@@ -52,7 +52,7 @@ mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.c tests/fixtures/original_kicks.inc game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) common/binary.c
+build/test-battle: tests/test_battle.c tests/fixtures/original_kicks.inc tests/fixtures/original_scorpion.inc game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) common/binary.c
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c common/binary.c -o $@ $(LDLIBS)
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)

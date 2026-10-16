@@ -135,6 +135,40 @@ static void sequence_event(Battle *battle, Fighter *fighter) {
   fighter->health--;
 }
 
+static void check_original_scorpion(void) {
+  struct ScorpionFixture {
+    const char *name;
+    int state, result, contact_tick, press_count, presses[8], facing_away, count;
+    int clips[256], frames[256];
+  };
+  static const struct ScorpionFixture fixtures[] = {
+#include "fixtures/original_scorpion.inc"
+  };
+  for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
+    const struct ScorpionFixture *expected = &fixtures[i];
+    /* Contact and repeat branches are recorded by the oracle, but are not
+     * exercised by this uninterrupted no-contact playback regression yet. */
+    if (expected->result != 0 || expected->press_count != 0) {
+      continue;
+    }
+    Battle battle = fight(4.f);
+    Fighter *fighter = &battle.fighters[0];
+    fighter_enter_state(&battle, fighter, expected->state);
+    for (int tick = 0; tick < expected->count; ++tick) {
+      int clip = fighter_move(fighter)->clip;
+      int count = clip == 294 ? 23 : clip == 293 ? 20 : clip == 63 ? 46 : 18;
+      if (clip != expected->clips[tick] ||
+          fighter_frame(fighter, count) != expected->frames[tick]) {
+        fprintf(stderr, "%s at step %d\n", expected->name, tick);
+        check(false, "Scorpion sample differs from original x86");
+      }
+      check(fighter->state == expected->state, "Scorpion move returned early");
+      advance_ticks(&battle, 1, NULL);
+    }
+    check(fighter->state == S_IDLE, "Scorpion move did not return at retail end step");
+  }
+}
+
 static void sequence_end(Battle *battle, Fighter *fighter) {
   fighter_enter_state(battle, fighter, S_IDLE);
 }
@@ -171,6 +205,7 @@ static void check_sequence_events(void) {
 int main(void) {
   check_roster();
   check_original_kicks();
+  check_original_scorpion();
   check_sequence_events();
   {
     Battle battle;
@@ -231,9 +266,11 @@ int main(void) {
   {
     Battle battle = fight(1.f);
     Input in[2] = {0};
+    /* Same recovered startup: Sub-Zero's jab still uses approximate timing. */
+    battle.fighters[1].roster = 0;
     in[0].pressed = in[1].pressed = BUTTON_BIT(BUTTON_PUNCH);
     battle_step(&battle, in);
-    advance_ticks(&battle, 6, NULL);
+    advance_ticks(&battle, 8, NULL);
     check(battle.fighters[0].health == 93 && battle.fighters[1].health == 93,
         "Simultaneous attacks must trade");
   }

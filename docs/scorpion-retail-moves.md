@@ -160,3 +160,24 @@ native `0x48d64c` passes record +0x14 to `0x48de80`, which subtracts health.
 These records alone do not specify transformed collision, block behavior,
 hitstop or victim movement. Those routines and the shared weapon/projectile/
 finisher scene machinery must be ported before claiming retail gameplay.
+
+## Normal-move branch oracle
+
+`tests/verify_scorpion.py` records 27 original-x86 scenarios: jab, sweep,
+uppercut and kick with miss/block/hit/air-hit results; early/late repeated jab
+presses, repeated jab loops, wrong facing, and late uppercut contacts. It
+executes the native input-repeat helper rather than replacing its decision.
+The only injected input is the original player's LP press latch. Native
+contact routines are explicitly replaced with the requested result; this
+checks the attacker's continuation, not retail collision or victim behavior.
+There is no world/physics pump, so this harness must not be used to assert
+projectile, teleport or fatality completeness.
+
+Uninterrupted no-contact playback now uses sparse segments in `c_scorpion.c`
+for jab (16 dispatches), sweep (41), uppercut (37) and high kick (30). C tests
+compare every submitted visible sample and end step with the x86 fixtures.
+Contact eligibility uses the original query visits: jab 8, sweep 18..19,
+uppercut 7..9, kick 11..13. Combat damage and geometry remain approximations.
+The other recorded branches still need runtime callbacks. In particular,
+uppercut block ends at 31 and hit at 61; last-visit contact adds two dispatches.
+Buffered LP input is consumed at native jab decisions, and can open clip 295.

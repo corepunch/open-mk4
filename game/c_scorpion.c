@@ -20,6 +20,40 @@ static const MoveSegment kick_segments[] = {
 static const MoveSequence kick_sequence = {kick_segments,
     (int)(sizeof kick_segments / sizeof kick_segments[0]), NULL, 0, 30, scorpion_ready};
 
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveSegment jab_segments[] = {
+  {0, 0, 1, 1},
+  {8, 7, 0, 1},
+  {9, 9, 2, 1},
+  {12, 17, 0, 1},
+  {14, 19, 2, 1},
+};
+static const MoveSegment sweep_segments[] = {
+  {0, 0, 2, 1},
+  {4, 10, 0, 1},
+  {5, 10, 1, 1},
+};
+static const MoveSegment uppercut_segments[] = {
+  {0, 0, 1, 1},
+  {6, 5, 0, 1},
+  {7, 6, 1, 1},
+  {10, 8, -1, 1},
+  {13, 7, 1, 1},
+  {15, 8, -1, 1},
+  {18, 7, 1, 1},
+  {20, 8, -1, 1},
+  {23, 7, 1, 1},
+  {25, 8, 1, 1},
+};
+// clang-format on
+
+static const MoveSequence jab_sequence = {
+    jab_segments, (int)(sizeof jab_segments / sizeof jab_segments[0]), NULL, 0, 16, scorpion_ready};
+static const MoveSequence sweep_sequence = {sweep_segments,
+    (int)(sizeof sweep_segments / sizeof sweep_segments[0]), NULL, 0, 41, scorpion_ready};
+static const MoveSequence uppercut_sequence = {uppercut_segments,
+    (int)(sizeof uppercut_segments / sizeof uppercut_segments[0]), NULL, 0, 37, scorpion_ready};
+
 /* Damage, stun, reach, push and other moves remain the native approximation.
  * Kick contact queries are steps 11..13 in the original no-contact trace. */
 static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL};
@@ -27,13 +61,13 @@ static const MoveDef s_walk = {269, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NUL
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL};
 static const MoveDef s_jab = {
-    294, 0, MOVE_END, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK, NULL};
+    294, 0, MOVE_END, 8, 1, 7, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK, &jab_sequence};
 static const MoveDef s_kick = {
     66, 0, MOVE_END, 11, 3, 16, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK, &kick_sequence};
-static const MoveDef s_sweep = {63, 0, MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f,
-    SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, NULL};
-static const MoveDef s_uppercut = {
-    293, 0, MOVE_END, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH, NULL};
+static const MoveDef s_sweep = {63, 0, MOVE_END, 18, 2, 21, 10, 45, 1.65f, 0.25f,
+    SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, &sweep_sequence};
+static const MoveDef s_uppercut = {293, 0, MOVE_END, 7, 3, 27, 18, 60, 1.35f, 0.5f,
+    SF_ATTACK | SF_LOCK | SF_LAUNCH, &uppercut_sequence};
 static const MoveDef s_throw = {75, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f,
     SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE, NULL};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL};
