@@ -40,9 +40,9 @@ run: mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
 GAME_HEADERS = game/game.h game/mk4_characters.h
-build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
