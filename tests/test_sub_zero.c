@@ -519,13 +519,28 @@ static void weapons(void) {
     advance(&battle, 80);
     battle_react(&battle, &battle.fighters[player], 51);
     check(!battle.fighters[player].armed && objects(&battle, PROJECTILE_SWORD) == 1, "scepter launch must drop actual weapon");
-    advance(&battle, 180);
     Projectile *drop = NULL;
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
       if (battle.projectiles[i].kind == PROJECTILE_SWORD) {
         drop = &battle.projectiles[i];
       }
     }
+    check(drop != NULL && drop->spin[AXIS_Z] == 0x20c4 && drop->vel[AXIS_Y] == -0x2666, "dropped weapon must open the recovered first settling arc");
+    int impacts = 0;
+    for (int tick = 0; tick < 180; ++tick) {
+      int previous = drop->bounce;
+      advance(&battle, 1);
+      if (drop->bounce != previous) {
+        bool sounded = false;
+        for (int i = 0; i < battle.sound_count; ++i) {
+          sounded |= battle.sounds[i].bank == SOUND_C && battle.sounds[i].selector == 0x15;
+        }
+        check(sounded, "each settling impact must request the retail weapon sound");
+        impacts++;
+      }
+    }
+    check(impacts == 3 && drop->bounce == 3 && drop->angle[AXIS_Z] == 0x191eb && drop->spin[AXIS_Z] == 0,
+        "shared weapon settling must complete three arcs and retain the final resting angle");
     check(drop != NULL && drop->phase == 2 && drop->weapon->type == 0x6b, "resting weapon must retain scepter descriptor");
     Fighter *other = &battle.fighters[1 - player];
     other->body.pos[AXIS_X] = drop->pos[AXIS_X];

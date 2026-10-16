@@ -1498,7 +1498,7 @@ static void sword_spin(Battle *battle, Fighter *fighter) {
   fighter->sample_override = 0;
 }
 
-static const WeaponDef sword = {0x60, sword_hp, sword_lp, sword_back_hp, sword_back_lp, sword_spin, weapon_throw, equip_sword};
+static const WeaponDef sword = {0x60, sword_hp, sword_lp, sword_back_hp, sword_back_lp, sword_spin, weapon_throw, equip_sword, SCENE_MODEL_SWORD};
 
 static bool can_weapon(const Battle *battle, const Fighter *fighter) {
   return battle->phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));

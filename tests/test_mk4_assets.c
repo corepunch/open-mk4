@@ -40,6 +40,11 @@ static void combat_poses(const Assets *assets) {
       "Clone must use the recovered shared ice meshes rather than an owner's costume");
   check(statue->meshes.data == assets->hud.effects.meshes.data && character_texture(statue, 0) == &assets->hud.effects.textures.data[0],
       "Scene models must share decoded multi-page materials with existing shared effects");
+  check(assets->scene_models.data[SCENE_MODEL_SWORD].bones.data[0].mesh == 99 && assets->scene_models.data[SCENE_MODEL_SCEPTER].bones.data[0].mesh == 113,
+      "Shared weapon presentation must use the original sword and scepter meshes");
+  Pose weapon_pose[MK4_MAX_BONES];
+  pose_static(&assets->scene_models.data[SCENE_MODEL_SCEPTER], weapon_pose);
+  check(fabsf(weapon_pose[0].position.y + .3f) < .001f, "Static weapon posing must preserve the descriptor grip offset");
   Battle battle;
   battle_init(&battle, 4, 15);
   battle_bind_assets(&battle, assets);

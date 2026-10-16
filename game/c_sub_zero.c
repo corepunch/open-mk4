@@ -1086,7 +1086,7 @@ static void scepter_back_lp(Battle *battle, Fighter *fighter) {
   scepter_attack(battle, fighter, 3);
 }
 
-static const WeaponDef scepter = {0x6b, scepter_hp, scepter_lp, scepter_back_hp, scepter_back_lp, NULL, weapon_throw, equip_scepter};
+static const WeaponDef scepter = {0x6b, scepter_hp, scepter_lp, scepter_back_hp, scepter_back_lp, NULL, weapon_throw, equip_scepter, SCENE_MODEL_SCEPTER};
 
 static bool can_weapon(const Battle *battle, const Fighter *fighter) {
   return battle->phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));

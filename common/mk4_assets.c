@@ -524,6 +524,15 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   statue.material_pages = assets->hud.effects.textures;
   statue.bones = load_rig(&exe, 0x50686c, 0x50609c, statue.meshes.count);
   PUSH(assets->scene_models, statue);
+  const uint32_t weapon_descriptors[] = {0x4ecdf8, 0x4ecdb8};
+  for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
+    uint32_t descriptor = weapon_descriptors[i];
+    uint32_t root = image_u32(&exe, descriptor + 4) * 4;
+    Character weapon = statue;
+    weapon.bones = load_rig(&exe, root, image_u32(&exe, root + 4), weapon.meshes.count);
+    weapon.bones.data[0].translation.y = image_s32(&exe, descriptor + 28) / 65536.f;
+    PUSH(assets->scene_models, weapon);
+  }
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;
@@ -659,6 +668,11 @@ static void pose_frames(const Character *ch, const Frame *f0, const Frame *f1, f
     }
     out[i] = p;
   }
+}
+
+void pose_static(const Character *ch, Pose out[MK4_MAX_BONES]) {
+  const Frame bind = {0};
+  pose_frames(ch, &bind, &bind, 0, out);
 }
 
 void pose(const Character *ch, const Clip *clip, double frame, Pose out[MK4_MAX_BONES]) {

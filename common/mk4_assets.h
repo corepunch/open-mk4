@@ -129,7 +129,9 @@ typedef struct Assets {
 
 enum {
   SCENE_MODEL_SPINE,
-  SCENE_MODEL_ICE_CLONE
+  SCENE_MODEL_ICE_CLONE,
+  SCENE_MODEL_SWORD,
+  SCENE_MODEL_SCEPTER
 };
 
 const Texture *character_texture(const Character *character, int page);
@@ -140,5 +142,6 @@ void assets_load_battle(Assets *assets, const char *archive, const char *executa
 void assets_free(Assets *assets);
 /* Output is caller-owned and holds at least ch->bones.count entries. */
 void pose(const Character *ch, const Clip *clip, double frame, Pose output[MK4_MAX_BONES]);
+void pose_static(const Character *ch, Pose output[MK4_MAX_BONES]);
 void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *to, int target, float fraction, Pose output[MK4_MAX_BONES]);
 #endif

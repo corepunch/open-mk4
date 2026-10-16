@@ -107,6 +107,30 @@ void weapon_followup_victim(Battle *battle, Fighter *fighter) {
   }
 }
 
+typedef struct WeaponBounce {
+  q16 spin, rise, rest_angle;
+} WeaponBounce;
+
+/* 53d580 selects 4ecaf0 for both currently ported weapons.
+ * 4941b0/230/390 play three explicit arcs, rather than one toss. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const WeaponBounce bounces[] = {
+  {0x20c4, -0x2666, 0x4b5c2},
+  {0x23d7, -0x1999, 0x191eb},
+  {0, -0x147a, 0x191eb},
+};
+// clang-format on
+
+static void begin_bounce(Battle *battle, Projectile *p) {
+  p->phase = 1;
+  p->lifetime = 180;
+  p->spin[AXIS_Z] = bounces[p->bounce].spin;
+  p->vel[AXIS_Y] = bounces[p->bounce].rise;
+  q16 speed = (q16)battle_random(battle, 2 * 0xa3d) - 0xa3d;
+  p->vel[AXIS_X] = q16_mul(p->heading[0], speed);
+  p->vel[AXIS_Z] = q16_mul(p->heading[1], speed);
+}
+
 static void object_tick(Battle *battle, Projectile *p) {
   if (p->phase == 2) {
     p->lifetime = 2;
@@ -114,14 +138,12 @@ static void object_tick(Battle *battle, Projectile *p) {
   }
   for (int k = 0; k < 3; ++k) {
     p->pos[k] += p->vel[k];
+    p->angle[k] = (p->angle[k] + p->spin[k]) % 0x6487e;
   }
   if (p->phase == 0) {
     ContactResult result = battle_contact_from(battle, &battle->fighters[p->owner], &thrown_record, p->pos, p->facing);
     if (result != CONTACT_MISS) {
-      p->phase = 1;
-      p->vel[AXIS_X] = p->vel[AXIS_Z] = 0;
-      p->vel[AXIS_Y] = -0x2666;
-      p->lifetime = 180;
+      begin_bounce(battle, p);
     } else if (p->ticks >= 30 ||
                (int64_t)p->pos[AXIS_X] * p->pos[AXIS_X] + (int64_t)p->pos[AXIS_Z] * p->pos[AXIS_Z] >= (int64_t)battle->arena_radius * battle->arena_radius) {
       p->kind = 0;
@@ -131,8 +153,15 @@ static void object_tick(Battle *battle, Projectile *p) {
     if (p->pos[AXIS_Y] >= -0x1999 && p->vel[AXIS_Y] >= 0) {
       p->pos[AXIS_Y] = -0x1999;
       memset(p->vel, 0, sizeof p->vel);
-      p->phase = 2;
-      p->lifetime = 2;
+      memset(p->spin, 0, sizeof p->spin);
+      p->angle[AXIS_Z] = bounces[p->bounce].rest_angle;
+      battle_sound(battle, SOUND_C, 0x15);
+      if (++p->bounce < (int)(sizeof bounces / sizeof bounces[0])) {
+        begin_bounce(battle, p);
+      } else {
+        p->phase = 2;
+        p->lifetime = 2;
+      }
     }
   }
 }
@@ -144,8 +173,13 @@ static void drop(Battle *battle, Fighter *fighter) {
   Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 180, object_tick);
   if (p != NULL) {
     p->weapon = fighter->weapon;
-    p->phase = 1;
-    p->vel[AXIS_Y] = -0x2666;
+    Vec3 position;
+    Mat3 unused;
+    fighter_joint_position(fighter, 10, &position, &unused);
+    p->pos[AXIS_X] = (q16)(position.x * Q16_ONE);
+    p->pos[AXIS_Y] = (q16)(position.y * Q16_ONE);
+    p->pos[AXIS_Z] = (q16)(position.z * Q16_ONE);
+    begin_bounce(battle, p);
   }
   fighter->armed = false;
 }
@@ -210,6 +244,7 @@ static void throw_tick(Battle *battle, Fighter *fighter) {
     Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 90, object_tick);
     if (p != NULL) {
       p->weapon = fighter->weapon;
+      p->spin[AXIS_Z] = -0x6666; /* 493a70 / 493c20 */
       for (int k = 0; k < 2; ++k) {
         int axis = k == 0 ? AXIS_X : AXIS_Z;
         p->pos[axis] += q16_mul(fighter->heading[k], 0xc000); /* 498480: .75 along heading */

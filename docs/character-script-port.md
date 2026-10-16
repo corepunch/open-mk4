@@ -139,10 +139,11 @@ pose, geometry, weapon, scene and sound checks for subsequent characters.
 pieces and PCM/ADPCM decoding. Existing compact kick/Scorpion fixtures stay.
 Do not add retail-execution harnesses or large per-tick JSON recordings.
 
-The engine still uses portable presentation: blue ice material, bounded particles,
-closed-surface character meshes for frozen pieces, and a single weapon settling arc.
-The shared clone statue and its orbiting light use their recovered rig and
-parameters. Weapon settling remains to be translated. CPU distance plans, probability gates and automatic
+Presentation uses recovered closed-surface rigs, animated head/spine models,
+camera splines, the shared ice statue and its orbiting light, original weapon
+meshes and three-arc settling records. The software rasterizer, blue freeze
+material, lighting and bounded particle pools remain portable engine choices.
+CPU distance plans, probability gates and automatic
 air attacks now live in the shared simulation; unported character action rows
 still fall back to their own stance tables. These translations do not claim
 retail scheduler or random-call-stream identity.

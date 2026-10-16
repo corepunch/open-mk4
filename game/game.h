@@ -200,6 +200,7 @@ typedef struct WeaponDef {
   int type; /* retail descriptor type; travels with a dropped weapon */
   FighterFn hp, lp, back_hp, back_lp, crouch_lp, throw_move;
   void (*equip)(Fighter *fighter);
+  int model;
 } WeaponDef;
 
 /* 494a00's descriptor-driven attack phases, translated into game data. */
@@ -481,6 +482,8 @@ struct Projectile {
   q16 angle[3], root_y; /* captured clone orientation/root offset */
   ProjectileFn step;
   OrbitLight light;
+  q16 spin[3];
+  int bounce;
 };
 
 #define MAX_PROJECTILES 4

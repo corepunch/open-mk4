@@ -193,26 +193,24 @@ void draw_sprite(Canvas *cv, const Geometry *geo, int index, Rect dst, bool flip
   canvas_blit(cv, &geo->textures.data[s->texture], (Rect){s->u, s->v, s->w, s->h}, dst, flip);
 }
 
-static void draw_blade(Canvas *cv, Camera camera, Vec3 base, Vec3 tip) {
-  ScreenVertex a = camera_project(camera, (Vertex){.p = camera_point(camera, base)}, 1);
-  ScreenVertex b = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);
-  for (int width = -2; width <= 2; ++width) {
-    canvas_line(cv, (int)a.x + width, (int)a.y, (int)b.x, (int)b.y, width == 0 ? 0xfff0f0ec : 0xff8c959a);
+static void draw_weapon(Canvas *cv, Camera camera, const Assets *assets, Vec3 origin, Mat3 basis, const WeaponDef *weapon, const SceneLight *light) {
+  require(weapon != NULL && weapon->model >= 0 && (size_t)weapon->model < assets->scene_models.count, "Invalid weapon model");
+  const Character *model = &assets->scene_models.data[weapon->model];
+  Pose bones[MK4_MAX_BONES];
+  pose_static(model, bones);
+  for (size_t n = 0; n < model->bones.count; ++n) {
+    const Bone *bone = &model->bones.data[n];
+    const Triangles *mesh = &model->meshes.data[bone->mesh].triangles;
+    for (size_t j = 0; j < mesh->count; ++j) {
+      Triangle triangle = mesh->data[j];
+      for (int k = 0; k < 3; ++k) {
+        Vec3 local = vec_add(bones[n].position, mat3_apply(bones[n].rotation, triangle.v[k].p));
+        triangle.v[k].p = vec_add(origin, mat3_apply(basis, local));
+        triangle.v[k].normal = mat3_apply(basis, mat3_apply(bones[n].rotation, triangle.v[k].normal));
+      }
+      render_triangle(cv, camera, triangle, character_texture(model, triangle.texture), 1, PASS_COLOR, light);
+    }
   }
-  canvas_line(cv, (int)a.x - 5, (int)a.y, (int)a.x + 5, (int)a.y, 0xffb7a46c);
-}
-
-static void draw_weapon(Canvas *cv, Camera camera, Vec3 base, Vec3 tip, const WeaponDef *weapon) {
-  if (weapon == NULL || weapon->type != 0x6b) {
-    draw_blade(cv, camera, base, tip);
-    return;
-  }
-  ScreenVertex a = camera_project(camera, (Vertex){.p = camera_point(camera, base)}, 1);
-  ScreenVertex b = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);
-  for (int width = -2; width <= 2; ++width) {
-    canvas_line(cv, (int)a.x + width, (int)a.y, (int)b.x + width, (int)b.y, width == 0 ? 0xffdef7ff : 0xff3189bc);
-  }
-  canvas_rect(cv, (Rect){(int)b.x - 4, (int)b.y - 4, 9, 9}, 0xff8ee8ff);
 }
 
 /* Animated accessories reserve their first channel for the detached
@@ -360,8 +358,11 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     }
     if (p->kind == PROJECTILE_SWORD) {
       Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
-      float angle = p->phase == 2 ? 0.f : (float)p->ticks * .3f;
-      draw_weapon(cv, camera, base, vec_add(base, (Vec3){cosf(angle), sinf(angle), 0}), p->weapon);
+      float factor = 4096.f / (6.283185307179586f * Q16_ONE);
+      Mat3 turn = rotation(0, (Vec3){p->angle[0] * factor, p->angle[1] * factor, p->angle[2] * factor});
+      float x = q16_float(p->heading[0]), z = q16_float(p->heading[1]);
+      Mat3 heading = {{x, 0, -z, 0, 1, 0, z, 0, x}};
+      draw_weapon(cv, camera, assets, base, mat3_mul(heading, turn), p->weapon, &light);
     }
     if (p->kind != PROJECTILE_SPEAR) {
       continue;
@@ -377,9 +378,10 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   for (int i = 0; i < 2; ++i) {
     const Fighter *f = &battle->fighters[i];
     if (f->armed) {
-      Vec3 hand = {fighter_x(f) + f->facing * .3f, -1.2f - fighter_height(f), fighter_z(f)};
-      float angle = fighter_move(f)->clip == 224 ? f->ticks * .5f : -1.1f;
-      draw_weapon(cv, camera, hand, vec_add(hand, (Vec3){f->facing * cosf(angle), sinf(angle), 0}), f->weapon);
+      Vec3 hand;
+      Mat3 grip;
+      fighter_joint_position(f, 10, &hand, &grip);
+      draw_weapon(cv, camera, assets, hand, grip, f->weapon, &light);
     }
     if ((fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
         (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_BURN && i == battle->winner && battle->phase_ticks >= 51 && battle->phase_ticks < 191)) {
