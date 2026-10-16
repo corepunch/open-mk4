@@ -1,0 +1,28 @@
+# Script decoder
+
+The decoder reads the supplied EXE; it does not execute retail code. Decoded
+operand layouts and native dependencies are evidence for a C port, not proof
+that a move's semantics or implementation are complete.
+
+## Additional opcode evidence
+
+These layouts were checked from exact-entry x86 handlers in `MK4/MK-4.EXE`.
+Addresses refer to the revision checked by `RetailImage`, not the upstream
+reference checkout. Unknown operations still terminate their path explicitly.
+
+| Opcode | Handler | Following words | Behavior established from the handler |
+| --- | --- | --- | --- |
+| `0c` | `45a510` | 1 packed clip descriptor | Set cursor to inline low byte; bind descriptor, submit pose and increment cursor through `4285b0` |
+| `26` | `4596a0` | 0 | Low-byte argument to indexed sound helper `48a100` |
+| `2a` | `4595a0` | 0 | Low-byte argument in scratch `53c43c`, call spawn helper `457b50`; its effects remain a native dependency |
+| `30` | `459820` | 0 | Tail to tagged continuation pop `41f780`; no script fallthrough |
+| `37` | `4598b0` | 0 | `45c020` unpacks two 12-bit waits; result bit 0 clear selects low 12 bits, set selects high 12 bits |
+| `51` | `45ab30` | 0 | Query B (`48d3f0`) with low-byte selector; record table `53d2b8` |
+| `5a` | `45afb0` | 1 signed Q16 value | Fetch through `45bff0`, negate, pass to horizontal speed helper `490390` |
+| `61` | `45b3a0` | 0 | Call `490330`, clearing bit 0 of fighter group flags at `+40` |
+| `62` | `45b310` | 0 | Low-byte argument to gated indexed helper `40a470`; its effects remain a native dependency |
+
+This removes the opcode stops in standing LK (`4e6d08`), crouching HK
+(`4e60b8`), spear victim (`4e9d00`), teleport victim (`4e9938`) and fire
+victim (`4e97f8`). Native tails and dynamic continuation returns remain explicit
+work; decoding past a wrapper does not resolve its transitive behavior.

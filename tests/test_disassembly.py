@@ -64,6 +64,34 @@ class ScriptTests(unittest.TestCase):
         parked = script_program(self.image, 0x4e5bc8)['instructions']
         self.assertEqual(parked[-1]['opcode'], '0x3e')
 
+    def test_scorpion_blocking_opcodes(self):
+        # Static handler evidence: 51 -> query B, 62/26 consume only inline;
+        # 5a fetches one word and negates it. 30 pops the continuation stack.
+        for root in (0x4e6d08, 0x4e60b8, 0x4e9d00, 0x4e9938, 0x4e97f8):
+            program = script_program(self.image, root)
+            self.assertFalse(any('unresearched' in row['operation'] for row in program['instructions']), hex(root))
+            self.assertIn(program['instructions'][-1]['opcode'], ('0x30', '0x32', '0x3f'))
+            self.assertFalse(program['whole_move_verified'])
+        low_kick = script_program(self.image, 0x4e6d08)['instructions']
+        query = next(row for row in low_kick if row['opcode'] == '0x51')
+        self.assertEqual(query['native_target'], '0x48d3f0')
+        self.assertEqual(query['contact']['selector'], 6)
+        wait = next(row for row in low_kick if row['opcode'] == '0x37')
+        self.assertEqual((wait['wait_if_clear'], wait['wait_if_set']), (5, 8))
+        spear = script_program(self.image, 0x4e9d00)['instructions']
+        self.assertEqual([row['va'] for row in spear[:3]], ['0x4e9d00', '0x4e9d04', '0x4e9d08'])
+        self.assertEqual(spear[0]['native_target'], '0x40a470')
+
+    def test_motion_and_continuation_boundaries(self):
+        address = 0x570000
+        struct.pack_into('<6I', self.image.memory, address - 0x400000,
+                         0x5a000000, 0x1999, 0x61000000, 0x30000000, 0xff000000, 0)
+        program = script_program(self.image, address)
+        self.assertEqual([row['va'] for row in program['instructions']], ['0x570000', '0x570008', '0x57000c'])
+        self.assertEqual(program['instructions'][0]['speed_q16'], -0x1999)
+        self.assertEqual(program['instructions'][1]['native_target'], '0x490330')
+        self.assertEqual(program['unresolved_native_edges'][-1]['kind'], 'dynamic continuation return')
+
     def test_unknown_is_explicit_terminal(self):
         address = 0x570000
         struct.pack_into('<II', self.image.memory, address - 0x400000, 0xff000000, 0x3f000000)

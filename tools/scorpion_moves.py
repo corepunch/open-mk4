@@ -41,6 +41,7 @@ SCRIPT_OPS = {
     0x07: ('finish backwards', 0),
     0x08: ('clip descriptor playback', 1),
     0x09: ('clip descriptor operation', 1),
+    0x0c: ('bind clip, submit inline sample and advance cursor', 1),
     0x0e: ('open victim clip at sample 0', 1),
     0x0f: ('open clip at sample', 1),
     0x10: ('advance self and victim poses for count', 0),
@@ -53,17 +54,21 @@ SCRIPT_OPS = {
     0x20: ('sound event', 0),
     0x24: ('release attack bookkeeping', 0),
     0x25: ('native helper', 0),
+    0x26: ('indexed sound helper with inline argument', 0),
     0x27: ('sound event', 0),
     0x28: ('native helper', 0),
     0x29: ('set action 0x1006', 0),
+    0x2a: ('spawn helper with inline argument', 0),
     0x2b: ('sound event', 0),
     0x2c: ('native helper', 0),
     0x2d: ('set action 0x1007', 0),
+    0x30: ('return through tagged continuation stack', 0),
     0x32: ('native tail call', 1),
     0x33: ('script jump', 1),
     0x34: ('scheduler wait', 0),
     0x35: ('native call', 1),
     0x36: ('native predicate and conditional script branch', 2),
+    0x37: ('wait selected by native result bit 0', 0),
     0x38: ('install group callback at +0x44', 1),
     0x39: ('clear group callback at +0x44', 0),
     0x3a: ('set loop counter', 0),
@@ -83,18 +88,37 @@ SCRIPT_OPS = {
     0x4c: ('native playback helper', 0),
     0x4d: ('advance twice per visit to sample', 0),
     0x4f: ('native helper', 0),
+    0x51: ('contact query B with inline selector', 0),
     0x52: ('contact query A with inline selector', 0),
     0x55: ('native predicate and conditional script branch', 2),
     0x58: ('motion operands', 3),
     0x59: ('native motion parameter block', 4),
+    0x5a: ('set horizontal speed to negated Q16 operand', 1),
     0x5b: ('native helper', 0),
     0x5f: ('horizontal motion operand', 1),
     0x60: ('native helper', 0),
+    0x61: ('clear fighter busy flag', 0),
+    0x62: ('indexed native helper with inline argument', 0),
     0x63: ('health subtraction with Q16 operand', 1),
     0x6a: ('native helper', 0),
     0x6b: ('sound helper', 0),
     0x6d: ('native helper with word operand', 1),
 }
+
+
+# Verified from exact-entry handlers in the supplied EXE, not execution traces.
+# These wrappers consume no following words: they mask inline to its low byte,
+# call the target, then resume dispatch (0x61 simply calls 0x490330).
+# 0x5a instead calls word-fetch 0x45bff0 once, negates it, then calls 0x490390.
+# The transitive effects of 0x26/0x2a/0x62 remain native research dependencies.
+INLINE_NATIVE_OPS = {
+    0x26: 0x48a100, 0x2a: 0x457b50, 0x51: 0x48d3f0,
+    0x52: 0x48d3d0, 0x61: 0x490330, 0x62: 0x40a470,
+}
+
+
+def signed_word(value):
+    return value if value < 0x80000000 else value - 0x100000000
 
 
 def script_program(image, entry):
@@ -125,21 +149,37 @@ def script_program(image, entry):
             operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
             row.update(operation=operation, inline=word & 0xffffff,
                        operands=[hex(value) for value in operands])
-            if op in (0x01, 0x02, 0x08, 0x09, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49) and operands:
+            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
-                if op in (0x01, 0x0f):
+                if op in (0x01, 0x0c, 0x0f):
                     row['start_sample'] = word & 255
                 row['clip_owner'] = 'victim' if op == 0x0e else 'self'
             if op in (0x32, 0x35, 0x36, 0x38, 0x55):
                 row['native_target'] = hex(operands[0])
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[0])))
+            if op in INLINE_NATIVE_OPS:
+                row['native_target'] = hex(INLINE_NATIVE_OPS[op])
+                row['argument'] = word & 255 if op != 0x61 else None
+                open_edges.append(dict(source=hex(pc), kind='native helper dependency',
+                                       target=row['native_target']))
+            if op in (0x51, 0x52):
+                row['contact'] = attack_record(image, 0x53d2b8 if op == 0x51 else 0x53d268, word & 255)
+            if op == 0x5a:
+                row['speed_q16'] = signed_word((-operands[0]) & 0xffffffff)
+                row['native_target'] = '0x490390'
+                open_edges.append(dict(source=hex(pc), kind='native motion dependency', target=row['native_target']))
             if op == 0x40:
                 row.update(task_type=operands[0], callback=hex(operands[1]))
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[1])))
             if operation in ('native helper', 'native playback helper', 'native helper with word operand') or op in (0x58, 0x59, 0x5f):
                 open_edges.append(dict(source=hex(pc), kind='native helper semantics',
                                        target=row['handler']))
+            if op == 0x30:
+                open_edges.append(dict(source=hex(pc), kind='dynamic continuation return', target='0x41f780'))
+            if op == 0x37:
+                row['wait_if_clear'] = word & 0xfff
+                row['wait_if_set'] = (word >> 12) & 0xfff
             if op == 0x45:
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
@@ -163,7 +203,7 @@ def script_program(image, entry):
             elif op == 0x33:
                 row['branch'] = hex(operands[0] * 4)
                 pc = operands[0] * 4
-            elif op in (0x32, 0x3e, 0x3f):
+            elif op in (0x30, 0x32, 0x3e, 0x3f):
                 break
             else:
                 pc += (count + 1) * 4
