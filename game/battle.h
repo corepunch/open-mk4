@@ -1,38 +1,49 @@
-#pragma once
-#include <array>
-#include <cstdint>
+#ifndef MK4_GAME_BATTLE_H
+#define MK4_GAME_BATTLE_H
+#include <stdbool.h>
+#include <stdint.h>
 
-namespace mk4::game {
-constexpr float tick_seconds=1.f/60.f;
-enum class Action { Idle, Walk, Crouch, Jump, Punch, Kick, Sweep, Uppercut, Throw, Block, Hit, Knockdown, Victory };
-enum class Phase { Ready, Fight, RoundOver, MatchOver };
-struct Input {
-    bool left=false,right=false,jump=false,crouch=false,block=false,run=false;
-    bool punch=false,kick=false,uppercut=false,grab=false;
-};
-struct Move { int startup,active,recovery,damage,stun;float reach,push;bool low=false,launch=false,unblockable=false; };
-const Move* move(Action);
-struct Fighter {
-    int character=0,health=100,wins=0,facing=1,ticks=0;
-    Action action=Action::Idle;
-    float x=0,height=0,velocity=0;
-    bool connected=false,crouching=false;
-};
-struct HitEffect { float x=0,height=0;int ticks=0;bool blocked=false; };
-struct Battle {
-    std::array<Fighter,2> fighters;
-    std::array<HitEffect,2> effects;
-    Phase phase=Phase::Ready;
-    int phase_ticks=0,time_ticks=99*60,round=1,winner=-1;
-    uint64_t ticks=0;
-    float wall=5.f;
-    Battle(int p1=0,int p2=4);
-    void reset_match();
-    void next_round();
-    void step(const std::array<Input,2>&);
-    Input cpu(int player) const;
-private:
-    void finish_round();
-};
-const char* action_name(Action);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define MK4_TICK_SECONDS (1.f / 60.f)
+typedef enum Action { ACTION_IDLE, ACTION_WALK, ACTION_CROUCH, ACTION_JUMP, ACTION_PUNCH, ACTION_KICK, ACTION_SWEEP, ACTION_UPPERCUT, ACTION_THROW, ACTION_BLOCK, ACTION_HIT, ACTION_KNOCKDOWN, ACTION_VICTORY } Action;
+typedef enum Phase { PHASE_READY, PHASE_FIGHT, PHASE_ROUND_OVER, PHASE_MATCH_OVER } Phase;
+typedef struct Input {
+    bool left, right, jump, crouch, block, run;
+    bool punch, kick, uppercut, grab;
+} Input;
+typedef struct Move {
+    int startup, active, recovery, damage, stun;
+    float reach, push;
+    bool low, launch, unblockable;
+} Move;
+typedef struct Fighter {
+    int character, health, wins, facing, ticks;
+    Action action;
+    float x, height, velocity;
+    bool connected, crouching;
+} Fighter;
+typedef struct HitEffect { float x, height; int ticks; bool blocked; } HitEffect;
+typedef struct Battle {
+    Fighter fighters[2];
+    HitEffect effects[2];
+    Phase phase;
+    int phase_ticks, time_ticks, round, winner;
+    uint64_t ticks;
+    float wall;
+} Battle;
+
+const Move *battle_move(Action action);
+void battle_init(Battle *battle, int p1, int p2);
+void battle_reset_match(Battle *battle);
+void battle_next_round(Battle *battle);
+void battle_step(Battle *battle, const Input input[2]);
+Input battle_cpu(const Battle *battle, int player);
+const char *action_name(Action action);
+
+#ifdef __cplusplus
 }
+#endif
+#endif

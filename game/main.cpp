@@ -36,13 +36,13 @@ void validate(const Assets& assets){
     require(assets.hud.font.sprites.size()==143,"Invalid HUD sprite directory");
     for(size_t i=0;i<assets.characters.size();++i){require(assets.hud.names[i]>=0,"Missing fighter name");
         const auto& ch=assets.characters[i];int channels=0;for(auto& b:ch.bones)channels=std::max(channels,b.channel+1);
-        for(auto a:{Action::Idle,Action::Walk,Action::Crouch,Action::Jump,Action::Punch,Action::Kick,Action::Sweep,Action::Uppercut,Action::Throw,Action::Block,Action::Hit,Action::Knockdown,Action::Victory}){
+        for(auto a:{ACTION_IDLE,ACTION_WALK,ACTION_CROUCH,ACTION_JUMP,ACTION_PUNCH,ACTION_KICK,ACTION_SWEEP,ACTION_UPPERCUT,ACTION_THROW,ACTION_BLOCK,ACTION_HIT,ACTION_KNOCKDOWN,ACTION_VICTORY}){
             const auto& clip=assets.clips[size_t(animation(ch,a))];require(int(clip.frames.front().angles.size())==channels,"Incompatible combat animation");
             for(double f:{0.,double(clip.frames.size())*.5})for(auto& p:pose(ch,clip,f))require(std::isfinite(p.position.x+p.position.y+p.position.z),"Invalid combat pose");}}
     std::puts("PASS: 11 textured arena hierarchies; original HUD/name sprites; all 18 combat rigs compatible");
 }
 Input held_input(const Uint8* keys,int p) {
-    Input in;
+    Input in{};
     if(!p){in.left=keys[SDL_SCANCODE_A];in.right=keys[SDL_SCANCODE_D];in.jump=keys[SDL_SCANCODE_W];in.crouch=keys[SDL_SCANCODE_S];in.block=keys[SDL_SCANCODE_L];in.run=keys[SDL_SCANCODE_H];}
     else{in.left=keys[SDL_SCANCODE_LEFT];in.right=keys[SDL_SCANCODE_RIGHT];in.jump=keys[SDL_SCANCODE_UP];in.crouch=keys[SDL_SCANCODE_DOWN];in.block=keys[SDL_SCANCODE_KP_3];in.run=keys[SDL_SCANCODE_RSHIFT];}
     return in;
@@ -63,7 +63,7 @@ int main(int argc,char** argv){
         if(list){for(size_t i=0;i<assets.characters.size();++i)std::printf("Fighter %2zu: %s\n",i,assets.characters[i].name.c_str());
             for(size_t i=0;i<assets.arenas.size();++i)std::printf("Arena %2zu: %s\n",i,assets.arenas[i].name.c_str());return 0;}
         if(selftest){validate(assets);return 0;}
-        SdlApp app("Mortal Kombat 4 - Battle",1280,800,headless);Canvas cv(1280,800);Battle battle(p1,p2);
+        SdlApp app("Mortal Kombat 4 - Battle",1280,800,headless);Canvas cv(1280,800);Battle battle; battle_init(&battle,p1,p2);
         bool running=true,paused=false;int rendered=0;double accumulator=0;uint64_t last=SDL_GetPerformanceCounter();
         std::array<Input,2> pending{};if(headless&&!limit)limit=1;
         while(running){SDL_Event ev;
@@ -73,11 +73,11 @@ int main(int argc,char** argv){
                 if(ev.type!=SDL_KEYDOWN||ev.key.repeat)continue;
                 auto k=ev.key.keysym.sym;
                 if(k==SDLK_ESCAPE)running=false;else if(k==SDLK_SPACE){paused=!paused;pending={};}
-                else if(k==SDLK_r){battle.reset_match();pending={};}
-                else if(k==SDLK_RETURN&&battle.phase==Phase::MatchOver){battle.reset_match();pending={};}
-                else if(k==SDLK_F1||k==SDLK_F2){size_t player=k==SDLK_F1?0:1;auto& ch=battle.fighters[player].character;ch=(ch+1)%18;battle.reset_match();pending={};}
+                else if(k==SDLK_r){battle_reset_match(&battle);pending={};}
+                else if(k==SDLK_RETURN&&battle.phase==PHASE_MATCH_OVER){battle_reset_match(&battle);pending={};}
+                else if(k==SDLK_F1||k==SDLK_F2){size_t player=k==SDLK_F1?0:1;auto& ch=battle.fighters[player].character;ch=(ch+1)%18;battle_reset_match(&battle);pending={};}
                 else if(k==SDLK_F3){cpu=!cpu;demo=false;pending={};}
-                else if(k==SDLK_F4){arena=(arena+1)%int(assets.arenas.size());battle.reset_match();pending={};}
+                else if(k==SDLK_F4){arena=(arena+1)%int(assets.arenas.size());battle_reset_match(&battle);pending={};}
                 else if(!paused){if(k==SDLK_j)pending[0].punch=true;if(k==SDLK_k)pending[0].kick=true;
                     if(k==SDLK_u)pending[0].uppercut=true;if(k==SDLK_o)pending[0].grab=true;
                     if(k==SDLK_KP_1)pending[1].punch=true;if(k==SDLK_KP_2)pending[1].kick=true;
@@ -89,9 +89,9 @@ int main(int argc,char** argv){
                 std::array<Input,2> in;
                 for(int i=0;i<2;++i){in[size_t(i)]=held_input(keys,i);auto& src=pending[size_t(i)];auto& dst=in[size_t(i)];
                     dst.punch=src.punch;dst.kick=src.kick;dst.uppercut=src.uppercut;dst.grab=src.grab;}
-                if(demo)in[0]=battle.cpu(0);if(cpu||demo)in[1]=battle.cpu(1);
-                battle.step(in);pending={};accumulator-=1./60.;
-                if(demo&&battle.phase==Phase::MatchOver&&battle.phase_ticks>240)battle.reset_match();}
+                if(demo)in[0]=battle_cpu(&battle,0);if(cpu||demo)in[1]=battle_cpu(&battle,1);
+                battle_step(&battle,in.data());pending={};accumulator-=1./60.;
+                if(demo&&battle.phase==PHASE_MATCH_OVER&&battle.phase_ticks>240)battle_reset_match(&battle);}
             draw_battle(cv,assets,battle,arena,cpu,paused);app.present(cv);
             ++rendered;if(limit&&rendered>=limit)running=false;if(!headless)SDL_Delay(1);
         }

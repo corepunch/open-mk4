@@ -1,3 +1,5 @@
+CC = cc
+CFLAGS = -O2 -std=c11 -Wall -Wextra -Wpedantic
 CXX = c++
 CXXFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic
 CPPFLAGS = -Icommon
@@ -30,13 +32,16 @@ viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-mk4-game: game/main.cpp game/battle.cpp game/battle.h game/draw.cpp game/draw.h $(ASSETS) $(RENDER) $(HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $$($(SDL2_CONFIG) --cflags) game/main.cpp game/battle.cpp game/draw.cpp $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs)
+mk4-game: game/main.cpp build/battle.o game/battle.h game/draw.cpp game/draw.h $(ASSETS) $(RENDER) $(HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $$($(SDL2_CONFIG) --cflags) game/main.cpp build/battle.o game/draw.cpp $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.cpp game/battle.cpp game/battle.h
+build/battle.o: game/battle.c game/battle.h
 	mkdir -p build
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Igame tests/test_battle.cpp game/battle.cpp -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c game/battle.c -o $@
+build/test-battle: tests/test_battle.cpp build/battle.o game/battle.h
+	mkdir -p build
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Igame tests/test_battle.cpp build/battle.o -o $@
 build/test-shadows: tests/test_shadows.cpp $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.cpp $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs)

@@ -54,15 +54,15 @@ std::vector<Triangle> fighter_geometry(const Assets& assets,const Fighter& fight
     const Clip* clip=&assets.clips[size_t(id)];int channels=0;for(auto& b:ch.bones)channels=std::max(channels,b.channel+1);
     if(int(clip->frames.front().angles.size())!=channels)clip=&assets.clips[size_t(ch.idle)];
     double frame=double(fighter.ticks)*.5;
-    if(const auto* m=move(fighter.action)) {
+    if(const auto* m=battle_move(fighter.action)) {
         double t=double(std::max(0,fighter.ticks));
         double progress=t<m->startup?.4*t/m->startup:
             t<m->startup+m->active?.4+.2*(t-m->startup)/m->active:
             .6+.4*(t-m->startup-m->active)/m->recovery;
         frame=std::clamp(progress,0.,1.)*double(clip->frames.size()-1);
     }
-    else if(fighter.action==Action::Knockdown)frame=std::min(double(std::max(0,fighter.ticks))*.65,double(clip->frames.size()-1));
-    else if(fighter.action==Action::Block||fighter.action==Action::Crouch||fighter.action==Action::Hit)frame=std::min(frame,double(clip->frames.size()-1));
+    else if(fighter.action==ACTION_KNOCKDOWN)frame=std::min(double(std::max(0,fighter.ticks))*.65,double(clip->frames.size()-1));
+    else if(fighter.action==ACTION_BLOCK||fighter.action==ACTION_CROUCH||fighter.action==ACTION_HIT)frame=std::min(frame,double(clip->frames.size()-1));
     auto bones=pose(ch,*clip,frame);auto initial=pose(ch,*clip,0);
     float front=ch.front_yaw;
     // Most original actions use a different absolute heading from the idle.
@@ -105,15 +105,15 @@ void bar(Canvas& cv,const Geometry& font,int health,Rect r,bool right) {
 int animation(const Character& ch,Action a){
     if(ch.idle==587) {
         // Goro has his own original 21-channel action bank.
-        switch(a){case Action::Walk:return 590;case Action::Crouch:return 603;case Action::Jump:return 602;
-            case Action::Punch:return 596;case Action::Kick:return 598;case Action::Sweep:return 600;
-            case Action::Uppercut:return 593;case Action::Throw:return 597;case Action::Block:return 595;
-            case Action::Hit:return 605;case Action::Knockdown:return 581;case Action::Victory:return 608;default:return 587;}
+        switch(a){case ACTION_WALK:return 590;case ACTION_CROUCH:return 603;case ACTION_JUMP:return 602;
+            case ACTION_PUNCH:return 596;case ACTION_KICK:return 598;case ACTION_SWEEP:return 600;
+            case ACTION_UPPERCUT:return 593;case ACTION_THROW:return 597;case ACTION_BLOCK:return 595;
+            case ACTION_HIT:return 605;case ACTION_KNOCKDOWN:return 581;case ACTION_VICTORY:return 608;default:return 587;}
     }
-    switch(a){case Action::Walk:return 267;case Action::Crouch:return 219;case Action::Jump:return 301;
-        case Action::Punch:return 216;case Action::Kick:return 65;case Action::Sweep:return 101;
-        case Action::Uppercut:return 212;case Action::Throw:return 23;case Action::Block:return 251;
-        case Action::Hit:return 247;case Action::Knockdown:return 166;case Action::Victory:return 293;default:return ch.idle;}
+    switch(a){case ACTION_WALK:return 267;case ACTION_CROUCH:return 219;case ACTION_JUMP:return 301;
+        case ACTION_PUNCH:return 216;case ACTION_KICK:return 65;case ACTION_SWEEP:return 101;
+        case ACTION_UPPERCUT:return 212;case ACTION_THROW:return 23;case ACTION_BLOCK:return 251;
+        case ACTION_HIT:return 247;case ACTION_KNOCKDOWN:return 166;case ACTION_VICTORY:return 293;default:return ch.idle;}
 }
 void draw_sprite(Canvas& cv,const Geometry& geo,int index,Rect dst,bool flip) {
     if(index<0||size_t(index)>=geo.sprites.size())return;
@@ -140,7 +140,7 @@ void draw_battle(Canvas& cv,const Assets& assets,const Battle& battle,int arena,
     for(size_t i=0;i<fighters.size();++i) {
         const auto& fighter=battle.fighters[i];
         const auto& texture=assets.characters[size_t(fighter.character)].texture;
-        for(auto triangle:fighters[i])render_triangle(cv,camera,triangle,texture,fighter.action==Action::Hit?.72f:1.f,TrianglePass::Color,&light);
+        for(auto triangle:fighters[i])render_triangle(cv,camera,triangle,texture,fighter.action==ACTION_HIT?.72f:1.f,TrianglePass::Color,&light);
     }
     for(const auto& e:battle.effects)if(e.ticks>0){auto p=camera.project({camera.camera({e.x,-e.height,.2f}),{},0,0});
         // Shared effects atlas supplies the original blue/white impact glow.
@@ -162,12 +162,12 @@ void draw_battle(Canvas& cv,const Assets& assets,const Battle& battle,int arena,
     font.draw(cv,cv.w-28-font.width(mode,.6f),cv.h-78,mode,.6f);
     font.draw(cv,28,cv.h-49,"P1  A/D MOVE  W JUMP  S DUCK  J PUNCH  K KICK  L BLOCK  U UPPERCUT  O THROW  H RUN",.6f);
     font.draw(cv,28,cv.h-29,"P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE",.6f);
-    if(battle.phase==Phase::Ready){round_intro(cv,assets.hud,battle.round);
+    if(battle.phase==PHASE_READY){round_intro(cv,assets.hud,battle.round);
         if(battle.phase_ticks>40)draw_sprite(cv,assets.hud.effects,137,{cv.w/2-181,285,362,126});}
-    if(battle.phase==Phase::RoundOver||battle.phase==Phase::MatchOver){
+    if(battle.phase==PHASE_ROUND_OVER||battle.phase==PHASE_MATCH_OVER){
         std::string message=battle.winner<0?"DRAW":assets.characters[size_t(battle.fighters[size_t(battle.winner)].character)].name+" WINS";
         cv.rect({cv.w/2-350,205,700,100},0xff141517);font.centered(cv,224,message,1.5f);
-        font.centered(cv,267,battle.phase==Phase::MatchOver?"MATCH COMPLETE / ENTER TO REMATCH":"NEXT ROUND",.75f);}
+        font.centered(cv,267,battle.phase==PHASE_MATCH_OVER?"MATCH COMPLETE / ENTER TO REMATCH":"NEXT ROUND",.75f);}
     if(paused){cv.rect({cv.w/2-130,cv.h/2-35,260,66},0xff141517);font.centered(cv,cv.h/2-15,"PAUSED",1.5f);}
 }
 }
