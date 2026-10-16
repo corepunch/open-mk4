@@ -1,3 +1,4 @@
+#include "game.h"
 #include "mk4_assets.h"
 #include <math.h>
 #include <stdio.h>
@@ -116,31 +117,48 @@ int main(void) {
       if (fabsf(sole0) > .05f || fabsf(sole1) > .05f)
         fatal("%s idle sole %f %f leaves the floor", ch->name, (double)sole0, (double)sole1);
     }
-    {
-      /* Shared bank plus Goro's crouch, knockdown and victory. */
-      // clang-format off: Keep table entries on one row, including long rows.
-      static const int grounded[] = {
-        166,
-        219,
-        247,
-        293,
-        581,
-        603,
-        608
-      };
-      // clang-format on
-      for (size_t g = 0; g < sizeof grounded / sizeof grounded[0]; ++g) {
-        const Clip *ground = &assets.clips.data[grounded[g]];
-        float sole, plant;
-        if ((int)ground->frames.data[0].angles.count != count)
-          continue;
-        sole = mesh_sole(ch, ground, (double)ground->frames.count - 1);
-        plant = ground->frames.data[0].translation.y;
-        if (fabsf(sole) > .15f)
-          fatal("%s clip %d sole %f leaves the floor", ch->name, grounded[g], (double)sole);
-        if (fabsf(plant) > .3f && fabsf(sole - plant) <= fabsf(sole) + .25f)
-          fatal(
-              "%s clip %d root Y %f is not the ground plant", ch->name, grounded[g], (double)plant);
+  }
+  /* Endpoints of every grounded roster move. Jump is airborne. Fujin's
+   * settled knockdown is his mesh on shared clip 186 (about +0.21). Goro's
+   * clip 581 opens about +0.49 below the floor; its root Y plants the end. */
+  for (int r = 0; r < roster_count(); ++r) {
+    const CharacterDef *def = roster_def(r);
+    const Character *fighter = roster_character(&assets, r);
+    const Clip *idle = &assets.clips.data[fighter->idle];
+    int channels = (int)idle->frames.data[0].angles.count;
+    for (int state = 0; state < S_COUNT; ++state) {
+      const MoveDef *move;
+      const Clip *ground;
+      int frames, first, last, point;
+      if (state == S_JUMP)
+        continue;
+      move = &def->moves[state];
+      ground = &assets.clips.data[roster_clip(def, state, fighter->idle)];
+      check((int)ground->frames.data[0].angles.count == channels,
+          "Roster clip does not match the rig");
+      frames = (int)ground->frames.count;
+      first = move->first < frames ? move->first : frames - 1;
+      last = move->last == MOVE_END ? frames - 1 : move->last;
+      if (last >= frames)
+        last = frames - 1;
+      for (point = 0; point < 2; ++point) {
+        int frame = point == 0 ? first : last;
+        float sole = mesh_sole(fighter, ground, (double)frame);
+        float plant = ground->frames.data[frame].translation.y;
+        int fujin_settle = !strcmp(def->name, "FUJIN") && state == S_KNOCKDOWN && point == 1;
+        int goro_open = !strcmp(def->name, "GORO") && state == S_KNOCKDOWN && point == 0;
+        if (fujin_settle) {
+          if (sole < .15f || sole > .30f)
+            fatal("%s knockdown sole %f left the known mesh overshoot", def->name, (double)sole);
+        } else if (goro_open) {
+          if (sole < .40f || sole > .55f)
+            fatal("%s knockdown opens at sole %f", def->name, (double)sole);
+        } else if (fabsf(sole) > .15f)
+          fatal("%s %s clip %d frame %d sole %f leaves the floor", def->name, state_name(state),
+              ground->id, frame, (double)sole);
+        if (!goro_open && fabsf(plant) > .3f && fabsf(sole - plant) <= fabsf(sole) + .25f)
+          fatal("%s %s clip %d frame %d root Y %f is not the ground plant", def->name,
+              state_name(state), ground->id, frame, (double)plant);
       }
     }
   }

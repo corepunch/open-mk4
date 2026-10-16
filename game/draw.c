@@ -145,9 +145,10 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
   Mat3 turn = yaw_matrix(front + (float)fighter->facing * pi * .5f);
   double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
   Vec3 current = clip->frames.data[(size_t)wrapped].translation;
-  /* Root-motion Y plants the sole on the floor. Frame 0 of a victory is
-   * about +0.4 and a knockdown is about +1.0; dropping that channel lifts
-   * the whole pose. X/Z stay with the fighter record. */
+  /* Root-motion Y plants the sole on the floor. Dropping that channel lifts
+   * the pose by the frame's Y. Uppercut 293 opens near +0.41, crouch 259
+   * settles near +0.44, and knockdown 186 settles near +0.97. X/Z stay with
+   * the fighter record. */
   Vec3 root = {current.x, 0.f, current.z};
   for (size_t n = 0; n < ch->bones.count; ++n) {
     const Bone *b = &ch->bones.data[n];

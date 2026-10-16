@@ -31,7 +31,10 @@
  * (0x43b170), 600 uppercut (slot 0x53c6bc at 0x43b75f), 601 leap and
  * stomp (action 0x409), 602 jump (0x43b7e0), and 603, a rise from the
  * crouch, played backwards as his duck. He has no sweep; the stomp is his
- * low knockdown. His hit (593) and knockdown (581) are visual choices. */
+ * low knockdown. His hit (593) and knockdown (581) are visual choices.
+ * Clip 581 keeps a root Y near +0.87, which plants its last frame; the
+ * first frame is still about 0.49 below the floor. His bank has no flatter
+ * grounded fall, so that opening stays. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef scorpion_moves[S_COUNT] = {
   [S_IDLE] =      {CLIP_ASSET_IDLE, 0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},

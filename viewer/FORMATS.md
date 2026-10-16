@@ -131,11 +131,18 @@ low knockdown in place of a sweep), jump 602 (0x43b7e0) and win roar 594 come
 from his code. His duck plays 603, a rise from the crouch, backwards through
 the move's frame range. His hit (593) and knockdown (581) remain visual.
 Battle placement keeps each frame's root-motion Y and drops root-motion X/Z.
-That Y channel is the ground plant: idle, crouch, hit, victory and a settled
-knockdown put the sole on Y=0 (positive Y is down) only while it is applied.
-Subtracting the first frame's Y lifts a victory by about 0.4 and a knockdown
-by about 1.0. The roster scale at +28 is stored on the character and is not
-part of this plant.
+That Y channel is the ground plant (positive Y is down). Subtracting a frame's
+Y lifts the pose by that amount. On the clips the roster plays, uppercut 293
+opens near +0.41, crouch 259 settles near +0.44, and knockdown 186 settles
+near +0.97. Win poses open near +0.05 to +0.11; the held frame reaches about
++0.39 for Liu Kang (119) and about +0.47 for Quan Chi and Jarek (125). The
+roster value at +28 is stored on the character and is not part of this plant.
+
+Fujin's mesh on the shared fall 186 ends about 0.21 below the floor. The same
+clip settles the other human meshes within 0.06, so his row keeps 186. Goro's
+visual knockdown 581 keeps a root Y near +0.87 and its last frame meets the
+floor; the first frame is still about 0.49 below it. No other clip in his bank
+lies flat on the floor, so that opening stays.
 
 Game text uses MK4FONT white digits 28..37, letters 38..63, and punctuation
 64..95, preserving the +8/+10 signed sprite bearings. Shared sprites 138..141

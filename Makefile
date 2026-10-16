@@ -37,9 +37,9 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
-build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc $(ASSETS) $(HEADERS)
+build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/roster.c game/game.h $(ASSETS) $(HEADERS)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) tests/test_mk4_assets.c $(ASSETS) -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/roster.c $(ASSETS) -o $@ $(LDLIBS)
 viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
