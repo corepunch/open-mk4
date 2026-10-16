@@ -86,6 +86,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | Follow-up draw | `494610/6f0`, `482c20`, direct `495710` | Equip, grounded reaction 120, retain no-guard, 30% damage scale after >3 hits, omit ordinary back-HP travel setup |
 | Shared weapon lifecycle | `4e62c0/d8`, `498290/480`, `45efc0`, `45f8f0`, `46a180` | Shared draw/air/drop/throw/pickup; .75 heading-relative throw origin; pickup requires action `2001`; scepter crouch LP does not acquire sword spin |
 | Walk / run | `460570/710`, `491780`, `460980/9f0`, `48fae0`, `422800` | Forward 0.06, backward 70%, run 0.13; forward/back unarmed and armed gaits; 2% run cost, 40-tick delay, 5% regeneration; direction follows the X/Z pair axis |
+| Wall behavior | `423690/4dad60`, `489cb0`, `488ea0`, `487530/570` | Per-stage radius, last-inside restoration with inward recovery; reached reaction branches recoil a grounded attacker at radius²−10 unless victim is marked; preserve pose, .3 retreat/friction, 8+5 recovery |
 | Jump transitions | `46f7e0`, `46fdf0/fe80`, `46ff20`, `470080/140/170` | Straight samples 0–2, rise 2–17, hold 17, landing 18–27 with stance cancels; directional tuck 0–8, signed spin/root offset, apex and Y=-2.3 retraction 7–1; direction at ticks 1–3 retains vertical velocity; root-aware landing |
 | RUN double tap | `45e820`, `469250/2e0/450`, descriptor `53ce18` | Previous RUN press within 8 ticks; 80-tick cooldown; clip 300; Down reverses playback/lateral direction; air victim scales speed to 30%; priority over pickup |
 | Fatality I | `4e0498[4] -> 445100`, `4e0368..3e8`, victim `445380`, `4e03f0..438`, `445510` | Owner 385, victim 389/387 entry blends; slow victim blends to 46/49/50; paired 1.45-unit alignment; head attachment and continuing owner loop 96–140 |
@@ -138,7 +139,7 @@ The engine uses portable presentation: blue ice material, bounded particles,
 linear camera transitions between recovered offsets, posed character meshes
 for detached pieces, and a single weapon settling arc. Retail camera splines,
 gore-cap/interior geometry, secondary ice decoration, cosmetic freeze shake,
-wall-task dispatch and CPU probability policies are not reproduced. Walk/run speeds, gait selection and energy now follow their native controllers.
+CPU probability policies are not yet reproduced. Walk/run speeds, gait selection and energy now follow their native controllers.
 Human jumps now use the shared native-phase translation along the pair axis. The match's finish-entry window remains
 five seconds. These choices are not evidence of exact retail audiovisual or
 scheduler identity, and must not justify changing damage or command branches.

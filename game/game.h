@@ -374,7 +374,8 @@ struct Fighter {
   int action; /* controller +0x74 */
   bool human; /* 0x5347c8 / 0x532248: block from switches, not action codes */
   bool connected, crouching;
-  bool avoids_high; /* low-kick script's temporary high-punch avoidance gate */
+  bool body_contact; /* reaction source was the other fighter, rather than an independent object */
+  bool avoids_high;  /* low-kick script's temporary high-punch avoidance gate */
   const MoveDef *current_move;
   unsigned buffered; /* pressed buttons since the current move phase began */
   int move_loops;
@@ -514,7 +515,9 @@ ContactResult battle_projectile_contact(Battle *battle, Projectile *projectile, 
 Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step);
 void battle_damage(Battle *battle, Fighter *victim, q16 damage);
 void battle_react(Battle *battle, Fighter *victim, int reaction);
+void battle_wall_recoil(Battle *battle, Fighter *victim);
 void battle_world(Battle *battle);
+void battle_set_arena(Battle *battle, int arena);
 bool battle_can_finish(const Battle *battle, const Fighter *fighter);
 bool battle_begin_finisher(Battle *battle, Fighter *fighter, int id);
 void battle_end_finisher(Battle *battle);

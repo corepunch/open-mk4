@@ -128,6 +128,7 @@ ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackReco
   ContactResult result = battle_contact_from(battle, attacker, record, attacker->body.pos, attacker->facing);
   if (result != CONTACT_MISS) {
     fighter_note_contact(attacker, result);
+    ((Fighter *)fighter_opponent(battle, attacker))->body_contact = true;
   }
   return result;
 }

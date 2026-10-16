@@ -628,6 +628,36 @@ static void weapon_recovery(void) {
   check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
 }
 
+static void walls(void) {
+  for (int marked = 0; marked < 2; ++marked) {
+    Battle battle = fight(0, 1.f);
+    Fighter *attacker = &battle.fighters[0], *victim = &battle.fighters[1];
+    attacker->body.pos[AXIS_X] = 0x86666;
+    victim->body.pos[AXIS_X] = 0x94ccc;
+    battle_world(&battle);
+    fighter_enter_state(&battle, attacker, S_KICK);
+    AttackRecord record = {0x20000, -0x18000, 0x20000, 0x30000, 16, 13, 6, marked ? ATTACK_MARK : 0, 0x1999};
+    check(battle_contact(&battle, attacker, &record) == CONTACT_HIT, "wall check needs a real body contact");
+    advance(&battle, 2);
+    check((attacker->state == S_HIT) == !marked, "wall recoil must interrupt the attacker unless the record marks the victim");
+    check(victim->health == Q16_ONE - 0x1999, "wall dispatch must preserve victim damage");
+    if (!marked) {
+      check(attacker->body.vel[AXIS_X] == q16_mul(-0x4ccc, 0xe666), "wall recoil must use .3 retreat and native friction");
+      advance(&battle, 13);
+      check(attacker->state == S_IDLE && !(attacker->flags & FF_REACTING), "wall recoil must restore neutral control");
+    }
+  }
+  Battle battle = fight(0, 1.f);
+  battle_set_arena(&battle, 10);
+  check(battle.arena_radius == 7 * Q16_ONE, "arena selection must use its retail radius");
+  Fighter *fighter = &battle.fighters[0];
+  fighter->body.pos[AXIS_X] = 8 * Q16_ONE;
+  fighter->body.vel[AXIS_X] = -0x1000;
+  battle_world(&battle);
+  check(fighter->body.pos[AXIS_X] == 8 * Q16_ONE - 0x1000 && fighter->body.vel[AXIS_X] == -0x1000,
+      "wall constraint must permit inward recovery from an outside position");
+}
+
 static void jumps(void) {
   Battle battle = fight(0, 8.f);
   Fighter *fighter = &battle.fighters[0];
@@ -942,6 +972,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  walls();
   jumps();
   locomotion();
   fatality_blends();

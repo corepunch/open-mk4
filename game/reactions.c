@@ -57,6 +57,46 @@ static void slide(Battle *battle, Fighter *fighter, q16 speed) {
   fighter->body.physics = friction;
 }
 
+/* 488ea0 -> 480fc0(2) -> 487530/570: a grounded attacker recoils
+ * when the victim is in the outer ten square units of the arena. Keep
+ * the attacking pose, slide back .3 with friction, wait 8+5 ticks, then
+ * wait for an airborne reacting opponent before returning control. */
+static void wall_recoil_tick(Battle *battle, Fighter *fighter) {
+  if (fighter->ticks == 8 && (fighter->script_phase == 0x10a || fighter->script_phase == 0x10b)) {
+    fighter_enter_stance(fighter, STANCE_STANDING);
+  }
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  if (fighter->ticks >= 13 && (!(victim->flags & FF_REACTING) || !fighter_airborne(victim))) {
+    fighter_neutral(fighter);
+    fighter_enter_state(battle, fighter, S_IDLE);
+  }
+}
+
+static void wall_recoil(Battle *battle, Fighter *fighter) {
+  int sample = fighter_pose_sample(fighter);
+  int action = fighter->action;
+  fighter_upright(fighter);
+  fighter->pending = NULL;
+  fighter->state = S_HIT;
+  fighter->ticks = 0;
+  fighter->action = 0;
+  fighter->script_phase = action;
+  fighter->sample_override = sample;
+  fighter->buttons = NULL;
+  fighter->flags |= FF_REACTING | FF_BUSY;
+  fighter->script = wall_recoil_tick;
+  slide(battle, fighter, 0x4ccc);
+}
+
+void battle_wall_recoil(Battle *battle, Fighter *victim) {
+  Fighter *attacker = (Fighter *)fighter_opponent(battle, victim);
+  int64_t x = victim->body.pos[AXIS_X], z = victim->body.pos[AXIS_Z];
+  int64_t radius = battle->arena_radius;
+  if (victim->body_contact && x * x + z * z >= radius * radius - 10LL * Q16_ONE * Q16_ONE && !(victim->flags & FF_MARK) && !fighter_airborne(attacker)) {
+    fighter_interrupt(attacker, wall_recoil);
+  }
+}
+
 static void launch(Battle *battle, Fighter *fighter, q16 speed, q16 vy, q16 gravity) {
   fighter_set_speed(battle, fighter, -speed);
   fighter->body.vel[AXIS_Y] = vy;
@@ -174,13 +214,15 @@ static void react_jab_air(Battle *battle, Fighter *fighter) {
 
 /* 13 (0x481d30): kick air hit. */
 static void react_kick_air(Battle *battle, Fighter *fighter) {
+  battle_wall_recoil(battle, fighter);
   fighter_start_move(battle, fighter, S_KNOCKDOWN, &kick_air);
   fighter->damage_scale = 0x9999;
   launch(battle, fighter, 0x11eb, -0x23d7, 0x28f); /* 0.07, -0.14, 0.01 */
 }
 
-/* 16 (0x482a10): kick hit. The stagger check 0x488ea0 is not ported. */
+/* 16 (0x482a10): kick hit, including the wall recoil check. */
 static void react_kick_hit(Battle *battle, Fighter *fighter) {
+  battle_wall_recoil(battle, fighter);
   fighter_start_move(battle, fighter, S_HIT, &kick_hit);
   slide(battle, fighter, 0x2666); /* 0.15 */
 }
@@ -196,6 +238,7 @@ static void react_sweep(Battle *battle, Fighter *fighter) {
 
 /* 34 (0x4838e0): uppercut launch from the current height. */
 static void react_uppercut(Battle *battle, Fighter *fighter) {
+  battle_wall_recoil(battle, fighter);
   fighter_start_move(battle, fighter, S_KNOCKDOWN, &uppercut_fall);
   launch(battle, fighter, 0x7ae, -0x3333, 0x20c); /* 0.03, -0.20, 0.008 */
 }
@@ -205,6 +248,7 @@ static void react_uppercut(Battle *battle, Fighter *fighter) {
 static void react_jab_hit(Battle *battle, Fighter *fighter) {
   bool staggers = fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666) || fighter->roster == 15;
   if (staggers) {
+    battle_wall_recoil(battle, fighter);
     fighter_start_move(battle, fighter, S_HIT, &stagger);
     fighter_set_speed(battle, fighter, -0x1999); /* 0.1 */
   } else {
@@ -337,6 +381,21 @@ static void tumble_tick(Battle *battle, Fighter *fighter) {
 }
 
 static void react_extra(Battle *battle, Fighter *fighter) {
+  switch (fighter->reaction) {
+    case 10:
+    case 17:
+    case 25:
+    case 26:
+    case 28:
+    case 29:
+    case 51:
+    case 52:
+    case 99:
+      battle_wall_recoil(battle, fighter);
+      break;
+    default:
+      break;
+  }
   int id = fighter->reaction;
   bool teleport_air = id == 90 && fighter_airborne(fighter);
   if (id == 20 || id == 100 || id == 156) {
@@ -610,6 +669,7 @@ static const FighterFn reactions[256] = {
  * reaction starts on the victim's next update. */
 void battle_react(Battle *battle, Fighter *victim, int reaction) {
   require(reaction >= 0 && reaction < COUNT(reactions), "Invalid reaction id");
+  victim->body_contact = false;
   /* Drop rules for the reaction ids currently used by our script records.
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&

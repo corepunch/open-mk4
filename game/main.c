@@ -113,7 +113,7 @@ static void apply_shell(ShellCommand command, Battle *battle, bool *running, boo
       break;
     case SHELL_NEXT_ARENA:
       *arena = (*arena + 1) % arena_count;
-      battle->arena = *arena;
+      battle_set_arena(battle, *arena);
       battle_reset_match(battle);
       input_sync(&pads[0], keys);
       input_sync(&pads[1], keys);
@@ -197,7 +197,7 @@ int main(int argc, char **argv) {
   battle_init(&battle, p1, p2);
   battle_bind_assets(&battle, &assets);
   game_audio_init(&audio, headless);
-  battle.arena = arena;
+  battle_set_arena(&battle, arena);
   input_bind_player(&pads[0], 0);
   input_bind_player(&pads[1], 1);
   last = SDL_GetPerformanceCounter();

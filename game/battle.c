@@ -6,11 +6,19 @@
 static void finish_round(Battle *battle);
 
 static bool locked(const Fighter *fighter) {
-  return (fighter_move(fighter)->flags & SF_LOCK) != 0;
+  return (fighter_move(fighter)->flags & SF_LOCK) != 0 || (fighter->flags & FF_REACTING) != 0;
 }
 
 /* Round-start X from 0x422ea0 / 0x422f50: P1 -1.3, P2 +1.3, Z = 0. */
 #define START_X 0x14ccc
+
+void battle_set_arena(Battle *battle, int arena) {
+  /* 423690 / 4dad60, in the archive stage order. */
+  static const q16 radii[] = {0x98000, 0x98000, 0x98000, 0x98000, 0x98000, 0x98000, 0x88000, 0x98000, 0x98000, 0xa0000, 0x70000};
+  require(arena >= 0 && arena < (int)(sizeof radii / sizeof *radii), "Invalid battle arena");
+  battle->arena = arena;
+  battle->arena_radius = radii[arena];
+}
 
 static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, q16 x, int facing) {
   const CharacterDef *def = roster_def(roster_index);
@@ -34,8 +42,7 @@ static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, 
 
 void battle_init(Battle *battle, int p1, int p2) {
   memset(battle, 0, sizeof *battle);
-  /* 0x4dad60: arena radius; 9.5 on most stages. */
-  battle->arena_radius = 0x98000;
+  battle_set_arena(battle, 0);
   battle->fighters[0].roster = p1;
   battle->fighters[1].roster = p2;
   roster_def(p1);
@@ -54,6 +61,7 @@ void battle_reset_match(Battle *battle) {
 
 void battle_next_round(Battle *battle) {
   size_t i;
+  battle_set_arena(battle, battle->arena);
   battle->round++;
   for (i = 0; i < 2; ++i) {
     int roster_index = battle->fighters[i].roster;
@@ -302,12 +310,13 @@ void battle_world(Battle *battle) {
       body->pos[AXIS_Z] += body->vel[AXIS_Z];
     }
     double x = body->pos[AXIS_X], z = body->pos[AXIS_Z];
-    if (x * x + z * z > r2) {
+    double next_x = x + body->vel[AXIS_X], next_z = z + body->vel[AXIS_Z];
+    if (x * x + z * z >= r2 && next_x * next_x + next_z * next_z > x * x + z * z) {
       body->pos[AXIS_X] = body->last_inside[AXIS_X];
       body->pos[AXIS_Z] = body->last_inside[AXIS_Z];
       body->vel[AXIS_X] = 0;
       body->vel[AXIS_Z] = 0;
-    } else {
+    } else if (x * x + z * z < r2) {
       memcpy(body->last_inside, body->pos, sizeof body->pos);
     }
   }
@@ -362,10 +371,11 @@ void battle_world(Battle *battle) {
       body->angle[k] = (body->angle[k] + body->spin[k]) % 0x6487e;
     }
     double x = body->pos[AXIS_X], z = body->pos[AXIS_Z];
-    double length = sqrt(x * x + z * z);
-    if (length > battle->arena_radius) {
-      body->pos[AXIS_X] = (q16)(x * battle->arena_radius / length);
-      body->pos[AXIS_Z] = (q16)(z * battle->arena_radius / length);
+    double old_x = x - body->vel[AXIS_X], old_z = z - body->vel[AXIS_Z];
+    if (x * x + z * z >= r2 && ((body->vel[AXIS_X] == 0 && body->vel[AXIS_Z] == 0) || x * x + z * z > old_x * old_x + old_z * old_z)) {
+      /* 489cb0 restores the last inside point; inward motion is allowed. */
+      body->pos[AXIS_X] = body->last_inside[AXIS_X];
+      body->pos[AXIS_Z] = body->last_inside[AXIS_Z];
       body->vel[AXIS_X] = 0;
       body->vel[AXIS_Z] = 0;
     }
