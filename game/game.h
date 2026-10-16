@@ -278,6 +278,7 @@ typedef struct CharacterDef {
   const Controls *controls;
   const FighterFn *enter; /* optional move_count callbacks; NULL entries use the default move */
   q16 ground;             /* retail standing group Y: the rig root's Y translation (soles at 0) */
+  FighterFn walk;         /* game-owned ground locomotion; reads held direction/run */
 } CharacterDef;
 
 enum {
@@ -341,6 +342,7 @@ enum {
  * landing continuation. */
 typedef struct Body {
   q16 pos[3], vel[3];
+  bool walking;          /* ground controller motion resolves before body separation */
   q16 angle[3], spin[3]; /* radians Q16, integrated by the world pump */
   q16 root_y;            /* explicit root offset, paired with group Y by 4702e0 */
   q16 gravity, ground;
@@ -366,8 +368,10 @@ struct Fighter {
   int hits;         /* controller +0x7c: hits taken in the current combo */
   q16 damage_total; /* controller +0x80 */
   q16 damage_scale; /* 0x5347a4 / 0x534834 */
-  int action;       /* controller +0x74 */
-  bool human;       /* 0x5347c8 / 0x532248: block from switches, not action codes */
+  q16 run_energy;
+  int run_delay;
+  int action; /* controller +0x74 */
+  bool human; /* 0x5347c8 / 0x532248: block from switches, not action codes */
   bool connected, crouching;
   bool avoids_high; /* low-kick script's temporary high-punch avoidance gate */
   const MoveDef *current_move;

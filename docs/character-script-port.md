@@ -85,6 +85,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | Scepter | Descriptor `4ecdb8`, table `4ecc90`, params `4ec458/490/480/4b8`, runner `494a00` | HP 231 (18%), LP 250 (15%, low), back HP 237 (15%), back LP 228 (reaction 151, no damage); contact-selected recoveries including LP stance blend |
 | Follow-up draw | `494610/6f0`, `482c20`, direct `495710` | Equip, grounded reaction 120, retain no-guard, 30% damage scale after >3 hits, omit ordinary back-HP travel setup |
 | Shared weapon lifecycle | `4e62c0/d8`, `498290/480`, `45efc0`, `45f8f0`, `46a180` | Shared draw/air/drop/throw/pickup; .75 heading-relative throw origin; pickup requires action `2001`; scepter crouch LP does not acquire sword spin |
+| Walk / run | `460570/710`, `491780`, `460980/9f0`, `48fae0`, `422800` | Forward 0.06, backward 70%, run 0.13; forward/back unarmed and armed gaits; 2% run cost, 40-tick delay, 5% regeneration; direction follows the X/Z pair axis |
 | RUN double tap | `45e820`, `469250/2e0/450`, descriptor `53ce18` | Previous RUN press within 8 ticks; 80-tick cooldown; clip 300; Down reverses playback/lateral direction; air victim scales speed to 30%; priority over pickup |
 | Fatality I | `4e0498[4] -> 445100`, `4e0368..3e8`, victim `445380`, `4e03f0..438`, `445510` | Owner 385, victim 389/387 entry blends; slow victim blends to 46/49/50; paired 1.45-unit alignment; head attachment and continuing owner loop 96–140 |
 | Fatality II | `4dfe90[4] -> 41b3a0`, `4d2c10/78/a0/c8`, victim `4d2bf0`, `41b450/610` | Owner 552 breath loops, independent victim 206; wait 20, slide eight samples, calculate delay from current range; uppercut/shatter, eight cursor passes, wait 60, victory |
@@ -136,9 +137,9 @@ The engine uses portable presentation: blue ice material, bounded particles,
 linear camera transitions between recovered offsets, posed character meshes
 for detached pieces, and a single weapon settling arc. Retail camera splines,
 gore-cap/interior geometry, secondary ice decoration, cosmetic freeze shake,
-wall-task dispatch and CPU probability policies are not reproduced. Walking,
-running and diagonal jump classification retain the shared portable controller
-pending their own source translation. The match's finish-entry window remains
+wall-task dispatch and CPU probability policies are not reproduced. Walk/run speeds, gait selection and energy now follow their native controllers.
+Directional jumps use the pair axis; their transition playback still uses the
+shared portable jump controller. The match's finish-entry window remains
 five seconds. These choices are not evidence of exact retail audiovisual or
 scheduler identity, and must not justify changing damage or command branches.
 

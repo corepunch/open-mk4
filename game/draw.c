@@ -372,6 +372,10 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     draw_sprite(cv, font, idx, (Rect){x, 31, s.w * 2, s.h * 2}, false);
     for (int win = 0; win < 2; ++win)
       canvas_rect(cv, (Rect){i ? cv->w - 52 - win * 21 : 38 + win * 21, 92, 13, 8}, win < f->wins ? gold : 0xff3b3830);
+    int meter_x = i ? cv->w - 218 : 38;
+    canvas_rect(cv, (Rect){meter_x, 83, 180, 4}, 0xff3b3830);
+    int energy = (int)((int64_t)f->run_energy * 180 / Q16_ONE);
+    canvas_rect(cv, (Rect){i ? meter_x + 180 - energy : meter_x, 83, energy, 4}, gold);
   }
   char timer[32], round[32];
   snprintf(timer, sizeof timer, "%02d", maxi(0, (battle->time_ticks + 59) / 60));

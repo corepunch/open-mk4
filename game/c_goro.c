@@ -34,4 +34,4 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_goro = {GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &mk4_controls, NULL, -85458};
+const CharacterDef mk4_goro = {GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &mk4_controls, NULL, -85458, mk4_walk};

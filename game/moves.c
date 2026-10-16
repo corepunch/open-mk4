@@ -104,6 +104,10 @@ void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed) {
 
 void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
+  if (fighter->state == S_WALK && !fighter_airborne(fighter) && (move->flags & SF_LOCK)) {
+    fighter_set_speed(battle, fighter, 0);
+  }
+  fighter->body.walking = false;
   bool was_locked = fighter->current_move != NULL && (fighter->current_move->flags & SF_LOCK);
   if (move->sequence != NULL) {
     const MoveSequence *sequence = move->sequence;

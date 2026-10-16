@@ -628,6 +628,47 @@ static void weapon_recovery(void) {
   check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
 }
 
+static void locomotion(void) {
+  Battle battle = fight(0, 8.f);
+  Fighter *fighter = &battle.fighters[0];
+  Input input[2] = {{.held = BUTTON_BIT(BUTTON_RIGHT)}, {0}};
+  battle_step(&battle, input);
+  check(fighter_move(fighter)->clip == 267 && fighter->body.vel[AXIS_X] == 0xf5c, "forward walk must use native gait and speed");
+  input[0].held = BUTTON_BIT(BUTTON_LEFT);
+  battle_step(&battle, input);
+  check(fighter_move(fighter)->clip == 272 && fighter->body.vel[AXIS_X] == -q16_mul(0xf5c, 0xb333), "back walk must change gait and use 70 percent speed");
+  input[0].held = BUTTON_BIT(BUTTON_RIGHT) | BUTTON_BIT(BUTTON_RUN);
+  battle_step(&battle, input);
+  check(fighter->body.vel[AXIS_X] == 0x2147 && fighter->run_energy == Q16_ONE - 0x51e, "run must use native speed and energy cost");
+  for (int i = 0; i < 50; ++i) {
+    battle_step(&battle, input);
+  }
+  check(fighter->run_energy == 0 && fighter->run_delay == 40, "running must exhaust its meter");
+  advance(&battle, 39);
+  check(fighter->run_energy == 0, "run energy must respect the recovery delay");
+  advance(&battle, 1);
+  check(fighter->run_energy == 0xccc, "run energy must regenerate at the native rate");
+
+  battle = fight(0, 4.f);
+  draw_scepter(&battle, 0);
+  input[0].held = BUTTON_BIT(BUTTON_RIGHT);
+  battle_step(&battle, input);
+  check(fighter_move(fighter)->clip == 277, "armed forward walk");
+  input[0].held = BUTTON_BIT(BUTTON_LEFT);
+  battle_step(&battle, input);
+  check(fighter_move(fighter)->clip == 278, "armed direction change must select the backward gait without leaving walk state");
+  press(&battle, 0, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+  check(fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "ground strike must stop locomotion");
+
+  battle = fight(0, 4.f);
+  battle.fighters[0].body.pos[AXIS_X] = battle.fighters[1].body.pos[AXIS_X] = 0;
+  battle.fighters[0].body.pos[AXIS_Z] = -2 * Q16_ONE;
+  battle.fighters[1].body.pos[AXIS_Z] = 2 * Q16_ONE;
+  battle_world(&battle);
+  press(&battle, 0, BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_RIGHT));
+  check(fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0xe14, "directional jump must follow the pair axis after a quarter turn");
+}
+
 static Battle sub_zero_finish(int player, q16 distance, int arena) {
   Battle battle = fight(player, 3.f);
   battle.arena = arena;
@@ -858,6 +899,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  locomotion();
   fatality_blends();
   weapon_recovery();
   independent_contacts();

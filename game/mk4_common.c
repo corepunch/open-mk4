@@ -1,5 +1,6 @@
 #include "game.h"
 #include "mk4_characters.h"
+#include "math_util.h"
 
 /* Approximate stance tables for fighters whose retail moves are not yet
  * ported. They follow the retail buttons from the shared tables in
@@ -55,6 +56,66 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = press_punch, [BUTTON_
 
 const Controls mk4_controls = {NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping}};
 
-/* Walk and run keep the prototype's 2.5 and 4.5 units/s until their retail
- * loops are researched. The jump is the retail straight jump 0x46f7e0. */
-const Motion mk4_motion = {0xaaa, 0x1333, 0x30a3, 0x28f};
+/* 460570/460710, 491780: forward walking .06, backward .7 scale.
+ * 460980/4609f0: .13 running, 2% energy per tick, 40-tick recovery delay.
+ * 422800 restores 5% after that delay. Straight jump: 46f7e0. */
+const Motion mk4_motion = {0xf5c, 0x2147, 0x30a3, 0x28f};
+
+#define WALK(c) {.clip = c, .last = MOVE_END}
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveDef walk_gaits[][2] = {
+  {WALK(269), WALK(274)},
+  {WALK(267), WALK(272)},
+  {WALK(267), WALK(272)},
+  {WALK(266), WALK(271)},
+  {WALK(267), WALK(272)},
+  {WALK(267), WALK(272)},
+  {WALK(267), WALK(272)},
+  {WALK(267), WALK(272)},
+  {WALK(267), WALK(272)},
+  {WALK(267), WALK(272)},
+  {WALK(268), WALK(273)},
+  {WALK(265), WALK(270)},
+  {WALK(267), WALK(272)},
+  {WALK(265), WALK(270)},
+  {WALK(267), WALK(272)},
+  {WALK(590), WALK(589)},
+};
+// clang-format on
+static const MoveDef run_open = WALK(317);
+static const MoveDef run_cycle = WALK(307);
+#undef WALK
+
+void mk4_walk(Battle *battle, Fighter *fighter) {
+  int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
+  bool forward = direction * fighter->facing > 0;
+  bool run = forward && (fighter->held & BUTTON_BIT(BUTTON_RUN)) && fighter->run_energy > 0 && fighter->roster != 15;
+  int character = roster_def(fighter->roster)->asset;
+  character = character == 16 ? 2 : character == 17 ? 7 : character;
+  if (run) {
+    bool continuing = fighter->state == S_WALK && (fighter->current_move == &run_open || fighter->current_move == &run_cycle);
+    const MoveDef *move = continuing ? &run_cycle : &run_open;
+    if (fighter->current_move != move) {
+      fighter_start_move(battle, fighter, S_WALK, move);
+    }
+    fighter->sample_override = continuing ? 11 + fighter->ticks % 13 : 0;
+    fighter->run_energy = maxi(0, fighter->run_energy - 0x51e);
+    fighter->run_delay = 40;
+    fighter_set_speed(battle, fighter, mk4_motion.run);
+    fighter->body.walking = true;
+    return;
+  }
+  if (fighter->armed) {
+    weapon_stance(battle, fighter, S_WALK);
+  } else {
+    const MoveDef *move = &walk_gaits[character][forward ? 0 : 1];
+    if (fighter->current_move != move || fighter->state != S_WALK) {
+      fighter_start_move(battle, fighter, S_WALK, move);
+    }
+  }
+  int count = fighter->assets != NULL ? (int)fighter_clip(fighter->assets, fighter)->frames.count : 30;
+  fighter->sample_override = fighter->ticks % count;
+  q16 speed = forward ? mk4_motion.walk : -q16_mul(mk4_motion.walk, 0xb333);
+  fighter_set_speed(battle, fighter, speed);
+  fighter->body.walking = true;
+}

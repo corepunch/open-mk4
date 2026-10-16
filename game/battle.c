@@ -21,6 +21,7 @@ static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, 
   fighter->wins = wins;
   fighter->health = Q16_ONE;
   fighter->damage_scale = Q16_ONE;
+  fighter->run_energy = Q16_ONE;
   fighter->human = true;
   fighter->body.ground = def->ground;
   fighter->body.pos[AXIS_X] = x;
@@ -226,6 +227,7 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
   grounded = !fighter_airborne(fighter);
   fighter->crouching = held(fighter, BUTTON_DOWN) && grounded;
   if (held(fighter, BUTTON_BLOCK) && grounded) {
+    fighter_set_speed(battle, fighter, 0);
     fighter_enter_state(battle, fighter, S_BLOCK);
     return;
   }
@@ -234,14 +236,21 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
     /* Straight jump 0x46f7e0 (vy 0x30a3 up, gravity 0x28f). Holding a
      * direction approximates the flips with their 0xe14 speed. */
     fighter->body.vel[AXIS_Y] = -motion->jump_velocity;
-    fighter->body.vel[AXIS_X] = dir * 0xe14;
+    fighter_set_speed(battle, fighter, dir * fighter->facing * 0xe14);
     fighter->body.gravity = motion->gravity;
     fighter->body.on_land = land_idle;
     fighter_enter_state(battle, fighter, S_JUMP);
     return;
   }
   if (grounded && !fighter->crouching) {
+    if (dir != 0 && def->walk != NULL) {
+      def->walk(battle, fighter);
+      return;
+    }
     fighter->body.pos[AXIS_X] += dir * (held(fighter, BUTTON_RUN) ? motion->run : motion->walk);
+  }
+  if (grounded) {
+    fighter_set_speed(battle, fighter, 0);
   }
   if (!grounded)
     fighter_enter_state(battle, fighter, S_JUMP);
@@ -284,6 +293,10 @@ void battle_world(Battle *battle) {
   double r2 = (double)battle->arena_radius * battle->arena_radius;
   for (int i = 0; i < 2; ++i) {
     Body *body = &battle->fighters[i].body;
+    if (body->walking) {
+      body->pos[AXIS_X] += body->vel[AXIS_X];
+      body->pos[AXIS_Z] += body->vel[AXIS_Z];
+    }
     double x = body->pos[AXIS_X], z = body->pos[AXIS_Z];
     if (x * x + z * z > r2) {
       body->pos[AXIS_X] = body->last_inside[AXIS_X];
@@ -334,8 +347,11 @@ void battle_world(Battle *battle) {
   }
   for (int i = 0; i < 2; ++i) {
     Body *body = &battle->fighters[i].body;
-    for (int k = 0; k < 3; ++k)
-      body->pos[k] += body->vel[k];
+    for (int k = 0; k < 3; ++k) {
+      if (!body->walking || k == AXIS_Y) {
+        body->pos[k] += body->vel[k];
+      }
+    }
     for (int k = 0; k < 3; ++k) {
       body->angle[k] = (body->angle[k] + body->spin[k]) % 0x6487e;
     }
@@ -408,6 +424,14 @@ void battle_step(Battle *battle, const Input input[2]) {
   battle_step_presentation(battle);
   for (i = 0; i < 2; ++i)
     sample_switches(&battle->fighters[i], input[i]);
+  for (i = 0; i < 2; ++i) {
+    Fighter *fighter = &battle->fighters[i];
+    /* 422800: decrement the recovery delay, then restore 5% per tick. */
+    fighter->run_delay = maxi(0, fighter->run_delay - 1);
+    if (fighter->run_delay == 0) {
+      fighter->run_energy = mini(Q16_ONE, fighter->run_energy + 0xccc);
+    }
+  }
   battle->phase_ticks++;
   for (i = 0; i < 2; ++i) {
     if (battle->effects[i].ticks > 0)

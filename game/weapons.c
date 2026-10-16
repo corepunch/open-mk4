@@ -30,6 +30,9 @@ void weapon_stance(Battle *battle, Fighter *fighter, int state) {
   if (fighter->armed) {
     move = state == S_IDLE ? &idle : state == S_WALK ? (fighter_holds_back(battle, fighter) ? &back_walk : &walk) : state == S_CROUCH ? &crouch : &block;
   }
+  if (state == S_WALK && fighter->state == S_WALK && fighter->current_move == move) {
+    return;
+  }
   fighter_start_move(battle, fighter, state, move);
 }
 

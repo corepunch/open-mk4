@@ -101,7 +101,7 @@ static void check_original_kicks(void) {
       battle_step(&battle, in);
     }
     check(fighter->state == S_WALK && fighter->ticks == 0, "Kick end callback did not release control on original return step");
-    check(fighter->current_move == roster_def(expected->roster)->moves[S_WALK], "Movement kept stale kick playback");
+    check(fighter->current_move->sequence == NULL, "Movement kept stale kick playback");
 
     fighter_enter_state(&battle, fighter, S_KICK);
     advance_ticks(&battle, 5, NULL);
