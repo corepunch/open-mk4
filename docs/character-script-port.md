@@ -52,9 +52,9 @@ assume these three indices will always coincide for other roster entries.
 | --- | --- | --- |
 | High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
 | Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables and D,F,LP freeze command | Slide, weapon and finisher commands in subsequent steps |
+| Controls | Character-owned stance/follow-up tables and D,F,LP freeze command | Weapon and finisher commands in subsequent steps |
 | Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
-| Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide is a subsequent step |
+| Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide chord, hit/block/miss continuations and reactions 122/165 are also ported |
 | Weapon combat and finishers | Not yet ported | Follow the character-specific dependencies below |
 
 Keep the existing high-kick sample fixture in
@@ -103,6 +103,19 @@ shots. Tests cover pose capture, independent lifetime, contact, near/air paths,
 cooldown boundaries, full allocation, rematch and mirror ownership. Clone and
 frozen victims use a simple blue material; secondary orbiting ice decoration
 and exact retail transforms are presentation choices.
+
+Slide-port coverage: `47dc00/4e84d8`, `47dc40`, `47de80`, `4e84f8` and
+`4e8530` give clip 95, 0.15-unit travel, contact after the opening eight
+samples and the following advance, a bounded 17-query miss path, four hit /
+six blocked pose loops, stop and backward recovery. Only unblocked contact
+stamps cooldown slot 2 for 64 ticks. Block immediately stops the owner and
+sets no-guard for the longer recovery. Victim reaction 122 follows `483500`
+/ `4e95f0` (clip 179, launch, 60% subsequent damage and getup); 165 follows
+`486d00/4e9e68` with two standing pose loops or crouching clip 255 out/back.
+Tests cover all three chord-trigger buttons, forbidden extra switches,
+cooldown/air/reaction rejection, both-player hit/block/miss/air damage,
+crouching guard, one-shot damage, recovery and startup interruption. Shared
+hulls and portable landing/getup behavior remain intentional engine choices.
 
 ## Sub-Zero: locating commands and scripts
 
@@ -325,14 +338,14 @@ move's evidence requires it:
 | Playback | `fighter_start_move` resets script, phase/timer, sample override, pending entry and contact bookkeeping; locked moves remove stance buttons | Install the continuation after starting the move; distinguish ticks from samples and restore control on each exit |
 | Contacts | `battle_contact` / `battle_contact_from` apply records, damage and reactions; `SF_RECORD` skips the approximate resolver | Use projectile/object origin where appropriate; prevent repeated damage or freeze from one connected attack; retain our documented hull approximation |
 | Projectiles/objects | `battle_spawn_projectile` returns a slot or NULL; four slots, owner index, callback and bounded lifetime; fight ticks update objects after fighters | Existing kinds/drawing cover spear and sword only. Add the necessary freeze/clone state and read-only presentation; handle full pool, expiry and owner interruption explicitly |
-| Victim reactions | `battle_react` clears physics and schedules a replacement continuation; unsupported IDs fall back to approximate hit/knockdown | Reaction 67 is explicit; 122 and 165 still need translation. Do not accept approximate fallback as slide coverage |
+| Victim reactions | `battle_react` clears physics and schedules a replacement continuation; unsupported IDs fall back to approximate hit/knockdown | Reactions 67, 122 and 165 are explicit; retain their script-selected phases |
 | Cleanup | Round spawn resets fighters/objects; round completion and finisher start clear objects | Move replacement does not automatically remove owned objects or release another fighter. Specify whether each object survives an interruption from evidence; clear locks, appearance and callbacks on thaw, replacement, KO and reset as appropriate |
 
 The common update is in [game/battle.c](../game/battle.c), move lifecycle in
 [game/moves.c](../game/moves.c), contact/object allocation in
 [game/combat.c](../game/combat.c), and reactions in
 [game/reactions.c](../game/reactions.c). `Fighter` currently has Scorpion
-cooldown fields `spear_ready` and `teleport_ready`, plus the Sub-Zero `clone_ready` deadline. Freeze uses explicit victim pose and
+cooldown fields `spear_ready` and `teleport_ready`, plus the Sub-Zero `clone_ready` and `slide_ready` deadlines. Freeze uses explicit victim pose and
 reaction continuation state. Choose explicit per-fighter/object state as the move
 needs it; do not repurpose those fields or introduce retail scratch globals.
 Scorpion's code is an example of these APIs, not proof that its constants,

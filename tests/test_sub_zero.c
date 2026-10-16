@@ -307,11 +307,102 @@ static void clone_tests(void) {
   check(objects(&mirror, PROJECTILE_CLONE) == 0, "mirror reset clears both objects");
 }
 
+static unsigned slide_chord(void) {
+  return BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK);
+}
+
+static void slide_tests(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int outcome = 0; outcome < 4; ++outcome) {
+      Battle battle = fight(player, outcome == 2 ? 8.f : 2.f);
+      Input input[2] = {0};
+      input[player].held = slide_chord();
+      if (outcome == 1) {
+        input[1 - player].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      if (outcome == 3) {
+        battle.fighters[1 - player].body.pos[AXIS_Y] -= 0x3333;
+        fighter_enter_state(&battle, &battle.fighters[1 - player], S_JUMP);
+      }
+      battle_step(&battle, input);
+      input[player].held = 0;
+      battle_step(&battle, input);
+      check(fighter_move(&battle.fighters[player])->clip == 95, "slide chord must enter clip 95");
+      for (int t = 0; t < 8; ++t) {
+        battle_step(&battle, input);
+      }
+      check(battle.fighters[1 - player].health == Q16_ONE, "slide damaged before contact window");
+      for (int t = 0; t < 18; ++t) {
+        battle_step(&battle, input);
+      }
+      q16 damage = outcome == 2 ? 0 : outcome == 1 ? q16_mul(0x147a, 0x3333) : 0x147a;
+      check(battle.fighters[1 - player].health == Q16_ONE - damage, "slide hit/block/miss/air record damage");
+      check(battle.fighters[1 - player].reaction == (outcome == 2 ? 0 : outcome == 1 ? 165 : 122), "slide must select explicit victim reaction");
+      check((battle.fighters[player].slide_ready != 0) == (outcome == 0 || outcome == 3), "only unblocked slide contact starts cooldown");
+      advance(&battle, 180);
+      check(battle.fighters[player].state == S_IDLE && battle.fighters[1 - player].state == S_IDLE, "slide must recover both fighters");
+      check(!(battle.fighters[player].flags & FF_NO_GUARD), "blocked slide must clear its recovery guard restriction");
+      check(battle.fighters[1 - player].health == Q16_ONE - damage, "slide must deal damage once");
+    }
+    Battle crouch = fight(player, 2.f);
+    Input crouch_input[2] = {0};
+    crouch_input[player].held = slide_chord();
+    crouch_input[1 - player].held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_DOWN);
+    battle_step(&crouch, crouch_input);
+    crouch_input[player].held = 0;
+    for (int t = 0; t < 12; ++t) {
+      battle_step(&crouch, crouch_input);
+    }
+    check(crouch.fighters[1 - player].reaction == 165 && fighter_move(&crouch.fighters[1 - player])->clip == 255, "crouching slide block must select clip 255");
+    const Button triggers[] = {BUTTON_LOW_PUNCH, BUTTON_BLOCK, BUTTON_LOW_KICK};
+    for (int k = 0; k < 3; ++k) {
+      Battle battle = fight(player, 6.f);
+      Input input[2] = {0};
+      input[player].held = slide_chord() & ~BUTTON_BIT(triggers[k]);
+      for (int t = 0; t < 80; ++t) {
+        battle_step(&battle, input);
+      }
+      input[player].held = slide_chord();
+      battle_step(&battle, input);
+      advance(&battle, 1);
+      check(fighter_move(&battle.fighters[player])->clip == 95, "each LP/BLK/LK press can complete slide chord");
+    }
+    const Button forbidden[] = {BUTTON_UP, BUTTON_HIGH_PUNCH, BUTTON_HIGH_KICK, BUTTON_RUN};
+    for (int k = 0; k < 4; ++k) {
+      Battle battle = fight(player, 6.f);
+      press(&battle, player, slide_chord() | BUTTON_BIT(forbidden[k]));
+      check(fighter_move(&battle.fighters[player])->clip != 95, "slide must reject forbidden extra buttons");
+    }
+    for (int gate = 0; gate < 3; ++gate) {
+      Battle battle = fight(player, 6.f);
+      if (gate == 0) {
+        battle.fighters[player].slide_ready = 2;
+      } else if (gate == 1) {
+        battle.fighters[player].body.pos[AXIS_Y] -= Q16_ONE;
+        fighter_enter_state(&battle, &battle.fighters[player], S_JUMP);
+      } else {
+        battle_react(&battle, &battle.fighters[player], 37);
+      }
+      press(&battle, player, slide_chord());
+      check(fighter_move(&battle.fighters[player])->clip != 95, "slide must reject cooldown/air/reaction gates");
+    }
+    Battle battle = fight(player, 6.f);
+    battle.fighters[player].slide_ready = 1;
+    press(&battle, player, slide_chord() | BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT));
+    check(fighter_move(&battle.fighters[player])->clip == 95, "slide cooldown is inclusive and does not require direction history");
+    advance(&battle, 4);
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 100);
+    check(battle.fighters[1 - player].health == Q16_ONE && battle.fighters[player].state == S_IDLE, "interrupted startup must not resume slide or contact");
+  }
+}
+
 int main(void) {
   normals();
   ice();
   clone_tests();
+  slide_tests();
   puts(
-      "PASS: clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+      "PASS: slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

@@ -939,10 +939,72 @@ static void sub_zero_clone(Battle *battle, Fighter *fighter) {
   fighter->clone_ready = battle->ticks + 180;
 }
 
+/* Slide: 47dc00/4e84d8 -> 47dc40; hit 4e84f8, block 4e8530.
+ * Only an unblocked contact stamps cooldown slot 2 (47de8e). */
+static const AttackRecord slide_record = {0xf0a3, 0x947a, 0x111eb, 0x8f5c, 122, 122, 165, 0, 0x147a};
+static const MoveDef s_slide = {.clip = 95, .last = 10, .flags = SF_LOCK | SF_RECORD, .action = 0x204};
+
+static void slide_tick(Battle *battle, Fighter *fighter) {
+  if (fighter->script_phase == 0) {
+    fighter->sample_override = mini(9, fighter->ticks);
+    if (fighter->ticks >= 9 && fighter->ticks <= 25) {
+      ContactResult contact = battle_contact(battle, fighter, &slide_record);
+      if (contact != CONTACT_MISS) {
+        fighter->script_phase = 1;
+        fighter->script_timer = 0;
+        if (contact == CONTACT_BLOCK) {
+          stop_body(fighter);
+          fighter->flags |= FF_NO_GUARD;
+        } else {
+          fighter->slide_ready = battle->ticks + 64;
+        }
+      }
+    }
+    if (fighter->script_phase == 0 && fighter->ticks >= 25) {
+      stop_body(fighter);
+      fighter->script_phase = 2;
+      fighter->script_timer = 0;
+    }
+  }
+  if (fighter->script_phase == 1) {
+    static const int samples[] = {10, 9, 8, 9};
+    int hold = fighter->contact == CONTACT_BLOCK ? 24 : 16;
+    fighter->sample_override = samples[fighter->script_timer % 4];
+    if (++fighter->script_timer >= hold) {
+      stop_body(fighter);
+      fighter->script_phase = 2;
+      fighter->script_timer = 0;
+    }
+  } else if (fighter->script_phase == 2) {
+    fighter->sample_override = maxi(0, 10 - fighter->script_timer++);
+    if (fighter->script_timer > 11) {
+      fighter->flags &= ~(unsigned)FF_NO_GUARD;
+      sub_zero_ready(battle, fighter);
+    }
+  }
+}
+
+static bool can_slide(const Battle *battle, const Fighter *fighter) {
+  unsigned chord = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK);
+  unsigned mask = chord | BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_RUN);
+  return battle->phase == PHASE_FIGHT && battle->ticks >= fighter->slide_ready && (fighter->held & mask) == chord;
+}
+
+static void sub_zero_slide(Battle *battle, Fighter *fighter) {
+  stop_body(fighter);
+  fighter_start_move(battle, fighter, S_KICK, &s_slide);
+  fighter->script = slide_tick;
+  fighter->sample_override = 0;
+  fighter_set_speed(battle, fighter, 0x2666);
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
+  {BUTTON_LOW_PUNCH, {0}, 0, 0, 0, can_slide, sub_zero_slide},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0, can_ice, sub_zero_ice},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 18, CMD_AIR, can_clone, sub_zero_clone},
+  {BUTTON_BLOCK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
+  {BUTTON_LOW_KICK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
 };
 // clang-format on
 

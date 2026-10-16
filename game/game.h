@@ -355,6 +355,7 @@ struct Fighter {
   int reaction;    /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
   uint64_t clone_ready;
+  uint64_t slide_ready;
   bool armed, weapon_used;
   FighterFn disarm; /* character-owned weapon drop entry */
 };

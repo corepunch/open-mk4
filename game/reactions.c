@@ -69,6 +69,7 @@ static const MoveSegment stagger_segments[] = {{0, 0, 2, 1}, {18, 38, 0, 1}, {20
 static const MoveSegment kick_hit_segments[] = {{0, 4, 0, 1}, {13, 6, 1, 1}};
 static const MoveSegment block_short_segments[] = {{0, 3, 2, 1}, {4, 7, -2, 1}};
 static const MoveSegment block_long_segments[] = {{0, 3, 2, 1}, {4, 7, -2, 1}, {7, 3, 2, 1}, {11, 7, -2, 1}};
+static const MoveSegment slide_crouch_block_segments[] = {{0, 0, 1, 1}, {5, 4, -1, 1}};
 static const MoveSegment forward_segments[] = {{0, 0, 1, 1}};
 static const MoveSegment jab_air_land_segments[] = {{0, 31, 1, 1}};
 static const MoveSegment uppercut_land_segments[] = {{0, 53, 0, 1}, {1, 55, 2, 1}};
@@ -88,6 +89,7 @@ static const MoveSequence stagger_sequence = {stagger_segments, COUNT(stagger_se
 static const MoveSequence kick_hit_sequence = PHASE(kick_hit_segments, 26, neutral);
 static const MoveSequence block_short_sequence = PHASE(block_short_segments, 7, neutral);
 static const MoveSequence block_long_sequence = PHASE(block_long_segments, 14, neutral);
+static const MoveSequence slide_crouch_block_sequence = PHASE(slide_crouch_block_segments, 10, neutral);
 static const MoveSequence sweep_fall_sequence = PHASE(forward_segments, 29, sweep_rise);
 static const MoveSequence sweep_rise_sequence = PHASE(forward_segments, 29, neutral);
 static const MoveSequence uppercut_fall_sequence = PHASE_UNTIL(forward_segments, 53, uppercut_land, landed);
@@ -105,6 +107,8 @@ REACTION(stagger, 182, SF_LOCK, stagger_sequence, 0);
 REACTION(kick_hit, 311, SF_LOCK, kick_hit_sequence, 0);
 REACTION(block_short, 321, SF_LOCK, block_short_sequence, ACTION_BLOCK);
 REACTION(block_long, 321, SF_LOCK, block_long_sequence, ACTION_BLOCK);
+REACTION(slide_block, 321, SF_LOCK, block_long_sequence, ACTION_BLOCK);
+REACTION(slide_crouch_block, 255, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
 REACTION(sweep_fall, 195, SF_LOCK, sweep_fall_sequence, 0);
 REACTION(sweep_rise_move, 197, SF_LOCK, sweep_rise_sequence, 0);
 REACTION(uppercut_fall, 128, SF_LOCK, uppercut_fall_sequence, 0);
@@ -241,6 +245,7 @@ static const ReactionSpec extra_reactions[256] = {
   [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
   [90] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
   [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
+  [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
   [154] = {R(131, 79, 0x4003), 0, 0, 40, 0, 0x1999, -0x23d7, 0x24d, 0, false, false},
   [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
   [173] = {R(182, 64, 0x4001), 0, 0, -1, 0, 0x3333, 0, 0, 0, true, false},
@@ -378,6 +383,12 @@ static void react_extra_block(Battle *battle, Fighter *fighter) {
   slide(battle, fighter, id == 8 ? 0 : id == 7 ? 0x4000 : id == 5 ? 0x2e14 : 0xf5c);
 }
 
+/* 486d00 -> 4e9e68: two repetitions of seven standing poses, no push.
+ * 486f90 instead binds crouching clip 255 and plays it out and back. */
+static void react_slide_block(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
+}
+
 static void react_approximate(Battle *battle, Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
@@ -490,6 +501,7 @@ static const FighterFn reactions[256] = {
   [90] = react_extra,
   [99] = react_extra,
   [100] = react_extra,
+  [122] = react_extra,
   [154] = react_extra,
   [155] = react_extra,
   [156] = react_extra,
@@ -507,6 +519,7 @@ static const FighterFn reactions[256] = {
   [18] = react_sweep,
   [34] = react_uppercut,
   [37] = react_jab_hit,
+  [165] = react_slide_block,
 };
 // clang-format on
 
@@ -519,8 +532,8 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 50) || reaction == 70 ||
-          reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
-          reaction == 156 || reaction == 173)) {
+          reaction == 122 || reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 ||
+          reaction == 155 || reaction == 156 || reaction == 173)) {
     victim->disarm(battle, victim);
   }
   victim->reaction = reaction;
