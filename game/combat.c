@@ -100,7 +100,6 @@ ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const Attac
       reaction = record->hit;
     }
   }
-  fighter_note_contact(attacker, result);
   int side = fighter_index(battle, attacker);
   /* Absolute retail Y has the soles at 0, so height above the floor is -Y. */
   float x = q16_float(attacker->body.pos[AXIS_X] / 2 + victim->body.pos[AXIS_X] / 2);
@@ -111,7 +110,11 @@ ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const Attac
 }
 
 ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record) {
-  return battle_contact_from(battle, attacker, record, attacker->body.pos, attacker->facing);
+  ContactResult result = battle_contact_from(battle, attacker, record, attacker->body.pos, attacker->facing);
+  if (result != CONTACT_MISS) {
+    fighter_note_contact(attacker, result);
+  }
+  return result;
 }
 
 Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step) {

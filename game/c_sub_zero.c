@@ -405,7 +405,7 @@ static void ground_attack_tick(Battle *battle, Fighter *fighter) {
 }
 
 static void ground_attack(Battle *battle, Fighter *fighter, int index) {
-  bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
+  bool followup = fighter_fast_start(battle, fighter);
   stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(battle, fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);

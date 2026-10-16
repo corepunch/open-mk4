@@ -18,6 +18,13 @@ static void frame_event(Battle *battle, Fighter *fighter) {
   }
 }
 
+/* Script opcode 45 / 45b650: airborne targets use their reaction flag;
+ * grounded targets use the attacker's follow-up window. */
+bool fighter_fast_start(const Battle *battle, const Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  return fighter_airborne(victim) ? (victim->flags & FF_REACTING) != 0 : (fighter->flags & FF_FOLLOW_UP) != 0;
+}
+
 /* Retail action codes (+0x74) of the generic states. The stance reset leaves
  * 0 while standing; moves with recovered entries name their own code. */
 // clang-format off: Keep table entries on one row, including long rows.

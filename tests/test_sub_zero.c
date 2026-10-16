@@ -221,6 +221,26 @@ static void ice(void) {
   }
 }
 
+static void independent_contacts(void) {
+  Battle battle = fight(0, 1.f);
+  Fighter *owner = &battle.fighters[0];
+  Fighter *victim = &battle.fighters[1];
+  const AttackRecord record = {Q16_ONE, -Q16_ONE, Q16_ONE, Q16_ONE, 67, 67, 0, 0, 0};
+  check(battle_contact_from(&battle, owner, &record, owner->body.pos, owner->facing) == CONTACT_HIT, "object contact must resolve");
+  check(!owner->connected, "independent object must not consume the owner's current strike");
+  check(battle_contact(&battle, owner, &record) == CONTACT_HIT && owner->connected, "fighter contact must latch its own result");
+  for (int air = 0; air < 2; ++air) {
+    victim->body.pos[AXIS_Y] = victim->body.ground - air * Q16_ONE;
+    for (int followup = 0; followup < 2; ++followup) {
+      owner->flags = followup ? FF_FOLLOW_UP : 0;
+      for (int reacting = 0; reacting < 2; ++reacting) {
+        victim->flags = reacting ? FF_REACTING : 0;
+        check(fighter_fast_start(&battle, owner) == (air ? reacting : followup), "opcode 45 must select the appropriate fighter's flags");
+      }
+    }
+  }
+}
+
 static void clone_command(Battle *battle, int player) {
   press(battle, player, BUTTON_BIT(BUTTON_DOWN));
   press(battle, player, BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT) | BUTTON_BIT(BUTTON_LOW_PUNCH));
@@ -762,6 +782,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  independent_contacts();
   sidesteps();
   fatalities();
   weapons();

@@ -448,6 +448,7 @@ void fighter_enter_stance(Fighter *fighter, Stance stance);
 const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter);
 float fighter_distance(const Battle *battle, const Fighter *fighter);
 bool fighter_holds_back(const Battle *battle, const Fighter *fighter);
+bool fighter_fast_start(const Battle *battle, const Fighter *fighter);
 void fighter_press(Battle *battle, Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
 int fighter_sample(const Fighter *fighter);
