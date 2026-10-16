@@ -32,6 +32,9 @@ static float mesh_sole(const Character *ch, const Clip *clip, double frame) {
 }
 
 static void combat_poses(const Assets *assets) {
+  const Character *spine = &assets->scene_models.data[SCENE_MODEL_SPINE];
+  check(spine->bones.count == 5 && spine->bones.data[0].mesh == 36 && spine->bones.data[4].channel == 5,
+      "Spine accessory must use its recovered five meshes and reserve the first animation channel for the head");
   Battle battle;
   battle_init(&battle, 4, 15);
   battle_bind_assets(&battle, assets);
@@ -85,6 +88,18 @@ static void combat_poses(const Assets *assets) {
   }
   battle_reset_match(&battle);
   Fighter *victim = &battle.fighters[1];
+  ScenePiece *head = battle_attach_head(&battle, victim, &battle.fighters[0], 10);
+  static const AttachmentDef spine_animation = {.model = SCENE_MODEL_SPINE, .clip = 386, .first = 0, .last = 96, .loop_from = 52};
+  battle_attach_piece_model(&battle, head, &spine_animation, &battle.fighters[0]);
+  check(head != NULL && battle.attachments[0].def != NULL, "Detached pieces must accept independent animated accessory models");
+  for (int i = 0; i < 97; ++i) {
+    battle_step_presentation(&battle);
+  }
+  check(battle.attachments[0].sample == 52, "Spine attachment must loop from sample 96 back to 52 independently of the fighter");
+  head->active = false;
+  battle_step_presentation(&battle);
+  check(battle.attachments[0].def == NULL, "Removing a detached parent must release its accessory");
+  battle_reset_match(&battle);
   victim->appearance = APPEARANCE_FROZEN;
   battle_shatter(&battle, victim);
   int pieces = 0;

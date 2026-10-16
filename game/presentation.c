@@ -153,11 +153,42 @@ static ScenePiece *detach(Battle *battle, Fighter *victim, int joint, const q16 
   return NULL;
 }
 
-void battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint) {
+ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint) {
   ScenePiece *head = detach(battle, victim, 2, (q16[3]){0}, (q16[3]){0});
   if (head != NULL) {
     head->attached_to = owner == &battle->fighters[0] ? 0 : 1;
     head->joint = joint;
+  }
+  return head;
+}
+
+static void attachment_pose(Battle *battle, SceneAttachment *attachment) {
+  const AttachmentDef *def = attachment->def;
+  const Frame *frame = &battle->assets->clips.data[def->clip].frames.data[attachment->sample];
+  ScenePiece *piece = &battle->pieces[attachment->piece];
+  Vec3 position = vec_add(attachment->origin, mat3_apply(attachment->orientation, vec_add(frame->translation, def->piece_offset)));
+  for (int k = 0; k < 3; ++k) {
+    piece->pos[k] = (q16)((k == 0 ? position.x : k == 1 ? position.y : position.z) * Q16_ONE);
+  }
+  piece->orientation = mat3_mul(attachment->orientation, rotation(def->piece_kind, frame->angles.data[0]));
+}
+
+void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor) {
+  if (piece == NULL) {
+    return;
+  }
+  require(def != NULL && def->first <= def->last && def->loop_from >= def->first && def->loop_from <= def->last, "Invalid animated attachment");
+  for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
+    if (battle->attachments[i].def == NULL) {
+      battle->attachments[i] = (SceneAttachment){.def = def, .piece = (int)(piece - battle->pieces), .sample = def->first};
+      SceneAttachment *attachment = &battle->attachments[i];
+      attachment->origin = vec_add((Vec3){fighter_x(actor), q16_float(actor->body.pos[AXIS_Y]), fighter_z(actor)}, def->group_offset);
+      attachment->orientation = fighter_turn(actor->assets, actor);
+      piece->animated = true;
+      piece->attached_to = -1;
+      attachment_pose(battle, attachment);
+      return;
+    }
   }
 }
 
@@ -201,6 +232,17 @@ void battle_shatter(Battle *battle, Fighter *victim) {
 }
 
 void battle_step_presentation(Battle *battle) {
+  for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
+    SceneAttachment *attachment = &battle->attachments[i];
+    if (attachment->def != NULL) {
+      if (!battle->pieces[attachment->piece].active) {
+        attachment->def = NULL;
+      } else {
+        attachment->sample = attachment->sample < attachment->def->last ? attachment->sample + 1 : attachment->def->loop_from;
+        attachment_pose(battle, attachment);
+      }
+    }
+  }
   SceneCamera *camera = &battle->camera;
   if (camera->active && camera->shots != NULL) {
     const CameraShot *shot = &camera->shots[camera->shot];
@@ -229,7 +271,7 @@ void battle_step_presentation(Battle *battle) {
   }
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
     ScenePiece *piece = &battle->pieces[i];
-    if (!piece->active) {
+    if (!piece->active || piece->animated) {
       continue;
     }
     if (piece->attached_to >= 0) {

@@ -1298,6 +1298,9 @@ static const CameraShot first_camera_shots[] = {
   {first_camera, COUNT(first_camera), 50, 0xccc, 0, 0, 0},
   {orbit_camera, COUNT(orbit_camera), 0, 0x45a, 3, 80, -0x4000},
 };
+/* 445740/446620 and 4e0440: independent head/spine playback. */
+static const AttachmentDef first_spine = {.model = SCENE_MODEL_SPINE, .clip = 386, .first = 0, .last = 96, .loop_from = 52,
+    .group_offset = {0, -0xccc / 65536.f, 0}, .piece_offset = {0, 0x2b43 / 65536.f, 0}, .piece_kind = 0, .scene_space = true};
 // clang-format on
 
 static void first_fatality_tick(Battle *battle, Fighter *fighter) {
@@ -1327,6 +1330,9 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
     } else if (phase == 7) {
       battle_sound(battle, SOUND_B, 0x1c);
       battle_sound(battle, SOUND_B, 0);
+      ScenePiece *head = battle_attach_head(battle, victim, fighter, 10);
+      battle_attach_piece_model(battle, head, &first_spine, fighter);
+      battle_particles(battle, victim, 2, 0xffa81420, 20, false);
     }
   }
   if (victim->scene.clips == NULL && fighter->scene.index >= 2) {
@@ -1334,10 +1340,6 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
   } else if (victim->scene.clips != NULL) {
     int before = victim->scene.index;
     scene_step(victim);
-    if (before != victim->scene.index && victim->scene.index == 8) {
-      battle_attach_head(battle, victim, fighter, 10);
-      battle_particles(battle, victim, 2, 0xffa81420, 20, false);
-    }
     if (before != victim->scene.index && victim->scene.index == 12) {
       battle_sound(battle, SOUND_B, 0x18);
       battle_particles(battle, victim, 5, 0xffa81420, 20, false);

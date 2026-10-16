@@ -211,6 +211,50 @@ static void draw_weapon(Canvas *cv, Camera camera, Vec3 base, Vec3 tip, const We
   canvas_rect(cv, (Rect){(int)b.x - 4, (int)b.y - 4, 9, 9}, 0xff8ee8ff);
 }
 
+/* Animated accessories reserve their first channel for the detached
+ * parent piece; the model's remaining channels pose its own hierarchy. */
+static Mat3 piece_basis(const Assets *assets, const Battle *battle, int index) {
+  (void)assets;
+  const ScenePiece *piece = &battle->pieces[index];
+  float factor = 4096.f / (6.283185307179586f * Q16_ONE);
+  Mat3 spin = rotation(0, (Vec3){piece->angle[0] * factor, piece->angle[1] * factor, piece->angle[2] * factor});
+  return mat3_mul(spin, piece->orientation);
+}
+
+static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, const Battle *battle, const SceneLight *light) {
+  for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
+    const SceneAttachment *attachment = &battle->attachments[i];
+    if (attachment->def == NULL) {
+      continue;
+    }
+    const AttachmentDef *def = attachment->def;
+    const ScenePiece *piece = &battle->pieces[attachment->piece];
+    const Character *model = &assets->scene_models.data[def->model];
+    const Clip *clip = &assets->clips.data[def->clip];
+    Pose bones[MK4_MAX_BONES];
+    pose(model, clip, attachment->sample, bones);
+    /* 446730 installs the inverse-parent transform on the accessory
+     * root. Its authored motion stays in the scene frame while the
+     * detached head follows the first channel's own rotation. */
+    Mat3 basis = def->scene_space ? attachment->orientation : piece_basis(assets, battle, attachment->piece);
+    Vec3 origin = {q16_float(piece->pos[0]), q16_float(piece->pos[1]), q16_float(piece->pos[2])};
+    Vec3 root = clip->frames.data[attachment->sample].translation;
+    for (size_t n = 0; n < model->bones.count; ++n) {
+      const Bone *bone = &model->bones.data[n];
+      const Triangles *mesh = &model->meshes.data[bone->mesh].triangles;
+      for (size_t j = 0; j < mesh->count; ++j) {
+        Triangle t = mesh->data[j];
+        for (int k = 0; k < 3; ++k) {
+          Vec3 local = vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, t.v[k].p)), root);
+          t.v[k].p = vec_add(origin, mat3_apply(basis, local));
+          t.v[k].normal = mat3_apply(basis, mat3_apply(bones[n].rotation, t.v[k].normal));
+        }
+        render_triangle(cv, camera, t, &model->texture, 1, PASS_COLOR, light);
+      }
+    }
+  }
+}
+
 void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused) {
   canvas_clear(cv);
   const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
@@ -253,9 +297,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     }
     const Character *ch = piece->frozen ? &assets->cut_characters.data[roster_def(piece->roster)->asset] : roster_character(assets, piece->roster);
     const Bone *bone = &ch->bones.data[piece->bone];
-    float factor = 4096.f / (6.283185307179586f * Q16_ONE);
-    Mat3 spin = rotation(0, (Vec3){piece->angle[0] * factor, piece->angle[1] * factor, piece->angle[2] * factor});
-    Mat3 transform = mat3_mul(spin, piece->orientation);
+    Mat3 transform = piece_basis(assets, battle, i);
     const Triangles *mesh = &ch->meshes.data[bone->mesh].triangles;
     for (size_t n = 0; n < mesh->count; ++n) {
       Triangle triangle = mesh->data[n];
@@ -266,6 +308,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       render_triangle(cv, camera, triangle, piece->frozen ? &ice_texture : &ch->texture, 1, PASS_COLOR, &light);
     }
   }
+  draw_attachments(cv, camera, assets, battle, &light);
   for (size_t i = 0; i < 2; ++i) {
     const Fighter *fighter = &battle->fighters[i];
     const Texture *texture = fighter->appearance == APPEARANCE_FROZEN ? &ice_texture : &fighter_model(assets, fighter)->texture;

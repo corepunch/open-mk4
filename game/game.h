@@ -476,11 +476,25 @@ struct Projectile {
 #define MAX_PROJECTILES 4
 
 typedef struct ScenePiece {
-  bool active, frozen;
+  bool active, frozen, animated;
   int roster, bone, attached_to, joint;
   q16 pos[3], vel[3], angle[3], spin[3];
   Mat3 orientation;
 } ScenePiece;
+
+typedef struct AttachmentDef {
+  int model, clip, first, last, loop_from;
+  Vec3 group_offset, piece_offset;
+  int piece_kind;
+  bool scene_space;
+} AttachmentDef;
+
+typedef struct SceneAttachment {
+  const AttachmentDef *def;
+  int piece, sample;
+  Vec3 origin;
+  Mat3 orientation;
+} SceneAttachment;
 
 typedef struct Particle {
   q16 pos[3], vel[3], gravity;
@@ -507,6 +521,7 @@ typedef struct SceneCamera {
 } SceneCamera;
 
 #define MAX_SCENE_PIECES 32
+#define MAX_SCENE_ATTACHMENTS 8
 #define MAX_PARTICLES 128
 
 typedef struct SoundEvent {
@@ -521,6 +536,7 @@ struct Battle {
   HitEffect effects[2];
   Projectile projectiles[MAX_PROJECTILES];
   ScenePiece pieces[MAX_SCENE_PIECES];
+  SceneAttachment attachments[MAX_SCENE_ATTACHMENTS];
   Particle particles[MAX_PARTICLES];
   SceneCamera camera;
   SoundEvent sounds[MAX_SOUND_EVENTS];
@@ -612,7 +628,8 @@ bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, M
 void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
-void battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
+ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
+void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);
 void battle_shatter(Battle *battle, Fighter *victim);
 void battle_step_presentation(Battle *battle);
 void battle_sound(Battle *battle, int bank, int selector);

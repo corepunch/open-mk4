@@ -504,6 +504,17 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     cut.bones = load_rig(&exe, cut_root, cut_slot, cut.meshes.count);
     PUSH(assets->cut_characters, cut);
   }
+  /* 446620 adds rig 5145bc below the detached head. Its mesh data
+   * is in sz_geo.geo; clip 386 also animates the original head first. */
+  Character spine = assets->characters.data[4];
+  spine.bones = load_rig(&exe, 0x5145bc, 0x511d1c, spine.meshes.count);
+  spine.idle = 386;
+  for (size_t i = 0; i < spine.bones.count; ++i) {
+    spine.bones.data[i].channel++;
+  }
+  spine.bones.data[0].kind = 2;                         /* attached below the head: descendant B */
+  spine.bones.data[0].translation.z = 0x13b6 / 65536.f; /* 4465a0 */
+  PUSH(assets->scene_models, spine);
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;
@@ -665,6 +676,10 @@ static void geometry_free(Geometry *g) {
 
 void assets_free(Assets *a) {
   sound_bank_free(&a->audio);
+  for (size_t i = 0; i < a->scene_models.count; ++i) {
+    FREE_ARRAY(a->scene_models.data[i].bones);
+  }
+  FREE_ARRAY(a->scene_models);
   for (size_t i = 0; i < a->cut_characters.count; ++i) {
     Character *cut = &a->cut_characters.data[i];
     const Character *normal = &a->characters.data[i];

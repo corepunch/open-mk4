@@ -118,12 +118,17 @@ typedef struct Hud {
 typedef struct Assets {
   Characters characters;
   Characters cut_characters; /* closed-surface rigs; share normal meshes/textures when the file matches */
+  Characters scene_models;   /* shared immutable geometry; independently owned accessory rigs */
   Character scorpion_beast;  /* fatality II model, separate from the roster */
   Clips clips;
   Arenas arenas;
   Hud hud;
   SoundBank audio;
 } Assets;
+
+enum {
+  SCENE_MODEL_SPINE
+};
 
 /* Initialize Assets to zero before loading. The owner frees all decoded data. */
 void assets_load(Assets *assets, const char *archive, const char *executable);

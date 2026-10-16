@@ -141,7 +141,7 @@ Do not add retail-execution harnesses or large per-tick JSON recordings.
 
 The engine still uses portable presentation: blue ice material, bounded particles,
 closed-surface character meshes for frozen pieces, and a single weapon settling arc.
-Retail fatality-I spine geometry and secondary ice decoration
+Retail secondary ice decoration
 remain to be translated. CPU distance plans, probability gates and automatic
 air attacks now live in the shared simulation; unported character action rows
 still fall back to their own stance tables. These translations do not claim
