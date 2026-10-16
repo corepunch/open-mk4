@@ -9,19 +9,30 @@ static bool locked(const Fighter *fighter) {
   return (fighter_move(fighter)->flags & SF_LOCK) != 0;
 }
 
-static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, float x, int facing) {
+/* Round-start X from 0x422ea0 / 0x422f50: P1 -1.3, P2 +1.3, Z = 0. */
+#define START_X 0x14ccc
+
+static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, q16 x, int facing) {
+  const CharacterDef *def = roster_def(roster_index);
   *fighter = (Fighter){0};
   fighter->roster = roster_index;
   fighter->wins = wins;
-  fighter->health = 100;
-  fighter->x = x;
+  fighter->health = Q16_ONE;
+  fighter->damage_scale = Q16_ONE;
+  fighter->human = true;
+  fighter->body.ground = def->ground;
+  fighter->body.pos[AXIS_X] = x;
+  fighter->body.pos[AXIS_Y] = def->ground;
+  fighter->body.last_inside[AXIS_X] = x;
+  fighter->body.last_inside[AXIS_Y] = def->ground;
   fighter->facing = facing;
   fighter_enter_state(battle, fighter, S_IDLE);
 }
 
 void battle_init(Battle *battle, int p1, int p2) {
   memset(battle, 0, sizeof *battle);
-  battle->wall = 5.f;
+  /* 0x4dad60: arena radius; 9.5 on most stages. */
+  battle->arena_radius = 0x98000;
   battle->fighters[0].roster = p1;
   battle->fighters[1].roster = p2;
   roster_def(p1);
@@ -44,10 +55,15 @@ void battle_next_round(Battle *battle) {
   for (i = 0; i < 2; ++i) {
     int roster_index = battle->fighters[i].roster;
     int wins = battle->fighters[i].wins;
-    float x = i ? 2.f : -2.f;
     int facing = i ? -1 : 1;
-    place(battle, &battle->fighters[i], roster_index, wins, x, facing);
+    place(battle, &battle->fighters[i], roster_index, wins, i ? START_X : -START_X, facing);
   }
+  battle->axis[0] = Q16_ONE;
+  battle->axis[1] = 0;
+  battle->distance = 2 * START_X;
+  battle->ko_winner = 0;
+  battle->contacts_off = false;
+  battle->contacted = false;
   memset(battle->effects, 0, sizeof battle->effects);
   battle->phase = PHASE_READY;
   battle->phase_ticks = 0;
@@ -68,9 +84,10 @@ static void finish_round(Battle *battle) {
     fighter_enter_state(battle, &battle->fighters[battle->winner], S_VICTORY);
   }
   for (i = 0; i < 2; ++i) {
-    if (battle->fighters[i].health <= 0)
+    if (battle->fighters[i].health <= 0 && battle->fighters[i].state != S_KNOCKDOWN)
       fighter_enter_state(battle, &battle->fighters[i], S_KNOCKDOWN);
   }
+  battle->contacts_off = true;
   if (battle->winner >= 0 && battle->fighters[battle->winner].wins >= 2)
     battle->phase = PHASE_MATCH_OVER;
   else
@@ -82,16 +99,21 @@ static bool held(const Fighter *fighter, Button button) {
   return (fighter->held & BUTTON_BIT(button)) != 0;
 }
 
+static void land_idle(Battle *battle, Fighter *fighter) {
+  if (fighter->state == S_JUMP)
+    fighter_enter_state(battle, fighter, S_IDLE);
+}
+
 static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *other) {
   const CharacterDef *def = roster_def(fighter->roster);
   const Motion *motion = def->motion;
+  bool grounded = !fighter_airborne(fighter);
   int dir;
 
-  fighter->contact_ready = false;
-  if (!locked(fighter) && fighter->height == 0.f)
-    fighter->facing = fighter->x <= other->x ? 1 : -1;
+  if (!locked(fighter) && grounded)
+    fighter->facing = fighter->body.pos[AXIS_X] <= other->body.pos[AXIS_X] ? 1 : -1;
   if (fighter->pending != NULL) {
-    /* The press task interrupted this fighter last tick; its entry runs now. */
+    /* A press or a reaction interrupted this fighter; its entry runs now. */
     FighterFn entry = fighter->pending;
     fighter->pending = NULL;
     entry(battle, fighter);
@@ -103,43 +125,37 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
     } else if (state->flags & SF_ATTACK) {
       int total = state->startup + state->active + state->recovery;
       if (fighter->ticks >= total)
-        fighter_enter_state(battle, fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);
+        fighter_enter_state(battle, fighter, fighter_airborne(fighter) ? S_JUMP : S_IDLE);
     } else if (state->flags & SF_REACTION) {
-      bool landed = !(state->flags & SF_WAIT_LAND) || fighter->height == 0.f;
+      bool landed = !(state->flags & SF_WAIT_LAND) || !fighter_airborne(fighter);
       if (fighter->ticks >= state->recovery && landed)
-        fighter_enter_state(battle, fighter, S_IDLE);
-    }
-  }
-
-  if (fighter->height > 0.f || fighter->velocity > 0.f) {
-    fighter->height += fighter->velocity * TICK_SECONDS;
-    fighter->velocity -= motion->gravity * TICK_SECONDS;
-    if (fighter->height <= 0.f) {
-      fighter->height = 0.f;
-      fighter->velocity = 0.f;
-      if (fighter->state == S_JUMP)
         fighter_enter_state(battle, fighter, S_IDLE);
     }
   }
   if (locked(fighter) || fighter->pending != NULL)
     return;
 
-  fighter->crouching = held(fighter, BUTTON_DOWN) && fighter->height == 0.f;
-  if (held(fighter, BUTTON_BLOCK) && fighter->height == 0.f) {
+  grounded = !fighter_airborne(fighter);
+  fighter->crouching = held(fighter, BUTTON_DOWN) && grounded;
+  if (held(fighter, BUTTON_BLOCK) && grounded) {
     fighter_enter_state(battle, fighter, S_BLOCK);
     return;
   }
-  if (held(fighter, BUTTON_UP) && fighter->height == 0.f) {
-    fighter->velocity = motion->jump_velocity;
-    fighter->height = 0.01f;
-    fighter_enter_state(battle, fighter, S_JUMP);
-  }
   dir = (int)held(fighter, BUTTON_RIGHT) - (int)held(fighter, BUTTON_LEFT);
-  if (!fighter->crouching) {
-    float speed = held(fighter, BUTTON_RUN) ? motion->run : motion->walk;
-    fighter->x += (float)dir * speed * TICK_SECONDS;
+  if (held(fighter, BUTTON_UP) && grounded) {
+    /* Straight jump 0x46f7e0 (vy 0x30a3 up, gravity 0x28f). Holding a
+     * direction approximates the flips with their 0xe14 speed. */
+    fighter->body.vel[AXIS_Y] = -motion->jump_velocity;
+    fighter->body.vel[AXIS_X] = dir * 0xe14;
+    fighter->body.gravity = motion->gravity;
+    fighter->body.on_land = land_idle;
+    fighter_enter_state(battle, fighter, S_JUMP);
+    return;
   }
-  if (fighter->height > 0.f)
+  if (grounded && !fighter->crouching) {
+    fighter->body.pos[AXIS_X] += dir * (held(fighter, BUTTON_RUN) ? motion->run : motion->walk);
+  }
+  if (!grounded)
     fighter_enter_state(battle, fighter, S_JUMP);
   else if (fighter->crouching)
     fighter_enter_state(battle, fighter, S_CROUCH);
@@ -169,77 +185,122 @@ static void dispatch_presses(Battle *battle) {
   }
 }
 
-static void separate_bodies(Battle *battle) {
-  Fighter *a = &battle->fighters[0];
-  Fighter *b = &battle->fighters[1];
-  float sign, mid;
-  int i;
-  for (i = 0; i < 2; ++i)
-    battle->fighters[i].x = clampf(battle->fighters[i].x, -battle->wall, battle->wall);
-  if (fabsf(a->height - b->height) >= 1.25f || fabsf(a->x - b->x) >= 0.7f)
-    return;
-  sign = a->x <= b->x ? 1.f : -1.f;
-  mid = (a->x + b->x) * 0.5f;
-  mid = clampf(mid, -battle->wall + 0.35f, battle->wall - 0.35f);
-  a->x = mid - sign * 0.35f;
-  b->x = mid + sign * 0.35f;
+static q16 to_q16(double value) {
+  return (q16)floor(value * Q16_ONE);
 }
 
-/* Both attacks are judged from the positions at the start of resolution, so
- * two moves that become active on the same tick can trade. */
+/* Our world update: arena bounds, pair axis, body separation, callbacks,
+ * gravity and integration. Script motion is expressed in units per tick. */
+void battle_world(Battle *battle) {
+  Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
+  double r2 = (double)battle->arena_radius * battle->arena_radius;
+  for (int i = 0; i < 2; ++i) {
+    Body *body = &battle->fighters[i].body;
+    double x = body->pos[AXIS_X], z = body->pos[AXIS_Z];
+    if (x * x + z * z > r2) {
+      body->pos[AXIS_X] = body->last_inside[AXIS_X];
+      body->pos[AXIS_Z] = body->last_inside[AXIS_Z];
+      body->vel[AXIS_X] = 0;
+      body->vel[AXIS_Z] = 0;
+    } else {
+      memcpy(body->last_inside, body->pos, sizeof body->pos);
+    }
+  }
+  double dx = (double)b->body.pos[AXIS_X] - a->body.pos[AXIS_X];
+  double dz = (double)b->body.pos[AXIS_Z] - a->body.pos[AXIS_Z];
+  double length = sqrt(dx * dx + dz * dz);
+  if (length > 0.) {
+    battle->axis[0] = to_q16(dx / length);
+    battle->axis[1] = to_q16(dz / length);
+  }
+  battle->distance = (q16)floor(length);
+  q16 dy = a->body.pos[AXIS_Y] - b->body.pos[AXIS_Y];
+  if (battle->distance < 0x8000 && (dy < 0 ? -dy : dy) <= 0xb333) {
+    q16 push = (0x8000 - battle->distance) / 2 + 1;
+    for (int k = 0; k < 2; ++k) {
+      q16 step = q16_mul(battle->axis[k], push);
+      a->body.pos[k == 0 ? AXIS_X : AXIS_Z] -= step;
+      b->body.pos[k == 0 ? AXIS_X : AXIS_Z] += step;
+    }
+  }
+  for (int i = 0; i < 2; ++i) {
+    Fighter *fighter = &battle->fighters[i];
+    Body *body = &fighter->body;
+    if (body->physics != NULL)
+      body->physics(battle, fighter);
+    if (body->gravity != 0) {
+      body->vel[AXIS_Y] += body->gravity;
+      if (body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] + body->vel[AXIS_Y] >= body->ground) {
+        memset(body->vel, 0, sizeof body->vel);
+        body->gravity = 0;
+        body->pos[AXIS_Y] = body->ground;
+        FighterFn land = body->on_land;
+        body->on_land = NULL;
+        if (land != NULL)
+          land(battle, fighter);
+      }
+    }
+  }
+  for (int i = 0; i < 2; ++i) {
+    Body *body = &battle->fighters[i].body;
+    for (int k = 0; k < 3; ++k)
+      body->pos[k] += body->vel[k];
+    double x = body->pos[AXIS_X], z = body->pos[AXIS_Z];
+    double length = sqrt(x * x + z * z);
+    if (length > battle->arena_radius) {
+      body->pos[AXIS_X] = (q16)(x * battle->arena_radius / length);
+      body->pos[AXIS_Z] = (q16)(z * battle->arena_radius / length);
+      body->vel[AXIS_X] = 0;
+      body->vel[AXIS_Z] = 0;
+    }
+  }
+}
+
+/* Approximate rules for moves without retail attack records. Both attacks
+ * are judged from the positions at the start of resolution, so two such
+ * moves that become active on the same tick can trade. */
 static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
-  size_t i;
-  for (i = 0; i < 2; ++i) {
+  for (int i = 0; i < 2; ++i) {
     const Fighter *attacker = &snapshot[i];
     const Fighter *defender = &snapshot[1 - i];
     const MoveDef *move = fighter_move(attacker);
-    Fighter *target;
-    float distance;
-    bool blocked;
-    int damage;
-    int reaction;
-
-    if (!(move->flags & SF_ATTACK) || attacker->connected)
+    if (!(move->flags & SF_ATTACK) || (move->flags & SF_RECORD) || attacker->connected)
       continue;
-    if (move->flags & SF_SCRIPT_CONTACT) {
-      if (!attacker->contact_ready) {
-        continue;
-      }
-    } else if (attacker->ticks < move->startup || attacker->ticks >= move->startup + move->active) {
+    if (attacker->ticks < move->startup || attacker->ticks >= move->startup + move->active)
       continue;
-    }
-    distance = (defender->x - attacker->x) * (float)attacker->facing;
+    float distance = (fighter_x(defender) - fighter_x(attacker)) * (float)attacker->facing;
+    float attacker_height = fighter_height(attacker), defender_height = fighter_height(defender);
     if (distance < 0.f || distance > move->reach)
       continue;
-    if (fabsf(attacker->height - defender->height) > 0.9f)
+    if (fabsf(attacker_height - defender_height) > 0.9f)
       continue;
-    if ((move->flags & SF_LOW) && defender->height > 0.2f)
+    if ((move->flags & SF_LOW) && defender_height > 0.2f)
       continue;
-    if ((move->flags & SF_UNBLOCKABLE) && (defender->height > 0.f || defender->state == S_KNOCKDOWN || defender->state == S_HIT))
+    if ((move->flags & SF_UNBLOCKABLE) && (defender_height > 0.f || defender->state == S_KNOCKDOWN || defender->state == S_HIT))
       continue;
     if (defender->state == S_KNOCKDOWN)
       continue;
 
-    blocked = defender->state == S_BLOCK && !(move->flags & SF_UNBLOCKABLE) && (!(move->flags & SF_LOW) || defender->crouching);
+    bool blocked = defender->state == S_BLOCK && !(move->flags & SF_UNBLOCKABLE) && (!(move->flags & SF_LOW) || defender->crouching);
     /* A simultaneous incoming reaction may already have interrupted this
      * fighter. The outgoing hit still trades, but cannot restart its move. */
     if (battle->fighters[i].current_move == attacker->current_move) {
-      fighter_note_contact(&battle->fighters[i], blocked ? CONTACT_BLOCK : defender->height > 0.f ? CONTACT_AIR_HIT : CONTACT_HIT);
+      fighter_note_contact(&battle->fighters[i], blocked ? CONTACT_BLOCK : defender_height > 0.f ? CONTACT_AIR_HIT : CONTACT_HIT);
     }
-    target = &battle->fighters[1 - i];
-    damage = blocked ? 0 : move->damage;
-    target->health = (int)fmaxf(0.f, (float)target->health - (float)damage);
-    target->x = clampf(target->x + (float)attacker->facing * move->push * (blocked ? 0.4f : 1.f), -battle->wall, battle->wall);
+    Fighter *target = &battle->fighters[1 - i];
+    if (!blocked)
+      battle_damage(battle, target, move->damage * Q16_ONE / 100);
+    target->body.pos[AXIS_X] += to_q16((double)attacker->facing * move->push * (blocked ? 0.4 : 1.0));
     if (!blocked) {
-      reaction = (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT;
-      fighter_enter_state(battle, target, reaction);
+      fighter_enter_state(battle, target, (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT);
       target->ticks = fighter_move(target)->recovery - move->stun;
       if (move->flags & SF_LAUNCH) {
-        target->velocity = 4.7f;
-        target->height = fmaxf(0.01f, target->height);
+        target->body.vel[AXIS_Y] = -0x140e; /* the prototype's 4.7 units/s */
+        target->body.gravity = 0x111;
       }
     }
-    battle->effects[i] = (HitEffect){(attacker->x + defender->x) * 0.5f, defender->height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
+    battle->effects[i] =
+        (HitEffect){(fighter_x(attacker) + fighter_x(defender)) * 0.5f, defender_height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
   }
 }
 
@@ -261,33 +322,38 @@ void battle_step(Battle *battle, const Input input[2]) {
     return;
   }
   if (battle->phase != PHASE_FIGHT) {
-    for (i = 0; i < 2; ++i)
-      battle->fighters[i].ticks++;
+    /* Poses keep playing to their last sample and bodies keep falling. */
+    for (i = 0; i < 2; ++i) {
+      Fighter *fighter = &battle->fighters[i];
+      if (fighter->pending != NULL) {
+        FighterFn entry = fighter->pending;
+        fighter->pending = NULL;
+        entry(battle, fighter);
+      } else {
+        fighter->ticks++;
+        if (fighter_move(fighter)->sequence != NULL) {
+          fighter_step_sequence(battle, fighter);
+        }
+      }
+    }
+    battle_world(battle);
     if (battle->phase == PHASE_ROUND_OVER && battle->phase_ticks >= 180)
       battle_next_round(battle);
     return;
   }
 
   battle->time_ticks--;
+  /* Retail tick 0x41fd70: task pump (fighters, then press tasks), world pump. */
   for (i = 0; i < 2; ++i)
     advance_fighter(battle, &battle->fighters[i], &battle->fighters[1 - i]);
-  separate_bodies(battle);
+  dispatch_presses(battle);
+  battle_world(battle);
   {
     Fighter snapshot[2];
     memcpy(snapshot, battle->fighters, sizeof snapshot);
     resolve_hits(battle, snapshot);
   }
-  for (i = 0; i < 2; ++i) {
-    Fighter *fighter = &battle->fighters[i];
-    FighterFn next = fighter->after_contact;
-    fighter->after_contact = NULL;
-    if (next != NULL) {
-      next(battle, fighter);
-    }
-  }
   if (battle->fighters[0].health <= 0 || battle->fighters[1].health <= 0 || battle->time_ticks <= 0) {
     finish_round(battle);
-    return;
   }
-  dispatch_presses(battle);
 }

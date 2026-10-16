@@ -136,7 +136,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
       for (size_t k = 0; k < 3; ++k) {
         Vertex *v = &t.v[k];
         Vec3 p = mat3_apply(turn, vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root));
-        v->p = (Vec3){p.x + fighter->x, p.y - fighter->height, p.z};
+        v->p = (Vec3){p.x + fighter_x(fighter), p.y - fighter_height(fighter), p.z + fighter_z(fighter)};
         v->normal = mat3_apply(turn, mat3_apply(bones[n].rotation, v->normal));
       }
       PUSH(triangles, t);
@@ -162,10 +162,10 @@ static void round_intro(Canvas *cv, const Hud *hud, int round) {
     font_draw(&hud->font, cv, x, 216, number, scale);
 }
 
-static void bar(Canvas *cv, const Geometry *font, int health, Rect r, bool right) {
+static void bar(Canvas *cv, const Geometry *font, q16 health, Rect r, bool right) {
   const Sprite *s = &font->sprites.data[25];
   canvas_blit(cv, &font->textures.data[s->texture], (Rect){s->u, s->v, s->w, 8}, r, right);
-  int inner = r.w - 6, missing = inner * (100 - health) / 100;
+  int inner = r.w - 6, missing = (int)((int64_t)inner * (Q16_ONE - health) / Q16_ONE);
   canvas_rect(cv, (Rect){right ? r.x + 3 : r.x + r.w - 3 - missing, r.y + 3, missing, r.h - 6}, 0xff292320);
 }
 
@@ -181,7 +181,8 @@ void draw_sprite(Canvas *cv, const Geometry *geo, int index, Rect dst, bool flip
 void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused) {
   canvas_clear(cv);
   const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
-  Camera camera = {(a->x + b->x) * .25f, fmaxf(7.5f, fabsf(a->x - b->x) * .85f + 3.f), (float)cv->w * .95f, cv->w, cv->h};
+  float ax = fighter_x(a), bx = fighter_x(b);
+  Camera camera = {(ax + bx) * .25f, fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f), (float)cv->w * .95f, cv->w, cv->h};
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
   Triangles fighters[] = {fighter_geometry(assets, a), fighter_geometry(assets, b)};

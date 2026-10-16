@@ -96,12 +96,12 @@ void input_cpu(const Battle *battle, int player, Input *out) {
   memset(out, 0, sizeof *out);
   if (battle->phase != PHASE_FIGHT)
     return;
-  distance = fabsf(fighter->x - other->x);
+  distance = fabsf(fighter_x(fighter) - fighter_x(other));
   cycle = (int)((battle->ticks + (uint64_t)player * 17u) % 120u);
   if (distance > 1.05f) {
-    if (fighter->x > other->x)
+    if (fighter_x(fighter) > fighter_x(other))
       hold(out, BUTTON_LEFT);
-    if (fighter->x < other->x)
+    if (fighter_x(fighter) < fighter_x(other))
       hold(out, BUTTON_RIGHT);
     if (distance > 3.f)
       hold(out, BUTTON_RUN);

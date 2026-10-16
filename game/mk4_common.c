@@ -55,4 +55,6 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = press_punch, [BUTTON_
 
 const Controls mk4_controls = {NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping}};
 
-const Motion mk4_motion = {2.5f, 4.5f, 6.8f, 15.f};
+/* Walk and run keep the prototype's 2.5 and 4.5 units/s until their retail
+ * loops are researched. The jump is the retail straight jump 0x46f7e0. */
+const Motion mk4_motion = {0xaaa, 0x1333, 0x30a3, 0x28f};

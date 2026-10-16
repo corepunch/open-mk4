@@ -249,8 +249,8 @@ int main(int argc, char **argv) {
 
   if (shot != NULL)
     save_bmp(&cv, shot);
-  printf("Rendered %d frames; simulated %llu ticks; health %d / %d; round %d\n", rendered, (unsigned long long)battle.ticks, battle.fighters[0].health,
-      battle.fighters[1].health, battle.round);
+  printf("Rendered %d frames; simulated %llu ticks; health %.4f / %.4f; round %d\n", rendered, (unsigned long long)battle.ticks,
+      q16_float(battle.fighters[0].health), q16_float(battle.fighters[1].health), battle.round);
   sdl_app_free(&app);
   canvas_free(&cv);
   assets_free(&assets);

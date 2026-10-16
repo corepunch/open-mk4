@@ -13,12 +13,12 @@ const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter) {
 }
 
 float fighter_distance(const Battle *battle, const Fighter *fighter) {
-  return fabsf(fighter_opponent(battle, fighter)->x - fighter->x);
+  return fabsf(fighter_x(fighter_opponent(battle, fighter)) - fighter_x(fighter));
 }
 
 /* 0x48ebd0: the raw switch pointing away from the opponent is held. */
 bool fighter_holds_back(const Battle *battle, const Fighter *fighter) {
-  bool facing_left = fighter_opponent(battle, fighter)->x < fighter->x;
+  bool facing_left = fighter_opponent(battle, fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
   return (fighter->held & BUTTON_BIT(facing_left ? BUTTON_RIGHT : BUTTON_LEFT)) != 0;
 }
 
@@ -32,7 +32,7 @@ void fighter_interrupt(Fighter *fighter, FighterFn entry) {
 }
 
 static Button resolve_token(const Battle *battle, const Fighter *fighter, CommandToken token) {
-  bool facing_left = fighter_opponent(battle, fighter)->x < fighter->x;
+  bool facing_left = fighter_opponent(battle, fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
   switch (token) {
     case TOKEN_UP:
       return BUTTON_UP;
@@ -71,10 +71,10 @@ static const CommandDef *match_command(const Battle *battle, const Fighter *figh
         return NULL;
       }
     }
-    if (!(command->flags & CMD_AIR) && !(fighter->flags & FF_FOLLOW_UP) && fighter->height != 0.f) {
+    if (!(command->flags & CMD_AIR) && !(fighter->flags & FF_FOLLOW_UP) && fighter_airborne(fighter)) {
       continue;
     }
-    if (fighter->flags & FF_BUSY) {
+    if (fighter->flags & (FF_BUSY | FF_REACTING)) {
       return NULL;
     }
     if (command->predicate != NULL && !command->predicate(battle, fighter)) {

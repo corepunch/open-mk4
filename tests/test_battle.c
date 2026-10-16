@@ -14,8 +14,8 @@ static Battle fight(float distance) {
   Battle battle;
   battle_init(&battle, 0, 4);
   battle.phase = PHASE_FIGHT;
-  battle.fighters[0].x = -distance * 0.5f;
-  battle.fighters[1].x = distance * 0.5f;
+  battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * 0.5f * Q16_ONE);
+  battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * 0.5f * Q16_ONE);
   return battle;
 }
 
@@ -68,7 +68,7 @@ static void check_roster(void) {
   check(goro->moves[S_CROUCH]->first > goro->moves[S_CROUCH]->last, "Goro's duck plays his rise backwards");
   check(roster_clip(roster_def(13), S_THROW, 0) == 83, "Jax throw from script 0x4de4f0");
   check(roster_clip(human, S_VICTORY, 0) == 115 && (human->moves[S_VICTORY]->flags & SF_HOLD), "Scorpion holds his 0x4e6a44 win pose");
-  check(human->moves[S_PUNCH]->damage == 7, "Punch damage row");
+  check(human->moves[S_PUNCH]->flags & SF_RECORD, "Scorpion uses script attack records");
   check(human->moves[S_BLOCK]->flags & SF_HOLD, "Block holds its last frame");
   check(human->moves[S_SWEEP]->flags & SF_LOW, "Sweep is a low");
   check(human->moves[S_THROW]->flags & SF_UNBLOCKABLE, "Throw is unblockable");
@@ -117,11 +117,11 @@ static void check_original_kicks(void) {
     in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
     battle_step(&battle, in);
     advance_ticks(&battle, 11, NULL);
-    check(battle.fighters[1 - player].health == 100, "Kick contact started before retail query");
+    check(battle.fighters[1 - player].health == Q16_ONE, "Kick contact started before retail query");
     advance_ticks(&battle, 1, NULL);
-    check(battle.fighters[1 - player].health == 88, "Kick missed its first retail contact step");
+    check(battle.fighters[1 - player].health == Q16_ONE - (player == 0 ? 0x2147 : 12 * Q16_ONE / 100), "Kick missed its first retail contact step");
     advance_ticks(&battle, 2, NULL);
-    check(battle.fighters[1 - player].health == 88, "Kick connected more than once");
+    check(battle.fighters[1 - player].health == Q16_ONE - (player == 0 ? 0x2147 : 12 * Q16_ONE / 100), "Kick connected more than once");
   }
 }
 
@@ -184,24 +184,24 @@ static void check_sequence_events(void) {
       {0, sequence_event},
       {2, sequence_event},
   };
-  static const MoveSequence sequence = {segments, 2, events, 2, 3, sequence_end};
+  static const MoveSequence sequence = {segments, 2, events, 2, 3, sequence_end, NULL};
   static const MoveDef move = {.clip = 294, .flags = SF_LOCK, .sequence = &sequence};
   Battle battle = fight(4.f);
   Fighter *fighter = &battle.fighters[0];
   fighter_start_move(&battle, fighter, S_PUNCH, &move);
-  check(fighter->health == 99, "Entry frame event missing");
+  check(fighter->health == Q16_ONE - 1, "Entry frame event missing");
   for (int i = 0; i < 5; ++i) {
     check(fighter_frame(fighter, 23) == 0, "Unexpected entry sample");
   }
-  check(fighter->health == 99, "Rendering/sample reads repeated a frame event");
+  check(fighter->health == Q16_ONE - 1, "Rendering/sample reads repeated a frame event");
   advance_ticks(&battle, 1, NULL);
-  check(fighter->health == 99, "Event fired on empty frame");
+  check(fighter->health == Q16_ONE - 1, "Event fired on empty frame");
   advance_ticks(&battle, 1, NULL);
-  check(fighter->health == 98, "Repeated sample lost its own frame event");
+  check(fighter->health == Q16_ONE - 2, "Repeated sample lost its own frame event");
   advance_ticks(&battle, 1, NULL);
   check(fighter->state == S_IDLE, "Sequence did not transition through its end callback");
   advance_ticks(&battle, 5, NULL);
-  check(fighter->health == 98, "Completed sequence kept firing events");
+  check(fighter->health == Q16_ONE - 2, "Completed sequence kept firing events");
 }
 
 static void check_scorpion_contact_branches(void) {
@@ -232,7 +232,7 @@ static void check_scorpion_contact_branches(void) {
     check(fighter_move(fighter)->clip == 295, "Jab repeat failed at its native branch");
     fighter_enter_state(&battle, fighter, S_HIT);
     advance_ticks(&battle, 30, NULL);
-    check(fighter->state == S_IDLE && fighter->after_contact == NULL && fighter->buffered == 0, "Interrupted jab retained a continuation or buffered repeat");
+    check(fighter->state == S_IDLE && fighter->pending == NULL && fighter->buffered == 0, "Interrupted jab retained a continuation or buffered repeat");
   }
 }
 
@@ -277,47 +277,48 @@ int main(void) {
   {
     Battle battle = fight(1.f);
     do_attack(&battle, S_PUNCH, false, false);
-    check(battle.fighters[1].health == 93, "Punch must connect once");
+    check(battle.fighters[1].health == Q16_ONE - 0xa3d, "Punch must connect once");
     advance_ticks(&battle, 30, NULL);
-    check(battle.fighters[1].health == 93, "Repeated hit during recovery");
+    check(battle.fighters[1].health == Q16_ONE - 0xa3d, "Repeated hit during recovery");
   }
   {
     Battle battle = fight(3);
     do_attack(&battle, S_KICK, false, false);
-    check(battle.fighters[1].health == 100, "Out-of-range attack connects");
+    check(battle.fighters[1].health == Q16_ONE, "Out-of-range attack connects");
   }
   {
     Battle battle = fight(1.f);
     do_attack(&battle, S_PUNCH, true, false);
-    check(battle.fighters[1].health == 100 && battle.effects[0].blocked, "Blocking fails");
+    check(battle.fighters[1].health == Q16_ONE - q16_mul(0xa3d, 0x3333) && battle.effects[0].blocked, "Blocking fails");
   }
   {
     Battle battle = fight(1.f);
     do_attack(&battle, S_SWEEP, true, false);
-    check(battle.fighters[1].health == 90, "Standing guard should lose to sweep");
+    check(battle.fighters[1].health == Q16_ONE - 0x23d7, "Standing guard should lose to sweep");
   }
   {
     Battle battle = fight(1.f);
     do_attack(&battle, S_SWEEP, true, true);
-    check(battle.fighters[1].health == 100, "Crouch guard fails against sweep");
+    check(battle.fighters[1].health == Q16_ONE - q16_mul(0x23d7, 0x3333), "Crouch guard fails against sweep");
   }
   {
     Battle battle = fight(0.6f);
     do_attack(&battle, S_THROW, true, false);
-    check(battle.fighters[1].health == 86, "Throw should beat guard");
+    check(battle.fighters[1].health == Q16_ONE - 14 * Q16_ONE / 100, "Throw should beat guard");
   }
   {
     Battle battle = fight(1.f);
-    battle.fighters[1].height = 1.5f;
+    battle.fighters[1].body.pos[AXIS_Y] -= 2 * Q16_ONE;
     do_attack(&battle, S_PUNCH, false, false);
-    check(battle.fighters[1].health == 100, "Ground punch hits above its vertical reach");
+    check(battle.fighters[1].health == Q16_ONE, "Ground punch hits above its vertical reach");
   }
   {
     Battle battle = fight(1.f);
     do_attack(&battle, S_UPPERCUT, false, false);
-    check(battle.fighters[1].health == 82 && battle.fighters[1].state == S_KNOCKDOWN && battle.fighters[1].height > 0, "Uppercut does not launch");
+    check(battle.fighters[1].health == Q16_ONE - 0x28f5 && battle.fighters[1].state == S_KNOCKDOWN && fighter_airborne(&battle.fighters[1]),
+        "Uppercut does not launch");
     advance_ticks(&battle, 100, NULL);
-    check(battle.fighters[1].height == 0 && battle.fighters[1].state == S_IDLE, "Knockdown never recovers");
+    check(!fighter_airborne(&battle.fighters[1]) && battle.fighters[1].state == S_IDLE, "Knockdown never recovers");
   }
   {
     Battle battle = fight(1.f);
@@ -327,25 +328,34 @@ int main(void) {
     in[0].held = in[1].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
     battle_step(&battle, in);
     advance_ticks(&battle, 9, NULL);
-    check(battle.fighters[0].health == 93 && battle.fighters[1].health == 93, "Simultaneous attacks must trade");
+    check(battle.fighters[0].health == Q16_ONE && battle.fighters[1].health == Q16_ONE - 0xa3d, "Script contacts use stable fighter order");
   }
   {
     Battle battle = fight(1.f);
-    battle.fighters[1].health = 7;
+    battle.fighters[1].health = 0xa3d;
     do_attack(&battle, S_PUNCH, false, false);
     check(battle.phase == PHASE_ROUND_OVER && battle.winner == 0 && battle.fighters[0].wins == 1, "KO/round award failed");
     advance_ticks(&battle, 180, NULL);
-    check(battle.phase == PHASE_READY && battle.round == 2 && battle.fighters[1].health == 100 && battle.fighters[0].wins == 1, "Next round reset failed");
+    check(battle.phase == PHASE_READY && battle.round == 2 && battle.fighters[1].health == Q16_ONE && battle.fighters[0].wins == 1, "Next round reset failed");
     battle.phase = PHASE_FIGHT;
-    battle.fighters[0].x = -0.5f;
-    battle.fighters[1].x = 0.5f;
-    battle.fighters[1].health = 7;
+    battle.fighters[0].body.pos[AXIS_X] = -Q16_ONE / 2;
+    battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 2;
+    battle.fighters[1].health = 0xa3d;
     do_attack(&battle, S_PUNCH, false, false);
     check(battle.phase == PHASE_MATCH_OVER && battle.fighters[0].wins == 2, "Best of three match failed");
     advance_ticks(&battle, 300, NULL);
     check(battle.phase == PHASE_MATCH_OVER, "Match result should wait for rematch");
     battle_reset_match(&battle);
     check(battle.round == 1 && battle.fighters[0].wins == 0, "Rematch failed");
+  }
+  {
+    Battle battle = fight(1.f);
+    battle.fighters[1].health = 0x28f5;
+    do_attack(&battle, S_UPPERCUT, false, false);
+    check(battle.phase == PHASE_ROUND_OVER, "Lethal uppercut must end the round");
+    advance_ticks(&battle, 100, NULL);
+    check(!fighter_airborne(&battle.fighters[1]) && fighter_sample(&battle.fighters[1]) == 109,
+        "KO must continue the uppercut landing sequence and hold the final pose");
   }
   {
     Battle battle = fight(1.f);
@@ -367,7 +377,7 @@ int main(void) {
     in[0].held = BUTTON_BIT(BUTTON_UP);
     battle_step(&battle, in);
     advance_ticks(&battle, 90, NULL);
-    check(battle.fighters[0].height == 0 && battle.fighters[0].velocity == 0, "Jump never lands");
+    check(!fighter_airborne(&battle.fighters[0]) && battle.fighters[0].body.vel[AXIS_Y] == 0, "Jump never lands");
   }
   {
     Battle battle = fight(1.f);
@@ -376,15 +386,15 @@ int main(void) {
     in[0].held = BUTTON_BIT(BUTTON_RIGHT);
     in[1].held = BUTTON_BIT(BUTTON_LEFT);
     advance_ticks(&battle, 600, in);
-    check(fabsf(battle.fighters[0].x - battle.fighters[1].x) >= 0.699f, "Bodies overlap");
+    check(fabsf(fighter_x(&battle.fighters[0]) - fighter_x(&battle.fighters[1])) >= 0.499f, "Bodies overlap");
     in[0].held = BUTTON_BIT(BUTTON_LEFT);
     advance_ticks(&battle, 600, in);
     for (i = 0; i < 2; ++i)
-      check(fabsf(battle.fighters[i].x) <= battle.wall, "Arena wall violated");
+      check(fabsf(fighter_x(&battle.fighters[i])) <= q16_float(battle.arena_radius), "Arena wall violated");
   }
   {
     Battle battle = fight(1.f);
-    int changes = 0, old = 200, i;
+    int changes = 0, old = 2 * Q16_ONE, i;
     for (i = 0; i < 18000 && battle.phase != PHASE_MATCH_OVER; ++i) {
       Input in[2];
       int sum;
@@ -399,6 +409,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

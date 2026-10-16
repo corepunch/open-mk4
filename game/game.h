@@ -20,6 +20,20 @@
 #define TICK_SECONDS (1.f / 60.f)
 #define CLIP_ASSET_IDLE (-1)
 
+/* Retail world values are signed Q16: 1.0 is 0x10000, one mesh unit. */
+typedef int32_t q16;
+#define Q16_ONE 0x10000
+
+/* Signed product with retail rounding: (a * b) >> 16, toward minus infinity. */
+static inline q16 q16_mul(q16 a, q16 b) {
+  int64_t product = (int64_t)a * b;
+  return (q16)(product >= 0 ? product / Q16_ONE : -((-product + Q16_ONE - 1) / Q16_ONE));
+}
+
+static inline float q16_float(q16 value) {
+  return (float)value / (float)Q16_ONE;
+}
+
 typedef enum GameId {
   GAME_MK4 = 0,
   GAME_WARGODS = 1
@@ -101,7 +115,7 @@ enum {
   SF_REACTION = 1u << 5,
   SF_WAIT_LAND = 1u << 6,
   SF_HOLD = 1u << 7,
-  SF_SCRIPT_CONTACT = 1u << 8 /* sparse events request contact instead of an active interval */
+  SF_RECORD = 1u << 8 /* move events query retail attack records; the approximate resolver skips it */
 };
 
 /* MoveDef.last value for the clip's final frame. */
@@ -116,16 +130,31 @@ typedef struct MoveDef {
   int clip;
   int first, last;
   int startup, active, recovery;
-  int damage, stun;
+  int damage, stun; /* approximate moves: damage in percent of full health */
   float reach, push;
   unsigned flags;
   const MoveSequence *sequence;
+  int action; /* retail action code at controller +0x74; 0 uses the state default */
 } MoveDef;
 
+/* Per-tick Q16 movement values. */
 typedef struct Motion {
-  float walk, run, jump_velocity, gravity;
+  q16 walk, run, jump_velocity, gravity;
 } Motion;
 
+/* A retail attack record (6 words). The box is relative to the attacker's
+ * origin along the attacker-to-victim axis: X spans [reach - length, reach]
+ * when facing the victim, Y spans [top, top + height] (Y down). */
+enum {
+  ATTACK_LOW = 1,  /* blocked only with down held */
+  ATTACK_MARK = 2, /* sets the victim's FF_MARK */
+};
+
+typedef struct AttackRecord {
+  q16 reach, top, length, height;
+  uint8_t hit, air, blocked, flags; /* reaction ids for hit / air hit / block */
+  q16 damage;                       /* fraction of full health */
+} AttackRecord;
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
@@ -195,6 +224,10 @@ typedef struct MoveEvent {
   FighterFn think;
 } MoveEvent;
 
+typedef bool (*FighterTest)(const Battle *battle, const Fighter *fighter);
+
+/* until, when set, holds the last sample after count ticks until it holds;
+ * a retail script wait such as "until landed". */
 struct MoveSequence {
   const MoveSegment *segments;
   int segment_count;
@@ -202,6 +235,7 @@ struct MoveSequence {
   int event_count;
   int count;
   FighterFn end;
+  FighterTest until;
 };
 
 typedef struct CharacterDef {
@@ -213,6 +247,7 @@ typedef struct CharacterDef {
   int move_count;
   const Controls *controls;
   const FighterFn *enter; /* optional move_count callbacks; NULL entries use the default move */
+  q16 ground;             /* retail standing group Y: the rig root's Y translation (soles at 0) */
 } CharacterDef;
 
 typedef enum Phase {
@@ -237,26 +272,56 @@ typedef struct InputHistory {
   uint64_t tick[INPUT_HISTORY];
 } InputHistory;
 
+/* Retail group +0x40 bits. */
 enum {
-  FF_BUSY = 1u << 0,     /* retail group flags40 0x001: special commands rejected */
-  FF_FOLLOW_UP = 1u << 9 /* retail 0x200: commands allowed off the ground */
+  FF_BUSY = 0x001,         /* special commands rejected; a human cannot block */
+  FF_WEAPON_LOST = 0x002,  /* draw-weapon predicate fails (HYPOTHESIS) */
+  FF_REACTING = 0x004,     /* in a hit reaction; commands rejected */
+  FF_NO_GUARD = 0x008,     /* contacts skip the block test; back is not held */
+  FF_MARK = 0x010,         /* copied from the last attack record's MARK bit */
+  FF_UNTOUCHABLE = 0x020,  /* contacts are ignored */
+  FF_TELEPORTING = 0x040,  /* camera ignores this fighter */
+  FF_FOLLOW_UP = 0x200,    /* commands allowed off the ground */
+  FF_NEUTRAL_CLEAR = 0x2e8 /* bits cleared by the return to neutral 0x48e080 */
+};
+
+/* Retail group motion: Q16 position (+0x54, Y down), velocity (+0x6c),
+ * per-tick gravity (+0x4c) and ground (+0x48). physics is the +0x44
+ * callback run by the world pump; on_land is the controller's one-shot
+ * landing continuation. */
+typedef struct Body {
+  q16 pos[3], vel[3];
+  q16 gravity, ground;
+  q16 last_inside[3]; /* last position inside the arena circle */
+  FighterFn physics;
+  FighterFn on_land;
+} Body;
+
+enum {
+  AXIS_X,
+  AXIS_Y,
+  AXIS_Z
 };
 
 struct Fighter {
   int roster;
-  int health, wins, facing, ticks;
+  int wins, facing, ticks;
   int state;
-  float x, height, velocity;
+  Body body;
+  q16 health;       /* 0x10000 is full */
+  int hits;         /* controller +0x7c: hits taken in the current combo */
+  q16 damage_total; /* controller +0x80 */
+  q16 damage_scale; /* 0x5347a4 / 0x534834 */
+  int action;       /* controller +0x74 */
+  bool human;       /* 0x5347c8 / 0x532248: block from switches, not action codes */
   bool connected, crouching;
   const MoveDef *current_move;
   unsigned buffered; /* pressed buttons since the current move phase began */
   int move_loops;
   ContactResult contact;
   int contact_tick;
-  bool contact_ready;
-  FighterFn after_contact; /* one-shot continuation after simultaneous contact resolution */
-  unsigned held, prev[2];  /* switch samples for the two-sample press rule */
-  unsigned pressed;        /* presses detected this tick */
+  unsigned held, prev[2]; /* switch samples for the two-sample press rule */
+  unsigned pressed;       /* presses detected this tick */
   InputHistory directions;
   uint64_t latch[BUTTON_COUNT]; /* tick of the last press; HK is never latched */
   const ButtonTable *buttons;   /* current stance table; NULL while locked */
@@ -276,7 +341,12 @@ struct Battle {
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
   uint64_t ticks;
-  float wall;
+  q16 arena_radius;
+  q16 axis[2];       /* 0x530238: unit X/Z from P1 toward P2, previous world pump */
+  q16 distance;      /* 0x53019c */
+  int ko_winner;     /* 0x532354: 1 or 2 after a KO */
+  bool contacts_off; /* 0x527ae4 */
+  bool contacted;    /* 0x532358: any contact this round */
 };
 
 void input_bind_player(InputDevice *device, int player);
@@ -294,6 +364,17 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
 void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
 void fighter_step_sequence(Battle *battle, Fighter *fighter);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
+float fighter_x(const Fighter *fighter);
+float fighter_z(const Fighter *fighter);
+float fighter_height(const Fighter *fighter);
+bool fighter_airborne(const Fighter *fighter);
+void fighter_neutral(Fighter *fighter);
+q16 fighter_axis(const Battle *battle, const Fighter *fighter, int axis);
+void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed);
+ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record);
+void battle_damage(Battle *battle, Fighter *victim, q16 damage);
+void battle_react(Battle *battle, Fighter *victim, int reaction);
+void battle_world(Battle *battle);
 void fighter_interrupt(Fighter *fighter, FighterFn entry);
 void fighter_enter_stance(Fighter *fighter, Stance stance);
 const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter);
@@ -301,6 +382,7 @@ float fighter_distance(const Battle *battle, const Fighter *fighter);
 bool fighter_holds_back(const Battle *battle, const Fighter *fighter);
 void fighter_press(Battle *battle, Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
+int fighter_sample(const Fighter *fighter);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

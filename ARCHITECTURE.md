@@ -170,3 +170,22 @@ Validation of the migration:
 - All decoded-frame text and the gallery/fight BMPs are byte-identical to the
   pre-migration C++ implementation. The 360-frame fight still simulates 360
   ticks and finishes with health 40/100 in round 1.
+
+## Script-first port policy (current)
+
+Character work starts with `build/retail-disassembly/scripts/` and the native
+helpers those scripts call. The goal is equivalent commands, animation phases,
+branches and combat balance in our own procedural C engine, not executable or
+per-tick emulator identity. Historical alignment statements above describe earlier
+checkpoints and are not proof of the current port. Do not add retail execution
+recorders or raw JSON traces for character implementation.
+
+The shared simulation now uses Q16 per-tick bodies and fractional health, attack
+records, and explicit reaction continuations. Collision uses our fixed standing
+and crouching gameplay hulls, independent of rendered animation joints. Script
+contacts resolve in stable player order; they can interrupt the next fighter
+before its update. Approximate roster moves keep their earlier interval-based
+resolver. This mixed roster is transitional, not a claim of retail engine identity.
+Reaction sequences continue after a KO so landing/getup branches can settle.
+Tests cover our gameplay rules and existing compact animation fixtures without
+executing the retail EXE.
