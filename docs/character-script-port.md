@@ -46,7 +46,8 @@ The working implementation is `game/c_scorpion.c` (the existing filename).
 | Fire | D,F,LP, normal/follow-up playback, one active query, 12% damage, recovery |
 | Sword | Draw/follow-up draw, HP/LP and back slashes, held/steered spin with recoil, armed air punches, throw, disarm, resting pickup and round reset |
 | Air normals | HP/LP, straight and diagonal kicks, extend/hold/retract, contact freezes, HP-to-LP/kick follow-ups and landing |
-| Remaining ground normals/combos, air throw, fatalities | Not ported yet; do not label Scorpion complete |
+| Ground normals/combos | Far HP repetition, close HP/HK and their distinct cancel tables, combo HP, LK, crouching punches/kicks and roundhouse |
+| Air throw, fatalities | Not ported yet; do not label Scorpion complete |
 
 Spear sources: scripts `0x4ed448`, `0x4ed4a8`; native `0x49a6a0`,
 `0x49b170`, `0x487350`, `0x487420`; contact record `0x4ebeb8`.
@@ -67,5 +68,5 @@ silently synthesized retail behavior.
 Air attack sources: scripts `0x4e6658`, `0x4e6710`, `0x4e61f8`, `0x4e6500`,
 `0x4e63d8`; native contact continuations `0x46e7c0`, `0x46cb10`, `0x46ef10`,
 `0x46e6b0`, `0x46e230`. Low HP/straight-kick contacts expose the current ground
-button table; its close-range combo selection still needs translation. Diagonal
+button table; its close-range combo selection uses the ground entry predicates. Diagonal
 jump classification uses horizontal motion in our current jump controller.

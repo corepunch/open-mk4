@@ -29,14 +29,14 @@ static int victim_action(const Battle *battle, const Fighter *fighter) {
 
 /* 0x46ddd0: one query per strike visit, skipped against a crouching victim
  * (0x2001), actions 0x106/0x107, or an early sweep (0x10c before sample 5).
- * The 0x102 gate reads victim +0x5c, which is not modeled. */
+ * The 0x102 gate is the low-kick crouching interval (native 0x46a970). */
 static void scorpion_jab_contact(Battle *battle, Fighter *fighter) {
   const Fighter *victim = fighter_opponent(battle, fighter);
   int action = victim->action;
   if (fighter->connected || action == 0x2001 || action == 0x106 || action == 0x107) {
     return;
   }
-  if (action == 0x10c && fighter_sample(victim) < 5) {
+  if ((action == 0x10c && fighter_sample(victim) < 5) || (action == 0x102 && victim->ticks >= 7 && victim->ticks < 10)) {
     return;
   }
   battle_contact(battle, fighter, &jab_record);
@@ -536,14 +536,222 @@ static bool can_weapon(const Battle *battle, const Fighter *fighter);
 static bool can_pickup(const Battle *battle, const Fighter *fighter);
 static void scorpion_pickup(Battle *battle, Fighter *fighter);
 
+/* Ground scripts and their native tails: 4e6d08/46a8d0, 4e60b8,
+ * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69b0/46c2c0,
+ * 4e6190/46bb60 and 4e6844/46f220. Times are our script ticks. */
+enum {
+  G_LOW_KICK,
+  G_CROUCH_LP,
+  G_CROUCH_LK,
+  G_CROUCH_HK,
+  G_CLOSE_HP,
+  G_COMBO_HP,
+  G_CLOSE_HK,
+  G_ROUNDHOUSE
+};
+
+typedef struct GroundAttack {
+  MoveDef move;
+  AttackRecord record;
+  int active, end_miss, end_contact;
+} GroundAttack;
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const GroundAttack ground_attacks[] = {
+  {{.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = 0x102}, {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208}, 10, 33, 36},
+  {{.clip = 260, .last = MOVE_END, .flags = RETAIL, .action = 0x107}, {65536, -3932, 42532, 20971, 29, 10, 4, 0, 2621}, 8, 19, 22},
+  {{.clip = 315, .last = MOVE_END, .flags = RETAIL, .action = 0x106}, {81264, 34734, 67502, 32768, 28, 10, 4, 0, 3932}, 9, 19, 22},
+  {{.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = 0x104}, {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864}, 9, 29, 29},
+  {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = 0x108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
+  {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = 0x108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
+  {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = 0x103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
+  {{.clip = 313, .last = MOVE_END, .flags = RETAIL, .action = 0x10d}, {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796}, 16, 33, 61},
+};
+// clang-format on
+static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
+static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
+static const MoveDef s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = 0x10a};
+static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = 0x10a};
+
+static void open_followup(Fighter *fighter, const ButtonTable *buttons) {
+  fighter->buttons = buttons;
+  fighter->flags = (fighter->flags | FF_FOLLOW_UP) & ~(unsigned)FF_BUSY;
+  fighter->action = 0x1006;
+}
+
+static void ground_attack_tick(Battle *battle, Fighter *fighter) {
+  int index = fighter->script_phase;
+  const GroundAttack *attack = &ground_attacks[index];
+  int t = fighter->ticks, fast = index == G_ROUNDHOUSE && fighter->script_timer ? 5 : 0;
+  int active = attack->active - fast;
+  bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(battle, fighter) == 0x2011;
+  if (index == G_CLOSE_HP) {
+    int action = victim_action(battle, fighter);
+    gate = action == 0x2001 || action == 0x106 || action == 0x107;
+  }
+  if (!gate && !fighter->connected && t >= active && t <= active + (index == G_ROUNDHOUSE ? 2 : 0)) {
+    if (battle_contact(battle, fighter, &attack->record) != CONTACT_MISS) {
+      if (index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CLOSE_HK) {
+        open_followup(fighter, index == G_CLOSE_HP ? &close_hp_followup : index == G_COMBO_HP ? &combo_hp_followup : &close_hk_followup);
+      }
+    }
+  }
+  if (t >= active) {
+    fighter->action = 0x1006;
+  }
+  int end = (fighter->connected ? attack->end_contact : attack->end_miss) - fast;
+  switch (index) {
+    case G_LOW_KICK: {
+      int reverse = fighter->connected ? 18 : 15;
+      fighter->sample_override = t < 9 ? mini(17, t * 2) : t < reverse ? 17 : maxi(0, 17 - t + reverse);
+      break;
+    }
+    case G_CROUCH_LP:
+    case G_CROUCH_LK: {
+      int reverse = active + (fighter->connected ? 4 : 1);
+      fighter->sample_override = t < active ? mini(9, t + (index == G_CROUCH_LP ? 2 : 1)) : maxi(0, 9 - maxi(0, t - reverse));
+      break;
+    }
+    case G_CROUCH_HK: {
+      static const int hold[] = {11, 10, 11, 12};
+      fighter->sample_override = t < 13 ? t : hold[((t - 13) / 2) % 4];
+      break;
+    }
+    case G_CLOSE_HP: {
+      int reverse = fighter->connected ? 18 : 12;
+      fighter->sample_override = t < 10 ? t : t < reverse ? 9 : maxi(0, 8 - t + reverse);
+      if (t >= reverse) {
+        fighter->buttons = NULL;
+        fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+      }
+      break;
+    }
+    case G_COMBO_HP:
+      fighter->sample_override = mini(27, t + 2 - (fighter->connected && t > active ? mini(3, t - active) : 0));
+      break;
+    case G_CLOSE_HK: {
+      int reverse = fighter->connected ? 10 : 12;
+      fighter->sample_override = t < 8 ? t + 5 : t < reverse ? 12 : maxi(0, 12 - t + reverse);
+      if (t >= reverse) {
+        fighter->buttons = NULL;
+        fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+      }
+      break;
+    }
+    case G_ROUNDHOUSE:
+      fighter->sample_override = t <= 6 ? t * 2 : t < active ? mini(21, 12 + (t - 6) * (fast ? 2 : 1)) : mini(38, 22 + t - active);
+      if (fighter->contact == CONTACT_BLOCK) {
+        end = attack->end_miss - fast;
+      }
+      break;
+  }
+  if (t >= end) {
+    scorpion_ready(battle, fighter);
+  }
+}
+
+static void ground_attack(Battle *battle, Fighter *fighter, int index) {
+  bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
+  stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  fighter_start_move(battle, fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);
+  fighter->script = ground_attack_tick;
+  fighter->script_phase = index;
+  fighter->script_timer = followup;
+  fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_COMBO_HP || index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
+}
+
+static void hp_tick(Battle *battle, Fighter *fighter) {
+  int phase = fighter->script_phase, t = fighter->ticks;
+  if (phase >= 4) {
+    fighter->sample_override = mini(phase == 4 ? 20 : 18, 11 + t);
+    if (t >= (phase == 4 ? 10 : 8)) {
+      scorpion_ready(battle, fighter);
+    }
+    return;
+  }
+  int first = phase == 0 ? 0 : phase == 1 ? 1 : phase == 2 ? 11 : 2;
+  int active = phase == 0 ? 8 : phase == 1 ? 7 : phase == 2 ? 6 : 6;
+  fighter->sample_override = phase == 2 && t == active + 2 ? 17 : first + t;
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  bool ducking_kick = victim->action == 0x102 && victim->ticks >= 7 && victim->ticks < 10;
+  if (t >= active && t <= active + 2 && !fighter->connected && !ducking_kick) {
+    battle_contact(battle, fighter, &hp_record);
+  }
+  if (t >= active + 3) {
+    bool repeat = (fighter->buffered & BUTTON_BIT(BUTTON_HIGH_PUNCH)) && (victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]) * fighter->facing >= 0;
+    int next = repeat ? (phase == 0 ? 1 : phase == 1 || phase == 3 ? 2 : 3) : phase == 0 || phase == 2 ? 4 : 5;
+    fighter_start_move(battle, fighter, S_PUNCH, next == 4 ? &s_hp : &s_hp_second);
+    fighter->script = hp_tick;
+    fighter->script_phase = next;
+    fighter->sample_override = next == 1 ? 1 : next == 3 ? 2 : 11;
+    fighter->flags &= ~(unsigned)FF_BUSY;
+  }
+}
+
+static void scorpion_hp(Battle *battle, Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  if (fighter_distance(battle, fighter) <= 0.8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    ground_attack(battle, fighter, G_CLOSE_HP);
+    return;
+  }
+  fighter_start_move(battle, fighter, S_PUNCH, &s_hp);
+  fighter->script = hp_tick;
+  fighter->sample_override = 0;
+  fighter->flags &= ~(unsigned)FF_BUSY;
+}
+
+static void scorpion_lk(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_LOW_KICK);
+}
+
+static void scorpion_crouch_lp(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_CROUCH_LP);
+}
+
+static void scorpion_crouch_lk(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_CROUCH_LK);
+}
+
+static void scorpion_crouch_hk(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_CROUCH_HK);
+}
+
+static void scorpion_combo_hp(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_COMBO_HP);
+}
+
+static void scorpion_roundhouse(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_ROUNDHOUSE);
+}
+
+static void scorpion_hk(Battle *battle, Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  if (fighter_holds_back(battle, fighter)) {
+    scorpion_roundhouse(battle, fighter);
+  } else if (fighter_distance(battle, fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != 0x4001 && victim->action != 0x4005) {
+    ground_attack(battle, fighter, G_CLOSE_HK);
+  } else {
+    scorpion_kick(battle, fighter);
+  }
+}
+
+static bool can_ground_throw(const Battle *battle, const Fighter *fighter, bool low_kick) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  int a = victim->action;
+  float distance = fighter_distance(battle, fighter);
+  return (low_kick ? distance < 0.7f : distance <= 0.7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
+         a != 0x10a && a != 0x10b && a != 0x100 && a != 0x102 && a != 0x10e && !(a >= 0x111 && a <= 0x113);
+}
+
 static void press_jab(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_hp : scorpion_jab);
+  fighter_interrupt(fighter, fighter->armed ? sword_hp : scorpion_hp);
 }
 
 static void press_kick(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, scorpion_kick);
+  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? scorpion_roundhouse : scorpion_hk);
 }
 
 static void enter_uppercut(Battle *battle, Fighter *fighter) {
@@ -559,11 +767,11 @@ static void enter_throw(Battle *battle, Fighter *fighter) {
 }
 
 static void press_lp(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(battle, fighter) <= 0.7f ? enter_throw : fighter->armed ? sword_lp : scorpion_jab);
+  fighter_interrupt(fighter, can_ground_throw(battle, fighter, false) ? enter_throw : fighter->armed ? sword_lp : scorpion_jab);
 }
 
 static void press_lk(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : scorpion_kick);
+  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : can_ground_throw(battle, fighter, true) ? enter_throw : scorpion_lk);
 }
 
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
@@ -715,7 +923,7 @@ static const ButtonTable air_followup = {
 
 static void press_crouch_lp(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_spin : enter_uppercut);
+  fighter_interrupt(fighter, fighter->armed ? sword_spin : scorpion_crouch_lp);
 }
 
 static void press_uppercut(Battle *battle, Fighter *fighter) {
@@ -723,10 +931,40 @@ static void press_uppercut(Battle *battle, Fighter *fighter) {
   fighter_interrupt(fighter, enter_uppercut);
 }
 
-static void press_sweep(Battle *battle, Fighter *fighter) {
+static void press_crouch_hk(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, enter_sweep);
+  fighter_interrupt(fighter, scorpion_crouch_hk);
 }
+
+static void press_crouch_lk(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, scorpion_crouch_lk);
+}
+
+static void press_combo_hp(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, fighter->armed ? sword_hp : scorpion_combo_hp);
+}
+
+static void press_combo_hk(Battle *battle, Fighter *fighter) {
+  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? scorpion_roundhouse : scorpion_kick);
+}
+
+static void press_knee_hp(Battle *battle, Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  if ((victim->action == 0x4004 || victim->hits > 1) && fighter_height(fighter) <= 0.5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN))) {
+    fighter_interrupt(fighter, enter_uppercut);
+  } else {
+    press_jab(battle, fighter);
+  }
+}
+
+static const ButtonTable close_hp_followup = {
+    {[BUTTON_HIGH_PUNCH] = press_combo_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
+static const ButtonTable combo_hp_followup = {
+    {[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
+static const ButtonTable close_hk_followup = {
+    {[BUTTON_HIGH_PUNCH] = press_knee_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_combo_hk, [BUTTON_LOW_KICK] = press_lk}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
@@ -737,7 +975,7 @@ static const CommandDef commands[] = {
   {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, scorpion_pickup},
 };
 static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
-static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_crouch_lp, [BUTTON_HIGH_KICK] = press_sweep, [BUTTON_LOW_KICK] = press_sweep}};
+static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_crouch_lp, [BUTTON_HIGH_KICK] = press_crouch_hk, [BUTTON_LOW_KICK] = press_crouch_lk}};
 static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = press_air_hp, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_hk, [BUTTON_LOW_KICK] = press_air_lk}};
 static const Controls scorpion_controls = {commands, COUNT(commands), {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
 // clang-format on

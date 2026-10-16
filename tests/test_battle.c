@@ -34,7 +34,7 @@ static void do_attack(Battle *battle, int state, bool guard, bool crouch) {
     in[1].held |= BUTTON_BIT(BUTTON_DOWN);
   /* Fighter 0 stands left of fighter 1, so back is left. */
   if (state == S_PUNCH)
-    in[0].held |= BUTTON_BIT(BUTTON_HIGH_PUNCH);
+    in[0].held |= BUTTON_BIT(BUTTON_LOW_PUNCH);
   if (state == S_KICK)
     in[0].held |= BUTTON_BIT(BUTTON_HIGH_KICK);
   if (state == S_SWEEP)
@@ -440,7 +440,52 @@ static void check_air_attacks(void) {
   }
 }
 
+static void check_ground_normals(void) {
+  const unsigned buttons[] = {BUTTON_BIT(BUTTON_HIGH_PUNCH), BUTTON_BIT(BUTTON_LOW_KICK), BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LEFT),
+      BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH), BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK),
+      BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK)};
+  const int clips[] = {296, 67, 313, 260, 315, 54};
+  for (int i = 0; i < 6; ++i) {
+    Battle battle = fight(4.f);
+    battle_step(&battle, (Input[2]){{buttons[i]}, {0}});
+    advance_ticks(&battle, 1, NULL);
+    check(fighter_move(&battle.fighters[0])->clip == clips[i], "Ground button selects wrong script");
+    advance_ticks(&battle, 80, NULL);
+    check(battle.fighters[0].state == S_IDLE && battle.fighters[1].health == Q16_ONE, "Ground miss must recover without damage");
+  }
+  {
+    Battle battle = fight(1.f);
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_LOW_KICK)}, {0}});
+    advance_ticks(&battle, 12, NULL);
+    check(battle.fighters[1].health == Q16_ONE - 7208, "Standing LK uses its eleven-percent record");
+  }
+  {
+    Battle battle = fight(0.65f);
+    Fighter *fighter = &battle.fighters[0];
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 8, NULL);
+    check(fighter_move(fighter)->clip == 262 && (fighter->flags & FF_FOLLOW_UP), "Close HP must open its own cancel table on contact");
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 1, NULL);
+    check(fighter_move(fighter)->clip == 261, "Close HP follow-up must use combo clip 261");
+    advance_ticks(&battle, 40, NULL);
+    check(fighter->state == S_IDLE && !(fighter->flags & FF_FOLLOW_UP), "Combo must close its cancel window on return");
+  }
+  {
+    Battle battle = fight(1.f);
+    Fighter *fighter = &battle.fighters[0];
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 4, NULL);
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 7, NULL);
+    check(fighter_move(fighter)->clip == 297, "Repeated far HP must advance to its second punch clip");
+    advance_ticks(&battle, 50, NULL);
+    check(fighter->state == S_IDLE, "HP repeat must stop when presses stop");
+  }
+}
+
 int main(void) {
+  check_ground_normals();
   check_air_attacks();
   check_weapon();
   check_specials();
@@ -509,7 +554,7 @@ int main(void) {
     Input in[2] = {0};
     /* Same recovered startup: Sub-Zero's jab still uses approximate timing. */
     battle.fighters[1].roster = 0;
-    in[0].held = in[1].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
+    in[0].held = in[1].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
     battle_step(&battle, in);
     advance_ticks(&battle, 9, NULL);
     check(battle.fighters[0].health == Q16_ONE && battle.fighters[1].health == Q16_ONE - 0xa3d, "Script contacts use stable fighter order");
