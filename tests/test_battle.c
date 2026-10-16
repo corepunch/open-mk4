@@ -484,6 +484,48 @@ static void check_ground_normals(void) {
   }
 }
 
+static void check_script_reactions(void) {
+  static const int ids[] = {3, 5, 8, 10, 12, 17, 20, 21, 22, 23, 25, 27, 28, 29, 32, 38, 39, 43, 48, 49, 50, 90, 99, 100, 143, 154, 155, 156, 173};
+  for (size_t n = 0; n < sizeof ids / sizeof ids[0]; ++n) {
+    for (int air = 0; air < 2; ++air) {
+      if (air && (ids[n] < 10 || ids[n] == 143)) {
+        continue;
+      }
+      Battle battle = fight(4.f);
+      Fighter *victim = &battle.fighters[1];
+      if (air) {
+        victim->body.pos[AXIS_Y] -= Q16_ONE;
+      }
+      battle_react(&battle, victim, ids[n]);
+      advance_ticks(&battle, 1, NULL);
+      check(victim->current_move != roster_def(4)->moves[S_HIT], "Scorpion records must not use generic hitstun");
+      advance_ticks(&battle, 250, NULL);
+      if (victim->state != S_IDLE || fighter_airborne(victim)) {
+        fprintf(stderr, "reaction %d air %d state %d height %f\n", ids[n], air, victim->state, fighter_height(victim));
+      }
+      check(victim->state == S_IDLE && !fighter_airborne(victim), "Reaction must finish on the floor and restore controls");
+      check(!(victim->flags & (FF_REACTING | FF_NO_GUARD)), "Reaction must clear combo-only guard restrictions");
+    }
+  }
+  Battle battle = fight(4.f);
+  Fighter *victim = &battle.fighters[1];
+  battle_react(&battle, victim, 43);
+  advance_ticks(&battle, 1, NULL);
+  check(victim->action == 0x4002 && victim->damage_scale == 0x9999 && (victim->flags & FF_NO_GUARD), "Close punch must create its scaled combo reaction");
+  advance_ticks(&battle, 8, NULL);
+  battle_react(&battle, victim, 49);
+  advance_ticks(&battle, 1, NULL);
+  check(victim->current_move->clip == 131 && victim->body.vel[AXIS_Y] < 0, "Sword launcher must replace hitstun and launch");
+  advance_ticks(&battle, 200, NULL);
+  check(victim->state == S_IDLE && victim->damage_scale == Q16_ONE, "New reaction must own recovery and reset combo scaling");
+  battle = fight(4.f);
+  victim = &battle.fighters[1];
+  victim->crouching = true;
+  battle_react(&battle, victim, 28);
+  advance_ticks(&battle, 1, NULL);
+  check(victim->current_move->clip == 254, "Crouching victim must use the crouch reaction branch");
+}
+
 static void check_air_throw(void) {
   for (int player = 0; player < 2; ++player) {
     Battle battle;
@@ -524,6 +566,7 @@ static void check_air_throw(void) {
 }
 
 int main(void) {
+  check_script_reactions();
   check_air_throw();
   check_ground_normals();
   check_air_attacks();

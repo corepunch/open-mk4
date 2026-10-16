@@ -332,6 +332,7 @@ struct Fighter {
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
+  int reaction; /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
   bool armed, weapon_used;
   FighterFn disarm; /* character-owned weapon drop entry */

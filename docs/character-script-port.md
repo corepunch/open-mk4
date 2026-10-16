@@ -75,3 +75,13 @@ Air throw now follows scripts `0x4e5e28/0x4e5e50`: paired clips 82/202,
 28-tick capture, 13% release damage, separate falls and recovery. Attachment
 only suppresses body separation; interruption releases the victim. Getup uses
 clip 131:46–79 and returns control instead of reproducing retail task parking.
+
+Scorpion's normal, air, sword, teleport and fire contact records now select
+explicit shared reaction phases in `game/reactions.c`, including crouch branches,
+no-guard combo windows, scaling, friction, launches, landing and getup. Sources
+are the reaction table at `0x4ea4e8`, each entry's targeted native query, and its
+referenced script. The port expresses tumbles along the gameplay pair axis;
+camera roll, blood/sound helpers and retail wall-contact task dispatch are not
+recreated. The world still uses our gameplay hulls. Goro retains his separate
+animation-bank fallback. Focused tests exercise reaction recovery from ground
+and air, combo flags/scaling, crouch selection, and replacing an active reaction.

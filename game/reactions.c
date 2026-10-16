@@ -208,6 +208,169 @@ static void react_jab_hit(Battle *battle, Fighter *fighter) {
   }
 }
 
+/* Additional Scorpion record reactions. Each row names the decoded clip,
+ * pose hold, landing boundary, motion and getup; no runtime script decoding.
+ * Camera-relative tumble motion uses our pair axis and no camera roll. */
+typedef struct ReactionSpec {
+  MoveDef move;
+  int hold_at, hold_ticks, land_at, getup;
+  q16 speed, vy, gravity, scale;
+  bool friction, no_guard;
+} ReactionSpec;
+
+#define R(c, n, a) {.clip = c, .last = n, .flags = SF_LOCK, .action = a}
+// clang-format off: Keep table entries on one row, including long rows.
+static const ReactionSpec extra_reactions[256] = {
+  [10] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
+  [12] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xccc, -0x23d7, 0x20c, 0, false, false},
+  [17] = {R(134, 17, 0x4001), 6, 8, -1, 0, 0x2666, 0, 0, 0, true, false},
+  [21] = {R(311, 18, 0x4003), 4, 13, -1, 0, 0, 0, 0, 0x8000, false, true},
+  [22] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
+  [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
+  [25] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
+  [27] = {R(134, 17, 0x4001), 6, 8, -1, 0, 0x51e, 0, 0, 0x9999, false, true},
+  [28] = {R(134, 17, 0x4001), 0, 0, -1, 0, 0x1eb8, 0, 0, 0, true, false},
+  [29] = {R(134, 17, 0x4001), 0, 0, -1, 0, 0x1eb8, 0, 0, 0, true, false},
+  [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
+  [38] = {R(311, 18, 0x4003), 4, 13, -1, 0, 0, 0, 0, 0x8000, false, true},
+  [39] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
+  [43] = {R(311, 18, 0x4002), 4, 13, -1, 0, 0, 0, 0, 0x9999, false, true},
+  [48] = {R(180, 19, 0x4001), 0, 6, -1, 0, 0x3333, 0, 0, 0, true, false},
+  [49] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xa3d, -0x23d7, 0x24d, 0, false, false},
+  [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
+  [90] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
+  [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
+  [154] = {R(131, 79, 0x4003), 0, 0, 40, 0, 0x1999, -0x23d7, 0x24d, 0, false, false},
+  [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
+  [173] = {R(182, 64, 0x4001), 0, 0, -1, 0, 0x3333, 0, 0, 0, true, false},
+};
+static const MoveDef crouch_reaction = R(254, 4, 0x4001);
+static const MoveDef tumble_start = R(142, 16, 0x4003);
+static const MoveDef tumble_loop = R(141, 16, 0x4003);
+static const MoveDef tumble_land_move = R(143, 28, 0x4003);
+static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
+static const MoveDef getup_front = R(188, 15, ACTION_GETUP);
+static const MoveDef getup_side = R(185, 15, ACTION_GETUP);
+// clang-format on
+#undef R
+
+static void getup_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(fighter_move(fighter)->last, fighter->ticks);
+  if (fighter->ticks > fighter_move(fighter)->last) {
+    neutral(battle, fighter);
+  }
+}
+
+static void begin_getup(Battle *battle, Fighter *fighter, int clip) {
+  stop_sliding(battle, fighter);
+  if (fighter->health <= 0) {
+    fighter->script = NULL;
+    return;
+  }
+  if (!clip) {
+    neutral(battle, fighter);
+    return;
+  }
+  fighter_start_move(battle, fighter, S_KNOCKDOWN, clip == 188 ? &getup_front : clip == 185 ? &getup_side : &getup_back);
+  fighter->script = getup_tick;
+  fighter->sample_override = 0;
+}
+
+static void extra_reaction_tick(Battle *battle, Fighter *fighter) {
+  const ReactionSpec *spec = &extra_reactions[fighter->reaction];
+  int elapsed = fighter->script_timer++;
+  int sample = elapsed;
+  if (spec->hold_ticks) {
+    sample = elapsed < spec->hold_at ? elapsed : elapsed < spec->hold_at + spec->hold_ticks ? spec->hold_at : elapsed - spec->hold_ticks;
+  }
+  /* Low-kick/knee scripts submit samples 6..9 with two waits each. */
+  if ((fighter->reaction == 17 || fighter->reaction == 27) && elapsed >= 6) {
+    sample = elapsed < 18 ? 6 + (elapsed - 6) / 3 : elapsed - 8;
+  }
+  if (fighter->current_move == &crouch_reaction) {
+    fighter->sample_override = mini(4, elapsed);
+    if (elapsed >= 9) {
+      neutral(battle, fighter);
+    }
+    return;
+  }
+  if (spec->land_at >= 0 && sample >= spec->land_at && fighter_airborne(fighter)) {
+    sample = spec->land_at;
+    fighter->script_timer--;
+  }
+  fighter->sample_override = mini(spec->move.last, sample);
+  if (sample > spec->move.last) {
+    begin_getup(battle, fighter, spec->getup);
+  }
+}
+
+static void tumble_tick(Battle *battle, Fighter *fighter) {
+  if (fighter->current_move == &tumble_land_move) {
+    fighter->sample_override = mini(28, fighter->ticks);
+    if (fighter->ticks >= (fighter->reaction == 100 ? 49 : 37)) {
+      begin_getup(battle, fighter, fighter->reaction == 100 ? 0 : 328);
+    }
+    return;
+  }
+  fighter->sample_override = mini(16, fighter->ticks);
+  if (!fighter_airborne(fighter) && fighter->ticks >= 17) {
+    fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_land_move);
+    fighter->script = tumble_tick;
+    fighter->sample_override = 0;
+  } else if (fighter->ticks >= 17) {
+    fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_loop);
+    fighter->script = tumble_tick;
+    fighter->sample_override = 0;
+  }
+}
+
+static void react_extra(Battle *battle, Fighter *fighter) {
+  int id = fighter->reaction;
+  if (id == 20 || id == 100 || id == 156) {
+    fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_start);
+    fighter->script = tumble_tick;
+    fighter->sample_override = 0;
+    launch(battle, fighter, id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
+    return;
+  }
+  if ((id == 90 || id == 173) && fighter_airborne(fighter)) {
+    fighter->reaction = id = 10;
+  }
+  if (id == 32 && (fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666))) {
+    react_jab_hit(battle, fighter);
+    return;
+  }
+  const ReactionSpec *spec = &extra_reactions[id];
+  bool crouch = fighter->crouching && (id == 17 || id == 28 || id == 29);
+  fighter_start_move(battle, fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, crouch ? &crouch_reaction : &spec->move);
+  fighter->script = extra_reaction_tick;
+  fighter->sample_override = spec->hold_at == 4 ? 4 : 0;
+  fighter->script_timer = spec->hold_at == 4 ? 4 : 0;
+  if (spec->scale) {
+    fighter->damage_scale = spec->scale;
+  }
+  if (spec->no_guard) {
+    fighter->flags |= FF_NO_GUARD;
+  }
+  if (spec->friction) {
+    slide(battle, fighter, crouch && id == 17 ? 0x2b85 : spec->speed);
+  } else {
+    launch(battle, fighter, spec->speed, spec->vy, spec->gravity);
+  }
+  if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
+    fighter->body.gravity = 0x28f;
+  }
+}
+
+static void react_extra_block(Battle *battle, Fighter *fighter) {
+  int id = fighter->reaction;
+  fighter_start_move(battle, fighter, S_BLOCK, id == 8 ? &block_short : &block_long);
+  if (id == 3 || id == 143) {
+    fighter->action = 0x4004;
+  }
+  slide(battle, fighter, id == 8 ? 0 : id == 5 ? 0x2e14 : 0xf5c);
+}
+
 static void react_approximate(Battle *battle, Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
@@ -220,6 +383,36 @@ static void react_approximate(Battle *battle, Fighter *fighter) {
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
   [0] = react_block,
+  [3] = react_extra_block,
+  [5] = react_extra_block,
+  [8] = react_extra_block,
+  [143] = react_extra_block,
+  [10] = react_extra,
+  [12] = react_extra,
+  [17] = react_extra,
+  [20] = react_extra,
+  [21] = react_extra,
+  [22] = react_extra,
+  [23] = react_extra,
+  [25] = react_extra,
+  [27] = react_extra,
+  [28] = react_extra,
+  [29] = react_extra,
+  [32] = react_extra,
+  [38] = react_extra,
+  [39] = react_extra,
+  [43] = react_extra,
+  [48] = react_extra,
+  [49] = react_extra,
+  [50] = react_extra,
+  [90] = react_extra,
+  [99] = react_extra,
+  [100] = react_extra,
+  [154] = react_extra,
+  [155] = react_extra,
+  [156] = react_extra,
+  [173] = react_extra,
+
   [112] = react_block,
   [118] = react_block,
   [119] = react_block,
@@ -244,9 +437,11 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 50) || reaction == 70 ||
-          reaction == 90 || reaction == 155 || reaction == 156 || reaction == 173)) {
+          reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 || reaction == 156 ||
+          reaction == 173)) {
     victim->disarm(battle, victim);
   }
+  victim->reaction = reaction;
   FighterFn entry = reactions[reaction] != NULL && victim->roster != 15 ? reactions[reaction] : react_approximate;
   (void)battle;
   for (int i = 0; i < 3; ++i) {
