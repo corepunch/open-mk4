@@ -140,12 +140,15 @@ static void sequence_end(Battle *battle, Fighter *fighter) {
 }
 
 static void check_sequence_events(void) {
-  static const MoveFrame frames[] = {
-      {0, sequence_event},
-      {1, NULL},
-      {1, sequence_event},
+  static const MoveSegment segments[] = {
+      {0, 0, 1, 1},
+      {2, 1, 0, 1},
   };
-  static const MoveSequence sequence = {frames, 3, sequence_end};
+  static const MoveEvent events[] = {
+      {0, sequence_event},
+      {2, sequence_event},
+  };
+  static const MoveSequence sequence = {segments, 2, events, 2, 3, sequence_end};
   static const MoveDef move = {.clip = 294, .flags = SF_LOCK, .sequence = &sequence};
   Battle battle = fight(4.f);
   Fighter *fighter = &battle.fighters[0];

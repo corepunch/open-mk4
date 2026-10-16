@@ -5,7 +5,7 @@ netplay choices. Written against commit `117a19b` (2026-10-16), then updated
 when the match code took the data-table option.
 
 The game initially implemented the table option and now adds the callback
-boundary described below. Each `game/character_*.c` owns its immutable moves
+boundary described below. Each `game/c_*.c` owns its immutable moves
 and custom entry callbacks. `game/roster.c` registers the definitions, while
 `game/moves.c` installs `Fighter.current_move`. Shared motion and commands
 remain in `game/mk4_common.c`. `battle_step` is the shared update. Keyboard, shell keys,

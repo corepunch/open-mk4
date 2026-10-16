@@ -8,41 +8,16 @@ static void sub_zero_ready(Battle *battle, Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveFrame kick_frames[] = {
-  {0, NULL},
-  {1, NULL},
-  {2, NULL},
-  {3, NULL},
-  {4, NULL},
-  {5, NULL},
-  {6, NULL},
-  {7, NULL},
-  {8, NULL},
-  {9, NULL},
-  {10, NULL},
-  {10, NULL},
-  {11, NULL},
-  {12, NULL},
-  {12, NULL},
-  {13, NULL},
-  {15, NULL},
-  {16, NULL},
-  {17, NULL},
-  {18, NULL},
-  {19, NULL},
-  {20, NULL},
-  {21, NULL},
-  {22, NULL},
-  {23, NULL},
-  {24, NULL},
-  {25, NULL},
-  {26, NULL},
-  {27, NULL},
+static const MoveSegment kick_segments[] = {
+  {0, 0, 1, 1},
+  {11, 10, 1, 1},
+  {14, 12, 1, 1},
+  {16, 15, 1, 1},
 };
 // clang-format on
 
-static const MoveSequence kick_sequence = {
-    kick_frames, (int)(sizeof kick_frames / sizeof kick_frames[0]), sub_zero_ready};
+static const MoveSequence kick_sequence = {kick_segments,
+    (int)(sizeof kick_segments / sizeof kick_segments[0]), NULL, 0, 29, sub_zero_ready};
 
 /* Damage, stun, reach, push and other moves remain the native approximation.
  * Kick contact queries are steps 11..13 in the original no-contact trace. */

@@ -37,7 +37,7 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
-CHARACTER_SOURCES = $(wildcard game/character_*.c) game/mk4_common.c
+CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c $(CHARACTER_SOURCES)
 GAME_HEADERS = game/game.h game/mk4_characters.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)

@@ -142,13 +142,26 @@ typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
 
-typedef struct MoveFrame {
-  int sample;
+/* A playback segment starts at a move-relative tick. Sample progression is
+ * first + step * floor((tick - at) / period), until the next segment.
+ * Negative steps reverse; zero steps hold. These are sparse changes in
+ * playback policy, not one record per displayed frame. */
+typedef struct MoveSegment {
+  int at, first, step, period;
+} MoveSegment;
+
+/* at is a move-relative simulation frame, not a stored pose sample. Keeping
+ * the two clocks distinct allows an event during a hold or reverse segment. */
+typedef struct MoveEvent {
+  int at;
   FighterFn think;
-} MoveFrame;
+} MoveEvent;
 
 struct MoveSequence {
-  const MoveFrame *frames;
+  const MoveSegment *segments;
+  int segment_count;
+  const MoveEvent *events;
+  int event_count;
   int count;
   FighterFn end;
 };

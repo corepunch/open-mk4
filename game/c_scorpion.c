@@ -8,42 +8,17 @@ static void scorpion_ready(Battle *battle, Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveFrame kick_frames[] = {
-  {0, NULL},
-  {1, NULL},
-  {2, NULL},
-  {4, NULL},
-  {6, NULL},
-  {8, NULL},
-  {10, NULL},
-  {12, NULL},
-  {14, NULL},
-  {16, NULL},
-  {17, NULL},
-  {17, NULL},
-  {17, NULL},
-  {16, NULL},
-  {16, NULL},
-  {15, NULL},
-  {13, NULL},
-  {12, NULL},
-  {11, NULL},
-  {10, NULL},
-  {9, NULL},
-  {8, NULL},
-  {7, NULL},
-  {6, NULL},
-  {5, NULL},
-  {4, NULL},
-  {3, NULL},
-  {2, NULL},
-  {1, NULL},
-  {0, NULL},
+static const MoveSegment kick_segments[] = {
+  {0, 0, 1, 1},
+  {3, 4, 2, 1},
+  {10, 17, 0, 1},
+  {13, 16, -1, 2},
+  {16, 13, -1, 1},
 };
 // clang-format on
 
-static const MoveSequence kick_sequence = {
-    kick_frames, (int)(sizeof kick_frames / sizeof kick_frames[0]), scorpion_ready};
+static const MoveSequence kick_sequence = {kick_segments,
+    (int)(sizeof kick_segments / sizeof kick_segments[0]), NULL, 0, 30, scorpion_ready};
 
 /* Damage, stun, reach, push and other moves remain the native approximation.
  * Kick contact queries are steps 11..13 in the original no-contact trace. */

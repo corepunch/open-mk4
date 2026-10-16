@@ -115,13 +115,13 @@ with a diagnostic. Shadow projection reports invalid geometry through `bool`.
 The match itself is one registry of character definitions in `game/roster.c`.
 A definition names its game (`GAME_MK4` today, `GAME_WARGODS` reserved), asset,
 motion, immutable moves, command table and optional state-entry callbacks.
-Each `game/character_*.c` owns that character's moves and custom functions;
+Each `game/c_*.c` owns that character's moves and custom functions;
 `game/mk4_common.c` owns shared MK4 motion and commands. Scorpion and Sub-Zero
 have explicit jab/kick entry callbacks. Other entries select a default move
 through the shared runner. Goro names clips from his separate animation bank.
 Spawn writes the roster index and initializes `Fighter.current_move`.
 `game/moves.c` owns move entry, frame/end callbacks and sample selection.
-Scorpion and Sub-Zero high kicks now use immutable sequences measured from
+Scorpion and Sub-Zero high kicks now use sparse playback segments measured from
 the supplied x86 VM and native recovery code. Scorpion reverses to sample 0;
 Sub-Zero continues to sample 27. Their uninterrupted no-contact paths finish
 at playback steps 30 and 29. Native contact queries occur at steps 11..13;

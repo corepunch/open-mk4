@@ -94,8 +94,13 @@ These are architectural references; no Quake implementation is copied here.
 The game now implements this boundary. Each character has its own C file;
 Scorpion's `scorpion_jab` and `scorpion_kick` select named immutable moves.
 `Fighter.current_move` can point at another move without adding a roster
-branch to `battle_step`. `MoveSequence` stores displayed samples, optional
-per-frame events and an end callback. `game/moves.c` dispatches those callbacks
+branch to `battle_step`. `MoveSequence` stores sparse playback segments,
+timed events and an end callback. A segment specifies its start tick, first
+sample, signed sample step and ticks per step; it runs until the next segment.
+Scorpion's entire kick needs five segments rather than thirty sample rows.
+Events use move-relative simulation frames, separately from clip samples, so
+an event can occur during a hold or reverse passage without ambiguity.
+`game/moves.c` dispatches those callbacks
 in simulation; rendering calls the read-only `fighter_frame` accessor.
 The two kicks use the original displayed sample sequences and return steps,
 with contact eligibility at steps 11..13. Damage, reach, push and stun remain

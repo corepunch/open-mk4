@@ -5,19 +5,41 @@
 
 static void frame_event(Battle *battle, Fighter *fighter) {
   const MoveSequence *sequence = fighter_move(fighter)->sequence;
-  if (sequence != NULL && fighter->ticks >= 0 && fighter->ticks < sequence->count) {
-    FighterFn think = sequence->frames[fighter->ticks].think;
-    if (think != NULL) {
-      think(battle, fighter);
+  if (sequence != NULL) {
+    for (int i = 0; i < sequence->event_count; ++i) {
+      const MoveEvent *event = &sequence->events[i];
+      if (event->at == fighter->ticks) {
+        event->think(battle, fighter);
+        if (fighter_move(fighter)->sequence != sequence) {
+          return;
+        }
+      }
     }
   }
 }
 
 void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
-  require(move->sequence == NULL || (move->sequence->frames != NULL && move->sequence->count > 0 &&
-                                        move->sequence->end != NULL),
-      "Invalid move sequence");
+  if (move->sequence != NULL) {
+    const MoveSequence *sequence = move->sequence;
+    require(sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 &&
+                sequence->end != NULL && sequence->segments[0].at == 0 &&
+                sequence->event_count >= 0 &&
+                (sequence->event_count == 0 || sequence->events != NULL),
+        "Invalid move sequence");
+    for (int i = 0; i < sequence->segment_count; ++i) {
+      const MoveSegment *segment = &sequence->segments[i];
+      require(segment->period > 0 && segment->at >= 0 && segment->at < sequence->count &&
+                  (i == 0 || sequence->segments[i - 1].at < segment->at),
+          "Invalid playback segment");
+    }
+    for (int i = 0; i < sequence->event_count; ++i) {
+      const MoveEvent *event = &sequence->events[i];
+      require(event->at >= 0 && event->at < sequence->count && event->think != NULL &&
+                  (i == 0 || sequence->events[i - 1].at <= event->at),
+          "Invalid move event");
+    }
+  }
   fighter->state = state;
   fighter->current_move = move;
   fighter->ticks = 0;
@@ -54,7 +76,11 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
   if (move->sequence != NULL) {
     const MoveSequence *sequence = move->sequence;
     int index = mini(maxi(fighter->ticks, 0), sequence->count - 1);
-    int sample = sequence->frames[index].sample;
+    const MoveSegment *segment = &sequence->segments[0];
+    for (int i = 1; i < sequence->segment_count && sequence->segments[i].at <= index; ++i) {
+      segment = &sequence->segments[i];
+    }
+    int sample = segment->first + segment->step * ((index - segment->at) / segment->period);
     require(sample >= 0 && sample < frame_count, "Move sample outside clip");
     return (double)sample;
   }
