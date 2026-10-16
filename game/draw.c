@@ -1,4 +1,4 @@
-#include "draw.h"
+#include "game.h"
 #include "sprite_font.h"
 #include "shadow.h"
 #include "lighting.h"
@@ -45,18 +45,30 @@ static float draw_arena(Canvas *cv,Camera camera,const Arena *arena,SceneLight l
     }
     return isfinite(floor_y)?floor_y:0.f;
 }
-static Triangles fighter_geometry(const Assets *assets,const Fighter *fighter) {
-    Triangles triangles={0};const Character *ch=&assets->characters.data[fighter->character];int id=animation(ch,fighter->action);
-    const Clip *clip=&assets->clips.data[id];int channels=0;
-    for(size_t i=0;i<ch->bones.count;++i)channels=maxi(channels,ch->bones.data[i].channel+1);
-    if((int)clip->frames.data[0].angles.count!=channels)clip=&assets->clips.data[ch->idle];
-    double frame=(double)fighter->ticks*.5;const Move *m=battle_move(fighter->action);
-    if(m) {
-        double t=(double)maxi(0,fighter->ticks);
-        double progress=t<m->startup?.4*t/m->startup:t<m->startup+m->active?.4+.2*(t-m->startup)/m->active:.6+.4*(t-m->startup-m->active)/m->recovery;
-        frame=clampd(progress,0.,1.)*(double)(clip->frames.count-1);
-    } else if(fighter->action==ACTION_KNOCKDOWN)frame=fmin((double)maxi(0,fighter->ticks)*.65,(double)(clip->frames.count-1));
-    else if(fighter->action==ACTION_BLOCK||fighter->action==ACTION_CROUCH||fighter->action==ACTION_HIT)frame=fmin(frame,(double)(clip->frames.count-1));
+static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) {
+    Triangles triangles = {0};
+    const Character *ch = roster_character(assets, fighter->roster);
+    const StateDef *state = fighter_state(fighter);
+    int id = roster_clip(roster_def(fighter->roster), fighter->state, ch->idle);
+    const Clip *clip = &assets->clips.data[id];
+    int channels = 0;
+    double frame;
+    for (size_t i = 0; i < ch->bones.count; ++i)
+        channels = maxi(channels, ch->bones.data[i].channel + 1);
+    if ((int)clip->frames.data[0].angles.count != channels)
+        clip = &assets->clips.data[ch->idle];
+    frame = (double)fighter->ticks * 0.5;
+    if (state->flags & STATE_F_ATTACK) {
+        double t = (double)maxi(0, fighter->ticks);
+        double progress = t < state->startup ? 0.4 * t / state->startup
+            : t < state->startup + state->active ? 0.4 + 0.2 * (t - state->startup) / state->active
+            : 0.6 + 0.4 * (t - state->startup - state->active) / state->recovery;
+        frame = clampd(progress, 0.0, 1.0) * (double)(clip->frames.count - 1);
+    } else if (fighter->state == STATE_KNOCKDOWN) {
+        frame = fmin((double)maxi(0, fighter->ticks) * 0.65, (double)(clip->frames.count - 1));
+    } else if (fighter->state == STATE_BLOCK || fighter->state == STATE_CROUCH || fighter->state == STATE_HIT) {
+        frame = fmin(frame, (double)(clip->frames.count - 1));
+    }
     Pose bones[MK4_MAX_BONES],initial[MK4_MAX_BONES];pose(ch,clip,frame,bones);pose(ch,clip,0,initial);float front=ch->front_yaw;
     for(size_t n=0;n<ch->bones.count;++n)if(ch->bones.data[n].channel==0) {Vec3 face=mat3_apply(initial[n].rotation,(Vec3){0,0,-1});front=atan2f(-face.x,face.z);break;}
     Mat3 turn=yaw_matrix(front+(float)fighter->facing*pi*.5f);Vec3 root=clip->frames.data[0].translation;
@@ -86,19 +98,6 @@ static void bar(Canvas *cv,const Geometry *font,int health,Rect r,bool right) {
     const Sprite *s=&font->sprites.data[25];canvas_blit(cv,&font->textures.data[s->texture],(Rect){s->u,s->v,s->w,8},r,right);
     int inner=r.w-6,missing=inner*(100-health)/100;canvas_rect(cv,(Rect){right?r.x+3:r.x+r.w-3-missing,r.y+3,missing,r.h-6},0xff292320);
 }
-int animation(const Character *ch,Action a){
-    if(ch->idle==587) {
-        // Goro has his own original 21-channel action bank.
-        switch(a){case ACTION_WALK:return 590;case ACTION_CROUCH:return 603;case ACTION_JUMP:return 602;
-            case ACTION_PUNCH:return 596;case ACTION_KICK:return 598;case ACTION_SWEEP:return 600;
-            case ACTION_UPPERCUT:return 593;case ACTION_THROW:return 597;case ACTION_BLOCK:return 595;
-            case ACTION_HIT:return 605;case ACTION_KNOCKDOWN:return 581;case ACTION_VICTORY:return 608;default:return 587;}
-    }
-    switch(a){case ACTION_WALK:return 267;case ACTION_CROUCH:return 219;case ACTION_JUMP:return 301;
-        case ACTION_PUNCH:return 216;case ACTION_KICK:return 65;case ACTION_SWEEP:return 101;
-        case ACTION_UPPERCUT:return 212;case ACTION_THROW:return 23;case ACTION_BLOCK:return 251;
-        case ACTION_HIT:return 247;case ACTION_KNOCKDOWN:return 166;case ACTION_VICTORY:return 293;default:return ch->idle;}
-}
 void draw_sprite(Canvas *cv,const Geometry *geo,int index,Rect dst,bool flip) {
     if(index<0||(size_t)index>=geo->sprites.count)return;const Sprite *s=&geo->sprites.data[index];if(!s->w||!s->h)return;
     canvas_blit(cv,&geo->textures.data[s->texture],(Rect){s->u,s->v,s->w,s->h},dst,flip);
@@ -110,7 +109,7 @@ void draw_battle(Canvas *cv,const Assets *assets,const Battle *battle,int arena,
     Triangles fighters[]={fighter_geometry(assets,a),fighter_geometry(assets,b)};Mat4 shadow;
     require(planar_shadow_matrix((Vec4){0,1,0,-floor_y},light_homogeneous(light),&shadow),"Shadow light must intersect the receiver plane");
     for(size_t i=0;i<2;++i) {
-        const Texture *texture=&assets->characters.data[battle->fighters[i].character].texture;
+        const Texture *texture=&roster_character(assets, battle->fighters[i].roster)->texture;
         for(size_t j=0;j<fighters[i].count;++j) {
             Triangle triangle=fighters[i].data[j];bool valid=true;
             for(size_t k=0;k<3;++k)valid &= mat4_project(shadow,triangle.v[k].p,&triangle.v[k].p);
@@ -119,8 +118,8 @@ void draw_battle(Canvas *cv,const Assets *assets,const Battle *battle,int arena,
     }
     canvas_resolve_shadows(cv,104);
     for(size_t i=0;i<2;++i) {
-        const Fighter *fighter=&battle->fighters[i];const Texture *texture=&assets->characters.data[fighter->character].texture;
-        for(size_t j=0;j<fighters[i].count;++j)render_triangle(cv,camera,fighters[i].data[j],texture,fighter->action==ACTION_HIT?.72f:1.f,PASS_COLOR,&light);
+        const Fighter *fighter=&battle->fighters[i];const Texture *texture=&roster_character(assets, fighter->roster)->texture;
+        for(size_t j=0;j<fighters[i].count;++j)render_triangle(cv,camera,fighters[i].data[j],texture,fighter->state==STATE_HIT?.72f:1.f,PASS_COLOR,&light);
         FREE_ARRAY(fighters[i]);
     }
     for(size_t i=0;i<2;++i) {
@@ -133,7 +132,7 @@ void draw_battle(Canvas *cv,const Assets *assets,const Battle *battle,int arena,
     int bw=(cv->w-250)/2;Rect left={38,60,bw,18},right={cv->w-38-bw,60,bw,18};
     bar(cv,font,a->health,left,false);bar(cv,font,b->health,right,true);
     for(int i=0;i<2;++i) {
-        const Fighter *f=&battle->fighters[i];int idx=assets->hud.names[f->character];Sprite s=font->sprites.data[idx];int x=i?cv->w-38-s.w*2:38;
+        const Fighter *f=&battle->fighters[i];int idx=assets->hud.names[roster_def(f->roster)->asset];Sprite s=font->sprites.data[idx];int x=i?cv->w-38-s.w*2:38;
         draw_sprite(cv,font,idx,(Rect){x,31,s.w*2,s.h*2},false);
         for(int win=0;win<2;++win)canvas_rect(cv,(Rect){i?cv->w-52-win*21:38+win*21,92,13,8},win<f->wins?gold:0xff3b3830);
     }
@@ -146,7 +145,7 @@ void draw_battle(Canvas *cv,const Assets *assets,const Battle *battle,int arena,
     font_draw(font,cv,28,cv->h-29,"P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE",.6f);
     if(battle->phase==PHASE_READY) {round_intro(cv,&assets->hud,battle->round);if(battle->phase_ticks>40)draw_sprite(cv,&assets->hud.effects,137,(Rect){cv->w/2-181,285,362,126},false);}
     if(battle->phase==PHASE_ROUND_OVER||battle->phase==PHASE_MATCH_OVER) {
-        char message[1100];if(battle->winner<0)snprintf(message,sizeof message,"DRAW");else snprintf(message,sizeof message,"%s WINS",assets->characters.data[battle->fighters[battle->winner].character].name);
+        char message[1100];if(battle->winner<0)snprintf(message,sizeof message,"DRAW");else snprintf(message,sizeof message,"%s WINS",roster_character(assets, battle->fighters[battle->winner].roster)->name);
         canvas_rect(cv,(Rect){cv->w/2-350,205,700,100},0xff141517);font_centered(font,cv,224,message,1.5f);
         font_centered(font,cv,267,battle->phase==PHASE_MATCH_OVER?"MATCH COMPLETE / ENTER TO REMATCH":"NEXT ROUND",.75f);
     }

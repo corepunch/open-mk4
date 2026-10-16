@@ -44,7 +44,10 @@ Output roots and generated subdirectories must not be symlinks.
 ## Language and architecture
 
 The game and engine use C11: plain state structs, explicit context functions,
-const tables, and caller-owned pose buffers. The PC retail reference is
+const tables, and caller-owned pose buffers. Fighters are rows in one roster.
+Each row points at motion, state, clip, and command tables; spawn stores the
+row index on a fighter, and one step function reads those tables. Keyboard,
+shell keys, and the CPU each produce the same input frame. The PC retail reference is
 reconstructed in C using MSVC 5.0; the compiler product name does not make the
 game C++. Our supplied executable confirms an MSVC-era toolchain but retains
 no source filenames that distinguish `.c` from `.cpp`. See
@@ -69,8 +72,9 @@ The package tool keeps its stable-snapshot watcher and extraction code separate.
 | `common/sdl_app.*` | Viewer and game: window, SDL presentation, logical coordinates, cleanup |
 | `viewer/main.c` | Character gallery and inspection controls |
 | `fsys.cpp` | Package listing, extraction, filename recovery, polling |
-| `game/battle.*` | SDL-independent combat simulation |
-| `game/draw.*`, `game/main.c` | Battle presentation, controls, game loop |
+| `game/game.h`, `game/roster.c`, `game/battle.c` | Roster state tables and SDL-independent combat simulation |
+| `game/input.c` | Keyboard bindings, shell keys, and CPU input |
+| `game/draw.c`, `game/main.c` | Battle presentation and game loop |
 
 `make` builds all three tools. `make fsys` builds only the dependency-free
 package tool. Viewer and game require SDL2 and a C11 compiler. The standalone

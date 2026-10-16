@@ -112,6 +112,19 @@ so posing does not allocate per call. The package validator returns an error
 for the standalone watcher; invalid asset loads terminate CLI applications
 with a diagnostic. Shadow projection reports invalid geometry through `bool`.
 
+The match itself is one roster of character rows, declared in `game/game.h`.
+A row names its game (`GAME_MK4` today, `GAME_WARGODS` reserved), the asset
+index inside that game's mesh bank, and the motion, state, clip, and command
+tables. Eighteen MK4 fighters share one state table and one command table.
+Goro overrides clip ids because his mesh uses a separate animation bank.
+Spawn writes the roster index onto a `Fighter`. `battle_step` is the shared
+update and does not branch on game id. Input is a held/pressed bit frame.
+`game/input.c` samples keyboard bindings, maps shell keys, and fills the CPU
+frame. The step function never reads SDL. War Gods can be added by appending
+roster rows and loading that game's asset bank; it does not need a second
+battle type. Options and the reasons for this shape are in
+[docs/fighting-game-architecture-options.md](docs/fighting-game-architecture-options.md).
+
 The separate extraction/watch frontend remains `fsys.cpp` in C++17 and links
 the same C archive validator. No C++ compiler or runtime is needed to build
 the game/viewer targets. The runtime does not copy retail global-address

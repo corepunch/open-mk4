@@ -37,13 +37,14 @@ viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-mk4-game: game/main.c game/battle.c game/battle.h game/draw.c game/draw.h $(ASSETS) $(RENDER) $(HEADERS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) game/main.c game/battle.c game/draw.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
+GAME_SOURCES = game/main.c game/input.c game/roster.c game/battle.c game/draw.c
+mk4-game: $(GAME_SOURCES) game/game.h $(ASSETS) $(RENDER) $(HEADERS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.c game/battle.c game/battle.h
+build/test-battle: tests/test_battle.c game/battle.c game/roster.c game/input.c game/game.h common/binary.c
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_battle.c game/battle.c -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c game/roster.c game/input.c common/binary.c -o $@ $(LDLIBS)
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
