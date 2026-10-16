@@ -119,9 +119,9 @@ static void check_original_kicks(void) {
     advance_ticks(&battle, 11, NULL);
     check(battle.fighters[1 - player].health == Q16_ONE, "Kick contact started before retail query");
     advance_ticks(&battle, 1, NULL);
-    check(battle.fighters[1 - player].health == Q16_ONE - (player == 0 ? 0x2147 : 12 * Q16_ONE / 100), "Kick missed its first retail contact step");
+    check(battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick missed its first retail contact step");
     advance_ticks(&battle, 2, NULL);
-    check(battle.fighters[1 - player].health == Q16_ONE - (player == 0 ? 0x2147 : 12 * Q16_ONE / 100), "Kick connected more than once");
+    check(battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick connected more than once");
   }
 }
 
@@ -782,7 +782,7 @@ int main(void) {
   {
     Battle battle = fight(1.f);
     Input in[2] = {0};
-    /* Same recovered startup: Sub-Zero's jab still uses approximate timing. */
+    /* Both players use the shared recovered jab startup. */
     battle.fighters[1].roster = 0;
     in[0].held = in[1].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
     battle_step(&battle, in);

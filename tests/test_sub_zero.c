@@ -1,0 +1,123 @@
+#include "game.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+static void check(bool condition, const char *message) {
+  if (!condition) {
+    fprintf(stderr, "FAIL Sub-Zero: %s\n", message);
+    exit(1);
+  }
+}
+
+static Battle fight(int player, float distance) {
+  Battle battle;
+  battle_init(&battle, player == 0 ? 4 : 0, player == 1 ? 4 : 0);
+  battle.phase = PHASE_FIGHT;
+  battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * Q16_ONE / 2);
+  battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * Q16_ONE / 2);
+  return battle;
+}
+
+static void advance(Battle *battle, int ticks) {
+  for (int i = 0; i < ticks; ++i) {
+    battle_step(battle, (Input[2]){0});
+  }
+}
+
+static void press(Battle *battle, int player, unsigned held) {
+  Input input[2] = {0};
+  input[player].held = held;
+  battle_step(battle, input);
+  advance(battle, 1);
+}
+
+static void normals(void) {
+  for (int player = 0; player < 2; ++player) {
+    unsigned back = BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT);
+    unsigned buttons[] = {BUTTON_BIT(BUTTON_HIGH_PUNCH), BUTTON_BIT(BUTTON_LOW_PUNCH), BUTTON_BIT(BUTTON_HIGH_KICK), BUTTON_BIT(BUTTON_LOW_KICK),
+        back | BUTTON_BIT(BUTTON_HIGH_KICK), back | BUTTON_BIT(BUTTON_LOW_KICK), BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH),
+        BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK), BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK)};
+    const int clips[] = {296, 294, 71, 70, 313, 63, 260, 315, 52};
+    for (int i = 0; i < 9; ++i) {
+      Battle battle = fight(player, 4.f);
+      press(&battle, player, buttons[i]);
+      check(fighter_move(&battle.fighters[player])->clip == clips[i], "stance/character selector chose wrong normal");
+      advance(&battle, 120);
+      check(battle.fighters[player].state == S_IDLE && battle.fighters[1 - player].health == Q16_ONE, "miss must recover without damage");
+    }
+    for (int outcome = 0; outcome < 4; ++outcome) {
+      Battle battle = fight(player, outcome == 3 ? 4.f : 1.f);
+      Input input[2] = {0};
+      if (outcome == 1) {
+        input[1 - player].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      if (outcome == 2) {
+        battle.fighters[1 - player].body.pos[AXIS_Y] -= Q16_ONE;
+        fighter_enter_state(&battle, &battle.fighters[1 - player], S_JUMP);
+      }
+      input[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
+      battle_step(&battle, input);
+      input[player].held = 0;
+      for (int t = 0; t < 11; ++t) {
+        battle_step(&battle, input);
+      }
+      check(battle.fighters[1 - player].health == Q16_ONE, "kick damaged before first contact");
+      battle_step(&battle, input);
+      q16 damage = outcome == 3 ? 0 : outcome == 1 ? q16_mul(0x2147, 0x3333) : 0x2147;
+      check(battle.fighters[1 - player].health == Q16_ONE - damage, "kick record/chip/air/miss damage");
+      advance(&battle, 160);
+      check(battle.fighters[1 - player].health == Q16_ONE - damage, "kick must connect once");
+      check(battle.fighters[player].state == S_IDLE, "kick recovery must release controller");
+    }
+    Battle battle = fight(player, .65f);
+    press(&battle, player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    advance(&battle, 7);
+    check(battle.fighters[player].flags & FF_FOLLOW_UP, "close HP must open its cancel");
+    press(&battle, player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    check(fighter_move(&battle.fighters[player])->clip == 532, "combo HP must select Sub-Zero clip 532");
+    advance(&battle, 120);
+    check(battle.fighters[player].state == S_IDLE, "combo HP must recover");
+    for (int lk = 0; lk < 2; ++lk) {
+      battle = fight(player, .6f);
+      press(&battle, player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
+      check(fighter_move(&battle.fighters[player])->clip == (lk ? 37 : 75), "paired throw entry");
+      advance(&battle, 41);
+      check(battle.fighters[1 - player].health == Q16_ONE, "throw damage occurred before sample 42");
+      advance(&battle, 1);
+      check(battle.fighters[1 - player].health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "paired throw damage");
+      advance(&battle, 180);
+      check(battle.fighters[player].state == S_IDLE && battle.fighters[1 - player].state == S_IDLE, "throw must release both controllers");
+    }
+    battle = fight(player, .65f);
+    press(&battle, player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK));
+    advance(&battle, 7);
+    check(battle.fighters[1 - player].reaction == 26 && battle.fighters[1 - player].health == Q16_ONE - 0x1999, "crouch HK must use its own launcher record");
+    advance(&battle, 180);
+    check(battle.fighters[1 - player].state == S_IDLE, "crouch HK victim must finish its reaction");
+    battle = fight(player, 4.f);
+    press(&battle, player, BUTTON_BIT(BUTTON_LOW_KICK));
+    advance(&battle, 6);
+    check(battle.fighters[player].avoids_high, "low-kick avoidance begins at sample 6");
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 1);
+    check(!battle.fighters[player].avoids_high, "interruption must clear low-kick avoidance");
+    for (int button = BUTTON_HIGH_PUNCH; button <= BUTTON_LOW_KICK; ++button) {
+      if (button == BUTTON_BLOCK) {
+        continue;
+      }
+      battle = fight(player, 4.f);
+      battle.fighters[player].body.pos[AXIS_Y] -= 3 * Q16_ONE;
+      fighter_enter_state(&battle, &battle.fighters[player], S_JUMP);
+      press(&battle, player, BUTTON_BIT(button));
+      check(fighter_move(&battle.fighters[player])->flags & SF_RECORD, "air attack must use script records");
+      advance(&battle, 160);
+      check(battle.fighters[player].state == S_IDLE && !fighter_airborne(&battle.fighters[player]), "air attack must land and restore controls");
+    }
+  }
+}
+
+int main(void) {
+  normals();
+  puts("PASS: Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+  return 0;
+}

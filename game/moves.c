@@ -106,6 +106,7 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   fighter->current_move = move;
   fighter->ticks = 0;
   fighter->connected = false;
+  fighter->avoids_high = false;
   fighter->buffered = 0;
   fighter->contact = CONTACT_MISS;
   fighter->contact_tick = -1;

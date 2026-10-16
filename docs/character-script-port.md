@@ -50,9 +50,9 @@ assume these three indices will always coincide for other roster entries.
 
 | Area | Current behavior | Work still needed |
 | --- | --- | --- |
-| High kick | Clip 71, sparse playback, control returns at step 29 on the uninterrupted no-contact path | Record-based contacts and verified contact-dependent branches; current damage, stun, reach and push are approximate |
-| Other normals, throws and reactions | Generic move definitions and approximate combat | Follow the relevant shared entry and every Sub-Zero selector; recover branches, records and victim continuations |
-| Controls | `mk4_controls`, with zero special-command records and approximate stance tables | Character-owned `Controls`, commands, stance and follow-up tables |
+| High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
+| Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
+| Controls | Character-owned stance/follow-up tables, no special commands yet | Specials, weapon and finisher command records in subsequent steps |
 | Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
 | Specials, weapon combat and finishers | No Sub-Zero-specific implementations | Translate the entries below; existing Scorpion coverage does not cover Sub-Zero |
 
@@ -63,6 +63,17 @@ sample selection, next-tick entry, return to movement and interruption. It
 does not establish complete retail contact behavior. Older architecture and
 research notes describe earlier checkpoints; source and this coverage table
 define the starting point for this port.
+
+Normal-port validation: `tests/test_sub_zero.c` covers both players' normal
+selectors, hit/block/air/miss kick records, combo clip 532, throw damage/release,
+crouching-launch recovery, low-kick avoidance cleanup and air recovery. The
+existing kick and Scorpion fixtures remain unchanged. Shared normal scripts
+use the established procedural translations, with character-selected data
+and continuations owned by `c_sub_zero.c`. Reactions 26/7 use the existing
+portable launch/block machinery; cosmetic effects, retail wall-task dispatch
+and CPU recovery decisions are not reproduced. Sources for the additions are
+`4e6da0`, `46a950/970`, `4e5fd8`, `4e69c8`, `46c2c0`, `4838e0/483930`,
+`4e9758` and `486ab0`; remaining normal sources are shared with Scorpion.
 
 ## Sub-Zero: locating commands and scripts
 

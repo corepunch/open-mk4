@@ -36,7 +36,7 @@ static void scorpion_jab_contact(Battle *battle, Fighter *fighter) {
   if (fighter->connected || action == 0x2001 || action == 0x106 || action == 0x107) {
     return;
   }
-  if ((action == 0x10c && fighter_sample(victim) < 5) || (action == 0x102 && victim->ticks >= 7 && victim->ticks < 10)) {
+  if ((action == 0x10c && fighter_sample(victim) < 5) || (action == 0x102 && victim->avoids_high)) {
     return;
   }
   battle_contact(battle, fighter, &jab_record);
@@ -586,6 +586,7 @@ static void ground_attack_tick(Battle *battle, Fighter *fighter) {
   const GroundAttack *attack = &ground_attacks[index];
   int t = fighter->ticks, fast = index == G_ROUNDHOUSE && fighter->script_timer ? 5 : 0;
   int active = attack->active - fast;
+  fighter->avoids_high = index == G_LOW_KICK && t >= 7 && t < 10;
   bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(battle, fighter) == 0x2011;
   if (index == G_CLOSE_HP) {
     int action = victim_action(battle, fighter);
@@ -676,7 +677,7 @@ static void hp_tick(Battle *battle, Fighter *fighter) {
   int active = phase == 0 ? 8 : phase == 1 ? 7 : phase == 2 ? 6 : 6;
   fighter->sample_override = phase == 2 && t == active + 2 ? 17 : first + t;
   const Fighter *victim = fighter_opponent(battle, fighter);
-  bool ducking_kick = victim->action == 0x102 && victim->ticks >= 7 && victim->ticks < 10;
+  bool ducking_kick = victim->action == 0x102 && victim->avoids_high;
   if (t >= active && t <= active + 2 && !fighter->connected && !ducking_kick) {
     battle_contact(battle, fighter, &hp_record);
   }

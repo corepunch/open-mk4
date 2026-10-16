@@ -333,6 +333,7 @@ struct Fighter {
   int action;       /* controller +0x74 */
   bool human;       /* 0x5347c8 / 0x532248: block from switches, not action codes */
   bool connected, crouching;
+  bool avoids_high; /* low-kick script's temporary high-punch avoidance gate */
   const MoveDef *current_move;
   unsigned buffered; /* pressed buttons since the current move phase began */
   int move_loops;

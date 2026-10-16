@@ -31,7 +31,7 @@ extract: fsys
 test: fsys
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-mk4-assets build/test-battle build/test-shadows
+	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-mk4-assets build/test-battle build/test-sub-zero build/test-shadows
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
@@ -58,8 +58,12 @@ build/test-battle: tests/test_battle.c tests/fixtures/original_kicks.inc tests/f
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
-game-test: mk4-game build/test-battle build/test-shadows
+build/test-sub-zero: tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) common/binary.c $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) common/binary.c -o $@ $(LDLIBS)
+game-test: mk4-game build/test-battle build/test-sub-zero build/test-shadows
 	./build/test-battle
+	./build/test-sub-zero
 	./build/test-shadows
 	./mk4-game --self-test
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp

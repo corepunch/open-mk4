@@ -228,6 +228,7 @@ static const ReactionSpec extra_reactions[256] = {
   [22] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
   [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
   [25] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
+  [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
   [27] = {R(134, 17, 0x4001), 6, 8, -1, 0, 0x51e, 0, 0, 0x9999, false, true},
   [28] = {R(134, 17, 0x4001), 0, 0, -1, 0, 0x1eb8, 0, 0, 0, true, false},
   [29] = {R(134, 17, 0x4001), 0, 0, -1, 0, 0x1eb8, 0, 0, 0, true, false},
@@ -374,7 +375,7 @@ static void react_extra_block(Battle *battle, Fighter *fighter) {
   if (id == 3 || id == 143) {
     fighter->action = 0x4004;
   }
-  slide(battle, fighter, id == 8 ? 0 : id == 5 ? 0x2e14 : 0xf5c);
+  slide(battle, fighter, id == 8 ? 0 : id == 7 ? 0x4000 : id == 5 ? 0x2e14 : 0xf5c);
 }
 
 static void react_approximate(Battle *battle, Fighter *fighter) {
@@ -391,6 +392,7 @@ static const FighterFn reactions[256] = {
   [0] = react_block,
   [3] = react_extra_block,
   [5] = react_extra_block,
+  [7] = react_extra_block,
   [8] = react_extra_block,
   [143] = react_extra_block,
   [10] = react_extra,
@@ -401,6 +403,7 @@ static const FighterFn reactions[256] = {
   [22] = react_extra,
   [23] = react_extra,
   [25] = react_extra,
+  [26] = react_extra,
   [27] = react_extra,
   [28] = react_extra,
   [29] = react_extra,
@@ -443,8 +446,8 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 50) || reaction == 70 ||
-          reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 || reaction == 156 ||
-          reaction == 173)) {
+          reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
+          reaction == 156 || reaction == 173)) {
     victim->disarm(battle, victim);
   }
   victim->reaction = reaction;
