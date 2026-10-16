@@ -173,6 +173,7 @@ typedef struct WeaponStrike {
   int first, windup, target, queries, recovery;
   int delay, travel;
   q16 speed;
+  int sound;
 } WeaponStrike;
 
 typedef struct SceneClip {
@@ -451,6 +452,12 @@ typedef struct SceneCamera {
 #define MAX_SCENE_PIECES 32
 #define MAX_PARTICLES 128
 
+typedef struct SoundEvent {
+  int bank, selector;
+} SoundEvent;
+
+#define MAX_SOUND_EVENTS 16
+
 struct Battle {
   const Assets *assets;
   Fighter fighters[2];
@@ -459,6 +466,8 @@ struct Battle {
   ScenePiece pieces[MAX_SCENE_PIECES];
   Particle particles[MAX_PARTICLES];
   SceneCamera camera;
+  SoundEvent sounds[MAX_SOUND_EVENTS];
+  int sound_count;
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
   int arena, finisher; /* stage id and completed/active character finisher id */
@@ -536,6 +545,7 @@ void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_
 void battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
 void battle_shatter(Battle *battle, Fighter *victim);
 void battle_step_presentation(Battle *battle);
+void battle_sound(Battle *battle, int bank, int selector);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

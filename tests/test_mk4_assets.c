@@ -82,7 +82,24 @@ static void combat_poses(const Assets *assets) {
   check(!battle.pieces[0].active && battle.fighters[1].hidden_joints[0] == 0 && !battle.camera.active, "Rematch must clear scene objects and mesh visibility");
 }
 
+static void sound_samples(void) {
+  Package archive;
+  package_load(&archive, "MK4/FILESYS.DAT");
+  Sound pcm = sound_decode(package_get(&archive, name_hash("c:\\source\\mk4\\win\\sound\\pcmk0195.esf")), 195);
+  check(pcm.rate == 11025 && pcm.channels == 1 && pcm.samples.count == 10296, "PCM ESF format/length");
+  check(pcm.samples.data[0] == 0 && pcm.samples.data[1] == 0 && pcm.samples.data[2] == -256, "PCM ESF unsigned samples");
+  Sound adpcm = sound_decode(package_get(&archive, name_hash("c:\\source\\mk4\\win\\sound\\pcmk0760.esf")), 760);
+  check(adpcm.rate == 22050 && adpcm.channels == 1 && adpcm.samples.count == 19094, "ADPCM ESF format/length");
+  check(adpcm.samples.data[0] == 0 && adpcm.samples.data[1] == 4 && adpcm.samples.data[2] == 8 && adpcm.samples.data[3] == 19,
+      "ADPCM ESF must decode high nibble first with the native predictor");
+  FREE_ARRAY(pcm.samples);
+  FREE_ARRAY(adpcm.samples);
+  package_free(&archive);
+}
+
 int main(void) {
+  sound_samples();
+
   struct Fixture {
     int kind;
     Vec3 angles;

@@ -8,7 +8,7 @@ SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
 FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
-ASSETS = common/mk4_assets.c $(PACKAGE)
+ASSETS = common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
@@ -39,7 +39,7 @@ run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
-GAME_HEADERS = game/game.h game/mk4_characters.h
+GAME_HEADERS = game/game.h game/mk4_characters.h game/audio.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -47,7 +47,7 @@ viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-GAME_SOURCES = game/main.c game/input.c $(ROSTER_SOURCES) game/battle.c game/draw.c
+GAME_SOURCES = game/main.c game/input.c game/audio.c $(ROSTER_SOURCES) game/battle.c game/draw.c
 mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game

@@ -549,6 +549,14 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   }
   assets->hud.font = load_geometry(package_geo(&archive, "mk4font_.geo"));
   assets->hud.effects = load_geometry(package_geo(&archive, "shared_g.geo"));
+  sound_bank_load(&assets->audio, &archive);
+  const uint32_t sound_tables[] = {0x4ea9b0, 0x4e77b8, 0x4eaa18};
+  const int sound_counts[] = {51, 184, 113};
+  for (int bank = 0; bank < SOUND_BANK_COUNT; ++bank) {
+    for (int i = 0; i < sound_counts[bank]; ++i) {
+      assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - 0x400000 + (uint32_t)i * 2);
+    }
+  }
   // clang-format off: Keep table entries on one row, including long rows.
   const char *sprite_names[] = {
     "LIU KANG",
@@ -637,6 +645,7 @@ static void geometry_free(Geometry *g) {
 }
 
 void assets_free(Assets *a) {
+  sound_bank_free(&a->audio);
   for (size_t i = 0; i < a->characters.count; ++i) {
     Character *ch = &a->characters.data[i];
     meshes_free(&ch->meshes);

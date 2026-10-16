@@ -1,4 +1,5 @@
 #include "game.h"
+#include "audio.h"
 #include "sdl_app.h"
 #include "math_util.h"
 #include "cli.h"
@@ -26,6 +27,7 @@ static void usage(void) {
 static void validate(const Assets *assets) {
   int roster;
   require(assets->arenas.count == 11, "Incomplete arena list");
+  require(assets->audio.sounds.count == 674, "Incomplete sound archive");
   for (size_t i = 0; i < assets->arenas.count; ++i) {
     const Arena *arena = &assets->arenas.data[i];
     size_t triangles = 0;
@@ -131,6 +133,7 @@ int main(int argc, char **argv) {
   SdlApp app;
   Canvas cv;
   Battle battle;
+  GameAudio audio;
   InputDevice pads[2];
   bool running = true, paused = false;
   int rendered = 0;
@@ -193,6 +196,7 @@ int main(int argc, char **argv) {
   canvas_init(&cv, 1280, 800);
   battle_init(&battle, p1, p2);
   battle_bind_assets(&battle, &assets);
+  game_audio_init(&audio, headless);
   battle.arena = arena;
   input_bind_player(&pads[0], 0);
   input_bind_player(&pads[1], 1);
@@ -237,6 +241,7 @@ int main(int argc, char **argv) {
       if (cpu || demo)
         input_cpu(&battle, 1, &in[1]);
       battle_step(&battle, in);
+      game_audio_step(&audio, &assets, &battle);
       accumulator -= 1.0 / 60.0;
       if (demo && battle.phase == PHASE_MATCH_OVER && battle.phase_ticks > 240)
         battle_reset_match(&battle);
@@ -254,6 +259,7 @@ int main(int argc, char **argv) {
     save_bmp(&cv, shot);
   printf("Rendered %d frames; simulated %llu ticks; health %.4f / %.4f; round %d\n", rendered, (unsigned long long)battle.ticks,
       q16_float(battle.fighters[0].health), q16_float(battle.fighters[1].health), battle.round);
+  game_audio_free(&audio);
   sdl_app_free(&app);
   canvas_free(&cv);
   assets_free(&assets);

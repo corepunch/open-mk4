@@ -875,6 +875,7 @@ static void ice_tick(Battle *battle, Fighter *fighter) {
     return;
   }
   if (t == startup) {
+    battle_sound(battle, SOUND_C, 0);
     Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_ICE, 180, ice_projectile);
     if (p != NULL) {
       for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
@@ -971,6 +972,7 @@ static void sub_zero_clone(Battle *battle, Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x28f5;
   fighter->body.gravity = 0x28f;
   fighter->clone_ready = battle->ticks + 180;
+  battle_sound(battle, SOUND_C, 0xa);
 }
 
 /* Slide: 47dc00/4e84d8 -> 47dc40; hit 4e84f8, block 4e8530.
@@ -1030,6 +1032,7 @@ static void sub_zero_slide(Battle *battle, Fighter *fighter) {
   fighter->script = slide_tick;
   fighter->sample_override = 0;
   fighter_set_speed(battle, fighter, 0x2666);
+  battle_sound(battle, SOUND_C, 0xf);
 }
 
 /* Shared weapon draw 4e62c0/4e62d8, air 4e66d0/4e66f0 and
@@ -1038,10 +1041,10 @@ static void sub_zero_slide(Battle *battle, Fighter *fighter) {
  * select the shared native attack runner and its recovery continuations. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const WeaponStrike scepter_attacks[] = {
-  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {128385, -35323, 92274, 22872, 51, 51, 119, 0, 11796}, 6, 10, 16, 4, 1, 0, 0, 0},
-  {{.clip = 250, .last = 31, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {115277, 20316, 73400, 51052, 150, 150, 118, ATTACK_LOW, 9830}, 0, 4, 12, 2, 9, 0, 0, 0},
-  {{.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x112}, {99614, -49152, 64880, 55050, 52, 52, 119, 0, 9830}, 0, 9, 16, 4, 0, 9, 8, 0x147a},
-  {{.clip = 228, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x113}, {123076, -26804, 91684, 14352, 151, 151, 118, 0, 0}, 0, 10, 16, 5, 5, 1, 14, 0x2666},
+  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {128385, -35323, 92274, 22872, 51, 51, 119, 0, 11796}, 6, 10, 16, 4, 1, 0, 0, 0, 0x20},
+  {{.clip = 250, .last = 31, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {115277, 20316, 73400, 51052, 150, 150, 118, ATTACK_LOW, 9830}, 0, 4, 12, 2, 9, 0, 0, 0, 0x22},
+  {{.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x112}, {99614, -49152, 64880, 55050, 52, 52, 119, 0, 9830}, 0, 9, 16, 4, 0, 9, 8, 0x147a, 0x22},
+  {{.clip = 228, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x113}, {123076, -26804, 91684, 14352, 151, 151, 118, 0, 0}, 0, 10, 16, 5, 5, 1, 14, 0x2666, 0x22},
 };
 // clang-format on
 
@@ -1279,6 +1282,20 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
   }
   int previous = fighter->scene.index;
   scene_step(fighter);
+  if (previous != fighter->scene.index) {
+    int phase = fighter->scene.index;
+    if (phase == 1) {
+      battle_sound(battle, SOUND_B, 0x30);
+    } else if (phase == 3) {
+      battle_sound(battle, SOUND_B, 0x1b);
+      battle_sound(battle, SOUND_B, 0x29);
+    } else if (phase == 4 || phase == 5 || phase == 6) {
+      battle_sound(battle, SOUND_B, phase == 4 ? 0x2b : phase == 5 ? 0x2a : 0x1b);
+    } else if (phase == 7) {
+      battle_sound(battle, SOUND_B, 0x1c);
+      battle_sound(battle, SOUND_B, 0);
+    }
+  }
   if (previous != fighter->scene.index && fighter->scene.index == 2) {
     /* The second camera path 4e0f58 opens at (-5,-7,-2.5). */
     battle_scene_camera(battle, fighter, victim, -0x50000, -0x70000, -0x28000, 30);
@@ -1293,6 +1310,7 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
       battle_particles(battle, victim, 2, 0xffa81420, 20, false);
     }
     if (before != victim->scene.index && victim->scene.index == 12) {
+      battle_sound(battle, SOUND_B, 0x18);
       battle_particles(battle, victim, 5, 0xffa81420, 20, false);
     }
   }
@@ -1305,9 +1323,13 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
   Fighter *victim = opponent(battle, fighter);
   if (victim->scene.clips != NULL) {
     scene_step(victim);
+    if (victim->sample_override == 20 || victim->sample_override == 90) {
+      battle_sound(battle, SOUND_A, 0x13);
+    }
   }
   switch (fighter->script_phase) {
-    case 0:
+    case 0: {
+      int before = fighter->scene.index;
       if (fighter->scene.clips == NULL) {
         scene_begin(fighter, breath_actor, COUNT(breath_actor), -1);
         scene_begin(victim, breath_target, COUNT(breath_target), -1);
@@ -1315,6 +1337,10 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
         scene_begin(fighter, slide_actor, COUNT(slide_actor), -1);
         fighter_set_speed(battle, fighter, 0x2666);
         fighter->script_phase = 1;
+        battle_sound(battle, SOUND_C, 0xf);
+      }
+      if (before != fighter->scene.index && fighter->script_phase == 0 && (fighter->scene.index == 1 || fighter->scene.index == 2)) {
+        battle_sound(battle, SOUND_C, fighter->scene.index == 1 ? 0x3f : 0x40);
       }
       if (fighter->scene.index >= 3) {
         victim->appearance = APPEARANCE_FROZEN;
@@ -1323,7 +1349,7 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
         /* 41bbb0 alternates joints 9 and 10 throughout its 46 passes. */
         battle_particles(battle, fighter, 9 + (fighter->ticks & 1), 0xffa6eaff, 2, true);
       }
-      break;
+    } break;
     case 1:
       if (scene_step(fighter)) {
         /* 41b450 uses the current pair distance after opening eight

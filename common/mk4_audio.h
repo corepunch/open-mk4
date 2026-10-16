@@ -1,0 +1,34 @@
+#ifndef MK4_AUDIO_H
+#define MK4_AUDIO_H
+#include "mk4_package.h"
+
+ARRAY_TYPE(SoundSamples, int16_t);
+
+typedef struct Sound {
+  int id, rate, channels;
+  bool loop;
+  SoundSamples samples;
+} Sound;
+
+ARRAY_TYPE(Sounds, Sound);
+
+enum {
+  SOUND_A,
+  SOUND_B,
+  SOUND_C,
+  SOUND_BANK_COUNT
+};
+
+#define SOUND_EVENT_COUNT 184
+
+typedef struct SoundBank {
+  Sounds sounds;
+  uint16_t events[SOUND_BANK_COUNT][SOUND_EVENT_COUNT];
+} SoundBank;
+
+Sound sound_decode(View data, int id);
+void sound_bank_load(SoundBank *bank, const Package *archive);
+void sound_bank_free(SoundBank *bank);
+const Sound *sound_find(const SoundBank *bank, int id);
+const Sound *sound_event(const SoundBank *bank, int category, int selector);
+#endif

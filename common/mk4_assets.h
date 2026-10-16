@@ -1,6 +1,7 @@
 #ifndef MK4_ASSETS_H
 #define MK4_ASSETS_H
 #include "binary.h"
+#include "mk4_audio.h"
 #define MK4_MAX_BONES 128
 #define MK4_ROSTER_COUNT 18
 #define MK4_CLIP_COUNT 612
@@ -120,6 +121,7 @@ typedef struct Assets {
   Clips clips;
   Arenas arenas;
   Hud hud;
+  SoundBank audio;
 } Assets;
 
 /* Initialize Assets to zero before loading. The owner frees all decoded data. */

@@ -3,6 +3,13 @@
 #include <math.h>
 #include <string.h>
 
+void battle_sound(Battle *battle, int bank, int selector) {
+  require(bank >= 0 && bank < SOUND_BANK_COUNT && selector >= 0 && selector < SOUND_EVENT_COUNT, "Invalid sound event");
+  if (battle->sound_count < MAX_SOUND_EVENTS) {
+    battle->sounds[battle->sound_count++] = (SoundEvent){bank, selector};
+  }
+}
+
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation) {
   *position = (Vec3){fighter_x(fighter), q16_float(fighter->body.pos[AXIS_Y]), fighter_z(fighter)};
   *orientation = mat3_identity();

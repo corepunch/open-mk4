@@ -43,6 +43,9 @@ static void blend_tick(Battle *battle, Fighter *fighter) {
 static void strike_tick(Battle *battle, Fighter *fighter) {
   const WeaponStrike *strike = fighter->weapon_strike;
   int active = strike->target - strike->first + 1;
+  if (fighter->ticks == strike->windup - strike->first + 1) {
+    battle_sound(battle, SOUND_C, strike->sound);
+  }
   if (fighter->weapon_travel && !fighter->connected && fighter->ticks >= strike->delay && fighter->ticks < strike->delay + strike->travel) {
     fighter_set_speed(battle, fighter, strike->speed);
   } else {
@@ -183,6 +186,9 @@ static void draw_tick(Battle *battle, Fighter *fighter) {
   if (fighter->ticks == 22) {
     fighter->weapon->equip(fighter);
   }
+  if (fighter->ticks == 35) {
+    battle_sound(battle, SOUND_C, 0x12);
+  }
   if (fighter->ticks >= 48) {
     fighter_ready(battle, fighter);
   }
@@ -253,6 +259,7 @@ void weapon_pickup(Battle *battle, Fighter *fighter) {
     return;
   }
   battle->projectiles[index].weapon->equip(fighter);
+  battle_sound(battle, SOUND_C, fighter == &battle->fighters[0] ? 0x26 : 0x27);
   battle->projectiles[index].kind = 0;
   fighter_start_move(battle, fighter, S_PUNCH, &pickup_move);
   fighter->script = pickup_tick;
