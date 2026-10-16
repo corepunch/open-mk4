@@ -14,7 +14,7 @@ static void set_state(Fighter *fighter, int state) {
 }
 
 static bool locked(const Fighter *fighter) {
-  return (fighter_state(fighter)->flags & SF_LOCK) != 0;
+  return (fighter_move(fighter)->flags & SF_LOCK) != 0;
 }
 
 static void place(Fighter *fighter, int roster_index, int wins, float x, int facing) {
@@ -100,7 +100,7 @@ static bool command_matches(const Fighter *fighter, Input in, const CommandDef *
 
 static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
   const CharacterDef *def = roster_def(fighter->roster);
-  const StateDef *state = fighter_state(fighter);
+  const MoveDef *state = fighter_move(fighter);
   const Motion *motion = def->motion;
   int dir;
   int c;
@@ -187,7 +187,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
   for (i = 0; i < 2; ++i) {
     const Fighter *attacker = &snapshot[i];
     const Fighter *defender = &snapshot[1 - i];
-    const StateDef *move = fighter_state(attacker);
+    const MoveDef *move = fighter_move(attacker);
     Fighter *target;
     float distance;
     bool blocked;
@@ -222,7 +222,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
     if (!blocked) {
       reaction = (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT;
       set_state(target, reaction);
-      target->ticks = fighter_state(target)->recovery - move->stun;
+      target->ticks = fighter_move(target)->recovery - move->stun;
       if (move->flags & SF_LAUNCH) {
         target->velocity = 4.7f;
         target->height = fmaxf(0.01f, target->height);

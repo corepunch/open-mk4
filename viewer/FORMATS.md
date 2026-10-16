@@ -99,7 +99,7 @@ strings and victim animations are not reproduced. Move routines store an action 
 the handler table at 0x4e3988; a packed pointer (top byte 0) is a no-op. Op
 0x47 sets a clip and 0x3c indexes the 16-entry table that follows it by
 character id, reading Sonya's entry for Kitana (16) and Reiko's for Noob (17).
-Each fighter has its own clip table in `game/roster.c`:
+Each fighter has its own move table in `game/roster.c`:
 
 | State | Evidence | Clips |
 | --- | --- | --- |

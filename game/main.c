@@ -50,9 +50,14 @@ static void validate(const Assets *assets) {
     require(assets->hud.names[def->asset] >= 0, "Missing fighter name");
     for (size_t j = 0; j < ch->bones.count; ++j)
       channels = maxi(channels, ch->bones.data[j].channel + 1);
-    for (state = 0; state < def->state_count; ++state) {
+    for (state = 0; state < def->move_count; ++state) {
+      const MoveDef *move = &def->moves[state];
       const Clip *clip = &assets->clips.data[roster_clip(def, state, ch->idle)];
+      int frames = (int)clip->frames.count;
       require((int)clip->frames.data[0].angles.count == channels, "Incompatible combat animation");
+      require(move->first >= 0 && move->first < frames &&
+                  (move->last == MOVE_END || (move->last >= 0 && move->last < frames)),
+          "Move frame range outside its clip");
       for (int k = 0; k < 2; ++k) {
         Pose nodes[MK4_MAX_BONES];
         double frame = k ? (double)clip->frames.count * 0.5 : 0.0;

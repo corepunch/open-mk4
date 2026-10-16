@@ -6,6 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 static const float pi = 3.14159265358979323846f;
 
@@ -101,7 +102,7 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
 static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) {
   Triangles triangles = {0};
   const Character *ch = roster_character(assets, fighter->roster);
-  const StateDef *state = fighter_state(fighter);
+  const MoveDef *state = fighter_move(fighter);
   int id = roster_clip(roster_def(fighter->roster), fighter->state, ch->idle);
   const Clip *clip = &assets->clips.data[id];
   int channels = 0;
@@ -110,19 +111,27 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
     channels = maxi(channels, ch->bones.data[i].channel + 1);
   if ((int)clip->frames.data[0].angles.count != channels)
     clip = &assets->clips.data[ch->idle];
-  frame = (double)fighter->ticks * 0.5;
+  /* at counts frames from the move's first frame toward its last. */
+  int end = (int)clip->frames.count - 1;
+  int first = mini(state->first, end);
+  int last = state->last == MOVE_END ? end : mini(state->last, end);
+  double span = (double)abs(last - first);
+  double at = (double)fighter->ticks * 0.5;
   if (state->flags & SF_ATTACK) {
     double t = (double)maxi(0, fighter->ticks);
     double progress = t < state->startup ? 0.4 * t / state->startup
                       : t < state->startup + state->active
                           ? 0.4 + 0.2 * (t - state->startup) / state->active
                           : 0.6 + 0.4 * (t - state->startup - state->active) / state->recovery;
-    frame = clampd(progress, 0.0, 1.0) * (double)(clip->frames.count - 1);
+    at = clampd(progress, 0.0, 1.0) * span;
   } else if (fighter->state == S_KNOCKDOWN) {
-    frame = fmin((double)maxi(0, fighter->ticks) * 0.65, (double)(clip->frames.count - 1));
-  } else if (fighter->state == S_BLOCK || fighter->state == S_CROUCH || fighter->state == S_HIT) {
-    frame = fmin(frame, (double)(clip->frames.count - 1));
+    at = fmin((double)maxi(0, fighter->ticks) * 0.65, span);
+  } else if (state->flags & SF_HOLD) {
+    at = fmin(at, span);
+  } else {
+    at = fmod(fmax(0., at), span + 1.0);
   }
+  frame = last < first ? (double)first - at : (double)first + at;
   Pose bones[MK4_MAX_BONES], initial[MK4_MAX_BONES];
   pose(ch, clip, frame, bones);
   pose(ch, clip, 0, initial);

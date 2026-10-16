@@ -109,7 +109,7 @@ void input_cpu(const Battle *battle, int player, Input *out) {
     if (distance > 3.f)
       hold(out, BUTTON_RUN);
   }
-  if (distance < 2.f && (fighter_state(other)->flags & SF_ATTACK) && cycle % 50 < 15) {
+  if (distance < 2.f && (fighter_move(other)->flags & SF_ATTACK) && cycle % 50 < 15) {
     hold(out, BUTTON_BLOCK);
     if (other->state == S_SWEEP)
       hold(out, BUTTON_DOWN);

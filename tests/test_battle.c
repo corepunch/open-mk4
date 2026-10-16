@@ -52,11 +52,11 @@ static void check_roster(void) {
   const CharacterDef *goro = roster_def(15);
   check(roster_count() == 18, "MK4 roster should be 18 fighters");
   check(human->game == GAME_MK4 && goro->game == GAME_MK4, "Current rows are MK4");
-  check(human->states == goro->states, "Goro shares the MK4 state timings");
   check(human->commands == roster_def(4)->commands, "Humans share one command table");
   for (int i = 0; i < roster_count(); ++i)
-    check(roster_def(i)->clips != NULL, "Every fighter owns a clip table");
-  check(human->clips != goro->clips, "Goro names clips from his own bank");
+    check(roster_def(i)->moves != NULL && roster_def(i)->move_count == S_COUNT,
+        "Every fighter owns a move table");
+  check(human->moves != goro->moves, "Goro names clips from his own bank");
   check(roster_clip(human, S_IDLE, 77) == 77, "Idle reads the mesh idle clip");
   check(roster_clip(human, S_PUNCH, 0) == 294, "Scorpion punch clip");
   check(roster_clip(human, S_KICK, 0) == 66, "Scorpion kick from the 0x4e5ca4 table");
@@ -68,9 +68,10 @@ static void check_roster(void) {
   check(roster_clip(roster_def(17), S_THROW, 0) == roster_clip(roster_def(7), S_THROW, 0),
       "Noob Saibot reads Reiko's character entries");
   check(roster_clip(goro, S_PUNCH, 0) == 596, "Goro punch clip");
-  check(human->states[S_PUNCH].damage == 7, "Punch damage row");
-  check(human->states[S_SWEEP].flags & SF_LOW, "Sweep is a low");
-  check(human->states[S_THROW].flags & SF_UNBLOCKABLE, "Throw is unblockable");
+  check(human->moves[S_PUNCH].damage == 7, "Punch damage row");
+  check(human->moves[S_BLOCK].flags & SF_HOLD, "Block holds its last frame");
+  check(human->moves[S_SWEEP].flags & SF_LOW, "Sweep is a low");
+  check(human->moves[S_THROW].flags & SF_UNBLOCKABLE, "Throw is unblockable");
 }
 
 int main(void) {

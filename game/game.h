@@ -5,7 +5,7 @@
  * common/ because the viewer uses them too.
  *
  * A character is a row in the roster, not a subclass. The row points at a
- * motion record, a state table, its own clip table, and a command table. Spawn writes the roster index onto a fighter. battle_step is the
+ * motion record, its own move table, and a command table. Spawn writes the roster index onto a fighter. battle_step is the
  * shared think function and only reads those tables.
  *
  * MK4 fills the roster today. War Gods (Midway arcade, Eurocom PC port, its
@@ -99,8 +99,12 @@ enum {
   SF_UNBLOCKABLE = 1u << 3,
   SF_LOCK = 1u << 4,
   SF_REACTION = 1u << 5,
-  SF_WAIT_LAND = 1u << 6
+  SF_WAIT_LAND = 1u << 6,
+  SF_HOLD = 1u << 7
 };
+
+/* MoveDef.last value for the clip's final frame. */
+#define MOVE_END (-1)
 
 enum {
   CMD_GROUNDED = 1u << 0,
@@ -108,12 +112,18 @@ enum {
   CMD_STANDING = 1u << 2
 };
 
-typedef struct StateDef {
+/* One row of a fighter's move table, like a Quake II mmove_t without the
+ * per-frame entries. The clip plays from first to last; last < first plays
+ * it backwards. Attacks spread that range over startup, active and recovery.
+ * SF_HOLD stops on the last frame; other non-attacks loop. */
+typedef struct MoveDef {
+  int clip;
+  int first, last;
   int startup, active, recovery;
   int damage, stun;
   float reach, push;
   unsigned flags;
-} StateDef;
+} MoveDef;
 
 typedef struct Motion {
   float walk, run, jump_velocity, gravity;
@@ -130,9 +140,8 @@ typedef struct CharacterDef {
   int asset;
   const char *name;
   const Motion *motion;
-  const StateDef *states;
-  int state_count;
-  const int *clips; /* state_count clip ids, indexed by StateId */
+  const MoveDef *moves; /* move_count rows, indexed by StateId */
+  int move_count;
   const CommandDef *commands;
   int command_count;
 } CharacterDef;
@@ -175,7 +184,7 @@ ShellCommand input_shell_command(int keycode);
 
 int roster_count(void);
 const CharacterDef *roster_def(int index);
-const StateDef *fighter_state(const Fighter *fighter);
+const MoveDef *fighter_move(const Fighter *fighter);
 int roster_clip(const CharacterDef *def, int state, int asset_idle);
 const Character *roster_character(const Assets *assets, int roster_index);
 

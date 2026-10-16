@@ -6,7 +6,7 @@ when the match code took the data-table option.
 
 The game now implements that option. `game/game.h` is the only match header.
 A fighter is a roster index plus runtime fields. The roster row points at
-shared motion, state, and command tables and at the fighter's own clip table.
+shared motion and command tables and at the fighter's own move table.
 Spawn writes the index. `battle_step` is the shared update. Keyboard, shell keys,
 and the CPU are input sources in `game/input.c` and never share a code path
 with the rules. `GAME_WARGODS` is reserved so another Eurocom/Midway roster

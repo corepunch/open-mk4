@@ -45,7 +45,7 @@ Output roots and generated subdirectories must not be symlinks.
 
 The game and engine use C11: plain state structs, explicit context functions,
 const tables, and caller-owned pose buffers. Fighters are rows in one roster.
-Each row points at motion, state, clip, and command tables; spawn stores the
+Each row points at motion, move, and command tables; spawn stores the
 row index on a fighter, and one step function reads those tables. Keyboard,
 shell keys, and the CPU each produce the same input frame. The PC retail reference is
 reconstructed in C using MSVC 5.0; the compiler product name does not make the
