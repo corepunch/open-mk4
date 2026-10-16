@@ -48,3 +48,22 @@ for contact, address in zip(scorpion['kick_contacts'], ['0x4ebae0', '0x4ebaf8'])
     assert contact['damage_q16'] == 0x2147
     assert (contact['reaction'], contact['alternate_reaction'], contact['blocked_reaction']) == (16, 13, 6)
 print('PASS: both players\' Scorpion commands match retail move-list directions; contact records decoded')
+
+programs = scorpion['special_programs']
+spear = programs['spear_entry']['instructions']
+assert [(row['va'], row['clip'], row['start_sample'], row['stored_count'])
+        for row in spear if 'clip' in row] == [
+            ('0x4ed454', 14, 0, 80), ('0x4ed47c', 14, 9, 80)]
+assert [(row['task_type'], row['callback']) for row in spear if 'task_type' in row] == [
+    (0x43, '0x49a6a0'), (0x43, '0x49a6a0')]
+assert [row['inline'] for row in spear if row['opcode'] == '0x34'] == [45, 45]
+teleport = programs['teleport_entry']['instructions']
+assert teleport[0]['operands'] == ['0xffffd99a', '0xffffe8f6', '0x1ca']
+assert teleport[1]['clip'] == 312 and teleport[1]['stored_count'] == 10
+assert teleport[3]['operation'] == 'install group callback at +0x44'
+assert teleport[3]['native_target'] == '0x480040'
+assert [row['clip'] for row in programs['breathe_fire']['instructions'] if 'clip' in row] == [448]
+assert [row['clip'] for row in programs['weapon_draw']['instructions'] if 'clip' in row] == [244]
+assert all(not program['whole_move_verified'] and program['unresolved_native_edges']
+           for program in programs.values())
+print('PASS: spear alternatives, task spawns/waits, teleport motion/callback, fire and weapon VM edges')

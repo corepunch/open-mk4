@@ -370,6 +370,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: original kick playback; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

@@ -194,3 +194,51 @@ simultaneous trades; entering a reaction clears a pending continuation. Tests
 exercise actual simulator hit/block delivery as well as controlled oracle
 results. These tests establish playback/branch behavior under the stated
 inputs, not the retail damage, collision, victim reaction or hitstop rules.
+
+## Special-program edges and scheduler verification
+
+The inventory now decodes both spear entry alternatives, spear's return
+script, fire's parent script, teleport entry/landing, and weapon draw/return.
+Each instruction preserves its VA, raw word, native handler, operand words,
+clip descriptor/count/start where applicable, and unresolved native edges.
+Unsupported opcodes stop a path explicitly. A native tail is an open edge,
+not proof that the move ends. `whole_move_verified` remains false for these
+programs.
+
+Spear (`0x4ed448`) opens clip 14 at sample 0, or at sample 9 through its
+conditional alternative (`0x4ed47c`). Both spawn task type `0x43` with callback
+`0x49a6a0`, progress to sample 30, then request a **45-tick scheduler wait**.
+The native child controls the chain and victim; `0x4ed4a8` is another return
+program reached through native code. Clip 14 contains 80 samples; neither its
+stored count nor the parent's forward progression supplies the full spear
+move behavior.
+
+Teleport's `0x38` instruction installs `0x480040` in group +0x44. It does
+**not** call that routine inside the VM. The world/physics update must drive
+this callback; its completion determines how the native continuation advances.
+The initial motion operands are preserved without converting them into an
+invented speed or teleport distance. Fire and weapon draw also leave the VM
+through native routines with effect/weapon dependencies.
+
+The Scorpion oracle now executes the **original task pump `0x41f570`** after
+entry. It restores task-local fields and honors the signed 16-bit countdown
+at task +0xdc. The initial save mirrors `0x41f650..0x41f6cd`. All 27 normal
+fixtures, including every fetch and pose call, remain unchanged. A separate
+synthetic test stream opens clip 66 for one tick and requests a 45-tick wait;
+the original VM resumes at tick 46 with the pose held throughout. This guards
+against silently collapsing long waits to a single callback dispatch. The
+synthetic stream is a harness test, not an extracted Scorpion move.
+
+Researching spear also exposed another fixture requirement: a parent task
+must occupy a real task-pool slot, since unlink scans that pool for the
+predecessor. The oracle uses `0x538728`. A full spear oracle additionally needs
+initialized group/transform pools and loaded geometry resources. Merely
+initializing the pools reaches a resource-bind failure at `0x408600`; tracing
+that failure path does not validate a successful spear. No spear timing or
+projectile gameplay is claimed from that incomplete environment.
+
+Still open: the other normal/contextual attacks and combo routes, specials'
+full entity/physics/victim behavior, weapon combat/geometry, all finisher scene
+programs, actual collision/reactions/damage/hitstop and authentic four-button
+command dispatch. The current host still supplies simplified punch/kick
+commands. Command extraction is not their implementation.

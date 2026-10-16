@@ -1,6 +1,6 @@
 {
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
-  "limits": "Optional x86 oracle for Scorpion normal-move playback and branch decisions.\n\nExecutes the supplied VM and native continuations. Pose, audio and contact are\nstubbed. Injected contact results test control flow, NOT original collision,\ndamage, victim reactions, hitstop or scheduler timing. No world physics runs.\n",
+  "limits": "Optional x86 oracle for Scorpion normal-move playback and branch decisions.\n\nExecutes the supplied VM, task scheduler and native continuations. Pose, audio and contact are\nstubbed. Injected contact results test control flow, NOT original collision,\ndamage, victim reactions, hitstop or scheduler timing. No world physics runs.\n",
   "moves": [
     {
       "name": "jab_miss",

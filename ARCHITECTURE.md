@@ -121,14 +121,21 @@ have explicit jab/kick entry callbacks. Other entries select a default move
 through the shared runner. Goro names clips from his separate animation bank.
 Spawn writes the roster index and initializes `Fighter.current_move`.
 `game/moves.c` owns move entry, frame/end callbacks and sample selection.
-Scorpion and Sub-Zero high kicks now use sparse playback segments measured from
+Scorpion and Sub-Zero high kicks use sparse playback segments measured from
 the supplied x86 VM and native recovery code. Scorpion reverses to sample 0;
 Sub-Zero continues to sample 27. Their uninterrupted no-contact paths finish
-at playback steps 30 and 29. Native contact queries occur at steps 11..13;
-damage/reach/stun and other moves remain our approximation. Per-frame events
-run only in simulation, including on move entry; rendering only reads samples.
-The original oracle and its explicit stubs/limits are documented in
-[Scorpion retail moves](docs/scorpion-retail-moves.md).
+at playback steps 30 and 29. Scorpion's jab, sweep and uppercut also have
+recovered playback, with buffered jab repeats and uppercut miss/block/hit
+recovery loops. All 27 normal-move branch scenarios match saved original VM,
+native-continuation and task-scheduler fixtures. Contact results in the oracle
+are injected; collision, damage, victim reactions and hitstop remain prototype
+rules. Sparse events request contact in simulation; one-shot continuations can
+run after simultaneous hit resolution. Entering another move clears pending
+continuations and buffered presses. Rendering only reads samples.
+The special-command and VM inventory preserves known clip/start/wait/spawn/
+callback edges with explicit unresolved native dependencies. Specials, weapon
+combat and fatalities are not yet implemented. The original oracle and its
+stubs/limits are documented in [Scorpion retail moves](docs/scorpion-retail-moves.md).
 `battle_step` remains
 the shared update and does not branch on game id. Static move pointers can
 be copied within this process, but need stable IDs for serialized snapshots.

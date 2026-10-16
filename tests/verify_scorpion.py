@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Optional x86 oracle for Scorpion normal-move playback and branch decisions.
 
-Executes the supplied VM and native continuations. Pose, audio and contact are
+Executes the supplied VM, task scheduler and native continuations. Pose, audio and contact are
 stubbed. Injected contact results test control flow, NOT original collision,
 damage, victim reactions, hitstop or scheduler timing. No world physics runs.
 """
@@ -34,7 +34,7 @@ SCENARIOS += [dict(name='uppercut_%s_at_%d' % (label, step), move='uppercut',
               for step in (8, 9) for status, label in [(1, 'block'), (2, 'hit')]]
 
 
-def trace(image, scenario):
+def trace(image, scenario, wait_probe=False):
     from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE
     from unicorn.x86_const import UC_X86_REG_ESP, UC_X86_REG_EIP
 
@@ -51,7 +51,9 @@ def trace(image, scenario):
 
     for dst, value in image.fixups.items():
         word(dst, value)
-    node, group, other, victim = 0x1000000, 0x1001000, 0x1002000, 0x1003000
+    # Use a real pool slot: native unlink scans predecessor slots in this
+    # pool, so an invented out-of-pool parent breaks spawned task cleanup.
+    node, group, other, victim = 0x538728, 0x1001000, 0x1002000, 0x1003000
     for va, value in [(0x53c420, node // 4), (0x53c41c, group // 4),
                       (0x4d07ac, 0x1100000 // 4), (node + 4, 0x1101000 // 4),
                       (node + 0x34, 0), (node + 0x3c, other // 4),
@@ -105,13 +107,33 @@ def trace(image, scenario):
             assert machine.reg_read(UC_X86_REG_EIP) == 0x1700000, 'Instruction budget exhausted'
             assert machine.reg_read(UC_X86_REG_ESP) == stack + 4, 'Unbalanced CPU stack'
 
-    call(0x459490, (SCRIPTS[scenario['move']],))
+    script = SCRIPTS[scenario['move']]
+    if wait_probe:
+        script = 0x1006000
+        # A test stream, NOT a discovered Scorpion move: open clip 66 for
+        # one dispatch, wait 45 scheduler ticks, return to the controller.
+        for index, value in enumerate([0x02000001, (0x4fad7c + 66 * 12) // 4,
+                                       0x3400002d, 0x3f000000]):
+            word(script + index * 4, value)
+    call(0x459490, (script,))
+    # Mirror the scheduler's post-callback save for the entry dispatch. All
+    # subsequent ticks execute the ORIGINAL task pump at 0x41f570, including
+    # signed 16-bit countdown at node +0xdc and task-local scratch restore.
+    # A direct callback loop silently turns opcode 0x34's 45-tick wait into 1.
+    for offset, scratch in [(0x14, 0x53c43c), (0x18, 0x53c440),
+                            (0x1c, 0x53c444), (0x20, 0x53c448),
+                            (0x10, 0x53c40c), (0x24, 0x53c414),
+                            (0x28, 0x53c418), (0x2c, 0x53c41c)]:
+        word(node + offset, get(scratch))
+    word(node + 0xd8, get(node + 8))
+    word(node + 0xdc, get(0x53c40c) & 0xffff)
+    word(0x524efc, node)
     for tick in range(256):
         if tick:
             word(0x53c22c, 0)
             if tick in scenario.get('presses', []):
                 word(0x53c204, tick + 1)
-            call(get(node + 8))
+            call(0x41f570)
         if done:
             break
         assert poses, 'No initial pose'
@@ -127,6 +149,10 @@ def main():
     parser.add_argument('--exe', default='MK4/MK-4.EXE')
     parser.add_argument('--record', action='store_true')
     args = parser.parse_args()
+    probe = trace(RetailImage(args.exe), dict(name='scheduler_wait45', move='kick'), wait_probe=True)
+    assert probe['end_step'] == 46
+    assert [row['step'] for row in probe['commands']] == [0, 1, 46]
+    assert all(row == dict(clip=66, frame=0) for row in probe['displayed'])
     result = dict(exe_sha256=EXE_SHA256,
                   limits=__doc__, moves=[trace(RetailImage(args.exe), row) for row in SCENARIOS])
     directory = Path(__file__).parent / 'fixtures'
@@ -149,6 +175,7 @@ def main():
     else:
         assert result == json.loads(fixture.read_text()), 'Scorpion playback fixture changed'
     print('PASS: %d original Scorpion VM/native scenarios; balanced continuations' % len(result['moves']))
+    print('PASS: original scheduler preserves the 45-tick wait and held pose')
     for move in result['moves']:
         print('  %s: %d steps, contacts %s' %
               (move['name'], move['end_step'], [row['step'] for row in move['contact_queries']]))

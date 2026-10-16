@@ -25,6 +25,90 @@ COMMAND_TABLES = [
 DISPATCH = [(1, 0x4e6ef8), (2, 0x4ed828), (4, 0x4e8910),
             (8, 0x4e7008), (32, 0x4dfc90)]
 
+# Operand counts checked in the supplied handlers, not inferred from an
+# apparent pointer following an opcode. Unlisted opcodes stop extraction.
+SCRIPT_OPS = {
+    0x02: ('open clip and advance for count', 1),
+    0x03: ('finish forwards', 0),
+    0x04: ('advance forwards for count', 0),
+    0x05: ('advance forwards to sample', 0),
+    0x09: ('clip descriptor operation', 1),
+    0x0f: ('open clip at sample', 1),
+    0x12: ('set animation cursor', 0),
+    0x19: ('advance twice per visit for count', 0),
+    0x20: ('sound event', 0),
+    0x25: ('native helper', 0),
+    0x27: ('sound event', 0),
+    0x2c: ('native helper', 0),
+    0x2d: ('set action 0x1007', 0),
+    0x32: ('native tail call', 1),
+    0x33: ('script jump', 1),
+    0x34: ('scheduler wait', 0),
+    0x35: ('native call', 1),
+    0x38: ('install group callback at +0x44', 1),
+    0x39: ('clear group callback at +0x44', 0),
+    0x3f: ('return to fighter controller', 0),
+    0x40: ('spawn cooperative task', 2),
+    0x41: ('native helper', 0),
+    0x45: ('conditional script branch', 1),
+    0x4d: ('advance twice per visit to sample', 0),
+    0x58: ('motion operands', 3),
+    0x60: ('native helper', 0),
+}
+
+
+def script_program(image, entry):
+    """Extract all known VM paths; native behavior remains an explicit edge.
+
+    Reaching a native tail closes this VM path, not the whole move. In
+    particular installing a group callback does not execute it in the VM.
+    """
+    pending, seen, rows, open_edges = [entry], set(), [], []
+    while pending:
+        pc = pending.pop()
+        while pc not in seen:
+            if len(seen) >= 512:
+                raise ValueError('Scorpion script graph exceeds researched bounds')
+            seen.add(pc)
+            word = image.word(pc)
+            op = word >> 24
+            row = dict(va=hex(pc), word=hex(word), opcode=hex(op),
+                       handler=hex(image.word(0x4e3988 + op * 4)))
+            rows.append(row)
+            if op not in SCRIPT_OPS:
+                row['operation'] = 'unresearched opcode; path stopped'
+                open_edges.append(dict(source=hex(pc), kind='unknown opcode', target=hex(op)))
+                break
+            operation, count = SCRIPT_OPS[op]
+            operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
+            row.update(operation=operation, inline=word & 0xffffff,
+                       operands=[hex(value) for value in operands])
+            if op in (0x02, 0x09, 0x0f):
+                clip = image.clip(operands[0])
+                row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
+                if op == 0x0f:
+                    row['start_sample'] = word & 255
+            if op in (0x32, 0x35, 0x38):
+                row['native_target'] = hex(operands[0])
+                open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[0])))
+            if op == 0x40:
+                row.update(task_type=operands[0], callback=hex(operands[1]))
+                open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[1])))
+            if op in (0x25, 0x2c, 0x41, 0x58, 0x60):
+                open_edges.append(dict(source=hex(pc), kind='native helper semantics',
+                                       target=row['handler']))
+            if op == 0x45:
+                pending.append(operands[0] * 4)
+                row['branch'] = hex(operands[0] * 4)
+            if op == 0x33:
+                pc = operands[0] * 4
+            elif op in (0x32, 0x3f):
+                break
+            else:
+                pc += (count + 1) * 4
+    return dict(entry=hex(entry), instructions=sorted(rows, key=lambda row: int(row['va'], 16)),
+                unresolved_native_edges=open_edges, whole_move_verified=False)
+
 
 def commands(image):
     result = []
@@ -97,12 +181,19 @@ def inventory(image):
                 move_list_asset='geogfx/sc_m_geo.geo',
                 command_records=commands(image),
                 entry_points=[dict(name=name, native=hex(native), script=hex(script) if script else None,
-                                   implementation='unverified except high_kick no-contact playback')
+                                   implementation=('playback/branch fixtures; combat still approximate'
+                                                   if name in ('jab', 'high_kick', 'sweep', 'uppercut')
+                                                   else 'not implemented'))
                               for name, native, script in roots],
+                special_programs={name: script_program(image, script) for name, script in [
+                    ('spear_entry', 0x4ed448), ('spear_return', 0x4ed4a8),
+                    ('breathe_fire', 0x4e5b58), ('teleport_entry', 0x4e87b0),
+                    ('teleport_landing', 0x4e8818), ('weapon_draw', 0x4e62c0),
+                    ('weapon_draw_return', 0x4e62d8)]},
                 kick_contacts=[attack_record(image, 0x53d2b8, i) for i in (1, 2)],
                 coverage=dict(command_records='extracted; both players checked',
                               native_predicates='identified; not yet ported',
-                              combos='native jab repeat helper identified at 0x46de60; graph not closed',
+                              combos='jab repeat playback ported and checked; other combo graphs open',
                               weapons='draw command identified; weapon-specific graph not closed',
                               fatalities='four command targets identified; scene graphs not closed'))
 
