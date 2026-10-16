@@ -331,7 +331,71 @@ static void check_specials(void) {
   }
 }
 
+static void draw_sword(Battle *battle) {
+  command(battle, 0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
+  check(battle->fighters[0].current_move->clip == 244, "F,F,HK must draw the sword");
+  advance_ticks(battle, 21, NULL);
+  check(!battle->fighters[0].armed, "Sword equipped before the script create event");
+  advance_ticks(battle, 27, NULL);
+  check(battle->fighters[0].armed && battle->fighters[0].current_move->clip == 286, "Draw must equip and return to armed stance");
+}
+
+static void check_weapon(void) {
+  for (int guard = 0; guard < 2; ++guard) {
+    Battle battle = fight(1.3f);
+    draw_sword(&battle);
+    Input in[2] = {{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {guard ? BUTTON_BIT(BUTTON_BLOCK) : 0}};
+    battle_step(&battle, in);
+    in[0].held = 0;
+    advance_ticks(&battle, 45, in);
+    check(battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x3333, 0x3333) : 0x3333), "Sword slash damage/chip must apply once");
+    check(battle.fighters[0].armed && battle.fighters[0].state == S_IDLE, "Slash must retain sword and recover");
+  }
+  {
+    Battle battle = fight(4.f);
+    draw_sword(&battle);
+    command(&battle, 0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
+    check(battle.fighters[0].current_move->clip == 208, "Drawing while armed must throw");
+    advance_ticks(&battle, 120, NULL);
+    check(!battle.fighters[0].armed && battle.fighters[0].weapon_used, "Throw must detach and prevent a new sword");
+    check(battle.fighters[1].health == Q16_ONE - 0x4000, "Thrown sword damage must be 25 percent");
+    int resting = -1;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      if (battle.projectiles[i].kind == PROJECTILE_SWORD && battle.projectiles[i].phase == 2) {
+        resting = i;
+      }
+    }
+    check(resting >= 0, "Connected thrown sword must fall and become pickable");
+    battle.fighters[0].body.pos[AXIS_X] = battle.projectiles[resting].pos[AXIS_X] - Q16_ONE / 2;
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_RUN)}, {0}});
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    check(battle.fighters[0].armed && battle.projectiles[resting].kind == 0, "Crouch+RUN must attach a nearby resting sword");
+    advance_ticks(&battle, 20, NULL);
+    battle_react(&battle, &battle.fighters[0], 34);
+    check(!battle.fighters[0].armed, "Launch reaction must knock out the held sword");
+    advance_ticks(&battle, 100, NULL);
+    battle_next_round(&battle);
+    check(!battle.fighters[0].armed && !battle.fighters[0].weapon_used, "New round must reset weapon availability");
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      check(battle.projectiles[i].kind == 0, "Round reset must remove world weapons");
+    }
+  }
+  {
+    Battle battle = fight(4.f);
+    draw_sword(&battle);
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
+    Input hold[2] = {{BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}};
+    advance_ticks(&battle, 20, hold);
+    check(battle.fighters[0].current_move->clip == 224, "Crouching armed LP must enter held spin");
+    advance_ticks(&battle, 2, NULL);
+    check(battle.fighters[0].state == S_IDLE, "Releasing LP must end spin");
+  }
+}
+
 int main(void) {
+  check_weapon();
   check_specials();
   check_retail_input();
   check_roster();
@@ -482,6 +546,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: sword draw/slash/chip/throw/drop/pickup/spin/reset; Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

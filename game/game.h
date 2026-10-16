@@ -332,6 +332,8 @@ struct Fighter {
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
   uint64_t spear_ready, teleport_ready;
+  bool armed, weapon_used;
+  FighterFn disarm; /* character-owned weapon drop entry */
 };
 
 typedef struct HitEffect {

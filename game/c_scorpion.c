@@ -248,7 +248,15 @@ static void scorpion_kick(Battle *battle, Fighter *fighter) {
   fighter_start_move(battle, fighter, S_KICK, &s_kick);
 }
 
+static void scorpion_idle(Battle *battle, Fighter *fighter);
+static void scorpion_walk(Battle *battle, Fighter *fighter);
+static void scorpion_crouch(Battle *battle, Fighter *fighter);
+static void scorpion_block(Battle *battle, Fighter *fighter);
 static const FighterFn enter[S_COUNT] = {
+    [S_IDLE] = scorpion_idle,
+    [S_WALK] = scorpion_walk,
+    [S_CROUCH] = scorpion_crouch,
+    [S_BLOCK] = scorpion_block,
     [S_PUNCH] = scorpion_jab,
     [S_KICK] = scorpion_kick,
 };
@@ -516,9 +524,17 @@ static bool fighting(const Battle *battle, const Fighter *fighter) {
   return battle->phase == PHASE_FIGHT;
 }
 
+static void sword_hp(Battle *battle, Fighter *fighter);
+static void sword_lp(Battle *battle, Fighter *fighter);
+static void sword_spin(Battle *battle, Fighter *fighter);
+static void scorpion_weapon(Battle *battle, Fighter *fighter);
+static bool can_weapon(const Battle *battle, const Fighter *fighter);
+static bool can_pickup(const Battle *battle, const Fighter *fighter);
+static void scorpion_pickup(Battle *battle, Fighter *fighter);
+
 static void press_jab(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, scorpion_jab);
+  fighter_interrupt(fighter, fighter->armed ? sword_hp : scorpion_jab);
 }
 
 static void press_kick(Battle *battle, Fighter *fighter) {
@@ -539,11 +555,21 @@ static void enter_throw(Battle *battle, Fighter *fighter) {
 }
 
 static void press_lp(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(battle, fighter) <= 0.7f ? enter_throw : scorpion_jab);
+  fighter_interrupt(fighter, fighter_distance(battle, fighter) <= 0.7f ? enter_throw : fighter->armed ? sword_lp : scorpion_jab);
 }
 
 static void press_lk(Battle *battle, Fighter *fighter) {
   fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : scorpion_kick);
+}
+
+static void press_air_lp(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, fighter->armed ? sword_lp : scorpion_jab);
+}
+
+static void press_crouch_lp(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, fighter->armed ? sword_spin : enter_uppercut);
 }
 
 static void press_uppercut(Battle *battle, Fighter *fighter) {
@@ -561,11 +587,291 @@ static const CommandDef commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, CMD_AIR, can_teleport, scorpion_teleport},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_BACK}, 2, 27, 0, can_spear, scorpion_spear},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 20, 0, fighting, scorpion_fire},
+  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, can_weapon, scorpion_weapon},
+  {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, scorpion_pickup},
 };
 static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
-static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_uppercut, [BUTTON_HIGH_KICK] = press_sweep, [BUTTON_LOW_KICK] = press_sweep}};
-static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_jab, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_kick}};
+static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_crouch_lp, [BUTTON_HIGH_KICK] = press_sweep, [BUTTON_LOW_KICK] = press_sweep}};
+static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_kick}};
 static const Controls scorpion_controls = {commands, COUNT(commands), {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
 // clang-format on
+
+/* Weapon scripts 0x4e62c0/0x4e62d8, 0x4ec8b0/0x4ec918 and 0x4e8850;
+ * slash parameter blocks 0x4ec880/0x4ec898; native throw 0x498290. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const AttackRecord sword_records[] = {
+  {98304, -35389, 57016, 39321, 48, 12, 119, 0, 13107}, /* HP / LP */
+  {124518, -34078, 83230, 51118, 49, 12, 119, 0, 13107}, /* back LP */
+  {111411, -34078, 83230, 51118, 50, 12, 119, 0, 13107}, /* back HP */
+  {78643, 1900, 193331, 24903, 99, 10, 118, 0, 3276}, /* spin */
+  {110690, -60882, 68157, 62914, 156, 156, 4, 0, 11796}, /* air HP */
+  {101580, -4587, 64225, 53739, 155, 155, 4, 0, 11796}, /* air LP */
+  {57606, -37945, 73990, 35979, 154, 154, 0, ATTACK_MARK, 16384}, /* throw */
+};
+// clang-format on
+#define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
+SWORD_MOVE(s_draw, 244, 0x1004);
+SWORD_MOVE(s_sword_hp, 235, 0x10e);
+SWORD_MOVE(s_sword_lp, 236, 0x10e);
+SWORD_MOVE(s_sword_back_lp, 237, 0x112);
+SWORD_MOVE(s_sword_back_hp, 238, 0x112);
+SWORD_MOVE(s_spin_start, 223, 0x407);
+SWORD_MOVE(s_spin, 224, 0x407);
+SWORD_MOVE(s_sword_throw, 208, 0x30f);
+SWORD_MOVE(s_pickup, 209, 0x2006);
+SWORD_MOVE(s_sword_air_hp, 252, 0x603);
+SWORD_MOVE(s_sword_air_lp, 251, 0x604);
+static const MoveDef s_armed_idle = {.clip = 286, .last = MOVE_END};
+static const MoveDef s_armed_walk = {.clip = 277, .last = MOVE_END};
+static const MoveDef s_armed_crouch = {.clip = 219, .last = MOVE_END, .flags = SF_HOLD};
+static const MoveDef s_armed_block = {.clip = 245, .last = MOVE_END, .flags = SF_HOLD};
+
+static void scorpion_idle(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_IDLE, fighter->armed ? &s_armed_idle : &s_idle);
+}
+
+static void scorpion_walk(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_WALK, fighter->armed ? &s_armed_walk : &s_walk);
+}
+
+static void scorpion_crouch(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_CROUCH, fighter->armed ? &s_armed_crouch : &s_crouch);
+}
+
+static void scorpion_block(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_BLOCK, fighter->armed ? &s_armed_block : &s_block);
+}
+
+static void sword_object_tick(Battle *battle, Projectile *p) {
+  if (p->phase == 2) {
+    p->lifetime = 2; /* Resting weapons last until pickup or the round reset. */
+    return;
+  }
+  for (int k = 0; k < 3; ++k) {
+    p->pos[k] += p->vel[k];
+  }
+  if (p->phase == 0) {
+    ContactResult contact = battle_contact_from(battle, &battle->fighters[p->owner], &sword_records[6], p->pos, p->facing);
+    if (contact != CONTACT_MISS) {
+      p->phase = 1;
+      p->vel[AXIS_X] = 0;
+      p->vel[AXIS_Y] = -0x2666;
+      p->lifetime = 180;
+    } else if (p->ticks >= 30 || abs(p->pos[AXIS_X]) >= battle->arena_radius) {
+      p->kind = 0;
+    }
+  } else {
+    p->vel[AXIS_Y] += 0x28f;
+    if (p->pos[AXIS_Y] >= -0x1999 && p->vel[AXIS_Y] >= 0) {
+      p->pos[AXIS_Y] = -0x1999;
+      memset(p->vel, 0, sizeof p->vel);
+      p->phase = 2;
+      p->lifetime = 2;
+    }
+  }
+}
+
+static void sword_drop(Battle *battle, Fighter *fighter) {
+  if (!fighter->armed) {
+    return;
+  }
+  Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 180, sword_object_tick);
+  if (p != NULL) {
+    p->phase = 1;
+    p->vel[AXIS_Y] = -0x2666;
+  }
+  fighter->armed = false;
+}
+
+static void equip_sword(Fighter *fighter) {
+  fighter->armed = true;
+  fighter->weapon_used = true;
+  fighter->disarm = sword_drop;
+}
+
+static void sword_slash_tick(Battle *battle, Fighter *fighter) {
+  int clip = fighter_move(fighter)->clip, tick = fighter->ticks;
+  int start = clip == 238 ? 26 : 17;
+  int active = clip == 235 || clip == 236 ? 4 : 3;
+  int record = clip == 237 ? 1 : clip == 238 ? 2 : 0;
+  if ((clip == 237 && tick == 9) || (clip == 238 && tick == 16)) {
+    fighter_set_speed(battle, fighter, 0x1999);
+  }
+  if (tick >= start && tick < start + active && !fighter->connected) {
+    battle_contact(battle, fighter, &sword_records[record]);
+  }
+  if (fighter->connected || tick >= start + active) {
+    fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
+    fighter->action = 0x1006;
+  }
+  int end = clip == 237 ? 48 : clip == 238 ? 41 : 43;
+  if (fighter->connected) {
+    end -= record ? 4 : 1;
+    fighter->sample_override = tick + (clip == 238 ? 0 : 1);
+  } else if (clip == 237) {
+    fighter->sample_override = tick < 21 ? tick : tick < 25 ? 20 : tick - 3;
+  } else if (clip == 238) {
+    fighter->sample_override = tick < 26 ? tick : tick < 30 ? tick - 1 : tick < 34 ? 28 : tick - 4;
+  } else {
+    fighter->sample_override = tick;
+  }
+  if (tick >= end) {
+    special_ready(battle, fighter);
+  }
+}
+
+static void sword_air_tick(Battle *battle, Fighter *fighter) {
+  int hp = fighter_move(fighter)->clip == 252;
+  int start = hp ? 8 : 9;
+  fighter->sample_override = mini(9, fighter->ticks);
+  if (fighter->ticks >= start && fighter->ticks <= 10 && !fighter->connected) {
+    battle_contact(battle, fighter, &sword_records[hp ? 4 : 5]);
+  }
+  if (!fighter_airborne(fighter)) {
+    fighter_start_move(battle, fighter, S_JUMP, &s_teleport_land);
+    fighter->script = teleport_land_tick;
+    fighter->sample_override = 18;
+  }
+}
+
+static void sword_attack(Battle *battle, Fighter *fighter, bool hp) {
+  bool back = fighter_holds_back(battle, fighter), air = fighter_airborne(fighter);
+  const MoveDef *move = air ? (hp ? &s_sword_air_hp : &s_sword_air_lp) : back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
+  fighter_start_move(battle, fighter, air ? S_JUMP : S_PUNCH, move);
+  fighter->script = air ? sword_air_tick : sword_slash_tick;
+  fighter->sample_override = 0;
+}
+
+static void sword_hp(Battle *battle, Fighter *fighter) {
+  sword_attack(battle, fighter, true);
+}
+
+static void sword_lp(Battle *battle, Fighter *fighter) {
+  sword_attack(battle, fighter, false);
+}
+
+static void spin_tick(Battle *battle, Fighter *fighter) {
+  if (fighter->script_phase != 0) {
+    if (++fighter->script_timer >= 12) {
+      special_ready(battle, fighter);
+    }
+    return;
+  }
+  fighter->sample_override = fighter->ticks % 12;
+  ContactResult result = CONTACT_MISS;
+  if (fighter->ticks > 0 && fighter->ticks % 12 == 0) {
+    result = battle_contact(battle, fighter, &sword_records[3]);
+  }
+  if (result == CONTACT_BLOCK || fighter_opponent(battle, fighter)->hits >= 3) {
+    stop_body(fighter);
+    fighter->script_phase = 1;
+    fighter->script_timer = 0;
+    return;
+  }
+  if (!(fighter->held & BUTTON_BIT(BUTTON_LOW_PUNCH))) {
+    special_ready(battle, fighter);
+    return;
+  }
+  int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
+  fighter->body.vel[AXIS_X] = direction * 0xf5c;
+}
+
+static void spin_start_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(3, fighter->ticks);
+  if (fighter->ticks >= 4) {
+    fighter_start_move(battle, fighter, S_PUNCH, &s_spin);
+    fighter->script = spin_tick;
+    fighter->sample_override = 0;
+  }
+}
+
+static void sword_spin(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_PUNCH, &s_spin_start);
+  fighter->script = spin_start_tick;
+  fighter->sample_override = 0;
+}
+
+static void draw_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = fighter->ticks + (fighter->ticks >= 35);
+  if (fighter->ticks == 22) {
+    equip_sword(fighter);
+  }
+  if (fighter->ticks >= 48) {
+    special_ready(battle, fighter);
+  }
+}
+
+static void sword_throw_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = fighter->ticks - (fighter->ticks >= 11);
+  if (fighter->ticks == 22 && fighter->armed) {
+    Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 90, sword_object_tick);
+    if (p != NULL) {
+      p->pos[AXIS_X] += fighter->facing * 0x9999;
+      p->pos[AXIS_Y] = -0x13333;
+      p->vel[AXIS_X] = fighter->facing * 0x3333;
+    }
+    fighter->armed = false;
+  }
+  if (fighter->ticks >= 62) {
+    special_ready(battle, fighter);
+  }
+}
+
+static bool can_weapon(const Battle *battle, const Fighter *fighter) {
+  return battle->phase == PHASE_FIGHT && (fighter->armed || !fighter->weapon_used);
+}
+
+static void scorpion_weapon(Battle *battle, Fighter *fighter) {
+  if (fighter->armed) {
+    fighter_start_move(battle, fighter, S_PUNCH, &s_sword_throw);
+    fighter->script = sword_throw_tick;
+  } else if (fighter->flags & FF_FOLLOW_UP) {
+    equip_sword(fighter);
+    fighter_start_move(battle, fighter, S_PUNCH, &s_sword_back_lp);
+    fighter->script = sword_slash_tick;
+  } else {
+    fighter_start_move(battle, fighter, S_PUNCH, &s_draw);
+    fighter->script = draw_tick;
+  }
+  fighter->sample_override = 0;
+}
+
+static int pickup_index(const Battle *battle, const Fighter *fighter) {
+  if (fighter->armed || !fighter->crouching) {
+    return -1;
+  }
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    const Projectile *p = &battle->projectiles[i];
+    q16 dx = p->pos[AXIS_X] - fighter->body.pos[AXIS_X], dz = p->pos[AXIS_Z] - fighter->body.pos[AXIS_Z];
+    if (p->kind == PROJECTILE_SWORD && p->phase == 2 && q16_mul(dx, dx) + q16_mul(dz, dz) <= Q16_ONE) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+static bool can_pickup(const Battle *battle, const Fighter *fighter) {
+  return battle->phase == PHASE_FIGHT && pickup_index(battle, fighter) >= 0;
+}
+
+static void pickup_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(14, fighter->ticks);
+  if (fighter->ticks >= 15) {
+    special_ready(battle, fighter);
+  }
+}
+
+static void scorpion_pickup(Battle *battle, Fighter *fighter) {
+  int index = pickup_index(battle, fighter);
+  if (index < 0) {
+    special_ready(battle, fighter);
+    return;
+  }
+  battle->projectiles[index].kind = 0;
+  equip_sword(fighter);
+  fighter_start_move(battle, fighter, S_PUNCH, &s_pickup);
+  fighter->script = pickup_tick;
+  fighter->sample_override = 0;
+}
 
 const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873};

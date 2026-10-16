@@ -40,7 +40,8 @@ The working implementation is `game/c_scorpion.c` (the existing filename).
 | Spear | B,B,LP, startup alternative, projectile, chip, pull, 64-tick stun, 60% combo scaling, cooldown and interruption cleanup |
 | Teleport | D,B,HP, air permission, cooldown/hit-count gate, vanish, cross-over, hit hang/drop, block recoil/landing, miss recovery |
 | Fire | D,F,LP, normal/follow-up playback, one active query, 12% damage, recovery |
-| Remaining normals/combos, weapons, fatalities | Not ported yet; do not label Scorpion complete |
+| Sword | Draw/follow-up draw, HP/LP and back slashes, held/steered spin with recoil, armed air punches, throw, disarm, resting pickup and round reset |
+| Remaining normals/combos, fatalities | Not ported yet; do not label Scorpion complete |
 
 Spear sources: scripts `0x4ed448`, `0x4ed4a8`; native `0x49a6a0`,
 `0x49b170`, `0x487350`, `0x487420`; contact record `0x4ebeb8`.
@@ -50,8 +51,9 @@ record `0x4ebf90`.
 
 Intentional engine choices: fixed standing/crouching collision hulls; a ten-tick
 teleport vanish replacing the retail camera-bearing trigger, with distance and
-wall exits retained; simple rope/flame rendering. Spear pull uses explicit C
-state instead of a rope-node task chain. Special victim reactions other than
+wall exits retained; simple rope/flame/blade rendering. Sword drops use a single settling arc rather
+than retail cosmetic bounces; thrown swords have a six-unit flight budget. Spear pull uses explicit C
+state instead of a rope-node task chain. Weapon and special victim reactions other than
 spear still use shared fallback reactions and need their own source translation
 before balance equivalence can be claimed. Audio and original particle/gore
 rendering are not implemented. The remaining coverage is explicit work, not

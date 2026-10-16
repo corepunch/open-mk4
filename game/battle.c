@@ -89,6 +89,7 @@ static void finish_round(Battle *battle) {
       fighter_enter_state(battle, &battle->fighters[i], S_KNOCKDOWN);
   }
   battle->contacts_off = true;
+  memset(battle->projectiles, 0, sizeof battle->projectiles);
   if (battle->winner >= 0 && battle->fighters[battle->winner].wins >= 2)
     battle->phase = PHASE_MATCH_OVER;
   else
@@ -295,6 +296,9 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
       battle_damage(battle, target, move->damage * Q16_ONE / 100);
     target->body.pos[AXIS_X] += to_q16((double)attacker->facing * move->push * (blocked ? 0.4 : 1.0));
     if (!blocked) {
+      if ((move->flags & SF_LAUNCH) && target->armed && target->disarm != NULL) {
+        target->disarm(battle, target);
+      }
       fighter_enter_state(battle, target, (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT);
       target->ticks = fighter_move(target)->recovery - move->stun;
       if (move->flags & SF_LAUNCH) {

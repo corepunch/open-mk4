@@ -221,6 +221,8 @@ static void react_approximate(Battle *battle, Fighter *fighter) {
 static const FighterFn reactions[256] = {
   [0] = react_block,
   [112] = react_block,
+  [118] = react_block,
+  [119] = react_block,
   [1] = react_jab_block,
   [4] = react_low_block,
   [6] = react_block,
@@ -238,6 +240,13 @@ static const FighterFn reactions[256] = {
  * reaction starts on the victim's next update. */
 void battle_react(Battle *battle, Fighter *victim, int reaction) {
   require(reaction >= 0 && reaction < COUNT(reactions), "Invalid reaction id");
+  /* Drop rules for the reaction ids currently used by our script records.
+   * Native 0x494520 is called by these reaction paths, not by ordinary block. */
+  if (victim->armed && victim->disarm != NULL &&
+      ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 50) || reaction == 70 ||
+          reaction == 90 || reaction == 155 || reaction == 156 || reaction == 173)) {
+    victim->disarm(battle, victim);
+  }
   FighterFn entry = reactions[reaction] != NULL && victim->roster != 15 ? reactions[reaction] : react_approximate;
   (void)battle;
   for (int i = 0; i < 3; ++i) {

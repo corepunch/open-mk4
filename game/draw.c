@@ -6,7 +6,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
 #include <string.h>
 static const float pi = 3.14159265358979323846f;
 
@@ -178,6 +177,15 @@ void draw_sprite(Canvas *cv, const Geometry *geo, int index, Rect dst, bool flip
   canvas_blit(cv, &geo->textures.data[s->texture], (Rect){s->u, s->v, s->w, s->h}, dst, flip);
 }
 
+static void draw_blade(Canvas *cv, Camera camera, Vec3 base, Vec3 tip) {
+  ScreenVertex a = camera_project(camera, (Vertex){.p = camera_point(camera, base)}, 1);
+  ScreenVertex b = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);
+  for (int width = -2; width <= 2; ++width) {
+    canvas_line(cv, (int)a.x + width, (int)a.y, (int)b.x, (int)b.y, width == 0 ? 0xfff0f0ec : 0xff8c959a);
+  }
+  canvas_line(cv, (int)a.x - 5, (int)a.y, (int)a.x + 5, (int)a.y, 0xffb7a46c);
+}
+
 void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused) {
   canvas_clear(cv);
   const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
@@ -210,6 +218,11 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &battle->projectiles[i];
+    if (p->kind == PROJECTILE_SWORD) {
+      Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
+      float angle = p->phase == 2 ? 0.f : (float)p->ticks * .3f;
+      draw_blade(cv, camera, base, vec_add(base, (Vec3){cosf(angle), sinf(angle), 0}));
+    }
     if (p->kind != PROJECTILE_SPEAR) {
       continue;
     }
@@ -223,6 +236,11 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   }
   for (int i = 0; i < 2; ++i) {
     const Fighter *f = &battle->fighters[i];
+    if (f->armed) {
+      Vec3 hand = {fighter_x(f) + f->facing * .3f, -1.2f - fighter_height(f), fighter_z(f)};
+      float angle = fighter_move(f)->clip == 224 ? f->ticks * .5f : -1.1f;
+      draw_blade(cv, camera, hand, vec_add(hand, (Vec3){f->facing * cosf(angle), sinf(angle), 0}));
+    }
     if (fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
       Vec3 end = {mouth.x + f->facing * 2.3f, mouth.y + .25f, mouth.z};
