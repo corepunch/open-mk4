@@ -262,7 +262,8 @@ enum {
   APPEARANCE_NORMAL,
   APPEARANCE_BEAST,
   APPEARANCE_BURNED,
-  APPEARANCE_HIDDEN
+  APPEARANCE_HIDDEN,
+  APPEARANCE_FROZEN
 };
 
 typedef enum Phase {
@@ -349,8 +350,9 @@ struct Fighter {
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
-  int appearance; /* character-script rendering variant; reset at round spawn */
-  int reaction;   /* last selected attack-record reaction, retained across its phases */
+  int appearance;  /* character-script rendering variant; reset at round spawn */
+  int frozen_clip; /* preserve the victim's current pose while frozen */
+  int reaction;    /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
   bool armed, weapon_used;
   FighterFn disarm; /* character-owned weapon drop entry */
@@ -367,7 +369,8 @@ typedef void (*ProjectileFn)(Battle *battle, Projectile *projectile);
 
 enum {
   PROJECTILE_SPEAR = 1,
-  PROJECTILE_SWORD = 2
+  PROJECTILE_SWORD = 2,
+  PROJECTILE_ICE = 3
 };
 
 struct Projectile {

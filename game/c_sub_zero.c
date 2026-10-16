@@ -815,12 +815,95 @@ static void enter_lk_throw(Battle *battle, Fighter *fighter) {
   ground_throw(battle, fighter, true);
 }
 
+/* Freeze: 49bc60 -> 4ed588/4ed818 -> 49bcb0. Flight is an independent
+ * task, so it survives owner interruption; bounds and contact own teardown. */
+static const AttackRecord ice_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 67, 67, 0, ATTACK_MARK, 0};
+static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = 0x304};
+
+static bool owned_object(const Battle *battle, const Fighter *fighter, int kind) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    const Projectile *p = &battle->projectiles[i];
+    if (p->kind == kind && &battle->fighters[p->owner] == fighter) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static void ice_projectile(Battle *battle, Projectile *p) {
+  if (battle->contacts_off) {
+    p->kind = 0;
+    return;
+  }
+  for (int i = 0; i < 3; ++i) {
+    p->pos[i] += p->vel[i];
+  }
+  Fighter *owner = &battle->fighters[p->owner];
+  if (opponent(battle, owner)->action != 0x2001 && battle_contact_from(battle, owner, &ice_record, p->pos, p->facing) != CONTACT_MISS) {
+    p->kind = 0;
+  }
+  int64_t radius2 = (int64_t)battle->arena_radius * battle->arena_radius + (int64_t)0xc0000 * Q16_ONE;
+  if ((int64_t)p->pos[AXIS_X] * p->pos[AXIS_X] + (int64_t)p->pos[AXIS_Z] * p->pos[AXIS_Z] > radius2) {
+    p->kind = 0;
+  }
+}
+
+static void ice_tick(Battle *battle, Fighter *fighter) {
+  int startup = fighter->script_phase ? 8 : 15;
+  int t = fighter->ticks;
+  if (t < startup) {
+    fighter->sample_override = mini(14, t * (fighter->script_phase ? 2 : 1));
+    return;
+  }
+  if (t == startup) {
+    Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_ICE, 180, ice_projectile);
+    if (p != NULL) {
+      for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+        q16 heading = fighter_axis(battle, fighter, axis);
+        p->pos[axis] += q16_mul(heading, 0xccc);
+        p->vel[axis] = q16_mul(heading, 0x3333);
+      }
+      p->pos[AXIS_Y] -= 0x28f;
+    }
+  }
+  int phase = t - startup - 1;
+  fighter->action = 0x1007;
+  fighter->sample_override = phase < 0    ? 14
+                             : phase < 8  ? 15 + phase
+                             : phase < 13 ? 23 - (phase - 8)
+                             : phase < 18 ? 18 + phase - 13
+                             : phase < 23 ? 23 - (phase - 18)
+                                          : mini(35, 18 + phase - 23);
+  if (phase >= 41) {
+    sub_zero_ready(battle, fighter);
+  }
+}
+
+static bool can_ice(const Battle *battle, const Fighter *fighter) {
+  return battle->phase == PHASE_FIGHT && fighter_opponent(battle, fighter)->hits <= 1 && !owned_object(battle, fighter, PROJECTILE_ICE);
+}
+
+static void sub_zero_ice(Battle *battle, Fighter *fighter) {
+  bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
+  stop_body(fighter);
+  fighter_start_move(battle, fighter, S_PUNCH, &s_ice);
+  fighter->script = ice_tick;
+  fighter->script_phase = followup;
+  fighter->sample_override = 0;
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const CommandDef commands[] = {
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0, can_ice, sub_zero_ice},
+};
+// clang-format on
+
 static const ButtonTable standing = {
     {[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
 static const ButtonTable crouching = {
     {[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_crouch_lp, [BUTTON_HIGH_KICK] = press_crouch_hk, [BUTTON_LOW_KICK] = press_crouch_lk}};
 static const ButtonTable jumping = {
     {[BUTTON_HIGH_PUNCH] = press_air_hp, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_hk, [BUTTON_LOW_KICK] = press_air_lk}};
-static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
+static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
 
 const CharacterDef mk4_sub_zero = {GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, &controls, enter, -77660};

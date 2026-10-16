@@ -52,9 +52,10 @@ assume these three indices will always coincide for other roster entries.
 | --- | --- | --- |
 | High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
 | Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables, no special commands yet | Specials, weapon and finisher command records in subsequent steps |
+| Controls | Character-owned stance/follow-up tables and D,F,LP freeze command | Clone, slide, weapon and finisher commands in subsequent steps |
 | Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
-| Specials, weapon combat and finishers | No Sub-Zero-specific implementations | Translate the entries below; existing Scorpion coverage does not cover Sub-Zero |
+| Specials | Freeze projectile and reaction 67, including double-freeze backfire and air thaw | Clone and slide are subsequent steps |
+| Weapon combat and finishers | Not yet ported | Follow the character-specific dependencies below |
 
 Keep the existing high-kick sample fixture in
 [tests/fixtures/original_kicks.inc](../tests/fixtures/original_kicks.inc).
@@ -74,6 +75,22 @@ portable launch/block machinery; cosmetic effects, retail wall-task dispatch
 and CPU recovery decisions are not reproduced. Sources for the additions are
 `4e6da0`, `46a950/970`, `4e5fd8`, `4e69c8`, `46c2c0`, `4838e0/483930`,
 `4e9758` and `486ab0`; remaining normal sources are shared with Scorpion.
+
+Freeze-port coverage: `49bc60`, `4ed588/4ed818`, `49bcb0`, `49c300/690/810`,
+`49bb90/49bc00`, `45f1f0` and its callees establish clip 16, the normal/fast
+startup, two recovery loops, 0.2-unit flight, 0.05-unit spawn offset, active
+object and opponent-hit-count gates. Reaction `486230` holds the victim's pose
+for six 6-tick shake phases, 88 ticks, then three 6-tick phases (142 ticks in
+our continuation). `486430` dispatches reaction 67 to the opponent on a double
+freeze, releasing the original victim; air release uses `4864b0`. Natural air
+thaw follows `4e9d38` (gravity 0x147, wait for landing) and `486530`. Opcode
+5c's one-word gravity operand is verified at handler `45b110` and decoded by
+the static tool. Tests cover command windows/gates, startup, hit/block, held
+pose, timed thaw, backfire, reaction replacement, independent flight, active
+object rejection and round reset for both players. Cosmetic shaking and the
+retail ice material are replaced by a held pose and simple projectile artwork;
+air landing uses the shared portable landing continuation. The projectile has
+a defensive 180-tick lifetime in addition to the source's radial-bound exit.
 
 ## Sub-Zero: locating commands and scripts
 
@@ -256,8 +273,8 @@ python3 tools/disassemble_retail.py --attack B 2
 
 ## Sub-Zero: specials and engine integration
 
-These are confirmed starting dependencies. Every row still needs semantic
-research and C implementation; a decoded stream is not a completed move.
+These are confirmed starting dependencies. Consult the coverage table above
+for completed paths; a decoded stream alone is not a completed move.
 
 | Move | Bounded research path | Known boundary / work to resolve |
 | --- | --- | --- |
@@ -296,15 +313,15 @@ move's evidence requires it:
 | Playback | `fighter_start_move` resets script, phase/timer, sample override, pending entry and contact bookkeeping; locked moves remove stance buttons | Install the continuation after starting the move; distinguish ticks from samples and restore control on each exit |
 | Contacts | `battle_contact` / `battle_contact_from` apply records, damage and reactions; `SF_RECORD` skips the approximate resolver | Use projectile/object origin where appropriate; prevent repeated damage or freeze from one connected attack; retain our documented hull approximation |
 | Projectiles/objects | `battle_spawn_projectile` returns a slot or NULL; four slots, owner index, callback and bounded lifetime; fight ticks update objects after fighters | Existing kinds/drawing cover spear and sword only. Add the necessary freeze/clone state and read-only presentation; handle full pool, expiry and owner interruption explicitly |
-| Victim reactions | `battle_react` clears physics and schedules a replacement continuation; unsupported IDs fall back to approximate hit/knockdown | Reactions 67, 122 and 165 currently have no explicit handlers. Translate the required reactions; do not accept the fallback as freeze or slide coverage |
+| Victim reactions | `battle_react` clears physics and schedules a replacement continuation; unsupported IDs fall back to approximate hit/knockdown | Reaction 67 is explicit; 122 and 165 still need translation. Do not accept approximate fallback as slide coverage |
 | Cleanup | Round spawn resets fighters/objects; round completion and finisher start clear objects | Move replacement does not automatically remove owned objects or release another fighter. Specify whether each object survives an interruption from evidence; clear locks, appearance and callbacks on thaw, replacement, KO and reset as appropriate |
 
 The common update is in [game/battle.c](../game/battle.c), move lifecycle in
 [game/moves.c](../game/moves.c), contact/object allocation in
 [game/combat.c](../game/combat.c), and reactions in
 [game/reactions.c](../game/reactions.c). `Fighter` currently has Scorpion
-cooldown fields `spear_ready` and `teleport_ready`, but no Sub-Zero cooldown
-or frozen-state model. Choose explicit per-fighter/object state as the move
+cooldown fields `spear_ready` and `teleport_ready`, and no Sub-Zero cooldown fields yet. Freeze uses explicit victim pose and
+reaction continuation state. Choose explicit per-fighter/object state as the move
 needs it; do not repurpose those fields or introduce retail scratch globals.
 Scorpion's code is an example of these APIs, not proof that its constants,
 weapon behavior, reactions or cleanup apply to Sub-Zero.

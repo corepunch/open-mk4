@@ -102,6 +102,12 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
     }
   }
   fighter->state = state;
+  if (fighter->appearance == APPEARANCE_FROZEN || fighter->action == 0x1003) {
+    fighter->appearance = APPEARANCE_NORMAL;
+    fighter->frozen_clip = 0;
+    fighter->flags &= ~(unsigned)FF_NO_GUARD;
+  }
+  fighter->frozen_clip = 0;
   fighter->flags &= ~(unsigned)FF_PAIRED;
   fighter->current_move = move;
   fighter->ticks = 0;

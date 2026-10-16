@@ -116,8 +116,116 @@ static void normals(void) {
   }
 }
 
+static void ice_command(Battle *battle, int player, int delay, unsigned extra) {
+  press(battle, player, BUTTON_BIT(BUTTON_DOWN));
+  advance(battle, delay);
+  press(battle, player, BUTTON_BIT(player ? BUTTON_LEFT : BUTTON_RIGHT) | BUTTON_BIT(BUTTON_LOW_PUNCH) | extra);
+}
+
+static int objects(const Battle *battle, int kind) {
+  int count = 0;
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    count += battle->projectiles[i].kind == kind;
+  }
+  return count;
+}
+
+static void ice(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle = fight(player, 2.f);
+    Fighter *victim = &battle.fighters[1 - player];
+    ice_command(&battle, player, 2, 0);
+    check(fighter_move(&battle.fighters[player])->clip == 16, "D,F,LP must enter ice");
+    advance(&battle, 14);
+    check(objects(&battle, PROJECTILE_ICE) == 0, "ice must wait for startup");
+    advance(&battle, 14);
+    check(victim->appearance == APPEARANCE_FROZEN && victim->action == 0x1003 && victim->health == Q16_ONE, "ice must freeze without direct damage");
+    check(victim->buttons == NULL && (victim->flags & FF_NO_GUARD), "frozen victim must be locked and unable to guard");
+    int frozen_age = victim->ticks;
+    q16 x = victim->body.pos[AXIS_X];
+    int pose = victim->sample_override;
+    advance(&battle, 141 - frozen_age);
+    check(victim->appearance == APPEARANCE_FROZEN && victim->body.pos[AXIS_X] == x && victim->sample_override == pose,
+        "freeze must hold pose and body through tick 141");
+    advance(&battle, 1);
+    check(victim->appearance == APPEARANCE_NORMAL && victim->state == S_IDLE && victim->buttons != NULL && !(victim->flags & FF_NO_GUARD),
+        "ground thaw must restore controls at tick 142");
+
+    battle = fight(player, 4.f);
+    ice_command(&battle, player, 2, 0);
+    advance(&battle, 16);
+    check(objects(&battle, PROJECTILE_ICE) == 1, "ice object must spawn");
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 1);
+    check(objects(&battle, PROJECTILE_ICE) == 1, "independent ice object must survive owner interruption");
+    advance(&battle, 180);
+    check(objects(&battle, PROJECTILE_ICE) == 0, "ice must expire after contact/bounds");
+
+    for (int gate = 0; gate < 4; ++gate) {
+      battle = fight(player, 4.f);
+      if (gate == 1) {
+        battle.fighters[1 - player].hits = 2;
+      }
+      if (gate == 2) {
+        battle.fighters[player].body.pos[AXIS_Y] -= Q16_ONE;
+        fighter_enter_state(&battle, &battle.fighters[player], S_JUMP);
+      }
+      ice_command(&battle, player, gate == 0 ? 27 : 2, gate == 3 ? BUTTON_BIT(BUTTON_BLOCK) : 0);
+      check(fighter_move(&battle.fighters[player])->clip != 16, "ice must reject late/juggle/air/block gates");
+    }
+    battle = fight(player, 4.f);
+    ice_command(&battle, player, 24, 0);
+    check(fighter_move(&battle.fighters[player])->clip == 16, "ice accepts inclusive 26-tick command window");
+    battle = fight(player, 14.f);
+    ice_command(&battle, player, 2, 0);
+    advance(&battle, 58);
+    check(objects(&battle, PROJECTILE_ICE) == 1 && battle.fighters[player].state == S_IDLE, "ice flight must outlive attacker recovery");
+    ice_command(&battle, player, 2, 0);
+    check(fighter_move(&battle.fighters[player])->clip != 16 && objects(&battle, PROJECTILE_ICE) == 1,
+        "active object gate must prevent stacking after attacker recovers");
+    battle_next_round(&battle);
+    check(objects(&battle, PROJECTILE_ICE) == 0 && battle.fighters[1 - player].appearance == APPEARANCE_NORMAL, "round reset must clear ice and freeze");
+
+    battle = fight(player, 2.f);
+    ice_command(&battle, player, 2, 0);
+    Input guard[2] = {0};
+    guard[1 - player].held = BUTTON_BIT(BUTTON_BLOCK);
+    for (int t = 0; t < 45; ++t) {
+      battle_step(&battle, guard);
+    }
+    check(battle.fighters[1 - player].health == Q16_ONE && battle.fighters[1 - player].appearance == APPEARANCE_NORMAL && objects(&battle, PROJECTILE_ICE) == 0,
+        "block must consume ice without damage or freeze");
+
+    battle = fight(player, 4.f);
+    victim = &battle.fighters[1 - player];
+    battle_react(&battle, victim, 67);
+    advance(&battle, 1);
+    check(victim->appearance == APPEARANCE_FROZEN, "explicit freeze reaction");
+    battle_react(&battle, victim, 67);
+    advance(&battle, 2);
+    check(victim->appearance == APPEARANCE_NORMAL && battle.fighters[player].appearance == APPEARANCE_FROZEN,
+        "double freeze must backfire and release original victim");
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 1);
+    check(battle.fighters[player].appearance == APPEARANCE_NORMAL && !(battle.fighters[player].flags & FF_NO_GUARD),
+        "new hit must clear frozen presentation and guard restriction");
+
+    battle = fight(player, 4.f);
+    victim = &battle.fighters[1 - player];
+    victim->body.pos[AXIS_Y] -= Q16_ONE;
+    fighter_enter_state(&battle, victim, S_JUMP);
+    battle_react(&battle, victim, 67);
+    advance(&battle, 143);
+    check(victim->body.gravity == 0x147 && fighter_airborne(victim), "air thaw must restore its own gravity");
+    advance(&battle, 150);
+    check(victim->state == S_IDLE && !fighter_airborne(victim) && victim->appearance == APPEARANCE_NORMAL, "air thaw must land and recover");
+  }
+}
+
 int main(void) {
   normals();
-  puts("PASS: Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+  ice();
+  puts(
+      "PASS: ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

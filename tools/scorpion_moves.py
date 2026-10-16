@@ -100,6 +100,7 @@ SCRIPT_OPS = {
     0x59: ('native motion parameter block', 4),
     0x5a: ('set horizontal speed to negated Q16 operand', 1),
     0x5b: ('native helper', 0),
+    0x5c: ('set gravity to Q16 operand', 1),
     0x5e: ('weapon contact query with inline selector', 0),
     0x5f: ('horizontal motion operand', 1),
     0x60: ('native helper', 0),

@@ -387,6 +387,78 @@ static void react_approximate(Battle *battle, Fighter *fighter) {
   }
 }
 
+/* 486230/486310/486340/4863b0: six 6-tick shakes, 88-tick hold,
+ * three 6-tick shakes. Pose and body stay fixed; cosmetic shake is omitted.
+ * Air thaw: 4e9d38 sets gravity 0x147 and waits for landing, then 486530. */
+static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = 0x1003};
+static const MoveDef thaw_landing = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
+static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = 0x1005};
+
+static void thaw_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(27, 18 + fighter->ticks);
+  if (fighter->ticks >= 10) {
+    neutral(battle, fighter);
+  }
+}
+
+static void frozen_tick(Battle *battle, Fighter *fighter) {
+  if (fighter->script_phase == 0 && fighter->ticks < 142) {
+    return;
+  }
+  if (fighter_airborne(fighter)) {
+    fighter->appearance = APPEARANCE_NORMAL;
+    fighter->body.gravity = 0x147;
+    fighter->script_phase = 1;
+    return;
+  }
+  fighter->appearance = APPEARANCE_NORMAL;
+  fighter->flags &= ~(unsigned)FF_NO_GUARD;
+  if (fighter->script_phase == 1) {
+    fighter_start_move(battle, fighter, S_JUMP, &thaw_landing);
+    fighter->script = thaw_tick;
+    fighter->sample_override = 18;
+  } else {
+    neutral(battle, fighter);
+  }
+}
+
+static void thaw_hop_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(18, 7 + fighter->ticks);
+  if (!fighter_airborne(fighter)) {
+    fighter_start_move(battle, fighter, S_JUMP, &thaw_landing);
+    fighter->script = thaw_tick;
+    fighter->sample_override = 18;
+  }
+}
+
+static void react_freeze(Battle *battle, Fighter *fighter) {
+  if (fighter->action == 0x1003) {
+    /* 486430 calls 480f80, which switches to the opponent: double freeze
+     * backfires. It does not recursively refresh this victim's timer. */
+    Fighter *attacker = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
+    battle_react(battle, attacker, 67);
+    if (fighter_airborne(fighter)) {
+      fighter_start_move(battle, fighter, S_JUMP, &thaw_hop);
+      fighter->script = thaw_hop_tick;
+      fighter->sample_override = 7;
+      fighter->body.vel[AXIS_Y] = -0x51e;
+      fighter->body.gravity = 0x20c;
+    } else {
+      neutral(battle, fighter);
+    }
+    return;
+  }
+  int clip = fighter->appearance == APPEARANCE_FROZEN ? fighter->frozen_clip : fighter_move(fighter)->clip;
+  int sample = (int)fighter_frame(fighter, 1 << 16);
+  fighter_start_move(battle, fighter, S_HIT, &frozen);
+  fighter->script = frozen_tick;
+  fighter->sample_override = sample;
+  fighter->frozen_clip = clip;
+  fighter->appearance = APPEARANCE_FROZEN;
+  fighter->damage_scale = fighter->hits > 0 ? 0x4ccc : 0x8000;
+  fighter->flags |= FF_REACTING | FF_NO_GUARD;
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
   [0] = react_block,
@@ -414,6 +486,7 @@ static const FighterFn reactions[256] = {
   [48] = react_extra,
   [49] = react_extra,
   [50] = react_extra,
+  [67] = react_freeze,
   [90] = react_extra,
   [99] = react_extra,
   [100] = react_extra,

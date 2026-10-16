@@ -95,6 +95,10 @@ class ScriptTests(unittest.TestCase):
         self.assertEqual(rows[rows.index(motion) + 1]['va'], '0x4e93c0')
 
     def test_motion_and_continuation_boundaries(self):
+        thaw = script_program(self.image, 0x4e9d38)['instructions']
+        self.assertEqual([row['va'] for row in thaw], ['0x4e9d38', '0x4e9d40', '0x4e9d44'])
+        self.assertEqual(thaw[0]['operands'], ['0x147'])
+        self.assertEqual(thaw[-1]['native_target'], '0x486530')
         address = 0x570000
         struct.pack_into('<6I', self.image.memory, address - 0x400000,
                          0x5a000000, 0x1999, 0x61000000, 0x30000000, 0xff000000, 0)

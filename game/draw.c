@@ -105,7 +105,8 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
     return triangles;
   }
   const MoveDef *move = fighter_move(fighter);
-  int id = move->clip < 0 ? ch->idle : move->clip;
+  int selected = fighter->action == 0x1003 ? fighter->frozen_clip : move->clip;
+  int id = selected < 0 ? ch->idle : selected;
   const Clip *clip = &assets->clips.data[id];
   int channels = 0;
   double frame;
@@ -234,6 +235,12 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &battle->projectiles[i];
+    if (p->kind == PROJECTILE_ICE) {
+      Vec3 tip = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
+      ScreenVertex at = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);
+      canvas_rect(cv, (Rect){(int)at.x - 7, (int)at.y - 3, 15, 7}, 0xff78d9ff);
+      canvas_line(cv, (int)at.x - 9, (int)at.y, (int)at.x + 9, (int)at.y, 0xffe0faff);
+    }
     if (p->kind == PROJECTILE_SWORD) {
       Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
       float angle = p->phase == 2 ? 0.f : (float)p->ticks * .3f;
