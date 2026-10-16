@@ -18,15 +18,20 @@
  *   sweep   0x10c, character table at 0x4e679c
  *   upper   0x109 starts with 293
  *   throw   the character table at 0x4de7a0 sets the victim's clip (op
- *           0x0e) and the thrower's (op 0x0f); Jax's entry runs Goro's 605,
- *           which cannot drive a 15-channel rig, so Jax keeps 75
+ *           0x0e) and the thrower's (op 0x0f); Jax's entry calls 0x42c7f0,
+ *           which switches to script 0x4de4f0 (83, victim 145)
  *   block   0x2005 sets slot 0x53ce30 (322), or 595 for Goro
  *   hit     0x2005 reaction script starts with 247
  *   knock   0x4003 staggers with 311, then falls with 186
- *   victory character table at 0x4e5efc
- * Clips 210..250 belong to the weapon routines and hold a weapon grip.
- * Goro's crouch, jump, punch, kick, sweep, uppercut, hit, knockdown and
- * victory remain visual choices from his bank. */
+ *   victory the round-end scripts call 0x4712e0, whose character table at
+ *           0x4e6a44 opens each win pose and then waits on its last frame
+ * Clips 210..250 belong to the weapon routines and hold a weapon grip;
+ * the 0x4e5efc table (44..51) holds AI katas, not win poses.
+ * Goro's moves come from his AI handlers: 597 punch (0x43ae70), 598 kick
+ * (0x43b170), 600 uppercut (slot 0x53c6bc at 0x43b75f), 601 leap and
+ * stomp (action 0x409), 602 jump (0x43b7e0), and 603, a rise from the
+ * crouch, played backwards as his duck. He has no sweep; the stomp is his
+ * low knockdown. His hit (593) and knockdown (581) are visual choices. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef scorpion_moves[S_COUNT] = {
   [S_IDLE] =      {CLIP_ASSET_IDLE, 0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
@@ -41,7 +46,7 @@ static const MoveDef scorpion_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {45,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {115,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef raiden_moves[S_COUNT] = {
@@ -57,7 +62,7 @@ static const MoveDef raiden_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {47,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {123,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef sonya_moves[S_COUNT] = {
@@ -73,7 +78,7 @@ static const MoveDef sonya_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {46,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {114,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef liu_kang_moves[S_COUNT] = {
@@ -89,7 +94,7 @@ static const MoveDef liu_kang_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {48,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {119,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef sub_zero_moves[S_COUNT] = {
@@ -105,7 +110,7 @@ static const MoveDef sub_zero_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {47,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {115,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef fujin_moves[S_COUNT] = {
@@ -121,7 +126,7 @@ static const MoveDef fujin_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {48,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {120,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef shinnok_moves[S_COUNT] = {
@@ -137,7 +142,7 @@ static const MoveDef shinnok_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {44,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {111,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef reiko_moves[S_COUNT] = {
@@ -153,7 +158,7 @@ static const MoveDef reiko_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {49,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {113,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef quan_chi_moves[S_COUNT] = {
@@ -169,7 +174,7 @@ static const MoveDef quan_chi_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {51,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {125,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef tanya_moves[S_COUNT] = {
@@ -185,7 +190,7 @@ static const MoveDef tanya_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {46,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {124,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef reptile_moves[S_COUNT] = {
@@ -201,7 +206,7 @@ static const MoveDef reptile_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {50,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {121,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef kai_moves[S_COUNT] = {
@@ -217,7 +222,7 @@ static const MoveDef kai_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {45,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {122,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef jarek_moves[S_COUNT] = {
@@ -233,7 +238,7 @@ static const MoveDef jarek_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {49,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {125,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef jax_moves[S_COUNT] = {
@@ -245,11 +250,11 @@ static const MoveDef jax_moves[S_COUNT] = {
   [S_KICK] =      {66,              0, MOVE_END, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK},
   [S_SWEEP] =     {62,              0, MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH},
   [S_UPPERCUT] =  {293,             0, MOVE_END, 9,  5, 30, 18, 60, 1.35f, 0.5f,  SF_ATTACK | SF_LOCK | SF_LAUNCH},
-  [S_THROW] =     {75,              0, MOVE_END, 6,  2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE},
+  [S_THROW] =     {83,              0, MOVE_END, 6,  2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE},
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {44,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {114,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef cage_moves[S_COUNT] = {
@@ -265,23 +270,23 @@ static const MoveDef cage_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {44,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {111,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef goro_moves[S_COUNT] = {
-  [S_IDLE] =      {CLIP_ASSET_IDLE, 0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
-  [S_WALK] =      {590,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
-  [S_CROUCH] =    {603,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
-  [S_JUMP] =      {602,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
-  [S_PUNCH] =     {596,             0, MOVE_END, 5,  4, 12, 7,  19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK},
-  [S_KICK] =      {598,             0, MOVE_END, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK},
-  [S_SWEEP] =     {600,             0, MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH},
-  [S_UPPERCUT] =  {593,             0, MOVE_END, 9,  5, 30, 18, 60, 1.35f, 0.5f,  SF_ATTACK | SF_LOCK | SF_LAUNCH},
-  [S_THROW] =     {604,             0, MOVE_END, 6,  2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE},
-  [S_BLOCK] =     {595,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
-  [S_HIT] =       {605,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
-  [S_KNOCKDOWN] = {581,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {608,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_IDLE] =      {CLIP_ASSET_IDLE, 0,  MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
+  [S_WALK] =      {590,             0,  MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
+  [S_CROUCH] =    {603,             18, 0,        0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
+  [S_JUMP] =      {602,             0,  MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0},
+  [S_PUNCH] =     {597,             0,  MOVE_END, 5,  4, 12, 7,  19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK},
+  [S_KICK] =      {598,             0,  MOVE_END, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK},
+  [S_SWEEP] =     {601,             0,  MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH},
+  [S_UPPERCUT] =  {600,             0,  MOVE_END, 9,  5, 30, 18, 60, 1.35f, 0.5f,  SF_ATTACK | SF_LOCK | SF_LAUNCH},
+  [S_THROW] =     {604,             0,  MOVE_END, 6,  2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE},
+  [S_BLOCK] =     {595,             0,  MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
+  [S_HIT] =       {593,             0,  MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
+  [S_KNOCKDOWN] = {581,             0,  MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
+  [S_VICTORY] =   {594,             0,  MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef kitana_moves[S_COUNT] = {
@@ -297,7 +302,7 @@ static const MoveDef kitana_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {46,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {114,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 
 static const MoveDef noob_saibot_moves[S_COUNT] = {
@@ -313,7 +318,7 @@ static const MoveDef noob_saibot_moves[S_COUNT] = {
   [S_BLOCK] =     {322,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD},
   [S_HIT] =       {247,             0, MOVE_END, 0,  0, 24, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_HOLD},
   [S_KNOCKDOWN] = {186,             0, MOVE_END, 0,  0, 54, 0,  0,  0.f,   0.f,   SF_LOCK | SF_REACTION | SF_WAIT_LAND},
-  [S_VICTORY] =   {49,              0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   0}
+  [S_VICTORY] =   {113,             0, MOVE_END, 0,  0, 0,  0,  0,  0.f,   0.f,   SF_HOLD}
 };
 // clang-format on
 

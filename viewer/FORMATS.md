@@ -110,16 +110,26 @@ Each fighter has its own move table in `game/roster.c`:
 | Kick | action 0x100, character table 0x4e5ca4 | 65, 66 or 71 |
 | Sweep | action 0x10c, character table 0x4e679c | 62 or 63 |
 | Uppercut | action 0x109 | 293 |
-| Throw | character table 0x4de7a0; op 0x0e sets the victim, 0x0f the thrower | 75, 76, 78, 79 or 81 |
+| Throw | character table 0x4de7a0; op 0x0e sets the victim, 0x0f the thrower | 75, 76, 78, 79, 81; Jax 83 |
 | Block | action 0x2005 loads slot 0x53ce30, or 595 for Goro | 322 |
 | Hit | the 0x2005 reaction script starts with 247 | 247 |
 | Knockdown | action 0x4003 staggers with 311, then falls | 186 |
-| Victory | character table 0x4e5efc | 44..51 by fighter |
+| Victory | round-end scripts call 0x4712e0; character table 0x4e6a44, held | 111..125 by fighter; Goro 594 |
 
 Clips 210..250 are started from the weapon routines at 0x4955c0..0x496d10 and
-hold a weapon grip. Jax's throw entry runs Goro's 605, which cannot drive a
-15-channel rig, so Jax keeps 75. Goro's walk, block and throw (604) follow the
-same tables; his other rows remain visual choices from his bank.
+hold a weapon grip. The 0x4e5efc table (44..51) sits in an AI move list and
+holds katas, not win poses. Each win script opens one clip and then waits on
+its last frame, so victory moves carry SF_HOLD. Jax's throw entry starts with
+op 0x32, calling 0x42c7f0, which switches to script 0x4de4f0 (83, victim 145);
+the 607/605 pair after it is Goro's pummel throw started from 0x42c7a0.
+
+Goro (character 15) is driven by AI choice lists at 0x4dfa70..0x4dfacc and his
+own handlers. Walk 590, block 595 and throw 604 come from the shared tables.
+His punch 597 (0x43ae70, script 0x4dfb40), kick 598 (0x43b170), uppercut 600
+(slot 0x53c6bc at 0x43b75f), leap and stomp 601 (action 0x409, used as his
+low knockdown in place of a sweep), jump 602 (0x43b7e0) and win roar 594 come
+from his code. His duck plays 603, a rise from the crouch, backwards through
+the move's frame range. His hit (593) and knockdown (581) remain visual.
 Battle placement keeps each frame's root-motion Y and drops root-motion X/Z.
 That Y channel is the ground plant: idle, crouch, hit, victory and a settled
 knockdown put the sole on Y=0 (positive Y is down) only while it is applied.

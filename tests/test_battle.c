@@ -67,7 +67,12 @@ static void check_roster(void) {
       "Kitana reads Sonya's character entries");
   check(roster_clip(roster_def(17), S_THROW, 0) == roster_clip(roster_def(7), S_THROW, 0),
       "Noob Saibot reads Reiko's character entries");
-  check(roster_clip(goro, S_PUNCH, 0) == 596, "Goro punch clip");
+  check(roster_clip(goro, S_PUNCH, 0) == 597, "Goro punch from his 0x4dfb40 script");
+  check(goro->moves[S_CROUCH].first > goro->moves[S_CROUCH].last,
+      "Goro's duck plays his rise backwards");
+  check(roster_clip(roster_def(13), S_THROW, 0) == 83, "Jax throw from script 0x4de4f0");
+  check(roster_clip(human, S_VICTORY, 0) == 115 && (human->moves[S_VICTORY].flags & SF_HOLD),
+      "Scorpion holds his 0x4e6a44 win pose");
   check(human->moves[S_PUNCH].damage == 7, "Punch damage row");
   check(human->moves[S_BLOCK].flags & SF_HOLD, "Block holds its last frame");
   check(human->moves[S_SWEEP].flags & SF_LOW, "Sweep is a low");
