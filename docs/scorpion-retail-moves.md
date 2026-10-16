@@ -91,6 +91,16 @@ See id Software's [definitions](https://github.com/id-Software/Quake-2/blob/mast
 [soldier callbacks](https://github.com/id-Software/Quake-2/blob/master/game/m_soldier.c).
 These are architectural references; no Quake implementation is copied here.
 
+The game now implements this boundary. Each character has its own C file;
+Scorpion's `scorpion_jab` and `scorpion_kick` select named immutable moves.
+`Fighter.current_move` can point at another move without adding a roster
+branch to `battle_step`. `MoveSequence` stores displayed samples, optional
+per-frame events and an end callback. `game/moves.c` dispatches those callbacks
+in simulation; rendering calls the read-only `fighter_frame` accessor.
+The two kicks use the original displayed sample sequences and return steps,
+with contact eligibility at steps 11..13. Damage, reach, push and stun remain
+the prototype's values. Other move scripts are still approximated.
+
 For MK4 a move must additionally identify the clip, and support repeated,
 skipped, reversed and held samples. A linear first/count alone would recreate
 this bug. Animation progression belongs in the simulation; rendering reads it.

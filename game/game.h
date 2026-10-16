@@ -113,10 +113,11 @@ enum {
   CMD_STANDING = 1u << 2
 };
 
-/* One row of a fighter's move table, like a Quake II mmove_t without the
- * per-frame entries. The clip plays from first to last; last < first plays
- * it backwards. Attacks spread that range over startup, active and recovery.
- * SF_HOLD stops on the last frame; other non-attacks loop. */
+typedef struct MoveSequence MoveSequence;
+
+/* Immutable move and combat rules. A recovered sequence overrides generic
+ * first/last playback and ends through its callback. Other moves retain the
+ * approximate playback policy until their scripts are recovered. */
 typedef struct MoveDef {
   int clip;
   int first, last;
@@ -124,6 +125,7 @@ typedef struct MoveDef {
   int damage, stun;
   float reach, push;
   unsigned flags;
+  const MoveSequence *sequence;
 } MoveDef;
 
 typedef struct Motion {
@@ -139,6 +141,17 @@ typedef struct CommandDef {
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
+
+typedef struct MoveFrame {
+  int sample;
+  FighterFn think;
+} MoveFrame;
+
+struct MoveSequence {
+  const MoveFrame *frames;
+  int count;
+  FighterFn end;
+};
 
 typedef struct CharacterDef {
   GameId game;
@@ -194,8 +207,10 @@ const CharacterDef *roster_def(int index);
 const MoveDef *fighter_move(const Fighter *fighter);
 int roster_clip(const CharacterDef *def, int state, int asset_idle);
 const Character *roster_character(const Assets *assets, int roster_index);
-void fighter_start_move(Fighter *fighter, int state, const MoveDef *move);
+void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move);
 void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
+void fighter_step_sequence(Battle *battle, Fighter *fighter);
+double fighter_frame(const Fighter *fighter, int frame_count);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

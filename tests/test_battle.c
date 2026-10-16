@@ -79,8 +79,96 @@ static void check_roster(void) {
   check(human->moves[S_THROW]->flags & SF_UNBLOCKABLE, "Throw is unblockable");
 }
 
+static void check_original_kicks(void) {
+  struct KickFixture {
+    int roster, clip, count;
+    int frames[30];
+  };
+  static const struct KickFixture fixtures[] = {
+#include "fixtures/original_kicks.inc"
+  };
+  for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
+    const struct KickFixture *expected = &fixtures[i];
+    Battle battle = fight(4.f);
+    int player = expected->roster == 0 ? 0 : 1;
+    Fighter *fighter = &battle.fighters[player];
+    Input in[2] = {0};
+    in[player].pressed = BUTTON_BIT(BUTTON_KICK);
+    battle_step(&battle, in);
+    check(fighter->current_move->clip == expected->clip, "Kick callback chose wrong move");
+    for (int tick = 0; tick < expected->count; ++tick) {
+      check(fighter->state == S_KICK && fighter->ticks == tick, "Kick returned prematurely");
+      check(fighter_frame(fighter, expected->clip == 66 ? 18 : 28) == expected->frames[tick],
+          "Kick sample differs from original VM/native recovery");
+      in[player] = (Input){.held = BUTTON_BIT(BUTTON_LEFT)};
+      battle_step(&battle, in);
+    }
+    check(fighter->state == S_WALK && fighter->ticks == 0,
+        "Kick end callback did not release control on original return step");
+    check(fighter->current_move == roster_def(expected->roster)->moves[S_WALK],
+        "Movement kept stale kick playback");
+
+    fighter_enter_state(&battle, fighter, S_KICK);
+    advance_ticks(&battle, 5, NULL);
+    fighter_enter_state(&battle, fighter, S_HIT);
+    check(fighter->current_move->sequence == NULL, "Reaction kept interrupted kick sequence");
+    advance_ticks(&battle, 30, NULL);
+    check(fighter->state == S_IDLE, "Interrupted kick completion overwrote reaction");
+
+    battle = fight(1.f);
+    fighter = &battle.fighters[player];
+    in[0] = (Input){0};
+    in[1] = (Input){0};
+    in[player].pressed = BUTTON_BIT(BUTTON_KICK);
+    battle_step(&battle, in);
+    advance_ticks(&battle, 10, NULL);
+    check(battle.fighters[1 - player].health == 100, "Kick contact started before retail query");
+    advance_ticks(&battle, 1, NULL);
+    check(battle.fighters[1 - player].health == 88, "Kick missed its first retail contact step");
+    advance_ticks(&battle, 2, NULL);
+    check(battle.fighters[1 - player].health == 88, "Kick connected more than once");
+  }
+}
+
+static void sequence_event(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter->health--;
+}
+
+static void sequence_end(Battle *battle, Fighter *fighter) {
+  fighter_enter_state(battle, fighter, S_IDLE);
+}
+
+static void check_sequence_events(void) {
+  static const MoveFrame frames[] = {
+      {0, sequence_event},
+      {1, NULL},
+      {1, sequence_event},
+  };
+  static const MoveSequence sequence = {frames, 3, sequence_end};
+  static const MoveDef move = {.clip = 294, .flags = SF_LOCK, .sequence = &sequence};
+  Battle battle = fight(4.f);
+  Fighter *fighter = &battle.fighters[0];
+  fighter_start_move(&battle, fighter, S_PUNCH, &move);
+  check(fighter->health == 99, "Entry frame event missing");
+  for (int i = 0; i < 5; ++i) {
+    check(fighter_frame(fighter, 23) == 0, "Unexpected entry sample");
+  }
+  check(fighter->health == 99, "Rendering/sample reads repeated a frame event");
+  advance_ticks(&battle, 1, NULL);
+  check(fighter->health == 99, "Event fired on empty frame");
+  advance_ticks(&battle, 1, NULL);
+  check(fighter->health == 98, "Repeated sample lost its own frame event");
+  advance_ticks(&battle, 1, NULL);
+  check(fighter->state == S_IDLE, "Sequence did not transition through its end callback");
+  advance_ticks(&battle, 5, NULL);
+  check(fighter->health == 98, "Completed sequence kept firing events");
+}
+
 int main(void) {
   check_roster();
+  check_original_kicks();
+  check_sequence_events();
   {
     Battle battle;
     battle_init(&battle, 0, 4);
@@ -222,6 +310,6 @@ int main(void) {
         "CPU match does not progress to completion");
   }
   puts(
-      "PASS: roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: original kick playback; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

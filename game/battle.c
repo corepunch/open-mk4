@@ -102,7 +102,9 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
   if (!locked(fighter) && fighter->height == 0.f)
     fighter->facing = fighter->x <= other->x ? 1 : -1;
 
-  if (state->flags & SF_ATTACK) {
+  if (state->sequence != NULL) {
+    fighter_step_sequence(battle, fighter);
+  } else if (state->flags & SF_ATTACK) {
     int total = state->startup + state->active + state->recovery;
     if (fighter->ticks >= total)
       fighter_enter_state(battle, fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);

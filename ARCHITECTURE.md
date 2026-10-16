@@ -120,7 +120,16 @@ Each `game/character_*.c` owns that character's moves and custom functions;
 have explicit jab/kick entry callbacks. Other entries select a default move
 through the shared runner. Goro names clips from his separate animation bank.
 Spawn writes the roster index and initializes `Fighter.current_move`.
-`game/moves.c` owns move entry and callback dispatch; `battle_step` remains
+`game/moves.c` owns move entry, frame/end callbacks and sample selection.
+Scorpion and Sub-Zero high kicks now use immutable sequences measured from
+the supplied x86 VM and native recovery code. Scorpion reverses to sample 0;
+Sub-Zero continues to sample 27. Their uninterrupted no-contact paths finish
+at playback steps 30 and 29. Native contact queries occur at steps 11..13;
+damage/reach/stun and other moves remain our approximation. Per-frame events
+run only in simulation, including on move entry; rendering only reads samples.
+The original oracle and its explicit stubs/limits are documented in
+[Scorpion retail moves](docs/scorpion-retail-moves.md).
+`battle_step` remains
 the shared update and does not branch on game id. Static move pointers can
 be copied within this process, but need stable IDs for serialized snapshots.
 Input is a held/pressed bit frame.

@@ -92,9 +92,12 @@ including original roster names and the health bar at sprite 25. The renderer
 uses the long bar's top eight texture rows; the right player's bar is mirrored.
 `shared_g.geo` contains four texture pages for fight text and effects.
 
-The battle simulation uses native move rules and timings. Its clips follow the
-original move scripts below, one clip per state; the scripts' branching, combo
-strings and victim animations are not reproduced. Move routines store an action code at player +0x74 and start a script through
+The battle simulation uses native move rules. Scorpion and Sub-Zero high kicks
+now follow original no-contact playback sequences, including Scorpion's reverse
+recovery, end callbacks and contact-query steps. See
+[the script/oracle evidence](../docs/scorpion-retail-moves.md). Other moves
+still use approximate timings and one default clip per state; combo strings,
+special attacks and victim animations are not reproduced. Move routines store an action code at player +0x74 and start a script through
 0x459490. The VM fetches a word, advances, and dispatches its top byte through
 the handler table at 0x4e3988; a packed pointer (top byte 0) is a no-op. Op
 0x47 sets a clip and 0x3c indexes the 16-entry table that follows it by
