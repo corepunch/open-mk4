@@ -207,6 +207,32 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       render_triangle(cv, camera, fighters[i].data[j], texture, fighter->state == S_HIT ? .72f : 1.f, PASS_COLOR, &light);
     FREE_ARRAY(fighters[i]);
   }
+  /* Script objects are rendered from simulation state; rendering never advances them. */
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    const Projectile *p = &battle->projectiles[i];
+    if (p->kind != PROJECTILE_SPEAR) {
+      continue;
+    }
+    const Fighter *owner = &battle->fighters[p->owner];
+    Vec3 hand = {fighter_x(owner), -1.4f - fighter_height(owner), fighter_z(owner)};
+    Vec3 tip = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
+    ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, hand)}, 1);
+    ScreenVertex to = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);
+    canvas_line(cv, (int)from.x, (int)from.y, (int)to.x, (int)to.y, 0xffc9a85c);
+    canvas_rect(cv, (Rect){(int)to.x - 3, (int)to.y - 2, 7, 4}, 0xffdedede);
+  }
+  for (int i = 0; i < 2; ++i) {
+    const Fighter *f = &battle->fighters[i];
+    if (fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) {
+      Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
+      Vec3 end = {mouth.x + f->facing * 2.3f, mouth.y + .25f, mouth.z};
+      ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, mouth)}, 1);
+      ScreenVertex to = camera_project(camera, (Vertex){.p = camera_point(camera, end)}, 1);
+      for (int spread = -8; spread <= 8; spread += 2) {
+        canvas_line(cv, (int)from.x, (int)from.y, (int)to.x, (int)to.y + spread, spread % 4 ? 0xffff7b24 : 0xffffd253);
+      }
+    }
+  }
   for (size_t i = 0; i < 2; ++i) {
     const HitEffect *e = &battle->effects[i];
     if (e->ticks <= 0)

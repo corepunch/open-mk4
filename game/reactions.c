@@ -219,6 +219,8 @@ static void react_approximate(Battle *battle, Fighter *fighter) {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
+  [0] = react_block,
+  [112] = react_block,
   [1] = react_jab_block,
   [4] = react_low_block,
   [6] = react_block,

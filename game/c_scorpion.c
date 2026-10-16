@@ -1,5 +1,8 @@
 #include "game.h"
 #include "mk4_characters.h"
+#include "math_util.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* Original no-contact VM/native recovery trace. Steps, not stored clip length.
  * See docs/scorpion-retail-moves.md and tests/fixtures/original_kicks.json. */
@@ -250,4 +253,319 @@ static const FighterFn enter[S_COUNT] = {
     [S_KICK] = scorpion_kick,
 };
 
-const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &mk4_controls, enter, -76873};
+/* Specials translated from spear_entry/return, teleport_entry/landing and
+ * breathe_fire in build/retail-disassembly/scripts. Native loops are ordinary
+ * C continuations. The camera-dependent teleport exit uses a fixed ten-tick
+ * vanish in our engine; it retains the distance/wall exits and contact branches. */
+static const AttackRecord spear_record = {0x3333, -0x1eb8, 0x947a, 0x3ae1, 70, 70, 112, ATTACK_MARK, 0xccc};
+static const AttackRecord teleport_record = {0x128f5, -0x3ae1, 0xab85, 0x91eb, 90, 90, 0, ATTACK_MARK, 0x170a};
+static const AttackRecord fire_record = {0x24e56, -0xc978, 0x23cac, 0xb7ce, 173, 173, 0, ATTACK_UNBLOCKABLE, 0x1eb8};
+static const MoveDef s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x300};
+static const MoveDef s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = 0x4000};
+static const MoveDef s_spear_stun = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK, .action = 0x1008};
+static const MoveDef s_teleport = {.clip = 312, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x209};
+static const MoveDef s_teleport_block = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = 0x1011};
+static const MoveDef s_teleport_land = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
+static const MoveDef s_fire = {.clip = 448, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x115};
+
+static Fighter *opponent(Battle *battle, Fighter *fighter) {
+  return &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
+}
+
+static void stop_body(Fighter *fighter) {
+  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
+  fighter->body.gravity = 0;
+  fighter->body.physics = NULL;
+  fighter->body.on_land = NULL;
+}
+
+static void special_ready(Battle *battle, Fighter *fighter) {
+  fighter->flags &= ~(unsigned)FF_TELEPORTING;
+  scorpion_ready(battle, fighter);
+}
+
+static void spear_stun_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = 0;
+  /* 0x487420: a 0x40-tick opening, cancelled naturally by a new hit. */
+  if (fighter->ticks >= 64) {
+    special_ready(battle, fighter);
+  }
+}
+
+static void spear_return_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(79, 31 + fighter->ticks);
+  if (fighter->ticks >= 49) {
+    fighter->spear_ready = battle->ticks + 90;
+    special_ready(battle, fighter);
+  }
+}
+
+static void spear_tick(Battle *battle, Fighter *fighter);
+
+static void spear_projectile(Battle *battle, Projectile *p) {
+  Fighter *owner = &battle->fighters[p->owner], *victim = opponent(battle, owner);
+  bool interrupted = owner->script != spear_tick && owner->script != spear_return_tick;
+  if (interrupted || battle->contacts_off) {
+    if (p->phase == 1 && victim->current_move == &s_snared) {
+      special_ready(battle, victim);
+    }
+    p->kind = 0;
+    return;
+  }
+  if (p->phase == 1) {
+    if (victim->current_move != &s_snared || victim->health <= 0) {
+      p->kind = 0;
+      return;
+    }
+    q16 dx = owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X];
+    if (abs(dx) <= 0xcccc) {
+      stop_body(victim);
+      fighter_start_move(battle, victim, S_HIT, &s_spear_stun);
+      victim->script = spear_stun_tick;
+      victim->sample_override = 0;
+      victim->flags |= FF_REACTING;
+      fighter_start_move(battle, owner, S_PUNCH, &s_spear);
+      owner->script = spear_return_tick;
+      owner->sample_override = 31;
+      p->kind = 0;
+    } else {
+      victim->body.pos[AXIS_X] += dx > 0 ? 0x3333 : -0x3333;
+      victim->body.pos[AXIS_Y] = victim->body.ground;
+      memcpy(p->pos, victim->body.pos, sizeof p->pos);
+    }
+    return;
+  }
+  if (p->phase == 2) {
+    q16 dx = owner->body.pos[AXIS_X] - p->pos[AXIS_X];
+    if (abs(dx) <= 0x3333) {
+      p->kind = 0;
+    } else {
+      p->pos[AXIS_X] += dx > 0 ? 0x3333 : -0x3333;
+    }
+    return;
+  }
+  for (int k = 0; k < 3; ++k) {
+    p->pos[k] += p->vel[k];
+  }
+  ContactResult result = battle_contact_from(battle, owner, &spear_record, p->pos, p->facing);
+  if (result == CONTACT_HIT || result == CONTACT_AIR_HIT) {
+    stop_body(victim);
+    fighter_start_move(battle, victim, S_HIT, &s_snared);
+    victim->sample_override = 5;
+    victim->flags |= FF_REACTING;
+    victim->damage_scale = 0x9999; /* 0x485fb0: subsequent combo damage scales to 60%. */
+    p->phase = 1;
+    p->lifetime = 100;
+  } else if (result == CONTACT_BLOCK || p->ticks >= 30 || abs(p->pos[AXIS_X]) > battle->arena_radius) {
+    p->phase = 2;
+    p->lifetime = 45;
+  }
+}
+
+static void spear_tick(Battle *battle, Fighter *fighter) {
+  int spawn = fighter->script_phase ? 8 : 10;
+  int first = fighter->script_phase ? 9 : 0;
+  fighter->sample_override = mini(30, first + 2 * fighter->ticks);
+  if (fighter->ticks == spawn) {
+    Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SPEAR, 90, spear_projectile);
+    if (p != NULL) {
+      p->pos[AXIS_X] += fighter->facing * 0xc000;
+      p->pos[AXIS_Y] = -0x16666;
+      p->vel[AXIS_X] = fighter->facing * 0x3333;
+    }
+  }
+  if (fighter->ticks >= 60) {
+    bool pulling = false;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      const Projectile *p = &battle->projectiles[i];
+      pulling |= p->kind == PROJECTILE_SPEAR && &battle->fighters[p->owner] == fighter && p->phase == 1;
+    }
+    if (!pulling) {
+      special_ready(battle, fighter);
+    }
+  }
+}
+
+static bool can_spear(const Battle *battle, const Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  return battle->phase == PHASE_FIGHT && battle->ticks >= fighter->spear_ready && victim->hits <= 3 && victim->action != 0x1008;
+}
+
+static void scorpion_spear(Battle *battle, Fighter *fighter) {
+  bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
+  stop_body(fighter);
+  fighter_start_move(battle, fighter, S_PUNCH, &s_spear);
+  fighter->script = spear_tick;
+  fighter->script_phase = followup;
+  fighter->sample_override = followup ? 9 : 0;
+  fighter->spear_ready = battle->ticks + 90;
+}
+
+static void teleport_land_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(27, 18 + fighter->ticks);
+  if (fighter->ticks >= 10) {
+    special_ready(battle, fighter);
+  }
+}
+
+static void teleport_block_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = fighter->ticks < 21 ? 8 : maxi(0, 29 - fighter->ticks);
+  if (fighter->ticks >= 29 && !fighter_airborne(fighter)) {
+    fighter_start_move(battle, fighter, S_JUMP, &s_teleport_land);
+    fighter->script = teleport_land_tick;
+    fighter->sample_override = 18;
+  }
+}
+
+static void teleport_tick(Battle *battle, Fighter *fighter) {
+  Fighter *victim = opponent(battle, fighter);
+  fighter->sample_override = mini(9, fighter->ticks);
+  if (fighter->script_phase == 0) {
+    if (fighter->ticks < 10 && fighter_distance(battle, fighter) < 5.9f && abs(fighter->body.pos[AXIS_X]) < battle->arena_radius - Q16_ONE) {
+      return;
+    }
+    q16 distance = abs(victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]);
+    int direction = victim->body.pos[AXIS_X] >= fighter->body.pos[AXIS_X] ? 1 : -1;
+    q16 offset = 0x26666 + maxi(0, 4 * Q16_ONE - distance);
+    q16 x = victim->body.pos[AXIS_X] + direction * offset;
+    fighter->body.pos[AXIS_X] = abs(x) > battle->arena_radius ? victim->body.pos[AXIS_X] : x;
+    fighter->facing = -direction;
+    fighter->body.vel[AXIS_X] = -direction * 0x2666;
+    fighter->sample_override = 9;
+    fighter->script_phase = 1;
+    return;
+  }
+  fighter->sample_override = 9;
+  if (fighter->script_phase == 2) {
+    if (++fighter->script_timer == 6) {
+      fighter->body.gravity = 0x1999;
+    }
+    if (fighter->script_timer >= 6 && !fighter_airborne(fighter)) {
+      special_ready(battle, fighter);
+    }
+    return;
+  }
+  if (!fighter_airborne(fighter)) {
+    special_ready(battle, fighter);
+    return;
+  }
+  ContactResult result = battle_contact(battle, fighter, &teleport_record);
+  if (result == CONTACT_BLOCK) {
+    fighter_start_move(battle, fighter, S_JUMP, &s_teleport_block);
+    fighter->script = teleport_block_tick;
+    fighter->sample_override = 8;
+    fighter->body.vel[AXIS_X] = -fighter->facing * 0x28f;
+    fighter->body.vel[AXIS_Y] = -0x2147;
+    fighter->body.gravity = 0x1ca;
+  } else if (result != CONTACT_MISS || fighter->ticks >= 70) {
+    stop_body(fighter);
+    fighter->flags &= ~(unsigned)FF_TELEPORTING;
+    fighter->script_phase = 2;
+    fighter->script_timer = 0;
+  }
+}
+
+static bool can_teleport(const Battle *battle, const Fighter *fighter) {
+  return battle->phase == PHASE_FIGHT && battle->ticks >= fighter->teleport_ready && fighter_opponent(battle, fighter)->hits < 3;
+}
+
+static void scorpion_teleport(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_PUNCH, &s_teleport);
+  fighter->script = teleport_tick;
+  fighter->sample_override = 0;
+  fighter->teleport_ready = battle->ticks + 69;
+  fighter->flags |= FF_TELEPORTING;
+  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(battle, fighter)->body.pos[AXIS_X] ? -1 : 1;
+  fighter_set_speed(battle, fighter, -0x2666);
+  fighter->body.vel[AXIS_Y] = -0x170a;
+  fighter->body.gravity = 0x1ca;
+}
+
+static void fire_tick(Battle *battle, Fighter *fighter) {
+  int tick = fighter->ticks;
+  bool fast = fighter->script_phase != 0;
+  if (tick < 4) {
+    fighter->sample_override = tick + 1;
+  } else if (tick < 9) {
+    fighter->sample_override = tick;
+  } else if (tick < 13) {
+    fighter->sample_override = tick - 1;
+  } else if (fast) {
+    fighter->sample_override = mini(34, tick < 19 ? tick - 2 : tick < 32 ? tick - 3 : tick - 4);
+  } else {
+    fighter->sample_override = mini(34, tick < 48 ? 11 + (tick - 13) / 2 : tick - 19);
+  }
+  if (tick == (fast ? 19 : 27)) {
+    battle_contact(battle, fighter, &fire_record);
+  }
+  if (tick >= (fast ? 39 : 54)) {
+    special_ready(battle, fighter);
+  }
+}
+
+static void scorpion_fire(Battle *battle, Fighter *fighter) {
+  stop_body(fighter);
+  fighter_start_move(battle, fighter, S_PUNCH, &s_fire);
+  fighter->script = fire_tick;
+  fighter->sample_override = 1;
+  fighter->script_phase = (fighter_opponent(battle, fighter)->flags & FF_REACTING) != 0;
+}
+
+static bool fighting(const Battle *battle, const Fighter *fighter) {
+  (void)fighter;
+  return battle->phase == PHASE_FIGHT;
+}
+
+static void press_jab(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, scorpion_jab);
+}
+
+static void press_kick(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, scorpion_kick);
+}
+
+static void enter_uppercut(Battle *battle, Fighter *fighter) {
+  fighter_enter_state(battle, fighter, S_UPPERCUT);
+}
+
+static void enter_sweep(Battle *battle, Fighter *fighter) {
+  fighter_enter_state(battle, fighter, S_SWEEP);
+}
+
+static void enter_throw(Battle *battle, Fighter *fighter) {
+  fighter_enter_state(battle, fighter, S_THROW);
+}
+
+static void press_lp(Battle *battle, Fighter *fighter) {
+  fighter_interrupt(fighter, fighter_distance(battle, fighter) <= 0.7f ? enter_throw : scorpion_jab);
+}
+
+static void press_lk(Battle *battle, Fighter *fighter) {
+  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : scorpion_kick);
+}
+
+static void press_uppercut(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, enter_uppercut);
+}
+
+static void press_sweep(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, enter_sweep);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const CommandDef commands[] = {
+  {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, CMD_AIR, can_teleport, scorpion_teleport},
+  {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_BACK}, 2, 27, 0, can_spear, scorpion_spear},
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 20, 0, fighting, scorpion_fire},
+};
+static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
+static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_uppercut, [BUTTON_HIGH_KICK] = press_sweep, [BUTTON_LOW_KICK] = press_sweep}};
+static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_jab, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_kick}};
+static const Controls scorpion_controls = {commands, COUNT(commands), {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
+// clang-format on
+
+const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873};

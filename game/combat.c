@@ -13,13 +13,13 @@ static int fighter_index(const Battle *battle, const Fighter *fighter) {
 /* Our gameplay hull is independent of rendering: 0.6 units wide, 1.8 high
  * standing and 1.0 crouched. Script attack boxes and damage keep their
  * original units. No sampled animation joints or retail pose emulation. */
-static bool contact_geometry(const Battle *battle, const Fighter *attacker, const Fighter *victim, const AttackRecord *record) {
+static bool contact_geometry(const Battle *battle, const q16 origin[3], int facing, const Fighter *victim, const AttackRecord *record) {
   (void)battle;
-  q16 dx = (victim->body.pos[AXIS_X] - attacker->body.pos[AXIS_X]) * attacker->facing;
-  q16 dz = victim->body.pos[AXIS_Z] - attacker->body.pos[AXIS_Z];
+  q16 dx = (victim->body.pos[AXIS_X] - origin[AXIS_X]) * facing;
+  q16 dz = victim->body.pos[AXIS_Z] - origin[AXIS_Z];
   q16 feet = victim->body.pos[AXIS_Y] - victim->body.ground;
   q16 head = feet - (victim->crouching ? Q16_ONE : 0x1cccc);
-  q16 top = attacker->body.pos[AXIS_Y] + record->top;
+  q16 top = origin[AXIS_Y] + record->top;
   q16 bottom = top + record->height;
   return abs(dz) <= 0x8000 && dx + 0x4ccc >= record->reach - record->length && dx - 0x4ccc <= record->reach && head <= bottom && feet >= top;
 }
@@ -27,7 +27,7 @@ static bool contact_geometry(const Battle *battle, const Fighter *attacker, cons
 /* 0x48e890 / 0x48e800. Fighters driven by input frames block like retail
  * humans; others block through their action codes like retail CPUs. */
 static bool blocks(const Fighter *victim, const AttackRecord *record) {
-  if (fighter_airborne(victim)) {
+  if ((record->flags & ATTACK_UNBLOCKABLE) || fighter_airborne(victim)) {
     return false;
   }
   if (!victim->human) {
@@ -64,9 +64,9 @@ void battle_damage(Battle *battle, Fighter *victim, q16 damage) {
 }
 
 /* 0x48d4a0 */
-ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record) {
+ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing) {
   Fighter *victim = (Fighter *)fighter_opponent(battle, attacker);
-  if (battle->contacts_off || !contact_geometry(battle, attacker, victim, record)) {
+  if (battle->contacts_off || !contact_geometry(battle, origin, facing, victim, record)) {
     return CONTACT_MISS;
   }
   battle->contacted = true;
@@ -104,8 +104,27 @@ ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackReco
   int side = fighter_index(battle, attacker);
   /* Absolute retail Y has the soles at 0, so height above the floor is -Y. */
   float x = q16_float(attacker->body.pos[AXIS_X] / 2 + victim->body.pos[AXIS_X] / 2);
-  float height = -q16_float(attacker->body.pos[AXIS_Y] + record->top + record->height / 2);
+  float height = -q16_float(origin[AXIS_Y] + record->top + record->height / 2);
   battle->effects[side] = (HitEffect){x, height, 10, result == CONTACT_BLOCK};
   battle_react(battle, victim, reaction);
   return result;
+}
+
+ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record) {
+  return battle_contact_from(battle, attacker, record, attacker->body.pos, attacker->facing);
+}
+
+Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step) {
+  require(step != NULL && lifetime > 0, "Invalid projectile");
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *p = &battle->projectiles[i];
+    if (p->kind == 0) {
+      *p = (Projectile){.kind = kind, .owner = fighter_index(battle, owner), .facing = owner->facing, .lifetime = lifetime, .step = step};
+      for (int k = 0; k < 3; ++k) {
+        p->pos[k] = owner->body.pos[k];
+      }
+      return p;
+    }
+  }
+  return NULL;
 }

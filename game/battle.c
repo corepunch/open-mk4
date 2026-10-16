@@ -65,6 +65,7 @@ void battle_next_round(Battle *battle) {
   battle->contacts_off = false;
   battle->contacted = false;
   memset(battle->effects, 0, sizeof battle->effects);
+  memset(battle->projectiles, 0, sizeof battle->projectiles);
   battle->phase = PHASE_READY;
   battle->phase_ticks = 0;
   battle->time_ticks = 99 * 60;
@@ -120,7 +121,9 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
   } else {
     const MoveDef *state = fighter_move(fighter);
     fighter->ticks++;
-    if (state->sequence != NULL) {
+    if (fighter->script != NULL) {
+      fighter->script(battle, fighter);
+    } else if (state->sequence != NULL) {
       fighter_step_sequence(battle, fighter);
     } else if (state->flags & SF_ATTACK) {
       int total = state->startup + state->active + state->recovery;
@@ -331,7 +334,9 @@ void battle_step(Battle *battle, const Input input[2]) {
         entry(battle, fighter);
       } else {
         fighter->ticks++;
-        if (fighter_move(fighter)->sequence != NULL) {
+        if (fighter->script != NULL) {
+          fighter->script(battle, fighter);
+        } else if (fighter_move(fighter)->sequence != NULL) {
           fighter_step_sequence(battle, fighter);
         }
       }
@@ -346,6 +351,16 @@ void battle_step(Battle *battle, const Input input[2]) {
   /* Retail tick 0x41fd70: task pump (fighters, then press tasks), world pump. */
   for (i = 0; i < 2; ++i)
     advance_fighter(battle, &battle->fighters[i], &battle->fighters[1 - i]);
+  for (int p = 0; p < MAX_PROJECTILES; ++p) {
+    Projectile *projectile = &battle->projectiles[p];
+    if (projectile->kind != 0) {
+      projectile->ticks++;
+      projectile->step(battle, projectile);
+      if (--projectile->lifetime <= 0) {
+        projectile->kind = 0;
+      }
+    }
+  }
   dispatch_presses(battle);
   battle_world(battle);
   {

@@ -146,8 +146,9 @@ typedef struct Motion {
  * origin along the attacker-to-victim axis: X spans [reach - length, reach]
  * when facing the victim, Y spans [top, top + height] (Y down). */
 enum {
-  ATTACK_LOW = 1,  /* blocked only with down held */
-  ATTACK_MARK = 2, /* sets the victim's FF_MARK */
+  ATTACK_LOW = 1,         /* blocked only with down held */
+  ATTACK_UNBLOCKABLE = 4, /* our explicit flag for unblockable script contacts */
+  ATTACK_MARK = 2,        /* sets the victim's FF_MARK */
 };
 
 typedef struct AttackRecord {
@@ -326,7 +327,11 @@ struct Fighter {
   uint64_t latch[BUTTON_COUNT]; /* tick of the last press; HK is never latched */
   const ButtonTable *buttons;   /* current stance table; NULL while locked */
   unsigned flags;
-  FighterFn pending; /* interrupt entry, started on the next tick */
+  FighterFn pending;   /* interrupt entry, started on the next tick */
+  FighterFn script;    /* native C move continuation; cleared on interruption */
+  int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
+  int script_phase, script_timer;
+  uint64_t spear_ready, teleport_ready;
 };
 
 typedef struct HitEffect {
@@ -335,9 +340,26 @@ typedef struct HitEffect {
   bool blocked;
 } HitEffect;
 
+typedef struct Projectile Projectile;
+typedef void (*ProjectileFn)(Battle *battle, Projectile *projectile);
+
+enum {
+  PROJECTILE_SPEAR = 1,
+  PROJECTILE_SWORD = 2
+};
+
+struct Projectile {
+  int kind, owner, facing, ticks, lifetime, phase;
+  q16 pos[3], vel[3];
+  ProjectileFn step;
+};
+
+#define MAX_PROJECTILES 4
+
 struct Battle {
   Fighter fighters[2];
   HitEffect effects[2];
+  Projectile projectiles[MAX_PROJECTILES];
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
   uint64_t ticks;
@@ -372,6 +394,8 @@ void fighter_neutral(Fighter *fighter);
 q16 fighter_axis(const Battle *battle, const Fighter *fighter, int axis);
 void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed);
 ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record);
+ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
+Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step);
 void battle_damage(Battle *battle, Fighter *victim, q16 damage);
 void battle_react(Battle *battle, Fighter *victim, int reaction);
 void battle_world(Battle *battle);

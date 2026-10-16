@@ -53,7 +53,7 @@ static void check_roster(void) {
   const CharacterDef *goro = roster_def(15);
   check(roster_count() == 18, "MK4 roster should be 18 fighters");
   check(human->game == GAME_MK4 && goro->game == GAME_MK4, "Current rows are MK4");
-  check(human->controls == roster_def(4)->controls, "Humans share one control table");
+  check(human->controls != roster_def(4)->controls, "Scorpion owns its command and stance tables");
   for (int i = 0; i < roster_count(); ++i)
     check(roster_def(i)->moves != NULL && roster_def(i)->move_count == S_COUNT, "Every fighter owns a move table");
   check(human->moves != goro->moves, "Goro names clips from his own bank");
@@ -259,7 +259,80 @@ static void check_retail_input(void) {
   check(fighter->state == S_PUNCH && fighter->ticks == 0, "Interrupted entry must start on the next tick");
 }
 
+static void command(Battle *battle, int player, Button first, Button second, Button attack) {
+  Input input[2] = {0};
+  input[player].held = BUTTON_BIT(first);
+  battle_step(battle, input);
+  advance_ticks(battle, 2, NULL);
+  input[player].held = BUTTON_BIT(second);
+  battle_step(battle, input);
+  advance_ticks(battle, 2, NULL);
+  input[player].held = BUTTON_BIT(attack);
+  battle_step(battle, input);
+  battle_step(battle, (Input[2]){0});
+}
+
+static void check_specials(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle = fight(4.f);
+    if (player == 1) {
+      battle_init(&battle, 4, 0);
+      battle.phase = PHASE_FIGHT;
+      battle.fighters[0].body.pos[AXIS_X] = -2 * Q16_ONE;
+      battle.fighters[1].body.pos[AXIS_X] = 2 * Q16_ONE;
+    }
+    Fighter *fighter = &battle.fighters[player], *victim = &battle.fighters[1 - player];
+    command(&battle, player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    check(fighter->current_move->clip == 14 && fighter->script != NULL, "B,B,LP must enter spear for either player");
+    advance_ticks(&battle, 45, NULL);
+    check(victim->health == Q16_ONE - 0xccc && fighter_distance(&battle, fighter) < 0.9f, "Spear must damage once and pull into follow-up range");
+    check(victim->action == 0x1008 && victim->damage_scale == 0x9999, "Spear must leave scaled combo stun");
+    advance_ticks(&battle, 100, NULL);
+    check(fighter->state == S_IDLE && victim->state == S_IDLE, "Spear must release both fighters");
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      check(battle.projectiles[i].kind == 0, "Spear leaked a projectile");
+    }
+  }
+  {
+    Battle battle = fight(4.f);
+    command(&battle, 0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    Input guard[2] = {{0}, {BUTTON_BIT(BUTTON_BLOCK)}};
+    advance_ticks(&battle, 60, guard);
+    check(battle.fighters[1].health == Q16_ONE - q16_mul(0xccc, 0x3333), "Blocked spear must only chip");
+    check(fighter_distance(&battle, &battle.fighters[0]) > 3.f, "Blocked spear must not pull");
+  }
+  {
+    Battle battle = fight(4.f);
+    command(&battle, 0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    advance_ticks(&battle, 27, NULL);
+    fighter_enter_state(&battle, &battle.fighters[0], S_HIT);
+    advance_ticks(&battle, 90, NULL);
+    check(battle.fighters[1].state == S_IDLE, "Interrupted spear must release the victim");
+  }
+  for (int guard = 0; guard < 2; ++guard) {
+    Battle battle = fight(2.f);
+    command(&battle, 0, BUTTON_DOWN, BUTTON_RIGHT, BUTTON_LOW_PUNCH);
+    check(battle.fighters[0].current_move->clip == 448, "D,F,LP must enter fire");
+    Input input[2] = {{0}, {guard ? BUTTON_BIT(BUTTON_BLOCK) : 0}};
+    advance_ticks(&battle, 60, input);
+    check(battle.fighters[1].health == Q16_ONE - 0x1eb8, "Fire must deal one unblockable 12-percent hit");
+    check(battle.fighters[0].state == S_IDLE, "Fire must recover");
+  }
+  for (int guard = 0; guard < 2; ++guard) {
+    Battle battle = fight(4.f);
+    command(&battle, 0, BUTTON_DOWN, BUTTON_LEFT, BUTTON_HIGH_PUNCH);
+    check(battle.fighters[0].current_move->clip == 312, "D,B,HP must enter teleport");
+    Input input[2] = {{0}, {guard ? BUTTON_BIT(BUTTON_BLOCK) : 0}};
+    advance_ticks(&battle, 12, input);
+    check(fighter_x(&battle.fighters[0]) > fighter_x(&battle.fighters[1]), "Teleport must cross to the far side");
+    advance_ticks(&battle, 100, input);
+    check(battle.fighters[0].state == S_IDLE && !(battle.fighters[0].flags & FF_TELEPORTING), "Teleport must land and clear its state");
+    check(battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x170a, 0x3333) : 0x170a), "Teleport hit/block damage");
+  }
+}
+
 int main(void) {
+  check_specials();
   check_retail_input();
   check_roster();
   check_original_kicks();
@@ -409,6 +482,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

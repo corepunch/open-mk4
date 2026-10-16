@@ -109,6 +109,10 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   fighter->contact = CONTACT_MISS;
   fighter->contact_tick = -1;
   fighter->pending = NULL;
+  fighter->script = NULL;
+  fighter->sample_override = -1;
+  fighter->script_phase = 0;
+  fighter->script_timer = 0;
   if (was_locked && !(move->flags & SF_LOCK)) {
     fighter_neutral(fighter);
   }
@@ -165,12 +169,15 @@ void fighter_step_sequence(Battle *battle, Fighter *fighter) {
 /* The displayed sample of a recovered sequence, or the move tick otherwise. */
 int fighter_sample(const Fighter *fighter) {
   const MoveDef *move = fighter_move(fighter);
-  return move->sequence != NULL ? (int)fighter_frame(fighter, 1 << 16) : fighter->ticks;
+  return fighter->sample_override >= 0 ? fighter->sample_override : move->sequence != NULL ? (int)fighter_frame(fighter, 1 << 16) : fighter->ticks;
 }
 
 double fighter_frame(const Fighter *fighter, int frame_count) {
   const MoveDef *move = fighter_move(fighter);
   require(frame_count > 0, "Empty move clip");
+  if (fighter->sample_override >= 0) {
+    return mini(fighter->sample_override, frame_count - 1);
+  }
   if (move->sequence != NULL) {
     const MoveSequence *sequence = move->sequence;
     int index = mini(maxi(fighter->ticks, 0), sequence->count - 1);
