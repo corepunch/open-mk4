@@ -628,6 +628,56 @@ static void weapon_recovery(void) {
   check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
 }
 
+static void cpu_behavior(void) {
+  Battle battle = fight(0, 6.f);
+  Fighter *fighter = &battle.fighters[0];
+  fighter->human = false;
+  battle.random[0] = 0;
+  battle.random[1] = 0x3000;
+  advance(&battle, 1);
+  check(fighter_move(fighter)->clip == 16 && fighter->directions.token[0] == 0,
+      "CPU far-distance table must select the character ice entry without synthesizing a human command");
+  advance(&battle, 16);
+  check(objects(&battle, PROJECTILE_ICE) == 1, "CPU ice must run the shared character continuation");
+
+  battle = fight(0, 2.5f);
+  fighter->human = false;
+  battle.random[0] = 0;
+  battle.random[1] = 0x3000;
+  advance(&battle, 1);
+  check(fighter->action == 0x405 && objects(&battle, PROJECTILE_CLONE) == 1, "CPU medium-distance table must select clone directly");
+  for (int level = 1; level <= 3; level += 2) {
+    battle = fight(0, 1.f);
+    battle.cpu_level = level;
+    fighter->human = false;
+    roster_def(4)->jump(&battle, fighter);
+    fighter->body.pos[AXIS_Y] -= Q16_ONE;
+    battle_world(&battle);
+    check((fighter->pending != NULL) == (level > 1), "CPU straight jump must enable automatic air attacks only above level one");
+    if (level > 1) {
+      advance(&battle, 1);
+      check(fighter_move(fighter)->clip == 58 && fighter->body.physics == NULL, "CPU air height/range branch must choose angled LK and clear jump callbacks");
+    }
+  }
+  battle.random[0] = 0;
+  battle.random[1] = 0xffff;
+  check(!battle_chance(&battle, 975), "CPU probability must use a strict per-thousand comparison");
+  battle.random[0] = battle.random[1] = 0;
+  check(battle_chance(&battle, 1), "CPU zero draw must pass a positive chance");
+
+  battle = fight(0, 2.f);
+  fighter->human = false;
+  battle.fighters[1].action = 0x113;
+  battle.random[0] = battle.random[1] = 0;
+  battle_cpu_step(&battle, fighter);
+  check(fighter->pending == NULL && (fighter->held & BUTTON_BIT(BUTTON_DOWN)), "CPU back-weapon response must wait in crouch before countering");
+  battle.fighters[1].action = 0x2000;
+  battle_cpu_step(&battle, fighter);
+  check((fighter->held & BUTTON_BIT(BUTTON_RUN)) && fighter->cpu.timer == 29, "CPU must approach for close HK after the weapon action clears");
+  battle_next_round(&battle);
+  check(!fighter->human && battle.fighters[1].human && fighter->cpu.plan == 0, "new rounds must preserve CPU ownership and discard old plans");
+}
+
 static void walls(void) {
   for (int marked = 0; marked < 2; ++marked) {
     Battle battle = fight(0, 1.f);
@@ -1010,6 +1060,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  cpu_behavior();
   finish_clock();
   walls();
   jumps();

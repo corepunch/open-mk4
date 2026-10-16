@@ -59,6 +59,7 @@ addresses. Upstream reference addresses differ: verify correspondence locally.
 | Weapons | `game/weapons.c`, `WeaponDef`, `WeaponStrike` | Shared lifecycle and recovery; actual weapon identity travels through drop/throw/pickup, including foreign owners |
 | Scene playback | `game/scene.c`, `SceneClip` | Independent actor clocks, forward/reverse/repeated clips and native-rate pose blends; no VM/task-stack recreation |
 | Scene objects | `game/presentation.c` | Bounded mesh pieces, joint attachments/visibility, particles and camera state; reset on a new round |
+| CPU | `game/cpu.c`, `CpuMoves` | Simulation-owned plans and direct character entries; battle-owned two-word random state, strict per-thousand gates and explicit difficulty/adaptive context; host only selects human/CPU ownership |
 | Sound | `battle_sound`, `common/mk4_audio.c`, `game/audio.c` | Simulation queues selectors; assets decode original ESFs; SDL playback belongs only to the host |
 
 The host owns decoded assets. Drawing reads simulation state. Four projectile
@@ -91,6 +92,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | RUN double tap | `45e820`, `469250/2e0/450`, descriptor `53ce18` | Previous RUN press within 8 ticks; 80-tick cooldown; clip 300; Down reverses playback/lateral direction; air victim scales speed to 30%; priority over pickup |
 | Fatality I | `4e0498[4] -> 445100`, `4e0368..3e8`, victim `445380`, `4e03f0..438`, `445510` | Owner 385, victim 389/387 entry blends; slow victim blends to 46/49/50; paired 1.45-unit alignment; head attachment and continuing owner loop 96–140 |
 | Fatality II | `4dfe90[4] -> 41b3a0`, `4d2c10/78/a0/c8`, victim `4d2bf0`, `41b450/610` | Owner 552 breath loops, independent victim 206; wait 20, slide eight samples, calculate delay from current range; uppercut/shatter, eight cursor passes, wait 60, victory |
+| CPU policy | `433630`, `4df478/498/4c0/4d8`, `4398c0`, `4ab540/570/5d0`, `46fcd0/470650/6f0` | Distance-weighted selections, 30-tick approaches, low-level 60–239 tick pauses, 8–27 tick footwork legs, changed-action probability gate, direct ice/clone/slide and difficulty-gated automatic air attacks |
 | Finish window | `48fc20`, `46a520/580`, `421d40/421ef0`, `45e5e0` | Preserve defeat recovery until dizzy; 60-tick grace clears contact latch, then 240 ticks or first contact; no new press on expiry; an already accepted entry may start on that tick |
 | Stage finishers | Fan `43d040`, `4e0118..1a8`; spikes `467e70`, `4e6950`, reaction 175 | Sub-Zero-specific commands select shared scenes; retain 31 fan repetitions and spike wait/impaled position |
 
@@ -136,13 +138,14 @@ pose, geometry, weapon, scene and sound checks for subsequent characters.
 pieces and PCM/ADPCM decoding. Existing compact kick/Scorpion fixtures stay.
 Do not add retail-execution harnesses or large per-tick JSON recordings.
 
-The engine uses portable presentation: blue ice material, bounded particles,
+The engine still uses portable presentation: blue ice material, bounded particles,
 linear camera transitions between recovered offsets, posed character meshes
 for detached pieces, and a single weapon settling arc. Retail camera splines,
-gore-cap/interior geometry, secondary ice decoration, cosmetic freeze shake,
-CPU probability policies are not yet reproduced. Walk/run speeds, gait selection and energy now follow their native controllers.
-Human jumps now use the shared native-phase translation along the pair axis. The finish clock follows the recovered grace/contact phases after defeat recovery. These choices are not evidence of exact retail audiovisual or
-scheduler identity, and must not justify changing damage or command branches.
+gore-cap/interior geometry, secondary ice decoration and cosmetic freeze shake
+remain to be translated. CPU distance plans, probability gates and automatic
+air attacks now live in the shared simulation; unported character action rows
+still fall back to their own stance tables. These translations do not claim
+retail scheduler or random-call-stream identity.
 
 Sound formats are checked against the local executable, including corrections
 to reference hypotheses: buffers are mono; ESF bit 31 controls looping.

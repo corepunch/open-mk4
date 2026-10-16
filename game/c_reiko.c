@@ -34,4 +34,4 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_reiko = {GAME_MK4, 7, "REIKO", &mk4_motion, moves, S_COUNT, &mk4_controls, NULL, -77660, mk4_walk, mk4_jump};
+const CharacterDef mk4_reiko = {GAME_MK4, 7, "REIKO", &mk4_motion, moves, S_COUNT, &mk4_controls, NULL, -77660, mk4_walk, mk4_jump, NULL};

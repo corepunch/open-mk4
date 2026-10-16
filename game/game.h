@@ -160,6 +160,42 @@ typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
 
+typedef enum CpuAction {
+  CPU_JAB,
+  CPU_LOW_KICK,
+  CPU_HIGH_KICK,
+  CPU_SWEEP,
+  CPU_UPPERCUT,
+  CPU_THROW,
+  CPU_CLOSE_HP,
+  CPU_CLOSE_HK,
+  CPU_CROUCH_LP,
+  CPU_AIR_HP,
+  CPU_AIR_HK,
+  CPU_AIR_LK,
+  CPU_PROJECTILE,
+  CPU_SPECIAL_1,
+  CPU_SPECIAL_2,
+  CPU_DRAW,
+  CPU_WEAPON_THROW,
+  CPU_FINISH_1,
+  CPU_FINISH_2,
+  CPU_FINISH_FAN,
+  CPU_FINISH_SPIKE,
+  CPU_ACTION_COUNT
+} CpuAction;
+
+typedef struct CpuMoves {
+  FighterFn enter[CPU_ACTION_COUNT];
+} CpuMoves;
+
+typedef struct CpuState {
+  int plan, timer, seen_action, rest, phase;
+  q16 target;
+  uint64_t weapon_tick;
+  bool finish_chosen;
+} CpuState;
+
 typedef struct WeaponDef {
   int type; /* retail descriptor type; travels with a dropped weapon */
   FighterFn hp, lp, back_hp, back_lp, crouch_lp, throw_move;
@@ -280,6 +316,7 @@ typedef struct CharacterDef {
   q16 ground;             /* retail standing group Y: the rig root's Y translation (soles at 0) */
   FighterFn walk;         /* game-owned ground locomotion; reads held direction/run */
   FighterFn jump;         /* grounded jump entry; owns takeoff, flight and landing */
+  const CpuMoves *cpu;    /* translated action entries, selected by the shared CPU controller */
 } CharacterDef;
 
 enum {
@@ -373,6 +410,7 @@ struct Fighter {
   int run_delay;
   int action; /* controller +0x74 */
   bool human; /* 0x5347c8 / 0x532248: block from switches, not action codes */
+  CpuState cpu;
   bool connected, crouching;
   bool body_contact; /* reaction source was the other fighter, rather than an independent object */
   bool avoids_high;  /* low-kick script's temporary high-punch avoidance gate */
@@ -477,6 +515,9 @@ struct Battle {
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
   bool finish_waiting; /* final KO recovery must reach the dizzy controller before entry */
+  uint32_t random[2];
+  int cpu_level, cpu_rank, cpu_progress; /* 534780, 5345b0, 53c370 */
+  bool cpu_adaptive;
   int arena, finisher; /* stage id and completed/active character finisher id */
   uint64_t ticks;
   q16 arena_radius;
@@ -490,7 +531,11 @@ struct Battle {
 void input_bind_player(InputDevice *device, int player);
 void input_sample(InputDevice *device, const unsigned char *keys, Input *out);
 void input_sync(InputDevice *device, const unsigned char *keys);
-void input_cpu(const Battle *battle, int player, Input *out);
+void input_cpu(Battle *battle, int player, Input *out);
+uint32_t battle_random(Battle *battle, uint32_t range);
+bool battle_chance(Battle *battle, int per_thousand);
+void battle_cpu_step(Battle *battle, Fighter *fighter);
+bool battle_cpu_action(Battle *battle, Fighter *fighter, CpuAction action);
 ShellCommand input_shell_command(int keycode);
 
 int roster_count(void);

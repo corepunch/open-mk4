@@ -22,6 +22,7 @@ void battle_set_arena(Battle *battle, int arena) {
 
 static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, q16 x, int facing) {
   const CharacterDef *def = roster_def(roster_index);
+  bool human = fighter->human;
   *fighter = (Fighter){0};
   fighter->assets = battle->assets;
   fighter->heading[0] = facing * Q16_ONE;
@@ -30,7 +31,7 @@ static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, 
   fighter->health = Q16_ONE;
   fighter->damage_scale = Q16_ONE;
   fighter->run_energy = Q16_ONE;
-  fighter->human = true;
+  fighter->human = human;
   fighter->body.ground = def->ground;
   fighter->body.pos[AXIS_X] = x;
   fighter->body.pos[AXIS_Y] = def->ground;
@@ -43,8 +44,10 @@ static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, 
 void battle_init(Battle *battle, int p1, int p2) {
   memset(battle, 0, sizeof *battle);
   battle_set_arena(battle, 0);
+  battle->cpu_level = 3;
   battle->fighters[0].roster = p1;
   battle->fighters[1].roster = p2;
+  battle->fighters[0].human = battle->fighters[1].human = true;
   roster_def(p1);
   roster_def(p2);
   battle_reset_match(battle);
@@ -56,6 +59,8 @@ void battle_reset_match(Battle *battle) {
     battle->fighters[i].wins = 0;
   battle->round = 0;
   battle->ticks = 0;
+  battle->random[0] = 0xbc4ff2;
+  battle->random[1] = 0xc83e33;
   battle_next_round(battle);
 }
 
@@ -464,6 +469,9 @@ void battle_step(Battle *battle, const Input input[2]) {
   battle_step_presentation(battle);
   for (i = 0; i < 2; ++i)
     sample_switches(&battle->fighters[i], input[i]);
+  for (i = 0; i < 2; ++i) {
+    battle_cpu_step(battle, &battle->fighters[i]);
+  }
   for (i = 0; i < 2; ++i) {
     Fighter *fighter = &battle->fighters[i];
     /* 422800: decrement the recovery delay, then restore 5% per tick. */

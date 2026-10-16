@@ -84,46 +84,8 @@ ShellCommand input_shell_command(int keycode) {
   }
 }
 
-static void hold(Input *out, Button button) {
-  out->held |= BUTTON_BIT(button);
-}
-
-void input_cpu(const Battle *battle, int player, Input *out) {
-  const Fighter *fighter = &battle->fighters[player];
-  const Fighter *other = &battle->fighters[1 - player];
-  float distance;
-  int cycle;
+/* CPU controllers run inside simulation. The host only selects ownership. */
+void input_cpu(Battle *battle, int player, Input *out) {
   memset(out, 0, sizeof *out);
-  if (battle->phase != PHASE_FIGHT)
-    return;
-  distance = fabsf(fighter_x(fighter) - fighter_x(other));
-  cycle = (int)((battle->ticks + (uint64_t)player * 17u) % 120u);
-  if (distance > 1.05f) {
-    if (fighter_x(fighter) > fighter_x(other))
-      hold(out, BUTTON_LEFT);
-    if (fighter_x(fighter) < fighter_x(other))
-      hold(out, BUTTON_RIGHT);
-    if (distance > 3.f)
-      hold(out, BUTTON_RUN);
-  }
-  if (distance < 2.f && (fighter_move(other)->flags & SF_ATTACK) && cycle % 50 < 15) {
-    hold(out, BUTTON_BLOCK);
-    if (other->state == S_SWEEP)
-      hold(out, BUTTON_DOWN);
-  }
-  if (distance < 1.8f) {
-    /* One-tick taps: the simulation turns a released switch into a press. */
-    if (cycle == 7)
-      hold(out, BUTTON_HIGH_PUNCH);
-    if (cycle == 45)
-      hold(out, BUTTON_HIGH_KICK);
-    if (cycle == 86) {
-      hold(out, BUTTON_DOWN);
-      hold(out, BUTTON_HIGH_PUNCH);
-    }
-    if (distance < 0.7f && cycle == 108)
-      hold(out, BUTTON_LOW_PUNCH);
-  }
-  if (distance > 2.f && cycle == 115)
-    hold(out, BUTTON_UP);
+  battle->fighters[player].human = false;
 }

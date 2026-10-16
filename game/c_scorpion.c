@@ -1526,4 +1526,4 @@ static void scorpion_pickup(Battle *battle, Fighter *fighter) {
   weapon_pickup(battle, fighter);
 }
 
-const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump};
+const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump, NULL};

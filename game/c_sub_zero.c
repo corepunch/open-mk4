@@ -1507,4 +1507,37 @@ static const ButtonTable jumping = {
     {[BUTTON_HIGH_PUNCH] = press_air_hp, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_hk, [BUTTON_LOW_KICK] = press_air_lk}};
 static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
 
-const CharacterDef mk4_sub_zero = {GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, &controls, enter, -77660, mk4_walk, mk4_jump};
+/* Shared CPU selections use these native entries directly, as 45f5f0 does.
+ * Human command patterns and held-button predicates do not gate drone actions. */
+static void cpu_close_hp(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_CLOSE_HP);
+}
+
+static void cpu_close_hk(Battle *battle, Fighter *fighter) {
+  ground_attack(battle, fighter, G_CLOSE_HK);
+}
+
+static const CpuMoves cpu_moves = {.enter = {
+                                       [CPU_JAB] = sub_zero_jab,
+                                       [CPU_LOW_KICK] = sub_zero_lk,
+                                       [CPU_HIGH_KICK] = sub_zero_hk,
+                                       [CPU_SWEEP] = enter_sweep,
+                                       [CPU_UPPERCUT] = enter_uppercut,
+                                       [CPU_THROW] = enter_throw,
+                                       [CPU_CLOSE_HP] = cpu_close_hp,
+                                       [CPU_CLOSE_HK] = cpu_close_hk,
+                                       [CPU_CROUCH_LP] = sub_zero_crouch_lp,
+                                       [CPU_AIR_HP] = air_hp,
+                                       [CPU_AIR_HK] = air_hk_diagonal,
+                                       [CPU_AIR_LK] = air_lk_diagonal,
+                                       [CPU_PROJECTILE] = sub_zero_ice,
+                                       [CPU_SPECIAL_1] = sub_zero_clone,
+                                       [CPU_SPECIAL_2] = sub_zero_slide,
+                                       [CPU_DRAW] = sub_zero_weapon,
+                                       [CPU_FINISH_1] = sub_zero_first_fatality,
+                                       [CPU_FINISH_2] = sub_zero_second_fatality,
+                                       [CPU_FINISH_FAN] = sub_zero_fan_fatality,
+                                       [CPU_FINISH_SPIKE] = sub_zero_spike_fatality,
+                                   }};
+
+const CharacterDef mk4_sub_zero = {GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, &controls, enter, -77660, mk4_walk, mk4_jump, &cpu_moves};

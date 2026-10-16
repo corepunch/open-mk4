@@ -14,6 +14,7 @@ static void usage(void) {
        "  --arena N          arena 0..10 (default 8, The Prison)\n"
        "  --two-player       local controls for player two\n"
        "  --demo             CPU controls both fighters\n"
+       "  --difficulty N     CPU level 1..9 (default 3)\n"
        "  --headless         render without a window\n"
        "  --frames N         stop after N frames (headless advances exactly 1/60s)\n"
        "  --screenshot PATH  save final frame as BMP\n"
@@ -128,7 +129,7 @@ int main(int argc, char **argv) {
   const char *exe = "MK4/MK-4.EXE";
   const char *shot = NULL;
   bool headless = false, demo = false, cpu = true, selftest = false, list = false;
-  int p1 = 0, p2 = 4, arena = 8, limit = 0;
+  int p1 = 0, p2 = 4, arena = 8, limit = 0, difficulty = 3;
   Assets assets = {0};
   SdlApp app;
   Canvas cv;
@@ -156,6 +157,8 @@ int main(int argc, char **argv) {
       arena = cli_int(cli_value(argc, argv, &i));
     else if (!strcmp(arg, "--frames"))
       limit = cli_int(cli_value(argc, argv, &i));
+    else if (!strcmp(arg, "--difficulty"))
+      difficulty = cli_int(cli_value(argc, argv, &i));
     else if (!strcmp(arg, "--headless"))
       headless = true;
     else if (!strcmp(arg, "--demo"))
@@ -195,6 +198,8 @@ int main(int argc, char **argv) {
   sdl_app_init(&app, "Mortal Kombat 4 - Battle", 1280, 800, headless);
   canvas_init(&cv, 1280, 800);
   battle_init(&battle, p1, p2);
+  require(difficulty >= 1 && difficulty <= 9, "CPU difficulty must be between 1 and 9");
+  battle.cpu_level = difficulty;
   battle_bind_assets(&battle, &assets);
   game_audio_init(&audio, headless);
   battle_set_arena(&battle, arena);
@@ -236,6 +241,8 @@ int main(int argc, char **argv) {
       Input in[2];
       input_sample(&pads[0], keys, &in[0]);
       input_sample(&pads[1], keys, &in[1]);
+      battle.fighters[0].human = !demo;
+      battle.fighters[1].human = !(cpu || demo);
       if (demo)
         input_cpu(&battle, 0, &in[0]);
       if (cpu || demo)

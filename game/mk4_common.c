@@ -99,8 +99,10 @@ void mk4_walk(Battle *battle, Fighter *fighter) {
       fighter_start_move(battle, fighter, S_WALK, move);
     }
     fighter->sample_override = continuing ? 11 + fighter->ticks % 13 : 0;
-    fighter->run_energy = maxi(0, fighter->run_energy - 0x51e);
-    fighter->run_delay = 40;
+    if (fighter->human) {
+      fighter->run_energy = maxi(0, fighter->run_energy - 0x51e);
+      fighter->run_delay = 40;
+    }
     fighter_set_speed(battle, fighter, mk4_motion.run);
     fighter->body.walking = true;
     return;
@@ -130,6 +132,29 @@ static const MoveDef jump_landing = {.clip = 304, .first = 18, .last = 27, .flag
 
 static void jump_tick(Battle *battle, Fighter *fighter);
 
+/* 46fcd0/470650/4706f0 and shared tail 4707e0. CPU air attacks
+ * select their entries directly; humans only run the whoosh countdown. */
+static void jump_physics(Battle *battle, Fighter *fighter) {
+  const Fighter *other = fighter_opponent(battle, fighter);
+  if (!fighter->human && battle->cpu_level > 1 && fighter->pending == NULL) {
+    q16 height = fighter->body.ground - fighter->body.pos[AXIS_Y];
+    float distance = fighter_distance(battle, fighter);
+    bool straight = fighter->action == 0x2007;
+    bool forward = fighter->action == 0x2009;
+    bool target_air = fighter_airborne(other);
+    bool attack = straight ? height >= 0xcccc && distance <= 1.5f
+                           : height >= 0x8000 && (forward ? distance <= 2.f && (target_air || fighter->body.vel[AXIS_Y] >= 0) : target_air && distance <= 1.f);
+    if (attack) {
+      CpuAction action = distance < q16_float(0xcccc) || other->body.pos[AXIS_Y] - fighter->body.pos[AXIS_Y] > 0x6666 ? CPU_AIR_LK : CPU_AIR_HK;
+      battle_cpu_action(battle, fighter, action);
+    }
+  }
+  if (fighter->action != 0x2007 && --fighter->move_loops <= 0) {
+    fighter->move_loops = 12;
+    battle_sound(battle, SOUND_C, 0x58);
+  }
+}
+
 static void jump_land_tick(Battle *battle, Fighter *fighter) {
   unsigned directions = fighter->held & (BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(BUTTON_RIGHT));
   if (directions != 0) {
@@ -145,6 +170,7 @@ static void jump_land_tick(Battle *battle, Fighter *fighter) {
 static void jump_land(Battle *battle, Fighter *fighter) {
   bool straight = fighter->current_move == &jump_straight;
   if (straight) {
+    fighter->body.physics = NULL;
     fighter_start_move(battle, fighter, S_JUMP, &jump_landing);
     fighter->script = jump_land_tick;
     fighter->sample_override = 18;
@@ -166,6 +192,8 @@ static void start_flip(Battle *battle, Fighter *fighter, int direction, bool fro
   }
   fighter->body.gravity = 0x24d;
   fighter->body.on_land = jump_land;
+  fighter->body.physics = jump_physics;
+  fighter->move_loops = 1;
 }
 
 static void jump_tick(Battle *battle, Fighter *fighter) {
@@ -219,6 +247,7 @@ void mk4_jump(Battle *battle, Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x30a3;
   fighter->body.gravity = 0x28f;
   fighter->body.on_land = jump_land;
+  fighter->body.physics = fighter->human || battle->cpu_level <= 1 ? NULL : jump_physics;
   fighter->script = jump_tick;
   battle_sound(battle, SOUND_B, 4);
 }
