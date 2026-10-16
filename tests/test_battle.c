@@ -637,6 +637,21 @@ static void check_script_reactions(void) {
   battle_react(&battle, victim, 28);
   advance_ticks(&battle, 1, NULL);
   check(victim->current_move->clip == 254, "Crouching victim must use the crouch reaction branch");
+  battle = fight(4.f);
+  victim = &battle.fighters[1];
+  victim->body.pos[AXIS_Y] -= Q16_ONE;
+  battle_react(&battle, victim, 90);
+  advance_ticks(&battle, 1, NULL);
+  check(victim->current_move->clip == 183 && abs(victim->body.vel[AXIS_X]) == 0x7ae, "Air teleport victim must use its own retreat speed");
+  battle = fight(4.f);
+  victim = &battle.fighters[1];
+  battle_react(&battle, victim, 23);
+  advance_ticks(&battle, 5, NULL);
+  check(fighter_sample(victim) == 6, "Diagonal kick reaction must advance its opening animation twice per tick");
+  advance_ticks(&battle, 4, NULL);
+  check(fighter_sample(victim) == 14, "Diagonal kick reaction must switch to normal speed after its fast opening");
+  advance_ticks(&battle, 1, NULL);
+  check(fighter_sample(victim) == 15, "Diagonal kick reaction must continue at normal speed");
 }
 
 static void check_ground_throws(void) {

@@ -280,6 +280,10 @@ static void extra_reaction_tick(Battle *battle, Fighter *fighter) {
   const ReactionSpec *spec = &extra_reactions[fighter->reaction];
   int elapsed = fighter->script_timer++;
   int sample = elapsed;
+  /* 0x4e8ab8 advances twice through sample 13, then once to landing. */
+  if (fighter->reaction == 23) {
+    sample = elapsed < 7 ? elapsed * 2 : elapsed + 7;
+  }
   if (spec->hold_ticks) {
     sample = elapsed < spec->hold_at ? elapsed : elapsed < spec->hold_at + spec->hold_ticks ? spec->hold_at : elapsed - spec->hold_ticks;
   }
@@ -326,6 +330,7 @@ static void tumble_tick(Battle *battle, Fighter *fighter) {
 
 static void react_extra(Battle *battle, Fighter *fighter) {
   int id = fighter->reaction;
+  bool teleport_air = id == 90 && fighter_airborne(fighter);
   if (id == 20 || id == 100 || id == 156) {
     fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_start);
     fighter->script = tumble_tick;
@@ -355,7 +360,8 @@ static void react_extra(Battle *battle, Fighter *fighter) {
   if (spec->friction) {
     slide(battle, fighter, crouch && id == 17 ? 0x2b85 : spec->speed);
   } else {
-    launch(battle, fighter, spec->speed, spec->vy, spec->gravity);
+    /* 0x4e9980 shares clip 183 with jab air, but retreats at 0.03. */
+    launch(battle, fighter, teleport_air ? 0x7ae : spec->speed, spec->vy, spec->gravity);
   }
   if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
     fighter->body.gravity = 0x28f;
