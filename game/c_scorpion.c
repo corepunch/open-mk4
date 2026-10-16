@@ -534,6 +534,7 @@ static void sword_back_hp(Battle *battle, Fighter *fighter);
 static void sword_back_lp(Battle *battle, Fighter *fighter);
 static void sword_spin(Battle *battle, Fighter *fighter);
 static void scorpion_weapon(Battle *battle, Fighter *fighter);
+
 static bool can_weapon(const Battle *battle, const Fighter *fighter);
 static bool can_pickup(const Battle *battle, const Fighter *fighter);
 static void scorpion_pickup(Battle *battle, Fighter *fighter);
@@ -748,7 +749,7 @@ static bool can_ground_throw(const Battle *battle, const Fighter *fighter, bool 
 }
 
 static void press_jab(Battle *battle, Fighter *fighter) {
-  FighterFn entry = fighter_holds_back(battle, fighter) ? sword_back_hp : sword_hp;
+  FighterFn entry = fighter->armed ? (fighter_holds_back(battle, fighter) ? fighter->weapon->back_hp : fighter->weapon->hp) : scorpion_hp;
   fighter_interrupt(fighter, fighter->armed ? entry : scorpion_hp);
 }
 
@@ -769,7 +770,7 @@ static void enter_throw(Battle *battle, Fighter *fighter);
 static void enter_lk_throw(Battle *battle, Fighter *fighter);
 
 static void press_lp(Battle *battle, Fighter *fighter) {
-  FighterFn entry = fighter_holds_back(battle, fighter) ? sword_back_lp : sword_lp;
+  FighterFn entry = fighter->armed ? (fighter_holds_back(battle, fighter) ? fighter->weapon->back_lp : fighter->weapon->lp) : scorpion_jab;
   fighter_interrupt(fighter, can_ground_throw(battle, fighter, false) ? enter_throw : fighter->armed ? entry : scorpion_jab);
 }
 
@@ -899,12 +900,12 @@ static void air_lk_diagonal(Battle *battle, Fighter *fighter) {
 
 static void press_air_hp(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_hp : air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : air_hp);
 }
 
 static void press_air_lp(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_lp : air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : air_lp);
 }
 
 static void press_air_hk(Battle *battle, Fighter *fighter) {
@@ -927,7 +928,7 @@ static const ButtonTable air_followup = {
 
 static void press_crouch_lp(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_spin : scorpion_crouch_lp);
+  fighter_interrupt(fighter, fighter->armed && fighter->weapon->crouch_lp != NULL ? fighter->weapon->crouch_lp : scorpion_crouch_lp);
 }
 
 static void press_uppercut(Battle *battle, Fighter *fighter) {
@@ -1429,12 +1430,15 @@ static void sword_object_tick(Battle *battle, Projectile *p) {
   }
 }
 
+static const WeaponDef sword;
+
 static void sword_drop(Battle *battle, Fighter *fighter) {
   if (!fighter->armed) {
     return;
   }
   Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 180, sword_object_tick);
   if (p != NULL) {
+    p->weapon = fighter->weapon;
     p->phase = 1;
     p->vel[AXIS_Y] = -0x2666;
   }
@@ -1445,6 +1449,7 @@ static void equip_sword(Fighter *fighter) {
   fighter->armed = true;
   fighter->weapon_used = true;
   fighter->disarm = sword_drop;
+  fighter->weapon = &sword;
 }
 
 static void sword_slash_tick(Battle *battle, Fighter *fighter) {
@@ -1575,6 +1580,7 @@ static void sword_throw_tick(Battle *battle, Fighter *fighter) {
   if (fighter->ticks == 22 && fighter->armed) {
     Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 90, sword_object_tick);
     if (p != NULL) {
+      p->weapon = fighter->weapon;
       p->pos[AXIS_X] += fighter->facing * 0x9999;
       p->pos[AXIS_Y] = -0x13333;
       p->vel[AXIS_X] = fighter->facing * 0x3333;
@@ -1586,14 +1592,21 @@ static void sword_throw_tick(Battle *battle, Fighter *fighter) {
   }
 }
 
+static void throw_weapon(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_PUNCH, &s_sword_throw);
+  fighter->script = sword_throw_tick;
+  fighter->sample_override = 0;
+}
+
+static const WeaponDef sword = {0x60, sword_hp, sword_lp, sword_back_hp, sword_back_lp, sword_spin, throw_weapon, equip_sword};
+
 static bool can_weapon(const Battle *battle, const Fighter *fighter) {
-  return battle->phase == PHASE_FIGHT && (fighter->armed || !fighter->weapon_used);
+  return battle->phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
 }
 
 static void scorpion_weapon(Battle *battle, Fighter *fighter) {
   if (fighter->armed) {
-    fighter_start_move(battle, fighter, S_PUNCH, &s_sword_throw);
-    fighter->script = sword_throw_tick;
+    fighter->weapon->throw_move(battle, fighter);
   } else if (fighter->flags & FF_FOLLOW_UP) {
     equip_sword(fighter);
     fighter_start_move(battle, fighter, S_PUNCH, &s_sword_back_lp);
@@ -1636,8 +1649,8 @@ static void scorpion_pickup(Battle *battle, Fighter *fighter) {
     special_ready(battle, fighter);
     return;
   }
+  battle->projectiles[index].weapon->equip(fighter);
   battle->projectiles[index].kind = 0;
-  equip_sword(fighter);
   fighter_start_move(battle, fighter, S_PUNCH, &s_pickup);
   fighter->script = pickup_tick;
   fighter->sample_override = 0;

@@ -159,6 +159,13 @@ typedef struct AttackRecord {
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
+
+typedef struct WeaponDef {
+  int type; /* retail descriptor type; travels with a dropped weapon */
+  FighterFn hp, lp, back_hp, back_lp, crouch_lp, throw_move;
+  void (*equip)(Fighter *fighter);
+} WeaponDef;
+
 typedef bool (*CommandPredicate)(const Battle *battle, const Fighter *fighter);
 
 /* Pattern tokens of a special command, earliest first. Back and forward are
@@ -357,6 +364,7 @@ struct Fighter {
   uint64_t clone_ready;
   uint64_t slide_ready;
   bool armed, weapon_used;
+  const WeaponDef *weapon;
   FighterFn disarm; /* character-owned weapon drop entry */
 };
 
@@ -378,6 +386,7 @@ enum {
 
 struct Projectile {
   int kind, owner, facing, ticks, lifetime, phase;
+  const WeaponDef *weapon;
   int clip, sample; /* stationary clone's captured pose */
   q16 pos[3], vel[3];
   ProjectileFn step;

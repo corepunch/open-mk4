@@ -52,10 +52,11 @@ assume these three indices will always coincide for other roster entries.
 | --- | --- | --- |
 | High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
 | Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables and D,F,LP freeze command | Weapon and finisher commands in subsequent steps |
+| Controls | Character-owned stance/follow-up tables, ice, clone, slide and D,F,HK weapon commands | Finisher commands in the next step |
 | Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
 | Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide chord, hit/block/miss continuations and reactions 122/165 are also ported |
-| Weapon combat and finishers | Not yet ported | Follow the character-specific dependencies below |
+| Weapon combat | Descriptor 0x6b, draw/follow-up, directional HP/LP, freezing back LP, shared air strikes, throw/drop/pickup with actual weapon identity | Simplified staff rendering and settling arc; pair-axis motion replaces camera-relative motion |
+| Finishers | Not yet ported | Follow the character-specific dependencies below |
 
 Keep the existing high-kick sample fixture in
 [tests/fixtures/original_kicks.inc](../tests/fixtures/original_kicks.inc).
@@ -492,3 +493,21 @@ Finite scene completion replaces retail parked tasks. Blends and stage camera
 travel are presentation choices; the owner/victim clips, repeated bite phases,
 fan repetitions and spike wait phases come from the listed scripts. The match
 result retains the final poses and clears every finisher field on rematch.
+
+
+Sub-Zero weapon sources: descriptor `4ecdb8`, button table `4ecc90`,
+entries `4956c0/495720/495710/495740`, parameter blocks
+`4ec458/4ec490/4ec480/4ec4b8`, shared runner `494a00`.
+HP uses clip 231 (18%), LP 250 (15%, low), back HP 237 (15%), back LP 228
+(zero damage, reaction 151 freeze). Reaction 151 tumbles after more than three
+combo hits; otherwise it uses the shared freeze/backfire logic. Reactions
+51/52 launch into clips 319/181; reaction 150 plays clip 192 and then the
+Down-held crouch 193 or rise 194. Opcode `44` consumes one branch operand.
+Crouching LP spins only with weapon type `60`; the scepter keeps normal LP.
+The immutable `WeaponDef` travels with held/dropped/thrown objects, preserving
+attacks on cross-character pickup. World weapons retain the existing finite
+flight, single settling arc and round reset policy. Ground strike recovery is
+expressed as bounded C phases; sound, particles and camera-relative displacement
+are presentation omissions. The new C-like navigator (`--script ADDRESS --c`)
+is useful where supported; fall back to the ordinary listing at its explicit
+unsupported-operation boundary.

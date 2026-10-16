@@ -20,6 +20,14 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_scepter_low_down_branch(self):
+        program = script_program(self.image, 0x4e94b0)
+        rows = {row['va']: row for row in program['instructions']}
+        self.assertEqual(rows['0x4e94e0']['branch'], '0x4e94f8')
+        self.assertEqual(rows['0x4e94e0']['opcode'], '0x44')
+        self.assertEqual(rows['0x4e94e8']['clip'], 194)
+        self.assertEqual(rows['0x4e94f8']['clip'], 193)
+
     def test_original_normal_vm_fetches(self):
         # Actual original execution includes native continuations into these
         # roots. Every executed fetch must remain a decoded opcode boundary.

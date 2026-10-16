@@ -397,12 +397,167 @@ static void slide_tests(void) {
   }
 }
 
+static void weapon_command(Battle *battle, int player) {
+  press(battle, player, BUTTON_BIT(BUTTON_DOWN));
+  advance(battle, 2);
+  press(battle, player, BUTTON_BIT(player ? BUTTON_LEFT : BUTTON_RIGHT) | BUTTON_BIT(BUTTON_HIGH_KICK));
+}
+
+static void draw_scepter(Battle *battle, int player) {
+  weapon_command(battle, player);
+  check(fighter_move(&battle->fighters[player])->clip == 244, "D,F,HK must draw scepter");
+  advance(battle, 21);
+  check(!battle->fighters[player].armed, "scepter must wait until draw event");
+  advance(battle, 27);
+  check(battle->fighters[player].armed && battle->fighters[player].weapon->type == 0x6b && fighter_move(&battle->fighters[player])->clip == 286,
+      "draw must equip descriptor 6b and armed stance");
+}
+
+static void weapons(void) {
+  for (int player = 0; player < 2; ++player) {
+    unsigned back = BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT);
+    for (int attack = 0; attack < 4; ++attack) {
+      for (int outcome = 0; outcome < 3; ++outcome) {
+        Battle battle = fight(player, 4.f);
+        draw_scepter(&battle, player);
+        if (outcome != 2) {
+          battle.fighters[player].body.pos[AXIS_X] = player ? Q16_ONE / 2 : -Q16_ONE / 2;
+          battle.fighters[1 - player].body.pos[AXIS_X] = player ? -Q16_ONE / 2 : Q16_ONE / 2;
+        }
+        unsigned button = BUTTON_BIT(attack % 2 == 0 ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH) | (attack >= 2 ? back : 0);
+        Input input[2] = {0};
+        input[player].held = button;
+        input[1 - player].held = outcome == 1 ? BUTTON_BIT(BUTTON_BLOCK) | (attack == 1 ? BUTTON_BIT(BUTTON_DOWN) : 0) : 0;
+        battle_step(&battle, input);
+        input[player].held = 0;
+        battle_step(&battle, input);
+        const int clips[] = {231, 250, 237, 228};
+        const q16 damages[] = {11796, 9830, 9830, 0};
+        check(fighter_move(&battle.fighters[player])->clip == clips[attack], "scepter must select distinct directional strikes");
+        for (int i = 0; i < 50; ++i) {
+          battle_step(&battle, input);
+        }
+        q16 expected = outcome == 2 ? 0 : outcome == 1 ? q16_mul(damages[attack], 0x3333) : damages[attack];
+        check(battle.fighters[1 - player].health == Q16_ONE - expected, "scepter hit/block/miss must apply one record");
+        if (attack == 3 && outcome == 0) {
+          check(battle.fighters[1 - player].appearance == APPEARANCE_FROZEN, "back LP must freeze without damage");
+        }
+        advance(&battle, 180);
+        check(battle.fighters[player].state == S_IDLE && battle.fighters[player].armed && battle.fighters[1 - player].state == S_IDLE,
+            "weapon strike and victim must recover");
+      }
+    }
+    Battle battle = fight(player, 4.f);
+    draw_scepter(&battle, player);
+    press(&battle, player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH));
+    check(fighter_move(&battle.fighters[player])->clip == 260, "scepter must keep normal crouching LP");
+    advance(&battle, 80);
+    battle_react(&battle, &battle.fighters[player], 51);
+    check(!battle.fighters[player].armed && objects(&battle, PROJECTILE_SWORD) == 1, "scepter launch must drop actual weapon");
+    advance(&battle, 180);
+    Projectile *drop = NULL;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      if (battle.projectiles[i].kind == PROJECTILE_SWORD) {
+        drop = &battle.projectiles[i];
+      }
+    }
+    check(drop != NULL && drop->phase == 2 && drop->weapon->type == 0x6b, "resting weapon must retain scepter descriptor");
+    Fighter *other = &battle.fighters[1 - player];
+    other->body.pos[AXIS_X] = drop->pos[AXIS_X];
+    other->body.pos[AXIS_Z] = drop->pos[AXIS_Z];
+    fighter_enter_state(&battle, other, S_CROUCH);
+    press(&battle, 1 - player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_RUN));
+    check(other->armed && other->weapon->type == 0x6b && drop->kind == 0, "Scorpion must pick up Sub-Zero's actual weapon");
+    advance(&battle, 20);
+    other->body.pos[AXIS_X] = player ? -3 * Q16_ONE : 3 * Q16_ONE;
+    battle.fighters[player].body.pos[AXIS_X] = player ? 3 * Q16_ONE : -3 * Q16_ONE;
+    press(&battle, 1 - player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    check(fighter_move(other)->clip == 231, "foreign scepter must use scepter attacks");
+
+    battle = fight(player, 4.f);
+    draw_scepter(&battle, player);
+    weapon_command(&battle, player);
+    check(fighter_move(&battle.fighters[player])->clip == 208, "armed D,F,HK must throw");
+    advance(&battle, 23);
+    check(!battle.fighters[player].armed, "throw must detach scepter");
+    battle.contacts_off = true;
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 180);
+    check(objects(&battle, PROJECTILE_SWORD) == 0, "thrown weapon must leave arena after bounded flight");
+    weapon_command(&battle, player);
+    check(fighter_move(&battle.fighters[player])->clip != 244, "spent weapon must not draw again");
+    battle_init(&battle, 4, 0);
+    check(!battle.fighters[0].armed && !battle.fighters[0].weapon_used && battle.fighters[0].weapon == NULL, "round reset clears weapon descriptor");
+
+    battle = fight(player, 4.f);
+    draw_scepter(&battle, player);
+    press(&battle, player, BUTTON_BIT(BUTTON_UP));
+    press(&battle, player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    check(fighter_move(&battle.fighters[player])->clip == 252, "armed air HP must use shared weapon strike");
+    advance(&battle, 180);
+    check(battle.fighters[player].state == S_IDLE && battle.fighters[player].armed, "armed air strike must land and retain weapon");
+
+    battle = fight(player, 4.f);
+    battle.fighters[player].flags |= FF_FOLLOW_UP;
+    weapon_command(&battle, player);
+    check(battle.fighters[player].armed && fighter_move(&battle.fighters[player])->clip == 237, "follow-up draw must equip and enter back HP");
+    advance(&battle, 90);
+    check(battle.fighters[player].state == S_IDLE, "follow-up draw must recover");
+
+    battle = fight(player, 4.f);
+    int sword_owner = 1 - player;
+    Button forward = sword_owner ? BUTTON_LEFT : BUTTON_RIGHT;
+    press(&battle, sword_owner, BUTTON_BIT(forward));
+    advance(&battle, 2);
+    press(&battle, sword_owner, BUTTON_BIT(forward) | BUTTON_BIT(BUTTON_HIGH_KICK));
+    advance(&battle, 50);
+    check(battle.fighters[sword_owner].armed, "Scorpion draw for foreign pickup");
+    battle.fighters[sword_owner].disarm(&battle, &battle.fighters[sword_owner]);
+    advance(&battle, 100);
+    drop = NULL;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      if (battle.projectiles[i].kind == PROJECTILE_SWORD) {
+        drop = &battle.projectiles[i];
+      }
+    }
+    check(drop != NULL && drop->weapon->type == 0x60, "dropped sword descriptor");
+    battle.fighters[player].body.pos[AXIS_X] = drop->pos[AXIS_X];
+    battle.fighters[player].body.pos[AXIS_Z] = drop->pos[AXIS_Z];
+    fighter_enter_state(&battle, &battle.fighters[player], S_CROUCH);
+    press(&battle, player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_RUN));
+    check(battle.fighters[player].armed && battle.fighters[player].weapon->type == 0x60, "Sub-Zero must pick up sword descriptor");
+    advance(&battle, 20);
+    battle.fighters[player].body.pos[AXIS_X] = player ? 3 * Q16_ONE : -3 * Q16_ONE;
+    battle.fighters[sword_owner].body.pos[AXIS_X] = player ? -3 * Q16_ONE : 3 * Q16_ONE;
+    press(&battle, player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    check(fighter_move(&battle.fighters[player])->clip == 235, "Sub-Zero's foreign sword must retain sword attacks");
+    advance(&battle, 80);
+    press(&battle, player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH));
+    advance(&battle, 4);
+    check(fighter_move(&battle.fighters[player])->clip == 224, "foreign sword must enable the sword spin");
+    advance(&battle, 20);
+    check(battle.fighters[player].state == S_IDLE, "foreign sword spin must release");
+
+    for (int reaction = 150; reaction <= 151; ++reaction) {
+      battle = fight(player, 3.f);
+      Fighter *victim = &battle.fighters[1 - player];
+      victim->hits = 4;
+      battle_react(&battle, victim, reaction);
+      advance(&battle, 1);
+      check(fighter_move(victim)->clip == (reaction == 151 ? 131 : 192), "scepter reaction and freeze hit-cap branch");
+      advance(&battle, 180);
+      check(victim->state == S_IDLE && victim->appearance == APPEARANCE_NORMAL, "scepter reactions must recover");
+    }
+  }
+}
+
 int main(void) {
+  weapons();
   normals();
   ice();
   clone_tests();
   slide_tests();
   puts(
-      "PASS: slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+      "PASS: scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

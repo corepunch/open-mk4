@@ -243,6 +243,8 @@ static const ReactionSpec extra_reactions[256] = {
   [48] = {R(180, 19, 0x4001), 0, 6, -1, 0, 0x3333, 0, 0, 0, true, false},
   [49] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xa3d, -0x23d7, 0x24d, 0, false, false},
   [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
+  [51] = {R(319, 82, 0x4003), 0, 0, 34, 328, -0x1999, -0x2147, 0x20c, 0, false, false},
+  [52] = {R(181, 82, 0x4003), 0, 0, 51, 328, 0x7ae, -0x3851, 0x20c, 0x6666, false, false},
   [90] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
   [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
@@ -367,7 +369,7 @@ static void react_extra(Battle *battle, Fighter *fighter) {
     slide(battle, fighter, crouch && id == 17 ? 0x2b85 : spec->speed);
   } else {
     /* 0x4e9980 shares clip 183 with jab air, but retreats at 0.03. */
-    launch(battle, fighter, teleport_air ? 0x7ae : spec->speed, spec->vy, spec->gravity);
+    launch(battle, fighter, teleport_air ? 0x7ae : id == 52 && fighter->hits > 1 ? 0xf5c : spec->speed, spec->vy, spec->gravity);
   }
   if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
     fighter->body.gravity = 0x28f;
@@ -470,6 +472,47 @@ static void react_freeze(Battle *battle, Fighter *fighter) {
   fighter->flags |= FF_REACTING | FF_NO_GUARD;
 }
 
+/* 4831e0 / 4e94b0: low scepter hit, then the human down-held
+ * branch 45b620 chooses crouch clip 193 instead of standing rise 194. */
+static const MoveDef scepter_low_hit = {.clip = 192, .last = 34, .flags = SF_LOCK, .action = 0x4003};
+static const MoveDef scepter_low_crouch = {.clip = 193, .last = 15, .flags = SF_LOCK, .action = 0x4003};
+static const MoveDef scepter_low_rise = {.clip = 194, .last = 23, .flags = SF_LOCK, .action = 0x4003};
+
+static void scepter_low_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(fighter_move(fighter)->last, fighter->ticks);
+  if (fighter->current_move == &scepter_low_hit && fighter->ticks >= 24) {
+    stop_sliding(battle, fighter);
+  }
+  if (fighter->ticks > fighter_move(fighter)->last) {
+    if (fighter->current_move == &scepter_low_hit) {
+      bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+      fighter_start_move(battle, fighter, S_KNOCKDOWN, down ? &scepter_low_crouch : &scepter_low_rise);
+      fighter->script = scepter_low_tick;
+      fighter->sample_override = 0;
+    } else {
+      neutral(battle, fighter);
+    }
+  }
+}
+
+static void react_scepter_low(Battle *battle, Fighter *fighter) {
+  fighter_start_move(battle, fighter, S_KNOCKDOWN, &scepter_low_hit);
+  fighter->script = scepter_low_tick;
+  fighter->sample_override = 0;
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  fighter_set_speed(battle, fighter, -0xf5c);
+}
+
+static void react_scepter_freeze(Battle *battle, Fighter *fighter) {
+  if (fighter->hits > 3) {
+    /* 486210 -> 4835f0 uses the shared weapon-throw tumble. */
+    fighter->reaction = 154;
+    react_extra(battle, fighter);
+  } else {
+    react_freeze(battle, fighter);
+  }
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
   [0] = react_block,
@@ -497,6 +540,10 @@ static const FighterFn reactions[256] = {
   [48] = react_extra,
   [49] = react_extra,
   [50] = react_extra,
+  [51] = react_extra,
+  [52] = react_extra,
+  [150] = react_scepter_low,
+  [151] = react_scepter_freeze,
   [67] = react_freeze,
   [90] = react_extra,
   [99] = react_extra,
@@ -531,9 +578,9 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
   /* Drop rules for the reaction ids currently used by our script records.
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&
-      ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 50) || reaction == 70 ||
-          reaction == 122 || reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 ||
-          reaction == 155 || reaction == 156 || reaction == 173)) {
+      ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 52) || reaction == 70 ||
+          reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 || reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 ||
+          reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 || reaction == 156 || reaction == 173)) {
     victim->disarm(battle, victim);
   }
   victim->reaction = reaction;

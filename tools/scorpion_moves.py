@@ -82,6 +82,7 @@ SCRIPT_OPS = {
     0x3f: ('return to fighter controller', 0),
     0x40: ('spawn cooperative task', 2),
     0x41: ('native helper', 0),
+    0x44: ('branch if down held', 1),
     0x45: ('conditional script branch', 1),
     # -1: handler calls 0x45bf80; a descriptor follows ONLY if byte 1 is 2.
     0x47: ('advance to sample with optional clip prefix', -1),
@@ -192,7 +193,7 @@ def script_program(image, entry):
             if op == 0x37:
                 row['wait_if_clear'] = word & 0xfff
                 row['wait_if_set'] = (word >> 12) & 0xfff
-            if op in (0x2f, 0x45):
+            if op in (0x2f, 0x44, 0x45):
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
             if op in (0x36, 0x55):
