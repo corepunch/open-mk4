@@ -28,6 +28,12 @@ even when they contain only one statement. Use normal spacing around operators
 and after commas, and wrap long expressions at the 100-column limit. Prefer
 readability over packing code into fewer lines.
 
+Keep data tables readable as one entry per row, preserving their column layout
+even when a row exceeds 100 columns. Surround only these table initializers
+with `// clang-format off: Keep table entries on one row, including long rows.`
+and `// clang-format on` so formatting preserves the layout. Keep functions and
+control flow outside these exceptions.
+
 Run `make format` before validation and committing. `make format-check` checks
 formatting without modifying files and also runs as part of `make check`.
 The targets find `clang-format` on `PATH` or through `xcrun` on macOS; override
