@@ -1,6 +1,6 @@
 # Third-party source
 
-The animation decoder and rotation formulas in `common/mk4_assets.cpp` are
+The animation decoder and rotation formulas in `common/mk4_assets.c` are
 adapted from the reconstructed routines in [mk4decomp](https://github.com/nathan-casabieille/mk4decomp),
 commit `af88007`. Its MIT notice is reproduced below. The reference checkouts
 retain their own license information. Game assets and the original executable

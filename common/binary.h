@@ -1,27 +1,41 @@
-#pragma once
-#include <cstdint>
-#include <stdexcept>
-#include <string>
-#include <vector>
+#ifndef MK4_BINARY_H
+#define MK4_BINARY_H
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
-namespace mk4 {
-using Bytes = std::vector<uint8_t>;
-inline void require(bool yes, const std::string& what) { if (!yes) throw std::runtime_error(what); }
-struct View {
-    const uint8_t* p=nullptr; size_t n=0;
-    void check(size_t o,size_t z) const { require(o<=n && z<=n-o,"Truncated asset data"); }
-    uint8_t u8(size_t o) const { check(o,1);return p[o]; }
-    uint16_t u16(size_t o) const { check(o,2);return uint16_t(p[o])|uint16_t(p[o+1])<<8; }
-    int16_t s16(size_t o) const { return int16_t(u16(o)); }
-    uint32_t u32(size_t o) const { check(o,4);return uint32_t(p[o])|uint32_t(p[o+1])<<8|uint32_t(p[o+2])<<16|uint32_t(p[o+3])<<24; }
-    int32_t s32(size_t o) const { return int32_t(u32(o)); }
-    View sub(size_t o,size_t z) const { check(o,z);return {p+o,z}; }
-    std::string string(size_t o) const {
-        std::string s;
-        while(o<n && u8(o)) { require(s.size()<1024,"Unterminated asset string");s+=char(u8(o++)); }
-        require(o<n,"Unterminated asset string");return s;
-    }
-};
-inline View view(const Bytes& b) { return {b.data(),b.size()}; }
-Bytes read_file(const std::string& path);
+#ifdef __cplusplus
+#define MK4_NORETURN [[noreturn]]
+extern "C" {
+#else
+#define MK4_NORETURN _Noreturn
+#endif
+
+/* Internal command-line applications fail with a diagnostic on invalid assets.
+ * The package validator itself returns errors so the watcher can retry. */
+MK4_NORETURN void fatal(const char *format, ...);
+void require(bool condition, const char *message);
+void *checked_alloc(size_t count, size_t size);
+void *array_resize(void *data, size_t *count, size_t *capacity, size_t n, size_t size);
+#define ARRAY_TYPE(Name, Type) typedef struct Name { Type *data; size_t count, capacity; } Name
+#define RESIZE(a, n) (a).data = array_resize((a).data, &(a).count, &(a).capacity, (n), sizeof *(a).data)
+#define PUSH(a, ...) do { RESIZE(a, (a).count + 1); (a).data[(a).count - 1] = (__VA_ARGS__); } while (0)
+#define FREE_ARRAY(a) do { free((a).data); memset(&(a), 0, sizeof(a)); } while (0)
+ARRAY_TYPE(Bytes, uint8_t);
+typedef struct View { const uint8_t *p; size_t n; } View;
+View view(Bytes bytes);
+void view_check(View v, size_t offset, size_t size);
+uint8_t view_u8(View v, size_t offset);
+uint16_t view_u16(View v, size_t offset);
+int16_t view_s16(View v, size_t offset);
+uint32_t view_u32(View v, size_t offset);
+int32_t view_s32(View v, size_t offset);
+View view_sub(View v, size_t offset, size_t size);
+void view_string(View v, size_t offset, char *output, size_t capacity);
+Bytes read_file(const char *path);
+#ifdef __cplusplus
 }
+#endif
+#endif

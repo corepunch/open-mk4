@@ -11,6 +11,13 @@ or request, what changed, why the approach was chosen, and how it was verified.
 Record relevant test results and any remaining limitations. Stage only the
 files belonging to that step, preserving unrelated work.
 
+## Implementation language
+
+Game, engine, viewer and native regression tests use C11. Follow the procedural
+state/context boundaries and evidence rules in `ARCHITECTURE.md`. Keep SDL out
+of combat simulation. The standalone `fsys.cpp` development tool may remain
+C++17; it must use the shared C archive validator and filename hash.
+
 ## References
 
 Local reference checkouts live in `reference/`:

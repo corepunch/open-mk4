@@ -1,8 +1,8 @@
-#pragma once
+#ifndef MK4_GAME_DRAW_H
+#define MK4_GAME_DRAW_H
 #include "battle.h"
 #include "renderer.h"
-namespace mk4::game {
-void draw_battle(Canvas&,const Assets&,const Battle&,int arena,bool cpu,bool paused);
-int animation(const Character&,Action);
-void draw_sprite(Canvas&,const Geometry&,int sprite,Rect dest,bool flip=false);
-}
+void draw_battle(Canvas *canvas,const Assets *assets,const Battle *battle,int arena,bool cpu,bool paused);
+int animation(const Character *character,Action action);
+void draw_sprite(Canvas *canvas,const Geometry *geometry,int sprite,Rect dest,bool flip);
+#endif

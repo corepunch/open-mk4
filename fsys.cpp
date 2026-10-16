@@ -20,11 +20,11 @@
 #include <time.h>
 #include <unistd.h>
 
-#define MAX_ENTRIES mk4::package_max_entries
+#define MAX_ENTRIES PACKAGE_MAX_ENTRIES
 #define NAME_SIZE 1024u
 #define PATH_SIZE 4096u
 
-struct Entry : mk4::PackageEntry {
+struct Entry : PackageEntry {
     char original[NAME_SIZE];
     int ambiguous;
 };
@@ -94,15 +94,15 @@ static int read_snapshot(const char *path, unsigned char **data, size_t *size)
 
 static int parse_archive(Archive *a)
 {
-    try {
-        auto entries = mk4::parse_package({a->data, a->size});
-        a->count = entries.size();
-        for (size_t i = 0; i < a->count; ++i) {
-            a->entries[i] = Entry{};
-            static_cast<mk4::PackageEntry&>(a->entries[i]) = entries[i];
-        }
-        return 0;
-    } catch (const std::exception& e) { return fail(e.what(), "FILESYS.DAT"); }
+    PackageEntry entries[MAX_ENTRIES];
+    const char *error;
+    if (!parse_package({a->data, a->size}, entries, &a->count, &error))
+        return fail(error, "FILESYS.DAT");
+    for (size_t i = 0; i < a->count; ++i) {
+        a->entries[i] = Entry{};
+        static_cast<PackageEntry&>(a->entries[i]) = entries[i];
+    }
+    return 0;
 }
 
 static const char *leaf_name(const char *s)
@@ -137,7 +137,7 @@ static void try_name(Archive *a, const char *name)
         if (c && (c < 32 || c > 126)) return;
         normalized[i] = (char)((c >= 'A' && c <= 'Z') ? c + 'a' - 'A' : c);
     }
-    hash = mk4::name_hash(normalized);
+    hash = name_hash(normalized);
     while (lo < hi) {
         size_t mid = lo + (hi - lo) / 2;
         if (a->entries[mid].hash < hash) lo = mid + 1;

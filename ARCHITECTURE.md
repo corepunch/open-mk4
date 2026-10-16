@@ -26,6 +26,39 @@ The supplied executable is a different revision from the reference's target.
 Addresses must be checked against `MK4/MK-4.EXE`; upstream notes are hypotheses
 until confirmed by source and local fixtures.
 
+## Inspection of the supplied retail executable
+
+`python3 tools/inspect_retail.py` repeats the read-only PE/string inspection.
+Add `--disassemble-entry` for x86 entry-point disassembly using Capstone. This
+is targeted binary analysis, not recovery of the original source files.
+
+Inspected `MK4/MK-4.EXE` SHA-256:
+`4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d`.
+
+| Evidence in this file | Observation | What it establishes |
+| --- | --- | --- |
+| PE optional header | Linker 5.10; x86 PE32; entry VA `0x004c5240` | Consistent with the MSVC 5.x toolchain identified by the reference; not a language or exact service-pack identifier. |
+| File offset `0x000cdc8c` | `Microsoft Visual C++ Runtime Library` | MSVC runtime branding; both C and C++ applications can link this runtime. |
+| COFF and PE debug/export directories | Symbol count zero; debug and export directories absent | No retained source-level debug map or exported function names to recover here. |
+| ASCII and UTF-16LE string scans | No credible `.c`, `.cpp`, `.cc`, or `.cxx` source filename candidates | The proposed filename-extension check is inconclusive in this stripped build. |
+| Asset path literals | `c:\source\mk4\win\anim\`, `menu.tga`, `geogfx\%s`, `sound\pcmk%04ld.esf` | Retained development asset root, not source filenames. |
+| CRT error table | Includes `pure virtual function call` at file offset `0x000cdae3` | Generic runtime text; not evidence of game-defined virtual classes. |
+| C++ feature scans | No RTTI class-name candidates or raw `0xe06d7363` throw marker | No positive signal from these scans; C++ can omit both features. |
+
+There is one raw `0x19930520` marker at file offset `0x001199e0`, VA
+`0x0051afe0`. Do not label it a C++ FuncInfo structure merely from that magic.
+Its local code references at `0x004c513f` and `0x004c5148` load the record into
+EBX; the code at `0x004c5150` stores ECX, EAX and EBP into its fields. That
+matches CRT nonlocal-goto/unwind notification bookkeeping, not proof of a
+C++ gameplay exception handler. The reference likewise initializes its
+`g_sehUnwindBase` to this value in `src/data.c`.
+
+Conclusion: the retail file supports the MSVC-era toolchain finding, but does
+not provide definitive original-source language evidence. The procedural C
+reconstruction is the strongest available architectural guide. We choose C
+for compatibility with that structure without claiming the binary proves
+all original translation units were C.
+
 ## Retail structure and our boundaries
 
 | Retail PC subsystem | Our implementation | Assessment |
@@ -68,3 +101,33 @@ new combat values labeled as our own until measured against retail.
 Migration must preserve existing archive rejection behavior, decoded animation
 words, original matrix fixtures, battle regressions, and deterministic rendering.
 Each verified migration step is committed separately on `main`.
+
+## Current alignment
+
+The game, shared archive/assets/pose/renderer modules, SDL host, viewer and
+native regression tests now compile as C11. `Battle`, `Assets`, `Canvas`, and
+`SdlApp` have explicit context APIs; decoded assets and SDL resources have
+explicit owners and cleanup. Pose output is a bounded caller-owned buffer,
+so posing does not allocate per call. The package validator returns an error
+for the standalone watcher; invalid asset loads terminate CLI applications
+with a diagnostic. Shadow projection reports invalid geometry through `bool`.
+
+The separate extraction/watch frontend remains `fsys.cpp` in C++17 and links
+the same C archive validator. No C++ compiler or runtime is needed to build
+the game/viewer targets. The runtime does not copy retail global-address
+machinery or pretend our simplified combat values are recovered retail rules.
+
+Validation of the migration:
+
+- `make check`: archive extraction/watch tests, malformed archive consistency,
+  assets/rigs/poses, battle rules and lighting/shadow regressions all pass.
+- Game, viewer and native tests rebuild with `CXX=false`, C11,
+  `-Werror -pedantic-errors`.
+- AddressSanitizer/UndefinedBehaviorSanitizer runs pass for the native tests
+  and both headless frontends.
+- `tests/verify_original.py`: all 36,723 frames match the supplied original
+  x86 routines; all 16 matrix fixtures verify. Unicorn was installed into
+  `/tmp/mk4-oracle-deps` for this optional check, not added as a runtime dependency.
+- All decoded-frame text and the gallery/fight BMPs are byte-identical to the
+  pre-migration C++ implementation. The 360-frame fight still simulates 360
+  ticks and finishes with health 40/100 in round 1.

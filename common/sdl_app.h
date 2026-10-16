@@ -1,17 +1,10 @@
-#pragma once
+#ifndef MK4_SDL_APP_H
+#define MK4_SDL_APP_H
 #include "renderer.h"
 #include <SDL.h>
-namespace mk4 {
-class SdlApp {
-    SDL_Window* window_=nullptr;
-    SDL_Renderer* renderer_=nullptr;
-    SDL_Texture* texture_=nullptr;
-public:
-    SdlApp(const char* title,int width,int height,bool headless);
-    ~SdlApp();
-    SdlApp(const SdlApp&)=delete;
-    SdlApp& operator=(const SdlApp&)=delete;
-    void present(const Canvas&);
-    void logical(int x,int y,float& lx,float& ly) const;
-};
-}
+typedef struct SdlApp { SDL_Window *window; SDL_Renderer *renderer; SDL_Texture *texture; } SdlApp;
+void sdl_app_init(SdlApp *app,const char *title,int width,int height,bool headless);
+void sdl_app_free(SdlApp *app);
+void sdl_app_present(const SdlApp *app,const Canvas *canvas);
+void sdl_app_logical(const SdlApp *app,int x,int y,float *lx,float *ly);
+#endif

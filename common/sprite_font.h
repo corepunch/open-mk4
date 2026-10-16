@@ -1,16 +1,8 @@
-#pragma once
+#ifndef MK4_SPRITE_FONT_H
+#define MK4_SPRITE_FONT_H
 #include "renderer.h"
-#include <string_view>
-
-namespace mk4 {
-// Original MK4FONT glyphs, with the authored bearings and baseline.
-class SpriteFont {
-    const Geometry& atlas_;
-public:
-    explicit SpriteFont(const Geometry& atlas):atlas_(atlas) {}
-    static int glyph(char character);
-    int width(std::string_view text,float scale=1) const;
-    void draw(Canvas&,int x,int y,std::string_view text,float scale=1) const;
-    void centered(Canvas&,int y,std::string_view text,float scale=1) const;
-};
-}
+int font_glyph(char character);
+int font_width(const Geometry *atlas,const char *text,float scale);
+void font_draw(const Geometry *atlas,Canvas *canvas,int x,int y,const char *text,float scale);
+void font_centered(const Geometry *atlas,Canvas *canvas,int y,const char *text,float scale);
+#endif

@@ -3,48 +3,50 @@ CFLAGS = -O2 -std=c11 -Wall -Wextra -Wpedantic
 CXX = c++
 CXXFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic
 CPPFLAGS = -Icommon
+LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
-PACKAGE = common/mk4_package.cpp
-ASSETS = common/mk4_assets.cpp $(PACKAGE)
-RENDER = common/renderer.cpp common/sdl_app.cpp common/sprite_font.cpp common/shadow.cpp common/lighting.cpp
+PACKAGE = common/mk4_package.c common/binary.c
+ASSETS = common/mk4_assets.c $(PACKAGE)
+RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h)
+PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
 .PHONY: all extract test clean viewer run viewer-test game play game-test check
 all: fsys mk4-viewer mk4-game
 
-fsys: fsys.cpp $(PACKAGE) $(HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) fsys.cpp $(PACKAGE) -o $@
+build/%.o: common/%.c $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+fsys: fsys.cpp $(PACKAGE_OBJECTS) $(HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) fsys.cpp $(PACKAGE_OBJECTS) -o $@
 extract: fsys
 	./fsys MK4/FILESYS.DAT --exe MK4/MK-4.EXE -o extracted
 test: fsys
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game build/test-mk4-assets build/test-battle build/test-shadows
+	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-mk4-assets build/test-battle build/test-shadows
 viewer: mk4-viewer
-mk4-viewer: viewer/main.cpp $(ASSETS) $(RENDER) $(HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.cpp $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs)
+mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
-build/test-mk4-assets: tests/test_mk4_assets.cpp tests/fixtures/original_matrices.inc $(ASSETS) $(HEADERS)
+build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc $(ASSETS) $(HEADERS)
 	mkdir -p build
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/test_mk4_assets.cpp $(ASSETS) -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) tests/test_mk4_assets.c $(ASSETS) -o $@ $(LDLIBS)
 viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-mk4-game: game/main.cpp build/battle.o game/battle.h game/draw.cpp game/draw.h $(ASSETS) $(RENDER) $(HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $$($(SDL2_CONFIG) --cflags) game/main.cpp build/battle.o game/draw.cpp $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs)
+mk4-game: game/main.c game/battle.c game/battle.h game/draw.c game/draw.h $(ASSETS) $(RENDER) $(HEADERS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) game/main.c game/battle.c game/draw.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/battle.o: game/battle.c game/battle.h
+build/test-battle: tests/test_battle.c game/battle.c game/battle.h
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c game/battle.c -o $@
-build/test-battle: tests/test_battle.cpp build/battle.o game/battle.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_battle.c game/battle.c -o $@ $(LDLIBS)
+build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Igame tests/test_battle.cpp build/battle.o -o $@
-build/test-shadows: tests/test_shadows.cpp $(ASSETS) $(RENDER) $(HEADERS)
-	mkdir -p build
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.cpp $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 game-test: mk4-game build/test-battle build/test-shadows
 	./build/test-battle
 	./build/test-shadows

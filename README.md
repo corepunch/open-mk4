@@ -41,29 +41,46 @@ Files removed from the archive are retained, and the latest manifest describes
 the current contents. Existing output files with generated names are updated.
 Output roots and generated subdirectories must not be symlinks.
 
+## Language and architecture
+
+The game and engine use C11: plain state structs, explicit context functions,
+const tables, and caller-owned pose buffers. The PC retail reference is
+reconstructed in C using MSVC 5.0; the compiler product name does not make the
+game C++. Our supplied executable confirms an MSVC-era toolchain but retains
+no source filenames that distinguish `.c` from `.cpp`. See
+[ARCHITECTURE.md](ARCHITECTURE.md) for the evidence, retail subsystem map and
+behavioral gaps. This portable implementation is not a matching retail rebuild.
+
 ## Shared code and executables
 
 All three executables include `common/mk4_package.h` and link the same
-`common/mk4_package.cpp`. There is one filename hash and one archive index
+`common/mk4_package.c`. There is one filename hash and one archive index
 validator, including overlap, padding, ordering, and payload bounds checks.
 The package tool keeps its stable-snapshot watcher and extraction code separate.
 
 | Code | Used by |
 | --- | --- |
-| `common/mk4_package.*`, `common/binary.h` | Package tool, viewer, game |
+| `common/mk4_package.*`, `common/binary.*` | Package tool, viewer, game |
 | `common/mk4_assets.*` | Viewer and game: GEO, RGB555 textures, rigs, AP0/AP1, poses, executable data |
 | `common/renderer.*` | Viewer and game: canvas, depth buffer, textured triangles, text, sprite blits, screenshots |
 | `common/lighting.*` | Shared point light for model/arena shading and matching shadow projection |
 | `common/shadow.*` | Homogeneous planar shadow matrices for directional and point lights |
 | `common/sprite_font.*` | Game: original MK4FONT glyphs, bearings, timer, and text layout |
 | `common/sdl_app.*` | Viewer and game: window, SDL presentation, logical coordinates, cleanup |
-| `viewer/main.cpp` | Character gallery and inspection controls |
+| `viewer/main.c` | Character gallery and inspection controls |
 | `fsys.cpp` | Package listing, extraction, filename recovery, polling |
 | `game/battle.*` | SDL-independent combat simulation |
-| `game/draw.*`, `game/main.cpp` | Battle presentation, controls, game loop |
+| `game/draw.*`, `game/main.c` | Battle presentation, controls, game loop |
 
 `make` builds all three tools. `make fsys` builds only the dependency-free
-package tool. Viewer and game require SDL2 and a C++17 compiler.
+package tool. Viewer and game require SDL2 and a C11 compiler. The standalone
+package tool uses a C++17 frontend linked to the same C archive module.
+
+Decoded assets, canvas buffers and SDL handles have explicit load/free APIs.
+Asset loading fails the command-line application with a diagnostic on invalid
+input; the package validator returns errors so the watcher can retry. Initialize
+asset owners to zero, free them before reloading, and keep them alive through
+rendering. Pose output belongs to the caller.
 
 ## Battle game
 
@@ -134,13 +151,13 @@ archives against all three executables.
 
 ## SDL2 character gallery
 
-The C++17 viewer reads the archive and executable directly; extraction is optional.
+The C11 viewer reads the archive and executable directly; extraction is optional.
 It loads all 18 roster slots, their textured GEO meshes and executable skeletons,
 and loops the game's per-character idle animations in a 6-by-3 grid. Each view
 faces the character's head toward the camera. Kitana and Noob use the game's
 special-ID stance remapping; Goro retains all four arms and 21 animation channels.
 
-Install SDL2 and a C++17 compiler, then run from this directory:
+Install SDL2 and a C11 compiler, then run from this directory:
 
 ```sh
 # macOS dependency, if needed: brew install sdl2
