@@ -141,8 +141,8 @@ Do not add retail-execution harnesses or large per-tick JSON recordings.
 
 The engine still uses portable presentation: blue ice material, bounded particles,
 closed-surface character meshes for frozen pieces, and a single weapon settling arc.
-Retail secondary ice decoration
-remain to be translated. CPU distance plans, probability gates and automatic
+The shared clone statue and its orbiting light use their recovered rig and
+parameters. Weapon settling remains to be translated. CPU distance plans, probability gates and automatic
 air attacks now live in the shared simulation; unported character action rows
 still fall back to their own stance tables. These translations do not claim
 retail scheduler or random-call-stream identity.

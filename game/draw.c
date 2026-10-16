@@ -103,16 +103,20 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
   return isfinite(floor_y) ? floor_y : 0.f;
 }
 
-static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) {
+static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, const Character *model) {
   Triangles triangles = {0};
-  const Character *ch = fighter_model(assets, fighter);
+  const Character *ch = model != NULL ? model : fighter_model(assets, fighter);
   if (fighter->appearance == APPEARANCE_HIDDEN) {
     return triangles;
   }
   const Clip *clip = fighter_clip(assets, fighter);
   double frame = fighter_frame(fighter, (int)clip->frames.count);
   Pose bones[MK4_MAX_BONES];
-  fighter_pose(assets, fighter, bones);
+  if (model != NULL) {
+    pose(ch, clip, frame, bones);
+  } else {
+    fighter_pose(assets, fighter, bones);
+  }
   Mat3 turn = fighter_turn(assets, fighter);
   double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
   Vec3 current = clip->frames.data[(size_t)wrapped].translation;
@@ -249,7 +253,7 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
           t.v[k].p = vec_add(origin, mat3_apply(basis, local));
           t.v[k].normal = mat3_apply(basis, mat3_apply(bones[n].rotation, t.v[k].normal));
         }
-        render_triangle(cv, camera, t, &model->texture, 1, PASS_COLOR, light);
+        render_triangle(cv, camera, t, character_texture(model, t.texture), 1, PASS_COLOR, light);
       }
     }
   }
@@ -273,7 +277,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   }
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
-  Triangles fighters[] = {fighter_geometry(assets, a), fighter_geometry(assets, b)};
+  Triangles fighters[] = {fighter_geometry(assets, a, NULL), fighter_geometry(assets, b, NULL)};
   Mat4 shadow;
   require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
@@ -327,7 +331,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       Fighter clone = battle->fighters[p->owner];
       MoveDef captured = {.clip = p->clip, .last = MOVE_END};
       clone.current_move = &captured;
-      clone.appearance = APPEARANCE_FROZEN;
+      clone.appearance = APPEARANCE_NORMAL;
       clone.blend_duration = 0;
       clone.action = 0;
       clone.sample_override = p->sample;
@@ -336,9 +340,15 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       memcpy(clone.body.angle, p->angle, sizeof clone.body.angle);
       clone.body.root_y = p->root_y;
       memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
-      Triangles geometry = fighter_geometry(assets, &clone);
+      const Character *model = &assets->scene_models.data[SCENE_MODEL_ICE_CLONE];
+      Triangles geometry = fighter_geometry(assets, &clone, model);
+      SceneLight clone_light = light;
+      if (p->light.def != NULL) {
+        clone_light.position = (Vec3){q16_float(p->light.pos[0]), q16_float(p->light.pos[1]), q16_float(p->light.pos[2])};
+        clone_light.diffuse *= clampf(q16_float(p->light.strength), .3125f, 1.f);
+      }
       for (size_t j = 0; j < geometry.count; ++j) {
-        render_triangle(cv, camera, geometry.data[j], &ice_texture, .9f, PASS_COLOR, &light);
+        render_triangle(cv, camera, geometry.data[j], character_texture(model, geometry.data[j].texture), 1, PASS_COLOR, &clone_light);
       }
       FREE_ARRAY(geometry);
     }

@@ -515,6 +515,15 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   spine.bones.data[0].kind = 2;                         /* attached below the head: descendant B */
   spine.bones.data[0].translation.z = 0x13b6 / 65536.f; /* 4465a0 */
   PUSH(assets->scene_models, spine);
+  /* 47f4d0 uses the shared ice statue, not the owner's body meshes. */
+  assets->hud.effects = load_geometry(package_geo(&archive, "shared_g.geo"));
+  Character statue = assets->characters.data[4];
+  snprintf(statue.file, sizeof statue.file, "shared_g.geo");
+  statue.meshes = assets->hud.effects.meshes;
+  statue.texture = assets->hud.effects.textures.data[0];
+  statue.material_pages = assets->hud.effects.textures;
+  statue.bones = load_rig(&exe, 0x50686c, 0x50609c, statue.meshes.count);
+  PUSH(assets->scene_models, statue);
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;
@@ -578,7 +587,6 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
     PUSH(assets->arenas, a);
   }
   assets->hud.font = load_geometry(package_geo(&archive, "mk4font_.geo"));
-  assets->hud.effects = load_geometry(package_geo(&archive, "shared_g.geo"));
   sound_bank_load(&assets->audio, &archive);
   const uint32_t sound_tables[] = {0x4ea9b0, 0x4e77b8, 0x4eaa18};
   const int sound_counts[] = {51, 184, 113};
@@ -619,6 +627,14 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   }
   package_free(&archive);
   FREE_ARRAY(exe.bytes);
+}
+
+const Texture *character_texture(const Character *character, int page) {
+  if (character->material_pages.count > 0) {
+    require(page >= 0 && (size_t)page < character->material_pages.count, "Invalid model material page");
+    return &character->material_pages.data[page];
+  }
+  return &character->texture;
 }
 
 static void pose_frames(const Character *ch, const Frame *f0, const Frame *f1, float t, Pose out[MK4_MAX_BONES]) {

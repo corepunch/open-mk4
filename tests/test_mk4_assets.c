@@ -35,6 +35,11 @@ static void combat_poses(const Assets *assets) {
   const Character *spine = &assets->scene_models.data[SCENE_MODEL_SPINE];
   check(spine->bones.count == 5 && spine->bones.data[0].mesh == 36 && spine->bones.data[4].channel == 5,
       "Spine accessory must use its recovered five meshes and reserve the first animation channel for the head");
+  const Character *statue = &assets->scene_models.data[SCENE_MODEL_ICE_CLONE];
+  check(statue->bones.count == 16 && statue->bones.data[1].mesh == 58 && statue->bones.data[15].mesh == 72,
+      "Clone must use the recovered shared ice meshes rather than an owner's costume");
+  check(statue->meshes.data == assets->hud.effects.meshes.data && character_texture(statue, 0) == &assets->hud.effects.textures.data[0],
+      "Scene models must share decoded multi-page materials with existing shared effects");
   Battle battle;
   battle_init(&battle, 4, 15);
   battle_bind_assets(&battle, assets);

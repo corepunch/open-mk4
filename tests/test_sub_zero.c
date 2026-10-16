@@ -306,9 +306,12 @@ static void clone_tests(void) {
     }
     q16 clone_x = clone->pos[AXIS_X];
     check(clone->clip >= -1 && clone->sample >= 0, "clone must own its captured pose");
+    check(clone->light.def != NULL && clone->light.phase == 0x18000 && clone->light.strength == Q16_ONE - 0xccc && clone->light.pos[AXIS_Y] == -25 * Q16_ONE,
+        "clone must open its independent orbit light at the recovered phase, height and fade");
     battle_react(&battle, &battle.fighters[player], 37);
     advance(&battle, 2);
     check(objects(&battle, PROJECTILE_CLONE) == 1 && clone->pos[AXIS_X] == clone_x, "clone must remain stationary after owner interruption");
+    check(clone->light.phase == 0x48000 && clone->light.strength == Q16_ONE - 3 * 0xccc, "clone light must keep its own clock after owner interruption");
     battle.fighters[1 - player].body.pos[AXIS_X] = clone_x + clone->facing * 0x6000;
     advance(&battle, 2);
     check(objects(&battle, PROJECTILE_CLONE) == 0 && battle.fighters[1 - player].appearance == APPEARANCE_FROZEN, "clone must freeze once on contact");

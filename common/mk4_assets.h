@@ -78,6 +78,7 @@ typedef struct Character {
   char name[1024], file[1024];
   Meshes meshes;
   Texture texture;
+  Textures material_pages; /* optional shared multi-page material view for scene models */
   Bones bones;
   int idle;
   float scale, front_yaw;
@@ -127,8 +128,11 @@ typedef struct Assets {
 } Assets;
 
 enum {
-  SCENE_MODEL_SPINE
+  SCENE_MODEL_SPINE,
+  SCENE_MODEL_ICE_CLONE
 };
+
+const Texture *character_texture(const Character *character, int page);
 
 /* Initialize Assets to zero before loading. The owner frees all decoded data. */
 void assets_load(Assets *assets, const char *archive, const char *executable);

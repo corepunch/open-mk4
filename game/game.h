@@ -463,6 +463,15 @@ enum {
   PROJECTILE_CLONE = 4
 };
 
+typedef struct OrbitLightDef {
+  q16 radius, height, speed, fade;
+} OrbitLightDef;
+
+typedef struct OrbitLight {
+  const OrbitLightDef *def;
+  q16 phase, strength, pos[3];
+} OrbitLight;
+
 struct Projectile {
   int kind, owner, facing, ticks, lifetime, phase;
   const WeaponDef *weapon;
@@ -471,6 +480,7 @@ struct Projectile {
   q16 heading[2];
   q16 angle[3], root_y; /* captured clone orientation/root offset */
   ProjectileFn step;
+  OrbitLight light;
 };
 
 #define MAX_PROJECTILES 4
@@ -627,6 +637,7 @@ bool scene_step(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
 void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
+void battle_object_light(Projectile *object, const OrbitLightDef *def);
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
 ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
 void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);

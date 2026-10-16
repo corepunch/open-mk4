@@ -16,6 +16,23 @@ void fighter_visual_offset(Fighter *fighter, q16 along, q16 y) {
   fighter->visual_offset[AXIS_Z] = q16_mul(fighter->heading[1], along);
 }
 
+static void orbit_light_step(OrbitLight *light) {
+  const OrbitLightDef *def = light->def;
+  light->phase = (light->phase + def->speed) % 0x6487e;
+  light->pos[AXIS_X] = (q16)(cosf(q16_float(light->phase)) * def->radius);
+  light->pos[AXIS_Y] = def->height;
+  light->pos[AXIS_Z] = (q16)(sinf(q16_float(light->phase)) * def->radius);
+  light->strength -= def->fade;
+}
+
+/* 47f9d0/fa90/fb10: the optional decoration is a lighting reference
+ * substituted for the camera light, with its own orbit and strength. */
+void battle_object_light(Projectile *object, const OrbitLightDef *def) {
+  require(def != NULL && def->radius >= 0, "Invalid object light");
+  object->light = (OrbitLight){.def = def, .strength = Q16_ONE};
+  orbit_light_step(&object->light);
+}
+
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation) {
   *position = (Vec3){fighter_x(fighter), q16_float(fighter->body.pos[AXIS_Y]), fighter_z(fighter)};
   Vec3 offset = {q16_float(fighter->visual_offset[0]), q16_float(fighter->visual_offset[1]), q16_float(fighter->visual_offset[2])};
@@ -232,6 +249,12 @@ void battle_shatter(Battle *battle, Fighter *victim) {
 }
 
 void battle_step_presentation(Battle *battle) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *object = &battle->projectiles[i];
+    if (object->kind != 0 && object->light.def != NULL) {
+      orbit_light_step(&object->light);
+    }
+  }
   for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
     SceneAttachment *attachment = &battle->attachments[i];
     if (attachment->def != NULL) {

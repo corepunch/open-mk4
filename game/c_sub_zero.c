@@ -907,6 +907,7 @@ static void sub_zero_ice(Battle *battle, Fighter *fighter) {
 static const AttackRecord clone_record = {0x4ccc, -0xa3d, 0xbae1, 0x9e76, 67, 67, 0, ATTACK_MARK, 0};
 static const MoveDef s_clone = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x405};
 static const MoveDef s_clone_near = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x406};
+static const OrbitLightDef clone_light = {25 * Q16_ONE, -25 * Q16_ONE, 0x18000, 0xccc};
 
 static void clone_object(Battle *battle, Projectile *p) {
   Fighter *owner = &battle->fighters[p->owner];
@@ -952,6 +953,7 @@ static void sub_zero_clone(Battle *battle, Fighter *fighter) {
     if (p != NULL) {
       p->clip = fighter_move(fighter)->clip;
       p->sample = fighter_pose_sample(fighter);
+      battle_object_light(p, &clone_light);
     }
   }
   stop_body(fighter);
