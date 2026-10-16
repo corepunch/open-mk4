@@ -38,7 +38,7 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
-ROSTER_SOURCES = game/roster.c game/moves.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
+ROSTER_SOURCES = game/roster.c game/moves.c game/pose.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
 GAME_HEADERS = game/game.h game/mk4_characters.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
@@ -52,15 +52,15 @@ mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.c tests/fixtures/original_kicks.inc tests/fixtures/original_scorpion.inc game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) common/binary.c
+build/test-battle: tests/test_battle.c tests/fixtures/original_kicks.inc tests/fixtures/original_scorpion.inc game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) $(ASSETS)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c common/binary.c -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(ASSETS) -o $@ $(LDLIBS)
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
-build/test-sub-zero: tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) common/binary.c $(HEADERS)
+build/test-sub-zero: tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) common/binary.c -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 game-test: mk4-game build/test-battle build/test-sub-zero build/test-shadows
 	./build/test-battle
 	./build/test-sub-zero

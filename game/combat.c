@@ -1,6 +1,7 @@
 #include "game.h"
 #include "math_util.h"
 #include <stdlib.h>
+#include <math.h>
 
 /* Retail contact, block and damage rules: docs/scorpion/combat-core.md.
  * Contact runs inside the attacker's move, so a hit replaces the victim's
@@ -10,18 +11,32 @@ static int fighter_index(const Battle *battle, const Fighter *fighter) {
   return fighter == &battle->fighters[0] ? 0 : 1;
 }
 
-/* Our gameplay hull is independent of rendering: 0.6 units wide, 1.8 high
- * standing and 1.0 crouched. Script attack boxes and damage keep their
- * original units. No sampled animation joints or retail pose emulation. */
+/* 48d750: project the victim's joint origins onto the origin-to-victim
+ * axis, trim eight percent off either horizontal edge, and overlap the
+ * script rectangle. Headless rule-only callers can omit decoded assets. */
 static bool contact_geometry(const Battle *battle, const q16 origin[3], int facing, const Fighter *victim, const AttackRecord *record) {
   (void)battle;
-  q16 dx = (victim->body.pos[AXIS_X] - origin[AXIS_X]) * facing;
-  q16 dz = victim->body.pos[AXIS_Z] - origin[AXIS_Z];
+  double dx = (double)victim->body.pos[AXIS_X] - origin[AXIS_X];
+  double dz = (double)victim->body.pos[AXIS_Z] - origin[AXIS_Z];
+  double distance = hypot(dx, dz);
+  q16 axis[2] = {distance > 0 ? (q16)(dx / distance * Q16_ONE) : facing * Q16_ONE, distance > 0 ? (q16)(dz / distance * Q16_ONE) : 0};
+  q16 bounds[4];
+  if (fighter_joint_bounds(victim, origin, axis, bounds)) {
+    q16 trim = q16_mul(bounds[1] - bounds[0], 0x147a);
+    int forward = dx * facing >= 0 ? 1 : -1;
+    q16 far = record->reach * forward;
+    q16 near = far - record->length * forward;
+    q16 left = near < far ? near : far;
+    q16 right = near > far ? near : far;
+    q16 top = origin[AXIS_Y] + record->top;
+    return top <= bounds[3] && bounds[2] <= top + record->height && right >= bounds[0] + trim && bounds[1] - trim >= left;
+  }
+  q16 along = (q16)distance * (dx * facing >= 0 ? 1 : -1);
   q16 feet = victim->body.pos[AXIS_Y] - victim->body.ground;
   q16 head = feet - (victim->crouching ? Q16_ONE : 0x1cccc);
   q16 top = origin[AXIS_Y] + record->top;
   q16 bottom = top + record->height;
-  return abs(dz) <= 0x8000 && dx + 0x4ccc >= record->reach - record->length && dx - 0x4ccc <= record->reach && head <= bottom && feet >= top;
+  return along + 0x4ccc >= record->reach - record->length && along - 0x4ccc <= record->reach && head <= bottom && feet >= top;
 }
 
 /* 0x48e890 / 0x48e800. Fighters driven by input frames block like retail
@@ -126,6 +141,8 @@ Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, in
       for (int k = 0; k < 3; ++k) {
         p->pos[k] = owner->body.pos[k];
       }
+      p->heading[0] = owner->heading[0];
+      p->heading[1] = owner->heading[1];
       return p;
     }
   }

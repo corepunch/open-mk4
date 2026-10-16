@@ -332,6 +332,8 @@ enum {
 };
 
 struct Fighter {
+  const Assets *assets; /* borrowed decoded clips/rigs; owned by the host */
+  q16 heading[2];       /* model's forward X/Z, independent of the camera */
   int roster;
   int wins, facing, ticks;
   int state;
@@ -391,12 +393,14 @@ struct Projectile {
   const WeaponDef *weapon;
   int clip, sample; /* stationary clone's captured pose */
   q16 pos[3], vel[3];
+  q16 heading[2];
   ProjectileFn step;
 };
 
 #define MAX_PROJECTILES 4
 
 struct Battle {
+  const Assets *assets;
   Fighter fighters[2];
   HitEffect effects[2];
   Projectile projectiles[MAX_PROJECTILES];
@@ -452,6 +456,12 @@ bool fighter_fast_start(const Battle *battle, const Fighter *fighter);
 void fighter_press(Battle *battle, Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
 int fighter_sample(const Fighter *fighter);
+void battle_bind_assets(Battle *battle, const Assets *assets);
+const Character *fighter_model(const Assets *assets, const Fighter *fighter);
+const Clip *fighter_clip(const Assets *assets, const Fighter *fighter);
+Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
+bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
+int fighter_pose_sample(const Fighter *fighter);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

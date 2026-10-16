@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-static const float pi = 3.14159265358979323846f;
 
 typedef struct Camera {
   float x, z, focal;
@@ -94,38 +93,17 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
   return isfinite(floor_y) ? floor_y : 0.f;
 }
 
-static const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
-  return fighter->appearance == APPEARANCE_BEAST ? &assets->scorpion_beast : roster_character(assets, fighter->roster);
-}
-
 static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) {
   Triangles triangles = {0};
   const Character *ch = fighter_model(assets, fighter);
   if (fighter->appearance == APPEARANCE_HIDDEN) {
     return triangles;
   }
-  const MoveDef *move = fighter_move(fighter);
-  int selected = fighter->action == 0x1003 ? fighter->frozen_clip : move->clip;
-  int id = selected < 0 ? ch->idle : selected;
-  const Clip *clip = &assets->clips.data[id];
-  int channels = 0;
-  double frame;
-  for (size_t i = 0; i < ch->bones.count; ++i)
-    channels = maxi(channels, ch->bones.data[i].channel + 1);
-  if ((int)clip->frames.data[0].angles.count != channels)
-    clip = &assets->clips.data[ch->idle];
-  frame = fighter_frame(fighter, (int)clip->frames.count);
-  Pose bones[MK4_MAX_BONES], initial[MK4_MAX_BONES];
+  const Clip *clip = fighter_clip(assets, fighter);
+  double frame = fighter_frame(fighter, (int)clip->frames.count);
+  Pose bones[MK4_MAX_BONES];
   pose(ch, clip, frame, bones);
-  pose(ch, clip, 0, initial);
-  float front = ch->front_yaw;
-  for (size_t n = 0; n < ch->bones.count; ++n)
-    if (ch->bones.data[n].channel == 0) {
-      Vec3 face = mat3_apply(initial[n].rotation, (Vec3){0, 0, -1});
-      front = atan2f(-face.x, face.z);
-      break;
-    }
-  Mat3 turn = yaw_matrix(front + (float)fighter->facing * pi * .5f);
+  Mat3 turn = fighter_turn(assets, fighter);
   double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
   Vec3 current = clip->frames.data[(size_t)wrapped].translation;
   /* Root-motion Y plants the sole on the floor. Dropping that channel lifts
@@ -258,6 +236,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       clone.action = 0;
       clone.sample_override = p->sample;
       clone.facing = p->facing;
+      memcpy(clone.heading, p->heading, sizeof clone.heading);
       memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
       Triangles geometry = fighter_geometry(assets, &clone);
       for (size_t j = 0; j < geometry.count; ++j) {

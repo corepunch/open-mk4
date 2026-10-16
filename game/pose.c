@@ -1,0 +1,85 @@
+#include "game.h"
+#include "math_util.h"
+#include <math.h>
+
+void battle_bind_assets(Battle *battle, const Assets *assets) {
+  battle->assets = assets;
+  for (int i = 0; i < 2; ++i) {
+    battle->fighters[i].assets = assets;
+  }
+}
+
+const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
+  return fighter->appearance == APPEARANCE_BEAST ? &assets->scorpion_beast : roster_character(assets, fighter->roster);
+}
+
+const Clip *fighter_clip(const Assets *assets, const Fighter *fighter) {
+  const Character *ch = fighter_model(assets, fighter);
+  int id = fighter->action == 0x1003 ? fighter->frozen_clip : fighter_move(fighter)->clip;
+  if (id < 0) {
+    id = ch->idle;
+  }
+  require((size_t)id < assets->clips.count, "Invalid fighter clip");
+  const Clip *clip = &assets->clips.data[id];
+  int channels = 0;
+  for (size_t i = 0; i < ch->bones.count; ++i) {
+    channels = maxi(channels, ch->bones.data[i].channel + 1);
+  }
+  return (int)clip->frames.data[0].angles.count == channels ? clip : &assets->clips.data[ch->idle];
+}
+
+int fighter_pose_sample(const Fighter *fighter) {
+  if (fighter->assets == NULL) {
+    return (int)fighter_frame(fighter, 1 << 16);
+  }
+  return (int)fighter_frame(fighter, (int)fighter_clip(fighter->assets, fighter)->frames.count);
+}
+
+Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
+  const Character *ch = fighter_model(assets, fighter);
+  const Clip *clip = fighter_clip(assets, fighter);
+  Pose initial[MK4_MAX_BONES];
+  pose(ch, clip, 0, initial);
+  float front = ch->front_yaw;
+  for (size_t i = 0; i < ch->bones.count; ++i) {
+    if (ch->bones.data[i].channel == 0) {
+      Vec3 face = mat3_apply(initial[i].rotation, (Vec3){0, 0, -1});
+      front = atan2f(-face.x, face.z);
+      break;
+    }
+  }
+  float yaw = front + atan2f((float)fighter->heading[0], (float)fighter->heading[1]);
+  float c = cosf(yaw), s = sinf(yaw);
+  return (Mat3){{c, 0, s, 0, 1, 0, -s, 0, c}};
+}
+
+/* Joint positions include animation root translation, as in 4b8140.
+ * Group Y is the bind-root height plus the fighter's displacement. */
+bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]) {
+  if (fighter->assets == NULL) {
+    return false;
+  }
+  const Character *ch = fighter_model(fighter->assets, fighter);
+  const Clip *clip = fighter_clip(fighter->assets, fighter);
+  Pose bones[MK4_MAX_BONES];
+  pose(ch, clip, fighter_frame(fighter, (int)clip->frames.count), bones);
+  Mat3 turn = fighter_turn(fighter->assets, fighter);
+  Vec3 bind = ch->bones.data[0].translation;
+  bounds[0] = bounds[2] = INT32_MAX;
+  bounds[1] = bounds[3] = INT32_MIN;
+  for (size_t i = 0; i < ch->bones.count; ++i) {
+    if (ch->bones.data[i].id <= 0) {
+      continue;
+    }
+    Vec3 joint = mat3_apply(turn, vec_sub(bones[i].position, bind));
+    q16 x = fighter->body.pos[AXIS_X] - origin[AXIS_X] + (q16)floorf(joint.x * Q16_ONE);
+    q16 z = fighter->body.pos[AXIS_Z] - origin[AXIS_Z] + (q16)floorf(joint.z * Q16_ONE);
+    q16 along = q16_mul(x, axis[0]) + q16_mul(z, axis[1]);
+    q16 y = fighter->body.pos[AXIS_Y] + (q16)floorf(joint.y * Q16_ONE);
+    bounds[0] = mini(bounds[0], along);
+    bounds[1] = maxi(bounds[1], along);
+    bounds[2] = mini(bounds[2], y);
+    bounds[3] = maxi(bounds[3], y);
+  }
+  return bounds[0] <= bounds[1];
+}

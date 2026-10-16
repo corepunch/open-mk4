@@ -15,6 +15,8 @@ static bool locked(const Fighter *fighter) {
 static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, q16 x, int facing) {
   const CharacterDef *def = roster_def(roster_index);
   *fighter = (Fighter){0};
+  fighter->assets = battle->assets;
+  fighter->heading[0] = facing * Q16_ONE;
   fighter->roster = roster_index;
   fighter->wins = wins;
   fighter->health = Q16_ONE;
@@ -308,6 +310,9 @@ void battle_world(Battle *battle) {
   for (int i = 0; i < 2; ++i) {
     Fighter *fighter = &battle->fighters[i];
     Body *body = &fighter->body;
+    int sign = (dx < 0 ? -1 : 1) * fighter->facing;
+    fighter->heading[0] = battle->axis[0] * sign;
+    fighter->heading[1] = battle->axis[1] * sign;
     if (body->physics != NULL)
       body->physics(battle, fighter);
     if (body->gravity != 0) {

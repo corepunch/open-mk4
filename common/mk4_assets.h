@@ -51,6 +51,7 @@ ARRAY_TYPE(Textures, Texture);
 
 typedef struct Bone {
   int parent, channel, mesh, kind;
+  int id; /* retail joint lookup ID; negative IDs are absent from contact bounds */
   uint32_t flags;
   Vec3 translation;
 } Bone;

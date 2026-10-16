@@ -31,6 +31,42 @@ static float mesh_sole(const Character *ch, const Clip *clip, double frame) {
   return sole;
 }
 
+static void combat_poses(const Assets *assets) {
+  Battle battle;
+  battle_init(&battle, 4, 15);
+  battle_bind_assets(&battle, assets);
+  battle.phase = PHASE_FIGHT;
+  Fighter *sub_zero = &battle.fighters[0];
+  sub_zero->ticks = 70;
+  check(fighter_pose_sample(sub_zero) == 0, "Pose snapshot must wrap the real 35-sample idle");
+  battle_react(&battle, sub_zero, 67);
+  battle_step(&battle, (Input[2]){0});
+  check(sub_zero->sample_override == 0 && sub_zero->frozen_clip == CLIP_ASSET_IDLE, "Freeze must preserve the displayed looping pose");
+  Fighter *goro = &battle.fighters[1];
+  battle_react(&battle, goro, 67);
+  battle_step(&battle, (Input[2]){0});
+  check(goro->appearance == APPEARANCE_FROZEN && fighter_clip(assets, goro)->id == 587, "Boss freeze must retain its own rig and pose");
+  for (int i = 0; i < 143; ++i) {
+    battle_step(&battle, (Input[2]){0});
+  }
+  check(goro->state == S_IDLE && goro->appearance == APPEARANCE_NORMAL, "Boss freeze must thaw and restore control");
+
+  battle_init(&battle, 4, 0);
+  battle_bind_assets(&battle, assets);
+  battle.phase = PHASE_FIGHT;
+  const AttackRecord strike = {0x18000, -0x10000, 0x18000, 0x18000, 37, 11, 1, 0, 0x1000};
+  for (int rotated = 0; rotated < 2; ++rotated) {
+    battle_reset_match(&battle);
+    Fighter *a = &battle.fighters[0], *b = &battle.fighters[1];
+    a->body.pos[AXIS_X] = 0;
+    b->body.pos[AXIS_X] = rotated ? 0 : Q16_ONE;
+    b->body.pos[AXIS_Z] = rotated ? Q16_ONE : 0;
+    battle_world(&battle);
+    check(battle_contact(&battle, a, &strike) == CONTACT_HIT, "Joint contact must follow the pair axis after a quarter turn");
+    check(b->health == Q16_ONE - 0x1000, "Pose contact must retain record damage");
+  }
+}
+
 int main(void) {
   struct Fixture {
     int kind;
@@ -154,6 +190,7 @@ int main(void) {
       }
     }
   }
+  combat_poses(&assets);
   assets_free(&assets);
   check(!assets.characters.data && !assets.clips.data, "Asset ownership was not released");
   printf("PASS: %zu original matrix fixtures; %zu upright idle poses; 18 complete rigs; 612 clips / %zu frames\n", sizeof fixtures / sizeof *fixtures, poses,

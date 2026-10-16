@@ -945,7 +945,7 @@ static void sub_zero_clone(Battle *battle, Fighter *fighter) {
     Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_CLONE, fighter_opponent(battle, fighter)->human ? 74 : 53, clone_object);
     if (p != NULL) {
       p->clip = fighter_move(fighter)->clip;
-      p->sample = (int)fighter_frame(fighter, 1 << 16);
+      p->sample = fighter_pose_sample(fighter);
     }
   }
   stop_body(fighter);

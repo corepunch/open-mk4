@@ -181,8 +181,10 @@ checkpoints and are not proof of the current port. Do not add retail execution
 recorders or raw JSON traces for character implementation.
 
 The shared simulation now uses Q16 per-tick bodies and fractional health, attack
-records, and explicit reaction continuations. Collision uses our fixed standing
-and crouching gameplay hulls, independent of rendered animation joints. Script
+records, and explicit reaction continuations. When decoded assets are bound, collision projects animated joint origins onto
+the contact axis and trims the horizontal interval as in native 48d750. Shared
+pose selection supplies real clip lengths and model heading to both simulation
+and drawing. Rule-only tests may omit assets and use the explicit fallback hull. Script
 contacts resolve in stable player order; they can interrupt the next fighter
 before its update. Approximate roster moves keep their earlier interval-based
 resolver. This mixed roster is transitional, not a claim of retail engine identity.

@@ -374,6 +374,7 @@ static void rig_walk(RigReader *r, int parent, int depth) {
      * MStackPushTwoEntryChainCall / ScaledMaskOrStore preserve other flags. */
   b.kind = (int)((b.flags >> 24) & 7);
   int id = image_s32(r->exe, r->cursor) >> 20;
+  b.id = id;
   b.channel = (b.flags & 0x100) ? id - 2 : -1;
   b.mesh = (int)image_u32(r->exe, r->cursor + 24);
   require(b.mesh >= 0 && (size_t)b.mesh < r->meshes, "Skeleton mesh index out of range");

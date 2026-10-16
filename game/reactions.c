@@ -462,7 +462,7 @@ static void react_freeze(Battle *battle, Fighter *fighter) {
     return;
   }
   int clip = fighter->appearance == APPEARANCE_FROZEN ? fighter->frozen_clip : fighter_move(fighter)->clip;
-  int sample = (int)fighter_frame(fighter, 1 << 16);
+  int sample = fighter_pose_sample(fighter);
   fighter_start_move(battle, fighter, S_HIT, &frozen);
   fighter->script = frozen_tick;
   fighter->sample_override = sample;
@@ -584,7 +584,8 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
     victim->disarm(battle, victim);
   }
   victim->reaction = reaction;
-  FighterFn entry = reactions[reaction] != NULL && victim->roster != 15 ? reactions[reaction] : react_approximate;
+  FighterFn entry = reactions[reaction] != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? reactions[reaction]
+                                                                                                                                      : react_approximate;
   (void)battle;
   for (int i = 0; i < 3; ++i) {
     victim->body.vel[i] = 0;

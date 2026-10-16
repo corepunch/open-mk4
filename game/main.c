@@ -192,6 +192,7 @@ int main(int argc, char **argv) {
   sdl_app_init(&app, "Mortal Kombat 4 - Battle", 1280, 800, headless);
   canvas_init(&cv, 1280, 800);
   battle_init(&battle, p1, p2);
+  battle_bind_assets(&battle, &assets);
   battle.arena = arena;
   input_bind_player(&pads[0], 0);
   input_bind_player(&pads[1], 1);
