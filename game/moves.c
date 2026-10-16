@@ -102,6 +102,7 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
     }
   }
   fighter->state = state;
+  fighter->flags &= ~(unsigned)FF_PAIRED;
   fighter->current_move = move;
   fighter->ticks = 0;
   fighter->connected = false;

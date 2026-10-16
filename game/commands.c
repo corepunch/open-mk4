@@ -28,7 +28,7 @@ void fighter_interrupt(Fighter *fighter, FighterFn entry) {
   require(entry != NULL, "Interrupt without an entry");
   fighter->pending = entry;
   fighter->buttons = NULL;
-  fighter->flags |= FF_BUSY;
+  fighter->flags = (fighter->flags | FF_BUSY) & ~(unsigned)FF_PAIRED;
 }
 
 static Button resolve_token(const Battle *battle, const Fighter *fighter, CommandToken token) {

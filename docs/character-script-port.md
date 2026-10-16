@@ -70,3 +70,8 @@ Air attack sources: scripts `0x4e6658`, `0x4e6710`, `0x4e61f8`, `0x4e6500`,
 `0x46e6b0`, `0x46e230`. Low HP/straight-kick contacts expose the current ground
 button table; its close-range combo selection uses the ground entry predicates. Diagonal
 jump classification uses horizontal motion in our current jump controller.
+
+Air throw now follows scripts `0x4e5e28/0x4e5e50`: paired clips 82/202,
+28-tick capture, 13% release damage, separate falls and recovery. Attachment
+only suppresses body separation; interruption releases the victim. Getup uses
+clip 131:46–79 and returns control instead of reproducing retail task parking.

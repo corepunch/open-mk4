@@ -484,7 +484,47 @@ static void check_ground_normals(void) {
   }
 }
 
+static void check_air_throw(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle;
+    battle_init(&battle, 0, 0);
+    battle.phase = PHASE_FIGHT;
+    Fighter *owner = &battle.fighters[player], *victim = &battle.fighters[1 - player];
+    owner->body.pos[AXIS_X] = 0;
+    victim->body.pos[AXIS_X] = Q16_ONE;
+    owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -3 * Q16_ONE;
+    fighter_enter_state(&battle, owner, S_JUMP);
+    fighter_enter_state(&battle, victim, S_JUMP);
+    Input input[2] = {0};
+    input[player].held = BUTTON_BIT(BUTTON_BLOCK);
+    battle_step(&battle, input);
+    advance_ticks(&battle, 1, NULL);
+    check(owner->current_move->clip == 82 && victim->current_move->clip == 202, "Air throw must take both participants");
+    advance_ticks(&battle, 27, NULL);
+    check(victim->health == Q16_ONE && owner->body.gravity == 0, "Air throw must hold before its damage event");
+    advance_ticks(&battle, 1, NULL);
+    check(victim->health == Q16_ONE - 0x2147, "Air throw must deal 13 percent at release");
+    advance_ticks(&battle, 140, NULL);
+    check(owner->state == S_IDLE && victim->state == S_IDLE, "Both air throw participants must recover");
+    check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Air throw must release body attachment");
+  }
+  Battle battle = fight(1.f);
+  for (int i = 0; i < 2; ++i) {
+    battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
+    fighter_enter_state(&battle, &battle.fighters[i], S_JUMP);
+  }
+  fighter_press(&battle, &battle.fighters[0], BUTTON_BLOCK);
+  advance_ticks(&battle, 1, NULL);
+  battle_react(&battle, &battle.fighters[0], 11);
+  advance_ticks(&battle, 150, NULL);
+  check(battle.fighters[1].state == S_IDLE && battle.fighters[1].health == Q16_ONE, "Interrupted throw must release victim without damage");
+  battle = fight(1.f);
+  fighter_press(&battle, &battle.fighters[0], BUTTON_BLOCK);
+  check(battle.fighters[0].pending == NULL, "Grounded BLOCK must not air throw");
+}
+
 int main(void) {
+  check_air_throw();
   check_ground_normals();
   check_air_attacks();
   check_weapon();

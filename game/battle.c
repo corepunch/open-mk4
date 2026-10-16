@@ -219,7 +219,7 @@ void battle_world(Battle *battle) {
   }
   battle->distance = (q16)floor(length);
   q16 dy = a->body.pos[AXIS_Y] - b->body.pos[AXIS_Y];
-  if (battle->distance < 0x8000 && (dy < 0 ? -dy : dy) <= 0xb333) {
+  if (!(a->flags & FF_PAIRED) && !(b->flags & FF_PAIRED) && battle->distance < 0x8000 && (dy < 0 ? -dy : dy) <= 0xb333) {
     q16 push = (0x8000 - battle->distance) / 2 + 1;
     for (int k = 0; k < 2; ++k) {
       q16 step = q16_mul(battle->axis[k], push);

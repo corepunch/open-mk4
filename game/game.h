@@ -283,7 +283,8 @@ enum {
   FF_UNTOUCHABLE = 0x020,  /* contacts are ignored */
   FF_TELEPORTING = 0x040,  /* camera ignores this fighter */
   FF_FOLLOW_UP = 0x200,    /* commands allowed off the ground */
-  FF_NEUTRAL_CLEAR = 0x2e8 /* bits cleared by the return to neutral 0x48e080 */
+  FF_PAIRED = 0x400,       /* bodies attached by a paired move; skip separation */
+  FF_NEUTRAL_CLEAR = 0x6e8 /* bits cleared by the return to neutral 0x48e080 */
 };
 
 /* Retail group motion: Q16 position (+0x54, Y down), velocity (+0x6c),
