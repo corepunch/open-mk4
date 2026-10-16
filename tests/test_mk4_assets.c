@@ -65,6 +65,21 @@ static void combat_poses(const Assets *assets) {
     check(battle_contact(&battle, a, &strike) == CONTACT_HIT, "Joint contact must follow the pair axis after a quarter turn");
     check(b->health == Q16_ONE - 0x1000, "Pose contact must retain record damage");
   }
+  battle_reset_match(&battle);
+  Fighter *victim = &battle.fighters[1];
+  victim->appearance = APPEARANCE_FROZEN;
+  battle_shatter(&battle, victim);
+  int pieces = 0;
+  for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
+    pieces += battle.pieces[i].active;
+    check(!battle.pieces[i].active || battle.pieces[i].frozen, "Shatter pieces must preserve the frozen material");
+  }
+  check(pieces >= 15 && victim->appearance == APPEARANCE_HIDDEN, "Shatter must detach posed meshes before hiding the intact body");
+  q16 height = battle.pieces[0].pos[AXIS_Y];
+  battle_step_presentation(&battle);
+  check(battle.pieces[0].pos[AXIS_Y] < height, "Detached pieces must follow their native launch vectors");
+  battle_reset_match(&battle);
+  check(!battle.pieces[0].active && battle.fighters[1].hidden_joints[0] == 0 && !battle.camera.active, "Rematch must clear scene objects and mesh visibility");
 }
 
 int main(void) {

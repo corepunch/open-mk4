@@ -389,6 +389,7 @@ struct Fighter {
   int blend_clip, blend_sample, blend_ticks, blend_duration;
   q16 blend_weight;
   ScenePlayback scene;
+  uint64_t hidden_joints[2];
   int appearance;  /* character-script rendering variant; reset at round spawn */
   int frozen_clip; /* preserve the victim's current pose while frozen */
   int reaction;    /* last selected attack-record reaction, retained across its phases */
@@ -428,11 +429,36 @@ struct Projectile {
 
 #define MAX_PROJECTILES 4
 
+typedef struct ScenePiece {
+  bool active, frozen;
+  int roster, bone, attached_to, joint;
+  q16 pos[3], vel[3], angle[3], spin[3];
+  Mat3 orientation;
+} ScenePiece;
+
+typedef struct Particle {
+  q16 pos[3], vel[3], gravity;
+  int ticks;
+  uint32_t color;
+} Particle;
+
+typedef struct SceneCamera {
+  bool active;
+  Vec3 eye, target, from_eye, from_target, to_eye, to_target;
+  int ticks, duration;
+} SceneCamera;
+
+#define MAX_SCENE_PIECES 32
+#define MAX_PARTICLES 128
+
 struct Battle {
   const Assets *assets;
   Fighter fighters[2];
   HitEffect effects[2];
   Projectile projectiles[MAX_PROJECTILES];
+  ScenePiece pieces[MAX_SCENE_PIECES];
+  Particle particles[MAX_PARTICLES];
+  SceneCamera camera;
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
   int arena, finisher; /* stage id and completed/active character finisher id */
@@ -504,6 +530,12 @@ void weapon_followup_victim(Battle *battle, Fighter *fighter);
 void weapon_stance(Battle *battle, Fighter *fighter, int state);
 void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);
 bool scene_step(Fighter *fighter);
+bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
+void battle_scene_camera(Battle *battle, const Fighter *owner, const Fighter *target, q16 along, q16 y, q16 across, int ticks);
+void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
+void battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
+void battle_shatter(Battle *battle, Fighter *victim);
+void battle_step_presentation(Battle *battle);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

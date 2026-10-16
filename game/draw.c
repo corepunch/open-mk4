@@ -11,13 +11,23 @@
 typedef struct Camera {
   float x, z, focal;
   int w, h;
+  bool scene;
+  Vec3 eye, right, up, forward;
 } Camera;
 
 static Vec3 camera_position(Camera c) {
-  return (Vec3){c.x, -2.8f, c.z};
+  return c.scene ? c.eye : (Vec3){c.x, -2.8f, c.z};
+}
+
+static float dot(Vec3 a, Vec3 b) {
+  return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 static Vec3 camera_point(Camera c, Vec3 p) {
+  if (c.scene) {
+    Vec3 relative = vec_sub(p, c.eye);
+    return (Vec3){dot(relative, c.right), dot(relative, c.up), dot(relative, c.forward)};
+  }
   float y = p.y + 2.8f, d = c.z - p.z;
   return (Vec3){p.x - c.x, y * .978f - d * .208f, y * .208f + d * .978f};
 }
@@ -115,6 +125,9 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
     const Bone *b = &ch->bones.data[n];
     if (b->flags & 4)
       continue;
+    if (b->id >= 0 && b->id < 128 && (fighter->hidden_joints[b->id / 64] & (UINT64_C(1) << (b->id % 64)))) {
+      continue;
+    }
     const Triangles *mesh = &ch->meshes.data[b->mesh].triangles;
     for (size_t j = 0; j < mesh->count; ++j) {
       Triangle t = mesh->data[j];
@@ -201,7 +214,18 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   canvas_clear(cv);
   const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
   float ax = fighter_x(a), bx = fighter_x(b);
-  Camera camera = {(ax + bx) * .25f, fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f), (float)cv->w * .95f, cv->w, cv->h};
+  Camera camera = {.x = (ax + bx) * .25f, .z = fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f), .focal = (float)cv->w * .95f, .w = cv->w, .h = cv->h};
+  if (battle->camera.active) {
+    camera.scene = true;
+    camera.eye = battle->camera.eye;
+    Vec3 direction = vec_sub(battle->camera.target, camera.eye);
+    float length = sqrtf(dot(direction, direction));
+    camera.forward = vec_scale(direction, 1.f / fmaxf(.001f, length));
+    float horizontal = hypotf(direction.x, direction.z);
+    camera.right = (Vec3){-direction.z / fmaxf(.001f, horizontal), 0, direction.x / fmaxf(.001f, horizontal)};
+    camera.up =
+        (Vec3){-camera.forward.y * camera.right.z, camera.forward.x * camera.right.z - camera.forward.z * camera.right.x, camera.forward.y * camera.right.x};
+  }
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
   Triangles fighters[] = {fighter_geometry(assets, a), fighter_geometry(assets, b)};
@@ -221,6 +245,26 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   canvas_resolve_shadows(cv, 104);
   uint32_t ice_pixel = 0xff89dfff;
   const Texture ice_texture = {1, 1, {&ice_pixel, 1, 1}};
+  for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
+    const ScenePiece *piece = &battle->pieces[i];
+    if (!piece->active) {
+      continue;
+    }
+    const Character *ch = roster_character(assets, piece->roster);
+    const Bone *bone = &ch->bones.data[piece->bone];
+    float factor = 4096.f / (6.283185307179586f * Q16_ONE);
+    Mat3 spin = rotation(0, (Vec3){piece->angle[0] * factor, piece->angle[1] * factor, piece->angle[2] * factor});
+    Mat3 transform = mat3_mul(spin, piece->orientation);
+    const Triangles *mesh = &ch->meshes.data[bone->mesh].triangles;
+    for (size_t n = 0; n < mesh->count; ++n) {
+      Triangle triangle = mesh->data[n];
+      for (int k = 0; k < 3; ++k) {
+        triangle.v[k].p = vec_add(mat3_apply(transform, triangle.v[k].p), (Vec3){q16_float(piece->pos[0]), q16_float(piece->pos[1]), q16_float(piece->pos[2])});
+        triangle.v[k].normal = mat3_apply(transform, triangle.v[k].normal);
+      }
+      render_triangle(cv, camera, triangle, piece->frozen ? &ice_texture : &ch->texture, 1, PASS_COLOR, &light);
+    }
+  }
   for (size_t i = 0; i < 2; ++i) {
     const Fighter *fighter = &battle->fighters[i];
     const Texture *texture = fighter->appearance == APPEARANCE_FROZEN ? &ice_texture : &fighter_model(assets, fighter)->texture;
@@ -282,17 +326,6 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       float angle = fighter_move(f)->clip == 224 ? f->ticks * .5f : -1.1f;
       draw_weapon(cv, camera, hand, vec_add(hand, (Vec3){f->facing * cosf(angle), sinf(angle), 0}), f->weapon);
     }
-    if (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_SUB_ZERO_2 && i == battle->winner && battle->phase_ticks >= 10 &&
-        battle->phase_ticks < 190) {
-      Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
-      const Fighter *victim = &battle->fighters[1 - i];
-      Vec3 end = {fighter_x(victim), -1.2f, fighter_z(victim)};
-      ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, mouth)}, 1);
-      ScreenVertex to = camera_project(camera, (Vertex){.p = camera_point(camera, end)}, 1);
-      for (int spread = -5; spread <= 5; spread += 2) {
-        canvas_line(cv, (int)from.x, (int)from.y, (int)to.x, (int)to.y + spread, spread % 3 ? 0xff8ee8ff : 0xffecfbff);
-      }
-    }
     if ((fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
         (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_BURN && i == battle->winner && battle->phase_ticks >= 51 && battle->phase_ticks < 191)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
@@ -302,6 +335,18 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       for (int spread = -8; spread <= 8; spread += 2) {
         canvas_line(cv, (int)from.x, (int)from.y, (int)to.x, (int)to.y + spread, spread % 4 ? 0xffff7b24 : 0xffffd253);
       }
+    }
+  }
+  for (int i = 0; i < MAX_PARTICLES; ++i) {
+    const Particle *p = &battle->particles[i];
+    if (p->ticks <= 0) {
+      continue;
+    }
+    Vec3 point = camera_point(camera, (Vec3){q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])});
+    if (point.z > .4f) {
+      ScreenVertex screen = camera_project(camera, (Vertex){.p = point}, 1);
+      int size = maxi(1, mini(8, (int)(camera.focal * .025f / point.z)));
+      canvas_rect(cv, (Rect){(int)screen.x - size / 2, (int)screen.y - size / 2, size, size}, p->color);
     }
   }
   for (size_t i = 0; i < 2; ++i) {

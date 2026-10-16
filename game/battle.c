@@ -69,6 +69,9 @@ void battle_next_round(Battle *battle) {
   battle->contacted = false;
   memset(battle->effects, 0, sizeof battle->effects);
   memset(battle->projectiles, 0, sizeof battle->projectiles);
+  memset(battle->pieces, 0, sizeof battle->pieces);
+  memset(battle->particles, 0, sizeof battle->particles);
+  battle->camera = (SceneCamera){0};
   battle->phase = PHASE_READY;
   battle->phase_ticks = 0;
   battle->time_ticks = 99 * 60;
@@ -400,6 +403,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
 void battle_step(Battle *battle, const Input input[2]) {
   int i;
   battle->ticks++;
+  battle_step_presentation(battle);
   for (i = 0; i < 2; ++i)
     sample_switches(&battle->fighters[i], input[i]);
   battle->phase_ticks++;

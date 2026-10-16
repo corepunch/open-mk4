@@ -1266,6 +1266,10 @@ static bool can_spike_fatality(const Battle *battle, const Fighter *fighter) {
 static void first_fatality_tick(Battle *battle, Fighter *fighter) {
   Fighter *victim = opponent(battle, fighter);
   if (fighter->script_phase == 0) {
+    if (battle->phase_ticks == 8) {
+      /* 445920's first local camera control points (4e0f00). */
+      battle_scene_camera(battle, fighter, victim, 0x20000, -0x30000, -0x20000, 0);
+    }
     if (battle->phase_ticks < 58) {
       return;
     }
@@ -1273,11 +1277,24 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
     fighter->script_phase = 1;
     return;
   }
+  int previous = fighter->scene.index;
   scene_step(fighter);
+  if (previous != fighter->scene.index && fighter->scene.index == 2) {
+    /* The second camera path 4e0f58 opens at (-5,-7,-2.5). */
+    battle_scene_camera(battle, fighter, victim, -0x50000, -0x70000, -0x28000, 30);
+  }
   if (victim->scene.clips == NULL && fighter->scene.index >= 2) {
     scene_begin(victim, first_target, COUNT(first_target), -1);
   } else if (victim->scene.clips != NULL) {
+    int before = victim->scene.index;
     scene_step(victim);
+    if (before != victim->scene.index && victim->scene.index == 8) {
+      battle_attach_head(battle, victim, fighter, 10);
+      battle_particles(battle, victim, 2, 0xffa81420, 20, false);
+    }
+    if (before != victim->scene.index && victim->scene.index == 12) {
+      battle_particles(battle, victim, 5, 0xffa81420, 20, false);
+    }
   }
   if (victim->scene.done && fighter->scene.index >= 9) {
     battle_end_finisher(battle);
@@ -1302,6 +1319,10 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
       if (fighter->scene.index >= 3) {
         victim->appearance = APPEARANCE_FROZEN;
       }
+      if (fighter->ticks >= 10 && fighter->ticks < 102) {
+        /* 41bbb0 alternates joints 9 and 10 throughout its 46 passes. */
+        battle_particles(battle, fighter, 9 + (fighter->ticks & 1), 0xffa6eaff, 2, true);
+      }
       break;
     case 1:
       if (scene_step(fighter)) {
@@ -1322,7 +1343,8 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
       break;
     case 3:
       if (scene_step(fighter)) {
-        victim->appearance = APPEARANCE_HIDDEN;
+        battle_particles(battle, victim, 3, 0xffa6eaff, 32, true);
+        battle_shatter(battle, victim);
         fighter->move_loops = 0;
         fighter->script_phase = 4;
       }

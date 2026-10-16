@@ -52,7 +52,7 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
   float c = cosf(yaw), s = sinf(yaw);
   Mat3 heading = {{c, 0, s, 0, 1, 0, -s, 0, c}};
   float factor = 4096.f / (6.283185307179586f * Q16_ONE);
-  Mat3 angular = rotation(1, (Vec3){fighter->body.angle[0] * factor, fighter->body.angle[1] * factor, fighter->body.angle[2] * factor});
+  Mat3 angular = rotation(0, (Vec3){fighter->body.angle[0] * factor, fighter->body.angle[1] * factor, fighter->body.angle[2] * factor});
   return mat3_mul(heading, angular);
 }
 
