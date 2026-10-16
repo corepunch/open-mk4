@@ -48,6 +48,7 @@ SCRIPT_OPS = {
     0x10: ('advance self and victim poses for count', 0),
     0x11: ('bind clip and set animation cursor', 1),
     0x12: ('set animation cursor', 0),
+    0x16: ('mark fatality scene active', 0),
     0x19: ('advance twice per visit for count', 0),
     0x1d: ('native playback helper', 0),
     0x1e: ('native helper', 0),

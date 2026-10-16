@@ -20,6 +20,16 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_sub_zero_fatality_script(self):
+        self.assertEqual(self.image.word(0x4e0498 + 4 * 4), 0x445100)
+        self.assertEqual(self.image.word(0x4dfe90 + 4 * 4), 0x41b3a0)
+        program = script_program(self.image, 0x4d2c10)
+        rows = {row['va']: row for row in program['instructions']}
+        self.assertEqual(rows['0x4d2c4c']['opcode'], '0x16')
+        self.assertEqual(rows['0x4d2c50']['callback'], '0x41b860')
+        self.assertEqual(rows['0x4d2c70']['native_target'], '0x41b440')
+        self.assertEqual([self.image.word(0x4e4178 + i * 4) for i in range(4)], [0x30, 4, 0x71, 7])
+
     def test_scepter_low_down_branch(self):
         program = script_program(self.image, 0x4e94b0)
         rows = {row['va']: row for row in program['instructions']}

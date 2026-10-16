@@ -1276,15 +1276,221 @@ static void sub_zero_pickup(Battle *battle, Fighter *fighter) {
   fighter->sample_override = 0;
 }
 
+/* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs
+ * through bounded C phase tables; no retail task/camera/object scheduler. */
+#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = 0x700}
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveDef fatal_moves[] = {
+  FATAL_MOVE(13, 55), FATAL_MOVE(385, 140), FATAL_MOVE(387, 73), FATAL_MOVE(552, 104),
+  FATAL_MOVE(95, 10), FATAL_MOVE(258, 38), FATAL_MOVE(293, 19), FATAL_MOVE(128, 109),
+  FATAL_MOVE(115, 18), FATAL_MOVE(116, 49), FATAL_MOVE(117, 18), FATAL_MOVE(118, 49),
+  FATAL_MOVE(415, 129), FATAL_MOVE(416, 107), FATAL_MOVE(412, 48),
+};
+// clang-format on
+#undef FATAL_MOVE
+
+typedef struct FatalPhase {
+  int clip, first, last, repeats;
+} FatalPhase;
+
+// clang-format off: Keep table entries on one row, including long rows.
+/* 445100 -> 4e0368..3e8; victim 445380 -> 4e03f0..438.
+ * Blend lengths and mesh/gore effects are presentation-owned. */
+static const FatalPhase first_owner[] = {{385, 0, 42, 1}, {385, 41, 31, 1}, {385, 32, 42, 1}, {385, 41, 31, 1}, {385, 32, 60, 1}, {385, 61, 140, 1}};
+static const FatalPhase first_victim[] = {{387, 0, 15, 1}, {387, 14, 4, 1}, {387, 5, 15, 1}, {387, 14, 4, 1}, {387, 5, 48, 1}, {387, 46, 50, 1}, {387, 51, 73, 1}};
+/* 41b3a0 -> 4d2c10: three breath passes and five held passes. */
+static const FatalPhase second_breath[] = {{552, 0, 9, 1}, {552, 10, 29, 3}, {552, 30, 83, 1}, {552, 83, 93, 5}, {552, 94, 104, 1}, {552, 104, 104, 20}};
+static const FatalPhase victory[] = {{115, 0, 18, 1}, {116, 0, 49, 1}, {117, 0, 18, 1}, {118, 0, 49, 1}};
+/* 0x43d3d0 sets 31 repetitions; 0x4e0118..1a8 owns the paired poses. */
+static const FatalPhase fan_owner[] = {{415, 0, 68, 1}, {415, 69, 77, 31}, {415, 78, 129, 1}, {412, 0, 48, 1}};
+static const FatalPhase fan_victim[] = {{416, 0, 68, 1}, {416, 69, 77, 31}, {416, 78, 107, 1}};
+// clang-format on
+
+static void fatality_tick(Battle *battle, Fighter *fighter);
+
+static void fatal_pose(Battle *battle, Fighter *fighter, int clip, int sample, bool owner) {
+  if (fighter_move(fighter)->clip != clip) {
+    for (int i = 0; i < COUNT(fatal_moves); ++i) {
+      if (fatal_moves[i].clip == clip) {
+        int scene_timer = fighter->script_timer;
+        fighter_start_move(battle, fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
+        fighter->script = owner ? fatality_tick : NULL;
+        fighter->script_timer = scene_timer;
+        break;
+      }
+    }
+  }
+  fighter->sample_override = sample;
+  fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
+}
+
+static bool fatal_phases(Battle *battle, Fighter *fighter, int tick, const FatalPhase *phases, int count, bool owner) {
+  for (int i = 0; i < count; ++i) {
+    const FatalPhase *p = &phases[i];
+    int length = abs(p->last - p->first) + 1;
+    if (tick < length * p->repeats || i == count - 1) {
+      bool done = tick >= length * p->repeats;
+      int sample = done ? p->last : p->first + (p->last >= p->first ? 1 : -1) * (tick % length);
+      fatal_pose(battle, fighter, p->clip, sample, owner);
+      return done;
+    }
+    tick -= length * p->repeats;
+  }
+  return true;
+}
+
+static bool can_second_fatality(const Battle *battle, const Fighter *fighter) {
+  float distance = fighter_distance(battle, fighter);
+  return battle_can_finish(battle, fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
+}
+
+static bool can_close_fatality(const Battle *battle, const Fighter *fighter) {
+  return battle_can_finish(battle, fighter) && fighter_distance(battle, fighter) <= 1.f;
+}
+
+/* 45e460 -> mask 4e4178: HP + BLOCK + RUN; no Up/HK/LP/LK. */
+static bool can_first_fatality(const Battle *battle, const Fighter *fighter) {
+  unsigned chord = BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN);
+  unsigned mask = chord | BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK);
+  return can_close_fatality(battle, fighter) && (fighter->held & mask) == chord;
+}
+
+static bool can_fan_fatality(const Battle *battle, const Fighter *fighter) {
+  return battle->arena == 8 && can_close_fatality(battle, fighter);
+}
+
+static bool can_spike_fatality(const Battle *battle, const Fighter *fighter) {
+  return battle->arena == 0 && can_close_fatality(battle, fighter);
+}
+
+static void fatality_tick(Battle *battle, Fighter *fighter) {
+  Fighter *victim = opponent(battle, fighter);
+  int tick = battle->phase_ticks;
+  bool owner_done = false, victim_done = false;
+  if (battle->finisher == FINISH_SUB_ZERO_1) {
+    if (tick < 58) {
+      return;
+    }
+    owner_done = fatal_phases(battle, fighter, tick - 58, first_owner, COUNT(first_owner), true);
+    if (tick >= 76) {
+      victim_done = fatal_phases(battle, victim, tick - 76, first_victim, COUNT(first_victim), false);
+    }
+  } else if (battle->finisher == FINISH_SUB_ZERO_2) {
+    int slide_end = 210 + fighter->script_timer;
+    if (tick < 210) {
+      fatal_phases(battle, fighter, tick, second_breath, COUNT(second_breath), true);
+      if (tick >= 70) {
+        victim->appearance = APPEARANCE_FROZEN;
+        victim->frozen_clip = 13;
+        victim->sample_override = 0;
+      }
+    } else if (tick < slide_end) {
+      fatal_pose(battle, fighter, 95, mini(8, tick - 210), true);
+      fighter_set_speed(battle, fighter, 0x2666);
+    } else {
+      fighter_set_speed(battle, fighter, 0);
+      int t = tick - slide_end;
+      if (t < 14) {
+        fatal_pose(battle, fighter, 258, 25 + t, true);
+      } else if (t < 19) {
+        fatal_pose(battle, fighter, 293, t - 14, true);
+      } else {
+        victim->appearance = APPEARANCE_HIDDEN;
+        int uppercut = t - 19;
+        if (uppercut < 34) {
+          int sample = uppercut < 6 ? (int[]){5, 6, 7, 8, 7, 6}[uppercut] : (int[]){7, 8, 7, 6}[(uppercut - 6) % 4];
+          fatal_pose(battle, fighter, 293, sample, true);
+        } else if (uppercut < 105) {
+          fatal_pose(battle, fighter, 293, mini(19, 9 + uppercut - 34), true);
+        } else {
+          owner_done = fatal_phases(battle, fighter, uppercut - 105, victory, COUNT(victory), true);
+          victim_done = true;
+        }
+      }
+    }
+  } else if (battle->finisher == FINISH_FAN) {
+    owner_done = fatal_phases(battle, fighter, tick, fan_owner, COUNT(fan_owner), true);
+    victim_done = fatal_phases(battle, victim, tick, fan_victim, COUNT(fan_victim), false);
+    if (tick >= 348) {
+      victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
+    }
+    if (victim_done) {
+      victim->appearance = APPEARANCE_HIDDEN;
+    }
+  } else if (battle->finisher == FINISH_SPIKE) {
+    /* 30-tick setup + script wait 28, uppercut to sample 5, reaction 175.
+     * Stop at Y=-5.6, then the victim script waits 128 + 50 + 60 ticks. */
+    int attack = tick - 58;
+    if (attack >= 0) {
+      fatal_pose(battle, fighter, 293, mini(19, attack), true);
+    }
+    if (tick >= 64) {
+      int rise = mini(22, tick - 64);
+      fatal_pose(battle, victim, 128, mini(31, rise * 2), false);
+      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+    }
+    if (tick >= 324) {
+      fatal_pose(battle, fighter, 115, 18, true);
+      owner_done = victim_done = true;
+    }
+  }
+  if (owner_done && victim_done) {
+    battle_end_finisher(battle);
+  }
+}
+
+static void start_fatality(Battle *battle, Fighter *fighter, int id) {
+  if (!battle_begin_finisher(battle, fighter, id)) {
+    sub_zero_ready(battle, fighter);
+    return;
+  }
+  Fighter *victim = opponent(battle, fighter);
+  fatal_pose(battle, victim, 13, 0, false);
+  fatal_pose(battle, fighter, id == FINISH_SUB_ZERO_1 ? 385 : id == FINISH_SUB_ZERO_2 ? 552 : id == FINISH_FAN ? 415 : 293, 0, true);
+  if (id == FINISH_SUB_ZERO_1) {
+    /* 445100 -> 475530 aligns the scene pair at 1.45 units. */
+    for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+      victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(battle, fighter, axis), 0x17333);
+    }
+  }
+  if (id == FINISH_SUB_ZERO_2) {
+    q16 distance = (q16)(fighter_distance(battle, fighter) * Q16_ONE);
+    fighter->script_timer = maxi(8, (distance - 0xcccc + 0x2665) / 0x2666);
+  }
+  fighter->script = fatality_tick;
+}
+
+static void sub_zero_first_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_SUB_ZERO_1);
+}
+
+static void sub_zero_second_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_SUB_ZERO_2);
+}
+
+static void sub_zero_fan_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_FAN);
+}
+
+static void sub_zero_spike_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_SPIKE);
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
+  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, can_first_fatality, sub_zero_first_fatality},
+  {BUTTON_HIGH_PUNCH, {TOKEN_BACK, TOKEN_BACK, TOKEN_DOWN, TOKEN_BACK}, 4, 50, 0, can_second_fatality, sub_zero_second_fatality},
   {BUTTON_LOW_PUNCH, {0}, 0, 0, 0, can_slide, sub_zero_slide},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0, can_ice, sub_zero_ice},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 18, CMD_AIR, can_clone, sub_zero_clone},
   {BUTTON_BLOCK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
+  {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, can_first_fatality, sub_zero_first_fatality},
+  {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_UP, TOKEN_UP, TOKEN_UP}, 4, 48, 0, can_fan_fatality, sub_zero_fan_fatality},
   {BUTTON_LOW_KICK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
+  {BUTTON_LOW_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, can_spike_fatality, sub_zero_spike_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 24, 0, can_weapon, sub_zero_weapon},
   {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, sub_zero_pickup},
+  {BUTTON_RUN, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, can_first_fatality, sub_zero_first_fatality},
 };
 // clang-format on
 

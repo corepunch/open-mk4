@@ -294,6 +294,17 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       float angle = fighter_move(f)->clip == 224 ? f->ticks * .5f : -1.1f;
       draw_weapon(cv, camera, hand, vec_add(hand, (Vec3){f->facing * cosf(angle), sinf(angle), 0}), f->weapon);
     }
+    if (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_SUB_ZERO_2 && i == battle->winner && battle->phase_ticks >= 10 &&
+        battle->phase_ticks < 190) {
+      Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
+      const Fighter *victim = &battle->fighters[1 - i];
+      Vec3 end = {fighter_x(victim), -1.2f, fighter_z(victim)};
+      ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, mouth)}, 1);
+      ScreenVertex to = camera_project(camera, (Vertex){.p = camera_point(camera, end)}, 1);
+      for (int spread = -5; spread <= 5; spread += 2) {
+        canvas_line(cv, (int)from.x, (int)from.y, (int)to.x, (int)to.y + spread, spread % 3 ? 0xff8ee8ff : 0xffecfbff);
+      }
+    }
     if ((fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
         (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_BURN && i == battle->winner && battle->phase_ticks >= 51 && battle->phase_ticks < 191)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};

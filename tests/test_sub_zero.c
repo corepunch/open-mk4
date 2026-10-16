@@ -551,13 +551,142 @@ static void weapons(void) {
   }
 }
 
+static Battle sub_zero_finish(int player, q16 distance, int arena) {
+  Battle battle = fight(player, 3.f);
+  battle.arena = arena;
+  battle.fighters[player].wins = 1;
+  battle_damage(&battle, &battle.fighters[1 - player], Q16_ONE);
+  advance(&battle, 1);
+  check(battle.phase == PHASE_FINISH && battle.winner == player, "Sub-Zero deciding KO must open finish window");
+  battle.fighters[0].body.pos[AXIS_X] = -distance / 2;
+  battle.fighters[1].body.pos[AXIS_X] = distance - distance / 2;
+  return battle;
+}
+
+static void sub_zero_finish_command(Battle *battle, int player, int id, unsigned extra, int window) {
+  Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
+  Button forward = player ? BUTTON_LEFT : BUTTON_RIGHT;
+  Button tokens[4] = {forward, back, forward, BUTTON_DOWN};
+  Button attack = BUTTON_HIGH_PUNCH;
+  int count = 4;
+  q16 distance = battle->fighters[1].body.pos[AXIS_X] - battle->fighters[0].body.pos[AXIS_X];
+  if (id == FINISH_SUB_ZERO_2) {
+    tokens[0] = tokens[1] = tokens[3] = back;
+    tokens[2] = BUTTON_DOWN;
+  } else if (id == FINISH_FAN) {
+    tokens[0] = BUTTON_DOWN;
+    tokens[1] = tokens[2] = tokens[3] = BUTTON_UP;
+    attack = BUTTON_HIGH_KICK;
+  } else if (id == FINISH_SPIKE) {
+    tokens[0] = tokens[1] = tokens[2] = BUTTON_DOWN;
+    count = 3;
+    attack = BUTTON_LOW_KICK;
+  }
+  for (int i = 0; i < count; ++i) {
+    press(battle, player, BUTTON_BIT(tokens[i]));
+    advance(battle, 2);
+  }
+  if (window > count * 4) {
+    advance(battle, window - count * 4);
+  }
+  /* Restore exact range after command-entry positioning, before the button. */
+  battle->fighters[0].body.pos[AXIS_X] = -distance / 2;
+  battle->fighters[1].body.pos[AXIS_X] = distance - distance / 2;
+  press(battle, player, BUTTON_BIT(attack) | extra);
+}
+
+static void fatalities(void) {
+  const int ids[] = {FINISH_SUB_ZERO_1, FINISH_SUB_ZERO_2, FINISH_FAN, FINISH_SPIKE};
+  unsigned chord = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN);
+  for (int player = 0; player < 2; ++player) {
+    for (int kind = 0; kind < 4; ++kind) {
+      int id = ids[kind];
+      Battle battle = sub_zero_finish(player, id == FINISH_SUB_ZERO_2 ? 0x26666 : 0xcccc, id == FINISH_FAN ? 8 : 0);
+      int time = battle.time_ticks;
+      sub_zero_finish_command(&battle, player, id, id == FINISH_SUB_ZERO_1 ? chord : 0, kind == 0 ? 60 : kind == 1 ? 50 : kind == 2 ? 48 : 40);
+      check(battle.phase == PHASE_FATALITY && battle.finisher == id, "Sub-Zero command at inclusive window must select finisher");
+      check(battle.time_ticks == time && battle.fighters[player].wins == 2, "finisher freezes timer and awards no extra win");
+      check(battle.fighters[0].buttons == NULL && battle.fighters[1].buttons == NULL, "finisher must lock both players");
+      if (id == FINISH_SUB_ZERO_1) {
+        advance(&battle, 90);
+        check(fighter_move(&battle.fighters[player])->clip == 385 && fighter_move(&battle.fighters[1 - player])->clip == 387,
+            "first fatality must select Sub-Zero paired clips");
+      } else if (id == FINISH_SUB_ZERO_2) {
+        advance(&battle, 80);
+        check(fighter_move(&battle.fighters[player])->clip == 552 && battle.fighters[1 - player].appearance == APPEARANCE_FROZEN,
+            "second fatality must play repeated breath and freeze victim");
+        advance(&battle, 135);
+        check(fighter_move(&battle.fighters[player])->clip == 95, "second fatality must approach with slide");
+        advance(&battle, 50);
+        check(battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN && fighter_move(&battle.fighters[player])->clip == 293,
+            "second fatality must shatter on uppercut");
+      }
+      advance(&battle, 700);
+      check(battle.phase == PHASE_MATCH_OVER && battle.finisher == id && battle.fighters[player].script == NULL, "finisher must complete once and settle");
+      if (id == FINISH_FAN) {
+        check(battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN, "fan must remove victim");
+      } else if (id == FINISH_SPIKE) {
+        check(battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "spikes must retain impaled position");
+      }
+      battle_reset_match(&battle);
+      check(battle.finisher == 0 && battle.fighters[0].appearance == APPEARANCE_NORMAL && battle.fighters[1].appearance == APPEARANCE_NORMAL,
+          "rematch must clear all finisher state");
+    }
+    for (int kind = 0; kind < 4; ++kind) {
+      int id = ids[kind];
+      Battle battle = sub_zero_finish(player, id == FINISH_SUB_ZERO_2 ? 0x26666 : 0xcccc, id == FINISH_FAN ? 8 : 0);
+      sub_zero_finish_command(&battle, player, id, id == FINISH_SUB_ZERO_1 ? chord : 0, kind == 0 ? 61 : kind == 1 ? 51 : kind == 2 ? 49 : 41);
+      check(battle.phase == PHASE_FINISH, "finisher must reject one tick beyond command window");
+    }
+    const q16 boundaries[] = {Q16_ONE, 0x1cccc, 0x30000};
+    for (int boundary = 0; boundary < 3; ++boundary) {
+      int id = boundary == 0 ? FINISH_SUB_ZERO_1 : FINISH_SUB_ZERO_2;
+      Battle battle = sub_zero_finish(player, boundaries[boundary], 0);
+      battle.projectiles[0].kind = PROJECTILE_ICE;
+      sub_zero_finish_command(&battle, player, id, boundary == 0 ? chord : 0, 0);
+      check(battle.phase == PHASE_FATALITY && objects(&battle, PROJECTILE_ICE) == 0, "inclusive range boundary and object cleanup");
+    }
+    for (int above = 0; above < 2; ++above) {
+      Battle battle = sub_zero_finish(player, above ? 0x30001 : 0x1cccb, 0);
+      sub_zero_finish_command(&battle, player, FINISH_SUB_ZERO_2, 0, 0);
+      check(battle.phase == PHASE_FINISH, "second fatality must reject either side of range interval");
+    }
+    for (int missing = 0; missing < 4; ++missing) {
+      Battle battle = sub_zero_finish(player, 0xcccc, 0);
+      unsigned extra = missing == 0   ? 0
+                       : missing == 1 ? BUTTON_BIT(BUTTON_RUN)
+                       : missing == 2 ? BUTTON_BIT(BUTTON_BLOCK)
+                                      : chord | BUTTON_BIT(BUTTON_LOW_PUNCH);
+      sub_zero_finish_command(&battle, player, FINISH_SUB_ZERO_1, extra, 0);
+      check(battle.phase == PHASE_FINISH, "first fatality requires exact held chord");
+    }
+    for (int kind = 0; kind < 4; ++kind) {
+      int id = ids[kind];
+      Battle battle = sub_zero_finish(player, id == FINISH_SUB_ZERO_2 ? 0x18000 : 0x10001, id == FINISH_FAN ? 8 : 0);
+      sub_zero_finish_command(&battle, player, id, id == FINISH_SUB_ZERO_1 ? chord : 0, 0);
+      check(battle.phase == PHASE_FINISH, "finisher must reject range outside boundary");
+    }
+    for (int kind = 2; kind < 4; ++kind) {
+      Battle battle = sub_zero_finish(player, 0xcccc, kind == 2 ? 0 : 8);
+      sub_zero_finish_command(&battle, player, ids[kind], 0, 0);
+      check(battle.phase == PHASE_FINISH, "stage fatality must require its stage");
+    }
+    Battle battle = sub_zero_finish(player, 0xcccc, 0);
+    sub_zero_finish_command(&battle, 1 - player, FINISH_SUB_ZERO_1, chord, 0);
+    check(battle.phase == PHASE_FINISH, "loser cannot start finisher");
+    advance(&battle, 300);
+    check(battle.phase == PHASE_MATCH_OVER && battle.finisher == 0, "finish window must still time out");
+  }
+}
+
 int main(void) {
+  fatalities();
   weapons();
   normals();
   ice();
   clone_tests();
   slide_tests();
   puts(
-      "PASS: scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+      "PASS: Sub-Zero fatalities/both stages/chord/windows/range/rematch; scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

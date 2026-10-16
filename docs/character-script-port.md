@@ -52,11 +52,11 @@ assume these three indices will always coincide for other roster entries.
 | --- | --- | --- |
 | High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
 | Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables, ice, clone, slide and D,F,HK weapon commands | Finisher commands in the next step |
+| Controls | Character-owned stance/follow-up tables and special, weapon and finisher commands | Shared RUN double-tap path remains for the final control step |
 | Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
 | Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide chord, hit/block/miss continuations and reactions 122/165 are also ported |
 | Weapon combat | Descriptor 0x6b, draw/follow-up, directional HP/LP, freezing back LP, shared air strikes, throw/drop/pickup with actual weapon identity | Simplified staff rendering and settling arc; pair-axis motion replaces camera-relative motion |
-| Finishers | Not yet ported | Follow the character-specific dependencies below |
+| Finishers | Both character scenes and fan/spikes stage fatalities; chord, range, stage, winner and window gates | Fixed camera, simplified ice/shatter and omitted mesh/gore effects; finite scene completion |
 
 Keep the existing high-kick sample fixture in
 [tests/fixtures/original_kicks.inc](../tests/fixtures/original_kicks.inc).
@@ -511,3 +511,37 @@ expressed as bounded C phases; sound, particles and camera-relative displacement
 are presentation omissions. The new C-like navigator (`--script ADDRESS --c`)
 is useful where supported; fall back to the ordinary listing at its explicit
 unsupported-operation boundary.
+
+
+## Sub-Zero finisher commands and sources
+
+During the winner-only finish window, directions are relative to the opponent.
+Fatality 1 uses **F,B,F,D, then HP+BLOCK+RUN held together** (60 ticks,
+at most 1 unit). Its HP, BLOCK and RUN records share predicate `45e460`;
+mask `4e4178` requires HP/BLOCK/RUN and rejects Up/HK/LP/LK. Directions
+Down/Left/Right are outside the mask. The startup dispatcher selects character
+4 from native table `4e0498`: `445100`, owner scripts `4e0368..3e8`,
+clip 385, paired victim `445380` / `4e03f0..438`, clip 387. Pair alignment
+uses 1.45 units. Cursor reversals and the final forward run are retained;
+our scene settles instead of looping samples 96–140 indefinitely.
+
+Fatality 2 is **B,B,D,B + HP** (50 ticks, 1.8–3 units inclusive).
+Native table `4dfe90[4]` selects `41b3a0`, script `4d2c10`: clip 552,
+three repetitions of samples 10–29 and five of 83–93, then its final
+samples. `4d2c78` waits 20 ticks and approaches with clip 95 at speed
+`0x2666`; `4d2ca0` continues clip 258:25–38 and uppercut 293, followed
+by eight forward/back cursor passes, a 60-tick hold and the victory sequence.
+The procedural scene turns the victim blue during the breath, hides it at
+shatter, and uses a bounded approach calculated from entry distance. Original
+ice mesh splitting, particles, gore and camera effects are omitted.
+Opcode `16` (`45baf0`) marks the fatality scene active and takes no operands;
+adding this researched operation exposes the second breath/hold branch.
+
+Stage commands are **D,U,U,U + HK** for the Prison fan (arena 8, 48 ticks)
+and **D,D,D + LK** for Goro's Lair spikes (arena 0, 40 ticks), both within
+one unit. They use the shared scenes and phases already ported for Scorpion,
+with Sub-Zero's own command records. All scenes lock both fighters, clear
+world objects, preserve the deciding KO and match timer, complete once, and
+clear appearance/scene state on rematch. Native tests cover both player slots,
+exact windows and range endpoints, missing/extra chord buttons, stage rejection,
+loser rejection, timeout, scene phases and reset.
