@@ -515,10 +515,43 @@ typedef struct SceneAttachment {
   Mat3 orientation;
 } SceneAttachment;
 
+typedef struct ParticleVisual {
+  MeshAnimation animation;
+  bool billboard, additive;
+  q16 shrink;
+} ParticleVisual;
+
+typedef struct ParticleSpray {
+  const ParticleVisual *visual;
+  int count, lifetime;
+  q16 gravity;
+  q16 velocity[3], spread[3], offset[3], position_spread[3];
+  bool splash;
+} ParticleSpray;
+
+typedef struct EmissionPhase {
+  int duration, period, extra, count; /* emit at period residue zero and optionally extra (-1 disables it) */
+} EmissionPhase;
+
+typedef struct JointSprayDef {
+  const ParticleSpray *spray;
+  const EmissionPhase *phases;
+  int count, origin_joint, base_joint; /* spray from origin away from base */
+  q16 speed, variation;
+} JointSprayDef;
+
+typedef struct JointSpray {
+  const JointSprayDef *def;
+  int fighter, ticks;
+} JointSpray;
+
 typedef struct Particle {
   q16 pos[3], vel[3], gravity;
   int ticks;
-  uint32_t color;
+  const ParticleVisual *visual;
+  int age;
+  q16 scale;
+  bool splash;
 } Particle;
 
 typedef struct CameraShot {
@@ -544,6 +577,7 @@ typedef struct SceneCamera {
 #define MAX_SCENE_PIECES 32
 #define MAX_SCENE_ATTACHMENTS 8
 #define MAX_PARTICLES 128
+#define MAX_JOINT_SPRAYS 4
 
 typedef struct SoundEvent {
   int bank, selector;
@@ -559,6 +593,7 @@ struct Battle {
   ScenePiece pieces[MAX_SCENE_PIECES];
   SceneAttachment attachments[MAX_SCENE_ATTACHMENTS];
   Particle particles[MAX_PARTICLES];
+  JointSpray sprays[MAX_JOINT_SPRAYS];
   SceneCamera camera;
   SoundEvent sounds[MAX_SOUND_EVENTS];
   int sound_count;
@@ -651,7 +686,9 @@ void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 int projectile_mesh_frame(const Projectile *object);
-void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
+void battle_particles(Battle *battle, const Fighter *fighter, int joint, int count, bool ice);
+void battle_spray(Battle *battle, const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation);
+void battle_joint_spray(Battle *battle, const Fighter *fighter, const JointSprayDef *def);
 ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
 void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);
 void battle_shatter(Battle *battle, Fighter *victim);

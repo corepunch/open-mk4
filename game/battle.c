@@ -86,6 +86,7 @@ void battle_next_round(Battle *battle) {
   memset(battle->pieces, 0, sizeof battle->pieces);
   memset(battle->attachments, 0, sizeof battle->attachments);
   memset(battle->particles, 0, sizeof battle->particles);
+  memset(battle->sprays, 0, sizeof battle->sprays);
   battle->camera = (SceneCamera){0};
   battle->sound_count = 0;
   battle->phase = PHASE_READY;

@@ -119,6 +119,74 @@ static Vec3 camera_sample(const SceneCamera *camera) {
   return result;
 }
 
+static q16 visual_random(unsigned *seed, q16 range) {
+  *seed = *seed * 1664525u + 1013904223u;
+  return (q16)(((uint64_t)*seed * (unsigned)range) >> 32);
+}
+
+void battle_spray(Battle *battle, const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation) {
+  require(spray != NULL && spray->visual != NULL && spray->lifetime > 0 && variation >= 0, "Invalid particle spray");
+  int count = spray->count;
+  for (int i = 0; i < MAX_PARTICLES && count > 0; ++i) {
+    Particle *p = &battle->particles[i];
+    if (p->ticks > 0) {
+      continue;
+    }
+    unsigned seed = (unsigned)battle->ticks * 1664525u + (unsigned)i * 1013904223u;
+    q16 velocity = speed + visual_random(&seed, variation);
+    *p = (Particle){.pos = {(q16)(origin.x * Q16_ONE), (q16)(origin.y * Q16_ONE), (q16)(origin.z * Q16_ONE)},
+        .vel = {(q16)(direction.x * velocity), (q16)(direction.y * velocity), (q16)(direction.z * velocity)},
+        .gravity = spray->gravity,
+        .ticks = spray->lifetime,
+        .visual = spray->visual,
+        .scale = spray->visual->animation.scale,
+        .splash = spray->splash};
+    for (int k = 0; k < 3; ++k) {
+      p->pos[k] += spray->offset[k] + visual_random(&seed, spray->position_spread[k] * 2) - spray->position_spread[k];
+      p->vel[k] += spray->velocity[k] + visual_random(&seed, spray->spread[k] * 2) - spray->spread[k];
+    }
+    --count;
+  }
+}
+
+static void joint_spray_step(Battle *battle, JointSpray *emitter) {
+  const JointSprayDef *def = emitter->def;
+  int age = emitter->ticks++;
+  for (int phase = 0; phase < def->count; ++phase) {
+    const EmissionPhase *timing = &def->phases[phase];
+    if (age >= timing->duration) {
+      age -= timing->duration;
+      continue;
+    }
+    if (age % timing->period == 0 || age % timing->period == timing->extra) {
+      Fighter *fighter = &battle->fighters[emitter->fighter];
+      Vec3 origin, target;
+      Mat3 unused;
+      fighter_joint_position(fighter, def->origin_joint, &origin, &unused);
+      fighter_joint_position(fighter, def->base_joint, &target, &unused);
+      Vec3 direction = vec_sub(origin, target);
+      float length = sqrtf(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+      direction = length > .0001f ? vec_scale(direction, 1.f / length) : (Vec3){0, -1, 0};
+      ParticleSpray spray = *def->spray;
+      spray.count = timing->count;
+      battle_spray(battle, &spray, origin, direction, def->speed, def->variation);
+    }
+    return;
+  }
+  emitter->def = NULL;
+}
+
+void battle_joint_spray(Battle *battle, const Fighter *fighter, const JointSprayDef *def) {
+  require(def != NULL && def->phases != NULL && def->count > 0, "Invalid joint spray");
+  for (int i = 0; i < MAX_JOINT_SPRAYS; ++i) {
+    if (battle->sprays[i].def == NULL) {
+      battle->sprays[i] = (JointSpray){.def = def, .fighter = fighter == &battle->fighters[0] ? 0 : 1};
+      joint_spray_step(battle, &battle->sprays[i]);
+      return;
+    }
+  }
+}
+
 /* 457b50/457b90: alternate a vertical camera offset and its removal,
  * independently of the active shot and without accumulating drift. */
 void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount) {
@@ -129,7 +197,9 @@ void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount) {
   camera->shake_interval = camera->shake_ticks = interval;
 }
 
-void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice) {
+void battle_particles(Battle *battle, const Fighter *fighter, int joint, int count, bool ice) {
+  static const ParticleVisual blood = {.animation = {0, 1, 1, Q16_ONE}};
+  static const ParticleVisual chip = {.animation = {73, 1, 1, Q16_ONE}};
   Vec3 origin;
   Mat3 unused;
   fighter_joint_position(fighter, joint, &origin, &unused);
@@ -144,7 +214,9 @@ void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_
         .vel = {q16_mul(fighter->heading[0], ice ? 0x51e0 : side), ice ? (side / 8) : -0x170a, q16_mul(fighter->heading[1], ice ? 0x51e0 : side)},
         .gravity = ice ? 0 : 0x147,
         .ticks = ice ? 16 : 45,
-        .color = color};
+        .visual = ice ? &chip : &blood,
+        .scale = Q16_ONE,
+        .splash = !ice};
     p->vel[AXIS_X] -= q16_mul(fighter->heading[1], side);
     p->vel[AXIS_Z] += q16_mul(fighter->heading[0], side);
     --count;
@@ -265,6 +337,11 @@ void battle_shatter(Battle *battle, Fighter *victim) {
 }
 
 void battle_step_presentation(Battle *battle) {
+  for (int i = 0; i < MAX_JOINT_SPRAYS; ++i) {
+    if (battle->sprays[i].def != NULL) {
+      joint_spray_step(battle, &battle->sprays[i]);
+    }
+  }
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     Projectile *object = &battle->projectiles[i];
     if (object->kind != 0 && object->light.def != NULL) {
@@ -306,13 +383,34 @@ void battle_step_presentation(Battle *battle) {
     float t = (float)++camera->ticks / camera->duration;
     camera->target = vec_add(camera->from_target, vec_scale(vec_sub(camera->to_target, camera->from_target), t));
   }
+  bool splash_sound = false;
   for (int i = 0; i < MAX_PARTICLES; ++i) {
     Particle *p = &battle->particles[i];
     if (p->ticks > 0) {
       --p->ticks;
+      p->age++;
+      if (p->visual != NULL) {
+        p->scale = maxi(0, p->scale - p->visual->shrink);
+      }
       p->vel[AXIS_Y] += p->gravity;
       for (int k = 0; k < 3; ++k) {
         p->pos[k] += p->vel[k];
+      }
+      if (p->splash && p->pos[AXIS_Y] >= 0 && p->vel[AXIS_Y] > 0) {
+        /* 4745d0: floor contact replaces the drop with 4e7ab0's
+         * nine two-tick meshes and a final one-tick tail. */
+        static const ParticleVisual splash = {.animation = {4, 9, 2, Q16_ONE}};
+        p->visual = &splash;
+        p->pos[AXIS_Y] = -0x7ae;
+        memset(p->vel, 0, sizeof p->vel);
+        p->gravity = p->age = 0;
+        p->ticks = 19;
+        p->scale = Q16_ONE;
+        p->splash = false;
+        if (!splash_sound) {
+          battle_sound(battle, SOUND_B, 5 + (i % 4));
+          splash_sound = true;
+        }
       }
     }
   }

@@ -831,6 +831,17 @@ static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECO
 /* 49bcfe installs 4ed898: shared meshes 74..81, one tick each.
  * The high bit invokes 40d720 for the separately managed ice trail. */
 static const MeshAnimation ice_meshes = {.first = 74, .count = 8, .period = 1, .scale = Q16_ONE};
+/* 40d720/40d920, 4d1b18/28/34: ten independent trail nodes,
+ * ten-tick track, quarter scale shrinking by .02 each tick.
+ * The supplied EXE's 405430 gate always succeeds. */
+static const ParticleVisual ice_trail_visual = {.animation = {339, 1, 1, 0x4000}, .billboard = true, .additive = true, .shrink = 0x51e};
+static const ParticleSpray ice_trail = {.visual = &ice_trail_visual,
+    .count = 10,
+    .lifetime = 10,
+    .velocity = {0, -0x7ae, 0},
+    .spread = {0, 0x28f, 0},
+    .offset = {0x1000, 0xc00, 0},
+    .position_spread = {0x6666, 0x6666, 0x6666}};
 
 static bool owned_object(const Battle *battle, const Fighter *fighter, int kind) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
@@ -857,6 +868,9 @@ static void ice_projectile(Battle *battle, Projectile *p) {
   int64_t radius2 = (int64_t)battle->arena_radius * battle->arena_radius + (int64_t)0xc0000 * Q16_ONE;
   if ((int64_t)p->pos[AXIS_X] * p->pos[AXIS_X] + (int64_t)p->pos[AXIS_Z] * p->pos[AXIS_Z] > radius2) {
     p->kind = 0;
+  }
+  if (p->kind != 0) {
+    battle_spray(battle, &ice_trail, (Vec3){q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])}, (Vec3){0}, 0, 0);
   }
 }
 
@@ -1309,6 +1323,28 @@ static const AttachmentDef first_spine = {.model = SCENE_MODEL_SPINE, .clip = 38
     .group_offset = {0, -0xccc / 65536.f, 0}, .piece_offset = {0, 0x2b43 / 65536.f, 0}, .piece_kind = 0, .scene_space = true};
 // clang-format on
 
+/* 445c40: eleven double sprays, eleven singles, thirteen 2/1-tick
+ * pairs, then seventy-one singles two ticks apart. 445e20 aims from
+ * joint 2 away from joint 3; 474330 selects the shared blood mesh. */
+static const ParticleVisual neck_blood_visual = {.animation = {0, 1, 1, Q16_ONE}};
+static const ParticleSpray neck_blood = {
+    .visual = &neck_blood_visual, .count = 1, .lifetime = 180, .gravity = 0x51e, .spread = {0x7ae, 0x7ae, 0x7ae}, .splash = true};
+// clang-format off: Keep table entries on one row, including long rows.
+static const EmissionPhase neck_blood_phases[] = {
+  {11, 1, -1, 2},
+  {11, 1, -1, 1},
+  {39, 3, 2, 1},
+  {142, 2, -1, 1},
+};
+// clang-format on
+static const JointSprayDef first_blood = {.spray = &neck_blood,
+    .phases = neck_blood_phases,
+    .count = COUNT(neck_blood_phases),
+    .origin_joint = 2,
+    .base_joint = 3,
+    .speed = 0x23d7,
+    .variation = 0x7ae};
+
 static void first_fatality_tick(Battle *battle, Fighter *fighter) {
   Fighter *victim = opponent(battle, fighter);
   if (fighter->script_phase == 0) {
@@ -1338,7 +1374,7 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
       battle_sound(battle, SOUND_B, 0);
       ScenePiece *head = battle_attach_head(battle, victim, fighter, 10);
       battle_attach_piece_model(battle, head, &first_spine, fighter);
-      battle_particles(battle, victim, 2, 0xffa81420, 20, false);
+      battle_joint_spray(battle, victim, &first_blood);
     }
   }
   if (victim->scene.clips == NULL && fighter->scene.index >= 2) {
@@ -1384,7 +1420,7 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
       }
       if (fighter->ticks >= 10 && fighter->ticks < 102) {
         /* 41bbb0 alternates joints 9 and 10 throughout its 46 passes. */
-        battle_particles(battle, fighter, 9 + (fighter->ticks & 1), 0xffa6eaff, 2, true);
+        battle_particles(battle, fighter, 9 + (fighter->ticks & 1), 2, true);
       }
     } break;
     case 1:
@@ -1406,7 +1442,7 @@ static void second_fatality_tick(Battle *battle, Fighter *fighter) {
       break;
     case 3:
       if (scene_step(fighter)) {
-        battle_particles(battle, victim, 3, 0xffa6eaff, 32, true);
+        battle_particles(battle, victim, 3, 32, true);
         battle_shatter(battle, victim);
         fighter->move_loops = 0;
         fighter->script_phase = 4;

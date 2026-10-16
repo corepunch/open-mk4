@@ -189,6 +189,15 @@ static void ice(void) {
         "ice command must bind its original mesh sequence at full size");
     int frame = projectile_mesh_frame(shot);
     check(frame >= 74 && frame <= 81, "ice object must select the recovered shared geometry");
+    int trails = 0;
+    for (int i = 0; i < MAX_PARTICLES; ++i) {
+      const Particle *p = &battle.particles[i];
+      if (p->ticks > 0 && p->visual != NULL && p->visual->billboard) {
+        check(p->visual->animation.first == 339 && p->scale > 0 && p->scale <= 0x4000, "ice trail must use its original quarter-size shrinking sprite");
+        ++trails;
+      }
+    }
+    check(trails == 20, "each ice animation tick must emit ten independent trail nodes");
     battle_react(&battle, &battle.fighters[player], 37);
     advance(&battle, 1);
     check(objects(&battle, PROJECTILE_ICE) == 1, "independent ice object must survive owner interruption");
@@ -1090,6 +1099,51 @@ static void fatality_camera(void) {
   }
 }
 
+static void fatality_particles(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle = sub_zero_finish(player, 0xcccc, 0);
+    sub_zero_finish_command(&battle, player, FINISH_SUB_ZERO_1, BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN), 60);
+    while (battle.fighters[player].scene.index < 7) {
+      advance(&battle, 1);
+    }
+    JointSpray *spray = &battle.sprays[0];
+    check(spray->def != NULL && spray->fighter == 1 - player && spray->ticks == 1, "head removal must start the independent victim blood stream");
+    int blood = 0;
+    for (int i = 0; i < MAX_PARTICLES; ++i) {
+      Particle *p = &battle.particles[i];
+      if (p->ticks > 0) {
+        check(p->visual != NULL && p->visual->animation.first == 0 && p->gravity == 0x51e, "neck stream must use the recovered blood mesh and gravity");
+        ++blood;
+      }
+    }
+    check(blood == 2, "neck stream must open with two drops rather than a single burst");
+    advance(&battle, 190);
+    check(spray->def != NULL && spray->ticks == 191, "neck stream must continue during the actor's independent animation loop");
+    advance(&battle, 13);
+    check(spray->def == NULL, "neck stream must end after its recovered 203-tick emission schedule");
+    battle_particles(&battle, &battle.fighters[1 - player], 2, 1, false);
+    Particle *drop = NULL;
+    for (int i = 0; i < MAX_PARTICLES; ++i) {
+      if (battle.particles[i].ticks == 45 && battle.particles[i].age == 0) {
+        drop = &battle.particles[i];
+        break;
+      }
+    }
+    check(drop != NULL, "prepare a blood drop at floor contact");
+    drop->pos[AXIS_Y] = -1;
+    drop->vel[AXIS_Y] = 0x2000;
+    battle_step_presentation(&battle);
+    check(drop->visual->animation.first == 4 && drop->ticks == 19 && drop->pos[AXIS_Y] == -0x7ae,
+        "blood must become the recovered floor splash sequence on landing");
+    for (int i = 0; i < 19; ++i) {
+      battle_step_presentation(&battle);
+    }
+    check(drop->ticks == 0, "floor splash must finish its nine two-tick frames and final tick");
+    battle_next_round(&battle);
+    check(battle.sprays[0].def == NULL && battle.particles[0].ticks == 0, "round reset must discard emitters and their particles");
+  }
+}
+
 static void sidesteps(void) {
   for (int player = 0; player < 2; ++player) {
     Battle range = fight(player, .6f);
@@ -1180,6 +1234,7 @@ int main(void) {
   locomotion();
   fatality_blends();
   fatality_camera();
+  fatality_particles();
   weapon_recovery();
   independent_contacts();
   sidesteps();

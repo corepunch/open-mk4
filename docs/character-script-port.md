@@ -145,7 +145,12 @@ camera splines and independent pulse shakes (`457b90`, fatality I uses
 the eight one-tick ice blast mesh frames (`4ed898`, shared meshes 74–81,
 GEO `0x100` additive blending),
 the shared ice statue and its orbiting light, original weapon
-meshes and three-arc settling records. The software rasterizer, blue freeze
+meshes and three-arc settling records. Ice trails use sprite 339 and the
+ten-node shrinking decoration from `40d720/40d920`; `405430` is an
+always-success gate in this executable. The first fatality's joint-directed
+blood stream translates `445c40`'s 203-tick cadence independently of the actor
+clips. Shared blood mesh 0 becomes floor splash meshes 4–12 on contact.
+The software rasterizer, blue freeze
 material, lighting and bounded particle pools remain portable engine choices.
 CPU distance plans, probability gates and automatic
 air attacks now live in the shared simulation; unported character action rows

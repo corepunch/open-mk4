@@ -193,6 +193,43 @@ void draw_sprite(Canvas *cv, const Geometry *geo, int index, Rect dst, bool flip
   canvas_blit(cv, &geo->textures.data[s->texture], (Rect){s->u, s->v, s->w, s->h}, dst, flip);
 }
 
+static void draw_shared_mesh(Canvas *cv, Camera camera, const Geometry *geometry, int index, Vec3 origin, Mat3 basis, float scale, const SceneLight *light) {
+  require(index >= 0 && (size_t)index < geometry->meshes.count, "Effect mesh outside shared geometry");
+  const Mesh *mesh = &geometry->meshes.data[index];
+  TrianglePass pass = (mesh->flags & 0x180) == 0x100 ? PASS_ADDITIVE : PASS_COLOR;
+  for (size_t j = 0; j < mesh->triangles.count; ++j) {
+    Triangle triangle = mesh->triangles.data[j];
+    for (int k = 0; k < 3; ++k) {
+      triangle.v[k].p = vec_add(origin, mat3_apply(basis, vec_scale(triangle.v[k].p, scale)));
+      triangle.v[k].normal = mat3_apply(basis, triangle.v[k].normal);
+    }
+    render_triangle(cv, camera, triangle, &geometry->textures.data[triangle.texture], 1, pass, light);
+  }
+}
+
+static void draw_billboard(Canvas *cv, Camera camera, const Geometry *geometry, int index, Vec3 origin, float scale, bool additive) {
+  require(index >= 0 && (size_t)index < geometry->sprites.count, "Effect sprite outside shared geometry");
+  const Sprite *sprite = &geometry->sprites.data[index];
+  Vec3 center = camera_point(camera, origin);
+  if (center.z < .4f || sprite->w <= 0 || sprite->h <= 0) {
+    return;
+  }
+  float x = center.x + sprite->origin_x * scale / 256.f, y = center.y + sprite->origin_y * scale / 256.f;
+  float width = sprite->width * scale / 256.f, height = sprite->height * scale / 256.f;
+  ScreenVertex corners[4];
+  for (int i = 0; i < 4; ++i) {
+    bool right = i & 1, down = i & 2;
+    Vertex vertex = {.p = {x + (right ? width : 0), y + (down ? height : 0), center.z},
+        .u = (float)(sprite->u + (right ? sprite->w - 1 : 0)),
+        .v = (float)(sprite->v + (down ? sprite->h - 1 : 0))};
+    corners[i] = camera_project(camera, vertex, 1);
+  }
+  ScreenVertex triangles[2][3] = {{corners[0], corners[1], corners[2]}, {corners[2], corners[1], corners[3]}};
+  for (int i = 0; i < 2; ++i) {
+    canvas_triangle(cv, triangles[i], &geometry->textures.data[sprite->texture], (Rect){0, 0, cv->w, cv->h}, false, additive ? PASS_ADDITIVE : PASS_COLOR);
+  }
+}
+
 static void draw_weapon(Canvas *cv, Camera camera, const Assets *assets, Vec3 origin, Mat3 basis, const WeaponDef *weapon, const SceneLight *light) {
   require(weapon != NULL && weapon->model >= 0 && (size_t)weapon->model < assets->scene_models.count, "Invalid weapon model");
   const Character *model = &assets->scene_models.data[weapon->model];
@@ -353,22 +390,10 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       FREE_ARRAY(geometry);
     }
     if (p->mesh_animation != NULL) {
-      const Geometry *geometry = &assets->hud.effects;
-      int index = projectile_mesh_frame(p);
-      require(index >= 0 && (size_t)index < geometry->meshes.count, "Object mesh outside shared geometry");
-      const Mesh *mesh = &geometry->meshes.data[index];
       float x = q16_float(p->heading[0]), z = q16_float(p->heading[1]);
       Mat3 basis = {{x, 0, -z, 0, 1, 0, z, 0, x}};
       Vec3 origin = {q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])};
-      for (size_t j = 0; j < mesh->triangles.count; ++j) {
-        Triangle triangle = mesh->triangles.data[j];
-        for (int k = 0; k < 3; ++k) {
-          triangle.v[k].p = vec_add(origin, mat3_apply(basis, vec_scale(triangle.v[k].p, q16_float(p->mesh_animation->scale))));
-          triangle.v[k].normal = mat3_apply(basis, triangle.v[k].normal);
-        }
-        TrianglePass pass = (mesh->flags & 0x180) == 0x100 ? PASS_ADDITIVE : PASS_COLOR;
-        render_triangle(cv, camera, triangle, &geometry->textures.data[triangle.texture], 1, pass, NULL);
-      }
+      draw_shared_mesh(cv, camera, &assets->hud.effects, projectile_mesh_frame(p), origin, basis, q16_float(p->mesh_animation->scale), NULL);
     }
     if (p->kind == PROJECTILE_SWORD) {
       Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
@@ -413,11 +438,23 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     if (p->ticks <= 0) {
       continue;
     }
-    Vec3 point = camera_point(camera, (Vec3){q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])});
-    if (point.z > .4f) {
-      ScreenVertex screen = camera_project(camera, (Vertex){.p = point}, 1);
-      int size = maxi(1, mini(8, (int)(camera.focal * .025f / point.z)));
-      canvas_rect(cv, (Rect){(int)screen.x - size / 2, (int)screen.y - size / 2, size, size}, p->color);
+    if (p->visual != NULL) {
+      const ParticleVisual *visual = p->visual;
+      int frame = visual->animation.first + mini(visual->animation.count - 1, p->age / visual->animation.period);
+      Vec3 origin = {q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])};
+      if (visual->billboard) {
+        draw_billboard(cv, camera, &assets->hud.effects, frame, origin, q16_float(p->scale), visual->additive);
+      } else {
+        float horizontal = hypotf(q16_float(p->vel[0]), q16_float(p->vel[2]));
+        Mat3 basis = mat3_identity();
+        if (horizontal > .0001f || p->vel[1] != 0) {
+          float pitch = atan2f(horizontal, q16_float(p->vel[1]));
+          float yaw = atan2f(q16_float(p->vel[0]), q16_float(p->vel[2]));
+          basis = mat3_mul(yaw_matrix(yaw), rotation(0, (Vec3){pitch * 4096.f / 6.283185307179586f, 0, 0}));
+        }
+        draw_shared_mesh(cv, camera, &assets->hud.effects, frame, origin, basis, q16_float(p->scale), &light);
+      }
+      continue;
     }
   }
   for (size_t i = 0; i < 2; ++i) {
