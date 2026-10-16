@@ -82,8 +82,7 @@ int roster_clip(const CharacterDef *def, int state, int asset_idle) {
 const Character *roster_character(const Assets *assets, int roster_index) {
   const CharacterDef *def = roster_def(roster_index);
   require(def->game == GAME_MK4, "Only the MK4 mesh bank is loaded");
-  require(def->asset >= 0 && (size_t)def->asset < assets->characters.count,
-      "Roster asset out of range");
+  require(def->asset >= 0 && (size_t)def->asset < assets->characters.count, "Roster asset out of range");
   return &assets->characters.data[def->asset];
 }
 

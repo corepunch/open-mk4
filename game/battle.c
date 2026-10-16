@@ -9,8 +9,7 @@ static bool locked(const Fighter *fighter) {
   return (fighter_move(fighter)->flags & SF_LOCK) != 0;
 }
 
-static void place(
-    Battle *battle, Fighter *fighter, int roster_index, int wins, float x, int facing) {
+static void place(Battle *battle, Fighter *fighter, int roster_index, int wins, float x, int facing) {
   *fighter = (Fighter){0};
   fighter->roster = roster_index;
   fighter->wins = wins;
@@ -207,26 +206,21 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
       continue;
     if ((move->flags & SF_LOW) && defender->height > 0.2f)
       continue;
-    if ((move->flags & SF_UNBLOCKABLE) &&
-        (defender->height > 0.f || defender->state == S_KNOCKDOWN || defender->state == S_HIT))
+    if ((move->flags & SF_UNBLOCKABLE) && (defender->height > 0.f || defender->state == S_KNOCKDOWN || defender->state == S_HIT))
       continue;
     if (defender->state == S_KNOCKDOWN)
       continue;
 
-    blocked = defender->state == S_BLOCK && !(move->flags & SF_UNBLOCKABLE) &&
-              (!(move->flags & SF_LOW) || defender->crouching);
+    blocked = defender->state == S_BLOCK && !(move->flags & SF_UNBLOCKABLE) && (!(move->flags & SF_LOW) || defender->crouching);
     /* A simultaneous incoming reaction may already have interrupted this
      * fighter. The outgoing hit still trades, but cannot restart its move. */
     if (battle->fighters[i].current_move == attacker->current_move) {
-      fighter_note_contact(&battle->fighters[i], blocked                  ? CONTACT_BLOCK
-                                                 : defender->height > 0.f ? CONTACT_AIR_HIT
-                                                                          : CONTACT_HIT);
+      fighter_note_contact(&battle->fighters[i], blocked ? CONTACT_BLOCK : defender->height > 0.f ? CONTACT_AIR_HIT : CONTACT_HIT);
     }
     target = &battle->fighters[1 - i];
     damage = blocked ? 0 : move->damage;
     target->health = (int)fmaxf(0.f, (float)target->health - (float)damage);
-    target->x = clampf(target->x + (float)attacker->facing * move->push * (blocked ? 0.4f : 1.f),
-        -battle->wall, battle->wall);
+    target->x = clampf(target->x + (float)attacker->facing * move->push * (blocked ? 0.4f : 1.f), -battle->wall, battle->wall);
     if (!blocked) {
       reaction = (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT;
       fighter_enter_state(battle, target, reaction);
@@ -236,8 +230,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
         target->height = fmaxf(0.01f, target->height);
       }
     }
-    battle->effects[i] = (HitEffect){(attacker->x + defender->x) * 0.5f,
-        defender->height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
+    battle->effects[i] = (HitEffect){(attacker->x + defender->x) * 0.5f, defender->height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
   }
 }
 

@@ -18,8 +18,7 @@ typedef struct Package {
 } Package;
 
 uint32_t name_hash(const char *path);
-bool parse_package(
-    View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t *count, const char **error);
+bool parse_package(View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t *count, const char **error);
 void package_load(Package *package, const char *path);
 void package_free(Package *package);
 View package_get(const Package *package, uint32_t hash);

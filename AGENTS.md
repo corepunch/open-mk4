@@ -25,11 +25,11 @@ and C include fragments. Use two-space indentation and keep opening braces on
 the same line as functions, structs, and control statements. Put each statement
 on its own line; expand function and control-flow bodies across multiple lines,
 even when they contain only one statement. Use normal spacing around operators
-and after commas, and wrap long expressions at the 100-column limit. Prefer
+and after commas, and wrap long expressions at the 160-column limit. Prefer
 readability over packing code into fewer lines.
 
 Keep data tables readable as one entry per row, preserving their column layout
-even when a row exceeds 100 columns. Surround only these table initializers
+even when a row exceeds 160 columns. Surround only these table initializers
 with `// clang-format off: Keep table entries on one row, including long rows.`
 and `// clang-format on` so formatting preserves the layout. Keep functions and
 control flow outside these exceptions.

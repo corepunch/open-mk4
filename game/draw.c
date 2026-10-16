@@ -25,12 +25,10 @@ static Vec3 camera_point(Camera c, Vec3 p) {
 }
 
 static ScreenVertex camera_project(Camera c, Vertex v, float light) {
-  return (ScreenVertex){(float)c.w * .5f + v.p.x * c.focal / v.p.z,
-      (float)c.h * .47f + v.p.y * c.focal / v.p.z, 1.f / v.p.z, v.u, v.v, light, 1.f / v.p.z};
+  return (ScreenVertex){(float)c.w * .5f + v.p.x * c.focal / v.p.z, (float)c.h * .47f + v.p.y * c.focal / v.p.z, 1.f / v.p.z, v.u, v.v, light, 1.f / v.p.z};
 }
 
-static void render_triangle(Canvas *cv, Camera camera, Triangle t, const Texture *texture,
-    float brightness, TrianglePass pass, const SceneLight *light) {
+static void render_triangle(Canvas *cv, Camera camera, Triangle t, const Texture *texture, float brightness, TrianglePass pass, const SceneLight *light) {
   typedef struct LitVertex {
     Vertex v;
     float light;
@@ -61,9 +59,8 @@ static void render_triangle(Canvas *cv, Camera camera, Triangle t, const Texture
     }
   }
   for (size_t i = 1; i + 1 < count; ++i) {
-    ScreenVertex v[] = {camera_project(camera, out[0].v, out[0].light),
-        camera_project(camera, out[i].v, out[i].light),
-        camera_project(camera, out[i + 1].v, out[i + 1].light)};
+    ScreenVertex v[] = {
+        camera_project(camera, out[0].v, out[0].light), camera_project(camera, out[i].v, out[i].light), camera_project(camera, out[i + 1].v, out[i + 1].light)};
     canvas_triangle(cv, v, texture, (Rect){0, 0, cv->w, cv->h}, false, pass);
   }
 }
@@ -92,8 +89,7 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
       if (floor)
         for (size_t k = 0; k < 3; ++k)
           floor_y = fminf(floor_y, t.v[k].p.y);
-      render_triangle(cv, camera, t, &arena->geometry.textures.data[t.texture], 1,
-          floor ? PASS_SHADOW_RECEIVER : PASS_COLOR, &light);
+      render_triangle(cv, camera, t, &arena->geometry.textures.data[t.texture], 1, floor ? PASS_SHADOW_RECEIVER : PASS_COLOR, &light);
     }
   }
   return isfinite(floor_y) ? floor_y : 0.f;
@@ -139,8 +135,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
       Triangle t = mesh->data[j];
       for (size_t k = 0; k < 3; ++k) {
         Vertex *v = &t.v[k];
-        Vec3 p = mat3_apply(
-            turn, vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root));
+        Vec3 p = mat3_apply(turn, vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root));
         v->p = (Vec3){p.x + fighter->x, p.y - fighter->height, p.z};
         v->normal = mat3_apply(turn, mat3_apply(bones[n].rotation, v->normal));
       }
@@ -156,16 +151,13 @@ static void round_intro(Canvas *cv, const Hud *hud, int round) {
   char number[32];
   snprintf(number, sizeof number, "%d", round);
   int digit = round >= 1 && round <= 3 ? 138 + round : -1;
-  int width = digit >= 0 ? hud->effects.sprites.data[digit].width * scale
-                         : font_width(&hud->font, number, scale);
+  int width = digit >= 0 ? hud->effects.sprites.data[digit].width * scale : font_width(&hud->font, number, scale);
   int x = (cv->w - word->width * scale - gap - width) / 2;
-  draw_sprite(
-      cv, &hud->effects, 138, (Rect){x, 205, word->width * scale, word->height * scale}, false);
+  draw_sprite(cv, &hud->effects, 138, (Rect){x, 205, word->width * scale, word->height * scale}, false);
   x += word->width * scale + gap;
   if (digit >= 0) {
     const Sprite *s = &hud->effects.sprites.data[digit];
-    draw_sprite(
-        cv, &hud->effects, digit, (Rect){x, 205, s->width * scale, s->height * scale}, false);
+    draw_sprite(cv, &hud->effects, digit, (Rect){x, 205, s->width * scale, s->height * scale}, false);
   } else
     font_draw(&hud->font, cv, x, 216, number, scale);
 }
@@ -174,8 +166,7 @@ static void bar(Canvas *cv, const Geometry *font, int health, Rect r, bool right
   const Sprite *s = &font->sprites.data[25];
   canvas_blit(cv, &font->textures.data[s->texture], (Rect){s->u, s->v, s->w, 8}, r, right);
   int inner = r.w - 6, missing = inner * (100 - health) / 100;
-  canvas_rect(
-      cv, (Rect){right ? r.x + 3 : r.x + r.w - 3 - missing, r.y + 3, missing, r.h - 6}, 0xff292320);
+  canvas_rect(cv, (Rect){right ? r.x + 3 : r.x + r.w - 3 - missing, r.y + 3, missing, r.h - 6}, 0xff292320);
 }
 
 void draw_sprite(Canvas *cv, const Geometry *geo, int index, Rect dst, bool flip) {
@@ -187,18 +178,15 @@ void draw_sprite(Canvas *cv, const Geometry *geo, int index, Rect dst, bool flip
   canvas_blit(cv, &geo->textures.data[s->texture], (Rect){s->u, s->v, s->w, s->h}, dst, flip);
 }
 
-void draw_battle(
-    Canvas *cv, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused) {
+void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused) {
   canvas_clear(cv);
   const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
-  Camera camera = {(a->x + b->x) * .25f, fmaxf(7.5f, fabsf(a->x - b->x) * .85f + 3.f),
-      (float)cv->w * .95f, cv->w, cv->h};
+  Camera camera = {(a->x + b->x) * .25f, fmaxf(7.5f, fabsf(a->x - b->x) * .85f + 3.f), (float)cv->w * .95f, cv->w, cv->h};
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
   Triangles fighters[] = {fighter_geometry(assets, a), fighter_geometry(assets, b)};
   Mat4 shadow;
-  require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow),
-      "Shadow light must intersect the receiver plane");
+  require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
     const Texture *texture = &roster_character(assets, battle->fighters[i].roster)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j) {
@@ -215,18 +203,15 @@ void draw_battle(
     const Fighter *fighter = &battle->fighters[i];
     const Texture *texture = &roster_character(assets, fighter->roster)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j)
-      render_triangle(cv, camera, fighters[i].data[j], texture,
-          fighter->state == S_HIT ? .72f : 1.f, PASS_COLOR, &light);
+      render_triangle(cv, camera, fighters[i].data[j], texture, fighter->state == S_HIT ? .72f : 1.f, PASS_COLOR, &light);
     FREE_ARRAY(fighters[i]);
   }
   for (size_t i = 0; i < 2; ++i) {
     const HitEffect *e = &battle->effects[i];
     if (e->ticks <= 0)
       continue;
-    ScreenVertex p = camera_project(
-        camera, (Vertex){.p = camera_point(camera, (Vec3){e->x, -e->height, .2f})}, 1);
-    canvas_blit(cv, &assets->hud.effects.textures.data[2], (Rect){1, 1, 23, 23},
-        (Rect){(int)p.x - 26, (int)p.y - 26, 52, 52}, false);
+    ScreenVertex p = camera_project(camera, (Vertex){.p = camera_point(camera, (Vec3){e->x, -e->height, .2f})}, 1);
+    canvas_blit(cv, &assets->hud.effects.textures.data[2], (Rect){1, 1, 23, 23}, (Rect){(int)p.x - 26, (int)p.y - 26, 52, 52}, false);
   }
   const uint32_t gold = 0xffdcc798;
   const Geometry *font = &assets->hud.font;
@@ -243,8 +228,7 @@ void draw_battle(
     int x = i ? cv->w - 38 - s.w * 2 : 38;
     draw_sprite(cv, font, idx, (Rect){x, 31, s.w * 2, s.h * 2}, false);
     for (int win = 0; win < 2; ++win)
-      canvas_rect(cv, (Rect){i ? cv->w - 52 - win * 21 : 38 + win * 21, 92, 13, 8},
-          win < f->wins ? gold : 0xff3b3830);
+      canvas_rect(cv, (Rect){i ? cv->w - 52 - win * 21 : 38 + win * 21, 92, 13, 8}, win < f->wins ? gold : 0xff3b3830);
   }
   char timer[32], round[32];
   snprintf(timer, sizeof timer, "%02d", maxi(0, (battle->time_ticks + 59) / 60));
@@ -255,11 +239,8 @@ void draw_battle(
   font_draw(font, cv, 28, cv->h - 79, assets->arenas.data[arena].name, 1);
   const char *mode = cpu ? "P1 VS CPU / F3 TWO PLAYERS" : "LOCAL TWO PLAYERS / F3 CPU";
   font_draw(font, cv, cv->w - 28 - font_width(font, mode, .6f), cv->h - 78, mode, .6f);
-  font_draw(font, cv, 28, cv->h - 49,
-      "P1  A/D MOVE  W JUMP  S DUCK  J PUNCH  K KICK  L BLOCK  U UPPERCUT  O THROW  H RUN", .6f);
-  font_draw(font, cv, 28, cv->h - 29,
-      "P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE",
-      .6f);
+  font_draw(font, cv, 28, cv->h - 49, "P1  A/D MOVE  W JUMP  S DUCK  J PUNCH  K KICK  L BLOCK  U UPPERCUT  O THROW  H RUN", .6f);
+  font_draw(font, cv, 28, cv->h - 29, "P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE", .6f);
   if (battle->phase == PHASE_READY) {
     round_intro(cv, &assets->hud, battle->round);
     if (battle->phase_ticks > 40)
@@ -270,13 +251,10 @@ void draw_battle(
     if (battle->winner < 0)
       snprintf(message, sizeof message, "DRAW");
     else
-      snprintf(message, sizeof message, "%s WINS",
-          roster_character(assets, battle->fighters[battle->winner].roster)->name);
+      snprintf(message, sizeof message, "%s WINS", roster_character(assets, battle->fighters[battle->winner].roster)->name);
     canvas_rect(cv, (Rect){cv->w / 2 - 350, 205, 700, 100}, 0xff141517);
     font_centered(font, cv, 224, message, 1.5f);
-    font_centered(font, cv, 267,
-        battle->phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND",
-        .75f);
+    font_centered(font, cv, 267, battle->phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND", .75f);
   }
   if (paused) {
     canvas_rect(cv, (Rect){cv->w / 2 - 130, cv->h / 2 - 35, 260, 66}, 0xff141517);

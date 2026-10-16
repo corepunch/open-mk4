@@ -13,18 +13,15 @@ void sdl_app_init(SdlApp *app, const char *title, int width, int height, bool he
   sdl_check(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == 0);
   if (headless)
     return;
-  app->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width,
-      height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+  app->window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
   if (app->window) {
-    app->renderer =
-        SDL_CreateRenderer(app->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    app->renderer = SDL_CreateRenderer(app->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!app->renderer)
       app->renderer = SDL_CreateRenderer(app->window, -1, SDL_RENDERER_SOFTWARE);
   }
   if (app->renderer) {
     SDL_RenderSetLogicalSize(app->renderer, width, height);
-    app->texture = SDL_CreateTexture(
-        app->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+    app->texture = SDL_CreateTexture(app->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
   }
   if (!app->texture) {
     char error[512];

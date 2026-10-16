@@ -30,23 +30,20 @@ static Image image_load(const char *name) {
   require(view_u16(v, 0) == 0x5a4d, "Executable is not an MZ/PE image");
   size_t pe = view_u32(v, 0x3c);
   require(view_u32(v, pe) == 0x4550, "Executable is not PE");
-  require(view_u16(v, pe + 4) == 0x14c && view_u16(v, pe + 24) == 0x10b,
-      "Expected 32-bit x86 MK4 executable");
+  require(view_u16(v, pe + 4) == 0x14c && view_u16(v, pe + 24) == 0x10b, "Expected 32-bit x86 MK4 executable");
   require(view_u32(v, pe + 52) == 0x400000, "Unexpected executable image base");
   Image exe = {0};
   RESIZE(exe.bytes, 0x180000);
   size_t sec = pe + 24 + view_u16(v, pe + 20);
   for (size_t i = 0; i < view_u16(v, pe + 6); ++i) {
-    size_t h = sec + i * 40, va = view_u32(v, h + 12), z = view_u32(v, h + 16),
-           o = view_u32(v, h + 20);
+    size_t h = sec + i * 40, va = view_u32(v, h + 12), z = view_u32(v, h + 16), o = view_u32(v, h + 20);
     if (va >= exe.bytes.count)
       continue;
     require(z <= exe.bytes.count - va, "Oversized executable section");
     view_check(v, o, z);
     memcpy(exe.bytes.data + va, v.p + o, z);
   }
-  require(image_u32(&exe, 0x4fad7c) == 0 && image_u32(&exe, 0x4fad80) == 13 &&
-              image_u32(&exe, 0x4fad7c + 612 * 12) == 0xffffffff,
+  require(image_u32(&exe, 0x4fad7c) == 0 && image_u32(&exe, 0x4fad80) == 13 && image_u32(&exe, 0x4fad7c + 612 * 12) == 0xffffffff,
       "Unsupported MK4 executable revision (animation table differs)");
   // clang-format off: Keep table entries on one row, including long rows.
   const uint32_t ranges[][2] = {
@@ -57,9 +54,7 @@ static Image image_load(const char *name) {
   for (size_t i = 0; i < 2; ++i)
     for (uint32_t p = ranges[i][0]; p < ranges[i][1]; p += 8) {
       uint32_t dst = image_u32(&exe, p), src = image_u32(&exe, p + 4);
-      require(
-          dst >= 0x4d0000 && dst + 4 <= 0x580000 && (!src || (src >= 0x4d0000 && src < 0x580000)),
-          "Invalid asset pointer fixup");
+      require(dst >= 0x4d0000 && dst + 4 <= 0x580000 && (!src || (src >= 0x4d0000 && src < 0x580000)), "Invalid asset pointer fixup");
       uint32_t w = src >> 2;
       for (int k = 0; k < 4; ++k)
         exe.bytes.data[dst - 0x400000 + (size_t)k] = (uint8_t)(w >> (k * 8));
@@ -84,15 +79,13 @@ static Meshes load_meshes(View v) {
     }
     if ((kind & 0x3f) > 1 || !count)
       break;
-    int64_t vp = (int64_t)(b) + 4 + view_s32(v, b + 4), sp = (int64_t)(b) + 8 + view_s32(v, b + 8),
-            tp = (int64_t)(b) + 12 + view_s32(v, b + 12);
+    int64_t vp = (int64_t)(b) + 4 + view_s32(v, b + 4), sp = (int64_t)(b) + 8 + view_s32(v, b + 8), tp = (int64_t)(b) + 12 + view_s32(v, b + 12);
     if (vp <= (int64_t)(b) || sp <= (int64_t)(b) || vp >= (int64_t)(end) || sp >= (int64_t)(end))
       break;
     table_end = minz(table_end, (size_t)(minz(vp, sp)));
     // Header's texture offset is four bytes before the texture count;
     // those four bytes are also the final triangle's trailing UV bytes.
-    require(tp >= 0 && (uint64_t)(tp) + (size_t)(count) * 8 <= (uint64_t)(end) + 4,
-        "Invalid GEO triangle table");
+    require(tp >= 0 && (uint64_t)(tp) + (size_t)(count) * 8 <= (uint64_t)(end) + 4, "Invalid GEO triangle table");
     Mesh mesh = {0};
     size_t vi = (size_t)(vp), ti = 0;
     bool terminated = false;
@@ -107,11 +100,8 @@ static Meshes load_meshes(View v) {
       for (int k = 0; k < n + 3; ++k) {
         require(vi + 12 <= (size_t)(tp), "Invalid GEO vertex stream");
         // GEO stores normal components as Z/X/Y; TransformVertex consumes X/Y/Z.
-        PUSH(verts, (Vertex){{view_s16(v, vi) / 256.f, view_s16(v, vi + 2) / 256.f,
-                                 view_s16(v, vi + 4) / 256.f},
-                        {view_s16(v, vi + 8) / 4096.f, view_s16(v, vi + 10) / 4096.f,
-                            view_s16(v, vi + 6) / 4096.f},
-                        0, 0});
+        PUSH(verts, (Vertex){{view_s16(v, vi) / 256.f, view_s16(v, vi + 2) / 256.f, view_s16(v, vi + 4) / 256.f},
+                        {view_s16(v, vi + 8) / 4096.f, view_s16(v, vi + 10) / 4096.f, view_s16(v, vi + 6) / 4096.f}, 0, 0});
         vi += 12;
       }
       for (int k = 0; k <= n; ++k, ++ti) {
@@ -147,8 +137,7 @@ static Textures load_textures(View v) {
     t.height = view_u16(v, p + 2);
     size_t n = view_u32(v, p + 4);
     p += 8;
-    require(t.width > 0 && t.width <= 1024 && t.height > 0 && t.height <= 1024,
-        "Invalid texture dimensions");
+    require(t.width > 0 && t.width <= 1024 && t.height > 0 && t.height <= 1024, "Invalid texture dimensions");
     // Stream size is rounded to an even byte count. Several retail files
     // omit that last pad byte; it is not part of the decoded pixel stream.
     require(p <= v.n && n <= v.n - p + 1, "Truncated texture stream");
@@ -169,15 +158,13 @@ static Textures load_textures(View v) {
         require(run > 0 && run <= t.width - x, "Invalid RGB555 texture run");
         // Zero is transparent. Literal and repeated colors use the same RGB555 format.
         uint32_t r = (c >> 10) & 31, g = (c >> 5) & 31, b = c & 31;
-        uint32_t rgba =
-            (c ? 0xff000000u : 0) | ((r * 255 / 31) << 16) | ((g * 255 / 31) << 8) | (b * 255 / 31);
+        uint32_t rgba = (c ? 0xff000000u : 0) | ((r * 255 / 31) << 16) | ((g * 255 / 31) << 8) | (b * 255 / 31);
         for (int k = 0; k < run; ++k)
           PUSH(t.pixels, rgba);
         x += run;
       }
     }
-    require(pos == available || (pos + 1 == available && n % 2 == 0),
-        "Texture stream has unexplained trailing data");
+    require(pos == available || (pos + 1 == available && n % 2 == 0), "Texture stream has unexplained trailing data");
     PUSH(textures, (t));
     p += n;
   }
@@ -211,8 +198,7 @@ static void bits_skip(Bits *b, size_t n) {
 
 // Adapted from mk4decomp's Anim_DecodeBitstream (MIT; see THIRD_PARTY_NOTICES).
 // A bounded bit cursor replaces the original's address-dependent DWORD reader.
-static void decode_frame(
-    View stream, View nibtable, int frames, int words, int frame, uint32_t out[24]) {
+static void decode_frame(View stream, View nibtable, int frames, int words, int frame, uint32_t out[24]) {
   require(words >= 3 && words <= 24, "Unsupported animation channel count");
   int bones = words - 3;
   memset(out, 0, 24 * sizeof *out);
@@ -279,8 +265,7 @@ static void decode_frame(
       }
   }
   for (int i = 0; i < 3; ++i)
-    out[(size_t)(i)] = ((scalar[(size_t)(i)] * view_u32(stream, (size_t)(i) * 8)) >> 8) +
-                       view_u32(stream, (size_t)(i) * 8 + 4);
+    out[(size_t)(i)] = ((scalar[(size_t)(i)] * view_u32(stream, (size_t)(i) * 8)) >> 8) + view_u32(stream, (size_t)(i) * 8 + 4);
   for (int i = 0; i < bones; ++i) {
     uint32_t packed = 0;
     for (int k = 0; k < 3; ++k) {
@@ -312,8 +297,7 @@ static Geometry load_geometry(View v) {
       sp.v = view_u8(v, p + 13);
       sp.w = view_u8(v, p + 14);
       sp.h = view_u8(v, p + 15);
-      require((size_t)sp.texture < g.textures.count && sp.w > 0 && sp.h > 0 &&
-                  sp.u + sp.w <= g.textures.data[sp.texture].width &&
+      require((size_t)sp.texture < g.textures.count && sp.w > 0 && sp.h > 0 && sp.u + sp.w <= g.textures.data[sp.texture].width &&
                   sp.v + sp.h <= g.textures.data[sp.texture].height,
           "Invalid GEO sprite");
       g.sprites.data[i] = sp;
@@ -342,8 +326,7 @@ static Clips load_clips(const Package *archive, const Image *exe) {
     seen[id] = true;
     uint32_t desc = 0x4fad7c + (uint32_t)id * 12;
     int frames = (int)image_u32(exe, desc + 4), words = (int)(image_u32(exe, desc + 8) >> 16);
-    require(
-        frames > 0 && frames <= 600 && words >= 3 && words <= 24, "Invalid animation descriptor");
+    require(frames > 0 && frames <= 600 && words >= 3 && words <= 24, "Invalid animation descriptor");
     View stream = view_sub(ap1, offset, size);
     offset += size;
     Clip *clip = &clips.data[id];
@@ -359,13 +342,11 @@ static Clips load_clips(const Package *archive, const Image *exe) {
         for (int w = 0; w < words; ++w)
           record[w] = view_u32(stream, (size_t)(f * words + w) * 4);
       Frame *out = &clip->frames.data[f];
-      out->translation = (Vec3){
-          (int32_t)record[0] / 65536.f, (int32_t)record[1] / 65536.f, (int32_t)record[2] / 65536.f};
+      out->translation = (Vec3){(int32_t)record[0] / 65536.f, (int32_t)record[1] / 65536.f, (int32_t)record[2] / 65536.f};
       RESIZE(out->angles, (size_t)(words - 3));
       for (int w = 3; w < words; ++w) {
         uint32_t v = record[w];
-        out->angles.data[w - 3] = (Vec3){
-            (float)((v & 0x7ff) * 2), (float)(((v >> 11) & 0x7ff) * 2), (float)((v >> 22) * 4)};
+        out->angles.data[w - 3] = (Vec3){(float)((v & 0x7ff) * 2), (float)(((v >> 11) & 0x7ff) * 2), (float)((v >> 22) * 4)};
       }
     }
   }
@@ -396,8 +377,7 @@ static void rig_walk(RigReader *r, int parent, int depth) {
   b.channel = (b.flags & 0x100) ? id - 2 : -1;
   b.mesh = (int)image_u32(r->exe, r->cursor + 24);
   require(b.mesh >= 0 && (size_t)b.mesh < r->meshes, "Skeleton mesh index out of range");
-  b.translation = (Vec3){image_s32(r->exe, r->cursor + 12) / 65536.f,
-      image_s32(r->exe, r->cursor + 16) / 65536.f, image_s32(r->exe, r->cursor + 20) / 65536.f};
+  b.translation = (Vec3){image_s32(r->exe, r->cursor + 12) / 65536.f, image_s32(r->exe, r->cursor + 16) / 65536.f, image_s32(r->exe, r->cursor + 20) / 65536.f};
   int index = (int)r->bones.count;
   PUSH(r->bones, b);
   r->cursor += 28;
@@ -433,8 +413,7 @@ Mat3 mat3_identity(void) {
 }
 
 Vec3 mat3_apply(Mat3 a, Vec3 v) {
-  return (Vec3){a.m[0] * v.x + a.m[1] * v.y + a.m[2] * v.z,
-      a.m[3] * v.x + a.m[4] * v.y + a.m[5] * v.z, a.m[6] * v.x + a.m[7] * v.y + a.m[8] * v.z};
+  return (Vec3){a.m[0] * v.x + a.m[1] * v.y + a.m[2] * v.z, a.m[3] * v.x + a.m[4] * v.y + a.m[5] * v.z, a.m[6] * v.x + a.m[7] * v.y + a.m[8] * v.z};
 }
 
 Mat3 mat3_mul(Mat3 a, Mat3 b) {
@@ -456,17 +435,14 @@ Mat3 rotation(int kind, Vec3 bam) {
   float x = cosf(a), xr = sinf(a), y = cosf(b), yr = sinf(b), z = cosf(c), zr = sinf(c);
   if (kind == 1) {
     float p = yr * xr, q = -yr * x;
-    return (Mat3){{z * y, -zr * y, yr, z * p + zr * x, z * x - zr * p, -xr * y, z * q + zr * xr,
-        xr * z - zr * q, y * x}};
+    return (Mat3){{z * y, -zr * y, yr, z * p + zr * x, z * x - zr * p, -xr * y, z * q + zr * xr, xr * z - zr * q, y * x}};
   }
   if (kind == 2) {
     float r = yr * z, t = zr * yr;
-    return (Mat3){{z * y, xr * r - zr * x, x * r + zr * xr, zr * y, xr * t + z * x, x * t - xr * z,
-        -yr, xr * y, y * x}};
+    return (Mat3){{z * y, xr * r - zr * x, x * r + zr * xr, zr * y, xr * t + z * x, x * t - xr * z, -yr, xr * y, y * x}};
   }
   float t = yr * xr, u = xr * y;
-  return (Mat3){{zr * t + z * y, z * t - zr * y, yr * x, zr * x, z * x, -xr, zr * u - yr * z,
-      z * u + zr * yr, y * x}};
+  return (Mat3){{zr * t + z * y, z * t - zr * y, yr * x, zr * x, z * x, -xr, zr * u - yr * z, z * u + zr * yr, y * x}};
 }
 
 void assets_load(Assets *assets, const char *archive_path, const char *executable) {
@@ -496,8 +472,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     /* StateDispatchTable special roster-ID stance remapping. */
     int stance_index = i == 16 ? 2 : i == 17 ? 7 : i;
     uint32_t stance = image_u32(&exe, 0x53d408 + (uint32_t)stance_index * 4) * 4;
-    require(stance >= 0x4fad7c && (stance - 0x4fad7c) % 12 == 0 && stance < 0x4fad7c + 612 * 12,
-        "Invalid default stance descriptor");
+    require(stance >= 0x4fad7c && (stance - 0x4fad7c) % 12 == 0 && stance < 0x4fad7c + 612 * 12, "Invalid default stance descriptor");
     ch.idle = (int)((stance - 0x4fad7c) / 12);
     Pose initial[MK4_MAX_BONES];
     pose(&ch, &assets->clips.data[ch.idle], 0, initial);
@@ -514,8 +489,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
 }
 
 void assets_load_battle(Assets *assets, const char *archive_path, const char *executable) {
-  require(assets->characters.count == MK4_ROSTER_COUNT && !assets->arenas.count,
-      "Load fighters before battle assets");
+  require(assets->characters.count == MK4_ROSTER_COUNT && !assets->arenas.count, "Load fighters before battle assets");
   Package archive;
   package_load(&archive, archive_path);
   Image exe = image_load(executable);
@@ -595,14 +569,12 @@ void pose(const Character *ch, const Clip *clip, double frame, Pose out[MK4_MAX_
     Vec3 angle = {0};
     if (bone->channel >= 0 && (size_t)bone->channel < f0->angles.count) {
       Vec3 v0 = f0->angles.data[bone->channel], v1 = f1->angles.data[bone->channel];
-      angle = (Vec3){v0.x + remainderf(v1.x - v0.x, 4096.f) * t,
-          v0.y + remainderf(v1.y - v0.y, 4096.f) * t, v0.z + remainderf(v1.z - v0.z, 4096.f) * t};
+      angle = (Vec3){v0.x + remainderf(v1.x - v0.x, 4096.f) * t, v0.y + remainderf(v1.y - v0.y, 4096.f) * t, v0.z + remainderf(v1.z - v0.z, 4096.f) * t};
     }
     p.rotation = bone->channel >= 0 ? rotation(bone->kind, angle) : mat3_identity();
     p.position = bone->translation;
     if (bone->parent < 0)
-      p.position = vec_add(
-          vec_add(p.position, vec_scale(f0->translation, 1 - t)), vec_scale(f1->translation, t));
+      p.position = vec_add(vec_add(p.position, vec_scale(f0->translation, 1 - t)), vec_scale(f1->translation, t));
     if (bone->parent >= 0) {
       require((size_t)bone->parent < i, "Skeleton is not in parent order");
       const Pose *par = &out[bone->parent];

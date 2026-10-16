@@ -246,7 +246,6 @@ void battle_next_round(Battle *battle);
 void battle_step(Battle *battle, const Input input[2]);
 const char *state_name(int state);
 
-void draw_battle(
-    Canvas *canvas, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused);
+void draw_battle(Canvas *canvas, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused);
 void draw_sprite(Canvas *canvas, const Geometry *geometry, int sprite, Rect dest, bool flip);
 #endif

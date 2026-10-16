@@ -73,8 +73,7 @@ int16_t view_s16(View v, size_t o) {
 
 uint32_t view_u32(View v, size_t o) {
   view_check(v, o, 4);
-  return (uint32_t)v.p[o] | (uint32_t)v.p[o + 1] << 8 | (uint32_t)v.p[o + 2] << 16 |
-         (uint32_t)v.p[o + 3] << 24;
+  return (uint32_t)v.p[o] | (uint32_t)v.p[o + 1] << 8 | (uint32_t)v.p[o + 2] << 16 | (uint32_t)v.p[o + 3] << 24;
 }
 
 int32_t view_s32(View v, size_t o) {

@@ -46,8 +46,7 @@ int main(void) {
   for (size_t f = 0; f < sizeof fixtures / sizeof *fixtures; ++f) {
     Mat3 m = rotation(fixtures[f].kind, fixtures[f].angles);
     for (size_t i = 0; i < 9; ++i)
-      check(fabsf(m.m[i] - (float)fixtures[f].q12.values[i] / 4096) < .002f,
-          "Rotation differs from original x86 builder");
+      check(fabsf(m.m[i] - (float)fixtures[f].q12.values[i] / 4096) < .002f, "Rotation differs from original x86 builder");
   }
   Assets assets = {0};
   assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
@@ -60,8 +59,7 @@ int main(void) {
     const Character *ch = &assets.characters.data[c];
     const Clip *clip = &assets.clips.data[ch->idle];
     bool channels[MK4_MAX_BONES] = {0};
-    int channel_count = 0, head = -1, left = -1, right = -1,
-        count = (int)clip->frames.data[0].angles.count;
+    int channel_count = 0, head = -1, left = -1, right = -1, count = (int)clip->frames.data[0].angles.count;
     for (size_t i = 0; i < ch->bones.count; ++i) {
       const Bone *b = &ch->bones.data[i];
       check(b->parent < (int)i, "Skeleton is not in parent order");
@@ -92,15 +90,13 @@ int main(void) {
         fatal("%s frame %zu head/feet height %f", ch->name, f, (double)(feet - p[head].position.y));
       for (size_t i = 0; i < ch->bones.count; ++i) {
         const Pose *bone = &p[i];
-        check(isfinite(bone->position.x + bone->position.y + bone->position.z),
-            "Invalid posed position");
+        check(isfinite(bone->position.x + bone->position.y + bone->position.z), "Invalid posed position");
         for (int row = 0; row < 3; ++row)
           for (int col = 0; col < 3; ++col) {
             float dot = 0;
             for (int k = 0; k < 3; ++k)
               dot += bone->rotation.m[row * 3 + k] * bone->rotation.m[col * 3 + k];
-            check(
-                fabsf(dot - (row == col ? 1.f : 0.f)) < .0001f, "Joint matrix is not orthonormal");
+            check(fabsf(dot - (row == col ? 1.f : 0.f)) < .0001f, "Joint matrix is not orthonormal");
           }
       }
     }
@@ -109,8 +105,7 @@ int main(void) {
     pose(ch, clip, (double)clip->frames.count, loop);
     for (size_t i = 0; i < ch->bones.count; ++i)
       for (size_t k = 0; k < 9; ++k)
-        check(first[i].rotation.m[k] == loop[i].rotation.m[k],
-            "Clip does not wrap at its frame count");
+        check(first[i].rotation.m[k] == loop[i].rotation.m[k], "Clip does not wrap at its frame count");
     {
       float sole0 = mesh_sole(ch, clip, 0);
       float sole1 = mesh_sole(ch, clip, (double)clip->frames.count - 1);
@@ -134,8 +129,7 @@ int main(void) {
         continue;
       move = def->moves[state];
       ground = &assets.clips.data[roster_clip(def, state, fighter->idle)];
-      check((int)ground->frames.data[0].angles.count == channels,
-          "Roster clip does not match the rig");
+      check((int)ground->frames.data[0].angles.count == channels, "Roster clip does not match the rig");
       frames = (int)ground->frames.count;
       first = move->first < frames ? move->first : frames - 1;
       last = move->last == MOVE_END ? frames - 1 : move->last;
@@ -154,18 +148,15 @@ int main(void) {
           if (sole < .40f || sole > .55f)
             fatal("%s knockdown opens at sole %f", def->name, (double)sole);
         } else if (fabsf(sole) > .15f)
-          fatal("%s %s clip %d frame %d sole %f leaves the floor", def->name, state_name(state),
-              ground->id, frame, (double)sole);
+          fatal("%s %s clip %d frame %d sole %f leaves the floor", def->name, state_name(state), ground->id, frame, (double)sole);
         if (!goro_open && fabsf(plant) > .3f && fabsf(sole - plant) <= fabsf(sole) + .25f)
-          fatal("%s %s clip %d frame %d root Y %f is not the ground plant", def->name,
-              state_name(state), ground->id, frame, (double)plant);
+          fatal("%s %s clip %d frame %d root Y %f is not the ground plant", def->name, state_name(state), ground->id, frame, (double)plant);
       }
     }
   }
   assets_free(&assets);
   check(!assets.characters.data && !assets.clips.data, "Asset ownership was not released");
-  printf(
-      "PASS: %zu original matrix fixtures; %zu upright idle poses; 18 complete rigs; 612 clips / %zu frames\n",
-      sizeof fixtures / sizeof *fixtures, poses, frames);
+  printf("PASS: %zu original matrix fixtures; %zu upright idle poses; 18 complete rigs; 612 clips / %zu frames\n", sizeof fixtures / sizeof *fixtures, poses,
+      frames);
   return 0;
 }

@@ -15,16 +15,15 @@ uint32_t name_hash(const char *path) {
   return h + (uint32_t)i;
 }
 
-bool parse_package(
-    View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t *count, const char **error) {
+bool parse_package(View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t *count, const char **error) {
   *count = 0;
   *error = NULL;
-#define VALIDATE(ok, message)                                                                      \
-  do {                                                                                             \
-    if (!(ok)) {                                                                                   \
-      *error = message;                                                                            \
-      return false;                                                                                \
-    }                                                                                              \
+#define VALIDATE(ok, message)                                                                                                                                  \
+  do {                                                                                                                                                         \
+    if (!(ok)) {                                                                                                                                               \
+      *error = message;                                                                                                                                        \
+      return false;                                                                                                                                            \
+    }                                                                                                                                                          \
   } while (0)
   VALIDATE(data.n >= PACKAGE_TABLE_SIZE, "truncated archive index");
   bool padding = false;
@@ -34,15 +33,11 @@ bool parse_package(
       padding = true;
       continue;
     }
-    VALIDATE(!padding && e.hash && (!*count || e.hash > entries[*count - 1].hash),
-        "invalid index ordering or padding");
-    VALIDATE(e.offset >= PACKAGE_TABLE_SIZE && (uint64_t)e.offset + e.size <= data.n,
-        "entry extends outside archive payload");
+    VALIDATE(!padding && e.hash && (!*count || e.hash > entries[*count - 1].hash), "invalid index ordering or padding");
+    VALIDATE(e.offset >= PACKAGE_TABLE_SIZE && (uint64_t)e.offset + e.size <= data.n, "entry extends outside archive payload");
     for (size_t i = 0; i < *count; ++i) {
       const PackageEntry *prev = &entries[i];
-      VALIDATE(!e.size || !prev->size ||
-                   (uint64_t)e.offset >= (uint64_t)prev->offset + prev->size ||
-                   (uint64_t)prev->offset >= (uint64_t)e.offset + e.size,
+      VALIDATE(!e.size || !prev->size || (uint64_t)e.offset >= (uint64_t)prev->offset + prev->size || (uint64_t)prev->offset >= (uint64_t)e.offset + e.size,
           "overlapping payload entries");
     }
     entries[(*count)++] = e;

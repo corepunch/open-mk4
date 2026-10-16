@@ -11,17 +11,14 @@ static const uint32_t gold = 0xffd2b273, ink = 0xffe9e7e0, muted = 0xff8a939f;
 static const float pi = 3.14159265358979323846f;
 
 static void cards(int w, int h, size_t count, Rect out[MK4_ROSTER_COUNT]) {
-  int cols = 6, rows = (int)((count + (size_t)cols - 1) / (size_t)cols), margin = 26, gap = 12,
-      top = 112, bottom = 52;
-  int cw = (w - 2 * margin - gap * (cols - 1)) / cols,
-      ch = (h - top - bottom - gap * (rows - 1)) / rows;
+  int cols = 6, rows = (int)((count + (size_t)cols - 1) / (size_t)cols), margin = 26, gap = 12, top = 112, bottom = 52;
+  int cw = (w - 2 * margin - gap * (cols - 1)) / cols, ch = (h - top - bottom - gap * (rows - 1)) / rows;
   for (size_t i = 0; i < count; ++i)
-    out[i] =
-        (Rect){margin + ((int)i % cols) * (cw + gap), top + ((int)i / cols) * (ch + gap), cw, ch};
+    out[i] = (Rect){margin + ((int)i % cols) * (cw + gap), top + ((int)i / cols) * (ch + gap), cw, ch};
 }
 
-static void draw(Canvas *cv, const Assets *assets, const Bounds boxes[MK4_ROSTER_COUNT],
-    double seconds, float speed, float yaw, bool paused, bool wire, bool skeleton, int selected) {
+static void draw(Canvas *cv, const Assets *assets, const Bounds boxes[MK4_ROSTER_COUNT], double seconds, float speed, float yaw, bool paused, bool wire,
+    bool skeleton, int selected) {
   canvas_clear(cv);
   canvas_rect(cv, (Rect){26, 29, 4, 44}, gold);
   canvas_text(cv, 44, 28, "MORTAL KOMBAT 4", 3, ink);
@@ -49,9 +46,7 @@ static void draw(Canvas *cv, const Assets *assets, const Bounds boxes[MK4_ROSTER
     snprintf(info, sizeof info, "IDLE %03d / %zu FRAMES", ch->idle, clip->frames.count);
     canvas_text(cv, r.x + 12, r.y + r.h - 16, info, 1, muted);
   }
-  canvas_text(cv, 26, cv->h - 27,
-      "SPACE PAUSE   DRAG ROTATE   R FRONT   W WIREFRAME   B BONES   -/+ SPEED   ESC QUIT", 1,
-      muted);
+  canvas_text(cv, 26, cv->h - 27, "SPACE PAUSE   DRAG ROTATE   R FRONT   W WIREFRAME   B BONES   -/+ SPEED   ESC QUIT", 1, muted);
 }
 
 static void usage(void) {
@@ -102,8 +97,7 @@ int main(int argc, char **argv) {
     } else
       fatal("Unknown option %s", arg);
   }
-  require(limit >= 0 && isfinite(start_time) && start_time >= 0 && isfinite(yaw) &&
-              override_clip >= -1 && override_clip < MK4_CLIP_COUNT,
+  require(limit >= 0 && isfinite(start_time) && start_time >= 0 && isfinite(yaw) && override_clip >= -1 && override_clip < MK4_CLIP_COUNT,
       "Invalid command-line value");
   Assets assets = {0};
   assets_load(&assets, archive, exe);
@@ -116,8 +110,7 @@ int main(int argc, char **argv) {
     int required = 0;
     for (size_t j = 0; j < ch->bones.count; ++j)
       required = maxi(required, ch->bones.data[j].channel + 1);
-    if (override_clip >= 0 &&
-        assets.clips.data[override_clip].frames.data[0].angles.count == (size_t)required)
+    if (override_clip >= 0 && assets.clips.data[override_clip].frames.data[0].angles.count == (size_t)required)
       ch->idle = override_clip;
     for (size_t j = 0; j < ch->meshes.count; ++j)
       triangles += ch->meshes.data[j].triangles.count;
@@ -125,11 +118,10 @@ int main(int argc, char **argv) {
     Bounds b = boxes[i];
     if (!isfinite(b.lo.x) || b.hi.y - b.lo.y < .1f || b.hi.y - b.lo.y > 10)
       fatal("Invalid posed bounds for %s", ch->name);
-    printf("%-12s %-14s %2zu bones / %2zu meshes / clip %3d (%zu frames)\n", ch->name, ch->file,
-        ch->bones.count, ch->meshes.count, ch->idle, assets.clips.data[ch->idle].frames.count);
+    printf("%-12s %-14s %2zu bones / %2zu meshes / clip %3d (%zu frames)\n", ch->name, ch->file, ch->bones.count, ch->meshes.count, ch->idle,
+        assets.clips.data[ch->idle].frames.count);
   }
-  printf("Loaded %zu characters, %zu clips, %zu animation frames, %zu mesh triangles\n",
-      assets.characters.count, assets.clips.count, frames, triangles);
+  printf("Loaded %zu characters, %zu clips, %zu animation frames, %zu mesh triangles\n", assets.characters.count, assets.clips.count, frames, triangles);
   if (dump) {
     FILE *f = fopen(dump, "w");
     require(f != NULL, "Cannot create frame dump");
@@ -143,8 +135,7 @@ int main(int argc, char **argv) {
           fprintf(f, " %08x", (uint32_t)(int32_t)lroundf(values[k] * 65536));
         for (size_t k = 0; k < frame->angles.count; ++k) {
           Vec3 a = frame->angles.data[k];
-          fprintf(f, " %08x",
-              ((uint32_t)a.x / 2) | (((uint32_t)a.y / 2) << 11) | (((uint32_t)a.z / 4) << 22));
+          fprintf(f, " %08x", ((uint32_t)a.x / 2) | (((uint32_t)a.y / 2) << 11) | (((uint32_t)a.z / 4) << 22));
         }
         fputc('\n', f);
       }
@@ -169,9 +160,7 @@ int main(int argc, char **argv) {
         ++animated;
     }
     require(animated == assets.characters.count, "Some characters have no animated pose change");
-    printf(
-        "PASS: all %zu character rigs animate; all clips and textures decoded with bounds checks\n",
-        animated);
+    printf("PASS: all %zu character rigs animate; all clips and textures decoded with bounds checks\n", animated);
     assets_free(&assets);
     return 0;
   }

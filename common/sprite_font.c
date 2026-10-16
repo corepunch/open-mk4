@@ -44,13 +44,10 @@ void font_draw(const Geometry *atlas, Canvas *cv, int x, int y, const char *text
       continue;
     }
     const Sprite *s = font_sprite(atlas, index);
-    require(
-        s->texture >= 0 && (size_t)s->texture < atlas->textures.count, "Font page outside atlas");
+    require(s->texture >= 0 && (size_t)s->texture < atlas->textures.count, "Font page outside atlas");
     canvas_blit(cv, &atlas->textures.data[s->texture], (Rect){s->u, s->v, s->w, s->h},
-        (Rect){(int)lroundf(pen + (float)s->origin_x * scale),
-            y + (int)lroundf((float)(13 + s->origin_y) * scale),
-            maxi(1, (int)lroundf((float)s->width * scale)),
-            maxi(1, (int)lroundf((float)s->height * scale))},
+        (Rect){(int)lroundf(pen + (float)s->origin_x * scale), y + (int)lroundf((float)(13 + s->origin_y) * scale),
+            maxi(1, (int)lroundf((float)s->width * scale)), maxi(1, (int)lroundf((float)s->height * scale))},
         false);
     pen += (float)(s->width + 1) * scale;
   }

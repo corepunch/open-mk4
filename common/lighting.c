@@ -11,8 +11,7 @@ float light_shade(SceneLight light, Vec3 point, Vec3 normal) {
   float l2 = to_light.x * to_light.x + to_light.y * to_light.y + to_light.z * to_light.z;
   if (n2 < 1e-12f || l2 < 1e-12f)
     return light.ambient;
-  float lambert =
-      (normal.x * to_light.x + normal.y * to_light.y + normal.z * to_light.z) / sqrtf(n2 * l2);
+  float lambert = (normal.x * to_light.x + normal.y * to_light.y + normal.z * to_light.z) / sqrtf(n2 * l2);
   return clampf(light.ambient + light.diffuse * fmaxf(0.f, lambert), 0.f, 1.f);
 }
 

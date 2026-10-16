@@ -51,15 +51,12 @@ static int fail(const char *message, const char *path) {
 
 static int same_stamp(const struct stat *a, const struct stat *b) {
 #ifdef __APPLE__
-  return a->st_dev == b->st_dev && a->st_ino == b->st_ino && a->st_size == b->st_size &&
-         a->st_mtimespec.tv_sec == b->st_mtimespec.tv_sec &&
-         a->st_mtimespec.tv_nsec == b->st_mtimespec.tv_nsec &&
-         a->st_ctimespec.tv_sec == b->st_ctimespec.tv_sec &&
+  return a->st_dev == b->st_dev && a->st_ino == b->st_ino && a->st_size == b->st_size && a->st_mtimespec.tv_sec == b->st_mtimespec.tv_sec &&
+         a->st_mtimespec.tv_nsec == b->st_mtimespec.tv_nsec && a->st_ctimespec.tv_sec == b->st_ctimespec.tv_sec &&
          a->st_ctimespec.tv_nsec == b->st_ctimespec.tv_nsec;
 #else
-  return a->st_dev == b->st_dev && a->st_ino == b->st_ino && a->st_size == b->st_size &&
-         a->st_mtim.tv_sec == b->st_mtim.tv_sec && a->st_mtim.tv_nsec == b->st_mtim.tv_nsec &&
-         a->st_ctim.tv_sec == b->st_ctim.tv_sec && a->st_ctim.tv_nsec == b->st_ctim.tv_nsec;
+  return a->st_dev == b->st_dev && a->st_ino == b->st_ino && a->st_size == b->st_size && a->st_mtim.tv_sec == b->st_mtim.tv_sec &&
+         a->st_mtim.tv_nsec == b->st_mtim.tv_nsec && a->st_ctim.tv_sec == b->st_ctim.tv_sec && a->st_ctim.tv_nsec == b->st_ctim.tv_nsec;
 #endif
 }
 
@@ -69,8 +66,7 @@ static int read_snapshot(const char *path, unsigned char **data, size_t *size) {
   FILE *f = fopen(path, "rb");
   if (!f)
     return fail(strerror(errno), path);
-  if (fstat(fileno(f), &before) || !S_ISREG(before.st_mode) || before.st_size < 0 ||
-      (uintmax_t)before.st_size > SIZE_MAX) {
+  if (fstat(fileno(f), &before) || !S_ISREG(before.st_mode) || before.st_size < 0 || (uintmax_t)before.st_size > SIZE_MAX) {
     fclose(f);
     return fail("not a readable regular file", path);
   }
@@ -80,8 +76,7 @@ static int read_snapshot(const char *path, unsigned char **data, size_t *size) {
     fclose(f);
     return fail("out of memory", path);
   }
-  if (fread(p, 1, *size, f) != *size || fstat(fileno(f), &after) || stat(path, &current) ||
-      !same_stamp(&before, &after) || !same_stamp(&after, &current)) {
+  if (fread(p, 1, *size, f) != *size || fstat(fileno(f), &after) || stat(path, &current) || !same_stamp(&before, &after) || !same_stamp(&after, &current)) {
     free(p);
     fclose(f);
     return fail("could not read a stable snapshot", path);
@@ -119,8 +114,7 @@ static int safe_leaf(const char *s) {
   if (!s[0] || s[0] == '.' || strlen(s) > 180)
     return 0;
   for (i = 0; s[i]; ++i)
-    if (!((s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z') ||
-            (s[i] >= '0' && s[i] <= '9') || s[i] == '_' || s[i] == '-' || s[i] == '.'))
+    if (!((s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z') || (s[i] >= '0' && s[i] <= '9') || s[i] == '_' || s[i] == '-' || s[i] == '.'))
       return 0;
   return 1;
 }
@@ -130,8 +124,7 @@ static void try_name(Archive *a, const char *name) {
   size_t i, n = strlen(name), lo = 0, hi = a->count;
   uint32_t hash;
   Entry *e;
-  if (n < 4 || n >= sizeof normalized || name[1] != ':' || name[2] != '\\' ||
-      !safe_leaf(leaf_name(name)))
+  if (n < 4 || n >= sizeof normalized || name[1] != ':' || name[2] != '\\' || !safe_leaf(leaf_name(name)))
     return;
   for (i = 0; i <= n; ++i) {
     unsigned char c = (unsigned char)name[i];
@@ -224,8 +217,7 @@ static int make_dirs(const char *path) {
     /* System path prefixes may be aliases (macOS /var -> /private/var).
          * Refuse symlinks at the output root and at each generated subdirectory.
          */
-    if ((mkdir(buf, 0755) && errno != EEXIST) || (i == n ? lstat(buf, &st) : stat(buf, &st)) ||
-        !S_ISDIR(st.st_mode))
+    if ((mkdir(buf, 0755) && errno != EEXIST) || (i == n ? lstat(buf, &st) : stat(buf, &st)) || !S_ISDIR(st.st_mode))
       return fail("cannot create directory (output directory must not be a symlink)", buf);
     buf[i] = path[i];
   }
@@ -300,8 +292,7 @@ static int process_archive(Archive *a, const char *output, int list) {
   char *manifest = static_cast<char *>(malloc(capacity));
   if (!manifest)
     return fail("out of memory", "manifest");
-  used = (size_t)snprintf(manifest, capacity,
-      "index\thash\toffset\tsize\ttype\tpath\tname_status\toriginal_path_candidate\n");
+  used = (size_t)snprintf(manifest, capacity, "index\thash\toffset\tsize\ttype\tpath\tname_status\toriginal_path_candidate\n");
   for (i = 0; i < a->count; ++i) {
     Entry *e = &a->entries[i];
     const char *status = e->ambiguous ? "ambiguous" : e->original[0] ? "candidate" : "unknown";
@@ -309,9 +300,8 @@ static int process_archive(Archive *a, const char *output, int list) {
     entry_path(a, e, relative, sizeof relative);
     if (e->original[0] && !e->ambiguous)
       ++known;
-    n = snprintf(manifest + used, capacity - used,
-        "%zu\t%08" PRIx32 "\t%" PRIu32 "\t%" PRIu32 "\t%s\t%s\t%s\t%s\n", i, e->hash, e->offset,
-        e->size, entry_type(a, e), relative, status, e->original);
+    n = snprintf(manifest + used, capacity - used, "%zu\t%08" PRIx32 "\t%" PRIu32 "\t%" PRIu32 "\t%s\t%s\t%s\t%s\n", i, e->hash, e->offset, e->size,
+        entry_type(a, e), relative, status, e->original);
     if (n < 0 || (size_t)n >= capacity - used) {
       free(manifest);
       return fail("manifest too large", output);
@@ -350,14 +340,12 @@ static int process_archive(Archive *a, const char *output, int list) {
     }
     written += (size_t)rc;
   }
-  if (join_path(path, sizeof path, output, "manifest.tsv") ||
-      write_atomic(path, (const unsigned char *)manifest, used) < 0) {
+  if (join_path(path, sizeof path, output, "manifest.tsv") || write_atomic(path, (const unsigned char *)manifest, used) < 0) {
     free(manifest);
     return -1;
   }
   free(manifest);
-  printf("%zu entries, %zu filename candidates; %zu files updated in %s\n", a->count, known,
-      written, output);
+  printf("%zu entries, %zu filename candidates; %zu files updated in %s\n", a->count, known, written, output);
   fflush(stdout);
   return 0;
 }
@@ -433,8 +421,7 @@ int main(int argc, char **argv) {
       if (!interval)
         result = 1;
     } else {
-      int stable = !interval ||
-                   (previous && previous_size == a->size && !memcmp(previous, a->data, a->size));
+      int stable = !interval || (previous && previous_size == a->size && !memcmp(previous, a->data, a->size));
       int changed = !published || published_size != a->size || memcmp(published, a->data, a->size);
       if (reported_error) {
         fprintf(stderr, "Archive readable again\n");

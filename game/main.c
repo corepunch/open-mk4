@@ -36,8 +36,7 @@ static void validate(const Assets *assets) {
       triangles += arena->geometry.meshes.data[arena->nodes.data[j].mesh].triangles.count;
     }
     require(triangles > 0, "Empty arena");
-    printf("%-20s %-15s %zu nodes / %zu triangles / %zu pages\n", arena->name, arena->file,
-        arena->nodes.count, triangles, arena->geometry.textures.count);
+    printf("%-20s %-15s %zu nodes / %zu triangles / %zu pages\n", arena->name, arena->file, arena->nodes.count, triangles, arena->geometry.textures.count);
   }
   require(assets->hud.font.sprites.count == 143, "Invalid HUD sprite directory");
   require(roster_count() == MK4_ROSTER_COUNT, "MK4 roster size drifted");
@@ -55,8 +54,7 @@ static void validate(const Assets *assets) {
       const Clip *clip = &assets->clips.data[roster_clip(def, state, ch->idle)];
       int frames = (int)clip->frames.count;
       require((int)clip->frames.data[0].angles.count == channels, "Incompatible combat animation");
-      require(move->first >= 0 && move->first < frames &&
-                  (move->last == MOVE_END || (move->last >= 0 && move->last < frames)),
+      require(move->first >= 0 && move->first < frames && (move->last == MOVE_END || (move->last >= 0 && move->last < frames)),
           "Move frame range outside its clip");
       for (int k = 0; k < 2; ++k) {
         Pose nodes[MK4_MAX_BONES];
@@ -70,13 +68,11 @@ static void validate(const Assets *assets) {
       }
     }
   }
-  puts(
-      "PASS: 11 textured arena hierarchies; original HUD/name sprites; all 18 combat rigs compatible");
+  puts("PASS: 11 textured arena hierarchies; original HUD/name sprites; all 18 combat rigs compatible");
 }
 
-static void apply_shell(ShellCommand command, Battle *battle, bool *running, bool *paused,
-    bool *cpu, bool *demo, int *arena, int arena_count, InputDevice pads[2],
-    const unsigned char *keys) {
+static void apply_shell(ShellCommand command, Battle *battle, bool *running, bool *paused, bool *cpu, bool *demo, int *arena, int arena_count,
+    InputDevice pads[2], const unsigned char *keys) {
   int player;
   switch (command) {
     case SHELL_QUIT:
@@ -216,15 +212,12 @@ int main(int argc, char **argv) {
       if (ev.type != SDL_KEYDOWN || ev.key.repeat)
         continue;
       keys = SDL_GetKeyboardState(NULL);
-      apply_shell(input_shell_command((int)ev.key.keysym.sym), &battle, &running, &paused, &cpu,
-          &demo, &arena, (int)assets.arenas.count, pads, keys);
+      apply_shell(input_shell_command((int)ev.key.keysym.sym), &battle, &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, pads, keys);
     }
 
     {
       uint64_t now = SDL_GetPerformanceCounter();
-      double dt = headless
-                      ? 1.0 / 60.0
-                      : fmin(0.1, (double)(now - last) / (double)SDL_GetPerformanceFrequency());
+      double dt = headless ? 1.0 / 60.0 : fmin(0.1, (double)(now - last) / (double)SDL_GetPerformanceFrequency());
       last = now;
       if (!paused)
         accumulator += dt;
@@ -256,9 +249,8 @@ int main(int argc, char **argv) {
 
   if (shot != NULL)
     save_bmp(&cv, shot);
-  printf("Rendered %d frames; simulated %llu ticks; health %d / %d; round %d\n", rendered,
-      (unsigned long long)battle.ticks, battle.fighters[0].health, battle.fighters[1].health,
-      battle.round);
+  printf("Rendered %d frames; simulated %llu ticks; health %d / %d; round %d\n", rendered, (unsigned long long)battle.ticks, battle.fighters[0].health,
+      battle.fighters[1].health, battle.round);
   sdl_app_free(&app);
   canvas_free(&cv);
   assets_free(&assets);
