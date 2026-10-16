@@ -131,6 +131,18 @@ static int objects(const Battle *battle, int kind) {
 }
 
 static void ice(void) {
+  Battle shake = fight(0, 4.f);
+  Fighter *shaken = &shake.fighters[1];
+  battle_react(&shake, shaken, 67);
+  advance(&shake, 1);
+  q16 origin = shaken->body.pos[AXIS_X];
+  check(shaken->visual_offset[AXIS_X] == -0xccc && shaken->visual_offset[AXIS_Y] == 0xccc, "freeze shake must open along the victim heading and down");
+  advance(&shake, 3);
+  check(shaken->visual_offset[AXIS_X] == 0 && shaken->body.pos[AXIS_X] == origin, "freeze shake must undo its offset without combat drift");
+  advance(&shake, 121);
+  check(shaken->visual_offset[AXIS_Y] == 0xccc, "freeze shake must restart after the 88-tick hold");
+  fighter_enter_state(&shake, shaken, S_IDLE);
+  check(shaken->visual_offset[AXIS_Y] == 0, "interrupting freeze must clear its presentation offset");
   for (int reacting = 0; reacting < 2; ++reacting) {
     Battle battle = fight(0, 4.f);
     battle.fighters[0].flags |= FF_FOLLOW_UP;

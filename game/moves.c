@@ -138,6 +138,7 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
     fighter->flags &= ~(unsigned)FF_NO_GUARD;
   }
   fighter->frozen_clip = 0;
+  memset(fighter->visual_offset, 0, sizeof fighter->visual_offset);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   fighter->current_move = move;
   fighter->ticks = 0;

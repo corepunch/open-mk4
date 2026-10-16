@@ -10,8 +10,16 @@ void battle_sound(Battle *battle, int bank, int selector) {
   }
 }
 
+void fighter_visual_offset(Fighter *fighter, q16 along, q16 y) {
+  fighter->visual_offset[AXIS_X] = q16_mul(fighter->heading[0], along);
+  fighter->visual_offset[AXIS_Y] = y;
+  fighter->visual_offset[AXIS_Z] = q16_mul(fighter->heading[1], along);
+}
+
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation) {
   *position = (Vec3){fighter_x(fighter), q16_float(fighter->body.pos[AXIS_Y]), fighter_z(fighter)};
+  Vec3 offset = {q16_float(fighter->visual_offset[0]), q16_float(fighter->visual_offset[1]), q16_float(fighter->visual_offset[2])};
+  *position = vec_add(*position, offset);
   *orientation = mat3_identity();
   if (fighter->assets == NULL) {
     return false;
@@ -25,6 +33,7 @@ bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, M
       Vec3 local = vec_sub(bones[i].position, ch->bones.data[0].translation);
       local.y += q16_float(fighter->body.root_y);
       *position = vec_add(mat3_apply(turn, local), (Vec3){fighter_x(fighter), q16_float(fighter->body.pos[AXIS_Y]), fighter_z(fighter)});
+      *position = vec_add(*position, offset);
       *orientation = mat3_mul(turn, bones[i].rotation);
       return true;
     }

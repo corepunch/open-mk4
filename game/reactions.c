@@ -474,6 +474,12 @@ static void thaw_tick(Battle *battle, Fighter *fighter) {
 }
 
 static void frozen_tick(Battle *battle, Fighter *fighter) {
+  /* 486310/340/3b0/3e0/5b0: six 3+3-tick pulses, an
+   * 88-tick hold, then three more pulses. Each positive .05
+   * translation is undone, rather than accumulated or mirrored. */
+  int tick = fighter->ticks;
+  bool shake = (tick < 36 && tick % 6 < 3) || (tick >= 124 && tick < 142 && (tick - 124) % 6 < 3);
+  fighter_visual_offset(fighter, shake ? 0xccc : 0, shake ? 0xccc : 0);
   if (fighter->script_phase == 0 && fighter->ticks < 142) {
     return;
   }
@@ -529,6 +535,7 @@ static void react_freeze(Battle *battle, Fighter *fighter) {
   fighter->appearance = APPEARANCE_FROZEN;
   fighter->damage_scale = fighter->hits > 0 ? 0x4ccc : 0x8000;
   fighter->flags |= FF_REACTING | FF_NO_GUARD;
+  fighter_visual_offset(fighter, 0xccc, 0xccc);
 }
 
 /* 4831e0 / 4e94b0: low scepter hit, then the human down-held

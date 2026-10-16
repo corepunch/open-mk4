@@ -147,6 +147,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
         }
         float y = fighter->appearance == APPEARANCE_BEAST ? -fighter_height(fighter) : q16_float(fighter->body.pos[AXIS_Y]);
         v->p = (Vec3){p.x + fighter_x(fighter), p.y + y, p.z + fighter_z(fighter)};
+        v->p = vec_add(v->p, (Vec3){q16_float(fighter->visual_offset[0]), q16_float(fighter->visual_offset[1]), q16_float(fighter->visual_offset[2])});
         v->normal = mat3_apply(turn, mat3_apply(bones[n].rotation, v->normal));
       }
       PUSH(triangles, t);

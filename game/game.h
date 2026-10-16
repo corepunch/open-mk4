@@ -435,9 +435,10 @@ struct Fighter {
   q16 blend_weight;
   ScenePlayback scene;
   uint64_t hidden_joints[2];
-  int appearance;  /* character-script rendering variant; reset at round spawn */
-  int frozen_clip; /* preserve the victim's current pose while frozen */
-  int reaction;    /* last selected attack-record reaction, retained across its phases */
+  int appearance;       /* character-script rendering variant; reset at round spawn */
+  int frozen_clip;      /* preserve the victim's current pose while frozen */
+  q16 visual_offset[3]; /* presentation translation; never integrated as combat velocity */
+  int reaction;         /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
   uint64_t clone_ready;
   uint64_t slide_ready, sidestep_ready;
@@ -597,6 +598,7 @@ void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_f
 bool scene_step(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
 void battle_scene_camera(Battle *battle, const Fighter *owner, const Fighter *target, q16 along, q16 y, q16 across, int ticks);
+void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
 void battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
 void battle_shatter(Battle *battle, Fighter *victim);
