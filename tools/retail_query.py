@@ -3,6 +3,7 @@
 No recursive native closure, archive loading, emulation, or dump generation.
 """
 from scorpion_moves import attack_record, attack_record_at, script_program, signed_word
+from retail_symbols import NAMES, reference_rows, target_text
 
 CONTACT_TABLES = {'A': 0x53d268, 'B': 0x53d2b8, 'WEAPON': 0x53d0c0}
 
@@ -62,7 +63,7 @@ def instruction_text(row, raw=False):
         details.append('inline=%#x' % row['inline'])
     for key in ('native_target', 'callback', 'branch'):
         if key in row:
-            details.append('%s=%s' % (key, row[key]))
+            details.append('%s=%s' % (key, target_text(row[key]) if key != 'branch' else row[key]))
     if 'selected_character' in row:
         details.append('character=%d -> %s' % (row['selected_character'], row['character_table'][row['selected_character']]))
     # Keep untyped operands visible; do not invent field names or semantics.
@@ -85,11 +86,15 @@ def script_text(image, entry, limit=80, raw=False):
         rows.append('Truncated: %d rows omitted; raise --limit (up to 512).' % (len(instructions) - limit))
     edges = program['unresolved_native_edges']
     rows += ['', 'Dependencies / unresolved boundaries (not no-ops):']
-    rows.extend('- %s: %s -> %s' % (edge['source'], edge['kind'], edge['target']) for edge in edges[:limit])
+    rows.extend('- %s: %s -> %s' %
+                (edge['source'], edge['kind'], target_text(edge['target']) if edge['target'].startswith('0x') else edge['target'])
+                for edge in edges[:limit])
     if len(edges) > limit:
         rows.append('- %d additional boundaries omitted by --limit.' % (len(edges) - limit))
     if not edges:
         rows.append('- None encountered in this script; this is not whole-move coverage.')
+    rows += reference_rows(int(row[key], 16) for row in instructions[:limit]
+                           for key in ('native_target', 'callback') if row.get(key))
     rows += ['', 'Inspect a dependency with --native ADDRESS; inspect a script branch with --script ADDRESS.']
     return '\n'.join(rows) + '\n'
 
@@ -101,7 +106,9 @@ def native_text(disassembly, entry, limit=80, raw=False):
     rows = ['# Native %08x — %s' % (entry, disassembly.label(entry)), '',
             'Exact-entry graph, at most %d instructions; dependencies are not recursively expanded.' % limit, '', '```asm']
     for pc, insn in sorted(function['instructions'].items()):
-        rows.append('%08x  %s%s %s' % (pc, insn.bytes.hex(' ') + '  ' if raw else '', insn.mnemonic, insn.op_str))
+        target = disassembly.direct(insn) if insn.mnemonic in ('call', 'jmp') else None
+        comment = ' ; ' + disassembly.label(target) if target is not None else ''
+        rows.append('%08x  %s%s %s%s' % (pc, insn.bytes.hex(' ') + '  ' if raw else '', insn.mnemonic, insn.op_str, comment))
     rows += ['```', '', 'Dependencies (follow with --native ADDRESS):']
     for kind, target in function['edges']:
         rows.append('- %s: %08x %s' % (kind, target, disassembly.label(target)))
@@ -111,6 +118,7 @@ def native_text(disassembly, entry, limit=80, raw=False):
     rows.extend('- %08x: %s%s' % (site['at'], site['reason'], ' ' + site['expression'] if 'expression' in site else '') for site in function['unresolved'])
     if not function['unresolved']:
         rows.append('- None encountered locally; native behavior is not thereby understood.')
+    rows += reference_rows([entry, *(target for _, target in function['edges'])])
     return '\n'.join(rows) + '\n'
 
 
@@ -214,7 +222,8 @@ def move_text(image, name, limit=80, raw=False):
     rows += ['', '## Native work to inspect', '']
     targets = list(native.items())
     for target, roles in targets[:12]:
-        rows.append('- `--native 0x%x`: %s' % (target, '; '.join(sorted(roles))))
+        name = ' (%s)' % NAMES[target] if target in NAMES else ''
+        rows.append('- `--native 0x%x`%s: %s' % (target, name, '; '.join(sorted(roles))))
     if len(targets) > 12:
         rows.append('- %d further native dependencies omitted; individual script queries list them.' % (len(targets) - 12))
     rows += ['', '## Decode boundaries', '',
@@ -228,4 +237,5 @@ def move_text(image, name, limit=80, raw=False):
         rows.append('- VM helper semantics need inspection: ' + ', '.join(sorted(vm_helpers)) + ' (use --native).')
     rows += ['- Native tails, predicates, reactions and computed paths remain separate research; counts cover only the selected roots.',
              '- C port status: docs/character-script-port.md (not inferred by this decoder).']
+    rows += reference_rows(native)
     return '\n'.join(rows) + '\n'

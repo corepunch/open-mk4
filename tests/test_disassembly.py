@@ -115,6 +115,46 @@ class ScriptTests(unittest.TestCase):
 
 
 class QueryTests(unittest.TestCase):
+    def test_build_specific_names_and_reference_sources(self):
+        from retail_query import instruction_text, script_text
+        from retail_symbols import REFERENCES, reference_rows, target_text
+        image = RetailImage('MK4/MK-4.EXE')
+        text = script_text(image, 0x4e6d08)
+        self.assertIn('native_target=0x46a950 (task_slot_5c_clear)', text)
+        self.assertIn('native_target=0x46a970 (task_slot_5c_set_one)', text)
+        self.assertIn('native_target=0x48d3f0 (contact_query_b)', text)
+        self.assertIn('wait_pose_then_controller_return', text)
+        self.assertIn('upstream `0046a9b0`', text)
+        self.assertIn('different EXE revision', text)
+        # Upstream addresses must never become our labels by numeric equality
+        # or by applying a single revision delta to all functions.
+        self.assertEqual(target_text('0x46a9b0'), '0x46a9b0')
+        self.assertNotIn('MoveSel_0048d3f0', text)
+        self.assertEqual(reference_rows([0x48d3f0]), [])
+        branch = dict(va='0x570000', opcode='0x31', operation='branch', branch='0x46a950')
+        self.assertEqual(instruction_text(branch), '00570000  branch; branch=0x46a950')
+        limited = script_text(image, 0x4e6d08, limit=1)
+        self.assertIn('upstream `0046a9b0`', limited)
+        self.assertNotIn('upstream `0046a9d0`', limited)
+
+    @unittest.skipUnless(Path('reference/mk4decomp/config/symbols.yaml').is_file(), 'Optional mk4decomp checkout unavailable')
+    def test_reference_sources_contain_the_named_containers(self):
+        from retail_symbols import REFERENCES
+        root = Path(__file__).resolve().parents[1] / 'reference/mk4decomp'
+        for _, symbol, source, _ in REFERENCES.values():
+            self.assertIn(symbol.split(' +')[0], (root / source).read_text())
+
+    def test_named_helpers_match_local_machine_code(self):
+        image = RetailImage('MK4/MK-4.EXE')
+        # These exact local entries support the conservative field-operation
+        # names independently of upstream naming or its address layout.
+        for address, code in (
+                (0x46a950, '8b0d20c4530033c0a32cc4530089048d5c000000c3'),
+                (0x46a970, '8b0d20c45300b801000000a32cc4530089048d5c000000c3')):
+            expected = bytes.fromhex(code)
+            offset = address - 0x400000
+            self.assertEqual(image.memory[offset:offset + len(expected)], expected)
+
     def test_script_limit_and_typed_contact(self):
         from retail_query import script_text, contact_text
         image = RetailImage('MK4/MK-4.EXE')
@@ -193,6 +233,15 @@ class QueryTests(unittest.TestCase):
         text = native_text(disassembly, 0x46d290, limit=3)
         self.assertIn('instruction budget reached', text)
         self.assertEqual(text.count('\n004'), 3)
+
+    @unittest.skipUnless(importlib.util.find_spec('capstone'), 'Capstone required for native queries')
+    def test_native_query_names_calls_and_links_upstream_source(self):
+        from retail_query import native_text
+        disassembly = Disassembly('MK4/MK-4.EXE')
+        text = native_text(disassembly, 0x459490, limit=8)
+        self.assertIn('jmp 0x4594b0 ; script_dispatch', text)
+        self.assertIn('ArgSarStoreJmp', text)
+        self.assertIn('upstream `004594f0`', text)
 
 
 @unittest.skipUnless(importlib.util.find_spec('capstone'), 'Capstone is optional; install to check native disassembly')

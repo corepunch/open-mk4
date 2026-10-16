@@ -32,6 +32,36 @@ Raw mode includes fixed script words or native instruction bytes.
 Running without a query shows help. The old bulk export now requires explicit
 `--bundle`; it remains available for research, separate from the query path.
 
+## Function names and mk4decomp sources
+
+Script operands and dependency lists now include build-specific research names,
+for example `native_target=0x48d3f0 (contact_query_b)`. Native queries annotate
+direct calls and jumps with names as well. Addresses remain visible, and unknown
+targets remain addresses. These names are descriptive annotations, not recovered
+original source names or proof that the helper has been fully understood.
+
+`tools/retail_symbols.py` shares names between queries and bundle output. Its
+small explicit correspondence table links checked helpers to the local
+mk4decomp source, showing both our address and the upstream entry or embedded
+offset. Initial links cover script entry and the low-kick script's task-field
+clear/set and pose-wait helpers. Source links also appear in generated native
+and script bundle pages; no bundle regeneration is needed for queries.
+
+The reference checkout at `af88007` targets another executable revision. Never
+apply `config/symbols.yaml` directly to our addresses or assume a single address
+delta: our contact query B at `0x48d3f0` is an unrelated move-table selector at
+that address upstream. The correspondence table was checked against local
+exact-entry x86 listings and upstream source. Embedded low-kick helpers occur
+in the matching assembly branch of `five_block_dispatch_variants.c`; its
+`NON_MATCHING` C twin omits them. Function names alone therefore cannot replace
+bytecode decoding or examination of the matching source branch.
+
+To extend coverage, inspect the local helper with `--native`, compare its
+operations and callers with the reference, then add its descriptive alias and
+source correspondence with the evidence recorded. Keep unresolved semantics
+visible. The upstream contributions are under the reference project's
+[MIT license](../reference/mk4decomp/LICENSE).
+
 ## Compact move pages
 
 `--move NAME` gathers a curated set of attacker/victim script roots, actual
