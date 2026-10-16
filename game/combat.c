@@ -132,6 +132,21 @@ ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackReco
   return result;
 }
 
+/* 49c810 rejects a C-table query unless the victim lies within 0x1999
+ * radians of the projectile's stored axis, including the opposite ray. */
+ContactResult battle_projectile_contact(Battle *battle, Projectile *p, const AttackRecord *record) {
+  Fighter *owner = &battle->fighters[p->owner];
+  const Fighter *victim = fighter_opponent(battle, owner);
+  double x = (double)victim->body.pos[AXIS_X] - p->pos[AXIS_X];
+  double z = (double)victim->body.pos[AXIS_Z] - p->pos[AXIS_Z];
+  double cross = x * p->heading[1] - z * p->heading[0];
+  double dot = x * p->heading[0] + z * p->heading[1];
+  if (atan2(fabs(cross), fabs(dot)) > q16_float(0x1999)) {
+    return CONTACT_MISS;
+  }
+  return battle_contact_from(battle, owner, record, p->pos, p->facing);
+}
+
 Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step) {
   require(step != NULL && lifetime > 0, "Invalid projectile");
   for (int i = 0; i < MAX_PROJECTILES; ++i) {

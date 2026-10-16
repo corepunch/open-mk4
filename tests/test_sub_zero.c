@@ -131,6 +131,17 @@ static int objects(const Battle *battle, int kind) {
 }
 
 static void ice(void) {
+  for (int reacting = 0; reacting < 2; ++reacting) {
+    Battle battle = fight(0, 4.f);
+    battle.fighters[0].flags |= FF_FOLLOW_UP;
+    Fighter *victim = &battle.fighters[1];
+    victim->body.pos[AXIS_Y] -= Q16_ONE;
+    fighter_enter_state(&battle, victim, S_JUMP);
+    victim->flags |= reacting ? FF_REACTING : 0;
+    ice_command(&battle, 0, 2, 0);
+    advance(&battle, 8);
+    check(objects(&battle, PROJECTILE_ICE) == reacting, "ice command must use the airborne victim reaction flag, not the owner follow-up flag");
+  }
   for (int player = 0; player < 2; ++player) {
     Battle battle = fight(player, 2.f);
     Fighter *victim = &battle.fighters[1 - player];
@@ -229,6 +240,14 @@ static void independent_contacts(void) {
   check(battle_contact_from(&battle, owner, &record, owner->body.pos, owner->facing) == CONTACT_HIT, "object contact must resolve");
   check(!owner->connected, "independent object must not consume the owner's current strike");
   check(battle_contact(&battle, owner, &record) == CONTACT_HIT && owner->connected, "fighter contact must latch its own result");
+  owner->connected = false;
+  Projectile ray = {.owner = 0, .facing = 1, .heading = {Q16_ONE, 0}};
+  ray.pos[AXIS_X] = victim->body.pos[AXIS_X] - Q16_ONE / 2;
+  ray.pos[AXIS_Y] = owner->body.pos[AXIS_Y];
+  victim->body.pos[AXIS_Z] = Q16_ONE / 5;
+  check(battle_projectile_contact(&battle, &ray, &record) == CONTACT_MISS, "projectile bearing gate must reject a nearby sidestepped victim");
+  victim->body.pos[AXIS_Z] = 0;
+  check(battle_projectile_contact(&battle, &ray, &record) == CONTACT_HIT && !owner->connected, "aligned projectile must contact without latching the owner");
   for (int air = 0; air < 2; ++air) {
     victim->body.pos[AXIS_Y] = victim->body.ground - air * Q16_ONE;
     for (int followup = 0; followup < 2; ++followup) {

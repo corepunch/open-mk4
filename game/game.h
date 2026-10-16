@@ -504,6 +504,7 @@ q16 fighter_axis(const Battle *battle, const Fighter *fighter, int axis);
 void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed);
 ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record);
 ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
+ContactResult battle_projectile_contact(Battle *battle, Projectile *projectile, const AttackRecord *record);
 Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step);
 void battle_damage(Battle *battle, Fighter *victim, q16 damage);
 void battle_react(Battle *battle, Fighter *victim, int reaction);

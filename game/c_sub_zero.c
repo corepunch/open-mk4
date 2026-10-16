@@ -858,7 +858,7 @@ static void ice_projectile(Battle *battle, Projectile *p) {
     p->pos[i] += p->vel[i];
   }
   Fighter *owner = &battle->fighters[p->owner];
-  if (opponent(battle, owner)->action != 0x2001 && battle_contact_from(battle, owner, &ice_record, p->pos, p->facing) != CONTACT_MISS) {
+  if (opponent(battle, owner)->action != 0x2001 && battle_projectile_contact(battle, p, &ice_record) != CONTACT_MISS) {
     p->kind = 0;
   }
   int64_t radius2 = (int64_t)battle->arena_radius * battle->arena_radius + (int64_t)0xc0000 * Q16_ONE;
@@ -904,7 +904,7 @@ static bool can_ice(const Battle *battle, const Fighter *fighter) {
 }
 
 static void sub_zero_ice(Battle *battle, Fighter *fighter) {
-  bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
+  bool followup = fighter_fast_start(battle, fighter);
   stop_body(fighter);
   fighter_start_move(battle, fighter, S_PUNCH, &s_ice);
   fighter->script = ice_tick;
