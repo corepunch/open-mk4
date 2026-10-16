@@ -3,7 +3,7 @@
 Generate the research bundle from the supplied files:
 
 ```sh
-python3 tools/disassemble_retail.py --output build/retail-disassembly
+python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly
 ```
 
 The tool needs Capstone 5 (tested with 5.0.7). It verifies the exact EXE SHA-256

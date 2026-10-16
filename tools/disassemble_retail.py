@@ -3,7 +3,8 @@
 
 Requires Capstone 5 for x86 decoding. Output is research material, not recovered
 source and not a gameplay port. No code is executed. Run from the workspace root:
-  python3 tools/disassemble_retail.py --output build/retail-disassembly
+  python3 tools/disassemble_retail.py --script 0x4e6d08
+  python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly
 """
 import argparse
 from collections import defaultdict, deque
@@ -655,18 +656,50 @@ class Disassembly:
 
 
 def main():
+    from retail_query import address, contact_text, native_text, script_text
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exe', default='MK4/MK-4.EXE')
-    parser.add_argument('--archive', default='MK4/FILESYS.DAT')
-    parser.add_argument('--output', type=Path, default=Path('build/retail-disassembly'))
-    parser.add_argument('--no-linear', action='store_true', help='Omit the large linear recovery fallback')
+    parser.add_argument('--archive', default='MK4/FILESYS.DAT', help='Used only for --bundle')
+    parser.add_argument('--output', type=Path, help='A Markdown file for queries, or a directory for --bundle')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--script', metavar='ADDRESS', help='Decode one script; addresses are hexadecimal')
+    mode.add_argument('--native', metavar='ADDRESS', help='Inspect one exact-entry native graph (requires Capstone)')
+    mode.add_argument('--attack', nargs=2, metavar=('TABLE', 'SELECTOR'), help='Inspect a contact record: A or B, decimal/0x selector')
+    mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
+    parser.add_argument('--limit', type=int, default=80, help='Query instruction limit, 1..512 (default 80)')
+    parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
+    parser.add_argument('--no-linear', action='store_true', help='For --bundle, omit the large linear recovery fallback')
     args = parser.parse_args()
-    disassembly = Disassembly(args.exe)
-    result = disassembly.write(args.output, args.archive, not args.no_linear)
-    print('Wrote %d scripts and %d native entry graphs to %s' %
-          (len(result['scripts']), len(result['functions']), args.output / 'README.md'))
-    print('Native unresolved sites: %d (preserved explicitly)' %
-          sum(len(function['unresolved']) for function in result['functions']))
+    if not 1 <= args.limit <= 512:
+        parser.error('--limit must be between 1 and 512')
+    if not any((args.script, args.native, args.attack, args.bundle)):
+        parser.print_help()
+        return
+    try:
+        if args.bundle:
+            output = args.output or Path('build/retail-disassembly')
+            result = Disassembly(args.exe).write(output, args.archive, not args.no_linear)
+            print('Wrote %d scripts and %d native entry graphs to %s' %
+                  (len(result['scripts']), len(result['functions']), output / 'README.md'))
+            return
+        if args.native:
+            # x86 entries are byte-aligned, unlike VM/data words.
+            entry = int(args.native, 16)
+            report = native_text(Disassembly(args.exe), entry, args.limit, args.raw)
+        else:
+            image = RetailImage(args.exe)
+            if args.script:
+                report = script_text(image, address(args.script), args.limit, args.raw)
+            else:
+                report = contact_text(image, args.attack[0], int(args.attack[1], 0))
+        if args.output:
+            args.output.parent.mkdir(parents=True, exist_ok=True)
+            args.output.write_text(report)
+            print('Wrote ' + str(args.output))
+        else:
+            print(report, end='')
+    except (ValueError, OSError, ImportError) as error:
+        parser.error(str(error))
 
 
 if __name__ == '__main__':

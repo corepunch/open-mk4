@@ -4,6 +4,30 @@ The decoder reads the supplied EXE; it does not execute retail code. Decoded
 operand layouts and native dependencies are evidence for a C port, not proof
 that a move's semantics or implementation are complete.
 
+## Targeted queries
+
+Run from the workspace root. Output goes to stdout; `--output FILE.md` saves
+only the requested report. None of these queries reads the asset archive or
+creates a bundle. Only native queries need Capstone.
+
+```sh
+python3 tools/disassemble_retail.py --script 0x4e6d08
+python3 tools/disassemble_retail.py --native 0x46bf10 --limit 80
+python3 tools/disassemble_retail.py --attack B 6
+python3 tools/disassemble_retail.py --script 0x4e9d00 --raw --output build/spear-victim.md
+```
+
+Addresses are hexadecimal, with or without `0x`. Attack selectors accept
+decimal or `0x` hexadecimal. `--limit` defaults to 80 instructions, with a
+maximum of 512. Truncation and unresolved boundaries are reported explicitly.
+Native queries decode from the given entry without a whole-binary discovery
+pass or recursive call expansion. Follow printed dependencies with another
+query. Script queries currently select Scorpion in character dispatch tables.
+Raw mode includes fixed script words or native instruction bytes.
+
+Running without a query shows help. The old bulk export now requires explicit
+`--bundle`; it remains available for research, separate from the query path.
+
 ## Additional opcode evidence
 
 These layouts were checked from exact-entry x86 handlers in `MK4/MK-4.EXE`.

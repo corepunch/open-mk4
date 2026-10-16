@@ -1,7 +1,7 @@
 # Porting a character's scripts to C
 
 Use the existing `build/retail-disassembly/` bundle first. Regenerate with
-`python3 tools/disassemble_retail.py --output build/retail-disassembly` only
+`python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly` only
 when its inputs or decoder change. This is static decoding, not retail execution.
 
 1. Start at the character's command table and stance dispatch tables. List each

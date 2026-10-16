@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -100,6 +101,49 @@ class ScriptTests(unittest.TestCase):
         self.assertIsNone(program['instructions'][0]['handler'])
         self.assertEqual(program['unresolved_native_edges'][0]['kind'], 'unknown opcode')
         self.assertFalse(program['whole_move_verified'])
+
+
+class QueryTests(unittest.TestCase):
+    def test_script_limit_and_typed_contact(self):
+        from retail_query import script_text, contact_text
+        image = RetailImage('MK4/MK-4.EXE')
+        text = script_text(image, 0x4e6d08, limit=2)
+        self.assertIn('Truncated:', text)
+        self.assertIn('raise --limit', text)
+        text = script_text(image, 0x4e6d08)
+        self.assertIn('B[6]; record 0x4ebb28', text)
+        self.assertIn('bit0 clear=5 ticks; set=8 ticks', text)
+        self.assertIn('damage 11%', contact_text(image, 'B', 6))
+
+    def test_query_cli_writes_only_requested_file(self):
+        root = Path(__file__).resolve().parents[1]
+        tool = str(root / 'tools/disassemble_retail.py')
+        with tempfile.TemporaryDirectory() as directory:
+            command = [sys.executable, tool, '--exe', str(root / 'MK4/MK-4.EXE'),
+                       '--archive', 'missing.dat', '--script', '004e9d00']
+            result = subprocess.run(command, cwd=directory, capture_output=True, text=True, check=True)
+            self.assertIn('clip=199', result.stdout)
+            self.assertEqual(list(Path(directory).iterdir()), [])
+            subprocess.run([*command, '--output', 'spear.md'], cwd=directory, capture_output=True, check=True)
+            self.assertEqual([p.name for p in Path(directory).iterdir()], ['spear.md'])
+            # Supply a real EXE to reach address validation rather than a missing-file error.
+            bad = subprocess.run([*command[:-1], '4e9d01'], cwd=directory, capture_output=True, text=True)
+            self.assertNotEqual(bad.returncode, 0)
+            self.assertIn('aligned image address', bad.stderr)
+            help_result = subprocess.run([sys.executable, tool], cwd=directory, capture_output=True, text=True, check=True)
+            self.assertIn('--script', help_result.stdout)
+            self.assertEqual([p.name for p in Path(directory).iterdir()], ['spear.md'])
+
+    @unittest.skipUnless(importlib.util.find_spec('capstone'), 'Capstone required for native queries')
+    def test_native_query_is_bounded_and_does_not_expand_closure(self):
+        from retail_query import native_text
+        disassembly = Disassembly('MK4/MK-4.EXE')
+        def forbidden():
+            self.fail('A targeted query must not discover the whole binary')
+        disassembly.closure = disassembly.discover_entries = forbidden
+        text = native_text(disassembly, 0x46d290, limit=3)
+        self.assertIn('instruction budget reached', text)
+        self.assertEqual(text.count('\n004'), 3)
 
 
 @unittest.skipUnless(importlib.util.find_spec('capstone'), 'Capstone is optional; install to check native disassembly')
