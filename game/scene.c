@@ -4,7 +4,7 @@
  * no bytecodes, task stacks, virtual addresses or implicit global operands. */
 static void begin_clip(Fighter *fighter) {
   const SceneClip *clip = &fighter->scene.clips[fighter->scene.index];
-  int source = fighter_move(fighter)->clip;
+  int source = fighter->assets != NULL ? fighter_clip(fighter->assets, fighter)->id : fighter_move(fighter)->clip;
   int sample = fighter_pose_sample(fighter);
   fighter->current_move = &clip->move;
   fighter->sample_override = clip->first;

@@ -50,6 +50,18 @@ static void combat_poses(const Assets *assets) {
     battle_step(&battle, (Input[2]){0});
   }
   check(goro->state == S_IDLE && goro->appearance == APPEARANCE_NORMAL, "Boss freeze must thaw and restore control");
+  static const SceneClip fallback_blend[] = {
+      {.move = {.clip = 13}, .first = 0, .last = 0, .repeats = 1},
+      {.move = {.clip = 304}, .first = 0, .last = 0, .repeats = 1, .blend_step = 0x1999},
+  };
+  scene_begin(goro, fallback_blend, 2, -1);
+  scene_step(goro);
+  check(goro->blend_clip == 587, "Scene blends must capture the compatible displayed clip for the victim rig");
+  Pose blended[MK4_MAX_BONES];
+  fighter_pose(assets, goro, blended);
+  for (size_t i = 0; i < fighter_model(assets, goro)->bones.count; ++i) {
+    check(isfinite(blended[i].position.x) && isfinite(blended[i].position.y) && isfinite(blended[i].position.z), "Fallback scene pose must remain finite");
+  }
 
   battle_init(&battle, 4, 0);
   battle_bind_assets(&battle, assets);
