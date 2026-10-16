@@ -488,10 +488,22 @@ typedef struct Particle {
   uint32_t color;
 } Particle;
 
+typedef struct CameraShot {
+  const q16 (*points)[3];
+  int count, hold;
+  q16 step;
+  int aim_joint, aim_ticks;
+  q16 aim_y;
+} CameraShot;
+
 typedef struct SceneCamera {
   bool active;
-  Vec3 eye, target, from_eye, from_target, to_eye, to_target;
+  Vec3 eye, target, from_target, to_target;
   int ticks, duration;
+  const CameraShot *shots;
+  int shot_count, shot, hold, target_player;
+  q16 parameter;
+  Vec3 origin, axis, path_start;
 } SceneCamera;
 
 #define MAX_SCENE_PIECES 32
@@ -597,7 +609,7 @@ void weapon_stance(Battle *battle, Fighter *fighter, int state);
 void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);
 bool scene_step(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
-void battle_scene_camera(Battle *battle, const Fighter *owner, const Fighter *target, q16 along, q16 y, q16 across, int ticks);
+void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
 void battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);

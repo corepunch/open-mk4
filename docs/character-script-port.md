@@ -140,9 +140,8 @@ pieces and PCM/ADPCM decoding. Existing compact kick/Scorpion fixtures stay.
 Do not add retail-execution harnesses or large per-tick JSON recordings.
 
 The engine still uses portable presentation: blue ice material, bounded particles,
-linear camera transitions between recovered offsets, posed character meshes
-for detached pieces, and a single weapon settling arc. Retail camera splines,
-gore-cap/interior geometry and secondary ice decoration
+posed character meshes for detached pieces, and a single weapon settling arc.
+Retail gore-cap/interior geometry and secondary ice decoration
 remain to be translated. CPU distance plans, probability gates and automatic
 air attacks now live in the shared simulation; unported character action rows
 still fall back to their own stance tables. These translations do not claim

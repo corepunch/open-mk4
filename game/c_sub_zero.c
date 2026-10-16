@@ -1256,12 +1256,55 @@ static bool can_spike_fatality(const Battle *battle, const Fighter *fighter) {
   return battle->arena == 0 && can_close_fatality(battle, fighter);
 }
 
+/* 445920: camera records 4e0f00/4e0f58, reordered from X,Z,Y. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const q16 first_camera[][3] = {
+  {131072, -131072, -196608},
+  {131072, -131072, -196608},
+  {131072, -131072, -196608},
+  {131072, -131072, -196608},
+  {131072, -131072, -196608},
+  {131072, -131072, -196608},
+  {131072, -131072, -196608},
+};
+static const q16 orbit_camera[][3] = {
+  {-327680, -163840, -458752},
+  {-393216, -183500, -393216},
+  {-393216, -255590, 393216},
+  {393216, -216268, 393216},
+  {393216, -190054, -393216},
+  {-458752, -170393, -458752},
+  {-524288, -157286, 524288},
+  {589824, -144179, 589824},
+  {655360, -117964, -655360},
+  {-655360, -104857, -655360},
+  {-655360, -104857, 655360},
+  {655360, -104857, 655360},
+  {655360, -117964, -655360},
+  {-655360, -131072, -655360},
+  {-655360, -144179, 655360},
+  {655360, -150732, 655360},
+  {655360, -157286, -655360},
+  {-655360, -157286, -655360},
+  {-655360, -157286, 655360},
+  {655360, -157286, 655360},
+  {655360, -157286, -655360},
+  {-655360, -157286, -655360},
+  {-655360, -157286, 655360},
+  {655360, -157286, 655360},
+  {655360, -157286, -655360},
+};
+static const CameraShot first_camera_shots[] = {
+  {first_camera, COUNT(first_camera), 50, 0xccc, 0, 0, 0},
+  {orbit_camera, COUNT(orbit_camera), 0, 0x45a, 3, 80, -0x4000},
+};
+// clang-format on
+
 static void first_fatality_tick(Battle *battle, Fighter *fighter) {
   Fighter *victim = opponent(battle, fighter);
   if (fighter->script_phase == 0) {
     if (battle->phase_ticks == 8) {
-      /* 445920's first local camera control points (4e0f00). */
-      battle_scene_camera(battle, fighter, victim, 0x20000, -0x30000, -0x20000, 0);
+      battle_camera_sequence(battle, fighter, victim, first_camera_shots, COUNT(first_camera_shots));
     }
     if (battle->phase_ticks < 58) {
       return;
@@ -1285,10 +1328,6 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
       battle_sound(battle, SOUND_B, 0x1c);
       battle_sound(battle, SOUND_B, 0);
     }
-  }
-  if (previous != fighter->scene.index && fighter->scene.index == 2) {
-    /* The second camera path 4e0f58 opens at (-5,-7,-2.5). */
-    battle_scene_camera(battle, fighter, victim, -0x50000, -0x70000, -0x28000, 30);
   }
   if (victim->scene.clips == NULL && fighter->scene.index >= 2) {
     scene_begin(victim, first_target, COUNT(first_target), -1);

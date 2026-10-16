@@ -41,24 +41,59 @@ bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, M
   return false;
 }
 
-void battle_scene_camera(Battle *battle, const Fighter *owner, const Fighter *target, q16 along, q16 y, q16 across, int ticks) {
+static void camera_shot(Battle *battle) {
   SceneCamera *camera = &battle->camera;
-  float x = q16_float(owner->heading[0]), z = q16_float(owner->heading[1]);
-  Vec3 eye = {fighter_x(owner) + x * q16_float(along) - z * q16_float(across), q16_float(y), fighter_z(owner) + z * q16_float(along) + x * q16_float(across)};
-  Vec3 aim;
-  Mat3 unused;
-  fighter_joint_position(target, 3, &aim, &unused);
-  if (!camera->active || ticks <= 0) {
-    camera->eye = eye;
-    camera->target = aim;
+  const CameraShot *shot = &camera->shots[camera->shot];
+  require(shot->count >= 4 && shot->step > 0, "Invalid camera shot");
+  camera->parameter = Q16_ONE;
+  camera->hold = 0;
+  camera->path_start = camera->eye;
+  if (shot->aim_ticks > 0) {
+    Mat3 unused;
+    fighter_joint_position(&battle->fighters[camera->target_player], shot->aim_joint, &camera->to_target, &unused);
+    camera->to_target.y += q16_float(shot->aim_y);
+    camera->from_target = camera->target;
+    camera->ticks = 0;
+    camera->duration = shot->aim_ticks;
   }
-  camera->active = true;
-  camera->from_eye = camera->eye;
-  camera->from_target = camera->target;
-  camera->to_eye = eye;
-  camera->to_target = aim;
-  camera->ticks = 0;
-  camera->duration = maxi(1, ticks);
+}
+
+/* 445920/44ca70/44cb20: retain a scene reference along the pair axis.
+ * Camera tracks run independently from actor animation continuations. */
+void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count) {
+  require(shots != NULL && count > 0, "Invalid camera sequence");
+  SceneCamera *camera = &battle->camera;
+  float ax = fighter_x(&battle->fighters[0]), bx = fighter_x(&battle->fighters[1]);
+  Vec3 initial = camera->active ? camera->eye : (Vec3){(ax + bx) * .25f, -2.8f, fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f)};
+  *camera = (SceneCamera){.active = true, .eye = initial, .shots = shots, .shot_count = count, .target_player = target == &battle->fighters[0] ? 0 : 1};
+  camera->axis = (Vec3){q16_float(owner->heading[0]), 0, q16_float(owner->heading[1])};
+  camera->origin = (Vec3){fighter_x(target) - camera->axis.x * q16_float(0xe666), -1.25f, fighter_z(target) - camera->axis.z * q16_float(0xe666)};
+  camera->target = camera->origin;
+  camera_shot(battle);
+}
+
+/* 48b030/4a0: four control points, with the retail compact-support
+ * cubic kernel .5*(1 - .75*d*d + .25*abs(d*d*d)). Indices <= 2
+ * repeat the camera's starting position; later controls are local to
+ * the scene reference. Retail records store X,Z,Y; CameraShot uses X,Y,Z. */
+static Vec3 camera_sample(const SceneCamera *camera) {
+  const CameraShot *shot = &camera->shots[camera->shot];
+  float parameter = q16_float(camera->parameter);
+  int first = (int)parameter - 1;
+  Vec3 result = {0};
+  for (int i = first; i < first + 4; ++i) {
+    float d = fabsf(parameter - i);
+    float weight = .5f * (1.f - .75f * d * d + .25f * d * d * d);
+    Vec3 point = camera->path_start;
+    if (i > 2) {
+      int n = mini(shot->count - 1, i - 3);
+      float x = q16_float(shot->points[n][0]), z = q16_float(shot->points[n][2]);
+      point = (Vec3){camera->origin.x + camera->axis.x * x - camera->axis.z * z, q16_float(shot->points[n][1]),
+          camera->origin.z + camera->axis.z * x + camera->axis.x * z};
+    }
+    result = vec_add(result, vec_scale(point, weight));
+  }
+  return result;
 }
 
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice) {
@@ -165,9 +200,19 @@ void battle_shatter(Battle *battle, Fighter *victim) {
 
 void battle_step_presentation(Battle *battle) {
   SceneCamera *camera = &battle->camera;
+  if (camera->active && camera->shots != NULL) {
+    const CameraShot *shot = &camera->shots[camera->shot];
+    q16 end = (shot->count - 1) * Q16_ONE;
+    if (camera->parameter < end) {
+      camera->parameter = mini(end, camera->parameter + shot->step);
+      camera->eye = camera_sample(camera);
+    } else if (camera->shot + 1 < camera->shot_count && ++camera->hold >= shot->hold) {
+      camera->shot++;
+      camera_shot(battle);
+    }
+  }
   if (camera->active && camera->ticks < camera->duration) {
     float t = (float)++camera->ticks / camera->duration;
-    camera->eye = vec_add(camera->from_eye, vec_scale(vec_sub(camera->to_eye, camera->from_eye), t));
     camera->target = vec_add(camera->from_target, vec_scale(vec_sub(camera->to_target, camera->from_target), t));
   }
   for (int i = 0; i < MAX_PARTICLES; ++i) {

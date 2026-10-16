@@ -1,4 +1,5 @@
 #include "game.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -1021,6 +1022,31 @@ static void fatality_blends(void) {
   check(victim->scene.index == 8 && victim->blend_weight < Q16_ONE, "victim blend must retain its native 0x666 progression");
 }
 
+static void fatality_camera(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle = sub_zero_finish(player, 0xcccc, 0);
+    sub_zero_finish_command(&battle, player, FINISH_SUB_ZERO_1, BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN), 60);
+    while (battle.phase_ticks < 8) {
+      advance(&battle, 1);
+    }
+    check(battle.camera.active && battle.camera.parameter == Q16_ONE && battle.camera.shot == 0, "fatality camera must begin its own path at tick eight");
+    advance(&battle, 101);
+    check(battle.camera.parameter == 6 * Q16_ONE && battle.camera.shot == 0, "first camera path must advance at its recovered .05 rate");
+    check(fabsf(battle.camera.eye.y + 2.f) < .001f && fabsf(battle.camera.eye.z - (player ? 3.f : -3.f)) < .001f,
+        "camera records must decode X,Z,Y ordering and mirror with the scene axis");
+    advance(&battle, 49);
+    check(battle.camera.shot == 0, "camera must hold fifty ticks after its first path independently of the actor clip");
+    advance(&battle, 1);
+    check(battle.camera.shot == 1 && battle.camera.parameter == Q16_ONE && battle.camera.duration == 80,
+        "orbit must open with its own parameter clock and eighty-tick joint-aim transition");
+    advance(&battle, 120);
+    check(battle.camera.parameter == Q16_ONE + 120 * 0x45a && isfinite(battle.camera.eye.x) && battle.camera.eye.y < 0,
+        "orbit must follow its recovered slow spline rate above the floor");
+    battle_next_round(&battle);
+    check(!battle.camera.active && battle.camera.shots == NULL, "round reset must discard camera continuations");
+  }
+}
+
 static void sidesteps(void) {
   for (int player = 0; player < 2; ++player) {
     Battle range = fight(player, .6f);
@@ -1110,6 +1136,7 @@ int main(void) {
   jumps();
   locomotion();
   fatality_blends();
+  fatality_camera();
   weapon_recovery();
   independent_contacts();
   sidesteps();
