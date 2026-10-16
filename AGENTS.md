@@ -84,3 +84,17 @@ strip or atlas in one ImageGen call. When visual states are needed, draw normal,
 selected, pressed, hover, and disabled states together in that same atlas. Use
 the authored state artwork directly; do not derive visual states through script
 post-processing.
+
+## Character script ports
+
+Use `tools/disassemble_retail.py` and the existing
+`build/retail-disassembly/` bundle as the primary source for character ports.
+Translate script control flow into procedural C in `game/c_<character>.c`;
+consult native listings and the included reference source for called helpers.
+Preserve move timing, command gates, branches, damage and balance intent while
+using our engine's own implementation and state boundaries. Binary identity,
+exact retail scheduler emulation and per-tick trace identity are not goals.
+Do not build new retail-execution harnesses or record large JSON traces for
+character work. Use focused native tests of commands, move branches, damage,
+interruption and recovery. Add engine features only when a translated move
+needs them.
