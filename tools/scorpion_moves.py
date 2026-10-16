@@ -24,36 +24,76 @@ COMMAND_TABLES = [
 ]
 DISPATCH = [(1, 0x4e6ef8), (2, 0x4ed828), (4, 0x4e8910),
             (8, 0x4e7008), (32, 0x4dfc90)]
+# Researched contiguous handler region, 0x4e3988..0x4e3b60 inclusive.
+# The original VM itself does not bounds-check its opcode index.
+VM_HANDLER_COUNT = 0x77
 
 # Operand counts checked in the supplied handlers, not inferred from an
 # apparent pointer following an opcode. Unlisted opcodes stop extraction.
 SCRIPT_OPS = {
+    0x00: ('VM no-op / continue', 0),
+    0x01: ('clip descriptor playback', 1),
     0x02: ('open clip and advance for count', 1),
     0x03: ('finish forwards', 0),
     0x04: ('advance forwards for count', 0),
     0x05: ('advance forwards to sample', 0),
+    0x06: ('advance backwards for count', 0),
+    0x07: ('finish backwards', 0),
+    0x08: ('clip descriptor playback', 1),
     0x09: ('clip descriptor operation', 1),
+    0x0e: ('open victim clip at sample 0', 1),
     0x0f: ('open clip at sample', 1),
+    0x10: ('advance self and victim poses for count', 0),
+    0x11: ('bind clip and set animation cursor', 1),
     0x12: ('set animation cursor', 0),
     0x19: ('advance twice per visit for count', 0),
+    0x1d: ('native playback helper', 0),
+    0x1e: ('native helper', 0),
+    0x1f: ('set attack selector', 1),
     0x20: ('sound event', 0),
+    0x24: ('release attack bookkeeping', 0),
     0x25: ('native helper', 0),
     0x27: ('sound event', 0),
+    0x28: ('native helper', 0),
+    0x29: ('set action 0x1006', 0),
+    0x2b: ('sound event', 0),
     0x2c: ('native helper', 0),
     0x2d: ('set action 0x1007', 0),
     0x32: ('native tail call', 1),
     0x33: ('script jump', 1),
     0x34: ('scheduler wait', 0),
     0x35: ('native call', 1),
+    0x36: ('native predicate and conditional script branch', 2),
     0x38: ('install group callback at +0x44', 1),
     0x39: ('clear group callback at +0x44', 0),
+    0x3a: ('set loop counter', 0),
+    0x3b: ('decrement counter and loop to preceding 0x3a', 0),
+    0x3c: ('select character script', 16),
+    0x3e: ('park task with repeated 60-tick reschedule', 0),
     0x3f: ('return to fighter controller', 0),
     0x40: ('spawn cooperative task', 2),
     0x41: ('native helper', 0),
     0x45: ('conditional script branch', 1),
+    # -1: handler calls 0x45bf80; a descriptor follows ONLY if byte 1 is 2.
+    0x47: ('advance to sample with optional clip prefix', -1),
+    0x48: ('native playback with optional clip prefix', -1),
+    0x49: ('native playback with optional clip prefix', -1),
+    0x4a: ('native playback helper', 0),
+    0x4b: ('native playback helper', 0),
+    0x4c: ('native playback helper', 0),
     0x4d: ('advance twice per visit to sample', 0),
+    0x4f: ('native helper', 0),
+    0x52: ('contact query A with inline selector', 0),
+    0x55: ('native predicate and conditional script branch', 2),
     0x58: ('motion operands', 3),
+    0x59: ('native motion parameter block', 4),
+    0x5b: ('native helper', 0),
+    0x5f: ('horizontal motion operand', 1),
     0x60: ('native helper', 0),
+    0x63: ('health subtraction with Q16 operand', 1),
+    0x6a: ('native helper', 0),
+    0x6b: ('sound helper', 0),
+    0x6d: ('native helper with word operand', 1),
 }
 
 
@@ -73,36 +113,57 @@ def script_program(image, entry):
             word = image.word(pc)
             op = word >> 24
             row = dict(va=hex(pc), word=hex(word), opcode=hex(op),
-                       handler=hex(image.word(0x4e3988 + op * 4)))
+                       handler=hex(image.word(0x4e3988 + op * 4)) if op < VM_HANDLER_COUNT else None)
             rows.append(row)
             if op not in SCRIPT_OPS:
                 row['operation'] = 'unresearched opcode; path stopped'
                 open_edges.append(dict(source=hex(pc), kind='unknown opcode', target=hex(op)))
                 break
             operation, count = SCRIPT_OPS[op]
+            if count == -1:
+                count = int(((word >> 8) & 255) == 2)
             operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
             row.update(operation=operation, inline=word & 0xffffff,
                        operands=[hex(value) for value in operands])
-            if op in (0x02, 0x09, 0x0f):
+            if op in (0x01, 0x02, 0x08, 0x09, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
-                if op == 0x0f:
+                if op in (0x01, 0x0f):
                     row['start_sample'] = word & 255
-            if op in (0x32, 0x35, 0x38):
+                row['clip_owner'] = 'victim' if op == 0x0e else 'self'
+            if op in (0x32, 0x35, 0x36, 0x38, 0x55):
                 row['native_target'] = hex(operands[0])
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[0])))
             if op == 0x40:
                 row.update(task_type=operands[0], callback=hex(operands[1]))
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[1])))
-            if op in (0x25, 0x2c, 0x41, 0x58, 0x60):
+            if operation in ('native helper', 'native playback helper', 'native helper with word operand') or op in (0x58, 0x59, 0x5f):
                 open_edges.append(dict(source=hex(pc), kind='native helper semantics',
                                        target=row['handler']))
             if op == 0x45:
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
-            if op == 0x33:
+            if op in (0x36, 0x55):
+                pending.append(operands[1] * 4)
+                row['branch'] = hex(operands[1] * 4)
+            if op == 0x3b:
+                # Match the native word scan; it searches instruction AND
+                # operand words backwards for a top byte of 0x3a.
+                for back in range(pc - 4, max(0x400000, pc - 2048) - 1, -4):
+                    if image.word(back) >> 24 == 0x3a:
+                        row['branch'] = hex(back + 4)
+                        pending.append(back + 4)
+                        break
+                else:
+                    open_edges.append(dict(source=hex(pc), kind='loop opener outside scan bound', target='unknown'))
+            if op == 0x3c:
+                row['character_table'] = [hex(value * 4) for value in operands]
+                row['selected_character'] = 0
                 pc = operands[0] * 4
-            elif op in (0x32, 0x3f):
+            elif op == 0x33:
+                row['branch'] = hex(operands[0] * 4)
+                pc = operands[0] * 4
+            elif op in (0x32, 0x3e, 0x3f):
                 break
             else:
                 pc += (count + 1) * 4
