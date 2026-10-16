@@ -1,0 +1,7135 @@
+{
+ "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
+ "limits": "Optional x86 oracle for Scorpion's input sampling, command matching and\nnormal-move selection.\n\nEvery tick executes the ORIGINAL switch scan 0x45c560, the tick increment\ndone by 0x41fdfb, the switch-event queue drain 0x45c7c0 and the original task\npump 0x41f570. Switch handlers therefore run as real type-0x11 tasks and\ncall the original command matcher 0x45dd30/0x45de00, the predicates and the\nnormal-button fallback 0x45da20. Only the raw switch words 0x4d00a4/0x4d00a8\nare injected (active low). After input, the interrupted fighter's new\ncallback (0x45f5f0 action_dispatch or a stance button handler) runs in the\nfighter context until it reaches an action-table entry; that entry then runs\nuntil its first write of the fighter task action (+0x74).\n\nStubbed: 0x45f870 begin-action (busy flag/button table/motion side effects),\n0x46a180 weapon-pickup side effect inside predicate 0x45efc0, pose 0x407920\nand sound 0x489f00/0x489f30/0x489f90/0x489fc0/0x489ff0. Injected world\nfields are listed in world(). The fighter distance 0x53019c is injected, not\ncomputed. Fighter tasks are not linked into the pump: this does not measure\nmove playback, contact, collision or the fighter's dispatch latency.\n",
+ "scenarios": [
+  {
+   "name": "teleport_window_24",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     34,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "34 record 0x4e49b8",
+    "34 window elapsed=24 limit=24",
+    "34 predicate 0x45f0c0",
+    "34 predicate_result 1",
+    "34 interrupt callback=0x45f5f0 word=0x7141800",
+    "34 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_window_25",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     35,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "35 record 0x4e49b8",
+    "35 window elapsed=25 limit=24",
+    "35 no_match_stop",
+    "35 interrupt callback=0x460f40 word=0x0",
+    "35 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_wrong_order",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "D"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=2",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_extra_direction_between",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     13,
+     "F"
+    ],
+    [
+     16,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "13 history 0x524ed8 token=4",
+    "16 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_extra_direction_after",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     13,
+     "B"
+    ],
+    [
+     16,
+     "U"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "13 history 0x524ed8 token=3",
+    "16 record 0x53cd10",
+    "16 no_match_stop",
+    "16 history 0x524ed8 token=1",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_buttons_between",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     12,
+     "LK"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     16,
+     "HK"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "12 record 0x4e4a18",
+    "12 reject tokens_or_block",
+    "12 record 0x4e4a24",
+    "12 reject tokens_or_block",
+    "12 record 0x4e4a30",
+    "12 no_match_stop",
+    "12 interrupt callback=0x460fc0 word=0x0",
+    "12 history 0x5346f0 token=9",
+    "14 history 0x524ed8 token=3",
+    "14 record 0x53cd10",
+    "14 no_match_stop",
+    "16 record 0x4e4a58",
+    "16 reject tokens_or_block",
+    "16 record 0x4e4a64",
+    "16 no_match_stop",
+    "16 interrupt callback=0x461030 word=0x0",
+    "16 history 0x5346f0 token=8",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x7141800",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_diagonal_roll",
+   "events": [
+    [
+     10,
+     "D",
+     6
+    ],
+    [
+     13,
+     "B",
+     6
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "13 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x7141800",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_wrong_button_lp",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_block_held",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     18,
+     "BLK",
+     6
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "18 record 0x4e49f8",
+    "18 reject tokens_or_block",
+    "18 record 0x4e4a04",
+    "18 predicate 0x45ed70",
+    "18 predicate_result 0",
+    "18 record 0x4e4a10",
+    "18 no_match_stop",
+    "18 interrupt callback=0x460200 word=0x0",
+    "18 history 0x5346f0 token=7",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_airborne",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "self_air": true
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x7141800",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_busy_flag",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "flags40": 1
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_opp_counter_2",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "opp_7c": 2
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x7141800",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_opp_counter_3",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "opp_7c": 3
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 0",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_cooldown_68",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stamps": {
+     "1": 47
+    }
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 0",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_cooldown_69",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stamps": {
+     "1": 48
+    }
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x7141800",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_facing_left",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "facing_left": true
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=4",
+    "20 record 0x4e49b8",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45f0c0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x7141800",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x7141800",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x47fc90"
+    ],
+    "action": "0x209",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "teleport_absolute_left_while_facing_left",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "L"
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "facing_left": true
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_window_27",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     37,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "37 record 0x4e49d8",
+    "37 window elapsed=27 limit=27",
+    "37 predicate 0x45ea60",
+    "37 predicate_result 1",
+    "37 interrupt callback=0x45f5f0 word=0x15021b06",
+    "37 history 0x5346f0 token=6"
+   ],
+   "matched_word": "0x15021b06",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x49a630"
+    ],
+    "action": "0x300",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_window_28",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     38,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "38 record 0x4e49d8",
+    "38 window elapsed=28 limit=27",
+    "38 no_match_stop",
+    "38 interrupt callback=0x460fb0 word=0x0",
+    "38 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_single_hold",
+   "events": [
+    [
+     10,
+     "B",
+     8
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_retap_after_1_tick",
+   "events": [
+    [
+     10,
+     "B",
+     1
+    ],
+    [
+     12,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_retap_after_2_ticks",
+   "events": [
+    [
+     10,
+     "B",
+     1
+    ],
+    [
+     13,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "13 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 predicate 0x45ea60",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x15021b06",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": "0x15021b06",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x49a630"
+    ],
+    "action": "0x300",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_cooldown_89",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stamps": {
+     "19": 68
+    }
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 predicate 0x45ea60",
+    "20 predicate_result 0",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_cooldown_90",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stamps": {
+     "19": 69
+    }
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 predicate 0x45ea60",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x15021b06",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": "0x15021b06",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x49a630"
+    ],
+    "action": "0x300",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_opp_action_1008",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "opp_action": 4104
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 predicate 0x45ea60",
+    "20 predicate_result 0",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_opp_counter_3",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "opp_7c": 3
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 predicate 0x45ea60",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x15021b06",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": "0x15021b06",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x49a630"
+    ],
+    "action": "0x300",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_opp_counter_4",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "opp_7c": 4
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 predicate 0x45ea60",
+    "20 predicate_result 0",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_airborne",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "self_air": true
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 window elapsed=10 limit=27",
+    "20 reject not_grounded",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spear_block_held",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "B"
+    ],
+    [
+     18,
+     "BLK",
+     6
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=3",
+    "18 record 0x4e49f8",
+    "18 reject tokens_or_block",
+    "18 record 0x4e4a04",
+    "18 predicate 0x45ed70",
+    "18 predicate_result 0",
+    "18 record 0x4e4a10",
+    "18 no_match_stop",
+    "18 interrupt callback=0x460200 word=0x0",
+    "18 history 0x5346f0 token=7",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fire_window_20",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     30,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=4",
+    "30 record 0x4e49d8",
+    "30 reject tokens_or_block",
+    "30 record 0x4e49e4",
+    "30 window elapsed=20 limit=20",
+    "30 interrupt callback=0x45f5f0 word=0x11428",
+    "30 history 0x5346f0 token=6"
+   ],
+   "matched_word": "0x11428",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x468610"
+    ],
+    "action": "0x115",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fire_window_21",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     31,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=4",
+    "31 record 0x4e49d8",
+    "31 reject tokens_or_block",
+    "31 record 0x4e49e4",
+    "31 window elapsed=21 limit=20",
+    "31 no_match_stop",
+    "31 interrupt callback=0x460fb0 word=0x0",
+    "31 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fire_wrong_order",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "D"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=2",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fire_airborne",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "self_air": true
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=4",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 window elapsed=10 limit=20",
+    "20 reject not_grounded",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fire_crouching_table",
+   "events": [
+    [
+     10,
+     "D"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "crouching"
+   },
+   "trace": [
+    "10 history 0x524ed8 token=2",
+    "14 history 0x524ed8 token=4",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 window elapsed=10 limit=20",
+    "20 interrupt callback=0x45f5f0 word=0x11428",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": "0x11428",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x468610"
+    ],
+    "action": "0x115",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "weapon_window_24",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     34,
+     "HK"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=4",
+    "34 record 0x4e4a58",
+    "34 window elapsed=24 limit=24",
+    "34 predicate 0x45ef50",
+    "34 predicate_result 1",
+    "34 interrupt callback=0x45f5f0 word=0x3011829",
+    "34 history 0x5346f0 token=8"
+   ],
+   "matched_word": "0x3011829",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x46d1d0"
+    ],
+    "action": "0x1004",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "weapon_window_25",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     35,
+     "HK"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=4",
+    "35 record 0x4e4a58",
+    "35 window elapsed=25 limit=24",
+    "35 no_match_stop",
+    "35 interrupt callback=0x461030 word=0x0",
+    "35 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "weapon_lost_flag",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "flags40": 2
+   },
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=4",
+    "20 record 0x4e4a58",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45ef50",
+    "20 predicate_result 0",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "weapon_already_armed",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "weapon": 4201472,
+    "flags40": 2
+   },
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=4",
+    "20 record 0x4e4a58",
+    "20 window elapsed=10 limit=24",
+    "20 predicate 0x45ef50",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x3011829",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": "0x3011829",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x46d1d0",
+     "0x498270"
+    ],
+    "action": "0x30f",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality2_window_50",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     22,
+     "U"
+    ],
+    [
+     60,
+     "HP"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=2",
+    "22 record 0x53cd10",
+    "22 no_match_stop",
+    "22 history 0x524ed8 token=1",
+    "60 record 0x4e49b8",
+    "60 reject tokens_or_block",
+    "60 record 0x4e49c4",
+    "60 window elapsed=50 limit=50",
+    "60 predicate 0x45e570",
+    "60 predicate_result 1",
+    "60 interrupt callback=0x45f5f0 word=0x1b013243",
+    "60 history 0x5346f0 token=5"
+   ],
+   "matched_word": "0x1b013243",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x467cd0"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Instruction budget exhausted in 0x45f5f0"
+   }
+  },
+  {
+   "name": "fatality2_window_51",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     22,
+     "U"
+    ],
+    [
+     61,
+     "HP"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=2",
+    "22 record 0x53cd10",
+    "22 no_match_stop",
+    "22 history 0x524ed8 token=1",
+    "61 record 0x4e49b8",
+    "61 reject tokens_or_block",
+    "61 record 0x4e49c4",
+    "61 window elapsed=51 limit=50",
+    "61 no_match_stop",
+    "61 interrupt callback=0x460f40 word=0x0",
+    "61 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality2_no_winner",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     22,
+     "U"
+    ],
+    [
+     30,
+     "HP"
+    ]
+   ],
+   "params": {
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=2",
+    "22 record 0x53cd10",
+    "22 no_match_stop",
+    "22 history 0x524ed8 token=1",
+    "30 record 0x4e49b8",
+    "30 reject tokens_or_block",
+    "30 record 0x4e49c4",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e570",
+    "30 predicate_result 0",
+    "30 record 0x4e49d0",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460f40 word=0x0",
+    "30 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality2_not_dazed",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     22,
+     "U"
+    ],
+    [
+     30,
+     "HP"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=2",
+    "22 record 0x53cd10",
+    "22 no_match_stop",
+    "22 history 0x524ed8 token=1",
+    "30 record 0x4e49b8",
+    "30 reject tokens_or_block",
+    "30 record 0x4e49c4",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e570",
+    "30 predicate_result 0",
+    "30 record 0x4e49d0",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460f40 word=0x0",
+    "30 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality2_distance_10001",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     22,
+     "U"
+    ],
+    [
+     30,
+     "HP"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65537
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=2",
+    "22 record 0x53cd10",
+    "22 no_match_stop",
+    "22 history 0x524ed8 token=1",
+    "30 record 0x4e49b8",
+    "30 reject tokens_or_block",
+    "30 record 0x4e49c4",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e570",
+    "30 predicate_result 0",
+    "30 record 0x4e49d0",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460f40 word=0x0",
+    "30 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality2_finisher_byte_0",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     22,
+     "U"
+    ],
+    [
+     30,
+     "HP"
+    ]
+   ],
+   "params": {
+    "finisher_byte": 0,
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=2",
+    "22 record 0x53cd10",
+    "22 no_match_stop",
+    "22 history 0x524ed8 token=1",
+    "30 record 0x4e49b8",
+    "30 reject tokens_or_block",
+    "30 record 0x4e49c4",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e570",
+    "30 predicate_result 0",
+    "30 record 0x4e49d0",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460f40 word=0x0",
+    "30 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality1_distance_1cccc",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     22,
+     "B"
+    ],
+    [
+     30,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 117964
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "22 history 0x524ed8 token=3",
+    "30 record 0x4e49f8",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e530",
+    "30 predicate_result 1",
+    "30 interrupt callback=0x45f5f0 word=0x25413240",
+    "30 history 0x5346f0 token=7"
+   ],
+   "matched_word": "0x25413240",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x467ce0",
+     "0x481010"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Invalid memory read"
+   }
+  },
+  {
+   "name": "fatality1_distance_1cccb",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     22,
+     "B"
+    ],
+    [
+     30,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 117963
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "22 history 0x524ed8 token=3",
+    "30 record 0x4e49f8",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e530",
+    "30 predicate_result 0",
+    "30 record 0x4e4a04",
+    "30 predicate 0x45ed70",
+    "30 predicate_result 0",
+    "30 record 0x4e4a10",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460200 word=0x0",
+    "30 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality1_distance_30000",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     22,
+     "B"
+    ],
+    [
+     30,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 196608
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "22 history 0x524ed8 token=3",
+    "30 record 0x4e49f8",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e530",
+    "30 predicate_result 1",
+    "30 interrupt callback=0x45f5f0 word=0x25413240",
+    "30 history 0x5346f0 token=7"
+   ],
+   "matched_word": "0x25413240",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x467ce0",
+     "0x481010"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Invalid memory read"
+   }
+  },
+  {
+   "name": "fatality1_distance_30001",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     22,
+     "B"
+    ],
+    [
+     30,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 196609
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "22 history 0x524ed8 token=3",
+    "30 record 0x4e49f8",
+    "30 window elapsed=20 limit=50",
+    "30 predicate 0x45e530",
+    "30 predicate_result 0",
+    "30 record 0x4e4a04",
+    "30 predicate 0x45ed70",
+    "30 predicate_result 0",
+    "30 record 0x4e4a10",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460200 word=0x0",
+    "30 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fatality1_window_51",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     22,
+     "B"
+    ],
+    [
+     61,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 131072
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "22 history 0x524ed8 token=3",
+    "61 record 0x4e49f8",
+    "61 window elapsed=51 limit=50",
+    "61 no_match_stop",
+    "61 interrupt callback=0x460200 word=0x0",
+    "61 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fan_fatality_stage_8",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "D"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     30,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stage": 8,
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=2",
+    "18 history 0x524ed8 token=2",
+    "30 record 0x4e4a18",
+    "30 window elapsed=20 limit=40",
+    "30 predicate 0x45e5a0",
+    "30 predicate_result 1",
+    "30 interrupt callback=0x45f5f0 word=0x1a012841",
+    "30 history 0x5346f0 token=9",
+    "32 record 0x53cd10",
+    "32 no_match_stop"
+   ],
+   "matched_word": "0x1a012841",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x467e00"
+    ],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "fan_fatality_stage_0",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "D"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     30,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stage": 0,
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=2",
+    "18 history 0x524ed8 token=2",
+    "30 record 0x4e4a18",
+    "30 window elapsed=20 limit=40",
+    "30 predicate 0x45e5a0",
+    "30 predicate_result 0",
+    "30 record 0x4e4a24",
+    "30 reject tokens_or_block",
+    "30 record 0x4e4a30",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460fc0 word=0x0",
+    "30 history 0x5346f0 token=9",
+    "32 record 0x53cd10",
+    "32 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "fan_fatality_window_41",
+   "events": [
+    [
+     10,
+     "F"
+    ],
+    [
+     14,
+     "D"
+    ],
+    [
+     18,
+     "D"
+    ],
+    [
+     51,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stage": 8,
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=4",
+    "14 history 0x524ed8 token=2",
+    "18 history 0x524ed8 token=2",
+    "51 record 0x4e4a18",
+    "51 window elapsed=41 limit=40",
+    "51 no_match_stop",
+    "51 interrupt callback=0x460fc0 word=0x0",
+    "51 history 0x5346f0 token=9",
+    "53 record 0x53cd10",
+    "53 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "spike_fatality_stage_0",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     30,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stage": 0,
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "30 record 0x4e4a18",
+    "30 reject tokens_or_block",
+    "30 record 0x4e4a24",
+    "30 window elapsed=20 limit=40",
+    "30 predicate 0x45e4f0",
+    "30 predicate_result 1",
+    "30 interrupt callback=0x45f5f0 word=0x33012842",
+    "30 history 0x5346f0 token=9",
+    "32 record 0x53cd10",
+    "32 no_match_stop"
+   ],
+   "matched_word": "0x33012842",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x467e70"
+    ],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "spike_fatality_stage_8",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     30,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stage": 8,
+    "winner": 1,
+    "opp_dazed": true,
+    "distance": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "30 record 0x4e4a18",
+    "30 reject tokens_or_block",
+    "30 record 0x4e4a24",
+    "30 window elapsed=20 limit=40",
+    "30 predicate 0x45e4f0",
+    "30 predicate_result 0",
+    "30 record 0x4e4a30",
+    "30 no_match_stop",
+    "30 interrupt callback=0x460fc0 word=0x0",
+    "30 history 0x5346f0 token=9",
+    "32 record 0x53cd10",
+    "32 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "block_plain",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460200 word=0x0",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "air_throw_both_airborne_close",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "self_air": true,
+    "opp_air": true,
+    "opp_x": 65536
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x6110022",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": "0x6110022",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x46aa80"
+    ],
+    "action": "0x502",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "air_throw_too_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "self_air": true,
+    "opp_air": true,
+    "opp_x": 131072
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460200 word=0x0",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "air_throw_shadowed_by_slow_fatality_tokens",
+   "events": [
+    [
+     10,
+     "B"
+    ],
+    [
+     14,
+     "F"
+    ],
+    [
+     18,
+     "F"
+    ],
+    [
+     22,
+     "B"
+    ],
+    [
+     61,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "self_air": true,
+    "opp_air": true,
+    "opp_x": 65536
+   },
+   "trace": [
+    "10 history 0x524ed8 token=3",
+    "14 history 0x524ed8 token=4",
+    "18 history 0x524ed8 token=4",
+    "22 history 0x524ed8 token=3",
+    "61 record 0x4e49f8",
+    "61 window elapsed=51 limit=50",
+    "61 no_match_stop",
+    "61 interrupt callback=0x460200 word=0x0",
+    "61 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "run_single_press",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "run_double_tap_8",
+   "events": [
+    [
+     10,
+     "RUN"
+    ],
+    [
+     18,
+     "RUN"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 record 0x4e4a38",
+    "10 predicate 0x45efc0",
+    "10 predicate_result 0",
+    "10 record 0x4e4a44",
+    "10 predicate 0x45e820",
+    "10 predicate_result 0",
+    "10 record 0x4e4a50",
+    "10 no_match_stop",
+    "10 history 0x5346f0 token=10",
+    "18 record 0x4e4a38",
+    "18 predicate 0x45efc0",
+    "18 predicate_result 0",
+    "18 record 0x4e4a44",
+    "18 predicate 0x45e820",
+    "18 predicate_result 1",
+    "18 interrupt callback=0x45f5f0 word=0x1d01000f",
+    "18 history 0x5346f0 token=10"
+   ],
+   "matched_word": "0x1d01000f",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x469250"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Invalid memory read"
+   }
+  },
+  {
+   "name": "run_double_tap_9",
+   "events": [
+    [
+     10,
+     "RUN"
+    ],
+    [
+     19,
+     "RUN"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "10 record 0x4e4a38",
+    "10 predicate 0x45efc0",
+    "10 predicate_result 0",
+    "10 record 0x4e4a44",
+    "10 predicate 0x45e820",
+    "10 predicate_result 0",
+    "10 record 0x4e4a50",
+    "10 no_match_stop",
+    "10 history 0x5346f0 token=10",
+    "19 record 0x4e4a38",
+    "19 predicate 0x45efc0",
+    "19 predicate_result 0",
+    "19 record 0x4e4a44",
+    "19 predicate 0x45e820",
+    "19 predicate_result 0",
+    "19 record 0x4e4a50",
+    "19 no_match_stop",
+    "19 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "run_double_tap_cooldown_79",
+   "events": [
+    [
+     10,
+     "RUN"
+    ],
+    [
+     18,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stamps": {
+     "10": 60
+    }
+   },
+   "trace": [
+    "10 record 0x4e4a38",
+    "10 predicate 0x45efc0",
+    "10 predicate_result 0",
+    "10 record 0x4e4a44",
+    "10 predicate 0x45e820",
+    "10 predicate_result 0",
+    "10 record 0x4e4a50",
+    "10 no_match_stop",
+    "10 history 0x5346f0 token=10",
+    "18 record 0x4e4a38",
+    "18 predicate 0x45efc0",
+    "18 predicate_result 0",
+    "18 record 0x4e4a44",
+    "18 predicate 0x45e820",
+    "18 predicate_result 0",
+    "18 record 0x4e4a50",
+    "18 no_match_stop",
+    "18 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "run_weapon_pickup_crouching",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "self_action": 8193,
+    "loose_weapon": true
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 1",
+    "20 interrupt callback=0x45f5f0 word=0x2010003",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": "0x2010003",
+   "resolution": {
+    "callback": "0x45f5f0",
+    "chain": [
+     "0x46a020"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Invalid memory read"
+   }
+  },
+  {
+   "name": "run_weapon_pickup_standing",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "loose_weapon": true
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "standing_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460200 word=0x0",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "crouching_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4610c0 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4610c0",
+    "chain": [
+     "0x46ccd0"
+    ],
+    "action": "0x109",
+    "index": [
+     "0x471130[1]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "crouching_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4610d0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4610d0",
+    "chain": [
+     "0x46b7f0"
+    ],
+    "action": "0x107",
+    "index": [
+     "0x4711f0[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "crouching_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461130 word=0x0",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461130",
+    "chain": [
+     "0x46b350"
+    ],
+    "action": "0x2002",
+    "index": [
+     "0x4711f0[9]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "crouching_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461190 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461190",
+    "chain": [
+     "0x46b5a0"
+    ],
+    "action": "0x104",
+    "index": [
+     "0x4711f0[7]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "crouching_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461160 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461160",
+    "chain": [
+     "0x46b710"
+    ],
+    "action": "0x106",
+    "index": [
+     "0x4711f0[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "crouching_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_up_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712c0 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712c0",
+    "chain": [
+     "0x46e6c0"
+    ],
+    "action": "0x603",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712d0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712d0",
+    "chain": [
+     "0x46ee30"
+    ],
+    "action": "0x604",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_up_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712b0 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712b0",
+    "chain": [
+     "0x46c7a0"
+    ],
+    "action": "0x600",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712b0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712b0",
+    "chain": [
+     "0x46c7a0"
+    ],
+    "action": "0x600",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 reject not_grounded",
+    "20 record 0x4e4a44",
+    "20 reject not_grounded",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_up_after_punch_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up_after_punch",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_up_after_punch_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up_after_punch",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712d0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712d0",
+    "chain": [
+     "0x46ee30"
+    ],
+    "action": "0x604",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_after_punch_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up_after_punch",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_up_after_punch_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up_after_punch",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712b0 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712b0",
+    "chain": [
+     "0x46c7a0"
+    ],
+    "action": "0x600",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_after_punch_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up_after_punch",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4712b0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4712b0",
+    "chain": [
+     "0x46c7a0"
+    ],
+    "action": "0x600",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_up_after_punch_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "jump_up_after_punch",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 reject not_grounded",
+    "20 record 0x4e4a44",
+    "20 reject not_grounded",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_diagonal_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "jump_diagonal",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c1f0 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c1f0",
+    "chain": [
+     "0x46e6c0"
+    ],
+    "action": "0x603",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_diagonal_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "jump_diagonal",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c200 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c200",
+    "chain": [
+     "0x46ee30"
+    ],
+    "action": "0x604",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_diagonal_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_diagonal",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "jump_diagonal_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_diagonal",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c1d0 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c1d0",
+    "chain": [
+     "0x46e380"
+    ],
+    "action": "0x602",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_diagonal_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "jump_diagonal",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c1e0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c1e0",
+    "chain": [
+     "0x46df50"
+    ],
+    "action": "0x601",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "jump_diagonal_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "jump_diagonal",
+    "self_air": true
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 reject not_grounded",
+    "20 record 0x4e4a44",
+    "20 reject not_grounded",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e7078_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c210 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c210",
+    "chain": [
+     "character_entry 0x46c290"
+    ],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "followup_4e7078_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e7078_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c680 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c680",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e7090_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c450 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c450",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e7090_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c650 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c650",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e70a8_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c480 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c480",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e70a8_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6a0 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6a0",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e70c0_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c3f0 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c3f0",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "followup_4e70c0_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c680 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c680",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "locked_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "locked",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "locked_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "locked",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "locked_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "locked",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "locked_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "locked",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "locked_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "locked",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "locked_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "locked",
+    "self_air": false
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "armed_standing_HP_far",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "self_air": false,
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x496c20 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x496c20",
+    "chain": [],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "armed_standing_LP_far",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "self_air": false,
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x496c30 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x496c30",
+    "chain": [],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "armed_standing_BLK_far",
+   "events": [
+    [
+     20,
+     "BLK"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "self_air": false,
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e49f8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a04",
+    "20 predicate 0x45ed70",
+    "20 predicate_result 0",
+    "20 record 0x4e4a10",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460200 word=0x0",
+    "20 history 0x5346f0 token=7"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460200",
+    "chain": [
+     "0x46b1f0"
+    ],
+    "action": "0x2005",
+    "index": [
+     "0x4711f0[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "armed_standing_HK_far",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "self_air": false,
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "armed_standing_LK_far",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "self_air": false,
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "armed_standing_RUN_far",
+   "events": [
+    [
+     20,
+     "RUN"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "self_air": false,
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e4a38",
+    "20 predicate 0x45efc0",
+    "20 predicate_result 0",
+    "20 record 0x4e4a44",
+    "20 predicate 0x45e820",
+    "20 predicate_result 0",
+    "20 record 0x4e4a50",
+    "20 no_match_stop",
+    "20 history 0x5346f0 token=10"
+   ],
+   "matched_word": null,
+   "resolution": null
+  },
+  {
+   "name": "standing_HP_close",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46be40"
+    ],
+    "action": "0x108",
+    "index": [
+     "0x471130[9]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_back_HP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "standing"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LP_close",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_back_LP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "standing"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HK_close",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46ba60"
+    ],
+    "action": "0x103",
+    "index": [
+     "0x471130[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_back_HK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "standing"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46f1f0"
+    ],
+    "action": "0x10d",
+    "index": [
+     "0x471130[7]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LK_close",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "standing",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0",
+     "0x42b6b0"
+    ],
+    "action": "0x501",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_back_LK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "standing"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_HP_close",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c210 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c210",
+    "chain": [
+     "character_entry 0x46c290"
+    ],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "followup_4e7078_back_HP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c210 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c210",
+    "chain": [
+     "character_entry 0x46c290"
+    ],
+    "action": null,
+    "status": "returned_without_action"
+   }
+  },
+  {
+   "name": "followup_4e7078_LP_close",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_back_LP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_HK_close",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c680 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c680",
+    "chain": [
+     "0x46ba60"
+    ],
+    "action": "0x103",
+    "index": [
+     "0x471130[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_back_HK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c680 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c680",
+    "chain": [
+     "0x46f1f0"
+    ],
+    "action": "0x10d",
+    "index": [
+     "0x471130[7]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_LK_close",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0",
+     "0x42b6b0"
+    ],
+    "action": "0x501",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_back_LK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_HP_close",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c450 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c450",
+    "chain": [
+     "0x46be40"
+    ],
+    "action": "0x108",
+    "index": [
+     "0x471130[9]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_back_HP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c450 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c450",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_LP_close",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_back_LP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_HK_close",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c650 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c650",
+    "chain": [
+     "0x46ba60"
+    ],
+    "action": "0x103",
+    "index": [
+     "0x471130[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_back_HK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c650 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c650",
+    "chain": [
+     "0x46f1f0"
+    ],
+    "action": "0x10d",
+    "index": [
+     "0x471130[7]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_LK_close",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0",
+     "0x42b6b0"
+    ],
+    "action": "0x501",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7090_back_LK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7090"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_HP_close",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c480 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c480",
+    "chain": [
+     "0x46be40"
+    ],
+    "action": "0x108",
+    "index": [
+     "0x471130[9]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_back_HP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c480 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c480",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_LP_close",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_back_LP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_HK_close",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6a0 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6a0",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_back_HK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6a0 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6a0",
+    "chain": [
+     "0x46f1f0"
+    ],
+    "action": "0x10d",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_LK_close",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0",
+     "0x42b6b0"
+    ],
+    "action": "0x501",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70a8_back_LK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70a8"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_HP_close",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c3f0 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c3f0",
+    "chain": [
+     "0x46be40"
+    ],
+    "action": "0x108",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_back_HP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c3f0 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c3f0",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_LP_close",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_back_LP",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_HK_close",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c680 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c680",
+    "chain": [
+     "0x46ba60"
+    ],
+    "action": "0x103",
+    "index": [
+     "0x471130[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_back_HK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c680 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c680",
+    "chain": [
+     "0x46f1f0"
+    ],
+    "action": "0x10d",
+    "index": [
+     "0x471130[7]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_LK_close",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0",
+    "distance": 32768
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46a7b0",
+     "0x42b6b0"
+    ],
+    "action": "0x501",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e70c0_back_LK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e70c0"
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c740 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c740",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HP_close_opp_airborne",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "distance": 32768,
+    "opp_air": true
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HP_close_opp_reacting_4001",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "distance": 32768,
+    "opp_action": 16385
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HK_close_opp_4005",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "distance": 32768,
+    "opp_action": 16389
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HK_close_opp_4002",
+   "events": [
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "distance": 32768,
+    "opp_action": 16386
+   },
+   "trace": [
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46ba60"
+    ],
+    "action": "0x103",
+    "index": [
+     "0x471130[12]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LP_close_opp_jabbing_10b",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "distance": 32768,
+    "opp_action": 267
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LP_distance_b333",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "distance": 45875
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LP_distance_b334",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "distance": 45876
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0"
+    ],
+    "action": "0x10b",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HP_distance_cccc",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "distance": 52428
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46be40"
+    ],
+    "action": "0x108",
+    "index": [
+     "0x471130[9]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_HP_distance_cccd",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "distance": 52429
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460f40 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460f40",
+    "chain": [
+     "0x46d290"
+    ],
+    "action": "0x10a",
+    "index": [
+     "0x471130[11]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LK_distance_b333",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "distance": 45875
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_LK_distance_b332",
+   "events": [
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "distance": 45874
+   },
+   "trace": [
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0",
+     "0x42b6b0"
+    ],
+    "action": "0x501",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_back_LP_close",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "distance": 32768
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_back_LK_close",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "distance": 32768
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_toward_LP_close",
+   "events": [
+    [
+     5,
+     "F",
+     19
+    ],
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "distance": 32768
+   },
+   "trace": [
+    "5 history 0x524ed8 token=4",
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fb0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fb0",
+    "chain": [
+     "0x46dca0",
+     "0x42c560"
+    ],
+    "action": "0x500",
+    "index": [
+     "0x471130[8]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_toward_LK",
+   "events": [
+    [
+     5,
+     "F",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "5 history 0x524ed8 token=4",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46a7b0"
+    ],
+    "action": "0x102",
+    "index": [
+     "0x471130[4]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "standing_toward_HK",
+   "events": [
+    [
+     5,
+     "F",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {},
+   "trace": [
+    "5 history 0x524ed8 token=4",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46a680"
+    ],
+    "action": "0x100",
+    "index": [
+     "0x471130[5]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "crouching_LP_armed",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "crouching",
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x4610d0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x4610d0",
+    "chain": [
+     "0x480770"
+    ],
+    "action": "0x407",
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "followup_4e7078_HP_armed",
+   "events": [
+    [
+     20,
+     "HP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e49b8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49c4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49d0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c210 word=0x0",
+    "20 history 0x5346f0 token=5"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c210",
+    "chain": [
+     "0x481010"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Invalid memory read"
+   }
+  },
+  {
+   "name": "followup_4e7078_LP_armed",
+   "events": [
+    [
+     20,
+     "LP"
+    ]
+   ],
+   "params": {
+    "stance": "followup_4e7078",
+    "weapon": 1291134
+   },
+   "trace": [
+    "20 record 0x4e49d8",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49e4",
+    "20 reject tokens_or_block",
+    "20 record 0x4e49f0",
+    "20 no_match_stop",
+    "20 interrupt callback=0x46c6f0 word=0x0",
+    "20 history 0x5346f0 token=6"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x46c6f0",
+    "chain": [
+     "0x481010"
+    ],
+    "action": null,
+    "status": "unresolved_dependency",
+    "unresolved": "Invalid memory read"
+   }
+  },
+  {
+   "name": "armed_standing_back_HK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "HK"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "weapon": 1291134
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a58",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a64",
+    "20 no_match_stop",
+    "20 interrupt callback=0x461030 word=0x0",
+    "20 history 0x5346f0 token=8"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x461030",
+    "chain": [
+     "0x46f1f0"
+    ],
+    "action": "0x10d",
+    "index": [
+     "0x471130[7]"
+    ],
+    "status": "action_written"
+   }
+  },
+  {
+   "name": "armed_standing_back_LK",
+   "events": [
+    [
+     5,
+     "B",
+     19
+    ],
+    [
+     20,
+     "LK"
+    ]
+   ],
+   "params": {
+    "stance": "armed_standing",
+    "weapon": 1291134
+   },
+   "trace": [
+    "5 history 0x524ed8 token=3",
+    "20 record 0x4e4a18",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a24",
+    "20 reject tokens_or_block",
+    "20 record 0x4e4a30",
+    "20 no_match_stop",
+    "20 interrupt callback=0x460fc0 word=0x0",
+    "20 history 0x5346f0 token=9",
+    "22 record 0x53cd10",
+    "22 no_match_stop"
+   ],
+   "matched_word": null,
+   "resolution": {
+    "callback": "0x460fc0",
+    "chain": [
+     "0x46ef90"
+    ],
+    "action": "0x10c",
+    "index": [
+     "0x471130[6]"
+    ],
+    "status": "action_written"
+   }
+  }
+ ]
+}

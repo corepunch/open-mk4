@@ -18,8 +18,8 @@ static void usage(void) {
        "  --screenshot PATH  save final frame as BMP\n"
        "  --list             show original roster and arenas\n"
        "  --self-test        validate battle resources and animation compatibility\n"
-       "P1: A/D W/S, J punch, K kick, L block, U uppercut, O throw, H run.\n"
-       "P2: arrows, keypad 1/2/3/4/5, right Shift run.\n"
+       "P1: A/D W/S move, U HP, J LP, I HK, K LK, L block, H run.\n"
+       "P2: arrows, keypad 4 HP, 1 LP, 5 HK, 2 LK, 3 block, right Shift run.\n"
        "F1/F2 change fighters, F3 CPU/local, F4 arena, R reset, Enter rematch, Space pause.\n");
 }
 

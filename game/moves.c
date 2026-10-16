@@ -45,6 +45,21 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   fighter->contact_tick = -1;
   fighter->contact_ready = false;
   fighter->after_contact = NULL;
+  fighter->pending = NULL;
+  if (move->flags & SF_LOCK) {
+    fighter->buttons = NULL;
+    fighter->flags |= FF_BUSY;
+  } else if (state == S_CROUCH) {
+    fighter_enter_stance(fighter, STANCE_CROUCHING);
+  } else if (state == S_JUMP) {
+    fighter_enter_stance(fighter, STANCE_JUMP);
+  } else if (state == S_IDLE || state == S_WALK) {
+    fighter_enter_stance(fighter, STANCE_STANDING);
+  } else {
+    /* Block and the win pose lock the buttons but leave commands enabled. */
+    fighter->buttons = NULL;
+    fighter->flags &= ~(unsigned)FF_BUSY;
+  }
   frame_event(battle, fighter);
 }
 

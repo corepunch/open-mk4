@@ -239,9 +239,10 @@ projectile gameplay is claimed from that incomplete environment.
 
 Still open: the other normal/contextual attacks and combo routes, specials'
 full entity/physics/victim behavior, weapon combat/geometry, all finisher scene
-programs, actual collision/reactions/damage/hitstop and authentic four-button
-command dispatch. The current host still supplies simplified punch/kick
-commands. Command extraction is not their implementation.
+programs and actual collision/reactions/damage/hitstop. Retail six-button
+input, the command matcher and stance button tables are now in the runtime
+([input and commands](scorpion/input-and-commands.md)); command records
+without an implemented move are not listed yet.
 
 ## Agent-readable disassembly
 

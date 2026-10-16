@@ -25,43 +25,42 @@ typedef enum GameId {
   GAME_WARGODS = 1
 } GameId;
 
+/* Retail switches in the order the switch scan queues their press events:
+ * word 0x4d00a4 holds directions, HP, BLK and HK; word 0x4d00a8 holds LP,
+ * LK and RUN. Directions are absolute, not facing relative. See
+ * docs/scorpion/input-and-commands.md. */
 typedef enum Button {
-  BUTTON_LEFT,
-  BUTTON_RIGHT,
   BUTTON_UP,
   BUTTON_DOWN,
+  BUTTON_LEFT,
+  BUTTON_RIGHT,
+  BUTTON_HIGH_PUNCH,
   BUTTON_BLOCK,
+  BUTTON_HIGH_KICK,
+  BUTTON_LOW_PUNCH,
+  BUTTON_LOW_KICK,
   BUTTON_RUN,
-  BUTTON_PUNCH,
-  BUTTON_KICK,
-  BUTTON_UPPERCUT,
-  BUTTON_THROW,
   BUTTON_COUNT
 } Button;
 
 #define BUTTON_BIT(button) (1u << (button))
 
-/* held is the buttons down during this tick. pressed is the subset that
- * went down since the previous sample. The match reads held for movement
- * and block, and pressed for attacks, so a held punch does not repeat. */
+/* held is the switches down during this tick. The simulation derives presses
+ * with the retail two-sample rule: a switch must be up in both previous
+ * samples, so a one-tick release between taps does not repeat a press. */
 typedef struct Input {
   unsigned held;
-  unsigned pressed;
 } Input;
 
 static inline bool input_held(Input in, Button button) {
   return (in.held & BUTTON_BIT(button)) != 0;
 }
 
-static inline bool input_pressed(Input in, Button button) {
-  return (in.pressed & BUTTON_BIT(button)) != 0;
-}
-
 /* code[] holds keyboard scancodes. The numbers come from SDL; this header
  * does not include SDL. */
 typedef struct InputDevice {
   int code[BUTTON_COUNT];
-  unsigned held;
+  unsigned suppressed; /* keys held across a shell action, ignored until released */
 } InputDevice;
 
 typedef enum ShellCommand {
@@ -108,12 +107,6 @@ enum {
 /* MoveDef.last value for the clip's final frame. */
 #define MOVE_END (-1)
 
-enum {
-  CMD_GROUNDED = 1u << 0,
-  CMD_CROUCHING = 1u << 1,
-  CMD_STANDING = 1u << 2
-};
-
 typedef struct MoveSequence MoveSequence;
 
 /* Immutable move and combat rules. A recovered sequence overrides generic
@@ -133,15 +126,59 @@ typedef struct Motion {
   float walk, run, jump_velocity, gravity;
 } Motion;
 
-typedef struct CommandDef {
-  Button button;
-  unsigned when;
-  int state;
-} CommandDef;
-
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
+typedef bool (*CommandPredicate)(const Battle *battle, const Fighter *fighter);
+
+/* Pattern tokens of a special command, earliest first. Back and forward are
+ * resolved against the opponent's position when the button is pressed. */
+typedef enum CommandToken {
+  TOKEN_UP = 1,
+  TOKEN_DOWN,
+  TOKEN_BACK,
+  TOKEN_FORWARD
+} CommandToken;
+
+enum {
+  CMD_AIR = 0x10,     /* retail flag 0x10: allowed off the ground */
+  CMD_BLOCK_OK = 0x40 /* retail flag 0x40: allowed while block is held */
+};
+
+#define COMMAND_TOKENS 4
+
+/* One retail command record (gate<<24 | flags<<16 | window<<8 | action).
+ * count 0 is an unconditional record. window is inclusive ticks from the
+ * first direction press to the button press; 0 disables the check. The
+ * action-table bits of the retail flags are replaced by the enter callback. */
+typedef struct CommandDef {
+  Button button;
+  CommandToken tokens[COMMAND_TOKENS];
+  int count;
+  int window;
+  unsigned flags;
+  CommandPredicate predicate;
+  FighterFn enter;
+} CommandDef;
+
+/* Press handlers for one stance, indexed by Button. Direction entries are
+ * unused; NULL ignores the press. A move with SF_LOCK installs none. */
+typedef struct ButtonTable {
+  FighterFn press[BUTTON_COUNT];
+} ButtonTable;
+
+typedef enum Stance {
+  STANCE_STANDING,
+  STANCE_CROUCHING,
+  STANCE_JUMP,
+  STANCE_COUNT
+} Stance;
+
+typedef struct Controls {
+  const CommandDef *commands;
+  int command_count;
+  const ButtonTable *stances[STANCE_COUNT];
+} Controls;
 
 /* A playback segment starts at a move-relative tick. Sample progression is
  * first + step * floor((tick - at) / period), until the next segment.
@@ -174,8 +211,7 @@ typedef struct CharacterDef {
   const Motion *motion;
   const MoveDef *const *moves; /* move_count pointers, indexed by StateId */
   int move_count;
-  const CommandDef *commands;
-  int command_count;
+  const Controls *controls;
   const FighterFn *enter; /* optional move_count callbacks; NULL entries use the default move */
 } CharacterDef;
 
@@ -193,6 +229,19 @@ typedef enum ContactResult {
   CONTACT_AIR_HIT = 3
 } ContactResult;
 
+#define INPUT_HISTORY 8
+
+/* Newest first, as retail 0x524ed8 (tokens) and 0x534660 (tick stamps). */
+typedef struct InputHistory {
+  uint8_t token[INPUT_HISTORY]; /* direction Button + 1; 0 is empty */
+  uint64_t tick[INPUT_HISTORY];
+} InputHistory;
+
+enum {
+  FF_BUSY = 1u << 0,     /* retail group flags40 0x001: special commands rejected */
+  FF_FOLLOW_UP = 1u << 9 /* retail 0x200: commands allowed off the ground */
+};
+
 struct Fighter {
   int roster;
   int health, wins, facing, ticks;
@@ -206,6 +255,13 @@ struct Fighter {
   int contact_tick;
   bool contact_ready;
   FighterFn after_contact; /* one-shot continuation after simultaneous contact resolution */
+  unsigned held, prev[2];  /* switch samples for the two-sample press rule */
+  unsigned pressed;        /* presses detected this tick */
+  InputHistory directions;
+  uint64_t latch[BUTTON_COUNT]; /* tick of the last press; HK is never latched */
+  const ButtonTable *buttons;   /* current stance table; NULL while locked */
+  unsigned flags;
+  FighterFn pending; /* interrupt entry, started on the next tick */
 };
 
 typedef struct HitEffect {
@@ -238,6 +294,12 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
 void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
 void fighter_step_sequence(Battle *battle, Fighter *fighter);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
+void fighter_interrupt(Fighter *fighter, FighterFn entry);
+void fighter_enter_stance(Fighter *fighter, Stance stance);
+const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter);
+float fighter_distance(const Battle *battle, const Fighter *fighter);
+bool fighter_holds_back(const Battle *battle, const Fighter *fighter);
+void fighter_press(Battle *battle, Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
 
 void battle_init(Battle *battle, int p1, int p2);

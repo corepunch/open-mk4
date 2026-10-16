@@ -32,19 +32,20 @@ static void do_attack(Battle *battle, int state, bool guard, bool crouch) {
     in[1].held |= BUTTON_BIT(BUTTON_BLOCK);
   if (crouch)
     in[1].held |= BUTTON_BIT(BUTTON_DOWN);
+  /* Fighter 0 stands left of fighter 1, so back is left. */
   if (state == S_PUNCH)
-    in[0].pressed |= BUTTON_BIT(BUTTON_PUNCH);
-  if (state == S_KICK || state == S_SWEEP)
-    in[0].pressed |= BUTTON_BIT(BUTTON_KICK);
-  if (state == S_UPPERCUT)
-    in[0].pressed |= BUTTON_BIT(BUTTON_UPPERCUT);
-  if (state == S_THROW)
-    in[0].pressed |= BUTTON_BIT(BUTTON_THROW);
+    in[0].held |= BUTTON_BIT(BUTTON_HIGH_PUNCH);
+  if (state == S_KICK)
+    in[0].held |= BUTTON_BIT(BUTTON_HIGH_KICK);
   if (state == S_SWEEP)
-    in[0].held |= BUTTON_BIT(BUTTON_DOWN);
+    in[0].held |= BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(BUTTON_LEFT);
+  if (state == S_UPPERCUT)
+    in[0].held |= BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_DOWN);
+  if (state == S_THROW)
+    in[0].held |= BUTTON_BIT(BUTTON_LOW_PUNCH);
   battle_step(battle, in);
   in[0] = (Input){0};
-  advance_ticks(battle, 19, in);
+  advance_ticks(battle, 20, in);
 }
 
 static void check_roster(void) {
@@ -52,7 +53,7 @@ static void check_roster(void) {
   const CharacterDef *goro = roster_def(15);
   check(roster_count() == 18, "MK4 roster should be 18 fighters");
   check(human->game == GAME_MK4 && goro->game == GAME_MK4, "Current rows are MK4");
-  check(human->commands == roster_def(4)->commands, "Humans share one command table");
+  check(human->controls == roster_def(4)->controls, "Humans share one control table");
   for (int i = 0; i < roster_count(); ++i)
     check(roster_def(i)->moves != NULL && roster_def(i)->move_count == S_COUNT, "Every fighter owns a move table");
   check(human->moves != goro->moves, "Goro names clips from his own bank");
@@ -87,7 +88,10 @@ static void check_original_kicks(void) {
     int player = expected->roster == 0 ? 0 : 1;
     Fighter *fighter = &battle.fighters[player];
     Input in[2] = {0};
-    in[player].pressed = BUTTON_BIT(BUTTON_KICK);
+    in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
+    battle_step(&battle, in);
+    check(fighter->pending != NULL && fighter->state == S_IDLE, "Press must start its move on the next tick");
+    in[player] = (Input){0};
     battle_step(&battle, in);
     check(fighter->current_move->clip == expected->clip, "Kick callback chose wrong move");
     for (int tick = 0; tick < expected->count; ++tick) {
@@ -110,9 +114,9 @@ static void check_original_kicks(void) {
     fighter = &battle.fighters[player];
     in[0] = (Input){0};
     in[1] = (Input){0};
-    in[player].pressed = BUTTON_BIT(BUTTON_KICK);
+    in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
     battle_step(&battle, in);
-    advance_ticks(&battle, 10, NULL);
+    advance_ticks(&battle, 11, NULL);
     check(battle.fighters[1 - player].health == 100, "Kick contact started before retail query");
     advance_ticks(&battle, 1, NULL);
     check(battle.fighters[1 - player].health == 88, "Kick missed its first retail contact step");
@@ -155,13 +159,13 @@ static void check_original_scorpion(void) {
         /* Match the oracle's controlled result. Collision is tested separately. */
         fighter_note_contact(fighter, (ContactResult)expected->result);
       }
-      Input in[2] = {0};
+      /* The oracle writes the LP latch before the pump; mirror that latch. */
       for (int press = 0; press < expected->press_count; ++press) {
         if (expected->presses[press] == tick + 1) {
-          in[0].pressed = BUTTON_BIT(BUTTON_PUNCH);
+          fighter->buffered |= BUTTON_BIT(BUTTON_LOW_PUNCH);
         }
       }
-      battle_step(&battle, in);
+      battle_step(&battle, (Input[2]){0});
     }
     check(fighter->state == S_IDLE, "Scorpion move did not return at retail end step");
   }
@@ -222,8 +226,9 @@ static void check_scorpion_contact_branches(void) {
     Battle battle = fight(4.f);
     Fighter *fighter = &battle.fighters[0];
     fighter_enter_state(&battle, fighter, S_PUNCH);
-    advance_ticks(&battle, 8, NULL);
-    battle_step(&battle, (Input[2]){{.pressed = BUTTON_BIT(BUTTON_PUNCH)}, {0}});
+    advance_ticks(&battle, 7, NULL);
+    battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
+    battle_step(&battle, (Input[2]){0});
     check(fighter_move(fighter)->clip == 295, "Jab repeat failed at its native branch");
     fighter_enter_state(&battle, fighter, S_HIT);
     advance_ticks(&battle, 30, NULL);
@@ -231,7 +236,31 @@ static void check_scorpion_contact_branches(void) {
   }
 }
 
+/* docs/scorpion/input-and-commands.md: two-sample press rule, history, latency. */
+static void check_retail_input(void) {
+  Battle battle = fight(4.f);
+  Fighter *fighter = &battle.fighters[0];
+  Input tap[2] = {{BUTTON_BIT(BUTTON_DOWN)}, {0}};
+  battle_step(&battle, tap);
+  check(fighter->directions.token[0] == BUTTON_DOWN + 1 && fighter->directions.tick[0] == battle.ticks, "Direction press not stamped");
+  battle_step(&battle, (Input[2]){0});
+  battle_step(&battle, tap);
+  check(fighter->directions.token[1] == 0, "A one-tick release must not repeat a press");
+  battle_step(&battle, (Input[2]){0});
+  battle_step(&battle, (Input[2]){0});
+  battle_step(&battle, tap);
+  check(fighter->directions.token[1] == BUTTON_DOWN + 1, "A two-tick release must allow a new press");
+  battle_step(&battle, (Input[2]){0});
+  battle_step(&battle, (Input[2]){0});
+  battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK)}, {0}});
+  check(fighter->latch[BUTTON_HIGH_PUNCH] == battle.ticks && fighter->latch[BUTTON_HIGH_KICK] == 0, "Only HP, LP, BLK, LK and RUN latch presses");
+  check(fighter->pending != NULL && fighter->buttons == NULL && (fighter->flags & FF_BUSY), "First handled press must lock the fighter");
+  battle_step(&battle, (Input[2]){0});
+  check(fighter->state == S_PUNCH && fighter->ticks == 0, "Interrupted entry must start on the next tick");
+}
+
 int main(void) {
+  check_retail_input();
   check_roster();
   check_original_kicks();
   check_original_scorpion();
@@ -273,7 +302,7 @@ int main(void) {
     check(battle.fighters[1].health == 100, "Crouch guard fails against sweep");
   }
   {
-    Battle battle = fight(0.8f);
+    Battle battle = fight(0.6f);
     do_attack(&battle, S_THROW, true, false);
     check(battle.fighters[1].health == 86, "Throw should beat guard");
   }
@@ -295,9 +324,9 @@ int main(void) {
     Input in[2] = {0};
     /* Same recovered startup: Sub-Zero's jab still uses approximate timing. */
     battle.fighters[1].roster = 0;
-    in[0].pressed = in[1].pressed = BUTTON_BIT(BUTTON_PUNCH);
+    in[0].held = in[1].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
     battle_step(&battle, in);
-    advance_ticks(&battle, 8, NULL);
+    advance_ticks(&battle, 9, NULL);
     check(battle.fighters[0].health == 93 && battle.fighters[1].health == 93, "Simultaneous attacks must trade");
   }
   {
@@ -370,6 +399,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; trades; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

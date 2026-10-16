@@ -132,7 +132,7 @@ static const MoveDef *const moves[S_COUNT] = {
 
 static bool scorpion_repeat_jab(const Battle *battle, const Fighter *fighter) {
   const Fighter *other = fighter == &battle->fighters[0] ? &battle->fighters[1] : &battle->fighters[0];
-  return (fighter->buffered & BUTTON_BIT(BUTTON_PUNCH)) != 0 && (other->x - fighter->x) * (float)fighter->facing >= 0.f;
+  return (fighter->buffered & BUTTON_BIT(BUTTON_LOW_PUNCH)) != 0 && (other->x - fighter->x) * (float)fighter->facing >= 0.f;
 }
 
 static void scorpion_jab_next(Battle *battle, Fighter *fighter) {
@@ -188,4 +188,4 @@ static const FighterFn enter[S_COUNT] = {
     [S_KICK] = scorpion_kick,
 };
 
-const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, mk4_commands, MK4_COMMAND_COUNT, enter};
+const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &mk4_controls, enter};

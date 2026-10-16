@@ -65,4 +65,4 @@ static const FighterFn enter[S_COUNT] = {
     [S_KICK] = sub_zero_kick,
 };
 
-const CharacterDef mk4_sub_zero = {GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, mk4_commands, MK4_COMMAND_COUNT, enter};
+const CharacterDef mk4_sub_zero = {GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, &mk4_controls, enter};

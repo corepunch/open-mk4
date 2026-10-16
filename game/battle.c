@@ -78,41 +78,37 @@ static void finish_round(Battle *battle) {
   battle->phase_ticks = 0;
 }
 
-static bool command_matches(const Fighter *fighter, Input in, const CommandDef *command) {
-  if (!input_pressed(in, command->button))
-    return false;
-  if ((command->when & CMD_GROUNDED) && fighter->height != 0.f)
-    return false;
-  if ((command->when & CMD_CROUCHING) && !fighter->crouching)
-    return false;
-  if ((command->when & CMD_STANDING) && fighter->crouching)
-    return false;
-  return true;
+static bool held(const Fighter *fighter, Button button) {
+  return (fighter->held & BUTTON_BIT(button)) != 0;
 }
 
-static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *other, Input in) {
+static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *other) {
   const CharacterDef *def = roster_def(fighter->roster);
-  const MoveDef *state = fighter_move(fighter);
   const Motion *motion = def->motion;
   int dir;
-  int c;
 
-  fighter->buffered |= in.pressed;
   fighter->contact_ready = false;
-  fighter->ticks++;
   if (!locked(fighter) && fighter->height == 0.f)
     fighter->facing = fighter->x <= other->x ? 1 : -1;
-
-  if (state->sequence != NULL) {
-    fighter_step_sequence(battle, fighter);
-  } else if (state->flags & SF_ATTACK) {
-    int total = state->startup + state->active + state->recovery;
-    if (fighter->ticks >= total)
-      fighter_enter_state(battle, fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);
-  } else if (state->flags & SF_REACTION) {
-    bool landed = !(state->flags & SF_WAIT_LAND) || fighter->height == 0.f;
-    if (fighter->ticks >= state->recovery && landed)
-      fighter_enter_state(battle, fighter, S_IDLE);
+  if (fighter->pending != NULL) {
+    /* The press task interrupted this fighter last tick; its entry runs now. */
+    FighterFn entry = fighter->pending;
+    fighter->pending = NULL;
+    entry(battle, fighter);
+  } else {
+    const MoveDef *state = fighter_move(fighter);
+    fighter->ticks++;
+    if (state->sequence != NULL) {
+      fighter_step_sequence(battle, fighter);
+    } else if (state->flags & SF_ATTACK) {
+      int total = state->startup + state->active + state->recovery;
+      if (fighter->ticks >= total)
+        fighter_enter_state(battle, fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);
+    } else if (state->flags & SF_REACTION) {
+      bool landed = !(state->flags & SF_WAIT_LAND) || fighter->height == 0.f;
+      if (fighter->ticks >= state->recovery && landed)
+        fighter_enter_state(battle, fighter, S_IDLE);
+    }
   }
 
   if (fighter->height > 0.f || fighter->velocity > 0.f) {
@@ -125,29 +121,22 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
         fighter_enter_state(battle, fighter, S_IDLE);
     }
   }
-  if (locked(fighter))
+  if (locked(fighter) || fighter->pending != NULL)
     return;
 
-  fighter->crouching = input_held(in, BUTTON_DOWN) && fighter->height == 0.f;
-  if (input_held(in, BUTTON_BLOCK)) {
+  fighter->crouching = held(fighter, BUTTON_DOWN) && fighter->height == 0.f;
+  if (held(fighter, BUTTON_BLOCK) && fighter->height == 0.f) {
     fighter_enter_state(battle, fighter, S_BLOCK);
     return;
   }
-  for (c = 0; c < def->command_count; ++c) {
-    if (!command_matches(fighter, in, &def->commands[c]))
-      continue;
-    fighter_enter_state(battle, fighter, def->commands[c].state);
-    return;
-  }
-
-  if (input_held(in, BUTTON_UP) && fighter->height == 0.f) {
+  if (held(fighter, BUTTON_UP) && fighter->height == 0.f) {
     fighter->velocity = motion->jump_velocity;
     fighter->height = 0.01f;
     fighter_enter_state(battle, fighter, S_JUMP);
   }
-  dir = (int)input_held(in, BUTTON_RIGHT) - (int)input_held(in, BUTTON_LEFT);
+  dir = (int)held(fighter, BUTTON_RIGHT) - (int)held(fighter, BUTTON_LEFT);
   if (!fighter->crouching) {
-    float speed = input_held(in, BUTTON_RUN) ? motion->run : motion->walk;
+    float speed = held(fighter, BUTTON_RUN) ? motion->run : motion->walk;
     fighter->x += (float)dir * speed * TICK_SECONDS;
   }
   if (fighter->height > 0.f)
@@ -158,6 +147,26 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
     fighter_enter_state(battle, fighter, S_WALK);
   else
     fighter_enter_state(battle, fighter, S_IDLE);
+}
+
+/* Switch scan 0x45c560: a press needs the switch up in both previous samples. */
+static void sample_switches(Fighter *fighter, Input in) {
+  fighter->held = in.held;
+  fighter->pressed = in.held & ~fighter->prev[0] & ~fighter->prev[1];
+  fighter->prev[1] = fighter->prev[0];
+  fighter->prev[0] = in.held;
+}
+
+/* Press handler tasks run after the fighter tasks in the same pump. */
+static void dispatch_presses(Battle *battle) {
+  for (int i = 0; i < 2; ++i) {
+    Fighter *fighter = &battle->fighters[i];
+    for (int button = 0; button < BUTTON_COUNT; ++button) {
+      if (fighter->pressed & BUTTON_BIT(button)) {
+        fighter_press(battle, fighter, (Button)button);
+      }
+    }
+  }
 }
 
 static void separate_bodies(Battle *battle) {
@@ -237,6 +246,8 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
 void battle_step(Battle *battle, const Input input[2]) {
   int i;
   battle->ticks++;
+  for (i = 0; i < 2; ++i)
+    sample_switches(&battle->fighters[i], input[i]);
   battle->phase_ticks++;
   for (i = 0; i < 2; ++i) {
     if (battle->effects[i].ticks > 0)
@@ -259,7 +270,7 @@ void battle_step(Battle *battle, const Input input[2]) {
 
   battle->time_ticks--;
   for (i = 0; i < 2; ++i)
-    advance_fighter(battle, &battle->fighters[i], &battle->fighters[1 - i], input[i]);
+    advance_fighter(battle, &battle->fighters[i], &battle->fighters[1 - i]);
   separate_bodies(battle);
   {
     Fighter snapshot[2];
@@ -274,6 +285,9 @@ void battle_step(Battle *battle, const Input input[2]) {
       next(battle, fighter);
     }
   }
-  if (battle->fighters[0].health <= 0 || battle->fighters[1].health <= 0 || battle->time_ticks <= 0)
+  if (battle->fighters[0].health <= 0 || battle->fighters[1].health <= 0 || battle->time_ticks <= 0) {
     finish_round(battle);
+    return;
+  }
+  dispatch_presses(battle);
 }

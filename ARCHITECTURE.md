@@ -139,7 +139,12 @@ stubs/limits are documented in [Scorpion retail moves](docs/scorpion-retail-move
 `battle_step` remains
 the shared update and does not branch on game id. Static move pointers can
 be copied within this process, but need stable IDs for serialized snapshots.
-Input is a held/pressed bit frame.
+Input is a frame of held retail switches (four absolute directions, HP, LP,
+BLK, HK, LK, RUN). The simulation applies the retail two-sample press rule,
+keeps the 8-entry direction history and press latches, and handles presses
+after the fighters move, like retail press tasks: special-command records
+first, then the current stance's button table. The selected entry starts on
+the next tick. See [input and commands](docs/scorpion/input-and-commands.md).
 `game/input.c` samples keyboard bindings, maps shell keys, and fills the CPU
 frame. The step function never reads SDL. War Gods can be added by appending
 roster rows and loading that game's asset bank; it does not need a second

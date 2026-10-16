@@ -17,24 +17,24 @@ void input_bind_player(InputDevice *device, int player) {
     bind(device, BUTTON_RIGHT, SDL_SCANCODE_D);
     bind(device, BUTTON_UP, SDL_SCANCODE_W);
     bind(device, BUTTON_DOWN, SDL_SCANCODE_S);
+    bind(device, BUTTON_HIGH_PUNCH, SDL_SCANCODE_U);
+    bind(device, BUTTON_LOW_PUNCH, SDL_SCANCODE_J);
+    bind(device, BUTTON_HIGH_KICK, SDL_SCANCODE_I);
+    bind(device, BUTTON_LOW_KICK, SDL_SCANCODE_K);
     bind(device, BUTTON_BLOCK, SDL_SCANCODE_L);
     bind(device, BUTTON_RUN, SDL_SCANCODE_H);
-    bind(device, BUTTON_PUNCH, SDL_SCANCODE_J);
-    bind(device, BUTTON_KICK, SDL_SCANCODE_K);
-    bind(device, BUTTON_UPPERCUT, SDL_SCANCODE_U);
-    bind(device, BUTTON_THROW, SDL_SCANCODE_O);
     return;
   }
   bind(device, BUTTON_LEFT, SDL_SCANCODE_LEFT);
   bind(device, BUTTON_RIGHT, SDL_SCANCODE_RIGHT);
   bind(device, BUTTON_UP, SDL_SCANCODE_UP);
   bind(device, BUTTON_DOWN, SDL_SCANCODE_DOWN);
+  bind(device, BUTTON_HIGH_PUNCH, SDL_SCANCODE_KP_4);
+  bind(device, BUTTON_LOW_PUNCH, SDL_SCANCODE_KP_1);
+  bind(device, BUTTON_HIGH_KICK, SDL_SCANCODE_KP_5);
+  bind(device, BUTTON_LOW_KICK, SDL_SCANCODE_KP_2);
   bind(device, BUTTON_BLOCK, SDL_SCANCODE_KP_3);
   bind(device, BUTTON_RUN, SDL_SCANCODE_RSHIFT);
-  bind(device, BUTTON_PUNCH, SDL_SCANCODE_KP_1);
-  bind(device, BUTTON_KICK, SDL_SCANCODE_KP_2);
-  bind(device, BUTTON_UPPERCUT, SDL_SCANCODE_KP_4);
-  bind(device, BUTTON_THROW, SDL_SCANCODE_KP_5);
 }
 
 static unsigned read_held(const InputDevice *device, const unsigned char *keys) {
@@ -50,13 +50,14 @@ static unsigned read_held(const InputDevice *device, const unsigned char *keys) 
 
 void input_sample(InputDevice *device, const unsigned char *keys, Input *out) {
   unsigned held = read_held(device, keys);
-  out->held = held;
-  out->pressed = held & ~device->held;
-  device->held = held;
+  device->suppressed &= held;
+  out->held = held & ~device->suppressed;
 }
 
+/* Keys held through a shell action (reset, fighter change) stay ignored until
+ * released, so they cannot become presses in the new match. */
 void input_sync(InputDevice *device, const unsigned char *keys) {
-  device->held = read_held(device, keys);
+  device->suppressed = read_held(device, keys);
 }
 
 /* keycode is an SDL_Keycode. Shell keys never share the fighter bitmask. */
@@ -81,10 +82,6 @@ ShellCommand input_shell_command(int keycode) {
     default:
       return SHELL_NONE;
   }
-}
-
-static void press(Input *out, Button button) {
-  out->pressed |= BUTTON_BIT(button);
 }
 
 static void hold(Input *out, Button button) {
@@ -115,14 +112,17 @@ void input_cpu(const Battle *battle, int player, Input *out) {
       hold(out, BUTTON_DOWN);
   }
   if (distance < 1.8f) {
+    /* One-tick taps: the simulation turns a released switch into a press. */
     if (cycle == 7)
-      press(out, BUTTON_PUNCH);
+      hold(out, BUTTON_HIGH_PUNCH);
     if (cycle == 45)
-      press(out, BUTTON_KICK);
-    if (cycle == 86)
-      press(out, BUTTON_UPPERCUT);
-    if (distance < 1.f && cycle == 108)
-      press(out, BUTTON_THROW);
+      hold(out, BUTTON_HIGH_KICK);
+    if (cycle == 86) {
+      hold(out, BUTTON_DOWN);
+      hold(out, BUTTON_HIGH_PUNCH);
+    }
+    if (distance < 0.7f && cycle == 108)
+      hold(out, BUTTON_LOW_PUNCH);
   }
   if (distance > 2.f && cycle == 115)
     hold(out, BUTTON_UP);

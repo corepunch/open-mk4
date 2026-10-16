@@ -239,7 +239,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   font_draw(font, cv, 28, cv->h - 79, assets->arenas.data[arena].name, 1);
   const char *mode = cpu ? "P1 VS CPU / F3 TWO PLAYERS" : "LOCAL TWO PLAYERS / F3 CPU";
   font_draw(font, cv, cv->w - 28 - font_width(font, mode, .6f), cv->h - 78, mode, .6f);
-  font_draw(font, cv, 28, cv->h - 49, "P1  A/D MOVE  W JUMP  S DUCK  J PUNCH  K KICK  L BLOCK  U UPPERCUT  O THROW  H RUN", .6f);
+  font_draw(font, cv, 28, cv->h - 49, "P1  A/D MOVE  W JUMP  S DUCK  U HP  J LP  I HK  K LK  L BLOCK  H RUN", .6f);
   font_draw(font, cv, 28, cv->h - 29, "P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE", .6f);
   if (battle->phase == PHASE_READY) {
     round_intro(cv, &assets->hud, battle->round);

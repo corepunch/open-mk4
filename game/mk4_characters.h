@@ -2,12 +2,8 @@
 #define MK4_CHARACTERS_H
 #include "game.h"
 
-enum {
-  MK4_COMMAND_COUNT = 6
-};
-
 extern const Motion mk4_motion;
-extern const CommandDef mk4_commands[MK4_COMMAND_COUNT];
+extern const Controls mk4_controls;
 
 extern const CharacterDef mk4_scorpion;
 extern const CharacterDef mk4_raiden;
