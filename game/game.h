@@ -166,6 +166,15 @@ typedef struct WeaponDef {
   void (*equip)(Fighter *fighter);
 } WeaponDef;
 
+/* 494a00's descriptor-driven attack phases, translated into game data. */
+typedef struct WeaponStrike {
+  MoveDef move;
+  AttackRecord record;
+  int first, windup, target, queries, recovery;
+  int delay, travel;
+  q16 speed;
+} WeaponStrike;
+
 typedef bool (*CommandPredicate)(const Battle *battle, const Fighter *fighter);
 
 /* Pattern tokens of a special command, earliest first. Back and forward are
@@ -361,6 +370,9 @@ struct Fighter {
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
+  const WeaponStrike *weapon_strike;
+  bool weapon_travel;
+  int blend_clip, blend_sample, blend_ticks, blend_duration;
   int appearance;  /* character-script rendering variant; reset at round spawn */
   int frozen_clip; /* preserve the victim's current pose while frozen */
   int reaction;    /* last selected attack-record reaction, retained across its phases */
@@ -462,6 +474,17 @@ const Clip *fighter_clip(const Assets *assets, const Fighter *fighter);
 Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
 int fighter_pose_sample(const Fighter *fighter);
+void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
+void fighter_ready(Battle *battle, Fighter *fighter);
+void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
+void weapon_start_strike(Battle *battle, Fighter *fighter, const WeaponStrike *strike, bool travel);
+void weapon_air_attack(Battle *battle, Fighter *fighter, bool high);
+void weapon_draw(Battle *battle, Fighter *fighter, const WeaponDef *weapon);
+void weapon_throw(Battle *battle, Fighter *fighter);
+bool weapon_can_pickup(const Battle *battle, const Fighter *fighter);
+void weapon_pickup(Battle *battle, Fighter *fighter);
+void weapon_followup_victim(Battle *battle, Fighter *fighter);
+void weapon_stance(Battle *battle, Fighter *fighter, int state);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

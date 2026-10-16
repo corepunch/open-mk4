@@ -128,4 +128,5 @@ void assets_load_battle(Assets *assets, const char *archive, const char *executa
 void assets_free(Assets *assets);
 /* Output is caller-owned and holds at least ch->bones.count entries. */
 void pose(const Character *ch, const Clip *clip, double frame, Pose output[MK4_MAX_BONES]);
+void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *to, int target, float fraction, Pose output[MK4_MAX_BONES]);
 #endif

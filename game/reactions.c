@@ -513,6 +513,40 @@ static void react_scepter_freeze(Battle *battle, Fighter *fighter) {
   }
 }
 
+/* 482c20, reaction 120: restart one of the current block poses, otherwise
+ * use 180. The old no-guard flag survives a follow-up weapon draw. */
+static const MoveDef weapon_followup[] = {
+    {.clip = 255, .last = 4, .flags = SF_LOCK},
+    {.clip = 222, .last = 4, .flags = SF_LOCK},
+    {.clip = 247, .last = 4, .flags = SF_LOCK},
+    {.clip = 321, .last = 32, .flags = SF_LOCK},
+    {.clip = 180, .last = 19, .flags = SF_LOCK},
+};
+
+static void weapon_followup_tick(Battle *battle, Fighter *fighter) {
+  int last = fighter->assets != NULL ? (int)fighter_clip(fighter->assets, fighter)->frames.count - 1 : fighter_move(fighter)->last;
+  fighter->sample_override = mini(last, fighter->ticks);
+  if (fighter->ticks > last) {
+    neutral(battle, fighter);
+  }
+}
+
+static void react_weapon_followup(Battle *battle, Fighter *fighter) {
+  int selected = 4, clip = fighter_move(fighter)->clip;
+  unsigned no_guard = fighter->flags & FF_NO_GUARD;
+  int action = fighter->action;
+  for (int i = 0; i < 4; ++i) {
+    if (weapon_followup[i].clip == clip) {
+      selected = i;
+    }
+  }
+  fighter_start_move(battle, fighter, S_BLOCK, &weapon_followup[selected]);
+  fighter->script = weapon_followup_tick;
+  fighter->sample_override = 0;
+  fighter->flags |= no_guard;
+  fighter->action = action;
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
   [0] = react_block,
@@ -544,6 +578,7 @@ static const FighterFn reactions[256] = {
   [52] = react_extra,
   [150] = react_scepter_low,
   [151] = react_scepter_freeze,
+  [120] = react_weapon_followup,
   [67] = react_freeze,
   [90] = react_extra,
   [99] = react_extra,

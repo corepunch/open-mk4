@@ -25,6 +25,14 @@ bool fighter_fast_start(const Battle *battle, const Fighter *fighter) {
   return fighter_airborne(victim) ? (victim->flags & FF_REACTING) != 0 : (fighter->flags & FF_FOLLOW_UP) != 0;
 }
 
+void fighter_ready(Battle *battle, Fighter *fighter) {
+  if (fighter_airborne(fighter)) {
+    fighter_start_move(battle, fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
+  } else {
+    fighter_enter_state(battle, fighter, S_IDLE);
+  }
+}
+
 /* Retail action codes (+0x74) of the generic states. The stance reset leaves
  * 0 while standing; moves with recovered entries name their own code. */
 // clang-format off: Keep table entries on one row, including long rows.
@@ -128,6 +136,9 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   fighter->sample_override = -1;
   fighter->script_phase = 0;
   fighter->script_timer = 0;
+  fighter->weapon_strike = NULL;
+  fighter->weapon_travel = false;
+  fighter->blend_duration = 0;
   if (was_locked && !(move->flags & SF_LOCK)) {
     fighter_neutral(fighter);
   }

@@ -1019,155 +1019,45 @@ static void sub_zero_slide(Battle *battle, Fighter *fighter) {
 
 /* Shared weapon draw 4e62c0/4e62d8, air 4e66d0/4e66f0 and
  * throw 498290. Scepter ground strikes use character-4 descriptor 4ecdb8. */
+/* Scepter descriptor 4ecdb8. Parameter blocks 4ec458/490/480/4b8
+ * select the shared native attack runner and its recovery continuations. */
 // clang-format off: Keep table entries on one row, including long rows.
-static const AttackRecord weapon_records[] = {
-  {110690, -60882, 68157, 62914, 156, 156, 4, 0, 11796}, /* air HP */
-  {101580, -4587, 64225, 53739, 155, 155, 4, 0, 11796}, /* air LP */
-  {57606, -37945, 73990, 35979, 154, 154, 0, ATTACK_MARK, 16384}, /* throw */
+static const WeaponStrike scepter_attacks[] = {
+  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {128385, -35323, 92274, 22872, 51, 51, 119, 0, 11796}, 6, 10, 16, 4, 1, 0, 0, 0},
+  {{.clip = 250, .last = 31, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {115277, 20316, 73400, 51052, 150, 150, 118, ATTACK_LOW, 9830}, 0, 4, 12, 2, 9, 0, 0, 0},
+  {{.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x112}, {99614, -49152, 64880, 55050, 52, 52, 119, 0, 9830}, 0, 9, 16, 4, 0, 9, 8, 0x147a},
+  {{.clip = 228, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x113}, {123076, -26804, 91684, 14352, 151, 151, 118, 0, 0}, 0, 10, 16, 5, 5, 1, 14, 0x2666},
 };
 // clang-format on
-#define WEAPON_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
-WEAPON_MOVE(s_draw, 244, 0x1004);
-WEAPON_MOVE(s_weapon_throw, 208, 0x30f);
-WEAPON_MOVE(s_pickup, 209, 0x2006);
-WEAPON_MOVE(s_weapon_air_hp, 252, 0x603);
-WEAPON_MOVE(s_weapon_air_lp, 251, 0x604);
-static const MoveDef s_armed_idle = {.clip = 286, .last = MOVE_END};
-static const MoveDef s_armed_walk = {.clip = 277, .last = MOVE_END};
-static const MoveDef s_armed_crouch = {.clip = 219, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef s_armed_block = {.clip = 245, .last = MOVE_END, .flags = SF_HOLD};
 
 static void armed_idle(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_IDLE, fighter->armed ? &s_armed_idle : &s_idle);
+  weapon_stance(battle, fighter, S_IDLE);
 }
 
 static void armed_walk(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_WALK, fighter->armed ? &s_armed_walk : &s_walk);
+  weapon_stance(battle, fighter, S_WALK);
 }
 
 static void armed_crouch(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_CROUCH, fighter->armed ? &s_armed_crouch : &s_crouch);
+  weapon_stance(battle, fighter, S_CROUCH);
 }
 
 static void armed_block(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_BLOCK, fighter->armed ? &s_armed_block : &s_block);
-}
-
-static void weapon_object_tick(Battle *battle, Projectile *p) {
-  if (p->phase == 2) {
-    p->lifetime = 2; /* Resting weapons last until pickup or the round reset. */
-    return;
-  }
-  for (int k = 0; k < 3; ++k) {
-    p->pos[k] += p->vel[k];
-  }
-  if (p->phase == 0) {
-    ContactResult contact = battle_contact_from(battle, &battle->fighters[p->owner], &weapon_records[2], p->pos, p->facing);
-    if (contact != CONTACT_MISS) {
-      p->phase = 1;
-      p->vel[AXIS_X] = 0;
-      p->vel[AXIS_Y] = -0x2666;
-      p->lifetime = 180;
-    } else if (p->ticks >= 30 || abs(p->pos[AXIS_X]) >= battle->arena_radius) {
-      p->kind = 0;
-    }
-  } else {
-    p->vel[AXIS_Y] += 0x28f;
-    if (p->pos[AXIS_Y] >= -0x1999 && p->vel[AXIS_Y] >= 0) {
-      p->pos[AXIS_Y] = -0x1999;
-      memset(p->vel, 0, sizeof p->vel);
-      p->phase = 2;
-      p->lifetime = 2;
-    }
-  }
+  weapon_stance(battle, fighter, S_BLOCK);
 }
 
 static const WeaponDef scepter;
 
-static void weapon_drop(Battle *battle, Fighter *fighter) {
-  if (!fighter->armed) {
-    return;
-  }
-  Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 180, weapon_object_tick);
-  if (p != NULL) {
-    p->weapon = fighter->weapon;
-    p->phase = 1;
-    p->vel[AXIS_Y] = -0x2666;
-  }
-  fighter->armed = false;
-}
-
 static void equip_scepter(Fighter *fighter) {
-  fighter->armed = true;
-  fighter->weapon_used = true;
-  fighter->disarm = weapon_drop;
-  fighter->weapon = &scepter;
-}
-
-static void weapon_air_tick(Battle *battle, Fighter *fighter) {
-  int hp = fighter_move(fighter)->clip == 252;
-  int start = hp ? 8 : 9;
-  fighter->sample_override = mini(9, fighter->ticks);
-  if (fighter->ticks >= start && fighter->ticks <= 10 && !fighter->connected) {
-    battle_contact(battle, fighter, &weapon_records[hp ? 0 : 1]);
-  }
-  if (!fighter_airborne(fighter)) {
-    fighter_start_move(battle, fighter, S_JUMP, &s_land);
-    fighter->script = landing_tick;
-    fighter->sample_override = 18;
-  }
-}
-
-/* Descriptor 4ecdb8, native 4956c0/495720/495710/495740; parameter
- * blocks 4ec458/490/480/4b8. Shared runner 494a00 is expressed as C phases. */
-typedef struct ScepterAttack {
-  MoveDef move;
-  AttackRecord record;
-  int first, active, contacts, end, delay, travel;
-  q16 speed;
-} ScepterAttack;
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const ScepterAttack scepter_attacks[] = {
-  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {128385, -35323, 92274, 22872, 51, 51, 119, 0, 11796}, 6, 11, 4, 39, 0, 0, 0},
-  {{.clip = 250, .last = 31, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {115277, 20316, 73400, 51052, 150, 150, 118, ATTACK_LOW, 9830}, 0, 13, 2, 33, 0, 0, 0},
-  {{.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x112}, {99614, -49152, 64880, 55050, 52, 52, 119, 0, 9830}, 0, 17, 4, 46, 9, 8, 0x147a},
-  {{.clip = 228, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x113}, {123076, -26804, 91684, 14352, 151, 151, 118, 0, 0}, 0, 17, 5, 41, 1, 14, 0x2666},
-};
-// clang-format on
-
-static void scepter_tick(Battle *battle, Fighter *fighter) {
-  const ScepterAttack *attack = &scepter_attacks[fighter->script_phase];
-  int t = fighter->ticks;
-  fighter->sample_override = mini(attack->move.last, attack->first + t);
-  if (!fighter->connected && t >= attack->delay && t < attack->delay + attack->travel) {
-    fighter_set_speed(battle, fighter, attack->speed);
-  } else {
-    fighter_set_speed(battle, fighter, 0);
-  }
-  if (!fighter->connected && t >= attack->active && t < attack->active + attack->contacts) {
-    battle_contact(battle, fighter, &attack->record);
-  }
-  if (fighter->connected || t >= attack->active + attack->contacts) {
-    fighter->action = 0x1006;
-    fighter_set_speed(battle, fighter, 0);
-  }
-  if (t >= attack->end) {
-    sub_zero_ready(battle, fighter);
-  }
+  fighter_equip_weapon(fighter, &scepter);
 }
 
 static void scepter_attack(Battle *battle, Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    fighter_start_move(battle, fighter, S_JUMP, index == 0 || index == 2 ? &s_weapon_air_hp : &s_weapon_air_lp);
-    fighter->script = weapon_air_tick;
-    fighter->body.on_land = NULL;
+    weapon_air_attack(battle, fighter, index == 0 || index == 2);
   } else {
-    fighter_start_move(battle, fighter, S_PUNCH, &scepter_attacks[index].move);
-    fighter->script = scepter_tick;
-    fighter->script_phase = index;
+    weapon_start_strike(battle, fighter, &scepter_attacks[index], true);
   }
-  fighter->sample_override = fighter_airborne(fighter) ? 0 : scepter_attacks[index].first;
 }
 
 static void scepter_hp(Battle *battle, Fighter *fighter) {
@@ -1186,40 +1076,7 @@ static void scepter_back_lp(Battle *battle, Fighter *fighter) {
   scepter_attack(battle, fighter, 3);
 }
 
-static void draw_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = fighter->ticks + (fighter->ticks >= 35);
-  if (fighter->ticks == 22) {
-    equip_scepter(fighter);
-  }
-  if (fighter->ticks >= 48) {
-    sub_zero_ready(battle, fighter);
-  }
-}
-
-static void weapon_throw_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = fighter->ticks - (fighter->ticks >= 11);
-  if (fighter->ticks == 22 && fighter->armed) {
-    Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 90, weapon_object_tick);
-    if (p != NULL) {
-      p->weapon = fighter->weapon;
-      p->pos[AXIS_X] += fighter->facing * 0x9999;
-      p->pos[AXIS_Y] = -0x13333;
-      p->vel[AXIS_X] = fighter->facing * 0x3333;
-    }
-    fighter->armed = false;
-  }
-  if (fighter->ticks >= 62) {
-    sub_zero_ready(battle, fighter);
-  }
-}
-
-static void throw_weapon(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_PUNCH, &s_weapon_throw);
-  fighter->script = weapon_throw_tick;
-  fighter->sample_override = 0;
-}
-
-static const WeaponDef scepter = {0x6b, scepter_hp, scepter_lp, scepter_back_hp, scepter_back_lp, NULL, throw_weapon, equip_scepter};
+static const WeaponDef scepter = {0x6b, scepter_hp, scepter_lp, scepter_back_hp, scepter_back_lp, NULL, weapon_throw, equip_scepter};
 
 static bool can_weapon(const Battle *battle, const Fighter *fighter) {
   return battle->phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
@@ -1230,50 +1087,20 @@ static void sub_zero_weapon(Battle *battle, Fighter *fighter) {
     fighter->weapon->throw_move(battle, fighter);
   } else if (fighter->flags & FF_FOLLOW_UP) {
     equip_scepter(fighter);
-    scepter_back_hp(battle, fighter);
+    weapon_followup_victim(battle, fighter);
+    weapon_start_strike(battle, fighter, &scepter_attacks[2], false);
+    fighter->action = 0x10e;
   } else {
-    fighter_start_move(battle, fighter, S_PUNCH, &s_draw);
-    fighter->script = draw_tick;
+    weapon_draw(battle, fighter, &scepter);
   }
-  fighter->sample_override = 0;
-}
-
-static int pickup_index(const Battle *battle, const Fighter *fighter) {
-  if (fighter->armed || !fighter->crouching) {
-    return -1;
-  }
-  for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    const Projectile *p = &battle->projectiles[i];
-    q16 dx = p->pos[AXIS_X] - fighter->body.pos[AXIS_X], dz = p->pos[AXIS_Z] - fighter->body.pos[AXIS_Z];
-    if (p->kind == PROJECTILE_SWORD && p->phase == 2 && q16_mul(dx, dx) + q16_mul(dz, dz) <= Q16_ONE) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 static bool can_pickup(const Battle *battle, const Fighter *fighter) {
-  return battle->phase == PHASE_FIGHT && pickup_index(battle, fighter) >= 0;
-}
-
-static void pickup_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = mini(14, fighter->ticks);
-  if (fighter->ticks >= 15) {
-    sub_zero_ready(battle, fighter);
-  }
+  return weapon_can_pickup(battle, fighter);
 }
 
 static void sub_zero_pickup(Battle *battle, Fighter *fighter) {
-  int index = pickup_index(battle, fighter);
-  if (index < 0) {
-    sub_zero_ready(battle, fighter);
-    return;
-  }
-  battle->projectiles[index].weapon->equip(fighter);
-  battle->projectiles[index].kind = 0;
-  fighter_start_move(battle, fighter, S_PUNCH, &s_pickup);
-  fighter->script = pickup_tick;
-  fighter->sample_override = 0;
+  weapon_pickup(battle, fighter);
 }
 
 /* 45e820: RUN latch is written after matching, so this sees the prior

@@ -1369,87 +1369,33 @@ static const AttackRecord sword_records[] = {
 };
 // clang-format on
 #define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
-SWORD_MOVE(s_draw, 244, 0x1004);
 SWORD_MOVE(s_sword_hp, 235, 0x10e);
 SWORD_MOVE(s_sword_lp, 236, 0x10e);
 SWORD_MOVE(s_sword_back_lp, 237, 0x112);
 SWORD_MOVE(s_sword_back_hp, 238, 0x112);
 SWORD_MOVE(s_spin_start, 223, 0x407);
 SWORD_MOVE(s_spin, 224, 0x407);
-SWORD_MOVE(s_sword_throw, 208, 0x30f);
-SWORD_MOVE(s_pickup, 209, 0x2006);
-SWORD_MOVE(s_sword_air_hp, 252, 0x603);
-SWORD_MOVE(s_sword_air_lp, 251, 0x604);
-static const MoveDef s_armed_idle = {.clip = 286, .last = MOVE_END};
-static const MoveDef s_armed_walk = {.clip = 277, .last = MOVE_END};
-static const MoveDef s_armed_crouch = {.clip = 219, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef s_armed_block = {.clip = 245, .last = MOVE_END, .flags = SF_HOLD};
 
 static void scorpion_idle(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_IDLE, fighter->armed ? &s_armed_idle : &s_idle);
+  weapon_stance(battle, fighter, S_IDLE);
 }
 
 static void scorpion_walk(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_WALK, fighter->armed ? &s_armed_walk : &s_walk);
+  weapon_stance(battle, fighter, S_WALK);
 }
 
 static void scorpion_crouch(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_CROUCH, fighter->armed ? &s_armed_crouch : &s_crouch);
+  weapon_stance(battle, fighter, S_CROUCH);
 }
 
 static void scorpion_block(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_BLOCK, fighter->armed ? &s_armed_block : &s_block);
-}
-
-static void sword_object_tick(Battle *battle, Projectile *p) {
-  if (p->phase == 2) {
-    p->lifetime = 2; /* Resting weapons last until pickup or the round reset. */
-    return;
-  }
-  for (int k = 0; k < 3; ++k) {
-    p->pos[k] += p->vel[k];
-  }
-  if (p->phase == 0) {
-    ContactResult contact = battle_contact_from(battle, &battle->fighters[p->owner], &sword_records[6], p->pos, p->facing);
-    if (contact != CONTACT_MISS) {
-      p->phase = 1;
-      p->vel[AXIS_X] = 0;
-      p->vel[AXIS_Y] = -0x2666;
-      p->lifetime = 180;
-    } else if (p->ticks >= 30 || abs(p->pos[AXIS_X]) >= battle->arena_radius) {
-      p->kind = 0;
-    }
-  } else {
-    p->vel[AXIS_Y] += 0x28f;
-    if (p->pos[AXIS_Y] >= -0x1999 && p->vel[AXIS_Y] >= 0) {
-      p->pos[AXIS_Y] = -0x1999;
-      memset(p->vel, 0, sizeof p->vel);
-      p->phase = 2;
-      p->lifetime = 2;
-    }
-  }
+  weapon_stance(battle, fighter, S_BLOCK);
 }
 
 static const WeaponDef sword;
 
-static void sword_drop(Battle *battle, Fighter *fighter) {
-  if (!fighter->armed) {
-    return;
-  }
-  Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 180, sword_object_tick);
-  if (p != NULL) {
-    p->weapon = fighter->weapon;
-    p->phase = 1;
-    p->vel[AXIS_Y] = -0x2666;
-  }
-  fighter->armed = false;
-}
-
 static void equip_sword(Fighter *fighter) {
-  fighter->armed = true;
-  fighter->weapon_used = true;
-  fighter->disarm = sword_drop;
-  fighter->weapon = &sword;
+  fighter_equip_weapon(fighter, &sword);
 }
 
 static void sword_slash_tick(Battle *battle, Fighter *fighter) {
@@ -1483,28 +1429,14 @@ static void sword_slash_tick(Battle *battle, Fighter *fighter) {
   }
 }
 
-static void sword_air_tick(Battle *battle, Fighter *fighter) {
-  int hp = fighter_move(fighter)->clip == 252;
-  int start = hp ? 8 : 9;
-  fighter->sample_override = mini(9, fighter->ticks);
-  if (fighter->ticks >= start && fighter->ticks <= 10 && !fighter->connected) {
-    battle_contact(battle, fighter, &sword_records[hp ? 4 : 5]);
-  }
-  if (!fighter_airborne(fighter)) {
-    fighter_start_move(battle, fighter, S_JUMP, &s_teleport_land);
-    fighter->script = teleport_land_tick;
-    fighter->sample_override = 18;
-  }
-}
-
 static void sword_attack(Battle *battle, Fighter *fighter, bool hp, bool back) {
-  bool air = fighter_airborne(fighter);
-  const MoveDef *move = air ? (hp ? &s_sword_air_hp : &s_sword_air_lp) : back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
-  fighter_start_move(battle, fighter, air ? S_JUMP : S_PUNCH, move);
-  fighter->script = air ? sword_air_tick : sword_slash_tick;
-  if (air) {
-    fighter->body.on_land = NULL;
+  if (fighter_airborne(fighter)) {
+    weapon_air_attack(battle, fighter, hp);
+    return;
   }
+  const MoveDef *move = back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
+  fighter_start_move(battle, fighter, S_PUNCH, move);
+  fighter->script = sword_slash_tick;
   fighter->sample_override = 0;
 }
 
@@ -1565,40 +1497,7 @@ static void sword_spin(Battle *battle, Fighter *fighter) {
   fighter->sample_override = 0;
 }
 
-static void draw_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = fighter->ticks + (fighter->ticks >= 35);
-  if (fighter->ticks == 22) {
-    equip_sword(fighter);
-  }
-  if (fighter->ticks >= 48) {
-    special_ready(battle, fighter);
-  }
-}
-
-static void sword_throw_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = fighter->ticks - (fighter->ticks >= 11);
-  if (fighter->ticks == 22 && fighter->armed) {
-    Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_SWORD, 90, sword_object_tick);
-    if (p != NULL) {
-      p->weapon = fighter->weapon;
-      p->pos[AXIS_X] += fighter->facing * 0x9999;
-      p->pos[AXIS_Y] = -0x13333;
-      p->vel[AXIS_X] = fighter->facing * 0x3333;
-    }
-    fighter->armed = false;
-  }
-  if (fighter->ticks >= 62) {
-    special_ready(battle, fighter);
-  }
-}
-
-static void throw_weapon(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_PUNCH, &s_sword_throw);
-  fighter->script = sword_throw_tick;
-  fighter->sample_override = 0;
-}
-
-static const WeaponDef sword = {0x60, sword_hp, sword_lp, sword_back_hp, sword_back_lp, sword_spin, throw_weapon, equip_sword};
+static const WeaponDef sword = {0x60, sword_hp, sword_lp, sword_back_hp, sword_back_lp, sword_spin, weapon_throw, equip_sword};
 
 static bool can_weapon(const Battle *battle, const Fighter *fighter) {
   return battle->phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
@@ -1609,51 +1508,21 @@ static void scorpion_weapon(Battle *battle, Fighter *fighter) {
     fighter->weapon->throw_move(battle, fighter);
   } else if (fighter->flags & FF_FOLLOW_UP) {
     equip_sword(fighter);
+    weapon_followup_victim(battle, fighter);
     fighter_start_move(battle, fighter, S_PUNCH, &s_sword_back_lp);
     fighter->script = sword_slash_tick;
   } else {
-    fighter_start_move(battle, fighter, S_PUNCH, &s_draw);
-    fighter->script = draw_tick;
+    weapon_draw(battle, fighter, &sword);
   }
   fighter->sample_override = 0;
-}
-
-static int pickup_index(const Battle *battle, const Fighter *fighter) {
-  if (fighter->armed || !fighter->crouching) {
-    return -1;
-  }
-  for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    const Projectile *p = &battle->projectiles[i];
-    q16 dx = p->pos[AXIS_X] - fighter->body.pos[AXIS_X], dz = p->pos[AXIS_Z] - fighter->body.pos[AXIS_Z];
-    if (p->kind == PROJECTILE_SWORD && p->phase == 2 && q16_mul(dx, dx) + q16_mul(dz, dz) <= Q16_ONE) {
-      return i;
-    }
-  }
-  return -1;
 }
 
 static bool can_pickup(const Battle *battle, const Fighter *fighter) {
-  return battle->phase == PHASE_FIGHT && pickup_index(battle, fighter) >= 0;
-}
-
-static void pickup_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = mini(14, fighter->ticks);
-  if (fighter->ticks >= 15) {
-    special_ready(battle, fighter);
-  }
+  return weapon_can_pickup(battle, fighter);
 }
 
 static void scorpion_pickup(Battle *battle, Fighter *fighter) {
-  int index = pickup_index(battle, fighter);
-  if (index < 0) {
-    special_ready(battle, fighter);
-    return;
-  }
-  battle->projectiles[index].weapon->equip(fighter);
-  battle->projectiles[index].kind = 0;
-  fighter_start_move(battle, fighter, S_PUNCH, &s_pickup);
-  fighter->script = pickup_tick;
-  fighter->sample_override = 0;
+  weapon_pickup(battle, fighter);
 }
 
 const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873};

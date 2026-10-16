@@ -571,6 +571,34 @@ static void weapons(void) {
   }
 }
 
+static void weapon_recovery(void) {
+  Battle battle = fight(0, 4.f);
+  draw_scepter(&battle, 0);
+  Fighter *fighter = &battle.fighters[0];
+  battle.fighters[1].body.pos[AXIS_X] = fighter->body.pos[AXIS_X] + Q16_ONE;
+  fighter->weapon->lp(&battle, fighter);
+  for (int i = 0; i < 50 && fighter->blend_duration == 0; ++i) {
+    advance(&battle, 1);
+  }
+  check(fighter->blend_duration == 10 && fighter->blend_clip == 250 && fighter->blend_sample == 31, "scepter LP contact must finish then blend to stance");
+  advance(&battle, 9);
+  check(fighter->blend_ticks == 9 && fighter->buttons == NULL, "stance blend retains recovery control lock");
+  advance(&battle, 1);
+  check(fighter->state == S_IDLE && fighter->blend_duration == 0, "stance blend returns control after ten steps");
+
+  battle = fight(0, 4.f);
+  fighter = &battle.fighters[0];
+  Fighter *victim = &battle.fighters[1];
+  fighter->flags |= FF_FOLLOW_UP;
+  victim->hits = 4;
+  victim->flags |= FF_NO_GUARD;
+  weapon_command(&battle, 0);
+  check(
+      victim->reaction == 120 && victim->damage_scale == 0x4ccc && (victim->flags & FF_NO_GUARD), "follow-up draw must prepare victim and scale a long combo");
+  advance(&battle, 10);
+  check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
+}
+
 static Battle sub_zero_finish(int player, q16 distance, int arena) {
   Battle battle = fight(player, 3.f);
   battle.arena = arena;
@@ -782,6 +810,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  weapon_recovery();
   independent_contacts();
   sidesteps();
   fatalities();

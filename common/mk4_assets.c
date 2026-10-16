@@ -583,13 +583,8 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   FREE_ARRAY(exe.bytes);
 }
 
-void pose(const Character *ch, const Clip *clip, double frame, Pose out[MK4_MAX_BONES]) {
-  require(clip->frames.count > 0, "Empty animation clip");
+static void pose_frames(const Character *ch, const Frame *f0, const Frame *f1, float t, Pose out[MK4_MAX_BONES]) {
   require(ch->bones.count <= MK4_MAX_BONES, "Too many rig bones");
-  double f = fmod(fmax(0., frame), (double)clip->frames.count);
-  size_t a = (size_t)f, b = (a + 1) % clip->frames.count;
-  float t = (float)(f - (double)a);
-  const Frame *f0 = &clip->frames.data[a], *f1 = &clip->frames.data[b];
   for (size_t i = 0; i < ch->bones.count; ++i) {
     const Bone *bone = &ch->bones.data[i];
     Pose p;
@@ -610,6 +605,21 @@ void pose(const Character *ch, const Clip *clip, double frame, Pose out[MK4_MAX_
     }
     out[i] = p;
   }
+}
+
+void pose(const Character *ch, const Clip *clip, double frame, Pose out[MK4_MAX_BONES]) {
+  require(clip->frames.count > 0, "Empty animation clip");
+  double f = fmod(fmax(0., frame), (double)clip->frames.count);
+  size_t a = (size_t)f, b = (a + 1) % clip->frames.count;
+  pose_frames(ch, &clip->frames.data[a], &clip->frames.data[b], (float)(f - (double)a), out);
+}
+
+void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *to, int target, float fraction, Pose out[MK4_MAX_BONES]) {
+  require(from->frames.count > 0 && to->frames.count > 0, "Empty blend clip");
+  const Frame *a = &from->frames.data[(size_t)sample % from->frames.count];
+  const Frame *b = &to->frames.data[(size_t)target % to->frames.count];
+  require(a->angles.count == b->angles.count, "Blend clips have different rigs");
+  pose_frames(ch, a, b, fraction, out);
 }
 
 static void meshes_free(Meshes *meshes) {

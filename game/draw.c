@@ -102,7 +102,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
   const Clip *clip = fighter_clip(assets, fighter);
   double frame = fighter_frame(fighter, (int)clip->frames.count);
   Pose bones[MK4_MAX_BONES];
-  pose(ch, clip, frame, bones);
+  fighter_pose(assets, fighter, bones);
   Mat3 turn = fighter_turn(assets, fighter);
   double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
   Vec3 current = clip->frames.data[(size_t)wrapped].translation;
