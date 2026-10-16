@@ -126,11 +126,39 @@ void mk4_walk(Battle *battle, Fighter *fighter) {
  * 46ff20 opens two tuck samples, then four more with diagonal buttons;
  * 470080 spins to the apex; 470140/170 retract at Y >= -2.3. */
 static const MoveDef jump_straight = {.clip = 304, .last = MOVE_END, .action = 0x2007};
-static const MoveDef jump_forward = {.clip = 301, .last = MOVE_END, .action = 0x2009};
-static const MoveDef jump_backward = {.clip = 301, .last = MOVE_END, .action = 0x200a};
+static const MoveDef jump_forward = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = 0x2009};
+static const MoveDef jump_backward = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = 0x200a};
 static const MoveDef jump_landing = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
 
 static void jump_tick(Battle *battle, Fighter *fighter);
+
+static void stance_blend_tick(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter->blend_weight += 0x3333;
+  if (fighter->blend_weight > Q16_ONE) {
+    fighter->blend_duration = 0;
+    fighter->blend_weight = -1;
+    fighter->sample_override = -1;
+    fighter->script = NULL;
+    fighter->ticks = 0;
+  }
+}
+
+/* 46f650/6e0/740: recover the current pose into the character's
+ * standing descriptor with weights .2, .4, .6, .8, 1.0. Stance
+ * controls remain available throughout this interruptible blend. */
+void mk4_return_to_stance(Battle *battle, Fighter *fighter) {
+  int clip = fighter->assets != NULL ? fighter_clip(fighter->assets, fighter)->id : fighter_move(fighter)->clip;
+  int sample = fighter_pose_sample(fighter);
+  fighter_neutral(fighter);
+  fighter_enter_state(battle, fighter, S_IDLE);
+  fighter->blend_clip = clip;
+  fighter->blend_sample = sample;
+  fighter->blend_duration = 5;
+  fighter->blend_weight = 0x3333;
+  fighter->sample_override = 0;
+  fighter->script = stance_blend_tick;
+}
 
 /* 46fcd0/470650/4706f0 and shared tail 4707e0. CPU air attacks
  * select their entries directly; humans only run the whoosh countdown. */
@@ -163,19 +191,24 @@ static void jump_land_tick(Battle *battle, Fighter *fighter) {
   }
   fighter->sample_override = mini(27, 18 + fighter->ticks);
   if (fighter->ticks >= 10) {
-    fighter_enter_state(battle, fighter, S_IDLE);
+    mk4_return_to_stance(battle, fighter);
   }
 }
 
 static void jump_land(Battle *battle, Fighter *fighter) {
-  bool straight = fighter->current_move == &jump_straight;
-  if (straight) {
-    fighter->body.physics = NULL;
-    fighter_start_move(battle, fighter, S_JUMP, &jump_landing);
-    fighter->script = jump_land_tick;
-    fighter->sample_override = 18;
-    fighter_enter_stance(fighter, STANCE_STANDING);
+  if (fighter->current_move == &jump_straight) {
+    mk4_land(battle, fighter);
   }
+}
+
+/* 46fd90: the same landing is reached by a straight jump, air strike
+ * or clone retreat. Keep direction cancels and standing buttons shared. */
+void mk4_land(Battle *battle, Fighter *fighter) {
+  fighter->body.physics = NULL;
+  fighter_start_move(battle, fighter, S_JUMP, &jump_landing);
+  fighter->script = jump_land_tick;
+  fighter->sample_override = 18;
+  fighter_enter_stance(fighter, STANCE_STANDING);
 }
 
 static void start_flip(Battle *battle, Fighter *fighter, int direction, bool from_straight) {
@@ -219,18 +252,21 @@ static void jump_tick(Battle *battle, Fighter *fighter) {
       body->pos[AXIS_Y] -= 0x3333;
       fighter->script_phase = 1;
     }
-  } else if (fighter->script_phase == 1 && body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] >= -0x24ccc) {
-    body->angle[AXIS_X] = body->spin[AXIS_X] = 0;
-    fighter->script_phase = 2;
-    fighter->script_timer = 7;
-    fighter->sample_override = 7;
-    fighter->buttons = NULL;
+  } else if (fighter->script_phase == 1) {
+    fighter->sample_override = mini(8, tick);
+    if (body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] >= -0x24ccc) {
+      body->angle[AXIS_X] = body->spin[AXIS_X] = 0;
+      fighter->script_phase = 2;
+      fighter->script_timer = 7;
+      fighter->sample_override = 7;
+      fighter->buttons = NULL;
+    }
   } else if (fighter->script_phase == 2) {
     if (fighter->script_timer > 0 && --fighter->script_timer > 0) {
       fighter->sample_override--;
     }
     if (fighter->script_timer == 0 && body->gravity == 0) {
-      fighter_enter_state(battle, fighter, S_IDLE);
+      mk4_return_to_stance(battle, fighter);
     }
   }
 }

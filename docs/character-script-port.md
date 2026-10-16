@@ -60,6 +60,7 @@ addresses. Upstream reference addresses differ: verify correspondence locally.
 | Scene playback | `game/scene.c`, `SceneClip` | Independent actor clocks, forward/reverse/repeated clips and native-rate pose blends; no VM/task-stack recreation |
 | Scene objects | `game/presentation.c` | Bounded mesh pieces, joint attachments/visibility, particles and camera state; reset on a new round |
 | CPU | `game/cpu.c`, `CpuMoves` | Simulation-owned plans and direct character entries; battle-owned two-word random state, strict per-thousand gates and explicit difficulty/adaptive context; host only selects human/CPU ownership |
+| Jump / landing | `mk4_jump`, `mk4_land`, `mk4_return_to_stance` | Shared flight and root-aware touchdown; landing controls and five native standing-blend weights also serve air strikes and clone retreats |
 | Sound | `battle_sound`, `common/mk4_audio.c`, `game/audio.c` | Simulation queues selectors; assets decode original ESFs; SDL playback belongs only to the host |
 
 The host owns decoded assets. Drawing reads simulation state. Four projectile
@@ -88,7 +89,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | Shared weapon lifecycle | `4e62c0/d8`, `498290/480`, `45efc0`, `45f8f0`, `46a180` | Shared draw/air/drop/throw/pickup; .75 heading-relative throw origin; pickup requires action `2001`; scepter crouch LP does not acquire sword spin |
 | Walk / run | `460570/710`, `491780`, `460980/9f0`, `48fae0`, `422800` | Forward 0.06, backward 70%, run 0.13; forward/back unarmed and armed gaits; 2% run cost, 40-tick delay, 5% regeneration; direction follows the X/Z pair axis |
 | Wall behavior | `423690/4dad60`, `489cb0`, `488ea0`, `487530/570` | Per-stage radius, last-inside restoration with inward recovery; reached reaction branches recoil a grounded attacker at radius²−10 unless victim is marked; preserve pose, .3 retreat/friction, 8+5 recovery |
-| Jump transitions | `46f7e0`, `46fdf0/fe80`, `46ff20`, `470080/140/170` | Straight samples 0–2, rise 2–17, hold 17, landing 18–27 with stance cancels; directional tuck 0–8, signed spin/root offset, apex and Y=-2.3 retraction 7–1; direction at ticks 1–3 retains vertical velocity; root-aware landing |
+| Jump transitions | `46f7e0`, `46fdf0/fe80`, `46ff20`, `470080/140/170`, `46fd90`, `46f650/6e0/740` | Straight samples 0–2, rise 2–17, hold 17, landing 18–27 with stance cancels; directional tuck 0–8, signed spin/root offset, apex and Y=-2.3 retraction 7–1; direction at ticks 1–3 retains vertical velocity; root-aware landing, completed retraction and interruptible five-weight standing blend |
 | RUN double tap | `45e820`, `469250/2e0/450`, descriptor `53ce18` | Previous RUN press within 8 ticks; 80-tick cooldown; clip 300; Down reverses playback/lateral direction; air victim scales speed to 30%; priority over pickup |
 | Fatality I | `4e0498[4] -> 445100`, `4e0368..3e8`, victim `445380`, `4e03f0..438`, `445510` | Owner 385, victim 389/387 entry blends; slow victim blends to 46/49/50; paired 1.45-unit alignment; head attachment and continuing owner loop 96–140 |
 | Fatality II | `4dfe90[4] -> 41b3a0`, `4d2c10/78/a0/c8`, victim `4d2bf0`, `41b450/610` | Owner 552 breath loops, independent victim 206; wait 20, slide eight samples, calculate delay from current range; uppercut/shatter, eight cursor passes, wait 60, victory |

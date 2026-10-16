@@ -276,15 +276,6 @@ static void stop_body(Fighter *fighter) {
   fighter->body.on_land = NULL;
 }
 
-static const MoveDef s_land = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
-
-static void landing_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = mini(27, 18 + fighter->ticks);
-  if (fighter->ticks >= 10) {
-    sub_zero_ready(battle, fighter);
-  }
-}
-
 /* Ground scripts and their native tails: 4e6da0, 4e5fd8,
  * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69c8/46c2c0,
  * 4e6190/46bb60 and 4e6844/46f220. Times are our script ticks. */
@@ -561,9 +552,7 @@ static const ButtonTable air_ground_followup;
 
 static void air_land(Battle *battle, Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
-  fighter_start_move(battle, fighter, S_JUMP, &s_land);
-  fighter->script = landing_tick;
-  fighter->sample_override = 18;
+  mk4_land(battle, fighter);
 }
 
 static void air_attack_tick(Battle *battle, Fighter *fighter) {

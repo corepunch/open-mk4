@@ -721,6 +721,12 @@ static void jumps(void) {
   check(fighter->action == 0x2008 && fighter->sample_override == 18, "straight jump must enter its landing continuation");
   advance(&battle, 10);
   check(fighter->state == S_IDLE && fighter->body.root_y == 0, "straight landing must restore control");
+  check(fighter->blend_clip == 304 && fighter->blend_sample == 27 && fighter->blend_weight == 0x3333,
+      "landing must blend its final pose into standing at the native initial weight");
+  advance(&battle, 4);
+  check(fighter->blend_weight == 0xffff && fighter->sample_override == 0, "standing return must hold its target sample through five native weights");
+  advance(&battle, 1);
+  check(fighter->blend_duration == 0 && fighter->script == NULL, "standing return must release the pose blend");
 
   for (int back = 0; back < 2; ++back) {
     battle = fight(0, 8.f);
@@ -730,11 +736,20 @@ static void jumps(void) {
     check(fighter->body.gravity == 0x24d && fighter->buttons == NULL, "flip takeoff must use native gravity and delay air attacks");
     advance(&battle, 6);
     check(fighter->body.spin[AXIS_X] == (back ? -0x4ccc : 0x4ccc) && fighter->body.root_y == 0x3333, "flip must begin its signed rotation after six samples");
+    advance(&battle, 2);
+    check(fighter->sample_override == 8, "flip rotation must finish extending to tuck sample eight");
     for (int i = 0; i < 100 && fighter->script_phase != 2; ++i) {
       advance(&battle, 1);
     }
     check(fighter->script_phase == 2 && fighter->sample_override == 7 && fighter->body.spin[AXIS_X] == 0,
         "falling flip must stop rotating and retract from sample seven");
+    for (int i = 0; i < 100 && fighter->state != S_IDLE; ++i) {
+      advance(&battle, 1);
+    }
+    check(fighter->blend_clip == 301 && fighter->blend_sample == 1 && fighter->blend_weight == 0x3333,
+        "directional jump must blend its last retraction pose into standing");
+    press(&battle, 0, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    check(fighter->blend_duration == 0 && fighter->action == 0x10a, "standing attacks must cancel a jump return blend");
     advance(&battle, 100);
     check(fighter->state == S_IDLE && fighter->body.root_y == 0 && fighter->body.angle[AXIS_X] == 0, "flip landing must restore body and control");
   }
