@@ -446,6 +446,9 @@ void battle_step(Battle *battle, const Input input[2]) {
         } else if (fighter_move(fighter)->sequence != NULL) {
           fighter_step_sequence(battle, fighter);
         }
+        if (battle->phase == PHASE_MATCH_OVER && fighter->scene.clips != NULL) {
+          scene_step(fighter);
+        }
       }
     }
     battle_world(battle);

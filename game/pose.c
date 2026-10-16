@@ -61,7 +61,7 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   const Clip *clip = fighter_clip(assets, fighter);
   if (fighter->blend_duration > 0) {
     int id = fighter->blend_clip < 0 ? ch->idle : fighter->blend_clip;
-    float fraction = fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
+    float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
     pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, fighter_pose_sample(fighter), fraction, output);
   } else {
     pose(ch, clip, fighter_frame(fighter, (int)clip->frames.count), output);

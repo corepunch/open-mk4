@@ -175,6 +175,18 @@ typedef struct WeaponStrike {
   q16 speed;
 } WeaponStrike;
 
+typedef struct SceneClip {
+  MoveDef move;
+  int first, last, repeats;
+  q16 blend_step, blend_first;
+} SceneClip;
+
+typedef struct ScenePlayback {
+  const SceneClip *clips;
+  int count, index, repeat, loop_from;
+  bool done;
+} ScenePlayback;
+
 typedef bool (*CommandPredicate)(const Battle *battle, const Fighter *fighter);
 
 /* Pattern tokens of a special command, earliest first. Back and forward are
@@ -375,6 +387,8 @@ struct Fighter {
   const WeaponStrike *weapon_strike;
   bool weapon_travel;
   int blend_clip, blend_sample, blend_ticks, blend_duration;
+  q16 blend_weight;
+  ScenePlayback scene;
   int appearance;  /* character-script rendering variant; reset at round spawn */
   int frozen_clip; /* preserve the victim's current pose while frozen */
   int reaction;    /* last selected attack-record reaction, retained across its phases */
@@ -488,6 +502,8 @@ bool weapon_can_pickup(const Battle *battle, const Fighter *fighter);
 void weapon_pickup(Battle *battle, Fighter *fighter);
 void weapon_followup_victim(Battle *battle, Fighter *fighter);
 void weapon_stance(Battle *battle, Fighter *fighter, int state);
+void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);
+bool scene_step(Fighter *fighter);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

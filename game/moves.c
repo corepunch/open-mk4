@@ -144,6 +144,8 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   fighter->weapon_strike = NULL;
   fighter->weapon_travel = false;
   fighter->blend_duration = 0;
+  fighter->blend_weight = -1;
+  fighter->scene = (ScenePlayback){0};
   if (was_locked && !(move->flags & SF_LOCK)) {
     fighter_neutral(fighter);
   }

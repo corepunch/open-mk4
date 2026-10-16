@@ -671,10 +671,11 @@ static void fatalities(void) {
             "first fatality must select Sub-Zero paired clips");
       } else if (id == FINISH_SUB_ZERO_2) {
         advance(&battle, 80);
-        check(fighter_move(&battle.fighters[player])->clip == 552 && battle.fighters[1 - player].appearance == APPEARANCE_FROZEN,
-            "second fatality must play repeated breath and freeze victim");
+        check(fighter_move(&battle.fighters[player])->clip == 552 && fighter_move(&battle.fighters[1 - player])->clip == 206,
+            "second fatality must run the independent victim animation during breath");
         advance(&battle, 135);
-        check(fighter_move(&battle.fighters[player])->clip == 95, "second fatality must approach with slide");
+        check(fighter_move(&battle.fighters[player])->clip == 95 && battle.fighters[1 - player].appearance == APPEARANCE_FROZEN,
+            "second fatality must freeze before approaching with slide");
         advance(&battle, 50);
         check(battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN && fighter_move(&battle.fighters[player])->clip == 293,
             "second fatality must shatter on uppercut");
@@ -685,6 +686,12 @@ static void fatalities(void) {
         check(battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN, "fan must remove victim");
       } else if (id == FINISH_SPIKE) {
         check(battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "spikes must retain impaled position");
+      } else if (id == FINISH_SUB_ZERO_1) {
+        Fighter *owner = &battle.fighters[player];
+        int sample = owner->sample_override;
+        advance(&battle, 1);
+        check(owner->sample_override != sample && owner->sample_override >= 96 && owner->sample_override <= 140,
+            "first fatality must keep its retail final loop after the result");
       }
       battle_reset_match(&battle);
       check(battle.finisher == 0 && battle.fighters[0].appearance == APPEARANCE_NORMAL && battle.fighters[1].appearance == APPEARANCE_NORMAL,
@@ -735,6 +742,18 @@ static void fatalities(void) {
     advance(&battle, 300);
     check(battle.phase == PHASE_MATCH_OVER && battle.finisher == 0, "finish window must still time out");
   }
+}
+
+static void fatality_blends(void) {
+  Battle battle = sub_zero_finish(0, 0xcccc, 0);
+  sub_zero_finish_command(&battle, 0, FINISH_SUB_ZERO_1, BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN), 60);
+  Fighter *victim = &battle.fighters[1];
+  for (int i = 0; i < 300 && victim->scene.index != 8; ++i) {
+    advance(&battle, 1);
+  }
+  check(victim->scene.index == 8 && victim->blend_sample == 48 && victim->sample_override == 46, "first fatality must blend from victim sample 48 back to 46");
+  advance(&battle, 30);
+  check(victim->scene.index == 8 && victim->blend_weight < Q16_ONE, "victim blend must retain its native 0x666 progression");
 }
 
 static void sidesteps(void) {
@@ -820,6 +839,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  fatality_blends();
   weapon_recovery();
   independent_contacts();
   sidesteps();
