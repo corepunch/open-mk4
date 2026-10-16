@@ -68,7 +68,8 @@ enum {
   PLAN_BACK_FLIP,
   PLAN_THROW_OR_CLOSE,
   PLAN_APPROACH_PROJECTILE,
-  PLAN_CROUCH_COUNTER
+  PLAN_CROUCH_COUNTER,
+  PLAN_WAIT_CLONE
 };
 
 typedef struct CpuChoice {
@@ -171,7 +172,17 @@ static bool respond(Battle *battle, Fighter *fighter) {
     /* 436810/840 and 434b77: answer clones below 3 with the
      * projectile row; answer a distant slide the same way. */
     if (clone) {
-      return distance < 3 * Q16_ONE && battle_cpu_action(battle, fighter, CPU_PROJECTILE);
+      if (distance < 3 * Q16_ONE) {
+        return battle_cpu_action(battle, fighter, CPU_PROJECTILE);
+      }
+      if (action == 0x405) {
+        /* 436840/4368b0, row 4df798: remain neutral until the
+         * opposing clone disappears, with a 240-tick bound. */
+        cpu->plan = PLAN_WAIT_CLONE + 1;
+        cpu->timer = 240;
+        return true;
+      }
+      return false;
     }
     return battle_cpu_action(battle, fighter, distance > 3 * Q16_ONE ? CPU_PROJECTILE : CPU_CLOSE_HK);
   }
@@ -227,10 +238,11 @@ static bool respond(Battle *battle, Fighter *fighter) {
   return false;
 }
 
-static bool projectile_alive(const Battle *battle, const Fighter *fighter) {
+static bool opponent_object(const Battle *battle, const Fighter *fighter, bool clone) {
   int owner = fighter == &battle->fighters[0] ? 1 : 0;
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    if (battle->projectiles[i].kind != 0 && battle->projectiles[i].owner == owner) {
+    const Projectile *object = &battle->projectiles[i];
+    if (object->kind != 0 && object->owner == owner && (object->kind == PROJECTILE_CLONE) == clone) {
       return true;
     }
   }
@@ -327,6 +339,12 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
   }
   int action = cpu->plan - 1;
   q16 distance = (q16)(fighter_distance(battle, fighter) * Q16_ONE);
+  if (action == PLAN_WAIT_CLONE) {
+    if (--cpu->timer <= 0 || !opponent_object(battle, fighter, true)) {
+      cpu->plan = 0;
+    }
+    return;
+  }
   if (action == PLAN_FOOTWORK && cpu->phase > 0) {
     if (--cpu->timer <= 0) {
       if (cpu->phase == 4 || (cpu->phase == 2 && battle_chance(battle, 500))) {
@@ -356,7 +374,7 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
     action = CPU_CLOSE_HK;
   }
   if (action == PLAN_APPROACH_PROJECTILE) {
-    if (cpu->phase == 0 && !projectile_alive(battle, fighter)) {
+    if (cpu->phase == 0 && !opponent_object(battle, fighter, false)) {
       return;
     }
     cpu->phase = 1;

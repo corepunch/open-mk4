@@ -676,6 +676,23 @@ static void cpu_behavior(void) {
   check((fighter->held & BUTTON_BIT(BUTTON_RUN)) && fighter->cpu.timer == 29, "CPU must approach for close HK after the weapon action clears");
   battle_next_round(&battle);
   check(!fighter->human && battle.fighters[1].human && fighter->cpu.plan == 0, "new rounds must preserve CPU ownership and discard old plans");
+
+  battle = fight(0, 6.f);
+  battle.fighters[1].roster = 4;
+  check(battle_cpu_action(&battle, &battle.fighters[1], CPU_SPECIAL_1), "mirror fixture needs the actual clone entry");
+  advance(&battle, 1);
+  fighter->human = false;
+  battle.random[0] = battle.random[1] = 0;
+  battle_cpu_step(&battle, fighter);
+  int wait_plan = fighter->cpu.plan;
+  check(wait_plan != 0 && fighter->held == 0 && fighter->pending == NULL, "CPU must wait for a distant opposing clone");
+  advance(&battle, 10);
+  check(fighter->cpu.plan == wait_plan && fighter->held == 0 && fighter->pending == NULL, "clone wait must survive repeated neutral ticks");
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    battle.projectiles[i].kind = 0;
+  }
+  battle_cpu_step(&battle, fighter);
+  check(fighter->cpu.plan == 0 && fighter->held == 0, "CPU clone wait must release when the independent clone disappears");
 }
 
 static void walls(void) {
