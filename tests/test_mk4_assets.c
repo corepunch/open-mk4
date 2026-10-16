@@ -8,6 +8,28 @@ static void check(bool ok, const char *message) {
   require(ok, message);
 }
 
+/* Positive Y is down. The lowest posed vertex is the sole, and root-motion Y
+ * is what holds it on the floor. */
+static float mesh_sole(const Character *ch, const Clip *clip, double frame) {
+  Pose nodes[MK4_MAX_BONES];
+  float sole = -1e9f;
+  size_t n, j, k;
+  pose(ch, clip, frame, nodes);
+  for (n = 0; n < ch->bones.count; ++n) {
+    const Bone *bone = &ch->bones.data[n];
+    const Triangles *mesh;
+    if (bone->flags & 4)
+      continue;
+    mesh = &ch->meshes.data[bone->mesh].triangles;
+    for (j = 0; j < mesh->count; ++j)
+      for (k = 0; k < 3; ++k) {
+        Vec3 p = vec_add(nodes[n].position, mat3_apply(nodes[n].rotation, mesh->data[j].v[k].p));
+        sole = fmaxf(sole, p.y);
+      }
+  }
+  return sole;
+}
+
 int main(void) {
   struct Fixture {
     int kind;
@@ -88,6 +110,29 @@ int main(void) {
       for (size_t k = 0; k < 9; ++k)
         check(first[i].rotation.m[k] == loop[i].rotation.m[k],
             "Clip does not wrap at its frame count");
+    {
+      float sole0 = mesh_sole(ch, clip, 0);
+      float sole1 = mesh_sole(ch, clip, (double)clip->frames.count - 1);
+      if (fabsf(sole0) > .05f || fabsf(sole1) > .05f)
+        fatal("%s idle sole %f %f leaves the floor", ch->name, (double)sole0, (double)sole1);
+    }
+    {
+      /* Shared bank plus Goro's crouch, knockdown and victory. */
+      static const int grounded[] = {166, 219, 247, 293, 581, 603, 608};
+      for (size_t g = 0; g < sizeof grounded / sizeof grounded[0]; ++g) {
+        const Clip *ground = &assets.clips.data[grounded[g]];
+        float sole, plant;
+        if ((int)ground->frames.data[0].angles.count != count)
+          continue;
+        sole = mesh_sole(ch, ground, (double)ground->frames.count - 1);
+        plant = ground->frames.data[0].translation.y;
+        if (fabsf(sole) > .15f)
+          fatal("%s clip %d sole %f leaves the floor", ch->name, grounded[g], (double)sole);
+        if (fabsf(plant) > .3f && fabsf(sole - plant) <= fabsf(sole) + .25f)
+          fatal(
+              "%s clip %d root Y %f is not the ground plant", ch->name, grounded[g], (double)plant);
+      }
+    }
   }
   assets_free(&assets);
   check(!assets.characters.data && !assets.clips.data, "Asset ownership was not released");

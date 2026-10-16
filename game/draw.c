@@ -120,8 +120,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
     frame = clampd(progress, 0.0, 1.0) * (double)(clip->frames.count - 1);
   } else if (fighter->state == S_KNOCKDOWN) {
     frame = fmin((double)maxi(0, fighter->ticks) * 0.65, (double)(clip->frames.count - 1));
-  } else if (fighter->state == S_BLOCK || fighter->state == S_CROUCH ||
-             fighter->state == S_HIT) {
+  } else if (fighter->state == S_BLOCK || fighter->state == S_CROUCH || fighter->state == S_HIT) {
     frame = fmin(frame, (double)(clip->frames.count - 1));
   }
   Pose bones[MK4_MAX_BONES], initial[MK4_MAX_BONES];
@@ -135,11 +134,12 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
       break;
     }
   Mat3 turn = yaw_matrix(front + (float)fighter->facing * pi * .5f);
-  Vec3 root = clip->frames.data[0].translation;
   double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
   Vec3 current = clip->frames.data[(size_t)wrapped].translation;
-  root.x = current.x;
-  root.z = current.z;
+  /* Root-motion Y plants the sole on the floor. Frame 0 of a victory is
+   * about +0.4 and a knockdown is about +1.0; dropping that channel lifts
+   * the whole pose. X/Z stay with the fighter record. */
+  Vec3 root = {current.x, 0.f, current.z};
   for (size_t n = 0; n < ch->bones.count; ++n) {
     const Bone *b = &ch->bones.data[n];
     if (b->flags & 4)

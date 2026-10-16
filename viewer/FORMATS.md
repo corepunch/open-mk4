@@ -95,6 +95,12 @@ uses the long bar's top eight texture rows; the right player's bar is mirrored.
 The battle simulation uses native move rules. Its clip selections were checked
 visually for compatibility, and are not a reconstruction of the original FSM's
 complete per-character action mapping. Goro's separate action bank is retained.
+Battle placement keeps each frame's root-motion Y and drops root-motion X/Z.
+That Y channel is the ground plant: idle, crouch, hit, victory and a settled
+knockdown put the sole on Y=0 (positive Y is down) only while it is applied.
+Subtracting the first frame's Y lifts a victory by about 0.4 and a knockdown
+by about 1.0. The roster scale at +28 is stored on the character and is not
+part of this plant.
 
 Game text uses MK4FONT white digits 28..37, letters 38..63, and punctuation
 64..95, preserving the +8/+10 signed sprite bearings. Shared sprites 138..141
