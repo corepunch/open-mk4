@@ -12,11 +12,16 @@ creates a bundle. Only native queries need Capstone.
 
 ```sh
 python3 tools/disassemble_retail.py --list-moves
+python3 tools/disassemble_retail.py --character sub_zero --list-moves
+python3 tools/disassemble_retail.py --character sub_zero --move ice
+python3 tools/disassemble_retail.py --character sub_zero --move low_kick --c
 python3 tools/disassemble_retail.py --move spear
 python3 tools/disassemble_retail.py --script 0x4e6d08
 python3 tools/disassemble_retail.py --move low_kick --c
 python3 tools/disassemble_retail.py --native 0x46bf10 --limit 80
 python3 tools/disassemble_retail.py --attack B 6
+python3 tools/disassemble_retail.py --attack C 3
+python3 tools/disassemble_retail.py --attack D 5
 python3 tools/disassemble_retail.py --attack weapon 2
 python3 tools/disassemble_retail.py --attack record 0x4ebeb8
 python3 tools/disassemble_retail.py --script 0x4e9d00 --raw --output build/spear-victim.md
@@ -27,7 +32,7 @@ decimal or `0x` hexadecimal. `--limit` defaults to 80 instructions, with a
 maximum of 512. Truncation and unresolved boundaries are reported explicitly.
 Native queries decode from the given entry without a whole-binary discovery
 pass or recursive call expansion. Follow printed dependencies with another
-query. Script queries currently select Scorpion in character dispatch tables.
+query. `--character NAME` (or roster ID 0..17) selects scripts and both players' command lists. It defaults to Scorpion. Selectors remap Kitana to Sonya and Noob to Reiko; nested selectors keep that context. Keep the option on follow-up script queries. P2 Up uses table `53cb10`; `53ca80` belongs to LK release.
 Raw mode includes fixed script words or native instruction bytes.
 
 Running without a query shows help. The old bulk export now requires explicit
@@ -100,12 +105,12 @@ visible. The upstream contributions are under the reference project's
 `--move NAME` gathers a curated set of attacker/victim script roots, actual
 command records and predicates, contact records and their reaction-table
 entries, known follow-up button tables, and native helpers. `--list-moves`
-lists 30 named entries. Pages work without Capstone and print or save one
+lists the selected character's available navigation roots. Pages work without Capstone and print or save one
 Markdown report, with up to six preview instructions per script (subject to
 the overall `--limit`). Follow the printed `--script` and `--native` commands
 for details. Branches in previews retain their source addresses.
 
-The catalog in `tools/scorpion_catalog.py` is deliberately small and explicit.
+The catalogs in `tools/scorpion_catalog.py` and `tools/character_catalog.py` are deliberately small and explicit. Scorpion and Sub-Zero have character-specific roots; the other roster choices expose selected shared roots for research, not completed special-move inventories.
 It is not a transitive call graph: a missing script, contact record or cancel
 table does not mean the move lacks that behavior. Counts describe selected
 roots only, and native semantic dependencies remain visible even when no

@@ -1,168 +1,101 @@
 # Porting a character's scripts to C
 
-Start with `python3 tools/disassemble_retail.py --list-moves` to check the
-available research roots. **The compact move catalog currently covers Scorpion
-only.** `--move spear` is an example of navigating his evidence, not a starting
-point for Sub-Zero. There is no `--character` option, and `--script` follows
-slot 0 (Scorpion) whenever it encounters a character selector, even inside an
-otherwise Sub-Zero-specific query. See the Sub-Zero entry points below before
-translating any character-selected path.
+Retail scripts and their native continuations are the specification. Preserve
+commands, branches, animation phases, damage, reaction selection and recovery
+in procedural C. Reproducing the retail VM, scheduler, scratch globals or
+per-tick binary traces is unnecessary. Game simulation remains C11 without SDL.
 
-For readable C-like script output, use
-`python3 tools/disassemble_retail.py --move low_kick --c`, or
-`--script ADDRESS --c` for a selected Sub-Zero branch. This is annotated
-pseudocode. Where it stops on an unsupported operation, continue with the
-ordinary script listing and its native dependencies.
+## Short workflow
 
-Follow bounded `--script`, `--native` and `--attack` queries for details; see
-[script-decoder.md](script-decoder.md). Use the existing
-`build/retail-disassembly/` bundle for broader navigation. Regenerate with
-`python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly` only
-when its inputs or decoder change. This is static decoding, not retail execution.
+1. Select the character and inspect a move. Read the C view where supported;
+   use the detailed view at an explicit unsupported-operation boundary.
+2. Follow only the printed script/native/contact dependencies needed by that
+   move. Use the existing `build/retail-disassembly/` for broader navigation;
+   full export requires explicit `--bundle` and is unnecessary for routine work.
+3. Translate decisions into `game/c_<character>.c`. Reuse shared helpers below.
+   Add an engine feature only when a reached move requires it. Character-specific
+   constants and decisions stay with the character.
+4. Verify the changed branch through its actual command or move entry. Add a
+   small regression only for a meaningful failure mode. Shared helpers are
+   checked once; avoid copying an exhaustive scenario matrix for every fighter.
+5. Run `make format`, relevant native checks, then `make check`. Commit the
+   coherent verified step on `main` before starting another step. Record source
+   addresses, results and remaining limitations in the commit description.
 
-1. Start at the character's command table and stance dispatch tables. List each
-   command, input window, predicate and entry. Include standing, crouching,
-   jumping, armed and follow-up button tables; specials alone are not a character.
-2. Open each decoded script. Translate clip selection, cursor changes, waits,
-   contact queries and conditional branches into that character's C file.
-   Use `MoveSequence` for fixed playback and `Fighter.script` for native loops.
-   `sample_override` is the explicit animation cursor for those loops.
-3. Follow calls and spawned tasks into `native/`. Use the included decompilation
-   as an explanatory reference, checking revision-dependent constants against
-   the supplied executable. `tools/retail_moves.py` and `tools/scorpion_moves.py`
-   expose helpers for reading additional tables without running the game;
-   their command inventory is not character-generic. Unknown operations are
-   work to resolve, not permission to treat them as no-ops. A report with zero
-   unknown opcodes can still have unresolved native behavior.
-4. Preserve gameplay data: startup/active/recovery, damage and chip, launch/pull
-   velocity, stun, cooldowns, range, command gates and allowed cancels. Name any
-   intentional engine choice in the coverage notes. Do not reproduce scratch
-   globals, packed pointers, CPU registers or cooperative-task implementation.
-5. Add only the missing shared primitive that the current move needs: movement,
-   an attack record, projectile, reaction or paired-fighter continuation. Keep
-   character decisions in `game/c_<name>.c`, and rendering read-only.
-6. Test our C behavior with a few meaningful scenarios: command acceptance and
-   rejection, hit/block/miss, interrupted recovery and cleanup, both player
-   sides, and relevant combo/cancel branches. Avoid raw per-tick dumps or new
-   retail-emulation harnesses. Keep existing asset/decoder regression coverage.
-7. Run `make format`, the relevant native checks, and required repository checks.
-   Commit the coherent, verified step on main before starting the next one.
+```sh
+python3 tools/disassemble_retail.py --character sub_zero --list-moves
+python3 tools/disassemble_retail.py --character sub_zero --move low_kick --c
+python3 tools/disassemble_retail.py --character sub_zero --move ice
+python3 tools/disassemble_retail.py --character sub_zero --script 4ed588
+python3 tools/disassemble_retail.py --native 45b650 --limit 48
+python3 tools/disassemble_retail.py --attack C 3
+```
 
-## Sub-Zero: implementation baseline
+See [script-decoder.md](script-decoder.md). `--character` accepts roster names
+or IDs 0..17 and defaults to Scorpion for compatibility. Keep it on subsequent
+script queries: selectors, including nested ones, use that character. Kitana
+uses Sonya's script slot; Noob uses Reiko's. Other characters' shared roots are
+navigation aids, not complete special-move catalogs. Unknown native behavior
+is an investigation boundary, never a no-op or proof of completion.
 
-The current implementation is [game/c_sub_zero.c](../game/c_sub_zero.c).
-Retail character ID, roster index and asset index are all **4** here; do not
-assume these three indices will always coincide for other roster entries.
-
-| Area | Current behavior | Work still needed |
-| --- | --- | --- |
-| High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
-| Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables and special, weapon and finisher commands | All indexed character-4 command records translated; engine movement policy below |
-| Movement | Shared `mk4_motion` walking/running, retail straight jump, RUN double-tap sidestep with Down reversal and airborne-victim slowdown | Walking/running speed and diagonal jump classification retain the existing portable policy |
-| Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide chord, hit/block/miss continuations and reactions 122/165 are also ported |
-| Weapon combat | Descriptor 0x6b, draw/follow-up, directional HP/LP, freezing back LP, shared air strikes, throw/drop/pickup with actual weapon identity | Simplified staff rendering and settling arc; pair-axis motion replaces camera-relative motion |
-| Finishers | Both character scenes and fan/spikes stage fatalities; chord, range, stage, winner and window gates | Fixed camera, simplified ice/shatter and omitted mesh/gore effects; finite scene completion |
-
-Keep the existing high-kick sample fixture in
-[tests/fixtures/original_kicks.inc](../tests/fixtures/original_kicks.inc).
-`check_original_kicks` in [tests/test_battle.c](../tests/test_battle.c) exercises
-sample selection, next-tick entry, return to movement and interruption. It
-does not establish complete retail contact behavior. Older architecture and
-research notes describe earlier checkpoints; source and this coverage table
-define the starting point for this port.
-
-Normal-port validation: `tests/test_sub_zero.c` covers both players' normal
-selectors, hit/block/air/miss kick records, combo clip 532, throw damage/release,
-crouching-launch recovery, low-kick avoidance cleanup and air recovery. The
-existing kick and Scorpion fixtures remain unchanged. Shared normal scripts
-use the established procedural translations, with character-selected data
-and continuations owned by `c_sub_zero.c`. Reactions 26/7 use the existing
-portable launch/block machinery; cosmetic effects, retail wall-task dispatch
-and CPU recovery decisions are not reproduced. Sources for the additions are
-`4e6da0`, `46a950/970`, `4e5fd8`, `4e69c8`, `46c2c0`, `4838e0/483930`,
-`4e9758` and `486ab0`; remaining normal sources are shared with Scorpion.
-
-Freeze-port coverage: `49bc60`, `4ed588/4ed818`, `49bcb0`, `49c300/690/810`,
-`49bb90/49bc00`, `45f1f0` and its callees establish clip 16, the normal/fast
-startup, two recovery loops, 0.2-unit flight, 0.05-unit spawn offset, active-clone and opponent-hit-count gates. Reaction `486230` holds the victim's pose
-for six 6-tick shake phases, 88 ticks, then three 6-tick phases (142 ticks in
-our continuation). `486430` dispatches reaction 67 to the opponent on a double
-freeze, releasing the original victim; air release uses `4864b0`. Natural air
-thaw follows `4e9d38` (gravity 0x147, wait for landing) and `486530`. Opcode
-5c's one-word gravity operand is verified at handler `45b110` and decoded by
-the static tool. Tests cover command windows/gates, startup, hit/block, held
-pose, timed thaw, backfire, reaction replacement, independent flight, active-clone rejection and round reset for both players. Cosmetic shaking and the
-retail ice material are replaced by a held pose and simple projectile artwork;
-air landing uses the shared portable landing continuation. The projectile has
-a defensive 180-tick lifetime in addition to the source's radial-bound exit.
-
-Clone-port coverage: `45ece0` and `47f4d0` establish the 180-tick cooldown,
-frozen-opponent and active-clone rejection, distance <1 branch (retreat without
-an object), and air permission. The object captures the pre-retreat clip/sample;
-`47f9d0/47fa90/47fbd0` give stationary D[5] freeze contact and 74-tick human /
-53-tick CPU lifetime. The retreat uses `4e87a0` motion (-0x170a horizontal,
--0x28f5 vertical, gravity 0x28f), clip 301 and the landing continuation.
-`4e41d8` and `4e4220` both hold clone task IDs 45/46: ice blast is blocked by
-a live clone, not by an existing ice projectile. The earlier extra one-ice
-restriction has been removed. Object-pool capacity still bounds simultaneous
-shots. Tests cover pose capture, independent lifetime, contact, near/air paths,
-cooldown boundaries, full allocation, rematch and mirror ownership. Clone and
-frozen victims use a simple blue material; secondary orbiting ice decoration
-and exact retail transforms are presentation choices.
-
-Slide-port coverage: `47dc00/4e84d8`, `47dc40`, `47de80`, `4e84f8` and
-`4e8530` give clip 95, 0.15-unit travel, contact after the opening eight
-samples and the following advance, a bounded 17-query miss path, four hit /
-six blocked pose loops, stop and backward recovery. Only unblocked contact
-stamps cooldown slot 2 for 64 ticks. Block immediately stops the owner and
-sets no-guard for the longer recovery. Victim reaction 122 follows `483500`
-/ `4e95f0` (clip 179, launch, 60% subsequent damage and getup); 165 follows
-`486d00/4e9e68` with two standing pose loops or crouching clip 255 out/back.
-Tests cover all three chord-trigger buttons, forbidden extra switches,
-cooldown/air/reaction rejection, both-player hit/block/miss/air damage,
-crouching guard, one-shot damage, recovery and startup interruption. Shared
-hulls and portable landing/getup behavior remain intentional engine choices.
-
-## Sub-Zero: locating commands and scripts
-
-All addresses below were checked against `MK4/MK-4.EXE`, SHA-256
+All addresses refer to the supplied `MK4/MK-4.EXE`, SHA-256
 `4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d`.
-Use `RetailImage` from [tools/retail_moves.py](../tools/retail_moves.py): it
-checks that revision and applies startup pointer fixups. Some pointer slots
-are zero in the file before fixups. Command-list and script-selector pointers
-are packed word indices: multiply them by four. Native predicate/action
-entries are byte addresses; do not multiply those by four.
+`RetailImage` checks the revision and applies startup fixups. Script/descriptor
+pointers are packed word indices (multiply by four); native entries are byte
+addresses. Upstream reference addresses differ: verify correspondence locally.
 
-### Command lists
+## Shared engine features
 
-These are the **already indexed character-4 slots**, not table bases. Both
-players' slots resolve to the same list in this build. Records are three
-words (`pattern`, `extra`, `command`), 12 bytes apart; a zero pattern ends the
-list. Preserve record order, including unconditional records.
+| Need | Reuse | Important boundary |
+| --- | --- | --- |
+| Commands | `game/commands.c`, ordered `CommandDef` and stance tables | Preserve unconditional-record priority, two-sample presses, inclusive windows and predicate masks; entries start next tick |
+| Fixed playback | `MoveSequence`, sparse `MoveSegment`/`MoveEvent` | Simulation ticks and stored pose samples are different clocks |
+| Native continuations | `Fighter.script`, explicit phase/timer | Start the move first, then install the continuation; replacement clears old move state |
+| Poses | `game/pose.c`, `fighter_pose_sample`, `fighter_pose` | Bind host-owned assets with `battle_bind_assets`; capture real wrapped samples, rig, heading and root offsets |
+| Contact | `battle_contact` for a fighter, `battle_contact_from` for an independent object | Object contacts return their result without consuming the owner's current attack latch |
+| Geometry | Shared decoded joint poses and pair-axis projection | Asset-backed play uses the `48d750` joint interval and 8% trim; rule-only callers without assets use an explicit fallback hull |
+| Motion | Q16 `Body`, `fighter_axis`, `fighter_set_speed` | X/Z heading follows the pair; angles/spin are Q16 radians, root offsets accompany group-Y changes |
+| Reactions | `game/reactions.c`, `battle_react` | Preserve hit counts/scaling, freeze/backfire/thaw and interruption; unsupported roster reactions still have a fallback |
+| Weapons | `game/weapons.c`, `WeaponDef`, `WeaponStrike` | Shared lifecycle and recovery; actual weapon identity travels through drop/throw/pickup, including foreign owners |
+| Scene playback | `game/scene.c`, `SceneClip` | Independent actor clocks, forward/reverse/repeated clips and native-rate pose blends; no VM/task-stack recreation |
+| Scene objects | `game/presentation.c` | Bounded mesh pieces, joint attachments/visibility, particles and camera state; reset on a new round |
+| Sound | `battle_sound`, `common/mk4_audio.c`, `game/audio.c` | Simulation queues selectors; assets decode original ESFs; SDL playback belongs only to the host |
 
-| Event | P1 slot | P2 slot | Decoded list root |
-| --- | --- | --- | --- |
-| Up | `0x53c898` | `0x53cb20` | `0x53cd10` (empty) |
-| HP | `0x53c8e0` | `0x53cb68` | `0x4e4b18` |
-| LP | `0x53c928` | `0x53cbb0` | `0x4e4b38` |
-| BLK | `0x53c970` | `0x53cbf8` | `0x4e4b60` |
-| HK | `0x53c9b8` | `0x53cc40` | `0x4e4b80` |
-| LK | `0x53ca00` | `0x53cc88` | `0x4e4ba0` |
-| RUN | `0x53cad8` | `0x53ccd0` | `0x4e4bc0` |
-| LK release | `0x53ca48` | `0x53ca90` | `0x53cd10` (empty) |
+The host owns decoded assets. Drawing reads simulation state. Four projectile
+slots and bounded scene pools are explicit engine limits. A full pool must not
+corrupt another move. Independent objects may outlive owner interruption;
+round/finisher cleanup follows the reached source path.
 
-Do not reuse `tools/scorpion_moves.py:commands` unchanged: it reads character
-0 and its P2 Up base is actually the LK-release table. The coincident empty
-Scorpion lists conceal that error. The correct P2 Up base is `0x53cb10`.
-See [input and commands](scorpion/input-and-commands.md), sections 1–3, for
-the switch map, record layout and matching rules.
+## Sub-Zero source-to-code ledger
 
-The character-4 records are below, in order within each button list.
-Directions are earliest first, relative to the opponent. Flags are the raw
-retail flags, not a C action ID. Windows are inclusive tick limits. These
-are navigation roots, not claims that the predicates or whole moves have
-been translated.
+Implementation: [game/c_sub_zero.c](../game/c_sub_zero.c). Retail, roster and
+asset IDs happen to be 4 here; other characters need not share those indices.
+The catalog links these sources directly through `--character sub_zero --move`.
+
+| Area | Retail roots | Translation and details to preserve |
+| --- | --- | --- |
+| High kick | `4e5ca0 -> 4e5c80`, `4e6978/6998`, B[2] | Clip 71; 29-step sparse playback; contact at steps 11–13; retain existing kick fixture |
+| Low kick / crouch HK / combo HP | `4e5d90 -> 4e6da0`, `4e5fd8`, `46c2a0 -> 4e69c8` | Clips 70/52/532, their distinct records, avoidance interval and follow-up tables |
+| Shared normals / air / throws | `4e62f0`, `4e62a0`, `4e6798`, `4e6658/6710/61f8/6500/63d8`, `4de6e4`, `4de2f8/318/328` | Own stance selection, hit/block/miss recovery, combo gates, paired damage/release and interrupted attachment cleanup |
+| Ice | `49bc60`, `4ed588/4ed818`, `49bcb0`, `49c300/690/810`, C[3] | Clip 16, normal/fast startup, independent 0.2-unit flight, no direct damage, reaction 67; an active clone blocks ice, another shot does not |
+| Fast startup | Opcode 45, native `45b650` | Grounded target: attacker's follow-up flag; airborne target: victim's reacting flag |
+| Freeze | `486230/430/4b0/530`, `4e9d38` | Hold the captured pose for 142 ticks; double freeze backfires; air thaw gravity `0x147`, landing and control restoration; no Goro exclusion |
+| Clone | `47f4d0/6d0/880/9d0/fa90/fbd0`, D[5], motion `4e87a0` | Snapshot before retreat; distance <1 omits the object; 180-tick cooldown; 74 human / 53 CPU lifetime; clip 301 forward, ascent spin `-0x6147`, apex retraction and landing |
+| Slide | `47dc00/40`, `4e84d8/f8/8530`, reactions 122/165 | LP+BLK+LK chord; 0.15-unit travel, contact/recoil branches; 64-tick cooldown only on unblocked contact |
+| Scepter | Descriptor `4ecdb8`, table `4ecc90`, params `4ec458/490/480/4b8`, runner `494a00` | HP 231 (18%), LP 250 (15%, low), back HP 237 (15%), back LP 228 (reaction 151, no damage); contact-selected recoveries including LP stance blend |
+| Follow-up draw | `494610/6f0`, `482c20`, direct `495710` | Equip, grounded reaction 120, retain no-guard, 30% damage scale after >3 hits, omit ordinary back-HP travel setup |
+| Shared weapon lifecycle | `4e62c0/d8`, `498290/480`, `45efc0`, `45f8f0`, `46a180` | Shared draw/air/drop/throw/pickup; .75 heading-relative throw origin; pickup requires action `2001`; scepter crouch LP does not acquire sword spin |
+| RUN double tap | `45e820`, `469250/2e0/450`, descriptor `53ce18` | Previous RUN press within 8 ticks; 80-tick cooldown; clip 300; Down reverses playback/lateral direction; air victim scales speed to 30%; priority over pickup |
+| Fatality I | `4e0498[4] -> 445100`, `4e0368..3e8`, victim `445380`, `4e03f0..438`, `445510` | Owner 385, victim 389/387 entry blends; slow victim blends to 46/49/50; paired 1.45-unit alignment; head attachment and continuing owner loop 96–140 |
+| Fatality II | `4dfe90[4] -> 41b3a0`, `4d2c10/78/a0/c8`, victim `4d2bf0`, `41b450/610` | Owner 552 breath loops, independent victim 206; wait 20, slide eight samples, calculate delay from current range; uppercut/shatter, eight cursor passes, wait 60, victory |
+| Stage finishers | Fan `43d040`, `4e0118..1a8`; spikes `467e70`, `4e6950`, reaction 175 | Sub-Zero-specific commands select shared scenes; retain 31 fan repetitions and spike wait/impaled position |
+
+## Command records
+
+Sub-Zero's P1/P2 button lists are HP `4e4b18`, LP `4e4b38`, BLK `4e4b60`,
+HK `4e4b80`, LK `4e4ba0`, RUN `4e4bc0`; Up and LK release are empty.
+P2 Up's table base is **`53cb10`**, not the LK-release table at `53ca80`.
+The query tool now selects these lists directly. Preserve the following order.
 
 | Record | Button | Pattern | Window | Flags | Predicate | Native entry / research role |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -181,396 +114,43 @@ been translated.
 | `0x4e4bcc` | RUN | Unconditional | 0 | `0x01` | `0x45efc0` | `0x46a020`, weapon pickup |
 | `0x4e4bd8` | RUN | F,B,F,D | 60 | `0x41` | `0x45e460` | `0x467ce0`, fatality 1 dispatcher |
 
-For a bounded, read-only check of any list, run this from the workspace root
-and substitute a slot from the table above. It prints raw records without
-creating a bundle or running the EXE:
+Slide requires LP+BLK+LK held together and rejects Up/HP/HK/RUN; horizontal
+directions are outside its mask. Fatality I requires HP+BLK+RUN and rejects
+Up/HK/LP/LK; it accepts the direction chord independently of that mask.
+Fatality I/fan/spikes require distance <=1. Fatality II accepts 1.8–3 units.
+Fan requires arena 8, spikes arena 0. Finishers require the deciding-KO winner
+and victim action `1009`. Timeout does not open that window.
 
-```sh
-python3 -B - <<'PY'
-import sys
-sys.path.insert(0, 'tools')
-from retail_moves import RetailImage
-image = RetailImage('MK4/MK-4.EXE')
-pc = image.word(0x53c928) * 4  # Sub-Zero P1 LP slot
-for _ in range(32):
-    words = [image.word(pc + 4 * k) for k in range(3)]
-    if words[0] == 0:
-        break
-    print(f'{pc:08x}:', *(f'{word:08x}' for word in words))
-    pc += 12
-else:
-    raise ValueError('List exceeds this query bound')
-PY
-```
+## Verification and scope
 
-Decode the third word as `gate<<24 | flags<<16 | window<<8 | action`.
-Pattern bytes are consumed low byte first: `AA` back, `DD` forward, `02`
-down, `01` up; `FFFFFFFF` is unconditional. Predicate pointers are at
-`0x4e4ec0 + gate*4`. The first set dispatch flag in order `01,02,04,08,20`
-selects the action table at `0x4e6ef8`, `0x4ed828`, `0x4e8910`, `0x4e7008`
-or `0x4dfc90`; read its byte-address entry at `table + action*4`.
+Retail behavior determines the assertions. Use a few focused checks of a
+changed command gate, branch, damage, interruption or recovery. An entry-level
+check catches wrong helper wiring that a helper-only check cannot. Reuse shared
+pose, geometry, weapon, scene and sound checks for subsequent characters.
+`tests/test_sub_zero.c` exercises the character through the input path;
+`tests/test_mk4_assets.c` covers real looping poses, rotated contact, frozen
+pieces and PCM/ADPCM decoding. Existing compact kick/Scorpion fixtures stay.
+Do not add retail-execution harnesses or large per-tick JSON recordings.
 
-The slide rows have `FFFFFFFF` in both first words. **Unconditional means
-no direction-history pattern, not no gate.** Predicate `0x45f270` checks
-cooldown slot 2 against `0x40` ticks, then calls `0x45f2b0` with held-switch
-data at `0x4e4248`. For a human, its P1 expected/mask pairs are
-`(0x20,0x71)` for switch word A4 and `(0x03,0x07)` for A8; P2 uses
-`(0x2000,0x7100)` and `(0x30,0x70)`. This requires BLK+LP+LK held and
-rejects Up, HP, HK or RUN; these masks impose no back/forward requirement.
-Follow `--native 0x45f270`, `--native 0x45f2b0` and `--native 0x45f3e0`
-before translating the predicate. Preserve its priority over later LP/BLK/LK
-records. Do not invent a direction sequence for it or drop it as an empty
-pattern. The C matcher already supports count-zero records with predicates.
+The engine uses portable presentation: blue ice material, bounded particles,
+linear camera transitions between recovered offsets, posed character meshes
+for detached pieces, and a single weapon settling arc. Retail camera splines,
+gore-cap/interior geometry, secondary ice decoration, cosmetic freeze shake,
+wall-task dispatch and CPU probability policies are not reproduced. Walking,
+running and diagonal jump classification retain the shared portable controller
+pending their own source translation. The match's finish-entry window remains
+five seconds. These choices are not evidence of exact retail audiovisual or
+scheduler identity, and must not justify changing damage or command branches.
 
-### Normal, air and weapon selection
+Sound formats are checked against the local executable, including corrections
+to reference hypotheses: buffers are mono; ESF bit 31 controls looping.
+`4bd4f0` maps sampled tokens through division by five. The 674 archive samples
+are decoded once. Three looping ADPCM files lack a final nibble; the decoder
+safely pads the final declared sample. Music/control tokens below 100 are
+outside sampled-effect playback. Additional sound cues can use the same event
+queue without character-owned audio devices.
 
-Shared stance tables are standing `0x4e5058`, crouching `0x4e5070`, straight
-jump `0x4e6ec8` and diagonal jump `0x4e70d8`; the locked table is
-`0x53d370`. Follow-up tables include `0x4e7078`, `0x4e7090`, `0x4e70a8`
-and `0x4e70c0`. Start with section 6 of
-[input and commands](scorpion/input-and-commands.md), then check each reached
-entry for character selection. Shared entry addresses do not imply shared
-animation, contact selector or recovery.
-
-At VM opcode `0x3c`, read the packed pointer at `opcode_address + 4 + 4*4`
-for Sub-Zero, then query that selected script directly. Repeat this at any
-nested selector: the current decoder always follows slot 0. Its report title
-still says "Scorpion selection" for direct scripts with no selector.
-
-| Path | Selector script | Sub-Zero selected script |
-| --- | --- | --- |
-| High kick | `0x4e5ca0` | `0x4e5c80` (Scorpion instead selects `0x4e6c90`) |
-| Low kick | `0x4e5d90` | `0x4e6da0` |
-| Sweep | `0x4e6798` | `0x4e6e68` |
-| Roundhouse | `0x4e6800` | `0x4e6840` |
-| Crouching HK | `0x4e6020` | `0x4e5fd8` |
-| Straight air kick | `0x4e61f8` | `0x4e6238` |
-
-Native selectors need the same care. Follow-up HP at `0x46c210` reads the
-native table `0x4e6c50`: slot 4 is `0x46c2a0`, which starts `0x4e69c8`
-(clip 532), rather than Scorpion's `0x46c290` / `0x4e69b0` path. For weapon
-research, start at `0x46d1d0` and the character-4 packed descriptor slot
-`0x53d5d0`, which resolves to `0x4ecdb8`. Follow the descriptor's armed
-tables; do not copy Scorpion's sword descriptor, contact records or spin.
-
-## Worked example: Sub-Zero's high kick
-
-This is a source-to-engine map for extending the existing move, not a new
-implementation or a claim that its contact branches are complete.
-
-1. **Selection.** Standing HK without a matching special falls through the
-   stance handler `0x461030`. Its far-kick branch reaches shared native entry
-   `0x46a680`, which writes action `0x100` and enters `0x4e5ca0`. Resolve
-   character 4 to `0x4e5c80`; querying only `--move high_kick` would show the
-   Scorpion branch and clip 66 instead.
-2. **Playback and continuation.** Sub-Zero's script sets selector 2, opens
-   clip 71, and tails to `0x46a790`. That native calls `0x470c60` with data
-   at `0x4e6978`: selector 2, query B `0x48d3f0`, sample operands 10/11/12,
-   sentinel `FFFFFFFF`, continuation `0x46a7a0`. The continuation enters
-   `0x4e6998`, changes action to `0x1006`, advances two samples, releases
-   attack bookkeeping, finishes forward and returns to the controller.
-3. **Contact.** `--attack B 2` resolves record `0x4ebaf8`: Q16 rectangle
-   `(0x116c8,-0xde76,0x1476c,0x12395)`, damage `0x2147` (about 13%),
-   hit/air/block reactions `16/13/6`, flags 0. These are different data from
-   the current approximate `MoveDef`; do not just change its integer damage
-   field and keep the approximate collision interval.
-4. **C mapping.** Retain the existing `kick_segments`, 29-step no-contact
-   sequence and end callback. A future port can add `MoveEvent` contacts
-   through `battle_contact` and `SF_RECORD` to exclude the approximate
-   resolver. Read `0x470c60` and `0x470dc0` before deciding retry, crouch and
-   connected behavior. Branch-dependent playback belongs in explicit C
-   continuations where a fixed sequence is insufficient. Event times are
-   move ticks; samples 10/11/12 are not automatically event ticks. Existing
-   no-contact evidence places queries at steps 11–13 and forward recovery
-   through sample 27, returning at step 29.
-5. **Acceptance.** Preserve the existing no-contact sample/return fixture;
-   test no damage before the active window, one connected attack's damage,
-   block chip/reaction, air reaction, miss recovery, interruption and both
-   player slots. Derive any changed contact-recovery expectations from the
-   native branches, not from the no-contact fixture.
-
-Use these small queries, following each printed dependency as needed:
-
-```sh
-python3 tools/disassemble_retail.py --native 0x461030 --limit 100
-python3 tools/disassemble_retail.py --native 0x46a680
-python3 tools/disassemble_retail.py --script 0x4e5c80
-python3 tools/disassemble_retail.py --native 0x46a790
-python3 tools/disassemble_retail.py --native 0x470c60 --limit 120
-python3 tools/disassemble_retail.py --native 0x470dc0
-python3 tools/disassemble_retail.py --native 0x46a7a0
-python3 tools/disassemble_retail.py --script 0x4e6998
-python3 tools/disassemble_retail.py --attack B 2
-```
-
-## Sub-Zero: specials and engine integration
-
-These are confirmed starting dependencies. Consult the coverage table above
-for completed paths; a decoded stream alone is not a completed move.
-
-| Move | Bounded research path | Known boundary / work to resolve |
-| --- | --- | --- |
-| Freeze projectile | `--native 0x49bc60` → `--script 0x4ed588` → spawned native `0x49bcb0` | Attacker clip 16; task parameters `0x4ed5d0`, contact-loop block `0x4ed5e0`; resolve conditional startup, flight, lifetime, contact and teardown |
-| Ice clone | `--native 0x47f4d0 --limit 220` → callback `0x47f9d0`, then `0x47fa90` / `0x47fbd0` | Entry compares distance against Q16 `0x10000` and branches; resolve near/air behavior, stationary object, lifetime and freeze contact |
-| Slide | `--native 0x47dc00` → `--script 0x4e84d8` → native `0x47dc40` | Clip 95 and initial speed Q16 `0x2666`; follow contact continuation `0x47de80` and recovery `0x47de00` for hit/block/miss behavior |
-| Freeze victim | Reaction 67 → `--native 0x486230` via reaction table `0x4ea4e8` | Determine freeze duration, pose/physics, thaw, damage/scaling, repeated-freeze rules and replacement by another reaction |
-| Finishers | Command predicates above → `0x467ce0` / `0x467cd0` → scenes `0x43cbb0` / `0x43bd70` | Dispatchers are shared; follow character 4 into its own scenes and victim programs. Scorpion scene addresses and range gates are not substitutes |
-
-Contact tables C and D are not exposed as named `--attack` selectors by the
-CLI. Resolve their packed record pointers with `RetailImage`, then use
-`--attack record ADDRESS`. Do not pass the pointer-table address as a record.
-The projectile path `0x49c690` → `0x49c810` → query C (`0x48d410`) uses
-selector 3 from `0x4ed5e0`; table `0x53d208[3]` points to `0x4ebf18`.
-Clone query D (`0x48d450`) uses selector 5 at `0x47fc0f`;
-`0x53d178[5]` points to `0x4ebf30`. Both records have zero direct damage,
-MARK flag 2 and hit/air reaction 67. Slide uses D selector 7, record
-`0x4ec1b8`, damage `0x147a` (about 8%), reactions `122/122/165`.
-Inspect the reactions as well as the records:
-
-```sh
-python3 tools/disassemble_retail.py --attack record 0x4ebf18
-python3 tools/disassemble_retail.py --attack record 0x4ebf30
-python3 tools/disassemble_retail.py --attack record 0x4ec1b8
-python3 tools/disassemble_retail.py --native 0x486230 --limit 120
-python3 tools/disassemble_retail.py --native 0x483500 --limit 100
-python3 tools/disassemble_retail.py --native 0x486d00 --limit 100
-```
-
-Use the current procedural interfaces; add a shared feature only when the
-move's evidence requires it:
-
-| Boundary | Existing interface and lifecycle | Sub-Zero responsibility |
-| --- | --- | --- |
-| Commands | `game/commands.c`: ordered `CommandDef` records, predicates, then stance fallback; entry is pending until the next tick | Own `Controls` in `c_sub_zero.c`; preserve unconditional slide priority, held-switch predicates, windows and air/block permission |
-| Playback | `fighter_start_move` resets script, phase/timer, sample override, pending entry and contact bookkeeping; locked moves remove stance buttons | Install the continuation after starting the move; distinguish ticks from samples and restore control on each exit |
-| Contacts | `battle_contact` / `battle_contact_from` apply records, damage and reactions; `SF_RECORD` skips the approximate resolver | Use projectile/object origin where appropriate; prevent repeated damage or freeze from one connected attack; retain our documented hull approximation |
-| Projectiles/objects | `battle_spawn_projectile` returns a slot or NULL; four slots, owner index, callback and bounded lifetime; fight ticks update objects after fighters | Ice/clone kinds and pose snapshots now exist with read-only blue presentation; retain full-pool, expiry and owner-interruption handling |
-| Victim reactions | `battle_react` clears physics and schedules a replacement continuation; unsupported IDs fall back to approximate hit/knockdown | Reactions 67, 122 and 165 are explicit; retain their script-selected phases |
-| Cleanup | Round spawn resets fighters/objects; round completion and finisher start clear objects | Move replacement does not automatically remove owned objects or release another fighter. Specify whether each object survives an interruption from evidence; clear locks, appearance and callbacks on thaw, replacement, KO and reset as appropriate |
-
-The common update is in [game/battle.c](../game/battle.c), move lifecycle in
-[game/moves.c](../game/moves.c), contact/object allocation in
-[game/combat.c](../game/combat.c), and reactions in
-[game/reactions.c](../game/reactions.c). `Fighter` currently has Scorpion
-cooldown fields `spear_ready` and `teleport_ready`, plus the Sub-Zero `clone_ready` and `slide_ready` deadlines. Freeze uses explicit victim pose and
-reaction continuation state. Choose explicit per-fighter/object state as the move
-needs it; do not repurpose those fields or introduce retail scratch globals.
-Scorpion's code is an example of these APIs, not proof that its constants,
-weapon behavior, reactions or cleanup apply to Sub-Zero.
-
-## Sub-Zero: acceptance and implementation order
-
-For every ported move, record its command/stance entry, selected scripts,
-native dependencies, contact/reaction records, phase timing, intentional
-engine choices, tests and unresolved gameplay questions in its coverage notes.
-Keep unresolved moves labeled as approximate or unimplemented. Specifically
-resolve these questions before calling freeze/clone complete:
-
-- How long is the victim frozen, what pose and physics apply on ground/in
-  air, and what restores input and normal reactions after thaw?
-- Does a second freeze reject, refresh, release or otherwise affect a frozen
-  victim? How do normal hits, throws, scaling and combo counters interact?
-- What are the projectile/clone cooldowns, active-object gates, distance
-  boundaries and air permissions? Predicate `0x45ece0` compares cooldown
-  slot 6 with `0xb4` ticks but has additional checks; this is not its whole gate.
-- Which objects survive owner damage, and what happens when a victim reaction
-  is replaced, a fighter is KO'd, a finish window opens or a round resets?
-
-Add focused scenarios to [tests/test_battle.c](../tests/test_battle.c).
-Use the actual input history path for command tests, not only direct entry
-calls. Cover accepted input and wrong order, extra direction, late window,
-held block, busy/reacting, cooldown and grounded/airborne rejection where
-applicable. Check a window/cooldown immediately below, at and above its boundary.
-For slide, test the held chord and rejected extra buttons on LP, BLK and LK
-presses, with two released samples before a repeated press. Test both player
-slots and facing directions, command priority and stance fallback.
-
-For gameplay, cover hit, block, miss, airborne victim, one-shot contact,
-recovery and interruption. Freeze needs thaw and attack/reaction replacement
-cases; clone needs near-distance boundary, contact, expiry and coexistence
-rules; slide needs travel/contact/recoil/recovery branches. Exercise object
-pool exhaustion, owner interruption, KO, next round, rematch and a Sub-Zero
-mirror match so state cannot leak between owners. Assert the researched
-outcomes; the questions above are not invented retail rules.
-
-A practical sequence of coherent implementation steps is: (1) character
-controls and normal/air/throw branches, retaining high-kick playback;
-(2) the freeze reaction with the projectile that needs it; (3) clone;
-(4) slide; (5) weapon paths and finishers. Split further when useful, with
-relevant tests and coverage notes in each step. These steps are now implemented, including the separate weapon, finisher and
-RUN-control commits. The coverage notes name the retained engine choices.
-
-For each implementation step, run `make format`, then the focused native
-battle test (`make build/test-battle` and `./build/test-battle`), followed by
-`make check` before committing. The latter includes format, native game/asset,
-frontend, archive, metadata and decoder checks. For a documentation-only
-update, verify the listed slots/records against `RetailImage`, run the quoted
-queries, check Markdown links and run formatting/required repository checks.
-Reuse the saved kick fixture and `tests/test_retail_moves.py` /
-`tests/test_disassembly.py`; do not add a retail-execution harness, regenerate
-bulk bundles or record new per-tick dumps for this character port.
-
-## Scorpion coverage
-
-The working implementation is `game/c_scorpion.c` (the existing filename).
-
-| Area | Current implementation |
-| --- | --- |
-| Jab, high kick, sweep, uppercut | Existing playback/branches plus script attack records |
-| Spear | B,B,LP, startup alternative, projectile, chip, pull, 64-tick stun, 60% combo scaling, cooldown and interruption cleanup |
-| Teleport | D,B,HP, air permission, cooldown/hit-count gate, vanish, cross-over, hit hang/drop, block recoil/landing, miss recovery |
-| Fire | D,F,LP, normal/follow-up playback, one active query, 12% damage, recovery |
-| Sword | Draw/follow-up draw, HP/LP and back slashes, held/steered spin with recoil, armed air punches, throw, disarm, resting pickup and round reset |
-| Air normals | HP/LP, straight and diagonal kicks, extend/hold/retract, contact freezes, HP-to-LP/kick follow-ups and landing |
-| Ground normals/combos | Far HP repetition, close HP/HK and their distinct cancel tables, combo HP, LK, crouching punches/kicks and roundhouse |
-| Throws | Paired LP/LK throws, air throw, damage/release phases and victim recovery |
-| Victim reactions | Explicit record-selected hitstun, combo scaling, crouch branches, launches, tumbles and getups |
-| Fatalities | Both character fatalities and both stage fatalities; winner/range/stage gates, paired phases, creature asset and match completion |
-
-Spear sources: scripts `0x4ed448`, `0x4ed4a8`; native `0x49a6a0`,
-`0x49b170`, `0x487350`, `0x487420`; contact record `0x4ebeb8`.
-Teleport: scripts `0x4e87b0`, `0x4e8818`; helpers `0x480040`, `0x47fd90`,
-`0x47fec0`; record `0x4ebf48`. Fire: `0x4e5b58`, `0x468640`, `0x4689b0`;
-record `0x4ebf90`.
-
-Intentional engine choices: fixed standing/crouching collision hulls; a ten-tick
-teleport vanish replacing the retail camera-bearing trigger, with distance and
-wall exits retained; simple rope/flame/blade rendering. Sword drops use a single settling arc rather
-than retail cosmetic bounces; thrown swords have a six-unit flight budget. Spear pull uses explicit C
-state instead of a rope-node task chain. Audio, original camera cuts and particle/gore
-rendering are not implemented. Finisher presentation uses our fixed camera, flame
-lines, darkened burn victim and stage removal/impalement. Script coverage does not
-claim identical retail rendering, collision hulls or scheduler timing.
-
-Air attack sources: scripts `0x4e6658`, `0x4e6710`, `0x4e61f8`, `0x4e6500`,
-`0x4e63d8`; native contact continuations `0x46e7c0`, `0x46cb10`, `0x46ef10`,
-`0x46e6b0`, `0x46e230`. Low HP/straight-kick contacts expose a ground follow-up
-table; HP uses `0x46c3f0` to permit close HP against a grounded victim already in
-hitstun. Sword back-punch variants capture direction when the button is pressed.
-Diagonal
-jump classification uses horizontal motion in our current jump controller.
-
-Air throw now follows scripts `0x4e5e28/0x4e5e50`: paired clips 82/202,
-28-tick capture, 13% release damage, separate falls and recovery. Attachment
-only suppresses body separation; interruption releases the victim. Getup uses
-clip 131:46–79 and returns control instead of reproducing retail task parking.
-
-Scorpion's normal, air, sword, teleport and fire contact records now select
-explicit shared reaction phases in `game/reactions.c`, including crouch branches,
-no-guard combo windows, scaling, friction, launches, landing and getup. Sources
-are the reaction table at `0x4ea4e8`, each entry's targeted native query, and its
-referenced script. The port expresses tumbles along the gameplay pair axis;
-camera roll, blood/sound helpers and retail wall-contact task dispatch are not
-recreated. The world still uses our gameplay hulls. Goro retains his separate
-animation-bank fallback. Focused tests exercise reaction recovery from ground
-and air, combo flags/scaling, crouch selection, and replacing an active reaction.
-
-Ground LP and LK throws now use paired clips 75/152 and 37/157, respectively.
-Both deal their script damage at sample 42 (15% LP, 18% LK). LP releases into
-reaction 100; LK retains the pair through sample 65, then plays the victim's
-586:65–130 continuation. Root alignment uses our paired world origin. The
-retail CPU probability-based throw reversal is not a human command branch and
-is left to a future CPU policy.
-
-The match now opens a winner-only finish window after the deciding KO. It uses
-our explicit five-second window, freezes the round timer, allows positioning and
-command history, and holds the loser in clip 13/action 0x1009. Timeout wins skip
-this window. Starting a finisher locks both controllers and removes projectiles;
-completion awards no extra round. Arena selection is now available to simulation
-for the two stage-fatality predicates.
-
-
-## Scorpion finisher commands and sources
-
-After the deciding KO, enter a command during the five-second finish window.
-Directions are relative to the opponent; press the attack with the last direction.
-
-| Finisher | Command | Gate | Script/native sources |
-| --- | --- | --- | --- |
-| Burn | B,F,F,B + BLOCK | 1.8–3 units; 50 ticks | `467ce0`, `443840`, owner `4e0278..2f0`, victim `4e0300..35c` |
-| Creature | B,F,D,U + HP | At most 1 unit; 50 ticks | `41e960`, `4d2e58/88/b0`, victim `4d2ef8/2f10` |
-| Fan | F,D,D + LK | Prison (8), at most 1 unit; 40 ticks | `43d040`, `4e0118..1a8`, 31 repeats initialized at `43d3d0` |
-| Spikes | B,F,F + LK | Goro's Lair (0), at most 1 unit; 40 ticks | `467e70`, `4e6950`, reaction 175 `4ea300/330` |
-
-The creature uses `sc_fat2_.geo`, slot `50c2e8`, rig `50cb28`, clips 578–581.
-Its animated IDs start at 1 (the human rigs start at 2), and its native root
-placement is Y=-0.9. Victim clips 584/585 stay on the defeated character's rig.
-Finite scene completion replaces retail parked tasks. Blends and stage camera
-travel are presentation choices; the owner/victim clips, repeated bite phases,
-fan repetitions and spike wait phases come from the listed scripts. The match
-result retains the final poses and clears every finisher field on rematch.
-
-
-Sub-Zero weapon sources: descriptor `4ecdb8`, button table `4ecc90`,
-entries `4956c0/495720/495710/495740`, parameter blocks
-`4ec458/4ec490/4ec480/4ec4b8`, shared runner `494a00`.
-HP uses clip 231 (18%), LP 250 (15%, low), back HP 237 (15%), back LP 228
-(zero damage, reaction 151 freeze). Reaction 151 tumbles after more than three
-combo hits; otherwise it uses the shared freeze/backfire logic. Reactions
-51/52 launch into clips 319/181; reaction 150 plays clip 192 and then the
-Down-held crouch 193 or rise 194. Opcode `44` consumes one branch operand.
-Crouching LP spins only with weapon type `60`; the scepter keeps normal LP.
-The immutable `WeaponDef` travels with held/dropped/thrown objects, preserving
-attacks on cross-character pickup. World weapons retain the existing finite
-flight, single settling arc and round reset policy. Ground strike recovery is
-expressed as bounded C phases; sound, particles and camera-relative displacement
-are presentation omissions. The new C-like navigator (`--script ADDRESS --c`)
-is useful where supported; fall back to the ordinary listing at its explicit
-unsupported-operation boundary.
-
-
-## Sub-Zero finisher commands and sources
-
-During the winner-only finish window, directions are relative to the opponent.
-Fatality 1 uses **F,B,F,D, then HP+BLOCK+RUN held together** (60 ticks,
-at most 1 unit). Its HP, BLOCK and RUN records share predicate `45e460`;
-mask `4e4178` requires HP/BLOCK/RUN and rejects Up/HK/LP/LK. Directions
-Down/Left/Right are outside the mask. The startup dispatcher selects character
-4 from native table `4e0498`: `445100`, owner scripts `4e0368..3e8`,
-clip 385, paired victim `445380` / `4e03f0..438`, clip 387. Pair alignment
-uses 1.45 units. Cursor reversals and the final forward run are retained;
-our scene settles instead of looping samples 96–140 indefinitely.
-
-Fatality 2 is **B,B,D,B + HP** (50 ticks, 1.8–3 units inclusive).
-Native table `4dfe90[4]` selects `41b3a0`, script `4d2c10`: clip 552,
-three repetitions of samples 10–29 and five of 83–93, then its final
-samples. `4d2c78` waits 20 ticks and approaches with clip 95 at speed
-`0x2666`; `4d2ca0` continues clip 258:25–38 and uppercut 293, followed
-by eight forward/back cursor passes, a 60-tick hold and the victory sequence.
-The procedural scene turns the victim blue during the breath, hides it at
-shatter, and uses a bounded approach calculated from entry distance. Original
-ice mesh splitting, particles, gore and camera effects are omitted.
-Opcode `16` (`45baf0`) marks the fatality scene active and takes no operands;
-adding this researched operation exposes the second breath/hold branch.
-
-Stage commands are **D,U,U,U + HK** for the Prison fan (arena 8, 48 ticks)
-and **D,D,D + LK** for Goro's Lair spikes (arena 0, 40 ticks), both within
-one unit. They use the shared scenes and phases already ported for Scorpion,
-with Sub-Zero's own command records. All scenes lock both fighters, clear
-world objects, preserve the deciding KO and match timer, complete once, and
-clear appearance/scene state on rematch. Native tests cover both player slots,
-exact windows and range endpoints, missing/extra chord buttons, stage rejection,
-loser rejection, timeout, scene phases and reset.
-
-
-RUN double-tap coverage: predicate `45e820` reads the previous RUN latch
-(the current press is latched after matching), accepts an interval of at most
-eight ticks and checks cooldown slot 10 for 80 ticks. `469250/4692e0` selects
-`53ce18` directly, whose first descriptor is **clip 300, 18 samples**; this
-helper does not index that address by character ID. Parameters `4e7058/68`
-use forward speed `0x443` and perpendicular speed `-/+0xccc`, with zero
-vertical motion. Holding Down through entry plays forwards and reverses the
-perpendicular direction; otherwise the clip plays backwards. `469450` scales
-motion to 30% if the opponent is airborne. The C port expresses this motion
-along/perpendicular to the gameplay pair axis, permits it from the ground,
-starts the round with it available, requires a real earlier press, stops at
-recovery and retains the RUN-record priority over pickup. Range gates now measure both X and Z so sidestep depth cannot produce a
-false close throw or near-distance clone branch. The shared world handles arena bounds. Tests cover the two-sample press rule, exact eight-tick
-window, cooldown endpoints, both directions/player slots, airborne victim,
-airborne-owner rejection, interruption, pickup priority and round reset.
-
-The full Sub-Zero native suite is `make build/test-sub-zero` followed by
-`./build/test-sub-zero`. `make check` includes it along with the original
-Scorpion/kick fixtures, asset/rendering, archive, format and decoder checks.
-Simulation remains C11 and independent of SDL; no retail execution or new
-trace recording is required for these ports.
+For each new character, add only researched roots to
+`tools/character_catalog.py`, translate its selected data/decisions, and reuse
+shared systems. Mark any unresolved native dependency explicitly before
+calling the affected move complete.

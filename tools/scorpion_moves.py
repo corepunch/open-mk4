@@ -14,7 +14,7 @@ from retail_moves import EXE_SHA256, RetailImage
 # Button names confirmed by the retail sc_m_geo.geo move-list texture as well
 # as its command records: D,B,HP; B,B,LP; F,F,HK; D,F,LP and the finishers.
 COMMAND_TABLES = [
-    ('up', 0x53c888, 0x53ca80),
+    ('up', 0x53c888, 0x53cb10),
     ('high_punch', 0x53c8d0, 0x53cb58),
     ('low_punch', 0x53c918, 0x53cba0),
     ('block', 0x53c960, 0x53cbe8),
@@ -133,12 +133,15 @@ def signed_word(value):
     return value if value < 0x80000000 else value - 0x100000000
 
 
-def script_program(image, entry):
+def script_program(image, entry, character=0):
     """Extract all known VM paths; native behavior remains an explicit edge.
 
     Reaching a native tail closes this VM path, not the whole move. In
     particular installing a group callback does not execute it in the VM.
     """
+    if not 0 <= character < 18:
+        raise ValueError('Character ID must be 0..17')
+    selection = 2 if character == 16 else 7 if character == 17 else character
     pending, seen, rows, open_edges = [entry], set(), [], []
     while pending:
         pc = pending.pop()
@@ -212,8 +215,8 @@ def script_program(image, entry):
                     open_edges.append(dict(source=hex(pc), kind='loop opener outside scan bound', target='unknown'))
             if op == 0x3c:
                 row['character_table'] = [hex(value * 4) for value in operands]
-                row['selected_character'] = 0
-                pc = operands[0] * 4
+                row['selected_character'] = selection
+                pc = operands[selection] * 4
             elif op == 0x33:
                 row['branch'] = hex(operands[0] * 4)
                 pc = operands[0] * 4
@@ -225,14 +228,24 @@ def script_program(image, entry):
                 unresolved_native_edges=open_edges, whole_move_verified=False)
 
 
-def commands(image):
+def commands(image, character=0):
     result = []
+    if not 0 <= character < 18:
+        raise ValueError('Character ID must be 0..17')
+    queries = []
     for button, p1, p2 in COMMAND_TABLES:
-        root = image.word(p1) * 4
-        assert root == image.word(p2) * 4, 'P1/P2 Scorpion command tables differ'
+        p1 += character * 4
+        p2 += character * 4
+        root1, root2 = image.word(p1) * 4, image.word(p2) * 4
+        queries.append((button, p1, p2, root1, 1 if root1 != root2 else None))
+        if root2 != root1:
+            queries.append((button, p1, p2, root2, 2))
+    for button, p1, p2, root, player in queries:
         records = []
         pc = root
         for _ in range(256):
+            if not pc:
+                break
             pattern, extra, word = [image.word(pc + k * 4) for k in range(3)]
             if pattern == 0:
                 break
@@ -256,6 +269,8 @@ def commands(image):
             raise ValueError('Unterminated command list')
         result.append(dict(button=button, p1_table=hex(p1), p2_table=hex(p2),
                            selected_list=hex(root), records=records))
+        if player is not None:
+            result[-1]['player'] = player
     return result
 
 

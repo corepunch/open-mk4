@@ -20,6 +20,23 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_character_selection_and_sub_zero_commands(self):
+        from scorpion_moves import commands
+        from retail_script_c import move_c_text
+        from retail_query import contact_text
+        rows = script_program(self.image, 0x4e5ca0, 4)['instructions']
+        self.assertEqual([row['clip'] for row in rows if 'clip' in row], [71])
+        self.assertEqual(next(row for row in rows if row['opcode'] == '0x3c')['selected_character'], 4)
+        kitana = script_program(self.image, 0x4e5ca0, 16)['instructions']
+        self.assertEqual(next(row for row in kitana if row['opcode'] == '0x3c')['selected_character'], 2)
+        ice = next(row for table in commands(self.image, 4) for row in table['records'] if row['target'] == '0x49bc60')
+        self.assertEqual((ice['tokens'], ice['window']), ([2, 0xdd], 26))
+        text = move_c_text(self.image, 'low_kick', 80, 4)
+        self.assertIn('void sub_zero_low_kick(void)', text)
+        self.assertIn('ANIM_CLIP_70', text)
+        self.assertIn('stopped at an unsupported operation', text)
+        self.assertIn('67/67/0', contact_text(self.image, 'C', 3))
+
     def test_sub_zero_fatality_script(self):
         self.assertEqual(self.image.word(0x4e0498 + 4 * 4), 0x445100)
         self.assertEqual(self.image.word(0x4dfe90 + 4 * 4), 0x41b3a0)

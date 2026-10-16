@@ -4,8 +4,9 @@ No recursive native closure, archive loading, emulation, or dump generation.
 """
 from scorpion_moves import attack_record, attack_record_at, script_program, signed_word
 from retail_symbols import NAMES, reference_rows, target_text
+from character_catalog import moves_for, character_name, CHARACTERS
 
-CONTACT_TABLES = {'A': 0x53d268, 'B': 0x53d2b8, 'WEAPON': 0x53d0c0}
+CONTACT_TABLES = {'A': 0x53d268, 'B': 0x53d2b8, 'C': 0x53d208, 'D': 0x53d178, 'WEAPON': 0x53d0c0}
 
 
 def address(value):
@@ -74,11 +75,11 @@ def instruction_text(row, raw=False):
     return '%08x  %s%s' % (int(row['va'], 16), text, '; ' + '; '.join(details) if details else '')
 
 
-def script_text(image, entry, limit=80, raw=False):
-    program = script_program(image, entry)
+def script_text(image, entry, limit=80, raw=False, character=0):
+    program = script_program(image, entry, character)
     instructions = program['instructions']
     unknown = sum('unresearched' in row['operation'] for row in instructions)
-    rows = ['# Script %08x (Scorpion selection)' % entry, '',
+    rows = ['# Script %08x (%s selection)' % (entry, character_name(character)), '',
             '%d decoded rows; %d unknown opcode stops. Native semantics remain separate.' % (len(instructions), unknown), '', '```text']
     rows.extend(instruction_text(row, raw) for row in instructions[:limit])
     rows.append('```')
@@ -96,6 +97,8 @@ def script_text(image, entry, limit=80, raw=False):
     rows += reference_rows(int(row[key], 16) for row in instructions[:limit]
                            for key in ('native_target', 'callback') if row.get(key))
     rows += ['', 'Inspect a dependency with --native ADDRESS; inspect a script branch with --script ADDRESS.']
+    if character:
+        rows.append('Keep `--character %s` on follow-up script queries.' % CHARACTERS[character])
     return '\n'.join(rows) + '\n'
 
 
@@ -127,39 +130,39 @@ def contact_text(image, table, selector):
         return '# Attack record %08x\n\n%s\n' % (selector, attack_text(attack_record_at(image, address(hex(selector)))))
     table = table.upper()
     if table not in CONTACT_TABLES or not 0 <= selector <= 255:
-        raise ValueError('Attack query requires A/B/weapon and selector 0..255, or record and a hex address')
+        raise ValueError('Attack query requires A/B/C/D/weapon and selector 0..255, or record and a hex address')
     return '# Attack %s[%d]\n\n%s\n' % (table, selector, attack_text(attack_record(image, CONTACT_TABLES[table], selector)))
 
 
-def move_list_text():
-    from scorpion_catalog import MOVES
-    rows = ['# Scorpion move queries', '',
+def move_list_text(character=0):
+    MOVES = moves_for(character)
+    rows = ['# %s move queries' % character_name(character), '',
             'Curated navigation roots, not exhaustive coverage or implementation status.', '',
             '| Move (--move NAME) | Native entry | Script roots |', '| --- | --- | --- |']
     rows.extend('| %s | %08x | %d |' % (name, move['entry'], len(move['scripts'])) for name, move in MOVES.items())
     return '\n'.join(rows) + '\n'
 
 
-def move_text(image, name, limit=80, raw=False):
-    from scorpion_catalog import MOVES
+def move_text(image, name, limit=80, raw=False, character=0):
+    MOVES = moves_for(character)
     from scorpion_moves import commands, attack_record_at
     if name not in MOVES:
-        raise ValueError('Unknown Scorpion move %r; use --list-moves' % name)
+        raise ValueError('Unknown %s move %r; use --list-moves' % (character_name(character), name))
     move = MOVES[name]
-    rows = ['# Scorpion: ' + name, '',
+    rows = ['# %s: %s' % (character_name(character), name), '',
             'Selected research roots only. Decoded instructions do not establish native semantics,',
             'whole-move coverage, timing totals, or C implementation status.', '',
             'Entry: `--native 0x%x`' % move['entry'], '', '## Input and gates', '']
     matched = False
     tokens = {0xaa: 'B', 0xdd: 'F', 2: 'D', 1: 'U'}
-    for command_list in commands(image):
+    for command_list in commands(image, character):
         for command in command_list['records']:
             if command['target'] != hex(move['entry']):
                 continue
             matched = True
             pattern = ','.join(tokens.get(value, '%02x' % value) for value in command['tokens']) or 'unconditional'
             rows.append('- `%s`: %s + %s; window=%d ticks; flags=%s; predicate `%s` (inspect with --native).' %
-                        (command['va'], pattern, command_list['button'], command['window'], command['flags'], command['predicate'] or 'none'))
+                        (command['va'], pattern, ('P%d ' % command_list['player'] if 'player' in command_list else '') + command_list['button'], command['window'], command['flags'], command['predicate'] or 'none'))
     if not matched:
         rows.append('- No direct special-command record for this entry; inspect its stance/native caller for selection and gates.')
     rows += ['', '## Selected scripts', '']
@@ -172,7 +175,7 @@ def move_text(image, name, limit=80, raw=False):
     total, shown, failures = 0, 0, []
     for role, entry in move['scripts']:
         try:
-            program = script_program(image, entry)
+            program = script_program(image, entry, character)
         except ValueError as error:
             failures.append((entry, str(error)))
             rows.append('- %s: `--script 0x%x` failed: %s' % (role, entry, error))
@@ -238,4 +241,6 @@ def move_text(image, name, limit=80, raw=False):
     rows += ['- Native tails, predicates, reactions and computed paths remain separate research; counts cover only the selected roots.',
              '- C port status: docs/character-script-port.md (not inferred by this decoder).']
     rows += reference_rows(native)
+    if character:
+        rows.append('Keep `--character %s` on follow-up script queries.' % CHARACTERS[character])
     return '\n'.join(rows) + '\n'

@@ -7,6 +7,7 @@ import re
 
 from retail_symbols import NAMES, reference_rows
 from scorpion_moves import script_program
+from character_catalog import moves_for, character_name, CHARACTERS
 
 
 ANIMATION_NAMES = {67: 'ANIM_SCORPION_LOW_KICK'}
@@ -16,13 +17,13 @@ def animation_name(clip):
     return ANIMATION_NAMES.get(clip, 'ANIM_CLIP_%d' % clip)
 
 
-def script_name(entry):
-    from scorpion_catalog import MOVES
+def script_name(entry, character=0):
+    MOVES = moves_for(character)
     for name, move in MOVES.items():
         for index, (role, root) in enumerate(move['scripts']):
             if root == entry:
                 suffix = '' if index == 0 else '_' + re.sub(r'[^a-z0-9]+', '_', role.lower()).strip('_')
-                return 'scorpion_' + name + suffix
+                return CHARACTERS[character] + '_' + name + suffix
     return 'script_%08x' % entry
 
 
@@ -39,6 +40,17 @@ def instruction_c(row):
     if op == 0x49 and (row['inline'] >> 8) in (0, 2):
         lines = ['bind_animation(%s);' % animation_name(row['clip'])] if 'clip' in row else []
         return lines + ['show_sample(%d);' % (row['inline'] & 255)]
+    if op == 0x47 and (row['inline'] >> 8) in (0, 2):
+        lines = ['bind_animation(%s);' % animation_name(row['clip'])] if 'clip' in row else []
+        return lines + ['advance_to_sample(%d);' % (row['inline'] & 255)]
+    if op in (0x03, 0x07):
+        return ['finish_%s();' % ('forwards' if op == 0x03 else 'backwards')]
+    if op in (0x04, 0x06):
+        return ['advance_%s(%d);' % ('forwards' if op == 0x04 else 'backwards', row['inline'])]
+    if op == 0x05:
+        return ['advance_to_sample(%d);' % row['inline']]
+    if op == 0x27:
+        return ['sound_event_c(%d);' % (row['inline'] & 255)]
     if op == 0x1f:
         return ['set_attack_selector(%d);' % int(row['operands'][0], 16)]
     if op == 0x20:
@@ -56,7 +68,7 @@ def instruction_c(row):
     return None
 
 
-def program_c(program, limit):
+def program_c(program, limit, character=0):
     """Keep source order and combine only adjacent sample/wait operations."""
     instructions = program['instructions']
     # The decoder sorts its graph by address, so a backwards branch can put
@@ -91,16 +103,16 @@ def program_c(program, limit):
     if any(int(row['opcode'], 16) == 0x29 for row in rendered):
         declarations.append('enum { ACTION_1006 = 0x1006 };')
     code = declarations + ([''] if declarations else [])
-    code += ['void %s(void) {' % script_name(int(program['entry'], 16))]
+    code += ['void %s(void) {' % script_name(int(program['entry'], 16), character)]
     code += ['  ' + line for line in lines]
     code += ['}']
     return code, rendered, stopped
 
 
-def script_c_text(image, entry, limit=80):
-    program = script_program(image, entry)
-    code, rendered, stopped = program_c(program, limit)
-    rows = ['# %s — C-style script' % script_name(entry), '',
+def script_c_text(image, entry, limit=80, character=0):
+    program = script_program(image, entry, character)
+    code, rendered, stopped = program_c(program, limit, character)
+    rows = ['# %s — C-style script' % script_name(entry, character), '',
             'Pseudocode: waits suspend/resume the script. Helper names describe researched operations;',
             'this is not a compilable C port or a complete account of native behavior.', '',
             '%d decoded instructions; %d shown in the C view%s.' %
@@ -120,23 +132,25 @@ def script_c_text(image, entry, limit=80):
                          record['reaction'], record['alternate_reaction'], record['blocked_reaction'], record['flags']))
     rows += reference_rows(int(row['native_target'], 16) for row in rendered if 'native_target' in row)
     rows += ['', 'For addresses, operands and every unresolved boundary, use `--script 0x%x` without `--c`.' % entry]
+    if character:
+        rows.append('Keep `--character %s` on follow-up script queries.' % CHARACTERS[character])
     return '\n'.join(rows) + '\n'
 
 
-def move_c_text(image, name, limit=80):
-    from scorpion_catalog import MOVES
+def move_c_text(image, name, limit=80, character=0):
+    MOVES = moves_for(character)
     if name not in MOVES:
-        raise ValueError('Unknown Scorpion move %r; use --list-moves' % name)
+        raise ValueError('Unknown %s move %r; use --list-moves' % (character_name(character), name))
     roots = MOVES[name]['scripts']
     if not roots:
         raise ValueError('No script roots catalogued for %s; inspect --move %s without --c' % (name, name))
-    rows = ['# Scorpion: %s — C-style scripts' % name, '',
+    rows = ['# %s: %s — C-style scripts' % (character_name(character), name), '',
             'Selected script roots only; native move entry, input gates and reactions remain separate research.', '']
     remaining = limit
     for _, entry in roots:
         if remaining <= 0:
             rows.append('Additional script roots omitted by --limit.')
             break
-        rows.append(script_c_text(image, entry, remaining))
-        remaining -= min(remaining, len(script_program(image, entry)['instructions']))
+        rows.append(script_c_text(image, entry, remaining, character))
+        remaining -= min(remaining, len(script_program(image, entry, character)['instructions']))
     return '\n'.join(rows) + '\n'

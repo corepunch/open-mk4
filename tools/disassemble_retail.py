@@ -638,14 +638,15 @@ def main():
     from retail_query import address, contact_text, native_text, script_text, move_text, move_list_text
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exe', default='MK4/MK-4.EXE')
+    parser.add_argument('--character', default='scorpion', help='Roster name or ID 0..17; selects scripts and command tables')
     parser.add_argument('--archive', default='MK4/FILESYS.DAT', help='Used only for --bundle')
     parser.add_argument('--output', type=Path, help='A Markdown file for queries, or a directory for --bundle')
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--script', metavar='ADDRESS', help='Decode one script; addresses are hexadecimal')
     mode.add_argument('--native', metavar='ADDRESS', help='Inspect one exact-entry native graph (requires Capstone)')
-    mode.add_argument('--attack', nargs=2, metavar=('TABLE', 'SELECTOR'), help='Inspect a contact record: A/B/weapon + decimal/0x selector, or record + 0x address')
-    mode.add_argument('--move', metavar='NAME', help='Compact Scorpion move page; use --list-moves for names')
-    mode.add_argument('--list-moves', action='store_true', help='List the curated Scorpion move roots')
+    mode.add_argument('--attack', nargs=2, metavar=('TABLE', 'SELECTOR'), help='Inspect a contact record: A/B/C/D/weapon + decimal/0x selector, or record + 0x address')
+    mode.add_argument('--move', metavar='NAME', help='Compact character move page; use --list-moves for names')
+    mode.add_argument('--list-moves', action='store_true', help='List curated move roots for the selected character')
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
     parser.add_argument('--limit', type=int, default=80, help='Query instruction limit, 1..512 (default 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
@@ -660,6 +661,10 @@ def main():
         parser.print_help()
         return
     try:
+        from character_catalog import character_id
+        character = character_id(args.character)
+        if args.bundle and character != 0:
+            raise ValueError('The existing bundle has Scorpion seeds; use bounded character queries instead')
         if args.bundle:
             output = args.output or Path('build/retail-disassembly')
             result = Disassembly(args.exe).write(output, args.archive, not args.no_linear)
@@ -667,7 +672,7 @@ def main():
                   (len(result['scripts']), len(result['functions']), output / 'README.md'))
             return
         if args.list_moves:
-            report = move_list_text()
+            report = move_list_text(character)
         elif args.native:
             # x86 entries are byte-aligned, unlike VM/data words.
             entry = int(args.native, 16)
@@ -676,11 +681,11 @@ def main():
             image = RetailImage(args.exe)
             if args.c:
                 from retail_script_c import move_c_text, script_c_text
-                report = move_c_text(image, args.move, args.limit) if args.move else script_c_text(image, address(args.script), args.limit)
+                report = move_c_text(image, args.move, args.limit, character) if args.move else script_c_text(image, address(args.script), args.limit, character)
             elif args.move:
-                report = move_text(image, args.move, args.limit, args.raw)
+                report = move_text(image, args.move, args.limit, args.raw, character)
             elif args.script:
-                report = script_text(image, address(args.script), args.limit, args.raw)
+                report = script_text(image, address(args.script), args.limit, args.raw, character)
             else:
                 report = contact_text(image, args.attack[0], int(args.attack[1], 0))
         if args.output:
