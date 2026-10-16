@@ -1,0 +1,9 @@
+/fsys
+/extracted/
+/MK4/
+/mk4-viewer
+/build/
+/viewer/screenshots/
+.DS_Store
+
+/mk4-game
