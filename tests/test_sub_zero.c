@@ -181,8 +181,7 @@ static void ice(void) {
     advance(&battle, 58);
     check(objects(&battle, PROJECTILE_ICE) == 1 && battle.fighters[player].state == S_IDLE, "ice flight must outlive attacker recovery");
     ice_command(&battle, player, 2, 0);
-    check(fighter_move(&battle.fighters[player])->clip != 16 && objects(&battle, PROJECTILE_ICE) == 1,
-        "active object gate must prevent stacking after attacker recovers");
+    check(fighter_move(&battle.fighters[player])->clip == 16 && objects(&battle, PROJECTILE_ICE) == 1, "ice gate must allow another shot when no clone exists");
     battle_next_round(&battle);
     check(objects(&battle, PROJECTILE_ICE) == 0 && battle.fighters[1 - player].appearance == APPEARANCE_NORMAL, "round reset must clear ice and freeze");
 
@@ -222,10 +221,97 @@ static void ice(void) {
   }
 }
 
+static void clone_command(Battle *battle, int player) {
+  press(battle, player, BUTTON_BIT(BUTTON_DOWN));
+  press(battle, player, BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT) | BUTTON_BIT(BUTTON_LOW_PUNCH));
+}
+
+static void idle_object(Battle *battle, Projectile *p) {
+  (void)battle;
+  (void)p;
+}
+
+static void clone_tests(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle = fight(player, 2.f);
+    clone_command(&battle, player);
+    check(objects(&battle, PROJECTILE_CLONE) == 1 && battle.fighters[player].action == 0x405, "clone must capture pose immediately");
+    Projectile *clone = NULL;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      if (battle.projectiles[i].kind == PROJECTILE_CLONE) {
+        clone = &battle.projectiles[i];
+      }
+    }
+    q16 clone_x = clone->pos[AXIS_X];
+    check(clone->clip >= -1 && clone->sample >= 0, "clone must own its captured pose");
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 2);
+    check(objects(&battle, PROJECTILE_CLONE) == 1 && clone->pos[AXIS_X] == clone_x, "clone must remain stationary after owner interruption");
+    battle.fighters[1 - player].body.pos[AXIS_X] = clone_x + clone->facing * 0x6000;
+    advance(&battle, 2);
+    check(objects(&battle, PROJECTILE_CLONE) == 0 && battle.fighters[1 - player].appearance == APPEARANCE_FROZEN, "clone must freeze once on contact");
+    check(battle.fighters[1 - player].health == Q16_ONE, "clone freeze must not deal direct damage");
+    battle_reset_match(&battle);
+    check(battle.fighters[player].clone_ready == 0 && objects(&battle, PROJECTILE_CLONE) == 0, "rematch clears clone state");
+
+    battle = fight(player, .7f);
+    clone_command(&battle, player);
+    check(objects(&battle, PROJECTILE_CLONE) == 0 && battle.fighters[player].action == 0x406, "near clone must retreat without spawning");
+    advance(&battle, 100);
+    check(battle.fighters[player].state == S_IDLE, "near branch must land and release controls");
+
+    battle = fight(player, 4.f);
+    clone_command(&battle, player);
+    advance(&battle, 50);
+    check(battle.fighters[player].state == S_IDLE && objects(&battle, PROJECTILE_CLONE) == 1, "retreat must recover while clone remains");
+    ice_command(&battle, player, 2, 0);
+    check(fighter_move(&battle.fighters[player])->clip != 16, "live clone must gate ice blast");
+    advance(&battle, 80);
+    check(objects(&battle, PROJECTILE_CLONE) == 0, "clone must expire");
+    uint64_t ready = battle.fighters[player].clone_ready;
+    battle.ticks = ready - 4;
+    clone_command(&battle, player);
+    check(battle.fighters[player].action != 0x405, "clone cooldown rejects immediately below boundary");
+    advance(&battle, 100);
+    clone_command(&battle, player);
+    check(objects(&battle, PROJECTILE_CLONE) == 1, "clone cooldown must permit another activation");
+
+    battle = fight(player, 4.f);
+    battle.fighters[player].clone_ready = 3;
+    clone_command(&battle, player);
+    check(objects(&battle, PROJECTILE_CLONE) == 1, "clone accepts cooldown at boundary");
+    battle_next_round(&battle);
+    battle.phase = PHASE_FIGHT;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      check(battle_spawn_projectile(&battle, &battle.fighters[player], PROJECTILE_SWORD, 200, idle_object) != NULL, "fill object pool");
+    }
+    clone_command(&battle, player);
+    advance(&battle, 100);
+    check(battle.fighters[player].state == S_IDLE && objects(&battle, PROJECTILE_CLONE) == 0, "full pool must not strand clone owner");
+
+    battle = fight(player, 4.f);
+    battle.fighters[player].body.pos[AXIS_Y] -= Q16_ONE;
+    fighter_enter_state(&battle, &battle.fighters[player], S_JUMP);
+    clone_command(&battle, player);
+    check(objects(&battle, PROJECTILE_CLONE) == 1, "clone command permits air activation");
+    advance(&battle, 180);
+    check(battle.fighters[player].state == S_IDLE, "air clone must land and recover");
+  }
+  Battle mirror;
+  battle_init(&mirror, 4, 4);
+  mirror.phase = PHASE_FIGHT;
+  clone_command(&mirror, 0);
+  clone_command(&mirror, 1);
+  check(objects(&mirror, PROJECTILE_CLONE) == 2, "mirror clones must have independent owners");
+  battle_reset_match(&mirror);
+  check(objects(&mirror, PROJECTILE_CLONE) == 0, "mirror reset clears both objects");
+}
+
 int main(void) {
   normals();
   ice();
+  clone_tests();
   puts(
-      "PASS: ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+      "PASS: clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

@@ -52,9 +52,9 @@ assume these three indices will always coincide for other roster entries.
 | --- | --- | --- |
 | High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
 | Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables and D,F,LP freeze command | Clone, slide, weapon and finisher commands in subsequent steps |
+| Controls | Character-owned stance/follow-up tables and D,F,LP freeze command | Slide, weapon and finisher commands in subsequent steps |
 | Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
-| Specials | Freeze projectile and reaction 67, including double-freeze backfire and air thaw | Clone and slide are subsequent steps |
+| Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide is a subsequent step |
 | Weapon combat and finishers | Not yet ported | Follow the character-specific dependencies below |
 
 Keep the existing high-kick sample fixture in
@@ -78,19 +78,31 @@ and CPU recovery decisions are not reproduced. Sources for the additions are
 
 Freeze-port coverage: `49bc60`, `4ed588/4ed818`, `49bcb0`, `49c300/690/810`,
 `49bb90/49bc00`, `45f1f0` and its callees establish clip 16, the normal/fast
-startup, two recovery loops, 0.2-unit flight, 0.05-unit spawn offset, active
-object and opponent-hit-count gates. Reaction `486230` holds the victim's pose
+startup, two recovery loops, 0.2-unit flight, 0.05-unit spawn offset, active-clone and opponent-hit-count gates. Reaction `486230` holds the victim's pose
 for six 6-tick shake phases, 88 ticks, then three 6-tick phases (142 ticks in
 our continuation). `486430` dispatches reaction 67 to the opponent on a double
 freeze, releasing the original victim; air release uses `4864b0`. Natural air
 thaw follows `4e9d38` (gravity 0x147, wait for landing) and `486530`. Opcode
 5c's one-word gravity operand is verified at handler `45b110` and decoded by
 the static tool. Tests cover command windows/gates, startup, hit/block, held
-pose, timed thaw, backfire, reaction replacement, independent flight, active
-object rejection and round reset for both players. Cosmetic shaking and the
+pose, timed thaw, backfire, reaction replacement, independent flight, active-clone rejection and round reset for both players. Cosmetic shaking and the
 retail ice material are replaced by a held pose and simple projectile artwork;
 air landing uses the shared portable landing continuation. The projectile has
 a defensive 180-tick lifetime in addition to the source's radial-bound exit.
+
+Clone-port coverage: `45ece0` and `47f4d0` establish the 180-tick cooldown,
+frozen-opponent and active-clone rejection, distance <1 branch (retreat without
+an object), and air permission. The object captures the pre-retreat clip/sample;
+`47f9d0/47fa90/47fbd0` give stationary D[5] freeze contact and 74-tick human /
+53-tick CPU lifetime. The retreat uses `4e87a0` motion (-0x170a horizontal,
+-0x28f5 vertical, gravity 0x28f), clip 301 and the landing continuation.
+`4e41d8` and `4e4220` both hold clone task IDs 45/46: ice blast is blocked by
+a live clone, not by an existing ice projectile. The earlier extra one-ice
+restriction has been removed. Object-pool capacity still bounds simultaneous
+shots. Tests cover pose capture, independent lifetime, contact, near/air paths,
+cooldown boundaries, full allocation, rematch and mirror ownership. Clone and
+frozen victims use a simple blue material; secondary orbiting ice decoration
+and exact retail transforms are presentation choices.
 
 ## Sub-Zero: locating commands and scripts
 
@@ -320,7 +332,7 @@ The common update is in [game/battle.c](../game/battle.c), move lifecycle in
 [game/moves.c](../game/moves.c), contact/object allocation in
 [game/combat.c](../game/combat.c), and reactions in
 [game/reactions.c](../game/reactions.c). `Fighter` currently has Scorpion
-cooldown fields `spear_ready` and `teleport_ready`, and no Sub-Zero cooldown fields yet. Freeze uses explicit victim pose and
+cooldown fields `spear_ready` and `teleport_ready`, plus the Sub-Zero `clone_ready` deadline. Freeze uses explicit victim pose and
 reaction continuation state. Choose explicit per-fighter/object state as the move
 needs it; do not repurpose those fields or introduce retail scratch globals.
 Scorpion's code is an example of these APIs, not proof that its constants,

@@ -221,9 +221,11 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     }
   }
   canvas_resolve_shadows(cv, 104);
+  uint32_t ice_pixel = 0xff89dfff;
+  const Texture ice_texture = {1, 1, {&ice_pixel, 1, 1}};
   for (size_t i = 0; i < 2; ++i) {
     const Fighter *fighter = &battle->fighters[i];
-    const Texture *texture = &fighter_model(assets, fighter)->texture;
+    const Texture *texture = fighter->appearance == APPEARANCE_FROZEN ? &ice_texture : &fighter_model(assets, fighter)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j)
       render_triangle(cv, camera, fighters[i].data[j], texture,
           fighter->appearance == APPEARANCE_BURNED ? .18f
@@ -235,6 +237,21 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &battle->projectiles[i];
+    if (p->kind == PROJECTILE_CLONE) {
+      Fighter clone = battle->fighters[p->owner];
+      MoveDef captured = {.clip = p->clip, .last = MOVE_END};
+      clone.current_move = &captured;
+      clone.appearance = APPEARANCE_NORMAL;
+      clone.action = 0;
+      clone.sample_override = p->sample;
+      clone.facing = p->facing;
+      memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
+      Triangles geometry = fighter_geometry(assets, &clone);
+      for (size_t j = 0; j < geometry.count; ++j) {
+        render_triangle(cv, camera, geometry.data[j], &ice_texture, .9f, PASS_COLOR, &light);
+      }
+      FREE_ARRAY(geometry);
+    }
     if (p->kind == PROJECTILE_ICE) {
       Vec3 tip = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
       ScreenVertex at = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);

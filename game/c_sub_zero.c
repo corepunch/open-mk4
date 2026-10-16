@@ -880,7 +880,7 @@ static void ice_tick(Battle *battle, Fighter *fighter) {
 }
 
 static bool can_ice(const Battle *battle, const Fighter *fighter) {
-  return battle->phase == PHASE_FIGHT && fighter_opponent(battle, fighter)->hits <= 1 && !owned_object(battle, fighter, PROJECTILE_ICE);
+  return battle->phase == PHASE_FIGHT && fighter_opponent(battle, fighter)->hits <= 1 && !owned_object(battle, fighter, PROJECTILE_CLONE);
 }
 
 static void sub_zero_ice(Battle *battle, Fighter *fighter) {
@@ -892,9 +892,57 @@ static void sub_zero_ice(Battle *battle, Fighter *fighter) {
   fighter->sample_override = 0;
 }
 
+/* 47f4d0 copies the current pose before the retreat. Both ice predicates
+ * inspect clone task types 45/46, not the projectile task type 42. */
+static const AttackRecord clone_record = {0x4ccc, -0xa3d, 0xbae1, 0x9e76, 67, 67, 0, ATTACK_MARK, 0};
+static const MoveDef s_clone = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x405};
+static const MoveDef s_clone_near = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x406};
+
+static void clone_object(Battle *battle, Projectile *p) {
+  Fighter *owner = &battle->fighters[p->owner];
+  if (battle->contacts_off || battle_contact_from(battle, owner, &clone_record, p->pos, p->facing) != CONTACT_MISS) {
+    p->kind = 0;
+  }
+}
+
+static void clone_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = fighter->ticks < 3 ? fighter->ticks : maxi(0, 6 - fighter->ticks);
+  if (fighter->ticks == 3) {
+    fighter->body.pos[AXIS_Y] -= 0x3333;
+  }
+  if (fighter->ticks >= 6 && !fighter_airborne(fighter)) {
+    air_land(battle, fighter);
+  }
+}
+
+static bool can_clone(const Battle *battle, const Fighter *fighter) {
+  return battle->phase == PHASE_FIGHT && battle->ticks >= fighter->clone_ready && fighter_opponent(battle, fighter)->action != 0x1003 &&
+         !owned_object(battle, fighter, PROJECTILE_CLONE);
+}
+
+static void sub_zero_clone(Battle *battle, Fighter *fighter) {
+  bool near = fighter_distance(battle, fighter) < 1.f;
+  if (!near) {
+    Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_CLONE, fighter_opponent(battle, fighter)->human ? 74 : 53, clone_object);
+    if (p != NULL) {
+      p->clip = fighter_move(fighter)->clip;
+      p->sample = (int)fighter_frame(fighter, 1 << 16);
+    }
+  }
+  stop_body(fighter);
+  fighter_start_move(battle, fighter, S_JUMP, near ? &s_clone_near : &s_clone);
+  fighter->script = clone_tick;
+  fighter->sample_override = 0;
+  fighter_set_speed(battle, fighter, -0x170a);
+  fighter->body.vel[AXIS_Y] = -0x28f5;
+  fighter->body.gravity = 0x28f;
+  fighter->clone_ready = battle->ticks + 180;
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0, can_ice, sub_zero_ice},
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 18, CMD_AIR, can_clone, sub_zero_clone},
 };
 // clang-format on
 

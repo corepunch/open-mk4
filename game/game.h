@@ -354,6 +354,7 @@ struct Fighter {
   int frozen_clip; /* preserve the victim's current pose while frozen */
   int reaction;    /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
+  uint64_t clone_ready;
   bool armed, weapon_used;
   FighterFn disarm; /* character-owned weapon drop entry */
 };
@@ -370,11 +371,13 @@ typedef void (*ProjectileFn)(Battle *battle, Projectile *projectile);
 enum {
   PROJECTILE_SPEAR = 1,
   PROJECTILE_SWORD = 2,
-  PROJECTILE_ICE = 3
+  PROJECTILE_ICE = 3,
+  PROJECTILE_CLONE = 4
 };
 
 struct Projectile {
   int kind, owner, facing, ticks, lifetime, phase;
+  int clip, sample; /* stationary clone's captured pose */
   q16 pos[3], vel[3];
   ProjectileFn step;
 };
