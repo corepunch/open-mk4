@@ -44,7 +44,19 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   fighter->current_move = move;
   fighter->ticks = 0;
   fighter->connected = false;
+  fighter->buffered = 0;
+  fighter->contact = CONTACT_MISS;
+  fighter->contact_tick = -1;
+  fighter->contact_ready = false;
+  fighter->after_contact = NULL;
   frame_event(battle, fighter);
+}
+
+void fighter_note_contact(Fighter *fighter, ContactResult result) {
+  require(result >= CONTACT_BLOCK && result <= CONTACT_AIR_HIT, "Invalid contact result");
+  fighter->connected = true;
+  fighter->contact = result;
+  fighter->contact_tick = fighter->ticks;
 }
 
 void fighter_enter_state(Battle *battle, Fighter *fighter, int state) {

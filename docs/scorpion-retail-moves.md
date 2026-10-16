@@ -178,6 +178,19 @@ for jab (16 dispatches), sweep (41), uppercut (37) and high kick (30). C tests
 compare every submitted visible sample and end step with the x86 fixtures.
 Contact eligibility uses the original query visits: jab 8, sweep 18..19,
 uppercut 7..9, kick 11..13. Combat damage and geometry remain approximations.
-The other recorded branches still need runtime callbacks. In particular,
-uppercut block ends at 31 and hit at 61; last-visit contact adds two dispatches.
-Buffered LP input is consumed at native jab decisions, and can open clip 295.
+The C runtime also matches all 27 recorded branches, including uppercut block
+at 31 and hit at 61; last-visit contact adds two dispatches. Buffered LP input
+(currently the host's punch button) is consumed at the native jab decisions
+and can open clip 295. Repeat presses during recovery do not reopen the jab;
+facing away rejects the follow-up. The jab alternates reusable move phases,
+and uppercut reuses a five-dispatch recovery loop with a counted end callback.
+Neither needs an authored row per frame.
+
+`Fighter.contact` carries miss/block/hit/air-hit and the contact tick. Sparse
+contact events can request queries outside a continuous active interval. A
+one-shot `after_contact` continuation handles the jab boundary where retail
+queries contact before selecting the next phase. Shared hit resolution keeps
+simultaneous trades; entering a reaction clears a pending continuation. Tests
+exercise actual simulator hit/block delivery as well as controlled oracle
+results. These tests establish playback/branch behavior under the stated
+inputs, not the retail damage, collision, victim reaction or hitstop rules.

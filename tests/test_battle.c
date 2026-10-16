@@ -146,24 +146,32 @@ static void check_original_scorpion(void) {
   };
   for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
     const struct ScorpionFixture *expected = &fixtures[i];
-    /* Contact and repeat branches are recorded by the oracle, but are not
-     * exercised by this uninterrupted no-contact playback regression yet. */
-    if (expected->result != 0 || expected->press_count != 0) {
-      continue;
-    }
     Battle battle = fight(4.f);
     Fighter *fighter = &battle.fighters[0];
+    if (expected->facing_away) {
+      fighter->facing = -1;
+    }
     fighter_enter_state(&battle, fighter, expected->state);
     for (int tick = 0; tick < expected->count; ++tick) {
       int clip = fighter_move(fighter)->clip;
-      int count = clip == 294 ? 23 : clip == 293 ? 20 : clip == 63 ? 46 : 18;
+      int count = clip == 294 ? 23 : clip == 295 ? 19 : clip == 293 ? 20 : clip == 63 ? 46 : 18;
       if (clip != expected->clips[tick] ||
           fighter_frame(fighter, count) != expected->frames[tick]) {
         fprintf(stderr, "%s at step %d\n", expected->name, tick);
         check(false, "Scorpion sample differs from original x86");
       }
       check(fighter->state == expected->state, "Scorpion move returned early");
-      advance_ticks(&battle, 1, NULL);
+      if (expected->result != 0 && tick == expected->contact_tick) {
+        /* Match the oracle's controlled result. Collision is tested separately. */
+        fighter_note_contact(fighter, (ContactResult)expected->result);
+      }
+      Input in[2] = {0};
+      for (int press = 0; press < expected->press_count; ++press) {
+        if (expected->presses[press] == tick + 1) {
+          in[0].pressed = BUTTON_BIT(BUTTON_PUNCH);
+        }
+      }
+      battle_step(&battle, in);
     }
     check(fighter->state == S_IDLE, "Scorpion move did not return at retail end step");
   }
@@ -202,11 +210,44 @@ static void check_sequence_events(void) {
   check(fighter->health == 98, "Completed sequence kept firing events");
 }
 
+static void check_scorpion_contact_branches(void) {
+  for (int blocked = 0; blocked < 2; ++blocked) {
+    Battle battle = fight(1.f);
+    Fighter *fighter = &battle.fighters[0];
+    fighter_enter_state(&battle, fighter, S_UPPERCUT);
+    Input in[2] = {0};
+    if (blocked) {
+      in[1].held = BUTTON_BIT(BUTTON_BLOCK);
+    }
+    advance_ticks(&battle, 7, in);
+    check(fighter->contact == (blocked ? CONTACT_BLOCK : CONTACT_HIT) && fighter->contact_tick == 7,
+        "Battle did not deliver uppercut contact to its continuation");
+    int end = blocked ? 31 : 61;
+    advance_ticks(&battle, end - 8, in);
+    check(fighter->state == S_UPPERCUT, "Contact recovery ended before retail return");
+    advance_ticks(&battle, 1, in);
+    check(fighter->state == S_IDLE, "Contact recovery did not return on retail step");
+  }
+  {
+    Battle battle = fight(4.f);
+    Fighter *fighter = &battle.fighters[0];
+    fighter_enter_state(&battle, fighter, S_PUNCH);
+    advance_ticks(&battle, 8, NULL);
+    battle_step(&battle, (Input[2]){{.pressed = BUTTON_BIT(BUTTON_PUNCH)}, {0}});
+    check(fighter_move(fighter)->clip == 295, "Jab repeat failed at its native branch");
+    fighter_enter_state(&battle, fighter, S_HIT);
+    advance_ticks(&battle, 30, NULL);
+    check(fighter->state == S_IDLE && fighter->after_contact == NULL && fighter->buffered == 0,
+        "Interrupted jab retained a continuation or buffered repeat");
+  }
+}
+
 int main(void) {
   check_roster();
   check_original_kicks();
   check_original_scorpion();
   check_sequence_events();
+  check_scorpion_contact_branches();
   {
     Battle battle;
     battle_init(&battle, 0, 4);

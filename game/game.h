@@ -101,7 +101,8 @@ enum {
   SF_LOCK = 1u << 4,
   SF_REACTION = 1u << 5,
   SF_WAIT_LAND = 1u << 6,
-  SF_HOLD = 1u << 7
+  SF_HOLD = 1u << 7,
+  SF_SCRIPT_CONTACT = 1u << 8 /* sparse events request contact instead of an active interval */
 };
 
 /* MoveDef.last value for the clip's final frame. */
@@ -185,6 +186,13 @@ typedef enum Phase {
   PHASE_MATCH_OVER
 } Phase;
 
+typedef enum ContactResult {
+  CONTACT_MISS = 0,
+  CONTACT_BLOCK = 1,
+  CONTACT_HIT = 2,
+  CONTACT_AIR_HIT = 3
+} ContactResult;
+
 struct Fighter {
   int roster;
   int health, wins, facing, ticks;
@@ -192,6 +200,12 @@ struct Fighter {
   float x, height, velocity;
   bool connected, crouching;
   const MoveDef *current_move;
+  unsigned buffered; /* pressed buttons since the current move phase began */
+  int move_loops;
+  ContactResult contact;
+  int contact_tick;
+  bool contact_ready;
+  FighterFn after_contact; /* one-shot continuation after simultaneous contact resolution */
 };
 
 typedef struct HitEffect {
@@ -223,6 +237,7 @@ const Character *roster_character(const Assets *assets, int roster_index);
 void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move);
 void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
 void fighter_step_sequence(Battle *battle, Fighter *fighter);
+void fighter_note_contact(Fighter *fighter, ContactResult result);
 double fighter_frame(const Fighter *fighter, int frame_count);
 
 void battle_init(Battle *battle, int p1, int p2);

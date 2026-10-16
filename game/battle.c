@@ -98,6 +98,8 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
   int dir;
   int c;
 
+  fighter->buffered |= in.pressed;
+  fighter->contact_ready = false;
   fighter->ticks++;
   if (!locked(fighter) && fighter->height == 0.f)
     fighter->facing = fighter->x <= other->x ? 1 : -1;
@@ -191,8 +193,13 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
 
     if (!(move->flags & SF_ATTACK) || attacker->connected)
       continue;
-    if (attacker->ticks < move->startup || attacker->ticks >= move->startup + move->active)
+    if (move->flags & SF_SCRIPT_CONTACT) {
+      if (!attacker->contact_ready) {
+        continue;
+      }
+    } else if (attacker->ticks < move->startup || attacker->ticks >= move->startup + move->active) {
       continue;
+    }
     distance = (defender->x - attacker->x) * (float)attacker->facing;
     if (distance < 0.f || distance > move->reach)
       continue;
@@ -206,9 +213,15 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
     if (defender->state == S_KNOCKDOWN)
       continue;
 
-    battle->fighters[i].connected = true;
     blocked = defender->state == S_BLOCK && !(move->flags & SF_UNBLOCKABLE) &&
               (!(move->flags & SF_LOW) || defender->crouching);
+    /* A simultaneous incoming reaction may already have interrupted this
+     * fighter. The outgoing hit still trades, but cannot restart its move. */
+    if (battle->fighters[i].current_move == attacker->current_move) {
+      fighter_note_contact(&battle->fighters[i], blocked                  ? CONTACT_BLOCK
+                                                 : defender->height > 0.f ? CONTACT_AIR_HIT
+                                                                          : CONTACT_HIT);
+    }
     target = &battle->fighters[1 - i];
     damage = blocked ? 0 : move->damage;
     target->health = (int)fmaxf(0.f, (float)target->health - (float)damage);
@@ -259,6 +272,14 @@ void battle_step(Battle *battle, const Input input[2]) {
     Fighter snapshot[2];
     memcpy(snapshot, battle->fighters, sizeof snapshot);
     resolve_hits(battle, snapshot);
+  }
+  for (i = 0; i < 2; ++i) {
+    Fighter *fighter = &battle->fighters[i];
+    FighterFn next = fighter->after_contact;
+    fighter->after_contact = NULL;
+    if (next != NULL) {
+      next(battle, fighter);
+    }
   }
   if (battle->fighters[0].health <= 0 || battle->fighters[1].health <= 0 || battle->time_ticks <= 0)
     finish_round(battle);
