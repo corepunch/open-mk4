@@ -679,7 +679,90 @@ static void fatalities(void) {
   }
 }
 
+static void sidesteps(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle range = fight(player, .6f);
+    range.fighters[1 - player].body.pos[AXIS_Z] = 2 * Q16_ONE;
+    check(fighter_distance(&range, &range.fighters[player]) > 2.f, "range must include sidestep depth");
+    press(&range, player, BUTTON_BIT(BUTTON_LOW_PUNCH));
+    check(fighter_move(&range.fighters[player])->clip == 294, "sidestep depth must prevent a false close throw");
+    for (int down = 0; down < 2; ++down) {
+      for (int interval = 2; interval <= 9; ++interval) {
+        Battle battle = fight(player, 4.f);
+        press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+        check(battle.fighters[player].script == NULL, "first RUN press must not manufacture a double tap");
+        advance(&battle, interval - 2);
+        Input run_input[2] = {0};
+        run_input[player].held = BUTTON_BIT(BUTTON_RUN) | (down ? BUTTON_BIT(BUTTON_DOWN) : 0);
+        battle_step(&battle, run_input);
+        run_input[player].held &= ~BUTTON_BIT(BUTTON_RUN);
+        battle_step(&battle, run_input);
+        Fighter *fighter = &battle.fighters[player];
+        bool accepted = interval >= 3 && interval <= 8;
+        check((fighter_move(fighter)->clip == 300) == accepted, "RUN two-sample rule and inclusive eight-tick window");
+        if (accepted) {
+          check(fighter->sample_override == (down ? 0 : 17) && fighter->sidestep_ready == battle.ticks + 80, "sidestep cursor direction/cooldown");
+          check(fighter->body.vel[AXIS_X] == (player ? -0x443 : 0x443) && fighter->body.vel[AXIS_Z] == (player ? -1 : 1) * (down ? -0xccc : 0xccc),
+              "sidestep must use pair-axis forward and perpendicular motion");
+          q16 z = fighter->body.pos[AXIS_Z];
+          advance(&battle, 18);
+          check(fighter->state == S_IDLE && fighter->body.vel[AXIS_Z] == 0 && fighter->body.pos[AXIS_Z] != z, "sidestep must travel then restore control");
+          check(battle.fighters[1 - player].health == Q16_ONE, "sidestep must not damage opponent");
+        }
+      }
+    }
+    for (int boundary = -1; boundary <= 1; ++boundary) {
+      Battle battle = fight(player, 4.f);
+      press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+      advance(&battle, 2);
+      /* Next press is tick 5; compare just below/at/above its deadline. */
+      battle.fighters[player].sidestep_ready = battle.ticks + 1 + boundary;
+      press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+      check((fighter_move(&battle.fighters[player])->clip == 300) == (boundary <= 0), "sidestep cooldown inclusive deadline");
+    }
+    Battle battle = fight(player, 4.f);
+    press(&battle, player, BUTTON_BIT(BUTTON_UP));
+    press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+    advance(&battle, 2);
+    press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+    check(fighter_move(&battle.fighters[player])->clip != 300, "airborne owner must reject sidestep");
+    battle = fight(player, 4.f);
+    battle.fighters[1 - player].body.pos[AXIS_Y] -= Q16_ONE;
+    fighter_enter_state(&battle, &battle.fighters[1 - player], S_JUMP);
+    press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+    advance(&battle, 2);
+    press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+    check(abs(battle.fighters[player].body.vel[AXIS_X]) == q16_mul(0x443, 0x4ccc), "airborne victim must scale sidestep motion to 30 percent");
+    battle_react(&battle, &battle.fighters[player], 37);
+    advance(&battle, 100);
+    check(battle.fighters[player].state == S_IDLE && battle.fighters[player].body.vel[AXIS_Z] == 0, "interrupted sidestep must clear motion");
+
+    battle = fight(player, 4.f);
+    draw_scepter(&battle, player);
+    battle.fighters[player].disarm(&battle, &battle.fighters[player]);
+    advance(&battle, 100);
+    Projectile *drop = NULL;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      if (battle.projectiles[i].kind == PROJECTILE_SWORD) {
+        drop = &battle.projectiles[i];
+      }
+    }
+    check(drop != NULL && drop->phase == 2, "prepare sidestep versus pickup priority");
+    battle.fighters[player].body.pos[AXIS_X] += player ? Q16_ONE * 2 : -Q16_ONE * 2;
+    press(&battle, player, BUTTON_BIT(BUTTON_RUN));
+    advance(&battle, 2);
+    battle.fighters[player].body.pos[AXIS_X] = drop->pos[AXIS_X];
+    battle.fighters[player].body.pos[AXIS_Z] = drop->pos[AXIS_Z];
+    press(&battle, player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_RUN));
+    check(fighter_move(&battle.fighters[player])->clip == 300 && !battle.fighters[player].armed && drop->kind != 0,
+        "RUN double-tap record must take priority over crouching pickup");
+    battle_next_round(&battle);
+    check(battle.fighters[player].sidestep_ready == 0, "new round clears sidestep deadline");
+  }
+}
+
 int main(void) {
+  sidesteps();
   fatalities();
   weapons();
   normals();
@@ -687,6 +770,6 @@ int main(void) {
   clone_tests();
   slide_tests();
   puts(
-      "PASS: Sub-Zero fatalities/both stages/chord/windows/range/rematch; scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+      "PASS: RUN double-tap/motion/windows/cooldown/priority/interruption; Sub-Zero fatalities/both stages/chord/windows/range/rematch; scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

@@ -8,6 +8,12 @@ slot 0 (Scorpion) whenever it encounters a character selector, even inside an
 otherwise Sub-Zero-specific query. See the Sub-Zero entry points below before
 translating any character-selected path.
 
+For readable C-like script output, use
+`python3 tools/disassemble_retail.py --move low_kick --c`, or
+`--script ADDRESS --c` for a selected Sub-Zero branch. This is annotated
+pseudocode. Where it stops on an unsupported operation, continue with the
+ordinary script listing and its native dependencies.
+
 Follow bounded `--script`, `--native` and `--attack` queries for details; see
 [script-decoder.md](script-decoder.md). Use the existing
 `build/retail-disassembly/` bundle for broader navigation. Regenerate with
@@ -52,8 +58,8 @@ assume these three indices will always coincide for other roster entries.
 | --- | --- | --- |
 | High kick | Clip 71, preserved 29-step sparse playback, record B[2], latched contact at steps 11–13 | Uses the shared gameplay hulls rather than retail joints |
 | Other normals, throws and reactions | Character-owned standing/crouching/air normals, jab/HP repeats, follow-ups, paired LP/LK throws; Sub-Zero clips 70/52/532 and records; explicit reactions 26/7 | Shared portable recovery/pair alignment policies apply; presentation remains simplified |
-| Controls | Character-owned stance/follow-up tables and special, weapon and finisher commands | Shared RUN double-tap path remains for the final control step |
-| Movement | Shared `mk4_motion`; walk/run are prototype values | Preserve the existing engine choice until the relevant retail movement path is researched |
+| Controls | Character-owned stance/follow-up tables and special, weapon and finisher commands | All indexed character-4 command records translated; engine movement policy below |
+| Movement | Shared `mk4_motion` walking/running, retail straight jump, RUN double-tap sidestep with Down reversal and airborne-victim slowdown | Walking/running speed and diagonal jump classification retain the existing portable policy |
 | Specials | Freeze projectile, clone retreat/object and reaction 67, including double-freeze backfire and air thaw | Slide chord, hit/block/miss continuations and reactions 122/165 are also ported |
 | Weapon combat | Descriptor 0x6b, draw/follow-up, directional HP/LP, freezing back LP, shared air strikes, throw/drop/pickup with actual weapon identity | Simplified staff rendering and settling arc; pair-axis motion replaces camera-relative motion |
 | Finishers | Both character scenes and fan/spikes stage fatalities; chord, range, stage, winner and window gates | Fixed camera, simplified ice/shatter and omitted mesh/gore effects; finite scene completion |
@@ -338,7 +344,7 @@ move's evidence requires it:
 | Commands | `game/commands.c`: ordered `CommandDef` records, predicates, then stance fallback; entry is pending until the next tick | Own `Controls` in `c_sub_zero.c`; preserve unconditional slide priority, held-switch predicates, windows and air/block permission |
 | Playback | `fighter_start_move` resets script, phase/timer, sample override, pending entry and contact bookkeeping; locked moves remove stance buttons | Install the continuation after starting the move; distinguish ticks from samples and restore control on each exit |
 | Contacts | `battle_contact` / `battle_contact_from` apply records, damage and reactions; `SF_RECORD` skips the approximate resolver | Use projectile/object origin where appropriate; prevent repeated damage or freeze from one connected attack; retain our documented hull approximation |
-| Projectiles/objects | `battle_spawn_projectile` returns a slot or NULL; four slots, owner index, callback and bounded lifetime; fight ticks update objects after fighters | Existing kinds/drawing cover spear and sword only. Add the necessary freeze/clone state and read-only presentation; handle full pool, expiry and owner interruption explicitly |
+| Projectiles/objects | `battle_spawn_projectile` returns a slot or NULL; four slots, owner index, callback and bounded lifetime; fight ticks update objects after fighters | Ice/clone kinds and pose snapshots now exist with read-only blue presentation; retain full-pool, expiry and owner-interruption handling |
 | Victim reactions | `battle_react` clears physics and schedules a replacement continuation; unsupported IDs fall back to approximate hit/knockdown | Reactions 67, 122 and 165 are explicit; retain their script-selected phases |
 | Cleanup | Round spawn resets fighters/objects; round completion and finisher start clear objects | Move replacement does not automatically remove owned objects or release another fighter. Specify whether each object survives an interruption from evidence; clear locks, appearance and callbacks on thaw, replacement, KO and reset as appropriate |
 
@@ -391,8 +397,8 @@ A practical sequence of coherent implementation steps is: (1) character
 controls and normal/air/throw branches, retaining high-kick playback;
 (2) the freeze reaction with the projectile that needs it; (3) clone;
 (4) slide; (5) weapon paths and finishers. Split further when useful, with
-relevant tests and coverage notes in each step. These are future work, not
-changes made by this guide.
+relevant tests and coverage notes in each step. These steps are now implemented, including the separate weapon, finisher and
+RUN-control commits. The coverage notes name the retained engine choices.
 
 For each implementation step, run `make format`, then the focused native
 battle test (`make build/test-battle` and `./build/test-battle`), followed by
@@ -545,3 +551,26 @@ world objects, preserve the deciding KO and match timer, complete once, and
 clear appearance/scene state on rematch. Native tests cover both player slots,
 exact windows and range endpoints, missing/extra chord buttons, stage rejection,
 loser rejection, timeout, scene phases and reset.
+
+
+RUN double-tap coverage: predicate `45e820` reads the previous RUN latch
+(the current press is latched after matching), accepts an interval of at most
+eight ticks and checks cooldown slot 10 for 80 ticks. `469250/4692e0` selects
+`53ce18` directly, whose first descriptor is **clip 300, 18 samples**; this
+helper does not index that address by character ID. Parameters `4e7058/68`
+use forward speed `0x443` and perpendicular speed `-/+0xccc`, with zero
+vertical motion. Holding Down through entry plays forwards and reverses the
+perpendicular direction; otherwise the clip plays backwards. `469450` scales
+motion to 30% if the opponent is airborne. The C port expresses this motion
+along/perpendicular to the gameplay pair axis, permits it from the ground,
+starts the round with it available, requires a real earlier press, stops at
+recovery and retains the RUN-record priority over pickup. Range gates now measure both X and Z so sidestep depth cannot produce a
+false close throw or near-distance clone branch. The shared world handles arena bounds. Tests cover the two-sample press rule, exact eight-tick
+window, cooldown endpoints, both directions/player slots, airborne victim,
+airborne-owner rejection, interruption, pickup priority and round reset.
+
+The full Sub-Zero native suite is `make build/test-sub-zero` followed by
+`./build/test-sub-zero`. `make check` includes it along with the original
+Scorpion/kick fixtures, asset/rendering, archive, format and decoder checks.
+Simulation remains C11 and independent of SDL; no retail execution or new
+trace recording is required for these ports.

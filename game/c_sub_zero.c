@@ -1276,6 +1276,43 @@ static void sub_zero_pickup(Battle *battle, Fighter *fighter) {
   fighter->sample_override = 0;
 }
 
+/* 45e820: RUN latch is written after matching, so this sees the prior
+ * press. 4692e0 uses shared descriptor 53ce18 (clip 300), not a roster
+ * table. Down plays it forwards; otherwise it plays backwards. */
+static const MoveDef s_sidestep = {.clip = 300, .last = 17, .flags = SF_LOCK};
+
+static bool can_sidestep(const Battle *battle, const Fighter *fighter) {
+  uint64_t previous = fighter->latch[BUTTON_RUN];
+  return battle->phase == PHASE_FIGHT && !fighter_airborne(fighter) && previous != 0 && battle->ticks - previous <= 8 &&
+         battle->ticks >= fighter->sidestep_ready;
+}
+
+static void sidestep_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
+  if (fighter->ticks >= 18) {
+    stop_body(fighter);
+    sub_zero_ready(battle, fighter);
+  }
+}
+
+static void sub_zero_sidestep(Battle *battle, Fighter *fighter) {
+  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+  q16 along = 0x443, across = down ? -0xccc : 0xccc;
+  if (fighter_airborne(opponent(battle, fighter))) {
+    along = q16_mul(along, 0x4ccc);
+    across = q16_mul(across, 0x4ccc);
+  }
+  q16 x = fighter_axis(battle, fighter, AXIS_X), z = fighter_axis(battle, fighter, AXIS_Z);
+  stop_body(fighter);
+  fighter_start_move(battle, fighter, S_WALK, &s_sidestep);
+  fighter->script = sidestep_tick;
+  fighter->script_phase = down;
+  fighter->sample_override = down ? 0 : 17;
+  fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
+  fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
+  fighter->sidestep_ready = battle->ticks + 80;
+}
+
 /* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs
  * through bounded C phase tables; no retail task/camera/object scheduler. */
 #define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = 0x700}
@@ -1489,6 +1526,7 @@ static const CommandDef commands[] = {
   {BUTTON_LOW_KICK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
   {BUTTON_LOW_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, can_spike_fatality, sub_zero_spike_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 24, 0, can_weapon, sub_zero_weapon},
+  {BUTTON_RUN, {0}, 0, 0, 0, can_sidestep, sub_zero_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, sub_zero_pickup},
   {BUTTON_RUN, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, can_first_fatality, sub_zero_first_fatality},
 };

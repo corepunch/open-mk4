@@ -13,7 +13,8 @@ const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter) {
 }
 
 float fighter_distance(const Battle *battle, const Fighter *fighter) {
-  return fabsf(fighter_x(fighter_opponent(battle, fighter)) - fighter_x(fighter));
+  const Fighter *other = fighter_opponent(battle, fighter);
+  return hypotf(fighter_x(other) - fighter_x(fighter), fighter_z(other) - fighter_z(fighter));
 }
 
 /* 0x48ebd0: the raw switch pointing away from the opponent is held. */

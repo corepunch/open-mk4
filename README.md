@@ -110,6 +110,12 @@ or system font. Goro uses his
 own 21-channel animation bank. Other characters use compatible original action
 clips. All resources load directly from the read-only archive and executable.
 
+Sub-Zero now has character-owned normals/combos and throws, ice blast and
+freeze/backfire, clone, slide, scepter draw/combat/throw/pickup, RUN double-tap
+sidestep, both character fatalities and both stage fatalities. Commands, source
+addresses, verification and presentation limits are recorded in
+[the character port guide](docs/character-script-port.md).
+
 Combat runs at a fixed 60 ticks per second. It implements walking/running,
 jumping, crouching, punches, kicks, sweeps (crouch + kick), uppercuts (crouch +
 punch or U), throws, high/low guard, startup/active/recovery windows, range and
