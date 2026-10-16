@@ -7,7 +7,11 @@
 /* Original no-contact VM/native recovery trace. Steps, not stored clip length.
  * See docs/scorpion-retail-moves.md and tests/fixtures/original_kicks.json. */
 static void scorpion_ready(Battle *battle, Fighter *fighter) {
-  fighter_enter_state(battle, fighter, fighter_airborne(fighter) ? S_JUMP : S_IDLE);
+  if (fighter_airborne(fighter)) {
+    fighter_start_move(battle, fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
+  } else {
+    fighter_enter_state(battle, fighter, S_IDLE);
+  }
 }
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
@@ -562,10 +566,152 @@ static void press_lk(Battle *battle, Fighter *fighter) {
   fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : scorpion_kick);
 }
 
+/* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
+ * Each extends, queries while holding its strike pose, then retracts. The
+ * native contact continuations freeze the body and optionally open a cancel. */
+typedef struct AirAttack {
+  MoveDef move;
+  AttackRecord record;
+  int extend, hold, retract;
+} AirAttack;
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const AirAttack air_attacks[] = {
+  {{.clip = 97, .last = MOVE_END, .flags = RETAIL, .action = 0x603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
+  {{.clip = 96, .last = MOVE_END, .flags = RETAIL, .action = 0x604}, {76677, -20316, 68157, 62914, 39, 39, 4, 0, 7864}, 10, 10, 11},
+  {{.clip = 327, .last = MOVE_END, .flags = RETAIL, .action = 0x600}, {67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
+  {{.clip = 55, .last = MOVE_END, .flags = RETAIL, .action = 0x602}, {74055, -7864, 60293, 24903, 23, 23, 4, ATTACK_MARK, 6553}, 6, 10, 6},
+  {{.clip = 58, .last = MOVE_END, .flags = RETAIL, .action = 0x601}, {75366, -2621, 67502, 34078, 22, 22, 4, ATTACK_MARK, 9830}, 10, 10, 10},
+};
+// clang-format on
+
+enum {
+  AIR_FLIGHT,
+  AIR_COMBO,
+  AIR_FREEZE,
+  AIR_COMBO_FREEZE,
+  AIR_FALL
+};
+
+static const ButtonTable air_followup;
+static const ButtonTable scorpion_standing;
+
+static void air_land(Battle *battle, Fighter *fighter) {
+  fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+  fighter_start_move(battle, fighter, S_JUMP, &s_teleport_land);
+  fighter->script = teleport_land_tick;
+  fighter->sample_override = 18;
+}
+
+static void air_attack_tick(Battle *battle, Fighter *fighter) {
+  int index = 0;
+  while (&air_attacks[index].move != fighter_move(fighter)) {
+    ++index;
+  }
+  const AirAttack *attack = &air_attacks[index];
+  int tick = fighter->ticks;
+  if (fighter->script_phase == AIR_FREEZE || fighter->script_phase == AIR_COMBO_FREEZE) {
+    if (--fighter->script_timer > 0) {
+      return;
+    }
+    fighter->buttons = NULL;
+    fighter->body.gravity = index >= 3 || fighter->script_phase == AIR_COMBO_FREEZE ? 0x51e : 0x28f;
+    fighter->script_phase = AIR_FALL;
+  }
+  if (!fighter_airborne(fighter)) {
+    air_land(battle, fighter);
+    return;
+  }
+  if (fighter->script_phase == AIR_FALL) {
+    return;
+  }
+  int retract_at = attack->extend + attack->hold;
+  fighter->sample_override = tick < attack->extend ? tick : tick < retract_at ? attack->extend - 1 : maxi(0, attack->retract - 1 - tick + retract_at);
+  if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(battle, fighter, &attack->record) != CONTACT_MISS) {
+    bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
+    bool combo = fighter->script_phase == AIR_COMBO;
+    stop_body(fighter);
+    fighter->action = 0x1006;
+    fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
+    fighter->script_timer = index >= 3 ? 8 : 12;
+    if (index == 0 || index == 2) {
+      if (low) {
+        fighter->body.pos[AXIS_Y] = fighter->body.ground;
+        if (!combo) {
+          fighter->buttons = &scorpion_standing;
+          fighter->flags |= FF_FOLLOW_UP;
+        }
+      } else if (index == 0 && !combo) {
+        fighter->buttons = &air_followup;
+      }
+    }
+  } else if (tick >= retract_at + attack->retract) {
+    if (fighter->script_phase == AIR_COMBO) {
+      fighter->body.gravity = 0x51e;
+    }
+    fighter->script_phase = AIR_FALL;
+  }
+}
+
+static void start_air_attack(Battle *battle, Fighter *fighter, int index) {
+  bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
+  fighter_start_move(battle, fighter, S_JUMP, &air_attacks[index].move);
+  fighter->script = air_attack_tick;
+  fighter->sample_override = 0;
+  fighter->script_phase = combo ? AIR_COMBO : AIR_FLIGHT;
+  fighter->body.on_land = NULL;
+  fighter->body.physics = NULL;
+  fighter->facing = fighter->body.pos[AXIS_X] <= opponent(battle, fighter)->body.pos[AXIS_X] ? 1 : -1;
+  fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
+}
+
+static void air_hp(Battle *battle, Fighter *fighter) {
+  start_air_attack(battle, fighter, 0);
+}
+
+static void air_lp(Battle *battle, Fighter *fighter) {
+  start_air_attack(battle, fighter, 1);
+}
+
+static void air_kick(Battle *battle, Fighter *fighter) {
+  start_air_attack(battle, fighter, 2);
+}
+
+static void air_hk_diagonal(Battle *battle, Fighter *fighter) {
+  start_air_attack(battle, fighter, 3);
+}
+
+static void air_lk_diagonal(Battle *battle, Fighter *fighter) {
+  start_air_attack(battle, fighter, 4);
+}
+
+static void press_air_hp(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, fighter->armed ? sword_hp : air_hp);
+}
+
 static void press_air_lp(Battle *battle, Fighter *fighter) {
   (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_lp : scorpion_jab);
+  fighter_interrupt(fighter, fighter->armed ? sword_lp : air_lp);
 }
+
+static void press_air_hk(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? air_hk_diagonal : air_kick);
+}
+
+static void press_air_lk(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? air_lk_diagonal : air_kick);
+}
+
+static void press_air_followup_kick(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter_interrupt(fighter, air_kick);
+}
+
+static const ButtonTable air_followup = {
+    {[BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
 
 static void press_crouch_lp(Battle *battle, Fighter *fighter) {
   (void)battle;
@@ -592,7 +738,7 @@ static const CommandDef commands[] = {
 };
 static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
 static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_crouch_lp, [BUTTON_HIGH_KICK] = press_sweep, [BUTTON_LOW_KICK] = press_sweep}};
-static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_kick}};
+static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = press_air_hp, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_hk, [BUTTON_LOW_KICK] = press_air_lk}};
 static const Controls scorpion_controls = {commands, COUNT(commands), {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
 // clang-format on
 
@@ -739,6 +885,9 @@ static void sword_attack(Battle *battle, Fighter *fighter, bool hp) {
   const MoveDef *move = air ? (hp ? &s_sword_air_hp : &s_sword_air_lp) : back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
   fighter_start_move(battle, fighter, air ? S_JUMP : S_PUNCH, move);
   fighter->script = air ? sword_air_tick : sword_slash_tick;
+  if (air) {
+    fighter->body.on_land = NULL;
+  }
   fighter->sample_override = 0;
 }
 

@@ -394,7 +394,54 @@ static void check_weapon(void) {
   }
 }
 
+static void check_air_attacks(void) {
+  const Button button[] = {BUTTON_HIGH_PUNCH, BUTTON_LOW_PUNCH, BUTTON_HIGH_KICK, BUTTON_HIGH_KICK, BUTTON_LOW_KICK};
+  const int clip[] = {97, 96, 327, 55, 58};
+  for (int i = 0; i < 5; ++i) {
+    Battle battle = fight(8.f);
+    Fighter *fighter = &battle.fighters[0];
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_UP) | (i >= 3 ? BUTTON_BIT(BUTTON_RIGHT) : 0)}, {0}});
+    advance_ticks(&battle, 5, NULL);
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(button[i])}, {0}});
+    advance_ticks(&battle, 1, NULL);
+    check(fighter_move(fighter)->clip == clip[i] && fighter_sample(fighter) == 0, "Air button must select its own attack script");
+    bool landing = false;
+    for (int tick = 0; tick < 100 && fighter->state != S_IDLE; ++tick) {
+      battle_step(&battle, (Input[2]){0});
+      landing |= fighter_move(fighter)->clip == 304 && fighter_sample(fighter) >= 18;
+    }
+    check(landing && fighter->state == S_IDLE && !fighter_airborne(fighter), "Air miss must play landing and restore controls");
+    check(battle.fighters[1].health == Q16_ONE, "Distant air attack must miss");
+  }
+  for (int followup = 0; followup < 3; ++followup) {
+    Battle battle = fight(1.f);
+    Fighter *fighter = &battle.fighters[0];
+    fighter_enter_state(&battle, fighter, S_JUMP);
+    fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
+    fighter->body.gravity = 1;
+    Fighter *victim = &battle.fighters[1];
+    fighter_enter_state(&battle, victim, S_JUMP);
+    victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
+    victim->body.gravity = 1;
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 6, NULL);
+    check(battle.fighters[1].health == Q16_ONE, "Jump HP must not hit before its strike hold");
+    advance_ticks(&battle, 1, NULL);
+    check(battle.fighters[1].health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
+        "High jump HP contact must deal nine percent and open its frozen follow-up");
+    q16 y = fighter->body.pos[AXIS_Y];
+    Button next = followup == 0 ? BUTTON_HIGH_PUNCH : followup == 1 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_KICK;
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(next)}, {0}});
+    advance_ticks(&battle, 1, NULL);
+    check(fighter->body.pos[AXIS_Y] == y, "Air follow-up must preserve the contact freeze");
+    check(fighter_move(fighter)->clip == (followup == 0 ? 97 : followup == 1 ? 96 : 327), "Jump HP allows LP or kick, but cannot repeat HP");
+    advance_ticks(&battle, 110, NULL);
+    check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Air contact/follow-up must eventually fall and recover");
+  }
+}
+
 int main(void) {
+  check_air_attacks();
   check_weapon();
   check_specials();
   check_retail_input();
@@ -546,6 +593,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: sword draw/slash/chip/throw/drop/pickup/spin/reset; Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: air attack selection/miss/landing/contact/follow-ups; sword draw/slash/chip/throw/drop/pickup/spin/reset; Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

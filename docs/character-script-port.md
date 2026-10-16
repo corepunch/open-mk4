@@ -41,7 +41,8 @@ The working implementation is `game/c_scorpion.c` (the existing filename).
 | Teleport | D,B,HP, air permission, cooldown/hit-count gate, vanish, cross-over, hit hang/drop, block recoil/landing, miss recovery |
 | Fire | D,F,LP, normal/follow-up playback, one active query, 12% damage, recovery |
 | Sword | Draw/follow-up draw, HP/LP and back slashes, held/steered spin with recoil, armed air punches, throw, disarm, resting pickup and round reset |
-| Remaining normals/combos, fatalities | Not ported yet; do not label Scorpion complete |
+| Air normals | HP/LP, straight and diagonal kicks, extend/hold/retract, contact freezes, HP-to-LP/kick follow-ups and landing |
+| Remaining ground normals/combos, air throw, fatalities | Not ported yet; do not label Scorpion complete |
 
 Spear sources: scripts `0x4ed448`, `0x4ed4a8`; native `0x49a6a0`,
 `0x49b170`, `0x487350`, `0x487420`; contact record `0x4ebeb8`.
@@ -53,8 +54,14 @@ Intentional engine choices: fixed standing/crouching collision hulls; a ten-tick
 teleport vanish replacing the retail camera-bearing trigger, with distance and
 wall exits retained; simple rope/flame/blade rendering. Sword drops use a single settling arc rather
 than retail cosmetic bounces; thrown swords have a six-unit flight budget. Spear pull uses explicit C
-state instead of a rope-node task chain. Weapon and special victim reactions other than
+state instead of a rope-node task chain. Air, weapon and special victim reactions other than
 spear still use shared fallback reactions and need their own source translation
 before balance equivalence can be claimed. Audio and original particle/gore
 rendering are not implemented. The remaining coverage is explicit work, not
 silently synthesized retail behavior.
+
+Air attack sources: scripts `0x4e6658`, `0x4e6710`, `0x4e61f8`, `0x4e6500`,
+`0x4e63d8`; native contact continuations `0x46e7c0`, `0x46cb10`, `0x46ef10`,
+`0x46e6b0`, `0x46e230`. Low HP/straight-kick contacts expose the current ground
+button table; its close-range combo selection still needs translation. Diagonal
+jump classification uses horizontal motion in our current jump controller.
