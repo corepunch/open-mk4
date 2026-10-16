@@ -116,7 +116,8 @@ The match itself is one roster of character rows, declared in `game/game.h`.
 A row names its game (`GAME_MK4` today, `GAME_WARGODS` reserved), the asset
 index inside that game's mesh bank, and the motion, state, clip, and command
 tables. Eighteen MK4 fighters share one state table and one command table.
-Goro overrides clip ids because his mesh uses a separate animation bank.
+Each fighter owns a clip table indexed by state; Goro's names clips from his
+separate animation bank.
 Spawn writes the roster index onto a `Fighter`. `battle_step` is the shared
 update and does not branch on game id. Input is a held/pressed bit frame.
 `game/input.c` samples keyboard bindings, maps shell keys, and fills the CPU

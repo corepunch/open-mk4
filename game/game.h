@@ -5,8 +5,7 @@
  * common/ because the viewer uses them too.
  *
  * A character is a row in the roster, not a subclass. The row points at a
- * motion record, a state table, an optional clip override, and a command
- * table. Spawn writes the roster index onto a fighter. battle_step is the
+ * motion record, a state table, its own clip table, and a command table. Spawn writes the roster index onto a fighter. battle_step is the
  * shared think function and only reads those tables.
  *
  * MK4 fills the roster today. War Gods (Midway arcade, Eurocom PC port, its
@@ -110,7 +109,6 @@ enum {
 };
 
 typedef struct StateDef {
-  int clip;
   int startup, active, recovery;
   int damage, stun;
   float reach, push;
@@ -134,7 +132,7 @@ typedef struct CharacterDef {
   const Motion *motion;
   const StateDef *states;
   int state_count;
-  const int *clips;
+  const int *clips; /* state_count clip ids, indexed by StateId */
   const CommandDef *commands;
   int command_count;
 } CharacterDef;

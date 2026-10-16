@@ -54,8 +54,11 @@ static void check_roster(void) {
   check(human->game == GAME_MK4 && goro->game == GAME_MK4, "Current rows are MK4");
   check(human->states == goro->states, "Goro shares the MK4 state timings");
   check(human->commands == roster_def(4)->commands, "Humans share one command table");
-  check(goro->clips != NULL && human->clips == NULL, "Only Goro overrides clip ids");
-  check(roster_clip(human, S_PUNCH, 0) == 294, "Shared punch clip");
+  for (int i = 0; i < roster_count(); ++i)
+    check(roster_def(i)->clips != NULL, "Every fighter owns a clip table");
+  check(human->clips != goro->clips, "Goro names clips from his own bank");
+  check(roster_clip(human, S_IDLE, 77) == 77, "Idle reads the mesh idle clip");
+  check(roster_clip(human, S_PUNCH, 0) == 294, "Scorpion punch clip");
   check(roster_clip(goro, S_PUNCH, 0) == 596, "Goro punch clip");
   check(human->states[S_PUNCH].damage == 7, "Punch damage row");
   check(human->states[S_SWEEP].flags & SF_LOW, "Sweep is a low");
