@@ -62,3 +62,4 @@ game-test: mk4-game build/test-battle build/test-shadows
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp
 check: format-check test viewer-test game-test
 	python3 tests/test_apps.py
+	python3 tests/test_retail_moves.py
