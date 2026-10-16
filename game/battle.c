@@ -114,7 +114,11 @@ void battle_end_finisher(Battle *battle) {
   battle->phase_ticks = 0;
   for (int i = 0; i < 2; ++i) {
     Fighter *f = &battle->fighters[i];
+    q16 y = f->body.pos[AXIS_Y];
     stop_fighter(f);
+    if (battle->finisher) {
+      f->body.pos[AXIS_Y] = y;
+    }
     f->pending = f->script = NULL;
     f->flags &= ~(unsigned)FF_PAIRED;
     if (battle->finisher == 0) {

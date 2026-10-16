@@ -1151,8 +1151,167 @@ static void scorpion_air_throw(Battle *battle, Fighter *fighter) {
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
 }
 
+/* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs
+ * through bounded C phase tables; no retail task/camera/object scheduler. */
+#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = 0x700}
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveDef fatal_moves[] = {
+  FATAL_MOVE(13, 55), FATAL_MOVE(390, 144), FATAL_MOVE(391, 169), FATAL_MOVE(206, 99),
+  FATAL_MOVE(115, 18), FATAL_MOVE(116, 49), FATAL_MOVE(117, 18), FATAL_MOVE(118, 49),
+  FATAL_MOVE(12, 57), FATAL_MOVE(578, 48), FATAL_MOVE(579, 34), FATAL_MOVE(580, 77), FATAL_MOVE(581, 37),
+  FATAL_MOVE(584, 77), FATAL_MOVE(585, 47), FATAL_MOVE(415, 129), FATAL_MOVE(416, 107), FATAL_MOVE(412, 48),
+  FATAL_MOVE(293, 19), FATAL_MOVE(128, 109),
+};
+// clang-format on
+#undef FATAL_MOVE
+
+typedef struct FatalPhase {
+  int clip, first, last, repeats;
+} FatalPhase;
+
+// clang-format off: Keep table entries on one row, including long rows.
+/* 0x4e0278..2f0 and victim 0x4e0300..35c. Blend durations are presentation-owned. */
+static const FatalPhase burn_owner[] = {{390, 0, 123, 1}, {390, 105, 123, 2}, {390, 124, 144, 1}, {115, 0, 18, 1}, {116, 0, 49, 1}, {117, 0, 18, 1}, {118, 0, 49, 1}};
+static const FatalPhase burn_victim[] = {{391, 0, 169, 1}, {391, 63, 169, 1}, {206, 0, 99, 1}};
+/* 0x4d2e58/88/b0, 0x4d2ef8/2f10: five backward/forward eight-frame bites. */
+static const FatalPhase beast_owner[] = {{12, 0, 57, 1}, {578, 0, 48, 1}, {579, 0, 34, 1}, {580, 0, 77, 1}, {580, 77, 70, 1}, {580, 70, 77, 1}, {580, 77, 70, 1}, {580, 70, 77, 1}, {580, 77, 70, 1}, {580, 70, 77, 1}, {580, 77, 70, 1}, {580, 70, 77, 1}, {580, 77, 70, 1}, {580, 70, 77, 1}, {581, 0, 37, 1}, {578, 0, 0, 1}};
+static const FatalPhase beast_victim[] = {{584, 0, 77, 1}, {584, 77, 70, 1}, {584, 70, 77, 1}, {584, 77, 70, 1}, {584, 70, 77, 1}, {584, 77, 70, 1}, {584, 70, 77, 1}, {584, 77, 70, 1}, {584, 70, 77, 1}, {584, 77, 70, 1}, {584, 70, 77, 1}, {585, 0, 47, 1}};
+/* 0x43d3d0 sets 31 repetitions; 0x4e0118..1a8 owns the paired poses. */
+static const FatalPhase fan_owner[] = {{415, 0, 68, 1}, {415, 69, 77, 31}, {415, 78, 129, 1}, {412, 0, 48, 1}};
+static const FatalPhase fan_victim[] = {{416, 0, 68, 1}, {416, 69, 77, 31}, {416, 78, 107, 1}};
+// clang-format on
+
+static void fatality_tick(Battle *battle, Fighter *fighter);
+
+static void fatal_pose(Battle *battle, Fighter *fighter, int clip, int sample, bool owner) {
+  if (fighter_move(fighter)->clip != clip) {
+    for (int i = 0; i < COUNT(fatal_moves); ++i) {
+      if (fatal_moves[i].clip == clip) {
+        fighter_start_move(battle, fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
+        fighter->script = owner ? fatality_tick : NULL;
+        break;
+      }
+    }
+  }
+  fighter->sample_override = sample;
+  fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
+}
+
+static bool fatal_phases(Battle *battle, Fighter *fighter, int tick, const FatalPhase *phases, int count, bool owner) {
+  for (int i = 0; i < count; ++i) {
+    const FatalPhase *p = &phases[i];
+    int length = abs(p->last - p->first) + 1;
+    if (tick < length * p->repeats || i == count - 1) {
+      bool done = tick >= length * p->repeats;
+      int sample = done ? p->last : p->first + (p->last >= p->first ? 1 : -1) * (tick % length);
+      fatal_pose(battle, fighter, p->clip, sample, owner);
+      return done;
+    }
+    tick -= length * p->repeats;
+  }
+  return true;
+}
+
+static bool can_burn_fatality(const Battle *battle, const Fighter *fighter) {
+  float distance = fighter_distance(battle, fighter);
+  return battle_can_finish(battle, fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
+}
+
+static bool can_beast_fatality(const Battle *battle, const Fighter *fighter) {
+  return battle_can_finish(battle, fighter) && fighter_distance(battle, fighter) <= 1.f;
+}
+
+static bool can_fan_fatality(const Battle *battle, const Fighter *fighter) {
+  return battle->arena == 8 && can_beast_fatality(battle, fighter);
+}
+
+static bool can_spike_fatality(const Battle *battle, const Fighter *fighter) {
+  return battle->arena == 0 && can_beast_fatality(battle, fighter);
+}
+
+static void fatality_tick(Battle *battle, Fighter *fighter) {
+  Fighter *victim = opponent(battle, fighter);
+  int tick = battle->phase_ticks;
+  bool owner_done = false, victim_done = false;
+  if (battle->finisher == FINISH_BURN) {
+    if (tick < 8) {
+      return;
+    }
+    owner_done = fatal_phases(battle, fighter, tick - 8, burn_owner, COUNT(burn_owner), true);
+    if (tick >= 133) {
+      victim_done = fatal_phases(battle, victim, tick - 133, burn_victim, COUNT(burn_victim), false);
+      victim->appearance = APPEARANCE_BURNED;
+    }
+  } else if (battle->finisher == FINISH_BEAST) {
+    owner_done = fatal_phases(battle, fighter, tick, beast_owner, COUNT(beast_owner), true);
+    fighter->appearance = tick >= 58 ? APPEARANCE_BEAST : APPEARANCE_NORMAL;
+    if (tick >= 142) {
+      victim_done = fatal_phases(battle, victim, tick - 142, beast_victim, COUNT(beast_victim), false);
+    }
+  } else if (battle->finisher == FINISH_FAN) {
+    owner_done = fatal_phases(battle, fighter, tick, fan_owner, COUNT(fan_owner), true);
+    victim_done = fatal_phases(battle, victim, tick, fan_victim, COUNT(fan_victim), false);
+    if (tick >= 348) {
+      victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
+    }
+    if (victim_done) {
+      victim->appearance = APPEARANCE_HIDDEN;
+    }
+  } else if (battle->finisher == FINISH_SPIKE) {
+    /* 30-tick setup + script wait 28, uppercut to sample 5, reaction 175.
+     * Stop at Y=-5.6, then the victim script waits 128 + 50 + 60 ticks. */
+    int attack = tick - 58;
+    if (attack >= 0) {
+      fatal_pose(battle, fighter, 293, mini(19, attack), true);
+    }
+    if (tick >= 64) {
+      int rise = mini(22, tick - 64);
+      fatal_pose(battle, victim, 128, mini(31, rise * 2), false);
+      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+    }
+    if (tick >= 324) {
+      fatal_pose(battle, fighter, 115, 18, true);
+      owner_done = victim_done = true;
+    }
+  }
+  if (owner_done && victim_done) {
+    battle_end_finisher(battle);
+  }
+}
+
+static void start_fatality(Battle *battle, Fighter *fighter, int id) {
+  if (!battle_begin_finisher(battle, fighter, id)) {
+    scorpion_ready(battle, fighter);
+    return;
+  }
+  Fighter *victim = opponent(battle, fighter);
+  fatal_pose(battle, victim, 13, 0, false);
+  fatal_pose(battle, fighter, id == FINISH_BEAST ? 12 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 390, 0, true);
+  fighter->script = fatality_tick;
+}
+
+static void scorpion_burn_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_BURN);
+}
+
+static void scorpion_beast_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_BEAST);
+}
+
+static void scorpion_fan_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_FAN);
+}
+
+static void scorpion_spike_fatality(Battle *battle, Fighter *fighter) {
+  start_fatality(battle, fighter, FINISH_SPIKE);
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
+  {BUTTON_BLOCK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 4, 50, CMD_BLOCK_OK, can_burn_fatality, scorpion_burn_fatality},
+  {BUTTON_HIGH_PUNCH, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0, can_beast_fatality, scorpion_beast_fatality},
+  {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, can_fan_fatality, scorpion_fan_fatality},
+  {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0, can_spike_fatality, scorpion_spike_fatality},
   {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, can_air_throw, scorpion_air_throw},
   {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, CMD_AIR, can_teleport, scorpion_teleport},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_BACK}, 2, 27, 0, can_spear, scorpion_spear},

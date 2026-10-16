@@ -251,6 +251,20 @@ typedef struct CharacterDef {
   q16 ground;             /* retail standing group Y: the rig root's Y translation (soles at 0) */
 } CharacterDef;
 
+enum {
+  FINISH_BURN = 1,
+  FINISH_BEAST,
+  FINISH_FAN,
+  FINISH_SPIKE
+};
+
+enum {
+  APPEARANCE_NORMAL,
+  APPEARANCE_BEAST,
+  APPEARANCE_BURNED,
+  APPEARANCE_HIDDEN
+};
+
 typedef enum Phase {
   PHASE_READY,
   PHASE_FIGHT,
@@ -334,7 +348,8 @@ struct Fighter {
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
-  int reaction; /* last selected attack-record reaction, retained across its phases */
+  int appearance; /* character-script rendering variant; reset at round spawn */
+  int reaction;   /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
   bool armed, weapon_used;
   FighterFn disarm; /* character-owned weapon drop entry */

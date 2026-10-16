@@ -484,6 +484,92 @@ static void check_ground_normals(void) {
   }
 }
 
+static Battle finish_window(int winner, float distance, int arena) {
+  Battle battle;
+  battle_init(&battle, 0, 0);
+  battle.phase = PHASE_FIGHT;
+  battle.arena = arena;
+  battle.fighters[winner].wins = 1;
+  battle_damage(&battle, &battle.fighters[1 - winner], Q16_ONE);
+  advance_ticks(&battle, 1, NULL);
+  check(battle.phase == PHASE_FINISH, "Deciding KO must prepare finish window");
+  battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * .5f * Q16_ONE);
+  battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
+  return battle;
+}
+
+static void finish_command(Battle *battle, int player, int id) {
+  Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
+  Button forward = player ? BUTTON_LEFT : BUTTON_RIGHT;
+  Button tokens[4] = {back, forward, forward, back};
+  int count = 4;
+  Button attack = BUTTON_BLOCK;
+  if (id == FINISH_BEAST) {
+    tokens[2] = BUTTON_DOWN;
+    tokens[3] = BUTTON_UP;
+    attack = BUTTON_HIGH_PUNCH;
+  } else if (id == FINISH_FAN) {
+    tokens[0] = forward;
+    tokens[1] = tokens[2] = BUTTON_DOWN;
+    count = 3;
+    attack = BUTTON_LOW_KICK;
+  } else if (id == FINISH_SPIKE) {
+    count = 3;
+    attack = BUTTON_LOW_KICK;
+  }
+  for (int i = 0; i < count; ++i) {
+    Input in[2] = {0};
+    in[player].held = BUTTON_BIT(tokens[i]);
+    if (i == count - 1) {
+      in[player].held |= BUTTON_BIT(attack);
+    }
+    battle_step(battle, in);
+    advance_ticks(battle, 2, NULL);
+  }
+}
+
+static void check_fatalities(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int id = FINISH_BURN; id <= FINISH_SPIKE; ++id) {
+      Battle battle = finish_window(player, id == FINISH_BURN ? 2.4f : .8f, id == FINISH_FAN ? 8 : 0);
+      int timer = battle.time_ticks;
+      finish_command(&battle, player, id);
+      check(battle.phase == PHASE_FATALITY && battle.finisher == id, "Fatality command must select its scene for either player");
+      check(!battle_can_finish(&battle, &battle.fighters[player]), "Fatality cannot start twice");
+      advance_ticks(&battle, 160, NULL);
+      if (id == FINISH_BEAST) {
+        check(battle.fighters[player].appearance == APPEARANCE_BEAST, "Fatality II must switch to the creature asset");
+        check(battle.fighters[1 - player].current_move->clip == 584, "Creature fatality must play its victim sequence");
+      }
+      advance_ticks(&battle, 440, NULL);
+      check(battle.phase == PHASE_MATCH_OVER && battle.fighters[player].wins == 2, "Fatality must complete without awarding another win");
+      check(battle.fighters[1 - player].health == 0 && battle.time_ticks == timer, "Fatality must retain KO and frozen match timer");
+      if (id == FINISH_FAN) {
+        check(battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN, "Fan must remove the finished victim");
+      }
+      if (id == FINISH_SPIKE) {
+        check(battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "Spike victim must stay impaled until rematch");
+      }
+      battle_reset_match(&battle);
+      check(battle.finisher == 0 && battle.fighters[player].appearance == APPEARANCE_NORMAL, "Rematch must clear finisher state and restore model");
+    }
+  }
+  for (int id = FINISH_BURN; id <= FINISH_SPIKE; ++id) {
+    Battle battle = finish_window(0, id == FINISH_BURN ? .8f : 2.4f, 0);
+    finish_command(&battle, 0, id);
+    check(battle.phase == PHASE_FINISH, "Out-of-range fatality must be rejected");
+  }
+  Battle battle = finish_window(0, .8f, 1);
+  finish_command(&battle, 0, FINISH_FAN);
+  check(battle.phase == PHASE_FINISH, "Fan fatality must require Prison");
+  advance_ticks(&battle, 3, NULL);
+  finish_command(&battle, 0, FINISH_SPIKE);
+  check(battle.phase == PHASE_FINISH, "Spike fatality must require Goro's Lair");
+  battle = finish_window(0, .8f, 0);
+  finish_command(&battle, 1, FINISH_BEAST);
+  check(battle.phase == PHASE_FINISH, "Defeated player cannot enter a fatality");
+}
+
 static void check_script_reactions(void) {
   static const int ids[] = {3, 5, 8, 10, 12, 17, 20, 21, 22, 23, 25, 27, 28, 29, 32, 38, 39, 43, 48, 49, 50, 90, 99, 100, 143, 154, 155, 156, 173};
   for (size_t n = 0; n < sizeof ids / sizeof ids[0]; ++n) {
@@ -582,6 +668,7 @@ static void check_air_throw(void) {
 }
 
 int main(void) {
+  check_fatalities();
   check_script_reactions();
   check_ground_throws();
   check_air_throw();
@@ -740,6 +827,6 @@ int main(void) {
     check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
-      "PASS: air attack selection/miss/landing/contact/follow-ups; sword draw/slash/chip/throw/drop/pickup/spin/reset; Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
+      "PASS: four fatalities/both players/gates/rematch; paired ground/air throws; ground normals/combos; victim reactions/recovery/interruption; air attack selection/miss/landing/contact/follow-ups; sword draw/slash/chip/throw/drop/pickup/spin/reset; Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");
   return 0;
 }

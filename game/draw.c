@@ -94,9 +94,16 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
   return isfinite(floor_y) ? floor_y : 0.f;
 }
 
+static const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
+  return fighter->appearance == APPEARANCE_BEAST ? &assets->scorpion_beast : roster_character(assets, fighter->roster);
+}
+
 static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) {
   Triangles triangles = {0};
-  const Character *ch = roster_character(assets, fighter->roster);
+  const Character *ch = fighter_model(assets, fighter);
+  if (fighter->appearance == APPEARANCE_HIDDEN) {
+    return triangles;
+  }
   const MoveDef *move = fighter_move(fighter);
   int id = move->clip < 0 ? ch->idle : move->clip;
   const Clip *clip = &assets->clips.data[id];
@@ -135,6 +142,11 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
       for (size_t k = 0; k < 3; ++k) {
         Vertex *v = &t.v[k];
         Vec3 p = mat3_apply(turn, vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root));
+        /* 0x41ea50 places the creature root at absolute Y=-0.9. Human
+         * rigs carry their ground offset in their bind root instead. */
+        if (fighter->appearance == APPEARANCE_BEAST) {
+          p.y -= .9f;
+        }
         v->p = (Vec3){p.x + fighter_x(fighter), p.y - fighter_height(fighter), p.z + fighter_z(fighter)};
         v->normal = mat3_apply(turn, mat3_apply(bones[n].rotation, v->normal));
       }
@@ -197,7 +209,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   Mat4 shadow;
   require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
-    const Texture *texture = &roster_character(assets, battle->fighters[i].roster)->texture;
+    const Texture *texture = &fighter_model(assets, &battle->fighters[i])->texture;
     for (size_t j = 0; j < fighters[i].count; ++j) {
       Triangle triangle = fighters[i].data[j];
       bool valid = true;
@@ -210,9 +222,13 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   canvas_resolve_shadows(cv, 104);
   for (size_t i = 0; i < 2; ++i) {
     const Fighter *fighter = &battle->fighters[i];
-    const Texture *texture = &roster_character(assets, fighter->roster)->texture;
+    const Texture *texture = &fighter_model(assets, fighter)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j)
-      render_triangle(cv, camera, fighters[i].data[j], texture, fighter->state == S_HIT ? .72f : 1.f, PASS_COLOR, &light);
+      render_triangle(cv, camera, fighters[i].data[j], texture,
+          fighter->appearance == APPEARANCE_BURNED ? .18f
+          : fighter->state == S_HIT                ? .72f
+                                                   : 1.f,
+          PASS_COLOR, &light);
     FREE_ARRAY(fighters[i]);
   }
   /* Script objects are rendered from simulation state; rendering never advances them. */
@@ -241,7 +257,8 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       float angle = fighter_move(f)->clip == 224 ? f->ticks * .5f : -1.1f;
       draw_blade(cv, camera, hand, vec_add(hand, (Vec3){f->facing * cosf(angle), sinf(angle), 0}));
     }
-    if (fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) {
+    if ((fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
+        (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_BURN && i == battle->winner && battle->phase_ticks >= 51 && battle->phase_ticks < 191)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
       Vec3 end = {mouth.x + f->facing * 2.3f, mouth.y + .25f, mouth.z};
       ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, mouth)}, 1);

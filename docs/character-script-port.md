@@ -47,7 +47,9 @@ The working implementation is `game/c_scorpion.c` (the existing filename).
 | Sword | Draw/follow-up draw, HP/LP and back slashes, held/steered spin with recoil, armed air punches, throw, disarm, resting pickup and round reset |
 | Air normals | HP/LP, straight and diagonal kicks, extend/hold/retract, contact freezes, HP-to-LP/kick follow-ups and landing |
 | Ground normals/combos | Far HP repetition, close HP/HK and their distinct cancel tables, combo HP, LK, crouching punches/kicks and roundhouse |
-| Air throw, fatalities | Not ported yet; do not label Scorpion complete |
+| Throws | Paired LP/LK throws, air throw, damage/release phases and victim recovery |
+| Victim reactions | Explicit record-selected hitstun, combo scaling, crouch branches, launches, tumbles and getups |
+| Fatalities | Both character fatalities and both stage fatalities; winner/range/stage gates, paired phases, creature asset and match completion |
 
 Spear sources: scripts `0x4ed448`, `0x4ed4a8`; native `0x49a6a0`,
 `0x49b170`, `0x487350`, `0x487420`; contact record `0x4ebeb8`.
@@ -59,11 +61,10 @@ Intentional engine choices: fixed standing/crouching collision hulls; a ten-tick
 teleport vanish replacing the retail camera-bearing trigger, with distance and
 wall exits retained; simple rope/flame/blade rendering. Sword drops use a single settling arc rather
 than retail cosmetic bounces; thrown swords have a six-unit flight budget. Spear pull uses explicit C
-state instead of a rope-node task chain. Air, weapon and special victim reactions other than
-spear still use shared fallback reactions and need their own source translation
-before balance equivalence can be claimed. Audio and original particle/gore
-rendering are not implemented. The remaining coverage is explicit work, not
-silently synthesized retail behavior.
+state instead of a rope-node task chain. Audio, original camera cuts and particle/gore
+rendering are not implemented. Finisher presentation uses our fixed camera, flame
+lines, darkened burn victim and stage removal/impalement. Script coverage does not
+claim identical retail rendering, collision hulls or scheduler timing.
 
 Air attack sources: scripts `0x4e6658`, `0x4e6710`, `0x4e61f8`, `0x4e6500`,
 `0x4e63d8`; native contact continuations `0x46e7c0`, `0x46cb10`, `0x46ef10`,
@@ -99,3 +100,24 @@ command history, and holds the loser in clip 13/action 0x1009. Timeout wins skip
 this window. Starting a finisher locks both controllers and removes projectiles;
 completion awards no extra round. Arena selection is now available to simulation
 for the two stage-fatality predicates.
+
+
+## Finisher commands and sources
+
+After the deciding KO, enter a command during the five-second finish window.
+Directions are relative to the opponent; press the attack with the last direction.
+
+| Finisher | Command | Gate | Script/native sources |
+| --- | --- | --- | --- |
+| Burn | B,F,F,B + BLOCK | 1.8–3 units; 50 ticks | `467ce0`, `443840`, owner `4e0278..2f0`, victim `4e0300..35c` |
+| Creature | B,F,D,U + HP | At most 1 unit; 50 ticks | `41e960`, `4d2e58/88/b0`, victim `4d2ef8/2f10` |
+| Fan | F,D,D + LK | Prison (8), at most 1 unit; 40 ticks | `43d040`, `4e0118..1a8`, 31 repeats initialized at `43d3d0` |
+| Spikes | B,F,F + LK | Goro's Lair (0), at most 1 unit; 40 ticks | `467e70`, `4e6950`, reaction 175 `4ea300/330` |
+
+The creature uses `sc_fat2_.geo`, slot `50c2e8`, rig `50cb28`, clips 578–581.
+Its animated IDs start at 1 (the human rigs start at 2), and its native root
+placement is Y=-0.9. Victim clips 584/585 stay on the defeated character's rig.
+Finite scene completion replaces retail parked tasks. Blends and stage camera
+travel are presentation choices; the owner/victim clips, repeated bite phases,
+fan repetitions and spike wait phases come from the listed scripts. The match
+result retains the final poses and clears every finisher field on rematch.

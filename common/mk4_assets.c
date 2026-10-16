@@ -484,6 +484,32 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       }
     PUSH(assets->characters, ch);
   }
+  /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
+   * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
+  Character *beast = &assets->scorpion_beast;
+  image_string(&exe, image_u32(&exe, image_u32(&exe, 0x50c2e8)), beast->file);
+  snprintf(beast->name, sizeof beast->name, "SCORPION CREATURE");
+  View beast_data = package_geo(&archive, beast->file);
+  beast->meshes = load_meshes(beast_data);
+  Textures beast_pages = load_textures(beast_data);
+  beast->texture = beast_pages.data[0];
+  for (size_t i = 1; i < beast_pages.count; ++i) {
+    FREE_ARRAY(beast_pages.data[i].pixels);
+  }
+  FREE_ARRAY(beast_pages);
+  beast->bones = load_rig(&exe, 0x50cb28, 0x50c2e8, beast->meshes.count);
+  beast->idle = 578;
+  beast->scale = 1.f;
+  int beast_channels = 0;
+  for (size_t i = 0; i < beast->bones.count; ++i) {
+    /* This rig animates IDs 1..21, including its root. Fighter rigs start
+     * at ID 2; the stream walks animated IDs in ascending order. */
+    beast->bones.data[i].channel++;
+    beast_channels = maxi(beast_channels, beast->bones.data[i].channel + 1);
+  }
+  for (int c = 578; c <= 581; ++c) {
+    require((int)assets->clips.data[c].frames.data[0].angles.count == beast_channels, "Scorpion creature animation/rig mismatch");
+  }
   package_free(&archive);
   FREE_ARRAY(exe.bytes);
 }
@@ -606,6 +632,9 @@ void assets_free(Assets *a) {
     FREE_ARRAY(ch->texture.pixels);
     FREE_ARRAY(ch->bones);
   }
+  meshes_free(&a->scorpion_beast.meshes);
+  FREE_ARRAY(a->scorpion_beast.texture.pixels);
+  FREE_ARRAY(a->scorpion_beast.bones);
   for (size_t i = 0; i < a->clips.count; ++i) {
     Frames *frames = &a->clips.data[i].frames;
     for (size_t j = 0; j < frames->count; ++j)
