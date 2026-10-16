@@ -5,14 +5,21 @@ CXXFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic
 CPPFLAGS = -Icommon
 LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
+CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
+FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_assets.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
-.PHONY: all extract test clean viewer run viewer-test game play game-test check
+.PHONY: all extract test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
+
+format:
+	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)
+format-check:
+	$(CLANG_FORMAT) --style=file --dry-run --Werror $(FORMAT_FILES)
 
 build/%.o: common/%.c $(HEADERS)
 	mkdir -p build
@@ -53,5 +60,5 @@ game-test: mk4-game build/test-battle build/test-shadows
 	./build/test-shadows
 	./mk4-game --self-test
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp
-check: test viewer-test game-test
+check: format-check test viewer-test game-test
 	python3 tests/test_apps.py

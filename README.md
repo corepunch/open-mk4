@@ -150,8 +150,14 @@ Skull scene includes an open floor area. No original executable code runs.
 `make game-test` checks the battle simulation, camera lighting, matching shadow rays, perspective brightness, projection and
 stencil behavior, every arena and HUD resource,
 animation compatibility for all 18 rigs, and a deterministic rendered CPU fight.
-`make check` also runs the package and viewer regressions and checks malformed
-archives against all three executables.
+`make check` also checks code formatting, runs the package and viewer regressions,
+and checks malformed archives against all three executables.
+
+Run `make format` to apply `.clang-format` to project-owned C/C++ sources,
+headers, and C include fragments. `make format-check` reports formatting errors
+without editing files. Both targets leave `reference/` untouched. Install
+`clang-format` on `PATH` or use the version supplied by Xcode on macOS; select
+a specific installation with `make format CLANG_FORMAT=/path/to/clang-format`.
 
 ## SDL2 character gallery
 
