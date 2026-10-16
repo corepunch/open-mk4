@@ -20,8 +20,13 @@ static Mat4 projection(Vec4 plane, Vec4 light) {
 }
 
 static void triangle(Canvas *cv, float z, const Texture *texture, TrianglePass pass) {
+  // clang-format off: Keep table entries on one row, including long rows.
   const ScreenVertex vertices[] = {
-      {0, 0, z, 0, 0, 1, 1}, {8, 0, z, 0, 0, 1, 1}, {0, 8, z, 0, 0, 1, 1}};
+    {0, 0, z, 0, 0, 1, 1},
+    {8, 0, z, 0, 0, 1, 1},
+    {0, 8, z, 0, 0, 1, 1}
+  };
+  // clang-format on
   canvas_triangle(cv, vertices, texture, (Rect){0, 0, 8, 8}, false, pass);
 }
 
@@ -49,7 +54,13 @@ static void matrix_checks(void) {
   check(!mat4_project(point, (Vec3){1, -4, 1}, &out),
       "Point at light height should project to infinity");
   Mat4 tilted = projection((Vec4){1, 2, -1, -3}, (Vec4){-2, -4, 1, 0});
-  const Vec3 points[] = {{2, -2, 3}, {-1, 5, 2}, {4, 0, -1}};
+  // clang-format off: Keep table entries on one row, including long rows.
+  const Vec3 points[] = {
+    { 2, -2,  3},
+    {-1,  5,  2},
+    { 4,  0, -1}
+  };
+  // clang-format on
   for (size_t i = 0; i < 3; ++i) {
     check(mat4_project(tilted, points[i], &out), "Tilted plane projection failed");
     check(closef(out.x + 2 * out.y - out.z, 3), "Projected point is not on the receiver plane");
@@ -98,8 +109,13 @@ static void lighting_checks(void) {
   canvas_clear(&cv);
   uint32_t pixel = 0xffc8c8c8;
   Texture texture = {1, 1, {&pixel, 1, 1}};
+  // clang-format off: Keep table entries on one row, including long rows.
   const ScreenVertex vertices[] = {
-      {0, 0, .1f, 0, 0, 0, 1}, {8, 0, .1f, 0, 0, 1, .5f}, {0, 8, .1f, 0, 0, 0, 1}};
+    {0, 0, .1f, 0, 0, 0,   1},
+    {8, 0, .1f, 0, 0, 1, .5f},
+    {0, 8, .1f, 0, 0, 0,   1}
+  };
+  // clang-format on
   canvas_triangle(&cv, vertices, &texture, (Rect){0, 0, 8, 8}, false, PASS_COLOR);
   check(cv.pixels[9] == 0xff141414,
       "Vertex lighting is not perspective-correct or clamps ambient to 0.4");

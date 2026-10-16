@@ -48,7 +48,12 @@ static Image image_load(const char *name) {
   require(image_u32(&exe, 0x4fad7c) == 0 && image_u32(&exe, 0x4fad80) == 13 &&
               image_u32(&exe, 0x4fad7c + 612 * 12) == 0xffffffff,
       "Unsupported MK4 executable revision (animation table differs)");
-  const uint32_t ranges[][2] = {{0x4d3e80, 0x4d93f0}, {0x4d93f8, 0x4d9d60}};
+  // clang-format off: Keep table entries on one row, including long rows.
+  const uint32_t ranges[][2] = {
+    {0x4d3e80, 0x4d93f0},
+    {0x4d93f8, 0x4d9d60}
+  };
+  // clang-format on
   for (size_t i = 0; i < 2; ++i)
     for (uint32_t p = ranges[i][0]; p < ranges[i][1]; p += 8) {
       uint32_t dst = image_u32(&exe, p), src = image_u32(&exe, p + 4);
@@ -514,9 +519,21 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   Package archive;
   package_load(&archive, archive_path);
   Image exe = image_load(executable);
-  const char *names[] = {"GORO'S LAIR", "THE WELL", "ELDER GODS", "THE TOMB", "WIND WORLD",
-      "REPTILE'S LAIR", "SHAOLIN TEMPLE", "THE LIVING FOREST", "THE PRISON", "ICE PIT",
-      "THE SKULL"};
+  // clang-format off: Keep table entries on one row, including long rows.
+  const char *names[] = {
+    "GORO'S LAIR",
+    "THE WELL",
+    "ELDER GODS",
+    "THE TOMB",
+    "WIND WORLD",
+    "REPTILE'S LAIR",
+    "SHAOLIN TEMPLE",
+    "THE LIVING FOREST",
+    "THE PRISON",
+    "ICE PIT",
+    "THE SKULL"
+  };
+  // clang-format on
   /* June 1998 stage table, verified against the supplied executable. */
   for (size_t i = 0; i < MK4_ARENA_COUNT; ++i) {
     uint32_t rec = 0x4dd960 + (uint32_t)i * 64, slot = image_u32(&exe, rec) * 4;
@@ -531,9 +548,29 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   }
   assets->hud.font = load_geometry(package_geo(&archive, "mk4font_.geo"));
   assets->hud.effects = load_geometry(package_geo(&archive, "shared_g.geo"));
-  const char *sprite_names[] = {"LIU KANG", "RAIDEN", "SONYA", "SCORPION", "SUB ZERO", "FUJIN",
-      "JAREK", "KAI", "TANYA", "MILEENA", "NOOB SAIBOT", "QUAN CHI", "REPTILE", "SHINNOK", "JAX",
-      "CAGE", "REIKO", "GORO", "KITANA"};
+  // clang-format off: Keep table entries on one row, including long rows.
+  const char *sprite_names[] = {
+    "LIU KANG",
+    "RAIDEN",
+    "SONYA",
+    "SCORPION",
+    "SUB ZERO",
+    "FUJIN",
+    "JAREK",
+    "KAI",
+    "TANYA",
+    "MILEENA",
+    "NOOB SAIBOT",
+    "QUAN CHI",
+    "REPTILE",
+    "SHINNOK",
+    "JAX",
+    "CAGE",
+    "REIKO",
+    "GORO",
+    "KITANA"
+  };
+  // clang-format on
   for (size_t i = 0; i < assets->characters.count; ++i) {
     assets->hud.names[i] = -1;
     for (int j = 0; j < 19; ++j)

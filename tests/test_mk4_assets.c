@@ -118,7 +118,17 @@ int main(void) {
     }
     {
       /* Shared bank plus Goro's crouch, knockdown and victory. */
-      static const int grounded[] = {166, 219, 247, 293, 581, 603, 608};
+      // clang-format off: Keep table entries on one row, including long rows.
+      static const int grounded[] = {
+        166,
+        219,
+        247,
+        293,
+        581,
+        603,
+        608
+      };
+      // clang-format on
       for (size_t g = 0; g < sizeof grounded / sizeof grounded[0]; ++g) {
         const Clip *ground = &assets.clips.data[grounded[g]];
         float sole, plant;
