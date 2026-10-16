@@ -925,12 +925,27 @@ static void clone_object(Battle *battle, Projectile *p) {
 }
 
 static void clone_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = fighter->ticks < 3 ? fighter->ticks : maxi(0, 6 - fighter->ticks);
-  if (fighter->ticks == 3) {
-    fighter->body.pos[AXIS_Y] -= 0x3333;
-  }
-  if (fighter->ticks >= 6 && !fighter_airborne(fighter)) {
-    air_land(battle, fighter);
+  if (fighter->script_phase == 0) {
+    fighter->sample_override = mini(8, fighter->ticks);
+    if (fighter->ticks == 3) {
+      fighter->body.root_y += 0x3333;
+      fighter->body.pos[AXIS_Y] -= 0x3333;
+      fighter->body.spin[AXIS_X] = -0x6147;
+    }
+    if (fighter->ticks >= 9 && fighter->body.vel[AXIS_Y] >= 0) {
+      /* 47f880 stops angular motion, restores facing, then 429460
+       * plays the clip backwards while 48f390 waits for landing. */
+      memset(fighter->body.angle, 0, sizeof fighter->body.angle);
+      memset(fighter->body.spin, 0, sizeof fighter->body.spin);
+      fighter->script_phase = 1;
+      fighter->script_timer = 0;
+    }
+  } else {
+    fighter->sample_override = maxi(0, 8 - ++fighter->script_timer);
+    if (fighter->script_timer >= 8 && !fighter_airborne(fighter)) {
+      fighter->body.root_y = 0;
+      air_land(battle, fighter);
+    }
   }
 }
 

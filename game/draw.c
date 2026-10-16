@@ -120,13 +120,20 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
       Triangle t = mesh->data[j];
       for (size_t k = 0; k < 3; ++k) {
         Vertex *v = &t.v[k];
-        Vec3 p = mat3_apply(turn, vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root));
+        Vec3 local = vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root);
+        Vec3 bind = ch->bones.data[0].translation;
+        if (fighter->appearance != APPEARANCE_BEAST) {
+          local = vec_sub(local, bind);
+          local.y += q16_float(fighter->body.root_y);
+        }
+        Vec3 p = mat3_apply(turn, local);
         /* 0x41ea50 places the creature root at absolute Y=-0.9. Human
          * rigs carry their ground offset in their bind root instead. */
         if (fighter->appearance == APPEARANCE_BEAST) {
           p.y -= .9f;
         }
-        v->p = (Vec3){p.x + fighter_x(fighter), p.y - fighter_height(fighter), p.z + fighter_z(fighter)};
+        float y = fighter->appearance == APPEARANCE_BEAST ? -fighter_height(fighter) : q16_float(fighter->body.pos[AXIS_Y]);
+        v->p = (Vec3){p.x + fighter_x(fighter), p.y + y, p.z + fighter_z(fighter)};
         v->normal = mat3_apply(turn, mat3_apply(bones[n].rotation, v->normal));
       }
       PUSH(triangles, t);
@@ -237,6 +244,8 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       clone.sample_override = p->sample;
       clone.facing = p->facing;
       memcpy(clone.heading, p->heading, sizeof clone.heading);
+      memcpy(clone.body.angle, p->angle, sizeof clone.body.angle);
+      clone.body.root_y = p->root_y;
       memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
       Triangles geometry = fighter_geometry(assets, &clone);
       for (size_t j = 0; j < geometry.count; ++j) {

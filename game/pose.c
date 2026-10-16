@@ -50,7 +50,10 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
   }
   float yaw = front + atan2f((float)fighter->heading[0], (float)fighter->heading[1]);
   float c = cosf(yaw), s = sinf(yaw);
-  return (Mat3){{c, 0, s, 0, 1, 0, -s, 0, c}};
+  Mat3 heading = {{c, 0, s, 0, 1, 0, -s, 0, c}};
+  float factor = 4096.f / (6.283185307179586f * Q16_ONE);
+  Mat3 angular = rotation(1, (Vec3){fighter->body.angle[0] * factor, fighter->body.angle[1] * factor, fighter->body.angle[2] * factor});
+  return mat3_mul(heading, angular);
 }
 
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]) {
@@ -82,7 +85,9 @@ bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16
     if (ch->bones.data[i].id <= 0) {
       continue;
     }
-    Vec3 joint = mat3_apply(turn, vec_sub(bones[i].position, bind));
+    Vec3 local = vec_sub(bones[i].position, bind);
+    local.y += q16_float(fighter->body.root_y);
+    Vec3 joint = mat3_apply(turn, local);
     q16 x = fighter->body.pos[AXIS_X] - origin[AXIS_X] + (q16)floorf(joint.x * Q16_ONE);
     q16 z = fighter->body.pos[AXIS_Z] - origin[AXIS_Z] + (q16)floorf(joint.z * Q16_ONE);
     q16 along = q16_mul(x, axis[0]) + q16_mul(z, axis[1]);

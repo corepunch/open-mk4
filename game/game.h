@@ -328,6 +328,8 @@ enum {
  * landing continuation. */
 typedef struct Body {
   q16 pos[3], vel[3];
+  q16 angle[3], spin[3]; /* radians Q16, integrated by the world pump */
+  q16 root_y;            /* explicit root offset, paired with group Y by 4702e0 */
   q16 gravity, ground;
   q16 last_inside[3]; /* last position inside the arena circle */
   FighterFn physics;
@@ -406,6 +408,7 @@ struct Projectile {
   int clip, sample; /* stationary clone's captured pose */
   q16 pos[3], vel[3];
   q16 heading[2];
+  q16 angle[3], root_y; /* captured clone orientation/root offset */
   ProjectileFn step;
 };
 

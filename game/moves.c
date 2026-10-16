@@ -58,6 +58,11 @@ void fighter_neutral(Fighter *fighter) {
   fighter->damage_scale = Q16_ONE;
   fighter->flags &= ~(unsigned)(FF_NEUTRAL_CLEAR | FF_REACTING);
   fighter->body.physics = NULL;
+  for (int i = 0; i < 3; ++i) {
+    fighter->body.angle[i] = fighter->body.spin[i] = 0;
+  }
+  fighter->body.pos[AXIS_Y] += fighter->body.root_y;
+  fighter->body.root_y = 0;
   if (!fighter_airborne(fighter)) {
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
     for (int i = 0; i < 3; ++i) {

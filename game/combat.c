@@ -143,6 +143,10 @@ Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, in
       }
       p->heading[0] = owner->heading[0];
       p->heading[1] = owner->heading[1];
+      for (int k = 0; k < 3; ++k) {
+        p->angle[k] = owner->body.angle[k];
+      }
+      p->root_y = owner->body.root_y;
       return p;
     }
   }

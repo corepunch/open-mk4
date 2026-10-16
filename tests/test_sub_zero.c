@@ -252,6 +252,16 @@ static void idle_object(Battle *battle, Projectile *p) {
 }
 
 static void clone_tests(void) {
+  Battle retreat = fight(0, 4.f);
+  clone_command(&retreat, 0);
+  advance(&retreat, 8);
+  check(retreat.fighters[0].sample_override == 8 && retreat.fighters[0].body.spin[AXIS_X] == -0x6147,
+      "clone retreat must finish forward with native angular motion");
+  advance(&retreat, 15);
+  check(retreat.fighters[0].script_phase == 1 && retreat.fighters[0].body.spin[AXIS_X] == 0 && retreat.fighters[0].body.angle[AXIS_X] == 0,
+      "clone retreat must restore orientation and retract after the apex");
+  advance(&retreat, 100);
+  check(retreat.fighters[0].state == S_IDLE && retreat.fighters[0].body.root_y == 0, "clone landing must restore its root and controls");
   for (int player = 0; player < 2; ++player) {
     Battle battle = fight(player, 2.f);
     clone_command(&battle, player);

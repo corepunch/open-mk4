@@ -619,11 +619,19 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
     victim->disarm(battle, victim);
   }
   victim->reaction = reaction;
+  if (reaction != 67 && reaction != 151) {
+    for (int i = 0; i < 3; ++i) {
+      victim->body.angle[i] = 0;
+    }
+    victim->body.pos[AXIS_Y] += victim->body.root_y;
+    victim->body.root_y = 0;
+  }
   FighterFn entry = reactions[reaction] != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? reactions[reaction]
                                                                                                                                       : react_approximate;
   (void)battle;
   for (int i = 0; i < 3; ++i) {
     victim->body.vel[i] = 0;
+    victim->body.spin[i] = 0;
   }
   victim->body.gravity = 0;
   victim->body.physics = NULL;

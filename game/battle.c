@@ -332,6 +332,9 @@ void battle_world(Battle *battle) {
     Body *body = &battle->fighters[i].body;
     for (int k = 0; k < 3; ++k)
       body->pos[k] += body->vel[k];
+    for (int k = 0; k < 3; ++k) {
+      body->angle[k] = (body->angle[k] + body->spin[k]) % 0x6487e;
+    }
     double x = body->pos[AXIS_X], z = body->pos[AXIS_Z];
     double length = sqrt(x * x + z * z);
     if (length > battle->arena_radius) {
