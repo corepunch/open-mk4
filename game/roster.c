@@ -6,11 +6,26 @@
  * each mesh already carries its own idle clip. Goro's mesh uses a separate
  * 21-channel bank, so his table names clips from that bank.
  *
- * Punch and uppercut come from the original move routines, which store an
- * action code at player +0x74 and start a move script. Action 0x10b plays
- * 294 (a complete jab; a repeated press continues into 295). Action 0x109
- * starts with 293. Clips 210..250 belong to the weapon routines and hold
- * a weapon grip, so they do not suit unarmed attacks. */
+ * Clips come from the original move routines, which store an action code
+ * at player +0x74 and run a move script; op 0x3c in a script branches on a
+ * 16-entry character table (Kitana reads Sonya's entry, Noob Reiko's).
+ *   walk    forward-walk table 0x53d388 (0x53d3c8 holds the slower walk back)
+ *   crouch  0x2001 plays 259 into the crouch, then loops 258
+ *   jump    0x2007 plays 304: takeoff, air, landing
+ *   punch   0x10b plays the jab 294 (295 follows a repeated press)
+ *   kick    0x100 high kick, character table at 0x4e5ca4
+ *   sweep   0x10c, character table at 0x4e679c
+ *   upper   0x109 starts with 293
+ *   throw   the character table at 0x4de7a0 sets the victim's clip (op
+ *           0x0e) and the thrower's (op 0x0f); Jax's entry runs Goro's 605,
+ *           which cannot drive a 15-channel rig, so Jax keeps 75
+ *   block   0x2005 sets slot 0x53ce30 (322), or 595 for Goro
+ *   hit     0x2005 reaction script starts with 247
+ *   knock   0x4003 staggers with 311, then falls with 186
+ *   victory character table at 0x4e5efc
+ * Clips 210..250 belong to the weapon routines and hold a weapon grip.
+ * Goro's crouch, jump, punch, kick, sweep, uppercut, hit, knockdown and
+ * victory remain visual choices from his bank. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const StateDef mk4_states[S_COUNT] = {
   [S_IDLE] = {0, 0, 0, 0, 0, 0.f, 0.f, 0},
@@ -33,24 +48,24 @@ _Static_assert(S_COUNT == 13, "Clip table columns follow StateId order");
 
 // clang-format off: Keep table entries on one row, including long rows.
 //                                               IDLE             WALK  CROUCH  JUMP  PUNCH  KICK  SWEEP  UPPER  THROW  BLOCK   HIT  KNOCK  VICTORY
-static const int scorpion_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int raiden_clips[S_COUNT] =        {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int sonya_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int liu_kang_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int sub_zero_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int fujin_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int shinnok_clips[S_COUNT] =       {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int reiko_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int quan_chi_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int tanya_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int reptile_clips[S_COUNT] =       {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int kai_clips[S_COUNT] =           {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int jarek_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int jax_clips[S_COUNT] =           {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int cage_clips[S_COUNT] =          {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int goro_clips[S_COUNT] =          {CLIP_ASSET_IDLE,  590,    603,  602,   596,  598,   600,   593,   597,   595,  605,   581,     608};
-static const int kitana_clips[S_COUNT] =        {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
-static const int noob_saibot_clips[S_COUNT] =   {CLIP_ASSET_IDLE,  267,    219,  301,   294,   65,   101,   293,    23,   251,  247,   166,     293};
+static const int scorpion_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  269,    259,  304,   294,   66,    63,   293,    75,   322,  247,   186,      45};
+static const int raiden_clips[S_COUNT] =        {CLIP_ASSET_IDLE,  267,    259,  304,   294,   71,    62,   293,    78,   322,  247,   186,      47};
+static const int sonya_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    259,  304,   294,   65,    63,   293,    78,   322,  247,   186,      46};
+static const int liu_kang_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  266,    259,  304,   294,   66,    62,   293,    79,   322,  247,   186,      48};
+static const int sub_zero_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  267,    259,  304,   294,   71,    63,   293,    76,   322,  247,   186,      47};
+static const int fujin_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    259,  304,   294,   65,    62,   293,    81,   322,  247,   186,      48};
+static const int shinnok_clips[S_COUNT] =       {CLIP_ASSET_IDLE,  267,    259,  304,   294,   66,    63,   293,    75,   322,  247,   186,      44};
+static const int reiko_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    259,  304,   294,   66,    62,   293,    78,   322,  247,   186,      49};
+static const int quan_chi_clips[S_COUNT] =      {CLIP_ASSET_IDLE,  267,    259,  304,   294,   71,    63,   293,    78,   322,  247,   186,      51};
+static const int tanya_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    259,  304,   294,   66,    62,   293,    79,   322,  247,   186,      46};
+static const int reptile_clips[S_COUNT] =       {CLIP_ASSET_IDLE,  268,    259,  304,   294,   66,    63,   293,    76,   322,  247,   186,      50};
+static const int kai_clips[S_COUNT] =           {CLIP_ASSET_IDLE,  265,    259,  304,   294,   71,    62,   293,    81,   322,  247,   186,      45};
+static const int jarek_clips[S_COUNT] =         {CLIP_ASSET_IDLE,  267,    259,  304,   294,   65,    63,   293,    78,   322,  247,   186,      49};
+static const int jax_clips[S_COUNT] =           {CLIP_ASSET_IDLE,  265,    259,  304,   294,   66,    62,   293,    75,   322,  247,   186,      44};
+static const int cage_clips[S_COUNT] =          {CLIP_ASSET_IDLE,  267,    259,  304,   294,   71,    63,   293,    75,   322,  247,   186,      44};
+static const int goro_clips[S_COUNT] =          {CLIP_ASSET_IDLE,  590,    603,  602,   596,  598,   600,   593,   604,   595,  605,   581,     608};
+static const int kitana_clips[S_COUNT] =        {CLIP_ASSET_IDLE,  267,    259,  304,   294,   65,    63,   293,    78,   322,  247,   186,      46};
+static const int noob_saibot_clips[S_COUNT] =   {CLIP_ASSET_IDLE,  267,    259,  304,   294,   66,    62,   293,    78,   322,  247,   186,      49};
 // clang-format on
 
 /* First match wins. Crouch punch is an uppercut and crouch kick is a sweep,

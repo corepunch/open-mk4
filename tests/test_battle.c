@@ -59,6 +59,14 @@ static void check_roster(void) {
   check(human->clips != goro->clips, "Goro names clips from his own bank");
   check(roster_clip(human, S_IDLE, 77) == 77, "Idle reads the mesh idle clip");
   check(roster_clip(human, S_PUNCH, 0) == 294, "Scorpion punch clip");
+  check(roster_clip(human, S_KICK, 0) == 66, "Scorpion kick from the 0x4e5ca4 table");
+  check(roster_clip(roster_def(1), S_KICK, 0) == 71, "Raiden kick from the 0x4e5ca4 table");
+  check(roster_clip(human, S_BLOCK, 0) == 322 && roster_clip(goro, S_BLOCK, 0) == 595,
+      "Block reads slot 0x53ce30 or Goro's clip");
+  check(roster_clip(roster_def(16), S_VICTORY, 0) == roster_clip(roster_def(2), S_VICTORY, 0),
+      "Kitana reads Sonya's character entries");
+  check(roster_clip(roster_def(17), S_THROW, 0) == roster_clip(roster_def(7), S_THROW, 0),
+      "Noob Saibot reads Reiko's character entries");
   check(roster_clip(goro, S_PUNCH, 0) == 596, "Goro punch clip");
   check(human->states[S_PUNCH].damage == 7, "Punch damage row");
   check(human->states[S_SWEEP].flags & SF_LOW, "Sweep is a low");

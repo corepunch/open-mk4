@@ -92,15 +92,34 @@ including original roster names and the health bar at sprite 25. The renderer
 uses the long bar's top eight texture rows; the right player's bar is mirrored.
 `shared_g.geo` contains four texture pages for fight text and effects.
 
-The battle simulation uses native move rules. Its clip selections were checked
-visually for compatibility, and are not a reconstruction of the original FSM's
-complete per-character action mapping. Goro's separate action bank is retained.
-Move routines store an action code at player +0x74 and start a script through
-0x459490; script opcode 0x47 sets a clip, and 0x3c branches on a 16-entry
-character table. Action 0x10b plays the jab 294, with 295 on a repeated press.
-Action 0x109 starts with the uppercut 293. Clips 210..250 are started from the
-weapon routines at 0x4955c0..0x496d10 and hold a weapon grip. The punch and
-uppercut rows use 294 and 293. The other rows remain visual choices.
+The battle simulation uses native move rules and timings. Its clips follow the
+original move scripts below, one clip per state; the scripts' branching, combo
+strings and victim animations are not reproduced. Move routines store an action code at player +0x74 and start a script through
+0x459490. The VM fetches a word, advances, and dispatches its top byte through
+the handler table at 0x4e3988; a packed pointer (top byte 0) is a no-op. Op
+0x47 sets a clip and 0x3c indexes the 16-entry table that follows it by
+character id, reading Sonya's entry for Kitana (16) and Reiko's for Noob (17).
+Each fighter has its own clip table in `game/roster.c`:
+
+| State | Evidence | Clips |
+| --- | --- | --- |
+| Walk | forward table 0x53d388 (0x53d3c8 is the slower walk back) | 265..269 by fighter |
+| Crouch | action 0x2001 plays 259, then loops 258 | 259 |
+| Jump | action 0x2007 plays the full jump | 304 |
+| Punch | action 0x10b; 295 follows a repeated press | 294 |
+| Kick | action 0x100, character table 0x4e5ca4 | 65, 66 or 71 |
+| Sweep | action 0x10c, character table 0x4e679c | 62 or 63 |
+| Uppercut | action 0x109 | 293 |
+| Throw | character table 0x4de7a0; op 0x0e sets the victim, 0x0f the thrower | 75, 76, 78, 79 or 81 |
+| Block | action 0x2005 loads slot 0x53ce30, or 595 for Goro | 322 |
+| Hit | the 0x2005 reaction script starts with 247 | 247 |
+| Knockdown | action 0x4003 staggers with 311, then falls | 186 |
+| Victory | character table 0x4e5efc | 44..51 by fighter |
+
+Clips 210..250 are started from the weapon routines at 0x4955c0..0x496d10 and
+hold a weapon grip. Jax's throw entry runs Goro's 605, which cannot drive a
+15-channel rig, so Jax keeps 75. Goro's walk, block and throw (604) follow the
+same tables; his other rows remain visual choices from his bank.
 Battle placement keeps each frame's root-motion Y and drops root-motion X/Z.
 That Y channel is the ground plant: idle, crouch, hit, victory and a settled
 knockdown put the sole on Y=0 (positive Y is down) only while it is applied.
