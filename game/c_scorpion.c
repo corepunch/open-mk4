@@ -869,6 +869,7 @@ static void air_attack_tick(Battle *battle, Fighter *fighter) {
 static void start_air_attack(Battle *battle, Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
   fighter_start_move(battle, fighter, S_JUMP, &air_attacks[index].move);
+  fighter_upright(fighter);
   fighter->script = air_attack_tick;
   fighter->sample_override = 0;
   fighter->script_phase = combo ? AIR_COMBO : AIR_FLIGHT;
@@ -1525,4 +1526,4 @@ static void scorpion_pickup(Battle *battle, Fighter *fighter) {
   weapon_pickup(battle, fighter);
 }
 
-const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk};
+const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump};

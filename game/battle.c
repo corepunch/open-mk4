@@ -233,6 +233,10 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
   }
   dir = (int)held(fighter, BUTTON_RIGHT) - (int)held(fighter, BUTTON_LEFT);
   if (battle->phase == PHASE_FIGHT && held(fighter, BUTTON_UP) && grounded) {
+    if (def->jump != NULL) {
+      def->jump(battle, fighter);
+      return;
+    }
     /* Straight jump 0x46f7e0 (vy 0x30a3 up, gravity 0x28f). Holding a
      * direction approximates the flips with their 0xe14 speed. */
     fighter->body.vel[AXIS_Y] = -motion->jump_velocity;

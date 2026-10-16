@@ -24,5 +24,6 @@ extern const CharacterDef mk4_goro;
 extern const CharacterDef mk4_kitana;
 extern const CharacterDef mk4_noob_saibot;
 void mk4_walk(Battle *battle, Fighter *fighter);
+void mk4_jump(Battle *battle, Fighter *fighter);
 
 #endif

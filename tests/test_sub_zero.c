@@ -628,6 +628,49 @@ static void weapon_recovery(void) {
   check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
 }
 
+static void jumps(void) {
+  Battle battle = fight(0, 8.f);
+  Fighter *fighter = &battle.fighters[0];
+  battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_UP)}, {0}});
+  check(fighter->action == 0x2007 && fighter->sample_override == 0, "straight jump must open at sample zero");
+  advance(&battle, 3);
+  check(fighter->sample_override == 17 && fighter->buttons != NULL, "straight jump must hold sample 17 with air commands enabled");
+  while (fighter_airborne(fighter)) {
+    advance(&battle, 1);
+  }
+  check(fighter->action == 0x2008 && fighter->sample_override == 18, "straight jump must enter its landing continuation");
+  advance(&battle, 10);
+  check(fighter->state == S_IDLE && fighter->body.root_y == 0, "straight landing must restore control");
+
+  for (int back = 0; back < 2; ++back) {
+    battle = fight(0, 8.f);
+    Input input[2] = {{.held = BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(back ? BUTTON_LEFT : BUTTON_RIGHT)}, {0}};
+    battle_step(&battle, input);
+    check(fighter->action == (back ? 0x200a : 0x2009) && fighter_move(fighter)->clip == 301, "directional jump must select its own action and tuck clip");
+    check(fighter->body.gravity == 0x24d && fighter->buttons == NULL, "flip takeoff must use native gravity and delay air attacks");
+    advance(&battle, 6);
+    check(fighter->body.spin[AXIS_X] == (back ? -0x4ccc : 0x4ccc) && fighter->body.root_y == 0x3333, "flip must begin its signed rotation after six samples");
+    for (int i = 0; i < 100 && fighter->script_phase != 2; ++i) {
+      advance(&battle, 1);
+    }
+    check(fighter->script_phase == 2 && fighter->sample_override == 7 && fighter->body.spin[AXIS_X] == 0,
+        "falling flip must stop rotating and retract from sample seven");
+    advance(&battle, 100);
+    check(fighter->state == S_IDLE && fighter->body.root_y == 0 && fighter->body.angle[AXIS_X] == 0, "flip landing must restore body and control");
+  }
+  battle = fight(0, 8.f);
+  press(&battle, 0, BUTTON_BIT(BUTTON_UP));
+  advance(&battle, 4);
+  q16 velocity = fighter->body.vel[AXIS_Y];
+  battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_RIGHT)}, {0}});
+  check(fighter->action == 0x2009 && fighter->body.vel[AXIS_Y] == velocity + 0x24d,
+      "late direction must convert straight flight without restarting vertical motion");
+  advance(&battle, 6);
+  press(&battle, 0, BUTTON_BIT(BUTTON_HIGH_KICK));
+  check(fighter_move(fighter)->clip == 55 && fighter->body.spin[AXIS_X] == 0 && fighter->body.root_y == 0,
+      "diagonal air attack must replace flip playback and unwind its transform");
+}
+
 static void locomotion(void) {
   Battle battle = fight(0, 8.f);
   Fighter *fighter = &battle.fighters[0];
@@ -899,6 +942,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  jumps();
   locomotion();
   fatality_blends();
   weapon_recovery();

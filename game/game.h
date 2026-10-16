@@ -279,6 +279,7 @@ typedef struct CharacterDef {
   const FighterFn *enter; /* optional move_count callbacks; NULL entries use the default move */
   q16 ground;             /* retail standing group Y: the rig root's Y translation (soles at 0) */
   FighterFn walk;         /* game-owned ground locomotion; reads held direction/run */
+  FighterFn jump;         /* grounded jump entry; owns takeoff, flight and landing */
 } CharacterDef;
 
 enum {
@@ -504,6 +505,7 @@ float fighter_z(const Fighter *fighter);
 float fighter_height(const Fighter *fighter);
 bool fighter_airborne(const Fighter *fighter);
 void fighter_neutral(Fighter *fighter);
+void fighter_upright(Fighter *fighter);
 q16 fighter_axis(const Battle *battle, const Fighter *fighter, int axis);
 void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed);
 ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record);

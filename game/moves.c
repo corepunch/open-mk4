@@ -50,6 +50,16 @@ static const int default_action[S_COUNT] = {
 };
 // clang-format on
 
+/* 490720/490e30/4702b0: restore the model orientation and root offset
+ * when replacing a somersault with another air action. */
+void fighter_upright(Fighter *fighter) {
+  for (int i = 0; i < 3; ++i) {
+    fighter->body.angle[i] = fighter->body.spin[i] = 0;
+  }
+  fighter->body.pos[AXIS_Y] += fighter->body.root_y;
+  fighter->body.root_y = 0;
+}
+
 /* 0x46f650 / 0x48e080: return to neutral control. Grounded fighters are
  * snapped to the floor and stopped; combo counters and damage scaling reset. */
 void fighter_neutral(Fighter *fighter) {
@@ -58,11 +68,7 @@ void fighter_neutral(Fighter *fighter) {
   fighter->damage_scale = Q16_ONE;
   fighter->flags &= ~(unsigned)(FF_NEUTRAL_CLEAR | FF_REACTING);
   fighter->body.physics = NULL;
-  for (int i = 0; i < 3; ++i) {
-    fighter->body.angle[i] = fighter->body.spin[i] = 0;
-  }
-  fighter->body.pos[AXIS_Y] += fighter->body.root_y;
-  fighter->body.root_y = 0;
+  fighter_upright(fighter);
   if (!fighter_airborne(fighter)) {
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
     for (int i = 0; i < 3; ++i) {
