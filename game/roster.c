@@ -4,17 +4,23 @@
 /* Timings are one table. Human fighters read clip ids from these rows.
  * Goro points at the same rows and overrides the clip ids; his mesh uses
  * a separate 21-channel bank. Idle is CLIP_ASSET_IDLE because each mesh
- * already carries its own idle clip. */
+ * already carries its own idle clip.
+ *
+ * Punch and uppercut come from the original move routines, which store an
+ * action code at player +0x74 and start a move script. Action 0x10b plays
+ * 294 (a complete jab; a repeated press continues into 295). Action 0x109
+ * starts with 293. Clips 210..250 belong to the weapon routines and hold
+ * a weapon grip, so they do not suit unarmed attacks. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const StateDef mk4_states[S_COUNT] = {
   [S_IDLE] = {CLIP_ASSET_IDLE, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
   [S_WALK] = {267, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
   [S_CROUCH] = {219, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
   [S_JUMP] = {301, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
-  [S_PUNCH] = {216, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK},
+  [S_PUNCH] = {294, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK},
   [S_KICK] = {65, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK},
   [S_SWEEP] = {101, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH},
-  [S_UPPERCUT] = {212, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH},
+  [S_UPPERCUT] = {293, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH},
   [S_THROW] = {23, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE},
   [S_BLOCK] = {251, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
   [S_HIT] = {247, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION},

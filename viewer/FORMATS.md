@@ -95,6 +95,12 @@ uses the long bar's top eight texture rows; the right player's bar is mirrored.
 The battle simulation uses native move rules. Its clip selections were checked
 visually for compatibility, and are not a reconstruction of the original FSM's
 complete per-character action mapping. Goro's separate action bank is retained.
+Move routines store an action code at player +0x74 and start a script through
+0x459490; script opcode 0x47 sets a clip, and 0x3c branches on a 16-entry
+character table. Action 0x10b plays the jab 294, with 295 on a repeated press.
+Action 0x109 starts with the uppercut 293. Clips 210..250 are started from the
+weapon routines at 0x4955c0..0x496d10 and hold a weapon grip. The punch and
+uppercut rows use 294 and 293. The other rows remain visual choices.
 Battle placement keeps each frame's root-motion Y and drops root-motion X/Z.
 That Y channel is the ground plant: idle, crouch, hit, victory and a settled
 knockdown put the sole on Y=0 (positive Y is down) only while it is applied.
