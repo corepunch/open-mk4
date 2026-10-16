@@ -1,7 +1,9 @@
 # MK4 package tool, viewer, and game
 
-The local Git repository uses `main`. Research checkouts are pinned submodules;
-restore them after cloning with `git submodule update --init --recursive`.
+The local Git repository uses `main`. `reference/MortalKombat.Tools` is a pinned
+submodule; restore it after cloning with `git submodule update --init`.
+Clone [mk4decomp](https://github.com/nathan-casabieille/mk4decomp) into
+`reference/mk4decomp` when you need that research tree. `reference/` is ignored.
 Supply the original game files separately in `MK4/`; game binaries, extracted
 assets, generated images, and build outputs are ignored by Git.
 

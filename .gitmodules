@@ -1,6 +1,3 @@
 [submodule "reference/MortalKombat.Tools"]
 	path = reference/MortalKombat.Tools
 	url = https://github.com/ermaccer/MortalKombat.Tools.git
-[submodule "reference/mk4decomp"]
-	path = reference/mk4decomp
-	url = https://github.com/nathan-casabieille/mk4decomp.git
