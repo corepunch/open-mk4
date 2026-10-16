@@ -83,6 +83,17 @@ class ScriptTests(unittest.TestCase):
         self.assertEqual([row['va'] for row in spear[:3]], ['0x4e9d00', '0x4e9d04', '0x4e9d08'])
         self.assertEqual(spear[0]['native_target'], '0x40a470')
 
+    def test_reaction_and_throw_paths(self):
+        for root in (0x4e89a0, 0x4e8ea8, 0x4e9308, 0x4e9568, 0x4e93a8,
+                     0x4e8ab8, 0x4e9260, 0x4e9238, 0x4de328, 0x4e93d8):
+            rows = script_program(self.image, root)['instructions']
+            self.assertFalse(any('unresearched' in r['operation'] for r in rows), hex(root))
+            self.assertIn(rows[-1]['opcode'], ('0x32', '0x3f'))
+        rows = script_program(self.image, 0x4e93a8)['instructions']
+        motion = next(r for r in rows if r['opcode'] == '0x65')
+        self.assertEqual(motion['operands'], ['0xffffe667', '0x0', '0x0'])
+        self.assertEqual(rows[rows.index(motion) + 1]['va'], '0x4e93c0')
+
     def test_motion_and_continuation_boundaries(self):
         address = 0x570000
         struct.pack_into('<6I', self.image.memory, address - 0x400000,

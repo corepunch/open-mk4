@@ -42,6 +42,7 @@ SCRIPT_OPS = {
     0x08: ('clip descriptor playback', 1),
     0x09: ('clip descriptor operation', 1),
     0x0c: ('bind clip, submit inline sample and advance cursor', 1),
+    0x0d: ('native playback helper', 0),
     0x0e: ('open victim clip at sample 0', 1),
     0x0f: ('open clip at sample', 1),
     0x10: ('advance self and victim poses for count', 0),
@@ -52,6 +53,7 @@ SCRIPT_OPS = {
     0x1e: ('native helper', 0),
     0x1f: ('set attack selector', 1),
     0x20: ('sound event', 0),
+    0x22: ('install task callback 0x457cb0 at +0x4c', 0),
     0x24: ('release attack bookkeeping', 0),
     0x25: ('native helper', 0),
     0x26: ('indexed sound helper with inline argument', 0),
@@ -62,6 +64,8 @@ SCRIPT_OPS = {
     0x2b: ('sound event', 0),
     0x2c: ('native helper', 0),
     0x2d: ('set action 0x1007', 0),
+    0x2e: ('set fighter no-guard flag', 0),
+    0x2f: ('branch if airborne', 1),
     0x30: ('return through tagged continuation stack', 0),
     0x32: ('native tail call', 1),
     0x33: ('script jump', 1),
@@ -87,6 +91,7 @@ SCRIPT_OPS = {
     0x4b: ('native playback helper', 0),
     0x4c: ('native playback helper', 0),
     0x4d: ('advance twice per visit to sample', 0),
+    0x4e: ('save active fighter in reaction context', 0),
     0x4f: ('native helper', 0),
     0x51: ('contact query B with inline selector', 0),
     0x52: ('contact query A with inline selector', 0),
@@ -101,8 +106,10 @@ SCRIPT_OPS = {
     0x61: ('clear fighter busy flag', 0),
     0x62: ('indexed native helper with inline argument', 0),
     0x63: ('health subtraction with Q16 operand', 1),
+    0x65: ('motion via native 0x490460, vertical velocity and gravity', 3),
     0x6a: ('native helper', 0),
     0x6b: ('sound helper', 0),
+    0x6e: ('disarm opponent through native helper', 0),
     0x6d: ('native helper with word operand', 1),
 }
 
@@ -113,6 +120,7 @@ SCRIPT_OPS = {
 # 0x5a instead calls word-fetch 0x45bff0 once, negates it, then calls 0x490390.
 # The transitive effects of 0x26/0x2a/0x62 remain native research dependencies.
 INLINE_NATIVE_OPS = {
+    0x2e: 0x490140, 0x6e: 0x483ae0,
     0x26: 0x48a100, 0x2a: 0x457b50, 0x51: 0x48d3f0,
     0x52: 0x48d3d0, 0x5e: 0x48d430, 0x61: 0x490330, 0x62: 0x40a470,
 }
@@ -175,7 +183,7 @@ def script_program(image, entry):
             if op == 0x40:
                 row.update(task_type=operands[0], callback=hex(operands[1]))
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[1])))
-            if operation in ('native helper', 'native playback helper', 'native helper with word operand') or op in (0x58, 0x59, 0x5f):
+            if operation in ('native helper', 'native playback helper', 'native helper with word operand') or op in (0x22, 0x4e, 0x58, 0x59, 0x5f, 0x65):
                 open_edges.append(dict(source=hex(pc), kind='native helper semantics',
                                        target=row['handler']))
             if op == 0x30:
@@ -183,7 +191,7 @@ def script_program(image, entry):
             if op == 0x37:
                 row['wait_if_clear'] = word & 0xfff
                 row['wait_if_set'] = (word >> 12) & 0xfff
-            if op == 0x45:
+            if op in (0x2f, 0x45):
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
             if op in (0x36, 0x55):
