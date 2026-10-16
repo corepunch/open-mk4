@@ -87,8 +87,12 @@ post-processing.
 
 ## Character script ports
 
-Use `tools/disassemble_retail.py` and the existing
-`build/retail-disassembly/` bundle as the primary source for character ports.
+Start character research with `python3 tools/disassemble_retail.py --move NAME`
+(or `--list-moves`), then follow its bounded `--script`, `--native`, and
+`--attack` queries. See `docs/script-decoder.md`. Use these static queries and
+the existing `build/retail-disassembly/` bundle as the primary source for
+character ports. Full bundle generation requires explicit `--bundle`; do not
+regenerate bulk dumps for routine move research.
 Translate script control flow into procedural C in `game/c_<character>.c`;
 consult native listings and the included reference source for called helpers.
 Preserve move timing, command gates, branches, damage and balance intent while

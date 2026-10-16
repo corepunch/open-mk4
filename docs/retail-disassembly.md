@@ -1,6 +1,15 @@
 # Agent-readable retail disassembly
 
-Generate the research bundle from the supplied files:
+For character ports, start with the lightweight
+[script and move queries](script-decoder.md). They print bounded reports and
+need neither a generated bundle nor retail execution:
+
+```sh
+python3 tools/disassemble_retail.py --move spear
+python3 tools/disassemble_retail.py --script 0x4e9d00
+```
+
+Explicitly generate the legacy research bundle only when needed:
 
 ```sh
 python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly
@@ -14,7 +23,7 @@ directory; the generator and its regression tests are committed.
 Start with `build/retail-disassembly/README.md`. The bundle contains:
 
 - `scorpion.md`: both players' command records, predicates, native move roots
-  and current runtime coverage.
+  and scope limitations.
 - `scripts/*.md`: named Scorpion scripts and additional constant script entries
   found in native calls, with opcode names, inline fields, following words,
   clips, starts, stored counts, branches, native handlers and task callbacks.

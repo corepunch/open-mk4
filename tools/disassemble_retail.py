@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Create an address-indexed, agent-readable disassembly of the supplied retail EXE.
+"""Inspect supplied retail move scripts, contacts and exact-entry native code.
 
-Requires Capstone 5 for x86 decoding. Output is research material, not recovered
-source and not a gameplay port. No code is executed. Run from the workspace root:
+Queries print bounded reports; full bundle generation is explicit. Native
+queries and bundles require Capstone 5. No retail code is executed. Examples:
   python3 tools/disassemble_retail.py --script 0x4e6d08
   python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly
 """
@@ -656,7 +656,7 @@ class Disassembly:
 
 
 def main():
-    from retail_query import address, contact_text, native_text, script_text
+    from retail_query import address, contact_text, native_text, script_text, move_text, move_list_text
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exe', default='MK4/MK-4.EXE')
     parser.add_argument('--archive', default='MK4/FILESYS.DAT', help='Used only for --bundle')
@@ -664,7 +664,9 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--script', metavar='ADDRESS', help='Decode one script; addresses are hexadecimal')
     mode.add_argument('--native', metavar='ADDRESS', help='Inspect one exact-entry native graph (requires Capstone)')
-    mode.add_argument('--attack', nargs=2, metavar=('TABLE', 'SELECTOR'), help='Inspect a contact record: A or B, decimal/0x selector')
+    mode.add_argument('--attack', nargs=2, metavar=('TABLE', 'SELECTOR'), help='Inspect a contact record: A/B/weapon + decimal/0x selector, or record + 0x address')
+    mode.add_argument('--move', metavar='NAME', help='Compact Scorpion move page; use --list-moves for names')
+    mode.add_argument('--list-moves', action='store_true', help='List the curated Scorpion move roots')
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
     parser.add_argument('--limit', type=int, default=80, help='Query instruction limit, 1..512 (default 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
@@ -672,7 +674,7 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.limit <= 512:
         parser.error('--limit must be between 1 and 512')
-    if not any((args.script, args.native, args.attack, args.bundle)):
+    if not any((args.script, args.native, args.attack, args.move, args.list_moves, args.bundle)):
         parser.print_help()
         return
     try:
@@ -682,13 +684,17 @@ def main():
             print('Wrote %d scripts and %d native entry graphs to %s' %
                   (len(result['scripts']), len(result['functions']), output / 'README.md'))
             return
-        if args.native:
+        if args.list_moves:
+            report = move_list_text()
+        elif args.native:
             # x86 entries are byte-aligned, unlike VM/data words.
             entry = int(args.native, 16)
             report = native_text(Disassembly(args.exe), entry, args.limit, args.raw)
         else:
             image = RetailImage(args.exe)
-            if args.script:
+            if args.move:
+                report = move_text(image, args.move, args.limit, args.raw)
+            elif args.script:
                 report = script_text(image, address(args.script), args.limit, args.raw)
             else:
                 report = contact_text(image, args.attack[0], int(args.attack[1], 0))

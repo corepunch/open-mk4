@@ -95,6 +95,7 @@ SCRIPT_OPS = {
     0x59: ('native motion parameter block', 4),
     0x5a: ('set horizontal speed to negated Q16 operand', 1),
     0x5b: ('native helper', 0),
+    0x5e: ('weapon contact query with inline selector', 0),
     0x5f: ('horizontal motion operand', 1),
     0x60: ('native helper', 0),
     0x61: ('clear fighter busy flag', 0),
@@ -113,7 +114,7 @@ SCRIPT_OPS = {
 # The transitive effects of 0x26/0x2a/0x62 remain native research dependencies.
 INLINE_NATIVE_OPS = {
     0x26: 0x48a100, 0x2a: 0x457b50, 0x51: 0x48d3f0,
-    0x52: 0x48d3d0, 0x61: 0x490330, 0x62: 0x40a470,
+    0x52: 0x48d3d0, 0x5e: 0x48d430, 0x61: 0x490330, 0x62: 0x40a470,
 }
 
 
@@ -163,8 +164,10 @@ def script_program(image, entry):
                 row['argument'] = word & 255 if op != 0x61 else None
                 open_edges.append(dict(source=hex(pc), kind='native helper dependency',
                                        target=row['native_target']))
-            if op in (0x51, 0x52):
-                row['contact'] = attack_record(image, 0x53d2b8 if op == 0x51 else 0x53d268, word & 255)
+            if op in (0x51, 0x52, 0x5e):
+                table, label = {0x51: (0x53d2b8, 'B'), 0x52: (0x53d268, 'A'), 0x5e: (0x53d0c0, 'weapon')}[op]
+                row['contact_table'] = label
+                row['contact'] = attack_record(image, table, word & 255)
             if op == 0x5a:
                 row['speed_q16'] = signed_word((-operands[0]) & 0xffffffff)
                 row['native_target'] = '0x490390'
@@ -245,19 +248,18 @@ def commands(image):
     return result
 
 
-def attack_record(image, table, selector):
-    va = image.word(table + selector * 4) * 4
+def attack_record_at(image, va):
     words = [image.word(va + k * 4) for k in range(6)]
-
-    def signed(value):
-        return value if value < 0x80000000 else value - 0x100000000
-
-    return dict(table=hex(table), selector=selector, va=hex(va),
-                raw_words=[hex(word) for word in words],
-                rectangle_q16=[signed(word) for word in words[:4]],
+    return dict(va=hex(va), raw_words=[hex(word) for word in words],
+                rectangle_q16=[signed_word(word) for word in words[:4]],
                 reaction=words[4] & 255, alternate_reaction=(words[4] >> 8) & 255,
                 blocked_reaction=(words[4] >> 16) & 255, flags=words[4] >> 24,
                 damage_q16=words[5])
+
+
+def attack_record(image, table, selector):
+    va = image.word(table + selector * 4) * 4
+    return dict(table=hex(table), selector=selector, **attack_record_at(image, va))
 
 
 def inventory(image):
@@ -282,9 +284,7 @@ def inventory(image):
                 move_list_asset='geogfx/sc_m_geo.geo',
                 command_records=commands(image),
                 entry_points=[dict(name=name, native=hex(native), script=hex(script) if script else None,
-                                   implementation=('playback/branch fixtures; combat still approximate'
-                                                   if name in ('jab', 'high_kick', 'sweep', 'uppercut')
-                                                   else 'not implemented'))
+                                   implementation='not assessed by static decoder')
                               for name, native, script in roots],
                 special_programs={name: script_program(image, script) for name, script in [
                     ('spear_entry', 0x4ed448), ('spear_return', 0x4ed4a8),
@@ -292,11 +292,10 @@ def inventory(image):
                     ('teleport_landing', 0x4e8818), ('weapon_draw', 0x4e62c0),
                     ('weapon_draw_return', 0x4e62d8)]},
                 kick_contacts=[attack_record(image, 0x53d2b8, i) for i in (1, 2)],
-                coverage=dict(command_records='extracted; both players checked',
-                              native_predicates='identified; not yet ported',
-                              combos='jab repeat playback ported and checked; other combo graphs open',
-                              weapons='draw command identified; weapon-specific graph not closed',
-                              fatalities='four command targets identified; scene graphs not closed'))
+                coverage=dict(scope='Selected Scorpion roots; not exhaustive character coverage',
+                              instruction_decode='Per-script unknown stops and native dependencies are explicit',
+                              native_semantics='Not established by instruction decoding',
+                              implementation='Not assessed; see docs/character-script-port.md'))
 
 
 def main():

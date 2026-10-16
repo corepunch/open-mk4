@@ -115,6 +115,36 @@ class QueryTests(unittest.TestCase):
         self.assertIn('bit0 clear=5 ticks; set=8 ticks', text)
         self.assertIn('damage 11%', contact_text(image, 'B', 6))
 
+    def test_compact_move_pages_and_honest_scope(self):
+        from retail_query import move_text, move_list_text, contact_text
+        from scorpion_catalog import MOVES
+        from scorpion_moves import inventory
+        image = RetailImage('MK4/MK-4.EXE')
+        spear = move_text(image, 'spear')
+        self.assertIn('B,B + low_punch; window=27', spear)
+        self.assertIn('predicate `0x45ea60`', spear)
+        self.assertIn('victim hit', spear)
+        self.assertIn('70 -> `--native 0x485fb0`', spear)
+        self.assertIn('projectile task', spear)
+        self.assertIn('rows omitted from preview', spear)
+        self.assertIn('HP=00000000; LP=004712d0', move_text(image, 'air_hp'))
+        self.assertIn('scene entry', move_text(image, 'fatality_1'))
+        sword = move_text(image, 'sword_back_lp')
+        self.assertIn('Unknown 0x42', sword)
+        self.assertIn('Path stopped', sword)
+        record = contact_text(image, 'weapon', 2)
+        self.assertIn('record 0x4eb9c0', record)
+        self.assertIn('damage 20%', record)
+        self.assertIn('record 0x4ebeb8', contact_text(image, 'record', 0x4ebeb8))
+        for name in MOVES:
+            report = move_text(image, name)
+            self.assertLess(len(report), 16000, name)
+            self.assertNotIn('failed:', report, name)
+            self.assertIn('counts cover only the selected roots', report)
+            self.assertIn(name, move_list_text())
+        self.assertEqual(inventory(image)['coverage']['implementation'],
+                         'Not assessed; see docs/character-script-port.md')
+
     def test_query_cli_writes_only_requested_file(self):
         root = Path(__file__).resolve().parents[1]
         tool = str(root / 'tools/disassemble_retail.py')
@@ -127,6 +157,14 @@ class QueryTests(unittest.TestCase):
             subprocess.run([*command, '--output', 'spear.md'], cwd=directory, capture_output=True, check=True)
             self.assertEqual([p.name for p in Path(directory).iterdir()], ['spear.md'])
             # Supply a real EXE to reach address validation rather than a missing-file error.
+            page = subprocess.run([sys.executable, tool, '--exe', str(root / 'MK4/MK-4.EXE'),
+                                   '--archive', 'missing.dat', '--move', 'spear'],
+                                  cwd=directory, capture_output=True, text=True, check=True)
+            self.assertIn('# Scorpion: spear', page.stdout)
+            unknown = subprocess.run([sys.executable, tool, '--exe', str(root / 'MK4/MK-4.EXE'), '--move', 'nonsense'],
+                                     cwd=directory, capture_output=True, text=True)
+            self.assertNotEqual(unknown.returncode, 0)
+            self.assertIn('--list-moves', unknown.stderr)
             bad = subprocess.run([*command[:-1], '4e9d01'], cwd=directory, capture_output=True, text=True)
             self.assertNotEqual(bad.returncode, 0)
             self.assertIn('aligned image address', bad.stderr)

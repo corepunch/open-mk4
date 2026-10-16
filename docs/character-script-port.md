@@ -1,6 +1,10 @@
 # Porting a character's scripts to C
 
-Use the existing `build/retail-disassembly/` bundle first. Regenerate with
+Start with a compact move query:
+`python3 tools/disassemble_retail.py --move spear` (or `--list-moves`).
+Follow its `--script`, `--native` and `--attack` queries for details; see
+[script-decoder.md](script-decoder.md). Use the existing
+`build/retail-disassembly/` bundle for broader navigation. Regenerate with
 `python3 tools/disassemble_retail.py --bundle --output build/retail-disassembly` only
 when its inputs or decoder change. This is static decoding, not retail execution.
 
