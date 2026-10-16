@@ -520,6 +520,10 @@ static Battle finish_window(int winner, float distance, int arena) {
   battle_damage(&battle, &battle.fighters[1 - winner], Q16_ONE);
   advance_ticks(&battle, 1, NULL);
   check(battle.phase == PHASE_FINISH, "Deciding KO must prepare finish window");
+  for (int i = 0; i < 180 && battle.finish_waiting; ++i) {
+    advance_ticks(&battle, 1, NULL);
+  }
+  check(!battle.finish_waiting, "Defeat recovery must reach the finish controller");
   battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * .5f * Q16_ONE);
   battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
   return battle;
@@ -802,6 +806,9 @@ int main(void) {
     battle.fighters[1].health = 0xa3d;
     do_attack(&battle, S_PUNCH, false, false);
     check(battle.phase == PHASE_FINISH && battle.fighters[0].wins == 2, "Final KO must open the finish window");
+    for (int i = 0; i < 180 && battle.finish_waiting; ++i) {
+      advance_ticks(&battle, 1, NULL);
+    }
     check(battle_can_finish(&battle, &battle.fighters[0]) && !battle_can_finish(&battle, &battle.fighters[1]), "Only winner may finish");
     advance_ticks(&battle, 300, NULL);
     check(battle.phase == PHASE_MATCH_OVER, "Match result should wait for rematch");

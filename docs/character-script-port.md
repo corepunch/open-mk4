@@ -91,6 +91,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | RUN double tap | `45e820`, `469250/2e0/450`, descriptor `53ce18` | Previous RUN press within 8 ticks; 80-tick cooldown; clip 300; Down reverses playback/lateral direction; air victim scales speed to 30%; priority over pickup |
 | Fatality I | `4e0498[4] -> 445100`, `4e0368..3e8`, victim `445380`, `4e03f0..438`, `445510` | Owner 385, victim 389/387 entry blends; slow victim blends to 46/49/50; paired 1.45-unit alignment; head attachment and continuing owner loop 96–140 |
 | Fatality II | `4dfe90[4] -> 41b3a0`, `4d2c10/78/a0/c8`, victim `4d2bf0`, `41b450/610` | Owner 552 breath loops, independent victim 206; wait 20, slide eight samples, calculate delay from current range; uppercut/shatter, eight cursor passes, wait 60, victory |
+| Finish window | `48fc20`, `46a520/580`, `421d40/421ef0`, `45e5e0` | Preserve defeat recovery until dizzy; 60-tick grace clears contact latch, then 240 ticks or first contact; no new press on expiry; an already accepted entry may start on that tick |
 | Stage finishers | Fan `43d040`, `4e0118..1a8`; spikes `467e70`, `4e6950`, reaction 175 | Sub-Zero-specific commands select shared scenes; retain 31 fan repetitions and spike wait/impaled position |
 
 ## Command records
@@ -122,7 +123,7 @@ directions are outside its mask. Fatality I requires HP+BLK+RUN and rejects
 Up/HK/LP/LK; it accepts the direction chord independently of that mask.
 Fatality I/fan/spikes require distance <=1. Fatality II accepts 1.8–3 units.
 Fan requires arena 8, spikes arena 0. Finishers require the deciding-KO winner
-and victim action `1009`. Timeout does not open that window.
+and victim action `1009`. The command matcher checks grounded entry on the press; do not reject the queued continuation merely because physics advanced before it executes. Hold block while entering repeated Up directions to suppress jumps, then release it for the final attack. Timeout does not open that window.
 
 ## Verification and scope
 
@@ -140,8 +141,7 @@ linear camera transitions between recovered offsets, posed character meshes
 for detached pieces, and a single weapon settling arc. Retail camera splines,
 gore-cap/interior geometry, secondary ice decoration, cosmetic freeze shake,
 CPU probability policies are not yet reproduced. Walk/run speeds, gait selection and energy now follow their native controllers.
-Human jumps now use the shared native-phase translation along the pair axis. The match's finish-entry window remains
-five seconds. These choices are not evidence of exact retail audiovisual or
+Human jumps now use the shared native-phase translation along the pair axis. The finish clock follows the recovered grace/contact phases after defeat recovery. These choices are not evidence of exact retail audiovisual or
 scheduler identity, and must not justify changing damage or command branches.
 
 Sound formats are checked against the local executable, including corrections

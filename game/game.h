@@ -476,6 +476,7 @@ struct Battle {
   int sound_count;
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
+  bool finish_waiting; /* final KO recovery must reach the dizzy controller before entry */
   int arena, finisher; /* stage id and completed/active character finisher id */
   uint64_t ticks;
   q16 arena_radius;

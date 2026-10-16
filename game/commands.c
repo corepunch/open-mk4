@@ -108,7 +108,7 @@ void fighter_press(Battle *battle, Fighter *fighter, Button button) {
   const CommandDef *command = match_command(battle, fighter, button);
   if (command != NULL) {
     fighter_interrupt(fighter, command->enter);
-  } else if (battle->phase == PHASE_FIGHT && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
+  } else if ((battle->phase == PHASE_FIGHT || battle_can_finish(battle, fighter)) && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
     fighter->buttons->press[button](battle, fighter);
   }
   if (button == BUTTON_RUN) {

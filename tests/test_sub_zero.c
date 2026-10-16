@@ -749,9 +749,47 @@ static Battle sub_zero_finish(int player, q16 distance, int arena) {
   battle_damage(&battle, &battle.fighters[1 - player], Q16_ONE);
   advance(&battle, 1);
   check(battle.phase == PHASE_FINISH && battle.winner == player, "Sub-Zero deciding KO must open finish window");
+  for (int i = 0; i < 180 && battle.finish_waiting; ++i) {
+    advance(&battle, 1);
+  }
+  check(!battle.finish_waiting, "Defeat recovery must reach the finish controller");
   battle.fighters[0].body.pos[AXIS_X] = -distance / 2;
   battle.fighters[1].body.pos[AXIS_X] = distance - distance / 2;
   return battle;
+}
+
+static void finish_clock(void) {
+  Battle battle = sub_zero_finish(0, 0xcccc, 0);
+  battle.phase_ticks = 59;
+  battle.contacted = true;
+  advance(&battle, 1);
+  check(battle.phase == PHASE_FINISH && !battle.contacted, "finish grace must clear the old contact latch after 60 ticks");
+  press(&battle, 0, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+  advance(&battle, 20);
+  check(battle.phase == PHASE_MATCH_OVER, "a normal hit after the grace period must close the finish window");
+
+  battle = sub_zero_finish(0, 0xcccc, 0);
+  battle.phase_ticks = 299;
+  battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+  check(battle.phase == PHASE_MATCH_OVER && battle.fighters[0].pending == NULL, "a new press on expiry must not extend the finish clock");
+  battle = sub_zero_finish(0, 0xcccc, 0);
+  battle.phase_ticks = 299;
+  fighter_interrupt(&battle.fighters[0], roster_def(4)->controls->commands[0].enter);
+  advance(&battle, 1);
+  check(battle.phase == PHASE_FATALITY, "a finisher accepted before expiry must execute on the next tick");
+
+  battle = fight(0, 3.f);
+  battle.fighters[0].wins = 1;
+  battle_damage(&battle, &battle.fighters[1], Q16_ONE);
+  battle_react(&battle, &battle.fighters[1], 34);
+  advance(&battle, 1);
+  check(battle.finish_waiting && fighter_airborne(&battle.fighters[1]) && !battle_can_finish(&battle, &battle.fighters[0]),
+      "deciding uppercut KO must preserve airborne defeat recovery");
+  for (int i = 0; i < 180 && battle.finish_waiting; ++i) {
+    advance(&battle, 1);
+  }
+  check(!battle.finish_waiting && battle.phase_ticks == 0 && battle.fighters[1].action == 0x1009,
+      "finish clock must start when the defeated controller becomes ready");
 }
 
 static void sub_zero_finish_command(Battle *battle, int player, int id, unsigned extra, int window) {
@@ -774,7 +812,7 @@ static void sub_zero_finish_command(Battle *battle, int player, int id, unsigned
     attack = BUTTON_LOW_KICK;
   }
   for (int i = 0; i < count; ++i) {
-    press(battle, player, BUTTON_BIT(tokens[i]));
+    press(battle, player, BUTTON_BIT(tokens[i]) | (tokens[i] == BUTTON_UP ? BUTTON_BIT(BUTTON_BLOCK) : 0));
     advance(battle, 2);
   }
   if (window > count * 4) {
@@ -972,6 +1010,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  finish_clock();
   walls();
   jumps();
   locomotion();
