@@ -633,7 +633,7 @@ static void jumps(void) {
   Fighter *fighter = &battle.fighters[0];
   battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_UP)}, {0}});
   check(fighter->action == 0x2007 && fighter->sample_override == 0, "straight jump must open at sample zero");
-  advance(&battle, 3);
+  advance(&battle, 19);
   check(fighter->sample_override == 17 && fighter->buttons != NULL, "straight jump must hold sample 17 with air commands enabled");
   while (fighter_airborne(fighter)) {
     advance(&battle, 1);
@@ -660,7 +660,7 @@ static void jumps(void) {
   }
   battle = fight(0, 8.f);
   press(&battle, 0, BUTTON_BIT(BUTTON_UP));
-  advance(&battle, 4);
+  advance(&battle, 1);
   q16 velocity = fighter->body.vel[AXIS_Y];
   battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_RIGHT)}, {0}});
   check(fighter->action == 0x2009 && fighter->body.vel[AXIS_Y] == velocity + 0x24d,

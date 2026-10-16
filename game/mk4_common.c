@@ -131,6 +131,11 @@ static const MoveDef jump_landing = {.clip = 304, .first = 18, .last = 27, .flag
 static void jump_tick(Battle *battle, Fighter *fighter);
 
 static void jump_land_tick(Battle *battle, Fighter *fighter) {
+  unsigned directions = fighter->held & (BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(BUTTON_RIGHT));
+  if (directions != 0) {
+    fighter_enter_state(battle, fighter, S_IDLE);
+    return;
+  }
   fighter->sample_override = mini(27, 18 + fighter->ticks);
   if (fighter->ticks >= 10) {
     fighter_enter_state(battle, fighter, S_IDLE);
@@ -139,13 +144,11 @@ static void jump_land_tick(Battle *battle, Fighter *fighter) {
 
 static void jump_land(Battle *battle, Fighter *fighter) {
   bool straight = fighter->current_move == &jump_straight;
-  fighter_neutral(fighter);
   if (straight) {
     fighter_start_move(battle, fighter, S_JUMP, &jump_landing);
     fighter->script = jump_land_tick;
     fighter->sample_override = 18;
-  } else {
-    fighter_enter_state(battle, fighter, S_IDLE);
+    fighter_enter_stance(fighter, STANCE_STANDING);
   }
 }
 
@@ -155,6 +158,7 @@ static void start_flip(Battle *battle, Fighter *fighter, int direction, bool fro
   fighter->script = jump_tick;
   fighter->sample_override = 0;
   fighter->buttons = NULL;
+  fighter->script_timer = forward || from_straight ? 0x4ccc : -0x4ccc;
   fighter_set_speed(battle, fighter, forward ? 0xe14 : -0xe14);
   if (!from_straight) {
     fighter->body.vel[AXIS_Y] = forward ? -0x30a3 : -0x2e14;
@@ -169,32 +173,37 @@ static void jump_tick(Battle *battle, Fighter *fighter) {
   int tick = fighter->ticks;
   if (fighter->current_move == &jump_straight) {
     int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
-    if (direction != 0 && fighter->human) {
+    if (direction != 0 && fighter->human && tick <= 3) {
       start_flip(battle, fighter, direction, true);
       return;
     }
-    fighter->sample_override = tick < 3 ? tick : 17;
+    fighter->sample_override = tick < 3 ? tick : mini(17, tick - 1);
     return;
   }
   if (fighter->script_phase == 0) {
-    fighter->sample_override = mini(5, tick);
+    fighter->sample_override = mini(8, tick);
     if (tick == 2) {
       fighter_enter_stance(fighter, STANCE_JUMP);
     }
     if (tick >= 6) {
-      body->spin[AXIS_X] = fighter->action == 0x2009 ? 0x4ccc : -0x4ccc;
+      body->spin[AXIS_X] = fighter->script_timer;
       body->root_y += 0x3333;
       body->pos[AXIS_Y] -= 0x3333;
       fighter->script_phase = 1;
     }
   } else if (fighter->script_phase == 1 && body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] >= -0x24ccc) {
     body->angle[AXIS_X] = body->spin[AXIS_X] = 0;
-    fighter_set_speed(battle, fighter, 0);
     fighter->script_phase = 2;
     fighter->script_timer = 7;
     fighter->sample_override = 7;
-  } else if (fighter->script_phase == 2 && --fighter->script_timer > 0) {
-    fighter->sample_override--;
+    fighter->buttons = NULL;
+  } else if (fighter->script_phase == 2) {
+    if (fighter->script_timer > 0 && --fighter->script_timer > 0) {
+      fighter->sample_override--;
+    }
+    if (fighter->script_timer == 0 && body->gravity == 0) {
+      fighter_enter_state(battle, fighter, S_IDLE);
+    }
   }
 }
 

@@ -338,8 +338,10 @@ void battle_world(Battle *battle) {
       body->physics(battle, fighter);
     if (body->gravity != 0) {
       body->vel[AXIS_Y] += body->gravity;
-      if (body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] + body->vel[AXIS_Y] >= body->ground) {
+      if (body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] + body->root_y + body->vel[AXIS_Y] >= body->ground) {
         memset(body->vel, 0, sizeof body->vel);
+        memset(body->spin, 0, sizeof body->spin);
+        body->root_y = 0;
         body->gravity = 0;
         body->pos[AXIS_Y] = body->ground;
         FighterFn land = body->on_land;
