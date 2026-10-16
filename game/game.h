@@ -77,30 +77,30 @@ typedef enum ShellCommand {
 } ShellCommand;
 
 typedef enum StateId {
-  STATE_IDLE,
-  STATE_WALK,
-  STATE_CROUCH,
-  STATE_JUMP,
-  STATE_PUNCH,
-  STATE_KICK,
-  STATE_SWEEP,
-  STATE_UPPERCUT,
-  STATE_THROW,
-  STATE_BLOCK,
-  STATE_HIT,
-  STATE_KNOCKDOWN,
-  STATE_VICTORY,
-  STATE_COUNT
+  S_IDLE,
+  S_WALK,
+  S_CROUCH,
+  S_JUMP,
+  S_PUNCH,
+  S_KICK,
+  S_SWEEP,
+  S_UPPERCUT,
+  S_THROW,
+  S_BLOCK,
+  S_HIT,
+  S_KNOCKDOWN,
+  S_VICTORY,
+  S_COUNT
 } StateId;
 
 enum {
-  STATE_F_ATTACK = 1u << 0,
-  STATE_F_LOW = 1u << 1,
-  STATE_F_LAUNCH = 1u << 2,
-  STATE_F_UNBLOCKABLE = 1u << 3,
-  STATE_F_LOCK = 1u << 4,
-  STATE_F_REACTION = 1u << 5,
-  STATE_F_WAIT_LAND = 1u << 6
+  SF_ATTACK = 1u << 0,
+  SF_LOW = 1u << 1,
+  SF_LAUNCH = 1u << 2,
+  SF_UNBLOCKABLE = 1u << 3,
+  SF_LOCK = 1u << 4,
+  SF_REACTION = 1u << 5,
+  SF_WAIT_LAND = 1u << 6
 };
 
 enum {

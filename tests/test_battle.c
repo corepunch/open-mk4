@@ -32,15 +32,15 @@ static void do_attack(Battle *battle, int state, bool guard, bool crouch) {
     in[1].held |= BUTTON_BIT(BUTTON_BLOCK);
   if (crouch)
     in[1].held |= BUTTON_BIT(BUTTON_DOWN);
-  if (state == STATE_PUNCH)
+  if (state == S_PUNCH)
     in[0].pressed |= BUTTON_BIT(BUTTON_PUNCH);
-  if (state == STATE_KICK || state == STATE_SWEEP)
+  if (state == S_KICK || state == S_SWEEP)
     in[0].pressed |= BUTTON_BIT(BUTTON_KICK);
-  if (state == STATE_UPPERCUT)
+  if (state == S_UPPERCUT)
     in[0].pressed |= BUTTON_BIT(BUTTON_UPPERCUT);
-  if (state == STATE_THROW)
+  if (state == S_THROW)
     in[0].pressed |= BUTTON_BIT(BUTTON_THROW);
-  if (state == STATE_SWEEP)
+  if (state == S_SWEEP)
     in[0].held |= BUTTON_BIT(BUTTON_DOWN);
   battle_step(battle, in);
   in[0] = (Input){0};
@@ -55,11 +55,11 @@ static void check_roster(void) {
   check(human->states == goro->states, "Goro shares the MK4 state timings");
   check(human->commands == roster_def(4)->commands, "Humans share one command table");
   check(goro->clips != NULL && human->clips == NULL, "Only Goro overrides clip ids");
-  check(roster_clip(human, STATE_PUNCH, 0) == 216, "Shared punch clip");
-  check(roster_clip(goro, STATE_PUNCH, 0) == 596, "Goro punch clip");
-  check(human->states[STATE_PUNCH].damage == 7, "Punch damage row");
-  check(human->states[STATE_SWEEP].flags & STATE_F_LOW, "Sweep is a low");
-  check(human->states[STATE_THROW].flags & STATE_F_UNBLOCKABLE, "Throw is unblockable");
+  check(roster_clip(human, S_PUNCH, 0) == 216, "Shared punch clip");
+  check(roster_clip(goro, S_PUNCH, 0) == 596, "Goro punch clip");
+  check(human->states[S_PUNCH].damage == 7, "Punch damage row");
+  check(human->states[S_SWEEP].flags & SF_LOW, "Sweep is a low");
+  check(human->states[S_THROW].flags & SF_UNBLOCKABLE, "Throw is unblockable");
 }
 
 int main(void) {
@@ -74,50 +74,50 @@ int main(void) {
   }
   {
     Battle battle = fight(1.f);
-    do_attack(&battle, STATE_PUNCH, false, false);
+    do_attack(&battle, S_PUNCH, false, false);
     check(battle.fighters[1].health == 93, "Punch must connect once");
     advance_ticks(&battle, 30, NULL);
     check(battle.fighters[1].health == 93, "Repeated hit during recovery");
   }
   {
     Battle battle = fight(3);
-    do_attack(&battle, STATE_KICK, false, false);
+    do_attack(&battle, S_KICK, false, false);
     check(battle.fighters[1].health == 100, "Out-of-range attack connects");
   }
   {
     Battle battle = fight(1.f);
-    do_attack(&battle, STATE_PUNCH, true, false);
+    do_attack(&battle, S_PUNCH, true, false);
     check(battle.fighters[1].health == 100 && battle.effects[0].blocked, "Blocking fails");
   }
   {
     Battle battle = fight(1.f);
-    do_attack(&battle, STATE_SWEEP, true, false);
+    do_attack(&battle, S_SWEEP, true, false);
     check(battle.fighters[1].health == 90, "Standing guard should lose to sweep");
   }
   {
     Battle battle = fight(1.f);
-    do_attack(&battle, STATE_SWEEP, true, true);
+    do_attack(&battle, S_SWEEP, true, true);
     check(battle.fighters[1].health == 100, "Crouch guard fails against sweep");
   }
   {
     Battle battle = fight(0.8f);
-    do_attack(&battle, STATE_THROW, true, false);
+    do_attack(&battle, S_THROW, true, false);
     check(battle.fighters[1].health == 86, "Throw should beat guard");
   }
   {
     Battle battle = fight(1.f);
     battle.fighters[1].height = 1.5f;
-    do_attack(&battle, STATE_PUNCH, false, false);
+    do_attack(&battle, S_PUNCH, false, false);
     check(battle.fighters[1].health == 100, "Ground punch hits above its vertical reach");
   }
   {
     Battle battle = fight(1.f);
-    do_attack(&battle, STATE_UPPERCUT, false, false);
-    check(battle.fighters[1].health == 82 && battle.fighters[1].state == STATE_KNOCKDOWN &&
+    do_attack(&battle, S_UPPERCUT, false, false);
+    check(battle.fighters[1].health == 82 && battle.fighters[1].state == S_KNOCKDOWN &&
               battle.fighters[1].height > 0,
         "Uppercut does not launch");
     advance_ticks(&battle, 100, NULL);
-    check(battle.fighters[1].height == 0 && battle.fighters[1].state == STATE_IDLE,
+    check(battle.fighters[1].height == 0 && battle.fighters[1].state == S_IDLE,
         "Knockdown never recovers");
   }
   {
@@ -132,7 +132,7 @@ int main(void) {
   {
     Battle battle = fight(1.f);
     battle.fighters[1].health = 7;
-    do_attack(&battle, STATE_PUNCH, false, false);
+    do_attack(&battle, S_PUNCH, false, false);
     check(battle.phase == PHASE_ROUND_OVER && battle.winner == 0 && battle.fighters[0].wins == 1,
         "KO/round award failed");
     advance_ticks(&battle, 180, NULL);
@@ -143,7 +143,7 @@ int main(void) {
     battle.fighters[0].x = -0.5f;
     battle.fighters[1].x = 0.5f;
     battle.fighters[1].health = 7;
-    do_attack(&battle, STATE_PUNCH, false, false);
+    do_attack(&battle, S_PUNCH, false, false);
     check(battle.phase == PHASE_MATCH_OVER && battle.fighters[0].wins == 2,
         "Best of three match failed");
     advance_ticks(&battle, 300, NULL);

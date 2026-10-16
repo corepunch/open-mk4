@@ -111,17 +111,17 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter) 
   if ((int)clip->frames.data[0].angles.count != channels)
     clip = &assets->clips.data[ch->idle];
   frame = (double)fighter->ticks * 0.5;
-  if (state->flags & STATE_F_ATTACK) {
+  if (state->flags & SF_ATTACK) {
     double t = (double)maxi(0, fighter->ticks);
     double progress = t < state->startup ? 0.4 * t / state->startup
                       : t < state->startup + state->active
                           ? 0.4 + 0.2 * (t - state->startup) / state->active
                           : 0.6 + 0.4 * (t - state->startup - state->active) / state->recovery;
     frame = clampd(progress, 0.0, 1.0) * (double)(clip->frames.count - 1);
-  } else if (fighter->state == STATE_KNOCKDOWN) {
+  } else if (fighter->state == S_KNOCKDOWN) {
     frame = fmin((double)maxi(0, fighter->ticks) * 0.65, (double)(clip->frames.count - 1));
-  } else if (fighter->state == STATE_BLOCK || fighter->state == STATE_CROUCH ||
-             fighter->state == STATE_HIT) {
+  } else if (fighter->state == S_BLOCK || fighter->state == S_CROUCH ||
+             fighter->state == S_HIT) {
     frame = fmin(frame, (double)(clip->frames.count - 1));
   }
   Pose bones[MK4_MAX_BONES], initial[MK4_MAX_BONES];
@@ -226,7 +226,7 @@ void draw_battle(
     const Texture *texture = &roster_character(assets, fighter->roster)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j)
       render_triangle(cv, camera, fighters[i].data[j], texture,
-          fighter->state == STATE_HIT ? .72f : 1.f, PASS_COLOR, &light);
+          fighter->state == S_HIT ? .72f : 1.f, PASS_COLOR, &light);
     FREE_ARRAY(fighters[i]);
   }
   for (size_t i = 0; i < 2; ++i) {

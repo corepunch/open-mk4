@@ -6,38 +6,38 @@
  * a separate 21-channel bank. Idle is CLIP_ASSET_IDLE because each mesh
  * already carries its own idle clip. */
 // clang-format off: Keep table entries on one row, including long rows.
-static const StateDef mk4_states[STATE_COUNT] = {
-  [STATE_IDLE] = {CLIP_ASSET_IDLE, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
-  [STATE_WALK] = {267, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
-  [STATE_CROUCH] = {219, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
-  [STATE_JUMP] = {301, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
-  [STATE_PUNCH] = {216, 5, 4, 12, 7, 19, 1.25f, 0.13f, STATE_F_ATTACK | STATE_F_LOCK},
-  [STATE_KICK] = {65, 10, 5, 18, 12, 25, 1.85f, 0.32f, STATE_F_ATTACK | STATE_F_LOCK},
-  [STATE_SWEEP] = {101, 11, 5, 23, 10, 45, 1.65f, 0.25f, STATE_F_ATTACK | STATE_F_LOCK | STATE_F_LOW | STATE_F_LAUNCH},
-  [STATE_UPPERCUT] = {212, 9, 5, 30, 18, 60, 1.35f, 0.5f, STATE_F_ATTACK | STATE_F_LOCK | STATE_F_LAUNCH},
-  [STATE_THROW] = {23, 6, 2, 25, 14, 42, 0.95f, 0.45f, STATE_F_ATTACK | STATE_F_LOCK | STATE_F_LAUNCH | STATE_F_UNBLOCKABLE},
-  [STATE_BLOCK] = {251, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
-  [STATE_HIT] = {247, 0, 0, 24, 0, 0, 0.f, 0.f, STATE_F_LOCK | STATE_F_REACTION},
-  [STATE_KNOCKDOWN] = {166, 0, 0, 54, 0, 0, 0.f, 0.f, STATE_F_LOCK | STATE_F_REACTION | STATE_F_WAIT_LAND},
-  [STATE_VICTORY] = {293, 0, 0, 0, 0, 0, 0.f, 0.f, 0}
+static const StateDef mk4_states[S_COUNT] = {
+  [S_IDLE] = {CLIP_ASSET_IDLE, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
+  [S_WALK] = {267, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
+  [S_CROUCH] = {219, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
+  [S_JUMP] = {301, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
+  [S_PUNCH] = {216, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK},
+  [S_KICK] = {65, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK},
+  [S_SWEEP] = {101, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH},
+  [S_UPPERCUT] = {212, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH},
+  [S_THROW] = {23, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE},
+  [S_BLOCK] = {251, 0, 0, 0, 0, 0, 0.f, 0.f, 0},
+  [S_HIT] = {247, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION},
+  [S_KNOCKDOWN] = {166, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND},
+  [S_VICTORY] = {293, 0, 0, 0, 0, 0, 0.f, 0.f, 0}
 };
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const int goro_clips[STATE_COUNT] = {
-  [STATE_IDLE] = CLIP_ASSET_IDLE,
-  [STATE_WALK] = 590,
-  [STATE_CROUCH] = 603,
-  [STATE_JUMP] = 602,
-  [STATE_PUNCH] = 596,
-  [STATE_KICK] = 598,
-  [STATE_SWEEP] = 600,
-  [STATE_UPPERCUT] = 593,
-  [STATE_THROW] = 597,
-  [STATE_BLOCK] = 595,
-  [STATE_HIT] = 605,
-  [STATE_KNOCKDOWN] = 581,
-  [STATE_VICTORY] = 608
+static const int goro_clips[S_COUNT] = {
+  [S_IDLE] = CLIP_ASSET_IDLE,
+  [S_WALK] = 590,
+  [S_CROUCH] = 603,
+  [S_JUMP] = 602,
+  [S_PUNCH] = 596,
+  [S_KICK] = 598,
+  [S_SWEEP] = 600,
+  [S_UPPERCUT] = 593,
+  [S_THROW] = 597,
+  [S_BLOCK] = 595,
+  [S_HIT] = 605,
+  [S_KNOCKDOWN] = 581,
+  [S_VICTORY] = 608
 };
 // clang-format on
 
@@ -46,12 +46,12 @@ static const int goro_clips[STATE_COUNT] = {
  * the rule gets its own command rows. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef mk4_commands[] = {
-  {BUTTON_THROW, CMD_GROUNDED | CMD_STANDING, STATE_THROW},
-  {BUTTON_UPPERCUT, CMD_GROUNDED, STATE_UPPERCUT},
-  {BUTTON_PUNCH, CMD_CROUCHING, STATE_UPPERCUT},
-  {BUTTON_PUNCH, 0, STATE_PUNCH},
-  {BUTTON_KICK, CMD_CROUCHING, STATE_SWEEP},
-  {BUTTON_KICK, 0, STATE_KICK}
+  {BUTTON_THROW, CMD_GROUNDED | CMD_STANDING, S_THROW},
+  {BUTTON_UPPERCUT, CMD_GROUNDED, S_UPPERCUT},
+  {BUTTON_PUNCH, CMD_CROUCHING, S_UPPERCUT},
+  {BUTTON_PUNCH, 0, S_PUNCH},
+  {BUTTON_KICK, CMD_CROUCHING, S_SWEEP},
+  {BUTTON_KICK, 0, S_KICK}
 };
 // clang-format on
 
@@ -63,24 +63,24 @@ enum {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const CharacterDef roster[] = {
-  {GAME_MK4, 0, "SCORPION", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 1, "RAIDEN", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 2, "SONYA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 3, "LIU KANG", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 4, "SUB ZERO", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 5, "FUJIN", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 6, "SHINNOK", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 7, "REIKO", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 8, "QUAN CHI", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 9, "TANYA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 10, "REPTILE", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 11, "KAI", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 12, "JAREK", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 13, "JAX", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 14, "CAGE", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 15, "GORO", &mk4_motion, mk4_states, STATE_COUNT, goro_clips, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 16, "KITANA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-  {GAME_MK4, 17, "NOOB SAIBOT", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT}
+  {GAME_MK4, 0, "SCORPION", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 1, "RAIDEN", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 2, "SONYA", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 3, "LIU KANG", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 4, "SUB ZERO", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 5, "FUJIN", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 6, "SHINNOK", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 7, "REIKO", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 8, "QUAN CHI", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 9, "TANYA", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 10, "REPTILE", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 11, "KAI", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 12, "JAREK", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 13, "JAX", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 14, "CAGE", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 15, "GORO", &mk4_motion, mk4_states, S_COUNT, goro_clips, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 16, "KITANA", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+  {GAME_MK4, 17, "NOOB SAIBOT", &mk4_motion, mk4_states, S_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT}
 };
 // clang-format on
 
@@ -115,9 +115,9 @@ const Character *roster_character(const Assets *assets, int roster_index) {
 }
 
 const char *state_name(int state) {
-  static const char *names[STATE_COUNT] = {"READY", "MOVE", "CROUCH", "JUMP", "PUNCH", "KICK",
+  static const char *names[S_COUNT] = {"READY", "MOVE", "CROUCH", "JUMP", "PUNCH", "KICK",
       "SWEEP", "UPPERCUT", "THROW", "BLOCK", "HIT", "KNOCKDOWN", "WINNER"};
-  if (state < 0 || state >= STATE_COUNT)
+  if (state < 0 || state >= S_COUNT)
     return "";
   return names[state];
 }

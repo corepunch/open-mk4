@@ -14,7 +14,7 @@ static void set_state(Fighter *fighter, int state) {
 }
 
 static bool locked(const Fighter *fighter) {
-  return (fighter_state(fighter)->flags & STATE_F_LOCK) != 0;
+  return (fighter_state(fighter)->flags & SF_LOCK) != 0;
 }
 
 static void place(Fighter *fighter, int roster_index, int wins, float x, int facing) {
@@ -24,7 +24,7 @@ static void place(Fighter *fighter, int roster_index, int wins, float x, int fac
   fighter->health = 100;
   fighter->x = x;
   fighter->facing = facing;
-  fighter->state = STATE_IDLE;
+  fighter->state = S_IDLE;
 }
 
 void battle_init(Battle *battle, int p1, int p2) {
@@ -73,11 +73,11 @@ static void finish_round(Battle *battle) {
     battle->winner = 1;
   if (battle->winner >= 0) {
     battle->fighters[battle->winner].wins++;
-    set_state(&battle->fighters[battle->winner], STATE_VICTORY);
+    set_state(&battle->fighters[battle->winner], S_VICTORY);
   }
   for (i = 0; i < 2; ++i) {
     if (battle->fighters[i].health <= 0)
-      set_state(&battle->fighters[i], STATE_KNOCKDOWN);
+      set_state(&battle->fighters[i], S_KNOCKDOWN);
   }
   if (battle->winner >= 0 && battle->fighters[battle->winner].wins >= 2)
     battle->phase = PHASE_MATCH_OVER;
@@ -109,14 +109,14 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
   if (!locked(fighter) && fighter->height == 0.f)
     fighter->facing = fighter->x <= other->x ? 1 : -1;
 
-  if (state->flags & STATE_F_ATTACK) {
+  if (state->flags & SF_ATTACK) {
     int total = state->startup + state->active + state->recovery;
     if (fighter->ticks >= total)
-      set_state(fighter, fighter->height > 0.f ? STATE_JUMP : STATE_IDLE);
-  } else if (state->flags & STATE_F_REACTION) {
-    bool landed = !(state->flags & STATE_F_WAIT_LAND) || fighter->height == 0.f;
+      set_state(fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);
+  } else if (state->flags & SF_REACTION) {
+    bool landed = !(state->flags & SF_WAIT_LAND) || fighter->height == 0.f;
     if (fighter->ticks >= state->recovery && landed)
-      set_state(fighter, STATE_IDLE);
+      set_state(fighter, S_IDLE);
   }
 
   if (fighter->height > 0.f || fighter->velocity > 0.f) {
@@ -125,8 +125,8 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
     if (fighter->height <= 0.f) {
       fighter->height = 0.f;
       fighter->velocity = 0.f;
-      if (fighter->state == STATE_JUMP)
-        set_state(fighter, STATE_IDLE);
+      if (fighter->state == S_JUMP)
+        set_state(fighter, S_IDLE);
     }
   }
   if (locked(fighter))
@@ -134,7 +134,7 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
 
   fighter->crouching = input_held(in, BUTTON_DOWN) && fighter->height == 0.f;
   if (input_held(in, BUTTON_BLOCK)) {
-    set_state(fighter, STATE_BLOCK);
+    set_state(fighter, S_BLOCK);
     return;
   }
   for (c = 0; c < def->command_count; ++c) {
@@ -147,7 +147,7 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
   if (input_held(in, BUTTON_UP) && fighter->height == 0.f) {
     fighter->velocity = motion->jump_velocity;
     fighter->height = 0.01f;
-    set_state(fighter, STATE_JUMP);
+    set_state(fighter, S_JUMP);
   }
   dir = (int)input_held(in, BUTTON_RIGHT) - (int)input_held(in, BUTTON_LEFT);
   if (!fighter->crouching) {
@@ -155,13 +155,13 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
     fighter->x += (float)dir * speed * TICK_SECONDS;
   }
   if (fighter->height > 0.f)
-    set_state(fighter, STATE_JUMP);
+    set_state(fighter, S_JUMP);
   else if (fighter->crouching)
-    set_state(fighter, STATE_CROUCH);
+    set_state(fighter, S_CROUCH);
   else if (dir)
-    set_state(fighter, STATE_WALK);
+    set_state(fighter, S_WALK);
   else
-    set_state(fighter, STATE_IDLE);
+    set_state(fighter, S_IDLE);
 }
 
 static void separate_bodies(Battle *battle) {
@@ -194,7 +194,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
     int damage;
     int reaction;
 
-    if (!(move->flags & STATE_F_ATTACK) || attacker->connected)
+    if (!(move->flags & SF_ATTACK) || attacker->connected)
       continue;
     if (attacker->ticks < move->startup || attacker->ticks >= move->startup + move->active)
       continue;
@@ -203,34 +203,34 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
       continue;
     if (fabsf(attacker->height - defender->height) > 0.9f)
       continue;
-    if ((move->flags & STATE_F_LOW) && defender->height > 0.2f)
+    if ((move->flags & SF_LOW) && defender->height > 0.2f)
       continue;
-    if ((move->flags & STATE_F_UNBLOCKABLE) &&
-        (defender->height > 0.f || defender->state == STATE_KNOCKDOWN ||
-            defender->state == STATE_HIT))
+    if ((move->flags & SF_UNBLOCKABLE) &&
+        (defender->height > 0.f || defender->state == S_KNOCKDOWN ||
+            defender->state == S_HIT))
       continue;
-    if (defender->state == STATE_KNOCKDOWN)
+    if (defender->state == S_KNOCKDOWN)
       continue;
 
     battle->fighters[i].connected = true;
-    blocked = defender->state == STATE_BLOCK && !(move->flags & STATE_F_UNBLOCKABLE) &&
-              (!(move->flags & STATE_F_LOW) || defender->crouching);
+    blocked = defender->state == S_BLOCK && !(move->flags & SF_UNBLOCKABLE) &&
+              (!(move->flags & SF_LOW) || defender->crouching);
     target = &battle->fighters[1 - i];
     damage = blocked ? 0 : move->damage;
     target->health = (int)fmaxf(0.f, (float)target->health - (float)damage);
     target->x = clampf(target->x + (float)attacker->facing * move->push * (blocked ? 0.4f : 1.f),
         -battle->wall, battle->wall);
     if (!blocked) {
-      reaction = (move->flags & STATE_F_LAUNCH) ? STATE_KNOCKDOWN : STATE_HIT;
+      reaction = (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT;
       set_state(target, reaction);
       target->ticks = fighter_state(target)->recovery - move->stun;
-      if (move->flags & STATE_F_LAUNCH) {
+      if (move->flags & SF_LAUNCH) {
         target->velocity = 4.7f;
         target->height = fmaxf(0.01f, target->height);
       }
     }
     battle->effects[i] = (HitEffect){(attacker->x + defender->x) * 0.5f,
-        defender->height + ((move->flags & STATE_F_LOW) ? 0.25f : 1.2f), 10, blocked};
+        defender->height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
   }
 }
 
