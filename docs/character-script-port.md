@@ -85,3 +85,10 @@ camera roll, blood/sound helpers and retail wall-contact task dispatch are not
 recreated. The world still uses our gameplay hulls. Goro retains his separate
 animation-bank fallback. Focused tests exercise reaction recovery from ground
 and air, combo flags/scaling, crouch selection, and replacing an active reaction.
+
+Ground LP and LK throws now use paired clips 75/152 and 37/157, respectively.
+Both deal their script damage at sample 42 (15% LP, 18% LK). LP releases into
+reaction 100; LK retains the pair through sample 65, then plays the victim's
+586:65–130 continuation. Root alignment uses our paired world origin. The
+retail CPU probability-based throw reversal is not a human command branch and
+is left to a future CPU policy.

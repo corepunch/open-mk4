@@ -166,7 +166,7 @@ static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence 
 static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = 0x109};
 static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = 0x109};
 
-static const MoveDef s_throw = {75, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
+static const MoveDef s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = 0x500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -762,16 +762,15 @@ static void enter_sweep(Battle *battle, Fighter *fighter) {
   fighter_enter_state(battle, fighter, S_SWEEP);
 }
 
-static void enter_throw(Battle *battle, Fighter *fighter) {
-  fighter_enter_state(battle, fighter, S_THROW);
-}
+static void enter_throw(Battle *battle, Fighter *fighter);
+static void enter_lk_throw(Battle *battle, Fighter *fighter);
 
 static void press_lp(Battle *battle, Fighter *fighter) {
   fighter_interrupt(fighter, can_ground_throw(battle, fighter, false) ? enter_throw : fighter->armed ? sword_lp : scorpion_jab);
 }
 
 static void press_lk(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : can_ground_throw(battle, fighter, true) ? enter_throw : scorpion_lk);
+  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : can_ground_throw(battle, fighter, true) ? enter_lk_throw : scorpion_lk);
 }
 
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
@@ -965,6 +964,93 @@ static const ButtonTable combo_hp_followup = {
     {[BUTTON_HIGH_PUNCH] = press_jab, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
 static const ButtonTable close_hk_followup = {
     {[BUTTON_HIGH_PUNCH] = press_knee_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_combo_hk, [BUTTON_LOW_KICK] = press_lk}};
+
+/* Paired ground throws: 0x4de6e4 (LP), 0x4de2f8/318/328 (LK).
+ * Native opponent-root alignment is represented by a shared world origin. */
+static const MoveDef s_lk_throw = {.clip = 37, .last = 65, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = 0x501};
+static const MoveDef s_lp_thrown = {.clip = 152, .last = 41, .flags = SF_LOCK, .action = 0x4003};
+static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, .action = 0x4003};
+static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = 0x4003};
+
+static void ground_thrown_tick(Battle *battle, Fighter *victim) {
+  Fighter *owner = opponent(battle, victim);
+  if (victim->current_move == &s_lk_thrown_end) {
+    victim->sample_override = mini(130, 65 + victim->ticks);
+    if (victim->ticks >= 66 && victim->health > 0) {
+      scorpion_ready(battle, victim);
+    }
+    return;
+  }
+  if ((owner->current_move != &s_throw && owner->current_move != &s_lk_throw) || owner->pending != NULL) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    if (victim->health > 0) {
+      scorpion_ready(battle, victim);
+    } else {
+      victim->script = NULL;
+    }
+    return;
+  }
+  victim->sample_override = mini(fighter_move(victim)->last, owner->ticks);
+  memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+  victim->body.pos[AXIS_Y] = victim->body.ground;
+}
+
+static void ground_throw_tick(Battle *battle, Fighter *fighter) {
+  Fighter *victim = opponent(battle, fighter);
+  bool lk = fighter->current_move == &s_lk_throw;
+  int tick = fighter->ticks, release = lk ? 65 : 42;
+  if (tick < release && (victim->script != ground_thrown_tick || victim->pending != NULL)) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    scorpion_ready(battle, fighter);
+    return;
+  }
+  fighter->sample_override = mini(lk ? 65 : 64, tick);
+  if (tick == 42) {
+    if (victim->armed && victim->disarm != NULL) {
+      victim->disarm(battle, victim);
+    }
+    battle_damage(battle, victim, lk ? 0x2e14 : 0x2666);
+  }
+  if (tick == release) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    if (lk) {
+      fighter_start_move(battle, victim, S_KNOCKDOWN, &s_lk_thrown_end);
+      victim->script = ground_thrown_tick;
+      victim->sample_override = 65;
+    } else {
+      battle_react(battle, victim, 100);
+    }
+  }
+  if (tick >= (lk ? 66 : 65)) {
+    scorpion_ready(battle, fighter);
+  }
+}
+
+static void ground_throw(Battle *battle, Fighter *fighter, bool lk) {
+  if (!can_ground_throw(battle, fighter, lk)) {
+    scorpion_ready(battle, fighter);
+    return;
+  }
+  Fighter *victim = opponent(battle, fighter);
+  stop_body(fighter);
+  stop_body(victim);
+  fighter_start_move(battle, fighter, S_THROW, lk ? &s_lk_throw : &s_throw);
+  fighter_start_move(battle, victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &s_lp_thrown);
+  fighter->script = ground_throw_tick;
+  victim->script = ground_thrown_tick;
+  fighter->flags |= FF_PAIRED;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  fighter->sample_override = victim->sample_override = 0;
+}
+
+static void enter_throw(Battle *battle, Fighter *fighter) {
+  ground_throw(battle, fighter, false);
+}
+
+static void enter_lk_throw(Battle *battle, Fighter *fighter) {
+  ground_throw(battle, fighter, true);
+}
 
 /* Air throw: scripts 0x4e5e28/0x4e5e50, native 0x46aae0.
  * The victim owns its release/recovery, so interrupting either participant

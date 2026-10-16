@@ -526,6 +526,22 @@ static void check_script_reactions(void) {
   check(victim->current_move->clip == 254, "Crouching victim must use the crouch reaction branch");
 }
 
+static void check_ground_throws(void) {
+  for (int lk = 0; lk < 2; ++lk) {
+    Battle battle = fight(0.6f);
+    Fighter *owner = &battle.fighters[0], *victim = &battle.fighters[1];
+    fighter_press(&battle, owner, lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH);
+    advance_ticks(&battle, 1, NULL);
+    check(owner->current_move->clip == (lk ? 37 : 75) && victim->current_move->clip == (lk ? 157 : 152), "Ground throws must choose paired clips");
+    advance_ticks(&battle, 41, NULL);
+    check(victim->health == Q16_ONE, "Ground throw damage must wait for sample 42");
+    advance_ticks(&battle, 1, NULL);
+    check(victim->health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "Ground throw damage must match selected script");
+    advance_ticks(&battle, 160, NULL);
+    check(owner->state == S_IDLE && victim->state == S_IDLE, "Ground throws must release both controllers");
+  }
+}
+
 static void check_air_throw(void) {
   for (int player = 0; player < 2; ++player) {
     Battle battle;
@@ -567,6 +583,7 @@ static void check_air_throw(void) {
 
 int main(void) {
   check_script_reactions();
+  check_ground_throws();
   check_air_throw();
   check_ground_normals();
   check_air_attacks();
@@ -616,7 +633,8 @@ int main(void) {
   {
     Battle battle = fight(0.6f);
     do_attack(&battle, S_THROW, true, false);
-    check(battle.fighters[1].health == Q16_ONE - 14 * Q16_ONE / 100, "Throw should beat guard");
+    advance_ticks(&battle, 23, NULL);
+    check(battle.fighters[1].health == Q16_ONE - 0x2666, "LP throw should beat guard for 15 percent at release");
   }
   {
     Battle battle = fight(1.f);
