@@ -112,15 +112,18 @@ so posing does not allocate per call. The package validator returns an error
 for the standalone watcher; invalid asset loads terminate CLI applications
 with a diagnostic. Shadow projection reports invalid geometry through `bool`.
 
-The match itself is one roster of character rows, declared in `game/game.h`.
-A row names its game (`GAME_MK4` today, `GAME_WARGODS` reserved), the asset
-index inside that game's mesh bank, and the motion, move, and command tables.
-Each fighter owns a move table indexed by state, in the spirit of a Quake II
-`mmove_t` without per-frame entries: clip, frame range, timings, damage and
-flags. Goro's names clips from his separate animation bank. Eighteen MK4
-fighters share one motion record and one command table.
-Spawn writes the roster index onto a `Fighter`. `battle_step` is the shared
-update and does not branch on game id. Input is a held/pressed bit frame.
+The match itself is one registry of character definitions in `game/roster.c`.
+A definition names its game (`GAME_MK4` today, `GAME_WARGODS` reserved), asset,
+motion, immutable moves, command table and optional state-entry callbacks.
+Each `game/character_*.c` owns that character's moves and custom functions;
+`game/mk4_common.c` owns shared MK4 motion and commands. Scorpion and Sub-Zero
+have explicit jab/kick entry callbacks. Other entries select a default move
+through the shared runner. Goro names clips from his separate animation bank.
+Spawn writes the roster index and initializes `Fighter.current_move`.
+`game/moves.c` owns move entry and callback dispatch; `battle_step` remains
+the shared update and does not branch on game id. Static move pointers can
+be copied within this process, but need stable IDs for serialized snapshots.
+Input is a held/pressed bit frame.
 `game/input.c` samples keyboard bindings, maps shell keys, and fills the CPU
 frame. The step function never reads SDL. War Gods can be added by appending
 roster rows and loading that game's asset bank; it does not need a second

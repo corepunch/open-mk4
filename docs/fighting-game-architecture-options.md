@@ -4,10 +4,11 @@ Research note for this workspace. It collects language, fighter-object, and
 netplay choices. Written against commit `117a19b` (2026-10-16), then updated
 when the match code took the data-table option.
 
-The game now implements that option. `game/game.h` is the only match header.
-A fighter is a roster index plus runtime fields. The roster row points at
-shared motion and command tables and at the fighter's own move table.
-Spawn writes the index. `battle_step` is the shared update. Keyboard, shell keys,
+The game initially implemented the table option and now adds the callback
+boundary described below. Each `game/character_*.c` owns its immutable moves
+and custom entry callbacks. `game/roster.c` registers the definitions, while
+`game/moves.c` installs `Fighter.current_move`. Shared motion and commands
+remain in `game/mk4_common.c`. `battle_step` is the shared update. Keyboard, shell keys,
 and the CPU are input sources in `game/input.c` and never share a code path
 with the rules. `GAME_WARGODS` is reserved so another Eurocom/Midway roster
 can be appended without a second battle type. Netplay is still local only.

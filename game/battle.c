@@ -5,26 +5,19 @@
 
 static void finish_round(Battle *battle);
 
-static void set_state(Fighter *fighter, int state) {
-  if (fighter->state == state)
-    return;
-  fighter->state = state;
-  fighter->ticks = 0;
-  fighter->connected = false;
-}
-
 static bool locked(const Fighter *fighter) {
   return (fighter_move(fighter)->flags & SF_LOCK) != 0;
 }
 
-static void place(Fighter *fighter, int roster_index, int wins, float x, int facing) {
+static void place(
+    Battle *battle, Fighter *fighter, int roster_index, int wins, float x, int facing) {
   *fighter = (Fighter){0};
   fighter->roster = roster_index;
   fighter->wins = wins;
   fighter->health = 100;
   fighter->x = x;
   fighter->facing = facing;
-  fighter->state = S_IDLE;
+  fighter_enter_state(battle, fighter, S_IDLE);
 }
 
 void battle_init(Battle *battle, int p1, int p2) {
@@ -54,7 +47,7 @@ void battle_next_round(Battle *battle) {
     int wins = battle->fighters[i].wins;
     float x = i ? 2.f : -2.f;
     int facing = i ? -1 : 1;
-    place(&battle->fighters[i], roster_index, wins, x, facing);
+    place(battle, &battle->fighters[i], roster_index, wins, x, facing);
   }
   memset(battle->effects, 0, sizeof battle->effects);
   battle->phase = PHASE_READY;
@@ -73,11 +66,11 @@ static void finish_round(Battle *battle) {
     battle->winner = 1;
   if (battle->winner >= 0) {
     battle->fighters[battle->winner].wins++;
-    set_state(&battle->fighters[battle->winner], S_VICTORY);
+    fighter_enter_state(battle, &battle->fighters[battle->winner], S_VICTORY);
   }
   for (i = 0; i < 2; ++i) {
     if (battle->fighters[i].health <= 0)
-      set_state(&battle->fighters[i], S_KNOCKDOWN);
+      fighter_enter_state(battle, &battle->fighters[i], S_KNOCKDOWN);
   }
   if (battle->winner >= 0 && battle->fighters[battle->winner].wins >= 2)
     battle->phase = PHASE_MATCH_OVER;
@@ -98,7 +91,7 @@ static bool command_matches(const Fighter *fighter, Input in, const CommandDef *
   return true;
 }
 
-static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
+static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *other, Input in) {
   const CharacterDef *def = roster_def(fighter->roster);
   const MoveDef *state = fighter_move(fighter);
   const Motion *motion = def->motion;
@@ -112,11 +105,11 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
   if (state->flags & SF_ATTACK) {
     int total = state->startup + state->active + state->recovery;
     if (fighter->ticks >= total)
-      set_state(fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);
+      fighter_enter_state(battle, fighter, fighter->height > 0.f ? S_JUMP : S_IDLE);
   } else if (state->flags & SF_REACTION) {
     bool landed = !(state->flags & SF_WAIT_LAND) || fighter->height == 0.f;
     if (fighter->ticks >= state->recovery && landed)
-      set_state(fighter, S_IDLE);
+      fighter_enter_state(battle, fighter, S_IDLE);
   }
 
   if (fighter->height > 0.f || fighter->velocity > 0.f) {
@@ -126,7 +119,7 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
       fighter->height = 0.f;
       fighter->velocity = 0.f;
       if (fighter->state == S_JUMP)
-        set_state(fighter, S_IDLE);
+        fighter_enter_state(battle, fighter, S_IDLE);
     }
   }
   if (locked(fighter))
@@ -134,20 +127,20 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
 
   fighter->crouching = input_held(in, BUTTON_DOWN) && fighter->height == 0.f;
   if (input_held(in, BUTTON_BLOCK)) {
-    set_state(fighter, S_BLOCK);
+    fighter_enter_state(battle, fighter, S_BLOCK);
     return;
   }
   for (c = 0; c < def->command_count; ++c) {
     if (!command_matches(fighter, in, &def->commands[c]))
       continue;
-    set_state(fighter, def->commands[c].state);
+    fighter_enter_state(battle, fighter, def->commands[c].state);
     return;
   }
 
   if (input_held(in, BUTTON_UP) && fighter->height == 0.f) {
     fighter->velocity = motion->jump_velocity;
     fighter->height = 0.01f;
-    set_state(fighter, S_JUMP);
+    fighter_enter_state(battle, fighter, S_JUMP);
   }
   dir = (int)input_held(in, BUTTON_RIGHT) - (int)input_held(in, BUTTON_LEFT);
   if (!fighter->crouching) {
@@ -155,13 +148,13 @@ static void advance_fighter(Fighter *fighter, const Fighter *other, Input in) {
     fighter->x += (float)dir * speed * TICK_SECONDS;
   }
   if (fighter->height > 0.f)
-    set_state(fighter, S_JUMP);
+    fighter_enter_state(battle, fighter, S_JUMP);
   else if (fighter->crouching)
-    set_state(fighter, S_CROUCH);
+    fighter_enter_state(battle, fighter, S_CROUCH);
   else if (dir)
-    set_state(fighter, S_WALK);
+    fighter_enter_state(battle, fighter, S_WALK);
   else
-    set_state(fighter, S_IDLE);
+    fighter_enter_state(battle, fighter, S_IDLE);
 }
 
 static void separate_bodies(Battle *battle) {
@@ -221,7 +214,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
         -battle->wall, battle->wall);
     if (!blocked) {
       reaction = (move->flags & SF_LAUNCH) ? S_KNOCKDOWN : S_HIT;
-      set_state(target, reaction);
+      fighter_enter_state(battle, target, reaction);
       target->ticks = fighter_move(target)->recovery - move->stun;
       if (move->flags & SF_LAUNCH) {
         target->velocity = 4.7f;
@@ -258,7 +251,7 @@ void battle_step(Battle *battle, const Input input[2]) {
 
   battle->time_ticks--;
   for (i = 0; i < 2; ++i)
-    advance_fighter(&battle->fighters[i], &battle->fighters[1 - i], input[i]);
+    advance_fighter(battle, &battle->fighters[i], &battle->fighters[1 - i], input[i]);
   separate_bodies(battle);
   {
     Fighter snapshot[2];

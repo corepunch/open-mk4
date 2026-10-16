@@ -5,8 +5,9 @@
  * common/ because the viewer uses them too.
  *
  * A character is a row in the roster, not a subclass. The row points at a
- * motion record, its own move table, and a command table. Spawn writes the roster index onto a fighter. battle_step is the
- * shared think function and only reads those tables.
+ * motion record, immutable moves, entry callbacks, and a command table.
+ * Each character's C file owns its moves and any custom logic. The live
+ * fighter keeps the current move; battle_step runs shared combat rules.
  *
  * MK4 fills the roster today. War Gods (Midway arcade, Eurocom PC port, its
  * own wgfsys archive) is another game id: append rows, point them at that
@@ -135,15 +136,20 @@ typedef struct CommandDef {
   int state;
 } CommandDef;
 
+typedef struct Battle Battle;
+typedef struct Fighter Fighter;
+typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
+
 typedef struct CharacterDef {
   GameId game;
   int asset;
   const char *name;
   const Motion *motion;
-  const MoveDef *moves; /* move_count rows, indexed by StateId */
+  const MoveDef *const *moves; /* move_count pointers, indexed by StateId */
   int move_count;
   const CommandDef *commands;
   int command_count;
+  const FighterFn *enter; /* optional move_count callbacks; NULL entries use the default move */
 } CharacterDef;
 
 typedef enum Phase {
@@ -153,13 +159,14 @@ typedef enum Phase {
   PHASE_MATCH_OVER
 } Phase;
 
-typedef struct Fighter {
+struct Fighter {
   int roster;
   int health, wins, facing, ticks;
   int state;
   float x, height, velocity;
   bool connected, crouching;
-} Fighter;
+  const MoveDef *current_move;
+};
 
 typedef struct HitEffect {
   float x, height;
@@ -167,14 +174,14 @@ typedef struct HitEffect {
   bool blocked;
 } HitEffect;
 
-typedef struct Battle {
+struct Battle {
   Fighter fighters[2];
   HitEffect effects[2];
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
   uint64_t ticks;
   float wall;
-} Battle;
+};
 
 void input_bind_player(InputDevice *device, int player);
 void input_sample(InputDevice *device, const unsigned char *keys, Input *out);
@@ -187,6 +194,8 @@ const CharacterDef *roster_def(int index);
 const MoveDef *fighter_move(const Fighter *fighter);
 int roster_clip(const CharacterDef *def, int state, int asset_idle);
 const Character *roster_character(const Assets *assets, int roster_index);
+void fighter_start_move(Fighter *fighter, int state, const MoveDef *move);
+void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

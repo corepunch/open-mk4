@@ -132,7 +132,7 @@ int main(void) {
       int frames, first, last, point;
       if (state == S_JUMP)
         continue;
-      move = &def->moves[state];
+      move = def->moves[state];
       ground = &assets.clips.data[roster_clip(def, state, fighter->idle)];
       check((int)ground->frames.data[0].angles.count == channels,
           "Roster clip does not match the rig");

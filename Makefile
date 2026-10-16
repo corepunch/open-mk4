@@ -37,21 +37,24 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
-build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/roster.c game/game.h $(ASSETS) $(HEADERS)
+CHARACTER_SOURCES = $(wildcard game/character_*.c) game/mk4_common.c
+ROSTER_SOURCES = game/roster.c game/moves.c $(CHARACTER_SOURCES)
+GAME_HEADERS = game/game.h game/mk4_characters.h
+build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/roster.c $(ASSETS) -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-GAME_SOURCES = game/main.c game/input.c game/roster.c game/battle.c game/draw.c
-mk4-game: $(GAME_SOURCES) game/game.h $(ASSETS) $(RENDER) $(HEADERS)
+GAME_SOURCES = game/main.c game/input.c $(ROSTER_SOURCES) game/battle.c game/draw.c
+mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.c game/battle.c game/roster.c game/input.c game/game.h common/binary.c
+build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) common/binary.c
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c game/roster.c game/input.c common/binary.c -o $@ $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c common/binary.c -o $@ $(LDLIBS)
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)

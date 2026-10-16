@@ -51,7 +51,7 @@ static void validate(const Assets *assets) {
     for (size_t j = 0; j < ch->bones.count; ++j)
       channels = maxi(channels, ch->bones.data[j].channel + 1);
     for (state = 0; state < def->move_count; ++state) {
-      const MoveDef *move = &def->moves[state];
+      const MoveDef *move = def->moves[state];
       const Clip *clip = &assets->clips.data[roster_clip(def, state, ch->idle)];
       int frames = (int)clip->frames.count;
       require((int)clip->frames.data[0].angles.count == channels, "Incompatible combat animation");
