@@ -68,8 +68,10 @@ claim identical retail rendering, collision hulls or scheduler timing.
 
 Air attack sources: scripts `0x4e6658`, `0x4e6710`, `0x4e61f8`, `0x4e6500`,
 `0x4e63d8`; native contact continuations `0x46e7c0`, `0x46cb10`, `0x46ef10`,
-`0x46e6b0`, `0x46e230`. Low HP/straight-kick contacts expose the current ground
-button table; its close-range combo selection uses the ground entry predicates. Diagonal
+`0x46e6b0`, `0x46e230`. Low HP/straight-kick contacts expose a ground follow-up
+table; HP uses `0x46c3f0` to permit close HP against a grounded victim already in
+hitstun. Sword back-punch variants capture direction when the button is pressed.
+Diagonal
 jump classification uses horizontal motion in our current jump controller.
 
 Air throw now follows scripts `0x4e5e28/0x4e5e50`: paired clips 82/202,

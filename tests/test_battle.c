@@ -341,6 +341,17 @@ static void draw_sword(Battle *battle) {
 }
 
 static void check_weapon(void) {
+  for (int hp = 0; hp < 2; ++hp) {
+    Battle battle = fight(1.3f);
+    draw_sword(&battle);
+    Button punch = hp ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH;
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(punch)}, {0}});
+    advance_ticks(&battle, 1, NULL);
+    check(fighter_move(&battle.fighters[0])->clip == (hp ? 238 : 237), "Tapped back+sword punch must retain its selected variant after release");
+    advance_ticks(&battle, 90, NULL);
+    check(battle.fighters[0].state == S_IDLE && battle.fighters[0].armed, "Back sword attacks must recover with the weapon equipped");
+    check(battle.fighters[1].health < Q16_ONE, "Back sword attack must reach its contact window");
+  }
   for (int guard = 0; guard < 2; ++guard) {
     Battle battle = fight(1.3f);
     draw_sword(&battle);
@@ -395,6 +406,22 @@ static void check_weapon(void) {
 }
 
 static void check_air_attacks(void) {
+  {
+    Battle battle = fight(0.75f);
+    Fighter *fighter = &battle.fighters[0];
+    fighter_enter_state(&battle, fighter, S_JUMP);
+    fighter->body.pos[AXIS_Y] = fighter->body.ground - Q16_ONE / 3;
+    fighter->body.gravity = 1;
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 7, NULL);
+    check(!fighter_airborne(fighter) && (fighter->flags & FF_FOLLOW_UP), "Low jump contact must open ground follow-ups");
+    check(battle.fighters[1].flags & FF_REACTING, "Low jump contact must put the victim in hitstun");
+    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(&battle, 1, NULL);
+    check(fighter_move(fighter)->clip == 262, "Low jump HP follow-up must select close HP even while the victim is reacting");
+    advance_ticks(&battle, 90, NULL);
+    check(fighter->state == S_IDLE, "Ground follow-up must recover");
+  }
   const Button button[] = {BUTTON_HIGH_PUNCH, BUTTON_LOW_PUNCH, BUTTON_HIGH_KICK, BUTTON_HIGH_KICK, BUTTON_LOW_KICK};
   const int clip[] = {97, 96, 327, 55, 58};
   for (int i = 0; i < 5; ++i) {

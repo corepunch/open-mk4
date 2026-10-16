@@ -530,6 +530,8 @@ static bool fighting(const Battle *battle, const Fighter *fighter) {
 
 static void sword_hp(Battle *battle, Fighter *fighter);
 static void sword_lp(Battle *battle, Fighter *fighter);
+static void sword_back_hp(Battle *battle, Fighter *fighter);
+static void sword_back_lp(Battle *battle, Fighter *fighter);
 static void sword_spin(Battle *battle, Fighter *fighter);
 static void scorpion_weapon(Battle *battle, Fighter *fighter);
 static bool can_weapon(const Battle *battle, const Fighter *fighter);
@@ -745,8 +747,8 @@ static bool can_ground_throw(const Battle *battle, const Fighter *fighter, bool 
 }
 
 static void press_jab(Battle *battle, Fighter *fighter) {
-  (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_hp : scorpion_hp);
+  FighterFn entry = fighter_holds_back(battle, fighter) ? sword_back_hp : sword_hp;
+  fighter_interrupt(fighter, fighter->armed ? entry : scorpion_hp);
 }
 
 static void press_kick(Battle *battle, Fighter *fighter) {
@@ -766,7 +768,8 @@ static void enter_throw(Battle *battle, Fighter *fighter);
 static void enter_lk_throw(Battle *battle, Fighter *fighter);
 
 static void press_lp(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, can_ground_throw(battle, fighter, false) ? enter_throw : fighter->armed ? sword_lp : scorpion_jab);
+  FighterFn entry = fighter_holds_back(battle, fighter) ? sword_back_lp : sword_lp;
+  fighter_interrupt(fighter, can_ground_throw(battle, fighter, false) ? enter_throw : fighter->armed ? entry : scorpion_jab);
 }
 
 static void press_lk(Battle *battle, Fighter *fighter) {
@@ -801,6 +804,7 @@ enum {
 };
 
 static const ButtonTable air_followup;
+static const ButtonTable air_ground_followup;
 static const ButtonTable scorpion_standing;
 
 static void air_land(Battle *battle, Fighter *fighter) {
@@ -845,7 +849,7 @@ static void air_attack_tick(Battle *battle, Fighter *fighter) {
       if (low) {
         fighter->body.pos[AXIS_Y] = fighter->body.ground;
         if (!combo) {
-          fighter->buttons = &scorpion_standing;
+          fighter->buttons = &air_ground_followup;
           fighter->flags |= FF_FOLLOW_UP;
         }
       } else if (index == 0 && !combo) {
@@ -941,9 +945,33 @@ static void press_crouch_lk(Battle *battle, Fighter *fighter) {
 }
 
 static void press_combo_hp(Battle *battle, Fighter *fighter) {
-  (void)battle;
-  fighter_interrupt(fighter, fighter->armed ? sword_hp : scorpion_combo_hp);
+  if (fighter->armed) {
+    press_jab(battle, fighter);
+  } else {
+    fighter_interrupt(fighter, scorpion_combo_hp);
+  }
 }
+
+/* 0x46c3f0 permits close HP against a reacting, grounded victim after a
+ * low air contact. Ordinary standing HP uses a stricter entry predicate. */
+static void air_ground_hp(Battle *battle, Fighter *fighter) {
+  if (fighter_distance(battle, fighter) <= 0.8f && !fighter_airborne(fighter_opponent(battle, fighter))) {
+    ground_attack(battle, fighter, G_CLOSE_HP);
+  } else {
+    scorpion_hp(battle, fighter);
+  }
+}
+
+static void press_air_ground_hp(Battle *battle, Fighter *fighter) {
+  if (fighter->armed) {
+    press_jab(battle, fighter);
+  } else {
+    fighter_interrupt(fighter, air_ground_hp);
+  }
+}
+
+static const ButtonTable air_ground_followup = {
+    {[BUTTON_HIGH_PUNCH] = press_air_ground_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_lk}};
 
 static void press_combo_hk(Battle *battle, Fighter *fighter) {
   fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? scorpion_roundhouse : scorpion_kick);
@@ -1463,8 +1491,8 @@ static void sword_air_tick(Battle *battle, Fighter *fighter) {
   }
 }
 
-static void sword_attack(Battle *battle, Fighter *fighter, bool hp) {
-  bool back = fighter_holds_back(battle, fighter), air = fighter_airborne(fighter);
+static void sword_attack(Battle *battle, Fighter *fighter, bool hp, bool back) {
+  bool air = fighter_airborne(fighter);
   const MoveDef *move = air ? (hp ? &s_sword_air_hp : &s_sword_air_lp) : back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
   fighter_start_move(battle, fighter, air ? S_JUMP : S_PUNCH, move);
   fighter->script = air ? sword_air_tick : sword_slash_tick;
@@ -1475,11 +1503,19 @@ static void sword_attack(Battle *battle, Fighter *fighter, bool hp) {
 }
 
 static void sword_hp(Battle *battle, Fighter *fighter) {
-  sword_attack(battle, fighter, true);
+  sword_attack(battle, fighter, true, false);
 }
 
 static void sword_lp(Battle *battle, Fighter *fighter) {
-  sword_attack(battle, fighter, false);
+  sword_attack(battle, fighter, false, false);
+}
+
+static void sword_back_hp(Battle *battle, Fighter *fighter) {
+  sword_attack(battle, fighter, true, true);
+}
+
+static void sword_back_lp(Battle *battle, Fighter *fighter) {
+  sword_attack(battle, fighter, false, true);
 }
 
 static void spin_tick(Battle *battle, Fighter *fighter) {
