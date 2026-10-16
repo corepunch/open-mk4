@@ -531,6 +531,8 @@ typedef struct SceneCamera {
   int shot_count, shot, hold, target_player;
   q16 parameter;
   Vec3 origin, axis, path_start;
+  q16 shake_y, shake_amount;
+  int shake_pulses, shake_interval, shake_ticks;
 } SceneCamera;
 
 #define MAX_SCENE_PIECES 32
@@ -639,6 +641,7 @@ void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_f
 bool scene_step(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
 void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
+void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);

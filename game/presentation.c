@@ -113,6 +113,16 @@ static Vec3 camera_sample(const SceneCamera *camera) {
   return result;
 }
 
+/* 457b50/457b90: alternate a vertical camera offset and its removal,
+ * independently of the active shot and without accumulating drift. */
+void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount) {
+  require(pulses > 0 && interval > 0, "Invalid camera shake");
+  SceneCamera *camera = &battle->camera;
+  camera->shake_y = camera->shake_amount = amount;
+  camera->shake_pulses = pulses;
+  camera->shake_interval = camera->shake_ticks = interval;
+}
+
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice) {
   Vec3 origin;
   Mat3 unused;
@@ -267,6 +277,14 @@ void battle_step_presentation(Battle *battle) {
     }
   }
   SceneCamera *camera = &battle->camera;
+  if (camera->shake_pulses > 0 && --camera->shake_ticks == 0) {
+    if (camera->shake_y != 0) {
+      camera->shake_y = 0;
+    } else if (--camera->shake_pulses > 0) {
+      camera->shake_y = camera->shake_amount;
+    }
+    camera->shake_ticks = camera->shake_interval;
+  }
   if (camera->active && camera->shots != NULL) {
     const CameraShot *shot = &camera->shots[camera->shot];
     q16 end = (shot->count - 1) * Q16_ONE;

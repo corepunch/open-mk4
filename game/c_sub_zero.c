@@ -1344,7 +1344,7 @@ static void first_fatality_tick(Battle *battle, Fighter *fighter) {
     scene_step(victim);
     if (before != victim->scene.index && victim->scene.index == 12) {
       battle_sound(battle, SOUND_B, 0x18);
-      battle_particles(battle, victim, 5, 0xffa81420, 20, false);
+      battle_camera_shake(battle, 2, 3, 0x2e14); /* 4456c0 -> 457b50, 4e3638[5] */
     }
   }
   if (victim->scene.done && fighter->scene.index >= 9) {

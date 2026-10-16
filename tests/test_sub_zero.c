@@ -1060,8 +1060,22 @@ static void fatality_camera(void) {
     advance(&battle, 120);
     check(battle.camera.parameter == Q16_ONE + 120 * 0x45a && isfinite(battle.camera.eye.x) && battle.camera.eye.y < 0,
         "orbit must follow its recovered slow spline rate above the floor");
+    while (battle.fighters[1 - player].scene.index < 12 && battle.phase == PHASE_FATALITY) {
+      advance(&battle, 1);
+    }
+    check(battle.camera.shake_y == 0x2e14 && battle.camera.shake_pulses == 2, "victim collapse must start the recovered two camera pulses");
+    advance(&battle, 3);
+    check(battle.camera.shake_y == 0, "camera pulse must remove its offset after three ticks");
+    advance(&battle, 3);
+    check(battle.camera.shake_y == 0x2e14, "camera must repeat its second pulse after the three-tick pause");
+    advance(&battle, 6);
+    check(battle.camera.shake_y == 0 && battle.camera.shake_pulses == 0, "camera shake must finish without changing the shot origin");
+    battle.camera.active = false;
+    battle_camera_shake(&battle, 1, 1, 0x1999);
+    battle_step_presentation(&battle);
+    check(battle.camera.shake_y == 0, "shared shake must also work with the normal fight camera");
     battle_next_round(&battle);
-    check(!battle.camera.active && battle.camera.shots == NULL, "round reset must discard camera continuations");
+    check(!battle.camera.active && battle.camera.shots == NULL && battle.camera.shake_pulses == 0, "round reset must discard camera continuations");
   }
 }
 

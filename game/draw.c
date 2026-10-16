@@ -9,14 +9,14 @@
 #include <string.h>
 
 typedef struct Camera {
-  float x, z, focal;
+  float x, z, focal, shake_y;
   int w, h;
   bool scene;
   Vec3 eye, right, up, forward;
 } Camera;
 
 static Vec3 camera_position(Camera c) {
-  return c.scene ? c.eye : (Vec3){c.x, -2.8f, c.z};
+  return c.scene ? c.eye : (Vec3){c.x, -2.8f + c.shake_y, c.z};
 }
 
 static float dot(Vec3 a, Vec3 b) {
@@ -28,7 +28,7 @@ static Vec3 camera_point(Camera c, Vec3 p) {
     Vec3 relative = vec_sub(p, c.eye);
     return (Vec3){dot(relative, c.right), dot(relative, c.up), dot(relative, c.forward)};
   }
-  float y = p.y + 2.8f, d = c.z - p.z;
+  float y = p.y + 2.8f - c.shake_y, d = c.z - p.z;
   return (Vec3){p.x - c.x, y * .978f - d * .208f, y * .208f + d * .978f};
 }
 
@@ -273,6 +273,8 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     camera.up =
         (Vec3){-camera.forward.y * camera.right.z, camera.forward.x * camera.right.z - camera.forward.z * camera.right.x, camera.forward.y * camera.right.x};
   }
+  camera.shake_y = q16_float(battle->camera.shake_y);
+  camera.eye.y += camera.shake_y;
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
   Triangles fighters[] = {fighter_geometry(assets, a, NULL), fighter_geometry(assets, b, NULL)};
