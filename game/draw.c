@@ -251,7 +251,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     if (!piece->active) {
       continue;
     }
-    const Character *ch = roster_character(assets, piece->roster);
+    const Character *ch = piece->frozen ? &assets->cut_characters.data[roster_def(piece->roster)->asset] : roster_character(assets, piece->roster);
     const Bone *bone = &ch->bones.data[piece->bone];
     float factor = 4096.f / (6.283185307179586f * Q16_ONE);
     Mat3 spin = rotation(0, (Vec3){piece->angle[0] * factor, piece->angle[1] * factor, piece->angle[2] * factor});
@@ -284,7 +284,8 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       Fighter clone = battle->fighters[p->owner];
       MoveDef captured = {.clip = p->clip, .last = MOVE_END};
       clone.current_move = &captured;
-      clone.appearance = APPEARANCE_NORMAL;
+      clone.appearance = APPEARANCE_FROZEN;
+      clone.blend_duration = 0;
       clone.action = 0;
       clone.sample_override = p->sample;
       clone.facing = p->facing;

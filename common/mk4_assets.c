@@ -484,6 +484,25 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
         break;
       }
     PUSH(assets->characters, ch);
+    /* 48ce00 selects roster +0x14 when freezing; these alternate
+     * meshes close the exposed cuts used by detached body parts. */
+    Character cut = ch;
+    uint32_t cut_root = image_u32(&exe, rec + 20) * 4;
+    uint32_t cut_slot = image_u32(&exe, cut_root + 4);
+    image_string(&exe, image_u32(&exe, image_u32(&exe, cut_slot)), cut.file);
+    if (strcmp(cut.file, ch.file) != 0) {
+      /* Kitana's recovered freeze row selects Tanya's cut geometry. */
+      View cut_data = package_geo(&archive, cut.file);
+      cut.meshes = load_meshes(cut_data);
+      Textures cut_pages = load_textures(cut_data);
+      cut.texture = cut_pages.data[0];
+      for (size_t j = 1; j < cut_pages.count; ++j) {
+        FREE_ARRAY(cut_pages.data[j].pixels);
+      }
+      FREE_ARRAY(cut_pages);
+    }
+    cut.bones = load_rig(&exe, cut_root, cut_slot, cut.meshes.count);
+    PUSH(assets->cut_characters, cut);
   }
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
@@ -646,6 +665,16 @@ static void geometry_free(Geometry *g) {
 
 void assets_free(Assets *a) {
   sound_bank_free(&a->audio);
+  for (size_t i = 0; i < a->cut_characters.count; ++i) {
+    Character *cut = &a->cut_characters.data[i];
+    const Character *normal = &a->characters.data[i];
+    if (cut->meshes.data != normal->meshes.data) {
+      meshes_free(&cut->meshes);
+      FREE_ARRAY(cut->texture.pixels);
+    }
+    FREE_ARRAY(cut->bones);
+  }
+  FREE_ARRAY(a->cut_characters);
   for (size_t i = 0; i < a->characters.count; ++i) {
     Character *ch = &a->characters.data[i];
     meshes_free(&ch->meshes);

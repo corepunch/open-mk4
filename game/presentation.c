@@ -119,16 +119,18 @@ void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_
 }
 
 static ScenePiece *detach(Battle *battle, Fighter *victim, int joint, const q16 velocity[3], const q16 spin[3]) {
-  if (joint < 0 || joint >= 128 || (victim->hidden_joints[joint / 64] & (UINT64_C(1) << (joint % 64)))) {
+  if (joint < -128 || joint >= 128 || (joint >= 0 && (victim->hidden_joints[joint / 64] & (UINT64_C(1) << (joint % 64))))) {
     return NULL;
   }
-  victim->hidden_joints[joint / 64] |= UINT64_C(1) << (joint % 64);
+  if (joint >= 0) {
+    victim->hidden_joints[joint / 64] |= UINT64_C(1) << (joint % 64);
+  }
   if (victim->assets == NULL) {
     return NULL;
   }
   const Character *ch = fighter_model(victim->assets, victim);
   for (size_t n = 0; n < ch->bones.count; ++n) {
-    if (ch->bones.data[n].id != joint) {
+    if (ch->bones.data[n].id != joint || (ch->bones.data[n].flags & 4)) {
       continue;
     }
     for (int i = 0; i < MAX_SCENE_PIECES; ++i) {

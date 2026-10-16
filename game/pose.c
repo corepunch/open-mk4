@@ -10,7 +10,13 @@ void battle_bind_assets(Battle *battle, const Assets *assets) {
 }
 
 const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
-  return fighter->appearance == APPEARANCE_BEAST ? &assets->scorpion_beast : roster_character(assets, fighter->roster);
+  if (fighter->appearance == APPEARANCE_BEAST) {
+    return &assets->scorpion_beast;
+  }
+  if (fighter->appearance == APPEARANCE_FROZEN) {
+    return &assets->cut_characters.data[roster_def(fighter->roster)->asset];
+  }
+  return roster_character(assets, fighter->roster);
 }
 
 const Clip *fighter_clip(const Assets *assets, const Fighter *fighter) {

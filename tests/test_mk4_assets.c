@@ -42,6 +42,12 @@ static void combat_poses(const Assets *assets) {
   battle_react(&battle, sub_zero, 67);
   battle_step(&battle, (Input[2]){0});
   check(sub_zero->sample_override == 0 && sub_zero->frozen_clip == CLIP_ASSET_IDLE, "Freeze must preserve the displayed looping pose");
+  const Character *closed = fighter_model(assets, sub_zero);
+  const Character *intact = roster_character(assets, 4);
+  check(closed->meshes.data == intact->meshes.data && closed->texture.pixels.data == intact->texture.pixels.data,
+      "Closed-surface rigs must share immutable archive geometry and texture ownership");
+  check(closed->bones.data[3].id == 2 && closed->bones.data[3].mesh == 20 && intact->bones.data[3].mesh == 2,
+      "Freeze must select the recovered closed head mesh rather than the intact head");
   Fighter *goro = &battle.fighters[1];
   battle_react(&battle, goro, 67);
   battle_step(&battle, (Input[2]){0});
@@ -82,10 +88,18 @@ static void combat_poses(const Assets *assets) {
   victim->appearance = APPEARANCE_FROZEN;
   battle_shatter(&battle, victim);
   int pieces = 0;
+  bool unnamed_piece = false;
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
     pieces += battle.pieces[i].active;
     check(!battle.pieces[i].active || battle.pieces[i].frozen, "Shatter pieces must preserve the frozen material");
+    if (battle.pieces[i].active) {
+      const Character *cut = &assets->cut_characters.data[roster_def(victim->roster)->asset];
+      const Bone *bone = &cut->bones.data[battle.pieces[i].bone];
+      check(!(bone->flags & 4), "Shatter must not draw invisible control roots as duplicate body meshes");
+      unnamed_piece |= bone->id < 0;
+    }
   }
+  check(unnamed_piece, "Shatter must preserve unnamed visible bones in its remaining-body launch");
   check(pieces >= 15 && victim->appearance == APPEARANCE_HIDDEN, "Shatter must detach posed meshes before hiding the intact body");
   q16 height = battle.pieces[0].pos[AXIS_Y];
   battle_step_presentation(&battle);

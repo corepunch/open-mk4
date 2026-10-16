@@ -117,7 +117,8 @@ typedef struct Hud {
 
 typedef struct Assets {
   Characters characters;
-  Character scorpion_beast; /* fatality II model, separate from the roster */
+  Characters cut_characters; /* closed-surface rigs; share normal meshes/textures when the file matches */
+  Character scorpion_beast;  /* fatality II model, separate from the roster */
   Clips clips;
   Arenas arenas;
   Hud hud;
