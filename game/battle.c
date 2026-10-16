@@ -206,8 +206,7 @@ static void resolve_hits(Battle *battle, const Fighter snapshot[2]) {
     if ((move->flags & SF_LOW) && defender->height > 0.2f)
       continue;
     if ((move->flags & SF_UNBLOCKABLE) &&
-        (defender->height > 0.f || defender->state == S_KNOCKDOWN ||
-            defender->state == S_HIT))
+        (defender->height > 0.f || defender->state == S_KNOCKDOWN || defender->state == S_HIT))
       continue;
     if (defender->state == S_KNOCKDOWN)
       continue;

@@ -115,8 +115,8 @@ const Character *roster_character(const Assets *assets, int roster_index) {
 }
 
 const char *state_name(int state) {
-  static const char *names[S_COUNT] = {"READY", "MOVE", "CROUCH", "JUMP", "PUNCH", "KICK",
-      "SWEEP", "UPPERCUT", "THROW", "BLOCK", "HIT", "KNOCKDOWN", "WINNER"};
+  static const char *names[S_COUNT] = {"READY", "MOVE", "CROUCH", "JUMP", "PUNCH", "KICK", "SWEEP",
+      "UPPERCUT", "THROW", "BLOCK", "HIT", "KNOCKDOWN", "WINNER"};
   if (state < 0 || state >= S_COUNT)
     return "";
   return names[state];
