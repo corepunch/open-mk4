@@ -120,3 +120,43 @@ motion, contact windows and selectors, branches, opponent effects and exit
 conditions. Verify each reachable scenario against retail before labeling it
 recovered. Preserve unresolved edges explicitly; a plausible animation is not
 evidence of recovered gameplay.
+
+## Command and native-entry inventory
+
+`python3 tools/scorpion_moves.py --output build/scorpion-moves.json` extracts
+Scorpion's seven per-button command lists for **both players**, including the
+three raw words per record, direction tokens, time window, flags, predicate,
+dispatch table and native target. This is an inventory with explicit open
+edges; it is not a list of fully ported moves. The move-list texture in
+`geogfx/sc_m_geo.geo` independently confirms these inputs:
+
+| Move | Input | Window | Native entry |
+| --- | --- | --- | --- |
+| Spear | B,B,LP | 27 | `0x49a630` |
+| Teleport punch (also airborne) | D,B,HP | 24 | `0x47fc90` |
+| Breathe fire | D,F,LP | 20 | `0x468610` |
+| Draw weapon | F,F,HK | 24 | `0x46d1d0` |
+| Fatality I | B,F,F,B+BLK | 50 | `0x467ce0` |
+| Fatality II | B,F,D,U+HP | 50 | `0x467cd0` |
+| Spike fatality | B,F,F+LK | 40 | `0x467e70` |
+| Fan fatality | F,D,D+LK | 40 | `0x467e00` |
+
+The texture also lists sword spin as D+LP and air throw as BLK in air. These
+are contextual actions; they do not appear as separate direction sequences
+in these lists. The command-window integers above are extracted values, not
+seconds. Native predicates still control state, distance and finisher access.
+
+Direction tokens are low-byte first: `AA` back, `DD` forward, `02` down,
+`01` up. Dispatch bits in the metadata select **different** native tables:
+`01` -> `0x4e6ef8`, `02` -> `0x4ed828`, `04` -> `0x4e8910`,
+`08` -> `0x4e7008`, `20` -> `0x4dfc90`. Other bits have gating roles;
+using the whole flag byte as one table ID misidentifies teleport and finishers.
+The high metadata byte indexes predicate pointers at `0x4e4ec0`.
+
+The extractor also preserves kick contact records selected through `0x53d2b8`.
+Their six words hold four signed Q16 rectangle values, packed reaction IDs and
+Q16 damage. The final word `0x2147` is a fraction of full health, **not push**:
+native `0x48d64c` passes record +0x14 to `0x48de80`, which subtracts health.
+These records alone do not specify transformed collision, block behavior,
+hitstop or victim movement. Those routines and the shared weapon/projectile/
+finisher scene machinery must be ported before claiming retail gameplay.
