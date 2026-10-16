@@ -18,6 +18,20 @@ state/context boundaries and evidence rules in `ARCHITECTURE.md`. Keep SDL out
 of combat simulation. The standalone `fsys.cpp` development tool may remain
 C++17; it must use the shared C archive validator and filename hash.
 
+## Code formatting
+
+Use the repository `.clang-format` for project-owned C/C++ sources, headers,
+and C include fragments. Use two-space indentation and keep opening braces on
+the same line as functions, structs, and control statements. Put each statement
+on its own line; expand function and control-flow bodies across multiple lines,
+even when they contain only one statement. Use normal spacing around operators
+and after commas, and wrap long expressions at the 100-column limit. Prefer
+readability over packing code into fewer lines.
+
+Run `clang-format -i` on changed code before validation and committing
+(`xcrun clang-format` on macOS if it is not on `PATH`). Do not format upstream
+reference checkouts. Keep formatting-only changes free of behavior changes.
+
 ## References
 
 Local reference checkouts live in `reference/`:

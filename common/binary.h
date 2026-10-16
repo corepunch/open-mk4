@@ -19,12 +19,30 @@ MK4_NORETURN void fatal(const char *format, ...);
 void require(bool condition, const char *message);
 void *checked_alloc(size_t count, size_t size);
 void *array_resize(void *data, size_t *count, size_t *capacity, size_t n, size_t size);
-#define ARRAY_TYPE(Name, Type) typedef struct Name { Type *data; size_t count, capacity; } Name
-#define RESIZE(a, n) (a).data = array_resize((a).data, &(a).count, &(a).capacity, (n), sizeof *(a).data)
-#define PUSH(a, ...) do { RESIZE(a, (a).count + 1); (a).data[(a).count - 1] = (__VA_ARGS__); } while (0)
-#define FREE_ARRAY(a) do { free((a).data); memset(&(a), 0, sizeof(a)); } while (0)
+#define ARRAY_TYPE(Name, Type)                                                                     \
+  typedef struct Name {                                                                            \
+    Type *data;                                                                                    \
+    size_t count, capacity;                                                                        \
+  } Name
+#define RESIZE(a, n)                                                                               \
+  (a).data = array_resize((a).data, &(a).count, &(a).capacity, (n), sizeof *(a).data)
+#define PUSH(a, ...)                                                                               \
+  do {                                                                                             \
+    RESIZE(a, (a).count + 1);                                                                      \
+    (a).data[(a).count - 1] = (__VA_ARGS__);                                                       \
+  } while (0)
+#define FREE_ARRAY(a)                                                                              \
+  do {                                                                                             \
+    free((a).data);                                                                                \
+    memset(&(a), 0, sizeof(a));                                                                    \
+  } while (0)
 ARRAY_TYPE(Bytes, uint8_t);
-typedef struct View { const uint8_t *p; size_t n; } View;
+
+typedef struct View {
+  const uint8_t *p;
+  size_t n;
+} View;
+
 View view(Bytes bytes);
 void view_check(View v, size_t offset, size_t size);
 uint8_t view_u8(View v, size_t offset);

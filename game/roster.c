@@ -22,11 +22,9 @@ static const StateDef mk4_states[STATE_COUNT] = {
     [STATE_HIT] = {247, 0, 0, 24, 0, 0, 0.f, 0.f, STATE_F_LOCK | STATE_F_REACTION},
     [STATE_KNOCKDOWN] = {166, 0, 0, 54, 0, 0, 0.f, 0.f,
         STATE_F_LOCK | STATE_F_REACTION | STATE_F_WAIT_LAND},
-    [STATE_VICTORY] = {293, 0, 0, 0, 0, 0, 0.f, 0.f, 0}
-};
+    [STATE_VICTORY] = {293, 0, 0, 0, 0, 0, 0.f, 0.f, 0}};
 
-static const int goro_clips[STATE_COUNT] = {
-    [STATE_IDLE] = CLIP_ASSET_IDLE,
+static const int goro_clips[STATE_COUNT] = {[STATE_IDLE] = CLIP_ASSET_IDLE,
     [STATE_WALK] = 590,
     [STATE_CROUCH] = 603,
     [STATE_JUMP] = 602,
@@ -38,81 +36,93 @@ static const int goro_clips[STATE_COUNT] = {
     [STATE_BLOCK] = 595,
     [STATE_HIT] = 605,
     [STATE_KNOCKDOWN] = 581,
-    [STATE_VICTORY] = 608
-};
+    [STATE_VICTORY] = 608};
 
 /* First match wins. Crouch punch is an uppercut and crouch kick is a sweep,
  * for every fighter who points at this table. A later character that breaks
  * the rule gets its own command rows. */
-static const CommandDef mk4_commands[] = {
-    {BUTTON_THROW, CMD_GROUNDED | CMD_STANDING, STATE_THROW},
-    {BUTTON_UPPERCUT, CMD_GROUNDED, STATE_UPPERCUT},
-    {BUTTON_PUNCH, CMD_CROUCHING, STATE_UPPERCUT},
-    {BUTTON_PUNCH, 0, STATE_PUNCH},
-    {BUTTON_KICK, CMD_CROUCHING, STATE_SWEEP},
-    {BUTTON_KICK, 0, STATE_KICK}
-};
+static const CommandDef mk4_commands[] = {{BUTTON_THROW, CMD_GROUNDED | CMD_STANDING, STATE_THROW},
+    {BUTTON_UPPERCUT, CMD_GROUNDED, STATE_UPPERCUT}, {BUTTON_PUNCH, CMD_CROUCHING, STATE_UPPERCUT},
+    {BUTTON_PUNCH, 0, STATE_PUNCH}, {BUTTON_KICK, CMD_CROUCHING, STATE_SWEEP},
+    {BUTTON_KICK, 0, STATE_KICK}};
 
 static const Motion mk4_motion = {2.5f, 4.5f, 6.8f, 15.f};
 
-enum { MK4_COMMAND_COUNT = (int)(sizeof mk4_commands / sizeof mk4_commands[0]) };
-
-static const CharacterDef roster[] = {
-    {GAME_MK4, 0, "SCORPION", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 1, "RAIDEN", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 2, "SONYA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 3, "LIU KANG", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 4, "SUB ZERO", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 5, "FUJIN", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 6, "SHINNOK", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 7, "REIKO", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 8, "QUAN CHI", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 9, "TANYA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 10, "REPTILE", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 11, "KAI", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 12, "JAREK", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 13, "JAX", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 14, "CAGE", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 15, "GORO", &mk4_motion, mk4_states, STATE_COUNT, goro_clips, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 16, "KITANA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
-    {GAME_MK4, 17, "NOOB SAIBOT", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT}
+enum {
+  MK4_COMMAND_COUNT = (int)(sizeof mk4_commands / sizeof mk4_commands[0])
 };
 
+static const CharacterDef roster[] = {{GAME_MK4, 0, "SCORPION", &mk4_motion, mk4_states,
+                                          STATE_COUNT, NULL, mk4_commands, MK4_COMMAND_COUNT},
+    {GAME_MK4, 1, "RAIDEN", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 2, "SONYA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 3, "LIU KANG", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 4, "SUB ZERO", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 5, "FUJIN", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 6, "SHINNOK", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 7, "REIKO", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 8, "QUAN CHI", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 9, "TANYA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 10, "REPTILE", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 11, "KAI", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 12, "JAREK", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 13, "JAX", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 14, "CAGE", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 15, "GORO", &mk4_motion, mk4_states, STATE_COUNT, goro_clips, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 16, "KITANA", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT},
+    {GAME_MK4, 17, "NOOB SAIBOT", &mk4_motion, mk4_states, STATE_COUNT, NULL, mk4_commands,
+        MK4_COMMAND_COUNT}};
+
 int roster_count(void) {
-    return (int)(sizeof roster / sizeof roster[0]);
+  return (int)(sizeof roster / sizeof roster[0]);
 }
 
 const CharacterDef *roster_def(int index) {
-    require(index >= 0 && index < roster_count(), "Roster index out of range");
-    return &roster[index];
+  require(index >= 0 && index < roster_count(), "Roster index out of range");
+  return &roster[index];
 }
 
 const StateDef *fighter_state(const Fighter *fighter) {
-    const CharacterDef *def = roster_def(fighter->roster);
-    require(fighter->state >= 0 && fighter->state < def->state_count, "Fighter state out of range");
-    return &def->states[fighter->state];
+  const CharacterDef *def = roster_def(fighter->roster);
+  require(fighter->state >= 0 && fighter->state < def->state_count, "Fighter state out of range");
+  return &def->states[fighter->state];
 }
 
 int roster_clip(const CharacterDef *def, int state, int asset_idle) {
-    int clip;
-    require(state >= 0 && state < def->state_count, "State has no clip");
-    clip = def->clips ? def->clips[state] : def->states[state].clip;
-    return clip < 0 ? asset_idle : clip;
+  int clip;
+  require(state >= 0 && state < def->state_count, "State has no clip");
+  clip = def->clips ? def->clips[state] : def->states[state].clip;
+  return clip < 0 ? asset_idle : clip;
 }
 
 const Character *roster_character(const Assets *assets, int roster_index) {
-    const CharacterDef *def = roster_def(roster_index);
-    require(def->game == GAME_MK4, "Only the MK4 mesh bank is loaded");
-    require(def->asset >= 0 && (size_t)def->asset < assets->characters.count, "Roster asset out of range");
-    return &assets->characters.data[def->asset];
+  const CharacterDef *def = roster_def(roster_index);
+  require(def->game == GAME_MK4, "Only the MK4 mesh bank is loaded");
+  require(def->asset >= 0 && (size_t)def->asset < assets->characters.count,
+      "Roster asset out of range");
+  return &assets->characters.data[def->asset];
 }
 
 const char *state_name(int state) {
-    static const char *names[STATE_COUNT] = {
-        "READY", "MOVE", "CROUCH", "JUMP", "PUNCH", "KICK", "SWEEP",
-        "UPPERCUT", "THROW", "BLOCK", "HIT", "KNOCKDOWN", "WINNER"
-    };
-    if (state < 0 || state >= STATE_COUNT)
-        return "";
-    return names[state];
+  static const char *names[STATE_COUNT] = {"READY", "MOVE", "CROUCH", "JUMP", "PUNCH", "KICK",
+      "SWEEP", "UPPERCUT", "THROW", "BLOCK", "HIT", "KNOCKDOWN", "WINNER"};
+  if (state < 0 || state >= STATE_COUNT)
+    return "";
+  return names[state];
 }
