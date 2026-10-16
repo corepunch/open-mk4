@@ -179,9 +179,20 @@ static void ice(void) {
     ice_command(&battle, player, 2, 0);
     advance(&battle, 16);
     check(objects(&battle, PROJECTILE_ICE) == 1, "ice object must spawn");
+    Projectile *shot = NULL;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      if (battle.projectiles[i].kind == PROJECTILE_ICE) {
+        shot = &battle.projectiles[i];
+      }
+    }
+    check(shot != NULL && shot->mesh_animation != NULL && shot->mesh_animation->scale == Q16_ONE,
+        "ice command must bind its original mesh sequence at full size");
+    int frame = projectile_mesh_frame(shot);
+    check(frame >= 74 && frame <= 81, "ice object must select the recovered shared geometry");
     battle_react(&battle, &battle.fighters[player], 37);
     advance(&battle, 1);
     check(objects(&battle, PROJECTILE_ICE) == 1, "independent ice object must survive owner interruption");
+    check(projectile_mesh_frame(shot) == 74 + (frame - 74 + 1) % 8, "ice meshes must advance once per tick independently of the owner");
     advance(&battle, 180);
     check(objects(&battle, PROJECTILE_ICE) == 0, "ice must expire after contact/bounds");
 

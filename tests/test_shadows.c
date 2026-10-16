@@ -150,6 +150,17 @@ static void stencil_checks(void) {
     check(cv.stencil[i] == 0, "Stencil was not reset between frames");
   triangle(&cv, .1f, &transparent, PASS_SHADOW_RECEIVER);
   check(cv.stencil[at] == 0, "Transparent floor texel marked receiver");
+  triangle(&cv, .1f, &white, PASS_SHADOW_RECEIVER);
+  triangle(&cv, .2f, &white, PASS_ADDITIVE);
+  check(cv.pixels[at] == 0xffffffff && closef(cv.depth[at], .1f) && cv.stencil[at] == CANVAS_RECEIVER_BIT,
+      "Additive effects must saturate color while preserving scene depth and receiver coverage");
+  uint32_t black_pixel = 0xff000000;
+  Texture black = {.width = 1, .height = 1, .pixels = {&black_pixel, 1, 1}};
+  triangle(&cv, .3f, &black, PASS_ADDITIVE);
+  check(cv.pixels[at] == 0xffffffff, "Black additive texels must leave the background visible");
+  triangle(&cv, .4f, &black, PASS_COLOR);
+  triangle(&cv, .2f, &white, PASS_ADDITIVE);
+  check(cv.pixels[at] == black_pixel, "Foreground geometry must occlude additive effects");
   canvas_free(&cv);
 }
 

@@ -352,11 +352,23 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       }
       FREE_ARRAY(geometry);
     }
-    if (p->kind == PROJECTILE_ICE) {
-      Vec3 tip = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
-      ScreenVertex at = camera_project(camera, (Vertex){.p = camera_point(camera, tip)}, 1);
-      canvas_rect(cv, (Rect){(int)at.x - 7, (int)at.y - 3, 15, 7}, 0xff78d9ff);
-      canvas_line(cv, (int)at.x - 9, (int)at.y, (int)at.x + 9, (int)at.y, 0xffe0faff);
+    if (p->mesh_animation != NULL) {
+      const Geometry *geometry = &assets->hud.effects;
+      int index = projectile_mesh_frame(p);
+      require(index >= 0 && (size_t)index < geometry->meshes.count, "Object mesh outside shared geometry");
+      const Mesh *mesh = &geometry->meshes.data[index];
+      float x = q16_float(p->heading[0]), z = q16_float(p->heading[1]);
+      Mat3 basis = {{x, 0, -z, 0, 1, 0, z, 0, x}};
+      Vec3 origin = {q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])};
+      for (size_t j = 0; j < mesh->triangles.count; ++j) {
+        Triangle triangle = mesh->triangles.data[j];
+        for (int k = 0; k < 3; ++k) {
+          triangle.v[k].p = vec_add(origin, mat3_apply(basis, vec_scale(triangle.v[k].p, q16_float(p->mesh_animation->scale))));
+          triangle.v[k].normal = mat3_apply(basis, triangle.v[k].normal);
+        }
+        TrianglePass pass = (mesh->flags & 0x180) == 0x100 ? PASS_ADDITIVE : PASS_COLOR;
+        render_triangle(cv, camera, triangle, &geometry->textures.data[triangle.texture], 1, pass, NULL);
+      }
     }
     if (p->kind == PROJECTILE_SWORD) {
       Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};

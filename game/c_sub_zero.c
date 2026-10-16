@@ -828,6 +828,9 @@ static void enter_lk_throw(Battle *battle, Fighter *fighter) {
  * task, so it survives owner interruption; bounds and contact own teardown. */
 static const AttackRecord ice_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 67, 67, 0, ATTACK_MARK, 0};
 static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = 0x304};
+/* 49bcfe installs 4ed898: shared meshes 74..81, one tick each.
+ * The high bit invokes 40d720 for the separately managed ice trail. */
+static const MeshAnimation ice_meshes = {.first = 74, .count = 8, .period = 1, .scale = Q16_ONE};
 
 static bool owned_object(const Battle *battle, const Fighter *fighter, int kind) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
@@ -868,6 +871,7 @@ static void ice_tick(Battle *battle, Fighter *fighter) {
     battle_sound(battle, SOUND_C, 0);
     Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_ICE, 180, ice_projectile);
     if (p != NULL) {
+      p->mesh_animation = &ice_meshes;
       for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
         q16 heading = fighter_axis(battle, fighter, axis);
         p->pos[axis] += q16_mul(heading, 0xccc);

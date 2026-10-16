@@ -473,6 +473,11 @@ typedef struct OrbitLight {
   q16 phase, strength, pos[3];
 } OrbitLight;
 
+typedef struct MeshAnimation {
+  int first, count, period;
+  q16 scale;
+} MeshAnimation;
+
 struct Projectile {
   int kind, owner, facing, ticks, lifetime, phase;
   const WeaponDef *weapon;
@@ -484,6 +489,7 @@ struct Projectile {
   OrbitLight light;
   q16 spin[3];
   int bounce;
+  const MeshAnimation *mesh_animation;
 };
 
 #define MAX_PROJECTILES 4
@@ -644,6 +650,7 @@ void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter 
 void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
+int projectile_mesh_frame(const Projectile *object);
 void battle_particles(Battle *battle, const Fighter *fighter, int joint, uint32_t color, int count, bool ice);
 ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
 void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);

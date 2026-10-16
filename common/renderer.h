@@ -16,6 +16,7 @@ typedef struct ScreenVertex {
 
 typedef enum TrianglePass {
   PASS_COLOR,
+  PASS_ADDITIVE,
   PASS_SHADOW_RECEIVER,
   PASS_SHADOW_MASK
 } TrianglePass;

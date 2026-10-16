@@ -142,6 +142,8 @@ Do not add retail-execution harnesses or large per-tick JSON recordings.
 Presentation uses recovered closed-surface rigs, animated head/spine models,
 camera splines and independent pulse shakes (`457b90`, fatality I uses
 `4e3638[5]`: two pulses, three ticks per half-cycle, Y `0x2e14`),
+the eight one-tick ice blast mesh frames (`4ed898`, shared meshes 74–81,
+GEO `0x100` additive blending),
 the shared ice statue and its orbiting light, original weapon
 meshes and three-arc settling records. The software rasterizer, blue freeze
 material, lighting and bounded particle pools remain portable engine choices.

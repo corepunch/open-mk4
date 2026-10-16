@@ -44,6 +44,10 @@ static void combat_poses(const Assets *assets) {
       "Shared weapon presentation must use the original sword and scepter meshes");
   Pose weapon_pose[MK4_MAX_BONES];
   pose_static(&assets->scene_models.data[SCENE_MODEL_SCEPTER], weapon_pose);
+  for (int mesh = 74; mesh <= 81; ++mesh) {
+    check(assets->hud.effects.meshes.data[mesh].triangles.count == 8, "Ice blast must retain all eight textured mesh frames");
+    check((assets->hud.effects.meshes.data[mesh].flags & 0x180) == 0x100, "Ice blast meshes must preserve their original additive material flag");
+  }
   check(fabsf(weapon_pose[0].position.y + .3f) < .001f, "Static weapon posing must preserve the descriptor grip offset");
   Battle battle;
   battle_init(&battle, 4, 15);

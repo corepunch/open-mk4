@@ -86,7 +86,7 @@ static Meshes load_meshes(View v) {
     // Header's texture offset is four bytes before the texture count;
     // those four bytes are also the final triangle's trailing UV bytes.
     require(tp >= 0 && (uint64_t)(tp) + (size_t)(count) * 8 <= (uint64_t)(end) + 4, "Invalid GEO triangle table");
-    Mesh mesh = {0};
+    Mesh mesh = {.flags = kind};
     size_t vi = (size_t)(vp), ti = 0;
     bool terminated = false;
     for (size_t s = (size_t)(sp); s + 4 <= end; s += 4) {

@@ -33,6 +33,12 @@ void battle_object_light(Projectile *object, const OrbitLightDef *def) {
   orbit_light_step(&object->light);
 }
 
+int projectile_mesh_frame(const Projectile *object) {
+  const MeshAnimation *animation = object->mesh_animation;
+  require(animation != NULL && animation->count > 0 && animation->period > 0, "Invalid object mesh animation");
+  return animation->first + (maxi(0, object->ticks - 1) / animation->period) % animation->count;
+}
+
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation) {
   *position = (Vec3){fighter_x(fighter), q16_float(fighter->body.pos[AXIS_Y]), fighter_z(fighter)};
   Vec3 offset = {q16_float(fighter->visual_offset[0]), q16_float(fighter->visual_offset[1]), q16_float(fighter->visual_offset[2])};

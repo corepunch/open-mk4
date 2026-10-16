@@ -38,6 +38,7 @@ ARRAY_TYPE(Triangles, Triangle);
 
 typedef struct Mesh {
   Triangles triangles;
+  uint16_t flags;
 } Mesh;
 
 ARRAY_TYPE(Meshes, Mesh);

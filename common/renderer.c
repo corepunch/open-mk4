@@ -175,12 +175,19 @@ void canvas_triangle(Canvas *cv, const ScreenVertex p[3], const Texture *tex, Re
           cv->stencil[at] |= CANVAS_SHADOW_BIT;
         continue; // Shadow coverage changes neither scene depth nor color.
       }
-      cv->stencil[at] = pass == PASS_SHADOW_RECEIVER ? CANVAS_RECEIVER_BIT : 0;
       float light = clampf((a * p[0].light * p[0].q + b * p[1].light * p[1].q + c * p[2].light * p[2].q) / q, 0.f, 1.f);
       unsigned r = (unsigned)((float)((color >> 16) & 255) * light), g = (unsigned)((float)((color >> 8) & 255) * light),
                bl = (unsigned)((float)(color & 255) * light);
+      if (pass == PASS_ADDITIVE) {
+        uint32_t previous = cv->pixels[at];
+        r = (unsigned)mini(255, (int)(r + ((previous >> 16) & 255)));
+        g = (unsigned)mini(255, (int)(g + ((previous >> 8) & 255)));
+        bl = (unsigned)mini(255, (int)(bl + (previous & 255)));
+      } else {
+        cv->stencil[at] = pass == PASS_SHADOW_RECEIVER ? CANVAS_RECEIVER_BIT : 0;
+        cv->depth[at] = z;
+      }
       cv->pixels[at] = 0xff000000 | (r << 16) | (g << 8) | bl;
-      cv->depth[at] = z;
     }
   if (wire)
     for (int i = 0; i < 3; ++i)
