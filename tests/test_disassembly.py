@@ -119,6 +119,83 @@ class ScriptTests(unittest.TestCase):
 
 
 class QueryTests(unittest.TestCase):
+    def test_c_view_preserves_low_kick_steps_and_native_order(self):
+        from retail_script_c import script_c_text
+        text = script_c_text(RetailImage('MK4/MK-4.EXE'), 0x4e6d08)
+        code = text.split('```c\n', 1)[1].split('```', 1)[0]
+        self.assertIn('void scorpion_low_kick(void) {', code)
+        self.assertIn('open_animation(ANIM_SCORPION_LOW_KICK, 0); // 18 stored samples', code)
+        self.assertIn('31 decoded instructions; 31 shown', text)
+        steps = re.findall(r'show_sample_for_ticks\((\d+), (\d+)\);', code)
+        self.assertEqual(steps, [(str(sample), '1') for sample in (0, 2, 4, 6, 8, 10, 12, 14, 16, 17)])
+        self.assertEqual(code.count('task_slot_5c_clear();'), 2)
+        self.assertLess(code.index('task_slot_5c_set_one();'), code.index('show_sample_for_ticks(14, 1);'))
+        self.assertGreater(code.rindex('task_slot_5c_clear();'), code.index('show_sample_for_ticks(17, 1);'))
+        ordered = ['contact_query_b(6);', 'set_action(ACTION_1006);', 'release_attack_bookkeeping();',
+                   'wait_ticks(native_result_bit0() ? 8 : 5);', 'wait_pose_then_controller_return();', 'return;']
+        positions = [code.index(statement) for statement in ordered]
+        self.assertEqual(positions, sorted(positions))
+        self.assertNotRegex(code, r'0x[0-9a-f]{6}|inline=|native_target=')
+        self.assertIn('damage 11%', text)
+        self.assertIn('reactions hit/air/block = 17/10/6', text)
+        self.assertIn('upstream `0046a9b0`', text)
+        self.assertIn('not a compilable C port', text)
+
+    def test_c_view_decodes_values_and_honors_instruction_limit(self):
+        from retail_script_c import script_c_text
+        image = RetailImage('MK4/MK-4.EXE')
+        struct.pack_into('<I', image.memory, 0x4e6d24 - 0x400000, 0x49000005)
+        struct.pack_into('<I', image.memory, 0x4e6d90 - 0x400000, 0x37007003)
+        text = script_c_text(image, 0x4e6d08)
+        self.assertIn('show_sample_for_ticks(5, 1);', text)
+        self.assertIn('wait_ticks(native_result_bit0() ? 7 : 3);', text)
+        limited = script_c_text(image, 0x4e6d08, limit=5)
+        self.assertIn('show_sample(5);', limited)
+        self.assertNotIn('show_sample_for_ticks', limited)
+        self.assertIn('31 decoded instructions; 5 shown', limited)
+        self.assertIn('continuation omitted', limited)
+
+    def test_c_view_stops_at_unknown_operations_and_control_flow(self):
+        from retail_script_c import script_c_text
+        image = RetailImage('MK4/MK-4.EXE')
+        entry = 0x570000
+        # A jump reaches valid low-kick instructions. Never print those as
+        # sequential C after an unsupported branch in the sorted VM graph.
+        struct.pack_into('<II', image.memory, entry - 0x400000, 0x33000000, (entry + 8) // 4)
+        struct.pack_into('<II', image.memory, entry + 8 - 0x400000, 0x35000000, 0x46a950)
+        struct.pack_into('<I', image.memory, entry + 16 - 0x400000, 0x3f000000)
+        text = script_c_text(image, entry)
+        self.assertIn('C view stopped: script jump', text)
+        self.assertNotIn('task_slot_5c_clear();', text)
+        struct.pack_into('<I', image.memory, entry - 0x400000, 0xff000000)
+        self.assertIn('unresearched opcode; path stopped', script_c_text(image, entry))
+        # The decoder's sorted graph can place a target below the entry. The
+        # C view must begin at the requested root, not that earlier block.
+        struct.pack_into('<II', image.memory, entry - 0x400000, 0x35000000, 0x46a950)
+        struct.pack_into('<I', image.memory, entry + 8 - 0x400000, 0x3f000000)
+        struct.pack_into('<II', image.memory, entry + 16 - 0x400000, 0x33000000, entry // 4)
+        text = script_c_text(image, entry + 16)
+        self.assertIn('C view stopped: script jump', text)
+        self.assertNotIn('task_slot_5c_clear();', text)
+
+    def test_c_view_cli_accepts_script_and_move_queries_only(self):
+        root = Path(__file__).resolve().parents[1]
+        tool = str(root / 'tools/disassemble_retail.py')
+        with tempfile.TemporaryDirectory() as directory:
+            command = [sys.executable, tool, '--exe', str(root / 'MK4/MK-4.EXE'), '--archive', 'missing.dat', '--c']
+            for query in (['--script', '0x4e6d08'], ['--move', 'low_kick']):
+                result = subprocess.run([*command, *query], cwd=directory, capture_output=True, text=True, check=True)
+                self.assertIn('void scorpion_low_kick(void)', result.stdout)
+                self.assertIn('show_sample_for_ticks(17, 1);', result.stdout)
+            self.assertEqual(list(Path(directory).iterdir()), [])
+            subprocess.run([*command, '--move', 'low_kick', '--output', 'kick.md'], cwd=directory, capture_output=True, check=True)
+            self.assertEqual([path.name for path in Path(directory).iterdir()], ['kick.md'])
+            self.assertIn('void scorpion_low_kick(void)', Path(directory, 'kick.md').read_text())
+            for query in (['--attack', 'B', '6'], ['--native', '0x46a950'], ['--script', '0x4e6d08', '--raw']):
+                result = subprocess.run([*command, *query], cwd=directory, capture_output=True, text=True)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('--c requires --script or --move', result.stderr)
+
     def test_build_specific_names_and_reference_sources(self):
         from retail_query import instruction_text, script_text
         from retail_symbols import REFERENCES, reference_rows, target_text

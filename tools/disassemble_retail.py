@@ -649,10 +649,13 @@ def main():
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
     parser.add_argument('--limit', type=int, default=80, help='Query instruction limit, 1..512 (default 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
+    parser.add_argument('--c', action='store_true', help='Readable C-style pseudocode for --script or --move')
     parser.add_argument('--no-linear', action='store_true', help='For --bundle, omit the large linear recovery fallback')
     args = parser.parse_args()
     if not 1 <= args.limit <= 512:
         parser.error('--limit must be between 1 and 512')
+    if args.c and (not (args.script or args.move) or args.raw):
+        parser.error('--c requires --script or --move and cannot be combined with --raw')
     if not any((args.script, args.native, args.attack, args.move, args.list_moves, args.bundle)):
         parser.print_help()
         return
@@ -671,7 +674,10 @@ def main():
             report = native_text(Disassembly(args.exe), entry, args.limit, args.raw)
         else:
             image = RetailImage(args.exe)
-            if args.move:
+            if args.c:
+                from retail_script_c import move_c_text, script_c_text
+                report = move_c_text(image, args.move, args.limit) if args.move else script_c_text(image, address(args.script), args.limit)
+            elif args.move:
                 report = move_text(image, args.move, args.limit, args.raw)
             elif args.script:
                 report = script_text(image, address(args.script), args.limit, args.raw)

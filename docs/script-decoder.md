@@ -14,6 +14,7 @@ creates a bundle. Only native queries need Capstone.
 python3 tools/disassemble_retail.py --list-moves
 python3 tools/disassemble_retail.py --move spear
 python3 tools/disassemble_retail.py --script 0x4e6d08
+python3 tools/disassemble_retail.py --move low_kick --c
 python3 tools/disassemble_retail.py --native 0x46bf10 --limit 80
 python3 tools/disassemble_retail.py --attack B 6
 python3 tools/disassemble_retail.py --attack weapon 2
@@ -31,6 +32,38 @@ Raw mode includes fixed script words or native instruction bytes.
 
 Running without a query shows help. The old bulk export now requires explicit
 `--bundle`; it remains available for research, separate from the query path.
+
+## Readable C-style view
+
+Use `--move low_kick --c` or `--script 0x4e6d08 --c` for named helper calls,
+animation samples and waits. This presentation reads the same decoded rows;
+the low-kick sequence is not a hardcoded example. The default detailed view
+remains available without `--c`. The C view supports `--output` and the same
+instruction limit, needs no Capstone or archive, and cannot combine with `--raw`.
+
+An adjacent opcode `49` sample submission and opcode `34` wait become
+`show_sample_for_ticks(sample, ticks)`. The sample is the low byte, displayed
+in decimal. Local handlers `45ba00 -> 429970 -> 429990` establish the explicit
+sample assignment and pose submission; `45bf80` optionally binds a clip only
+when prefix byte 1 equals 2. Opcode `0f` binds the descriptor and starting
+cursor without submitting a pose. The C view keeps clip binding, native calls
+and other intervening instructions in order. Recovery remains
+`wait_ticks(native_result_bit0() ? 8 : 5)`; this does not rename the native flag
+as hit/miss or assume that contact is its only writer.
+
+The result is pseudocode: waits suspend and resume the script, while a real C
+port needs its own state/continuation implementation. `ACTION_1006` preserves
+the known action value without inventing a semantic state name. Contact data
+and checked source references appear below the function. Names for unresolved
+native targets retain their addresses rather than inventing behavior.
+
+Only the researched straight-line operations used by low kick have C renderers
+so far. Unsupported instructions or control flow stop this view explicitly;
+later rows in the decoder's sorted graph are not flattened into sequential C.
+Use the default detailed query to inspect every decoded branch and unresolved
+dependency. For `--move`, C views share the total instruction limit across the
+catalogued script roots; native move entries, input gates and reactions remain
+separate research.
 
 ## Function names and mk4decomp sources
 
