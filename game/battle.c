@@ -62,6 +62,7 @@ void battle_next_round(Battle *battle) {
   battle->axis[1] = 0;
   battle->distance = 2 * START_X;
   battle->ko_winner = 0;
+  battle->finisher = 0;
   battle->contacts_off = false;
   battle->contacted = false;
   memset(battle->effects, 0, sizeof battle->effects);
@@ -70,6 +71,76 @@ void battle_next_round(Battle *battle) {
   battle->phase_ticks = 0;
   battle->time_ticks = 99 * 60;
   battle->winner = -1;
+}
+
+static const MoveDef dizzy = {.clip = 13, .last = 55, .flags = SF_LOCK, .action = 0x1009};
+static const MoveDef defeated = {.clip = 128, .first = 109, .last = 109, .flags = SF_LOCK | SF_HOLD, .action = 0x4003};
+
+static void stop_fighter(Fighter *fighter) {
+  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
+  fighter->body.gravity = 0;
+  fighter->body.physics = fighter->body.on_land = NULL;
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+}
+
+bool battle_can_finish(const Battle *battle, const Fighter *fighter) {
+  return battle->phase == PHASE_FINISH && battle->finisher == 0 && battle->winner >= 0 && fighter == &battle->fighters[battle->winner] &&
+         fighter_opponent(battle, fighter)->action == 0x1009 && !fighter_airborne(fighter);
+}
+
+bool battle_begin_finisher(Battle *battle, Fighter *fighter, int id) {
+  if (id <= 0 || !battle_can_finish(battle, fighter)) {
+    return false;
+  }
+  battle->finisher = id;
+  battle->phase = PHASE_FATALITY;
+  battle->phase_ticks = 0;
+  for (int i = 0; i < 2; ++i) {
+    Fighter *f = &battle->fighters[i];
+    if (f->armed && f->disarm != NULL) {
+      f->disarm(battle, f);
+    }
+    stop_fighter(f);
+    f->pending = f->script = NULL;
+    f->buttons = NULL;
+    f->flags = FF_BUSY | FF_UNTOUCHABLE;
+  }
+  memset(battle->projectiles, 0, sizeof battle->projectiles);
+  return true;
+}
+
+void battle_end_finisher(Battle *battle) {
+  battle->phase = PHASE_MATCH_OVER;
+  battle->phase_ticks = 0;
+  for (int i = 0; i < 2; ++i) {
+    Fighter *f = &battle->fighters[i];
+    stop_fighter(f);
+    f->pending = f->script = NULL;
+    f->flags &= ~(unsigned)FF_PAIRED;
+    if (battle->finisher == 0) {
+      if (i == battle->winner) {
+        fighter_enter_state(battle, f, S_VICTORY);
+      } else {
+        fighter_start_move(battle, f, S_KNOCKDOWN, &defeated);
+      }
+    }
+  }
+}
+
+static void begin_finish_window(Battle *battle) {
+  battle->phase = PHASE_FINISH;
+  battle->phase_ticks = 0;
+  for (int i = 0; i < 2; ++i) {
+    Fighter *f = &battle->fighters[i];
+    stop_fighter(f);
+    f->flags = 0;
+    if (i == battle->winner) {
+      fighter_start_move(battle, f, S_IDLE, roster_def(f->roster)->moves[S_IDLE]);
+    } else {
+      fighter_start_move(battle, f, S_HIT, &dizzy);
+    }
+    memset(&f->directions, 0, sizeof f->directions);
+  }
 }
 
 static void finish_round(Battle *battle) {
@@ -95,6 +166,9 @@ static void finish_round(Battle *battle) {
   else
     battle->phase = PHASE_ROUND_OVER;
   battle->phase_ticks = 0;
+  if (battle->phase == PHASE_MATCH_OVER && battle->ko_winner != 0 && battle->time_ticks > 0) {
+    begin_finish_window(battle);
+  }
 }
 
 static bool held(const Fighter *fighter, Button button) {
@@ -146,7 +220,7 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
     return;
   }
   dir = (int)held(fighter, BUTTON_RIGHT) - (int)held(fighter, BUTTON_LEFT);
-  if (held(fighter, BUTTON_UP) && grounded) {
+  if (battle->phase == PHASE_FIGHT && held(fighter, BUTTON_UP) && grounded) {
     /* Straight jump 0x46f7e0 (vy 0x30a3 up, gravity 0x28f). Holding a
      * direction approximates the flips with their 0xe14 speed. */
     fighter->body.vel[AXIS_Y] = -motion->jump_velocity;
@@ -325,6 +399,23 @@ void battle_step(Battle *battle, const Input input[2]) {
     if (battle->phase_ticks >= 90) {
       battle->phase = PHASE_FIGHT;
       battle->phase_ticks = 0;
+    }
+    return;
+  }
+  if (battle->phase == PHASE_FINISH) {
+    Fighter *winner = &battle->fighters[battle->winner];
+    Fighter *victim = &battle->fighters[1 - battle->winner];
+    advance_fighter(battle, winner, victim);
+    victim->ticks++;
+    for (int button = 0; button < BUTTON_COUNT; ++button) {
+      if (winner->pressed & BUTTON_BIT(button)) {
+        fighter_press(battle, winner, (Button)button);
+      }
+    }
+    battle_world(battle);
+    /* Our match rule: five seconds to enter a finisher, timer frozen. */
+    if (battle->phase == PHASE_FINISH && battle->phase_ticks >= 300 && winner->pending == NULL) {
+      battle_end_finisher(battle);
     }
     return;
   }

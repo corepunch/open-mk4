@@ -254,6 +254,8 @@ typedef struct CharacterDef {
 typedef enum Phase {
   PHASE_READY,
   PHASE_FIGHT,
+  PHASE_FINISH,
+  PHASE_FATALITY,
   PHASE_ROUND_OVER,
   PHASE_MATCH_OVER
 } Phase;
@@ -366,6 +368,7 @@ struct Battle {
   Projectile projectiles[MAX_PROJECTILES];
   Phase phase;
   int phase_ticks, time_ticks, round, winner;
+  int arena, finisher; /* stage id and completed/active character finisher id */
   uint64_t ticks;
   q16 arena_radius;
   q16 axis[2];       /* 0x530238: unit X/Z from P1 toward P2, previous world pump */
@@ -403,6 +406,9 @@ Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, in
 void battle_damage(Battle *battle, Fighter *victim, q16 damage);
 void battle_react(Battle *battle, Fighter *victim, int reaction);
 void battle_world(Battle *battle);
+bool battle_can_finish(const Battle *battle, const Fighter *fighter);
+bool battle_begin_finisher(Battle *battle, Fighter *fighter, int id);
+void battle_end_finisher(Battle *battle);
 void fighter_interrupt(Fighter *fighter, FighterFn entry);
 void fighter_enter_stance(Fighter *fighter, Stance stance);
 const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter);

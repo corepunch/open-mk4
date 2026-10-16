@@ -92,3 +92,10 @@ reaction 100; LK retains the pair through sample 65, then plays the victim's
 586:65–130 continuation. Root alignment uses our paired world origin. The
 retail CPU probability-based throw reversal is not a human command branch and
 is left to a future CPU policy.
+
+The match now opens a winner-only finish window after the deciding KO. It uses
+our explicit five-second window, freezes the round timer, allows positioning and
+command history, and holds the loser in clip 13/action 0x1009. Timeout wins skip
+this window. Starting a finisher locks both controllers and removes projectiles;
+completion awards no extra round. Arena selection is now available to simulation
+for the two stage-fatality predicates.

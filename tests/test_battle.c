@@ -672,7 +672,8 @@ int main(void) {
     battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 2;
     battle.fighters[1].health = 0xa3d;
     do_attack(&battle, S_PUNCH, false, false);
-    check(battle.phase == PHASE_MATCH_OVER && battle.fighters[0].wins == 2, "Best of three match failed");
+    check(battle.phase == PHASE_FINISH && battle.fighters[0].wins == 2, "Final KO must open the finish window");
+    check(battle_can_finish(&battle, &battle.fighters[0]) && !battle_can_finish(&battle, &battle.fighters[1]), "Only winner may finish");
     advance_ticks(&battle, 300, NULL);
     check(battle.phase == PHASE_MATCH_OVER, "Match result should wait for rematch");
     battle_reset_match(&battle);

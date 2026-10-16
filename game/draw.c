@@ -291,12 +291,16 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     if (battle->phase_ticks > 40)
       draw_sprite(cv, &assets->hud.effects, 137, (Rect){cv->w / 2 - 181, 285, 362, 126}, false);
   }
+  if (battle->phase == PHASE_FINISH || battle->phase == PHASE_FATALITY) {
+    font_centered(font, cv, 165, battle->phase == PHASE_FINISH ? "FINISH HIM" : "FATALITY", 1.5f);
+  }
   if (battle->phase == PHASE_ROUND_OVER || battle->phase == PHASE_MATCH_OVER) {
     char message[1100];
     if (battle->winner < 0)
       snprintf(message, sizeof message, "DRAW");
     else
-      snprintf(message, sizeof message, "%s WINS", roster_character(assets, battle->fighters[battle->winner].roster)->name);
+      snprintf(message, sizeof message, battle->finisher ? "%s WINS / FATALITY" : "%s WINS",
+          roster_character(assets, battle->fighters[battle->winner].roster)->name);
     canvas_rect(cv, (Rect){cv->w / 2 - 350, 205, 700, 100}, 0xff141517);
     font_centered(font, cv, 224, message, 1.5f);
     font_centered(font, cv, 267, battle->phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND", .75f);
