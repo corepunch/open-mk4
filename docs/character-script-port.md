@@ -145,6 +145,11 @@ blocked/hit pull behavior, direct hit and queued interruption during nested
 startup/recovery/pull waits, full object pools, rematch during pull, and two
 simultaneous actor fibers whose projectiles can interrupt one another.
 
+Air attack hit-stops, paired ground and air throws, and weapon draw/strike/
+throw/pickup/recovery now use actor fibers too. Paired victims retain their own
+fall/getup lifetimes. Weapon objects still fly and settle independently, and
+shared locomotion and generic hit reactions remain engine callbacks.
+
 The special-move fibers cover ice, clone, slide, sidestep, spear return/stun,
 teleport and fire. Independent projectile and clone callbacks retain their own
 lifetimes. Ice plays two forward/backward recovery cycles; clone suspends until

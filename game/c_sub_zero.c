@@ -571,67 +571,66 @@ static void air_land(Fighter *fighter) {
   mk4_land(fighter);
 }
 
-static void air_attack_tick(Fighter *fighter) {
+static void air_attack_script(Fighter *fighter) {
   int index = 0;
   while (&air_attacks[index].move != fighter_move(fighter)) {
     ++index;
   }
   const AirAttack *attack = &air_attacks[index];
-  int tick = fighter->ticks;
-  if (fighter->script_phase == AIR_FREEZE || fighter->script_phase == AIR_COMBO_FREEZE) {
-    if (--fighter->script_timer > 0) {
-      return;
+  const bool combo = fighter->script_phase == AIR_COMBO;
+  const int retract_at = attack->extend + attack->hold;
+  for (int tick = 1;; ++tick) {
+    fighter_wait_ticks(1);
+    if (!fighter_airborne(fighter)) {
+      fighter_fiber_finish(air_land);
     }
-    fighter->buttons = NULL;
-    fighter->body.gravity = index >= 3 || fighter->script_phase == AIR_COMBO_FREEZE ? 0x51e : 0x28f;
-    fighter->script_phase = AIR_FALL;
-  }
-  if (!fighter_airborne(fighter)) {
-    air_land(fighter);
-    return;
-  }
-  if (fighter->script_phase == AIR_FALL) {
-    return;
-  }
-  int retract_at = attack->extend + attack->hold;
-  fighter->sample_override = tick < attack->extend ? tick : tick < retract_at ? attack->extend - 1 : maxi(0, attack->retract - 1 - tick + retract_at);
-  if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(fighter, &attack->record) != CONTACT_MISS) {
-    bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
-    bool combo = fighter->script_phase == AIR_COMBO;
-    stop_body(fighter);
-    fighter->action = 0x1006;
-    fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
-    fighter->script_timer = index >= 3 ? 8 : 12;
-    if (index == 0 || index == 2) {
-      if (low) {
-        fighter->body.pos[AXIS_Y] = fighter->body.ground;
-        if (!combo) {
-          fighter->buttons = &air_ground_followup;
-          fighter->flags |= FF_FOLLOW_UP;
+    fighter->sample_override = tick < attack->extend ? tick : tick < retract_at ? attack->extend - 1 : maxi(0, attack->retract - 1 - tick + retract_at);
+    if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(fighter, &attack->record) != CONTACT_MISS) {
+      bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
+      stop_body(fighter);
+      fighter->action = ACTION_RETAIL_1006;
+      fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
+      if (index == 0 || index == 2) {
+        if (low) {
+          fighter->body.pos[AXIS_Y] = fighter->body.ground;
+          if (!combo) {
+            fighter->buttons = &air_ground_followup;
+            fighter->flags |= FF_FOLLOW_UP;
+          }
+        } else if (index == 0 && !combo) {
+          fighter->buttons = &air_followup;
         }
-      } else if (index == 0 && !combo) {
-        fighter->buttons = &air_followup;
       }
+      fighter_wait_ticks(index >= 3 ? 8 : 12);
+      fighter->buttons = NULL;
+      fighter->body.gravity = index >= 3 || combo ? 0x51e : 0x28f;
+      break;
     }
-  } else if (tick >= retract_at + attack->retract) {
-    if (fighter->script_phase == AIR_COMBO) {
-      fighter->body.gravity = 0x51e;
+    if (tick >= retract_at + attack->retract) {
+      if (combo) {
+        fighter->body.gravity = 0x51e;
+      }
+      break;
     }
-    fighter->script_phase = AIR_FALL;
   }
+  fighter->script_phase = AIR_FALL;
+  while (fighter_airborne(fighter)) {
+    fighter_wait_ticks(1);
+  }
+  fighter_fiber_finish(air_land);
 }
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
   fighter_start_move(fighter, S_JUMP, &air_attacks[index].move);
   fighter_upright(fighter);
-  fighter->script = air_attack_tick;
   fighter->sample_override = 0;
   fighter->script_phase = combo ? AIR_COMBO : AIR_FLIGHT;
   fighter->body.on_land = NULL;
   fighter->body.physics = NULL;
   fighter->facing = fighter->body.pos[AXIS_X] <= opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
+  fighter_start_fiber(fighter, air_attack_script, NULL);
 }
 
 static void air_hp(Fighter *fighter) {
@@ -749,59 +748,57 @@ static const MoveDef s_lp_thrown = {.clip = 152, .last = 41, .flags = SF_LOCK, .
 static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = 0x4003};
 
-static void ground_thrown_tick(Fighter *victim) {
-  Fighter *owner = opponent(victim);
-  if (victim->current_move == &s_lk_thrown_end) {
-    victim->sample_override = mini(130, 65 + victim->ticks);
-    if (victim->ticks >= 66 && victim->health > 0) {
-      sub_zero_ready(victim);
-    }
-    return;
-  }
-  if ((owner->current_move != &s_throw && owner->current_move != &s_lk_throw) || owner->pending != NULL) {
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    if (victim->health > 0) {
-      sub_zero_ready(victim);
-    } else {
-      victim->script = NULL;
-    }
-    return;
-  }
-  victim->sample_override = mini(fighter_move(victim)->last, owner->ticks);
-  memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-  victim->body.pos[AXIS_Y] = victim->body.ground;
+static void thrown_end_script(Fighter *victim) {
+  fighter_fiber_play_to(victim, 130, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(victim->health > 0 ? sub_zero_ready : NULL);
 }
 
-static void ground_throw_tick(Fighter *fighter) {
+static void ground_thrown_script(Fighter *victim) {
+  Fighter *owner = opponent(victim);
+  for (;;) {
+    fighter_wait_ticks(1);
+    if ((owner->current_move != &s_throw && owner->current_move != &s_lk_throw) || owner->pending != NULL) {
+      victim->flags &= ~(unsigned)FF_PAIRED;
+      fighter_fiber_finish(victim->health > 0 ? sub_zero_ready : NULL);
+    }
+    victim->sample_override = mini(fighter_move(victim)->last, owner->ticks);
+    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+    victim->body.pos[AXIS_Y] = victim->body.ground;
+  }
+}
+
+static void ground_throw_script(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  bool lk = fighter->current_move == &s_lk_throw;
-  int tick = fighter->ticks, release = lk ? 65 : 42;
-  if (tick < release && (victim->script != ground_thrown_tick || victim->pending != NULL)) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    sub_zero_ready(fighter);
-    return;
-  }
-  fighter->sample_override = mini(lk ? 65 : 64, tick);
-  if (tick == 42) {
-    if (victim->armed && victim->disarm != NULL) {
-      victim->disarm(victim);
+  const bool lk = fighter->current_move == &s_lk_throw;
+  const int release = lk ? 65 : 42;
+  for (int tick = 1; tick <= (lk ? 66 : 65); ++tick) {
+    fighter_wait_ticks(1);
+    if (tick < release &&
+        ((victim->current_move != &s_lp_thrown && victim->current_move != &s_lk_thrown) || !fighter_fiber_active(victim) || victim->pending != NULL)) {
+      fighter->flags &= ~(unsigned)FF_PAIRED;
+      fighter_fiber_finish(sub_zero_ready);
     }
-    battle_damage(victim, lk ? 0x2e14 : 0x2666);
-  }
-  if (tick == release) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    if (lk) {
-      fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown_end);
-      victim->script = ground_thrown_tick;
-      victim->sample_override = 65;
-    } else {
-      battle_react(victim, 100);
+    fighter->sample_override = mini(lk ? 65 : 64, tick);
+    if (tick == 42) {
+      if (victim->armed && victim->disarm != NULL) {
+        victim->disarm(victim);
+      }
+      battle_damage(victim, lk ? 0x2e14 : 0x2666);
+    }
+    if (tick == release) {
+      fighter->flags &= ~(unsigned)FF_PAIRED;
+      victim->flags &= ~(unsigned)FF_PAIRED;
+      if (lk) {
+        fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown_end);
+        victim->sample_override = 65;
+        fighter_start_fiber(victim, thrown_end_script, NULL);
+      } else {
+        battle_react(victim, 100);
+      }
     }
   }
-  if (tick >= (lk ? 66 : 65)) {
-    sub_zero_ready(fighter);
-  }
+  fighter_fiber_finish(sub_zero_ready);
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
@@ -814,11 +811,11 @@ static void ground_throw(Fighter *fighter, bool lk) {
   stop_body(victim);
   fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &s_throw);
   fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &s_lp_thrown);
-  fighter->script = ground_throw_tick;
-  victim->script = ground_thrown_tick;
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   fighter->sample_override = victim->sample_override = 0;
+  fighter_start_fiber(fighter, ground_throw_script, NULL);
+  fighter_start_fiber(victim, ground_thrown_script, NULL);
 }
 
 static void enter_throw(Fighter *fighter) {

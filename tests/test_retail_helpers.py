@@ -45,7 +45,7 @@ class HelperTests(unittest.TestCase):
         for value in ('indexed_sound_event(13);', 'advance_pair_to_sample(28);',
                       'set_motion_q16(1966, -6553, 655);', 'wait_ticks(10);',
                       'set_motion_q16(0, 13107, 655);', 'scene_impact();', 'wait_ticks(4);',
-                      'mk4_air_throw', 'air_throw_tick', '0x2147', 'explicit extension'):
+                      'mk4_air_throw', 'air_throw_script', '0x2147', 'explicit extension'):
             self.assertIn(value, text)
         self.assertEqual(HELPERS[0x46aa80].port, ('game/mk4_common.c', 'mk4_air_throw'))
         self.assertEqual(table_values(self.image, 'impact_voices')[4]['token'], 925)

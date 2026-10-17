@@ -291,13 +291,6 @@ static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | S
 static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
 
-static void thrown_getup_tick(Fighter *fighter) {
-  fighter->sample_override = mini(79, 46 + fighter->ticks);
-  if (fighter->ticks >= 34 && fighter->health > 0) {
-    fighter_ready(fighter);
-  }
-}
-
 /* 480f50[89] -> 484b40 / 4e9910: release is owned by the attacker,
  * before world physics, so P1/P2 update order cannot delay the drop. */
 static void air_throw_drop(Fighter *victim) {
@@ -309,35 +302,40 @@ static void air_throw_drop(Fighter *victim) {
   victim->body.gravity = 0x28f;
 }
 
-static void air_thrown_tick(Fighter *victim) {
+static void air_thrown_script(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
-  if (victim->script_phase == 0) {
-    if (owner->current_move == &s_air_throw && owner->pending == NULL && owner->ticks < 28) {
-      memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-      victim->sample_override = mini(27, owner->ticks);
-      return;
+  for (;;) {
+    fighter_wait_ticks(1);
+    if (victim->script_phase != 0) {
+      break;
     }
-    air_throw_drop(victim);
+    if (owner->current_move != &s_air_throw || owner->pending != NULL || owner->ticks >= 28) {
+      air_throw_drop(victim);
+      break;
+    }
+    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+    victim->sample_override = mini(27, owner->ticks);
   }
-  if (victim->script_phase == 1 && !fighter_airborne(victim)) {
-    victim->script_phase = 2;
-    victim->script_timer = 0;
-    battle_scene_impact(victim); /* 4e9910 -> 457cb0. */
+  while (fighter_airborne(victim)) {
+    fighter_wait_ticks(1);
   }
-  if (victim->script_phase == 2) {
-    victim->sample_override = mini(44, 29 + victim->script_timer++);
-    if (victim->script_timer >= 20) {
-      if (victim->health <= 0) {
-        /* Let the shared defeat controller open the finish window. */
-        victim->script = NULL;
-        return;
-      }
-      victim->facing = -victim->facing; /* 484b60 -> 490350, reverse getup. */
-      fighter_start_move(victim, S_KNOCKDOWN, &s_throw_getup);
-      victim->script = thrown_getup_tick;
-      victim->sample_override = 46;
+  victim->script_phase = 2;
+  battle_scene_impact(victim);
+  for (int tick = 0; tick < 20; ++tick) {
+    victim->sample_override = mini(44, 29 + tick);
+    if (tick < 19) {
+      fighter_wait_ticks(1);
     }
   }
+  if (victim->health <= 0) {
+    fighter_fiber_finish(NULL);
+  }
+  victim->facing = -victim->facing;
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_throw_getup);
+  victim->sample_override = 46;
+  fighter_fiber_play_to(victim, 79, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
 }
 
 bool mk4_can_air_throw(const Fighter *fighter) {
@@ -351,38 +349,39 @@ bool mk4_can_air_throw(const Fighter *fighter) {
          !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
 }
 
-static void air_throw_tick(Fighter *fighter) {
+static void air_throw_script(Fighter *fighter) {
   Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-  int tick = fighter->ticks;
-  if (tick <= 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    fighter->body.gravity = 0x28f;
-    fighter_ready(fighter);
-    return;
-  }
-  if (tick < 28) {
-    /* P2's owner runs after the victim; drive both poses on this visit. */
-    memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
-    victim->sample_override = tick;
-  }
-  fighter->sample_override = tick < 29 ? tick : tick < 39 ? 28 : mini(44, tick - 9);
-  if (tick == 28) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    air_throw_drop(victim);
-    victim->reaction = 89;
-    battle_damage(victim, 0x2147);
-    if (victim->health <= 0) {
-      /* Round resolution replaces our next-tick launch with victory. */
+  for (int tick = 1;; ++tick) {
+    fighter_wait_ticks(1);
+    if (tick <= 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
+      fighter->flags &= ~(unsigned)FF_PAIRED;
+      fighter->body.gravity = 0x28f;
+      fighter_fiber_finish(fighter_ready);
+    }
+    if (tick < 28) {
+      /* P2's owner runs after the victim; drive both poses on this visit. */
+      memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
+      victim->sample_override = tick;
+    }
+    fighter->sample_override = tick < 29 ? tick : tick < 39 ? 28 : mini(44, tick - 9);
+    if (tick == 28) {
+      fighter->flags &= ~(unsigned)FF_PAIRED;
+      air_throw_drop(victim);
+      victim->reaction = 89;
+      battle_damage(victim, 0x2147);
+      if (victim->health <= 0) {
+        /* Round resolution replaces our next-tick launch with victory. */
+        fighter->body.gravity = 0x28f;
+      }
+    }
+    if (tick == 29) {
+      fighter_set_speed(fighter, 0x7ae);
+      fighter->body.vel[AXIS_Y] = -0x1999;
       fighter->body.gravity = 0x28f;
     }
-  }
-  if (tick == 29) {
-    fighter_set_speed(fighter, 0x7ae);
-    fighter->body.vel[AXIS_Y] = -0x1999;
-    fighter->body.gravity = 0x28f;
-  }
-  if (tick >= 54 && !fighter_airborne(fighter)) {
-    mk4_land(fighter);
+    if (tick >= 54 && !fighter_airborne(fighter)) {
+      fighter_fiber_finish(mk4_land);
+    }
   }
 }
 
@@ -405,8 +404,6 @@ void mk4_air_throw(Fighter *fighter) {
   }
   fighter_start_move(fighter, S_THROW, &s_air_throw);
   fighter_start_move(victim, S_KNOCKDOWN, &s_air_thrown);
-  fighter->script = air_throw_tick;
-  victim->script = air_thrown_tick;
   fighter->sample_override = victim->sample_override = 0;
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
@@ -414,4 +411,6 @@ void mk4_air_throw(Fighter *fighter) {
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
   battle_sound(SOUND_INDEXED, 13); /* 4e5e28 -> token 2100, sample 420. */
+  fighter_start_fiber(fighter, air_throw_script, NULL);
+  fighter_start_fiber(victim, air_thrown_script, NULL);
 }
