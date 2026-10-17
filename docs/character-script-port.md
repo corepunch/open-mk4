@@ -146,6 +146,12 @@ blocked/hit pull behavior, direct hit and queued interruption during nested
 startup/recovery/pull waits, full object pools, rematch during pull, and two
 simultaneous actor fibers whose projectiles can interrupt one another.
 
+Scorpion and Sub-Zero ground normals now start actor fibers. Jabs keep their
+repeat/recovery graph in C; uppercuts retain contact and loop count across phase
+rebindings. Their MoveSequences supply sample timing and sparse contact events.
+HP repeats and the other ground attacks keep live input/contact decisions inside
+the fiber. Existing original kick and 27 Scorpion branch fixtures still apply.
+
 ## Sub-Zero source-to-code ledger
 
 Implementation: [game/c_sub_zero.c](../game/c_sub_zero.c). Retail, roster and

@@ -268,6 +268,7 @@ static void check_scorpion_contact_branches(void) {
     fight(1.f);
     Fighter *fighter = &g_battle.fighters[0];
     fighter_enter_state(fighter, S_UPPERCUT);
+    check(fighter_fiber_active(fighter), "Uppercut must run its branches in a fiber");
     Input in[2] = {0};
     if (blocked) {
       in[1].held = BUTTON_BIT(BUTTON_BLOCK);

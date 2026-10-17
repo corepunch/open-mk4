@@ -79,12 +79,6 @@ static const MoveSegment kick_segments[] = {
 
 static const MoveSequence kick_sequence = {kick_segments, (int)(sizeof kick_segments / sizeof kick_segments[0]), kick_events, 3, 30, scorpion_ready, NULL};
 
-static void scorpion_jab_next(Fighter *fighter);
-static void scorpion_jab_second_end(Fighter *fighter);
-static void scorpion_jab_finish_end(Fighter *fighter);
-static void scorpion_uppercut_recover(Fighter *fighter);
-static void scorpion_uppercut_loop_end(Fighter *fighter);
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveSegment jab_segments[] = {
   {0, 0, 1, 1},
@@ -132,15 +126,15 @@ static const MoveEvent uppercut_events[] = {{7, scorpion_uppercut_contact}, {8, 
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
 #define EVENT_SEQUENCE(segments, events, count, end) {segments, COUNT(segments), events, COUNT(events), count, end, NULL}
 
-static const MoveSequence jab_sequence = EVENT_SEQUENCE(jab_segments, jab_events, 9, scorpion_jab_next);
+static const MoveSequence jab_sequence = EVENT_SEQUENCE(jab_segments, jab_events, 9, scorpion_ready);
 static const MoveSequence jab_recover_sequence = SEQUENCE(jab_recover_segments, 7, scorpion_ready);
-static const MoveSequence jab_second_sequence = SEQUENCE(jab_second_segments, 10, scorpion_jab_second_end);
+static const MoveSequence jab_second_sequence = SEQUENCE(jab_second_segments, 10, scorpion_ready);
 static const MoveSequence jab_stop_sequence = EVENT_SEQUENCE(jab_stop_segments, jab_strike_events, 3, scorpion_ready);
-static const MoveSequence jab_finish_sequence = EVENT_SEQUENCE(jab_finish_segments, jab_strike_events, 9, scorpion_jab_finish_end);
+static const MoveSequence jab_finish_sequence = EVENT_SEQUENCE(jab_finish_segments, jab_strike_events, 9, scorpion_ready);
 static const MoveSequence sweep_sequence = EVENT_SEQUENCE(sweep_segments, sweep_events, 41, scorpion_ready);
-static const MoveSequence uppercut_sequence = EVENT_SEQUENCE(uppercut_segments, uppercut_events, 10, scorpion_uppercut_recover);
-static const MoveSequence uppercut_loop_sequence = SEQUENCE(uppercut_loop_segments, 5, scorpion_uppercut_loop_end);
-static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segments, 7, scorpion_uppercut_loop_end);
+static const MoveSequence uppercut_sequence = EVENT_SEQUENCE(uppercut_segments, uppercut_events, 10, scorpion_ready);
+static const MoveSequence uppercut_loop_sequence = SEQUENCE(uppercut_loop_segments, 5, scorpion_ready);
+static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segments, 7, scorpion_ready);
 static const MoveSequence uppercut_miss_end_sequence = SEQUENCE(uppercut_miss_end_segments, 12, scorpion_ready);
 static const MoveSequence uppercut_hit_end_sequence = SEQUENCE(uppercut_hit_end_segments, 11, scorpion_ready);
 
@@ -196,60 +190,76 @@ static bool scorpion_repeat_jab(const Fighter *fighter) {
   return (fighter->buffered & BUTTON_BIT(BUTTON_LOW_PUNCH)) != 0 && (fighter->facing > 0 ? dx >= 0 : dx <= 0);
 }
 
-static void scorpion_jab_next(Fighter *fighter) {
-  const MoveDef *next = scorpion_repeat_jab(fighter) ? &s_jab_second : &s_jab_recover;
-  fighter_start_move(fighter, S_PUNCH, next);
+/* Phase branches are ordinary C; blocking playback owns only samples/events. */
+static void jab_script(Fighter *fighter) {
+  fighter_fiber_sequence(fighter, &jab_sequence);
+  while (scorpion_repeat_jab(fighter)) {
+    fighter_fiber_move(fighter, S_PUNCH, &s_jab_second);
+    fighter_fiber_sequence(fighter, &jab_second_sequence);
+    bool repeat = scorpion_repeat_jab(fighter);
+    fighter_fiber_move(fighter, S_PUNCH, repeat ? &s_jab_finish : &s_jab_stop);
+    fighter_fiber_sequence(fighter, repeat ? &jab_finish_sequence : &jab_stop_sequence);
+    if (!repeat) {
+      fighter_fiber_finish(scorpion_ready);
+    }
+    scorpion_jab_contact(fighter);
+  }
+  fighter_fiber_move(fighter, S_PUNCH, &s_jab_recover);
+  fighter_fiber_sequence(fighter, &jab_recover_sequence);
+  fighter_fiber_finish(scorpion_ready);
 }
 
-static void scorpion_jab_second_end(Fighter *fighter) {
-  const MoveDef *next = scorpion_repeat_jab(fighter) ? &s_jab_finish : &s_jab_stop;
-  fighter_start_move(fighter, S_PUNCH, next);
-}
-
-static void scorpion_jab_finish_end(Fighter *fighter) {
-  /* Native 0x46ddd0 queries contact before 0x46de60 consumes the next press. */
-  scorpion_jab_contact(fighter);
-  scorpion_jab_next(fighter);
-}
-
-static void scorpion_uppercut_recover(Fighter *fighter) {
+static void uppercut_script(Fighter *fighter) {
+  fighter_fiber_sequence(fighter, &uppercut_sequence);
+  ContactResult result = fighter->contact;
   bool late = fighter->contact_tick == 9;
-  ContactResult result = fighter->contact;
-  fighter->move_loops = result == CONTACT_MISS ? 3 : result == CONTACT_BLOCK ? 2 : 8;
-  fighter_start_move(fighter, S_UPPERCUT, late ? &s_uppercut_late : &s_uppercut_loop);
-  /* Only the no-contact path holds sample 8 before final forward recovery. */
+  int loops = result == CONTACT_MISS ? 3 : result == CONTACT_BLOCK ? 2 : 8;
+  for (int i = 0; i < loops; ++i) {
+    const MoveDef *move = late && i == 0 ? &s_uppercut_late : &s_uppercut_loop;
+    fighter_fiber_move(fighter, S_UPPERCUT, move);
+    fighter->contact = result;
+    fighter->connected = result != CONTACT_MISS;
+    if (result != CONTACT_MISS) {
+      fighter->action = ACTION_RETAIL_1006;
+    }
+    fighter_fiber_sequence(fighter, move->sequence);
+  }
+  const MoveDef *end = result == CONTACT_MISS ? &s_uppercut_miss_end : &s_uppercut_hit_end;
+  fighter_fiber_move(fighter, S_UPPERCUT, end);
   fighter->contact = result;
   fighter->connected = result != CONTACT_MISS;
   if (result != CONTACT_MISS) {
-    fighter->action = 0x1006;
+    fighter->action = ACTION_RETAIL_1006;
   }
+  fighter_fiber_sequence(fighter, end->sequence);
+  fighter_fiber_finish(scorpion_ready);
 }
 
-static void scorpion_uppercut_loop_end(Fighter *fighter) {
-  ContactResult result = fighter->contact;
-  const MoveDef *next;
-  fighter->move_loops--;
-  if (fighter->move_loops > 0) {
-    next = &s_uppercut_loop;
-  } else {
-    next = result == CONTACT_MISS ? &s_uppercut_miss_end : &s_uppercut_hit_end;
-  }
-  fighter_start_move(fighter, S_UPPERCUT, next);
-  fighter->contact = result;
-  fighter->connected = result != CONTACT_MISS;
-  if (result != CONTACT_MISS) {
-    fighter->action = 0x1006;
-  }
+static void normal_script(Fighter *fighter) {
+  fighter_fiber_sequence(fighter, fighter->sequence);
+  fighter_fiber_finish(scorpion_ready);
+}
+
+static void scorpion_uppercut(Fighter *fighter) {
+  fighter_start_move(fighter, S_UPPERCUT, &s_uppercut);
+  fighter_start_fiber(fighter, uppercut_script, NULL);
+}
+
+static void scorpion_sweep(Fighter *fighter) {
+  fighter_start_move(fighter, S_SWEEP, &s_sweep);
+  fighter_start_fiber(fighter, normal_script, NULL);
 }
 
 static void scorpion_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_jab);
   /* The jab entry clears the busy bit (0x490330): commands stay live. */
   fighter->flags &= ~(unsigned)FF_BUSY;
+  fighter_start_fiber(fighter, jab_script, NULL);
 }
 
 static void scorpion_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_kick);
+  fighter_start_fiber(fighter, normal_script, NULL);
 }
 
 static void scorpion_idle(Fighter *fighter);
@@ -263,6 +273,8 @@ static const FighterFn enter[S_COUNT] = {
     [S_BLOCK] = scorpion_block,
     [S_PUNCH] = scorpion_jab,
     [S_KICK] = scorpion_kick,
+    [S_SWEEP] = scorpion_sweep,
+    [S_UPPERCUT] = scorpion_uppercut,
 };
 
 /* Specials translated from spear_entry/return, teleport_entry/landing and
@@ -619,75 +631,79 @@ static void open_followup(Fighter *fighter, const ButtonTable *buttons) {
   fighter->action = 0x1006;
 }
 
-static void ground_attack_tick(Fighter *fighter) {
-  int index = fighter->script_phase;
-  const GroundAttack *attack = &ground_attacks[index];
-  int t = fighter->ticks, fast = index == G_ROUNDHOUSE && fighter->script_timer ? 5 : 0;
-  int active = attack->active - fast;
-  fighter->avoids_high = index == G_LOW_KICK && t >= 7 && t < 10;
-  bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(fighter) == 0x2011;
-  if (index == G_CLOSE_HP) {
-    int action = victim_action(fighter);
-    gate = action == 0x2001 || action == 0x106 || action == 0x107;
-  }
-  if (!gate && !fighter->connected && t >= active && t <= active + (index == G_ROUNDHOUSE ? 2 : 0)) {
-    if (battle_contact(fighter, &attack->record) != CONTACT_MISS) {
-      if (index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CLOSE_HK) {
-        open_followup(fighter, index == G_CLOSE_HP ? &close_hp_followup : index == G_COMBO_HP ? &combo_hp_followup : &close_hk_followup);
+static void ground_attack_script(Fighter *fighter) {
+  const int index = fighter->script_phase;
+  const bool followup = fighter->script_timer != 0;
+  for (;;) {
+    fighter_wait_ticks(1);
+    const GroundAttack *attack = &ground_attacks[index];
+    int t = fighter->ticks, fast = index == G_ROUNDHOUSE && followup ? 5 : 0;
+    int active = attack->active - fast;
+    fighter->avoids_high = index == G_LOW_KICK && t >= 7 && t < 10;
+    bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(fighter) == 0x2011;
+    if (index == G_CLOSE_HP) {
+      int action = victim_action(fighter);
+      gate = action == 0x2001 || action == 0x106 || action == 0x107;
+    }
+    if (!gate && !fighter->connected && t >= active && t <= active + (index == G_ROUNDHOUSE ? 2 : 0)) {
+      if (battle_contact(fighter, &attack->record) != CONTACT_MISS) {
+        if (index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CLOSE_HK) {
+          open_followup(fighter, index == G_CLOSE_HP ? &close_hp_followup : index == G_COMBO_HP ? &combo_hp_followup : &close_hk_followup);
+        }
       }
     }
-  }
-  if (t >= active) {
-    fighter->action = 0x1006;
-  }
-  int end = (fighter->connected ? attack->end_contact : attack->end_miss) - fast;
-  switch (index) {
-    case G_LOW_KICK: {
-      int reverse = fighter->connected ? 18 : 15;
-      fighter->sample_override = t < 9 ? mini(17, t * 2) : t < reverse ? 17 : maxi(0, 17 - t + reverse);
-      break;
+    if (t >= active) {
+      fighter->action = 0x1006;
     }
-    case G_CROUCH_LP:
-    case G_CROUCH_LK: {
-      int reverse = active + (fighter->connected ? 4 : 1);
-      fighter->sample_override = t < active ? mini(9, t + (index == G_CROUCH_LP ? 2 : 1)) : maxi(0, 9 - maxi(0, t - reverse));
-      break;
-    }
-    case G_CROUCH_HK: {
-      static const int hold[] = {11, 10, 11, 12};
-      fighter->sample_override = t < 13 ? t : hold[((t - 13) / 2) % 4];
-      break;
-    }
-    case G_CLOSE_HP: {
-      int reverse = fighter->connected ? 18 : 12;
-      fighter->sample_override = t < 10 ? t : t < reverse ? 9 : maxi(0, 8 - t + reverse);
-      if (t >= reverse) {
-        fighter->buttons = NULL;
-        fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+    int end = (fighter->connected ? attack->end_contact : attack->end_miss) - fast;
+    switch (index) {
+      case G_LOW_KICK: {
+        int reverse = fighter->connected ? 18 : 15;
+        fighter->sample_override = t < 9 ? mini(17, t * 2) : t < reverse ? 17 : maxi(0, 17 - t + reverse);
+        break;
       }
-      break;
-    }
-    case G_COMBO_HP:
-      fighter->sample_override = mini(27, t + 2 - (fighter->connected && t > active ? mini(3, t - active) : 0));
-      break;
-    case G_CLOSE_HK: {
-      int reverse = fighter->connected ? 10 : 12;
-      fighter->sample_override = t < 8 ? t + 5 : t < reverse ? 12 : maxi(0, 12 - t + reverse);
-      if (t >= reverse) {
-        fighter->buttons = NULL;
-        fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+      case G_CROUCH_LP:
+      case G_CROUCH_LK: {
+        int reverse = active + (fighter->connected ? 4 : 1);
+        fighter->sample_override = t < active ? mini(9, t + (index == G_CROUCH_LP ? 2 : 1)) : maxi(0, 9 - maxi(0, t - reverse));
+        break;
       }
-      break;
-    }
-    case G_ROUNDHOUSE:
-      fighter->sample_override = t <= 6 ? t * 2 : t < active ? mini(21, 12 + (t - 6) * (fast ? 2 : 1)) : mini(38, 22 + t - active);
-      if (fighter->contact == CONTACT_BLOCK) {
-        end = attack->end_miss - fast;
+      case G_CROUCH_HK: {
+        static const int hold[] = {11, 10, 11, 12};
+        fighter->sample_override = t < 13 ? t : hold[((t - 13) / 2) % 4];
+        break;
       }
-      break;
-  }
-  if (t >= end) {
-    scorpion_ready(fighter);
+      case G_CLOSE_HP: {
+        int reverse = fighter->connected ? 18 : 12;
+        fighter->sample_override = t < 10 ? t : t < reverse ? 9 : maxi(0, 8 - t + reverse);
+        if (t >= reverse) {
+          fighter->buttons = NULL;
+          fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+        }
+        break;
+      }
+      case G_COMBO_HP:
+        fighter->sample_override = mini(27, t + 2 - (fighter->connected && t > active ? mini(3, t - active) : 0));
+        break;
+      case G_CLOSE_HK: {
+        int reverse = fighter->connected ? 10 : 12;
+        fighter->sample_override = t < 8 ? t + 5 : t < reverse ? 12 : maxi(0, 12 - t + reverse);
+        if (t >= reverse) {
+          fighter->buttons = NULL;
+          fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
+        }
+        break;
+      }
+      case G_ROUNDHOUSE:
+        fighter->sample_override = t <= 6 ? t * 2 : t < active ? mini(21, 12 + (t - 6) * (fast ? 2 : 1)) : mini(38, 22 + t - active);
+        if (fighter->contact == CONTACT_BLOCK) {
+          end = attack->end_miss - fast;
+        }
+        break;
+    }
+    if (t >= end) {
+      fighter_fiber_finish(scorpion_ready);
+    }
   }
 }
 
@@ -696,36 +712,38 @@ static void ground_attack(Fighter *fighter, int index) {
   stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);
-  fighter->script = ground_attack_tick;
   fighter->script_phase = index;
   fighter->script_timer = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_COMBO_HP || index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
+  fighter_start_fiber(fighter, ground_attack_script, NULL);
 }
 
-static void hp_tick(Fighter *fighter) {
-  int phase = fighter->script_phase, t = fighter->ticks;
-  if (phase >= 4) {
-    fighter->sample_override = mini(phase == 4 ? 20 : 18, 11 + t);
-    if (t >= (phase == 4 ? 10 : 8)) {
-      scorpion_ready(fighter);
+static void hp_script(Fighter *fighter) {
+  for (int phase = 0;;) {
+    if (phase >= 4) {
+      for (int t = 1; t <= (phase == 4 ? 10 : 8); ++t) {
+        fighter_wait_ticks(1);
+        fighter->sample_override = mini(phase == 4 ? 20 : 18, 11 + t);
+      }
+      fighter_fiber_finish(scorpion_ready);
     }
-    return;
-  }
-  int first = phase == 0 ? 0 : phase == 1 ? 1 : phase == 2 ? 11 : 2;
-  int active = phase == 0 ? 8 : phase == 1 ? 7 : phase == 2 ? 6 : 6;
-  fighter->sample_override = phase == 2 && t == active + 2 ? 17 : first + t;
-  const Fighter *victim = fighter_opponent(fighter);
-  bool ducking_kick = victim->action == 0x102 && victim->avoids_high;
-  if (t >= active && t <= active + 2 && !fighter->connected && !ducking_kick) {
-    battle_contact(fighter, &hp_record);
-  }
-  if (t >= active + 3) {
+    int first = phase == 0 ? 0 : phase == 1 ? 1 : phase == 2 ? 11 : 2;
+    int active = phase == 0 ? 8 : phase == 1 ? 7 : 6;
+    for (int t = 1; t <= active + 3; ++t) {
+      fighter_wait_ticks(1);
+      fighter->sample_override = phase == 2 && t == active + 2 ? 17 : first + t;
+      const Fighter *victim = fighter_opponent(fighter);
+      bool ducking_kick = victim->action == 0x102 && victim->avoids_high;
+      if (t >= active && t <= active + 2 && !fighter->connected && !ducking_kick) {
+        battle_contact(fighter, &hp_record);
+      }
+    }
+    const Fighter *victim = fighter_opponent(fighter);
     bool repeat = (fighter->buffered & BUTTON_BIT(BUTTON_HIGH_PUNCH)) && (victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]) * fighter->facing >= 0;
-    int next = repeat ? (phase == 0 ? 1 : phase == 1 || phase == 3 ? 2 : 3) : phase == 0 || phase == 2 ? 4 : 5;
-    fighter_start_move(fighter, S_PUNCH, next == 4 ? &s_hp : &s_hp_second);
-    fighter->script = hp_tick;
-    fighter->script_phase = next;
-    fighter->sample_override = next == 1 ? 1 : next == 3 ? 2 : 11;
+    phase = repeat ? (phase == 0 ? 1 : phase == 1 || phase == 3 ? 2 : 3) : phase == 0 || phase == 2 ? 4 : 5;
+    fighter_fiber_move(fighter, S_PUNCH, phase == 4 ? &s_hp : &s_hp_second);
+    fighter->script_phase = phase;
+    fighter->sample_override = phase == 1 ? 1 : phase == 3 ? 2 : 11;
     fighter->flags &= ~(unsigned)FF_BUSY;
   }
 }
@@ -737,9 +755,9 @@ static void scorpion_hp(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_hp);
-  fighter->script = hp_tick;
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
+  fighter_start_fiber(fighter, hp_script, NULL);
 }
 
 static void scorpion_lk(Fighter *fighter) {
