@@ -7,242 +7,157 @@
       "symbol": "weapon_pickup"
     }
   },
-  "generated_scripts": [
-    "0x4e6d08",
-    "0x4e60b8",
-    "0x4ed678",
-    "0x4ed6c0",
-    "0x4ed6f8"
-  ],
-  "integration_source": "game/c_liu_kang.c",
-  "inventory_sha256": "dee5722d207213c532b0fc2576c09ef53226b00b02efc6d4c6141c126451e537",
-  "legacy_scripts": {
-    "0x4de3b0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_lk_throw"
-    },
+  "entry_contexts": {
     "0x4de410": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_lk_throw"
+      "clip": 35,
+      "count": 44,
+      "evidence": "42c0b0 resumes after paired opening",
+      "sample": 10
     },
     "0x4de428": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_lk_throw"
+      "clip": 35,
+      "count": 44,
+      "evidence": "42c0d0 applies damage then resumes",
+      "return_to": "caller",
+      "sample": 38
     },
-    "0x4de478": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_lk_throw"
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "43d460/43d530 native loop, 31 calls from C owner",
+      "sample": 69
     },
-    "0x4de798": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_throw"
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "43d640 owner release",
+      "sample": 69
     },
-    "0x4dfff8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_second_fatality"
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "43d6f0 owner victory",
+      "sample": 107
     },
-    "0x4e0020": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_second_fatality"
-    },
-    "0x4e0118": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_fan_fatality"
-    },
-    "0x4e0188": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_fan_fatality"
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "43db10 victim release replaces repeat task",
+      "sample": 69
     },
     "0x4e5c70": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_kick"
-    },
-    "0x4e6158": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_crouch_lk"
-    },
-    "0x4e6190": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_hk"
+      "clip": 66,
+      "count": 18,
+      "evidence": "46a760 contact recovery",
+      "sample": 17
     },
     "0x4e61e0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_hp"
-    },
-    "0x4e62a0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_uppercut"
-    },
-    "0x4e62c0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_weapon"
+      "clip": 262,
+      "count": 10,
+      "evidence": "46bea0 opens close punch",
+      "sample": 0
     },
     "0x4e62d8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_weapon"
-    },
-    "0x4e62f0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_jab"
+      "clip": 244,
+      "count": 49,
+      "evidence": "46d260 equips after 22 visits",
+      "sample": 22
     },
     "0x4e6330": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_jab"
+      "clip": 295,
+      "count": 19,
+      "evidence": "46dd00 entered after clip bind",
+      "sample": 0
     },
     "0x4e6360": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_jab"
-    },
-    "0x4e63b0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_jab"
-    },
-    "0x4e63d8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "air_lk_diagonal"
-    },
-    "0x4e6500": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "air_hk_diagonal"
-    },
-    "0x4e6658": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "air_hp"
-    },
-    "0x4e6710": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "air_lp"
-    },
-    "0x4e67d8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_sweep"
+      "clip": 295,
+      "count": 19,
+      "evidence": "46dd10 after full second clip",
+      "sample": 18
     },
     "0x4e6890": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_roundhouse"
+      "clip": 64,
+      "count": 45,
+      "evidence": "46f390 fast roundhouse selection",
+      "sample": 0
     },
     "0x4e68a8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_roundhouse"
-    },
-    "0x4e6950": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_spike_fatality"
-    },
-    "0x4e69b0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_combo_hp"
-    },
-    "0x4e6c90": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_kick"
-    },
-    "0x4e6df0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "air_kick"
-    },
-    "0x4e6e90": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_roundhouse"
-    },
-    "0x4e8610": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_bicycle_kick"
-    },
-    "0x4e8678": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_bicycle_kick"
-    },
-    "0x4e8688": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_bicycle_kick"
-    },
-    "0x4e86a8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_flying_kick"
-    },
-    "0x4e86d0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_flying_kick"
-    },
-    "0x4e86e8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_flying_kick"
-    },
-    "0x4e8718": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_flying_kick"
+      "clip": 64,
+      "count": 45,
+      "evidence": "46f390 ordinary roundhouse selection",
+      "sample": 0
     },
     "0x4e9a90": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_lk_throw"
+      "clip": 133,
+      "count": 36,
+      "evidence": "reaction80 release at paired sample30",
+      "sample": 30
     },
     "0x4e9ad0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_bicycle_kick"
-    },
-    "0x4e9ae8": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "liu_kang_bicycle_kick"
-    },
-    "0x4e9b68": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "enter_throw"
-    },
-    "0x4ec680": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "sword_hp"
-    },
-    "0x4ec7f0": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/c_liu_kang.c",
-      "symbol": "sword_back_lp"
+      "evidence": "reaction81 victim owns released recovery including KO",
+      "return_to": "thrown_ready"
     }
   },
+  "generated_scripts": [
+    "0x4de3b0",
+    "0x4de410",
+    "0x4de428",
+    "0x4de478",
+    "0x4de798",
+    "0x4dfff8",
+    "0x4e0020",
+    "0x4e0118",
+    "0x4e0188",
+    "0x4e5c70",
+    "0x4e60b8",
+    "0x4e6158",
+    "0x4e6190",
+    "0x4e61e0",
+    "0x4e62a0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e67d8",
+    "0x4e6890",
+    "0x4e68a8",
+    "0x4e6950",
+    "0x4e69b0",
+    "0x4e6c90",
+    "0x4e6d08",
+    "0x4e6df0",
+    "0x4e6e90",
+    "0x4e8610",
+    "0x4e8678",
+    "0x4e8688",
+    "0x4e86a8",
+    "0x4e86d0",
+    "0x4e86e8",
+    "0x4e8718",
+    "0x4e9a90",
+    "0x4e9ad0",
+    "0x4e9ae8",
+    "0x4e9b68",
+    "0x4ec680",
+    "0x4ec7f0",
+    "0x4ed678",
+    "0x4ed6c0",
+    "0x4ed6f8",
+    "0x4de468",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e01a0"
+  ],
+  "integration_source": "game/c_liu_kang.c",
+  "inventory_sha256": "87aa280ffecc678134d092815f0c7e9916a77aead45b9108db83c2790cc96dee",
+  "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -446,7 +361,7 @@
       "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 104 -> 0x485af0; docs/liu-kang-scripts.md",
       "source": "game/c_liu_kang.c",
-      "symbol": "lp_thrown_script"
+      "symbol": "liu_script_lp_getup"
     },
     "11": {
       "evidence": "4ea4e8[11] -> 0x482070; shared reaction adapter and behavioral regressions",
@@ -502,13 +417,13 @@
       "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
       "evidence": "4ea4e8[175] -> 0x4836e0; docs/liu-kang-scripts.md",
       "source": "game/c_liu_kang.c",
-      "symbol": "stage_fatality_script"
+      "symbol": "liu_script_spike_tail"
     },
     "176": {
       "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 176 -> 0x481360; docs/liu-kang-scripts.md",
       "source": "game/c_liu_kang.c",
-      "symbol": "fireball_fatality_script"
+      "symbol": "liu_script_fatal_setup"
     },
     "19": {
       "evidence": "4ea4e8[19] -> 0x4831e0; shared reaction adapter and behavioral regressions",

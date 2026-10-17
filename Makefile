@@ -18,8 +18,6 @@ SCRIPT_CHARACTERS = $(notdir $(basename $(wildcard tools/ports/*.json)))
 SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
-# Reviewed pre-compiler migration baseline. New profiles require all VM roots generated.
-SCRIPT_LEGACY_CHARACTERS = liu_kang
 
 .PHONY: scripts scripts-check scripts-audit $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
@@ -32,7 +30,7 @@ $(SCRIPT_GENERATE_TARGETS): scripts-generate-%:
 $(SCRIPT_CHECK_TARGETS): scripts-check-%:
 	python3 tools/compile_retail.py --character $* --generate --check
 $(SCRIPT_AUDIT_TARGETS): scripts-audit-%:
-	python3 tools/compile_retail.py --character $* --audit --strict --summary $(if $(filter $*,$(SCRIPT_LEGACY_CHARACTERS)),,--require-generated)
+	python3 tools/compile_retail.py --character $* --audit --strict --summary --require-generated
 
 format:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)

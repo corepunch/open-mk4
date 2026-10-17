@@ -383,6 +383,7 @@ enum {
   FF_UNTOUCHABLE = 0x020,  /* contacts are ignored */
   FF_TELEPORTING = 0x040,  /* camera ignores this fighter */
   FF_FOLLOW_UP = 0x200,    /* commands allowed off the ground */
+  FF_PAIR_RELEASE = 0x800, /* committed victim owns its pose before body separation */
   FF_PAIRED = 0x400,       /* bodies attached by a paired move; skip separation */
   FF_NEUTRAL_CLEAR = 0x6e8 /* bits cleared by the return to neutral 0x48e080 */
 };
@@ -448,6 +449,7 @@ struct Fighter {
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
+  q16 saved_motion[3]; /* native save/restore around blocking generated playback */
   const WeaponStrike *weapon_strike;
   bool weapon_travel;
   int blend_clip, blend_sample, blend_ticks, blend_duration;

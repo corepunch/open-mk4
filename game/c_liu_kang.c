@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Retail control flow is translated to C fibers; playback steps need not
+/* VM control flow is generated; native adapters reuse C fibers. Playback need not
  * match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
 static void liu_kang_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
@@ -14,11 +14,6 @@ static void liu_kang_ready(Fighter *fighter) {
   }
 }
 
-/* Generated script functions use these existing object/landing adapters. */
-static void liu_script_spawn_low(Fighter *fighter, int task_type);
-static void liu_script_spawn_high(Fighter *fighter, int task_type);
-static void liu_script_spawn_air(Fighter *fighter, int task_type);
-static void liu_script_air_return(Fighter *fighter);
 #include "generated/liu_kang.inc"
 
 /* Retail attack records; source addresses identify the supplied EXE. */
@@ -73,73 +68,14 @@ static void liu_kang_uppercut_contact(Fighter *fighter) {
   }
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveEvent kick_events[] = {{11, liu_kang_kick_contact}, {12, liu_kang_kick_contact}, {13, liu_kang_kick_contact}};
-static const MoveSegment kick_segments[] = {
-  {0, 0, 1, 1},
-  {3, 4, 2, 1},
-  {10, 17, 0, 1},
-  {13, 16, -1, 2},
-  {16, 13, -1, 1},
-};
-// clang-format on
-
-static const MoveSequence kick_sequence = {kick_segments, (int)(sizeof kick_segments / sizeof kick_segments[0]), kick_events, 3, 30, liu_kang_ready, NULL};
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveSegment jab_segments[] = {
-  {0, 0, 1, 1},
-  {8, 7, 0, 1},
-};
-static const MoveSegment jab_recover_segments[] = {
-  {0, 9, 2, 1},
-  {3, 17, 0, 1},
-  {5, 19, 2, 1},
-};
-static const MoveSegment jab_second_segments[] = {{0, 0, 1, 1}};
-static const MoveSegment jab_stop_segments[] = {{0, 10, 1, 1}};
-static const MoveSegment jab_finish_segments[] = {
-  {0, 11, 1, 1},
-  {8, 18, 0, 1},
-};
-static const MoveSegment sweep_segments[] = {
-  {0, 0, 2, 1},
-  {4, 10, 0, 1},
-  {5, 10, 1, 1},
-};
-static const MoveSegment uppercut_segments[] = {
-  {0, 0, 1, 1},
-  {6, 5, 0, 1},
-  {7, 6, 1, 1},
-};
-static const MoveSegment uppercut_loop_segments[] = {
-  {0, 8, -1, 1},
-  {3, 7, 1, 1},
-};
-static const MoveSegment uppercut_late_segments[] = {
-  {0, 9, 0, 1},
-  {2, 8, -1, 1},
-  {5, 7, 1, 1},
-};
-static const MoveSegment uppercut_miss_end_segments[] = {{0, 8, 1, 1}};
-static const MoveSegment uppercut_hit_end_segments[] = {{0, 9, 1, 1}};
-static const MoveEvent jab_events[] = {{8, liu_kang_jab_contact}};
-static const MoveEvent jab_strike_events[] = {{0, liu_kang_jab_contact}};
-static const MoveEvent sweep_events[] = {{17, liu_kang_sweep_contact}, {18, liu_kang_sweep_contact}};
-static const MoveEvent uppercut_events[] = {{7, liu_kang_uppercut_contact}, {8, liu_kang_uppercut_contact}, {9, liu_kang_uppercut_contact}};
-// clang-format on
-
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
-#define EVENT_SEQUENCE(segments, events, count, end) {segments, COUNT(segments), events, COUNT(events), count, end, NULL}
-
-static const MoveSequence jab_sequence = EVENT_SEQUENCE(jab_segments, jab_events, 9, liu_kang_ready);
-static const MoveSequence jab_recover_sequence = SEQUENCE(jab_recover_segments, 7, liu_kang_ready);
-static const MoveSequence jab_second_sequence = SEQUENCE(jab_second_segments, 10, liu_kang_ready);
-static const MoveSequence jab_stop_sequence = EVENT_SEQUENCE(jab_stop_segments, jab_strike_events, 3, liu_kang_ready);
-static const MoveSequence jab_finish_sequence = EVENT_SEQUENCE(jab_finish_segments, jab_strike_events, 9, liu_kang_ready);
-static const MoveSequence sweep_sequence = EVENT_SEQUENCE(sweep_segments, sweep_events, 40, liu_kang_ready);
-static const MoveSequence uppercut_sequence = EVENT_SEQUENCE(uppercut_segments, uppercut_events, 10, liu_kang_ready);
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveSegment uppercut_loop_segments[] = {{0, 8, -1, 1}, {3, 7, 1, 1}};
+static const MoveSegment uppercut_late_segments[] = {{0, 9, 0, 1}, {2, 8, -1, 1}, {5, 7, 1, 1}};
+static const MoveSegment uppercut_miss_end_segments[] = {{0, 8, 1, 1}};
+static const MoveSegment uppercut_hit_end_segments[] = {{0, 9, 1, 1}};
+// clang-format on
 static const MoveSequence uppercut_loop_sequence = SEQUENCE(uppercut_loop_segments, 5, liu_kang_ready);
 static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segments, 7, liu_kang_ready);
 static const MoveSequence uppercut_miss_end_sequence = SEQUENCE(uppercut_miss_end_segments, 12, liu_kang_ready);
@@ -152,16 +88,10 @@ static const MoveDef s_walk = {266, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NUL
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
-static const MoveDef s_jab = {.clip = 294, .last = MOVE_END, .flags = RETAIL, .sequence = &jab_sequence, .action = ACTION_RETAIL_010B};
-static const MoveDef s_kick = {.clip = 66, .last = MOVE_END, .flags = RETAIL, .sequence = &kick_sequence, .action = ACTION_RETAIL_0100};
-static const MoveDef s_sweep = {.clip = 62, .last = MOVE_END, .flags = RETAIL | SF_LOW, .sequence = &sweep_sequence, .action = ACTION_RETAIL_010C};
-static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .sequence = &uppercut_sequence, .action = ACTION_RETAIL_0109};
-/* The jab graph alternates an opening/recovery with a second clip. Contact
- * requests at phase boundaries execute before the next branch is committed. */
-static const MoveDef s_jab_recover = {.clip = 294, .flags = RETAIL, .sequence = &jab_recover_sequence, .action = ACTION_RETAIL_010B};
-static const MoveDef s_jab_second = {.clip = 295, .flags = RETAIL, .sequence = &jab_second_sequence, .action = ACTION_RETAIL_010B};
-static const MoveDef s_jab_stop = {.clip = 295, .flags = RETAIL, .sequence = &jab_stop_sequence, .action = ACTION_RETAIL_010B};
-static const MoveDef s_jab_finish = {.clip = 295, .flags = RETAIL, .sequence = &jab_finish_sequence, .action = ACTION_RETAIL_010B};
+static const MoveDef s_jab = {.clip = 294, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010B};
+static const MoveDef s_kick = {.clip = 66, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0100};
+static const MoveDef s_sweep = {.clip = 62, .last = MOVE_END, .flags = RETAIL | SF_LOW, .action = ACTION_RETAIL_010C};
+static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_loop_sequence, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
@@ -198,26 +128,16 @@ static bool liu_kang_repeat_jab(const Fighter *fighter) {
 }
 
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
-static void jab_script(Fighter *fighter) {
-  fighter_fiber_sequence(fighter, &jab_sequence);
-  while (liu_kang_repeat_jab(fighter)) {
-    fighter_fiber_move(fighter, S_PUNCH, &s_jab_second);
-    fighter_fiber_sequence(fighter, &jab_second_sequence);
-    bool repeat = liu_kang_repeat_jab(fighter);
-    fighter_fiber_move(fighter, S_PUNCH, repeat ? &s_jab_finish : &s_jab_stop);
-    fighter_fiber_sequence(fighter, repeat ? &jab_finish_sequence : &jab_stop_sequence);
-    if (!repeat) {
-      fighter_fiber_finish(liu_kang_ready);
-    }
-    liu_kang_jab_contact(fighter);
-  }
-  fighter_fiber_move(fighter, S_PUNCH, &s_jab_recover);
-  fighter_fiber_sequence(fighter, &jab_recover_sequence);
-  fighter_fiber_finish(liu_kang_ready);
-}
 
 static void uppercut_script(Fighter *fighter) {
-  fighter_fiber_sequence(fighter, &uppercut_sequence);
+  for (int sample = 6; sample <= 9; ++sample) {
+    fighter_wait_ticks(sample == 6 ? 2 : 1);
+    fighter->sample_override = sample;
+    if (sample >= 7) {
+      liu_kang_uppercut_contact(fighter);
+    }
+  }
+  fighter_wait_ticks(1);
   ContactResult result = fighter->contact;
   bool late = fighter->contact_tick == 9;
   int loops = result == CONTACT_MISS ? 3 : result == CONTACT_BLOCK ? 2 : 8;
@@ -242,31 +162,26 @@ static void uppercut_script(Fighter *fighter) {
   fighter_fiber_finish(liu_kang_ready);
 }
 
-static void normal_script(Fighter *fighter) {
-  fighter_fiber_sequence(fighter, fighter->sequence);
-  fighter_fiber_finish(liu_kang_ready);
-}
-
 static void liu_kang_uppercut(Fighter *fighter) {
   fighter_start_move(fighter, S_UPPERCUT, &s_uppercut);
-  fighter_start_fiber(fighter, uppercut_script, NULL);
+  fighter_start_fiber(fighter, retail_script_004e62a0, NULL);
 }
 
 static void liu_kang_sweep(Fighter *fighter) {
   fighter_start_move(fighter, S_SWEEP, &s_sweep);
-  fighter_start_fiber(fighter, normal_script, NULL);
+  fighter_start_fiber(fighter, retail_script_004e67d8, NULL);
 }
 
 static void liu_kang_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_jab);
   /* The jab entry clears the busy bit (0x490330): commands stay live. */
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, jab_script, NULL);
+  fighter_start_fiber(fighter, retail_script_004e62f0, NULL);
 }
 
 static void liu_kang_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_kick);
-  fighter_start_fiber(fighter, normal_script, NULL);
+  fighter_start_fiber(fighter, retail_script_004e6c90, NULL);
 }
 
 static void armed_idle(Fighter *fighter);
@@ -339,11 +254,10 @@ static void open_followup(Fighter *fighter, const ButtonTable *buttons) {
   fighter->action = ACTION_RETAIL_1006;
 }
 
-static void ground_attack_script(Fighter *fighter) {
+static void ground_native_tail(Fighter *fighter) {
   const int index = fighter->script_phase;
   const bool followup = fighter->script_timer != 0;
   for (;;) {
-    fighter_wait_ticks(1);
     const GroundAttack *attack = &ground_attacks[index];
     int t = fighter->ticks, fast = index == G_ROUNDHOUSE && followup ? 4 : 0;
     int active = attack->active - fast;
@@ -401,6 +315,7 @@ static void ground_attack_script(Fighter *fighter) {
     if (t >= end) {
       fighter_fiber_finish(liu_kang_ready);
     }
+    fighter_wait_ticks(1);
   }
 }
 
@@ -412,7 +327,9 @@ static void ground_attack(Fighter *fighter, int index) {
   fighter->script_phase = index;
   fighter->script_timer = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_COMBO_HP || index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
-  FighterFn script = index == G_LOW_KICK ? retail_script_004e6d08 : index == G_CROUCH_HK ? retail_script_004e60b8 : ground_attack_script;
+  static const FighterFn scripts[] = {retail_script_004e6d08, ground_native_tail, retail_script_004e6158, retail_script_004e60b8, retail_script_004e61e0,
+      retail_script_004e69b0, retail_script_004e6190, retail_script_004e6e90};
+  FighterFn script = scripts[index];
   fighter_start_fiber(fighter, script, NULL);
 }
 
@@ -566,16 +483,14 @@ static void air_land(Fighter *fighter) {
   mk4_land(fighter);
 }
 
-static void air_attack_script(Fighter *fighter) {
-  int index = 0;
-  while (&air_attacks[index].move != fighter_move(fighter)) {
-    ++index;
-  }
+static void air_native_tail(Fighter *fighter, int index, int elapsed) {
   const AirAttack *attack = &air_attacks[index];
   const bool combo = fighter->script_phase == AIR_COMBO;
   const int retract_at = attack->extend + attack->hold;
-  for (int tick = 1;; ++tick) {
-    fighter_wait_ticks(1);
+  for (int tick = elapsed ? elapsed : 1;; ++tick) {
+    if (tick != elapsed) {
+      fighter_wait_ticks(1);
+    }
     if (!fighter_airborne(fighter)) {
       fighter_fiber_finish(air_land);
     }
@@ -628,7 +543,8 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->body.physics = NULL;
   fighter->facing = fighter->body.pos[AXIS_X] <= opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
-  fighter_start_fiber(fighter, air_attack_script, NULL);
+  static const FighterFn scripts[] = {retail_script_004e6658, retail_script_004e6710, retail_script_004e6df0, retail_script_004e6500, retail_script_004e63d8};
+  fighter_start_fiber(fighter, scripts[index], NULL);
 }
 
 static void air_hp(Fighter *fighter) {
@@ -746,7 +662,6 @@ static const MoveDef s_lp_thrown = {.clip = 151, .last = 45, .flags = SF_LOCK, .
 static const MoveDef s_lk_thrown = {.clip = 133, .last = 35, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
-static const MoveDef s_throw_retreat = {.clip = 182, .last = 64, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
 
 static void thrown_play_to(Fighter *victim, int sample, int step) {
   while (step > 0 ? victim->sample_override < sample : victim->sample_override > sample) {
@@ -763,55 +678,33 @@ static void thrown_finish(Fighter *victim) {
   fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
 }
 
-static void lp_thrown_script(Fighter *victim) {
-  thrown_play_to(victim, 17, 1);
-  battle_scene_impact(victim);
-  thrown_play_to(victim, 26, 1);
-  fighter_wait_ticks(1);
-  stop_body(victim);
+static void liu_script_lp_getup(Fighter *victim) {
   if (victim->health <= 0) {
     thrown_finish(victim);
   }
   victim->facing = -victim->facing;
   fighter_fiber_move(victim, S_KNOCKDOWN, &s_lp_getup);
   victim->sample_override = 0;
-  fighter_set_speed(victim, -0x147a); /* 4ea220 normal getup. */
+  fighter_set_speed(victim, -0x147a);
   thrown_play_to(victim, 15, 1);
   fighter_wait_ticks(1);
   thrown_finish(victim);
 }
 
 static void lk_thrown_script(Fighter *victim) {
-  /* The two samples after the damage event are committed victim work. */
   victim->script_phase = 1;
   victim->sample_override = 30;
   fighter_wait_ticks(2);
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->reaction = 80;
-  battle_sound(SOUND_A, 37);
-  thrown_play_to(victim, 35, 1);
-  for (int cycle = 0; cycle < 3; ++cycle) {
-    thrown_play_to(victim, 31, -1);
-    thrown_play_to(victim, 35, 1);
-  }
-  fighter_set_speed(victim, -0x3333);
-  victim->body.physics = fighter_friction;
-  thrown_play_to(victim, 0, -1);
-  fighter_wait_ticks(1);
-  victim->facing = -victim->facing;
-  thrown_finish(victim);
-}
-
-static bool throw_paired(const Fighter *owner) {
-  const Fighter *victim = fighter_opponent(owner);
-  return (victim->current_move == &s_lp_thrown || victim->current_move == &s_lk_thrown) && fighter_fiber_active(victim) && victim->pending == NULL;
+  retail_script_004e9a90(victim);
 }
 
 static void ground_thrown_script(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   for (;;) {
     fighter_wait_ticks(1);
-    if ((owner->current_move != &s_throw && owner->current_move != &s_lk_throw) || owner->pending != NULL) {
+    if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
       victim->flags &= ~(unsigned)FF_PAIRED;
       thrown_finish(victim);
     }
@@ -824,24 +717,13 @@ static void throw_disarm(Fighter *victim) {
   }
 }
 
-static void throw_pair_to(Fighter *owner, int sample, bool lk) {
-  Fighter *victim = opponent(owner);
-  while (owner->sample_override < sample) {
-    fighter_wait_ticks(1);
-    if (!throw_paired(owner)) {
-      owner->flags &= ~(unsigned)FF_PAIRED;
-      fighter_fiber_finish(liu_kang_ready);
-    }
-    owner->sample_override++;
-    if (!lk || owner->sample_override <= 30) {
-      victim->sample_override = owner->sample_override;
-    }
-  }
+static void liu_script_pair_to(Fighter *owner, int sample) {
+  mk4_script_pair_advance(owner, sample - owner->sample_override);
 }
 
 static void throw_cleanup(Fighter *owner) {
   Fighter *victim = opponent(owner);
-  if ((victim->flags & FF_PAIRED) && (victim->current_move == &s_lp_thrown || victim->current_move == &s_lk_thrown)) {
+  if ((victim->flags & FF_PAIRED) && (fighter_move(victim)->clip == 151 || fighter_move(victim)->clip == 133)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     if (victim->script_phase == 1) {
       return;
@@ -854,55 +736,21 @@ static void throw_cleanup(Fighter *owner) {
   }
 }
 
-static void ground_throw_script(Fighter *fighter) {
+static void liu_script_lk_continue(Fighter *fighter) {
+  retail_script_004de410(fighter);
+}
+
+static void liu_script_lk_damage(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  const bool lk = fighter->current_move == &s_lk_throw;
-  if (!lk) {
-    throw_pair_to(fighter, 45, false);
-    throw_disarm(victim);
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    stop_body(victim);
-    fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
-    victim->reaction = 104;
-    victim->sample_override = 0;
-    victim->flags |= FF_REACTING;
-    fighter_start_fiber(victim, lp_thrown_script, NULL);
-    battle_damage(victim, 0x2666);
-    fighter_fiber_play_to(fighter, 60, 1);
-    fighter_wait_ticks(1);
-  } else {
-    throw_pair_to(fighter, 30, true);
-    throw_pair_to(fighter, 38, true);
-    /* 48fee0 aligns victim .7 units along the captured heading. */
-    for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-      victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
-    }
-    throw_disarm(victim);
-    battle_sound(SOUND_A, 36);
-    victim->script_phase = 1;
-    fighter_start_fiber(victim, lk_thrown_script, NULL);
-    battle_damage(victim, 0x2e14);
-    throw_pair_to(fighter, 40, true);
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    fighter_fiber_play_to(fighter, 43, 1);
-    for (int cycle = 0; cycle < 4; ++cycle) {
-      fighter_fiber_play_to(fighter, 39, -1);
-      if (cycle < 3) {
-        fighter_fiber_play_to(fighter, 43, 1);
-      }
-    }
-    fighter_fiber_play_to(fighter, 0, -1);
-    fighter_fiber_move(fighter, S_THROW, &s_throw_retreat);
-    fighter->sample_override = 0;
-    fighter_set_speed(fighter, -0x11eb);
-    fighter_fiber_play_to(fighter, 28, 2);
-    stop_body(fighter);
-    fighter_fiber_play_to(fighter, 64, 1);
-    fighter_wait_ticks(1);
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
   }
-  fighter_fiber_finish(liu_kang_ready);
+  victim->script_phase = 1;
+  victim->flags |= FF_PAIR_RELEASE;
+  fighter_start_fiber(victim, lk_thrown_script, NULL);
+  battle_damage(victim, 0x2e14);
+  retail_script_004de428(fighter);
+  retail_script_004de468(fighter);
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
@@ -924,10 +772,7 @@ static void ground_throw(Fighter *fighter, bool lk) {
   victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  if (!lk) {
-    battle_sound(SOUND_B, 7);
-  }
-  fighter_start_fiber(fighter, ground_throw_script, throw_cleanup);
+  fighter_start_fiber(fighter, lk ? retail_script_004de3b0 : retail_script_004de798, throw_cleanup);
   fighter_start_fiber(victim, ground_thrown_script, NULL);
 }
 
@@ -952,7 +797,7 @@ static void bicycle_victim_script(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   for (;;) {
     fighter_wait_ticks(1);
-    if (victim->script_phase != 0 || owner->current_move != &s_bicycle || owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
+    if (victim->script_phase != 0 || owner->action != ACTION_RETAIL_0206 || owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
       break;
     }
     victim->sample_override = victim->ticks < 24 ? victim->ticks : 4 + (victim->ticks - 24) % 20;
@@ -963,28 +808,11 @@ static void bicycle_victim_script(Fighter *victim) {
   victim->reaction = 81;
   victim->sample_override = 0;
   if (air) {
-    fighter_set_speed(victim, -0xccc);
-    victim->body.vel[AXIS_Y] = -0xf5c;
-    victim->body.gravity = 0x312;
-    thrown_play_to(victim, 30, 1);
-    while (fighter_airborne(victim)) {
-      fighter_wait_ticks(1);
-    }
-    battle_scene_impact(victim);
-    thrown_play_to(victim, 33, 1);
-    fighter_wait_ticks(2);
-    if (victim->health > 0) {
-      fighter_fiber_move(victim, S_KNOCKDOWN, &s_bicycle_getup);
-      victim->sample_override = 0;
-      thrown_play_to(victim, 15, 1);
-    }
+    retail_script_004e9ae8(victim);
   } else {
-    fighter_set_speed(victim, -0x4ccc);
     victim->body.physics = fighter_friction;
-    thrown_play_to(victim, 64, 1);
+    retail_script_004e9ad0(victim);
   }
-  fighter_wait_ticks(1);
-  thrown_finish(victim);
 }
 
 static void bicycle_cleanup(Fighter *fighter) {
@@ -996,12 +824,6 @@ static void bicycle_cleanup(Fighter *fighter) {
 }
 
 static void bicycle_script(Fighter *fighter) {
-  fighter_fiber_play_to(fighter, 5, 1);
-  fighter_wait_ticks(1);
-  battle_sound(SOUND_INDEXED, 1);
-  fighter_set_speed(fighter, 0x2147);
-  fighter->body.vel[AXIS_Y] = -0xa3d;
-  fighter->body.gravity = 0xc4;
   for (int tick = 0; tick < 60; ++tick) {
     fighter_wait_ticks(1);
     fighter->sample_override = 7 + tick % 16;
@@ -1013,14 +835,7 @@ static void bicycle_script(Fighter *fighter) {
       continue;
     }
     if (result == CONTACT_BLOCK) {
-      fighter_set_speed(fighter, 0);
-      fighter->body.vel[AXIS_Y] = -0x147a;
-      fighter->body.gravity = 0xe5;
-      while (fighter_airborne(fighter)) {
-        fighter_wait_ticks(1);
-        fighter->sample_override = 7 + fighter->ticks % 16;
-      }
-      fighter_fiber_finish(mk4_land);
+      retail_script_004e8688(fighter);
     }
     Fighter *victim = opponent(fighter);
     throw_disarm(victim);
@@ -1050,16 +865,13 @@ static void bicycle_script(Fighter *fighter) {
     stop_body(fighter);
     break;
   }
-  fighter->sample_override = 6;
-  fighter_fiber_play_to(fighter, 22, 1);
-  fighter_wait_ticks(1);
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0xc4;
     while (fighter_airborne(fighter)) {
       fighter_wait_ticks(1);
     }
   }
-  fighter_fiber_finish(liu_kang_ready);
+  retail_script_004e8678(fighter);
 }
 
 static bool can_bicycle(const Fighter *fighter) {
@@ -1074,7 +886,7 @@ static void liu_kang_bicycle_kick(Fighter *fighter) {
   stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_bicycle);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, bicycle_script, bicycle_cleanup);
+  fighter_start_fiber(fighter, retail_script_004e8610, bicycle_cleanup);
 }
 
 /* Fireballs: 49bf50/90/49bfe0 -> 4ed678/6c0/6f8.
@@ -1170,48 +982,25 @@ static void liu_kang_low_fireball(Fighter *fighter) {
 /* 47edc0/4e86a8 -> 47ee00/30; D[12], six opening visits.
  * Hit and blocked exits are 4e86e8 and 4e8718 respectively. */
 static const MoveDef s_flying_kick = {.clip = 92, .last = 5, .flags = RETAIL, .action = ACTION_RETAIL_0207};
-static const MoveDef s_flying_hit = {.clip = 93, .last = 2, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0207};
 static const AttackRecord flying_record = {0x14f5c, -0xf5c, 0xf5c2, 0x51eb, 31, 31, 0, 0, 0x23d7};
 
 static void flying_kick_script(Fighter *fighter) {
-  for (int tick = 1;; ++tick) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = mini(5, tick);
-    if (tick < 6) {
-      continue;
-    }
+  mk4_script_finish_clip(fighter, 1); /* 47ee00 native startup before 47ee30 contact runner. */
+  for (;;) {
     if (!fighter_airborne(fighter)) {
-      fighter_fiber_play_to(fighter, 0, -1);
-      fighter_wait_ticks(1);
-      fighter_fiber_finish(liu_kang_ready);
+      retail_script_004e86d0(fighter);
+      return;
     }
     ContactResult result = battle_contact(fighter, &flying_record);
-    if (result == CONTACT_MISS) {
-      continue;
-    }
-    stop_body(fighter);
     if (result == CONTACT_BLOCK) {
-      fighter_wait_ticks(12);
-      fighter_wait_ticks(12);
-      fighter->body.gravity = 0x28f;
-      while (fighter_airborne(fighter)) {
-        fighter_wait_ticks(1);
-      }
-      fighter_fiber_finish(mk4_land);
+      retail_script_004e8718(fighter);
+      return;
     }
-    fighter_fiber_move(fighter, S_KICK, &s_flying_hit);
-    fighter->sample_override = 0;
-    fighter_set_speed(fighter, 0x51e);
-    fighter_fiber_play_to(fighter, 2, 1);
-    fighter_wait_ticks(20);
-    fighter->body.gravity = 0x51e;
-    fighter_fiber_move(fighter, S_KICK, &s_flying_kick);
-    fighter->sample_override = 5;
-    fighter_fiber_play_to(fighter, 0, -1);
-    while (fighter_airborne(fighter)) {
-      fighter_wait_ticks(1);
+    if (result != CONTACT_MISS) {
+      retail_script_004e86e8(fighter);
+      return;
     }
-    fighter_fiber_finish(liu_kang_ready);
+    fighter_wait_ticks(1);
   }
 }
 
@@ -1226,7 +1015,7 @@ static void liu_kang_flying_kick(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x170a;
   fighter->body.gravity = 0x106;
   battle_sound(SOUND_INDEXED, 0);
-  fighter_start_fiber(fighter, flying_kick_script, NULL);
+  fighter_start_fiber(fighter, retail_script_004e86a8, NULL);
 }
 
 /* Default weapon descriptor 53d5c0[3] -> 4ece58: type 66,
@@ -1245,15 +1034,13 @@ static const WeaponStrike sword_attacks[] = {
   {{.clip = 227, .last = 59, .flags = RETAIL, .action = ACTION_RETAIL_0112}, {98959, -28835, 67502, 36700, 57, 57, 119, 0, 9175}, 0, 16, 29, 2, 0, 8, 13, 0x1999, 31},
 };
 static const MoveDef s_sword_hp = {.clip = 233, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_021C};
-static const MoveDef s_sword_hp_loop = {.clip = 216, .last = 21, .flags = RETAIL, .action = ACTION_RETAIL_021C};
-static const AttackRecord sword_hp_record = {92405, -28835, 70778, 11796, 60, 10, 117, 0, 4587};
 // clang-format on
 
 static void sword_motion(Fighter *fighter) {
   if (fighter->script_timer > 0) {
     fighter->script_timer--;
   } else if (fighter->move_loops > 0) {
-    fighter_set_speed(fighter, fighter->weapon_strike == NULL ? 0x11eb : fighter->weapon_strike->speed);
+    fighter_set_speed(fighter, fighter->saved_motion[0]);
     fighter->move_loops--;
   } else {
     fighter_set_speed(fighter, 0);
@@ -1263,6 +1050,7 @@ static void sword_motion(Fighter *fighter) {
 
 static void sword_travel(Fighter *fighter, int delay, int duration) {
   fighter_set_speed(fighter, 0);
+  fighter->saved_motion[0] = fighter->weapon_strike == NULL ? 0x11eb : fighter->weapon_strike->speed;
   fighter->script_timer = delay;
   fighter->move_loops = duration;
   fighter->body.physics = sword_motion;
@@ -1292,58 +1080,17 @@ static void sword_blend(Fighter *fighter, int ticks) {
   }
 }
 
-static void sword_hp_script(Fighter *fighter) {
-  sword_travel(fighter, 6, 6);
-  fighter_fiber_play_to(fighter, 10, 2);
-  battle_sound(SOUND_C, 29);
-  fighter_fiber_play_to(fighter, 18, 2);
-  unsigned buffered = fighter->buffered;
-  int delay = fighter->script_timer;
-  fighter_fiber_move(fighter, S_PUNCH, &s_sword_hp_loop);
-  fighter->buffered = buffered;
-  fighter->script_timer = delay;
-  fighter->sample_override = 0;
-  for (;;) {
-    battle_contact(fighter, &sword_hp_record);
-    if (!sword_repeat(fighter)) {
-      fighter->action = ACTION_RETAIL_1006;
-      fighter_fiber_play_to(fighter, 5, 1);
-      sword_blend(fighter, 5); /* 496430: native blend step 0x2666. */
-      fighter_fiber_finish(fighter_ready);
-    }
-    sword_travel(fighter, 6, 6);
-    battle_sound(SOUND_C, 31);
-    fighter_fiber_play_to(fighter, 10, 1);
-    fighter->connected = false;
-    battle_contact(fighter, &sword_hp_record);
-    if (!sword_repeat(fighter)) {
-      fighter->action = ACTION_RETAIL_1006;
-      fighter_fiber_play_to(fighter, 21, 1);
-      fighter_wait_ticks(1);
-      fighter_fiber_finish(fighter_ready);
-    }
-    sword_travel(fighter, 6, 6);
-    battle_sound(SOUND_C, 29);
-    fighter_fiber_play_to(fighter, 21, 1);
-    fighter->sample_override = 0;
-    fighter->connected = false;
-  }
-}
-
 static void sword_strike_script(Fighter *fighter) {
   int index = fighter->script_phase;
   for (;;) {
     const WeaponStrike *strike = &sword_attacks[index];
-    int opening = index == 3 ? 8 : strike->windup - strike->first;
+    int opening = strike->windup - strike->first;
     for (int i = 1; i <= opening; ++i) {
       fighter_wait_ticks(1);
-      fighter->sample_override = strike->first + i * (index == 3 ? 2 : 1);
+      fighter->sample_override = strike->first + i;
     }
     battle_sound(SOUND_C, strike->sound);
-    fighter_fiber_play_to(fighter, index == 3 ? 26 : strike->target, index == 3 ? 2 : 1);
-    if (index == 3) {
-      fighter_fiber_play_to(fighter, 29, 1);
-    }
+    fighter_fiber_play_to(fighter, strike->target, 1);
     for (int i = 0; i < strike->queries; ++i) {
       fighter_wait_ticks(1);
       fighter->sample_override++;
@@ -1388,7 +1135,7 @@ static void sword_attack(Fighter *fighter, int index) {
   if (sword_attacks[index].travel != 0) {
     sword_travel(fighter, sword_attacks[index].delay, sword_attacks[index].travel);
   }
-  fighter_start_fiber(fighter, sword_strike_script, sword_cleanup);
+  fighter_start_fiber(fighter, index == 3 ? retail_script_004ec7f0 : sword_strike_script, sword_cleanup);
 }
 
 static void sword_hp(Fighter *fighter) {
@@ -1399,7 +1146,7 @@ static void sword_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_sword_hp);
   fighter->weapon_strike = NULL;
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, sword_hp_script, sword_cleanup);
+  fighter_start_fiber(fighter, retail_script_004ec680, sword_cleanup);
 }
 
 static void sword_lp(Fighter *fighter) {
@@ -1430,6 +1177,7 @@ static void liu_kang_weapon(Fighter *fighter) {
     sword_lp(fighter); /* 4ecb40[type 66 - 60] -> 4964d0. */
   } else {
     weapon_draw(fighter, &dragon_sword);
+    fighter_start_fiber(fighter, retail_script_004e62c0, NULL);
   }
 }
 
@@ -1493,13 +1241,7 @@ static const MoveDef fatal_moves[] = {
 // clang-format on
 #undef FATAL_MOVE
 
-typedef struct FatalPhase {
-  int clip, first, last, repeats;
-} FatalPhase;
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const FatalPhase fan_owner[] = {{415, 0, 68, 1}, {415, 69, 77, 31}, {415, 78, 129, 1}, {412, 0, 48, 1}};
-static const FatalPhase fan_victim[] = {{416, 0, 68, 1}, {416, 69, 77, 31}, {416, 78, 107, 1}};
 #define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
 static const SceneClip dragon_actor[] = {SCENE(418, 0, 159), SCENE(418, 160, 518), SCENE(418, 446, 518)};
 static const SceneClip dragon_target[] = {
@@ -1525,21 +1267,6 @@ static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   }
   fighter->sample_override = sample;
   fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
-}
-
-static bool fatal_phases(Fighter *fighter, int tick, const FatalPhase *phases, int count, bool owner) {
-  for (int i = 0; i < count; ++i) {
-    const FatalPhase *p = &phases[i];
-    int length = abs(p->last - p->first) + 1;
-    if (tick < length * p->repeats || i == count - 1) {
-      bool done = tick >= length * p->repeats;
-      int sample = done ? p->last : p->first + (p->last >= p->first ? 1 : -1) * (tick % length);
-      fatal_pose(fighter, p->clip, sample, owner);
-      return done;
-    }
-    tick -= length * p->repeats;
-  }
-  return true;
 }
 
 static bool can_close_fatality(const Fighter *fighter) {
@@ -1620,6 +1347,23 @@ static void dragon_fatality_script(Fighter *fighter) {
   }
 }
 
+static void liu_script_fatal_watch(Fighter *fighter) {
+  if (--fighter->script_timer <= 0) {
+    fighter_cancel_all_fibers();
+    battle_end_finisher();
+  }
+}
+
+static void liu_script_fatal_hit(Fighter *owner) {
+  Fighter *victim = opponent(owner);
+  victim->script_phase = 2;
+  victim->reaction = 177;
+  battle_shatter(victim);
+  battle_particles(victim, 3, 20, false);
+  owner->script_timer = 160;
+  owner->body.physics = liu_script_fatal_watch;
+}
+
 static void fatal_fireball_object(Projectile *p) {
   if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != FINISH_LIU_KANG_2) {
     p->kind = 0;
@@ -1633,35 +1377,20 @@ static void fatal_fireball_object(Projectile *p) {
   q16 dz = victim->body.pos[AXIS_Z] - p->pos[AXIS_Z];
   if ((int64_t)dx * dx + (int64_t)dz * dz <= (int64_t)0x28000 * 0x28000 || p->ticks >= 47) {
     p->kind = 0;
-    victim->script_phase = 2;
-    victim->reaction = 177;
-    battle_shatter(victim); /* Generic flesh pieces: victim is not frozen. */
-    battle_particles(victim, 3, 20, false);
+    liu_script_fatal_hit(&g_battle.fighters[p->owner]);
   }
 }
 
-static void fireball_fatality_script(Fighter *fighter) {
-  Fighter *victim = opponent(fighter);
-  /* 4dfff8: scene events 42/43/44 with waits 15/20/60. */
-  fighter_wait_ticks(15);
-  fighter_wait_ticks(20);
-  fighter_wait_ticks(60);
-  battle_sound(SOUND_B, 10);
+static void liu_script_fatal_setup(Fighter *fighter) {
   fatal_pose(fighter, 537, 0, true);
-  fatal_pose(victim, 539, 0, false);
-  for (int sample = 1; sample <= 37; ++sample) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = victim->sample_override = sample;
-  }
-  victim->reaction = 176;
-  victim->facing = -victim->facing;
-  fighter_fiber_play_to(fighter, 59, 1);
-  fighter_wait_ticks(18);
-  battle_sound(SOUND_A, 33);
-  battle_sound(SOUND_INDEXED, 57);
-  fatal_pose(fighter, 538, 0, true);
-  fighter_fiber_play_to(fighter, 16, 1);
-  fighter_wait_ticks(1);
+  fatal_pose(opponent(fighter), 539, 0, false);
+  fighter->flags |= FF_PAIRED;
+  opponent(fighter)->flags |= FF_PAIRED;
+  retail_script_004e0020(fighter);
+}
+
+static void liu_script_fatal_spawn(Fighter *fighter, int task_type) {
+  require(task_type == 38, "Invalid fatality projectile task");
   Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_FATAL_FIREBALL, 48, fatal_fireball_object);
   if (p != NULL) {
     p->mesh_animation = &fireball_mesh;
@@ -1672,53 +1401,68 @@ static void fireball_fatality_script(Fighter *fighter) {
       p->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
     }
   } else {
-    /* Scene must settle even when the bounded object pool is exhausted. */
-    victim->script_phase = 2;
-    victim->reaction = 177;
-    battle_shatter(victim);
+    liu_script_fatal_hit(fighter);
   }
-  fighter_fiber_play_to(fighter, 0, -1);
-  while (victim->script_phase != 2) {
-    fighter_wait_ticks(1);
-  }
-  fighter_wait_ticks(160); /* 4891c0 -> 489110: independent explosion tail. */
-  fighter_fiber_finish(finish_scene);
 }
 
-static void stage_fatality_script(Fighter *fighter) {
+static void liu_script_fatal_align(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  for (;;) {
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
+  }
+}
+
+static void liu_script_fan_cycle(Fighter *fighter) {
+  (void)fighter; /* 43d530 returns to the bounded native scene coordinator. */
+}
+
+static void liu_script_fan_victim_end(Fighter *victim) {
+  victim->appearance = APPEARANCE_HIDDEN;
+  fighter_fiber_finish(NULL);
+}
+
+static void liu_script_fan_victory(Fighter *fighter) {
+  retail_script_004e0158(fighter);
+}
+
+static void liu_script_fan_watch(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  int rise = mini(30, ++fighter->script_timer);
+  victim->body.pos[AXIS_Y] = victim->body.ground - rise * 0x3333;
+  /* Native arena task owns completion and retires the generated pose loop. */
+  if (fighter->script_timer >= 102) {
+    fighter_cancel_all_fibers();
+    battle_end_finisher();
+  }
+}
+
+static void liu_script_fan_tail(Fighter *fighter) {
+  for (int cycle = 0; cycle < 31; ++cycle) {
+    retail_script_004e0138(fighter);
+  }
+  Fighter *victim = opponent(fighter);
+  fighter_cancel_fiber(victim);
+  victim->sample_override = 69;
+  fighter_start_fiber(victim, retail_script_004e01a0, NULL);
+  fighter->script_timer = 0;
+  fighter->body.physics = liu_script_fan_watch;
+  retail_script_004e0148(fighter);
+}
+
+static void liu_script_spike_tail(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  while (g_battle.phase_ticks < 324) {
     fighter_wait_ticks(1);
     int tick = g_battle.phase_ticks;
-    bool owner_done = false, victim_done = false;
-    if (g_battle.finisher == FINISH_FAN) {
-      owner_done = fatal_phases(fighter, tick, fan_owner, COUNT(fan_owner), true);
-      victim_done = fatal_phases(victim, tick, fan_victim, COUNT(fan_victim), false);
-      if (tick >= 348) {
-        victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
-      }
-      if (victim_done) {
-        victim->appearance = APPEARANCE_HIDDEN;
-      }
-    } else {
-      int attack = tick - 58;
-      if (attack >= 0) {
-        fatal_pose(fighter, 293, mini(19, attack), true);
-      }
-      if (tick >= 64) {
-        int rise = mini(22, tick - 64);
-        fatal_pose(victim, 128, mini(31, rise * 2), false);
-        victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
-      }
-      if (tick >= 324) {
-        fatal_pose(fighter, 119, 0, true);
-        owner_done = victim_done = true;
-      }
-    }
-    if (owner_done && victim_done) {
-      fighter_fiber_finish(finish_scene);
+    fighter->sample_override = mini(19, fighter->sample_override + 1);
+    if (tick >= 64) {
+      int rise = mini(22, tick - 64);
+      fatal_pose(victim, 128, mini(31, rise * 2), false);
+      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
     }
   }
+  fatal_pose(fighter, 119, 0, true);
+  fighter_fiber_finish(finish_scene);
 }
 
 static void start_fatality(Fighter *fighter, int id) {
@@ -1733,10 +1477,15 @@ static void start_fatality(Fighter *fighter, int id) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x20ccc);
     }
   }
+  if (id == FINISH_FAN) {
+    fatal_pose(victim, 416, 0, false);
+    fighter_start_fiber(victim, retail_script_004e0188, NULL);
+  }
   fighter_start_fiber(fighter,
       id == FINISH_LIU_KANG_1   ? dragon_fatality_script
-      : id == FINISH_LIU_KANG_2 ? fireball_fatality_script
-                                : stage_fatality_script,
+      : id == FINISH_LIU_KANG_2 ? retail_script_004dfff8
+      : id == FINISH_FAN        ? retail_script_004e0118
+                                : retail_script_004e6950,
       NULL);
 }
 
@@ -1754,6 +1503,234 @@ static void liu_kang_fan_fatality(Fighter *fighter) {
 
 static void liu_kang_spike_fatality(Fighter *fighter) {
   start_fatality(fighter, FINISH_SPIKE);
+}
+
+/* Typed native boundaries used by generated VM code. These contain native
+ * contact/controller work; all VM playback and branching lives in the include. */
+static void liu_script_ready(Fighter *fighter) {
+  (void)fighter;
+  fighter_fiber_finish(fighter_ready);
+}
+
+static void liu_script_land(Fighter *fighter) {
+  (void)fighter;
+  fighter_fiber_finish(mk4_land);
+}
+
+static void thrown_ready(Fighter *fighter) {
+  stop_body(fighter);
+  if (fighter->health > 0) {
+    fighter_ready(fighter);
+  }
+}
+
+static void liu_script_impact(Fighter *fighter) {
+  battle_scene_impact(fighter);
+}
+
+static void liu_script_impact_callback(Fighter *fighter) {
+  fighter->body.on_land = liu_script_impact;
+}
+
+static void liu_script_disarm(Fighter *fighter) {
+  throw_disarm(opponent(fighter));
+}
+
+static void liu_script_damage(Fighter *fighter, int damage) {
+  battle_damage(opponent(fighter), damage);
+}
+
+static void liu_script_pair_adjust(Fighter *fighter, int amount) {
+  /* 42ceb0 adjusts group velocity, not controller action. */
+  Fighter *victim = opponent(fighter);
+  fighter_set_speed(victim, amount);
+}
+
+static void liu_script_context(Fighter *fighter, int selector) {
+  /* 431520/431700 create a camera task. Our camera already follows both
+   * live actors; paired positions remain the source of its framing. */
+  (void)fighter;
+  require(selector == 1 || selector == 36, "Unexpected paired camera context");
+}
+
+static void liu_script_roster_sound(Fighter *fighter, int selector) {
+  require(selector == 8, "Unexpected roster sound list");
+  battle_sound(SOUND_THROW_VOICE, roster_def(fighter->roster)->asset);
+}
+
+static void liu_script_draw_voice(Fighter *fighter) {
+  battle_sound(SOUND_DRAW_VOICE, roster_def(fighter->roster)->asset);
+}
+
+static void liu_script_scene_event(Fighter *fighter, int selector) {
+  require(g_battle.phase == PHASE_FATALITY && selector >= 42 && selector <= 44, "Invalid fatality orchestration event");
+  /* battle_begin_finisher owns input lock, camera and scene activation. */
+  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
+}
+
+static void liu_script_scene_active(Fighter *fighter) {
+  fighter->flags |= FF_UNTOUCHABLE;
+}
+
+static void liu_script_reaction(Fighter *fighter, int reaction) {
+  Fighter *victim = opponent(fighter);
+  victim->reaction = reaction;
+  if (reaction == 104) {
+    throw_disarm(victim);
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    stop_body(victim);
+    fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
+    victim->sample_override = 0;
+    victim->flags |= FF_REACTING;
+    fighter_start_fiber(victim, retail_script_004e9b68, NULL);
+  } else if (reaction == 80) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+  } else if (reaction == 176) {
+    victim->facing = -victim->facing;
+  }
+}
+
+static unsigned liu_script_jab_gate(Fighter *fighter) {
+  bool stop = !liu_kang_repeat_jab(fighter);
+  fighter->buffered &= ~BUTTON_BIT(BUTTON_LOW_PUNCH);
+  return stop ? 4u : 0u;
+}
+
+static void liu_script_kick_tail(Fighter *fighter) {
+  for (int i = 0; i < 3; ++i) {
+    fighter_wait_ticks(1);
+    liu_kang_kick_contact(fighter);
+  }
+  retail_script_004e5c70(fighter);
+}
+
+static void liu_script_sweep_tail(Fighter *fighter) {
+  for (int i = 0; i < 2; ++i) {
+    fighter_wait_ticks(1);
+    liu_kang_sweep_contact(fighter);
+  }
+  fighter->action = ACTION_RETAIL_1006;
+  mk4_script_finish_clip(fighter, 1);
+  fighter_fiber_finish(liu_kang_ready);
+}
+
+static void liu_script_crouch_lk_tail(Fighter *fighter) {
+  fighter_wait_ticks(1);
+  ground_native_tail(fighter);
+}
+
+static void liu_script_knee_tail(Fighter *fighter) {
+  ground_native_tail(fighter);
+}
+
+static void liu_script_close_hp_tail(Fighter *fighter) {
+  ground_native_tail(fighter);
+}
+
+static void liu_script_combo_hp_tail(Fighter *fighter) {
+  ground_native_tail(fighter);
+}
+
+static void liu_script_roundhouse_tail(Fighter *fighter) {
+  ground_native_tail(fighter);
+}
+
+static void liu_script_roundhouse_start(Fighter *fighter) {
+  fighter->script_timer = fighter_fast_start(fighter);
+  if (fighter->script_timer) {
+    retail_script_004e6890(fighter);
+  } else {
+    retail_script_004e68a8(fighter);
+  }
+}
+
+static void liu_script_air_hp_tail(Fighter *fighter) {
+  air_native_tail(fighter, 0, 0);
+}
+
+static void liu_script_air_lp_tail(Fighter *fighter) {
+  air_native_tail(fighter, 1, 0);
+}
+
+static void liu_script_air_kick_tail(Fighter *fighter) {
+  air_native_tail(fighter, 2, 6);
+}
+
+static void liu_script_air_diagonal_tail(Fighter *fighter) {
+  air_native_tail(fighter, 3, 0);
+}
+
+static void liu_script_air_lk_tail(Fighter *fighter) {
+  air_native_tail(fighter, 4, 10);
+}
+
+static void liu_script_lk_thrown_tail(Fighter *victim) {
+  fighter_set_speed(victim, -0x3333);
+  victim->body.physics = fighter_friction;
+  thrown_play_to(victim, 0, -1);
+  fighter_wait_ticks(1);
+  victim->facing = -victim->facing;
+  thrown_finish(victim);
+}
+
+static void liu_script_bicycle_getup(Fighter *victim) {
+  if (victim->health > 0) {
+    fighter_fiber_move(victim, S_KNOCKDOWN, &s_bicycle_getup);
+    victim->sample_override = 0;
+    thrown_play_to(victim, 15, 1);
+  }
+  thrown_finish(victim);
+}
+
+static void liu_script_save_motion(Fighter *fighter) {
+  memcpy(fighter->saved_motion, fighter->body.vel, sizeof fighter->saved_motion);
+  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
+}
+
+static void liu_script_restore_motion(Fighter *fighter) {
+  memcpy(fighter->body.vel, fighter->saved_motion, sizeof fighter->saved_motion);
+}
+
+static void liu_script_bicycle_motion(Fighter *fighter) {
+  fighter->sample_override = 7 + fighter->ticks % 16;
+}
+
+static void liu_script_draw_equip(Fighter *fighter) {
+  equip_dragon_sword(fighter);
+  retail_script_004e62d8(fighter);
+}
+
+static unsigned liu_script_sword_gate(Fighter *fighter) {
+  return sword_repeat(fighter) ? 0u : 4u;
+}
+
+static void liu_script_sword_blend(Fighter *fighter) {
+  sword_blend(fighter, 5);
+  fighter_fiber_finish(fighter_ready);
+}
+
+static void liu_script_motion(Fighter *fighter, int speed, int delay, int duration) {
+  sword_travel(fighter, delay, duration);
+  fighter->saved_motion[0] = speed;
+}
+
+static void liu_script_back_lp_tail(Fighter *fighter) {
+  const WeaponStrike *strike = &sword_attacks[3];
+  for (int i = 0; i < strike->queries; ++i) {
+    fighter_wait_ticks(1);
+    fighter->sample_override++;
+    if (battle_contact(fighter, &strike->record) != CONTACT_MISS) {
+      break;
+    }
+  }
+  fighter->action = ACTION_RETAIL_1006;
+  fighter_set_speed(fighter, 0);
+  fighter->body.physics = NULL;
+  fighter_fiber_play_to(fighter, strike->move.last, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(fighter_ready);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.

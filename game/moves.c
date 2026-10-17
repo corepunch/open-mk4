@@ -126,7 +126,7 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   }
   fighter->frozen_clip = 0;
   memset(fighter->visual_offset, 0, sizeof fighter->visual_offset);
-  fighter->flags &= ~(unsigned)FF_PAIRED;
+  fighter->flags &= ~(unsigned)(FF_PAIRED | FF_PAIR_RELEASE);
   fighter->current_move = move;
   fighter->sequence = NULL;
   fighter->continuation++;

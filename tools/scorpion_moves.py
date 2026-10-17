@@ -167,7 +167,7 @@ def script_program(image, entry, character=0):
             operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
             row.update(operation=operation, inline=word & 0xffffff,
                        operands=[hex(value) for value in operands])
-            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49) and operands:
+            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49, 0x4e) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
                 if op in (0x01, 0x0c, 0x0f):

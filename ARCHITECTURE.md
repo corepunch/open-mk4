@@ -238,7 +238,12 @@ storage is the actor's `playback_move`, so cancelling a stack cannot invalidate
 Reviewed character profiles keep generated roots separate from existing legacy
 C adaptations. The strict audit checks typed input/CPU/stance/weapon/reaction
 coverage, source definitions, graph fingerprints, integration and regeneration;
-it does not prove native equivalence or exhaustive x86 reachability. New ports
-must additionally pass `--require-generated`. The five live Liu Kang generated
-scripts and their existing native regressions provide the integration proof.
+it does not prove native equivalence or exhaustive x86 reachability. All profiles
+must pass `--require-generated`; Make has no legacy exception. Liu Kang's 55
+catalogued roots provide the complete generated integration proof. Native-entry
+contracts seed clip/cursor validation and are checked at runtime. Pure native
+script-enter thunks link directly into the generated CFG; proven cursor progress
+allows loops without adding a dispatcher. Committed paired victims own their
+pose independently before separation, while native scene completion retires
+parked fibers on the simulation stack.
 See [the compiler contract](docs/script-compiler.md).

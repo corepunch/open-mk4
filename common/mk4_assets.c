@@ -618,13 +618,20 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   assets->hud.font = load_geometry(package_geo(&archive, "mk4font_.geo"));
   sound_bank_load(&assets->audio, &archive);
   /* 48a0d0 accepts indexed selectors 0..65 at 4ead30. Do not alias B. */
-  const uint32_t sound_tables[] = {0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, image_u32(&exe, 0x53d0a4) * 4};
-  const int sound_counts[] = {51, 184, 113, 66, MK4_ROSTER_COUNT};
+  const uint32_t sound_tables[] = {
+      0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, image_u32(&exe, 0x53d0a4) * 4, image_u32(&exe, 0x53d000 + 8 * 4) * 4, image_u32(&exe, 0x53d0a0) * 4};
+  const int sound_counts[] = {51, 184, 113, 66, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT};
   for (int bank = 0; bank < SOUND_BANK_COUNT; ++bank) {
     assets->audio.event_counts[bank] = sound_counts[bank];
     for (int i = 0; i < sound_counts[bank]; ++i) {
       /* 48a230 maps Kitana/Noob voices to Sonya/Reiko. */
-      int selector = bank == SOUND_IMPACT_VOICE ? (i == 16 ? 2 : i == 17 ? 7 : i) : i;
+      int selector = (bank == SOUND_IMPACT_VOICE || bank == SOUND_DRAW_VOICE) ? (i == 16 ? 2 : i == 17 ? 7 : i) : i;
+      if (bank == SOUND_THROW_VOICE) {
+        /* 489ff0: flat nonzero selector-8 list, indexed through the signed
+         * roster remap (Kitana uses roster 10 for this voice family). */
+        int roster = i == 16 ? 10 : i;
+        selector = view_u8(view(exe.bytes), 0x4ead18 - 0x400000 + (uint32_t)roster);
+      }
       assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - 0x400000 + (uint32_t)selector * 2);
     }
   }

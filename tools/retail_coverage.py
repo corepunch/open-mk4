@@ -129,10 +129,13 @@ def audit(image, character, return_to=None, profile=None):
             root_names.setdefault(entry, []).append('%s: %s' % (name, role))
     generated = {int(entry, 16) for entry in (profile or {}).get('generated_scripts', [])}
     legacy = (profile or {}).get('legacy_scripts', {})
+    contexts = (profile or {}).get('entry_contexts', {})
+    for entry in contexts.keys() - {hex(root) for root in generated}:
+        errors.append('%s: stale generated entry context' % entry)
     scripts = []
     for entry, names in sorted(root_names.items()):
         try:
-            program, _ = compile_program(image, entry, character, bindings, continuation)
+            program, _ = compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', continuation), contexts.get(hex(entry)))
             status, diagnostics = 'compilable', []
         except (CompileError, ValueError) as exc:
             status = 'unsupported'
@@ -192,15 +195,23 @@ def audit(image, character, return_to=None, profile=None):
                 errors.append('generated scripts need an integration source')
             else:
                 source = (ROOT / integration).read_text()
-                for entry in sorted(generated):
-                    if not re.search(r'\b' + symbol(entry) + r'\b', masked_c(source)):
-                        errors.append('%s: generated function is not referenced by integration source' % hex(entry))
+                referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b', masked_c(source))}
+                reachable = set(referenced)
+                for entry in referenced:
+                    try:
+                        program, _ = compile_program(image, entry, character, bindings,
+                                                     contexts.get(hex(entry), {}).get('return_to', continuation), contexts.get(hex(entry)))
+                        reachable.update(int(row['va'], 16) for row in program['instructions'])
+                    except (CompileError, ValueError):
+                        pass # Per-root compilation errors were reported above.
+                for entry in sorted(generated - reachable):
+                    errors.append('%s: generated function is not referenced by integration source or a linked generated CFG' % hex(entry))
                 include = (ROOT / profile['output']).relative_to((ROOT / integration).parent).as_posix()
                 if '#include "%s"' % include not in source:
                     errors.append('integration source does not include ' + include)
     if generated and all(row['status'] == 'compilable' for row in scripts if row['implementation'] == 'generated'):
         output = ROOT / profile['output']
-        if not output.is_file() or output.read_text() != format_c(generate(image, generated, character, continuation)):
+        if not output.is_file() or output.read_text() != format_c(generate(image, generated, character, continuation, contexts=contexts)):
             errors.append('generated output is missing, stale or manually edited: ' + str(profile['output']))
     # Every typed boundary is navigable to a real definition. Prose helper
     # names alone never satisfy this check.

@@ -307,6 +307,11 @@ int main(void) {
       }
     }
   }
+  /* 489ff0 selector8: Liu remap1 reads token1275 -> pcmk0255.esf.
+   * This catches accidental routing through indexed sounds (opcode25). */
+  assets_load_battle(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
+  const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
+  check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");
   combat_poses(&assets);
   assets_free(&assets);
   check(!assets.characters.data && !assets.clips.data, "Asset ownership was not released");

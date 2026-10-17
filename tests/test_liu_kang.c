@@ -59,7 +59,9 @@ static void normals(void) {
       input[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
       battle_step(input);
       input[player].held = 0;
-      for (int t = 0; t < 11; ++t) {
+      /* 459f80 decrements opcode19's count twice per visit: 17 ->
+       * nine visits after the three-count prefix, then native contact. */
+      for (int t = 0; t < 13; ++t) {
         battle_step(input);
       }
       check(g_battle.fighters[1 - player].health == Q16_ONE, "kick damaged before first contact");
@@ -135,6 +137,34 @@ static void normals(void) {
       check(fighter_move(&g_battle.fighters[player])->flags & SF_RECORD, "air attack must use script records");
       advance(160);
       check(g_battle.fighters[player].state == S_IDLE && !fighter_airborne(&g_battle.fighters[player]), "air attack must land and restore controls");
+    }
+  }
+}
+
+/* Native air contacts and cancels begin at the generated VM boundary. */
+static void air_contacts(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int blocked = 0; blocked < 2; ++blocked) {
+      fight(player, 1.f);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      fighter_enter_state(owner, S_JUMP);
+      owner->body.pos[AXIS_Y] = owner->body.ground - 0xb333;
+      owner->body.vel[AXIS_Y] = 0;
+      owner->body.gravity = 1;
+      Input input[2] = {0};
+      input[player].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
+      input[1 - player].held = blocked ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      battle_step(input);
+      input[player].held = 0;
+      for (int t = 0; t < 7; ++t) {
+        battle_step(input);
+      }
+      q16 damage = blocked ? q16_mul(5898, 0x3333) : 5898;
+      check(victim->health == Q16_ONE - damage, "generated air HP reaches native hit/block contact once");
+      check(owner->flags & FF_FOLLOW_UP, "low air HP opens shared ground cancel");
+      advance(160);
+      check(owner->state == S_IDLE && victim->state == S_IDLE, "air contact and victim recover");
+      check(victim->health == Q16_ONE - damage, "air hold cannot repeat its contact");
     }
   }
 }
@@ -293,7 +323,7 @@ static void weapons(void) {
     check(owner->armed && owner->weapon->type == 0x66, "B,F,LK draws Liu Kang weapon descriptor");
     check(owner->weapon->model == SCENE_MODEL_DRAGON_SWORD, "weapon uses its own recovered rig");
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
-    advance(9);
+    advance(10);
     check(fighter_move(owner)->clip == 216, "armed HP changes into repeat clip");
     advance(40);
     check(owner->state == S_IDLE && owner->armed, "armed HP miss returns to weapon stance");
@@ -307,7 +337,7 @@ static void weapons(void) {
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     advance(3);
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
-    advance(6);
+    advance(7);
     check(fighter_move(owner)->clip == 216 && fighter_fiber_active(owner), "buffered HP extends armed repeat program");
     advance(100);
     victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + owner->facing * (q16)(1.4f * Q16_ONE);
@@ -322,7 +352,7 @@ static void weapons(void) {
     /* Keep the owner far enough away to avoid LP's ground-throw gate. */
     victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + owner->facing * (q16)(1.2f * Q16_ONE);
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
-    advance(9);
+    advance(10);
     check(victim->health == Q16_ONE - 0x11eb && victim->reaction == 60, "armed HP first contact uses weapon[15]");
     battle_react(owner, 16);
     advance(100);
@@ -431,6 +461,15 @@ static void fatalities(void) {
     finish_setup(player, 0xcccc, 1);
     finish_command(player, FINISH_FAN, 0, 0);
     check(g_battle.phase == PHASE_FINISH, "fan requires its retail stage");
+    finish_setup(player, 0xcccc, 0);
+    finish_command(player, FINISH_LIU_KANG_2, 0, 0);
+    advance(100);
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      check(battle_spawn_projectile(&g_battle.fighters[player], PROJECTILE_ICE, 500, pool_object) != NULL, "fill finisher object pool");
+    }
+    advance(500);
+    check(g_battle.phase == PHASE_MATCH_OVER && !fighter_fiber_active(&g_battle.fighters[player]),
+        "failed fatality spawn retires generated parked owner through native completion");
   }
 }
 
@@ -524,6 +563,7 @@ static void cpu_entries(void) {
 
 int main(void) {
   normals();
+  air_contacts();
   throws();
   specials();
   weapons();

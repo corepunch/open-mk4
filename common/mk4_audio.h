@@ -18,6 +18,8 @@ enum {
   SOUND_C,
   SOUND_INDEXED,      /* Opcode 25 / 48a0d0, separate from A/B/C. */
   SOUND_IMPACT_VOICE, /* 48a230 selector 1, indexed by roster. */
+  SOUND_THROW_VOICE,  /* 489ff0 selector 8, roster remap 4ead18. */
+  SOUND_DRAW_VOICE,   /* 48a230 selector 0, weapon draw voice. */
   SOUND_BANK_COUNT
 };
 

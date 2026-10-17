@@ -5,25 +5,28 @@ This ledger distinguishes implemented control flow from outstanding work.
 Shared locomotion, contact scaling, reactions, landing and scene pools use the
 existing procedural engine; this is not retail scheduler emulation.
 
-Five live script bodies are now generated from the EXE by
-`make scripts`: low kick `4e6d08`, crouching HK `4e60b8`, low/high/air
-fireballs `4ed678/4ed6c0/4ed6f8`. See `game/generated/liu_kang.inc` and
-`tools/ports/liu_kang.json`. They use the normal command entries and shared
-fiber/contact/playback helpers. Projectile spawning and air landing remain
-small typed native adapters in `c_liu_kang.c`. Other move families retain
-the verified existing C ports; generated coverage is reported separately
-from those legacy implementations. `make scripts-check` rejects edited or
-stale generated output.
-The strict static audit covers eight input event tables, four CPU rows, nine
-stance tables and 41 contact/VM-dispatched reactions. Its inventory fingerprint
-and C boundary references are checked in the profile. Compiler blockers for
-the remaining 45 legacy roots remain visible; `--require-generated` fails
-until they are migrated. See [the compiler contract](script-compiler.md).
+All 45 remaining VM roots have been migrated to generated C. Together with the
+previous five and five newly catalogued throw/fan continuations (`4de468`,
+`4e0138/148/158/1a0`), the audit passes **55/55 generated, zero legacy**.
+`make scripts` regenerates `game/generated/liu_kang.inc` from the pinned EXE;
+`tools/ports/liu_kang.json` supplies reviewed native entry contexts and returns.
+Normal command/CPU entries call these generated fibers, and script-only native
+thunks become direct C jumps. Shared fibers, contacts, clip binding, pair
+playback, landing, weapon motion, audio and scene pools supply the engine work.
+Native contact/recovery portions and native-only programs remain procedural C.
+
+`make scripts-check` now requires generated-only coverage for every profile,
+including Liu Kang. It checks eight input event tables, four CPU rows, nine
+stance tables and 41 contact/VM-dispatched reactions, plus source references,
+static script links, the inventory fingerprint and canonical regeneration.
+See [the compiler contract](script-compiler.md) for entry-context and native
+binding rules. This establishes declared VM coverage, not exhaustive x86
+reachability or native implementation equivalence.
 
 | Family | Retail evidence | State |
 | --- | --- | --- |
 | HP/LP, uppercut, close attacks and combo buttons | 46d290, 4e62f0/330/360/3b0, 4e62a0, 4e61e0, 4e69b0, 4e6190 | Implemented using the reached shared branches |
-| HK | 4e6c90 -> 46a760 -> 4e5d30 -> 4e5c70; clip 66, B[1], contact ticks 11–13, reverse recovery | Implemented |
+| HK | 4e6c90 -> 46a760 -> 4e5d30 -> 4e5c70; clip 66, B[1], counted startup 3 + ceil(17/2), then three native contact visits, reverse recovery | Implemented |
 | LK/crouching attacks | 4e6d08, 4e6020[3] -> 4e60b8, 46b7f0, 4e6158 | Implemented; LK avoidance ticks 7–9, B[6] at 10, contact hold 8 / miss 5 |
 | Sweep | 4e67d8 -> 46efd0/46f130; clip 62, B[36], double steps to 10 then to 22 | Implemented; contact visits 17/18, reaction 19 |
 | Roundhouse | 4e6e90 -> 46f390, 4e6890/4e68a8 -> 46f3e0/46f500; clip 64, B[34] | Implemented; fast startup skips four ticks; hit adds 28 recovery ticks |
@@ -162,3 +165,29 @@ and reset controllers retain the engine boundaries described in the guide.
 Liu Kang has no retail BLOCK air-throw record; no extension was added.
 Cinematic camera/decorative details listed above remain presentation
 adaptations, not claims of native task or rendering identity.
+
+## Generated migration evidence and ownership
+
+The compiler now handles inherited clip/sample contracts, paired descriptors and
+counts, sample-start playback, landing waits, optional full playback, and
+cursor-progress proofs. Native tails `46dd00/10/20` are pure script-enter thunks
+for `4e6330/360/3b0`; they are statically linked rather than recursively called.
+LK throw `4de428` returns to its native damage coordinator, then generated
+`4de468/478` performs retreat. Committed victims own their pose before body
+separation (`FF_PAIR_RELEASE`); interruption cannot rewind or cancel that work.
+Clip rebinding no longer invalidates throw/air/bicycle identity checks.
+
+The fan owner runs generated `4e0138` from the existing bounded native scene
+counter, then generated release/victory scripts. Its victim runs generated
+`4e0188` until the native arena continuation replaces it with `4e01a0`.
+Fireball-fatality `4e0020` parks as authored; the independent explosion's
+160-tick native completion retires the parked fibers on the simulation stack.
+Object-pool exhaustion uses the same completion path. These routines reuse the
+portable scene pools/framing; retail camera-task interpolation and decorative
+scheduling remain the documented presentation adaptations.
+
+Two corrected assumptions are visible in native tests: `459f80` decrements the
+opcode-19 count twice per visit, so count 17 takes nine visits; sword HP targets
+9 and 18 each take five visits under the engine's clamped two-sample stepping.
+The roster sound-list selector 8 uses `489ff0`'s `4ead18` remap and the flat
+`53d000[8]` table through the common audio loader. It is not indexed sound 8.

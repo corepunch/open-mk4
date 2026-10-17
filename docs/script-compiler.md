@@ -22,20 +22,17 @@ python3 tools/compile_retail.py --character liu_kang --script 4e60b8 --return-to
 make scripts
 make scripts-check
 
-# Strict reviewed coverage; new ports must additionally have no legacy VM roots.
+# Strict generated-only coverage (also required by make scripts-check).
 python3 tools/compile_retail.py --character liu_kang --audit --strict --summary
 python3 tools/compile_retail.py --character liu_kang --audit --strict --require-generated --summary
 ```
 
-Make discovers all profiles in `tools/ports/`. A new profile automatically
-participates in generation, regeneration checks and strict audits. The Makefile
-requires fully generated VM coverage for new profiles; Liu Kang is the explicit
-reviewed pre-compiler migration baseline.
-
-The last command currently returns 1: Liu Kang has five generated roots and
-45 reviewed existing legacy roots. That is deliberately different from a clean
-reviewed coverage audit. Unsupported graphs and all helper call sites remain
-visible in JSON; they are never silently emitted as empty functions.
+Make discovers all profiles in `tools/ports/`. Every profile participates in
+generation, canonical regeneration checks and the generated-only audit. There
+are no character exceptions in the Makefile. Liu Kang passes with 55/55 generated
+roots and zero legacy roots: the original 50 plus five throw/fan continuations
+found while following native script entries. Detailed JSON still reports every
+unsupported instruction or native boundary for an incomplete future port.
 
 A successful compile returns 0. Unsupported or invalid compilation, a stale
 `--check`, malformed profile or I/O failure returns 2. `--audit --strict`
@@ -52,7 +49,8 @@ pseudocode templates are not compiler bindings.
 
 Each binding declares the local EXE address, C symbol and source definition,
 allowed roles, engine argument types, result (`void` or native flag bits), flow
-and evidence. Bindings may also explain a portable adaptation. A physics
+and evidence. Cursor effects (`preserve`, `finish`, `unknown`) keep native
+playback from invalidating loop-progress proofs. Bindings may also explain a portable adaptation. A physics
 callback has the existing `FighterFn` signature and is installed without calling
 it. A spawn binding declares accepted task types and uses the existing object
 pool to create an independent lifetime. Its C entry performs allocation; it
@@ -71,9 +69,9 @@ body with a new handwritten timing table merely to make the audit pass.
 
 `tools/ports/<character>.json` declares generated script roots, output include,
 controller/tagged-return adaptation, integration source, move references,
-reviewed existing legacy bodies, stance/weapon/reaction adapters and a reviewed
-inventory fingerprint. New ports should have no legacy VM bodies. The Liu Kang
-legacy entries identify pre-compiler ports and expose the remaining migration.
+entry contexts, stance/weapon/reaction adapters and a reviewed inventory
+fingerprint. `legacy_scripts` remains readable for auditing older profiles, but
+every Make audit requires it to be empty. Liu Kang has no legacy VM bodies.
 
 The audit independently checks that the command reader includes all eight
 known input event kinds, including LK release, and reads both players' records.
@@ -86,8 +84,9 @@ requires review, not automatic fingerprint acceptance.
 References must resolve to actual C functions or initialized tables. Shared
 reaction entries must match the reviewed C dispatch symbol. Paired or cinematic
 reactions that bypass the shared reaction table require an explicit adaptation.
-Generated roots must compile, have references in the integration source, be
-included there, and match canonical regeneration. A script cannot be both
+Generated roots must compile, be referenced by the integration source or reached
+through a statically linked generated CFG, be included there, and match canonical
+regeneration. A script cannot be both
 legacy and generated. Missing or stale entries fail the strict coverage gate.
 
 These checks establish declared static coverage. They do not infer native
@@ -105,10 +104,28 @@ bypass all positive waits are rejected. The known selected air-table word that
 also executes as a VM no-op is supported explicitly. Returns require a supplied
 engine continuation rather than an invented retail task stack.
 
-Some scripts inherit their clip or task-loop state from a native continuation.
-Those are currently rejected unless their compiled graph establishes it itself;
-add an explicit typed entry-context lowering before migrating such a root.
-Yield analysis is conservative: uncertain cursor-only loops remain unsupported.
+For a root entered from native code with an inherited clip, declare an
+`entry_contexts` record keyed by its hex entry. It requires `clip`, `count`,
+`sample` and an evidence string naming the native entry. Compilation seeds its
+initialization/cursor analysis from that contract; generated C checks the actual
+clip and sample before rebinding actor-owned storage. Missing context fails
+compilation. Do not initialize unknown flags, selectors or loop counters to
+invented values. A per-entry `return_to` overrides the profile continuation;
+`"caller"` means ordinary C return for a native coordinator's script subroutine.
+It still preserves the controller-return handoff wait.
+
+A native tail that *only* enters another VM script declares `script_target` in
+its binding. The compiler follows that bounded static edge, validates the
+combined graph and emits a direct label jump. Jab repetition therefore does
+not recursively call C functions or grow the actor stack. The integration audit
+counts such reachable roots without requiring unused wrapper references.
+
+Yield analysis propagates finite clip/cursor states through resets, branches,
+counts and target playback. A target loop is accepted only when progress to
+its target is proven on every incoming path; same-cursor loops still fail.
+Paired clip binding/counts, sample-start playback, landing waits and optional
+full playback use shared engine helpers. Typed native adapters retain ownership
+of independent victims, delayed motion, camera orchestration and scene teardown.
 
 The shared clip primitives use the engine's existing cursor stepping. Counted
 playback yields once per visit, full forward/reverse playback includes its final
@@ -121,16 +138,23 @@ cancelled. Native adapters retain responsibility for physics/object lifetimes.
 
 ## Liu Kang proof and validation
 
-Live command entries run generated roots `4e6d08`, `4e60b8`, `4ed678`,
-`4ed6c0` and `4ed6f8` from `game/generated/liu_kang.inc`. They cover explicit
-sample/wait sequences, contact-dependent recovery, counted loops, full reverse
-tails, sound events and independent projectile spawning. Existing entry gates,
-object callbacks and landing helpers are reused. Handwritten equivalents for
-those script bodies and duplicate normal timing/contact data were removed.
+All catalogued Liu Kang VM roots run from `game/generated/liu_kang.inc`:
+normals and jab branches, paired throws and releases, air attacks, weapon draw
+and sword programs, projectiles, flying/bicycle exits, and the fireball/fan/spike
+scene scripts. Native-only attacks and native portions of contact/recovery/scene
+routines remain C adapters. The former VM timing tables and handwritten script
+loops were removed, including the fan's embedded follow-up scripts.
+
+Generation exposed two old timing assumptions: opcode 19's count 17 consumes
+nine double-step visits (459f80 decrements twice), and sword HP's successive
+sample targets 9/18 consume five visits each with the engine's clamped cursor.
+The native regressions now check those decoded boundaries. This remains a
+portable gameplay adaptation, not exact retail scheduler/pose identity.
 
 `tests/test_script_codegen.py` checks graph preservation, malformed and unknown
 boundaries, definite initialization, wait-free cycles, selector specialization,
-optional descriptor prefixes, deterministic generation, atomic validation
+optional descriptor prefixes, inherited-entry contracts, native script links,
+proven cursor progress, deterministic generation, atomic validation
 failures, real C11 compilation and execution of both emitted conditional paths.
 Coverage mutation tests catch dropped release tables, changed CPU targets,
 missing implementation references and wrong reaction adapters.
@@ -138,6 +162,9 @@ missing implementation references and wrong reaction adapters.
 `tests/test_liu_kang.c` exercises real inputs in both slots: generated LK
 hit/block/miss damage and 33/36-tick recovery, the 42-tick crouching-HK tail,
 fireball release timing, independent projectile interruption, crouch/block/armed
-reactions, air landing and allocation failure. Shared scheduling is covered once
-by the existing fiber suite. `make check` includes regeneration, strict reviewed
+reactions, air contact/follow-ups and landing, paired interruption/KO, weapon repeats,
+finisher completion/reset and allocation failure. The additional throw voice uses
+the existing audio loader with the native roster remap, rather than aliasing the
+unrelated indexed sound bank. Shared scheduling is covered once
+by the existing fiber suite. `make check` includes regeneration, strict generated-only
 coverage, compiler tests and existing game/asset/archive regressions.

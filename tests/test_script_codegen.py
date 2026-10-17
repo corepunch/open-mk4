@@ -65,6 +65,10 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('result_flags & 4u', source)
         with self.assertRaisesRegex(CompileError, 'cannot be used as predicate'):
             self.compile([0x36000000, 0x46a950, (e + 16) // 4, 0x34000001, 0x3f000000])
+        with self.assertRaisesRegex(CompileError, 'does not accept inline selector'):
+            self.compile([0x6b000007, 0x3f000000])
+        source = self.compile([0x6c123456, 17, 0x3f000000])
+        self.assertIn('liu_script_motion(fighter, 17, 1110, 291)', source)
         with self.assertRaisesRegex(ValueError, 'Predicate must return flags'):
             dataclasses.replace(binding, result='void')
         with self.assertRaisesRegex(CompileError, 'does not accept task type'):
@@ -74,7 +78,7 @@ class CompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(CompileError, 'unsupported opcode'):
             self.compile([0xff000000])
         with self.assertRaisesRegex(CompileError, 'unbound tail'):
-            self.compile([0x32000000, 0x46ddd0])
+            self.compile([0x32000000, 0x460000])
         with self.assertRaisesRegex(CompileError, 'not initialized'):
             self.compile([0x37008005, 0x3f000000])
         descriptor = (0x4fad7c + 54 * 12) // 4
@@ -107,11 +111,50 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('mk4_script_finish_clip(fighter, 1);', source)
         self.assertNotIn('fighter, 2)', source)
 
-    def test_audit_reports_unsupported_without_claiming_whole_move_parity(self):
+    def test_generated_only_audit_without_claiming_whole_native_parity(self):
         report = audit(self.image, 3)
-        self.assertGreater(report['total'], report['compilable'])
+        self.assertEqual(report['total'], report['compilable'])
+        self.assertEqual(report['total'], report['generated'])
+        self.assertEqual(report['legacy'], 0)
+        self.assertEqual(report['coverage_errors'], [])
         self.assertIn('not native implementation parity', report['scope'])
-        self.assertTrue(any(row['status'] == 'unsupported' and row['diagnostics'] for row in report['scripts']))
+        self.assertTrue(all(row['status'] == 'compilable' and not row['diagnostics'] for row in report['scripts']))
+
+    def test_native_script_links_and_explicit_entry_contracts(self):
+        # The three native jab tails only enter another VM script; flattening
+        # them preserves the repeated branch without growing a fiber's stack.
+        source = generate(self.image, [0x4e62f0], 3, 'fighter_ready')
+        for target in ('004e6330', '004e6360', '004e63b0'):
+            self.assertIn('goto L_' + target, source)
+            self.assertNotIn('retail_script_' + target + '(fighter)', source)
+        with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
+            compile_program(self.image, 0x4e61e0, 3, return_to='fighter_ready')
+        context = dict(clip=262, count=10, sample=0, evidence='46bea0 opens clip before VM entry')
+        source = generate(self.image, [0x4e61e0], 3, 'fighter_ready', contexts={'0x4e61e0': context})
+        self.assertIn('mk4_script_inherit(fighter, 262, 10, 0)', source)
+        with self.assertRaisesRegex(ValueError, 'Invalid entry clip'):
+            compile_program(self.image, 0x4e61e0, 3, return_to='fighter_ready', context={**context, 'sample': 10})
+        source = generate(self.image, [0x4de428], 3, 'caller', contexts={
+            '0x4de428': dict(clip=35, count=44, sample=38, evidence='42c0d0 damage continuation')})
+        self.assertNotIn('fighter_fiber_finish(caller)', source)
+        self.assertIn('return;', source)
+
+    def test_cursor_progress_proves_loops_but_rejects_zero_progress(self):
+        e = self.entry
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        # This loop resets to 1, advances to 4, and therefore always suspends.
+        self.compile([0x0f000001, descriptor, 0x05000004, 0x12000001, 0x33000000, (e + 8) // 4])
+        with self.assertRaisesRegex(CompileError, 'without a positive wait'):
+            self.compile([0x0f000004, descriptor, 0x05000004, 0x33000000, (e + 8) // 4])
+        # A native call can invalidate an otherwise proven cursor reset.
+        clobber = Binding('sets_cursor', 'tests/test_script_codegen.py', ('call',),
+                          cursor_effect='unknown', evidence='synthetic native cursor mutation')
+        with self.assertRaisesRegex(CompileError, 'without a positive wait'):
+            self.compile([0x0f000000, descriptor, 0x12000000, 0x35000000, 0x460000,
+                          0x05000004, 0x33000000, (e + 8) // 4], {0x460000: clobber})
+        # Source 459f80 decrements the packed count twice, not once per wait.
+        source = self.compile([0x0f000000, descriptor, 0x19000011, 0x3f000000])
+        self.assertIn('mk4_script_advance(fighter, 9, 2)', source)
 
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
@@ -155,7 +198,7 @@ int main(void) {
         profile = profile_for(3)
         self.assertEqual(coverage_audit(self.image, 3)['coverage_errors'], [])
         broken = copy.deepcopy(profile)
-        broken['legacy_scripts'].pop('0x4e62f0')
+        broken['generated_scripts'].remove('0x4e62f0')
         broken['moves']['bicycle_kick']['symbol'] = 'missing_bicycle_implementation'
         errors = coverage_audit(self.image, 3, profile=broken)['coverage_errors']
         self.assertTrue(any('no generation entry' in error for error in errors))
@@ -185,7 +228,7 @@ int main(void) {
             base = [sys.executable, str(tool), '--character', 'liu_kang', '--output', str(path), '--return-to', 'fighter_ready']
             subprocess.run([*base, '--script', '4e60b8'], check=True, capture_output=True)
             original = path.read_bytes()
-            failed = subprocess.run([*base, '--script', '4e60b8', '--script', '4e62f0'], capture_output=True)
+            failed = subprocess.run([*base, '--script', '4e60b8', '--script', '4e61e0'], capture_output=True)
             self.assertEqual(failed.returncode, 2)
             self.assertEqual(path.read_bytes(), original)
             subprocess.run([*base, '--script', '4e60b8', '--check'], check=True, capture_output=True)

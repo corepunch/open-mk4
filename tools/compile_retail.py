@@ -33,6 +33,7 @@ def main(argv=None):
     parser.add_argument('--summary', action='store_true', help='compact audit report; default is detailed JSON')
     args = parser.parse_args(argv)
     try:
+        contexts = {}
         if args.generate:
             profile = profile_for(args.character)
             if profile is None:
@@ -41,6 +42,7 @@ def main(argv=None):
                 raise ValueError('Invalid character generation profile')
             args.script = [int(entry, 16) for entry in profile['generated_scripts']]
             args.return_to = profile['return_to']
+            contexts = profile.get('entry_contexts', {})
             if args.output is None:
                 args.output = ROOT / profile['output']
         if args.check and not args.output:
@@ -59,7 +61,7 @@ def main(argv=None):
             output = json.dumps(inventory(image, args.character), indent=2, sort_keys=True) + '\n'
             status = 0
         else:
-            output = format_c(generate(image, args.script, args.character, args.return_to))
+            output = format_c(generate(image, args.script, args.character, args.return_to, contexts=contexts))
             status = 0
         if args.check:
             if not args.output.is_file() or args.output.read_text() != output:

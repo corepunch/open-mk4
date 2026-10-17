@@ -28,9 +28,9 @@ boundary to an existing engine helper. Handwritten C owns native behavior and
 entry/lifetime adaptations, not a second transcription of the script graph.
 
 The complete tool contract and profile format are in
-[script-compiler.md](script-compiler.md). The current Liu Kang proof runs five
-real generated scripts; its other 45 VM roots remain explicit reviewed legacy
-ports, not generated coverage. New ports must satisfy `--require-generated`.
+[script-compiler.md](script-compiler.md). Liu Kang now proves the complete migration: 55 catalogued VM roots (the
+original 50 and five followed native continuations), zero legacy entries.
+Every profile must satisfy `--require-generated`; Make has no migration bypass.
 
 ### 1. Inventory the fighter and choose a move
 
@@ -195,7 +195,12 @@ make scripts-check
 ```
 
 The profile declares `generated_scripts`, `return_to`, `output`, and the C
-integration source. Include its generated `.inc` and start those functions from
+integration source. Add evidence-backed `entry_contexts` for inherited clips
+and samples; use per-root `return_to: "caller"` for scripts invoked as native
+subroutines. Bind pure script-enter native tails with `script_target` so the
+compiler links their CFG directly. Extend cursor progress analysis or shared
+lowerings when required; never bypass the audit with unused function references.
+Include its generated `.inc` and start those functions from
 the existing command/move entries. Never edit the generated include. Ordinary
 C11 functions and labels express VM branches; fiber waits preserve locals.
 No runtime VM, byte-address dispatcher, scheduler emulation or new execution
@@ -608,7 +613,8 @@ calling the affected move complete.
 
 ## Liu Kang coverage
 
-See [Liu Kang's source and timing ledger](liu-kang-scripts.md). Slot 3 now
+See [Liu Kang's source and timing ledger](liu-kang-scripts.md). All 55 catalogued
+VM roots are generated and pass the generated-only audit. Slot 3 now
 has procedural C entries for normals, close/combo and air attacks, both
 ground throws and independent victim recovery, high/low/air fireballs,
 flying and charged bicycle kicks, the type-66 weapon programs, sidestep,
