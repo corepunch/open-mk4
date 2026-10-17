@@ -1567,6 +1567,9 @@ static const CommandDef commands[] = {
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 18, CMD_AIR, can_clone, sub_zero_clone},
   {BUTTON_BLOCK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
   {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, can_first_fatality, sub_zero_first_fatality},
+  /* Requested extension: retail Sub-Zero has no 4e4a04 air-throw record.
+   * Keep his slide/fatality priority, then reuse the shared retail throw. */
+  {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, mk4_can_air_throw, mk4_air_throw},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_UP, TOKEN_UP, TOKEN_UP}, 4, 48, 0, can_fan_fatality, sub_zero_fan_fatality},
   {BUTTON_LOW_KICK, {0}, 0, 0, 0, can_slide, sub_zero_slide},
   {BUTTON_LOW_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, can_spike_fatality, sub_zero_spike_fatality},

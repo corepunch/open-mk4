@@ -290,8 +290,8 @@ void mk4_jump(Battle *battle, Fighter *fighter) {
 }
 
 /* Air throw: scripts 0x4e5e28/0x4e5e50, native 0x46aae0.
- * The victim owns its release/recovery, so interrupting either participant
- * cannot leave a suspended body behind. Shared getup replaces scheduler parking. */
+ * The owner releases the pair; the victim owns its fall/getup, so interrupting
+ * either participant cannot suspend a body. Shared getup replaces task parking. */
 static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
 static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
@@ -303,6 +303,17 @@ static void thrown_getup_tick(Battle *battle, Fighter *fighter) {
   }
 }
 
+/* 480f50[89] -> 484b40 / 4e9910: release is owned by the attacker,
+ * before world physics, so P1/P2 update order cannot delay the drop. */
+static void air_throw_drop(Fighter *victim) {
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  victim->script_phase = 1;
+  victim->sample_override = 27;
+  memset(victim->body.vel, 0, sizeof victim->body.vel);
+  victim->body.vel[AXIS_Y] = 0x3333;
+  victim->body.gravity = 0x28f;
+}
+
 static void air_thrown_tick(Battle *battle, Fighter *victim) {
   const Fighter *owner = fighter_opponent(battle, victim);
   if (victim->script_phase == 0) {
@@ -311,18 +322,22 @@ static void air_thrown_tick(Battle *battle, Fighter *victim) {
       victim->sample_override = mini(27, owner->ticks);
       return;
     }
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    victim->script_phase = 1;
-    victim->body.vel[AXIS_Y] = 0x3333;
-    victim->body.gravity = 0x28f;
+    air_throw_drop(victim);
   }
   if (victim->script_phase == 1 && !fighter_airborne(victim)) {
     victim->script_phase = 2;
     victim->script_timer = 0;
+    battle_scene_impact(battle, victim); /* 4e9910 -> 457cb0. */
   }
   if (victim->script_phase == 2) {
     victim->sample_override = mini(44, 29 + victim->script_timer++);
-    if (victim->script_timer >= 20 && victim->health > 0) {
+    if (victim->script_timer >= 20) {
+      if (victim->health <= 0) {
+        /* Let the shared defeat controller open the finish window. */
+        victim->script = NULL;
+        return;
+      }
+      victim->facing = -victim->facing; /* 484b60 -> 490350, reverse getup. */
       fighter_start_move(battle, victim, S_KNOCKDOWN, &s_throw_getup);
       victim->script = thrown_getup_tick;
       victim->sample_override = 46;
@@ -335,25 +350,36 @@ bool mk4_can_air_throw(const Battle *battle, const Fighter *fighter) {
   int64_t distance2 = 0;
   for (int i = 0; i < 3; ++i) {
     int64_t d = (int64_t)victim->body.pos[i] - fighter->body.pos[i];
-    distance2 += d * d;
+    distance2 += (d * d) >> 16; /* 45ed80 sums three Q16 products. */
   }
-  return battle->phase == PHASE_FIGHT && fighter->body.pos[AXIS_Y] <= -0x23333 && victim->body.pos[AXIS_Y] <= -0x23333 &&
-         distance2 <= 2LL * Q16_ONE * Q16_ONE && !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
+  return battle->phase == PHASE_FIGHT && fighter->body.pos[AXIS_Y] <= -0x23333 && victim->body.pos[AXIS_Y] <= -0x23333 && distance2 <= 0x20000 &&
+         !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
 }
 
 static void air_throw_tick(Battle *battle, Fighter *fighter) {
   Fighter *victim = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
   int tick = fighter->ticks;
-  if (tick < 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
+  if (tick <= 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
     fighter->body.gravity = 0x28f;
     fighter_ready(battle, fighter);
     return;
   }
+  if (tick < 28) {
+    /* P2's owner runs after the victim; drive both poses on this visit. */
+    memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
+    victim->sample_override = tick;
+  }
   fighter->sample_override = tick < 29 ? tick : tick < 39 ? 28 : mini(44, tick - 9);
   if (tick == 28) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
+    air_throw_drop(victim);
+    victim->reaction = 89;
     battle_damage(battle, victim, 0x2147);
+    if (victim->health <= 0) {
+      /* Round resolution replaces our next-tick launch with victory. */
+      fighter->body.gravity = 0x28f;
+    }
   }
   if (tick == 29) {
     fighter_set_speed(battle, fighter, 0x7ae);
@@ -376,6 +402,7 @@ void mk4_air_throw(Battle *battle, Fighter *fighter) {
   }
   for (int i = 0; i < 2; ++i) {
     Fighter *actor = &battle->fighters[i];
+    fighter_upright(actor); /* 48f9f0 / 490750: cancel the jump rotation. */
     memset(actor->body.vel, 0, sizeof actor->body.vel);
     actor->body.gravity = 0;
     actor->body.physics = NULL;
@@ -389,4 +416,7 @@ void mk4_air_throw(Battle *battle, Fighter *fighter) {
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
+  victim->facing = fighter->facing;
+  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  battle_sound(battle, SOUND_INDEXED, 13); /* 4e5e28 -> token 2100, sample 420. */
 }

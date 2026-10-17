@@ -10,6 +10,13 @@ void battle_sound(Battle *battle, int bank, int selector) {
   }
 }
 
+/* 457cb0: voice row 1 of the impacted fighter, shake 4e3638[0], A[19]. */
+void battle_scene_impact(Battle *battle, const Fighter *fighter) {
+  battle_sound(battle, SOUND_IMPACT_VOICE, roster_def(fighter->roster)->asset);
+  battle_camera_shake(battle, 3, 4, 0x2666);
+  battle_sound(battle, SOUND_A, 0x13);
+}
+
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y) {
   fighter->visual_offset[AXIS_X] = q16_mul(fighter->heading[0], along);
   fighter->visual_offset[AXIS_Y] = y;

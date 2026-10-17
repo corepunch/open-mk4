@@ -598,12 +598,14 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   assets->hud.font = load_geometry(package_geo(&archive, "mk4font_.geo"));
   sound_bank_load(&assets->audio, &archive);
   /* 48a0d0 accepts indexed selectors 0..65 at 4ead30. Do not alias B. */
-  const uint32_t sound_tables[] = {0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30};
-  const int sound_counts[] = {51, 184, 113, 66};
+  const uint32_t sound_tables[] = {0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, image_u32(&exe, 0x53d0a4) * 4};
+  const int sound_counts[] = {51, 184, 113, 66, MK4_ROSTER_COUNT};
   for (int bank = 0; bank < SOUND_BANK_COUNT; ++bank) {
     assets->audio.event_counts[bank] = sound_counts[bank];
     for (int i = 0; i < sound_counts[bank]; ++i) {
-      assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - 0x400000 + (uint32_t)i * 2);
+      /* 48a230 maps Kitana/Noob voices to Sonya/Reiko. */
+      int selector = bank == SOUND_IMPACT_VOICE ? (i == 16 ? 2 : i == 17 ? 7 : i) : i;
+      assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - 0x400000 + (uint32_t)selector * 2);
     }
   }
   // clang-format off: Keep table entries on one row, including long rows.

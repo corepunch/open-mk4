@@ -695,6 +695,7 @@ void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const Attachme
 void battle_shatter(Battle *battle, Fighter *victim);
 void battle_step_presentation(Battle *battle);
 void battle_sound(Battle *battle, int bank, int selector);
+void battle_scene_impact(Battle *battle, const Fighter *fighter);
 
 void battle_init(Battle *battle, int p1, int p2);
 void battle_reset_match(Battle *battle);

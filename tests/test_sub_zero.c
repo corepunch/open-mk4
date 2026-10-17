@@ -709,6 +709,136 @@ static void weapon_recovery(void) {
   check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
 }
 
+static void air_throw_setup(Battle *battle) {
+  for (int i = 0; i < 2; ++i) {
+    Fighter *fighter = &battle->fighters[i];
+    fighter->body.pos[AXIS_Y] = -3 * Q16_ONE;
+    fighter_enter_state(battle, fighter, S_JUMP);
+    fighter->body.vel[AXIS_Y] = 0;
+    fighter->body.gravity = 0;
+  }
+}
+
+static void air_throws(void) {
+  for (int player = 0; player < 2; ++player) {
+    Battle battle = fight(player, 1.f);
+    air_throw_setup(&battle);
+    Fighter *owner = &battle.fighters[player], *victim = &battle.fighters[1 - player];
+    owner->body.root_y = -0x1000;
+    owner->body.angle[AXIS_Z] = 0x18000;
+    owner->body.spin[AXIS_Z] = 0x3000;
+    press(&battle, player, BUTTON_BIT(BUTTON_BLOCK));
+    check(fighter_move(owner)->clip == 82 && fighter_move(victim)->clip == 202 && owner->action == 0x502, "air BLOCK must enter the shared paired throw");
+    check(owner->body.gravity == 0 && victim->body.gravity == 0 && owner->body.root_y == 0 && owner->body.spin[AXIS_Z] == 0,
+        "air throw must cancel jump physics and rotation before pairing");
+    check(victim->body.pos[AXIS_X] == owner->body.pos[AXIS_X] && victim->body.pos[AXIS_Y] == owner->body.pos[AXIS_Y] && victim->facing == owner->facing,
+        "air throw must align the victim with the upright owner");
+    check(sound_events(&battle, SOUND_INDEXED, 13) == 1, "air throw must play indexed selector 13 once on entry");
+    advance(&battle, 27);
+    check(victim->health == Q16_ONE && owner->sample_override == 27 && victim->sample_override == 27, "air throw must hold both poses in sync until sample 28");
+    advance(&battle, 1);
+    check(victim->health == Q16_ONE - 0x2147 && victim->reaction == 89 && victim->script_phase == 1,
+        "air throw must damage once and start victim release at tick 28");
+    check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED) && victim->body.gravity == 0x28f && victim->body.vel[AXIS_Y] == 0x3333 + 0x28f,
+        "both players must release the victim into the same tick of falling physics");
+    int impacts = 0;
+    for (int tick = 29; tick <= 54; ++tick) {
+      advance(&battle, 1);
+      check(sound_events(&battle, SOUND_INDEXED, 13) == 0, "air throw must not repeat its entry cue");
+      impacts += sound_events(&battle, SOUND_A, 0x13);
+      if (sound_events(&battle, SOUND_A, 0x13)) {
+        check(sound_events(&battle, SOUND_IMPACT_VOICE, roster_def(victim->roster)->asset) == 1 && battle.camera.shake_pulses == 3 &&
+                  battle.camera.shake_interval == 4 && battle.camera.shake_amount == 0x2666,
+            "floor impact must use the victim's roster voice and original camera shake");
+      }
+      if (tick == 29) {
+        check(owner->body.vel[AXIS_Y] == -0x1999 + 0x28f && abs(owner->body.vel[AXIS_X]) == 0x7ae,
+            "air throw release must use the script's forward speed, vertical launch and gravity");
+      }
+      if (tick == 29 || tick == 38) {
+        check(owner->sample_override == 28, "air throw must hold sample 28 during its ten-tick wait");
+      }
+      if (tick == 39) {
+        check(owner->sample_override == 30, "air throw must resume forward playback after the wait");
+      }
+    }
+    check(impacts == 1, "victim landing must emit its floor impact exactly once");
+    advance(&battle, 150);
+    check(owner->state == S_IDLE && victim->state == S_IDLE && owner->buttons != NULL && victim->buttons != NULL,
+        "both air throw participants must finish landing/getup and regain their own controls");
+    check(victim->health == Q16_ONE - 0x2147, "air throw must not deal repeat damage during recovery");
+
+    for (int gate = 0; gate < 8; ++gate) {
+      battle = fight(player, 1.f);
+      air_throw_setup(&battle);
+      owner = &battle.fighters[player];
+      victim = &battle.fighters[1 - player];
+      if (gate == 0 || gate == 1) {
+        battle.fighters[gate == 0 ? player : 1 - player].body.pos[AXIS_Y] = -0x23332;
+      } else if (gate == 2) {
+        victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + 2 * Q16_ONE;
+      } else if (gate == 3) {
+        victim->body.pos[AXIS_Z] = 2 * Q16_ONE;
+      } else if (gate == 4) {
+        victim->body.pos[AXIS_Y] -= 2 * Q16_ONE;
+      } else {
+        victim->flags |= gate == 5 ? FF_REACTING : gate == 6 ? FF_UNTOUCHABLE : FF_PAIRED;
+      }
+      fighter_press(&battle, owner, BUTTON_BLOCK);
+      check(
+          owner->pending == NULL && sound_events(&battle, SOUND_INDEXED, 13) == 0, "air throw must reject low, distant and unavailable victims without a cue");
+    }
+    battle = fight(player, 1.f);
+    air_throw_setup(&battle);
+    owner = &battle.fighters[player];
+    victim = &battle.fighters[1 - player];
+    owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -0x23333;
+    victim->body.pos[AXIS_Z] = Q16_ONE;
+    fighter_press(&battle, owner, BUTTON_BLOCK);
+    check(owner->pending != NULL, "air throw must accept the inclusive retail height and 3-D squared-distance boundaries");
+    victim->body.pos[AXIS_Y] = victim->body.ground;
+    advance(&battle, 1);
+    check(fighter_move(owner)->clip != 82 && sound_events(&battle, SOUND_INDEXED, 13) == 0, "queued air throw must recheck its victim before taking control");
+
+    for (int participant = 0; participant < 2; ++participant) {
+      for (int tick = 0; tick <= 27; tick += 27) {
+        battle = fight(player, 1.f);
+        air_throw_setup(&battle);
+        press(&battle, player, BUTTON_BIT(BUTTON_BLOCK));
+        advance(&battle, tick);
+        battle_react(&battle, &battle.fighters[participant ? 1 - player : player], 11);
+        advance(&battle, 180);
+        check(battle.fighters[1 - player].health == Q16_ONE, "interruption before or on the release tick must cancel throw damage");
+        check(battle.fighters[0].state == S_IDLE && battle.fighters[1].state == S_IDLE && !((battle.fighters[0].flags | battle.fighters[1].flags) & FF_PAIRED),
+            "interrupting either participant must release the pair and recover both controllers");
+      }
+    }
+    battle_init(&battle, 4, 4);
+    battle.phase = PHASE_FIGHT;
+    draw_scepter(&battle, 1 - player);
+    battle.fighters[0].body.pos[AXIS_X] = 0;
+    battle.fighters[1].body.pos[AXIS_X] = Q16_ONE;
+    air_throw_setup(&battle);
+    press(&battle, player, BUTTON_BIT(BUTTON_BLOCK));
+    check(fighter_move(&battle.fighters[player])->clip == 82 && !battle.fighters[1 - player].armed, "air throw must disarm the captured victim");
+
+    battle = fight(player, 1.f);
+    air_throw_setup(&battle);
+    battle.fighters[player].wins = 1;
+    battle.fighters[1 - player].health = 0x1000;
+    press(&battle, player, BUTTON_BIT(BUTTON_BLOCK));
+    advance(&battle, 28);
+    check(battle.phase == PHASE_FINISH && battle.finish_waiting && battle.fighters[1 - player].health == 0,
+        "lethal air throw must finish the victim's falling reaction before opening the finish window");
+    for (int tick = 0; tick < 120 && battle.finish_waiting; ++tick) {
+      advance(&battle, 1);
+    }
+    check(!battle.finish_waiting && battle.phase == PHASE_FINISH && battle.fighters[1 - player].action == 0x1009 &&
+              !fighter_airborne(&battle.fighters[player]) && !fighter_airborne(&battle.fighters[1 - player]),
+        "lethal air throw must land both fighters and hand off to the shared finish controller");
+  }
+}
+
 static void cpu_behavior(void) {
   Battle battle = fight(0, 6.f);
   Fighter *fighter = &battle.fighters[0];
@@ -1262,6 +1392,7 @@ static void sidesteps(void) {
 }
 
 int main(void) {
+  air_throws();
   cpu_behavior();
   finish_clock();
   walls();
@@ -1280,6 +1411,6 @@ int main(void) {
   clone_tests();
   slide_tests();
   puts(
-      "PASS: RUN double-tap/motion/windows/cooldown/priority/interruption; Sub-Zero fatalities/both stages/chord/windows/range/rematch; scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
+      "PASS: shared air throw/gates/paired release/sound/interruption/disarm/recovery; RUN double-tap/motion/windows/cooldown/priority/interruption; Sub-Zero fatalities/both stages/chord/windows/range/rematch; scepter strikes/freeze/air/draw/follow-up/disarm/throw/cross-pickup/reactions; slide chord/gates/contact/recovery/interruption; clone pose/contact/near/cooldown/air/expiry/pool/mirror; ice commands/gates/flight/freeze/thaw/backfire/interruption/reset; Sub-Zero normal selectors, kick records, combos, paired throws, crouch launcher, avoidance and air recovery for both players");
   return 0;
 }

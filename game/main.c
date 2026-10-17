@@ -35,6 +35,13 @@ static void validate(const Assets *assets) {
   require(sound_event(&assets->audio, SOUND_B, 4) != ice_sound, "Indexed selectors must remain distinct from sound bank B");
   require(sound_event(&assets->audio, SOUND_INDEXED, 65) == NULL && sound_event(&assets->audio, SOUND_INDEXED, 66) == NULL,
       "Zero and out-of-range indexed sounds must be silent");
+  const Sound *throw_sound = sound_event(&assets->audio, SOUND_INDEXED, 13);
+  const Sound *impact_voice = sound_event(&assets->audio, SOUND_IMPACT_VOICE, 4);
+  require(throw_sound != NULL && throw_sound->id == 420 && impact_voice != NULL && impact_voice->id == 185,
+      "Air throw and Sub-Zero floor-impact cues must resolve original sampled tokens");
+  require(sound_event(&assets->audio, SOUND_IMPACT_VOICE, 16) == sound_event(&assets->audio, SOUND_IMPACT_VOICE, 2) &&
+              sound_event(&assets->audio, SOUND_IMPACT_VOICE, 17) == sound_event(&assets->audio, SOUND_IMPACT_VOICE, 7),
+      "Impact voices must preserve Kitana/Noob roster remaps");
   for (size_t i = 0; i < assets->arenas.count; ++i) {
     const Arena *arena = &assets->arenas.data[i];
     size_t triangles = 0;

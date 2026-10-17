@@ -81,6 +81,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | High kick | `4e5ca0 -> 4e5c80`, `4e6978/6998`, B[2] | Clip 71; 29-step sparse playback; contact at steps 11–13; retain existing kick fixture |
 | Low kick / crouch HK / combo HP | `4e5d90 -> 4e6da0`, `4e5fd8`, `46c2a0 -> 4e69c8` | Clips 70/52/532, their distinct records, avoidance interval and follow-up tables |
 | Shared normals / air / throws | `4e62f0`, `4e62a0`, `4e6798`, `4e6658/6710/61f8/6500/63d8`, `4de6e4`, `4de2f8/318/328` | Own stance selection, hit/block/miss recovery, combo gates, paired damage/release and interrupted attachment cleanup |
+| Air throw | `45ed70/80`, `46aa80/aae0/ab20`, `4e5e28/50`, `4878c0`, reaction 89 `484b40/4e9910/484b60` | Shared Scorpion/Sub-Zero runner in `game/mk4_common.c`: upright paired clips 82/202; indexed cue 13; damage `0x2147` at sample 28; independent victim drop, impact and getup; ten-tick owner launch wait and shared landing |
 | Ice | `49bc60`, `4ed588/4ed818`, `49bcb0`, `49c300/690/810`, C[3] | Clip 16, normal/fast startup, independent 0.2-unit flight, no direct damage, reaction 67; an active clone blocks ice, another shot does not |
 | Fast startup | Opcode 45, native `45b650` | Grounded target: attacker's follow-up flag; airborne target: victim's reacting flag |
 | Freeze | `486230/430/4b0/530`, `4e9d38` | Hold the captured pose for 142 ticks; double freeze backfires; air thaw gravity `0x147`, landing and control restoration; no Goro exclusion |
@@ -122,6 +123,21 @@ The query tool now selects these lists directly. Preserve the following order.
 | `0x4e4bc0` | RUN | Unconditional | 0 | `0x01` | `0x45e820` | `0x469250`, shared RUN double-tap path |
 | `0x4e4bcc` | RUN | Unconditional | 0 | `0x01` | `0x45efc0` | `0x46a020`, weapon pickup |
 | `0x4e4bd8` | RUN | F,B,F,D | 60 | `0x41` | `0x45e460` | `0x467ce0`, fatality 1 dispatcher |
+
+Sub-Zero's new airborne BLOCK air throw is an explicit requested extension:
+his retail BLOCK list ends at `4e4b78` after slide/fatality, without Scorpion's
+`4e4a04` air-throw record. The portable command follows those two records,
+preserving their priority. The shared retail gate requires both absolute Y
+positions <= `-0x23333` and squared 3-D Q16 distance <= `0x20000`.
+The entry rechecks the victim, disarms it, cancels jump rotation and stops both
+bodies. At sample 28 it deals 13% damage and releases the victim downwards at
+`0x3333` with gravity `0x28f`, independently of player update order. The owner
+launches at tick 29 with forward `0x7ae`, Y velocity `-0x1999`, gravity `0x28f`;
+holds sample 28 for ten ticks, finishes clip 82, and lands through `mk4_land`.
+Victim clip 202 finishes after landing, waits four ticks, then gets up with
+clip 131 samples 46–79. Impact reuses the roster voice, A[19] and three-pulse
+camera shake. Context camera task 23 uses normal portable fight framing;
+retail root realignment/task parking use the existing portable recovery.
 
 Slide requires LP+BLK+LK held together and rejects Up/HP/HK/RUN; horizontal
 directions are outside its mask. Fatality I requires HP+BLK+RUN and rejects
@@ -165,9 +181,9 @@ loop. Opcode 25 uses `battle_sound(battle, SOUND_INDEXED, selector)` and the
 complete 66-entry table at `4ead30`, separately from A/B/C. Ice (`4ed588`)
 and the breath fatality (`4d2c10`) each queue selector 4 once on successful entry:
 token `0x852` resolves to `pcmk0426.esf`. Normal/fast ice release still uses C[0]
-at tick 15/8. Rejected commands do not play the entry cue. The catalogued air
-throw script uses indexed selector 13; its current C entry lives in Scorpion,
-so cataloguing that shared script does not establish a Sub-Zero implementation.
+at tick 15/8. Rejected commands do not play the entry cue. The shared air
+throw runner uses indexed selector 13 (token 2100, sample 420), with the
+Sub-Zero command extension described above.
 Existing adaptations remain reuse references, not evidence overriding the EXE.
 
 Sound formats are checked against the local executable, including corrections

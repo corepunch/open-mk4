@@ -135,6 +135,29 @@ static void combat_poses(const Assets *assets) {
   check(battle.pieces[0].pos[AXIS_Y] < height, "Detached pieces must follow their native launch vectors");
   battle_reset_match(&battle);
   check(!battle.pieces[0].active && battle.fighters[1].hidden_joints[0] == 0 && !battle.camera.active, "Rematch must clear scene objects and mesh visibility");
+  for (int player = 0; player < 2; ++player) {
+    battle_init(&battle, player == 0 ? 4 : 0, player == 1 ? 4 : 0);
+    battle_bind_assets(&battle, assets);
+    battle.phase = PHASE_FIGHT;
+    for (int i = 0; i < 2; ++i) {
+      battle.fighters[i].body.pos[AXIS_X] = i * Q16_ONE;
+      battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
+      fighter_enter_state(&battle, &battle.fighters[i], S_JUMP);
+    }
+    fighter_press(&battle, &battle.fighters[player], BUTTON_BLOCK);
+    for (int tick = 0; tick < 16; ++tick) {
+      battle_step(&battle, (Input[2]){0});
+    }
+    for (int i = 0; i < 2; ++i) {
+      const Fighter *actor = &battle.fighters[i];
+      check(fighter_clip(assets, actor)->id == (i == player ? 82 : 202), "Air throw must pose the original attacker and victim clips on their own rigs");
+      Pose posed[MK4_MAX_BONES];
+      fighter_pose(assets, actor, posed);
+      for (size_t bone = 0; bone < fighter_model(assets, actor)->bones.count; ++bone) {
+        check(isfinite(posed[bone].position.x + posed[bone].position.y + posed[bone].position.z), "Both air throw rigs must produce finite posed joints");
+      }
+    }
+  }
 }
 
 static void sound_samples(void) {

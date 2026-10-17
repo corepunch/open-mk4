@@ -40,6 +40,18 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(sounds[13]['token'], 2100)
         self.assertEqual(sounds[65]['token'], 0)
 
+    def test_air_throw_exposes_shared_runner_and_victim_release(self):
+        text = move_c_text(self.image, 'air_throw', character=4)
+        for value in ('indexed_sound_event(13);', 'advance_pair_to_sample(28);',
+                      'set_motion_q16(1966, -6553, 655);', 'wait_ticks(10);',
+                      'set_motion_q16(0, 13107, 655);', 'scene_impact();', 'wait_ticks(4);',
+                      'mk4_air_throw', 'air_throw_tick', '0x2147', 'explicit extension'):
+            self.assertIn(value, text)
+        self.assertEqual(HELPERS[0x46aa80].port, ('game/mk4_common.c', 'mk4_air_throw'))
+        self.assertEqual(table_values(self.image, 'impact_voices')[4]['token'], 925)
+        self.assertEqual([self.image.word(0x4e4b60 + i * 4) for i in range(7)],
+                         [0xffffffff, 0xffffffff, 0x01040002, 0x02ddaadd, 0, 0x1c413c40, 0])
+
     def test_native_only_clone_and_scepter_emit_actual_c_adaptations(self):
         clone = move_c_text(self.image, 'clone', character=4)
         for value in ('static void sub_zero_clone(', 'static void clone_tick(', 'static void clone_object(',
