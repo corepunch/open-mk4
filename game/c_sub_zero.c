@@ -897,7 +897,7 @@ static void ice_tick(Battle *battle, Fighter *fighter) {
     }
   }
   int phase = t - startup - 1;
-  fighter->action = 0x1007;
+  fighter->action = ACTION_RETAIL_1007;
   fighter->sample_override = phase < 0    ? 14
                              : phase < 8  ? 15 + phase
                              : phase < 13 ? 23 - (phase - 8)

@@ -123,6 +123,12 @@ enum {
 
 typedef struct MoveSequence MoveSequence;
 
+typedef enum RetailAction {
+#define RETAIL_ACTION(name, value, confidence, description) name = value,
+#include "retail_actions.inc"
+#undef RETAIL_ACTION
+} RetailAction;
+
 /* Immutable move and combat rules. A recovered sequence overrides generic
  * first/last playback and ends through its callback. Other moves retain the
  * approximate playback policy until their scripts are recovered. */

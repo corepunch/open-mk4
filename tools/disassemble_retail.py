@@ -646,6 +646,7 @@ def main():
     mode.add_argument('--native', metavar='ADDRESS', help='Inspect one exact-entry native graph (requires Capstone)')
     mode.add_argument('--attack', nargs=2, metavar=('TABLE', 'SELECTOR'), help='Inspect a contact record: A/B/C/D/weapon + decimal/0x selector, or record + 0x address')
     mode.add_argument('--move', metavar='NAME', help='Compact character move page; use --list-moves for names')
+    mode.add_argument('--action', metavar='CODE', help='Research a controller action code; hexadecimal with or without 0x')
     mode.add_argument('--list-moves', action='store_true', help='List curated move roots for the selected character')
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
     parser.add_argument('--limit', type=int, help='Query instruction limit, 1..512 (default 512 for --c, otherwise 80)')
@@ -659,7 +660,9 @@ def main():
         parser.error('--limit must be between 1 and 512')
     if args.c and (not (args.script or args.move or args.native) or args.raw):
         parser.error('--c requires --script, --move or --native and cannot be combined with --raw')
-    if not any((args.script, args.native, args.attack, args.move, args.list_moves, args.bundle)):
+    if args.action and args.raw:
+        parser.error('--action does not support --raw; use its printed --script/--native queries')
+    if not any((args.script, args.native, args.attack, args.move, args.action, args.list_moves, args.bundle)):
         parser.print_help()
         return
     try:
@@ -675,6 +678,9 @@ def main():
             return
         if args.list_moves:
             report = move_list_text(character)
+        elif args.action:
+            from retail_actions import action_text
+            report = action_text(RetailImage(args.exe), int(args.action, 16), character, args.limit)
         elif args.native:
             # x86 entries are byte-aligned, unlike VM/data words.
             entry = int(args.native, 16)

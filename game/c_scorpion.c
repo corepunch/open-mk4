@@ -272,7 +272,7 @@ static const FighterFn enter[S_COUNT] = {
 static const AttackRecord spear_record = {0x3333, -0x1eb8, 0x947a, 0x3ae1, 70, 70, 112, ATTACK_MARK, 0xccc};
 static const AttackRecord teleport_record = {0x128f5, -0x3ae1, 0xab85, 0x91eb, 90, 90, 0, ATTACK_MARK, 0x170a};
 static const AttackRecord fire_record = {0x24e56, -0xc978, 0x23cac, 0xb7ce, 173, 173, 0, ATTACK_UNBLOCKABLE, 0x1eb8};
-static const MoveDef s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x300};
+static const MoveDef s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0300};
 static const MoveDef s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = 0x4000};
 static const MoveDef s_spear_stun = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK, .action = 0x1008};
 static const MoveDef s_teleport = {.clip = 312, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x209};
@@ -404,7 +404,7 @@ static void spear_tick(Battle *battle, Fighter *fighter) {
     }
   }
   if (fighter->ticks >= (30 - first + 1) / 2) {
-    fighter->action = 0x1007;
+    fighter->action = ACTION_RETAIL_1007;
     fighter_start_sequence(battle, fighter, &spear_wait);
   }
 }

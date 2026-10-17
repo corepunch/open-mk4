@@ -14,6 +14,7 @@ creates a bundle. Only native queries need Capstone.
 python3 tools/disassemble_retail.py --list-moves
 python3 tools/disassemble_retail.py --character sub_zero --list-moves
 python3 tools/disassemble_retail.py --character sub_zero --move ice
+python3 tools/disassemble_retail.py --character sub_zero --action 0x1007
 python3 tools/disassemble_retail.py --character sub_zero --move low_kick --c
 python3 tools/disassemble_retail.py --move spear
 python3 tools/disassemble_retail.py --script 0x4e6d08
@@ -37,6 +38,34 @@ Raw mode includes fixed script words or native instruction bytes.
 
 Running without a query shows help. The old bulk export now requires explicit
 `--bundle`; it remains available for research, separate from the query path.
+
+## Action-code catalog
+
+`--action CODE` accepts hexadecimal with or without `0x`, such as `1007`,
+`1006`, `300`, or `2001`. It reports the C identifier, descriptive confidence,
+selected native writers/readers checked against exact instruction bytes,
+decoded script writers for the selected roster, and direct portable C action
+assignments/comparisons with file/line links. `--limit` bounds displayed matches;
+`--output` saves the report. No archive, Capstone, game execution, bulk bundle,
+or upstream checkout is needed. Follow the printed native/script queries for
+context. The CLI does not accept `--c` or `--raw` for action reports.
+
+`game/retail_actions.inc` is the shared catalog, included as a C enum and read
+by `tools/retail_actions.py`. Neutral identifiers such as `ACTION_RETAIL_1007`
+preserve the number even when a description is inferred. Verified means the
+recorded use is established, not that every use of that value is understood.
+Unknown values remain explicitly uncatalogued. Initial coverage includes the
+53 direct action literals in the portable game, with unresolved descriptions
+where no stronger meaning has been recorded. Native sites are deliberately
+selected, not an exhaustive executable index; lexical C navigation does not
+cover indirect assignments or masked classifications. Script roots are the
+existing character catalogs, each with the decoder's 512-instruction bound.
+
+For `1007`, projectile recovery is an inference supported by ice/spear script
+placement and the spear owner-action check. The upstream name
+`RoundOverFsmCluster` for that checking routine is misleading: our checked
+caller is the spear victim continuation. Do not derive gameplay flags or a
+complete semantic mapping from that upstream name or the code's bit pattern.
 
 ## Readable C-style view
 
