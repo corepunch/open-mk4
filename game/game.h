@@ -337,7 +337,11 @@ enum {
   FINISH_SUB_ZERO_1,
   FINISH_SUB_ZERO_2,
   FINISH_LIU_KANG_1,
-  FINISH_LIU_KANG_2
+  FINISH_LIU_KANG_2,
+  FINISH_RAIDEN_1,
+  FINISH_RAIDEN_2,
+  FINISH_SONYA_1,
+  FINISH_SONYA_2
 };
 
 enum {
@@ -464,6 +468,7 @@ struct Fighter {
   uint64_t spear_ready, teleport_ready;
   uint64_t clone_ready;
   uint64_t slide_ready, sidestep_ready;
+  uint64_t leg_grab_ready, cartwheel_ready;
   bool armed, weapon_used;
   const WeaponDef *weapon;
   FighterFn disarm; /* character-owned weapon drop entry */

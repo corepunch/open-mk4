@@ -30,6 +30,8 @@ void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn
 void mk4_script_air_throw_release(Fighter *fighter);
 void mk4_script_air_getup(Fighter *fighter);
 void scorpion_generated_reaction(Fighter *fighter);
+void raiden_generated_reaction(Fighter *fighter);
+void sonya_generated_reaction(Fighter *fighter);
 void mk4_walk(Fighter *fighter);
 void mk4_jump(Fighter *fighter);
 void mk4_land(Fighter *fighter);

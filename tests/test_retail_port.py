@@ -25,7 +25,7 @@ class PortTests(unittest.TestCase):
         cls.disassembly = Disassembly(ROOT / 'MK4/MK-4.EXE')
 
     def test_all_character_move_entries_and_top_level_extraction(self):
-        for character in (0, 3, 4):
+        for character in (0, 1, 2, 3, 4):
             for name in moves_for(character):
                 port = port_entry(character, name)
                 self.assertIsNotNone(port, (character, name))
@@ -57,7 +57,7 @@ class PortTests(unittest.TestCase):
         self.assertIn('fighter_wait_ticks(45);', spear)
         self.assertIn('script_spear_return', spear)
         self.assertIn('Typed compiler boundaries', spear)
-        other = port_text(self.disassembly, 'jab', 1, 12)
+        other = port_text(self.disassembly, 'jab', 5, 12)
         self.assertIn('No portable C entry is indexed', other)
         self.assertNotIn('static void scorpion_jab(', other)
 

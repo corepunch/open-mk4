@@ -30,6 +30,14 @@ SPECIFIC = {
         'sword_back_lp': 'sword_back_lp', 'sword_back_hp': 'sword_back_hp', 'sword_spin': 'sword_spin',
         'fatality_1': 'scorpion_burn_fatality', 'fatality_2': 'scorpion_beast_fatality',
         'sword_throw': ('game/weapons.c', 'weapon_throw')},
+    1: {'lightning': 'raiden_lightning', 'torpedo': 'raiden_torpedo', 'teleport': 'raiden_teleport',
+        'staff_hp': 'weapon_hp', 'staff_lp': 'weapon_lp', 'staff_back_hp': 'weapon_back_hp', 'staff_back_lp': 'weapon_back_lp',
+        'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': 'raiden_sidestep',
+        'victory': 'enter_victory', 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
+    2: {'ring': 'sonya_ring', 'leg_grab': 'sonya_leg_grab', 'bicycle': 'sonya_bicycle', 'square_wave': 'sonya_square_wave', 'cartwheel': 'sonya_cartwheel',
+        'weapon_hp': 'weapon_hp', 'weapon_lp': 'weapon_lp', 'weapon_back_hp': 'weapon_back_hp', 'weapon_back_lp': 'weapon_back_lp',
+        'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': 'sonya_sidestep',
+        'air_throw': 'sonya_air_throw', 'victory': 'enter_victory', 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
     3: {
         'jab': ('game/generated/liu_kang.inc', 'retail_script_004e62f0'),
         'high_kick': ('game/generated/liu_kang.inc', 'retail_script_004e6c90'),
@@ -74,9 +82,9 @@ SPECIFIC = {
 
 # Generated VM entries are first-class extraction sources. Native-only entries
 # still point at their engine integration above.
-for _character, _slug in ((0, 'scorpion'), (4, 'sub_zero')):
+for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub_zero')):
     for _name, _move in moves_for(_character).items():
-        if _move['scripts']:
+        if _move['scripts'] and (_character not in (1, 2) or _name not in SPECIFIC[_character]):
             SPECIFIC[_character][_name] = ('game/generated/%s.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
 
 
@@ -99,9 +107,9 @@ def masked_c(text):
 def port_entry(character, name):
     if character not in SPECIFIC:
         return None
-    if name in COMMON:
+    if name in COMMON and character != 2:
         return COMMON[name]
-    c = {0: 'scorpion', 3: 'liu_kang', 4: 'sub_zero'}[character]
+    c = {0: 'scorpion', 1: 'raiden', 2: 'sonya', 3: 'liu_kang', 4: 'sub_zero'}[character]
     entry = SPECIFIC[character].get(name, ENTRIES.get(name))
     if isinstance(entry, tuple):
         return entry

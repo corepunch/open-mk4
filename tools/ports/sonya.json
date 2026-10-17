@@ -1,0 +1,678 @@
+{
+  "character": "sonya",
+  "entry_adapters": {
+    "0x46a020": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup"
+    }
+  },
+  "entry_contexts": {
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 69
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 69
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 107
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 69
+    },
+    "0x4e01d0": {
+      "clip": 388,
+      "count": 129,
+      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
+      "sample": 42
+    },
+    "0x4e5980": {
+      "clip": 560,
+      "count": 73,
+      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
+      "sample": 24
+    },
+    "0x4e5990": {
+      "clip": 560,
+      "count": 73,
+      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
+      "sample": 24
+    },
+    "0x4e59a8": {
+      "clip": 560,
+      "count": 73,
+      "evidence": "Native cycle completion preserves clip 560",
+      "sample": 72
+    },
+    "0x4e5a20": {
+      "clip": 561,
+      "count": 79,
+      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
+      "sample": 78
+    },
+    "0x4e5d20": {
+      "clip": 65,
+      "count": 11,
+      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
+      "sample": 10
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 0
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 22
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 0
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 18
+    },
+    "0x4e6860": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 0
+    },
+    "0x4e6878": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 0
+    },
+    "0x4e85a8": {
+      "clip": 102,
+      "count": 65,
+      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
+      "sample": 11
+    },
+    "0x4e8b38": {
+      "evidence": "Independent victim owns KO-aware native recovery",
+      "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4e8f50": {
+      "evidence": "Independent victim owns KO-aware native recovery",
+      "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4e9110": {
+      "evidence": "Independent victim owns KO-aware native recovery",
+      "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4e9a68": {
+      "clip": 201,
+      "count": 58,
+      "evidence": "Owner starts paired playback at 11 while victim opens at 0; paired 22/back19/22/back19/34 leaves victim at 23 (45bb10/45bbc0). docs/raiden-sonya-scripts.md",
+      "sample": 23
+    },
+    "0x4e9b88": {
+      "evidence": "Released victim owns recovery including KO",
+      "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4e9de8": {
+      "evidence": "Independent victim owns KO-aware native recovery",
+      "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4ea0b8": {
+      "evidence": "Independent victim owns KO-aware native recovery",
+      "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4ea130": {
+      "evidence": "Independent victim owns KO-aware native recovery",
+      "return_to": "mk4_script_thrown_ready"
+    }
+  },
+  "generated_scripts": [
+    "0x4de360",
+    "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e01c0",
+    "0x4e01d0",
+    "0x4e5930",
+    "0x4e5940",
+    "0x4e5960",
+    "0x4e5980",
+    "0x4e5990",
+    "0x4e59a8",
+    "0x4e59c8",
+    "0x4e5a20",
+    "0x4e5ca0",
+    "0x4e5d20",
+    "0x4e5d90",
+    "0x4e5ed0",
+    "0x4e6020",
+    "0x4e6158",
+    "0x4e6190",
+    "0x4e61e0",
+    "0x4e61f8",
+    "0x4e62a0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6860",
+    "0x4e6878",
+    "0x4e6950",
+    "0x4e69b0",
+    "0x4e6a40",
+    "0x4e81d0",
+    "0x4e8578",
+    "0x4e85a8",
+    "0x4e85c0",
+    "0x4e8b38",
+    "0x4e8f50",
+    "0x4e9110",
+    "0x4e98a0",
+    "0x4e9a68",
+    "0x4e9b88",
+    "0x4e9de8",
+    "0x4ea0b8",
+    "0x4ea130",
+    "0x4ec7a0",
+    "0x4ec7f0",
+    "0x4ed4c0"
+  ],
+  "integration_source": "game/c_sonya.c",
+  "inventory_sha256": "9948c812be46b8678360c1c1deb59b194bebfb4e432b9dec0bb24cf286d9680d",
+  "legacy_scripts": {},
+  "moves": {
+    "air_diagonal_hk": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6500"
+    },
+    "air_diagonal_lk": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e63d8"
+    },
+    "air_hp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6658"
+    },
+    "air_kick": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e61f8"
+    },
+    "air_lp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6710"
+    },
+    "air_throw": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e5ed0"
+    },
+    "bicycle": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_bicycle"
+    },
+    "cartwheel": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e81d0"
+    },
+    "close_hk": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6190"
+    },
+    "close_hp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e61e0"
+    },
+    "combo_hp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e69b0"
+    },
+    "crouch_hk": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6020"
+    },
+    "crouch_lk": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6158"
+    },
+    "crouch_lp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_crouch_lp"
+    },
+    "draw_weapon": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e62c0"
+    },
+    "fan_fatality": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e0118"
+    },
+    "fatality_1": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e01c0"
+    },
+    "fatality_2": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e5930"
+    },
+    "high_kick": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e5ca0"
+    },
+    "high_punch": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_hp"
+    },
+    "jab": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e62f0"
+    },
+    "leg_grab": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e8578"
+    },
+    "lk_throw": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004de360"
+    },
+    "low_kick": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e5d90"
+    },
+    "lp_throw": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004de798"
+    },
+    "ring": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004ed4c0"
+    },
+    "roundhouse": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6800"
+    },
+    "sidestep": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_sidestep"
+    },
+    "spike_fatality": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6950"
+    },
+    "square_wave": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e85c0"
+    },
+    "sweep": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6798"
+    },
+    "uppercut": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e62a0"
+    },
+    "victory": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004e6a40"
+    },
+    "weapon_back_hp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004ec7a0"
+    },
+    "weapon_back_lp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/generated/sonya.inc",
+      "symbol": "retail_script_004ec7f0"
+    },
+    "weapon_hp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "weapon_hp"
+    },
+    "weapon_lp": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "weapon_lp"
+    },
+    "weapon_throw": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/weapons.c",
+      "symbol": "weapon_throw"
+    }
+  },
+  "output": "game/generated/sonya.inc",
+  "reactions": {
+    "0": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "1": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block"
+    },
+    "10": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "103": {
+      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "script_reaction"
+    },
+    "11": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air"
+    },
+    "119": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "121": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "13": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air"
+    },
+    "143": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "154": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "16": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit"
+    },
+    "17": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "175": {
+      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "script_reaction"
+    },
+    "18": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_sweep"
+    },
+    "184": {
+      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "script_reaction"
+    },
+    "2": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block"
+    },
+    "21": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "22": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "23": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "24": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "28": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "34": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut"
+    },
+    "37": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit"
+    },
+    "38": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "39": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "4": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_low_block"
+    },
+    "5": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "54": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "55": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "56": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "57": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "6": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "68": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "78": {
+      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "script_reaction"
+    },
+    "79": {
+      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "script_reaction"
+    },
+    "8": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "86": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "87": {
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "sonya_generated_reaction"
+    },
+    "88": {
+      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "leg_grab_script"
+    },
+    "9": {
+      "evidence": "486b30: two standing block cycles, speed 0x3333, crouch/armed choices through shared 486d30; docs/raiden-sonya-scripts.md",
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block"
+    }
+  },
+  "return_to": "sonya_ready",
+  "schema": 1,
+  "stances": {
+    "air_followup": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "air_ground_followup"
+    },
+    "air_punch_followup": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "air_followup"
+    },
+    "close_hk_followup": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "close_hk_followup"
+    },
+    "close_hp_followup": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "close_hp_followup"
+    },
+    "combo_hp_followup": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "combo_hp_followup"
+    },
+    "crouching": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "crouching"
+    },
+    "diagonal_air": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "jumping"
+    },
+    "standing": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "standing"
+    },
+    "straight_air": {
+      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+      "source": "game/c_sonya.c",
+      "symbol": "jumping"
+    }
+  },
+  "weapon": {
+    "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
+    "source": "game/c_sonya.c",
+    "symbol": "native_weapon"
+  }
+}

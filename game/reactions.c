@@ -469,7 +469,7 @@ static void react_fireball_block(Fighter *fighter) {
     move = fighter->crouching ? &fireball_armed_crouch_block : &fireball_armed_block;
   }
   fighter_start_move(fighter, S_BLOCK, move);
-  slide(fighter, 0x2147);
+  slide(fighter, fighter->reaction == 9 ? 0x3333 : 0x2147);
 }
 
 static void react_approximate(Fighter *fighter) {
@@ -706,6 +706,18 @@ static void react_liu_record(Fighter *fighter) {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
+  [47] = raiden_generated_reaction,
+  [53] = raiden_generated_reaction,
+  [66] = raiden_generated_reaction,
+  [82] = raiden_generated_reaction,
+  [83] = raiden_generated_reaction,
+  [24] = sonya_generated_reaction,
+  [55] = sonya_generated_reaction,
+  [56] = sonya_generated_reaction,
+  [68] = sonya_generated_reaction,
+  [86] = sonya_generated_reaction,
+  [87] = sonya_generated_reaction,
+  [121] = sonya_generated_reaction,
   [54] = react_extra,
   [57] = react_extra,
   [59] = react_extra,
@@ -719,6 +731,7 @@ static const FighterFn reactions[256] = {
   [64] = react_liu_record,
   [65] = react_liu_record,
   [2] = react_fireball_block,
+  [9] = react_fireball_block,
   [0] = react_block,
   [3] = react_extra_block,
   [5] = react_extra_block,

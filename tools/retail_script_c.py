@@ -81,6 +81,8 @@ def instruction_c(row):
         return prefix + ['play_remaining_clip();']
     if op == 0x4e:
         return ['save_reaction_context();']
+    if op == 0x71:
+        return ['blend_into_animation(%s); // 45bc70/45bd20, resume at sample one' % animation_name(row['clip'])]
     if op in (0x03, 0x07):
         return ['finish_%s();' % ('forwards' if op == 0x03 else 'backwards')]
     if op in (0x04, 0x06):

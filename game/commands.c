@@ -98,7 +98,11 @@ static void push_direction(InputHistory *history, Button direction, uint64_t tic
 
 void fighter_press(Fighter *fighter, Button button) {
   if (button <= BUTTON_RIGHT) {
+    const CommandDef *command = match_command(fighter, button, false);
     push_direction(&fighter->directions, button, g_battle.ticks);
+    if (command != NULL) {
+      fighter_interrupt(fighter, command->enter);
+    }
     return;
   }
   /* HP, LP, BLK and LK latch before matching, RUN after, HK never. */

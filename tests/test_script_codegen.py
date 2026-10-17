@@ -46,6 +46,19 @@ class CompilerTests(unittest.TestCase):
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
+    def test_blend_bind_requires_source_pose_and_valid_sample_one(self):
+        # Raiden's finisher opcode 71 blends the inherited pose, then resumes
+        # destination playback at sample one. It must not silently start at zero.
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
+            self.compile([0x71000000, descriptor, 0x3f000000])
+        source = self.compile([0x0f000000, descriptor, 0x71000000, descriptor, 0x3f000000])
+        self.assertIn('mk4_script_blend_bind(fighter, 54,', source)
+        # Descriptor decoding and ordinary cursor validation apply to blends.
+        struct.pack_into('<I', self.image.memory, descriptor * 4 + 4 - 0x400000, 1)
+        with self.assertRaisesRegex(CompileError, 'animation cursor outside stored clip'):
+            self.compile([0x0f000000, descriptor, 0x71000000, descriptor, 0x3f000000])
+
     def test_both_branch_outcomes_and_jumps_into_waits_remain_edges(self):
         # Down branches into the second wait, which must remain a distinct
         # target rather than being folded into its predecessor.

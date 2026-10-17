@@ -654,7 +654,7 @@ Scorpion generates all 70 reviewed VM roots. The 48 initial roots grew by 22
 when bounded native queries exposed roundhouse starts, fan continuations,
 burn owner/victim continuations, beast approach/victim recovery, the final
 teleport-victim wait, spin startup and two shared air-weapon selectors. Every discovered body is in the catalog and profile.
-`make scripts-check` checks canonical C and both strict generated-only audits;
+`make scripts-check` checks canonical C and all strict generated-only audits;
 there are no legacy bodies or per-character Make exceptions.
 
 The spear retains the shared object pool, pull and interruption cleanup. Its
@@ -684,3 +684,20 @@ actors, creature rigs reuse the owner actor, voice lists use the shared roster
 resolver, and fire/gore decorations use bounded engine pools. These are native
 presentation adaptations, not handwritten VM exceptions. The audit establishes
 reviewed static coverage; native behavioral tests remain necessary.
+
+
+## Raiden and Sonya generated coverage
+
+Raiden now generates 64/64 reviewed VM roots; Sonya generates 63/63, each with
+zero legacy bodies and no coverage errors. The roster-specific LK throw entries
+are 4de218 and 4de360. Sonya also owns a different air-throw pair, 4e5ed0/4e98a0,
+rather than the shared 82/202 owner/victim clips. Shared contact reactions are
+registered in the common reaction table so arbitrary victim rosters execute the
+generated recovery programs.
+
+Native adapters keep their source-derived contact/recovery phases, typed
+bindings, pair/object lifetimes and engine physics. Profiles declare checked
+native clip/cursor entry contracts. Opcode 71 uses a shared yielding pose blend;
+shared projectile, pair cleanup, delayed motion and weapon helpers serve both
+characters. See [the combined ledger](raiden-sonya-scripts.md) for evidence,
+commands, native adaptations and validation.

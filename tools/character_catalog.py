@@ -34,6 +34,77 @@ def moves_for(character):
     shared.update(high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70))),
                   low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),)),
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878))))
+    if character in (1, 2):
+        # Exact roster dispatch: 4ddfb8[1/2] -> 42bce0/42bed0.
+        # Shared selector roots remain explicit; native-entered recoveries are
+        # listed alongside them rather than borrowing Scorpion's streams.
+        shared.update(
+            lk_throw=move(0x42b6b0, (("Raiden paired throw", 0x4de218), ("released victim", 0x4e99c0)) if character == 1 else (("Sonya paired throw", 0x4de360),),
+                          native=(("roster entry", 0x42bce0 if character == 1 else 0x42bed0),)),
+            high_kick=move(0x46a680, (("roster selector", 0x4e5ca0), ("recovery", 0x4e6998 if character == 1 else 0x4e5d20)),
+                           (("B", 2 if character == 1 else 0),)),
+            close_hp=SCORPION['close_hp'], close_hk=SCORPION['close_hk'], combo_hp=SCORPION['combo_hp'],
+            crouch_lp=SCORPION['crouch_lp'], crouch_lk=SCORPION['crouch_lk'],
+            crouch_hk=move(0x46b5a0, (("roster selector", 0x4e6020),)),
+            roundhouse=move(0x46f1f0, (("roster selector", 0x4e6800),
+                ("fast start", 0x4e6890 if character == 1 else 0x4e6860),
+                ("normal start", 0x4e68a8 if character == 1 else 0x4e6878))),
+            draw_weapon=SCORPION['draw_weapon'],
+            weapon_throw=SCORPION['sword_throw'],
+            sidestep=move(0x469250, native=(("shared direction/playback", 0x4692e0),)),
+            victory=move(0x4712e0, (("roster selector", 0x4e6a40),)),
+        )
+        shared.update(
+            sweep=move(0x46ef90, (("roster selector", 0x4e6798),), (("B", 36 if character == 1 else 35),)),
+            air_kick=move(0x46c7a0, (("roster selector", 0x4e61f8),), (("B", 39 if character == 1 else 40),)),
+            air_diagonal_hk=move(0x46e380, (("roster selector", 0x4e6500),), (("B", 31 if character == 1 else 32),)),
+            air_diagonal_lk=move(0x46df50, (("roster selector", 0x4e63d8),), (("B", 28 if character == 1 else 29),)),
+        )
+        if character == 1:
+            shared.update(
+                lp_throw=move(0x42c560, (("roster selector", 0x4de798), ("extended throw", 0x4de640), ("short throw", 0x4de6b8), ("extended owner recovery", 0x4de668), ("extended victim", 0x4e9b40), ("short victim", 0x4e9bd0))),
+                fatality_1=move(0x467ce0, (("performer", 0x4e0210), ("owner release", 0x4e0220)), native=(("scene", 0x440fc0),)),
+                fatality_2=move(0x467cd0, (("scene entry", 0x4e56c8), ("first playback", 0x4e56d8), ("repeated playback", 0x4e56f0), ("held pose", 0x4e5728), ("ending", 0x4e5740), ("owner hold", 0x4e5760), ("victim", 0x4e5770), ("victim hold", 0x4e5788)), native=(("scene", 0x4647f0),)),
+                staff_hp=move(0x496a40, contacts=(("weapon", 4),)), staff_lp=move(0x496ba0, contacts=(("weapon", 5),)), staff_back_hp=move(0x496a70, contacts=(("weapon", 7),)), staff_back_lp=move(0x496be0, contacts=(("weapon", 6),)),
+                lightning=move(0x49bdd0, (("startup and recovery", 0x4ed5f0),), (("C", 2),), (("independent projectile", 0x49be10),)),
+                torpedo=move(0x47d5f0, (("fast startup", 0x4e8440), ("ordinary startup", 0x4e8458)), (("D", 0),)),
+                teleport=move(0x47cd00, native=(("rise and relocation", 0x47cd00),)),
+            )
+        else:
+            shared.update(
+                lp_throw=move(0x42c560, (("roster selector", 0x4de798), ("victim release", 0x4e9b88))),
+                air_throw=move(0x46ae60, (("paired owner", 0x4e5ed0), ("victim release", 0x4e98a0)), native=(("release", 0x46aed0), ("victim getup", 0x4847e0))),
+                fatality_1=move(0x467ce0, (("performer", 0x4e01c0), ("owner loop", 0x4e01d0)), native=(("scene", 0x43f420),)),
+                fatality_2=move(0x467cd0, (("scene entry", 0x4e5930), ("opening", 0x4e5940), ("cycle", 0x4e5960), ("first cycle", 0x4e5980), ("second cycle", 0x4e5990), ("owner ending", 0x4e59a8), ("victim", 0x4e59c8), ("victim end", 0x4e5a20)), native=(("scene", 0x465cb0),)),
+                weapon_hp=move(0x4966b0, contacts=(("weapon", 8),)), weapon_lp=move(0x4966e0, contacts=(("weapon", 9),)),
+                weapon_back_hp=move(0x496720, (("attacker", 0x4ec7a0),), (("weapon", 10),)),
+                weapon_back_lp=move(0x496920, (("attacker", 0x4ec7f0),), (("weapon", 11),)),
+                ring=move(0x49b9a0, (("startup and recovery", 0x4ed4c0),), (("C", 4),), (("independent projectile", 0x49ba50),)),
+                leg_grab=move(0x47dee0, (("paired grab", 0x4e8578), ("miss or block", 0x4e85a8), ("victim recovery", 0x4e9a68)), (("D", 3),)),
+                bicycle=move(0x47e650, native=(("rise and contact", 0x47e7a0),)),
+                square_wave=move(0x47e180, (("launch", 0x4e85c0),)),
+                cartwheel=move(0x47b690, (("startup", 0x4e81d0),)),
+            )
+    # Reactions reached by these records execute on arbitrary victim rosters.
+    # Bind their generated bodies into the shared reaction dispatch explicitly.
+    if character in (1, 2):
+        reached = {
+            'staff_hp': (("staff victim", 0x4ea068), ("weapon victim", 0x4e8e18)),
+            'lightning': (("victim", 0x4e9d50),),
+            'torpedo': (("held victim", 0x4ea108), ("ground release", 0x4e9ad0), ("air release", 0x4e9ae8)),
+        } if character == 1 else {
+            'crouch_hk': (("victim", 0x4e9110),),
+            'weapon_hp': (("victim", 0x4e8b38),),
+            'weapon_lp': (("victim", 0x4e8f50),),
+            'ring': (("victim", 0x4e9de8),),
+            'bicycle': (("victim", 0x4ea130),),
+            'cartwheel': (("victim", 0x4ea0b8),),
+        }
+        for name, scripts in reached.items():
+            shared[name] = {**shared[name], 'scripts': (*shared[name]['scripts'], *scripts)}
+        if character == 2:
+            for name, selector in (('bicycle', 1), ('square_wave', 2), ('cartwheel', 18)):
+                shared[name] = {**shared[name], 'contacts': (("D", selector),)}
     if character == 3:
         shared.update(
             fatality_1=move(0x467ce0, native=(('Liu Kang dragon scene', 0x450930), ('victim', 0x451190), ('blood/cuts', 0x451300))),

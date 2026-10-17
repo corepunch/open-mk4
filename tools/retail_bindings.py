@@ -124,7 +124,7 @@ CHARACTER_BINDINGS[3][0x43db50] = Binding('liu_script_fan_victim_end', 'game/c_l
 
 BINDINGS[0x4595e0] = Binding('mk4_script_draw_voice', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='4595e0; bounded native listing and docs/liu-kang-scripts.md', inline_values=(0,))
 BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='459720 -> 489ff0, selector8 table53d000 and remap4ead18', adaptation='Shared audio loader resolves roster throw voices from the same table', inline_values=(1, 8))
-BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 4, 6, 22, 23, 36, 56, 57, 58, 60, 61, 62))
+BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 3, 4, 6, 12, 14, 22, 23, 34, 36, 37, 56, 57, 58, 60, 61, 62))
 BINDINGS[0x45ae50] = Binding('mk4_script_pair_adjust', 'game/script.c', ('handler',), ('fighter', 'word0_i32'), result='void', evidence='45ae50; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b030] = Binding('mk4_script_disarm', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='45b030; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b1b0] = Binding('mk4_script_impact', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='45b1b0; bounded native listing and docs/liu-kang-scripts.md')
@@ -248,7 +248,7 @@ CHARACTER_BINDINGS[0][0x450d40] = Binding('script_transform_effect', 'game/c_sco
 CHARACTER_BINDINGS[0][0x41ed80] = Binding('script_beast_gore', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='41ed80 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
 BINDINGS[0x45afe0] = Binding('fighter_set_speed', 'game/moves.c', ('handler',), ('fighter', 'word0_i32'), evidence='45afe0 -> 490c60 horizontal signed velocity')
 BINDINGS[0x4595a0] = Binding('mk4_script_shake', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='4595a0 -> 457b50 camera pulse selector table 4e3638', inline_values=(0, 1, 2, 3, 4, 5, 6))
-BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector', inline_values=tuple(range(19)))
+BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector', inline_values=tuple(range(20)))
 
 CHARACTER_BINDINGS[0][0x444190] = Binding('script_burn_victim_end', 'game/c_scorpion.c', ('tail',), evidence='444190 native scene completion after 4e0358')
 
@@ -262,6 +262,94 @@ for _roster in (0, 4):
 BINDINGS[0x46eab0] = Binding('weapon_air_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', evidence='46eab0: weapon air HP native runner, selector 0x104')
 BINDINGS[0x46ec10] = Binding('weapon_air_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', evidence='46ec10: weapon air LP native runner, selector 0x108')
 CHARACTER_BINDINGS[0][0x4807b0] = Binding('spin_script', 'game/c_scorpion.c', ('tail',), flow='terminal', evidence='4807b0 native contact/travel loop after VM startup 4e8850')
+
+# Raiden and Sonya: shared native runners retain contact, physics and scene
+# ownership; their VM bodies are generated from the selected roster streams.
+for _character, _slug in ((1, 'raiden'), (2, 'sonya')):
+    _source = 'game/c_%s.c' % _slug
+    _normal_tails = {
+        0x46b740: 'script_crouch_lk_tail', 0x46bb60: 'script_knee_tail',
+        0x46bf10: 'script_close_hp_tail', 0x46c2c0: 'script_combo_hp_tail',
+        0x46cde0: 'uppercut_script', 0x46d260: 'script_draw_equip',
+        0x46e730: 'script_air_hp_tail', 0x46eea0: 'script_air_lp_tail',
+        0x43d460: 'script_fan_tail', 0x43d6f0: 'script_fan_victory',
+        0x467fc0: 'script_spike_tail', 0x46aae0: 'script_air_release',
+    }
+    _normal_tails.update({0x46a790: 'script_kick_tail', 0x46c970: 'script_air_kick_tail',
+        0x46e070: 'script_air_lk_tail', 0x46e4d0: 'script_air_diagonal_tail',
+        0x46efd0: 'script_sweep_tail', 0x46f390: 'script_roundhouse_start',
+        0x46f3e0: 'script_roundhouse_tail', 0x42cc00: 'script_lp_select',
+        0x42cc40: 'script_lp_end', 0x42ce80: 'script_lp_return',
+        0x47d680: 'script_torpedo_miss', 0x47d7f0: 'script_torpedo_contact',
+    } if _character == 1 else {
+        0x46a6b0: 'script_kick_tail', 0x46c7f0: 'script_air_kick_tail',
+        0x46e150: 'script_air_lk_tail', 0x46e5c0: 'script_air_diagonal_tail',
+        0x46f080: 'script_sweep_tail', 0x46f220: 'script_roundhouse_start',
+        0x46f270: 'script_roundhouse_tail', 0x42bf00: 'script_lk_return',
+        0x47b6c0: 'script_cartwheel_tail', 0x47e0a0: 'script_leg_grab_tail',
+        0x47e1d0: 'script_square_wave_tail',
+    })
+    CHARACTER_BINDINGS[_character] = {
+        _address: Binding(_name, _source, ('tail',), evidence='%x exact native entry; docs/raiden-sonya-scripts.md' % _address)
+        for _address, _name in _normal_tails.items()
+    }
+    for _address in (0x45b1f0, 0x45b230):
+        CHARACTER_BINDINGS[_character][_address] = Binding('script_reaction', _source, ('handler',), ('fighter', 'arg_u8'),
+            evidence='%x reaction dispatch; native pair adapter owns independent victim recovery' % _address)
+    CHARACTER_BINDINGS[_character][0x43d530] = Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',), evidence='43d530 returns to the C scene coordinator')
+    CHARACTER_BINDINGS[_character][0x43db50] = Binding('mk4_script_fan_victim_end', 'game/script.c', ('tail',), evidence='43db50 arena release/hide; existing shared scene helper')
+    CHARACTER_BINDINGS[_character][0x484b60] = Binding('mk4_script_air_getup', 'game/mk4_common.c', ('tail',), evidence='484b60 airborne throw victim getup; shared native continuation')
+    if _character == 1:
+        CHARACTER_BINDINGS[_character][0x47d6e0] = Binding('script_torpedo_motion', _source, ('physics',), evidence='47d6e0 installed torpedo horizontal motion callback')
+        CHARACTER_BINDINGS[_character][0x47d720] = Binding('script_torpedo_step', _source, ('call',), evidence='47d720 floor clamp and torpedo pose advancement')
+        CHARACTER_BINDINGS[_character][0x48d450] = Binding('script_torpedo_query', _source, ('predicate',), result='flags', evidence='48d450 D-table contact; selector 0 supplied by torpedo script')
+        CHARACTER_BINDINGS[_character][0x49be10] = Binding('script_lightning_spawn', _source, ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(65,), evidence='49be10 independent lightning object, task 65')
+    else:
+        CHARACTER_BINDINGS[_character][0x49ba50] = Binding('script_ring_spawn', _source, ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(68,), evidence='49ba50 independent Sonya ring object, task 68')
+        CHARACTER_BINDINGS[_character][0x49b9e0] = Binding('script_ring_flash', _source, ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(38,), evidence='49b9e0 independent launch flash, task 38')
+
+for _character, _address in ((1, 0x485ad0), (2, 0x485b50)):
+    CHARACTER_BINDINGS[_character][_address] = Binding('script_throw_getup', 'game/c_%s.c' % ('raiden' if _character == 1 else 'sonya'), ('tail',), evidence='%x native victim release/getup; bounded listing' % _address)
+CHARACTER_BINDINGS[1][0x470420] = Binding('script_thrown_return', 'game/c_raiden.c', ('tail',), flow='terminal', evidence='470420 reaction 102 getup adaptation after generated 4e9bd0')
+CHARACTER_BINDINGS[1][0x485510] = Binding('script_lk_victim_end', 'game/c_raiden.c', ('tail',), evidence='485510 native throw victim landing/recovery after 4e99c0')
+CHARACTER_BINDINGS[2][0x4858d0] = Binding('script_leg_victim_end', 'game/c_sonya.c', ('tail',), evidence='4858d0 binds landing pose, waits for ground then enters native getup 328')
+# Scene and weapon continuations reached by the two complete profiles.
+for _cid, _slug, _tails in (
+    (1, 'raiden', {0x441140: 'script_first_release', 0x441180: 'script_first_end',
+        0x464960: 'script_second_blend', 0x464a60: 'script_second_effect',
+        0x464aa0: 'script_second_release', 0x464bb0: 'script_second_end'}),
+    (2, 'sonya', {0x43f510: 'script_first_release', 0x465e10: 'script_second_open',
+        0x465e70: 'script_second_repeat', 0x465ea0: 'script_second_branch',
+        0x465ed0: 'script_second_pause', 0x466000: 'script_second_cycle_end',
+        0x466190: 'script_second_victim_end', 0x496770: 'script_weapon_hp_tail',
+        0x496970: 'script_weapon_lp_tail'}),
+):
+    for _address, _name in _tails.items():
+        CHARACTER_BINDINGS[_cid][_address] = Binding(_name, 'game/c_%s.c' % _slug, ('tail',), evidence='%x exact native scene/weapon entry; docs/raiden-sonya-scripts.md' % _address)
+    CHARACTER_BINDINGS[_cid][0x464bd0] = Binding('mk4_script_scene_task', 'game/script.c', ('spawn',), ('fighter', 'task_type'),
+        flow='independent', task_types=(619,), evidence='464bd0 allocates a task that only waits one tick and repeats; portable object pool retains its scene lifetime')
+CHARACTER_BINDINGS[1][0x427b70] = Binding('script_second_particles', 'game/c_raiden.c', ('call',), evidence='427b70 spawns task 619; 427b90 independent scene emitter')
+CHARACTER_BINDINGS[1][0x464a90] = Binding('retail_script_004e5728', 'game/generated/raiden.inc', ('tail',), script_target=0x4e5728, evidence='464a90 only enters script 4e5728')
+BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45abf0 -> 431520 context-camera selector, including finisher contexts 75..79', inline_values=(1, 2, 3, 4, 6, 12, 14, 22, 23, 34, 36, 37, 56, 57, 58, 60, 61, 62, 75, 76, 77, 79))
+CHARACTER_BINDINGS[1][0x464ee0] = Binding('script_second_victim_end', 'game/c_raiden.c', ('tail',), evidence='464ee0 independent scene task then script 4e5788')
+for _cid, _slug in ((1, 'raiden'), (2, 'sonya')):
+    CHARACTER_BINDINGS[_cid][0x4712e0] = Binding('script_victory', 'game/c_%s.c' % _slug, ('tail',), evidence='4712e0 selects roster victory script 4e6a40')
+CHARACTER_BINDINGS[1][0x410380] = Binding('script_victory_effect', 'game/c_raiden.c', ('call',), evidence='410380 allocates decorative task 410390; particles use existing independent presentation lifetimes')
+del CHARACTER_BINDINGS[2][0x46aae0]
+CHARACTER_BINDINGS[2][0x46aed0] = Binding('script_air_release', 'game/c_sonya.c', ('tail',), evidence='46aed0 releases reaction 85 at paired count 24, damage 0x2666, owner gravity 0x20c')
+CHARACTER_BINDINGS[2][0x4847e0] = Binding('script_air_getup', 'game/c_sonya.c', ('tail',), evidence='4847e0 finishes clip 198 and selects 53cf70 getup')
+BINDINGS[0x490290] = Binding('mk4_script_touchable', 'game/script.c', ('call',), evidence='490290 clears group flag 0x80')
+BINDINGS[0x494520] = Binding('mk4_script_disarm_self', 'game/script.c', ('call',), evidence='494520 drops the active context weapon; 483ae0 invokes it in opponent context')
+BINDINGS[0x45b2f0] = Binding('mk4_script_wait_land', 'game/script.c', ('handler',), flow='suspend', evidence='45b2f0 waits through 48f390 landing continuation')
+for _cid, _slug in ((1, 'raiden'), (2, 'sonya')):
+    CHARACTER_BINDINGS[_cid][0x482790] = Binding('script_weapon_victim_getup', 'game/c_%s.c' % _slug, ('tail',), evidence='482790 completes native reverse/recovery and getup 328')
+    CHARACTER_BINDINGS[_cid][0x488b40] = Binding('script_reaction_side_getup', 'game/c_%s.c' % _slug, ('tail',), evidence='488b40 native side getup clip 185; skip standing after KO')
+CHARACTER_BINDINGS[1][0x488590] = Binding('script_staff_victim_tail', 'game/c_raiden.c', ('tail',), evidence='488590 twenty visits of native weapon-victim motion before recovery')
+CHARACTER_BINDINGS[1][0x4889b0] = Binding('script_torpedo_victim_motion', 'game/c_raiden.c', ('physics',), evidence='4889b0 paired torpedo victim follows attacker and retains its own pose loop')
+CHARACTER_BINDINGS[2][0x488c10] = Binding('script_weapon_victim_getup', 'game/c_sonya.c', ('tail',), evidence='488c10 KO-aware front/back getup; uses shared native getup')
+BINDINGS[0x46a850] = Binding('mk4_script_reverse_return', 'game/script.c', ('tail',), flow='terminal', evidence='46a850 -> 429380 reverses the current clip then 46f650 controller return')
+BINDINGS[0x46a6e0] = Binding('mk4_script_reverse_return', 'game/script.c', ('tail',), flow='terminal', evidence='46a6e0 kick reversal -> 429380 then 46f650 controller return')
+BINDINGS[0x45bbc0] = Binding('mk4_script_pair_back_to', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), flow='suspend', cursor_effect='unknown', evidence='45bbc0 -> 45beb0 decrements owner and victim cursors to the inline target')
 
 def bindings_for(character):
     from character_catalog import CHARACTERS

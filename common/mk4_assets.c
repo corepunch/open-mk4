@@ -524,7 +524,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   statue.material_pages = assets->hud.effects.textures;
   statue.bones = load_rig(&exe, 0x50686c, 0x50609c, statue.meshes.count);
   PUSH(assets->scene_models, statue);
-  const uint32_t weapon_descriptors[] = {0x4ecdf8, 0x4ecdb8, 0x4ece58};
+  const uint32_t weapon_descriptors[] = {0x4ecdf8, 0x4ecdb8, 0x4ece58, 0x4ece18, 0x4ece38};
   for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
     uint32_t descriptor = weapon_descriptors[i];
     uint32_t root = image_u32(&exe, descriptor + 4) * 4;

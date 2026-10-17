@@ -58,6 +58,30 @@ void mk4_script_current(Fighter *fighter) {
   mk4_script_finish_clip(fighter, 1);
 }
 
+/* 45bc70/45bd20 -> 428b10: blend from the live pose into sample zero,
+ * with step 0xa3d and first weight 0x4000, then resume at sample one. */
+void mk4_script_blend_bind(Fighter *fighter, int clip, int count) {
+  require(count > 1, "Blend continuation needs sample one");
+  mk4_script_blend_to(fighter, clip, count, 0, 0xa3d, 0x4000);
+  fighter->sample_override = 1;
+}
+
+void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first) {
+  require(step > 0 && first >= 0 && first <= Q16_ONE, "Invalid native pose blend");
+  int source = fighter_move(fighter)->clip;
+  int sample = fighter->sample_override;
+  bind_clip(fighter, clip, count, target);
+  fighter->blend_clip = source;
+  fighter->blend_sample = sample;
+  fighter->blend_duration = 1;
+  for (q16 weight = first; weight <= Q16_ONE; weight += step) {
+    fighter->blend_weight = weight;
+    fighter_wait_ticks(1);
+  }
+  fighter->blend_duration = 0;
+  fighter->blend_weight = -1;
+}
+
 void mk4_script_advance(Fighter *fighter, int count, int step) {
   require(count >= 0 && step != 0 && fighter->sample_override >= 0, "Invalid generated counted playback");
   for (int i = 0; i < count; ++i) {
@@ -144,6 +168,22 @@ void mk4_script_disarm(Fighter *fighter) {
   }
 }
 
+void mk4_script_disarm_self(Fighter *fighter) {
+  if (fighter->armed && fighter->disarm != NULL) {
+    fighter->disarm(fighter);
+  }
+}
+
+void mk4_script_touchable(Fighter *fighter) {
+  fighter->flags &= ~(unsigned)FF_UNTOUCHABLE;
+}
+
+void mk4_script_wait_land(Fighter *fighter) {
+  while (fighter_airborne(fighter)) {
+    fighter_wait_ticks(1);
+  }
+}
+
 void mk4_script_damage(Fighter *fighter, int damage) {
   battle_damage((Fighter *)fighter_opponent(fighter), damage);
 }
@@ -158,7 +198,7 @@ void mk4_script_context(Fighter *fighter, int selector) {
   /* 431520/431700 create a camera task. Our camera already follows both
    * live actors; paired positions remain the source of its framing. */
   (void)fighter;
-  require(selector >= 0 && selector < 64, "Unexpected paired camera context");
+  require(selector >= 0 && selector < 80, "Unexpected paired camera context");
 }
 
 void mk4_script_roster_sound(Fighter *fighter, int selector) {
@@ -176,6 +216,90 @@ void mk4_script_scene_active(Fighter *fighter) {
 
 void mk4_script_pair_to(Fighter *owner, int sample) {
   mk4_script_pair_advance(owner, sample - owner->sample_override);
+}
+
+/* 45bbc0/45beb0: reverse both live cursors, then hand off for one actor tick. */
+void mk4_script_pair_back_to(Fighter *owner, int sample) {
+  Fighter *victim = (Fighter *)fighter_opponent(owner);
+  while (owner->sample_override > sample) {
+    fighter_wait_ticks(1);
+    --owner->sample_override;
+    victim->sample_override = maxi(0, victim->sample_override - 1);
+  }
+  fighter_wait_ticks(1);
+}
+
+void mk4_script_thrown_finish(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter_fiber_finish(fighter->health > 0 ? fighter_ready : NULL);
+}
+
+static void throw_hold(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  while (victim->flags & FF_PAIRED) {
+    fighter_wait_ticks(1);
+    if (owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
+      victim->flags &= ~(unsigned)FF_PAIRED;
+      mk4_script_thrown_finish(victim);
+    }
+  }
+}
+
+void mk4_script_pair_cleanup(Fighter *owner) {
+  Fighter *victim = (Fighter *)fighter_opponent(owner);
+  owner->flags &= ~(unsigned)FF_PAIRED;
+  if (victim->flags & FF_PAIRED) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    mk4_script_stop_body(victim);
+    fighter_cancel_fiber(victim);
+    if (victim->pending == NULL && victim->health > 0) {
+      fighter_ready(victim);
+    }
+  }
+}
+
+void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  mk4_script_stop_body(fighter);
+  mk4_script_stop_body(victim);
+  fighter_start_move(fighter, S_THROW, owner_move);
+  fighter_start_move(victim, S_KNOCKDOWN, victim_move);
+  fighter->flags |= FF_PAIRED;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  fighter->sample_override = victim->sample_override = 0;
+  for (int axis = 0; axis < 3; ++axis) {
+    fighter->saved_motion[axis] = victim->body.pos[axis] - fighter->body.pos[axis];
+    victim->body.pos[axis] = fighter->body.pos[axis];
+  }
+  victim->body.pos[AXIS_Y] += victim->body.ground - fighter->body.ground;
+  victim->facing = fighter->facing;
+  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  fighter_start_fiber(fighter, script, mk4_script_pair_cleanup);
+  if (victim->flags & FF_PAIRED) {
+    fighter_start_fiber(victim, throw_hold, NULL);
+  }
+}
+
+void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  mk4_script_stop_body(victim);
+  fighter_start_move(victim, S_KNOCKDOWN, move);
+  fighter->flags |= FF_PAIRED;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  victim->sample_override = 0;
+  victim->facing = fighter->facing;
+  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  fighter_start_fiber(victim, throw_hold, NULL);
+}
+
+Fighter *mk4_script_release_pair(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter->flags &= ~(unsigned)FF_PAIRED;
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  if (victim->armed && victim->disarm != NULL) {
+    victim->disarm(victim);
+  }
+  return victim;
 }
 
 void mk4_script_save_motion(Fighter *fighter) {
@@ -226,8 +350,8 @@ void mk4_script_context_sound(Fighter *fighter, int selector) {
 
 void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, int gravity) {
   /* 490910 chooses camera-side X motion. The portable simulation resolves
-   * that symmetric motion along the pair axis. */
-  require(left == -right, "Asymmetric reaction motion needs an explicit binding");
+   * the selected horizontal motion along the pair axis. */
+  require(left == -right || right == 0, "Unresearched camera-relative reaction motion");
   fighter_set_speed(fighter, left);
   fighter->body.vel[AXIS_Y] = up;
   fighter->body.gravity = gravity;
@@ -312,13 +436,96 @@ void mk4_script_shake(Fighter *fighter, int selector) {
     {10, 3, 0x2e14},
     {2, 3, 0x2e14},
     {3, 3, 0x3333},
+    {2, 3, 0xf5c},
+    {6, 3, 0x2e14},
   };
   // clang-format on
-  require(selector >= 0 && selector < 7, "Unexpected camera pulse selector");
+  require(selector >= 0 && selector < 9, "Unexpected camera pulse selector");
   battle_camera_shake(pulses[selector][0], pulses[selector][1], pulses[selector][2]);
 }
 
 void mk4_script_effect(Fighter *fighter, int selector) {
-  require(selector >= 0 && selector <= 18, "Unexpected decorative effect selector");
+  require(selector >= 0 && selector <= 19, "Unexpected decorative effect selector");
   battle_particles(fighter, selector, 3, true);
+}
+
+void mk4_script_projectile_step(Projectile *object, const AttackRecord *record, bool hits_crouching) {
+  if (g_battle.contacts_off) {
+    object->kind = 0;
+    return;
+  }
+  for (int axis = 0; axis < 3; ++axis) {
+    object->pos[axis] += object->vel[axis];
+  }
+  const Fighter *owner = &g_battle.fighters[object->owner];
+  if ((hits_crouching || fighter_opponent(owner)->action != ACTION_RETAIL_2001) && battle_projectile_contact(object, record) != CONTACT_MISS) {
+    object->kind = 0;
+  }
+}
+
+/* 49c300 + 49be10/49ba50: actor-independent heading object, .2 units/tick. */
+Projectile *mk4_script_projectile_spawn(Fighter *fighter, ProjectileFn step, const MeshAnimation *mesh, q16 forward, q16 y, int lifetime) {
+  Projectile *object = battle_spawn_projectile(fighter, PROJECTILE_FIREBALL, lifetime, step);
+  if (object == NULL) {
+    return NULL;
+  }
+  object->mesh_animation = mesh;
+  object->initial_mesh = mesh->first;
+  object->pos[AXIS_Y] += y;
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    object->pos[axis] += q16_mul(fighter_axis(fighter, axis), forward);
+    object->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
+  }
+  return object;
+}
+
+static void scheduled_motion(Fighter *fighter) {
+  if (fighter->script_timer > 0) {
+    --fighter->script_timer;
+  } else if (fighter->move_loops > 0) {
+    fighter_set_speed(fighter, fighter->saved_motion[0]);
+    --fighter->move_loops;
+  } else {
+    fighter_set_speed(fighter, 0);
+    fighter->body.physics = NULL;
+  }
+}
+
+void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int duration) {
+  require(delay >= 0 && duration >= 0, "Invalid scheduled script motion");
+  fighter_set_speed(fighter, 0);
+  fighter->saved_motion[0] = speed;
+  fighter->script_timer = delay;
+  fighter->move_loops = duration;
+  fighter->body.physics = scheduled_motion;
+}
+
+void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {
+  for (int visit = 0; visit < queries; ++visit) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = mini(fighter_move(fighter)->last, fighter->sample_override + 1);
+    if (battle_contact(fighter, record) != CONTACT_MISS) {
+      break;
+    }
+  }
+  fighter->action = ACTION_RETAIL_1006;
+  fighter->body.physics = NULL;
+  fighter_set_speed(fighter, 0);
+  mk4_script_finish_clip(fighter, 1);
+  fighter_fiber_finish(fighter_ready);
+}
+
+static void scene_task_step(Projectile *object) {
+  if (g_battle.phase == PHASE_FATALITY) {
+    object->lifetime = 2;
+  } else {
+    object->kind = 0;
+  }
+}
+
+void mk4_script_scene_task(Fighter *fighter, int task_type) {
+  require(task_type == 619, "Unexpected scene keepalive task");
+  /* 464bd0 has no presentation or combat writes: it retains its task slot
+   * through one-tick reschedules. The bounded object pool owns that lifetime. */
+  battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 2, scene_task_step);
 }

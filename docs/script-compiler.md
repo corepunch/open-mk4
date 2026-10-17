@@ -31,7 +31,8 @@ Make discovers all profiles in `tools/ports/`. Every profile participates in
 generation, canonical regeneration checks and the generated-only audit. There
 are no character exceptions in the Makefile. Scorpion passes with 70/70 and
 Sub-Zero with 63/63 generated roots; Liu Kang passes with 57/57 generated
-roots and zero legacy roots: the original 50, five followed throw/fan
+roots. Raiden passes with 64/64 and Sonya with 63/63 generated roots; both have
+zero legacy roots. Liu Kang includes the original 50, five followed throw/fan
 continuations, and two shared air-weapon selector programs. Detailed JSON still reports every
 unsupported instruction or native boundary for an incomplete future port.
 
@@ -129,7 +130,10 @@ inline cursor; reaction-context opcode 4e uses the explicit Fighter argument and
 does not perform playback. Shared native bindings live in `game/script.c`,
 including audio, damage/disarm, pair stepping, jab gates and impact/motion setup.
 Paired clip binding/counts, sample-start playback, landing waits and optional
-full playback use shared engine helpers. Typed native adapters retain ownership
+full playback use shared engine helpers. Opcode 71 blends an initialized source
+pose into destination sample zero, yields through the shared native blend, and
+resumes at sample one. Destination count must exceed one; the compiler applies
+its usual descriptor bounds and source initialization checks. Typed native adapters retain ownership
 of independent victims, delayed motion, camera orchestration and scene teardown.
 
 The shared clip primitives use the engine's existing cursor stepping. Counted
@@ -230,3 +234,19 @@ Those programs pass their decoded `1f` selector into the shared native air-weapo
 runner. Scorpion additionally generates the spin startup `4e8850`; its contact
 and travel loop remains native `4807b0`. No handwritten VM startup remains in
 the draw, air-weapon or spin entries.
+
+
+## Raiden and Sonya integration
+
+The reviewed profiles generate 64 Raiden and 63 Sonya roots, including normal
+selector branches, ground/air throws, released victims, projectile/weapon
+reactions, special exits, victories and all four finisher families. Native-only
+teleport/bicycle routines and native contact/recovery adapters remain in their
+character files. [The ledger](raiden-sonya-scripts.md) records the evidence,
+portable adaptations and focused regression coverage.
+
+Shared bindings now reuse pair setup/release/cleanup, reverse pair playback,
+pose blending, delayed horizontal motion, independent projectile objects,
+weapon tails and scene task lifetimes. Direction press commands match against
+prior input history before recording their own trigger (Raiden Down,Up).
+No alternate script scheduler or retail execution harness is introduced.

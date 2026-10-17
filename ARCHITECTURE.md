@@ -141,7 +141,7 @@ have explicit jab/kick entry callbacks. Other entries select a default move
 through the shared runner. Goro names clips from his separate animation bank.
 Spawn writes the roster index and initializes `Fighter.current_move`.
 `game/moves.c` owns move entry, frame/end callbacks and sample selection.
-Scorpion, Sub-Zero and Liu Kang lower their reviewed VM roots deterministically
+Scorpion, Raiden, Sonya, Sub-Zero and Liu Kang lower their reviewed VM roots deterministically
 into C11 functions in `game/generated/`. Typed bindings connect decoded native
 edges to shared engine helpers and character-owned native continuations. No
 runtime bytecode or address dispatcher is introduced. Fighter clip bindings own
@@ -240,8 +240,9 @@ Reviewed character profiles keep generated roots separate from existing legacy
 C adaptations. The strict audit checks typed input/CPU/stance/weapon/reaction
 coverage, source definitions, graph fingerprints, integration and regeneration;
 it does not prove native equivalence or exhaustive x86 reachability. All profiles
-must pass `--require-generated`; Make has no legacy exception. Liu Kang's 55
-catalogued roots provide the complete generated integration proof. Native-entry
+must pass `--require-generated`; Make has no legacy exception. Raiden's 64 and
+Sonya's 63 catalogued roots join the completed Scorpion, Sub-Zero and Liu Kang
+integrations. See [their port ledger](docs/raiden-sonya-scripts.md). Native-entry
 contracts seed clip/cursor validation and are checked at runtime. Pure native
 script-enter thunks link directly into the generated CFG; proven cursor progress
 allows loops without adding a dispatcher. Committed paired victims own their

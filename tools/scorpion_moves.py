@@ -118,6 +118,7 @@ SCRIPT_OPS = {
     0x6b: ('sound helper', 0),
     0x6e: ('disarm opponent through native helper', 0),
     0x6d: ('native helper with word operand', 1),
+    0x71: ('blend into clip and resume at sample one', 1),
 }
 
 
@@ -168,12 +169,14 @@ def script_program(image, entry, character=0):
             operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
             row.update(operation=operation, inline=word & 0xffffff,
                        operands=[hex(value) for value in operands])
-            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49, 0x4e) and operands:
+            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49, 0x4e, 0x71) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
                 if op in (0x01, 0x0c, 0x0f, 0x11):
                     row['start_sample'] = word & 255
                 row['clip_owner'] = 'victim' if op == 0x0e else 'self'
+                if op == 0x71:
+                    row['start_sample'] = 1
             if op in (0x32, 0x35, 0x36, 0x38, 0x55):
                 row['native_target'] = hex(operands[0])
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[0])))

@@ -47,7 +47,7 @@ extract: fsys
 test: fsys
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-shadows build/test-fibers
+	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-fibers
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
@@ -83,10 +83,14 @@ build/test-liu-kang: tests/test_liu_kang.c game/battle.c $(ROSTER_SOURCES) $(GAM
 build/test-fibers: tests/test_fibers.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_fibers.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
-game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang build/test-shadows build/test-fibers
+build/test-raiden-sonya: tests/test_raiden_sonya.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_raiden_sonya.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
+game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-fibers
 	./build/test-battle
 	./build/test-sub-zero
 	./build/test-liu-kang
+	./build/test-raiden-sonya
 	./build/test-shadows
 	./build/test-fibers
 	./mk4-game --self-test

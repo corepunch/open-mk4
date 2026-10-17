@@ -28,7 +28,7 @@ CORE_OPS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0c, 0x0e, 0x10, 0x60, 0x0f, 0x11, 0x
             0x20, 0x27, 0x2b, 0x29, 0x2d, 0x2e, 0x2f, 0x30, 0x32, 0x33,
             0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
             0x3e, 0x3f, 0x40, 0x42, 0x44, 0x45, 0x47, 0x48, 0x49, 0x4a, 0x4d,
-            0x4e, 0x51, 0x52, 0x55, 0x58, 0x5a, 0x5b, 0x5c, 0x5e, 0x61}
+            0x4e, 0x51, 0x52, 0x55, 0x58, 0x5a, 0x5b, 0x5c, 0x5e, 0x61, 0x71}
 
 
 def symbol(entry):
@@ -70,6 +70,8 @@ def reads_defines(row, bindings):
     if 'clip' in row and row.get('clip_owner') != 'victim':
         defines.add('clip')
     elif op in (3, 4, 5, 6, 7, 0x12, 0x19, 0x1d, 0x47, 0x48, 0x49, 0x4a, 0x4d, 8, 0x10):
+        reads.add('clip')
+    if op == 0x71:
         reads.add('clip')
     if op == 0x1f:
         defines.add('selector')
@@ -200,7 +202,7 @@ def validate(program, bindings, return_to, context=None):
     # remaining graph. A cycle that can bypass a wait is unsafe too.
     def yields(row):
         op = int(row['opcode'], 16)
-        return (op in (2, 4, 6, 0x19, 0x10) and row['inline'] > 0) or op in (1, 3, 7, 8, 9, 0x48, 0x3e) or (op == 0x34 and row['inline'] > 0) or (
+        return (op in (2, 4, 6, 0x19, 0x10) and row['inline'] > 0) or op in (1, 3, 7, 8, 9, 0x48, 0x3e, 0x71) or (op == 0x34 and row['inline'] > 0) or (
             op == 0x37 and min(row['wait_if_set'], row['wait_if_clear']) > 0)
     cursors = {pc: set() for pc in rows}
     def cursor_after(row, values):
@@ -284,7 +286,7 @@ def lower(row, bindings, return_to):
                     '  goto L_%08x;' % int(row['branch'], 16), '}']
         return [('result_flags = ' if binding.result == 'flags' else '') + call + ';'] + (['return;'] if role == 'tail' else [])
     lines = []
-    if 'clip' in row:
+    if 'clip' in row and op != 0x71:
         first = row.get('start_sample', inline if op == 8 else 0)
         if op == 9:
             first = row['stored_count'] - 1
@@ -360,6 +362,8 @@ def lower(row, bindings, return_to):
         lines.append('mk4_script_stop(fighter);')
     elif op == 0x60:
         lines.append('while (fighter_airborne(fighter)) {\n  fighter_wait_ticks(1);\n}')
+    elif op == 0x71:
+        lines.append('mk4_script_blend_bind(fighter, %d, %d);' % (row['clip'], row['stored_count']))
     else:
         raise AssertionError('Missing lowering for %#x' % op)
     return lines
