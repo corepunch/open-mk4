@@ -16,7 +16,7 @@ existing procedural engine; this is not retail scheduler emulation.
 | LP and LK throws, independent victim tails | 4de678/4e9b68/485b10; 42c040/4de3b0/410/428/468/478, 4e9a90/ab0 | Implemented; see timing below |
 | High/low/air fireball | 4e4928/4e4948 -> 49bf90/49bf50/49bfe0 | Implemented; independent task 64, C[0]/C[1] |
 | Flying kick | 4e4978 -> 47edc0, 4e86a8/d0/e8/718 | Implemented; hit/block/miss and landing |
-| Weapon draw/strikes/throw/pickup; sidestep | 4e4998, 46d1d0; shared RUN records | Pending |
+| Weapon draw/strikes/throw/pickup; sidestep | 4e4998, 46d1d0; 4ece58/4ecd50, 4963e0/4d0/6670/6920; RUN records | Implemented |
 | Fatalities I/II and fan/spikes | 4e4968/4e4934/4e4954/4e4984 | Pending |
 | CPU | Shared CPU controller; character entries | Pending wiring |
 
@@ -57,3 +57,20 @@ then reverses 92 and lands at gravity 0x51e; a block holds 12+12 and lands
 at 0x28f. A miss reverses after landing. Reaction 31 uses clip 131, speed
 -0x1999, Y -0x23d7 and gravity 0x24d. Reached normal records 15/19 now
 use tumble/getup and the clip 192/down-held 193/standing 194 branches.
+
+Weapon draw is B,F+LK (24). Descriptor 4ece58/type 66 selects rig 506cb0
+(mesh 96) and its own armed HP/LP entries. HP (4ec680) double steps clip 233
+to 18, then uses clip 216 at samples 0/10 with weapon[15]. Each buffered HP
+allows the next strike; no press recovers through five samples and a stance
+blend, or finishes the second half. Opcode 6c/45b050 installs delayed motion
+6/6/0x11eb; its single following word is now decoded. LP uses 4ec708 clip
+240/weapon[13]; contact plus buffered HP selects 4ec720/730 clip 237 and
+weapon[16]. Back HP uses clip 242/weapon[17] and a ten-tick armed blend;
+back LP uses clip 227/weapon[11], double steps then two query visits. The
+corresponding victim reactions 57/59/60/61/62 now use shared reaction
+controllers. Thrown/picked-up weapons retain type 66 and its callbacks.
+
+RUN priority is shared sidestep before pickup. Sidestep keeps the eight-tick
+double-press window, 80-tick cooldown, directional sample order and reduced
+travel against an airborne target. Armed air attacks use the existing weapon
+HP/LP and shared landing. Asset loading adds the original type-66 rig.

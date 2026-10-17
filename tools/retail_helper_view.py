@@ -34,6 +34,7 @@ TABLES = {
     'camera_orbit': Table(0x4e0f5c, 25, 12, (('x', 0, 'q16'), ('y', 8, 'q16'), ('z', 4, 'q16')), 'Converted X,Z,Y; step 0x45a; target joint 3 with 80-tick transition', (('header_q16', 0x4e0f58, 'q16'),)),
     'clone_rig': Table(0x50686c, 16, 28, (('flags', 0, 'hex'), ('x', 12, 'q16'), ('y', 16, 'q16'), ('z', 20, 'q16'), ('mesh', 24, 'int')), 'shared_g.geo; root is an invisible control node; visible meshes 58..72'),
     'spine_rig': Table(0x5145bc, 5, 28, (('flags', 0, 'hex'), ('x', 12, 'q16'), ('y', 16, 'q16'), ('z', 20, 'q16'), ('mesh', 24, 'int')), 'sz_geo.geo; channels 1..5 of clip 386; head occupies channel 0; native root Z adjustment 0x13b6'),
+    'liu_weapon_descriptor': Table(0x4ece58, 1, 32, (('type', 0, 'hex'), ('rig', 4, 'packed'), ('grip_y', 28, 'q16')), 'Default roster slot 3 in 53d5c0; type 66, root mesh 96.'),
     'weapon_descriptor': Table(0x4ecdb8, 1, 32, (('type', 0, 'hex'), ('rig', 4, 'packed'), ('grip_y', 28, 'q16'))),
     'weapon_bounces': Table(0x4ecaf4, 3, 12, (('spin_z', 0, 'q16'), ('launch_y', 4, 'q16'), ('rest_angle', 8, 'q16')), 'Angles are Q16 radians; gravity 0x28f; impact sound C[21]', (('floor', 0x4ecaf0, 'q16'),)),
     'blood_splash': Table(0x4e7ab0, 9, 4, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration')), 'Final one-tick mesh-12 tail invokes 405dd0; complete splash lasts nineteen ticks'),

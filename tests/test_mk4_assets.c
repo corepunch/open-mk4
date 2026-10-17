@@ -42,6 +42,7 @@ static void combat_poses(const Assets *assets) {
       "Scene models must share decoded multi-page materials with existing shared effects");
   check(assets->scene_models.data[SCENE_MODEL_SWORD].bones.data[0].mesh == 99 && assets->scene_models.data[SCENE_MODEL_SCEPTER].bones.data[0].mesh == 113,
       "Shared weapon presentation must use the original sword and scepter meshes");
+  check(assets->scene_models.data[SCENE_MODEL_DRAGON_SWORD].bones.data[0].mesh == 96, "Liu Kang weapon uses its own original rig");
   Pose weapon_pose[MK4_MAX_BONES];
   pose_static(&assets->scene_models.data[SCENE_MODEL_SCEPTER], weapon_pose);
   for (int mesh = 74; mesh <= 82; ++mesh) {

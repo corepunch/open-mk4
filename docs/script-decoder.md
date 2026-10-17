@@ -266,3 +266,9 @@ This removes the opcode stops in standing LK (`4e6d08`), crouching HK
 (`4e60b8`), spear victim (`4e9d00`), teleport victim (`4e9938`) and fire
 victim (`4e97f8`). Native tails and dynamic continuation returns remain explicit
 work; decoding past a wrapper does not resolve its transitive behavior.
+
+Liu Kang weapon opcode `6c` (`45b050`) stops current motion, unpacks the
+inline low/high 12-bit delay/duration through `45c020`, consumes one signed
+Q16 speed word through `45bff0`, and installs body callback `494860`. It
+does not wait in the script; pose playback and scheduled travel overlap.
+The decoder now follows `4ec680` through its HP continuation branches.

@@ -132,7 +132,8 @@ enum {
   SCENE_MODEL_SPINE,
   SCENE_MODEL_ICE_CLONE,
   SCENE_MODEL_SWORD,
-  SCENE_MODEL_SCEPTER
+  SCENE_MODEL_SCEPTER,
+  SCENE_MODEL_DRAGON_SWORD
 };
 
 const Texture *character_texture(const Character *character, int page);

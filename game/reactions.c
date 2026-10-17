@@ -285,6 +285,10 @@ static const ReactionSpec extra_reactions[256] = {
   [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
   [51] = {R(319, 82, 0x4003), 0, 0, 34, 328, -0x1999, -0x2147, 0x20c, 0, false, false},
   [52] = {R(181, 82, 0x4003), 0, 0, 51, 328, 0x7ae, -0x3851, 0x20c, 0x6666, false, false},
+  [54] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
+  [59] = {R(189, 30, 0x4003), 0, 0, 30, 191, 0x3d7, -0x3851, 0x28f, 0x8000, false, false},
+  [60] = {R(311, 18, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
+  [62] = {R(130, 39, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [90] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
   [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
@@ -298,6 +302,7 @@ static const MoveDef tumble_loop = R(141, 16, 0x4003);
 static const MoveDef tumble_land_move = R(143, 28, 0x4003);
 static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
 static const MoveDef getup_front = R(188, 15, ACTION_GETUP);
+static const MoveDef getup_kick = R(191, 15, ACTION_GETUP);
 static const MoveDef getup_side = R(185, 15, ACTION_GETUP);
 // clang-format on
 #undef R
@@ -319,7 +324,7 @@ static void begin_getup(Fighter *fighter, int clip) {
     neutral(fighter);
     return;
   }
-  fighter_start_move(fighter, S_KNOCKDOWN, clip == 188 ? &getup_front : clip == 185 ? &getup_side : &getup_back);
+  fighter_start_move(fighter, S_KNOCKDOWN, clip == 188 ? &getup_front : clip == 185 ? &getup_side : clip == 191 ? &getup_kick : &getup_back);
   fighter->script = getup_tick;
   fighter->sample_override = 0;
 }
@@ -359,8 +364,8 @@ static void extra_reaction_tick(Fighter *fighter) {
 static void tumble_tick(Fighter *fighter) {
   if (fighter->current_move == &tumble_land_move) {
     fighter->sample_override = mini(28, fighter->ticks);
-    if (fighter->ticks >= (fighter->reaction == 100 ? 49 : 37)) {
-      begin_getup(fighter, fighter->reaction == 100 ? 0 : 328);
+    if (fighter->ticks >= ((fighter->reaction == 100 || fighter->reaction == 61) ? 49 : 37)) {
+      begin_getup(fighter, (fighter->reaction == 100 || fighter->reaction == 61) ? 0 : 328);
     }
     return;
   }
@@ -394,11 +399,11 @@ static void react_extra(Fighter *fighter) {
   }
   int id = fighter->reaction;
   bool teleport_air = id == 90 && fighter_airborne(fighter);
-  if (id == 15 || id == 20 || id == 100 || id == 156) {
+  if (id == 15 || id == 20 || id == 57 || id == 61 || id == 100 || id == 156) {
     fighter_start_move(fighter, S_KNOCKDOWN, &tumble_start);
     fighter->script = tumble_tick;
     fighter->sample_override = 0;
-    launch(fighter, id == 15 ? 0xccc : id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
+    launch(fighter, id == 57 || id == 61 ? 0xa3d : id == 15 || id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
     return;
   }
   if ((id == 90 || id == 173) && fighter_airborne(fighter)) {
@@ -680,6 +685,13 @@ static void react_liu_record(Fighter *fighter) {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
+  [54] = react_extra,
+  [57] = react_extra,
+  [59] = react_extra,
+  [60] = react_extra,
+  [61] = react_extra,
+  [62] = react_extra,
+  [117] = react_block,
   [15] = react_extra,
   [19] = react_liu_record,
   [31] = react_liu_record,
@@ -752,7 +764,7 @@ void battle_react(Fighter *victim, int reaction) {
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 31 || reaction == 64 || reaction == 65 || reaction == 34 ||
-          (reaction >= 48 && reaction <= 52) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
+          (reaction >= 48 && reaction <= 62) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
           reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
           reaction == 156 || reaction == 173)) {
     victim->disarm(victim);

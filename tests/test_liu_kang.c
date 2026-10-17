@@ -220,10 +220,83 @@ static void specials(void) {
   }
 }
 
+static void draw_sword(int player) {
+  unsigned back = BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT);
+  unsigned forward = BUTTON_BIT(player ? BUTTON_LEFT : BUTTON_RIGHT);
+  press(player, back);
+  advance(1);
+  press(player, forward | BUTTON_BIT(BUTTON_LOW_KICK));
+  advance(60);
+}
+
+static void weapons(void) {
+  for (int player = 0; player < 2; ++player) {
+    fight(player, 4.f);
+    draw_sword(player);
+    Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+    check(owner->armed && owner->weapon->type == 0x66, "B,F,LK draws Liu Kang weapon descriptor");
+    check(owner->weapon->model == SCENE_MODEL_DRAGON_SWORD, "weapon uses its own recovered rig");
+    press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    advance(9);
+    check(fighter_move(owner)->clip == 216, "armed HP changes into repeat clip");
+    advance(40);
+    check(owner->state == S_IDLE && owner->armed, "armed HP miss returns to weapon stance");
+    for (int mode = 0; mode < 3; ++mode) {
+      unsigned back = BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT);
+      press(player, (mode ? back : 0) | BUTTON_BIT(mode == 1 ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH));
+      check(fighter_move(owner)->clip == (mode == 0 ? 240 : mode == 1 ? 242 : 227), "weapon stance/back selector");
+      advance(100);
+      check(owner->state == S_IDLE && !fighter_fiber_active(owner), "weapon attack miss restores control");
+    }
+    press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    advance(3);
+    press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    advance(6);
+    check(fighter_move(owner)->clip == 216 && fighter_fiber_active(owner), "buffered HP extends armed repeat program");
+    advance(100);
+    victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + owner->facing * (q16)(1.4f * Q16_ONE);
+    press(player, BUTTON_BIT(BUTTON_LOW_PUNCH));
+    advance(5);
+    press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    advance(10);
+    check(fighter_move(owner)->clip == 237, "LP contact plus buffered HP selects second weapon strike");
+    advance(160);
+    check(owner->state == S_IDLE && victim->state == S_IDLE, "weapon chain and victim recover");
+    victim->health = Q16_ONE;
+    /* Keep the owner far enough away to avoid LP's ground-throw gate. */
+    victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + owner->facing * (q16)(1.2f * Q16_ONE);
+    press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    advance(9);
+    check(victim->health == Q16_ONE - 0x11eb && victim->reaction == 60, "armed HP first contact uses weapon[15]");
+    battle_react(owner, 16);
+    advance(100);
+    check(victim->health == Q16_ONE - 0x11eb, "interrupted weapon sequence cannot damage later");
+    check(!owner->armed, "weapon hit reaction disarms through shared lifecycle");
+    fight(player, 4.f);
+    draw_sword(player);
+    draw_sword(player); /* Armed command throws the actual weapon identity. */
+    check(!g_battle.fighters[player].armed, "armed draw command throws weapon");
+    bool identity = false;
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      const Projectile *p = &g_battle.projectiles[i];
+      identity |= p->kind == PROJECTILE_SWORD && p->weapon->type == 0x66;
+    }
+    check(identity, "thrown weapon retains Liu Kang identity");
+    fight(player, 4.f);
+    press(player, BUTTON_BIT(BUTTON_RUN));
+    advance(1);
+    press(player, BUTTON_BIT(BUTTON_RUN));
+    check(fighter_move(&g_battle.fighters[player])->clip == 300, "RUN double tap sidestep");
+    advance(24);
+    check(g_battle.fighters[player].state == S_IDLE, "sidestep recovers");
+  }
+}
+
 int main(void) {
   normals();
   throws();
   specials();
+  weapons();
   puts("Liu Kang tests passed");
   return 0;
 }

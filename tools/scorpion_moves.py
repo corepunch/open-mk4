@@ -110,6 +110,7 @@ SCRIPT_OPS = {
     0x62: ('indexed native helper with inline argument', 0),
     0x63: ('health subtraction with Q16 operand', 1),
     0x65: ('motion via native 0x490460, vertical velocity and gravity', 3),
+    0x6c: ('schedule horizontal motion with packed delay/duration', 1),
     0x6a: ('native helper', 0),
     0x6b: ('sound helper', 0),
     0x6e: ('disarm opponent through native helper', 0),

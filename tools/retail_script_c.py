@@ -134,6 +134,8 @@ def instruction_c(row):
         return ['set_horizontal_speed_q16(%d); // negated operand' % row['speed_q16']]
     if op == 0x5c:
         return ['set_gravity_q16(%d);' % signed_word(words[0])]
+    if op == 0x6c:
+        return ['schedule_horizontal_motion(%d, %d, %d);' % (inline & 0xfff, (inline >> 12) & 0xfff, signed_word(words[0]))]
     if op == 0x63:
         return ['health_subtract_q16(%d);' % signed_word(words[0])]
     if op in (0x2e, 0x26, 0x2a, 0x61, 0x62, 0x6e):

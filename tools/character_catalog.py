@@ -36,6 +36,13 @@ def moves_for(character):
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),)))
     if character == 3:
         shared.update(
+            sidestep=move(0x469250, native=(('direction/playback', 0x4692e0),)),
+            draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('return', 0x4e62d8)), native=(('follow-up draw', 0x494610), ('Liu Kang weapon', 0x4964d0))),
+            sword_hp=move(0x4963e0, (('repeat program', 0x4ec680),), (('weapon', 15),)),
+            sword_lp=move(0x4964d0, contacts=(('weapon', 13), ('weapon', 16)), native=(('second strike', 0x496500),)),
+            sword_back_hp=move(0x496670, contacts=(('weapon', 17),)),
+            sword_back_lp=move(0x496920, (('attacker', 0x4ec7f0),), (('weapon', 11),)),
+            weapon_throw=SCORPION['sword_throw'],
             high_fireball=move(0x49bf90, (('high', 0x4ed6c0),), (('C', 0),), (('spawn', 0x49c160),)),
             low_fireball=move(0x49bf50, (('low', 0x4ed678),), (('C', 1),), (('spawn', 0x49c110),)),
             air_fireball=move(0x49bfe0, (('air', 0x4ed6f8),), (('C', 0),), (('spawn', 0x49c0d0), ('landing', 0x49c010))),

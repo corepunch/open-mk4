@@ -266,6 +266,20 @@
       "site": "0x47eddb",
       "bytes": "b807020000a32cc4530089048d74000000",
       "note": "Liu Kang flying kick entry writes controller action +0x74."
+    },
+    {
+      "value": "0x21c",
+      "entry": "0x4963e0",
+      "site": "0x4963e6",
+      "bytes": "b81c020000a32cc4530089048d74000000",
+      "note": "Liu Kang armed HP writes controller action +0x74."
+    },
+    {
+      "value": "0x212",
+      "entry": "0x496670",
+      "site": "0x496676",
+      "bytes": "b812020000a32cc453006840c74e0089048d74000000",
+      "note": "Liu Kang back armed HP writes controller action +0x74."
     }
   ]
 }

@@ -64,4 +64,6 @@ RETAIL_ACTION(ACTION_RETAIL_030C, 0x030c, "verified", "Liu Kang high fireball en
 RETAIL_ACTION(ACTION_RETAIL_030D, 0x030d, "verified", "Liu Kang low fireball entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
 RETAIL_ACTION(ACTION_RETAIL_030E, 0x030e, "verified", "Liu Kang air fireball entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
 RETAIL_ACTION(ACTION_RETAIL_0207, 0x0207, "verified", "Liu Kang flying kick entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
+RETAIL_ACTION(ACTION_RETAIL_021C, 0x021c, "verified", "Liu Kang armed HP; checked local writer 4963e6.")
+RETAIL_ACTION(ACTION_RETAIL_0212, 0x0212, "verified", "Liu Kang back armed HP; checked local writer 496676.")
 // clang-format on

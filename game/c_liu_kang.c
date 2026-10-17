@@ -1101,11 +1101,266 @@ static void liu_kang_flying_kick(Fighter *fighter) {
   fighter_start_fiber(fighter, flying_kick_script, NULL);
 }
 
+/* Default weapon descriptor 53d5c0[3] -> 4ece58: type 66,
+ * rig 506cb0. The four weapon entries select distinct native programs. */
+static const WeaponDef dragon_sword;
+static void sword_hp(Fighter *fighter);
+static void sword_lp(Fighter *fighter);
+static void sword_back_hp(Fighter *fighter);
+static void sword_back_lp(Fighter *fighter);
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const WeaponStrike sword_attacks[] = {
+  {{.clip = 240, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_010E}, {106168, -54394, 77987, 80609, 59, 59, 119, 0, 10485}, 0, 8, 13, 3, 4, 0, 0, 0, 34},
+  {{.clip = 237, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_010E}, {99614, -49152, 64880, 55050, 61, 61, 119, 0, 9830}, 0, 9, 16, 4, 0, 9, 11, 0x147a, 34},
+  {{.clip = 242, .last = 30, .flags = RETAIL, .action = ACTION_RETAIL_0212}, {111411, -25552, 89784, 11796, 62, 62, 118, 0, 9830}, 8, 9, 11, 3, 8, 2, 18, 0x28f5, 34},
+  {{.clip = 227, .last = 59, .flags = RETAIL, .action = ACTION_RETAIL_0112}, {98959, -28835, 67502, 36700, 57, 57, 119, 0, 9175}, 0, 16, 29, 2, 0, 8, 13, 0x1999, 31},
+};
+static const MoveDef s_sword_hp = {.clip = 233, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_021C};
+static const MoveDef s_sword_hp_loop = {.clip = 216, .last = 21, .flags = RETAIL, .action = ACTION_RETAIL_021C};
+static const AttackRecord sword_hp_record = {92405, -28835, 70778, 11796, 60, 10, 117, 0, 4587};
+// clang-format on
+
+static void sword_motion(Fighter *fighter) {
+  if (fighter->script_timer > 0) {
+    fighter->script_timer--;
+  } else if (fighter->move_loops > 0) {
+    fighter_set_speed(fighter, fighter->weapon_strike == NULL ? 0x11eb : fighter->weapon_strike->speed);
+    fighter->move_loops--;
+  } else {
+    fighter_set_speed(fighter, 0);
+    fighter->body.physics = NULL;
+  }
+}
+
+static void sword_travel(Fighter *fighter, int delay, int duration) {
+  fighter_set_speed(fighter, 0);
+  fighter->script_timer = delay;
+  fighter->move_loops = duration;
+  fighter->body.physics = sword_motion;
+}
+
+static void sword_cleanup(Fighter *fighter) {
+  if (fighter->body.physics == sword_motion) {
+    fighter->body.physics = NULL;
+    fighter_set_speed(fighter, 0);
+  }
+}
+
+static bool sword_repeat(Fighter *fighter) {
+  bool repeat = (fighter->buffered & BUTTON_BIT(BUTTON_HIGH_PUNCH)) != 0;
+  fighter->buffered &= ~BUTTON_BIT(BUTTON_HIGH_PUNCH);
+  return repeat;
+}
+
+static void sword_blend(Fighter *fighter, int ticks) {
+  fighter->blend_clip = fighter_move(fighter)->clip;
+  fighter->blend_sample = fighter->sample_override;
+  fighter->blend_ticks = 0;
+  fighter->blend_duration = ticks;
+  for (int i = 1; i <= ticks; ++i) {
+    fighter_wait_ticks(1);
+    fighter->blend_ticks = i;
+  }
+}
+
+static void sword_hp_script(Fighter *fighter) {
+  sword_travel(fighter, 6, 6);
+  fighter_fiber_play_to(fighter, 10, 2);
+  battle_sound(SOUND_C, 29);
+  fighter_fiber_play_to(fighter, 18, 2);
+  unsigned buffered = fighter->buffered;
+  int delay = fighter->script_timer;
+  fighter_fiber_move(fighter, S_PUNCH, &s_sword_hp_loop);
+  fighter->buffered = buffered;
+  fighter->script_timer = delay;
+  fighter->sample_override = 0;
+  for (;;) {
+    battle_contact(fighter, &sword_hp_record);
+    if (!sword_repeat(fighter)) {
+      fighter->action = ACTION_RETAIL_1006;
+      fighter_fiber_play_to(fighter, 5, 1);
+      sword_blend(fighter, 5); /* 496430: native blend step 0x2666. */
+      fighter_fiber_finish(fighter_ready);
+    }
+    sword_travel(fighter, 6, 6);
+    battle_sound(SOUND_C, 31);
+    fighter_fiber_play_to(fighter, 10, 1);
+    fighter->connected = false;
+    battle_contact(fighter, &sword_hp_record);
+    if (!sword_repeat(fighter)) {
+      fighter->action = ACTION_RETAIL_1006;
+      fighter_fiber_play_to(fighter, 21, 1);
+      fighter_wait_ticks(1);
+      fighter_fiber_finish(fighter_ready);
+    }
+    sword_travel(fighter, 6, 6);
+    battle_sound(SOUND_C, 29);
+    fighter_fiber_play_to(fighter, 21, 1);
+    fighter->sample_override = 0;
+    fighter->connected = false;
+  }
+}
+
+static void sword_strike_script(Fighter *fighter) {
+  int index = fighter->script_phase;
+  for (;;) {
+    const WeaponStrike *strike = &sword_attacks[index];
+    int opening = index == 3 ? 8 : strike->windup - strike->first;
+    for (int i = 1; i <= opening; ++i) {
+      fighter_wait_ticks(1);
+      fighter->sample_override = strike->first + i * (index == 3 ? 2 : 1);
+    }
+    battle_sound(SOUND_C, strike->sound);
+    fighter_fiber_play_to(fighter, index == 3 ? 26 : strike->target, index == 3 ? 2 : 1);
+    if (index == 3) {
+      fighter_fiber_play_to(fighter, 29, 1);
+    }
+    for (int i = 0; i < strike->queries; ++i) {
+      fighter_wait_ticks(1);
+      fighter->sample_override++;
+      if (battle_contact(fighter, &strike->record) != CONTACT_MISS) {
+        break;
+      }
+    }
+    bool hit = fighter->connected;
+    fighter->action = ACTION_RETAIL_1006;
+    if (index == 0 && hit && sword_repeat(fighter)) {
+      index = 1; /* 496500 -> 4ec720/730, delayed travel then second strike. */
+      fighter_fiber_move(fighter, S_PUNCH, &sword_attacks[index].move);
+      fighter->weapon_strike = &sword_attacks[index];
+      fighter->sample_override = sword_attacks[index].first;
+      sword_travel(fighter, sword_attacks[index].delay, sword_attacks[index].travel);
+      continue;
+    }
+    fighter_set_speed(fighter, 0);
+    fighter->body.physics = NULL;
+    fighter_fiber_play_to(fighter, strike->move.last, 1);
+    if (index == 2 && hit) {
+      sword_blend(fighter, 10); /* 494e10: fixed armed stance, step 0x1999. */
+    }
+    fighter_wait_ticks(1);
+    fighter_fiber_finish(fighter_ready);
+  }
+}
+
+static void equip_dragon_sword(Fighter *fighter) {
+  fighter_equip_weapon(fighter, &dragon_sword);
+}
+
+static void sword_attack(Fighter *fighter, int index) {
+  if (fighter_airborne(fighter)) {
+    weapon_air_attack(fighter, index == 2);
+    return;
+  }
+  fighter_start_move(fighter, S_PUNCH, &sword_attacks[index].move);
+  fighter->script_phase = index;
+  fighter->weapon_strike = &sword_attacks[index];
+  fighter->sample_override = sword_attacks[index].first;
+  if (sword_attacks[index].travel != 0) {
+    sword_travel(fighter, sword_attacks[index].delay, sword_attacks[index].travel);
+  }
+  fighter_start_fiber(fighter, sword_strike_script, sword_cleanup);
+}
+
+static void sword_hp(Fighter *fighter) {
+  if (fighter_airborne(fighter)) {
+    weapon_air_attack(fighter, true);
+    return;
+  }
+  fighter_start_move(fighter, S_PUNCH, &s_sword_hp);
+  fighter->weapon_strike = NULL;
+  fighter->sample_override = 0;
+  fighter_start_fiber(fighter, sword_hp_script, sword_cleanup);
+}
+
+static void sword_lp(Fighter *fighter) {
+  sword_attack(fighter, 0);
+}
+
+static void sword_back_hp(Fighter *fighter) {
+  sword_attack(fighter, 2);
+}
+
+static void sword_back_lp(Fighter *fighter) {
+  sword_attack(fighter, 3);
+}
+
+static const WeaponDef dragon_sword = {
+    0x66, sword_hp, sword_lp, sword_back_hp, sword_back_lp, NULL, weapon_throw, equip_dragon_sword, SCENE_MODEL_DRAGON_SWORD};
+
+static bool can_weapon(const Fighter *fighter) {
+  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
+}
+
+static void liu_kang_weapon(Fighter *fighter) {
+  if (fighter->armed) {
+    fighter->weapon->throw_move(fighter);
+  } else if (fighter->flags & FF_FOLLOW_UP) {
+    equip_dragon_sword(fighter);
+    weapon_followup_victim(fighter);
+    sword_lp(fighter); /* 4ecb40[type 66 - 60] -> 4964d0. */
+  } else {
+    weapon_draw(fighter, &dragon_sword);
+  }
+}
+
+static bool can_pickup(const Fighter *fighter) {
+  return weapon_can_pickup(fighter);
+}
+
+static void liu_kang_pickup(Fighter *fighter) {
+  weapon_pickup(fighter);
+}
+
+/* 45e820: RUN latch is written after matching, so this sees the prior
+ * press. 4692e0 uses shared descriptor 53ce18 (clip 300), not a roster
+ * table. Down plays it forwards; otherwise it plays backwards. */
+static const MoveDef s_sidestep = {.clip = 300, .last = 17, .flags = SF_LOCK};
+
+static bool can_sidestep(const Fighter *fighter) {
+  uint64_t previous = fighter->latch[BUTTON_RUN];
+  return g_battle.phase == PHASE_FIGHT && !fighter_airborne(fighter) && previous != 0 && g_battle.ticks - previous <= 8 &&
+         g_battle.ticks >= fighter->sidestep_ready;
+}
+
+static void sidestep_script(Fighter *fighter) {
+  for (;;) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
+    if (fighter->ticks >= 18) {
+      stop_body(fighter);
+      fighter_fiber_finish(liu_kang_ready);
+    }
+  }
+}
+
+static void liu_kang_sidestep(Fighter *fighter) {
+  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+  q16 along = 0x443, across = down ? -0xccc : 0xccc;
+  if (fighter_airborne(opponent(fighter))) {
+    along = q16_mul(along, 0x4ccc);
+    across = q16_mul(across, 0x4ccc);
+  }
+  q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
+  stop_body(fighter);
+  fighter_start_move(fighter, S_WALK, &s_sidestep);
+  fighter->script_phase = down;
+  fighter->sample_override = down ? 0 : 17;
+  fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
+  fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
+  fighter->sidestep_ready = g_battle.ticks + 80;
+  fighter_start_fiber(fighter, sidestep_script, NULL);
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, CMD_AIR, NULL, liu_kang_high_fireball},
   {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_low_fireball},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_flying_kick},
+  {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0, can_weapon, liu_kang_weapon},
+  {BUTTON_RUN, {0}, 0, 0, 0, can_sidestep, liu_kang_sidestep},
+  {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, liu_kang_pickup},
 };
 // clang-format on
 

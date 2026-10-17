@@ -20,6 +20,15 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_liu_weapon_scheduled_motion_operand(self):
+        from retail_script_c import script_c_text
+        rows = script_program(self.image, 0x4ec680, 3)['instructions']
+        schedule = next(row for row in rows if row['opcode'] == '0x6c')
+        self.assertEqual((schedule['handler'], schedule['operands']), ('0x45b050', ['0x11eb']))
+        self.assertTrue(any(row['va'] == '0x4ec690' and row.get('clip') == 233 for row in rows))
+        self.assertNotIn('unresearched opcode', [row['operation'] for row in rows])
+        self.assertIn('schedule_horizontal_motion(6, 6, 4587)', script_c_text(self.image, 0x4ec680, character=3))
+
     def test_character_selection_and_sub_zero_commands(self):
         from scorpion_moves import commands
         from retail_script_c import move_c_text
