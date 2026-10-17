@@ -36,6 +36,9 @@ void battle_object_light(Projectile *object, const OrbitLightDef *def) {
 int projectile_mesh_frame(const Projectile *object) {
   const MeshAnimation *animation = object->mesh_animation;
   require(animation != NULL && animation->count > 0 && animation->period > 0, "Invalid object mesh animation");
+  if (object->ticks == 0) {
+    return object->initial_mesh;
+  }
   return animation->first + (maxi(0, object->ticks - 1) / animation->period) % animation->count;
 }
 

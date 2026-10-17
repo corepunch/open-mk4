@@ -151,12 +151,12 @@ lookup `4ead30` rather than bank B, and `405430` always succeeding in this EXE.
 The indexed sound helper currently has no direct A/B/C-selector adapter; the
 query preserves its token lookup rather than silently dropping the cue.
 
-Direct table decoding also exposes a remaining character-port discrepancy:
+Direct table decoding separates the spawn rig from the animated track:
 `4ed5d0` initially creates mesh 74, but `4ed898`'s track records point to rig
-records whose mesh fields are **75–82**. The existing C cycle is 74–81. The
-helper/table view records this difference; fixing the decompiler does not
-silently modify the character. Camera tables skip their leading parameter word;
-weapon bounce triples start after their floor header. Focused checks protect
+records whose mesh fields are **75–82**. The portable projectile keeps its
+initial mesh separately and begins the eight-frame loop on its first animation
+tick; mesh 74 is never replayed in that loop. Camera tables skip their leading
+parameter word; weapon bounce triples start after their floor header. Focused checks protect
 these layout distinctions against repeating the earlier hand-transcription
 mistakes.
 

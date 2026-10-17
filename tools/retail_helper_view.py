@@ -24,7 +24,7 @@ class Table:
 
 TABLES = {
     'ice_spawn': Table(0x4ed5d0, 1, 16, (('rig', 0, 'packed'), ('forward', 4, 'q16'), ('dy', 8, 'q16'), ('initial_track', 12, 'packed'))),
-    'ice_meshes': Table(0x4ed898, 8, 8, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration'), ('callback', 4, 'hex')), 'shared_g.geo; spawn rig is mesh 74, track is 75..82; GEO 0x100 is additive. Existing C cycle 74..81 needs correction.'),
+    'ice_meshes': Table(0x4ed898, 8, 8, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration'), ('callback', 4, 'hex')), 'shared_g.geo; spawn rig is mesh 74, track is 75..82; GEO 0x100 is additive.'),
     'ice_trail': Table(0x4d1b18, 1, 4, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration')), '40d720 adds ten nodes; quarter scale, shrink 0x51e/tick; separate decoration clock'),
     'camera_shakes': Table(0x4e3638, 6, 12, (('pulses', 0, 'int'), ('half_cycle_ticks', 4, 'int'), ('dy', 8, 'q16'))),
     'camera_first': Table(0x4e0f04, 7, 12, (('x', 0, 'q16'), ('y', 8, 'q16'), ('z', 4, 'q16')), 'Converted from retail X,Z,Y to engine X,Y,Z; step 0xccc then hold 50 ticks', (('header_q16', 0x4e0f00, 'q16'),)),

@@ -175,9 +175,9 @@ static void ice(void) {
     check(victim->appearance == APPEARANCE_NORMAL && victim->state == S_IDLE && victim->buttons != NULL && !(victim->flags & FF_NO_GUARD),
         "ground thaw must restore controls at tick 142");
 
-    battle = fight(player, 4.f);
+    battle = fight(player, 14.f);
     ice_command(&battle, player, 2, 0);
-    advance(&battle, 16);
+    advance(&battle, 15);
     check(objects(&battle, PROJECTILE_ICE) == 1, "ice object must spawn");
     Projectile *shot = NULL;
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
@@ -187,8 +187,11 @@ static void ice(void) {
     }
     check(shot != NULL && shot->mesh_animation != NULL && shot->mesh_animation->scale == Q16_ONE,
         "ice command must bind its original mesh sequence at full size");
-    int frame = projectile_mesh_frame(shot);
-    check(frame >= 74 && frame <= 81, "ice object must select the recovered shared geometry");
+    Projectile initial = *shot;
+    initial.ticks = 0;
+    check(projectile_mesh_frame(&initial) == 74, "ice spawn rig must remain separate from its animated track");
+    check(projectile_mesh_frame(shot) == 75, "ice must begin its animated track with mesh 75");
+    advance(&battle, 1);
     int trails = 0;
     for (int i = 0; i < MAX_PARTICLES; ++i) {
       const Particle *p = &battle.particles[i];
@@ -201,7 +204,11 @@ static void ice(void) {
     battle_react(&battle, &battle.fighters[player], 37);
     advance(&battle, 1);
     check(objects(&battle, PROJECTILE_ICE) == 1, "independent ice object must survive owner interruption");
-    check(projectile_mesh_frame(shot) == 74 + (frame - 74 + 1) % 8, "ice meshes must advance once per tick independently of the owner");
+    for (int frame = 77; frame <= 82; ++frame) {
+      check(projectile_mesh_frame(shot) == frame, "ice must visit every track mesh once per tick independently of the owner");
+      advance(&battle, 1);
+    }
+    check(projectile_mesh_frame(shot) == 75, "ice must loop from mesh 82 to 75 without replaying its spawn rig");
     advance(&battle, 180);
     check(objects(&battle, PROJECTILE_ICE) == 0, "ice must expire after contact/bounds");
 

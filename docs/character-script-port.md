@@ -159,10 +159,11 @@ still fall back to their own stance tables. These translations do not claim
 retail scheduler or random-call-stream identity.
 
 The decompiler now distinguishes recovered data from the current port. The ice
-spawn rig uses mesh 74; its `4ed898` track uses meshes 75–82. The C animation
-still cycles 74–81. Opcode 25's indexed sound table `4ead30` also requires its
-own token route, rather than assuming an A/B/C bank selector. These differences
-are recorded by the helper catalog for a later character correction; the
+spawn rig uses mesh 74; its `4ed898` track uses meshes 75–82, one tick each.
+The shared projectile presentation keeps the initial mesh separate from the
+loop. Opcode 25's indexed sound table `4ead30` also requires its own token route,
+rather than assuming an A/B/C bank selector. This remaining sound difference is
+recorded by the helper catalog for a later correction; the
 existing adaptation is a reuse reference, not evidence overriding the EXE.
 
 Sound formats are checked against the local executable, including corrections

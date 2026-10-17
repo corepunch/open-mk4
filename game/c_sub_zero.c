@@ -828,9 +828,10 @@ static void enter_lk_throw(Battle *battle, Fighter *fighter) {
  * task, so it survives owner interruption; bounds and contact own teardown. */
 static const AttackRecord ice_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 67, 67, 0, ATTACK_MARK, 0};
 static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = 0x304};
-/* 49bcfe installs 4ed898: shared meshes 74..81, one tick each.
+/* 49c300 creates rig 506a48 (mesh 74); 49bcfe installs 4ed898:
+ * shared meshes 75..82, one tick each, looping without the spawn rig.
  * The high bit invokes 40d720 for the separately managed ice trail. */
-static const MeshAnimation ice_meshes = {.first = 74, .count = 8, .period = 1, .scale = Q16_ONE};
+static const MeshAnimation ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
 /* 40d720/40d920, 4d1b18/28/34: ten independent trail nodes,
  * ten-tick track, quarter scale shrinking by .02 each tick.
  * The supplied EXE's 405430 gate always succeeds. */
@@ -886,6 +887,7 @@ static void ice_tick(Battle *battle, Fighter *fighter) {
     Projectile *p = battle_spawn_projectile(battle, fighter, PROJECTILE_ICE, 180, ice_projectile);
     if (p != NULL) {
       p->mesh_animation = &ice_meshes;
+      p->initial_mesh = 74;
       for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
         q16 heading = fighter_axis(battle, fighter, axis);
         p->pos[axis] += q16_mul(heading, 0xccc);

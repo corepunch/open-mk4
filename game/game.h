@@ -490,6 +490,7 @@ struct Projectile {
   q16 spin[3];
   int bounce;
   const MeshAnimation *mesh_animation;
+  int initial_mesh; /* Spawn rig before the first mesh animation tick. */
 };
 
 #define MAX_PROJECTILES 4
