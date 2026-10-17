@@ -95,7 +95,7 @@
     },
     "0x4e9ad0": {
       "evidence": "reaction81 victim owns released recovery including KO",
-      "return_to": "thrown_ready"
+      "return_to": "mk4_script_thrown_ready"
     }
   },
   "generated_scripts": [

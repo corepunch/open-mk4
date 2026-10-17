@@ -18,7 +18,6 @@ static void liu_kang_ready(Fighter *fighter) {
 
 /* Retail attack records; source addresses identify the supplied EXE. */
 // clang-format off: Keep table entries on one row, including long rows.
-static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d};            /* 0x4ebd38, query A selector 1 */
 static const AttackRecord uppercut_record = {0xe3d7, -0xfd70, 0x947a, 0x10518, 34, 34, 6, 0, 0x28f5};     /* 0x4ebd50, A selector 2 */
 static const AttackRecord uppercut_alt_record = {0x12106, -0x111a9, 0xfa9f, 0x17a9f, 34, 34, 6, 0, 0xa3d}; /* 0x4ebd68, A selector 6 */
 static const AttackRecord kick_record = {0x15e76, -0xd999, 0x151a9, 0x111eb, 16, 13, 6, 0, 0x2147};       /* 0x4ebae0, B selector 1 */
@@ -32,17 +31,6 @@ static int victim_action(const Fighter *fighter) {
 /* 0x46ddd0: one query per strike visit, skipped against a crouching victim
  * (0x2001), actions 0x106/0x107, or an early sweep (0x10c before sample 5).
  * The 0x102 gate is the low-kick crouching interval (native 0x46a970). */
-static void liu_kang_jab_contact(Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(fighter);
-  int action = victim->action;
-  if (fighter->connected || action == ACTION_RETAIL_2001 || action == ACTION_RETAIL_0106 || action == ACTION_RETAIL_0107) {
-    return;
-  }
-  if ((action == ACTION_RETAIL_010C && fighter_sample(victim) < 5) || (action == ACTION_RETAIL_0102 && victim->avoids_high)) {
-    return;
-  }
-  battle_contact(fighter, &jab_record);
-}
 
 /* Runner 0x470c60 with block 0x4e5d30: the first contact latches. */
 static void liu_kang_kick_contact(Fighter *fighter) {
@@ -121,12 +109,6 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static bool liu_kang_repeat_jab(const Fighter *fighter) {
-  const Fighter *other = fighter_opponent(fighter);
-  q16 dx = other->body.pos[AXIS_X] - fighter->body.pos[AXIS_X];
-  return (fighter->buffered & BUTTON_BIT(BUTTON_LOW_PUNCH)) != 0 && (fighter->facing > 0 ? dx >= 0 : dx <= 0);
-}
-
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_script(Fighter *fighter) {
@@ -202,13 +184,6 @@ static const FighterFn enter[S_COUNT] = {
 
 static Fighter *opponent(Fighter *fighter) {
   return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-}
-
-static void stop_body(Fighter *fighter) {
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-  fighter->body.gravity = 0;
-  fighter->body.physics = NULL;
-  fighter->body.on_land = NULL;
 }
 
 /* Selected Liu Kang ground scripts and native tails: 4e6d08, 4e60b8,
@@ -321,7 +296,7 @@ static void ground_native_tail(Fighter *fighter) {
 
 static void ground_attack(Fighter *fighter, int index) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
-  stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);
   fighter->script_phase = index;
@@ -500,7 +475,7 @@ static void air_native_tail(Fighter *fighter, int index, int elapsed) {
                                                        : maxi(0, attack->retract - 1 - tick + retract_at);
     if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(fighter, &attack->record) != CONTACT_MISS) {
       bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
-      stop_body(fighter);
+      mk4_script_stop_body(fighter);
       fighter->action = ACTION_RETAIL_1006;
       fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
       if (index == 0 || index == 2) {
@@ -674,7 +649,7 @@ static void thrown_play_to(Fighter *victim, int sample, int step) {
 }
 
 static void thrown_finish(Fighter *victim) {
-  stop_body(victim);
+  mk4_script_stop_body(victim);
   fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
 }
 
@@ -717,10 +692,6 @@ static void throw_disarm(Fighter *victim) {
   }
 }
 
-static void liu_script_pair_to(Fighter *owner, int sample) {
-  mk4_script_pair_advance(owner, sample - owner->sample_override);
-}
-
 static void throw_cleanup(Fighter *owner) {
   Fighter *victim = opponent(owner);
   if ((victim->flags & FF_PAIRED) && (fighter_move(victim)->clip == 151 || fighter_move(victim)->clip == 133)) {
@@ -728,7 +699,7 @@ static void throw_cleanup(Fighter *owner) {
     if (victim->script_phase == 1) {
       return;
     }
-    stop_body(victim);
+    mk4_script_stop_body(victim);
     fighter_cancel_fiber(victim);
     if (victim->pending == NULL && victim->health > 0) {
       fighter_ready(victim);
@@ -759,8 +730,8 @@ static void ground_throw(Fighter *fighter, bool lk) {
     return;
   }
   Fighter *victim = opponent(fighter);
-  stop_body(fighter);
-  stop_body(victim);
+  mk4_script_stop_body(fighter);
+  mk4_script_stop_body(victim);
   fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &s_throw);
   fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &s_lp_thrown);
   fighter->flags |= FF_PAIRED;
@@ -862,7 +833,7 @@ static void bicycle_script(Fighter *fighter) {
     victim->script_phase = 1;
     fighter->flags &= ~(unsigned)FF_PAIRED;
     fighter->body.pos[AXIS_Y] = fighter->body.ground; /* 4906c0 */
-    stop_body(fighter);
+    mk4_script_stop_body(fighter);
     break;
   }
   if (fighter_airborne(fighter)) {
@@ -883,7 +854,7 @@ static void liu_kang_bicycle_kick(Fighter *fighter) {
   if (g_battle.phase != PHASE_FIGHT || fighter_opponent(fighter)->action == ACTION_RETAIL_100B) {
     return;
   }
-  stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_bicycle);
   fighter->sample_override = 0;
   fighter_start_fiber(fighter, retail_script_004e8610, bicycle_cleanup);
@@ -959,7 +930,7 @@ static void fireball(Fighter *fighter, bool low) {
     return;
   }
   if (!air) {
-    stop_body(fighter);
+    mk4_script_stop_body(fighter);
   }
   fighter_start_move(fighter, S_PUNCH, air ? &s_fireball_air : low ? &s_fireball_low : &s_fireball_high);
   fighter->body.on_land = NULL;
@@ -1008,7 +979,7 @@ static void liu_kang_flying_kick(Fighter *fighter) {
   if (g_battle.phase != PHASE_FIGHT || fighter_airborne(fighter)) {
     return;
   }
-  stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_flying_kick);
   fighter->sample_override = 0;
   fighter_set_speed(fighter, 0x23d7);
@@ -1205,7 +1176,7 @@ static void sidestep_script(Fighter *fighter) {
     fighter_wait_ticks(1);
     fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
     if (fighter->ticks >= 18) {
-      stop_body(fighter);
+      mk4_script_stop_body(fighter);
       fighter_fiber_finish(liu_kang_ready);
     }
   }
@@ -1219,7 +1190,7 @@ static void liu_kang_sidestep(Fighter *fighter) {
     across = q16_mul(across, 0x4ccc);
   }
   q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
-  stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_WALK, &s_sidestep);
   fighter->script_phase = down;
   fighter->sample_override = down ? 0 : 17;
@@ -1507,69 +1478,11 @@ static void liu_kang_spike_fatality(Fighter *fighter) {
 
 /* Typed native boundaries used by generated VM code. These contain native
  * contact/controller work; all VM playback and branching lives in the include. */
-static void liu_script_ready(Fighter *fighter) {
-  (void)fighter;
-  fighter_fiber_finish(fighter_ready);
-}
-
-static void liu_script_land(Fighter *fighter) {
-  (void)fighter;
-  fighter_fiber_finish(mk4_land);
-}
-
-static void thrown_ready(Fighter *fighter) {
-  stop_body(fighter);
-  if (fighter->health > 0) {
-    fighter_ready(fighter);
-  }
-}
-
-static void liu_script_impact(Fighter *fighter) {
-  battle_scene_impact(fighter);
-}
-
-static void liu_script_impact_callback(Fighter *fighter) {
-  fighter->body.on_land = liu_script_impact;
-}
-
-static void liu_script_disarm(Fighter *fighter) {
-  throw_disarm(opponent(fighter));
-}
-
-static void liu_script_damage(Fighter *fighter, int damage) {
-  battle_damage(opponent(fighter), damage);
-}
-
-static void liu_script_pair_adjust(Fighter *fighter, int amount) {
-  /* 42ceb0 adjusts group velocity, not controller action. */
-  Fighter *victim = opponent(fighter);
-  fighter_set_speed(victim, amount);
-}
-
-static void liu_script_context(Fighter *fighter, int selector) {
-  /* 431520/431700 create a camera task. Our camera already follows both
-   * live actors; paired positions remain the source of its framing. */
-  (void)fighter;
-  require(selector == 1 || selector == 36, "Unexpected paired camera context");
-}
-
-static void liu_script_roster_sound(Fighter *fighter, int selector) {
-  require(selector == 8, "Unexpected roster sound list");
-  battle_sound(SOUND_THROW_VOICE, roster_def(fighter->roster)->asset);
-}
-
-static void liu_script_draw_voice(Fighter *fighter) {
-  battle_sound(SOUND_DRAW_VOICE, roster_def(fighter->roster)->asset);
-}
 
 static void liu_script_scene_event(Fighter *fighter, int selector) {
   require(g_battle.phase == PHASE_FATALITY && selector >= 42 && selector <= 44, "Invalid fatality orchestration event");
   /* battle_begin_finisher owns input lock, camera and scene activation. */
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-}
-
-static void liu_script_scene_active(Fighter *fighter) {
-  fighter->flags |= FF_UNTOUCHABLE;
 }
 
 static void liu_script_reaction(Fighter *fighter, int reaction) {
@@ -1579,7 +1492,7 @@ static void liu_script_reaction(Fighter *fighter, int reaction) {
     throw_disarm(victim);
     fighter->flags &= ~(unsigned)FF_PAIRED;
     victim->flags &= ~(unsigned)FF_PAIRED;
-    stop_body(victim);
+    mk4_script_stop_body(victim);
     fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
@@ -1590,12 +1503,6 @@ static void liu_script_reaction(Fighter *fighter, int reaction) {
   } else if (reaction == 176) {
     victim->facing = -victim->facing;
   }
-}
-
-static unsigned liu_script_jab_gate(Fighter *fighter) {
-  bool stop = !liu_kang_repeat_jab(fighter);
-  fighter->buffered &= ~BUTTON_BIT(BUTTON_LOW_PUNCH);
-  return stop ? 4u : 0u;
 }
 
 static void liu_script_kick_tail(Fighter *fighter) {
@@ -1682,15 +1589,6 @@ static void liu_script_bicycle_getup(Fighter *victim) {
     thrown_play_to(victim, 15, 1);
   }
   thrown_finish(victim);
-}
-
-static void liu_script_save_motion(Fighter *fighter) {
-  memcpy(fighter->saved_motion, fighter->body.vel, sizeof fighter->saved_motion);
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-}
-
-static void liu_script_restore_motion(Fighter *fighter) {
-  memcpy(fighter->body.vel, fighter->saved_motion, sizeof fighter->saved_motion);
 }
 
 static void liu_script_bicycle_motion(Fighter *fighter) {

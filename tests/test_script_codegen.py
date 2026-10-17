@@ -156,6 +156,20 @@ class CompilerTests(unittest.TestCase):
         source = self.compile([0x0f000000, descriptor, 0x19000011, 0x3f000000])
         self.assertIn('mk4_script_advance(fighter, 9, 2)', source)
 
+    def test_contact_branch_and_reaction_context_are_structural(self):
+        e = self.entry
+        source = self.compile([0x51000006, 0x42000000, (e + 16) // 4, 0x34000002, 0x3f000000])
+        self.assertIn('result_flags & 1u', source)
+        self.assertIn('goto L_00570010', source)
+        with self.assertRaisesRegex(CompileError, 'flags is not initialized'):
+            self.compile([0x42000000, (e + 8) // 4, 0x3f000000])
+        source = self.compile([0x4e000000, 0x3f000000])
+        self.assertNotIn('mk4_script_finish_clip', source)
+        self.assertIn('owns reaction context', source)
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        source = self.compile([0x11000003, descriptor, 0x34000001, 0x3f000000])
+        self.assertIn('mk4_script_bind(fighter, 54, 13, 3)', source)
+
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
         # C control flow; real actor suspension is covered by the native Liu suite.

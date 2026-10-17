@@ -12,7 +12,7 @@ from character_catalog import moves_for, character_name, CHARACTERS
 
 ANIMATION_NAMES = {67: 'ANIM_SCORPION_LOW_KICK'}
 TERMINALS = {0x30, 0x32, 0x3e, 0x3f}
-CONDITIONALS = {0x2f, 0x36, 0x44, 0x45, 0x55, 0x3b}
+CONDITIONALS = {0x42, 0x2f, 0x36, 0x44, 0x45, 0x55, 0x3b}
 
 
 def animation_name(clip):
@@ -111,7 +111,7 @@ def instruction_c(row):
         prefix = []
         if op in (0x36, 0x55):
             prefix = (['native_argument(%d);' % arg] if op == 0x55 else []) + [target + '();']
-        condition = {0x2f: 'fighter_is_airborne()', 0x44: 'down_is_held()', 0x45: 'fast_startup_allowed()',
+        condition = {0x42: '(native_result_flags() & 1) != 0', 0x2f: 'fighter_is_airborne()', 0x44: 'down_is_held()', 0x45: 'fast_startup_allowed()',
                      0x36: '(native_result_flags() & 4) != 0', 0x55: '(native_result_flags() & 1) != 0',
                      0x3b: '--loop_counter != 0'}[op]
         branch = ['goto L_%08x;' % int(row['branch'], 16)] if 'branch' in row else ['unresolved_loop_target();', 'return;']

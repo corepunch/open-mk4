@@ -123,6 +123,10 @@ counts such reachable roots without requiring unused wrapper references.
 Yield analysis propagates finite clip/cursor states through resets, branches,
 counts and target playback. A target loop is accepted only when progress to
 its target is proven on every incoming path; same-cursor loops still fail.
+Contact-result branches lower to tested C edges. Binding opcode 11 preserves its
+inline cursor; reaction-context opcode 4e uses the explicit Fighter argument and
+does not perform playback. Shared native bindings live in `game/script.c`,
+including audio, damage/disarm, pair stepping, jab gates and impact/motion setup.
 Paired clip binding/counts, sample-start playback, landing waits and optional
 full playback use shared engine helpers. Typed native adapters retain ownership
 of independent victims, delayed motion, camera orchestration and scene teardown.

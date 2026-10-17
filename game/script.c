@@ -1,4 +1,5 @@
 #include "script.h"
+#include "mk4_characters.h"
 #include "math_util.h"
 #include <string.h>
 
@@ -98,4 +99,115 @@ void mk4_script_attack_return(Fighter *fighter) {
 void mk4_script_indexed_sound(Fighter *fighter, int selector) {
   (void)fighter;
   battle_sound(SOUND_INDEXED, selector);
+}
+
+/* Native contracts shared by generated fighter scripts. */
+static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d}; /* 4ebd38 */
+
+static bool script_repeat_jab(const Fighter *fighter);
+
+void mk4_script_ready(Fighter *fighter) {
+  (void)fighter;
+  fighter_fiber_finish(fighter_ready);
+}
+
+void mk4_script_land(Fighter *fighter) {
+  (void)fighter;
+  fighter_fiber_finish(mk4_land);
+}
+
+void mk4_script_thrown_ready(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  if (fighter->health > 0) {
+    fighter_ready(fighter);
+  }
+}
+
+void mk4_script_impact(Fighter *fighter) {
+  battle_scene_impact(fighter);
+}
+
+void mk4_script_impact_callback(Fighter *fighter) {
+  fighter->body.on_land = mk4_script_impact;
+}
+
+void mk4_script_disarm(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  if (victim->armed && victim->disarm != NULL) {
+    victim->disarm(victim);
+  }
+}
+
+void mk4_script_damage(Fighter *fighter, int damage) {
+  battle_damage((Fighter *)fighter_opponent(fighter), damage);
+}
+
+void mk4_script_pair_adjust(Fighter *fighter, int amount) {
+  /* 42ceb0 adjusts group velocity, not controller action. */
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter_set_speed(victim, amount);
+}
+
+void mk4_script_context(Fighter *fighter, int selector) {
+  /* 431520/431700 create a camera task. Our camera already follows both
+   * live actors; paired positions remain the source of its framing. */
+  (void)fighter;
+  require(selector >= 0 && selector < 64, "Unexpected paired camera context");
+}
+
+void mk4_script_roster_sound(Fighter *fighter, int selector) {
+  require(selector == 8, "Unexpected roster sound list");
+  battle_sound(SOUND_THROW_VOICE, roster_def(fighter->roster)->asset);
+}
+
+void mk4_script_draw_voice(Fighter *fighter) {
+  battle_sound(SOUND_DRAW_VOICE, roster_def(fighter->roster)->asset);
+}
+
+void mk4_script_scene_active(Fighter *fighter) {
+  fighter->flags |= FF_UNTOUCHABLE;
+}
+
+void mk4_script_pair_to(Fighter *owner, int sample) {
+  mk4_script_pair_advance(owner, sample - owner->sample_override);
+}
+
+void mk4_script_save_motion(Fighter *fighter) {
+  memcpy(fighter->saved_motion, fighter->body.vel, sizeof fighter->saved_motion);
+  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
+}
+
+void mk4_script_restore_motion(Fighter *fighter) {
+  memcpy(fighter->body.vel, fighter->saved_motion, sizeof fighter->saved_motion);
+}
+
+unsigned mk4_script_jab_gate(Fighter *fighter) {
+  bool stop = !script_repeat_jab(fighter);
+  fighter->buffered &= ~BUTTON_BIT(BUTTON_LOW_PUNCH);
+  return stop ? 4u : 0u;
+}
+
+void mk4_script_jab_contact(Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(fighter);
+  int action = victim->action;
+  if (fighter->connected || action == ACTION_RETAIL_2001 || action == ACTION_RETAIL_0106 || action == ACTION_RETAIL_0107) {
+    return;
+  }
+  if ((action == ACTION_RETAIL_010C && fighter_sample(victim) < 5) || (action == ACTION_RETAIL_0102 && victim->avoids_high)) {
+    return;
+  }
+  battle_contact(fighter, &jab_record);
+}
+
+void mk4_script_stop_body(Fighter *fighter) {
+  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
+  fighter->body.gravity = 0;
+  fighter->body.physics = NULL;
+  fighter->body.on_land = NULL;
+}
+
+static bool script_repeat_jab(const Fighter *fighter) {
+  const Fighter *other = fighter_opponent(fighter);
+  q16 dx = other->body.pos[AXIS_X] - fighter->body.pos[AXIS_X];
+  return (fighter->buffered & BUTTON_BIT(BUTTON_LOW_PUNCH)) != 0 && (fighter->facing > 0 ? dx >= 0 : dx <= 0);
 }

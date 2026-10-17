@@ -84,6 +84,7 @@ SCRIPT_OPS = {
     0x3f: ('return to fighter controller', 0),
     0x40: ('spawn cooperative task', 2),
     0x41: ('native helper', 0),
+    0x42: ('branch if contact result bit 0 set', 1),
     0x44: ('branch if down held', 1),
     0x45: ('conditional script branch', 1),
     # -1: handler calls 0x45bf80; a descriptor follows ONLY if byte 1 is 2.
@@ -170,7 +171,7 @@ def script_program(image, entry, character=0):
             if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49, 0x4e) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
-                if op in (0x01, 0x0c, 0x0f):
+                if op in (0x01, 0x0c, 0x0f, 0x11):
                     row['start_sample'] = word & 255
                 row['clip_owner'] = 'victim' if op == 0x0e else 'self'
             if op in (0x32, 0x35, 0x36, 0x38, 0x55):
@@ -200,7 +201,7 @@ def script_program(image, entry, character=0):
             if op == 0x37:
                 row['wait_if_clear'] = word & 0xfff
                 row['wait_if_set'] = (word >> 12) & 0xfff
-            if op in (0x2f, 0x44, 0x45):
+            if op in (0x2f, 0x42, 0x44, 0x45):
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
             if op in (0x36, 0x55):

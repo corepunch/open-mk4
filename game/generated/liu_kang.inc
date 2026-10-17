@@ -4,7 +4,6 @@
 
 static void bicycle_script(Fighter *);
 static void flying_kick_script(Fighter *);
-static void liu_kang_jab_contact(Fighter *);
 static void liu_script_air_diagonal_tail(Fighter *);
 static void liu_script_air_hp_tail(Fighter *);
 static void liu_script_air_kick_tail(Fighter *);
@@ -16,12 +15,8 @@ static void liu_script_bicycle_getup(Fighter *);
 static void liu_script_bicycle_motion(Fighter *);
 static void liu_script_close_hp_tail(Fighter *);
 static void liu_script_combo_hp_tail(Fighter *);
-static void liu_script_context(Fighter *, int);
 static void liu_script_crouch_lk_tail(Fighter *);
-static void liu_script_damage(Fighter *, int);
-static void liu_script_disarm(Fighter *);
 static void liu_script_draw_equip(Fighter *);
-static void liu_script_draw_voice(Fighter *);
 static void liu_script_fan_cycle(Fighter *);
 static void liu_script_fan_tail(Fighter *);
 static void liu_script_fan_victim_end(Fighter *);
@@ -29,27 +24,16 @@ static void liu_script_fan_victory(Fighter *);
 static void liu_script_fatal_align(Fighter *);
 static void liu_script_fatal_setup(Fighter *);
 static void liu_script_fatal_spawn(Fighter *, int);
-static void liu_script_impact(Fighter *);
-static void liu_script_impact_callback(Fighter *);
-static unsigned liu_script_jab_gate(Fighter *);
 static void liu_script_kick_tail(Fighter *);
 static void liu_script_knee_tail(Fighter *);
-static void liu_script_land(Fighter *);
 static void liu_script_lk_continue(Fighter *);
 static void liu_script_lk_damage(Fighter *);
 static void liu_script_lk_thrown_tail(Fighter *);
 static void liu_script_lp_getup(Fighter *);
 static void liu_script_motion(Fighter *, int, int, int);
-static void liu_script_pair_adjust(Fighter *, int);
-static void liu_script_pair_to(Fighter *, int);
 static void liu_script_reaction(Fighter *, int);
-static void liu_script_ready(Fighter *);
-static void liu_script_restore_motion(Fighter *);
-static void liu_script_roster_sound(Fighter *, int);
 static void liu_script_roundhouse_start(Fighter *);
 static void liu_script_roundhouse_tail(Fighter *);
-static void liu_script_save_motion(Fighter *);
-static void liu_script_scene_active(Fighter *);
 static void liu_script_scene_event(Fighter *, int);
 static void liu_script_spawn_air(Fighter *, int);
 static void liu_script_spawn_high(Fighter *, int);
@@ -63,7 +47,6 @@ static const AttackRecord retail_contact_4eb858 = {92405, -28835, 70778, 11796, 
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebc90 = {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
-static void thrown_ready(Fighter *);
 
 static inline void retail_script_004de3b0(Fighter *fighter) {
   unsigned result_flags = 0;
@@ -98,7 +81,7 @@ static inline void retail_script_004de410(Fighter *fighter) {
   goto L_004de410;
 L_004de410: {
   /* EXE 004de410: 0x4f000001 */
-  liu_script_context(fighter, 1);
+  mk4_script_context(fighter, 1);
   goto L_004de414;
 }
 L_004de414: {
@@ -125,7 +108,7 @@ static inline void retail_script_004de428(Fighter *fighter) {
   goto L_004de428;
 L_004de428: {
   /* EXE 004de428: 0x6e000000 */
-  liu_script_disarm(fighter);
+  mk4_script_disarm(fighter);
   goto L_004de42c;
 }
 L_004de42c: {
@@ -135,7 +118,7 @@ L_004de42c: {
 }
 L_004de430: {
   /* EXE 004de430: 0x6b000008 */
-  liu_script_roster_sound(fighter, 8);
+  mk4_script_roster_sound(fighter, 8);
   goto L_004de434;
 }
 L_004de434: {
@@ -277,7 +260,7 @@ static inline void retail_script_004de798(Fighter *fighter) {
   goto L_004de798;
 L_004de678: {
   /* EXE 004de678: 0x4f000024 */
-  liu_script_context(fighter, 36);
+  mk4_script_context(fighter, 36);
   goto L_004de67c;
 }
 L_004de67c: {
@@ -292,7 +275,7 @@ L_004de684: {
 }
 L_004de68c: {
   /* EXE 004de68c: 0x4b00002d */
-  liu_script_pair_to(fighter, 45);
+  mk4_script_pair_to(fighter, 45);
   goto L_004de690;
 }
 L_004de690: {
@@ -302,12 +285,12 @@ L_004de690: {
 }
 L_004de694: {
   /* EXE 004de694: 0x6d000000 0xccc */
-  liu_script_pair_adjust(fighter, 3276);
+  mk4_script_pair_adjust(fighter, 3276);
   goto L_004de69c;
 }
 L_004de69c: {
   /* EXE 004de69c: 0x63000000 0x2666 */
-  liu_script_damage(fighter, 9830);
+  mk4_script_damage(fighter, 9830);
   goto L_004de6a4;
 }
 L_004de6a4: {
@@ -317,7 +300,7 @@ L_004de6a4: {
 }
 L_004de6a8: {
   /* EXE 004de6a8: 0x32000000 0x470420 */
-  liu_script_ready(fighter);
+  mk4_script_ready(fighter);
   return;
 }
 L_004de798: {
@@ -403,7 +386,7 @@ L_004e003c: {
 }
 L_004e0040: {
   /* EXE 004e0040: 0x16000000 */
-  liu_script_scene_active(fighter);
+  mk4_script_scene_active(fighter);
   goto L_004e0044;
 }
 L_004e0044: {
@@ -889,7 +872,7 @@ static inline void retail_script_004e62c0(Fighter *fighter) {
   goto L_004e62c0;
 L_004e62c0: {
   /* EXE 004e62c0: 0x2c000000 */
-  liu_script_draw_voice(fighter);
+  mk4_script_draw_voice(fighter);
   goto L_004e62c4;
 }
 L_004e62c4: {
@@ -927,7 +910,7 @@ L_004e62e0: {
 }
 L_004e62e4: {
   /* EXE 004e62e4: 0x32000000 0x470420 */
-  liu_script_ready(fighter);
+  mk4_script_ready(fighter);
   return;
 }
 }
@@ -938,7 +921,7 @@ static inline void retail_script_004e62f0(Fighter *fighter) {
   goto L_004e62f0;
 L_004e62f0: {
   /* EXE 004e62f0: 0x35000000 0x46de60 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   goto L_004e62f8;
 }
 L_004e62f8: {
@@ -954,7 +937,7 @@ L_004e62fc: {
 }
 L_004e6304: {
   /* EXE 004e6304: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e630c;
 }
 L_004e630c: {
@@ -964,7 +947,7 @@ L_004e630c: {
 }
 L_004e6310: {
   /* EXE 004e6310: 0x36000000 0x46de60 0x1398e8 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63a0;
   }
@@ -996,12 +979,12 @@ L_004e6334: {
 }
 L_004e6338: {
   /* EXE 004e6338: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e6340;
 }
 L_004e6340: {
   /* EXE 004e6340: 0x36000000 0x46de60 0x1398f2 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63c8;
   }
@@ -1028,12 +1011,12 @@ L_004e6360: {
 }
 L_004e6364: {
   /* EXE 004e6364: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e636c;
 }
 L_004e636c: {
   /* EXE 004e636c: 0x36000000 0x46de60 0x1398e8 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63a0;
   }
@@ -1052,12 +1035,12 @@ L_004e637c: {
 }
 L_004e6384: {
   /* EXE 004e6384: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e638c;
 }
 L_004e638c: {
   /* EXE 004e638c: 0x36000000 0x46de60 0x1398f2 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63c8;
   }
@@ -1130,12 +1113,12 @@ L_004e6334: {
 }
 L_004e6338: {
   /* EXE 004e6338: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e6340;
 }
 L_004e6340: {
   /* EXE 004e6340: 0x36000000 0x46de60 0x1398f2 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63c8;
   }
@@ -1162,12 +1145,12 @@ L_004e6360: {
 }
 L_004e6364: {
   /* EXE 004e6364: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e636c;
 }
 L_004e636c: {
   /* EXE 004e636c: 0x36000000 0x46de60 0x1398e8 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63a0;
   }
@@ -1186,12 +1169,12 @@ L_004e637c: {
 }
 L_004e6384: {
   /* EXE 004e6384: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e638c;
 }
 L_004e638c: {
   /* EXE 004e638c: 0x36000000 0x46de60 0x1398f2 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63c8;
   }
@@ -1273,12 +1256,12 @@ L_004e6360: {
 }
 L_004e6364: {
   /* EXE 004e6364: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e636c;
 }
 L_004e636c: {
   /* EXE 004e636c: 0x36000000 0x46de60 0x1398e8 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63a0;
   }
@@ -1297,12 +1280,12 @@ L_004e637c: {
 }
 L_004e6384: {
   /* EXE 004e6384: 0x35000000 0x46ddd0 */
-  liu_kang_jab_contact(fighter);
+  mk4_script_jab_contact(fighter);
   goto L_004e638c;
 }
 L_004e638c: {
   /* EXE 004e638c: 0x36000000 0x46de60 0x1398f2 */
-  result_flags = liu_script_jab_gate(fighter);
+  result_flags = mk4_script_jab_gate(fighter);
   if (result_flags & 4u) {
     goto L_004e63c8;
   }
@@ -1934,7 +1917,7 @@ L_004e8610: {
 }
 L_004e8620: {
   /* EXE 004e8620: 0x35000000 0x48f6e0 */
-  liu_script_save_motion(fighter);
+  mk4_script_save_motion(fighter);
   goto L_004e8628;
 }
 L_004e8628: {
@@ -1955,7 +1938,7 @@ L_004e8638: {
 }
 L_004e863c: {
   /* EXE 004e863c: 0x35000000 0x48f750 */
-  liu_script_restore_motion(fighter);
+  mk4_script_restore_motion(fighter);
   goto L_004e8644;
 }
 L_004e8644: {
@@ -2017,7 +2000,7 @@ L_004e869c: {
 }
 L_004e86a0: {
   /* EXE 004e86a0: 0x32000000 0x47ed40 */
-  liu_script_land(fighter);
+  mk4_script_land(fighter);
   return;
 }
 }
@@ -2161,7 +2144,7 @@ L_004e8730: {
 }
 L_004e8734: {
   /* EXE 004e8734: 0x32000000 0x47ef10 */
-  liu_script_land(fighter);
+  mk4_script_land(fighter);
   return;
 }
 }
@@ -2230,7 +2213,7 @@ L_004e9ad8: {
 L_004e9ae0: {
   /* EXE 004e9ae0: 0x3f000000 */
   fighter_wait_ticks(1);
-  fighter_fiber_finish(thrown_ready);
+  fighter_fiber_finish(mk4_script_thrown_ready);
 }
 }
 
@@ -2247,7 +2230,7 @@ L_004e9ae8: {
 }
 L_004e9af8: {
   /* EXE 004e9af8: 0x22000000 */
-  liu_script_impact_callback(fighter);
+  mk4_script_impact_callback(fighter);
   goto L_004e9afc;
 }
 L_004e9afc: {
@@ -2292,7 +2275,7 @@ L_004e9b68: {
 }
 L_004e9b70: {
   /* EXE 004e9b70: 0x28000000 */
-  liu_script_impact(fighter);
+  mk4_script_impact(fighter);
   goto L_004e9b74;
 }
 L_004e9b74: {
