@@ -32,6 +32,11 @@ static float mesh_sole(const Character *ch, const Clip *clip, double frame) {
 }
 
 static void combat_poses(const Assets *assets) {
+  const Character *dragon = &assets->liu_dragon;
+  check(dragon->bones.count == 10 && dragon->idle == 418 && assets->clips.data[418].frames.data[0].angles.count == 10,
+      "Dragon scene must bind its complete original rig and animation channels");
+  Pose dragon_pose[MK4_MAX_BONES];
+  pose(dragon, &assets->clips.data[418], 160, dragon_pose);
   const Character *spine = &assets->scene_models.data[SCENE_MODEL_SPINE];
   check(spine->bones.count == 5 && spine->bones.data[0].mesh == 36 && spine->bones.data[4].channel == 5,
       "Spine accessory must use its recovered five meshes and reserve the first animation channel for the head");

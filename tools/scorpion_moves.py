@@ -98,6 +98,7 @@ SCRIPT_OPS = {
     0x51: ('contact query B with inline selector', 0),
     0x52: ('contact query A with inline selector', 0),
     0x55: ('native predicate and conditional script branch', 2),
+    0x56: ('dispatch scene event with inline selector', 0),
     0x58: ('motion operands', 3),
     0x59: ('native motion parameter block', 4),
     0x5a: ('set horizontal speed to negated Q16 operand', 1),
@@ -124,7 +125,7 @@ SCRIPT_OPS = {
 # 0x5a instead calls word-fetch 0x45bff0 once, negates it, then calls 0x490390.
 # The transitive effects of 0x26/0x2a/0x62 remain native research dependencies.
 INLINE_NATIVE_OPS = {
-    0x2e: 0x490140, 0x6e: 0x483ae0,
+    0x56: 0x4315b0, 0x2e: 0x490140, 0x6e: 0x483ae0,
     0x26: 0x48a100, 0x2a: 0x457b50, 0x51: 0x48d3f0,
     0x52: 0x48d3d0, 0x5e: 0x48d430, 0x61: 0x490330, 0x62: 0x40a470,
 }

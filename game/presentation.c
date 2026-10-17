@@ -268,6 +268,10 @@ static ScenePiece *detach(Fighter *victim, int joint, const q16 velocity[3], con
   return NULL;
 }
 
+ScenePiece *battle_detach_piece(Fighter *victim, int joint, const q16 velocity[3], const q16 spin[3]) {
+  return detach(victim, joint, velocity, spin);
+}
+
 ScenePiece *battle_attach_head(Fighter *victim, Fighter *owner, int joint) {
   ScenePiece *head = detach(victim, 2, (q16[3]){0}, (q16[3]){0});
   if (head != NULL) {

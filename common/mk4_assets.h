@@ -121,6 +121,7 @@ typedef struct Assets {
   Characters characters;
   Characters cut_characters; /* closed-surface rigs; share normal meshes/textures when the file matches */
   Characters scene_models;   /* shared immutable geometry; independently owned accessory rigs */
+  Character liu_dragon;      /* fatality I creature, separate from the roster */
   Character scorpion_beast;  /* fatality II model, separate from the roster */
   Clips clips;
   Arenas arenas;

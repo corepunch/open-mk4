@@ -1353,11 +1353,290 @@ static void liu_kang_sidestep(Fighter *fighter) {
   fighter_start_fiber(fighter, sidestep_script, NULL);
 }
 
+/* First scene: 4e0498[3] -> 450930. Second: 4dfe90[3] ->
+ * 43c3d0/4dfff8/4e0020, victim reactions 176/177. */
+#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveDef fatal_moves[] = {
+  FATAL_MOVE(13, 55), FATAL_MOVE(119, 59), FATAL_MOVE(418, 518), FATAL_MOVE(419, 288),
+  FATAL_MOVE(537, 59), FATAL_MOVE(538, 16), FATAL_MOVE(539, 37),
+  FATAL_MOVE(415, 129), FATAL_MOVE(416, 107), FATAL_MOVE(412, 48), FATAL_MOVE(293, 19), FATAL_MOVE(128, 109),
+};
+// clang-format on
+#undef FATAL_MOVE
+
+typedef struct FatalPhase {
+  int clip, first, last, repeats;
+} FatalPhase;
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const FatalPhase fan_owner[] = {{415, 0, 68, 1}, {415, 69, 77, 31}, {415, 78, 129, 1}, {412, 0, 48, 1}};
+static const FatalPhase fan_victim[] = {{416, 0, 68, 1}, {416, 69, 77, 31}, {416, 78, 107, 1}};
+#define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
+static const SceneClip dragon_actor[] = {SCENE(418, 0, 159), SCENE(418, 160, 518), SCENE(418, 446, 518)};
+static const SceneClip dragon_target[] = {
+  {{.clip = 389, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 419, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
+  SCENE(419, 0, 288),
+};
+#undef SCENE
+// clang-format on
+
+static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
+  if (fighter_move(fighter)->clip != clip) {
+    for (int i = 0; i < COUNT(fatal_moves); ++i) {
+      if (fatal_moves[i].clip == clip) {
+        if (owner && fighter_fiber_running(fighter)) {
+          fighter_fiber_move(fighter, S_VICTORY, &fatal_moves[i]);
+        } else {
+          fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
+        }
+        break;
+      }
+    }
+  }
+  fighter->sample_override = sample;
+  fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
+}
+
+static bool fatal_phases(Fighter *fighter, int tick, const FatalPhase *phases, int count, bool owner) {
+  for (int i = 0; i < count; ++i) {
+    const FatalPhase *p = &phases[i];
+    int length = abs(p->last - p->first) + 1;
+    if (tick < length * p->repeats || i == count - 1) {
+      bool done = tick >= length * p->repeats;
+      int sample = done ? p->last : p->first + (p->last >= p->first ? 1 : -1) * (tick % length);
+      fatal_pose(fighter, p->clip, sample, owner);
+      return done;
+    }
+    tick -= length * p->repeats;
+  }
+  return true;
+}
+
+static bool can_close_fatality(const Fighter *fighter) {
+  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
+}
+
+static bool can_first_fatality(const Fighter *fighter) {
+  /* 45e410 / 4e4158: word A requires BLK+HK, word B requires LK;
+   * reject Up/HP/LP/RUN. Directions other than Up are outside the mask. */
+  unsigned chord = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_KICK);
+  unsigned mask = chord | BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_RUN);
+  float distance = fighter_distance(fighter);
+  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f && (fighter->held & mask) == chord;
+}
+
+static bool can_fan_fatality(const Fighter *fighter) {
+  return g_battle.arena == 8 && can_close_fatality(fighter);
+}
+
+static bool can_spike_fatality(const Fighter *fighter) {
+  return g_battle.arena == 0 && can_close_fatality(fighter);
+}
+
+static void finish_scene(Fighter *fighter) {
+  (void)fighter;
+  battle_end_finisher();
+}
+
+static void dragon_fatality_script(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  bool actor_started = false;
+  for (;;) {
+    fighter_wait_ticks(1);
+    int tick = g_battle.phase_ticks;
+    if (tick == 101) { /* 450930 setup 16, then 85, then spawn. */
+      fighter->appearance = APPEARANCE_DRAGON;
+      fighter->body.pos[AXIS_Y] = -0x12c49; /* Object group Y from 450a07. */
+      fatal_pose(fighter, 418, 0, true);
+      battle_sound(SOUND_B, 36);
+      /* Portable wide framing keeps the complete native creature visible.
+       * Retail 452000 uses several independently scheduled zoom/focus tasks. */
+      float x = q16_float(fighter->heading[0]), z = q16_float(fighter->heading[1]);
+      Vec3 center = {fighter_x(fighter) + x, -2.7f, fighter_z(fighter) + z};
+      g_battle.camera = (SceneCamera){.active = true, .focal_scale = 0x9999, .eye = {center.x - z * 7.5f, -2.9f, center.z + x * 7.5f}, .target = center};
+    }
+    if (tick == 121) {
+      battle_sound(SOUND_B, 46);
+      scene_begin(fighter, dragon_actor, COUNT(dragon_actor), 2);
+      actor_started = true;
+    } else if (actor_started) {
+      scene_step(fighter);
+    }
+    if (tick == 269) {
+      scene_begin(victim, dragon_target, COUNT(dragon_target), -1);
+    } else if (victim->scene.clips != NULL) {
+      scene_step(victim);
+    }
+    /* 451300: wait 4, then 23 four-visit and 26 six-visit blood
+     * phases, wait 8, remove victim joints 5/6. Bounded scene pools
+     * replace native per-joint task allocation. */
+    int tear = tick - 285;
+    if ((tear >= 0 && tear < 92 && tear % 4 == 0) || (tear >= 92 && tear < 248 && (tear - 92) % 6 == 0)) {
+      battle_particles(victim, 3, 3, false);
+    }
+    if (tick == 281) {
+      battle_sound(SOUND_B, 37);
+    }
+    if (tick == 418) {
+      battle_sound(SOUND_B, 65); /* 450ce0's 137-tick delayed cue. */
+    }
+    if (tick == 541) {
+      battle_detach_piece(victim, 5, (q16[3]){0}, (q16[3]){0});
+      battle_detach_piece(victim, 6, (q16[3]){0}, (q16[3]){0});
+    }
+    if (victim->scene.done && fighter->scene.index >= 2) {
+      fighter_fiber_finish(finish_scene);
+    }
+  }
+}
+
+static void fatal_fireball_object(Projectile *p) {
+  if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != FINISH_LIU_KANG_2) {
+    p->kind = 0;
+    return;
+  }
+  Fighter *victim = opponent(&g_battle.fighters[p->owner]);
+  for (int axis = 0; axis < 3; ++axis) {
+    p->pos[axis] += p->vel[axis];
+  }
+  q16 dx = victim->body.pos[AXIS_X] - p->pos[AXIS_X];
+  q16 dz = victim->body.pos[AXIS_Z] - p->pos[AXIS_Z];
+  if ((int64_t)dx * dx + (int64_t)dz * dz <= (int64_t)0x28000 * 0x28000 || p->ticks >= 47) {
+    p->kind = 0;
+    victim->script_phase = 2;
+    victim->reaction = 177;
+    battle_shatter(victim); /* Generic flesh pieces: victim is not frozen. */
+    battle_particles(victim, 3, 20, false);
+  }
+}
+
+static void fireball_fatality_script(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  /* 4dfff8: scene events 42/43/44 with waits 15/20/60. */
+  fighter_wait_ticks(15);
+  fighter_wait_ticks(20);
+  fighter_wait_ticks(60);
+  battle_sound(SOUND_B, 10);
+  fatal_pose(fighter, 537, 0, true);
+  fatal_pose(victim, 539, 0, false);
+  for (int sample = 1; sample <= 37; ++sample) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = victim->sample_override = sample;
+  }
+  victim->reaction = 176;
+  victim->facing = -victim->facing;
+  fighter_fiber_play_to(fighter, 59, 1);
+  fighter_wait_ticks(18);
+  battle_sound(SOUND_A, 33);
+  battle_sound(SOUND_INDEXED, 57);
+  fatal_pose(fighter, 538, 0, true);
+  fighter_fiber_play_to(fighter, 16, 1);
+  fighter_wait_ticks(1);
+  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_FATAL_FIREBALL, 48, fatal_fireball_object);
+  if (p != NULL) {
+    p->mesh_animation = &fireball_mesh;
+    p->initial_mesh = 50;
+    p->pos[AXIS_Y] -= 0x7333;
+    for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+      p->pos[axis] += q16_mul(fighter_axis(fighter, axis), 0x1999);
+      p->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
+    }
+  } else {
+    /* Scene must settle even when the bounded object pool is exhausted. */
+    victim->script_phase = 2;
+    victim->reaction = 177;
+    battle_shatter(victim);
+  }
+  fighter_fiber_play_to(fighter, 0, -1);
+  while (victim->script_phase != 2) {
+    fighter_wait_ticks(1);
+  }
+  fighter_wait_ticks(160); /* 4891c0 -> 489110: independent explosion tail. */
+  fighter_fiber_finish(finish_scene);
+}
+
+static void stage_fatality_script(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  for (;;) {
+    fighter_wait_ticks(1);
+    int tick = g_battle.phase_ticks;
+    bool owner_done = false, victim_done = false;
+    if (g_battle.finisher == FINISH_FAN) {
+      owner_done = fatal_phases(fighter, tick, fan_owner, COUNT(fan_owner), true);
+      victim_done = fatal_phases(victim, tick, fan_victim, COUNT(fan_victim), false);
+      if (tick >= 348) {
+        victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
+      }
+      if (victim_done) {
+        victim->appearance = APPEARANCE_HIDDEN;
+      }
+    } else {
+      int attack = tick - 58;
+      if (attack >= 0) {
+        fatal_pose(fighter, 293, mini(19, attack), true);
+      }
+      if (tick >= 64) {
+        int rise = mini(22, tick - 64);
+        fatal_pose(victim, 128, mini(31, rise * 2), false);
+        victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+      }
+      if (tick >= 324) {
+        fatal_pose(fighter, 119, 0, true);
+        owner_done = victim_done = true;
+      }
+    }
+    if (owner_done && victim_done) {
+      fighter_fiber_finish(finish_scene);
+    }
+  }
+}
+
+static void start_fatality(Fighter *fighter, int id) {
+  if (!battle_begin_finisher(fighter, id)) {
+    return;
+  }
+  Fighter *victim = opponent(fighter);
+  fatal_pose(victim, 13, 0, false);
+  fatal_pose(fighter, id == FINISH_LIU_KANG_2 ? 119 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 119, 0, true);
+  if (id == FINISH_LIU_KANG_1) {
+    for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+      victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x20ccc);
+    }
+  }
+  fighter_start_fiber(fighter,
+      id == FINISH_LIU_KANG_1   ? dragon_fatality_script
+      : id == FINISH_LIU_KANG_2 ? fireball_fatality_script
+                                : stage_fatality_script,
+      NULL);
+}
+
+static void liu_kang_first_fatality(Fighter *fighter) {
+  start_fatality(fighter, FINISH_LIU_KANG_1);
+}
+
+static void liu_kang_second_fatality(Fighter *fighter) {
+  start_fatality(fighter, FINISH_LIU_KANG_2);
+}
+
+static void liu_kang_fan_fatality(Fighter *fighter) {
+  start_fatality(fighter, FINISH_FAN);
+}
+
+static void liu_kang_spike_fatality(Fighter *fighter) {
+  start_fatality(fighter, FINISH_SPIKE);
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, CMD_AIR, NULL, liu_kang_high_fireball},
+  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0, can_close_fatality, liu_kang_second_fatality},
   {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_low_fireball},
+  {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0, can_fan_fatality, liu_kang_fan_fatality},
+  {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, can_first_fatality, liu_kang_first_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_flying_kick},
+  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0, can_spike_fatality, liu_kang_spike_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0, can_weapon, liu_kang_weapon},
   {BUTTON_RUN, {0}, 0, 0, 0, can_sidestep, liu_kang_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, liu_kang_pickup},

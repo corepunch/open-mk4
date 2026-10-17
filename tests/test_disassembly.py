@@ -20,6 +20,14 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_liu_finisher_scene_events_do_not_consume_waits(self):
+        rows = script_program(self.image, 0x4dfff8, 3)['instructions']
+        events = [row for row in rows if row['opcode'] == '0x56']
+        self.assertEqual([row['inline'] for row in events], [42, 43, 44])
+        self.assertTrue(all(row['handler'] == '0x45ac30' and row['native_target'] == '0x4315b0' and not row['operands'] for row in events))
+        self.assertEqual([row['inline'] for row in rows if row['opcode'] == '0x34'], [15, 20, 60])
+        self.assertEqual(rows[-1]['native_target'], '0x43c500')
+
     def test_liu_weapon_scheduled_motion_operand(self):
         from retail_script_c import script_c_text
         rows = script_program(self.image, 0x4ec680, 3)['instructions']

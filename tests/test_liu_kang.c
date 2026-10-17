@@ -292,11 +292,98 @@ static void weapons(void) {
   }
 }
 
+static void finish_setup(int player, q16 distance, int arena) {
+  fight(player, 3.f);
+  g_battle.arena = arena;
+  g_battle.fighters[player].wins = 1;
+  battle_damage(&g_battle.fighters[1 - player], Q16_ONE);
+  advance(1);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance(1);
+  }
+  check(battle_can_finish(&g_battle.fighters[player]), "deciding KO opens real finish controller");
+  g_battle.fighters[0].body.pos[AXIS_X] = -distance / 2;
+  g_battle.fighters[1].body.pos[AXIS_X] = distance - distance / 2;
+}
+
+static void finish_command(int player, int id, unsigned extra, int window) {
+  Button forward = player ? BUTTON_LEFT : BUTTON_RIGHT;
+  Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
+  Button tokens[4] = {forward, forward, forward, BUTTON_DOWN};
+  Button attack = BUTTON_BLOCK;
+  int count = 4;
+  q16 distance = g_battle.fighters[1].body.pos[AXIS_X] - g_battle.fighters[0].body.pos[AXIS_X];
+  if (id == FINISH_LIU_KANG_2) {
+    tokens[1] = tokens[2] = BUTTON_DOWN;
+    tokens[3] = BUTTON_UP;
+    attack = BUTTON_HIGH_PUNCH;
+  } else if (id == FINISH_FAN || id == FINISH_SPIKE) {
+    tokens[2] = back;
+    count = 3;
+    attack = id == FINISH_FAN ? BUTTON_LOW_PUNCH : BUTTON_HIGH_KICK;
+  }
+  for (int i = 0; i < count; ++i) {
+    press(player, BUTTON_BIT(tokens[i]) | (tokens[i] == BUTTON_UP ? BUTTON_BIT(BUTTON_BLOCK) : 0));
+    advance(2);
+  }
+  if (window > count * 4) {
+    advance(window - count * 4);
+  }
+  g_battle.fighters[0].body.pos[AXIS_X] = -distance / 2;
+  g_battle.fighters[1].body.pos[AXIS_X] = distance - distance / 2;
+  press(player, BUTTON_BIT(attack) | extra);
+}
+
+static void fatalities(void) {
+  const int ids[] = {FINISH_LIU_KANG_1, FINISH_LIU_KANG_2, FINISH_FAN, FINISH_SPIKE};
+  unsigned chord = BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_KICK);
+  for (int player = 0; player < 2; ++player) {
+    for (int kind = 0; kind < 4; ++kind) {
+      int id = ids[kind];
+      finish_setup(player, kind == 0 ? 0x26666 : 0xcccc, id == FINISH_FAN ? 8 : 0);
+      finish_command(player, id, kind == 0 ? chord : 0, kind == 0 ? 60 : kind == 1 ? 50 : 40);
+      check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == id, "inclusive finisher command chooses correct scene");
+      if (kind == 0) {
+        advance(130);
+        check(g_battle.fighters[player].appearance == APPEARANCE_DRAGON && fighter_move(&g_battle.fighters[player])->clip == 418,
+            "first fatality uses original dragon model and clip");
+        advance(160);
+        check(fighter_move(&g_battle.fighters[1 - player])->clip == 419, "dragon victim owns independent clip");
+      } else if (kind == 1) {
+        advance(100);
+        check(fighter_move(&g_battle.fighters[player])->clip == 537 && fighter_move(&g_battle.fighters[1 - player])->clip == 539,
+            "second fatality paired opening");
+        advance(120);
+        check(g_battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN && g_battle.fighters[1 - player].reaction == 177,
+            "finisher projectile commits victim explosion");
+      }
+      advance(800);
+      check(g_battle.phase == PHASE_MATCH_OVER && !fighter_fiber_active(&g_battle.fighters[player]), "finisher completes and retires actor stack");
+      check(g_battle.fighters[player].wins == 2, "finisher must not award an extra win");
+      battle_reset_match();
+      check(g_battle.finisher == 0 && g_battle.fighters[player].appearance == APPEARANCE_NORMAL, "rematch clears finisher appearance and ownership");
+      finish_setup(player, kind == 0 ? 0x26666 : 0xcccc, id == FINISH_FAN ? 8 : 0);
+      finish_command(player, id, kind == 0 ? chord : 0, kind == 0 ? 61 : kind == 1 ? 51 : 41);
+      check(g_battle.phase == PHASE_FINISH, "finisher rejects expired direction window");
+    }
+    finish_setup(player, 0x26666, 0);
+    finish_command(player, FINISH_LIU_KANG_1, 0, 0);
+    check(g_battle.phase == PHASE_FINISH, "first fatality requires HK+LK with BLOCK");
+    finish_setup(player, 0xcccc, 0);
+    finish_command(player, FINISH_LIU_KANG_1, chord, 0);
+    check(g_battle.phase == PHASE_FINISH, "dragon fatality rejects close range");
+    finish_setup(player, 0xcccc, 1);
+    finish_command(player, FINISH_FAN, 0, 0);
+    check(g_battle.phase == PHASE_FINISH, "fan requires its retail stage");
+  }
+}
+
 int main(void) {
   normals();
   throws();
   specials();
   weapons();
+  fatalities();
   puts("Liu Kang tests passed");
   return 0;
 }

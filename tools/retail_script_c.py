@@ -138,7 +138,7 @@ def instruction_c(row):
         return ['schedule_horizontal_motion(%d, %d, %d);' % (inline & 0xfff, (inline >> 12) & 0xfff, signed_word(words[0]))]
     if op == 0x63:
         return ['health_subtract_q16(%d);' % signed_word(words[0])]
-    if op in (0x2e, 0x26, 0x2a, 0x61, 0x62, 0x6e):
+    if op in (0x2e, 0x26, 0x2a, 0x56, 0x61, 0x62, 0x6e):
         return ['%s(%s);' % (target, str(arg) if op != 0x61 else '')]
     # All fixed operands remain visible, including optional clip prefixes.
     # The handler address identifies the exact semantics still to adapt.

@@ -36,6 +36,8 @@ def moves_for(character):
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),)))
     if character == 3:
         shared.update(
+            fatality_1=move(0x467ce0, native=(('Liu Kang dragon scene', 0x450930), ('victim', 0x451190), ('blood/cuts', 0x451300))),
+            fatality_2=move(0x467cd0, (('setup events', 0x4dfff8), ('paired opening/projectile', 0x4e0020)), native=(('Liu Kang scene', 0x43c3d0), ('fireball object', 0x43c540), ('victim hold', 0x481360), ('victim explosion', 0x481420))),
             sidestep=move(0x469250, native=(('direction/playback', 0x4692e0),)),
             draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('return', 0x4e62d8)), native=(('follow-up draw', 0x494610), ('Liu Kang weapon', 0x4964d0))),
             sword_hp=move(0x4963e0, (('repeat program', 0x4ec680),), (('weapon', 15),)),
@@ -57,6 +59,7 @@ def moves_for(character):
             close_hp=SCORPION['close_hp'], combo_hp=SCORPION['combo_hp'], close_hk=SCORPION['close_hk'],
             crouch_lp=SCORPION['crouch_lp'], crouch_lk=SCORPION['crouch_lk'], crouch_hk=SCORPION['crouch_hk'],
         )
+        shared.pop('air_throw')  # No Liu Kang BLOCK air-throw command record.
         return shared
     if character != 4:
         return shared

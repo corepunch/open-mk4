@@ -332,7 +332,9 @@ enum {
   FINISH_FAN,
   FINISH_SPIKE,
   FINISH_SUB_ZERO_1,
-  FINISH_SUB_ZERO_2
+  FINISH_SUB_ZERO_2,
+  FINISH_LIU_KANG_1,
+  FINISH_LIU_KANG_2
 };
 
 enum {
@@ -340,7 +342,8 @@ enum {
   APPEARANCE_BEAST,
   APPEARANCE_BURNED,
   APPEARANCE_HIDDEN,
-  APPEARANCE_FROZEN
+  APPEARANCE_FROZEN,
+  APPEARANCE_DRAGON
 };
 
 typedef enum Phase {
@@ -472,7 +475,8 @@ enum {
   PROJECTILE_SWORD = 2,
   PROJECTILE_ICE = 3,
   PROJECTILE_CLONE = 4,
-  PROJECTILE_FIREBALL = 5
+  PROJECTILE_FIREBALL = 5,
+  PROJECTILE_FATAL_FIREBALL = 6
 };
 
 typedef struct OrbitLightDef {
@@ -576,6 +580,7 @@ typedef struct CameraShot {
 
 typedef struct SceneCamera {
   bool active;
+  q16 focal_scale; /* zero keeps the standard focal length */
   Vec3 eye, target, from_target, to_target;
   int ticks, duration;
   const CameraShot *shots;
@@ -722,6 +727,7 @@ void battle_spray(const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 s
 void battle_joint_spray(const Fighter *fighter, const JointSprayDef *def);
 ScenePiece *battle_attach_head(Fighter *victim, Fighter *owner, int joint);
 void battle_attach_piece_model(ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);
+ScenePiece *battle_detach_piece(Fighter *victim, int joint, const q16 velocity[3], const q16 spin[3]);
 void battle_shatter(Fighter *victim);
 void battle_step_presentation(void);
 void battle_sound(int bank, int selector);

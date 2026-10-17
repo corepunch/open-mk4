@@ -272,3 +272,8 @@ inline low/high 12-bit delay/duration through `45c020`, consumes one signed
 Q16 speed word through `45bff0`, and installs body callback `494860`. It
 does not wait in the script; pose playback and scheduled travel overlap.
 The decoder now follows `4ec680` through its HP continuation branches.
+
+Opcode `56` (`45ac30`) masks its inline low byte and invokes scene-event
+request `4315b0`, then resumes dispatch. It consumes no following word.
+This reaches Liu Kang's `4dfff8` setup events without treating them as waits
+or combat contacts.

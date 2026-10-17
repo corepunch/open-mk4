@@ -559,6 +559,26 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   for (int c = 578; c <= 581; ++c) {
     require((int)assets->clips.data[c].frames.data[0].angles.count == beast_channels, "Scorpion creature animation/rig mismatch");
   }
+  /* 450930 creates the original Liu Kang dragon rig 508204. Its
+   * asset slot 5061b0 resolves to lk_fat_g.geo; IDs start at one. */
+  Character *dragon = &assets->liu_dragon;
+  image_string(&exe, image_u32(&exe, image_u32(&exe, 0x5061b0)), dragon->file);
+  snprintf(dragon->name, sizeof dragon->name, "LIU KANG DRAGON");
+  View dragon_data = package_geo(&archive, dragon->file);
+  dragon->meshes = load_meshes(dragon_data);
+  dragon->material_pages = load_textures(dragon_data);
+  dragon->texture = dragon->material_pages.data[0];
+  dragon->bones = load_rig(&exe, 0x508204, 0x5061b0, dragon->meshes.count);
+  dragon->idle = 418;
+  dragon->scale = 1.f;
+  int dragon_channels = 0;
+  for (size_t i = 0; i < dragon->bones.count; ++i) {
+    if (dragon->bones.data[i].flags & 0x100) {
+      dragon->bones.data[i].channel++;
+    }
+    dragon_channels = maxi(dragon_channels, dragon->bones.data[i].channel + 1);
+  }
+  require((int)assets->clips.data[418].frames.data[0].angles.count == dragon_channels, "Liu Kang dragon animation/rig mismatch");
   package_free(&archive);
   FREE_ARRAY(exe.bytes);
 }
@@ -730,6 +750,12 @@ void assets_free(Assets *a) {
     FREE_ARRAY(ch->texture.pixels);
     FREE_ARRAY(ch->bones);
   }
+  meshes_free(&a->liu_dragon.meshes);
+  for (size_t i = 0; i < a->liu_dragon.material_pages.count; ++i) {
+    FREE_ARRAY(a->liu_dragon.material_pages.data[i].pixels);
+  }
+  FREE_ARRAY(a->liu_dragon.material_pages);
+  FREE_ARRAY(a->liu_dragon.bones);
   meshes_free(&a->scorpion_beast.meshes);
   FREE_ARRAY(a->scorpion_beast.texture.pixels);
   FREE_ARRAY(a->scorpion_beast.bones);

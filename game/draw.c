@@ -301,6 +301,9 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   Camera camera = {.x = (ax + bx) * .25f, .z = fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f), .focal = (float)cv->w * .95f, .w = cv->w, .h = cv->h};
   if (g_battle.camera.active) {
     camera.scene = true;
+    if (g_battle.camera.focal_scale > 0) {
+      camera.focal *= q16_float(g_battle.camera.focal_scale);
+    }
     camera.eye = g_battle.camera.eye;
     Vec3 direction = vec_sub(g_battle.camera.target, camera.eye);
     float length = sqrtf(dot(direction, direction));

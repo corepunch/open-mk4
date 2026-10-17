@@ -470,6 +470,19 @@ static void resolve_hits(const Fighter snapshot[2]) {
   }
 }
 
+static void step_projectiles(void) {
+  for (int p = 0; p < MAX_PROJECTILES; ++p) {
+    Projectile *projectile = &g_battle.projectiles[p];
+    if (projectile->kind != 0) {
+      projectile->ticks++;
+      projectile->step(projectile);
+      if (--projectile->lifetime <= 0) {
+        projectile->kind = 0;
+      }
+    }
+  }
+}
+
 void battle_step(const Input input[2]) {
   int i;
   g_battle.ticks++;
@@ -550,6 +563,9 @@ void battle_step(const Input input[2]) {
         }
       }
     }
+    if (g_battle.phase == PHASE_FATALITY) {
+      step_projectiles();
+    }
     battle_world();
     if (g_battle.phase == PHASE_ROUND_OVER && g_battle.phase_ticks >= 180)
       battle_next_round();
@@ -560,16 +576,7 @@ void battle_step(const Input input[2]) {
   /* Retail tick 0x41fd70: task pump (fighters, then press tasks), world pump. */
   for (i = 0; i < 2; ++i)
     advance_fighter(&g_battle.fighters[i], &g_battle.fighters[1 - i]);
-  for (int p = 0; p < MAX_PROJECTILES; ++p) {
-    Projectile *projectile = &g_battle.projectiles[p];
-    if (projectile->kind != 0) {
-      projectile->ticks++;
-      projectile->step(projectile);
-      if (--projectile->lifetime <= 0) {
-        projectile->kind = 0;
-      }
-    }
-  }
+  step_projectiles();
   dispatch_presses();
   battle_world();
   {

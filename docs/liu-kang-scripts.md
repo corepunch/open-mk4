@@ -17,7 +17,7 @@ existing procedural engine; this is not retail scheduler emulation.
 | High/low/air fireball | 4e4928/4e4948 -> 49bf90/49bf50/49bfe0 | Implemented; independent task 64, C[0]/C[1] |
 | Flying kick | 4e4978 -> 47edc0, 4e86a8/d0/e8/718 | Implemented; hit/block/miss and landing |
 | Weapon draw/strikes/throw/pickup; sidestep | 4e4998, 46d1d0; 4ece58/4ecd50, 4963e0/4d0/6670/6920; RUN records | Implemented |
-| Fatalities I/II and fan/spikes | 4e4968/4e4934/4e4954/4e4984 | Pending |
+| Fatalities I/II and fan/spikes | 4e4968/4e4934/4e4954/4e4984 | Implemented; cinematic presentation adaptations below |
 | CPU | Shared CPU controller; character entries | Pending wiring |
 
 Normal attacks preserve their command routing, contact/miss/block recovery,
@@ -74,3 +74,29 @@ RUN priority is shared sidestep before pickup. Sidestep keeps the eight-tick
 double-press window, 80-tick cooldown, directional sample order and reduced
 travel against an airborne target. Armed air attacks use the existing weapon
 HP/LP and shared landing. Asset loading adds the original type-66 rig.
+
+Fatality I requires F,F,F,D+BLOCK with HK+LK held, without Up/HP/LP/RUN,
+within 60 ticks and distance 1.8–3 (45e410, mask 4e4158). Fatality II
+requires F,D,D,U+HP, 50 ticks, distance <=1. Fan is F,F,B+LP, spikes
+F,F,B+HK, both 40 ticks and close range, stages 8/0 respectively. They
+require the real deciding-KO winner, defeat action 1009 and finish clock.
+
+Dragon scene 450930 aligns at 0x20ccc, waits 16+85, creates the original
+lk_fat_g.geo rig 508204 at Y -0x12c49, waits 20, plays clip 418 0–159 then
+160–518 and loops 446–518. Victim 451190 waits 269, blends 389/419 and
+plays all 289 samples. Blood/cut task 451300 starts after actor sample 159:
+wait 4, 23 four-visit cycles, 26 six-visit cycles, wait 8, remove joints 5/6.
+The portable scene renders the dragon in the owner's presentation slot;
+it does not rebuild a native object/task hierarchy. Native camera zoom,
+per-joint blood random allocation and minor sound tasks are adapted to the
+portable wide scene framing and bounded particle/piece pools.
+
+Second scene 43c3d0 runs event selectors 42/43/44 with waits 15/20/60;
+4e0020 pairs clips 537/539 to 37, parks victim reaction 176, finishes owner
+59, waits 18, queues A[33]/indexed[57], plays 538 and spawns task 38 before
+reversing. The finisher projectile uses 4e0078/mesh 50 and dispatches 177
+within 2.5 scene units. Our pair-axis distance replaces fixed scene Z.
+Generic flesh pieces replace the original per-piece task programs; the
+160-tick explosion tail still completes before the result. Object-pool
+failure resolves the scene without stranding either actor. Fan/spikes reuse
+the already translated shared stage scene, with Liu Kang victory clip 119.
