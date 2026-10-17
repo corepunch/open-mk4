@@ -160,7 +160,7 @@ static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence 
 static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
 
-static const MoveDef s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
+static const MoveDef s_throw = {.clip = 79, .last = 60, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -742,13 +742,204 @@ static const ButtonTable combo_hp_followup = {
 static const ButtonTable close_hk_followup = {
     {[BUTTON_HIGH_PUNCH] = press_knee_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_combo_hk, [BUTTON_LOW_KICK] = press_lk}};
 
-/* Ground throws are replaced in the next port step. */
+/* Slot 3: LP 4de678, LK 42c040/4de3b0/410/428/468/478.
+ * The victim owns its released recovery, even after owner interruption/KO. */
+static const MoveDef s_lk_throw = {.clip = 35, .last = 43, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0501};
+static const MoveDef s_lp_thrown = {.clip = 151, .last = 45, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lk_thrown = {.clip = 133, .last = 35, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
+static const MoveDef s_throw_retreat = {.clip = 182, .last = 64, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
+
+static void thrown_play_to(Fighter *victim, int sample, int step) {
+  while (step > 0 ? victim->sample_override < sample : victim->sample_override > sample) {
+    uint64_t submitted = g_battle.ticks;
+    do {
+      fighter_wait_ticks(1);
+    } while (g_battle.ticks == submitted);
+    victim->sample_override += step;
+  }
+}
+
+static void thrown_finish(Fighter *victim) {
+  stop_body(victim);
+  fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
+}
+
+static void lp_thrown_script(Fighter *victim) {
+  thrown_play_to(victim, 17, 1);
+  battle_scene_impact(victim);
+  thrown_play_to(victim, 26, 1);
+  fighter_wait_ticks(1);
+  stop_body(victim);
+  if (victim->health <= 0) {
+    thrown_finish(victim);
+  }
+  victim->facing = -victim->facing;
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lp_getup);
+  victim->sample_override = 0;
+  fighter_set_speed(victim, -0x147a); /* 4ea220 normal getup. */
+  thrown_play_to(victim, 15, 1);
+  fighter_wait_ticks(1);
+  thrown_finish(victim);
+}
+
+static void lk_thrown_script(Fighter *victim) {
+  /* The two samples after the damage event are committed victim work. */
+  victim->script_phase = 1;
+  victim->sample_override = 30;
+  fighter_wait_ticks(2);
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  victim->reaction = 80;
+  battle_sound(SOUND_A, 37);
+  thrown_play_to(victim, 35, 1);
+  for (int cycle = 0; cycle < 3; ++cycle) {
+    thrown_play_to(victim, 31, -1);
+    thrown_play_to(victim, 35, 1);
+  }
+  fighter_set_speed(victim, -0x3333);
+  victim->body.physics = fighter_friction;
+  thrown_play_to(victim, 0, -1);
+  fighter_wait_ticks(1);
+  victim->facing = -victim->facing;
+  thrown_finish(victim);
+}
+
+static bool throw_paired(const Fighter *owner) {
+  const Fighter *victim = fighter_opponent(owner);
+  return (victim->current_move == &s_lp_thrown || victim->current_move == &s_lk_thrown) && fighter_fiber_active(victim) && victim->pending == NULL;
+}
+
+static void ground_thrown_script(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  for (;;) {
+    fighter_wait_ticks(1);
+    if ((owner->current_move != &s_throw && owner->current_move != &s_lk_throw) || owner->pending != NULL) {
+      victim->flags &= ~(unsigned)FF_PAIRED;
+      thrown_finish(victim);
+    }
+  }
+}
+
+static void throw_disarm(Fighter *victim) {
+  if (victim->armed && victim->disarm != NULL) {
+    victim->disarm(victim);
+  }
+}
+
+static void throw_pair_to(Fighter *owner, int sample, bool lk) {
+  Fighter *victim = opponent(owner);
+  while (owner->sample_override < sample) {
+    fighter_wait_ticks(1);
+    if (!throw_paired(owner)) {
+      owner->flags &= ~(unsigned)FF_PAIRED;
+      fighter_fiber_finish(liu_kang_ready);
+    }
+    owner->sample_override++;
+    if (!lk || owner->sample_override <= 30) {
+      victim->sample_override = owner->sample_override;
+    }
+  }
+}
+
+static void throw_cleanup(Fighter *owner) {
+  Fighter *victim = opponent(owner);
+  if ((victim->flags & FF_PAIRED) && (victim->current_move == &s_lp_thrown || victim->current_move == &s_lk_thrown)) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    if (victim->script_phase == 1) {
+      return;
+    }
+    stop_body(victim);
+    fighter_cancel_fiber(victim);
+    if (victim->pending == NULL && victim->health > 0) {
+      fighter_ready(victim);
+    }
+  }
+}
+
+static void ground_throw_script(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  const bool lk = fighter->current_move == &s_lk_throw;
+  if (!lk) {
+    throw_pair_to(fighter, 45, false);
+    throw_disarm(victim);
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    stop_body(victim);
+    fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
+    victim->reaction = 104;
+    victim->sample_override = 0;
+    victim->flags |= FF_REACTING;
+    fighter_start_fiber(victim, lp_thrown_script, NULL);
+    battle_damage(victim, 0x2666);
+    fighter_fiber_play_to(fighter, 60, 1);
+    fighter_wait_ticks(1);
+  } else {
+    throw_pair_to(fighter, 30, true);
+    throw_pair_to(fighter, 38, true);
+    /* 48fee0 aligns victim .7 units along the captured heading. */
+    for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+      victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
+    }
+    throw_disarm(victim);
+    battle_sound(SOUND_A, 36);
+    victim->script_phase = 1;
+    fighter_start_fiber(victim, lk_thrown_script, NULL);
+    battle_damage(victim, 0x2e14);
+    throw_pair_to(fighter, 40, true);
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    fighter_fiber_play_to(fighter, 43, 1);
+    for (int cycle = 0; cycle < 4; ++cycle) {
+      fighter_fiber_play_to(fighter, 39, -1);
+      if (cycle < 3) {
+        fighter_fiber_play_to(fighter, 43, 1);
+      }
+    }
+    fighter_fiber_play_to(fighter, 0, -1);
+    fighter_fiber_move(fighter, S_THROW, &s_throw_retreat);
+    fighter->sample_override = 0;
+    fighter_set_speed(fighter, -0x11eb);
+    fighter_fiber_play_to(fighter, 28, 2);
+    stop_body(fighter);
+    fighter_fiber_play_to(fighter, 64, 1);
+    fighter_wait_ticks(1);
+  }
+  fighter_fiber_finish(liu_kang_ready);
+}
+
+static void ground_throw(Fighter *fighter, bool lk) {
+  if (!can_ground_throw(fighter, lk)) {
+    liu_kang_ready(fighter);
+    return;
+  }
+  Fighter *victim = opponent(fighter);
+  stop_body(fighter);
+  stop_body(victim);
+  fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &s_throw);
+  fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &s_lp_thrown);
+  fighter->flags |= FF_PAIRED;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  fighter->sample_override = victim->sample_override = 0;
+  for (int axis = 0; axis < 3; ++axis) {
+    victim->body.pos[axis] = fighter->body.pos[axis];
+  }
+  victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
+  victim->facing = fighter->facing;
+  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  if (!lk) {
+    battle_sound(SOUND_B, 7);
+  }
+  fighter_start_fiber(fighter, ground_throw_script, throw_cleanup);
+  fighter_start_fiber(victim, ground_thrown_script, NULL);
+}
+
 static void enter_throw(Fighter *fighter) {
-  fighter_start_move(fighter, S_THROW, &s_throw);
+  ground_throw(fighter, false);
 }
 
 static void enter_lk_throw(Fighter *fighter) {
-  enter_throw(fighter);
+  ground_throw(fighter, true);
 }
 
 static void armed_idle(Fighter *fighter) {

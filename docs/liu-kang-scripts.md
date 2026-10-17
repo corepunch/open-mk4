@@ -13,7 +13,7 @@ existing procedural engine; this is not retail scheduler emulation.
 | Sweep | 4e67d8 -> 46efd0/46f130; clip 62, B[36], double steps to 10 then to 22 | Implemented; contact visits 17/18, reaction 19 |
 | Roundhouse | 4e6e90 -> 46f390, 4e6890/4e68a8 -> 46f3e0/46f500; clip 64, B[34] | Implemented; fast startup skips four ticks; hit adds 28 recovery ticks |
 | Air attacks | 4e6658, 4e6710, 4e6df0/46c970, 4e6544, 4e641c | Implemented; straight kick uses clip 61 from cursor 4, B[39], three active visits |
-| LP and LK throws, independent victim tails | 42c560/42b6b0; roster slot 3 | Pending research and implementation |
+| LP and LK throws, independent victim tails | 4de678/4e9b68/485b10; 42c040/4de3b0/410/428/468/478, 4e9a90/ab0 | Implemented; see timing below |
 | High/low/air fireball | 4e4928/4e4948 -> 49bf90/49bf50 | Pending |
 | Flying kick | 4e4978 -> 47edc0 | Pending |
 | Weapon draw/strikes/throw/pickup; sidestep | 4e4998, 46d1d0; shared RUN records | Pending |
@@ -24,3 +24,17 @@ Normal attacks preserve their command routing, contact/miss/block recovery,
 repeat/cancel windows and high-avoidance clearing on interruption. Shared
 native tails use the existing portable body and reaction controllers. Exact
 pose interpolation and camera/task ordering remain engine adaptations.
+
+LP plays owner/victim 79/151 to sample 45, releases reaction 104 into clip
+174, applies 0x2666 damage, and finishes owner sample 60. Victim impact is at
+174 sample 17; after sample 26 it flips and gets up with clip 191 (4ea220).
+The portable getup selects the normal row rather than reproducing native
+human/CPU task dispatch.
+
+LK plays 35/133 for 30 paired samples, then eight owner samples while the
+victim holds 30. Damage 0x2e14 commits at 38; two more paired ticks release
+reaction 80. Victim advances to 35, cycles 31–35 three times, then reverses
+to 0 with -0x3333 speed and friction. Owner cycles 39–43, reverses to 0,
+then retreats with clip 182 at -0x11eb, double steps to 28 and finishes 64.
+Pair alignment preserves each rig's bind-ground Y. Both actors release
+input/paired state on interruption; committed victim recovery survives KO.

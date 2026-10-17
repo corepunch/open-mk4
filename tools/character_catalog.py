@@ -36,6 +36,8 @@ def moves_for(character):
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),)))
     if character == 3:
         shared.update(
+            lp_throw=move(0x42c560, (('selected LP', 0x4de798), ('victim release', 0x4e9b68)), native=(('victim reaction 104', 0x485af0),)),
+            lk_throw=move(0x42b6b0, (('paired opening', 0x4de3b0), ('paired continuation', 0x4de410), ('damage/release', 0x4de428), ('retreat', 0x4de478), ('victim', 0x4e9a90)), native=(('Liu Kang entry', 0x42c040), ('damage', 0x42c0d0), ('victim reaction 80', 0x485910))),
             high_kick=move(0x46a680, (('Liu Kang attacker', 0x4e6c90), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('Liu Kang attacker', 0x4e6d08),), (('B', 6),)),
             sweep=move(0x46ef90, (('Liu Kang attacker', 0x4e67d8),), (('B', 36),)),

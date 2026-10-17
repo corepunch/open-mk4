@@ -107,8 +107,41 @@ static void normals(void) {
   }
 }
 
+static void throws(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int lk = 0; lk < 2; ++lk) {
+      fight(player, .5f);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
+      check(fighter_move(owner)->clip == (lk ? 35 : 79), "throw entry must select Liu Kang pair");
+      advance(lk ? 37 : 44);
+      check(victim->health == Q16_ONE, "throw cannot damage before its retail release boundary");
+      advance(1);
+      check(victim->health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "throw damage at owner sample boundary");
+      advance(240);
+      check(owner->state == S_IDLE && victim->state == S_IDLE, "both throw participants recover");
+      check(!(victim->flags & FF_PAIRED) && !fighter_fiber_active(victim), "throw victim must release pair and fiber");
+      fight(player, .5f);
+      press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
+      advance(20);
+      battle_react(owner, 37);
+      advance(240);
+      check(victim->health == Q16_ONE && victim->state == S_IDLE, "cancelled throw must not wake and damage victim");
+      fight(player, .5f);
+      victim->health = 1;
+      press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
+      advance(130);
+      check(victim->health == 0 && !(victim->flags & FF_PAIRED), "lethal throw must release independent victim tail");
+      check(!fighter_fiber_active(victim), "lethal victim tail must finish");
+      battle_init(3, 0);
+      check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "throw reset frees actor stacks");
+    }
+  }
+}
+
 int main(void) {
   normals();
+  throws();
   puts("Liu Kang tests passed");
   return 0;
 }
