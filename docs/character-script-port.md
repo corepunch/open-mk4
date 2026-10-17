@@ -14,54 +14,263 @@ then steps `battle_step(input)`. Tests reset the singleton for each scenario.
 This is one active simulation, not a reentrant multi-battle API. SDL and
 asset ownership remain with the host; drawing only reads simulation state.
 
-## Short workflow
+## Workflow
 
-1. Select the character and inspect a move with `--c`. It shows all decoded
-   paths, command gates, contacts and helper contracts. Native-only moves show
-   existing C adaptations; unresolved native behavior remains an explicit query.
-2. Follow only the printed script/native/contact dependencies needed by that
-   move. Use the existing `build/retail-disassembly/` for broader navigation;
-   full export requires explicit `--bundle` and is unnecessary for routine work.
-3. Translate decisions into `game/c_<character>.c`. Reuse shared helpers below.
-   Add an engine feature only when a reached move requires it. Character-specific
-   constants and decisions stay with the character.
-4. Verify the changed branch through its actual command or move entry. Add a
-   small regression only for a meaningful failure mode. Shared helpers are
-   checked once; avoid copying an exhaustive scenario matrix for every fighter.
-5. Run `make format`, relevant native checks, then `make check`. Commit the
-   coherent verified step on `main` before starting another step. Record source
-   addresses, results and remaining limitations in the commit description.
+Port one coherent move or move family at a time. Finish its reached branches,
+owner and victim recovery, and relevant tests; commit that step on `main`
+before starting the next. A roster entry, playable animation or successful
+`--port` query alone does not establish that a fighter is ported.
+
+### 1. Inventory the fighter and choose a move
+
+Read [ARCHITECTURE.md](../ARCHITECTURE.md), then inspect the existing
+`game/c_<character>.c`, its `CharacterDef`, and `game/roster.c`. Separate shared
+locomotion/reactions from character decisions. Inventory standing and crouching
+attacks, close attacks/combos, air attacks, both throws, specials, weapons,
+finishers and CPU entries. Mark each as researched, implemented, tested or
+unresolved; existing fallback moves are not evidence of retail behavior.
+
+Start research with the bounded move catalog:
 
 ```sh
 python3 tools/disassemble_retail.py --character sub_zero --list-moves
-python3 tools/disassemble_retail.py --character sub_zero --move low_kick --c
-python3 tools/disassemble_retail.py --character sub_zero --move ice --c
-python3 tools/disassemble_retail.py --character sub_zero --move clone --c
-python3 tools/disassemble_retail.py --character sub_zero --script 4ed588
-python3 tools/disassemble_retail.py --native 45b650 --limit 48
-python3 tools/disassemble_retail.py --attack C 3
+python3 tools/disassemble_retail.py --character sub_zero --move lk_throw --c
 ```
 
-See [script-decoder.md](script-decoder.md). `--character` accepts roster names
-or IDs 0..17 and defaults to Scorpion for compatibility. Keep it on subsequent
-script queries: selectors, including nested ones, use that character. Kitana
-uses Sonya's script slot; Noob uses Reiko's. Other characters' shared roots are
-navigation aids, not complete special-move catalogs. Unknown native behavior
-is an investigation boundary, never a no-op or proof of completion.
+`--character` accepts roster names or IDs 0..17 and defaults to Scorpion.
+Keep it on follow-up script queries: nested selectors use that character too.
+Kitana uses Sonya's script slot; Noob uses Reiko's. Other characters' shared
+roots are navigation aids, not complete special-move catalogs. Verify the
+selected table slot even when two fighters share a move entry.
 
-All addresses refer to the supplied `MK4/MK-4.EXE`, SHA-256
+### 2. Follow the move through scripts and native continuations
+
+Use the view that answers the current question. These examples are read-only;
+`--output PATH` can save a query when needed.
+
+| Query | What to use it for |
+| --- | --- |
+| `--character sub_zero --move lk_throw --c` | Retail C-like control flow: branches, waits, selected scripts and native exits |
+| `--character sub_zero --move lk_throw --port` | Current workspace C, supporting data links, operand evidence and checked reference links |
+| `--character sub_zero --script 4de490 --c` | A particular script dependency, decoded in the correct roster context |
+| `--character sub_zero --script 4de490 --raw` | Exact script words alongside their decoded roles |
+| `--native 42c220 --limit 100` | Bounded exact-entry x86 listing and known helper contracts |
+| `--attack C 3` | Contact descriptor: damage, reaction and other decoded fields |
+| `--action 1007` | Action catalog, confidence, checked writers/readers and current C references |
+
+Prefix the query options above with `python3 tools/disassemble_retail.py`.
+`--c` is research pseudocode, not compile-ready C. `--port` extracts existing
+workspace implementations, not automatically translated x86; an unported
+fighter needs a new implementation. Native listings and `--port` require
+Capstone. The worksheet is bounded: follow its omitted-dependency queries
+rather than assuming it contains the full native call graph.
+
+Follow both conditional outcomes, character selectors, contact outcomes,
+spawned objects, installed callbacks and native tails until each affected actor
+returns to control, lands, remains defeated, or enters another understood move.
+A script ending in a native jump has not finished its behavior. Include victim
+reaction tables and recovery, not just the attacker's visible clip. Consult
+existing `build/retail-disassembly/` material for navigation. Full generation
+requires explicit `--bundle`; do not regenerate it for routine move research.
+See [script-decoder.md](script-decoder.md) for query formats and limits.
+
+### 3. Resolve constants and helper contracts from evidence
+
+The supplied `MK4/MK-4.EXE` is authoritative, SHA-256
 `4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d`.
-`RetailImage` checks the revision and applies startup fixups. Script/descriptor
+`RetailImage` checks this revision and applies startup fixups. Script/descriptor
 pointers are packed word indices (multiply by four); native entries are byte
-addresses. Upstream reference addresses differ: verify correspondence locally.
+addresses. Determine the table type before interpreting a value as a pointer.
+
+Use the query's checked mk4decomp links to inspect
+`reference/mk4decomp/`. Its executable revision has different addresses; a
+function name or a fixed address offset is insufficient correspondence.
+Verify the local entry's instructions, field accesses, branches and callees.
+Embedded entry points may exist only in the reference's matching assembly,
+not its reconstructed C. Keep reference checkouts unchanged and implement our
+adaptation outside `reference/`. Consult upstream licenses before copying code.
+
+For every encountered literal, establish its role from its writer and consumer:
+clip/sample, count, selector, action, reaction, Q16 value, angle or pointer.
+For example, controller `+0x74` is an action field, while group `+0x74` can be
+motion data. Equal numbers do not make the fields interchangeable. Query
+`--action 1007` before using `ACTION_RETAIL_1007`; its recovery use is evidenced,
+but a complete semantic name remains uncertain. Keep neutral names where the
+evidence does not support a stronger claim.
+
+Record helper inputs, actor/object context, effects, yield/return behavior and
+portable equivalent. When new research is reusable, update the existing index
+alongside the implementation:
+
+| Knowledge | Workspace location |
+| --- | --- |
+| Researched move entries and script roots | `tools/character_catalog.py` |
+| Local helper contracts and engine equivalents | `tools/retail_helpers.py` |
+| Typed executable data views | `tools/retail_helper_view.py` |
+| Local aliases and checked reference correspondences | `tools/retail_symbols.py`, `tools/retail_symbol_map.json` |
+| Action names/confidence and checked native evidence | `game/retail_actions.inc`, `tools/retail_action_evidence.json` |
+| Existing portable C entry extraction | `tools/retail_port.py` |
+
+The symbol map is checked research data; do not rebuild it for every fighter.
+Extend `retail_port.py` when adding a newly supported character or move so
+`--port` finds its own C entry. Preserve source addresses and bytes for new
+action evidence; record unknowns instead of guessing or treating them as no-ops.
+
+### 4. Write a small timing and branch ledger
+
+Before coding, list each phase's actor, clip/cursor, elapsed ticks, entry gate,
+contact/damage event, motion, next branch and interruption policy. Cite the local
+script/native addresses. Distinguish stored animation samples from simulation
+ticks: a move can skip samples, run backwards, repeat them or hold a pose while
+physics and other actors continue. `fighter->ticks` can reset at a phase change;
+it is not necessarily total elapsed move time.
+
+[Sub-Zero's throws](sub-zero-throws.md) show why this matters. LK plays ten
+owner-only samples, then paired counts `29 + 5 + 8`: damage occurs at elapsed
+52, not at the victim's sample 52. Five more paired samples reach 57, then the
+owner waits 60 ticks and returns at 117. The victim has its own cursor cycles
+and clip 200, returning at 127. LP instead uses clips 76/153, damage at 25,
+and reaction 102's tumble/hold/getup. Sharing Scorpion's throw runner would
+lose those differences despite the shared top-level command.
+
+Keep measured retail facts separate from portable adaptations and unresolved
+presentation. A concise source-to-code ledger such as the Sub-Zero ledger below
+makes the implementation reviewable without preserving a large execution trace.
+
+### 5. Translate sequential control flow into a move fiber
+
+Put character decisions in `game/c_<character>.c`, using ordinary C11 functions,
+loops and locals. Use the shared engine features below for contact, physics,
+weapons, poses, sound and scenes. Add an engine feature only when a reached move
+needs it. Use callbacks for independent objects, landing and shared engine work;
+use a fighter fiber for its sequential waits and branches.
+
+The external move entry validates its gates, calls `fighter_start_move`, and
+initializes phase data and pose before `fighter_start_fiber`. Starting a fiber
+executes it immediately until its first wait or completion. Nested helpers can
+call `fighter_wait_ticks(n)`; locals survive. All scheduling stays on the single
+simulation thread, in P1/P2 order, with positive actor-tick waits at 60 Hz.
+
+| From a running fiber | Purpose |
+| --- | --- |
+| `fighter_wait_ticks(n)` | Hold execution for positive simulation ticks; other actors and objects continue |
+| `fighter_fiber_play_to(fighter, sample, step)` | Advance an initialized `sample_override` cursor forwards or backwards to a target |
+| `fighter_fiber_sequence(fighter, &sequence)` | Run shared `MoveSequence` playback/events/hold, then return to the next C statement |
+| `fighter_fiber_move(fighter, state, &move)` | Rebind a phase while preserving the current fiber and locals |
+| `fighter_fiber_finish(next)` | Retire this stack and let the host invoke the continuation; never returns |
+
+Do not call plain `fighter_start_move` to change phases inside the running
+fiber: external move replacement cancels the old fiber. Blocking sequence
+playback does not invoke the sequence's legacy `end` callback; put that branch
+after `fighter_fiber_sequence`. Give every loop a real yield or terminating path.
+Use engine state and predicates for landing/contact waits, rather than sleeping
+or waiting for the drawing loop.
+
+Scorpion's current spear body illustrates the pattern (helpers and entry setup
+are in [c_scorpion.c](../game/c_scorpion.c)):
+
+```c
+static void spear_script(Fighter *fighter) {
+  bool fast = fighter->script_phase != 0;
+  spear_play_to(fighter, fast ? 25 : 20);
+  spear_spawn(fighter);
+  spear_play_to(fighter, 30);
+  fighter->action = ACTION_RETAIL_1007;
+  fighter->ticks = 0;
+  fighter_wait_ticks(45);
+  while (!spear_not_pulling(fighter)) {
+    fighter_wait_ticks(1);
+  }
+  fighter_fiber_finish(special_ready);
+}
+```
+
+The wait begins after sample 30, at normal/fast elapsed tick 15/11. Projectile
+callbacks can replace this script with the return/pull continuation. Extract the
+complete entry, helpers and cleanup with `--move spear --port` when studying it.
+
+### 6. Give paired actors and objects explicit lifetimes
+
+Define which actor owns each phase and when the victim becomes independent.
+Peer fiber starts are deferred to the host scheduler; a peer may still receive
+its regular pump that battle tick. Do not infer a full displayed tick from
+startup order. Check both P1 and P2 ownership. Paired pose submission and
+released recovery helpers in `game/c_sub_zero.c` are examples, including the
+victim's committed five-sample LK tail after damage.
+
+Release a victim through its own roster's recovery controller. Preserve its
+bind-ground Y offset when aligning it to another rig, and clear paired flags,
+input restrictions, temporary presentation and callbacks at the correct boundary.
+Owner interruption or victory must not erase an already released victim's fall
+and getup. Conversely, interruption before the damage event must not allow a
+cancelled script to wake later and apply damage.
+
+Use the fiber cleanup callback for owned temporary state on completion,
+replacement or reset. It runs once after the stack retires: never retain pointers
+to fiber locals in fighter/projectile state, and do not start a replacement fiber
+from cleanup. Independent projectiles/statues use object callbacks and the source's
+lifetime policy; they need not disappear when their owner resumes controls.
+Handle full object pools, either participant's interruption, KO and round/rematch
+cleanup using the shared engine boundaries. See the API details below and
+[game/fiber.c](../game/fiber.c).
+
+### 7. Wire real inputs and verify the behavior
+
+Update the character's `MoveDef`/state entry table, ordered `CommandDef` records,
+stance controls and optional `CpuMoves` as required. Preserve command priority,
+button masks, inclusive windows, ground/range/cooldown gates and follow-up
+branches. For a newly added roster definition, wire `game/mk4_characters.h` and
+`game/roster.c`; asset identity and retail script-selector identity are distinct.
+Character C files are already included by the Makefile's `game/c_*.c` wildcard.
+
+Test through the real command or move entry, not only a directly invoked helper.
+Choose focused assertions from the ledger: accepted/rejected gates, meaningful
+hit/miss/block branches, clip/cursor phase boundaries, one-time scaled damage,
+interruption and eventual owner/victim recovery. For paired moves, run the
+attacker in both player slots and include a victim with a different rig when
+alignment matters. Cover KO or reset where an independent tail could survive
+incorrectly. Reuse shared engine regressions instead of copying every engine
+scenario into every fighter's tests.
+
+For example, after changing Sub-Zero's paired moves:
+
+```sh
+make format
+make build/test-sub-zero build/test-battle build/test-fibers
+./build/test-sub-zero
+./build/test-battle
+./build/test-fibers
+python3 tests/test_retail_port.py
+make check
+```
+
+Run the relevant decoder/helper/action tests when changing their research data.
+Add compact EXE-backed assertions for newly decoded table layouts or constants;
+use native C tests for gameplay. Do not add retail-execution harnesses, binary
+scheduler emulation or large per-tick JSON traces. `tests/test_sub_zero.c` and
+`tests/test_fibers.c` provide existing gameplay and scheduling examples.
+
+### 8. Record scope and commit the verified step
+
+Update the move ledger and extraction/helper indexes affected by the port.
+Document unresolved native behavior and any deliberate engine adaptation,
+including presentation limits. Check the diff and stage only this step's files.
+Commit directly to `main` with a clear subject and a body explaining the problem,
+source addresses, final behavior, approach, validation results and remaining
+limitations. Finish a coherent step before moving to the next move family.
+
+A move is complete when its command path, reached branches, damage and reactions,
+owner/victim/object lifetimes, interruption and return to control are understood
+and covered by relevant checks. List remaining fighter work explicitly; do not
+infer complete fighter coverage from the curated move catalog.
 
 ## Shared engine features
 
 | Need | Reuse | Important boundary |
 | --- | --- | --- |
 | Commands | `game/commands.c`, ordered `CommandDef` and stance tables | Preserve unconditional-record priority, two-sample presses, inclusive windows and predicate masks; entries start next tick |
-| Fixed playback / waits | `MoveSequence`, sparse `MoveSegment`/`MoveEvent`, `fighter_start_sequence` | Active phases have their own tick clock; simulation ticks and stored pose samples are different clocks |
-| Native continuations | `Fighter.script`, explicit phase/timer | Start the move first, then install the continuation; replacement clears old move state |
+| Fixed playback / waits | `MoveSequence`, sparse `MoveSegment`/`MoveEvent`, blocking `fighter_fiber_sequence`, `fighter_wait_ticks` | Active phases have their own tick clock; simulation ticks and stored pose samples are different clocks |
+| Native continuations | Sequential C fibers and nested helpers; callbacks for independent engine work | Initialize the move before starting its fiber; use `fighter_fiber_move` for an internal phase change |
 | Poses | `game/pose.c`, `fighter_pose_sample`, `fighter_pose` | Bind host-owned assets with `battle_bind_assets`; capture real wrapped samples, rig, heading and root offsets |
 | Contact | `battle_contact` for a fighter, `battle_contact_from` for an independent object | Object contacts return their result without consuming the owner's current attack latch |
 | Geometry | Shared decoded joint poses and pair-axis projection | Asset-backed play uses the `48d750` joint interval and 8% trim; rule-only callers without assets use an explicit fallback hull |
@@ -80,6 +289,9 @@ corrupt another move. Independent objects may outlive owner interruption;
 round/finisher cleanup follows the reached source path.
 
 ### Shared move phases
+
+Character fibers normally use blocking `fighter_fiber_sequence`. The callback
+interface below remains available for shared engine continuations.
 
 `fighter_start_sequence` replaces the current continuation without restarting
 the move. It resets the phase tick to zero, clears the native script and sample

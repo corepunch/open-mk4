@@ -87,6 +87,9 @@ post-processing.
 
 ## Character script ports
 
+See [the fighter port workflow](docs/character-script-port.md#workflow) for the
+end-to-end research, fiber implementation, validation and commit procedure.
+
 Start character research with `python3 tools/disassemble_retail.py --move NAME`
 (or `--list-moves`), then follow its bounded `--script`, `--native`, and
 `--attack` queries. See `docs/script-decoder.md`. Use these static queries and
