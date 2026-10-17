@@ -87,8 +87,8 @@ static void validate(const Assets *assets) {
   puts("PASS: 11 textured arena hierarchies; original HUD/name sprites; all 18 combat rigs compatible");
 }
 
-static void apply_shell(ShellCommand command, Battle *battle, bool *running, bool *paused, bool *cpu, bool *demo, int *arena, int arena_count,
-    InputDevice pads[2], const unsigned char *keys) {
+static void apply_shell(
+    ShellCommand command, bool *running, bool *paused, bool *cpu, bool *demo, int *arena, int arena_count, InputDevice pads[2], const unsigned char *keys) {
   int player;
   switch (command) {
     case SHELL_QUIT:
@@ -100,13 +100,13 @@ static void apply_shell(ShellCommand command, Battle *battle, bool *running, boo
       input_sync(&pads[1], keys);
       break;
     case SHELL_RESET:
-      battle_reset_match(battle);
+      battle_reset_match();
       input_sync(&pads[0], keys);
       input_sync(&pads[1], keys);
       break;
     case SHELL_REMATCH:
-      if (battle->phase == PHASE_MATCH_OVER) {
-        battle_reset_match(battle);
+      if (g_battle.phase == PHASE_MATCH_OVER) {
+        battle_reset_match();
         input_sync(&pads[0], keys);
         input_sync(&pads[1], keys);
       }
@@ -114,8 +114,8 @@ static void apply_shell(ShellCommand command, Battle *battle, bool *running, boo
     case SHELL_NEXT_P1:
     case SHELL_NEXT_P2:
       player = command == SHELL_NEXT_P1 ? 0 : 1;
-      battle->fighters[player].roster = (battle->fighters[player].roster + 1) % roster_count();
-      battle_reset_match(battle);
+      g_battle.fighters[player].roster = (g_battle.fighters[player].roster + 1) % roster_count();
+      battle_reset_match();
       input_sync(&pads[0], keys);
       input_sync(&pads[1], keys);
       break;
@@ -127,8 +127,8 @@ static void apply_shell(ShellCommand command, Battle *battle, bool *running, boo
       break;
     case SHELL_NEXT_ARENA:
       *arena = (*arena + 1) % arena_count;
-      battle_set_arena(battle, *arena);
-      battle_reset_match(battle);
+      battle_set_arena(*arena);
+      battle_reset_match();
       input_sync(&pads[0], keys);
       input_sync(&pads[1], keys);
       break;
@@ -146,7 +146,6 @@ int main(int argc, char **argv) {
   Assets assets = {0};
   SdlApp app;
   Canvas cv;
-  Battle battle;
   GameAudio audio;
   InputDevice pads[2];
   bool running = true, paused = false;
@@ -210,12 +209,12 @@ int main(int argc, char **argv) {
 
   sdl_app_init(&app, "Mortal Kombat 4 - Battle", 1280, 800, headless);
   canvas_init(&cv, 1280, 800);
-  battle_init(&battle, p1, p2);
+  battle_init(p1, p2);
   require(difficulty >= 1 && difficulty <= 9, "CPU difficulty must be between 1 and 9");
-  battle.cpu_level = difficulty;
-  battle_bind_assets(&battle, &assets);
+  g_battle.cpu_level = difficulty;
+  battle_bind_assets(&assets);
   game_audio_init(&audio, headless);
-  battle_set_arena(&battle, arena);
+  battle_set_arena(arena);
   input_bind_player(&pads[0], 0);
   input_bind_player(&pads[1], 1);
   last = SDL_GetPerformanceCounter();
@@ -237,7 +236,7 @@ int main(int argc, char **argv) {
       if (ev.type != SDL_KEYDOWN || ev.key.repeat)
         continue;
       keys = SDL_GetKeyboardState(NULL);
-      apply_shell(input_shell_command((int)ev.key.keysym.sym), &battle, &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, pads, keys);
+      apply_shell(input_shell_command((int)ev.key.keysym.sym), &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, pads, keys);
     }
 
     {
@@ -254,19 +253,19 @@ int main(int argc, char **argv) {
       Input in[2];
       input_sample(&pads[0], keys, &in[0]);
       input_sample(&pads[1], keys, &in[1]);
-      battle.fighters[0].human = !demo;
-      battle.fighters[1].human = !(cpu || demo);
+      g_battle.fighters[0].human = !demo;
+      g_battle.fighters[1].human = !(cpu || demo);
       if (demo)
-        input_cpu(&battle, 0, &in[0]);
+        input_cpu(0, &in[0]);
       if (cpu || demo)
-        input_cpu(&battle, 1, &in[1]);
-      battle_step(&battle, in);
-      game_audio_step(&audio, &assets, &battle);
+        input_cpu(1, &in[1]);
+      battle_step(in);
+      game_audio_step(&audio, &assets);
       accumulator -= 1.0 / 60.0;
-      if (demo && battle.phase == PHASE_MATCH_OVER && battle.phase_ticks > 240)
-        battle_reset_match(&battle);
+      if (demo && g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks > 240)
+        battle_reset_match();
     }
-    draw_battle(&cv, &assets, &battle, arena, cpu, paused);
+    draw_battle(&cv, &assets, arena, cpu, paused);
     sdl_app_present(&app, &cv);
     ++rendered;
     if (limit && rendered >= limit)
@@ -277,8 +276,8 @@ int main(int argc, char **argv) {
 
   if (shot != NULL)
     save_bmp(&cv, shot);
-  printf("Rendered %d frames; simulated %llu ticks; health %.4f / %.4f; round %d\n", rendered, (unsigned long long)battle.ticks,
-      q16_float(battle.fighters[0].health), q16_float(battle.fighters[1].health), battle.round);
+  printf("Rendered %d frames; simulated %llu ticks; health %.4f / %.4f; round %d\n", rendered, (unsigned long long)g_battle.ticks,
+      q16_float(g_battle.fighters[0].health), q16_float(g_battle.fighters[1].health), g_battle.round);
   game_audio_free(&audio);
   sdl_app_free(&app);
   canvas_free(&cv);

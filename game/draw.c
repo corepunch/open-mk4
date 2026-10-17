@@ -252,22 +252,22 @@ static void draw_weapon(Canvas *cv, Camera camera, const Assets *assets, Vec3 or
 
 /* Animated accessories reserve their first channel for the detached
  * parent piece; the model's remaining channels pose its own hierarchy. */
-static Mat3 piece_basis(const Assets *assets, const Battle *battle, int index) {
+static Mat3 piece_basis(const Assets *assets, int index) {
   (void)assets;
-  const ScenePiece *piece = &battle->pieces[index];
+  const ScenePiece *piece = &g_battle.pieces[index];
   float factor = 4096.f / (6.283185307179586f * Q16_ONE);
   Mat3 spin = rotation(0, (Vec3){piece->angle[0] * factor, piece->angle[1] * factor, piece->angle[2] * factor});
   return mat3_mul(spin, piece->orientation);
 }
 
-static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, const Battle *battle, const SceneLight *light) {
+static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, const SceneLight *light) {
   for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
-    const SceneAttachment *attachment = &battle->attachments[i];
+    const SceneAttachment *attachment = &g_battle.attachments[i];
     if (attachment->def == NULL) {
       continue;
     }
     const AttachmentDef *def = attachment->def;
-    const ScenePiece *piece = &battle->pieces[attachment->piece];
+    const ScenePiece *piece = &g_battle.pieces[attachment->piece];
     const Character *model = &assets->scene_models.data[def->model];
     const Clip *clip = &assets->clips.data[def->clip];
     Pose bones[MK4_MAX_BONES];
@@ -275,7 +275,7 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
     /* 446730 installs the inverse-parent transform on the accessory
      * root. Its authored motion stays in the scene frame while the
      * detached head follows the first channel's own rotation. */
-    Mat3 basis = def->scene_space ? attachment->orientation : piece_basis(assets, battle, attachment->piece);
+    Mat3 basis = def->scene_space ? attachment->orientation : piece_basis(assets, attachment->piece);
     Vec3 origin = {q16_float(piece->pos[0]), q16_float(piece->pos[1]), q16_float(piece->pos[2])};
     Vec3 root = clip->frames.data[attachment->sample].translation;
     for (size_t n = 0; n < model->bones.count; ++n) {
@@ -294,15 +294,15 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
   }
 }
 
-void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused) {
+void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool paused) {
   canvas_clear(cv);
-  const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
+  const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
   float ax = fighter_x(a), bx = fighter_x(b);
   Camera camera = {.x = (ax + bx) * .25f, .z = fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f), .focal = (float)cv->w * .95f, .w = cv->w, .h = cv->h};
-  if (battle->camera.active) {
+  if (g_battle.camera.active) {
     camera.scene = true;
-    camera.eye = battle->camera.eye;
-    Vec3 direction = vec_sub(battle->camera.target, camera.eye);
+    camera.eye = g_battle.camera.eye;
+    Vec3 direction = vec_sub(g_battle.camera.target, camera.eye);
     float length = sqrtf(dot(direction, direction));
     camera.forward = vec_scale(direction, 1.f / fmaxf(.001f, length));
     float horizontal = hypotf(direction.x, direction.z);
@@ -310,7 +310,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     camera.up =
         (Vec3){-camera.forward.y * camera.right.z, camera.forward.x * camera.right.z - camera.forward.z * camera.right.x, camera.forward.y * camera.right.x};
   }
-  camera.shake_y = q16_float(battle->camera.shake_y);
+  camera.shake_y = q16_float(g_battle.camera.shake_y);
   camera.eye.y += camera.shake_y;
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
@@ -318,7 +318,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   Mat4 shadow;
   require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
-    const Texture *texture = &fighter_model(assets, &battle->fighters[i])->texture;
+    const Texture *texture = &fighter_model(assets, &g_battle.fighters[i])->texture;
     for (size_t j = 0; j < fighters[i].count; ++j) {
       Triangle triangle = fighters[i].data[j];
       bool valid = true;
@@ -332,13 +332,13 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   uint32_t ice_pixel = 0xff89dfff;
   const Texture ice_texture = {1, 1, {&ice_pixel, 1, 1}};
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
-    const ScenePiece *piece = &battle->pieces[i];
+    const ScenePiece *piece = &g_battle.pieces[i];
     if (!piece->active) {
       continue;
     }
     const Character *ch = piece->frozen ? &assets->cut_characters.data[roster_def(piece->roster)->asset] : roster_character(assets, piece->roster);
     const Bone *bone = &ch->bones.data[piece->bone];
-    Mat3 transform = piece_basis(assets, battle, i);
+    Mat3 transform = piece_basis(assets, i);
     const Triangles *mesh = &ch->meshes.data[bone->mesh].triangles;
     for (size_t n = 0; n < mesh->count; ++n) {
       Triangle triangle = mesh->data[n];
@@ -349,9 +349,9 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       render_triangle(cv, camera, triangle, piece->frozen ? &ice_texture : &ch->texture, 1, PASS_COLOR, &light);
     }
   }
-  draw_attachments(cv, camera, assets, battle, &light);
+  draw_attachments(cv, camera, assets, &light);
   for (size_t i = 0; i < 2; ++i) {
-    const Fighter *fighter = &battle->fighters[i];
+    const Fighter *fighter = &g_battle.fighters[i];
     const Texture *texture = fighter->appearance == APPEARANCE_FROZEN ? &ice_texture : &fighter_model(assets, fighter)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j)
       render_triangle(cv, camera, fighters[i].data[j], texture,
@@ -363,9 +363,9 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   }
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    const Projectile *p = &battle->projectiles[i];
+    const Projectile *p = &g_battle.projectiles[i];
     if (p->kind == PROJECTILE_CLONE) {
-      Fighter clone = battle->fighters[p->owner];
+      Fighter clone = g_battle.fighters[p->owner];
       MoveDef captured = {.clip = p->clip, .last = MOVE_END};
       clone.current_move = &captured;
       clone.appearance = APPEARANCE_NORMAL;
@@ -406,7 +406,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     if (p->kind != PROJECTILE_SPEAR) {
       continue;
     }
-    const Fighter *owner = &battle->fighters[p->owner];
+    const Fighter *owner = &g_battle.fighters[p->owner];
     Vec3 hand = {fighter_x(owner), -1.4f - fighter_height(owner), fighter_z(owner)};
     Vec3 tip = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
     ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, hand)}, 1);
@@ -415,7 +415,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     canvas_rect(cv, (Rect){(int)to.x - 3, (int)to.y - 2, 7, 4}, 0xffdedede);
   }
   for (int i = 0; i < 2; ++i) {
-    const Fighter *f = &battle->fighters[i];
+    const Fighter *f = &g_battle.fighters[i];
     if (f->armed) {
       Vec3 hand;
       Mat3 grip;
@@ -423,7 +423,8 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
       draw_weapon(cv, camera, assets, hand, grip, f->weapon, &light);
     }
     if ((fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
-        (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_BURN && i == battle->winner && battle->phase_ticks >= 51 && battle->phase_ticks < 191)) {
+        (g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_BURN && i == g_battle.winner && g_battle.phase_ticks >= 51 &&
+            g_battle.phase_ticks < 191)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
       Vec3 end = {mouth.x + f->facing * 2.3f, mouth.y + .25f, mouth.z};
       ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, mouth)}, 1);
@@ -434,7 +435,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     }
   }
   for (int i = 0; i < MAX_PARTICLES; ++i) {
-    const Particle *p = &battle->particles[i];
+    const Particle *p = &g_battle.particles[i];
     if (p->ticks <= 0) {
       continue;
     }
@@ -458,7 +459,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     }
   }
   for (size_t i = 0; i < 2; ++i) {
-    const HitEffect *e = &battle->effects[i];
+    const HitEffect *e = &g_battle.effects[i];
     if (e->ticks <= 0)
       continue;
     ScreenVertex p = camera_project(camera, (Vertex){.p = camera_point(camera, (Vec3){e->x, -e->height, .2f})}, 1);
@@ -473,7 +474,7 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   bar(cv, font, a->health, left, false);
   bar(cv, font, b->health, right, true);
   for (int i = 0; i < 2; ++i) {
-    const Fighter *f = &battle->fighters[i];
+    const Fighter *f = &g_battle.fighters[i];
     int idx = assets->hud.names[roster_def(f->roster)->asset];
     Sprite s = font->sprites.data[idx];
     int x = i ? cv->w - 38 - s.w * 2 : 38;
@@ -486,8 +487,8 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
     canvas_rect(cv, (Rect){i ? meter_x + 180 - energy : meter_x, 83, energy, 4}, gold);
   }
   char timer[32], round[32];
-  snprintf(timer, sizeof timer, "%02d", maxi(0, (battle->time_ticks + 59) / 60));
-  snprintf(round, sizeof round, "ROUND %d", battle->round);
+  snprintf(timer, sizeof timer, "%02d", maxi(0, (g_battle.time_ticks + 59) / 60));
+  snprintf(round, sizeof round, "ROUND %d", g_battle.round);
   font_centered(font, cv, 43, timer, 2);
   font_centered(font, cv, 96, round, .65f);
   canvas_rect(cv, (Rect){0, cv->h - 96, cv->w, 96}, 0xff141517);
@@ -496,24 +497,24 @@ void draw_battle(Canvas *cv, const Assets *assets, const Battle *battle, int are
   font_draw(font, cv, cv->w - 28 - font_width(font, mode, .6f), cv->h - 78, mode, .6f);
   font_draw(font, cv, 28, cv->h - 49, "P1  A/D MOVE  W JUMP  S DUCK  U HP  J LP  I HK  K LK  L BLOCK  H RUN", .6f);
   font_draw(font, cv, 28, cv->h - 29, "P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE", .6f);
-  if (battle->phase == PHASE_READY) {
-    round_intro(cv, &assets->hud, battle->round);
-    if (battle->phase_ticks > 40)
+  if (g_battle.phase == PHASE_READY) {
+    round_intro(cv, &assets->hud, g_battle.round);
+    if (g_battle.phase_ticks > 40)
       draw_sprite(cv, &assets->hud.effects, 137, (Rect){cv->w / 2 - 181, 285, 362, 126}, false);
   }
-  if (battle->phase == PHASE_FINISH || battle->phase == PHASE_FATALITY) {
-    font_centered(font, cv, 165, battle->phase == PHASE_FINISH ? "FINISH HIM" : "FATALITY", 1.5f);
+  if (g_battle.phase == PHASE_FINISH || g_battle.phase == PHASE_FATALITY) {
+    font_centered(font, cv, 165, g_battle.phase == PHASE_FINISH ? "FINISH HIM" : "FATALITY", 1.5f);
   }
-  if (battle->phase == PHASE_ROUND_OVER || battle->phase == PHASE_MATCH_OVER) {
+  if (g_battle.phase == PHASE_ROUND_OVER || g_battle.phase == PHASE_MATCH_OVER) {
     char message[1100];
-    if (battle->winner < 0)
+    if (g_battle.winner < 0)
       snprintf(message, sizeof message, "DRAW");
     else
-      snprintf(message, sizeof message, battle->finisher ? "%s WINS / FATALITY" : "%s WINS",
-          roster_character(assets, battle->fighters[battle->winner].roster)->name);
+      snprintf(message, sizeof message, g_battle.finisher ? "%s WINS / FATALITY" : "%s WINS",
+          roster_character(assets, g_battle.fighters[g_battle.winner].roster)->name);
     canvas_rect(cv, (Rect){cv->w / 2 - 350, 205, 700, 100}, 0xff141517);
     font_centered(font, cv, 224, message, 1.5f);
-    font_centered(font, cv, 267, battle->phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND", .75f);
+    font_centered(font, cv, 267, g_battle.phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND", .75f);
   }
   if (paused) {
     canvas_rect(cv, (Rect){cv->w / 2 - 130, cv->h / 2 - 35, 260, 66}, 0xff141517);

@@ -8,18 +8,18 @@
  * the current stance table handles the press. Either way, the selected entry
  * starts on the next tick, after the interrupted task is rescheduled. */
 
-const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter) {
-  return fighter == &battle->fighters[0] ? &battle->fighters[1] : &battle->fighters[0];
+const Fighter *fighter_opponent(const Fighter *fighter) {
+  return fighter == &g_battle.fighters[0] ? &g_battle.fighters[1] : &g_battle.fighters[0];
 }
 
-float fighter_distance(const Battle *battle, const Fighter *fighter) {
-  const Fighter *other = fighter_opponent(battle, fighter);
+float fighter_distance(const Fighter *fighter) {
+  const Fighter *other = fighter_opponent(fighter);
   return hypotf(fighter_x(other) - fighter_x(fighter), fighter_z(other) - fighter_z(fighter));
 }
 
 /* 0x48ebd0: the raw switch pointing away from the opponent is held. */
-bool fighter_holds_back(const Battle *battle, const Fighter *fighter) {
-  bool facing_left = fighter_opponent(battle, fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
+bool fighter_holds_back(const Fighter *fighter) {
+  bool facing_left = fighter_opponent(fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
   return (fighter->held & BUTTON_BIT(facing_left ? BUTTON_RIGHT : BUTTON_LEFT)) != 0;
 }
 
@@ -32,8 +32,8 @@ void fighter_interrupt(Fighter *fighter, FighterFn entry) {
   fighter->flags = (fighter->flags | FF_BUSY) & ~(unsigned)FF_PAIRED;
 }
 
-static Button resolve_token(const Battle *battle, const Fighter *fighter, CommandToken token) {
-  bool facing_left = fighter_opponent(battle, fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
+static Button resolve_token(const Fighter *fighter, CommandToken token) {
+  bool facing_left = fighter_opponent(fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
   switch (token) {
     case TOKEN_UP:
       return BUTTON_UP;
@@ -48,7 +48,7 @@ static Button resolve_token(const Battle *battle, const Fighter *fighter, Comman
   return BUTTON_UP;
 }
 
-static const CommandDef *match_command(const Battle *battle, const Fighter *fighter, Button button) {
+static const CommandDef *match_command(const Fighter *fighter, Button button) {
   const Controls *controls = roster_def(fighter->roster)->controls;
   for (int i = 0; i < controls->command_count; ++i) {
     const CommandDef *command = &controls->commands[i];
@@ -59,7 +59,7 @@ static const CommandDef *match_command(const Battle *battle, const Fighter *figh
       bool same = true;
       require(command->count <= COMMAND_TOKENS && command->count <= INPUT_HISTORY, "Command pattern too long");
       for (int k = 0; k < command->count && same; ++k) {
-        same = fighter->directions.token[command->count - 1 - k] == resolve_token(battle, fighter, command->tokens[k]) + 1;
+        same = fighter->directions.token[command->count - 1 - k] == resolve_token(fighter, command->tokens[k]) + 1;
       }
       if (!same) {
         continue;
@@ -68,7 +68,7 @@ static const CommandDef *match_command(const Battle *battle, const Fighter *figh
         continue;
       }
       /* A late pattern ends the whole list, hiding later records. */
-      if (command->window > 0 && battle->ticks - fighter->directions.tick[command->count - 1] > (uint64_t)command->window) {
+      if (command->window > 0 && g_battle.ticks - fighter->directions.tick[command->count - 1] > (uint64_t)command->window) {
         return NULL;
       }
     }
@@ -78,7 +78,7 @@ static const CommandDef *match_command(const Battle *battle, const Fighter *figh
     if (fighter->flags & (FF_BUSY | FF_REACTING)) {
       return NULL;
     }
-    if (command->predicate != NULL && !command->predicate(battle, fighter)) {
+    if (command->predicate != NULL && !command->predicate(fighter)) {
       continue;
     }
     return command;
@@ -95,24 +95,24 @@ static void push_direction(InputHistory *history, Button direction, uint64_t tic
   history->tick[0] = tick;
 }
 
-void fighter_press(Battle *battle, Fighter *fighter, Button button) {
+void fighter_press(Fighter *fighter, Button button) {
   if (button <= BUTTON_RIGHT) {
-    push_direction(&fighter->directions, button, battle->ticks);
+    push_direction(&fighter->directions, button, g_battle.ticks);
     return;
   }
   /* HP, LP, BLK and LK latch before matching, RUN after, HK never. */
   if (button != BUTTON_HIGH_KICK && button != BUTTON_RUN) {
-    fighter->latch[button] = battle->ticks;
+    fighter->latch[button] = g_battle.ticks;
   }
   fighter->buffered |= BUTTON_BIT(button);
-  const CommandDef *command = match_command(battle, fighter, button);
+  const CommandDef *command = match_command(fighter, button);
   if (command != NULL) {
     fighter_interrupt(fighter, command->enter);
-  } else if ((battle->phase == PHASE_FIGHT || battle_can_finish(battle, fighter)) && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
-    fighter->buttons->press[button](battle, fighter);
+  } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
+    fighter->buttons->press[button](fighter);
   }
   if (button == BUTTON_RUN) {
-    fighter->latch[button] = battle->ticks;
+    fighter->latch[button] = g_battle.ticks;
   }
 }
 

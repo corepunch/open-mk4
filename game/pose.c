@@ -2,10 +2,10 @@
 #include "math_util.h"
 #include <math.h>
 
-void battle_bind_assets(Battle *battle, const Assets *assets) {
-  battle->assets = assets;
+void battle_bind_assets(const Assets *assets) {
+  g_battle.assets = assets;
   for (int i = 0; i < 2; ++i) {
-    battle->fighters[i].assets = assets;
+    g_battle.fighters[i].assets = assets;
   }
 }
 

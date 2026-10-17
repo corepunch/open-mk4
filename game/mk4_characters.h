@@ -23,11 +23,11 @@ extern const CharacterDef mk4_cage;
 extern const CharacterDef mk4_goro;
 extern const CharacterDef mk4_kitana;
 extern const CharacterDef mk4_noob_saibot;
-bool mk4_can_air_throw(const Battle *battle, const Fighter *fighter);
-void mk4_air_throw(Battle *battle, Fighter *fighter);
-void mk4_walk(Battle *battle, Fighter *fighter);
-void mk4_jump(Battle *battle, Fighter *fighter);
-void mk4_land(Battle *battle, Fighter *fighter);
-void mk4_return_to_stance(Battle *battle, Fighter *fighter);
+bool mk4_can_air_throw(const Fighter *fighter);
+void mk4_air_throw(Fighter *fighter);
+void mk4_walk(Fighter *fighter);
+void mk4_jump(Fighter *fighter);
+void mk4_land(Fighter *fighter);
+void mk4_return_to_stance(Fighter *fighter);
 
 #endif

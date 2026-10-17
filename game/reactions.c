@@ -16,26 +16,23 @@ enum {
   ACTION_BLOCK = 0x2005
 };
 
-static void neutral(Battle *battle, Fighter *fighter) {
+static void neutral(Fighter *fighter) {
   if (fighter->health > 0) {
-    fighter_enter_state(battle, fighter, S_IDLE);
+    fighter_enter_state(fighter, S_IDLE);
   }
 }
 
-static bool landed(const Battle *battle, const Fighter *fighter) {
-  (void)battle;
+static bool landed(const Fighter *fighter) {
   return !fighter_airborne(fighter) && fighter->body.gravity == 0;
 }
 
-static bool never(const Battle *battle, const Fighter *fighter) {
-  (void)battle;
+static bool never(const Fighter *fighter) {
   (void)fighter;
   return false;
 }
 
 /* 0x4913a0 group callback. */
-static void friction(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void friction(Fighter *fighter) {
   q16 *v = fighter->body.vel;
   v[AXIS_X] = q16_mul(v[AXIS_X], FRICTION);
   v[AXIS_Z] = q16_mul(v[AXIS_Z], FRICTION);
@@ -46,14 +43,13 @@ static void friction(Battle *battle, Fighter *fighter) {
   }
 }
 
-static void stop_sliding(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void stop_sliding(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = 0;
   fighter->body.vel[AXIS_Z] = 0;
 }
 
-static void slide(Battle *battle, Fighter *fighter, q16 speed) {
-  fighter_set_speed(battle, fighter, -speed);
+static void slide(Fighter *fighter, q16 speed) {
+  fighter_set_speed(fighter, -speed);
   fighter->body.physics = friction;
 }
 
@@ -61,18 +57,18 @@ static void slide(Battle *battle, Fighter *fighter, q16 speed) {
  * when the victim is in the outer ten square units of the arena. Keep
  * the attacking pose, slide back .3 with friction, wait 8+5 ticks, then
  * wait for an airborne reacting opponent before returning control. */
-static void wall_recoil_tick(Battle *battle, Fighter *fighter) {
+static void wall_recoil_tick(Fighter *fighter) {
   if (fighter->ticks == 8 && (fighter->script_phase == 0x10a || fighter->script_phase == 0x10b)) {
     fighter_enter_stance(fighter, STANCE_STANDING);
   }
-  const Fighter *victim = fighter_opponent(battle, fighter);
+  const Fighter *victim = fighter_opponent(fighter);
   if (fighter->ticks >= 13 && (!(victim->flags & FF_REACTING) || !fighter_airborne(victim))) {
     fighter_neutral(fighter);
-    fighter_enter_state(battle, fighter, S_IDLE);
+    fighter_enter_state(fighter, S_IDLE);
   }
 }
 
-static void wall_recoil(Battle *battle, Fighter *fighter) {
+static void wall_recoil(Fighter *fighter) {
   int sample = fighter_pose_sample(fighter);
   int action = fighter->action;
   fighter_upright(fighter);
@@ -85,20 +81,20 @@ static void wall_recoil(Battle *battle, Fighter *fighter) {
   fighter->buttons = NULL;
   fighter->flags |= FF_REACTING | FF_BUSY;
   fighter->script = wall_recoil_tick;
-  slide(battle, fighter, 0x4ccc);
+  slide(fighter, 0x4ccc);
 }
 
-void battle_wall_recoil(Battle *battle, Fighter *victim) {
-  Fighter *attacker = (Fighter *)fighter_opponent(battle, victim);
+void battle_wall_recoil(Fighter *victim) {
+  Fighter *attacker = (Fighter *)fighter_opponent(victim);
   int64_t x = victim->body.pos[AXIS_X], z = victim->body.pos[AXIS_Z];
-  int64_t radius = battle->arena_radius;
+  int64_t radius = g_battle.arena_radius;
   if (victim->body_contact && x * x + z * z >= radius * radius - 10LL * Q16_ONE * Q16_ONE && !(victim->flags & FF_MARK) && !fighter_airborne(attacker)) {
     fighter_interrupt(attacker, wall_recoil);
   }
 }
 
-static void launch(Battle *battle, Fighter *fighter, q16 speed, q16 vy, q16 gravity) {
-  fighter_set_speed(battle, fighter, -speed);
+static void launch(Fighter *fighter, q16 speed, q16 vy, q16 gravity) {
+  fighter_set_speed(fighter, -speed);
   fighter->body.vel[AXIS_Y] = vy;
   fighter->body.gravity = gravity;
 }
@@ -117,12 +113,12 @@ static const MoveSegment uppercut_ko_segments[] = {{0, 53, 0, 1}, {1, 55, 2, 1},
 static const MoveEvent stagger_events[] = {{19, stop_sliding}};
 // clang-format on
 
-static void sweep_rise(Battle *battle, Fighter *fighter);
-static void uppercut_land(Battle *battle, Fighter *fighter);
-static void uppercut_rise(Battle *battle, Fighter *fighter);
-static void kick_air_rise(Battle *battle, Fighter *fighter);
-static void jab_air_land(Battle *battle, Fighter *fighter);
-static void jab_air_rise(Battle *battle, Fighter *fighter);
+static void sweep_rise(Fighter *fighter);
+static void uppercut_land(Fighter *fighter);
+static void uppercut_rise(Fighter *fighter);
+static void kick_air_rise(Fighter *fighter);
+static void jab_air_land(Fighter *fighter);
+static void jab_air_rise(Fighter *fighter);
 
 static const MoveSequence jab_hit_sequence = PHASE(jab_hit_segments, 12, neutral);
 static const MoveSequence stagger_sequence = {stagger_segments, COUNT(stagger_segments), stagger_events, 1, 25, neutral, NULL};
@@ -161,98 +157,98 @@ REACTION(jab_air, 183, SF_LOCK, jab_air_sequence, 0);
 REACTION(jab_air_land_move, 183, SF_LOCK, jab_air_land_sequence, ACTION_GETUP);
 REACTION(jab_air_rise_move, 185, SF_LOCK, air_getup_sequence, ACTION_GETUP);
 
-static void sweep_rise(Battle *battle, Fighter *fighter) {
-  stop_sliding(battle, fighter);
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &sweep_rise_move);
+static void sweep_rise(Fighter *fighter) {
+  stop_sliding(fighter);
+  fighter_start_move(fighter, S_KNOCKDOWN, &sweep_rise_move);
 }
 
-static void uppercut_land(Battle *battle, Fighter *fighter) {
+static void uppercut_land(Fighter *fighter) {
   /* A KO victim stays down; 0x48fc20 ends the round instead of a getup. */
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, fighter->health == 0 ? &uppercut_ko : &uppercut_land_move);
+  fighter_start_move(fighter, S_KNOCKDOWN, fighter->health == 0 ? &uppercut_ko : &uppercut_land_move);
 }
 
-static void uppercut_rise(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &uppercut_rise_move);
+static void uppercut_rise(Fighter *fighter) {
+  fighter_start_move(fighter, S_KNOCKDOWN, &uppercut_rise_move);
 }
 
-static void kick_air_rise(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &kick_air_rise_move);
+static void kick_air_rise(Fighter *fighter) {
+  fighter_start_move(fighter, S_KNOCKDOWN, &kick_air_rise_move);
 }
 
-static void jab_air_land(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &jab_air_land_move);
+static void jab_air_land(Fighter *fighter) {
+  fighter_start_move(fighter, S_KNOCKDOWN, &jab_air_land_move);
 }
 
-static void jab_air_rise(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &jab_air_rise_move);
+static void jab_air_rise(Fighter *fighter) {
+  fighter_start_move(fighter, S_KNOCKDOWN, &jab_air_rise_move);
 }
 
 /* 1: jab blocked. */
-static void react_jab_block(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_BLOCK, &block_short);
-  slide(battle, fighter, 0x3d70); /* 0.24 */
+static void react_jab_block(Fighter *fighter) {
+  fighter_start_move(fighter, S_BLOCK, &block_short);
+  slide(fighter, 0x3d70); /* 0.24 */
 }
 
 /* 4: sweep blocked. */
-static void react_low_block(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_BLOCK, &block_long);
-  slide(battle, fighter, 0x2666); /* 0.15 */
+static void react_low_block(Fighter *fighter) {
+  fighter_start_move(fighter, S_BLOCK, &block_long);
+  slide(fighter, 0x2666); /* 0.15 */
 }
 
 /* 6: kick or uppercut blocked. */
-static void react_block(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_BLOCK, &block_long);
-  slide(battle, fighter, 0x3333); /* 0.20 */
+static void react_block(Fighter *fighter) {
+  fighter_start_move(fighter, S_BLOCK, &block_long);
+  slide(fighter, 0x3333); /* 0.20 */
 }
 
 /* 11 (0x482070): jab air hit; air reactions scale later damage by 0.6. */
-static void react_jab_air(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &jab_air);
+static void react_jab_air(Fighter *fighter) {
+  fighter_start_move(fighter, S_KNOCKDOWN, &jab_air);
   fighter->damage_scale = 0x9999;
-  launch(battle, fighter, 0xccc, -0x23d7, 0x28f); /* 0.05, -0.14, 0.01 */
+  launch(fighter, 0xccc, -0x23d7, 0x28f); /* 0.05, -0.14, 0.01 */
 }
 
 /* 13 (0x481d30): kick air hit. */
-static void react_kick_air(Battle *battle, Fighter *fighter) {
-  battle_wall_recoil(battle, fighter);
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &kick_air);
+static void react_kick_air(Fighter *fighter) {
+  battle_wall_recoil(fighter);
+  fighter_start_move(fighter, S_KNOCKDOWN, &kick_air);
   fighter->damage_scale = 0x9999;
-  launch(battle, fighter, 0x11eb, -0x23d7, 0x28f); /* 0.07, -0.14, 0.01 */
+  launch(fighter, 0x11eb, -0x23d7, 0x28f); /* 0.07, -0.14, 0.01 */
 }
 
 /* 16 (0x482a10): kick hit, including the wall recoil check. */
-static void react_kick_hit(Battle *battle, Fighter *fighter) {
-  battle_wall_recoil(battle, fighter);
-  fighter_start_move(battle, fighter, S_HIT, &kick_hit);
-  slide(battle, fighter, 0x2666); /* 0.15 */
+static void react_kick_hit(Fighter *fighter) {
+  battle_wall_recoil(fighter);
+  fighter_start_move(fighter, S_HIT, &kick_hit);
+  slide(fighter, 0x2666); /* 0.15 */
 }
 
 /* 18 (0x483050): sweep trip, also when airborne; Y is forced to the floor. */
-static void react_sweep(Battle *battle, Fighter *fighter) {
+static void react_sweep(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->body.vel[AXIS_Y] = 0;
   fighter->body.gravity = 0;
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &sweep_fall);
-  fighter_set_speed(battle, fighter, -0xf5c); /* 0.06 */
+  fighter_start_move(fighter, S_KNOCKDOWN, &sweep_fall);
+  fighter_set_speed(fighter, -0xf5c); /* 0.06 */
 }
 
 /* 34 (0x4838e0): uppercut launch from the current height. */
-static void react_uppercut(Battle *battle, Fighter *fighter) {
-  battle_wall_recoil(battle, fighter);
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &uppercut_fall);
-  launch(battle, fighter, 0x7ae, -0x3333, 0x20c); /* 0.03, -0.20, 0.008 */
+static void react_uppercut(Fighter *fighter) {
+  battle_wall_recoil(fighter);
+  fighter_start_move(fighter, S_KNOCKDOWN, &uppercut_fall);
+  launch(fighter, 0x7ae, -0x3333, 0x20c); /* 0.03, -0.20, 0.008 */
 }
 
 /* 37 (0x483b40): jab hit, or a stagger once 0.2 damage (0.15 for a CPU)
  * has accumulated, or always against Goro. */
-static void react_jab_hit(Battle *battle, Fighter *fighter) {
+static void react_jab_hit(Fighter *fighter) {
   bool staggers = fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666) || fighter->roster == 15;
   if (staggers) {
-    battle_wall_recoil(battle, fighter);
-    fighter_start_move(battle, fighter, S_HIT, &stagger);
-    fighter_set_speed(battle, fighter, -0x1999); /* 0.1 */
+    battle_wall_recoil(fighter);
+    fighter_start_move(fighter, S_HIT, &stagger);
+    fighter_set_speed(fighter, -0x1999); /* 0.1 */
   } else {
-    fighter_start_move(battle, fighter, S_HIT, &jab_hit);
+    fighter_start_move(fighter, S_HIT, &jab_hit);
   }
 }
 
@@ -306,29 +302,29 @@ static const MoveDef getup_side = R(185, 15, ACTION_GETUP);
 // clang-format on
 #undef R
 
-static void getup_tick(Battle *battle, Fighter *fighter) {
+static void getup_tick(Fighter *fighter) {
   fighter->sample_override = mini(fighter_move(fighter)->last, fighter->ticks);
   if (fighter->ticks > fighter_move(fighter)->last) {
-    neutral(battle, fighter);
+    neutral(fighter);
   }
 }
 
-static void begin_getup(Battle *battle, Fighter *fighter, int clip) {
-  stop_sliding(battle, fighter);
+static void begin_getup(Fighter *fighter, int clip) {
+  stop_sliding(fighter);
   if (fighter->health <= 0) {
     fighter->script = NULL;
     return;
   }
   if (!clip) {
-    neutral(battle, fighter);
+    neutral(fighter);
     return;
   }
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, clip == 188 ? &getup_front : clip == 185 ? &getup_side : &getup_back);
+  fighter_start_move(fighter, S_KNOCKDOWN, clip == 188 ? &getup_front : clip == 185 ? &getup_side : &getup_back);
   fighter->script = getup_tick;
   fighter->sample_override = 0;
 }
 
-static void extra_reaction_tick(Battle *battle, Fighter *fighter) {
+static void extra_reaction_tick(Fighter *fighter) {
   const ReactionSpec *spec = &extra_reactions[fighter->reaction];
   int elapsed = fighter->script_timer++;
   int sample = elapsed;
@@ -346,7 +342,7 @@ static void extra_reaction_tick(Battle *battle, Fighter *fighter) {
   if (fighter->current_move == &crouch_reaction) {
     fighter->sample_override = mini(4, elapsed);
     if (elapsed >= 9) {
-      neutral(battle, fighter);
+      neutral(fighter);
     }
     return;
   }
@@ -356,31 +352,31 @@ static void extra_reaction_tick(Battle *battle, Fighter *fighter) {
   }
   fighter->sample_override = mini(spec->move.last, sample);
   if (sample > spec->move.last) {
-    begin_getup(battle, fighter, spec->getup);
+    begin_getup(fighter, spec->getup);
   }
 }
 
-static void tumble_tick(Battle *battle, Fighter *fighter) {
+static void tumble_tick(Fighter *fighter) {
   if (fighter->current_move == &tumble_land_move) {
     fighter->sample_override = mini(28, fighter->ticks);
     if (fighter->ticks >= (fighter->reaction == 100 ? 49 : 37)) {
-      begin_getup(battle, fighter, fighter->reaction == 100 ? 0 : 328);
+      begin_getup(fighter, fighter->reaction == 100 ? 0 : 328);
     }
     return;
   }
   fighter->sample_override = mini(16, fighter->ticks);
   if (!fighter_airborne(fighter) && fighter->ticks >= 17) {
-    fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_land_move);
+    fighter_start_move(fighter, S_KNOCKDOWN, &tumble_land_move);
     fighter->script = tumble_tick;
     fighter->sample_override = 0;
   } else if (fighter->ticks >= 17) {
-    fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_loop);
+    fighter_start_move(fighter, S_KNOCKDOWN, &tumble_loop);
     fighter->script = tumble_tick;
     fighter->sample_override = 0;
   }
 }
 
-static void react_extra(Battle *battle, Fighter *fighter) {
+static void react_extra(Fighter *fighter) {
   switch (fighter->reaction) {
     case 10:
     case 17:
@@ -391,7 +387,7 @@ static void react_extra(Battle *battle, Fighter *fighter) {
     case 51:
     case 52:
     case 99:
-      battle_wall_recoil(battle, fighter);
+      battle_wall_recoil(fighter);
       break;
     default:
       break;
@@ -399,22 +395,22 @@ static void react_extra(Battle *battle, Fighter *fighter) {
   int id = fighter->reaction;
   bool teleport_air = id == 90 && fighter_airborne(fighter);
   if (id == 20 || id == 100 || id == 156) {
-    fighter_start_move(battle, fighter, S_KNOCKDOWN, &tumble_start);
+    fighter_start_move(fighter, S_KNOCKDOWN, &tumble_start);
     fighter->script = tumble_tick;
     fighter->sample_override = 0;
-    launch(battle, fighter, id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
+    launch(fighter, id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
     return;
   }
   if ((id == 90 || id == 173) && fighter_airborne(fighter)) {
     fighter->reaction = id = 10;
   }
   if (id == 32 && (fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666))) {
-    react_jab_hit(battle, fighter);
+    react_jab_hit(fighter);
     return;
   }
   const ReactionSpec *spec = &extra_reactions[id];
   bool crouch = fighter->crouching && (id == 17 || id == 28 || id == 29);
-  fighter_start_move(battle, fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, crouch ? &crouch_reaction : &spec->move);
+  fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, crouch ? &crouch_reaction : &spec->move);
   fighter->script = extra_reaction_tick;
   fighter->sample_override = spec->hold_at == 4 ? 4 : 0;
   fighter->script_timer = spec->hold_at == 4 ? 4 : 0;
@@ -425,37 +421,37 @@ static void react_extra(Battle *battle, Fighter *fighter) {
     fighter->flags |= FF_NO_GUARD;
   }
   if (spec->friction) {
-    slide(battle, fighter, crouch && id == 17 ? 0x2b85 : spec->speed);
+    slide(fighter, crouch && id == 17 ? 0x2b85 : spec->speed);
   } else {
     /* 0x4e9980 shares clip 183 with jab air, but retreats at 0.03. */
-    launch(battle, fighter, teleport_air ? 0x7ae : id == 52 && fighter->hits > 1 ? 0xf5c : spec->speed, spec->vy, spec->gravity);
+    launch(fighter, teleport_air ? 0x7ae : id == 52 && fighter->hits > 1 ? 0xf5c : spec->speed, spec->vy, spec->gravity);
   }
   if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
     fighter->body.gravity = 0x28f;
   }
 }
 
-static void react_extra_block(Battle *battle, Fighter *fighter) {
+static void react_extra_block(Fighter *fighter) {
   int id = fighter->reaction;
-  fighter_start_move(battle, fighter, S_BLOCK, id == 8 ? &block_short : &block_long);
+  fighter_start_move(fighter, S_BLOCK, id == 8 ? &block_short : &block_long);
   if (id == 3 || id == 143) {
     fighter->action = 0x4004;
   }
-  slide(battle, fighter, id == 8 ? 0 : id == 7 ? 0x4000 : id == 5 ? 0x2e14 : 0xf5c);
+  slide(fighter, id == 8 ? 0 : id == 7 ? 0x4000 : id == 5 ? 0x2e14 : 0xf5c);
 }
 
 /* 486d00 -> 4e9e68: two repetitions of seven standing poses, no push.
  * 486f90 instead binds crouching clip 255 and plays it out and back. */
-static void react_slide_block(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
+static void react_slide_block(Fighter *fighter) {
+  fighter_start_move(fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
 }
 
-static void react_approximate(Battle *battle, Fighter *fighter) {
+static void react_approximate(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
-    fighter_enter_state(battle, fighter, S_KNOCKDOWN);
+    fighter_enter_state(fighter, S_KNOCKDOWN);
   } else {
-    fighter_enter_state(battle, fighter, S_HIT);
+    fighter_enter_state(fighter, S_HIT);
   }
 }
 
@@ -466,14 +462,14 @@ static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef thaw_landing = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
 static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = 0x1005};
 
-static void thaw_tick(Battle *battle, Fighter *fighter) {
+static void thaw_tick(Fighter *fighter) {
   fighter->sample_override = mini(27, 18 + fighter->ticks);
   if (fighter->ticks >= 10) {
-    neutral(battle, fighter);
+    neutral(fighter);
   }
 }
 
-static void frozen_tick(Battle *battle, Fighter *fighter) {
+static void frozen_tick(Fighter *fighter) {
   /* 486310/340/3b0/3e0/5b0: six 3+3-tick pulses, an
    * 88-tick hold, then three more pulses. Each positive .05
    * translation is undone, rather than accumulated or mirrored. */
@@ -492,43 +488,43 @@ static void frozen_tick(Battle *battle, Fighter *fighter) {
   fighter->appearance = APPEARANCE_NORMAL;
   fighter->flags &= ~(unsigned)FF_NO_GUARD;
   if (fighter->script_phase == 1) {
-    fighter_start_move(battle, fighter, S_JUMP, &thaw_landing);
+    fighter_start_move(fighter, S_JUMP, &thaw_landing);
     fighter->script = thaw_tick;
     fighter->sample_override = 18;
   } else {
-    neutral(battle, fighter);
+    neutral(fighter);
   }
 }
 
-static void thaw_hop_tick(Battle *battle, Fighter *fighter) {
+static void thaw_hop_tick(Fighter *fighter) {
   fighter->sample_override = mini(18, 7 + fighter->ticks);
   if (!fighter_airborne(fighter)) {
-    fighter_start_move(battle, fighter, S_JUMP, &thaw_landing);
+    fighter_start_move(fighter, S_JUMP, &thaw_landing);
     fighter->script = thaw_tick;
     fighter->sample_override = 18;
   }
 }
 
-static void react_freeze(Battle *battle, Fighter *fighter) {
+static void react_freeze(Fighter *fighter) {
   if (fighter->action == 0x1003) {
     /* 486430 calls 480f80, which switches to the opponent: double freeze
      * backfires. It does not recursively refresh this victim's timer. */
-    Fighter *attacker = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
-    battle_react(battle, attacker, 67);
+    Fighter *attacker = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
+    battle_react(attacker, 67);
     if (fighter_airborne(fighter)) {
-      fighter_start_move(battle, fighter, S_JUMP, &thaw_hop);
+      fighter_start_move(fighter, S_JUMP, &thaw_hop);
       fighter->script = thaw_hop_tick;
       fighter->sample_override = 7;
       fighter->body.vel[AXIS_Y] = -0x51e;
       fighter->body.gravity = 0x20c;
     } else {
-      neutral(battle, fighter);
+      neutral(fighter);
     }
     return;
   }
   int clip = fighter->appearance == APPEARANCE_FROZEN ? fighter->frozen_clip : fighter_move(fighter)->clip;
   int sample = fighter_pose_sample(fighter);
-  fighter_start_move(battle, fighter, S_HIT, &frozen);
+  fighter_start_move(fighter, S_HIT, &frozen);
   fighter->script = frozen_tick;
   fighter->sample_override = sample;
   fighter->frozen_clip = clip;
@@ -544,38 +540,38 @@ static const MoveDef scepter_low_hit = {.clip = 192, .last = 34, .flags = SF_LOC
 static const MoveDef scepter_low_crouch = {.clip = 193, .last = 15, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef scepter_low_rise = {.clip = 194, .last = 23, .flags = SF_LOCK, .action = 0x4003};
 
-static void scepter_low_tick(Battle *battle, Fighter *fighter) {
+static void scepter_low_tick(Fighter *fighter) {
   fighter->sample_override = mini(fighter_move(fighter)->last, fighter->ticks);
   if (fighter->current_move == &scepter_low_hit && fighter->ticks >= 24) {
-    stop_sliding(battle, fighter);
+    stop_sliding(fighter);
   }
   if (fighter->ticks > fighter_move(fighter)->last) {
     if (fighter->current_move == &scepter_low_hit) {
       bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-      fighter_start_move(battle, fighter, S_KNOCKDOWN, down ? &scepter_low_crouch : &scepter_low_rise);
+      fighter_start_move(fighter, S_KNOCKDOWN, down ? &scepter_low_crouch : &scepter_low_rise);
       fighter->script = scepter_low_tick;
       fighter->sample_override = 0;
     } else {
-      neutral(battle, fighter);
+      neutral(fighter);
     }
   }
 }
 
-static void react_scepter_low(Battle *battle, Fighter *fighter) {
-  fighter_start_move(battle, fighter, S_KNOCKDOWN, &scepter_low_hit);
+static void react_scepter_low(Fighter *fighter) {
+  fighter_start_move(fighter, S_KNOCKDOWN, &scepter_low_hit);
   fighter->script = scepter_low_tick;
   fighter->sample_override = 0;
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  fighter_set_speed(battle, fighter, -0xf5c);
+  fighter_set_speed(fighter, -0xf5c);
 }
 
-static void react_scepter_freeze(Battle *battle, Fighter *fighter) {
+static void react_scepter_freeze(Fighter *fighter) {
   if (fighter->hits > 3) {
     /* 486210 -> 4835f0 uses the shared weapon-throw tumble. */
     fighter->reaction = 154;
-    react_extra(battle, fighter);
+    react_extra(fighter);
   } else {
-    react_freeze(battle, fighter);
+    react_freeze(fighter);
   }
 }
 
@@ -589,15 +585,15 @@ static const MoveDef weapon_followup[] = {
     {.clip = 180, .last = 19, .flags = SF_LOCK},
 };
 
-static void weapon_followup_tick(Battle *battle, Fighter *fighter) {
+static void weapon_followup_tick(Fighter *fighter) {
   int last = fighter->assets != NULL ? (int)fighter_clip(fighter->assets, fighter)->frames.count - 1 : fighter_move(fighter)->last;
   fighter->sample_override = mini(last, fighter->ticks);
   if (fighter->ticks > last) {
-    neutral(battle, fighter);
+    neutral(fighter);
   }
 }
 
-static void react_weapon_followup(Battle *battle, Fighter *fighter) {
+static void react_weapon_followup(Fighter *fighter) {
   int selected = 4, clip = fighter_move(fighter)->clip;
   unsigned no_guard = fighter->flags & FF_NO_GUARD;
   int action = fighter->action;
@@ -606,7 +602,7 @@ static void react_weapon_followup(Battle *battle, Fighter *fighter) {
       selected = i;
     }
   }
-  fighter_start_move(battle, fighter, S_BLOCK, &weapon_followup[selected]);
+  fighter_start_move(fighter, S_BLOCK, &weapon_followup[selected]);
   fighter->script = weapon_followup_tick;
   fighter->sample_override = 0;
   fighter->flags |= no_guard;
@@ -674,7 +670,7 @@ static const FighterFn reactions[256] = {
 /* 0x48f880: the victim's move is replaced at once; velocities, gravity and
  * its physics callback are cleared and it is marked as reacting. The
  * reaction starts on the victim's next update. */
-void battle_react(Battle *battle, Fighter *victim, int reaction) {
+void battle_react(Fighter *victim, int reaction) {
   require(reaction >= 0 && reaction < COUNT(reactions), "Invalid reaction id");
   victim->body_contact = false;
   /* Drop rules for the reaction ids currently used by our script records.
@@ -683,7 +679,7 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 52) || reaction == 70 ||
           reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 || reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 ||
           reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 || reaction == 156 || reaction == 173)) {
-    victim->disarm(battle, victim);
+    victim->disarm(victim);
   }
   victim->reaction = reaction;
   if (reaction != 67 && reaction != 151) {
@@ -695,7 +691,7 @@ void battle_react(Battle *battle, Fighter *victim, int reaction) {
   }
   FighterFn entry = reactions[reaction] != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? reactions[reaction]
                                                                                                                                       : react_approximate;
-  (void)battle;
+
   for (int i = 0; i < 3; ++i) {
     victim->body.vel[i] = 0;
     victim->body.spin[i] = 0;

@@ -164,7 +164,7 @@ typedef struct AttackRecord {
 } AttackRecord;
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
-typedef void (*FighterFn)(Battle *battle, Fighter *fighter);
+typedef void (*FighterFn)(Fighter *fighter);
 
 typedef enum CpuAction {
   CPU_JAB,
@@ -231,7 +231,7 @@ typedef struct ScenePlayback {
   bool done;
 } ScenePlayback;
 
-typedef bool (*CommandPredicate)(const Battle *battle, const Fighter *fighter);
+typedef bool (*CommandPredicate)(const Fighter *fighter);
 
 /* Pattern tokens of a special command, earliest first. Back and forward are
  * resolved against the opponent's position when the button is pressed. */
@@ -297,7 +297,7 @@ typedef struct MoveEvent {
   FighterFn think;
 } MoveEvent;
 
-typedef bool (*FighterTest)(const Battle *battle, const Fighter *fighter);
+typedef bool (*FighterTest)(const Fighter *fighter);
 
 /* until, when set, holds the last sample after count ticks until it holds;
  * a retail script wait such as "until landed". */
@@ -465,7 +465,7 @@ typedef struct HitEffect {
 } HitEffect;
 
 typedef struct Projectile Projectile;
-typedef void (*ProjectileFn)(Battle *battle, Projectile *projectile);
+typedef void (*ProjectileFn)(Projectile *projectile);
 
 enum {
   PROJECTILE_SPEAR = 1,
@@ -624,14 +624,18 @@ struct Battle {
   bool contacted;    /* 0x532358: any contact this round */
 };
 
+/* One active simulation, defined in battle.c and initialized by battle_init.
+ * Assets remain borrowed from the host; rendering only reads this state. */
+extern Battle g_battle;
+
 void input_bind_player(InputDevice *device, int player);
 void input_sample(InputDevice *device, const unsigned char *keys, Input *out);
 void input_sync(InputDevice *device, const unsigned char *keys);
-void input_cpu(Battle *battle, int player, Input *out);
-uint32_t battle_random(Battle *battle, uint32_t range);
-bool battle_chance(Battle *battle, int per_thousand);
-void battle_cpu_step(Battle *battle, Fighter *fighter);
-bool battle_cpu_action(Battle *battle, Fighter *fighter, CpuAction action);
+void input_cpu(int player, Input *out);
+uint32_t battle_random(uint32_t range);
+bool battle_chance(int per_thousand);
+void battle_cpu_step(Fighter *fighter);
+bool battle_cpu_action(Fighter *fighter, CpuAction action);
 ShellCommand input_shell_command(int keycode);
 
 int roster_count(void);
@@ -639,10 +643,10 @@ const CharacterDef *roster_def(int index);
 const MoveDef *fighter_move(const Fighter *fighter);
 int roster_clip(const CharacterDef *def, int state, int asset_idle);
 const Character *roster_character(const Assets *assets, int roster_index);
-void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move);
-void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
-void fighter_step_sequence(Battle *battle, Fighter *fighter);
-void fighter_start_sequence(Battle *battle, Fighter *fighter, const MoveSequence *sequence);
+void fighter_start_move(Fighter *fighter, int state, const MoveDef *move);
+void fighter_enter_state(Fighter *fighter, int state);
+void fighter_step_sequence(Fighter *fighter);
+void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
 float fighter_z(const Fighter *fighter);
@@ -650,70 +654,70 @@ float fighter_height(const Fighter *fighter);
 bool fighter_airborne(const Fighter *fighter);
 void fighter_neutral(Fighter *fighter);
 void fighter_upright(Fighter *fighter);
-q16 fighter_axis(const Battle *battle, const Fighter *fighter, int axis);
-void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed);
-ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record);
-ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
-ContactResult battle_projectile_contact(Battle *battle, Projectile *projectile, const AttackRecord *record);
-Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step);
-void battle_damage(Battle *battle, Fighter *victim, q16 damage);
-void battle_react(Battle *battle, Fighter *victim, int reaction);
-void battle_wall_recoil(Battle *battle, Fighter *victim);
-void battle_world(Battle *battle);
-void battle_set_arena(Battle *battle, int arena);
-bool battle_can_finish(const Battle *battle, const Fighter *fighter);
-bool battle_begin_finisher(Battle *battle, Fighter *fighter, int id);
-void battle_end_finisher(Battle *battle);
+q16 fighter_axis(const Fighter *fighter, int axis);
+void fighter_set_speed(Fighter *fighter, q16 speed);
+ContactResult battle_contact(Fighter *attacker, const AttackRecord *record);
+ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
+ContactResult battle_projectile_contact(Projectile *projectile, const AttackRecord *record);
+Projectile *battle_spawn_projectile(Fighter *owner, int kind, int lifetime, ProjectileFn step);
+void battle_damage(Fighter *victim, q16 damage);
+void battle_react(Fighter *victim, int reaction);
+void battle_wall_recoil(Fighter *victim);
+void battle_world(void);
+void battle_set_arena(int arena);
+bool battle_can_finish(const Fighter *fighter);
+bool battle_begin_finisher(Fighter *fighter, int id);
+void battle_end_finisher(void);
 void fighter_interrupt(Fighter *fighter, FighterFn entry);
 void fighter_enter_stance(Fighter *fighter, Stance stance);
-const Fighter *fighter_opponent(const Battle *battle, const Fighter *fighter);
-float fighter_distance(const Battle *battle, const Fighter *fighter);
-bool fighter_holds_back(const Battle *battle, const Fighter *fighter);
-bool fighter_fast_start(const Battle *battle, const Fighter *fighter);
-void fighter_press(Battle *battle, Fighter *fighter, Button button);
+const Fighter *fighter_opponent(const Fighter *fighter);
+float fighter_distance(const Fighter *fighter);
+bool fighter_holds_back(const Fighter *fighter);
+bool fighter_fast_start(const Fighter *fighter);
+void fighter_press(Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
 int fighter_sample(const Fighter *fighter);
-void battle_bind_assets(Battle *battle, const Assets *assets);
+void battle_bind_assets(const Assets *assets);
 const Character *fighter_model(const Assets *assets, const Fighter *fighter);
 const Clip *fighter_clip(const Assets *assets, const Fighter *fighter);
 Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
 int fighter_pose_sample(const Fighter *fighter);
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
-void fighter_ready(Battle *battle, Fighter *fighter);
+void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
-void weapon_start_strike(Battle *battle, Fighter *fighter, const WeaponStrike *strike, bool travel);
-void weapon_air_attack(Battle *battle, Fighter *fighter, bool high);
-void weapon_draw(Battle *battle, Fighter *fighter, const WeaponDef *weapon);
-void weapon_throw(Battle *battle, Fighter *fighter);
-bool weapon_can_pickup(const Battle *battle, const Fighter *fighter);
-void weapon_pickup(Battle *battle, Fighter *fighter);
-void weapon_followup_victim(Battle *battle, Fighter *fighter);
-void weapon_stance(Battle *battle, Fighter *fighter, int state);
+void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
+void weapon_air_attack(Fighter *fighter, bool high);
+void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
+void weapon_throw(Fighter *fighter);
+bool weapon_can_pickup(const Fighter *fighter);
+void weapon_pickup(Fighter *fighter);
+void weapon_followup_victim(Fighter *fighter);
+void weapon_stance(Fighter *fighter, int state);
 void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);
 bool scene_step(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
-void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
-void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount);
+void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
+void battle_camera_shake(int pulses, int interval, q16 amount);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 int projectile_mesh_frame(const Projectile *object);
-void battle_particles(Battle *battle, const Fighter *fighter, int joint, int count, bool ice);
-void battle_spray(Battle *battle, const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation);
-void battle_joint_spray(Battle *battle, const Fighter *fighter, const JointSprayDef *def);
-ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint);
-void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);
-void battle_shatter(Battle *battle, Fighter *victim);
-void battle_step_presentation(Battle *battle);
-void battle_sound(Battle *battle, int bank, int selector);
-void battle_scene_impact(Battle *battle, const Fighter *fighter);
+void battle_particles(const Fighter *fighter, int joint, int count, bool ice);
+void battle_spray(const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation);
+void battle_joint_spray(const Fighter *fighter, const JointSprayDef *def);
+ScenePiece *battle_attach_head(Fighter *victim, Fighter *owner, int joint);
+void battle_attach_piece_model(ScenePiece *piece, const AttachmentDef *def, const Fighter *actor);
+void battle_shatter(Fighter *victim);
+void battle_step_presentation(void);
+void battle_sound(int bank, int selector);
+void battle_scene_impact(const Fighter *fighter);
 
-void battle_init(Battle *battle, int p1, int p2);
-void battle_reset_match(Battle *battle);
-void battle_next_round(Battle *battle);
-void battle_step(Battle *battle, const Input input[2]);
+void battle_init(int p1, int p2);
+void battle_reset_match(void);
+void battle_next_round(void);
+void battle_step(const Input input[2]);
 const char *state_name(int state);
 
-void draw_battle(Canvas *canvas, const Assets *assets, const Battle *battle, int arena, bool cpu, bool paused);
+void draw_battle(Canvas *canvas, const Assets *assets, int arena, bool cpu, bool paused);
 void draw_sprite(Canvas *canvas, const Geometry *geometry, int sprite, Rect dest, bool flip);
 #endif

@@ -178,7 +178,7 @@ Recovered distinctions include opcode 36's result flag 4 versus opcode 55's
 flag 1, task-spawn opcode 40 ignoring its inline byte, opcode 25 using sound
 lookup `4ead30` rather than bank B, and `405430` always succeeding in this EXE.
 The indexed sound helper links to the common `sound_event` resolver. Queue it
-with `battle_sound(battle, SOUND_INDEXED, selector)`; assets load all 66 tokens,
+with `battle_sound(SOUND_INDEXED, selector)`; assets load all 66 tokens,
 selectors above 65 and zero entries are silent, and sampled tokens resolve
 through division by five. Selector 4 is token `0x852`, sample 426. Keep the
 indexed cue at its script position, separately from later A/B/C events.

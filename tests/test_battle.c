@@ -10,23 +10,21 @@ static void check(bool yes, const char *message) {
   }
 }
 
-static Battle fight(float distance) {
-  Battle battle;
-  battle_init(&battle, 0, 4);
-  battle.phase = PHASE_FIGHT;
-  battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * 0.5f * Q16_ONE);
-  battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * 0.5f * Q16_ONE);
-  return battle;
+static void fight(float distance) {
+  battle_init(0, 4);
+  g_battle.phase = PHASE_FIGHT;
+  g_battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * 0.5f * Q16_ONE);
+  g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * 0.5f * Q16_ONE);
 }
 
-static void advance_ticks(Battle *battle, int n, const Input *in) {
+static void advance_ticks(int n, const Input *in) {
   const Input zero[2] = {0};
   int i;
   for (i = 0; i < n; ++i)
-    battle_step(battle, in ? in : zero);
+    battle_step(in ? in : zero);
 }
 
-static void do_attack(Battle *battle, int state, bool guard, bool crouch) {
+static void do_attack(int state, bool guard, bool crouch) {
   Input in[2] = {0};
   if (guard)
     in[1].held |= BUTTON_BIT(BUTTON_BLOCK);
@@ -43,9 +41,9 @@ static void do_attack(Battle *battle, int state, bool guard, bool crouch) {
     in[0].held |= BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_DOWN);
   if (state == S_THROW)
     in[0].held |= BUTTON_BIT(BUTTON_LOW_PUNCH);
-  battle_step(battle, in);
+  battle_step(in);
   in[0] = (Input){0};
-  advance_ticks(battle, 20, in);
+  advance_ticks(20, in);
 }
 
 static void check_roster(void) {
@@ -84,49 +82,48 @@ static void check_original_kicks(void) {
   };
   for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
     const struct KickFixture *expected = &fixtures[i];
-    Battle battle = fight(4.f);
+    fight(4.f);
     int player = expected->roster == 0 ? 0 : 1;
-    Fighter *fighter = &battle.fighters[player];
+    Fighter *fighter = &g_battle.fighters[player];
     Input in[2] = {0};
     in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
-    battle_step(&battle, in);
+    battle_step(in);
     check(fighter->pending != NULL && fighter->state == S_IDLE, "Press must start its move on the next tick");
     in[player] = (Input){0};
-    battle_step(&battle, in);
+    battle_step(in);
     check(fighter->current_move->clip == expected->clip, "Kick callback chose wrong move");
     for (int tick = 0; tick < expected->count; ++tick) {
       check(fighter->state == S_KICK && fighter->ticks == tick, "Kick returned prematurely");
       check(fighter_frame(fighter, expected->clip == 66 ? 18 : 28) == expected->frames[tick], "Kick sample differs from original VM/native recovery");
       in[player] = (Input){.held = BUTTON_BIT(BUTTON_LEFT)};
-      battle_step(&battle, in);
+      battle_step(in);
     }
     check(fighter->state == S_WALK && fighter->ticks == 0, "Kick end callback did not release control on original return step");
     check(fighter->current_move->sequence == NULL, "Movement kept stale kick playback");
 
-    fighter_enter_state(&battle, fighter, S_KICK);
-    advance_ticks(&battle, 5, NULL);
-    fighter_enter_state(&battle, fighter, S_HIT);
+    fighter_enter_state(fighter, S_KICK);
+    advance_ticks(5, NULL);
+    fighter_enter_state(fighter, S_HIT);
     check(fighter->current_move->sequence == NULL, "Reaction kept interrupted kick sequence");
-    advance_ticks(&battle, 30, NULL);
+    advance_ticks(30, NULL);
     check(fighter->state == S_IDLE, "Interrupted kick completion overwrote reaction");
 
-    battle = fight(1.f);
-    fighter = &battle.fighters[player];
+    fight(1.f);
+    fighter = &g_battle.fighters[player];
     in[0] = (Input){0};
     in[1] = (Input){0};
     in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
-    battle_step(&battle, in);
-    advance_ticks(&battle, 11, NULL);
-    check(battle.fighters[1 - player].health == Q16_ONE, "Kick contact started before retail query");
-    advance_ticks(&battle, 1, NULL);
-    check(battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick missed its first retail contact step");
-    advance_ticks(&battle, 2, NULL);
-    check(battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick connected more than once");
+    battle_step(in);
+    advance_ticks(11, NULL);
+    check(g_battle.fighters[1 - player].health == Q16_ONE, "Kick contact started before retail query");
+    advance_ticks(1, NULL);
+    check(g_battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick missed its first retail contact step");
+    advance_ticks(2, NULL);
+    check(g_battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick connected more than once");
   }
 }
 
-static void sequence_event(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void sequence_event(Fighter *fighter) {
   fighter->health--;
 }
 
@@ -141,12 +138,12 @@ static void check_original_scorpion(void) {
   };
   for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
     const struct ScorpionFixture *expected = &fixtures[i];
-    Battle battle = fight(4.f);
-    Fighter *fighter = &battle.fighters[0];
+    fight(4.f);
+    Fighter *fighter = &g_battle.fighters[0];
     if (expected->facing_away) {
       fighter->facing = -1;
     }
-    fighter_enter_state(&battle, fighter, expected->state);
+    fighter_enter_state(fighter, expected->state);
     for (int tick = 0; tick < expected->count; ++tick) {
       int clip = fighter_move(fighter)->clip;
       int count = clip == 294 ? 23 : clip == 295 ? 19 : clip == 293 ? 20 : clip == 63 ? 46 : 18;
@@ -165,14 +162,14 @@ static void check_original_scorpion(void) {
           fighter->buffered |= BUTTON_BIT(BUTTON_LOW_PUNCH);
         }
       }
-      battle_step(&battle, (Input[2]){0});
+      battle_step((Input[2]){0});
     }
     check(fighter->state == S_IDLE, "Scorpion move did not return at retail end step");
   }
 }
 
-static void sequence_end(Battle *battle, Fighter *fighter) {
-  fighter_enter_state(battle, fighter, S_IDLE);
+static void sequence_end(Fighter *fighter) {
+  fighter_enter_state(fighter, S_IDLE);
 }
 
 static void check_sequence_events(void) {
@@ -186,30 +183,29 @@ static void check_sequence_events(void) {
   };
   static const MoveSequence sequence = {segments, 2, events, 2, 3, sequence_end, NULL};
   static const MoveDef move = {.clip = 294, .flags = SF_LOCK, .sequence = &sequence};
-  Battle battle = fight(4.f);
-  Fighter *fighter = &battle.fighters[0];
-  fighter_start_move(&battle, fighter, S_PUNCH, &move);
+  fight(4.f);
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_move(fighter, S_PUNCH, &move);
   check(fighter->health == Q16_ONE - 1, "Entry frame event missing");
   for (int i = 0; i < 5; ++i) {
     check(fighter_frame(fighter, 23) == 0, "Unexpected entry sample");
   }
   check(fighter->health == Q16_ONE - 1, "Rendering/sample reads repeated a frame event");
-  advance_ticks(&battle, 1, NULL);
+  advance_ticks(1, NULL);
   check(fighter->health == Q16_ONE - 1, "Event fired on empty frame");
-  advance_ticks(&battle, 1, NULL);
+  advance_ticks(1, NULL);
   check(fighter->health == Q16_ONE - 2, "Repeated sample lost its own frame event");
-  advance_ticks(&battle, 1, NULL);
+  advance_ticks(1, NULL);
   check(fighter->state == S_IDLE, "Sequence did not transition through its end callback");
-  advance_ticks(&battle, 5, NULL);
+  advance_ticks(5, NULL);
   check(fighter->health == Q16_ONE - 2, "Completed sequence kept firing events");
 }
 
-static void restart_sequence(Battle *battle, Fighter *fighter) {
-  fighter_start_sequence(battle, fighter, fighter->sequence);
+static void restart_sequence(Fighter *fighter) {
+  fighter_start_sequence(fighter, fighter->sequence);
 }
 
-static void count_sequence_end(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void count_sequence_end(Fighter *fighter) {
   fighter->script_timer++;
 }
 
@@ -218,320 +214,335 @@ static void check_wait_phases(void) {
   static const MoveEvent events[] = {{0, sequence_event}, {15, sequence_event}};
   static const MoveSequence wait = {hold, 1, events, 2, 45, sequence_end, NULL};
   static const MoveDef move = {.clip = 294, .flags = SF_LOCK, .action = 0x1007};
-  Battle battle = fight(10.f);
-  Fighter *fighter = &battle.fighters[0];
-  fighter_start_move(&battle, fighter, S_PUNCH, &move);
-  fighter_start_sequence(&battle, fighter, &wait);
-  fighter_step_sequence(&battle, fighter);
+  fight(10.f);
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_move(fighter, S_PUNCH, &move);
+  fighter_start_sequence(fighter, &wait);
+  fighter_step_sequence(fighter);
   check(fighter->health == Q16_ONE - 1, "Re-entering a phase pump repeated its entry event");
-  advance_ticks(&battle, 44, NULL);
+  advance_ticks(44, NULL);
   check(fighter->state == S_PUNCH && fighter->action == 0x1007 && fighter_sample(fighter) == 10 && fighter->health == Q16_ONE - 2,
       "Wait must retain the move/action/pose and run its timed events exactly once");
-  advance_ticks(&battle, 1, NULL);
+  advance_ticks(1, NULL);
   check(fighter->state == S_IDLE, "45-tick wait must return exactly on tick 45");
-  fighter_start_move(&battle, fighter, S_PUNCH, &move);
-  fighter_start_sequence(&battle, fighter, &wait);
-  advance_ticks(&battle, 44, NULL);
-  fighter_enter_state(&battle, fighter, S_KNOCKDOWN);
+  fighter_start_move(fighter, S_PUNCH, &move);
+  fighter_start_sequence(fighter, &wait);
+  advance_ticks(44, NULL);
+  fighter_enter_state(fighter, S_KNOCKDOWN);
   const MoveDef *replacement = fighter->current_move;
-  advance_ticks(&battle, 2, NULL);
+  advance_ticks(2, NULL);
   check(fighter->sequence != &wait && fighter->current_move == replacement, "Interrupted wait fired a stale controller return");
 
   static const MoveEvent restarting[] = {{0, sequence_event}, {2, restart_sequence}, {2, sequence_event}};
   static const MoveSequence restart = {hold, 1, restarting, 3, 4, sequence_end, NULL};
-  fighter_start_move(&battle, fighter, S_PUNCH, &move);
+  fighter_start_move(fighter, S_PUNCH, &move);
   q16 health = fighter->health;
-  fighter_start_sequence(&battle, fighter, &restart);
-  advance_ticks(&battle, 2, NULL);
+  fighter_start_sequence(fighter, &restart);
+  advance_ticks(2, NULL);
   check(fighter->ticks == 0 && fighter->health == health - 2, "Restarting the same phase must stop processing the old phase's events");
 
   static const MoveSequence once = {hold, 1, NULL, 0, 2, count_sequence_end, NULL};
-  fighter_start_sequence(&battle, fighter, &once);
-  advance_ticks(&battle, 5, NULL);
+  fighter_start_sequence(fighter, &once);
+  advance_ticks(5, NULL);
   check(fighter->script_timer == 1, "A completed phase must call its completion callback only once");
+
+  /* A new match reuses the singleton's storage. Old phase/object state must
+   * not leak into that match or keep a stale completion callback alive. */
+  fighter_start_sequence(fighter, &wait);
+  g_battle.contacts_off = true;
+  g_battle.camera.active = true;
+  g_battle.projectiles[0].kind = PROJECTILE_SPEAR;
+  battle_init(4, 0);
+  check(g_battle.fighters[0].roster == 4 && g_battle.fighters[1].roster == 0 && g_battle.phase == PHASE_READY && g_battle.ticks == 0,
+      "Singleton initialization must start the requested fresh match");
+  check(g_battle.fighters[0].sequence == NULL && g_battle.fighters[0].script == NULL && g_battle.fighters[0].pending == NULL &&
+            g_battle.projectiles[0].kind == 0 && !g_battle.camera.active && !g_battle.contacts_off,
+      "Singleton initialization must discard old continuations, objects and scene state");
+  advance_ticks(45, NULL);
+  check(g_battle.phase == PHASE_READY && g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[0].script_timer == 0,
+      "A previous match's wait callback must not run in the fresh match");
 }
 
 static void check_scorpion_contact_branches(void) {
   for (int blocked = 0; blocked < 2; ++blocked) {
-    Battle battle = fight(1.f);
-    Fighter *fighter = &battle.fighters[0];
-    fighter_enter_state(&battle, fighter, S_UPPERCUT);
+    fight(1.f);
+    Fighter *fighter = &g_battle.fighters[0];
+    fighter_enter_state(fighter, S_UPPERCUT);
     Input in[2] = {0};
     if (blocked) {
       in[1].held = BUTTON_BIT(BUTTON_BLOCK);
     }
-    advance_ticks(&battle, 7, in);
+    advance_ticks(7, in);
     check(fighter->contact == (blocked ? CONTACT_BLOCK : CONTACT_HIT) && fighter->contact_tick == 7,
         "Battle did not deliver uppercut contact to its continuation");
     int end = blocked ? 31 : 61;
-    advance_ticks(&battle, end - 8, in);
+    advance_ticks(end - 8, in);
     check(fighter->state == S_UPPERCUT, "Contact recovery ended before retail return");
-    advance_ticks(&battle, 1, in);
+    advance_ticks(1, in);
     check(fighter->state == S_IDLE, "Contact recovery did not return on retail step");
   }
   {
-    Battle battle = fight(4.f);
-    Fighter *fighter = &battle.fighters[0];
-    fighter_enter_state(&battle, fighter, S_PUNCH);
-    advance_ticks(&battle, 7, NULL);
-    battle_step(&battle, (Input[2]){{.held = BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
-    battle_step(&battle, (Input[2]){0});
+    fight(4.f);
+    Fighter *fighter = &g_battle.fighters[0];
+    fighter_enter_state(fighter, S_PUNCH);
+    advance_ticks(7, NULL);
+    battle_step((Input[2]){{.held = BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
+    battle_step((Input[2]){0});
     check(fighter_move(fighter)->clip == 295, "Jab repeat failed at its native branch");
-    fighter_enter_state(&battle, fighter, S_HIT);
-    advance_ticks(&battle, 30, NULL);
+    fighter_enter_state(fighter, S_HIT);
+    advance_ticks(30, NULL);
     check(fighter->state == S_IDLE && fighter->pending == NULL && fighter->buffered == 0, "Interrupted jab retained a continuation or buffered repeat");
   }
 }
 
 /* docs/scorpion/input-and-commands.md: two-sample press rule, history, latency. */
 static void check_retail_input(void) {
-  Battle battle = fight(4.f);
-  Fighter *fighter = &battle.fighters[0];
+  fight(4.f);
+  Fighter *fighter = &g_battle.fighters[0];
   Input tap[2] = {{BUTTON_BIT(BUTTON_DOWN)}, {0}};
-  battle_step(&battle, tap);
-  check(fighter->directions.token[0] == BUTTON_DOWN + 1 && fighter->directions.tick[0] == battle.ticks, "Direction press not stamped");
-  battle_step(&battle, (Input[2]){0});
-  battle_step(&battle, tap);
+  battle_step(tap);
+  check(fighter->directions.token[0] == BUTTON_DOWN + 1 && fighter->directions.tick[0] == g_battle.ticks, "Direction press not stamped");
+  battle_step((Input[2]){0});
+  battle_step(tap);
   check(fighter->directions.token[1] == 0, "A one-tick release must not repeat a press");
-  battle_step(&battle, (Input[2]){0});
-  battle_step(&battle, (Input[2]){0});
-  battle_step(&battle, tap);
+  battle_step((Input[2]){0});
+  battle_step((Input[2]){0});
+  battle_step(tap);
   check(fighter->directions.token[1] == BUTTON_DOWN + 1, "A two-tick release must allow a new press");
-  battle_step(&battle, (Input[2]){0});
-  battle_step(&battle, (Input[2]){0});
-  battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK)}, {0}});
-  check(fighter->latch[BUTTON_HIGH_PUNCH] == battle.ticks && fighter->latch[BUTTON_HIGH_KICK] == 0, "Only HP, LP, BLK, LK and RUN latch presses");
+  battle_step((Input[2]){0});
+  battle_step((Input[2]){0});
+  battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK)}, {0}});
+  check(fighter->latch[BUTTON_HIGH_PUNCH] == g_battle.ticks && fighter->latch[BUTTON_HIGH_KICK] == 0, "Only HP, LP, BLK, LK and RUN latch presses");
   check(fighter->pending != NULL && fighter->buttons == NULL && (fighter->flags & FF_BUSY), "First handled press must lock the fighter");
-  battle_step(&battle, (Input[2]){0});
+  battle_step((Input[2]){0});
   check(fighter->state == S_PUNCH && fighter->ticks == 0, "Interrupted entry must start on the next tick");
 }
 
-static void command(Battle *battle, int player, Button first, Button second, Button attack) {
+static void command(int player, Button first, Button second, Button attack) {
   Input input[2] = {0};
   input[player].held = BUTTON_BIT(first);
-  battle_step(battle, input);
-  advance_ticks(battle, 2, NULL);
+  battle_step(input);
+  advance_ticks(2, NULL);
   input[player].held = BUTTON_BIT(second);
-  battle_step(battle, input);
-  advance_ticks(battle, 2, NULL);
+  battle_step(input);
+  advance_ticks(2, NULL);
   input[player].held = BUTTON_BIT(attack);
-  battle_step(battle, input);
-  battle_step(battle, (Input[2]){0});
+  battle_step(input);
+  battle_step((Input[2]){0});
 }
 
 static void check_specials(void) {
   for (int player = 0; player < 2; ++player) {
     for (int fast = 0; fast < 2; ++fast) {
-      Battle battle;
-      battle_init(&battle, player ? 4 : 0, player ? 0 : 4);
-      battle.phase = PHASE_FIGHT;
-      battle.fighters[0].body.pos[AXIS_X] = -5 * Q16_ONE;
-      battle.fighters[1].body.pos[AXIS_X] = 5 * Q16_ONE;
-      Fighter *fighter = &battle.fighters[player];
+      battle_init(player ? 4 : 0, player ? 0 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      g_battle.fighters[0].body.pos[AXIS_X] = -5 * Q16_ONE;
+      g_battle.fighters[1].body.pos[AXIS_X] = 5 * Q16_ONE;
+      Fighter *fighter = &g_battle.fighters[player];
       if (fast) {
         fighter->flags |= FF_FOLLOW_UP;
       }
-      command(&battle, player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
+      command(player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
       check(fighter->script_phase == fast, "Spear must select the requested normal/fast startup");
-      advance_ticks(&battle, fast ? 11 : 15, NULL);
+      advance_ticks(fast ? 11 : 15, NULL);
       check(fighter->action == 0x1007 && fighter->sequence != NULL && fighter->ticks == 0 && fighter_sample(fighter) == 30,
           "Spear startup must enter a fresh recovery wait with action 0x1007");
-      advance_ticks(&battle, 44, NULL);
+      advance_ticks(44, NULL);
       check(fighter->state == S_PUNCH && fighter_sample(fighter) == 30, "Spear recovery returned before its 45-tick wait");
-      advance_ticks(&battle, 1, NULL);
+      advance_ticks(1, NULL);
       check(fighter->state == S_IDLE, "Normal and fast spear must each return after 45 recovery ticks");
     }
   }
   for (int player = 0; player < 2; ++player) {
-    Battle battle = fight(4.f);
+    fight(4.f);
     if (player == 1) {
-      battle_init(&battle, 4, 0);
-      battle.phase = PHASE_FIGHT;
-      battle.fighters[0].body.pos[AXIS_X] = -2 * Q16_ONE;
-      battle.fighters[1].body.pos[AXIS_X] = 2 * Q16_ONE;
+      battle_init(4, 0);
+      g_battle.phase = PHASE_FIGHT;
+      g_battle.fighters[0].body.pos[AXIS_X] = -2 * Q16_ONE;
+      g_battle.fighters[1].body.pos[AXIS_X] = 2 * Q16_ONE;
     }
-    Fighter *fighter = &battle.fighters[player], *victim = &battle.fighters[1 - player];
-    command(&battle, player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    Fighter *fighter = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+    command(player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
     check(fighter->current_move->clip == 14 && fighter->script != NULL, "B,B,LP must enter spear for either player");
-    advance_ticks(&battle, 45, NULL);
-    check(victim->health == Q16_ONE - 0xccc && fighter_distance(&battle, fighter) < 0.9f, "Spear must damage once and pull into follow-up range");
+    advance_ticks(45, NULL);
+    check(victim->health == Q16_ONE - 0xccc && fighter_distance(fighter) < 0.9f, "Spear must damage once and pull into follow-up range");
     check(victim->action == 0x1008 && victim->damage_scale == 0x9999, "Spear must leave scaled combo stun");
-    advance_ticks(&battle, 100, NULL);
+    advance_ticks(100, NULL);
     check(fighter->state == S_IDLE && victim->state == S_IDLE, "Spear must release both fighters");
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
-      check(battle.projectiles[i].kind == 0, "Spear leaked a projectile");
+      check(g_battle.projectiles[i].kind == 0, "Spear leaked a projectile");
     }
   }
   {
-    Battle battle = fight(4.f);
-    command(&battle, 0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    fight(4.f);
+    command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
     Input guard[2] = {{0}, {BUTTON_BIT(BUTTON_BLOCK)}};
-    advance_ticks(&battle, 60, guard);
-    check(battle.fighters[1].health == Q16_ONE - q16_mul(0xccc, 0x3333), "Blocked spear must only chip");
-    check(fighter_distance(&battle, &battle.fighters[0]) > 3.f, "Blocked spear must not pull");
+    advance_ticks(60, guard);
+    check(g_battle.fighters[1].health == Q16_ONE - q16_mul(0xccc, 0x3333), "Blocked spear must only chip");
+    check(fighter_distance(&g_battle.fighters[0]) > 3.f, "Blocked spear must not pull");
   }
   {
-    Battle battle = fight(4.f);
-    command(&battle, 0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
-    advance_ticks(&battle, 27, NULL);
-    fighter_enter_state(&battle, &battle.fighters[0], S_HIT);
-    advance_ticks(&battle, 90, NULL);
-    check(battle.fighters[1].state == S_IDLE, "Interrupted spear must release the victim");
+    fight(4.f);
+    command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    advance_ticks(27, NULL);
+    fighter_enter_state(&g_battle.fighters[0], S_HIT);
+    advance_ticks(90, NULL);
+    check(g_battle.fighters[1].state == S_IDLE, "Interrupted spear must release the victim");
   }
   for (int guard = 0; guard < 2; ++guard) {
-    Battle battle = fight(2.f);
-    command(&battle, 0, BUTTON_DOWN, BUTTON_RIGHT, BUTTON_LOW_PUNCH);
-    check(battle.fighters[0].current_move->clip == 448, "D,F,LP must enter fire");
+    fight(2.f);
+    command(0, BUTTON_DOWN, BUTTON_RIGHT, BUTTON_LOW_PUNCH);
+    check(g_battle.fighters[0].current_move->clip == 448, "D,F,LP must enter fire");
     Input input[2] = {{0}, {guard ? BUTTON_BIT(BUTTON_BLOCK) : 0}};
-    advance_ticks(&battle, 60, input);
-    check(battle.fighters[1].health == Q16_ONE - 0x1eb8, "Fire must deal one unblockable 12-percent hit");
-    check(battle.fighters[0].state == S_IDLE, "Fire must recover");
+    advance_ticks(60, input);
+    check(g_battle.fighters[1].health == Q16_ONE - 0x1eb8, "Fire must deal one unblockable 12-percent hit");
+    check(g_battle.fighters[0].state == S_IDLE, "Fire must recover");
   }
   for (int guard = 0; guard < 2; ++guard) {
-    Battle battle = fight(4.f);
-    command(&battle, 0, BUTTON_DOWN, BUTTON_LEFT, BUTTON_HIGH_PUNCH);
-    check(battle.fighters[0].current_move->clip == 312, "D,B,HP must enter teleport");
+    fight(4.f);
+    command(0, BUTTON_DOWN, BUTTON_LEFT, BUTTON_HIGH_PUNCH);
+    check(g_battle.fighters[0].current_move->clip == 312, "D,B,HP must enter teleport");
     Input input[2] = {{0}, {guard ? BUTTON_BIT(BUTTON_BLOCK) : 0}};
-    advance_ticks(&battle, 12, input);
-    check(fighter_x(&battle.fighters[0]) > fighter_x(&battle.fighters[1]), "Teleport must cross to the far side");
-    advance_ticks(&battle, 100, input);
-    check(battle.fighters[0].state == S_IDLE && !(battle.fighters[0].flags & FF_TELEPORTING), "Teleport must land and clear its state");
-    check(battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x170a, 0x3333) : 0x170a), "Teleport hit/block damage");
+    advance_ticks(12, input);
+    check(fighter_x(&g_battle.fighters[0]) > fighter_x(&g_battle.fighters[1]), "Teleport must cross to the far side");
+    advance_ticks(100, input);
+    check(g_battle.fighters[0].state == S_IDLE && !(g_battle.fighters[0].flags & FF_TELEPORTING), "Teleport must land and clear its state");
+    check(g_battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x170a, 0x3333) : 0x170a), "Teleport hit/block damage");
   }
 }
 
-static void draw_sword(Battle *battle) {
-  command(battle, 0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
-  check(battle->fighters[0].current_move->clip == 244, "F,F,HK must draw the sword");
-  advance_ticks(battle, 21, NULL);
-  check(!battle->fighters[0].armed, "Sword equipped before the script create event");
-  advance_ticks(battle, 27, NULL);
-  check(battle->fighters[0].armed && battle->fighters[0].current_move->clip == 286, "Draw must equip and return to armed stance");
+static void draw_sword(void) {
+  command(0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
+  check(g_battle.fighters[0].current_move->clip == 244, "F,F,HK must draw the sword");
+  advance_ticks(21, NULL);
+  check(!g_battle.fighters[0].armed, "Sword equipped before the script create event");
+  advance_ticks(27, NULL);
+  check(g_battle.fighters[0].armed && g_battle.fighters[0].current_move->clip == 286, "Draw must equip and return to armed stance");
 }
 
 static void check_weapon(void) {
   for (int hp = 0; hp < 2; ++hp) {
-    Battle battle = fight(1.3f);
-    draw_sword(&battle);
+    fight(1.3f);
+    draw_sword();
     Button punch = hp ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH;
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(punch)}, {0}});
-    advance_ticks(&battle, 1, NULL);
-    check(fighter_move(&battle.fighters[0])->clip == (hp ? 238 : 237), "Tapped back+sword punch must retain its selected variant after release");
-    advance_ticks(&battle, 90, NULL);
-    check(battle.fighters[0].state == S_IDLE && battle.fighters[0].armed, "Back sword attacks must recover with the weapon equipped");
-    check(battle.fighters[1].health < Q16_ONE, "Back sword attack must reach its contact window");
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(punch)}, {0}});
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[0])->clip == (hp ? 238 : 237), "Tapped back+sword punch must retain its selected variant after release");
+    advance_ticks(90, NULL);
+    check(g_battle.fighters[0].state == S_IDLE && g_battle.fighters[0].armed, "Back sword attacks must recover with the weapon equipped");
+    check(g_battle.fighters[1].health < Q16_ONE, "Back sword attack must reach its contact window");
   }
   for (int guard = 0; guard < 2; ++guard) {
-    Battle battle = fight(1.3f);
-    draw_sword(&battle);
+    fight(1.3f);
+    draw_sword();
     Input in[2] = {{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {guard ? BUTTON_BIT(BUTTON_BLOCK) : 0}};
-    battle_step(&battle, in);
+    battle_step(in);
     in[0].held = 0;
-    advance_ticks(&battle, 45, in);
-    check(battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x3333, 0x3333) : 0x3333), "Sword slash damage/chip must apply once");
-    check(battle.fighters[0].armed && battle.fighters[0].state == S_IDLE, "Slash must retain sword and recover");
+    advance_ticks(45, in);
+    check(g_battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x3333, 0x3333) : 0x3333), "Sword slash damage/chip must apply once");
+    check(g_battle.fighters[0].armed && g_battle.fighters[0].state == S_IDLE, "Slash must retain sword and recover");
   }
   {
-    Battle battle = fight(4.f);
-    draw_sword(&battle);
-    command(&battle, 0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
-    check(battle.fighters[0].current_move->clip == 208, "Drawing while armed must throw");
-    advance_ticks(&battle, 120, NULL);
-    check(!battle.fighters[0].armed && battle.fighters[0].weapon_used, "Throw must detach and prevent a new sword");
-    check(battle.fighters[1].health == Q16_ONE - 0x4000, "Thrown sword damage must be 25 percent");
+    fight(4.f);
+    draw_sword();
+    command(0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
+    check(g_battle.fighters[0].current_move->clip == 208, "Drawing while armed must throw");
+    advance_ticks(120, NULL);
+    check(!g_battle.fighters[0].armed && g_battle.fighters[0].weapon_used, "Throw must detach and prevent a new sword");
+    check(g_battle.fighters[1].health == Q16_ONE - 0x4000, "Thrown sword damage must be 25 percent");
     int resting = -1;
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
-      if (battle.projectiles[i].kind == PROJECTILE_SWORD && battle.projectiles[i].phase == 2) {
+      if (g_battle.projectiles[i].kind == PROJECTILE_SWORD && g_battle.projectiles[i].phase == 2) {
         resting = i;
       }
     }
     check(resting >= 0, "Connected thrown sword must fall and become pickable");
-    battle.fighters[0].body.pos[AXIS_X] = battle.projectiles[resting].pos[AXIS_X] - Q16_ONE / 2;
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_RUN)}, {0}});
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
-    check(battle.fighters[0].armed && battle.projectiles[resting].kind == 0, "Crouch+RUN must attach a nearby resting sword");
-    advance_ticks(&battle, 20, NULL);
-    battle_react(&battle, &battle.fighters[0], 34);
-    check(!battle.fighters[0].armed, "Launch reaction must knock out the held sword");
-    advance_ticks(&battle, 100, NULL);
-    battle_next_round(&battle);
-    check(!battle.fighters[0].armed && !battle.fighters[0].weapon_used, "New round must reset weapon availability");
+    g_battle.fighters[0].body.pos[AXIS_X] = g_battle.projectiles[resting].pos[AXIS_X] - Q16_ONE / 2;
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_RUN)}, {0}});
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    check(g_battle.fighters[0].armed && g_battle.projectiles[resting].kind == 0, "Crouch+RUN must attach a nearby resting sword");
+    advance_ticks(20, NULL);
+    battle_react(&g_battle.fighters[0], 34);
+    check(!g_battle.fighters[0].armed, "Launch reaction must knock out the held sword");
+    advance_ticks(100, NULL);
+    battle_next_round();
+    check(!g_battle.fighters[0].armed && !g_battle.fighters[0].weapon_used, "New round must reset weapon availability");
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
-      check(battle.projectiles[i].kind == 0, "Round reset must remove world weapons");
+      check(g_battle.projectiles[i].kind == 0, "Round reset must remove world weapons");
     }
   }
   {
-    Battle battle = fight(4.f);
-    draw_sword(&battle);
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
+    fight(4.f);
+    draw_sword();
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
     Input hold[2] = {{BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}};
-    advance_ticks(&battle, 20, hold);
-    check(battle.fighters[0].current_move->clip == 224, "Crouching armed LP must enter held spin");
-    advance_ticks(&battle, 2, NULL);
-    check(battle.fighters[0].state == S_IDLE, "Releasing LP must end spin");
+    advance_ticks(20, hold);
+    check(g_battle.fighters[0].current_move->clip == 224, "Crouching armed LP must enter held spin");
+    advance_ticks(2, NULL);
+    check(g_battle.fighters[0].state == S_IDLE, "Releasing LP must end spin");
   }
 }
 
 static void check_air_attacks(void) {
   {
-    Battle battle = fight(0.75f);
-    Fighter *fighter = &battle.fighters[0];
-    fighter_enter_state(&battle, fighter, S_JUMP);
+    fight(0.75f);
+    Fighter *fighter = &g_battle.fighters[0];
+    fighter_enter_state(fighter, S_JUMP);
     fighter->body.pos[AXIS_Y] = fighter->body.ground - Q16_ONE / 3;
     fighter->body.gravity = 1;
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 7, NULL);
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(7, NULL);
     check(!fighter_airborne(fighter) && (fighter->flags & FF_FOLLOW_UP), "Low jump contact must open ground follow-ups");
-    check(battle.fighters[1].flags & FF_REACTING, "Low jump contact must put the victim in hitstun");
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 1, NULL);
+    check(g_battle.fighters[1].flags & FF_REACTING, "Low jump contact must put the victim in hitstun");
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(1, NULL);
     check(fighter_move(fighter)->clip == 262, "Low jump HP follow-up must select close HP even while the victim is reacting");
-    advance_ticks(&battle, 90, NULL);
+    advance_ticks(90, NULL);
     check(fighter->state == S_IDLE, "Ground follow-up must recover");
   }
   const Button button[] = {BUTTON_HIGH_PUNCH, BUTTON_LOW_PUNCH, BUTTON_HIGH_KICK, BUTTON_HIGH_KICK, BUTTON_LOW_KICK};
   const int clip[] = {97, 96, 327, 55, 58};
   for (int i = 0; i < 5; ++i) {
-    Battle battle = fight(8.f);
-    Fighter *fighter = &battle.fighters[0];
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_UP) | (i >= 3 ? BUTTON_BIT(BUTTON_RIGHT) : 0)}, {0}});
-    advance_ticks(&battle, 5, NULL);
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(button[i])}, {0}});
-    advance_ticks(&battle, 1, NULL);
+    fight(8.f);
+    Fighter *fighter = &g_battle.fighters[0];
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_UP) | (i >= 3 ? BUTTON_BIT(BUTTON_RIGHT) : 0)}, {0}});
+    advance_ticks(5, NULL);
+    battle_step((Input[2]){{BUTTON_BIT(button[i])}, {0}});
+    advance_ticks(1, NULL);
     check(fighter_move(fighter)->clip == clip[i] && fighter_sample(fighter) == 0, "Air button must select its own attack script");
     bool landing = false;
     for (int tick = 0; tick < 100 && fighter->state != S_IDLE; ++tick) {
-      battle_step(&battle, (Input[2]){0});
+      battle_step((Input[2]){0});
       landing |= fighter_move(fighter)->clip == 304 && fighter_sample(fighter) >= 18;
     }
     check(landing && fighter->state == S_IDLE && !fighter_airborne(fighter), "Air miss must play landing and restore controls");
-    check(battle.fighters[1].health == Q16_ONE, "Distant air attack must miss");
+    check(g_battle.fighters[1].health == Q16_ONE, "Distant air attack must miss");
   }
   for (int followup = 0; followup < 3; ++followup) {
-    Battle battle = fight(1.f);
-    Fighter *fighter = &battle.fighters[0];
-    fighter_enter_state(&battle, fighter, S_JUMP);
+    fight(1.f);
+    Fighter *fighter = &g_battle.fighters[0];
+    fighter_enter_state(fighter, S_JUMP);
     fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
     fighter->body.gravity = 1;
-    Fighter *victim = &battle.fighters[1];
-    fighter_enter_state(&battle, victim, S_JUMP);
+    Fighter *victim = &g_battle.fighters[1];
+    fighter_enter_state(victim, S_JUMP);
     victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
     victim->body.gravity = 1;
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 6, NULL);
-    check(battle.fighters[1].health == Q16_ONE, "Jump HP must not hit before its strike hold");
-    advance_ticks(&battle, 1, NULL);
-    check(battle.fighters[1].health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(6, NULL);
+    check(g_battle.fighters[1].health == Q16_ONE, "Jump HP must not hit before its strike hold");
+    advance_ticks(1, NULL);
+    check(g_battle.fighters[1].health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
         "High jump HP contact must deal nine percent and open its frozen follow-up");
     q16 y = fighter->body.pos[AXIS_Y];
     Button next = followup == 0 ? BUTTON_HIGH_PUNCH : followup == 1 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_KICK;
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(next)}, {0}});
-    advance_ticks(&battle, 1, NULL);
+    battle_step((Input[2]){{BUTTON_BIT(next)}, {0}});
+    advance_ticks(1, NULL);
     check(fighter->body.pos[AXIS_Y] == y, "Air follow-up must preserve the contact freeze");
     check(fighter_move(fighter)->clip == (followup == 0 ? 97 : followup == 1 ? 96 : 327), "Jump HP allows LP or kick, but cannot repeat HP");
-    advance_ticks(&battle, 110, NULL);
+    advance_ticks(110, NULL);
     check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Air contact/follow-up must eventually fall and recover");
   }
 }
@@ -542,63 +553,61 @@ static void check_ground_normals(void) {
       BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK)};
   const int clips[] = {296, 67, 313, 260, 315, 54};
   for (int i = 0; i < 6; ++i) {
-    Battle battle = fight(4.f);
-    battle_step(&battle, (Input[2]){{buttons[i]}, {0}});
-    advance_ticks(&battle, 1, NULL);
-    check(fighter_move(&battle.fighters[0])->clip == clips[i], "Ground button selects wrong script");
-    advance_ticks(&battle, 80, NULL);
-    check(battle.fighters[0].state == S_IDLE && battle.fighters[1].health == Q16_ONE, "Ground miss must recover without damage");
+    fight(4.f);
+    battle_step((Input[2]){{buttons[i]}, {0}});
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[0])->clip == clips[i], "Ground button selects wrong script");
+    advance_ticks(80, NULL);
+    check(g_battle.fighters[0].state == S_IDLE && g_battle.fighters[1].health == Q16_ONE, "Ground miss must recover without damage");
   }
   {
-    Battle battle = fight(1.f);
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_LOW_KICK)}, {0}});
-    advance_ticks(&battle, 12, NULL);
-    check(battle.fighters[1].health == Q16_ONE - 7208, "Standing LK uses its eleven-percent record");
+    fight(1.f);
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_LOW_KICK)}, {0}});
+    advance_ticks(12, NULL);
+    check(g_battle.fighters[1].health == Q16_ONE - 7208, "Standing LK uses its eleven-percent record");
   }
   {
-    Battle battle = fight(0.65f);
-    Fighter *fighter = &battle.fighters[0];
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 8, NULL);
+    fight(0.65f);
+    Fighter *fighter = &g_battle.fighters[0];
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(8, NULL);
     check(fighter_move(fighter)->clip == 262 && (fighter->flags & FF_FOLLOW_UP), "Close HP must open its own cancel table on contact");
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 1, NULL);
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(1, NULL);
     check(fighter_move(fighter)->clip == 261, "Close HP follow-up must use combo clip 261");
-    advance_ticks(&battle, 40, NULL);
+    advance_ticks(40, NULL);
     check(fighter->state == S_IDLE && !(fighter->flags & FF_FOLLOW_UP), "Combo must close its cancel window on return");
   }
   {
-    Battle battle = fight(1.f);
-    Fighter *fighter = &battle.fighters[0];
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 4, NULL);
-    battle_step(&battle, (Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(&battle, 7, NULL);
+    fight(1.f);
+    Fighter *fighter = &g_battle.fighters[0];
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(4, NULL);
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(7, NULL);
     check(fighter_move(fighter)->clip == 297, "Repeated far HP must advance to its second punch clip");
-    advance_ticks(&battle, 50, NULL);
+    advance_ticks(50, NULL);
     check(fighter->state == S_IDLE, "HP repeat must stop when presses stop");
   }
 }
 
-static Battle finish_window(int winner, float distance, int arena) {
-  Battle battle;
-  battle_init(&battle, 0, 0);
-  battle.phase = PHASE_FIGHT;
-  battle.arena = arena;
-  battle.fighters[winner].wins = 1;
-  battle_damage(&battle, &battle.fighters[1 - winner], Q16_ONE);
-  advance_ticks(&battle, 1, NULL);
-  check(battle.phase == PHASE_FINISH, "Deciding KO must prepare finish window");
-  for (int i = 0; i < 180 && battle.finish_waiting; ++i) {
-    advance_ticks(&battle, 1, NULL);
+static void finish_window(int winner, float distance, int arena) {
+  battle_init(0, 0);
+  g_battle.phase = PHASE_FIGHT;
+  g_battle.arena = arena;
+  g_battle.fighters[winner].wins = 1;
+  battle_damage(&g_battle.fighters[1 - winner], Q16_ONE);
+  advance_ticks(1, NULL);
+  check(g_battle.phase == PHASE_FINISH, "Deciding KO must prepare finish window");
+  for (int i = 0; i < 180 && g_battle.finish_waiting; ++i) {
+    advance_ticks(1, NULL);
   }
-  check(!battle.finish_waiting, "Defeat recovery must reach the finish controller");
-  battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * .5f * Q16_ONE);
-  battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
-  return battle;
+  check(!g_battle.finish_waiting, "Defeat recovery must reach the finish controller");
+  g_battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * .5f * Q16_ONE);
+  g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
-static void finish_command(Battle *battle, int player, int id) {
+static void finish_command(int player, int id) {
   Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
   Button forward = player ? BUTTON_LEFT : BUTTON_RIGHT;
   Button tokens[4] = {back, forward, forward, back};
@@ -623,51 +632,51 @@ static void finish_command(Battle *battle, int player, int id) {
     if (i == count - 1) {
       in[player].held |= BUTTON_BIT(attack);
     }
-    battle_step(battle, in);
-    advance_ticks(battle, 2, NULL);
+    battle_step(in);
+    advance_ticks(2, NULL);
   }
 }
 
 static void check_fatalities(void) {
   for (int player = 0; player < 2; ++player) {
     for (int id = FINISH_BURN; id <= FINISH_SPIKE; ++id) {
-      Battle battle = finish_window(player, id == FINISH_BURN ? 2.4f : .8f, id == FINISH_FAN ? 8 : 0);
-      int timer = battle.time_ticks;
-      finish_command(&battle, player, id);
-      check(battle.phase == PHASE_FATALITY && battle.finisher == id, "Fatality command must select its scene for either player");
-      check(!battle_can_finish(&battle, &battle.fighters[player]), "Fatality cannot start twice");
-      advance_ticks(&battle, 160, NULL);
+      finish_window(player, id == FINISH_BURN ? 2.4f : .8f, id == FINISH_FAN ? 8 : 0);
+      int timer = g_battle.time_ticks;
+      finish_command(player, id);
+      check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == id, "Fatality command must select its scene for either player");
+      check(!battle_can_finish(&g_battle.fighters[player]), "Fatality cannot start twice");
+      advance_ticks(160, NULL);
       if (id == FINISH_BEAST) {
-        check(battle.fighters[player].appearance == APPEARANCE_BEAST, "Fatality II must switch to the creature asset");
-        check(battle.fighters[1 - player].current_move->clip == 584, "Creature fatality must play its victim sequence");
+        check(g_battle.fighters[player].appearance == APPEARANCE_BEAST, "Fatality II must switch to the creature asset");
+        check(g_battle.fighters[1 - player].current_move->clip == 584, "Creature fatality must play its victim sequence");
       }
-      advance_ticks(&battle, 440, NULL);
-      check(battle.phase == PHASE_MATCH_OVER && battle.fighters[player].wins == 2, "Fatality must complete without awarding another win");
-      check(battle.fighters[1 - player].health == 0 && battle.time_ticks == timer, "Fatality must retain KO and frozen match timer");
+      advance_ticks(440, NULL);
+      check(g_battle.phase == PHASE_MATCH_OVER && g_battle.fighters[player].wins == 2, "Fatality must complete without awarding another win");
+      check(g_battle.fighters[1 - player].health == 0 && g_battle.time_ticks == timer, "Fatality must retain KO and frozen match timer");
       if (id == FINISH_FAN) {
-        check(battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN, "Fan must remove the finished victim");
+        check(g_battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN, "Fan must remove the finished victim");
       }
       if (id == FINISH_SPIKE) {
-        check(battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "Spike victim must stay impaled until rematch");
+        check(g_battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "Spike victim must stay impaled until rematch");
       }
-      battle_reset_match(&battle);
-      check(battle.finisher == 0 && battle.fighters[player].appearance == APPEARANCE_NORMAL, "Rematch must clear finisher state and restore model");
+      battle_reset_match();
+      check(g_battle.finisher == 0 && g_battle.fighters[player].appearance == APPEARANCE_NORMAL, "Rematch must clear finisher state and restore model");
     }
   }
   for (int id = FINISH_BURN; id <= FINISH_SPIKE; ++id) {
-    Battle battle = finish_window(0, id == FINISH_BURN ? .8f : 2.4f, 0);
-    finish_command(&battle, 0, id);
-    check(battle.phase == PHASE_FINISH, "Out-of-range fatality must be rejected");
+    finish_window(0, id == FINISH_BURN ? .8f : 2.4f, 0);
+    finish_command(0, id);
+    check(g_battle.phase == PHASE_FINISH, "Out-of-range fatality must be rejected");
   }
-  Battle battle = finish_window(0, .8f, 1);
-  finish_command(&battle, 0, FINISH_FAN);
-  check(battle.phase == PHASE_FINISH, "Fan fatality must require Prison");
-  advance_ticks(&battle, 3, NULL);
-  finish_command(&battle, 0, FINISH_SPIKE);
-  check(battle.phase == PHASE_FINISH, "Spike fatality must require Goro's Lair");
-  battle = finish_window(0, .8f, 0);
-  finish_command(&battle, 1, FINISH_BEAST);
-  check(battle.phase == PHASE_FINISH, "Defeated player cannot enter a fatality");
+  finish_window(0, .8f, 1);
+  finish_command(0, FINISH_FAN);
+  check(g_battle.phase == PHASE_FINISH, "Fan fatality must require Prison");
+  advance_ticks(3, NULL);
+  finish_command(0, FINISH_SPIKE);
+  check(g_battle.phase == PHASE_FINISH, "Spike fatality must require Goro's Lair");
+  finish_window(0, .8f, 0);
+  finish_command(1, FINISH_BEAST);
+  check(g_battle.phase == PHASE_FINISH, "Defeated player cannot enter a fatality");
 }
 
 static void check_script_reactions(void) {
@@ -677,15 +686,15 @@ static void check_script_reactions(void) {
       if (air && (ids[n] < 10 || ids[n] == 143)) {
         continue;
       }
-      Battle battle = fight(4.f);
-      Fighter *victim = &battle.fighters[1];
+      fight(4.f);
+      Fighter *victim = &g_battle.fighters[1];
       if (air) {
         victim->body.pos[AXIS_Y] -= Q16_ONE;
       }
-      battle_react(&battle, victim, ids[n]);
-      advance_ticks(&battle, 1, NULL);
+      battle_react(victim, ids[n]);
+      advance_ticks(1, NULL);
       check(victim->current_move != roster_def(4)->moves[S_HIT], "Scorpion records must not use generic hitstun");
-      advance_ticks(&battle, 250, NULL);
+      advance_ticks(250, NULL);
       if (victim->state != S_IDLE || fighter_airborne(victim)) {
         fprintf(stderr, "reaction %d air %d state %d height %f\n", ids[n], air, victim->state, fighter_height(victim));
       }
@@ -693,93 +702,92 @@ static void check_script_reactions(void) {
       check(!(victim->flags & (FF_REACTING | FF_NO_GUARD)), "Reaction must clear combo-only guard restrictions");
     }
   }
-  Battle battle = fight(4.f);
-  Fighter *victim = &battle.fighters[1];
-  battle_react(&battle, victim, 43);
-  advance_ticks(&battle, 1, NULL);
+  fight(4.f);
+  Fighter *victim = &g_battle.fighters[1];
+  battle_react(victim, 43);
+  advance_ticks(1, NULL);
   check(victim->action == 0x4002 && victim->damage_scale == 0x9999 && (victim->flags & FF_NO_GUARD), "Close punch must create its scaled combo reaction");
-  advance_ticks(&battle, 8, NULL);
-  battle_react(&battle, victim, 49);
-  advance_ticks(&battle, 1, NULL);
+  advance_ticks(8, NULL);
+  battle_react(victim, 49);
+  advance_ticks(1, NULL);
   check(victim->current_move->clip == 131 && victim->body.vel[AXIS_Y] < 0, "Sword launcher must replace hitstun and launch");
-  advance_ticks(&battle, 200, NULL);
+  advance_ticks(200, NULL);
   check(victim->state == S_IDLE && victim->damage_scale == Q16_ONE, "New reaction must own recovery and reset combo scaling");
-  battle = fight(4.f);
-  victim = &battle.fighters[1];
+  fight(4.f);
+  victim = &g_battle.fighters[1];
   victim->crouching = true;
-  battle_react(&battle, victim, 28);
-  advance_ticks(&battle, 1, NULL);
+  battle_react(victim, 28);
+  advance_ticks(1, NULL);
   check(victim->current_move->clip == 254, "Crouching victim must use the crouch reaction branch");
-  battle = fight(4.f);
-  victim = &battle.fighters[1];
+  fight(4.f);
+  victim = &g_battle.fighters[1];
   victim->body.pos[AXIS_Y] -= Q16_ONE;
-  battle_react(&battle, victim, 90);
-  advance_ticks(&battle, 1, NULL);
+  battle_react(victim, 90);
+  advance_ticks(1, NULL);
   check(victim->current_move->clip == 183 && abs(victim->body.vel[AXIS_X]) == 0x7ae, "Air teleport victim must use its own retreat speed");
-  battle = fight(4.f);
-  victim = &battle.fighters[1];
-  battle_react(&battle, victim, 23);
-  advance_ticks(&battle, 5, NULL);
+  fight(4.f);
+  victim = &g_battle.fighters[1];
+  battle_react(victim, 23);
+  advance_ticks(5, NULL);
   check(fighter_sample(victim) == 6, "Diagonal kick reaction must advance its opening animation twice per tick");
-  advance_ticks(&battle, 4, NULL);
+  advance_ticks(4, NULL);
   check(fighter_sample(victim) == 14, "Diagonal kick reaction must switch to normal speed after its fast opening");
-  advance_ticks(&battle, 1, NULL);
+  advance_ticks(1, NULL);
   check(fighter_sample(victim) == 15, "Diagonal kick reaction must continue at normal speed");
 }
 
 static void check_ground_throws(void) {
   for (int lk = 0; lk < 2; ++lk) {
-    Battle battle = fight(0.6f);
-    Fighter *owner = &battle.fighters[0], *victim = &battle.fighters[1];
-    fighter_press(&battle, owner, lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH);
-    advance_ticks(&battle, 1, NULL);
+    fight(0.6f);
+    Fighter *owner = &g_battle.fighters[0], *victim = &g_battle.fighters[1];
+    fighter_press(owner, lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH);
+    advance_ticks(1, NULL);
     check(owner->current_move->clip == (lk ? 37 : 75) && victim->current_move->clip == (lk ? 157 : 152), "Ground throws must choose paired clips");
-    advance_ticks(&battle, 41, NULL);
+    advance_ticks(41, NULL);
     check(victim->health == Q16_ONE, "Ground throw damage must wait for sample 42");
-    advance_ticks(&battle, 1, NULL);
+    advance_ticks(1, NULL);
     check(victim->health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "Ground throw damage must match selected script");
-    advance_ticks(&battle, 160, NULL);
+    advance_ticks(160, NULL);
     check(owner->state == S_IDLE && victim->state == S_IDLE, "Ground throws must release both controllers");
   }
 }
 
 static void check_air_throw(void) {
   for (int player = 0; player < 2; ++player) {
-    Battle battle;
-    battle_init(&battle, 0, 0);
-    battle.phase = PHASE_FIGHT;
-    Fighter *owner = &battle.fighters[player], *victim = &battle.fighters[1 - player];
+    battle_init(0, 0);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
     owner->body.pos[AXIS_X] = 0;
     victim->body.pos[AXIS_X] = Q16_ONE;
     owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -3 * Q16_ONE;
-    fighter_enter_state(&battle, owner, S_JUMP);
-    fighter_enter_state(&battle, victim, S_JUMP);
+    fighter_enter_state(owner, S_JUMP);
+    fighter_enter_state(victim, S_JUMP);
     Input input[2] = {0};
     input[player].held = BUTTON_BIT(BUTTON_BLOCK);
-    battle_step(&battle, input);
-    advance_ticks(&battle, 1, NULL);
+    battle_step(input);
+    advance_ticks(1, NULL);
     check(owner->current_move->clip == 82 && victim->current_move->clip == 202, "Air throw must take both participants");
-    advance_ticks(&battle, 27, NULL);
+    advance_ticks(27, NULL);
     check(victim->health == Q16_ONE && owner->body.gravity == 0, "Air throw must hold before its damage event");
-    advance_ticks(&battle, 1, NULL);
+    advance_ticks(1, NULL);
     check(victim->health == Q16_ONE - 0x2147, "Air throw must deal 13 percent at release");
-    advance_ticks(&battle, 140, NULL);
+    advance_ticks(140, NULL);
     check(owner->state == S_IDLE && victim->state == S_IDLE, "Both air throw participants must recover");
     check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Air throw must release body attachment");
   }
-  Battle battle = fight(1.f);
+  fight(1.f);
   for (int i = 0; i < 2; ++i) {
-    battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
-    fighter_enter_state(&battle, &battle.fighters[i], S_JUMP);
+    g_battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
+    fighter_enter_state(&g_battle.fighters[i], S_JUMP);
   }
-  fighter_press(&battle, &battle.fighters[0], BUTTON_BLOCK);
-  advance_ticks(&battle, 1, NULL);
-  battle_react(&battle, &battle.fighters[0], 11);
-  advance_ticks(&battle, 150, NULL);
-  check(battle.fighters[1].state == S_IDLE && battle.fighters[1].health == Q16_ONE, "Interrupted throw must release victim without damage");
-  battle = fight(1.f);
-  fighter_press(&battle, &battle.fighters[0], BUTTON_BLOCK);
-  check(battle.fighters[0].pending == NULL, "Grounded BLOCK must not air throw");
+  fighter_press(&g_battle.fighters[0], BUTTON_BLOCK);
+  advance_ticks(1, NULL);
+  battle_react(&g_battle.fighters[0], 11);
+  advance_ticks(150, NULL);
+  check(g_battle.fighters[1].state == S_IDLE && g_battle.fighters[1].health == Q16_ONE, "Interrupted throw must release victim without damage");
+  fight(1.f);
+  fighter_press(&g_battle.fighters[0], BUTTON_BLOCK);
+  check(g_battle.fighters[0].pending == NULL, "Grounded BLOCK must not air throw");
 }
 
 int main(void) {
@@ -799,151 +807,151 @@ int main(void) {
   check_wait_phases();
   check_scorpion_contact_branches();
   {
-    Battle battle;
-    battle_init(&battle, 0, 4);
-    advance_ticks(&battle, 89, NULL);
-    check(battle.phase == PHASE_READY, "Countdown ends too soon");
-    advance_ticks(&battle, 1, NULL);
-    check(battle.phase == PHASE_FIGHT, "Countdown never starts fight");
+    battle_init(0, 4);
+    advance_ticks(89, NULL);
+    check(g_battle.phase == PHASE_READY, "Countdown ends too soon");
+    advance_ticks(1, NULL);
+    check(g_battle.phase == PHASE_FIGHT, "Countdown never starts fight");
   }
   {
-    Battle battle = fight(1.f);
-    do_attack(&battle, S_PUNCH, false, false);
-    check(battle.fighters[1].health == Q16_ONE - 0xa3d, "Punch must connect once");
-    advance_ticks(&battle, 30, NULL);
-    check(battle.fighters[1].health == Q16_ONE - 0xa3d, "Repeated hit during recovery");
+    fight(1.f);
+    do_attack(S_PUNCH, false, false);
+    check(g_battle.fighters[1].health == Q16_ONE - 0xa3d, "Punch must connect once");
+    advance_ticks(30, NULL);
+    check(g_battle.fighters[1].health == Q16_ONE - 0xa3d, "Repeated hit during recovery");
   }
   {
-    Battle battle = fight(3);
-    do_attack(&battle, S_KICK, false, false);
-    check(battle.fighters[1].health == Q16_ONE, "Out-of-range attack connects");
+    fight(3);
+    do_attack(S_KICK, false, false);
+    check(g_battle.fighters[1].health == Q16_ONE, "Out-of-range attack connects");
   }
   {
-    Battle battle = fight(1.f);
-    do_attack(&battle, S_PUNCH, true, false);
-    check(battle.fighters[1].health == Q16_ONE - q16_mul(0xa3d, 0x3333) && battle.effects[0].blocked, "Blocking fails");
+    fight(1.f);
+    do_attack(S_PUNCH, true, false);
+    check(g_battle.fighters[1].health == Q16_ONE - q16_mul(0xa3d, 0x3333) && g_battle.effects[0].blocked, "Blocking fails");
   }
   {
-    Battle battle = fight(1.f);
-    do_attack(&battle, S_SWEEP, true, false);
-    check(battle.fighters[1].health == Q16_ONE - 0x23d7, "Standing guard should lose to sweep");
+    fight(1.f);
+    do_attack(S_SWEEP, true, false);
+    check(g_battle.fighters[1].health == Q16_ONE - 0x23d7, "Standing guard should lose to sweep");
   }
   {
-    Battle battle = fight(1.f);
-    do_attack(&battle, S_SWEEP, true, true);
-    check(battle.fighters[1].health == Q16_ONE - q16_mul(0x23d7, 0x3333), "Crouch guard fails against sweep");
+    fight(1.f);
+    do_attack(S_SWEEP, true, true);
+    check(g_battle.fighters[1].health == Q16_ONE - q16_mul(0x23d7, 0x3333), "Crouch guard fails against sweep");
   }
   {
-    Battle battle = fight(0.6f);
-    do_attack(&battle, S_THROW, true, false);
-    advance_ticks(&battle, 23, NULL);
-    check(battle.fighters[1].health == Q16_ONE - 0x2666, "LP throw should beat guard for 15 percent at release");
+    fight(0.6f);
+    do_attack(S_THROW, true, false);
+    advance_ticks(23, NULL);
+    check(g_battle.fighters[1].health == Q16_ONE - 0x2666, "LP throw should beat guard for 15 percent at release");
   }
   {
-    Battle battle = fight(1.f);
-    battle.fighters[1].body.pos[AXIS_Y] -= 2 * Q16_ONE;
-    do_attack(&battle, S_PUNCH, false, false);
-    check(battle.fighters[1].health == Q16_ONE, "Ground punch hits above its vertical reach");
+    fight(1.f);
+    g_battle.fighters[1].body.pos[AXIS_Y] -= 2 * Q16_ONE;
+    do_attack(S_PUNCH, false, false);
+    check(g_battle.fighters[1].health == Q16_ONE, "Ground punch hits above its vertical reach");
   }
   {
-    Battle battle = fight(1.f);
-    do_attack(&battle, S_UPPERCUT, false, false);
-    check(battle.fighters[1].health == Q16_ONE - 0x28f5 && battle.fighters[1].state == S_KNOCKDOWN && fighter_airborne(&battle.fighters[1]),
+    fight(1.f);
+    do_attack(S_UPPERCUT, false, false);
+    check(g_battle.fighters[1].health == Q16_ONE - 0x28f5 && g_battle.fighters[1].state == S_KNOCKDOWN && fighter_airborne(&g_battle.fighters[1]),
         "Uppercut does not launch");
-    advance_ticks(&battle, 100, NULL);
-    check(!fighter_airborne(&battle.fighters[1]) && battle.fighters[1].state == S_IDLE, "Knockdown never recovers");
+    advance_ticks(100, NULL);
+    check(!fighter_airborne(&g_battle.fighters[1]) && g_battle.fighters[1].state == S_IDLE, "Knockdown never recovers");
   }
   {
-    Battle battle = fight(1.f);
+    fight(1.f);
     Input in[2] = {0};
     /* Both players use the shared recovered jab startup. */
-    battle.fighters[1].roster = 0;
+    g_battle.fighters[1].roster = 0;
     in[0].held = in[1].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
-    battle_step(&battle, in);
-    advance_ticks(&battle, 9, NULL);
-    check(battle.fighters[0].health == Q16_ONE && battle.fighters[1].health == Q16_ONE - 0xa3d, "Script contacts use stable fighter order");
+    battle_step(in);
+    advance_ticks(9, NULL);
+    check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE - 0xa3d, "Script contacts use stable fighter order");
   }
   {
-    Battle battle = fight(1.f);
-    battle.fighters[1].health = 0xa3d;
-    do_attack(&battle, S_PUNCH, false, false);
-    check(battle.phase == PHASE_ROUND_OVER && battle.winner == 0 && battle.fighters[0].wins == 1, "KO/round award failed");
-    advance_ticks(&battle, 180, NULL);
-    check(battle.phase == PHASE_READY && battle.round == 2 && battle.fighters[1].health == Q16_ONE && battle.fighters[0].wins == 1, "Next round reset failed");
-    battle.phase = PHASE_FIGHT;
-    battle.fighters[0].body.pos[AXIS_X] = -Q16_ONE / 2;
-    battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 2;
-    battle.fighters[1].health = 0xa3d;
-    do_attack(&battle, S_PUNCH, false, false);
-    check(battle.phase == PHASE_FINISH && battle.fighters[0].wins == 2, "Final KO must open the finish window");
-    for (int i = 0; i < 180 && battle.finish_waiting; ++i) {
-      advance_ticks(&battle, 1, NULL);
+    fight(1.f);
+    g_battle.fighters[1].health = 0xa3d;
+    do_attack(S_PUNCH, false, false);
+    check(g_battle.phase == PHASE_ROUND_OVER && g_battle.winner == 0 && g_battle.fighters[0].wins == 1, "KO/round award failed");
+    advance_ticks(180, NULL);
+    check(g_battle.phase == PHASE_READY && g_battle.round == 2 && g_battle.fighters[1].health == Q16_ONE && g_battle.fighters[0].wins == 1,
+        "Next round reset failed");
+    g_battle.phase = PHASE_FIGHT;
+    g_battle.fighters[0].body.pos[AXIS_X] = -Q16_ONE / 2;
+    g_battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 2;
+    g_battle.fighters[1].health = 0xa3d;
+    do_attack(S_PUNCH, false, false);
+    check(g_battle.phase == PHASE_FINISH && g_battle.fighters[0].wins == 2, "Final KO must open the finish window");
+    for (int i = 0; i < 180 && g_battle.finish_waiting; ++i) {
+      advance_ticks(1, NULL);
     }
-    check(battle_can_finish(&battle, &battle.fighters[0]) && !battle_can_finish(&battle, &battle.fighters[1]), "Only winner may finish");
-    advance_ticks(&battle, 300, NULL);
-    check(battle.phase == PHASE_MATCH_OVER, "Match result should wait for rematch");
-    battle_reset_match(&battle);
-    check(battle.round == 1 && battle.fighters[0].wins == 0, "Rematch failed");
+    check(battle_can_finish(&g_battle.fighters[0]) && !battle_can_finish(&g_battle.fighters[1]), "Only winner may finish");
+    advance_ticks(300, NULL);
+    check(g_battle.phase == PHASE_MATCH_OVER, "Match result should wait for rematch");
+    battle_reset_match();
+    check(g_battle.round == 1 && g_battle.fighters[0].wins == 0, "Rematch failed");
   }
   {
-    Battle battle = fight(1.f);
-    battle.fighters[1].health = 0x28f5;
-    do_attack(&battle, S_UPPERCUT, false, false);
-    check(battle.phase == PHASE_ROUND_OVER, "Lethal uppercut must end the round");
-    advance_ticks(&battle, 100, NULL);
-    check(!fighter_airborne(&battle.fighters[1]) && fighter_sample(&battle.fighters[1]) == 109,
+    fight(1.f);
+    g_battle.fighters[1].health = 0x28f5;
+    do_attack(S_UPPERCUT, false, false);
+    check(g_battle.phase == PHASE_ROUND_OVER, "Lethal uppercut must end the round");
+    advance_ticks(100, NULL);
+    check(!fighter_airborne(&g_battle.fighters[1]) && fighter_sample(&g_battle.fighters[1]) == 109,
         "KO must continue the uppercut landing sequence and hold the final pose");
   }
   {
-    Battle battle = fight(1.f);
-    battle.time_ticks = 1;
-    battle.fighters[0].health = 75;
-    battle.fighters[1].health = 50;
-    battle_step(&battle, (Input[2]){0});
-    check(battle.winner == 0 && battle.phase == PHASE_ROUND_OVER, "Timeout winner incorrect");
+    fight(1.f);
+    g_battle.time_ticks = 1;
+    g_battle.fighters[0].health = 75;
+    g_battle.fighters[1].health = 50;
+    battle_step((Input[2]){0});
+    check(g_battle.winner == 0 && g_battle.phase == PHASE_ROUND_OVER, "Timeout winner incorrect");
   }
   {
-    Battle battle = fight(1.f);
-    battle.time_ticks = 1;
-    battle_step(&battle, (Input[2]){0});
-    check(battle.winner == -1 && battle.fighters[0].wins == 0 && battle.fighters[1].wins == 0, "Draw should not award wins");
+    fight(1.f);
+    g_battle.time_ticks = 1;
+    battle_step((Input[2]){0});
+    check(g_battle.winner == -1 && g_battle.fighters[0].wins == 0 && g_battle.fighters[1].wins == 0, "Draw should not award wins");
   }
   {
-    Battle battle = fight(1.f);
+    fight(1.f);
     Input in[2] = {0};
     in[0].held = BUTTON_BIT(BUTTON_UP);
-    battle_step(&battle, in);
-    advance_ticks(&battle, 90, NULL);
-    check(!fighter_airborne(&battle.fighters[0]) && battle.fighters[0].body.vel[AXIS_Y] == 0, "Jump never lands");
+    battle_step(in);
+    advance_ticks(90, NULL);
+    check(!fighter_airborne(&g_battle.fighters[0]) && g_battle.fighters[0].body.vel[AXIS_Y] == 0, "Jump never lands");
   }
   {
-    Battle battle = fight(1.f);
+    fight(1.f);
     Input in[2] = {0};
     int i;
     in[0].held = BUTTON_BIT(BUTTON_RIGHT);
     in[1].held = BUTTON_BIT(BUTTON_LEFT);
-    advance_ticks(&battle, 600, in);
-    check(fabsf(fighter_x(&battle.fighters[0]) - fighter_x(&battle.fighters[1])) >= 0.499f, "Bodies overlap");
+    advance_ticks(600, in);
+    check(fabsf(fighter_x(&g_battle.fighters[0]) - fighter_x(&g_battle.fighters[1])) >= 0.499f, "Bodies overlap");
     in[0].held = BUTTON_BIT(BUTTON_LEFT);
-    advance_ticks(&battle, 600, in);
+    advance_ticks(600, in);
     for (i = 0; i < 2; ++i)
-      check(fabsf(fighter_x(&battle.fighters[i])) <= q16_float(battle.arena_radius), "Arena wall violated");
+      check(fabsf(fighter_x(&g_battle.fighters[i])) <= q16_float(g_battle.arena_radius), "Arena wall violated");
   }
   {
-    Battle battle = fight(1.f);
+    fight(1.f);
     int changes = 0, old = 2 * Q16_ONE, i;
-    for (i = 0; i < 18000 && battle.phase != PHASE_MATCH_OVER; ++i) {
+    for (i = 0; i < 18000 && g_battle.phase != PHASE_MATCH_OVER; ++i) {
       Input in[2];
       int sum;
-      input_cpu(&battle, 0, &in[0]);
-      input_cpu(&battle, 1, &in[1]);
-      battle_step(&battle, in);
-      sum = battle.fighters[0].health + battle.fighters[1].health;
+      input_cpu(0, &in[0]);
+      input_cpu(1, &in[1]);
+      battle_step(in);
+      sum = g_battle.fighters[0].health + g_battle.fighters[1].health;
       if (sum < old)
         ++changes;
       old = sum;
     }
-    check(changes > 4 && battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
+    check(changes > 4 && g_battle.phase == PHASE_MATCH_OVER, "CPU match does not progress to completion");
   }
   puts(
       "PASS: four fatalities/both players/gates/rematch; paired ground/air throws; ground normals/combos; victim reactions/recovery/interruption; air attack selection/miss/landing/contact/follow-ups; sword draw/slash/chip/throw/drop/pickup/spin/reset; Scorpion special commands/pull/stun/chip/interruption/teleport/fire; retail press rule/history/latency; 27 original Scorpion branches; original kicks; move callbacks/events/interruption; roster tables; countdown; range; single hits; block; sweep; throw; air reach; launch; ordered contacts; KO; rounds; timeout; draw; rematch; jump; walls; CPU match");

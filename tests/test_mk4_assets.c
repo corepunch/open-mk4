@@ -49,15 +49,15 @@ static void combat_poses(const Assets *assets) {
     check((assets->hud.effects.meshes.data[mesh].flags & 0x180) == 0x100, "Ice blast meshes must preserve their original additive material flag");
   }
   check(fabsf(weapon_pose[0].position.y + .3f) < .001f, "Static weapon posing must preserve the descriptor grip offset");
-  Battle battle;
-  battle_init(&battle, 4, 15);
-  battle_bind_assets(&battle, assets);
-  battle.phase = PHASE_FIGHT;
-  Fighter *sub_zero = &battle.fighters[0];
+
+  battle_init(4, 15);
+  battle_bind_assets(assets);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *sub_zero = &g_battle.fighters[0];
   sub_zero->ticks = 70;
   check(fighter_pose_sample(sub_zero) == 0, "Pose snapshot must wrap the real 35-sample idle");
-  battle_react(&battle, sub_zero, 67);
-  battle_step(&battle, (Input[2]){0});
+  battle_react(sub_zero, 67);
+  battle_step((Input[2]){0});
   check(sub_zero->sample_override == 0 && sub_zero->frozen_clip == CLIP_ASSET_IDLE, "Freeze must preserve the displayed looping pose");
   const Character *closed = fighter_model(assets, sub_zero);
   const Character *intact = roster_character(assets, 4);
@@ -65,12 +65,12 @@ static void combat_poses(const Assets *assets) {
       "Closed-surface rigs must share immutable archive geometry and texture ownership");
   check(closed->bones.data[3].id == 2 && closed->bones.data[3].mesh == 20 && intact->bones.data[3].mesh == 2,
       "Freeze must select the recovered closed head mesh rather than the intact head");
-  Fighter *goro = &battle.fighters[1];
-  battle_react(&battle, goro, 67);
-  battle_step(&battle, (Input[2]){0});
+  Fighter *goro = &g_battle.fighters[1];
+  battle_react(goro, 67);
+  battle_step((Input[2]){0});
   check(goro->appearance == APPEARANCE_FROZEN && fighter_clip(assets, goro)->id == 587, "Boss freeze must retain its own rig and pose");
   for (int i = 0; i < 143; ++i) {
-    battle_step(&battle, (Input[2]){0});
+    battle_step((Input[2]){0});
   }
   check(goro->state == S_IDLE && goro->appearance == APPEARANCE_NORMAL, "Boss freeze must thaw and restore control");
   static const SceneClip fallback_blend[] = {
@@ -86,70 +86,71 @@ static void combat_poses(const Assets *assets) {
     check(isfinite(blended[i].position.x) && isfinite(blended[i].position.y) && isfinite(blended[i].position.z), "Fallback scene pose must remain finite");
   }
 
-  battle_init(&battle, 4, 0);
-  battle_bind_assets(&battle, assets);
-  battle.phase = PHASE_FIGHT;
+  battle_init(4, 0);
+  battle_bind_assets(assets);
+  g_battle.phase = PHASE_FIGHT;
   const AttackRecord strike = {0x18000, -0x10000, 0x18000, 0x18000, 37, 11, 1, 0, 0x1000};
   for (int rotated = 0; rotated < 2; ++rotated) {
-    battle_reset_match(&battle);
-    Fighter *a = &battle.fighters[0], *b = &battle.fighters[1];
+    battle_reset_match();
+    Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
     a->body.pos[AXIS_X] = 0;
     b->body.pos[AXIS_X] = rotated ? 0 : Q16_ONE;
     b->body.pos[AXIS_Z] = rotated ? Q16_ONE : 0;
-    battle_world(&battle);
-    check(battle_contact(&battle, a, &strike) == CONTACT_HIT, "Joint contact must follow the pair axis after a quarter turn");
+    battle_world();
+    check(battle_contact(a, &strike) == CONTACT_HIT, "Joint contact must follow the pair axis after a quarter turn");
     check(b->health == Q16_ONE - 0x1000, "Pose contact must retain record damage");
   }
-  battle_reset_match(&battle);
-  Fighter *victim = &battle.fighters[1];
-  ScenePiece *head = battle_attach_head(&battle, victim, &battle.fighters[0], 10);
+  battle_reset_match();
+  Fighter *victim = &g_battle.fighters[1];
+  ScenePiece *head = battle_attach_head(victim, &g_battle.fighters[0], 10);
   static const AttachmentDef spine_animation = {.model = SCENE_MODEL_SPINE, .clip = 386, .first = 0, .last = 96, .loop_from = 52};
-  battle_attach_piece_model(&battle, head, &spine_animation, &battle.fighters[0]);
-  check(head != NULL && battle.attachments[0].def != NULL, "Detached pieces must accept independent animated accessory models");
+  battle_attach_piece_model(head, &spine_animation, &g_battle.fighters[0]);
+  check(head != NULL && g_battle.attachments[0].def != NULL, "Detached pieces must accept independent animated accessory models");
   for (int i = 0; i < 97; ++i) {
-    battle_step_presentation(&battle);
+    battle_step_presentation();
   }
-  check(battle.attachments[0].sample == 52, "Spine attachment must loop from sample 96 back to 52 independently of the fighter");
+  check(g_battle.attachments[0].sample == 52, "Spine attachment must loop from sample 96 back to 52 independently of the fighter");
   head->active = false;
-  battle_step_presentation(&battle);
-  check(battle.attachments[0].def == NULL, "Removing a detached parent must release its accessory");
-  battle_reset_match(&battle);
+  battle_step_presentation();
+  check(g_battle.attachments[0].def == NULL, "Removing a detached parent must release its accessory");
+  battle_reset_match();
   victim->appearance = APPEARANCE_FROZEN;
-  battle_shatter(&battle, victim);
+  battle_shatter(victim);
   int pieces = 0;
   bool unnamed_piece = false;
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
-    pieces += battle.pieces[i].active;
-    check(!battle.pieces[i].active || battle.pieces[i].frozen, "Shatter pieces must preserve the frozen material");
-    if (battle.pieces[i].active) {
+    pieces += g_battle.pieces[i].active;
+    check(!g_battle.pieces[i].active || g_battle.pieces[i].frozen, "Shatter pieces must preserve the frozen material");
+    if (g_battle.pieces[i].active) {
       const Character *cut = &assets->cut_characters.data[roster_def(victim->roster)->asset];
-      const Bone *bone = &cut->bones.data[battle.pieces[i].bone];
+      const Bone *bone = &cut->bones.data[g_battle.pieces[i].bone];
       check(!(bone->flags & 4), "Shatter must not draw invisible control roots as duplicate body meshes");
       unnamed_piece |= bone->id < 0;
     }
   }
   check(unnamed_piece, "Shatter must preserve unnamed visible bones in its remaining-body launch");
   check(pieces >= 15 && victim->appearance == APPEARANCE_HIDDEN, "Shatter must detach posed meshes before hiding the intact body");
-  q16 height = battle.pieces[0].pos[AXIS_Y];
-  battle_step_presentation(&battle);
-  check(battle.pieces[0].pos[AXIS_Y] < height, "Detached pieces must follow their native launch vectors");
-  battle_reset_match(&battle);
-  check(!battle.pieces[0].active && battle.fighters[1].hidden_joints[0] == 0 && !battle.camera.active, "Rematch must clear scene objects and mesh visibility");
+  q16 height = g_battle.pieces[0].pos[AXIS_Y];
+  battle_step_presentation();
+  check(g_battle.pieces[0].pos[AXIS_Y] < height, "Detached pieces must follow their native launch vectors");
+  battle_reset_match();
+  check(!g_battle.pieces[0].active && g_battle.fighters[1].hidden_joints[0] == 0 && !g_battle.camera.active,
+      "Rematch must clear scene objects and mesh visibility");
   for (int player = 0; player < 2; ++player) {
-    battle_init(&battle, player == 0 ? 4 : 0, player == 1 ? 4 : 0);
-    battle_bind_assets(&battle, assets);
-    battle.phase = PHASE_FIGHT;
+    battle_init(player == 0 ? 4 : 0, player == 1 ? 4 : 0);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
     for (int i = 0; i < 2; ++i) {
-      battle.fighters[i].body.pos[AXIS_X] = i * Q16_ONE;
-      battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
-      fighter_enter_state(&battle, &battle.fighters[i], S_JUMP);
+      g_battle.fighters[i].body.pos[AXIS_X] = i * Q16_ONE;
+      g_battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
+      fighter_enter_state(&g_battle.fighters[i], S_JUMP);
     }
-    fighter_press(&battle, &battle.fighters[player], BUTTON_BLOCK);
+    fighter_press(&g_battle.fighters[player], BUTTON_BLOCK);
     for (int tick = 0; tick < 16; ++tick) {
-      battle_step(&battle, (Input[2]){0});
+      battle_step((Input[2]){0});
     }
     for (int i = 0; i < 2; ++i) {
-      const Fighter *actor = &battle.fighters[i];
+      const Fighter *actor = &g_battle.fighters[i];
       check(fighter_clip(assets, actor)->id == (i == player ? 82 : 202), "Air throw must pose the original attacker and victim clips on their own rigs");
       Pose posed[MK4_MAX_BONES];
       fighter_pose(assets, actor, posed);

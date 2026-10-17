@@ -3,18 +3,18 @@
 #include <math.h>
 #include <string.h>
 
-void battle_sound(Battle *battle, int bank, int selector) {
+void battle_sound(int bank, int selector) {
   require(bank >= 0 && bank < SOUND_BANK_COUNT && selector >= 0 && selector < SOUND_EVENT_COUNT, "Invalid sound event");
-  if (battle->sound_count < MAX_SOUND_EVENTS) {
-    battle->sounds[battle->sound_count++] = (SoundEvent){bank, selector};
+  if (g_battle.sound_count < MAX_SOUND_EVENTS) {
+    g_battle.sounds[g_battle.sound_count++] = (SoundEvent){bank, selector};
   }
 }
 
 /* 457cb0: voice row 1 of the impacted fighter, shake 4e3638[0], A[19]. */
-void battle_scene_impact(Battle *battle, const Fighter *fighter) {
-  battle_sound(battle, SOUND_IMPACT_VOICE, roster_def(fighter->roster)->asset);
-  battle_camera_shake(battle, 3, 4, 0x2666);
-  battle_sound(battle, SOUND_A, 0x13);
+void battle_scene_impact(const Fighter *fighter) {
+  battle_sound(SOUND_IMPACT_VOICE, roster_def(fighter->roster)->asset);
+  battle_camera_shake(3, 4, 0x2666);
+  battle_sound(SOUND_A, 0x13);
 }
 
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y) {
@@ -74,8 +74,8 @@ bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, M
   return false;
 }
 
-static void camera_shot(Battle *battle) {
-  SceneCamera *camera = &battle->camera;
+static void camera_shot(void) {
+  SceneCamera *camera = &g_battle.camera;
   const CameraShot *shot = &camera->shots[camera->shot];
   require(shot->count >= 4 && shot->step > 0, "Invalid camera shot");
   camera->parameter = Q16_ONE;
@@ -83,7 +83,7 @@ static void camera_shot(Battle *battle) {
   camera->path_start = camera->eye;
   if (shot->aim_ticks > 0) {
     Mat3 unused;
-    fighter_joint_position(&battle->fighters[camera->target_player], shot->aim_joint, &camera->to_target, &unused);
+    fighter_joint_position(&g_battle.fighters[camera->target_player], shot->aim_joint, &camera->to_target, &unused);
     camera->to_target.y += q16_float(shot->aim_y);
     camera->from_target = camera->target;
     camera->ticks = 0;
@@ -93,16 +93,16 @@ static void camera_shot(Battle *battle) {
 
 /* 445920/44ca70/44cb20: retain a scene reference along the pair axis.
  * Camera tracks run independently from actor animation continuations. */
-void battle_camera_sequence(Battle *battle, const Fighter *owner, const Fighter *target, const CameraShot *shots, int count) {
+void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count) {
   require(shots != NULL && count > 0, "Invalid camera sequence");
-  SceneCamera *camera = &battle->camera;
-  float ax = fighter_x(&battle->fighters[0]), bx = fighter_x(&battle->fighters[1]);
+  SceneCamera *camera = &g_battle.camera;
+  float ax = fighter_x(&g_battle.fighters[0]), bx = fighter_x(&g_battle.fighters[1]);
   Vec3 initial = camera->active ? camera->eye : (Vec3){(ax + bx) * .25f, -2.8f, fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f)};
-  *camera = (SceneCamera){.active = true, .eye = initial, .shots = shots, .shot_count = count, .target_player = target == &battle->fighters[0] ? 0 : 1};
+  *camera = (SceneCamera){.active = true, .eye = initial, .shots = shots, .shot_count = count, .target_player = target == &g_battle.fighters[0] ? 0 : 1};
   camera->axis = (Vec3){q16_float(owner->heading[0]), 0, q16_float(owner->heading[1])};
   camera->origin = (Vec3){fighter_x(target) - camera->axis.x * q16_float(0xe666), -1.25f, fighter_z(target) - camera->axis.z * q16_float(0xe666)};
   camera->target = camera->origin;
-  camera_shot(battle);
+  camera_shot();
 }
 
 /* 48b030/4a0: four control points, with the retail compact-support
@@ -134,15 +134,15 @@ static q16 visual_random(unsigned *seed, q16 range) {
   return (q16)(((uint64_t)*seed * (unsigned)range) >> 32);
 }
 
-void battle_spray(Battle *battle, const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation) {
+void battle_spray(const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation) {
   require(spray != NULL && spray->visual != NULL && spray->lifetime > 0 && variation >= 0, "Invalid particle spray");
   int count = spray->count;
   for (int i = 0; i < MAX_PARTICLES && count > 0; ++i) {
-    Particle *p = &battle->particles[i];
+    Particle *p = &g_battle.particles[i];
     if (p->ticks > 0) {
       continue;
     }
-    unsigned seed = (unsigned)battle->ticks * 1664525u + (unsigned)i * 1013904223u;
+    unsigned seed = (unsigned)g_battle.ticks * 1664525u + (unsigned)i * 1013904223u;
     q16 velocity = speed + visual_random(&seed, variation);
     *p = (Particle){.pos = {(q16)(origin.x * Q16_ONE), (q16)(origin.y * Q16_ONE), (q16)(origin.z * Q16_ONE)},
         .vel = {(q16)(direction.x * velocity), (q16)(direction.y * velocity), (q16)(direction.z * velocity)},
@@ -159,7 +159,7 @@ void battle_spray(Battle *battle, const ParticleSpray *spray, Vec3 origin, Vec3 
   }
 }
 
-static void joint_spray_step(Battle *battle, JointSpray *emitter) {
+static void joint_spray_step(JointSpray *emitter) {
   const JointSprayDef *def = emitter->def;
   int age = emitter->ticks++;
   for (int phase = 0; phase < def->count; ++phase) {
@@ -169,7 +169,7 @@ static void joint_spray_step(Battle *battle, JointSpray *emitter) {
       continue;
     }
     if (age % timing->period == 0 || age % timing->period == timing->extra) {
-      Fighter *fighter = &battle->fighters[emitter->fighter];
+      Fighter *fighter = &g_battle.fighters[emitter->fighter];
       Vec3 origin, target;
       Mat3 unused;
       fighter_joint_position(fighter, def->origin_joint, &origin, &unused);
@@ -179,19 +179,19 @@ static void joint_spray_step(Battle *battle, JointSpray *emitter) {
       direction = length > .0001f ? vec_scale(direction, 1.f / length) : (Vec3){0, -1, 0};
       ParticleSpray spray = *def->spray;
       spray.count = timing->count;
-      battle_spray(battle, &spray, origin, direction, def->speed, def->variation);
+      battle_spray(&spray, origin, direction, def->speed, def->variation);
     }
     return;
   }
   emitter->def = NULL;
 }
 
-void battle_joint_spray(Battle *battle, const Fighter *fighter, const JointSprayDef *def) {
+void battle_joint_spray(const Fighter *fighter, const JointSprayDef *def) {
   require(def != NULL && def->phases != NULL && def->count > 0, "Invalid joint spray");
   for (int i = 0; i < MAX_JOINT_SPRAYS; ++i) {
-    if (battle->sprays[i].def == NULL) {
-      battle->sprays[i] = (JointSpray){.def = def, .fighter = fighter == &battle->fighters[0] ? 0 : 1};
-      joint_spray_step(battle, &battle->sprays[i]);
+    if (g_battle.sprays[i].def == NULL) {
+      g_battle.sprays[i] = (JointSpray){.def = def, .fighter = fighter == &g_battle.fighters[0] ? 0 : 1};
+      joint_spray_step(&g_battle.sprays[i]);
       return;
     }
   }
@@ -199,26 +199,26 @@ void battle_joint_spray(Battle *battle, const Fighter *fighter, const JointSpray
 
 /* 457b50/457b90: alternate a vertical camera offset and its removal,
  * independently of the active shot and without accumulating drift. */
-void battle_camera_shake(Battle *battle, int pulses, int interval, q16 amount) {
+void battle_camera_shake(int pulses, int interval, q16 amount) {
   require(pulses > 0 && interval > 0, "Invalid camera shake");
-  SceneCamera *camera = &battle->camera;
+  SceneCamera *camera = &g_battle.camera;
   camera->shake_y = camera->shake_amount = amount;
   camera->shake_pulses = pulses;
   camera->shake_interval = camera->shake_ticks = interval;
 }
 
-void battle_particles(Battle *battle, const Fighter *fighter, int joint, int count, bool ice) {
+void battle_particles(const Fighter *fighter, int joint, int count, bool ice) {
   static const ParticleVisual blood = {.animation = {0, 1, 1, Q16_ONE}};
   static const ParticleVisual chip = {.animation = {73, 1, 1, Q16_ONE}};
   Vec3 origin;
   Mat3 unused;
   fighter_joint_position(fighter, joint, &origin, &unused);
   for (int i = 0; i < MAX_PARTICLES && count > 0; ++i) {
-    Particle *p = &battle->particles[i];
+    Particle *p = &g_battle.particles[i];
     if (p->ticks > 0) {
       continue;
     }
-    unsigned seed = (unsigned)battle->ticks * 1664525u + (unsigned)i * 1013904223u;
+    unsigned seed = (unsigned)g_battle.ticks * 1664525u + (unsigned)i * 1013904223u;
     q16 side = (q16)((seed >> 16) & 0x3fff) - 0x2000;
     *p = (Particle){.pos = {(q16)(origin.x * Q16_ONE), (q16)(origin.y * Q16_ONE), (q16)(origin.z * Q16_ONE)},
         .vel = {q16_mul(fighter->heading[0], ice ? 0x51e0 : side), ice ? (side / 8) : -0x170a, q16_mul(fighter->heading[1], ice ? 0x51e0 : side)},
@@ -233,7 +233,7 @@ void battle_particles(Battle *battle, const Fighter *fighter, int joint, int cou
   }
 }
 
-static ScenePiece *detach(Battle *battle, Fighter *victim, int joint, const q16 velocity[3], const q16 spin[3]) {
+static ScenePiece *detach(Fighter *victim, int joint, const q16 velocity[3], const q16 spin[3]) {
   if (joint < -128 || joint >= 128 || (joint >= 0 && (victim->hidden_joints[joint / 64] & (UINT64_C(1) << (joint % 64))))) {
     return NULL;
   }
@@ -249,7 +249,7 @@ static ScenePiece *detach(Battle *battle, Fighter *victim, int joint, const q16 
       continue;
     }
     for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
-      ScenePiece *piece = &battle->pieces[i];
+      ScenePiece *piece = &g_battle.pieces[i];
       if (piece->active) {
         continue;
       }
@@ -268,19 +268,19 @@ static ScenePiece *detach(Battle *battle, Fighter *victim, int joint, const q16 
   return NULL;
 }
 
-ScenePiece *battle_attach_head(Battle *battle, Fighter *victim, Fighter *owner, int joint) {
-  ScenePiece *head = detach(battle, victim, 2, (q16[3]){0}, (q16[3]){0});
+ScenePiece *battle_attach_head(Fighter *victim, Fighter *owner, int joint) {
+  ScenePiece *head = detach(victim, 2, (q16[3]){0}, (q16[3]){0});
   if (head != NULL) {
-    head->attached_to = owner == &battle->fighters[0] ? 0 : 1;
+    head->attached_to = owner == &g_battle.fighters[0] ? 0 : 1;
     head->joint = joint;
   }
   return head;
 }
 
-static void attachment_pose(Battle *battle, SceneAttachment *attachment) {
+static void attachment_pose(SceneAttachment *attachment) {
   const AttachmentDef *def = attachment->def;
-  const Frame *frame = &battle->assets->clips.data[def->clip].frames.data[attachment->sample];
-  ScenePiece *piece = &battle->pieces[attachment->piece];
+  const Frame *frame = &g_battle.assets->clips.data[def->clip].frames.data[attachment->sample];
+  ScenePiece *piece = &g_battle.pieces[attachment->piece];
   Vec3 position = vec_add(attachment->origin, mat3_apply(attachment->orientation, vec_add(frame->translation, def->piece_offset)));
   for (int k = 0; k < 3; ++k) {
     piece->pos[k] = (q16)((k == 0 ? position.x : k == 1 ? position.y : position.z) * Q16_ONE);
@@ -288,20 +288,20 @@ static void attachment_pose(Battle *battle, SceneAttachment *attachment) {
   piece->orientation = mat3_mul(attachment->orientation, rotation(def->piece_kind, frame->angles.data[0]));
 }
 
-void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const AttachmentDef *def, const Fighter *actor) {
+void battle_attach_piece_model(ScenePiece *piece, const AttachmentDef *def, const Fighter *actor) {
   if (piece == NULL) {
     return;
   }
   require(def != NULL && def->first <= def->last && def->loop_from >= def->first && def->loop_from <= def->last, "Invalid animated attachment");
   for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
-    if (battle->attachments[i].def == NULL) {
-      battle->attachments[i] = (SceneAttachment){.def = def, .piece = (int)(piece - battle->pieces), .sample = def->first};
-      SceneAttachment *attachment = &battle->attachments[i];
+    if (g_battle.attachments[i].def == NULL) {
+      g_battle.attachments[i] = (SceneAttachment){.def = def, .piece = (int)(piece - g_battle.pieces), .sample = def->first};
+      SceneAttachment *attachment = &g_battle.attachments[i];
       attachment->origin = vec_add((Vec3){fighter_x(actor), q16_float(actor->body.pos[AXIS_Y]), fighter_z(actor)}, def->group_offset);
       attachment->orientation = fighter_turn(actor->assets, actor);
       piece->animated = true;
       piece->attached_to = -1;
-      attachment_pose(battle, attachment);
+      attachment_pose(attachment);
       return;
     }
   }
@@ -310,7 +310,7 @@ void battle_attach_piece_model(Battle *battle, ScenePiece *piece, const Attachme
 /* 41b610 -> 419720/7e0/8a0/900/9e0/aa0/b60.
  * First six words of each 4d28e8..4d2b58 record: linear/angular speed.
  * Bodies use our bounded piece pool; the native's task tree is unnecessary. */
-void battle_shatter(Battle *battle, Fighter *victim) {
+void battle_shatter(Fighter *victim) {
   typedef struct Launch {
     int joint;
     q16 velocity[3], spin[3];
@@ -334,42 +334,42 @@ void battle_shatter(Battle *battle, Fighter *victim) {
   };
   // clang-format on
   for (size_t i = 0; i < sizeof launches / sizeof launches[0]; ++i) {
-    detach(battle, victim, launches[i].joint, launches[i].velocity, launches[i].spin);
+    detach(victim, launches[i].joint, launches[i].velocity, launches[i].spin);
   }
   if (victim->assets != NULL) {
     const Character *ch = fighter_model(victim->assets, victim);
     for (size_t i = 0; i < ch->bones.count; ++i) {
       /* Remaining hierarchy follows 419470's final body launch. */
-      detach(battle, victim, ch->bones.data[i].id, (q16[3]){0x666, -0x1c28, 0xccc}, (q16[3]){0, 0x3333, -0x51e});
+      detach(victim, ch->bones.data[i].id, (q16[3]){0x666, -0x1c28, 0xccc}, (q16[3]){0, 0x3333, -0x51e});
     }
   }
   victim->appearance = APPEARANCE_HIDDEN;
 }
 
-void battle_step_presentation(Battle *battle) {
+void battle_step_presentation(void) {
   for (int i = 0; i < MAX_JOINT_SPRAYS; ++i) {
-    if (battle->sprays[i].def != NULL) {
-      joint_spray_step(battle, &battle->sprays[i]);
+    if (g_battle.sprays[i].def != NULL) {
+      joint_spray_step(&g_battle.sprays[i]);
     }
   }
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    Projectile *object = &battle->projectiles[i];
+    Projectile *object = &g_battle.projectiles[i];
     if (object->kind != 0 && object->light.def != NULL) {
       orbit_light_step(&object->light);
     }
   }
   for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
-    SceneAttachment *attachment = &battle->attachments[i];
+    SceneAttachment *attachment = &g_battle.attachments[i];
     if (attachment->def != NULL) {
-      if (!battle->pieces[attachment->piece].active) {
+      if (!g_battle.pieces[attachment->piece].active) {
         attachment->def = NULL;
       } else {
         attachment->sample = attachment->sample < attachment->def->last ? attachment->sample + 1 : attachment->def->loop_from;
-        attachment_pose(battle, attachment);
+        attachment_pose(attachment);
       }
     }
   }
-  SceneCamera *camera = &battle->camera;
+  SceneCamera *camera = &g_battle.camera;
   if (camera->shake_pulses > 0 && --camera->shake_ticks == 0) {
     if (camera->shake_y != 0) {
       camera->shake_y = 0;
@@ -386,7 +386,7 @@ void battle_step_presentation(Battle *battle) {
       camera->eye = camera_sample(camera);
     } else if (camera->shot + 1 < camera->shot_count && ++camera->hold >= shot->hold) {
       camera->shot++;
-      camera_shot(battle);
+      camera_shot();
     }
   }
   if (camera->active && camera->ticks < camera->duration) {
@@ -395,7 +395,7 @@ void battle_step_presentation(Battle *battle) {
   }
   bool splash_sound = false;
   for (int i = 0; i < MAX_PARTICLES; ++i) {
-    Particle *p = &battle->particles[i];
+    Particle *p = &g_battle.particles[i];
     if (p->ticks > 0) {
       --p->ticks;
       p->age++;
@@ -418,20 +418,20 @@ void battle_step_presentation(Battle *battle) {
         p->scale = Q16_ONE;
         p->splash = false;
         if (!splash_sound) {
-          battle_sound(battle, SOUND_B, 5 + (i % 4));
+          battle_sound(SOUND_B, 5 + (i % 4));
           splash_sound = true;
         }
       }
     }
   }
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
-    ScenePiece *piece = &battle->pieces[i];
+    ScenePiece *piece = &g_battle.pieces[i];
     if (!piece->active || piece->animated) {
       continue;
     }
     if (piece->attached_to >= 0) {
       Vec3 position;
-      fighter_joint_position(&battle->fighters[piece->attached_to], piece->joint, &position, &piece->orientation);
+      fighter_joint_position(&g_battle.fighters[piece->attached_to], piece->joint, &position, &piece->orientation);
       piece->pos[0] = (q16)(position.x * Q16_ONE);
       piece->pos[1] = (q16)(position.y * Q16_ONE);
       piece->pos[2] = (q16)(position.z * Q16_ONE);

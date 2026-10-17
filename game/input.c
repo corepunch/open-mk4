@@ -85,7 +85,7 @@ ShellCommand input_shell_command(int keycode) {
 }
 
 /* CPU controllers run inside simulation. The host only selects ownership. */
-void input_cpu(Battle *battle, int player, Input *out) {
+void input_cpu(int player, Input *out) {
   memset(out, 0, sizeof *out);
-  battle->fighters[player].human = false;
+  g_battle.fighters[player].human = false;
 }

@@ -7,15 +7,14 @@
  * Contact runs inside the attacker's move, so a hit replaces the victim's
  * move before the victim's own update in the same tick. */
 
-static int fighter_index(const Battle *battle, const Fighter *fighter) {
-  return fighter == &battle->fighters[0] ? 0 : 1;
+static int fighter_index(const Fighter *fighter) {
+  return fighter == &g_battle.fighters[0] ? 0 : 1;
 }
 
 /* 48d750: project the victim's joint origins onto the origin-to-victim
  * axis, trim eight percent off either horizontal edge, and overlap the
  * script rectangle. Headless rule-only callers can omit decoded assets. */
-static bool contact_geometry(const Battle *battle, const q16 origin[3], int facing, const Fighter *victim, const AttackRecord *record) {
-  (void)battle;
+static bool contact_geometry(const q16 origin[3], int facing, const Fighter *victim, const AttackRecord *record) {
   double dx = (double)victim->body.pos[AXIS_X] - origin[AXIS_X];
   double dz = (double)victim->body.pos[AXIS_Z] - origin[AXIS_Z];
   double distance = hypot(dx, dz);
@@ -58,8 +57,8 @@ static bool blocks(const Fighter *victim, const AttackRecord *record) {
 }
 
 /* 0x48de80 */
-void battle_damage(Battle *battle, Fighter *victim, q16 damage) {
-  if (battle->ko_winner != 0) {
+void battle_damage(Fighter *victim, q16 damage) {
+  if (g_battle.ko_winner != 0) {
     return;
   }
   if (victim->roster == 15) {
@@ -74,17 +73,17 @@ void battle_damage(Battle *battle, Fighter *victim, q16 damage) {
   victim->health -= damage;
   if (victim->health <= 0) {
     victim->health = 0;
-    battle->ko_winner = fighter_index(battle, victim) == 0 ? 2 : 1;
+    g_battle.ko_winner = fighter_index(victim) == 0 ? 2 : 1;
   }
 }
 
 /* 0x48d4a0 */
-ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing) {
-  Fighter *victim = (Fighter *)fighter_opponent(battle, attacker);
-  if (battle->contacts_off || !contact_geometry(battle, origin, facing, victim, record)) {
+ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing) {
+  Fighter *victim = (Fighter *)fighter_opponent(attacker);
+  if (g_battle.contacts_off || !contact_geometry(origin, facing, victim, record)) {
     return CONTACT_MISS;
   }
-  battle->contacted = true;
+  g_battle.contacted = true;
   if (victim->flags & FF_UNTOUCHABLE) {
     return CONTACT_MISS;
   }
@@ -93,7 +92,7 @@ ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const Attac
   int reaction = record->blocked;
   bool chip_ko = false;
   if (!(victim->flags & FF_NO_GUARD) && blocks(victim, record)) {
-    battle_damage(battle, victim, q16_mul(record->damage, 0x3333));
+    battle_damage(victim, q16_mul(record->damage, 0x3333));
     if (victim->health > 0) {
       result = CONTACT_BLOCK;
     } else {
@@ -102,7 +101,7 @@ ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const Attac
   }
   if (result == CONTACT_HIT) {
     if (!chip_ko) {
-      battle_damage(battle, victim, record->damage);
+      battle_damage(victim, record->damage);
     }
     victim->hits++;
     if (fighter_airborne(victim)) {
@@ -115,29 +114,29 @@ ContactResult battle_contact_from(Battle *battle, Fighter *attacker, const Attac
       reaction = record->hit;
     }
   }
-  int side = fighter_index(battle, attacker);
+  int side = fighter_index(attacker);
   /* Absolute retail Y has the soles at 0, so height above the floor is -Y. */
   float x = q16_float(attacker->body.pos[AXIS_X] / 2 + victim->body.pos[AXIS_X] / 2);
   float height = -q16_float(origin[AXIS_Y] + record->top + record->height / 2);
-  battle->effects[side] = (HitEffect){x, height, 10, result == CONTACT_BLOCK};
-  battle_react(battle, victim, reaction);
+  g_battle.effects[side] = (HitEffect){x, height, 10, result == CONTACT_BLOCK};
+  battle_react(victim, reaction);
   return result;
 }
 
-ContactResult battle_contact(Battle *battle, Fighter *attacker, const AttackRecord *record) {
-  ContactResult result = battle_contact_from(battle, attacker, record, attacker->body.pos, attacker->facing);
+ContactResult battle_contact(Fighter *attacker, const AttackRecord *record) {
+  ContactResult result = battle_contact_from(attacker, record, attacker->body.pos, attacker->facing);
   if (result != CONTACT_MISS) {
     fighter_note_contact(attacker, result);
-    ((Fighter *)fighter_opponent(battle, attacker))->body_contact = true;
+    ((Fighter *)fighter_opponent(attacker))->body_contact = true;
   }
   return result;
 }
 
 /* 49c810 rejects a C-table query unless the victim lies within 0x1999
  * radians of the projectile's stored axis, including the opposite ray. */
-ContactResult battle_projectile_contact(Battle *battle, Projectile *p, const AttackRecord *record) {
-  Fighter *owner = &battle->fighters[p->owner];
-  const Fighter *victim = fighter_opponent(battle, owner);
+ContactResult battle_projectile_contact(Projectile *p, const AttackRecord *record) {
+  Fighter *owner = &g_battle.fighters[p->owner];
+  const Fighter *victim = fighter_opponent(owner);
   double x = (double)victim->body.pos[AXIS_X] - p->pos[AXIS_X];
   double z = (double)victim->body.pos[AXIS_Z] - p->pos[AXIS_Z];
   double cross = x * p->heading[1] - z * p->heading[0];
@@ -145,15 +144,15 @@ ContactResult battle_projectile_contact(Battle *battle, Projectile *p, const Att
   if (atan2(fabs(cross), fabs(dot)) > q16_float(0x1999)) {
     return CONTACT_MISS;
   }
-  return battle_contact_from(battle, owner, record, p->pos, p->facing);
+  return battle_contact_from(owner, record, p->pos, p->facing);
 }
 
-Projectile *battle_spawn_projectile(Battle *battle, Fighter *owner, int kind, int lifetime, ProjectileFn step) {
+Projectile *battle_spawn_projectile(Fighter *owner, int kind, int lifetime, ProjectileFn step) {
   require(step != NULL && lifetime > 0, "Invalid projectile");
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    Projectile *p = &battle->projectiles[i];
+    Projectile *p = &g_battle.projectiles[i];
     if (p->kind == 0) {
-      *p = (Projectile){.kind = kind, .owner = fighter_index(battle, owner), .facing = owner->facing, .lifetime = lifetime, .step = step};
+      *p = (Projectile){.kind = kind, .owner = fighter_index(owner), .facing = owner->facing, .lifetime = lifetime, .step = step};
       for (int k = 0; k < 3; ++k) {
         p->pos[k] = owner->body.pos[k];
       }

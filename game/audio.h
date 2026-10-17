@@ -15,6 +15,6 @@ typedef struct GameAudio {
 } GameAudio;
 
 void game_audio_init(GameAudio *audio, bool headless);
-void game_audio_step(GameAudio *audio, const Assets *assets, const Battle *battle);
+void game_audio_step(GameAudio *audio, const Assets *assets);
 void game_audio_free(GameAudio *audio);
 #endif

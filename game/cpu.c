@@ -4,18 +4,18 @@
 
 /* 4ab540/570/5d0: explicit unsigned wrap, low-word scaled draws, strict
  * per-thousand comparison. These two words belong to the battle, not libc. */
-uint32_t battle_random(Battle *battle, uint32_t range) {
-  uint32_t value = battle->random[0] + battle->random[1];
-  battle->random[0] = value;
-  battle->random[1] += value - (value >> 31);
+uint32_t battle_random(uint32_t range) {
+  uint32_t value = g_battle.random[0] + g_battle.random[1];
+  g_battle.random[0] = value;
+  g_battle.random[1] += value - (value >> 31);
   return (uint32_t)((uint64_t)(value & 0xffffu) * range >> 16);
 }
 
-bool battle_chance(Battle *battle, int per_thousand) {
-  return battle_random(battle, 1000) < (uint32_t)maxi(0, per_thousand);
+bool battle_chance(int per_thousand) {
+  return battle_random(1000) < (uint32_t)maxi(0, per_thousand);
 }
 
-bool battle_cpu_action(Battle *battle, Fighter *fighter, CpuAction action) {
+bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   const CharacterDef *def = roster_def(fighter->roster);
   require(action >= 0 && action < CPU_ACTION_COUNT, "Invalid CPU action");
   FighterFn entry = def->cpu != NULL ? def->cpu->enter[action] : NULL;
@@ -30,9 +30,9 @@ bool battle_cpu_action(Battle *battle, Fighter *fighter, CpuAction action) {
   }
   fighter->held = 0;
   if (entry != NULL) {
-    fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(battle, fighter)->body.pos[AXIS_X] ? 1 : -1;
+    fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
     if (!fighter_airborne(fighter)) {
-      fighter_set_speed(battle, fighter, 0);
+      fighter_set_speed(fighter, 0);
     }
     fighter_interrupt(fighter, entry);
     return true;
@@ -48,7 +48,7 @@ bool battle_cpu_action(Battle *battle, Fighter *fighter, CpuAction action) {
   }
   if (action == CPU_UPPERCUT || action == CPU_CROUCH_LP) {
     fighter->held = BUTTON_BIT(BUTTON_DOWN);
-    fighter_enter_state(battle, fighter, S_CROUCH);
+    fighter_enter_state(fighter, S_CROUCH);
   } else if (action == CPU_SWEEP) {
     fighter->held = BUTTON_BIT(fighter->facing > 0 ? BUTTON_LEFT : BUTTON_RIGHT);
   }
@@ -56,7 +56,7 @@ bool battle_cpu_action(Battle *battle, Fighter *fighter, CpuAction action) {
                                                     : action == CPU_UPPERCUT || action == CPU_CROUCH_LP ? STANCE_CROUCHING
                                                                                                         : STANCE_STANDING];
   if (table != NULL && table->press[button] != NULL) {
-    table->press[button](battle, fighter);
+    table->press[button](fighter);
     return true;
   }
   return false;
@@ -116,29 +116,29 @@ static const CpuChoice close_choices[] = {
 };
 // clang-format on
 
-static void choose(Battle *battle, Fighter *fighter, const CpuChoice *choices, int count) {
-  const CpuChoice *choice = &choices[battle_random(battle, (uint32_t)count)];
+static void choose(Fighter *fighter, const CpuChoice *choices, int count) {
+  const CpuChoice *choice = &choices[battle_random((uint32_t)count)];
   fighter->cpu.plan = choice->action + 1;
   fighter->cpu.phase = 0;
-  fighter->cpu.target = choice->target < 0 ? 0x18000 + (q16)battle_random(battle, 0x20000) : choice->target;
+  fighter->cpu.target = choice->target < 0 ? 0x18000 + (q16)battle_random(0x20000) : choice->target;
   fighter->cpu.timer = choice->run ? 30 : 0;
 }
 
 /* 4398c0, parameters 4ee82c: 25 + level*10 + adaptive progress*40
  * + rank*100, capped at 975/1000. Opponent wins join progress in arcade
  * adaptive mode. Local play can leave those context values at zero. */
-static bool reacts(Battle *battle, Fighter *fighter) {
-  int progress = battle->cpu_progress + (battle->cpu_adaptive ? fighter_opponent(battle, fighter)->wins : 0);
-  int chance = mini(975, 25 + battle->cpu_level * 10 + progress * 40 + battle->cpu_rank * 100);
-  return battle_chance(battle, chance);
+static bool reacts(Fighter *fighter) {
+  int progress = g_battle.cpu_progress + (g_battle.cpu_adaptive ? fighter_opponent(fighter)->wins : 0);
+  int chance = mini(975, 25 + g_battle.cpu_level * 10 + progress * 40 + g_battle.cpu_rank * 100);
+  return battle_chance(chance);
 }
 
-static void flip(Battle *battle, Fighter *fighter, bool back) {
+static void flip(Fighter *fighter, bool back) {
   const CharacterDef *def = roster_def(fighter->roster);
   fighter->held = BUTTON_BIT(BUTTON_UP) | BUTTON_BIT((fighter->facing > 0) != back ? BUTTON_RIGHT : BUTTON_LEFT);
-  fighter_set_speed(battle, fighter, 0);
+  fighter_set_speed(fighter, 0);
   if (def->jump != NULL) {
-    def->jump(battle, fighter);
+    def->jump(fighter);
   }
   fighter->held = 0;
 }
@@ -146,15 +146,15 @@ static void flip(Battle *battle, Fighter *fighter, bool back) {
 /* 4339b0 dispatches on a changed opponent action, not a periodic host
  * timer. Translate the normal, projectile and frozen-victim branches used
  * by Sub-Zero. Continuing plans retain their timers when no reaction wins. */
-static bool respond(Battle *battle, Fighter *fighter) {
-  const Fighter *other = fighter_opponent(battle, fighter);
+static bool respond(Fighter *fighter) {
+  const Fighter *other = fighter_opponent(fighter);
   CpuState *cpu = &fighter->cpu;
   int action = other->action;
   if (action == cpu->seen_action) {
     return false;
   }
   cpu->seen_action = action;
-  q16 distance = (q16)(fighter_distance(battle, fighter) * Q16_ONE);
+  q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
   if (action == 0x1003) {
     cpu->plan = CPU_UPPERCUT + 1;
     cpu->target = 0xcccc;
@@ -165,7 +165,7 @@ static bool respond(Battle *battle, Fighter *fighter) {
   if ((action & 0xf00) != 0x100 && (action & 0xf00) != 0x300 && action != 0x204 && !clone) {
     return false;
   }
-  if (!reacts(battle, fighter)) {
+  if (!reacts(fighter)) {
     return false;
   }
   if (clone || action == 0x204) {
@@ -173,7 +173,7 @@ static bool respond(Battle *battle, Fighter *fighter) {
      * projectile row; answer a distant slide the same way. */
     if (clone) {
       if (distance < 3 * Q16_ONE) {
-        return battle_cpu_action(battle, fighter, CPU_PROJECTILE);
+        return battle_cpu_action(fighter, CPU_PROJECTILE);
       }
       if (action == 0x405) {
         /* 436840/4368b0, row 4df798: remain neutral until the
@@ -184,7 +184,7 @@ static bool respond(Battle *battle, Fighter *fighter) {
       }
       return false;
     }
-    return battle_cpu_action(battle, fighter, distance > 3 * Q16_ONE ? CPU_PROJECTILE : CPU_CLOSE_HK);
+    return battle_cpu_action(fighter, distance > 3 * Q16_ONE ? CPU_PROJECTILE : CPU_CLOSE_HK);
   }
   if (action == 0x111 || action == 0x112 || action == 0x113) {
     /* 436180/1b0/435f90: close the gap for a throw/counter;
@@ -196,7 +196,7 @@ static bool respond(Battle *battle, Fighter *fighter) {
       return true;
     }
     if (action != 0x111 && distance > 0x2b333) {
-      return battle_cpu_action(battle, fighter, CPU_PROJECTILE);
+      return battle_cpu_action(fighter, CPU_PROJECTILE);
     }
     if (action == 0x113) {
       /* 435fd0/439170: crouch until the attack class clears or
@@ -205,20 +205,20 @@ static bool respond(Battle *battle, Fighter *fighter) {
       cpu->timer = 120;
       return true;
     }
-    return battle_cpu_action(battle, fighter, CPU_CLOSE_HK);
+    return battle_cpu_action(fighter, CPU_CLOSE_HK);
   }
   if ((action & 0xf00) == 0x300) {
     /* 435420/5590: close HK below 2; crouching LP or a forward
      * flip (50/50) below 4. At range, wait for the projectile,
      * approach until squared distance < 7, then flip. */
     if (distance < 0x20000) {
-      return battle_cpu_action(battle, fighter, CPU_CLOSE_HK);
+      return battle_cpu_action(fighter, CPU_CLOSE_HK);
     }
     if (distance < 0x40000) {
-      if (battle_chance(battle, 500)) {
-        return battle_cpu_action(battle, fighter, CPU_CROUCH_LP);
+      if (battle_chance(500)) {
+        return battle_cpu_action(fighter, CPU_CROUCH_LP);
       }
-      flip(battle, fighter, false);
+      flip(fighter, false);
       return true;
     }
     cpu->plan = PLAN_APPROACH_PROJECTILE + 1;
@@ -227,21 +227,21 @@ static bool respond(Battle *battle, Fighter *fighter) {
     return true;
   }
   if (action == 0x100 && distance < 0x1cccc) {
-    return battle_cpu_action(battle, fighter, CPU_SWEEP);
+    return battle_cpu_action(fighter, CPU_SWEEP);
   }
   if ((action == 0x10a || action == 0x10b) && distance <= Q16_ONE) {
-    return battle_cpu_action(battle, fighter, CPU_THROW);
+    return battle_cpu_action(fighter, CPU_THROW);
   }
   if (distance <= 0x28000) {
-    return battle_cpu_action(battle, fighter, CPU_CLOSE_HK);
+    return battle_cpu_action(fighter, CPU_CLOSE_HK);
   }
   return false;
 }
 
-static bool opponent_object(const Battle *battle, const Fighter *fighter, bool clone) {
-  int owner = fighter == &battle->fighters[0] ? 1 : 0;
+static bool opponent_object(const Fighter *fighter, bool clone) {
+  int owner = fighter == &g_battle.fighters[0] ? 1 : 0;
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    const Projectile *object = &battle->projectiles[i];
+    const Projectile *object = &g_battle.projectiles[i];
     if (object->kind != 0 && object->owner == owner && (object->kind == PROJECTILE_CLONE) == clone) {
       return true;
     }
@@ -249,9 +249,9 @@ static bool opponent_object(const Battle *battle, const Fighter *fighter, bool c
   return false;
 }
 
-static void finish(Battle *battle, Fighter *fighter) {
+static void finish(Fighter *fighter) {
   CpuState *cpu = &fighter->cpu;
-  if (!battle_can_finish(battle, fighter)) {
+  if (!battle_can_finish(fighter)) {
     return;
   }
   if (!cpu->finish_chosen) {
@@ -259,8 +259,8 @@ static void finish(Battle *battle, Fighter *fighter) {
     /* 4344a0/550: ordinary arcade chance 150, then 600 for the
      * second finisher. Stages 0 and 8 replace that choice. */
     int action = CPU_THROW;
-    if (battle_chance(battle, 150)) {
-      action = battle->arena == 0 ? CPU_FINISH_SPIKE : battle->arena == 8 ? CPU_FINISH_FAN : battle_chance(battle, 600) ? CPU_FINISH_2 : CPU_FINISH_1;
+    if (battle_chance(150)) {
+      action = g_battle.arena == 0 ? CPU_FINISH_SPIKE : g_battle.arena == 8 ? CPU_FINISH_FAN : battle_chance(600) ? CPU_FINISH_2 : CPU_FINISH_1;
     }
     cpu->plan = action + 1;
     cpu->target = action == CPU_FINISH_2 ? 0x26666 : 0xb333;
@@ -268,7 +268,7 @@ static void finish(Battle *battle, Fighter *fighter) {
   }
 }
 
-void battle_cpu_step(Battle *battle, Fighter *fighter) {
+void battle_cpu_step(Fighter *fighter) {
   if (fighter->human) {
     return;
   }
@@ -283,17 +283,17 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     return;
   }
-  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(battle, fighter)->body.pos[AXIS_X] ? 1 : -1;
+  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
   CpuState *cpu = &fighter->cpu;
-  if (battle->phase == PHASE_FINISH) {
-    if (!battle_can_finish(battle, fighter)) {
+  if (g_battle.phase == PHASE_FINISH) {
+    if (!battle_can_finish(fighter)) {
       return;
     }
-    finish(battle, fighter);
-  } else if (battle->phase != PHASE_FIGHT) {
+    finish(fighter);
+  } else if (g_battle.phase != PHASE_FIGHT) {
     return;
   } else {
-    if (respond(battle, fighter) && fighter->pending != NULL) {
+    if (respond(fighter) && fighter->pending != NULL) {
       cpu->plan = 0;
       return;
     }
@@ -305,32 +305,32 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
       return;
     }
     if (cpu->plan == 0) {
-      q16 distance = (q16)(fighter_distance(battle, fighter) * Q16_ONE);
-      uint64_t weapon_elapsed = battle->ticks - cpu->weapon_tick;
-      if (fighter->armed && weapon_elapsed >= 240 && distance >= 2 * Q16_ONE && battle_chance(battle, weapon_elapsed > 600 ? 600 : 200)) {
-        cpu->weapon_tick = battle->ticks;
-        if (battle_cpu_action(battle, fighter, CPU_WEAPON_THROW)) {
+      q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
+      uint64_t weapon_elapsed = g_battle.ticks - cpu->weapon_tick;
+      if (fighter->armed && weapon_elapsed >= 240 && distance >= 2 * Q16_ONE && battle_chance(weapon_elapsed > 600 ? 600 : 200)) {
+        cpu->weapon_tick = g_battle.ticks;
+        if (battle_cpu_action(fighter, CPU_WEAPON_THROW)) {
           return;
         }
       }
-      if (battle->cpu_level != 1 && !fighter->armed && !fighter->weapon_used && battle->ticks >= 480 && battle_chance(battle, 100)) {
-        cpu->weapon_tick = battle->ticks;
-        if (battle_cpu_action(battle, fighter, CPU_DRAW)) {
+      if (g_battle.cpu_level != 1 && !fighter->armed && !fighter->weapon_used && g_battle.ticks >= 480 && battle_chance(100)) {
+        cpu->weapon_tick = g_battle.ticks;
+        if (battle_cpu_action(fighter, CPU_DRAW)) {
           return;
         }
       }
-      if (battle->cpu_level <= 2 && battle_chance(battle, 500)) {
-        cpu->rest = 60 + (int)battle_random(battle, 180);
+      if (g_battle.cpu_level <= 2 && battle_chance(500)) {
+        cpu->rest = 60 + (int)battle_random(180);
         return;
       }
       if (distance < Q16_ONE) {
-        choose(battle, fighter, close_choices, 5);
+        choose(fighter, close_choices, 5);
       } else if (distance < 2 * Q16_ONE) {
-        choose(battle, fighter, near_choices, 5);
+        choose(fighter, near_choices, 5);
       } else if (distance < 3 * Q16_ONE) {
-        choose(battle, fighter, medium_choices, 8);
+        choose(fighter, medium_choices, 8);
       } else {
-        choose(battle, fighter, far_choices, 7);
+        choose(fighter, far_choices, 7);
       }
     }
   }
@@ -338,34 +338,34 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
     return;
   }
   int action = cpu->plan - 1;
-  q16 distance = (q16)(fighter_distance(battle, fighter) * Q16_ONE);
+  q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
   if (action == PLAN_WAIT_CLONE) {
-    if (--cpu->timer <= 0 || !opponent_object(battle, fighter, true)) {
+    if (--cpu->timer <= 0 || !opponent_object(fighter, true)) {
       cpu->plan = 0;
     }
     return;
   }
   if (action == PLAN_FOOTWORK && cpu->phase > 0) {
     if (--cpu->timer <= 0) {
-      if (cpu->phase == 4 || (cpu->phase == 2 && battle_chance(battle, 500))) {
+      if (cpu->phase == 4 || (cpu->phase == 2 && battle_chance(500))) {
         cpu->plan = 0;
         return;
       }
       cpu->phase++;
-      cpu->timer = 8 + (int)battle_random(battle, 20);
+      cpu->timer = 8 + (int)battle_random(20);
     }
     bool forward = (cpu->phase & 1) != 0;
     fighter->held = BUTTON_BIT((fighter->facing > 0) == forward ? BUTTON_RIGHT : BUTTON_LEFT);
     return;
   }
   if (action == PLAN_CROUCH_COUNTER) {
-    if (--cpu->timer > 0 && (fighter_opponent(battle, fighter)->action & 0xf00) != 0) {
+    if (--cpu->timer > 0 && (fighter_opponent(fighter)->action & 0xf00) != 0) {
       fighter->held = BUTTON_BIT(BUTTON_DOWN);
       return;
     }
     if (distance < 0x12666) {
       cpu->plan = 0;
-      battle_cpu_action(battle, fighter, CPU_UPPERCUT);
+      battle_cpu_action(fighter, CPU_UPPERCUT);
       return;
     }
     cpu->plan = CPU_CLOSE_HK + 1;
@@ -374,7 +374,7 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
     action = CPU_CLOSE_HK;
   }
   if (action == PLAN_APPROACH_PROJECTILE) {
-    if (cpu->phase == 0 && !opponent_object(battle, fighter, false)) {
+    if (cpu->phase == 0 && !opponent_object(fighter, false)) {
       return;
     }
     cpu->phase = 1;
@@ -400,17 +400,17 @@ void battle_cpu_step(Battle *battle, Fighter *fighter) {
   }
   cpu->plan = 0;
   if (action == PLAN_FORWARD_FLIP || action == PLAN_BACK_FLIP) {
-    flip(battle, fighter, action == PLAN_BACK_FLIP);
+    flip(fighter, action == PLAN_BACK_FLIP);
   } else if (action == PLAN_FOOTWORK) {
     /* 436df0/436f90: four forward/back legs, 8..28 ticks each,
      * with a 50% early return after the second leg. */
     cpu->plan = PLAN_FOOTWORK + 1;
     cpu->phase = 1;
-    cpu->timer = 8 + (int)battle_random(battle, 20);
+    cpu->timer = 8 + (int)battle_random(20);
   } else {
     if (action == PLAN_THROW_OR_CLOSE) {
-      action = fighter_opponent(battle, fighter)->flags & FF_REACTING ? CPU_CLOSE_HP : CPU_THROW;
+      action = fighter_opponent(fighter)->flags & FF_REACTING ? CPU_CLOSE_HP : CPU_THROW;
     }
-    battle_cpu_action(battle, fighter, (CpuAction)action);
+    battle_cpu_action(fighter, (CpuAction)action);
   }
 }

@@ -88,8 +88,14 @@ Source paths for retail flow:
 
 ## Implementation rules
 
-Use plain structs for state, enums for states, const data tables, and functions
-that receive their context explicitly. No C++ classes, STL, references or
+Use plain structs for state, enums for states, const data tables, and procedural
+functions. The game has one active `Battle g_battle`, defined in `game/battle.c`
+and declared in `game/game.h`. Game functions and callbacks access it directly;
+they receive the fighter, object or other local arguments they operate on.
+`battle_init(p1, p2)` fully initializes that singleton. Tests initialize it for
+each scenario instead of creating separate active battle instances. The API is
+single-simulation and is not reentrant. Assets and host resources keep explicit
+owners and arguments. No C++ classes, STL, references or
 exceptions in migrated game/engine modules. Keep simulation independent of SDL
 and rendering, and keep archive ownership separate from decoded assets.
 
@@ -105,8 +111,8 @@ Each verified migration step is committed separately on `main`.
 ## Current alignment
 
 The game, shared archive/assets/pose/renderer modules, SDL host, viewer and
-native regression tests now compile as C11. `Battle`, `Assets`, `Canvas`, and
-`SdlApp` have explicit context APIs; decoded assets and SDL resources have
+native regression tests now compile as C11. `Battle` lives in `g_battle`;
+`Assets`, `Canvas`, and `SdlApp` retain explicit context APIs. Decoded assets and SDL resources have
 explicit owners and cleanup. Pose output is a bounded caller-owned buffer,
 so posing does not allocate per call. The package validator returns an error
 for the standalone watcher; invalid asset loads terminate CLI applications

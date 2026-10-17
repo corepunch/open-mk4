@@ -207,7 +207,7 @@ A fighter version:
 
 ```c
 typedef struct Fighter Fighter;
-typedef void (*FighterFn)(Fighter *self, Battle *battle);
+typedef void (*FighterFn)(Fighter *self); /* shared match state: g_battle */
 
 struct Fighter {
     int def, state, ticks, health, facing;

@@ -3,7 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-static void frame_event(Battle *battle, Fighter *fighter) {
+static void frame_event(Fighter *fighter) {
   const MoveSequence *sequence = fighter->sequence;
   uint64_t continuation = fighter->continuation;
   if (sequence != NULL && fighter->sequence_event_tick != fighter->ticks) {
@@ -11,7 +11,7 @@ static void frame_event(Battle *battle, Fighter *fighter) {
     for (int i = 0; i < sequence->event_count; ++i) {
       const MoveEvent *event = &sequence->events[i];
       if (event->at == fighter->ticks) {
-        event->think(battle, fighter);
+        event->think(fighter);
         if (fighter->continuation != continuation || fighter->pending != NULL) {
           return;
         }
@@ -22,16 +22,16 @@ static void frame_event(Battle *battle, Fighter *fighter) {
 
 /* Script opcode 45 / 45b650: airborne targets use their reaction flag;
  * grounded targets use the attacker's follow-up window. */
-bool fighter_fast_start(const Battle *battle, const Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(battle, fighter);
+bool fighter_fast_start(const Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(fighter);
   return fighter_airborne(victim) ? (victim->flags & FF_REACTING) != 0 : (fighter->flags & FF_FOLLOW_UP) != 0;
 }
 
-void fighter_ready(Battle *battle, Fighter *fighter) {
+void fighter_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    fighter_start_move(battle, fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
+    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
   } else {
-    fighter_enter_state(battle, fighter, S_IDLE);
+    fighter_enter_state(fighter, S_IDLE);
   }
 }
 
@@ -98,22 +98,22 @@ float fighter_height(const Fighter *fighter) {
 
 /* Task +0x40/+0x44: this fighter's unit heading toward the opponent, as of
  * the previous world pump. */
-q16 fighter_axis(const Battle *battle, const Fighter *fighter, int axis) {
+q16 fighter_axis(const Fighter *fighter, int axis) {
   require(axis == AXIS_X || axis == AXIS_Z, "Heading has only X and Z");
-  q16 value = battle->axis[axis == AXIS_X ? 0 : 1];
-  return fighter == &battle->fighters[0] ? value : -value;
+  q16 value = g_battle.axis[axis == AXIS_X ? 0 : 1];
+  return fighter == &g_battle.fighters[0] ? value : -value;
 }
 
 /* 0x490390: horizontal velocity = heading * speed; negative moves away. */
-void fighter_set_speed(const Battle *battle, Fighter *fighter, q16 speed) {
-  fighter->body.vel[AXIS_X] = q16_mul(fighter_axis(battle, fighter, AXIS_X), speed);
-  fighter->body.vel[AXIS_Z] = q16_mul(fighter_axis(battle, fighter, AXIS_Z), speed);
+void fighter_set_speed(Fighter *fighter, q16 speed) {
+  fighter->body.vel[AXIS_X] = q16_mul(fighter_axis(fighter, AXIS_X), speed);
+  fighter->body.vel[AXIS_Z] = q16_mul(fighter_axis(fighter, AXIS_Z), speed);
 }
 
-void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move) {
+void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
   if (fighter->state == S_WALK && !fighter_airborne(fighter) && (move->flags & SF_LOCK)) {
-    fighter_set_speed(battle, fighter, 0);
+    fighter_set_speed(fighter, 0);
   }
   fighter->body.walking = false;
   bool was_locked = fighter->current_move != NULL && (fighter->current_move->flags & SF_LOCK);
@@ -164,7 +164,7 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
     fighter->flags &= ~(unsigned)FF_BUSY;
   }
   if (move->sequence != NULL) {
-    fighter_start_sequence(battle, fighter, move->sequence);
+    fighter_start_sequence(fighter, move->sequence);
   }
 }
 
@@ -175,22 +175,22 @@ void fighter_note_contact(Fighter *fighter, ContactResult result) {
   fighter->contact_tick = fighter->ticks;
 }
 
-void fighter_enter_state(Battle *battle, Fighter *fighter, int state) {
+void fighter_enter_state(Fighter *fighter, int state) {
   const CharacterDef *def = roster_def(fighter->roster);
   require(state >= 0 && state < def->move_count, "Invalid character state");
   if (fighter->state == state && fighter->current_move != NULL) {
     return;
   }
   if (def->enter != NULL && def->enter[state] != NULL) {
-    def->enter[state](battle, fighter);
+    def->enter[state](fighter);
   } else {
-    fighter_start_move(battle, fighter, state, def->moves[state]);
+    fighter_start_move(fighter, state, def->moves[state]);
   }
 }
 
 /* A phase owns its tick clock and continuation, but retains the move's
  * combat identity, action, contact result and input restrictions. */
-void fighter_start_sequence(Battle *battle, Fighter *fighter, const MoveSequence *sequence) {
+void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence) {
   require(sequence != NULL && sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 && sequence->end != NULL &&
               sequence->segments[0].at == 0 && sequence->event_count >= 0 && (sequence->event_count == 0 || sequence->events != NULL),
       "Invalid move phase");
@@ -211,23 +211,23 @@ void fighter_start_sequence(Battle *battle, Fighter *fighter, const MoveSequence
   fighter->sequence_finished = false;
   fighter->script = NULL;
   fighter->sample_override = -1;
-  frame_event(battle, fighter);
+  frame_event(fighter);
 }
 
-void fighter_step_sequence(Battle *battle, Fighter *fighter) {
+void fighter_step_sequence(Fighter *fighter) {
   const MoveSequence *sequence = fighter->sequence;
   require(sequence != NULL, "Move has no sequence");
   if (fighter->sequence_finished || fighter->pending != NULL) {
     return;
   }
   if (fighter->ticks >= sequence->count) {
-    if (sequence->until == NULL || sequence->until(battle, fighter)) {
+    if (sequence->until == NULL || sequence->until(fighter)) {
       fighter->sequence_finished = true;
-      sequence->end(battle, fighter);
+      sequence->end(fighter);
     }
     return;
   }
-  frame_event(battle, fighter);
+  frame_event(fighter);
 }
 
 /* The displayed sample of a recovered sequence, or the move tick otherwise. */

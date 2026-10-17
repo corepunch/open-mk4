@@ -5,6 +5,15 @@ commands, branches, animation phases, damage, reaction selection and recovery
 in procedural C. Reproducing the retail VM, scheduler, scratch globals or
 per-tick binary traces is unnecessary. Game simulation remains C11 without SDL.
 
+The active simulation is `g_battle`, defined in `game/battle.c`.
+Move/physics/event/end callbacks take `Fighter *`; projectile callbacks take
+`Projectile *`; predicates take `const Fighter *`. They access shared match
+state through the global instead of receiving a `Battle *`. The host calls
+`battle_init(p1, p2)`, binds borrowed assets with `battle_bind_assets(assets)`,
+then steps `battle_step(input)`. Tests reset the singleton for each scenario.
+This is one active simulation, not a reentrant multi-battle API. SDL and
+asset ownership remain with the host; drawing only reads simulation state.
+
 ## Short workflow
 
 1. Select the character and inspect a move with `--c`. It shows all decoded
@@ -196,7 +205,7 @@ retail scheduler or random-call-stream identity.
 The decompiler now distinguishes recovered data from the current port. The ice
 spawn rig uses mesh 74; its `4ed898` track uses meshes 75–82, one tick each.
 The shared projectile presentation keeps the initial mesh separate from the
-loop. Opcode 25 uses `battle_sound(battle, SOUND_INDEXED, selector)` and the
+loop. Opcode 25 uses `battle_sound(SOUND_INDEXED, selector)` and the
 complete 66-entry table at `4ead30`, separately from A/B/C. Ice (`4ed588`)
 and the breath fatality (`4d2c10`) each queue selector 4 once on successful entry:
 token `0x852` resolves to `pcmk0426.esf`. Normal/fast ice release still uses C[0]

@@ -15,17 +15,17 @@ void game_audio_init(GameAudio *audio, bool headless) {
   }
 }
 
-void game_audio_step(GameAudio *audio, const Assets *assets, const Battle *battle) {
+void game_audio_step(GameAudio *audio, const Assets *assets) {
   if (audio->device == 0) {
     return;
   }
-  if (battle->ticks <= audio->last_tick) {
+  if (g_battle.ticks <= audio->last_tick) {
     memset(audio->voices, 0, sizeof audio->voices);
     SDL_ClearQueuedAudio(audio->device);
   }
-  audio->last_tick = battle->ticks;
-  for (int i = 0; i < battle->sound_count; ++i) {
-    SoundEvent event = battle->sounds[i];
+  audio->last_tick = g_battle.ticks;
+  for (int i = 0; i < g_battle.sound_count; ++i) {
+    SoundEvent event = g_battle.sounds[i];
     const Sound *sound = sound_event(&assets->audio, event.bank, event.selector);
     if (sound != NULL) {
       audio->voices[audio->next_voice] = (AudioVoice){sound, 0};

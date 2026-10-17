@@ -475,7 +475,7 @@ enum {                        /* CommandDef.flags, retail bit values */
   CMD_T1 = 0x01, CMD_T2 = 0x02, CMD_T4 = 0x04, CMD_T8 = 0x08,
   CMD_AIR = 0x10, CMD_T20 = 0x20, CMD_BLOCK_OK = 0x40
 };
-typedef bool (*CommandPredicate)(const Battle *battle, const Fighter *self);
+typedef bool (*CommandPredicate)(const Fighter *self); /* shared state: g_battle */
 
 typedef struct CommandDef {
   uint8_t tokens[4];          /* earliest first; PATTERN_* values */

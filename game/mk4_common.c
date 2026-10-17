@@ -9,8 +9,8 @@
  * HP uppercuts and a close LP throws. Other selections use the generic move
  * for the button. A character with recovered moves owns its tables. */
 #define ENTER_STATE(name, state)                                                                                                                               \
-  static void enter_##name(Battle *battle, Fighter *fighter) {                                                                                                 \
-    fighter_enter_state(battle, fighter, state);                                                                                                               \
+  static void enter_##name(Fighter *fighter) {                                                                                                                 \
+    fighter_enter_state(fighter, state);                                                                                                                       \
   }
 ENTER_STATE(punch, S_PUNCH)
 ENTER_STATE(kick, S_KICK)
@@ -21,31 +21,27 @@ ENTER_STATE(throw, S_THROW)
 /* 0xb333 Q16: retail close-LP throw distance. */
 #define MK4_THROW_RANGE 0.7f
 
-static void press_punch(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void press_punch(Fighter *fighter) {
   fighter_interrupt(fighter, enter_punch);
 }
 
-static void press_low_punch(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(battle, fighter) <= MK4_THROW_RANGE ? enter_throw : enter_punch);
+static void press_low_punch(Fighter *fighter) {
+  fighter_interrupt(fighter, fighter_distance(fighter) <= MK4_THROW_RANGE ? enter_throw : enter_punch);
 }
 
-static void press_kick(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void press_kick(Fighter *fighter) {
   fighter_interrupt(fighter, enter_kick);
 }
 
-static void press_low_kick(Battle *battle, Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(battle, fighter) ? enter_sweep : enter_kick);
+static void press_low_kick(Fighter *fighter) {
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? enter_sweep : enter_kick);
 }
 
-static void press_uppercut(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void press_uppercut(Fighter *fighter) {
   fighter_interrupt(fighter, enter_uppercut);
 }
 
-static void press_sweep(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void press_sweep(Fighter *fighter) {
   fighter_interrupt(fighter, enter_sweep);
 }
 
@@ -87,7 +83,7 @@ static const MoveDef run_open = WALK(317);
 static const MoveDef run_cycle = WALK(307);
 #undef WALK
 
-void mk4_walk(Battle *battle, Fighter *fighter) {
+void mk4_walk(Fighter *fighter) {
   int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
   bool forward = direction * fighter->facing > 0;
   bool run = forward && (fighter->held & BUTTON_BIT(BUTTON_RUN)) && fighter->run_energy > 0 && fighter->roster != 15;
@@ -97,29 +93,29 @@ void mk4_walk(Battle *battle, Fighter *fighter) {
     bool continuing = fighter->state == S_WALK && (fighter->current_move == &run_open || fighter->current_move == &run_cycle);
     const MoveDef *move = continuing ? &run_cycle : &run_open;
     if (fighter->current_move != move) {
-      fighter_start_move(battle, fighter, S_WALK, move);
+      fighter_start_move(fighter, S_WALK, move);
     }
     fighter->sample_override = continuing ? 11 + fighter->ticks % 13 : 0;
     if (fighter->human) {
       fighter->run_energy = maxi(0, fighter->run_energy - 0x51e);
       fighter->run_delay = 40;
     }
-    fighter_set_speed(battle, fighter, mk4_motion.run);
+    fighter_set_speed(fighter, mk4_motion.run);
     fighter->body.walking = true;
     return;
   }
   if (fighter->armed) {
-    weapon_stance(battle, fighter, S_WALK);
+    weapon_stance(fighter, S_WALK);
   } else {
     const MoveDef *move = &walk_gaits[character][forward ? 0 : 1];
     if (fighter->current_move != move || fighter->state != S_WALK) {
-      fighter_start_move(battle, fighter, S_WALK, move);
+      fighter_start_move(fighter, S_WALK, move);
     }
   }
   int count = fighter->assets != NULL ? (int)fighter_clip(fighter->assets, fighter)->frames.count : 30;
   fighter->sample_override = fighter->ticks % count;
   q16 speed = forward ? mk4_motion.walk : -q16_mul(mk4_motion.walk, 0xb333);
-  fighter_set_speed(battle, fighter, speed);
+  fighter_set_speed(fighter, speed);
   fighter->body.walking = true;
 }
 
@@ -131,10 +127,9 @@ static const MoveDef jump_forward = {.clip = 301, .last = MOVE_END, .flags = SF_
 static const MoveDef jump_backward = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = 0x200a};
 static const MoveDef jump_landing = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
 
-static void jump_tick(Battle *battle, Fighter *fighter);
+static void jump_tick(Fighter *fighter);
 
-static void stance_blend_tick(Battle *battle, Fighter *fighter) {
-  (void)battle;
+static void stance_blend_tick(Fighter *fighter) {
   fighter->blend_weight += 0x3333;
   if (fighter->blend_weight > Q16_ONE) {
     fighter->blend_duration = 0;
@@ -148,11 +143,11 @@ static void stance_blend_tick(Battle *battle, Fighter *fighter) {
 /* 46f650/6e0/740: recover the current pose into the character's
  * standing descriptor with weights .2, .4, .6, .8, 1.0. Stance
  * controls remain available throughout this interruptible blend. */
-void mk4_return_to_stance(Battle *battle, Fighter *fighter) {
+void mk4_return_to_stance(Fighter *fighter) {
   int clip = fighter->assets != NULL ? fighter_clip(fighter->assets, fighter)->id : fighter_move(fighter)->clip;
   int sample = fighter_pose_sample(fighter);
   fighter_neutral(fighter);
-  fighter_enter_state(battle, fighter, S_IDLE);
+  fighter_enter_state(fighter, S_IDLE);
   fighter->blend_clip = clip;
   fighter->blend_sample = sample;
   fighter->blend_duration = 5;
@@ -163,11 +158,11 @@ void mk4_return_to_stance(Battle *battle, Fighter *fighter) {
 
 /* 46fcd0/470650/4706f0 and shared tail 4707e0. CPU air attacks
  * select their entries directly; humans only run the whoosh countdown. */
-static void jump_physics(Battle *battle, Fighter *fighter) {
-  const Fighter *other = fighter_opponent(battle, fighter);
-  if (!fighter->human && battle->cpu_level > 1 && fighter->pending == NULL) {
+static void jump_physics(Fighter *fighter) {
+  const Fighter *other = fighter_opponent(fighter);
+  if (!fighter->human && g_battle.cpu_level > 1 && fighter->pending == NULL) {
     q16 height = fighter->body.ground - fighter->body.pos[AXIS_Y];
-    float distance = fighter_distance(battle, fighter);
+    float distance = fighter_distance(fighter);
     bool straight = fighter->action == 0x2007;
     bool forward = fighter->action == 0x2009;
     bool target_air = fighter_airborne(other);
@@ -175,54 +170,54 @@ static void jump_physics(Battle *battle, Fighter *fighter) {
                            : height >= 0x8000 && (forward ? distance <= 2.f && (target_air || fighter->body.vel[AXIS_Y] >= 0) : target_air && distance <= 1.f);
     if (attack) {
       CpuAction action = distance < q16_float(0xcccc) || other->body.pos[AXIS_Y] - fighter->body.pos[AXIS_Y] > 0x6666 ? CPU_AIR_LK : CPU_AIR_HK;
-      battle_cpu_action(battle, fighter, action);
+      battle_cpu_action(fighter, action);
     }
   }
   if (fighter->action != 0x2007 && --fighter->move_loops <= 0) {
     fighter->move_loops = 12;
-    battle_sound(battle, SOUND_C, 0x58);
+    battle_sound(SOUND_C, 0x58);
   }
 }
 
-static void jump_land_tick(Battle *battle, Fighter *fighter) {
+static void jump_land_tick(Fighter *fighter) {
   unsigned directions = fighter->held & (BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(BUTTON_RIGHT));
   if (directions != 0) {
-    fighter_enter_state(battle, fighter, S_IDLE);
+    fighter_enter_state(fighter, S_IDLE);
     return;
   }
   fighter->sample_override = mini(27, 18 + fighter->ticks);
   if (fighter->ticks >= 10) {
-    mk4_return_to_stance(battle, fighter);
+    mk4_return_to_stance(fighter);
   }
 }
 
-static void jump_land(Battle *battle, Fighter *fighter) {
+static void jump_land(Fighter *fighter) {
   if (fighter->current_move == &jump_straight) {
-    mk4_land(battle, fighter);
+    mk4_land(fighter);
   }
 }
 
 /* 46fd90: the same landing is reached by a straight jump, air strike
  * or clone retreat. Keep direction cancels and standing buttons shared. */
-void mk4_land(Battle *battle, Fighter *fighter) {
+void mk4_land(Fighter *fighter) {
   fighter->body.physics = NULL;
-  fighter_start_move(battle, fighter, S_JUMP, &jump_landing);
+  fighter_start_move(fighter, S_JUMP, &jump_landing);
   fighter->script = jump_land_tick;
   fighter->sample_override = 18;
   fighter_enter_stance(fighter, STANCE_STANDING);
 }
 
-static void start_flip(Battle *battle, Fighter *fighter, int direction, bool from_straight) {
+static void start_flip(Fighter *fighter, int direction, bool from_straight) {
   bool forward = direction * fighter->facing > 0;
-  fighter_start_move(battle, fighter, S_JUMP, forward ? &jump_forward : &jump_backward);
+  fighter_start_move(fighter, S_JUMP, forward ? &jump_forward : &jump_backward);
   fighter->script = jump_tick;
   fighter->sample_override = 0;
   fighter->buttons = NULL;
   fighter->script_timer = forward || from_straight ? 0x4ccc : -0x4ccc;
-  fighter_set_speed(battle, fighter, forward ? 0xe14 : -0xe14);
+  fighter_set_speed(fighter, forward ? 0xe14 : -0xe14);
   if (!from_straight) {
     fighter->body.vel[AXIS_Y] = forward ? -0x30a3 : -0x2e14;
-    battle_sound(battle, SOUND_B, 4);
+    battle_sound(SOUND_B, 4);
   }
   fighter->body.gravity = 0x24d;
   fighter->body.on_land = jump_land;
@@ -230,13 +225,13 @@ static void start_flip(Battle *battle, Fighter *fighter, int direction, bool fro
   fighter->move_loops = 1;
 }
 
-static void jump_tick(Battle *battle, Fighter *fighter) {
+static void jump_tick(Fighter *fighter) {
   Body *body = &fighter->body;
   int tick = fighter->ticks;
   if (fighter->current_move == &jump_straight) {
     int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
     if (direction != 0 && fighter->human && tick <= 3) {
-      start_flip(battle, fighter, direction, true);
+      start_flip(fighter, direction, true);
       return;
     }
     fighter->sample_override = tick < 3 ? tick : mini(17, tick - 1);
@@ -267,26 +262,26 @@ static void jump_tick(Battle *battle, Fighter *fighter) {
       fighter->sample_override--;
     }
     if (fighter->script_timer == 0 && body->gravity == 0) {
-      mk4_return_to_stance(battle, fighter);
+      mk4_return_to_stance(fighter);
     }
   }
 }
 
-void mk4_jump(Battle *battle, Fighter *fighter) {
+void mk4_jump(Fighter *fighter) {
   int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
   if (direction != 0) {
-    start_flip(battle, fighter, direction, false);
+    start_flip(fighter, direction, false);
     return;
   }
-  fighter_start_move(battle, fighter, S_JUMP, &jump_straight);
-  fighter_set_speed(battle, fighter, 0);
+  fighter_start_move(fighter, S_JUMP, &jump_straight);
+  fighter_set_speed(fighter, 0);
   fighter->sample_override = 0;
   fighter->body.vel[AXIS_Y] = -0x30a3;
   fighter->body.gravity = 0x28f;
   fighter->body.on_land = jump_land;
-  fighter->body.physics = fighter->human || battle->cpu_level <= 1 ? NULL : jump_physics;
+  fighter->body.physics = fighter->human || g_battle.cpu_level <= 1 ? NULL : jump_physics;
   fighter->script = jump_tick;
-  battle_sound(battle, SOUND_B, 4);
+  battle_sound(SOUND_B, 4);
 }
 
 /* Air throw: scripts 0x4e5e28/0x4e5e50, native 0x46aae0.
@@ -296,10 +291,10 @@ static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | S
 static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
 
-static void thrown_getup_tick(Battle *battle, Fighter *fighter) {
+static void thrown_getup_tick(Fighter *fighter) {
   fighter->sample_override = mini(79, 46 + fighter->ticks);
   if (fighter->ticks >= 34 && fighter->health > 0) {
-    fighter_ready(battle, fighter);
+    fighter_ready(fighter);
   }
 }
 
@@ -314,8 +309,8 @@ static void air_throw_drop(Fighter *victim) {
   victim->body.gravity = 0x28f;
 }
 
-static void air_thrown_tick(Battle *battle, Fighter *victim) {
-  const Fighter *owner = fighter_opponent(battle, victim);
+static void air_thrown_tick(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
   if (victim->script_phase == 0) {
     if (owner->current_move == &s_air_throw && owner->pending == NULL && owner->ticks < 28) {
       memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
@@ -327,7 +322,7 @@ static void air_thrown_tick(Battle *battle, Fighter *victim) {
   if (victim->script_phase == 1 && !fighter_airborne(victim)) {
     victim->script_phase = 2;
     victim->script_timer = 0;
-    battle_scene_impact(battle, victim); /* 4e9910 -> 457cb0. */
+    battle_scene_impact(victim); /* 4e9910 -> 457cb0. */
   }
   if (victim->script_phase == 2) {
     victim->sample_override = mini(44, 29 + victim->script_timer++);
@@ -338,31 +333,31 @@ static void air_thrown_tick(Battle *battle, Fighter *victim) {
         return;
       }
       victim->facing = -victim->facing; /* 484b60 -> 490350, reverse getup. */
-      fighter_start_move(battle, victim, S_KNOCKDOWN, &s_throw_getup);
+      fighter_start_move(victim, S_KNOCKDOWN, &s_throw_getup);
       victim->script = thrown_getup_tick;
       victim->sample_override = 46;
     }
   }
 }
 
-bool mk4_can_air_throw(const Battle *battle, const Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(battle, fighter);
+bool mk4_can_air_throw(const Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(fighter);
   int64_t distance2 = 0;
   for (int i = 0; i < 3; ++i) {
     int64_t d = (int64_t)victim->body.pos[i] - fighter->body.pos[i];
     distance2 += (d * d) >> 16; /* 45ed80 sums three Q16 products. */
   }
-  return battle->phase == PHASE_FIGHT && fighter->body.pos[AXIS_Y] <= -0x23333 && victim->body.pos[AXIS_Y] <= -0x23333 && distance2 <= 0x20000 &&
+  return g_battle.phase == PHASE_FIGHT && fighter->body.pos[AXIS_Y] <= -0x23333 && victim->body.pos[AXIS_Y] <= -0x23333 && distance2 <= 0x20000 &&
          !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
 }
 
-static void air_throw_tick(Battle *battle, Fighter *fighter) {
-  Fighter *victim = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
+static void air_throw_tick(Fighter *fighter) {
+  Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
   int tick = fighter->ticks;
   if (tick <= 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
     fighter->body.gravity = 0x28f;
-    fighter_ready(battle, fighter);
+    fighter_ready(fighter);
     return;
   }
   if (tick < 28) {
@@ -375,41 +370,41 @@ static void air_throw_tick(Battle *battle, Fighter *fighter) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
     air_throw_drop(victim);
     victim->reaction = 89;
-    battle_damage(battle, victim, 0x2147);
+    battle_damage(victim, 0x2147);
     if (victim->health <= 0) {
       /* Round resolution replaces our next-tick launch with victory. */
       fighter->body.gravity = 0x28f;
     }
   }
   if (tick == 29) {
-    fighter_set_speed(battle, fighter, 0x7ae);
+    fighter_set_speed(fighter, 0x7ae);
     fighter->body.vel[AXIS_Y] = -0x1999;
     fighter->body.gravity = 0x28f;
   }
   if (tick >= 54 && !fighter_airborne(fighter)) {
-    mk4_land(battle, fighter);
+    mk4_land(fighter);
   }
 }
 
-void mk4_air_throw(Battle *battle, Fighter *fighter) {
-  if (!mk4_can_air_throw(battle, fighter)) {
-    fighter_ready(battle, fighter);
+void mk4_air_throw(Fighter *fighter) {
+  if (!mk4_can_air_throw(fighter)) {
+    fighter_ready(fighter);
     return;
   }
-  Fighter *victim = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
+  Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
   if (victim->armed && victim->disarm != NULL) {
-    victim->disarm(battle, victim);
+    victim->disarm(victim);
   }
   for (int i = 0; i < 2; ++i) {
-    Fighter *actor = &battle->fighters[i];
+    Fighter *actor = &g_battle.fighters[i];
     fighter_upright(actor); /* 48f9f0 / 490750: cancel the jump rotation. */
     memset(actor->body.vel, 0, sizeof actor->body.vel);
     actor->body.gravity = 0;
     actor->body.physics = NULL;
     actor->body.on_land = NULL;
   }
-  fighter_start_move(battle, fighter, S_THROW, &s_air_throw);
-  fighter_start_move(battle, victim, S_KNOCKDOWN, &s_air_thrown);
+  fighter_start_move(fighter, S_THROW, &s_air_throw);
+  fighter_start_move(victim, S_KNOCKDOWN, &s_air_thrown);
   fighter->script = air_throw_tick;
   victim->script = air_thrown_tick;
   fighter->sample_override = victim->sample_override = 0;
@@ -418,5 +413,5 @@ void mk4_air_throw(Battle *battle, Fighter *fighter) {
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  battle_sound(battle, SOUND_INDEXED, 13); /* 4e5e28 -> token 2100, sample 420. */
+  battle_sound(SOUND_INDEXED, 13); /* 4e5e28 -> token 2100, sample 420. */
 }
