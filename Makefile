@@ -38,8 +38,8 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
-ROSTER_SOURCES = game/roster.c game/moves.c game/fiber.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
-GAME_HEADERS = game/game.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
+ROSTER_SOURCES = game/roster.c game/moves.c game/fiber.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
+GAME_HEADERS = game/script.h game/game.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -83,3 +83,4 @@ check: format-check test viewer-test game-test
 	python3 tests/test_retail_helpers.py
 	python3 tests/test_retail_actions.py
 	python3 tests/test_retail_port.py
+	python3 tests/test_script_codegen.py

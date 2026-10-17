@@ -428,6 +428,7 @@ struct Fighter {
   bool body_contact; /* reaction source was the other fighter, rather than an independent object */
   bool avoids_high;  /* low-kick script's temporary high-punch avoidance gate */
   const MoveDef *current_move;
+  MoveDef playback_move;        /* actor-owned clip binding for generated C fibers */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   uint64_t continuation;        /* changes on move/phase replacement, even when re-entering the same phase */
   int sequence_event_tick;
