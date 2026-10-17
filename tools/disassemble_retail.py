@@ -648,11 +648,13 @@ def main():
     mode.add_argument('--move', metavar='NAME', help='Compact character move page; use --list-moves for names')
     mode.add_argument('--list-moves', action='store_true', help='List curated move roots for the selected character')
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
-    parser.add_argument('--limit', type=int, default=80, help='Query instruction limit, 1..512 (default 80)')
+    parser.add_argument('--limit', type=int, help='Query instruction limit, 1..512 (default 512 for --c, otherwise 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
     parser.add_argument('--c', action='store_true', help='Readable C-style pseudocode for --script or --move')
     parser.add_argument('--no-linear', action='store_true', help='For --bundle, omit the large linear recovery fallback')
     args = parser.parse_args()
+    if args.limit is None:
+        args.limit = 512 if args.c else 80
     if not 1 <= args.limit <= 512:
         parser.error('--limit must be between 1 and 512')
     if args.c and (not (args.script or args.move) or args.raw):

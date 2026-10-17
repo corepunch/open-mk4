@@ -34,7 +34,8 @@ class ScriptTests(unittest.TestCase):
         text = move_c_text(self.image, 'low_kick', 80, 4)
         self.assertIn('void sub_zero_low_kick(void)', text)
         self.assertIn('ANIM_CLIP_70', text)
-        self.assertIn('stopped at an unsupported operation', text)
+        self.assertIn('15 decoded instructions; 15 shown', text)
+        self.assertIn('fighter_controller_return();', text)
         self.assertIn('67/67/0', contact_text(self.image, 'C', 3))
 
     def test_sub_zero_fatality_script(self):
@@ -190,28 +191,74 @@ class QueryTests(unittest.TestCase):
         self.assertIn('31 decoded instructions; 5 shown', limited)
         self.assertIn('continuation omitted', limited)
 
-    def test_c_view_stops_at_unknown_operations_and_control_flow(self):
+    def test_c_view_preserves_jumps_backwards_targets_and_unknown_paths(self):
         from retail_script_c import script_c_text
         image = RetailImage('MK4/MK-4.EXE')
         entry = 0x570000
-        # A jump reaches valid low-kick instructions. Never print those as
-        # sequential C after an unsupported branch in the sorted VM graph.
         struct.pack_into('<II', image.memory, entry - 0x400000, 0x33000000, (entry + 8) // 4)
         struct.pack_into('<II', image.memory, entry + 8 - 0x400000, 0x35000000, 0x46a950)
         struct.pack_into('<I', image.memory, entry + 16 - 0x400000, 0x3f000000)
         text = script_c_text(image, entry)
-        self.assertIn('C view stopped: script jump', text)
-        self.assertNotIn('task_slot_5c_clear();', text)
+        self.assertIn('goto L_00570008;', text)
+        self.assertIn('task_slot_5c_clear();', text)
+        self.assertIn('fighter_controller_return();', text)
         struct.pack_into('<I', image.memory, entry - 0x400000, 0xff000000)
-        self.assertIn('unresearched opcode; path stopped', script_c_text(image, entry))
-        # The decoder's sorted graph can place a target below the entry. The
-        # C view must begin at the requested root, not that earlier block.
+        self.assertIn('unresolved_opcode(0x570000, 0xff000000);', script_c_text(image, entry))
         struct.pack_into('<II', image.memory, entry - 0x400000, 0x35000000, 0x46a950)
         struct.pack_into('<I', image.memory, entry + 8 - 0x400000, 0x3f000000)
         struct.pack_into('<II', image.memory, entry + 16 - 0x400000, 0x33000000, entry // 4)
         text = script_c_text(image, entry + 16)
-        self.assertIn('C view stopped: script jump', text)
-        self.assertNotIn('task_slot_5c_clear();', text)
+        code = text.split('```c\n')[1].split('```')[0]
+        self.assertLess(code.index('goto L_00570010;'), code.index('task_slot_5c_clear();'))
+        self.assertIn('L_00570000:', code)
+        self.assertIn('goto L_00570000;', code)
+
+    def test_sub_zero_c_views_cover_every_decoded_row(self):
+        from character_catalog import moves_for
+        from retail_script_c import program_c, script_c_text
+        image = RetailImage('MK4/MK-4.EXE')
+        for move in moves_for(4).values():
+            for role, root in move['scripts']:
+                program = script_program(image, root, 4)
+                code, rendered, unknown = program_c(program, 512, 4)
+                self.assertEqual({row['va'] for row in rendered}, {row['va'] for row in program['instructions']}, (role, hex(root)))
+                labels = set(re.findall(r'^(L_[0-9a-f]+):', '\n'.join(code), re.M))
+                self.assertTrue(set(re.findall(r'goto (L_[0-9a-f]+);', '\n'.join(code))) <= labels, hex(root))
+                self.assertFalse(unknown, hex(root))
+        ice = script_c_text(image, 0x4ed588, character=4)
+        self.assertIn('16 decoded instructions; 16 shown', ice)
+        for statement in ('fast_startup_allowed()', 'spawn_task(66,', '--loop_counter != 0', 'advance_twice_to_sample(15);', 'fighter_controller_return();'):
+            self.assertIn(statement, ice)
+        self.assertNotIn('C view stopped', ice)
+
+    def test_c_view_predicate_polarity_callbacks_and_truncated_edges(self):
+        from retail_script_c import script_c_text
+        image = RetailImage('MK4/MK-4.EXE')
+        entry = 0x570000
+        # op36 branches on native flag 4; op55 passes inline and branches on 1.
+        words = [0x36000000, 0x46a950, (entry + 28) // 4,
+                 0x55000007, 0x46a970, (entry + 28) // 4, 0x3f000000,
+                 0x38000000, 0x47f9d0, 0x40000003, 66, 0x49bcb0, 0x3e000000]
+        struct.pack_into('<%dI' % len(words), image.memory, entry - 0x400000, *words)
+        text = script_c_text(image, entry)
+        self.assertIn('(native_result_flags() & 4) != 0', text)
+        self.assertIn('native_argument(7);', text)
+        self.assertIn('(native_result_flags() & 1) != 0', text)
+        self.assertIn('set_group_callback(', text)
+        self.assertIn('spawn_task(66,', text)
+        self.assertIn(', 3); // independent continuation', text)
+        self.assertIn('wait_ticks(60);', text)
+        limited = script_c_text(image, entry, limit=1)
+        self.assertIn('omitted_script_continuation(0x57001c);', limited)
+        self.assertIn('omitted_script_continuation(0x57000c);', limited)
+        # A branch into a wait forbids folding it into the preceding sample.
+        words = [0x44000000, (entry + 12) // 4, 0x49000005, 0x34000001, 0x3f000000]
+        struct.pack_into('<5I', image.memory, entry - 0x400000, *words)
+        text = script_c_text(image, entry)
+        self.assertIn('L_0057000c:', text)
+        self.assertIn('show_sample(5);', text)
+        self.assertNotIn('show_sample_for_ticks', text)
+
 
     def test_c_view_cli_accepts_script_and_move_queries_only(self):
         root = Path(__file__).resolve().parents[1]

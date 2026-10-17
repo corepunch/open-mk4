@@ -40,35 +40,37 @@ Running without a query shows help. The old bulk export now requires explicit
 
 ## Readable C-style view
 
-Use `--move low_kick --c` or `--script 0x4e6d08 --c` for named helper calls,
-animation samples and waits. This presentation reads the same decoded rows;
-the low-kick sequence is not a hardcoded example. The default detailed view
-remains available without `--c`. The C view supports `--output` and the same
-instruction limit, needs no Capstone or archive, and cannot combine with `--raw`.
+Use `--character sub_zero --move ice --c` or `--script 0x4ed588 --c`
+for complete C-like control flow over the decoded graph. This view supports all
+researched opcode layouts, both outcomes of conditional branches, backward
+jumps, shared blocks, counted loops, selected-character jumps, cooperative task
+spawns, callback installation, native tails, tagged returns, controller returns
+and parked tasks. Labels/gotos preserve the graph without guessing structured
+loops or silently falling through into an unrelated block. Character selectors
+are specialized to the requested roster, including Kitana/Noob remapping.
 
-An adjacent opcode `49` sample submission and opcode `34` wait become
-`show_sample_for_ticks(sample, ticks)`. The sample is the low byte, displayed
-in decimal. Local handlers `45ba00 -> 429970 -> 429990` establish the explicit
-sample assignment and pose submission; `45bf80` optionally binds a clip only
-when prefix byte 1 equals 2. Opcode `0f` binds the descriptor and starting
-cursor without submitting a pose. The C view keeps clip binding, native calls
-and other intervening instructions in order. Recovery remains
-`wait_ticks(native_result_bit0() ? 8 : 5)`; this does not rename the native flag
-as hit/miss or assume that contact is its only writer.
+The C view defaults to a 512-instruction total budget; other queries default to
+80. An explicit `--limit` still applies. Every omitted edge ends in a named
+continuation boundary, so truncated output cannot look like a complete path.
+Unknown opcode paths terminate explicitly while other decoded paths remain
+visible. An unresolved native helper never stops printing later VM instructions.
+Its exact handler address, inline value and fixed operands remain available in
+the C call and dependency list. This is not automatic x86-to-C decompilation.
 
-The result is pseudocode: waits suspend and resume the script, while a real C
-port needs its own state/continuation implementation. `ACTION_1006` preserves
-the known action value without inventing a semantic state name. Contact data
-and checked source references appear below the function. Names for unresolved
-native targets retain their addresses rather than inventing behavior.
+Waits and playback operations suspend/resume. Adapt them to the existing engine
+continuations; do not turn them into blocking host calls or implement another
+VM. Native calls can suspend too. Task/callback installation does not call its
+target inline. The VM has one task loop counter, including when entered midway
+through a loop. Predicate opcode 36 branches on result flag 4; opcode 55 passes
+the low-byte argument and branches on flag 1. Wait opcode 37 separately tests
+flag 1 and is not assumed to mean hit/miss.
 
-Only the researched straight-line operations used by low kick have C renderers
-so far. Unsupported instructions or control flow stop this view explicitly;
-later rows in the decoder's sorted graph are not flattened into sequential C.
-Use the default detailed query to inspect every decoded branch and unresolved
-dependency. For `--move`, C views share the total instruction limit across the
-catalogued script roots; native move entries, input gates and reactions remain
-separate research.
+Adjacent sample submission and wait operations combine as
+`show_sample_for_ticks(sample, ticks)` only when no branch enters the wait.
+Clip binding, native calls and other operations stay in order. Contact records
+and source links follow the code. Use the detailed view for every original
+address and fixed word. `--c` needs no archive or Capstone, supports `--output`,
+and cannot combine with `--raw`.
 
 ## Function names and mk4decomp sources
 
