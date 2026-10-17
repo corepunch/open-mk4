@@ -145,6 +145,8 @@ REACTION(block_short, 321, SF_LOCK, block_short_sequence, ACTION_BLOCK);
 REACTION(block_long, 321, SF_LOCK, block_long_sequence, ACTION_BLOCK);
 REACTION(slide_block, 321, SF_LOCK, block_long_sequence, ACTION_BLOCK);
 REACTION(slide_crouch_block, 255, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
+REACTION(fireball_armed_block, 247, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
+REACTION(fireball_armed_crouch_block, 222, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
 REACTION(sweep_fall, 195, SF_LOCK, sweep_fall_sequence, 0);
 REACTION(sweep_rise_move, 197, SF_LOCK, sweep_rise_sequence, 0);
 REACTION(uppercut_fall, 128, SF_LOCK, uppercut_fall_sequence, 0);
@@ -451,6 +453,18 @@ static void react_slide_block(Fighter *fighter) {
   fighter_start_move(fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
 }
 
+/* 2: 486ca0 -> 486d30/486e20. Two standing cycles, or the crouching
+ * out-and-back path; armed standing uses 4e9ec8's five-sample clip 247.
+ * Unlike the jab block, all paths retreat at .13 with friction. */
+static void react_fireball_block(Fighter *fighter) {
+  const MoveDef *move = fighter->crouching ? &slide_crouch_block : &block_long;
+  if (fighter->armed) {
+    move = fighter->crouching ? &fireball_armed_crouch_block : &fireball_armed_block;
+  }
+  fighter_start_move(fighter, S_BLOCK, move);
+  slide(fighter, 0x2147);
+}
+
 static void react_approximate(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
@@ -697,7 +711,7 @@ static const FighterFn reactions[256] = {
   [31] = react_liu_record,
   [64] = react_liu_record,
   [65] = react_liu_record,
-  [2] = react_jab_block,
+  [2] = react_fireball_block,
   [0] = react_block,
   [3] = react_extra_block,
   [5] = react_extra_block,

@@ -189,6 +189,30 @@ static void specials(void) {
       battle_step(guard);
     }
     check(g_battle.fighters[1 - player].health == Q16_ONE, "high fireball passes crouching victim");
+    for (int stance = 0; stance < 4; ++stance) {
+      fight(player, 4.f);
+      Fighter *victim = &g_battle.fighters[1 - player];
+      bool crouching = stance & 1, armed = stance & 2;
+      if (armed) {
+        forward_command(1 - player, BUTTON_HIGH_KICK);
+        advance(80);
+        check(victim->armed, "victim draws weapon before guarding");
+      }
+      forward_command(player, crouching ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+      Input input[2] = {0};
+      input[1 - player].held = BUTTON_BIT(BUTTON_BLOCK) | (crouching ? BUTTON_BIT(BUTTON_DOWN) : 0);
+      for (int t = 0; t < 100 && victim->health == Q16_ONE; ++t) {
+        battle_step(input);
+      }
+      check(victim->health == Q16_ONE - q16_mul(0x1999, 0x3333) && victim->reaction == 2, "fireball applies one chip contact and block reaction");
+      advance(1);
+      check(fighter_move(victim)->clip == (crouching ? armed ? 222 : 255 : armed ? 247 : 321), "fireball guard selects crouching and armed poses");
+      advance(7);
+      check(victim->state == S_BLOCK, "fireball guard must retain its second standing cycle or reverse tail");
+      advance(25);
+      check(victim->state == S_IDLE && victim->health == Q16_ONE - q16_mul(0x1999, 0x3333), "fireball guard recovers without repeat chip");
+      check(victim->armed == armed && victim->body.vel[AXIS_X] == 0, "fireball block keeps weapon and stops retreat on recovery");
+    }
     for (int blocked = 0; blocked < 2; ++blocked) {
       fight(player, 3.f);
       forward_command(player, BUTTON_HIGH_KICK);

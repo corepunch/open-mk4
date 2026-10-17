@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Original no-contact VM/native recovery trace. Steps, not stored clip length.
- * See docs/liu_kang-retail-moves.md and tests/fixtures/original_kicks.json. */
+/* Retail control flow is translated to C fibers; playback steps need not
+ * match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
 static void liu_kang_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
@@ -14,7 +14,7 @@ static void liu_kang_ready(Fighter *fighter) {
   }
 }
 
-/* Retail attack records (docs/liu_kang/combat-core.md section 2). */
+/* Retail attack records; source addresses identify the supplied EXE. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d};            /* 0x4ebd38, query A selector 1 */
 static const AttackRecord uppercut_record = {0xe3d7, -0xfd70, 0x947a, 0x10518, 34, 34, 6, 0, 0x28f5};     /* 0x4ebd50, A selector 2 */
@@ -138,8 +138,8 @@ static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segmen
 static const MoveSequence uppercut_miss_end_sequence = SEQUENCE(uppercut_miss_end_segments, 12, liu_kang_ready);
 static const MoveSequence uppercut_hit_end_sequence = SEQUENCE(uppercut_hit_end_segments, 11, liu_kang_ready);
 
-/* Recovered moves query retail records from their events (SF_RECORD). The
- * remaining moves keep the approximate damage, reach and push columns. */
+/* Attacks query retail records from their events (SF_RECORD). Generic
+ * S_HIT/S_KNOCKDOWN entries remain shared recovery fallbacks. */
 static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 static const MoveDef s_walk = {266, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};

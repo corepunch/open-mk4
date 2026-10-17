@@ -51,6 +51,10 @@ are bounded presentation in the portable renderer; their allocation/task
 ordering is not reproduced. High fireballs pass a crouching action 2001; low
 ones query it. Both use one scaled 10% contact. Reactions 64/65 now translate
 clips 130/127, friction and the low-hit forward recovery.
+Blocked contact uses reaction 2 (`486ca0 -> 486d30/486e20`): retreat
+0x2147 with friction, two seven-pose standing cycles (`4e9e68`),
+crouching clip 255 out and back (`486f90`), or armed clips 247/222.
+Armed standing plays all five clip-247 samples before rewinding (`4e9ec8`).
 
 Flying kick uses F,F+HK (24): clip 92, speed 0x23d7, Y -0x170a, gravity
 0x106; contact D[12] after six opening visits. A hit plays clip 93, holds 20,
