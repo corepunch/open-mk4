@@ -20,6 +20,11 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_liu_cpu_rows_and_fatality_distances(self):
+        self.assertEqual([self.image.word(base + 3 * 4) for base in (0x4df8e8, 0x4df928, 0x4df968, 0x4df9a8)],
+                         [0x40004, 0x20002, 0x40003, 0x20002])
+        self.assertEqual([self.image.word(base + 3 * 4) for base in (0x4dfe10, 0x4dfe50)], [0x20000, 0x10000])
+
     def test_liu_bicycle_release_command_and_charge(self):
         from scorpion_moves import commands
         release = next(table for table in commands(self.image, 3) if table['button'] == 'low_kick_release')

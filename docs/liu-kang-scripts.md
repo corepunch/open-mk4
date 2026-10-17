@@ -19,7 +19,7 @@ existing procedural engine; this is not retail scheduler emulation.
 | Flying kick | 4e4978 -> 47edc0, 4e86a8/d0/e8/718 | Implemented; hit/block/miss and landing |
 | Weapon draw/strikes/throw/pickup; sidestep | 4e4998, 46d1d0; 4ece58/4ecd50, 4963e0/4d0/6670/6920; RUN records | Implemented |
 | Fatalities I/II and fan/spikes | 4e4968/4e4934/4e4954/4e4984 | Implemented; cinematic presentation adaptations below |
-| CPU | Shared CPU controller; character entries | Pending wiring |
+| CPU | 438e50/60/70/80 -> 4df8e8/928/968/9a8[3]; 4dfe10/50[3] | Implemented; native entries and character finisher spacing |
 
 Normal attacks preserve their command routing, contact/miss/block recovery,
 repeat/cancel windows and high-avoidance clearing on interruption. Shared
@@ -124,3 +124,22 @@ Final normal-path audit: crouching HK 4e60b8 finishes clip 54, holds
 11/10/11/12 for two two-tick cycles, then rewinds the complete 13-sample
 clip before returning. Its 42-tick recovery includes that reverse tail;
 returning immediately after the pose loop would allow an early next move.
+
+CPU slot-3 rows are 0x40004, 0x20002, 0x40003, 0x20002: near bicycle,
+medium low fireball, flying kick and low projectile. The shared near choice
+now has a distinct entry, falling back to the old special entry for existing
+fighters. The CPU bypasses human charge/chord gates and invokes translated
+move entries directly. Its fatality approach distances are 2/1 units from
+4dfe10/4dfe50[3], with first-fatality minimum 1.8; it retreats for the dragon
+and approaches for the close fireball scene. Straight/diagonal air attacks
+select the corresponding clip, including armed HP. Shared plans and random
+probability gates remain the engine's established CPU adaptation.
+
+Coverage: all slot-3 standing/crouching/close/combo/air attacks, both ground
+throws, high/low/air fireballs, flying kick, charged bicycle kick, weapon
+draw/strikes/repeats/throw/pickup, sidestep, fatalities and stage finishers
+are wired and exercised. Shared locomotion, stance, contact, reaction, KO
+and reset controllers retain the engine boundaries described in the guide.
+Liu Kang has no retail BLOCK air-throw record; no extension was added.
+Cinematic camera/decorative details listed above remain presentation
+adaptations, not claims of native task or rendering identity.

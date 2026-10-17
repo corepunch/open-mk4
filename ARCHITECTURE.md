@@ -211,3 +211,12 @@ resolver. This mixed roster is transitional, not a claim of retail engine identi
 Reaction sequences continue after a KO so landing/getup branches can settle.
 Tests cover our gameplay rules and existing compact animation fixtures without
 executing the retail EXE.
+
+Liu Kang's current script coverage is recorded in
+[the character ledger](docs/liu-kang-scripts.md), including the LK-release
+charge path and character-specific CPU range rows. Near and medium CPU
+special selections have separate entries where the native roster rows differ.
+Character finishers can provide their own approach/minimum distances; zero
+distance metadata retains the previous shared defaults. Cinematic objects
+step on the simulation clock during fatalities, and scene cameras may widen
+their focal scale without changing ordinary fight framing.

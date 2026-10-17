@@ -442,6 +442,36 @@ static void bicycle(void) {
   }
 }
 
+static void cpu_entries(void) {
+  const CpuAction actions[] = {CPU_SPECIAL_NEAR, CPU_SPECIAL_1, CPU_SPECIAL_2, CPU_PROJECTILE};
+  const int clips[] = {68, 19, 92, 19};
+  for (int player = 0; player < 2; ++player) {
+    for (int i = 0; i < 4; ++i) {
+      fight(player, 5.f);
+      Fighter *owner = &g_battle.fighters[player];
+      check(battle_cpu_action(owner, actions[i]), "Liu Kang CPU special row must have a translated entry");
+      advance(1);
+      check(fighter_move(owner)->clip == clips[i], "CPU roster row chooses native Liu Kang special");
+      advance(150);
+      check(owner->state == S_IDLE, "CPU special entry returns control");
+    }
+    for (int second = 0; second < 2; ++second) {
+      finish_setup(player, second ? 3 * Q16_ONE : 0xcccc, 1);
+      Fighter *owner = &g_battle.fighters[player];
+      owner->human = false;
+      owner->cpu.finish_chosen = true;
+      owner->cpu.plan = (second ? CPU_FINISH_2 : CPU_FINISH_1) + 1;
+      owner->cpu.target = second ? Q16_ONE : 2 * Q16_ONE;
+      owner->cpu.timer = 240;
+      for (int t = 0; t < 180 && g_battle.phase == PHASE_FINISH; ++t) {
+        advance(1);
+      }
+      check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (second ? FINISH_LIU_KANG_2 : FINISH_LIU_KANG_1),
+          "CPU retreats for dragon and approaches for close fatality");
+    }
+  }
+}
+
 int main(void) {
   normals();
   throws();
@@ -449,6 +479,7 @@ int main(void) {
   weapons();
   fatalities();
   bicycle();
+  cpu_entries();
   puts("Liu Kang tests passed");
   return 0;
 }

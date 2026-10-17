@@ -188,11 +188,13 @@ typedef enum CpuAction {
   CPU_FINISH_2,
   CPU_FINISH_FAN,
   CPU_FINISH_SPIKE,
+  CPU_SPECIAL_NEAR,
   CPU_ACTION_COUNT
 } CpuAction;
 
 typedef struct CpuMoves {
   FighterFn enter[CPU_ACTION_COUNT];
+  q16 finish_min[2], finish_distance[2]; /* zero distance retains the shared default */
 } CpuMoves;
 
 typedef struct CpuState {

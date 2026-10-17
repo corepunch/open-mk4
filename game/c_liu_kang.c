@@ -1805,4 +1805,60 @@ static const ButtonTable crouching = {
 static const ButtonTable jumping = {
     {[BUTTON_HIGH_PUNCH] = press_air_hp, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_hk, [BUTTON_LOW_KICK] = press_air_lk}};
 static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
-const CharacterDef mk4_liu_kang = {GAME_MK4, 3, "LIU KANG", &mk4_motion, moves, S_COUNT, &controls, enter, -70320, mk4_walk, mk4_jump, NULL};
+
+/* 438e50/60/70/80 select 4df8e8/928/968/9a8[3]:
+ * bicycle, low fireball, flying kick, low fireball. */
+static void cpu_close_hp(Fighter *fighter) {
+  ground_attack(fighter, G_CLOSE_HP);
+}
+
+static void cpu_close_hk(Fighter *fighter) {
+  ground_attack(fighter, G_CLOSE_HK);
+}
+
+static void cpu_air_hp(Fighter *fighter) {
+  if (fighter->armed) {
+    weapon_air_attack(fighter, true);
+  } else {
+    air_hp(fighter);
+  }
+}
+
+static void cpu_air_hk(Fighter *fighter) {
+  start_air_attack(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? 3 : 2);
+}
+
+static void cpu_air_lk(Fighter *fighter) {
+  start_air_attack(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? 4 : 2);
+}
+
+static const CpuMoves cpu_moves = {
+    .enter =
+        {
+            [CPU_JAB] = liu_kang_jab,
+            [CPU_LOW_KICK] = liu_kang_lk,
+            [CPU_HIGH_KICK] = liu_kang_hk,
+            [CPU_SWEEP] = enter_sweep,
+            [CPU_UPPERCUT] = enter_uppercut,
+            [CPU_THROW] = enter_throw,
+            [CPU_CLOSE_HP] = cpu_close_hp,
+            [CPU_CLOSE_HK] = cpu_close_hk,
+            [CPU_CROUCH_LP] = liu_kang_crouch_lp,
+            [CPU_AIR_HP] = cpu_air_hp,
+            [CPU_AIR_HK] = cpu_air_hk,
+            [CPU_AIR_LK] = cpu_air_lk,
+            [CPU_PROJECTILE] = liu_kang_low_fireball,
+            [CPU_SPECIAL_1] = liu_kang_low_fireball,
+            [CPU_SPECIAL_2] = liu_kang_flying_kick,
+            [CPU_SPECIAL_NEAR] = liu_kang_bicycle_kick,
+            [CPU_DRAW] = liu_kang_weapon,
+            [CPU_FINISH_1] = liu_kang_first_fatality,
+            [CPU_FINISH_2] = liu_kang_second_fatality,
+            [CPU_FINISH_FAN] = liu_kang_fan_fatality,
+            [CPU_FINISH_SPIKE] = liu_kang_spike_fatality,
+        },
+    .finish_min = {0x1cccc, 0},
+    .finish_distance = {0x20000, 0x10000}, /* 4dfe10/4dfe50[3]. */
+};
+
+const CharacterDef mk4_liu_kang = {GAME_MK4, 3, "LIU KANG", &mk4_motion, moves, S_COUNT, &controls, enter, -70320, mk4_walk, mk4_jump, &cpu_moves};

@@ -19,6 +19,9 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   const CharacterDef *def = roster_def(fighter->roster);
   require(action >= 0 && action < CPU_ACTION_COUNT, "Invalid CPU action");
   FighterFn entry = def->cpu != NULL ? def->cpu->enter[action] : NULL;
+  if (entry == NULL && action == CPU_SPECIAL_NEAR && def->cpu != NULL) {
+    entry = def->cpu->enter[CPU_SPECIAL_1];
+  }
   if (fighter->armed && fighter->weapon != NULL) {
     if (action == CPU_JAB || action == CPU_CLOSE_HP) {
       entry = fighter->weapon->hp;
@@ -102,7 +105,7 @@ static const CpuChoice medium_choices[] = {
 };
 static const CpuChoice near_choices[] = {
   {PLAN_FOOTWORK, 0x20000, true},
-  {CPU_SPECIAL_1, 0, false},
+  {CPU_SPECIAL_NEAR, 0, false},
   {PLAN_FORWARD_FLIP, 0, false},
   {CPU_HIGH_KICK, 0x13333, true},
   {CPU_LOW_KICK, 0x13333, true},
@@ -249,6 +252,19 @@ static bool opponent_object(const Fighter *fighter, bool clone) {
   return false;
 }
 
+typedef struct CpuFinishRange {
+  q16 minimum, target;
+} CpuFinishRange;
+
+static CpuFinishRange finish_range(const Fighter *fighter, int action) {
+  int index = action == CPU_FINISH_1 ? 0 : action == CPU_FINISH_2 ? 1 : -1;
+  const CpuMoves *moves = roster_def(fighter->roster)->cpu;
+  if (index >= 0 && moves != NULL && moves->finish_distance[index] > 0) {
+    return (CpuFinishRange){moves->finish_min[index], moves->finish_distance[index]};
+  }
+  return action == CPU_FINISH_2 ? (CpuFinishRange){0x1cccc, 0x26666} : (CpuFinishRange){0, 0xb333};
+}
+
 static void finish(Fighter *fighter) {
   CpuState *cpu = &fighter->cpu;
   if (!battle_can_finish(fighter)) {
@@ -263,7 +279,7 @@ static void finish(Fighter *fighter) {
       action = g_battle.arena == 0 ? CPU_FINISH_SPIKE : g_battle.arena == 8 ? CPU_FINISH_FAN : battle_chance(600) ? CPU_FINISH_2 : CPU_FINISH_1;
     }
     cpu->plan = action + 1;
-    cpu->target = action == CPU_FINISH_2 ? 0x26666 : 0xb333;
+    cpu->target = finish_range(fighter, action).target;
     cpu->timer = 240;
   }
 }
@@ -386,7 +402,7 @@ void battle_cpu_step(Fighter *fighter) {
     cpu->target = 0;
     action = PLAN_FORWARD_FLIP;
   }
-  bool retreat = action == CPU_FINISH_2 && distance < 0x1cccc;
+  bool retreat = distance < finish_range(fighter, action).minimum;
   if ((distance >= cpu->target && cpu->target > 0) || retreat) {
     if (cpu->timer-- > 0) {
       fighter->held = BUTTON_BIT((fighter->facing > 0) != retreat ? BUTTON_RIGHT : BUTTON_LEFT);

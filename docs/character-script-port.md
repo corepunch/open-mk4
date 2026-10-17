@@ -529,3 +529,21 @@ For each new character, add only researched roots to
 `tools/character_catalog.py`, translate its selected data/decisions, and reuse
 shared systems. Mark any unresolved native dependency explicitly before
 calling the affected move complete.
+
+## Liu Kang coverage
+
+See [Liu Kang's source and timing ledger](liu-kang-scripts.md). Slot 3 now
+has procedural C entries for normals, close/combo and air attacks, both
+ground throws and independent victim recovery, high/low/air fireballs,
+flying and charged bicycle kicks, the type-66 weapon programs, sidestep,
+both character fatalities and both stage finishers. The release-table audit
+is essential: `53ca38/53ca80[3]` reaches bicycle kick after a 120-tick LK
+hold. CPU selection distinguishes near bicycle from medium low fireball
+and uses character-owned first/second fatality approach distances.
+
+`tests/test_liu_kang.c` covers real commands in both slots, damage and
+contact branches, repeats, charge/release priority, interruption, KO and
+recovery, object-pool exhaustion and rematch cleanup. The original weapon
+and dragon rigs are loaded and posed in the asset checks. Cinematic
+framing, minor sound/decorative scheduling and generic blood/flesh piece
+allocation are explicit portable presentation adaptations in the ledger.
