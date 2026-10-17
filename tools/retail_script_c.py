@@ -7,6 +7,7 @@ import re
 
 from retail_symbols import native_name, reference_rows
 from scorpion_moves import SCRIPT_OPS, script_program, signed_word
+from retail_helpers import HELPERS
 from character_catalog import moves_for, character_name, CHARACTERS
 
 ANIMATION_NAMES = {67: 'ANIM_SCORPION_LOW_KICK'}
@@ -53,6 +54,11 @@ def instruction_c(row):
     target = native_name(int(row['native_target'], 16)) if 'native_target' in row else None
     if op not in SCRIPT_OPS:
         return ['unresolved_opcode(%s, %s);' % (row['va'], row['word']), 'return;']
+    helper = HELPERS.get(int(row['handler'], 16)) if row.get('handler') else None
+    if helper is not None and helper.call:
+        arguments = dict(arg=arg, inline=hex(inline), clip=animation_name(row['clip']) if 'clip' in row else 'UNBOUND_CLIP')
+        arguments.update({'w%d' % index: signed_word(value) for index, value in enumerate(words)})
+        return [helper.call.format(**arguments)]
     if op == 0:
         return ['/* VM no-op */']
     if op in (0x32, 0x35):
@@ -108,10 +114,10 @@ def instruction_c(row):
         condition = {0x2f: 'fighter_is_airborne()', 0x44: 'down_is_held()', 0x45: 'fast_startup_allowed()',
                      0x36: '(native_result_flags() & 4) != 0', 0x55: '(native_result_flags() & 1) != 0',
                      0x3b: '--loop_counter != 0'}[op]
-        branch = 'goto L_%08x;' % int(row['branch'], 16) if 'branch' in row else 'unresolved_loop_target(); return;'
-        return prefix + ['if (%s) {' % condition, '  ' + branch, '}']
+        branch = ['goto L_%08x;' % int(row['branch'], 16)] if 'branch' in row else ['unresolved_loop_target();', 'return;']
+        return prefix + ['if (%s) {' % condition] + ['  ' + line for line in branch] + ['}']
     if op == 0x40:
-        return ['spawn_task(%d, %s, %d); // independent continuation' % (row['task_type'], native_name(int(row['callback'], 16)), arg)]
+        return ['spawn_task(%d, %s); // independent continuation; inline byte ignored' % (row['task_type'], native_name(int(row['callback'], 16)))]
     if op == 0x38:
         return ['set_group_callback(%s); // install; do not invoke here' % target]
     if op == 0x39:
@@ -202,7 +208,17 @@ def program_c(program, limit, character=0):
     return code, rendered, any(int(row['opcode'], 16) not in SCRIPT_OPS for row in rendered)
 
 
-def script_c_text(image, entry, limit=512, character=0):
+def script_dependencies(instructions):
+    dependencies = {int(row[key], 16) for row in instructions for key in ('native_target', 'callback') if row.get(key)}
+    for row in instructions:
+        if row.get('handler'):
+            handler = int(row['handler'], 16)
+            if handler in HELPERS or any('vm_helper_' in line for line in instruction_c(row)):
+                dependencies.add(handler)
+    return dependencies
+
+
+def script_c_text(image, entry, limit=512, character=0, details=True):
     program = script_program(image, entry, character)
     code, rendered, unknown = program_c(program, limit, character)
     rows = ['# %s — C-style script' % script_name(entry, character), '',
@@ -212,40 +228,92 @@ def script_c_text(image, entry, limit=512, character=0):
             '%d decoded instructions; %d shown in the C view%s.' %
             (len(program['instructions']), len(rendered), '; unresolved opcode paths terminate explicitly' if unknown else ''), '',
             '```c', *code, '```']
-    contacts = {(row['contact_table'], row['contact']['selector']): row['contact'] for row in rendered if 'contact' in row}
-    if contacts:
-        rows += ['', 'Contact records (dimensions rounded for display):', '']
-        for (table, selector), record in contacts.items():
-            rectangle = ', '.join('%g' % (value / 65536) for value in record['rectangle_q16'])
-            rows.append('- %s[%d]: damage %.4g%%; reach/top/length/height = [%s]; reactions hit/air/block = %d/%d/%d; flags = %d.' %
-                        (table, selector, record['damage_q16'] * 100 / 65536, rectangle,
-                         record['reaction'], record['alternate_reaction'], record['blocked_reaction'], record['flags']))
-    dependencies = {int(row[key], 16) for row in rendered for key in ('native_target', 'callback') if row.get(key)}
-    helpers = {int(row['handler'], 16) for row in rendered if any('vm_helper_' in line for line in instruction_c(row))}
-    if dependencies or helpers:
-        rows += ['', 'Native boundaries (calls can suspend; task/callback installation does not call the target inline):', '']
-        rows += ['- `%s`: `--native %08x`' % (native_name(address), address) for address in sorted(dependencies | helpers)]
-    rows += reference_rows(dependencies | helpers)
-    rows += ['', 'For source addresses and fixed operands, use `--script 0x%x` without `--c`.' % entry]
-    if character:
-        rows.append('Keep `--character %s` on follow-up script queries.' % CHARACTERS[character])
+    if details:
+        contacts = {(row['contact_table'], row['contact']['selector']): row['contact'] for row in rendered if 'contact' in row}
+        if contacts:
+            rows += ['', 'Contact records (dimensions rounded for display):', '']
+            for (table, selector), record in contacts.items():
+                rectangle = ', '.join('%g' % (value / 65536) for value in record['rectangle_q16'])
+                rows.append('- %s[%d]: damage %.4g%%; reach/top/length/height = [%s]; reactions hit/air/block = %d/%d/%d; flags = %d.' %
+                            (table, selector, record['damage_q16'] * 100 / 65536, rectangle,
+                             record['reaction'], record['alternate_reaction'], record['blocked_reaction'], record['flags']))
+        dependencies = script_dependencies(rendered)
+        from retail_helper_view import helper_rows
+        rows += helper_rows(dependencies, image, limit=limit)
+        rows += reference_rows(dependencies)
+        rows += ['', 'For source addresses and fixed operands, use `--script 0x%x` without `--c`.' % entry]
+        if character:
+            rows.append('Keep `--character %s` on follow-up script queries.' % CHARACTERS[character])
     return '\n'.join(rows) + '\n'
 
 
 def move_c_text(image, name, limit=512, character=0):
+    from retail_query import command_gate_rows, CONTACT_TABLES, attack_text
+    from retail_helper_view import helper_rows, port_source, ROOT
+    from scorpion_moves import attack_record, attack_record_at
     moves = moves_for(character)
     if name not in moves:
         raise ValueError('Unknown %s move %r; use --list-moves' % (character_name(character), name))
-    roots = moves[name]['scripts']
-    if not roots:
-        raise ValueError('No script roots catalogued for %s; inspect --move %s without --c' % (name, name))
+    move = moves[name]
     rows = ['# %s: %s — C-style scripts' % (character_name(character), name), '',
-            'Selected script roots and every decoded path for this roster. Native entry, gates and reactions are separate boundaries.', '']
+            'All decoded paths for this roster; native contracts and engine adaptations are separate from script decompilation.',
+            '', 'Entry: `--native %08x --c`' % move['entry'], '', '## Input and gates', '']
+    gates, predicates = command_gate_rows(image, move['entry'], character)
+    rows += gates
+    dependencies = {move['entry'], *predicates, *(address for _, address in move['native'])}
+    contacts = {}
+    for table, selector in move['contacts']:
+        record = attack_record_at(image, selector) if table == 'record' else attack_record(image, CONTACT_TABLES[table], selector)
+        contacts[record['va']] = record
     remaining = limit
-    for _, entry in roots:
+    for _, entry in move['scripts']:
         if remaining <= 0:
             rows.append('Additional script roots omitted by --limit.')
             break
-        rows.append(script_c_text(image, entry, remaining, character))
-        remaining -= min(remaining, len(script_program(image, entry, character)['instructions']))
+        program = script_program(image, entry, character)
+        _, rendered, _ = program_c(program, remaining, character)
+        rows.append(script_c_text(image, entry, remaining, character, details=False))
+        dependencies.update(script_dependencies(rendered))
+        for row in rendered:
+            if 'contact' in row:
+                contacts[row['contact']['va']] = row['contact']
+        remaining -= len(rendered)
+    if not move['scripts']:
+        rows += ['', '## Native move — existing portable C adaptations', '',
+                 'This move is native, not an empty VM script. Bodies below are read from our C implementation;',
+                 'they are reuse examples, not automatically decompiled x86. Contracts identify native timing and branches.']
+        selected = [move['entry'], *(address for _, address in move['native'])]
+        ports = set()
+        for address in selected:
+            helper = HELPERS.get(address)
+            if helper is None or not helper.port or helper.port in ports:
+                continue
+            ports.add(helper.port)
+            line, code = port_source(helper.port)
+            rows += ['', '[%s:%d](%s:%d)' % (helper.port[0], line, ROOT / helper.port[0], line)]
+            if len(code.splitlines()) <= remaining:
+                rows += ['', '```c', code, '```']
+                remaining -= len(code.splitlines())
+            else:
+                rows += ['', 'C definition omitted by --limit; follow the source link for its complete body.']
+        if not ports:
+            rows += ['', 'No portable C adapter is recorded. Follow the explicit native boundaries below.']
+    rows += ['', '## Contacts and reactions', '']
+    for record in contacts.values():
+        rows += ['- ' + attack_text(record)]
+        indices = sorted({record[key] for key in ('reaction', 'alternate_reaction', 'blocked_reaction')})
+        for reaction in indices:
+            target = image.word(0x4ea4e8 + reaction * 4)
+            dependencies.add(target)
+            rows.append('  Reaction %d -> `%08x` %s.' % (reaction, target, native_name(target)))
+    if not contacts:
+        rows.append('No contact records catalogued or decoded inline; helper contracts describe native effects.')
+    if move['buttons']:
+        rows += ['', '## Follow-up buttons', '', 'HP, LP, BLOCK, HK, LK, RUN; zero disables a button. Native handlers retain their own gates.']
+        for role, table in move['buttons']:
+            targets = [image.word(table + index * 4) for index in range(6)]
+            rows += ['', '- %s at `%08x`: %s.' % (role, table, ', '.join('%08x %s' % (target, native_name(target)) if target else '0' for target in targets))]
+            dependencies.update(target for target in targets if target)
+    rows += helper_rows(dependencies, image, include_related=True, limit=limit)
+    rows += reference_rows(dependencies)
     return '\n'.join(rows) + '\n'

@@ -650,15 +650,15 @@ def main():
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
     parser.add_argument('--limit', type=int, help='Query instruction limit, 1..512 (default 512 for --c, otherwise 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
-    parser.add_argument('--c', action='store_true', help='Readable C-style pseudocode for --script or --move')
+    parser.add_argument('--c', action='store_true', help='C-like script flow or researched native contract and portable C adaptation')
     parser.add_argument('--no-linear', action='store_true', help='For --bundle, omit the large linear recovery fallback')
     args = parser.parse_args()
     if args.limit is None:
         args.limit = 512 if args.c else 80
     if not 1 <= args.limit <= 512:
         parser.error('--limit must be between 1 and 512')
-    if args.c and (not (args.script or args.move) or args.raw):
-        parser.error('--c requires --script or --move and cannot be combined with --raw')
+    if args.c and (not (args.script or args.move or args.native) or args.raw):
+        parser.error('--c requires --script, --move or --native and cannot be combined with --raw')
     if not any((args.script, args.native, args.attack, args.move, args.list_moves, args.bundle)):
         parser.print_help()
         return
@@ -678,7 +678,11 @@ def main():
         elif args.native:
             # x86 entries are byte-aligned, unlike VM/data words.
             entry = int(args.native, 16)
-            report = native_text(Disassembly(args.exe), entry, args.limit, args.raw)
+            if args.c:
+                from retail_helper_view import native_c_text
+                report = native_c_text(RetailImage(args.exe), entry, args.limit)
+            else:
+                report = native_text(Disassembly(args.exe), entry, args.limit, args.raw)
         else:
             image = RetailImage(args.exe)
             if args.c:

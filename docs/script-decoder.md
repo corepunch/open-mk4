@@ -112,6 +112,54 @@ source correspondence with the evidence recorded. Keep unresolved semantics
 visible. The upstream contributions are under the reference project's
 [MIT license](../reference/mk4decomp/LICENSE).
 
+## Actionable helper contracts and native C views
+
+`tools/retail_helpers.py` is the shared semantic catalog. Each researched local
+entry records inputs/context ownership, effects, timing/control transfer,
+related helpers, data tables and an existing engine adapter where available.
+Queries prefer these semantic aliases while retaining the mapped upstream name
+and both addresses in source references. Add discoveries here once, so later
+characters do not repeat Sub-Zero's helper research.
+
+```sh
+python3 tools/disassemble_retail.py --character sub_zero --move ice --c
+python3 tools/disassemble_retail.py --character sub_zero --move clone --c
+python3 tools/disassemble_retail.py --native 457b50 --c
+```
+
+Move C pages include decoded command records and predicates, all selected script
+paths, contacts/reaction entries, follow-up buttons and deduplicated helper
+contracts. Native-only moves include the relevant portable C definitions and
+continuations instead of failing with "no script roots". `--native ADDRESS --c`
+shows its contract, one explicit level of related helpers, decoded tables and
+the current engine C adapter. Definitions are read from their actual source,
+with file/line links, rather than maintained as a second implementation.
+**These bodies are existing portable adaptations, not automatically decompiled
+native x86 or proof of retail parity.** Unknown helpers remain explicit native
+boundaries and never receive a fabricated C body. No source changes, game
+execution, recursive native closure or bulk bundle generation occurs.
+
+`tools/retail_helper_view.py` decodes typed table layouts from the checked EXE:
+ice spawn/animation/trail, closed scene rigs, X,Z,Y camera paths, pulse shakes,
+weapon descriptors/bounces, indexed sound tokens and blood splashes. A limited
+table is marked incomplete. Playback, object lifetime and scene clocks remain
+separate; generated code is intended for adaptation to the shared C engine.
+
+Recovered distinctions include opcode 36's result flag 4 versus opcode 55's
+flag 1, task-spawn opcode 40 ignoring its inline byte, opcode 25 using sound
+lookup `4ead30` rather than bank B, and `405430` always succeeding in this EXE.
+The indexed sound helper currently has no direct A/B/C-selector adapter; the
+query preserves its token lookup rather than silently dropping the cue.
+
+Direct table decoding also exposes a remaining character-port discrepancy:
+`4ed5d0` initially creates mesh 74, but `4ed898`'s track records point to rig
+records whose mesh fields are **75–82**. The existing C cycle is 74–81. The
+helper/table view records this difference; fixing the decompiler does not
+silently modify the character. Camera tables skip their leading parameter word;
+weapon bounce triples start after their floor header. Focused checks protect
+these layout distinctions against repeating the earlier hand-transcription
+mistakes.
+
 ## Compact move pages
 
 `--move NAME` gathers a curated set of attacker/victim script roots, actual

@@ -121,6 +121,8 @@ def native_text(disassembly, entry, limit=80, raw=False):
     rows.extend('- %08x: %s%s' % (site['at'], site['reason'], ' ' + site['expression'] if 'expression' in site else '') for site in function['unresolved'])
     if not function['unresolved']:
         rows.append('- None encountered locally; native behavior is not thereby understood.')
+    from retail_helper_view import helper_rows
+    rows += helper_rows([entry], disassembly.image, limit=limit)
     rows += reference_rows([entry, *(target for _, target in function['edges'])])
     return '\n'.join(rows) + '\n'
 
@@ -143,6 +145,26 @@ def move_list_text(character=0):
     return '\n'.join(rows) + '\n'
 
 
+def command_gate_rows(image, entry, character=0):
+    from scorpion_moves import commands
+    rows, predicates = [], set()
+    matched = False
+    tokens = {0xaa: 'B', 0xdd: 'F', 2: 'D', 1: 'U'}
+    for command_list in commands(image, character):
+        for command in command_list['records']:
+            if command['target'] != hex(entry):
+                continue
+            matched = True
+            if command['predicate']:
+                predicates.add(int(command['predicate'], 16))
+            pattern = ','.join(tokens.get(value, '%02x' % value) for value in command['tokens']) or 'unconditional'
+            rows.append('- `%s`: %s + %s; window=%d ticks; flags=%s; predicate `%s` (inspect with --native).' %
+                        (command['va'], pattern, ('P%d ' % command_list['player'] if 'player' in command_list else '') + command_list['button'], command['window'], command['flags'], command['predicate'] or 'none'))
+    if not matched:
+        rows.append('- No direct special-command record for this entry; inspect its stance/native caller for selection and gates.')
+    return rows, predicates
+
+
 def move_text(image, name, limit=80, raw=False, character=0):
     MOVES = moves_for(character)
     from scorpion_moves import commands, attack_record_at
@@ -153,18 +175,7 @@ def move_text(image, name, limit=80, raw=False, character=0):
             'Selected research roots only. Decoded instructions do not establish native semantics,',
             'whole-move coverage, timing totals, or C implementation status.', '',
             'Entry: `--native 0x%x`' % move['entry'], '', '## Input and gates', '']
-    matched = False
-    tokens = {0xaa: 'B', 0xdd: 'F', 2: 'D', 1: 'U'}
-    for command_list in commands(image, character):
-        for command in command_list['records']:
-            if command['target'] != hex(move['entry']):
-                continue
-            matched = True
-            pattern = ','.join(tokens.get(value, '%02x' % value) for value in command['tokens']) or 'unconditional'
-            rows.append('- `%s`: %s + %s; window=%d ticks; flags=%s; predicate `%s` (inspect with --native).' %
-                        (command['va'], pattern, ('P%d ' % command_list['player'] if 'player' in command_list else '') + command_list['button'], command['window'], command['flags'], command['predicate'] or 'none'))
-    if not matched:
-        rows.append('- No direct special-command record for this entry; inspect its stance/native caller for selection and gates.')
+    rows += command_gate_rows(image, move['entry'], character)[0]
     rows += ['', '## Selected scripts', '']
     records, native, vm_helpers, stops = {}, {}, set(), []
     for table, selector in move['contacts']:

@@ -41,7 +41,7 @@ class SymbolTests(unittest.TestCase):
             self.assertIsNotNone(row)
             self.assertIn(row['name'], '\n'.join(reference_rows([address])))
         self.assertEqual(mapped_symbol(0x49bc60)['local'], '0x49bc00')
-        self.assertIn('at_0049bc60', native_name(0x49bc60))
+        self.assertEqual(native_name(0x49bc60), 'sub_zero_ice_entry')
         self.assertNotEqual(native_name(0x49bc60), 'Vec2SumMul10ChainCompute')
 
     @unittest.skipUnless((ROOT / 'reference/mk4decomp/config/symbols.yaml').is_file(), 'Optional reference checkout unavailable')

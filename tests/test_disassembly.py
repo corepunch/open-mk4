@@ -246,7 +246,8 @@ class QueryTests(unittest.TestCase):
         self.assertIn('(native_result_flags() & 1) != 0', text)
         self.assertIn('set_group_callback(', text)
         self.assertIn('spawn_task(66,', text)
-        self.assertIn(', 3); // independent continuation', text)
+        self.assertIn('); // independent continuation; inline byte ignored', text)
+        self.assertNotIn(', 3); // independent', text)
         self.assertIn('wait_ticks(60);', text)
         limited = script_c_text(image, entry, limit=1)
         self.assertIn('omitted_script_continuation(0x57001c);', limited)
@@ -273,10 +274,10 @@ class QueryTests(unittest.TestCase):
             subprocess.run([*command, '--move', 'low_kick', '--output', 'kick.md'], cwd=directory, capture_output=True, check=True)
             self.assertEqual([path.name for path in Path(directory).iterdir()], ['kick.md'])
             self.assertIn('void scorpion_low_kick(void)', Path(directory, 'kick.md').read_text())
-            for query in (['--attack', 'B', '6'], ['--native', '0x46a950'], ['--script', '0x4e6d08', '--raw']):
+            for query in (['--attack', 'B', '6'], ['--script', '0x4e6d08', '--raw']):
                 result = subprocess.run([*command, *query], cwd=directory, capture_output=True, text=True)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn('--c requires --script or --move', result.stderr)
+                self.assertIn('--c requires --script, --move or --native', result.stderr)
 
     def test_build_specific_names_and_reference_sources(self):
         from retail_query import instruction_text, script_text

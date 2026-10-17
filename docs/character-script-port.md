@@ -7,8 +7,9 @@ per-tick binary traces is unnecessary. Game simulation remains C11 without SDL.
 
 ## Short workflow
 
-1. Select the character and inspect a move. Read the C view where supported;
-   use the detailed view at an explicit unsupported-operation boundary.
+1. Select the character and inspect a move with `--c`. It shows all decoded
+   paths, command gates, contacts and helper contracts. Native-only moves show
+   existing C adaptations; unresolved native behavior remains an explicit query.
 2. Follow only the printed script/native/contact dependencies needed by that
    move. Use the existing `build/retail-disassembly/` for broader navigation;
    full export requires explicit `--bundle` and is unnecessary for routine work.
@@ -25,7 +26,8 @@ per-tick binary traces is unnecessary. Game simulation remains C11 without SDL.
 ```sh
 python3 tools/disassemble_retail.py --character sub_zero --list-moves
 python3 tools/disassemble_retail.py --character sub_zero --move low_kick --c
-python3 tools/disassemble_retail.py --character sub_zero --move ice
+python3 tools/disassemble_retail.py --character sub_zero --move ice --c
+python3 tools/disassemble_retail.py --character sub_zero --move clone --c
 python3 tools/disassemble_retail.py --character sub_zero --script 4ed588
 python3 tools/disassemble_retail.py --native 45b650 --limit 48
 python3 tools/disassemble_retail.py --attack C 3
@@ -142,8 +144,7 @@ Do not add retail-execution harnesses or large per-tick JSON recordings.
 Presentation uses recovered closed-surface rigs, animated head/spine models,
 camera splines and independent pulse shakes (`457b90`, fatality I uses
 `4e3638[5]`: two pulses, three ticks per half-cycle, Y `0x2e14`),
-the eight one-tick ice blast mesh frames (`4ed898`, shared meshes 74–81,
-GEO `0x100` additive blending),
+the ice blast mesh animation (GEO `0x100` additive blending),
 the shared ice statue and its orbiting light, original weapon
 meshes and three-arc settling records. Ice trails use sprite 339 and the
 ten-node shrinking decoration from `40d720/40d920`; `405430` is an
@@ -156,6 +157,13 @@ CPU distance plans, probability gates and automatic
 air attacks now live in the shared simulation; unported character action rows
 still fall back to their own stance tables. These translations do not claim
 retail scheduler or random-call-stream identity.
+
+The decompiler now distinguishes recovered data from the current port. The ice
+spawn rig uses mesh 74; its `4ed898` track uses meshes 75–82. The C animation
+still cycles 74–81. Opcode 25's indexed sound table `4ead30` also requires its
+own token route, rather than assuming an A/B/C bank selector. These differences
+are recorded by the helper catalog for a later character correction; the
+existing adaptation is a reuse reference, not evidence overriding the EXE.
 
 Sound formats are checked against the local executable, including corrections
 to reference hypotheses: buffers are mono; ESF bit 31 controls looping.

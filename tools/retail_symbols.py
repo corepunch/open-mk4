@@ -5,6 +5,7 @@ Upstream numeric addresses alone never establish a local correspondence.
 import json
 from pathlib import Path
 from retail_moves import EXE_SHA256
+from retail_helpers import HELPERS
 
 MAP = json.loads(Path(__file__).with_name('retail_symbol_map.json').read_text())
 if MAP['exe_sha256'] != EXE_SHA256:
@@ -40,6 +41,7 @@ NAMES = {
 
 for _symbol in MAPPED:
     NAMES.setdefault(int(_symbol['local'], 16), _symbol['name'])
+NAMES.update({address: helper.name for address, helper in HELPERS.items()})
 
 
 def mapped_symbol(address):
