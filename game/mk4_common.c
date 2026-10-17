@@ -1,6 +1,7 @@
 #include "game.h"
 #include "mk4_characters.h"
 #include "math_util.h"
+#include <string.h>
 
 /* Approximate stance tables for fighters whose retail moves are not yet
  * ported. They follow the retail buttons from the shared tables in
@@ -286,4 +287,106 @@ void mk4_jump(Battle *battle, Fighter *fighter) {
   fighter->body.physics = fighter->human || battle->cpu_level <= 1 ? NULL : jump_physics;
   fighter->script = jump_tick;
   battle_sound(battle, SOUND_B, 4);
+}
+
+/* Air throw: scripts 0x4e5e28/0x4e5e50, native 0x46aae0.
+ * The victim owns its release/recovery, so interrupting either participant
+ * cannot leave a suspended body behind. Shared getup replaces scheduler parking. */
+static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
+static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
+static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
+
+static void thrown_getup_tick(Battle *battle, Fighter *fighter) {
+  fighter->sample_override = mini(79, 46 + fighter->ticks);
+  if (fighter->ticks >= 34 && fighter->health > 0) {
+    fighter_ready(battle, fighter);
+  }
+}
+
+static void air_thrown_tick(Battle *battle, Fighter *victim) {
+  const Fighter *owner = fighter_opponent(battle, victim);
+  if (victim->script_phase == 0) {
+    if (owner->current_move == &s_air_throw && owner->pending == NULL && owner->ticks < 28) {
+      memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+      victim->sample_override = mini(27, owner->ticks);
+      return;
+    }
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    victim->script_phase = 1;
+    victim->body.vel[AXIS_Y] = 0x3333;
+    victim->body.gravity = 0x28f;
+  }
+  if (victim->script_phase == 1 && !fighter_airborne(victim)) {
+    victim->script_phase = 2;
+    victim->script_timer = 0;
+  }
+  if (victim->script_phase == 2) {
+    victim->sample_override = mini(44, 29 + victim->script_timer++);
+    if (victim->script_timer >= 20 && victim->health > 0) {
+      fighter_start_move(battle, victim, S_KNOCKDOWN, &s_throw_getup);
+      victim->script = thrown_getup_tick;
+      victim->sample_override = 46;
+    }
+  }
+}
+
+bool mk4_can_air_throw(const Battle *battle, const Fighter *fighter) {
+  const Fighter *victim = fighter_opponent(battle, fighter);
+  int64_t distance2 = 0;
+  for (int i = 0; i < 3; ++i) {
+    int64_t d = (int64_t)victim->body.pos[i] - fighter->body.pos[i];
+    distance2 += d * d;
+  }
+  return battle->phase == PHASE_FIGHT && fighter->body.pos[AXIS_Y] <= -0x23333 && victim->body.pos[AXIS_Y] <= -0x23333 &&
+         distance2 <= 2LL * Q16_ONE * Q16_ONE && !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
+}
+
+static void air_throw_tick(Battle *battle, Fighter *fighter) {
+  Fighter *victim = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
+  int tick = fighter->ticks;
+  if (tick < 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    fighter->body.gravity = 0x28f;
+    fighter_ready(battle, fighter);
+    return;
+  }
+  fighter->sample_override = tick < 29 ? tick : tick < 39 ? 28 : mini(44, tick - 9);
+  if (tick == 28) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    battle_damage(battle, victim, 0x2147);
+  }
+  if (tick == 29) {
+    fighter_set_speed(battle, fighter, 0x7ae);
+    fighter->body.vel[AXIS_Y] = -0x1999;
+    fighter->body.gravity = 0x28f;
+  }
+  if (tick >= 54 && !fighter_airborne(fighter)) {
+    mk4_land(battle, fighter);
+  }
+}
+
+void mk4_air_throw(Battle *battle, Fighter *fighter) {
+  if (!mk4_can_air_throw(battle, fighter)) {
+    fighter_ready(battle, fighter);
+    return;
+  }
+  Fighter *victim = &battle->fighters[fighter == &battle->fighters[0] ? 1 : 0];
+  if (victim->armed && victim->disarm != NULL) {
+    victim->disarm(battle, victim);
+  }
+  for (int i = 0; i < 2; ++i) {
+    Fighter *actor = &battle->fighters[i];
+    memset(actor->body.vel, 0, sizeof actor->body.vel);
+    actor->body.gravity = 0;
+    actor->body.physics = NULL;
+    actor->body.on_land = NULL;
+  }
+  fighter_start_move(battle, fighter, S_THROW, &s_air_throw);
+  fighter_start_move(battle, victim, S_KNOCKDOWN, &s_air_thrown);
+  fighter->script = air_throw_tick;
+  victim->script = air_thrown_tick;
+  fighter->sample_override = victim->sample_override = 0;
+  fighter->flags |= FF_PAIRED;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
 }

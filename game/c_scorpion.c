@@ -1083,105 +1083,6 @@ static void enter_lk_throw(Battle *battle, Fighter *fighter) {
   ground_throw(battle, fighter, true);
 }
 
-/* Air throw: scripts 0x4e5e28/0x4e5e50, native 0x46aae0.
- * The victim owns its release/recovery, so interrupting either participant
- * cannot leave a suspended body behind. Shared getup replaces scheduler parking. */
-static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
-static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
-static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
-
-static void thrown_getup_tick(Battle *battle, Fighter *fighter) {
-  fighter->sample_override = mini(79, 46 + fighter->ticks);
-  if (fighter->ticks >= 34 && fighter->health > 0) {
-    scorpion_ready(battle, fighter);
-  }
-}
-
-static void air_thrown_tick(Battle *battle, Fighter *victim) {
-  Fighter *owner = opponent(battle, victim);
-  if (victim->script_phase == 0) {
-    if (owner->current_move == &s_air_throw && owner->pending == NULL && owner->ticks < 28) {
-      memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-      victim->sample_override = mini(27, owner->ticks);
-      return;
-    }
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    victim->script_phase = 1;
-    victim->body.vel[AXIS_Y] = 0x3333;
-    victim->body.gravity = 0x28f;
-  }
-  if (victim->script_phase == 1 && !fighter_airborne(victim)) {
-    victim->script_phase = 2;
-    victim->script_timer = 0;
-  }
-  if (victim->script_phase == 2) {
-    victim->sample_override = mini(44, 29 + victim->script_timer++);
-    if (victim->script_timer >= 20 && victim->health > 0) {
-      fighter_start_move(battle, victim, S_KNOCKDOWN, &s_throw_getup);
-      victim->script = thrown_getup_tick;
-      victim->sample_override = 46;
-    }
-  }
-}
-
-static bool can_air_throw(const Battle *battle, const Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(battle, fighter);
-  int64_t distance2 = 0;
-  for (int i = 0; i < 3; ++i) {
-    int64_t d = (int64_t)victim->body.pos[i] - fighter->body.pos[i];
-    distance2 += d * d;
-  }
-  return battle->phase == PHASE_FIGHT && fighter->body.pos[AXIS_Y] <= -0x23333 && victim->body.pos[AXIS_Y] <= -0x23333 &&
-         distance2 <= 2LL * Q16_ONE * Q16_ONE && !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
-}
-
-static void air_throw_tick(Battle *battle, Fighter *fighter) {
-  Fighter *victim = opponent(battle, fighter);
-  int tick = fighter->ticks;
-  if (tick < 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    fighter->body.gravity = 0x28f;
-    scorpion_ready(battle, fighter);
-    return;
-  }
-  fighter->sample_override = tick < 29 ? tick : tick < 39 ? 28 : mini(44, tick - 9);
-  if (tick == 28) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    battle_damage(battle, victim, 0x2147);
-  }
-  if (tick == 29) {
-    fighter_set_speed(battle, fighter, 0x7ae);
-    fighter->body.vel[AXIS_Y] = -0x1999;
-    fighter->body.gravity = 0x28f;
-  }
-  if (tick >= 54 && !fighter_airborne(fighter)) {
-    fighter_start_move(battle, fighter, S_JUMP, &s_teleport_land);
-    fighter->script = teleport_land_tick;
-    fighter->sample_override = 18;
-  }
-}
-
-static void scorpion_air_throw(Battle *battle, Fighter *fighter) {
-  if (!can_air_throw(battle, fighter)) {
-    scorpion_ready(battle, fighter);
-    return;
-  }
-  Fighter *victim = opponent(battle, fighter);
-  if (victim->armed && victim->disarm != NULL) {
-    victim->disarm(battle, victim);
-  }
-  stop_body(fighter);
-  stop_body(victim);
-  fighter_start_move(battle, fighter, S_THROW, &s_air_throw);
-  fighter_start_move(battle, victim, S_KNOCKDOWN, &s_air_thrown);
-  fighter->script = air_throw_tick;
-  victim->script = air_thrown_tick;
-  fighter->sample_override = victim->sample_override = 0;
-  fighter->flags |= FF_PAIRED;
-  victim->flags |= FF_PAIRED | FF_REACTING;
-  memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
-}
-
 /* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs
  * through bounded C phase tables; no retail task/camera/object scheduler. */
 #define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = 0x700}
@@ -1343,7 +1244,7 @@ static const CommandDef commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0, can_beast_fatality, scorpion_beast_fatality},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, can_fan_fatality, scorpion_fan_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0, can_spike_fatality, scorpion_spike_fatality},
-  {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, can_air_throw, scorpion_air_throw},
+  {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, mk4_can_air_throw, mk4_air_throw},
   {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, CMD_AIR, can_teleport, scorpion_teleport},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_BACK}, 2, 27, 0, can_spear, scorpion_spear},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 20, 0, fighting, scorpion_fire},
