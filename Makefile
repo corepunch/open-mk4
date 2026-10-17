@@ -6,15 +6,21 @@ CPPFLAGS = -Icommon
 LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
-FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
+FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/generated/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
-.PHONY: all extract test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: scripts scripts-check all extract test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
+
+scripts:
+	python3 tools/compile_retail.py --character liu_kang --generate
+scripts-check:
+	python3 tools/compile_retail.py --character liu_kang --generate --check
+
 
 format:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)
@@ -39,7 +45,7 @@ run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/fiber.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(CHARACTER_SOURCES)
-GAME_HEADERS = game/script.h game/game.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
+GAME_HEADERS = $(wildcard game/generated/*.inc) game/script.h game/game.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -75,7 +81,7 @@ game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang bu
 	./build/test-fibers
 	./mk4-game --self-test
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp
-check: format-check test viewer-test game-test
+check: format-check scripts-check test viewer-test game-test
 	python3 tests/test_apps.py
 	python3 tests/test_retail_moves.py
 	python3 tests/test_disassembly.py

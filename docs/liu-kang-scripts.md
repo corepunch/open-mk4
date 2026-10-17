@@ -5,6 +5,16 @@ This ledger distinguishes implemented control flow from outstanding work.
 Shared locomotion, contact scaling, reactions, landing and scene pools use the
 existing procedural engine; this is not retail scheduler emulation.
 
+Five live script bodies are now generated from the EXE by
+`make scripts`: low kick `4e6d08`, crouching HK `4e60b8`, low/high/air
+fireballs `4ed678/4ed6c0/4ed6f8`. See `game/generated/liu_kang.inc` and
+`tools/ports/liu_kang.json`. They use the normal command entries and shared
+fiber/contact/playback helpers. Projectile spawning and air landing remain
+small typed native adapters in `c_liu_kang.c`. Other move families retain
+the verified existing C ports; generated coverage is reported separately
+from those legacy implementations. `make scripts-check` rejects edited or
+stale generated output.
+
 | Family | Retail evidence | State |
 | --- | --- | --- |
 | HP/LP, uppercut, close attacks and combo buttons | 46d290, 4e62f0/330/360/3b0, 4e62a0, 4e61e0, 4e69b0, 4e6190 | Implemented using the reached shared branches |

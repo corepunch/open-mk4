@@ -53,7 +53,18 @@ BINDINGS = {
 
 # Character-specific boundaries reuse existing object and landing helpers.
 # Entries are added with the actual integration, not inferred from HELPERS prose.
-CHARACTER_BINDINGS = {}
+CHARACTER_BINDINGS = {
+    3: {
+        0x49c110: Binding('liu_script_spawn_low', 'game/c_liu_kang.c', ('spawn',), ('fighter', 'task_type'),
+                         flow='independent', evidence='49c110/4ed740, independent task 64; see docs/liu-kang-scripts.md'),
+        0x49c160: Binding('liu_script_spawn_high', 'game/c_liu_kang.c', ('spawn',), ('fighter', 'task_type'),
+                         flow='independent', evidence='49c160/4ed760, independent task 64; see docs/liu-kang-scripts.md'),
+        0x49c0d0: Binding('liu_script_spawn_air', 'game/c_liu_kang.c', ('spawn',), ('fighter', 'task_type'),
+                         flow='independent', evidence='49c0d0/4ed730, independent task 64; see docs/liu-kang-scripts.md'),
+        0x49c010: Binding('liu_script_air_return', 'game/c_liu_kang.c', ('tail',), flow='terminal',
+                         evidence='49c010 restores gravity 0x20c, waits for the floor and returns through shared landing'),
+    },
+}
 
 
 def bindings_for(character):

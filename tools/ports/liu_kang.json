@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "character": "liu_kang",
+  "output": "game/generated/liu_kang.inc",
+  "return_to": "fighter_ready",
+  "generated_scripts": ["0x4e6d08", "0x4e60b8", "0x4ed678", "0x4ed6c0", "0x4ed6f8"]
+}

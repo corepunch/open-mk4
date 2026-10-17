@@ -53,12 +53,21 @@ def main(argv=None):
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument('--script', type=lambda value: int(value, 16), action='append', help='repeat to emit several scripts atomically')
     action.add_argument('--audit', action='store_true')
+    action.add_argument('--generate', action='store_true', help='generate the character profile checked into tools/ports')
     parser.add_argument('--return-to', help='explicit controller/tagged-return engine continuation')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--check', action='store_true', help='compare output without writing')
     parser.add_argument('--strict', action='store_true', help='audit fails if any VM graph is unsupported')
     args = parser.parse_args(argv)
     try:
+        if args.generate:
+            profile = json.loads((ROOT / 'tools/ports' / (CHARACTERS[args.character] + '.json')).read_text())
+            if profile.get('schema') != 1 or profile.get('character') != CHARACTERS[args.character]:
+                raise ValueError('Invalid character generation profile')
+            args.script = [int(entry, 16) for entry in profile['generated_scripts']]
+            args.return_to = profile['return_to']
+            if args.output is None:
+                args.output = ROOT / profile['output']
         if args.check and not args.output:
             raise ValueError('--check requires --output')
         if args.strict and not args.audit:

@@ -70,6 +70,32 @@ static void normals(void) {
       check(g_battle.fighters[1 - player].health == Q16_ONE - damage, "kick must connect once");
       check(g_battle.fighters[player].state == S_IDLE, "kick recovery must release controller");
     }
+    /* Generated 4e6d08: contact selects the eight/five-tick hold before
+     * the shared reverse tail. Exercise real inputs, not a second VM. */
+    for (int outcome = 0; outcome < 3; ++outcome) {
+      fight(player, outcome == 2 ? 4.f : 1.f);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      Input input[2] = {0};
+      input[player].held = BUTTON_BIT(BUTTON_LOW_KICK);
+      input[1 - player].held = outcome == 1 ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      battle_step(input);
+      input[player].held = 0;
+      battle_step(input); /* generated fiber enters at elapsed zero */
+      for (int t = 0; t < 9; ++t) {
+        battle_step(input);
+      }
+      check(victim->health == Q16_ONE && owner->avoids_high, "generated LK keeps its startup and avoidance before contact");
+      battle_step(input);
+      q16 damage = outcome == 2 ? 0 : outcome == 1 ? q16_mul(0x1c28, 0x3333) : 0x1c28;
+      check(victim->health == Q16_ONE - damage && !owner->avoids_high, "generated LK applies the retail record and clears avoidance");
+      int remaining = (outcome == 2 ? 33 : 36) - 10;
+      for (int t = 0; t < remaining - 1; ++t) {
+        battle_step(input);
+      }
+      check(owner->state == S_KICK, "generated LK must finish its contact-selected reverse tail");
+      battle_step(input);
+      check(owner->state == S_IDLE && !fighter_fiber_active(owner), "generated LK returns at the selected recovery deadline");
+    }
     fight(player, .65f);
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     advance(7);

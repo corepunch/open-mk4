@@ -14,6 +14,13 @@ static void liu_kang_ready(Fighter *fighter) {
   }
 }
 
+/* Generated script functions use these existing object/landing adapters. */
+static void liu_script_spawn_low(Fighter *fighter, int task_type);
+static void liu_script_spawn_high(Fighter *fighter, int task_type);
+static void liu_script_spawn_air(Fighter *fighter, int task_type);
+static void liu_script_air_return(Fighter *fighter);
+#include "generated/liu_kang.inc"
+
 /* Retail attack records; source addresses identify the supplied EXE. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d};            /* 0x4ebd38, query A selector 1 */
@@ -311,10 +318,10 @@ typedef struct GroundAttack {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
-  {{.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208}, 10, 33, 36},
+  {.move = {.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}}, /* generated 4e6d08 */
   {{.clip = 260, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0107}, {65536, -3932, 42532, 20971, 29, 10, 4, 0, 2621}, 8, 19, 22},
   {{.clip = 315, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0106}, {81264, 34734, 67502, 32768, 28, 10, 4, 0, 3932}, 9, 19, 22},
-  {{.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0104}, {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864}, 9, 42, 42},
+  {.move = {.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0104}}, /* generated 4e60b8 */
   {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
   {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
   {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
@@ -340,7 +347,6 @@ static void ground_attack_script(Fighter *fighter) {
     const GroundAttack *attack = &ground_attacks[index];
     int t = fighter->ticks, fast = index == G_ROUNDHOUSE && followup ? 4 : 0;
     int active = attack->active - fast;
-    fighter->avoids_high = index == G_LOW_KICK && t >= 7 && t < 10;
     bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(fighter) == ACTION_RETAIL_2011;
     if (index == G_CLOSE_HP) {
       int action = victim_action(fighter);
@@ -358,20 +364,10 @@ static void ground_attack_script(Fighter *fighter) {
     }
     int end = (fighter->connected ? attack->end_contact : attack->end_miss) - fast;
     switch (index) {
-      case G_LOW_KICK: {
-        int reverse = fighter->connected ? 18 : 15;
-        fighter->sample_override = t < 9 ? mini(17, t * 2) : t < reverse ? 17 : maxi(0, 17 - t + reverse);
-        break;
-      }
       case G_CROUCH_LP:
       case G_CROUCH_LK: {
         int reverse = active + (fighter->connected ? 4 : 1);
         fighter->sample_override = t < active ? mini(9, t + (index == G_CROUCH_LP ? 2 : 1)) : maxi(0, 9 - maxi(0, t - reverse));
-        break;
-      }
-      case G_CROUCH_HK: {
-        static const int hold[] = {11, 10, 11, 12};
-        fighter->sample_override = t < 13 ? t : t < 29 ? hold[((t - 13) / 2) % 4] : maxi(0, 12 - (t - 29));
         break;
       }
       case G_CLOSE_HP: {
@@ -416,7 +412,8 @@ static void ground_attack(Fighter *fighter, int index) {
   fighter->script_phase = index;
   fighter->script_timer = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_COMBO_HP || index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
-  fighter_start_fiber(fighter, ground_attack_script, NULL);
+  FighterFn script = index == G_LOW_KICK ? retail_script_004e6d08 : index == G_CROUCH_HK ? retail_script_004e60b8 : ground_attack_script;
+  fighter_start_fiber(fighter, script, NULL);
 }
 
 static void hp_script(Fighter *fighter) {
@@ -1121,35 +1118,27 @@ static void fireball_spawn(Fighter *fighter, int type) {
   }
 }
 
-static void fireball_script(Fighter *fighter) {
-  int type = fighter->script_phase; /* high, low, airborne high */
-  fighter_fiber_play_to(fighter, type == 2 ? 5 : 20, type == 2 ? 1 : 2);
-  if (type == 2) {
+static void liu_script_spawn_low(Fighter *fighter, int task_type) {
+  require(task_type == 64, "Wrong Liu Kang low-fireball task type");
+  fireball_spawn(fighter, 1);
+}
+
+static void liu_script_spawn_high(Fighter *fighter, int task_type) {
+  require(task_type == 64, "Wrong Liu Kang high-fireball task type");
+  fireball_spawn(fighter, 0);
+}
+
+static void liu_script_spawn_air(Fighter *fighter, int task_type) {
+  require(task_type == 64, "Wrong Liu Kang air-fireball task type");
+  fireball_spawn(fighter, 2);
+}
+
+static void liu_script_air_return(Fighter *fighter) {
+  fighter->body.gravity = 0x20c;
+  while (fighter_airborne(fighter)) {
     fighter_wait_ticks(1);
   }
-  battle_sound(SOUND_A, 33);
-  battle_sound(SOUND_INDEXED, type == 2 ? 3 : 2);
-  fireball_spawn(fighter, type);
-  if (type == 2) {
-    fighter_wait_ticks(16);
-    fighter_fiber_play_to(fighter, 0, -1);
-    fighter->body.gravity = 0x20c;
-    while (fighter_airborne(fighter)) {
-      fighter_wait_ticks(1);
-    }
-    fighter_fiber_finish(mk4_land);
-  }
-  fighter_fiber_play_to(fighter, type == 1 ? 23 : 27, 1);
-  fighter->action = ACTION_RETAIL_1007;
-  if (type == 1) {
-    for (int cycle = 0; cycle < 3; ++cycle) {
-      fighter_fiber_play_to(fighter, 18, -1);
-      fighter_fiber_play_to(fighter, 23, 1);
-    }
-  } /* High stream's forward-to-18/27 is already past both targets. */
-  fighter_fiber_play_to(fighter, 0, -1);
-  fighter_wait_ticks(1);
-  fighter_fiber_finish(liu_kang_ready);
+  fighter_fiber_finish(mk4_land);
 }
 
 static void fireball(Fighter *fighter, bool low) {
@@ -1166,7 +1155,8 @@ static void fireball(Fighter *fighter, bool low) {
   fighter_upright(fighter);
   fighter->script_phase = air ? 2 : low ? 1 : 0;
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, fireball_script, NULL);
+  FighterFn script = air ? retail_script_004ed6f8 : low ? retail_script_004ed678 : retail_script_004ed6c0;
+  fighter_start_fiber(fighter, script, NULL);
 }
 
 static void liu_kang_high_fireball(Fighter *fighter) {

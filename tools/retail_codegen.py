@@ -209,6 +209,8 @@ def lower(row, bindings, return_to):
     elif op == 0x61:
         lines.append('fighter->flags &= ~(unsigned)FF_BUSY;')
     elif op in (0x30, 0x3f):
+        if op == 0x3f:
+            lines.append('fighter_wait_ticks(1);')
         lines.append('fighter_fiber_finish(%s);' % return_to)
     elif op in (0x33, 0x3c):
         lines.append('goto L_%08x;' % successors(row)[0])
