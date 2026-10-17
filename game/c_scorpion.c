@@ -33,10 +33,10 @@ static int victim_action(const Fighter *fighter) {
 static void scorpion_jab_contact(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   int action = victim->action;
-  if (fighter->connected || action == 0x2001 || action == 0x106 || action == 0x107) {
+  if (fighter->connected || action == ACTION_RETAIL_2001 || action == ACTION_RETAIL_0106 || action == ACTION_RETAIL_0107) {
     return;
   }
-  if ((action == 0x10c && fighter_sample(victim) < 5) || (action == 0x102 && victim->avoids_high)) {
+  if ((action == ACTION_RETAIL_010C && fighter_sample(victim) < 5) || (action == ACTION_RETAIL_0102 && victim->avoids_high)) {
     return;
   }
   battle_contact(fighter, &jab_record);
@@ -44,7 +44,7 @@ static void scorpion_jab_contact(Fighter *fighter) {
 
 /* Runner 0x470c60 with block 0x4e5d30: the first contact latches. */
 static void scorpion_kick_contact(Fighter *fighter) {
-  if (!fighter->connected && victim_action(fighter) != 0x2001) {
+  if (!fighter->connected && victim_action(fighter) != ACTION_RETAIL_2001) {
     battle_contact(fighter, &kick_record);
   }
 }
@@ -58,11 +58,11 @@ static void scorpion_sweep_contact(Fighter *fighter) {
 
 /* 0x46cde0: selector 6 inside a follow-up window; contact sets action 0x1006. */
 static void scorpion_uppercut_contact(Fighter *fighter) {
-  if (fighter->connected || victim_action(fighter) == 0x2001) {
+  if (fighter->connected || victim_action(fighter) == ACTION_RETAIL_2001) {
     return;
   }
   if (battle_contact(fighter, (fighter->flags & FF_FOLLOW_UP) ? &uppercut_alt_record : &uppercut_record) != CONTACT_MISS) {
-    fighter->action = 0x1006;
+    fighter->action = ACTION_RETAIL_1006;
   }
 }
 
@@ -145,22 +145,22 @@ static const MoveDef s_walk = {269, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NUL
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
-static const MoveDef s_jab = {.clip = 294, .last = MOVE_END, .flags = RETAIL, .sequence = &jab_sequence, .action = 0x10b};
-static const MoveDef s_kick = {.clip = 66, .last = MOVE_END, .flags = RETAIL, .sequence = &kick_sequence, .action = 0x100};
-static const MoveDef s_sweep = {.clip = 63, .last = MOVE_END, .flags = RETAIL | SF_LOW, .sequence = &sweep_sequence, .action = 0x10c};
-static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .sequence = &uppercut_sequence, .action = 0x109};
+static const MoveDef s_jab = {.clip = 294, .last = MOVE_END, .flags = RETAIL, .sequence = &jab_sequence, .action = ACTION_RETAIL_010B};
+static const MoveDef s_kick = {.clip = 66, .last = MOVE_END, .flags = RETAIL, .sequence = &kick_sequence, .action = ACTION_RETAIL_0100};
+static const MoveDef s_sweep = {.clip = 63, .last = MOVE_END, .flags = RETAIL | SF_LOW, .sequence = &sweep_sequence, .action = ACTION_RETAIL_010C};
+static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .sequence = &uppercut_sequence, .action = ACTION_RETAIL_0109};
 /* The jab graph alternates an opening/recovery with a second clip. Contact
  * requests at phase boundaries execute before the next branch is committed. */
-static const MoveDef s_jab_recover = {.clip = 294, .flags = RETAIL, .sequence = &jab_recover_sequence, .action = 0x10b};
-static const MoveDef s_jab_second = {.clip = 295, .flags = RETAIL, .sequence = &jab_second_sequence, .action = 0x10b};
-static const MoveDef s_jab_stop = {.clip = 295, .flags = RETAIL, .sequence = &jab_stop_sequence, .action = 0x10b};
-static const MoveDef s_jab_finish = {.clip = 295, .flags = RETAIL, .sequence = &jab_finish_sequence, .action = 0x10b};
-static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_loop_sequence, .action = 0x109};
-static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = 0x109};
-static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = 0x109};
-static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = 0x109};
+static const MoveDef s_jab_recover = {.clip = 294, .flags = RETAIL, .sequence = &jab_recover_sequence, .action = ACTION_RETAIL_010B};
+static const MoveDef s_jab_second = {.clip = 295, .flags = RETAIL, .sequence = &jab_second_sequence, .action = ACTION_RETAIL_010B};
+static const MoveDef s_jab_stop = {.clip = 295, .flags = RETAIL, .sequence = &jab_stop_sequence, .action = ACTION_RETAIL_010B};
+static const MoveDef s_jab_finish = {.clip = 295, .flags = RETAIL, .sequence = &jab_finish_sequence, .action = ACTION_RETAIL_010B};
+static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_loop_sequence, .action = ACTION_RETAIL_0109};
+static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = ACTION_RETAIL_0109};
+static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
+static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
 
-static const MoveDef s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = 0x500};
+static const MoveDef s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -285,12 +285,12 @@ static const AttackRecord spear_record = {0x3333, -0x1eb8, 0x947a, 0x3ae1, 70, 7
 static const AttackRecord teleport_record = {0x128f5, -0x3ae1, 0xab85, 0x91eb, 90, 90, 0, ATTACK_MARK, 0x170a};
 static const AttackRecord fire_record = {0x24e56, -0xc978, 0x23cac, 0xb7ce, 173, 173, 0, ATTACK_UNBLOCKABLE, 0x1eb8};
 static const MoveDef s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0300};
-static const MoveDef s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = 0x4000};
-static const MoveDef s_spear_stun = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK, .action = 0x1008};
-static const MoveDef s_teleport = {.clip = 312, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x209};
-static const MoveDef s_teleport_block = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = 0x1011};
-static const MoveDef s_teleport_land = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
-static const MoveDef s_fire = {.clip = 448, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x115};
+static const MoveDef s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4000};
+static const MoveDef s_spear_stun = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1008};
+static const MoveDef s_teleport = {.clip = 312, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0209};
+static const MoveDef s_teleport_block = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1011};
+static const MoveDef s_teleport_land = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = ACTION_RETAIL_2008};
+static const MoveDef s_fire = {.clip = 448, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0115};
 
 static Fighter *opponent(Fighter *fighter) {
   return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
@@ -447,7 +447,7 @@ static void spear_script(Fighter *fighter) {
 
 static bool can_spear(const Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
-  return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->spear_ready && victim->hits <= 3 && victim->action != 0x1008;
+  return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->spear_ready && victim->hits <= 3 && victim->action != ACTION_RETAIL_1008;
 }
 
 static void scorpion_spear(Fighter *fighter) {
@@ -601,25 +601,25 @@ typedef struct GroundAttack {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
-  {{.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = 0x102}, {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208}, 10, 33, 36},
-  {{.clip = 260, .last = MOVE_END, .flags = RETAIL, .action = 0x107}, {65536, -3932, 42532, 20971, 29, 10, 4, 0, 2621}, 8, 19, 22},
-  {{.clip = 315, .last = MOVE_END, .flags = RETAIL, .action = 0x106}, {81264, 34734, 67502, 32768, 28, 10, 4, 0, 3932}, 9, 19, 22},
-  {{.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = 0x104}, {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864}, 9, 29, 29},
-  {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = 0x108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
-  {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = 0x108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
-  {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = 0x103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
-  {{.clip = 313, .last = MOVE_END, .flags = RETAIL, .action = 0x10d}, {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796}, 16, 33, 61},
+  {{.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208}, 10, 33, 36},
+  {{.clip = 260, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0107}, {65536, -3932, 42532, 20971, 29, 10, 4, 0, 2621}, 8, 19, 22},
+  {{.clip = 315, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0106}, {81264, 34734, 67502, 32768, 28, 10, 4, 0, 3932}, 9, 19, 22},
+  {{.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0104}, {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864}, 9, 29, 29},
+  {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
+  {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
+  {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
+  {{.clip = 313, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010D}, {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796}, 16, 33, 61},
 };
 // clang-format on
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
-static const MoveDef s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = 0x10a};
-static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = 0x10a};
+static const MoveDef s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
+static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
 
 static void open_followup(Fighter *fighter, const ButtonTable *buttons) {
   fighter->buttons = buttons;
   fighter->flags = (fighter->flags | FF_FOLLOW_UP) & ~(unsigned)FF_BUSY;
-  fighter->action = 0x1006;
+  fighter->action = ACTION_RETAIL_1006;
 }
 
 static void ground_attack_script(Fighter *fighter) {
@@ -631,10 +631,10 @@ static void ground_attack_script(Fighter *fighter) {
     int t = fighter->ticks, fast = index == G_ROUNDHOUSE && followup ? 5 : 0;
     int active = attack->active - fast;
     fighter->avoids_high = index == G_LOW_KICK && t >= 7 && t < 10;
-    bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(fighter) == 0x2011;
+    bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(fighter) == ACTION_RETAIL_2011;
     if (index == G_CLOSE_HP) {
       int action = victim_action(fighter);
-      gate = action == 0x2001 || action == 0x106 || action == 0x107;
+      gate = action == ACTION_RETAIL_2001 || action == ACTION_RETAIL_0106 || action == ACTION_RETAIL_0107;
     }
     if (!gate && !fighter->connected && t >= active && t <= active + (index == G_ROUNDHOUSE ? 2 : 0)) {
       if (battle_contact(fighter, &attack->record) != CONTACT_MISS) {
@@ -644,7 +644,7 @@ static void ground_attack_script(Fighter *fighter) {
       }
     }
     if (t >= active) {
-      fighter->action = 0x1006;
+      fighter->action = ACTION_RETAIL_1006;
     }
     int end = (fighter->connected ? attack->end_contact : attack->end_miss) - fast;
     switch (index) {
@@ -724,7 +724,7 @@ static void hp_script(Fighter *fighter) {
       fighter_wait_ticks(1);
       fighter->sample_override = phase == 2 && t == active + 2 ? 17 : first + t;
       const Fighter *victim = fighter_opponent(fighter);
-      bool ducking_kick = victim->action == 0x102 && victim->avoids_high;
+      bool ducking_kick = victim->action == ACTION_RETAIL_0102 && victim->avoids_high;
       if (t >= active && t <= active + 2 && !fighter->connected && !ducking_kick) {
         battle_contact(fighter, &hp_record);
       }
@@ -779,7 +779,7 @@ static void scorpion_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
     scorpion_roundhouse(fighter);
-  } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != 0x4001 && victim->action != 0x4005) {
+  } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
     ground_attack(fighter, G_CLOSE_HK);
   } else {
     scorpion_kick(fighter);
@@ -791,7 +791,8 @@ static bool can_ground_throw(const Fighter *fighter, bool low_kick) {
   int a = victim->action;
   float distance = fighter_distance(fighter);
   return (low_kick ? distance < 0.7f : distance <= 0.7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
-         a != 0x10a && a != 0x10b && a != 0x100 && a != 0x102 && a != 0x10e && !(a >= 0x111 && a <= 0x113);
+         a != ACTION_RETAIL_010A && a != ACTION_RETAIL_010B && a != ACTION_RETAIL_0100 && a != ACTION_RETAIL_0102 && a != ACTION_RETAIL_010E &&
+         !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
 }
 
 static void press_jab(Fighter *fighter) {
@@ -834,11 +835,11 @@ typedef struct AirAttack {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const AirAttack air_attacks[] = {
-  {{.clip = 97, .last = MOVE_END, .flags = RETAIL, .action = 0x603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
-  {{.clip = 96, .last = MOVE_END, .flags = RETAIL, .action = 0x604}, {76677, -20316, 68157, 62914, 39, 39, 4, 0, 7864}, 10, 10, 11},
-  {{.clip = 327, .last = MOVE_END, .flags = RETAIL, .action = 0x600}, {67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
-  {{.clip = 55, .last = MOVE_END, .flags = RETAIL, .action = 0x602}, {74055, -7864, 60293, 24903, 23, 23, 4, ATTACK_MARK, 6553}, 6, 10, 6},
-  {{.clip = 58, .last = MOVE_END, .flags = RETAIL, .action = 0x601}, {75366, -2621, 67502, 34078, 22, 22, 4, ATTACK_MARK, 9830}, 10, 10, 10},
+  {{.clip = 97, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
+  {{.clip = 96, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0604}, {76677, -20316, 68157, 62914, 39, 39, 4, 0, 7864}, 10, 10, 11},
+  {{.clip = 327, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0600}, {67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
+  {{.clip = 55, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0602}, {74055, -7864, 60293, 24903, 23, 23, 4, ATTACK_MARK, 6553}, 6, 10, 6},
+  {{.clip = 58, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0601}, {75366, -2621, 67502, 34078, 22, 22, 4, ATTACK_MARK, 9830}, 10, 10, 10},
 };
 // clang-format on
 
@@ -1017,7 +1018,7 @@ static void press_combo_hk(Fighter *fighter) {
 
 static void press_knee_hp(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
-  if ((victim->action == 0x4004 || victim->hits > 1) && fighter_height(fighter) <= 0.5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN))) {
+  if ((victim->action == ACTION_RETAIL_4004 || victim->hits > 1) && fighter_height(fighter) <= 0.5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN))) {
     fighter_interrupt(fighter, enter_uppercut);
   } else {
     press_jab(fighter);
@@ -1033,10 +1034,10 @@ static const ButtonTable close_hk_followup = {
 
 /* Paired ground throws: 0x4de6e4 (LP), 0x4de2f8/318/328 (LK).
  * Native opponent-root alignment is represented by a shared world origin. */
-static const MoveDef s_lk_throw = {.clip = 37, .last = 65, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = 0x501};
-static const MoveDef s_lp_thrown = {.clip = 152, .last = 41, .flags = SF_LOCK, .action = 0x4003};
-static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, .action = 0x4003};
-static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = 0x4003};
+static const MoveDef s_lk_throw = {.clip = 37, .last = 65, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0501};
+static const MoveDef s_lp_thrown = {.clip = 152, .last = 41, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 static void thrown_end_script(Fighter *victim) {
   fighter_fiber_play_to(victim, 130, 1);
@@ -1118,7 +1119,7 @@ static void enter_lk_throw(Fighter *fighter) {
 
 /* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs
  * through bounded C phase tables; no retail task/camera/object scheduler. */
-#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = 0x700}
+#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef fatal_moves[] = {
   FATAL_MOVE(13, 55), FATAL_MOVE(390, 144), FATAL_MOVE(391, 169), FATAL_MOVE(206, 99),
@@ -1313,12 +1314,12 @@ static const AttackRecord sword_records[] = {
 };
 // clang-format on
 #define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
-SWORD_MOVE(s_sword_hp, 235, 0x10e);
-SWORD_MOVE(s_sword_lp, 236, 0x10e);
-SWORD_MOVE(s_sword_back_lp, 237, 0x112);
-SWORD_MOVE(s_sword_back_hp, 238, 0x112);
-SWORD_MOVE(s_spin_start, 223, 0x407);
-SWORD_MOVE(s_spin, 224, 0x407);
+SWORD_MOVE(s_sword_hp, 235, ACTION_RETAIL_010E);
+SWORD_MOVE(s_sword_lp, 236, ACTION_RETAIL_010E);
+SWORD_MOVE(s_sword_back_lp, 237, ACTION_RETAIL_0112);
+SWORD_MOVE(s_sword_back_hp, 238, ACTION_RETAIL_0112);
+SWORD_MOVE(s_spin_start, 223, ACTION_RETAIL_0407);
+SWORD_MOVE(s_spin, 224, ACTION_RETAIL_0407);
 
 static void scorpion_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
@@ -1357,7 +1358,7 @@ static void sword_slash_script(Fighter *fighter) {
     }
     if (fighter->connected || tick >= start + active) {
       fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
-      fighter->action = 0x1006;
+      fighter->action = ACTION_RETAIL_1006;
     }
     int end = clip == 237 ? 48 : clip == 238 ? 41 : 43;
     if (fighter->connected) {

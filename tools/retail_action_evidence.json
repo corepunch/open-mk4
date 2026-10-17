@@ -1,0 +1,243 @@
+{
+  "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
+  "evidence": [
+    {
+      "value": "0x100",
+      "entry": "0x46a680",
+      "site": "0x46a686",
+      "bytes": "b800010000a32cc4530068a05c4e0089048d74000000",
+      "note": "Standing high-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x102",
+      "entry": "0x46a7b0",
+      "site": "0x46a820",
+      "bytes": "b802010000a32cc4530068905d4e0089048d74000000",
+      "note": "Standing low-kick branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x103",
+      "entry": "0x46ba60",
+      "site": "0x46ba8d",
+      "bytes": "c7048d7400000003010000",
+      "note": "Close high-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x104",
+      "entry": "0x46b5a0",
+      "site": "0x46b5a6",
+      "bytes": "b804010000a32cc453006820604e0089048d74000000",
+      "note": "Crouching high-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x106",
+      "entry": "0x46b710",
+      "site": "0x46b716",
+      "bytes": "b806010000a32cc453006858614e0089048d74000000",
+      "note": "Crouching low-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x107",
+      "entry": "0x46b7f0",
+      "site": "0x46b97e",
+      "bytes": "b8070100006858ce5300c7048d68000000030100008b1520c45300a32cc4530089049574000000",
+      "note": "Crouching low-punch branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x108",
+      "entry": "0x46be40",
+      "site": "0x46be46",
+      "bytes": "b808010000a32cc4530089048d74000000",
+      "note": "Close high-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x109",
+      "entry": "0x46ccd0",
+      "site": "0x46cdba",
+      "bytes": "b809010000a32cc4530068a0624e0089048d74000000",
+      "note": "Uppercut entry branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x10a",
+      "entry": "0x46d290",
+      "site": "0x46d9b8",
+      "bytes": "c70485740000000a010000",
+      "note": "Standing high-punch branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x10b",
+      "entry": "0x46dca0",
+      "site": "0x46dcc6",
+      "bytes": "c70485740000000b010000",
+      "note": "Standing low-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x10c",
+      "entry": "0x46ef90",
+      "site": "0x46ef96",
+      "bytes": "b80c0100006a26a32cc453006830ef460089048d74000000",
+      "note": "Sweep entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x10d",
+      "entry": "0x46f1f0",
+      "site": "0x46f1f6",
+      "bytes": "b80d010000a32cc453006800684e0089048d74000000",
+      "note": "Roundhouse entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x111",
+      "entry": "0x4956c0",
+      "site": "0x4956c6",
+      "bytes": "b811010000a32cc453006858c44e0089048d74000000",
+      "note": "Scepter high-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x112",
+      "entry": "0x496c50",
+      "site": "0x496c6b",
+      "bytes": "b812010000a32cc4530089048d74000000",
+      "note": "Back sword low-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x113",
+      "entry": "0x495740",
+      "site": "0x495746",
+      "bytes": "b813010000a32cc4530068a8c44e0089048d74000000",
+      "note": "Scepter back low-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x115",
+      "entry": "0x468610",
+      "site": "0x468616",
+      "bytes": "b815010000a32cc4530068585b4e0089048d74000000",
+      "note": "Scorpion fire entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x204",
+      "entry": "0x47dc00",
+      "site": "0x47dc1b",
+      "bytes": "b804020000a32cc4530089048d74000000",
+      "note": "Sub-Zero slide entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x209",
+      "entry": "0x47fc90",
+      "site": "0x47fca6",
+      "bytes": "b809020000a32cc4530089048d74000000",
+      "note": "Scorpion teleport entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x304",
+      "entry": "0x49bc60",
+      "site": "0x49bc74",
+      "bytes": "b804030000a32cc4530089048d74000000",
+      "note": "Sub-Zero ice entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x30f",
+      "entry": "0x498290",
+      "site": "0x4983ed",
+      "bytes": "b80f030000a32cc4530068b0d6530089048d74000000",
+      "note": "Weapon throw branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x405",
+      "entry": "0x47f4d0",
+      "site": "0x47f518",
+      "bytes": "b805040000a32cc45300ba6c68500089048d74000000",
+      "note": "Clone statue/retreat branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x406",
+      "entry": "0x47f4d0",
+      "site": "0x47f4f1",
+      "bytes": "c704857400000006040000",
+      "note": "Clone close-range branch without statue writes controller action at +0x74."
+    },
+    {
+      "value": "0x407",
+      "entry": "0x480770",
+      "site": "0x48078b",
+      "bytes": "b807040000a32cc4530089048d74000000",
+      "note": "Scorpion sword spin entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x500",
+      "entry": "0x42c590",
+      "site": "0x42c59f",
+      "bytes": "c704857400000000050000",
+      "note": "LP throw entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x501",
+      "entry": "0x42c180",
+      "site": "0x42c1ba",
+      "bytes": "b801050000a32cc4530089048d74000000",
+      "note": "Sub-Zero LK throw entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x502",
+      "entry": "0x46aa80",
+      "site": "0x46aa85",
+      "bytes": "c704857400000002050000",
+      "note": "Shared air throw entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x600",
+      "entry": "0x46c7a0",
+      "site": "0x46c7b4",
+      "bytes": "b800060000a32cc4530089048d74000000",
+      "note": "Straight air-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x601",
+      "entry": "0x46df50",
+      "site": "0x46df56",
+      "bytes": "b801060000a32cc4530089048d74000000",
+      "note": "Diagonal air low-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x602",
+      "entry": "0x46e380",
+      "site": "0x46e394",
+      "bytes": "b802060000a32cc4530089048d74000000",
+      "note": "Diagonal air high-kick entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x603",
+      "entry": "0x46e6c0",
+      "site": "0x46e6d4",
+      "bytes": "b803060000a32cc4530089048d74000000",
+      "note": "Air high-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x604",
+      "entry": "0x46ee30",
+      "site": "0x46ee44",
+      "bytes": "b804060000a32cc4530089048d74000000",
+      "note": "Air low-punch entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x1004",
+      "entry": "0x46d1d0",
+      "site": "0x46d226",
+      "bytes": "b804100000a32cc4530068c0624e0089049574000000",
+      "note": "Weapon draw branch writes controller action at +0x74."
+    },
+    {
+      "value": "0x1008",
+      "entry": "0x487350",
+      "site": "0x4873e4",
+      "bytes": "b808100000a32cc4530089048d74000000",
+      "note": "Spear victim arrival stun writes controller action at +0x74."
+    },
+    {
+      "value": "0x1011",
+      "entry": "0x47fec0",
+      "site": "0x47fec5",
+      "bytes": "c704857400000011100000",
+      "note": "Blocked teleport recoil entry writes controller action at +0x74."
+    }
+  ]
+}

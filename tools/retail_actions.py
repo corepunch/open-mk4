@@ -5,11 +5,13 @@ analysis. Native evidence is explicitly selected and checked against this EXE.
 No archive, native execution, Capstone or upstream checkout is required.
 """
 import ast
+import json
 from pathlib import Path
 import re
 
 from character_catalog import character_name, moves_for
 from scorpion_moves import script_program
+from retail_moves import EXE_SHA256
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / 'game/retail_actions.inc'
@@ -48,6 +50,14 @@ NATIVE = {
         ('reader', 0x49b170, 0x49b2dd, '3d00030000', 'Alternative to owner action 1007 in the spear victim continuation.'),
     ),
 }
+
+_evidence = json.loads(Path(__file__).with_name('retail_action_evidence.json').read_text())
+if _evidence['exe_sha256'] != EXE_SHA256:
+    raise ValueError('Action evidence targets another executable revision')
+for _row in _evidence['evidence']:
+    _value = int(_row['value'], 16)
+    NATIVE[_value] = (*NATIVE.get(_value, ()),
+                      ('writer', int(_row['entry'], 16), int(_row['site'], 16), _row['bytes'], _row['note']))
 
 
 def native_evidence(image, value):
@@ -133,6 +143,8 @@ def action_text(image, value, character=0, limit=80):
                  'The matching assembly calls this container `RoundOverFsmCluster`, but our verified caller is the spear victim continuation. '
                  'That name is not evidence for a round-end meaning.', '',
                  '- [Upstream comparison](%s:155594).' % (ROOT / 'reference/mk4decomp/src/engine/five_block_dispatch_variants.c')]
+    from retail_symbols import reference_rows
+    rows += reference_rows(entry for _, entry, _, _, _ in NATIVE.get(value, ()))
     rows += ['', 'Coverage: selected native sites, decoded selected-roster catalog roots, and direct portable C field comparisons/assignments. '
              'Script paths retain the existing bounded decoder budget. Indirect assignments, masked classifications, uncatalogued roots and transitive '
              'native behavior are not exhaustively indexed. No matches does not establish absence of behavior.', '']

@@ -78,3 +78,4 @@ check: format-check test viewer-test game-test
 	python3 tests/test_retail_symbols.py
 	python3 tests/test_retail_helpers.py
 	python3 tests/test_retail_actions.py
+	python3 tests/test_retail_port.py

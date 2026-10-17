@@ -108,7 +108,7 @@ def port_source(port):
     # Mask comments/strings while preserving offsets for balanced-brace lookup.
     masked = re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',
                     lambda match: re.sub(r'[^\n]', ' ', match[0]), text, flags=re.S)
-    match = re.search(r'^([\w* ]+\b' + re.escape(name) + r'\s*\([^;{}]*\)\s*)\{', masked, re.M)
+    match = re.search(r'^([A-Za-z_][\w* \t]*\b' + re.escape(name) + r'\s*\([^;{}]*\)\s*)\{', masked, re.M)
     if match is None:
         raise ValueError('Missing portable C definition %s in %s' % (name, path))
     depth, end = 1, match.end()

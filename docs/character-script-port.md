@@ -152,6 +152,18 @@ approach, uppercut/shatter, eight cursor passes, a 60-tick wait, then victory.
 Its nested wait helper also advances the victim scene and impact sounds. Scene
 completion returns to the scheduler before ending the finisher or resetting.
 
+Use `--move NAME --port` (with `--character sub_zero` where appropriate) to
+extract these actual C bodies, nested helpers/callbacks, supporting data links,
+raw operands and native values. `--c` remains the retail control-flow view.
+`high_punch`, `lp_throw` and `lk_throw` are now catalogued alongside the special
+moves. Native throw math, random roster sound lists and auxiliary tasks remain
+explicit boundaries; the portable engine's existing gameplay adaptations are
+retained rather than silently claiming those routines have been fully translated.
+The shared Sub-Zero ground throws are a known difference: retail LP selects
+clips 76/153 and sample 25; LK selects 41/165 and native 42c200. The existing
+shared 75/152 and 37/157 gameplay is retained in this migration. `--port` flags
+the discrepancy alongside the correctly roster-selected retail scripts.
+
 Air attack hit-stops, paired ground and air throws, and weapon draw/strike/
 throw/pickup/recovery now use actor fibers too. Paired victims retain their own
 fall/getup lifetimes. Weapon objects still fly and settle independently, and

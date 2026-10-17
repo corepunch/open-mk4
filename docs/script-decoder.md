@@ -8,12 +8,14 @@ that a move's semantics or implementation are complete.
 
 Run from the workspace root. Output goes to stdout; `--output FILE.md` saves
 only the requested report. None of these queries reads the asset archive or
-creates a bundle. Only native queries need Capstone.
+creates a bundle. Native queries and `--port` worksheets need Capstone.
 
 ```sh
 python3 tools/disassemble_retail.py --list-moves
 python3 tools/disassemble_retail.py --character sub_zero --list-moves
 python3 tools/disassemble_retail.py --character sub_zero --move ice
+python3 tools/disassemble_retail.py --character sub_zero --move ice --port
+python3 tools/disassemble_retail.py --move spear --port
 python3 tools/disassemble_retail.py --character sub_zero --action 0x1007
 python3 tools/disassemble_retail.py --character sub_zero --move low_kick --c
 python3 tools/disassemble_retail.py --move spear
@@ -54,12 +56,19 @@ context. The CLI does not accept `--c` or `--raw` for action reports.
 by `tools/retail_actions.py`. Neutral identifiers such as `ACTION_RETAIL_1007`
 preserve the number even when a description is inferred. Verified means the
 recorded use is established, not that every use of that value is understood.
-Unknown values remain explicitly uncatalogued. Initial coverage includes the
-53 direct action literals in the portable game, with unresolved descriptions
+Unknown values remain explicitly uncatalogued. Coverage includes the
+direct action literals in the portable game, with unresolved descriptions
 where no stronger meaning has been recorded. Native sites are deliberately
 selected, not an exhaustive executable index; lexical C navigation does not
 cover indirect assignments or masked classifications. Script roots are the
 existing character catalogs, each with the decoder's 512-instruction bound.
+
+`tools/retail_action_evidence.json` records 34 additional inspected writer spans
+for normals, air attacks, specials and weapons. Every report checks those exact
+bytes against this EXE. Tests also decode each span and verify the literal
+written to controller `+0x74`; changing the input value fails evidence validation.
+Action reports link checked mk4decomp assembly correspondences where available.
+Both character modules and their weapon routines use the shared C identifiers.
 
 For `1007`, projectile recovery is an inference supported by ice/spear script
 placement and the spear owner-action check. The upstream name
@@ -68,6 +77,26 @@ caller is the spear victim continuation. Do not derive gameplay flags or a
 complete semantic mapping from that upstream name or the code's bit pattern.
 
 ## Readable C-style view
+
+`--move NAME --port` collects the current engine entry and nested fiber C
+functions, supporting data links, exact script words/decoded operand roles,
+contact-record C initializers, and native literals with their instruction bytes.
+It includes helper contracts, action evidence, and checked mk4decomp source and
+matching-assembly links. The C bodies come from the workspace; they are review
+and extraction fragments with engine/data dependencies, not automatically
+decompiled x86 or a standalone translation unit. Same-file callback arguments
+are included. Dynamic button/weapon callbacks and engine calls remain explicit
+source boundaries. No other character's C body is substituted for an unported
+character.
+
+The worksheet uses separate budgets of `--limit` C source lines, decoded script
+instructions and native instructions (default 512 each). Native entries share
+one budget and are not recursively expanded; omitted routines retain exact
+follow-up queries. C bodies are emitted completely or linked, never sliced
+mid-function. Native operands are not automatically labeled Q16, actions or
+function arguments based on their numeric value. In particular, group field
+`+0x74` can hold motion data where a controller's `+0x74` holds an action.
+`--port` requires `--move`, supports `--output`, and excludes `--c`/`--raw`.
 
 Use `--character sub_zero --move ice --c` or `--script 0x4ed588 --c`
 for complete C-like control flow over the decoded graph. This view supports all

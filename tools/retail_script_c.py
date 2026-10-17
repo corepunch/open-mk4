@@ -95,7 +95,7 @@ def instruction_c(row):
     if op in (0x51, 0x52, 0x5e):
         return ['contact_query_%s(%d);' % (row['contact_table'].lower(), row['contact']['selector'])]
     if op in (0x29, 0x2d):
-        return ['set_action(%s);' % ('ACTION_1006' if op == 0x29 else '0x1007')]
+        return ['set_action(%s);' % ('ACTION_RETAIL_1006' if op == 0x29 else 'ACTION_RETAIL_1007')]
     if op == 0x24:
         return ['release_attack_bookkeeping();']
     if op == 0x34:
@@ -163,8 +163,8 @@ def program_c(program, limit, character=0):
         leaders.add(entry)
     code = ['enum { %s = %d };' % (animation_name(clip), clip)
             for clip in sorted({row['clip'] for row in ordered if 'clip' in row})]
-    if any(int(row['opcode'], 16) == 0x29 for row in ordered):
-        code.append('enum { ACTION_1006 = 0x1006 };')
+    if any(int(row['opcode'], 16) in (0x29, 0x2d) for row in ordered):
+        code.append('// ACTION_RETAIL_* comes from game/retail_actions.inc; research with --action CODE.')
     if code:
         code.append('')
     code.append('void %s(void) {' % script_name(entry, character))

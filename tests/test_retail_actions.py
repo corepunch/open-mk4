@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
-from retail_actions import action_text, catalog, native_evidence, portable_references, script_writers
+from retail_actions import action_text, catalog, native_evidence, portable_references, script_writers, NATIVE
 from retail_moves import RetailImage
 
 
@@ -24,11 +24,12 @@ class ActionTests(unittest.TestCase):
         self.assertEqual(entries[0x1007]['name'], 'ACTION_RETAIL_1007')
         self.assertEqual(entries[0x1007]['confidence'], 'inferred')
         self.assertEqual(entries[0x1003]['confidence'], 'verified')
-        self.assertEqual(entries[0x100]['confidence'], 'unresolved')
+        self.assertEqual(entries[0x100]['confidence'], 'verified')
+        self.assertEqual(entries[0x1005]['confidence'], 'unresolved')
         self.assertIn('#include "retail_actions.inc"', (ROOT / 'game/game.h').read_text())
 
     def test_native_evidence_matches_and_is_not_silently_trusted(self):
-        for value in (0x1006, 0x1007, 0x300):
+        for value in NATIVE:
             self.assertTrue(native_evidence(self.image, value))
         changed = RetailImage(ROOT / 'MK4/MK-4.EXE')
         struct.pack_into('<I', changed.memory, 0x459767 - 0x400000, 0x1006)

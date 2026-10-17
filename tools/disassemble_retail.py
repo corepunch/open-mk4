@@ -649,17 +649,20 @@ def main():
     mode.add_argument('--action', metavar='CODE', help='Research a controller action code; hexadecimal with or without 0x')
     mode.add_argument('--list-moves', action='store_true', help='List curated move roots for the selected character')
     mode.add_argument('--bundle', action='store_true', help='Explicitly generate the full research bundle')
-    parser.add_argument('--limit', type=int, help='Query instruction limit, 1..512 (default 512 for --c, otherwise 80)')
+    parser.add_argument('--limit', type=int, help='Query limit, 1..512 (default 512 for --c/--port, otherwise 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
     parser.add_argument('--c', action='store_true', help='C-like script flow or researched native contract and portable C adaptation')
+    parser.add_argument('--port', action='store_true', help='Move worksheet: actual fiber C, dependencies, exact operands and checked mk4decomp links (requires Capstone)')
     parser.add_argument('--no-linear', action='store_true', help='For --bundle, omit the large linear recovery fallback')
     args = parser.parse_args()
     if args.limit is None:
-        args.limit = 512 if args.c else 80
+        args.limit = 512 if args.c or args.port else 80
     if not 1 <= args.limit <= 512:
         parser.error('--limit must be between 1 and 512')
     if args.c and (not (args.script or args.move or args.native) or args.raw):
         parser.error('--c requires --script, --move or --native and cannot be combined with --raw')
+    if args.port and (not args.move or args.c or args.raw):
+        parser.error('--port requires --move and cannot be combined with --c or --raw')
     if args.action and args.raw:
         parser.error('--action does not support --raw; use its printed --script/--native queries')
     if not any((args.script, args.native, args.attack, args.move, args.action, args.list_moves, args.bundle)):
@@ -681,6 +684,9 @@ def main():
         elif args.action:
             from retail_actions import action_text
             report = action_text(RetailImage(args.exe), int(args.action, 16), character, args.limit)
+        elif args.port:
+            from retail_port import port_text
+            report = port_text(Disassembly(args.exe), args.move, character, args.limit)
         elif args.native:
             # x86 entries are byte-aligned, unlike VM/data words.
             entry = int(args.native, 16)

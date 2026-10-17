@@ -28,7 +28,7 @@ def moves_for(character):
         return SCORPION
     # These entry scripts contain the original character selectors. Native
     # follow-ups still need research for the requested character.
-    shared = {key: SCORPION[key] for key in ('jab', 'uppercut', 'sweep', 'air_hp', 'air_lp',
+    shared = {key: SCORPION[key] for key in ('high_punch', 'lp_throw', 'lk_throw', 'jab', 'uppercut', 'sweep', 'air_hp', 'air_lp',
                                            'air_kick', 'air_diagonal_hk', 'air_diagonal_lk',
                                            'air_throw', 'fan_fatality', 'spike_fatality')}
     shared.update(high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70))),
@@ -37,6 +37,8 @@ def moves_for(character):
     if character != 4:
         return shared
     shared.update(
+        lk_throw=move(0x42b6b0, (('Sub-Zero paired opening', 0x4de490),),
+                      native=(('roster dispatch', 0x42b6e0), ('Sub-Zero entry', 0x42c180), ('paired continuation', 0x42c200))),
         high_kick=move(0x46a680, (('Sub-Zero attacker', 0x4e5c80), ('recovery', 0x4e6998)), (('B', 2),)),
         low_kick=move(0x46a7b0, (('Sub-Zero attacker', 0x4e6da0),)),
         close_hp=SCORPION['close_hp'], close_hk=SCORPION['close_hk'],

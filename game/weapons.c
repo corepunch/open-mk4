@@ -4,13 +4,13 @@
 #include <string.h>
 
 #define WEAPON_MOVE(c, a, end) {.clip = c, .last = end, .flags = SF_LOCK | SF_RECORD, .action = a}
-static const MoveDef draw_move = WEAPON_MOVE(244, 0x1004, 49);
-static const MoveDef throw_move = WEAPON_MOVE(208, 0x30f, 60);
-static const MoveDef pickup_move = WEAPON_MOVE(209, 0x2006, 14);
-static const MoveDef air_hp = WEAPON_MOVE(252, 0x603, 9);
-static const MoveDef air_lp = WEAPON_MOVE(251, 0x604, 9);
-static const MoveDef landing = WEAPON_MOVE(304, 0x2008, 27);
-static const MoveDef blend_stance = WEAPON_MOVE(286, 0x1006, 0);
+static const MoveDef draw_move = WEAPON_MOVE(244, ACTION_RETAIL_1004, 49);
+static const MoveDef throw_move = WEAPON_MOVE(208, ACTION_RETAIL_030F, 60);
+static const MoveDef pickup_move = WEAPON_MOVE(209, ACTION_RETAIL_2006, 14);
+static const MoveDef air_hp = WEAPON_MOVE(252, ACTION_RETAIL_0603, 9);
+static const MoveDef air_lp = WEAPON_MOVE(251, ACTION_RETAIL_0604, 9);
+static const MoveDef landing = WEAPON_MOVE(304, ACTION_RETAIL_2008, 27);
+static const MoveDef blend_stance = WEAPON_MOVE(286, ACTION_RETAIL_1006, 0);
 #undef WEAPON_MOVE
 static const MoveDef idle = {.clip = 286, .last = MOVE_END};
 static const MoveDef walk = {.clip = 277, .last = MOVE_END};
@@ -275,7 +275,7 @@ void weapon_throw(Fighter *fighter) {
 }
 
 static int pickup_index(const Fighter *fighter) {
-  if (fighter->armed || fighter->action != 0x2001) {
+  if (fighter->armed || fighter->action != ACTION_RETAIL_2001) {
     return -1;
   }
   for (int i = 0; i < MAX_PROJECTILES; ++i) {

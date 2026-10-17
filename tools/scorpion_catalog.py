@@ -11,6 +11,11 @@ def move(entry, scripts=(), contacts=(), native=(), buttons=()):
 
 
 MOVES = {
+    'high_punch': move(0x46d290, native=(('contact/repeat/recovery', 0x46d9b3),)),
+    'lp_throw': move(0x42c560, (('roster-selected attacker/victim', 0x4de798),),
+        native=(('precondition', 0x42c3d0), ('entry/roster selection', 0x42c590), ('release adjustment', 0x42ceb0))),
+    'lk_throw': move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328)),
+        native=(('Scorpion entry', 0x42bdd0), ('paired continuation', 0x42bdf0),)),
     'jab': move(0x46dca0,
         (('attacker', 0x4e62f0), ('second punch', 0x4e6330), ('repeat', 0x4e6360), ('recovery', 0x4e63b0)),
         (('A', 1),), (('repeat predicate', 0x46de60),)),
