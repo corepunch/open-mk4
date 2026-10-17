@@ -211,3 +211,86 @@ static bool script_repeat_jab(const Fighter *fighter) {
   q16 dx = other->body.pos[AXIS_X] - fighter->body.pos[AXIS_X];
   return (fighter->buffered & BUTTON_BIT(BUTTON_LOW_PUNCH)) != 0 && (fighter->facing > 0 ? dx >= 0 : dx <= 0);
 }
+
+void mk4_script_context_sound(Fighter *fighter, int selector) {
+  (void)fighter;
+  require(selector >= 0 && selector < 20, "Invalid context sound selector");
+  battle_sound(SOUND_CONTEXT, selector);
+}
+
+void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, int gravity) {
+  /* 490910 chooses camera-side X motion. The portable simulation resolves
+   * that symmetric motion along the pair axis. */
+  require(left == -right, "Asymmetric reaction motion needs an explicit binding");
+  fighter_set_speed(fighter, left);
+  fighter->body.vel[AXIS_Y] = up;
+  fighter->body.gravity = gravity;
+}
+
+void mk4_script_landing_motion(Fighter *fighter) {
+  /* 4707e0 is a twelve-tick sound clock, separate from world landing. */
+  if (++fighter->script_timer >= 12) {
+    fighter->script_timer = 0;
+    battle_sound(SOUND_C, 0x58);
+  }
+}
+
+void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample) {
+  bind_clip(fighter, clip, count, sample);
+  fighter->action = ACTION_RETAIL_0700;
+  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
+}
+
+void mk4_script_fan_cycle(Fighter *fighter) {
+  (void)fighter; /* Native 43d530 returns to its scene coordinator. */
+}
+
+void mk4_script_fan_victim_end(Fighter *victim) {
+  victim->appearance = APPEARANCE_HIDDEN;
+  fighter_fiber_finish(NULL);
+}
+
+static void fan_watch(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  int rise = mini(30, ++fighter->script_timer);
+  victim->body.pos[AXIS_Y] = victim->body.ground - rise * 0x3333;
+  if (fighter->script_timer >= 102) {
+    fighter_cancel_all_fibers();
+    battle_end_finisher();
+  }
+}
+
+void mk4_script_fan_tail(Fighter *fighter, FighterFn cycle, FighterFn release, FighterFn victim_release) {
+  for (int i = 0; i < 31; ++i) {
+    cycle(fighter);
+  }
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter_cancel_fiber(victim);
+  victim->sample_override = 69;
+  fighter_start_fiber(victim, victim_release, NULL);
+  fighter->script_timer = 0;
+  fighter->body.physics = fan_watch;
+  release(fighter);
+}
+
+static void finish_scene(Fighter *fighter) {
+  (void)fighter;
+  battle_end_finisher();
+}
+
+void mk4_script_spike_tail(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  while (g_battle.phase_ticks < 324) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = mini(19, fighter->sample_override + 1);
+    if (g_battle.phase_ticks >= 64) {
+      int rise = mini(22, g_battle.phase_ticks - 64);
+      mk4_script_scene_pose(victim, 128, 110, mini(31, rise * 2));
+      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+    }
+  }
+  const MoveDef *victory = roster_def(fighter->roster)->moves[S_VICTORY];
+  fighter_fiber_move(fighter, S_VICTORY, victory);
+  fighter->sample_override = victory->last == MOVE_END ? 0 : victory->last;
+  fighter_fiber_finish(finish_scene);
+}

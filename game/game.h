@@ -449,7 +449,8 @@ struct Fighter {
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase, script_timer;
-  q16 saved_motion[3]; /* native save/restore around blocking generated playback */
+  FighterFn paired_release; /* native peer continuation selected by a paired move */
+  q16 saved_motion[3];      /* native save/restore around blocking generated playback */
   const WeaponStrike *weapon_strike;
   bool weapon_travel;
   int blend_clip, blend_sample, blend_ticks, blend_duration;
@@ -483,7 +484,8 @@ enum {
   PROJECTILE_ICE = 3,
   PROJECTILE_CLONE = 4,
   PROJECTILE_FIREBALL = 5,
-  PROJECTILE_FATAL_FIREBALL = 6
+  PROJECTILE_FATAL_FIREBALL = 6,
+  PROJECTILE_EFFECT = 7
 };
 
 typedef struct OrbitLightDef {

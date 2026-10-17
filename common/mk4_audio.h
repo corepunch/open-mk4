@@ -20,6 +20,7 @@ enum {
   SOUND_IMPACT_VOICE, /* 48a230 selector 1, indexed by roster. */
   SOUND_THROW_VOICE,  /* 489ff0 selector 8, roster remap 4ead18. */
   SOUND_DRAW_VOICE,   /* 48a230 selector 0, weapon draw voice. */
+  SOUND_CONTEXT,      /* Opcode 26 / 48a100, table 4eaaf8. */
   SOUND_BANK_COUNT
 };
 

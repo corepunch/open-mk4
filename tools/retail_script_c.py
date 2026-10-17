@@ -76,6 +76,11 @@ def instruction_c(row):
     if op in (0x49, 0x47) and (inline >> 8) in (0, 2):
         lines = ['bind_animation(%s);' % animation_name(row['clip'])] if 'clip' in row else []
         return lines + ['%s(%d);' % ('show_sample' if op == 0x49 else 'advance_to_sample', arg)]
+    if op == 0x48:
+        prefix = ['bind_clip(%s);' % animation_name(row['clip'])] if 'clip' in row else []
+        return prefix + ['play_remaining_clip();']
+    if op == 0x4e:
+        return ['save_reaction_context();']
     if op in (0x03, 0x07):
         return ['finish_%s();' % ('forwards' if op == 0x03 else 'backwards')]
     if op in (0x04, 0x06):

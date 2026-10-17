@@ -619,8 +619,8 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   sound_bank_load(&assets->audio, &archive);
   /* 48a0d0 accepts indexed selectors 0..65 at 4ead30. Do not alias B. */
   const uint32_t sound_tables[] = {
-      0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, image_u32(&exe, 0x53d0a4) * 4, image_u32(&exe, 0x53d000 + 8 * 4) * 4, image_u32(&exe, 0x53d0a0) * 4};
-  const int sound_counts[] = {51, 184, 113, 66, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT};
+      0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, image_u32(&exe, 0x53d0a4) * 4, image_u32(&exe, 0x53d000 + 8 * 4) * 4, image_u32(&exe, 0x53d0a0) * 4, 0x4eaaf8};
+  const int sound_counts[] = {51, 184, 113, 66, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT, 20};
   for (int bank = 0; bank < SOUND_BANK_COUNT; ++bank) {
     assets->audio.event_counts[bank] = sound_counts[bank];
     for (int i = 0; i < sound_counts[bank]; ++i) {

@@ -53,7 +53,7 @@ class ActionTests(unittest.TestCase):
         entries = catalog()
         refs = '\n'.join(portable_references(0x1007, entries))
         self.assertIn('game/c_scorpion.c:', refs)
-        self.assertIn('game/c_sub_zero.c:', refs)
+        self.assertIn('game/generated/sub_zero.inc:', refs)
         self.assertIn('ACTION_RETAIL_1007', refs)
         self.assertIn('**reader**', '\n'.join(portable_references(0x1003, entries)))
         unknown = action_text(self.image, 0xdeadbeef)

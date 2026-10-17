@@ -37,8 +37,8 @@ class PortTests(unittest.TestCase):
                     self.assertTrue(code.endswith('}'))
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
-        self.assertIn('ice_script', ice)
-        self.assertIn('ice_projectile', ice)  # A callback argument, not an inline call.
+        self.assertIn('retail_script_004ed588', ice)
+        self.assertIn('ice_projectile', source_closure(('game/c_sub_zero.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
             port_source(('game/c_sub_zero.c', 'if'))
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
@@ -46,7 +46,7 @@ class PortTests(unittest.TestCase):
 
     def test_ice_and_native_clone_have_reusable_fibers_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
-        for value in ('static void ice_script(', 'fighter_wait_ticks(1);', 'cycle < 2', 'fighter_fiber_play_to(fighter, 18, -1)',
+        for value in ('static inline void retail_script_004ed588(', 'fighter_wait_ticks(1);', 'loop_counter = 2u', 'fighter_fiber_play_to(fighter, 18, -1);',
                       'ACTION_RETAIL_1007', 'raw_fixed=', 'retail_contact_', '0x570a', '0049bc74', 'mk4decomp',
                       'Existing engine C', 'not a standalone translation unit', 'literal', 'control target'):
             self.assertIn(value, ice)
@@ -92,8 +92,8 @@ class PortTests(unittest.TestCase):
         self.assertEqual(image.word(0x4ddfb8 + 4 * 4), 0x42c180)  # Native byte address, not VM code.
         self.assertEqual(moves_for(4)['lk_throw']['scripts'][0][1], 0x4de490)
         for name, fragments in (
-                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'lp_thrown_script')),
-                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'lk_thrown_script'))):
+                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'retail_script_004de798')),
+                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'retail_script_004de490'))):
             text = port_text(self.disassembly, name, 4, 64)
             self.assertIn('Port notes', text)
             for fragment in fragments:
@@ -148,7 +148,7 @@ class PortTests(unittest.TestCase):
         base = [sys.executable, tool, '--exe', str(ROOT / 'MK4/MK-4.EXE'), '--archive', 'missing']
         with tempfile.TemporaryDirectory() as directory:
             result = subprocess.run([*base, '--character', 'sub_zero', '--move', 'ice', '--port'], cwd=directory, text=True, capture_output=True, check=True)
-            self.assertIn('ice_script', result.stdout)
+            self.assertIn('retail_script_004ed588', result.stdout)
             self.assertEqual(list(Path(directory).iterdir()), [])
             for args in (['--port'], ['--port', '--script', '4ed588'], ['--port', '--move', 'ice', '--c'],
                          ['--port', '--move', 'ice', '--raw'], ['--move', 'ice', '--port', '--limit', '0']):

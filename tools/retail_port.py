@@ -72,6 +72,13 @@ SPECIFIC = {
         'weapon_throw': ('game/weapons.c', 'weapon_throw')},
 }
 
+# Generated VM entries are first-class extraction sources. Native-only entries
+# still point at their engine integration above.
+for _name, _move in moves_for(4).items():
+    if _move['scripts']:
+        SPECIFIC[4][_name] = ('game/generated/sub_zero.inc', 'retail_script_%08x' % _move['scripts'][0][1])
+
+
 PORT_NOTES = {
     (4, 'lp_throw'): 'Retail selector 4de798[4] chooses 4de6b8: owner/victim 76/153, damage 0x2666 at sample 25, '
                     'owner return after sample 48. Reaction 102 plays 142/141/143, waits 20 and reverses into getup 328. '

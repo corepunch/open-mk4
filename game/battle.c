@@ -563,6 +563,10 @@ void battle_step(const Input input[2]) {
         fighter->ticks++;
         if (fighter->script != NULL) {
           fighter->script(fighter);
+        } else if (g_battle.phase == PHASE_MATCH_OVER && fighter_fiber_active(fighter)) {
+          /* Finisher presentation may keep a generated pose loop after the
+           * result. The next round/reset retires its actor-owned stack. */
+          fighter_step_fiber(fighter);
         } else if (fighter->sequence != NULL) {
           fighter_step_sequence(fighter);
         }

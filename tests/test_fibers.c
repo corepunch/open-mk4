@@ -197,8 +197,8 @@ static void phase_and_paired_playback(void) {
     fighter_start_fiber(&g_battle.fighters[owner], pair_owner_script, cleanup);
     advance(4);
     check(event_count == 4 && events[1][0] == 1 && events[1][1] == owner && events[1][2] == 10 && events[2][0] == 1 && events[2][1] == 1 - owner &&
-              events[2][2] == 20 && events[3][0] == (owner == 0 ? 1 : 2) && events[3][2] == 21,
-        "paired entry must start on the host after owner yields, then follow the fixed P1/P2 actor order");
+              events[2][2] == 20 && events[3][0] == 2 && events[3][2] == 21,
+        "paired entry must start on the host after owner yields and suspend a full tick in either player slot");
     check(cleaned[owner] == 1 && cleaned[1 - owner] == 2 && !fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
         "paired replacement/completion must release both stacks exactly once");
   }

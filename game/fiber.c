@@ -79,6 +79,9 @@ static void fiber_entry(mco_coro *coroutine) {
 
 static void fiber_resume(MoveFiber *slot) {
   require(running == NULL, "Move fibers must be scheduled by the simulation thread");
+  if (!slot->started) {
+    slot->last_tick = g_battle.ticks;
+  }
   slot->started = true;
   running = slot;
   mco_result result = mco_resume(slot->coroutine);

@@ -33,7 +33,7 @@ class Binding:
             raise ValueError('Invalid C binding symbol')
         if not self.roles or not set(self.roles) <= {'call', 'tail', 'predicate', 'physics', 'spawn', 'handler'}:
             raise ValueError('Invalid binding roles')
-        if not set(self.arguments) <= {'fighter', 'arg_u8', 'task_type', 'selector_u32', 'word0_i32', 'word1_i32', 'word2_i32', 'inline_lo_u12', 'inline_hi_u12'}:
+        if not set(self.arguments) <= {'fighter', 'arg_u8', 'task_type', 'selector_u32', 'word0_i32', 'word1_i32', 'word2_i32', 'word3_i32', 'inline_lo_u12', 'inline_hi_u12'}:
             raise ValueError('Invalid binding argument type')
         if self.result not in ('void', 'flags') or self.flow not in ('immediate', 'suspend', 'terminal', 'independent'):
             raise ValueError('Invalid binding result/flow')
@@ -124,7 +124,7 @@ CHARACTER_BINDINGS[3][0x43db50] = Binding('liu_script_fan_victim_end', 'game/c_l
 
 BINDINGS[0x4595e0] = Binding('mk4_script_draw_voice', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='4595e0; bounded native listing and docs/liu-kang-scripts.md', inline_values=(0,))
 BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='459720 -> 489ff0, selector8 table53d000 and remap4ead18', adaptation='Shared audio loader resolves roster throw voices from the same table', inline_values=(8,))
-BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 4, 22, 23, 36, 56, 57, 58, 60, 62))
+BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 4, 6, 22, 23, 36, 56, 57, 58, 60, 62))
 BINDINGS[0x45ae50] = Binding('mk4_script_pair_adjust', 'game/script.c', ('handler',), ('fighter', 'word0_i32'), result='void', evidence='45ae50; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b030] = Binding('mk4_script_disarm', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='45b030; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b1b0] = Binding('mk4_script_impact', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='45b1b0; bounded native listing and docs/liu-kang-scripts.md')
@@ -139,6 +139,64 @@ BINDINGS[0x47ed40] = Binding('mk4_script_land', 'game/script.c', ('tail',), ('fi
 BINDINGS[0x47ef10] = Binding('mk4_script_land', 'game/script.c', ('tail',), ('fighter',), result='void', flow='terminal', evidence='47ef10; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x48f6e0] = Binding('mk4_script_save_motion', 'game/script.c', ('call',), ('fighter',), result='void', evidence='48f6e0; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x48f750] = Binding('mk4_script_restore_motion', 'game/script.c', ('call',), ('fighter',), result='void', evidence='48f750; bounded native listing and docs/liu-kang-scripts.md')
+CHARACTER_BINDINGS[4] = {
+    0x470420: Binding('script_ready', 'game/c_sub_zero.c', ('tail',), flow='terminal', evidence='470420 controller return; reaction 102 routes to native 488b80 getup'),
+    0x46a790: Binding('script_kick_tail', 'game/c_sub_zero.c', ('tail',), evidence='46a790; bounded native listing; docs/character-script-port.md'),
+    0x46b740: Binding('script_crouch_lk_tail', 'game/c_sub_zero.c', ('tail',), evidence='46b740; bounded native listing; docs/character-script-port.md'),
+    0x46bb60: Binding('script_knee_tail', 'game/c_sub_zero.c', ('tail',), evidence='46bb60; bounded native listing; docs/character-script-port.md'),
+    0x46bf10: Binding('script_close_hp_tail', 'game/c_sub_zero.c', ('tail',), evidence='46bf10; bounded native listing; docs/character-script-port.md'),
+    0x46c2c0: Binding('script_combo_hp_tail', 'game/c_sub_zero.c', ('tail',), evidence='46c2c0; bounded native listing; docs/character-script-port.md'),
+    0x46c7f0: Binding('script_air_kick_tail', 'game/c_sub_zero.c', ('tail',), evidence='46c7f0; bounded native listing; docs/character-script-port.md'),
+    0x46cde0: Binding('uppercut_script', 'game/c_sub_zero.c', ('tail',), evidence='46cde0; bounded native listing; docs/character-script-port.md'),
+    0x46d260: Binding('script_draw_equip', 'game/c_sub_zero.c', ('tail',), evidence='46d260; bounded native listing; docs/character-script-port.md'),
+    0x46e070: Binding('script_air_lk_tail', 'game/c_sub_zero.c', ('tail',), evidence='46e070; bounded native listing; docs/character-script-port.md'),
+    0x46e4d0: Binding('script_air_diagonal_tail', 'game/c_sub_zero.c', ('tail',), evidence='46e4d0; bounded native listing; docs/character-script-port.md'),
+    0x46e730: Binding('script_air_hp_tail', 'game/c_sub_zero.c', ('tail',), evidence='46e730; bounded native listing; docs/character-script-port.md'),
+    0x46eea0: Binding('script_air_lp_tail', 'game/c_sub_zero.c', ('tail',), evidence='46eea0; bounded native listing; docs/character-script-port.md'),
+    0x46f080: Binding('script_sweep_tail', 'game/c_sub_zero.c', ('tail',), evidence='46f080; bounded native listing; docs/character-script-port.md'),
+    0x46f220: Binding('script_roundhouse_start', 'game/c_sub_zero.c', ('tail',), evidence='46f220; bounded native listing; docs/character-script-port.md'),
+    0x46f270: Binding('script_roundhouse_tail', 'game/c_sub_zero.c', ('tail',), evidence='46f270; bounded native listing; docs/character-script-port.md'),
+    0x42c200: Binding('script_lk_rebase', 'game/c_sub_zero.c', ('tail',), evidence='42c200; bounded native listing; docs/character-script-port.md'),
+    0x42c220: Binding('script_lk_damage', 'game/c_sub_zero.c', ('tail',), evidence='42c220; bounded native listing; docs/character-script-port.md'),
+    0x42c300: Binding('script_lk_owner_return', 'game/c_sub_zero.c', ('tail',), evidence='42c300; bounded native listing; docs/character-script-port.md'),
+    0x42ce80: Binding('script_lp_owner_return', 'game/c_sub_zero.c', ('tail',), evidence='42ce80; bounded native listing; docs/character-script-port.md'),
+    0x487220: Binding('script_lk_victim_rise', 'game/c_sub_zero.c', ('tail',), evidence='487220; bounded native listing; docs/character-script-port.md'),
+    0x47dc40: Binding('slide_script', 'game/c_sub_zero.c', ('tail',), evidence='47dc40; bounded native listing; docs/character-script-port.md'),
+    0x47de00: Binding('script_slide_return', 'game/c_sub_zero.c', ('tail',), evidence='47de00; bounded native listing; docs/character-script-port.md'),
+    0x445150: Binding('script_first_begin', 'game/c_sub_zero.c', ('tail',), evidence='445150; bounded native listing; docs/character-script-port.md'),
+    0x445220: Binding('script_first_pull', 'game/c_sub_zero.c', ('tail',), evidence='445220; bounded native listing; docs/character-script-port.md'),
+    0x445240: Binding('script_first_cues1', 'game/c_sub_zero.c', ('tail',), evidence='445240; bounded native listing; docs/character-script-port.md'),
+    0x445280: Binding('script_first_cues2', 'game/c_sub_zero.c', ('tail',), evidence='445280; bounded native listing; docs/character-script-port.md'),
+    0x4452b0: Binding('script_first_cues3', 'game/c_sub_zero.c', ('tail',), evidence='4452b0; bounded native listing; docs/character-script-port.md'),
+    0x4452e0: Binding('script_first_cues4', 'game/c_sub_zero.c', ('tail',), evidence='4452e0; bounded native listing; docs/character-script-port.md'),
+    0x445310: Binding('script_first_head', 'game/c_sub_zero.c', ('tail',), evidence='445310; bounded native listing; docs/character-script-port.md'),
+    0x445510: Binding('script_first_victim_blends', 'game/c_sub_zero.c', ('tail',), evidence='445510; bounded native listing; docs/character-script-port.md'),
+    0x4456c0: Binding('script_first_victim_collapse', 'game/c_sub_zero.c', ('tail',), evidence='4456c0; bounded native listing; docs/character-script-port.md'),
+    0x445700: Binding('script_first_victim_end', 'game/c_sub_zero.c', ('tail',), evidence='445700; bounded native listing; docs/character-script-port.md'),
+    0x41b080: Binding('script_breath_victim_end', 'game/c_sub_zero.c', ('tail',), evidence='41b080; bounded native listing; docs/character-script-port.md'),
+    0x41b440: Binding('script_breath_approach', 'game/c_sub_zero.c', ('tail',), evidence='41b440; bounded native listing; docs/character-script-port.md'),
+    0x41b450: Binding('script_breath_slide', 'game/c_sub_zero.c', ('tail',), evidence='41b450; bounded native listing; docs/character-script-port.md'),
+    0x41b570: Binding('script_breath_shatter', 'game/c_sub_zero.c', ('tail',), evidence='41b570; bounded native listing; docs/character-script-port.md'),
+    0x4712e0: Binding('script_victory', 'game/c_sub_zero.c', ('tail',), evidence='4712e0; bounded native listing; docs/character-script-port.md'),
+    0x43d460: Binding('script_fan_tail', 'game/c_sub_zero.c', ('tail',), evidence='43d460; bounded native listing; docs/character-script-port.md'),
+    0x43d530: Binding('script_fan_cycle', 'game/c_sub_zero.c', ('tail',), evidence='43d530; bounded native listing; docs/character-script-port.md'),
+    0x43d6f0: Binding('script_fan_victory', 'game/c_sub_zero.c', ('tail',), evidence='43d6f0; bounded native listing; docs/character-script-port.md'),
+    0x43db50: Binding('script_fan_victim_end', 'game/c_sub_zero.c', ('tail',), evidence='43db50; bounded native listing; docs/character-script-port.md'),
+    0x467fc0: Binding('script_spike_tail', 'game/c_sub_zero.c', ('tail',), evidence='467fc0; bounded native listing; docs/character-script-port.md'),
+}
+CHARACTER_BINDINGS[4][0x45b1f0] = Binding('script_reaction', 'game/c_sub_zero.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b1f0 native contract; explicit engine body/scene context')
+BINDINGS[0x45af60] = Binding('mk4_script_reaction_motion', 'game/script.c', ('handler',), ('fighter', 'word0_i32', 'word1_i32', 'word2_i32', 'word3_i32'), evidence='45af60 native contract; explicit engine body/scene context')
+BINDINGS[0x4596a0] = Binding('mk4_script_context_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='4596a0 native contract; explicit engine body/scene context')
+BINDINGS[0x4913a0] = Binding('fighter_friction', 'game/reactions.c', ('physics',), ('fighter',), evidence='4913a0 native contract; explicit engine body/scene context')
+BINDINGS[0x4707e0] = Binding('mk4_script_landing_motion', 'game/script.c', ('physics',), ('fighter',), evidence='4707e0 native contract; explicit engine body/scene context')
+CHARACTER_BINDINGS[4][0x49bcb0] = Binding('script_spawn_ice', 'game/c_sub_zero.c', ('spawn',), ('fighter', 'task_type'), evidence='49bcb0 native contract; explicit engine body/scene context', flow='independent', task_types=(66,))
+CHARACTER_BINDINGS[4][0x41bbb0] = Binding('script_breath_object', 'game/c_sub_zero.c', ('spawn',), ('fighter', 'task_type'), evidence='41bbb0 native contract; explicit engine body/scene context', flow='independent', task_types=(0,))
+CHARACTER_BINDINGS[4][0x41b860] = Binding('script_breath_freeze', 'game/c_sub_zero.c', ('spawn',), ('fighter', 'task_type'), evidence='41b860 native contract; explicit engine body/scene context', flow='independent', task_types=(0,))
+
+CHARACTER_BINDINGS[4][0x46aae0] = Binding('script_air_release', 'game/c_sub_zero.c', ('tail',), evidence='46aae0 releases pair and applies D-record damage before 4e5e50')
+BINDINGS[0x46ab20] = Binding('mk4_script_land', 'game/script.c', ('tail',), flow='terminal', evidence='46ab20 shared landing return')
+BINDINGS[0x484b60] = Binding('mk4_script_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal', evidence='484b60 released air victim native getup')
+
 
 def bindings_for(character):
     from character_catalog import CHARACTERS

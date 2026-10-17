@@ -385,7 +385,7 @@ static void air_throw_script(Fighter *fighter) {
   }
 }
 
-void mk4_air_throw(Fighter *fighter) {
+static void air_throw_start(Fighter *fighter, bool generated) {
   if (!mk4_can_air_throw(fighter)) {
     fighter_ready(fighter);
     return;
@@ -410,7 +410,74 @@ void mk4_air_throw(Fighter *fighter) {
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  battle_sound(SOUND_INDEXED, 13); /* 4e5e28 -> token 2100, sample 420. */
+  if (!generated) {
+    battle_sound(SOUND_INDEXED, 13);
+  } /* Generated owner emits this cue. */
   fighter_start_fiber(fighter, air_throw_script, NULL);
   fighter_start_fiber(victim, air_thrown_script, NULL);
+}
+
+void mk4_script_air_getup(Fighter *victim) {
+  if (victim->health <= 0) {
+    fighter_fiber_finish(NULL);
+  }
+  victim->facing = -victim->facing;
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_throw_getup);
+  victim->sample_override = 46;
+  fighter_fiber_play_to(victim, 79, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(fighter_ready);
+}
+
+static void air_generated_victim(Fighter *victim) {
+  Fighter *owner = (Fighter *)fighter_opponent(victim);
+  while (victim->flags & FF_PAIRED) {
+    fighter_wait_ticks(1);
+    if (owner->pending != NULL || owner->action != 0x502) {
+      air_throw_drop(victim);
+      victim->sample_override = 28;
+    }
+    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+  }
+  victim->sample_override = 28;
+  victim->paired_release(victim);
+}
+
+void mk4_script_air_throw_release(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter->flags &= ~(unsigned)FF_PAIRED;
+  air_throw_drop(victim);
+  victim->sample_override = 28;
+  victim->reaction = 89;
+  battle_damage(victim, 0x2147);
+  if (victim->health <= 0) {
+    fighter->body.gravity = 0x28f;
+  }
+}
+
+static void air_generated_cleanup(Fighter *fighter) {
+  if ((fighter->flags & FF_PAIRED) && fighter_airborne(fighter)) {
+    fighter->body.gravity = 0x28f;
+  }
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter->flags &= ~(unsigned)FF_PAIRED;
+  if (victim->flags & FF_PAIRED) {
+    air_throw_drop(victim);
+    victim->sample_override = 28;
+  }
+}
+
+void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
+  air_throw_start(fighter, true);
+  if (!(fighter->flags & FF_PAIRED)) {
+    return;
+  }
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  victim->paired_release = victim_script;
+  fighter_start_fiber(fighter, owner_script, air_generated_cleanup);
+  fighter_start_fiber(victim, air_generated_victim, NULL);
+}
+
+void mk4_air_throw(Fighter *fighter) {
+  air_throw_start(fighter, false);
 }

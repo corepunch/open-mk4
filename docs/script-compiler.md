@@ -172,3 +172,30 @@ the existing audio loader with the native roster remap, rather than aliasing the
 unrelated indexed sound bank. Shared scheduling is covered once
 by the existing fiber suite. `make check` includes regeneration, strict generated-only
 coverage, compiler tests and existing game/asset/archive regressions.
+
+## Sub-Zero integration
+
+Sub-Zero generates all 61 reviewed roots, including the native-entered spine
+continuations, fan continuations and the victory selector reached by `4712e0`.
+Its owner and victim fibers call generated code independently; native adapters
+retain contact runners, pair alignment, object allocation, blends and camera
+operations. The former VM timing/finisher phase tables are removed.
+
+Shared bindings now cover reaction motion (`45af60`, four signed operands),
+friction, the native twelve-tick sound callback and the separate opcode-26
+20-entry sound bank at `4eaaf8`. Normal and fast ice startup, slide contact
+branches, and the LP/LK throw continuations come directly from decoded words.
+Static selection also corrects Sub-Zero's diagonal air clips to 56 and 59 and
+uses their own contact records. Generated draw includes the script's final wait;
+air throw holds sample 29 after its counted advance, before forward playback.
+
+A newly started peer fiber starts its wait deadline on the current simulation
+tick. It cannot consume that wait again when its player slot is pumped later
+in the same tick. Shared fiber tests cover both actor orders. Result-screen
+presentation may continue an existing generated finisher pose loop; reset retires
+that actor stack through the normal fiber lifetime API.
+
+Portable scene adaptations remain explicit: context-camera requests use shared
+framing, ice breath uses the bounded effect pool, native blends use scene helpers,
+and stage tasks use shared arena completion. These adaptations do not translate
+VM opcodes in C adapters or emulate retail tasks.

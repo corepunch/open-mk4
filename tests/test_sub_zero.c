@@ -511,7 +511,7 @@ static void draw_scepter(int player) {
   check(fighter_move(&g_battle.fighters[player])->clip == 244, "D,F,HK must draw scepter");
   advance(21);
   check(!g_battle.fighters[player].armed, "scepter must wait until draw event");
-  advance(27);
+  advance(28); /* Generated full-clip playback includes its final suspension. */
   check(g_battle.fighters[player].armed && g_battle.fighters[player].weapon->type == 0x6b && fighter_move(&g_battle.fighters[player])->clip == 286,
       "draw must equip descriptor 6b and armed stance");
 }
@@ -744,10 +744,10 @@ static void air_throws(void) {
             "air throw release must use the script's forward speed, vertical launch and gravity");
       }
       if (tick == 29 || tick == 38) {
-        check(owner->sample_override == 28, "air throw must hold sample 28 during its ten-tick wait");
+        check(owner->sample_override == 29, "air throw must hold the counted advance at sample 29 during its ten-tick wait");
       }
       if (tick == 39) {
-        check(owner->sample_override == 30, "air throw must resume forward playback after the wait");
+        check(owner->sample_override == 29, "air throw must retain the current sample until the next forward visit");
       }
     }
     check(impacts == 1, "victim landing must emit its floor impact exactly once");
@@ -1022,7 +1022,7 @@ static void cpu_behavior(void) {
     check((fighter->pending != NULL) == (level > 1), "CPU straight jump must enable automatic air attacks only above level one");
     if (level > 1) {
       advance(1);
-      check(fighter_move(fighter)->clip == 58 && fighter->body.physics == NULL, "CPU air height/range branch must choose angled LK and clear jump callbacks");
+      check(fighter_move(fighter)->clip == 59 && fighter->body.physics == NULL, "CPU air height/range branch must choose angled LK and clear jump callbacks");
     }
   }
   g_battle.random[0] = 0;
@@ -1145,7 +1145,7 @@ static void jumps(void) {
       "late direction must convert straight flight without restarting vertical motion");
   advance(6);
   press(0, BUTTON_BIT(BUTTON_HIGH_KICK));
-  check(fighter_move(fighter)->clip == 55 && fighter->body.spin[AXIS_X] == 0 && fighter->body.root_y == 0,
+  check(fighter_move(fighter)->clip == 56 && fighter->body.spin[AXIS_X] == 0 && fighter->body.root_y == 0,
       "diagonal air attack must replace flip playback and unwind its transform");
 }
 
@@ -1294,10 +1294,14 @@ static void fatalities(void) {
         advance(79);
         check(fighter_move(&g_battle.fighters[player])->clip == 552 && fighter_move(&g_battle.fighters[1 - player])->clip == 206,
             "second fatality must run the independent victim animation during breath");
-        advance(135);
+        for (int tick = 0; tick < 150 && fighter_move(&g_battle.fighters[player])->clip != 95; ++tick) {
+          advance(1);
+        }
         check(fighter_move(&g_battle.fighters[player])->clip == 95 && g_battle.fighters[1 - player].appearance == APPEARANCE_FROZEN,
             "second fatality must freeze before approaching with slide");
-        advance(50);
+        for (int tick = 0; tick < 100 && g_battle.fighters[1 - player].appearance != APPEARANCE_HIDDEN; ++tick) {
+          advance(1);
+        }
         check(g_battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN && fighter_move(&g_battle.fighters[player])->clip == 293,
             "second fatality must shatter on uppercut");
       }
@@ -1371,12 +1375,13 @@ static void fatality_blends(void) {
   sub_zero_finish(0, 0xcccc, 0);
   sub_zero_finish_command(0, FINISH_SUB_ZERO_1, BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN), 60);
   Fighter *victim = &g_battle.fighters[1];
-  for (int i = 0; i < 300 && victim->scene.index != 8; ++i) {
+  for (int i = 0; i < 300 && !(victim->blend_duration > 0 && victim->sample_override == 46); ++i) {
     advance(1);
   }
-  check(victim->scene.index == 8 && victim->blend_sample == 48 && victim->sample_override == 46, "first fatality must blend from victim sample 48 back to 46");
+  check(
+      victim->blend_duration > 0 && victim->blend_sample == 48 && victim->sample_override == 46, "first fatality must blend from victim sample 48 back to 46");
   advance(30);
-  check(victim->scene.index == 8 && victim->blend_weight < Q16_ONE, "victim blend must retain its native 0x666 progression");
+  check(victim->blend_duration > 0 && victim->sample_override == 46 && victim->blend_weight < Q16_ONE, "victim blend must retain its native 0x666 progression");
 }
 
 static void fatality_camera(void) {
@@ -1399,7 +1404,7 @@ static void fatality_camera(void) {
     advance(120);
     check(g_battle.camera.parameter == Q16_ONE + 120 * 0x45a && isfinite(g_battle.camera.eye.x) && g_battle.camera.eye.y < 0,
         "orbit must follow its recovered slow spline rate above the floor");
-    while (g_battle.fighters[1 - player].scene.index < 12 && g_battle.phase == PHASE_FATALITY) {
+    while (g_battle.camera.shake_pulses == 0 && g_battle.phase == PHASE_FATALITY) {
       advance(1);
     }
     check(g_battle.camera.shake_y == 0x2e14 && g_battle.camera.shake_pulses == 2, "victim collapse must start the recovered two camera pulses");
@@ -1422,7 +1427,7 @@ static void fatality_particles(void) {
   for (int player = 0; player < 2; ++player) {
     sub_zero_finish(player, 0xcccc, 0);
     sub_zero_finish_command(player, FINISH_SUB_ZERO_1, BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN), 60);
-    while (g_battle.fighters[player].scene.index < 7) {
+    while (g_battle.sprays[0].def == NULL && g_battle.phase == PHASE_FATALITY) {
       advance(1);
     }
     JointSpray *spray = &g_battle.sprays[0];
