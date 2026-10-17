@@ -1146,14 +1146,15 @@ static const FatalPhase fan_owner[] = {{415, 0, 68, 1}, {415, 69, 77, 31}, {415,
 static const FatalPhase fan_victim[] = {{416, 0, 68, 1}, {416, 69, 77, 31}, {416, 78, 107, 1}};
 // clang-format on
 
-static void fatality_tick(Fighter *fighter);
-
 static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   if (fighter_move(fighter)->clip != clip) {
     for (int i = 0; i < COUNT(fatal_moves); ++i) {
       if (fatal_moves[i].clip == clip) {
-        fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        fighter->script = owner ? fatality_tick : NULL;
+        if (owner && fighter_fiber_running(fighter)) {
+          fighter_fiber_move(fighter, S_VICTORY, &fatal_moves[i]);
+        } else {
+          fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
+        }
         break;
       }
     }
@@ -1194,53 +1195,61 @@ static bool can_spike_fatality(const Fighter *fighter) {
   return g_battle.arena == 0 && can_beast_fatality(fighter);
 }
 
-static void fatality_tick(Fighter *fighter) {
+static void finish_scene(Fighter *fighter) {
+  (void)fighter;
+  battle_end_finisher();
+}
+
+static void fatality_script(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  int tick = g_battle.phase_ticks;
-  bool owner_done = false, victim_done = false;
-  if (g_battle.finisher == FINISH_BURN) {
-    if (tick < 8) {
-      return;
-    }
-    owner_done = fatal_phases(fighter, tick - 8, burn_owner, COUNT(burn_owner), true);
-    if (tick >= 133) {
-      victim_done = fatal_phases(victim, tick - 133, burn_victim, COUNT(burn_victim), false);
-      victim->appearance = APPEARANCE_BURNED;
-    }
-  } else if (g_battle.finisher == FINISH_BEAST) {
-    owner_done = fatal_phases(fighter, tick, beast_owner, COUNT(beast_owner), true);
-    fighter->appearance = tick >= 58 ? APPEARANCE_BEAST : APPEARANCE_NORMAL;
-    if (tick >= 142) {
-      victim_done = fatal_phases(victim, tick - 142, beast_victim, COUNT(beast_victim), false);
-    }
-  } else if (g_battle.finisher == FINISH_FAN) {
-    owner_done = fatal_phases(fighter, tick, fan_owner, COUNT(fan_owner), true);
-    victim_done = fatal_phases(victim, tick, fan_victim, COUNT(fan_victim), false);
-    if (tick >= 348) {
-      victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
-    }
-    if (victim_done) {
-      victim->appearance = APPEARANCE_HIDDEN;
-    }
-  } else if (g_battle.finisher == FINISH_SPIKE) {
-    /* 30-tick setup + script wait 28, uppercut to sample 5, reaction 175.
+  for (;;) {
+    fighter_wait_ticks(1);
+    int tick = g_battle.phase_ticks;
+    bool owner_done = false, victim_done = false;
+    if (g_battle.finisher == FINISH_BURN) {
+      if (tick < 8) {
+        continue;
+      }
+      owner_done = fatal_phases(fighter, tick - 8, burn_owner, COUNT(burn_owner), true);
+      if (tick >= 133) {
+        victim_done = fatal_phases(victim, tick - 133, burn_victim, COUNT(burn_victim), false);
+        victim->appearance = APPEARANCE_BURNED;
+      }
+    } else if (g_battle.finisher == FINISH_BEAST) {
+      owner_done = fatal_phases(fighter, tick, beast_owner, COUNT(beast_owner), true);
+      fighter->appearance = tick >= 58 ? APPEARANCE_BEAST : APPEARANCE_NORMAL;
+      if (tick >= 142) {
+        victim_done = fatal_phases(victim, tick - 142, beast_victim, COUNT(beast_victim), false);
+      }
+    } else if (g_battle.finisher == FINISH_FAN) {
+      owner_done = fatal_phases(fighter, tick, fan_owner, COUNT(fan_owner), true);
+      victim_done = fatal_phases(victim, tick, fan_victim, COUNT(fan_victim), false);
+      if (tick >= 348) {
+        victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
+      }
+      if (victim_done) {
+        victim->appearance = APPEARANCE_HIDDEN;
+      }
+    } else if (g_battle.finisher == FINISH_SPIKE) {
+      /* 30-tick setup + script wait 28, uppercut to sample 5, reaction 175.
      * Stop at Y=-5.6, then the victim script waits 128 + 50 + 60 ticks. */
-    int attack = tick - 58;
-    if (attack >= 0) {
-      fatal_pose(fighter, 293, mini(19, attack), true);
+      int attack = tick - 58;
+      if (attack >= 0) {
+        fatal_pose(fighter, 293, mini(19, attack), true);
+      }
+      if (tick >= 64) {
+        int rise = mini(22, tick - 64);
+        fatal_pose(victim, 128, mini(31, rise * 2), false);
+        victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+      }
+      if (tick >= 324) {
+        fatal_pose(fighter, 115, 18, true);
+        owner_done = victim_done = true;
+      }
     }
-    if (tick >= 64) {
-      int rise = mini(22, tick - 64);
-      fatal_pose(victim, 128, mini(31, rise * 2), false);
-      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+    if (owner_done && victim_done) {
+      fighter_fiber_finish(finish_scene);
     }
-    if (tick >= 324) {
-      fatal_pose(fighter, 115, 18, true);
-      owner_done = victim_done = true;
-    }
-  }
-  if (owner_done && victim_done) {
-    battle_end_finisher();
   }
 }
 
@@ -1252,7 +1261,7 @@ static void start_fatality(Fighter *fighter, int id) {
   Fighter *victim = opponent(fighter);
   fatal_pose(victim, 13, 0, false);
   fatal_pose(fighter, id == FINISH_BEAST ? 12 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 390, 0, true);
-  fighter->script = fatality_tick;
+  fighter_start_fiber(fighter, fatality_script, NULL);
 }
 
 static void scorpion_burn_fatality(Fighter *fighter) {

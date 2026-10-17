@@ -1217,15 +1217,16 @@ static const FatalPhase fan_owner[] = {{415, 0, 68, 1}, {415, 69, 77, 31}, {415,
 static const FatalPhase fan_victim[] = {{416, 0, 68, 1}, {416, 69, 77, 31}, {416, 78, 107, 1}};
 // clang-format on
 
-static void fatality_tick(Fighter *fighter);
-
 static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   if (fighter_move(fighter)->clip != clip) {
     for (int i = 0; i < COUNT(fatal_moves); ++i) {
       if (fatal_moves[i].clip == clip) {
         int scene_timer = fighter->script_timer;
-        fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        fighter->script = owner ? fatality_tick : NULL;
+        if (owner && fighter_fiber_running(fighter)) {
+          fighter_fiber_move(fighter, S_VICTORY, &fatal_moves[i]);
+        } else {
+          fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
+        }
         fighter->script_timer = scene_timer;
         break;
       }
@@ -1343,177 +1344,182 @@ static const JointSprayDef first_blood = {.spray = &neck_blood,
     .speed = 0x23d7,
     .variation = 0x7ae};
 
-static void first_fatality_tick(Fighter *fighter) {
+static void finish_scene(Fighter *fighter);
+
+static void first_fatality_script(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  if (fighter->script_phase == 0) {
-    if (g_battle.phase_ticks == 8) {
-      battle_camera_sequence(fighter, victim, first_camera_shots, COUNT(first_camera_shots));
-    }
-    if (g_battle.phase_ticks < 58) {
-      return;
-    }
-    scene_begin(fighter, first_actor, COUNT(first_actor), 9);
-    fighter->script_phase = 1;
-    return;
+  while (g_battle.phase_ticks < 8) {
+    fighter_wait_ticks(1);
   }
-  int previous = fighter->scene.index;
-  scene_step(fighter);
-  if (previous != fighter->scene.index) {
-    int phase = fighter->scene.index;
-    if (phase == 1) {
-      battle_sound(SOUND_B, 0x30);
-    } else if (phase == 3) {
-      battle_sound(SOUND_B, 0x1b);
-      battle_sound(SOUND_B, 0x29);
-    } else if (phase == 4 || phase == 5 || phase == 6) {
-      battle_sound(SOUND_B, phase == 4 ? 0x2b : phase == 5 ? 0x2a : 0x1b);
-    } else if (phase == 7) {
-      battle_sound(SOUND_B, 0x1c);
-      battle_sound(SOUND_B, 0);
-      ScenePiece *head = battle_attach_head(victim, fighter, 10);
-      battle_attach_piece_model(head, &first_spine, fighter);
-      battle_joint_spray(victim, &first_blood);
-    }
+  battle_camera_sequence(fighter, victim, first_camera_shots, COUNT(first_camera_shots));
+  while (g_battle.phase_ticks < 58) {
+    fighter_wait_ticks(1);
   }
-  if (victim->scene.clips == NULL && fighter->scene.index >= 2) {
-    scene_begin(victim, first_target, COUNT(first_target), -1);
-  } else if (victim->scene.clips != NULL) {
-    int before = victim->scene.index;
-    scene_step(victim);
-    if (before != victim->scene.index && victim->scene.index == 12) {
-      battle_sound(SOUND_B, 0x18);
-      battle_camera_shake(2, 3, 0x2e14); /* 4456c0 -> 457b50, 4e3638[5] */
+  scene_begin(fighter, first_actor, COUNT(first_actor), 9);
+  fighter->script_phase = 1;
+  for (;;) {
+    fighter_wait_ticks(1);
+    int previous = fighter->scene.index;
+    scene_step(fighter);
+    if (previous != fighter->scene.index) {
+      int phase = fighter->scene.index;
+      if (phase == 1) {
+        battle_sound(SOUND_B, 0x30);
+      } else if (phase == 3) {
+        battle_sound(SOUND_B, 0x1b);
+        battle_sound(SOUND_B, 0x29);
+      } else if (phase == 4 || phase == 5 || phase == 6) {
+        battle_sound(SOUND_B, phase == 4 ? 0x2b : phase == 5 ? 0x2a : 0x1b);
+      } else if (phase == 7) {
+        battle_sound(SOUND_B, 0x1c);
+        battle_sound(SOUND_B, 0);
+        ScenePiece *head = battle_attach_head(victim, fighter, 10);
+        battle_attach_piece_model(head, &first_spine, fighter);
+        battle_joint_spray(victim, &first_blood);
+      }
     }
-  }
-  if (victim->scene.done && fighter->scene.index >= 9) {
-    battle_end_finisher();
+    if (victim->scene.clips == NULL && fighter->scene.index >= 2) {
+      scene_begin(victim, first_target, COUNT(first_target), -1);
+    } else if (victim->scene.clips != NULL) {
+      int before = victim->scene.index;
+      scene_step(victim);
+      if (before != victim->scene.index && victim->scene.index == 12) {
+        battle_sound(SOUND_B, 0x18);
+        battle_camera_shake(2, 3, 0x2e14); /* 4456c0 -> 457b50, 4e3638[5] */
+      }
+    }
+    if (victim->scene.done && fighter->scene.index >= 9) {
+      fighter_fiber_finish(finish_scene);
+    }
   }
 }
 
-static void second_fatality_tick(Fighter *fighter) {
+/* Victim playback has an independent scene cursor. Step it on every owner
+ * suspension, including nested loops and fixed waits, preserving scene order. */
+static void breath_wait(Fighter *fighter, int ticks) {
   Fighter *victim = opponent(fighter);
-  if (victim->scene.clips != NULL) {
-    scene_step(victim);
-    if (victim->sample_override == 20 || victim->sample_override == 90) {
-      battle_sound(SOUND_A, 0x13);
+  for (int tick = 0; tick < ticks; ++tick) {
+    fighter_wait_ticks(1);
+    if (victim->scene.clips != NULL) {
+      scene_step(victim);
+      if (victim->sample_override == 20 || victim->sample_override == 90) {
+        battle_sound(SOUND_A, 0x13);
+      }
     }
-  }
-  switch (fighter->script_phase) {
-    case 0: {
-      int before = fighter->scene.index;
-      if (fighter->scene.clips == NULL) {
-        scene_begin(fighter, breath_actor, COUNT(breath_actor), -1);
-        scene_begin(victim, breath_target, COUNT(breath_target), -1);
-      } else if (scene_step(fighter)) {
-        scene_begin(fighter, slide_actor, COUNT(slide_actor), -1);
-        fighter_set_speed(fighter, 0x2666);
-        fighter->script_phase = 1;
-        battle_sound(SOUND_C, 0xf);
-      }
-      if (before != fighter->scene.index && fighter->script_phase == 0 && (fighter->scene.index == 1 || fighter->scene.index == 2)) {
-        battle_sound(SOUND_C, fighter->scene.index == 1 ? 0x3f : 0x40);
-      }
-      if (fighter->scene.index >= 3) {
-        victim->appearance = APPEARANCE_FROZEN;
-      }
-      if (fighter->ticks >= 10 && fighter->ticks < 102) {
-        /* 41bbb0 alternates joints 9 and 10 throughout its 46 passes. */
-        battle_particles(fighter, 9 + (fighter->ticks & 1), 2, true);
-      }
-    } break;
-    case 1:
-      if (scene_step(fighter)) {
-        /* 41b450 uses the current pair distance after opening eight
-         * samples, then truncates the Q16 result to a tick count. */
-        q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
-        fighter->script_timer = maxi(0, q16_mul(distance - 0xcccc, 0x69999) / Q16_ONE);
-        fighter->sample_override = 9;
-        fighter->script_phase = 2;
-      }
-      break;
-    case 2:
-      if (fighter->script_timer-- <= 0) {
-        fighter_set_speed(fighter, 0);
-        scene_begin(fighter, uppercut_actor, COUNT(uppercut_actor), -1);
-        fighter->script_phase = 3;
-      }
-      break;
-    case 3:
-      if (scene_step(fighter)) {
-        battle_particles(victim, 3, 32, true);
-        battle_shatter(victim);
-        fighter->move_loops = 0;
-        fighter->script_phase = 4;
-      }
-      break;
-    case 4:
-      if (++fighter->sample_override >= 8) {
-        fighter->script_phase = 5;
-      }
-      break;
-    case 5:
-      if (--fighter->sample_override <= 6) {
-        fighter->script_phase = ++fighter->move_loops < 8 ? 4 : 6;
-      }
-      break;
-    case 6:
-      if (++fighter->sample_override >= 19) {
-        fighter->script_timer = 60;
-        fighter->script_phase = 7;
-      }
-      break;
-    case 7:
-      if (--fighter->script_timer <= 0) {
-        scene_begin(fighter, victory_actor, COUNT(victory_actor), -1);
-        fighter->script_phase = 8;
-      }
-      break;
-    case 8:
-      if (scene_step(fighter)) {
-        battle_end_finisher();
-      }
-      break;
   }
 }
 
-static void fatality_tick(Fighter *fighter) {
+static void breath_play_to(Fighter *fighter, int sample, int step) {
+  while (step > 0 ? fighter->sample_override < sample : fighter->sample_override > sample) {
+    breath_wait(fighter, 1);
+    fighter->sample_override += step;
+  }
+}
+
+static void second_fatality_script(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  int tick = g_battle.phase_ticks;
-  bool owner_done = false, victim_done = false;
+  breath_wait(fighter, 1);
+  scene_begin(fighter, breath_actor, COUNT(breath_actor), -1);
+  scene_begin(victim, breath_target, COUNT(breath_target), -1);
+  for (;;) {
+    breath_wait(fighter, 1);
+    int before = fighter->scene.index;
+    if (scene_step(fighter)) {
+      break;
+    }
+    if (before != fighter->scene.index && (fighter->scene.index == 1 || fighter->scene.index == 2)) {
+      battle_sound(SOUND_C, fighter->scene.index == 1 ? 0x3f : 0x40);
+    }
+    if (fighter->scene.index >= 3) {
+      victim->appearance = APPEARANCE_FROZEN;
+    }
+    if (fighter->ticks >= 10 && fighter->ticks < 102) {
+      battle_particles(fighter, 9 + (fighter->ticks & 1), 2, true);
+    }
+  }
+  scene_begin(fighter, slide_actor, COUNT(slide_actor), -1);
+  fighter_set_speed(fighter, 0x2666);
+  fighter->script_phase = 1;
+  battle_sound(SOUND_C, 0xf);
+  do {
+    breath_wait(fighter, 1);
+  } while (!scene_step(fighter));
+  q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
+  int delay = maxi(0, q16_mul(distance - 0xcccc, 0x69999) / Q16_ONE);
+  fighter->sample_override = 9;
+  fighter->script_phase = 2;
+  breath_wait(fighter, delay + 1);
+  fighter_set_speed(fighter, 0);
+  scene_begin(fighter, uppercut_actor, COUNT(uppercut_actor), -1);
+  fighter->script_phase = 3;
+  do {
+    breath_wait(fighter, 1);
+  } while (!scene_step(fighter));
+  battle_particles(victim, 3, 32, true);
+  battle_shatter(victim);
+  for (int pass = 0; pass < 8; ++pass) {
+    fighter->script_phase = 4;
+    breath_play_to(fighter, 8, 1);
+    fighter->script_phase = 5;
+    breath_play_to(fighter, 6, -1);
+  }
+  fighter->script_phase = 6;
+  breath_play_to(fighter, 19, 1);
+  fighter->script_phase = 7;
+  breath_wait(fighter, 60);
+  scene_begin(fighter, victory_actor, COUNT(victory_actor), -1);
+  fighter->script_phase = 8;
+  do {
+    breath_wait(fighter, 1);
+  } while (!scene_step(fighter));
+  fighter_fiber_finish(finish_scene);
+}
+
+static void finish_scene(Fighter *fighter) {
+  (void)fighter;
+  battle_end_finisher();
+}
+
+static void fatality_script(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
   if (g_battle.finisher == FINISH_SUB_ZERO_1) {
-    first_fatality_tick(fighter);
-    return;
+    first_fatality_script(fighter);
   } else if (g_battle.finisher == FINISH_SUB_ZERO_2) {
-    second_fatality_tick(fighter);
-    return;
-  } else if (g_battle.finisher == FINISH_FAN) {
-    owner_done = fatal_phases(fighter, tick, fan_owner, COUNT(fan_owner), true);
-    victim_done = fatal_phases(victim, tick, fan_victim, COUNT(fan_victim), false);
-    if (tick >= 348) {
-      victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
-    }
-    if (victim_done) {
-      victim->appearance = APPEARANCE_HIDDEN;
-    }
-  } else if (g_battle.finisher == FINISH_SPIKE) {
-    /* 30-tick setup + script wait 28, uppercut to sample 5, reaction 175.
-     * Stop at Y=-5.6, then the victim script waits 128 + 50 + 60 ticks. */
-    int attack = tick - 58;
-    if (attack >= 0) {
-      fatal_pose(fighter, 293, mini(19, attack), true);
-    }
-    if (tick >= 64) {
-      int rise = mini(22, tick - 64);
-      fatal_pose(victim, 128, mini(31, rise * 2), false);
-      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
-    }
-    if (tick >= 324) {
-      fatal_pose(fighter, 115, 18, true);
-      owner_done = victim_done = true;
-    }
+    second_fatality_script(fighter);
   }
-  if (owner_done && victim_done) {
-    battle_end_finisher();
+  for (;;) {
+    fighter_wait_ticks(1);
+    int tick = g_battle.phase_ticks;
+    bool owner_done = false, victim_done = false;
+    if (g_battle.finisher == FINISH_FAN) {
+      owner_done = fatal_phases(fighter, tick, fan_owner, COUNT(fan_owner), true);
+      victim_done = fatal_phases(victim, tick, fan_victim, COUNT(fan_victim), false);
+      if (tick >= 348) {
+        victim->body.pos[AXIS_Y] = victim->body.ground - mini(30, tick - 348) * 0x3333;
+      }
+      if (victim_done) {
+        victim->appearance = APPEARANCE_HIDDEN;
+      }
+    } else if (g_battle.finisher == FINISH_SPIKE) {
+      /* 30-tick setup + script wait 28, uppercut to sample 5, reaction 175.
+     * Stop at Y=-5.6, then the victim script waits 128 + 50 + 60 ticks. */
+      int attack = tick - 58;
+      if (attack >= 0) {
+        fatal_pose(fighter, 293, mini(19, attack), true);
+      }
+      if (tick >= 64) {
+        int rise = mini(22, tick - 64);
+        fatal_pose(victim, 128, mini(31, rise * 2), false);
+        victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+      }
+      if (tick >= 324) {
+        fatal_pose(fighter, 115, 18, true);
+        owner_done = victim_done = true;
+      }
+    }
+    if (owner_done && victim_done) {
+      fighter_fiber_finish(finish_scene);
+    }
   }
 }
 
@@ -1534,7 +1540,7 @@ static void start_fatality(Fighter *fighter, int id) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x17333);
     }
   }
-  fighter->script = fatality_tick;
+  fighter_start_fiber(fighter, fatality_script, NULL);
 }
 
 static void sub_zero_first_fatality(Fighter *fighter) {

@@ -96,7 +96,7 @@ startup tick 15/11, action `0x1007`, and a 45-tick hold (`4ed470/4ed498`). The
 fiber prototype below now expresses that move's same timing as sequential C;
 MoveSequence remains the shared playback/event mechanism for other moves.
 
-### Stackful move prototype
+### Stackful character scripts
 
 `fighter_start_fiber(fighter, entry, cleanup)` starts a C entry immediately,
 until its first `fighter_wait_ticks(n)` or completion. The wait may be nested
@@ -144,6 +144,13 @@ Focused regressions cover both players and startup paths, exact recovery,
 blocked/hit pull behavior, direct hit and queued interruption during nested
 startup/recovery/pull waits, full object pools, rematch during pull, and two
 simultaneous actor fibers whose projectiles can interrupt one another.
+
+All timed continuations owned by `c_scorpion.c` and `c_sub_zero.c` now run in
+fibers, including finishers. SceneClip/FatalPhase tables remain presentation
+data. Sub-Zero's breath finisher is sequential C: breath, range-dependent
+approach, uppercut/shatter, eight cursor passes, a 60-tick wait, then victory.
+Its nested wait helper also advances the victim scene and impact sounds. Scene
+completion returns to the scheduler before ending the finisher or resetting.
 
 Air attack hit-stops, paired ground and air throws, and weapon draw/strike/
 throw/pickup/recovery now use actor fibers too. Paired victims retain their own
