@@ -91,12 +91,10 @@ Tick zero runs entry events once; completion runs on tick 45, once. An optional
 stops old events when a callback replaces even the same phase or queues an
 interruption. A new move clears the active sequence.
 
-Scorpion spear reaches sample 30 at normal/fast startup tick 15/11, sets action
-`0x1007`, then enters a 45-tick hold. This follows `4ed470/4ed498` and removes
-the old shared total-tick-60 cutoff. Successful pull arrival replaces the hold
-with the existing spear-return continuation. The existing policy of retaining
-a live paired pull beyond the minimum wait remains an engine adaptation;
-interruption releases the captive victim rather than firing a stale return.
+The original spear wait-phase port established sample-30 recovery at normal/fast
+startup tick 15/11, action `0x1007`, and a 45-tick hold (`4ed470/4ed498`). The
+fiber prototype below now expresses that move's same timing as sequential C;
+MoveSequence remains the shared playback/event mechanism for other moves.
 
 ### Stackful move prototype
 
@@ -122,6 +120,22 @@ The backend is the unmodified pinned minicoro header; see
 `third_party/minicoro/UPSTREAM.md` and LICENSE. Runtime stacks are outside
 Battle and cannot be restored by copying the struct. This remains an actor
 move prototype, not a general task scheduler or rollback implementation.
+
+Scorpion's `spear_script` is the first fiber port. A normal C helper
+`spear_play_to` advances two stored samples after each nested one-tick wait.
+Normal/fast paths launch at ticks 10/8, reach sample 30 at 15/11, then wait
+45 ticks. The existing live-pull predicate may extend that hold. Projectile
+contacts and movement retain their independent C callback. Pull arrival first
+installs the victim stun, then replaces the owner's fiber with the existing
+`spear_return_tick` callback. `spear_cleanup` removes owner projectiles and
+releases a still-snared victim on cancellation, while preserving an already
+installed arrival stun. These paired-return mechanics remain portable engine
+adaptations; this prototype does not claim full retail spear-native parity.
+
+Focused regressions cover both players and startup paths, exact recovery,
+blocked/hit pull behavior, direct hit and queued interruption during nested
+startup/recovery/pull waits, full object pools, rematch during pull, and two
+simultaneous actor fibers whose projectiles can interrupt one another.
 
 ## Sub-Zero source-to-code ledger
 

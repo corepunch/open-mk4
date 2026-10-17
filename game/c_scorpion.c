@@ -312,8 +312,6 @@ static void spear_return_tick(Fighter *fighter) {
   }
 }
 
-static void spear_tick(Fighter *fighter);
-
 static bool spear_not_pulling(const Fighter *fighter) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &g_battle.projectiles[i];
@@ -324,16 +322,27 @@ static bool spear_not_pulling(const Fighter *fighter) {
   return true;
 }
 
-/* 4ed470 / 4ed498: hold sample 30 for 45 ticks, then controller return.
- * Keep the existing paired-pull policy: arrival installs its own return
- * continuation; expiry/interruption cannot leave a captive victim behind. */
-static const MoveSegment spear_wait_segments[] = {{0, 30, 0, 1}};
-static const MoveSequence spear_wait = {spear_wait_segments, 1, NULL, 0, 45, special_ready, spear_not_pulling};
+/* Runs on the scheduler stack, after the old fiber has been retired. Pull
+ * arrival installs stun before replacing the owner's move, so that victim
+ * is already released from s_snared and must retain its follow-up opening. */
+static void spear_cleanup(Fighter *fighter) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *p = &g_battle.projectiles[i];
+    if (p->kind != PROJECTILE_SPEAR || &g_battle.fighters[p->owner] != fighter) {
+      continue;
+    }
+    bool pulling = p->phase == 1;
+    p->kind = 0;
+    Fighter *victim = opponent(fighter);
+    if (pulling && victim->current_move == &s_snared) {
+      special_ready(victim);
+    }
+  }
+}
 
 static void spear_projectile(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner], *victim = opponent(owner);
-  bool interrupted = owner->current_move != &s_spear || (owner->script != spear_tick && owner->script != spear_return_tick && owner->sequence != &spear_wait) ||
-                     owner->pending != NULL;
+  bool interrupted = owner->current_move != &s_spear || (!fighter_fiber_active(owner) && owner->script != spear_return_tick) || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && victim->current_move == &s_snared) {
       special_ready(victim);
@@ -391,22 +400,39 @@ static void spear_projectile(Projectile *p) {
   }
 }
 
-static void spear_tick(Fighter *fighter) {
-  int spawn = fighter->script_phase ? 8 : 10;
-  int first = fighter->script_phase ? 9 : 0;
-  fighter->sample_override = mini(30, first + 2 * fighter->ticks);
-  if (fighter->ticks == spawn) {
-    Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SPEAR, 90, spear_projectile);
-    if (p != NULL) {
-      p->pos[AXIS_X] += fighter->facing * 0xc000;
-      p->pos[AXIS_Y] = -0x16666;
-      p->vel[AXIS_X] = fighter->facing * 0x3333;
-    }
+/* This helper suspends inside an ordinary C loop. Its call frame, and the
+ * caller's fast-start local, survive each nested one-tick wait. */
+static void spear_play_to(Fighter *fighter, int sample) {
+  while (fighter->sample_override < sample) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = mini(sample, fighter->sample_override + 2);
   }
-  if (fighter->ticks >= (30 - first + 1) / 2) {
-    fighter->action = ACTION_RETAIL_1007;
-    fighter_start_sequence(fighter, &spear_wait);
+}
+
+static void spear_spawn(Fighter *fighter) {
+  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SPEAR, 90, spear_projectile);
+  if (p != NULL) {
+    p->pos[AXIS_X] += fighter->facing * 0xc000;
+    p->pos[AXIS_Y] = -0x16666;
+    p->vel[AXIS_X] = fighter->facing * 0x3333;
   }
+}
+
+/* 4ed448/4ed47c -> 4ed470/4ed498. Normal/fast launch is at tick 10/8;
+ * sample 30 follows at 15/11. Keep the existing paired-pull policy: arrival
+ * replaces this fiber with spear_return_tick, while cancellation cleans up. */
+static void spear_script(Fighter *fighter) {
+  bool fast = fighter->script_phase != 0;
+  spear_play_to(fighter, fast ? 25 : 20);
+  spear_spawn(fighter);
+  spear_play_to(fighter, 30);
+  fighter->action = ACTION_RETAIL_1007;
+  fighter->ticks = 0;
+  fighter_wait_ticks(45);
+  while (!spear_not_pulling(fighter)) {
+    fighter_wait_ticks(1);
+  }
+  fighter_fiber_finish(special_ready);
 }
 
 static bool can_spear(const Fighter *fighter) {
@@ -418,10 +444,10 @@ static void scorpion_spear(Fighter *fighter) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
   stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &s_spear);
-  fighter->script = spear_tick;
   fighter->script_phase = followup;
   fighter->sample_override = followup ? 9 : 0;
   fighter->spear_ready = g_battle.ticks + 90;
+  fighter_start_fiber(fighter, spear_script, spear_cleanup);
 }
 
 static void teleport_land_tick(Fighter *fighter) {
