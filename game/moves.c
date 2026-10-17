@@ -4,13 +4,15 @@
 #include <stdlib.h>
 
 static void frame_event(Battle *battle, Fighter *fighter) {
-  const MoveSequence *sequence = fighter_move(fighter)->sequence;
-  if (sequence != NULL) {
+  const MoveSequence *sequence = fighter->sequence;
+  uint64_t continuation = fighter->continuation;
+  if (sequence != NULL && fighter->sequence_event_tick != fighter->ticks) {
+    fighter->sequence_event_tick = fighter->ticks;
     for (int i = 0; i < sequence->event_count; ++i) {
       const MoveEvent *event = &sequence->events[i];
       if (event->at == fighter->ticks) {
         event->think(battle, fighter);
-        if (fighter_move(fighter)->sequence != sequence) {
+        if (fighter->continuation != continuation || fighter->pending != NULL) {
           return;
         }
       }
@@ -115,22 +117,6 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   }
   fighter->body.walking = false;
   bool was_locked = fighter->current_move != NULL && (fighter->current_move->flags & SF_LOCK);
-  if (move->sequence != NULL) {
-    const MoveSequence *sequence = move->sequence;
-    require(sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 && sequence->end != NULL && sequence->segments[0].at == 0 &&
-                sequence->event_count >= 0 && (sequence->event_count == 0 || sequence->events != NULL),
-        "Invalid move sequence");
-    for (int i = 0; i < sequence->segment_count; ++i) {
-      const MoveSegment *segment = &sequence->segments[i];
-      require(segment->period > 0 && segment->at >= 0 && segment->at < sequence->count && (i == 0 || sequence->segments[i - 1].at < segment->at),
-          "Invalid playback segment");
-    }
-    for (int i = 0; i < sequence->event_count; ++i) {
-      const MoveEvent *event = &sequence->events[i];
-      require(
-          event->at >= 0 && event->at < sequence->count && event->think != NULL && (i == 0 || sequence->events[i - 1].at <= event->at), "Invalid move event");
-    }
-  }
   fighter->state = state;
   if (fighter->appearance == APPEARANCE_FROZEN || fighter->action == 0x1003) {
     fighter->appearance = APPEARANCE_NORMAL;
@@ -141,6 +127,8 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
   memset(fighter->visual_offset, 0, sizeof fighter->visual_offset);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   fighter->current_move = move;
+  fighter->sequence = NULL;
+  fighter->continuation++;
   fighter->ticks = 0;
   fighter->connected = false;
   fighter->avoids_high = false;
@@ -175,7 +163,9 @@ void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveD
     fighter->buttons = NULL;
     fighter->flags &= ~(unsigned)FF_BUSY;
   }
-  frame_event(battle, fighter);
+  if (move->sequence != NULL) {
+    fighter_start_sequence(battle, fighter, move->sequence);
+  }
 }
 
 void fighter_note_contact(Fighter *fighter, ContactResult result) {
@@ -198,11 +188,41 @@ void fighter_enter_state(Battle *battle, Fighter *fighter, int state) {
   }
 }
 
+/* A phase owns its tick clock and continuation, but retains the move's
+ * combat identity, action, contact result and input restrictions. */
+void fighter_start_sequence(Battle *battle, Fighter *fighter, const MoveSequence *sequence) {
+  require(sequence != NULL && sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 && sequence->end != NULL &&
+              sequence->segments[0].at == 0 && sequence->event_count >= 0 && (sequence->event_count == 0 || sequence->events != NULL),
+      "Invalid move phase");
+  for (int i = 0; i < sequence->segment_count; ++i) {
+    const MoveSegment *segment = &sequence->segments[i];
+    require(segment->period > 0 && segment->at >= 0 && segment->at < sequence->count && (i == 0 || sequence->segments[i - 1].at < segment->at),
+        "Invalid phase segment");
+  }
+  for (int i = 0; i < sequence->event_count; ++i) {
+    const MoveEvent *event = &sequence->events[i];
+    require(
+        event->at >= 0 && event->at < sequence->count && event->think != NULL && (i == 0 || sequence->events[i - 1].at <= event->at), "Invalid phase event");
+  }
+  fighter->sequence = sequence;
+  fighter->continuation++;
+  fighter->ticks = 0;
+  fighter->sequence_event_tick = -1;
+  fighter->sequence_finished = false;
+  fighter->script = NULL;
+  fighter->sample_override = -1;
+  frame_event(battle, fighter);
+}
+
 void fighter_step_sequence(Battle *battle, Fighter *fighter) {
-  const MoveSequence *sequence = fighter_move(fighter)->sequence;
+  const MoveSequence *sequence = fighter->sequence;
   require(sequence != NULL, "Move has no sequence");
+  if (fighter->sequence_finished || fighter->pending != NULL) {
+    return;
+  }
   if (fighter->ticks >= sequence->count) {
     if (sequence->until == NULL || sequence->until(battle, fighter)) {
+      fighter->sequence_finished = true;
       sequence->end(battle, fighter);
     }
     return;
@@ -212,8 +232,7 @@ void fighter_step_sequence(Battle *battle, Fighter *fighter) {
 
 /* The displayed sample of a recovered sequence, or the move tick otherwise. */
 int fighter_sample(const Fighter *fighter) {
-  const MoveDef *move = fighter_move(fighter);
-  return fighter->sample_override >= 0 ? fighter->sample_override : move->sequence != NULL ? (int)fighter_frame(fighter, 1 << 16) : fighter->ticks;
+  return fighter->sample_override >= 0 ? fighter->sample_override : fighter->sequence != NULL ? (int)fighter_frame(fighter, 1 << 16) : fighter->ticks;
 }
 
 double fighter_frame(const Fighter *fighter, int frame_count) {
@@ -222,8 +241,8 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
   if (fighter->sample_override >= 0) {
     return mini(fighter->sample_override, frame_count - 1);
   }
-  if (move->sequence != NULL) {
-    const MoveSequence *sequence = move->sequence;
+  if (fighter->sequence != NULL) {
+    const MoveSequence *sequence = fighter->sequence;
     int index = mini(maxi(fighter->ticks, 0), sequence->count - 1);
     const MoveSegment *segment = &sequence->segments[0];
     for (int i = 1; i < sequence->segment_count && sequence->segments[i].at <= index; ++i) {

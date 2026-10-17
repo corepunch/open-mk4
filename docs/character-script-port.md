@@ -51,7 +51,7 @@ addresses. Upstream reference addresses differ: verify correspondence locally.
 | Need | Reuse | Important boundary |
 | --- | --- | --- |
 | Commands | `game/commands.c`, ordered `CommandDef` and stance tables | Preserve unconditional-record priority, two-sample presses, inclusive windows and predicate masks; entries start next tick |
-| Fixed playback | `MoveSequence`, sparse `MoveSegment`/`MoveEvent` | Simulation ticks and stored pose samples are different clocks |
+| Fixed playback / waits | `MoveSequence`, sparse `MoveSegment`/`MoveEvent`, `fighter_start_sequence` | Active phases have their own tick clock; simulation ticks and stored pose samples are different clocks |
 | Native continuations | `Fighter.script`, explicit phase/timer | Start the move first, then install the continuation; replacement clears old move state |
 | Poses | `game/pose.c`, `fighter_pose_sample`, `fighter_pose` | Bind host-owned assets with `battle_bind_assets`; capture real wrapped samples, rig, heading and root offsets |
 | Contact | `battle_contact` for a fighter, `battle_contact_from` for an independent object | Object contacts return their result without consuming the owner's current attack latch |
@@ -69,6 +69,25 @@ The host owns decoded assets. Drawing reads simulation state. Four projectile
 slots and bounded scene pools are explicit engine limits. A full pool must not
 corrupt another move. Independent objects may outlive owner interruption;
 round/finisher cleanup follows the reached source path.
+
+### Shared move phases
+
+`fighter_start_sequence` replaces the current continuation without restarting
+the move. It resets the phase tick to zero, clears the native script and sample
+override, and preserves action, contact results and input restrictions. A hold
+segment `{0, sample, 0, 1}` plus `count = 45` expresses a 45-tick wait; `end`
+is its C continuation. The world and independent objects continue stepping.
+Tick zero runs entry events once; completion runs on tick 45, once. An optional
+`until` predicate delays completion while retaining the last pose. The runner
+stops old events when a callback replaces even the same phase or queues an
+interruption. A new move clears the active sequence.
+
+Scorpion spear reaches sample 30 at normal/fast startup tick 15/11, sets action
+`0x1007`, then enters a 45-tick hold. This follows `4ed470/4ed498` and removes
+the old shared total-tick-60 cutoff. Successful pull arrival replaces the hold
+with the existing spear-return continuation. The existing policy of retaining
+a live paired pull beyond the minimum wait remains an engine adaptation;
+interruption releases the captive victim rather than firing a stale return.
 
 ## Sub-Zero source-to-code ledger
 

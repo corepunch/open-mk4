@@ -204,6 +204,53 @@ static void check_sequence_events(void) {
   check(fighter->health == Q16_ONE - 2, "Completed sequence kept firing events");
 }
 
+static void restart_sequence(Battle *battle, Fighter *fighter) {
+  fighter_start_sequence(battle, fighter, fighter->sequence);
+}
+
+static void count_sequence_end(Battle *battle, Fighter *fighter) {
+  (void)battle;
+  fighter->script_timer++;
+}
+
+static void check_wait_phases(void) {
+  static const MoveSegment hold[] = {{0, 10, 0, 1}};
+  static const MoveEvent events[] = {{0, sequence_event}, {15, sequence_event}};
+  static const MoveSequence wait = {hold, 1, events, 2, 45, sequence_end, NULL};
+  static const MoveDef move = {.clip = 294, .flags = SF_LOCK, .action = 0x1007};
+  Battle battle = fight(10.f);
+  Fighter *fighter = &battle.fighters[0];
+  fighter_start_move(&battle, fighter, S_PUNCH, &move);
+  fighter_start_sequence(&battle, fighter, &wait);
+  fighter_step_sequence(&battle, fighter);
+  check(fighter->health == Q16_ONE - 1, "Re-entering a phase pump repeated its entry event");
+  advance_ticks(&battle, 44, NULL);
+  check(fighter->state == S_PUNCH && fighter->action == 0x1007 && fighter_sample(fighter) == 10 && fighter->health == Q16_ONE - 2,
+      "Wait must retain the move/action/pose and run its timed events exactly once");
+  advance_ticks(&battle, 1, NULL);
+  check(fighter->state == S_IDLE, "45-tick wait must return exactly on tick 45");
+  fighter_start_move(&battle, fighter, S_PUNCH, &move);
+  fighter_start_sequence(&battle, fighter, &wait);
+  advance_ticks(&battle, 44, NULL);
+  fighter_enter_state(&battle, fighter, S_KNOCKDOWN);
+  const MoveDef *replacement = fighter->current_move;
+  advance_ticks(&battle, 2, NULL);
+  check(fighter->sequence != &wait && fighter->current_move == replacement, "Interrupted wait fired a stale controller return");
+
+  static const MoveEvent restarting[] = {{0, sequence_event}, {2, restart_sequence}, {2, sequence_event}};
+  static const MoveSequence restart = {hold, 1, restarting, 3, 4, sequence_end, NULL};
+  fighter_start_move(&battle, fighter, S_PUNCH, &move);
+  q16 health = fighter->health;
+  fighter_start_sequence(&battle, fighter, &restart);
+  advance_ticks(&battle, 2, NULL);
+  check(fighter->ticks == 0 && fighter->health == health - 2, "Restarting the same phase must stop processing the old phase's events");
+
+  static const MoveSequence once = {hold, 1, NULL, 0, 2, count_sequence_end, NULL};
+  fighter_start_sequence(&battle, fighter, &once);
+  advance_ticks(&battle, 5, NULL);
+  check(fighter->script_timer == 1, "A completed phase must call its completion callback only once");
+}
+
 static void check_scorpion_contact_branches(void) {
   for (int blocked = 0; blocked < 2; ++blocked) {
     Battle battle = fight(1.f);
@@ -273,6 +320,28 @@ static void command(Battle *battle, int player, Button first, Button second, But
 }
 
 static void check_specials(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int fast = 0; fast < 2; ++fast) {
+      Battle battle;
+      battle_init(&battle, player ? 4 : 0, player ? 0 : 4);
+      battle.phase = PHASE_FIGHT;
+      battle.fighters[0].body.pos[AXIS_X] = -5 * Q16_ONE;
+      battle.fighters[1].body.pos[AXIS_X] = 5 * Q16_ONE;
+      Fighter *fighter = &battle.fighters[player];
+      if (fast) {
+        fighter->flags |= FF_FOLLOW_UP;
+      }
+      command(&battle, player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
+      check(fighter->script_phase == fast, "Spear must select the requested normal/fast startup");
+      advance_ticks(&battle, fast ? 11 : 15, NULL);
+      check(fighter->action == 0x1007 && fighter->sequence != NULL && fighter->ticks == 0 && fighter_sample(fighter) == 30,
+          "Spear startup must enter a fresh recovery wait with action 0x1007");
+      advance_ticks(&battle, 44, NULL);
+      check(fighter->state == S_PUNCH && fighter_sample(fighter) == 30, "Spear recovery returned before its 45-tick wait");
+      advance_ticks(&battle, 1, NULL);
+      check(fighter->state == S_IDLE, "Normal and fast spear must each return after 45 recovery ticks");
+    }
+  }
   for (int player = 0; player < 2; ++player) {
     Battle battle = fight(4.f);
     if (player == 1) {
@@ -727,6 +796,7 @@ int main(void) {
   check_original_kicks();
   check_original_scorpion();
   check_sequence_events();
+  check_wait_phases();
   check_scorpion_contact_branches();
   {
     Battle battle;

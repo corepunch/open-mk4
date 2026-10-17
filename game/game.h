@@ -416,6 +416,10 @@ struct Fighter {
   bool body_contact; /* reaction source was the other fighter, rather than an independent object */
   bool avoids_high;  /* low-kick script's temporary high-punch avoidance gate */
   const MoveDef *current_move;
+  const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
+  uint64_t continuation;        /* changes on move/phase replacement, even when re-entering the same phase */
+  int sequence_event_tick;
+  bool sequence_finished;
   unsigned buffered; /* pressed buttons since the current move phase began */
   int move_loops;
   ContactResult contact;
@@ -632,6 +636,7 @@ const Character *roster_character(const Assets *assets, int roster_index);
 void fighter_start_move(Battle *battle, Fighter *fighter, int state, const MoveDef *move);
 void fighter_enter_state(Battle *battle, Fighter *fighter, int state);
 void fighter_step_sequence(Battle *battle, Fighter *fighter);
+void fighter_start_sequence(Battle *battle, Fighter *fighter, const MoveSequence *sequence);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
 float fighter_z(const Fighter *fighter);

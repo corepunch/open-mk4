@@ -314,9 +314,26 @@ static void spear_return_tick(Battle *battle, Fighter *fighter) {
 
 static void spear_tick(Battle *battle, Fighter *fighter);
 
+static bool spear_not_pulling(const Battle *battle, const Fighter *fighter) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    const Projectile *p = &battle->projectiles[i];
+    if (p->kind == PROJECTILE_SPEAR && &battle->fighters[p->owner] == fighter && p->phase == 1) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/* 4ed470 / 4ed498: hold sample 30 for 45 ticks, then controller return.
+ * Keep the existing paired-pull policy: arrival installs its own return
+ * continuation; expiry/interruption cannot leave a captive victim behind. */
+static const MoveSegment spear_wait_segments[] = {{0, 30, 0, 1}};
+static const MoveSequence spear_wait = {spear_wait_segments, 1, NULL, 0, 45, special_ready, spear_not_pulling};
+
 static void spear_projectile(Battle *battle, Projectile *p) {
   Fighter *owner = &battle->fighters[p->owner], *victim = opponent(battle, owner);
-  bool interrupted = owner->script != spear_tick && owner->script != spear_return_tick;
+  bool interrupted = owner->current_move != &s_spear || (owner->script != spear_tick && owner->script != spear_return_tick && owner->sequence != &spear_wait) ||
+                     owner->pending != NULL;
   if (interrupted || battle->contacts_off) {
     if (p->phase == 1 && victim->current_move == &s_snared) {
       special_ready(battle, victim);
@@ -386,15 +403,9 @@ static void spear_tick(Battle *battle, Fighter *fighter) {
       p->vel[AXIS_X] = fighter->facing * 0x3333;
     }
   }
-  if (fighter->ticks >= 60) {
-    bool pulling = false;
-    for (int i = 0; i < MAX_PROJECTILES; ++i) {
-      const Projectile *p = &battle->projectiles[i];
-      pulling |= p->kind == PROJECTILE_SPEAR && &battle->fighters[p->owner] == fighter && p->phase == 1;
-    }
-    if (!pulling) {
-      special_ready(battle, fighter);
-    }
+  if (fighter->ticks >= (30 - first + 1) / 2) {
+    fighter->action = 0x1007;
+    fighter_start_sequence(battle, fighter, &spear_wait);
   }
 }
 

@@ -181,8 +181,8 @@ static bool defeat_settled(const Fighter *fighter) {
   if (fighter->pending != NULL || fighter->script != NULL || fighter_airborne(fighter) || fighter->body.gravity != 0) {
     return false;
   }
-  if (move->sequence != NULL) {
-    return fighter->ticks >= move->sequence->count;
+  if (fighter->sequence != NULL) {
+    return fighter->ticks >= fighter->sequence->count;
   }
   return !(move->flags & SF_REACTION) || fighter->ticks >= move->recovery;
 }
@@ -248,7 +248,7 @@ static void advance_fighter(Battle *battle, Fighter *fighter, const Fighter *oth
     fighter->ticks++;
     if (fighter->script != NULL) {
       fighter->script(battle, fighter);
-    } else if (state->sequence != NULL) {
+    } else if (fighter->sequence != NULL) {
       fighter_step_sequence(battle, fighter);
     } else if (state->flags & SF_ATTACK) {
       int total = state->startup + state->active + state->recovery;
@@ -535,7 +535,7 @@ void battle_step(Battle *battle, const Input input[2]) {
         fighter->ticks++;
         if (fighter->script != NULL) {
           fighter->script(battle, fighter);
-        } else if (fighter_move(fighter)->sequence != NULL) {
+        } else if (fighter->sequence != NULL) {
           fighter_step_sequence(battle, fighter);
         }
         if (battle->phase == PHASE_MATCH_OVER && fighter->scene.clips != NULL) {
