@@ -134,9 +134,80 @@ static void interruptions_and_reset(void) {
   check(event_count == 2 && completed[0] == 0 && completed[1] == 0, "rematch resumed an old fiber");
 }
 
+static void sequence_event(Fighter *fighter) {
+  record(fighter, fighter->ticks);
+}
+
+static void forbidden_end(Fighter *fighter) {
+  (void)fighter;
+  check(false, "blocking sequence must return to its C caller, not invoke the old end callback");
+}
+
+static bool hold_done(const Fighter *fighter) {
+  return fighter->ticks >= 5;
+}
+
+static const MoveSegment phase_segments[] = {{0, 6, -1, 1}};
+static const MoveEvent phase_events[] = {{0, sequence_event}, {2, sequence_event}};
+static const MoveSequence phase_sequence = {phase_segments, 1, phase_events, 2, 3, forbidden_end, hold_done};
+static const MoveDef phase_move = {.clip = 14, .flags = SF_LOCK, .sequence = &phase_sequence};
+
+static void phase_script(Fighter *fighter) {
+  int local = 73;
+  fighter_wait_ticks(2);
+  fighter_fiber_move(fighter, S_PUNCH, &phase_move);
+  fighter_fiber_sequence(fighter, &phase_sequence);
+  check(fighter_sample(fighter) == 4 && fighter->ticks == 5, "sequence reverse/hold timing changed");
+  fighter->sample_override = fighter_sample(fighter);
+  fighter_fiber_play_to(fighter, 0, -2);
+  record(fighter, local);
+  fighter_fiber_finish(NULL);
+}
+
+static void paired_script(Fighter *fighter) {
+  record(fighter, 20);
+  fighter_wait_ticks(1);
+  record(fighter, 21);
+  fighter_fiber_finish(NULL);
+}
+
+static void pair_owner_script(Fighter *fighter) {
+  fighter_wait_ticks(1);
+  Fighter *victim = &g_battle.fighters[1 - player(fighter)];
+  fighter_start_move(victim, S_HIT, &test_move);
+  fighter_start_fiber(victim, paired_script, cleanup);
+  record(fighter, 10);
+  fighter_wait_ticks(2);
+  fighter_fiber_finish(NULL);
+}
+
+static void phase_and_paired_playback(void) {
+  setup();
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_fiber(fighter, phase_script, cleanup);
+  advance(8);
+  check(fighter_fiber_active(fighter) && event_count == 2, "phase playback completed early or duplicated events");
+  advance(1);
+  check(!fighter_fiber_active(fighter) && fighter->script == NULL && cleaned[0] == 1, "explicit parked completion must release its stack");
+  check(events[0][0] == 2 && events[0][2] == 0 && events[1][0] == 4 && events[1][2] == 2 && events[2][0] == 9 && events[2][2] == 73,
+      "phase rebinding must preserve locals and run each event exactly once");
+  for (int owner = 0; owner < 2; ++owner) {
+    setup();
+    fighter_start_fiber(&g_battle.fighters[1 - owner], nested_script, cleanup);
+    fighter_start_fiber(&g_battle.fighters[owner], pair_owner_script, cleanup);
+    advance(4);
+    check(event_count == 4 && events[1][0] == 1 && events[1][1] == owner && events[1][2] == 10 && events[2][0] == 1 && events[2][1] == 1 - owner &&
+              events[2][2] == 20 && events[3][0] == (owner == 0 ? 1 : 2) && events[3][2] == 21,
+        "paired entry must start on the host after owner yields, then follow the fixed P1/P2 actor order");
+    check(cleaned[owner] == 1 && cleaned[1 - owner] == 2 && !fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
+        "paired replacement/completion must release both stacks exactly once");
+  }
+}
+
 int main(void) {
   deterministic_nested_waits();
   interruptions_and_reset();
+  phase_and_paired_playback();
   fighter_cancel_all_fibers();
   puts(
       "PASS: deterministic P1/P2 fiber scheduling; nested waits and locals; exact deadlines; completion; interruption/replacement/round/rematch/reset cleanup");

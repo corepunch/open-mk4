@@ -109,7 +109,16 @@ fiber per live fighter, with a 64 KiB stack and no nested actor scheduling.
 Use `fighter_fiber_finish(next)` for a move transition from a running fiber;
 it never returns. The scheduler destroys the old stack, invokes cleanup once,
 then calls `next` on its own stack. Returning normally uses `fighter_ready`.
-Directly replacing one's own move/phase from inside the fiber is rejected.
+Use `fighter_fiber_move(fighter, state, move)` to bind another animation phase
+while preserving the running stack and locals. Ordinary `fighter_start_move`
+still cancels suspended stacks. `fighter_fiber_sequence` blocks through a
+MoveSequence's samples, contact events and optional hold predicate, then returns
+to its C caller instead of invoking the legacy end callback.
+`fighter_fiber_play_to` advances an explicit sample override in either direction.
+A running actor may start a peer fiber: its entry is queued until the caller
+yields to the host. Subsequent waits follow P1/P2 pump order, including whether
+the peer has already taken its turn this tick. There is no nested actor resume.
+`fighter_fiber_finish(NULL)` releases the stack and parks the actor.
 External move replacement, queued interruption, round reset, rematch and
 `battle_init` cancel suspended stacks without resuming them. The optional
 cleanup releases independent objects or paired victims; it must not depend

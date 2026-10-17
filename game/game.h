@@ -650,6 +650,11 @@ void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
 /* Stackful move prototype: one scheduler-owned fiber per active fighter. */
 void fighter_start_fiber(Fighter *fighter, FighterFn entry, FighterFn cleanup);
 bool fighter_fiber_active(const Fighter *fighter);
+bool fighter_fiber_running(const Fighter *fighter);
+void fighter_fiber_pump_begin(Fighter *fighter);
+void fighter_fiber_move(Fighter *fighter, int state, const MoveDef *move);
+void fighter_fiber_sequence(Fighter *fighter, const MoveSequence *sequence);
+void fighter_fiber_play_to(Fighter *fighter, int sample, int step);
 void fighter_step_fiber(Fighter *fighter);
 void fighter_cancel_fiber(Fighter *fighter);
 void fighter_cancel_all_fibers(void);

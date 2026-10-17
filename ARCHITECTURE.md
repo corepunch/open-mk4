@@ -107,7 +107,11 @@ existing P1/P2 actor pump resumes them on one thread, with positive waits in
 actor simulation ticks and at most one resume per battle tick. There are no
 worker threads, wall-clock sleeps or retail task-stack emulation. Runtime
 stacks live outside `g_battle`; copying Battle cannot snapshot an active fiber.
-Callbacks and MoveSequence remain supported for other moves.
+Explicit phase rebinding preserves a running fiber's locals. Blocking
+MoveSequence playback retains the shared sample/event data and returns to C
+for branches. Peer entries are deferred to the scheduler stack; no actor resumes
+on another actor's stack. Callbacks remain supported for independent objects,
+physics and shared engine behaviors.
 
 Do not reproduce the original global-address memory model or introduce an ECS
 framework merely to imitate the retail callback trees. Add an explicit event

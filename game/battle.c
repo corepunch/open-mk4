@@ -236,6 +236,7 @@ static void land_idle(Fighter *fighter) {
 }
 
 static void advance_fighter(Fighter *fighter, const Fighter *other) {
+  fighter_fiber_pump_begin(fighter);
   const CharacterDef *def = roster_def(fighter->roster);
   const Motion *motion = def->motion;
   bool grounded = !fighter_airborne(fighter);
@@ -532,6 +533,7 @@ void battle_step(const Input input[2]) {
     /* Poses keep playing to their last sample and bodies keep falling. */
     for (i = 0; i < 2; ++i) {
       Fighter *fighter = &g_battle.fighters[i];
+      fighter_fiber_pump_begin(fighter);
       if (fighter->pending != NULL) {
         FighterFn entry = fighter->pending;
         fighter->pending = NULL;
