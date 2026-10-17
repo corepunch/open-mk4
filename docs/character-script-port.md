@@ -161,10 +161,14 @@ retail scheduler or random-call-stream identity.
 The decompiler now distinguishes recovered data from the current port. The ice
 spawn rig uses mesh 74; its `4ed898` track uses meshes 75–82, one tick each.
 The shared projectile presentation keeps the initial mesh separate from the
-loop. Opcode 25's indexed sound table `4ead30` also requires its own token route,
-rather than assuming an A/B/C bank selector. This remaining sound difference is
-recorded by the helper catalog for a later correction; the
-existing adaptation is a reuse reference, not evidence overriding the EXE.
+loop. Opcode 25 uses `battle_sound(battle, SOUND_INDEXED, selector)` and the
+complete 66-entry table at `4ead30`, separately from A/B/C. Ice (`4ed588`)
+and the breath fatality (`4d2c10`) each queue selector 4 once on successful entry:
+token `0x852` resolves to `pcmk0426.esf`. Normal/fast ice release still uses C[0]
+at tick 15/8. Rejected commands do not play the entry cue. The catalogued air
+throw script uses indexed selector 13; its current C entry lives in Scorpion,
+so cataloguing that shared script does not establish a Sub-Zero implementation.
+Existing adaptations remain reuse references, not evidence overriding the EXE.
 
 Sound formats are checked against the local executable, including corrections
 to reference hypotheses: buffers are mono; ESF bit 31 controls looping.
@@ -172,7 +176,8 @@ to reference hypotheses: buffers are mono; ESF bit 31 controls looping.
 are decoded once. Three looping ADPCM files lack a final nibble; the decoder
 safely pads the final declared sample. Music/control tokens below 100 are
 outside sampled-effect playback. Additional sound cues can use the same event
-queue without character-owned audio devices.
+queue without character-owned audio devices. Each bank retains its own selector
+count; zero and out-of-range indexed entries resolve to silence.
 
 For each new character, add only researched roots to
 `tools/character_catalog.py`, translate its selected data/decisions, and reuse

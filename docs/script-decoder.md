@@ -148,17 +148,20 @@ separate; generated code is intended for adaptation to the shared C engine.
 Recovered distinctions include opcode 36's result flag 4 versus opcode 55's
 flag 1, task-spawn opcode 40 ignoring its inline byte, opcode 25 using sound
 lookup `4ead30` rather than bank B, and `405430` always succeeding in this EXE.
-The indexed sound helper currently has no direct A/B/C-selector adapter; the
-query preserves its token lookup rather than silently dropping the cue.
+The indexed sound helper links to the common `sound_event` resolver. Queue it
+with `battle_sound(battle, SOUND_INDEXED, selector)`; assets load all 66 tokens,
+selectors above 65 and zero entries are silent, and sampled tokens resolve
+through division by five. Selector 4 is token `0x852`, sample 426. Keep the
+indexed cue at its script position, separately from later A/B/C events.
 
 Direct table decoding separates the spawn rig from the animated track:
 `4ed5d0` initially creates mesh 74, but `4ed898`'s track records point to rig
 records whose mesh fields are **75–82**. The portable projectile keeps its
 initial mesh separately and begins the eight-frame loop on its first animation
 tick; mesh 74 is never replayed in that loop. Camera tables skip their leading
-parameter word; weapon bounce triples start after their floor header. Focused checks protect
-these layout distinctions against repeating the earlier hand-transcription
-mistakes.
+parameter word; weapon bounce triples start after their floor header. Focused
+checks protect these layout distinctions against repeating the earlier
+hand-transcription mistakes.
 
 ## Compact move pages
 

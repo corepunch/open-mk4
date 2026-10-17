@@ -34,7 +34,7 @@ TABLES = {
     'weapon_descriptor': Table(0x4ecdb8, 1, 32, (('type', 0, 'hex'), ('rig', 4, 'packed'), ('grip_y', 28, 'q16'))),
     'weapon_bounces': Table(0x4ecaf4, 3, 12, (('spin_z', 0, 'q16'), ('launch_y', 4, 'q16'), ('rest_angle', 8, 'q16')), 'Angles are Q16 radians; gravity 0x28f; impact sound C[21]', (('floor', 0x4ecaf0, 'q16'),)),
     'blood_splash': Table(0x4e7ab0, 9, 4, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration')), 'Final one-tick mesh-12 tail invokes 405dd0; complete splash lasts nineteen ticks'),
-    'indexed_sounds': Table(0x4ead30, 8, 2, (('token', 0, 'u16'),), 'First eight selectors; 0x25 uses this table, NOT bank B; tokens below 100 are control events'),
+    'indexed_sounds': Table(0x4ead30, 66, 2, (('token', 0, 'u16'),), 'All 66 selectors accepted by 48a0d0; 0x25 uses this table, NOT bank B; tokens below 100 are control events'),
 }
 
 

@@ -33,7 +33,12 @@ class HelperTests(unittest.TestCase):
         # A previously hidden opcode is an indexed sound table, not bank B.
         self.assertEqual(table_values(self.image, 'indexed_sounds')[4]['token'], 0x852)
         self.assertIn('NOT bank B', text)
-        self.assertIn('no direct engine adapter recorded', text)
+        self.assertIn('SOUND_INDEXED', text)
+        self.assertIn('[`sound_event`]', text)
+        sounds = table_values(self.image, 'indexed_sounds')
+        self.assertEqual(len(sounds), 66)
+        self.assertEqual(sounds[13]['token'], 2100)
+        self.assertEqual(sounds[65]['token'], 0)
 
     def test_native_only_clone_and_scepter_emit_actual_c_adaptations(self):
         clone = move_c_text(self.image, 'clone', character=4)

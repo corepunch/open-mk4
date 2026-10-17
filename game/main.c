@@ -29,6 +29,12 @@ static void validate(const Assets *assets) {
   int roster;
   require(assets->arenas.count == 11, "Incomplete arena list");
   require(assets->audio.sounds.count == 674, "Incomplete sound archive");
+  const Sound *ice_sound = sound_event(&assets->audio, SOUND_INDEXED, 4);
+  require(assets->audio.event_counts[SOUND_INDEXED] == 66 && assets->audio.events[SOUND_INDEXED][4] == 0x852 && ice_sound != NULL && ice_sound->id == 426,
+      "Indexed ice cue must resolve the original token to pcmk0426.esf");
+  require(sound_event(&assets->audio, SOUND_B, 4) != ice_sound, "Indexed selectors must remain distinct from sound bank B");
+  require(sound_event(&assets->audio, SOUND_INDEXED, 65) == NULL && sound_event(&assets->audio, SOUND_INDEXED, 66) == NULL,
+      "Zero and out-of-range indexed sounds must be silent");
   for (size_t i = 0; i < assets->arenas.count; ++i) {
     const Arena *arena = &assets->arenas.data[i];
     size_t triangles = 0;

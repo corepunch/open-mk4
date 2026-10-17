@@ -16,6 +16,7 @@ enum {
   SOUND_A,
   SOUND_B,
   SOUND_C,
+  SOUND_INDEXED, /* Opcode 25 / 48a0d0, separate from A/B/C. */
   SOUND_BANK_COUNT
 };
 
@@ -23,6 +24,7 @@ enum {
 
 typedef struct SoundBank {
   Sounds sounds;
+  int event_counts[SOUND_BANK_COUNT];
   uint16_t events[SOUND_BANK_COUNT][SOUND_EVENT_COUNT];
 } SoundBank;
 

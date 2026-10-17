@@ -24,7 +24,7 @@ H = Helper
 SZ = 'game/c_sub_zero.c'
 HELPERS = {
     # VM wrappers: checked at their exact local entries, not guessed from names.
-    0x4596e0: H('indexed_sound_event', 'low byte of inline; table 4ead30', 'Lookup a 16-bit sampled/control token; index <= 0x41, zero tokens do nothing. This is NOT bank B.', 'Immediate; dispatch resumes.', related=(0x48a0d0,), tables=('indexed_sounds',), call='indexed_sound_event({arg});'),
+    0x4596e0: H('indexed_sound_event', 'low byte of inline; table 4ead30', 'Lookup a 16-bit sampled/control token; index <= 0x41, zero tokens do nothing. This is NOT bank B.', 'Immediate; dispatch resumes. Queue battle_sound(battle, SOUND_INDEXED, selector); the common resolver maps sampled tokens through /5.', ('common/mk4_audio.c', 'sound_event'), related=(0x48a0d0,), tables=('indexed_sounds',), call='indexed_sound_event({arg});'),
     0x4595e0: H('roster_voice_event', 'low-byte selector and active task roster', 'Select 53d0a0 row and a roster-specific 16-bit token; Kitana/Noob remap to Sonya/Reiko.', 'Immediate; dispatch resumes.', related=(0x48a230,), call='roster_voice_event({arg});'),
     0x45a4d0: H('submit_sample', 'low-byte stored sample', '429970 submits the requested pose without a scheduler wait.', 'Immediate; the following wait is a separate operation.', related=(0x429970,), call='show_sample({arg});'),
     0x45ba40: H('rewind_to_sample', 'low-byte target sample; current clip/cursor', '4292f0 decrements playback toward the target; retain the bound clip.', 'Cooperative playback; resumes script after completion.', (SZ, 'ice_tick'), (0x4292f0,), call='rewind_to_sample({arg});'),

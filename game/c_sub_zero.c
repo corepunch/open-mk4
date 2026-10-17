@@ -920,6 +920,7 @@ static void sub_zero_ice(Battle *battle, Fighter *fighter) {
   fighter->script = ice_tick;
   fighter->script_phase = followup;
   fighter->sample_override = 0;
+  battle_sound(battle, SOUND_INDEXED, 4); /* 4ed588: before normal/fast startup. */
 }
 
 /* 47f4d0 copies the current pose before the retreat. Both ice predicates
@@ -1529,6 +1530,9 @@ static void start_fatality(Battle *battle, Fighter *fighter, int id) {
   Fighter *victim = opponent(battle, fighter);
   fatal_pose(battle, victim, 13, 0, false);
   fatal_pose(battle, fighter, id == FINISH_SUB_ZERO_1 ? 385 : id == FINISH_SUB_ZERO_2 ? 552 : id == FINISH_FAN ? 415 : 293, 0, true);
+  if (id == FINISH_SUB_ZERO_2) {
+    battle_sound(battle, SOUND_INDEXED, 4); /* 4d2c10: before the breath clip. */
+  }
   if (id == FINISH_SUB_ZERO_1) {
     /* 445100 -> 475530 aligns the scene pair at 1.45 units. */
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {

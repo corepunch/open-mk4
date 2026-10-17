@@ -131,6 +131,14 @@ static int objects(const Battle *battle, int kind) {
   return count;
 }
 
+static int sound_events(const Battle *battle, int bank, int selector) {
+  int count = 0;
+  for (int i = 0; i < battle->sound_count; ++i) {
+    count += battle->sounds[i].bank == bank && battle->sounds[i].selector == selector;
+  }
+  return count;
+}
+
 static void ice(void) {
   Battle shake = fight(0, 4.f);
   Fighter *shaken = &shake.fighters[1];
@@ -160,9 +168,14 @@ static void ice(void) {
     Fighter *victim = &battle.fighters[1 - player];
     ice_command(&battle, player, 2, 0);
     check(fighter_move(&battle.fighters[player])->clip == 16, "D,F,LP must enter ice");
+    check(sound_events(&battle, SOUND_INDEXED, 4) == 1 && sound_events(&battle, SOUND_C, 0) == 0,
+        "ice entry must queue its indexed cue once before the release sound");
     advance(&battle, 14);
     check(objects(&battle, PROJECTILE_ICE) == 0, "ice must wait for startup");
-    advance(&battle, 14);
+    advance(&battle, 1);
+    check(sound_events(&battle, SOUND_C, 0) == 1 && sound_events(&battle, SOUND_INDEXED, 4) == 0,
+        "normal ice release must retain C[0] without repeating its indexed entry cue");
+    advance(&battle, 13);
     check(victim->appearance == APPEARANCE_FROZEN && victim->action == 0x1003 && victim->health == Q16_ONE, "ice must freeze without direct damage");
     check(victim->buttons == NULL && (victim->flags & FF_NO_GUARD), "frozen victim must be locked and unable to guard");
     int frozen_age = victim->ticks;
@@ -223,7 +236,17 @@ static void ice(void) {
       }
       ice_command(&battle, player, gate == 0 ? 27 : 2, gate == 3 ? BUTTON_BIT(BUTTON_BLOCK) : 0);
       check(fighter_move(&battle.fighters[player])->clip != 16, "ice must reject late/juggle/air/block gates");
+      check(sound_events(&battle, SOUND_INDEXED, 4) == 0, "rejected ice command must not play the entry cue");
     }
+    battle = fight(player, 14.f);
+    battle.fighters[player].flags |= FF_FOLLOW_UP;
+    ice_command(&battle, player, 2, 0);
+    check(battle.fighters[player].script_phase == 1 && sound_events(&battle, SOUND_INDEXED, 4) == 1, "fast ice must use the same one-shot entry cue");
+    advance(&battle, 7);
+    check(objects(&battle, PROJECTILE_ICE) == 0 && sound_events(&battle, SOUND_INDEXED, 4) == 0, "fast ice must wait seven ticks without repeating its cue");
+    advance(&battle, 1);
+    check(objects(&battle, PROJECTILE_ICE) == 1 && sound_events(&battle, SOUND_C, 0) == 1 && sound_events(&battle, SOUND_INDEXED, 4) == 0,
+        "fast ice must play C[0] at its eight-tick release");
     battle = fight(player, 4.f);
     ice_command(&battle, player, 24, 0);
     check(fighter_move(&battle.fighters[player])->clip == 16, "ice accepts inclusive 26-tick command window");
@@ -695,6 +718,7 @@ static void cpu_behavior(void) {
   advance(&battle, 1);
   check(fighter_move(fighter)->clip == 16 && fighter->directions.token[0] == 0,
       "CPU far-distance table must select the character ice entry without synthesizing a human command");
+  check(sound_events(&battle, SOUND_INDEXED, 4) == 1, "CPU ice must share the same indexed entry cue as human commands");
   advance(&battle, 16);
   check(objects(&battle, PROJECTILE_ICE) == 1, "CPU ice must run the shared character continuation");
 
@@ -976,12 +1000,15 @@ static void fatalities(void) {
       check(battle.phase == PHASE_FATALITY && battle.finisher == id, "Sub-Zero command at inclusive window must select finisher");
       check(battle.time_ticks == time && battle.fighters[player].wins == 2, "finisher freezes timer and awards no extra win");
       check(battle.fighters[0].buttons == NULL && battle.fighters[1].buttons == NULL, "finisher must lock both players");
+      check(sound_events(&battle, SOUND_INDEXED, 4) == (id == FINISH_SUB_ZERO_2), "only the breath fatality must use the indexed ice entry cue");
       if (id == FINISH_SUB_ZERO_1) {
         advance(&battle, 90);
         check(fighter_move(&battle.fighters[player])->clip == 385 && fighter_move(&battle.fighters[1 - player])->clip == 387,
             "first fatality must select Sub-Zero paired clips");
       } else if (id == FINISH_SUB_ZERO_2) {
-        advance(&battle, 80);
+        advance(&battle, 1);
+        check(sound_events(&battle, SOUND_INDEXED, 4) == 0, "breath animation must not repeat its entry cue");
+        advance(&battle, 79);
         check(fighter_move(&battle.fighters[player])->clip == 552 && fighter_move(&battle.fighters[1 - player])->clip == 206,
             "second fatality must run the independent victim animation during breath");
         advance(&battle, 135);
@@ -1013,6 +1040,7 @@ static void fatalities(void) {
       Battle battle = sub_zero_finish(player, id == FINISH_SUB_ZERO_2 ? 0x26666 : 0xcccc, id == FINISH_FAN ? 8 : 0);
       sub_zero_finish_command(&battle, player, id, id == FINISH_SUB_ZERO_1 ? chord : 0, kind == 0 ? 61 : kind == 1 ? 51 : kind == 2 ? 49 : 41);
       check(battle.phase == PHASE_FINISH, "finisher must reject one tick beyond command window");
+      check(sound_events(&battle, SOUND_INDEXED, 4) == 0, "rejected finisher must not play the breath entry cue");
     }
     const q16 boundaries[] = {Q16_ONE, 0x1cccc, 0x30000};
     for (int boundary = 0; boundary < 3; ++boundary) {
