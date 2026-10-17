@@ -244,7 +244,9 @@ class QueryTests(unittest.TestCase):
         self.assertIn('different EXE revision', text)
         # Upstream addresses must never become our labels by numeric equality
         # or by applying a single revision delta to all functions.
-        self.assertEqual(target_text('0x46a9b0'), '0x46a9b0')
+        # This interior entry is now independently located by a full
+        # matching-assembly container, not borrowed by address equality.
+        self.assertIn('at_0046a9b0', target_text('0x46a9b0'))
         self.assertNotIn('MoveSel_0048d3f0', text)
         self.assertEqual(reference_rows([0x48d3f0]), [])
         branch = dict(va='0x570000', opcode='0x31', operation='branch', branch='0x46a950')
@@ -415,7 +417,8 @@ class NativeTests(unittest.TestCase):
                 self.assertEqual(len(manifest['functions']), len(self.functions))
                 for file in root.rglob('*.md'):
                     for link in re.findall(r'\]\(([^)]+)\)', file.read_text()):
-                        self.assertTrue((file.parent / link).is_file(), (str(file), link))
+                        target = re.sub(r':\d+$', '', link)
+                        self.assertTrue((file.parent / target).is_file(), (str(file), link))
                 first = (root / 'manifest.json').read_bytes()
                 disassembly.write(root, 'MK4/FILESYS.DAT', full_text=False)
                 self.assertEqual((root / 'manifest.json').read_bytes(), first)

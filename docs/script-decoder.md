@@ -78,21 +78,31 @@ direct calls and jumps with names as well. Addresses remain visible, and unknown
 targets remain addresses. These names are descriptive annotations, not recovered
 original source names or proof that the helper has been fully understood.
 
-`tools/retail_symbols.py` shares names between queries and bundle output. Its
-small explicit correspondence table links checked helpers to the local
-mk4decomp source, showing both our address and the upstream entry or embedded
-offset. Initial links cover script entry and the low-kick script's task-field
-clear/set and pose-wait helpers. Source links also appear in generated native
-and script bundle pages; no bundle regeneration is needed for queries.
+`tools/retail_symbols.py` loads the checked-in `retail_symbol_map.json`,
+produced from `reference/mk4decomp/config/symbols.yaml` and its matching assembly:
 
-The reference checkout at `af88007` targets another executable revision. Never
-apply `config/symbols.yaml` directly to our addresses or assume a single address
-delta: our contact query B at `0x48d3f0` is an unrelated move-table selector at
-that address upstream. The correspondence table was checked against local
-exact-entry x86 listings and upstream source. Embedded low-kick helpers occur
-in the matching assembly branch of `five_block_dispatch_variants.c`; its
-`NON_MATCHING` C twin omits them. Function names alone therefore cannot replace
-bytecode decoding or examination of the matching source branch.
+```sh
+python3 tools/map_retail_symbols.py
+```
+
+The mapper accepts unique complete instruction-shape matches, preserving
+registers, operand widths, small constants, internal branches and consistent
+one-to-one address relocations. It does not use numeric address equality or a
+uniform revision offset. The initial map contains 355 mapped symbols; repeated
+wrappers remain ambiguous, and functions without matching assembly remain
+unmapped. The JSON records both addresses, source files, instruction counts,
+EXE/source fingerprints, ambiguity candidates and unmatched names. Ordinary
+queries read this compact map without scanning reference sources or requiring
+the upstream executable. Rebuild it explicitly after updating the reference.
+
+Queries link both the upstream C file and the matching assembly used as evidence.
+An entry inside a mapped cluster is labeled as an interior entry, retaining its
+local address and container offset; it is never presented as the cluster's
+function entry. For example our ice entry `49bc60` lies inside the locally mapped
+`49bc00` container; upstream `49bc60` names that container itself. Existing
+manually checked embedded helper correspondences remain available as well.
+Names and source links are navigation aids, not recovered signatures or proof
+that a helper's complete behavior is understood.
 
 To extend coverage, inspect the local helper with `--native`, compare its
 operations and callers with the reference, then add its descriptive alias and

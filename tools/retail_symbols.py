@@ -1,8 +1,15 @@
-"""Build-specific research names and explicitly checked upstream source links.
+"""Build-specific aliases plus structurally mapped mk4decomp symbols.
 
-Never resolve our addresses through the reference build's symbol map.
+Upstream numeric addresses alone never establish a local correspondence.
 """
+import json
 from pathlib import Path
+from retail_moves import EXE_SHA256
+
+MAP = json.loads(Path(__file__).with_name('retail_symbol_map.json').read_text())
+if MAP['exe_sha256'] != EXE_SHA256:
+    raise ValueError('Symbol map targets another retail revision')
+MAPPED = MAP['mapped']
 
 # Descriptive research aliases for THIS build, never imported upstream addresses.
 NAMES = {
@@ -31,6 +38,23 @@ NAMES = {
     0x49c810: 'spear_contact_query', 0x49c610: 'special_input_snapshot',
 }
 
+for _symbol in MAPPED:
+    NAMES.setdefault(int(_symbol['local'], 16), _symbol['name'])
+
+
+def mapped_symbol(address):
+    """Prefer an exact entry, otherwise the narrowest mapped container."""
+    rows = [row for row in MAPPED if int(row['local'], 16) <= address < int(row['end'], 16)]
+    return min(rows, key=lambda row: (int(row['local'], 16) != address,
+                                     int(row['end'], 16) - int(row['local'], 16))) if rows else None
+
+
+def native_name(address):
+    if address in NAMES:
+        return NAMES[address]
+    row = mapped_symbol(address)
+    return '%s_at_%08x' % (row['name'], address) if row else 'unresolved_native_%08x' % address
+
 # Manually compared with the supplied EXE's exact-entry listings. The source
 # checkout is af88007; offsets below are within its matching assembly cluster,
 # not the NON_MATCHING C twin (which omits these embedded entry points).
@@ -54,12 +78,14 @@ def target_text(value):
     """Keep the original address and annotate only known local names."""
     address = int(value, 16) if isinstance(value, str) else value
     name = NAMES.get(address)
+    if name is None and mapped_symbol(address):
+        name = native_name(address)
     return '%s (%s)' % (value, name) if name else str(value)
 
 
 def reference_rows(addresses):
     """Link checked correspondences without importing upstream addresses."""
-    selected = sorted(set(addresses) & REFERENCES.keys())
+    selected = sorted(address for address in set(addresses) if address in REFERENCES or mapped_symbol(address))
     if not selected:
         return []
     root = Path(__file__).resolve().parents[1] / 'reference/mk4decomp'
@@ -67,6 +93,15 @@ def reference_rows(addresses):
             'Checked correspondences to reference af88007; upstream addresses belong to a different EXE revision.',
             'Names are research annotations; embedded entries may exist only in the matching assembly branch.', '']
     for address in selected:
+        if address not in REFERENCES:
+            row = mapped_symbol(address)
+            offset = address - int(row['local'], 16)
+            rows.append('- `%08x` -> [`%s`](%s), upstream container `%08x`, local container `%08x`%s. %s. '
+                        'Matching assembly: [%s:%d](%s:%d).' %
+                        (address, row['name'], root / row['source'], int(row['upstream'], 16), int(row['local'], 16),
+                         ' +%#x' % offset if offset else '', row['evidence'], row['assembly_source'], row['assembly_line'],
+                         root / row['assembly_source'], row['assembly_line']))
+            continue
         upstream, symbol, source, evidence = REFERENCES[address]
         rows.append('- `%08x` (%s) -> [`%s`](%s), upstream `%08x`. %s' %
                     (address, NAMES[address], symbol, root / source, upstream, evidence))

@@ -71,3 +71,4 @@ check: format-check test viewer-test game-test
 	python3 tests/test_apps.py
 	python3 tests/test_retail_moves.py
 	python3 tests/test_disassembly.py
+	python3 tests/test_retail_symbols.py

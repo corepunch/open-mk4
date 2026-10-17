@@ -14,7 +14,7 @@ import struct
 
 from retail_moves import DESCRIPTORS, EXE_SHA256, RetailImage, clip_inventory
 from scorpion_moves import SCRIPT_OPS, VM_HANDLER_COUNT, inventory, script_program
-from retail_symbols import NAMES, reference_rows
+from retail_symbols import NAMES, reference_rows, native_name
 
 GLOBALS = {
     0x4d07ac: 'scratch_stack_top (packed word index)',
@@ -343,7 +343,7 @@ class Disassembly:
         return functions
 
     def label(self, address):
-        return self.names.get(address, self.imports.get(address, 'fn_%08x' % address))
+        return self.names.get(address, self.imports.get(address, native_name(address)))
 
     def native_link(self, address, prefix=''):
         return '[%s (`%08x`)](%snative/%08x.md)' % (self.label(address), address, prefix, address)
