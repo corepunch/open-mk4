@@ -135,8 +135,7 @@ Scorpion's `spear_script` is the first fiber port. A normal C helper
 Normal/fast paths launch at ticks 10/8, reach sample 30 at 15/11, then wait
 45 ticks. The existing live-pull predicate may extend that hold. Projectile
 contacts and movement retain their independent C callback. Pull arrival first
-installs the victim stun, then replaces the owner's fiber with the existing
-`spear_return_tick` callback. `spear_cleanup` removes owner projectiles and
+installs independent victim-stun and owner-return fibers. `spear_cleanup` removes owner projectiles and
 releases a still-snared victim on cancellation, while preserving an already
 installed arrival stun. These paired-return mechanics remain portable engine
 adaptations; this prototype does not claim full retail spear-native parity.
@@ -145,6 +144,11 @@ Focused regressions cover both players and startup paths, exact recovery,
 blocked/hit pull behavior, direct hit and queued interruption during nested
 startup/recovery/pull waits, full object pools, rematch during pull, and two
 simultaneous actor fibers whose projectiles can interrupt one another.
+
+The special-move fibers cover ice, clone, slide, sidestep, spear return/stun,
+teleport and fire. Independent projectile and clone callbacks retain their own
+lifetimes. Ice plays two forward/backward recovery cycles; clone suspends until
+its apex and landing; teleport retains live contact and wall/range gates.
 
 Scorpion and Sub-Zero ground normals now start actor fibers. Jabs keep their
 repeat/recovery graph in C; uppercuts retain contact and loop count across phase

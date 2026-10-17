@@ -880,38 +880,30 @@ static void ice_projectile(Projectile *p) {
   }
 }
 
-static void ice_tick(Fighter *fighter) {
-  int startup = fighter->script_phase ? 8 : 15;
-  int t = fighter->ticks;
-  if (t < startup) {
-    fighter->sample_override = mini(14, t * (fighter->script_phase ? 2 : 1));
-    return;
-  }
-  if (t == startup) {
-    battle_sound(SOUND_C, 0);
-    Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_ICE, 180, ice_projectile);
-    if (p != NULL) {
-      p->mesh_animation = &ice_meshes;
-      p->initial_mesh = 74;
-      for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-        q16 heading = fighter_axis(fighter, axis);
-        p->pos[axis] += q16_mul(heading, 0xccc);
-        p->vel[axis] = q16_mul(heading, 0x3333);
-      }
-      p->pos[AXIS_Y] -= 0x28f;
+static void ice_script(Fighter *fighter) {
+  bool fast = fighter->script_phase != 0;
+  fighter_fiber_play_to(fighter, 14, fast ? 2 : 1);
+  fighter_wait_ticks(1);
+  battle_sound(SOUND_C, 0);
+  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_ICE, 180, ice_projectile);
+  if (p != NULL) {
+    p->mesh_animation = &ice_meshes;
+    p->initial_mesh = 74;
+    for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+      q16 heading = fighter_axis(fighter, axis);
+      p->pos[axis] += q16_mul(heading, 0xccc);
+      p->vel[axis] = q16_mul(heading, 0x3333);
     }
+    p->pos[AXIS_Y] -= 0x28f;
   }
-  int phase = t - startup - 1;
   fighter->action = ACTION_RETAIL_1007;
-  fighter->sample_override = phase < 0    ? 14
-                             : phase < 8  ? 15 + phase
-                             : phase < 13 ? 23 - (phase - 8)
-                             : phase < 18 ? 18 + phase - 13
-                             : phase < 23 ? 23 - (phase - 18)
-                                          : mini(35, 18 + phase - 23);
-  if (phase >= 41) {
-    sub_zero_ready(fighter);
+  for (int cycle = 0; cycle < 2; ++cycle) {
+    fighter_fiber_play_to(fighter, 23, 1);
+    fighter_fiber_play_to(fighter, 18, -1);
   }
+  fighter_fiber_play_to(fighter, 35, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(sub_zero_ready);
 }
 
 static bool can_ice(const Fighter *fighter) {
@@ -922,10 +914,10 @@ static void sub_zero_ice(Fighter *fighter) {
   bool followup = fighter_fast_start(fighter);
   stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &s_ice);
-  fighter->script = ice_tick;
   fighter->script_phase = followup;
   fighter->sample_override = 0;
   battle_sound(SOUND_INDEXED, 4); /* 4ed588: before normal/fast startup. */
+  fighter_start_fiber(fighter, ice_script, NULL);
 }
 
 /* 47f4d0 copies the current pose before the retreat. Both ice predicates
@@ -942,29 +934,25 @@ static void clone_object(Projectile *p) {
   }
 }
 
-static void clone_tick(Fighter *fighter) {
-  if (fighter->script_phase == 0) {
-    fighter->sample_override = mini(8, fighter->ticks);
-    if (fighter->ticks == 3) {
-      fighter->body.root_y += 0x3333;
-      fighter->body.pos[AXIS_Y] -= 0x3333;
-      fighter->body.spin[AXIS_X] = -0x6147;
-    }
-    if (fighter->ticks >= 9 && fighter->body.vel[AXIS_Y] >= 0) {
-      /* 47f880 stops angular motion, restores facing, then 429460
-       * plays the clip backwards while 48f390 waits for landing. */
-      memset(fighter->body.angle, 0, sizeof fighter->body.angle);
-      memset(fighter->body.spin, 0, sizeof fighter->body.spin);
-      fighter->script_phase = 1;
-      fighter->script_timer = 0;
-    }
-  } else {
-    fighter->sample_override = maxi(0, 8 - ++fighter->script_timer);
-    if (fighter->script_timer >= 8 && !fighter_airborne(fighter)) {
-      fighter->body.root_y = 0;
-      air_land(fighter);
-    }
+static void clone_script(Fighter *fighter) {
+  fighter_fiber_play_to(fighter, 3, 1);
+  fighter->body.root_y += 0x3333;
+  fighter->body.pos[AXIS_Y] -= 0x3333;
+  fighter->body.spin[AXIS_X] = -0x6147;
+  fighter_fiber_play_to(fighter, 8, 1);
+  do {
+    fighter_wait_ticks(1);
+  } while (fighter->body.vel[AXIS_Y] < 0);
+  /* 47f880 restores facing; 429460 reverses before the landing wait. */
+  memset(fighter->body.angle, 0, sizeof fighter->body.angle);
+  memset(fighter->body.spin, 0, sizeof fighter->body.spin);
+  fighter->script_phase = 1;
+  fighter_fiber_play_to(fighter, 0, -1);
+  while (fighter_airborne(fighter)) {
+    fighter_wait_ticks(1);
   }
+  fighter->body.root_y = 0;
+  fighter_fiber_finish(air_land);
 }
 
 static bool can_clone(const Fighter *fighter) {
@@ -984,13 +972,13 @@ static void sub_zero_clone(Fighter *fighter) {
   }
   stop_body(fighter);
   fighter_start_move(fighter, S_JUMP, near ? &s_clone_near : &s_clone);
-  fighter->script = clone_tick;
   fighter->sample_override = 0;
   fighter_set_speed(fighter, -0x170a);
   fighter->body.vel[AXIS_Y] = -0x28f5;
   fighter->body.gravity = 0x28f;
   fighter->clone_ready = g_battle.ticks + 180;
   battle_sound(SOUND_C, 0xa);
+  fighter_start_fiber(fighter, clone_script, NULL);
 }
 
 /* Slide: 47dc00/4e84d8 -> 47dc40; hit 4e84f8, block 4e8530.
@@ -998,44 +986,46 @@ static void sub_zero_clone(Fighter *fighter) {
 static const AttackRecord slide_record = {0xf0a3, 0x947a, 0x111eb, 0x8f5c, 122, 122, 165, 0, 0x147a};
 static const MoveDef s_slide = {.clip = 95, .last = 10, .flags = SF_LOCK | SF_RECORD, .action = 0x204};
 
-static void slide_tick(Fighter *fighter) {
-  if (fighter->script_phase == 0) {
-    fighter->sample_override = mini(9, fighter->ticks);
-    if (fighter->ticks >= 9 && fighter->ticks <= 25) {
-      ContactResult contact = battle_contact(fighter, &slide_record);
+static void slide_script(Fighter *fighter) {
+  ContactResult contact = CONTACT_MISS;
+  for (int tick = 1; tick <= 25; ++tick) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = mini(9, tick);
+    if (tick >= 9) {
+      contact = battle_contact(fighter, &slide_record);
       if (contact != CONTACT_MISS) {
-        fighter->script_phase = 1;
-        fighter->script_timer = 0;
-        if (contact == CONTACT_BLOCK) {
-          stop_body(fighter);
-          fighter->flags |= FF_NO_GUARD;
-        } else {
-          fighter->slide_ready = g_battle.ticks + 64;
-        }
+        break;
       }
     }
-    if (fighter->script_phase == 0 && fighter->ticks >= 25) {
-      stop_body(fighter);
-      fighter->script_phase = 2;
-      fighter->script_timer = 0;
-    }
   }
-  if (fighter->script_phase == 1) {
+  if (contact != CONTACT_MISS) {
+    fighter->script_phase = 1;
+    if (contact == CONTACT_BLOCK) {
+      stop_body(fighter);
+      fighter->flags |= FF_NO_GUARD;
+    } else {
+      fighter->slide_ready = g_battle.ticks + 64;
+    }
     static const int samples[] = {10, 9, 8, 9};
-    int hold = fighter->contact == CONTACT_BLOCK ? 24 : 16;
-    fighter->sample_override = samples[fighter->script_timer % 4];
-    if (++fighter->script_timer >= hold) {
-      stop_body(fighter);
-      fighter->script_phase = 2;
-      fighter->script_timer = 0;
+    int hold = contact == CONTACT_BLOCK ? 24 : 16;
+    for (int tick = 0; tick < hold; ++tick) {
+      fighter->sample_override = samples[tick % 4];
+      if (tick + 1 < hold) {
+        fighter_wait_ticks(1);
+      }
     }
-  } else if (fighter->script_phase == 2) {
-    fighter->sample_override = maxi(0, 10 - fighter->script_timer++);
-    if (fighter->script_timer > 11) {
-      fighter->flags &= ~(unsigned)FF_NO_GUARD;
-      sub_zero_ready(fighter);
-    }
+    stop_body(fighter);
+    fighter->script_phase = 2;
+    fighter_wait_ticks(1);
+  } else {
+    stop_body(fighter);
+    fighter->script_phase = 2;
   }
+  fighter->sample_override = 10;
+  fighter_fiber_play_to(fighter, 0, -1);
+  fighter_wait_ticks(1);
+  fighter->flags &= ~(unsigned)FF_NO_GUARD;
+  fighter_fiber_finish(sub_zero_ready);
 }
 
 static bool can_slide(const Fighter *fighter) {
@@ -1047,10 +1037,10 @@ static bool can_slide(const Fighter *fighter) {
 static void sub_zero_slide(Fighter *fighter) {
   stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_slide);
-  fighter->script = slide_tick;
   fighter->sample_override = 0;
   fighter_set_speed(fighter, 0x2666);
   battle_sound(SOUND_C, 0xf);
+  fighter_start_fiber(fighter, slide_script, NULL);
 }
 
 /* Shared weapon draw 4e62c0/4e62d8, air 4e66d0/4e66f0 and
@@ -1150,11 +1140,14 @@ static bool can_sidestep(const Fighter *fighter) {
          g_battle.ticks >= fighter->sidestep_ready;
 }
 
-static void sidestep_tick(Fighter *fighter) {
-  fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
-  if (fighter->ticks >= 18) {
-    stop_body(fighter);
-    sub_zero_ready(fighter);
+static void sidestep_script(Fighter *fighter) {
+  for (;;) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
+    if (fighter->ticks >= 18) {
+      stop_body(fighter);
+      fighter_fiber_finish(sub_zero_ready);
+    }
   }
 }
 
@@ -1168,12 +1161,12 @@ static void sub_zero_sidestep(Fighter *fighter) {
   q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
   stop_body(fighter);
   fighter_start_move(fighter, S_WALK, &s_sidestep);
-  fighter->script = sidestep_tick;
   fighter->script_phase = down;
   fighter->sample_override = down ? 0 : 17;
   fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
   fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
   fighter->sidestep_ready = g_battle.ticks + 80;
+  fighter_start_fiber(fighter, sidestep_script, NULL);
 }
 
 /* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs

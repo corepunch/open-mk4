@@ -412,7 +412,7 @@ static void check_spear_fiber_allocation_and_reset(void) {
   advance_ticks(45, NULL);
   check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE - 0xccc && g_battle.fighters[1].action == 0x1008,
       "Earlier spear must cancel the other fiber and projectile, then finish its victim pull");
-  check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Mirror pull arrival must retire both stacks");
+  check(fighter_fiber_active(&g_battle.fighters[0]) && fighter_fiber_active(&g_battle.fighters[1]), "Mirror pull arrival must start return and stun fibers");
   advance_ticks(100, NULL);
   check(g_battle.fighters[0].state == S_IDLE && g_battle.fighters[1].state == S_IDLE, "Mirror pull must return both actors without stale waits");
 }
@@ -453,7 +453,7 @@ static void check_specials(void) {
     advance_ticks(45, NULL);
     check(victim->health == Q16_ONE - 0xccc && fighter_distance(fighter) < 0.9f, "Spear must damage once and pull into follow-up range");
     check(victim->action == 0x1008 && victim->damage_scale == 0x9999, "Spear must leave scaled combo stun");
-    check(!fighter_fiber_active(fighter) && fighter->script != fighter_step_fiber, "Pull arrival must replace the waiting fiber with the return continuation");
+    check(fighter_fiber_active(fighter) && fighter_fiber_active(victim), "Pull arrival must start independent return and stun fibers");
     advance_ticks(100, NULL);
     check(fighter->state == S_IDLE && victim->state == S_IDLE, "Spear must release both fighters");
     for (int i = 0; i < MAX_PROJECTILES; ++i) {

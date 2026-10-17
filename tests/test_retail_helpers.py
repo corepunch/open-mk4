@@ -54,7 +54,7 @@ class HelperTests(unittest.TestCase):
 
     def test_native_only_clone_and_scepter_emit_actual_c_adaptations(self):
         clone = move_c_text(self.image, 'clone', character=4)
-        for value in ('static void sub_zero_clone(', 'static void clone_tick(', 'static void clone_object(',
+        for value in ('static void sub_zero_clone(', 'static void clone_script(', 'static void clone_object(',
                       'snapshot', '74', '53', '180', 'clip 301', 'shared_g.geo'):
             self.assertIn(value.lower(), clone.lower())
         self.assertIn('not automatically decompiled x86', clone)

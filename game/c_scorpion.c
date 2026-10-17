@@ -308,20 +308,17 @@ static void special_ready(Fighter *fighter) {
   scorpion_ready(fighter);
 }
 
-static void spear_stun_tick(Fighter *fighter) {
-  fighter->sample_override = 0;
-  /* 0x487420: a 0x40-tick opening, cancelled naturally by a new hit. */
-  if (fighter->ticks >= 64) {
-    special_ready(fighter);
-  }
+static void spear_stun_script(Fighter *fighter) {
+  /* 487420: independent 0x40-tick follow-up opening, cancelled by a hit. */
+  fighter_wait_ticks(64);
+  fighter_fiber_finish(special_ready);
 }
 
-static void spear_return_tick(Fighter *fighter) {
-  fighter->sample_override = mini(79, 31 + fighter->ticks);
-  if (fighter->ticks >= 49) {
-    fighter->spear_ready = g_battle.ticks + 90;
-    special_ready(fighter);
-  }
+static void spear_return_script(Fighter *fighter) {
+  fighter_fiber_play_to(fighter, 79, 1);
+  fighter_wait_ticks(1);
+  fighter->spear_ready = g_battle.ticks + 90;
+  fighter_fiber_finish(special_ready);
 }
 
 static bool spear_not_pulling(const Fighter *fighter) {
@@ -354,7 +351,7 @@ static void spear_cleanup(Fighter *fighter) {
 
 static void spear_projectile(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner], *victim = opponent(owner);
-  bool interrupted = owner->current_move != &s_spear || (!fighter_fiber_active(owner) && owner->script != spear_return_tick) || owner->pending != NULL;
+  bool interrupted = owner->current_move != &s_spear || !fighter_fiber_active(owner) || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && victim->current_move == &s_snared) {
       special_ready(victim);
@@ -371,12 +368,12 @@ static void spear_projectile(Projectile *p) {
     if (abs(dx) <= 0xcccc) {
       stop_body(victim);
       fighter_start_move(victim, S_HIT, &s_spear_stun);
-      victim->script = spear_stun_tick;
       victim->sample_override = 0;
       victim->flags |= FF_REACTING;
+      fighter_start_fiber(victim, spear_stun_script, NULL);
       fighter_start_move(owner, S_PUNCH, &s_spear);
-      owner->script = spear_return_tick;
       owner->sample_override = 31;
+      fighter_start_fiber(owner, spear_return_script, spear_cleanup);
       p->kind = 0;
     } else {
       victim->body.pos[AXIS_X] += dx > 0 ? 0x3333 : -0x3333;
@@ -432,7 +429,7 @@ static void spear_spawn(Fighter *fighter) {
 
 /* 4ed448/4ed47c -> 4ed470/4ed498. Normal/fast launch is at tick 10/8;
  * sample 30 follows at 15/11. Keep the existing paired-pull policy: arrival
- * replaces this fiber with spear_return_tick, while cancellation cleans up. */
+ * replaces this fiber with spear_return_script, while cancellation cleans up. */
 static void spear_script(Fighter *fighter) {
   bool fast = fighter->script_phase != 0;
   spear_play_to(fighter, fast ? 25 : 20);
@@ -462,68 +459,59 @@ static void scorpion_spear(Fighter *fighter) {
   fighter_start_fiber(fighter, spear_script, spear_cleanup);
 }
 
-static void teleport_land_tick(Fighter *fighter) {
-  fighter->sample_override = mini(27, 18 + fighter->ticks);
-  if (fighter->ticks >= 10) {
-    special_ready(fighter);
-  }
+static void teleport_land_script(Fighter *fighter) {
+  fighter_fiber_play_to(fighter, 27, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(special_ready);
 }
 
-static void teleport_block_tick(Fighter *fighter) {
-  fighter->sample_override = fighter->ticks < 21 ? 8 : maxi(0, 29 - fighter->ticks);
-  if (fighter->ticks >= 29 && !fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, &s_teleport_land);
-    fighter->script = teleport_land_tick;
-    fighter->sample_override = 18;
-  }
-}
-
-static void teleport_tick(Fighter *fighter) {
+static void teleport_script(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  fighter->sample_override = mini(9, fighter->ticks);
-  if (fighter->script_phase == 0) {
-    if (fighter->ticks < 10 && fighter_distance(fighter) < 5.9f && abs(fighter->body.pos[AXIS_X]) < g_battle.arena_radius - Q16_ONE) {
-      return;
-    }
-    q16 distance = abs(victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]);
-    int direction = victim->body.pos[AXIS_X] >= fighter->body.pos[AXIS_X] ? 1 : -1;
-    q16 offset = 0x26666 + maxi(0, 4 * Q16_ONE - distance);
-    q16 x = victim->body.pos[AXIS_X] + direction * offset;
-    fighter->body.pos[AXIS_X] = abs(x) > g_battle.arena_radius ? victim->body.pos[AXIS_X] : x;
-    fighter->facing = -direction;
-    fighter->body.vel[AXIS_X] = -direction * 0x2666;
-    fighter->sample_override = 9;
-    fighter->script_phase = 1;
-    return;
-  }
+  do {
+    fighter_wait_ticks(1);
+    fighter->sample_override = mini(9, fighter->ticks);
+  } while (fighter->ticks < 10 && fighter_distance(fighter) < 5.9f && abs(fighter->body.pos[AXIS_X]) < g_battle.arena_radius - Q16_ONE);
+  q16 distance = abs(victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]);
+  int direction = victim->body.pos[AXIS_X] >= fighter->body.pos[AXIS_X] ? 1 : -1;
+  q16 offset = 0x26666 + maxi(0, 4 * Q16_ONE - distance);
+  q16 x = victim->body.pos[AXIS_X] + direction * offset;
+  fighter->body.pos[AXIS_X] = abs(x) > g_battle.arena_radius ? victim->body.pos[AXIS_X] : x;
+  fighter->facing = -direction;
+  fighter->body.vel[AXIS_X] = -direction * 0x2666;
   fighter->sample_override = 9;
-  if (fighter->script_phase == 2) {
-    if (++fighter->script_timer == 6) {
-      fighter->body.gravity = 0x1999;
+  fighter->script_phase = 1;
+  ContactResult result;
+  do {
+    fighter_wait_ticks(1);
+    if (!fighter_airborne(fighter)) {
+      fighter_fiber_finish(special_ready);
     }
-    if (fighter->script_timer >= 6 && !fighter_airborne(fighter)) {
-      special_ready(fighter);
-    }
-    return;
-  }
-  if (!fighter_airborne(fighter)) {
-    special_ready(fighter);
-    return;
-  }
-  ContactResult result = battle_contact(fighter, &teleport_record);
+    result = battle_contact(fighter, &teleport_record);
+  } while (result == CONTACT_MISS && fighter->ticks < 70);
   if (result == CONTACT_BLOCK) {
-    fighter_start_move(fighter, S_JUMP, &s_teleport_block);
-    fighter->script = teleport_block_tick;
+    fighter_fiber_move(fighter, S_JUMP, &s_teleport_block);
     fighter->sample_override = 8;
     fighter->body.vel[AXIS_X] = -fighter->facing * 0x28f;
     fighter->body.vel[AXIS_Y] = -0x2147;
     fighter->body.gravity = 0x1ca;
-  } else if (result != CONTACT_MISS || fighter->ticks >= 70) {
-    stop_body(fighter);
-    fighter->flags &= ~(unsigned)FF_TELEPORTING;
-    fighter->script_phase = 2;
-    fighter->script_timer = 0;
+    fighter_wait_ticks(21);
+    fighter_fiber_play_to(fighter, 0, -1);
+    while (fighter_airborne(fighter)) {
+      fighter_wait_ticks(1);
+    }
+    fighter_fiber_move(fighter, S_JUMP, &s_teleport_land);
+    fighter->sample_override = 18;
+    teleport_land_script(fighter);
   }
+  stop_body(fighter);
+  fighter->flags &= ~(unsigned)FF_TELEPORTING;
+  fighter->script_phase = 2;
+  fighter_wait_ticks(6);
+  fighter->body.gravity = 0x1999;
+  while (fighter_airborne(fighter)) {
+    fighter_wait_ticks(1);
+  }
+  fighter_fiber_finish(special_ready);
 }
 
 static bool can_teleport(const Fighter *fighter) {
@@ -532,7 +520,6 @@ static bool can_teleport(const Fighter *fighter) {
 
 static void scorpion_teleport(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_teleport);
-  fighter->script = teleport_tick;
   fighter->sample_override = 0;
   fighter->teleport_ready = g_battle.ticks + 69;
   fighter->flags |= FF_TELEPORTING;
@@ -540,36 +527,39 @@ static void scorpion_teleport(Fighter *fighter) {
   fighter_set_speed(fighter, -0x2666);
   fighter->body.vel[AXIS_Y] = -0x170a;
   fighter->body.gravity = 0x1ca;
+  fighter_start_fiber(fighter, teleport_script, NULL);
 }
 
-static void fire_tick(Fighter *fighter) {
-  int tick = fighter->ticks;
-  bool fast = fighter->script_phase != 0;
-  if (tick < 4) {
-    fighter->sample_override = tick + 1;
-  } else if (tick < 9) {
-    fighter->sample_override = tick;
-  } else if (tick < 13) {
-    fighter->sample_override = tick - 1;
-  } else if (fast) {
-    fighter->sample_override = mini(34, tick < 19 ? tick - 2 : tick < 32 ? tick - 3 : tick - 4);
-  } else {
-    fighter->sample_override = mini(34, tick < 48 ? 11 + (tick - 13) / 2 : tick - 19);
-  }
-  if (tick == (fast ? 19 : 27)) {
-    battle_contact(fighter, &fire_record);
-  }
-  if (tick >= (fast ? 39 : 54)) {
-    special_ready(fighter);
+static void fire_script(Fighter *fighter) {
+  const bool fast = fighter->script_phase != 0;
+  for (int tick = 1;; ++tick) {
+    fighter_wait_ticks(1);
+    if (tick < 4) {
+      fighter->sample_override = tick + 1;
+    } else if (tick < 9) {
+      fighter->sample_override = tick;
+    } else if (tick < 13) {
+      fighter->sample_override = tick - 1;
+    } else if (fast) {
+      fighter->sample_override = mini(34, tick < 19 ? tick - 2 : tick < 32 ? tick - 3 : tick - 4);
+    } else {
+      fighter->sample_override = mini(34, tick < 48 ? 11 + (tick - 13) / 2 : tick - 19);
+    }
+    if (tick == (fast ? 19 : 27)) {
+      battle_contact(fighter, &fire_record);
+    }
+    if (tick >= (fast ? 39 : 54)) {
+      fighter_fiber_finish(special_ready);
+    }
   }
 }
 
 static void scorpion_fire(Fighter *fighter) {
   stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &s_fire);
-  fighter->script = fire_tick;
   fighter->sample_override = 1;
   fighter->script_phase = (fighter_opponent(fighter)->flags & FF_REACTING) != 0;
+  fighter_start_fiber(fighter, fire_script, NULL);
 }
 
 static bool fighting(const Fighter *fighter) {
@@ -866,8 +856,8 @@ static const ButtonTable scorpion_standing;
 static void air_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
   fighter_start_move(fighter, S_JUMP, &s_teleport_land);
-  fighter->script = teleport_land_tick;
   fighter->sample_override = 18;
+  fighter_start_fiber(fighter, teleport_land_script, NULL);
 }
 
 static void air_attack_tick(Fighter *fighter) {
