@@ -20,7 +20,7 @@ static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11,
 static const AttackRecord uppercut_record = {0xe3d7, -0xfd70, 0x947a, 0x10518, 34, 34, 6, 0, 0x28f5};     /* 0x4ebd50, A selector 2 */
 static const AttackRecord uppercut_alt_record = {0x12106, -0x111a9, 0xfa9f, 0x17a9f, 34, 34, 6, 0, 0xa3d}; /* 0x4ebd68, A selector 6 */
 static const AttackRecord kick_record = {0x15e76, -0xd999, 0x151a9, 0x111eb, 16, 13, 6, 0, 0x2147};       /* 0x4ebae0, B selector 1 */
-static const AttackRecord sweep_record = {0x170a3, 0x8518, 0xdeb8, 0x8000, 19, 19, 4, ATTACK_LOW, 0x23d7}; /* 0x4ebb58, B selector 35 */
+static const AttackRecord sweep_record = {0x170a3, 0x8518, 0xdeb8, 0x8000, 19, 19, 4, ATTACK_LOW, 0x23d7}; /* 0x4ebb70, B selector 36 */
 // clang-format on
 
 static int victim_action(const Fighter *fighter) {
@@ -289,9 +289,9 @@ static void stop_body(Fighter *fighter) {
   fighter->body.on_land = NULL;
 }
 
-/* Ground scripts and their native tails: 4e6da0, 4e5fd8,
- * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69c8/46c2c0,
- * 4e6190/46bb60 and 4e6844/46f220. Times are our script ticks. */
+/* Selected Liu Kang ground scripts and native tails: 4e6d08, 4e60b8,
+ * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69b0/46c2c0,
+ * 4e6190/46bb60 and 4e6e90/46f390. Times are our script ticks. */
 enum {
   G_LOW_KICK,
   G_CROUCH_LP,
@@ -314,7 +314,7 @@ static const GroundAttack ground_attacks[] = {
   {{.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208}, 10, 33, 36},
   {{.clip = 260, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0107}, {65536, -3932, 42532, 20971, 29, 10, 4, 0, 2621}, 8, 19, 22},
   {{.clip = 315, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0106}, {81264, 34734, 67502, 32768, 28, 10, 4, 0, 3932}, 9, 19, 22},
-  {{.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0104}, {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864}, 9, 29, 29},
+  {{.clip = 54, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0104}, {48496, -24903, 44564, 30146, 25, 10, 5, 0, 7864}, 9, 42, 42},
   {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
   {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
   {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
@@ -371,7 +371,7 @@ static void ground_attack_script(Fighter *fighter) {
       }
       case G_CROUCH_HK: {
         static const int hold[] = {11, 10, 11, 12};
-        fighter->sample_override = t < 13 ? t : hold[((t - 13) / 2) % 4];
+        fighter->sample_override = t < 13 ? t : t < 29 ? hold[((t - 13) / 2) % 4] : maxi(0, 12 - (t - 29));
         break;
       }
       case G_CLOSE_HP: {

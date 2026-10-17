@@ -119,3 +119,8 @@ clip 182 with -0x4ccc/friction on ground, or 183 with -0xccc, Y -0xf5c,
 gravity 0x312 and getup 185 when above 0x3333. Owner snaps to ground,
 finishes 68 from sample 6 and returns. Interruption releases the committed
 victim tail; no repeated damage is added for the visual kicks.
+
+Final normal-path audit: crouching HK 4e60b8 finishes clip 54, holds
+11/10/11/12 for two two-tick cycles, then rewinds the complete 13-sample
+clip before returning. Its 42-tick recovery includes that reverse tail;
+returning immediately after the pose loop would allow an early next move.

@@ -86,6 +86,12 @@ static void normals(void) {
     advance(180);
     check(g_battle.fighters[1 - player].state == S_IDLE, "crouch HK victim must finish its reaction");
     fight(player, 4.f);
+    press(player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK));
+    advance(30);
+    check(fighter_fiber_active(&g_battle.fighters[player]), "crouching HK must finish its reverse-to-start tail");
+    advance(12);
+    check(!fighter_fiber_active(&g_battle.fighters[player]), "crouching HK releases after the reversed clip");
+    fight(player, 4.f);
     press(player, BUTTON_BIT(BUTTON_LOW_KICK));
     advance(7);
     check(g_battle.fighters[player].avoids_high, "low-kick avoidance begins after seven ticks");
