@@ -224,13 +224,19 @@ branches. For a newly added roster definition, wire `game/mk4_characters.h` and
 Character C files are already included by the Makefile's `game/c_*.c` wildcard.
 
 Test through the real command or move entry, not only a directly invoked helper.
-Choose focused assertions from the ledger: accepted/rejected gates, meaningful
-hit/miss/block branches, clip/cursor phase boundaries, one-time scaled damage,
-interruption and eventual owner/victim recovery. For paired moves, run the
+Keep the set small and choose assertions for plausible failures: a changed
+command gate or important hit/miss/block branch, one-time scaled damage,
+interruption and eventual owner/victim recovery. Check a clip/cursor boundary
+when incorrect timing would change behavior. For paired moves, run the
 attacker in both player slots and include a victim with a different rig when
 alignment matters. Cover KO or reset where an independent tail could survive
-incorrectly. Reuse shared engine regressions instead of copying every engine
-scenario into every fighter's tests.
+incorrectly. Test shared scheduling and engine behavior once, then reuse that
+coverage across fighters.
+
+Simple arithmetic, data tables and small helpers do not automatically need
+dedicated tests. Skip tests that merely repeat implementation constants or
+check every intermediate tick. Expected behavior should come from the retail
+evidence; a focused test is useful when it catches a meaningful bug cheaply.
 
 For example, after changing Sub-Zero's paired moves:
 
@@ -474,6 +480,8 @@ Retail behavior determines the assertions. Use a few focused checks of a
 changed command gate, branch, damage, interruption or recovery. An entry-level
 check catches wrong helper wiring that a helper-only check cannot. Reuse shared
 pose, geometry, weapon, scene and sound checks for subsequent characters.
+Avoid duplicate constant checks and exhaustive per-tick assertions; see the
+testing guidance in [step 7](#7-wire-real-inputs-and-verify-the-behavior).
 `tests/test_sub_zero.c` exercises the character through the input path;
 `tests/test_mk4_assets.c` covers real looping poses, rotated contact, frozen
 pieces and PCM/ADPCM decoding. Existing compact kick/Scorpion fixtures stay.

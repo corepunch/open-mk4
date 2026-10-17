@@ -40,6 +40,21 @@ The targets find `clang-format` on `PATH` or through `xcrun` on macOS; override
 `CLANG_FORMAT` to select another installation. Do not format upstream reference
 checkouts. Keep formatting-only changes free of behavior changes.
 
+## Testing
+
+Keep tests proportional to plausible failure modes. Simple arithmetic, data
+tables and small helpers do not automatically need dedicated tests. Avoid tests
+that only repeat implementation constants or assert every intermediate tick.
+Derive expected behavior from retail evidence rather than copying the code.
+
+For fighter ports, prefer a small set of behavioral regressions for damage and
+recovery, important branches, interruption, and both player slots for paired
+moves. Include KO/reset when actor or object lifetimes make it relevant. Exercise
+real command or move entries. Test shared scheduling and engine behavior once,
+then reuse that coverage across fighters instead of duplicating exhaustive
+matrices. Run relevant existing checks; add tests only where they catch a
+meaningful bug cheaply.
+
 ## References
 
 Local reference checkouts live in `reference/`:
