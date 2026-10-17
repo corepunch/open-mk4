@@ -34,6 +34,17 @@ def moves_for(character):
     shared.update(high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70))),
                   low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),)),
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),)))
+    if character == 3:
+        shared.update(
+            high_kick=move(0x46a680, (('Liu Kang attacker', 0x4e6c90), ('recovery', 0x4e5c70)), (('B', 1),)),
+            low_kick=move(0x46a7b0, (('Liu Kang attacker', 0x4e6d08),), (('B', 6),)),
+            sweep=move(0x46ef90, (('Liu Kang attacker', 0x4e67d8),), (('B', 36),)),
+            roundhouse=move(0x46f1f0, (('Liu Kang attacker', 0x4e6e90), ('normal startup', 0x4e68a8), ('fast startup', 0x4e6890)), (('B', 34),)),
+            air_kick=move(0x46c7a0, (('Liu Kang straight kick', 0x4e6df0),), (('B', 39),)),
+            close_hp=SCORPION['close_hp'], combo_hp=SCORPION['combo_hp'], close_hk=SCORPION['close_hk'],
+            crouch_lp=SCORPION['crouch_lp'], crouch_lk=SCORPION['crouch_lk'], crouch_hk=SCORPION['crouch_hk'],
+        )
+        return shared
     if character != 4:
         return shared
     shared.update(

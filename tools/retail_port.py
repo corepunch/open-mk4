@@ -30,6 +30,7 @@ SPECIFIC = {
         'sword_back_lp': 'sword_back_lp', 'sword_back_hp': 'sword_back_hp', 'sword_spin': 'sword_spin',
         'fatality_1': 'scorpion_burn_fatality', 'fatality_2': 'scorpion_beast_fatality',
         'sword_throw': ('game/weapons.c', 'weapon_throw')},
+    3: {},
     4: {'ice': 'sub_zero_ice', 'clone': 'sub_zero_clone', 'slide': 'sub_zero_slide', 'sidestep': 'sub_zero_sidestep',
         'scepter_hp': 'scepter_hp', 'scepter_lp': 'scepter_lp', 'scepter_back_hp': 'scepter_back_hp', 'scepter_back_lp': 'scepter_back_lp',
         'fatality_1': 'sub_zero_first_fatality', 'fatality_2': 'sub_zero_second_fatality',
@@ -57,7 +58,7 @@ def port_entry(character, name):
         return None
     if name in COMMON:
         return COMMON[name]
-    c = 'scorpion' if character == 0 else 'sub_zero'
+    c = {0: 'scorpion', 3: 'liu_kang', 4: 'sub_zero'}[character]
     entry = SPECIFIC[character].get(name, ENTRIES.get(name))
     if isinstance(entry, tuple):
         return entry
