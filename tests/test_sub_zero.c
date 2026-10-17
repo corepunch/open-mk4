@@ -78,17 +78,6 @@ static void normals(void) {
     check(fighter_move(&g_battle.fighters[player])->clip == 532, "combo HP must select Sub-Zero clip 532");
     advance(120);
     check(g_battle.fighters[player].state == S_IDLE, "combo HP must recover");
-    for (int lk = 0; lk < 2; ++lk) {
-      fight(player, .6f);
-      press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
-      check(fighter_move(&g_battle.fighters[player])->clip == (lk ? 37 : 75), "paired throw entry");
-      advance(41);
-      check(g_battle.fighters[1 - player].health == Q16_ONE, "throw damage occurred before sample 42");
-      advance(1);
-      check(g_battle.fighters[1 - player].health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "paired throw damage");
-      advance(180);
-      check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].state == S_IDLE, "throw must release both controllers");
-    }
     fight(player, .65f);
     press(player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK));
     advance(7);
@@ -838,6 +827,172 @@ static void air_throws(void) {
   }
 }
 
+static int ground_throw_disarms;
+
+static void ground_throw_disarm(Fighter *fighter) {
+  ground_throw_disarms++;
+  fighter->armed = false;
+}
+
+static void start_ground_throw(int player, bool lk) {
+  fight(player, .6f);
+  ground_throw_disarms = 0;
+  Fighter *victim = &g_battle.fighters[1 - player];
+  victim->armed = true;
+  victim->disarm = ground_throw_disarm;
+  press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
+  check(g_battle.fighters[player].ticks == 0 && fighter_move(&g_battle.fighters[player])->clip == (lk ? 41 : 76) &&
+            fighter_move(victim)->clip == (lk ? 165 : 153),
+      "Sub-Zero throws must select retail owner/victim clips for both player slots");
+  check(fighter_fiber_active(&g_battle.fighters[player]) && fighter_fiber_active(victim) && (g_battle.fighters[player].flags & FF_PAIRED) &&
+            (victim->flags & FF_PAIRED),
+      "retail throw entry must own both fibers and lock the pair");
+}
+
+static void ground_throws(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int lk = 0; lk < 2; ++lk) {
+      start_ground_throw(player, lk);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      const int entry_facing = owner->facing;
+      const int damage_at = lk ? 52 : 25, disarm_at = lk ? 39 : 25, release_at = lk ? 57 : 25, owner_end = lk ? 117 : 49;
+      const q16 damage = lk ? 0x2e14 : 0x2666;
+      for (int tick = 1; tick <= 130; ++tick) {
+        advance(1);
+        check(victim->health == Q16_ONE - (tick >= damage_at ? damage : 0), "throw must damage once at LP 25 / LK 52 without chip or Scorpion timing");
+        check(ground_throw_disarms == (tick >= disarm_at ? 1 : 0), "LP must disarm on release; LK must disarm earlier at sample 39");
+        if (tick < release_at) {
+          check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "throw must retain the pair until its retail release boundary");
+        } else {
+          check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "release must detach both actors in the same world tick");
+        }
+        if (tick < owner_end) {
+          check(owner->state == S_THROW && fighter_fiber_active(owner), "owner must remain locked through its full retail recovery");
+        } else {
+          check(owner->state == S_IDLE && !fighter_fiber_active(owner), "owner must return at LP 49 / LK 117");
+        }
+        if (!lk) {
+          if (tick < 25) {
+            check(owner->sample_override == tick && victim->sample_override == tick, "LP paired poses must stay synchronized through sample 24");
+          }
+          if (tick == 25 || tick == 41) {
+            check(victim->reaction == 102 && fighter_move(victim)->clip == 142 && victim->sample_override == tick - 25,
+                "LP release must select reaction 102 / tumble 142 without a one-tick player-order difference");
+          }
+          if (tick == 42 || tick == 58) {
+            check(fighter_move(victim)->clip == 141 && victim->sample_override == tick - 42, "LP must play tumble 141 after 17 samples of 142");
+          }
+          if (tick == 59 || tick == 87 || tick == 107) {
+            check(
+                fighter_move(victim)->clip == 143 && victim->sample_override == (tick < 87 ? tick - 59 : 28), "LP must finish clip 143 then hold twenty ticks");
+          }
+          if (tick == 108 || tick == 122) {
+            check(fighter_move(victim)->clip == 328 && victim->sample_override == tick - 108 && victim->action == ACTION_RETAIL_200E,
+                "LP victim must reverse into getup 328 after the twenty-tick hold");
+            check(victim->facing == -entry_facing, "LP reverse getup must turn from the aligned throw facing");
+          }
+          if (tick == 123) {
+            check(victim->state == S_IDLE && !fighter_fiber_active(victim), "LP victim must finish its own getup independently of the owner");
+          }
+        } else {
+          if (tick <= 10) {
+            check(owner->sample_override == tick && victim->sample_override == 0, "LK opening advances only the owner for ten samples");
+          }
+          if (tick < 52) {
+            check(owner->body.vel[AXIS_X] == 0 && victim->body.vel[AXIS_X] == 0, "LK must save its entry momentum without moving during paired startup");
+          }
+          if (tick == 52) {
+            check(abs(victim->body.vel[AXIS_X]) == 0x1999 && owner->body.vel[AXIS_X] == q16_mul(-victim->body.vel[AXIS_X], 0xe666),
+                "LK damage must restore opposite entry momentum and start owner friction in the same world tick");
+          }
+          if (tick == 39 || tick == 44 || tick == 52) {
+            check(
+                owner->sample_override == tick && victim->sample_override == tick - 10, "LK paired count operands must preserve the ten-sample cursor offset");
+          }
+          if (tick >= 57 && tick < 117) {
+            check(fighter_move(owner)->clip == CLIP_ASSET_IDLE && owner->sample_override == 0, "LK owner must hold an idle pose for sixty ticks after release");
+          }
+          if (tick == 57 || tick == 61 || tick == 66 || tick == 71 || tick == 76 || tick == 81) {
+            int expected = tick == 57 ? 45 : tick == 61 || tick == 71 || tick == 81 ? 41 : 46;
+            check(fighter_move(victim)->clip == 165 && victim->sample_override == expected, "LK victim must execute all three reverse/forward 41..46 cycles");
+          }
+          if (tick == 86 || tick == 126) {
+            check(fighter_move(victim)->clip == 200 && victim->sample_override == tick - 86, "LK victim must finish with retail clip 200");
+          }
+          if (tick == 127) {
+            check(victim->state == S_IDLE && !fighter_fiber_active(victim), "LK victim must release control after clip 200");
+          }
+        }
+      }
+      check(
+          victim->state == S_IDLE && victim->body.gravity == 0 && victim->body.on_land == NULL && owner->body.vel[AXIS_X] == 0 && victim->body.vel[AXIS_X] == 0,
+          "throw recovery must clear physics/callbacks and restore the victim's own controller");
+
+      for (int interrupted = 0; interrupted < 2; ++interrupted) {
+        start_ground_throw(player, lk);
+        advance(damage_at - 1);
+        fighter_interrupt(&g_battle.fighters[interrupted ? 1 - player : player], fighter_ready);
+        advance(150);
+        if (victim->health != Q16_ONE || owner->state != S_IDLE || victim->state != S_IDLE || fighter_fiber_active(owner) || fighter_fiber_active(victim) ||
+            (owner->flags & FF_PAIRED) || (victim->flags & FF_PAIRED)) {
+          fprintf(stderr, "throw interruption player=%d lk=%d target=%d health=%x states=%d/%d fibers=%d/%d flags=%x/%x\n", player, lk, interrupted,
+              victim->health, owner->state, victim->state, fighter_fiber_active(owner), fighter_fiber_active(victim), owner->flags, victim->flags);
+        }
+        check(victim->health == Q16_ONE && owner->state == S_IDLE && victim->state == S_IDLE && !fighter_fiber_active(owner) && !fighter_fiber_active(victim) &&
+                  !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
+            "interrupting either actor immediately before damage must cancel the paired throw and all stale continuations");
+      }
+      start_ground_throw(player, lk);
+      victim->damage_scale = 0x8000;
+      advance(damage_at);
+      check(victim->health == Q16_ONE - q16_mul(0x8000, damage), "retail throw damage must retain victim damage scaling");
+
+      start_ground_throw(player, lk);
+      advance(release_at);
+      fighter_interrupt(owner, fighter_ready);
+      check(fighter_fiber_active(victim), "owner interruption after release must preserve the victim's independent recovery");
+      advance(150);
+      check(owner->state == S_IDLE && victim->state == S_IDLE && victim->health == Q16_ONE - damage, "released victim must recover without repeated damage");
+
+      start_ground_throw(player, lk);
+      advance(release_at);
+      battle_react(victim, 67);
+      advance(40);
+      check(victim->action == ACTION_RETAIL_1003 && !fighter_fiber_active(victim),
+          "hit interruption must cancel old victim recovery instead of resuming its getup");
+      advance(150);
+      check(victim->state == S_IDLE, "interrupted victim must finish the new reaction");
+
+      if (!lk) {
+        start_ground_throw(player, false);
+        advance(release_at);
+        check(victim->body.on_land != NULL, "LP tumble must install its landing impact callback");
+        fighter_interrupt(victim, fighter_ready);
+        check(victim->body.on_land == NULL && !fighter_fiber_active(victim), "queued interruption must retire the LP landing callback with its fiber");
+        advance(150);
+        check(victim->state == S_IDLE && victim->health == Q16_ONE - damage, "cancelled LP recovery must not resume or leave a suspended body");
+      }
+
+      start_ground_throw(player, lk);
+      owner->wins = 1;
+      victim->health = damage / 2;
+      advance(damage_at);
+      check(g_battle.phase == PHASE_FINISH && g_battle.finish_waiting && victim->health == 0 && fighter_fiber_active(victim),
+          "lethal throw must preserve the victim recovery when the winner enters victory");
+      advance(160);
+      check(g_battle.phase == PHASE_FINISH && !g_battle.finish_waiting && victim->action == ACTION_RETAIL_1009 && !fighter_fiber_active(victim),
+          "lethal throw must settle its victim and open the finish window without a stuck pair");
+
+      start_ground_throw(player, lk);
+      advance(release_at);
+      battle_reset_match();
+      advance(150);
+      check(owner->health == Q16_ONE && victim->health == Q16_ONE && !fighter_fiber_active(owner) && !fighter_fiber_active(victim),
+          "rematch must cancel both throw recoveries without later damage or callback work");
+    }
+  }
+}
+
 static void cpu_behavior(void) {
   fight(0, 6.f);
   Fighter *fighter = &g_battle.fighters[0];
@@ -1406,6 +1561,7 @@ int main(void) {
   fatalities();
   weapons();
   normals();
+  ground_throws();
   ice();
   clone_tests();
   slide_tests();

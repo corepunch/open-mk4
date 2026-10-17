@@ -32,7 +32,7 @@ static bool never(const Fighter *fighter) {
 }
 
 /* 0x4913a0 group callback. */
-static void friction(Fighter *fighter) {
+void fighter_friction(Fighter *fighter) {
   q16 *v = fighter->body.vel;
   v[AXIS_X] = q16_mul(v[AXIS_X], FRICTION);
   v[AXIS_Z] = q16_mul(v[AXIS_Z], FRICTION);
@@ -50,7 +50,7 @@ static void stop_sliding(Fighter *fighter) {
 
 static void slide(Fighter *fighter, q16 speed) {
   fighter_set_speed(fighter, -speed);
-  fighter->body.physics = friction;
+  fighter->body.physics = fighter_friction;
 }
 
 /* 488ea0 -> 480fc0(2) -> 487530/570: a grounded attacker recoils

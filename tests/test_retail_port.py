@@ -82,7 +82,7 @@ class PortTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unknown'):
             port_text(disassembly, 'not_a_move', 4)
 
-    def test_throw_roster_selection_and_existing_adaptation_are_explicit(self):
+    def test_throw_roster_selection_and_complete_retail_continuations(self):
         image = self.disassembly.image
         scorpion = script_program(image, moves_for(0)['lp_throw']['scripts'][0][1], 0)
         sub_zero = script_program(image, moves_for(4)['lp_throw']['scripts'][0][1], 4)
@@ -91,11 +91,28 @@ class PortTests(unittest.TestCase):
         self.assertEqual(image.word(0x4de7a0 + 4 * 4) * 4, 0x4de6b8)  # Packed script pointer.
         self.assertEqual(image.word(0x4ddfb8 + 4 * 4), 0x42c180)  # Native byte address, not VM code.
         self.assertEqual(moves_for(4)['lk_throw']['scripts'][0][1], 0x4de490)
-        for name in ('lp_throw', 'lk_throw'):
+        for name, fragments in (
+                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'lp_thrown_script')),
+                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'lk_thrown_script'))):
             text = port_text(self.disassembly, name, 4, 64)
-            self.assertIn('Known adaptation', text)
-            self.assertIn('retains existing gameplay', text)
+            self.assertIn('Port notes', text)
+            for fragment in fragments:
+                self.assertIn(fragment, text)
+            self.assertNotIn('retains existing gameplay', text)
         self.assertNotIn('Known adaptation', port_text(self.disassembly, 'lp_throw', 0, 64))
+        self.assertEqual([entry for _, entry in moves_for(4)['lk_throw']['scripts']], [0x4de490, 0x4de4b8, 0x4de4e0, 0x4e9ee0])
+        counts = script_program(image, 0x4de4b8, 4)['instructions']
+        self.assertEqual([r['inline'] for r in counts if int(r['opcode'], 16) == 0x10], [29, 5, 8])
+        final = script_program(image, 0x4de4e0, 4)['instructions']
+        self.assertEqual(final[0]['inline'], 5)
+        victim = script_program(image, 0x4e9bd0, 4)['instructions']
+        self.assertEqual([(r['clip'], r['stored_count']) for r in victim if 'clip' in r], [(142, 17), (141, 17), (143, 29)])
+        self.assertEqual([r['inline'] for r in victim if int(r['opcode'], 16) == 0x34], [20])
+        # Numeric evidence is data/assembly, not copied back from the C implementation.
+        self.assertEqual(image.word(0x42c226), 0x2e14)
+        self.assertEqual(image.word(0x42c370), 60)
+        self.assertEqual(image.clip(image.word(0x53cf90)), 200)
+        self.assertEqual(image.clip(image.word(0x4ea214)), 328)
 
     def test_action_evidence_is_real_literal_to_controller_field(self):
         from capstone import Cs, CS_ARCH_X86, CS_MODE_32

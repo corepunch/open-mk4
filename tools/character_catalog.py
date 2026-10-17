@@ -37,8 +37,14 @@ def moves_for(character):
     if character != 4:
         return shared
     shared.update(
-        lk_throw=move(0x42b6b0, (('Sub-Zero paired opening', 0x4de490),),
-                      native=(('roster dispatch', 0x42b6e0), ('Sub-Zero entry', 0x42c180), ('paired continuation', 0x42c200))),
+        lp_throw=move(0x42c560, (('roster-selected attacker/victim', 0x4de798), ('reaction 102 tumble body', 0x4e9bd0)),
+                      native=(('precondition', 0x42c3d0), ('entry/roster selection', 0x42c590), ('owner return', 0x42ce80),
+                              ('reaction 102', 0x485b70), ('victim getup', 0x488b80))),
+        lk_throw=move(0x42b6b0, (('Sub-Zero paired opening', 0x4de490), ('paired counts', 0x4de4b8),
+                               ('final five samples', 0x4de4e0), ('victim recovery', 0x4e9ee0)),
+                      native=(('roster dispatch', 0x42b6e0), ('Sub-Zero entry', 0x42c180), ('paired continuation', 0x42c200),
+                              ('damage/momentum', 0x42c220), ('owner return', 0x42c300), ('saved momentum', 0x48f6e0),
+                              ('victim release', 0x4871e0), ('victim recovery end', 0x487220))),
         high_kick=move(0x46a680, (('Sub-Zero attacker', 0x4e5c80), ('recovery', 0x4e6998)), (('B', 2),)),
         low_kick=move(0x46a7b0, (('Sub-Zero attacker', 0x4e6da0),)),
         close_hp=SCORPION['close_hp'], close_hk=SCORPION['close_hk'],

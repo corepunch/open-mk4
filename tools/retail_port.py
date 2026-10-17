@@ -37,12 +37,13 @@ SPECIFIC = {
 }
 
 PORT_NOTES = {
-    (4, 'lp_throw'): 'Existing portable shared throw uses clips 75/152, release 42 and a 65-tick owner duration. '
-                    'Retail roster selector 4de798 chooses 4de6b8: clips 76/153, pair playback to 25, reaction 102. '
-                    'The fiber migration retains existing gameplay; this is a known retail/port difference, not verified throw parity.',
-    (4, 'lk_throw'): 'Existing portable shared throw uses clips 37/157 and release 65. Retail native table 4ddfb8[4] '
-                    'selects 42c180 -> script 4de490, clips 41/165, followed by native 42c200. '
-                    'The fiber migration retains existing gameplay; the full Sub-Zero-specific release remains a native research boundary.',
+    (4, 'lp_throw'): 'Retail selector 4de798[4] chooses 4de6b8: owner/victim 76/153, damage 0x2666 at sample 25, '
+                    'owner return after sample 48. Reaction 102 plays 142/141/143, waits 20 and reverses into getup 328. '
+                    'The engine uses its pair axis for camera-relative tumble motion and keeps each roster bind-ground offset.',
+    (4, 'lk_throw'): 'Retail 42c180/4de490/4de4b8: owner/victim 41/165; owner-only opening 10, paired counts 29+5+8, '
+                    'damage 0x2e14 at 52, final paired 5 through 57, then owner idle hold 60. The saved -0x1999 entry velocity '
+                    'is restored at damage with opposite victim momentum. Victim 4e9ee0 reverses 45->41 and cycles to 46 three '
+                    'times, then plays clip 200. World alignment and friction use the engine body context.',
 }
 
 
@@ -187,7 +188,7 @@ def port_text(disassembly, name, character=0, limit=512):
             'not equal numeric addresses or assumed original symbols.' % move['entry']]
     port = port_entry(character, name)
     if (character, name) in PORT_NOTES:
-        rows += ['', '**Known adaptation:** ' + PORT_NOTES[character, name]]
+        rows += ['', '**Port notes:** ' + PORT_NOTES[character, name]]
     rows += source_rows(port, limit) if port else ['', 'No portable C entry is indexed for this character/move. No other character body is substituted.']
     operands, native = script_operands(image, move, character, limit)
     rows += operands

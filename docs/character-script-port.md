@@ -159,10 +159,10 @@ raw operands and native values. `--c` remains the retail control-flow view.
 moves. Native throw math, random roster sound lists and auxiliary tasks remain
 explicit boundaries; the portable engine's existing gameplay adaptations are
 retained rather than silently claiming those routines have been fully translated.
-The shared Sub-Zero ground throws are a known difference: retail LP selects
-clips 76/153 and sample 25; LK selects 41/165 and native 42c200. The existing
-shared 75/152 and 37/157 gameplay is retained in this migration. `--port` flags
-the discrepancy alongside the correctly roster-selected retail scripts.
+Sub-Zero ground throws now follow their own retail programs: LP 76/153,
+damage at 25, reaction 102 and reversed getup 328; LK 41/165, disarm at 39,
+damage at 52, release at 57, a 60-tick owner wait and independent victim
+41..46 cursor cycles followed by clip 200. See [throw evidence and timing](sub-zero-throws.md).
 
 Air attack hit-stops, paired ground and air throws, and weapon draw/strike/
 throw/pickup/recovery now use actor fibers too. Paired victims retain their own
@@ -190,7 +190,7 @@ The catalog links these sources directly through `--character sub_zero --move`.
 | --- | --- | --- |
 | High kick | `4e5ca0 -> 4e5c80`, `4e6978/6998`, B[2] | Clip 71; 29-step sparse playback; contact at steps 11–13; retain existing kick fixture |
 | Low kick / crouch HK / combo HP | `4e5d90 -> 4e6da0`, `4e5fd8`, `46c2a0 -> 4e69c8` | Clips 70/52/532, their distinct records, avoidance interval and follow-up tables |
-| Shared normals / air / throws | `4e62f0`, `4e62a0`, `4e6798`, `4e6658/6710/61f8/6500/63d8`, `4de6e4`, `4de2f8/318/328` | Own stance selection, hit/block/miss recovery, combo gates, paired damage/release and interrupted attachment cleanup |
+| Shared normals / air / throws | `4e62f0`, `4e62a0`, `4e6798`, `4e6658/6710/61f8/6500/63d8`, `4de6b8/898`, `4de490/4b8/4e0`, `4e9bd0`, `4e9ee0` | Own stance selection, hit/block/miss recovery, combo gates, paired damage/release and interrupted attachment cleanup |
 | Air throw | `45ed70/80`, `46aa80/aae0/ab20`, `4e5e28/50`, `4878c0`, reaction 89 `484b40/4e9910/484b60` | Shared Scorpion/Sub-Zero runner in `game/mk4_common.c`: upright paired clips 82/202; indexed cue 13; damage `0x2147` at sample 28; independent victim drop, impact and getup; ten-tick owner launch wait and shared landing |
 | Ice | `49bc60`, `4ed588/4ed818`, `49bcb0`, `49c300/690/810`, C[3] | Clip 16, normal/fast startup, independent 0.2-unit flight, no direct damage, reaction 67; an active clone blocks ice, another shot does not |
 | Fast startup | Opcode 45, native `45b650` | Grounded target: attacker's follow-up flag; airborne target: victim's reacting flag |

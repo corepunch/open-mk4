@@ -159,7 +159,7 @@ static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence 
 static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
 
-static const MoveDef s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
+static const MoveDef s_throw = {.clip = 76, .last = 48, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -742,65 +742,221 @@ static const ButtonTable combo_hp_followup = {
 static const ButtonTable close_hk_followup = {
     {[BUTTON_HIGH_PUNCH] = press_knee_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_combo_hk, [BUTTON_LOW_KICK] = press_lk}};
 
-/* Paired ground throws: 0x4de6e4 (LP), 0x4de2f8/318/328 (LK).
- * Retained shared gameplay adaptation: these are Scorpion's clips/timings.
- * Sub-Zero's retail LP selects 4de6b8 (76/153, sample 25); LK selects
- * 42c180 -> 4de490 (41/165). --move lp_throw/lk_throw --port records the gap.
- * Native opponent-root alignment is represented by a shared world origin. */
-static const MoveDef s_lk_throw = {.clip = 37, .last = 65, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0501};
-static const MoveDef s_lp_thrown = {.clip = 152, .last = 41, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+/* LP: roster script 4de798[4] -> 4de6b8/4de898; reaction 102 is
+ * 485b70 -> 4e9bd0, then reverse getup 488b80/4fbcdc.
+ * LK: 4ddfb8[4] -> 42c180 -> 4de490/4de4b8/4de4e0;
+ * 42c300 releases victim through 4871e0/4e9ee0/487220.
+ * Pair alignment uses our shared world origin, not retail task/group pointers. */
+static const MoveDef s_lk_throw = {.clip = 41, .last = 74, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0501};
+static const MoveDef s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lk_thrown = {.clip = 165, .last = 46, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
+static const MoveDef s_lk_thrown_rise = {.clip = 200, .last = 40, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lp_tumble_start = {.clip = 142, .last = 16, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lp_tumble_loop = {.clip = 141, .last = 16, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lp_tumble_end = {.clip = 143, .last = 28, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_lp_thrown_getup = {.clip = 328, .last = 14, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 
-static void thrown_end_script(Fighter *victim) {
-  fighter_fiber_play_to(victim, 130, 1);
+enum {
+  LP_THROW_RELEASE = 25,
+  LK_THROW_DISARM = 39, /* Opening 10 + paired 29. */
+  LK_THROW_VOICE = 44,  /* Another paired 5. */
+  LK_THROW_DAMAGE = 52, /* Another paired 8. */
+  LK_THROW_RELEASE = 57 /* Final paired 5 before the independent victim tail. */
+};
+
+/* A newly installed peer can take its P1/P2 turn in the installation tick.
+ * A displayed victim sample must still last one simulation tick. Keep the
+ * first wait on that sample as well; subsequent waits follow the same rule. */
+static void thrown_play_to(Fighter *victim, int sample, int step) {
+  while (step > 0 ? victim->sample_override < sample : victim->sample_override > sample) {
+    uint64_t submitted = g_battle.ticks;
+    do {
+      fighter_wait_ticks(1);
+    } while (g_battle.ticks == submitted);
+    victim->sample_override += step;
+  }
+}
+
+static void thrown_finish(Fighter *victim) {
+  stop_body(victim);
+  fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
+}
+
+static void lp_thrown_impact(Fighter *victim) {
+  battle_scene_impact(victim);
+}
+
+static void lp_thrown_cleanup(Fighter *victim) {
+  if (victim->body.on_land == lp_thrown_impact) {
+    victim->body.on_land = NULL;
+  }
+}
+
+static void lp_thrown_script(Fighter *victim) {
+  /* 4e9be0: heading-relative tumble, upward velocity and gravity. Floor
+   * contact emits the installed 457cb0 task callback independently of poses. */
+  thrown_play_to(victim, 16, 1);
   fighter_wait_ticks(1);
-  fighter_fiber_finish(victim->health > 0 ? sub_zero_ready : NULL);
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lp_tumble_loop);
+  victim->sample_override = 0;
+  thrown_play_to(victim, 16, 1);
+  fighter_wait_ticks(1);
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lp_tumble_end);
+  victim->sample_override = 0;
+  thrown_play_to(victim, 28, 1);
+  fighter_wait_ticks(1);
+  fighter_wait_ticks(20);
+  if (victim->health <= 0) {
+    thrown_finish(victim);
+  }
+  stop_body(victim);
+  victim->facing = -victim->facing; /* 488b80 -> 490350. */
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lp_thrown_getup);
+  victim->sample_override = 0;
+  thrown_play_to(victim, 14, 1);
+  fighter_wait_ticks(1);
+  thrown_finish(victim);
+}
+
+static void lk_thrown_script(Fighter *victim) {
+  /* Damage has already committed. Own the last five paired samples here,
+   * so a lethal throw can finish even when the winner enters victory. */
+  victim->script_phase = 1;
+  victim->sample_override = 42;
+  for (int tick = 1; tick <= 5; ++tick) {
+    uint64_t submitted = g_battle.ticks;
+    do {
+      fighter_wait_ticks(1);
+    } while (g_battle.ticks == submitted);
+    victim->sample_override = mini(46, 42 + tick);
+  }
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  victim->sample_override = 45;
+  victim->body.physics = fighter_friction;
+  /* 4e9ee0 sets cursor 45, then visits 41/46 three times. */
+  for (int cycle = 0; cycle < 3; ++cycle) {
+    thrown_play_to(victim, 41, -1);
+    thrown_play_to(victim, 46, 1);
+  }
+  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lk_thrown_rise);
+  victim->sample_override = 0;
+  thrown_play_to(victim, 40, 1);
+  fighter_wait_ticks(1);
+  thrown_finish(victim);
+}
+
+static bool throw_paired(const Fighter *owner) {
+  const Fighter *victim = fighter_opponent(owner);
+  return (victim->current_move == &s_lp_thrown || victim->current_move == &s_lk_thrown) && fighter_fiber_active(victim) && victim->pending == NULL;
 }
 
 static void ground_thrown_script(Fighter *victim) {
-  Fighter *owner = opponent(victim);
+  const Fighter *owner = opponent(victim);
   for (;;) {
     fighter_wait_ticks(1);
     if ((owner->current_move != &s_throw && owner->current_move != &s_lk_throw) || owner->pending != NULL) {
       victim->flags &= ~(unsigned)FF_PAIRED;
-      fighter_fiber_finish(victim->health > 0 ? sub_zero_ready : NULL);
+      thrown_finish(victim);
     }
-    victim->sample_override = mini(fighter_move(victim)->last, owner->ticks);
-    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-    victim->body.pos[AXIS_Y] = victim->body.ground;
+    /* The owner submits both poses. Origins rebase at the script's native
+     * alignment boundary; do not overwrite independent release velocities. */
+  }
+}
+
+static void throw_disarm(Fighter *victim) {
+  if (victim->armed && victim->disarm != NULL) {
+    victim->disarm(victim);
+  }
+}
+
+static void throw_pair_to(Fighter *owner, int sample, bool lk) {
+  Fighter *victim = opponent(owner);
+  while (owner->sample_override < sample) {
+    fighter_wait_ticks(1);
+    if (!throw_paired(owner)) {
+      owner->flags &= ~(unsigned)FF_PAIRED;
+      fighter_fiber_finish(sub_zero_ready);
+    }
+    owner->sample_override++;
+    if (!lk || owner->sample_override < LK_THROW_DAMAGE) {
+      victim->sample_override = mini(lk ? 46 : 25, maxi(0, owner->sample_override - (lk ? 10 : 0)));
+    }
+  }
+}
+
+static void throw_cleanup(Fighter *owner) {
+  Fighter *victim = opponent(owner);
+  if ((victim->flags & FF_PAIRED) && (victim->current_move == &s_lp_thrown || victim->current_move == &s_lk_thrown)) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    if (victim->health <= 0 && victim->script_phase == 1) {
+      return;
+    }
+    stop_body(victim);
+    fighter_cancel_fiber(victim);
+    if (victim->pending == NULL && victim->health > 0) {
+      fighter_ready(victim);
+    }
   }
 }
 
 static void ground_throw_script(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
   const bool lk = fighter->current_move == &s_lk_throw;
-  const int release = lk ? 65 : 42;
-  for (int tick = 1; tick <= (lk ? 66 : 65); ++tick) {
+  q16 momentum[3] = {0};
+  if (lk) {
+    /* 42c180 -> 48f6e0 saves -0x1999 along the entry pair axis, then
+     * stops it. 42c220 restores that vector and its opposite at damage. */
+    fighter_set_speed(fighter, -0x1999);
+    memcpy(momentum, fighter->body.vel, sizeof momentum);
+    stop_body(fighter);
+  }
+  if (!lk) {
+    throw_pair_to(fighter, LP_THROW_RELEASE, false);
+    throw_disarm(victim);
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    stop_body(victim);
+    fighter_start_move(victim, S_KNOCKDOWN, &s_lp_tumble_start);
+    victim->reaction = 102;
+    victim->sample_override = 0;
+    victim->flags |= FF_REACTING;
+    fighter_set_speed(victim, -0xa3d);
+    victim->body.vel[AXIS_Y] = -0x147a;
+    victim->body.gravity = 0xde;
+    victim->body.on_land = lp_thrown_impact;
+    fighter_start_fiber(victim, lp_thrown_script, lp_thrown_cleanup);
+    battle_damage(victim, 0x2666);
+    fighter_fiber_play_to(fighter, 48, 1);
     fighter_wait_ticks(1);
-    if (tick < release &&
-        ((victim->current_move != &s_lp_thrown && victim->current_move != &s_lk_thrown) || !fighter_fiber_active(victim) || victim->pending != NULL)) {
-      fighter->flags &= ~(unsigned)FF_PAIRED;
-      fighter_fiber_finish(sub_zero_ready);
+  } else {
+    throw_pair_to(fighter, 10, true);
+    stop_body(fighter);
+    stop_body(victim); /* 42c200 -> 48f9f0, rebase the paired origin. */
+    memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
+    victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
+    victim->facing = fighter->facing;
+    memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+    battle_sound(SOUND_A, 3);
+    throw_pair_to(fighter, LK_THROW_DISARM, true);
+    throw_disarm(victim);
+    battle_sound(SOUND_A, 36);
+    throw_pair_to(fighter, LK_THROW_VOICE, true);
+    throw_pair_to(fighter, LK_THROW_DAMAGE, true);
+    memcpy(fighter->body.vel, momentum, sizeof momentum);
+    for (int axis = 0; axis < 3; ++axis) {
+      victim->body.vel[axis] = -momentum[axis];
     }
-    fighter->sample_override = mini(lk ? 65 : 64, tick);
-    if (tick == 42) {
-      if (victim->armed && victim->disarm != NULL) {
-        victim->disarm(victim);
-      }
-      battle_damage(victim, lk ? 0x2e14 : 0x2666);
-    }
-    if (tick == release) {
-      fighter->flags &= ~(unsigned)FF_PAIRED;
-      victim->flags &= ~(unsigned)FF_PAIRED;
-      if (lk) {
-        fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown_end);
-        victim->sample_override = 65;
-        fighter_start_fiber(victim, thrown_end_script, NULL);
-      } else {
-        battle_react(victim, 100);
-      }
-    }
+    fighter->body.physics = fighter_friction;
+    victim->script_phase = 1;
+    fighter_start_fiber(victim, lk_thrown_script, NULL);
+    battle_damage(victim, 0x2e14);
+    throw_pair_to(fighter, LK_THROW_RELEASE, true);
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    fighter_fiber_move(fighter, S_THROW, &s_lk_throw_idle);
+    fighter->sample_override = 0;
+    fighter_wait_ticks(60); /* 42c300 stores 0x3c in the scheduler delay. */
   }
   fighter_fiber_finish(sub_zero_ready);
 }
@@ -818,7 +974,14 @@ static void ground_throw(Fighter *fighter, bool lk) {
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   fighter->sample_override = victim->sample_override = 0;
-  fighter_start_fiber(fighter, ground_throw_script, NULL);
+  if (!lk) {
+    memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
+    victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
+    victim->facing = fighter->facing;
+    memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+    battle_sound(SOUND_B, 7);
+  }
+  fighter_start_fiber(fighter, ground_throw_script, throw_cleanup);
   fighter_start_fiber(victim, ground_thrown_script, NULL);
 }
 
