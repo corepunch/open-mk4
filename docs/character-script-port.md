@@ -1,8 +1,8 @@
 # Porting a character's scripts to C
 
-Retail scripts and their native continuations are the specification. Preserve
-commands, branches, animation phases, damage, reaction selection and recovery
-in procedural C. Reproducing the retail VM, scheduler, scratch globals or
+Retail scripts and their native continuations are the specification. Generate
+VM control flow with `tools/compile_retail.py`; preserve commands, branches,
+animation phases, damage, reactions and recovery in procedural C. Reproducing the retail VM, scheduler, scratch globals or
 per-tick binary traces is unnecessary. Game simulation remains C11 without SDL.
 
 The active simulation is `g_battle`, defined in `game/battle.c`.
@@ -21,6 +21,17 @@ owner and victim recovery, and relevant tests; commit that step on `main`
 before starting the next. A roster entry, playable animation or successful
 `--port` query alone does not establish that a fighter is ported.
 
+Use the deterministic compiler for script bodies. Do not manually translate
+supported VM instructions into handwritten per-tick cases, duration tables or
+AI-generated C. Extend a missing lowering once, or bind a researched native
+boundary to an existing engine helper. Handwritten C owns native behavior and
+entry/lifetime adaptations, not a second transcription of the script graph.
+
+The complete tool contract and profile format are in
+[script-compiler.md](script-compiler.md). The current Liu Kang proof runs five
+real generated scripts; its other 45 VM roots remain explicit reviewed legacy
+ports, not generated coverage. New ports must satisfy `--require-generated`.
+
 ### 1. Inventory the fighter and choose a move
 
 Read [ARCHITECTURE.md](../ARCHITECTURE.md), then inspect the existing
@@ -30,22 +41,40 @@ attacks, close attacks/combos, air attacks, both throws, specials, weapons,
 finishers and CPU entries. Mark each as researched, implemented, tested or
 unresolved; existing fallback moves are not evidence of retail behavior.
 
-Start research with the bounded move catalog:
+Start with the typed inventory and coverage audit:
+
+```sh
+python3 tools/compile_retail.py --character liu_kang --inventory --output build/liu-inventory.json
+python3 tools/compile_retail.py --character liu_kang --audit --summary
+```
+
+The inventory includes both players' press/release command records, four CPU
+choice rows, stance/follow-up tables, the default weapon descriptor and buttons,
+contact reactions and the selected catalog's decoded script/native frontiers.
+Do not infer completeness from `--list-moves`: it is a curated navigation index.
+Add missing research roots to `tools/character_catalog.py` and implementation
+references to a reviewed `tools/ports/<character>.json` profile. Review every
+new input/CPU target, reaction, and inventory fingerprint change. The audit
+rejects dropped release tables, missing definitions, unreviewed VM roots,
+changed reaction dispatch and stale generated output.
+
+Use the bounded move view for names and the audit's unresolved boundaries:
 
 ```sh
 python3 tools/disassemble_retail.py --character sub_zero --list-moves
 python3 tools/disassemble_retail.py --character sub_zero --move lk_throw --c
 ```
 
-`--character` accepts roster names or IDs 0..17 and defaults to Scorpion.
-Keep it on follow-up script queries: nested selectors use that character too.
-Kitana uses Sonya's script slot; Noob uses Reiko's. Other characters' shared
-roots are navigation aids, not complete special-move catalogs. Verify the
-selected table slot even when two fighters share a move entry.
+`--character` accepts roster names or IDs 0..17. Keep it on follow-up script
+queries. Kitana uses Sonya's script slot; Noob uses Reiko's. Other characters'
+shared roots are navigation aids, not complete special-move catalogs. Verify
+the selected table slot even when fighters share an entry.
 
 ### 2. Follow the move through scripts and native continuations
 
-Use the view that answers the current question. These examples are read-only;
+Read compiler diagnostics first. Reuse a known lowering or typed native binding;
+research only an unbound helper or unsupported operation. Use the view that
+answers that specific question. These examples are read-only;
 `--output PATH` can save a query when needed.
 
 | Query | What to use it for |
@@ -106,6 +135,8 @@ alongside the implementation:
 | --- | --- |
 | Researched move entries and script roots | `tools/character_catalog.py` |
 | Local helper contracts and engine equivalents | `tools/retail_helpers.py` |
+| Typed compiler bindings, actor arguments, roles and native flow | `tools/retail_bindings.py` |
+| Generated roots, integration and reviewed coverage boundaries | `tools/ports/<character>.json` |
 | Typed executable data views | `tools/retail_helper_view.py` |
 | Local aliases and checked reference correspondences | `tools/retail_symbols.py`, `tools/retail_symbol_map.json` |
 | Action names/confidence and checked native evidence | `game/retail_actions.inc`, `tools/retail_action_evidence.json` |
@@ -116,11 +147,12 @@ Extend `retail_port.py` when adding a newly supported character or move so
 `--port` finds its own C entry. Preserve source addresses and bytes for new
 action evidence; record unknowns instead of guessing or treating them as no-ops.
 
-### 4. Write a small timing and branch ledger
+### 4. Record native boundaries and observable behavior
 
-Before coding, list each phase's actor, clip/cursor, elapsed ticks, entry gate,
-contact/damage event, motion, next branch and interruption policy. Cite the local
-script/native addresses. Distinguish stored animation samples from simulation
+Generate the VM body first; its comments retain every source address and raw
+word. Keep a small ledger for native helper timing, entry gates, damage, actor
+ownership and interruption policy. Do not hand-copy every decoded phase into
+a second timing specification. Distinguish stored animation samples from simulation
 ticks: a move can skip samples, run backwards, repeat them or hold a pose while
 physics and other actors continue. `fighter->ticks` can reset at a phase change;
 it is not necessarily total elapsed move time.
@@ -137,13 +169,42 @@ Keep measured retail facts separate from portable adaptations and unresolved
 presentation. A concise source-to-code ledger such as the Sub-Zero ledger below
 makes the implementation reviewable without preserving a large execution trace.
 
-### 5. Translate sequential control flow into a move fiber
+### 5. Generate the script and bind native engine helpers
 
-Put character decisions in `game/c_<character>.c`, using ordinary C11 functions,
-loops and locals. Use the shared engine features below for contact, physics,
-weapons, poses, sound and scenes. Add an engine feature only when a reached move
-needs it. Use callbacks for independent objects, landing and shared engine work;
-use a fighter fiber for its sequential waits and branches.
+Preview a selected script with an explicit controller/tagged-return adaptation:
+
+```sh
+python3 tools/compile_retail.py --character liu_kang --script 4e60b8 --return-to fighter_ready --output build/crouch-hk.inc
+```
+
+Unknown operations and native boundaries are compilation errors. Register a
+native boundary in `tools/retail_bindings.py` with its actual C symbol/source,
+allowed role (call, tail, predicate, physics callback, independent spawn or VM
+handler), typed arguments, result flags, timing/flow and local EXE evidence.
+A predicate returns flags; a spawn binding declares accepted task types and
+creates an independent object. The compiler never treats a callback as an
+inline call or substitutes a prose helper name for a C implementation.
+
+If no existing helper fits, implement the verified native behavior once in
+shared engine code or a small character adapter. Keep SDL out of simulation.
+Then add the root to the generation profile and regenerate:
+
+```sh
+make scripts
+make scripts-check
+```
+
+The profile declares `generated_scripts`, `return_to`, `output`, and the C
+integration source. Include its generated `.inc` and start those functions from
+the existing command/move entries. Never edit the generated include. Ordinary
+C11 functions and labels express VM branches; fiber waits preserve locals.
+No runtime VM, byte-address dispatcher, scheduler emulation or new execution
+harness is introduced. `game/script.c` owns shared clip primitives and stores
+rebound animation data on the actor, avoiding dangling fiber-stack pointers.
+
+Native adapters still use the existing fiber rules and APIs below. The
+handwritten Scorpion example is a legacy illustration of these APIs, not the
+workflow for translating another VM body.
 
 The external move entry validates its gates, calls `fighter_start_move`, and
 initializes phase data and pose before `fighter_start_fiber`. Starting a fiber
@@ -238,12 +299,14 @@ dedicated tests. Skip tests that merely repeat implementation constants or
 check every intermediate tick. Expected behavior should come from the retail
 evidence; a focused test is useful when it catches a meaningful bug cheaply.
 
-For example, after changing Sub-Zero's paired moves:
+For example, after changing Liu Kang generated scripts or native adapters:
 
 ```sh
 make format
-make build/test-sub-zero build/test-battle build/test-fibers
-./build/test-sub-zero
+make scripts-check
+python3 tests/test_script_codegen.py
+make build/test-liu-kang build/test-battle build/test-fibers
+./build/test-liu-kang
 ./build/test-battle
 ./build/test-fibers
 python3 tests/test_retail_port.py
@@ -257,6 +320,18 @@ scheduler emulation or large per-tick JSON traces. `tests/test_sub_zero.c` and
 `tests/test_fibers.c` provide existing gameplay and scheduling examples.
 
 ### 8. Record scope and commit the verified step
+
+Before committing, require regeneration and a clean reviewed coverage audit:
+
+```sh
+python3 tools/compile_retail.py --character liu_kang --audit --strict --summary
+```
+
+For a new port, also require `--require-generated`; this rejects retained
+legacy/unreviewed VM roots. `--strict` alone validates the reviewed boundaries
+and permits the explicitly listed existing legacy ports. It does not claim
+all native x86 dependencies are generated or prove gameplay equivalence.
+The detailed JSON audit retains every unsupported instruction/helper call site.
 
 Update the move ledger and extraction/helper indexes affected by the port.
 Document unresolved native behavior and any deliberate engine adaptation,
@@ -275,6 +350,7 @@ infer complete fighter coverage from the curated move catalog.
 | Need | Reuse | Important boundary |
 | --- | --- | --- |
 | Commands | `game/commands.c`, ordered `CommandDef` and stance tables | Preserve unconditional-record priority, two-sample presses, inclusive windows and predicate masks; entries start next tick |
+| Generated VM control flow | `tools/compile_retail.py`, `game/script.c`, checked generation profiles | Fail unsupported paths before output; require regeneration and coverage gates |
 | Fixed playback / waits | `MoveSequence`, sparse `MoveSegment`/`MoveEvent`, blocking `fighter_fiber_sequence`, `fighter_wait_ticks` | Active phases have their own tick clock; simulation ticks and stored pose samples are different clocks |
 | Native continuations | Sequential C fibers and nested helpers; callbacks for independent engine work | Initialize the move before starting its fiber; use `fighter_fiber_move` for an internal phase change |
 | Poses | `game/pose.c`, `fighter_pose_sample`, `fighter_pose` | Bind host-owned assets with `battle_bind_assets`; capture real wrapped samples, rig, heading and root offsets |

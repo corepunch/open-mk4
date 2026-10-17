@@ -47,8 +47,8 @@ class CompilerTests(unittest.TestCase):
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
     def test_both_branch_outcomes_and_jumps_into_waits_remain_edges(self):
-        # Down branches into the wait itself, so folding it with show-sample
-        # would skip an externally reachable operation.
+        # Down branches into the second wait, which must remain a distinct
+        # target rather than being folded into its predecessor.
         e = self.entry
         source = self.compile([0x44000000, (e + 12) // 4, 0x34000005, 0x34000002, 0x3f000000])
         self.assertIn('goto L_0057000c;', source)
@@ -67,6 +67,8 @@ class CompilerTests(unittest.TestCase):
             self.compile([0x36000000, 0x46a950, (e + 16) // 4, 0x34000001, 0x3f000000])
         with self.assertRaisesRegex(ValueError, 'Predicate must return flags'):
             dataclasses.replace(binding, result='void')
+        with self.assertRaisesRegex(CompileError, 'does not accept task type'):
+            self.compile([0x40000000, 65, 0x49c110, 0x3f000000])
 
     def test_unknown_helpers_opcodes_and_truncated_paths_fail(self):
         with self.assertRaisesRegex(CompileError, 'unsupported opcode'):
@@ -75,6 +77,9 @@ class CompilerTests(unittest.TestCase):
             self.compile([0x32000000, 0x46ddd0])
         with self.assertRaisesRegex(CompileError, 'not initialized'):
             self.compile([0x37008005, 0x3f000000])
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        with self.assertRaisesRegex(CompileError, 'outside an incoming clip'):
+            self.compile([0x0f000000, descriptor, 0x490000ff, 0x3f000000])
         with self.assertRaisesRegex(CompileError, 'overlaps operand'):
             self.compile([0x44000000, (self.entry + 4) // 4, 0x3f000000])
 
@@ -87,6 +92,11 @@ class CompilerTests(unittest.TestCase):
             self.compile([0x44000000, e // 4, 0x34000001, 0x33000000, e // 4])
         with self.assertRaisesRegex(CompileError, 'zero loop count'):
             self.compile([0x3a000000, 0x34000001, 0x3b000000, 0x3f000000])
+        # A nonzero packed word whose low-byte count is zero must not be
+        # mistaken for a guaranteed yield by cycle validation.
+        with self.assertRaisesRegex(CompileError, 'unsupported counted-playback'):
+            descriptor = (0x4fad7c + 54 * 12) // 4
+            self.compile([0x02000100, descriptor, 0x33000000, e // 4])
 
     def test_character_selector_is_specialized_and_optional_prefix_is_not_speed(self):
         program, _ = compile_program(self.image, 0x4e5ca0, 3, bindings={0x46a760: Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic selector continuation')})
@@ -102,6 +112,71 @@ class CompilerTests(unittest.TestCase):
         self.assertGreater(report['total'], report['compilable'])
         self.assertIn('not native implementation parity', report['scope'])
         self.assertTrue(any(row['status'] == 'unsupported' and row['diagnostics'] for row in report['scripts']))
+
+    def test_generated_conditional_code_runs_both_paths_in_C(self):
+        # Execute only generated portable C. Wait/finish stubs inspect emitted
+        # C control flow; real actor suspension is covered by the native Liu suite.
+        e = self.entry
+        words = [0x44000000, (e + 20) // 4, 0x34000005, 0x33000000, (e + 24) // 4,
+                 0x34000002, 0x3f000000]
+        source = self.compile(words)
+        harness = r"""
+#include <setjmp.h>
+#include <stdlib.h>
+static jmp_buf done;
+static int elapsed;
+void fighter_ready(Fighter *fighter) { (void)fighter; }
+void fighter_wait_ticks(int ticks) { if (ticks <= 0) { abort(); } elapsed += ticks; }
+_Noreturn void fighter_fiber_finish(FighterFn next) { if (next != fighter_ready) { abort(); } longjmp(done, 1); }
+int main(void) {
+  Fighter fighter = {0};
+  for (int down = 0; down < 2; ++down) {
+    fighter.held = down ? BUTTON_BIT(BUTTON_DOWN) : 0;
+    elapsed = 0;
+    if (setjmp(done) == 0) { retail_script_00570000(&fighter); abort(); }
+    if (elapsed != (down ? 3 : 6)) { return 1; }
+  }
+  return 0;
+}
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'branches.c'
+            binary = Path(directory) / 'branches'
+            path.write_text(source + harness)
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path), '-o', str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run([str(binary)], check=True)
+
+    def test_reviewed_audit_detects_input_cpu_reaction_and_manifest_regressions(self):
+        import copy
+        from unittest.mock import patch
+        from retail_coverage import audit as coverage_audit, profile_for, inventory
+        profile = profile_for(3)
+        self.assertEqual(coverage_audit(self.image, 3)['coverage_errors'], [])
+        broken = copy.deepcopy(profile)
+        broken['legacy_scripts'].pop('0x4e62f0')
+        broken['moves']['bicycle_kick']['symbol'] = 'missing_bicycle_implementation'
+        errors = coverage_audit(self.image, 3, profile=broken)['coverage_errors']
+        self.assertTrue(any('no generation entry' in error for error in errors))
+        self.assertTrue(any('Missing portable C' in error for error in errors))
+        broken = copy.deepcopy(profile)
+        broken['reactions']['2']['symbol'] = 'react_jab_block'
+        self.assertTrue(any('C dispatch' in error for error in coverage_audit(self.image, 3, profile=broken)['coverage_errors']))
+        # A command-table reader regression must not silently drop releases.
+        tables = inventory(self.image, 3)['inputs']
+        with patch('retail_coverage.commands', return_value=[table for table in tables if table['button'] != 'low_kick_release']):
+            self.assertIn('missing input event low_kick_release', coverage_audit(self.image, 3)['coverage_errors'])
+        struct.pack_into('<I', self.image.memory, 0x4df8e8 + 3 * 4 - 0x400000, 0x4000f)
+        errors = coverage_audit(self.image, 3)['coverage_errors']
+        self.assertTrue(any('inventory changed' in error for error in errors))
+        self.assertTrue(any('input/CPU target' in error for error in errors))
+
+    def test_selected_air_table_word_is_a_valid_overlapping_no_op(self):
+        binding = Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic native boundary')
+        source = generate(self.image, [0x4e6500], 3, bindings={0x46e3d0: binding})
+        self.assertIn('L_004e6544', source)
+        self.assertIn('decoded VM no-op', source)
 
     def test_cli_fails_atomically_and_check_never_writes(self):
         tool = ROOT / 'tools/compile_retail.py'

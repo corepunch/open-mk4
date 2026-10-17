@@ -19,6 +19,7 @@ class Binding:
     flow: str = 'immediate'
     evidence: str = ''
     adaptation: str = ''
+    task_types: tuple = ()
 
     def __post_init__(self):
         if not re.fullmatch(r'[A-Za-z_]\w*', self.symbol):
@@ -35,8 +36,12 @@ class Binding:
             raise ValueError('Predicate must return flags immediately')
         if 'physics' in self.roles and (self.arguments != ('fighter',) or self.result != 'void'):
             raise ValueError('Physics callback must have FighterFn signature')
-        if 'spawn' in self.roles and self.flow != 'independent':
-            raise ValueError('Spawn must create an independent lifetime')
+        if 'spawn' in self.roles and (self.flow != 'independent' or not self.task_types):
+            raise ValueError('Spawn must declare independent lifetime and accepted task types')
+        if 'task_type' in self.arguments and set(self.roles) != {'spawn'}:
+            raise ValueError('Task type is only valid for a spawn binding')
+        if self.flow == 'terminal' and set(self.roles) != {'tail'}:
+            raise ValueError('Terminal flow must be a native tail')
 
 
 BINDINGS = {
@@ -56,11 +61,11 @@ BINDINGS = {
 CHARACTER_BINDINGS = {
     3: {
         0x49c110: Binding('liu_script_spawn_low', 'game/c_liu_kang.c', ('spawn',), ('fighter', 'task_type'),
-                         flow='independent', evidence='49c110/4ed740, independent task 64; see docs/liu-kang-scripts.md'),
+                         flow='independent', task_types=(64,), evidence='49c110/4ed740, independent task 64; see docs/liu-kang-scripts.md'),
         0x49c160: Binding('liu_script_spawn_high', 'game/c_liu_kang.c', ('spawn',), ('fighter', 'task_type'),
-                         flow='independent', evidence='49c160/4ed760, independent task 64; see docs/liu-kang-scripts.md'),
+                         flow='independent', task_types=(64,), evidence='49c160/4ed760, independent task 64; see docs/liu-kang-scripts.md'),
         0x49c0d0: Binding('liu_script_spawn_air', 'game/c_liu_kang.c', ('spawn',), ('fighter', 'task_type'),
-                         flow='independent', evidence='49c0d0/4ed730, independent task 64; see docs/liu-kang-scripts.md'),
+                         flow='independent', task_types=(64,), evidence='49c0d0/4ed730, independent task 64; see docs/liu-kang-scripts.md'),
         0x49c010: Binding('liu_script_air_return', 'game/c_liu_kang.c', ('tail',), flow='terminal',
                          evidence='49c010 restores gravity 0x20c, waits for the floor and returns through shared landing'),
     },

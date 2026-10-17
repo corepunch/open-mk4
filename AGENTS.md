@@ -105,14 +105,21 @@ post-processing.
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
 end-to-end research, fiber implementation, validation and commit procedure.
 
-Start character research with `python3 tools/disassemble_retail.py --move NAME`
-(or `--list-moves`), then follow its bounded `--script`, `--native`, and
-`--attack` queries. See `docs/script-decoder.md`. Use these static queries and
-the existing `build/retail-disassembly/` bundle as the primary source for
+Start character ports with
+`python3 tools/compile_retail.py --character NAME --inventory` and
+`--audit --summary`. Generate supported VM bodies through the
+compiler; do not manually transcribe them into C. Add typed native bindings or
+a missing lowering once, reusing existing engine helpers. Use bounded
+`tools/disassemble_retail.py --character NAME --move MOVE`, `--script`,
+`--native` and `--attack` queries only for unresolved boundaries. See
+`docs/script-decoder.md`. Use these static queries and the existing `build/retail-disassembly/` bundle as the primary source for
 character ports. Full bundle generation requires explicit `--bundle`; do not
 regenerate bulk dumps for routine move research.
-Translate script control flow into procedural C in `game/c_<character>.c`;
-consult native listings and the included reference source for called helpers.
+Keep native adapters and move entries in `game/c_<character>.c`, and include
+the compiler-generated C from the reviewed character profile. Run
+`make scripts-check` and the strict coverage audit; new ports also require
+`--require-generated`. Consult native listings and the included reference
+source for unresolved called helpers.
 Preserve move timing, command gates, branches, damage and balance intent while
 using our engine's own implementation and state boundaries. Binary identity,
 exact retail scheduler emulation and per-tick trace identity are not goals.

@@ -25,7 +25,7 @@ class PortTests(unittest.TestCase):
         cls.disassembly = Disassembly(ROOT / 'MK4/MK-4.EXE')
 
     def test_all_character_move_entries_and_top_level_extraction(self):
-        for character in (0, 4):
+        for character in (0, 3, 4):
             for name in moves_for(character):
                 port = port_entry(character, name)
                 self.assertIsNotNone(port, (character, name))

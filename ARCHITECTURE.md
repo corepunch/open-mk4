@@ -220,3 +220,25 @@ Character finishers can provide their own approach/minimum distances; zero
 distance metadata retains the previous shared defaults. Cinematic objects
 step on the simulation clock during fatalities, and scene cameras may widen
 their focal scale without changing ordinary fight framing.
+
+## Deterministic script compilation
+
+`tools/compile_retail.py` lowers the decoded, roster-specialized VM graph to
+ordinary C11 fiber functions in `game/generated/`. Branches are C control flow,
+waits use the existing actor scheduler, and contacts use the shared battle API.
+Native boundaries have explicit engine symbols, roles, arguments and timing in
+`tools/retail_bindings.py`; unsupported instructions and bindings fail before
+output. This is offline compilation, without runtime bytecode/address dispatch.
+
+`game/script.c` owns the small shared clip primitives. A clip-only binding
+preserves combat state, action, flags, physics and the fiber clock. Its MoveDef
+storage is the actor's `playback_move`, so cancelling a stack cannot invalidate
+`current_move`. Full move transitions still use the normal engine entry API.
+
+Reviewed character profiles keep generated roots separate from existing legacy
+C adaptations. The strict audit checks typed input/CPU/stance/weapon/reaction
+coverage, source definitions, graph fingerprints, integration and regeneration;
+it does not prove native equivalence or exhaustive x86 reachability. New ports
+must additionally pass `--require-generated`. The five live Liu Kang generated
+scripts and their existing native regressions provide the integration proof.
+See [the compiler contract](docs/script-compiler.md).

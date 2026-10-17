@@ -6,6 +6,7 @@ CPPFLAGS = -Icommon
 LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
+export CLANG_FORMAT
 FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/generated/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
@@ -13,14 +14,25 @@ RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
-.PHONY: scripts scripts-check all extract test clean viewer run viewer-test game play game-test format format-check check
+SCRIPT_CHARACTERS = $(notdir $(basename $(wildcard tools/ports/*.json)))
+SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
+SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
+SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
+# Reviewed pre-compiler migration baseline. New profiles require all VM roots generated.
+SCRIPT_LEGACY_CHARACTERS = liu_kang
+
+.PHONY: scripts scripts-check scripts-audit $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
-scripts:
-	python3 tools/compile_retail.py --character liu_kang --generate
-scripts-check:
-	python3 tools/compile_retail.py --character liu_kang --generate --check
-
+scripts: $(SCRIPT_GENERATE_TARGETS)
+scripts-check: scripts-audit $(SCRIPT_CHECK_TARGETS)
+scripts-audit: $(SCRIPT_AUDIT_TARGETS)
+$(SCRIPT_GENERATE_TARGETS): scripts-generate-%:
+	python3 tools/compile_retail.py --character $* --generate
+$(SCRIPT_CHECK_TARGETS): scripts-check-%:
+	python3 tools/compile_retail.py --character $* --generate --check
+$(SCRIPT_AUDIT_TARGETS): scripts-audit-%:
+	python3 tools/compile_retail.py --character $* --audit --strict --summary $(if $(filter $*,$(SCRIPT_LEGACY_CHARACTERS)),,--require-generated)
 
 format:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)

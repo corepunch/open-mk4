@@ -14,6 +14,11 @@ small typed native adapters in `c_liu_kang.c`. Other move families retain
 the verified existing C ports; generated coverage is reported separately
 from those legacy implementations. `make scripts-check` rejects edited or
 stale generated output.
+The strict static audit covers eight input event tables, four CPU rows, nine
+stance tables and 41 contact/VM-dispatched reactions. Its inventory fingerprint
+and C boundary references are checked in the profile. Compiler blockers for
+the remaining 45 legacy roots remain visible; `--require-generated` fails
+until they are migrated. See [the compiler contract](script-compiler.md).
 
 | Family | Retail evidence | State |
 | --- | --- | --- |

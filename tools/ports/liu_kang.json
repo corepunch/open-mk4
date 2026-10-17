@@ -1,7 +1,695 @@
 {
-  "schema": 1,
   "character": "liu_kang",
+  "entry_adapters": {
+    "0x46a020": {
+      "evidence": "Shared RUN pickup after sidestep; 46a020, docs/liu-kang-scripts.md",
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup"
+    }
+  },
+  "generated_scripts": [
+    "0x4e6d08",
+    "0x4e60b8",
+    "0x4ed678",
+    "0x4ed6c0",
+    "0x4ed6f8"
+  ],
+  "integration_source": "game/c_liu_kang.c",
+  "inventory_sha256": "dee5722d207213c532b0fc2576c09ef53226b00b02efc6d4c6141c126451e537",
+  "legacy_scripts": {
+    "0x4de3b0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_lk_throw"
+    },
+    "0x4de410": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_lk_throw"
+    },
+    "0x4de428": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_lk_throw"
+    },
+    "0x4de478": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_lk_throw"
+    },
+    "0x4de798": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_throw"
+    },
+    "0x4dfff8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_second_fatality"
+    },
+    "0x4e0020": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_second_fatality"
+    },
+    "0x4e0118": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_fan_fatality"
+    },
+    "0x4e0188": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_fan_fatality"
+    },
+    "0x4e5c70": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_kick"
+    },
+    "0x4e6158": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_crouch_lk"
+    },
+    "0x4e6190": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_hk"
+    },
+    "0x4e61e0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_hp"
+    },
+    "0x4e62a0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_uppercut"
+    },
+    "0x4e62c0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_weapon"
+    },
+    "0x4e62d8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_weapon"
+    },
+    "0x4e62f0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_jab"
+    },
+    "0x4e6330": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_jab"
+    },
+    "0x4e6360": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_jab"
+    },
+    "0x4e63b0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_jab"
+    },
+    "0x4e63d8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_lk_diagonal"
+    },
+    "0x4e6500": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_hk_diagonal"
+    },
+    "0x4e6658": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_hp"
+    },
+    "0x4e6710": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_lp"
+    },
+    "0x4e67d8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_sweep"
+    },
+    "0x4e6890": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_roundhouse"
+    },
+    "0x4e68a8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_roundhouse"
+    },
+    "0x4e6950": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_spike_fatality"
+    },
+    "0x4e69b0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_combo_hp"
+    },
+    "0x4e6c90": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_kick"
+    },
+    "0x4e6df0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_kick"
+    },
+    "0x4e6e90": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_roundhouse"
+    },
+    "0x4e8610": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_bicycle_kick"
+    },
+    "0x4e8678": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_bicycle_kick"
+    },
+    "0x4e8688": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_bicycle_kick"
+    },
+    "0x4e86a8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_flying_kick"
+    },
+    "0x4e86d0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_flying_kick"
+    },
+    "0x4e86e8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_flying_kick"
+    },
+    "0x4e8718": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_flying_kick"
+    },
+    "0x4e9a90": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_lk_throw"
+    },
+    "0x4e9ad0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_bicycle_kick"
+    },
+    "0x4e9ae8": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_bicycle_kick"
+    },
+    "0x4e9b68": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_throw"
+    },
+    "0x4ec680": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "sword_hp"
+    },
+    "0x4ec7f0": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "sword_back_lp"
+    }
+  },
+  "moves": {
+    "air_diagonal_hk": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_hk_diagonal"
+    },
+    "air_diagonal_lk": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_lk_diagonal"
+    },
+    "air_fireball": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/generated/liu_kang.inc",
+      "symbol": "retail_script_004ed6f8"
+    },
+    "air_hp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_hp"
+    },
+    "air_kick": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_kick"
+    },
+    "air_lp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_lp"
+    },
+    "bicycle_kick": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_bicycle_kick"
+    },
+    "close_hk": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_hk"
+    },
+    "close_hp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_hp"
+    },
+    "combo_hp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_combo_hp"
+    },
+    "crouch_hk": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/generated/liu_kang.inc",
+      "symbol": "retail_script_004e60b8"
+    },
+    "crouch_lk": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_crouch_lk"
+    },
+    "crouch_lp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_crouch_lp"
+    },
+    "draw_weapon": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_weapon"
+    },
+    "fan_fatality": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_fan_fatality"
+    },
+    "fatality_1": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_first_fatality"
+    },
+    "fatality_2": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_second_fatality"
+    },
+    "flying_kick": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_flying_kick"
+    },
+    "high_fireball": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/generated/liu_kang.inc",
+      "symbol": "retail_script_004ed6c0"
+    },
+    "high_kick": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_kick"
+    },
+    "high_punch": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_hp"
+    },
+    "jab": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_jab"
+    },
+    "lk_throw": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_lk_throw"
+    },
+    "low_fireball": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/generated/liu_kang.inc",
+      "symbol": "retail_script_004ed678"
+    },
+    "low_kick": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/generated/liu_kang.inc",
+      "symbol": "retail_script_004e6d08"
+    },
+    "lp_throw": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "enter_throw"
+    },
+    "roundhouse": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_roundhouse"
+    },
+    "sidestep": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_sidestep"
+    },
+    "spike_fatality": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_spike_fatality"
+    },
+    "sweep": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_sweep"
+    },
+    "sword_back_hp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "sword_back_hp"
+    },
+    "sword_back_lp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "sword_back_lp"
+    },
+    "sword_hp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "sword_hp"
+    },
+    "sword_lp": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "sword_lp"
+    },
+    "uppercut": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/c_liu_kang.c",
+      "symbol": "liu_kang_uppercut"
+    },
+    "weapon_throw": {
+      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
+      "source": "game/weapons.c",
+      "symbol": "weapon_throw"
+    }
+  },
   "output": "game/generated/liu_kang.inc",
+  "reactions": {
+    "0": {
+      "evidence": "4ea4e8[0] -> 0x486cd0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "1": {
+      "evidence": "4ea4e8[1] -> 0x486c40; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block"
+    },
+    "10": {
+      "evidence": "4ea4e8[10] -> 0x481320; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "104": {
+      "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
+      "evidence": "VM reaction dispatcher selects 104 -> 0x485af0; docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "lp_thrown_script"
+    },
+    "11": {
+      "evidence": "4ea4e8[11] -> 0x482070; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air"
+    },
+    "117": {
+      "evidence": "4ea4e8[117] -> 0x4869f0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "118": {
+      "evidence": "4ea4e8[118] -> 0x486a30; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "119": {
+      "evidence": "4ea4e8[119] -> 0x486a70; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "13": {
+      "evidence": "4ea4e8[13] -> 0x481d30; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air"
+    },
+    "143": {
+      "evidence": "4ea4e8[143] -> 0x486970; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "15": {
+      "evidence": "4ea4e8[15] -> 0x483450; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "154": {
+      "evidence": "4ea4e8[154] -> 0x4835e0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "16": {
+      "evidence": "4ea4e8[16] -> 0x482a10; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit"
+    },
+    "17": {
+      "evidence": "4ea4e8[17] -> 0x482e00; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "175": {
+      "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
+      "evidence": "4ea4e8[175] -> 0x4836e0; docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "stage_fatality_script"
+    },
+    "176": {
+      "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
+      "evidence": "VM reaction dispatcher selects 176 -> 0x481360; docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "fireball_fatality_script"
+    },
+    "19": {
+      "evidence": "4ea4e8[19] -> 0x4831e0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record"
+    },
+    "2": {
+      "evidence": "4ea4e8[2] -> 0x486ca0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block"
+    },
+    "21": {
+      "evidence": "4ea4e8[21] -> 0x482e80; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "22": {
+      "evidence": "4ea4e8[22] -> 0x482f00; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "23": {
+      "evidence": "4ea4e8[23] -> 0x481fc0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "25": {
+      "evidence": "4ea4e8[25] -> 0x482830; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "28": {
+      "evidence": "4ea4e8[28] -> 0x482870; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "31": {
+      "evidence": "4ea4e8[31] -> 0x4835f0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record"
+    },
+    "34": {
+      "evidence": "4ea4e8[34] -> 0x4838e0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut"
+    },
+    "37": {
+      "evidence": "4ea4e8[37] -> 0x483b40; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit"
+    },
+    "38": {
+      "evidence": "4ea4e8[38] -> 0x482e90; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "39": {
+      "evidence": "4ea4e8[39] -> 0x482ef0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "4": {
+      "evidence": "4ea4e8[4] -> 0x486bb0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_low_block"
+    },
+    "5": {
+      "evidence": "4ea4e8[5] -> 0x486b70; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "57": {
+      "evidence": "4ea4e8[57] -> 0x482750; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "59": {
+      "evidence": "4ea4e8[59] -> 0x4823c0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "6": {
+      "evidence": "4ea4e8[6] -> 0x486af0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "60": {
+      "evidence": "4ea4e8[60] -> 0x482260; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "61": {
+      "evidence": "4ea4e8[61] -> 0x482730; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "62": {
+      "evidence": "4ea4e8[62] -> 0x4821e0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "64": {
+      "evidence": "4ea4e8[64] -> 0x486730; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record"
+    },
+    "65": {
+      "evidence": "4ea4e8[65] -> 0x4866d0; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record"
+    },
+    "8": {
+      "evidence": "4ea4e8[8] -> 0x486c70; shared reaction adapter and behavioral regressions",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "80": {
+      "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
+      "evidence": "VM reaction dispatcher selects 80 -> 0x485910; docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "lk_thrown_script"
+    },
+    "84": {
+      "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
+      "evidence": "4ea4e8[84] -> 0x488870; docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "bicycle_victim_script"
+    }
+  },
   "return_to": "fighter_ready",
-  "generated_scripts": ["0x4e6d08", "0x4e60b8", "0x4ed678", "0x4ed6c0", "0x4ed6f8"]
+  "schema": 1,
+  "stances": {
+    "air_followup": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_ground_followup"
+    },
+    "air_punch_followup": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "air_followup"
+    },
+    "close_hk_followup": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "close_hk_followup"
+    },
+    "close_hp_followup": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "close_hp_followup"
+    },
+    "combo_hp_followup": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "combo_hp_followup"
+    },
+    "crouching": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "crouching"
+    },
+    "diagonal_air": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "jumping"
+    },
+    "standing": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "standing"
+    },
+    "straight_air": {
+      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
+      "source": "game/c_liu_kang.c",
+      "symbol": "jumping"
+    }
+  },
+  "weapon": {
+    "evidence": "53d5c0[3] -> 4ece58/type 66 and armed table 4ecd50; docs/liu-kang-scripts.md",
+    "source": "game/c_liu_kang.c",
+    "symbol": "dragon_sword"
+  }
 }

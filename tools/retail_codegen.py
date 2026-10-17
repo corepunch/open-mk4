@@ -5,6 +5,10 @@ Every reachable instruction is lowered from the existing decoder's graph;
 unsupported instructions/edges fail before any output is written.
 """
 import re
+import os
+from pathlib import Path
+import shutil
+import subprocess
 
 from retail_moves import EXE_SHA256
 from scorpion_moves import script_program, signed_word
@@ -86,7 +90,14 @@ def validate(program, bindings, return_to):
             error(pc, 'unsupported opcode %#x' % op)
         for word in range(pc, pc + 4 * (1 + len(row.get('operands', []))), 4):
             if word in occupied and occupied[word] != pc:
-                error(pc, 'instruction overlaps operand of 0x%08x' % occupied[word])
+                owner = rows[occupied[word]]
+                # Retail air selectors deliberately execute their final zero
+                # table word as a no-op. It is the selected target itself,
+                # not an arbitrary branch into an operand.
+                selected_zero = (int(owner['opcode'], 16) == 0x3c and word == pc and int(row['opcode'], 16) == 0 and
+                                 int(owner['character_table'][owner['selected_character']], 16) == pc)
+                if not selected_zero:
+                    error(pc, 'instruction overlaps operand of 0x%08x' % occupied[word])
             occupied[word] = pc
         for target in successors(row):
             if target not in rows:
@@ -95,6 +106,8 @@ def validate(program, bindings, return_to):
             error(pc, 'unresolved loop target')
         if op == 0x3a and row['inline'] & 255 == 0:
             error(pc, 'zero loop count would underflow')
+        if op == 2 and row['inline'] > 255:
+            error(pc, 'unsupported counted-playback inline bits')
         if op in (0x30, 0x3f) and return_to is None:
             error(pc, 'controller/tagged return needs an explicit engine continuation')
         if op in (0x47, 0x48, 0x49) and row['inline'] >> 8 not in (0, 2):
@@ -112,6 +125,8 @@ def validate(program, bindings, return_to):
             elif role not in binding.roles:
                 error(pc, 'binding 0x%08x cannot be used as %s' % (address, role))
             else:
+                if role == 'spawn' and row['task_type'] not in binding.task_types:
+                    error(pc, 'spawn binding does not accept task type %d' % row['task_type'])
                 try:
                     expression(binding, row)
                 except ValueError as exc:
@@ -139,11 +154,32 @@ def validate(program, bindings, return_to):
     for pc, row in rows.items():
         for name in reads_defines(row, bindings)[0] - incoming[pc]:
             error(pc, '%s is not initialized on every incoming path' % name)
+    # All possible incoming clip lengths matter at merges. A cursor valid
+    # on one branch must not silently index past another branch's clip.
+    clip_in = {pc: set() for pc in rows}
+    changed = True
+    while changed:
+        changed = False
+        for pc in sorted(rows):
+            values = {None} if pc == entry else set()
+            for predecessor in predecessors[pc]:
+                row = rows[predecessor]
+                values |= {row['stored_count']} if 'clip' in row else clip_in[predecessor]
+            if values != clip_in[pc]:
+                clip_in[pc] = values
+                changed = True
+    for pc, row in rows.items():
+        op = int(row['opcode'], 16)
+        if op in (5, 0x12, 0x1d, 0x47, 0x49, 0x4a, 0x4d):
+            lengths = {row['stored_count']} if 'clip' in row else clip_in[pc] - {None}
+            target = row['inline'] & 255 if op in (0x12, 0x1d, 0x47, 0x49, 0x4a) else row['inline']
+            if any(target >= count for count in lengths):
+                error(pc, 'target sample %d is outside an incoming clip' % target)
     # Delete guaranteed-yield instructions, then reject cycles in the
     # remaining graph. A cycle that can bypass a wait is unsafe too.
     def yields(row):
         op = int(row['opcode'], 16)
-        return op in (1, 3, 7, 9, 0x48, 0x3e) or (op == 0x34 and row['inline'] > 0) or (
+        return (op in (2, 4, 6, 0x19) and row['inline'] > 0) or op in (1, 3, 7, 9, 0x48, 0x3e) or (op == 0x34 and row['inline'] > 0) or (
             op == 0x37 and min(row['wait_if_set'], row['wait_if_clear']) > 0)
     active, done = set(), set()
     def visit(pc):
@@ -301,3 +337,16 @@ def generate(image, entries, character=0, return_to=None, bindings=None):
     for program, binding in programs:
         lines += ['', emit_program(program, binding, return_to)]
     return '\n'.join(lines) + '\n'
+
+
+def format_c(source):
+    """Canonical repository formatting; generation/check use the same path."""
+    root = Path(__file__).resolve().parents[1]
+    formatter = os.environ.get('CLANG_FORMAT') or shutil.which('clang-format')
+    if formatter is None:
+        result = subprocess.run(['xcrun', '--find', 'clang-format'], capture_output=True, text=True)
+        formatter = result.stdout.strip() if result.returncode == 0 else None
+    if not formatter:
+        raise ValueError('clang-format is required for canonical generated C')
+    return subprocess.run([formatter, '--style=file', '--assume-filename=' + str(root / 'game/generated/script.inc')],
+                          input=source, text=True, capture_output=True, check=True).stdout
