@@ -36,6 +36,10 @@ def moves_for(character):
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),)))
     if character == 3:
         shared.update(
+            high_fireball=move(0x49bf90, (('high', 0x4ed6c0),), (('C', 0),), (('spawn', 0x49c160),)),
+            low_fireball=move(0x49bf50, (('low', 0x4ed678),), (('C', 1),), (('spawn', 0x49c110),)),
+            air_fireball=move(0x49bfe0, (('air', 0x4ed6f8),), (('C', 0),), (('spawn', 0x49c0d0), ('landing', 0x49c010))),
+            flying_kick=move(0x47edc0, (('launch', 0x4e86a8), ('miss', 0x4e86d0), ('hit', 0x4e86e8), ('block', 0x4e8718)), (('D', 12),), (('contact loop', 0x47ee30),)),
             lp_throw=move(0x42c560, (('selected LP', 0x4de798), ('victim release', 0x4e9b68)), native=(('victim reaction 104', 0x485af0),)),
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de3b0), ('paired continuation', 0x4de410), ('damage/release', 0x4de428), ('retreat', 0x4de478), ('victim', 0x4e9a90)), native=(('Liu Kang entry', 0x42c040), ('damage', 0x42c0d0), ('victim reaction 80', 0x485910))),
             high_kick=move(0x46a680, (('Liu Kang attacker', 0x4e6c90), ('recovery', 0x4e5c70)), (('B', 1),)),

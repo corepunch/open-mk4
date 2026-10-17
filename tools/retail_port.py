@@ -30,7 +30,7 @@ SPECIFIC = {
         'sword_back_lp': 'sword_back_lp', 'sword_back_hp': 'sword_back_hp', 'sword_spin': 'sword_spin',
         'fatality_1': 'scorpion_burn_fatality', 'fatality_2': 'scorpion_beast_fatality',
         'sword_throw': ('game/weapons.c', 'weapon_throw')},
-    3: {},
+    3: {'high_fireball': 'liu_kang_high_fireball', 'low_fireball': 'liu_kang_low_fireball', 'air_fireball': 'liu_kang_high_fireball', 'flying_kick': 'liu_kang_flying_kick'},
     4: {'ice': 'sub_zero_ice', 'clone': 'sub_zero_clone', 'slide': 'sub_zero_slide', 'sidestep': 'sub_zero_sidestep',
         'scepter_hp': 'scepter_hp', 'scepter_lp': 'scepter_lp', 'scepter_back_hp': 'scepter_back_hp', 'scepter_back_lp': 'scepter_back_lp',
         'fatality_1': 'sub_zero_first_fatality', 'fatality_2': 'sub_zero_second_fatality',

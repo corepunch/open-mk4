@@ -60,4 +60,8 @@ RETAIL_ACTION(ACTION_RETAIL_4003, 0x4003, "contextual", "Shared knockdown/air-th
 RETAIL_ACTION(ACTION_RETAIL_4004, 0x4004, "contextual", "Launched victim action used by follow-up gates.")
 RETAIL_ACTION(ACTION_RETAIL_4005, 0x4005, "unresolved", "Meaning not catalogued; inspect the portable C writers/readers and retail move entry.")
 RETAIL_ACTION(ACTION_RETAIL_2006, 0x2006, "contextual", "Shared weapon pickup controller in the current port; exact native writer not yet indexed.")
+RETAIL_ACTION(ACTION_RETAIL_030C, 0x030c, "verified", "Liu Kang high fireball entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
+RETAIL_ACTION(ACTION_RETAIL_030D, 0x030d, "verified", "Liu Kang low fireball entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
+RETAIL_ACTION(ACTION_RETAIL_030E, 0x030e, "verified", "Liu Kang air fireball entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
+RETAIL_ACTION(ACTION_RETAIL_0207, 0x0207, "verified", "Liu Kang flying kick entry; checked local writer in retail_action_evidence.json. This records a use, not exclusive meaning.")
 // clang-format on

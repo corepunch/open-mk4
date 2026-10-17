@@ -139,9 +139,91 @@ static void throws(void) {
   }
 }
 
+static void forward_command(int player, Button button) {
+  unsigned forward = BUTTON_BIT(player ? BUTTON_LEFT : BUTTON_RIGHT);
+  press(player, forward);
+  advance(1);
+  press(player, forward | BUTTON_BIT(button));
+}
+
+static int fireballs(void) {
+  int count = 0;
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    count += g_battle.projectiles[i].kind == PROJECTILE_FIREBALL;
+  }
+  return count;
+}
+
+static void pool_object(Projectile *object) {
+  (void)object;
+}
+
+static void specials(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int low = 0; low < 2; ++low) {
+      fight(player, 4.f);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      forward_command(player, low ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+      check(fighter_move(owner)->clip == (low ? 19 : 18), "fireball command selects height");
+      advance(9);
+      check(fireballs() == 0 && victim->health == Q16_ONE, "fireball waits for release sample");
+      advance(1);
+      check(fireballs() == 1, "fireball spawns after double-step startup");
+      battle_react(owner, 37);
+      advance(30);
+      check(victim->health == Q16_ONE - 0x1999, "released fireball survives owner interruption and damages once");
+      advance(100);
+      check(victim->state == S_IDLE && fireballs() == 0, "fireball victim and object recover");
+    }
+    fight(player, 4.f);
+    forward_command(player, BUTTON_HIGH_PUNCH);
+    Input guard[2] = {0};
+    guard[1 - player].held = BUTTON_BIT(BUTTON_DOWN);
+    for (int t = 0; t < 100; ++t) {
+      battle_step(guard);
+    }
+    check(g_battle.fighters[1 - player].health == Q16_ONE, "high fireball passes crouching victim");
+    for (int blocked = 0; blocked < 2; ++blocked) {
+      fight(player, 3.f);
+      forward_command(player, BUTTON_HIGH_KICK);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      check(fighter_move(owner)->clip == 92, "flying kick command entry");
+      Input input[2] = {0};
+      input[1 - player].held = blocked ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      for (int t = 0; t < 170; ++t) {
+        battle_step(input);
+      }
+      q16 damage = blocked ? q16_mul(0x23d7, 0x3333) : 0x23d7;
+      check(victim->health == Q16_ONE - damage, "flying kick hit/block record");
+      check(owner->state == S_IDLE && !fighter_airborne(owner), "flying kick settles and recovers");
+    }
+    fight(player, 6.f);
+    Fighter *owner = &g_battle.fighters[player];
+    owner->body.pos[AXIS_Y] -= 3 * Q16_ONE;
+    owner->body.gravity = 0x28f;
+    fighter_enter_state(owner, S_JUMP);
+    forward_command(player, BUTTON_HIGH_PUNCH);
+    check(fighter_move(owner)->clip == 20, "HP fireball selects air script");
+    advance(6);
+    check(fireballs() == 1, "air fireball release");
+    advance(150);
+    check(owner->state == S_IDLE && !fighter_airborne(owner), "air fireball restores landing controller");
+    fight(player, 6.f);
+    forward_command(player, BUTTON_LOW_PUNCH);
+    for (int i = 0; i < MAX_PROJECTILES; ++i) {
+      check(battle_spawn_projectile(&g_battle.fighters[player], PROJECTILE_ICE, 80, pool_object) != NULL, "fill object pool");
+    }
+    advance(11);
+    check(fireballs() == 0, "full pool safely rejects fireball allocation");
+    advance(100);
+    check(g_battle.fighters[player].state == S_IDLE, "pool failure cannot strand fireball owner");
+  }
+}
+
 int main(void) {
   normals();
   throws();
+  specials();
   puts("Liu Kang tests passed");
   return 0;
 }

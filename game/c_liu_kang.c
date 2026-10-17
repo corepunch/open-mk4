@@ -942,6 +942,173 @@ static void enter_lk_throw(Fighter *fighter) {
   ground_throw(fighter, true);
 }
 
+/* Fireballs: 49bf50/90/49bfe0 -> 4ed678/6c0/6f8.
+ * Projectile task 64 has a 48-tick lifetime independent of its owner. */
+static const MoveDef s_fireball_high = {.clip = 18, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030C};
+static const MoveDef s_fireball_low = {.clip = 19, .last = 46, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030D};
+static const MoveDef s_fireball_air = {.clip = 20, .last = 5, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030E};
+static const AttackRecord fireball_high_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 64, 10, 2, ATTACK_MARK, 0x1999};
+static const AttackRecord fireball_low_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 65, 10, 2, ATTACK_MARK, 0x1999};
+static const MeshAnimation fireball_mesh = {.first = 50, .count = 1, .period = 1, .scale = Q16_ONE};
+
+static void fireball_projectile(Projectile *p) {
+  if (g_battle.contacts_off) {
+    p->kind = 0;
+    return;
+  }
+  for (int axis = 0; axis < 3; ++axis) {
+    p->pos[axis] += p->vel[axis];
+  }
+  Fighter *owner = &g_battle.fighters[p->owner];
+  bool low = p->phase != 0;
+  if ((low || opponent(owner)->action != ACTION_RETAIL_2001) &&
+      battle_projectile_contact(p, low ? &fireball_low_record : &fireball_high_record) != CONTACT_MISS) {
+    p->kind = 0;
+  }
+}
+
+static void fireball_spawn(Fighter *fighter, int type) {
+  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_FIREBALL, 48, fireball_projectile);
+  if (p == NULL) {
+    return;
+  }
+  p->phase = type == 1;
+  p->mesh_animation = &fireball_mesh;
+  p->initial_mesh = 50; /* 4ed730/740/760 -> rig 50678c +24. */
+  q16 forward = type == 2 ? 0x9999 : type == 1 ? 0x28f5 : 0x1999;
+  p->pos[AXIS_Y] += type == 2 ? -0x2147 : type == 1 ? 0x35c2 : -0x7333;
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    p->pos[axis] += q16_mul(fighter_axis(fighter, axis), forward);
+    p->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
+  }
+}
+
+static void fireball_script(Fighter *fighter) {
+  int type = fighter->script_phase; /* high, low, airborne high */
+  fighter_fiber_play_to(fighter, type == 2 ? 5 : 20, type == 2 ? 1 : 2);
+  if (type == 2) {
+    fighter_wait_ticks(1);
+  }
+  battle_sound(SOUND_A, 33);
+  battle_sound(SOUND_INDEXED, type == 2 ? 3 : 2);
+  fireball_spawn(fighter, type);
+  if (type == 2) {
+    fighter_wait_ticks(16);
+    fighter_fiber_play_to(fighter, 0, -1);
+    fighter->body.gravity = 0x20c;
+    while (fighter_airborne(fighter)) {
+      fighter_wait_ticks(1);
+    }
+    fighter_fiber_finish(mk4_land);
+  }
+  fighter_fiber_play_to(fighter, type == 1 ? 23 : 27, 1);
+  fighter->action = ACTION_RETAIL_1007;
+  if (type == 1) {
+    for (int cycle = 0; cycle < 3; ++cycle) {
+      fighter_fiber_play_to(fighter, 18, -1);
+      fighter_fiber_play_to(fighter, 23, 1);
+    }
+  } /* High stream's forward-to-18/27 is already past both targets. */
+  fighter_fiber_play_to(fighter, 0, -1);
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(liu_kang_ready);
+}
+
+static void fireball(Fighter *fighter, bool low) {
+  bool air = !low && fighter_airborne(fighter);
+  if (g_battle.phase != PHASE_FIGHT || (low && fighter_airborne(fighter))) {
+    return;
+  }
+  if (!air) {
+    stop_body(fighter);
+  }
+  fighter_start_move(fighter, S_PUNCH, air ? &s_fireball_air : low ? &s_fireball_low : &s_fireball_high);
+  fighter->body.on_land = NULL;
+  fighter->body.physics = NULL;
+  fighter_upright(fighter);
+  fighter->script_phase = air ? 2 : low ? 1 : 0;
+  fighter->sample_override = 0;
+  fighter_start_fiber(fighter, fireball_script, NULL);
+}
+
+static void liu_kang_high_fireball(Fighter *fighter) {
+  fireball(fighter, false);
+}
+
+static void liu_kang_low_fireball(Fighter *fighter) {
+  fireball(fighter, true);
+}
+
+/* 47edc0/4e86a8 -> 47ee00/30; D[12], six opening visits.
+ * Hit and blocked exits are 4e86e8 and 4e8718 respectively. */
+static const MoveDef s_flying_kick = {.clip = 92, .last = 5, .flags = RETAIL, .action = ACTION_RETAIL_0207};
+static const MoveDef s_flying_hit = {.clip = 93, .last = 2, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0207};
+static const AttackRecord flying_record = {0x14f5c, -0xf5c, 0xf5c2, 0x51eb, 31, 31, 0, 0, 0x23d7};
+
+static void flying_kick_script(Fighter *fighter) {
+  for (int tick = 1;; ++tick) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = mini(5, tick);
+    if (tick < 6) {
+      continue;
+    }
+    if (!fighter_airborne(fighter)) {
+      fighter_fiber_play_to(fighter, 0, -1);
+      fighter_wait_ticks(1);
+      fighter_fiber_finish(liu_kang_ready);
+    }
+    ContactResult result = battle_contact(fighter, &flying_record);
+    if (result == CONTACT_MISS) {
+      continue;
+    }
+    stop_body(fighter);
+    if (result == CONTACT_BLOCK) {
+      fighter_wait_ticks(12);
+      fighter_wait_ticks(12);
+      fighter->body.gravity = 0x28f;
+      while (fighter_airborne(fighter)) {
+        fighter_wait_ticks(1);
+      }
+      fighter_fiber_finish(mk4_land);
+    }
+    fighter_fiber_move(fighter, S_KICK, &s_flying_hit);
+    fighter->sample_override = 0;
+    fighter_set_speed(fighter, 0x51e);
+    fighter_fiber_play_to(fighter, 2, 1);
+    fighter_wait_ticks(20);
+    fighter->body.gravity = 0x51e;
+    fighter_fiber_move(fighter, S_KICK, &s_flying_kick);
+    fighter->sample_override = 5;
+    fighter_fiber_play_to(fighter, 0, -1);
+    while (fighter_airborne(fighter)) {
+      fighter_wait_ticks(1);
+    }
+    fighter_fiber_finish(liu_kang_ready);
+  }
+}
+
+static void liu_kang_flying_kick(Fighter *fighter) {
+  if (g_battle.phase != PHASE_FIGHT || fighter_airborne(fighter)) {
+    return;
+  }
+  stop_body(fighter);
+  fighter_start_move(fighter, S_KICK, &s_flying_kick);
+  fighter->sample_override = 0;
+  fighter_set_speed(fighter, 0x23d7);
+  fighter->body.vel[AXIS_Y] = -0x170a;
+  fighter->body.gravity = 0x106;
+  battle_sound(SOUND_INDEXED, 0);
+  fighter_start_fiber(fighter, flying_kick_script, NULL);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const CommandDef commands[] = {
+  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, CMD_AIR, NULL, liu_kang_high_fireball},
+  {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_low_fireball},
+  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_flying_kick},
+};
+// clang-format on
+
 static void armed_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
 }
@@ -964,5 +1131,5 @@ static const ButtonTable crouching = {
     {[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_crouch_lp, [BUTTON_HIGH_KICK] = press_crouch_hk, [BUTTON_LOW_KICK] = press_crouch_lk}};
 static const ButtonTable jumping = {
     {[BUTTON_HIGH_PUNCH] = press_air_hp, [BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_hk, [BUTTON_LOW_KICK] = press_air_lk}};
-static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
+static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
 const CharacterDef mk4_liu_kang = {GAME_MK4, 3, "LIU KANG", &mk4_motion, moves, S_COUNT, &controls, enter, -70320, mk4_walk, mk4_jump, NULL};

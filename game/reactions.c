@@ -394,11 +394,11 @@ static void react_extra(Fighter *fighter) {
   }
   int id = fighter->reaction;
   bool teleport_air = id == 90 && fighter_airborne(fighter);
-  if (id == 20 || id == 100 || id == 156) {
+  if (id == 15 || id == 20 || id == 100 || id == 156) {
     fighter_start_move(fighter, S_KNOCKDOWN, &tumble_start);
     fighter->script = tumble_tick;
     fighter->sample_override = 0;
-    launch(fighter, id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
+    launch(fighter, id == 15 ? 0xccc : id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
     return;
   }
   if ((id == 90 || id == 173) && fighter_airborne(fighter)) {
@@ -609,8 +609,83 @@ static void react_weapon_followup(Fighter *fighter) {
   fighter->action = action;
 }
 
+/* Reached Liu Kang records: 15/19/31/64/65. Scripts 4e9508,
+ * 4e94b0, 4e96e0, 4e9de8 and 4e9d88; shared across victim rosters. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveDef liu_reaction_moves[] = {
+  {.clip = 130, .last = 39, .flags = SF_LOCK, .action = ACTION_RETAIL_4001},
+  {.clip = 127, .last = 39, .flags = SF_LOCK, .action = ACTION_RETAIL_4001},
+  {.clip = 131, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_4003},
+  {.clip = 192, .last = 34, .flags = SF_LOCK, .action = ACTION_RETAIL_4003},
+  {.clip = 193, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E},
+  {.clip = 194, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_200E},
+};
+// clang-format on
+
+static void liu_record_impact(Fighter *fighter) {
+  battle_scene_impact(fighter);
+}
+
+static void liu_record_script(Fighter *fighter) {
+  int id = fighter->reaction;
+  if (id == 64) {
+    slide(fighter, 0x4000);
+    battle_sound(SOUND_B, 1);
+    fighter_fiber_play_to(fighter, 39, 1);
+  } else if (id == 65) {
+    battle_sound(SOUND_A, 38);
+    slide(fighter, 0x5999);
+    fighter_fiber_play_to(fighter, 26, 1);
+    fighter->body.physics = NULL;
+    fighter_set_speed(fighter, 0x147a);
+    fighter_fiber_play_to(fighter, 31, 1);
+    stop_sliding(fighter);
+    fighter_fiber_play_to(fighter, 39, 1);
+  } else if (id == 31) {
+    launch(fighter, 0x1999, -0x23d7, 0x24d);
+    battle_sound(SOUND_B, 3);
+    fighter->body.on_land = liu_record_impact;
+    fighter_fiber_play_to(fighter, 39, 1);
+    while (fighter_airborne(fighter)) {
+      fighter_wait_ticks(1);
+    }
+    fighter_fiber_play_to(fighter, 79, 1);
+  } else {
+    fighter_set_speed(fighter, -0xf5c);
+    fighter_fiber_play_to(fighter, 24, 1);
+    battle_scene_impact(fighter);
+    stop_sliding(fighter);
+    fighter_fiber_play_to(fighter, 34, 1);
+    fighter_wait_ticks(1);
+    if (fighter->health <= 0) {
+      fighter_fiber_finish(NULL);
+    }
+    bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+    fighter_fiber_move(fighter, S_KNOCKDOWN, &liu_reaction_moves[down ? 4 : 5]);
+    fighter->sample_override = 0;
+    fighter_fiber_play_to(fighter, down ? 15 : 23, 1);
+  }
+  fighter_wait_ticks(1);
+  fighter->body.on_land = NULL;
+  stop_sliding(fighter);
+  fighter_fiber_finish(fighter->health > 0 ? fighter_ready : NULL);
+}
+
+static void react_liu_record(Fighter *fighter) {
+  int index = fighter->reaction == 64 ? 0 : fighter->reaction == 65 ? 1 : fighter->reaction == 31 ? 2 : 3;
+  fighter_start_move(fighter, index < 2 ? S_HIT : S_KNOCKDOWN, &liu_reaction_moves[index]);
+  fighter->sample_override = 0;
+  fighter_start_fiber(fighter, liu_record_script, NULL);
+}
+
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn reactions[256] = {
+  [15] = react_extra,
+  [19] = react_liu_record,
+  [31] = react_liu_record,
+  [64] = react_liu_record,
+  [65] = react_liu_record,
+  [2] = react_jab_block,
   [0] = react_block,
   [3] = react_extra_block,
   [5] = react_extra_block,
@@ -676,9 +751,10 @@ void battle_react(Fighter *victim, int reaction) {
   /* Drop rules for the reaction ids currently used by our script records.
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
   if (victim->armed && victim->disarm != NULL &&
-      ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 34 || (reaction >= 48 && reaction <= 52) || reaction == 70 ||
-          reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 || reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 ||
-          reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 || reaction == 156 || reaction == 173)) {
+      ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 31 || reaction == 64 || reaction == 65 || reaction == 34 ||
+          (reaction >= 48 && reaction <= 52) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
+          reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
+          reaction == 156 || reaction == 173)) {
     victim->disarm(victim);
   }
   victim->reaction = reaction;

@@ -238,6 +238,34 @@
       "site": "0x47fec5",
       "bytes": "c704857400000011100000",
       "note": "Blocked teleport recoil entry writes controller action at +0x74."
+    },
+    {
+      "value": "0x30c",
+      "entry": "0x49bf90",
+      "site": "0x49bfc0",
+      "bytes": "b80c030000a32cc4530068c0d64e0089048d74000000",
+      "note": "Liu Kang high fireball entry writes controller action +0x74."
+    },
+    {
+      "value": "0x30d",
+      "entry": "0x49bf50",
+      "site": "0x49bf56",
+      "bytes": "b80d030000a32cc4530089048d74000000",
+      "note": "Liu Kang low fireball entry writes controller action +0x74."
+    },
+    {
+      "value": "0x30e",
+      "entry": "0x49bfe0",
+      "site": "0x49bfe6",
+      "bytes": "b80e030000a32cc4530068f8d64e0089048d74000000",
+      "note": "Liu Kang air fireball entry writes controller action +0x74."
+    },
+    {
+      "value": "0x207",
+      "entry": "0x47edc0",
+      "site": "0x47eddb",
+      "bytes": "b807020000a32cc4530089048d74000000",
+      "note": "Liu Kang flying kick entry writes controller action +0x74."
     }
   ]
 }

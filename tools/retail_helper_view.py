@@ -23,6 +23,9 @@ class Table:
 
 
 TABLES = {
+    'liu_fireball_spawn': Table(0x4ed730, 1, 16, (('rig', 0, 'packed'), ('forward', 4, 'q16'), ('dy', 8, 'q16'), ('initial_track', 12, 'packed')), 'Air fireball; 49c370 applies heading-relative forward and group Y offsets.'),
+    'liu_low_fireball_spawn': Table(0x4ed740, 1, 16, (('rig', 0, 'packed'), ('forward', 4, 'q16'), ('dy', 8, 'q16'), ('initial_track', 12, 'packed'))),
+    'liu_high_fireball_spawn': Table(0x4ed760, 1, 16, (('rig', 0, 'packed'), ('forward', 4, 'q16'), ('dy', 8, 'q16'), ('initial_track', 12, 'packed'))),
     'ice_spawn': Table(0x4ed5d0, 1, 16, (('rig', 0, 'packed'), ('forward', 4, 'q16'), ('dy', 8, 'q16'), ('initial_track', 12, 'packed'))),
     'ice_meshes': Table(0x4ed898, 8, 8, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration'), ('callback', 4, 'hex')), 'shared_g.geo; spawn rig is mesh 74, track is 75..82; GEO 0x100 is additive.'),
     'ice_trail': Table(0x4d1b18, 1, 4, (('mesh', 0, 'mesh_root'), ('ticks', 0, 'duration')), '40d720 adds ten nodes; quarter scale, shrink 0x51e/tick; separate decoration clock'),
