@@ -20,6 +20,7 @@ COMMAND_TABLES = [
     ('block', 0x53c960, 0x53cbe8),
     ('high_kick', 0x53c9a8, 0x53cc30),
     ('low_kick', 0x53c9f0, 0x53cc78),
+    ('low_kick_release', 0x53ca38, 0x53ca80),
     ('run', 0x53cac8, 0x53ccc0),
 ]
 DISPATCH = [(1, 0x4e6ef8), (2, 0x4ed828), (4, 0x4e8910),

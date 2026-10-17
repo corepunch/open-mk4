@@ -20,6 +20,14 @@ class ScriptTests(unittest.TestCase):
     def setUp(self):
         self.image = RetailImage('MK4/MK-4.EXE')
 
+    def test_liu_bicycle_release_command_and_charge(self):
+        from scorpion_moves import commands
+        release = next(table for table in commands(self.image, 3) if table['button'] == 'low_kick_release')
+        self.assertEqual((release['p1_table'], release['p2_table'], release['selected_list']), ('0x53ca44', '0x53ca8c', '0x4e49a8'))
+        record = release['records'][0]
+        self.assertEqual((record['target'], record['predicate'], record['unconditional_pattern']), ('0x47eaf0', '0x45eab0', True))
+        self.assertEqual(bytes(self.image.memory[0x45eaf6 - 0x400000:0x45eaf9 - 0x400000]), bytes.fromhex('83 f8 78'))  # cmp eax, 120.
+
     def test_liu_finisher_scene_events_do_not_consume_waits(self):
         rows = script_program(self.image, 0x4dfff8, 3)['instructions']
         events = [row for row in rows if row['opcode'] == '0x56']

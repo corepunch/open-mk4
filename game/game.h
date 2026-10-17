@@ -243,8 +243,9 @@ typedef enum CommandToken {
 } CommandToken;
 
 enum {
-  CMD_AIR = 0x10,     /* retail flag 0x10: allowed off the ground */
-  CMD_BLOCK_OK = 0x40 /* retail flag 0x40: allowed while block is held */
+  CMD_RELEASE = 0x100, /* match release instead of press; portable event tag */
+  CMD_AIR = 0x10,      /* retail flag 0x10: allowed off the ground */
+  CMD_BLOCK_OK = 0x40  /* retail flag 0x40: allowed while block is held */
 };
 
 #define COMMAND_TOKENS 4
@@ -435,6 +436,7 @@ struct Fighter {
   int contact_tick;
   unsigned held, prev[2]; /* switch samples for the two-sample press rule */
   unsigned pressed;       /* presses detected this tick */
+  unsigned released;      /* releases after retail word-group press suppression */
   InputHistory directions;
   uint64_t latch[BUTTON_COUNT]; /* tick of the last press; HK is never latched */
   const ButtonTable *buttons;   /* current stance table; NULL while locked */
@@ -695,6 +697,7 @@ float fighter_distance(const Fighter *fighter);
 bool fighter_holds_back(const Fighter *fighter);
 bool fighter_fast_start(const Fighter *fighter);
 void fighter_press(Fighter *fighter, Button button);
+void fighter_release(Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
 int fighter_sample(const Fighter *fighter);
 void battle_bind_assets(const Assets *assets);

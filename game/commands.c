@@ -49,11 +49,11 @@ static Button resolve_token(const Fighter *fighter, CommandToken token) {
   return BUTTON_UP;
 }
 
-static const CommandDef *match_command(const Fighter *fighter, Button button) {
+static const CommandDef *match_command(const Fighter *fighter, Button button, bool released) {
   const Controls *controls = roster_def(fighter->roster)->controls;
   for (int i = 0; i < controls->command_count; ++i) {
     const CommandDef *command = &controls->commands[i];
-    if (command->button != button) {
+    if (command->button != button || !!(command->flags & CMD_RELEASE) != released) {
       continue;
     }
     if (command->count > 0) {
@@ -106,7 +106,7 @@ void fighter_press(Fighter *fighter, Button button) {
     fighter->latch[button] = g_battle.ticks;
   }
   fighter->buffered |= BUTTON_BIT(button);
-  const CommandDef *command = match_command(fighter, button);
+  const CommandDef *command = match_command(fighter, button, false);
   if (command != NULL) {
     fighter_interrupt(fighter, command->enter);
   } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
@@ -114,6 +114,15 @@ void fighter_press(Fighter *fighter, Button button) {
   }
   if (button == BUTTON_RUN) {
     fighter->latch[button] = g_battle.ticks;
+  }
+}
+
+/* LK release has no stance fallback and never rewrites the press latch.
+ * sample_switches preserves the retail word-B press/release priority. */
+void fighter_release(Fighter *fighter, Button button) {
+  const CommandDef *command = match_command(fighter, button, true);
+  if (command != NULL) {
+    fighter_interrupt(fighter, command->enter);
   }
 }
 

@@ -277,3 +277,8 @@ Opcode `56` (`45ac30`) masks its inline low byte and invokes scene-event
 request `4315b0`, then resumes dispatch. It consumes no following word.
 This reaches Liu Kang's `4dfff8` setup events without treating them as waits
 or combat contacts.
+
+Command queries now include `low_kick_release`, using P1/P2 tables
+`53ca38`/`53ca80`. Liu Kang slot 3 selects `4e49a8` (47eaf0, predicate
+45eab0); Scorpion and Sub-Zero release lists remain empty. Press lists alone
+are insufficient to establish the special-move inventory.

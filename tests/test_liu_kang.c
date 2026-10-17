@@ -378,12 +378,71 @@ static void fatalities(void) {
   }
 }
 
+static void charge_bicycle(int player, int ticks, float distance, unsigned victim_buttons, unsigned release_buttons) {
+  Input input[2] = {0};
+  input[player].held = BUTTON_BIT(BUTTON_LOW_KICK);
+  for (int tick = 0; tick < ticks; ++tick) {
+    battle_step(input);
+  }
+  g_battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * Q16_ONE / 2);
+  g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * Q16_ONE / 2);
+  input[player].held = release_buttons;
+  input[1 - player].held = victim_buttons;
+  battle_step(input);
+  battle_step(input);
+}
+
+static void bicycle(void) {
+  for (int player = 0; player < 2; ++player) {
+    fight(player, 6.f);
+    charge_bicycle(player, 119, 4.f, 0, 0);
+    check(fighter_move(&g_battle.fighters[player])->clip != 68, "bicycle rejects 119-tick charge");
+    fight(player, 6.f);
+    charge_bicycle(player, 120, 4.f, 0, BUTTON_BIT(BUTTON_RUN));
+    check(fighter_move(&g_battle.fighters[player])->clip != 68, "new word-B press suppresses LK release");
+    for (int outcome = 0; outcome < 4; ++outcome) {
+      fight(player, 6.f);
+      Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+      unsigned guard = outcome == 1 ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      charge_bicycle(player, 120, outcome == 3 ? 7.f : 1.4f, guard, 0);
+      check(fighter_move(owner)->clip == 68 && owner->action == ACTION_RETAIL_0206, "120-tick LK release enters bicycle script");
+      if (outcome == 2) {
+        victim->body.pos[AXIS_Y] -= Q16_ONE;
+      }
+      Input input[2] = {0};
+      input[1 - player].held = guard;
+      for (int tick = 0; tick < 200; ++tick) {
+        battle_step(input);
+      }
+      q16 damage = outcome == 3 ? 0 : outcome == 1 ? q16_mul(0x2666, 0x3333) : 0x2666;
+      check(victim->health == Q16_ONE - damage, "bicycle hit/block/air/miss deals one retail contact");
+      check(owner->state == S_IDLE && victim->state == (outcome == 1 ? S_BLOCK : S_IDLE), "bicycle owner and victim settle");
+      check(!(victim->flags & FF_PAIRED) && !fighter_fiber_active(victim), "bicycle releases victim lifetime");
+    }
+    fight(player, 6.f);
+    Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
+    charge_bicycle(player, 120, 1.4f, 0, 0);
+    advance(10);
+    check(victim->reaction == 84 && (victim->flags & FF_PAIRED), "bicycle hit starts captured victim loop");
+    battle_react(owner, 13);
+    advance(150);
+    check(owner->state == S_IDLE && victim->state == S_IDLE && victim->health == Q16_ONE - 0x2666,
+        "interruption releases paired victim without repeating damage");
+    fight(player, 6.f);
+    victim->health = 1;
+    charge_bicycle(player, 120, 1.4f, 0, 0);
+    advance(120);
+    check(victim->health == 0 && !(victim->flags & FF_PAIRED) && !fighter_fiber_active(victim), "lethal bicycle settles committed victim");
+  }
+}
+
 int main(void) {
   normals();
   throws();
   specials();
   weapons();
   fatalities();
+  bicycle();
   puts("Liu Kang tests passed");
   return 0;
 }

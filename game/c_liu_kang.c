@@ -942,6 +942,144 @@ static void enter_lk_throw(Fighter *fighter) {
   ground_throw(fighter, true);
 }
 
+/* LK release 4e49a8 -> 45eab0/47eaf0, scripts 4e8610/678/688.
+ * Native 47eb50 holds a hit pair for 58 ticks; damage is D[6] once. */
+static const MoveDef s_bicycle = {.clip = 68, .last = 22, .flags = RETAIL, .action = ACTION_RETAIL_0206};
+static const MoveDef s_bicycle_victim = {.clip = 136, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef s_bicycle_release = {.clip = 182, .last = 64, .flags = SF_LOCK, .action = ACTION_RETAIL_100B};
+static const MoveDef s_bicycle_air_release = {.clip = 183, .last = 33, .flags = SF_LOCK, .action = ACTION_RETAIL_100B};
+static const MoveDef s_bicycle_getup = {.clip = 185, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
+static const AttackRecord bicycle_record = {0xf851, -0x547a, 0xf5c2, 0x70a3, 84, 84, 0, 0, 0x2666};
+
+static void bicycle_victim_script(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  for (;;) {
+    fighter_wait_ticks(1);
+    if (victim->script_phase != 0 || owner->current_move != &s_bicycle || owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
+      break;
+    }
+    victim->sample_override = victim->ticks < 24 ? victim->ticks : 4 + (victim->ticks - 24) % 20;
+  }
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  bool air = victim->body.ground - victim->body.pos[AXIS_Y] > 0x3333;
+  fighter_fiber_move(victim, S_KNOCKDOWN, air ? &s_bicycle_air_release : &s_bicycle_release);
+  victim->reaction = 81;
+  victim->sample_override = 0;
+  if (air) {
+    fighter_set_speed(victim, -0xccc);
+    victim->body.vel[AXIS_Y] = -0xf5c;
+    victim->body.gravity = 0x312;
+    thrown_play_to(victim, 30, 1);
+    while (fighter_airborne(victim)) {
+      fighter_wait_ticks(1);
+    }
+    battle_scene_impact(victim);
+    thrown_play_to(victim, 33, 1);
+    fighter_wait_ticks(2);
+    if (victim->health > 0) {
+      fighter_fiber_move(victim, S_KNOCKDOWN, &s_bicycle_getup);
+      victim->sample_override = 0;
+      thrown_play_to(victim, 15, 1);
+    }
+  } else {
+    fighter_set_speed(victim, -0x4ccc);
+    victim->body.physics = fighter_friction;
+    thrown_play_to(victim, 64, 1);
+  }
+  fighter_wait_ticks(1);
+  thrown_finish(victim);
+}
+
+static void bicycle_cleanup(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  if (victim->current_move == &s_bicycle_victim && (victim->flags & FF_PAIRED)) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    victim->script_phase = 1;
+  }
+}
+
+static void bicycle_script(Fighter *fighter) {
+  fighter_fiber_play_to(fighter, 5, 1);
+  fighter_wait_ticks(1);
+  battle_sound(SOUND_INDEXED, 1);
+  fighter_set_speed(fighter, 0x2147);
+  fighter->body.vel[AXIS_Y] = -0xa3d;
+  fighter->body.gravity = 0xc4;
+  for (int tick = 0; tick < 60; ++tick) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = 7 + tick % 16;
+    if (!fighter_airborne(fighter)) {
+      break;
+    }
+    ContactResult result = battle_contact(fighter, &bicycle_record);
+    if (result == CONTACT_MISS) {
+      continue;
+    }
+    if (result == CONTACT_BLOCK) {
+      fighter_set_speed(fighter, 0);
+      fighter->body.vel[AXIS_Y] = -0x147a;
+      fighter->body.gravity = 0xe5;
+      while (fighter_airborne(fighter)) {
+        fighter_wait_ticks(1);
+        fighter->sample_override = 7 + fighter->ticks % 16;
+      }
+      fighter_fiber_finish(mk4_land);
+    }
+    Fighter *victim = opponent(fighter);
+    throw_disarm(victim);
+    fighter_start_move(victim, S_KNOCKDOWN, &s_bicycle_victim);
+    victim->sample_override = 0;
+    victim->reaction = 84;
+    victim->flags |= FF_PAIRED | FF_REACTING;
+    fighter->flags |= FF_PAIRED;
+    fighter->body.pos[AXIS_Y] = mini(fighter->body.pos[AXIS_Y], -0x15999);
+    fighter_set_speed(fighter, 0x10a3);
+    fighter->body.vel[AXIS_Y] = fighter->body.gravity = 0;
+    fighter_start_fiber(victim, bicycle_victim_script, NULL);
+    for (int paired = 0; paired < 58; ++paired) {
+      fighter_wait_ticks(1);
+      if (victim->current_move != &s_bicycle_victim || victim->pending != NULL || !fighter_fiber_active(victim)) {
+        break;
+      }
+      fighter->sample_override = 7 + paired % 16;
+      for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+        victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xe666);
+      }
+    }
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    victim->script_phase = 1;
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    fighter->body.pos[AXIS_Y] = fighter->body.ground; /* 4906c0 */
+    stop_body(fighter);
+    break;
+  }
+  fighter->sample_override = 6;
+  fighter_fiber_play_to(fighter, 22, 1);
+  fighter_wait_ticks(1);
+  if (fighter_airborne(fighter)) {
+    fighter->body.gravity = 0xc4;
+    while (fighter_airborne(fighter)) {
+      fighter_wait_ticks(1);
+    }
+  }
+  fighter_fiber_finish(liu_kang_ready);
+}
+
+static bool can_bicycle(const Fighter *fighter) {
+  return g_battle.phase == PHASE_FIGHT && fighter_opponent(fighter)->action != ACTION_RETAIL_100B && fighter->latch[BUTTON_LOW_KICK] != 0 &&
+         g_battle.ticks - fighter->latch[BUTTON_LOW_KICK] >= 120;
+}
+
+static void liu_kang_bicycle_kick(Fighter *fighter) {
+  if (g_battle.phase != PHASE_FIGHT || fighter_opponent(fighter)->action == ACTION_RETAIL_100B) {
+    return;
+  }
+  stop_body(fighter);
+  fighter_start_move(fighter, S_KICK, &s_bicycle);
+  fighter->sample_override = 0;
+  fighter_start_fiber(fighter, bicycle_script, bicycle_cleanup);
+}
+
 /* Fireballs: 49bf50/90/49bfe0 -> 4ed678/6c0/6f8.
  * Projectile task 64 has a 48-tick lifetime independent of its owner. */
 static const MoveDef s_fireball_high = {.clip = 18, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030C};
@@ -1638,6 +1776,7 @@ static const CommandDef commands[] = {
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_flying_kick},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0, can_spike_fatality, liu_kang_spike_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0, can_weapon, liu_kang_weapon},
+  {BUTTON_LOW_KICK, {0}, 0, 0, CMD_RELEASE, can_bicycle, liu_kang_bicycle_kick},
   {BUTTON_RUN, {0}, 0, 0, 0, can_sidestep, liu_kang_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0, can_pickup, liu_kang_pickup},
 };

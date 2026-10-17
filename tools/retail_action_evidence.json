@@ -280,6 +280,20 @@
       "site": "0x496676",
       "bytes": "b812020000a32cc453006840c74e0089048d74000000",
       "note": "Liu Kang back armed HP writes controller action +0x74."
+    },
+    {
+      "value": "0x206",
+      "entry": "0x47eaf0",
+      "site": "0x47eb0b",
+      "bytes": "b806020000a32cc4530089048d74000000",
+      "note": "Liu Kang bicycle kick writes controller action +0x74."
+    },
+    {
+      "value": "0x100b",
+      "entry": "0x4859b0",
+      "site": "0x4859b6",
+      "bytes": "b80b100000a32cc4530089048d74000000",
+      "note": "Bicycle released victim writes controller action +0x74."
     }
   ]
 }

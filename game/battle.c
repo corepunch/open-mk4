@@ -315,6 +315,11 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
 static void sample_switches(Fighter *fighter, Input in) {
   fighter->held = in.held;
   fighter->pressed = in.held & ~fighter->prev[0] & ~fighter->prev[1];
+  fighter->released = fighter->prev[0] & ~in.held;
+  unsigned group_b = BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(BUTTON_RUN);
+  if (fighter->pressed & group_b) {
+    fighter->released &= ~group_b;
+  }
   fighter->prev[1] = fighter->prev[0];
   fighter->prev[0] = in.held;
 }
@@ -327,6 +332,9 @@ static void dispatch_presses(void) {
       if (fighter->pressed & BUTTON_BIT(button)) {
         fighter_press(fighter, (Button)button);
       }
+    }
+    if (fighter->released & BUTTON_BIT(BUTTON_LOW_KICK)) {
+      fighter_release(fighter, BUTTON_LOW_KICK);
     }
   }
 }

@@ -15,6 +15,7 @@ existing procedural engine; this is not retail scheduler emulation.
 | Air attacks | 4e6658, 4e6710, 4e6df0/46c970, 4e6544, 4e641c | Implemented; straight kick uses clip 61 from cursor 4, B[39], three active visits |
 | LP and LK throws, independent victim tails | 4de678/4e9b68/485b10; 42c040/4de3b0/410/428/468/478, 4e9a90/ab0 | Implemented; see timing below |
 | High/low/air fireball | 4e4928/4e4948 -> 49bf90/49bf50/49bfe0 | Implemented; independent task 64, C[0]/C[1] |
+| Bicycle kick | LK release 4e49a8 -> 45eab0/47eaf0, 4e8610/678/688 | Implemented; hold LK >=120 ticks then release |
 | Flying kick | 4e4978 -> 47edc0, 4e86a8/d0/e8/718 | Implemented; hit/block/miss and landing |
 | Weapon draw/strikes/throw/pickup; sidestep | 4e4998, 46d1d0; 4ece58/4ecd50, 4963e0/4d0/6670/6920; RUN records | Implemented |
 | Fatalities I/II and fan/spikes | 4e4968/4e4934/4e4954/4e4984 | Implemented; cinematic presentation adaptations below |
@@ -100,3 +101,21 @@ Generic flesh pieces replace the original per-piece task programs; the
 160-tick explosion tail still completes before the result. Object-pool
 failure resolves the scene without stranding either actor. Fan/spikes reuse
 the already translated shared stage scene, with Liu Kang victory clip 119.
+
+The release-table audit adds bicycle kick (53ca38/53ca80 slot 3, record
+4e49a8), absent from the old press-only query. 45eab0 requires at least
+120 ticks since LK press and rejects opponent action 100b. The shared input
+layer now dispatches release-tagged commands without updating press latches
+and suppresses word-B releases when LP/LK/RUN has a new press that tick.
+
+47eaf0/4e8610 plays six clip-68 samples while momentum is saved/stopped,
+then restores forward 0x2147, Y -0xa3d and gravity 0xc4. Native 4704d0
+queries D[6] for up to 60 visits while airborne; animation cycles 7–22. A
+block launches recoil Y -0x147a/gravity 0xe5 before normal landing. A hit
+deals 0x2666 once, disarms and holds reaction 84/clip 136 independently.
+Owner clamps absolute Y to <=-0x15999, halves forward speed and aligns
+victim X/Z at 0xe666 for 58 ticks. Release reaction 81/action 100b uses
+clip 182 with -0x4ccc/friction on ground, or 183 with -0xccc, Y -0xf5c,
+gravity 0x312 and getup 185 when above 0x3333. Owner snaps to ground,
+finishes 68 from sample 6 and returns. Interruption releases the committed
+victim tail; no repeated damage is added for the visual kicks.
