@@ -29,9 +29,10 @@ python3 tools/compile_retail.py --character liu_kang --audit --strict --require-
 
 Make discovers all profiles in `tools/ports/`. Every profile participates in
 generation, canonical regeneration checks and the generated-only audit. There
-are no character exceptions in the Makefile. Liu Kang passes with 55/55 generated
-roots and zero legacy roots: the original 50 plus five throw/fan continuations
-found while following native script entries. Detailed JSON still reports every
+are no character exceptions in the Makefile. Scorpion passes with 70/70 and
+Sub-Zero with 63/63 generated roots; Liu Kang passes with 57/57 generated
+roots and zero legacy roots: the original 50, five followed throw/fan
+continuations, and two shared air-weapon selector programs. Detailed JSON still reports every
 unsupported instruction or native boundary for an incomplete future port.
 
 A successful compile returns 0. Unsupported or invalid compilation, a stale
@@ -175,8 +176,9 @@ coverage, compiler tests and existing game/asset/archive regressions.
 
 ## Sub-Zero integration
 
-Sub-Zero generates all 61 reviewed roots, including the native-entered spine
-continuations, fan continuations and the victory selector reached by `4712e0`.
+Sub-Zero generates all 63 reviewed roots, including the native-entered spine
+continuations, fan continuations, the victory selector reached by `4712e0`, and both shared
+air-weapon selectors.
 Its owner and victim fibers call generated code independently; native adapters
 retain contact runners, pair alignment, object allocation, blends and camera
 operations. The former VM timing/finisher phase tables are removed.
@@ -199,3 +201,32 @@ Portable scene adaptations remain explicit: context-camera requests use shared
 framing, ice breath uses the bounded effect pool, native blends use scene helpers,
 and stage tasks use shared arena completion. These adaptations do not translate
 VM opcodes in C adapters or emulate retail tasks.
+
+
+## Scorpion integration and source navigation
+
+Scorpion's 70 roots include the native-entered burn and beast scene programs,
+fan continuations and teleport victim tail. Their generated code uses shared
+horizontal-motion, decorative-effect and seven-row camera-pulse bindings.
+Opcode 42 branches on the preceding contact result, so both back-sword programs
+compile completely, including their hit/block recovery and miss fallthrough.
+Runtime inherited-cursor failures report both required and actual clip/sample.
+
+The `--port` worksheet links direct decoded edges to their typed compiler
+bindings, source definitions and declared lifetime. Generated roots are indexed
+as source for all three completed fighters. An uninstalled future fighter's
+generated thunk is identified explicitly without breaking the research query.
+Source/action navigation scans generated includes as well as native C.
+
+The shared air-throw setup no longer starts or retains handwritten playback
+loops. Callers provide two ordinary generated C function pointers; native code
+handles pair ownership, interruption and released-victim getup. Shared weapon draw only prepares native equipment state; callers run generated
+playback, and the old shared draw loop is removed. Shared stage
+coordinators and RUN sidestep keep engine behavior out of per-fighter copies.
+
+
+The final weapon pass also generates `4e66d0/4e66f0` for each completed fighter.
+Those programs pass their decoded `1f` selector into the shared native air-weapon
+runner. Scorpion additionally generates the spin startup `4e8850`; its contact
+and travel loop remains native `4807b0`. No handwritten VM startup remains in
+the draw, air-weapon or spin entries.

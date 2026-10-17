@@ -1,4 +1,5 @@
 #include "game.h"
+#include "script.h"
 #include "mk4_characters.h"
 #include "math_util.h"
 #include <string.h>
@@ -302,42 +303,6 @@ static void air_throw_drop(Fighter *victim) {
   victim->body.gravity = 0x28f;
 }
 
-static void air_thrown_script(Fighter *victim) {
-  const Fighter *owner = fighter_opponent(victim);
-  for (;;) {
-    fighter_wait_ticks(1);
-    if (victim->script_phase != 0) {
-      break;
-    }
-    if (owner->current_move != &s_air_throw || owner->pending != NULL || owner->ticks >= 28) {
-      air_throw_drop(victim);
-      break;
-    }
-    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-    victim->sample_override = mini(27, owner->ticks);
-  }
-  while (fighter_airborne(victim)) {
-    fighter_wait_ticks(1);
-  }
-  victim->script_phase = 2;
-  battle_scene_impact(victim);
-  for (int tick = 0; tick < 20; ++tick) {
-    victim->sample_override = mini(44, 29 + tick);
-    if (tick < 19) {
-      fighter_wait_ticks(1);
-    }
-  }
-  if (victim->health <= 0) {
-    fighter_fiber_finish(NULL);
-  }
-  victim->facing = -victim->facing;
-  fighter_fiber_move(victim, S_KNOCKDOWN, &s_throw_getup);
-  victim->sample_override = 46;
-  fighter_fiber_play_to(victim, 79, 1);
-  fighter_wait_ticks(1);
-  fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
-}
-
 bool mk4_can_air_throw(const Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   int64_t distance2 = 0;
@@ -349,43 +314,7 @@ bool mk4_can_air_throw(const Fighter *fighter) {
          !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
 }
 
-static void air_throw_script(Fighter *fighter) {
-  Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-  for (int tick = 1;; ++tick) {
-    fighter_wait_ticks(1);
-    if (tick <= 28 && (victim->current_move != &s_air_thrown || victim->pending != NULL)) {
-      fighter->flags &= ~(unsigned)FF_PAIRED;
-      fighter->body.gravity = 0x28f;
-      fighter_fiber_finish(fighter_ready);
-    }
-    if (tick < 28) {
-      /* P2's owner runs after the victim; drive both poses on this visit. */
-      memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
-      victim->sample_override = tick;
-    }
-    fighter->sample_override = tick < 29 ? tick : tick < 39 ? 28 : mini(44, tick - 9);
-    if (tick == 28) {
-      fighter->flags &= ~(unsigned)FF_PAIRED;
-      air_throw_drop(victim);
-      victim->reaction = 89;
-      battle_damage(victim, 0x2147);
-      if (victim->health <= 0) {
-        /* Round resolution replaces our next-tick launch with victory. */
-        fighter->body.gravity = 0x28f;
-      }
-    }
-    if (tick == 29) {
-      fighter_set_speed(fighter, 0x7ae);
-      fighter->body.vel[AXIS_Y] = -0x1999;
-      fighter->body.gravity = 0x28f;
-    }
-    if (tick >= 54 && !fighter_airborne(fighter)) {
-      fighter_fiber_finish(mk4_land);
-    }
-  }
-}
-
-static void air_throw_start(Fighter *fighter, bool generated) {
+static void air_throw_start(Fighter *fighter) {
   if (!mk4_can_air_throw(fighter)) {
     fighter_ready(fighter);
     return;
@@ -410,11 +339,6 @@ static void air_throw_start(Fighter *fighter, bool generated) {
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  if (!generated) {
-    battle_sound(SOUND_INDEXED, 13);
-  } /* Generated owner emits this cue. */
-  fighter_start_fiber(fighter, air_throw_script, NULL);
-  fighter_start_fiber(victim, air_thrown_script, NULL);
 }
 
 void mk4_script_air_getup(Fighter *victim) {
@@ -468,7 +392,7 @@ static void air_generated_cleanup(Fighter *fighter) {
 }
 
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
-  air_throw_start(fighter, true);
+  air_throw_start(fighter);
   if (!(fighter->flags & FF_PAIRED)) {
     return;
   }
@@ -478,6 +402,39 @@ void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn
   fighter_start_fiber(victim, air_generated_victim, NULL);
 }
 
-void mk4_air_throw(Fighter *fighter) {
-  air_throw_start(fighter, false);
+static const MoveDef s_sidestep = {.clip = 300, .last = 17, .flags = SF_LOCK};
+
+bool mk4_can_sidestep(const Fighter *fighter) {
+  uint64_t previous = fighter->latch[BUTTON_RUN];
+  return g_battle.phase == PHASE_FIGHT && !fighter_airborne(fighter) && previous != 0 && g_battle.ticks - previous <= 8 &&
+         g_battle.ticks >= fighter->sidestep_ready;
+}
+
+static void sidestep_script(Fighter *fighter) {
+  for (;;) {
+    fighter_wait_ticks(1);
+    fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
+    if (fighter->ticks >= 18) {
+      mk4_script_stop_body(fighter);
+      fighter_fiber_finish(fighter_ready);
+    }
+  }
+}
+
+void mk4_sidestep(Fighter *fighter) {
+  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+  q16 along = 0x443, across = down ? -0xccc : 0xccc;
+  if (fighter_airborne(fighter_opponent(fighter))) {
+    along = q16_mul(along, 0x4ccc);
+    across = q16_mul(across, 0x4ccc);
+  }
+  q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
+  mk4_script_stop_body(fighter);
+  fighter_start_move(fighter, S_WALK, &s_sidestep);
+  fighter->script_phase = down;
+  fighter->sample_override = down ? 0 : 17;
+  fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
+  fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
+  fighter->sidestep_ready = g_battle.ticks + 80;
+  fighter_start_fiber(fighter, sidestep_script, NULL);
 }

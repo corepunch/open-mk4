@@ -717,7 +717,8 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
-void weapon_air_attack(Fighter *fighter, bool high);
+void weapon_air_attack(Fighter *fighter, bool high, FighterFn script);
+void weapon_air_native(Fighter *fighter, unsigned selector);
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
 void weapon_throw(Fighter *fighter);
 bool weapon_can_pickup(const Fighter *fighter);

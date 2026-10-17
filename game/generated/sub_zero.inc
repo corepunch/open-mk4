@@ -1851,6 +1851,42 @@ L_004e6664: {
 }
 }
 
+static inline void retail_script_004e66d0(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  int attack_selector = 0;
+  (void)attack_selector;
+  goto L_004e66d0;
+L_004e66d0: {
+  /* EXE 004e66d0: 0x1f000000 0x104 */
+  attack_selector = 260;
+  goto L_004e66d8;
+}
+L_004e66d8: {
+  /* EXE 004e66d8: 0x32000000 0x46eab0 */
+  weapon_air_native(fighter, attack_selector);
+  return;
+}
+}
+
+static inline void retail_script_004e66f0(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  int attack_selector = 0;
+  (void)attack_selector;
+  goto L_004e66f0;
+L_004e66f0: {
+  /* EXE 004e66f0: 0x1f000000 0x108 */
+  attack_selector = 264;
+  goto L_004e66f8;
+}
+L_004e66f8: {
+  /* EXE 004e66f8: 0x32000000 0x46ec10 */
+  weapon_air_native(fighter, attack_selector);
+  return;
+}
+}
+
 static inline void retail_script_004e6710(Fighter *fighter) {
   unsigned result_flags = 0;
   (void)result_flags;

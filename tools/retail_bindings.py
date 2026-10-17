@@ -123,8 +123,8 @@ CHARACTER_BINDINGS[3][0x43d6f0] = Binding('liu_script_fan_victory', 'game/c_liu_
 CHARACTER_BINDINGS[3][0x43db50] = Binding('liu_script_fan_victim_end', 'game/c_liu_kang.c', ('tail',), evidence='43db50 victim arena release/hide native continuation')
 
 BINDINGS[0x4595e0] = Binding('mk4_script_draw_voice', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='4595e0; bounded native listing and docs/liu-kang-scripts.md', inline_values=(0,))
-BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='459720 -> 489ff0, selector8 table53d000 and remap4ead18', adaptation='Shared audio loader resolves roster throw voices from the same table', inline_values=(8,))
-BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 4, 6, 22, 23, 36, 56, 57, 58, 60, 62))
+BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='459720 -> 489ff0, selector8 table53d000 and remap4ead18', adaptation='Shared audio loader resolves roster throw voices from the same table', inline_values=(1, 8))
+BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 4, 6, 22, 23, 36, 56, 57, 58, 60, 61, 62))
 BINDINGS[0x45ae50] = Binding('mk4_script_pair_adjust', 'game/script.c', ('handler',), ('fighter', 'word0_i32'), result='void', evidence='45ae50; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b030] = Binding('mk4_script_disarm', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='45b030; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b1b0] = Binding('mk4_script_impact', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='45b1b0; bounded native listing and docs/liu-kang-scripts.md')
@@ -197,6 +197,71 @@ CHARACTER_BINDINGS[4][0x46aae0] = Binding('script_air_release', 'game/c_sub_zero
 BINDINGS[0x46ab20] = Binding('mk4_script_land', 'game/script.c', ('tail',), flow='terminal', evidence='46ab20 shared landing return')
 BINDINGS[0x484b60] = Binding('mk4_script_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal', evidence='484b60 released air victim native getup')
 
+
+CHARACTER_BINDINGS[0] = {
+    address: Binding(binding.symbol, 'game/c_scorpion.c', binding.roles, binding.arguments,
+                     result=binding.result, flow=binding.flow, cursor_effect=binding.cursor_effect,
+                     evidence=binding.evidence, inline_values=binding.inline_values)
+    for address, binding in CHARACTER_BINDINGS[4].items()
+    if address in (0x46b740, 0x46bb60, 0x46bf10, 0x46c2c0, 0x46c7f0, 0x46cde0, 0x46d260,
+                   0x46e730, 0x46eea0, 0x46f080, 0x46f220, 0x46f270, 0x46aae0,
+                   0x43d460, 0x43d530, 0x43d6f0, 0x43db50, 0x467fc0)
+}
+
+CHARACTER_BINDINGS[0][0x46a760] = Binding('script_kick_tail', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='46a760 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x46df90] = Binding('script_air_lk_tail', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='46df90 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x46e3d0] = Binding('script_air_diagonal_tail', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='46e3d0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x42bdf0] = Binding('script_lk_rebase', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='42bdf0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x42be00] = Binding('script_lk_damage', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='42be00 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x42be10] = Binding('script_lk_return', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='42be10 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x42ce60] = Binding('script_lp_return', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='42ce60 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x49a680] = Binding('script_spear_return', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='49a680 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x486000] = Binding('script_spear_pull', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='486000 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x487420] = Binding('spear_stun_script', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='487420 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x47fcf0] = Binding('teleport_script', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='47fcf0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x47ffc0] = Binding('script_teleport_land', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='47ffc0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x468640] = Binding('fire_script', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='468640 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x483df0] = Binding('script_burn_tail', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='483df0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x484c00] = Binding('script_teleport_victim_tail', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='484c00 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x443930] = Binding('script_burn_begin', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='443930 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x443a30] = Binding('script_burn_victim_start', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='443a30 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x443a70] = Binding('script_burn_repeat1', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='443a70 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x443b40] = Binding('script_burn_repeat2', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='443b40 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x443c10] = Binding('script_burn_victory', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='443c10 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x444000] = Binding('script_burn_victim_cue', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='444000 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x444030] = Binding('script_burn_victim_repeat', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='444030 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x444060] = Binding('script_burn_victim_blend', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='444060 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x444100] = Binding('script_burn_victim_impact', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='444100 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x444150] = Binding('script_burn_victim_settle', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='444150 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x41ea50] = Binding('script_beast_begin', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='41ea50 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x41ebd0] = Binding('script_beast_attack', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='41ebd0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x41ec70] = Binding('script_beast_victim_pieces', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='41ec70 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x41f1b0] = Binding('script_beast_park', 'game/c_scorpion.c', ('tail',), ('fighter',), evidence='41f1b0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x416ae0] = Binding('script_fire_decor', 'game/c_scorpion.c', ('call',), ('fighter',), evidence='416ae0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x416d40] = Binding('script_fire_flame', 'game/c_scorpion.c', ('call',), ('fighter',), evidence='416d40 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x48a1f0] = Binding('script_beast_voice', 'game/c_scorpion.c', ('call',), ('fighter',), evidence='48a1f0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x480040] = Binding('script_teleport_motion', 'game/c_scorpion.c', ('physics',), ('fighter',), evidence='480040 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x45b1f0] = Binding('script_reaction', 'game/c_scorpion.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b1f0 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x45b230] = Binding('script_opponent_reaction', 'game/c_scorpion.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b230 exact-entry native contract; docs/scorpion-retail-moves.md')
+CHARACTER_BINDINGS[0][0x49a6a0] = Binding('script_spawn_spear', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='49a6a0 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(67,))
+CHARACTER_BINDINGS[0][0x450d40] = Binding('script_transform_effect', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='450d40 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
+CHARACTER_BINDINGS[0][0x41ed80] = Binding('script_beast_gore', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='41ed80 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
+BINDINGS[0x45afe0] = Binding('fighter_set_speed', 'game/moves.c', ('handler',), ('fighter', 'word0_i32'), evidence='45afe0 -> 490c60 horizontal signed velocity')
+BINDINGS[0x4595a0] = Binding('mk4_script_shake', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='4595a0 -> 457b50 camera pulse selector table 4e3638', inline_values=(0, 1, 2, 3, 4, 5, 6))
+BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector', inline_values=tuple(range(19)))
+
+CHARACTER_BINDINGS[0][0x444190] = Binding('script_burn_victim_end', 'game/c_scorpion.c', ('tail',), evidence='444190 native scene completion after 4e0358')
+
+for _roster in (0, 4):
+    for _address, _binding in tuple(CHARACTER_BINDINGS[_roster].items()):
+        if _binding.roles == ('tail',) and _address != 0x43d530:
+            from dataclasses import replace as _replace_binding
+            CHARACTER_BINDINGS[_roster][_address] = _replace_binding(_binding, flow='terminal')
+
+
+BINDINGS[0x46eab0] = Binding('weapon_air_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', evidence='46eab0: weapon air HP native runner, selector 0x104')
+BINDINGS[0x46ec10] = Binding('weapon_air_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', evidence='46ec10: weapon air LP native runner, selector 0x108')
+CHARACTER_BINDINGS[0][0x4807b0] = Binding('spin_script', 'game/c_scorpion.c', ('tail',), flow='terminal', evidence='4807b0 native contact/travel loop after VM startup 4e8850')
 
 def bindings_for(character):
     from character_catalog import CHARACTERS

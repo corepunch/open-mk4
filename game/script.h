@@ -45,4 +45,6 @@ void mk4_script_fan_cycle(Fighter *fighter);
 void mk4_script_fan_victim_end(Fighter *fighter);
 void mk4_script_fan_tail(Fighter *fighter, FighterFn cycle, FighterFn release, FighterFn victim_release);
 void mk4_script_spike_tail(Fighter *fighter);
+void mk4_script_shake(Fighter *fighter, int selector);
+void mk4_script_effect(Fighter *fighter, int selector);
 #endif

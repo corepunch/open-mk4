@@ -2,6 +2,7 @@
 #include "mk4_characters.h"
 #include "math_util.h"
 #include <string.h>
+#include <stdio.h>
 
 static void bind_clip(Fighter *fighter, int clip, int count, int first) {
   require(count > 0 && first >= 0 && first < count, "Invalid generated clip binding");
@@ -29,7 +30,12 @@ void mk4_script_bind_victim(Fighter *fighter, int clip, int count, int first) {
 }
 
 void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample) {
-  require(fighter_move(fighter)->clip == clip && fighter->sample_override == sample, "Generated entry context differs from native continuation");
+  if (fighter_move(fighter)->clip != clip || fighter->sample_override != sample) {
+    char message[160];
+    snprintf(message, sizeof message, "Generated entry needs clip %d sample %d; native continuation has clip %d sample %d", clip, sample,
+        fighter_move(fighter)->clip, fighter->sample_override);
+    require(false, message);
+  }
   bind_clip(fighter, clip, count, sample);
 }
 
@@ -156,8 +162,8 @@ void mk4_script_context(Fighter *fighter, int selector) {
 }
 
 void mk4_script_roster_sound(Fighter *fighter, int selector) {
-  require(selector == 8, "Unexpected roster sound list");
-  battle_sound(SOUND_THROW_VOICE, roster_def(fighter->roster)->asset);
+  require(selector == 8 || selector == 1, "Unexpected roster sound list");
+  battle_sound(selector == 8 ? SOUND_THROW_VOICE : SOUND_IMPACT_VOICE, roster_def(fighter->roster)->asset);
 }
 
 void mk4_script_draw_voice(Fighter *fighter) {
@@ -293,4 +299,26 @@ void mk4_script_spike_tail(Fighter *fighter) {
   fighter_fiber_move(fighter, S_VICTORY, victory);
   fighter->sample_override = victory->last == MOVE_END ? 0 : victory->last;
   fighter_fiber_finish(finish_scene);
+}
+
+void mk4_script_shake(Fighter *fighter, int selector) {
+  (void)fighter;
+  // clang-format off: Keep table entries on one row, including long rows.
+  static const int pulses[][3] = {
+    {3, 4, 0x2666},
+    {2, 2, 0x1999},
+    {2, 2, 0x1999},
+    {4, 3, 0x2666},
+    {10, 3, 0x2e14},
+    {2, 3, 0x2e14},
+    {3, 3, 0x3333},
+  };
+  // clang-format on
+  require(selector >= 0 && selector < 7, "Unexpected camera pulse selector");
+  battle_camera_shake(pulses[selector][0], pulses[selector][1], pulses[selector][2]);
+}
+
+void mk4_script_effect(Fighter *fighter, int selector) {
+  require(selector >= 0 && selector <= 18, "Unexpected decorative effect selector");
+  battle_particles(fighter, selector, 3, true);
 }

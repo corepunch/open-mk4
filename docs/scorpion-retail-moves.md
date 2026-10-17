@@ -6,6 +6,17 @@ The reference checkout is useful disassembly/reconstructed C, not recovered
 original source. Its addresses, scratch globals and some native-port comments
 differ from this executable. In particular its VM dispatch table is elsewhere.
 
+## Current generated implementation
+
+Scorpion now generates all 70 reviewed VM roots; Sub-Zero generates 63 and
+Liu Kang 57. Use `make scripts` and `make scripts-check`, following
+[the compiler workflow](character-script-port.md#workflow). The historical
+measurements below describe retail dispatch visits and the earlier sparse
+playback implementation. Current native regressions retain their branch
+scenarios and verify gameplay/recovery without requiring retail task scheduling
+or last-submitted-pose identity. Native entry, scene and object adaptations are
+recorded in the porting guide; no VM bodies remain in character timing tables.
+
 ## Where lengths and starts live
 
 There are two different quantities:
@@ -70,7 +81,7 @@ x86 VM and native playback/recovery routines in Unicorn and compares the result
 with `tests/fixtures/original_kicks.json`. Unicorn is optional and development
 only. Hosts that prohibit executable JIT memory need to authorize this local
 oracle run. `--record` deliberately regenerates the JSON and matching C fixture
-for reviewed changes. Normal regression tests use the saved C fixture.
+for reviewed changes. Normal regressions use the saved branch scenarios; the compiler owns VM playback.
 
 Only pose submission (`0x407920`), audio (`0x489f00`) and contact queries
 (`0x48d3f0`) are replaced. Contact explicitly clears result bit 0 (no hit).

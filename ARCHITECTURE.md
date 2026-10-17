@@ -141,21 +141,22 @@ have explicit jab/kick entry callbacks. Other entries select a default move
 through the shared runner. Goro names clips from his separate animation bank.
 Spawn writes the roster index and initializes `Fighter.current_move`.
 `game/moves.c` owns move entry, frame/end callbacks and sample selection.
-Scorpion and Sub-Zero high kicks use sparse playback segments measured from
-the supplied x86 VM and native recovery code. Scorpion reverses to sample 0;
-Sub-Zero continues to sample 27. Their uninterrupted no-contact paths finish
-at playback steps 30 and 29. Scorpion's jab, sweep and uppercut also have
-recovered playback, with buffered jab repeats and uppercut miss/block/hit
-recovery loops. All 27 normal-move branch scenarios match saved original VM,
-native-continuation and task-scheduler fixtures. Contact results in the oracle
-are injected; collision, damage, victim reactions and hitstop remain prototype
-rules. Sparse events request contact in simulation; one-shot continuations can
-run after simultaneous hit resolution. Entering another move clears pending
-continuations and buffered presses. Rendering only reads samples.
-The special-command and VM inventory preserves known clip/start/wait/spawn/
-callback edges with explicit unresolved native dependencies. Specials, weapon
-combat and fatalities are not yet implemented. The original oracle and its
-stubs/limits are documented in [Scorpion retail moves](docs/scorpion-retail-moves.md).
+Scorpion, Sub-Zero and Liu Kang lower their reviewed VM roots deterministically
+into C11 functions in `game/generated/`. Typed bindings connect decoded native
+edges to shared engine helpers and character-owned native continuations. No
+runtime bytecode or address dispatcher is introduced. Fighter clip bindings own
+their storage; animation changes preserve action, contact and controller state.
+Native contact/recovery runners, pair coordination, objects and scene blends
+remain procedural C. The generated-only audit rejects legacy VM bodies and
+checks canonical regeneration and typed input/CPU/stance/weapon/reaction coverage.
+
+The old x86 normal-move fixtures remain research evidence. Regression scenarios
+reuse their branch inputs and check control-flow choices, damage, interruption,
+clip bounds and bounded recovery; portable fiber visits do not claim per-tick
+retail task-scheduler identity. Shared fiber tests establish full-tick peer waits
+for both player orders. Source playback and architecture details are documented
+in [the porting guide](docs/character-script-port.md) and
+[compiler guide](docs/script-compiler.md).
 `battle_step` remains
 the shared update and does not branch on game id. Static move pointers can
 be copied within this process, but need stable IDs for serialized snapshots.

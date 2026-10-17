@@ -7,7 +7,7 @@ existing procedural engine; this is not retail scheduler emulation.
 
 All 45 remaining VM roots have been migrated to generated C. Together with the
 previous five and five newly catalogued throw/fan continuations (`4de468`,
-`4e0138/148/158/1a0`), the audit passes **55/55 generated, zero legacy**.
+`4e0138/148/158/1a0`), the audit passes **57/57 generated, zero legacy**, including the two shared air-weapon selector programs.
 `make scripts` regenerates `game/generated/liu_kang.inc` from the pinned EXE;
 `tools/ports/liu_kang.json` supplies reviewed native entry contexts and returns.
 Normal command/CPU entries call these generated fibers, and script-only native

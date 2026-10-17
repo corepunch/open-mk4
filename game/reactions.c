@@ -1,4 +1,6 @@
 #include "game.h"
+#include "mk4_characters.h"
+#include "script.h"
 #include "math_util.h"
 
 /* Shared reaction phases used by script attack records. Source addresses
@@ -291,12 +293,12 @@ static const ReactionSpec extra_reactions[256] = {
   [59] = {R(189, 30, 0x4003), 0, 0, 30, 191, 0x3d7, -0x3851, 0x28f, 0x8000, false, false},
   [60] = {R(311, 18, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [62] = {R(130, 39, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
-  [90] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
+  [90] = {.move = R(311, 18, 0x4001), .land_at = -1},
   [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
   [154] = {R(131, 79, 0x4003), 0, 0, 40, 0, 0x1999, -0x23d7, 0x24d, 0, false, false},
   [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
-  [173] = {R(182, 64, 0x4001), 0, 0, -1, 0, 0x3333, 0, 0, 0, true, false},
+  [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
 static const MoveDef crouch_reaction = R(254, 4, 0x4001);
 static const MoveDef tumble_start = R(142, 16, 0x4003);
@@ -418,6 +420,11 @@ static void react_extra(Fighter *fighter) {
   const ReactionSpec *spec = &extra_reactions[id];
   bool crouch = fighter->crouching && (id == 17 || id == 28 || id == 29);
   fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, crouch ? &crouch_reaction : &spec->move);
+  if (id == 90 || id == 173) {
+    mk4_script_stop_body(fighter);
+    scorpion_generated_reaction(fighter);
+    return;
+  }
   fighter->script = extra_reaction_tick;
   fighter->sample_override = spec->hold_at == 4 ? 4 : 0;
   fighter->script_timer = spec->hold_at == 4 ? 4 : 0;

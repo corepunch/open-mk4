@@ -223,6 +223,8 @@
     "0x4e63d8",
     "0x4e6500",
     "0x4e6658",
+    "0x4e66d0",
+    "0x4e66f0",
     "0x4e6710",
     "0x4e6798",
     "0x4e6800",
@@ -231,6 +233,7 @@
     "0x4e6950",
     "0x4e6998",
     "0x4e69c8",
+    "0x4e6a40",
     "0x4e6da0",
     "0x4e84d8",
     "0x4e84f8",
@@ -238,11 +241,10 @@
     "0x4e9910",
     "0x4e9bd0",
     "0x4e9ee0",
-    "0x4ed588",
-    "0x4e6a40"
+    "0x4ed588"
   ],
   "integration_source": "game/c_sub_zero.c",
-  "inventory_sha256": "7377c5e9bba1188e6796bc4526b68b1e98d9ff5759892c616f9c370c0b4ae9b2",
+  "inventory_sha256": "94567a38d8e8fa6a4f7e92a0ab6ed1874d0cf599b1f05a54f6e20b963fc275b5",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {

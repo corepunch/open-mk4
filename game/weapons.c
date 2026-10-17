@@ -214,34 +214,24 @@ static void air_script(Fighter *fighter) {
   landing_script(fighter);
 }
 
-void weapon_air_attack(Fighter *fighter, bool high) {
+void weapon_air_native(Fighter *fighter, unsigned selector) {
+  require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
+  require(fighter_move(fighter)->clip == (selector == 0x104 ? 252 : 251), "Weapon-air native entry differs from selected program");
+  air_script(fighter);
+}
+
+void weapon_air_attack(Fighter *fighter, bool high, FighterFn script) {
   fighter_start_move(fighter, S_JUMP, high ? &air_hp : &air_lp);
   fighter->sample_override = 0;
   fighter->body.on_land = NULL;
-  fighter_start_fiber(fighter, air_script, NULL);
-}
-
-static void draw_script(Fighter *fighter) {
-  for (;;) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = fighter->ticks + (fighter->ticks >= 35);
-    if (fighter->ticks == 22) {
-      fighter->weapon->equip(fighter);
-    }
-    if (fighter->ticks == 35) {
-      battle_sound(SOUND_C, 0x12);
-    }
-    if (fighter->ticks >= 48) {
-      fighter_fiber_finish(fighter_ready);
-    }
-  }
+  fighter_start_fiber(fighter, script, NULL);
 }
 
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {
   fighter_start_move(fighter, S_PUNCH, &draw_move);
   fighter->weapon = weapon;
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, draw_script, NULL);
+  /* The character starts its generated 4e62c0/4e62d8 program. */
 }
 
 static void throw_script(Fighter *fighter) {

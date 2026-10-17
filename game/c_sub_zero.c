@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Original no-contact VM/native recovery trace. Steps, not stored clip length.
- * See docs/scorpion-retail-moves.md and tests/fixtures/original_kicks.json. */
+/* Native controller return used by generated VM programs and native runners. */
 static void sub_zero_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
@@ -30,10 +29,6 @@ static const AttackRecord sweep_record = {0x175c2, 0x7a9f, 0x10ccc, 0x8a3d, 18, 
 static int victim_action(const Fighter *fighter) {
   return fighter_opponent(fighter)->action;
 }
-
-/* 0x46ddd0: one query per strike visit, skipped against a crouching victim
- * (0x2001), actions 0x106/0x107, or an early sweep (0x10c before sample 5).
- * The 0x102 gate is the low-kick crouching interval (native 0x46a970). */
 
 /* Runner 0x470c60 with block 0x4e6978: the first contact latches. */
 static void sub_zero_kick_contact(Fighter *fighter) {
@@ -117,12 +112,10 @@ static const MoveDef *const moves[S_COUNT] = {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_script(Fighter *fighter) {
-  for (int sample = 6; sample <= 9; ++sample) {
+  for (int sample = 6; sample <= 8; ++sample) {
     fighter_wait_ticks(sample == 6 ? 2 : 1);
     fighter->sample_override = sample;
-    if (sample >= 7) {
-      sub_zero_uppercut_contact(fighter);
-    }
+    sub_zero_uppercut_contact(fighter);
   }
   fighter_wait_ticks(1);
   ContactResult result = fighter->contact;
@@ -1065,7 +1058,7 @@ static void equip_scepter(Fighter *fighter) {
 
 static void scepter_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, index == 0 || index == 2);
+    weapon_air_attack(fighter, index == 0 || index == 2, (index == 0 || index == 2) ? retail_script_004e66d0 : retail_script_004e66f0);
   } else {
     weapon_start_strike(fighter, &scepter_attacks[index], true);
   }
@@ -1118,45 +1111,16 @@ static void sub_zero_pickup(Fighter *fighter) {
 /* 45e820: RUN latch is written after matching, so this sees the prior
  * press. 4692e0 uses shared descriptor 53ce18 (clip 300), not a roster
  * table. Down plays it forwards; otherwise it plays backwards. */
-static const MoveDef s_sidestep = {.clip = 300, .last = 17, .flags = SF_LOCK};
 
 static bool can_sidestep(const Fighter *fighter) {
-  uint64_t previous = fighter->latch[BUTTON_RUN];
-  return g_battle.phase == PHASE_FIGHT && !fighter_airborne(fighter) && previous != 0 && g_battle.ticks - previous <= 8 &&
-         g_battle.ticks >= fighter->sidestep_ready;
-}
-
-static void sidestep_script(Fighter *fighter) {
-  for (;;) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
-    if (fighter->ticks >= 18) {
-      stop_body(fighter);
-      fighter_fiber_finish(sub_zero_ready);
-    }
-  }
+  return mk4_can_sidestep(fighter);
 }
 
 static void sub_zero_sidestep(Fighter *fighter) {
-  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-  q16 along = 0x443, across = down ? -0xccc : 0xccc;
-  if (fighter_airborne(opponent(fighter))) {
-    along = q16_mul(along, 0x4ccc);
-    across = q16_mul(across, 0x4ccc);
-  }
-  q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
-  stop_body(fighter);
-  fighter_start_move(fighter, S_WALK, &s_sidestep);
-  fighter->script_phase = down;
-  fighter->sample_override = down ? 0 : 17;
-  fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
-  fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
-  fighter->sidestep_ready = g_battle.ticks + 80;
-  fighter_start_fiber(fighter, sidestep_script, NULL);
+  mk4_sidestep(fighter);
 }
 
-/* Finishers: character entries 0x467cd0/ce0/e00/e70. Presentation runs
- * through bounded C phase tables; no retail task/camera/object scheduler. */
+/* Generated VM finishers use shared scene, blend and object helpers. */
 #define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef fatal_moves[] = {

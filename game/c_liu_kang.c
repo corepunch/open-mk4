@@ -112,12 +112,10 @@ static const MoveDef *const moves[S_COUNT] = {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_script(Fighter *fighter) {
-  for (int sample = 6; sample <= 9; ++sample) {
+  for (int sample = 6; sample <= 8; ++sample) {
     fighter_wait_ticks(sample == 6 ? 2 : 1);
     fighter->sample_override = sample;
-    if (sample >= 7) {
-      liu_kang_uppercut_contact(fighter);
-    }
+    liu_kang_uppercut_contact(fighter);
   }
   fighter_wait_ticks(1);
   ContactResult result = fighter->contact;
@@ -1096,7 +1094,7 @@ static void equip_dragon_sword(Fighter *fighter) {
 
 static void sword_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, index == 2);
+    weapon_air_attack(fighter, index == 2, (index == 2) ? retail_script_004e66d0 : retail_script_004e66f0);
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &sword_attacks[index].move);
@@ -1111,7 +1109,7 @@ static void sword_attack(Fighter *fighter, int index) {
 
 static void sword_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, true);
+    weapon_air_attack(fighter, true, retail_script_004e66d0);
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_sword_hp);
@@ -1163,41 +1161,13 @@ static void liu_kang_pickup(Fighter *fighter) {
 /* 45e820: RUN latch is written after matching, so this sees the prior
  * press. 4692e0 uses shared descriptor 53ce18 (clip 300), not a roster
  * table. Down plays it forwards; otherwise it plays backwards. */
-static const MoveDef s_sidestep = {.clip = 300, .last = 17, .flags = SF_LOCK};
 
 static bool can_sidestep(const Fighter *fighter) {
-  uint64_t previous = fighter->latch[BUTTON_RUN];
-  return g_battle.phase == PHASE_FIGHT && !fighter_airborne(fighter) && previous != 0 && g_battle.ticks - previous <= 8 &&
-         g_battle.ticks >= fighter->sidestep_ready;
-}
-
-static void sidestep_script(Fighter *fighter) {
-  for (;;) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
-    if (fighter->ticks >= 18) {
-      mk4_script_stop_body(fighter);
-      fighter_fiber_finish(liu_kang_ready);
-    }
-  }
+  return mk4_can_sidestep(fighter);
 }
 
 static void liu_kang_sidestep(Fighter *fighter) {
-  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-  q16 along = 0x443, across = down ? -0xccc : 0xccc;
-  if (fighter_airborne(opponent(fighter))) {
-    along = q16_mul(along, 0x4ccc);
-    across = q16_mul(across, 0x4ccc);
-  }
-  q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
-  mk4_script_stop_body(fighter);
-  fighter_start_move(fighter, S_WALK, &s_sidestep);
-  fighter->script_phase = down;
-  fighter->sample_override = down ? 0 : 17;
-  fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
-  fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
-  fighter->sidestep_ready = g_battle.ticks + 80;
-  fighter_start_fiber(fighter, sidestep_script, NULL);
+  mk4_sidestep(fighter);
 }
 
 /* First scene: 4e0498[3] -> 450930. Second: 4dfe90[3] ->
@@ -1683,7 +1653,7 @@ static void cpu_close_hk(Fighter *fighter) {
 
 static void cpu_air_hp(Fighter *fighter) {
   if (fighter->armed) {
-    weapon_air_attack(fighter, true);
+    weapon_air_attack(fighter, true, retail_script_004e66d0);
   } else {
     air_hp(fighter);
   }

@@ -14,7 +14,7 @@ from retail_symbols import native_name, reference_rows
 from scorpion_moves import script_program
 
 # This is a portable implementation index, separate from the retail root map.
-COMMON = {'air_throw': ('game/mk4_common.c', 'mk4_air_throw')}
+COMMON = {'air_throw': ('game/mk4_common.c', 'mk4_air_throw_generated')}
 ENTRIES = {
     'high_punch': '{c}_hp', 'lp_throw': 'enter_throw', 'lk_throw': 'enter_lk_throw',
     'jab': '{c}_jab', 'high_kick': '{c}_kick', 'low_kick': '{c}_lk',
@@ -74,9 +74,10 @@ SPECIFIC = {
 
 # Generated VM entries are first-class extraction sources. Native-only entries
 # still point at their engine integration above.
-for _name, _move in moves_for(4).items():
-    if _move['scripts']:
-        SPECIFIC[4][_name] = ('game/generated/sub_zero.inc', 'retail_script_%08x' % _move['scripts'][0][1])
+for _character, _slug in ((0, 'scorpion'), (4, 'sub_zero')):
+    for _name, _move in moves_for(_character).items():
+        if _move['scripts']:
+            SPECIFIC[_character][_name] = ('game/generated/%s.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
 
 
 PORT_NOTES = {
@@ -153,6 +154,30 @@ def source_rows(port, limit):
         rows.append('No direct same-file const definitions referenced.')
     rows += ['', 'Engine calls and dynamically selected weapon/button callbacks remain explicit source boundaries. '
              'Use `--c` for retail control flow and helper contracts; source references are lexical navigation, not exhaustive C data flow.']
+    return rows
+
+
+def compiler_binding_rows(image, move, character):
+    from retail_bindings import bindings_for
+    from retail_codegen import instruction_binding
+    bindings = bindings_for(character)
+    used = {}
+    for _, root in move['scripts']:
+        for row in script_program(image, root, character)['instructions']:
+            key = instruction_binding(row)
+            if key and key[0] in bindings:
+                used[key[0]] = bindings[key[0]]
+    if not used:
+        return []
+    rows = ['', '## Typed compiler boundaries', '',
+            'Direct decoded edges only. These links identify engine ownership and lifetime; native semantics remain separate evidence.', '']
+    for address, binding in sorted(used.items()):
+        if not (ROOT / binding.source).is_file():
+            rows.append('- `%08x`: %s, %s; generated integration is not yet installed.' % (address, binding.symbol, binding.flow))
+            continue
+        line, _ = port_source((binding.source, binding.symbol))
+        rows.append('- `%08x`: [%s](%s:%d), %s; %s.' %
+                    (address, binding.symbol, ROOT / binding.source, line, binding.flow, binding.evidence))
     return rows
 
 
@@ -234,6 +259,7 @@ def port_text(disassembly, name, character=0, limit=512):
         rows += ['', '**Port notes:** ' + PORT_NOTES[character, name]]
     rows += source_rows(port, limit) if port else ['', 'No portable C entry is indexed for this character/move. No other character body is substituted.']
     operands, native = script_operands(image, move, character, limit)
+    rows += compiler_binding_rows(image, move, character)
     rows += operands
     from retail_query import CONTACT_TABLES, attack_text
     from scorpion_moves import attack_record, attack_record_at
