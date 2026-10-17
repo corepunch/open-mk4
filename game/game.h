@@ -647,6 +647,14 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move);
 void fighter_enter_state(Fighter *fighter, int state);
 void fighter_step_sequence(Fighter *fighter);
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
+/* Stackful move prototype: one scheduler-owned fiber per active fighter. */
+void fighter_start_fiber(Fighter *fighter, FighterFn entry, FighterFn cleanup);
+bool fighter_fiber_active(const Fighter *fighter);
+void fighter_step_fiber(Fighter *fighter);
+void fighter_cancel_fiber(Fighter *fighter);
+void fighter_cancel_all_fibers(void);
+void fighter_wait_ticks(int ticks);
+_Noreturn void fighter_fiber_finish(FighterFn next);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
 float fighter_z(const Fighter *fighter);

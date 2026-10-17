@@ -99,6 +99,16 @@ owners and arguments. No C++ classes, STL, references or
 exceptions in migrated game/engine modules. Keep simulation independent of SDL
 and rendering, and keep archive ownership separate from decoded assets.
 
+The move-fiber prototype uses pinned minicoro in `third_party/minicoro`, under
+its MIT No Attribution license option. Only `game/fiber.c` includes the backend
+implementation. Two runtime slots provide one 64 KiB stack per fighter; stacks
+are allocated on entry and freed on completion, replacement or reset. The
+existing P1/P2 actor pump resumes them on one thread, with positive waits in
+actor simulation ticks and at most one resume per battle tick. There are no
+worker threads, wall-clock sleeps or retail task-stack emulation. Runtime
+stacks live outside `g_battle`; copying Battle cannot snapshot an active fiber.
+Callbacks and MoveSequence remain supported for other moves.
+
 Do not reproduce the original global-address memory model or introduce an ECS
 framework merely to imitate the retail callback trees. Add an explicit event
 queue or script interpreter when a verified gameplay behavior needs it. Keep

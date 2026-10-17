@@ -44,6 +44,7 @@ static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facin
 }
 
 void battle_init(int p1, int p2) {
+  fighter_cancel_all_fibers();
   memset(&g_battle, 0, sizeof g_battle);
   battle_set_arena(0);
   g_battle.cpu_level = 3;
@@ -56,6 +57,7 @@ void battle_init(int p1, int p2) {
 }
 
 void battle_reset_match(void) {
+  fighter_cancel_all_fibers();
   int i;
   for (i = 0; i < 2; ++i)
     g_battle.fighters[i].wins = 0;
@@ -67,6 +69,7 @@ void battle_reset_match(void) {
 }
 
 void battle_next_round(void) {
+  fighter_cancel_all_fibers();
   size_t i;
   battle_set_arena(g_battle.arena);
   g_battle.round++;

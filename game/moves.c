@@ -112,6 +112,7 @@ void fighter_set_speed(Fighter *fighter, q16 speed) {
 
 void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
+  fighter_cancel_fiber(fighter);
   if (fighter->state == S_WALK && !fighter_airborne(fighter) && (move->flags & SF_LOCK)) {
     fighter_set_speed(fighter, 0);
   }
@@ -191,6 +192,7 @@ void fighter_enter_state(Fighter *fighter, int state) {
 /* A phase owns its tick clock and continuation, but retains the move's
  * combat identity, action, contact result and input restrictions. */
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence) {
+  fighter_cancel_fiber(fighter);
   require(sequence != NULL && sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 && sequence->end != NULL &&
               sequence->segments[0].at == 0 && sequence->event_count >= 0 && (sequence->event_count == 0 || sequence->events != NULL),
       "Invalid move phase");

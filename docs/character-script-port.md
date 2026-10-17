@@ -98,6 +98,31 @@ with the existing spear-return continuation. The existing policy of retaining
 a live paired pull beyond the minimum wait remains an engine adaptation;
 interruption releases the captive victim rather than firing a stale return.
 
+### Stackful move prototype
+
+`fighter_start_fiber(fighter, entry, cleanup)` starts a C entry immediately,
+until its first `fighter_wait_ticks(n)` or completion. The wait may be nested
+inside ordinary C helpers and loops; locals survive. Subsequent execution
+uses the existing fighter script pump in P1/P2 order. A wait advances only
+when its actor is pumped, never through a sleep or another thread. Repeated
+pumps in the same battle tick do not resume again. This is bounded to one
+fiber per live fighter, with a 64 KiB stack and no nested actor scheduling.
+
+Use `fighter_fiber_finish(next)` for a move transition from a running fiber;
+it never returns. The scheduler destroys the old stack, invokes cleanup once,
+then calls `next` on its own stack. Returning normally uses `fighter_ready`.
+Directly replacing one's own move/phase from inside the fiber is rejected.
+External move replacement, queued interruption, round reset, rematch and
+`battle_init` cancel suspended stacks without resuming them. The optional
+cleanup releases independent objects or paired victims; it must not depend
+on fiber locals or start another fiber. Never store pointers to fiber locals
+in simulation state. Reset cancels both actors before overwriting any fighter.
+
+The backend is the unmodified pinned minicoro header; see
+`third_party/minicoro/UPSTREAM.md` and LICENSE. Runtime stacks are outside
+Battle and cannot be restored by copying the struct. This remains an actor
+move prototype, not a general task scheduler or rollback implementation.
+
 ## Sub-Zero source-to-code ledger
 
 Implementation: [game/c_sub_zero.c](../game/c_sub_zero.c). Retail, roster and
