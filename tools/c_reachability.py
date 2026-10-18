@@ -95,6 +95,34 @@ def workspace_graph():
     return DefinitionGraph(units)
 
 
+def weapon_dispatch_cycles(graph, reached, directory):
+    """An armed callback must implement its move, not press its own switch again."""
+    fields = ('type', 'hp', 'lp', 'back_hp', 'back_lp', 'crouch_lp', 'throw_move', 'equip', 'model')
+    buttons = {'hp': 'BUTTON_HIGH_PUNCH', 'back_hp': 'BUTTON_HIGH_PUNCH',
+               'lp': 'BUTTON_LOW_PUNCH', 'back_lp': 'BUTTON_LOW_PUNCH', 'crouch_lp': 'BUTTON_LOW_PUNCH'}
+    errors = []
+    for key in sorted(reached):
+        path, name = key
+        body = graph.nodes[key]
+        head = body.split('=', 1)[0]
+        if not path.startswith(directory) or not re.search(r'\bWeaponDef\b', head) or '=' not in body:
+            continue
+        initializer = body.split('=', 1)[1].strip().strip('{} \n')
+        values = initializer.split(',')
+        callbacks = dict(zip(fields, values))
+        if any(re.match(r'\s*\.', value) for value in values):
+            callbacks = {match[1]: match[2] for match in re.finditer(r'\.(\w+)\s*=\s*(\w+)', initializer)}
+        for field, button in buttons.items():
+            callback = callbacks.get(field, '').strip()
+            if not re.fullmatch(r'\w+', callback):
+                continue
+            target = graph.find(path, callback)
+            if target and re.search(r'\bfighter_press\s*\([^,;{}]+,\s*' + button + r'\s*\)', graph.nodes[target]):
+                errors.append('weapon %s:%s.%s: callback %s redispatches its own %s instead of implementing the armed move' %
+                              (path, name, field, callback, button))
+    return errors
+
+
 def unreachable_references(profile):
     graph = workspace_graph()
     # The roster lookup is an indirect runtime selection, not an edge from
@@ -127,6 +155,7 @@ def unreachable_references(profile):
     # in port.json. Generated VM bodies and their mechanical integration thunks
     # are checked through the catalog roots above, not as independent moves.
     directory = 'game/' + profile['character'] + '/'
+    errors.extend(weapon_dispatch_cycles(graph, reached, directory))
     for key, body in graph.nodes.items():
         path, name = key
         if not path.startswith(directory) or key in reached or key in reported:

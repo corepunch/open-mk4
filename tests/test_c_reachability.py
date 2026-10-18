@@ -60,6 +60,32 @@ const CharacterDef mk4_example = {controls};
         self.assertTrue(any('combos.c:followups' in error for error in errors))
         self.assertFalse(any(':live ' in error for error in errors))
 
+    def test_registered_weapon_cannot_redispatch_its_own_armed_button(self):
+        for initializer in ('{0x69, hp, lp}', '{.type = 0x69, .hp = hp, .lp = lp}'):
+            with self.subTest(initializer=initializer):
+                graph = DefinitionGraph({'game/example/moves/weapon.c': """
+static void hp(Fighter *fighter) { fighter_press(fighter, BUTTON_HIGH_PUNCH); }
+static void lp(Fighter *fighter) { start_real_strike(fighter); }
+static const WeaponDef weapon = """ + initializer + """;
+void equip(Fighter *fighter) { fighter_equip_weapon(fighter, &weapon); }
+""", 'game/example/character.c': 'const CharacterDef mk4_example = {equip};'})
+                with patch('c_reachability.workspace_graph', return_value=graph):
+                    errors = unreachable_references({'character': 'example'})
+                self.assertEqual(len(errors), 1)
+                self.assertIn('weapon.hp: callback hp redispatches its own BUTTON_HIGH_PUNCH', errors[0])
+
+    def test_weapon_callback_lookup_keeps_static_module_identity(self):
+        graph = DefinitionGraph({'game/example/weapon.c': """
+static void hp(Fighter *fighter) { start_real_strike(fighter); }
+static const WeaponDef weapon = {0x69, hp};
+const CharacterDef mk4_example = {weapon};
+""", 'game/other/weapon.c': """
+static void hp(Fighter *fighter) { fighter_press(fighter, BUTTON_HIGH_PUNCH); }
+const WeaponDef weapon = {0x69, hp};
+"""})
+        with patch('c_reachability.workspace_graph', return_value=graph):
+            self.assertEqual(unreachable_references({'character': 'example'}), [])
+
     def test_generated_unused_continuations_do_not_become_independent_moves(self):
         graph = DefinitionGraph({'game/example/character.c': '''
 static void retail_script_12345678(void) {}
