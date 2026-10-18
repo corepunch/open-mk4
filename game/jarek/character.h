@@ -40,6 +40,8 @@ void jarek_low_kick(Fighter *fighter);
 void jarek_lp_throw(Fighter *fighter);
 void jarek_press_air_hp(Fighter *fighter);
 void jarek_press_air_kick(Fighter *fighter);
+void jarek_press_air_hk(Fighter *fighter);
+void jarek_press_air_lk(Fighter *fighter);
 void jarek_press_air_lp(Fighter *fighter);
 void jarek_press_kick(Fighter *fighter);
 void jarek_press_low_kick(Fighter *fighter);

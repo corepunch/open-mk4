@@ -35,10 +35,8 @@ static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = jarek_press_uppercu
     [BUTTON_LOW_KICK] = jarek_press_sweep}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = jarek_press_air_hp,
     [BUTTON_LOW_PUNCH] = jarek_press_air_lp,
-    [BUTTON_HIGH_KICK] = jarek_press_air_kick,
-    [BUTTON_LOW_KICK] = jarek_press_air_kick}};
-static const ButtonTable air_punch_followup = {{[BUTTON_LOW_PUNCH] = jarek_press_air_lp}};
-static const ButtonTable air_followup = {{[BUTTON_HIGH_KICK] = jarek_press_air_kick, [BUTTON_LOW_KICK] = jarek_press_air_kick}};
+    [BUTTON_HIGH_KICK] = jarek_press_air_hk,
+    [BUTTON_LOW_KICK] = jarek_press_air_lk}};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch}};
 static const ButtonTable combo_hp_followup = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch}};
 static const ButtonTable close_hk_followup = {{[BUTTON_HIGH_KICK] = jarek_press_kick}};
@@ -81,7 +79,7 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_jarek = {GAME_MK4, 12, "JAREK", &mk4_motion, moves, S_COUNT, &controls, enter, -73531, mk4_walk, mk4_jump, NULL};
+const CharacterDef mk4_jarek = {GAME_MK4, 12, "JAREK", &mk4_motion, moves, S_COUNT, &controls, enter, -73531, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void jarek_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);
