@@ -286,6 +286,51 @@ def moves_for(character):
                             (('B', 34),)),
         )
         return shared
+    if character == 15:
+        # Goro shares the common combat streams, while roster-selected
+        # contact records and scene tables keep their own character context.
+        shared.update(
+            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328),
+                                    ('follow-up return', 0x4de358)),
+                          native=(('roster continuation', 0x42bdd0), ('victim continuation', 0x42bdf0),
+                                  ('follow-up return', 0x42be10))),
+            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('repeated damage', 0x4de7e8),
+                                     ('final damage', 0x4de6e4)),
+                          native=(('selector', 0x42c3d0), ('throw continuation', 0x42c590), ('victim continuation', 0x42ceb0),
+                                  ('five-phase sequence', 0x42c770), ('phase repeat', 0x42c7b0))),
+            jab=move(0x46dca0, (('attacker', 0x4e62f0), ('second punch', 0x4e6330),
+                                ('repeat', 0x4e6360), ('recovery', 0x4e63b0)), (('A', 1),),
+                     native=(('recovery callback', 0x46de60),)),
+            uppercut=move(0x46ccd0, (('attacker', 0x4e62a0),), (('A', 2), ('A', 6))),
+            sweep=move(0x46ef90, (('attacker', 0x4e6798),), (('B', 36),)),
+            air_hp=move(0x46e6c0, (('attacker', 0x4e6658),), (('A', 4),),
+                        native=(('recovery callback', 0x46e7c0),)),
+            air_lp=move(0x46ee30, (('attacker', 0x4e6710),), (('A', 5),),
+                        native=(('recovery callback', 0x46ef10),)),
+            air_kick=move(0x46c7a0, (('straight kick', 0x4e61f8),), (('B', 40),),
+                          native=(('recovery callback', 0x46cb10),)),
+            air_diagonal_hk=move(0x46e380, (('attacker', 0x4e6500),), (('B', 32),)),
+            air_diagonal_lk=move(0x46df50, (('attacker', 0x4e63d8),), (('B', 29),)),
+            air_throw=move(0x46aa80, (('paired attacker/victim', 0x4e5e28), ('release', 0x4e5e50),
+                                      ('victim release', 0x4e9910)),
+                           native=(('command gate', 0x45ed70), ('release damage', 0x46aae0),
+                                   ('landing', 0x46ab20), ('victim continuation', 0x4878c0),
+                                   ('victim getup', 0x484b60))),
+            fan_fatality=move(0x467e00, (('performer', 0x4e0118), ('victim', 0x4e0188),
+                                         ('owner cycle', 0x4e0138), ('owner release', 0x4e0148),
+                                         ('victory', 0x4e0158), ('victim release', 0x4e01a0)),
+                              native=(('scene entry', 0x43d040),)),
+            spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
+            high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
+            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),
+                                       ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
+            progress_event=move(0x43af90, (('actor clip', 0x4dfb60),)),
+            counter_kick_event=move(0x43b170, (('actor clip', 0x4dfb70),)),
+            counter_sweep_event=move(0x43b320, (('actor clip', 0x4dfbb8),)),
+        )
+        return shared
+
     if character != 4:
         return shared
     shared.update(
