@@ -566,7 +566,7 @@ static const mmove_t air_freeze_phase = {.frame = air_freeze_frames, .endfunc = 
 static const mmove_t air_diagonal_freeze_phase = {.frame = air_diagonal_freeze_frames, .endfunc = air_unfreeze};
 
 static void air_cleanup(Fighter *fighter) {
-  if (fighter->script_phase == AIR_FREEZE || fighter->script_phase == AIR_COMBO_FREEZE) {
+  if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
     fighter->body.gravity = 0x51e;
   }
   if (fighter->buttons == &air_followup || fighter->buttons == &air_ground_followup) {
@@ -627,6 +627,9 @@ static void air_native_tail(Fighter *fighter, int index, int elapsed) {
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
   fighter_start_move(fighter, S_JUMP, &air_attacks[index].move);
+  if (combo) {
+    fighter->body.gravity = 0;
+  }
   fighter_upright(fighter);
   fighter->sample_override = 0;
   fighter->script_phase = combo ? AIR_COMBO : AIR_FLIGHT;
@@ -659,12 +662,25 @@ static void air_lk_diagonal(Fighter *fighter) {
   start_air_attack(fighter, 4);
 }
 
+/* A queued follow-up takes ownership of the contact pause after cancellation
+ * has restored safe falling for every other interruption path. */
+static void air_combo_lp(Fighter *fighter) {
+  fighter->body.gravity = 0;
+  air_lp(fighter);
+}
+
+static void air_combo_kick(Fighter *fighter) {
+  fighter->body.gravity = 0;
+  air_kick(fighter);
+}
+
 static void press_air_hp(Fighter *fighter) {
   fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : air_hp);
 }
 
 static void press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : air_lp);
+  FighterFn entry = fighter->armed ? fighter->weapon->lp : fighter->buttons == &air_followup ? air_combo_lp : air_lp;
+  fighter_interrupt(fighter, entry);
 }
 
 static void press_air_hk(Fighter *fighter) {
@@ -676,7 +692,7 @@ static void press_air_lk(Fighter *fighter) {
 }
 
 static void press_air_followup_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, air_kick);
+  fighter_interrupt(fighter, air_combo_kick);
 }
 
 static const ButtonTable air_followup = {

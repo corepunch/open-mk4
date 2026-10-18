@@ -147,6 +147,30 @@ static void air_phase_interrupt(void) {
   }
 }
 
+static void air_phase_followup(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int kick = 0; kick < 2; ++kick) {
+      fight(player, 1.f);
+      Fighter *fighter = &g_battle.fighters[player];
+      fighter->body.pos[AXIS_Y] -= Q16_ONE;
+      fighter_enter_state(fighter, S_JUMP);
+      fighter->body.gravity = 1;
+      g_battle.fighters[1 - player].body.pos[AXIS_Y] -= Q16_ONE;
+      check(battle_cpu_action(fighter, CPU_AIR_HP), "air combo regression must use the real HP entry");
+      advance(8);
+      check(fighter->connected && fighter->body.gravity == 0 && fighter->buttons != NULL, "air HP must open its contact follow-up");
+      press(player, BUTTON_BIT(kick ? BUTTON_HIGH_KICK : BUTTON_LOW_PUNCH));
+      check(fighter_move(fighter)->clip == (kick ? 327 : 96) && fighter->body.gravity == 0 && !fighter_fiber_active(fighter),
+          "queued air follow-up must take over the contact pause without falling or allocating a fiber");
+      fighter_interrupt(fighter, fighter_ready);
+      advance(1);
+      check(fighter->body.gravity != 0 && fighter->current_mmove == NULL, "interrupting combo startup must release its inherited pause");
+      advance(160);
+      check(fighter->state == S_IDLE, "interrupted air combo must land and recover");
+    }
+  }
+}
+
 static void ice_command(int player, int delay, unsigned extra) {
   press(player, BUTTON_BIT(BUTTON_DOWN));
   advance(delay);
@@ -1625,6 +1649,7 @@ int main(void) {
   weapons();
   normals();
   air_phase_interrupt();
+  air_phase_followup();
   sweep_frames();
   ground_throws();
   ice();
