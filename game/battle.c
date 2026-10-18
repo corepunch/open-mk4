@@ -101,6 +101,8 @@ void battle_next_round(void) {
   memset(g_battle.attachments, 0, sizeof g_battle.attachments);
   memset(g_battle.particles, 0, sizeof g_battle.particles);
   memset(g_battle.blood, 0, sizeof g_battle.blood);
+  memset(g_battle.splats, 0, sizeof g_battle.splats);
+  g_battle.splat_next = 0;
   memset(g_battle.sprays, 0, sizeof g_battle.sprays);
   g_battle.camera = (SceneCamera){0};
   g_battle.sound_count = 0;

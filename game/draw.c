@@ -260,6 +260,44 @@ static void draw_blend_billboard(Canvas *cv, Camera camera, const Geometry *geom
   canvas_blend_triangle(cv, (ScreenVertex[3]){corners[2], corners[1], corners[3]}, texture, tint);
 }
 
+/* The retail splat sprites are drawn as seen from the fight camera, so
+ * stretch their depth back out before laying them flat. The sprite's top
+ * edge stays farthest from the camera, and stains fade over their last
+ * second. */
+static void draw_blood_splats(Canvas *cv, Camera camera, const Assets *assets, float floor_y) {
+  const Geometry *effects = &assets->hud.effects;
+  for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
+    const BloodSplat *splat = &g_battle.splats[i];
+    if (splat->ticks <= 0) {
+      continue;
+    }
+    const Sprite *sprite = &effects->sprites.data[splat->sprite];
+    Vec3 across = {q16_float(splat->axis[0]), 0, q16_float(splat->axis[1])};
+    if (across.x < 0) {
+      across = vec_scale(across, -1);
+    }
+    Vec3 toward = {-across.z, 0, across.x};
+    float half = q16_float(splat->half), deep = half * (float)sprite->h / (float)sprite->w / .4f;
+    Vec3 center = {q16_float(splat->pos[0]), floor_y - .005f, q16_float(splat->pos[1])};
+    ScreenVertex corners[4];
+    bool visible = true;
+    for (int k = 0; k < 4; ++k) {
+      bool right = k & 1, near = k & 2;
+      Vec3 world = vec_add(center, vec_add(vec_scale(across, right ? half : -half), vec_scale(toward, near ? deep : -deep)));
+      Vertex vertex = {.p = camera_point(camera, world), .u = (float)(sprite->u + (right ? sprite->w : 0)), .v = (float)(sprite->v + (near ? sprite->h : 0))};
+      visible &= vertex.p.z >= .4f;
+      corners[k] = camera_project(camera, vertex, 1);
+    }
+    if (!visible) {
+      continue;
+    }
+    unsigned alpha = (unsigned)mini(224, splat->ticks * 224 / 60);
+    const Texture *texture = &effects->textures.data[sprite->texture];
+    canvas_blend_triangle(cv, (ScreenVertex[3]){corners[0], corners[1], corners[2]}, texture, alpha << 24 | 0xd8d8d8);
+    canvas_blend_triangle(cv, (ScreenVertex[3]){corners[2], corners[1], corners[3]}, texture, alpha << 24 | 0xd8d8d8);
+  }
+}
+
 /* Hit blood from battle_blood_hit: retail drop mesh 0 in flight, crown
  * meshes 4-12 on landing and spatter sprite 153 at the impact. */
 static void draw_blood(Canvas *cv, Camera camera, const Assets *assets, const SceneLight *light) {
@@ -388,6 +426,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     }
   }
   canvas_resolve_shadows(cv, 104);
+  draw_blood_splats(cv, camera, assets, floor_y);
   uint32_t ice_pixel = 0xff89dfff;
   const Texture ice_texture = {1, 1, {&ice_pixel, 1, 1}};
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {

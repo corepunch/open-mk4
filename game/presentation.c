@@ -301,7 +301,28 @@ void battle_blood_hit(const Fighter *attacker, const Fighter *victim, Vec3 point
   }
 }
 
+/* Larger landed drops stain the floor with one of the retail red splat
+ * sprites; their green twins and neighbours are other effects. */
+static void stain_floor(const BloodDrop *drop, int index) {
+  static const int sprites[] = {163, 164, 166, 167, 168};
+  if (drop->scale < 0xd800) {
+    return;
+  }
+  BloodSplat *splat = &g_battle.splats[g_battle.splat_next];
+  g_battle.splat_next = (g_battle.splat_next + 1) % MAX_BLOOD_SPLATS;
+  *splat = (BloodSplat){.pos = {drop->pos[AXIS_X], drop->pos[AXIS_Z]},
+      .axis = {g_battle.axis[0], g_battle.axis[1]},
+      .half = 0x1800 + q16_mul(drop->scale, 0x2000),
+      .sprite = sprites[(index + (int)g_battle.ticks) % (int)(sizeof sprites / sizeof sprites[0])],
+      .ticks = BLOOD_SPLAT_TICKS};
+}
+
 static void step_blood(void) {
+  for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
+    if (g_battle.splats[i].ticks > 0) {
+      g_battle.splats[i].ticks--;
+    }
+  }
   for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
     BloodDrop *drop = &g_battle.blood[i];
     if (drop->kind == BLOOD_NONE) {
@@ -320,6 +341,7 @@ static void step_blood(void) {
     }
     if (drop->kind == BLOOD_DROP && drop->pos[AXIS_Y] >= 0) {
       /* As 4745d0 does for retail drops: nine two-tick crown meshes. */
+      stain_floor(drop, i);
       drop->kind = BLOOD_SPLASH;
       drop->pos[AXIS_Y] = -0x7ae;
       memset(drop->vel, 0, sizeof drop->vel);

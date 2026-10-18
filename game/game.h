@@ -726,6 +726,14 @@ typedef struct BloodDrop {
   int ticks, age;
 } BloodDrop;
 
+/* A floor stain left by a landed hit-blood drop. */
+typedef struct BloodSplat {
+  q16 pos[2];  /* floor X/Z */
+  q16 axis[2]; /* sprite width direction: the battle axis when it landed */
+  q16 half;    /* half width in world units */
+  int sprite, ticks;
+} BloodSplat;
+
 typedef struct CameraShot {
   const q16 (*points)[3];
   int count, hold;
@@ -752,6 +760,8 @@ typedef struct SceneCamera {
 #define MAX_PARTICLES 128
 #define MAX_JOINT_SPRAYS 4
 #define MAX_BLOOD_DROPS 192
+#define MAX_BLOOD_SPLATS 48
+#define BLOOD_SPLAT_TICKS 600
 
 typedef struct SoundEvent {
   int bank, selector;
@@ -770,6 +780,8 @@ struct Battle {
   Particle particles[MAX_PARTICLES];
   JointSpray sprays[MAX_JOINT_SPRAYS];
   BloodDrop blood[MAX_BLOOD_DROPS];
+  BloodSplat splats[MAX_BLOOD_SPLATS];
+  int splat_next; /* oldest stain, reused when the pool is full */
   SceneCamera camera;
   SoundEvent sounds[MAX_SOUND_EVENTS];
   int sound_count;

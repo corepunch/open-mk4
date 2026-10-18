@@ -91,14 +91,37 @@ static void check_hit_blood(void) {
     }
   }
   check(splashed && live_blood(BLOOD_NONE) == 0, "Hit blood must splash on the floor and then expire");
+  int stains = 0;
+  for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
+    const BloodSplat *splat = &g_battle.splats[i];
+    if (splat->ticks > 0) {
+      ++stains;
+      check(splat->sprite == 163 || splat->sprite == 164 || splat->sprite == 166 || splat->sprite == 167 || splat->sprite == 168,
+          "Floor stains must use the retail red splat sprites");
+    }
+  }
+  check(stains > 0, "Larger landed drops must stain the floor");
+  advance_ticks(BLOOD_SPLAT_TICKS, NULL);
+  for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
+    check(g_battle.splats[i].ticks == 0, "Floor stains must fade away");
+  }
   fight(1.f);
   do_attack(S_PUNCH, true, false);
   check(live_blood(BLOOD_NONE) == 0, "Blocked hits must not bleed");
   fight(1.f);
   do_attack(S_PUNCH, false, false);
-  check(live_blood(BLOOD_NONE) > 0, "Hit blood must outlast the attack");
+  advance_ticks(60, NULL);
+  bool stained = false;
+  for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
+    stained |= g_battle.splats[i].ticks > 0;
+  }
+  check(stained, "Hit blood must stain the floor");
   battle_next_round();
-  check(live_blood(BLOOD_NONE) == 0, "Round reset must discard hit blood");
+  stained = false;
+  for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
+    stained |= g_battle.splats[i].ticks > 0;
+  }
+  check(live_blood(BLOOD_NONE) == 0 && !stained, "Round reset must discard hit blood and floor stains");
 }
 
 static void check_roster(void) {
