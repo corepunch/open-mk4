@@ -93,6 +93,9 @@ def _moves_for(character):
         # these common attacks, but its selectors and contact records are
         # roster-specific. Keep the roots explicit for compiler coverage.
         shared.update(
+            wind=move(0x46a620, (("wind caster", 0x4e5c50), ("caster recovery", 0x4e5c20)), (("D", 8),), native=(("vortex victim", 0x487ed0),)),
+            wind_slam=move(0x46a5f0, (("slam owner", 0x4e5c00), ("victim bounce", 0x4e9ff0)), native=(("slam victim", 0x488310),)),
+            wind_victim=move(0x487ed0, (("vortex landing", 0x4e9fe0),)),
             draw_weapon=move(0x46d1d0, (("draw", 0x4e62c0), ("equip return", 0x4e62d8), ("air HP", 0x4e66d0), ("air LP", 0x4e66f0)), native=(("equip", 0x46d260),)),
             crossbow_hp=move(0x495c30, native=(("upward shot", 0x499db0), ("independent bolt", 0x499f90))),
             crossbow_lp=move(0x495c60, (("shot recovery", 0x4ed408),), (("C", 16),), native=(("straight shot", 0x49a370), ("downward shot", 0x499c30))),

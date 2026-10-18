@@ -27,14 +27,14 @@
       "evidence": "Fujin fatality input target 467ce0 starts generated spike fatality root 4e6950."
     },
     "0x46a5f0": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_entry_low_kick",
-      "evidence": "Fujin input target 46a5f0 selects Fujin low-kick combat handling."
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind_slam",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x46a620": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_entry_high_punch",
-      "evidence": "Fujin high-punch input target 46a620 selects the generated jab chain."
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x47bf60": {
       "source": "game/fujin/moves/dive.c",
@@ -60,6 +60,11 @@
       "source": "game/fujin/moves/spike.c",
       "symbol": "fujin_entry_spike",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x46a7b0": {
+      "source": "game/fujin/moves/kicks.c",
+      "symbol": "fujin_entry_low_kick",
+      "evidence": "The ordinary stance low kick is46a7b0 ->4e5d90, distinct from46a5f0 wind slam; its normal button route now reaches this existing adapter."
     }
   },
   "entry_contexts": {
@@ -168,6 +173,18 @@
       "count": 49,
       "sample": 22,
       "evidence": "46d260 equips after draw clip244 reaches22, then resumes its recovery."
+    },
+    "0x4e5c20": {
+      "clip": 98,
+      "count": 40,
+      "sample": 16,
+      "evidence": "Native46a650 keeps clip98 at16 after D8 contact, then enters4e5c20 recovery with valid end cursor40."
+    },
+    "0x4e9ff0": {
+      "clip": 195,
+      "count": 29,
+      "sample": 28,
+      "evidence": "Native4883b0 selects195 final pose with4298b0 before the impact and4-tick hold at4e9ff0."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -213,10 +230,15 @@
     "0x4e66f0",
     "0x4ed408",
     "0x4ed788",
-    "0x4e9e10"
+    "0x4e9e10",
+    "0x4e5c00",
+    "0x4e5c20",
+    "0x4e5c50",
+    "0x4e9fe0",
+    "0x4e9ff0"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "8846779b59450d31d3299e89fffcd8872b9bca8d64550b8959ba4c5192a2258c",
+  "inventory_sha256": "1b41c7afbe3aae856d1f9fa5813781ff242f47b93dd080a5836e926276343dc6",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -343,6 +365,21 @@
       "source": "game/fujin/moves/weapon.c",
       "symbol": "fujin_bolt_victim",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+    },
+    "wind": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
+    },
+    "wind_slam": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind_slam",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
+    },
+    "wind_victim": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind_victim",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     }
   },
   "output": "game/fujin/generated/scripts.inc",
@@ -511,6 +548,24 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+    },
+    "92": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind_victim",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts.",
+      "adaptation": "Shared reactions.c table registers the move-owned wind victim functions for either player; reaction97 explicitly retains vortex velocity across action cleanup."
+    },
+    "97": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind_slam_victim",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts.",
+      "adaptation": "Shared reactions.c table registers the move-owned wind victim functions for either player; reaction97 explicitly retains vortex velocity across action cleanup."
+    },
+    "165": {
+      "source": "game/reactions.c",
+      "symbol": "react_slide_block",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts.",
+      "adaptation": "Shared reactions.c table registers the move-owned wind victim functions for either player; reaction97 explicitly retains vortex velocity across action cleanup."
     }
   },
   "return_to": "fighter_ready",
@@ -598,6 +653,16 @@
       "source": "game/fujin/moves/weapon.c",
       "symbol": "fujin_weapon_action",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+    },
+    "0x46a620": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
+    },
+    "0x46a5f0": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind_slam",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     }
   },
   "command_predicates": {
@@ -606,7 +671,9 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45eeb0": "fujin_can_dive",
-    "0x45ef50": "weapon_can_draw"
+    "0x45ef50": "weapon_can_draw",
+    "0x45ec10": "fujin_can_wind",
+    "0x45ebf0": "fujin_can_wind_slam"
   },
   "mmove_scripts": [
     "0x4de610",
@@ -649,6 +716,18 @@
     "0x4e66f0",
     "0x4ed408",
     "0x4ed788",
-    "0x4e9e10"
-  ]
+    "0x4e9e10",
+    "0x4e5c00",
+    "0x4e5c20",
+    "0x4e5c50",
+    "0x4e9fe0",
+    "0x4e9ff0"
+  ],
+  "cpu_bindings": {
+    "0x46a620": {
+      "source": "game/fujin/moves/wind.c",
+      "symbol": "fujin_wind",
+      "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
+    }
+  }
 }

@@ -83,7 +83,7 @@ static const FighterFn state_entries[S_COUNT] = {
 // clang-format on
 
 const CharacterDef mk4_fujin = {
-    GAME_MK4, 5, "FUJIN", &mk4_motion, fujin_moves, S_COUNT, &fujin_controls, state_entries, -73531, mk4_walk, mk4_jump, NULL, NULL, 0};
+    GAME_MK4, 5, "FUJIN", &mk4_motion, fujin_moves, S_COUNT, &fujin_controls, state_entries, -73531, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
 
 void fujin_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);
@@ -235,4 +235,24 @@ void fujin_entry_retail_script_004ed788(Fighter *fighter) {
 
 void fujin_entry_retail_script_004e9e10(Fighter *fighter) {
   retail_script_004e9e10(fighter);
+}
+
+void fujin_entry_retail_script_004e5c00(Fighter *fighter) {
+  retail_script_004e5c00(fighter);
+}
+
+void fujin_entry_retail_script_004e5c20(Fighter *fighter) {
+  retail_script_004e5c20(fighter);
+}
+
+void fujin_entry_retail_script_004e5c50(Fighter *fighter) {
+  retail_script_004e5c50(fighter);
+}
+
+void fujin_entry_retail_script_004e9fe0(Fighter *fighter) {
+  retail_script_004e9fe0(fighter);
+}
+
+void fujin_entry_retail_script_004e9ff0(Fighter *fighter) {
+  retail_script_004e9ff0(fighter);
 }

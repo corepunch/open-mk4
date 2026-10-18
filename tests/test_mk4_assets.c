@@ -6,6 +6,8 @@
 #include <string.h>
 
 void fujin_weapon_action(Fighter *fighter);
+void fujin_wind(Fighter *fighter);
+void fujin_wind_slam(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 
@@ -603,6 +605,48 @@ static void scene_pose_entry(Fighter *actor) {
   fighter_mmove_phase(actor, &scene_pose_phase);
 }
 
+static void fujin_wind_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int slam = 0; slam < 2; ++slam) {
+      battle_init(slot ? 2 : 5, slot ? 5 : 2);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 0x14ccc : -0x14ccc;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_interrupt(owner, fujin_wind);
+      bool caught = false, emitted = false, slammed = false, bounce = false;
+      for (int tick = 0; tick < 500; ++tick) {
+        if (victim->action == 0x1001) {
+          caught = true;
+          if (slam && owner->state == S_IDLE && !slammed) {
+            fighter_interrupt(owner, fujin_wind_slam);
+            slammed = true;
+          }
+        }
+        battle_step((Input[2]){0});
+        bounce |= fighter_move(victim)->clip == 179;
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        for (int i = 0; i < MAX_PARTICLES; ++i) {
+          const Particle *p = &g_battle.particles[i];
+          if (p->ticks > 0 && p->visual != NULL && p->visual->animation.first >= 84 && p->visual->animation.first <= 91) {
+            emitted = true;
+            int mesh = p->visual->animation.first;
+            check(assets->hud.effects.meshes.data[mesh].triangles.count > 0 && assets->hud.effects.sprites.data[mesh].w == 0,
+                "Wind emitter must use the actual three-dimensional shared84..91 mesh geometry");
+          }
+        }
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Real wind, slam and getup clips must remain on frame phases");
+      }
+      check(caught && emitted && (!slam || (slammed && bounce)) && victim->state == S_IDLE && victim->health == Q16_ONE - (slam ? 0x147a : 0),
+          "Real-asset wind catch, optional slam and landing must complete with the authored damage");
+      battle_reset_match();
+    }
+  }
+}
+
 static void fujin_crossbow_assets(const Assets *assets) {
   const Character *bow = &assets->scene_models.data[SCENE_MODEL_FUJIN_WEAPON];
   check(bow->bones.count == 1 && bow->bones.data[0].mesh == 105, "Fujin crossbow must use descriptor4ece98's original shared105 rig");
@@ -938,6 +982,7 @@ int main(void) {
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
+  fujin_wind_assets(&assets);
   fujin_crossbow_assets(&assets);
   independent_scene_poses(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);

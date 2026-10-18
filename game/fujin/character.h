@@ -119,4 +119,18 @@ void fujin_entry_retail_script_004ed408(Fighter *fighter);
 void fujin_entry_retail_script_004ed788(Fighter *fighter);
 void fujin_entry_retail_script_004e9e10(Fighter *fighter);
 extern const uint32_t fujin_weapon_descriptor[];
+bool fujin_can_wind(const Fighter *fighter);
+bool fujin_can_wind_slam(const Fighter *fighter);
+void fujin_wind(Fighter *fighter);
+void fujin_wind_slam(Fighter *fighter);
+void fujin_wind_victim(Fighter *fighter);
+void fujin_wind_slam_victim(Fighter *fighter);
+void fujin_wind_recovery(Fighter *fighter);
+void fujin_wind_getup(Fighter *fighter);
+void fujin_wind_crouch_return(Fighter *fighter);
+void fujin_entry_retail_script_004e5c00(Fighter *fighter);
+void fujin_entry_retail_script_004e5c20(Fighter *fighter);
+void fujin_entry_retail_script_004e5c50(Fighter *fighter);
+void fujin_entry_retail_script_004e9fe0(Fighter *fighter);
+void fujin_entry_retail_script_004e9ff0(Fighter *fighter);
 #endif

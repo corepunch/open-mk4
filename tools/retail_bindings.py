@@ -1359,3 +1359,8 @@ CHARACTER_BINDINGS[5][0x49a480] = Binding('fujin_bow_finish', 'game/fujin/moves/
 CHARACTER_BINDINGS[5][0x470420] = replace(CHARACTER_BINDINGS[5].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
 for _address in (0x46eab0, 0x46ec10):
     CHARACTER_BINDINGS[5][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing frame runner')
+
+# Fujin wind owner and victim native boundaries.
+CHARACTER_BINDINGS[5][0x46a650] = Binding('fujin_wind_recovery', 'game/fujin/moves/wind.c', ('tail',), flow='terminal', mmove=True, evidence='Native46a650 wind recovery/getup boundary, backed by the supplied executable and fixed-frame portable continuations')
+CHARACTER_BINDINGS[5][0x488ba0] = Binding('fujin_wind_getup', 'game/fujin/moves/wind.c', ('tail',), flow='terminal', mmove=True, evidence='Native488ba0 wind recovery/getup boundary, backed by the supplied executable and fixed-frame portable continuations')
+CHARACTER_BINDINGS[5][0x45fc40] = Binding('fujin_wind_crouch_return', 'game/fujin/moves/wind.c', ('tail',), flow='terminal', mmove=True, evidence='Native45fc40 wind recovery/getup boundary, backed by the supplied executable and fixed-frame portable continuations')

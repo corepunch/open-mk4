@@ -15,6 +15,10 @@ bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
+void fujin_wind(Fighter *fighter);
+void fujin_wind_slam(Fighter *fighter);
+bool fujin_can_wind(const Fighter *fighter);
+bool fujin_can_wind_slam(const Fighter *fighter);
 void kai_draw_weapon(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
@@ -2447,6 +2451,120 @@ static void check_independent_scene_actor_lifetime(void) {
   }
 }
 
+static void drive_owned_command(int slot, FighterFn entry) {
+  const Controls *controls = roster_def(g_battle.fighters[slot].roster)->controls;
+  const CommandDef *command = NULL;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].enter == entry) {
+      command = &controls->commands[i];
+      break;
+    }
+  }
+  check(command != NULL, "Requested move must be connected to a real generated command");
+  for (int i = 0; i < command->count; ++i) {
+    CommandToken token = command->tokens[i];
+    Button direction = token == TOKEN_UP        ? BUTTON_UP
+                       : token == TOKEN_DOWN    ? BUTTON_DOWN
+                       : token == TOKEN_FORWARD ? (slot ? BUTTON_LEFT : BUTTON_RIGHT)
+                                                : (slot ? BUTTON_RIGHT : BUTTON_LEFT);
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(direction);
+    battle_step(input);
+    advance_ticks(2, NULL);
+  }
+  Input input[2] = {0};
+  input[slot].held = BUTTON_BIT(command->button);
+  battle_step(input);
+  advance_ticks(2, NULL);
+}
+
+static void check_fujin_wind(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 6; ++scenario) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->wins = 1;
+      owner->body.pos[AXIS_X] = slot ? 0x14ccc : -0x14ccc;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(!fujin_can_wind_slam(owner), "Wind slam must reject a target not caught in the vortex");
+      victim->hits = 3;
+      check(!fujin_can_wind(owner), "Wind catch must enforce its native two-hit combo limit");
+      victim->hits = 0;
+      if (scenario == 5) {
+        victim->health = 0x1000;
+      }
+      drive_owned_command(slot, fujin_wind);
+      check(fighter_move(owner)->clip == 98, "Fujin's Back,Forward,Back+HP must enter the actual wind caster clip");
+      if (scenario == 2) {
+        victim->body.pos[AXIS_X] = slot ? -6 * Q16_ONE : 6 * Q16_ONE;
+      }
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      bool caught = false, slammed = false, interrupted = false, bounced = false, effect = false;
+      int lifts = 0;
+      for (int tick = 0; tick < 500; ++tick) {
+        if (victim->action == 0x1001) {
+          caught = true;
+          lifts = victim->native_variant > lifts ? victim->native_variant : lifts;
+          check(!fujin_can_wind(owner) && fujin_can_wind_slam(owner), "Only the slam may target the active vortex");
+          if ((scenario == 3 || scenario == 5) && owner->state == S_IDLE && !slammed) {
+            drive_owned_command(slot, fujin_wind_slam);
+            slammed = true;
+            check(fighter_move(owner)->clip == 99, "Back,Forward,Down+LK must select the matching wind slam instead of a normal kick");
+          }
+          if (scenario == 4 && !interrupted) {
+            battle_react(owner, 11);
+            interrupted = true;
+          }
+        }
+        battle_step(input);
+        bounced |= fighter_move(victim)->clip == 179;
+        for (int i = 0; i < MAX_PARTICLES; ++i) {
+          const Particle *p = &g_battle.particles[i];
+          effect |= p->ticks > 0 && p->visual != NULL && p->visual->animation.first >= 84 && p->visual->animation.first <= 91;
+        }
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Wind catch, slam and victim getup must use frame phases");
+      }
+      check((scenario == 1 || scenario == 2) ? !caught : caught && effect, "Wind contact must distinguish hit, grounded block and miss");
+      if (scenario == 3 || scenario == 5) {
+        check(slammed && bounced && victim->health == (scenario == 5 ? 0 : Q16_ONE - 0x147a),
+            "Wind slam must preserve its eight-percent damage, victim bounce and lethal result");
+      } else {
+        check(victim->health == Q16_ONE, "Wind catch alone, block, miss and owner interruption must not invent damage");
+        if (scenario == 0 || scenario == 4) {
+          check(lifts == 3, "Unslammed vortex must finish all four native acceleration cycles");
+        }
+      }
+      if (fighter_airborne(victim) || (scenario != 5 && victim->state != (scenario == 1 ? S_BLOCK : S_IDLE))) {
+        fprintf(stderr, "Wind slot%d scenario%d caught%d slam%d state%d action%x clip%d sample%d y%d floor%d vy%d gravity%d lifts%d\n", slot, scenario, caught,
+            slammed, victim->state, victim->action, fighter_move(victim)->clip, fighter_sample(victim), victim->body.pos[AXIS_Y], victim->body.ground,
+            victim->body.vel[AXIS_Y], victim->body.gravity, lifts);
+      }
+      check(!fighter_airborne(victim) && (scenario == 5 || victim->state == (scenario == 1 ? S_BLOCK : S_IDLE)),
+          "Wind victim must land and recover, or remain defeated after KO");
+      battle_reset_match();
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        check(g_battle.projectiles[i].kind == 0, "Wind reset must remove its independent emitter");
+      }
+    }
+    for (int delay = 0; delay < 2; ++delay) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      g_battle.fighters[slot].body.pos[AXIS_X] = slot ? 0x14ccc : -0x14ccc;
+      g_battle.fighters[1 - slot].body.pos[AXIS_X] = -g_battle.fighters[slot].body.pos[AXIS_X];
+      drive_owned_command(slot, fujin_wind);
+      advance_ticks(delay ? 50 : 2, NULL);
+      battle_reset_match();
+      advance_ticks(120, NULL);
+      check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE,
+          "Reset before or during the vortex must not leave delayed wind damage or a retained victim continuation");
+    }
+  }
+}
+
 static void check_fujin_dive(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 4; ++scenario) {
@@ -2860,6 +2978,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_wind();
   check_fujin_dive();
   check_cage_first_fatality();
   check_cage_second_fatality();

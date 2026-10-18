@@ -4,6 +4,8 @@
 
 void reptile_reaction_40(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
+void fujin_wind_victim(Fighter *fighter);
+void fujin_wind_slam_victim(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
 
@@ -827,6 +829,8 @@ static const FighterFn reactions[256] = {
   [120] = react_weapon_followup,
   [67] = react_freeze,
   [90] = react_extra,
+  [92] = fujin_wind_victim,
+  [97] = fujin_wind_slam_victim,
   [99] = react_extra,
   [100] = react_extra,
   [101] = fujin_bolt_victim,
@@ -871,6 +875,10 @@ static const FighterFn reactions[256] = {
  * reaction starts on the victim's next update. */
 void battle_react(Fighter *victim, int reaction) {
   require(reaction >= 0 && reaction < COUNT(reactions), "Invalid reaction id");
+  q16 retained_velocity[3];
+  if (reaction == 97) {
+    memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);
+  }
   victim->body_contact = false;
   /* Drop rules for the reaction ids currently used by our script records.
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
@@ -906,5 +914,10 @@ void battle_react(Fighter *victim, int reaction) {
   victim->body.physics = NULL;
   victim->body.on_land = NULL;
   fighter_interrupt(victim, entry);
+  /* Native488310 changes gravity on the existing vortex motion. Preserve
+   * that motion across cancellation of the previous portable frame action. */
+  if (reaction == 97) {
+    memcpy(victim->body.vel, retained_velocity, sizeof retained_velocity);
+  }
   victim->flags |= FF_REACTING;
 }
