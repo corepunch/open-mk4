@@ -28,6 +28,20 @@ class CompilerTests(unittest.TestCase):
     def compile(self, words, bindings=None):
         return generate(self.image, [self.fixture(words)], 3, return_to='fighter_ready', bindings=bindings)
 
+    def test_gravity_operand_survives_nonblocking_landing_lowering(self):
+        descriptor = (0x4fad7c + 58 * 12) // 4
+        # Freeze, hold, clear busy, restore gravity and wait for the floor.
+        entry = self.fixture([0x0f000000, descriptor, 0x5b000000, 0x34000008,
+                              0x61000000, 0x5c000000, 0x51e, 0x60000000, 0x3f000000])
+        frames = generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('fighter->body.gravity = 1310;', frames)
+        self.assertIn('mk4_mmove_wait_grounded', frames)
+        self.assertIn('fighter->flags &= ~(unsigned)FF_BUSY;', frames)
+        self.assertNotIn('fighter_wait_ticks', frames)
+        entry = self.fixture([0x0f000000, descriptor, 0x5c000000, 0xfffffae2, 0x3f000000])
+        frames = generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('fighter->body.gravity = -1310;', frames)
+
     def test_controller_return_lowering_preserves_legacy_boundary(self):
         entry = self.fixture([0x32000000, 0x470420])
         binding = Binding('mk4_script_ready', 'game/script.c', ('tail',), flow='terminal',

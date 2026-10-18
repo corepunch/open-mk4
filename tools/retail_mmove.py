@@ -281,6 +281,9 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 extra.extend(frame_table(hold, [sample], {0: 'mk4_mmove_wait_grounded'}, endfunc=suffix))
                 emit('if (fighter_airborne(fighter)) { fighter_mmove_phase(fighter, &%s_phase); } else { %s(fighter); }' % (hold, suffix))
                 break
+            elif op == 0x5c:
+                from retail_codegen import signed_word
+                emit('fighter->body.gravity = %d;' % signed_word(int(row['operands'][0], 16)))
             elif op == 0x5a:
                 emit('fighter_set_speed(fighter, %d);' % row['speed_q16'])
             elif op in (0x30, 0x3f):
