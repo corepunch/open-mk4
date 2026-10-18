@@ -182,7 +182,7 @@
     "0x4e9910"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "18e1fbed3e88ea5703925f2776bfbff7636026e53fc0eb1936448001449b03d4",
+  "inventory_sha256": "3e62070b3260b90e76dee2a49e78c8099be72d41ccb5204eb08616ca3e3613c8",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",

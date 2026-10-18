@@ -172,7 +172,7 @@
     "0x4e9910"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "d585e161e789253c0f910eb511fcb2d1608eee9d003e6e3c6ab776c1aa6c3bc2",
+  "inventory_sha256": "1fc50b17b4982fe604ef79a5f4070f14a81e50c890fae585811e1a8a42c63fed",
   "legacy_scripts": {},
   "moves": {
     "jab": {

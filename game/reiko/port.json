@@ -200,7 +200,7 @@
     "0x4e9bd0"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "d9f97647cd0a2097e5d9892758285afa6f0dd7401bbb180116168deff666112f",
+  "inventory_sha256": "e5b8ea982e7ac4f125eeed5af8256c84da4de7ce85625ee69e877e1b911dc57f",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",

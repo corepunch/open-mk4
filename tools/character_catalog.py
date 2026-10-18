@@ -36,9 +36,6 @@ def moves_for(character):
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878))))
     if character in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
         shared.update(close_hp=SCORPION['close_hp'], combo_hp=SCORPION['combo_hp'], close_hk=SCORPION['close_hk'])
-        if character in (5, 7, 9, 11, 17):
-            shared['roundhouse'] = move(0x46f1f0, (('roster-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)))
-
     if character == 16:
         # Kitana's roster slot aliases Sonya's retail script slot. Keep a
         # distinct Kitana profile while auditing the same selected roots.
@@ -99,7 +96,7 @@ def moves_for(character):
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 0),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
-            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
+            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 34),)),
         )
     if character == 7:
         # Reiko's retail slot uses these exact script entries. Several streams
@@ -133,7 +130,7 @@ def moves_for(character):
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
-            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 33),)),
+            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 33),)),
         )
     if character == 9:
         # Tanya uses the same decoded common VM entry set, but the selector
@@ -157,7 +154,7 @@ def moves_for(character):
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
-            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
+            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 34),)),
         )
     if character == 10:
         # Reptile's input and CPU tables expose three additional script
@@ -209,7 +206,7 @@ def moves_for(character):
                           native=(('variant selector', 0x42cb80),)),
             high_kick=move(0x46a680, (('Kai selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             roundhouse=move(0x46f1f0,
-                            (('Kai attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),
+                            (('Kai attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)),
                             (('B', 34),)),
         )
         return shared

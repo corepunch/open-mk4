@@ -1976,7 +1976,7 @@
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "6c9ba8247e91604c6beb1e2b3f4b1f95e7227c1560fdd44b4e4a583b0a432473",
+  "inventory_sha256": "664e41cc0af5dba27437baa61e2f68645f7966433b21b2a86a42579f395311c4",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",

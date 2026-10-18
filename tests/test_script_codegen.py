@@ -379,6 +379,17 @@ int main(void) {
         self.assertTrue(any('inventory changed' in error for error in errors))
         self.assertTrue(any('input/CPU target' in error for error in errors))
 
+    def test_all_reviewed_generated_roots_remain_in_the_final_roster_catalog(self):
+        from character_catalog import CHARACTERS, moves_for
+        from retail_coverage import profile_for, inventory, fingerprint
+        for character, name in enumerate(CHARACTERS):
+            with self.subTest(character=name):
+                profile = profile_for(character)
+                selected = {root for move in moves_for(character).values() for _, root in move['scripts']}
+                generated = {int(root, 16) for root in profile.get('generated_scripts', {})}
+                self.assertFalse(generated - selected, 'Generated entries must survive the final fighter-specific catalog overrides')
+                self.assertEqual(profile['inventory_sha256'], fingerprint(inventory(self.image, character)))
+
     def test_reviewed_audit_skips_zeroed_cpu_rows(self):
         from unittest.mock import patch
         from retail_coverage import audit as coverage_audit, profile_for, inventory, fingerprint

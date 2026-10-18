@@ -227,7 +227,7 @@
     "0x4ed2c0"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "6f715bc07c0ef6922edd0731314f08d444b1b6860aea5f59a0d3bc9bd5d5378c",
+  "inventory_sha256": "10fd21120b9b90319fe284ef110dfef5e239e9dc92558e4fc45814ab6de3afbd",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
