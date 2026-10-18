@@ -2,6 +2,8 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 5. */
 #include "script.h"
 
+void fujin_dive_contact(Fighter *);
+void fujin_dive_land(Fighter *);
 void fujin_script_air_finish(Fighter *);
 void fujin_script_close_hk_tail(Fighter *);
 void fujin_script_close_hp_tail(Fighter *);
@@ -3099,4 +3101,78 @@ static inline void retail_script_004e69b0(Fighter *fighter) {
   mk4_mmove_bind(fighter, 261, 28, 2);
   /* EXE 004e69b8: 0x500000b */
   fighter_mmove_phase(fighter, &retail_script_004e69b0_phase);
+}
+
+static inline void retail_script_004e8258(Fighter *fighter);
+
+static void retail_script_004e8258_at_10(Fighter *fighter) {
+  /* EXE 004e8274: 0x32000000 0x47bf90 */
+  fujin_dive_contact(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e8258_frames[10] = {
+  [9] = {.thinkfunc = retail_script_004e8258_at_10},
+};
+// clang-format on
+static const mmove_t retail_script_004e8258_phase = {.firstframe = 0, .lastframe = 9, .frame = retail_script_004e8258_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e8258(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e8258: 0x27000039 */
+  battle_sound(SOUND_C, 57);
+  /* EXE 004e825c: 0x58000000 0x1eb8 0xf5c 0x41 */
+  fighter_set_speed(fighter, 7864);
+  fighter->body.vel[AXIS_Y] = 3932;
+  fighter->body.gravity = 65;
+  /* EXE 004e826c: 0x48000200 0x13ec0d */
+  mk4_mmove_bind(fighter, 58, 10, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e8258_phase);
+}
+
+static inline void retail_script_004e8298(Fighter *fighter);
+static inline void retail_script_004e8298_branch_1(Fighter *fighter);
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e8298_landing_frames[1] = {
+  [0] = {.thinkfunc = mk4_mmove_wait_grounded},
+};
+// clang-format on
+static const mmove_t retail_script_004e8298_landing_phase = {
+    .firstframe = 9, .lastframe = 9, .frame = retail_script_004e8298_landing_frames, .endfunc = retail_script_004e8298_branch_1};
+
+static void retail_script_004e8298_at_8(Fighter *fighter) {
+  /* EXE 004e82a0: 0x61000000 */
+  fighter->flags &= ~(unsigned)FF_BUSY;
+  /* EXE 004e82a4: 0x5c000000 0x51e */
+  fighter->body.gravity = 1310;
+  /* EXE 004e82ac: 0x60000000 */
+  if (fighter_airborne(fighter)) {
+    fighter_mmove_phase(fighter, &retail_script_004e8298_landing_phase);
+  } else {
+    retail_script_004e8298_branch_1(fighter);
+  }
+}
+
+static const int retail_script_004e8298_samples[] = {9, 9, 9, 9, 9, 9, 9, 9};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e8298_frames[8] = {
+  [7] = {.thinkfunc = retail_script_004e8298_at_8},
+};
+// clang-format on
+static const mmove_t retail_script_004e8298_phase = {
+    .firstframe = 0, .lastframe = 7, .frame = retail_script_004e8298_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e8298_samples};
+
+static inline void retail_script_004e8298(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_script_inherit(fighter, 58, 10, 9);
+  /* EXE 004e8298: 0x5b000000 */
+  mk4_script_stop(fighter);
+  /* EXE 004e829c: 0x34000008 */
+  fighter_mmove_phase(fighter, &retail_script_004e8298_phase);
+}
+
+static inline void retail_script_004e8298_branch_1(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e82b0: 0x32000000 0x47bfd0 */
+  fujin_dive_land(fighter);
 }

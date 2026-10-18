@@ -91,4 +91,10 @@ void fujin_roundhouse(Fighter *fighter);
 void fujin_script_roundhouse_finish(Fighter *fighter);
 void fujin_entry_roundhouse(Fighter *fighter);
 void fujin_press_roundhouse(Fighter *fighter);
+bool fujin_can_dive(const Fighter *fighter);
+void fujin_dive(Fighter *fighter);
+void fujin_dive_contact(Fighter *fighter);
+void fujin_dive_land(Fighter *fighter);
+void fujin_entry_retail_script_004e8258(Fighter *fighter);
+void fujin_entry_retail_script_004e8298(Fighter *fighter);
 #endif

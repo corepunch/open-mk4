@@ -37,9 +37,9 @@
       "evidence": "Fujin high-punch input target 46a620 selects the generated jab chain."
     },
     "0x47bf60": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_entry_sweep",
-      "evidence": "Fujin low-kick command target 47bf60 selects sweep handling."
+      "source": "game/fujin/moves/dive.c",
+      "symbol": "fujin_dive",
+      "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     },
     "0x47f010": {
       "source": "game/fujin/character.c",
@@ -138,6 +138,12 @@
       "count": 19,
       "sample": 18,
       "evidence": "46dd10 resumes the jab repeat after clip295 finishes at18; the native tail enters4e6360."
+    },
+    "0x4e8298": {
+      "clip": 58,
+      "count": 10,
+      "sample": 9,
+      "evidence": "4e8258 completes clip58 before47bf90 holds sample9 through its contact table."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -174,10 +180,12 @@
     "0x4e6890",
     "0x4e68a8",
     "0x4e6950",
-    "0x4e69b0"
+    "0x4e69b0",
+    "0x4e8258",
+    "0x4e8298"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "9b5ce9d44b73422f95deaa2510df0372ae2281af0097b073e70a42de491d47c4",
+  "inventory_sha256": "620773bdc0e2ad0dc48c03e1ec88eac66ed610ea9a1e552b178b657c78039c22",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -274,6 +282,11 @@
       "source": "game/fujin/moves/combos.c",
       "symbol": "fujin_close_hk",
       "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+    },
+    "aerial_dive": {
+      "source": "game/fujin/moves/dive.c",
+      "symbol": "fujin_dive",
+      "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     }
   },
   "output": "game/fujin/generated/scripts.inc",
@@ -406,6 +419,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "0": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Dive D[15] blocked reaction0 selects486cd0 shared block recovery."
     }
   },
   "return_to": "fighter_ready",
@@ -483,13 +501,19 @@
       "source": "game/fujin/moves/spike.c",
       "symbol": "fujin_entry_spike",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x47bf60": {
+      "source": "game/fujin/moves/dive.c",
+      "symbol": "fujin_dive",
+      "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     }
   },
   "command_predicates": {
     "0x45e820": "mk4_can_sidestep",
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
-    "0x45e4f0": "mk4_can_spike_finish"
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45eeb0": "fujin_can_dive"
   },
   "mmove_scripts": [
     "0x4de610",
@@ -516,6 +540,8 @@
     "0x4e6360",
     "0x4e63b0",
     "0x4e62a0",
-    "0x4e5d90"
+    "0x4e5d90",
+    "0x4e8258",
+    "0x4e8298"
   ]
 }

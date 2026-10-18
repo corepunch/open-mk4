@@ -1341,3 +1341,7 @@ CHARACTER_BINDINGS[14][0x448c80] = Binding('cage_first_torso_half', 'game/cage/m
 CHARACTER_BINDINGS[14][0x448d20] = Binding('cage_first_torso_123', 'game/cage/moves/fatality.c', ('tail',), flow='terminal', mmove=True, evidence='Native448d20 continues the reviewed first-fatality body on fixed-frame phases')
 CHARACTER_BINDINGS[14][0x448d70] = Binding('cage_first_torso_finish', 'game/cage/moves/fatality.c', ('tail',), flow='terminal', mmove=True, evidence='Native448d70 continues the reviewed first-fatality body on fixed-frame phases')
 CHARACTER_BINDINGS[14][0x49cb60] = Binding('cage_first_task_end', 'game/cage/moves/fatality.c', ('tail',), flow='terminal', mmove=True, evidence='Native49cb60 continues the reviewed first-fatality body on fixed-frame phases')
+
+# Fujin's dive selects the native4e8280 contact/recovery table.
+CHARACTER_BINDINGS[5][0x47bf90] = Binding('fujin_dive_contact', 'game/fujin/moves/dive.c', ('tail',), flow='terminal', mmove=True, evidence='47bf90 selects4e8280:60 D[15] queries with contact/timeout recoil and floor landing')
+CHARACTER_BINDINGS[5][0x47bfd0] = Binding('fujin_dive_land', 'game/fujin/moves/dive.c', ('tail',), flow='terminal', mmove=True, evidence='47bfd0 runs46fd90 shared landing before46f650 controller return')

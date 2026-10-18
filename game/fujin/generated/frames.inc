@@ -7,6 +7,10 @@ static const int fujin_clip_037_samples[132] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5,
 const mframe_t fujin_clip_037_frames[132] = {{0}};
 const mmove_t fujin_clip_037_mmove = {.firstframe = 0, .lastframe = 131, .frame = fujin_clip_037_frames, .samples = fujin_clip_037_samples};
 
+static const int fujin_dive_samples[20] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9};
+const mframe_t fujin_dive_frames[20] = {{0}};
+const mmove_t fujin_dive_mmove = {.firstframe = 0, .lastframe = 19, .frame = fujin_dive_frames, .samples = fujin_dive_samples};
+
 static const int fujin_clip_060_samples[12] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5};
 const mframe_t fujin_clip_060_frames[12] = {{0}};
 const mmove_t fujin_clip_060_mmove = {.firstframe = 0, .lastframe = 11, .frame = fujin_clip_060_frames, .samples = fujin_clip_060_samples};

@@ -93,6 +93,7 @@ def _moves_for(character):
         # these common attacks, but its selectors and contact records are
         # roster-specific. Keep the roots explicit for compiler coverage.
         shared.update(
+            aerial_dive=move(0x47bf60, (("startup", 0x4e8258), ("recoil", 0x4e8298)), (("D", 15),), native=(("contact table", 0x47bf90), ("land", 0x47bfd0))),
             lp_throw=move(0x42c560, (('Fujin selector', 0x4de798), ('extended throw', 0x4de610), ('short throw', 0x4de6b8))),
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328))),
             jab=move(0x46dca0, (('attacker', 0x4e62f0), ('second punch', 0x4e6330), ('repeat', 0x4e6360), ('recovery', 0x4e63b0)), (('A', 1),)),

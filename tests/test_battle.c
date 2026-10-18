@@ -7,6 +7,8 @@
 
 void goro_cpu_projectile(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
+bool fujin_can_dive(const Fighter *fighter);
+void fujin_dive(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
@@ -2343,6 +2345,75 @@ static void check_independent_scene_actor_lifetime(void) {
   }
 }
 
+static void check_fujin_dive(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_Y] = -0x18000;
+      check(!fujin_can_dive(owner), "Fujin dive must reject heights below1.8");
+      owner->body.pos[AXIS_Y] = -0x24000;
+      victim->hits = 5;
+      check(!fujin_can_dive(owner), "Fujin dive must reject an opponent already hit five times");
+      victim->hits = 0;
+      check(fujin_can_dive(owner), "Fujin dive must accept sufficient height and a valid target combo count");
+      owner->body.gravity = 0;
+      owner->body.on_land = NULL;
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_UP);
+      battle_step(input);
+      input[slot].held = BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK);
+      battle_step(input);
+      advance_ticks(2, NULL);
+      check(fighter_move(owner)->clip == 58 && owner->action == 0x20f && !fighter_fiber_active(owner),
+          "Fujin's Up,Down+LK command must enter the actual aerial dive without a fiber");
+      int health = victim->health;
+      bool recovered = false;
+      for (int tick = 0; tick < 240; ++tick) {
+        bool querying = owner->action == 0x20f && fighter_sample(owner) == 9;
+        if (scenario != 0 && querying && !owner->connected) {
+          /* Place the target at the moving contact plane so this checks the
+           * contact/recoil path without depending on incidental trajectory. */
+          victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + q16_mul(owner->heading[0], 0x9999);
+          victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z] + q16_mul(owner->heading[1], 0x9999);
+          victim->body.pos[AXIS_Y] = scenario == 2 ? victim->body.ground : owner->body.pos[AXIS_Y];
+          if (scenario == 2) {
+            owner->body.pos[AXIS_Y] = owner->body.ground - 0x6666;
+          }
+          victim->body.gravity = 0;
+          victim->body.on_land = NULL;
+        } else if (scenario == 0) {
+          victim->body.pos[AXIS_X] = slot ? -0x50000 : 0x50000;
+        }
+        if (scenario == 2) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        if (scenario == 3 && tick == 3) {
+          battle_react(owner, 11);
+        }
+        battle_step(input);
+        input[slot].held = 0;
+        check(!fighter_fiber_active(owner), "Fujin dive, recoil and landing must stay on frame phases");
+        if (owner->state == S_IDLE && !fighter_airborne(owner)) {
+          recovered = true;
+          break;
+        }
+      }
+      check(recovered, "Fujin dive must recover on hit, block, miss and interruption");
+      if (scenario == 0 || scenario == 3) {
+        check(victim->health == health, "Fujin dive miss or pre-contact interruption must not damage its target");
+      } else if (scenario == 1) {
+        check(victim->health == health - 0x147a, "Fujin dive must apply its D[15] eight-percent damage exactly once");
+      } else {
+        check(victim->health < health && victim->health > health - 0x147a, "Fujin dive block must apply chip instead of full damage");
+      }
+      battle_reset_match();
+      check(owner->body.on_land == NULL && !fighter_fiber_active(owner), "Reset must discard Fujin dive motion and continuations");
+    }
+  }
+}
+
 static void check_cage_first_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int female = 0; female < 2; ++female) {
@@ -2687,6 +2758,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_dive();
   check_cage_first_fatality();
   check_cage_second_fatality();
   check_independent_scene_actor_lifetime();
