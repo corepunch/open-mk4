@@ -16,7 +16,6 @@ static void shinnok_command_469ac0(Fighter *fighter);
 static void shinnok_command_469ad0(Fighter *fighter);
 static void shinnok_command_467cd0(Fighter *fighter);
 static void shinnok_command_467ce0(Fighter *fighter);
-static void shinnok_command_46d1d0(Fighter *fighter);
 
 static void shinnok_command_469a00(Fighter *fighter) {
   shinnok_input_target(fighter, BUTTON_LOW_PUNCH);
@@ -80,8 +79,4 @@ static void shinnok_command_467cd0(Fighter *fighter) {
 
 static void shinnok_command_467ce0(Fighter *fighter) {
   shinnok_spike_fatality(fighter);
-}
-
-static void shinnok_command_46d1d0(Fighter *fighter) {
-  weapon_draw(fighter, &shinnok_weapon);
 }

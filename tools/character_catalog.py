@@ -492,6 +492,13 @@ def _moves_for(character):
         # native move entries. Keep his roster entry and paired throw flow
         # explicit instead of inheriting Scorpion's descriptive labels.
         shared.update(
+            draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('equip', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0))),
+            weapon_hp=move(0x495bb0, contacts=(('WEAPON', 28),)),
+            weapon_lp=move(0x495be0, contacts=(('WEAPON', 29),)),
+            weapon_back_hp=move(0x496670, contacts=(('WEAPON', 17),)),
+            weapon_back_lp=move(0x495c20, contacts=(('WEAPON', 30),)),
+            weapon_followup=move(0x496c50, (('follow-up HP', 0x4ec8b0),), (('WEAPON', 2),)),
+            weapon_reaction=move(0x482350, (('LP victim', 0x4e8d08), ('sweep victim', 0x4e9460), ('sweep getup', 0x4e9498))),
             lp_throw=move(0x42c560, (('Shinnok selected attacker/victim', 0x4de798),),
                           native=(('precondition', 0x42c3d0), ('roster entry', 0x42c590), ('release adjustment', 0x42ceb0))),
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328)),

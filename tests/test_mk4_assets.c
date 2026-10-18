@@ -429,6 +429,57 @@ static void jarek_weapon_contacts(const Assets *assets) {
   }
 }
 
+static void shinnok_weapon_contacts(const Assets *assets) {
+  check(assets->scene_models.count > SCENE_MODEL_SHINNOK_WEAPON && assets->scene_models.data[SCENE_MODEL_SHINNOK_WEAPON].bones.count > 0,
+      "Shinnok weapon extraction must provide its own complete shared-geometry rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 4; ++strike) {
+      battle_init(slot ? 4 : 6, slot ? 6 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      const Button sequence[] = {slot ? BUTTON_RIGHT : BUTTON_LEFT, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_LOW_PUNCH};
+      for (int entry = 0; entry < 3; ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      for (int tick = 0; tick < 65; ++tick) {
+        battle_step(input);
+      }
+      check(owner->armed && owner->weapon->model == SCENE_MODEL_SHINNOK_WEAPON, "Shinnok draw command must equip his extracted retail weapon");
+      owner->body.pos[AXIS_X] = slot ? 0xa666 : -0xa666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      input[slot].held = BUTTON_BIT(strike == 1 || strike == 3 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+      if (strike >= 2) {
+        input[slot].held |= BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      }
+      battle_step(input);
+      battle_step(input);
+      input[slot].held = 0;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Shinnok weapon owner and victim must remain on frame tables");
+      }
+      const q16 damages[] = {11141, 13107, 9830, 11796};
+      if (victim->health != Q16_ONE - damages[strike] || owner->state != S_IDLE) {
+        fprintf(stderr, "Shinnok asset slot%d strike%d health%d state%d clip%d pose%d\n", slot, strike, victim->health, owner->state, fighter_move(owner)->clip,
+            fighter_sample(owner));
+      }
+      check(
+          victim->health == Q16_ONE - damages[strike] && owner->state == S_IDLE, "Shinnok weapon records must hit once with real animated bounds and recover");
+    }
+  }
+}
+
 static void cage_weapon_contacts(const Assets *assets) {
   check(assets->scene_models.count > SCENE_MODEL_CAGE_WEAPON && assets->scene_models.data[SCENE_MODEL_CAGE_WEAPON].bones.count > 0,
       "Cage weapon extraction must provide its own complete shared-geometry rig");
@@ -718,6 +769,7 @@ int main(void) {
   kai_weapon_contacts(&assets);
   cage_weapon_contacts(&assets);
   jarek_weapon_contacts(&assets);
+  shinnok_weapon_contacts(&assets);
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   cage_groin_command(&assets);

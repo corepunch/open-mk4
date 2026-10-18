@@ -534,9 +534,10 @@
       "symbol": "react_extra"
     },
     "62": {
-      "evidence": "4ea4e8[62] -> 0x4821e0; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "source": "game/jarek/moves/weapon.c",
+      "symbol": "jarek_weapon_reaction",
+      "evidence": "Reaction62 and148 share native4821e0 and generated4e8c08.",
+      "adaptation": "Use the existing generated native victim stream in the shared dispatcher."
     },
     "64": {
       "evidence": "4ea4e8[64] -> 0x486730; shared reaction adapter and behavioral regressions",

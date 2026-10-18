@@ -8,6 +8,7 @@
 void goro_cpu_projectile(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
+void shinnok_weapon_action(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
@@ -1637,6 +1638,75 @@ static void check_jarek_weapon_commands(void) {
   }
 }
 
+static void check_shinnok_weapon_commands(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 4; ++strike) {
+      for (int scenario = 0; scenario < (strike == 1 || strike == 3 ? 5 : 4); ++scenario) {
+        battle_init(slot ? 4 : 6, slot ? 6 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+        command(slot, back, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_LOW_PUNCH);
+        check(fighter_move(owner)->clip == 244 && !owner->armed, "Shinnok's real draw command must play before equipping");
+        advance_ticks(65, NULL);
+        check(owner->armed && owner->weapon->type == 0x64 && owner->weapon->model == SCENE_MODEL_SHINNOK_WEAPON && owner->state == S_IDLE,
+            "Shinnok must equip his own extracted weapon rig and persistent armed controls");
+        q16 half_distance = scenario == 2 ? 4 * Q16_ONE : 0xa666;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        if (scenario == 3) {
+          victim->health = 1;
+        }
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(strike == 1 || strike == 3 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+        if (strike >= 2) {
+          input[slot].held |= BUTTON_BIT(back);
+        }
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        advance_ticks(2, input);
+        const int clips[] = {237, 238, 242, 243};
+        check(
+            fighter_move(owner)->clip == clips[strike], "Shinnok armed punches must select their own native strike rather than a normal or recursive callback");
+        input[slot].held = 0;
+        bool crouch_getup = false;
+        for (int tick = 0; tick < 180; ++tick) {
+          if (scenario == 4 && victim->health < Q16_ONE) {
+            input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+          }
+          battle_step(input);
+          crouch_getup |= fighter_move(victim)->clip == 184 || fighter_move(victim)->clip == 196;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shinnok weapon attacks and victim recoveries must use frame tables");
+        }
+        if (scenario == 4) {
+          check(crouch_getup && victim->state == S_CROUCH, "Polearm victim must honor the native held-DOWN getup branch");
+        }
+        q16 damage = scenario == 2 ? 0 : strike == 0 ? 11141 : strike == 1 ? 13107 : strike == 2 ? 9830 : 11796;
+        if (scenario == 1) {
+          damage = q16_mul(damage, 0x3333);
+        }
+        q16 expected = scenario == 3 ? 0 : Q16_ONE - damage;
+        if (victim->health != expected) {
+          fprintf(stderr, "Shinnok weapon slot%d strike%d scenario%d health%d expected%d\n", slot, strike, scenario, victim->health, expected);
+        }
+        check(victim->health == expected, "Shinnok weapon records must preserve native damage, chip and miss behavior");
+        check((owner->state == S_IDLE || (scenario == 3 && owner->state == S_VICTORY)) && owner->armed && owner->body.physics == NULL &&
+                  owner->body.vel[AXIS_X] == 0,
+            "Shinnok weapon recovery must clear travel and restore armed controls");
+        check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
+        if (scenario == 3) {
+          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          battle_reset_match();
+          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+        }
+      }
+    }
+  }
+}
+
 static void check_cage_weapon_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int strike = 0; strike < 4; ++strike) {
@@ -1710,9 +1780,9 @@ static void check_cage_weapon_commands(void) {
 }
 
 static void check_weapon_followup_selection(void) {
-  const int rosters[] = {14, 12};
-  const FighterFn entries[] = {cage_weapon_action, jarek_weapon_action};
-  for (int row = 0; row < 2; ++row) {
+  const int rosters[] = {14, 12, 6};
+  const FighterFn entries[] = {cage_weapon_action, jarek_weapon_action, shinnok_weapon_action};
+  for (int row = 0; row < 3; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
       g_battle.phase = PHASE_FIGHT;
@@ -1722,10 +1792,13 @@ static void check_weapon_followup_selection(void) {
       owner->flags |= FF_FOLLOW_UP;
       fighter_interrupt(owner, entries[row]);
       advance_ticks(1, NULL);
-      check(owner->armed && fighter_move(owner)->clip == (row == 0 ? 227 : 229),
-          "Follow-up draw must select the roster weapon table entry, preserving Cage back LP and Jarek LP");
+      check(owner->armed && fighter_move(owner)->clip == (row == 0      ? 227
+                                                             : row == 1 ? 229
+                                                                        : 237),
+          "Follow-up draw must select the roster weapon table entry, preserving Cage back LP, Jarek LP and Shinnok follow-up237");
       advance_ticks(180, NULL);
-      check(victim->health == Q16_ONE - (row == 0 ? 9175 : 9830) && owner->state == S_IDLE,
+      const q16 damages[] = {9175, 9830, 13107};
+      check(victim->health == Q16_ONE - damages[row] && owner->state == S_IDLE,
           "Weapon follow-up must apply its selected record and recover without a substitute attack");
       check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Weapon follow-up owner and victim must stay on frame tables");
     }
@@ -2438,6 +2511,7 @@ int main(void) {
   check_kai_weapon_commands();
   check_cage_weapon_commands();
   check_jarek_weapon_commands();
+  check_shinnok_weapon_commands();
   check_weapon_followup_selection();
   check_reaction_motion_components();
   check_roster_throw_state_entries();

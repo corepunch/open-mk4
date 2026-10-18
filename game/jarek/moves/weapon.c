@@ -83,7 +83,7 @@ void jarek_weapon_action(Fighter *fighter) {
 }
 
 void jarek_weapon_reaction(Fighter *fighter) {
-  require(fighter->reaction == 148, "Invalid knife victim entry");
+  require(fighter->reaction == 148 || fighter->reaction == 62, "Invalid knife victim entry");
   mk4_script_disarm_self(fighter);
   const Fighter *peer = fighter_opponent(fighter);
   fighter->body.pos[AXIS_X] = peer->body.pos[AXIS_X] + q16_mul(fighter_axis(peer, AXIS_X), 0x1b333);

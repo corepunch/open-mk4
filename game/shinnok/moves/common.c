@@ -11,15 +11,15 @@ void shinnok_start(Fighter *fighter, int state, const MoveDef *move, FighterFn s
 }
 
 void shinnok_idle(Fighter *fighter) {
-  fighter_start_move(fighter, S_IDLE, &shinnok_s_idle);
+  weapon_stance(fighter, S_IDLE);
 }
 
 void shinnok_walk(Fighter *fighter) {
-  fighter_start_move(fighter, S_WALK, &shinnok_s_walk);
+  weapon_stance(fighter, S_WALK);
 }
 
 void shinnok_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &shinnok_s_block);
+  weapon_stance(fighter, S_BLOCK);
 }
 
 void shinnok_script_current_reaction(Fighter *fighter, int reaction) {

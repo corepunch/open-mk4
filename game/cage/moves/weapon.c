@@ -121,7 +121,7 @@ void cage_weapon_getup_roll(Fighter *fighter) {
 }
 
 void cage_weapon_reaction(Fighter *fighter) {
-  require(fighter->reaction == 63 || fighter->reaction == 149, "Invalid Cage weapon victim reaction");
+  require(fighter->reaction == 63 || fighter->reaction == 139 || fighter->reaction == 149, "Invalid Cage weapon victim reaction");
   if (fighter->reaction == 149) {
     fighter->damage_scale = 0x8000;
   }

@@ -140,7 +140,8 @@ enum {
   SCENE_MODEL_AXE,
   SCENE_MODEL_KAI_WEAPON,
   SCENE_MODEL_CAGE_WEAPON,
-  SCENE_MODEL_JAREK_WEAPON
+  SCENE_MODEL_JAREK_WEAPON,
+  SCENE_MODEL_SHINNOK_WEAPON
 };
 
 const Texture *character_texture(const Character *character, int page);

@@ -75,7 +75,7 @@ void shinnok_script_air_finish(Fighter *fighter) {
 }
 
 void shinnok_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, shinnok_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : shinnok_air_hp);
 }
 
 void shinnok_press_air_lp(Fighter *fighter) {

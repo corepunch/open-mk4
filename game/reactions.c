@@ -785,7 +785,7 @@ static const FighterFn reactions[256] = {
   [59] = react_extra,
   [60] = react_extra,
   [61] = react_extra,
-  [62] = react_extra,
+  [62] = jarek_weapon_reaction,
   [117] = react_block,
   [15] = react_extra,
   [19] = react_liu_record,
@@ -857,6 +857,9 @@ static const FighterFn reactions[256] = {
   [149] = cage_weapon_reaction,
   [44] = kai_weapon_reaction,
   [148] = jarek_weapon_reaction,
+  [139] = cage_weapon_reaction,
+  [140] = shinnok_weapon_reaction,
+  [141] = shinnok_weapon_reaction,
 };
 // clang-format on
 

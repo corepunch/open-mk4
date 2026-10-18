@@ -85,7 +85,6 @@ void shinnok_start(Fighter *fighter, int state, const MoveDef *move, FighterFn s
 void shinnok_sweep(Fighter *fighter);
 void shinnok_uppercut(Fighter *fighter);
 void shinnok_walk(Fighter *fighter);
-extern const WeaponDef shinnok_weapon;
 void shinnok_weapon_back_hp(Fighter *fighter);
 void shinnok_weapon_back_lp(Fighter *fighter);
 void shinnok_weapon_equip(Fighter *fighter);
@@ -111,4 +110,19 @@ void shinnok_spike_fatality(Fighter *fighter);
 void shinnok_roundhouse(Fighter *fighter);
 void shinnok_script_roundhouse_finish(Fighter *fighter);
 void shinnok_entry_retail_script_004e6270(Fighter *fighter);
+void shinnok_weapon_action(Fighter *fighter);
+void shinnok_script_draw_equip(Fighter *fighter);
+void shinnok_weapon_back_getup(Fighter *fighter);
+void shinnok_weapon_crouch_return(Fighter *fighter);
+void shinnok_weapon_sweep_getup(Fighter *fighter);
+void shinnok_weapon_sweep_finish(Fighter *fighter);
+void shinnok_weapon_reaction(Fighter *fighter);
+void shinnok_entry_retail_script_004e62c0(Fighter *fighter);
+void shinnok_entry_retail_script_004e62d8(Fighter *fighter);
+void shinnok_entry_retail_script_004e66d0(Fighter *fighter);
+void shinnok_entry_retail_script_004e66f0(Fighter *fighter);
+void shinnok_entry_retail_script_004e8d08(Fighter *fighter);
+void shinnok_entry_retail_script_004e9460(Fighter *fighter);
+void shinnok_entry_retail_script_004e9498(Fighter *fighter);
+void shinnok_entry_retail_script_004ec8b0(Fighter *fighter);
 #endif

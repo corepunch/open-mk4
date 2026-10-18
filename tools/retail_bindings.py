@@ -1308,3 +1308,13 @@ CHARACTER_BINDINGS[12][0x4958b0] = Binding('jarek_weapon_upper_contact', 'game/j
 CHARACTER_BINDINGS[12][0x470420] = replace(CHARACTER_BINDINGS[12].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
 CHARACTER_BINDINGS[12][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')
 CHARACTER_BINDINGS[12][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')
+
+# Shinnok polearm draw and victim recovery contracts.
+CHARACTER_BINDINGS[6][0x46d260] = Binding('shinnok_script_draw_equip', 'game/shinnok/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='46d260 equips type64 then resumes generated244 recovery')
+CHARACTER_BINDINGS[6][0x488ba0] = Binding('shinnok_weapon_back_getup', 'game/shinnok/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='488ba0 selects4ea210 standing/crouching getup')
+CHARACTER_BINDINGS[6][0x483090] = Binding('shinnok_weapon_sweep_getup', 'game/shinnok/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='483090 selects4e9498 after victim195; independent KO-aware frame recovery')
+CHARACTER_BINDINGS[6][0x4830a0] = Binding('shinnok_weapon_sweep_finish', 'game/shinnok/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='4830a0/483160 finishes selected197 before controller return')
+CHARACTER_BINDINGS[6][0x45fc40] = Binding('shinnok_weapon_crouch_return', 'game/shinnok/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='45fc40 restores held-DOWN controls after196')
+CHARACTER_BINDINGS[6][0x470420] = replace(CHARACTER_BINDINGS[6].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
+CHARACTER_BINDINGS[6][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')
+CHARACTER_BINDINGS[6][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')

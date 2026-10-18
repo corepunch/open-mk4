@@ -22,11 +22,11 @@ static void shinnok_high_punch(Fighter *fighter) {
 }
 
 void shinnok_press_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, shinnok_high_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : shinnok_high_punch);
 }
 
 void shinnok_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= 0.7f ? shinnok_lp_throw : shinnok_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? shinnok_lp_throw : shinnok_jab);
 }
 
 /* 46d290/46d9b3: select the native HP record and 296/297 repeat phases. */

@@ -79,7 +79,7 @@ static void strike_sound(Fighter *fighter) {
 
 static void strike_done(Fighter *fighter) {
   const WeaponStrike *strike = fighter->weapon_strike;
-  if (fighter->connected && strike->recovery == 9) {
+  if (fighter->connected && (strike->recovery == 8 || strike->recovery == 9)) {
     int clip = fighter_move(fighter)->clip, sample = fighter_sample(fighter);
     fighter_start_mmove(fighter, S_PUNCH, &blend_stance, &blend_phase);
     fighter->blend_clip = clip;
