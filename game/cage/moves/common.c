@@ -79,10 +79,7 @@ void cage_script_opponent_reaction(Fighter *fighter, int reaction) {
     return;
   }
   if (reaction == 77) {
-    Fighter *victim = mk4_script_release_pair(fighter);
-    victim->reaction = reaction;
-    victim->flags |= FF_REACTING;
-    fighter_fiber_finish(cage_ready);
+    mk4_mmove_lk_release(fighter, reaction);
     return;
   }
   require(false, "Unexpected Cage opponent reaction");

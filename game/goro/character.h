@@ -29,6 +29,7 @@ void goro_enter_low_punch(Fighter *fighter);
 void goro_enter_sweep(Fighter *fighter);
 void goro_enter_uppercut(Fighter *fighter);
 void goro_lp_throw(Fighter *fighter);
+void goro_lk_throw(Fighter *fighter);
 void goro_script_air_finish(Fighter *fighter);
 void goro_script_air_release(Fighter *fighter);
 void goro_script_current_reaction(Fighter *fighter, int reaction);

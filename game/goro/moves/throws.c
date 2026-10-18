@@ -1,7 +1,7 @@
 #include "../character.h"
 
 void goro_lk_throw(Fighter *fighter) {
-  goro_start_script(fighter, S_THROW, &goro_s_throw, goro_entry_retail_script_004de2f8);
+  mk4_mmove_throw_start(fighter, &goro_s_throw, &goro_s_knockdown, goro_entry_retail_script_004de2f8);
 }
 
 void goro_lp_throw(Fighter *fighter) {

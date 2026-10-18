@@ -641,3 +641,37 @@ void mk4_mmove_wait_grounded(Fighter *fighter) {
 void mk4_mmove_hold(Fighter *fighter) {
   fighter->mmove_hold = true;
 }
+
+/* 484f10 selects descriptor4fc8f4 at stored pose65 and finishes its131-pose
+ * clip. It stops motion before and after playback; the owner keeps running. */
+void mk4_mmove_lk_release(Fighter *fighter, int reaction) {
+  require(reaction == 77, "Unexpected shared LK throw release");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  static const MoveDef released = {.clip = 586, .last = 130, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
+  mk4_script_stop_body(victim);
+  fighter_start_move(victim, S_KNOCKDOWN, &released);
+  victim->reaction = reaction;
+  victim->flags |= FF_REACTING;
+  victim->sample_override = 65;
+  native_begin(victim, 65, 130, mk4_mmove_thrown_finish);
+  for (int sample = 65; sample <= 130; ++sample) {
+    native_frame(victim, sample, sample, NULL);
+  }
+  native_play(victim, false);
+}
+
+/* 42be10 ->490ab0 reads speed -0x3333 from4de358, opens descriptor53c540
+ * (clip282), and advances to its end before controller return. */
+void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
+  fighter_set_speed(fighter, -0x3333);
+  mk4_mmove_bind(fighter, 282, 30, 0);
+  native_begin(fighter, 0, 29, end);
+  for (int sample = 0; sample < 30; ++sample) {
+    native_frame(fighter, sample, sample, NULL);
+  }
+  native_play(fighter, false);
+}
+
+void mk4_mmove_lk_owner_ready(Fighter *fighter) {
+  mk4_mmove_lk_owner_return(fighter, fighter_ready);
+}

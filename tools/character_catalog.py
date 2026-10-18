@@ -197,7 +197,7 @@ def moves_for(character):
                              native=(('follow-up draw', 0x46d260),)),
             lk_throw=move(0x42b6b0,
                           (('paired opening', 0x4de2f8), ('damage', 0x4de318),
-                           ('release', 0x4de328), ('victim continuation', 0x4de358)),
+                           ('release', 0x4de328)),
                           native=(('victim continuation', 0x42be10),)),
             lp_throw=move(0x42c560,
                           (('selected attacker/victim', 0x4de798),
@@ -255,8 +255,7 @@ def moves_for(character):
         shared.update(
             lp_throw=move(0x42c560, (('Jax selector', 0x4de798), ('selected throw', 0x4de4f0)),
                           native=(('throw continuation', 0x42c7f0),)),
-            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328),
-                                     ('follow-up return', 0x4de358))),
+            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328))),
             draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
                              native=(('follow-up draw', 0x46d260),)),
             input_47ab10=move(0x47ab10, (('selected jab script', 0x4e8150), ('retry script', 0x4e8174)),
@@ -313,8 +312,7 @@ def moves_for(character):
         # Goro shares the common combat streams, while roster-selected
         # contact records and scene tables keep their own character context.
         shared.update(
-            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328),
-                                    ('follow-up return', 0x4de358)),
+            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328)),
                           native=(('roster continuation', 0x42bdd0), ('victim continuation', 0x42bdf0),
                                   ('follow-up return', 0x42be10))),
             lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('repeated damage', 0x4de7e8),

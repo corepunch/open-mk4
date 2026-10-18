@@ -16,7 +16,7 @@ void reiko_lp_throw(Fighter *fighter) {
 }
 
 void reiko_lk_throw(Fighter *fighter) {
-  mk4_script_throw_start(fighter, &reiko_s_throw, &s_ground_thrown, reiko_entry_retail_script_004de2f8);
+  mk4_mmove_throw_start(fighter, &reiko_s_throw, &s_ground_thrown, reiko_entry_retail_script_004de2f8);
 }
 
 static void reiko_air_throw(Fighter *fighter) {

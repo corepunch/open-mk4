@@ -54,13 +54,15 @@
       "clip": 37,
       "count": 66,
       "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
-      "sample": 18
+      "sample": 18,
+      "paired": true
     },
     "0x4de328": {
       "clip": 37,
       "count": 66,
       "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
-      "sample": 42
+      "sample": 42,
+      "paired": true
     },
     "0x4e0138": {
       "clip": 415,
@@ -442,10 +444,10 @@
       "evidence": "Cage contact reaches shared reaction 39 through retail dispatcher 0x482ef0."
     },
     "77": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_script_opponent_reaction",
-      "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
-      "evidence": "Cage generated throw/fatality streams dispatch reaction 77 through native handler 0x45b230."
+      "source": "game/script.c",
+      "symbol": "mk4_mmove_lk_release",
+      "adaptation": "Release captured peer into native484f10 frame recovery; owner continues native42be10 independently.",
+      "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "100": {
       "source": "game/reactions.c",
@@ -536,6 +538,9 @@
     "0x4e6190",
     "0x4e6800",
     "0x4e6860",
-    "0x4e6878"
+    "0x4e6878",
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328"
   ]
 }

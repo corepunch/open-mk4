@@ -33,11 +33,7 @@ void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
 }
 
 void shinnok_script_opponent_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 77, "Unexpected Shinnok paired reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = reaction;
-  victim->flags |= FF_REACTING;
-  fighter_fiber_finish(shinnok_ready);
+  mk4_mmove_lk_release(fighter, reaction);
 }
 
 void shinnok_input_target(Fighter *fighter, Button button) {

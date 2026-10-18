@@ -1218,6 +1218,17 @@ for _cid, _name in ((7, 'reiko'), (10, 'reptile'), (17, 'noob_saibot')):
             flow='terminal', mmove=True, evidence='Nonblocking released-victim completion; retain existing KO-aware recovery policy')
 
 
+for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17):
+    CHARACTER_BINDINGS[_cid][0x45b230] = replace(CHARACTER_BINDINGS[_cid][0x45b230], mmove=True)
+    _binding = CHARACTER_BINDINGS[_cid][0x42be10]
+    if _binding.symbol == 'mk4_script_ready':
+        CHARACTER_BINDINGS[_cid][0x42be10] = Binding('mk4_mmove_lk_owner_ready', 'game/script.c', ('tail',),
+            flow='terminal', mmove=True, evidence='42be10 native clip282 retreat and controller return')
+    else:
+        CHARACTER_BINDINGS[_cid][0x42be10] = replace(_binding, mmove=True,
+            evidence='42be10 native retreat uses4de358 speed data and clip282; no VM entry at4de358')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

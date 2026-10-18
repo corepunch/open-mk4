@@ -368,3 +368,11 @@ stream. Native 45b1f0's historical current-context name is misleading here:
 480f80 reaches 48f880/48fd00, which installs the selected reaction through the
 task's peer fields +38/+3c. Applying it to the executing owner cancels that
 owner mid-script. Neither LP branch allocates a coroutine.
+
+The shared LK throw return at `42be10` consumes `4de358` as motion data
+(`0x3333, 0`) through `490ab0`; it does not enter a VM at that address.
+The owner retreats through clip 282 before controller return. Reaction 77
+(`484f10`) independently stops the victim and advances clip 586 from stored
+pose 65 to 130. The portable frame adapters retain these native boundaries,
+including KO-aware victim completion. Standalone generated paired suffixes
+`4de318` and `4de328` explicitly declare their inherited paired context.

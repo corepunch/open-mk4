@@ -77,13 +77,15 @@
       "clip": 37,
       "count": 66,
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "sample": 18
+      "sample": 18,
+      "paired": true
     },
     "0x4de328": {
       "clip": 37,
       "count": 66,
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "sample": 42
+      "sample": 42,
+      "paired": true
     },
     "0x4de668": {
       "clip": 80,
@@ -449,10 +451,10 @@
       "symbol": "react_block"
     },
     "77": {
-      "adaptation": "Noob Saibot selector 77 is handled by the character pair/cinematic continuation, outside the shared hit-reaction table.",
-      "evidence": "Contact selector 77 at 0x484f10; Noob Saibot-native pair coordinator 0x45b230",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_script_opponent_reaction"
+      "source": "game/script.c",
+      "symbol": "mk4_mmove_lk_release",
+      "adaptation": "Release captured peer into native484f10 frame recovery; owner continues native42be10 independently.",
+      "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "8": {
       "evidence": "Retail reaction selector 8 (0x486c70) routes to the shared MK4 reaction table.",
@@ -578,6 +580,9 @@
     "0x4e9bd0",
     "0x4e6800",
     "0x4e6890",
-    "0x4e68a8"
+    "0x4e68a8",
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328"
   ]
 }

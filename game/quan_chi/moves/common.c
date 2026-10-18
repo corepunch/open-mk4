@@ -15,10 +15,7 @@ void quan_chi_ready(Fighter *fighter) {
 }
 
 void quan_chi_script_lk_return(Fighter *fighter) {
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  fighter_fiber_finish(quan_chi_ready);
+  mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
 
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction) {
@@ -32,10 +29,7 @@ void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction) {
     return;
   }
   if (reaction == 77) {
-    Fighter *victim = mk4_script_release_pair(fighter);
-    victim->reaction = reaction;
-    victim->flags |= FF_REACTING;
-    fighter_fiber_finish(quan_chi_ready);
+    mk4_mmove_lk_release(fighter, reaction);
     return;
   }
   require(false, "Unexpected Quan Chi opponent reaction");

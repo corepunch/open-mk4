@@ -749,7 +749,7 @@ static void check_reconnected_ground_combos(void) {
 }
 
 static void check_reconnected_lk_throws(void) {
-  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
@@ -766,7 +766,14 @@ static void check_reconnected_lk_throws(void) {
         fprintf(stderr, "LK throw entry roster %d slot %d clip %d\n", rosters[row], slot, fighter_move(owner)->clip);
       }
       check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "Close LK must enter the paired throw for either player");
-      advance_ticks(240, NULL);
+      bool owner_retreat = false, victim_recovery = false;
+      for (int tick = 0; tick < 240; ++tick) {
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Paired LK capture and both released actors must stay on frame tables");
+        owner_retreat |= fighter_move(owner)->clip == 282;
+        victim_recovery |= fighter_move(victim)->clip == 586;
+        advance_ticks(1, NULL);
+      }
+      check(owner_retreat && victim_recovery, "LK release must reach native owner retreat and selected victim recovery");
       if (victim->health >= Q16_ONE || owner->state != S_IDLE || ((owner->flags | victim->flags) & FF_PAIRED)) {
         fprintf(stderr, "LK throw recovery roster %d slot %d health %d state %d flags %u/%u\n", rosters[row], slot, victim->health, owner->state, owner->flags,
             victim->flags);

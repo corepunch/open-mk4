@@ -19,10 +19,7 @@ void goro_script_current_reaction(Fighter *fighter, int reaction) {
 
 void goro_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 77) {
-    Fighter *victim = mk4_script_release_pair(fighter);
-    victim->reaction = reaction;
-    victim->flags |= FF_REACTING;
-    fighter_fiber_finish(goro_ready);
+    mk4_mmove_lk_release(fighter, reaction);
     return;
   }
   require(false, "Unexpected Goro opponent reaction");
@@ -34,9 +31,7 @@ void goro_script_lk_return(Fighter *fighter) {
 }
 
 void goro_script_lk_finish(Fighter *fighter) {
-  /* The portable fiber owns the paired throw lifetime and actor return. */
-  mk4_script_pair_cleanup(fighter);
-  fighter_fiber_finish(goro_ready);
+  fighter_finish_mmove(fighter, goro_ready);
 }
 
 void goro_script_lp_phase_repeat(Fighter *fighter) {

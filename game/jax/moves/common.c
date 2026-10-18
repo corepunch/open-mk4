@@ -21,7 +21,7 @@ bool jax_contact_event(BattleEvent *event, Fighter *owner, Fighter *opponent) {
 }
 
 void jax_script_opponent_reaction(Fighter *fighter, int reaction) {
-  battle_react((Fighter *)fighter_opponent(fighter), reaction);
+  mk4_mmove_lk_release(fighter, reaction);
 }
 
 void jax_script_current_reaction(Fighter *fighter, int reaction) {
@@ -80,6 +80,5 @@ void jax_script_lk_return(Fighter *fighter) {
 }
 
 void jax_script_lk_finish(Fighter *fighter) {
-  mk4_script_pair_cleanup(fighter);
-  fighter_fiber_finish(jax_ready);
+  fighter_finish_mmove(fighter, jax_ready);
 }

@@ -14,7 +14,7 @@ void kai_lp_throw(Fighter *fighter) {
 }
 
 void kai_lk_throw(Fighter *fighter) {
-  mk4_script_throw_start(fighter, &kai_s_throw, &s_thrown, kai_entry_retail_script_004de2f8);
+  mk4_mmove_throw_start(fighter, &kai_s_throw, &s_thrown, kai_entry_retail_script_004de2f8);
 }
 
 static void kai_air_throw(Fighter *fighter) {

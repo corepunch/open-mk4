@@ -64,10 +64,7 @@ void kai_script_lk_return(Fighter *fighter) {
 }
 
 void kai_script_lk_finish(Fighter *fighter) {
-  /* Retail 42bf00 coordinates global task callbacks. The portable fiber
-   * scheduler owns that queue; close the actor pair at this boundary. */
-  mk4_script_pair_cleanup(fighter);
-  fighter_fiber_finish(kai_ready);
+  fighter_finish_mmove(fighter, kai_ready);
 }
 
 void kai_script_aerial_transition(Fighter *fighter) {
@@ -176,10 +173,7 @@ void kai_script_opponent_reaction(Fighter *fighter, int reaction) {
     return;
   }
   if (reaction == 77) {
-    Fighter *victim = mk4_script_release_pair(fighter);
-    victim->reaction = reaction;
-    victim->flags |= FF_REACTING;
-    fighter_fiber_finish(kai_ready);
+    mk4_mmove_lk_release(fighter, reaction);
     return;
   }
   require(false, "Unexpected Kai paired reaction");

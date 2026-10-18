@@ -13,10 +13,7 @@ static void reiko_ready(Fighter *fighter) {
 }
 
 void reiko_script_lk_return(Fighter *fighter) {
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  fighter_fiber_finish(reiko_ready);
+  mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
 
 void reiko_script_lp_select(Fighter *fighter) {
@@ -59,10 +56,7 @@ void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
   }
 
   if (reaction == 77) {
-    Fighter *victim = mk4_script_release_pair(fighter);
-    victim->reaction = reaction;
-    victim->flags |= FF_REACTING;
-    fighter_fiber_finish(reiko_ready);
+    mk4_mmove_lk_release(fighter, reaction);
     return;
   }
   require(false, "Unexpected Reiko opponent reaction");

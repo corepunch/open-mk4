@@ -8,7 +8,7 @@ static void shinnok_press_air_throw(Fighter *fighter);
 static const MoveDef s_thrown = {.clip = 157, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 
 static void shinnok_ground_throw(Fighter *fighter, FighterFn script) {
-  mk4_script_throw_start(fighter, &shinnok_s_throw, &s_thrown, script);
+  mk4_mmove_throw_start(fighter, &shinnok_s_throw, &s_thrown, script);
 }
 
 void shinnok_lp_throw(Fighter *fighter) {

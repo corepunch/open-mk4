@@ -85,7 +85,8 @@ void goro_entry_retail_script_004de2f8(Fighter *fighter) {
 }
 
 void goro_entry_retail_script_004de358(Fighter *fighter) {
-  retail_script_004de358(fighter);
+  /* 4de358 is speed data consumed by490ab0, not a VM program. */
+  mk4_mmove_lk_owner_return(fighter, goro_script_lk_finish);
 }
 
 void goro_entry_retail_script_004de6e4(Fighter *fighter) {

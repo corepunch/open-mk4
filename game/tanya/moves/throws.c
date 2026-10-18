@@ -14,7 +14,7 @@ void tanya_lp_throw(Fighter *fighter) {
 }
 
 void tanya_lk_throw(Fighter *fighter) {
-  mk4_script_throw_start(fighter, &tanya_s_throw, &s_ground_thrown, tanya_entry_retail_script_004de2f8);
+  mk4_mmove_throw_start(fighter, &tanya_s_throw, &s_ground_thrown, tanya_entry_retail_script_004de2f8);
 }
 
 void tanya_air_throw(Fighter *fighter) {

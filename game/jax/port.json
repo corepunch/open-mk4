@@ -191,13 +191,26 @@
       "count": 72,
       "sample": 43,
       "evidence": "46aa40 enters owner release after paired cursor43; victim now owns reaction166."
+    },
+    "0x4de318": {
+      "clip": 37,
+      "count": 66,
+      "sample": 18,
+      "evidence": "Shared paired LK owner continuation from4de2f8.",
+      "paired": true
+    },
+    "0x4de328": {
+      "clip": 37,
+      "count": 66,
+      "sample": 42,
+      "evidence": "Shared paired LK owner continuation from4de2f8.",
+      "paired": true
     }
   },
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
     "0x4de328",
-    "0x4de358",
     "0x4de4f0",
     "0x4de798",
     "0x4e0118",
@@ -253,7 +266,7 @@
     "0x4ed090"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "57973ff0238c546f05304109651365cb70769e7fb581d585108e0b296967bf80",
+  "inventory_sha256": "0d43b20554c94d9e5988d1ce5fdaed274bbac7706248b0506874af3693585d83",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -341,7 +354,7 @@
       "symbol": "jax_jab"
     },
     "lk_throw": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for lk_throw",
+      "evidence": "Selected4de2f8/318/328 paired streams, native42be10 retreats through clip282;4de358 is Q16 motion data, not a script.",
       "source": "game/jax/character.c",
       "symbol": "jax_lk_throw"
     },
@@ -484,17 +497,11 @@
       "evidence": "Jax fatality scene contact callback at native entry 0x483550 is handled through the Jax reaction adapter.",
       "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
     },
-    "78": {
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_current_reaction",
-      "evidence": "Jax paired throw release callback at native entry 0x484d50 is handled through the Jax reaction adapter.",
-      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
-    },
     "77": {
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_current_reaction",
-      "evidence": "Jax throw victim recovery callback at native entry 0x484f10 is handled through the Jax reaction adapter.",
-      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
+      "source": "game/script.c",
+      "symbol": "mk4_mmove_lk_release",
+      "adaptation": "Release captured peer into native484f10 frame recovery; owner continues native42be10 independently.",
+      "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "175": {
       "source": "game/jax/character.c",
@@ -616,6 +623,9 @@
     "0x4e6190",
     "0x4e6800",
     "0x4e6890",
-    "0x4e68a8"
+    "0x4e68a8",
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328"
   ]
 }
