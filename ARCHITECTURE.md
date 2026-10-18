@@ -295,3 +295,12 @@ frame lowering. Runtime predicates select named successor phases, and repeating
 scene streams form finite phase cycles. Shared weapon strikes, throw/pickup,
 sidestep and the foreign sword paths also use phases. Other fighters and their
 victim continuations retain fibers during the incremental migration.
+
+Native phases whose frame ranges depend on a selected attack profile assemble
+bounded actor-owned `mframe_t` rows once at phase entry (`game/native.c`). Each
+row names its action callback; callback bodies do not test elapsed ticks or
+count down an action timer. Source-pose boundary callbacks select the pose used
+by contact before the action, then the next row displays it. Native tails hand
+off their fiber on the scheduler stack, transferring cleanup to frame playback.
+Independent movement uses bounded fixed-frame callback rows on the existing body
+physics clock; collision, friction and landing remain physical conditions.

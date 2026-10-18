@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -221,6 +222,47 @@ static void mmove_hold_jump_and_loop(void) {
   check(fighter->current_mmove == NULL && fighter_sample(fighter) == 1 && cleaned[0] == 1, "explicit stop must retain final pose and clean once");
 }
 
+static void native_action(Fighter *fighter) {
+  record(fighter, 41);
+}
+
+static void native_motion_action(Fighter *fighter) {
+  record(fighter, 42);
+}
+
+static void native_handoff(Fighter *fighter) {
+  native_begin(fighter, 1, 3, finish);
+  native_frame(fighter, 1, 3, NULL);
+  native_frame(fighter, 2, 4, native_action);
+  native_frame(fighter, 3, 5, NULL);
+  native_play(fighter, false);
+}
+
+static void native_frame_schedules(void) {
+  for (int interrupted = 0; interrupted < 2; ++interrupted) {
+    setup();
+    Fighter *fighter = &g_battle.fighters[0];
+    fighter_start_fiber(fighter, native_handoff, cleanup);
+    check(!fighter_fiber_active(fighter) && fighter->current_mmove != NULL && cleaned[0] == 0,
+        "native handoff must retire the fiber while retaining action cleanup");
+    advance(1);
+    check(event_count == 0 && fighter_sample(fighter) == 3, "native schedule ran its boundary action early");
+    if (interrupted) {
+      fighter_interrupt(fighter, fighter_ready);
+    }
+    advance(4);
+    check(event_count == (interrupted ? 0 : 1) && cleaned[0] == 1 && completed[0] == (interrupted ? 0 : 1),
+        "native frame action/cleanup survived replacement or ran twice");
+  }
+  setup();
+  Fighter *fighter = &g_battle.fighters[0];
+  native_motion_begin(fighter, 4, NULL);
+  native_motion_frame(fighter, 1, NULL, 0, native_motion_action);
+  native_motion_play(fighter);
+  advance(6);
+  check(event_count == 1 && events[0][2] == 42 && fighter->body.physics == NULL, "independent motion frames must execute scheduled actions once and stop");
+}
+
 static void advance(int ticks) {
   for (int i = 0; i < ticks; ++i) {
     battle_step((Input[2]){0});
@@ -356,6 +398,7 @@ int main(void) {
   mmove_frames_and_callbacks();
   mmove_phases_and_cleanup();
   mmove_hold_jump_and_loop();
+  native_frame_schedules();
   deterministic_nested_waits();
   interruptions_and_reset();
   phase_and_paired_playback();

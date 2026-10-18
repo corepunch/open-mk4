@@ -169,6 +169,24 @@ struct mmove_s {
   FighterFn cleanup; /* action lifetime; phase changes retain the initial cleanup */
 };
 
+/* Actor-owned native tables are assembled at entry, never interpreted as
+ * timers by a callback. Auxiliary rows share the simulation clock for motion
+ * that runs independently of clip/script playback. */
+#define NATIVE_FRAME_CAPACITY 1024
+
+typedef struct NativeFrames {
+  mmove_t move;
+  mframe_t frames[NATIVE_FRAME_CAPACITY];
+  int poses[NATIVE_FRAME_CAPACITY];
+} NativeFrames;
+
+typedef struct NativeMotion {
+  mframe_t frames[NATIVE_FRAME_CAPACITY];
+  int frame, count;
+  FighterFn end;
+  uint64_t generation, last_tick;
+} NativeMotion;
+
 /* Per-tick Q16 movement values. */
 typedef struct Motion {
   q16 walk, run, jump_velocity, gravity;
@@ -463,6 +481,9 @@ struct Fighter {
   MoveDef playback_move;        /* actor-owned clip binding for generated C fibers */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   const mmove_t *current_mmove;
+  NativeFrames native;
+  NativeMotion native_motion;
+  bool native_immediate;
   int mmove_frame, mmove_nextframe; /* -1 means no pending frame jump */
   bool mmove_hold;
   FighterFn mmove_cleanup;
@@ -768,6 +789,7 @@ void fighter_cancel_fiber(Fighter *fighter);
 void fighter_cancel_all_fibers(void);
 void fighter_wait_ticks(int ticks);
 _Noreturn void fighter_fiber_finish(FighterFn next);
+_Noreturn void fighter_fiber_handoff(FighterFn next);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
 float fighter_z(const Fighter *fighter);

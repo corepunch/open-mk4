@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include <stdlib.h>
 #include <string.h>
@@ -36,11 +37,6 @@ void weapon_stance(Fighter *fighter, int state) {
   fighter_start_move(fighter, state, move);
 }
 
-static bool weapon_wait(const Fighter *fighter) {
-  (void)fighter;
-  return false;
-}
-
 static void weapon_hold(Fighter *fighter, const mmove_t *phase) {
   int sample = fighter_sample(fighter);
   fighter_mmove_phase(fighter, phase);
@@ -49,6 +45,7 @@ static void weapon_hold(Fighter *fighter, const mmove_t *phase) {
 
 static void weapon_cleanup(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
+  native_motion_stop(fighter);
   fighter->blend_duration = 0;
 }
 
@@ -74,19 +71,14 @@ static const mframe_t blend_frames[10] = {
 static const mmove_t blend_phase = {
     .firstframe = 0, .lastframe = 9, .frame = blend_frames, .endfunc = fighter_ready, .samples = blend_frames_samples, .cleanup = weapon_cleanup};
 
-static void strike_effects(Fighter *fighter) {
-  const WeaponStrike *strike = fighter->weapon_strike;
-  if (fighter->ticks == strike->windup - strike->first + 1) {
-    battle_sound(SOUND_C, strike->sound);
-  }
-  bool moving = fighter->weapon_travel && !fighter->connected && fighter->ticks >= strike->delay && fighter->ticks < strike->delay + strike->travel;
-  fighter_set_speed(fighter, moving ? strike->speed : 0);
+static void strike_sound(Fighter *fighter) {
+  battle_sound(SOUND_C, fighter->weapon_strike->sound);
 }
 
 static void strike_done(Fighter *fighter) {
   const WeaponStrike *strike = fighter->weapon_strike;
   if (fighter->connected && strike->recovery == 9) {
-    int clip = strike->move.clip, sample = fighter_sample(fighter);
+    int clip = fighter_move(fighter)->clip, sample = fighter_sample(fighter);
     fighter_start_mmove(fighter, S_PUNCH, &blend_stance, &blend_phase);
     fighter->blend_clip = clip;
     fighter->blend_sample = sample;
@@ -97,81 +89,57 @@ static void strike_done(Fighter *fighter) {
   }
 }
 
-static void strike_recover_tick(Fighter *fighter) {
-  strike_effects(fighter);
-  if (fighter_sample(fighter) >= fighter->weapon_strike->move.last) {
-    strike_done(fighter);
-  } else {
-    fighter->sample_override = fighter_sample(fighter) + 1;
-  }
-}
-
-static void strike_recover_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  strike_recover_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !weapon_wait(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t strike_recover_frames[1] = {
-  [0] = {.thinkfunc = strike_recover_frames_frame_0},
-};
-// clang-format on
-static const mmove_t strike_recover_phase = {.firstframe = 0, .lastframe = 0, .frame = strike_recover_frames, .endfunc = fighter_stop_mmove};
-
 static void strike_recover(Fighter *fighter) {
-  weapon_hold(fighter, &strike_recover_phase);
+  int sample = fighter_sample(fighter), last = fighter->weapon_strike->move.last;
+  native_begin(fighter, 1, maxi(1, last - sample + 1), strike_done);
+  for (int frame = 1; frame <= maxi(1, last - sample + 1); ++frame) {
+    native_frame(fighter, frame, mini(last, sample + frame), NULL);
+  }
+  native_play(fighter, false);
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t strike_pause_frames[1] = {
-  [0] = {.thinkfunc = strike_effects},
-};
-// clang-format on
-static const mmove_t strike_pause_phase = {.firstframe = 0, .lastframe = 0, .frame = strike_pause_frames, .endfunc = strike_recover};
-
-static void strike_tick(Fighter *fighter) {
-  const WeaponStrike *strike = fighter->weapon_strike;
-  int active = strike->target - strike->first + 1;
-  strike_effects(fighter);
-  fighter->sample_override = strike->first + fighter->ticks;
-  if (fighter->ticks >= active) {
-    battle_contact(fighter, &strike->record);
-  }
-  if (!fighter->connected && fighter->ticks < active + strike->queries - 1) {
-    return;
-  }
+static void strike_recovery(Fighter *fighter) {
+  native_motion_stop(fighter);
+  fighter_set_speed(fighter, 0);
   fighter->script_phase = 1;
   fighter->action = ACTION_RETAIL_1006;
-  fighter_set_speed(fighter, 0);
-  weapon_hold(fighter, fighter->connected && (strike->recovery == 5 || strike->recovery == 9) ? &strike_pause_phase : &strike_recover_phase);
-}
-
-static void strike_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  strike_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
+  if (fighter->connected && (fighter->weapon_strike->recovery == 5 || fighter->weapon_strike->recovery == 9)) {
+    native_hold(fighter, 1, strike_recover);
+  } else {
+    strike_recover(fighter);
   }
-  fighter->mmove_hold = !weapon_wait(fighter);
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t strike_frames[1] = {
-  [0] = {.thinkfunc = strike_frames_frame_0},
-};
-// clang-format on
-static const mmove_t strike_phase = {.firstframe = 0, .lastframe = 0, .frame = strike_frames, .endfunc = fighter_stop_mmove, .cleanup = weapon_cleanup};
+static void strike_query(Fighter *fighter) {
+  if (battle_contact(fighter, &fighter->weapon_strike->record) != CONTACT_MISS) {
+    strike_recovery(fighter);
+  }
+}
+
+static void strike_sound_query(Fighter *fighter) {
+  strike_sound(fighter);
+  strike_query(fighter);
+}
 
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel) {
   require(strike->first <= strike->windup && strike->windup <= strike->target && strike->queries > 0, "Invalid weapon phases");
-  fighter_start_mmove(fighter, S_PUNCH, &strike->move, &strike_phase);
+  fighter_start_move(fighter, S_PUNCH, &strike->move);
   fighter->weapon_strike = strike;
   fighter->weapon_travel = travel;
   fighter->sample_override = strike->first;
+  int active = strike->target - strike->first + 1;
+  int sound = strike->windup - strike->first + 1;
+  int last = active + strike->queries - 1;
+  native_begin(fighter, 1, last, strike_recovery);
+  for (int frame = 1; frame <= last; ++frame) {
+    FighterFn action = frame >= active ? (frame == sound ? strike_sound_query : strike_query) : frame == sound ? strike_sound : NULL;
+    native_frame(fighter, frame, strike->first + frame, action);
+  }
+  if (travel && strike->travel > 0) {
+    native_schedule_speed(fighter, strike->speed, maxi(0, strike->delay - 1), strike->travel);
+  }
+  fighter->mmove_cleanup = weapon_cleanup;
+  native_play(fighter, false);
 }
 
 /* 494610 / 4946f0. This is separate from a back-punch's motion setup. */
@@ -269,33 +237,8 @@ void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon) {
   fighter->weapon = weapon;
 }
 
-static void landing_script(Fighter *fighter) {
-  fighter_fiber_play_to(fighter, 27, 1);
-  fighter_wait_ticks(1);
-  fighter_fiber_finish(fighter_ready);
-}
-
-static void air_script(Fighter *fighter) {
-  const bool high = fighter_move(fighter)->clip == 252;
-  for (int tick = 1;; ++tick) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = mini(9, tick);
-    if (!fighter->connected && tick >= (high ? 8 : 9) && tick <= 10) {
-      battle_contact(fighter, &air_records[high ? 0 : 1]);
-    }
-    if (!fighter_airborne(fighter)) {
-      break;
-    }
-  }
-  fighter_fiber_move(fighter, S_JUMP, &landing);
-  fighter->sample_override = 18;
-  landing_script(fighter);
-}
-
 void weapon_air_native(Fighter *fighter, unsigned selector) {
-  require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
-  require(fighter_move(fighter)->clip == (selector == 0x104 ? 252 : 251), "Weapon-air native entry differs from selected program");
-  air_script(fighter);
+  weapon_air_frames_native(fighter, selector);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -303,39 +246,48 @@ static const mframe_t weapon_land_frames[10] = {{0}};
 // clang-format on
 static const mmove_t weapon_land = {.firstframe = 18, .lastframe = 27, .frame = weapon_land_frames, .endfunc = fighter_ready};
 
-static void weapon_air_tick(Fighter *fighter) {
-  bool high = fighter_move(fighter)->clip == 252;
-  int tick = ++fighter->script_timer;
-  fighter->sample_override = mini(9, tick);
-  if (!fighter->connected && tick >= (high ? 8 : 9) && tick <= 10) {
-    battle_contact(fighter, &air_records[high ? 0 : 1]);
-  }
+static void weapon_air_landing(Fighter *fighter) {
   if (!fighter_airborne(fighter)) {
     fighter_start_mmove(fighter, S_JUMP, &landing, &weapon_land);
   }
 }
 
-static void weapon_air_frames_table_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  weapon_air_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
+static void weapon_air_query(Fighter *fighter) {
+  bool high = fighter_move(fighter)->clip == 252;
+  if (!fighter->connected) {
+    battle_contact(fighter, &air_records[high ? 0 : 1]);
   }
-  fighter->mmove_hold = !weapon_wait(fighter);
+  weapon_air_landing(fighter);
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t weapon_air_frames_table[1] = {
-  [0] = {.thinkfunc = weapon_air_frames_table_frame_0},
-};
-// clang-format on
-static const mmove_t weapon_air_phase = {.firstframe = 0, .lastframe = 0, .frame = weapon_air_frames_table, .endfunc = fighter_stop_mmove};
+static void weapon_air_wait(Fighter *fighter) {
+  fighter->mmove_hold = true;
+  weapon_air_landing(fighter);
+}
+
+static const mframe_t weapon_air_wait_frames[] = {{.thinkfunc = weapon_air_wait}};
+static const mmove_t weapon_air_wait_move = {.firstframe = 9, .lastframe = 9, .frame = weapon_air_wait_frames};
+
+static void weapon_air_fall(Fighter *fighter) {
+  fighter_mmove_phase(fighter, &weapon_air_wait_move);
+}
+
+static void weapon_air_begin(Fighter *fighter) {
+  bool high = fighter_move(fighter)->clip == 252;
+  native_begin(fighter, 1, 10, weapon_air_fall);
+  for (int frame = 1; frame <= 10; ++frame) {
+    native_frame(fighter, frame, mini(9, frame), frame >= (high ? 8 : 9) ? weapon_air_query : weapon_air_landing);
+  }
+  native_play(fighter, false);
+}
 
 void weapon_air_frames_native(Fighter *fighter, unsigned selector) {
   require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
   require(fighter_move(fighter)->clip == (selector == 0x104 ? 252 : 251), "Weapon-air phase differs from selected program");
-  fighter->script_timer = 0;
-  weapon_hold(fighter, &weapon_air_phase);
+  if (fighter_fiber_running(fighter)) {
+    fighter_fiber_handoff(weapon_air_begin);
+  }
+  weapon_air_begin(fighter);
 }
 
 void weapon_air_frames(Fighter *fighter, bool high, FighterFn script) {

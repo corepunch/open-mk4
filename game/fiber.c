@@ -195,3 +195,12 @@ _Noreturn void fighter_fiber_finish(FighterFn next) {
   require(false, "Finished move fiber was resumed");
   abort();
 }
+
+/* Native tails retire their stack and transfer action cleanup to the frame
+ * runner. The successor installs actor-owned rows on the scheduler stack. */
+_Noreturn void fighter_fiber_handoff(FighterFn next) {
+  require(running != NULL, "Native frame handoff requires a running fiber");
+  running->fighter->mmove_cleanup = running->cleanup;
+  running->cleanup = NULL;
+  fighter_fiber_finish(next);
+}
