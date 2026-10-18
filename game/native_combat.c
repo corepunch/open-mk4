@@ -87,9 +87,14 @@ static void ground_build(Fighter *fighter, int first, bool immediate) {
   int end = (hit && !(index == G_ROUNDHOUSE && fighter->contact == CONTACT_BLOCK) ? attack->end_contact : attack->end_miss) - fast;
   int reverse = index == G_CLOSE_HP ? (hit ? 18 : 12) : index == G_CLOSE_HK ? (hit ? 10 : 12) : -1;
   int initial = fighter_sample(fighter);
+  /* The compiled startup may hand off after the nominal active frame (for
+   * example, combo HP includes an explicit boundary wait). The native runner
+   * owns the contact probe: execute it on its first owned row rather than
+   * dropping it because the actor clock already crossed that boundary. */
+  int query_first = maxi(active, fighter->native_elapsed);
   native_begin(fighter, first, maxi(first, end), profile->ready);
   for (int frame = first; frame <= maxi(first, end); ++frame) {
-    FighterFn action = frame >= active && frame <= active + (index == G_ROUNDHOUSE ? 2 : 0) ? ground_query : NULL;
+    FighterFn action = frame >= query_first && frame <= query_first + (index == G_ROUNDHOUSE ? 2 : 0) ? ground_query : NULL;
     if (frame == reverse) {
       action = close_followup;
     }
