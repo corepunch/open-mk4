@@ -383,6 +383,30 @@ L_00000004: {
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
+    def test_counted_half_speed_supports_prefix_and_bounded_clip_end(self):
+        # 45b800 optionally binds via45bf80 and runs429120 twice per pose.
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        entry = self.fixture([0x46000204, descriptor, 0x3f000000])
+        slow = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('.lastframe = 8', slow)
+        self.assertIn('0, 0, 1, 1, 2, 2, 3, 3', slow)
+        self.assertIn('0, 0, 1, 1, 2, 2, 3, 3, 4', slow)
+        self.assertNotIn('mk4_script_advance_slow', slow)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'slow_count.c'
+            path.write_text(slow + '\nvoid use_slow_count(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
+        legacy = generate(self.image, [entry], 3, 'fighter_ready')
+        self.assertIn('mk4_script_advance_slow(fighter, 4);', legacy)
+        for count in (0, 4):
+            entry = self.fixture([0x1100000a, descriptor, 0x46000000 | count, 0x3f000000])
+            end = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+            self.assertIn('.lastframe = 5', end)
+            self.assertIn('10, 10, 11, 11, 12', end)
+        with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
+            self.compile([0x46000004, 0x3f000000])
+
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
         # C control flow; real actor suspension is covered by the native Liu suite.

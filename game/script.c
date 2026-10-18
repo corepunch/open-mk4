@@ -130,6 +130,20 @@ void mk4_script_advance(Fighter *fighter, int count, int step) {
   native_advance(fighter, count, step);
 }
 
+/* 45b800/429040 repeats429120's full/half visits for each counted pose.
+ * A zero count or exhausted clip finishes at the bounded final pose. */
+void mk4_script_advance_slow(Fighter *fighter, int count) {
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  require(count >= 0 && last != MOVE_END && first >= 0 && first <= last, "Slow counted playback needs a bounded cursor");
+  int remaining = last - first;
+  int frames = count == 0 || count > remaining ? 2 * remaining + 1 : 2 * count;
+  native_begin(fighter, 1, frames, NULL);
+  for (int frame = 1; frame <= frames; ++frame) {
+    native_frame(fighter, frame, mini(last, first + frame / 2), NULL);
+  }
+  native_wait(fighter);
+}
+
 void mk4_script_finish_clip(Fighter *fighter, int step) {
   int last = fighter_move(fighter)->last;
   require(last != MOVE_END && last >= 0, "Generated playback needs a decoded clip length");

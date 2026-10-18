@@ -87,6 +87,7 @@ SCRIPT_OPS = {
     0x42: ('branch if contact result bit 0 set', 1),
     0x44: ('branch if down held', 1),
     0x45: ('conditional script branch', 1),
+    0x46: ('advance at half speed for count with optional clip prefix', -1),
     # -1: handler calls 0x45bf80; a descriptor follows ONLY if byte 1 is 2.
     0x47: ('advance to sample with optional clip prefix', -1),
     0x48: ('native playback with optional clip prefix', -1),
@@ -173,7 +174,7 @@ def script_program(image, entry, character=0):
             operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
             row.update(operation=operation, inline=word & 0xffffff,
                        operands=[hex(value) for value in operands])
-            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x47, 0x48, 0x49, 0x4e, 0x71) and operands:
+            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x46, 0x47, 0x48, 0x49, 0x4e, 0x71) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
                 if op in (0x01, 0x0c, 0x0f, 0x11):

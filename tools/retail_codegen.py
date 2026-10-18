@@ -30,7 +30,7 @@ class CompileError(ValueError):
 CORE_OPS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0c, 0x0d, 0x0e, 0x10, 0x60, 0x0f, 0x11, 0x12, 0x19, 0x1d, 0x1f,
             0x20, 0x27, 0x2b, 0x29, 0x2d, 0x2e, 0x2f, 0x30, 0x32, 0x33,
             0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
-            0x3e, 0x3f, 0x40, 0x42, 0x44, 0x45, 0x47, 0x48, 0x49, 0x4a, 0x4d,
+            0x3e, 0x3f, 0x40, 0x42, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4d,
             0x4e, 0x51, 0x52, 0x53, 0x55, 0x58, 0x5a, 0x5b, 0x5c, 0x5e, 0x61, 0x69, 0x71}
 
 
@@ -74,7 +74,7 @@ def reads_defines(row, bindings):
     defines = {'flags'} if op in (0x36, 0x55, 0x51, 0x52, 0x53, 0x5e) else {'loop'} if op == 0x3a else set()
     if 'clip' in row and row.get('clip_owner') != 'victim':
         defines.add('clip')
-    elif op in (3, 4, 5, 6, 7, 0x0d, 0x12, 0x19, 0x1d, 0x47, 0x48, 0x49, 0x4a, 0x4d, 8, 0x10):
+    elif op in (3, 4, 5, 6, 7, 0x0d, 0x12, 0x19, 0x1d, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4d, 8, 0x10):
         reads.add('clip')
     if op == 0x71:
         reads.add('clip')
@@ -144,7 +144,7 @@ def validate(program, bindings, return_to, context=None):
             error(pc, 'unsupported counted-playback inline bits')
         if op in (0x30, 0x3f) and return_to is None:
             error(pc, 'controller/tagged return needs an explicit engine continuation')
-        if op in (0x47, 0x48, 0x49) and row['inline'] >> 8 not in (0, 2):
+        if op in (0x46, 0x47, 0x48, 0x49) and row['inline'] >> 8 not in (0, 2):
             error(pc, 'unsupported playback prefix (only absent/descriptor prefixes are typed)')
         if 'clip' in row:
             first = row.get('start_sample', row['inline'] if op == 8 else 0)
@@ -215,7 +215,7 @@ def validate(program, bindings, return_to, context=None):
     # remaining graph. A cycle that can bypass a wait is unsafe too.
     def yields(row):
         op = int(row['opcode'], 16)
-        return (op in (2, 4, 6, 0x19, 0x10) and row['inline'] > 0) or op in (1, 3, 7, 8, 9, 0x48, 0x3e, 0x69, 0x71) or (op == 0x34 and row['inline'] > 0) or (
+        return (op in (2, 4, 6, 0x19, 0x10) and row['inline'] > 0) or op in (1, 3, 7, 8, 9, 0x46, 0x48, 0x3e, 0x69, 0x71) or (op == 0x34 and row['inline'] > 0) or (
             op == 0x37 and min(row['wait_if_set'], row['wait_if_clear']) > 0)
     cursors = {pc: set() for pc in rows}
     def cursor_after(row, values):
@@ -238,6 +238,8 @@ def validate(program, bindings, return_to, context=None):
             return {(n, cursor) for n, _ in values for cursor in range(n)}
         if op in (1, 3, 7, 8, 9, 0x48, 0x69) or (binding and binding.cursor_effect == 'finish'):
             return {(n, 0 if op in (7, 9) else n - 1) for n, _ in values}
+        if op == 0x46:
+            return {(n, min(n - 1, c + (inline & 255)) if inline & 255 else n - 1) for n, c in values}
         if op in (2, 4, 6, 0x19):
             delta = -(inline & 255) if op == 6 else 2 * ((inline + 1) // 2) if op == 0x19 else inline & 255
             return {(n, max(0, min(n - 1, c + delta))) for n, c in values}
@@ -314,6 +316,8 @@ def lower(row, bindings, return_to):
     elif op in (0x0f, 0x12, 0x49, 0x1d):
         if op != 0x0f:
             lines.append('fighter->sample_override = %d;' % arg)
+    elif op == 0x46:
+        lines.append('mk4_script_advance_slow(fighter, %d);' % arg)
     elif op == 0x69:
         lines.append('mk4_script_finish_clip(fighter, 0);')
     elif op in (1, 3, 8, 0x48):

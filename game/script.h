@@ -15,6 +15,7 @@ void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 
 void mk4_script_pair_advance(Fighter *fighter, int count);
 void mk4_script_current(Fighter *fighter);
 void mk4_script_advance(Fighter *fighter, int count, int step);
+void mk4_script_advance_slow(Fighter *fighter, int count);
 /* step -1 reverses, +1 advances normally, 0 uses two visits per pose. */
 void mk4_script_finish_clip(Fighter *fighter, int step);
 void mk4_script_stop(Fighter *fighter);

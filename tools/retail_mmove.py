@@ -180,6 +180,11 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             elif op in (1, 3, 7, 8, 9, 0x48):
                 advance(0 if op in (7, 9) else count - 1, -1 if op in (7, 9) else 1)
                 wait(1)
+            elif op == 0x46:
+                first = sample
+                advance(min(count - 1, sample + arg) if arg else count - 1, period=2)
+                if arg == 0 or first + arg >= count:
+                    wait(1)
             elif op == 0x69:
                 advance(count - 1, period=2)
                 wait(1)

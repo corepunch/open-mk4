@@ -50,6 +50,8 @@ def instruction_text(row, raw=False):
         details.append('bit0 clear=%d ticks; set=%d ticks' % (row['wait_if_clear'], row['wait_if_set']))
     elif op in (0x02, 0x04, 0x06, 0x10, 0x19):
         details.append('count=%d' % row['inline'])
+    elif op == 0x46:
+        details.append('count=%d' % (row['inline'] & 255))
     elif op in (0x05, 0x12):
         details.append('sample=%d' % row['inline'])
     elif op == 0x40:
