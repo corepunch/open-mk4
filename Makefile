@@ -19,7 +19,7 @@ SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: $(SCRIPT_GENERATE_TARGETS)
@@ -27,6 +27,9 @@ scripts-check: scripts-audit $(SCRIPT_CHECK_TARGETS)
 scripts-audit: $(SCRIPT_AUDIT_TARGETS)
 mmove-frames:
 	python3 tools/generate_mmove_frames.py
+native-frames-check:
+	python3 tools/check_native_frames.py
+	python3 tests/test_native_frames.py
 mmove-frames-check:
 	python3 tools/generate_mmove_frames.py --check
 $(SCRIPT_GENERATE_TARGETS): scripts-generate-%:
@@ -99,7 +102,7 @@ game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang bu
 	./build/test-fibers
 	./mk4-game --self-test
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp
-check: format-check scripts-check test viewer-test game-test
+check: format-check scripts-check mmove-frames-check native-frames-check test viewer-test game-test
 	python3 tests/test_apps.py
 	python3 tests/test_retail_moves.py
 	python3 tests/test_disassembly.py

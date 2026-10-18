@@ -732,3 +732,26 @@ foreign sword paths were migrated so Sub-Zero's existing cross-pickup behavior
 remains available. Other fighters' scripts and their victim continuations can
 still use the existing fiber scheduler; this migration does not remove that
 scheduler from the engine.
+
+## Native action frames
+
+Native moves use fixed 60 Hz `mframe_t` rows with optional movement and action
+callbacks. Frames have no duration. Select hit, sound, movement, release and
+recovery actions when constructing a phase, then let the frame runner dispatch
+them. Entry-time constructors can resolve a range from the current pose, move
+branch or scene phase; callbacks must not compare elapsed actor/scene clocks or
+count down scratch fields.
+
+Use the helpers in `game/native.h` for bounded playback, contacts, blends,
+repetitions and physical holds. A returning native binding can await a frame
+program while retaining its generated VM continuation. Terminal native tails
+hand off cleanup to the frame runner. Independent motion and battle-event rows
+support concurrent actor/scene work. Landing and ownership guards inspect live
+state on held frames. Keep input charge/cooldown rules and independent world
+object lifetimes in their owning systems.
+
+Supported VM bodies remain compiler-owned. A reviewed `export_frames` entry
+context emits a reusable generated phase; native fan coordinators compose that
+phase into their complete repetition schedule. Regenerate with `make scripts`.
+`make native-frames-check` rejects native coroutine waits and actor/scene clock
+branches, and runs as part of `make check`.
