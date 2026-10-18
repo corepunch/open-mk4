@@ -13,6 +13,7 @@ from retail_moves import RetailImage
 from retail_codegen import format_c
 from retail_coverage import profile_for, cpu_records
 from scorpion_moves import commands
+from c_reachability import CPU_FINISH_TARGETS
 
 ROOT = Path(__file__).resolve().parents[1]
 TOKENS = {1: 'TOKEN_UP', 2: 'TOKEN_DOWN', 0xaa: 'TOKEN_BACK', 0xdd: 'TOKEN_FORWARD'}
@@ -46,13 +47,32 @@ def generate_controls(image, character, profile):
             '// clang-format off: Keep table entries on one row, including long rows.\n'
             'static const CommandDef retail_commands[] = {\n' + '\n'.join(rows) + '\n};\n// clang-format on\n')
     cpu_bound = profile.get('cpu_bindings', {})
-    if cpu_bound:
+    finishes = {slot: bindings[target] for slot, target in CPU_FINISH_TARGETS.items() if target in bindings}
+    if cpu_bound or finishes:
         slots = {'near': 'CPU_SPECIAL_NEAR', 'medium': 'CPU_SPECIAL_1', 'far': 'CPU_SPECIAL_2', 'projectile': 'CPU_PROJECTILE'}
         entries = ['    [%s] = %s,' % (slots[name], cpu_bound[row['target']]['symbol'])
                    for name, row in cpu_records(image, character).items() if row['target'] in cpu_bound]
+        entries += ['    [%s] = %s,' % (slot, ref['symbol']) for slot, ref in finishes.items()]
         if not entries:
             raise ValueError('Reviewed CPU bindings produced no runtime entries')
-        output += '\nstatic const CpuMoves retail_cpu_moves = {.enter = {\n' + '\n'.join(entries) + '\n}};\n'
+        output += '\nstatic const CpuMoves retail_cpu_moves = {.enter = {\n' + '\n'.join(entries) + '\n}'
+        fatality_slots = ('CPU_FINISH_1', 'CPU_FINISH_2')
+        if any(slot in finishes for slot in fatality_slots):
+            ranges = profile.get('cpu_finish_min', {})
+            if not ranges.get('evidence') or ranges.keys() - {*fatality_slots, 'evidence'}:
+                raise ValueError('CPU fatality ranges require reviewed minimums and evidence')
+            selection = 2 if character == 16 else 7 if character == 17 else character
+            minimums, distances = [], []
+            for index, slot in enumerate(fatality_slots):
+                distance = image.word((0x4dfe10 if index == 0 else 0x4dfe50) + selection * 4) if slot in finishes else 0
+                minimum = ranges.get(slot) if slot in finishes else 0
+                if slot in finishes and (not isinstance(minimum, int) or isinstance(minimum, bool) or not 0 <= minimum < distance):
+                    raise ValueError('CPU fatality minimum must be reviewed below its retail distance for ' + slot)
+                minimums.append(minimum)
+                distances.append(distance)
+            output += ', .finish_min = {%s}, .finish_distance = {%s}' % (
+                ', '.join('0x%x' % value for value in minimums), ', '.join('0x%x' % value for value in distances))
+        output += '};\n'
     return format_c(output)
 
 

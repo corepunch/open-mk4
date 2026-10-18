@@ -14,4 +14,6 @@ static const CpuMoves retail_cpu_moves = {.enter = {
                                               [CPU_SPECIAL_NEAR] = reptile_input_47a690,
                                               [CPU_SPECIAL_1] = reptile_input_47a690,
                                               [CPU_SPECIAL_2] = reptile_input_47afe0,
+                                              [CPU_FINISH_FAN] = reptile_entry_fan,
+                                              [CPU_FINISH_SPIKE] = reptile_entry_spike,
                                           }};

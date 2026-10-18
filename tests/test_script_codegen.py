@@ -561,6 +561,31 @@ int main(void) {
         self.assertTrue(any('inventory changed' in error for error in errors))
         self.assertTrue(any('input/CPU target' in error for error in errors))
 
+    def test_cpu_fatalities_require_reviewed_minimums_and_use_retail_targets(self):
+        import copy
+        from retail_controls import generate_controls
+        from retail_coverage import profile_for, inventory
+        profile = profile_for(5)
+        source = generate_controls(self.image, 5, profile)
+        self.assertIn('[CPU_FINISH_1] = fujin_first_fatality', source)
+        self.assertIn('[CPU_FINISH_2] = fujin_second_fatality', source)
+        expected = ', '.join('0x%x' % value for value in inventory(self.image, 5)['finish_distances'])
+        self.assertIn('.finish_distance = {' + expected + '}', source)
+        partial = copy.deepcopy(profile)
+        partial['command_bindings'].pop('0x467cd0')
+        partial['cpu_finish_min'].pop('CPU_FINISH_2')
+        one = generate_controls(self.image, 5, partial)
+        self.assertNotIn('[CPU_FINISH_2]', one)
+        self.assertIn('.finish_distance = {0x%x, 0x0}' % inventory(self.image, 5)['finish_distances'][0], one)
+        broken = copy.deepcopy(profile)
+        broken.pop('cpu_finish_min')
+        with self.assertRaisesRegex(ValueError, 'require reviewed'):
+            generate_controls(self.image, 5, broken)
+        broken = copy.deepcopy(profile)
+        broken['cpu_finish_min']['CPU_FINISH_1'] = self.image.word(0x4dfe10 + 5 * 4)
+        with self.assertRaisesRegex(ValueError, 'below its retail distance'):
+            generate_controls(self.image, 5, broken)
+
     def test_all_reviewed_generated_roots_remain_in_the_final_roster_catalog(self):
         from character_catalog import CHARACTERS, moves_for
         from retail_coverage import profile_for, inventory, fingerprint

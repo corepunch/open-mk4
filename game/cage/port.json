@@ -835,5 +835,10 @@
     "0x4e12a0",
     "0x4e12b0",
     "0x4e6798"
-  ]
+  ],
+  "cpu_finish_min": {
+    "CPU_FINISH_1": 0,
+    "CPU_FINISH_2": 0,
+    "evidence": "Cage45e570 close gate accepts up to1 unit; CPU first/second targets are4dfe10/4dfe50[14]=1 unit."
+  }
 }

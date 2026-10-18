@@ -9,3 +9,8 @@ static const CommandDef retail_commands[] = {
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };
 // clang-format on
+
+static const CpuMoves retail_cpu_moves = {.enter = {
+                                              [CPU_FINISH_FAN] = kai_fan_fatality,
+                                              [CPU_FINISH_SPIKE] = kai_spike_fatality,
+                                          }};

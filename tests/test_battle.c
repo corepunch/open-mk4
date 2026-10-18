@@ -2484,6 +2484,69 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_generated_cpu_finish_dispatch(void) {
+  const int fighters[] = {14, 5};
+  for (size_t index = 0; index < sizeof fighters / sizeof fighters[0]; ++index) {
+    int selected = fighters[index];
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int finish = 0; finish < 2; ++finish) {
+        for (int far = 0; far < 2; ++far) {
+          battle_init(slot ? 4 : selected, slot ? selected : 4);
+          g_battle.phase = PHASE_FIGHT;
+          Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+          owner->wins = 1;
+          battle_damage(victim, Q16_ONE);
+          advance_ticks(1, NULL);
+          for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+            advance_ticks(1, NULL);
+          }
+          const CpuMoves *moves = roster_def(selected)->cpu;
+          check(moves != NULL && moves->enter[CPU_FINISH_1] != NULL && moves->enter[CPU_FINISH_2] != NULL,
+              "Generated CPU table must connect fatalities independently of human commands");
+          q16 distance = far ? 5 * Q16_ONE : 0x9999;
+          owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+          victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+          owner->human = false;
+          owner->cpu =
+              (CpuState){.finish_chosen = true, .plan = (finish ? CPU_FINISH_2 : CPU_FINISH_1) + 1, .target = moves->finish_distance[finish], .timer = 240};
+          for (int tick = 0; tick < 240 && g_battle.phase == PHASE_FINISH; ++tick) {
+            advance_ticks(1, NULL);
+          }
+          int expected = selected == 14 ? 17 + finish : FINISH_FUJIN_1 + finish;
+          if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != expected) {
+            fprintf(stderr, "CPU finish roster%d slot%d finish%d far%d phase%d id%d distance%f\n", selected, slot, finish, far, g_battle.phase,
+                g_battle.finisher, fighter_distance(owner));
+          }
+          check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == expected,
+              "CPU must approach or retreat into the authored range and enter its selected real fatality");
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim) && owner->fujin_finish_inputs == 0,
+              "CPU scene dispatch must bypass human input counting and use existing frame entries");
+          battle_reset_match();
+        }
+      }
+      for (int stage = 0; stage < 2; ++stage) {
+        battle_init(slot ? 4 : selected, slot ? selected : 4);
+        g_battle.phase = PHASE_FIGHT;
+        g_battle.arena = stage ? 8 : 0;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        owner->body.pos[AXIS_X] = slot ? 0x4ccc : -0x4ccc;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        check(battle_cpu_action(owner, stage ? CPU_FINISH_FAN : CPU_FINISH_SPIKE), "Reviewed CPU stage-finisher slot must be registered");
+        advance_ticks(2, NULL);
+        check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (stage ? FINISH_FAN : FINISH_SPIKE),
+            "CPU stage dispatch must retain its own fan or spike scene");
+        battle_reset_match();
+      }
+    }
+  }
+}
+
 static void check_fujin_first_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int target = 2; target <= 4; target += 2) {
@@ -3322,6 +3385,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_generated_cpu_finish_dispatch();
   check_fujin_first_fatality();
   check_fujin_second_fatality();
   check_advancing_sweeps();
