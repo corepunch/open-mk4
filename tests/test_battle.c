@@ -2601,6 +2601,42 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_partial_cpu_stage_dispatch(void) {
+  const int rosters[] = {6, 7, 8, 9, 11, 12, 13, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int fan = 0; fan < 2; ++fan) {
+        int selected = rosters[row];
+        battle_init(slot ? 4 : selected, slot ? selected : 4);
+        g_battle.phase = PHASE_FIGHT;
+        g_battle.arena = fan ? 8 : 0;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        owner->body.pos[AXIS_X] = slot ? 0x4ccc : -0x4ccc;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        const CpuMoves *cpu = roster_def(selected)->cpu;
+        check(cpu != NULL && cpu->enter[CPU_FINISH_FAN] != NULL && cpu->enter[CPU_FINISH_SPIKE] != NULL,
+            "Partial fighter must attach its generated CPU stage table to the roster");
+        check(cpu->enter[CPU_FINISH_1] == NULL && cpu->enter[CPU_FINISH_2] == NULL,
+            "Stage registration must not substitute fan or spike for an unported character fatality");
+        check(battle_cpu_action(owner, fan ? CPU_FINISH_FAN : CPU_FINISH_SPIKE), "CPU must reach the reviewed stage entry");
+        advance_ticks(1, NULL);
+        check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (fan ? FINISH_FAN : FINISH_SPIKE),
+            "CPU stage entry must acquire its actual fan or spike scene");
+        advance_ticks(650, NULL);
+        check(g_battle.phase == PHASE_MATCH_OVER, "CPU stage scene must complete for both player slots");
+        battle_reset_match();
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reset must retire legacy partial-fighter stage tasks");
+      }
+    }
+  }
+}
+
 static void check_generated_cpu_finish_dispatch(void) {
   const int fighters[] = {14, 5};
   for (size_t index = 0; index < sizeof fighters / sizeof fighters[0]; ++index) {
@@ -3503,6 +3539,7 @@ int main(void) {
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
   check_generated_cpu_finish_dispatch();
+  check_partial_cpu_stage_dispatch();
   check_fujin_first_fatality();
   check_fujin_second_fatality();
   check_advancing_sweeps();

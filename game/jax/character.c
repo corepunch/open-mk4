@@ -74,7 +74,7 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_jax = {GAME_MK4, 13, "JAX", &mk4_motion, moves, S_COUNT, &s_controls, enter, -75169, mk4_walk, mk4_jump, NULL, NULL, 0};
+const CharacterDef mk4_jax = {GAME_MK4, 13, "JAX", &mk4_motion, moves, S_COUNT, &s_controls, enter, -75169, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
 
 void jax_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

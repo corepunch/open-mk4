@@ -80,7 +80,8 @@ static const FighterFn state_entries[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_reiko = {GAME_MK4, 7, "REIKO", &mk4_motion, moves, S_COUNT, &reiko_controls, state_entries, -77660, mk4_walk, mk4_jump, NULL, NULL, 0};
+const CharacterDef mk4_reiko = {
+    GAME_MK4, 7, "REIKO", &mk4_motion, moves, S_COUNT, &reiko_controls, state_entries, -77660, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
 
 void reiko_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);
