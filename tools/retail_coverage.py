@@ -15,7 +15,7 @@ from retail_codegen import CompileError, compile_program, instruction_binding, s
 from retail_helper_view import port_source
 from retail_moves import EXE_SHA256
 from retail_port import masked_c
-from c_source import read_source
+from c_source import read_source, private_aliases
 from retail_query import CONTACT_TABLES
 from scorpion_moves import commands, script_program, attack_record, attack_record_at, DISPATCH
 
@@ -108,7 +108,7 @@ def check_reference(reference, errors, label, table=False):
         errors.append('%s: missing workspace source %s' % (label, reference['source']))
         return
     if table:
-        pattern = r'\b' + re.escape(reference['symbol']) + r'\s*(?:\[[^;={}]*\])?\s*='
+        pattern = r'\b' + re.escape(private_aliases(path).get(reference['symbol'], reference['symbol'])) + r'\s*(?:\[[^;={}]*\])?\s*='
         if re.search(pattern, masked_c(read_source(path))) is None:
             errors.append('%s: missing C table %s' % (label, reference['symbol']))
     else:

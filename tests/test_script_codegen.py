@@ -56,7 +56,7 @@ class CompilerTests(unittest.TestCase):
         self.assertNotIn('mk4_script_advance', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'frames.c'
-            path.write_text(source + '\nstatic void script_sweep_tail(Fighter *fighter) { fighter_ready(fighter); }\n'
+            path.write_text(source + '\nvoid script_sweep_tail(Fighter *fighter) { fighter_ready(fighter); }\n'
                             'void use_frames(Fighter *fighter) { retail_script_004e6798(fighter); }\n')
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
@@ -122,9 +122,9 @@ class CompilerTests(unittest.TestCase):
         self.assertNotIn('mk4_script_pair_to(fighter', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'pair.c'
-            path.write_text(source + '\nstatic void script_reaction(Fighter *f, int r) { (void)f; (void)r; }\n'
-                            'static void script_lp_owner_return(Fighter *f) { fighter_ready(f); }\n'
-                            'static void script_ready(Fighter *f) { fighter_ready(f); }\n'
+            path.write_text(source + '\nvoid script_reaction(Fighter *f, int r) { (void)f; (void)r; }\n'
+                            'void script_lp_owner_return(Fighter *f) { fighter_ready(f); }\n'
+                            'void script_ready(Fighter *f) { fighter_ready(f); }\n'
                             'void use_frames(Fighter *f) { retail_script_004de798(f); retail_script_004e9bd0(f); }\n')
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)

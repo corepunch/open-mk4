@@ -2,25 +2,25 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 17. */
 #include "script.h"
 
-static void noob_saibot_script_air_finish(Fighter *);
-static void noob_saibot_script_air_throw_continue(Fighter *);
-static void noob_saibot_script_air_throw_end(Fighter *);
-static void noob_saibot_script_fan_cycle(Fighter *);
-static void noob_saibot_script_fan_tail(Fighter *);
-static void noob_saibot_script_fan_victim_end(Fighter *);
-static void noob_saibot_script_fan_victory(Fighter *);
-static void noob_saibot_script_finish(Fighter *);
-static void noob_saibot_script_kick_finish(Fighter *);
-static void noob_saibot_script_lk_return(Fighter *);
-static void noob_saibot_script_lp_end(Fighter *);
-static void noob_saibot_script_lp_return(Fighter *);
-static void noob_saibot_script_lp_select(Fighter *);
-static void noob_saibot_script_opponent_reaction(Fighter *, int);
-static void noob_saibot_script_roundhouse_start(Fighter *);
-static void noob_saibot_script_spike_tail(Fighter *);
-static void noob_saibot_shadow_install_physics(Fighter *);
-static void noob_saibot_shadow_task_low(Fighter *, int);
-static void noob_saibot_shadow_task_up(Fighter *, int);
+void noob_saibot_script_air_finish(Fighter *);
+void noob_saibot_script_air_throw_continue(Fighter *);
+void noob_saibot_script_air_throw_end(Fighter *);
+void noob_saibot_script_fan_cycle(Fighter *);
+void noob_saibot_script_fan_tail(Fighter *);
+void noob_saibot_script_fan_victim_end(Fighter *);
+void noob_saibot_script_fan_victory(Fighter *);
+void noob_saibot_script_finish(Fighter *);
+void noob_saibot_script_kick_finish(Fighter *);
+void noob_saibot_script_lk_return(Fighter *);
+void noob_saibot_script_lp_end(Fighter *);
+void noob_saibot_script_lp_return(Fighter *);
+void noob_saibot_script_lp_select(Fighter *);
+void noob_saibot_script_opponent_reaction(Fighter *, int);
+void noob_saibot_script_roundhouse_start(Fighter *);
+void noob_saibot_script_spike_tail(Fighter *);
+void noob_saibot_shadow_install_physics(Fighter *);
+void noob_saibot_shadow_task_low(Fighter *, int);
+void noob_saibot_shadow_task_up(Fighter *, int);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

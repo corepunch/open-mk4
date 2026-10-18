@@ -2,21 +2,21 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 7. */
 #include "script.h"
 
-static void reiko_script_air_finish(Fighter *);
-static void reiko_script_air_release(Fighter *);
-static void reiko_script_fan_cycle(Fighter *);
-static void reiko_script_fan_tail(Fighter *);
-static void reiko_script_fan_victim_end(Fighter *);
-static void reiko_script_fan_victory(Fighter *);
-static void reiko_script_finish(Fighter *);
-static void reiko_script_kick_finish(Fighter *);
-static void reiko_script_lk_return(Fighter *);
-static void reiko_script_lp_end(Fighter *);
-static void reiko_script_lp_return(Fighter *);
-static void reiko_script_lp_select(Fighter *);
-static void reiko_script_opponent_reaction(Fighter *, int);
-static void reiko_script_roundhouse_start(Fighter *);
-static void reiko_script_spike_tail(Fighter *);
+void reiko_script_air_finish(Fighter *);
+void reiko_script_air_release(Fighter *);
+void reiko_script_fan_cycle(Fighter *);
+void reiko_script_fan_tail(Fighter *);
+void reiko_script_fan_victim_end(Fighter *);
+void reiko_script_fan_victory(Fighter *);
+void reiko_script_finish(Fighter *);
+void reiko_script_kick_finish(Fighter *);
+void reiko_script_lk_return(Fighter *);
+void reiko_script_lp_end(Fighter *);
+void reiko_script_lp_return(Fighter *);
+void reiko_script_lp_select(Fighter *);
+void reiko_script_opponent_reaction(Fighter *, int);
+void reiko_script_roundhouse_start(Fighter *);
+void reiko_script_spike_tail(Fighter *);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

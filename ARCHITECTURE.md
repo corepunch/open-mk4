@@ -304,3 +304,14 @@ by contact before the action, then the next row displays it. Native tails hand
 off their fiber on the scheduler stack, transferring cleanup to frame playback.
 Independent movement uses bounded fixed-frame callback rows on the existing body
 physics clock; collision, friction and landing remain physical conditions.
+
+## Character module boundaries
+
+Fighter folders live directly under `game/`. Each `moves/*.c` is compiled
+independently and keeps move-owned callbacks and records static. The
+character-private header exposes only cross-file entries, continuations and
+shared records; game-facing declarations stay in the shared character header.
+Generated includes belong only to `character.c`, with typed entry functions and
+phase accessors connecting native moves to compiler-owned code. Source queries
+and strict coverage audits search the character module without folding generated
+bodies into native evidence.

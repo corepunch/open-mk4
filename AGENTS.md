@@ -116,7 +116,9 @@ a missing lowering once, reusing existing engine helpers. Use bounded
 character ports. Full bundle generation requires explicit `--bundle`; do not
 regenerate bulk dumps for routine move research.
 Keep native adapters and move entries in `game/<character>/moves/`.
-Each character compiles through its `character.c` and private `character.h`.
+Each move compiles as a separate C11 source with file-local helpers and data.
+Expose only required cross-file entries in the private `character.h`;
+`character.c` owns roster and generated-script integration.
 Keep its reviewed `port.json` and compiler-generated C in that same folder. Run
 `make scripts-check` and the strict coverage audit; new ports also require
 `--require-generated`. Consult native listings and the included reference

@@ -2,16 +2,16 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 6. */
 #include "script.h"
 
-static void shinnok_fan_tail(Fighter *);
-static void shinnok_script_air_finish(Fighter *);
-static void shinnok_script_air_release(Fighter *);
-static void shinnok_script_current_reaction(Fighter *, int);
-static void shinnok_script_kick_finish(Fighter *);
-static void shinnok_script_opponent_reaction(Fighter *, int);
-static void shinnok_script_roundhouse_finish(Fighter *);
-static void shinnok_script_roundhouse_start(Fighter *);
-static void shinnok_script_sweep_finish(Fighter *);
-static void shinnok_script_uppercut_finish(Fighter *);
+void shinnok_fan_tail(Fighter *);
+void shinnok_script_air_finish(Fighter *);
+void shinnok_script_air_release(Fighter *);
+void shinnok_script_current_reaction(Fighter *, int);
+void shinnok_script_kick_finish(Fighter *);
+void shinnok_script_opponent_reaction(Fighter *, int);
+void shinnok_script_roundhouse_finish(Fighter *);
+void shinnok_script_roundhouse_start(Fighter *);
+void shinnok_script_sweep_finish(Fighter *);
+void shinnok_script_uppercut_finish(Fighter *);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

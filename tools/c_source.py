@@ -1,4 +1,4 @@
-"""Read private C move fragments and retain real file/line navigation."""
+"""Read private C move modules and retain real file/line navigation."""
 from pathlib import Path
 import re
 
@@ -21,6 +21,9 @@ def source_files(path):
                 visit(child)
 
     visit(path)
+    if path.name == 'character.c':
+        for child in sorted((path.parent / 'moves').glob('*.c')):
+            visit(child)
     return result
 
 
@@ -35,7 +38,18 @@ def mask_c(text):
                   lambda match: re.sub(r'[^\n]', ' ', match[0]), text, flags=re.S)
 
 
+def private_aliases(path):
+    path = (ROOT / path).resolve()
+    header = path.parent / 'character.h'
+    if not header.is_file() and path.parent.name == 'moves':
+        header = path.parent.parent / 'character.h'
+    if not header.is_file():
+        return {}
+    return dict(re.findall(r'^#define (\w+) (\w+)$', header.read_text(), re.M))
+
+
 def function_source(path, name):
+    name = private_aliases(path).get(name, name)
     for candidate in source_files(path):
         text = candidate.read_text()
         masked = mask_c(text)

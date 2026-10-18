@@ -2,17 +2,17 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 5. */
 #include "script.h"
 
-static void fujin_script_air_finish(Fighter *);
-static void fujin_script_air_release(Fighter *);
-static void fujin_script_current_reaction(Fighter *, int);
-static void fujin_script_fan_tail(Fighter *);
-static void fujin_script_finish(Fighter *);
-static void fujin_script_lk_return(Fighter *);
-static void fujin_script_lp_extended_finish(Fighter *);
-static void fujin_script_lp_select(Fighter *);
-static void fujin_script_lp_short_finish(Fighter *);
-static void fujin_script_opponent_reaction(Fighter *, int);
-static void fujin_script_roundhouse_start(Fighter *);
+void fujin_script_air_finish(Fighter *);
+void fujin_script_air_release(Fighter *);
+void fujin_script_current_reaction(Fighter *, int);
+void fujin_script_fan_tail(Fighter *);
+void fujin_script_finish(Fighter *);
+void fujin_script_lk_return(Fighter *);
+void fujin_script_lp_extended_finish(Fighter *);
+void fujin_script_lp_select(Fighter *);
+void fujin_script_lp_short_finish(Fighter *);
+void fujin_script_opponent_reaction(Fighter *, int);
+void fujin_script_roundhouse_start(Fighter *);
 static const AttackRecord retail_contact_4ebb10 = {97648, -17039, 64225, 28835, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

@@ -2,20 +2,20 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 8. */
 #include "script.h"
 
-static void quan_chi_script_air_finish(Fighter *);
-static void quan_chi_script_air_release(Fighter *);
-static void quan_chi_script_current_reaction(Fighter *, int);
-static void quan_chi_script_fan_cycle(Fighter *);
-static void quan_chi_script_fan_tail(Fighter *);
-static void quan_chi_script_fan_victim_end(Fighter *);
-static void quan_chi_script_fan_victory(Fighter *);
-static void quan_chi_script_finish(Fighter *);
-static void quan_chi_script_kick_finish(Fighter *);
-static void quan_chi_script_lk_return(Fighter *);
-static void quan_chi_script_opponent_reaction(Fighter *, int);
-static void quan_chi_script_roundhouse_start(Fighter *);
-static void quan_chi_script_spike_tail(Fighter *);
-static void quan_chi_script_sweep_finish(Fighter *);
+void quan_chi_script_air_finish(Fighter *);
+void quan_chi_script_air_release(Fighter *);
+void quan_chi_script_current_reaction(Fighter *, int);
+void quan_chi_script_fan_cycle(Fighter *);
+void quan_chi_script_fan_tail(Fighter *);
+void quan_chi_script_fan_victim_end(Fighter *);
+void quan_chi_script_fan_victory(Fighter *);
+void quan_chi_script_finish(Fighter *);
+void quan_chi_script_kick_finish(Fighter *);
+void quan_chi_script_lk_return(Fighter *);
+void quan_chi_script_opponent_reaction(Fighter *, int);
+void quan_chi_script_roundhouse_start(Fighter *);
+void quan_chi_script_spike_tail(Fighter *);
+void quan_chi_script_sweep_finish(Fighter *);
 static const AttackRecord retail_contact_4ebb40 = {89128, -13762, 66783, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

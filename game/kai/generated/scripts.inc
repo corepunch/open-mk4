@@ -2,29 +2,29 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 11. */
 #include "script.h"
 
-static void kai_script_aerial_recovery(Fighter *);
-static void kai_script_aerial_transition(Fighter *);
-static void kai_script_air_finish(Fighter *);
-static void kai_script_air_release(Fighter *);
-static void kai_script_contact_b10_continuation(Fighter *);
-static void kai_script_contact_b9_continuation(Fighter *);
-static void kai_script_current_reaction(Fighter *, int);
-static void kai_script_draw_equip(Fighter *);
-static void kai_script_fan_cycle(Fighter *);
-static void kai_script_fan_tail(Fighter *);
-static void kai_script_fan_victim_end(Fighter *);
-static void kai_script_fan_victory(Fighter *);
-static void kai_script_finish(Fighter *);
-static void kai_script_kick_finish(Fighter *);
-static void kai_script_lk_finish(Fighter *);
-static void kai_script_lk_return(Fighter *);
-static void kai_script_lp_extended_finish(Fighter *);
-static void kai_script_lp_select(Fighter *);
-static void kai_script_lp_short_finish(Fighter *);
-static void kai_script_opponent_reaction(Fighter *, int);
-static void kai_script_roundhouse_start(Fighter *);
-static void kai_script_spike_tail(Fighter *);
-static void kai_script_stage_event(Fighter *);
+void kai_script_aerial_recovery(Fighter *);
+void kai_script_aerial_transition(Fighter *);
+void kai_script_air_finish(Fighter *);
+void kai_script_air_release(Fighter *);
+void kai_script_contact_b10_continuation(Fighter *);
+void kai_script_contact_b9_continuation(Fighter *);
+void kai_script_current_reaction(Fighter *, int);
+void kai_script_draw_equip(Fighter *);
+void kai_script_fan_cycle(Fighter *);
+void kai_script_fan_tail(Fighter *);
+void kai_script_fan_victim_end(Fighter *);
+void kai_script_fan_victory(Fighter *);
+void kai_script_finish(Fighter *);
+void kai_script_kick_finish(Fighter *);
+void kai_script_lk_finish(Fighter *);
+void kai_script_lk_return(Fighter *);
+void kai_script_lp_extended_finish(Fighter *);
+void kai_script_lp_select(Fighter *);
+void kai_script_lp_short_finish(Fighter *);
+void kai_script_opponent_reaction(Fighter *, int);
+void kai_script_roundhouse_start(Fighter *);
+void kai_script_spike_tail(Fighter *);
+void kai_script_stage_event(Fighter *);
 static const AttackRecord retail_contact_4ebb40 = {89128, -13762, 66783, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

@@ -1,0 +1,11 @@
+#include "../character.h"
+
+static void noob_saibot_spike_fatality(Fighter *fighter);
+
+void noob_saibot_script_spike_tail(Fighter *fighter) {
+  mk4_script_spike_tail(fighter);
+}
+
+static void noob_saibot_spike_fatality(Fighter *fighter) {
+  fighter_start_fiber(fighter, noob_saibot_entry_retail_script_004e6950, NULL);
+}

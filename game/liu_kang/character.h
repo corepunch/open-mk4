@@ -1,5 +1,5 @@
-#ifndef MK4_CHARACTER_LIU_KANG_PRIVATE_H
-#define MK4_CHARACTER_LIU_KANG_PRIVATE_H
+#ifndef MK4_LIU_KANG_PRIVATE_H
+#define MK4_LIU_KANG_PRIVATE_H
 
 #include "game.h"
 #include "native.h"
@@ -7,178 +7,306 @@
 #include "math_util.h"
 #include <stdlib.h>
 #include <string.h>
+#include "script.h"
 
-/* Private callbacks and entries; only character.c includes this header. */
-static void liu_kang_ready(Fighter *fighter);
-static int victim_action(const Fighter *fighter);
-static void liu_kang_kick_contact(Fighter *fighter);
-static void liu_kang_sweep_contact(Fighter *fighter);
-static void liu_kang_uppercut_contact(Fighter *fighter);
-static void uppercut_script(Fighter *fighter);
-static void liu_kang_uppercut(Fighter *fighter);
-static void liu_kang_sweep(Fighter *fighter);
-static void liu_kang_jab(Fighter *fighter);
-static void liu_kang_kick(Fighter *fighter);
-static Fighter *opponent(Fighter *fighter);
-static void ground_native_tail(Fighter *fighter);
-static void ground_attack(Fighter *fighter, int index);
-static void hp_script(Fighter *fighter);
-static void liu_kang_hp(Fighter *fighter);
-static void liu_kang_lk(Fighter *fighter);
-static void liu_kang_crouch_lp(Fighter *fighter);
-static void liu_kang_crouch_lk(Fighter *fighter);
-static void liu_kang_crouch_hk(Fighter *fighter);
-static void liu_kang_combo_hp(Fighter *fighter);
-static void liu_kang_roundhouse(Fighter *fighter);
-static void liu_kang_hk(Fighter *fighter);
-static bool can_ground_throw(const Fighter *fighter, bool low_kick);
-static void press_jab(Fighter *fighter);
-static void press_kick(Fighter *fighter);
-static void enter_uppercut(Fighter *fighter);
-static void enter_sweep(Fighter *fighter);
-static void press_lp(Fighter *fighter);
-static void press_lk(Fighter *fighter);
-static void air_land(Fighter *fighter);
-static void air_native_tail(Fighter *fighter, int index, int elapsed);
-static void start_air_attack(Fighter *fighter, int index);
-static void air_hp(Fighter *fighter);
-static void air_lp(Fighter *fighter);
-static void air_kick(Fighter *fighter);
-static void air_hk_diagonal(Fighter *fighter);
-static void air_lk_diagonal(Fighter *fighter);
-static void press_air_hp(Fighter *fighter);
-static void press_air_lp(Fighter *fighter);
-static void press_air_hk(Fighter *fighter);
-static void press_air_lk(Fighter *fighter);
-static void press_air_followup_kick(Fighter *fighter);
-static void press_crouch_lp(Fighter *fighter);
-static void press_uppercut(Fighter *fighter);
-static void press_crouch_hk(Fighter *fighter);
-static void press_crouch_lk(Fighter *fighter);
-static void press_combo_hp(Fighter *fighter);
-static void air_ground_hp(Fighter *fighter);
-static void press_air_ground_hp(Fighter *fighter);
-static void press_combo_hk(Fighter *fighter);
-static void press_knee_hp(Fighter *fighter);
-static void thrown_play_to(Fighter *victim, int sample, int step);
-static void thrown_finish(Fighter *victim);
-static void liu_script_lp_getup(Fighter *victim);
-static void lk_thrown_script(Fighter *victim);
-static void ground_thrown_frame(Fighter *victim);
-static void ground_thrown_script(Fighter *victim);
-static void throw_disarm(Fighter *victim);
-static void throw_cleanup(Fighter *owner);
-static void liu_script_lk_continue(Fighter *fighter);
-static void liu_script_lk_damage(Fighter *fighter);
-static void ground_throw(Fighter *fighter, bool lk);
-static void enter_throw(Fighter *fighter);
-static void enter_lk_throw(Fighter *fighter);
-static void bicycle_release_script(Fighter *victim);
-static void bicycle_release(Fighter *victim);
-static void bicycle_victim_guard(Fighter *victim);
-static void bicycle_victim_cycle(Fighter *victim);
-static void bicycle_victim_script(Fighter *victim);
-static void bicycle_cleanup(Fighter *fighter);
-static void bicycle_query(Fighter *fighter);
-static void bicycle_pair(Fighter *fighter);
-static bool bicycle_grounded(const Fighter *fighter);
-static void bicycle_script(Fighter *fighter);
-static bool can_bicycle(const Fighter *fighter);
-static void liu_kang_bicycle_kick(Fighter *fighter);
-static void fireball_projectile(Projectile *p);
-static void fireball_spawn(Fighter *fighter, int type);
-static void liu_script_spawn_low(Fighter *fighter, int task_type);
-static void liu_script_spawn_high(Fighter *fighter, int task_type);
-static void liu_script_spawn_air(Fighter *fighter, int task_type);
-static void liu_script_air_return(Fighter *fighter);
-static void fireball(Fighter *fighter, bool low);
-static void liu_kang_high_fireball(Fighter *fighter);
-static void liu_kang_low_fireball(Fighter *fighter);
-static void flying_query(Fighter *fighter);
-static void flying_kick_script(Fighter *fighter);
-static void liu_kang_flying_kick(Fighter *fighter);
-static void sword_travel(Fighter *fighter, int delay, int duration);
-static void sword_cleanup(Fighter *fighter);
-static bool sword_repeat(Fighter *fighter);
-static void sword_blend_weight(Fighter *fighter, float weight);
-static void sword_blend(Fighter *fighter, int ticks);
-static void sword_strike_script(Fighter *fighter);
-static void equip_dragon_sword(Fighter *fighter);
-static void sword_attack(Fighter *fighter, int index);
-static void sword_hp(Fighter *fighter);
-static void sword_lp(Fighter *fighter);
-static void sword_back_hp(Fighter *fighter);
-static void sword_back_lp(Fighter *fighter);
-static bool can_weapon(const Fighter *fighter);
-static void liu_kang_weapon(Fighter *fighter);
-static bool can_pickup(const Fighter *fighter);
-static void liu_kang_pickup(Fighter *fighter);
-static bool can_sidestep(const Fighter *fighter);
-static void liu_kang_sidestep(Fighter *fighter);
-static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner);
-static bool can_close_fatality(const Fighter *fighter);
-static bool can_first_fatality(const Fighter *fighter);
-static bool can_fan_fatality(const Fighter *fighter);
-static bool can_spike_fatality(const Fighter *fighter);
-static void finish_scene(Fighter *fighter);
-static void dragon_stream(Fighter *fighter);
-static void dragon_spawn(Fighter *fighter);
-static void dragon_actor_start(Fighter *fighter);
-static void dragon_victim_start(Fighter *fighter);
-static void dragon_tear(Fighter *fighter);
-static void dragon_bite_sound(Fighter *fighter);
-static void dragon_delayed_sound(Fighter *fighter);
-static void dragon_detach(Fighter *fighter);
-static void dragon_play(Fighter *fighter);
-static void dragon_fatality_script(Fighter *fighter);
-static void liu_script_fatal_watch(Fighter *fighter);
-static void liu_script_fatal_hit(Fighter *owner);
-static void fatal_fireball_object(Projectile *p);
-static void liu_script_fatal_setup(Fighter *fighter);
-static void liu_script_fatal_spawn(Fighter *fighter, int task_type);
-static void liu_script_fatal_align(Fighter *fighter);
-static void liu_script_fan_cycle(Fighter *fighter);
-static void liu_script_fan_victim_end(Fighter *victim);
-static void liu_script_fan_victory(Fighter *fighter);
-static void liu_script_fan_tail(Fighter *fighter);
-static void liu_spike_finish(Fighter *fighter);
-static void liu_script_spike_tail(Fighter *fighter);
-static void start_fatality(Fighter *fighter, int id);
-static void liu_kang_first_fatality(Fighter *fighter);
-static void liu_kang_second_fatality(Fighter *fighter);
-static void liu_kang_fan_fatality(Fighter *fighter);
-static void liu_kang_spike_fatality(Fighter *fighter);
-static void liu_script_scene_event(Fighter *fighter, int selector);
-static void liu_script_reaction(Fighter *fighter, int reaction);
-static void liu_script_kick_tail(Fighter *fighter);
-static void liu_script_sweep_tail(Fighter *fighter);
-static void liu_script_crouch_lk_tail(Fighter *fighter);
-static void liu_script_knee_tail(Fighter *fighter);
-static void liu_script_close_hp_tail(Fighter *fighter);
-static void liu_script_combo_hp_tail(Fighter *fighter);
-static void liu_script_roundhouse_tail(Fighter *fighter);
-static void liu_script_roundhouse_start(Fighter *fighter);
-static void liu_script_air_hp_tail(Fighter *fighter);
-static void liu_script_air_lp_tail(Fighter *fighter);
-static void liu_script_air_kick_tail(Fighter *fighter);
-static void liu_script_air_diagonal_tail(Fighter *fighter);
-static void liu_script_air_lk_tail(Fighter *fighter);
-static void liu_script_lk_thrown_tail(Fighter *victim);
-static void liu_script_bicycle_getup(Fighter *victim);
-static void bicycle_motion_pose(Fighter *fighter, float pose);
-static void liu_script_bicycle_motion(Fighter *fighter);
-static void liu_script_draw_equip(Fighter *fighter);
-static unsigned liu_script_sword_gate(Fighter *fighter);
-static void liu_script_sword_blend(Fighter *fighter);
-static void liu_script_motion(Fighter *fighter, int speed, int delay, int duration);
-static void liu_script_back_lp_tail(Fighter *fighter);
-static void armed_idle(Fighter *fighter);
-static void armed_walk(Fighter *fighter);
-static void armed_crouch(Fighter *fighter);
-static void armed_block(Fighter *fighter);
-static void cpu_close_hp(Fighter *fighter);
-static void cpu_close_hk(Fighter *fighter);
-static void cpu_air_hp(Fighter *fighter);
-static void cpu_air_hk(Fighter *fighter);
-static void cpu_air_lk(Fighter *fighter);
+/* Internal interfaces; helpers and tables stay local to their owning move. */
+#define armed_block liu_kang_armed_block
+#define armed_crouch liu_kang_armed_crouch
+#define armed_idle liu_kang_armed_idle
+#define armed_walk liu_kang_armed_walk
+#define bicycle_script liu_kang_bicycle_script
+#define can_bicycle liu_kang_can_bicycle
+#define can_close_fatality liu_kang_can_close_fatality
+#define can_fan_fatality liu_kang_can_fan_fatality
+#define can_first_fatality liu_kang_can_first_fatality
+#define can_ground_throw liu_kang_can_ground_throw
+#define can_pickup liu_kang_can_pickup
+#define can_sidestep liu_kang_can_sidestep
+#define can_spike_fatality liu_kang_can_spike_fatality
+#define can_weapon liu_kang_can_weapon
+#define cpu_air_hk liu_kang_cpu_air_hk
+#define cpu_air_hp liu_kang_cpu_air_hp
+#define cpu_air_lk liu_kang_cpu_air_lk
+#define cpu_close_hk liu_kang_cpu_close_hk
+#define cpu_close_hp liu_kang_cpu_close_hp
+#define enter_lk_throw liu_kang_enter_lk_throw
+#define enter_sweep liu_kang_enter_sweep
+#define enter_throw liu_kang_enter_throw
+#define enter_uppercut liu_kang_enter_uppercut
+#define fatal_pose liu_kang_fatal_pose
+#define finish_scene liu_kang_finish_scene
+#define fireball_mesh liu_kang_fireball_mesh
+#define fireball_spawn liu_kang_fireball_spawn
+#define flying_kick_script liu_kang_flying_kick_script
+#define ground_attack liu_kang_ground_attack
+#define ground_native_tail liu_kang_ground_native_tail
+#define hp_script liu_kang_hp_script
+#define liu_script_air_diagonal_tail liu_kang_liu_script_air_diagonal_tail
+#define liu_script_air_hp_tail liu_kang_liu_script_air_hp_tail
+#define liu_script_air_kick_tail liu_kang_liu_script_air_kick_tail
+#define liu_script_air_lk_tail liu_kang_liu_script_air_lk_tail
+#define liu_script_air_lp_tail liu_kang_liu_script_air_lp_tail
+#define liu_script_air_return liu_kang_liu_script_air_return
+#define liu_script_back_lp_tail liu_kang_liu_script_back_lp_tail
+#define liu_script_bicycle_getup liu_kang_liu_script_bicycle_getup
+#define liu_script_bicycle_motion liu_kang_liu_script_bicycle_motion
+#define liu_script_close_hp_tail liu_kang_liu_script_close_hp_tail
+#define liu_script_combo_hp_tail liu_kang_liu_script_combo_hp_tail
+#define liu_script_crouch_lk_tail liu_kang_liu_script_crouch_lk_tail
+#define liu_script_draw_equip liu_kang_liu_script_draw_equip
+#define liu_script_fan_cycle liu_kang_liu_script_fan_cycle
+#define liu_script_fan_tail liu_kang_liu_script_fan_tail
+#define liu_script_fan_victim_end liu_kang_liu_script_fan_victim_end
+#define liu_script_fan_victory liu_kang_liu_script_fan_victory
+#define liu_script_fatal_align liu_kang_liu_script_fatal_align
+#define liu_script_fatal_setup liu_kang_liu_script_fatal_setup
+#define liu_script_fatal_spawn liu_kang_liu_script_fatal_spawn
+#define liu_script_kick_tail liu_kang_liu_script_kick_tail
+#define liu_script_knee_tail liu_kang_liu_script_knee_tail
+#define liu_script_lk_continue liu_kang_liu_script_lk_continue
+#define liu_script_lk_damage liu_kang_liu_script_lk_damage
+#define liu_script_lk_thrown_tail liu_kang_liu_script_lk_thrown_tail
+#define liu_script_lp_getup liu_kang_liu_script_lp_getup
+#define liu_script_motion liu_kang_liu_script_motion
+#define liu_script_reaction liu_kang_liu_script_reaction
+#define liu_script_roundhouse_start liu_kang_liu_script_roundhouse_start
+#define liu_script_roundhouse_tail liu_kang_liu_script_roundhouse_tail
+#define liu_script_scene_event liu_kang_liu_script_scene_event
+#define liu_script_spawn_air liu_kang_liu_script_spawn_air
+#define liu_script_spawn_high liu_kang_liu_script_spawn_high
+#define liu_script_spawn_low liu_kang_liu_script_spawn_low
+#define liu_script_spike_tail liu_kang_liu_script_spike_tail
+#define liu_script_sweep_tail liu_kang_liu_script_sweep_tail
+#define liu_script_sword_blend liu_kang_liu_script_sword_blend
+#define liu_script_sword_gate liu_kang_liu_script_sword_gate
+#define lk_thrown_script liu_kang_lk_thrown_script
+#define opponent liu_kang_opponent
+#define press_air_hk liu_kang_press_air_hk
+#define press_air_hp liu_kang_press_air_hp
+#define press_air_lk liu_kang_press_air_lk
+#define press_air_lp liu_kang_press_air_lp
+#define press_combo_hk liu_kang_press_combo_hk
+#define press_combo_hp liu_kang_press_combo_hp
+#define press_crouch_hk liu_kang_press_crouch_hk
+#define press_crouch_lk liu_kang_press_crouch_lk
+#define press_crouch_lp liu_kang_press_crouch_lp
+#define press_jab liu_kang_press_jab
+#define press_kick liu_kang_press_kick
+#define press_knee_hp liu_kang_press_knee_hp
+#define press_lk liu_kang_press_lk
+#define press_lp liu_kang_press_lp
+#define press_uppercut liu_kang_press_uppercut
+#define s_hp liu_kang_s_hp
+#define s_jab liu_kang_s_jab
+#define s_kick liu_kang_s_kick
+#define s_sweep liu_kang_s_sweep
+#define s_throw liu_kang_s_throw
+#define s_uppercut liu_kang_s_uppercut
+#define start_fatality liu_kang_start_fatality
+#define sword_attacks liu_kang_sword_attacks
+#define throw_disarm liu_kang_throw_disarm
+#define thrown_finish liu_kang_thrown_finish
+#define thrown_play_to liu_kang_thrown_play_to
+#define uppercut_script liu_kang_uppercut_script
+#define victim_action liu_kang_victim_action
+
+enum {
+  G_LOW_KICK,
+  G_CROUCH_LP,
+  G_CROUCH_LK,
+  G_CROUCH_HK,
+  G_CLOSE_HP,
+  G_COMBO_HP,
+  G_CLOSE_HK,
+  G_ROUNDHOUSE
+};
+
+enum {
+  AIR_FLIGHT,
+  AIR_COMBO,
+  AIR_FREEZE,
+  AIR_COMBO_FREEZE,
+  AIR_FALL
+};
+
+#define COUNT(array) ((int)(sizeof array / sizeof array[0]))
+#define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
+#define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
+#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
+#define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
+
+void liu_kang_armed_block(Fighter *fighter);
+void liu_kang_armed_crouch(Fighter *fighter);
+void liu_kang_armed_idle(Fighter *fighter);
+void liu_kang_armed_walk(Fighter *fighter);
+void liu_kang_bicycle_script(Fighter *fighter);
+bool liu_kang_can_bicycle(const Fighter *fighter);
+bool liu_kang_can_close_fatality(const Fighter *fighter);
+bool liu_kang_can_fan_fatality(const Fighter *fighter);
+bool liu_kang_can_first_fatality(const Fighter *fighter);
+bool liu_kang_can_ground_throw(const Fighter *fighter, bool low_kick);
+bool liu_kang_can_pickup(const Fighter *fighter);
+bool liu_kang_can_sidestep(const Fighter *fighter);
+bool liu_kang_can_spike_fatality(const Fighter *fighter);
+bool liu_kang_can_weapon(const Fighter *fighter);
+void liu_kang_cpu_air_hk(Fighter *fighter);
+void liu_kang_cpu_air_hp(Fighter *fighter);
+void liu_kang_cpu_air_lk(Fighter *fighter);
+void liu_kang_cpu_close_hk(Fighter *fighter);
+void liu_kang_cpu_close_hp(Fighter *fighter);
+void liu_kang_enter_lk_throw(Fighter *fighter);
+void liu_kang_enter_sweep(Fighter *fighter);
+void liu_kang_enter_throw(Fighter *fighter);
+void liu_kang_enter_uppercut(Fighter *fighter);
+void liu_kang_fatal_pose(Fighter *fighter, int clip, int sample, bool owner);
+void liu_kang_finish_scene(Fighter *fighter);
+extern const MeshAnimation liu_kang_fireball_mesh;
+void liu_kang_fireball_spawn(Fighter *fighter, int type);
+void liu_kang_flying_kick_script(Fighter *fighter);
+void liu_kang_ground_attack(Fighter *fighter, int index);
+void liu_kang_ground_native_tail(Fighter *fighter);
+void liu_kang_hp_script(Fighter *fighter);
+void liu_kang_bicycle_kick(Fighter *fighter);
+void liu_kang_crouch_lp(Fighter *fighter);
+void liu_kang_fan_fatality(Fighter *fighter);
+void liu_kang_first_fatality(Fighter *fighter);
+void liu_kang_flying_kick(Fighter *fighter);
+void liu_kang_high_fireball(Fighter *fighter);
+void liu_kang_hk(Fighter *fighter);
+void liu_kang_hp(Fighter *fighter);
+void liu_kang_jab(Fighter *fighter);
+void liu_kang_kick(Fighter *fighter);
+void liu_kang_lk(Fighter *fighter);
+void liu_kang_low_fireball(Fighter *fighter);
+void liu_kang_pickup(Fighter *fighter);
+void liu_kang_ready(Fighter *fighter);
+void liu_kang_roundhouse(Fighter *fighter);
+void liu_kang_second_fatality(Fighter *fighter);
+void liu_kang_sidestep(Fighter *fighter);
+void liu_kang_spike_fatality(Fighter *fighter);
+void liu_kang_sweep(Fighter *fighter);
+void liu_kang_uppercut(Fighter *fighter);
+void liu_kang_weapon(Fighter *fighter);
+void liu_kang_liu_script_air_diagonal_tail(Fighter *fighter);
+void liu_kang_liu_script_air_hp_tail(Fighter *fighter);
+void liu_kang_liu_script_air_kick_tail(Fighter *fighter);
+void liu_kang_liu_script_air_lk_tail(Fighter *fighter);
+void liu_kang_liu_script_air_lp_tail(Fighter *fighter);
+void liu_kang_liu_script_air_return(Fighter *fighter);
+void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
+void liu_kang_liu_script_bicycle_getup(Fighter *victim);
+void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
+void liu_kang_liu_script_close_hp_tail(Fighter *fighter);
+void liu_kang_liu_script_combo_hp_tail(Fighter *fighter);
+void liu_kang_liu_script_crouch_lk_tail(Fighter *fighter);
+void liu_kang_liu_script_draw_equip(Fighter *fighter);
+void liu_kang_liu_script_fan_cycle(Fighter *fighter);
+void liu_kang_liu_script_fan_tail(Fighter *fighter);
+void liu_kang_liu_script_fan_victim_end(Fighter *victim);
+void liu_kang_liu_script_fan_victory(Fighter *fighter);
+void liu_kang_liu_script_fatal_align(Fighter *fighter);
+void liu_kang_liu_script_fatal_setup(Fighter *fighter);
+void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type);
+void liu_kang_liu_script_kick_tail(Fighter *fighter);
+void liu_kang_liu_script_knee_tail(Fighter *fighter);
+void liu_kang_liu_script_lk_continue(Fighter *fighter);
+void liu_kang_liu_script_lk_damage(Fighter *fighter);
+void liu_kang_liu_script_lk_thrown_tail(Fighter *victim);
+void liu_kang_liu_script_lp_getup(Fighter *victim);
+void liu_kang_liu_script_motion(Fighter *fighter, int speed, int delay, int duration);
+void liu_kang_liu_script_reaction(Fighter *fighter, int reaction);
+void liu_kang_liu_script_roundhouse_start(Fighter *fighter);
+void liu_kang_liu_script_roundhouse_tail(Fighter *fighter);
+void liu_kang_liu_script_scene_event(Fighter *fighter, int selector);
+void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type);
+void liu_kang_liu_script_spawn_high(Fighter *fighter, int task_type);
+void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type);
+void liu_kang_liu_script_spike_tail(Fighter *fighter);
+void liu_kang_liu_script_sweep_tail(Fighter *fighter);
+void liu_kang_liu_script_sword_blend(Fighter *fighter);
+unsigned int liu_kang_liu_script_sword_gate(Fighter *fighter);
+void liu_kang_lk_thrown_script(Fighter *victim);
+Fighter *liu_kang_opponent(Fighter *fighter);
+void liu_kang_press_air_hk(Fighter *fighter);
+void liu_kang_press_air_hp(Fighter *fighter);
+void liu_kang_press_air_lk(Fighter *fighter);
+void liu_kang_press_air_lp(Fighter *fighter);
+void liu_kang_press_combo_hk(Fighter *fighter);
+void liu_kang_press_combo_hp(Fighter *fighter);
+void liu_kang_press_crouch_hk(Fighter *fighter);
+void liu_kang_press_crouch_lk(Fighter *fighter);
+void liu_kang_press_crouch_lp(Fighter *fighter);
+void liu_kang_press_jab(Fighter *fighter);
+void liu_kang_press_kick(Fighter *fighter);
+void liu_kang_press_knee_hp(Fighter *fighter);
+void liu_kang_press_lk(Fighter *fighter);
+void liu_kang_press_lp(Fighter *fighter);
+void liu_kang_press_uppercut(Fighter *fighter);
+void liu_kang_entry_retail_script_004de3b0(Fighter *fighter);
+void liu_kang_entry_retail_script_004de410(Fighter *fighter);
+void liu_kang_entry_retail_script_004de428(Fighter *fighter);
+void liu_kang_entry_retail_script_004de468(Fighter *fighter);
+void liu_kang_entry_retail_script_004de798(Fighter *fighter);
+void liu_kang_entry_retail_script_004dfff8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e0020(Fighter *fighter);
+void liu_kang_entry_retail_script_004e0118(Fighter *fighter);
+const mmove_t *liu_kang_retail_script_004e0138_repeat_phase(void);
+void liu_kang_entry_retail_script_004e0148(Fighter *fighter);
+void liu_kang_entry_retail_script_004e0158(Fighter *fighter);
+void liu_kang_entry_retail_script_004e0188(Fighter *fighter);
+void liu_kang_entry_retail_script_004e01a0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e5c70(Fighter *fighter);
+void liu_kang_entry_retail_script_004e60b8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6158(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6190(Fighter *fighter);
+void liu_kang_entry_retail_script_004e61e0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e62a0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e62c0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e62d8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e62f0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e63d8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6500(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6658(Fighter *fighter);
+void liu_kang_entry_retail_script_004e66d0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e66f0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6710(Fighter *fighter);
+void liu_kang_entry_retail_script_004e67d8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6890(Fighter *fighter);
+void liu_kang_entry_retail_script_004e68a8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6950(Fighter *fighter);
+void liu_kang_entry_retail_script_004e69b0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6c90(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6d08(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6df0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e6e90(Fighter *fighter);
+void liu_kang_entry_retail_script_004e8610(Fighter *fighter);
+void liu_kang_entry_retail_script_004e8678(Fighter *fighter);
+void liu_kang_entry_retail_script_004e8688(Fighter *fighter);
+void liu_kang_entry_retail_script_004e86a8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e86d0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e86e8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e8718(Fighter *fighter);
+void liu_kang_entry_retail_script_004e9a90(Fighter *fighter);
+void liu_kang_entry_retail_script_004e9ad0(Fighter *fighter);
+void liu_kang_entry_retail_script_004e9ae8(Fighter *fighter);
+void liu_kang_entry_retail_script_004e9b68(Fighter *fighter);
+void liu_kang_entry_retail_script_004ec680(Fighter *fighter);
+void liu_kang_entry_retail_script_004ec7f0(Fighter *fighter);
+void liu_kang_entry_retail_script_004ed678(Fighter *fighter);
+void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter);
+void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter);
+extern const MoveDef liu_kang_s_hp;
+extern const MoveDef liu_kang_s_jab;
+extern const MoveDef liu_kang_s_kick;
+extern const MoveDef liu_kang_s_sweep;
+extern const MoveDef liu_kang_s_throw;
+extern const MoveDef liu_kang_s_uppercut;
+void liu_kang_start_fatality(Fighter *fighter, int id);
+extern const WeaponStrike liu_kang_sword_attacks[4];
+void liu_kang_throw_disarm(Fighter *victim);
+void liu_kang_thrown_finish(Fighter *victim);
+void liu_kang_thrown_play_to(Fighter *victim, int sample, int step);
+void liu_kang_uppercut_script(Fighter *fighter);
+int liu_kang_victim_action(const Fighter *fighter);
+
 #endif

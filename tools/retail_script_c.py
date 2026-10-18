@@ -261,7 +261,8 @@ def script_c_text(image, entry, limit=512, character=0, details=True):
 
 def move_c_text(image, name, limit=512, character=0):
     from retail_query import command_gate_rows, CONTACT_TABLES, attack_text
-    from retail_helper_view import helper_rows, port_source, ROOT
+    from retail_helper_view import helper_rows, ROOT
+    from c_source import function_source
     from scorpion_moves import attack_record, attack_record_at
     moves = moves_for(character)
     if name not in moves:
@@ -301,8 +302,8 @@ def move_c_text(image, name, limit=512, character=0):
             if helper is None or not helper.port or helper.port in ports:
                 continue
             ports.add(helper.port)
-            line, code = port_source(helper.port)
-            rows += ['', '[%s:%d](%s:%d)' % (helper.port[0], line, ROOT / helper.port[0], line)]
+            path, line, code = function_source(*helper.port)
+            rows += ['', '[%s:%d](%s:%d)' % (path, line, ROOT / path, line)]
             if len(code.splitlines()) <= remaining:
                 rows += ['', '```c', code, '```']
                 remaining -= len(code.splitlines())

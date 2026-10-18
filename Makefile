@@ -7,7 +7,7 @@ LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
 export CLANG_FORMAT
-FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.inc game/*/generated/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
+FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.[ch] game/*/generated/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
@@ -60,9 +60,9 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
-CHARACTER_SOURCES = $(wildcard game/*/character.c) game/mk4_common.c
+CHARACTER_SOURCES = $(wildcard game/*/character.c game/*/moves/*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/fiber.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
-GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.inc game/*/generated/*.inc) game/native.h game/script.h game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
+GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch] game/*/generated/*.inc) game/native.h game/script.h game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)

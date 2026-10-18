@@ -6,11 +6,11 @@ from pathlib import Path
 
 from retail_moves import RetailImage, clip_inventory
 from retail_codegen import format_c
-from c_source import read_source
+from c_source import read_source, private_aliases
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CHARACTER = re.compile(r"static const MoveDef\s+(\w+)\s*=\s*\{([^;]+)\};", re.S)
+CHARACTER = re.compile(r"(?:static )?const MoveDef\s+(\w+)\s*=\s*\{([^;]+)\};", re.S)
 CLIP_MEMBER = re.compile(r"\.clip\s*=\s*(\d+)")
 POSITIONAL_CLIP = re.compile(r"^\s*(\d+)\s*,")
 SCRIPT_CLIP = re.compile(r"mk4_(?:script|mmove)_(?:bind|bind_victim|inherit|scene_pose)\(fighter,\s*(\d+)\s*,")
@@ -19,13 +19,14 @@ SCRIPT_CLIP = re.compile(r"mk4_(?:script|mmove)_(?:bind|bind_victim|inherit|scen
 def clip_names(character):
     source = read_source(ROOT / "game" / character / "character.c")
     names = {}
+    aliases = {value: key for key, value in private_aliases(ROOT / 'game' / character / 'character.c').items()}
     for match in CHARACTER.finditer(source):
         symbol, body = match.groups()
         clip = CLIP_MEMBER.search(body)
         if clip is None:
             clip = POSITIONAL_CLIP.search(body)
         if clip is not None:
-            names.setdefault(int(clip.group(1)), []).append(symbol)
+            names.setdefault(int(clip.group(1)), []).append(aliases.get(symbol, symbol))
     generated = ROOT / "game" / character / "generated/scripts.inc"
     if generated.exists():
         for match in SCRIPT_CLIP.finditer(generated.read_text()):

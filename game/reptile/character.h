@@ -1,78 +1,104 @@
-#ifndef MK4_CHARACTER_REPTILE_PRIVATE_H
-#define MK4_CHARACTER_REPTILE_PRIVATE_H
+#ifndef MK4_REPTILE_PRIVATE_H
+#define MK4_REPTILE_PRIVATE_H
 
 #include "game.h"
 #include "native.h"
 #include "mk4_characters.h"
 #include "script.h"
+#include "script.h"
 
-/* Private callbacks and entries; only character.c includes this header. */
-static void reptile_clone_step(Projectile *projectile);
-static bool reptile_visibility_event(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-static BattleEvent *reptile_find_event(Fighter *fighter, BattleEventFn step, int kind);
-static void reptile_script_visibility_start(Fighter *fighter);
-static void reptile_script_visibility_extend(Fighter *fighter);
-static void reptile_script_visibility_end(Fighter *fighter);
-static void reptile_script_visibility_phase(Fighter *fighter);
-static bool reptile_clone_pose(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-static bool reptile_clone_contact(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-static bool reptile_task_76_event(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-static void reptile_task_76_spawn(Fighter *fighter, int task_type);
-static void reptile_ready(Fighter *fighter);
-static void reptile_script_lk_return(Fighter *fighter);
-static void reptile_script_47a6d0(Fighter *fighter);
-static void reptile_script_47ab50(Fighter *fighter);
-static void reptile_script_47b260(Fighter *fighter);
-static void reptile_loop_frame(Fighter *fighter);
-static void reptile_script_47b010(Fighter *fighter);
-static void reptile_script_reaction_side_getup(Fighter *fighter);
-static void reptile_script_lp_select(Fighter *fighter);
-static void reptile_script_lp_end(Fighter *fighter);
-static void reptile_script_lp_return(Fighter *fighter);
-static void reptile_script_current_reaction(Fighter *fighter, int reaction);
-void reptile_reaction_40(Fighter *fighter);
-static void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
-static void reptile_script_fan_cycle(Fighter *fighter);
-static void reptile_script_fan_victim_end(Fighter *fighter);
-static void reptile_script_fan_tail(Fighter *fighter);
-static void reptile_script_air_release(Fighter *fighter);
-static void reptile_script_finish(Fighter *fighter);
-static void reptile_script_air_finish(Fighter *fighter);
-static void reptile_script_roundhouse_start(Fighter *fighter);
-static void reptile_script_spike_tail(Fighter *fighter);
-static void reptile_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
-static void reptile_lp_throw(Fighter *fighter);
-static void reptile_lk_throw(Fighter *fighter);
-static void reptile_jab(Fighter *fighter);
-static void reptile_high_kick(Fighter *fighter);
-static void reptile_low_kick(Fighter *fighter);
-static void reptile_sweep(Fighter *fighter);
-static void reptile_uppercut(Fighter *fighter);
-static void reptile_roundhouse(Fighter *fighter);
-static void reptile_input_47a690(Fighter *fighter);
-static void reptile_input_47afe0(Fighter *fighter);
-static void reptile_input_4988d0(Fighter *fighter);
-static void reptile_air_hp(Fighter *fighter);
-static void reptile_air_lp(Fighter *fighter);
-static void reptile_air_kick(Fighter *fighter);
-static void reptile_air_diagonal_hk(Fighter *fighter);
-static void reptile_air_diagonal_lk(Fighter *fighter);
-static void reptile_air_throw(Fighter *fighter);
-static void reptile_fan_fatality(Fighter *fighter);
-static void reptile_spike_fatality(Fighter *fighter);
-static void reptile_entry_fan(Fighter *fighter);
-static void reptile_entry_spike(Fighter *fighter);
-static void reptile_entry_block(Fighter *fighter);
-static void reptile_entry_high_punch(Fighter *fighter);
-static void reptile_entry_low_punch(Fighter *fighter);
-static void reptile_press_punch(Fighter *fighter);
-static void reptile_press_low_punch(Fighter *fighter);
-static void reptile_press_kick(Fighter *fighter);
-static void reptile_press_low_kick(Fighter *fighter);
-static void reptile_press_uppercut(Fighter *fighter);
-static void reptile_press_sweep(Fighter *fighter);
-static void reptile_press_air_hp(Fighter *fighter);
-static void reptile_press_air_lp(Fighter *fighter);
-static void reptile_press_air_hk(Fighter *fighter);
-static void reptile_press_air_lk(Fighter *fighter);
+/* Internal interfaces; helpers and tables stay local to their owning move. */
+#define s_jab reptile_s_jab
+#define s_kick reptile_s_kick
+#define s_lp_thrown reptile_s_lp_thrown
+#define s_sweep reptile_s_sweep
+#define s_throw reptile_s_throw
+#define s_uppercut reptile_s_uppercut
+
+enum {
+  REPTILE_EVENT_VISIBILITY = 1,
+  REPTILE_EVENT_TASK_76
+};
+
+bool reptile_clone_contact(BattleEvent *event, Fighter *fighter, Fighter *opponent);
+bool reptile_clone_pose(BattleEvent *event, Fighter *fighter, Fighter *opponent);
+void reptile_clone_step(Projectile *projectile);
+void reptile_lp_throw(Fighter *fighter);
+void reptile_press_air_hk(Fighter *fighter);
+void reptile_press_air_hp(Fighter *fighter);
+void reptile_press_air_lk(Fighter *fighter);
+void reptile_press_air_lp(Fighter *fighter);
+void reptile_press_kick(Fighter *fighter);
+void reptile_press_low_kick(Fighter *fighter);
+void reptile_press_low_punch(Fighter *fighter);
+void reptile_press_punch(Fighter *fighter);
+void reptile_press_sweep(Fighter *fighter);
+void reptile_press_uppercut(Fighter *fighter);
+void reptile_script_47a6d0(Fighter *fighter);
+void reptile_script_47b010(Fighter *fighter);
+void reptile_script_air_finish(Fighter *fighter);
+void reptile_script_air_release(Fighter *fighter);
+extern const AttackRecord reptile_script_contact;
+void reptile_script_current_reaction(Fighter *fighter, int reaction);
+void reptile_script_fan_cycle(Fighter *fighter);
+void reptile_script_fan_tail(Fighter *fighter);
+void reptile_script_fan_victim_end(Fighter *fighter);
+void reptile_script_finish(Fighter *fighter);
+void reptile_script_lk_return(Fighter *fighter);
+void reptile_script_lp_end(Fighter *fighter);
+void reptile_script_lp_return(Fighter *fighter);
+void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
+void reptile_script_reaction_side_getup(Fighter *fighter);
+void reptile_script_roundhouse_start(Fighter *fighter);
+void reptile_script_spike_tail(Fighter *fighter);
+void reptile_script_visibility_end(Fighter *fighter);
+void reptile_script_visibility_extend(Fighter *fighter);
+void reptile_script_visibility_phase(Fighter *fighter);
+void reptile_script_visibility_start(Fighter *fighter);
+void reptile_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
+void reptile_sweep(Fighter *fighter);
+void reptile_task_76_spawn(Fighter *fighter, int task_type);
+void reptile_entry_retail_script_004de2f8(Fighter *fighter);
+void reptile_entry_retail_script_004de640(Fighter *fighter);
+void reptile_entry_retail_script_004de664(Fighter *fighter);
+void reptile_entry_retail_script_004de668(Fighter *fighter);
+void reptile_entry_retail_script_004de6b8(Fighter *fighter);
+void reptile_entry_retail_script_004de798(Fighter *fighter);
+void reptile_entry_retail_script_004e0118(Fighter *fighter);
+const mmove_t *reptile_retail_script_004e0138_repeat_phase(void);
+void reptile_entry_retail_script_004e0148(Fighter *fighter);
+void reptile_entry_retail_script_004e0188(Fighter *fighter);
+void reptile_entry_retail_script_004e01a0(Fighter *fighter);
+void reptile_entry_retail_script_004e5ca0(Fighter *fighter);
+void reptile_entry_retail_script_004e5d90(Fighter *fighter);
+void reptile_entry_retail_script_004e5e28(Fighter *fighter);
+void reptile_entry_retail_script_004e5e50(Fighter *fighter);
+void reptile_entry_retail_script_004e61f8(Fighter *fighter);
+void reptile_entry_retail_script_004e62a0(Fighter *fighter);
+void reptile_entry_retail_script_004e62f0(Fighter *fighter);
+void reptile_entry_retail_script_004e63d8(Fighter *fighter);
+void reptile_entry_retail_script_004e6500(Fighter *fighter);
+void reptile_entry_retail_script_004e6658(Fighter *fighter);
+void reptile_entry_retail_script_004e6710(Fighter *fighter);
+void reptile_entry_retail_script_004e6798(Fighter *fighter);
+void reptile_entry_retail_script_004e6800(Fighter *fighter);
+void reptile_entry_retail_script_004e6860(Fighter *fighter);
+void reptile_entry_retail_script_004e6878(Fighter *fighter);
+void reptile_entry_retail_script_004e6950(Fighter *fighter);
+void reptile_entry_retail_script_004e8128(Fighter *fighter);
+void reptile_entry_retail_script_004e8148(Fighter *fighter);
+void reptile_entry_retail_script_004e8174(Fighter *fighter);
+void reptile_entry_retail_script_004e8178(Fighter *fighter);
+void reptile_entry_retail_script_004e9620(Fighter *fighter);
+void reptile_entry_retail_script_004e9910(Fighter *fighter);
+void reptile_entry_retail_script_004e9b40(Fighter *fighter);
+void reptile_entry_retail_script_004e9bd0(Fighter *fighter);
+void reptile_entry_retail_script_004ed1e8(Fighter *fighter);
+extern const MoveDef reptile_s_jab;
+extern const MoveDef reptile_s_kick;
+extern const MoveDef reptile_s_lp_thrown;
+extern const MoveDef reptile_s_sweep;
+extern const MoveDef reptile_s_throw;
+extern const MoveDef reptile_s_uppercut;
+
 #endif

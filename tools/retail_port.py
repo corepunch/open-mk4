@@ -1,6 +1,6 @@
 """Bounded source extraction and operand ledger for translating a move to C.
 
-Existing ports are source excerpts, never automatic decompilation. Only same-translation-unit
+Existing ports are source excerpts, never automatic decompilation. Only character-module
 function references are expanded. Native literals retain instruction provenance;
 no operand is called Q16, damage, action or a host pointer just from its number.
 """
@@ -118,7 +118,7 @@ def port_entry(character, name):
 
 
 def source_closure(port):
-    """Lexical same-translation-unit references, including callback arguments; no C call-graph claim."""
+    """Lexical character-module references, including callback arguments; no C call-graph claim."""
     path, root = port
     source = read_source(ROOT / path)
     masked = masked_c(source)
@@ -139,7 +139,7 @@ def source_rows(port, limit):
     path, entry = port
     found = source_closure(port)
     rows = ['', '## Existing engine C — entry and local helpers', '',
-            'Read from the current workspace, not decompiled x86. Same-translation-unit function references (including callbacks) are expanded.',
+            'Read from the current workspace, not decompiled x86. Character-module function references (including callbacks) are expanded.',
             'These are review/extraction fragments: retain their supporting data/macros and engine APIs; they are not a standalone translation unit.', '']
     remaining = limit
     for name, (line, code) in found.items():

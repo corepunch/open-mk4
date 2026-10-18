@@ -107,7 +107,7 @@ def table_rows(image, names, limit=512):
 
 
 def port_source(port):
-    """Extract a local C definition, including private move fragments."""
+    """Extract a local C definition, including private move modules."""
     _, line, code = function_source(*port)
     return line, code
 
@@ -158,10 +158,10 @@ def native_c_text(image, address, limit=512):
     rows += helper_rows([address], image, include_related=True, limit=limit)
     helper = HELPERS.get(address)
     if helper is not None and helper.port:
-        line, code = port_source(helper.port)
+        path, line, code = function_source(*helper.port)
         rows += ['', '## Existing portable C adaptation', '',
                  'Read from [%s:%d](%s:%d). This is our engine implementation, not automatically decompiled retail x86.' %
-                 (helper.port[0], line, ROOT / helper.port[0], line)]
+                 (path, line, ROOT / path, line)]
         if len(code.splitlines()) <= limit:
             rows += ['', '```c', code, '```']
         else:

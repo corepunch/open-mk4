@@ -54,10 +54,11 @@ class HelperTests(unittest.TestCase):
 
     def test_native_only_clone_and_scepter_emit_actual_c_adaptations(self):
         clone = move_c_text(self.image, 'clone', character=4)
-        for value in ('static void sub_zero_clone(', 'static void clone_spin(', 'static void clone_object(',
+        for value in ('void sub_zero_clone(', 'static void clone_spin(', 'static void clone_object(',
                       'snapshot', '74', '53', '180', 'clip 301', 'shared_g.geo'):
             self.assertIn(value.lower(), clone.lower())
         self.assertIn('not automatically decompiled x86', clone)
+        self.assertIn('game/sub_zero/moves/clone.c:', clone)
         scepter = move_c_text(self.image, 'scepter_back_lp', character=4)
         self.assertIn('static void scepter_back_lp(', scepter)
         self.assertIn('reaction 151', scepter)

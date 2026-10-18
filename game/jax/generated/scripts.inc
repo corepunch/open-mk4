@@ -2,25 +2,25 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 13. */
 #include "script.h"
 
-static void jax_fan_tail(Fighter *);
-static void jax_script_air_finish(Fighter *);
-static void jax_script_air_throw_ground_release(Fighter *);
-static void jax_script_air_throw_release(Fighter *);
-static void jax_script_cpu_projectile_spawn(Fighter *, int);
-static void jax_script_current_reaction(Fighter *, int);
-static void jax_script_fatality_1_finish(Fighter *);
-static void jax_script_fatality_1_scene_signal(Fighter *);
-static void jax_script_fatality_2_scene_finish(Fighter *);
-static void jax_script_fatality_2_tail(Fighter *);
-static void jax_script_fatality_2_task(Fighter *, int);
-static void jax_script_finish(Fighter *);
-static void jax_script_jab_contact(Fighter *);
-static void jax_script_jab_followup(Fighter *);
-static void jax_script_lk_finish(Fighter *);
-static void jax_script_lk_return(Fighter *);
-static void jax_script_opponent_reaction(Fighter *, int);
-static void jax_script_roundhouse_start(Fighter *);
-static void jax_script_roundhouse_tail(Fighter *);
+void jax_fan_tail(Fighter *);
+void jax_script_air_finish(Fighter *);
+void jax_script_air_throw_ground_release(Fighter *);
+void jax_script_air_throw_release(Fighter *);
+void jax_script_cpu_projectile_spawn(Fighter *, int);
+void jax_script_current_reaction(Fighter *, int);
+void jax_script_fatality_1_finish(Fighter *);
+void jax_script_fatality_1_scene_signal(Fighter *);
+void jax_script_fatality_2_scene_finish(Fighter *);
+void jax_script_fatality_2_tail(Fighter *);
+void jax_script_fatality_2_task(Fighter *, int);
+void jax_script_finish(Fighter *);
+void jax_script_jab_contact(Fighter *);
+void jax_script_jab_followup(Fighter *);
+void jax_script_lk_finish(Fighter *);
+void jax_script_lk_return(Fighter *);
+void jax_script_opponent_reaction(Fighter *, int);
+void jax_script_roundhouse_start(Fighter *);
+void jax_script_roundhouse_tail(Fighter *);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 static const AttackRecord retail_contact_4ec080 = {59506, -16252, 47179, 22216, 40, 10, 9, 0, 5898};

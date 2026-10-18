@@ -1,17 +1,17 @@
 # Character source layout
 
-Each character folder owns its native implementation, generated output and
-reviewed compiler profile:
+Each fighter lives directly under `game/` and owns its native moves, generated
+output and reviewed compiler profile:
 
 ```text
 scorpion/
-  character.c          shared records, move tables and CharacterDef
-  character.h          private callback and entry declarations
+  character.c          roster definition and generated script integration
+  character.h          character-private interfaces
   moves/
-    spear.inc
-    teleport.inc
-    uppercut.inc
-    weapon.inc
+    spear.c
+    teleport.c
+    uppercut.c
+    weapon.c
     ...
   generated/
     scripts.inc        compiler-owned VM bodies and frame phases
@@ -19,19 +19,23 @@ scorpion/
   port.json            reviewed roots, native boundaries and coverage
 ```
 
-Move files are C11 include fragments compiled through `character.c`. This keeps
-callbacks and shared character data private without exposing them across the
-game. Related helpers live with their move; shared ground, air, control and
-weapon helpers have their own files. Existing external character entry points
-remain declared in the shared game headers.
+Move files are independent C11 translation units. A move owns its callbacks and
+immutable records whenever they are used only there; those symbols remain
+`static`. The private `character.h` declares only the entries, continuations and
+shared records needed across the character's files. Existing game-facing
+character declarations remain in the shared game headers.
 
-Edit native behavior in `moves/` and shared immutable records in `character.c`.
-Add private declarations to `character.h`. Edit the local `port.json` when
-reviewing compiler coverage or new generated roots. Regenerate with `make
-scripts` and `make mmove-frames`; generated files must not be edited by hand.
-The Makefile tracks private headers and move fragments as dependencies and
-formats them with the rest of the project.
+Generated bodies remain private to `character.c`. Small typed entry functions
+let native moves start those bodies, and phase accessors keep generated frame
+tables private. Private aliases retain the reviewed native binding names while
+namespace-qualified external symbols prevent collisions between fighters.
 
-The source-query tools follow private fragments and link to the actual move
-file and line. Generated code stays a separate query boundary. See the
-[fighter port workflow](../../docs/character-script-port.md).
+Edit native behavior and move-owned records in `moves/`. Add a private interface
+only when another file needs it. Edit `port.json` when reviewing compiler
+coverage or new generated roots. Regenerate with `make scripts` and
+`make mmove-frames`; generated files must not be edited by hand. The Makefile
+compiles every move source and tracks and formats character-private headers.
+
+Source-query tools search each character's move modules and link to the actual
+file and line. Generated code remains a separate query boundary. See the
+[fighter port workflow](../docs/character-script-port.md).

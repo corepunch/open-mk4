@@ -761,7 +761,7 @@ branches, and runs as part of `make check`.
 ## Character folders
 
 See [the source layout](../game/README.md). Each character owns its
-`character.c`, private header, move fragments, generated scripts/frame maps and
+`character.c`, private header, move C modules, generated scripts/frame maps and
 reviewed `port.json`. Move helpers remain private to one C11 translation unit.
 The source query and coverage tools follow native fragments while preserving
 actual file/line links and separate generated-code boundaries.

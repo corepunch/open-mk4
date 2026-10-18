@@ -2,24 +2,24 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 14. */
 #include "script.h"
 
-static void cage_script_air_finish(Fighter *);
-static void cage_script_air_release(Fighter *);
-static void cage_script_cpu_kick_tail(Fighter *);
-static void cage_script_fan_cycle(Fighter *);
-static void cage_script_fan_tail(Fighter *);
-static void cage_script_fan_victim_end(Fighter *);
-static void cage_script_fan_victory(Fighter *);
-static void cage_script_fatality_1_signal(Fighter *);
-static void cage_script_fatality_2_continue(Fighter *);
-static void cage_script_finish(Fighter *);
-static void cage_script_kick_finish(Fighter *);
-static void cage_script_lk_throw_return(Fighter *);
-static void cage_script_lp_return(Fighter *);
-static void cage_script_opponent_reaction(Fighter *, int);
-static void cage_script_powered_punch_finish_tail(Fighter *);
-static void cage_script_powered_punch_tail(Fighter *);
-static void cage_script_roundhouse_start(Fighter *);
-static void cage_script_spike_tail(Fighter *);
+void cage_script_air_finish(Fighter *);
+void cage_script_air_release(Fighter *);
+void cage_script_cpu_kick_tail(Fighter *);
+void cage_script_fan_cycle(Fighter *);
+void cage_script_fan_tail(Fighter *);
+void cage_script_fan_victim_end(Fighter *);
+void cage_script_fan_victory(Fighter *);
+void cage_script_fatality_1_signal(Fighter *);
+void cage_script_fatality_2_continue(Fighter *);
+void cage_script_finish(Fighter *);
+void cage_script_kick_finish(Fighter *);
+void cage_script_lk_throw_return(Fighter *);
+void cage_script_lp_return(Fighter *);
+void cage_script_opponent_reaction(Fighter *, int);
+void cage_script_powered_punch_finish_tail(Fighter *);
+void cage_script_powered_punch_tail(Fighter *);
+void cage_script_roundhouse_start(Fighter *);
+void cage_script_spike_tail(Fighter *);
 static const AttackRecord retail_contact_4ebb40 = {89128, -13762, 66783, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

@@ -1,5 +1,5 @@
-#ifndef MK4_CHARACTER_SCORPION_PRIVATE_H
-#define MK4_CHARACTER_SCORPION_PRIVATE_H
+#ifndef MK4_SCORPION_PRIVATE_H
+#define MK4_SCORPION_PRIVATE_H
 
 #include "game.h"
 #include "native.h"
@@ -7,185 +7,348 @@
 #include "math_util.h"
 #include <stdlib.h>
 #include <string.h>
+#include "script.h"
 
-/* Private callbacks and entries; only character.c includes this header. */
-static void scorpion_ready(Fighter *fighter);
-static int victim_action(const Fighter *fighter);
-static void scorpion_kick_contact(Fighter *fighter);
-static void scorpion_sweep_contact(Fighter *fighter);
-static void scorpion_uppercut_contact(Fighter *fighter);
-static void uppercut_script(Fighter *fighter);
-static void scorpion_uppercut(Fighter *fighter);
-static void scorpion_sweep(Fighter *fighter);
-static void scorpion_jab(Fighter *fighter);
-static void scorpion_kick(Fighter *fighter);
-static Fighter *opponent(Fighter *fighter);
-static void stop_body(Fighter *fighter);
-static void special_ready(Fighter *fighter);
-static void spear_stun_script(Fighter *fighter);
-static bool spear_not_pulling(const Fighter *fighter);
-static void spear_cleanup(Fighter *fighter);
-static void spear_projectile(Projectile *p);
-static void spear_spawn(Fighter *fighter);
-static bool can_spear(const Fighter *fighter);
-static void scorpion_spear(Fighter *fighter);
-static void teleport_land_script(Fighter *fighter);
-static void teleport_land_gate(Fighter *fighter);
-static void teleport_drop(Fighter *fighter);
-static void teleport_pause(Fighter *fighter);
-static void teleport_block_return(Fighter *fighter);
-static void teleport_query(Fighter *fighter);
-static void teleport_vanish(Fighter *fighter);
-static void teleport_range(Fighter *fighter);
-static void teleport_script(Fighter *fighter);
-static bool can_teleport(const Fighter *fighter);
-static void scorpion_teleport(Fighter *fighter);
-static void fire_contact(Fighter *fighter);
-static void fire_script(Fighter *fighter);
-static void scorpion_fire(Fighter *fighter);
-static bool fighting(const Fighter *fighter);
-static void ground_native_tail(Fighter *fighter);
-static void ground_attack(Fighter *fighter, int index);
-static void hp_script(Fighter *fighter);
-static void scorpion_hp(Fighter *fighter);
-static void scorpion_lk(Fighter *fighter);
-static void scorpion_crouch_lp(Fighter *fighter);
-static void scorpion_crouch_lk(Fighter *fighter);
-static void scorpion_crouch_hk(Fighter *fighter);
-static void scorpion_combo_hp(Fighter *fighter);
-static void scorpion_roundhouse(Fighter *fighter);
-static void scorpion_hk(Fighter *fighter);
-static bool can_ground_throw(const Fighter *fighter, bool low_kick);
-static void press_jab(Fighter *fighter);
-static void press_kick(Fighter *fighter);
-static void enter_uppercut(Fighter *fighter);
-static void enter_sweep(Fighter *fighter);
-static void press_lp(Fighter *fighter);
-static void press_lk(Fighter *fighter);
-static void air_land(Fighter *fighter);
-static void air_native_tail(Fighter *fighter, int index, int elapsed);
-static void start_air_attack(Fighter *fighter, int index);
-static void air_hp(Fighter *fighter);
-static void air_lp(Fighter *fighter);
-static void air_kick(Fighter *fighter);
-static void air_hk_diagonal(Fighter *fighter);
-static void air_lk_diagonal(Fighter *fighter);
-static void press_air_hp(Fighter *fighter);
-static void press_air_lp(Fighter *fighter);
-static void press_air_hk(Fighter *fighter);
-static void press_air_lk(Fighter *fighter);
-static void press_air_followup_kick(Fighter *fighter);
-static void press_crouch_lp(Fighter *fighter);
-static void press_uppercut(Fighter *fighter);
-static void press_crouch_hk(Fighter *fighter);
-static void press_crouch_lk(Fighter *fighter);
-static void press_combo_hp(Fighter *fighter);
-static void air_ground_hp(Fighter *fighter);
-static void press_air_ground_hp(Fighter *fighter);
-static void press_combo_hk(Fighter *fighter);
-static void press_knee_hp(Fighter *fighter);
-static void thrown_end_script(Fighter *victim);
-static void ground_thrown_frame(Fighter *victim);
-static void ground_thrown_script(Fighter *victim);
-static void script_lk_rebase(Fighter *fighter);
-static void script_lk_damage(Fighter *fighter);
-static void script_lk_return(Fighter *fighter);
-static void script_lp_return(Fighter *fighter);
-static void script_opponent_reaction(Fighter *fighter, int reaction);
-static void ground_throw(Fighter *fighter, bool lk);
-static void enter_throw(Fighter *fighter);
-static void enter_lk_throw(Fighter *fighter);
-static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner);
-static bool can_burn_fatality(const Fighter *fighter);
-static bool can_beast_fatality(const Fighter *fighter);
-static bool can_fan_fatality(const Fighter *fighter);
-static bool can_spike_fatality(const Fighter *fighter);
-static void finish_scene(Fighter *fighter);
-static void burn_start(Fighter *fighter);
-static void beast_start(Fighter *fighter);
-static void start_fatality(Fighter *fighter, int id);
-static void scorpion_burn_fatality(Fighter *fighter);
-static void scorpion_beast_fatality(Fighter *fighter);
-static void scorpion_fan_fatality(Fighter *fighter);
-static void scorpion_spike_fatality(Fighter *fighter);
-static void scorpion_idle(Fighter *fighter);
-static void scorpion_walk(Fighter *fighter);
-static void scorpion_crouch(Fighter *fighter);
-static void scorpion_block(Fighter *fighter);
-static void equip_sword(Fighter *fighter);
-static void script_weapon_ready(Fighter *fighter);
-static void sword_slash_recover(Fighter *fighter);
-static void sword_slash_query(Fighter *fighter);
-static void sword_slash_build(Fighter *fighter, int first, bool hit);
-static void sword_attack(Fighter *fighter, bool hp, bool back);
-static void sword_hp(Fighter *fighter);
-static void sword_lp(Fighter *fighter);
-static void sword_back_hp(Fighter *fighter);
-static void sword_back_lp(Fighter *fighter);
-static void sword_spin_recover(Fighter *fighter);
-static void sword_spin_control(Fighter *fighter);
-static void sword_spin_query(Fighter *fighter);
-static void spin_script(Fighter *fighter);
-static void sword_spin(Fighter *fighter);
-static bool can_weapon(const Fighter *fighter);
-static void scorpion_weapon(Fighter *fighter);
-static bool can_pickup(const Fighter *fighter);
-static void scorpion_pickup(Fighter *fighter);
-static void script_crouch_lk_tail(Fighter *fighter);
-static void script_knee_tail(Fighter *fighter);
-static void script_close_hp_tail(Fighter *fighter);
-static void script_combo_hp_tail(Fighter *fighter);
-static void script_roundhouse_tail(Fighter *fighter);
-static void script_roundhouse_start(Fighter *fighter);
-static void script_air_hp_tail(Fighter *fighter);
-static void script_air_lp_tail(Fighter *fighter);
-static void script_air_kick_tail(Fighter *fighter);
-static void script_air_lk_tail(Fighter *fighter);
-static void script_air_diagonal_tail(Fighter *fighter);
-static void script_sweep_tail(Fighter *fighter);
-static void script_fan_cycle(Fighter *fighter);
-static void script_fan_victim_end(Fighter *fighter);
-static void script_fan_victory(Fighter *fighter);
-static void script_fan_tail(Fighter *fighter);
-static void script_spike_tail(Fighter *fighter);
-static void fan_start(Fighter *fighter);
-static void spike_start(Fighter *fighter);
-static void script_air_release(Fighter *fighter);
-static void script_kick_tail(Fighter *fighter);
-static void scorpion_air_throw(Fighter *fighter);
-static void script_draw_equip(Fighter *fighter);
-static void spear_wait_native(Fighter *fighter);
-static void script_spear_done(Fighter *fighter);
-static void script_spear_return(Fighter *fighter);
-static void script_spawn_spear(Fighter *fighter, int type);
-static void script_spear_pull(Fighter *fighter);
-static void script_reaction(Fighter *fighter, int reaction);
-static void script_teleport_motion(Fighter *fighter);
-static void script_teleport_land(Fighter *fighter);
-static void script_fire_decor(Fighter *fighter);
-static void script_fire_flame(Fighter *fighter);
-static void script_burn_tail(Fighter *victim);
-static void script_teleport_victim_tail(Fighter *victim);
-void scorpion_generated_reaction(Fighter *victim);
-static void native_blend(Fighter *fighter, const SceneClip *blend);
-static void script_burn_begin(Fighter *fighter);
-static void script_burn_victim_start(Fighter *fighter);
-static void script_burn_repeat1(Fighter *fighter);
-static void script_burn_repeat2(Fighter *fighter);
-static void script_burn_victory(Fighter *fighter);
-static void script_burn_victim_cue(Fighter *victim);
-static void script_burn_victim_repeat(Fighter *victim);
-static void script_burn_victim_blend(Fighter *victim);
-static void script_burn_victim_impact(Fighter *victim);
-static void script_burn_victim_settle(Fighter *victim);
-static void script_burn_victim_end(Fighter *victim);
-static void script_transform_effect(Fighter *fighter, int type);
-static void beast_watch(Fighter *fighter);
-static void script_beast_begin(Fighter *fighter);
-static void script_beast_attack(Fighter *fighter);
-static void script_beast_victim_pieces(Fighter *victim);
-static void script_beast_voice(Fighter *fighter);
-static void script_beast_park(Fighter *fighter);
-static void beast_gore_object(Projectile *object);
-static void script_beast_gore(Fighter *victim, int type);
+/* Internal interfaces; helpers and tables stay local to their owning move. */
+#define can_beast_fatality scorpion_can_beast_fatality
+#define can_burn_fatality scorpion_can_burn_fatality
+#define can_fan_fatality scorpion_can_fan_fatality
+#define can_ground_throw scorpion_can_ground_throw
+#define can_pickup scorpion_can_pickup
+#define can_spear scorpion_can_spear
+#define can_spike_fatality scorpion_can_spike_fatality
+#define can_teleport scorpion_can_teleport
+#define can_weapon scorpion_can_weapon
+#define enter_lk_throw scorpion_enter_lk_throw
+#define enter_sweep scorpion_enter_sweep
+#define enter_throw scorpion_enter_throw
+#define enter_uppercut scorpion_enter_uppercut
+#define fan_start scorpion_fan_start
+#define fighting scorpion_fighting
+#define fire_script scorpion_fire_script
+#define ground_attack scorpion_ground_attack
+#define ground_native_tail scorpion_ground_native_tail
+#define hp_script scorpion_hp_script
+#define native_blend scorpion_native_blend
+#define opponent scorpion_opponent
+#define press_air_hk scorpion_press_air_hk
+#define press_air_hp scorpion_press_air_hp
+#define press_air_lk scorpion_press_air_lk
+#define press_air_lp scorpion_press_air_lp
+#define press_combo_hk scorpion_press_combo_hk
+#define press_combo_hp scorpion_press_combo_hp
+#define press_crouch_hk scorpion_press_crouch_hk
+#define press_crouch_lk scorpion_press_crouch_lk
+#define press_crouch_lp scorpion_press_crouch_lp
+#define press_jab scorpion_press_jab
+#define press_kick scorpion_press_kick
+#define press_knee_hp scorpion_press_knee_hp
+#define press_lk scorpion_press_lk
+#define press_lp scorpion_press_lp
+#define press_uppercut scorpion_press_uppercut
+#define s_hp scorpion_s_hp
+#define s_jab scorpion_s_jab
+#define s_kick scorpion_s_kick
+#define s_sweep scorpion_s_sweep
+#define s_teleport_land scorpion_s_teleport_land
+#define s_throw scorpion_s_throw
+#define s_uppercut scorpion_s_uppercut
+#define script_air_diagonal_tail scorpion_script_air_diagonal_tail
+#define script_air_hp_tail scorpion_script_air_hp_tail
+#define script_air_kick_tail scorpion_script_air_kick_tail
+#define script_air_lk_tail scorpion_script_air_lk_tail
+#define script_air_lp_tail scorpion_script_air_lp_tail
+#define script_air_release scorpion_script_air_release
+#define script_beast_attack scorpion_script_beast_attack
+#define script_beast_begin scorpion_script_beast_begin
+#define script_beast_gore scorpion_script_beast_gore
+#define script_beast_park scorpion_script_beast_park
+#define script_beast_victim_pieces scorpion_script_beast_victim_pieces
+#define script_beast_voice scorpion_script_beast_voice
+#define script_burn_begin scorpion_script_burn_begin
+#define script_burn_repeat1 scorpion_script_burn_repeat1
+#define script_burn_repeat2 scorpion_script_burn_repeat2
+#define script_burn_tail scorpion_script_burn_tail
+#define script_burn_victim_blend scorpion_script_burn_victim_blend
+#define script_burn_victim_cue scorpion_script_burn_victim_cue
+#define script_burn_victim_end scorpion_script_burn_victim_end
+#define script_burn_victim_impact scorpion_script_burn_victim_impact
+#define script_burn_victim_repeat scorpion_script_burn_victim_repeat
+#define script_burn_victim_settle scorpion_script_burn_victim_settle
+#define script_burn_victim_start scorpion_script_burn_victim_start
+#define script_burn_victory scorpion_script_burn_victory
+#define script_close_hp_tail scorpion_script_close_hp_tail
+#define script_combo_hp_tail scorpion_script_combo_hp_tail
+#define script_crouch_lk_tail scorpion_script_crouch_lk_tail
+#define script_draw_equip scorpion_script_draw_equip
+#define script_fan_cycle scorpion_script_fan_cycle
+#define script_fan_tail scorpion_script_fan_tail
+#define script_fan_victim_end scorpion_script_fan_victim_end
+#define script_fan_victory scorpion_script_fan_victory
+#define script_fire_decor scorpion_script_fire_decor
+#define script_fire_flame scorpion_script_fire_flame
+#define script_kick_tail scorpion_script_kick_tail
+#define script_knee_tail scorpion_script_knee_tail
+#define script_lk_damage scorpion_script_lk_damage
+#define script_lk_rebase scorpion_script_lk_rebase
+#define script_lk_return scorpion_script_lk_return
+#define script_lp_return scorpion_script_lp_return
+#define script_opponent_reaction scorpion_script_opponent_reaction
+#define script_reaction scorpion_script_reaction
+#define script_roundhouse_start scorpion_script_roundhouse_start
+#define script_roundhouse_tail scorpion_script_roundhouse_tail
+#define script_spawn_spear scorpion_script_spawn_spear
+#define script_spear_done scorpion_script_spear_done
+#define script_spear_pull scorpion_script_spear_pull
+#define script_spear_return scorpion_script_spear_return
+#define script_spike_tail scorpion_script_spike_tail
+#define script_sweep_tail scorpion_script_sweep_tail
+#define script_teleport_land scorpion_script_teleport_land
+#define script_teleport_motion scorpion_script_teleport_motion
+#define script_teleport_victim_tail scorpion_script_teleport_victim_tail
+#define script_transform_effect scorpion_script_transform_effect
+#define script_weapon_ready scorpion_script_weapon_ready
+#define spear_stun_script scorpion_spear_stun_script
+#define special_ready scorpion_special_ready
+#define spike_start scorpion_spike_start
+#define spin_script scorpion_spin_script
+#define start_fatality scorpion_start_fatality
+#define stop_body scorpion_stop_body
+#define sword_spin_control scorpion_sword_spin_control
+#define sword_spin_query scorpion_sword_spin_query
+#define teleport_land_script scorpion_teleport_land_script
+#define teleport_script scorpion_teleport_script
+#define thrown_end_script scorpion_thrown_end_script
+#define uppercut_script scorpion_uppercut_script
+#define victim_action scorpion_victim_action
+
+enum {
+  G_LOW_KICK,
+  G_CROUCH_LP,
+  G_CROUCH_LK,
+  G_CROUCH_HK,
+  G_CLOSE_HP,
+  G_COMBO_HP,
+  G_CLOSE_HK,
+  G_ROUNDHOUSE
+};
+
+enum {
+  AIR_FLIGHT,
+  AIR_COMBO,
+  AIR_FREEZE,
+  AIR_COMBO_FREEZE,
+  AIR_FALL
+};
+
+#define COUNT(array) ((int)(sizeof array / sizeof array[0]))
+#define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
+#define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
+#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
+#define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
+#define BLEND(clip_id, cursor)                                                                                                                                 \
+  {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, cursor, cursor, 1, 0x3333, 0x3333}
+
+bool scorpion_can_beast_fatality(const Fighter *fighter);
+bool scorpion_can_burn_fatality(const Fighter *fighter);
+bool scorpion_can_fan_fatality(const Fighter *fighter);
+bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick);
+bool scorpion_can_pickup(const Fighter *fighter);
+bool scorpion_can_spear(const Fighter *fighter);
+bool scorpion_can_spike_fatality(const Fighter *fighter);
+bool scorpion_can_teleport(const Fighter *fighter);
+bool scorpion_can_weapon(const Fighter *fighter);
+void scorpion_enter_lk_throw(Fighter *fighter);
+void scorpion_enter_sweep(Fighter *fighter);
+void scorpion_enter_throw(Fighter *fighter);
+void scorpion_enter_uppercut(Fighter *fighter);
+void scorpion_fan_start(Fighter *fighter);
+bool scorpion_fighting(const Fighter *fighter);
+void scorpion_fire_script(Fighter *fighter);
+void scorpion_ground_attack(Fighter *fighter, int index);
+void scorpion_ground_native_tail(Fighter *fighter);
+void scorpion_hp_script(Fighter *fighter);
+void scorpion_native_blend(Fighter *fighter, const SceneClip *blend);
+Fighter *scorpion_opponent(Fighter *fighter);
+void scorpion_press_air_hk(Fighter *fighter);
+void scorpion_press_air_hp(Fighter *fighter);
+void scorpion_press_air_lk(Fighter *fighter);
+void scorpion_press_air_lp(Fighter *fighter);
+void scorpion_press_combo_hk(Fighter *fighter);
+void scorpion_press_combo_hp(Fighter *fighter);
+void scorpion_press_crouch_hk(Fighter *fighter);
+void scorpion_press_crouch_lk(Fighter *fighter);
+void scorpion_press_crouch_lp(Fighter *fighter);
+void scorpion_press_jab(Fighter *fighter);
+void scorpion_press_kick(Fighter *fighter);
+void scorpion_press_knee_hp(Fighter *fighter);
+void scorpion_press_lk(Fighter *fighter);
+void scorpion_press_lp(Fighter *fighter);
+void scorpion_press_uppercut(Fighter *fighter);
+void scorpion_entry_retail_script_004d2e58(Fighter *fighter);
+void scorpion_entry_retail_script_004d2e88(Fighter *fighter);
+void scorpion_entry_retail_script_004d2eb0(Fighter *fighter);
+void scorpion_entry_retail_script_004d2ef8(Fighter *fighter);
+void scorpion_entry_retail_script_004d2f10(Fighter *fighter);
+void scorpion_entry_retail_script_004de2f8(Fighter *fighter);
+void scorpion_entry_retail_script_004de318(Fighter *fighter);
+void scorpion_entry_retail_script_004de328(Fighter *fighter);
+void scorpion_entry_retail_script_004de798(Fighter *fighter);
+void scorpion_entry_retail_script_004e0118(Fighter *fighter);
+const mmove_t *scorpion_retail_script_004e0138_repeat_phase(void);
+void scorpion_entry_retail_script_004e0148(Fighter *fighter);
+void scorpion_entry_retail_script_004e0158(Fighter *fighter);
+void scorpion_entry_retail_script_004e0188(Fighter *fighter);
+void scorpion_entry_retail_script_004e01a0(Fighter *fighter);
+void scorpion_entry_retail_script_004e0278(Fighter *fighter);
+void scorpion_entry_retail_script_004e0288(Fighter *fighter);
+void scorpion_entry_retail_script_004e0298(Fighter *fighter);
+void scorpion_entry_retail_script_004e02a8(Fighter *fighter);
+void scorpion_entry_retail_script_004e02b8(Fighter *fighter);
+void scorpion_entry_retail_script_004e02d0(Fighter *fighter);
+void scorpion_entry_retail_script_004e0300(Fighter *fighter);
+void scorpion_entry_retail_script_004e0310(Fighter *fighter);
+void scorpion_entry_retail_script_004e0320(Fighter *fighter);
+void scorpion_entry_retail_script_004e0338(Fighter *fighter);
+void scorpion_entry_retail_script_004e0348(Fighter *fighter);
+void scorpion_entry_retail_script_004e0358(Fighter *fighter);
+void scorpion_entry_retail_script_004e5b58(Fighter *fighter);
+void scorpion_entry_retail_script_004e5c70(Fighter *fighter);
+void scorpion_entry_retail_script_004e5ca0(Fighter *fighter);
+void scorpion_entry_retail_script_004e5e28(Fighter *fighter);
+void scorpion_entry_retail_script_004e5e50(Fighter *fighter);
+void scorpion_entry_retail_script_004e60b8(Fighter *fighter);
+void scorpion_entry_retail_script_004e6158(Fighter *fighter);
+void scorpion_entry_retail_script_004e6190(Fighter *fighter);
+void scorpion_entry_retail_script_004e61e0(Fighter *fighter);
+void scorpion_entry_retail_script_004e61f8(Fighter *fighter);
+void scorpion_entry_retail_script_004e62a0(Fighter *fighter);
+void scorpion_entry_retail_script_004e62c0(Fighter *fighter);
+void scorpion_entry_retail_script_004e62d8(Fighter *fighter);
+void scorpion_entry_retail_script_004e62f0(Fighter *fighter);
+void scorpion_entry_retail_script_004e63d8(Fighter *fighter);
+void scorpion_entry_retail_script_004e6500(Fighter *fighter);
+void scorpion_entry_retail_script_004e6658(Fighter *fighter);
+void scorpion_entry_retail_script_004e66d0(Fighter *fighter);
+void scorpion_entry_retail_script_004e66f0(Fighter *fighter);
+void scorpion_entry_retail_script_004e6710(Fighter *fighter);
+void scorpion_entry_retail_script_004e6798(Fighter *fighter);
+void scorpion_entry_retail_script_004e6844(Fighter *fighter);
+void scorpion_entry_retail_script_004e6860(Fighter *fighter);
+void scorpion_entry_retail_script_004e6878(Fighter *fighter);
+void scorpion_entry_retail_script_004e6950(Fighter *fighter);
+void scorpion_entry_retail_script_004e69b0(Fighter *fighter);
+void scorpion_entry_retail_script_004e6d08(Fighter *fighter);
+void scorpion_entry_retail_script_004e87b0(Fighter *fighter);
+void scorpion_entry_retail_script_004e8818(Fighter *fighter);
+void scorpion_entry_retail_script_004e8850(Fighter *fighter);
+void scorpion_entry_retail_script_004e97f8(Fighter *fighter);
+void scorpion_entry_retail_script_004e9910(Fighter *fighter);
+void scorpion_entry_retail_script_004e9938(Fighter *fighter);
+void scorpion_entry_retail_script_004e9970(Fighter *fighter);
+void scorpion_entry_retail_script_004e9d00(Fighter *fighter);
+void scorpion_entry_retail_script_004e9f20(Fighter *fighter);
+void scorpion_entry_retail_script_004ec8b0(Fighter *fighter);
+void scorpion_entry_retail_script_004ec918(Fighter *fighter);
+void scorpion_entry_retail_script_004ed448(Fighter *fighter);
+void scorpion_entry_retail_script_004ed4a8(Fighter *fighter);
+extern const MoveDef scorpion_s_hp;
+extern const MoveDef scorpion_s_jab;
+extern const MoveDef scorpion_s_kick;
+extern const MoveDef scorpion_s_sweep;
+extern const MoveDef scorpion_s_teleport_land;
+extern const MoveDef scorpion_s_throw;
+extern const MoveDef scorpion_s_uppercut;
+void scorpion_air_throw(Fighter *fighter);
+void scorpion_beast_fatality(Fighter *fighter);
+void scorpion_block(Fighter *fighter);
+void scorpion_burn_fatality(Fighter *fighter);
+void scorpion_crouch(Fighter *fighter);
+void scorpion_fan_fatality(Fighter *fighter);
+void scorpion_fire(Fighter *fighter);
+void scorpion_hk(Fighter *fighter);
+void scorpion_hp(Fighter *fighter);
+void scorpion_idle(Fighter *fighter);
+void scorpion_jab(Fighter *fighter);
+void scorpion_kick(Fighter *fighter);
+void scorpion_lk(Fighter *fighter);
+void scorpion_pickup(Fighter *fighter);
+void scorpion_ready(Fighter *fighter);
+void scorpion_roundhouse(Fighter *fighter);
+void scorpion_spear(Fighter *fighter);
+void scorpion_spike_fatality(Fighter *fighter);
+void scorpion_sweep(Fighter *fighter);
+void scorpion_teleport(Fighter *fighter);
+void scorpion_uppercut(Fighter *fighter);
+void scorpion_walk(Fighter *fighter);
+void scorpion_weapon(Fighter *fighter);
+void scorpion_script_air_diagonal_tail(Fighter *fighter);
+void scorpion_script_air_hp_tail(Fighter *fighter);
+void scorpion_script_air_kick_tail(Fighter *fighter);
+void scorpion_script_air_lk_tail(Fighter *fighter);
+void scorpion_script_air_lp_tail(Fighter *fighter);
+void scorpion_script_air_release(Fighter *fighter);
+void scorpion_script_beast_attack(Fighter *fighter);
+void scorpion_script_beast_begin(Fighter *fighter);
+void scorpion_script_beast_gore(Fighter *victim, int type);
+void scorpion_script_beast_park(Fighter *fighter);
+void scorpion_script_beast_victim_pieces(Fighter *victim);
+void scorpion_script_beast_voice(Fighter *fighter);
+void scorpion_script_burn_begin(Fighter *fighter);
+void scorpion_script_burn_repeat1(Fighter *fighter);
+void scorpion_script_burn_repeat2(Fighter *fighter);
+void scorpion_script_burn_tail(Fighter *victim);
+void scorpion_script_burn_victim_blend(Fighter *victim);
+void scorpion_script_burn_victim_cue(Fighter *victim);
+void scorpion_script_burn_victim_end(Fighter *victim);
+void scorpion_script_burn_victim_impact(Fighter *victim);
+void scorpion_script_burn_victim_repeat(Fighter *victim);
+void scorpion_script_burn_victim_settle(Fighter *victim);
+void scorpion_script_burn_victim_start(Fighter *fighter);
+void scorpion_script_burn_victory(Fighter *fighter);
+void scorpion_script_close_hp_tail(Fighter *fighter);
+void scorpion_script_combo_hp_tail(Fighter *fighter);
+void scorpion_script_crouch_lk_tail(Fighter *fighter);
+void scorpion_script_draw_equip(Fighter *fighter);
+void scorpion_script_fan_cycle(Fighter *fighter);
+void scorpion_script_fan_tail(Fighter *fighter);
+void scorpion_script_fan_victim_end(Fighter *fighter);
+void scorpion_script_fan_victory(Fighter *fighter);
+void scorpion_script_fire_decor(Fighter *fighter);
+void scorpion_script_fire_flame(Fighter *fighter);
+void scorpion_script_kick_tail(Fighter *fighter);
+void scorpion_script_knee_tail(Fighter *fighter);
+void scorpion_script_lk_damage(Fighter *fighter);
+void scorpion_script_lk_rebase(Fighter *fighter);
+void scorpion_script_lk_return(Fighter *fighter);
+void scorpion_script_lp_return(Fighter *fighter);
+void scorpion_script_opponent_reaction(Fighter *fighter, int reaction);
+void scorpion_script_reaction(Fighter *fighter, int reaction);
+void scorpion_script_roundhouse_start(Fighter *fighter);
+void scorpion_script_roundhouse_tail(Fighter *fighter);
+void scorpion_script_spawn_spear(Fighter *fighter, int type);
+void scorpion_script_spear_done(Fighter *fighter);
+void scorpion_script_spear_pull(Fighter *fighter);
+void scorpion_script_spear_return(Fighter *fighter);
+void scorpion_script_spike_tail(Fighter *fighter);
+void scorpion_script_sweep_tail(Fighter *fighter);
+void scorpion_script_teleport_land(Fighter *fighter);
+void scorpion_script_teleport_motion(Fighter *fighter);
+void scorpion_script_teleport_victim_tail(Fighter *victim);
+void scorpion_script_transform_effect(Fighter *fighter, int type);
+void scorpion_script_weapon_ready(Fighter *fighter);
+void scorpion_spear_stun_script(Fighter *fighter);
+void scorpion_special_ready(Fighter *fighter);
+void scorpion_spike_start(Fighter *fighter);
+void scorpion_spin_script(Fighter *fighter);
+void scorpion_start_fatality(Fighter *fighter, int id);
+void scorpion_stop_body(Fighter *fighter);
+void scorpion_sword_spin_control(Fighter *fighter);
+void scorpion_sword_spin_query(Fighter *fighter);
+void scorpion_teleport_land_script(Fighter *fighter);
+void scorpion_teleport_script(Fighter *fighter);
+void scorpion_thrown_end_script(Fighter *victim);
+void scorpion_uppercut_script(Fighter *fighter);
+int scorpion_victim_action(const Fighter *fighter);
+
 #endif

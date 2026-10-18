@@ -1,0 +1,33 @@
+#include "../character.h"
+
+static void fujin_script_fan_cycle(Fighter *fighter);
+static void fujin_script_fan_victim_end(Fighter *fighter);
+static void fujin_script_fan_victory(Fighter *fighter);
+static void fujin_fan_fatality(Fighter *fighter);
+static void fujin_entry_fan(Fighter *fighter);
+
+static void fujin_script_fan_cycle(Fighter *fighter) {
+  mk4_script_fan_cycle(fighter);
+}
+
+static void fujin_script_fan_victim_end(Fighter *fighter) {
+  mk4_script_fan_victim_end(fighter);
+}
+
+static void fujin_script_fan_victory(Fighter *fighter) {
+  fujin_entry_retail_script_004e0158(fighter);
+}
+
+void fujin_script_fan_tail(Fighter *fighter) {
+  mk4_script_fan_tail(fighter, fujin_retail_script_004e0138_repeat_phase(), fujin_entry_retail_script_004e0148, fujin_entry_retail_script_004e01a0);
+}
+
+static void fujin_fan_fatality(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter_start_fiber(victim, fujin_entry_retail_script_004e0188, NULL);
+  fighter_start_fiber(fighter, fujin_entry_retail_script_004e0118, NULL);
+}
+
+static void fujin_entry_fan(Fighter *fighter) {
+  fujin_fan_fatality(fighter);
+}

@@ -1,112 +1,132 @@
-#ifndef MK4_CHARACTER_JAREK_PRIVATE_H
-#define MK4_CHARACTER_JAREK_PRIVATE_H
+#ifndef MK4_JAREK_PRIVATE_H
+#define MK4_JAREK_PRIVATE_H
 
 #include "game.h"
 #include "native.h"
 #include "math_util.h"
 #include "mk4_characters.h"
 #include "script.h"
+#include "script.h"
 
-/* Private callbacks and entries; only character.c includes this header. */
-static void jarek_ready(Fighter *fighter);
-static void jarek_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script);
-static void jarek_idle(Fighter *fighter);
-static void jarek_walk(Fighter *fighter);
-static void jarek_crouch(Fighter *fighter);
-static void jarek_block(Fighter *fighter);
-static void jarek_jab(Fighter *fighter);
-static void jarek_high_punch(Fighter *fighter);
-static void jarek_high_kick(Fighter *fighter);
-static void jarek_low_kick(Fighter *fighter);
-static void jarek_sweep(Fighter *fighter);
-static void jarek_uppercut(Fighter *fighter);
-static void jarek_roundhouse(Fighter *fighter);
-static void jarek_air_hp(Fighter *fighter);
-static void jarek_air_lp(Fighter *fighter);
-static void jarek_air_kick(Fighter *fighter);
-static void jarek_air_diagonal_hk(Fighter *fighter);
-static void jarek_air_diagonal_lk(Fighter *fighter);
-static void jarek_ground_throw(Fighter *fighter, FighterFn script);
-static void jarek_script_lk_return(Fighter *fighter);
-static void jarek_script_lp_select(Fighter *fighter);
-static void jarek_script_lp_end(Fighter *fighter);
-static void jarek_script_lp_return(Fighter *fighter);
-static void jarek_lp_throw(Fighter *fighter);
-static void jarek_lk_throw(Fighter *fighter);
-static void jarek_air_throw(Fighter *fighter);
-static void jarek_script_air_release(Fighter *fighter);
-static void jarek_fan_start(Fighter *fighter);
-static void jarek_fan_tail(Fighter *fighter);
-static void jarek_fan_victory(Fighter *fighter);
-static void jarek_fan_fatality(Fighter *fighter);
-static void jarek_spike_fatality(Fighter *fighter);
-static void jarek_throw_reaction(Fighter *fighter);
-static void jarek_script_current_reaction(Fighter *fighter, int reaction);
-static void jarek_script_opponent_reaction(Fighter *fighter, int reaction);
-static void jarek_fatality_contact_hold(Fighter *fighter);
-static void jarek_start_contact_recovery(BattleEvent *event, Fighter *fighter, int frames);
-static bool jarek_contact_event(BattleEvent *event, Fighter *fighter, Fighter *victim);
-static void jarek_contact_dispatch(Fighter *fighter, int stage);
-static void jarek_script_contact_25(Fighter *fighter);
-static void jarek_script_contact_26(Fighter *fighter);
-static void jarek_script_contact_24(Fighter *fighter);
-static bool jarek_fan_event(BattleEvent *event, Fighter *fighter, Fighter *victim);
-static void jarek_script_fan_scene(Fighter *fighter);
-static void jarek_script_fan_victim_scene(Fighter *fighter);
-static bool jarek_fan_finish_event(BattleEvent *event, Fighter *fighter, Fighter *victim);
-static bool jarek_fan_finish_pose(BattleEvent *event, Fighter *fighter, Fighter *victim);
-static void jarek_script_fan_finish(Fighter *fighter);
-static void jarek_ai_projectile_step(Projectile *projectile);
-static void jarek_ai_projectile_spawn(Fighter *fighter, int task_type);
-static void jarek_kick_frame(Fighter *fighter);
-static void jarek_script_kick_finish(Fighter *fighter);
-static void jarek_script_low_kick_avoid(Fighter *fighter);
-static void jarek_script_low_kick_clear(Fighter *fighter);
-static void jarek_script_low_kick_finish(Fighter *fighter);
-static void jarek_script_air_finish(Fighter *fighter);
-static void jarek_uppercut_frame(Fighter *fighter);
-static void jarek_script_uppercut_finish(Fighter *fighter);
-static void jarek_script_sweep_finish(Fighter *fighter);
-static void jarek_script_roundhouse_start(Fighter *fighter);
-static void jarek_script_roundhouse_finish(Fighter *fighter);
-static void jarek_press_punch(Fighter *fighter);
-static void jarek_press_low_punch(Fighter *fighter);
-static void jarek_press_kick(Fighter *fighter);
-static void jarek_press_low_kick(Fighter *fighter);
-static void jarek_press_uppercut(Fighter *fighter);
-static void jarek_press_sweep(Fighter *fighter);
-static void jarek_press_air_hp(Fighter *fighter);
-static void jarek_press_air_lp(Fighter *fighter);
-static void jarek_press_air_kick(Fighter *fighter);
-static void jarek_press_air_throw(Fighter *fighter);
-static void jarek_input_target(Fighter *fighter, Button button);
-static void jarek_command_469a00(Fighter *fighter);
-static void jarek_command_469a10(Fighter *fighter);
-static void jarek_command_469a20(Fighter *fighter);
-static void jarek_command_469a30(Fighter *fighter);
-static void jarek_command_469a40(Fighter *fighter);
-static void jarek_command_469a50(Fighter *fighter);
-static void jarek_command_469a60(Fighter *fighter);
-static void jarek_command_469a70(Fighter *fighter);
-static void jarek_command_469a80(Fighter *fighter);
-static void jarek_command_469a90(Fighter *fighter);
-static void jarek_command_469aa0(Fighter *fighter);
-static void jarek_command_469ab0(Fighter *fighter);
-static void jarek_command_469ac0(Fighter *fighter);
-static void jarek_command_469ad0(Fighter *fighter);
-static void jarek_command_467cd0(Fighter *fighter);
-static void jarek_command_467ce0(Fighter *fighter);
-static void jarek_command_46d1d0(Fighter *fighter);
-static void jarek_command_4797f0(Fighter *fighter);
-static void jarek_command_47b310(Fighter *fighter);
-static void jarek_command_47b5d0(Fighter *fighter);
-static void jarek_command_497540(Fighter *fighter);
-static void jarek_script_weapon_draw_finish(Fighter *fighter);
-static void jarek_script_47b600(Fighter *fighter);
-static void jarek_weapon_hp(Fighter *fighter);
-static void jarek_weapon_lp(Fighter *fighter);
-static void jarek_weapon_back_hp(Fighter *fighter);
-static void jarek_weapon_back_lp(Fighter *fighter);
-static void jarek_weapon_equip(Fighter *fighter);
-static void jarek_weapon_action(Fighter *fighter);
+/* Internal interfaces; helpers and tables stay local to their owning move. */
+#define s_block jarek_s_block
+#define s_crouch jarek_s_crouch
+#define s_high_kick jarek_s_high_kick
+#define s_idle jarek_s_idle
+#define s_jab jarek_s_jab
+#define s_low_kick jarek_s_low_kick
+#define s_sweep jarek_s_sweep
+#define s_throw jarek_s_throw
+#define s_uppercut jarek_s_uppercut
+#define s_walk jarek_s_walk
+
+enum {
+  JAREK_CONTACT_RECOVERY = 1,
+  JAREK_FAN_SCENE = 16,
+  JAREK_FAN_FINISH
+};
+
+void jarek_ai_projectile_spawn(Fighter *fighter, int task_type);
+void jarek_block(Fighter *fighter);
+void jarek_crouch(Fighter *fighter);
+void jarek_fan_fatality(Fighter *fighter);
+void jarek_fan_victory(Fighter *fighter);
+void jarek_fatality_contact_hold(Fighter *fighter);
+void jarek_high_kick(Fighter *fighter);
+void jarek_idle(Fighter *fighter);
+void jarek_input_target(Fighter *fighter, Button button);
+void jarek_jab(Fighter *fighter);
+void jarek_low_kick(Fighter *fighter);
+void jarek_lp_throw(Fighter *fighter);
+void jarek_press_air_hp(Fighter *fighter);
+void jarek_press_air_kick(Fighter *fighter);
+void jarek_press_air_lp(Fighter *fighter);
+void jarek_press_kick(Fighter *fighter);
+void jarek_press_low_kick(Fighter *fighter);
+void jarek_press_low_punch(Fighter *fighter);
+void jarek_press_punch(Fighter *fighter);
+void jarek_press_sweep(Fighter *fighter);
+void jarek_press_uppercut(Fighter *fighter);
+void jarek_ready(Fighter *fighter);
+void jarek_script_47b600(Fighter *fighter);
+void jarek_script_air_finish(Fighter *fighter);
+void jarek_script_air_release(Fighter *fighter);
+void jarek_script_contact_24(Fighter *fighter);
+void jarek_script_contact_25(Fighter *fighter);
+void jarek_script_contact_26(Fighter *fighter);
+void jarek_script_current_reaction(Fighter *fighter, int reaction);
+void jarek_script_fan_finish(Fighter *fighter);
+void jarek_script_fan_scene(Fighter *fighter);
+void jarek_script_fan_victim_scene(Fighter *fighter);
+void jarek_script_kick_finish(Fighter *fighter);
+void jarek_script_lk_return(Fighter *fighter);
+void jarek_script_low_kick_avoid(Fighter *fighter);
+void jarek_script_low_kick_clear(Fighter *fighter);
+void jarek_script_lp_end(Fighter *fighter);
+void jarek_script_lp_return(Fighter *fighter);
+void jarek_script_lp_select(Fighter *fighter);
+void jarek_script_opponent_reaction(Fighter *fighter, int reaction);
+void jarek_script_roundhouse_finish(Fighter *fighter);
+void jarek_script_roundhouse_start(Fighter *fighter);
+void jarek_script_sweep_finish(Fighter *fighter);
+void jarek_script_uppercut_finish(Fighter *fighter);
+void jarek_script_weapon_draw_finish(Fighter *fighter);
+extern const AttackRecord jarek_selector_25_record;
+void jarek_spike_fatality(Fighter *fighter);
+void jarek_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script);
+void jarek_sweep(Fighter *fighter);
+void jarek_uppercut(Fighter *fighter);
+void jarek_walk(Fighter *fighter);
+void jarek_weapon_action(Fighter *fighter);
+void jarek_entry_retail_script_004de2f8(Fighter *fighter);
+void jarek_entry_retail_script_004de640(Fighter *fighter);
+void jarek_entry_retail_script_004de664(Fighter *fighter);
+void jarek_entry_retail_script_004de668(Fighter *fighter);
+void jarek_entry_retail_script_004de6b8(Fighter *fighter);
+void jarek_entry_retail_script_004de798(Fighter *fighter);
+void jarek_entry_retail_script_004e0118(Fighter *fighter);
+void jarek_entry_retail_script_004e0138(Fighter *fighter);
+const mmove_t *jarek_retail_script_004e0138_repeat_phase(void);
+void jarek_entry_retail_script_004e0148(Fighter *fighter);
+void jarek_entry_retail_script_004e0158(Fighter *fighter);
+void jarek_entry_retail_script_004e0188(Fighter *fighter);
+void jarek_entry_retail_script_004e01a0(Fighter *fighter);
+void jarek_entry_retail_script_004e01b0(Fighter *fighter);
+void jarek_entry_retail_script_004e5c70(Fighter *fighter);
+void jarek_entry_retail_script_004e5ca0(Fighter *fighter);
+void jarek_entry_retail_script_004e5d90(Fighter *fighter);
+void jarek_entry_retail_script_004e5e28(Fighter *fighter);
+void jarek_entry_retail_script_004e5e50(Fighter *fighter);
+void jarek_entry_retail_script_004e61f8(Fighter *fighter);
+void jarek_entry_retail_script_004e62a0(Fighter *fighter);
+void jarek_entry_retail_script_004e62c0(Fighter *fighter);
+void jarek_entry_retail_script_004e62d8(Fighter *fighter);
+void jarek_entry_retail_script_004e62f0(Fighter *fighter);
+void jarek_entry_retail_script_004e63d8(Fighter *fighter);
+void jarek_entry_retail_script_004e6500(Fighter *fighter);
+void jarek_entry_retail_script_004e6658(Fighter *fighter);
+void jarek_entry_retail_script_004e6710(Fighter *fighter);
+void jarek_entry_retail_script_004e6798(Fighter *fighter);
+void jarek_entry_retail_script_004e6800(Fighter *fighter);
+void jarek_entry_retail_script_004e6860(Fighter *fighter);
+void jarek_entry_retail_script_004e6878(Fighter *fighter);
+void jarek_entry_retail_script_004e6950(Fighter *fighter);
+void jarek_entry_retail_script_004e80a0(Fighter *fighter);
+void jarek_entry_retail_script_004e80c8(Fighter *fighter);
+void jarek_entry_retail_script_004e80f4(Fighter *fighter);
+void jarek_entry_retail_script_004e81a8(Fighter *fighter);
+void jarek_entry_retail_script_004e9910(Fighter *fighter);
+void jarek_entry_retail_script_004ed118(Fighter *fighter);
+void jarek_entry_retail_script_004ed190(Fighter *fighter);
+extern const MoveDef jarek_s_block;
+extern const MoveDef jarek_s_crouch;
+extern const MoveDef jarek_s_high_kick;
+extern const MoveDef jarek_s_idle;
+extern const MoveDef jarek_s_jab;
+extern const MoveDef jarek_s_low_kick;
+extern const MoveDef jarek_s_sweep;
+extern const MoveDef jarek_s_throw;
+extern const MoveDef jarek_s_uppercut;
+extern const MoveDef jarek_s_walk;
+
 #endif

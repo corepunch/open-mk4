@@ -2,19 +2,19 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 9. */
 #include "script.h"
 
-static void tanya_script_air_finish(Fighter *);
-static void tanya_script_air_release(Fighter *);
-static void tanya_script_current_reaction(Fighter *, int);
-static void tanya_script_fan_cycle(Fighter *);
-static void tanya_script_fan_tail(Fighter *);
-static void tanya_script_fan_victim_end(Fighter *);
-static void tanya_script_fan_victory(Fighter *);
-static void tanya_script_finish(Fighter *);
-static void tanya_script_kick_finish(Fighter *);
-static void tanya_script_lk_return(Fighter *);
-static void tanya_script_opponent_reaction(Fighter *, int);
-static void tanya_script_roundhouse_start(Fighter *);
-static void tanya_script_spike_tail(Fighter *);
+void tanya_script_air_finish(Fighter *);
+void tanya_script_air_release(Fighter *);
+void tanya_script_current_reaction(Fighter *, int);
+void tanya_script_fan_cycle(Fighter *);
+void tanya_script_fan_tail(Fighter *);
+void tanya_script_fan_victim_end(Fighter *);
+void tanya_script_fan_victory(Fighter *);
+void tanya_script_finish(Fighter *);
+void tanya_script_kick_finish(Fighter *);
+void tanya_script_lk_return(Fighter *);
+void tanya_script_opponent_reaction(Fighter *, int);
+void tanya_script_roundhouse_start(Fighter *);
+void tanya_script_spike_tail(Fighter *);
 static const AttackRecord retail_contact_4ebb10 = {97648, -17039, 64225, 28835, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 

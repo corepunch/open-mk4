@@ -2,31 +2,31 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 12. */
 #include "script.h"
 
-static void jarek_ai_projectile_spawn(Fighter *, int);
-static void jarek_fan_victory(Fighter *);
-static void jarek_script_47b600(Fighter *);
-static void jarek_script_air_finish(Fighter *);
-static void jarek_script_air_release(Fighter *);
-static void jarek_script_contact_24(Fighter *);
-static void jarek_script_contact_25(Fighter *);
-static void jarek_script_contact_26(Fighter *);
-static void jarek_script_current_reaction(Fighter *, int);
-static void jarek_script_fan_finish(Fighter *);
-static void jarek_script_fan_scene(Fighter *);
-static void jarek_script_fan_victim_scene(Fighter *);
-static void jarek_script_kick_finish(Fighter *);
-static void jarek_script_lk_return(Fighter *);
-static void jarek_script_low_kick_avoid(Fighter *);
-static void jarek_script_low_kick_clear(Fighter *);
-static void jarek_script_lp_end(Fighter *);
-static void jarek_script_lp_return(Fighter *);
-static void jarek_script_lp_select(Fighter *);
-static void jarek_script_opponent_reaction(Fighter *, int);
-static void jarek_script_roundhouse_finish(Fighter *);
-static void jarek_script_roundhouse_start(Fighter *);
-static void jarek_script_sweep_finish(Fighter *);
-static void jarek_script_uppercut_finish(Fighter *);
-static void jarek_script_weapon_draw_finish(Fighter *);
+void jarek_ai_projectile_spawn(Fighter *, int);
+void jarek_fan_victory(Fighter *);
+void jarek_script_47b600(Fighter *);
+void jarek_script_air_finish(Fighter *);
+void jarek_script_air_release(Fighter *);
+void jarek_script_contact_24(Fighter *);
+void jarek_script_contact_25(Fighter *);
+void jarek_script_contact_26(Fighter *);
+void jarek_script_current_reaction(Fighter *, int);
+void jarek_script_fan_finish(Fighter *);
+void jarek_script_fan_scene(Fighter *);
+void jarek_script_fan_victim_scene(Fighter *);
+void jarek_script_kick_finish(Fighter *);
+void jarek_script_lk_return(Fighter *);
+void jarek_script_low_kick_avoid(Fighter *);
+void jarek_script_low_kick_clear(Fighter *);
+void jarek_script_lp_end(Fighter *);
+void jarek_script_lp_return(Fighter *);
+void jarek_script_lp_select(Fighter *);
+void jarek_script_opponent_reaction(Fighter *, int);
+void jarek_script_roundhouse_finish(Fighter *);
+void jarek_script_roundhouse_start(Fighter *);
+void jarek_script_sweep_finish(Fighter *);
+void jarek_script_uppercut_finish(Fighter *);
+void jarek_script_weapon_draw_finish(Fighter *);
 static const AttackRecord retail_contact_4ebb10 = {97648, -17039, 64225, 28835, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 
