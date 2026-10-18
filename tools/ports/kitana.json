@@ -5,6 +5,16 @@
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/weapons.c",
       "symbol": "weapon_pickup"
+    },
+    "0x498b70": {
+      "evidence": "Kitana low-punch command record 4e44b0 enters the clip-26 paired shadow action and VM root 4ed268.",
+      "source": "game/c_kitana.c",
+      "symbol": "kitana_command_shadow_low"
+    },
+    "0x498e70": {
+      "evidence": "Kitana airborne low-punch command record 4e44bc enters the clip-24 paired shadow action and VM root 4ed2c0.",
+      "source": "game/c_kitana.c",
+      "symbol": "kitana_command_shadow_up"
     }
   },
   "entry_contexts": {
@@ -208,10 +218,12 @@
     "0x4ea130",
     "0x4ec7a0",
     "0x4ec7f0",
+    "0x4ed268",
+    "0x4ed2c0",
     "0x4ed4c0"
   ],
   "integration_source": "game/c_kitana.c",
-  "inventory_sha256": "5d94715088715a83e805b8b993cb62885885cebc1bc29ddb72f86384d895eb4d",
+  "inventory_sha256": "f6218f7e4bef0b25c1f28d1c758c984b7ee9e3975f824a391cd76883e0369ec4",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
@@ -403,6 +415,16 @@
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
       "source": "game/weapons.c",
       "symbol": "weapon_throw"
+    },
+    "shadow_low": {
+      "evidence": "Kitana low-punch command uses the shared 4ed268 actor and contact phases with its own controller entry.",
+      "source": "game/c_kitana.c",
+      "symbol": "kitana_command_shadow_low"
+    },
+    "shadow_up": {
+      "evidence": "Kitana airborne low-punch command uses the shared 4ed2c0 actor, motion and recovery phases.",
+      "source": "game/c_kitana.c",
+      "symbol": "kitana_command_shadow_up"
     }
   },
   "output": "game/generated/kitana.inc",

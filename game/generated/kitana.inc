@@ -2,6 +2,9 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 16. */
 #include "script.h"
 
+static void kitana_shadow_install_physics(Fighter *);
+static void kitana_shadow_task_low(Fighter *, int);
+static void kitana_shadow_task_up(Fighter *, int);
 static void script_air_diagonal_tail(Fighter *);
 static void script_air_getup(Fighter *);
 static void script_air_hp_tail(Fighter *);
@@ -2585,6 +2588,125 @@ L_004ec804: {
 L_004ec808: {
   /* EXE 004ec808: 0x32000000 0x496970 */
   script_weapon_lp_tail(fighter);
+  return;
+}
+}
+
+static inline void retail_script_004ed268(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  goto L_004ed268;
+L_004ed268: {
+  /* EXE 004ed268: 0x48000200 0x13ebad */
+  mk4_script_bind(fighter, 26, 14, 0);
+  mk4_script_finish_clip(fighter, 1);
+  goto L_004ed270;
+}
+L_004ed270: {
+  /* EXE 004ed270: 0x20000021 */
+  battle_sound(SOUND_A, 33);
+  goto L_004ed274;
+}
+L_004ed274: {
+  /* EXE 004ed274: 0x75000000 */
+  mk4_script_guard_block_sound_26(fighter);
+  goto L_004ed278;
+}
+L_004ed278: {
+  /* EXE 004ed278: 0x40000000 0x4b 0x498bb0 */
+  kitana_shadow_task_low(fighter, 75);
+  goto L_004ed284;
+}
+L_004ed284: {
+  /* EXE 004ed284: 0x4a00000b */
+  fighter_fiber_play_to(fighter, 11, -1);
+  goto L_004ed288;
+}
+L_004ed288: {
+  /* EXE 004ed288: 0x500000d */
+  fighter_fiber_play_to(fighter, 13, 1);
+  goto L_004ed28c;
+}
+L_004ed28c: {
+  /* EXE 004ed28c: 0x2d000000 */
+  fighter->action = ACTION_RETAIL_1007;
+  goto L_004ed290;
+}
+L_004ed290: {
+  /* EXE 004ed290: 0x4a00000b */
+  fighter_fiber_play_to(fighter, 11, -1);
+  goto L_004ed294;
+}
+L_004ed294: {
+  /* EXE 004ed294: 0x500000d */
+  fighter_fiber_play_to(fighter, 13, 1);
+  goto L_004ed298;
+}
+L_004ed298: {
+  /* EXE 004ed298: 0x4a00000b */
+  fighter_fiber_play_to(fighter, 11, -1);
+  goto L_004ed29c;
+}
+L_004ed29c: {
+  /* EXE 004ed29c: 0x500000d */
+  fighter_fiber_play_to(fighter, 13, 1);
+  goto L_004ed2a0;
+}
+L_004ed2a0: {
+  /* EXE 004ed2a0: 0x4a00000b */
+  fighter_fiber_play_to(fighter, 11, -1);
+  goto L_004ed2a4;
+}
+L_004ed2a4: {
+  /* EXE 004ed2a4: 0x500000d */
+  fighter_fiber_play_to(fighter, 13, 1);
+  goto L_004ed2a8;
+}
+L_004ed2a8: {
+  /* EXE 004ed2a8: 0x4a000000 */
+  fighter_fiber_play_to(fighter, 0, -1);
+  goto L_004ed2ac;
+}
+L_004ed2ac: {
+  /* EXE 004ed2ac: 0x3f000000 */
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(kitana_ready);
+}
+}
+
+static inline void retail_script_004ed2c0(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  goto L_004ed2c0;
+L_004ed2c0: {
+  /* EXE 004ed2c0: 0x20000021 */
+  battle_sound(SOUND_A, 33);
+  goto L_004ed2c4;
+}
+L_004ed2c4: {
+  /* EXE 004ed2c4: 0x76000000 */
+  mk4_script_guard_block_sound_28(fighter);
+  goto L_004ed2c8;
+}
+L_004ed2c8: {
+  /* EXE 004ed2c8: 0x47000209 0x13eba7 */
+  mk4_script_bind(fighter, 24, 10, 0);
+  fighter_fiber_play_to(fighter, 9, 1);
+  goto L_004ed2d0;
+}
+L_004ed2d0: {
+  /* EXE 004ed2d0: 0x40000000 0x4b 0x498ed0 */
+  kitana_shadow_task_up(fighter, 75);
+  goto L_004ed2dc;
+}
+L_004ed2dc: {
+  /* EXE 004ed2dc: 0x6000005 */
+  mk4_script_advance(fighter, 5, -1);
+  goto L_004ed2e0;
+}
+L_004ed2e0: {
+  /* EXE 004ed2e0: 0x32000000 0x498eb0 */
+  kitana_shadow_install_physics(fighter);
   return;
 }
 }

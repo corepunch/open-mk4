@@ -364,6 +364,30 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
           PASS_COLOR, &light);
     FREE_ARRAY(fighters[i]);
   }
+  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
+    const BattleEvent *event = &g_battle.events[i];
+    if (!battle_shadow_actor_event(event)) {
+      continue;
+    }
+    const Fighter *owner = &g_battle.fighters[event->owner];
+    Fighter actor = *owner;
+    MoveDef move = {.clip = event->data[SHADOW_DATA_CLIP], .last = MOVE_END};
+    actor.current_move = &move;
+    actor.sample_override = event->data[SHADOW_DATA_SAMPLE];
+    actor.blend_duration = 0;
+    actor.action = 0;
+    actor.facing = owner->facing;
+    actor.body.pos[AXIS_X] = event->data[SHADOW_DATA_X];
+    actor.body.pos[AXIS_Y] = event->data[SHADOW_DATA_Y];
+    actor.body.pos[AXIS_Z] = event->data[SHADOW_DATA_Z];
+    actor.visual_offset[1] = 0;
+    const Character *model = fighter_model(assets, owner);
+    Triangles geometry = fighter_geometry(assets, &actor, model);
+    for (size_t j = 0; j < geometry.count; ++j) {
+      render_triangle(cv, camera, geometry.data[j], &model->texture, .38f, PASS_COLOR, &light);
+    }
+    FREE_ARRAY(geometry);
+  }
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &g_battle.projectiles[i];

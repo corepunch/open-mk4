@@ -80,6 +80,8 @@ static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence 
 static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
 static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
+static const MoveDef s_shadow_low = {.clip = 26, .last = 13, .flags = SF_LOCK, .action = 0x309};
+static const MoveDef s_shadow_up = {.clip = 24, .last = 9, .flags = SF_LOCK, .action = 0x30a};
 
 static const MoveDef s_throw = {.clip = 76, .last = 48, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -153,6 +155,20 @@ static void kitana_jab(Fighter *fighter) {
   /* The jab entry clears the busy bit (0x490330): commands stay live. */
   fighter->flags &= ~(unsigned)FF_BUSY;
   fighter_start_fiber(fighter, retail_script_004e62f0, NULL);
+}
+
+static void kitana_shadow_low(Fighter *fighter) {
+  fighter_start_move(fighter, S_PUNCH, &s_shadow_low);
+  fighter_start_fiber(fighter, retail_script_004ed268, NULL);
+}
+
+static void kitana_shadow_up(Fighter *fighter) {
+  fighter_start_move(fighter, S_PUNCH, &s_shadow_up);
+  fighter_start_fiber(fighter, retail_script_004ed2c0, NULL);
+}
+
+static bool kitana_shadow_up_enabled(const Fighter *fighter) {
+  return fighter->body.gravity != 0;
 }
 
 static void kitana_kick(Fighter *fighter) {
@@ -859,6 +875,29 @@ static void kitana_ring(Fighter *fighter) {
   fighter_start_fiber(fighter, retail_script_004ed4c0, NULL);
 }
 
+static void kitana_shadow_task_low(Fighter *fighter, int task_type) {
+  require(task_type == 75, "Unexpected Kitana shadow task type");
+  battle_shadow_actor_start(fighter, SHADOW_ACTOR_LOW);
+}
+
+static void kitana_shadow_task_up(Fighter *fighter, int task_type) {
+  require(task_type == 75, "Unexpected Kitana shadow task type");
+  battle_shadow_actor_start(fighter, SHADOW_ACTOR_UP);
+}
+
+static void kitana_shadow_install_physics(Fighter *fighter) {
+  battle_shadow_actor_install_physics(fighter);
+  fighter_fiber_finish(kitana_ready);
+}
+
+static void kitana_command_shadow_low(Fighter *fighter) {
+  fighter_interrupt(fighter, kitana_shadow_low);
+}
+
+static void kitana_command_shadow_up(Fighter *fighter) {
+  fighter_interrupt(fighter, kitana_shadow_up);
+}
+
 static void special_cleanup(Fighter *fighter) {
   mk4_script_pair_cleanup(fighter);
   fighter->body.physics = NULL;
@@ -1252,6 +1291,8 @@ static const CommandDef commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_BACK}, 2, 24, 0x0, NULL, kitana_bicycle},
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, can_spike_fatality, kitana_spike_fatality},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 16, 0x0, NULL, kitana_ring},
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0x0, NULL, kitana_command_shadow_low},
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, CMD_AIR, kitana_shadow_up_enabled, kitana_command_shadow_up},
   {BUTTON_LOW_PUNCH, {0}, 0, 0, 0x40, can_leg_grab, kitana_leg_grab},
   {BUTTON_BLOCK, {0}, 0, 0, 0x10, mk4_can_air_throw, kitana_air_throw},
   {BUTTON_BLOCK, {0}, 0, 0, 0x40, can_leg_grab, kitana_leg_grab},

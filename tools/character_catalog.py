@@ -34,6 +34,45 @@ def moves_for(character):
     shared.update(high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70))),
                   low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),)),
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878))))
+    if character == 16:
+        # Kitana's roster slot aliases Sonya's retail script slot. Keep a
+        # distinct Kitana profile while auditing the same selected roots.
+        kitana_moves = moves_for(2)
+        kitana_moves['shadow_low'] = move(
+            0x498b70,
+            (('shadow low playback', 0x4ed268),),
+        )
+        kitana_moves['shadow_up'] = move(
+            0x498e70,
+            (('shadow up playback', 0x4ed2c0),),
+        )
+        return kitana_moves
+    if character == 17:
+        # Noob Saibot's roster slot aliases Reiko's retail script slot. Keep
+        # the same selected roots while auditing the slot under its own ID.
+        noob_moves = moves_for(7)
+        noob_moves['air_throw'] = move(
+            0x46aa80,
+            (
+                ('victim release', 0x4e9910),
+                ('Noob air-throw opener', 0x4e5e78),
+                ('Noob air-throw release', 0x4e5e50),
+                ('Noob pair continuation', 0x4e5ea0),
+                ('Noob landing continuation', 0x4e5eb0),
+            ),
+            native=(('command gate', 0x45ed70), ('release damage', 0x46aae0),
+                    ('landing', 0x46ab20), ('victim continuation', 0x4878c0),
+                    ('victim getup', 0x484b60)),
+        )
+        noob_moves['shadow_low'] = move(
+            0x498b70,
+            (('shadow low playback', 0x4ed268),),
+        )
+        noob_moves['shadow_up'] = move(
+            0x498e70,
+            (('shadow up playback', 0x4ed2c0),),
+        )
+        return noob_moves
     if character == 5:
         # Fujin's roster slot uses the same decoded VM entry set as Reiko for
         # these common attacks, but its selectors and contact records are

@@ -39,6 +39,13 @@ void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample) {
   bind_clip(fighter, clip, count, sample);
 }
 
+void mk4_script_inherit_current(Fighter *fighter, int count, int sample) {
+  const MoveDef *current = fighter_move(fighter);
+  require(fighter_fiber_running(fighter), "Generated clip needs a running owner");
+  require(current->clip >= 0 && current->last == count - 1 && fighter->sample_override == sample, "Generated entry needs the inherited clip length and sample");
+  bind_clip(fighter, current->clip, count, sample);
+}
+
 void mk4_script_pair_advance(Fighter *fighter, int count) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   for (int i = 0; i < count; ++i) {
@@ -138,6 +145,20 @@ static bool script_repeat_jab(const Fighter *fighter);
 
 void mk4_script_ready(Fighter *fighter) {
   (void)fighter;
+static void script_guard_block_sound(Fighter *fighter, int selector) {
+  if ((fighter == &g_battle.fighters[0] || fighter == &g_battle.fighters[1]) && fighter->state == S_BLOCK) {
+    battle_sound(SOUND_INDEXED, selector);
+  }
+}
+
+void mk4_script_guard_block_sound_26(Fighter *fighter) {
+  script_guard_block_sound(fighter, 26);
+}
+
+void mk4_script_guard_block_sound_28(Fighter *fighter) {
+  script_guard_block_sound(fighter, 28);
+}
+
   fighter_fiber_finish(fighter_ready);
 }
 

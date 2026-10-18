@@ -52,6 +52,8 @@ class Binding:
 
 
 BINDINGS = {
+    0x45b010: Binding('mk4_script_stop', 'game/script.c', ('handler',),
+                      evidence='45b010 clears the current actor velocity, gravity and spin through stop_motion'),
     0x46a950: Binding('mk4_script_avoid_clear', 'game/script.c', ('call',), evidence='46a950 clears task +5c'),
     0x46a970: Binding('mk4_script_avoid_set', 'game/script.c', ('call',), evidence='46a970 sets task +5c'),
     0x46a8d0: Binding('mk4_script_reverse_return', 'game/script.c', ('tail',), flow='terminal',
@@ -61,6 +63,10 @@ BINDINGS = {
                       adaptation='CPU continuation choices remain in the shared portable CPU controller'),
     0x4596e0: Binding('mk4_script_indexed_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'),
                       evidence='4596e0 -> 48a100, indexed sound bank'),
+    0x45c150: Binding('mk4_script_guard_block_sound_26', 'game/script.c', ('handler',),
+                      evidence='45c150 tests the selected player state for S_BLOCK (9), then conditionally plays indexed sound 26'),
+    0x45c1c0: Binding('mk4_script_guard_block_sound_28', 'game/script.c', ('handler',),
+                      evidence='45c1c0 tests the selected player state for S_BLOCK (9), then conditionally plays indexed sound 28'),
 }
 
 # Character-specific boundaries reuse existing object and landing helpers.
@@ -881,6 +887,24 @@ CHARACTER_BINDINGS[15] = {
                       evidence='467fc0 completes Goro stage-fatality continuation'),
 }
 
+from dataclasses import replace as _clone_binding
+
+CHARACTER_BINDINGS[17] = {
+    _address: _clone_binding(
+        _binding,
+        symbol=_binding.symbol.replace('reiko_', 'noob_saibot_'),
+        source=_binding.source.replace('reiko', 'noob_saibot'),
+        evidence=_binding.evidence.replace('Reiko', 'Noob Saibot').replace('reiko', 'Noob Saibot'),
+    )
+    for _address, _binding in CHARACTER_BINDINGS[7].items()
+}
+CHARACTER_BINDINGS[17][0x45abf0] = Binding(
+    'mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'),
+    evidence='45abf0 Noob paired throw context 21 uses the shared live-actor camera context',
+    adaptation='Portable camera tracks live paired actors; the retail camera task has no local lifetime',
+    inline_values=(1, 2, 3, 4, 6, 11, 12, 14, 21, 22, 23, 34, 36, 37, 56, 57, 58, 60, 61, 62, 68, 75, 76, 77, 79),
+)
+
 CHARACTER_BINDINGS[16] = {
     _address: _clone_binding(
         _binding,
@@ -890,6 +914,22 @@ CHARACTER_BINDINGS[16] = {
     )
     for _address, _binding in CHARACTER_BINDINGS[2].items()
 }
+CHARACTER_BINDINGS[16].update({
+    0x498bb0: Binding('kitana_shadow_task_low', 'game/c_kitana.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(75,), evidence='498bb0 starts the clip-26 paired task and contact-wait phase for Kitana'),
+    0x498ed0: Binding('kitana_shadow_task_up', 'game/c_kitana.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(75,), evidence='498ed0 starts Kitana child clip 22, action 0x23d7 and the paired contact phase'),
+    0x498eb0: Binding('kitana_shadow_install_physics', 'game/c_kitana.c', ('tail',), flow='terminal',
+                      evidence='498eb0 installs gravity 0x20c and clears vertical position for the Kitana paired actor'),
+})
+CHARACTER_BINDINGS[17].update({
+    0x498bb0: Binding('noob_saibot_shadow_task_low', 'game/c_noob_saibot.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(75,), evidence='498bb0 starts the clip-26 paired task and contact-wait phase for Noob Saibot'),
+    0x498ed0: Binding('noob_saibot_shadow_task_up', 'game/c_noob_saibot.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(75,), evidence='498ed0 starts Noob Saibot child clip 22, action 0x23d7 and the paired contact phase'),
+    0x498eb0: Binding('noob_saibot_shadow_install_physics', 'game/c_noob_saibot.c', ('tail',), flow='terminal',
+                      evidence='498eb0 installs gravity 0x20c and clears vertical position for the Noob Saibot paired actor'),
+})
 
 # Cage's generated streams share the fan, paired-throw, and air-throw
 # continuations with the established ports. Contact and stage callbacks stay

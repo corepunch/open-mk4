@@ -7,6 +7,7 @@
 void mk4_script_bind(Fighter *fighter, int clip, int count, int first);
 void mk4_script_bind_victim(Fighter *fighter, int clip, int count, int first);
 void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample);
+void mk4_script_inherit_current(Fighter *fighter, int count, int sample);
 void mk4_script_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first);
 void mk4_script_pair_advance(Fighter *fighter, int count);
@@ -20,6 +21,8 @@ void mk4_script_reverse_return(Fighter *fighter);
 void mk4_script_attack_return(Fighter *fighter);
 void mk4_script_indexed_sound(Fighter *fighter, int selector);
 
+void mk4_script_guard_block_sound_26(Fighter *fighter);
+void mk4_script_guard_block_sound_28(Fighter *fighter);
 void mk4_script_ready(Fighter *fighter);
 void mk4_script_land(Fighter *fighter);
 void mk4_script_thrown_ready(Fighter *fighter);

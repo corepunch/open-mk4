@@ -533,6 +533,24 @@ struct Projectile {
 /* Portable scene/contact callbacks keep explicit phase and data instead of
  * retaining a retail task stack or pointers into native scratch state. */
 struct BattleEvent {
+enum {
+  BATTLE_EVENT_SHADOW_ACTOR = 0x53484144,
+  SHADOW_ACTOR_LOW,
+  SHADOW_ACTOR_UP,
+  SHADOW_PHASE_PHYSICS = 1 << 8
+};
+
+enum {
+  SHADOW_DATA_KIND,
+  SHADOW_DATA_VARIANT,
+  SHADOW_DATA_CLIP,
+  SHADOW_DATA_SAMPLE,
+  SHADOW_DATA_X,
+  SHADOW_DATA_Y,
+  SHADOW_DATA_Z,
+  SHADOW_DATA_VELOCITY_Y
+};
+
   BattleEventFn step;
   uint64_t generation, due_tick, owner_continuation;
   int owner, phase, data[8];
@@ -720,6 +738,9 @@ void battle_event_pump(void);
 void battle_damage(Fighter *victim, q16 damage);
 void battle_react(Fighter *victim, int reaction);
 void battle_wall_recoil(Fighter *victim);
+void battle_shadow_actor_start(Fighter *owner, int variant);
+void battle_shadow_actor_install_physics(Fighter *owner);
+bool battle_shadow_actor_event(const BattleEvent *event);
 void battle_world(void);
 void battle_set_arena(int arena);
 bool battle_can_finish(const Fighter *fighter);
