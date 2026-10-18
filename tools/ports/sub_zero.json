@@ -247,7 +247,10 @@
   "inventory_sha256": "94567a38d8e8fa6a4f7e92a0ab6ed1874d0cf599b1f05a54f6e20b963fc275b5",
   "legacy_scripts": {},
   "mmove_scripts": [
-    "0x4e6798"
+    "0x4e6798",
+    "0x4e84d8",
+    "0x4e84f8",
+    "0x4e8530"
   ],
   "moves": {
     "air_diagonal_hk": {

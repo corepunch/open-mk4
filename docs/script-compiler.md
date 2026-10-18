@@ -276,3 +276,10 @@ The first converted root is Sub-Zero sweep `4e6798`: roster slot 4 selects
 `4e6e68`, clip 63, doubled startup through sample 10, A[175], then sample 22.
 Native `46f080/46f130` retains the established two contact visits and remaining
 clip recovery in native frame phases. Its command entry allocates no fiber.
+
+Sub-Zero slide roots `4e84d8`, `4e84f8`, and `4e8530` now use the mmove
+backend. The native contact phase checks each simulation tick from 9 through
+25 and selects hit, blocked, or miss recovery. The generated hit/block loops
+retain four/six repetitions of samples 10,9,8,9; only an unblocked hit stamps
+the cooldown. Native return reverses samples 10 through 0. Action cleanup
+stops motion and clears no-guard even when interrupted during blocked recoil.

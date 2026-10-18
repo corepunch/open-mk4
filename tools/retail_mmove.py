@@ -131,6 +131,8 @@ def emit_mmove(program, bindings, return_to, context=None):
                 emit('fighter->action = ACTION_RETAIL_%s;' % ('1006' if op == 0x29 else '1007'))
             elif op == 0x2e:
                 emit('fighter->flags |= FF_NO_GUARD;')
+            elif op == 0x5b:
+                emit('mk4_script_stop(fighter);')
             elif op == 0x39:
                 emit('fighter->body.physics = NULL;')
             elif op == 0x5a:

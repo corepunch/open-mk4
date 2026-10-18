@@ -451,6 +451,7 @@ static void slide_tests(void) {
       input[player].held = 0;
       battle_step(input);
       check(fighter_move(&g_battle.fighters[player])->clip == 95, "slide chord must enter clip 95");
+      check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "slide entry must use frame phases");
       for (int t = 0; t < 8; ++t) {
         battle_step(input);
       }
@@ -462,6 +463,7 @@ static void slide_tests(void) {
       check(g_battle.fighters[1 - player].health == Q16_ONE - damage, "slide hit/block/miss/air record damage");
       check(g_battle.fighters[1 - player].reaction == (outcome == 2 ? 0 : outcome == 1 ? 165 : 122), "slide must select explicit victim reaction");
       check((g_battle.fighters[player].slide_ready != 0) == (outcome == 0 || outcome == 3), "only unblocked slide contact starts cooldown");
+      check(!fighter_fiber_active(&g_battle.fighters[player]), "slide branch allocated a coroutine");
       advance(180);
       check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].state == S_IDLE, "slide must recover both fighters");
       check(!(g_battle.fighters[player].flags & FF_NO_GUARD), "blocked slide must clear its recovery guard restriction");
@@ -478,6 +480,10 @@ static void slide_tests(void) {
     }
     check(g_battle.fighters[1 - player].reaction == 165 && fighter_move(&g_battle.fighters[1 - player])->clip == 255,
         "crouching slide block must select clip 255");
+    check(g_battle.fighters[player].flags & FF_NO_GUARD, "blocked slide must enter no-guard recovery");
+    fighter_interrupt(&g_battle.fighters[player], fighter_ready);
+    check(!(g_battle.fighters[player].flags & FF_NO_GUARD) && g_battle.fighters[player].mmove_cleanup == NULL,
+        "interrupting slide recovery must release its guard restriction exactly once");
     const Button triggers[] = {BUTTON_LOW_PUNCH, BUTTON_BLOCK, BUTTON_LOW_KICK};
     for (int k = 0; k < 3; ++k) {
       fight(player, 6.f);

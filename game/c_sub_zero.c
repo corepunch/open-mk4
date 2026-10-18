@@ -984,29 +984,49 @@ static void sub_zero_clone(Fighter *fighter) {
 static const AttackRecord slide_record = {0xf0a3, 0x947a, 0x111eb, 0x8f5c, 122, 122, 165, 0, 0x147a};
 static const MoveDef s_slide = {.clip = 95, .last = 10, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0204};
 
-static void slide_script(Fighter *fighter) {
-  ContactResult contact = CONTACT_MISS;
-  for (int tick = 1; tick <= 25; ++tick) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = mini(9, tick);
-    if (tick >= 9) {
-      contact = battle_contact(fighter, &slide_record);
-      if (contact != CONTACT_MISS) {
-        break;
-      }
-    }
+static void slide_cleanup(Fighter *fighter) {
+  fighter->flags &= ~(unsigned)FF_NO_GUARD;
+  stop_body(fighter);
+}
+
+static void slide_contact_tick(Fighter *fighter) {
+  if (++fighter->script_timer < 9) {
+    return;
   }
   fighter->sample_override = 9;
+  ContactResult contact = battle_contact(fighter, &slide_record);
+  if (contact == CONTACT_MISS) {
+    return;
+  }
+  fighter->script_phase = 1;
   if (contact == CONTACT_BLOCK) {
-    fighter->script_phase = 1;
     retail_script_004e8530(fighter);
-  } else if (contact != CONTACT_MISS) {
-    fighter->script_phase = 1;
+  } else {
     fighter->slide_ready = g_battle.ticks + 64;
     retail_script_004e84f8(fighter);
-  } else {
-    script_slide_return(fighter);
   }
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t slide_contact_frames[] = {
+  {.sample = 0, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 1, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 2, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 3, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 4, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 5, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 6, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 7, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 8, .duration = 1, .tick = slide_contact_tick},
+  {.sample = 9, .duration = 16, .tick = slide_contact_tick},
+};
+// clang-format on
+static const mmove_t slide_contact_phase = {
+    .firstframe = 0, .lastframe = COUNT(slide_contact_frames) - 1, .frame = slide_contact_frames, .endfunc = script_slide_return};
+
+static void slide_script(Fighter *fighter) {
+  fighter->script_timer = 0;
+  fighter_mmove_phase(fighter, &slide_contact_phase);
 }
 
 static bool can_slide(const Fighter *fighter) {
@@ -1019,7 +1039,8 @@ static void sub_zero_slide(Fighter *fighter) {
   stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_slide);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, retail_script_004e84d8, NULL);
+  fighter->mmove_cleanup = slide_cleanup;
+  retail_script_004e84d8(fighter);
 }
 
 /* Shared weapon draw 4e62c0/4e62d8, air 4e66d0/4e66f0 and
@@ -1613,14 +1634,28 @@ static void script_draw_equip(Fighter *fighter) {
   retail_script_004e62d8(fighter);
 }
 
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t slide_return_frames[] = {
+  {.sample = 10, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 0, .duration = 1},
+};
+// clang-format on
+static const mmove_t slide_return_phase = {
+    .firstframe = 0, .lastframe = COUNT(slide_return_frames) - 1, .frame = slide_return_frames, .endfunc = sub_zero_ready};
+
 static void script_slide_return(Fighter *fighter) {
   stop_body(fighter);
   fighter->script_phase = 2;
-  fighter->sample_override = 10;
-  fighter_fiber_play_to(fighter, 0, -1);
-  fighter_wait_ticks(1);
-  fighter->flags &= ~(unsigned)FF_NO_GUARD;
-  fighter_fiber_finish(sub_zero_ready);
+  fighter_mmove_phase(fighter, &slide_return_phase);
 }
 
 static void sub_zero_air_throw(Fighter *fighter) {
