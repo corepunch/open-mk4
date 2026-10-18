@@ -73,11 +73,13 @@ class DefinitionGraph:
             refs = {local.get(name, self.exports.get(name)) for name in re.findall(r'\b\w+\b', body)}
             self.edges[key] = refs - {None, key}
 
-    def reachable(self, roots):
+    def reachable(self, roots, stop=()):
         todo = [self.exports[name] for name in roots if name in self.exports]
         reached = set(todo)
         while todo:
             for key in self.edges[todo.pop()] - reached:
+                if key[1] in stop:
+                    continue
                 reached.add(key)
                 todo.append(key)
         return reached
@@ -95,7 +97,9 @@ def workspace_graph():
 
 def unreachable_references(profile):
     graph = workspace_graph()
-    reached = graph.reachable(['main'])
+    # The roster lookup is an indirect runtime selection, not an edge from
+    # every fighter to every other fighter's command tables.
+    reached = graph.reachable(['mk4_' + profile['character']], stop={'roster'})
     errors = []
     references = []
     for section in ('moves', 'entry_adapters', 'stances'):

@@ -30,6 +30,20 @@ int main(void) { use(controls); }
         self.assertIn(('a.c', 'move'), reached)
         self.assertNotIn(('b.c', 'move'), reached)
 
+    def test_another_fighter_cannot_supply_the_missing_registration(self):
+        graph = DefinitionGraph({'game.c': """
+static void special(void) {}
+static const Commands registered = {special};
+const CharacterDef mk4_first = {0};
+const CharacterDef mk4_second = {registered};
+static const CharacterDef *roster[] = {&mk4_first, &mk4_second};
+const CharacterDef *lookup(void) { return roster[0]; }
+int main(void) { lookup(); }
+"""})
+        self.assertIn(('game.c', 'special'), graph.reachable(['main']))
+        self.assertNotIn(('game.c', 'special'), graph.reachable(['mk4_first'], stop={'roster'}))
+        self.assertIn(('game.c', 'special'), graph.reachable(['mk4_second'], stop={'roster'}))
+
 
 if __name__ == '__main__':
     unittest.main()
