@@ -18,7 +18,7 @@ void liu_kang_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &liu_kang_s_hp);
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, liu_kang_hp_script, NULL);
+  liu_kang_hp_script(fighter);
 }
 
 static void liu_kang_combo_hp(Fighter *fighter) {

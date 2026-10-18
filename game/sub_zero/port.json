@@ -263,7 +263,7 @@
     "0x4ed588"
   ],
   "integration_source": "game/sub_zero/character.c",
-  "inventory_sha256": "94567a38d8e8fa6a4f7e92a0ab6ed1874d0cf599b1f05a54f6e20b963fc275b5",
+  "inventory_sha256": "cd1e0f4b368cfb12940c2eed4efcbce66b44589b4a94cff80b9fd95e61f7669c",
   "legacy_scripts": {},
   "mmove_only": true,
   "mmove_scripts": [
@@ -671,6 +671,11 @@
       "evidence": "4ea4e8[8] -> 0x486c70; shared C reaction dispatch",
       "source": "game/reactions.c",
       "symbol": "react_extra_block"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

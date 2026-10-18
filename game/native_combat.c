@@ -140,6 +140,9 @@ static void hp_branch(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   int phase = fighter->script_phase;
   bool repeat = (fighter->buffered & BUTTON_BIT(BUTTON_HIGH_PUNCH)) && (victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]) * fighter->facing >= 0;
+  if (repeat) {
+    battle_sound(SOUND_A, 10);
+  }
   phase = repeat ? (phase == 0 ? 1 : phase == 1 || phase == 3 ? 2 : 3) : phase == 0 || phase == 2 ? 4 : 5;
   fighter_start_move(fighter, S_PUNCH, phase == 4 ? profile->first : profile->second);
   fighter->native_context = profile;
@@ -164,6 +167,7 @@ static void hp_build(Fighter *fighter) {
 }
 
 void native_hp_start(Fighter *fighter, const NativeHPProfile *profile) {
+  battle_sound(SOUND_A, 10);
   fighter->native_context = profile;
   if (fighter_fiber_running(fighter)) {
     fighter_fiber_handoff(hp_build);

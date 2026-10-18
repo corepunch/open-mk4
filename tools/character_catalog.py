@@ -581,10 +581,12 @@ def _moves_for(character):
 
 
 def moves_for(character):
-    result = _moves_for(character)
+    result = dict(_moves_for(character))
     if character in (6, 8, 10, 12, 14):
         entry = dict(result['air_kick'])
         result['air_kick'] = entry
         entry['scripts'] = tuple(entry['scripts']) + (('narrow miss reversal', 0x4e6270),)
         entry['contacts'] = (('B', 40),)
+    if character != 15:
+        result['high_punch'] = dict(result['high_punch'], contacts=(('A', 0),))
     return result

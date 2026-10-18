@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "fbf59c3a3b697cb1b0683a88b23a705e06fd9d916e5ffa2d1794065e8d4f99f9",
+  "inventory_sha256": "b34a4c16980e602d3e0d1bb5e035845aabdd5f0df5c6d6984132bf09fc18cdf0",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -631,6 +631,11 @@
       "symbol": "jarek_script_opponent_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 107 through native continuation 0x45b1f0; paired clips 80/154, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 107 on the victim actor"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "schema": 1,

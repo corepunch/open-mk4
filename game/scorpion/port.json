@@ -256,7 +256,7 @@
     "0x4ed4a8"
   ],
   "integration_source": "game/scorpion/character.c",
-  "inventory_sha256": "12721330226eea45c096a6d3cf01cb66d141d95963f4c2825c5e3e2c6ad7b0e9",
+  "inventory_sha256": "b515bb4b7f8a397f24a1ca654d281474963279863da9190d8e59c47eeb49d787",
   "legacy_scripts": {},
   "mmove_scripts": [
     "0x4e66d0",
@@ -633,6 +633,11 @@
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "source": "game/reactions.c",
       "symbol": "react_extra"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

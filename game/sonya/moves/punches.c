@@ -18,7 +18,7 @@ void sonya_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &sonya_s_hp);
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, sonya_hp_script, NULL);
+  sonya_hp_script(fighter);
 }
 
 static void sonya_combo_hp(Fighter *fighter) {

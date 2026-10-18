@@ -242,7 +242,7 @@
     "0x4ea0b8"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "ad881d661f82e1db9c262517ddd625a0b32fddd6799bf9a67244947bc99710fa",
+  "inventory_sha256": "2d6d387450a81bc815d8f8d3d8567b8633696a3cfb8ef8dce4235186ec07eb0f",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -554,6 +554,11 @@
       "symbol": "raiden_generated_reaction",
       "evidence": "4ea4e8[53] ->482450; shared dispatch selects the existing generated victim stream.",
       "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

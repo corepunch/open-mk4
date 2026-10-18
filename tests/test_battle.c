@@ -1044,6 +1044,40 @@ static void check_reconnected_uppercuts(void) {
   }
 }
 
+static void check_roster_high_punch_frames(void) {
+  const int rosters[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int scenario = 0; scenario < 4; ++scenario) {
+        battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 half_distance = scenario == 2 ? 3 * Q16_ONE : Q16_ONE / 2;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        advance_ticks(2, input);
+        check(fighter_move(owner)->clip == 296 && owner->action == ACTION_RETAIL_010A, "Plain standing HP must select its native first clip and action");
+        input[slot].held = 0;
+        for (int tick = 0; tick < 90; ++tick) {
+          input[slot].held = scenario == 3 && tick == 4 ? BUTTON_BIT(BUTTON_HIGH_PUNCH) : 0;
+          battle_step(input);
+          check(!fighter_fiber_active(owner), "Standing HP startup, repeat and recovery must run directly on native frames");
+        }
+        q16 damage = scenario == 2 ? 0 : scenario == 1 ? q16_mul(0xccc, 0x3333) : scenario == 3 ? 2 * 0xccc : 0xccc;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(stderr, "HP roster%d slot%d scenario%d health%d expected%d\n", rosters[row], slot, scenario, victim->health, Q16_ONE - damage);
+        }
+        check(victim->health == Q16_ONE - damage && owner->state == S_IDLE, "HP must preserve its five-percent hit, buffered repeat, chip, miss and recovery");
+      }
+    }
+  }
+}
+
 static void check_roster_jab_frames(void) {
   const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
   for (size_t row = 0; row < sizeof roster / sizeof roster[0]; ++row) {
@@ -2195,6 +2229,7 @@ int main(void) {
   check_kai_handstand_frames();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
+  check_roster_high_punch_frames();
   check_straight_air_kick_contacts();
   check_reconnected_ground_combos();
   check_reconnected_lk_throws();

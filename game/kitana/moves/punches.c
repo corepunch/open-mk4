@@ -18,7 +18,7 @@ void kitana_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &kitana_s_hp);
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, kitana_hp_script, NULL);
+  kitana_hp_script(fighter);
 }
 
 static void kitana_combo_hp(Fighter *fighter) {

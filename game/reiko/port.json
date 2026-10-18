@@ -215,7 +215,7 @@
     "0x4ea0b8"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "05c89a22f74dc0aea58f7ee60d164c8acacca4e2835abb01c90ce0a9a158bb6c",
+  "inventory_sha256": "b37b8246da648e9c9d83369f2e5730b8f29a9e3a4331ab1278aeb98581d6d72c",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -517,6 +517,11 @@
       "symbol": "raiden_generated_reaction",
       "evidence": "4ea4e8[53] ->482450; shared dispatch selects the existing generated victim stream.",
       "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

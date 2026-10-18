@@ -18,7 +18,7 @@ void raiden_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &raiden_s_hp);
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, raiden_hp_script, NULL);
+  raiden_hp_script(fighter);
 }
 
 static void raiden_combo_hp(Fighter *fighter) {

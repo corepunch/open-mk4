@@ -159,7 +159,7 @@
     "0x4ed6f8"
   ],
   "integration_source": "game/liu_kang/character.c",
-  "inventory_sha256": "cbb666437c797dceedb39650db689cd56faacc18d2711b96dd17a708fd3980c1",
+  "inventory_sha256": "cc39cc69fc7f9db78cecfd99840684051a8f9026a10ed6e28c7d8cdfa5618bf9",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
@@ -554,6 +554,11 @@
       "evidence": "4ea4e8[84] -> 0x488870; docs/liu-kang-scripts.md",
       "source": "game/liu_kang/character.c",
       "symbol": "bicycle_victim_script"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

@@ -265,6 +265,31 @@ static void fallback_clip_clock(const Assets *assets) {
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
 }
 
+static void restored_high_punch_contacts(const Assets *assets) {
+  const int rosters[] = {5, 11};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
+      battle_step(input);
+      input[slot].held = 0;
+      for (int tick = 0; tick < 90; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+      }
+      check(victim->health == Q16_ONE - 0xccc && owner->state == S_IDLE && !fighter_fiber_active(owner),
+          "Restored ordinary HP must hit once through actual pose bounds and complete native frame recovery");
+    }
+  }
+}
+
 static void kai_weapon_contacts(const Assets *assets) {
   check(assets->scene_models.count > SCENE_MODEL_KAI_WEAPON && assets->scene_models.data[SCENE_MODEL_KAI_WEAPON].bones.count > 0,
       "Kai weapon extraction must provide its own complete shared-geometry rig");
@@ -548,6 +573,7 @@ int main(void) {
   fallback_clip_clock(&assets);
   axe_followup_contacts(&assets);
   kai_weapon_contacts(&assets);
+  restored_high_punch_contacts(&assets);
   cage_groin_command(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

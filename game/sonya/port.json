@@ -212,7 +212,7 @@
     "0x4ed4c0"
   ],
   "integration_source": "game/sonya/character.c",
-  "inventory_sha256": "9948c812be46b8678360c1c1deb59b194bebfb4e432b9dec0bb24cf286d9680d",
+  "inventory_sha256": "884490de1145269b0971bc31d7c15cc818469a73a2f450ef238621cd311cef4f",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
@@ -620,6 +620,11 @@
       "evidence": "486b30: two standing block cycles, speed 0x3333, crouch/armed choices through shared 486d30; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
       "symbol": "react_fireball_block"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "sonya_ready",

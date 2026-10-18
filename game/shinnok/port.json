@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/shinnok/generated/scripts.inc",
   "integration_source": "game/shinnok/character.c",
-  "inventory_sha256": "b22e72a17219ab8356a6703d71f51f97bda26a76eace773c9ce35da1b74d547c",
+  "inventory_sha256": "75e2349ce90c22767e6f912c6c11bbf4cfe3523872982703967661173f09e5e5",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -478,6 +478,11 @@
       "symbol": "shinnok_fatality_contact_hold",
       "evidence": "Shinnok spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "schema": 1,

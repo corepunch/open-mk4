@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "6e8838a30a13d10fe7e7e4d1772fe9c3ae003c2d7b59c956d6fc042da5dcb433",
+  "inventory_sha256": "1e1e8bceb096df3fbc673254cc942b533ae7330b280b1d4fba159e4b178896fc",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -491,6 +491,11 @@
       "source": "game/reactions.c",
       "symbol": "react_slide_block",
       "evidence": "4ea4e8[165] ->486d00; native D[27] blocked reaction."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",

@@ -2535,7 +2535,7 @@
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "bdc931873650498e03aaa2e02bbcf9d40979ac144c41bf73531d6abb9d1b7304",
+  "inventory_sha256": "6b100c072817c9cb5d9561c328e83ff9d1991bcff780f3876b5b019068d1690b",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2910,6 +2910,11 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Type63 weapon chip selects119/486a70 through existing shared block recovery."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "stances": {

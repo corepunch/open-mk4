@@ -413,6 +413,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra_block",
       "evidence": "Quan Chi slot 8 dispatches reaction 8 through the shared C reaction table (0x486c70)"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "stances": {
@@ -467,7 +472,7 @@
     "symbol": "quan_chi_weapon_descriptor",
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
-  "inventory_sha256": "234e41db21182feb90dc8662c78c292c098c72f182704a24e10e0124695dbb33",
+  "inventory_sha256": "c428d0374016073abec5a0409c8d0dccb819fb3b77dd07ec43bb97ee3ddcc261",
   "controls_output": "game/quan_chi/generated/controls.inc",
   "command_bindings": {
     "0x469250": {

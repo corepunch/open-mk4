@@ -18,7 +18,7 @@ void scorpion_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &scorpion_s_hp);
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, scorpion_hp_script, NULL);
+  scorpion_hp_script(fighter);
 }
 
 static void scorpion_combo_hp(Fighter *fighter) {

@@ -213,7 +213,7 @@
     "0x4ed5f0"
   ],
   "integration_source": "game/raiden/character.c",
-  "inventory_sha256": "fa7d52a7fd4748095714e81f8081a47bd22bca1b6ec4d6c510eae9b63d1efc51",
+  "inventory_sha256": "6f27204a3058ab08d09c03c76ad9f67f5e1d72406ca874eea0d62fc58af21e2a",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
@@ -587,6 +587,11 @@
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/raiden/character.c",
       "symbol": "raiden_generated_reaction"
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "raiden_ready",

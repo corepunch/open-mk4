@@ -192,7 +192,7 @@
     "0x4e9910"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "5ef06c5743e80275ec1262349330f0c609b46e9a6e0a2b494f19ac55659bed03",
+  "inventory_sha256": "2e1d1f8565f68af533f56fff77626708f4823e726f362f8349904f7d3d61b309",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -421,6 +421,11 @@
       "symbol": "fujin_script_current_reaction",
       "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
       "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 109 on task peer +38/+3c, not on the executing owner."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

@@ -184,7 +184,7 @@
     "0x4e9910"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "3e62070b3260b90e76dee2a49e78c8099be72d41ccb5204eb08616ca3e3613c8",
+  "inventory_sha256": "09327b30a5d192b164679a92dfe1e12a6b2862396c1018f61dc48ac1fd44abcb",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",
@@ -406,6 +406,11 @@
       "symbol": "tanya_script_opponent_reaction",
       "adaptation": "Fatality arena continuation owns this terminal reaction and does not start ordinary victim recovery.",
       "evidence": "Tanya finisher reaction 175 is handled by the paired scene continuation."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",
