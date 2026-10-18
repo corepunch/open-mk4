@@ -94,10 +94,10 @@ static void setup(void) {
 }
 
 static const mframe_t test_mframes[] = {
-    {frame_ai, 1.5f, frame_think, 3, 2},
-    {NULL, 0.0f, frame_think, 4, 1},
+    {frame_ai, 1.5f, frame_think, 3, 2, NULL},
+    {NULL, 0.0f, frame_think, 4, 1, NULL},
 };
-static const mmove_t test_mmove = {0, 1, test_mframes, mmove_end};
+static const mmove_t test_mmove = {.firstframe = 0, .lastframe = 1, .frame = test_mframes, .endfunc = mmove_end};
 
 static void mmove_frames_and_callbacks(void) {
   setup();
@@ -112,6 +112,67 @@ static void mmove_frames_and_callbacks(void) {
   advance(1);
   check(mmove_finished == 1 && fighter->state == S_IDLE && fighter->current_mmove == NULL && frame_think_calls == 2,
       "mmove end callback did not run exactly once after the final frame");
+}
+
+static bool phase_done(const Fighter *fighter) {
+  return fighter->script_timer >= 4;
+}
+
+static void held_tick(Fighter *fighter) {
+  fighter->script_timer++;
+}
+
+static const mframe_t held_frames[] = {{.sample = 4, .duration = 2, .think = frame_think, .tick = held_tick}};
+static const mmove_t held_phase = {.firstframe = 0, .lastframe = 0, .frame = held_frames, .endfunc = finish, .until = phase_done};
+
+static void branch_phase(Fighter *fighter) {
+  fighter_mmove_phase(fighter, &held_phase);
+}
+
+static void stale_tick(Fighter *fighter) {
+  (void)fighter;
+  check(false, "replaced frame ran its tick callback");
+}
+
+static const mframe_t branch_frames[] = {{.sample = 3, .duration = 1, .think = branch_phase, .tick = stale_tick}};
+static const mmove_t branch_move = {.firstframe = 0, .lastframe = 0, .frame = branch_frames, .cleanup = cleanup};
+
+static void mmove_phases_and_cleanup(void) {
+  setup();
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_mmove(fighter, S_PUNCH, &test_move, &branch_move);
+  fighter->contact = CONTACT_BLOCK;
+  fighter->buffered = BUTTON_BIT(BUTTON_HIGH_PUNCH);
+  fighter->flags |= FF_PAIRED;
+  int action = fighter->action;
+  advance(1);
+  check(fighter->current_mmove == &held_phase && fighter->script_timer == 0 && cleaned[0] == 0, "phase branch advanced immediately or cleaned the action");
+  check(fighter->contact == CONTACT_BLOCK && fighter->buffered == BUTTON_BIT(BUTTON_HIGH_PUNCH) && (fighter->flags & FF_PAIRED) && fighter->action == action,
+      "phase branch reset combat state");
+  advance(3);
+  fighter_step_mmove(fighter);
+  check(fighter->current_mmove == &held_phase && fighter->script_timer == 3 && frame_think_calls == 1,
+      "held frame repeated its entry event, skipped ticks or advanced twice in a tick");
+  advance(1);
+  check(fighter->state == S_IDLE && cleaned[0] == 1 && completed[0] == 1, "held phase did not finish and clean exactly once");
+  for (int kind = 0; kind < 5; ++kind) {
+    setup();
+    fighter_start_mmove(fighter, S_PUNCH, &test_move, &branch_move);
+    advance(1);
+    if (kind == 0) {
+      fighter_interrupt(fighter, fighter_ready);
+    } else if (kind == 1) {
+      fighter_start_move(fighter, S_HIT, &test_move);
+    } else if (kind == 2) {
+      battle_next_round();
+    } else if (kind == 3) {
+      battle_init(4, 0);
+    } else {
+      battle_reset_match();
+    }
+    advance(8);
+    check(cleaned[0] == 1 && completed[0] == 0 && fighter->current_mmove == NULL, "cancelled mmove resumed or missed cleanup");
+  }
 }
 
 static void advance(int ticks) {
@@ -247,6 +308,7 @@ static void phase_and_paired_playback(void) {
 
 int main(void) {
   mmove_frames_and_callbacks();
+  mmove_phases_and_cleanup();
   deterministic_nested_waits();
   interruptions_and_reset();
   phase_and_paired_playback();

@@ -18,7 +18,7 @@ const mframe_t raiden_s_projectile_frames[14] = {
   MFRAME(13), /* raiden_s_projectile_013 */
 };
 // clang-format on
-const mmove_t raiden_s_projectile_mmove = {0, 13, raiden_s_projectile_frames, NULL};
+const mmove_t raiden_s_projectile_mmove = {.firstframe = 0, .lastframe = 13, .frame = raiden_s_projectile_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_lk_throw_frames[77] = {
@@ -101,7 +101,7 @@ const mframe_t raiden_s_lk_throw_frames[77] = {
   MFRAME(76), /* raiden_s_lk_throw_076 */
 };
 // clang-format on
-const mmove_t raiden_s_lk_throw_mmove = {0, 76, raiden_s_lk_throw_frames, NULL};
+const mmove_t raiden_s_lk_throw_mmove = {.firstframe = 0, .lastframe = 76, .frame = raiden_s_lk_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_052_frames[11] = {
@@ -118,7 +118,7 @@ const mframe_t raiden_clip_052_frames[11] = {
   MFRAME(10), /* raiden_clip_052_010 */
 };
 // clang-format on
-const mmove_t raiden_clip_052_mmove = {0, 10, raiden_clip_052_frames, NULL};
+const mmove_t raiden_clip_052_mmove = {.firstframe = 0, .lastframe = 10, .frame = raiden_clip_052_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_059_frames[6] = {
@@ -130,7 +130,7 @@ const mframe_t raiden_clip_059_frames[6] = {
   MFRAME(5), /* raiden_clip_059_005 */
 };
 // clang-format on
-const mmove_t raiden_clip_059_mmove = {0, 5, raiden_clip_059_frames, NULL};
+const mmove_t raiden_clip_059_mmove = {.firstframe = 0, .lastframe = 5, .frame = raiden_clip_059_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_061_frames[30] = {
@@ -166,7 +166,7 @@ const mframe_t raiden_clip_061_frames[30] = {
   MFRAME(29), /* raiden_clip_061_029 */
 };
 // clang-format on
-const mmove_t raiden_clip_061_mmove = {0, 29, raiden_clip_061_frames, NULL};
+const mmove_t raiden_clip_061_mmove = {.firstframe = 0, .lastframe = 29, .frame = raiden_clip_061_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_sweep_frames[44] = {
@@ -216,7 +216,7 @@ const mframe_t raiden_s_sweep_frames[44] = {
   MFRAME(43), /* raiden_s_sweep_043 */
 };
 // clang-format on
-const mmove_t raiden_s_sweep_mmove = {0, 43, raiden_s_sweep_frames, NULL};
+const mmove_t raiden_s_sweep_mmove = {.firstframe = 0, .lastframe = 43, .frame = raiden_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_064_frames[45] = {
@@ -267,7 +267,7 @@ const mframe_t raiden_clip_064_frames[45] = {
   MFRAME(44), /* raiden_clip_064_044 */
 };
 // clang-format on
-const mmove_t raiden_clip_064_mmove = {0, 44, raiden_clip_064_frames, NULL};
+const mmove_t raiden_clip_064_mmove = {.firstframe = 0, .lastframe = 44, .frame = raiden_clip_064_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_070_frames[28] = {
@@ -301,7 +301,7 @@ const mframe_t raiden_clip_070_frames[28] = {
   MFRAME(27), /* raiden_clip_070_027 */
 };
 // clang-format on
-const mmove_t raiden_clip_070_mmove = {0, 27, raiden_clip_070_frames, NULL};
+const mmove_t raiden_clip_070_mmove = {.firstframe = 0, .lastframe = 27, .frame = raiden_clip_070_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_kick_frames[28] = {
@@ -335,7 +335,7 @@ const mframe_t raiden_s_kick_frames[28] = {
   MFRAME(27), /* raiden_s_kick_027 */
 };
 // clang-format on
-const mmove_t raiden_s_kick_mmove = {0, 27, raiden_s_kick_frames, NULL};
+const mmove_t raiden_s_kick_mmove = {.firstframe = 0, .lastframe = 27, .frame = raiden_s_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_throw_frames[49] = {
@@ -390,7 +390,7 @@ const mframe_t raiden_s_throw_frames[49] = {
   MFRAME(48), /* raiden_s_throw_048 */
 };
 // clang-format on
-const mmove_t raiden_s_throw_mmove = {0, 48, raiden_s_throw_frames, NULL};
+const mmove_t raiden_s_throw_mmove = {.firstframe = 0, .lastframe = 48, .frame = raiden_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_080_frames[75] = {
@@ -471,7 +471,7 @@ const mframe_t raiden_clip_080_frames[75] = {
   MFRAME(74), /* raiden_clip_080_074 */
 };
 // clang-format on
-const mmove_t raiden_clip_080_mmove = {0, 74, raiden_clip_080_frames, NULL};
+const mmove_t raiden_clip_080_mmove = {.firstframe = 0, .lastframe = 74, .frame = raiden_clip_080_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_082_frames[45] = {
@@ -522,7 +522,7 @@ const mframe_t raiden_clip_082_frames[45] = {
   MFRAME(44), /* raiden_clip_082_044 */
 };
 // clang-format on
-const mmove_t raiden_clip_082_mmove = {0, 44, raiden_clip_082_frames, NULL};
+const mmove_t raiden_clip_082_mmove = {.firstframe = 0, .lastframe = 44, .frame = raiden_clip_082_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_torpedo_frames[31] = {
@@ -559,7 +559,7 @@ const mframe_t raiden_s_torpedo_frames[31] = {
   MFRAME(30), /* raiden_s_torpedo_030 */
 };
 // clang-format on
-const mmove_t raiden_s_torpedo_mmove = {0, 30, raiden_s_torpedo_frames, NULL};
+const mmove_t raiden_s_torpedo_mmove = {.firstframe = 0, .lastframe = 30, .frame = raiden_s_torpedo_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_victory_frames[101] = {
@@ -666,7 +666,7 @@ const mframe_t raiden_s_victory_frames[101] = {
   MFRAME(100), /* raiden_s_victory_100 */
 };
 // clang-format on
-const mmove_t raiden_s_victory_mmove = {0, 100, raiden_s_victory_frames, NULL};
+const mmove_t raiden_s_victory_mmove = {.firstframe = 0, .lastframe = 100, .frame = raiden_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_127_frames[40] = {
@@ -712,7 +712,7 @@ const mframe_t raiden_clip_127_frames[40] = {
   MFRAME(39), /* raiden_clip_127_039 */
 };
 // clang-format on
-const mmove_t raiden_clip_127_mmove = {0, 39, raiden_clip_127_frames, NULL};
+const mmove_t raiden_clip_127_mmove = {.firstframe = 0, .lastframe = 39, .frame = raiden_clip_127_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_132_frames[60] = {
@@ -778,7 +778,7 @@ const mframe_t raiden_clip_132_frames[60] = {
   MFRAME(59), /* raiden_clip_132_059 */
 };
 // clang-format on
-const mmove_t raiden_clip_132_mmove = {0, 59, raiden_clip_132_frames, NULL};
+const mmove_t raiden_clip_132_mmove = {.firstframe = 0, .lastframe = 59, .frame = raiden_clip_132_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_torpedo_victim_frames[10] = {
@@ -794,7 +794,7 @@ const mframe_t raiden_s_torpedo_victim_frames[10] = {
   MFRAME(9), /* raiden_s_torpedo_victim_009 */
 };
 // clang-format on
-const mmove_t raiden_s_torpedo_victim_mmove = {0, 9, raiden_s_torpedo_victim_frames, NULL};
+const mmove_t raiden_s_torpedo_victim_mmove = {.firstframe = 0, .lastframe = 9, .frame = raiden_s_torpedo_victim_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_141_frames[17] = {
@@ -817,7 +817,7 @@ const mframe_t raiden_clip_141_frames[17] = {
   MFRAME(16), /* raiden_clip_141_016 */
 };
 // clang-format on
-const mmove_t raiden_clip_141_mmove = {0, 16, raiden_clip_141_frames, NULL};
+const mmove_t raiden_clip_141_mmove = {.firstframe = 0, .lastframe = 16, .frame = raiden_clip_141_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_142_frames[17] = {
@@ -840,7 +840,7 @@ const mframe_t raiden_clip_142_frames[17] = {
   MFRAME(16), /* raiden_clip_142_016 */
 };
 // clang-format on
-const mmove_t raiden_clip_142_mmove = {0, 16, raiden_clip_142_frames, NULL};
+const mmove_t raiden_clip_142_mmove = {.firstframe = 0, .lastframe = 16, .frame = raiden_clip_142_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_143_frames[29] = {
@@ -875,7 +875,7 @@ const mframe_t raiden_clip_143_frames[29] = {
   MFRAME(28), /* raiden_clip_143_028 */
 };
 // clang-format on
-const mmove_t raiden_clip_143_mmove = {0, 28, raiden_clip_143_frames, NULL};
+const mmove_t raiden_clip_143_mmove = {.firstframe = 0, .lastframe = 28, .frame = raiden_clip_143_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_lk_thrown_frames[40] = {
@@ -921,7 +921,7 @@ const mframe_t raiden_s_lk_thrown_frames[40] = {
   MFRAME(39), /* raiden_s_lk_thrown_039 */
 };
 // clang-format on
-const mmove_t raiden_s_lk_thrown_mmove = {0, 39, raiden_s_lk_thrown_frames, NULL};
+const mmove_t raiden_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 39, .frame = raiden_s_lk_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_153_frames[26] = {
@@ -953,7 +953,7 @@ const mframe_t raiden_clip_153_frames[26] = {
   MFRAME(25), /* raiden_clip_153_025 */
 };
 // clang-format on
-const mmove_t raiden_clip_153_mmove = {0, 25, raiden_clip_153_frames, NULL};
+const mmove_t raiden_clip_153_mmove = {.firstframe = 0, .lastframe = 25, .frame = raiden_clip_153_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_lp_thrown_frames[58] = {
@@ -1017,7 +1017,7 @@ const mframe_t raiden_s_lp_thrown_frames[58] = {
   MFRAME(57), /* raiden_s_lp_thrown_057 */
 };
 // clang-format on
-const mmove_t raiden_s_lp_thrown_mmove = {0, 57, raiden_s_lp_thrown_frames, NULL};
+const mmove_t raiden_s_lp_thrown_mmove = {.firstframe = 0, .lastframe = 57, .frame = raiden_s_lp_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_169_frames[43] = {
@@ -1066,7 +1066,7 @@ const mframe_t raiden_clip_169_frames[43] = {
   MFRAME(42), /* raiden_clip_169_042 */
 };
 // clang-format on
-const mmove_t raiden_clip_169_mmove = {0, 42, raiden_clip_169_frames, NULL};
+const mmove_t raiden_clip_169_mmove = {.firstframe = 0, .lastframe = 42, .frame = raiden_clip_169_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_172_frames[22] = {
@@ -1094,7 +1094,7 @@ const mframe_t raiden_clip_172_frames[22] = {
   MFRAME(21), /* raiden_clip_172_021 */
 };
 // clang-format on
-const mmove_t raiden_clip_172_mmove = {0, 21, raiden_clip_172_frames, NULL};
+const mmove_t raiden_clip_172_mmove = {.firstframe = 0, .lastframe = 21, .frame = raiden_clip_172_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_182_frames[65] = {
@@ -1165,7 +1165,7 @@ const mframe_t raiden_clip_182_frames[65] = {
   MFRAME(64), /* raiden_clip_182_064 */
 };
 // clang-format on
-const mmove_t raiden_clip_182_mmove = {0, 64, raiden_clip_182_frames, NULL};
+const mmove_t raiden_clip_182_mmove = {.firstframe = 0, .lastframe = 64, .frame = raiden_clip_182_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_183_frames[34] = {
@@ -1205,7 +1205,7 @@ const mframe_t raiden_clip_183_frames[34] = {
   MFRAME(33), /* raiden_clip_183_033 */
 };
 // clang-format on
-const mmove_t raiden_clip_183_mmove = {0, 33, raiden_clip_183_frames, NULL};
+const mmove_t raiden_clip_183_mmove = {.firstframe = 0, .lastframe = 33, .frame = raiden_clip_183_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_knockdown_frames[20] = {
@@ -1231,7 +1231,7 @@ const mframe_t raiden_s_knockdown_frames[20] = {
   MFRAME(19), /* raiden_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t raiden_s_knockdown_mmove = {0, 19, raiden_s_knockdown_frames, NULL};
+const mmove_t raiden_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = raiden_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_202_frames[45] = {
@@ -1282,7 +1282,7 @@ const mframe_t raiden_clip_202_frames[45] = {
   MFRAME(44), /* raiden_clip_202_044 */
 };
 // clang-format on
-const mmove_t raiden_clip_202_mmove = {0, 44, raiden_clip_202_frames, NULL};
+const mmove_t raiden_clip_202_mmove = {.firstframe = 0, .lastframe = 44, .frame = raiden_clip_202_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_205_frames[8] = {
@@ -1296,7 +1296,7 @@ const mframe_t raiden_clip_205_frames[8] = {
   MFRAME(7), /* raiden_clip_205_007 */
 };
 // clang-format on
-const mmove_t raiden_clip_205_mmove = {0, 7, raiden_clip_205_frames, NULL};
+const mmove_t raiden_clip_205_mmove = {.firstframe = 0, .lastframe = 7, .frame = raiden_clip_205_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_244_frames[49] = {
@@ -1351,7 +1351,7 @@ const mframe_t raiden_clip_244_frames[49] = {
   MFRAME(48), /* raiden_clip_244_048 */
 };
 // clang-format on
-const mmove_t raiden_clip_244_mmove = {0, 48, raiden_clip_244_frames, NULL};
+const mmove_t raiden_clip_244_mmove = {.firstframe = 0, .lastframe = 48, .frame = raiden_clip_244_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_hit_frames[5] = {
@@ -1362,7 +1362,7 @@ const mframe_t raiden_s_hit_frames[5] = {
   MFRAME(4), /* raiden_s_hit_004 */
 };
 // clang-format on
-const mmove_t raiden_s_hit_mmove = {0, 4, raiden_s_hit_frames, NULL};
+const mmove_t raiden_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = raiden_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_crouch_frames[5] = {
@@ -1373,7 +1373,7 @@ const mframe_t raiden_s_crouch_frames[5] = {
   MFRAME(4), /* raiden_s_crouch_004 */
 };
 // clang-format on
-const mmove_t raiden_s_crouch_mmove = {0, 4, raiden_s_crouch_frames, NULL};
+const mmove_t raiden_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = raiden_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_261_frames[28] = {
@@ -1407,7 +1407,7 @@ const mframe_t raiden_clip_261_frames[28] = {
   MFRAME(27), /* raiden_clip_261_027 */
 };
 // clang-format on
-const mmove_t raiden_clip_261_mmove = {0, 27, raiden_clip_261_frames, NULL};
+const mmove_t raiden_clip_261_mmove = {.firstframe = 0, .lastframe = 27, .frame = raiden_clip_261_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_262_frames[10] = {
@@ -1423,7 +1423,7 @@ const mframe_t raiden_clip_262_frames[10] = {
   MFRAME(9), /* raiden_clip_262_009 */
 };
 // clang-format on
-const mmove_t raiden_clip_262_mmove = {0, 9, raiden_clip_262_frames, NULL};
+const mmove_t raiden_clip_262_mmove = {.firstframe = 0, .lastframe = 9, .frame = raiden_clip_262_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_walk_frames[30] = {
@@ -1459,7 +1459,7 @@ const mframe_t raiden_s_walk_frames[30] = {
   MFRAME(29), /* raiden_s_walk_029 */
 };
 // clang-format on
-const mmove_t raiden_s_walk_mmove = {0, 29, raiden_s_walk_frames, NULL};
+const mmove_t raiden_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = raiden_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_uppercut_frames[20] = {
@@ -1485,7 +1485,7 @@ const mframe_t raiden_s_uppercut_frames[20] = {
   MFRAME(19), /* raiden_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t raiden_s_uppercut_mmove = {0, 19, raiden_s_uppercut_frames, NULL};
+const mmove_t raiden_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = raiden_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_jab_frames[23] = {
@@ -1514,7 +1514,7 @@ const mframe_t raiden_s_jab_frames[23] = {
   MFRAME(22), /* raiden_s_jab_022 */
 };
 // clang-format on
-const mmove_t raiden_s_jab_mmove = {0, 22, raiden_s_jab_frames, NULL};
+const mmove_t raiden_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = raiden_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_295_frames[19] = {
@@ -1539,7 +1539,7 @@ const mframe_t raiden_clip_295_frames[19] = {
   MFRAME(18), /* raiden_clip_295_018 */
 };
 // clang-format on
-const mmove_t raiden_clip_295_mmove = {0, 18, raiden_clip_295_frames, NULL};
+const mmove_t raiden_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = raiden_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_hp_frames[21] = {
@@ -1566,7 +1566,7 @@ const mframe_t raiden_s_hp_frames[21] = {
   MFRAME(20), /* raiden_s_hp_020 */
 };
 // clang-format on
-const mmove_t raiden_s_hp_mmove = {0, 20, raiden_s_hp_frames, NULL};
+const mmove_t raiden_s_hp_mmove = {.firstframe = 0, .lastframe = 20, .frame = raiden_s_hp_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_hp_second_frames[19] = {
@@ -1591,7 +1591,7 @@ const mframe_t raiden_s_hp_second_frames[19] = {
   MFRAME(18), /* raiden_s_hp_second_018 */
 };
 // clang-format on
-const mmove_t raiden_s_hp_second_mmove = {0, 18, raiden_s_hp_second_frames, NULL};
+const mmove_t raiden_s_hp_second_mmove = {.firstframe = 0, .lastframe = 18, .frame = raiden_s_hp_second_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_jump_frames[28] = {
@@ -1625,7 +1625,7 @@ const mframe_t raiden_s_jump_frames[28] = {
   MFRAME(27), /* raiden_s_jump_027 */
 };
 // clang-format on
-const mmove_t raiden_s_jump_mmove = {0, 27, raiden_s_jump_frames, NULL};
+const mmove_t raiden_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = raiden_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_314_frames[13] = {
@@ -1644,7 +1644,7 @@ const mframe_t raiden_clip_314_frames[13] = {
   MFRAME(12), /* raiden_clip_314_012 */
 };
 // clang-format on
-const mmove_t raiden_clip_314_mmove = {0, 12, raiden_clip_314_frames, NULL};
+const mmove_t raiden_clip_314_mmove = {.firstframe = 0, .lastframe = 12, .frame = raiden_clip_314_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_315_frames[10] = {
@@ -1660,7 +1660,7 @@ const mframe_t raiden_clip_315_frames[10] = {
   MFRAME(9), /* raiden_clip_315_009 */
 };
 // clang-format on
-const mmove_t raiden_clip_315_mmove = {0, 9, raiden_clip_315_frames, NULL};
+const mmove_t raiden_clip_315_mmove = {.firstframe = 0, .lastframe = 9, .frame = raiden_clip_315_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_s_block_frames[5] = {
@@ -1671,7 +1671,7 @@ const mframe_t raiden_s_block_frames[5] = {
   MFRAME(4), /* raiden_s_block_004 */
 };
 // clang-format on
-const mmove_t raiden_s_block_mmove = {0, 4, raiden_s_block_frames, NULL};
+const mmove_t raiden_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = raiden_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_392_frames[25] = {
@@ -1702,7 +1702,7 @@ const mframe_t raiden_clip_392_frames[25] = {
   MFRAME(24), /* raiden_clip_392_024 */
 };
 // clang-format on
-const mmove_t raiden_clip_392_mmove = {0, 24, raiden_clip_392_frames, NULL};
+const mmove_t raiden_clip_392_mmove = {.firstframe = 0, .lastframe = 24, .frame = raiden_clip_392_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_412_frames[49] = {
@@ -1757,7 +1757,7 @@ const mframe_t raiden_clip_412_frames[49] = {
   MFRAME(48), /* raiden_clip_412_048 */
 };
 // clang-format on
-const mmove_t raiden_clip_412_mmove = {0, 48, raiden_clip_412_frames, NULL};
+const mmove_t raiden_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = raiden_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_415_frames[130] = {
@@ -1893,7 +1893,7 @@ const mframe_t raiden_clip_415_frames[130] = {
   MFRAME(129), /* raiden_clip_415_129 */
 };
 // clang-format on
-const mmove_t raiden_clip_415_mmove = {0, 129, raiden_clip_415_frames, NULL};
+const mmove_t raiden_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = raiden_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_416_frames[108] = {
@@ -2007,7 +2007,7 @@ const mframe_t raiden_clip_416_frames[108] = {
   MFRAME(107), /* raiden_clip_416_107 */
 };
 // clang-format on
-const mmove_t raiden_clip_416_mmove = {0, 107, raiden_clip_416_frames, NULL};
+const mmove_t raiden_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = raiden_clip_416_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_570_frames[39] = {
@@ -2052,7 +2052,7 @@ const mframe_t raiden_clip_570_frames[39] = {
   MFRAME(38), /* raiden_clip_570_038 */
 };
 // clang-format on
-const mmove_t raiden_clip_570_mmove = {0, 38, raiden_clip_570_frames, NULL};
+const mmove_t raiden_clip_570_mmove = {.firstframe = 0, .lastframe = 38, .frame = raiden_clip_570_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_571_frames[15] = {
@@ -2073,7 +2073,7 @@ const mframe_t raiden_clip_571_frames[15] = {
   MFRAME(14), /* raiden_clip_571_014 */
 };
 // clang-format on
-const mmove_t raiden_clip_571_mmove = {0, 14, raiden_clip_571_frames, NULL};
+const mmove_t raiden_clip_571_mmove = {.firstframe = 0, .lastframe = 14, .frame = raiden_clip_571_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_572_frames[76] = {
@@ -2155,7 +2155,7 @@ const mframe_t raiden_clip_572_frames[76] = {
   MFRAME(75), /* raiden_clip_572_075 */
 };
 // clang-format on
-const mmove_t raiden_clip_572_mmove = {0, 75, raiden_clip_572_frames, NULL};
+const mmove_t raiden_clip_572_mmove = {.firstframe = 0, .lastframe = 75, .frame = raiden_clip_572_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_573_frames[21] = {
@@ -2182,7 +2182,7 @@ const mframe_t raiden_clip_573_frames[21] = {
   MFRAME(20), /* raiden_clip_573_020 */
 };
 // clang-format on
-const mmove_t raiden_clip_573_mmove = {0, 20, raiden_clip_573_frames, NULL};
+const mmove_t raiden_clip_573_mmove = {.firstframe = 0, .lastframe = 20, .frame = raiden_clip_573_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_574_frames[39] = {
@@ -2227,7 +2227,7 @@ const mframe_t raiden_clip_574_frames[39] = {
   MFRAME(38), /* raiden_clip_574_038 */
 };
 // clang-format on
-const mmove_t raiden_clip_574_mmove = {0, 38, raiden_clip_574_frames, NULL};
+const mmove_t raiden_clip_574_mmove = {.firstframe = 0, .lastframe = 38, .frame = raiden_clip_574_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_575_frames[15] = {
@@ -2248,7 +2248,7 @@ const mframe_t raiden_clip_575_frames[15] = {
   MFRAME(14), /* raiden_clip_575_014 */
 };
 // clang-format on
-const mmove_t raiden_clip_575_mmove = {0, 14, raiden_clip_575_frames, NULL};
+const mmove_t raiden_clip_575_mmove = {.firstframe = 0, .lastframe = 14, .frame = raiden_clip_575_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t raiden_clip_576_frames[65] = {
@@ -2319,4 +2319,4 @@ const mframe_t raiden_clip_576_frames[65] = {
   MFRAME(64), /* raiden_clip_576_064 */
 };
 // clang-format on
-const mmove_t raiden_clip_576_mmove = {0, 64, raiden_clip_576_frames, NULL};
+const mmove_t raiden_clip_576_mmove = {.firstframe = 0, .lastframe = 64, .frame = raiden_clip_576_frames};

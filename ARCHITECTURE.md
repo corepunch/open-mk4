@@ -249,3 +249,16 @@ allows loops without adding a dispatcher. Committed paired victims own their
 pose independently before separation, while native scene completion retires
 parked fibers on the simulation stack.
 See [the compiler contract](docs/script-compiler.md).
+
+## Frame-table migration
+
+The mmove runner supports action entry and playback-only phase transitions.
+A phase retains the action, contact, input and pair state. Each row has a
+one-shot entry callback and an optional callback for every simulation tick;
+the final row may wait on a predicate. Phase changes start on the next actor
+tick, and callbacks that replace or interrupt a phase stop its old update.
+Completion without a successor holds the final sample. Action cleanup is
+retained across phases and detached before invocation on completion,
+replacement, interruption or round/match reset. Camera and object updates
+remain independent. Fibers coexist during migration; generated script coverage
+and behavioral checks remain required for each converted move.

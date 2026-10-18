@@ -56,7 +56,7 @@ def output_for(character, clips):
         lines.extend([
             "};",
             "// clang-format on",
-            "const mmove_t %s_mmove = {0, %d, %s_frames, NULL};" % (stem, count - 1, stem),
+            "const mmove_t %s_mmove = {.firstframe = 0, .lastframe = %d, .frame = %s_frames};" % (stem, count - 1, stem),
             "",
         ])
     return "\n".join(lines)

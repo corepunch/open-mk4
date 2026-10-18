@@ -70,7 +70,7 @@ const mframe_t tanya_clip_037_frames[66] = {
   MFRAME(65), /* tanya_clip_037_065 */
 };
 // clang-format on
-const mmove_t tanya_clip_037_mmove = {0, 65, tanya_clip_037_frames, NULL};
+const mmove_t tanya_clip_037_mmove = {.firstframe = 0, .lastframe = 65, .frame = tanya_clip_037_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_058_frames[10] = {
@@ -86,7 +86,7 @@ const mframe_t tanya_clip_058_frames[10] = {
   MFRAME(9), /* tanya_clip_058_009 */
 };
 // clang-format on
-const mmove_t tanya_clip_058_mmove = {0, 9, tanya_clip_058_frames, NULL};
+const mmove_t tanya_clip_058_mmove = {.firstframe = 0, .lastframe = 9, .frame = tanya_clip_058_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_061_frames[30] = {
@@ -122,7 +122,7 @@ const mframe_t tanya_clip_061_frames[30] = {
   MFRAME(29), /* tanya_clip_061_029 */
 };
 // clang-format on
-const mmove_t tanya_clip_061_mmove = {0, 29, tanya_clip_061_frames, NULL};
+const mmove_t tanya_clip_061_mmove = {.firstframe = 0, .lastframe = 29, .frame = tanya_clip_061_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_sweep_frames[44] = {
@@ -172,7 +172,7 @@ const mframe_t tanya_s_sweep_frames[44] = {
   MFRAME(43), /* tanya_s_sweep_043 */
 };
 // clang-format on
-const mmove_t tanya_s_sweep_mmove = {0, 43, tanya_s_sweep_frames, NULL};
+const mmove_t tanya_s_sweep_mmove = {.firstframe = 0, .lastframe = 43, .frame = tanya_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_064_frames[45] = {
@@ -223,7 +223,7 @@ const mframe_t tanya_clip_064_frames[45] = {
   MFRAME(44), /* tanya_clip_064_044 */
 };
 // clang-format on
-const mmove_t tanya_clip_064_mmove = {0, 44, tanya_clip_064_frames, NULL};
+const mmove_t tanya_clip_064_mmove = {.firstframe = 0, .lastframe = 44, .frame = tanya_clip_064_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_kick_frames[18] = {
@@ -247,7 +247,7 @@ const mframe_t tanya_s_kick_frames[18] = {
   MFRAME(17), /* tanya_s_kick_017 */
 };
 // clang-format on
-const mmove_t tanya_s_kick_mmove = {0, 17, tanya_s_kick_frames, NULL};
+const mmove_t tanya_s_kick_mmove = {.firstframe = 0, .lastframe = 17, .frame = tanya_s_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_throw_frames[61] = {
@@ -314,7 +314,7 @@ const mframe_t tanya_s_throw_frames[61] = {
   MFRAME(60), /* tanya_s_throw_060 */
 };
 // clang-format on
-const mmove_t tanya_s_throw_mmove = {0, 60, tanya_s_throw_frames, NULL};
+const mmove_t tanya_s_throw_mmove = {.firstframe = 0, .lastframe = 60, .frame = tanya_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_air_throw_frames[45] = {
@@ -365,7 +365,7 @@ const mframe_t tanya_s_air_throw_frames[45] = {
   MFRAME(44), /* tanya_s_air_throw_044 */
 };
 // clang-format on
-const mmove_t tanya_s_air_throw_mmove = {0, 44, tanya_s_air_throw_frames, NULL};
+const mmove_t tanya_s_air_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = tanya_s_air_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_victory_frames[119] = {
@@ -490,7 +490,7 @@ const mframe_t tanya_s_victory_frames[119] = {
   MFRAME(118), /* tanya_s_victory_118 */
 };
 // clang-format on
-const mmove_t tanya_s_victory_mmove = {0, 118, tanya_s_victory_frames, NULL};
+const mmove_t tanya_s_victory_mmove = {.firstframe = 0, .lastframe = 118, .frame = tanya_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_151_frames[46] = {
@@ -542,7 +542,7 @@ const mframe_t tanya_clip_151_frames[46] = {
   MFRAME(45), /* tanya_clip_151_045 */
 };
 // clang-format on
-const mmove_t tanya_clip_151_mmove = {0, 45, tanya_clip_151_frames, NULL};
+const mmove_t tanya_clip_151_mmove = {.firstframe = 0, .lastframe = 45, .frame = tanya_clip_151_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_157_frames[131] = {
@@ -679,7 +679,7 @@ const mframe_t tanya_clip_157_frames[131] = {
   MFRAME(130), /* tanya_clip_157_130 */
 };
 // clang-format on
-const mmove_t tanya_clip_157_mmove = {0, 130, tanya_clip_157_frames, NULL};
+const mmove_t tanya_clip_157_mmove = {.firstframe = 0, .lastframe = 130, .frame = tanya_clip_157_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_knockdown_frames[20] = {
@@ -705,7 +705,7 @@ const mframe_t tanya_s_knockdown_frames[20] = {
   MFRAME(19), /* tanya_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t tanya_s_knockdown_mmove = {0, 19, tanya_s_knockdown_frames, NULL};
+const mmove_t tanya_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = tanya_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_air_thrown_frames[45] = {
@@ -756,7 +756,7 @@ const mframe_t tanya_s_air_thrown_frames[45] = {
   MFRAME(44), /* tanya_s_air_thrown_044 */
 };
 // clang-format on
-const mmove_t tanya_s_air_thrown_mmove = {0, 44, tanya_s_air_thrown_frames, NULL};
+const mmove_t tanya_s_air_thrown_mmove = {.firstframe = 0, .lastframe = 44, .frame = tanya_s_air_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_hit_frames[5] = {
@@ -767,7 +767,7 @@ const mframe_t tanya_s_hit_frames[5] = {
   MFRAME(4), /* tanya_s_hit_004 */
 };
 // clang-format on
-const mmove_t tanya_s_hit_mmove = {0, 4, tanya_s_hit_frames, NULL};
+const mmove_t tanya_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = tanya_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_crouch_frames[5] = {
@@ -778,7 +778,7 @@ const mframe_t tanya_s_crouch_frames[5] = {
   MFRAME(4), /* tanya_s_crouch_004 */
 };
 // clang-format on
-const mmove_t tanya_s_crouch_mmove = {0, 4, tanya_s_crouch_frames, NULL};
+const mmove_t tanya_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = tanya_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_walk_frames[30] = {
@@ -814,7 +814,7 @@ const mframe_t tanya_s_walk_frames[30] = {
   MFRAME(29), /* tanya_s_walk_029 */
 };
 // clang-format on
-const mmove_t tanya_s_walk_mmove = {0, 29, tanya_s_walk_frames, NULL};
+const mmove_t tanya_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = tanya_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_uppercut_frames[20] = {
@@ -840,7 +840,7 @@ const mframe_t tanya_s_uppercut_frames[20] = {
   MFRAME(19), /* tanya_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t tanya_s_uppercut_mmove = {0, 19, tanya_s_uppercut_frames, NULL};
+const mmove_t tanya_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = tanya_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_jab_frames[23] = {
@@ -869,7 +869,7 @@ const mframe_t tanya_s_jab_frames[23] = {
   MFRAME(22), /* tanya_s_jab_022 */
 };
 // clang-format on
-const mmove_t tanya_s_jab_mmove = {0, 22, tanya_s_jab_frames, NULL};
+const mmove_t tanya_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = tanya_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_295_frames[19] = {
@@ -894,7 +894,7 @@ const mframe_t tanya_clip_295_frames[19] = {
   MFRAME(18), /* tanya_clip_295_018 */
 };
 // clang-format on
-const mmove_t tanya_clip_295_mmove = {0, 18, tanya_clip_295_frames, NULL};
+const mmove_t tanya_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = tanya_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_jump_frames[28] = {
@@ -928,7 +928,7 @@ const mframe_t tanya_s_jump_frames[28] = {
   MFRAME(27), /* tanya_s_jump_027 */
 };
 // clang-format on
-const mmove_t tanya_s_jump_mmove = {0, 27, tanya_s_jump_frames, NULL};
+const mmove_t tanya_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = tanya_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_308_frames[25] = {
@@ -959,7 +959,7 @@ const mframe_t tanya_clip_308_frames[25] = {
   MFRAME(24), /* tanya_clip_308_024 */
 };
 // clang-format on
-const mmove_t tanya_clip_308_mmove = {0, 24, tanya_clip_308_frames, NULL};
+const mmove_t tanya_clip_308_mmove = {.firstframe = 0, .lastframe = 24, .frame = tanya_clip_308_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_313_frames[39] = {
@@ -1004,7 +1004,7 @@ const mframe_t tanya_clip_313_frames[39] = {
   MFRAME(38), /* tanya_clip_313_038 */
 };
 // clang-format on
-const mmove_t tanya_clip_313_mmove = {0, 38, tanya_clip_313_frames, NULL};
+const mmove_t tanya_clip_313_mmove = {.firstframe = 0, .lastframe = 38, .frame = tanya_clip_313_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_s_block_frames[5] = {
@@ -1015,7 +1015,7 @@ const mframe_t tanya_s_block_frames[5] = {
   MFRAME(4), /* tanya_s_block_004 */
 };
 // clang-format on
-const mmove_t tanya_s_block_mmove = {0, 4, tanya_s_block_frames, NULL};
+const mmove_t tanya_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = tanya_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_412_frames[49] = {
@@ -1070,7 +1070,7 @@ const mframe_t tanya_clip_412_frames[49] = {
   MFRAME(48), /* tanya_clip_412_048 */
 };
 // clang-format on
-const mmove_t tanya_clip_412_mmove = {0, 48, tanya_clip_412_frames, NULL};
+const mmove_t tanya_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = tanya_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_415_frames[130] = {
@@ -1206,7 +1206,7 @@ const mframe_t tanya_clip_415_frames[130] = {
   MFRAME(129), /* tanya_clip_415_129 */
 };
 // clang-format on
-const mmove_t tanya_clip_415_mmove = {0, 129, tanya_clip_415_frames, NULL};
+const mmove_t tanya_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = tanya_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t tanya_clip_416_frames[108] = {
@@ -1320,4 +1320,4 @@ const mframe_t tanya_clip_416_frames[108] = {
   MFRAME(107), /* tanya_clip_416_107 */
 };
 // clang-format on
-const mmove_t tanya_clip_416_mmove = {0, 107, tanya_clip_416_frames, NULL};
+const mmove_t tanya_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = tanya_clip_416_frames};

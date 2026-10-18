@@ -14,7 +14,7 @@ const mframe_t noob_saibot_s_noob_shadow_up_frames[10] = {
   MFRAME(9), /* noob_saibot_s_noob_shadow_up_009 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_noob_shadow_up_mmove = {0, 9, noob_saibot_s_noob_shadow_up_frames, NULL};
+const mmove_t noob_saibot_s_noob_shadow_up_mmove = {.firstframe = 0, .lastframe = 9, .frame = noob_saibot_s_noob_shadow_up_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_noob_shadow_low_frames[14] = {
@@ -34,7 +34,7 @@ const mframe_t noob_saibot_s_noob_shadow_low_frames[14] = {
   MFRAME(13), /* noob_saibot_s_noob_shadow_low_013 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_noob_shadow_low_mmove = {0, 13, noob_saibot_s_noob_shadow_low_frames, NULL};
+const mmove_t noob_saibot_s_noob_shadow_low_mmove = {.firstframe = 0, .lastframe = 13, .frame = noob_saibot_s_noob_shadow_low_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_037_frames[66] = {
@@ -106,7 +106,7 @@ const mframe_t noob_saibot_clip_037_frames[66] = {
   MFRAME(65), /* noob_saibot_clip_037_065 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_037_mmove = {0, 65, noob_saibot_clip_037_frames, NULL};
+const mmove_t noob_saibot_clip_037_mmove = {.firstframe = 0, .lastframe = 65, .frame = noob_saibot_clip_037_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_059_frames[6] = {
@@ -118,7 +118,7 @@ const mframe_t noob_saibot_clip_059_frames[6] = {
   MFRAME(5), /* noob_saibot_clip_059_005 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_059_mmove = {0, 5, noob_saibot_clip_059_frames, NULL};
+const mmove_t noob_saibot_clip_059_mmove = {.firstframe = 0, .lastframe = 5, .frame = noob_saibot_clip_059_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_061_frames[30] = {
@@ -154,7 +154,7 @@ const mframe_t noob_saibot_clip_061_frames[30] = {
   MFRAME(29), /* noob_saibot_clip_061_029 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_061_mmove = {0, 29, noob_saibot_clip_061_frames, NULL};
+const mmove_t noob_saibot_clip_061_mmove = {.firstframe = 0, .lastframe = 29, .frame = noob_saibot_clip_061_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_sweep_frames[44] = {
@@ -204,7 +204,7 @@ const mframe_t noob_saibot_s_sweep_frames[44] = {
   MFRAME(43), /* noob_saibot_s_sweep_043 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_sweep_mmove = {0, 43, noob_saibot_s_sweep_frames, NULL};
+const mmove_t noob_saibot_s_sweep_mmove = {.firstframe = 0, .lastframe = 43, .frame = noob_saibot_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_064_frames[45] = {
@@ -255,7 +255,7 @@ const mframe_t noob_saibot_clip_064_frames[45] = {
   MFRAME(44), /* noob_saibot_clip_064_044 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_064_mmove = {0, 44, noob_saibot_clip_064_frames, NULL};
+const mmove_t noob_saibot_clip_064_mmove = {.firstframe = 0, .lastframe = 44, .frame = noob_saibot_clip_064_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_kick_frames[18] = {
@@ -279,7 +279,7 @@ const mframe_t noob_saibot_s_kick_frames[18] = {
   MFRAME(17), /* noob_saibot_s_kick_017 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_kick_mmove = {0, 17, noob_saibot_s_kick_frames, NULL};
+const mmove_t noob_saibot_s_kick_mmove = {.firstframe = 0, .lastframe = 17, .frame = noob_saibot_s_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_067_frames[18] = {
@@ -303,7 +303,7 @@ const mframe_t noob_saibot_clip_067_frames[18] = {
   MFRAME(17), /* noob_saibot_clip_067_017 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_067_mmove = {0, 17, noob_saibot_clip_067_frames, NULL};
+const mmove_t noob_saibot_clip_067_mmove = {.firstframe = 0, .lastframe = 17, .frame = noob_saibot_clip_067_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_noob_air_throw_frames[45] = {
@@ -354,7 +354,7 @@ const mframe_t noob_saibot_s_noob_air_throw_frames[45] = {
   MFRAME(44), /* noob_saibot_s_noob_air_throw_044 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_noob_air_throw_mmove = {0, 44, noob_saibot_s_noob_air_throw_frames, NULL};
+const mmove_t noob_saibot_s_noob_air_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = noob_saibot_s_noob_air_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_076_frames[49] = {
@@ -409,7 +409,7 @@ const mframe_t noob_saibot_clip_076_frames[49] = {
   MFRAME(48), /* noob_saibot_clip_076_048 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_076_mmove = {0, 48, noob_saibot_clip_076_frames, NULL};
+const mmove_t noob_saibot_clip_076_mmove = {.firstframe = 0, .lastframe = 48, .frame = noob_saibot_clip_076_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_throw_frames[45] = {
@@ -460,7 +460,7 @@ const mframe_t noob_saibot_s_throw_frames[45] = {
   MFRAME(44), /* noob_saibot_s_throw_044 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_throw_mmove = {0, 44, noob_saibot_s_throw_frames, NULL};
+const mmove_t noob_saibot_s_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = noob_saibot_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_080_frames[75] = {
@@ -541,7 +541,7 @@ const mframe_t noob_saibot_clip_080_frames[75] = {
   MFRAME(74), /* noob_saibot_clip_080_074 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_080_mmove = {0, 74, noob_saibot_clip_080_frames, NULL};
+const mmove_t noob_saibot_clip_080_mmove = {.firstframe = 0, .lastframe = 74, .frame = noob_saibot_clip_080_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_082_frames[45] = {
@@ -592,7 +592,7 @@ const mframe_t noob_saibot_clip_082_frames[45] = {
   MFRAME(44), /* noob_saibot_clip_082_044 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_082_mmove = {0, 44, noob_saibot_clip_082_frames, NULL};
+const mmove_t noob_saibot_clip_082_mmove = {.firstframe = 0, .lastframe = 44, .frame = noob_saibot_clip_082_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_victory_frames[89] = {
@@ -687,7 +687,7 @@ const mframe_t noob_saibot_s_victory_frames[89] = {
   MFRAME(88), /* noob_saibot_s_victory_088 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_victory_mmove = {0, 88, noob_saibot_s_victory_frames, NULL};
+const mmove_t noob_saibot_s_victory_mmove = {.firstframe = 0, .lastframe = 88, .frame = noob_saibot_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_141_frames[17] = {
@@ -710,7 +710,7 @@ const mframe_t noob_saibot_clip_141_frames[17] = {
   MFRAME(16), /* noob_saibot_clip_141_016 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_141_mmove = {0, 16, noob_saibot_clip_141_frames, NULL};
+const mmove_t noob_saibot_clip_141_mmove = {.firstframe = 0, .lastframe = 16, .frame = noob_saibot_clip_141_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_142_frames[17] = {
@@ -733,7 +733,7 @@ const mframe_t noob_saibot_clip_142_frames[17] = {
   MFRAME(16), /* noob_saibot_clip_142_016 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_142_mmove = {0, 16, noob_saibot_clip_142_frames, NULL};
+const mmove_t noob_saibot_clip_142_mmove = {.firstframe = 0, .lastframe = 16, .frame = noob_saibot_clip_142_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_143_frames[29] = {
@@ -768,7 +768,7 @@ const mframe_t noob_saibot_clip_143_frames[29] = {
   MFRAME(28), /* noob_saibot_clip_143_028 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_143_mmove = {0, 28, noob_saibot_clip_143_frames, NULL};
+const mmove_t noob_saibot_clip_143_mmove = {.firstframe = 0, .lastframe = 28, .frame = noob_saibot_clip_143_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_noob_air_thrown_frames[28] = {
@@ -802,7 +802,7 @@ const mframe_t noob_saibot_s_noob_air_thrown_frames[28] = {
   MFRAME(27), /* noob_saibot_s_noob_air_thrown_027 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_noob_air_thrown_mmove = {0, 27, noob_saibot_s_noob_air_thrown_frames, NULL};
+const mmove_t noob_saibot_s_noob_air_thrown_mmove = {.firstframe = 0, .lastframe = 27, .frame = noob_saibot_s_noob_air_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_lp_thrown_frames[26] = {
@@ -834,7 +834,7 @@ const mframe_t noob_saibot_s_lp_thrown_frames[26] = {
   MFRAME(25), /* noob_saibot_s_lp_thrown_025 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_lp_thrown_mmove = {0, 25, noob_saibot_s_lp_thrown_frames, NULL};
+const mmove_t noob_saibot_s_lp_thrown_mmove = {.firstframe = 0, .lastframe = 25, .frame = noob_saibot_s_lp_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_154_frames[58] = {
@@ -898,7 +898,7 @@ const mframe_t noob_saibot_clip_154_frames[58] = {
   MFRAME(57), /* noob_saibot_clip_154_057 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_154_mmove = {0, 57, noob_saibot_clip_154_frames, NULL};
+const mmove_t noob_saibot_clip_154_mmove = {.firstframe = 0, .lastframe = 57, .frame = noob_saibot_clip_154_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_157_frames[131] = {
@@ -1035,7 +1035,7 @@ const mframe_t noob_saibot_clip_157_frames[131] = {
   MFRAME(130), /* noob_saibot_clip_157_130 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_157_mmove = {0, 130, noob_saibot_clip_157_frames, NULL};
+const mmove_t noob_saibot_clip_157_mmove = {.firstframe = 0, .lastframe = 130, .frame = noob_saibot_clip_157_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_172_frames[22] = {
@@ -1063,7 +1063,7 @@ const mframe_t noob_saibot_clip_172_frames[22] = {
   MFRAME(21), /* noob_saibot_clip_172_021 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_172_mmove = {0, 21, noob_saibot_clip_172_frames, NULL};
+const mmove_t noob_saibot_clip_172_mmove = {.firstframe = 0, .lastframe = 21, .frame = noob_saibot_clip_172_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_knockdown_frames[20] = {
@@ -1089,7 +1089,7 @@ const mframe_t noob_saibot_s_knockdown_frames[20] = {
   MFRAME(19), /* noob_saibot_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_knockdown_mmove = {0, 19, noob_saibot_s_knockdown_frames, NULL};
+const mmove_t noob_saibot_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = noob_saibot_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_202_frames[45] = {
@@ -1140,7 +1140,7 @@ const mframe_t noob_saibot_clip_202_frames[45] = {
   MFRAME(44), /* noob_saibot_clip_202_044 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_202_mmove = {0, 44, noob_saibot_clip_202_frames, NULL};
+const mmove_t noob_saibot_clip_202_mmove = {.firstframe = 0, .lastframe = 44, .frame = noob_saibot_clip_202_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_hit_frames[5] = {
@@ -1151,7 +1151,7 @@ const mframe_t noob_saibot_s_hit_frames[5] = {
   MFRAME(4), /* noob_saibot_s_hit_004 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_hit_mmove = {0, 4, noob_saibot_s_hit_frames, NULL};
+const mmove_t noob_saibot_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = noob_saibot_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_crouch_frames[5] = {
@@ -1162,7 +1162,7 @@ const mframe_t noob_saibot_s_crouch_frames[5] = {
   MFRAME(4), /* noob_saibot_s_crouch_004 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_crouch_mmove = {0, 4, noob_saibot_s_crouch_frames, NULL};
+const mmove_t noob_saibot_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = noob_saibot_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_walk_frames[30] = {
@@ -1198,7 +1198,7 @@ const mframe_t noob_saibot_s_walk_frames[30] = {
   MFRAME(29), /* noob_saibot_s_walk_029 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_walk_mmove = {0, 29, noob_saibot_s_walk_frames, NULL};
+const mmove_t noob_saibot_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = noob_saibot_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_uppercut_frames[20] = {
@@ -1224,7 +1224,7 @@ const mframe_t noob_saibot_s_uppercut_frames[20] = {
   MFRAME(19), /* noob_saibot_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_uppercut_mmove = {0, 19, noob_saibot_s_uppercut_frames, NULL};
+const mmove_t noob_saibot_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = noob_saibot_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_jab_frames[23] = {
@@ -1253,7 +1253,7 @@ const mframe_t noob_saibot_s_jab_frames[23] = {
   MFRAME(22), /* noob_saibot_s_jab_022 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_jab_mmove = {0, 22, noob_saibot_s_jab_frames, NULL};
+const mmove_t noob_saibot_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = noob_saibot_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_295_frames[19] = {
@@ -1278,7 +1278,7 @@ const mframe_t noob_saibot_clip_295_frames[19] = {
   MFRAME(18), /* noob_saibot_clip_295_018 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_295_mmove = {0, 18, noob_saibot_clip_295_frames, NULL};
+const mmove_t noob_saibot_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = noob_saibot_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_jump_frames[28] = {
@@ -1312,7 +1312,7 @@ const mframe_t noob_saibot_s_jump_frames[28] = {
   MFRAME(27), /* noob_saibot_s_jump_027 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_jump_mmove = {0, 27, noob_saibot_s_jump_frames, NULL};
+const mmove_t noob_saibot_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = noob_saibot_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_313_frames[39] = {
@@ -1357,7 +1357,7 @@ const mframe_t noob_saibot_clip_313_frames[39] = {
   MFRAME(38), /* noob_saibot_clip_313_038 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_313_mmove = {0, 38, noob_saibot_clip_313_frames, NULL};
+const mmove_t noob_saibot_clip_313_mmove = {.firstframe = 0, .lastframe = 38, .frame = noob_saibot_clip_313_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_s_block_frames[5] = {
@@ -1368,7 +1368,7 @@ const mframe_t noob_saibot_s_block_frames[5] = {
   MFRAME(4), /* noob_saibot_s_block_004 */
 };
 // clang-format on
-const mmove_t noob_saibot_s_block_mmove = {0, 4, noob_saibot_s_block_frames, NULL};
+const mmove_t noob_saibot_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = noob_saibot_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_412_frames[49] = {
@@ -1423,7 +1423,7 @@ const mframe_t noob_saibot_clip_412_frames[49] = {
   MFRAME(48), /* noob_saibot_clip_412_048 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_412_mmove = {0, 48, noob_saibot_clip_412_frames, NULL};
+const mmove_t noob_saibot_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = noob_saibot_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_415_frames[130] = {
@@ -1559,7 +1559,7 @@ const mframe_t noob_saibot_clip_415_frames[130] = {
   MFRAME(129), /* noob_saibot_clip_415_129 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_415_mmove = {0, 129, noob_saibot_clip_415_frames, NULL};
+const mmove_t noob_saibot_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = noob_saibot_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t noob_saibot_clip_416_frames[108] = {
@@ -1673,4 +1673,4 @@ const mframe_t noob_saibot_clip_416_frames[108] = {
   MFRAME(107), /* noob_saibot_clip_416_107 */
 };
 // clang-format on
-const mmove_t noob_saibot_clip_416_mmove = {0, 107, noob_saibot_clip_416_frames, NULL};
+const mmove_t noob_saibot_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = noob_saibot_clip_416_frames};

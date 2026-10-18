@@ -17,7 +17,7 @@ const mframe_t kai_s_stage_event_clip_frames[13] = {
   MFRAME(12), /* kai_s_stage_event_clip_012 */
 };
 // clang-format on
-const mmove_t kai_s_stage_event_clip_mmove = {0, 12, kai_s_stage_event_clip_frames, NULL};
+const mmove_t kai_s_stage_event_clip_mmove = {.firstframe = 0, .lastframe = 12, .frame = kai_s_stage_event_clip_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_001_frames[20] = {
@@ -43,7 +43,7 @@ const mframe_t kai_clip_001_frames[20] = {
   MFRAME(19), /* kai_clip_001_019 */
 };
 // clang-format on
-const mmove_t kai_clip_001_mmove = {0, 19, kai_clip_001_frames, NULL};
+const mmove_t kai_clip_001_mmove = {.firstframe = 0, .lastframe = 19, .frame = kai_clip_001_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_009_frames[12] = {
@@ -61,7 +61,7 @@ const mframe_t kai_clip_009_frames[12] = {
   MFRAME(11), /* kai_clip_009_011 */
 };
 // clang-format on
-const mmove_t kai_clip_009_mmove = {0, 11, kai_clip_009_frames, NULL};
+const mmove_t kai_clip_009_mmove = {.firstframe = 0, .lastframe = 11, .frame = kai_clip_009_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_throw_frames[66] = {
@@ -133,7 +133,7 @@ const mframe_t kai_s_throw_frames[66] = {
   MFRAME(65), /* kai_s_throw_065 */
 };
 // clang-format on
-const mmove_t kai_s_throw_mmove = {0, 65, kai_s_throw_frames, NULL};
+const mmove_t kai_s_throw_mmove = {.firstframe = 0, .lastframe = 65, .frame = kai_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_043_frames[112] = {
@@ -251,7 +251,7 @@ const mframe_t kai_clip_043_frames[112] = {
   MFRAME(111), /* kai_clip_043_111 */
 };
 // clang-format on
-const mmove_t kai_clip_043_mmove = {0, 111, kai_clip_043_frames, NULL};
+const mmove_t kai_clip_043_mmove = {.firstframe = 0, .lastframe = 111, .frame = kai_clip_043_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_058_frames[10] = {
@@ -267,7 +267,7 @@ const mframe_t kai_clip_058_frames[10] = {
   MFRAME(9), /* kai_clip_058_009 */
 };
 // clang-format on
-const mmove_t kai_clip_058_mmove = {0, 9, kai_clip_058_frames, NULL};
+const mmove_t kai_clip_058_mmove = {.firstframe = 0, .lastframe = 9, .frame = kai_clip_058_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_060_frames[6] = {
@@ -279,7 +279,7 @@ const mframe_t kai_clip_060_frames[6] = {
   MFRAME(5), /* kai_clip_060_005 */
 };
 // clang-format on
-const mmove_t kai_clip_060_mmove = {0, 5, kai_clip_060_frames, NULL};
+const mmove_t kai_clip_060_mmove = {.firstframe = 0, .lastframe = 5, .frame = kai_clip_060_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_air_attack_frames[30] = {
@@ -315,7 +315,7 @@ const mframe_t kai_s_air_attack_frames[30] = {
   MFRAME(29), /* kai_s_air_attack_029 */
 };
 // clang-format on
-const mmove_t kai_s_air_attack_mmove = {0, 29, kai_s_air_attack_frames, NULL};
+const mmove_t kai_s_air_attack_mmove = {.firstframe = 0, .lastframe = 29, .frame = kai_s_air_attack_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_sweep_frames[44] = {
@@ -365,7 +365,7 @@ const mframe_t kai_s_sweep_frames[44] = {
   MFRAME(43), /* kai_s_sweep_043 */
 };
 // clang-format on
-const mmove_t kai_s_sweep_mmove = {0, 43, kai_s_sweep_frames, NULL};
+const mmove_t kai_s_sweep_mmove = {.firstframe = 0, .lastframe = 43, .frame = kai_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_064_frames[45] = {
@@ -416,7 +416,7 @@ const mframe_t kai_clip_064_frames[45] = {
   MFRAME(44), /* kai_clip_064_044 */
 };
 // clang-format on
-const mmove_t kai_clip_064_mmove = {0, 44, kai_clip_064_frames, NULL};
+const mmove_t kai_clip_064_mmove = {.firstframe = 0, .lastframe = 44, .frame = kai_clip_064_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_low_kick_frames[28] = {
@@ -450,7 +450,7 @@ const mframe_t kai_s_low_kick_frames[28] = {
   MFRAME(27), /* kai_s_low_kick_027 */
 };
 // clang-format on
-const mmove_t kai_s_low_kick_mmove = {0, 27, kai_s_low_kick_frames, NULL};
+const mmove_t kai_s_low_kick_mmove = {.firstframe = 0, .lastframe = 27, .frame = kai_s_low_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_high_kick_frames[28] = {
@@ -484,7 +484,7 @@ const mframe_t kai_s_high_kick_frames[28] = {
   MFRAME(27), /* kai_s_high_kick_027 */
 };
 // clang-format on
-const mmove_t kai_s_high_kick_mmove = {0, 27, kai_s_high_kick_frames, NULL};
+const mmove_t kai_s_high_kick_mmove = {.firstframe = 0, .lastframe = 27, .frame = kai_s_high_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_076_frames[49] = {
@@ -539,7 +539,7 @@ const mframe_t kai_clip_076_frames[49] = {
   MFRAME(48), /* kai_clip_076_048 */
 };
 // clang-format on
-const mmove_t kai_clip_076_mmove = {0, 48, kai_clip_076_frames, NULL};
+const mmove_t kai_clip_076_mmove = {.firstframe = 0, .lastframe = 48, .frame = kai_clip_076_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_081_frames[79] = {
@@ -624,7 +624,7 @@ const mframe_t kai_clip_081_frames[79] = {
   MFRAME(78), /* kai_clip_081_078 */
 };
 // clang-format on
-const mmove_t kai_clip_081_mmove = {0, 78, kai_clip_081_frames, NULL};
+const mmove_t kai_clip_081_mmove = {.firstframe = 0, .lastframe = 78, .frame = kai_clip_081_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_air_throw_frames[45] = {
@@ -675,7 +675,7 @@ const mframe_t kai_s_air_throw_frames[45] = {
   MFRAME(44), /* kai_s_air_throw_044 */
 };
 // clang-format on
-const mmove_t kai_s_air_throw_mmove = {0, 44, kai_s_air_throw_frames, NULL};
+const mmove_t kai_s_air_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = kai_s_air_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_victory_frames[140] = {
@@ -821,7 +821,7 @@ const mframe_t kai_s_victory_frames[140] = {
   MFRAME(139), /* kai_s_victory_139 */
 };
 // clang-format on
-const mmove_t kai_s_victory_mmove = {0, 139, kai_s_victory_frames, NULL};
+const mmove_t kai_s_victory_mmove = {.firstframe = 0, .lastframe = 139, .frame = kai_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_lp_thrown_frames[26] = {
@@ -853,7 +853,7 @@ const mframe_t kai_s_lp_thrown_frames[26] = {
   MFRAME(25), /* kai_s_lp_thrown_025 */
 };
 // clang-format on
-const mmove_t kai_s_lp_thrown_mmove = {0, 25, kai_s_lp_thrown_frames, NULL};
+const mmove_t kai_s_lp_thrown_mmove = {.firstframe = 0, .lastframe = 25, .frame = kai_s_lp_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_thrown_frames[131] = {
@@ -990,7 +990,7 @@ const mframe_t kai_s_thrown_frames[131] = {
   MFRAME(130), /* kai_s_thrown_130 */
 };
 // clang-format on
-const mmove_t kai_s_thrown_mmove = {0, 130, kai_s_thrown_frames, NULL};
+const mmove_t kai_s_thrown_mmove = {.firstframe = 0, .lastframe = 130, .frame = kai_s_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_lk_thrown_frames[47] = {
@@ -1043,7 +1043,7 @@ const mframe_t kai_s_lk_thrown_frames[47] = {
   MFRAME(46), /* kai_s_lk_thrown_046 */
 };
 // clang-format on
-const mmove_t kai_s_lk_thrown_mmove = {0, 46, kai_s_lk_thrown_frames, NULL};
+const mmove_t kai_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 46, .frame = kai_s_lk_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_163_frames[112] = {
@@ -1161,7 +1161,7 @@ const mframe_t kai_clip_163_frames[112] = {
   MFRAME(111), /* kai_clip_163_111 */
 };
 // clang-format on
-const mmove_t kai_clip_163_mmove = {0, 111, kai_clip_163_frames, NULL};
+const mmove_t kai_clip_163_mmove = {.firstframe = 0, .lastframe = 111, .frame = kai_clip_163_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_knockdown_frames[20] = {
@@ -1187,7 +1187,7 @@ const mframe_t kai_s_knockdown_frames[20] = {
   MFRAME(19), /* kai_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t kai_s_knockdown_mmove = {0, 19, kai_s_knockdown_frames, NULL};
+const mmove_t kai_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = kai_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_air_thrown_frames[45] = {
@@ -1238,7 +1238,7 @@ const mframe_t kai_s_air_thrown_frames[45] = {
   MFRAME(44), /* kai_s_air_thrown_044 */
 };
 // clang-format on
-const mmove_t kai_s_air_thrown_mmove = {0, 44, kai_s_air_thrown_frames, NULL};
+const mmove_t kai_s_air_thrown_mmove = {.firstframe = 0, .lastframe = 44, .frame = kai_s_air_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_244_frames[49] = {
@@ -1293,7 +1293,7 @@ const mframe_t kai_clip_244_frames[49] = {
   MFRAME(48), /* kai_clip_244_048 */
 };
 // clang-format on
-const mmove_t kai_clip_244_mmove = {0, 48, kai_clip_244_frames, NULL};
+const mmove_t kai_clip_244_mmove = {.firstframe = 0, .lastframe = 48, .frame = kai_clip_244_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_hit_frames[5] = {
@@ -1304,7 +1304,7 @@ const mframe_t kai_s_hit_frames[5] = {
   MFRAME(4), /* kai_s_hit_004 */
 };
 // clang-format on
-const mmove_t kai_s_hit_mmove = {0, 4, kai_s_hit_frames, NULL};
+const mmove_t kai_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = kai_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_crouch_frames[5] = {
@@ -1315,7 +1315,7 @@ const mframe_t kai_s_crouch_frames[5] = {
   MFRAME(4), /* kai_s_crouch_004 */
 };
 // clang-format on
-const mmove_t kai_s_crouch_mmove = {0, 4, kai_s_crouch_frames, NULL};
+const mmove_t kai_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = kai_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_walk_frames[30] = {
@@ -1351,7 +1351,7 @@ const mframe_t kai_s_walk_frames[30] = {
   MFRAME(29), /* kai_s_walk_029 */
 };
 // clang-format on
-const mmove_t kai_s_walk_mmove = {0, 29, kai_s_walk_frames, NULL};
+const mmove_t kai_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = kai_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_uppercut_frames[20] = {
@@ -1377,7 +1377,7 @@ const mframe_t kai_s_uppercut_frames[20] = {
   MFRAME(19), /* kai_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t kai_s_uppercut_mmove = {0, 19, kai_s_uppercut_frames, NULL};
+const mmove_t kai_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = kai_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_jab_frames[23] = {
@@ -1406,7 +1406,7 @@ const mframe_t kai_s_jab_frames[23] = {
   MFRAME(22), /* kai_s_jab_022 */
 };
 // clang-format on
-const mmove_t kai_s_jab_mmove = {0, 22, kai_s_jab_frames, NULL};
+const mmove_t kai_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = kai_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_295_frames[19] = {
@@ -1431,7 +1431,7 @@ const mframe_t kai_clip_295_frames[19] = {
   MFRAME(18), /* kai_clip_295_018 */
 };
 // clang-format on
-const mmove_t kai_clip_295_mmove = {0, 18, kai_clip_295_frames, NULL};
+const mmove_t kai_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = kai_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_298_frames[20] = {
@@ -1457,7 +1457,7 @@ const mframe_t kai_clip_298_frames[20] = {
   MFRAME(19), /* kai_clip_298_019 */
 };
 // clang-format on
-const mmove_t kai_clip_298_mmove = {0, 19, kai_clip_298_frames, NULL};
+const mmove_t kai_clip_298_mmove = {.firstframe = 0, .lastframe = 19, .frame = kai_clip_298_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_jump_frames[28] = {
@@ -1491,7 +1491,7 @@ const mframe_t kai_s_jump_frames[28] = {
   MFRAME(27), /* kai_s_jump_027 */
 };
 // clang-format on
-const mmove_t kai_s_jump_mmove = {0, 27, kai_s_jump_frames, NULL};
+const mmove_t kai_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = kai_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_s_block_frames[5] = {
@@ -1502,7 +1502,7 @@ const mframe_t kai_s_block_frames[5] = {
   MFRAME(4), /* kai_s_block_004 */
 };
 // clang-format on
-const mmove_t kai_s_block_mmove = {0, 4, kai_s_block_frames, NULL};
+const mmove_t kai_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = kai_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_412_frames[49] = {
@@ -1557,7 +1557,7 @@ const mframe_t kai_clip_412_frames[49] = {
   MFRAME(48), /* kai_clip_412_048 */
 };
 // clang-format on
-const mmove_t kai_clip_412_mmove = {0, 48, kai_clip_412_frames, NULL};
+const mmove_t kai_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = kai_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_415_frames[130] = {
@@ -1693,7 +1693,7 @@ const mframe_t kai_clip_415_frames[130] = {
   MFRAME(129), /* kai_clip_415_129 */
 };
 // clang-format on
-const mmove_t kai_clip_415_mmove = {0, 129, kai_clip_415_frames, NULL};
+const mmove_t kai_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = kai_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_416_frames[108] = {
@@ -1807,7 +1807,7 @@ const mframe_t kai_clip_416_frames[108] = {
   MFRAME(107), /* kai_clip_416_107 */
 };
 // clang-format on
-const mmove_t kai_clip_416_mmove = {0, 107, kai_clip_416_frames, NULL};
+const mmove_t kai_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = kai_clip_416_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t kai_clip_551_frames[60] = {
@@ -1873,4 +1873,4 @@ const mframe_t kai_clip_551_frames[60] = {
   MFRAME(59), /* kai_clip_551_059 */
 };
 // clang-format on
-const mmove_t kai_clip_551_mmove = {0, 59, kai_clip_551_frames, NULL};
+const mmove_t kai_clip_551_mmove = {.firstframe = 0, .lastframe = 59, .frame = kai_clip_551_frames};

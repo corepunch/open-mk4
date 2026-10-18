@@ -159,9 +159,10 @@ typedef struct mframe_s {
   FighterFn think;
   int sample;
   int duration;
+  FighterFn tick; /* runs once per simulation tick, including held frames */
 } mframe_t;
 
-#define MFRAME(sample_) {NULL, 0.0f, NULL, (sample_), MMOVE_FRAME_TICKS}
+#define MFRAME(sample_) {NULL, 0.0f, NULL, (sample_), MMOVE_FRAME_TICKS, NULL}
 
 /* A contiguous animation range. Callbacks can replace the active move, which
  * is how conditional branches select another mmove_t at a frame boundary. */
@@ -169,6 +170,8 @@ struct mmove_s {
   int firstframe, lastframe;
   const mframe_t *frame;
   FighterFn endfunc;
+  bool (*until)(const Fighter *fighter); /* hold final row after its duration until true */
+  FighterFn cleanup;                     /* action lifetime; phase changes retain the initial cleanup */
 };
 
 /* Per-tick Q16 movement values. */
@@ -466,6 +469,8 @@ struct Fighter {
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   const mmove_t *current_mmove;
   int mmove_frame, mmove_elapsed;
+  FighterFn mmove_cleanup;
+  uint64_t mmove_last_tick;
   uint64_t continuation; /* changes on move/phase replacement, even when re-entering the same phase */
   int sequence_event_tick;
   bool sequence_finished;
@@ -747,6 +752,10 @@ void fighter_step_sequence(Fighter *fighter);
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
 void fighter_start_mmove(Fighter *fighter, int state, const MoveDef *move, const mmove_t *mmove);
 void fighter_step_mmove(Fighter *fighter);
+void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase);
+void fighter_cancel_mmove(Fighter *fighter);
+void fighter_finish_mmove(Fighter *fighter, FighterFn next);
+void fighter_cancel_all_mmoves(void);
 /* Stackful move prototype: one scheduler-owned fiber per active fighter. */
 void fighter_start_fiber(Fighter *fighter, FighterFn entry, FighterFn cleanup);
 bool fighter_fiber_active(const Fighter *fighter);

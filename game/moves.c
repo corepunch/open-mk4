@@ -113,6 +113,7 @@ void fighter_set_speed(Fighter *fighter, q16 speed) {
 void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
   fighter_cancel_fiber(fighter);
+  fighter_cancel_mmove(fighter);
   if (fighter->state == S_WALK && !fighter_airborne(fighter) && (move->flags & SF_LOCK)) {
     fighter_set_speed(fighter, 0);
   }
@@ -196,6 +197,7 @@ void fighter_enter_state(Fighter *fighter, int state) {
  * combat identity, action, contact result and input restrictions. */
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence) {
   fighter_cancel_fiber(fighter);
+  fighter_cancel_mmove(fighter);
   require(sequence != NULL && sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 && sequence->end != NULL &&
               sequence->segments[0].at == 0 && sequence->event_count >= 0 && (sequence->event_count == 0 || sequence->events != NULL),
       "Invalid move phase");
@@ -235,49 +237,112 @@ void fighter_step_sequence(Fighter *fighter) {
   frame_event(fighter);
 }
 
-void fighter_start_mmove(Fighter *fighter, int state, const MoveDef *move, const mmove_t *mmove) {
-  require(mmove != NULL && mmove->frame != NULL && mmove->lastframe >= mmove->firstframe, "Invalid mmove");
-  for (int frame = mmove->firstframe; frame <= mmove->lastframe; ++frame) {
-    const mframe_t *entry = &mmove->frame[frame - mmove->firstframe];
+/* Cleanup is detached before calling user code, so replacement/reset cannot
+ * run it twice. A phase change deliberately retains the action's cleanup. */
+void fighter_cancel_mmove(Fighter *fighter) {
+  FighterFn cleanup = fighter->mmove_cleanup;
+  if (fighter->current_mmove != NULL || cleanup != NULL) {
+    fighter->continuation++;
+  }
+  fighter->current_mmove = NULL;
+  fighter->mmove_cleanup = NULL;
+  if (cleanup != NULL) {
+    cleanup(fighter);
+  }
+}
+
+void fighter_cancel_all_mmoves(void) {
+  for (int i = 0; i < 2; ++i) {
+    fighter_cancel_mmove(&g_battle.fighters[i]);
+  }
+}
+
+void fighter_finish_mmove(Fighter *fighter, FighterFn next) {
+  fighter_cancel_mmove(fighter);
+  if (next != NULL) {
+    next(fighter);
+  }
+}
+
+/* This changes only playback, retaining combat identity, contact, buttons,
+ * paired ownership and action-local state. New phases start next actor tick. */
+void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase) {
+  require(phase != NULL && phase->frame != NULL && phase->lastframe >= phase->firstframe, "Invalid mmove phase");
+  for (int frame = phase->firstframe; frame <= phase->lastframe; ++frame) {
+    const mframe_t *entry = &phase->frame[frame - phase->firstframe];
     require(entry->sample >= 0 && entry->duration > 0, "Invalid mframe");
   }
-  fighter_start_move(fighter, state, move);
-  fighter->current_mmove = mmove;
-  fighter->mmove_frame = mmove->firstframe;
+  fighter->current_mmove = phase;
+  fighter->mmove_frame = phase->firstframe;
   fighter->mmove_elapsed = 0;
+  fighter->mmove_last_tick = g_battle.ticks;
+  fighter->sequence = NULL;
+  fighter->script = NULL;
+  fighter->sample_override = -1;
+  fighter->continuation++;
+}
+
+void fighter_start_mmove(Fighter *fighter, int state, const MoveDef *move, const mmove_t *mmove) {
+  fighter_start_move(fighter, state, move);
+  fighter_mmove_phase(fighter, mmove);
+  fighter->mmove_cleanup = mmove->cleanup;
+}
+
+static bool mmove_changed(const Fighter *fighter, const mmove_t *phase, uint64_t continuation) {
+  return fighter->continuation != continuation || fighter->current_mmove != phase || fighter->pending != NULL;
 }
 
 void fighter_step_mmove(Fighter *fighter) {
   const mmove_t *mmove = fighter->current_mmove;
   require(mmove != NULL, "Fighter has no mmove");
+  if (fighter->mmove_last_tick == g_battle.ticks) {
+    return;
+  }
+  fighter->mmove_last_tick = g_battle.ticks;
   const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
   uint64_t continuation = fighter->continuation;
   if (fighter->mmove_elapsed == 0) {
     if (frame->ai != NULL) {
       frame->ai(fighter, frame->dist);
     }
-    if (fighter->continuation != continuation || fighter->current_mmove != mmove || fighter->pending != NULL) {
+    if (mmove_changed(fighter, mmove, continuation)) {
       return;
     }
     if (frame->think != NULL) {
       frame->think(fighter);
     }
-    if (fighter->continuation != continuation || fighter->current_mmove != mmove || fighter->pending != NULL) {
+    if (mmove_changed(fighter, mmove, continuation)) {
       return;
     }
   }
-  fighter->mmove_elapsed++;
+  if (frame->tick != NULL) {
+    frame->tick(fighter);
+    if (mmove_changed(fighter, mmove, continuation)) {
+      return;
+    }
+  }
+  if (fighter->mmove_elapsed < frame->duration) {
+    fighter->mmove_elapsed++;
+  }
   if (fighter->mmove_elapsed < frame->duration) {
     return;
   }
-  fighter->mmove_elapsed = 0;
   if (fighter->mmove_frame < mmove->lastframe) {
+    fighter->mmove_elapsed = 0;
     fighter->mmove_frame++;
     return;
   }
+  if (mmove->until != NULL && !mmove->until(fighter)) {
+    return;
+  }
+  /* A terminal phase without a successor holds its final pose. */
+  fighter->sample_override = frame->sample;
   fighter->current_mmove = NULL;
   if (mmove->endfunc != NULL) {
     mmove->endfunc(fighter);
+  }
+  if (fighter->continuation == continuation && fighter->current_mmove == NULL) {
+    fighter_cancel_mmove(fighter);
   }
 }
 

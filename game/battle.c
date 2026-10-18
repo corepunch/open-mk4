@@ -45,6 +45,7 @@ static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facin
 
 void battle_init(int p1, int p2) {
   fighter_cancel_all_fibers();
+  fighter_cancel_all_mmoves();
   memset(&g_battle, 0, sizeof g_battle);
   battle_set_arena(0);
   g_battle.cpu_level = 3;
@@ -58,6 +59,7 @@ void battle_init(int p1, int p2) {
 
 void battle_reset_match(void) {
   fighter_cancel_all_fibers();
+  fighter_cancel_all_mmoves();
   g_battle.previous_animation.valid = false;
   g_battle.current_animation.valid = false;
   int i;
@@ -72,6 +74,7 @@ void battle_reset_match(void) {
 
 void battle_next_round(void) {
   fighter_cancel_all_fibers();
+  fighter_cancel_all_mmoves();
   battle_event_cancel_all();
   g_battle.previous_animation.valid = false;
   g_battle.current_animation.valid = false;

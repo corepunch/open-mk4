@@ -70,7 +70,7 @@ const mframe_t quan_chi_s_lk_throw_frames[66] = {
   MFRAME(65), /* quan_chi_s_lk_throw_065 */
 };
 // clang-format on
-const mmove_t quan_chi_s_lk_throw_mmove = {0, 65, quan_chi_s_lk_throw_frames, NULL};
+const mmove_t quan_chi_s_lk_throw_mmove = {.firstframe = 0, .lastframe = 65, .frame = quan_chi_s_lk_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_060_frames[6] = {
@@ -82,7 +82,7 @@ const mframe_t quan_chi_clip_060_frames[6] = {
   MFRAME(5), /* quan_chi_clip_060_005 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_060_mmove = {0, 5, quan_chi_clip_060_frames, NULL};
+const mmove_t quan_chi_clip_060_mmove = {.firstframe = 0, .lastframe = 5, .frame = quan_chi_clip_060_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_sweep_frames[46] = {
@@ -134,7 +134,7 @@ const mframe_t quan_chi_s_sweep_frames[46] = {
   MFRAME(45), /* quan_chi_s_sweep_045 */
 };
 // clang-format on
-const mmove_t quan_chi_s_sweep_mmove = {0, 45, quan_chi_s_sweep_frames, NULL};
+const mmove_t quan_chi_s_sweep_mmove = {.firstframe = 0, .lastframe = 45, .frame = quan_chi_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_high_kick_frames[18] = {
@@ -158,7 +158,7 @@ const mframe_t quan_chi_s_high_kick_frames[18] = {
   MFRAME(17), /* quan_chi_s_high_kick_017 */
 };
 // clang-format on
-const mmove_t quan_chi_s_high_kick_mmove = {0, 17, quan_chi_s_high_kick_frames, NULL};
+const mmove_t quan_chi_s_high_kick_mmove = {.firstframe = 0, .lastframe = 17, .frame = quan_chi_s_high_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_070_frames[28] = {
@@ -192,7 +192,7 @@ const mframe_t quan_chi_clip_070_frames[28] = {
   MFRAME(27), /* quan_chi_clip_070_027 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_070_mmove = {0, 27, quan_chi_clip_070_frames, NULL};
+const mmove_t quan_chi_clip_070_mmove = {.firstframe = 0, .lastframe = 27, .frame = quan_chi_clip_070_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_071_frames[28] = {
@@ -226,7 +226,7 @@ const mframe_t quan_chi_clip_071_frames[28] = {
   MFRAME(27), /* quan_chi_clip_071_027 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_071_mmove = {0, 27, quan_chi_clip_071_frames, NULL};
+const mmove_t quan_chi_clip_071_mmove = {.firstframe = 0, .lastframe = 27, .frame = quan_chi_clip_071_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_throw_frames[45] = {
@@ -277,7 +277,7 @@ const mframe_t quan_chi_s_throw_frames[45] = {
   MFRAME(44), /* quan_chi_s_throw_044 */
 };
 // clang-format on
-const mmove_t quan_chi_s_throw_mmove = {0, 44, quan_chi_s_throw_frames, NULL};
+const mmove_t quan_chi_s_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = quan_chi_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_air_throw_frames[45] = {
@@ -328,7 +328,7 @@ const mframe_t quan_chi_s_air_throw_frames[45] = {
   MFRAME(44), /* quan_chi_s_air_throw_044 */
 };
 // clang-format on
-const mmove_t quan_chi_s_air_throw_mmove = {0, 44, quan_chi_s_air_throw_frames, NULL};
+const mmove_t quan_chi_s_air_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = quan_chi_s_air_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_victory_frames[120] = {
@@ -454,7 +454,7 @@ const mframe_t quan_chi_s_victory_frames[120] = {
   MFRAME(119), /* quan_chi_s_victory_119 */
 };
 // clang-format on
-const mmove_t quan_chi_s_victory_mmove = {0, 119, quan_chi_s_victory_frames, NULL};
+const mmove_t quan_chi_s_victory_mmove = {.firstframe = 0, .lastframe = 119, .frame = quan_chi_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_156_frames[22] = {
@@ -482,7 +482,7 @@ const mframe_t quan_chi_clip_156_frames[22] = {
   MFRAME(21), /* quan_chi_clip_156_021 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_156_mmove = {0, 21, quan_chi_clip_156_frames, NULL};
+const mmove_t quan_chi_clip_156_mmove = {.firstframe = 0, .lastframe = 21, .frame = quan_chi_clip_156_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_lk_thrown_frames[131] = {
@@ -619,7 +619,7 @@ const mframe_t quan_chi_s_lk_thrown_frames[131] = {
   MFRAME(130), /* quan_chi_s_lk_thrown_130 */
 };
 // clang-format on
-const mmove_t quan_chi_s_lk_thrown_mmove = {0, 130, quan_chi_s_lk_thrown_frames, NULL};
+const mmove_t quan_chi_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 130, .frame = quan_chi_s_lk_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_knockdown_frames[20] = {
@@ -645,7 +645,7 @@ const mframe_t quan_chi_s_knockdown_frames[20] = {
   MFRAME(19), /* quan_chi_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t quan_chi_s_knockdown_mmove = {0, 19, quan_chi_s_knockdown_frames, NULL};
+const mmove_t quan_chi_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = quan_chi_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_air_thrown_frames[45] = {
@@ -696,7 +696,7 @@ const mframe_t quan_chi_s_air_thrown_frames[45] = {
   MFRAME(44), /* quan_chi_s_air_thrown_044 */
 };
 // clang-format on
-const mmove_t quan_chi_s_air_thrown_mmove = {0, 44, quan_chi_s_air_thrown_frames, NULL};
+const mmove_t quan_chi_s_air_thrown_mmove = {.firstframe = 0, .lastframe = 44, .frame = quan_chi_s_air_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_hit_frames[5] = {
@@ -707,7 +707,7 @@ const mframe_t quan_chi_s_hit_frames[5] = {
   MFRAME(4), /* quan_chi_s_hit_004 */
 };
 // clang-format on
-const mmove_t quan_chi_s_hit_mmove = {0, 4, quan_chi_s_hit_frames, NULL};
+const mmove_t quan_chi_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = quan_chi_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_crouch_frames[5] = {
@@ -718,7 +718,7 @@ const mframe_t quan_chi_s_crouch_frames[5] = {
   MFRAME(4), /* quan_chi_s_crouch_004 */
 };
 // clang-format on
-const mmove_t quan_chi_s_crouch_mmove = {0, 4, quan_chi_s_crouch_frames, NULL};
+const mmove_t quan_chi_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = quan_chi_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_walk_frames[30] = {
@@ -754,7 +754,7 @@ const mframe_t quan_chi_s_walk_frames[30] = {
   MFRAME(29), /* quan_chi_s_walk_029 */
 };
 // clang-format on
-const mmove_t quan_chi_s_walk_mmove = {0, 29, quan_chi_s_walk_frames, NULL};
+const mmove_t quan_chi_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = quan_chi_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_uppercut_frames[20] = {
@@ -780,7 +780,7 @@ const mframe_t quan_chi_s_uppercut_frames[20] = {
   MFRAME(19), /* quan_chi_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t quan_chi_s_uppercut_mmove = {0, 19, quan_chi_s_uppercut_frames, NULL};
+const mmove_t quan_chi_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = quan_chi_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_jab_frames[23] = {
@@ -809,7 +809,7 @@ const mframe_t quan_chi_s_jab_frames[23] = {
   MFRAME(22), /* quan_chi_s_jab_022 */
 };
 // clang-format on
-const mmove_t quan_chi_s_jab_mmove = {0, 22, quan_chi_s_jab_frames, NULL};
+const mmove_t quan_chi_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = quan_chi_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_295_frames[19] = {
@@ -834,7 +834,7 @@ const mframe_t quan_chi_clip_295_frames[19] = {
   MFRAME(18), /* quan_chi_clip_295_018 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_295_mmove = {0, 18, quan_chi_clip_295_frames, NULL};
+const mmove_t quan_chi_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = quan_chi_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_jump_frames[28] = {
@@ -868,7 +868,7 @@ const mframe_t quan_chi_s_jump_frames[28] = {
   MFRAME(27), /* quan_chi_s_jump_027 */
 };
 // clang-format on
-const mmove_t quan_chi_s_jump_mmove = {0, 27, quan_chi_s_jump_frames, NULL};
+const mmove_t quan_chi_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = quan_chi_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_313_frames[39] = {
@@ -913,7 +913,7 @@ const mframe_t quan_chi_clip_313_frames[39] = {
   MFRAME(38), /* quan_chi_clip_313_038 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_313_mmove = {0, 38, quan_chi_clip_313_frames, NULL};
+const mmove_t quan_chi_clip_313_mmove = {.firstframe = 0, .lastframe = 38, .frame = quan_chi_clip_313_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_s_block_frames[5] = {
@@ -924,7 +924,7 @@ const mframe_t quan_chi_s_block_frames[5] = {
   MFRAME(4), /* quan_chi_s_block_004 */
 };
 // clang-format on
-const mmove_t quan_chi_s_block_mmove = {0, 4, quan_chi_s_block_frames, NULL};
+const mmove_t quan_chi_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = quan_chi_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_327_frames[8] = {
@@ -938,7 +938,7 @@ const mframe_t quan_chi_clip_327_frames[8] = {
   MFRAME(7), /* quan_chi_clip_327_007 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_327_mmove = {0, 7, quan_chi_clip_327_frames, NULL};
+const mmove_t quan_chi_clip_327_mmove = {.firstframe = 0, .lastframe = 7, .frame = quan_chi_clip_327_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_412_frames[49] = {
@@ -993,7 +993,7 @@ const mframe_t quan_chi_clip_412_frames[49] = {
   MFRAME(48), /* quan_chi_clip_412_048 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_412_mmove = {0, 48, quan_chi_clip_412_frames, NULL};
+const mmove_t quan_chi_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = quan_chi_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_415_frames[130] = {
@@ -1129,7 +1129,7 @@ const mframe_t quan_chi_clip_415_frames[130] = {
   MFRAME(129), /* quan_chi_clip_415_129 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_415_mmove = {0, 129, quan_chi_clip_415_frames, NULL};
+const mmove_t quan_chi_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = quan_chi_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t quan_chi_clip_416_frames[108] = {
@@ -1243,4 +1243,4 @@ const mframe_t quan_chi_clip_416_frames[108] = {
   MFRAME(107), /* quan_chi_clip_416_107 */
 };
 // clang-format on
-const mmove_t quan_chi_clip_416_mmove = {0, 107, quan_chi_clip_416_frames, NULL};
+const mmove_t quan_chi_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = quan_chi_clip_416_frames};

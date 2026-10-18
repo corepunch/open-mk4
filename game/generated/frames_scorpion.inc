@@ -62,7 +62,7 @@ const mframe_t scorpion_clip_012_frames[58] = {
   MFRAME(57), /* scorpion_clip_012_057 */
 };
 // clang-format on
-const mmove_t scorpion_clip_012_mmove = {0, 57, scorpion_clip_012_frames, NULL};
+const mmove_t scorpion_clip_012_mmove = {.firstframe = 0, .lastframe = 57, .frame = scorpion_clip_012_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_spear_stun_frames[56] = {
@@ -124,7 +124,7 @@ const mframe_t scorpion_s_spear_stun_frames[56] = {
   MFRAME(55), /* scorpion_s_spear_stun_055 */
 };
 // clang-format on
-const mmove_t scorpion_s_spear_stun_mmove = {0, 55, scorpion_s_spear_stun_frames, NULL};
+const mmove_t scorpion_s_spear_stun_mmove = {.firstframe = 0, .lastframe = 55, .frame = scorpion_s_spear_stun_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_spear_frames[80] = {
@@ -210,7 +210,7 @@ const mframe_t scorpion_s_spear_frames[80] = {
   MFRAME(79), /* scorpion_s_spear_079 */
 };
 // clang-format on
-const mmove_t scorpion_s_spear_mmove = {0, 79, scorpion_s_spear_frames, NULL};
+const mmove_t scorpion_s_spear_mmove = {.firstframe = 0, .lastframe = 79, .frame = scorpion_s_spear_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_lk_throw_frames[66] = {
@@ -282,7 +282,7 @@ const mframe_t scorpion_s_lk_throw_frames[66] = {
   MFRAME(65), /* scorpion_s_lk_throw_065 */
 };
 // clang-format on
-const mmove_t scorpion_s_lk_throw_mmove = {0, 65, scorpion_s_lk_throw_frames, NULL};
+const mmove_t scorpion_s_lk_throw_mmove = {.firstframe = 0, .lastframe = 65, .frame = scorpion_s_lk_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_054_frames[13] = {
@@ -301,7 +301,7 @@ const mframe_t scorpion_clip_054_frames[13] = {
   MFRAME(12), /* scorpion_clip_054_012 */
 };
 // clang-format on
-const mmove_t scorpion_clip_054_mmove = {0, 12, scorpion_clip_054_frames, NULL};
+const mmove_t scorpion_clip_054_mmove = {.firstframe = 0, .lastframe = 12, .frame = scorpion_clip_054_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_058_frames[10] = {
@@ -317,7 +317,7 @@ const mframe_t scorpion_clip_058_frames[10] = {
   MFRAME(9), /* scorpion_clip_058_009 */
 };
 // clang-format on
-const mmove_t scorpion_clip_058_mmove = {0, 9, scorpion_clip_058_frames, NULL};
+const mmove_t scorpion_clip_058_mmove = {.firstframe = 0, .lastframe = 9, .frame = scorpion_clip_058_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_sweep_frames[46] = {
@@ -369,7 +369,7 @@ const mframe_t scorpion_s_sweep_frames[46] = {
   MFRAME(45), /* scorpion_s_sweep_045 */
 };
 // clang-format on
-const mmove_t scorpion_s_sweep_mmove = {0, 45, scorpion_s_sweep_frames, NULL};
+const mmove_t scorpion_s_sweep_mmove = {.firstframe = 0, .lastframe = 45, .frame = scorpion_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_kick_frames[18] = {
@@ -393,7 +393,7 @@ const mframe_t scorpion_s_kick_frames[18] = {
   MFRAME(17), /* scorpion_s_kick_017 */
 };
 // clang-format on
-const mmove_t scorpion_s_kick_mmove = {0, 17, scorpion_s_kick_frames, NULL};
+const mmove_t scorpion_s_kick_mmove = {.firstframe = 0, .lastframe = 17, .frame = scorpion_s_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_067_frames[18] = {
@@ -417,7 +417,7 @@ const mframe_t scorpion_clip_067_frames[18] = {
   MFRAME(17), /* scorpion_clip_067_017 */
 };
 // clang-format on
-const mmove_t scorpion_clip_067_mmove = {0, 17, scorpion_clip_067_frames, NULL};
+const mmove_t scorpion_clip_067_mmove = {.firstframe = 0, .lastframe = 17, .frame = scorpion_clip_067_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_throw_frames[65] = {
@@ -488,7 +488,7 @@ const mframe_t scorpion_s_throw_frames[65] = {
   MFRAME(64), /* scorpion_s_throw_064 */
 };
 // clang-format on
-const mmove_t scorpion_s_throw_mmove = {0, 64, scorpion_s_throw_frames, NULL};
+const mmove_t scorpion_s_throw_mmove = {.firstframe = 0, .lastframe = 64, .frame = scorpion_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_082_frames[45] = {
@@ -539,7 +539,7 @@ const mframe_t scorpion_clip_082_frames[45] = {
   MFRAME(44), /* scorpion_clip_082_044 */
 };
 // clang-format on
-const mmove_t scorpion_clip_082_mmove = {0, 44, scorpion_clip_082_frames, NULL};
+const mmove_t scorpion_clip_082_mmove = {.firstframe = 0, .lastframe = 44, .frame = scorpion_clip_082_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_victory_frames[19] = {
@@ -564,7 +564,7 @@ const mframe_t scorpion_s_victory_frames[19] = {
   MFRAME(18), /* scorpion_s_victory_018 */
 };
 // clang-format on
-const mmove_t scorpion_s_victory_mmove = {0, 18, scorpion_s_victory_frames, NULL};
+const mmove_t scorpion_s_victory_mmove = {.firstframe = 0, .lastframe = 18, .frame = scorpion_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_116_frames[50] = {
@@ -620,7 +620,7 @@ const mframe_t scorpion_clip_116_frames[50] = {
   MFRAME(49), /* scorpion_clip_116_049 */
 };
 // clang-format on
-const mmove_t scorpion_clip_116_mmove = {0, 49, scorpion_clip_116_frames, NULL};
+const mmove_t scorpion_clip_116_mmove = {.firstframe = 0, .lastframe = 49, .frame = scorpion_clip_116_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_117_frames[19] = {
@@ -645,7 +645,7 @@ const mframe_t scorpion_clip_117_frames[19] = {
   MFRAME(18), /* scorpion_clip_117_018 */
 };
 // clang-format on
-const mmove_t scorpion_clip_117_mmove = {0, 18, scorpion_clip_117_frames, NULL};
+const mmove_t scorpion_clip_117_mmove = {.firstframe = 0, .lastframe = 18, .frame = scorpion_clip_117_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_118_frames[50] = {
@@ -701,7 +701,7 @@ const mframe_t scorpion_clip_118_frames[50] = {
   MFRAME(49), /* scorpion_clip_118_049 */
 };
 // clang-format on
-const mmove_t scorpion_clip_118_mmove = {0, 49, scorpion_clip_118_frames, NULL};
+const mmove_t scorpion_clip_118_mmove = {.firstframe = 0, .lastframe = 49, .frame = scorpion_clip_118_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_lp_thrown_frames[42] = {
@@ -749,7 +749,7 @@ const mframe_t scorpion_s_lp_thrown_frames[42] = {
   MFRAME(41), /* scorpion_s_lp_thrown_041 */
 };
 // clang-format on
-const mmove_t scorpion_s_lp_thrown_mmove = {0, 41, scorpion_s_lp_thrown_frames, NULL};
+const mmove_t scorpion_s_lp_thrown_mmove = {.firstframe = 0, .lastframe = 41, .frame = scorpion_s_lp_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_lk_thrown_frames[131] = {
@@ -886,7 +886,7 @@ const mframe_t scorpion_s_lk_thrown_frames[131] = {
   MFRAME(130), /* scorpion_s_lk_thrown_130 */
 };
 // clang-format on
-const mmove_t scorpion_s_lk_thrown_mmove = {0, 130, scorpion_s_lk_thrown_frames, NULL};
+const mmove_t scorpion_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 130, .frame = scorpion_s_lk_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_182_frames[65] = {
@@ -957,7 +957,7 @@ const mframe_t scorpion_clip_182_frames[65] = {
   MFRAME(64), /* scorpion_clip_182_064 */
 };
 // clang-format on
-const mmove_t scorpion_clip_182_mmove = {0, 64, scorpion_clip_182_frames, NULL};
+const mmove_t scorpion_clip_182_mmove = {.firstframe = 0, .lastframe = 64, .frame = scorpion_clip_182_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_knockdown_frames[20] = {
@@ -983,7 +983,7 @@ const mframe_t scorpion_s_knockdown_frames[20] = {
   MFRAME(19), /* scorpion_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t scorpion_s_knockdown_mmove = {0, 19, scorpion_s_knockdown_frames, NULL};
+const mmove_t scorpion_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = scorpion_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_snared_frames[17] = {
@@ -1006,7 +1006,7 @@ const mframe_t scorpion_s_snared_frames[17] = {
   MFRAME(16), /* scorpion_s_snared_016 */
 };
 // clang-format on
-const mmove_t scorpion_s_snared_mmove = {0, 16, scorpion_s_snared_frames, NULL};
+const mmove_t scorpion_s_snared_mmove = {.firstframe = 0, .lastframe = 16, .frame = scorpion_s_snared_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_202_frames[45] = {
@@ -1057,7 +1057,7 @@ const mframe_t scorpion_clip_202_frames[45] = {
   MFRAME(44), /* scorpion_clip_202_044 */
 };
 // clang-format on
-const mmove_t scorpion_clip_202_mmove = {0, 44, scorpion_clip_202_frames, NULL};
+const mmove_t scorpion_clip_202_mmove = {.firstframe = 0, .lastframe = 44, .frame = scorpion_clip_202_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_206_frames[100] = {
@@ -1163,7 +1163,7 @@ const mframe_t scorpion_clip_206_frames[100] = {
   MFRAME(99), /* scorpion_clip_206_099 */
 };
 // clang-format on
-const mmove_t scorpion_clip_206_mmove = {0, 99, scorpion_clip_206_frames, NULL};
+const mmove_t scorpion_clip_206_mmove = {.firstframe = 0, .lastframe = 99, .frame = scorpion_clip_206_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_223_frames[4] = {
@@ -1173,7 +1173,7 @@ const mframe_t scorpion_clip_223_frames[4] = {
   MFRAME(3), /* scorpion_clip_223_003 */
 };
 // clang-format on
-const mmove_t scorpion_clip_223_mmove = {0, 3, scorpion_clip_223_frames, NULL};
+const mmove_t scorpion_clip_223_mmove = {.firstframe = 0, .lastframe = 3, .frame = scorpion_clip_223_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_224_frames[12] = {
@@ -1191,7 +1191,7 @@ const mframe_t scorpion_clip_224_frames[12] = {
   MFRAME(11), /* scorpion_clip_224_011 */
 };
 // clang-format on
-const mmove_t scorpion_clip_224_mmove = {0, 11, scorpion_clip_224_frames, NULL};
+const mmove_t scorpion_clip_224_mmove = {.firstframe = 0, .lastframe = 11, .frame = scorpion_clip_224_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_237_frames[45] = {
@@ -1242,7 +1242,7 @@ const mframe_t scorpion_clip_237_frames[45] = {
   MFRAME(44), /* scorpion_clip_237_044 */
 };
 // clang-format on
-const mmove_t scorpion_clip_237_mmove = {0, 44, scorpion_clip_237_frames, NULL};
+const mmove_t scorpion_clip_237_mmove = {.firstframe = 0, .lastframe = 44, .frame = scorpion_clip_237_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_238_frames[37] = {
@@ -1285,7 +1285,7 @@ const mframe_t scorpion_clip_238_frames[37] = {
   MFRAME(36), /* scorpion_clip_238_036 */
 };
 // clang-format on
-const mmove_t scorpion_clip_238_mmove = {0, 36, scorpion_clip_238_frames, NULL};
+const mmove_t scorpion_clip_238_mmove = {.firstframe = 0, .lastframe = 36, .frame = scorpion_clip_238_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_244_frames[49] = {
@@ -1340,7 +1340,7 @@ const mframe_t scorpion_clip_244_frames[49] = {
   MFRAME(48), /* scorpion_clip_244_048 */
 };
 // clang-format on
-const mmove_t scorpion_clip_244_mmove = {0, 48, scorpion_clip_244_frames, NULL};
+const mmove_t scorpion_clip_244_mmove = {.firstframe = 0, .lastframe = 48, .frame = scorpion_clip_244_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_hit_frames[5] = {
@@ -1351,7 +1351,7 @@ const mframe_t scorpion_s_hit_frames[5] = {
   MFRAME(4), /* scorpion_s_hit_004 */
 };
 // clang-format on
-const mmove_t scorpion_s_hit_mmove = {0, 4, scorpion_s_hit_frames, NULL};
+const mmove_t scorpion_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = scorpion_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_crouch_frames[5] = {
@@ -1362,7 +1362,7 @@ const mframe_t scorpion_s_crouch_frames[5] = {
   MFRAME(4), /* scorpion_s_crouch_004 */
 };
 // clang-format on
-const mmove_t scorpion_s_crouch_mmove = {0, 4, scorpion_s_crouch_frames, NULL};
+const mmove_t scorpion_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = scorpion_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_261_frames[28] = {
@@ -1396,7 +1396,7 @@ const mframe_t scorpion_clip_261_frames[28] = {
   MFRAME(27), /* scorpion_clip_261_027 */
 };
 // clang-format on
-const mmove_t scorpion_clip_261_mmove = {0, 27, scorpion_clip_261_frames, NULL};
+const mmove_t scorpion_clip_261_mmove = {.firstframe = 0, .lastframe = 27, .frame = scorpion_clip_261_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_262_frames[10] = {
@@ -1412,7 +1412,7 @@ const mframe_t scorpion_clip_262_frames[10] = {
   MFRAME(9), /* scorpion_clip_262_009 */
 };
 // clang-format on
-const mmove_t scorpion_clip_262_mmove = {0, 9, scorpion_clip_262_frames, NULL};
+const mmove_t scorpion_clip_262_mmove = {.firstframe = 0, .lastframe = 9, .frame = scorpion_clip_262_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_walk_frames[30] = {
@@ -1448,7 +1448,7 @@ const mframe_t scorpion_s_walk_frames[30] = {
   MFRAME(29), /* scorpion_s_walk_029 */
 };
 // clang-format on
-const mmove_t scorpion_s_walk_mmove = {0, 29, scorpion_s_walk_frames, NULL};
+const mmove_t scorpion_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = scorpion_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_uppercut_frames[20] = {
@@ -1474,7 +1474,7 @@ const mframe_t scorpion_s_uppercut_frames[20] = {
   MFRAME(19), /* scorpion_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t scorpion_s_uppercut_mmove = {0, 19, scorpion_s_uppercut_frames, NULL};
+const mmove_t scorpion_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = scorpion_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_jab_frames[23] = {
@@ -1503,7 +1503,7 @@ const mframe_t scorpion_s_jab_frames[23] = {
   MFRAME(22), /* scorpion_s_jab_022 */
 };
 // clang-format on
-const mmove_t scorpion_s_jab_mmove = {0, 22, scorpion_s_jab_frames, NULL};
+const mmove_t scorpion_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = scorpion_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_295_frames[19] = {
@@ -1528,7 +1528,7 @@ const mframe_t scorpion_clip_295_frames[19] = {
   MFRAME(18), /* scorpion_clip_295_018 */
 };
 // clang-format on
-const mmove_t scorpion_clip_295_mmove = {0, 18, scorpion_clip_295_frames, NULL};
+const mmove_t scorpion_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = scorpion_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_hp_frames[21] = {
@@ -1555,7 +1555,7 @@ const mframe_t scorpion_s_hp_frames[21] = {
   MFRAME(20), /* scorpion_s_hp_020 */
 };
 // clang-format on
-const mmove_t scorpion_s_hp_mmove = {0, 20, scorpion_s_hp_frames, NULL};
+const mmove_t scorpion_s_hp_mmove = {.firstframe = 0, .lastframe = 20, .frame = scorpion_s_hp_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_hp_second_frames[19] = {
@@ -1580,7 +1580,7 @@ const mframe_t scorpion_s_hp_second_frames[19] = {
   MFRAME(18), /* scorpion_s_hp_second_018 */
 };
 // clang-format on
-const mmove_t scorpion_s_hp_second_mmove = {0, 18, scorpion_s_hp_second_frames, NULL};
+const mmove_t scorpion_s_hp_second_mmove = {.firstframe = 0, .lastframe = 18, .frame = scorpion_s_hp_second_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_teleport_block_frames[9] = {
@@ -1595,7 +1595,7 @@ const mframe_t scorpion_s_teleport_block_frames[9] = {
   MFRAME(8), /* scorpion_s_teleport_block_008 */
 };
 // clang-format on
-const mmove_t scorpion_s_teleport_block_mmove = {0, 8, scorpion_s_teleport_block_frames, NULL};
+const mmove_t scorpion_s_teleport_block_mmove = {.firstframe = 0, .lastframe = 8, .frame = scorpion_s_teleport_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_jump_frames[28] = {
@@ -1629,7 +1629,7 @@ const mframe_t scorpion_s_jump_frames[28] = {
   MFRAME(27), /* scorpion_s_jump_027 */
 };
 // clang-format on
-const mmove_t scorpion_s_jump_mmove = {0, 27, scorpion_s_jump_frames, NULL};
+const mmove_t scorpion_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = scorpion_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_311_frames[19] = {
@@ -1654,7 +1654,7 @@ const mframe_t scorpion_clip_311_frames[19] = {
   MFRAME(18), /* scorpion_clip_311_018 */
 };
 // clang-format on
-const mmove_t scorpion_clip_311_mmove = {0, 18, scorpion_clip_311_frames, NULL};
+const mmove_t scorpion_clip_311_mmove = {.firstframe = 0, .lastframe = 18, .frame = scorpion_clip_311_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_teleport_frames[10] = {
@@ -1670,7 +1670,7 @@ const mframe_t scorpion_s_teleport_frames[10] = {
   MFRAME(9), /* scorpion_s_teleport_009 */
 };
 // clang-format on
-const mmove_t scorpion_s_teleport_mmove = {0, 9, scorpion_s_teleport_frames, NULL};
+const mmove_t scorpion_s_teleport_mmove = {.firstframe = 0, .lastframe = 9, .frame = scorpion_s_teleport_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_313_frames[39] = {
@@ -1715,7 +1715,7 @@ const mframe_t scorpion_clip_313_frames[39] = {
   MFRAME(38), /* scorpion_clip_313_038 */
 };
 // clang-format on
-const mmove_t scorpion_clip_313_mmove = {0, 38, scorpion_clip_313_frames, NULL};
+const mmove_t scorpion_clip_313_mmove = {.firstframe = 0, .lastframe = 38, .frame = scorpion_clip_313_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_314_frames[13] = {
@@ -1734,7 +1734,7 @@ const mframe_t scorpion_clip_314_frames[13] = {
   MFRAME(12), /* scorpion_clip_314_012 */
 };
 // clang-format on
-const mmove_t scorpion_clip_314_mmove = {0, 12, scorpion_clip_314_frames, NULL};
+const mmove_t scorpion_clip_314_mmove = {.firstframe = 0, .lastframe = 12, .frame = scorpion_clip_314_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_315_frames[10] = {
@@ -1750,7 +1750,7 @@ const mframe_t scorpion_clip_315_frames[10] = {
   MFRAME(9), /* scorpion_clip_315_009 */
 };
 // clang-format on
-const mmove_t scorpion_clip_315_mmove = {0, 9, scorpion_clip_315_frames, NULL};
+const mmove_t scorpion_clip_315_mmove = {.firstframe = 0, .lastframe = 9, .frame = scorpion_clip_315_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_block_frames[5] = {
@@ -1761,7 +1761,7 @@ const mframe_t scorpion_s_block_frames[5] = {
   MFRAME(4), /* scorpion_s_block_004 */
 };
 // clang-format on
-const mmove_t scorpion_s_block_mmove = {0, 4, scorpion_s_block_frames, NULL};
+const mmove_t scorpion_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = scorpion_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_327_frames[8] = {
@@ -1775,7 +1775,7 @@ const mframe_t scorpion_clip_327_frames[8] = {
   MFRAME(7), /* scorpion_clip_327_007 */
 };
 // clang-format on
-const mmove_t scorpion_clip_327_mmove = {0, 7, scorpion_clip_327_frames, NULL};
+const mmove_t scorpion_clip_327_mmove = {.firstframe = 0, .lastframe = 7, .frame = scorpion_clip_327_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_390_frames[145] = {
@@ -1926,7 +1926,7 @@ const mframe_t scorpion_clip_390_frames[145] = {
   MFRAME(144), /* scorpion_clip_390_144 */
 };
 // clang-format on
-const mmove_t scorpion_clip_390_mmove = {0, 144, scorpion_clip_390_frames, NULL};
+const mmove_t scorpion_clip_390_mmove = {.firstframe = 0, .lastframe = 144, .frame = scorpion_clip_390_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_391_frames[170] = {
@@ -2102,7 +2102,7 @@ const mframe_t scorpion_clip_391_frames[170] = {
   MFRAME(169), /* scorpion_clip_391_169 */
 };
 // clang-format on
-const mmove_t scorpion_clip_391_mmove = {0, 169, scorpion_clip_391_frames, NULL};
+const mmove_t scorpion_clip_391_mmove = {.firstframe = 0, .lastframe = 169, .frame = scorpion_clip_391_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_412_frames[49] = {
@@ -2157,7 +2157,7 @@ const mframe_t scorpion_clip_412_frames[49] = {
   MFRAME(48), /* scorpion_clip_412_048 */
 };
 // clang-format on
-const mmove_t scorpion_clip_412_mmove = {0, 48, scorpion_clip_412_frames, NULL};
+const mmove_t scorpion_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = scorpion_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_415_frames[130] = {
@@ -2293,7 +2293,7 @@ const mframe_t scorpion_clip_415_frames[130] = {
   MFRAME(129), /* scorpion_clip_415_129 */
 };
 // clang-format on
-const mmove_t scorpion_clip_415_mmove = {0, 129, scorpion_clip_415_frames, NULL};
+const mmove_t scorpion_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = scorpion_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_416_frames[108] = {
@@ -2407,7 +2407,7 @@ const mframe_t scorpion_clip_416_frames[108] = {
   MFRAME(107), /* scorpion_clip_416_107 */
 };
 // clang-format on
-const mmove_t scorpion_clip_416_mmove = {0, 107, scorpion_clip_416_frames, NULL};
+const mmove_t scorpion_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = scorpion_clip_416_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_fire_frames[35] = {
@@ -2448,7 +2448,7 @@ const mframe_t scorpion_s_fire_frames[35] = {
   MFRAME(34), /* scorpion_s_fire_034 */
 };
 // clang-format on
-const mmove_t scorpion_s_fire_mmove = {0, 34, scorpion_s_fire_frames, NULL};
+const mmove_t scorpion_s_fire_mmove = {.firstframe = 0, .lastframe = 34, .frame = scorpion_s_fire_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_578_frames[49] = {
@@ -2503,7 +2503,7 @@ const mframe_t scorpion_clip_578_frames[49] = {
   MFRAME(48), /* scorpion_clip_578_048 */
 };
 // clang-format on
-const mmove_t scorpion_clip_578_mmove = {0, 48, scorpion_clip_578_frames, NULL};
+const mmove_t scorpion_clip_578_mmove = {.firstframe = 0, .lastframe = 48, .frame = scorpion_clip_578_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_579_frames[35] = {
@@ -2544,7 +2544,7 @@ const mframe_t scorpion_clip_579_frames[35] = {
   MFRAME(34), /* scorpion_clip_579_034 */
 };
 // clang-format on
-const mmove_t scorpion_clip_579_mmove = {0, 34, scorpion_clip_579_frames, NULL};
+const mmove_t scorpion_clip_579_mmove = {.firstframe = 0, .lastframe = 34, .frame = scorpion_clip_579_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_580_frames[78] = {
@@ -2628,7 +2628,7 @@ const mframe_t scorpion_clip_580_frames[78] = {
   MFRAME(77), /* scorpion_clip_580_077 */
 };
 // clang-format on
-const mmove_t scorpion_clip_580_mmove = {0, 77, scorpion_clip_580_frames, NULL};
+const mmove_t scorpion_clip_580_mmove = {.firstframe = 0, .lastframe = 77, .frame = scorpion_clip_580_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_581_frames[38] = {
@@ -2672,7 +2672,7 @@ const mframe_t scorpion_clip_581_frames[38] = {
   MFRAME(37), /* scorpion_clip_581_037 */
 };
 // clang-format on
-const mmove_t scorpion_clip_581_mmove = {0, 37, scorpion_clip_581_frames, NULL};
+const mmove_t scorpion_clip_581_mmove = {.firstframe = 0, .lastframe = 37, .frame = scorpion_clip_581_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_584_frames[78] = {
@@ -2756,7 +2756,7 @@ const mframe_t scorpion_clip_584_frames[78] = {
   MFRAME(77), /* scorpion_clip_584_077 */
 };
 // clang-format on
-const mmove_t scorpion_clip_584_mmove = {0, 77, scorpion_clip_584_frames, NULL};
+const mmove_t scorpion_clip_584_mmove = {.firstframe = 0, .lastframe = 77, .frame = scorpion_clip_584_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_clip_585_frames[48] = {
@@ -2810,7 +2810,7 @@ const mframe_t scorpion_clip_585_frames[48] = {
   MFRAME(47), /* scorpion_clip_585_047 */
 };
 // clang-format on
-const mmove_t scorpion_clip_585_mmove = {0, 47, scorpion_clip_585_frames, NULL};
+const mmove_t scorpion_clip_585_mmove = {.firstframe = 0, .lastframe = 47, .frame = scorpion_clip_585_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t scorpion_s_lk_thrown_end_frames[131] = {
@@ -2947,4 +2947,4 @@ const mframe_t scorpion_s_lk_thrown_end_frames[131] = {
   MFRAME(130), /* scorpion_s_lk_thrown_end_130 */
 };
 // clang-format on
-const mmove_t scorpion_s_lk_thrown_end_mmove = {0, 130, scorpion_s_lk_thrown_end_frames, NULL};
+const mmove_t scorpion_s_lk_thrown_end_mmove = {.firstframe = 0, .lastframe = 130, .frame = scorpion_s_lk_thrown_end_frames};

@@ -17,7 +17,7 @@ const mframe_t jarek_s_air_attack_frames[13] = {
   MFRAME(12), /* jarek_s_air_attack_012 */
 };
 // clang-format on
-const mmove_t jarek_s_air_attack_mmove = {0, 12, jarek_s_air_attack_frames, NULL};
+const mmove_t jarek_s_air_attack_mmove = {.firstframe = 0, .lastframe = 12, .frame = jarek_s_air_attack_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_027_frames[22] = {
@@ -45,7 +45,7 @@ const mframe_t jarek_clip_027_frames[22] = {
   MFRAME(21), /* jarek_clip_027_021 */
 };
 // clang-format on
-const mmove_t jarek_clip_027_mmove = {0, 21, jarek_clip_027_frames, NULL};
+const mmove_t jarek_clip_027_mmove = {.firstframe = 0, .lastframe = 21, .frame = jarek_clip_027_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_throw_frames[66] = {
@@ -117,7 +117,7 @@ const mframe_t jarek_s_throw_frames[66] = {
   MFRAME(65), /* jarek_s_throw_065 */
 };
 // clang-format on
-const mmove_t jarek_s_throw_mmove = {0, 65, jarek_s_throw_frames, NULL};
+const mmove_t jarek_s_throw_mmove = {.firstframe = 0, .lastframe = 65, .frame = jarek_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_058_frames[10] = {
@@ -133,7 +133,7 @@ const mframe_t jarek_clip_058_frames[10] = {
   MFRAME(9), /* jarek_clip_058_009 */
 };
 // clang-format on
-const mmove_t jarek_clip_058_mmove = {0, 9, jarek_clip_058_frames, NULL};
+const mmove_t jarek_clip_058_mmove = {.firstframe = 0, .lastframe = 9, .frame = jarek_clip_058_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_sweep_frames[46] = {
@@ -185,7 +185,7 @@ const mframe_t jarek_s_sweep_frames[46] = {
   MFRAME(45), /* jarek_s_sweep_045 */
 };
 // clang-format on
-const mmove_t jarek_s_sweep_mmove = {0, 45, jarek_s_sweep_frames, NULL};
+const mmove_t jarek_s_sweep_mmove = {.firstframe = 0, .lastframe = 45, .frame = jarek_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_high_kick_frames[11] = {
@@ -202,7 +202,7 @@ const mframe_t jarek_s_high_kick_frames[11] = {
   MFRAME(10), /* jarek_s_high_kick_010 */
 };
 // clang-format on
-const mmove_t jarek_s_high_kick_mmove = {0, 10, jarek_s_high_kick_frames, NULL};
+const mmove_t jarek_s_high_kick_mmove = {.firstframe = 0, .lastframe = 10, .frame = jarek_s_high_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_076_frames[49] = {
@@ -257,7 +257,7 @@ const mframe_t jarek_clip_076_frames[49] = {
   MFRAME(48), /* jarek_clip_076_048 */
 };
 // clang-format on
-const mmove_t jarek_clip_076_mmove = {0, 48, jarek_clip_076_frames, NULL};
+const mmove_t jarek_clip_076_mmove = {.firstframe = 0, .lastframe = 48, .frame = jarek_clip_076_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_080_frames[75] = {
@@ -338,7 +338,7 @@ const mframe_t jarek_clip_080_frames[75] = {
   MFRAME(74), /* jarek_clip_080_074 */
 };
 // clang-format on
-const mmove_t jarek_clip_080_mmove = {0, 74, jarek_clip_080_frames, NULL};
+const mmove_t jarek_clip_080_mmove = {.firstframe = 0, .lastframe = 74, .frame = jarek_clip_080_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_082_frames[45] = {
@@ -389,7 +389,7 @@ const mframe_t jarek_clip_082_frames[45] = {
   MFRAME(44), /* jarek_clip_082_044 */
 };
 // clang-format on
-const mmove_t jarek_clip_082_mmove = {0, 44, jarek_clip_082_frames, NULL};
+const mmove_t jarek_clip_082_mmove = {.firstframe = 0, .lastframe = 44, .frame = jarek_clip_082_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_085_frames[55] = {
@@ -450,7 +450,7 @@ const mframe_t jarek_clip_085_frames[55] = {
   MFRAME(54), /* jarek_clip_085_054 */
 };
 // clang-format on
-const mmove_t jarek_clip_085_mmove = {0, 54, jarek_clip_085_frames, NULL};
+const mmove_t jarek_clip_085_mmove = {.firstframe = 0, .lastframe = 54, .frame = jarek_clip_085_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_105_frames[30] = {
@@ -486,7 +486,7 @@ const mframe_t jarek_clip_105_frames[30] = {
   MFRAME(29), /* jarek_clip_105_029 */
 };
 // clang-format on
-const mmove_t jarek_clip_105_mmove = {0, 29, jarek_clip_105_frames, NULL};
+const mmove_t jarek_clip_105_mmove = {.firstframe = 0, .lastframe = 29, .frame = jarek_clip_105_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_107_frames[70] = {
@@ -562,7 +562,7 @@ const mframe_t jarek_clip_107_frames[70] = {
   MFRAME(69), /* jarek_clip_107_069 */
 };
 // clang-format on
-const mmove_t jarek_clip_107_mmove = {0, 69, jarek_clip_107_frames, NULL};
+const mmove_t jarek_clip_107_mmove = {.firstframe = 0, .lastframe = 69, .frame = jarek_clip_107_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_victory_frames[136] = {
@@ -704,7 +704,7 @@ const mframe_t jarek_s_victory_frames[136] = {
   MFRAME(135), /* jarek_s_victory_135 */
 };
 // clang-format on
-const mmove_t jarek_s_victory_mmove = {0, 135, jarek_s_victory_frames, NULL};
+const mmove_t jarek_s_victory_mmove = {.firstframe = 0, .lastframe = 135, .frame = jarek_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_153_frames[26] = {
@@ -736,7 +736,7 @@ const mframe_t jarek_clip_153_frames[26] = {
   MFRAME(25), /* jarek_clip_153_025 */
 };
 // clang-format on
-const mmove_t jarek_clip_153_mmove = {0, 25, jarek_clip_153_frames, NULL};
+const mmove_t jarek_clip_153_mmove = {.firstframe = 0, .lastframe = 25, .frame = jarek_clip_153_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_154_frames[58] = {
@@ -800,7 +800,7 @@ const mframe_t jarek_clip_154_frames[58] = {
   MFRAME(57), /* jarek_clip_154_057 */
 };
 // clang-format on
-const mmove_t jarek_clip_154_mmove = {0, 57, jarek_clip_154_frames, NULL};
+const mmove_t jarek_clip_154_mmove = {.firstframe = 0, .lastframe = 57, .frame = jarek_clip_154_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_thrown_frames[131] = {
@@ -937,7 +937,7 @@ const mframe_t jarek_s_thrown_frames[131] = {
   MFRAME(130), /* jarek_s_thrown_130 */
 };
 // clang-format on
-const mmove_t jarek_s_thrown_mmove = {0, 130, jarek_s_thrown_frames, NULL};
+const mmove_t jarek_s_thrown_mmove = {.firstframe = 0, .lastframe = 130, .frame = jarek_s_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_knockdown_frames[20] = {
@@ -963,7 +963,7 @@ const mframe_t jarek_s_knockdown_frames[20] = {
   MFRAME(19), /* jarek_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t jarek_s_knockdown_mmove = {0, 19, jarek_s_knockdown_frames, NULL};
+const mmove_t jarek_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = jarek_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_202_frames[45] = {
@@ -1014,7 +1014,7 @@ const mframe_t jarek_clip_202_frames[45] = {
   MFRAME(44), /* jarek_clip_202_044 */
 };
 // clang-format on
-const mmove_t jarek_clip_202_mmove = {0, 44, jarek_clip_202_frames, NULL};
+const mmove_t jarek_clip_202_mmove = {.firstframe = 0, .lastframe = 44, .frame = jarek_clip_202_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_229_frames[45] = {
@@ -1065,7 +1065,7 @@ const mframe_t jarek_clip_229_frames[45] = {
   MFRAME(44), /* jarek_clip_229_044 */
 };
 // clang-format on
-const mmove_t jarek_clip_229_mmove = {0, 44, jarek_clip_229_frames, NULL};
+const mmove_t jarek_clip_229_mmove = {.firstframe = 0, .lastframe = 44, .frame = jarek_clip_229_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_weapon_draw_frames[49] = {
@@ -1120,7 +1120,7 @@ const mframe_t jarek_s_weapon_draw_frames[49] = {
   MFRAME(48), /* jarek_s_weapon_draw_048 */
 };
 // clang-format on
-const mmove_t jarek_s_weapon_draw_mmove = {0, 48, jarek_s_weapon_draw_frames, NULL};
+const mmove_t jarek_s_weapon_draw_mmove = {.firstframe = 0, .lastframe = 48, .frame = jarek_s_weapon_draw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_hit_frames[5] = {
@@ -1131,7 +1131,7 @@ const mframe_t jarek_s_hit_frames[5] = {
   MFRAME(4), /* jarek_s_hit_004 */
 };
 // clang-format on
-const mmove_t jarek_s_hit_mmove = {0, 4, jarek_s_hit_frames, NULL};
+const mmove_t jarek_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = jarek_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_crouch_frames[5] = {
@@ -1142,7 +1142,7 @@ const mframe_t jarek_s_crouch_frames[5] = {
   MFRAME(4), /* jarek_s_crouch_004 */
 };
 // clang-format on
-const mmove_t jarek_s_crouch_mmove = {0, 4, jarek_s_crouch_frames, NULL};
+const mmove_t jarek_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = jarek_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_walk_frames[30] = {
@@ -1178,7 +1178,7 @@ const mframe_t jarek_s_walk_frames[30] = {
   MFRAME(29), /* jarek_s_walk_029 */
 };
 // clang-format on
-const mmove_t jarek_s_walk_mmove = {0, 29, jarek_s_walk_frames, NULL};
+const mmove_t jarek_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = jarek_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_uppercut_frames[20] = {
@@ -1204,7 +1204,7 @@ const mframe_t jarek_s_uppercut_frames[20] = {
   MFRAME(19), /* jarek_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t jarek_s_uppercut_mmove = {0, 19, jarek_s_uppercut_frames, NULL};
+const mmove_t jarek_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = jarek_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_jab_frames[23] = {
@@ -1233,7 +1233,7 @@ const mframe_t jarek_s_jab_frames[23] = {
   MFRAME(22), /* jarek_s_jab_022 */
 };
 // clang-format on
-const mmove_t jarek_s_jab_mmove = {0, 22, jarek_s_jab_frames, NULL};
+const mmove_t jarek_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = jarek_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_295_frames[19] = {
@@ -1258,7 +1258,7 @@ const mframe_t jarek_clip_295_frames[19] = {
   MFRAME(18), /* jarek_clip_295_018 */
 };
 // clang-format on
-const mmove_t jarek_clip_295_mmove = {0, 18, jarek_clip_295_frames, NULL};
+const mmove_t jarek_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = jarek_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_jump_frames[28] = {
@@ -1292,7 +1292,7 @@ const mframe_t jarek_s_jump_frames[28] = {
   MFRAME(27), /* jarek_s_jump_027 */
 };
 // clang-format on
-const mmove_t jarek_s_jump_mmove = {0, 27, jarek_s_jump_frames, NULL};
+const mmove_t jarek_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = jarek_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_low_kick_frames[25] = {
@@ -1323,7 +1323,7 @@ const mframe_t jarek_s_low_kick_frames[25] = {
   MFRAME(24), /* jarek_s_low_kick_024 */
 };
 // clang-format on
-const mmove_t jarek_s_low_kick_mmove = {0, 24, jarek_s_low_kick_frames, NULL};
+const mmove_t jarek_s_low_kick_mmove = {.firstframe = 0, .lastframe = 24, .frame = jarek_s_low_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_roundhouse_frames[39] = {
@@ -1368,7 +1368,7 @@ const mframe_t jarek_s_roundhouse_frames[39] = {
   MFRAME(38), /* jarek_s_roundhouse_038 */
 };
 // clang-format on
-const mmove_t jarek_s_roundhouse_mmove = {0, 38, jarek_s_roundhouse_frames, NULL};
+const mmove_t jarek_s_roundhouse_mmove = {.firstframe = 0, .lastframe = 38, .frame = jarek_s_roundhouse_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_s_block_frames[5] = {
@@ -1379,7 +1379,7 @@ const mframe_t jarek_s_block_frames[5] = {
   MFRAME(4), /* jarek_s_block_004 */
 };
 // clang-format on
-const mmove_t jarek_s_block_mmove = {0, 4, jarek_s_block_frames, NULL};
+const mmove_t jarek_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = jarek_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_327_frames[8] = {
@@ -1393,7 +1393,7 @@ const mframe_t jarek_clip_327_frames[8] = {
   MFRAME(7), /* jarek_clip_327_007 */
 };
 // clang-format on
-const mmove_t jarek_clip_327_mmove = {0, 7, jarek_clip_327_frames, NULL};
+const mmove_t jarek_clip_327_mmove = {.firstframe = 0, .lastframe = 7, .frame = jarek_clip_327_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_412_frames[49] = {
@@ -1448,14 +1448,14 @@ const mframe_t jarek_clip_412_frames[49] = {
   MFRAME(48), /* jarek_clip_412_048 */
 };
 // clang-format on
-const mmove_t jarek_clip_412_mmove = {0, 48, jarek_clip_412_frames, NULL};
+const mmove_t jarek_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = jarek_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_413_frames[1] = {
   MFRAME(0), /* jarek_clip_413_000 */
 };
 // clang-format on
-const mmove_t jarek_clip_413_mmove = {0, 0, jarek_clip_413_frames, NULL};
+const mmove_t jarek_clip_413_mmove = {.firstframe = 0, .lastframe = 0, .frame = jarek_clip_413_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_414_frames[9] = {
@@ -1470,7 +1470,7 @@ const mframe_t jarek_clip_414_frames[9] = {
   MFRAME(8), /* jarek_clip_414_008 */
 };
 // clang-format on
-const mmove_t jarek_clip_414_mmove = {0, 8, jarek_clip_414_frames, NULL};
+const mmove_t jarek_clip_414_mmove = {.firstframe = 0, .lastframe = 8, .frame = jarek_clip_414_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_415_frames[130] = {
@@ -1606,7 +1606,7 @@ const mframe_t jarek_clip_415_frames[130] = {
   MFRAME(129), /* jarek_clip_415_129 */
 };
 // clang-format on
-const mmove_t jarek_clip_415_mmove = {0, 129, jarek_clip_415_frames, NULL};
+const mmove_t jarek_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = jarek_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t jarek_clip_416_frames[108] = {
@@ -1720,4 +1720,4 @@ const mframe_t jarek_clip_416_frames[108] = {
   MFRAME(107), /* jarek_clip_416_107 */
 };
 // clang-format on
-const mmove_t jarek_clip_416_mmove = {0, 107, jarek_clip_416_frames, NULL};
+const mmove_t jarek_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = jarek_clip_416_frames};

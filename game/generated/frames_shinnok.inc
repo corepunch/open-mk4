@@ -17,7 +17,7 @@ const mframe_t shinnok_s_air_attack_frames[13] = {
   MFRAME(12), /* shinnok_s_air_attack_012 */
 };
 // clang-format on
-const mmove_t shinnok_s_air_attack_mmove = {0, 12, shinnok_s_air_attack_frames, NULL};
+const mmove_t shinnok_s_air_attack_mmove = {.firstframe = 0, .lastframe = 12, .frame = shinnok_s_air_attack_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_throw_frames[66] = {
@@ -89,7 +89,7 @@ const mframe_t shinnok_s_throw_frames[66] = {
   MFRAME(65), /* shinnok_s_throw_065 */
 };
 // clang-format on
-const mmove_t shinnok_s_throw_mmove = {0, 65, shinnok_s_throw_frames, NULL};
+const mmove_t shinnok_s_throw_mmove = {.firstframe = 0, .lastframe = 65, .frame = shinnok_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_058_frames[10] = {
@@ -105,7 +105,7 @@ const mframe_t shinnok_clip_058_frames[10] = {
   MFRAME(9), /* shinnok_clip_058_009 */
 };
 // clang-format on
-const mmove_t shinnok_clip_058_mmove = {0, 9, shinnok_clip_058_frames, NULL};
+const mmove_t shinnok_clip_058_mmove = {.firstframe = 0, .lastframe = 9, .frame = shinnok_clip_058_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_sweep_frames[46] = {
@@ -157,7 +157,7 @@ const mframe_t shinnok_s_sweep_frames[46] = {
   MFRAME(45), /* shinnok_s_sweep_045 */
 };
 // clang-format on
-const mmove_t shinnok_s_sweep_mmove = {0, 45, shinnok_s_sweep_frames, NULL};
+const mmove_t shinnok_s_sweep_mmove = {.firstframe = 0, .lastframe = 45, .frame = shinnok_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_high_kick_frames[18] = {
@@ -181,7 +181,7 @@ const mframe_t shinnok_s_high_kick_frames[18] = {
   MFRAME(17), /* shinnok_s_high_kick_017 */
 };
 // clang-format on
-const mmove_t shinnok_s_high_kick_mmove = {0, 17, shinnok_s_high_kick_frames, NULL};
+const mmove_t shinnok_s_high_kick_mmove = {.firstframe = 0, .lastframe = 17, .frame = shinnok_s_high_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_067_frames[18] = {
@@ -205,7 +205,7 @@ const mframe_t shinnok_clip_067_frames[18] = {
   MFRAME(17), /* shinnok_clip_067_017 */
 };
 // clang-format on
-const mmove_t shinnok_clip_067_mmove = {0, 17, shinnok_clip_067_frames, NULL};
+const mmove_t shinnok_clip_067_mmove = {.firstframe = 0, .lastframe = 17, .frame = shinnok_clip_067_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_low_kick_frames[61] = {
@@ -272,7 +272,7 @@ const mframe_t shinnok_s_low_kick_frames[61] = {
   MFRAME(60), /* shinnok_s_low_kick_060 */
 };
 // clang-format on
-const mmove_t shinnok_s_low_kick_mmove = {0, 60, shinnok_s_low_kick_frames, NULL};
+const mmove_t shinnok_s_low_kick_mmove = {.firstframe = 0, .lastframe = 60, .frame = shinnok_s_low_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_075_frames[65] = {
@@ -343,7 +343,7 @@ const mframe_t shinnok_clip_075_frames[65] = {
   MFRAME(64), /* shinnok_clip_075_064 */
 };
 // clang-format on
-const mmove_t shinnok_clip_075_mmove = {0, 64, shinnok_clip_075_frames, NULL};
+const mmove_t shinnok_clip_075_mmove = {.firstframe = 0, .lastframe = 64, .frame = shinnok_clip_075_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_082_frames[45] = {
@@ -394,7 +394,7 @@ const mframe_t shinnok_clip_082_frames[45] = {
   MFRAME(44), /* shinnok_clip_082_044 */
 };
 // clang-format on
-const mmove_t shinnok_clip_082_mmove = {0, 44, shinnok_clip_082_frames, NULL};
+const mmove_t shinnok_clip_082_mmove = {.firstframe = 0, .lastframe = 44, .frame = shinnok_clip_082_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_victory_frames[136] = {
@@ -536,7 +536,7 @@ const mframe_t shinnok_s_victory_frames[136] = {
   MFRAME(135), /* shinnok_s_victory_135 */
 };
 // clang-format on
-const mmove_t shinnok_s_victory_mmove = {0, 135, shinnok_s_victory_frames, NULL};
+const mmove_t shinnok_s_victory_mmove = {.firstframe = 0, .lastframe = 135, .frame = shinnok_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_152_frames[42] = {
@@ -584,7 +584,7 @@ const mframe_t shinnok_clip_152_frames[42] = {
   MFRAME(41), /* shinnok_clip_152_041 */
 };
 // clang-format on
-const mmove_t shinnok_clip_152_mmove = {0, 41, shinnok_clip_152_frames, NULL};
+const mmove_t shinnok_clip_152_mmove = {.firstframe = 0, .lastframe = 41, .frame = shinnok_clip_152_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_thrown_frames[131] = {
@@ -721,7 +721,7 @@ const mframe_t shinnok_s_thrown_frames[131] = {
   MFRAME(130), /* shinnok_s_thrown_130 */
 };
 // clang-format on
-const mmove_t shinnok_s_thrown_mmove = {0, 130, shinnok_s_thrown_frames, NULL};
+const mmove_t shinnok_s_thrown_mmove = {.firstframe = 0, .lastframe = 130, .frame = shinnok_s_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_knockdown_frames[20] = {
@@ -747,7 +747,7 @@ const mframe_t shinnok_s_knockdown_frames[20] = {
   MFRAME(19), /* shinnok_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t shinnok_s_knockdown_mmove = {0, 19, shinnok_s_knockdown_frames, NULL};
+const mmove_t shinnok_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = shinnok_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_202_frames[45] = {
@@ -798,7 +798,7 @@ const mframe_t shinnok_clip_202_frames[45] = {
   MFRAME(44), /* shinnok_clip_202_044 */
 };
 // clang-format on
-const mmove_t shinnok_clip_202_mmove = {0, 44, shinnok_clip_202_frames, NULL};
+const mmove_t shinnok_clip_202_mmove = {.firstframe = 0, .lastframe = 44, .frame = shinnok_clip_202_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_hit_frames[5] = {
@@ -809,7 +809,7 @@ const mframe_t shinnok_s_hit_frames[5] = {
   MFRAME(4), /* shinnok_s_hit_004 */
 };
 // clang-format on
-const mmove_t shinnok_s_hit_mmove = {0, 4, shinnok_s_hit_frames, NULL};
+const mmove_t shinnok_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = shinnok_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_crouch_frames[5] = {
@@ -820,7 +820,7 @@ const mframe_t shinnok_s_crouch_frames[5] = {
   MFRAME(4), /* shinnok_s_crouch_004 */
 };
 // clang-format on
-const mmove_t shinnok_s_crouch_mmove = {0, 4, shinnok_s_crouch_frames, NULL};
+const mmove_t shinnok_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = shinnok_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_walk_frames[30] = {
@@ -856,7 +856,7 @@ const mframe_t shinnok_s_walk_frames[30] = {
   MFRAME(29), /* shinnok_s_walk_029 */
 };
 // clang-format on
-const mmove_t shinnok_s_walk_mmove = {0, 29, shinnok_s_walk_frames, NULL};
+const mmove_t shinnok_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = shinnok_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_uppercut_frames[20] = {
@@ -882,7 +882,7 @@ const mframe_t shinnok_s_uppercut_frames[20] = {
   MFRAME(19), /* shinnok_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t shinnok_s_uppercut_mmove = {0, 19, shinnok_s_uppercut_frames, NULL};
+const mmove_t shinnok_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = shinnok_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_jab_frames[23] = {
@@ -911,7 +911,7 @@ const mframe_t shinnok_s_jab_frames[23] = {
   MFRAME(22), /* shinnok_s_jab_022 */
 };
 // clang-format on
-const mmove_t shinnok_s_jab_mmove = {0, 22, shinnok_s_jab_frames, NULL};
+const mmove_t shinnok_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = shinnok_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_295_frames[19] = {
@@ -936,7 +936,7 @@ const mframe_t shinnok_clip_295_frames[19] = {
   MFRAME(18), /* shinnok_clip_295_018 */
 };
 // clang-format on
-const mmove_t shinnok_clip_295_mmove = {0, 18, shinnok_clip_295_frames, NULL};
+const mmove_t shinnok_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = shinnok_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_jump_frames[28] = {
@@ -970,7 +970,7 @@ const mframe_t shinnok_s_jump_frames[28] = {
   MFRAME(27), /* shinnok_s_jump_027 */
 };
 // clang-format on
-const mmove_t shinnok_s_jump_mmove = {0, 27, shinnok_s_jump_frames, NULL};
+const mmove_t shinnok_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = shinnok_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_roundhouse_frames[39] = {
@@ -1015,7 +1015,7 @@ const mframe_t shinnok_s_roundhouse_frames[39] = {
   MFRAME(38), /* shinnok_s_roundhouse_038 */
 };
 // clang-format on
-const mmove_t shinnok_s_roundhouse_mmove = {0, 38, shinnok_s_roundhouse_frames, NULL};
+const mmove_t shinnok_s_roundhouse_mmove = {.firstframe = 0, .lastframe = 38, .frame = shinnok_s_roundhouse_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_s_block_frames[5] = {
@@ -1026,7 +1026,7 @@ const mframe_t shinnok_s_block_frames[5] = {
   MFRAME(4), /* shinnok_s_block_004 */
 };
 // clang-format on
-const mmove_t shinnok_s_block_mmove = {0, 4, shinnok_s_block_frames, NULL};
+const mmove_t shinnok_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = shinnok_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_327_frames[8] = {
@@ -1040,7 +1040,7 @@ const mframe_t shinnok_clip_327_frames[8] = {
   MFRAME(7), /* shinnok_clip_327_007 */
 };
 // clang-format on
-const mmove_t shinnok_clip_327_mmove = {0, 7, shinnok_clip_327_frames, NULL};
+const mmove_t shinnok_clip_327_mmove = {.firstframe = 0, .lastframe = 7, .frame = shinnok_clip_327_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_412_frames[49] = {
@@ -1095,7 +1095,7 @@ const mframe_t shinnok_clip_412_frames[49] = {
   MFRAME(48), /* shinnok_clip_412_048 */
 };
 // clang-format on
-const mmove_t shinnok_clip_412_mmove = {0, 48, shinnok_clip_412_frames, NULL};
+const mmove_t shinnok_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = shinnok_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_415_frames[130] = {
@@ -1231,7 +1231,7 @@ const mframe_t shinnok_clip_415_frames[130] = {
   MFRAME(129), /* shinnok_clip_415_129 */
 };
 // clang-format on
-const mmove_t shinnok_clip_415_mmove = {0, 129, shinnok_clip_415_frames, NULL};
+const mmove_t shinnok_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = shinnok_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t shinnok_clip_416_frames[108] = {
@@ -1345,4 +1345,4 @@ const mframe_t shinnok_clip_416_frames[108] = {
   MFRAME(107), /* shinnok_clip_416_107 */
 };
 // clang-format on
-const mmove_t shinnok_clip_416_mmove = {0, 107, shinnok_clip_416_frames, NULL};
+const mmove_t shinnok_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = shinnok_clip_416_frames};

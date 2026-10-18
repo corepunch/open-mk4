@@ -70,7 +70,7 @@ const mframe_t cage_clip_037_frames[66] = {
   MFRAME(65), /* cage_clip_037_065 */
 };
 // clang-format on
-const mmove_t cage_clip_037_mmove = {0, 65, cage_clip_037_frames, NULL};
+const mmove_t cage_clip_037_mmove = {.firstframe = 0, .lastframe = 65, .frame = cage_clip_037_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_060_frames[6] = {
@@ -82,7 +82,7 @@ const mframe_t cage_clip_060_frames[6] = {
   MFRAME(5), /* cage_clip_060_005 */
 };
 // clang-format on
-const mmove_t cage_clip_060_mmove = {0, 5, cage_clip_060_frames, NULL};
+const mmove_t cage_clip_060_mmove = {.firstframe = 0, .lastframe = 5, .frame = cage_clip_060_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_sweep_frames[46] = {
@@ -134,7 +134,7 @@ const mframe_t cage_s_sweep_frames[46] = {
   MFRAME(45), /* cage_s_sweep_045 */
 };
 // clang-format on
-const mmove_t cage_s_sweep_mmove = {0, 45, cage_s_sweep_frames, NULL};
+const mmove_t cage_s_sweep_mmove = {.firstframe = 0, .lastframe = 45, .frame = cage_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_066_frames[18] = {
@@ -158,7 +158,7 @@ const mframe_t cage_clip_066_frames[18] = {
   MFRAME(17), /* cage_clip_066_017 */
 };
 // clang-format on
-const mmove_t cage_clip_066_mmove = {0, 17, cage_clip_066_frames, NULL};
+const mmove_t cage_clip_066_mmove = {.firstframe = 0, .lastframe = 17, .frame = cage_clip_066_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_070_frames[28] = {
@@ -192,7 +192,7 @@ const mframe_t cage_clip_070_frames[28] = {
   MFRAME(27), /* cage_clip_070_027 */
 };
 // clang-format on
-const mmove_t cage_clip_070_mmove = {0, 27, cage_clip_070_frames, NULL};
+const mmove_t cage_clip_070_mmove = {.firstframe = 0, .lastframe = 27, .frame = cage_clip_070_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_kick_frames[28] = {
@@ -226,7 +226,7 @@ const mframe_t cage_s_kick_frames[28] = {
   MFRAME(27), /* cage_s_kick_027 */
 };
 // clang-format on
-const mmove_t cage_s_kick_mmove = {0, 27, cage_s_kick_frames, NULL};
+const mmove_t cage_s_kick_mmove = {.firstframe = 0, .lastframe = 27, .frame = cage_s_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_throw_frames[65] = {
@@ -297,7 +297,7 @@ const mframe_t cage_s_throw_frames[65] = {
   MFRAME(64), /* cage_s_throw_064 */
 };
 // clang-format on
-const mmove_t cage_s_throw_mmove = {0, 64, cage_s_throw_frames, NULL};
+const mmove_t cage_s_throw_mmove = {.firstframe = 0, .lastframe = 64, .frame = cage_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_air_throw_frames[45] = {
@@ -348,7 +348,7 @@ const mframe_t cage_s_air_throw_frames[45] = {
   MFRAME(44), /* cage_s_air_throw_044 */
 };
 // clang-format on
-const mmove_t cage_s_air_throw_mmove = {0, 44, cage_s_air_throw_frames, NULL};
+const mmove_t cage_s_air_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = cage_s_air_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_powered_punch_script_frames[55] = {
@@ -409,7 +409,7 @@ const mframe_t cage_s_powered_punch_script_frames[55] = {
   MFRAME(54), /* cage_s_powered_punch_script_054 */
 };
 // clang-format on
-const mmove_t cage_s_powered_punch_script_mmove = {0, 54, cage_s_powered_punch_script_frames, NULL};
+const mmove_t cage_s_powered_punch_script_mmove = {.firstframe = 0, .lastframe = 54, .frame = cage_s_powered_punch_script_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_powered_punch_finish_frames[30] = {
@@ -445,7 +445,7 @@ const mframe_t cage_s_powered_punch_finish_frames[30] = {
   MFRAME(29), /* cage_s_powered_punch_finish_029 */
 };
 // clang-format on
-const mmove_t cage_s_powered_punch_finish_mmove = {0, 29, cage_s_powered_punch_finish_frames, NULL};
+const mmove_t cage_s_powered_punch_finish_mmove = {.firstframe = 0, .lastframe = 29, .frame = cage_s_powered_punch_finish_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_victory_frames[136] = {
@@ -587,7 +587,7 @@ const mframe_t cage_s_victory_frames[136] = {
   MFRAME(135), /* cage_s_victory_135 */
 };
 // clang-format on
-const mmove_t cage_s_victory_mmove = {0, 135, cage_s_victory_frames, NULL};
+const mmove_t cage_s_victory_mmove = {.firstframe = 0, .lastframe = 135, .frame = cage_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_152_frames[42] = {
@@ -635,7 +635,7 @@ const mframe_t cage_clip_152_frames[42] = {
   MFRAME(41), /* cage_clip_152_041 */
 };
 // clang-format on
-const mmove_t cage_clip_152_mmove = {0, 41, cage_clip_152_frames, NULL};
+const mmove_t cage_clip_152_mmove = {.firstframe = 0, .lastframe = 41, .frame = cage_clip_152_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_157_frames[131] = {
@@ -772,7 +772,7 @@ const mframe_t cage_clip_157_frames[131] = {
   MFRAME(130), /* cage_clip_157_130 */
 };
 // clang-format on
-const mmove_t cage_clip_157_mmove = {0, 130, cage_clip_157_frames, NULL};
+const mmove_t cage_clip_157_mmove = {.firstframe = 0, .lastframe = 130, .frame = cage_clip_157_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_knockdown_frames[20] = {
@@ -798,7 +798,7 @@ const mframe_t cage_s_knockdown_frames[20] = {
   MFRAME(19), /* cage_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t cage_s_knockdown_mmove = {0, 19, cage_s_knockdown_frames, NULL};
+const mmove_t cage_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = cage_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_air_thrown_frames[45] = {
@@ -849,7 +849,7 @@ const mframe_t cage_s_air_thrown_frames[45] = {
   MFRAME(44), /* cage_s_air_thrown_044 */
 };
 // clang-format on
-const mmove_t cage_s_air_thrown_mmove = {0, 44, cage_s_air_thrown_frames, NULL};
+const mmove_t cage_s_air_thrown_mmove = {.firstframe = 0, .lastframe = 44, .frame = cage_s_air_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_hit_frames[5] = {
@@ -860,7 +860,7 @@ const mframe_t cage_s_hit_frames[5] = {
   MFRAME(4), /* cage_s_hit_004 */
 };
 // clang-format on
-const mmove_t cage_s_hit_mmove = {0, 4, cage_s_hit_frames, NULL};
+const mmove_t cage_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = cage_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_crouch_frames[5] = {
@@ -871,7 +871,7 @@ const mframe_t cage_s_crouch_frames[5] = {
   MFRAME(4), /* cage_s_crouch_004 */
 };
 // clang-format on
-const mmove_t cage_s_crouch_mmove = {0, 4, cage_s_crouch_frames, NULL};
+const mmove_t cage_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = cage_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_walk_frames[30] = {
@@ -907,7 +907,7 @@ const mframe_t cage_s_walk_frames[30] = {
   MFRAME(29), /* cage_s_walk_029 */
 };
 // clang-format on
-const mmove_t cage_s_walk_mmove = {0, 29, cage_s_walk_frames, NULL};
+const mmove_t cage_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = cage_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_uppercut_frames[20] = {
@@ -933,7 +933,7 @@ const mframe_t cage_s_uppercut_frames[20] = {
   MFRAME(19), /* cage_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t cage_s_uppercut_mmove = {0, 19, cage_s_uppercut_frames, NULL};
+const mmove_t cage_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = cage_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_jab_frames[23] = {
@@ -962,7 +962,7 @@ const mframe_t cage_s_jab_frames[23] = {
   MFRAME(22), /* cage_s_jab_022 */
 };
 // clang-format on
-const mmove_t cage_s_jab_mmove = {0, 22, cage_s_jab_frames, NULL};
+const mmove_t cage_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = cage_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_295_frames[19] = {
@@ -987,7 +987,7 @@ const mframe_t cage_clip_295_frames[19] = {
   MFRAME(18), /* cage_clip_295_018 */
 };
 // clang-format on
-const mmove_t cage_clip_295_mmove = {0, 18, cage_clip_295_frames, NULL};
+const mmove_t cage_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = cage_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_jump_frames[28] = {
@@ -1021,7 +1021,7 @@ const mframe_t cage_s_jump_frames[28] = {
   MFRAME(27), /* cage_s_jump_027 */
 };
 // clang-format on
-const mmove_t cage_s_jump_mmove = {0, 27, cage_s_jump_frames, NULL};
+const mmove_t cage_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = cage_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_cpu_kick_script_frames[25] = {
@@ -1052,7 +1052,7 @@ const mframe_t cage_s_cpu_kick_script_frames[25] = {
   MFRAME(24), /* cage_s_cpu_kick_script_024 */
 };
 // clang-format on
-const mmove_t cage_s_cpu_kick_script_mmove = {0, 24, cage_s_cpu_kick_script_frames, NULL};
+const mmove_t cage_s_cpu_kick_script_mmove = {.firstframe = 0, .lastframe = 24, .frame = cage_s_cpu_kick_script_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_313_frames[39] = {
@@ -1097,7 +1097,7 @@ const mframe_t cage_clip_313_frames[39] = {
   MFRAME(38), /* cage_clip_313_038 */
 };
 // clang-format on
-const mmove_t cage_clip_313_mmove = {0, 38, cage_clip_313_frames, NULL};
+const mmove_t cage_clip_313_mmove = {.firstframe = 0, .lastframe = 38, .frame = cage_clip_313_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_s_block_frames[5] = {
@@ -1108,7 +1108,7 @@ const mframe_t cage_s_block_frames[5] = {
   MFRAME(4), /* cage_s_block_004 */
 };
 // clang-format on
-const mmove_t cage_s_block_mmove = {0, 4, cage_s_block_frames, NULL};
+const mmove_t cage_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = cage_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_327_frames[8] = {
@@ -1122,7 +1122,7 @@ const mframe_t cage_clip_327_frames[8] = {
   MFRAME(7), /* cage_clip_327_007 */
 };
 // clang-format on
-const mmove_t cage_clip_327_mmove = {0, 7, cage_clip_327_frames, NULL};
+const mmove_t cage_clip_327_mmove = {.firstframe = 0, .lastframe = 7, .frame = cage_clip_327_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_412_frames[49] = {
@@ -1177,7 +1177,7 @@ const mframe_t cage_clip_412_frames[49] = {
   MFRAME(48), /* cage_clip_412_048 */
 };
 // clang-format on
-const mmove_t cage_clip_412_mmove = {0, 48, cage_clip_412_frames, NULL};
+const mmove_t cage_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = cage_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_415_frames[130] = {
@@ -1313,7 +1313,7 @@ const mframe_t cage_clip_415_frames[130] = {
   MFRAME(129), /* cage_clip_415_129 */
 };
 // clang-format on
-const mmove_t cage_clip_415_mmove = {0, 129, cage_clip_415_frames, NULL};
+const mmove_t cage_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = cage_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_416_frames[108] = {
@@ -1427,7 +1427,7 @@ const mframe_t cage_clip_416_frames[108] = {
   MFRAME(107), /* cage_clip_416_107 */
 };
 // clang-format on
-const mmove_t cage_clip_416_mmove = {0, 107, cage_clip_416_frames, NULL};
+const mmove_t cage_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = cage_clip_416_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t cage_clip_443_frames[30] = {
@@ -1463,4 +1463,4 @@ const mframe_t cage_clip_443_frames[30] = {
   MFRAME(29), /* cage_clip_443_029 */
 };
 // clang-format on
-const mmove_t cage_clip_443_mmove = {0, 29, cage_clip_443_frames, NULL};
+const mmove_t cage_clip_443_mmove = {.firstframe = 0, .lastframe = 29, .frame = cage_clip_443_frames};

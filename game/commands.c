@@ -28,6 +28,7 @@ bool fighter_holds_back(const Fighter *fighter) {
 void fighter_interrupt(Fighter *fighter, FighterFn entry) {
   require(entry != NULL, "Interrupt without an entry");
   fighter_cancel_fiber(fighter);
+  fighter_cancel_mmove(fighter);
   fighter->pending = entry;
   fighter->buttons = NULL;
   fighter->flags = (fighter->flags | FF_BUSY) & ~(unsigned)FF_PAIRED;

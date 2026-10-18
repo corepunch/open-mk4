@@ -107,6 +107,7 @@ static void fiber_resume(MoveFiber *slot) {
 void fighter_start_fiber(Fighter *fighter, FighterFn entry, FighterFn cleanup) {
   require(entry != NULL && !fighter_fiber_running(fighter), "Move fiber requires an entry and cannot replace its running owner");
   fighter_cancel_fiber(fighter);
+  fighter_cancel_mmove(fighter);
   MoveFiber *slot = fiber_slot(fighter);
   *slot = (MoveFiber){.fighter = fighter, .entry = entry, .cleanup = cleanup, .last_tick = g_battle.ticks};
   if (running != NULL && pumped_ticks[slot - fibers] != g_battle.ticks) {

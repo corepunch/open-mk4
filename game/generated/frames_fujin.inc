@@ -70,7 +70,7 @@ const mframe_t fujin_clip_037_frames[66] = {
   MFRAME(65), /* fujin_clip_037_065 */
 };
 // clang-format on
-const mmove_t fujin_clip_037_mmove = {0, 65, fujin_clip_037_frames, NULL};
+const mmove_t fujin_clip_037_mmove = {.firstframe = 0, .lastframe = 65, .frame = fujin_clip_037_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_060_frames[6] = {
@@ -82,7 +82,7 @@ const mframe_t fujin_clip_060_frames[6] = {
   MFRAME(5), /* fujin_clip_060_005 */
 };
 // clang-format on
-const mmove_t fujin_clip_060_mmove = {0, 5, fujin_clip_060_frames, NULL};
+const mmove_t fujin_clip_060_mmove = {.firstframe = 0, .lastframe = 5, .frame = fujin_clip_060_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_061_frames[30] = {
@@ -118,7 +118,7 @@ const mframe_t fujin_clip_061_frames[30] = {
   MFRAME(29), /* fujin_clip_061_029 */
 };
 // clang-format on
-const mmove_t fujin_clip_061_mmove = {0, 29, fujin_clip_061_frames, NULL};
+const mmove_t fujin_clip_061_mmove = {.firstframe = 0, .lastframe = 29, .frame = fujin_clip_061_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_sweep_frames[44] = {
@@ -168,7 +168,7 @@ const mframe_t fujin_s_sweep_frames[44] = {
   MFRAME(43), /* fujin_s_sweep_043 */
 };
 // clang-format on
-const mmove_t fujin_s_sweep_mmove = {0, 43, fujin_s_sweep_frames, NULL};
+const mmove_t fujin_s_sweep_mmove = {.firstframe = 0, .lastframe = 43, .frame = fujin_s_sweep_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_064_frames[45] = {
@@ -219,7 +219,7 @@ const mframe_t fujin_clip_064_frames[45] = {
   MFRAME(44), /* fujin_clip_064_044 */
 };
 // clang-format on
-const mmove_t fujin_clip_064_mmove = {0, 44, fujin_clip_064_frames, NULL};
+const mmove_t fujin_clip_064_mmove = {.firstframe = 0, .lastframe = 44, .frame = fujin_clip_064_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_kick_frames[11] = {
@@ -236,7 +236,7 @@ const mframe_t fujin_s_kick_frames[11] = {
   MFRAME(10), /* fujin_s_kick_010 */
 };
 // clang-format on
-const mmove_t fujin_s_kick_mmove = {0, 10, fujin_s_kick_frames, NULL};
+const mmove_t fujin_s_kick_mmove = {.firstframe = 0, .lastframe = 10, .frame = fujin_s_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_076_frames[49] = {
@@ -291,7 +291,7 @@ const mframe_t fujin_clip_076_frames[49] = {
   MFRAME(48), /* fujin_clip_076_048 */
 };
 // clang-format on
-const mmove_t fujin_clip_076_mmove = {0, 48, fujin_clip_076_frames, NULL};
+const mmove_t fujin_clip_076_mmove = {.firstframe = 0, .lastframe = 48, .frame = fujin_clip_076_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_throw_frames[79] = {
@@ -376,7 +376,7 @@ const mframe_t fujin_s_throw_frames[79] = {
   MFRAME(78), /* fujin_s_throw_078 */
 };
 // clang-format on
-const mmove_t fujin_s_throw_mmove = {0, 78, fujin_s_throw_frames, NULL};
+const mmove_t fujin_s_throw_mmove = {.firstframe = 0, .lastframe = 78, .frame = fujin_s_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_air_throw_frames[45] = {
@@ -427,7 +427,7 @@ const mframe_t fujin_s_air_throw_frames[45] = {
   MFRAME(44), /* fujin_s_air_throw_044 */
 };
 // clang-format on
-const mmove_t fujin_s_air_throw_mmove = {0, 44, fujin_s_air_throw_frames, NULL};
+const mmove_t fujin_s_air_throw_mmove = {.firstframe = 0, .lastframe = 44, .frame = fujin_s_air_throw_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_victory_frames[120] = {
@@ -553,7 +553,7 @@ const mframe_t fujin_s_victory_frames[120] = {
   MFRAME(119), /* fujin_s_victory_119 */
 };
 // clang-format on
-const mmove_t fujin_s_victory_mmove = {0, 119, fujin_s_victory_frames, NULL};
+const mmove_t fujin_s_victory_mmove = {.firstframe = 0, .lastframe = 119, .frame = fujin_s_victory_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_lp_thrown_frames[26] = {
@@ -585,7 +585,7 @@ const mframe_t fujin_s_lp_thrown_frames[26] = {
   MFRAME(25), /* fujin_s_lp_thrown_025 */
 };
 // clang-format on
-const mmove_t fujin_s_lp_thrown_mmove = {0, 25, fujin_s_lp_thrown_frames, NULL};
+const mmove_t fujin_s_lp_thrown_mmove = {.firstframe = 0, .lastframe = 25, .frame = fujin_s_lp_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_157_frames[131] = {
@@ -722,7 +722,7 @@ const mframe_t fujin_clip_157_frames[131] = {
   MFRAME(130), /* fujin_clip_157_130 */
 };
 // clang-format on
-const mmove_t fujin_clip_157_mmove = {0, 130, fujin_clip_157_frames, NULL};
+const mmove_t fujin_clip_157_mmove = {.firstframe = 0, .lastframe = 130, .frame = fujin_clip_157_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_lk_thrown_frames[47] = {
@@ -775,7 +775,7 @@ const mframe_t fujin_s_lk_thrown_frames[47] = {
   MFRAME(46), /* fujin_s_lk_thrown_046 */
 };
 // clang-format on
-const mmove_t fujin_s_lk_thrown_mmove = {0, 46, fujin_s_lk_thrown_frames, NULL};
+const mmove_t fujin_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 46, .frame = fujin_s_lk_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_knockdown_frames[20] = {
@@ -801,7 +801,7 @@ const mframe_t fujin_s_knockdown_frames[20] = {
   MFRAME(19), /* fujin_s_knockdown_019 */
 };
 // clang-format on
-const mmove_t fujin_s_knockdown_mmove = {0, 19, fujin_s_knockdown_frames, NULL};
+const mmove_t fujin_s_knockdown_mmove = {.firstframe = 0, .lastframe = 19, .frame = fujin_s_knockdown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_air_thrown_frames[45] = {
@@ -852,7 +852,7 @@ const mframe_t fujin_s_air_thrown_frames[45] = {
   MFRAME(44), /* fujin_s_air_thrown_044 */
 };
 // clang-format on
-const mmove_t fujin_s_air_thrown_mmove = {0, 44, fujin_s_air_thrown_frames, NULL};
+const mmove_t fujin_s_air_thrown_mmove = {.firstframe = 0, .lastframe = 44, .frame = fujin_s_air_thrown_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_hit_frames[5] = {
@@ -863,7 +863,7 @@ const mframe_t fujin_s_hit_frames[5] = {
   MFRAME(4), /* fujin_s_hit_004 */
 };
 // clang-format on
-const mmove_t fujin_s_hit_mmove = {0, 4, fujin_s_hit_frames, NULL};
+const mmove_t fujin_s_hit_mmove = {.firstframe = 0, .lastframe = 4, .frame = fujin_s_hit_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_crouch_frames[5] = {
@@ -874,7 +874,7 @@ const mframe_t fujin_s_crouch_frames[5] = {
   MFRAME(4), /* fujin_s_crouch_004 */
 };
 // clang-format on
-const mmove_t fujin_s_crouch_mmove = {0, 4, fujin_s_crouch_frames, NULL};
+const mmove_t fujin_s_crouch_mmove = {.firstframe = 0, .lastframe = 4, .frame = fujin_s_crouch_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_walk_frames[30] = {
@@ -910,7 +910,7 @@ const mframe_t fujin_s_walk_frames[30] = {
   MFRAME(29), /* fujin_s_walk_029 */
 };
 // clang-format on
-const mmove_t fujin_s_walk_mmove = {0, 29, fujin_s_walk_frames, NULL};
+const mmove_t fujin_s_walk_mmove = {.firstframe = 0, .lastframe = 29, .frame = fujin_s_walk_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_uppercut_frames[20] = {
@@ -936,7 +936,7 @@ const mframe_t fujin_s_uppercut_frames[20] = {
   MFRAME(19), /* fujin_s_uppercut_019 */
 };
 // clang-format on
-const mmove_t fujin_s_uppercut_mmove = {0, 19, fujin_s_uppercut_frames, NULL};
+const mmove_t fujin_s_uppercut_mmove = {.firstframe = 0, .lastframe = 19, .frame = fujin_s_uppercut_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_jab_frames[23] = {
@@ -965,7 +965,7 @@ const mframe_t fujin_s_jab_frames[23] = {
   MFRAME(22), /* fujin_s_jab_022 */
 };
 // clang-format on
-const mmove_t fujin_s_jab_mmove = {0, 22, fujin_s_jab_frames, NULL};
+const mmove_t fujin_s_jab_mmove = {.firstframe = 0, .lastframe = 22, .frame = fujin_s_jab_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_295_frames[19] = {
@@ -990,7 +990,7 @@ const mframe_t fujin_clip_295_frames[19] = {
   MFRAME(18), /* fujin_clip_295_018 */
 };
 // clang-format on
-const mmove_t fujin_clip_295_mmove = {0, 18, fujin_clip_295_frames, NULL};
+const mmove_t fujin_clip_295_mmove = {.firstframe = 0, .lastframe = 18, .frame = fujin_clip_295_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_jump_frames[28] = {
@@ -1024,7 +1024,7 @@ const mframe_t fujin_s_jump_frames[28] = {
   MFRAME(27), /* fujin_s_jump_027 */
 };
 // clang-format on
-const mmove_t fujin_s_jump_mmove = {0, 27, fujin_s_jump_frames, NULL};
+const mmove_t fujin_s_jump_mmove = {.firstframe = 0, .lastframe = 27, .frame = fujin_s_jump_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_low_kick_frames[25] = {
@@ -1055,7 +1055,7 @@ const mframe_t fujin_s_low_kick_frames[25] = {
   MFRAME(24), /* fujin_s_low_kick_024 */
 };
 // clang-format on
-const mmove_t fujin_s_low_kick_mmove = {0, 24, fujin_s_low_kick_frames, NULL};
+const mmove_t fujin_s_low_kick_mmove = {.firstframe = 0, .lastframe = 24, .frame = fujin_s_low_kick_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_313_frames[39] = {
@@ -1100,7 +1100,7 @@ const mframe_t fujin_clip_313_frames[39] = {
   MFRAME(38), /* fujin_clip_313_038 */
 };
 // clang-format on
-const mmove_t fujin_clip_313_mmove = {0, 38, fujin_clip_313_frames, NULL};
+const mmove_t fujin_clip_313_mmove = {.firstframe = 0, .lastframe = 38, .frame = fujin_clip_313_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_s_block_frames[5] = {
@@ -1111,7 +1111,7 @@ const mframe_t fujin_s_block_frames[5] = {
   MFRAME(4), /* fujin_s_block_004 */
 };
 // clang-format on
-const mmove_t fujin_s_block_mmove = {0, 4, fujin_s_block_frames, NULL};
+const mmove_t fujin_s_block_mmove = {.firstframe = 0, .lastframe = 4, .frame = fujin_s_block_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_412_frames[49] = {
@@ -1166,7 +1166,7 @@ const mframe_t fujin_clip_412_frames[49] = {
   MFRAME(48), /* fujin_clip_412_048 */
 };
 // clang-format on
-const mmove_t fujin_clip_412_mmove = {0, 48, fujin_clip_412_frames, NULL};
+const mmove_t fujin_clip_412_mmove = {.firstframe = 0, .lastframe = 48, .frame = fujin_clip_412_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_415_frames[130] = {
@@ -1302,7 +1302,7 @@ const mframe_t fujin_clip_415_frames[130] = {
   MFRAME(129), /* fujin_clip_415_129 */
 };
 // clang-format on
-const mmove_t fujin_clip_415_mmove = {0, 129, fujin_clip_415_frames, NULL};
+const mmove_t fujin_clip_415_mmove = {.firstframe = 0, .lastframe = 129, .frame = fujin_clip_415_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
 const mframe_t fujin_clip_416_frames[108] = {
@@ -1416,4 +1416,4 @@ const mframe_t fujin_clip_416_frames[108] = {
   MFRAME(107), /* fujin_clip_416_107 */
 };
 // clang-format on
-const mmove_t fujin_clip_416_mmove = {0, 107, fujin_clip_416_frames, NULL};
+const mmove_t fujin_clip_416_mmove = {.firstframe = 0, .lastframe = 107, .frame = fujin_clip_416_frames};
