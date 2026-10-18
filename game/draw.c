@@ -108,11 +108,9 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
   if (fighter->appearance == APPEARANCE_HIDDEN) {
     return triangles;
   }
-  const Clip *clip = fighter_clip(assets, fighter);
-  double frame = fighter_frame(fighter, (int)clip->frames.count);
   Pose bones[MK4_MAX_BONES];
   if (model != NULL) {
-    pose(ch, clip, frame, bones);
+    pose(ch, fighter_clip(assets, fighter), fighter_pose_frame(fighter), bones);
   } else {
     fighter_render_pose(assets, fighter, interpolation, bones);
   }

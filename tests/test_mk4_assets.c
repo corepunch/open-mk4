@@ -256,7 +256,10 @@ static void fallback_clip_clock(const Assets *assets) {
     if (fighter_move(fighter)->clip == 75) {
       reached = true;
       check(fighter_clip(assets, fighter) != &assets->clips.data[75], "Goro humanoid suffix must use the existing rig fallback");
-      check(fighter_pose_sample(fighter) == 0, "Fallback rig must hold its own neutral pose independently of the move clock");
+      check(
+          fighter_pose_sample(fighter) == 0 && fighter_pose_frame(fighter) == 0, "Fallback rig must hold its own neutral pose independently of the move clock");
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, fighter, bones);
     }
   }
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");

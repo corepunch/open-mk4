@@ -900,6 +900,7 @@ const Character *fighter_model(const Assets *assets, const Fighter *fighter);
 const Clip *fighter_clip(const Assets *assets, const Fighter *fighter);
 Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
+double fighter_pose_frame(const Fighter *fighter);
 int fighter_pose_sample(const Fighter *fighter);
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
 void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]);

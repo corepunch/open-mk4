@@ -38,9 +38,9 @@ const Clip *fighter_clip(const Assets *assets, const Fighter *fighter) {
   return (int)clip->frames.data[0].angles.count == channels ? clip : &assets->clips.data[ch->idle];
 }
 
-int fighter_pose_sample(const Fighter *fighter) {
+double fighter_pose_frame(const Fighter *fighter) {
   if (fighter->assets == NULL) {
-    return (int)fighter_frame(fighter, 1 << 16);
+    return fighter_frame(fighter, 1 << 16);
   }
   const Clip *clip = fighter_clip(fighter->assets, fighter);
   int requested = fighter->action == 0x1003 ? fighter->frozen_clip : fighter_move(fighter)->clip;
@@ -49,7 +49,11 @@ int fighter_pose_sample(const Fighter *fighter) {
   if (requested >= 0 && clip != &fighter->assets->clips.data[requested]) {
     return 0;
   }
-  return (int)fighter_frame(fighter, (int)clip->frames.count);
+  return fighter_frame(fighter, (int)clip->frames.count);
+}
+
+int fighter_pose_sample(const Fighter *fighter) {
+  return (int)fighter_pose_frame(fighter);
 }
 
 Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
@@ -81,7 +85,7 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
     float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
     pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, fighter_pose_sample(fighter), fraction, output);
   } else {
-    pose(ch, clip, fighter_frame(fighter, (int)clip->frames.count), output);
+    pose(ch, clip, fighter_pose_frame(fighter), output);
   }
 }
 
