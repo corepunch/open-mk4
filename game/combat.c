@@ -147,6 +147,12 @@ ContactResult battle_projectile_contact(Projectile *p, const AttackRecord *recor
   return battle_contact_from(owner, record, p->pos, p->facing);
 }
 
+bool battle_projectile_overlaps(const Projectile *p, const AttackRecord *record) {
+  const Fighter *owner = &g_battle.fighters[p->owner];
+  const Fighter *victim = fighter_opponent(owner);
+  return !g_battle.contacts_off && !(victim->flags & FF_UNTOUCHABLE) && contact_geometry(p->pos, p->facing, victim, record);
+}
+
 Projectile *battle_spawn_projectile(Fighter *owner, int kind, int lifetime, ProjectileFn step) {
   require(step != NULL && lifetime > 0, "Invalid projectile");
   for (int i = 0; i < MAX_PROJECTILES; ++i) {

@@ -710,6 +710,7 @@ void fighter_friction(Fighter *fighter);
 ContactResult battle_contact(Fighter *attacker, const AttackRecord *record);
 ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
 ContactResult battle_projectile_contact(Projectile *projectile, const AttackRecord *record);
+bool battle_projectile_overlaps(const Projectile *projectile, const AttackRecord *record);
 Projectile *battle_spawn_projectile(Fighter *owner, int kind, int lifetime, ProjectileFn step);
 BattleEvent *battle_event_start(Fighter *owner, BattleEventFn step, bool cancel_on_owner_change, bool cancel_on_ko);
 void battle_event_cancel(BattleEvent *event);
