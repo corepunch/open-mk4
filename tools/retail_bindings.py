@@ -672,6 +672,16 @@ CHARACTER_BINDINGS[15] = {
                       evidence='467fc0 completes Goro stage-fatality continuation'),
 }
 
+CHARACTER_BINDINGS[16] = {
+    _address: _clone_binding(
+        _binding,
+        source=_binding.source.replace('game/c_sonya.c', 'game/c_kitana.c')
+                                .replace('game/generated/sonya.inc', 'game/generated/kitana.inc'),
+        evidence=_binding.evidence.replace('Sonya', 'Kitana'),
+    )
+    for _address, _binding in CHARACTER_BINDINGS[2].items()
+}
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/generated/%s.inc' % CHARACTERS[character], ('tail',),
