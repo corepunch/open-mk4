@@ -561,6 +561,20 @@ int main(void) {
         self.assertTrue(any('inventory changed' in error for error in errors))
         self.assertTrue(any('input/CPU target' in error for error in errors))
 
+    def test_frame_only_profiles_reject_direct_and_hidden_fiber_waits(self):
+        from unittest.mock import patch
+        from retail_coverage import audit as coverage_audit, profile_for, legacy_frame_calls
+        for name in ('fighter_start_fiber', 'fighter_fiber_finish', 'native_wait', 'native_calls', 'native_until', 'mk4_script_fan_tail'):
+            source = 'void start(Fighter *actor) { helper(actor); } void helper(Fighter *actor) { %s(actor); }' % name
+            self.assertEqual(legacy_frame_calls(source), [name])
+        self.assertEqual(legacy_frame_calls('/* native_wait(actor); */ void start(Fighter *actor) { native_play(actor, false); fighter_cancel_fiber(actor); }'), [])
+        for character in (5, 14):
+            self.assertTrue(profile_for(character)['mmove_only'])
+            self.assertEqual(coverage_audit(self.image, character)['coverage_errors'], [])
+        with patch('retail_coverage.read_source', return_value='void helper(Fighter *actor) { native_wait(actor); }'):
+            errors = coverage_audit(self.image, 14)['coverage_errors']
+        self.assertTrue(any('coroutine call native_wait' in error for error in errors))
+
     def test_cpu_fatalities_require_reviewed_minimums_and_use_retail_targets(self):
         import copy
         from retail_controls import generate_controls

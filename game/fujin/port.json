@@ -864,5 +864,6 @@
     "CPU_FINISH_1": 117964,
     "CPU_FINISH_2": 117964,
     "evidence": "Fujin first45e3b0 calls45e530, the second range gate1.8..3; both CPU targets4dfe10/4dfe50[5] are2 units. CPU scene entry bypasses counted human input."
-  }
+  },
+  "mmove_only": true
 }

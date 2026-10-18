@@ -876,5 +876,6 @@
     "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 0,
     "evidence": "Cage45e570 close gate accepts up to1 unit; CPU first/second targets are4dfe10/4dfe50[14]=1 unit."
-  }
+  },
+  "mmove_only": true
 }

@@ -53,6 +53,19 @@ def cpu_records(image, character):
     return cpu
 
 
+def legacy_frame_calls(source):
+    """Reject fiber-only APIs even when hidden in a character-owned helper.
+
+    Cancellation and active/running predicates are permitted; native_play has
+    a genuine frame path and is also permitted. These listed waits and legacy
+    script helpers require a running fiber, so an indirect call is unsafe.
+    """
+    pattern = (r'\b(?:fighter_(?:start_fiber|wait_ticks|fiber_(?:move|sequence|play_to|finish|handoff|await_frames))'
+               r'|native_(?:wait|wait_loop|delay|play_to|calls|until)'
+               r'|mk4_script_(?:bind|bind_victim|finish_clip|thrown_finish|fan_tail|fan_victim_end))\s*\(')
+    return sorted({match[0].split('(')[0].strip() for match in re.finditer(pattern, masked_c(source))})
+
+
 def inventory(image, character):
     moves = moves_for(character)
     roots = sorted({root for move in moves.values() for _, root in move['scripts']})
@@ -235,8 +248,9 @@ def audit(image, character, return_to=None, profile=None):
                 errors.append('generated scripts need an integration source')
             else:
                 source = read_source(ROOT / integration)
-                if profile.get('mmove_only') and re.search(r'\bfighter_(?:start_fiber|wait_ticks|fiber_(?:move|sequence|play_to|finish))\s*\(', masked_c(source)):
-                    errors.append('mmove-only integration still contains coroutine calls: ' + integration)
+                if profile.get('mmove_only'):
+                    for call in legacy_frame_calls(source):
+                        errors.append('mmove-only integration still contains coroutine call %s: %s' % (call, integration))
                 referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b|&' + symbol(entry) + r'_(?:repeat_)?phase\b', masked_c(source))}
                 reachable = set(referenced)
                 for entry in referenced:
