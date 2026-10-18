@@ -427,14 +427,24 @@ void mk4_script_fan_victim_end(Fighter *victim) {
   fighter_fiber_finish(NULL);
 }
 
-static void fan_watch(Fighter *fighter) {
+static void scene_finish_all(Fighter *fighter) {
+  (void)fighter;
+  fighter_cancel_all_fibers();
+  fighter_cancel_all_mmoves();
+  battle_end_finisher();
+}
+
+static void fan_rise(Fighter *fighter, float rise) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  int rise = mini(30, ++fighter->script_timer);
-  victim->body.pos[AXIS_Y] = victim->body.ground - rise * 0x3333;
-  if (fighter->script_timer >= 102) {
-    fighter_cancel_all_fibers();
-    battle_end_finisher();
+  victim->body.pos[AXIS_Y] = victim->body.ground - (int)rise * 0x3333;
+}
+
+void mk4_native_fan_rise(Fighter *fighter) {
+  native_motion_begin(fighter, 102, scene_finish_all);
+  for (int frame = 0; frame < 102; ++frame) {
+    native_motion_frame(fighter, frame, fan_rise, (float)mini(30, frame + 1), NULL);
   }
+  native_motion_play(fighter);
 }
 
 void mk4_script_fan_tail(Fighter *fighter, FighterFn cycle, FighterFn release, FighterFn victim_release) {
@@ -445,8 +455,7 @@ void mk4_script_fan_tail(Fighter *fighter, FighterFn cycle, FighterFn release, F
   fighter_cancel_fiber(victim);
   victim->sample_override = 69;
   fighter_start_fiber(victim, victim_release, NULL);
-  fighter->script_timer = 0;
-  fighter->body.physics = fan_watch;
+  mk4_native_fan_rise(fighter);
   release(fighter);
 }
 
@@ -455,21 +464,38 @@ static void finish_scene(Fighter *fighter) {
   battle_end_finisher();
 }
 
-void mk4_script_spike_tail(Fighter *fighter) {
+static void spike_rise(Fighter *fighter, float rise) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  while (g_battle.phase_ticks < 324) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = mini(19, fighter->sample_override + 1);
-    if (g_battle.phase_ticks >= 64) {
-      int rise = mini(22, g_battle.phase_ticks - 64);
-      mk4_script_scene_pose(victim, 128, 110, mini(31, rise * 2));
-      victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+  int height = (int)rise;
+  mk4_script_scene_pose(victim, 128, 110, mini(31, height * 2));
+  victim->body.pos[AXIS_Y] = height == 22 ? -0x59999 : victim->body.ground - height * 0x3333;
+}
+
+void mk4_native_spike_tail(Fighter *fighter, FighterFn end) {
+  int first = g_battle.phase_ticks + 1;
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, first, maxi(first, 324), end);
+  for (int frame = first; frame <= fighter->native.move.lastframe; ++frame) {
+    native_frame(fighter, frame, mini(19, pose + frame - first + 1), NULL);
+    if (frame >= 64) {
+      /* Pose and victim movement have separate frame tracks so the callback
+       * needs only the authored rise, never the scene clock. */
+      fighter->native.frames[frame - first].aifunc = spike_rise;
+      fighter->native.frames[frame - first].dist = (float)mini(22, frame - 64);
     }
   }
+  native_play(fighter, false);
+}
+
+static void spike_finish(Fighter *fighter) {
   const MoveDef *victory = roster_def(fighter->roster)->moves[S_VICTORY];
-  fighter_fiber_move(fighter, S_VICTORY, victory);
+  fighter_start_move(fighter, S_VICTORY, victory);
   fighter->sample_override = victory->last == MOVE_END ? 0 : victory->last;
-  fighter_fiber_finish(finish_scene);
+  finish_scene(fighter);
+}
+
+void mk4_script_spike_tail(Fighter *fighter) {
+  mk4_native_spike_tail(fighter, spike_finish);
 }
 
 void mk4_script_shake(Fighter *fighter, int selector) {

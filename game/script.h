@@ -60,6 +60,8 @@ void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample);
 void mk4_script_fan_cycle(Fighter *fighter);
 void mk4_script_fan_victim_end(Fighter *fighter);
 void mk4_script_fan_tail(Fighter *fighter, FighterFn cycle, FighterFn release, FighterFn victim_release);
+void mk4_native_fan_rise(Fighter *fighter);
+void mk4_native_spike_tail(Fighter *fighter, FighterFn end);
 void mk4_script_spike_tail(Fighter *fighter);
 void mk4_script_shake(Fighter *fighter, int selector);
 void mk4_script_effect(Fighter *fighter, int selector);

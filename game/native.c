@@ -3,7 +3,9 @@
 #include <string.h>
 
 static void frame_pose(Fighter *fighter, float pose) {
-  fighter->sample_override = (int)pose;
+  if (!fighter->mmove_hold) {
+    fighter->sample_override = (int)pose;
+  }
 }
 
 void native_begin(Fighter *fighter, int first, int last, FighterFn end) {

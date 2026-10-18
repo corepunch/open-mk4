@@ -58,13 +58,6 @@ static void sub_zero_uppercut_contact(Fighter *fighter) {
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 
-/* Native waits keep their pose while ordinary C tick callbacks decide the
- * next phase. The runner owns cancellation and once-per-tick scheduling. */
-static bool phase_wait(const Fighter *fighter) {
-  (void)fighter;
-  return false;
-}
-
 static void hold_phase(Fighter *fighter, const mmove_t *phase) {
   int sample = fighter_sample(fighter);
   fighter_mmove_phase(fighter, phase);
@@ -108,33 +101,26 @@ static const MoveDef *const moves[S_COUNT] = {
 
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
-static void uppercut_recover(Fighter *fighter);
-static const int uppercut_loop_frames_samples[] = {8, 7, 6, 7, 8};
-static const mframe_t uppercut_loop_frames[5] = {{0}};
-static const mmove_t uppercut_loop = {
-    .firstframe = 0, .lastframe = 4, .frame = uppercut_loop_frames, .endfunc = uppercut_recover, .samples = uppercut_loop_frames_samples};
-static const int uppercut_late_frames_samples[] = {9, 9, 8, 7, 6, 7, 8};
-static const mframe_t uppercut_late_frames[7] = {{0}};
-static const mmove_t uppercut_late = {
-    .firstframe = 0, .lastframe = 6, .frame = uppercut_late_frames, .endfunc = uppercut_recover, .samples = uppercut_late_frames_samples};
-static const mframe_t uppercut_miss_end_frames[12] = {{0}};
-static const mmove_t uppercut_miss_end = {.firstframe = 8, .lastframe = 19, .frame = uppercut_miss_end_frames, .endfunc = sub_zero_ready};
-static const mframe_t uppercut_hit_end_frames[11] = {{0}};
-static const mmove_t uppercut_hit_end = {.firstframe = 9, .lastframe = 19, .frame = uppercut_hit_end_frames, .endfunc = sub_zero_ready};
-
-static void uppercut_recover(Fighter *fighter) {
-  if (fighter->script_timer-- > 0) {
-    fighter_mmove_phase(fighter, fighter->script_phase ? &uppercut_late : &uppercut_loop);
-    fighter->script_phase = 0;
-  } else {
-    fighter_mmove_phase(fighter, fighter->contact == CONTACT_MISS ? &uppercut_miss_end : &uppercut_hit_end);
-  }
-}
-
 static void uppercut_branch(Fighter *fighter) {
-  fighter->script_timer = fighter->contact == CONTACT_MISS ? 3 : fighter->contact == CONTACT_BLOCK ? 2 : 8;
-  fighter->script_phase = fighter->contact_tick == 9;
-  uppercut_recover(fighter);
+  static const int cycle[] = {8, 7, 6, 7, 8};
+  static const int late[] = {9, 9, 8, 7, 6, 7, 8};
+  int repeats = fighter->contact == CONTACT_MISS ? 3 : fighter->contact == CONTACT_BLOCK ? 2 : 8;
+  int recovery = fighter->contact == CONTACT_MISS ? 8 : 9;
+  bool delayed = fighter->contact_tick == 9;
+  int count = repeats * 5 + (delayed ? 2 : 0) + 20 - recovery;
+  native_begin(fighter, 0, count - 1, sub_zero_ready);
+  int row = 0;
+  for (int repeat = 0; repeat < repeats; ++repeat) {
+    const int *poses = delayed && repeat == 0 ? late : cycle;
+    int length = delayed && repeat == 0 ? 7 : 5;
+    for (int frame = 0; frame < length; ++frame) {
+      fighter->native.poses[row++] = poses[frame];
+    }
+  }
+  for (int pose = recovery; pose < 20; ++pose) {
+    fighter->native.poses[row++] = pose;
+  }
+  native_play(fighter, false);
 }
 
 static void uppercut_contact(Fighter *fighter) {
@@ -272,7 +258,7 @@ static void sub_zero_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_hp);
   fighter->sample_override = 0;
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter->script_phase = fighter->script_timer = 0;
+  fighter->script_phase = 0;
   hp_script(fighter);
 }
 
@@ -1135,9 +1121,7 @@ static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   if (fighter_move(fighter)->clip != clip) {
     for (int i = 0; i < COUNT(fatal_moves); ++i) {
       if (fatal_moves[i].clip == clip) {
-        int scene_timer = fighter->script_timer;
         fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        fighter->script_timer = scene_timer;
         break;
       }
     }
@@ -1289,24 +1273,8 @@ static void first_camera_start(Fighter *fighter) {
   retail_script_004e0368(fighter);
 }
 
-static bool first_scene_due(const Fighter *fighter) {
-  (void)fighter;
-  return g_battle.phase_ticks >= 8;
-}
-
-static void first_scene_wait_frames_frame_0(Fighter *fighter) {
-  fighter->mmove_hold = !first_scene_due(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t first_scene_wait_frames[1] = {
-  [0] = {.thinkfunc = first_scene_wait_frames_frame_0},
-};
-// clang-format on
-static const mmove_t first_scene_wait = {.firstframe = 0, .lastframe = 0, .frame = first_scene_wait_frames, .endfunc = first_camera_start};
-
 static void first_fatality_script(Fighter *fighter) {
-  fighter_mmove_phase(fighter, &first_scene_wait);
+  native_hold(fighter, maxi(1, 8 - g_battle.phase_ticks), first_camera_start);
 }
 
 static void first_victim_start(Fighter *victim) {
@@ -1410,35 +1378,18 @@ static void script_breath_approach(Fighter *fighter) {
   retail_script_004d2c78(fighter);
 }
 
-static void breath_travel_tick(Fighter *fighter) {
-  if (--fighter->script_timer == 0) {
-    fighter_set_speed(fighter, 0);
-    fighter->script_phase = 3;
-    retail_script_004d2ca0(fighter);
-  }
+static void breath_resume(Fighter *fighter) {
+  fighter_set_speed(fighter, 0);
+  fighter->script_phase = 3;
+  retail_script_004d2ca0(fighter);
 }
-
-static void breath_travel_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  breath_travel_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !phase_wait(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t breath_travel_frames[1] = {
-  [0] = {.thinkfunc = breath_travel_frames_frame_0},
-};
-// clang-format on
-static const mmove_t breath_travel_phase = {.firstframe = 9, .lastframe = 9, .frame = breath_travel_frames, .endfunc = fighter_stop_mmove};
 
 static void breath_travel(Fighter *fighter) {
   q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
-  fighter->script_timer = maxi(0, q16_mul(distance - 0xcccc, 0x69999) / Q16_ONE) + 1;
+  int frames = maxi(0, q16_mul(distance - 0xcccc, 0x69999) / Q16_ONE) + 1;
   fighter->script_phase = 2;
-  fighter_mmove_phase(fighter, &breath_travel_phase);
+  fighter->sample_override = 9;
+  native_hold(fighter, frames, breath_resume);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -1458,41 +1409,36 @@ static void script_breath_shatter(Fighter *fighter) {
   retail_script_004d2cc8(fighter);
 }
 
+static void victory_finish(Fighter *fighter) {
+  (void)fighter;
+  fighter_cancel_all_mmoves();
+  battle_end_finisher();
+}
+
 static void victory_watch(Fighter *fighter) {
-  if (fighter_move(fighter)->clip == 118 && ++fighter->script_timer >= 50) {
-    fighter_cancel_all_mmoves();
-    battle_end_finisher();
+  if (fighter_move(fighter)->clip == 118) {
+    native_motion_begin(fighter, 50, victory_finish);
+    native_motion_play(fighter);
+    native_motion_step(fighter);
   }
 }
 
 static void script_victory(Fighter *fighter) {
-  fighter->script_timer = 0;
   fighter->body.physics = victory_watch;
   retail_script_004e6a40(fighter);
 }
 
-static void fan_watch(Fighter *fighter) {
-  Fighter *victim = opponent(fighter);
-  int rise = mini(30, ++fighter->script_timer);
-  victim->body.pos[AXIS_Y] = victim->body.ground - rise * 0x3333;
-  if (fighter->script_timer >= 102) {
-    fighter_cancel_all_mmoves();
-    battle_end_finisher();
-  }
-}
-
-static void script_fan_cycle(Fighter *fighter) {
-  if (--fighter->script_timer > 0) {
-    retail_script_004e0138(fighter);
-    return;
-  }
+static void fan_release(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
   fighter_cancel_mmove(victim);
   victim->sample_override = 69;
   retail_script_004e01a0(victim);
-  fighter->script_timer = 0;
-  fighter->body.physics = fan_watch;
+  mk4_native_fan_rise(fighter);
   retail_script_004e0148(fighter);
+}
+
+static void script_fan_cycle(Fighter *fighter) {
+  (void)fighter; /* Repetition is expanded from the generated phase on entry. */
 }
 
 static void script_fan_victim_end(Fighter *fighter) {
@@ -1505,44 +1451,21 @@ static void script_fan_victory(Fighter *fighter) {
 }
 
 static void script_fan_tail(Fighter *fighter) {
-  fighter->script_timer = 31;
-  retail_script_004e0138(fighter);
-}
-
-static void spike_tick(Fighter *fighter) {
-  Fighter *victim = opponent(fighter);
-  fighter->sample_override = mini(19, fighter_sample(fighter) + 1);
-  if (g_battle.phase_ticks >= 64) {
-    int rise = mini(22, g_battle.phase_ticks - 64);
-    mk4_script_scene_pose(victim, 128, 110, mini(31, rise * 2));
-    victim->body.pos[AXIS_Y] = rise == 22 ? -0x59999 : victim->body.ground - rise * 0x3333;
+  const mmove_t *cycle = &retail_script_004e0138_phase;
+  int length = cycle->lastframe - cycle->firstframe + 1;
+  native_begin(fighter, 0, 31 * length - 1, fan_release);
+  for (int repeat = 0; repeat < 31; ++repeat) {
+    for (int frame = 0; frame < length; ++frame) {
+      int row = repeat * length + frame;
+      fighter->native.frames[row] = cycle->frame[frame];
+      fighter->native.poses[row] = cycle->samples != NULL ? cycle->samples[frame] : cycle->firstframe + frame;
+    }
   }
-  if (g_battle.phase_ticks >= 324) {
-    const MoveDef *victory = roster_def(fighter->roster)->moves[S_VICTORY];
-    fighter_start_move(fighter, S_VICTORY, victory);
-    fighter->sample_override = victory->last == MOVE_END ? 0 : victory->last;
-    finish_scene(fighter);
-  }
+  native_play(fighter, false);
 }
-
-static void spike_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  spike_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !phase_wait(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t spike_frames[1] = {
-  [0] = {.thinkfunc = spike_frames_frame_0},
-};
-// clang-format on
-static const mmove_t spike_phase = {.firstframe = 5, .lastframe = 5, .frame = spike_frames, .endfunc = fighter_stop_mmove};
 
 static void script_spike_tail(Fighter *fighter) {
-  hold_phase(fighter, &spike_phase);
+  mk4_script_spike_tail(fighter);
 }
 
 static void fan_start(Fighter *fighter) {
@@ -1550,24 +1473,8 @@ static void fan_start(Fighter *fighter) {
   retail_script_004e0118(fighter);
 }
 
-static bool spike_due(const Fighter *fighter) {
-  (void)fighter;
-  return g_battle.phase_ticks >= 30;
-}
-
-static void spike_wait_frames_frame_0(Fighter *fighter) {
-  fighter->mmove_hold = !spike_due(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t spike_wait_frames[1] = {
-  [0] = {.thinkfunc = spike_wait_frames_frame_0},
-};
-// clang-format on
-static const mmove_t spike_wait = {.firstframe = 0, .lastframe = 0, .frame = spike_wait_frames, .endfunc = retail_script_004e6950};
-
 static void spike_start(Fighter *fighter) {
-  fighter_mmove_phase(fighter, &spike_wait);
+  native_hold(fighter, maxi(1, 30 - g_battle.phase_ticks), retail_script_004e6950);
 }
 
 static void start_fatality(Fighter *fighter, int id) {
