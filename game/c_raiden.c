@@ -457,24 +457,18 @@ static const ButtonTable close_hk_followup = {
     {[BUTTON_HIGH_PUNCH] = press_knee_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_combo_hk, [BUTTON_LOW_KICK] = press_lk}};
 
 static void script_kick_tail(Fighter *fighter) {
-  for (int visit = 0; visit < 3; ++visit) {
-    mk4_script_advance(fighter, 1, 1);
-    raiden_kick_contact(fighter);
-  }
+  native_calls(fighter, 3, 1, raiden_kick_contact);
   retail_script_004e6998(fighter);
 }
 
 static void script_sweep_tail(Fighter *fighter) {
-  for (int visit = 0; visit < 2; ++visit) {
-    fighter_wait_ticks(1);
-    raiden_sweep_contact(fighter);
-  }
+  native_calls(fighter, 2, 0, raiden_sweep_contact);
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(raiden_ready);
 }
 
 static void script_crouch_lk_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -487,12 +481,12 @@ static void script_close_hp_tail(Fighter *fighter) {
 }
 
 static void script_combo_hp_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
 static void script_roundhouse_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -547,9 +541,7 @@ static void fan_start(Fighter *fighter) {
 }
 
 static void spike_start(Fighter *fighter) {
-  while (g_battle.phase_ticks < 30) {
-    fighter_wait_ticks(1);
-  }
+  native_delay(fighter, maxi(0, 30 - g_battle.phase_ticks));
   retail_script_004e6950(fighter);
 }
 
@@ -585,7 +577,7 @@ static void script_throw_getup(Fighter *victim) {
   victim->facing = -victim->facing;
   mk4_script_bind(victim, 328, 15, 0);
   mk4_script_finish_clip(victim, 1);
-  fighter_wait_ticks(1);
+  native_delay(victim, 1);
   mk4_script_thrown_finish(victim);
 }
 
@@ -806,12 +798,14 @@ static void raiden_torpedo(Fighter *fighter) {
 
 static const MoveDef s_teleport = {.clip = 304, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x20c};
 
+static bool teleport_below_ground(const Fighter *fighter) {
+  return fighter->body.pos[AXIS_Y] >= fighter->body.ground + Q16_ONE;
+}
+
 static void teleport_script(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = 0x4ccc;
   fighter->body.gravity = 0;
-  while (fighter->body.pos[AXIS_Y] < fighter->body.ground + Q16_ONE) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, teleport_below_ground);
   const Fighter *victim = fighter_opponent(fighter);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     fighter->body.pos[axis] = victim->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x10000);
@@ -823,7 +817,7 @@ static void teleport_script(Fighter *fighter) {
   native_until(fighter, native_grounded);
   fighter->flags &= ~(unsigned)FF_UNTOUCHABLE;
   fighter->teleport_ready = g_battle.ticks + 32;
-  fighter_wait_ticks(4);
+  native_delay(fighter, 4);
   fighter_fiber_finish(raiden_ready);
 }
 
@@ -950,15 +944,22 @@ static void script_first_release(Fighter *fighter) {
   retail_script_004e0220(fighter);
 }
 
+static void first_end_shake(Fighter *fighter) {
+  mk4_script_shake(fighter, 8);
+}
+
+static void first_end_particles(Fighter *fighter) {
+  battle_particles(opponent(fighter), 2, 24, true);
+}
+
 static void script_first_end(Fighter *fighter) {
-  Fighter *victim = opponent(fighter);
-  for (int cue = 0; cue < 2; ++cue) {
-    mk4_script_shake(fighter, 8);
-    fighter_wait_ticks(28);
-    battle_particles(victim, 2, 24, true);
-    fighter_wait_ticks(2);
+  first_end_shake(fighter);
+  native_begin(fighter, 1, 60, NULL);
+  for (int frame = 1; frame <= 60; ++frame) {
+    native_frame(fighter, frame, fighter_sample(fighter), frame == 30 ? first_end_shake : frame == 28 || frame == 58 ? first_end_particles : NULL);
   }
-  battle_shatter(victim);
+  native_wait(fighter);
+  battle_shatter(opponent(fighter));
   battle_end_finisher();
   script_victory(fighter);
 }
@@ -1121,7 +1122,7 @@ static void script_reaction_side_getup(Fighter *victim) {
 
 static void script_staff_victim_tail(Fighter *victim) {
   victim->body.physics = fighter_friction;
-  fighter_wait_ticks(20);
+  native_delay(victim, 20);
   mk4_script_finish_clip(victim, 1);
   script_throw_getup(victim);
 }

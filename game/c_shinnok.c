@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include "mk4_characters.h"
 #include "script.h"
@@ -201,15 +202,19 @@ static void shinnok_script_air_finish(Fighter *fighter) {
   fighter_fiber_finish(mk4_land);
 }
 
-static void shinnok_script_uppercut_finish(Fighter *fighter) {
+static void shinnok_uppercut_frame(Fighter *fighter) {
   const AttackRecord *record = (fighter->flags & FF_FOLLOW_UP) ? &shinnok_uppercut_followup_record : &shinnok_uppercut_record;
-  for (int sample = 6; sample <= 8; ++sample) {
-    fighter_wait_ticks(sample == 6 ? 2 : 1);
-    fighter->sample_override = sample;
-    if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001 && battle_contact(fighter, record) != CONTACT_MISS) {
-      fighter->action = ACTION_RETAIL_1006;
-    }
+  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001 && battle_contact(fighter, record) != CONTACT_MISS) {
+    fighter->action = ACTION_RETAIL_1006;
   }
+}
+
+static void shinnok_script_uppercut_finish(Fighter *fighter) {
+  native_begin(fighter, 1, 4, NULL);
+  for (int frame = 1; frame <= 4; ++frame) {
+    native_frame(fighter, frame, frame == 1 ? fighter_sample(fighter) : frame + 4, frame >= 2 ? shinnok_uppercut_frame : NULL);
+  }
+  native_wait(fighter);
   fighter_fiber_finish(shinnok_ready);
 }
 
@@ -221,7 +226,7 @@ static void shinnok_script_sweep_finish(Fighter *fighter) {
 }
 
 static void shinnok_script_roundhouse_start(Fighter *fighter) {
-  if (fighter->script_timer != 0) {
+  if (fighter_fast_start(fighter)) {
     retail_script_004e6860(fighter);
   } else {
     retail_script_004e6878(fighter);

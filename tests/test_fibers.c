@@ -117,7 +117,7 @@ static void mmove_frames_and_callbacks(void) {
 
 static void held_think(Fighter *fighter) {
   frame_think(fighter);
-  fighter->mmove_hold = ++fighter->script_timer < 4;
+  fighter->mmove_hold = frame_think_calls < 4;
 }
 
 static const mframe_t held_frames[] = {{.thinkfunc = held_think}};
@@ -145,13 +145,12 @@ static void mmove_phases_and_cleanup(void) {
   fighter->flags |= FF_PAIRED;
   int action = fighter->action;
   advance(1);
-  check(fighter->current_mmove == &held_phase && fighter->script_timer == 0 && cleaned[0] == 0, "phase branch advanced immediately or cleaned the action");
+  check(fighter->current_mmove == &held_phase && frame_think_calls == 0 && cleaned[0] == 0, "phase branch advanced immediately or cleaned the action");
   check(fighter->contact == CONTACT_BLOCK && fighter->buffered == BUTTON_BIT(BUTTON_HIGH_PUNCH) && (fighter->flags & FF_PAIRED) && fighter->action == action,
       "phase branch reset combat state");
   advance(3);
   fighter_step_mmove(fighter);
-  check(fighter->current_mmove == &held_phase && fighter->script_timer == 3 && frame_think_calls == 3,
-      "held frame skipped its action callback or advanced twice in a tick");
+  check(fighter->current_mmove == &held_phase && frame_think_calls == 3, "held frame skipped its action callback or advanced twice in a tick");
   advance(1);
   check(fighter->state == S_IDLE && cleaned[0] == 1 && completed[0] == 1, "held phase did not finish and clean exactly once");
   for (int kind = 0; kind < 5; ++kind) {

@@ -473,24 +473,18 @@ static const ButtonTable close_hk_followup = {
     {[BUTTON_HIGH_PUNCH] = press_knee_hp, [BUTTON_LOW_PUNCH] = press_lp, [BUTTON_HIGH_KICK] = press_combo_hk, [BUTTON_LOW_KICK] = press_lk}};
 
 static void script_kick_tail(Fighter *fighter) {
-  for (int visit = 0; visit < 3; ++visit) {
-    fighter_wait_ticks(1);
-    kitana_kick_contact(fighter);
-  }
+  native_calls(fighter, 3, 0, kitana_kick_contact);
   retail_script_004e5d20(fighter);
 }
 
 static void script_sweep_tail(Fighter *fighter) {
-  for (int visit = 0; visit < 2; ++visit) {
-    fighter_wait_ticks(1);
-    kitana_sweep_contact(fighter);
-  }
+  native_calls(fighter, 2, 0, kitana_sweep_contact);
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(kitana_ready);
 }
 
 static void script_crouch_lk_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -503,12 +497,12 @@ static void script_close_hp_tail(Fighter *fighter) {
 }
 
 static void script_combo_hp_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
 static void script_roundhouse_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -570,9 +564,7 @@ static void fan_start(Fighter *fighter) {
 }
 
 static void spike_start(Fighter *fighter) {
-  while (g_battle.phase_ticks < 30) {
-    fighter_wait_ticks(1);
-  }
+  native_delay(fighter, maxi(0, 30 - g_battle.phase_ticks));
   retail_script_004e6950(fighter);
 }
 
@@ -608,7 +600,7 @@ static void script_throw_getup(Fighter *victim) {
   victim->facing = -victim->facing;
   mk4_script_bind(victim, 328, 15, 0);
   mk4_script_finish_clip(victim, 1);
-  fighter_wait_ticks(1);
+  native_delay(victim, 1);
   mk4_script_thrown_finish(victim);
 }
 
@@ -661,7 +653,7 @@ static void script_reaction(Fighter *fighter, int reaction) {
 
 static void script_lk_return(Fighter *fighter) {
   mk4_script_finish_clip(fighter, 1);
-  fighter_wait_ticks(20); /* Native stance blend, step 0xccc. */
+  native_delay(fighter, 20); /* Native stance blend, step 0xccc. */
   fighter_fiber_finish(kitana_ready);
 }
 
@@ -987,7 +979,7 @@ static void script_first_release(Fighter *fighter) {
 
 static void script_second_pause(Fighter *fighter) {
   (void)fighter;
-  fighter_wait_ticks(15);
+  native_delay(fighter, 15);
 }
 
 static void script_second_cycle_end(Fighter *fighter) {
@@ -1194,14 +1186,23 @@ static void script_reaction_side_getup(Fighter *victim) {
   mk4_script_thrown_finish(victim);
 }
 
-static void square_victim(Fighter *victim) {
+static void square_victim_guard(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
+  if (owner->action != 0x201 || owner->pending != NULL) {
+    fighter_stop_mmove(victim);
+  }
+}
+
+static void square_victim(Fighter *victim) {
   mk4_script_bind(victim, 136, 24, 0);
   victim->flags |= FF_PAIRED;
-  int visit = 0;
-  while (owner->action == 0x201 && owner->pending == NULL) {
-    fighter_wait_ticks(1);
-    victim->sample_override = 4 + (++visit % 20);
+  const Fighter *owner = fighter_opponent(victim);
+  if (owner->action == 0x201 && owner->pending == NULL) {
+    native_begin(victim, 0, 19, NULL);
+    for (int frame = 0; frame < 20; ++frame) {
+      native_frame(victim, frame, 4 + (frame + 1) % 20, square_victim_guard);
+    }
+    native_wait_loop(victim);
   }
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->body.gravity = 0x28f;

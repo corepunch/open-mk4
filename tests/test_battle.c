@@ -210,8 +210,11 @@ static void restart_sequence(Fighter *fighter) {
   fighter_start_sequence(fighter, fighter->sequence);
 }
 
+static int sequence_completions;
+
 static void count_sequence_end(Fighter *fighter) {
-  fighter->script_timer++;
+  (void)fighter;
+  sequence_completions++;
 }
 
 static void check_wait_phases(void) {
@@ -247,9 +250,10 @@ static void check_wait_phases(void) {
   check(fighter->ticks == 0 && fighter->health == health - 2, "Restarting the same phase must stop processing the old phase's events");
 
   static const MoveSequence once = {hold, 1, NULL, 0, 2, count_sequence_end, NULL};
+  sequence_completions = 0;
   fighter_start_sequence(fighter, &once);
   advance_ticks(5, NULL);
-  check(fighter->script_timer == 1, "A completed phase must call its completion callback only once");
+  check(sequence_completions == 1, "A completed phase must call its completion callback only once");
 
   /* A new match reuses the singleton's storage. Old phase/object state must
    * not leak into that match or keep a stale completion callback alive. */
@@ -257,6 +261,7 @@ static void check_wait_phases(void) {
   g_battle.contacts_off = true;
   g_battle.camera.active = true;
   g_battle.projectiles[0].kind = PROJECTILE_SPEAR;
+  sequence_completions = 0;
   battle_init(4, 0);
   check(g_battle.fighters[0].roster == 4 && g_battle.fighters[1].roster == 0 && g_battle.phase == PHASE_READY && g_battle.ticks == 0,
       "Singleton initialization must start the requested fresh match");
@@ -264,7 +269,7 @@ static void check_wait_phases(void) {
             g_battle.projectiles[0].kind == 0 && !g_battle.camera.active && !g_battle.contacts_off,
       "Singleton initialization must discard old continuations, objects and scene state");
   advance_ticks(45, NULL);
-  check(g_battle.phase == PHASE_READY && g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[0].script_timer == 0,
+  check(g_battle.phase == PHASE_READY && g_battle.fighters[0].health == Q16_ONE && sequence_completions == 0,
       "A previous match's wait callback must not run in the fresh match");
 }
 
@@ -417,7 +422,8 @@ static void check_spear_fiber_allocation_and_reset(void) {
   advance_ticks(45, NULL);
   check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE - 0xccc && g_battle.fighters[1].action == 0x1008,
       "Earlier spear must cancel the other fiber and projectile, then finish its victim pull");
-  check(fighter_fiber_active(&g_battle.fighters[0]) && fighter_fiber_active(&g_battle.fighters[1]), "Mirror pull arrival must start return and stun fibers");
+  check(fighter_fiber_active(&g_battle.fighters[0]) && g_battle.fighters[1].current_mmove != NULL,
+      "Mirror pull arrival must start independent return and frame-driven stun");
   advance_ticks(100, NULL);
   check(g_battle.fighters[0].state == S_IDLE && g_battle.fighters[1].state == S_IDLE, "Mirror pull must return both actors without stale waits");
 }
@@ -459,7 +465,7 @@ static void check_specials(void) {
     advance_ticks(45, NULL);
     check(victim->health == Q16_ONE - 0xccc && fighter_distance(fighter) < 0.9f, "Spear must damage once and pull into follow-up range");
     check(victim->action == 0x1008 && victim->damage_scale == 0x9999, "Spear must leave scaled combo stun");
-    check(fighter_fiber_active(fighter) && fighter_fiber_active(victim), "Pull arrival must start independent return and stun fibers");
+    check(fighter_fiber_active(fighter) && victim->current_mmove != NULL, "Pull arrival must start independent return and frame-driven stun");
     advance_ticks(100, NULL);
     check(fighter->state == S_IDLE && victim->state == S_IDLE, "Spear must release both fighters");
     for (int i = 0; i < MAX_PROJECTILES; ++i) {

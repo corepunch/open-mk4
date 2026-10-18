@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "mk4_characters.h"
 #include "script.h"
 
@@ -97,7 +98,7 @@ static void quan_chi_script_sweep_finish(Fighter *fighter) {
 }
 
 static void quan_chi_script_roundhouse_start(Fighter *fighter) {
-  if (fighter->script_timer) {
+  if (fighter_fast_start(fighter)) {
     retail_script_004e6860(fighter);
   } else {
     retail_script_004e6878(fighter);

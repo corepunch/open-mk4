@@ -378,14 +378,14 @@ static void jarek_ai_projectile_spawn(Fighter *fighter, int task_type) {
   }
 }
 
-static void jarek_script_kick_finish(Fighter *fighter) {
-  for (int sample = 9; sample <= 10; ++sample) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = sample;
-    if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
-      battle_contact(fighter, &jarek_high_kick_record);
-    }
+static void jarek_kick_frame(Fighter *fighter) {
+  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
+    battle_contact(fighter, &jarek_high_kick_record);
   }
+}
+
+static void jarek_script_kick_finish(Fighter *fighter) {
+  native_calls(fighter, 2, 1, jarek_kick_frame);
   retail_script_004e5c70(fighter);
 }
 
@@ -407,15 +407,19 @@ static void jarek_script_air_finish(Fighter *fighter) {
   fighter_fiber_finish(mk4_land);
 }
 
-static void jarek_script_uppercut_finish(Fighter *fighter) {
+static void jarek_uppercut_frame(Fighter *fighter) {
   const AttackRecord *record = (fighter->flags & FF_FOLLOW_UP) ? &jarek_uppercut_followup_record : &jarek_uppercut_record;
-  for (int sample = 6; sample <= 8; ++sample) {
-    fighter_wait_ticks(sample == 6 ? 2 : 1);
-    fighter->sample_override = sample;
-    if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001 && battle_contact(fighter, record) != CONTACT_MISS) {
-      fighter->action = ACTION_RETAIL_1006;
-    }
+  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001 && battle_contact(fighter, record) != CONTACT_MISS) {
+    fighter->action = ACTION_RETAIL_1006;
   }
+}
+
+static void jarek_script_uppercut_finish(Fighter *fighter) {
+  native_begin(fighter, 1, 4, NULL);
+  for (int frame = 1; frame <= 4; ++frame) {
+    native_frame(fighter, frame, frame == 1 ? fighter_sample(fighter) : frame + 4, frame >= 2 ? jarek_uppercut_frame : NULL);
+  }
+  native_wait(fighter);
   fighter_fiber_finish(jarek_ready);
 }
 
@@ -427,7 +431,7 @@ static void jarek_script_sweep_finish(Fighter *fighter) {
 }
 
 static void jarek_script_roundhouse_start(Fighter *fighter) {
-  if (fighter->script_timer != 0) {
+  if (fighter_fast_start(fighter)) {
     retail_script_004e6860(fighter);
   } else {
     retail_script_004e6878(fighter);

@@ -173,21 +173,8 @@ static void reptile_script_lk_return(Fighter *fighter) {
 }
 
 static void reptile_script_47a6d0(Fighter *fighter) {
-  int last = fighter_move(fighter)->last;
-  int remaining = 16;
-  bool contacted = false;
-  while (remaining > 0) {
-    fighter_wait_ticks(1);
-    if (fighter->sample_override < last) {
-      fighter->sample_override++;
-    }
-    if (battle_contact(fighter, &reptile_script_contact) != CONTACT_MISS) {
-      contacted = true;
-      break;
-    }
-    remaining--;
-  }
-  if (!contacted) {
+  native_queries(fighter, &reptile_script_contact, 16, 1);
+  if (!fighter->connected) {
     retail_script_004e8148(fighter);
     return;
   }
@@ -205,12 +192,21 @@ static void reptile_script_47b260(Fighter *fighter) {
   }
 }
 
+static void reptile_loop_frame(Fighter *fighter) {
+  reptile_script_47b260(fighter);
+  if (fighter->connected) {
+    fighter_stop_mmove(fighter);
+  }
+}
+
 static void reptile_script_47b010(Fighter *fighter) {
-  for (int remaining = 6; remaining > 0 && !fighter->connected; --remaining) {
-    reptile_script_47b260(fighter);
-    if (!fighter->connected) {
-      fighter_wait_ticks(1);
+  reptile_script_47b260(fighter);
+  if (!fighter->connected) {
+    native_begin(fighter, 1, 6, NULL);
+    for (int frame = 1; frame <= 6; ++frame) {
+      native_frame(fighter, frame, fighter_sample(fighter), frame < 6 ? reptile_loop_frame : NULL);
     }
+    native_wait(fighter);
   }
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(reptile_ready);
@@ -317,7 +313,7 @@ static void reptile_script_air_finish(Fighter *fighter) {
 }
 
 static void reptile_script_roundhouse_start(Fighter *fighter) {
-  if (fighter->script_timer) {
+  if (fighter_fast_start(fighter)) {
     retail_script_004e6860(fighter);
   } else {
     retail_script_004e6878(fighter);

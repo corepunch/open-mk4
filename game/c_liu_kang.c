@@ -458,13 +458,7 @@ static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, 
 static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 
 static void thrown_play_to(Fighter *victim, int sample, int step) {
-  while (step > 0 ? victim->sample_override < sample : victim->sample_override > sample) {
-    uint64_t submitted = g_battle.ticks;
-    do {
-      fighter_wait_ticks(1);
-    } while (g_battle.ticks == submitted);
-    victim->sample_override += step;
-  }
+  native_play_to(victim, sample, step);
 }
 
 static void thrown_finish(Fighter *victim) {
@@ -481,28 +475,34 @@ static void liu_script_lp_getup(Fighter *victim) {
   victim->sample_override = 0;
   fighter_set_speed(victim, -0x147a);
   thrown_play_to(victim, 15, 1);
-  fighter_wait_ticks(1);
+  native_delay(victim, 1);
   thrown_finish(victim);
 }
 
 static void lk_thrown_script(Fighter *victim) {
   victim->script_phase = 1;
   victim->sample_override = 30;
-  fighter_wait_ticks(2);
+  native_delay(victim, 2);
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->reaction = 80;
   retail_script_004e9a90(victim);
 }
 
-static void ground_thrown_script(Fighter *victim) {
+static void ground_thrown_frame(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
-  for (;;) {
-    fighter_wait_ticks(1);
-    if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
-      victim->flags &= ~(unsigned)FF_PAIRED;
-      thrown_finish(victim);
-    }
+  if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    fighter_stop_mmove(victim);
+    return;
   }
+  victim->mmove_hold = true;
+}
+
+static void ground_thrown_script(Fighter *victim) {
+  native_begin(victim, 0, 0, NULL);
+  victim->native.frames[0].thinkfunc = ground_thrown_frame;
+  native_wait(victim);
+  thrown_finish(victim);
 }
 
 static void throw_disarm(Fighter *victim) {
@@ -800,23 +800,23 @@ static void liu_kang_low_fireball(Fighter *fighter) {
 static const MoveDef s_flying_kick = {.clip = 92, .last = 5, .flags = RETAIL, .action = ACTION_RETAIL_0207};
 static const AttackRecord flying_record = {0x14f5c, -0xf5c, 0xf5c2, 0x51eb, 31, 31, 0, 0, 0x23d7};
 
+static void flying_query(Fighter *fighter) {
+  fighter->mmove_hold = fighter_airborne(fighter) && battle_contact(fighter, &flying_record) == CONTACT_MISS;
+}
+
 static void flying_kick_script(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1); /* 47ee00 native startup before 47ee30 contact runner. */
-  for (;;) {
-    if (!fighter_airborne(fighter)) {
-      retail_script_004e86d0(fighter);
-      return;
-    }
-    ContactResult result = battle_contact(fighter, &flying_record);
-    if (result == CONTACT_BLOCK) {
-      retail_script_004e8718(fighter);
-      return;
-    }
-    if (result != CONTACT_MISS) {
-      retail_script_004e86e8(fighter);
-      return;
-    }
-    fighter_wait_ticks(1);
+  mk4_script_finish_clip(fighter, 1);
+  if (fighter_airborne(fighter) && battle_contact(fighter, &flying_record) == CONTACT_MISS) {
+    native_begin(fighter, 0, 0, NULL);
+    fighter->native.frames[0].thinkfunc = flying_query;
+    native_wait(fighter);
+  }
+  if (!fighter_airborne(fighter)) {
+    retail_script_004e86d0(fighter);
+  } else if (fighter->contact == CONTACT_BLOCK) {
+    retail_script_004e8718(fighter);
+  } else {
+    retail_script_004e86e8(fighter);
   }
 }
 
@@ -1323,25 +1323,19 @@ static void liu_script_reaction(Fighter *fighter, int reaction) {
 }
 
 static void liu_script_kick_tail(Fighter *fighter) {
-  for (int i = 0; i < 3; ++i) {
-    fighter_wait_ticks(1);
-    liu_kang_kick_contact(fighter);
-  }
+  native_calls(fighter, 3, 0, liu_kang_kick_contact);
   retail_script_004e5c70(fighter);
 }
 
 static void liu_script_sweep_tail(Fighter *fighter) {
-  for (int i = 0; i < 2; ++i) {
-    fighter_wait_ticks(1);
-    liu_kang_sweep_contact(fighter);
-  }
+  native_calls(fighter, 2, 0, liu_kang_sweep_contact);
   fighter->action = ACTION_RETAIL_1006;
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(liu_kang_ready);
 }
 
 static void liu_script_crouch_lk_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -1394,7 +1388,7 @@ static void liu_script_lk_thrown_tail(Fighter *victim) {
   fighter_set_speed(victim, -0x3333);
   victim->body.physics = fighter_friction;
   thrown_play_to(victim, 0, -1);
-  fighter_wait_ticks(1);
+  native_delay(victim, 1);
   victim->facing = -victim->facing;
   thrown_finish(victim);
 }

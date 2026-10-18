@@ -1,4 +1,6 @@
 #include "game.h"
+#include "native.h"
+#include "math_util.h"
 #include "mk4_characters.h"
 #include "script.h"
 #include <string.h>
@@ -255,37 +257,34 @@ static void kai_script_aerial_recovery(Fighter *fighter) {
   memset(fighter->body.vel, 0, sizeof fighter->body.vel);
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   fighter->body.gravity = 0;
-  fighter_wait_ticks(8);
+  native_delay(fighter, 8);
   fighter->flags &= ~(unsigned)FF_BUSY;
   fighter->body.gravity = 0x51e;
   mk4_script_wait_land(fighter);
   fighter_fiber_finish(kai_ready);
 }
 
-static void kai_script_contact_sample(Fighter *fighter, int sample, const AttackRecord *record) {
-  if (fighter->sample_override < sample) {
-    fighter_fiber_play_to(fighter, sample, 1);
-  } else {
-    fighter_wait_ticks(1);
-  }
+static void kai_contact_frame(Fighter *fighter) {
   if (!fighter->connected) {
-    battle_contact(fighter, record);
+    battle_contact(fighter, fighter->native_record);
   }
 }
 
 static void kai_script_contact_b9_continuation(Fighter *fighter) {
-  /* 478e20 dispatches table-B selector 9 at samples 30 through 34. */
-  for (int sample = 30; sample <= 34; ++sample) {
-    kai_script_contact_sample(fighter, sample, &s_kai_attack_b9);
-  }
+  native_play_to(fighter, 29, 1);
+  fighter->native_record = &s_kai_attack_b9;
+  native_calls(fighter, 5, 1, kai_contact_frame);
   retail_script_004e88c8(fighter);
 }
 
 static void kai_script_contact_b10_continuation(Fighter *fighter) {
-  /* 47cc50 dispatches table-B selector 10 at samples 10, 11 and 11. */
-  kai_script_contact_sample(fighter, 10, &s_kai_attack_b10);
-  kai_script_contact_sample(fighter, 11, &s_kai_attack_b10);
-  kai_script_contact_sample(fighter, 11, &s_kai_attack_b10);
+  native_play_to(fighter, 9, 1);
+  fighter->native_record = &s_kai_attack_b10;
+  native_begin(fighter, 1, 3, NULL);
+  for (int frame = 1; frame <= 3; ++frame) {
+    native_frame(fighter, frame, frame == 1 ? 10 : 11, kai_contact_frame);
+  }
+  native_wait(fighter);
   retail_script_004e8390(fighter);
 }
 
@@ -296,40 +295,22 @@ enum {
 
 static bool kai_stage_event_step(BattleEvent *event, Fighter *owner, Fighter *opponent) {
   (void)opponent;
-
-  if (event->phase == 0) {
-    int clip = event->data[0];
-    int sample = event->data[1];
-    int last = event->data[2];
-    fighter_start_move(owner, S_KICK, &s_stage_event_clip);
-    owner->playback_move = *fighter_move(owner);
-    owner->playback_move.clip = clip;
-    owner->playback_move.first = 0;
-    owner->playback_move.last = last;
-    owner->playback_move.sequence = NULL;
-    owner->playback_move.flags = SF_LOCK;
-    owner->current_move = &owner->playback_move;
-    owner->sample_override = sample;
-    owner->action = 0x200d;
-    event->phase = KAI_STAGE_EVENT_PLAY_CLIP;
-    event->cancel_on_owner_change = true;
-    event->owner_continuation = owner->continuation;
-    return true;
+  int clip = event->data[0], sample = event->data[1], last = event->data[2];
+  fighter_start_move(owner, S_KICK, &s_stage_event_clip);
+  owner->playback_move = *fighter_move(owner);
+  owner->playback_move.clip = clip;
+  owner->playback_move.first = 0;
+  owner->playback_move.last = last;
+  owner->playback_move.sequence = NULL;
+  owner->playback_move.flags = SF_LOCK;
+  owner->current_move = &owner->playback_move;
+  owner->sample_override = sample;
+  owner->action = 0x200d;
+  native_begin(owner, 1, last - sample + 2, kai_ready);
+  for (int frame = 1; frame <= last - sample + 2; ++frame) {
+    native_frame(owner, frame, mini(last, sample + frame), NULL);
   }
-
-  if (event->phase == KAI_STAGE_EVENT_PLAY_CLIP) {
-    if (fighter_move(owner)->clip != event->data[0] || owner->sample_override < 0) {
-      return false;
-    }
-    if (owner->sample_override < event->data[2]) {
-      owner->sample_override++;
-      return true;
-    }
-    event->phase = KAI_STAGE_EVENT_SETTLE;
-    return true;
-  }
-
-  kai_ready(owner);
+  native_play(owner, false);
   return false;
 }
 
@@ -438,7 +419,7 @@ static void kai_script_finish(Fighter *fighter) {
 }
 
 static void kai_script_roundhouse_start(Fighter *fighter) {
-  if (fighter->script_timer) {
+  if (fighter_fast_start(fighter)) {
     retail_script_004e6860(fighter);
   } else {
     retail_script_004e6878(fighter);

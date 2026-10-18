@@ -512,7 +512,7 @@ struct Fighter {
   FighterFn pending;   /* interrupt entry, started on the next tick */
   FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
-  int script_phase, script_timer;
+  int script_phase;
   FighterFn paired_release; /* native peer continuation selected by a paired move */
   q16 saved_motion[3];      /* native save/restore around blocking generated playback */
   const WeaponStrike *weapon_strike;

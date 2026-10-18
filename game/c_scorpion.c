@@ -173,10 +173,7 @@ static void special_ready(Fighter *fighter) {
 }
 
 static void spear_stun_script(Fighter *fighter) {
-  (void)fighter;
-  /* 487420: independent 0x40-tick follow-up opening, cancelled by a hit. */
-  fighter_wait_ticks(64);
-  fighter_fiber_finish(special_ready);
+  native_hold(fighter, 64, special_ready);
 }
 
 static bool spear_not_pulling(const Fighter *fighter) {
@@ -209,7 +206,7 @@ static void spear_cleanup(Fighter *fighter) {
 
 static void spear_projectile(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner], *victim = opponent(owner);
-  bool interrupted = fighter_move(owner)->clip != 14 || !fighter_fiber_active(owner) || owner->pending != NULL;
+  bool interrupted = fighter_move(owner)->clip != 14 || (!fighter_fiber_active(owner) && owner->current_mmove == NULL) || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && fighter_move(victim)->clip == 199) {
       special_ready(victim);
@@ -759,22 +756,28 @@ static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, 
 static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 static void thrown_end_script(Fighter *victim) {
-  fighter_fiber_play_to(victim, 130, 1);
-  fighter_wait_ticks(1);
+  native_play_to(victim, 130, 1);
+  native_delay(victim, 1);
   fighter_fiber_finish(victim->health > 0 ? scorpion_ready : NULL);
 }
 
-static void ground_thrown_script(Fighter *victim) {
-  Fighter *owner = opponent(victim);
-  for (;;) {
-    fighter_wait_ticks(1);
-    if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
-      victim->flags &= ~(unsigned)FF_PAIRED;
-      fighter_fiber_finish(victim->health > 0 ? scorpion_ready : NULL);
-    }
-    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-    victim->body.pos[AXIS_Y] = victim->body.ground;
+static void ground_thrown_frame(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    fighter_stop_mmove(victim);
+    return;
   }
+  memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+  victim->body.pos[AXIS_Y] = victim->body.ground;
+  victim->mmove_hold = true;
+}
+
+static void ground_thrown_script(Fighter *victim) {
+  native_begin(victim, 0, 0, NULL);
+  victim->native.frames[0].thinkfunc = ground_thrown_frame;
+  native_wait(victim);
+  fighter_fiber_finish(victim->health > 0 ? scorpion_ready : NULL);
 }
 
 static void script_lk_rebase(Fighter *fighter) {
@@ -888,9 +891,7 @@ static void finish_scene(Fighter *fighter) {
 }
 
 static void burn_start(Fighter *fighter) {
-  while (g_battle.phase_ticks < 8) {
-    fighter_wait_ticks(1);
-  }
+  native_delay(fighter, maxi(0, 8 - g_battle.phase_ticks));
   retail_script_004e0278(fighter);
 }
 
@@ -1130,7 +1131,7 @@ static void scorpion_pickup(Fighter *fighter) {
 const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump, NULL};
 
 static void script_crouch_lk_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -1143,12 +1144,12 @@ static void script_close_hp_tail(Fighter *fighter) {
 }
 
 static void script_combo_hp_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
 static void script_roundhouse_tail(Fighter *fighter) {
-  fighter_wait_ticks(1);
+  native_delay(fighter, 1);
   ground_native_tail(fighter);
 }
 
@@ -1181,10 +1182,7 @@ static void script_air_diagonal_tail(Fighter *fighter) {
 }
 
 static void script_sweep_tail(Fighter *fighter) {
-  for (int visit = 0; visit < 2; ++visit) {
-    fighter_wait_ticks(1);
-    scorpion_sweep_contact(fighter);
-  }
+  native_calls(fighter, 2, 0, scorpion_sweep_contact);
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(scorpion_ready);
 }
@@ -1215,9 +1213,7 @@ static void fan_start(Fighter *fighter) {
 }
 
 static void spike_start(Fighter *fighter) {
-  while (g_battle.phase_ticks < 30) {
-    fighter_wait_ticks(1);
-  }
+  native_delay(fighter, maxi(0, 30 - g_battle.phase_ticks));
   retail_script_004e6950(fighter);
 }
 
@@ -1227,12 +1223,8 @@ static void script_air_release(Fighter *fighter) {
 }
 
 static void script_kick_tail(Fighter *fighter) {
-  for (int i = 0; i < 3; ++i) {
-    scorpion_kick_contact(fighter);
-    if (i < 2) {
-      fighter_wait_ticks(1);
-    }
-  }
+  scorpion_kick_contact(fighter);
+  native_calls(fighter, 2, 0, scorpion_kick_contact);
   retail_script_004e5c70(fighter);
 }
 
@@ -1246,9 +1238,7 @@ static void script_draw_equip(Fighter *fighter) {
 }
 
 static void spear_wait_native(Fighter *fighter) {
-  while (!spear_not_pulling(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, spear_not_pulling);
   fighter_fiber_finish(special_ready);
 }
 
@@ -1272,9 +1262,9 @@ static void script_spawn_spear(Fighter *fighter, int type) {
 
 static void script_spear_pull(Fighter *fighter) {
   fighter->damage_scale = 0x9999;
-  for (;;) {
-    fighter_wait_ticks(1);
-  }
+  native_begin(fighter, 0, 0, NULL);
+  fighter->native.frames[0].thinkfunc = mk4_mmove_hold;
+  native_play(fighter, false);
 }
 
 static void script_reaction(Fighter *fighter, int reaction) {
@@ -1340,11 +1330,15 @@ static const SceneClip burn_victim_blend[] = {BLEND(206, 0)};
 #undef BLEND
 // clang-format on
 
+static void native_blend_frame(Fighter *fighter) {
+  fighter->mmove_hold = !scene_step(fighter);
+}
+
 static void native_blend(Fighter *fighter, const SceneClip *blend) {
   scene_begin(fighter, blend, 1, -1);
-  do {
-    fighter_wait_ticks(1);
-  } while (!scene_step(fighter));
+  native_begin(fighter, 0, 0, NULL);
+  fighter->native.frames[0].thinkfunc = native_blend_frame;
+  native_wait(fighter);
   fighter->scene.clips = NULL;
 }
 
@@ -1441,9 +1435,9 @@ static void script_beast_voice(Fighter *fighter) {
 
 static void script_beast_park(Fighter *fighter) {
   fighter->script_phase = 9;
-  for (;;) {
-    fighter_wait_ticks(60);
-  }
+  native_begin(fighter, 0, 0, NULL);
+  fighter->native.frames[0].thinkfunc = mk4_mmove_hold;
+  native_play(fighter, false);
 }
 
 static void beast_gore_object(Projectile *object) {
