@@ -1,0 +1,429 @@
+{
+  "character": "tanya",
+  "entry_adapters": {
+    "0x467cd0": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_fan_fatality",
+      "evidence": "Tanya finisher input target 467cd0 maps to the fan-fatality adapter and its reviewed 4e0118 root."
+    },
+    "0x467ce0": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_spike_fatality",
+      "evidence": "Tanya finisher input target 467ce0 maps to the spike-fatality adapter and its reviewed 4e6950 root."
+    },
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Tanya run input selects the shared sidestep helper; local callback is in mk4_common.c."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Tanya inventory resolves this input target to the shared pickup handler in weapons.c."
+    },
+    "0x46d1d0": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_high_kick",
+      "evidence": "Tanya input target 46d1d0 uses the portable kick callback in c_tanya.c."
+    },
+    "0x479520": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_low_kick",
+      "evidence": "Tanya CPU low-kick target 479520 uses the portable low-kick callback in c_tanya.c."
+    },
+    "0x47b9f0": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_sweep",
+      "evidence": "Tanya CPU selector target 47b9f0 maps through the low-kick selection to c_tanya.c."
+    },
+    "0x498b70": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_high_punch",
+      "evidence": "Tanya high-punch event target 498b70 maps to c_tanya.c."
+    },
+    "0x498e70": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_jab",
+      "evidence": "Tanya low-punch event target 498e70 maps to c_tanya.c."
+    }
+  },
+  "entry_contexts": {
+    "0x4de318": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
+      "sample": 18
+    },
+    "0x4de328": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
+      "sample": 42
+    },
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "return_to": "caller",
+      "sample": 69,
+      "export_frames": true
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 69
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 107
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 69
+    },
+    "0x4e5c70": {
+      "clip": 66,
+      "count": 18,
+      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
+      "sample": 17
+    },
+    "0x4e5e50": {
+      "clip": 82,
+      "count": 45,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 28
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 0
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 18
+    },
+    "0x4e6860": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 0
+    },
+    "0x4e6878": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 0
+    },
+    "0x4e9910": {
+      "clip": 202,
+      "count": 45,
+      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 28
+    }
+  },
+  "generated_scripts": [
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328",
+    "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e5d90",
+    "0x4e5e28",
+    "0x4e5e50",
+    "0x4e61f8",
+    "0x4e62a0",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6860",
+    "0x4e6878",
+    "0x4e6950",
+    "0x4e9910"
+  ],
+  "integration_source": "game/tanya/character.c",
+  "inventory_sha256": "10ff662b8911fe9263a9a3dc95f6c7da83f3c58f0e5ce39f7773eea28cef0fcc",
+  "moves": {
+    "high_punch": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_high_punch",
+      "evidence": "Tanya high_punch entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "lp_throw": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_lp_throw",
+      "evidence": "Tanya lp_throw entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "lk_throw": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_lk_throw",
+      "evidence": "Tanya lk_throw entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "jab": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_jab",
+      "evidence": "Tanya jab entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "uppercut": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_uppercut",
+      "evidence": "Tanya uppercut entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "sweep": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_sweep",
+      "evidence": "Tanya sweep entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "air_hp": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_air_hp",
+      "evidence": "Tanya air_hp entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "air_lp": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_air_lp",
+      "evidence": "Tanya air_lp entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "air_kick": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_air_kick",
+      "evidence": "Tanya air_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "air_diagonal_hk": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_air_diagonal_hk",
+      "evidence": "Tanya air_diagonal_hk entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "air_diagonal_lk": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_air_diagonal_lk",
+      "evidence": "Tanya air_diagonal_lk entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "air_throw": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_air_throw",
+      "evidence": "Tanya air_throw entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "fan_fatality": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_fan_fatality",
+      "evidence": "Tanya fan_fatality entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "spike_fatality": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_spike_fatality",
+      "evidence": "Tanya spike_fatality entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "high_kick": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_high_kick",
+      "evidence": "Tanya high_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "low_kick": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_low_kick",
+      "evidence": "Tanya low_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    },
+    "roundhouse": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_roundhouse",
+      "evidence": "Tanya roundhouse entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+    }
+  },
+  "output": "game/tanya/generated/scripts.inc",
+  "reactions": {
+    "1": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Tanya contact record selects reaction 1; reviewed against the portable shared reaction table."
+    },
+    "4": {
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Tanya contact record selects reaction 4; reviewed against the portable shared reaction table."
+    },
+    "5": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Tanya contact record selects reaction 5; reviewed against the portable shared reaction table."
+    },
+    "6": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Tanya contact record selects reaction 6; reviewed against the portable shared reaction table."
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Tanya contact record selects reaction 8; reviewed against the portable shared reaction table."
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 10; reviewed against the portable shared reaction table."
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Tanya contact record selects reaction 11; reviewed against the portable shared reaction table."
+    },
+    "13": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air",
+      "evidence": "Tanya contact record selects reaction 13; reviewed against the portable shared reaction table."
+    },
+    "15": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 15; reviewed against the portable shared reaction table."
+    },
+    "16": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit",
+      "evidence": "Tanya contact record selects reaction 16; reviewed against the portable shared reaction table."
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 17; reviewed against the portable shared reaction table."
+    },
+    "19": {
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record",
+      "evidence": "Tanya contact record selects reaction 19; reviewed against the portable shared reaction table."
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 21; reviewed against the portable shared reaction table."
+    },
+    "22": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 22; reviewed against the portable shared reaction table."
+    },
+    "23": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 23; reviewed against the portable shared reaction table."
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Tanya contact record selects reaction 34; reviewed against the portable shared reaction table."
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Tanya contact record selects reaction 37; reviewed against the portable shared reaction table."
+    },
+    "38": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 38; reviewed against the portable shared reaction table."
+    },
+    "39": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Tanya contact record selects reaction 39; reviewed against the portable shared reaction table."
+    },
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Tanya contact record selects reaction 143; reviewed against the portable shared reaction table."
+    },
+    "77": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_script_opponent_reaction",
+      "adaptation": "Paired Tanya LK throw release sets reaction 77 on the victim and retires the owner continuation.",
+      "evidence": "EXE opponent-context dispatch at 45b230; c_tanya.c releases the pair for reaction 77."
+    },
+    "104": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_script_current_reaction",
+      "adaptation": "Current-context reaction uses battle_react and the engine approximate entry when no shared table row exists.",
+      "evidence": "Tanya contact table reaction 104; current-context dispatch is 45b1f0."
+    },
+    "175": {
+      "source": "game/tanya/character.c",
+      "symbol": "tanya_script_opponent_reaction",
+      "adaptation": "Fatality arena continuation owns this terminal reaction and does not start ordinary victim recovery.",
+      "evidence": "Tanya finisher reaction 175 is handled by the paired scene continuation."
+    }
+  },
+  "return_to": "fighter_ready",
+  "schema": 1,
+  "stances": {
+    "air_followup": {
+      "source": "game/tanya/character.c",
+      "symbol": "jumping",
+      "evidence": "Tanya's normalized air followup buttons are the corresponding local stance table in tanya_controls."
+    },
+    "air_punch_followup": {
+      "source": "game/tanya/character.c",
+      "symbol": "jumping",
+      "evidence": "Tanya's normalized air punch followup buttons are the corresponding local stance table in tanya_controls."
+    },
+    "close_hk_followup": {
+      "source": "game/tanya/character.c",
+      "symbol": "standing",
+      "evidence": "Tanya's normalized close hk followup buttons are the corresponding local stance table in tanya_controls."
+    },
+    "close_hp_followup": {
+      "source": "game/tanya/character.c",
+      "symbol": "standing",
+      "evidence": "Tanya's normalized close hp followup buttons are the corresponding local stance table in tanya_controls."
+    },
+    "combo_hp_followup": {
+      "source": "game/tanya/character.c",
+      "symbol": "standing",
+      "evidence": "Tanya's normalized combo hp followup buttons are the corresponding local stance table in tanya_controls."
+    },
+    "crouching": {
+      "source": "game/tanya/character.c",
+      "symbol": "crouching",
+      "evidence": "Tanya's normalized crouching buttons are the corresponding local stance table in tanya_controls."
+    },
+    "diagonal_air": {
+      "source": "game/tanya/character.c",
+      "symbol": "jumping",
+      "evidence": "Tanya's normalized diagonal air buttons are the corresponding local stance table in tanya_controls."
+    },
+    "standing": {
+      "source": "game/tanya/character.c",
+      "symbol": "standing",
+      "evidence": "Tanya's normalized standing buttons are the corresponding local stance table in tanya_controls."
+    },
+    "straight_air": {
+      "source": "game/tanya/character.c",
+      "symbol": "jumping",
+      "evidence": "Tanya's normalized straight air buttons are the corresponding local stance table in tanya_controls."
+    }
+  },
+  "weapon": {
+    "source": "game/tanya/character.c",
+    "symbol": "tanya_weapon_descriptor",
+    "evidence": "Encoded Tanya descriptor words preserved from retail descriptor 0x4ecd98; no pointer values are interpreted as host addresses."
+  }
+}

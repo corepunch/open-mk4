@@ -40,35 +40,35 @@ SPECIFIC = {
         'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': 'sonya_sidestep',
         'air_throw': 'sonya_air_throw', 'victory': 'enter_victory', 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
     3: {
-        'jab': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e62f0'),
-        'high_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6c90'),
-        'low_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6d08'),
-        'uppercut': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e62a0'),
-        'sweep': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e67d8'),
-        'roundhouse': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6e90'),
-        'close_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e61e0'),
-        'combo_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e69b0'),
-        'close_hk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6190'),
-        'crouch_lk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6158'),
-        'crouch_hk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e60b8'),
-        'air_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6658'),
-        'air_lp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6710'),
-        'air_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6df0'),
-        'air_diagonal_hk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6500'),
-        'air_diagonal_lk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e63d8'),
-        'lp_throw': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004de798'),
-        'lk_throw': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004de3b0'),
-        'bicycle_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e8610'),
-        'flying_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e86a8'),
-        'high_fireball': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ed6c0'),
-        'low_fireball': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ed678'),
-        'air_fireball': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ed6f8'),
-        'sword_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ec680'),
-        'sword_back_lp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ec7f0'),
-        'draw_weapon': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e62c0'),
-        'fatality_2': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004dfff8'),
-        'fan_fatality': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e0118'),
-        'spike_fatality': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6950'),
+        'jab': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62f0'),
+        'high_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6c90'),
+        'low_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6d08'),
+        'uppercut': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62a0'),
+        'sweep': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e67d8'),
+        'roundhouse': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6e90'),
+        'close_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e61e0'),
+        'combo_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e69b0'),
+        'close_hk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6190'),
+        'crouch_lk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6158'),
+        'crouch_hk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e60b8'),
+        'air_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6658'),
+        'air_lp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6710'),
+        'air_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6df0'),
+        'air_diagonal_hk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6500'),
+        'air_diagonal_lk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e63d8'),
+        'lp_throw': ('game/liu_kang/generated/scripts.inc', 'retail_script_004de798'),
+        'lk_throw': ('game/liu_kang/generated/scripts.inc', 'retail_script_004de3b0'),
+        'bicycle_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e8610'),
+        'flying_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e86a8'),
+        'high_fireball': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ed6c0'),
+        'low_fireball': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ed678'),
+        'air_fireball': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ed6f8'),
+        'sword_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ec680'),
+        'sword_back_lp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ec7f0'),
+        'draw_weapon': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62c0'),
+        'fatality_2': ('game/liu_kang/generated/scripts.inc', 'retail_script_004dfff8'),
+        'fan_fatality': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e0118'),
+        'spike_fatality': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6950'),
         'fatality_1': 'liu_kang_first_fatality',
         'sidestep': 'liu_kang_sidestep',
         'sword_lp': 'sword_lp',
@@ -86,7 +86,7 @@ SPECIFIC = {
 for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub_zero')):
     for _name, _move in moves_for(_character).items():
         if _move['scripts'] and (_character not in (1, 2) or _name not in SPECIFIC[_character]):
-            SPECIFIC[_character][_name] = ('game/characters/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
+            SPECIFIC[_character][_name] = ('game/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
 
 
 PORT_NOTES = {
@@ -114,7 +114,7 @@ def port_entry(character, name):
     entry = SPECIFIC[character].get(name, ENTRIES.get(name))
     if isinstance(entry, tuple):
         return entry
-    return ('game/characters/%s/character.c' % c, entry.format(c=c)) if entry else None
+    return ('game/%s/character.c' % c, entry.format(c=c)) if entry else None
 
 
 def source_closure(port):

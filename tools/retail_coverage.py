@@ -31,7 +31,7 @@ CPU_TABLES = {'near': 0x4df8e8, 'medium': 0x4df928, 'far': 0x4df968, 'projectile
 
 
 def profile_for(character):
-    path = ROOT / 'game/characters' / CHARACTERS[character] / 'port.json'
+    path = ROOT / 'game' / CHARACTERS[character] / 'port.json'
     if not path.is_file():
         return None
     profile = json.loads(path.read_text())

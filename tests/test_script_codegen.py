@@ -299,14 +299,14 @@ L_00000004: {
     def test_contact_query_d_lowers_inline_selector_to_researched_record(self):
         bindings = bindings_for(10)
         for address in (0x47a6d0, 0x47b010):
-            bindings[address] = Binding('reptile_loop', 'game/characters/reptile/character.c', ('tail',), flow='terminal',
+            bindings[address] = Binding('reptile_loop', 'game/reptile/character.c', ('tail',), flow='terminal',
                                         evidence='synthetic native-loop boundary for the retail D-contact fixture')
         source = generate(self.image, [0x4e8178], 10, 'fighter_ready', bindings=bindings)
         self.assertIn('static const AttackRecord retail_contact_4ec080', source)
         self.assertIn('battle_contact(fighter, &retail_contact_4ec080)', source)
 
     def test_advance_twice_to_sample_uses_packed_low_byte_target(self):
-        binding = Binding('jarek_projectile', 'game/characters/jarek/character.c', ('spawn',), ('fighter', 'task_type'),
+        binding = Binding('jarek_projectile', 'game/jarek/character.c', ('spawn',), ('fighter', 'task_type'),
                           flow='independent', task_types=(78,), evidence='synthetic native task boundary')
         source = generate(self.image, [0x4ed7f0], 12, 'fighter_ready', bindings={0x497580: binding})
         self.assertIn('fighter_fiber_play_to(fighter, 17, 2);', source)

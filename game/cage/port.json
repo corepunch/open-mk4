@@ -1,0 +1,433 @@
+{
+  "schema": 1,
+  "character": "cage",
+  "return_to": "fighter_ready",
+  "output": "game/cage/generated/scripts.inc",
+  "integration_source": "game/cage/character.c",
+  "inventory_sha256": "31c8aaea50d89aff29d3c72a6822eeec01e17b06cd7f641edd902c72f9cd564d",
+  "generated_scripts": [
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328",
+    "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e12a0",
+    "0x4e12b0",
+    "0x4e5870",
+    "0x4e5ba8",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e5d90",
+    "0x4e5e28",
+    "0x4e5e50",
+    "0x4e61f8",
+    "0x4e62a0",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6860",
+    "0x4e6878",
+    "0x4e6950",
+    "0x4e80a8",
+    "0x4e80c8",
+    "0x4e80d0",
+    "0x4e80f4",
+    "0x4e9910"
+  ],
+  "entry_contexts": {
+    "0x4de318": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 18
+    },
+    "0x4de328": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 42
+    },
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "return_to": "caller",
+      "sample": 69,
+      "export_frames": true
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 69
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 107
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 69
+    },
+    "0x4e5c70": {
+      "clip": 66,
+      "count": 18,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 17
+    },
+    "0x4e5e50": {
+      "clip": 82,
+      "count": 45,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 28
+    },
+    "0x4e5ba8": {
+      "clip": 71,
+      "count": 28,
+      "evidence": "Cage shadow-kick entry selects clip 71; the root finishes that clip backwards from its final stored sample",
+      "sample": 27
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 0
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 18
+    },
+    "0x4e6860": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 0
+    },
+    "0x4e6878": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 0
+    },
+    "0x4e9910": {
+      "clip": 202,
+      "count": 45,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 28
+    },
+    "0x4e12a0": {
+      "clip": 443,
+      "count": 30,
+      "evidence": "Cage fatality signal begins from the selected scene actor's clip 443 pose context",
+      "sample": 0
+    }
+  },
+  "moves": {
+    "high_punch": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_high_punch",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "lp_throw": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_lp_throw",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "lk_throw": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_lk_throw",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "jab": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_jab",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "uppercut": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_uppercut",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "sweep": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_sweep",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "air_hp": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_hp",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "air_lp": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_lp",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "air_kick": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_kick",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "air_diagonal_hk": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_diagonal_hk",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "air_diagonal_lk": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_diagonal_lk",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "air_throw": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_throw",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "fan_fatality": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_fan_fatality",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "spike_fatality": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_spike_fatality",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "high_kick": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_high_kick",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "low_kick": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_low_kick",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "roundhouse": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_roundhouse",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "fatality_1": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_fatality_1",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "fatality_2": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_fatality_2",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "shadow_kick": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_shadow_kick",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "powered_punch": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_powered_punch",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "cpu_kick": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_cpu_kick",
+      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    }
+  },
+  "entry_adapters": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Cage input/CPU inventory selects this exact target at 0x469250."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Cage input/CPU inventory selects this exact target at 0x46a020."
+    },
+    "0x46d1d0": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_draw",
+      "evidence": "Cage input/CPU inventory selects this exact target at 0x46d1d0."
+    },
+    "0x497070": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_cpu_projectile",
+      "evidence": "Cage input/CPU inventory selects this exact target at 0x497070."
+    },
+    "0x497080": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_cpu_projectile",
+      "evidence": "Cage input/CPU inventory selects this exact target at 0x497080."
+    }
+  },
+  "stances": {
+    "standing": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_standing",
+      "evidence": "Retail Cage stance table 0x4e5058; C input selectors route the generated Cage move entries."
+    },
+    "crouching": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_crouching",
+      "evidence": "Retail Cage stance table 0x4e5070; C input selectors route the generated Cage move entries."
+    },
+    "straight_air": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_straight_air",
+      "evidence": "Retail Cage stance table 0x4e6ec8; C input selectors route the generated Cage move entries."
+    },
+    "air_punch_followup": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_punch_followup",
+      "evidence": "Retail Cage stance table 0x4e6ee0; C input selectors route the generated Cage move entries."
+    },
+    "diagonal_air": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_diagonal_air",
+      "evidence": "Retail Cage stance table 0x4e70d8; C input selectors route the generated Cage move entries."
+    },
+    "close_hp_followup": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_close_hp_followup",
+      "evidence": "Retail Cage stance table 0x4e7078; C input selectors route the generated Cage move entries."
+    },
+    "combo_hp_followup": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_combo_hp_followup",
+      "evidence": "Retail Cage stance table 0x4e7090; C input selectors route the generated Cage move entries."
+    },
+    "close_hk_followup": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_close_hk_followup",
+      "evidence": "Retail Cage stance table 0x4e70a8; C input selectors route the generated Cage move entries."
+    },
+    "air_followup": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_air_followup",
+      "evidence": "Retail Cage stance table 0x4e70c0; C input selectors route the generated Cage move entries."
+    }
+  },
+  "weapon": {
+    "source": "game/cage/character.c",
+    "symbol": "cage_weapon_descriptor",
+    "evidence": "Retail Cage weapon descriptor 0x4ecf58; all eight words are retained from the inventory."
+  },
+  "reactions": {
+    "1": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Cage contact reaches shared reaction 1 through retail dispatcher 0x486c40."
+    },
+    "4": {
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Cage contact reaches shared reaction 4 through retail dispatcher 0x486bb0."
+    },
+    "6": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Cage contact reaches shared reaction 6 through retail dispatcher 0x486af0."
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Cage contact reaches shared reaction 8 through retail dispatcher 0x486c70."
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 10 through retail dispatcher 0x481320."
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Cage contact reaches shared reaction 11 through retail dispatcher 0x482070."
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 17 through retail dispatcher 0x482e00."
+    },
+    "18": {
+      "source": "game/reactions.c",
+      "symbol": "react_sweep",
+      "evidence": "Cage contact reaches shared reaction 18 through retail dispatcher 0x483050."
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 21 through retail dispatcher 0x482e80."
+    },
+    "22": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 22 through retail dispatcher 0x482f00."
+    },
+    "23": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 23 through retail dispatcher 0x481fc0."
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Cage contact reaches shared reaction 34 through retail dispatcher 0x4838e0."
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Cage contact reaches shared reaction 37 through retail dispatcher 0x483b40."
+    },
+    "38": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 38 through retail dispatcher 0x482e90."
+    },
+    "39": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 39 through retail dispatcher 0x482ef0."
+    },
+    "77": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_script_opponent_reaction",
+      "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
+      "evidence": "Cage generated throw/fatality streams dispatch reaction 77 through native handler 0x45b230."
+    },
+    "100": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Cage contact reaches shared reaction 100 through retail dispatcher 0x485bf0."
+    },
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Cage contact reaches shared reaction 143 through retail dispatcher 0x486970."
+    },
+    "175": {
+      "source": "game/cage/character.c",
+      "symbol": "cage_script_opponent_reaction",
+      "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
+      "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."
+    }
+  }
+}

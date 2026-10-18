@@ -35,7 +35,7 @@ Every profile must satisfy `--require-generated`; Make has no migration bypass.
 ### 1. Inventory the fighter and choose a move
 
 Read [ARCHITECTURE.md](../ARCHITECTURE.md), then inspect the existing
-`game/characters/<character>/character.c`, its `CharacterDef`, and `game/roster.c`. Separate shared
+`game/<character>/character.c`, its `CharacterDef`, and `game/roster.c`. Separate shared
 locomotion/reactions from character decisions. Inventory standing and crouching
 attacks, close attacks/combos, air attacks, both throws, specials, weapons,
 finishers and CPU entries. Mark each as researched, implemented, tested or
@@ -53,7 +53,7 @@ choice rows, stance/follow-up tables, the default weapon descriptor and buttons,
 contact reactions and the selected catalog's decoded script/native frontiers.
 Do not infer completeness from `--list-moves`: it is a curated navigation index.
 Add missing research roots to `tools/character_catalog.py` and implementation
-references to a reviewed `game/characters/<character>/port.json` profile. Review every
+references to a reviewed `game/<character>/port.json` profile. Review every
 new input/CPU target, reaction, and inventory fingerprint change. The audit
 rejects dropped release tables, missing definitions, unreviewed VM roots,
 changed reaction dispatch and stale generated output.
@@ -136,7 +136,7 @@ alongside the implementation:
 | Researched move entries and script roots | `tools/character_catalog.py` |
 | Local helper contracts and engine equivalents | `tools/retail_helpers.py` |
 | Typed compiler bindings, actor arguments, roles and native flow | `tools/retail_bindings.py` |
-| Generated roots, integration and reviewed coverage boundaries | `game/characters/<character>/port.json` |
+| Generated roots, integration and reviewed coverage boundaries | `game/<character>/port.json` |
 | Typed executable data views | `tools/retail_helper_view.py` |
 | Local aliases and checked reference correspondences | `tools/retail_symbols.py`, `tools/retail_symbol_map.json` |
 | Action names/confidence and checked native evidence | `game/retail_actions.inc`, `tools/retail_action_evidence.json` |
@@ -248,7 +248,7 @@ Use engine state and predicates for landing/contact waits, rather than sleeping
 or waiting for the drawing loop.
 
 Scorpion's current spear body illustrates the pattern (helpers and entry setup
-are in [c_scorpion.c](../game/characters/scorpion/character.c)):
+are in [c_scorpion.c](../game/scorpion/character.c)):
 
 ```c
 static void spear_script(Fighter *fighter) {
@@ -276,7 +276,7 @@ Define which actor owns each phase and when the victim becomes independent.
 Peer fiber starts are deferred to the host scheduler; a peer may still receive
 its regular pump that battle tick. Do not infer a full displayed tick from
 startup order. Check both P1 and P2 ownership. Paired pose submission and
-released recovery helpers in `game/characters/sub_zero/character.c` are examples, including the
+released recovery helpers in `game/sub_zero/character.c` are examples, including the
 victim's committed five-sample LK tail after damage.
 
 Release a victim through its own roster's recovery controller. Preserve its
@@ -302,7 +302,7 @@ stance controls and optional `CpuMoves` as required. Preserve command priority,
 button masks, inclusive windows, ground/range/cooldown gates and follow-up
 branches. For a newly added roster definition, wire `game/mk4_characters.h` and
 `game/roster.c`; asset identity and retail script-selector identity are distinct.
-Character C files are already included by the Makefile's `game/characters/*/character.c` wildcard.
+Character C files are already included by the Makefile's `game/*/character.c` wildcard.
 
 Test through the real command or move entry, not only a directly invoked helper.
 Keep the set small and choose assertions for plausible failures: a changed
@@ -498,7 +498,7 @@ the fiber. Existing original kick and 27 Scorpion branch fixtures still apply.
 
 ## Sub-Zero source-to-code ledger
 
-Implementation: [game/characters/sub_zero/character.c](../game/characters/sub_zero/character.c). Retail, roster and
+Implementation: [game/sub_zero/character.c](../game/sub_zero/character.c). Retail, roster and
 asset IDs happen to be 4 here; other characters need not share those indices.
 The catalog links these sources directly through `--character sub_zero --move`.
 
@@ -760,7 +760,7 @@ branches, and runs as part of `make check`.
 
 ## Character folders
 
-See [the source layout](../game/characters/README.md). Each character owns its
+See [the source layout](../game/README.md). Each character owns its
 `character.c`, private header, move fragments, generated scripts/frame maps and
 reviewed `port.json`. Move helpers remain private to one C11 translation unit.
 The source query and coverage tools follow native fragments while preserving

@@ -126,7 +126,7 @@ def main(argv=None):
     parser.add_argument('paths', nargs='*', type=Path,
                         help='generated .inc files or directories; defaults to each character generated directory')
     args = parser.parse_args(argv)
-    paths = args.paths or sorted((ROOT / 'game/characters').glob('*/generated'))
+    paths = args.paths or sorted((ROOT / 'game').glob('*/generated'))
     files = set()
     for path in paths:
         if path.is_dir():

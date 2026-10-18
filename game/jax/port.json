@@ -1,0 +1,530 @@
+{
+  "character": "jax",
+  "entry_adapters": {
+    "0x469250": {
+      "evidence": "Retail target 469250 delegates to shared sidestep helper 4692e0; exact portable equivalent is mk4_sidestep.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_command_sidestep"
+    },
+    "0x46a020": {
+      "evidence": "Retail target 46a020 is the roster walk/run controller; exact portable equivalent is mk4_walk.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_command_run"
+    },
+    "0x46f390": {
+      "evidence": "Retail roundhouse selector reads actor flag 0x200 and enters 4e6890 when set or 4e68a8 otherwise; fighter_fast_start selects the corresponding generated Jax branch.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_roundhouse_start"
+    },
+    "0x46f3e0": {
+      "evidence": "Retail callback advances Jax roundhouse clip and queries attack table B selector 34; port uses the established clip-64 phase with the exact Jax B[34] contact record.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_roundhouse_tail"
+    },
+    "0x46aae0": {
+      "evidence": "Retail releases victim with reaction 89, applies 0x2147 damage, then enters the generated owner air-throw recovery root 4e5e50.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_air_throw_release"
+    }
+  },
+  "entry_contexts": {
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native fan cycle preserves clip 415 at sample 69; Jax fan-fatality continuation",
+      "sample": 69,
+      "export_frames": true
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native fan release preserves clip 415 at sample 69; Jax fan-fatality continuation",
+      "sample": 69
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Native victory continuation enters clip 415 at sample 107; Jax fan-fatality",
+      "sample": 107
+    },
+    "0x4e0188": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Jax fan victim callback preserves clip 416 at sample 69",
+      "sample": 69
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Jax fan victim release preserves clip 416 at sample 69",
+      "sample": 69
+    },
+    "0x4e1390": {
+      "evidence": "F1 selector 4e0498[13] -> 4494c0; Jax performer opening clip384"
+    },
+    "0x4e13a0": {
+      "evidence": "F1 continuation 449620 switches performer to looping clip443"
+    },
+    "0x4e13b0": {
+      "evidence": "Native callback 4496d0 chooses animation descriptor 204, advances to sample49, then tail 449890; independent F1 scene actor context."
+    },
+    "0x4e13c0": {
+      "evidence": "Native callback 4496d0 chooses alternate animation descriptor 400, advances to sample49, then tail 449890; independent F1 scene actor context."
+    },
+    "0x4e13d0": {
+      "clip": "current",
+      "count": 386,
+      "evidence": "Native 449890 enters this continuation from either 4e13b0 (clip 204) or 4e13c0 (clip 400), both at sample 49; preserve the live descriptor.",
+      "sample": 49
+    },
+    "0x4e13e0": {
+      "clip": "current",
+      "count": 386,
+      "evidence": "Native 4498d0 enters from 4e13d0 after it advances the same live clip (204 or 400, count 386) to sample 78.",
+      "sample": 78
+    },
+    "0x4e18f0": {
+      "evidence": "Native callback 44a9f0 enters the independent F1 scene-task context with descriptor 4e18f0; VM ends at unresearched opcode 0xfffd3334."
+    },
+    "0x4e1958": {
+      "evidence": "Native callback 44a9f0 enters the alternate independent F1 scene-task context with descriptor 4e1958; VM ends at unresearched opcode 0xfff00000."
+    },
+    "0x4e5a80": {
+      "evidence": "F2 selector 4dfe90[13] -> 4669c0; Jax performer clip284 opening"
+    },
+    "0x4e5a98": {
+      "evidence": "F2 owner continuation 466a90; Jax scene clip555/556/114 phases"
+    },
+    "0x4e5b38": {
+      "clip": 556,
+      "count": 34,
+      "sample": 0,
+      "evidence": "The native F2 victim callback starts this continuation on clip 556/34 at sample 0 before task cleanup at 466df0."
+    },
+    "0x4e5b10": {
+      "evidence": "Native reaction callback 466b40 allocates task type 0x26b for the current scene actor, enters 4e5b10, and continues at 466bb0; scene-task context, not the victim fighter fiber."
+    },
+    "0x4e5c70": {
+      "clip": 66,
+      "count": 12,
+      "evidence": "Jax high-kick recovery inherits clip 66 at sample 10; selector path 46a680",
+      "sample": 10
+    },
+    "0x4e5e50": {
+      "clip": 82,
+      "count": 45,
+      "evidence": "Jax air-throw release owner path enters 4e5e50 after advancing paired clip 82 to sample 28",
+      "sample": 28
+    },
+    "0x4e5df8": {
+      "clip": 84,
+      "count": 72,
+      "evidence": "Jax paired throw exit 46a9f0 enters continuation after clip84 sample20",
+      "sample": 20
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "evidence": "Jax weapon follow-up 46d260 enters after clip244 sample22",
+      "sample": 22
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Jax jab continuation enters clip295 at sample zero",
+      "sample": 0
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Jax jab repeat continuation inherits clip295 at sample18",
+      "sample": 18
+    },
+    "0x4e63b0": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Jax jab recovery inherits clip295 at sample18",
+      "sample": 18
+    },
+    "0x4e8174": {
+      "clip": 106,
+      "count": 22,
+      "evidence": "The generated jab follow-up starts clip 106/22 at sample 0; its native tail dispatches selector 21 and drives contact/recovery through a BattleEvent.",
+      "sample": 0
+    },
+    "0x4e9910": {
+      "clip": 202,
+      "count": 45,
+      "evidence": "Jax air-throw victim release inherits clip202 at sample28",
+      "sample": 28
+    },
+    "0x4e6890": {
+      "clip": 64,
+      "count": 45,
+      "evidence": "Jax selector path 4e6800 -> 4e6e90 opens clip 64 at sample 0/count 45; native callback 46f390 enters 4e6890 when actor flag 0x200 is set.",
+      "sample": 0
+    },
+    "0x4e68a8": {
+      "clip": 64,
+      "count": 45,
+      "evidence": "Jax selector path 4e6800 -> 4e6e90 opens clip 64 at sample 0/count 45; native callback 46f390 enters 4e68a8 when actor flag 0x200 is clear.",
+      "sample": 0
+    },
+    "0x4e8150": {
+      "clip": 299,
+      "count": 35,
+      "sample": 0,
+      "evidence": "F2? Jax jab callback enters clip 299/35 at its start; native continuation advances to sample 18 before selector 21 contact."
+    }
+  },
+  "generated_scripts": [
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328",
+    "0x4de358",
+    "0x4de4f0",
+    "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e1390",
+    "0x4e13a0",
+    "0x4e13b0",
+    "0x4e13c0",
+    "0x4e13d0",
+    "0x4e13e0",
+    "0x4e18f0",
+    "0x4e1958",
+    "0x4e5a80",
+    "0x4e5a98",
+    "0x4e5b10",
+    "0x4e5b38",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e5d90",
+    "0x4e5dd8",
+    "0x4e5df8",
+    "0x4e5e28",
+    "0x4e5e50",
+    "0x4e61f8",
+    "0x4e62a0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6890",
+    "0x4e68a8",
+    "0x4e6950",
+    "0x4e8150",
+    "0x4e8174",
+    "0x4e9910",
+    "0x4ed090"
+  ],
+  "integration_source": "game/jax/character.c",
+  "inventory_sha256": "020a84dd42440b8967ebf017ac138b8adf4f78859195884788db564d3bd11cdf",
+  "moves": {
+    "air_diagonal_hk": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
+      "source": "game/jax/character.c",
+      "symbol": "jax_air_diagonal_hk"
+    },
+    "air_diagonal_lk": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_lk",
+      "source": "game/jax/character.c",
+      "symbol": "jax_air_diagonal_lk"
+    },
+    "air_hp": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_hp",
+      "source": "game/jax/character.c",
+      "symbol": "jax_air_hp"
+    },
+    "air_kick": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_kick",
+      "source": "game/jax/character.c",
+      "symbol": "jax_air_kick"
+    },
+    "air_lp": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_lp",
+      "source": "game/jax/character.c",
+      "symbol": "jax_air_lp"
+    },
+    "air_throw": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_throw",
+      "source": "game/jax/character.c",
+      "symbol": "jax_air_throw"
+    },
+    "cpu_496f80": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for cpu_496f80",
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_cpu_496f80"
+    },
+    "draw_weapon": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for draw_weapon",
+      "source": "game/jax/character.c",
+      "symbol": "jax_weapon_action"
+    },
+    "fan_fatality": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for fan_fatality",
+      "source": "game/jax/character.c",
+      "symbol": "jax_fan_fatality"
+    },
+    "fatality_1": {
+      "evidence": "Roster slot 13 selects native F1 entry 4494c0; generated performer roots 4e1390/13a0 and selected actor continuations are integrated in this adapter. F1 task signal and finish callbacks use stateful BattleEvents at the observed clip boundaries.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_fatality_1"
+    },
+    "fatality_2": {
+      "evidence": "Roster slot 13 selects native F2 entry 4669c0; generated owner and victim roots 4e5a80/5a98/5b38 are integrated in this adapter. F2 task spawns and victim callbacks use stateful BattleEvents tied to the known clip phases.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_fatality_2"
+    },
+    "high_kick": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for high_kick",
+      "source": "game/jax/character.c",
+      "symbol": "jax_high_kick"
+    },
+    "high_punch": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for high_punch",
+      "source": "game/jax/character.c",
+      "symbol": "jax_high_punch"
+    },
+    "input_468f00": {
+      "evidence": "Retail low-kick action44 and CPU medium row both select native phase machine 468f00; its full portable mapping remains pending because scene-global flags and controller context are not exposed.",
+      "source": "game/jax/character.c",
+      "symbol": "jax_cpu_medium"
+    },
+    "input_46a990": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for input_46a990",
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_input_46a990"
+    },
+    "input_47ab10": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for input_47ab10",
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_input_47ab10"
+    },
+    "jab": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for jab",
+      "source": "game/jax/character.c",
+      "symbol": "jax_jab"
+    },
+    "lk_throw": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for lk_throw",
+      "source": "game/jax/character.c",
+      "symbol": "jax_lk_throw"
+    },
+    "low_kick": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for low_kick",
+      "source": "game/jax/character.c",
+      "symbol": "jax_low_kick"
+    },
+    "lp_throw": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for lp_throw",
+      "source": "game/jax/character.c",
+      "symbol": "jax_lp_throw"
+    },
+    "roundhouse": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for roundhouse",
+      "source": "game/jax/character.c",
+      "symbol": "jax_roundhouse"
+    },
+    "spike_fatality": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for spike_fatality",
+      "source": "game/jax/character.c",
+      "symbol": "jax_spike_fatality"
+    },
+    "sweep": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for sweep",
+      "source": "game/jax/character.c",
+      "symbol": "jax_sweep"
+    },
+    "uppercut": {
+      "evidence": "Jax roster slot 13 native selection and generated retail script roots for uppercut",
+      "source": "game/jax/character.c",
+      "symbol": "jax_uppercut"
+    }
+  },
+  "output": "game/jax/generated/scripts.inc",
+  "reactions": {
+    "1": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Jax script reaction selector 1 follows the shared reaction table entry."
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 10 follows the shared reaction table entry."
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Jax script reaction selector 11 follows the shared reaction table entry."
+    },
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Jax script reaction selector 143 follows the shared reaction table entry."
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 17 follows the shared reaction table entry."
+    },
+    "18": {
+      "source": "game/reactions.c",
+      "symbol": "react_sweep",
+      "evidence": "Jax script reaction selector 18 follows the shared reaction table entry."
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 21 follows the shared reaction table entry."
+    },
+    "22": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 22 follows the shared reaction table entry."
+    },
+    "23": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 23 follows the shared reaction table entry."
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Jax script reaction selector 34 follows the shared reaction table entry."
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Jax script reaction selector 37 follows the shared reaction table entry."
+    },
+    "38": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 38 follows the shared reaction table entry."
+    },
+    "39": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Jax script reaction selector 39 follows the shared reaction table entry."
+    },
+    "4": {
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Jax script reaction selector 4 follows the shared reaction table entry."
+    },
+    "6": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Jax script reaction selector 6 follows the shared reaction table entry."
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Jax script reaction selector 8 follows the shared reaction table entry."
+    },
+    "9": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Jax script reaction selector 9 follows the shared reaction table entry."
+    },
+    "40": {
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_current_reaction",
+      "evidence": "Jax fatality scene contact callback at native entry 0x483550 is handled through the Jax reaction adapter.",
+      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
+    },
+    "78": {
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_current_reaction",
+      "evidence": "Jax paired throw release callback at native entry 0x484d50 is handled through the Jax reaction adapter.",
+      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
+    },
+    "77": {
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_current_reaction",
+      "evidence": "Jax throw victim recovery callback at native entry 0x484f10 is handled through the Jax reaction adapter.",
+      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
+    },
+    "175": {
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_current_reaction",
+      "evidence": "Jax scene contact hold callback at native entry 0x4836e0 is handled through the Jax reaction adapter.",
+      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
+    },
+    "183": {
+      "source": "game/jax/character.c",
+      "symbol": "jax_script_current_reaction",
+      "evidence": "Jax F2 selector 183 starts its scene callback task through the portable BattleEvent adapter at native entry 0x466b40.",
+      "adaptation": "The task callback uses explicit scene phases and completion boundaries from clips 557, 206 and 556."
+    }
+  },
+  "return_to": "fighter_ready",
+  "schema": 1,
+  "stances": {
+    "air_followup": {
+      "evidence": "Jax slot 13 uses shared portable air_followup stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "air_punch_followup": {
+      "evidence": "Jax slot 13 uses shared portable air_punch_followup stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "close_hk_followup": {
+      "evidence": "Jax slot 13 uses shared portable close_hk_followup stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "close_hp_followup": {
+      "evidence": "Jax slot 13 uses shared portable close_hp_followup stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "combo_hp_followup": {
+      "evidence": "Jax slot 13 uses shared portable combo_hp_followup stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "crouching": {
+      "evidence": "Jax slot 13 uses shared portable crouching stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "diagonal_air": {
+      "evidence": "Jax slot 13 uses shared portable diagonal_air stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "standing": {
+      "evidence": "Jax slot 13 uses shared portable standing stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    },
+    "straight_air": {
+      "evidence": "Jax slot 13 uses shared portable straight_air stance; typed inventory table recorded",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_controls"
+    }
+  },
+  "weapon": {
+    "evidence": "Jax slot-13 weapon descriptor 0x4eced8, type 0x69, from typed inventory",
+    "source": "game/jax/character.c",
+    "symbol": "s_jax_weapon"
+  }
+}

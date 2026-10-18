@@ -1,0 +1,434 @@
+{
+  "schema": 1,
+  "character": "quan_chi",
+  "return_to": "fighter_ready",
+  "output": "game/quan_chi/generated/scripts.inc",
+  "integration_source": "game/quan_chi/character.c",
+  "generated_scripts": [
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328",
+    "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e5d90",
+    "0x4e5e28",
+    "0x4e5e50",
+    "0x4e61f8",
+    "0x4e62a0",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6860",
+    "0x4e6878",
+    "0x4e6950",
+    "0x4e9910"
+  ],
+  "entry_contexts": {
+    "0x4de318": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 18
+    },
+    "0x4de328": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 42
+    },
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "return_to": "caller",
+      "sample": 69,
+      "export_frames": true
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 69
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 107
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 69
+    },
+    "0x4e5c70": {
+      "clip": 66,
+      "count": 18,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 17
+    },
+    "0x4e5e50": {
+      "clip": 82,
+      "count": 45,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 28
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 0
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 18
+    },
+    "0x4e6860": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 0
+    },
+    "0x4e6878": {
+      "clip": 313,
+      "count": 39,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 0
+    },
+    "0x4e9910": {
+      "clip": 202,
+      "count": 45,
+      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
+      "sample": 28
+    }
+  },
+  "entry_adapters": {
+    "0x467cd0": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_fan_fatality",
+      "evidence": "Quan Chi fatality command target 0x467cd0 uses the fan-fatality owner root."
+    },
+    "0x467ce0": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_spike_fatality",
+      "evidence": "Quan Chi fatality command target 0x467ce0 uses the stage-fatality entry."
+    },
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Shared direction and playback sidestep routine 0x469250."
+    },
+    "0x469c80": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_entry_469c80",
+      "evidence": "Quan Chi input target 0x469c80; bounded command-entry boundary."
+    },
+    "0x46a020": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_entry_46a020",
+      "evidence": "Quan Chi input target 0x46a020; bounded command-entry boundary."
+    },
+    "0x46aba0": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_throw",
+      "evidence": "Quan Chi action 0x502 air-throw gate, input target 0x46aba0."
+    },
+    "0x46d1d0": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_weapon_draw",
+      "evidence": "Quan Chi descriptor-backed weapon-draw command target 0x46d1d0."
+    },
+    "0x47a370": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_entry_47a370",
+      "evidence": "Quan Chi CPU move target 0x47a370; bounded native entry boundary."
+    },
+    "0x47cf30": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_entry_47cf30",
+      "evidence": "Quan Chi CPU move target 0x47cf30; bounded native entry boundary."
+    },
+    "0x499740": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_entry_499740",
+      "evidence": "Quan Chi projectile CPU target 0x499740; bounded native entry boundary."
+    }
+  },
+  "moves": {
+    "air_diagonal_hk": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_diagonal_hk",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "air_diagonal_lk": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_diagonal_lk",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "air_hp": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_hp",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "air_kick": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_kick",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "air_lp": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_lp",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "air_throw": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_air_throw",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "fan_fatality": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_fan_fatality",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "high_kick": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_high_kick",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "high_punch": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_high_punch",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "jab": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_jab",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "lk_throw": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_lk_throw",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "low_kick": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_low_kick",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "lp_throw": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_lp_throw",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "roundhouse": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_roundhouse",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "spike_fatality": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_spike_fatality",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "sweep": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_sweep",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    },
+    "uppercut": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_uppercut",
+      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+    }
+  },
+  "reactions": {
+    "1": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Quan Chi slot 8 dispatches reaction 1 through the shared C reaction table (0x486c40)"
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 10 through the shared C reaction table (0x481320)"
+    },
+    "103": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_script_current_reaction",
+      "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
+      "evidence": "Quan Chi LP throw emits reaction 103 through VM handler 45b1f0 (0x485b30)"
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Quan Chi slot 8 dispatches reaction 11 through the shared C reaction table (0x482070)"
+    },
+    "13": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air",
+      "evidence": "Quan Chi slot 8 dispatches reaction 13 through the shared C reaction table (0x481d30)"
+    },
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Quan Chi slot 8 dispatches reaction 143 through the shared C reaction table (0x486970)"
+    },
+    "15": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 15 through the shared C reaction table (0x483450)"
+    },
+    "16": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit",
+      "evidence": "Quan Chi slot 8 dispatches reaction 16 through the shared C reaction table (0x482a10)"
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 17 through the shared C reaction table (0x482e00)"
+    },
+    "175": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_script_current_reaction",
+      "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
+      "evidence": "Quan Chi LP throw emits reaction 175 through VM handler 45b1f0 (0x4836e0)"
+    },
+    "18": {
+      "source": "game/reactions.c",
+      "symbol": "react_sweep",
+      "evidence": "Quan Chi slot 8 dispatches reaction 18 through the shared C reaction table (0x483050)"
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 21 through the shared C reaction table (0x482e80)"
+    },
+    "22": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 22 through the shared C reaction table (0x482f00)"
+    },
+    "23": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 23 through the shared C reaction table (0x481fc0)"
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Quan Chi slot 8 dispatches reaction 34 through the shared C reaction table (0x4838e0)"
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Quan Chi slot 8 dispatches reaction 37 through the shared C reaction table (0x483b40)"
+    },
+    "38": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 38 through the shared C reaction table (0x482e90)"
+    },
+    "39": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Quan Chi slot 8 dispatches reaction 39 through the shared C reaction table (0x482ef0)"
+    },
+    "4": {
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Quan Chi slot 8 dispatches reaction 4 through the shared C reaction table (0x486bb0)"
+    },
+    "5": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Quan Chi slot 8 dispatches reaction 5 through the shared C reaction table (0x486b70)"
+    },
+    "6": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Quan Chi slot 8 dispatches reaction 6 through the shared C reaction table (0x486af0)"
+    },
+    "77": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "quan_chi_script_current_reaction",
+      "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
+      "evidence": "Quan Chi LP throw emits reaction 77 through VM handler 45b1f0 (0x484f10)"
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Quan Chi slot 8 dispatches reaction 8 through the shared C reaction table (0x486c70)"
+    }
+  },
+  "stances": {
+    "air_followup": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "air_followup",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "air_punch_followup": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "air_punch_followup",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "close_hk_followup": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "close_hk_followup",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "close_hp_followup": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "close_hp_followup",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "combo_hp_followup": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "combo_hp_followup",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "crouching": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "crouching",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "diagonal_air": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "diagonal_air",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "standing": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "standing",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    },
+    "straight_air": {
+      "source": "game/quan_chi/character.c",
+      "symbol": "straight_air",
+      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+    }
+  },
+  "weapon": {
+    "source": "game/quan_chi/character.c",
+    "symbol": "quan_chi_weapon_descriptor",
+    "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
+  },
+  "inventory_sha256": "a48a2c8e7d1e8546d55d5557fe75895f10eb4ababc77e5e934f6b0794632c7ec"
+}

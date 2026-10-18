@@ -92,7 +92,7 @@ def portable_references(value, entries):
     pattern = re.compile(r'(?:\b\w+->action|\.action|\bvictim_action\([^;\n]*?\))\s*(==|!=|=|<=|>=|<|>)\s*'
                          r'(0x[0-9a-fA-F]+|\d+|ACTION_RETAIL_[0-9A-F]+)\b')
     rows = []
-    for path in sorted([*(ROOT / 'game').glob('*.c'), *(ROOT / 'game/characters').rglob('*.c'), *(ROOT / 'game/characters').rglob('*.inc')]):
+    for path in sorted([*(ROOT / 'game').rglob('*.c'), *(ROOT / 'game').rglob('*.inc')]):
         text = path.read_text()
         # Keep line numbers while excluding comments and strings.
         masked = re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"',

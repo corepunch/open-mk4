@@ -17,7 +17,7 @@ SCRIPT_CLIP = re.compile(r"mk4_(?:script|mmove)_(?:bind|bind_victim|inherit|scen
 
 
 def clip_names(character):
-    source = read_source(ROOT / "game/characters" / character / "character.c")
+    source = read_source(ROOT / "game" / character / "character.c")
     names = {}
     for match in CHARACTER.finditer(source):
         symbol, body = match.groups()
@@ -26,7 +26,7 @@ def clip_names(character):
             clip = POSITIONAL_CLIP.search(body)
         if clip is not None:
             names.setdefault(int(clip.group(1)), []).append(symbol)
-    generated = ROOT / "game/characters" / character / "generated/scripts.inc"
+    generated = ROOT / "game" / character / "generated/scripts.inc"
     if generated.exists():
         for match in SCRIPT_CLIP.finditer(generated.read_text()):
             names.setdefault(int(match.group(1)), [])
@@ -70,14 +70,14 @@ def main():
 
     image = RetailImage(args.exe)
     clips = {row["id"]: row for row in clip_inventory(image, args.archive)}
-    characters = [args.character] if args.character else sorted(path.parent.name for path in (ROOT / "game/characters").glob("*/character.c"))
+    characters = [args.character] if args.character else sorted(path.parent.name for path in (ROOT / "game").glob("*/character.c"))
     errors = []
     for character in characters:
-        source = ROOT / "game/characters" / character / "character.c"
+        source = ROOT / "game" / character / "character.c"
         if not source.is_file():
             errors.append("unknown character: " + character)
             continue
-        target = ROOT / "game/characters" / character / "generated/frames.inc"
+        target = ROOT / "game" / character / "generated/frames.inc"
         output = format_c(output_for(character, clips))
         if args.check:
             if not target.is_file() or target.read_text() != output:

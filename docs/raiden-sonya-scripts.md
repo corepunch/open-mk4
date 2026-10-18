@@ -6,7 +6,7 @@ with **zero legacy roots and zero coverage errors**. Each audit covers eight
 input event tables, four CPU rows and nine stance tables, plus the default
 weapon and reached contacts/reactions (36 Raiden, 40 Sonya).
 
-`game/characters/raiden/port.json` and `sonya.json` contain the reviewed inventory
+`game/raiden/port.json` and `sonya.json` contain the reviewed inventory
 fingerprints, native entry clip/cursor contracts, engine continuations and C
 integration references. `make scripts` regenerates the two includes in
 each character’s `generated/` folder; `make scripts-check` requires canonical generation and
@@ -14,7 +14,7 @@ strict generated-only coverage for every profile. These checks establish
 catalogued VM coverage, not exhaustive native reachability or x86 equivalence.
 
 Native-only routines and native parts of mixed routines remain in
-`game/characters/raiden/character.c` and `game/characters/sonya/character.c`. VM bodies, including scripts entered by
+`game/raiden/character.c` and `game/sonya/character.c`. VM bodies, including scripts entered by
 native tails and independent victims, come from the compiler. No runtime
 bytecode interpreter or native-address dispatcher is added.
 

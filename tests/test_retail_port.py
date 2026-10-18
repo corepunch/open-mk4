@@ -39,11 +39,11 @@ class PortTests(unittest.TestCase):
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
         self.assertIn('retail_script_004ed588', ice)
-        self.assertIn('ice_projectile', source_closure(('game/characters/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
+        self.assertIn('ice_projectile', source_closure(('game/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
-            port_source(('game/characters/sub_zero/character.c', 'if'))
+            port_source(('game/sub_zero/character.c', 'if'))
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
-            port_source(('game/characters/sub_zero/character.c', 'battle_spray'))
+            port_source(('game/sub_zero/character.c', 'battle_spray'))
 
     def test_ice_and_native_clone_have_reusable_phases_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
@@ -157,9 +157,9 @@ class PortTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0, args)
 
     def test_private_move_navigation_keeps_generated_code_separate(self):
-        integration = 'game/characters/scorpion/character.c'
+        integration = 'game/scorpion/character.c'
         actual, line, code = function_source(integration, 'scorpion_teleport')
-        self.assertEqual(actual, 'game/characters/scorpion/moves/teleport.inc')
+        self.assertEqual(actual, 'game/scorpion/moves/teleport.inc')
         self.assertTrue((ROOT / actual).read_text().splitlines()[line - 1].startswith('static void scorpion_teleport('))
         native = read_source(integration)
         self.assertIn(code, native)
