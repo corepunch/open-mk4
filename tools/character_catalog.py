@@ -320,7 +320,7 @@ def _moves_for(character):
         # scene entries selected by the roster's F1/F2 tables. His command
         # tables also select a powered punch, a shadow kick, and a CPU kick.
         shared.update(
-            fatality_1=move(0x467ce0, (('scene setup', 0x4e12a0), ('scene loop', 0x4e12b0)),
+            fatality_1=move(0x467ce0, (('scene setup', 0x4e12a0), ('scene loop', 0x4e12b0), ('continuation 4e12c0', 0x4e12c0), ('continuation 4e12d0', 0x4e12d0), ('continuation 4e12e0', 0x4e12e0), ('continuation 4e12f0', 0x4e12f0), ('continuation 4e1300', 0x4e1300), ('continuation 4e1310', 0x4e1310), ('continuation 4e1320', 0x4e1320), ('continuation 4e1330', 0x4e1330), ('continuation 4e1340', 0x4e1340), ('continuation 4e1350', 0x4e1350), ('continuation 4e1360', 0x4e1360), ('continuation 4e1370', 0x4e1370), ('continuation 4e1380', 0x4e1380)),
                             native=(('roster dispatch', 0x448160), ('scene continuation', 0x448480))),
             fatality_2=move(0x467cd0, (('scene entry', 0x4e5870), ('uppercut', 0x4e5880), ('victory', 0x4e58d8), ('victim start', 0x4e5b38), ('victim hit', 0x4e5900)),
                             native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0), ('three repeats', 0x4658f0), ('head release', 0x465a80))),

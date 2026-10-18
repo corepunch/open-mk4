@@ -2,6 +2,17 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 14. */
 #include "script.h"
 
+void cage_first_sever(Fighter *);
+void cage_first_task_end(Fighter *);
+void cage_first_torso_123(Fighter *);
+void cage_first_torso_finish(Fighter *);
+void cage_first_torso_half(Fighter *);
+void cage_first_victim_131(Fighter *);
+void cage_first_victim_148(Fighter *);
+void cage_first_victim_166(Fighter *);
+void cage_first_victim_185(Fighter *);
+void cage_first_victim_206(Fighter *);
+void cage_first_victim_59(Fighter *);
 void cage_orb_spawn(Fighter *, int);
 void cage_script_air_finish(Fighter *);
 void cage_script_close_hk_tail(Fighter *);
@@ -1745,35 +1756,371 @@ static inline void retail_script_004e01a0(Fighter *fighter) {
   }
 }
 
-static inline void retail_script_004e12a0(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  mk4_script_inherit(fighter, 443, 30, 0);
-  {
-    /* EXE 004e12a0: 0x3000000 */
-    mk4_script_finish_clip(fighter, 1);
-  }
-  {
-    /* EXE 004e12a4: 0x32000000 0x448480 */
-    cage_script_fatality_1_signal(fighter);
-    return;
-  }
+static inline void retail_script_004e12a0(Fighter *fighter);
+
+static void retail_script_004e12a0_at_43(Fighter *fighter) {
+  /* EXE 004e12a4: 0x32000000 0x448480 */
+  cage_script_fatality_1_signal(fighter);
 }
 
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12a0_frames[43] = {
+  [42] = {.thinkfunc = retail_script_004e12a0_at_43},
+};
+// clang-format on
+static const mmove_t retail_script_004e12a0_phase = {
+    .firstframe = 334, .lastframe = 376, .frame = retail_script_004e12a0_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e12a0(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 377, 334);
+  /* EXE 004e12a0: 0x3000000 */
+  fighter_mmove_phase(fighter, &retail_script_004e12a0_phase);
+}
+
+static inline void retail_script_004e12b0(Fighter *fighter);
+static inline void retail_script_004e12b0_branch_1(Fighter *fighter);
+
+static void retail_script_004e12b0_at_30(Fighter *fighter) {
+  /* EXE 004e12b8: 0x33000000 0x1384ac */
+  /* EXE 004e12b0: 0x48000200 0x13f090 */
+  mk4_mmove_bind(fighter, 443, 30, 0);
+}
+
+static void retail_script_004e12b0_at_60(Fighter *fighter) {
+  retail_script_004e12b0_branch_1(fighter);
+}
+
+static const int retail_script_004e12b0_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+    29, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12b0_frames[60] = {
+  [29] = {.thinkfunc = retail_script_004e12b0_at_30},
+  [59] = {.thinkfunc = retail_script_004e12b0_at_60},
+};
+// clang-format on
+static const mmove_t retail_script_004e12b0_phase = {
+    .firstframe = 0, .lastframe = 59, .frame = retail_script_004e12b0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e12b0_samples};
+
 static inline void retail_script_004e12b0(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  for (;;) {
-    {
-      /* EXE 004e12b0: 0x48000200 0x13f090 */
-      mk4_script_bind(fighter, 443, 30, 0);
-      mk4_script_finish_clip(fighter, 1);
-    }
-    {
-      /* EXE 004e12b8: 0x33000000 0x1384ac */
-      continue;
-    }
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e12b0: 0x48000200 0x13f090 */
+  mk4_mmove_bind(fighter, 443, 30, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e12b0_phase);
+}
+
+static void retail_script_004e12b0_branch_1_at_30(Fighter *fighter) {
+  retail_script_004e12b0_branch_1(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12b0_branch_1_frames[30] = {
+  [29] = {.thinkfunc = retail_script_004e12b0_branch_1_at_30},
+};
+// clang-format on
+static const mmove_t retail_script_004e12b0_branch_1_phase = {
+    .firstframe = 0, .lastframe = 29, .frame = retail_script_004e12b0_branch_1_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e12b0_branch_1(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e12b8: 0x33000000 0x1384ac */
+  /* EXE 004e12b0: 0x48000200 0x13f090 */
+  mk4_mmove_bind(fighter, 443, 30, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e12b0_branch_1_phase);
+}
+
+static inline void retail_script_004e12c0(Fighter *fighter);
+
+static void retail_script_004e12c0_at_58(Fighter *fighter) {
+  fighter->sample_override = 58;
+  /* EXE 004e12c8: 0x33000000 0x1384b6 */
+  /* EXE 004e12d8: 0x32000000 0x4487b0 */
+  cage_first_victim_59(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12c0_frames[58] = {
+  [57] = {.thinkfunc = retail_script_004e12c0_at_58},
+};
+// clang-format on
+static const mmove_t retail_script_004e12c0_phase = {.firstframe = 0, .lastframe = 57, .frame = retail_script_004e12c0_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e12c0(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e12c0: 0x4700023a 0x13f02d */
+  mk4_mmove_bind(fighter, 410, 310, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e12c0_phase);
+}
+
+static inline void retail_script_004e12d0(Fighter *fighter);
+
+static void retail_script_004e12d0_at_58(Fighter *fighter) {
+  fighter->sample_override = 58;
+  /* EXE 004e12d8: 0x32000000 0x4487b0 */
+  cage_first_victim_59(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12d0_frames[58] = {
+  [57] = {.thinkfunc = retail_script_004e12d0_at_58},
+};
+// clang-format on
+static const mmove_t retail_script_004e12d0_phase = {.firstframe = 0, .lastframe = 57, .frame = retail_script_004e12d0_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e12d0(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e12d0: 0x4700023a 0x13f030 */
+  mk4_mmove_bind(fighter, 411, 310, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e12d0_phase);
+}
+
+static inline void retail_script_004e12e0(Fighter *fighter);
+
+static void retail_script_004e12e0_at_71(Fighter *fighter) {
+  fighter->sample_override = 130;
+  /* EXE 004e12e4: 0x32000000 0x4487f0 */
+  cage_first_victim_131(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12e0_frames[71] = {
+  [70] = {.thinkfunc = retail_script_004e12e0_at_71},
+};
+// clang-format on
+static const mmove_t retail_script_004e12e0_phase = {.firstframe = 59, .lastframe = 129, .frame = retail_script_004e12e0_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e12e0(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 59);
+  /* EXE 004e12e0: 0x5000082 */
+  fighter_mmove_phase(fighter, &retail_script_004e12e0_phase);
+}
+
+static inline void retail_script_004e12f0(Fighter *fighter);
+
+static void retail_script_004e12f0_at_16(Fighter *fighter) {
+  fighter->sample_override = 147;
+  /* EXE 004e12f4: 0x32000000 0x448830 */
+  cage_first_victim_148(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e12f0_frames[16] = {
+  [15] = {.thinkfunc = retail_script_004e12f0_at_16},
+};
+// clang-format on
+static const mmove_t retail_script_004e12f0_phase = {
+    .firstframe = 131, .lastframe = 146, .frame = retail_script_004e12f0_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e12f0(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 131);
+  /* EXE 004e12f0: 0x5000093 */
+  fighter_mmove_phase(fighter, &retail_script_004e12f0_phase);
+}
+
+static inline void retail_script_004e1300(Fighter *fighter);
+
+static void retail_script_004e1300_at_17(Fighter *fighter) {
+  fighter->sample_override = 165;
+  /* EXE 004e1304: 0x32000000 0x448870 */
+  cage_first_victim_166(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1300_frames[17] = {
+  [16] = {.thinkfunc = retail_script_004e1300_at_17},
+};
+// clang-format on
+static const mmove_t retail_script_004e1300_phase = {
+    .firstframe = 148, .lastframe = 164, .frame = retail_script_004e1300_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1300(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 148);
+  /* EXE 004e1300: 0x50000a5 */
+  fighter_mmove_phase(fighter, &retail_script_004e1300_phase);
+}
+
+static inline void retail_script_004e1310(Fighter *fighter);
+
+static void retail_script_004e1310_at_18(Fighter *fighter) {
+  fighter->sample_override = 184;
+  /* EXE 004e1314: 0x32000000 0x4488b0 */
+  cage_first_victim_185(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1310_frames[18] = {
+  [17] = {.thinkfunc = retail_script_004e1310_at_18},
+};
+// clang-format on
+static const mmove_t retail_script_004e1310_phase = {
+    .firstframe = 166, .lastframe = 183, .frame = retail_script_004e1310_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1310(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 166);
+  /* EXE 004e1310: 0x50000b8 */
+  fighter_mmove_phase(fighter, &retail_script_004e1310_phase);
+}
+
+static inline void retail_script_004e1320(Fighter *fighter);
+
+static void retail_script_004e1320_at_20(Fighter *fighter) {
+  fighter->sample_override = 205;
+  /* EXE 004e1324: 0x32000000 0x4488f0 */
+  cage_first_victim_206(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1320_frames[20] = {
+  [19] = {.thinkfunc = retail_script_004e1320_at_20},
+};
+// clang-format on
+static const mmove_t retail_script_004e1320_phase = {
+    .firstframe = 185, .lastframe = 204, .frame = retail_script_004e1320_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1320(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 185);
+  /* EXE 004e1320: 0x50000cd */
+  fighter_mmove_phase(fighter, &retail_script_004e1320_phase);
+}
+
+static inline void retail_script_004e1330(Fighter *fighter);
+
+static void retail_script_004e1330_at_18(Fighter *fighter) {
+  fighter->sample_override = 224;
+  /* EXE 004e1334: 0x32000000 0x448930 */
+  cage_first_sever(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1330_frames[18] = {
+  [17] = {.thinkfunc = retail_script_004e1330_at_18},
+};
+// clang-format on
+static const mmove_t retail_script_004e1330_phase = {
+    .firstframe = 206, .lastframe = 223, .frame = retail_script_004e1330_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1330(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 206);
+  /* EXE 004e1330: 0x50000e0 */
+  fighter_mmove_phase(fighter, &retail_script_004e1330_phase);
+}
+
+static inline void retail_script_004e1340(Fighter *fighter);
+
+static void retail_script_004e1340_at_3(Fighter *fighter) {
+  /* EXE 004e1344: 0x32000000 0x49cb60 */
+  cage_first_task_end(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1340_frames[3] = {
+  [2] = {.thinkfunc = retail_script_004e1340_at_3},
+};
+// clang-format on
+static const mmove_t retail_script_004e1340_phase = {
+    .firstframe = 307, .lastframe = 309, .frame = retail_script_004e1340_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1340(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 310, 307);
+  /* EXE 004e1340: 0x3000000 */
+  fighter_mmove_phase(fighter, &retail_script_004e1340_phase);
+}
+
+static inline void retail_script_004e1350(Fighter *fighter);
+
+static void retail_script_004e1350_at_58(Fighter *fighter) {
+  fighter->sample_override = 58;
+  /* EXE 004e1358: 0x32000000 0x448c80 */
+  cage_first_torso_half(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1350_frames[58] = {
+  [57] = {.thinkfunc = retail_script_004e1350_at_58},
+};
+// clang-format on
+static const mmove_t retail_script_004e1350_phase = {.firstframe = 0, .lastframe = 57, .frame = retail_script_004e1350_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1350(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e1350: 0x4700023a 0x13f027 */
+  mk4_mmove_bind(fighter, 408, 143, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e1350_phase);
+}
+
+static inline void retail_script_004e1360(Fighter *fighter);
+
+static void retail_script_004e1360_at_13(Fighter *fighter) {
+  fighter->sample_override = 122;
+  /* EXE 004e1364: 0x32000000 0x448d20 */
+  cage_first_torso_123(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1360_frames[13] = {
+  [12] = {.thinkfunc = retail_script_004e1360_at_13},
+};
+// clang-format on
+static const mmove_t retail_script_004e1360_phase = {
+    .firstframe = 109, .lastframe = 121, .frame = retail_script_004e1360_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1360(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 143, 109);
+  /* EXE 004e1360: 0x500007a */
+  fighter_mmove_phase(fighter, &retail_script_004e1360_phase);
+}
+
+static inline void retail_script_004e1370(Fighter *fighter);
+
+static void retail_script_004e1370_at_15(Fighter *fighter) {
+  fighter->sample_override = 138;
+  /* EXE 004e1374: 0x32000000 0x448d70 */
+  cage_first_torso_finish(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1370_frames[15] = {
+  [14] = {.thinkfunc = retail_script_004e1370_at_15},
+};
+// clang-format on
+static const mmove_t retail_script_004e1370_phase = {
+    .firstframe = 123, .lastframe = 137, .frame = retail_script_004e1370_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1370(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 143, 123);
+  /* EXE 004e1370: 0x500008a */
+  fighter_mmove_phase(fighter, &retail_script_004e1370_phase);
+}
+
+static inline void retail_script_004e1380(Fighter *fighter);
+
+static void retail_script_004e1380_at_5(Fighter *fighter) {
+  /* EXE 004e1384: 0x32000000 0x49cb60 */
+  cage_first_task_end(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e1380_frames[5] = {
+  [4] = {.thinkfunc = retail_script_004e1380_at_5},
+};
+// clang-format on
+static const mmove_t retail_script_004e1380_phase = {
+    .firstframe = 138, .lastframe = 142, .frame = retail_script_004e1380_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e1380(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_mmove_inherit_current(fighter, 143, 138);
+  /* EXE 004e1380: 0x3000000 */
+  fighter_mmove_phase(fighter, &retail_script_004e1380_phase);
 }
 
 static inline void retail_script_004e5870(Fighter *fighter);

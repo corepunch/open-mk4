@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 
 static void check(bool ok, const char *message) {
@@ -625,6 +626,49 @@ static void independent_scene_poses(const Assets *assets) {
   }
 }
 
+static void cage_first_fatality_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int female = 0; female < 2; ++female) {
+      int enemy = female ? 2 : 4;
+      battle_init(slot ? enemy : 14, slot ? 14 : enemy);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->wins = 1;
+      battle_damage(victim, Q16_ONE);
+      for (int tick = 0; tick < 180 && !battle_can_finish(owner); ++tick) {
+        battle_step((Input[2]){0});
+      }
+      check(battle_can_finish(owner), "Asset-backed torso rip needs the deciding-KO window");
+      owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_interrupt(owner, cage_fatality_1);
+      bool detached = false;
+      for (int tick = 0; tick < 1100 && g_battle.phase != PHASE_MATCH_OVER; ++tick) {
+        battle_step((Input[2]){0});
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+          Fighter *body = &g_battle.scene_actors[i].actor;
+          if (g_battle.scene_actors[i].active) {
+            detached = true;
+            fighter_pose(assets, body, bones);
+            const Character *model = fighter_model(assets, body);
+            for (size_t bone = 0; bone < model->bones.count; ++bone) {
+              check(isfinite(bones[bone].position.x) && isfinite(bones[bone].position.y) && isfinite(bones[bone].position.z),
+                  "Cage's detached male/female torso must decode finite independent rig poses");
+            }
+          }
+        }
+      }
+      check(
+          detached && owner->native_variant == 7 && g_battle.phase == PHASE_MATCH_OVER, "Cage's asset-backed torso and lower body must complete independently");
+      battle_reset_match();
+    }
+  }
+}
+
 static void cage_second_fatality_assets(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     battle_init(slot ? 4 : 14, slot ? 14 : 4);
@@ -849,6 +893,7 @@ int main(void) {
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   cage_groin_command(&assets);
+  cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
   independent_scene_poses(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);

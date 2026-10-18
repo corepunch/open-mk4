@@ -123,7 +123,17 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
     const Bone *b = &ch->bones.data[n];
     if (b->flags & 4)
       continue;
-    if (b->id >= 0 && b->id < 128 && (fighter->hidden_joints[b->id / 64] & (UINT64_C(1) << (b->id % 64)))) {
+    /* Retail subtree masking hides all meshes descending from the selected
+     * joint, while their transforms still pose independent scene bodies. */
+    bool hidden = false;
+    for (int ancestor = (int)n; ancestor >= 0; ancestor = ch->bones.data[ancestor].parent) {
+      int id = ch->bones.data[ancestor].id;
+      if (id >= 0 && id < 128 && (fighter->hidden_joints[id / 64] & (UINT64_C(1) << (id % 64)))) {
+        hidden = true;
+        break;
+      }
+    }
+    if (hidden) {
       continue;
     }
     const Triangles *mesh = &ch->meshes.data[b->mesh].triangles;

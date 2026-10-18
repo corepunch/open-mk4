@@ -7,6 +7,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 26, 0x0, NULL, cage_low_orb},
   {BUTTON_BLOCK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_FORWARD, TOKEN_DOWN}, 4, 50, 0x40, cage_can_close_fatality, cage_fatality_2},
   {BUTTON_BLOCK, {0}, 0, 0, 0x0, cage_can_groin_punch, cage_groin_punch},
+  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_DOWN, TOKEN_DOWN}, 4, 60, 0x40, cage_can_close_fatality, cage_fatality_1},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_fan_finish, cage_fan_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0x0, NULL, cage_cpu_kick},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 24, 0x0, weapon_can_draw, cage_weapon_action},

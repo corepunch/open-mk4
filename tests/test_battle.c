@@ -7,6 +7,7 @@
 
 void goro_cpu_projectile(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
+void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
@@ -2342,6 +2343,77 @@ static void check_independent_scene_actor_lifetime(void) {
   }
 }
 
+static void check_cage_first_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int female = 0; female < 2; ++female) {
+      for (int reset_at = 0; reset_at < 3; ++reset_at) {
+        int target = female ? 2 : 4;
+        battle_init(slot ? target : 14, slot ? 14 : target);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        check(battle_can_finish(owner), "Cage first fatality needs the deciding-KO command window");
+        owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        const Controls *controls = roster_def(14)->controls;
+        const CommandDef *selected = NULL;
+        for (int i = 0; i < controls->command_count; ++i) {
+          if (controls->commands[i].enter == cage_fatality_1) {
+            selected = &controls->commands[i];
+          }
+        }
+        check(selected != NULL, "Cage first fatality needs its real generated command");
+        for (int i = 0; i < selected->count; ++i) {
+          bool forward = selected->tokens[i] == TOKEN_FORWARD;
+          Button direction = selected->tokens[i] == TOKEN_DOWN ? BUTTON_DOWN : (forward != (slot != 0) ? BUTTON_RIGHT : BUTTON_LEFT);
+          Input input[2] = {0};
+          input[slot].held = BUTTON_BIT(direction);
+          if (i == selected->count - 1) {
+            input[slot].held |= BUTTON_BIT(selected->button);
+          }
+          battle_step(input);
+          advance_ticks(2, NULL);
+        }
+        check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == (female ? 407 : 406),
+            "Cage first command must select its matching male or female paired scene");
+        int timer = g_battle.time_ticks;
+        bool severed = false;
+        int limit = reset_at == 1 ? 100 : reset_at == 2 ? 690 : 1100;
+        for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage first fatality must use frame phases for both players");
+          for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+            SceneActor *body = &g_battle.scene_actors[i];
+            if (body->active) {
+              severed = true;
+              check(body->source == 1 - slot && body->owner == slot && fighter_move(&body->actor)->clip == 408 &&
+                        body->actor.hidden_joints[0] == ((UINT64_C(1) << 11) | (UINT64_C(1) << 12)) && !fighter_fiber_active(&body->actor),
+                  "Detached torso must keep its source model, independent clip and correct body mask without a fiber");
+            }
+          }
+        }
+        if (reset_at == 0) {
+          check(severed && g_battle.phase == PHASE_MATCH_OVER && fighter_move(owner)->clip == 443 && fighter_sample(victim) == 309,
+              "Cage torso rip must finish the lower body and detached torso before the result");
+          check(owner->native_variant == 7 && victim->hidden_joints[0] == (UINT64_C(1) << 3) && owner->wins == 2 && victim->health == 0 &&
+                    g_battle.time_ticks == timer,
+              "Cage first fatality must preserve the decided result and frozen clock");
+        }
+        battle_reset_match();
+        check(victim->hidden_joints[0] == 0 && owner->hidden_joints[0] == 0, "Cage first fatality reset must restore both bodies");
+        for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+          check(!g_battle.scene_actors[i].active, "Reset before or after severing must retire the independent torso");
+        }
+      }
+    }
+  }
+}
+
 static void check_cage_second_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int reset_at = 0; reset_at < 3; ++reset_at) {
@@ -2615,6 +2687,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_cage_first_fatality();
   check_cage_second_fatality();
   check_independent_scene_actor_lifetime();
   check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
