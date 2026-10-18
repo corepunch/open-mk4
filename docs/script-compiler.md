@@ -352,3 +352,11 @@ CPU registration. The audit checks the required CPU targets and requires the
 CPU table itself to be reachable from the owning character registration.
 Partial bindings remain explicit coverage errors rather than falling back to
 an unrelated move.
+
+Reachability also scans authored fighter callbacks and `ButtonTable`,
+`CommandDef`, `Controls` and `CpuMoves` definitions absent from the manifest.
+An unlisted follow-up cycle cannot satisfy itself. Mechanical generated VM
+continuations and their integration thunks remain checked through catalog
+roots rather than being mistaken for separately callable moves. This is a
+conservative source graph; behavioral tests still establish input gates,
+contact, cancellation and recovery.

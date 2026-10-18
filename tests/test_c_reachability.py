@@ -3,7 +3,8 @@ import sys
 from pathlib import Path
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from c_reachability import DefinitionGraph
+from c_reachability import DefinitionGraph, unreachable_references
+from unittest.mock import patch
 
 
 class ReachabilityTests(unittest.TestCase):
@@ -43,6 +44,33 @@ int main(void) { lookup(); }
         self.assertIn(('game.c', 'special'), graph.reachable(['main']))
         self.assertNotIn(('game.c', 'special'), graph.reachable(['mk4_first'], stop={'roster'}))
         self.assertIn(('game.c', 'special'), graph.reachable(['mk4_second'], stop={'roster'}))
+
+    def test_unlisted_move_and_followup_cycle_are_still_audit_failures(self):
+        graph = DefinitionGraph({'game/example/moves/combos.c': '''
+static void second(void) { use(followups); }
+static const ButtonTable followups = {second};
+void live(void) {}
+''', 'game/example/character.c': '''
+const Controls controls = {live};
+const CharacterDef mk4_example = {controls};
+'''})
+        with patch('c_reachability.workspace_graph', return_value=graph):
+            errors = unreachable_references({'character': 'example'})
+        self.assertTrue(any('combos.c:second' in error for error in errors))
+        self.assertTrue(any('combos.c:followups' in error for error in errors))
+        self.assertFalse(any(':live ' in error for error in errors))
+
+    def test_generated_unused_continuations_do_not_become_independent_moves(self):
+        graph = DefinitionGraph({'game/example/character.c': '''
+static void retail_script_12345678(void) {}
+void example_entry_retail_script_12345678(void) { retail_script_12345678(); }
+static void authored_special(void) {}
+const CharacterDef mk4_example = {0};
+'''})
+        with patch('c_reachability.workspace_graph', return_value=graph):
+            errors = unreachable_references({'character': 'example'})
+        self.assertEqual(len(errors), 1)
+        self.assertIn(':authored_special', errors[0])
 
 
 if __name__ == '__main__':

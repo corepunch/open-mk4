@@ -108,6 +108,7 @@ def unreachable_references(profile):
         references.append(('runtime command table', {'source': profile['integration_source'], 'symbol': 'retail_commands'}))
     if profile.get('cpu_bindings'):
         references.append(('runtime CPU table', {'source': profile['integration_source'], 'symbol': 'retail_cpu_moves'}))
+    reported = set()
     for label, ref in references:
         path, name = ref.get('source'), ref.get('symbol')
         if not path or not name:
@@ -120,4 +121,20 @@ def unreachable_references(profile):
         candidates = [key for key in candidates if key]
         if candidates and not any(key in reached for key in candidates):
             errors.append('%s: unreachable implementation %s (not connected to gameplay)' % (label, name))
+            reported.update(candidates)
+    # A manifest is a review index, not the universe of possible omissions.
+    # Inspect authored callbacks and control tables even if nobody listed them
+    # in port.json. Generated VM bodies and their mechanical integration thunks
+    # are checked through the catalog roots above, not as independent moves.
+    directory = 'game/' + profile['character'] + '/'
+    for key, body in graph.nodes.items():
+        path, name = key
+        if not path.startswith(directory) or key in reached or key in reported:
+            continue
+        head = body.split('{', 1)[0]
+        function = '=' not in head and re.search(r'\b' + re.escape(name) + r'\s*\(', head)
+        table = re.search(r'\b(?:ButtonTable|CommandDef|Controls|CpuMoves)\b', head)
+        generated_thunk = path == directory + 'character.c' and (name.startswith('retail_script_') or name.startswith(profile['character'] + '_entry_retail_script_'))
+        if (function or table) and not generated_thunk:
+            errors.append('unreachable move definition %s:%s (not connected to gameplay)' % key)
     return errors
