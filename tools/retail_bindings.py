@@ -1158,6 +1158,14 @@ for _address in (0x42cb80, 0x42cbc0, 0x42ce80, 0x45b1f0):
     CHARACTER_BINDINGS[5][_address] = replace(CHARACTER_BINDINGS[5][_address], mmove=True)
 
 
+
+# Shinnok LP release installs the peer reaction, then continues the owner clip.
+CHARACTER_BINDINGS[6][0x45b1f0] = replace(CHARACTER_BINDINGS[6][0x45b1f0], mmove=True,
+    evidence='45b1f0 -> 480f80 -> 48f880 -> 48fd00 installs the selected reaction on the task peer')
+CHARACTER_BINDINGS[6][0x42ce60] = Binding('shinnok_script_lp_return', 'game/shinnok/character.c', ('tail',),
+    flow='terminal', mmove=True, evidence='42ce60 returns the released LP owner through the nonblocking ready boundary')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

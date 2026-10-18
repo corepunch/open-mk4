@@ -12,7 +12,11 @@ static void shinnok_ground_throw(Fighter *fighter, FighterFn script) {
 }
 
 void shinnok_lp_throw(Fighter *fighter) {
-  shinnok_ground_throw(fighter, shinnok_entry_retail_script_004de798);
+  if (!mk4_can_ground_throw(fighter, false)) {
+    fighter_ready(fighter);
+    return;
+  }
+  mk4_mmove_throw_start(fighter, &shinnok_s_throw, &s_thrown, shinnok_entry_retail_script_004de798);
 }
 
 void shinnok_lk_throw(Fighter *fighter) {

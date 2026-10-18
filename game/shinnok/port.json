@@ -496,5 +496,8 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw"
-  }
+  },
+  "mmove_scripts": [
+    "0x4de798"
+  ]
 }

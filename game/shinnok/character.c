@@ -11,7 +11,7 @@ const MoveDef shinnok_s_high_kick = {.clip = 66, .last = MOVE_END, .flags = SF_A
 const MoveDef shinnok_s_sweep = {.clip = 63, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW, .action = ACTION_RETAIL_010C};
 const MoveDef shinnok_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LAUNCH, .action = ACTION_RETAIL_0109};
 
-const MoveDef shinnok_s_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
+const MoveDef shinnok_s_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD, .action = ACTION_RETAIL_0500};
 
 const MoveDef shinnok_s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
