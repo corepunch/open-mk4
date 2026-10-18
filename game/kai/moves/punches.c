@@ -22,10 +22,14 @@ static void kai_low_punch(Fighter *fighter) {
 }
 
 void kai_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, kai_input_47bd10);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : kai_input_47bd10);
 }
 
 void kai_press_low_punch(Fighter *fighter) {
+  if (fighter->armed) {
+    fighter_interrupt(fighter, fighter->weapon->lp);
+    return;
+  }
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, false)) {
     fighter_interrupt(fighter, kai_lp_throw);
     return;

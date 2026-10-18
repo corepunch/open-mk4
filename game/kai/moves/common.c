@@ -18,15 +18,15 @@ void kai_start_script(Fighter *fighter, StateId state, const MoveDef *move, Figh
 }
 
 void kai_idle(Fighter *fighter) {
-  fighter_start_move(fighter, S_IDLE, &kai_s_idle);
+  weapon_stance(fighter, S_IDLE);
 }
 
 void kai_walk(Fighter *fighter) {
-  fighter_start_move(fighter, S_WALK, &kai_s_walk);
+  weapon_stance(fighter, S_WALK);
 }
 
 void kai_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &kai_s_block);
+  weapon_stance(fighter, S_BLOCK);
 }
 
 void kai_input_478df0(Fighter *fighter) {

@@ -157,4 +157,16 @@ void kai_entry_retail_script_004e9308(Fighter *fighter);
 void kai_entry_retail_script_004e9360(Fighter *fighter);
 void kai_entry_retail_script_004ea170(Fighter *fighter);
 void kai_entry_retail_script_004ea1c0(Fighter *fighter);
+extern const uint32_t kai_weapon_descriptor[];
+void kai_draw_weapon(Fighter *fighter);
+void kai_weapon_back_contact(Fighter *fighter);
+void kai_weapon_face_peer(Fighter *fighter);
+void kai_weapon_victim_getup(Fighter *fighter);
+void kai_weapon_reaction(Fighter *fighter);
+void kai_entry_retail_script_004e66d0(Fighter *fighter);
+void kai_entry_retail_script_004e66f0(Fighter *fighter);
+void kai_entry_retail_script_004ec5a8(Fighter *fighter);
+void kai_entry_retail_script_004e8b78(Fighter *fighter);
+void kai_entry_retail_script_004e8bc0(Fighter *fighter);
+void kai_entry_retail_script_004e8f50(Fighter *fighter);
 #endif

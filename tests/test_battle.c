@@ -1475,6 +1475,72 @@ static void check_reaction_motion_components(void) {
   }
 }
 
+static void check_kai_weapon_commands(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 3; ++strike) {
+      for (int scenario = 0; scenario < 4; ++scenario) {
+        battle_init(slot ? 4 : 11, slot ? 11 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+        command(slot, BUTTON_DOWN, back, BUTTON_LOW_PUNCH);
+        check(fighter_move(owner)->clip == 244 && !owner->armed, "Kai's real draw command must play before equipping");
+        advance_ticks(65, NULL);
+        check(owner->armed && owner->weapon->type == 0x63 && owner->weapon->model == SCENE_MODEL_KAI_WEAPON && owner->state == S_IDLE,
+            "Kai must equip his own extracted weapon rig and persistent armed controls");
+        q16 half_distance = scenario == 2 ? 4 * Q16_ONE : 0xa666;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        if (scenario == 3) {
+          victim->health = 1;
+        }
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(strike == 1 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+        if (strike == 2) {
+          input[slot].held |= BUTTON_BIT(back);
+        }
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        advance_ticks(2, input);
+        const int clips[] = {230, 229, 226};
+        check(fighter_move(owner)->clip == clips[strike], "Kai armed punches must select their own native strike rather than a normal or recursive callback");
+        input[slot].held = 0;
+        for (int tick = 0; tick < 180; ++tick) {
+          battle_step(input);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai weapon attacks and victim recoveries must use frame tables");
+        }
+        q16 damage = scenario == 2 ? 0 : strike == 1 ? 10485 : 11796;
+        if (scenario == 1) {
+          damage = q16_mul(damage, 0x3333);
+        }
+        q16 expected = scenario == 3 ? 0 : Q16_ONE - damage;
+        if (victim->health != expected) {
+          fprintf(stderr, "Kai weapon slot%d strike%d scenario%d health%d expected%d\n", slot, strike, scenario, victim->health, expected);
+        }
+        check(victim->health == expected, "Kai weapon records must preserve native damage, chip and miss behavior");
+        check(owner->state == S_IDLE && owner->armed && owner->body.physics == NULL && owner->body.vel[AXIS_X] == 0,
+            "Kai weapon recovery must clear travel and restore armed controls");
+        check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
+        if (scenario == 3) {
+          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          battle_reset_match();
+          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+        } else if (scenario == 2 && strike == 2) {
+          input[slot].held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK);
+          advance_ticks(2, input);
+          input[slot].held = 0;
+          advance_ticks(100, input);
+          check(fighter_move(owner)->clip == 4 && owner->armed && !fighter_fiber_active(owner),
+              "Armed handstand must follow its native intro/front-kick branch into persistent controls");
+        }
+      }
+    }
+  }
+}
+
 static void check_type69_weapon_commands(void) {
   const int roster[] = {7, 13, 17};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
@@ -2109,6 +2175,7 @@ int main(void) {
   check_cage_groin_gate();
   check_weapon_frame_startups();
   check_type69_weapon_commands();
+  check_kai_weapon_commands();
   check_reaction_motion_components();
   check_roster_throw_state_entries();
   check_short_diagonal_air_recovery();

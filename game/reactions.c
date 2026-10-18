@@ -850,6 +850,9 @@ static const FighterFn reactions[256] = {
   [126] = kai_handstand_reaction,
   [127] = kai_handstand_reaction,
   [167] = kai_handstand_reaction,
+  [142] = kai_weapon_reaction,
+  [145] = kai_weapon_reaction,
+  [146] = kai_weapon_reaction,
 };
 // clang-format on
 

@@ -48,4 +48,5 @@ void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn vi
 void mk4_mmove_air_throw_release(Fighter *fighter);
 
 void kai_handstand_reaction(Fighter *fighter);
+void kai_weapon_reaction(Fighter *fighter);
 #endif

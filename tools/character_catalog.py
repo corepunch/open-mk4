@@ -212,7 +212,7 @@ def _moves_for(character):
                               native=(('clip finish', 0x478e20),)),
             input_47cbf0=move(0x47cbf0, (('selected continuation', 0x4e88c8),),
                               native=(('clip finish', 0x47cc10),)),
-            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
+            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0), ('back strike', 0x4ec5a8), ('HP victim', 0x4e8b78), ('LP victim', 0x4e8f50), ('back victim', 0x4e8bc0)), contacts=(('weapon', 31), ('weapon', 32), ('weapon', 33)),
                              native=(('follow-up draw', 0x46d260),)),
             lk_throw=move(0x42b6b0,
                           (('paired opening', 0x4de2f8), ('damage', 0x4de318),

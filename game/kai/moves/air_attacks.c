@@ -82,11 +82,11 @@ void kai_script_air_finish(Fighter *fighter) {
 }
 
 void kai_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, kai_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : kai_air_hp);
 }
 
 void kai_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &kai_air_punch_followup ? kai_air_combo_lp : kai_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &kai_air_punch_followup ? kai_air_combo_lp : kai_air_lp);
 }
 
 void kai_press_air_kick(Fighter *fighter) {

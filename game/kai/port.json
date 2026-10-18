@@ -2130,6 +2130,266 @@
           "0x488ac0"
         ]
       }
+    ],
+    "0x4e66d0": [
+      {
+        "pc": "0x4e66d0",
+        "words": [
+          "0x1f000000",
+          "0x104"
+        ]
+      },
+      {
+        "pc": "0x4e66d8",
+        "words": [
+          "0x32000000",
+          "0x46eab0"
+        ]
+      }
+    ],
+    "0x4e66f0": [
+      {
+        "pc": "0x4e66f0",
+        "words": [
+          "0x1f000000",
+          "0x108"
+        ]
+      },
+      {
+        "pc": "0x4e66f8",
+        "words": [
+          "0x32000000",
+          "0x46ec10"
+        ]
+      }
+    ],
+    "0x4ec5a8": [
+      {
+        "pc": "0x4ec5a8",
+        "words": [
+          "0xf000000",
+          "0x13ee05"
+        ]
+      },
+      {
+        "pc": "0x4ec5b0",
+        "words": [
+          "0x4d000010"
+        ]
+      },
+      {
+        "pc": "0x4ec5b4",
+        "words": [
+          "0x2700001f"
+        ]
+      },
+      {
+        "pc": "0x4ec5b8",
+        "words": [
+          "0x4d00001a"
+        ]
+      },
+      {
+        "pc": "0x4ec5bc",
+        "words": [
+          "0x500001d"
+        ]
+      },
+      {
+        "pc": "0x4ec5c0",
+        "words": [
+          "0x32000000",
+          "0x495ae0"
+        ]
+      }
+    ],
+    "0x4e8b78": [
+      {
+        "pc": "0x4e8b78",
+        "words": [
+          "0x2b000001"
+        ]
+      },
+      {
+        "pc": "0x4e8b7c",
+        "words": [
+          "0x62000005"
+        ]
+      },
+      {
+        "pc": "0x4e8b80",
+        "words": [
+          "0x58000000",
+          "0xffffee15",
+          "0xffffdc29",
+          "0x28f"
+        ]
+      },
+      {
+        "pc": "0x4e8b90",
+        "words": [
+          "0x22000000"
+        ]
+      },
+      {
+        "pc": "0x4e8b94",
+        "words": [
+          "0x1000000",
+          "0x13ed84"
+        ]
+      },
+      {
+        "pc": "0x4e8b9c",
+        "words": [
+          "0x60000000"
+        ]
+      },
+      {
+        "pc": "0x4e8ba0",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e8ba4",
+        "words": [
+          "0x32000000",
+          "0x488b40"
+        ]
+      }
+    ],
+    "0x4e8bc0": [
+      {
+        "pc": "0x4e8bc0",
+        "words": [
+          "0x26000006"
+        ]
+      },
+      {
+        "pc": "0x4e8bc4",
+        "words": [
+          "0x62000001"
+        ]
+      },
+      {
+        "pc": "0x4e8bc8",
+        "words": [
+          "0x2a000000"
+        ]
+      },
+      {
+        "pc": "0x4e8bcc",
+        "words": [
+          "0x2b000001"
+        ]
+      },
+      {
+        "pc": "0x4e8bd0",
+        "words": [
+          "0x4e000000"
+        ]
+      },
+      {
+        "pc": "0x4e8bd4",
+        "words": [
+          "0x59000000",
+          "0xfffff5c3",
+          "0xccc",
+          "0x0",
+          "0x0"
+        ]
+      },
+      {
+        "pc": "0x4e8be8",
+        "words": [
+          "0x38000000",
+          "0x490bd0"
+        ]
+      },
+      {
+        "pc": "0x4e8bf0",
+        "words": [
+          "0xf000000",
+          "0x13ed81"
+        ]
+      },
+      {
+        "pc": "0x4e8bf8",
+        "words": [
+          "0x6a000000"
+        ]
+      },
+      {
+        "pc": "0x4e8bfc",
+        "words": [
+          "0x5b000000"
+        ]
+      },
+      {
+        "pc": "0x4e8c00",
+        "words": [
+          "0x3f000000"
+        ]
+      }
+    ],
+    "0x4e8f50": [
+      {
+        "pc": "0x4e8f50",
+        "words": [
+          "0x62000000"
+        ]
+      },
+      {
+        "pc": "0x4e8f54",
+        "words": [
+          "0x2b000001"
+        ]
+      },
+      {
+        "pc": "0x4e8f58",
+        "words": [
+          "0x5a000000",
+          "0x11eb"
+        ]
+      },
+      {
+        "pc": "0x4e8f60",
+        "words": [
+          "0x200000e",
+          "0x13eceb"
+        ]
+      },
+      {
+        "pc": "0x4e8f68",
+        "words": [
+          "0x60000000"
+        ]
+      },
+      {
+        "pc": "0x4e8f6c",
+        "words": [
+          "0x20000004"
+        ]
+      },
+      {
+        "pc": "0x4e8f70",
+        "words": [
+          "0x5b000000"
+        ]
+      },
+      {
+        "pc": "0x4e8f74",
+        "words": [
+          "0x400000e"
+        ]
+      },
+      {
+        "pc": "0x4e8f78",
+        "words": [
+          "0x32000000",
+          "0x482790"
+        ]
+      }
     ]
   },
   "entry_contexts": {
@@ -2254,12 +2514,28 @@
     "0x4ea1c0": {
       "return_to": "mk4_mmove_thrown_finish",
       "evidence": "Native handstand victim reaction selects this stream and returns through KO-aware recovery."
+    },
+    "0x4ec5a8": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+    },
+    "0x4e8b78": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+    },
+    "0x4e8bc0": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+    },
+    "0x4e8f50": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
     }
   },
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "f438bb2ac7da5ec8876a696271f5af30ef49f555e0da04ec74c64fa8b7be1ce7",
+  "inventory_sha256": "bdc931873650498e03aaa2e02bbcf9d40979ac144c41bf73531d6abb9d1b7304",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2292,9 +2568,9 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5e28, 0x4e5e50, 0x4e9910); verified by typed Kai inventory."
     },
     "draw_weapon": {
-      "source": "game/kai/character.c",
+      "source": "game/kai/moves/weapon.c",
       "symbol": "kai_draw_weapon",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62c0, 0x4e62d8); verified by typed Kai inventory."
+      "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "fan_fatality": {
       "source": "game/kai/character.c",
@@ -2457,6 +2733,11 @@
       "source": "game/kai/moves/spike.c",
       "symbol": "kai_spike_fatality",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x46d1d0": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "kai_draw_weapon",
+      "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     }
   },
   "reactions": {
@@ -2606,6 +2887,29 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Handstand D13 blocked reaction0 dispatches486cd0; existing shared block frame recovery."
+    },
+    "142": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "kai_weapon_reaction",
+      "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
+      "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
+    },
+    "145": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "kai_weapon_reaction",
+      "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
+      "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
+    },
+    "146": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "kai_weapon_reaction",
+      "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
+      "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
+    },
+    "119": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Type63 weapon chip selects119/486a70 through existing shared block recovery."
     }
   },
   "stances": {
@@ -2656,9 +2960,9 @@
     }
   },
   "weapon": {
-    "source": "game/kai/character.c",
-    "symbol": "kai_weapon_descriptor",
-    "evidence": "Kai slot-11 weapon inventory descriptor 0x4ecef8 as eight words from typed inventory."
+    "source": "game/kai/moves/weapon.c",
+    "symbol": "native_weapon",
+    "evidence": "4ecef8 type63, rig506ccc, button table4eccc0 targets495a20/495a50 and back495a90."
   },
   "controls_output": "game/kai/generated/controls.inc",
   "command_bindings": {
@@ -2686,6 +2990,11 @@
       "source": "game/kai/moves/handstand.c",
       "symbol": "kai_input_47c520",
       "evidence": "Kai LK command4e4908 selects47c520 through held-switch predicate45eb80/45f2b0."
+    },
+    "0x46d1d0": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "kai_draw_weapon",
+      "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     }
   },
   "command_predicates": {
@@ -2695,7 +3004,8 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw",
-    "0x45eb80": "kai_can_handstand"
+    "0x45eb80": "kai_can_handstand",
+    "0x45ef50": "weapon_can_draw"
   },
   "mmove_scripts": [
     "0x4e5ca0",
@@ -2734,6 +3044,14 @@
     "0x4e9308",
     "0x4e9360",
     "0x4ea170",
-    "0x4ea1c0"
+    "0x4ea1c0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ec5a8",
+    "0x4e8b78",
+    "0x4e8bc0",
+    "0x4e8f50"
   ]
 }

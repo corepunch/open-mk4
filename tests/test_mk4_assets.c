@@ -265,6 +265,52 @@ static void fallback_clip_clock(const Assets *assets) {
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
 }
 
+static void kai_weapon_contacts(const Assets *assets) {
+  check(assets->scene_models.count > SCENE_MODEL_KAI_WEAPON && assets->scene_models.data[SCENE_MODEL_KAI_WEAPON].bones.count > 0,
+      "Kai weapon extraction must provide its own complete shared-geometry rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 3; ++strike) {
+      battle_init(slot ? 4 : 11, slot ? 11 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      const Button sequence[] = {BUTTON_DOWN, slot ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH};
+      for (int entry = 0; entry < 3; ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      for (int tick = 0; tick < 65; ++tick) {
+        battle_step(input);
+      }
+      check(owner->armed && owner->weapon->model == SCENE_MODEL_KAI_WEAPON, "Kai draw command must equip his extracted retail weapon");
+      owner->body.pos[AXIS_X] = slot ? 0xa666 : -0xa666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      input[slot].held = BUTTON_BIT(strike == 1 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+      if (strike == 2) {
+        input[slot].held |= BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      }
+      battle_step(input);
+      battle_step(input);
+      input[slot].held = 0;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Kai weapon owner and victim must remain on frame tables");
+      }
+      check(victim->health == Q16_ONE - (strike == 1 ? 10485 : 11796) && owner->state == S_IDLE,
+          "Kai weapon records must hit once with real animated bounds and recover");
+    }
+  }
+}
+
 static void axe_followup_contacts(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 4; ++scenario) {
@@ -501,6 +547,7 @@ int main(void) {
   fighter_render_snapshots(&assets);
   fallback_clip_clock(&assets);
   axe_followup_contacts(&assets);
+  kai_weapon_contacts(&assets);
   cage_groin_command(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

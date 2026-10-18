@@ -1297,3 +1297,12 @@ CHARACTER_BINDINGS[11][0x47ccc0] = Binding('kai_handstand_rear_contact', 'game/k
 CHARACTER_BINDINGS[11][0x488ac0] = Binding('kai_handstand_victim_tail', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native488ac0 handstand control or victim continuation; frame runner owns the selected clip')
 CHARACTER_BINDINGS[11][0x45fc40] = Binding('kai_handstand_crouch_return', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native45fc40 handstand control or victim continuation; frame runner owns the selected clip')
 CHARACTER_BINDINGS[11][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 KO-aware clip185 side getup')
+
+# Kai type63 weapon entries and generated victim continuations.
+CHARACTER_BINDINGS[11][0x46d260] = Binding('kai_script_draw_equip', 'game/kai/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native46d260 selects Kai type63 weapon or victim frame continuation')
+CHARACTER_BINDINGS[11][0x495ae0] = Binding('kai_weapon_back_contact', 'game/kai/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native495ae0 selects Kai type63 weapon or victim frame continuation')
+CHARACTER_BINDINGS[11][0x482790] = Binding('kai_weapon_victim_getup', 'game/kai/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native482790 selects Kai type63 weapon or victim frame continuation')
+CHARACTER_BINDINGS[11][0x490bd0] = Binding('kai_weapon_face_peer', 'game/kai/moves/weapon.c', ('physics',), mmove=True, evidence='490bd0 corrects facing and recomputes the pair heading; portable axis is updated by the world pump')
+CHARACTER_BINDINGS[11][0x470420] = replace(CHARACTER_BINDINGS[11].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
+CHARACTER_BINDINGS[11][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared weapon air native contact and landing frame runner')
+CHARACTER_BINDINGS[11][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared weapon air native contact and landing frame runner')
