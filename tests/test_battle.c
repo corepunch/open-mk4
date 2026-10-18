@@ -555,8 +555,11 @@ static void check_weapon(void) {
     draw_sword();
     command(0, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_HIGH_KICK);
     check(g_battle.fighters[0].current_move->clip == 208, "Drawing while armed must throw");
-    advance_ticks(120, NULL);
-    check(!g_battle.fighters[0].armed && g_battle.fighters[0].weapon_used, "Throw must detach and prevent a new sword");
+    advance_ticks(21, NULL);
+    check(g_battle.fighters[0].armed, "Throw must retain its weapon before the release frame");
+    advance_ticks(1, NULL);
+    check(!g_battle.fighters[0].armed && g_battle.fighters[0].weapon_used, "Throw release frame must detach and prevent a new sword");
+    advance_ticks(98, NULL);
     check(g_battle.fighters[1].health == Q16_ONE - 0x4000, "Thrown sword damage must be 25 percent");
     int resting = -1;
     for (int i = 0; i < MAX_PROJECTILES; ++i) {

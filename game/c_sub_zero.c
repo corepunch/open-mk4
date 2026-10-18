@@ -1210,10 +1210,7 @@ static void slide_cleanup(Fighter *fighter) {
   stop_body(fighter);
 }
 
-static void slide_contact_tick(Fighter *fighter) {
-  if (++fighter->script_timer < 9) {
-    return;
-  }
+static void slide_contact(Fighter *fighter) {
   fighter->sample_override = 9;
   ContactResult contact = battle_contact(fighter, &slide_record);
   if (contact == CONTACT_MISS) {
@@ -1230,41 +1227,31 @@ static void slide_contact_tick(Fighter *fighter) {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const int slide_contact_frames_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9};
-// clang-format off: Keep table entries on one row, including long rows.
+/* Native 47dc40 queries contact on simulation frames 9 through 25. */
 static const mframe_t slide_contact_frames[25] = {
-  [0] = {.thinkfunc = slide_contact_tick},
-  [1] = {.thinkfunc = slide_contact_tick},
-  [2] = {.thinkfunc = slide_contact_tick},
-  [3] = {.thinkfunc = slide_contact_tick},
-  [4] = {.thinkfunc = slide_contact_tick},
-  [5] = {.thinkfunc = slide_contact_tick},
-  [6] = {.thinkfunc = slide_contact_tick},
-  [7] = {.thinkfunc = slide_contact_tick},
-  [8] = {.thinkfunc = slide_contact_tick},
-  [9] = {.thinkfunc = slide_contact_tick},
-  [10] = {.thinkfunc = slide_contact_tick},
-  [11] = {.thinkfunc = slide_contact_tick},
-  [12] = {.thinkfunc = slide_contact_tick},
-  [13] = {.thinkfunc = slide_contact_tick},
-  [14] = {.thinkfunc = slide_contact_tick},
-  [15] = {.thinkfunc = slide_contact_tick},
-  [16] = {.thinkfunc = slide_contact_tick},
-  [17] = {.thinkfunc = slide_contact_tick},
-  [18] = {.thinkfunc = slide_contact_tick},
-  [19] = {.thinkfunc = slide_contact_tick},
-  [20] = {.thinkfunc = slide_contact_tick},
-  [21] = {.thinkfunc = slide_contact_tick},
-  [22] = {.thinkfunc = slide_contact_tick},
-  [23] = {.thinkfunc = slide_contact_tick},
-  [24] = {.thinkfunc = slide_contact_tick},
+  [8] = {.thinkfunc = slide_contact},
+  [9] = {.thinkfunc = slide_contact},
+  [10] = {.thinkfunc = slide_contact},
+  [11] = {.thinkfunc = slide_contact},
+  [12] = {.thinkfunc = slide_contact},
+  [13] = {.thinkfunc = slide_contact},
+  [14] = {.thinkfunc = slide_contact},
+  [15] = {.thinkfunc = slide_contact},
+  [16] = {.thinkfunc = slide_contact},
+  [17] = {.thinkfunc = slide_contact},
+  [18] = {.thinkfunc = slide_contact},
+  [19] = {.thinkfunc = slide_contact},
+  [20] = {.thinkfunc = slide_contact},
+  [21] = {.thinkfunc = slide_contact},
+  [22] = {.thinkfunc = slide_contact},
+  [23] = {.thinkfunc = slide_contact},
+  [24] = {.thinkfunc = slide_contact},
 };
-// clang-format on
 // clang-format on
 static const mmove_t slide_contact_phase = {
     .firstframe = 0, .lastframe = 24, .frame = slide_contact_frames, .endfunc = script_slide_return, .samples = slide_contact_frames_samples};
 
 static void slide_script(Fighter *fighter) {
-  fighter->script_timer = 0;
   fighter_mmove_phase(fighter, &slide_contact_phase);
 }
 

@@ -359,96 +359,41 @@ void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {
   /* The character starts its generated 4e62c0/4e62d8 program. */
 }
 
-static void throw_tick(Fighter *fighter) {
-  fighter->sample_override = fighter->ticks - (fighter->ticks >= 11);
-  if (fighter->ticks == 22 && fighter->armed) {
-    Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SWORD, 90, object_tick);
-    if (p != NULL) {
-      p->weapon = fighter->weapon;
-      p->spin[AXIS_Z] = -0x6666; /* 493a70 / 493c20 */
-      for (int k = 0; k < 2; ++k) {
-        int axis = k == 0 ? AXIS_X : AXIS_Z;
-        p->pos[axis] += q16_mul(fighter->heading[k], 0xc000); /* 498480: .75 along heading */
-        p->vel[axis] = q16_mul(fighter->heading[k], 0x3333);
-      }
-      p->pos[AXIS_Y] = -0x13333;
+static void throw_release(Fighter *fighter) {
+  if (!fighter->armed) {
+    return;
+  }
+  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SWORD, 90, object_tick);
+  if (p != NULL) {
+    p->weapon = fighter->weapon;
+    p->spin[AXIS_Z] = -0x6666; /* 493a70 / 493c20 */
+    for (int k = 0; k < 2; ++k) {
+      int axis = k == 0 ? AXIS_X : AXIS_Z;
+      p->pos[axis] += q16_mul(fighter->heading[k], 0xc000); /* 498480: .75 along heading */
+      p->vel[axis] = q16_mul(fighter->heading[k], 0x3333);
     }
-    fighter->armed = false;
+    p->pos[AXIS_Y] = -0x13333;
   }
-  if (fighter->ticks >= 62) {
-    fighter_finish_mmove(fighter, fighter_ready);
-  }
+  fighter->armed = false;
 }
 
-static const int throw_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+enum {
+  THROW_FIRST,
+  THROW_RELEASE = 21,
+  THROW_LAST = 61
+};
+
+/* 498290: release on the 22nd simulation frame, then recover through 62.
+ * Pose ten is repeated once; source poses and action frames are independent. */
+static const int throw_samples[THROW_LAST + 1] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+    29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60};
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t throw_frames[62] = {
-  [0] = {.thinkfunc = throw_tick},
-  [1] = {.thinkfunc = throw_tick},
-  [2] = {.thinkfunc = throw_tick},
-  [3] = {.thinkfunc = throw_tick},
-  [4] = {.thinkfunc = throw_tick},
-  [5] = {.thinkfunc = throw_tick},
-  [6] = {.thinkfunc = throw_tick},
-  [7] = {.thinkfunc = throw_tick},
-  [8] = {.thinkfunc = throw_tick},
-  [9] = {.thinkfunc = throw_tick},
-  [10] = {.thinkfunc = throw_tick},
-  [11] = {.thinkfunc = throw_tick},
-  [12] = {.thinkfunc = throw_tick},
-  [13] = {.thinkfunc = throw_tick},
-  [14] = {.thinkfunc = throw_tick},
-  [15] = {.thinkfunc = throw_tick},
-  [16] = {.thinkfunc = throw_tick},
-  [17] = {.thinkfunc = throw_tick},
-  [18] = {.thinkfunc = throw_tick},
-  [19] = {.thinkfunc = throw_tick},
-  [20] = {.thinkfunc = throw_tick},
-  [21] = {.thinkfunc = throw_tick},
-  [22] = {.thinkfunc = throw_tick},
-  [23] = {.thinkfunc = throw_tick},
-  [24] = {.thinkfunc = throw_tick},
-  [25] = {.thinkfunc = throw_tick},
-  [26] = {.thinkfunc = throw_tick},
-  [27] = {.thinkfunc = throw_tick},
-  [28] = {.thinkfunc = throw_tick},
-  [29] = {.thinkfunc = throw_tick},
-  [30] = {.thinkfunc = throw_tick},
-  [31] = {.thinkfunc = throw_tick},
-  [32] = {.thinkfunc = throw_tick},
-  [33] = {.thinkfunc = throw_tick},
-  [34] = {.thinkfunc = throw_tick},
-  [35] = {.thinkfunc = throw_tick},
-  [36] = {.thinkfunc = throw_tick},
-  [37] = {.thinkfunc = throw_tick},
-  [38] = {.thinkfunc = throw_tick},
-  [39] = {.thinkfunc = throw_tick},
-  [40] = {.thinkfunc = throw_tick},
-  [41] = {.thinkfunc = throw_tick},
-  [42] = {.thinkfunc = throw_tick},
-  [43] = {.thinkfunc = throw_tick},
-  [44] = {.thinkfunc = throw_tick},
-  [45] = {.thinkfunc = throw_tick},
-  [46] = {.thinkfunc = throw_tick},
-  [47] = {.thinkfunc = throw_tick},
-  [48] = {.thinkfunc = throw_tick},
-  [49] = {.thinkfunc = throw_tick},
-  [50] = {.thinkfunc = throw_tick},
-  [51] = {.thinkfunc = throw_tick},
-  [52] = {.thinkfunc = throw_tick},
-  [53] = {.thinkfunc = throw_tick},
-  [54] = {.thinkfunc = throw_tick},
-  [55] = {.thinkfunc = throw_tick},
-  [56] = {.thinkfunc = throw_tick},
-  [57] = {.thinkfunc = throw_tick},
-  [58] = {.thinkfunc = throw_tick},
-  [59] = {.thinkfunc = throw_tick},
-  [60] = {.thinkfunc = throw_tick},
-  [61] = {.thinkfunc = throw_tick},
+static const mframe_t throw_frames[THROW_LAST + 1] = {
+  [THROW_RELEASE] = {NULL, 0.0f, throw_release},
 };
 // clang-format on
-static const mmove_t throw_phase = {.firstframe = 0, .lastframe = 61, .frame = throw_frames, .endfunc = fighter_stop_mmove, .samples = throw_frames_samples};
+static const mmove_t throw_phase = {
+    .firstframe = THROW_FIRST, .lastframe = THROW_LAST, .frame = throw_frames, .endfunc = fighter_ready, .samples = throw_samples};
 
 void weapon_throw(Fighter *fighter) {
   fighter_start_mmove(fighter, S_PUNCH, &throw_move, &throw_phase);

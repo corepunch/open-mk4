@@ -668,14 +668,24 @@ static void weapons(void) {
     draw_scepter(player);
     weapon_command(player);
     check(fighter_move(&g_battle.fighters[player])->clip == 208, "armed D,F,HK must throw");
-    advance(23);
-    check(!g_battle.fighters[player].armed, "throw must detach scepter");
+    advance(21);
+    check(g_battle.fighters[player].armed && objects(PROJECTILE_SWORD) == 0, "throw must not release before its action frame");
+    advance(1);
+    check(!g_battle.fighters[player].armed && objects(PROJECTILE_SWORD) == 1, "throw action frame must release one scepter");
     g_battle.contacts_off = true;
     battle_react(&g_battle.fighters[player], 37);
     advance(180);
     check(objects(PROJECTILE_SWORD) == 0, "thrown weapon must leave arena after bounded flight");
     weapon_command(player);
     check(fighter_move(&g_battle.fighters[player])->clip != 244, "spent weapon must not draw again");
+
+    fight(player, 4.f);
+    draw_scepter(player);
+    weapon_command(player);
+    advance(21);
+    fighter_interrupt(&g_battle.fighters[player], fighter_ready);
+    advance(50);
+    check(g_battle.fighters[player].armed && objects(PROJECTILE_SWORD) == 0, "interrupting before the throw action frame must cancel weapon release");
     battle_init(4, 0);
     check(!g_battle.fighters[0].armed && !g_battle.fighters[0].weapon_used && g_battle.fighters[0].weapon == NULL, "round reset clears weapon descriptor");
 
