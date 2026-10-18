@@ -393,14 +393,14 @@
     "102": {
       "source": "game/fujin/character.c",
       "symbol": "fujin_script_current_reaction",
-      "adaptation": "Fujin throw reactions use character-native paired throw handling outside the shared global contact table.",
-      "evidence": "Fujin LP-throw path dispatches selector 102 through current-context native continuation 0x45b1f0."
+      "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
+      "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 102 on task peer +38/+3c, not on the executing owner."
     },
     "109": {
       "source": "game/fujin/character.c",
       "symbol": "fujin_script_current_reaction",
-      "adaptation": "Fujin throw reactions use character-native paired throw handling outside the shared global contact table.",
-      "evidence": "Fujin LP-throw path dispatches selector 109 through current-context native continuation 0x45b1f0."
+      "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
+      "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 109 on task peer +38/+3c, not on the executing owner."
     }
   },
   "return_to": "fighter_ready",
@@ -487,5 +487,10 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw"
-  }
+  },
+  "mmove_scripts": [
+    "0x4de610",
+    "0x4de6b8",
+    "0x4de798"
+  ]
 }

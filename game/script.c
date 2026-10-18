@@ -328,7 +328,7 @@ void mk4_script_pair_cleanup(Fighter *owner) {
   }
 }
 
-void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
+static Fighter *start_throw_pair(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   mk4_script_stop_body(fighter);
   mk4_script_stop_body(victim);
@@ -344,10 +344,30 @@ void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const M
   victim->body.pos[AXIS_Y] += victim->body.ground - fighter->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  return victim;
+}
+
+void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
+  Fighter *victim = start_throw_pair(fighter, owner_move, victim_move);
   fighter_start_fiber(fighter, script, mk4_script_pair_cleanup);
   if (victim->flags & FF_PAIRED) {
     fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
   }
+}
+
+static void captured_throw_done(Fighter *victim) {
+  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+}
+
+static const mframe_t captured_throw_frames[] = {{.thinkfunc = throw_hold_frame}};
+static const mmove_t captured_throw = {.firstframe = 0, .lastframe = 0, .frame = captured_throw_frames, .endfunc = captured_throw_done};
+
+void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
+  Fighter *victim = start_throw_pair(fighter, owner_move, victim_move);
+  fighter_mmove_phase(victim, &captured_throw);
+  victim->mmove_cleanup = throw_hold_cleanup;
+  fighter->mmove_cleanup = mk4_script_pair_cleanup;
+  script(fighter);
 }
 
 void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {

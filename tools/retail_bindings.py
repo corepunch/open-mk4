@@ -582,7 +582,7 @@ CHARACTER_BINDINGS[5] = {
     0x42cbc0: Binding('fujin_script_lp_extended_finish', 'game/fujin/character.c', ('tail',), flow='terminal',
                       evidence='42cbc0 releases the extended Fujin throw pair through controller recovery'),
     0x42ce80: Binding('fujin_script_lp_short_finish', 'game/fujin/character.c', ('tail',), flow='terminal',
-                      evidence='42ce80 releases the short Fujin LP throw and applies reaction 102'),
+                      evidence='42ce80 returns the short Fujin LP owner; reaction 102 was already installed on its peer at cursor25'),
     0x43d460: Binding('fujin_script_fan_tail', 'game/fujin/character.c', ('tail',), flow='terminal',
                       evidence='43d460 coordinates Fujin fan owner/victim continuations through shared scene helper'),
     0x43d530: Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',),
@@ -592,7 +592,7 @@ CHARACTER_BINDINGS[5] = {
     0x43db50: Binding('mk4_script_fan_victim_end', 'game/script.c', ('tail',), flow='terminal',
                       evidence='43db50 hides the fan victim and retires its scene fiber'),
     0x45b1f0: Binding('fujin_script_current_reaction', 'game/fujin/character.c', ('handler',), ('fighter', 'arg_u8'),
-                      evidence='45b1f0 dispatches Fujin LP-throw current-context reaction 109'),
+                      evidence='45b1f0 -> 480f80/48f880/48fd00 installs Fujin LP reactions 102/109 on the captured peer'),
     0x45b230: Binding('fujin_script_opponent_reaction', 'game/fujin/character.c', ('handler',), ('fighter', 'arg_u8'),
                       evidence='45b230 dispatches paired Fujin throw victim reaction 77 and releases the pair'),
     0x46a6b0: Binding('retail_script_004e5c70', 'game/fujin/generated/scripts.inc', ('tail',),
@@ -1150,6 +1150,12 @@ for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 14, 17):
         CHARACTER_BINDINGS.setdefault(_cid, {})[_address] = Binding(
             _name + '_script_roundhouse_' + _suffix, 'game/' + _name + '/moves/roundhouse.c', ('tail',), flow=_flow,
             evidence='Selected 64/45 or 313/39 native roundhouse startup and shared contact/recovery runner; exact native entry and source-selected script branch')
+
+
+# Fujin LP throw phases now replace only the captured peer and never suspend
+# their C callback. Entry/selector and both owner returns are frame-owned.
+for _address in (0x42cb80, 0x42cbc0, 0x42ce80, 0x45b1f0):
+    CHARACTER_BINDINGS[5][_address] = replace(CHARACTER_BINDINGS[5][_address], mmove=True)
 
 
 def bindings_for(character):

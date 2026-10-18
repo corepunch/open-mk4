@@ -42,6 +42,7 @@ void mk4_script_draw_voice(Fighter *fighter);
 void mk4_script_scene_active(Fighter *fighter);
 void mk4_script_pair_to(Fighter *owner, int sample);
 void mk4_script_pair_back_to(Fighter *owner, int sample);
+void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move);

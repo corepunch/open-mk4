@@ -34,7 +34,11 @@ void fujin_script_lp_select(Fighter *fighter) {
 }
 
 void fujin_script_current_reaction(Fighter *fighter, int reaction) {
-  battle_react(fighter, reaction);
+  /* 480f80 -> 48f880/48fd00 installs this on the task's captured peer.
+   * Replacing the owner here cancels the very stream issuing the reaction. */
+  require(reaction == 102 || reaction == 109, "Unexpected Fujin LP victim release");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  battle_react(victim, reaction);
 }
 
 void fujin_script_opponent_reaction(Fighter *fighter, int reaction) {
@@ -52,21 +56,11 @@ void fujin_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void fujin_script_lp_extended_finish(Fighter *fighter) {
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = 109;
-  victim->flags |= FF_REACTING;
-  fighter_start_move(victim, S_KNOCKDOWN, &fujin_s_knockdown);
-  battle_react(victim, 109);
-  fighter_fiber_finish(fujin_ready);
+  fighter_finish_mmove(fighter, fujin_ready);
 }
 
 void fujin_script_lp_short_finish(Fighter *fighter) {
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = 102;
-  victim->flags |= FF_REACTING;
-  fighter_start_move(victim, S_KNOCKDOWN, &fujin_s_knockdown);
-  battle_react(victim, 102);
-  fighter_fiber_finish(fujin_ready);
+  fighter_finish_mmove(fighter, fujin_ready);
 }
 
 void fujin_script_finish(Fighter *fighter) {

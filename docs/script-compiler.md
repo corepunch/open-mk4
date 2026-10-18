@@ -360,3 +360,11 @@ continuations and their integration thunks remain checked through catalog
 roots rather than being mistaken for separately callable moves. This is a
 conservative source graph; behavioral tests still establish input gates,
 contact, cancellation and recovery.
+
+Fujin LP capture and both native-selected owner branches now use frame tables.
+`mk4_mmove_throw_start` acquires the pair and installs a held victim frame;
+release replaces only the captured peer, while the owner finishes its generated
+stream. Native 45b1f0's historical current-context name is misleading here:
+480f80 reaches 48f880/48fd00, which installs the selected reaction through the
+task's peer fields +38/+3c. Applying it to the executing owner cancels that
+owner mid-script. Neither LP branch allocates a coroutine.
