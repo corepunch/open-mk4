@@ -454,10 +454,16 @@ void mk4_script_context_sound(Fighter *fighter, int selector) {
 }
 
 void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, int gravity) {
-  /* 490910 chooses camera-side X motion. The portable simulation resolves
-   * the selected horizontal motion along the pair axis. */
-  require(left == -right || right == 0, "Unresearched camera-relative reaction motion");
-  fighter_set_speed(fighter, left);
+  /* 490910 combines heading motion with its camera-oriented perpendicular.
+   * The second operand is a lateral component, not a second signed speed. */
+  q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
+  q16 side_x = z, side_z = -x;
+  if (q16_float(side_x) * g_battle.view.x + q16_float(side_z) * g_battle.view.z < 0) {
+    side_x = -side_x;
+    side_z = -side_z;
+  }
+  fighter->body.vel[AXIS_X] = q16_mul(x, left) + q16_mul(side_x, right);
+  fighter->body.vel[AXIS_Z] = q16_mul(z, left) + q16_mul(side_z, right);
   fighter->body.vel[AXIS_Y] = up;
   fighter->body.gravity = gravity;
 }

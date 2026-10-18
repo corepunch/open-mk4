@@ -1,5 +1,6 @@
 #include "game.h"
 #include "mk4_characters.h"
+#include "script.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1458,6 +1459,22 @@ static void check_weapon_frame_startups(void) {
   }
 }
 
+static void check_reaction_motion_components(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int behind = 0; behind < 2; ++behind) {
+      fight(2.f);
+      g_battle.view = (Vec3){0, 0, behind ? 1 : -1};
+      Fighter *fighter = &g_battle.fighters[slot];
+      /* Native490910 with an X-aligned pair: heading -.04, lateral .05.
+       * Camera reversal changes lateral depth; changing slots reverses X. */
+      mk4_script_reaction_motion(fighter, -0xa3d, 0xccc, -0x147a, 0xde);
+      check(fighter->body.vel[AXIS_X] == (slot ? 0xa3d : -0xa3d) && fighter->body.vel[AXIS_Z] == (behind ? 0xccc : -0xccc),
+          "Reaction motion must combine independent heading and camera-side components for both players");
+      check(fighter->body.vel[AXIS_Y] == -0x147a && fighter->body.gravity == 0xde, "Horizontal reaction composition must preserve native vertical motion");
+    }
+  }
+}
+
 static void check_type69_weapon_commands(void) {
   const int roster[] = {7, 13, 17};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
@@ -2092,6 +2109,7 @@ int main(void) {
   check_cage_groin_gate();
   check_weapon_frame_startups();
   check_type69_weapon_commands();
+  check_reaction_motion_components();
   check_roster_throw_state_entries();
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
