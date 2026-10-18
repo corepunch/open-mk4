@@ -132,7 +132,8 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   fighter->sequence = NULL;
   fighter->current_mmove = NULL;
   fighter->mmove_frame = 0;
-  fighter->mmove_elapsed = 0;
+  fighter->mmove_nextframe = -1;
+  fighter->mmove_hold = false;
   fighter->continuation++;
   fighter->ticks = 0;
   fighter->connected = false;
@@ -246,6 +247,8 @@ void fighter_cancel_mmove(Fighter *fighter) {
   }
   fighter->current_mmove = NULL;
   fighter->mmove_cleanup = NULL;
+  fighter->mmove_hold = false;
+  fighter->mmove_nextframe = -1;
   if (cleanup != NULL) {
     cleanup(fighter);
   }
@@ -269,12 +272,14 @@ void fighter_finish_mmove(Fighter *fighter, FighterFn next) {
 void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase) {
   require(phase != NULL && phase->frame != NULL && phase->lastframe >= phase->firstframe, "Invalid mmove phase");
   for (int frame = phase->firstframe; frame <= phase->lastframe; ++frame) {
-    const mframe_t *entry = &phase->frame[frame - phase->firstframe];
-    require(entry->sample >= 0 && entry->duration > 0, "Invalid mframe");
+    if (phase->samples != NULL) {
+      require(phase->samples[frame - phase->firstframe] >= 0, "Invalid mframe sample map");
+    }
   }
   fighter->current_mmove = phase;
   fighter->mmove_frame = phase->firstframe;
-  fighter->mmove_elapsed = 0;
+  fighter->mmove_nextframe = -1;
+  fighter->mmove_hold = false;
   fighter->mmove_last_tick = g_battle.ticks;
   fighter->sequence = NULL;
   fighter->script = NULL;
@@ -292,73 +297,76 @@ static bool mmove_changed(const Fighter *fighter, const mmove_t *phase, uint64_t
   return fighter->continuation != continuation || fighter->current_mmove != phase || fighter->pending != NULL;
 }
 
+/* Frame jumps are consumed before the next callback, including a jump to zero.
+ * Callbacks can hold any row and release it on a later visit. */
+void fighter_mmove_nextframe(Fighter *fighter, int frame) {
+  const mmove_t *move = fighter->current_mmove;
+  require(move != NULL && frame >= move->firstframe && frame <= move->lastframe, "Invalid mmove frame jump");
+  fighter->mmove_nextframe = frame;
+}
+
+static int mmove_sample(const Fighter *fighter) {
+  const mmove_t *move = fighter->current_mmove;
+  return move->samples != NULL ? move->samples[fighter->mmove_frame - move->firstframe] : fighter->mmove_frame;
+}
+
+void fighter_stop_mmove(Fighter *fighter) {
+  int sample = fighter_sample(fighter);
+  fighter_cancel_mmove(fighter);
+  fighter->sample_override = sample;
+}
+
 void fighter_step_mmove(Fighter *fighter) {
-  const mmove_t *mmove = fighter->current_mmove;
-  require(mmove != NULL, "Fighter has no mmove");
+  const mmove_t *move = fighter->current_mmove;
+  require(move != NULL, "Fighter has no mmove");
   if (fighter->mmove_last_tick == g_battle.ticks) {
     return;
   }
   fighter->mmove_last_tick = g_battle.ticks;
-  const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
+  bool jumped = fighter->mmove_nextframe >= 0;
+  if (jumped) {
+    fighter->mmove_frame = fighter->mmove_nextframe;
+    fighter->mmove_nextframe = -1;
+    fighter->sample_override = -1;
+  }
+  const mframe_t *frame = &move->frame[fighter->mmove_frame - move->firstframe];
   uint64_t continuation = fighter->continuation;
-  if (fighter->mmove_elapsed == 0) {
-    if (frame->ai != NULL) {
-      frame->ai(fighter, frame->dist);
-    }
-    if (mmove_changed(fighter, mmove, continuation)) {
-      return;
-    }
-    if (frame->think != NULL) {
-      frame->think(fighter);
-    }
-    if (mmove_changed(fighter, mmove, continuation)) {
+  if (frame->aifunc != NULL) {
+    frame->aifunc(fighter, fighter->mmove_hold ? 0.0f : frame->dist);
+    if (mmove_changed(fighter, move, continuation)) {
       return;
     }
   }
-  if (frame->tick != NULL) {
-    frame->tick(fighter);
-    if (mmove_changed(fighter, mmove, continuation)) {
+  if (frame->thinkfunc != NULL) {
+    frame->thinkfunc(fighter);
+    if (mmove_changed(fighter, move, continuation)) {
       return;
     }
   }
-  if (fighter->mmove_elapsed < frame->duration) {
-    fighter->mmove_elapsed++;
-    if (fighter->mmove_elapsed == frame->duration && frame->leave != NULL) {
-      frame->leave(fighter);
-      if (mmove_changed(fighter, mmove, continuation)) {
+  if (fighter->mmove_hold || fighter->mmove_nextframe >= 0) {
+    return;
+  }
+  if (fighter->mmove_frame == move->lastframe) {
+    if (move->endfunc != NULL) {
+      move->endfunc(fighter);
+      if (mmove_changed(fighter, move, continuation)) {
+        return;
+      }
+      if (fighter->mmove_hold || fighter->mmove_nextframe >= 0) {
         return;
       }
     }
-  }
-  if (fighter->mmove_elapsed < frame->duration) {
-    return;
-  }
-  if (fighter->mmove_frame < mmove->lastframe) {
-    fighter->mmove_elapsed = 0;
+    fighter->mmove_frame = move->firstframe;
+  } else {
     fighter->mmove_frame++;
-    fighter->sample_override = -1;
-    return;
   }
-  if (mmove->until != NULL && !mmove->until(fighter)) {
-    return;
-  }
-  /* A terminal phase without a successor holds its final pose. */
-  if (fighter->sample_override < 0) {
-    fighter->sample_override = frame->sample;
-  }
-  fighter->current_mmove = NULL;
-  if (mmove->endfunc != NULL) {
-    mmove->endfunc(fighter);
-  }
-  if (fighter->continuation == continuation && fighter->current_mmove == NULL) {
-    fighter_cancel_mmove(fighter);
-  }
+  fighter->sample_override = -1;
 }
 
 /* The displayed sample of a recovered sequence, or the move tick otherwise. */
 int fighter_sample(const Fighter *fighter) {
   return fighter->sample_override >= 0    ? fighter->sample_override
-         : fighter->current_mmove != NULL ? fighter->current_mmove->frame[fighter->mmove_frame - fighter->current_mmove->firstframe].sample
+         : fighter->current_mmove != NULL ? mmove_sample(fighter)
          : fighter->sequence != NULL      ? (int)fighter_frame(fighter, 1 << 16)
                                           : fighter->ticks;
 }
@@ -370,10 +378,9 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
     return mini(fighter->sample_override, frame_count - 1);
   }
   if (fighter->current_mmove != NULL) {
-    const mmove_t *mmove = fighter->current_mmove;
-    const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
-    require(frame->sample < frame_count, "Mmove sample outside clip");
-    return frame->sample;
+    int sample = mmove_sample(fighter);
+    require(sample >= 0 && sample < frame_count, "Mmove sample outside clip");
+    return sample;
   }
   if (fighter->sequence != NULL) {
     const MoveSequence *sequence = fighter->sequence;

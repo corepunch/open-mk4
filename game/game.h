@@ -18,7 +18,6 @@
 #include <stdint.h>
 
 #define TICK_SECONDS (1.f / 60.f)
-#define MMOVE_FRAME_TICKS 2
 #define CLIP_ASSET_IDLE (-1)
 
 /* Retail world values are signed Q16: 1.0 is 0x10000, one mesh unit. */
@@ -148,31 +147,26 @@ typedef struct MoveDef {
   int action; /* retail action code at controller +0x74; 0 uses the state default */
 } MoveDef;
 
-/* Quake II-style animation frame. ai/dist retain the familiar movement hook;
- * sample is a decoded MK4 pose and duration is measured in simulation ticks.
- * The default two-tick duration plays all source samples at 30 frames/second. */
+/* One fixed simulation frame, following Quake II's monster frame contract.
+ * Both callbacks are optional. Held frames repeat thinkfunc and call aifunc
+ * with zero distance; timing belongs to frame progression, not frame data. */
 typedef void (*FighterAIFn)(Fighter *fighter, float distance);
 
 typedef struct mframe_s {
-  FighterAIFn ai;
+  FighterAIFn aifunc;
   float dist;
-  FighterFn think;
-  int sample;
-  int duration;
-  FighterFn tick;  /* runs once per simulation tick, including held frames */
-  FighterFn leave; /* once after duration, before entering the next row */
+  FighterFn thinkfunc;
 } mframe_t;
 
-#define MFRAME(sample_) {NULL, 0.0f, NULL, (sample_), MMOVE_FRAME_TICKS, NULL, NULL}
-
-/* A contiguous animation range. Callbacks can replace the active move, which
- * is how conditional branches select another mmove_t at a frame boundary. */
+/* A contiguous gameplay frame range. Without a sample map the frame number
+ * is the decoded pose. Maps accommodate reversed/repeated MK4 poses without
+ * putting timing or pose data in callback rows. An unchanged move loops. */
 struct mmove_s {
   int firstframe, lastframe;
   const mframe_t *frame;
   FighterFn endfunc;
-  bool (*until)(const Fighter *fighter); /* hold final row after its duration until true */
-  FighterFn cleanup;                     /* action lifetime; phase changes retain the initial cleanup */
+  const int *samples;
+  FighterFn cleanup; /* action lifetime; phase changes retain the initial cleanup */
 };
 
 /* Per-tick Q16 movement values. */
@@ -469,7 +463,8 @@ struct Fighter {
   MoveDef playback_move;        /* actor-owned clip binding for generated C fibers */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   const mmove_t *current_mmove;
-  int mmove_frame, mmove_elapsed;
+  int mmove_frame, mmove_nextframe; /* -1 means no pending frame jump */
+  bool mmove_hold;
   FighterFn mmove_cleanup;
   uint64_t mmove_last_tick;
   unsigned mmove_result; /* Generated phase branch result, local to this action. */
@@ -754,6 +749,8 @@ void fighter_step_sequence(Fighter *fighter);
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
 void fighter_start_mmove(Fighter *fighter, int state, const MoveDef *move, const mmove_t *mmove);
 void fighter_step_mmove(Fighter *fighter);
+void fighter_mmove_nextframe(Fighter *fighter, int frame);
+void fighter_stop_mmove(Fighter *fighter);
 void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase);
 void fighter_cancel_mmove(Fighter *fighter);
 void fighter_finish_mmove(Fighter *fighter, FighterFn next);

@@ -1157,8 +1157,21 @@ static bool sword_phase_wait(const Fighter *fighter) {
   return false;
 }
 
-static const mframe_t sword_slash_frames[] = {{.sample = 0, .duration = 1, .tick = sword_slash_tick}};
-static const mmove_t sword_slash_phase = {.frame = sword_slash_frames, .until = sword_phase_wait};
+static void sword_slash_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  sword_slash_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !sword_phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t sword_slash_frames[1] = {
+  [0] = {.thinkfunc = sword_slash_frames_frame_0},
+};
+// clang-format on
+static const mmove_t sword_slash_phase = {.firstframe = 0, .lastframe = 0, .frame = sword_slash_frames, .endfunc = fighter_stop_mmove};
 
 static void sword_attack(Fighter *fighter, bool hp, bool back) {
   if (fighter_airborne(fighter)) {
@@ -1191,8 +1204,10 @@ static void sword_back_lp(Fighter *fighter) {
   sword_attack(fighter, false, true);
 }
 
-static const mframe_t sword_spin_recover_frames[] = {{.sample = 0, .duration = 12}};
-static const mmove_t sword_spin_recover = {.frame = sword_spin_recover_frames, .endfunc = special_ready};
+static const int sword_spin_recover_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const mframe_t sword_spin_recover_frames[12] = {{0}};
+static const mmove_t sword_spin_recover = {
+    .firstframe = 0, .lastframe = 11, .frame = sword_spin_recover_frames, .endfunc = special_ready, .samples = sword_spin_recover_frames_samples};
 
 static void sword_spin_tick(Fighter *fighter) {
   int tick = ++fighter->script_timer;
@@ -1217,8 +1232,21 @@ static void sword_spin_tick(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = direction * 0xf5c;
 }
 
-static const mframe_t sword_spin_frames[] = {{.sample = 0, .duration = 1, .tick = sword_spin_tick}};
-static const mmove_t sword_spin_phase = {.frame = sword_spin_frames, .until = sword_phase_wait};
+static void sword_spin_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  sword_spin_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !sword_phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t sword_spin_frames[1] = {
+  [0] = {.thinkfunc = sword_spin_frames_frame_0},
+};
+// clang-format on
+static const mmove_t sword_spin_phase = {.firstframe = 0, .lastframe = 0, .frame = sword_spin_frames, .endfunc = fighter_stop_mmove};
 
 static void spin_script(Fighter *fighter) {
   fighter->script_timer = 0;

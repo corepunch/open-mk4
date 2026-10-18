@@ -42,7 +42,7 @@ static void frame_ai(Fighter *fighter, float distance) {
 }
 
 static void frame_think(Fighter *fighter) {
-  check(fighter_sample(fighter) == 3 || fighter_sample(fighter) == 4, "mframe think ran outside its displayed sample");
+  check(fighter_sample(fighter) == 3 || fighter_sample(fighter) == 4 || fighter_sample(fighter) == 5, "mframe think ran outside its displayed sample");
   frame_think_calls++;
 }
 
@@ -94,48 +94,46 @@ static void setup(void) {
 }
 
 static const mframe_t test_mframes[] = {
-    {frame_ai, 1.5f, frame_think, 3, 2, NULL, NULL},
-    {NULL, 0.0f, frame_think, 4, 1, NULL, NULL},
+    {frame_ai, 1.5f, frame_think},
+    {NULL, 0.0f, NULL},
+    {NULL, 0.0f, frame_think},
 };
-static const mmove_t test_mmove = {.firstframe = 0, .lastframe = 1, .frame = test_mframes, .endfunc = mmove_end};
+static const mmove_t test_mmove = {.firstframe = 3, .lastframe = 5, .frame = test_mframes, .endfunc = mmove_end};
 
 static void mmove_frames_and_callbacks(void) {
   setup();
   Fighter *fighter = &g_battle.fighters[0];
   fighter_start_mmove(fighter, S_PUNCH, &test_move, &test_mmove);
-  check(fighter_sample(fighter) == 3, "mmove did not select its first frame sample");
+  check(fighter_sample(fighter) == 3, "mmove did not select its first frame");
   advance(1);
-  check(fighter_sample(fighter) == 3 && fighter_frame(fighter, 8) == 3 && frame_ai_calls == 1 && frame_think_calls == 1,
-      "30 Hz gameplay frame or callback timing changed");
+  check(fighter_sample(fighter) == 4 && frame_ai_calls == 1 && frame_think_calls == 1, "fixed frame movement/action callback timing changed");
   advance(1);
-  check(fighter_sample(fighter) == 4 && frame_ai_calls == 1 && frame_think_calls == 1, "mmove did not advance after the frame duration");
+  check(fighter_sample(fighter) == 5 && frame_think_calls == 1, "frame with optional callbacks did not advance");
   advance(1);
   check(mmove_finished == 1 && fighter->state == S_IDLE && fighter->current_mmove == NULL && frame_think_calls == 2,
       "mmove end callback did not run exactly once after the final frame");
 }
 
-static bool phase_done(const Fighter *fighter) {
-  return fighter->script_timer >= 4;
+static void held_think(Fighter *fighter) {
+  frame_think(fighter);
+  fighter->mmove_hold = ++fighter->script_timer < 4;
 }
 
-static void held_tick(Fighter *fighter) {
-  fighter->script_timer++;
-}
+static const mframe_t held_frames[] = {{.thinkfunc = held_think}};
+static const mmove_t held_phase = {.firstframe = 4, .lastframe = 4, .frame = held_frames, .endfunc = finish};
 
-static const mframe_t held_frames[] = {{.sample = 4, .duration = 2, .think = frame_think, .tick = held_tick}};
-static const mmove_t held_phase = {.firstframe = 0, .lastframe = 0, .frame = held_frames, .endfunc = finish, .until = phase_done};
-
-static void branch_phase(Fighter *fighter) {
+static void branch_phase(Fighter *fighter, float distance) {
+  (void)distance;
   fighter_mmove_phase(fighter, &held_phase);
 }
 
-static void stale_tick(Fighter *fighter) {
+static void stale_think(Fighter *fighter) {
   (void)fighter;
-  check(false, "replaced frame ran its tick callback");
+  check(false, "replaced frame ran its action callback");
 }
 
-static const mframe_t branch_frames[] = {{.sample = 3, .duration = 1, .think = branch_phase, .tick = stale_tick}};
-static const mmove_t branch_move = {.firstframe = 0, .lastframe = 0, .frame = branch_frames, .cleanup = cleanup};
+static const mframe_t branch_frames[] = {{.aifunc = branch_phase, .thinkfunc = stale_think}};
+static const mmove_t branch_move = {.firstframe = 3, .lastframe = 3, .frame = branch_frames, .cleanup = cleanup};
 
 static void mmove_phases_and_cleanup(void) {
   setup();
@@ -151,8 +149,8 @@ static void mmove_phases_and_cleanup(void) {
       "phase branch reset combat state");
   advance(3);
   fighter_step_mmove(fighter);
-  check(fighter->current_mmove == &held_phase && fighter->script_timer == 3 && frame_think_calls == 1,
-      "held frame repeated its entry event, skipped ticks or advanced twice in a tick");
+  check(fighter->current_mmove == &held_phase && fighter->script_timer == 3 && frame_think_calls == 3,
+      "held frame skipped its action callback or advanced twice in a tick");
   advance(1);
   check(fighter->state == S_IDLE && cleaned[0] == 1 && completed[0] == 1, "held phase did not finish and clean exactly once");
   for (int kind = 0; kind < 5; ++kind) {
@@ -173,6 +171,54 @@ static void mmove_phases_and_cleanup(void) {
     advance(8);
     check(cleaned[0] == 1 && completed[0] == 0 && fighter->current_mmove == NULL, "cancelled mmove resumed or missed cleanup");
   }
+}
+
+static float held_distances[4];
+static int held_visits, jump_visits;
+
+static void held_ai(Fighter *fighter, float distance) {
+  (void)fighter;
+  check(held_visits < 4, "held frame did not jump away");
+  held_distances[held_visits++] = distance;
+}
+
+static void hold_then_jump(Fighter *fighter) {
+  fighter->mmove_hold = held_visits < 3;
+  if (!fighter->mmove_hold) {
+    fighter_mmove_nextframe(fighter, 2);
+  }
+}
+
+static void jump_to_zero(Fighter *fighter) {
+  check(fighter_sample(fighter) == 2, "jump did not select target before callback");
+  jump_visits++;
+  fighter_mmove_nextframe(fighter, 0);
+}
+
+static const mframe_t jump_frames[] = {
+    {.aifunc = held_ai, .dist = 1.5f, .thinkfunc = hold_then_jump},
+    {.thinkfunc = stale_think},
+    {.thinkfunc = jump_to_zero},
+};
+static const mmove_t jump_move = {.firstframe = 0, .lastframe = 2, .frame = jump_frames};
+static const mframe_t loop_frames[2] = {{0}};
+static const mmove_t loop_move = {.firstframe = 0, .lastframe = 1, .frame = loop_frames, .cleanup = cleanup};
+
+static void mmove_hold_jump_and_loop(void) {
+  setup();
+  Fighter *fighter = &g_battle.fighters[0];
+  held_visits = jump_visits = 0;
+  fighter_start_mmove(fighter, S_PUNCH, &test_move, &jump_move);
+  advance(4);
+  check(held_visits == 3 && jump_visits == 1 && held_distances[0] == 1.5f && held_distances[1] == 0 && held_distances[2] == 0,
+      "held frames must repeat callbacks with zero movement and honor frame jumps");
+  advance(1);
+  check(held_visits == 4 && held_distances[3] == 1.5f, "jump to frame zero was lost or treated as a held visit");
+  fighter_start_mmove(fighter, S_PUNCH, &test_move, &loop_move);
+  advance(5);
+  check(fighter->current_mmove == &loop_move && fighter_sample(fighter) == 1 && cleaned[0] == 0, "unchanged move must loop without cleanup");
+  fighter_stop_mmove(fighter);
+  check(fighter->current_mmove == NULL && fighter_sample(fighter) == 1 && cleaned[0] == 1, "explicit stop must retain final pose and clean once");
 }
 
 static void advance(int ticks) {
@@ -309,11 +355,12 @@ static void phase_and_paired_playback(void) {
 int main(void) {
   mmove_frames_and_callbacks();
   mmove_phases_and_cleanup();
+  mmove_hold_jump_and_loop();
   deterministic_nested_waits();
   interruptions_and_reset();
   phase_and_paired_playback();
   fighter_cancel_all_fibers();
   puts(
-      "PASS: deterministic P1/P2 fiber scheduling; nested waits and locals; exact deadlines; completion; interruption/replacement/round/rematch/reset cleanup");
+      "PASS: fixed frame callbacks, holds, jumps and loops; deterministic P1/P2 fiber scheduling; nested waits and locals; exact deadlines; completion; interruption/replacement/round/rematch/reset cleanup");
   return 0;
 }

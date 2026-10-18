@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from retail_moves import RetailImage, clip_inventory
+from retail_codegen import format_c
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,15 +49,11 @@ def output_for(character, clips):
         move = names[clip][0] if names[clip] else "clip_%03d" % clip
         stem = identifier("%s_%s" % (character, move))
         lines.extend([
-            "// clang-format off: Keep table entries on one row, including long rows.",
-            "const mframe_t %s_frames[%d] = {" % (stem, count),
-        ])
-        for frame in range(count):
-            lines.append("  MFRAME(%d), /* %s_%03d */" % (frame, stem, frame))
-        lines.extend([
-            "};",
-            "// clang-format on",
-            "const mmove_t %s_mmove = {.firstframe = 0, .lastframe = %d, .frame = %s_frames};" % (stem, count - 1, stem),
+            "static const int %s_samples[%d] = {%s};" %
+            (stem, count * 2, ', '.join(str(frame) for frame in range(count) for _ in range(2))),
+            "const mframe_t %s_frames[%d] = {{0}};" % (stem, count * 2),
+            "const mmove_t %s_mmove = {.firstframe = 0, .lastframe = %d, .frame = %s_frames, .samples = %s_samples};" %
+            (stem, count * 2 - 1, stem, stem),
             "",
         ])
     return "\n".join(lines)
@@ -80,7 +77,7 @@ def main():
             errors.append("unknown character: " + character)
             continue
         target = ROOT / "game" / "generated" / ("frames_" + character + ".inc")
-        output = output_for(character, clips)
+        output = format_c(output_for(character, clips))
         if args.check:
             if not target.is_file() or target.read_text() != output:
                 errors.append("missing or stale generated frame table: " + str(target.relative_to(ROOT)))

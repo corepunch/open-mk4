@@ -91,7 +91,7 @@ class CompilerTests(unittest.TestCase):
         entries = [int(root, 16) for root in profile['generated_scripts']]
         source = generate(self.image, entries, 4, profile['return_to'], contexts=profile['entry_contexts'],
                           mmove_entries=profile['mmove_scripts'], mmove_only=True)
-        self.assertIn('mk4_mmove_parked', source)
+        self.assertIn('mk4_mmove_hold', source)
         self.assertIn('retail_script_004e03d8_branch_', source)
         for forbidden in ('fighter_wait_ticks(', 'fighter_start_fiber(', 'fighter_fiber_finish(', 'mk4_script_advance(',
                           'mk4_script_pair_advance(', 'mk4_script_finish_clip(', 'goto L_'):
@@ -102,7 +102,9 @@ class CompilerTests(unittest.TestCase):
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x34000001, 0x33000000, (self.entry + 8) // 4])
         source = generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
-        self.assertIn('.duration = 1', source)
+        self.assertNotIn('.duration', source)
+        self.assertNotIn('.leave', source)
+        self.assertIn('.thinkfunc', source)
         self.assertIn('_branch_1', source)
         self.assertNotIn('fighter_wait_ticks', source)
 

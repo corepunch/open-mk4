@@ -570,11 +570,10 @@ void mk4_script_scene_task(Fighter *fighter, int task_type) {
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 2, scene_task_step);
 }
 
-bool mk4_mmove_grounded(const Fighter *fighter) {
-  return !fighter_airborne(fighter);
+void mk4_mmove_wait_grounded(Fighter *fighter) {
+  fighter->mmove_hold = fighter_airborne(fighter);
 }
 
-bool mk4_mmove_parked(const Fighter *fighter) {
-  (void)fighter;
-  return false;
+void mk4_mmove_hold(Fighter *fighter) {
+  fighter->mmove_hold = true;
 }

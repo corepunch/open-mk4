@@ -413,8 +413,21 @@ static bool air_frame_captured(const Fighter *victim) {
   return false;
 }
 
-static const mframe_t air_frame_victim_frames[] = {{.sample = 0, .duration = 1, .tick = air_frame_victim_tick}};
-static const mmove_t air_frame_victim_phase = {.frame = air_frame_victim_frames, .until = air_frame_captured};
+static void air_frame_victim_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  air_frame_victim_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !air_frame_captured(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t air_frame_victim_frames[1] = {
+  [0] = {.thinkfunc = air_frame_victim_frames_frame_0},
+};
+// clang-format on
+static const mmove_t air_frame_victim_phase = {.firstframe = 0, .lastframe = 0, .frame = air_frame_victim_frames, .endfunc = fighter_stop_mmove};
 
 static void air_frame_cleanup(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
@@ -477,51 +490,15 @@ static void sidestep_done(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t sidestep_forward_frames[] = {
-  {.sample = 0, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 8, .duration = 1},
-  {.sample = 9, .duration = 1},
-  {.sample = 10, .duration = 1},
-  {.sample = 11, .duration = 1},
-  {.sample = 12, .duration = 1},
-  {.sample = 13, .duration = 1},
-  {.sample = 14, .duration = 1},
-  {.sample = 15, .duration = 1},
-  {.sample = 16, .duration = 1},
-  {.sample = 17, .duration = 1},
-};
+static const mframe_t sidestep_forward_frames[18] = {{0}};
 // clang-format on
-static const mmove_t sidestep_forward = {.frame = sidestep_forward_frames, .lastframe = 17, .endfunc = sidestep_done};
+static const mmove_t sidestep_forward = {.firstframe = 0, .lastframe = 17, .frame = sidestep_forward_frames, .endfunc = sidestep_done};
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t sidestep_backward_frames[] = {
-  {.sample = 17, .duration = 1},
-  {.sample = 16, .duration = 1},
-  {.sample = 15, .duration = 1},
-  {.sample = 14, .duration = 1},
-  {.sample = 13, .duration = 1},
-  {.sample = 12, .duration = 1},
-  {.sample = 11, .duration = 1},
-  {.sample = 10, .duration = 1},
-  {.sample = 9, .duration = 1},
-  {.sample = 8, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 0, .duration = 1},
-};
+static const int sidestep_backward_frames_samples[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+static const mframe_t sidestep_backward_frames[18] = {{0}};
 // clang-format on
-static const mmove_t sidestep_backward = {.frame = sidestep_backward_frames, .lastframe = 17, .endfunc = sidestep_done};
+static const mmove_t sidestep_backward = {
+    .firstframe = 0, .lastframe = 17, .frame = sidestep_backward_frames, .endfunc = sidestep_done, .samples = sidestep_backward_frames_samples};
 
 void mk4_sidestep(Fighter *fighter) {
   bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;

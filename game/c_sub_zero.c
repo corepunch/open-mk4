@@ -108,53 +108,18 @@ static const MoveDef *const moves[S_COUNT] = {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_recover(Fighter *fighter);
-static const mframe_t uppercut_loop_frames[] = {
-    {.sample = 8, .duration = 1},
-    {.sample = 7, .duration = 1},
-    {.sample = 6, .duration = 1},
-    {.sample = 7, .duration = 1},
-    {.sample = 8, .duration = 1},
-};
-static const mmove_t uppercut_loop = {.frame = uppercut_loop_frames, .lastframe = 4, .endfunc = uppercut_recover};
-static const mframe_t uppercut_late_frames[] = {
-    {.sample = 9, .duration = 1},
-    {.sample = 9, .duration = 1},
-    {.sample = 8, .duration = 1},
-    {.sample = 7, .duration = 1},
-    {.sample = 6, .duration = 1},
-    {.sample = 7, .duration = 1},
-    {.sample = 8, .duration = 1},
-};
-static const mmove_t uppercut_late = {.frame = uppercut_late_frames, .lastframe = 6, .endfunc = uppercut_recover};
-static const mframe_t uppercut_miss_end_frames[] = {
-    {.sample = 8, .duration = 1},
-    {.sample = 9, .duration = 1},
-    {.sample = 10, .duration = 1},
-    {.sample = 11, .duration = 1},
-    {.sample = 12, .duration = 1},
-    {.sample = 13, .duration = 1},
-    {.sample = 14, .duration = 1},
-    {.sample = 15, .duration = 1},
-    {.sample = 16, .duration = 1},
-    {.sample = 17, .duration = 1},
-    {.sample = 18, .duration = 1},
-    {.sample = 19, .duration = 1},
-};
-static const mmove_t uppercut_miss_end = {.frame = uppercut_miss_end_frames, .lastframe = 11, .endfunc = sub_zero_ready};
-static const mframe_t uppercut_hit_end_frames[] = {
-    {.sample = 9, .duration = 1},
-    {.sample = 10, .duration = 1},
-    {.sample = 11, .duration = 1},
-    {.sample = 12, .duration = 1},
-    {.sample = 13, .duration = 1},
-    {.sample = 14, .duration = 1},
-    {.sample = 15, .duration = 1},
-    {.sample = 16, .duration = 1},
-    {.sample = 17, .duration = 1},
-    {.sample = 18, .duration = 1},
-    {.sample = 19, .duration = 1},
-};
-static const mmove_t uppercut_hit_end = {.frame = uppercut_hit_end_frames, .lastframe = 10, .endfunc = sub_zero_ready};
+static const int uppercut_loop_frames_samples[] = {8, 7, 6, 7, 8};
+static const mframe_t uppercut_loop_frames[5] = {{0}};
+static const mmove_t uppercut_loop = {
+    .firstframe = 0, .lastframe = 4, .frame = uppercut_loop_frames, .endfunc = uppercut_recover, .samples = uppercut_loop_frames_samples};
+static const int uppercut_late_frames_samples[] = {9, 9, 8, 7, 6, 7, 8};
+static const mframe_t uppercut_late_frames[7] = {{0}};
+static const mmove_t uppercut_late = {
+    .firstframe = 0, .lastframe = 6, .frame = uppercut_late_frames, .endfunc = uppercut_recover, .samples = uppercut_late_frames_samples};
+static const mframe_t uppercut_miss_end_frames[12] = {{0}};
+static const mmove_t uppercut_miss_end = {.firstframe = 8, .lastframe = 19, .frame = uppercut_miss_end_frames, .endfunc = sub_zero_ready};
+static const mframe_t uppercut_hit_end_frames[11] = {{0}};
+static const mmove_t uppercut_hit_end = {.firstframe = 9, .lastframe = 19, .frame = uppercut_hit_end_frames, .endfunc = sub_zero_ready};
 
 static void uppercut_recover(Fighter *fighter) {
   if (fighter->script_timer-- > 0) {
@@ -176,13 +141,16 @@ static void uppercut_contact(Fighter *fighter) {
   sub_zero_uppercut_contact(fighter);
 }
 
-static const mframe_t uppercut_contact_frames[] = {
-    {.sample = 5, .duration = 2, .leave = uppercut_contact},
-    {.sample = 6, .duration = 1, .leave = uppercut_contact},
-    {.sample = 7, .duration = 1, .leave = uppercut_contact},
-    {.sample = 8, .duration = 1},
+static const int uppercut_contact_frames_samples[] = {5, 5, 6, 7, 8};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t uppercut_contact_frames[5] = {
+  [1] = {.thinkfunc = uppercut_contact},
+  [2] = {.thinkfunc = uppercut_contact},
+  [3] = {.thinkfunc = uppercut_contact},
 };
-static const mmove_t uppercut_contact_phase = {.frame = uppercut_contact_frames, .lastframe = 3, .endfunc = uppercut_branch};
+// clang-format on
+static const mmove_t uppercut_contact_phase = {
+    .firstframe = 0, .lastframe = 4, .frame = uppercut_contact_frames, .endfunc = uppercut_branch, .samples = uppercut_contact_frames_samples};
 
 static void uppercut_script(Fighter *fighter) {
   hold_phase(fighter, &uppercut_contact_phase);
@@ -346,8 +314,21 @@ static void ground_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t ground_frames[] = {{.sample = 0, .duration = 1, .tick = ground_tick}};
-static const mmove_t ground_phase = {.frame = ground_frames, .until = phase_wait};
+static void ground_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  ground_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t ground_frames[1] = {
+  [0] = {.thinkfunc = ground_frames_frame_0},
+};
+// clang-format on
+static const mmove_t ground_phase = {.firstframe = 0, .lastframe = 0, .frame = ground_frames, .endfunc = fighter_stop_mmove};
 
 static void ground_native_tail(Fighter *fighter) {
   hold_phase(fighter, &ground_phase);
@@ -400,8 +381,21 @@ static void hp_tick(Fighter *fighter) {
   hp_script(fighter);
 }
 
-static const mframe_t hp_frames[] = {{.sample = 0, .duration = 1, .tick = hp_tick}};
-static const mmove_t hp_phase = {.frame = hp_frames, .until = phase_wait};
+static void hp_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  hp_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t hp_frames[1] = {
+  [0] = {.thinkfunc = hp_frames_frame_0},
+};
+// clang-format on
+static const mmove_t hp_phase = {.firstframe = 0, .lastframe = 0, .frame = hp_frames, .endfunc = fighter_stop_mmove};
 
 static void hp_script(Fighter *fighter) {
   hold_phase(fighter, &hp_phase);
@@ -542,8 +536,16 @@ static bool air_grounded(const Fighter *fighter) {
   return !fighter_airborne(fighter);
 }
 
-static const mframe_t air_fall_frames[] = {{.sample = 0, .duration = 1}};
-static const mmove_t air_fall_phase = {.frame = air_fall_frames, .until = air_grounded, .endfunc = air_land};
+static void air_fall_frames_frame_0(Fighter *fighter) {
+  fighter->mmove_hold = !air_grounded(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t air_fall_frames[1] = {
+  [0] = {.thinkfunc = air_fall_frames_frame_0},
+};
+// clang-format on
+static const mmove_t air_fall_phase = {.firstframe = 0, .lastframe = 0, .frame = air_fall_frames, .endfunc = air_land};
 
 static void air_fall(Fighter *fighter) {
   fighter->script_phase = AIR_FALL;
@@ -560,10 +562,14 @@ static void air_unfreeze(Fighter *fighter) {
   air_fall(fighter);
 }
 
-static const mframe_t air_freeze_frames[] = {{.sample = 0, .duration = 12}};
-static const mframe_t air_diagonal_freeze_frames[] = {{.sample = 0, .duration = 8}};
-static const mmove_t air_freeze_phase = {.frame = air_freeze_frames, .endfunc = air_unfreeze};
-static const mmove_t air_diagonal_freeze_phase = {.frame = air_diagonal_freeze_frames, .endfunc = air_unfreeze};
+static const int air_freeze_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const mframe_t air_freeze_frames[12] = {{0}};
+static const int air_diagonal_freeze_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0};
+static const mframe_t air_diagonal_freeze_frames[8] = {{0}};
+static const mmove_t air_freeze_phase = {
+    .firstframe = 0, .lastframe = 11, .frame = air_freeze_frames, .endfunc = air_unfreeze, .samples = air_freeze_frames_samples};
+static const mmove_t air_diagonal_freeze_phase = {
+    .firstframe = 0, .lastframe = 7, .frame = air_diagonal_freeze_frames, .endfunc = air_unfreeze, .samples = air_diagonal_freeze_frames_samples};
 
 static void air_cleanup(Fighter *fighter) {
   if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
@@ -612,8 +618,21 @@ static void air_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t air_frames[] = {{.sample = 0, .duration = 1, .tick = air_tick}};
-static const mmove_t air_phase = {.frame = air_frames, .until = phase_wait};
+static void air_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  air_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t air_frames[1] = {
+  [0] = {.thinkfunc = air_frames_frame_0},
+};
+// clang-format on
+static const mmove_t air_phase = {.firstframe = 0, .lastframe = 0, .frame = air_frames, .endfunc = fighter_stop_mmove};
 
 static void air_native_tail(Fighter *fighter, int index, int elapsed) {
   require(air_index(fighter) == index, "Air native phase differs from selected clip");
@@ -827,25 +846,9 @@ static void lp_getup_done(Fighter *victim) {
 
 /* Native 488b80: reversed getup clip 328, final sample held for one tick. */
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t lp_getup_frames[] = {
-  {.sample = 0, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 8, .duration = 1},
-  {.sample = 9, .duration = 1},
-  {.sample = 10, .duration = 1},
-  {.sample = 11, .duration = 1},
-  {.sample = 12, .duration = 1},
-  {.sample = 13, .duration = 1},
-  {.sample = 14, .duration = 1},
-};
+static const mframe_t lp_getup_frames[15] = {{0}};
 // clang-format on
-static const mmove_t lp_getup_phase = {.firstframe = 0, .lastframe = COUNT(lp_getup_frames) - 1, .frame = lp_getup_frames, .endfunc = lp_getup_done};
+static const mmove_t lp_getup_phase = {.firstframe = 0, .lastframe = 14, .frame = lp_getup_frames, .endfunc = lp_getup_done};
 
 static void script_lp_getup(Fighter *victim) {
   fighter_mmove_phase(victim, &lp_getup_phase);
@@ -858,15 +861,9 @@ static void lk_thrown_release(Fighter *victim) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t lk_thrown_release_phase_frames[] = {
-  {.sample = 42, .duration = 1},
-  {.sample = 43, .duration = 1},
-  {.sample = 44, .duration = 1},
-  {.sample = 45, .duration = 1},
-  {.sample = 46, .duration = 1},
-};
+static const mframe_t lk_thrown_release_phase_frames[5] = {{0}};
 // clang-format on
-static const mmove_t lk_thrown_release_phase = {.frame = lk_thrown_release_phase_frames, .lastframe = 4, .endfunc = lk_thrown_release};
+static const mmove_t lk_thrown_release_phase = {.firstframe = 42, .lastframe = 46, .frame = lk_thrown_release_phase_frames, .endfunc = lk_thrown_release};
 
 static void lk_thrown_script(Fighter *victim) {
   victim->script_phase = 1;
@@ -920,8 +917,11 @@ static void script_lk_damage(Fighter *fighter) {
   retail_script_004de4e0(fighter);
 }
 
-static const mframe_t lk_owner_idle_frames[] = {{.sample = 0, .duration = 60}};
-static const mmove_t lk_owner_idle_phase = {.frame = lk_owner_idle_frames, .endfunc = sub_zero_ready};
+static const int lk_owner_idle_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const mframe_t lk_owner_idle_frames[60] = {{0}};
+static const mmove_t lk_owner_idle_phase = {
+    .firstframe = 0, .lastframe = 59, .frame = lk_owner_idle_frames, .endfunc = sub_zero_ready, .samples = lk_owner_idle_frames_samples};
 
 static void script_lk_owner_return(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
@@ -935,51 +935,9 @@ static void script_lp_owner_return(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t lk_rise_frames[] = {
-  {.sample = 0, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 8, .duration = 1},
-  {.sample = 9, .duration = 1},
-  {.sample = 10, .duration = 1},
-  {.sample = 11, .duration = 1},
-  {.sample = 12, .duration = 1},
-  {.sample = 13, .duration = 1},
-  {.sample = 14, .duration = 1},
-  {.sample = 15, .duration = 1},
-  {.sample = 16, .duration = 1},
-  {.sample = 17, .duration = 1},
-  {.sample = 18, .duration = 1},
-  {.sample = 19, .duration = 1},
-  {.sample = 20, .duration = 1},
-  {.sample = 21, .duration = 1},
-  {.sample = 22, .duration = 1},
-  {.sample = 23, .duration = 1},
-  {.sample = 24, .duration = 1},
-  {.sample = 25, .duration = 1},
-  {.sample = 26, .duration = 1},
-  {.sample = 27, .duration = 1},
-  {.sample = 28, .duration = 1},
-  {.sample = 29, .duration = 1},
-  {.sample = 30, .duration = 1},
-  {.sample = 31, .duration = 1},
-  {.sample = 32, .duration = 1},
-  {.sample = 33, .duration = 1},
-  {.sample = 34, .duration = 1},
-  {.sample = 35, .duration = 1},
-  {.sample = 36, .duration = 1},
-  {.sample = 37, .duration = 1},
-  {.sample = 38, .duration = 1},
-  {.sample = 39, .duration = 1},
-  {.sample = 40, .duration = 1},
-};
+static const mframe_t lk_rise_frames[41] = {{0}};
 // clang-format on
-static const mmove_t lk_rise = {.frame = lk_rise_frames, .lastframe = 40, .endfunc = thrown_finish};
+static const mmove_t lk_rise = {.firstframe = 0, .lastframe = 40, .frame = lk_rise_frames, .endfunc = thrown_finish};
 
 static void script_lk_victim_rise(Fighter *victim) {
   fighter_start_mmove(victim, S_KNOCKDOWN, &s_lk_thrown_rise, &lk_rise);
@@ -997,8 +955,16 @@ static void lp_capture_done(Fighter *victim) {
 }
 
 /* Owner submits paired samples; the victim only watches capture lifetime. */
-static const mframe_t lp_capture_frames[] = {{.sample = 0, .duration = 1}};
-static const mmove_t lp_capture_phase = {.firstframe = 0, .lastframe = 0, .frame = lp_capture_frames, .until = lp_pair_released, .endfunc = lp_capture_done};
+static void lp_capture_frames_frame_0(Fighter *fighter) {
+  fighter->mmove_hold = !lp_pair_released(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t lp_capture_frames[1] = {
+  [0] = {.thinkfunc = lp_capture_frames_frame_0},
+};
+// clang-format on
+static const mmove_t lp_capture_phase = {.firstframe = 0, .lastframe = 0, .frame = lp_capture_frames, .endfunc = lp_capture_done};
 
 static void ground_throw(Fighter *fighter, bool lk) {
   if (!can_ground_throw(fighter, lk)) {
@@ -1137,8 +1103,16 @@ static void clone_done(Fighter *fighter) {
   fighter_finish_mmove(fighter, air_land);
 }
 
-static const mframe_t clone_land_frames[] = {{.sample = 0, .duration = 1}};
-static const mmove_t clone_land_phase = {.frame = clone_land_frames, .until = air_grounded, .endfunc = clone_done};
+static void clone_land_frames_frame_0(Fighter *fighter) {
+  fighter->mmove_hold = !air_grounded(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t clone_land_frames[1] = {
+  [0] = {.thinkfunc = clone_land_frames_frame_0},
+};
+// clang-format on
+static const mmove_t clone_land_phase = {.firstframe = 0, .lastframe = 0, .frame = clone_land_frames, .endfunc = clone_done};
 
 static void clone_land(Fighter *fighter) {
   fighter->sample_override = 0;
@@ -1150,18 +1124,11 @@ static void clone_land(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t clone_reverse_frames[] = {
-  {.sample = 8, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 1, .duration = 1},
-};
+static const int clone_reverse_frames_samples[] = {8, 7, 6, 5, 4, 3, 2, 1};
+static const mframe_t clone_reverse_frames[8] = {{0}};
 // clang-format on
-static const mmove_t clone_reverse = {.frame = clone_reverse_frames, .lastframe = 7, .endfunc = clone_land};
+static const mmove_t clone_reverse = {
+    .firstframe = 0, .lastframe = 7, .frame = clone_reverse_frames, .endfunc = clone_land, .samples = clone_reverse_frames_samples};
 
 static void clone_turn(Fighter *fighter) {
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
@@ -1174,23 +1141,25 @@ static bool clone_falling(const Fighter *fighter) {
   return fighter->body.vel[AXIS_Y] >= 0;
 }
 
-static const mframe_t clone_apex_frames[] = {{.sample = 8, .duration = 1}};
-static const mmove_t clone_apex = {.frame = clone_apex_frames, .until = clone_falling, .endfunc = clone_turn};
+static void clone_apex_frames_frame_0(Fighter *fighter) {
+  fighter->mmove_hold = !clone_falling(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t clone_apex_frames[1] = {
+  [0] = {.thinkfunc = clone_apex_frames_frame_0},
+};
+// clang-format on
+static const mmove_t clone_apex = {.firstframe = 8, .lastframe = 8, .frame = clone_apex_frames, .endfunc = clone_turn};
 
 static void clone_apex_wait(Fighter *fighter) {
   fighter_mmove_phase(fighter, &clone_apex);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t clone_extend_frames[] = {
-  {.sample = 3, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 7, .duration = 1},
-};
+static const mframe_t clone_extend_frames[5] = {{0}};
 // clang-format on
-static const mmove_t clone_extend = {.frame = clone_extend_frames, .lastframe = 4, .endfunc = clone_apex_wait};
+static const mmove_t clone_extend = {.firstframe = 3, .lastframe = 7, .frame = clone_extend_frames, .endfunc = clone_apex_wait};
 
 static void clone_spin(Fighter *fighter) {
   fighter->body.root_y += 0x3333;
@@ -1200,13 +1169,9 @@ static void clone_spin(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t clone_start_frames[] = {
-  {.sample = 0, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 2, .duration = 1},
-};
+static const mframe_t clone_start_frames[3] = {{0}};
 // clang-format on
-static const mmove_t clone_start = {.frame = clone_start_frames, .lastframe = 2, .endfunc = clone_spin};
+static const mmove_t clone_start = {.firstframe = 0, .lastframe = 2, .frame = clone_start_frames, .endfunc = clone_spin};
 
 static bool can_clone(const Fighter *fighter) {
   return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->clone_ready && fighter_opponent(fighter)->action != ACTION_RETAIL_1003 &&
@@ -1264,21 +1229,39 @@ static void slide_contact_tick(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t slide_contact_frames[] = {
-  {.sample = 0, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 1, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 2, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 3, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 4, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 5, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 6, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 7, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 8, .duration = 1, .tick = slide_contact_tick},
-  {.sample = 9, .duration = 16, .tick = slide_contact_tick},
+static const int slide_contact_frames_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t slide_contact_frames[25] = {
+  [0] = {.thinkfunc = slide_contact_tick},
+  [1] = {.thinkfunc = slide_contact_tick},
+  [2] = {.thinkfunc = slide_contact_tick},
+  [3] = {.thinkfunc = slide_contact_tick},
+  [4] = {.thinkfunc = slide_contact_tick},
+  [5] = {.thinkfunc = slide_contact_tick},
+  [6] = {.thinkfunc = slide_contact_tick},
+  [7] = {.thinkfunc = slide_contact_tick},
+  [8] = {.thinkfunc = slide_contact_tick},
+  [9] = {.thinkfunc = slide_contact_tick},
+  [10] = {.thinkfunc = slide_contact_tick},
+  [11] = {.thinkfunc = slide_contact_tick},
+  [12] = {.thinkfunc = slide_contact_tick},
+  [13] = {.thinkfunc = slide_contact_tick},
+  [14] = {.thinkfunc = slide_contact_tick},
+  [15] = {.thinkfunc = slide_contact_tick},
+  [16] = {.thinkfunc = slide_contact_tick},
+  [17] = {.thinkfunc = slide_contact_tick},
+  [18] = {.thinkfunc = slide_contact_tick},
+  [19] = {.thinkfunc = slide_contact_tick},
+  [20] = {.thinkfunc = slide_contact_tick},
+  [21] = {.thinkfunc = slide_contact_tick},
+  [22] = {.thinkfunc = slide_contact_tick},
+  [23] = {.thinkfunc = slide_contact_tick},
+  [24] = {.thinkfunc = slide_contact_tick},
 };
 // clang-format on
+// clang-format on
 static const mmove_t slide_contact_phase = {
-    .firstframe = 0, .lastframe = COUNT(slide_contact_frames) - 1, .frame = slide_contact_frames, .endfunc = script_slide_return};
+    .firstframe = 0, .lastframe = 24, .frame = slide_contact_frames, .endfunc = script_slide_return, .samples = slide_contact_frames_samples};
 
 static void slide_script(Fighter *fighter) {
   fighter->script_timer = 0;
@@ -1548,10 +1531,23 @@ static bool scene_blend_done(const Fighter *fighter) {
   return fighter->scene.clips == NULL;
 }
 
-static const mframe_t scene_blend_frames[] = {{.sample = 0, .duration = 1, .tick = scene_blend_tick}};
-static const mmove_t first_actor_blend_phase = {.frame = scene_blend_frames, .until = scene_blend_done, .endfunc = retail_script_004e0378};
-static const mmove_t first_victim_setup_phase = {.frame = scene_blend_frames, .until = scene_blend_done, .endfunc = retail_script_004e03f0};
-static const mmove_t first_victim_blend_phase = {.frame = scene_blend_frames, .until = scene_blend_done, .endfunc = retail_script_004e0420};
+static void scene_blend_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  scene_blend_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !scene_blend_done(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t scene_blend_frames[1] = {
+  [0] = {.thinkfunc = scene_blend_frames_frame_0},
+};
+// clang-format on
+static const mmove_t first_actor_blend_phase = {.firstframe = 0, .lastframe = 0, .frame = scene_blend_frames, .endfunc = retail_script_004e0378};
+static const mmove_t first_victim_setup_phase = {.firstframe = 0, .lastframe = 0, .frame = scene_blend_frames, .endfunc = retail_script_004e03f0};
+static const mmove_t first_victim_blend_phase = {.firstframe = 0, .lastframe = 0, .frame = scene_blend_frames, .endfunc = retail_script_004e0420};
 
 static void native_blends(Fighter *fighter, const SceneClip *clips, int count, const mmove_t *phase) {
   scene_begin(fighter, clips, count, -1);
@@ -1569,8 +1565,16 @@ static bool first_scene_due(const Fighter *fighter) {
   return g_battle.phase_ticks >= 8;
 }
 
-static const mframe_t first_scene_wait_frames[] = {{.sample = 0, .duration = 1}};
-static const mmove_t first_scene_wait = {.frame = first_scene_wait_frames, .until = first_scene_due, .endfunc = first_camera_start};
+static void first_scene_wait_frames_frame_0(Fighter *fighter) {
+  fighter->mmove_hold = !first_scene_due(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t first_scene_wait_frames[1] = {
+  [0] = {.thinkfunc = first_scene_wait_frames_frame_0},
+};
+// clang-format on
+static const mmove_t first_scene_wait = {.firstframe = 0, .lastframe = 0, .frame = first_scene_wait_frames, .endfunc = first_camera_start};
 
 static void first_fatality_script(Fighter *fighter) {
   fighter_mmove_phase(fighter, &first_scene_wait);
@@ -1685,8 +1689,21 @@ static void breath_travel_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t breath_travel_frames[] = {{.sample = 9, .duration = 1, .tick = breath_travel_tick}};
-static const mmove_t breath_travel_phase = {.frame = breath_travel_frames, .until = phase_wait};
+static void breath_travel_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  breath_travel_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t breath_travel_frames[1] = {
+  [0] = {.thinkfunc = breath_travel_frames_frame_0},
+};
+// clang-format on
+static const mmove_t breath_travel_phase = {.firstframe = 9, .lastframe = 9, .frame = breath_travel_frames, .endfunc = fighter_stop_mmove};
 
 static void breath_travel(Fighter *fighter) {
   q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
@@ -1696,19 +1713,9 @@ static void breath_travel(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t breath_slide_phase_frames[] = {
-  {.sample = 0, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 8, .duration = 1},
-};
+static const mframe_t breath_slide_phase_frames[9] = {{0}};
 // clang-format on
-static const mmove_t breath_slide_phase = {.frame = breath_slide_phase_frames, .lastframe = 8, .endfunc = breath_travel};
+static const mmove_t breath_slide_phase = {.firstframe = 0, .lastframe = 8, .frame = breath_slide_phase_frames, .endfunc = breath_travel};
 
 static void script_breath_slide(Fighter *fighter) {
   fighter->script_phase = 1;
@@ -1789,8 +1796,21 @@ static void spike_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t spike_frames[] = {{.sample = 5, .duration = 1, .tick = spike_tick}};
-static const mmove_t spike_phase = {.frame = spike_frames, .until = phase_wait};
+static void spike_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  spike_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !phase_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t spike_frames[1] = {
+  [0] = {.thinkfunc = spike_frames_frame_0},
+};
+// clang-format on
+static const mmove_t spike_phase = {.firstframe = 5, .lastframe = 5, .frame = spike_frames, .endfunc = fighter_stop_mmove};
 
 static void script_spike_tail(Fighter *fighter) {
   hold_phase(fighter, &spike_phase);
@@ -1806,8 +1826,16 @@ static bool spike_due(const Fighter *fighter) {
   return g_battle.phase_ticks >= 30;
 }
 
-static const mframe_t spike_wait_frames[] = {{.sample = 0, .duration = 1}};
-static const mmove_t spike_wait = {.frame = spike_wait_frames, .until = spike_due, .endfunc = retail_script_004e6950};
+static void spike_wait_frames_frame_0(Fighter *fighter) {
+  fighter->mmove_hold = !spike_due(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t spike_wait_frames[1] = {
+  [0] = {.thinkfunc = spike_wait_frames_frame_0},
+};
+// clang-format on
+static const mmove_t spike_wait = {.firstframe = 0, .lastframe = 0, .frame = spike_wait_frames, .endfunc = retail_script_004e6950};
 
 static void spike_start(Fighter *fighter) {
   fighter_mmove_phase(fighter, &spike_wait);
@@ -1876,12 +1904,14 @@ static void kick_contact(Fighter *fighter) {
   sub_zero_kick_contact(fighter);
 }
 
-static const mframe_t kick_contact_frames[] = {
-    {.sample = 10, .duration = 1, .leave = kick_contact},
-    {.sample = 11, .duration = 1, .leave = kick_contact},
-    {.sample = 12, .duration = 1, .leave = kick_contact},
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t kick_contact_frames[3] = {
+  [0] = {.thinkfunc = kick_contact},
+  [1] = {.thinkfunc = kick_contact},
+  [2] = {.thinkfunc = kick_contact},
 };
-static const mmove_t kick_contact_phase = {.frame = kick_contact_frames, .lastframe = 2, .endfunc = retail_script_004e6998};
+// clang-format on
+static const mmove_t kick_contact_phase = {.firstframe = 10, .lastframe = 12, .frame = kick_contact_frames, .endfunc = retail_script_004e6998};
 
 static void script_kick_tail(Fighter *fighter) {
   hold_phase(fighter, &kick_contact_phase);
@@ -1890,42 +1920,23 @@ static void script_kick_tail(Fighter *fighter) {
 /* 46f080/46f130: two native contact visits, then remaining clip playback.
  * Keep the established portable timing; source-script startup is generated. */
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t sweep_recovery_frames[] = {
-  {.sample = 22, .duration = 1},
-  {.sample = 23, .duration = 1},
-  {.sample = 24, .duration = 1},
-  {.sample = 25, .duration = 1},
-  {.sample = 26, .duration = 1},
-  {.sample = 27, .duration = 1},
-  {.sample = 28, .duration = 1},
-  {.sample = 29, .duration = 1},
-  {.sample = 30, .duration = 1},
-  {.sample = 31, .duration = 1},
-  {.sample = 32, .duration = 1},
-  {.sample = 33, .duration = 1},
-  {.sample = 34, .duration = 1},
-  {.sample = 35, .duration = 1},
-  {.sample = 36, .duration = 1},
-  {.sample = 37, .duration = 1},
-  {.sample = 38, .duration = 1},
-  {.sample = 39, .duration = 1},
-  {.sample = 40, .duration = 1},
-  {.sample = 41, .duration = 1},
-  {.sample = 42, .duration = 1},
-  {.sample = 43, .duration = 1},
-  {.sample = 44, .duration = 1},
-  {.sample = 45, .duration = 1},
-};
+static const mframe_t sweep_recovery_frames[24] = {{0}};
 // clang-format on
-static const mmove_t sweep_recovery = {
-    .firstframe = 0, .lastframe = COUNT(sweep_recovery_frames) - 1, .frame = sweep_recovery_frames, .endfunc = sub_zero_ready};
+static const mmove_t sweep_recovery = {.firstframe = 22, .lastframe = 45, .frame = sweep_recovery_frames, .endfunc = sub_zero_ready};
 
 static void sweep_recover(Fighter *fighter) {
   fighter_mmove_phase(fighter, &sweep_recovery);
 }
 
-static const mframe_t sweep_contact_frames[] = {{.sample = 22, .duration = 2, .tick = sub_zero_sweep_contact}};
-static const mmove_t sweep_contact = {.firstframe = 0, .lastframe = 0, .frame = sweep_contact_frames, .endfunc = sweep_recover};
+static const int sweep_contact_frames_samples[] = {22, 22};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t sweep_contact_frames[2] = {
+  [0] = {.thinkfunc = sub_zero_sweep_contact},
+  [1] = {.thinkfunc = sub_zero_sweep_contact},
+};
+// clang-format on
+static const mmove_t sweep_contact = {
+    .firstframe = 0, .lastframe = 1, .frame = sweep_contact_frames, .endfunc = sweep_recover, .samples = sweep_contact_frames_samples};
 
 static void script_sweep_tail(Fighter *fighter) {
   fighter_mmove_phase(fighter, &sweep_contact);
@@ -1985,22 +1996,11 @@ static void script_draw_equip(Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t slide_return_frames[] = {
-  {.sample = 10, .duration = 1},
-  {.sample = 9, .duration = 1},
-  {.sample = 8, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 0, .duration = 1},
-};
+static const int slide_return_frames_samples[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+static const mframe_t slide_return_frames[11] = {{0}};
 // clang-format on
 static const mmove_t slide_return_phase = {
-    .firstframe = 0, .lastframe = COUNT(slide_return_frames) - 1, .frame = slide_return_frames, .endfunc = sub_zero_ready};
+    .firstframe = 0, .lastframe = 10, .frame = slide_return_frames, .endfunc = sub_zero_ready, .samples = slide_return_frames_samples};
 
 static void script_slide_return(Fighter *fighter) {
   stop_body(fighter);
@@ -2014,44 +2014,9 @@ static void script_air_land(Fighter *fighter) {
 
 static const MoveDef s_air_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t air_getup_frames[] = {
-  {.sample = 46, .duration = 1},
-  {.sample = 47, .duration = 1},
-  {.sample = 48, .duration = 1},
-  {.sample = 49, .duration = 1},
-  {.sample = 50, .duration = 1},
-  {.sample = 51, .duration = 1},
-  {.sample = 52, .duration = 1},
-  {.sample = 53, .duration = 1},
-  {.sample = 54, .duration = 1},
-  {.sample = 55, .duration = 1},
-  {.sample = 56, .duration = 1},
-  {.sample = 57, .duration = 1},
-  {.sample = 58, .duration = 1},
-  {.sample = 59, .duration = 1},
-  {.sample = 60, .duration = 1},
-  {.sample = 61, .duration = 1},
-  {.sample = 62, .duration = 1},
-  {.sample = 63, .duration = 1},
-  {.sample = 64, .duration = 1},
-  {.sample = 65, .duration = 1},
-  {.sample = 66, .duration = 1},
-  {.sample = 67, .duration = 1},
-  {.sample = 68, .duration = 1},
-  {.sample = 69, .duration = 1},
-  {.sample = 70, .duration = 1},
-  {.sample = 71, .duration = 1},
-  {.sample = 72, .duration = 1},
-  {.sample = 73, .duration = 1},
-  {.sample = 74, .duration = 1},
-  {.sample = 75, .duration = 1},
-  {.sample = 76, .duration = 1},
-  {.sample = 77, .duration = 1},
-  {.sample = 78, .duration = 1},
-  {.sample = 79, .duration = 1},
-};
+static const mframe_t air_getup_frames[34] = {{0}};
 // clang-format on
-static const mmove_t air_getup = {.frame = air_getup_frames, .lastframe = 33, .endfunc = fighter_ready};
+static const mmove_t air_getup = {.firstframe = 46, .lastframe = 79, .frame = air_getup_frames, .endfunc = fighter_ready};
 
 static void script_air_getup(Fighter *victim) {
   if (victim->health <= 0) {

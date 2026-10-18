@@ -56,8 +56,23 @@ static void blend_tick(Fighter *fighter) {
   ++fighter->blend_ticks;
 }
 
-static const mframe_t blend_frames[] = {{.sample = 0, .duration = 10, .tick = blend_tick}};
-static const mmove_t blend_phase = {.frame = blend_frames, .endfunc = fighter_ready, .cleanup = weapon_cleanup};
+static const int blend_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t blend_frames[10] = {
+  [0] = {.thinkfunc = blend_tick},
+  [1] = {.thinkfunc = blend_tick},
+  [2] = {.thinkfunc = blend_tick},
+  [3] = {.thinkfunc = blend_tick},
+  [4] = {.thinkfunc = blend_tick},
+  [5] = {.thinkfunc = blend_tick},
+  [6] = {.thinkfunc = blend_tick},
+  [7] = {.thinkfunc = blend_tick},
+  [8] = {.thinkfunc = blend_tick},
+  [9] = {.thinkfunc = blend_tick},
+};
+// clang-format on
+static const mmove_t blend_phase = {
+    .firstframe = 0, .lastframe = 9, .frame = blend_frames, .endfunc = fighter_ready, .samples = blend_frames_samples, .cleanup = weapon_cleanup};
 
 static void strike_effects(Fighter *fighter) {
   const WeaponStrike *strike = fighter->weapon_strike;
@@ -91,15 +106,32 @@ static void strike_recover_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t strike_recover_frames[] = {{.sample = 0, .duration = 1, .tick = strike_recover_tick}};
-static const mmove_t strike_recover_phase = {.frame = strike_recover_frames, .until = weapon_wait};
+static void strike_recover_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  strike_recover_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !weapon_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t strike_recover_frames[1] = {
+  [0] = {.thinkfunc = strike_recover_frames_frame_0},
+};
+// clang-format on
+static const mmove_t strike_recover_phase = {.firstframe = 0, .lastframe = 0, .frame = strike_recover_frames, .endfunc = fighter_stop_mmove};
 
 static void strike_recover(Fighter *fighter) {
   weapon_hold(fighter, &strike_recover_phase);
 }
 
-static const mframe_t strike_pause_frames[] = {{.sample = 0, .duration = 1, .tick = strike_effects}};
-static const mmove_t strike_pause_phase = {.frame = strike_pause_frames, .endfunc = strike_recover};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t strike_pause_frames[1] = {
+  [0] = {.thinkfunc = strike_effects},
+};
+// clang-format on
+static const mmove_t strike_pause_phase = {.firstframe = 0, .lastframe = 0, .frame = strike_pause_frames, .endfunc = strike_recover};
 
 static void strike_tick(Fighter *fighter) {
   const WeaponStrike *strike = fighter->weapon_strike;
@@ -118,8 +150,21 @@ static void strike_tick(Fighter *fighter) {
   weapon_hold(fighter, fighter->connected && (strike->recovery == 5 || strike->recovery == 9) ? &strike_pause_phase : &strike_recover_phase);
 }
 
-static const mframe_t strike_frames[] = {{.sample = 0, .duration = 1, .tick = strike_tick}};
-static const mmove_t strike_phase = {.frame = strike_frames, .until = weapon_wait, .cleanup = weapon_cleanup};
+static void strike_frames_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  strike_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !weapon_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t strike_frames[1] = {
+  [0] = {.thinkfunc = strike_frames_frame_0},
+};
+// clang-format on
+static const mmove_t strike_phase = {.firstframe = 0, .lastframe = 0, .frame = strike_frames, .endfunc = fighter_stop_mmove, .cleanup = weapon_cleanup};
 
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel) {
   require(strike->first <= strike->windup && strike->windup <= strike->target && strike->queries > 0, "Invalid weapon phases");
@@ -254,20 +299,9 @@ void weapon_air_native(Fighter *fighter, unsigned selector) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t weapon_land_frames[] = {
-  {.sample = 18, .duration = 1},
-  {.sample = 19, .duration = 1},
-  {.sample = 20, .duration = 1},
-  {.sample = 21, .duration = 1},
-  {.sample = 22, .duration = 1},
-  {.sample = 23, .duration = 1},
-  {.sample = 24, .duration = 1},
-  {.sample = 25, .duration = 1},
-  {.sample = 26, .duration = 1},
-  {.sample = 27, .duration = 1},
-};
+static const mframe_t weapon_land_frames[10] = {{0}};
 // clang-format on
-static const mmove_t weapon_land = {.frame = weapon_land_frames, .lastframe = 9, .endfunc = fighter_ready};
+static const mmove_t weapon_land = {.firstframe = 18, .lastframe = 27, .frame = weapon_land_frames, .endfunc = fighter_ready};
 
 static void weapon_air_tick(Fighter *fighter) {
   bool high = fighter_move(fighter)->clip == 252;
@@ -281,8 +315,21 @@ static void weapon_air_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t weapon_air_frames_table[] = {{.sample = 0, .duration = 1, .tick = weapon_air_tick}};
-static const mmove_t weapon_air_phase = {.frame = weapon_air_frames_table, .until = weapon_wait};
+static void weapon_air_frames_table_frame_0(Fighter *fighter) {
+  uint64_t continuation = fighter->continuation;
+  weapon_air_tick(fighter);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  fighter->mmove_hold = !weapon_wait(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t weapon_air_frames_table[1] = {
+  [0] = {.thinkfunc = weapon_air_frames_table_frame_0},
+};
+// clang-format on
+static const mmove_t weapon_air_phase = {.firstframe = 0, .lastframe = 0, .frame = weapon_air_frames_table, .endfunc = fighter_stop_mmove};
 
 void weapon_air_frames_native(Fighter *fighter, unsigned selector) {
   require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
@@ -333,8 +380,75 @@ static void throw_tick(Fighter *fighter) {
   }
 }
 
-static const mframe_t throw_frames[] = {{.sample = 0, .duration = 62, .tick = throw_tick}};
-static const mmove_t throw_phase = {.frame = throw_frames};
+static const int throw_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t throw_frames[62] = {
+  [0] = {.thinkfunc = throw_tick},
+  [1] = {.thinkfunc = throw_tick},
+  [2] = {.thinkfunc = throw_tick},
+  [3] = {.thinkfunc = throw_tick},
+  [4] = {.thinkfunc = throw_tick},
+  [5] = {.thinkfunc = throw_tick},
+  [6] = {.thinkfunc = throw_tick},
+  [7] = {.thinkfunc = throw_tick},
+  [8] = {.thinkfunc = throw_tick},
+  [9] = {.thinkfunc = throw_tick},
+  [10] = {.thinkfunc = throw_tick},
+  [11] = {.thinkfunc = throw_tick},
+  [12] = {.thinkfunc = throw_tick},
+  [13] = {.thinkfunc = throw_tick},
+  [14] = {.thinkfunc = throw_tick},
+  [15] = {.thinkfunc = throw_tick},
+  [16] = {.thinkfunc = throw_tick},
+  [17] = {.thinkfunc = throw_tick},
+  [18] = {.thinkfunc = throw_tick},
+  [19] = {.thinkfunc = throw_tick},
+  [20] = {.thinkfunc = throw_tick},
+  [21] = {.thinkfunc = throw_tick},
+  [22] = {.thinkfunc = throw_tick},
+  [23] = {.thinkfunc = throw_tick},
+  [24] = {.thinkfunc = throw_tick},
+  [25] = {.thinkfunc = throw_tick},
+  [26] = {.thinkfunc = throw_tick},
+  [27] = {.thinkfunc = throw_tick},
+  [28] = {.thinkfunc = throw_tick},
+  [29] = {.thinkfunc = throw_tick},
+  [30] = {.thinkfunc = throw_tick},
+  [31] = {.thinkfunc = throw_tick},
+  [32] = {.thinkfunc = throw_tick},
+  [33] = {.thinkfunc = throw_tick},
+  [34] = {.thinkfunc = throw_tick},
+  [35] = {.thinkfunc = throw_tick},
+  [36] = {.thinkfunc = throw_tick},
+  [37] = {.thinkfunc = throw_tick},
+  [38] = {.thinkfunc = throw_tick},
+  [39] = {.thinkfunc = throw_tick},
+  [40] = {.thinkfunc = throw_tick},
+  [41] = {.thinkfunc = throw_tick},
+  [42] = {.thinkfunc = throw_tick},
+  [43] = {.thinkfunc = throw_tick},
+  [44] = {.thinkfunc = throw_tick},
+  [45] = {.thinkfunc = throw_tick},
+  [46] = {.thinkfunc = throw_tick},
+  [47] = {.thinkfunc = throw_tick},
+  [48] = {.thinkfunc = throw_tick},
+  [49] = {.thinkfunc = throw_tick},
+  [50] = {.thinkfunc = throw_tick},
+  [51] = {.thinkfunc = throw_tick},
+  [52] = {.thinkfunc = throw_tick},
+  [53] = {.thinkfunc = throw_tick},
+  [54] = {.thinkfunc = throw_tick},
+  [55] = {.thinkfunc = throw_tick},
+  [56] = {.thinkfunc = throw_tick},
+  [57] = {.thinkfunc = throw_tick},
+  [58] = {.thinkfunc = throw_tick},
+  [59] = {.thinkfunc = throw_tick},
+  [60] = {.thinkfunc = throw_tick},
+  [61] = {.thinkfunc = throw_tick},
+};
+// clang-format on
+static const mmove_t throw_phase = {.firstframe = 0, .lastframe = 61, .frame = throw_frames, .endfunc = fighter_stop_mmove, .samples = throw_frames_samples};
 
 void weapon_throw(Fighter *fighter) {
   fighter_start_mmove(fighter, S_PUNCH, &throw_move, &throw_phase);
@@ -360,25 +474,9 @@ bool weapon_can_pickup(const Fighter *fighter) {
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t pickup_phase_frames[] = {
-  {.sample = 0, .duration = 1},
-  {.sample = 1, .duration = 1},
-  {.sample = 2, .duration = 1},
-  {.sample = 3, .duration = 1},
-  {.sample = 4, .duration = 1},
-  {.sample = 5, .duration = 1},
-  {.sample = 6, .duration = 1},
-  {.sample = 7, .duration = 1},
-  {.sample = 8, .duration = 1},
-  {.sample = 9, .duration = 1},
-  {.sample = 10, .duration = 1},
-  {.sample = 11, .duration = 1},
-  {.sample = 12, .duration = 1},
-  {.sample = 13, .duration = 1},
-  {.sample = 14, .duration = 1},
-};
+static const mframe_t pickup_phase_frames[15] = {{0}};
 // clang-format on
-static const mmove_t pickup_phase = {.frame = pickup_phase_frames, .lastframe = 14, .endfunc = fighter_ready};
+static const mmove_t pickup_phase = {.firstframe = 0, .lastframe = 14, .frame = pickup_phase_frames, .endfunc = fighter_ready};
 
 void weapon_pickup(Fighter *fighter) {
   int index = pickup_index(fighter);

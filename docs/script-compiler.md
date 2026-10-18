@@ -260,10 +260,12 @@ A profile's `mmove_scripts` is a subset of `generated_scripts`. Those roots
 use the same decoder, graph/cursor validation, typed bindings, inventory and
 canonical-output checks, but emit const frame rows and nonblocking boundary
 callbacks. Statically selected roster branches and counted loops are expanded
-offline. Playback preserves source sample skips, reverse playback and waits;
-a row's `leave` callback runs after its duration, so native effects occur at
-the decoded boundary rather than at the next rendering update. Plain sample
-changes need no callback. Runtime branches not yet supported by this backend
+offline. Playback preserves source sample skips, reverse playback and waits through
+fixed 60 Hz gameplay frames. `mframe_t` has only the optional movement and
+action callbacks plus movement distance, following Quake II monsters. Decoded
+boundary effects are attached as `thinkfunc` callbacks on their execution
+frames. Optional move-owned pose maps handle skipped, reversed and repeated
+source samples; plain sample changes need no callback. No frame has a duration. Runtime branches not yet supported by this backend
 fail generation. Native branches may select another generated phase explicitly.
 
 Bindings used by this backend must opt in with `mmove=True` after their native
@@ -289,7 +291,7 @@ for both participants. The pair-to native primitive has an explicit offline
 lowering: owner rows advance the captured victim at the same boundary and
 abort if either participant loses capture ownership. No yielding helper is
 called. Release at tick 25 starts the victim's independent frame phase; its
-first duration cannot elapse during its installation tick, in either player
+first frame cannot execute during its installation tick, in either player
 slot. Native getup 328 is a separate nonblocking phase. Owner recovery ends at
 49; victim tumble/hold/getup ends at 123, with dead victims staying down.
 The frame-program entry rejects an active fiber rather than silently nesting
@@ -303,7 +305,7 @@ to named C callbacks and bounded hold tables. The compiler specializes successor
 by clip cursor, counted-loop state and selector; it rejects excessive expansion.
 Only the native result flags persist on the actor. No runtime program counter,
 bytecode dispatcher or suspended stack is introduced. Native Sub-Zero ground
-contact/recovery loops use mmove tick callbacks, including HP repeats and
+contact/recovery loops use held-frame action callbacks, including HP repeats and
 uppercut hit/block/miss recovery.
 
 Sub-Zero is now an `mmove_only` profile: all 63 catalogued roots must be listed
@@ -313,7 +315,10 @@ and coverage. The normal EXE inventory, typed binding review and canonical
 generated-output checks still apply. Other fighters can migrate incrementally.
 
 Repeating scene streams compile into finite, named phase cycles. Parking uses
-an explicit held phase; landing uses a floor predicate. Native scene blends
+a callback that holds its frame; landing releases a held frame when grounded.
+Held callbacks run on every visit with zero movement distance. Frame jumps
+are explicit, and moves without an end transition loop automatically. A
+terminal generated phase stops explicitly to preserve its final pose. Native scene blends
 advance from tick callbacks and preserve their original blend increments. Cameras,
 particles and projectiles remain independently scheduled. The first fatality
 intentionally keeps its final pose loop after match completion until reset.

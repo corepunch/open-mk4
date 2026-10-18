@@ -252,16 +252,36 @@ See [the compiler contract](docs/script-compiler.md).
 
 ## Frame-table migration
 
-The mmove runner supports action entry and playback-only phase transitions.
-A phase retains the action, contact, input and pair state. Each row has a
-one-shot entry callback and an optional callback for every simulation tick;
-the final row may wait on a predicate. Phase changes start on the next actor
-tick, and callbacks that replace or interrupt a phase stop its old update.
-Completion without a successor holds the final sample. Action cleanup is
-retained across phases and detached before invocation on completion,
-replacement, interruption or round/match reset. Camera and object updates
-remain independent. Fibers coexist during migration; generated script coverage
-and behavioral checks remain required for each converted move.
+The frame runner uses Quake II's monster callback shape: `mframe_t` contains
+only optional `aifunc`, movement distance and optional `thinkfunc`. Each row
+executes on one fixed 60 Hz simulation step. Frame data has no duration,
+entry/tick/leave split or completion predicate. A frame callback may hold any
+row through `mmove_hold`; every held visit repeats the action callback and
+calls movement with zero distance. `fighter_mmove_nextframe` requests a bounded
+jump, including frame zero, before the next callback. An unchanged move loops;
+`fighter_stop_mmove` explicitly ends playback while retaining its pose.
+
+Move bounds identify decoded poses directly for ordinary forward ranges. An
+optional move-owned sample map handles reverse playback, skipped poses and
+multiple gameplay frames displaying the same decoded pose. It contains only
+pose indices. Actions remain attached to their execution frames. Generated
+script callbacks preserve decoded boundary effects on the existing simulation
+clock. The 30 Hz generic clip tables map two fixed frames to each pose.
+
+Action entry and playback-only phase transitions remain separate. A phase
+retains action, contact, input and pair state, and starts on the next actor
+tick. Callbacks that replace or interrupt a phase stop its old update. This
+actor scheduling boundary is intentional; the runner does not inherit Quake
+II's 10 Hz clock or process a newly installed phase in the same update.
+Action cleanup is retained across phases and detached before invocation on
+completion, replacement, interruption or round/match reset. Camera and object
+updates remain independent. Fibers coexist during migration; generated script
+coverage and behavioral checks remain required for each converted move.
+
+Reference reviewed: the local Quake-2-master `game/g_local.h`, `g_monster.c`
+(`M_MoveFrame`) and `m_infantry.c` (attack and held firing callbacks). Its source
+is GPL-licensed; this runner is an independent implementation of the callback
+contract within our existing actor/simulation boundaries.
 
 All 63 Sub-Zero script roots, native move continuations, paired victims and
 fatality actors now use the frame backend. His profile requires phase generation

@@ -69,7 +69,7 @@ void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int dura
 void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries);
 void mk4_script_scene_task(Fighter *fighter, int task_type);
 
-bool mk4_mmove_parked(const Fighter *fighter);
-bool mk4_mmove_grounded(const Fighter *fighter);
+void mk4_mmove_hold(Fighter *fighter);
+void mk4_mmove_wait_grounded(Fighter *fighter);
 
 #endif

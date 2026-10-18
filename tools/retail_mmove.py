@@ -10,6 +10,28 @@ from retail_script_c import successors
 import re
 
 
+def frame_table(name, samples, callbacks=None, endfunc='fighter_stop_mmove'):
+    """Emit fixed-step callback rows, with pose mapping separate from actions."""
+    callbacks = callbacks or {}
+    linear = samples == list(range(samples[0], samples[0] + len(samples)))
+    first = samples[0] if linear else 0
+    lines = []
+    if not linear:
+        lines += ['static const int %s_samples[] = {%s};' % (name, ', '.join(map(str, samples)))]
+    if callbacks:
+        lines += ['// clang-format off: Keep table entries on one row, including long rows.',
+                  'static const mframe_t %s_frames[%d] = {' % (name, len(samples))]
+        for frame, callback in sorted(callbacks.items()):
+            lines.append('  [%d] = {.thinkfunc = %s},' % (frame, callback))
+        lines += ['};', '// clang-format on']
+    else:
+        lines += ['static const mframe_t %s_frames[%d] = {{0}};' % (name, len(samples))]
+    mapping = ', .samples = %s_samples' % name if not linear else ''
+    lines += ['static const mmove_t %s_phase = {.firstframe = %d, .lastframe = %d, .frame = %s_frames, .endfunc = %s%s};' %
+              (name, first, first + len(samples) - 1, name, endfunc, mapping)]
+    return lines
+
+
 def emit_mmove(program, bindings, return_to, context=None):
     context = context or {}
     root = symbol(int(program['entry'], 16))
@@ -191,9 +213,8 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                             holds.append(suffix + '(fighter);')
                             continue
                         hold = name + '_hold_' + label
-                        extra.extend(['static const mframe_t %s_frame[] = {{.sample = %d, .duration = %d}};' % (hold, sample, ticks),
-                                      'static const mmove_t %s = {.frame = %s_frame, .endfunc = %s};' % (hold, hold, suffix)])
-                        holds.append('fighter_mmove_phase(fighter, &%s);' % hold)
+                        extra.extend(frame_table(hold, [sample] * ticks, endfunc=suffix))
+                        holds.append('fighter_mmove_phase(fighter, &%s_phase);' % hold)
                     emit('if (fighter->mmove_result & 1u) { %s } else { %s }' % tuple(holds))
                 break
             elif op in (0x51, 0x52, 0x53, 0x5e):
@@ -222,16 +243,14 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 if sample is None:
                     fail('park without a known pose')
                 hold = name + '_park'
-                extra.extend(['static const mframe_t %s_frame[] = {{.sample = %d, .duration = 1}};' % (hold, sample),
-                              'static const mmove_t %s = {.frame = %s_frame, .until = mk4_mmove_parked};' % (hold, hold)])
-                emit('fighter_mmove_phase(fighter, &%s);' % hold)
+                extra.extend(frame_table(hold, [sample], {0: 'mk4_mmove_hold'}))
+                emit('fighter_mmove_phase(fighter, &%s_phase);' % hold)
                 break
             elif op == 0x60:
                 suffix = enqueue((following, sample, count, victim_bound, loop, selector))
                 hold = name + '_landing'
-                extra.extend(['static const mframe_t %s_frame[] = {{.sample = %d, .duration = 1}};' % (hold, sample),
-                              'static const mmove_t %s = {.frame = %s_frame, .until = mk4_mmove_grounded, .endfunc = %s};' % (hold, hold, suffix)])
-                emit('if (fighter_airborne(fighter)) { fighter_mmove_phase(fighter, &%s); } else { %s(fighter); }' % (hold, suffix))
+                extra.extend(frame_table(hold, [sample], {0: 'mk4_mmove_wait_grounded'}, endfunc=suffix))
+                emit('if (fighter_airborne(fighter)) { fighter_mmove_phase(fighter, &%s_phase); } else { %s(fighter); }' % (hold, suffix))
                 break
             elif op == 0x5a:
                 emit('fighter_set_speed(fighter, %d);' % row['speed_q16'])
@@ -248,10 +267,10 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
     else:
         fail('unbounded control-flow expansion')
 
-    # Entry effects run immediately. Each row describes the pose held during a
-    # tick; its leave callback performs the decoded work at the tick boundary.
+    # Entry setup runs immediately. Decoded boundary effects become optional
+    # think callbacks on fixed simulation frames, as in monster move tables.
     lines = extra
-    callbacks = set()
+    callbacks = {}
     for tick, statements in enumerate(events[1:], 1):
         # Moving to the next row already selects its sample. Keep assignments
         # only at boundaries that also execute actual native/script effects.
@@ -259,18 +278,12 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                       not re.fullmatch(r'fighter->sample_override = \d+;', line)]
         if not meaningful:
             continue
-        callbacks.add(tick)
+        callbacks[tick - 1] = '%s_at_%d' % (name, tick)
         lines += ['static void %s_at_%d(Fighter *fighter) {' % (name, tick)]
         lines += ['  ' + statement for statement in statements] or ['  (void)fighter;']
         lines += ['}']
     if samples:
-        lines += ['// clang-format off: Keep table entries on one row, including long rows.',
-                  'static const mframe_t %s_frames[] = {' % name]
-        for tick, pose in enumerate(samples, 1):
-            callback = ', .leave = %s_at_%d' % (name, tick) if tick in callbacks else ''
-            lines.append('  {.sample = %d, .duration = 1%s},' % (pose, callback))
-        lines += ['};', '// clang-format on',
-                  'static const mmove_t %s_phase = {.firstframe = 0, .lastframe = %d, .frame = %s_frames};' % (name, len(samples) - 1, name)]
+        lines += frame_table(name, samples, callbacks)
     lines += ['static inline void %s(Fighter *fighter) {' % name,
               '  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");']
     lines += ['  ' + statement for statement in events[0]]
