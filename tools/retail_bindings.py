@@ -1206,6 +1206,18 @@ for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
             CHARACTER_BINDINGS[_cid][_address] = replace(_binding, mmove=True)
 
 
+for _cid, _name in ((7, 'reiko'), (10, 'reptile'), (17, 'noob_saibot')):
+    for _address in (0x42cc00, 0x42cc40, 0x42ce80):
+        CHARACTER_BINDINGS[_cid][_address] = replace(CHARACTER_BINDINGS[_cid][_address], mmove=True)
+    if 0x45abf0 in CHARACTER_BINDINGS[_cid]:
+        CHARACTER_BINDINGS[_cid][0x45abf0] = replace(CHARACTER_BINDINGS[_cid][0x45abf0], mmove=True)
+    CHARACTER_BINDINGS[_cid][0x45b1f0] = Binding(_name + '_script_lp_reaction', 'game/' + _name + '/moves/common.c',
+        ('handler',), ('fighter', 'arg_u8'), mmove=True, evidence='45b1f0 releases peer with102/107; owner continues generated damage/recovery')
+    for _address in (0x485ad0, 0x470420):
+        CHARACTER_BINDINGS[_cid][_address] = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',),
+            flow='terminal', mmove=True, evidence='Nonblocking released-victim completion; retain existing KO-aware recovery policy')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

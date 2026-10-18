@@ -179,7 +179,7 @@ static void reptile_script_lp_select(Fighter *fighter) {
 
 void reptile_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter_start_fiber(victim, reptile_entry_retail_script_004de664, NULL);
+  reptile_entry_retail_script_004de664(victim);
   reptile_entry_retail_script_004de668(fighter);
 }
 
@@ -188,19 +188,11 @@ void reptile_script_lp_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_fiber_finish(reptile_ready);
+  fighter_finish_mmove(fighter, reptile_ready);
 }
 
 void reptile_script_current_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 102 || reaction == 107) {
-    Fighter *victim = mk4_script_release_pair(fighter);
-    victim->reaction = reaction;
-    victim->flags |= FF_REACTING;
-    fighter_start_move(victim, S_KNOCKDOWN, &reptile_s_lp_thrown);
-    fighter_start_fiber(victim, reaction == 102 ? reptile_entry_retail_script_004e9bd0 : reptile_entry_retail_script_004e9b40, NULL);
-    fighter_fiber_finish(reptile_ready);
-    return;
-  }
+
   battle_react(fighter, reaction);
 }
 
@@ -258,4 +250,17 @@ static void reptile_input_4988d0(Fighter *fighter) {
 
 static void reptile_entry_block(Fighter *fighter) {
   fighter_enter_state(fighter, S_BLOCK);
+}
+
+void reptile_script_lp_reaction(Fighter *fighter, int reaction) {
+  require(reaction == 102 || reaction == 107, "Unexpected reptile LP victim reaction");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  victim->reaction = reaction;
+  victim->flags |= FF_REACTING;
+  fighter_start_move(victim, S_KNOCKDOWN, &reptile_s_lp_thrown);
+  if (reaction == 102) {
+    reptile_entry_retail_script_004e9bd0(victim);
+  } else {
+    reptile_entry_retail_script_004e9b40(victim);
+  }
 }

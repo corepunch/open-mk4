@@ -12,7 +12,7 @@ const MoveDef reptile_s_jab = {294, 0, MOVE_END, 5, 4, 12, 7, 19, 1.25f, 0.13f, 
 const MoveDef reptile_s_kick = {66, 0, MOVE_END, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK, NULL, 0};
 const MoveDef reptile_s_sweep = {63, 0, MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, NULL, 0};
 const MoveDef reptile_s_uppercut = {293, 0, MOVE_END, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH, NULL, 0};
-const MoveDef reptile_s_throw = {76, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
+const MoveDef reptile_s_throw = {76, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 const MoveDef reptile_s_lp_thrown = {.clip = 153, .last = 26, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef s_air_throw = {.clip = 82, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_UNBLOCKABLE};
@@ -93,7 +93,8 @@ void reptile_entry_retail_script_004de640(Fighter *fighter) {
 }
 
 void reptile_entry_retail_script_004de664(Fighter *fighter) {
-  retail_script_004de664(fighter);
+  /* 4de664 is a490350 callback table, not a VM body. */
+  fighter->facing = -fighter->facing;
 }
 
 void reptile_entry_retail_script_004de668(Fighter *fighter) {

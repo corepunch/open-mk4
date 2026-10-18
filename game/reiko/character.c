@@ -80,7 +80,8 @@ void reiko_entry_retail_script_004de640(Fighter *fighter) {
 }
 
 void reiko_entry_retail_script_004de664(Fighter *fighter) {
-  retail_script_004de664(fighter);
+  /* 4de664 is a490350 callback table, not a VM body. */
+  fighter->facing = -fighter->facing;
 }
 
 void reiko_entry_retail_script_004de668(Fighter *fighter) {

@@ -109,7 +109,6 @@ def moves_for(character):
                     ('Reiko attacker/victim', 0x4de798),
                     ('extended throw', 0x4de640),
                     ('short throw', 0x4de6b8),
-                    ('extended throw owner continuation', 0x4de664),
                     ('throw owner continuation', 0x4de668),
                     ('throw victim recovery', 0x4e9b40),
                     ('throw victim recovery', 0x4e9bd0),
@@ -162,7 +161,7 @@ def moves_for(character):
         # enter a second generated stream after its D-contact window.
         shared.update(
             lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('extended throw', 0x4de640),
-                                     ('short throw', 0x4de6b8), ('extended continuation', 0x4de664),
+                                     ('short throw', 0x4de6b8),
                                      ('owner return', 0x4de668), ('victim reaction 107', 0x4e9b40),
                                      ('victim reaction 102', 0x4e9bd0)),
                           native=(('selector', 0x42cc00), ('extended continuation', 0x42cc40),

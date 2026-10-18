@@ -48,6 +48,7 @@ Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_pair_cleanup(Fighter *fighter);
 void mk4_script_thrown_finish(Fighter *fighter);
+void mk4_mmove_thrown_finish(Fighter *fighter);
 void mk4_script_save_motion(Fighter *fighter);
 void mk4_script_restore_motion(Fighter *fighter);
 unsigned mk4_script_jab_gate(Fighter *fighter);

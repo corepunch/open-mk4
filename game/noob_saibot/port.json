@@ -85,12 +85,6 @@
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "sample": 42
     },
-    "0x4de664": {
-      "clip": 80,
-      "count": 75,
-      "evidence": "42cc40 enters this Noob Saibot owner continuation after the 4de640/4de6b8 selector; exact inherited clip/sample from native script words.",
-      "sample": 57
-    },
     "0x4de668": {
       "clip": 80,
       "count": 75,
@@ -185,7 +179,6 @@
     "0x4de318",
     "0x4de328",
     "0x4de640",
-    "0x4de664",
     "0x4de668",
     "0x4de6b8",
     "0x4de798",
@@ -227,7 +220,7 @@
     "0x4ed2c0"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "10fd21120b9b90319fe284ef110dfef5e239e9dc92558e4fc45814ab6de3afbd",
+  "inventory_sha256": "ddcc9b46b735cd5b6b534efdd55ea6a266ab4c096563ed711824c0a2ab7200ff",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -353,16 +346,16 @@
       "symbol": "react_extra"
     },
     "102": {
-      "adaptation": "Noob Saibot LP-throw victim recovery has a character-specific native reaction path outside the shared reaction table.",
+      "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
       "evidence": "Contact selector 102 at 0x485b70 dispatches through Noob Saibot LP-throw reaction continuation 0x45b1f0.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_script_opponent_reaction"
+      "source": "game/noob_saibot/moves/common.c",
+      "symbol": "noob_saibot_script_lp_reaction"
     },
     "107": {
-      "adaptation": "Noob Saibot LP-throw victim recovery has a character-specific native reaction path outside the shared reaction table.",
+      "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
       "evidence": "Contact selector 107 at 0x485a90 dispatches through Noob Saibot LP-throw reaction continuation 0x45b1f0.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_script_opponent_reaction"
+      "source": "game/noob_saibot/moves/common.c",
+      "symbol": "noob_saibot_script_lp_reaction"
     },
     "11": {
       "evidence": "Retail reaction selector 11 (0x482070) routes to the shared MK4 reaction table.",
@@ -576,6 +569,12 @@
     "0x4e63d8",
     "0x4e61e0",
     "0x4e69b0",
-    "0x4e6190"
+    "0x4e6190",
+    "0x4de798",
+    "0x4de640",
+    "0x4de6b8",
+    "0x4de668",
+    "0x4e9b40",
+    "0x4e9bd0"
   ]
 }

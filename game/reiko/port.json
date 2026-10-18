@@ -70,12 +70,6 @@
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "sample": 42
     },
-    "0x4de664": {
-      "clip": 80,
-      "count": 75,
-      "evidence": "42cc40 enters this Reiko owner continuation after the 4de640/4de6b8 selector; exact inherited clip/sample from native script words.",
-      "sample": 57
-    },
     "0x4de668": {
       "clip": 80,
       "count": 75,
@@ -162,7 +156,6 @@
     "0x4de318",
     "0x4de328",
     "0x4de640",
-    "0x4de664",
     "0x4de668",
     "0x4de6b8",
     "0x4de798",
@@ -200,7 +193,7 @@
     "0x4e9bd0"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "e5b8ea982e7ac4f125eeed5af8256c84da4de7ce85625ee69e877e1b911dc57f",
+  "inventory_sha256": "fe0f504017433db222ce5a10deaca6296a4747f9781ffc827c50e3aa0bb50ee4",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -316,16 +309,16 @@
       "symbol": "react_extra"
     },
     "102": {
-      "adaptation": "Reiko LP-throw victim recovery has a character-specific native reaction path outside the shared reaction table.",
+      "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
       "evidence": "Contact selector 102 at 0x485b70 dispatches through Reiko LP-throw reaction continuation 0x45b1f0.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_script_opponent_reaction"
+      "source": "game/reiko/moves/common.c",
+      "symbol": "reiko_script_lp_reaction"
     },
     "107": {
-      "adaptation": "Reiko LP-throw victim recovery has a character-specific native reaction path outside the shared reaction table.",
+      "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
       "evidence": "Contact selector 107 at 0x485a90 dispatches through Reiko LP-throw reaction continuation 0x45b1f0.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_script_opponent_reaction"
+      "source": "game/reiko/moves/common.c",
+      "symbol": "reiko_script_lp_reaction"
     },
     "11": {
       "evidence": "Retail reaction selector 11 (0x482070) routes to the shared MK4 reaction table.",
@@ -523,6 +516,12 @@
     "0x4e63d8",
     "0x4e61e0",
     "0x4e69b0",
-    "0x4e6190"
+    "0x4e6190",
+    "0x4de798",
+    "0x4de640",
+    "0x4de6b8",
+    "0x4de668",
+    "0x4e9b40",
+    "0x4e9bd0"
   ]
 }

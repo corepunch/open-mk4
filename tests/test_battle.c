@@ -8,6 +8,9 @@ void goro_cpu_projectile(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
+void reiko_entry_retail_script_004de640(Fighter *fighter);
+void reptile_entry_retail_script_004de640(Fighter *fighter);
+void noob_saibot_entry_retail_script_004de640(Fighter *fighter);
 
 static void check(bool yes, const char *message) {
   if (!yes) {
@@ -893,9 +896,14 @@ static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn
         if (interrupted) {
           fighter_enter_state(owner, S_HIT);
         }
+        bool selected_victim = false;
         for (int tick = 0; tick < 160; ++tick) {
           advance_ticks(1, NULL);
+          selected_victim |= fighter_move(victim)->clip == (extended ? 172 : 142);
           check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Branch LP LP throw and independent victim release must stay on frame tables");
+        }
+        if (!interrupted && (roster == 7 || roster == 10 || roster == 17)) {
+          check(selected_victim, "Released LP victim must execute its selected generated reaction rather than an approximate fallback");
         }
         q16 damage = interrupted ? 0 : extended ? 11796 : 9830;
         check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
@@ -1536,6 +1544,9 @@ int main(void) {
   check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
   check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);
   check_branch_frame_lp_throw(12, 80, jarek_entry_retail_script_004de640);
+  check_branch_frame_lp_throw(7, 80, reiko_entry_retail_script_004de640);
+  check_branch_frame_lp_throw(10, 80, reptile_entry_retail_script_004de640);
+  check_branch_frame_lp_throw(17, 80, noob_saibot_entry_retail_script_004de640);
   check_peer_release_lp_throw(6, 75);
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);
