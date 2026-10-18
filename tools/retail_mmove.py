@@ -72,7 +72,7 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
         if ticks < 0 or len(samples) + ticks > 4096:
             fail('unbounded frame expansion')
         for _ in range(ticks):
-            samples.append(sample)
+            samples.append(min(sample, count - 1) if count is not None else sample)
             events.append([])
 
     def advance(target, step=1, paired=False, period=1):
@@ -84,7 +84,7 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
         while sample < target if step > 0 else sample > target:
             wait(period)
             sample = min(target, sample + step) if step > 0 else max(target, sample + step)
-            emit('fighter->sample_override = %d;' % sample)
+            emit('fighter->sample_override = %d;' % min(sample, count - 1))
             if paired:
                 emit('if (!mk4_mmove_pair_step(fighter)) { return; }')
 

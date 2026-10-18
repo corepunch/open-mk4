@@ -209,7 +209,11 @@ def validate(program, bindings, return_to, context=None):
         if op in (5, 0x12, 0x1d, 0x47, 0x49, 0x4a, 0x4d):
             lengths = {row['stored_count']} if 'clip' in row else clip_in[pc] - {None}
             target = row['inline'] & 255 if op in (0x12, 0x1d, 0x47, 0x49, 0x4a, 0x4d) else row['inline']
-            if any(target >= count for count in lengths):
+            # 429990 permits the end cursor equal to stored_count without
+            # submitting a pose there. Only forward playback may reach it;
+            # direct pose selection and reverse targets remain strict.
+            endpoint = op in (5, 0x47, 0x4d)
+            if any(target > count or (target == count and not endpoint) for count in lengths):
                 error(pc, 'target sample %d is outside an incoming clip' % target)
     # Delete guaranteed-yield instructions, then reject cycles in the
     # remaining graph. A cycle that can bypass a wait is unsafe too.

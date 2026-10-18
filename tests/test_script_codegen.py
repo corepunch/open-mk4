@@ -28,6 +28,30 @@ class CompilerTests(unittest.TestCase):
     def compile(self, words, bindings=None):
         return generate(self.image, [self.fixture(words)], 3, return_to='fighter_ready', bindings=bindings)
 
+    def test_forward_end_cursor_holds_last_pose_but_pose_selection_stays_strict(self):
+        descriptor = (0x4fad7c + 98 * 12) // 4
+        # Fujin4e5c20 advances to cursor40 on a40-sample clip, then
+        # rewinds34. Native429990 never submits pose40 at the end cursor.
+        entry = self.fixture([0x0f000000, descriptor, 0x05000028, 0x4a000022, 0x3f000000])
+        legacy = generate(self.image, [entry], 5, 'fighter_ready')
+        frames = generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('fighter_fiber_play_to(fighter, 40, 1);', legacy)
+        self.assertNotIn('fighter->sample_override = 40;', frames)
+        samples = frames.split('_samples[] = {', 1)[1].split('}', 1)[0]
+        poses = [int(value) for value in samples.split(',')]
+        self.assertEqual(max(poses), 39)
+        self.assertEqual(poses[-1], 34)
+        self.assertEqual(poses.count(39), 3)
+        self.assertNotIn('fighter_wait_ticks', frames)
+        actual = generate(self.image, [0x4e5c20], 5, 'fighter_ready', contexts={
+            '0x4e5c20': {'clip': 98, 'count': 40, 'sample': 16, 'evidence': 'Native46a650 retains the wind caster clip.'}},
+            mmove_entries=[0x4e5c20])
+        self.assertNotIn('fighter->sample_override = 40;', actual)
+        for opcode, target in [(5, 41), (0x49, 40), (0x12, 40), (0x4a, 40)]:
+            entry = self.fixture([0x0f000000, descriptor, opcode << 24 | target, 0x3f000000])
+            with self.assertRaisesRegex(CompileError, 'outside an incoming clip'):
+                generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+
     def test_gravity_operand_survives_nonblocking_landing_lowering(self):
         descriptor = (0x4fad7c + 58 * 12) // 4
         # Freeze, hold, clear busy, restore gravity and wait for the floor.
