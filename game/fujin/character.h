@@ -97,4 +97,9 @@ void fujin_dive_contact(Fighter *fighter);
 void fujin_dive_land(Fighter *fighter);
 void fujin_entry_retail_script_004e8258(Fighter *fighter);
 void fujin_entry_retail_script_004e8298(Fighter *fighter);
+void fujin_script_fan_cycle(Fighter *fighter);
+void fujin_script_fan_victim_end(Fighter *fighter);
+void fujin_script_fan_victory(Fighter *fighter);
+void fujin_script_spike_tail(Fighter *fighter);
+void fujin_entry_retail_script_004e0138(Fighter *fighter);
 #endif

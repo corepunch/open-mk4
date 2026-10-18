@@ -1345,3 +1345,10 @@ CHARACTER_BINDINGS[14][0x49cb60] = Binding('cage_first_task_end', 'game/cage/mov
 # Fujin's dive selects the native4e8280 contact/recovery table.
 CHARACTER_BINDINGS[5][0x47bf90] = Binding('fujin_dive_contact', 'game/fujin/moves/dive.c', ('tail',), flow='terminal', mmove=True, evidence='47bf90 selects4e8280:60 D[15] queries with contact/timeout recoil and floor landing')
 CHARACTER_BINDINGS[5][0x47bfd0] = Binding('fujin_dive_land', 'game/fujin/moves/dive.c', ('tail',), flow='terminal', mmove=True, evidence='47bfd0 runs46fd90 shared landing before46f650 controller return')
+
+# Fujin stage scenes run through frame phases and their character-owned native tails.
+CHARACTER_BINDINGS[5][0x43d460] = Binding('fujin_script_fan_tail', 'game/fujin/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Native43d460 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
+CHARACTER_BINDINGS[5][0x43d530] = Binding('fujin_script_fan_cycle', 'game/fujin/moves/fan.c', ('tail',), flow='immediate', mmove=True, evidence='Native43d530 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
+CHARACTER_BINDINGS[5][0x43d6f0] = Binding('fujin_script_fan_victory', 'game/fujin/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Native43d6f0 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
+CHARACTER_BINDINGS[5][0x43db50] = Binding('fujin_script_fan_victim_end', 'game/fujin/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Native43db50 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
+CHARACTER_BINDINGS[5][0x467fc0] = Binding('fujin_script_spike_tail', 'game/fujin/moves/spike.c', ('tail',), flow='terminal', mmove=True, evidence='Native467fc0 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')

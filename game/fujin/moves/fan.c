@@ -1,25 +1,37 @@
 #include "../character.h"
 
-static void fujin_script_fan_cycle(Fighter *fighter);
-static void fujin_script_fan_victim_end(Fighter *fighter);
-static void fujin_script_fan_victory(Fighter *fighter);
+void fujin_script_fan_cycle(Fighter *fighter);
+void fujin_script_fan_victim_end(Fighter *fighter);
+void fujin_script_fan_victory(Fighter *fighter);
 static void fujin_fan_fatality(Fighter *fighter);
 void fujin_entry_fan(Fighter *fighter);
 
-static void fujin_script_fan_cycle(Fighter *fighter) {
+void fujin_script_fan_cycle(Fighter *fighter) {
   mk4_script_fan_cycle(fighter);
 }
 
-static void fujin_script_fan_victim_end(Fighter *fighter) {
-  mk4_script_fan_victim_end(fighter);
+void fujin_script_fan_victim_end(Fighter *fighter) {
+  fighter->appearance = APPEARANCE_HIDDEN;
+  fighter_finish_mmove(fighter, NULL);
 }
 
-static void fujin_script_fan_victory(Fighter *fighter) {
+void fujin_script_fan_victory(Fighter *fighter) {
   fujin_entry_retail_script_004e0158(fighter);
 }
 
+static void fan_release(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  fighter_cancel_mmove(victim);
+  victim->sample_override = 69;
+  fujin_entry_retail_script_004e01a0(victim);
+  mk4_native_fan_rise(fighter);
+  fujin_entry_retail_script_004e0148(fighter);
+}
+
 void fujin_script_fan_tail(Fighter *fighter) {
-  mk4_script_fan_tail(fighter, fujin_retail_script_004e0138_repeat_phase(), fujin_entry_retail_script_004e0148, fujin_entry_retail_script_004e01a0);
+  fujin_entry_retail_script_004e0138(fighter);
+  native_repeat(fighter, fujin_retail_script_004e0138_repeat_phase(), 31, fan_release);
+  native_play(fighter, false);
 }
 
 static void fujin_fan_fatality(Fighter *fighter) {
@@ -28,8 +40,8 @@ static void fujin_fan_fatality(Fighter *fighter) {
   }
 
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter_start_fiber(victim, fujin_entry_retail_script_004e0188, NULL);
-  fighter_start_fiber(fighter, fujin_entry_retail_script_004e0118, NULL);
+  fujin_entry_retail_script_004e0188(victim);
+  fujin_entry_retail_script_004e0118(fighter);
 }
 
 void fujin_entry_fan(Fighter *fighter) {

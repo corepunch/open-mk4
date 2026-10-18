@@ -2261,7 +2261,13 @@ static void check_reconnected_stage_commands(void) {
         }
         check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (stage ? FINISH_SPIKE : FINISH_FAN),
             "Stage command must acquire the correct scene for either player");
-        advance_ticks(650, NULL);
+        for (int tick = 0; tick < 650; ++tick) {
+          advance_ticks(1, NULL);
+          if (rosters[row] == 5) {
+            check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
+                "Fujin stage-scene owner and victim must stay on frame phases");
+          }
+        }
         if (g_battle.phase != PHASE_MATCH_OVER) {
           fprintf(stderr, "Stage recovery roster %d slot %d stage %d phase %d\n", rosters[row], slot, stage, g_battle.phase);
         }

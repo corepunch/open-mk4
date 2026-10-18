@@ -67,7 +67,6 @@
       "clip": 415,
       "count": 130,
       "evidence": "Fujin bounded fan script/caller query preserves this inherited clip and sample context; the address is shared with the selected roster graph.",
-      "return_to": "caller",
       "sample": 69,
       "export_frames": true
     },
@@ -144,6 +143,12 @@
       "count": 10,
       "sample": 9,
       "evidence": "4e8258 completes clip58 before47bf90 holds sample9 through its contact table."
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "sample": 0,
+      "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -542,6 +547,13 @@
     "0x4e62a0",
     "0x4e5d90",
     "0x4e8258",
-    "0x4e8298"
+    "0x4e8298",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e6950"
   ]
 }
