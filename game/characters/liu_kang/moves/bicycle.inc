@@ -55,7 +55,8 @@ static void bicycle_query(Fighter *fighter) {
 
 static void bicycle_pair(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  if (victim->current_move != &s_bicycle_victim || victim->pending != NULL || victim->current_mmove == NULL) {
+  if (victim->current_move != &s_bicycle_victim || victim->pending != NULL || victim->current_mmove == NULL || !(fighter->flags & FF_PAIRED) ||
+      !(victim->flags & FF_PAIRED)) {
     fighter_stop_mmove(fighter);
     return;
   }
@@ -94,8 +95,10 @@ static void bicycle_script(Fighter *fighter) {
       native_frame(fighter, frame, 7 + frame % 16, bicycle_pair);
     }
     native_wait(fighter);
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    victim->script_phase = 1;
+    if (victim->current_move == &s_bicycle_victim && victim->pending == NULL && (victim->flags & FF_PAIRED)) {
+      victim->flags &= ~(unsigned)FF_PAIRED;
+      victim->script_phase = 1;
+    }
     fighter->flags &= ~(unsigned)FF_PAIRED;
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
     mk4_script_stop_body(fighter);

@@ -525,6 +525,16 @@ static void bicycle(void) {
     check(owner->state == S_IDLE && victim->state == S_IDLE && victim->health == Q16_ONE - 0x2666,
         "interruption releases paired victim without repeating damage");
     fight(player, 6.f);
+    charge_bicycle(player, 120, 1.4f, 0, 0);
+    advance(10);
+    battle_react(victim, 67);
+    advance(2);
+    check(victim->appearance == APPEARANCE_FROZEN && victim->script_phase == 0 && !(victim->flags & FF_PAIRED),
+        "bicycle release must preserve an interrupted victim's new reaction phase in either player order");
+    advance(200);
+    check(owner->state == S_IDLE && victim->state == S_IDLE && victim->health == Q16_ONE - 0x2666,
+        "replaced bicycle victim must thaw and recover without stale capture writes");
+    fight(player, 6.f);
     victim->health = 1;
     charge_bicycle(player, 120, 1.4f, 0, 0);
     advance(120);
