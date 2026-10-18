@@ -380,6 +380,55 @@ static void kai_weapon_contacts(const Assets *assets) {
   }
 }
 
+static void jarek_weapon_contacts(const Assets *assets) {
+  check(assets->scene_models.count > SCENE_MODEL_JAREK_WEAPON && assets->scene_models.data[SCENE_MODEL_JAREK_WEAPON].bones.count > 0,
+      "Jarek weapon extraction must provide its own complete shared-geometry rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 4; ++strike) {
+      battle_init(slot ? 4 : 12, slot ? 12 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      const Button sequence[] = {slot ? BUTTON_LEFT : BUTTON_RIGHT, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_HIGH_PUNCH};
+      for (int entry = 0; entry < 3; ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      for (int tick = 0; tick < 65; ++tick) {
+        battle_step(input);
+      }
+      check(owner->armed && owner->weapon->model == SCENE_MODEL_JAREK_WEAPON, "Jarek draw command must equip his extracted retail weapon");
+      owner->body.pos[AXIS_X] = slot ? 0xa666 : -0xa666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      input[slot].held = BUTTON_BIT(strike == 1 || strike == 3 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+      if (strike >= 2) {
+        input[slot].held |= BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      }
+      battle_step(input);
+      battle_step(input);
+      input[slot].held = 0;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Jarek weapon owner and victim must remain on frame tables");
+      }
+      check(victim->health == Q16_ONE - (strike == 0      ? 10485
+                                            : strike == 2 ? 11796
+                                                          : 9830) &&
+                owner->state == S_IDLE,
+          "Jarek weapon records must hit once with real animated bounds and recover");
+    }
+  }
+}
+
 static void cage_weapon_contacts(const Assets *assets) {
   check(assets->scene_models.count > SCENE_MODEL_CAGE_WEAPON && assets->scene_models.data[SCENE_MODEL_CAGE_WEAPON].bones.count > 0,
       "Cage weapon extraction must provide its own complete shared-geometry rig");
@@ -668,6 +717,7 @@ int main(void) {
   axe_followup_contacts(&assets);
   kai_weapon_contacts(&assets);
   cage_weapon_contacts(&assets);
+  jarek_weapon_contacts(&assets);
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   cage_groin_command(&assets);

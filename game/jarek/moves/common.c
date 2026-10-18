@@ -17,15 +17,15 @@ void jarek_start(Fighter *fighter, int state, const MoveDef *move, FighterFn scr
 }
 
 void jarek_idle(Fighter *fighter) {
-  fighter_start_move(fighter, S_IDLE, &jarek_s_idle);
+  weapon_stance(fighter, S_IDLE);
 }
 
 void jarek_walk(Fighter *fighter) {
-  fighter_start_move(fighter, S_WALK, &jarek_s_walk);
+  weapon_stance(fighter, S_WALK);
 }
 
 void jarek_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &jarek_s_block);
+  weapon_stance(fighter, S_BLOCK);
 }
 
 void jarek_script_lk_return(Fighter *fighter) {

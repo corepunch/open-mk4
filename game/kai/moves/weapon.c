@@ -91,7 +91,7 @@ void kai_weapon_victim_getup(Fighter *fighter) {
 void kai_weapon_reaction(Fighter *fighter) {
   int reaction = fighter->reaction;
   bool airborne = fighter_airborne(fighter);
-  require(reaction == 142 || reaction == 145 || reaction == 146, "Invalid Kai weapon reaction");
+  require(reaction == 142 || reaction == 145 || reaction == 146 || reaction == 44, "Invalid Kai weapon reaction");
   mk4_script_disarm_self(fighter);
   if (reaction != 146) {
     mk4_script_indexed_sound(fighter, 6);
@@ -107,7 +107,7 @@ void kai_weapon_reaction(Fighter *fighter) {
     fighter->body.pos[AXIS_Z] = peer->body.pos[AXIS_Z] + q16_mul(fighter_axis(peer, AXIS_Z), 0x1cccc);
     fighter->body.pos[AXIS_Y] = peer->body.pos[AXIS_Y] - 0x8000;
     kai_entry_retail_script_004e8b78(fighter);
-  } else if (reaction == 145) {
+  } else if (reaction == 145 || reaction == 44) {
     if (airborne) {
       fighter->body.gravity = 0x28f;
       fighter->body.vel[AXIS_Y] = 0x1999;

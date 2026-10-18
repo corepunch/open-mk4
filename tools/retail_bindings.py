@@ -1301,3 +1301,10 @@ CHARACTER_BINDINGS[14][0x470420] = replace(CHARACTER_BINDINGS[14].get(0x470420, 
 CHARACTER_BINDINGS[14][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing phase')
 CHARACTER_BINDINGS[14][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing phase')
 CHARACTER_BINDINGS[3][0x496970] = replace(CHARACTER_BINDINGS[3][0x496970], mmove=True, evidence='496970 weapon11 two-query tail reuses the shared native frame continuation')
+
+# Jarek type6a knife shares the native mace upper strike and air contracts.
+CHARACTER_BINDINGS[12][0x46d260] = Binding('jarek_script_weapon_draw_finish', 'game/jarek/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='46d260 equips the knife and resumes244 at22')
+CHARACTER_BINDINGS[12][0x4958b0] = Binding('jarek_weapon_upper_contact', 'game/jarek/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='495860 selects4ec4f0 then4958b0 weapon33 queries')
+CHARACTER_BINDINGS[12][0x470420] = replace(CHARACTER_BINDINGS[12].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
+CHARACTER_BINDINGS[12][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')
+CHARACTER_BINDINGS[12][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')

@@ -145,4 +145,10 @@ void jarek_spike_fatality(Fighter *fighter);
 void jarek_roundhouse(Fighter *fighter);
 void jarek_script_roundhouse_finish(Fighter *fighter);
 void jarek_entry_retail_script_004e6270(Fighter *fighter);
+void jarek_weapon_upper_contact(Fighter *fighter);
+void jarek_weapon_reaction(Fighter *fighter);
+void jarek_entry_retail_script_004ec4f0(Fighter *fighter);
+void jarek_entry_retail_script_004e66d0(Fighter *fighter);
+void jarek_entry_retail_script_004e66f0(Fighter *fighter);
+void jarek_entry_retail_script_004e8c08(Fighter *fighter);
 #endif

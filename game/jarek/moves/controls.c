@@ -16,7 +16,6 @@ static void jarek_command_469ac0(Fighter *fighter);
 static void jarek_command_469ad0(Fighter *fighter);
 static void jarek_command_467cd0(Fighter *fighter);
 static void jarek_command_467ce0(Fighter *fighter);
-static void jarek_command_46d1d0(Fighter *fighter);
 static void jarek_command_4797f0(Fighter *fighter);
 static void jarek_command_47b310(Fighter *fighter);
 static void jarek_command_47b5d0(Fighter *fighter);
@@ -84,10 +83,6 @@ static void jarek_command_467cd0(Fighter *fighter) {
 
 static void jarek_command_467ce0(Fighter *fighter) {
   jarek_spike_fatality(fighter);
-}
-
-static void jarek_command_46d1d0(Fighter *fighter) {
-  jarek_weapon_action(fighter);
 }
 
 static void jarek_command_4797f0(Fighter *fighter) {

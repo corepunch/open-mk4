@@ -75,11 +75,11 @@ void jarek_script_air_finish(Fighter *fighter) {
 }
 
 void jarek_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, jarek_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : jarek_air_hp);
 }
 
 void jarek_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &air_punch_followup ? jarek_air_combo_lp : jarek_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &air_punch_followup ? jarek_air_combo_lp : jarek_air_lp);
 }
 
 void jarek_press_air_kick(Fighter *fighter) {

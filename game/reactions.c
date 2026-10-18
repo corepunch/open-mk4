@@ -855,6 +855,8 @@ static const FighterFn reactions[256] = {
   [146] = kai_weapon_reaction,
   [63] = cage_weapon_reaction,
   [149] = cage_weapon_reaction,
+  [44] = kai_weapon_reaction,
+  [148] = jarek_weapon_reaction,
 };
 // clang-format on
 
