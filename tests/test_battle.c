@@ -1063,6 +1063,24 @@ static void check_selected_high_kick(void) {
   }
 }
 
+static void check_roster_throw_state_entries(void) {
+  const int roster[] = {5, 7, 10, 14, 15, 17};
+  for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
+    battle_init(roster[index], 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[0];
+    Fighter *victim = &g_battle.fighters[1];
+    owner->body.pos[AXIS_X] = -Q16_ONE / 4;
+    victim->body.pos[AXIS_X] = Q16_ONE / 4;
+    fighter_enter_state(owner, S_THROW);
+    check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED),
+        "Shared throw entry must invoke the carrier's owned capture, not its approximate move header");
+    advance_ticks(300, NULL);
+    check(owner->state == S_IDLE && victim->health < Q16_ONE && !((owner->flags | victim->flags) & FF_PAIRED),
+        "Owned shared-state throw must apply damage, release its victim and recover");
+  }
+}
+
 static void check_cage_groin_gate(void) {
   for (int stale = 0; stale < 2; ++stale) {
     battle_init(14, 0);
@@ -1629,6 +1647,7 @@ int main(void) {
   check_goro_frame_lp_throw();
   check_goro_projectile_completion();
   check_cage_groin_gate();
+  check_roster_throw_state_entries();
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
   check_jax_air_grab_command();

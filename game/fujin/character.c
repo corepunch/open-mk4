@@ -74,7 +74,14 @@ static const ButtonTable fujin_jumping = {{[BUTTON_HIGH_PUNCH] = fujin_press_air
 static const Controls fujin_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
     {[STANCE_STANDING] = &fujin_standing, [STANCE_CROUCHING] = &fujin_crouching, [STANCE_JUMP] = &fujin_jumping, [STANCE_DIAGONAL_AIR] = &fujin_diagonal_air}};
 
-const CharacterDef mk4_fujin = {GAME_MK4, 5, "FUJIN", &mk4_motion, fujin_moves, S_COUNT, &fujin_controls, NULL, -73531, mk4_walk, mk4_jump, NULL, NULL, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const FighterFn state_entries[S_COUNT] = {
+  [S_THROW] = fujin_enter_throw,
+};
+// clang-format on
+
+const CharacterDef mk4_fujin = {
+    GAME_MK4, 5, "FUJIN", &mk4_motion, fujin_moves, S_COUNT, &fujin_controls, state_entries, -73531, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void fujin_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

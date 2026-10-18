@@ -78,7 +78,14 @@ static const Controls goro_controls = {goro_commands, (int)(sizeof goro_commands
 
 static const CpuMoves goro_cpu_moves = {.enter = {[CPU_PROJECTILE] = goro_cpu_projectile}};
 
-const CharacterDef mk4_goro = {GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, NULL, -85458, mk4_walk, NULL, &goro_cpu_moves, NULL, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const FighterFn state_entries[S_COUNT] = {
+  [S_THROW] = goro_lp_throw,
+};
+// clang-format on
+
+const CharacterDef mk4_goro = {
+    GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, state_entries, -85458, mk4_walk, NULL, &goro_cpu_moves, NULL, 0};
 
 void goro_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

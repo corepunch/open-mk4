@@ -81,8 +81,14 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
+// clang-format off: Keep table entries on one row, including long rows.
+static const FighterFn state_entries[S_COUNT] = {
+  [S_THROW] = reptile_lp_throw,
+};
+// clang-format on
+
 const CharacterDef mk4_reptile = {
-    GAME_MK4, 10, "REPTILE", &mk4_motion, moves, S_COUNT, &reptile_controls, NULL, -73531, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
+    GAME_MK4, 10, "REPTILE", &mk4_motion, moves, S_COUNT, &reptile_controls, state_entries, -73531, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
 
 void reptile_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

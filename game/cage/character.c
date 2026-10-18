@@ -73,7 +73,14 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_cage = {GAME_MK4, 14, "CAGE", &mk4_motion, moves, S_COUNT, &cage_controls, NULL, -74645, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const FighterFn state_entries[S_COUNT] = {
+  [S_THROW] = cage_lp_throw,
+};
+// clang-format on
+
+const CharacterDef mk4_cage = {
+    GAME_MK4, 14, "CAGE", &mk4_motion, moves, S_COUNT, &cage_controls, state_entries, -74645, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
 
 void cage_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

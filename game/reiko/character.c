@@ -69,7 +69,13 @@ static const ButtonTable reiko_air = {{[BUTTON_HIGH_PUNCH] = reiko_press_air_hp,
 static const Controls reiko_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
     {[STANCE_STANDING] = &reiko_standing, [STANCE_CROUCHING] = &reiko_crouching, [STANCE_JUMP] = &reiko_air, [STANCE_DIAGONAL_AIR] = &reiko_diagonal_air}};
 
-const CharacterDef mk4_reiko = {GAME_MK4, 7, "REIKO", &mk4_motion, moves, S_COUNT, &reiko_controls, NULL, -77660, mk4_walk, mk4_jump, NULL, NULL, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const FighterFn state_entries[S_COUNT] = {
+  [S_THROW] = reiko_lp_throw,
+};
+// clang-format on
+
+const CharacterDef mk4_reiko = {GAME_MK4, 7, "REIKO", &mk4_motion, moves, S_COUNT, &reiko_controls, state_entries, -77660, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void reiko_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

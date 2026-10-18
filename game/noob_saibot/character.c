@@ -80,8 +80,14 @@ static const MoveListEntry move_list[] = {
 };
 // clang-format on
 
-const CharacterDef mk4_noob_saibot = {GAME_MK4, 17, "NOOB SAIBOT", &mk4_motion, moves, S_COUNT, &noob_saibot_controls, NULL, -77660, mk4_walk, mk4_jump, NULL,
-    move_list, (int)(sizeof move_list / sizeof move_list[0])};
+// clang-format off: Keep table entries on one row, including long rows.
+static const FighterFn state_entries[S_COUNT] = {
+  [S_THROW] = noob_saibot_lp_throw,
+};
+// clang-format on
+
+const CharacterDef mk4_noob_saibot = {GAME_MK4, 17, "NOOB SAIBOT", &mk4_motion, moves, S_COUNT, &noob_saibot_controls, state_entries, -77660, mk4_walk,
+    mk4_jump, NULL, move_list, (int)(sizeof move_list / sizeof move_list[0])};
 
 void noob_saibot_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);
