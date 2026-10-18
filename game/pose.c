@@ -42,7 +42,14 @@ int fighter_pose_sample(const Fighter *fighter) {
   if (fighter->assets == NULL) {
     return (int)fighter_frame(fighter, 1 << 16);
   }
-  return (int)fighter_frame(fighter, (int)fighter_clip(fighter->assets, fighter)->frames.count);
+  const Clip *clip = fighter_clip(fighter->assets, fighter);
+  int requested = fighter->action == 0x1003 ? fighter->frozen_clip : fighter_move(fighter)->clip;
+  /* A rig-incompatible stream already selects the model's idle fallback.
+   * Its presentation pose has no relation to the requested move's clock. */
+  if (requested >= 0 && clip != &fighter->assets->clips.data[requested]) {
+    return 0;
+  }
+  return (int)fighter_frame(fighter, (int)clip->frames.count);
 }
 
 Mat3 fighter_turn(const Assets *assets, const Fighter *fighter) {
@@ -93,7 +100,7 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
   const AnimationSnapshot *current = &g_battle.current_animation;
   if (fighter_index < 0 || !previous->valid || !current->valid || !previous->fighters[fighter_index].valid || !current->fighters[fighter_index].valid ||
       previous->fighters[fighter_index].model != ch || current->fighters[fighter_index].model != ch) {
-    double sample = fighter_frame(fighter, (int)clip->frames.count);
+    double sample = fighter_pose_sample(fighter);
     pose(ch, clip, sample, output);
     return;
   }

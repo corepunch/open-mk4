@@ -127,7 +127,7 @@ void battle_capture_render_snapshot(void) {
     const Fighter *fighter = &g_battle.fighters[i];
     const Character *model = fighter_model(g_battle.assets, fighter);
     const Clip *clip = fighter_clip(g_battle.assets, fighter);
-    next.fighters[i] = (FighterAnimationFrame){model, (int)(clip - g_battle.assets->clips.data), fighter_frame(fighter, (int)clip->frames.count), true};
+    next.fighters[i] = (FighterAnimationFrame){model, (int)(clip - g_battle.assets->clips.data), fighter_pose_sample(fighter), true};
   }
   if (!g_battle.current_animation.valid) {
     g_battle.previous_animation = next;

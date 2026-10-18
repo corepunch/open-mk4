@@ -239,6 +239,29 @@ static void sound_samples(void) {
   package_free(&archive);
 }
 
+static void fallback_clip_clock(const Assets *assets) {
+  battle_init(15, 4);
+  battle_bind_assets(assets);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *fighter = &g_battle.fighters[0];
+  /* The real Goro sequence reaches a humanoid final recovery after its five
+   * damage cycles. Rendering selects the existing rig-compatible idle
+   * fallback, whose shorter clip must not inherit that recovery's clock. */
+  fighter->body.pos[AXIS_X] = -Q16_ONE / 4;
+  g_battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 4;
+  fighter_press(fighter, BUTTON_LOW_PUNCH);
+  bool reached = false;
+  for (int tick = 0; tick < 300; ++tick) {
+    battle_step((Input[2]){{0}, {0}});
+    if (fighter_move(fighter)->clip == 75) {
+      reached = true;
+      check(fighter_clip(assets, fighter) != &assets->clips.data[75], "Goro humanoid suffix must use the existing rig fallback");
+      check(fighter_pose_sample(fighter) == 0, "Fallback rig must hold its own neutral pose independently of the move clock");
+    }
+  }
+  check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
+}
+
 int main(void) {
   sound_samples();
 
@@ -369,6 +392,7 @@ int main(void) {
   assets_load_battle(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
+  fallback_clip_clock(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");
   combat_poses(&assets);
