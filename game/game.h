@@ -18,6 +18,7 @@
 #include <stdint.h>
 
 #define TICK_SECONDS (1.f / 60.f)
+#define MMOVE_FRAME_TICKS 2
 #define CLIP_ASSET_IDLE (-1)
 
 /* Retail world values are signed Q16: 1.0 is 0x10000, one mesh unit. */
@@ -147,8 +148,9 @@ typedef struct MoveDef {
   int action; /* retail action code at controller +0x74; 0 uses the state default */
 } MoveDef;
 
-/* Quake II-style animation frame. ai/dist retain the familiar per-frame
- * movement hook; sample and duration map a pose to the MK4 clip clock. */
+/* Quake II-style animation frame. ai/dist retain the familiar movement hook;
+ * sample is a decoded MK4 pose and duration is measured in simulation ticks.
+ * The default two-tick duration plays all source samples at 30 frames/second. */
 typedef void (*FighterAIFn)(Fighter *fighter, float distance);
 
 typedef struct mframe_s {
@@ -158,6 +160,8 @@ typedef struct mframe_s {
   int sample;
   int duration;
 } mframe_t;
+
+#define MFRAME(sample_) {NULL, 0.0f, NULL, (sample_), MMOVE_FRAME_TICKS}
 
 /* A contiguous animation range. Callbacks can replace the active move, which
  * is how conditional branches select another mmove_t at a frame boundary. */

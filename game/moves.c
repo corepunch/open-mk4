@@ -252,17 +252,19 @@ void fighter_step_mmove(Fighter *fighter) {
   require(mmove != NULL, "Fighter has no mmove");
   const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
   uint64_t continuation = fighter->continuation;
-  if (frame->ai != NULL) {
-    frame->ai(fighter, frame->dist);
-  }
-  if (fighter->continuation != continuation || fighter->current_mmove != mmove || fighter->pending != NULL) {
-    return;
-  }
-  if (frame->think != NULL) {
-    frame->think(fighter);
-  }
-  if (fighter->continuation != continuation || fighter->current_mmove != mmove || fighter->pending != NULL) {
-    return;
+  if (fighter->mmove_elapsed == 0) {
+    if (frame->ai != NULL) {
+      frame->ai(fighter, frame->dist);
+    }
+    if (fighter->continuation != continuation || fighter->current_mmove != mmove || fighter->pending != NULL) {
+      return;
+    }
+    if (frame->think != NULL) {
+      frame->think(fighter);
+    }
+    if (fighter->continuation != continuation || fighter->current_mmove != mmove || fighter->pending != NULL) {
+      return;
+    }
   }
   fighter->mmove_elapsed++;
   if (fighter->mmove_elapsed < frame->duration) {
@@ -294,9 +296,17 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
     return mini(fighter->sample_override, frame_count - 1);
   }
   if (fighter->current_mmove != NULL) {
-    int sample = fighter->current_mmove->frame[fighter->mmove_frame - fighter->current_mmove->firstframe].sample;
+    const mmove_t *mmove = fighter->current_mmove;
+    const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
+    int sample = frame->sample;
     require(sample < frame_count, "Mmove sample outside clip");
-    return sample;
+    if (fighter->mmove_frame == mmove->lastframe) {
+      return sample;
+    }
+    const mframe_t *next = &mmove->frame[fighter->mmove_frame + 1 - mmove->firstframe];
+    require(next->sample < frame_count, "Next mmove sample outside clip");
+    double fraction = (double)fighter->mmove_elapsed / frame->duration;
+    return sample + (next->sample - sample) * fraction;
   }
   if (fighter->sequence != NULL) {
     const MoveSequence *sequence = fighter->sequence;
