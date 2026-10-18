@@ -1,8 +1,7 @@
 #include "../character.h"
 
 void quan_chi_script_sweep_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(quan_chi_ready);
+  native_standard_sweep(fighter);
 }
 
 void quan_chi_sweep(Fighter *fighter) {

@@ -86,6 +86,10 @@ void goro_event_progress(Fighter *fighter) {
 }
 
 void goro_script_finish(Fighter *fighter) {
+  if (fighter->state == S_SWEEP) {
+    native_standard_sweep(fighter);
+    return;
+  }
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(goro_ready);
 }
@@ -93,7 +97,11 @@ void goro_script_finish(Fighter *fighter) {
 void goro_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 void goro_script_lp_finish(Fighter *fighter) {

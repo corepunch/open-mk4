@@ -151,4 +151,5 @@ void jarek_entry_retail_script_004ec4f0(Fighter *fighter);
 void jarek_entry_retail_script_004e66d0(Fighter *fighter);
 void jarek_entry_retail_script_004e66f0(Fighter *fighter);
 void jarek_entry_retail_script_004e8c08(Fighter *fighter);
+void jarek_script_sweep_tail(Fighter *fighter);
 #endif

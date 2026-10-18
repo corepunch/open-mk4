@@ -16,3 +16,7 @@ void jarek_script_sweep_finish(Fighter *fighter) {
 void jarek_press_sweep(Fighter *fighter) {
   fighter_interrupt(fighter, jarek_sweep);
 }
+
+void jarek_script_sweep_tail(Fighter *fighter) {
+  native_standard_sweep(fighter);
+}

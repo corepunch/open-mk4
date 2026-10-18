@@ -38,7 +38,11 @@ void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction) {
 void quan_chi_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 static void quan_chi_entry_469c80(Fighter *fighter) {

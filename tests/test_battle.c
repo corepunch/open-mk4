@@ -2482,9 +2482,10 @@ static void drive_owned_command(int slot, FighterFn entry) {
 }
 
 static void check_advancing_sweeps(void) {
-  const int roster[] = {1, 3, 5, 7, 9, 11, 13, 17};
+  const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
   for (size_t character = 0; character < sizeof roster / sizeof roster[0]; ++character) {
     int selected = roster[character];
+    int sweep_clip = selected % 2 && selected != 15 ? 62 : 63;
     for (int slot = 0; slot < 2; ++slot) {
       for (int scenario = 0; scenario < 5; ++scenario) {
         battle_init(slot ? 4 : selected, slot ? selected : 4);
@@ -2504,24 +2505,29 @@ static void check_advancing_sweeps(void) {
         battle_step(input);
         input[slot] = (Input){0};
         advance_ticks(2, input);
-        if (owner->state != S_SWEEP || fighter_move(owner)->clip != 62 || owner->action != ACTION_RETAIL_010C) {
-          fprintf(stderr, "sweep slot%d scenario%d state%d clip%d action%x facing%d\n", slot, scenario, owner->state, fighter_move(owner)->clip, owner->action,
-              owner->facing);
+        if (owner->state != S_SWEEP || fighter_move(owner)->clip != sweep_clip || owner->action != ACTION_RETAIL_010C) {
+          fprintf(stderr, "sweep roster%d slot%d scenario%d state%d clip%d action%x facing%d\n", selected, slot, scenario, owner->state,
+              fighter_move(owner)->clip, owner->action, owner->facing);
         }
-        check(owner->state == S_SWEEP && fighter_move(owner)->clip == 62 && owner->action == ACTION_RETAIL_010C,
-            "Back+LK must enter the selected generated clip62 sweep");
+        check(owner->state == S_SWEEP && fighter_move(owner)->clip == sweep_clip && owner->action == ACTION_RETAIL_010C,
+            "Back+LK must enter the selected generated retail sweep");
         input[slot] = (Input){0};
         bool recovered = false;
+        q16 previous_health = victim->health;
         for (int tick = 0; tick < 100; ++tick) {
           if (scenario == 4 && tick == 3) {
             battle_react(owner, 11);
           }
           battle_step(input);
+          if (victim->health != previous_health) {
+            check(fighter_sample(owner) == 23 || fighter_sample(owner) == 24, "Retail sweep contacts must advance to authored23/24 rather than holding22");
+            previous_health = victim->health;
+          }
           recovered |= owner->action == 0x1006;
           check(!fighter_fiber_active(owner), "Advancing sweep startup, contact and recovery must never start a fiber");
         }
         q16 damage = scenario >= 3 ? 0 : scenario == 2 ? q16_mul(0x23d7, 0x3333) : 0x23d7;
-        check(victim->health == Q16_ONE - damage, "B36 sweep must retain fourteen-percent damage, low guard and startup interruption");
+        check(victim->health == Q16_ONE - damage, "Retail sweep must retain fourteen-percent damage, low guard and startup interruption");
         check(owner->state == S_IDLE && !fighter_airborne(owner) && (scenario == 4 || recovered),
             "Advancing sweep must reach native action1006 recovery and return to its controller");
         battle_reset_match();

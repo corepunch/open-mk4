@@ -1378,3 +1378,9 @@ CHARACTER_BINDINGS[5][0x46efd0] = Binding('fujin_script_finish', 'game/fujin/mov
 for _cid in (1, 3, 7, 9, 11, 13, 17):
     CHARACTER_BINDINGS[_cid][0x46efd0] = replace(CHARACTER_BINDINGS[_cid][0x46efd0], mmove=True,
         evidence='46efd0 submits23/24 with B36 contact;46f130 sets action1006 and completes clip62 through the shared native frame tail')
+
+for _cid in (0, 2, 4, 6, 8, 10, 12, 14, 15, 16):
+    CHARACTER_BINDINGS[_cid][0x46f080] = replace(CHARACTER_BINDINGS[_cid][0x46f080], mmove=True,
+        evidence='46f080 advances23/24 and queries B35;46f130 action1006 finishes clip63 to45 before controller return')
+CHARACTER_BINDINGS[12][0x46f080] = replace(CHARACTER_BINDINGS[12][0x46f080],
+    symbol='jarek_script_sweep_tail', source='game/jarek/moves/sweep.c')

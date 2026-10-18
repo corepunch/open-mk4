@@ -25,6 +25,11 @@ void goro_enter_high_kick(Fighter *fighter) {
 }
 
 void goro_enter_low_kick(Fighter *fighter) {
+  /*460fc0/48ebd0 selects4e6ef8[6]=46ef90 while holding back. */
+  if (fighter_holds_back(fighter)) {
+    goro_enter_sweep(fighter);
+    return;
+  }
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
     fighter_interrupt(fighter, goro_lk_throw);
     return;

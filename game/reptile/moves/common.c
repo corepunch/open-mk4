@@ -211,14 +211,17 @@ void reptile_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void reptile_script_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(reptile_ready);
+  native_standard_sweep(fighter);
 }
 
 void reptile_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 bool reptile_can_dash(const Fighter *fighter) {

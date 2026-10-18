@@ -13,7 +13,11 @@ void jarek_ready(Fighter *fighter) {
 void jarek_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 void jarek_idle(Fighter *fighter) {
