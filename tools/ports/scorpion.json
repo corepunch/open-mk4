@@ -257,6 +257,13 @@
   "integration_source": "game/c_scorpion.c",
   "inventory_sha256": "12721330226eea45c096a6d3cf01cb66d141d95963f4c2825c5e3e2c6ad7b0e9",
   "legacy_scripts": {},
+  "mmove_scripts": [
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4e8850",
+    "0x4ec8b0",
+    "0x4ec918"
+  ],
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

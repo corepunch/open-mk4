@@ -136,7 +136,7 @@ CHARACTER_BINDINGS[3][0x43d530] = Binding('liu_script_fan_cycle', 'game/c_liu_ka
 CHARACTER_BINDINGS[3][0x43d6f0] = Binding('liu_script_fan_victory', 'game/c_liu_kang.c', ('tail',), evidence='43d6f0 clears motion and enters 4e0158')
 CHARACTER_BINDINGS[3][0x43db50] = Binding('liu_script_fan_victim_end', 'game/c_liu_kang.c', ('tail',), evidence='43db50 victim arena release/hide native continuation')
 
-BINDINGS[0x4595e0] = Binding('mk4_script_draw_voice', 'game/script.c', ('handler',), ('fighter',), result='void', evidence='4595e0; bounded native listing and docs/liu-kang-scripts.md', inline_values=(0,))
+BINDINGS[0x4595e0] = Binding('mk4_script_draw_voice', 'game/script.c', ('handler',), ('fighter',), result='void', mmove=True, evidence='4595e0; bounded native listing and docs/liu-kang-scripts.md', inline_values=(0,))
 BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', mmove=True, evidence='459720 -> 489ff0, selector8 table53d000 and remap4ead18', adaptation='Shared audio loader resolves roster throw voices from the same table', inline_values=(1, 8))
 BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', mmove=True, evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 3, 4, 6, 12, 14, 22, 23, 34, 36, 37, 56, 57, 58, 60, 61, 62))
 BINDINGS[0x45ae50] = Binding('mk4_script_pair_adjust', 'game/script.c', ('handler',), ('fighter', 'word0_i32'), result='void', mmove=True, evidence='45ae50; bounded native listing and docs/liu-kang-scripts.md')
@@ -162,7 +162,7 @@ CHARACTER_BINDINGS[4] = {
     0x46c2c0: Binding('script_combo_hp_tail', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46c2c0; bounded native listing; docs/character-script-port.md'),
     0x46c7f0: Binding('script_air_kick_tail', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46c7f0; bounded native listing; docs/character-script-port.md'),
     0x46cde0: Binding('uppercut_script', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46cde0; bounded native listing; docs/character-script-port.md'),
-    0x46d260: Binding('script_draw_equip', 'game/c_sub_zero.c', ('tail',), evidence='46d260; bounded native listing; docs/character-script-port.md'),
+    0x46d260: Binding('script_draw_equip', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46d260; bounded native listing; docs/character-script-port.md'),
     0x46e070: Binding('script_air_lk_tail', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46e070; bounded native listing; docs/character-script-port.md'),
     0x46e4d0: Binding('script_air_diagonal_tail', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46e4d0; bounded native listing; docs/character-script-port.md'),
     0x46e730: Binding('script_air_hp_tail', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46e730; bounded native listing; docs/character-script-port.md'),
@@ -260,7 +260,7 @@ CHARACTER_BINDINGS[0][0x45b230] = Binding('script_opponent_reaction', 'game/c_sc
 CHARACTER_BINDINGS[0][0x49a6a0] = Binding('script_spawn_spear', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='49a6a0 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(67,))
 CHARACTER_BINDINGS[0][0x450d40] = Binding('script_transform_effect', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='450d40 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
 CHARACTER_BINDINGS[0][0x41ed80] = Binding('script_beast_gore', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='41ed80 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
-BINDINGS[0x45afe0] = Binding('fighter_set_speed', 'game/moves.c', ('handler',), ('fighter', 'word0_i32'), evidence='45afe0 -> 490c60 horizontal signed velocity')
+BINDINGS[0x45afe0] = Binding('fighter_set_speed', 'game/moves.c', ('handler',), ('fighter', 'word0_i32'), mmove=True, evidence='45afe0 -> 490c60 horizontal signed velocity')
 BINDINGS[0x4595a0] = Binding('mk4_script_shake', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='4595a0 -> 457b50 camera pulse selector table 4e3638', inline_values=(0, 1, 2, 3, 4, 5, 6))
 BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector, including Goro throw selector 21', inline_values=tuple(range(22)))
 
@@ -275,7 +275,7 @@ for _roster in (0, 4):
 
 BINDINGS[0x46eab0] = Binding('weapon_air_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', evidence='46eab0: weapon air HP native runner, selector 0x104')
 BINDINGS[0x46ec10] = Binding('weapon_air_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', evidence='46ec10: weapon air LP native runner, selector 0x108')
-CHARACTER_BINDINGS[0][0x4807b0] = Binding('spin_script', 'game/c_scorpion.c', ('tail',), flow='terminal', evidence='4807b0 native contact/travel loop after VM startup 4e8850')
+CHARACTER_BINDINGS[0][0x4807b0] = Binding('spin_script', 'game/c_scorpion.c', ('tail',), mmove=True, flow='terminal', evidence='4807b0 native contact/travel loop after VM startup 4e8850')
 
 # Raiden and Sonya: shared native runners retain contact, physics and scene
 # ownership; their VM bodies are generated from the selected roster streams.
@@ -1140,3 +1140,9 @@ def bindings_for(character):
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/c_sub_zero.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')
 CHARACTER_BINDINGS[4][0x484b60] = Binding('script_air_getup', 'game/c_sub_zero.c', ('tail',), flow='terminal', mmove=True, evidence='484b60 clip131 samples46..79 after release and landing')
+
+for _cid in (0, 4):
+    for _address in (0x46eab0, 0x46ec10):
+        CHARACTER_BINDINGS[_cid][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='46eab0/46ec10 weapon air contact and landing phases')
+
+CHARACTER_BINDINGS[0][0x470420] = Binding('script_weapon_ready', 'game/c_scorpion.c', ('tail',), flow='terminal', mmove=True, evidence='470420 nonblocking return for generated sword recovery')

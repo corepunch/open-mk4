@@ -1323,7 +1323,7 @@ static void equip_scepter(Fighter *fighter) {
 
 static void scepter_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, index == 0 || index == 2, (index == 0 || index == 2) ? retail_script_004e66d0 : retail_script_004e66f0);
+    weapon_air_frames(fighter, index == 0 || index == 2, (index == 0 || index == 2) ? retail_script_004e66d0 : retail_script_004e66f0);
   } else {
     weapon_start_strike(fighter, &scepter_attacks[index], true);
   }
@@ -1361,7 +1361,7 @@ static void sub_zero_weapon(Fighter *fighter) {
     fighter->action = ACTION_RETAIL_010E;
   } else {
     weapon_draw(fighter, &scepter);
-    fighter_start_fiber(fighter, retail_script_004e62c0, NULL);
+    retail_script_004e62c0(fighter);
   }
 }
 

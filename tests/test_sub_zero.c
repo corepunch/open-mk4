@@ -697,10 +697,12 @@ static void weapons(void) {
     g_battle.fighters[sword_owner].body.pos[AXIS_X] = player ? -3 * Q16_ONE : 3 * Q16_ONE;
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     check(fighter_move(&g_battle.fighters[player])->clip == 235, "Sub-Zero's foreign sword must retain sword attacks");
+    check(!fighter_fiber_active(&g_battle.fighters[player]), "picked-up sword attacks must use phases");
     advance(80);
     press(player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH));
     advance(4);
     check(fighter_move(&g_battle.fighters[player])->clip == 224, "foreign sword must enable the sword spin");
+    check(!fighter_fiber_active(&g_battle.fighters[player]), "picked-up sword spin must use generated phases");
     advance(20);
     check(g_battle.fighters[player].state == S_IDLE, "foreign sword spin must release");
 

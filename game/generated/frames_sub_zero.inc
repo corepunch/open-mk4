@@ -558,6 +558,92 @@ const mframe_t sub_zero_clip_118_frames[50] = {
 const mmove_t sub_zero_clip_118_mmove = {.firstframe = 0, .lastframe = 49, .frame = sub_zero_clip_118_frames};
 
 // clang-format off: Keep table entries on one row, including long rows.
+const mframe_t sub_zero_s_air_getup_frames[80] = {
+  MFRAME(0), /* sub_zero_s_air_getup_000 */
+  MFRAME(1), /* sub_zero_s_air_getup_001 */
+  MFRAME(2), /* sub_zero_s_air_getup_002 */
+  MFRAME(3), /* sub_zero_s_air_getup_003 */
+  MFRAME(4), /* sub_zero_s_air_getup_004 */
+  MFRAME(5), /* sub_zero_s_air_getup_005 */
+  MFRAME(6), /* sub_zero_s_air_getup_006 */
+  MFRAME(7), /* sub_zero_s_air_getup_007 */
+  MFRAME(8), /* sub_zero_s_air_getup_008 */
+  MFRAME(9), /* sub_zero_s_air_getup_009 */
+  MFRAME(10), /* sub_zero_s_air_getup_010 */
+  MFRAME(11), /* sub_zero_s_air_getup_011 */
+  MFRAME(12), /* sub_zero_s_air_getup_012 */
+  MFRAME(13), /* sub_zero_s_air_getup_013 */
+  MFRAME(14), /* sub_zero_s_air_getup_014 */
+  MFRAME(15), /* sub_zero_s_air_getup_015 */
+  MFRAME(16), /* sub_zero_s_air_getup_016 */
+  MFRAME(17), /* sub_zero_s_air_getup_017 */
+  MFRAME(18), /* sub_zero_s_air_getup_018 */
+  MFRAME(19), /* sub_zero_s_air_getup_019 */
+  MFRAME(20), /* sub_zero_s_air_getup_020 */
+  MFRAME(21), /* sub_zero_s_air_getup_021 */
+  MFRAME(22), /* sub_zero_s_air_getup_022 */
+  MFRAME(23), /* sub_zero_s_air_getup_023 */
+  MFRAME(24), /* sub_zero_s_air_getup_024 */
+  MFRAME(25), /* sub_zero_s_air_getup_025 */
+  MFRAME(26), /* sub_zero_s_air_getup_026 */
+  MFRAME(27), /* sub_zero_s_air_getup_027 */
+  MFRAME(28), /* sub_zero_s_air_getup_028 */
+  MFRAME(29), /* sub_zero_s_air_getup_029 */
+  MFRAME(30), /* sub_zero_s_air_getup_030 */
+  MFRAME(31), /* sub_zero_s_air_getup_031 */
+  MFRAME(32), /* sub_zero_s_air_getup_032 */
+  MFRAME(33), /* sub_zero_s_air_getup_033 */
+  MFRAME(34), /* sub_zero_s_air_getup_034 */
+  MFRAME(35), /* sub_zero_s_air_getup_035 */
+  MFRAME(36), /* sub_zero_s_air_getup_036 */
+  MFRAME(37), /* sub_zero_s_air_getup_037 */
+  MFRAME(38), /* sub_zero_s_air_getup_038 */
+  MFRAME(39), /* sub_zero_s_air_getup_039 */
+  MFRAME(40), /* sub_zero_s_air_getup_040 */
+  MFRAME(41), /* sub_zero_s_air_getup_041 */
+  MFRAME(42), /* sub_zero_s_air_getup_042 */
+  MFRAME(43), /* sub_zero_s_air_getup_043 */
+  MFRAME(44), /* sub_zero_s_air_getup_044 */
+  MFRAME(45), /* sub_zero_s_air_getup_045 */
+  MFRAME(46), /* sub_zero_s_air_getup_046 */
+  MFRAME(47), /* sub_zero_s_air_getup_047 */
+  MFRAME(48), /* sub_zero_s_air_getup_048 */
+  MFRAME(49), /* sub_zero_s_air_getup_049 */
+  MFRAME(50), /* sub_zero_s_air_getup_050 */
+  MFRAME(51), /* sub_zero_s_air_getup_051 */
+  MFRAME(52), /* sub_zero_s_air_getup_052 */
+  MFRAME(53), /* sub_zero_s_air_getup_053 */
+  MFRAME(54), /* sub_zero_s_air_getup_054 */
+  MFRAME(55), /* sub_zero_s_air_getup_055 */
+  MFRAME(56), /* sub_zero_s_air_getup_056 */
+  MFRAME(57), /* sub_zero_s_air_getup_057 */
+  MFRAME(58), /* sub_zero_s_air_getup_058 */
+  MFRAME(59), /* sub_zero_s_air_getup_059 */
+  MFRAME(60), /* sub_zero_s_air_getup_060 */
+  MFRAME(61), /* sub_zero_s_air_getup_061 */
+  MFRAME(62), /* sub_zero_s_air_getup_062 */
+  MFRAME(63), /* sub_zero_s_air_getup_063 */
+  MFRAME(64), /* sub_zero_s_air_getup_064 */
+  MFRAME(65), /* sub_zero_s_air_getup_065 */
+  MFRAME(66), /* sub_zero_s_air_getup_066 */
+  MFRAME(67), /* sub_zero_s_air_getup_067 */
+  MFRAME(68), /* sub_zero_s_air_getup_068 */
+  MFRAME(69), /* sub_zero_s_air_getup_069 */
+  MFRAME(70), /* sub_zero_s_air_getup_070 */
+  MFRAME(71), /* sub_zero_s_air_getup_071 */
+  MFRAME(72), /* sub_zero_s_air_getup_072 */
+  MFRAME(73), /* sub_zero_s_air_getup_073 */
+  MFRAME(74), /* sub_zero_s_air_getup_074 */
+  MFRAME(75), /* sub_zero_s_air_getup_075 */
+  MFRAME(76), /* sub_zero_s_air_getup_076 */
+  MFRAME(77), /* sub_zero_s_air_getup_077 */
+  MFRAME(78), /* sub_zero_s_air_getup_078 */
+  MFRAME(79), /* sub_zero_s_air_getup_079 */
+};
+// clang-format on
+const mmove_t sub_zero_s_air_getup_mmove = {.firstframe = 0, .lastframe = 79, .frame = sub_zero_s_air_getup_frames};
+
+// clang-format off: Keep table entries on one row, including long rows.
 const mframe_t sub_zero_clip_141_frames[17] = {
   MFRAME(0), /* sub_zero_clip_141_000 */
   MFRAME(1), /* sub_zero_clip_141_001 */

@@ -36,16 +36,31 @@ void weapon_stance(Fighter *fighter, int state) {
   fighter_start_move(fighter, state, move);
 }
 
-static void blend_script(Fighter *fighter) {
-  for (int tick = 1; tick <= fighter->blend_duration; ++tick) {
-    fighter_wait_ticks(1);
-    fighter->blend_ticks = tick;
-  }
-  fighter_fiber_finish(fighter_ready);
+static bool weapon_wait(const Fighter *fighter) {
+  (void)fighter;
+  return false;
 }
 
-static void strike_wait(Fighter *fighter, const WeaponStrike *strike) {
-  fighter_wait_ticks(1);
+static void weapon_hold(Fighter *fighter, const mmove_t *phase) {
+  int sample = fighter_sample(fighter);
+  fighter_mmove_phase(fighter, phase);
+  fighter->sample_override = sample;
+}
+
+static void weapon_cleanup(Fighter *fighter) {
+  fighter_set_speed(fighter, 0);
+  fighter->blend_duration = 0;
+}
+
+static void blend_tick(Fighter *fighter) {
+  ++fighter->blend_ticks;
+}
+
+static const mframe_t blend_frames[] = {{.sample = 0, .duration = 10, .tick = blend_tick}};
+static const mmove_t blend_phase = {.frame = blend_frames, .endfunc = fighter_ready, .cleanup = weapon_cleanup};
+
+static void strike_effects(Fighter *fighter) {
+  const WeaponStrike *strike = fighter->weapon_strike;
   if (fighter->ticks == strike->windup - strike->first + 1) {
     battle_sound(SOUND_C, strike->sound);
   }
@@ -53,47 +68,65 @@ static void strike_wait(Fighter *fighter, const WeaponStrike *strike) {
   fighter_set_speed(fighter, moving ? strike->speed : 0);
 }
 
-static void strike_script(Fighter *fighter) {
+static void strike_done(Fighter *fighter) {
   const WeaponStrike *strike = fighter->weapon_strike;
-  const int active = strike->target - strike->first + 1;
-  do {
-    strike_wait(fighter, strike);
-    fighter->sample_override = strike->first + fighter->ticks;
-    if (fighter->ticks >= active) {
-      battle_contact(fighter, &strike->record);
-    }
-  } while (!fighter->connected && fighter->ticks < active + strike->queries - 1);
-  fighter->script_phase = 1;
-  fighter->action = ACTION_RETAIL_1006;
-  fighter_set_speed(fighter, 0);
-  if (fighter->connected && (strike->recovery == 5 || strike->recovery == 9)) {
-    strike_wait(fighter, strike);
-  }
-  while (fighter->sample_override < strike->move.last) {
-    strike_wait(fighter, strike);
-    fighter->sample_override++;
-  }
-  strike_wait(fighter, strike);
   if (fighter->connected && strike->recovery == 9) {
-    int clip = strike->move.clip, sample = fighter->sample_override;
-    fighter_fiber_move(fighter, S_PUNCH, &blend_stance);
+    int clip = strike->move.clip, sample = fighter_sample(fighter);
+    fighter_start_mmove(fighter, S_PUNCH, &blend_stance, &blend_phase);
     fighter->blend_clip = clip;
     fighter->blend_sample = sample;
     fighter->blend_ticks = 0;
-    fighter->blend_duration = 10; /* 495300 -> 48fde0, step 0x1999 */
-    fighter->sample_override = 0;
-    blend_script(fighter);
+    fighter->blend_duration = 10;
+  } else {
+    fighter_finish_mmove(fighter, fighter_ready);
   }
-  fighter_fiber_finish(fighter_ready);
 }
+
+static void strike_recover_tick(Fighter *fighter) {
+  strike_effects(fighter);
+  if (fighter_sample(fighter) >= fighter->weapon_strike->move.last) {
+    strike_done(fighter);
+  } else {
+    fighter->sample_override = fighter_sample(fighter) + 1;
+  }
+}
+
+static const mframe_t strike_recover_frames[] = {{.sample = 0, .duration = 1, .tick = strike_recover_tick}};
+static const mmove_t strike_recover_phase = {.frame = strike_recover_frames, .until = weapon_wait};
+
+static void strike_recover(Fighter *fighter) {
+  weapon_hold(fighter, &strike_recover_phase);
+}
+
+static const mframe_t strike_pause_frames[] = {{.sample = 0, .duration = 1, .tick = strike_effects}};
+static const mmove_t strike_pause_phase = {.frame = strike_pause_frames, .endfunc = strike_recover};
+
+static void strike_tick(Fighter *fighter) {
+  const WeaponStrike *strike = fighter->weapon_strike;
+  int active = strike->target - strike->first + 1;
+  strike_effects(fighter);
+  fighter->sample_override = strike->first + fighter->ticks;
+  if (fighter->ticks >= active) {
+    battle_contact(fighter, &strike->record);
+  }
+  if (!fighter->connected && fighter->ticks < active + strike->queries - 1) {
+    return;
+  }
+  fighter->script_phase = 1;
+  fighter->action = ACTION_RETAIL_1006;
+  fighter_set_speed(fighter, 0);
+  weapon_hold(fighter, fighter->connected && (strike->recovery == 5 || strike->recovery == 9) ? &strike_pause_phase : &strike_recover_phase);
+}
+
+static const mframe_t strike_frames[] = {{.sample = 0, .duration = 1, .tick = strike_tick}};
+static const mmove_t strike_phase = {.frame = strike_frames, .until = weapon_wait, .cleanup = weapon_cleanup};
 
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel) {
   require(strike->first <= strike->windup && strike->windup <= strike->target && strike->queries > 0, "Invalid weapon phases");
-  fighter_start_move(fighter, S_PUNCH, &strike->move);
+  fighter_start_mmove(fighter, S_PUNCH, &strike->move, &strike_phase);
   fighter->weapon_strike = strike;
   fighter->weapon_travel = travel;
   fighter->sample_override = strike->first;
-  fighter_start_fiber(fighter, strike_script, NULL);
 }
 
 /* 494610 / 4946f0. This is separate from a back-punch's motion setup. */
@@ -220,6 +253,51 @@ void weapon_air_native(Fighter *fighter, unsigned selector) {
   air_script(fighter);
 }
 
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t weapon_land_frames[] = {
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 24, .duration = 1},
+  {.sample = 25, .duration = 1},
+  {.sample = 26, .duration = 1},
+  {.sample = 27, .duration = 1},
+};
+// clang-format on
+static const mmove_t weapon_land = {.frame = weapon_land_frames, .lastframe = 9, .endfunc = fighter_ready};
+
+static void weapon_air_tick(Fighter *fighter) {
+  bool high = fighter_move(fighter)->clip == 252;
+  int tick = ++fighter->script_timer;
+  fighter->sample_override = mini(9, tick);
+  if (!fighter->connected && tick >= (high ? 8 : 9) && tick <= 10) {
+    battle_contact(fighter, &air_records[high ? 0 : 1]);
+  }
+  if (!fighter_airborne(fighter)) {
+    fighter_start_mmove(fighter, S_JUMP, &landing, &weapon_land);
+  }
+}
+
+static const mframe_t weapon_air_frames_table[] = {{.sample = 0, .duration = 1, .tick = weapon_air_tick}};
+static const mmove_t weapon_air_phase = {.frame = weapon_air_frames_table, .until = weapon_wait};
+
+void weapon_air_frames_native(Fighter *fighter, unsigned selector) {
+  require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
+  require(fighter_move(fighter)->clip == (selector == 0x104 ? 252 : 251), "Weapon-air phase differs from selected program");
+  fighter->script_timer = 0;
+  weapon_hold(fighter, &weapon_air_phase);
+}
+
+void weapon_air_frames(Fighter *fighter, bool high, FighterFn script) {
+  fighter_start_move(fighter, S_JUMP, high ? &air_hp : &air_lp);
+  fighter->sample_override = 0;
+  fighter->body.on_land = NULL;
+  script(fighter);
+}
+
 void weapon_air_attack(Fighter *fighter, bool high, FighterFn script) {
   fighter_start_move(fighter, S_JUMP, high ? &air_hp : &air_lp);
   fighter->sample_override = 0;
@@ -234,34 +312,33 @@ void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {
   /* The character starts its generated 4e62c0/4e62d8 program. */
 }
 
-static void throw_script(Fighter *fighter) {
-  for (;;) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = fighter->ticks - (fighter->ticks >= 11);
-    if (fighter->ticks == 22 && fighter->armed) {
-      Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SWORD, 90, object_tick);
-      if (p != NULL) {
-        p->weapon = fighter->weapon;
-        p->spin[AXIS_Z] = -0x6666; /* 493a70 / 493c20 */
-        for (int k = 0; k < 2; ++k) {
-          int axis = k == 0 ? AXIS_X : AXIS_Z;
-          p->pos[axis] += q16_mul(fighter->heading[k], 0xc000); /* 498480: .75 along heading */
-          p->vel[axis] = q16_mul(fighter->heading[k], 0x3333);
-        }
-        p->pos[AXIS_Y] = -0x13333;
+static void throw_tick(Fighter *fighter) {
+  fighter->sample_override = fighter->ticks - (fighter->ticks >= 11);
+  if (fighter->ticks == 22 && fighter->armed) {
+    Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SWORD, 90, object_tick);
+    if (p != NULL) {
+      p->weapon = fighter->weapon;
+      p->spin[AXIS_Z] = -0x6666; /* 493a70 / 493c20 */
+      for (int k = 0; k < 2; ++k) {
+        int axis = k == 0 ? AXIS_X : AXIS_Z;
+        p->pos[axis] += q16_mul(fighter->heading[k], 0xc000); /* 498480: .75 along heading */
+        p->vel[axis] = q16_mul(fighter->heading[k], 0x3333);
       }
-      fighter->armed = false;
+      p->pos[AXIS_Y] = -0x13333;
     }
-    if (fighter->ticks >= 62) {
-      fighter_fiber_finish(fighter_ready);
-    }
+    fighter->armed = false;
+  }
+  if (fighter->ticks >= 62) {
+    fighter_finish_mmove(fighter, fighter_ready);
   }
 }
 
+static const mframe_t throw_frames[] = {{.sample = 0, .duration = 62, .tick = throw_tick}};
+static const mmove_t throw_phase = {.frame = throw_frames};
+
 void weapon_throw(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &throw_move);
+  fighter_start_mmove(fighter, S_PUNCH, &throw_move, &throw_phase);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, throw_script, NULL);
 }
 
 static int pickup_index(const Fighter *fighter) {
@@ -282,11 +359,26 @@ bool weapon_can_pickup(const Fighter *fighter) {
   return g_battle.phase == PHASE_FIGHT && pickup_index(fighter) >= 0;
 }
 
-static void pickup_script(Fighter *fighter) {
-  fighter_fiber_play_to(fighter, 14, 1);
-  fighter_wait_ticks(1);
-  fighter_fiber_finish(fighter_ready);
-}
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t pickup_phase_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 11, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 13, .duration = 1},
+  {.sample = 14, .duration = 1},
+};
+// clang-format on
+static const mmove_t pickup_phase = {.frame = pickup_phase_frames, .lastframe = 14, .endfunc = fighter_ready};
 
 void weapon_pickup(Fighter *fighter) {
   int index = pickup_index(fighter);
@@ -297,7 +389,6 @@ void weapon_pickup(Fighter *fighter) {
   g_battle.projectiles[index].weapon->equip(fighter);
   battle_sound(SOUND_C, fighter == &g_battle.fighters[0] ? 0x26 : 0x27);
   g_battle.projectiles[index].kind = 0;
-  fighter_start_move(fighter, S_PUNCH, &pickup_move);
+  fighter_start_mmove(fighter, S_PUNCH, &pickup_move, &pickup_phase);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, pickup_script, NULL);
 }

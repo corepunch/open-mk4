@@ -1130,32 +1130,49 @@ static void equip_sword(Fighter *fighter) {
   fighter_equip_weapon(fighter, &sword);
 }
 
-static void sword_slash_script(Fighter *fighter) {
-  for (int tick = 1;; ++tick) {
-    fighter_wait_ticks(1);
-    if (tick >= 17 && tick < 21 && !fighter->connected) {
-      battle_contact(fighter, &sword_records[0]);
-    }
-    if (fighter->connected || tick >= 21) {
-      fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
-      fighter->action = ACTION_RETAIL_1006;
-    }
-    fighter->sample_override = tick + (fighter->connected ? 1 : 0);
-    if (tick >= (fighter->connected ? 42 : 43)) {
-      fighter_fiber_finish(special_ready);
-    }
+static void script_weapon_ready(Fighter *fighter) {
+  if (fighter_fiber_running(fighter)) {
+    fighter_fiber_finish(fighter_ready);
+  }
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static void sword_slash_tick(Fighter *fighter) {
+  int tick = fighter->ticks;
+  if (tick >= 17 && tick < 21 && !fighter->connected) {
+    battle_contact(fighter, &sword_records[0]);
+  }
+  if (fighter->connected || tick >= 21) {
+    fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
+    fighter->action = ACTION_RETAIL_1006;
+  }
+  fighter->sample_override = tick + (fighter->connected ? 1 : 0);
+  if (tick >= (fighter->connected ? 42 : 43)) {
+    fighter_finish_mmove(fighter, special_ready);
   }
 }
 
+static bool sword_phase_wait(const Fighter *fighter) {
+  (void)fighter;
+  return false;
+}
+
+static const mframe_t sword_slash_frames[] = {{.sample = 0, .duration = 1, .tick = sword_slash_tick}};
+static const mmove_t sword_slash_phase = {.frame = sword_slash_frames, .until = sword_phase_wait};
+
 static void sword_attack(Fighter *fighter, bool hp, bool back) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, hp, (hp) ? retail_script_004e66d0 : retail_script_004e66f0);
+    weapon_air_frames(fighter, hp, (hp) ? retail_script_004e66d0 : retail_script_004e66f0);
     return;
   }
   const MoveDef *move = back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
   fighter_start_move(fighter, S_PUNCH, move);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, back ? (hp ? retail_script_004ec918 : retail_script_004ec8b0) : sword_slash_script, NULL);
+  if (back) {
+    (hp ? retail_script_004ec918 : retail_script_004ec8b0)(fighter);
+  } else {
+    fighter_mmove_phase(fighter, &sword_slash_phase);
+  }
 }
 
 static void sword_hp(Fighter *fighter) {
@@ -1174,32 +1191,47 @@ static void sword_back_lp(Fighter *fighter) {
   sword_attack(fighter, false, true);
 }
 
-static void spin_script(Fighter *fighter) {
-  for (int tick = 1;; ++tick) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = tick % 12;
-    ContactResult result = CONTACT_MISS;
-    if (tick % 12 == 0) {
-      result = battle_contact(fighter, &sword_records[3]);
-    }
-    if (result == CONTACT_BLOCK || fighter_opponent(fighter)->hits >= 3) {
-      stop_body(fighter);
-      fighter->script_phase = 1;
-      fighter_wait_ticks(12);
-      fighter_fiber_finish(special_ready);
-    }
-    if (!(fighter->held & BUTTON_BIT(BUTTON_LOW_PUNCH))) {
-      fighter_fiber_finish(special_ready);
-    }
-    int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
-    fighter->body.vel[AXIS_X] = direction * 0xf5c;
+static const mframe_t sword_spin_recover_frames[] = {{.sample = 0, .duration = 12}};
+static const mmove_t sword_spin_recover = {.frame = sword_spin_recover_frames, .endfunc = special_ready};
+
+static void sword_spin_tick(Fighter *fighter) {
+  int tick = ++fighter->script_timer;
+  fighter->sample_override = tick % 12;
+  ContactResult result = CONTACT_MISS;
+  if (tick % 12 == 0) {
+    result = battle_contact(fighter, &sword_records[3]);
   }
+  if (result == CONTACT_BLOCK || fighter_opponent(fighter)->hits >= 3) {
+    stop_body(fighter);
+    fighter->script_phase = 1;
+    int pose = fighter_sample(fighter);
+    fighter_mmove_phase(fighter, &sword_spin_recover);
+    fighter->sample_override = pose;
+    return;
+  }
+  if (!(fighter->held & BUTTON_BIT(BUTTON_LOW_PUNCH))) {
+    fighter_finish_mmove(fighter, special_ready);
+    return;
+  }
+  int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
+  fighter->body.vel[AXIS_X] = direction * 0xf5c;
+}
+
+static const mframe_t sword_spin_frames[] = {{.sample = 0, .duration = 1, .tick = sword_spin_tick}};
+static const mmove_t sword_spin_phase = {.frame = sword_spin_frames, .until = sword_phase_wait};
+
+static void spin_script(Fighter *fighter) {
+  fighter->script_timer = 0;
+  int pose = fighter_sample(fighter);
+  fighter_mmove_phase(fighter, &sword_spin_phase);
+  fighter->sample_override = pose;
 }
 
 static void sword_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_spin_start);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, retail_script_004e8850, NULL);
+  fighter->mmove_cleanup = stop_body;
+  retail_script_004e8850(fighter);
 }
 
 static const WeaponDef sword = {0x60, sword_hp, sword_lp, sword_back_hp, sword_back_lp, sword_spin, weapon_throw, equip_sword, SCENE_MODEL_SWORD};
@@ -1216,7 +1248,7 @@ static void scorpion_weapon(Fighter *fighter) {
     weapon_followup_victim(fighter);
     fighter_start_move(fighter, S_PUNCH, &s_sword_back_lp);
     fighter->sample_override = 0;
-    fighter_start_fiber(fighter, retail_script_004ec8b0, NULL);
+    retail_script_004ec8b0(fighter);
   } else {
     weapon_draw(fighter, &sword);
     fighter_start_fiber(fighter, retail_script_004e62c0, NULL);
