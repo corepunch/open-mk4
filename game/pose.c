@@ -11,6 +11,9 @@ void battle_bind_assets(const Assets *assets) {
 }
 
 const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
+  if (fighter->scene_model != NULL) {
+    return fighter->scene_model;
+  }
   if (fighter->appearance == APPEARANCE_DRAGON) {
     return &assets->liu_dragon;
   }

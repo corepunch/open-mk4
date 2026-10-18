@@ -1384,3 +1384,10 @@ for _cid in (0, 2, 4, 6, 8, 10, 12, 14, 15, 16):
         evidence='46f080 advances23/24 and queries B35;46f130 action1006 finishes clip63 to45 before controller return')
 CHARACTER_BINDINGS[12][0x46f080] = replace(CHARACTER_BINDINGS[12][0x46f080],
     symbol='jarek_script_sweep_tail', source='game/jarek/moves/sweep.c')
+
+CHARACTER_BINDINGS[5][0x41ef20] = Binding('fujin_second_blood', 'game/fujin/moves/fatality_second.c', ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(38,), mmove=True, evidence='41ef20 spawns independent gore decorations during the wind fatality; portable bounded blood system owns their lifetime')
+CHARACTER_BINDINGS[5][0x4816f0] = Binding('fujin_second_burst', 'game/fujin/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True, evidence='4816f0 saves X/Z momentum,4818f0 schedules4ea420 joints five visits apart,481880 installs41d770 flesh rig and enters4ea2a8')
+CHARACTER_BINDINGS[5][0x4817c0] = Binding('fujin_second_finish', 'game/fujin/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True, evidence='4817c0 lowers the remaining body by.08, cues indexed scream61 and waits60 before ending scene orchestration')
+CHARACTER_BINDINGS[5][0x45b380] = Binding('fujin_second_face', 'game/fujin/moves/fatality_second.c', ('handler',), mmove=True, evidence='Opcode64 calls490bd0 to correct facing and refresh the pair heading')
+CHARACTER_BINDINGS[5][0x45ac30] = Binding('fujin_second_event', 'game/fujin/moves/fatality_second.c', ('handler',), ('fighter', 'arg_u8'), inline_values=(63,), mmove=True, evidence='45ac30 ->4315b0 queues scene event63 after the wind victim landing; portable finisher retains scene ownership')
+CHARACTER_BINDINGS[5][0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=BINDINGS[0x45abf0].inline_values+(55,), evidence='Fujin second fatality4dfed0 enqueues camera context55 through45abf0; portable camera follows the live scene actors')

@@ -93,6 +93,7 @@ def _moves_for(character):
         # these common attacks, but its selectors and contact records are
         # roster-specific. Keep the roots explicit for compiler coverage.
         shared.update(
+            fatality_2=move(0x467cd0, (("owner wind", 0x4dfed0), ("victim wind hold", 0x4ea2d8), ("victim fall", 0x4ea2a8)), native=(("scene entry", 0x43bea0), ("victim", 0x4816b0), ("limb separation", 0x4818f0))),
             wind_grab=move(0x480360, (("opening", 0x4e8830), ("victim release", 0x4e9fb0)), native=(("held control", 0x4803a0), ("capture", 0x480510), ("blocked", 0x480660), ("victim orbit", 0x487a10))),
             triple_kick=move(0x47f010, (("startup", 0x4e8740), ("fast startup", 0x4e8770), ("first victim", 0x4ea040), ("middle victim", 0x4ea050), ("final victim", 0x4ea0b8)), (("D", 9),), native=(("contact", 0x47f070), ("paired follow-through", 0x47f390), ("blocked recoil", 0x47f480))),
             wind=move(0x46a620, (("wind caster", 0x4e5c50), ("caster recovery", 0x4e5c20)), (("D", 8),), native=(("vortex victim", 0x487ed0),)),

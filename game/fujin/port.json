@@ -17,9 +17,9 @@
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "0x467cd0": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_entry_fan",
-      "evidence": "Fujin fatality input target 467cd0 starts the fan owner and victim generated roots."
+      "source": "game/fujin/moves/fatality_second.c",
+      "symbol": "fujin_second_fatality",
+      "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
     },
     "0x467ce0": {
       "source": "game/fujin/character.c",
@@ -193,6 +193,12 @@
     "0x4ea050": {
       "return_to": "mk4_mmove_thrown_finish",
       "evidence": "Native46f650 controller return snaps the intermediate victim to its own floor if the paired owner was interrupted; do not retain the captured vertical offset."
+    },
+    "0x4dfed0": {
+      "clip": 291,
+      "count": 73,
+      "sample": 0,
+      "evidence": "43bea0 calls4611c0/490f60, selecting53d408[5]=Fujin standing descriptor291 before4dfed0 waits60 and binds547."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -250,10 +256,13 @@
     "0x4ea050",
     "0x4ea0b8",
     "0x4e8830",
-    "0x4e9fb0"
+    "0x4e9fb0",
+    "0x4dfed0",
+    "0x4ea2d8",
+    "0x4ea2a8"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "e112062de6438a24ac964c5a14dd72b763d96c7f67a266f28f6a8d659b458daf",
+  "inventory_sha256": "bad0ce40af00ef83ffd5e22d5d5516289e0460b5b1f219deb9fe7f7b6e43efa9",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -405,6 +414,11 @@
       "source": "game/fujin/moves/wind_grab.c",
       "symbol": "fujin_wind_grab",
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks."
+    },
+    "fatality_2": {
+      "source": "game/fujin/moves/fatality_second.c",
+      "symbol": "fujin_second_fatality",
+      "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
     }
   },
   "output": "game/fujin/generated/scripts.inc",
@@ -620,6 +634,16 @@
       "source": "game/reactions.c",
       "symbol": "react_extra_block",
       "evidence": "480660 directly selects global blocked reaction7 without applying damage."
+    },
+    "181": {
+      "source": "game/fujin/moves/fatality_second.c",
+      "symbol": "fujin_second_victim",
+      "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550.",
+      "scripts": [
+        "0x4ea2d8",
+        "0x4ea2a8"
+      ],
+      "adaptation": "Reaction181 is installed by the generated fatality peer dispatcher; its portable global reaction entry starts independent wind hold, skin separation and flesh replacement phases."
     }
   },
   "return_to": "fighter_ready",
@@ -727,6 +751,11 @@
       "source": "game/fujin/moves/wind_grab.c",
       "symbol": "fujin_wind_grab",
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks."
+    },
+    "0x467cd0": {
+      "source": "game/fujin/moves/fatality_second.c",
+      "symbol": "fujin_second_fatality",
+      "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
     }
   },
   "command_predicates": {
@@ -738,7 +767,8 @@
     "0x45ef50": "weapon_can_draw",
     "0x45ec10": "fujin_can_wind",
     "0x45ebf0": "fujin_can_wind_slam",
-    "0x45ec60": "fujin_can_wind_grab"
+    "0x45ec60": "fujin_can_wind_grab",
+    "0x45e530": "fujin_can_second_fatality"
   },
   "mmove_scripts": [
     "0x4de610",
@@ -794,7 +824,10 @@
     "0x4ea0b8",
     "0x4e8830",
     "0x4e9fb0",
-    "0x4e6798"
+    "0x4e6798",
+    "0x4dfed0",
+    "0x4ea2d8",
+    "0x4ea2a8"
   ],
   "cpu_bindings": {
     "0x46a620": {

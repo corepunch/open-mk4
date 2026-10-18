@@ -33,7 +33,7 @@ void fujin_script_lp_select(Fighter *fighter) {
 void fujin_script_current_reaction(Fighter *fighter, int reaction) {
   /* 480f80 -> 48f880/48fd00 installs this on the task's captured peer.
    * Replacing the owner here cancels the very stream issuing the reaction. */
-  if (reaction == 97) {
+  if (reaction == 97 || reaction == 181) {
     battle_react((Fighter *)fighter_opponent(fighter), reaction);
     return;
   }

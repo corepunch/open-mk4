@@ -540,6 +540,21 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     weapon.bones.data[0].translation.y = image_s32(&exe, descriptor + 28) / 65536.f;
     PUSH(assets->scene_models, weapon);
   }
+  /*41d560/41d770 replaces a wind-torn victim with the original
+   *share2 flesh rig50c444 before4818f0 separates its limbs. */
+  Character flesh = statue;
+  snprintf(flesh.file, sizeof flesh.file, "share2_g.geo");
+  flesh.meshes = assets->hud.effects2.meshes;
+  flesh.texture = assets->hud.effects2.textures.data[0];
+  flesh.material_pages = assets->hud.effects2.textures;
+  flesh.bones = load_rig(&exe, 0x50c444, 0x50c2a0, flesh.meshes.count);
+  PUSH(assets->scene_models, flesh);
+  for (uint32_t part = 0; part < 14; ++part) {
+    uint32_t root = image_u32(&exe, 0x4ea424 + part * 12) * 4;
+    Character skin = flesh;
+    skin.bones = load_rig(&exe, root, image_u32(&exe, root + 4), skin.meshes.count);
+    PUSH(assets->scene_models, skin);
+  }
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;

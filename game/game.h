@@ -403,7 +403,9 @@ enum {
   FINISH_JAX_1,
   FINISH_JAX_2,
   FINISH_KITANA_1,
-  FINISH_KITANA_2
+  FINISH_KITANA_2,
+  FINISH_FUJIN_1 = 19,
+  FINISH_FUJIN_2
 };
 
 enum {
@@ -492,8 +494,9 @@ struct Fighter {
   bool human; /* 0x5347c8 / 0x532248: block from switches, not action codes */
   CpuState cpu;
   bool connected, crouching;
-  bool body_contact; /* reaction source was the other fighter, rather than an independent object */
-  bool avoids_high;  /* low-kick script's temporary high-punch avoidance gate */
+  bool body_contact;            /* reaction source was the other fighter, rather than an independent object */
+  bool avoids_high;             /* low-kick script's temporary high-punch avoidance gate */
+  const Character *scene_model; /* Optional actor-owned presentation replacement; assets retain ownership. */
   const MoveDef *current_move;
   MoveDef playback_move;        /* actor-owned clip binding for generated C fibers */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
@@ -664,6 +667,8 @@ typedef struct AnimationSnapshot {
 typedef struct ScenePiece {
   bool active, frozen, animated;
   int roster, bone, attached_to, joint;
+  const Character *model;
+  int lifetime; /* Zero keeps a corpse piece until reset. */
   q16 pos[3], vel[3], angle[3], spin[3];
   q16 gravity; /* Zero retains the shared419040 piece gravity. */
   Mat3 orientation;

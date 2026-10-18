@@ -149,4 +149,15 @@ void fujin_grab_victim(Fighter *fighter);
 void fujin_entry_retail_script_004e8830(Fighter *fighter);
 void fujin_entry_retail_script_004e9fb0(Fighter *fighter);
 void fujin_sweep_tail(Fighter *fighter);
+void fujin_second_fatality(Fighter *fighter);
+bool fujin_can_second_fatality(const Fighter *fighter);
+void fujin_second_victim(Fighter *fighter);
+void fujin_second_burst(Fighter *fighter);
+void fujin_second_finish(Fighter *fighter);
+void fujin_second_face(Fighter *fighter);
+void fujin_second_event(Fighter *fighter, int selector);
+void fujin_second_blood(Fighter *fighter, int task_type);
+void fujin_entry_retail_script_004dfed0(Fighter *fighter);
+void fujin_entry_retail_script_004ea2d8(Fighter *fighter);
+void fujin_entry_retail_script_004ea2a8(Fighter *fighter);
 #endif

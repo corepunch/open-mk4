@@ -142,7 +142,9 @@ enum {
   SCENE_MODEL_CAGE_WEAPON,
   SCENE_MODEL_JAREK_WEAPON,
   SCENE_MODEL_SHINNOK_WEAPON,
-  SCENE_MODEL_FUJIN_WEAPON
+  SCENE_MODEL_FUJIN_WEAPON,
+  SCENE_MODEL_FLAYED_BODY,
+  SCENE_MODEL_WIND_PIECES /* Fourteen closed part rigs in4ea420 order. */
 };
 
 const Texture *character_texture(const Character *character, int page);

@@ -409,7 +409,8 @@ static ScenePiece *detach(Fighter *victim, int joint, const q16 velocity[3], con
       if (piece->active) {
         continue;
       }
-      *piece = (ScenePiece){.active = true, .frozen = victim->appearance == APPEARANCE_FROZEN, .roster = victim->roster, .bone = (int)n, .attached_to = -1};
+      *piece = (ScenePiece){
+          .active = true, .frozen = victim->appearance == APPEARANCE_FROZEN, .roster = victim->roster, .bone = (int)n, .attached_to = -1, .model = ch};
       Vec3 origin;
       fighter_joint_position(victim, joint, &origin, &piece->orientation);
       piece->pos[0] = (q16)(origin.x * Q16_ONE);
@@ -589,6 +590,10 @@ void battle_step_presentation(void) {
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
     ScenePiece *piece = &g_battle.pieces[i];
     if (!piece->active || piece->animated) {
+      continue;
+    }
+    if (piece->lifetime > 0 && --piece->lifetime == 0) {
+      piece->active = false;
       continue;
     }
     if (piece->attached_to >= 0) {

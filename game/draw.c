@@ -450,7 +450,9 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     if (!piece->active) {
       continue;
     }
-    const Character *ch = piece->frozen ? &assets->cut_characters.data[roster_def(piece->roster)->asset] : roster_character(assets, piece->roster);
+    const Character *ch = piece->model != NULL ? piece->model
+                          : piece->frozen      ? &assets->cut_characters.data[roster_def(piece->roster)->asset]
+                                               : roster_character(assets, piece->roster);
     const Bone *bone = &ch->bones.data[piece->bone];
     Mat3 transform = piece_basis(assets, i);
     const Triangles *mesh = &ch->meshes.data[bone->mesh].triangles;

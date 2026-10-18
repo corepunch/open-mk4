@@ -16,6 +16,8 @@ void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
+void fujin_second_fatality(Fighter *fighter);
+bool fujin_can_second_fatality(const Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
@@ -2481,6 +2483,65 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_fujin_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int target = 2; target <= 4; target += 2) {
+      for (int reset_at = 0; reset_at < 3; ++reset_at) {
+        battle_init(slot ? target : 5, slot ? 5 : target);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        check(battle_can_finish(owner), "Fujin wind fatality needs the deciding-KO command window");
+        owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        check(fujin_can_second_fatality(owner), "Fujin second fatality must accept its two-unit range");
+        const Controls *controls = roster_def(5)->controls;
+        const CommandDef *command = NULL;
+        for (int i = 0; i < controls->command_count; ++i) {
+          if (controls->commands[i].enter == fujin_second_fatality) {
+            command = &controls->commands[i];
+          }
+        }
+        check(command != NULL && command->count == 4, "Fujin second fatality must retain Down,Forward,Forward,Up+Block");
+        for (int i = 0; i < command->count; ++i) {
+          Button direction = command->tokens[i] == TOKEN_DOWN ? BUTTON_DOWN : command->tokens[i] == TOKEN_UP ? BUTTON_UP : slot ? BUTTON_LEFT : BUTTON_RIGHT;
+          Input input[2] = {0};
+          input[slot].held = BUTTON_BIT(direction);
+          if (i == command->count - 1) {
+            input[slot].held |= BUTTON_BIT(command->button);
+          }
+          battle_step(input);
+          advance_ticks(2, NULL);
+        }
+        check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_FUJIN_2, "Fujin actual second command must select its wind scene");
+        bool cast = false, held = false, fall = false, torn = false;
+        int limit = reset_at == 1 ? 80 : reset_at == 2 ? 250 : 700;
+        for (int tick = 0; tick < limit; ++tick) {
+          advance_ticks(1, NULL);
+          cast |= fighter_move(owner)->clip == 547 || fighter_move(owner)->clip == 548;
+          held |= fighter_move(victim)->clip == 549;
+          fall |= fighter_move(victim)->clip == 550;
+          torn |= victim->native_variant == 14;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Fujin wind fatality and independent victim must remain fiber-free");
+        }
+        if (reset_at == 0) {
+          check(cast && held && fall && torn && g_battle.phase == PHASE_MATCH_OVER, "Fujin wind scene must tear all native joints, retain550 and finish");
+          check(fighter_move(owner)->clip == 548 && victim->health == 0, "Fujin must retain its own ending pose and defeated victim");
+        }
+        battle_reset_match();
+        advance_ticks(180, NULL);
+        check(owner->scene_model == NULL && victim->scene_model == NULL && owner->health == Q16_ONE && victim->health == Q16_ONE,
+            "Reset must clear wind scene replacement models and delayed actions");
+      }
+    }
+  }
+}
+
 static void check_advancing_sweeps(void) {
   const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
   for (size_t character = 0; character < sizeof roster / sizeof roster[0]; ++character) {
@@ -3191,6 +3252,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_second_fatality();
   check_advancing_sweeps();
   check_fujin_wind_grab();
   check_fujin_triple_kick();

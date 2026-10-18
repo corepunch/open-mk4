@@ -7,6 +7,7 @@
 
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
+void fujin_second_fatality(Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
@@ -607,6 +608,49 @@ static void scene_pose_entry(Fighter *actor) {
   fighter_mmove_phase(actor, &scene_pose_phase);
 }
 
+static void fujin_second_fatality_assets(const Assets *assets) {
+  const Character *flesh = &assets->scene_models.data[SCENE_MODEL_FLAYED_BODY];
+  check(flesh->bones.count >= 16 && flesh->meshes.data == assets->hud.effects2.meshes.data, "Wind victim must load the actual50c444 share2 flesh rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 2 : 5, slot ? 5 : 2);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FINISH;
+    g_battle.winner = slot;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    victim->health = 0;
+    victim->action = 0x1009;
+    fujin_second_fatality(owner);
+    bool skin = false, flayed = false, landing = false;
+    for (int tick = 0; tick < 650; ++tick) {
+      battle_step((Input[2]){0});
+      Pose pose[MK4_MAX_BONES];
+      fighter_pose(assets, owner, pose);
+      fighter_pose(assets, victim, pose);
+      flayed |= fighter_model(assets, victim) == flesh;
+      landing |= fighter_move(victim)->clip == 550;
+      for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
+        const ScenePiece *piece = &g_battle.pieces[i];
+        if (piece->active) {
+          skin = true;
+          check(piece->model != NULL && piece->model->meshes.data == assets->hud.effects2.meshes.data && piece->bone == 0 &&
+                    piece->model->meshes.data[piece->model->bones.data[0].mesh].triangles.count > 0 && piece->gravity == 0x1999 && piece->lifetime > 0 &&
+                    piece->lifetime <= 45,
+              "Torn skin must retain its actual4ea420 closed part and native forty-five-visit lifetime");
+        }
+      }
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed wind fatality must never start fibers");
+    }
+    check(skin && flayed && landing && g_battle.phase == PHASE_MATCH_OVER && victim->hidden_joints[0] == 0,
+        "Wind fatality must replace torn skin with a complete posed flesh body and land its550 ending");
+    for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
+      check(!g_battle.pieces[i].active, "Wind skin fragments must retire after their native lifetime");
+    }
+    battle_reset_match();
+  }
+}
+
 static void fujin_wind_grab_assets(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int blocked = 0; blocked < 2; ++blocked) {
@@ -1061,6 +1105,7 @@ int main(void) {
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
+  fujin_second_fatality_assets(&assets);
   fujin_wind_grab_assets(&assets);
   fujin_triple_kick_assets(&assets);
   fujin_wind_assets(&assets);
