@@ -35,7 +35,11 @@ void jax_script_current_reaction(Fighter *fighter, int reaction) {
 void jax_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 void jax_idle(Fighter *fighter) {
@@ -51,8 +55,7 @@ void jax_block(Fighter *fighter) {
 }
 
 void jax_script_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(jax_ready);
+  native_advancing_sweep(fighter);
 }
 
 static void jax_script_input_47ab10(Fighter *fighter) {

@@ -1529,40 +1529,39 @@ static inline void retail_script_004e6710(Fighter *fighter) {
   }
 }
 
+static inline void retail_script_004e67d8(Fighter *fighter);
+
+static void retail_script_004e67d8_at_5(Fighter *fighter) {
+  fighter->sample_override = 10;
+  /* EXE 004e67f0: 0x200000af */
+  battle_sound(SOUND_A, 175);
+  /* EXE 004e67f4: 0x5000016 */
+}
+
+static void retail_script_004e67d8_at_17(Fighter *fighter) {
+  fighter->sample_override = 22;
+  /* EXE 004e67f8: 0x32000000 0x46efd0 */
+  liu_script_sweep_tail(fighter);
+}
+
+static const int retail_script_004e67d8_samples[] = {0, 2, 4, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e67d8_frames[17] = {
+  [4] = {.thinkfunc = retail_script_004e67d8_at_5},
+  [16] = {.thinkfunc = retail_script_004e67d8_at_17},
+};
+// clang-format on
+static const mmove_t retail_script_004e67d8_phase = {
+    .firstframe = 0, .lastframe = 16, .frame = retail_script_004e67d8_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e67d8_samples};
+
 static inline void retail_script_004e67d8(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  int attack_selector = 0;
-  (void)attack_selector;
-  {
-    /* EXE 004e67d8: 0x139b9a */
-    (void)fighter; /* decoded VM no-op */
-  }
-  {
-    /* EXE 004e67dc: 0x1f000000 0x24 */
-    attack_selector = 36;
-  }
-  {
-    /* EXE 004e67e4: 0xf000000 0x13ec19 */
-    mk4_script_bind(fighter, 62, 44, 0);
-  }
-  {
-    /* EXE 004e67ec: 0x4d00000a */
-    fighter_fiber_play_to(fighter, 10, 2);
-  }
-  {
-    /* EXE 004e67f0: 0x200000af */
-    battle_sound(SOUND_A, 175);
-  }
-  {
-    /* EXE 004e67f4: 0x5000016 */
-    fighter_fiber_play_to(fighter, 22, 1);
-  }
-  {
-    /* EXE 004e67f8: 0x32000000 0x46efd0 */
-    liu_script_sweep_tail(fighter);
-    return;
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e67d8: 0x139b9a */
+  /* EXE 004e67dc: 0x1f000000 0x24 */
+  /* EXE 004e67e4: 0xf000000 0x13ec19 */
+  mk4_mmove_bind(fighter, 62, 44, 0);
+  /* EXE 004e67ec: 0x4d00000a */
+  fighter_mmove_phase(fighter, &retail_script_004e67d8_phase);
 }
 
 static inline void retail_script_004e6890(Fighter *fighter) {

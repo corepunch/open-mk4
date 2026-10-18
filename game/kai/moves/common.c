@@ -14,7 +14,11 @@ void kai_ready(Fighter *fighter) {
 
 void kai_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 void kai_idle(Fighter *fighter) {
@@ -124,6 +128,5 @@ void kai_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void kai_script_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(kai_ready);
+  native_advancing_sweep(fighter);
 }

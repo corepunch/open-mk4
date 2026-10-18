@@ -1373,3 +1373,8 @@ CHARACTER_BINDINGS[5][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c
 CHARACTER_BINDINGS[5][0x4803a0] = Binding('fujin_grab_control_start', 'game/fujin/moves/wind_grab.c', ('tail',), flow='terminal', mmove=True, evidence='4803a0 steers while LP is held, checks distance below1 before the hold gate, then480510/480660 selects capture or blocked recovery')
 
 CHARACTER_BINDINGS[5][0x46efd0] = Binding('fujin_script_finish', 'game/fujin/moves/common.c', ('tail',), flow='terminal', mmove=True, evidence='46efd0 submits23/24 with B36 contact;46f130 sets action1006 and finishes the current clip before controller return')
+
+#46efd0 is the same advancing B36 sweep continuation for these roster slots.
+for _cid in (1, 3, 7, 9, 11, 13, 17):
+    CHARACTER_BINDINGS[_cid][0x46efd0] = replace(CHARACTER_BINDINGS[_cid][0x46efd0], mmove=True,
+        evidence='46efd0 submits23/24 with B36 contact;46f130 sets action1006 and completes clip62 through the shared native frame tail')

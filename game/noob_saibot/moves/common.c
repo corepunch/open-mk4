@@ -47,8 +47,7 @@ void noob_saibot_script_lp_return(Fighter *fighter) {
 }
 
 void noob_saibot_script_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(noob_saibot_ready);
+  native_advancing_sweep(fighter);
 }
 
 void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction) {
@@ -65,7 +64,11 @@ void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction) {
 
 void noob_saibot_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
-  fighter_start_fiber(fighter, script, NULL);
+  if (state == S_SWEEP) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 void noob_saibot_shadow_low(Fighter *fighter) {
