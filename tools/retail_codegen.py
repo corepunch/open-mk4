@@ -14,6 +14,7 @@ from retail_moves import EXE_SHA256
 from scorpion_moves import script_program, signed_word
 from retail_script_c import successors
 from retail_bindings import bindings_for
+from retail_c_postprocess import postprocess
 
 
 class CompileError(ValueError):
@@ -458,7 +459,7 @@ def generate(image, entries, character=0, return_to=None, bindings=None, context
         lines.append('static const AttackRecord retail_contact_%s = {%s};' % (address[2:], ', '.join(map(str, values))))
     for program, binding in programs:
         lines += ['', emit_program(program, binding, contexts.get(program['entry'], {}).get('return_to', return_to), contexts.get(program['entry']))]
-    return '\n'.join(lines) + '\n'
+    return postprocess('\n'.join(lines) + '\n')
 
 
 def format_c(source):
@@ -470,5 +471,10 @@ def format_c(source):
         formatter = result.stdout.strip() if result.returncode == 0 else None
     if not formatter:
         raise ValueError('clang-format is required for canonical generated C')
-    return subprocess.run([formatter, '--style=file', '--assume-filename=' + str(root / 'game/generated/script.inc')],
-                          input=source, text=True, capture_output=True, check=True).stdout
+    command = [formatter, '--style=file', '--assume-filename=' + str(root / 'game/generated/script.inc')]
+    # clang-format can move a trailing comment out of an empty labeled block
+    # on its first pass and then reflow that block on its second pass. Generated
+    # output must match the repository's in-place formatter, so use its stable
+    # result rather than a one-pass intermediate.
+    formatted = subprocess.run(command, input=source, text=True, capture_output=True, check=True).stdout
+    return subprocess.run(command, input=formatted, text=True, capture_output=True, check=True).stdout

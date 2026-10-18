@@ -68,7 +68,7 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('fighter_wait_ticks(5);', source)
         self.assertIn('fighter_wait_ticks(2);', source)
         self.assertIn('fighter->held & BUTTON_BIT(BUTTON_DOWN)', source)
-        self.assertIn('goto L_00570008;', source)
+        self.assertNotIn('goto L_00570008;', source)
 
     def test_predicate_flags_and_binding_roles_are_typed(self):
         e = self.entry
@@ -115,6 +115,15 @@ class CompilerTests(unittest.TestCase):
             descriptor = (0x4fad7c + 54 * 12) // 4
             self.compile([0x02000100, descriptor, 0x33000000, e // 4])
 
+    def test_postprocessor_removes_fallthrough_and_structures_simple_loops(self):
+        e = self.entry
+        source = self.compile([0x34000001, 0x33000000, e // 4])
+        self.assertIn('for (;;) {', source)
+        self.assertIn('fighter_wait_ticks(1);', source)
+        self.assertIn('continue;', source)
+        self.assertNotIn('goto L_00570000;', source)
+        self.assertNotIn('goto L_00570004;', source)
+
     def test_character_selector_is_specialized_and_optional_prefix_is_not_speed(self):
         program, _ = compile_program(self.image, 0x4e5ca0, 3, bindings={0x46a760: Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic selector continuation')})
         self.assertEqual(next(row for row in program['instructions'] if row['opcode'] == '0x3c')['selected_character'], 3)
@@ -138,7 +147,8 @@ class CompilerTests(unittest.TestCase):
         # them preserves the repeated branch without growing a fiber's stack.
         source = generate(self.image, [0x4e62f0], 3, 'fighter_ready')
         for target in ('004e6330', '004e6360', '004e63b0'):
-            self.assertIn('goto L_' + target, source)
+            self.assertNotIn('goto L_' + target, source)
+            self.assertIn('EXE ' + target, source)
             self.assertNotIn('retail_script_' + target + '(fighter)', source)
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             compile_program(self.image, 0x4e61e0, 3, return_to='fighter_ready')
@@ -281,7 +291,7 @@ int main(void) {
     def test_selected_air_table_word_is_a_valid_overlapping_no_op(self):
         binding = Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic native boundary')
         source = generate(self.image, [0x4e6500], 3, bindings={0x46e3d0: binding})
-        self.assertIn('L_004e6544', source)
+        self.assertIn('EXE 004e6544', source)
         self.assertIn('decoded VM no-op', source)
 
     def test_cli_fails_atomically_and_check_never_writes(self):
