@@ -7,7 +7,9 @@ static void goro_air_diagonal_hk(Fighter *fighter);
 static void goro_air_diagonal_lk(Fighter *fighter);
 
 void goro_script_lp_pair_start(Fighter *fighter) {
-  mk4_script_pair_victim(fighter, &goro_s_knockdown);
+  /* Native42b680 acquires and aligns the captured peer; the shared frame
+   * entry already owns that setup and its interruption cleanup. */
+  require((fighter->flags & FF_PAIRED) && (fighter_opponent(fighter)->flags & FF_PAIRED), "Goro LP needs its captured peer");
 }
 
 void goro_script_air_release(Fighter *fighter) {

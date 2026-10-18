@@ -261,8 +261,8 @@ CHARACTER_BINDINGS[0][0x49a6a0] = Binding('script_spawn_spear', 'game/scorpion/c
 CHARACTER_BINDINGS[0][0x450d40] = Binding('script_transform_effect', 'game/scorpion/character.c', ('spawn',), ('fighter', 'task_type'), evidence='450d40 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
 CHARACTER_BINDINGS[0][0x41ed80] = Binding('script_beast_gore', 'game/scorpion/character.c', ('spawn',), ('fighter', 'task_type'), evidence='41ed80 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
 BINDINGS[0x45afe0] = Binding('fighter_set_speed', 'game/moves.c', ('handler',), ('fighter', 'word0_i32'), mmove=True, evidence='45afe0 -> 490c60 horizontal signed velocity')
-BINDINGS[0x4595a0] = Binding('mk4_script_shake', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='4595a0 -> 457b50 camera pulse selector table 4e3638', inline_values=(0, 1, 2, 3, 4, 5, 6))
-BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector, including Goro throw selector 21', inline_values=tuple(range(22)))
+BINDINGS[0x4595a0] = Binding('mk4_script_shake', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), mmove=True, evidence='4595a0 -> 457b50 camera pulse selector table 4e3638', inline_values=(0, 1, 2, 3, 4, 5, 6))
+BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), mmove=True, evidence='45b310 -> 40a470 independent decorative effect selector, including Goro throw selector 21', inline_values=tuple(range(22)))
 
 CHARACTER_BINDINGS[0][0x444190] = Binding('script_burn_victim_end', 'game/scorpion/character.c', ('tail',), evidence='444190 native scene completion after 4e0358')
 
@@ -1188,6 +1188,11 @@ for _address in (0x42cc00, 0x42cc40, 0x42ce80, 0x45b1f0):
 CHARACTER_BINDINGS[14][0x45b1f0] = Binding("cage_script_current_reaction", "game/cage/character.c", ("handler",),
     ("fighter", "arg_u8"), mmove=True, evidence="45b1f0 installs reaction100 on the task peer; owner continues clip75")
 CHARACTER_BINDINGS[14][0x42ce60] = replace(CHARACTER_BINDINGS[14][0x42ce60], mmove=True)
+
+for _address in (0x42b680, 0x42c7b0, 0x45b1f0):
+    CHARACTER_BINDINGS[15][_address] = replace(CHARACTER_BINDINGS[15][_address], mmove=True)
+CHARACTER_BINDINGS[15][0x42ce60] = Binding("goro_script_lp_finish", "game/goro/character.c", ("tail",),
+    flow="terminal", mmove=True, evidence="42ce60 completes the generated LP owner after reaction100 releases the peer")
 
 def bindings_for(character):
     from character_catalog import CHARACTERS

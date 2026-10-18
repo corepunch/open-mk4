@@ -962,6 +962,36 @@ static void check_peer_release_lp_throw(int roster, int clip) {
   }
 }
 
+static void check_goro_frame_lp_throw(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int interrupted = 0; interrupted < 2; ++interrupted) {
+      battle_init(slot ? 4 : 15, slot ? 15 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot];
+      Fighter *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 4 : -Q16_ONE / 4;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_press(owner, BUTTON_LOW_PUNCH);
+      advance_ticks(1, NULL);
+      check(fighter_move(owner)->clip == 604, "Close LP input must reach Goro LP's selected capture");
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Goro LP LP capture must allocate no fiber");
+      advance_ticks(8, NULL);
+      if (interrupted) {
+        fighter_enter_state(owner, S_HIT);
+      }
+      for (int tick = 0; tick < 300; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Goro LP LP throw and independent victim release must stay on frame tables");
+      }
+      q16 damage = interrupted ? 0 : 10 * 1966 + 9830;
+      check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
+          "Goro LP throw must damage its captured victim through its five damage cycles and never react against its owner");
+      check(owner->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
+          "Goro LP LP throw or cancellation must release the pair and return controls");
+    }
+  }
+}
+
 static void check_selected_high_kick(void) {
   const int roster[] = {5, 8, 11, 12, 14};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
@@ -1519,6 +1549,7 @@ int main(void) {
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);
   check_peer_release_lp_throw(14, 75);
+  check_goro_frame_lp_throw();
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
   check_jax_air_grab_command();

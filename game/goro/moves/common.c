@@ -12,8 +12,9 @@ static void goro_ready(Fighter *fighter) {
 }
 
 void goro_script_current_reaction(Fighter *fighter, int reaction) {
-  /* Goro's roster entry makes battle_react select the roster-15 fallback. */
-  battle_react(fighter, reaction);
+  require(reaction == 100, "Unexpected Goro LP victim reaction");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  battle_react(victim, reaction);
 }
 
 void goro_script_opponent_reaction(Fighter *fighter, int reaction) {
@@ -98,4 +99,8 @@ void goro_start_script(Fighter *fighter, StateId state, const MoveDef *move, Fig
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
   fighter_start_fiber(fighter, script, NULL);
+}
+
+void goro_script_lp_finish(Fighter *fighter) {
+  fighter_finish_mmove(fighter, goro_ready);
 }
