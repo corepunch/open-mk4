@@ -23,7 +23,8 @@ void fujin_script_kick_finish(Fighter *fighter) {
 
 static void fujin_low_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_low_kick);
-  fighter_start_fiber(fighter, fujin_entry_retail_script_004e5d90, NULL);
+  fighter->action = ACTION_RETAIL_0102;
+  fujin_entry_retail_script_004e5d90(fighter);
 }
 
 static void fujin_high_kick(Fighter *fighter) {

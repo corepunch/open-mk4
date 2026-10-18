@@ -22,6 +22,9 @@ static void bind_clip(Fighter *fighter, int clip, int count, int first) {
 
 void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first) {
   bind_clip(fighter, clip, count, first);
+  /* Generated programs own contact queries. Do not also resolve the
+   * approximate startup/active/damage window from an old move header. */
+  fighter->playback_move.flags |= SF_RECORD;
 }
 
 void mk4_script_bind(Fighter *fighter, int clip, int count, int first) {

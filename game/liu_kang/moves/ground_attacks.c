@@ -46,7 +46,11 @@ void liu_kang_ground_attack(Fighter *fighter, int index) {
       liu_kang_entry_retail_script_004e60b8, liu_kang_entry_retail_script_004e61e0, liu_kang_entry_retail_script_004e69b0,
       liu_kang_entry_retail_script_004e6190, liu_kang_entry_retail_script_004e6e90};
   FighterFn script = scripts[index];
-  fighter_start_fiber(fighter, script, NULL);
+  if (index == G_LOW_KICK) {
+    script(fighter);
+  } else {
+    fighter_start_fiber(fighter, script, NULL);
+  }
 }
 
 void liu_kang_crouch_lp(Fighter *fighter) {

@@ -12,7 +12,9 @@ static void reiko_high_kick(Fighter *fighter) {
 }
 
 static void reiko_low_kick(Fighter *fighter) {
-  reiko_start_script(fighter, S_KICK, &reiko_s_kick, reiko_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &reiko_s_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  reiko_entry_retail_script_004e5d90(fighter);
 }
 
 void reiko_press_high_kick(Fighter *fighter) {

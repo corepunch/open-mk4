@@ -31,6 +31,7 @@ void fighter_interrupt(Fighter *fighter, FighterFn entry) {
   fighter_cancel_fiber(fighter);
   fighter_cancel_mmove(fighter);
   native_motion_stop(fighter);
+  fighter->avoids_high = false;
   fighter->pending = entry;
   fighter->buttons = NULL;
   fighter->flags = (fighter->flags | FF_BUSY) & ~(unsigned)FF_PAIRED;

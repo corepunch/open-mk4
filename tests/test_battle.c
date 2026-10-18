@@ -815,6 +815,71 @@ static void check_reconnected_air_attacks(void) {
   }
 }
 
+static void check_roster_low_kick_frames(void) {
+  const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17};
+  for (size_t row = 0; row < sizeof roster / sizeof roster[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      int scenarios = row == 0 ? 3 : 1;
+      for (int scenario = 0; scenario < scenarios; ++scenario) {
+        battle_init(slot ? 4 : roster[row], slot ? roster[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 distance = scenario == 2 ? 6 * Q16_ONE : 0x11999;
+        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        battle_step(input);
+        input[slot].held = 0;
+        for (int tick = 0; tick < 100; ++tick) {
+          battle_step(input);
+          if (fighter_fiber_active(owner)) {
+            fprintf(
+                stderr, "Low kick fiber roster%d slot%d scenario%d clip%d action%x\n", roster[row], slot, scenario, fighter_move(owner)->clip, owner->action);
+          }
+          check(!fighter_fiber_active(owner), "Low kick contact, native result wait and reversal must run through generated frames");
+        }
+        q16 damage = scenario == 2 ? 0 : scenario == 1 ? q16_mul(0x1c28, 0x3333) : 0x1c28;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(stderr, "Low kick roster%d slot%d scenario%d health%d expected%d\n", roster[row], slot, scenario, victim->health, Q16_ONE - damage);
+        }
+        check(victim->health == Q16_ONE - damage && owner->state == S_IDLE && !owner->avoids_high,
+            "Low kick must apply native damage once and restore controls without retaining avoidance");
+      }
+    }
+  }
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 0 : 12, slot ? 12 : 0);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
+    input[1 - slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+    battle_step(input);
+    advance_ticks(100, NULL);
+    check(owner->health == Q16_ONE && victim->health == Q16_ONE - 0x1c28,
+        "Jarek's native low-kick avoidance must reject the simultaneous high jab before delivering its own hit");
+    battle_init(slot ? 0 : 12, slot ? 12 : 0);
+    g_battle.phase = PHASE_FIGHT;
+    owner = &g_battle.fighters[slot];
+    g_battle.fighters[0].body.pos[AXIS_X] = -3 * Q16_ONE;
+    g_battle.fighters[1].body.pos[AXIS_X] = 3 * Q16_ONE;
+    input[1 - slot].held = 0;
+    battle_step(input);
+    advance_ticks(8, NULL);
+    check(owner->avoids_high, "Jarek must enter the native set-one avoidance window after startup");
+    fighter_interrupt(owner, fighter_ready);
+    check(!owner->avoids_high, "Interrupt must retire avoidance immediately before the next entry runs");
+    advance_ticks(100, NULL);
+    check(owner->state == S_IDLE && !fighter_fiber_active(owner), "Interrupted low kick must not resume its old reversal");
+  }
+}
+
 static void check_reconnected_uppercuts(void) {
   const int roster[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
   for (size_t row = 0; row < sizeof roster / sizeof roster[0]; ++row) {
@@ -1920,6 +1985,7 @@ int main(void) {
   check_ground_normals();
   check_air_attacks();
   check_reconnected_air_attacks();
+  check_roster_low_kick_frames();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_straight_air_kick_contacts();

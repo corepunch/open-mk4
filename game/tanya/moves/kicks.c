@@ -11,7 +11,9 @@ void tanya_high_kick(Fighter *fighter) {
 }
 
 static void tanya_low_kick(Fighter *fighter) {
-  tanya_start_script(fighter, S_KICK, &tanya_s_kick, tanya_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &tanya_s_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  tanya_entry_retail_script_004e5d90(fighter);
 }
 
 void tanya_press_high_kick(Fighter *fighter) {

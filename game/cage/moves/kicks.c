@@ -25,7 +25,9 @@ static void cage_high_kick(Fighter *fighter) {
 }
 
 static void cage_low_kick(Fighter *fighter) {
-  cage_start_script(fighter, S_KICK, &cage_s_kick, cage_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &cage_s_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  cage_entry_retail_script_004e5d90(fighter);
 }
 
 void cage_press_high_kick(Fighter *fighter) {

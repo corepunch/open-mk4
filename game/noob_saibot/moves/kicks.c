@@ -12,7 +12,9 @@ static void noob_saibot_high_kick(Fighter *fighter) {
 }
 
 static void noob_saibot_low_kick(Fighter *fighter) {
-  noob_saibot_start_script(fighter, S_KICK, &noob_saibot_s_kick, noob_saibot_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &noob_saibot_s_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  noob_saibot_entry_retail_script_004e5d90(fighter);
 }
 
 void noob_saibot_press_high_kick(Fighter *fighter) {

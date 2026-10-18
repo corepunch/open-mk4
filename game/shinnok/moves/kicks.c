@@ -8,7 +8,9 @@ void shinnok_high_kick(Fighter *fighter) {
 }
 
 static void shinnok_low_kick(Fighter *fighter) {
-  shinnok_start(fighter, S_KICK, &s_low_kick, shinnok_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &s_low_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  shinnok_entry_retail_script_004e5d90(fighter);
 }
 
 void shinnok_script_kick_finish(Fighter *fighter) {

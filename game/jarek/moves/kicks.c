@@ -12,7 +12,9 @@ void jarek_high_kick(Fighter *fighter) {
 }
 
 void jarek_low_kick(Fighter *fighter) {
-  jarek_start(fighter, S_KICK, &jarek_s_low_kick, jarek_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &jarek_s_low_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  jarek_entry_retail_script_004e5d90(fighter);
 }
 
 static void jarek_kick_frame(Fighter *fighter) {

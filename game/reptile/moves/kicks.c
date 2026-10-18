@@ -8,7 +8,9 @@ static void reptile_high_kick(Fighter *fighter) {
 }
 
 static void reptile_low_kick(Fighter *fighter) {
-  reptile_start(fighter, S_KICK, &reptile_s_kick, reptile_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &reptile_s_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  reptile_entry_retail_script_004e5d90(fighter);
 }
 
 void reptile_press_kick(Fighter *fighter) {

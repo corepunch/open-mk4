@@ -14,7 +14,9 @@ void quan_chi_high_kick(Fighter *fighter) {
 }
 
 static void quan_chi_low_kick(Fighter *fighter) {
-  quan_chi_start(fighter, S_KICK, &quan_chi_s_high_kick, quan_chi_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &quan_chi_s_high_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  quan_chi_entry_retail_script_004e5d90(fighter);
 }
 
 void quan_chi_press_high_kick(Fighter *fighter) {

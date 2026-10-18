@@ -43,7 +43,11 @@ void sonya_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {sonya_entry_retail_script_004e5d90, sonya_ground_native_tail, sonya_entry_retail_script_004e6158,
       sonya_entry_retail_script_004e6020, sonya_entry_retail_script_004e61e0, sonya_entry_retail_script_004e69b0, sonya_entry_retail_script_004e6190,
       sonya_entry_retail_script_004e6800};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  if (index == G_LOW_KICK) {
+    scripts[index](fighter);
+  } else {
+    fighter_start_fiber(fighter, scripts[index], NULL);
+  }
 }
 
 void sonya_crouch_lp(Fighter *fighter) {

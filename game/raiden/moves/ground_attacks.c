@@ -45,7 +45,11 @@ void raiden_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {raiden_entry_retail_script_004e5d90, raiden_ground_native_tail, raiden_entry_retail_script_004e6158,
       raiden_entry_retail_script_004e6020, raiden_entry_retail_script_004e61e0, raiden_entry_retail_script_004e69b0, raiden_entry_retail_script_004e6190,
       raiden_entry_retail_script_004e6800};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  if (index == G_LOW_KICK) {
+    scripts[index](fighter);
+  } else {
+    fighter_start_fiber(fighter, scripts[index], NULL);
+  }
 }
 
 void raiden_crouch_lp(Fighter *fighter) {

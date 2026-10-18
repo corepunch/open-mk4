@@ -1262,6 +1262,11 @@ for _cid in (0, 1, 2, 3, 16):
 CHARACTER_BINDINGS[8][0x46cde0] = Binding('quan_chi_script_finish', 'game/quan_chi/moves/uppercut.c', ('tail',),
     flow='terminal', mmove=True, evidence='Quan Chi uppercut adapter now enters46cde0 contact/recovery rather than finishing the clip without a query')
 
+for _address, _symbol in ((0x46a950, 'jarek_script_low_kick_clear'), (0x46a970, 'jarek_script_low_kick_avoid')):
+    CHARACTER_BINDINGS[12][_address] = Binding(_symbol, 'game/jarek/moves/kicks.c', ('call',), mmove=True,
+        evidence='46a950 clears and46a970 sets task5c;46ddd0 rejects jab contact when the low-kick task5c equals1')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),
