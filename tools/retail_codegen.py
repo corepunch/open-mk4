@@ -92,11 +92,13 @@ def reads_defines(row, bindings):
 
 def validate(program, bindings, return_to, context=None):
     context = context or {}
-    allowed = {"clip", "count", "sample", "evidence", "return_to"}
+    allowed = {"clip", "count", "sample", "evidence", "return_to", "paired"}
     if context.keys() & {'count', 'sample'} and 'clip' not in context:
         raise ValueError('Entry cursor requires a clip contract')
     if context.keys() - allowed or (context and not context.get("evidence")):
         raise ValueError("Entry context requires evidence and known fields")
+    if "paired" in context and not isinstance(context["paired"], bool):
+        raise ValueError("Paired entry context must be boolean")
     initial = {"clip"} if "clip" in context else set()
     inherited_clip = context.get("clip") == "current"
     if initial and ((not inherited_clip and (not isinstance(context.get("clip"), int) or context['clip'] < 0)) or

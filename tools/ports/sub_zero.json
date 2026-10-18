@@ -18,13 +18,14 @@
       "clip": 41,
       "count": 75,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "paired": true,
       "sample": 10
     },
     "0x4de4e0": {
       "clip": 41,
       "count": 75,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "return_to": "caller",
+      "paired": true,
       "sample": 52
     },
     "0x4e0138": {
@@ -247,8 +248,13 @@
   "inventory_sha256": "94567a38d8e8fa6a4f7e92a0ab6ed1874d0cf599b1f05a54f6e20b963fc275b5",
   "legacy_scripts": {},
   "mmove_scripts": [
+    "0x4de490",
+    "0x4de4b8",
+    "0x4de4e0",
     "0x4de798",
     "0x4e5c80",
+    "0x4e5e28",
+    "0x4e5e50",
     "0x4e5fd8",
     "0x4e6158",
     "0x4e6190",
@@ -273,7 +279,9 @@
     "0x4e84d8",
     "0x4e84f8",
     "0x4e8530",
+    "0x4e9910",
     "0x4e9bd0",
+    "0x4e9ee0",
     "0x4ed588"
   ],
   "moves": {

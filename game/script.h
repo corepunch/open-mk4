@@ -68,4 +68,7 @@ Projectile *mk4_script_projectile_spawn(Fighter *fighter, ProjectileFn step, con
 void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int duration);
 void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries);
 void mk4_script_scene_task(Fighter *fighter, int task_type);
+
+bool mk4_mmove_grounded(const Fighter *fighter);
+
 #endif

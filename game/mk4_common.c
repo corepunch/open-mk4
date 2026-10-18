@@ -397,6 +397,51 @@ static void air_generated_cleanup(Fighter *fighter) {
   }
 }
 
+static void air_frame_victim_tick(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  if (owner->pending != NULL || owner->action != ACTION_RETAIL_0502 || !(owner->flags & FF_PAIRED)) {
+    air_throw_drop(victim);
+    victim->sample_override = air_throw_release_sample(victim);
+    victim->paired_release(victim);
+    return;
+  }
+  memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+}
+
+static bool air_frame_captured(const Fighter *victim) {
+  (void)victim;
+  return false;
+}
+
+static const mframe_t air_frame_victim_frames[] = {{.sample = 0, .duration = 1, .tick = air_frame_victim_tick}};
+static const mmove_t air_frame_victim_phase = {.frame = air_frame_victim_frames, .until = air_frame_captured};
+
+static void air_frame_cleanup(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  bool captured = (victim->flags & FF_PAIRED) != 0;
+  air_generated_cleanup(fighter);
+  if (captured && victim->pending == NULL) {
+    victim->paired_release(victim);
+  }
+}
+
+void mk4_mmove_air_throw_release(Fighter *fighter) {
+  mk4_script_air_throw_release(fighter);
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  victim->paired_release(victim);
+}
+
+void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
+  if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
+    return;
+  }
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  victim->paired_release = victim_script;
+  fighter_mmove_phase(victim, &air_frame_victim_phase);
+  fighter->mmove_cleanup = air_frame_cleanup;
+  owner_script(fighter);
+}
+
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
   if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
     return;

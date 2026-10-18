@@ -40,4 +40,7 @@ void mk4_jump(Fighter *fighter);
 void mk4_land(Fighter *fighter);
 void mk4_return_to_stance(Fighter *fighter);
 
+void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
+void mk4_mmove_air_throw_release(Fighter *fighter);
+
 #endif

@@ -770,19 +770,9 @@ enum {
 /* A newly installed peer can take its P1/P2 turn in the installation tick.
  * A displayed victim sample must still last one simulation tick. Keep the
  * first wait on that sample as well; subsequent waits follow the same rule. */
-static void thrown_play_to(Fighter *victim, int sample, int step) {
-  while (step > 0 ? victim->sample_override < sample : victim->sample_override > sample) {
-    uint64_t submitted = g_battle.ticks;
-    do {
-      fighter_wait_ticks(1);
-    } while (g_battle.ticks == submitted);
-    victim->sample_override += step;
-  }
-}
-
 static void thrown_finish(Fighter *victim) {
   stop_body(victim);
-  fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
+  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
 static void lp_thrown_cleanup(Fighter *victim) {
@@ -848,34 +838,26 @@ static void script_lp_getup(Fighter *victim) {
   fighter_mmove_phase(victim, &lp_getup_phase);
 }
 
-static void lk_thrown_script(Fighter *victim) {
-  /* Damage has already committed. Own the last five paired samples here,
-   * so a lethal throw can finish even when the winner enters victory. */
-  victim->script_phase = 1;
-  victim->sample_override = 42;
-  for (int tick = 1; tick <= 5; ++tick) {
-    uint64_t submitted = g_battle.ticks;
-    do {
-      fighter_wait_ticks(1);
-    } while (g_battle.ticks == submitted);
-    victim->sample_override = mini(46, 42 + tick);
-  }
+static void lk_thrown_release(Fighter *victim) {
   victim->sample_override = 46;
   victim->body.physics = fighter_friction;
   retail_script_004e9ee0(victim);
 }
 
-static void ground_thrown_script(Fighter *victim) {
-  const Fighter *owner = opponent(victim);
-  for (;;) {
-    fighter_wait_ticks(1);
-    if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
-      victim->flags &= ~(unsigned)FF_PAIRED;
-      thrown_finish(victim);
-    }
-    /* The owner submits both poses. Origins rebase at the script's native
-     * alignment boundary; do not overwrite independent release velocities. */
-  }
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t lk_thrown_release_phase_frames[] = {
+  {.sample = 42, .duration = 1},
+  {.sample = 43, .duration = 1},
+  {.sample = 44, .duration = 1},
+  {.sample = 45, .duration = 1},
+  {.sample = 46, .duration = 1},
+};
+// clang-format on
+static const mmove_t lk_thrown_release_phase = {.frame = lk_thrown_release_phase_frames, .lastframe = 4, .endfunc = lk_thrown_release};
+
+static void lk_thrown_script(Fighter *victim) {
+  victim->script_phase = 1;
+  fighter_mmove_phase(victim, &lk_thrown_release_phase);
 }
 
 static void throw_disarm(Fighter *victim) {
@@ -920,31 +902,74 @@ static void script_lk_damage(Fighter *fighter) {
   fighter->body.physics = fighter_friction;
   victim->script_phase = 1;
   victim->flags |= FF_PAIR_RELEASE;
-  fighter_start_fiber(victim, lk_thrown_script, NULL);
+  lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
   retail_script_004de4e0(fighter);
 }
+
+static const mframe_t lk_owner_idle_frames[] = {{.sample = 0, .duration = 60}};
+static const mmove_t lk_owner_idle_phase = {.frame = lk_owner_idle_frames, .endfunc = sub_zero_ready};
 
 static void script_lk_owner_return(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
-  fighter_fiber_move(fighter, S_THROW, &s_lk_throw_idle);
-  fighter->sample_override = 0;
-  fighter_wait_ticks(60);
-  fighter_fiber_finish(sub_zero_ready);
+  fighter_start_mmove(fighter, S_THROW, &s_lk_throw_idle, &lk_owner_idle_phase);
 }
 
 static void script_lp_owner_return(Fighter *fighter) {
   fighter_finish_mmove(fighter, sub_zero_ready);
 }
 
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t lk_rise_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 11, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 13, .duration = 1},
+  {.sample = 14, .duration = 1},
+  {.sample = 15, .duration = 1},
+  {.sample = 16, .duration = 1},
+  {.sample = 17, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 24, .duration = 1},
+  {.sample = 25, .duration = 1},
+  {.sample = 26, .duration = 1},
+  {.sample = 27, .duration = 1},
+  {.sample = 28, .duration = 1},
+  {.sample = 29, .duration = 1},
+  {.sample = 30, .duration = 1},
+  {.sample = 31, .duration = 1},
+  {.sample = 32, .duration = 1},
+  {.sample = 33, .duration = 1},
+  {.sample = 34, .duration = 1},
+  {.sample = 35, .duration = 1},
+  {.sample = 36, .duration = 1},
+  {.sample = 37, .duration = 1},
+  {.sample = 38, .duration = 1},
+  {.sample = 39, .duration = 1},
+  {.sample = 40, .duration = 1},
+};
+// clang-format on
+static const mmove_t lk_rise = {.frame = lk_rise_frames, .lastframe = 40, .endfunc = thrown_finish};
+
 static void script_lk_victim_rise(Fighter *victim) {
-  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lk_thrown_rise);
-  victim->sample_override = 0;
-  thrown_play_to(victim, 40, 1);
-  fighter_wait_ticks(1);
-  thrown_finish(victim);
+  fighter_start_mmove(victim, S_KNOCKDOWN, &s_lk_thrown_rise, &lk_rise);
 }
 
 static bool lp_pair_released(const Fighter *victim) {
@@ -985,14 +1010,9 @@ static void ground_throw(Fighter *fighter, bool lk) {
     fighter_set_speed(fighter, -0x1999);
     mk4_script_save_motion(fighter);
   }
-  if (lk) {
-    fighter_start_fiber(fighter, retail_script_004de490, throw_cleanup);
-    fighter_start_fiber(victim, ground_thrown_script, NULL);
-  } else {
-    fighter_mmove_phase(victim, &lp_capture_phase);
-    fighter->mmove_cleanup = throw_cleanup;
-    retail_script_004de798(fighter);
-  }
+  fighter_mmove_phase(victim, &lp_capture_phase);
+  fighter->mmove_cleanup = throw_cleanup;
+  (lk ? retail_script_004de490 : retail_script_004de798)(fighter);
 }
 
 static void enter_throw(Fighter *fighter) {
@@ -1887,12 +1907,66 @@ static void script_slide_return(Fighter *fighter) {
   fighter_mmove_phase(fighter, &slide_return_phase);
 }
 
+static void script_air_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
+static const MoveDef s_air_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t air_getup_frames[] = {
+  {.sample = 46, .duration = 1},
+  {.sample = 47, .duration = 1},
+  {.sample = 48, .duration = 1},
+  {.sample = 49, .duration = 1},
+  {.sample = 50, .duration = 1},
+  {.sample = 51, .duration = 1},
+  {.sample = 52, .duration = 1},
+  {.sample = 53, .duration = 1},
+  {.sample = 54, .duration = 1},
+  {.sample = 55, .duration = 1},
+  {.sample = 56, .duration = 1},
+  {.sample = 57, .duration = 1},
+  {.sample = 58, .duration = 1},
+  {.sample = 59, .duration = 1},
+  {.sample = 60, .duration = 1},
+  {.sample = 61, .duration = 1},
+  {.sample = 62, .duration = 1},
+  {.sample = 63, .duration = 1},
+  {.sample = 64, .duration = 1},
+  {.sample = 65, .duration = 1},
+  {.sample = 66, .duration = 1},
+  {.sample = 67, .duration = 1},
+  {.sample = 68, .duration = 1},
+  {.sample = 69, .duration = 1},
+  {.sample = 70, .duration = 1},
+  {.sample = 71, .duration = 1},
+  {.sample = 72, .duration = 1},
+  {.sample = 73, .duration = 1},
+  {.sample = 74, .duration = 1},
+  {.sample = 75, .duration = 1},
+  {.sample = 76, .duration = 1},
+  {.sample = 77, .duration = 1},
+  {.sample = 78, .duration = 1},
+  {.sample = 79, .duration = 1},
+};
+// clang-format on
+static const mmove_t air_getup = {.frame = air_getup_frames, .lastframe = 33, .endfunc = fighter_ready};
+
+static void script_air_getup(Fighter *victim) {
+  if (victim->health <= 0) {
+    fighter_finish_mmove(victim, NULL);
+    return;
+  }
+  victim->facing = -victim->facing;
+  fighter_start_mmove(victim, S_KNOCKDOWN, &s_air_getup, &air_getup);
+}
+
 static void sub_zero_air_throw(Fighter *fighter) {
-  mk4_air_throw_generated(fighter, retail_script_004e5e28, retail_script_004e9910);
+  mk4_air_throw_frames(fighter, retail_script_004e5e28, retail_script_004e9910);
 }
 
 static void script_air_release(Fighter *fighter) {
-  mk4_script_air_throw_release(fighter);
+  mk4_mmove_air_throw_release(fighter);
   retail_script_004e5e50(fighter);
 }
 

@@ -569,3 +569,7 @@ void mk4_script_scene_task(Fighter *fighter, int task_type) {
    * through one-tick reschedules. The bounded object pool owns that lifetime. */
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 2, scene_task_step);
 }
+
+bool mk4_mmove_grounded(const Fighter *fighter) {
+  return !fighter_airborne(fighter);
+}

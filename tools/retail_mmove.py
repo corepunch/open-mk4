@@ -13,7 +13,7 @@ import re
 def emit_mmove(program, bindings, return_to, context=None):
     context = context or {}
     root = symbol(int(program['entry'], 16))
-    pending = [(int(program['entry'], 16), context.get('sample'), context.get('count'), False, None, None)]
+    pending = [(int(program['entry'], 16), context.get('sample'), context.get('count'), context.get('paired', False), None, None)]
     names = {pending[0]: root}
     def enqueue(state):
         if state not in names:
@@ -147,13 +147,17 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             elif op in (1, 3, 7, 8, 9, 0x48, 0x69):
                 advance(0 if op in (7, 9) else count - 1, -1 if op in (7, 9) else 1)
                 wait(1)
-            elif op in (2, 4, 6, 0x0c, 0x19):
+            elif op in (2, 4, 6, 0x0c, 0x19, 0x10):
+                if op == 0x10 and not victim_bound:
+                    fail('paired playback without a known victim clip')
                 steps = 1 if op == 0x0c else arg if op == 2 else (inline + 1) // 2 if op == 0x19 else inline
                 step = -1 if op == 6 else 2 if op == 0x19 else 1
                 for _ in range(steps):
                     wait(1)
                     sample = max(0, min(count - 1, sample + step))
                     emit('fighter->sample_override = %d;' % sample)
+                    if op == 0x10:
+                        emit('if (!mk4_mmove_pair_step(fighter)) { return; }')
             elif op in (5, 0x47, 0x4a, 0x4d):
                 advance(inline if op == 5 else arg, -1 if op == 0x4a else 2 if op == 0x4d else 1)
             elif op in (0x12, 0x49, 0x1d):
@@ -200,6 +204,19 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 emit('mk4_script_stop(fighter);')
             elif op == 0x39:
                 emit('fighter->body.physics = NULL;')
+            elif op == 0x58:
+                from retail_codegen import signed_word
+                words = [signed_word(int(word, 16)) for word in row['operands']]
+                emit('fighter_set_speed(fighter, %d);' % words[0])
+                emit('fighter->body.vel[AXIS_Y] = %d;' % words[1])
+                emit('fighter->body.gravity = %d;' % words[2])
+            elif op == 0x60:
+                suffix = enqueue((following, sample, count, victim_bound, loop, selector))
+                hold = name + '_landing'
+                extra.extend(['static const mframe_t %s_frame[] = {{.sample = %d, .duration = 1}};' % (hold, sample),
+                              'static const mmove_t %s = {.frame = %s_frame, .until = mk4_mmove_grounded, .endfunc = %s};' % (hold, hold, suffix)])
+                emit('if (fighter_airborne(fighter)) { fighter_mmove_phase(fighter, &%s); } else { %s(fighter); }' % (hold, suffix))
+                break
             elif op == 0x5a:
                 emit('fighter_set_speed(fighter, %d);' % row['speed_q16'])
             elif op in (0x30, 0x3f):
