@@ -75,14 +75,14 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             samples.append(sample)
             events.append([])
 
-    def advance(target, step=1, paired=False):
+    def advance(target, step=1, paired=False, period=1):
         nonlocal sample
         if paired and not victim_bound:
             fail('paired playback without a known victim clip')
         if sample is None or count is None:
             fail('playback without a known clip')
         while sample < target if step > 0 else sample > target:
-            wait(1)
+            wait(period)
             sample = min(target, sample + step) if step > 0 else max(target, sample + step)
             emit('fighter->sample_override = %d;' % sample)
             if paired:
@@ -177,8 +177,11 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 pass
             elif op == 0x1f:
                 selector = int(row['operands'][0], 16)
-            elif op in (1, 3, 7, 8, 9, 0x48, 0x69):
+            elif op in (1, 3, 7, 8, 9, 0x48):
                 advance(0 if op in (7, 9) else count - 1, -1 if op in (7, 9) else 1)
+                wait(1)
+            elif op == 0x69:
+                advance(count - 1, period=2)
                 wait(1)
             elif op in (2, 4, 6, 0x0c, 0x19, 0x10):
                 if op == 0x10 and not victim_bound:

@@ -314,7 +314,9 @@ def lower(row, bindings, return_to):
     elif op in (0x0f, 0x12, 0x49, 0x1d):
         if op != 0x0f:
             lines.append('fighter->sample_override = %d;' % arg)
-    elif op in (1, 3, 8, 0x48, 0x69):
+    elif op == 0x69:
+        lines.append('mk4_script_finish_clip(fighter, 0);')
+    elif op in (1, 3, 8, 0x48):
         lines.append('mk4_script_finish_clip(fighter, 1);')
     elif op in (7, 9):
         lines.append('mk4_script_finish_clip(fighter, -1);')

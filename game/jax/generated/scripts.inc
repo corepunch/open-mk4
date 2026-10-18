@@ -3351,7 +3351,7 @@ static inline void retail_script_004ed090(Fighter *fighter) {
   }
   {
     /* EXE 004ed0ac: 0x69000000 */
-    mk4_script_finish_clip(fighter, 1);
+    mk4_script_finish_clip(fighter, 0);
   }
   {
     /* EXE 004ed0b0: 0x3f000000 */

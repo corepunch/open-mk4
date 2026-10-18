@@ -360,13 +360,28 @@ L_00000004: {
         self.assertIn('fighter_fiber_play_to(fighter, 17, 2);', source)
         self.assertNotIn('fighter_fiber_play_to(fighter, 529, 2);', source)
 
-    def test_opcode_69_plays_remaining_clip_through_shared_fiber_helper(self):
+    def test_opcode_69_preserves_native_half_speed_in_both_lowerings(self):
         binding = Binding('jax_projectile', 'tests/test_script_codegen.py', ('spawn',), ('fighter', 'task_type'),
                           flow='independent', task_types=(80,), evidence='synthetic native task boundary')
         source = generate(self.image, [0x4ed090], 13, 'fighter_ready', bindings={0x496fc0: binding})
-        self.assertIn('mk4_script_finish_clip(fighter, 1);', source)
+        self.assertIn('mk4_script_finish_clip(fighter, 0);', source)
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             self.compile([0x69000000, 0x3f000000])
+
+        # Native45b6d0/428ea0 use two visits per remaining pose. Start
+        # at10 of clip54's13 samples: the tail takes five visits, not three.
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        entry = self.fixture([0x1100000a, descriptor, 0x69000000, 0x3f000000])
+        slow = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('.lastframe = 5', slow)
+        self.assertIn('10, 10, 11, 11, 12', slow)
+        self.assertNotIn('mk4_script_finish_clip', slow)
+        self.assertNotIn('fighter_wait_ticks', slow)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'slow_tail.c'
+            path.write_text(slow + '\nvoid use_slow_tail(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted

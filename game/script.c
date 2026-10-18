@@ -133,6 +133,20 @@ void mk4_script_advance(Fighter *fighter, int count, int step) {
 void mk4_script_finish_clip(Fighter *fighter, int step) {
   int last = fighter_move(fighter)->last;
   require(last != MOVE_END && last >= 0, "Generated playback needs a decoded clip length");
+  if (step == 0) {
+    /* 45b6d0 ->428ea0/429120: a full-pose visit and a half-pose visit
+     * precede each cursor increment. Existing frame interpolation supplies
+     * the presentation between the two repeated pose rows. */
+    int first = fighter_sample(fighter);
+    require(first >= 0 && first <= last, "Slow playback needs a bounded cursor");
+    int frames = 2 * (last - first) + 1;
+    native_begin(fighter, 0, frames - 1, NULL);
+    for (int frame = 0; frame < frames; ++frame) {
+      native_frame(fighter, frame, mini(last, first + frame / 2), NULL);
+    }
+    native_wait(fighter);
+    return;
+  }
   native_play_to(fighter, step > 0 ? last : 0, step);
   native_delay(fighter, 1);
 }
