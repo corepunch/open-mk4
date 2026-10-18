@@ -61,10 +61,10 @@ static const int reptile_s_air_throw_samples[90] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4
 const mframe_t reptile_s_air_throw_frames[90] = {{0}};
 const mmove_t reptile_s_air_throw_mmove = {.firstframe = 0, .lastframe = 89, .frame = reptile_s_air_throw_frames, .samples = reptile_s_air_throw_samples};
 
-static const int reptile_clip_106_samples[44] = {
+static const int reptile_s_roll_samples[44] = {
     0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21};
-const mframe_t reptile_clip_106_frames[44] = {{0}};
-const mmove_t reptile_clip_106_mmove = {.firstframe = 0, .lastframe = 43, .frame = reptile_clip_106_frames, .samples = reptile_clip_106_samples};
+const mframe_t reptile_s_roll_frames[44] = {{0}};
+const mmove_t reptile_s_roll_mmove = {.firstframe = 0, .lastframe = 43, .frame = reptile_s_roll_frames, .samples = reptile_s_roll_samples};
 
 static const int reptile_s_victory_samples[372] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
     16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
@@ -187,9 +187,9 @@ static const int reptile_clip_299_samples[70] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5
 const mframe_t reptile_clip_299_frames[70] = {{0}};
 const mmove_t reptile_clip_299_mmove = {.firstframe = 0, .lastframe = 69, .frame = reptile_clip_299_frames, .samples = reptile_clip_299_samples};
 
-static const int reptile_clip_302_samples[16] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
-const mframe_t reptile_clip_302_frames[16] = {{0}};
-const mmove_t reptile_clip_302_mmove = {.firstframe = 0, .lastframe = 15, .frame = reptile_clip_302_frames, .samples = reptile_clip_302_samples};
+static const int reptile_s_dash_samples[16] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
+const mframe_t reptile_s_dash_frames[16] = {{0}};
+const mmove_t reptile_s_dash_mmove = {.firstframe = 0, .lastframe = 15, .frame = reptile_s_dash_frames, .samples = reptile_s_dash_samples};
 
 static const int reptile_clip_303_samples[40] = {
     0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19};

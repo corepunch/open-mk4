@@ -852,6 +852,64 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
+static void check_reptile_reconnected_specials(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int dash = 0; dash < 2; ++dash) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        battle_init(slot ? 4 : 10, slot ? 10 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot];
+        Fighter *victim = &g_battle.fighters[1 - slot];
+        owner->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        if (scenario == 1) {
+          victim->flags |= FF_UNTOUCHABLE;
+        }
+        fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
+        fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
+        fighter_press(owner, dash ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH);
+        advance_ticks(1, NULL);
+        check(fighter_move(owner)->clip == (dash ? 302 : 106), "Reptile motion command must enter its owned movement attack");
+        if (scenario == 2) {
+          fighter_enter_state(owner, S_HIT);
+        }
+        advance_ticks(180, NULL);
+        q16 expected = scenario == 0 ? Q16_ONE - (dash ? 0x1eb8 : 0x170a) : Q16_ONE;
+        if (owner->state != S_IDLE || victim->health != expected) {
+          fprintf(stderr, "Reptile slot %d dash %d scenario %d state %d health %d expected %d\n", slot, dash, scenario, owner->state, victim->health, expected);
+        }
+        check(victim->health == expected, "Reptile special must apply its owned contact once, with miss and interruption gates");
+        check(owner->state == S_IDLE, "Reptile special must recover after its contact branch");
+      }
+    }
+    battle_init(slot ? 4 : 10, slot ? 10 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Reptile CPU dash must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 302, "Reptile CPU near row must select the dash");
+    const Controls *controls = roster_def(10)->controls;
+    CommandPredicate gate = NULL;
+    for (int i = 0; i < controls->command_count; ++i) {
+      if (controls->commands[i].button == BUTTON_LOW_KICK && controls->commands[i].count == 2) {
+        gate = controls->commands[i].predicate;
+      }
+    }
+    check(gate != NULL && !gate(&g_battle.fighters[slot]), "Dash entry must arm the cooldown used by its command gate");
+    advance_ticks(180, NULL);
+    check(gate(&g_battle.fighters[slot]), "Completed dash cooldown must allow the next command");
+    g_battle.fighters[1 - slot].hits = 5;
+    check(!gate(&g_battle.fighters[slot]), "Dash gate must reject a victim beyond the retail combo cap");
+    g_battle.fighters[1 - slot].hits = 4;
+    check(gate(&g_battle.fighters[slot]), "Dash combo cap must include its fourth-hit boundary");
+    battle_init(slot ? 4 : 10, slot ? 10 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_2), "Reptile CPU far attack must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 106, "Reptile CPU far row must select the forward attack");
+    advance_ticks(180, NULL);
+  }
+}
+
 static void check_goro_reconnected_counters(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kick = 0; kick < 2; ++kick) {
@@ -1239,6 +1297,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_cage_special_commands();
   check_reconnected_stage_commands();

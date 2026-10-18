@@ -524,6 +524,16 @@
       "source": "game/reptile/moves/spike.c",
       "symbol": "reptile_entry_spike",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x47a690": {
+      "source": "game/reptile/moves/common.c",
+      "symbol": "reptile_input_47a690",
+      "evidence": "Typed Reptile native command 0x47a690 and generated owned script/contact continuation."
+    },
+    "0x47afe0": {
+      "source": "game/reptile/moves/common.c",
+      "symbol": "reptile_input_47afe0",
+      "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
     }
   },
   "command_predicates": {
@@ -532,6 +542,19 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw"
+    "0x45ed80": "mk4_can_air_throw",
+    "0x45e950": "reptile_can_dash"
+  },
+  "cpu_bindings": {
+    "0x47a690": {
+      "source": "game/reptile/moves/common.c",
+      "symbol": "reptile_input_47a690",
+      "evidence": "Typed Reptile native command 0x47a690 and generated owned script/contact continuation."
+    },
+    "0x47afe0": {
+      "source": "game/reptile/moves/common.c",
+      "symbol": "reptile_input_47afe0",
+      "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
+    }
   }
 }

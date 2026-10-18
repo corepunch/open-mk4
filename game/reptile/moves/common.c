@@ -8,10 +8,12 @@ static void reptile_script_47ab50(Fighter *fighter);
 static void reptile_script_47b260(Fighter *fighter);
 static void reptile_loop_frame(Fighter *fighter);
 static void reptile_script_lp_select(Fighter *fighter);
-static void reptile_input_47a690(Fighter *fighter);
-static void reptile_input_47afe0(Fighter *fighter);
+void reptile_input_47a690(Fighter *fighter);
+void reptile_input_47afe0(Fighter *fighter);
 static void reptile_input_4988d0(Fighter *fighter);
 static void reptile_entry_block(Fighter *fighter);
+static const MoveDef s_dash = {.clip = 302, .last = 7, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x216};
+static const MoveDef s_roll = {.clip = 106, .last = 21, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x20d};
 static const MoveDef s_reaction_40 = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const AttackRecord reptile_loop_contact = {0xe872, -0x3f7c, 0xb84b, 0x56c8, 40, 10, 9, 0, 0x170a};
 
@@ -233,12 +235,21 @@ void reptile_start(Fighter *fighter, StateId state, const MoveDef *move, Fighter
   fighter_start_fiber(fighter, script, NULL);
 }
 
-static void reptile_input_47a690(Fighter *fighter) {
-  reptile_start(fighter, S_KICK, &reptile_s_kick, reptile_entry_retail_script_004e8128);
+bool reptile_can_dash(const Fighter *fighter) {
+  /* 45e950: action family 11 must be at least 70 ticks old and the peer
+   * combo count (+7c, queried by 45f5b0) must not exceed four. */
+  return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->slide_ready && fighter_opponent(fighter)->hits <= 4;
 }
 
-static void reptile_input_47afe0(Fighter *fighter) {
-  reptile_start(fighter, S_KICK, &reptile_s_kick, reptile_entry_retail_script_004e8178);
+void reptile_input_47a690(Fighter *fighter) {
+  fighter->slide_ready = g_battle.ticks + 70;
+  mk4_script_stop_body(fighter);
+  reptile_start(fighter, S_KICK, &s_dash, reptile_entry_retail_script_004e8128);
+}
+
+void reptile_input_47afe0(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  reptile_start(fighter, S_KICK, &s_roll, reptile_entry_retail_script_004e8178);
 }
 
 static void reptile_input_4988d0(Fighter *fighter) {
