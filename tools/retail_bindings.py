@@ -728,6 +728,8 @@ CHARACTER_BINDINGS[11] = {
                       evidence='46f390 selects Kai fast or normal roundhouse startup'),
     0x467fc0: Binding('kai_script_spike_tail', 'game/c_kai.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes Kai stage-fatality continuation'),
+    0x47c580: Binding('kai_script_stage_event', 'game/c_kai.c', ('tail',), flow='independent',
+                      evidence='47c580 enters StageEventComplexFsm after the Kai clip-1 or clip-9 phase; the portable BattleEvent resumes that clip from its observed sample boundary'),
     0x47cc10: Binding('retail_script_004e8358', 'game/generated/kai.inc', ('tail',),
                       script_target=0x4e8358, evidence='47cc10 enters the selected Kai continuation 4e8358'),
 }

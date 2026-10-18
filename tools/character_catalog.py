@@ -331,6 +331,38 @@ def moves_for(character):
         )
         return shared
 
+    if character == 11:
+        # Kai's selected input/CPU targets include additional kick, recovery,
+        # victory and draw streams beyond the shared fighter roots.
+        shared.update(
+            input_47bd10=move(0x47bd10, (('selected continuation', 0x4e8210),),
+                              native=(('motion finish', 0x47bd40),)),
+            input_47bd40=move(0x47bd40, (('selected continuation', 0x4e8238),),
+                              native=(('recovery finish', 0x47bf90),)),
+            input_47c520=move(0x47c520, (('selected continuation', 0x4e8320),),
+                              native=(('clip finish', 0x47c580),)),
+            input_47cc10=move(0x47cc10, (('selected continuation', 0x4e8358), ('scheduler continuation', 0x4e8390)),
+                              native=(('clip finish', 0x47cc50),)),
+            input_478df0=move(0x478df0, (('selected continuation', 0x4e8870),),
+                              native=(('clip finish', 0x478e20),)),
+            input_47cbf0=move(0x47cbf0, (('selected continuation', 0x4e88c8),),
+                              native=(('clip finish', 0x47cc10),)),
+            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
+                             native=(('follow-up draw', 0x46d260),)),
+            lk_throw=move(0x42b6b0,
+                          (('paired opening', 0x4de2f8), ('damage', 0x4de318),
+                           ('release', 0x4de328), ('victim continuation', 0x4de358)),
+                          native=(('victim continuation', 0x42be10),)),
+            lp_throw=move(0x42c560,
+                          (('selected attacker/victim', 0x4de798),
+                           ('extended throw', 0x4de610), ('short throw', 0x4de6b8)),
+                          native=(('variant selector', 0x42cb80),)),
+            high_kick=move(0x46a680, (('Kai selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            roundhouse=move(0x46f1f0,
+                            (('Kai attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),
+                            (('B', 34),)),
+        )
+        return shared
     if character == 14:
         # Cage's controller-selected streams include a fatality scene loop and
         # a three-stage powered punch continuation.
