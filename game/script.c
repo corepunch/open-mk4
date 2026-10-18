@@ -294,8 +294,10 @@ void mk4_script_pair_back_to(Fighter *owner, int sample) {
   native_delay(owner, 1);
 }
 
+/* 46f650 first calls4906c0: controller return snaps to the actor floor. */
 void mk4_mmove_thrown_finish(Fighter *fighter) {
   mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
 }
 

@@ -9,6 +9,7 @@ void goro_cpu_projectile(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
+void kai_draw_weapon(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
@@ -1780,27 +1781,37 @@ static void check_cage_weapon_commands(void) {
 }
 
 static void check_weapon_followup_selection(void) {
-  const int rosters[] = {14, 12, 6};
-  const FighterFn entries[] = {cage_weapon_action, jarek_weapon_action, shinnok_weapon_action};
-  for (int row = 0; row < 3; ++row) {
+  const int rosters[] = {14, 12, 6, 11};
+  const FighterFn entries[] = {cage_weapon_action, jarek_weapon_action, shinnok_weapon_action, kai_draw_weapon};
+  const int clips[] = {227, 229, 237, 230};
+  const q16 damages[] = {9175, 9830, 13107, 11796};
+  for (int row = 0; row < 4; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
-      battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
-      g_battle.phase = PHASE_FIGHT;
-      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-      owner->body.pos[AXIS_X] = slot ? 0xa666 : -0xa666;
-      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      owner->flags |= FF_FOLLOW_UP;
-      fighter_interrupt(owner, entries[row]);
-      advance_ticks(1, NULL);
-      check(owner->armed && fighter_move(owner)->clip == (row == 0      ? 227
-                                                             : row == 1 ? 229
-                                                                        : 237),
-          "Follow-up draw must select the roster weapon table entry, preserving Cage back LP, Jarek LP and Shinnok follow-up237");
-      advance_ticks(180, NULL);
-      const q16 damages[] = {9175, 9830, 13107};
-      check(victim->health == Q16_ONE - damages[row] && owner->state == S_IDLE,
-          "Weapon follow-up must apply its selected record and recover without a substitute attack");
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Weapon follow-up owner and victim must stay on frame tables");
+      for (int air = 0; air < 2; ++air) {
+        battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->body.pos[AXIS_X] = slot ? 0xa666 : -0xa666;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        if (air) {
+          owner->body.pos[AXIS_Y] -= 0x2000;
+          owner->body.gravity = 0;
+        }
+        owner->flags |= FF_FOLLOW_UP;
+        fighter_interrupt(owner, entries[row]);
+        advance_ticks(1, NULL);
+        check(owner->armed && fighter_move(owner)->clip == clips[row], "Follow-up draw must select its native table entry even from a frozen airborne contact");
+        advance_ticks(180, NULL);
+        if (victim->health != Q16_ONE - damages[row] || owner->state != S_IDLE) {
+          fprintf(stderr, "Weapon followup row%d slot%d air%d health%d state%d clip%d pose%d\n", row, slot, air, victim->health, owner->state,
+              fighter_move(owner)->clip, fighter_sample(owner));
+        }
+        check(victim->health == Q16_ONE - damages[row] && owner->state == S_IDLE,
+            "Weapon follow-up must apply its selected record and recover without a substitute attack");
+        check(owner->body.pos[AXIS_Y] == owner->body.ground && owner->body.physics == NULL,
+            "Native controller return must restore the owner floor instead of leaving a frozen airborne fighter");
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Weapon follow-up owner and victim must stay on frame tables");
+      }
     }
   }
 }

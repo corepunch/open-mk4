@@ -47,15 +47,23 @@ static void hp(Fighter *fighter) {
   }
 }
 
-static void lp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, jarek_entry_retail_script_004e66f0);
-  } else if (fighter_distance(fighter) <= .7f && !fighter_airborne(fighter_opponent(fighter)) && !(fighter_opponent(fighter)->flags & FF_REACTING)) {
+/* 495980 has the throw/back gates but no air selector. The ordinary LP
+ * callback handles air first; follow-up table4ecb40 enters this ground body. */
+static void ground_lp(Fighter *fighter) {
+  if (fighter_distance(fighter) <= .7f && !fighter_airborne(fighter_opponent(fighter)) && !(fighter_opponent(fighter)->flags & FF_REACTING)) {
     jarek_lp_throw(fighter);
   } else if (fighter_holds_back(fighter)) {
     back_lp(fighter);
   } else {
     weapon_start_strike(fighter, &strikes[1], false);
+  }
+}
+
+static void lp(Fighter *fighter) {
+  if (fighter_airborne(fighter)) {
+    weapon_air_frames(fighter, false, jarek_entry_retail_script_004e66f0);
+  } else {
+    ground_lp(fighter);
   }
 }
 
@@ -75,7 +83,7 @@ void jarek_weapon_action(Fighter *fighter) {
   } else if (fighter->flags & FF_FOLLOW_UP) {
     equip(fighter);
     weapon_followup_victim(fighter);
-    lp(fighter);
+    ground_lp(fighter);
   } else {
     weapon_draw(fighter, &knife);
     jarek_entry_retail_script_004e62c0(fighter);

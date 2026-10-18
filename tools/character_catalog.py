@@ -218,6 +218,7 @@ def _moves_for(character):
                           (('paired opening', 0x4de2f8), ('damage', 0x4de318),
                            ('release', 0x4de328)),
                           native=(('victim continuation', 0x42be10),)),
+            weapon_followup=move(0x4959f0, contacts=(('WEAPON', 31),)),
             lp_throw=move(0x42c560,
                           (('selected attacker/victim', 0x4de798),
                            ('extended throw', 0x4de610), ('short throw', 0x4de6b8)),

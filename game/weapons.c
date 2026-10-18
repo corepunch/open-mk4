@@ -71,7 +71,7 @@ static const mframe_t blend_frames[10] = {
 };
 // clang-format on
 static const mmove_t blend_phase = {
-    .firstframe = 0, .lastframe = 9, .frame = blend_frames, .endfunc = fighter_ready, .samples = blend_frames_samples, .cleanup = weapon_cleanup};
+    .firstframe = 0, .lastframe = 9, .frame = blend_frames, .endfunc = mk4_mmove_thrown_finish, .samples = blend_frames_samples, .cleanup = weapon_cleanup};
 
 static void strike_sound(Fighter *fighter) {
   battle_sound(SOUND_C, fighter->weapon_strike->sound);
@@ -87,7 +87,7 @@ static void strike_done(Fighter *fighter) {
     fighter->blend_ticks = 0;
     fighter->blend_duration = 10;
   } else {
-    fighter_finish_mmove(fighter, fighter_ready);
+    mk4_mmove_thrown_finish(fighter);
   }
 }
 

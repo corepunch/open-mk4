@@ -2398,7 +2398,7 @@
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "fef00fcbed38e35897b73c7e5cff730740defcac51d137bf949c2c1e4332529f",
+  "inventory_sha256": "81e05891212d414fae36d181c1695d1644c33a6d357c7c439a66c2f7d07e6be3",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2549,6 +2549,11 @@
       "source": "game/kai/moves/handstand.c",
       "symbol": "kai_handstand_reaction",
       "evidence": "Bounded native handstand listings preserve selected startup, contact and recovery streams."
+    },
+    "weapon_followup": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "weapon_followup",
+      "evidence": "4ecb40[type63-60] selects4959f0:4eca08 motion and4eca18 clip230/weapon31, bypassing air/back selectors."
     }
   },
   "entry_adapters": {

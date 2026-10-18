@@ -66,13 +66,19 @@ void kai_script_draw_equip(Fighter *fighter) {
   kai_entry_retail_script_004e62d8(fighter);
 }
 
+/* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
+ * the HP strike data directly, bypassing ordinary air/back input selection. */
+static void weapon_followup(Fighter *fighter) {
+  weapon_start_strike(fighter, &strikes[0], true);
+}
+
 void kai_draw_weapon(Fighter *fighter) {
   if (fighter->armed) {
     fighter->weapon->throw_move(fighter);
   } else if (fighter->flags & FF_FOLLOW_UP) {
     equip_weapon(fighter);
     weapon_followup_victim(fighter);
-    weapon_back(fighter);
+    weapon_followup(fighter);
   } else {
     weapon_draw(fighter, &native_weapon);
     kai_entry_retail_script_004e62c0(fighter);
