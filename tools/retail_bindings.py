@@ -1166,6 +1166,14 @@ CHARACTER_BINDINGS[6][0x42ce60] = Binding('shinnok_script_lp_return', 'game/shin
     flow='terminal', mmove=True, evidence='42ce60 returns the released LP owner through the nonblocking ready boundary')
 
 
+CHARACTER_BINDINGS[8][0x45b1f0] = replace(CHARACTER_BINDINGS[8][0x45b1f0], mmove=True,
+    evidence="45b1f0 installs reaction 103 on the released task peer")
+
+CHARACTER_BINDINGS[9][0x45b1f0] = replace(CHARACTER_BINDINGS[9][0x45b1f0], mmove=True,
+    evidence="45b1f0 installs reaction 104 on the released task peer")
+CHARACTER_BINDINGS[9][0x470420] = Binding("tanya_script_lp_return", "game/tanya/character.c", ("tail",),
+    flow="terminal", mmove=True, evidence="470420 nonblocking owner ready after peer release")
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

@@ -892,10 +892,10 @@ static void check_fujin_frame_lp_throw(void) {
   }
 }
 
-static void check_shinnok_frame_lp_throw(void) {
+static void check_peer_release_lp_throw(int roster, int clip) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int interrupted = 0; interrupted < 2; ++interrupted) {
-      battle_init(slot ? 4 : 6, slot ? 6 : 4);
+      battle_init(slot ? 4 : roster, slot ? roster : 4);
       g_battle.phase = PHASE_FIGHT;
       Fighter *owner = &g_battle.fighters[slot];
       Fighter *victim = &g_battle.fighters[1 - slot];
@@ -903,21 +903,22 @@ static void check_shinnok_frame_lp_throw(void) {
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       fighter_press(owner, BUTTON_LOW_PUNCH);
       advance_ticks(1, NULL);
-      check(fighter_move(owner)->clip == 75, "Close LP input must reach Shinnok's selected capture");
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shinnok LP capture must allocate no fiber");
+      check(fighter_move(owner)->clip == clip, "Close LP input must reach Peer-release LP's selected capture");
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Peer-release LP LP capture must allocate no fiber");
       advance_ticks(8, NULL);
       if (interrupted) {
         fighter_enter_state(owner, S_HIT);
       }
       for (int tick = 0; tick < 160; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shinnok LP throw and independent victim release must stay on frame tables");
+        check(
+            !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Peer-release LP LP throw and independent victim release must stay on frame tables");
       }
       q16 damage = interrupted ? 0 : 9830;
       check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
-          "Shinnok throw must damage its captured victim once and never react against its owner");
+          "Peer-release LP throw must damage its captured victim once and never react against its owner");
       check(owner->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
-          "Shinnok LP throw or cancellation must release the pair and return controls");
+          "Peer-release LP LP throw or cancellation must release the pair and return controls");
     }
   }
 }
@@ -1443,7 +1444,9 @@ int main(void) {
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
   check_fujin_frame_lp_throw();
-  check_shinnok_frame_lp_throw();
+  check_peer_release_lp_throw(6, 75);
+  check_peer_release_lp_throw(8, 78);
+  check_peer_release_lp_throw(9, 79);
   check_short_diagonal_air_recovery();
   check_jax_air_grab_command();
   check_reptile_reconnected_specials();

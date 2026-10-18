@@ -11,7 +11,7 @@ const MoveDef quan_chi_s_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTAC
 const MoveDef quan_chi_s_high_kick = {.clip = 66, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK};
 const MoveDef quan_chi_s_sweep = {.clip = 63, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW};
 const MoveDef quan_chi_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LAUNCH};
-const MoveDef quan_chi_s_throw = {.clip = 78, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE};
+const MoveDef quan_chi_s_throw = {.clip = 78, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD};
 
 static const MoveDef s_air_throw = {.clip = 82, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE};
 static const MoveDef s_air_thrown = {.clip = 202, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION};

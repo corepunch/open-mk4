@@ -42,5 +42,11 @@ void tanya_start_script(Fighter *fighter, StateId state, const MoveDef *move, Fi
 }
 
 void tanya_script_current_reaction(Fighter *fighter, int reaction) {
-  battle_react(fighter, reaction);
+  require(reaction == 104, "Unexpected tanya LP release reaction");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  battle_react(victim, reaction);
+}
+
+void tanya_script_lp_return(Fighter *fighter) {
+  fighter_finish_mmove(fighter, tanya_ready);
 }
