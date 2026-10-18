@@ -198,7 +198,10 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 advance(min(count - 1, sample + arg) if arg else count - 1, period=2)
                 if arg == 0 or first + arg >= count:
                     wait(1)
-            elif op == 0x69:
+            elif op in (0x68, 0x69):
+                if op == 0x68:
+                    sample = 0
+                    emit('fighter->sample_override = 0;')
                 advance(count - 1, period=2)
                 wait(1)
             elif op in (2, 4, 6, 0x0c, 0x19, 0x10):

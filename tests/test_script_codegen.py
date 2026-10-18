@@ -421,6 +421,32 @@ L_00000004: {
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
+    def test_restarted_half_speed_preserves_prefix_and_resets_inherited_cursor(self):
+        #45b750 parses45bf80's optional descriptor;428e80 resets to0
+        #before428ea0 uses the same two-visit playback as opcode69.
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        for words in ([0x68000200, descriptor, 0x3f000000],
+                      [0x1100000a, descriptor, 0x68000000, 0x3f000000]):
+            entry = self.fixture(words)
+            legacy = generate(self.image, [entry], 3, 'fighter_ready')
+            self.assertIn('fighter->sample_override = 0;', legacy)
+            self.assertIn('mk4_script_finish_clip(fighter, 0);', legacy)
+            frames = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+            self.assertIn('.lastframe = 25', frames)
+            self.assertIn('0, 0, 1, 1, 2, 2, 3, 3', frames)
+            self.assertNotIn('mk4_script_finish_clip', frames)
+        with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
+            self.compile([0x68000000, 0x3f000000])
+        with self.assertRaisesRegex(CompileError, 'unsupported playback prefix'):
+            self.compile([0x68000300, 0x3f000000])
+        # Actual Fujin first-fatality opening: no handwritten VM body.
+        binding = Binding('first_native_tail', 'tests/test_script_codegen.py', ('tail',),
+                          flow='terminal', mmove=True, evidence='bounded native boundary44f5e0')
+        real = generate(self.image, [0x4e1f58], 5, 'fighter_ready',
+                        bindings={0x44f5e0: binding}, mmove_entries=[0x4e1f58])
+        self.assertIn('first_native_tail(fighter);', real)
+        self.assertNotIn('fighter_wait_ticks', real)
+
     def test_counted_half_speed_supports_prefix_and_bounded_clip_end(self):
         # 45b800 optionally binds via45bf80 and runs429120 twice per pose.
         descriptor = (0x4fad7c + 54 * 12) // 4
