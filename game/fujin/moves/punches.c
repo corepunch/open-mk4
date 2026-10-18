@@ -16,7 +16,7 @@ static void fujin_entry_high_punch(Fighter *fighter) {
 
 static void fujin_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_retail_jab);
-  fighter_start_fiber(fighter, fujin_entry_retail_script_004e62f0, NULL);
+  fujin_entry_retail_script_004e62f0(fighter);
 }
 
 static void fujin_enter_punch(Fighter *fighter) {

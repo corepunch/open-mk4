@@ -3,7 +3,8 @@
 static void quan_chi_high_punch(Fighter *fighter);
 
 void quan_chi_jab(Fighter *fighter) {
-  quan_chi_start(fighter, S_PUNCH, &quan_chi_s_jab, quan_chi_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &quan_chi_s_jab);
+  quan_chi_entry_retail_script_004e62f0(fighter);
 }
 
 static void quan_chi_high_punch(Fighter *fighter) {

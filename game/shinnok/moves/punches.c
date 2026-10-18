@@ -4,7 +4,8 @@ static void shinnok_high_punch(Fighter *fighter);
 static const MoveDef s_high_punch = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_0100};
 
 void shinnok_jab(Fighter *fighter) {
-  shinnok_start(fighter, S_PUNCH, &shinnok_s_jab, shinnok_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &shinnok_s_jab);
+  shinnok_entry_retail_script_004e62f0(fighter);
 }
 
 static void shinnok_high_punch(Fighter *fighter) {

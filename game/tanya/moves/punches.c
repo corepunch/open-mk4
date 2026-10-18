@@ -1,7 +1,8 @@
 #include "../character.h"
 
 void tanya_jab(Fighter *fighter) {
-  tanya_start_script(fighter, S_PUNCH, &tanya_s_jab, tanya_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &tanya_s_jab);
+  tanya_entry_retail_script_004e62f0(fighter);
 }
 
 void tanya_high_punch(Fighter *fighter) {

@@ -6,7 +6,7 @@ void sonya_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &sonya_s_jab);
   /* The jab entry clears the busy bit (0x490330): commands stay live. */
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, sonya_entry_retail_script_004e62f0, NULL);
+  sonya_entry_retail_script_004e62f0(fighter);
 }
 
 void sonya_hp(Fighter *fighter) {

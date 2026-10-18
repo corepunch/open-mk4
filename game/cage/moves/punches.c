@@ -15,7 +15,8 @@ void cage_script_powered_punch_finish_tail(Fighter *fighter) {
 }
 
 static void cage_jab(Fighter *fighter) {
-  cage_start_script(fighter, S_PUNCH, &cage_s_jab, cage_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &cage_s_jab);
+  cage_entry_retail_script_004e62f0(fighter);
 }
 
 void cage_powered_punch(Fighter *fighter) {

@@ -6,7 +6,7 @@ void kitana_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &kitana_s_jab);
   /* The jab entry clears the busy bit (0x490330): commands stay live. */
   fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004e62f0, NULL);
+  kitana_entry_retail_script_004e62f0(fighter);
 }
 
 void kitana_hp(Fighter *fighter) {

@@ -804,6 +804,37 @@ static void check_reconnected_air_attacks(void) {
   }
 }
 
+static void check_roster_jab_frames(void) {
+  const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
+  for (size_t row = 0; row < sizeof roster / sizeof roster[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int repeat = 0; repeat < 2; ++repeat) {
+        battle_init(slot ? 4 : roster[row], slot ? roster[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -3 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 3 * Q16_ONE;
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+        battle_step(input);
+        bool repeated = false;
+        for (int tick = 0; tick < 150; ++tick) {
+          input[slot].held = repeat && tick < 45 && tick % 4 == 2 ? BUTTON_BIT(BUTTON_LOW_PUNCH) : 0;
+          battle_step(input);
+          repeated |= fighter_move(owner)->clip == 295;
+          check(!fighter_fiber_active(owner), "Roster jab, buffered repeat and release recovery must use generated frame programs");
+        }
+        if (repeat && !repeated) {
+          fprintf(stderr, "Jab frames roster%d slot%d did not repeat\n", roster[row], slot);
+        }
+        check(!repeat || repeated, "Repeated LP presses must reach the real second-punch loop before release");
+        check(owner->state == S_IDLE && g_battle.fighters[1 - slot].health == Q16_ONE,
+            "Released jab must finish its recovery and leave a distant opponent untouched");
+      }
+    }
+  }
+}
+
 static void check_straight_air_kick_contacts(void) {
   for (int narrow = 0; narrow < 2; ++narrow) {
     for (int slot = 0; slot < 2; ++slot) {
@@ -1836,6 +1867,7 @@ int main(void) {
   check_ground_normals();
   check_air_attacks();
   check_reconnected_air_attacks();
+  check_roster_jab_frames();
   check_straight_air_kick_contacts();
   check_reconnected_ground_combos();
   check_reconnected_lk_throws();

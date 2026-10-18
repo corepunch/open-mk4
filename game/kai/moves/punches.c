@@ -3,7 +3,8 @@
 static void kai_low_punch(Fighter *fighter);
 
 void kai_jab(Fighter *fighter) {
-  kai_start_script(fighter, S_PUNCH, &kai_s_jab, kai_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &kai_s_jab);
+  kai_entry_retail_script_004e62f0(fighter);
 }
 
 void kai_high_punch(Fighter *fighter) {
@@ -16,7 +17,8 @@ void kai_high_punch(Fighter *fighter) {
 }
 
 static void kai_low_punch(Fighter *fighter) {
-  kai_start_script(fighter, S_PUNCH, &kai_s_jab, kai_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &kai_s_jab);
+  kai_entry_retail_script_004e62f0(fighter);
 }
 
 void kai_press_high_punch(Fighter *fighter) {

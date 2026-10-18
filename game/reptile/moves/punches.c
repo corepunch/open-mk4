@@ -5,7 +5,8 @@ static void reptile_entry_high_punch(Fighter *fighter);
 static void reptile_entry_low_punch(Fighter *fighter);
 
 static void reptile_jab(Fighter *fighter) {
-  reptile_start(fighter, S_PUNCH, &reptile_s_jab, reptile_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &reptile_s_jab);
+  reptile_entry_retail_script_004e62f0(fighter);
 }
 
 static void reptile_entry_high_punch(Fighter *fighter) {

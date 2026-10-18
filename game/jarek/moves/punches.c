@@ -4,7 +4,8 @@ static void jarek_high_punch(Fighter *fighter);
 static const MoveDef s_high_punch = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_0100};
 
 void jarek_jab(Fighter *fighter) {
-  jarek_start(fighter, S_PUNCH, &jarek_s_jab, jarek_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &jarek_s_jab);
+  jarek_entry_retail_script_004e62f0(fighter);
 }
 
 static void jarek_high_punch(Fighter *fighter) {

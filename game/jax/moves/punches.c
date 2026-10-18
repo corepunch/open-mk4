@@ -12,7 +12,8 @@ void jax_script_jab_followup(Fighter *fighter) {
 }
 
 void jax_jab(Fighter *fighter) {
-  jax_start(fighter, S_PUNCH, &jax_s_jab, jax_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &jax_s_jab);
+  jax_entry_retail_script_004e62f0(fighter);
 }
 
 static void jax_high_punch(Fighter *fighter) {

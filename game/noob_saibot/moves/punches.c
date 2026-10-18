@@ -13,7 +13,8 @@ static void noob_saibot_high_punch(Fighter *fighter) {
 }
 
 static void noob_saibot_jab(Fighter *fighter) {
-  noob_saibot_start_script(fighter, S_PUNCH, &noob_saibot_s_jab, noob_saibot_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &noob_saibot_s_jab);
+  noob_saibot_entry_retail_script_004e62f0(fighter);
 }
 
 void noob_saibot_press_high_punch(Fighter *fighter) {

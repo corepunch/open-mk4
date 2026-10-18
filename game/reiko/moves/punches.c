@@ -13,7 +13,8 @@ static void reiko_high_punch(Fighter *fighter) {
 }
 
 static void reiko_jab(Fighter *fighter) {
-  reiko_start_script(fighter, S_PUNCH, &reiko_s_jab, reiko_entry_retail_script_004e62f0);
+  fighter_start_move(fighter, S_PUNCH, &reiko_s_jab);
+  reiko_entry_retail_script_004e62f0(fighter);
 }
 
 void reiko_press_high_punch(Fighter *fighter) {
