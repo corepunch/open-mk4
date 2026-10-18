@@ -331,6 +331,24 @@ def moves_for(character):
         )
         return shared
 
+    if character == 14:
+        # Cage's controller-selected streams include a fatality scene loop and
+        # a three-stage powered punch continuation.
+        shared.update(
+            fatality_1=move(0x467ce0, (('scene setup', 0x4e12a0), ('scene loop', 0x4e12b0)),
+                            native=(('roster dispatch', 0x448160), ('scene continuation', 0x448480))),
+            fatality_2=move(0x467cd0, (('scene entry', 0x4e5870),),
+                            native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0))),
+            shadow_kick=move(0x468aa0, (('contact or recovery', 0x4e5ba8),),
+                             native=(('contact loop', 0x48d450),)),
+            powered_punch=move(0x479ec0, (('attack', 0x4e80d0), ('powered continuation', 0x4e80c8),
+                                          ('final follow-up', 0x4e80f4)),
+                               native=(('return continuation', 0x479f00),)),
+            cpu_kick=move(0x479b20, (('attack', 0x4e80a8),),
+                          native=(('return continuation', 0x479b70),)),
+        )
+        return shared
+
     if character != 4:
         return shared
     shared.update(
