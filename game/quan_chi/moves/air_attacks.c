@@ -88,11 +88,19 @@ void quan_chi_press_air_kick(Fighter *fighter) {
 }
 
 void quan_chi_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? quan_chi_air_diagonal_hk : quan_chi_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, quan_chi_air_diagonal_hk);
+  } else {
+    quan_chi_press_air_kick(fighter);
+  }
 }
 
 void quan_chi_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? quan_chi_air_diagonal_lk : quan_chi_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, quan_chi_air_diagonal_lk);
+  } else {
+    quan_chi_press_air_kick(fighter);
+  }
 }
 
 static void quan_chi_air_combo_lp(Fighter *fighter) {

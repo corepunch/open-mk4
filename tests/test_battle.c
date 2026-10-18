@@ -779,6 +779,27 @@ static void check_reconnected_air_attacks(void) {
         check(!fighter_fiber_active(fighter), "Roster air LP follow-up/recovery must remain on frame tables");
       }
       check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Reconnected air follow-up must land and restore control");
+      for (int low = 0; low < 2; ++low) {
+        battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        fighter = &g_battle.fighters[slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+        fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
+        fighter->body.pos[AXIS_Y] = fighter->body.ground - 2 * Q16_ONE;
+        fighter->body.gravity = 0x28f;
+        fighter_press(fighter, low ? BUTTON_LOW_KICK : BUTTON_HIGH_KICK);
+        advance_ticks(1, NULL);
+        /* Retail4e61f8 selects narrow clip327 and wide clip61. */
+        int clip = rosters[row] == 6 || rosters[row] == 8 || rosters[row] == 10 || rosters[row] == 12 || rosters[row] == 14 ? 327 : 61;
+        if (fighter_move(fighter)->clip != clip) {
+          fprintf(stderr, "Straight kick roster%d slot%d low%d clip%d vx%d vz%d state%d\n", rosters[row], slot, low, fighter_move(fighter)->clip,
+              fighter->body.vel[AXIS_X], fighter->body.vel[AXIS_Z], fighter->state);
+        }
+        check(fighter_move(fighter)->clip == clip, "Both straight-air kick switches must reach the shared native kick entry");
+        advance_ticks(100, NULL);
+        check(fighter->state == S_IDLE && !fighter_fiber_active(fighter), "Straight-air kick miss must land and restore controls");
+      }
     }
   }
 }

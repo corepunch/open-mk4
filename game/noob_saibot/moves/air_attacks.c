@@ -92,11 +92,19 @@ void noob_saibot_press_air_kick(Fighter *fighter) {
 }
 
 void noob_saibot_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? noob_saibot_air_diagonal_hk : noob_saibot_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, noob_saibot_air_diagonal_hk);
+  } else {
+    noob_saibot_press_air_kick(fighter);
+  }
 }
 
 void noob_saibot_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? noob_saibot_air_diagonal_lk : noob_saibot_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, noob_saibot_air_diagonal_lk);
+  } else {
+    noob_saibot_press_air_kick(fighter);
+  }
 }
 
 static void noob_saibot_air_combo_lp(Fighter *fighter) {

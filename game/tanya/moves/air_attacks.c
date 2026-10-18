@@ -90,11 +90,19 @@ void tanya_press_air_kick(Fighter *fighter) {
 }
 
 void tanya_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? tanya_air_diagonal_hk : tanya_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, tanya_air_diagonal_hk);
+  } else {
+    tanya_press_air_kick(fighter);
+  }
 }
 
 void tanya_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? tanya_air_diagonal_lk : tanya_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, tanya_air_diagonal_lk);
+  } else {
+    tanya_press_air_kick(fighter);
+  }
 }
 
 static void tanya_air_combo_lp(Fighter *fighter) {

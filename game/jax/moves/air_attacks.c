@@ -81,11 +81,19 @@ void jax_press_air_kick(Fighter *fighter) {
 }
 
 void jax_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? jax_air_diagonal_hk : jax_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, jax_air_diagonal_hk);
+  } else {
+    jax_press_air_kick(fighter);
+  }
 }
 
 void jax_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? jax_air_diagonal_lk : jax_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, jax_air_diagonal_lk);
+  } else {
+    jax_press_air_kick(fighter);
+  }
 }
 
 static void jax_air_combo_lp(Fighter *fighter) {

@@ -88,11 +88,19 @@ void shinnok_press_air_kick(Fighter *fighter) {
 }
 
 void shinnok_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? shinnok_air_diagonal_hk : shinnok_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, shinnok_air_diagonal_hk);
+  } else {
+    shinnok_press_air_kick(fighter);
+  }
 }
 
 void shinnok_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? shinnok_air_diagonal_lk : shinnok_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, shinnok_air_diagonal_lk);
+  } else {
+    shinnok_press_air_kick(fighter);
+  }
 }
 
 static void shinnok_air_combo_lp(Fighter *fighter) {

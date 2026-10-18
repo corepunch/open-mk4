@@ -90,11 +90,19 @@ void fujin_press_air_kick(Fighter *fighter) {
 }
 
 void fujin_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? fujin_air_diagonal_hk : fujin_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, fujin_air_diagonal_hk);
+  } else {
+    fujin_press_air_kick(fighter);
+  }
 }
 
 void fujin_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? fujin_air_diagonal_lk : fujin_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, fujin_air_diagonal_lk);
+  } else {
+    fujin_press_air_kick(fighter);
+  }
 }
 
 static void fujin_air_combo_lp(Fighter *fighter) {

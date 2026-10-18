@@ -90,11 +90,19 @@ void kai_press_air_kick(Fighter *fighter) {
 }
 
 void kai_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? kai_air_diagonal_hk : kai_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, kai_air_diagonal_hk);
+  } else {
+    kai_press_air_kick(fighter);
+  }
 }
 
 void kai_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? kai_air_diagonal_lk : kai_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, kai_air_diagonal_lk);
+  } else {
+    kai_press_air_kick(fighter);
+  }
 }
 
 static void kai_air_combo_lp(Fighter *fighter) {

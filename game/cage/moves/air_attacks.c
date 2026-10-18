@@ -90,11 +90,19 @@ void cage_press_air_kick(Fighter *fighter) {
 }
 
 void cage_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? cage_air_diagonal_hk : cage_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, cage_air_diagonal_hk);
+  } else {
+    cage_press_air_kick(fighter);
+  }
 }
 
 void cage_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? cage_air_diagonal_lk : cage_air_kick);
+  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
+    fighter_interrupt(fighter, cage_air_diagonal_lk);
+  } else {
+    cage_press_air_kick(fighter);
+  }
 }
 
 static void cage_air_combo_lp(Fighter *fighter) {
