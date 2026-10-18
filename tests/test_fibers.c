@@ -259,6 +259,15 @@ static void native_frame_schedules(void) {
     check(fighter->current_mmove == NULL && cleaned[player] == 1, "cancelling an awaited native program must retire its frames with the stack");
     advance(6);
     check(event_count == 0 && completed[player] == 0 && cleaned[player] == 1, "cancelled native frames ran a stale action or completion");
+    setup();
+    fighter = &g_battle.fighters[player];
+    fighter_start_fiber(fighter, native_returning, cleanup);
+    advance(1);
+    native_handoff(fighter);
+    check(!fighter_fiber_active(fighter) && fighter->current_mmove != NULL && cleaned[player] == 0,
+        "replacing an awaited binding with native playback must transfer cleanup without running it");
+    advance(4);
+    check(event_count == 1 && completed[player] == 1 && cleaned[player] == 1, "replacement native playback lost or repeated its transferred cleanup");
   }
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     setup();

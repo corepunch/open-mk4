@@ -234,9 +234,12 @@ void fighter_fiber_await_frames(Fighter *fighter) {
 void fighter_fiber_release_to_mmove(Fighter *fighter) {
   MoveFiber *slot = fiber_slot(fighter);
   require(running != slot, "Running native handoff must yield");
-  if (slot->cleanup != NULL) {
-    fighter->mmove_cleanup = slot->cleanup;
-    slot->cleanup = NULL;
-  }
+  FighterFn cleanup = slot->cleanup;
+  slot->cleanup = NULL;
+  /* Retire an awaited old program before attaching ownership to its
+   * replacement, otherwise cancellation would run the transferred cleanup. */
   fighter_cancel_fiber(fighter);
+  if (cleanup != NULL) {
+    fighter->mmove_cleanup = cleanup;
+  }
 }
