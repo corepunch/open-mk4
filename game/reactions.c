@@ -11,8 +11,6 @@ void reptile_reaction_40(Fighter *fighter);
  * an emulation of the retail task scheduler. Goro retains his own clips. */
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
-#define PHASE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
-#define PHASE_UNTIL(segments, count, end, until) {segments, COUNT(segments), NULL, 0, count, end, until}
 
 enum {
   FRICTION = 0xe666,    /* 0x4913a0: velocity *= 0.9 per world pump */
@@ -24,16 +22,13 @@ enum {
 static void neutral(Fighter *fighter) {
   if (fighter->health > 0) {
     fighter_enter_state(fighter, S_IDLE);
+  } else {
+    fighter_stop_mmove(fighter);
   }
 }
 
 static bool landed(const Fighter *fighter) {
   return !fighter_airborne(fighter) && fighter->body.gravity == 0;
-}
-
-static bool never(const Fighter *fighter) {
-  (void)fighter;
-  return false;
 }
 
 /* 0x4913a0 group callback. */
@@ -112,19 +107,15 @@ static void launch(Fighter *fighter, q16 speed, q16 vy, q16 gravity) {
   fighter->body.gravity = gravity;
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveSegment jab_hit_segments[] = {{0, 4, 1, 1}, {9, 14, 2, 1}};
-static const MoveSegment stagger_segments[] = {{0, 0, 2, 1}, {18, 38, 0, 1}, {20, 40, 2, 1}, {24, 50, 0, 1}};
-static const MoveSegment kick_hit_segments[] = {{0, 4, 0, 1}, {13, 6, 1, 1}};
-static const MoveSegment block_short_segments[] = {{0, 3, 2, 1}, {4, 7, -2, 1}};
-static const MoveSegment block_long_segments[] = {{0, 3, 2, 1}, {4, 7, -2, 1}, {7, 3, 2, 1}, {11, 7, -2, 1}};
-static const MoveSegment slide_crouch_block_segments[] = {{0, 0, 1, 1}, {5, 4, -1, 1}};
-static const MoveSegment forward_segments[] = {{0, 0, 1, 1}};
-static const MoveSegment jab_air_land_segments[] = {{0, 31, 1, 1}};
-static const MoveSegment uppercut_land_segments[] = {{0, 53, 0, 1}, {1, 55, 2, 1}};
-static const MoveSegment uppercut_ko_segments[] = {{0, 53, 0, 1}, {1, 55, 2, 1}, {28, 109, 0, 1}};
-static const MoveEvent stagger_events[] = {{19, stop_sliding}};
-// clang-format on
+/* These maps include the entry pose. Later poses and actions are installed
+ * once in a fixed-frame program; callbacks never read an age clock. */
+typedef struct ReactionPhase {
+  MoveDef move;
+  const int *samples;
+  int count;
+  FighterFn end;
+  FighterTest until;
+} ReactionPhase;
 
 static void sweep_rise(Fighter *fighter);
 static void uppercut_land(Fighter *fighter);
@@ -133,92 +124,117 @@ static void kick_air_rise(Fighter *fighter);
 static void jab_air_land(Fighter *fighter);
 static void jab_air_rise(Fighter *fighter);
 
-static const MoveSequence jab_hit_sequence = PHASE(jab_hit_segments, 12, neutral);
-static const MoveSequence stagger_sequence = {stagger_segments, COUNT(stagger_segments), stagger_events, 1, 25, neutral, NULL};
-static const MoveSequence kick_hit_sequence = PHASE(kick_hit_segments, 26, neutral);
-static const MoveSequence block_short_sequence = PHASE(block_short_segments, 7, neutral);
-static const MoveSequence block_long_sequence = PHASE(block_long_segments, 14, neutral);
-static const MoveSequence slide_crouch_block_sequence = PHASE(slide_crouch_block_segments, 10, neutral);
-static const MoveSequence sweep_fall_sequence = PHASE(forward_segments, 29, sweep_rise);
-static const MoveSequence sweep_rise_sequence = PHASE(forward_segments, 29, neutral);
-static const MoveSequence uppercut_fall_sequence = PHASE_UNTIL(forward_segments, 53, uppercut_land, landed);
-static const MoveSequence uppercut_land_sequence = PHASE(uppercut_land_segments, 28, uppercut_rise);
-static const MoveSequence uppercut_ko_sequence = PHASE_UNTIL(uppercut_ko_segments, 29, neutral, never);
-static const MoveSequence getup_sequence = PHASE(forward_segments, 15, neutral);
-static const MoveSequence kick_air_sequence = PHASE_UNTIL(forward_segments, 30, kick_air_rise, landed);
-static const MoveSequence air_getup_sequence = PHASE(forward_segments, 16, neutral);
-static const MoveSequence jab_air_sequence = PHASE_UNTIL(forward_segments, 30, jab_air_land, landed);
-static const MoveSequence jab_air_land_sequence = PHASE(jab_air_land_segments, 3, jab_air_rise);
+// clang-format off: Keep table entries on one row, including long rows.
+static const int forward_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52};
+static const int jab_hit_samples[] = {4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18};
+static const int stagger_samples[] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 38, 38, 40, 42, 44, 46, 50};
+static const int kick_hit_samples[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+static const int block_samples[] = {3, 5, 7, 9, 7, 5, 3, 3, 5, 7, 9, 7, 5, 3};
+static const int crouch_block_samples[] = {0, 1, 2, 3, 4, 4, 3, 2, 1, 0};
+static const int uppercut_land_samples[] = {53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105, 107, 109};
+static const int jab_air_land_samples[] = {31, 32, 33};
+// clang-format on
 
-#define REACTION(name, clip, flags, sequence, action) static const MoveDef name = {clip, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, flags, &sequence, action}
-REACTION(jab_hit, 311, SF_LOCK, jab_hit_sequence, 0);
-REACTION(stagger, 182, SF_LOCK, stagger_sequence, 0);
-REACTION(kick_hit, 311, SF_LOCK, kick_hit_sequence, 0);
-REACTION(block_short, 321, SF_LOCK, block_short_sequence, ACTION_BLOCK);
-REACTION(block_long, 321, SF_LOCK, block_long_sequence, ACTION_BLOCK);
-REACTION(slide_block, 321, SF_LOCK, block_long_sequence, ACTION_BLOCK);
-REACTION(slide_crouch_block, 255, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
-REACTION(fireball_armed_block, 247, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
-REACTION(fireball_armed_crouch_block, 222, SF_LOCK, slide_crouch_block_sequence, ACTION_BLOCK);
-REACTION(sweep_fall, 195, SF_LOCK, sweep_fall_sequence, 0);
-REACTION(sweep_rise_move, 197, SF_LOCK, sweep_rise_sequence, 0);
-REACTION(uppercut_fall, 128, SF_LOCK, uppercut_fall_sequence, 0);
-REACTION(uppercut_land_move, 128, SF_LOCK, uppercut_land_sequence, 0);
-REACTION(uppercut_ko, 128, SF_LOCK, uppercut_ko_sequence, 0);
-REACTION(uppercut_rise_move, 328, SF_LOCK, getup_sequence, ACTION_GETUP);
-REACTION(kick_air, 189, SF_LOCK, kick_air_sequence, 0);
-REACTION(kick_air_rise_move, 191, SF_LOCK, air_getup_sequence, ACTION_GETUP);
-REACTION(jab_air, 183, SF_LOCK, jab_air_sequence, 0);
-REACTION(jab_air_land_move, 183, SF_LOCK, jab_air_land_sequence, ACTION_GETUP);
-REACTION(jab_air_rise_move, 185, SF_LOCK, air_getup_sequence, ACTION_GETUP);
+#define REACTION(name, clip_id, move_flags, poses, frames, finish, gate, action_id)                                                                            \
+  static const ReactionPhase name = {                                                                                                                          \
+      .move = {.clip = clip_id, .last = MOVE_END, .flags = move_flags, .action = action_id}, .samples = poses, .count = frames, .end = finish, .until = gate}
+
+REACTION(jab_hit, 311, SF_LOCK, jab_hit_samples, COUNT(jab_hit_samples), neutral, NULL, 0);
+REACTION(stagger, 182, SF_LOCK, stagger_samples, COUNT(stagger_samples), neutral, NULL, 0);
+REACTION(kick_hit, 311, SF_LOCK, kick_hit_samples, COUNT(kick_hit_samples), neutral, NULL, 0);
+REACTION(block_short, 321, SF_LOCK, block_samples, 7, neutral, NULL, ACTION_BLOCK);
+REACTION(block_long, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral, NULL, ACTION_BLOCK);
+REACTION(slide_block, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral, NULL, ACTION_BLOCK);
+REACTION(slide_crouch_block, 255, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
+REACTION(fireball_armed_block, 247, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
+REACTION(fireball_armed_crouch_block, 222, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
+REACTION(sweep_fall, 195, SF_LOCK, forward_samples, 29, sweep_rise, NULL, 0);
+REACTION(sweep_rise_move, 197, SF_LOCK, forward_samples, 29, neutral, NULL, 0);
+REACTION(uppercut_fall, 128, SF_LOCK, forward_samples, 53, uppercut_land, landed, 0);
+REACTION(uppercut_land_move, 128, SF_LOCK, uppercut_land_samples, 28, uppercut_rise, NULL, 0);
+REACTION(uppercut_ko, 128, SF_LOCK, uppercut_land_samples, COUNT(uppercut_land_samples), neutral, NULL, 0);
+REACTION(uppercut_rise_move, 328, SF_LOCK, forward_samples, 15, neutral, NULL, ACTION_GETUP);
+REACTION(kick_air, 189, SF_LOCK, forward_samples, 30, kick_air_rise, landed, 0);
+REACTION(kick_air_rise_move, 191, SF_LOCK, forward_samples, 16, neutral, NULL, ACTION_GETUP);
+REACTION(jab_air, 183, SF_LOCK, forward_samples, 30, jab_air_land, landed, 0);
+REACTION(jab_air_land_move, 183, SF_LOCK, jab_air_land_samples, COUNT(jab_air_land_samples), jab_air_rise, NULL, ACTION_GETUP);
+REACTION(jab_air_rise_move, 185, SF_LOCK, forward_samples, 16, neutral, NULL, ACTION_GETUP);
+#undef REACTION
+
+static void shared_reaction_finish(Fighter *fighter) {
+  const ReactionPhase *phase = fighter->native_context;
+  fighter_finish_mmove(fighter, phase->end);
+}
+
+static void shared_reaction_gate(Fighter *fighter) {
+  const ReactionPhase *phase = fighter->native_context;
+  fighter->mmove_hold = !phase->until(fighter);
+}
+
+static void start_reaction(Fighter *fighter, int state, const ReactionPhase *phase) {
+  fighter_start_move(fighter, state, &phase->move);
+  fighter->native_context = phase;
+  fighter->sample_override = phase->samples[0];
+  native_begin(fighter, 1, phase->count, shared_reaction_finish);
+  for (int frame = 1; frame <= phase->count; ++frame) {
+    native_frame(fighter, frame, phase->samples[mini(frame, phase->count - 1)], NULL);
+  }
+  if (phase == &stagger) {
+    fighter->native.frames[18].thinkfunc = stop_sliding;
+  }
+  if (phase->until != NULL) {
+    fighter->native.frames[phase->count - 1].thinkfunc = shared_reaction_gate;
+  }
+  native_play(fighter, false);
+}
 
 static void sweep_rise(Fighter *fighter) {
   stop_sliding(fighter);
-  fighter_start_move(fighter, S_KNOCKDOWN, &sweep_rise_move);
+  start_reaction(fighter, S_KNOCKDOWN, &sweep_rise_move);
 }
 
 static void uppercut_land(Fighter *fighter) {
   /* A KO victim stays down; 0x48fc20 ends the round instead of a getup. */
-  fighter_start_move(fighter, S_KNOCKDOWN, fighter->health == 0 ? &uppercut_ko : &uppercut_land_move);
+  start_reaction(fighter, S_KNOCKDOWN, fighter->health == 0 ? &uppercut_ko : &uppercut_land_move);
 }
 
 static void uppercut_rise(Fighter *fighter) {
-  fighter_start_move(fighter, S_KNOCKDOWN, &uppercut_rise_move);
+  start_reaction(fighter, S_KNOCKDOWN, &uppercut_rise_move);
 }
 
 static void kick_air_rise(Fighter *fighter) {
-  fighter_start_move(fighter, S_KNOCKDOWN, &kick_air_rise_move);
+  start_reaction(fighter, S_KNOCKDOWN, &kick_air_rise_move);
 }
 
 static void jab_air_land(Fighter *fighter) {
-  fighter_start_move(fighter, S_KNOCKDOWN, &jab_air_land_move);
+  start_reaction(fighter, S_KNOCKDOWN, &jab_air_land_move);
 }
 
 static void jab_air_rise(Fighter *fighter) {
-  fighter_start_move(fighter, S_KNOCKDOWN, &jab_air_rise_move);
+  start_reaction(fighter, S_KNOCKDOWN, &jab_air_rise_move);
 }
 
 /* 1: jab blocked. */
 static void react_jab_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &block_short);
+  start_reaction(fighter, S_BLOCK, &block_short);
   slide(fighter, 0x3d70); /* 0.24 */
 }
 
 /* 4: sweep blocked. */
 static void react_low_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &block_long);
+  start_reaction(fighter, S_BLOCK, &block_long);
   slide(fighter, 0x2666); /* 0.15 */
 }
 
 /* 6: kick or uppercut blocked. */
 static void react_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &block_long);
+  start_reaction(fighter, S_BLOCK, &block_long);
   slide(fighter, 0x3333); /* 0.20 */
 }
 
 /* 11 (0x482070): jab air hit; air reactions scale later damage by 0.6. */
 static void react_jab_air(Fighter *fighter) {
-  fighter_start_move(fighter, S_KNOCKDOWN, &jab_air);
+  start_reaction(fighter, S_KNOCKDOWN, &jab_air);
   fighter->damage_scale = 0x9999;
   launch(fighter, 0xccc, -0x23d7, 0x28f); /* 0.05, -0.14, 0.01 */
 }
@@ -226,7 +242,7 @@ static void react_jab_air(Fighter *fighter) {
 /* 13 (0x481d30): kick air hit. */
 static void react_kick_air(Fighter *fighter) {
   battle_wall_recoil(fighter);
-  fighter_start_move(fighter, S_KNOCKDOWN, &kick_air);
+  start_reaction(fighter, S_KNOCKDOWN, &kick_air);
   fighter->damage_scale = 0x9999;
   launch(fighter, 0x11eb, -0x23d7, 0x28f); /* 0.07, -0.14, 0.01 */
 }
@@ -234,7 +250,7 @@ static void react_kick_air(Fighter *fighter) {
 /* 16 (0x482a10): kick hit, including the wall recoil check. */
 static void react_kick_hit(Fighter *fighter) {
   battle_wall_recoil(fighter);
-  fighter_start_move(fighter, S_HIT, &kick_hit);
+  start_reaction(fighter, S_HIT, &kick_hit);
   slide(fighter, 0x2666); /* 0.15 */
 }
 
@@ -243,14 +259,14 @@ static void react_sweep(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->body.vel[AXIS_Y] = 0;
   fighter->body.gravity = 0;
-  fighter_start_move(fighter, S_KNOCKDOWN, &sweep_fall);
+  start_reaction(fighter, S_KNOCKDOWN, &sweep_fall);
   fighter_set_speed(fighter, -0xf5c); /* 0.06 */
 }
 
 /* 34 (0x4838e0): uppercut launch from the current height. */
 static void react_uppercut(Fighter *fighter) {
   battle_wall_recoil(fighter);
-  fighter_start_move(fighter, S_KNOCKDOWN, &uppercut_fall);
+  start_reaction(fighter, S_KNOCKDOWN, &uppercut_fall);
   launch(fighter, 0x7ae, -0x3333, 0x20c); /* 0.03, -0.20, 0.008 */
 }
 
@@ -260,10 +276,10 @@ static void react_jab_hit(Fighter *fighter) {
   bool staggers = fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666) || fighter->roster == 15;
   if (staggers) {
     battle_wall_recoil(fighter);
-    fighter_start_move(fighter, S_HIT, &stagger);
+    start_reaction(fighter, S_HIT, &stagger);
     fighter_set_speed(fighter, -0x1999); /* 0.1 */
   } else {
-    fighter_start_move(fighter, S_HIT, &jab_hit);
+    start_reaction(fighter, S_HIT, &jab_hit);
   }
 }
 
@@ -334,6 +350,7 @@ static void begin_getup(Fighter *fighter, int clip) {
   stop_sliding(fighter);
   if (fighter->health <= 0) {
     fighter->script = NULL;
+    fighter_stop_mmove(fighter);
     return;
   }
   if (!clip) {
@@ -468,7 +485,7 @@ static void react_extra(Fighter *fighter) {
 
 static void react_extra_block(Fighter *fighter) {
   int id = fighter->reaction;
-  fighter_start_move(fighter, S_BLOCK, id == 8 ? &block_short : &block_long);
+  start_reaction(fighter, S_BLOCK, id == 8 ? &block_short : &block_long);
   if (id == 3 || id == 143) {
     fighter->action = 0x4004;
   }
@@ -478,18 +495,18 @@ static void react_extra_block(Fighter *fighter) {
 /* 486d00 -> 4e9e68: two repetitions of seven standing poses, no push.
  * 486f90 instead binds crouching clip 255 and plays it out and back. */
 static void react_slide_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
+  start_reaction(fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
 }
 
 /* 2: 486ca0 -> 486d30/486e20. Two standing cycles, or the crouching
  * out-and-back path; armed standing uses 4e9ec8's five-sample clip 247.
  * Unlike the jab block, all paths retreat at .13 with friction. */
 static void react_fireball_block(Fighter *fighter) {
-  const MoveDef *move = fighter->crouching ? &slide_crouch_block : &block_long;
+  const ReactionPhase *phase = fighter->crouching ? &slide_crouch_block : &block_long;
   if (fighter->armed) {
-    move = fighter->crouching ? &fireball_armed_crouch_block : &fireball_armed_block;
+    phase = fighter->crouching ? &fireball_armed_crouch_block : &fireball_armed_block;
   }
-  fighter_start_move(fighter, S_BLOCK, move);
+  start_reaction(fighter, S_BLOCK, phase);
   slide(fighter, fighter->reaction == 9 ? 0x3333 : 0x2147);
 }
 

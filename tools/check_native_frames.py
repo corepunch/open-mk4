@@ -15,7 +15,7 @@ def masked(text):
 def audit_text(path, text):
     source = masked(text)
     errors = []
-    forbidden = r'\b(?:script_timer|move_loops|fighter_wait_ticks|fighter_fiber_play_to|fighter_fiber_sequence)\b'
+    forbidden = r'\b(?:script_timer|move_loops|fighter_wait_ticks|fighter_fiber_play_to|fighter_fiber_sequence|fighter_start_sequence|MoveSequence|MoveSegment|MoveEvent)\b'
     for match in re.finditer(forbidden, source):
         errors.append('%s:%d: legacy native timing: %s' % (path, source.count('\n', 0, match.start()) + 1, match[0]))
     pattern = r'^[\w* \t]+\b(\w+)\s*\([^;{}]*\)\s*\{'

@@ -18,6 +18,11 @@ void helper(Fighter *fighter) { if (fighter->ticks == 9) { hit(fighter); } }'''
         self.assertTrue(audit_text('wait.c', 'void action(Fighter *fighter) { fighter_wait_ticks(3); }'))
         self.assertTrue(audit_text('counter.c', 'void action(Fighter *fighter) { --fighter->script_timer; }'))
 
+    def test_native_tick_sequences_are_rejected(self):
+        self.assertTrue(audit_text('reaction.c', 'static const MoveSequence phase = {segments, 1, events, 1, 25, end, NULL};'))
+        self.assertTrue(audit_text('reaction.c', 'static const MoveEvent events[] = {{19, stop}};'))
+        self.assertTrue(audit_text('reaction.c', 'void start(Fighter *fighter) { fighter_start_sequence(fighter, &phase); }'))
+
     def test_entry_construction_and_world_lifetimes_are_allowed(self):
         source = '''void build(Fighter *fighter) { int first = fighter->ticks + 1; native_begin(fighter, first, 20, done); }
 void projectile(Projectile *object) { if (object->ticks >= 30) { object->kind = 0; } }'''

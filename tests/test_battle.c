@@ -797,6 +797,28 @@ static void check_fatalities(void) {
 }
 
 static void check_script_reactions(void) {
+  for (int player = 0; player < 2; ++player) {
+    fight(4.f);
+    Fighter *victim = &g_battle.fighters[player];
+    victim->damage_total = 0x3333;
+    battle_react(victim, 37);
+    advance_ticks(1, NULL);
+    check(victim->current_mmove != NULL && victim->sequence == NULL, "Shared stagger must own frame callbacks instead of an elapsed-tick sequence");
+    advance_ticks(19, NULL);
+    check(victim->state == S_HIT && victim->body.vel[AXIS_X] == 0 && victim->body.vel[AXIS_Z] == 0, "Stagger frame callback must stop sliding before recovery");
+    battle_react(victim, 34);
+    advance_ticks(160, NULL);
+    check(victim->state == S_IDLE && !fighter_airborne(victim) && victim->current_mmove == NULL,
+        "Replacement uppercut must land, get up and retire its frame program");
+    fight(4.f);
+    victim = &g_battle.fighters[player];
+    g_battle.fighters[1 - player].wins = 1;
+    battle_damage(victim, Q16_ONE);
+    battle_react(victim, 49);
+    advance_ticks(180, NULL);
+    check(g_battle.phase == PHASE_FINISH && !g_battle.finish_waiting && victim->current_mmove == NULL,
+        "Completed KO launcher must retire its frames and open the deciding finish window");
+  }
   static const int ids[] = {3, 5, 8, 10, 12, 17, 20, 21, 22, 23, 25, 27, 28, 29, 32, 38, 39, 43, 48, 49, 50, 90, 99, 100, 143, 154, 155, 156, 173};
   for (size_t n = 0; n < sizeof ids / sizeof ids[0]; ++n) {
     for (int air = 0; air < 2; ++air) {
@@ -1043,7 +1065,7 @@ int main(void) {
     do_attack(S_UPPERCUT, false, false);
     check(g_battle.phase == PHASE_ROUND_OVER, "Lethal uppercut must end the round");
     advance_ticks(100, NULL);
-    check(!fighter_airborne(&g_battle.fighters[1]) && fighter_sample(&g_battle.fighters[1]) == 109,
+    check(!fighter_airborne(&g_battle.fighters[1]) && fighter_sample(&g_battle.fighters[1]) == 109 && g_battle.fighters[1].current_mmove == NULL,
         "KO must continue the uppercut landing sequence and hold the final pose");
   }
   {
