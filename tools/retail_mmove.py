@@ -1,8 +1,8 @@
 """Offline frame-table lowering for statically timed decoded script paths.
 
-Resolve roster branches and counted loops at generation time. Unsupported
-runtime decisions and yielding native bindings fail closed; native decisions
-may explicitly select another generated phase. No runtime instruction pointer,
+Resolve roster branches and counted loops at generation time. Runtime
+predicates select named phases specialized for their known clip/cursor state.
+Unsupported yielding native bindings fail closed. No runtime instruction pointer,
 interpreter or suspended C stack is emitted.
 """
 from retail_codegen import instruction_binding, expression, symbol, CompileError
@@ -12,16 +12,31 @@ import re
 
 def emit_mmove(program, bindings, return_to, context=None):
     context = context or {}
+    root = symbol(int(program['entry'], 16))
+    pending = [(int(program['entry'], 16), context.get('sample'), context.get('count'), False, None, None)]
+    names = {pending[0]: root}
+    def enqueue(state):
+        if state not in names:
+            if len(names) >= 512:
+                raise CompileError([dict(pc=hex(state[0]), reason='mmove: excessive phase expansion')])
+            names[state] = root + '_branch_' + str(len(names))
+            pending.append(state)
+        return names[state]
+    bodies = []
+    for state in pending:
+        bodies.append(emit_phase(program, bindings, return_to, context if names[state] == root else {},
+                                 names[state], state, enqueue))
+    declarations = ['static inline void %s(Fighter *fighter);' % name for name in names.values()]
+    return '\n'.join(declarations + bodies)
+
+
+def emit_phase(program, bindings, return_to, context, name, state, enqueue):
+    context = context or {}
     rows = {int(row['va'], 16): row for row in program['instructions']}
-    entry = int(program['entry'], 16)
-    name = symbol(entry)
     events = [[]]
     samples = []
-    sample = context.get('sample')
-    count = context.get('count')
-    victim_bound = False
-    loop = selector = None
-    pc = entry
+    extra = []
+    pc, sample, count, victim_bound, loop, selector = state
 
     def fail(reason):
         raise CompileError([dict(pc=hex(pc), reason='mmove: ' + reason)])
@@ -56,6 +71,11 @@ def emit_mmove(program, bindings, return_to, context=None):
             fail('dynamic inherited clip is not supported')
         emit('mk4_script_inherit(fighter, %d, %d, %d);' % (context['clip'], count, sample))
 
+    def branch(condition, target, following):
+        yes = enqueue((target, sample, count, victim_bound, loop, selector))
+        no = enqueue((following, sample, count, victim_bound, loop, selector))
+        emit('if (%s) { %s(fighter); } else { %s(fighter); }' % (condition, yes, no))
+
     for _ in range(8192):
         row = rows[pc]
         op = int(row['opcode'], 16)
@@ -80,6 +100,14 @@ def emit_mmove(program, bindings, return_to, context=None):
             loop -= 1
             if loop:
                 following = int(row['branch'], 16)
+        elif key and binding.mmove_lowering == 'reverse_return':
+            advance(0, -1)
+            wait(1)
+            emit('fighter_finish_mmove(fighter, fighter_ready);')
+            break
+        elif key and binding.mmove_lowering == 'current':
+            advance(count - 1)
+            wait(1)
         elif key and binding.mmove_lowering == 'pair_to':
             advance(arg, paired=True)
         elif key:
@@ -90,14 +118,15 @@ def emit_mmove(program, bindings, return_to, context=None):
             if key[1] == 'physics':
                 emit('fighter->body.physics = %s;' % binding.symbol)
             else:
-                if binding.result != 'void':
-                    fail('dynamic native result requires a phase branch')
                 call = expression(binding, row)
                 if 'selector_u32' in binding.arguments:
                     if selector is None:
                         fail('unknown attack selector')
                     call = call.replace('attack_selector', str(selector))
-                emit(call + ';')
+                emit(('fighter->mmove_result = ' if binding.result == 'flags' else '') + call + ';')
+                if key[1] == 'predicate':
+                    branch('fighter->mmove_result & %du' % (4 if op == 0x36 else 1), int(row['branch'], 16), following)
+                    break
             if key[1] == 'tail' or (key[1] == 'handler' and 'unresearched' in row['operation']):
                 break
         else:
@@ -130,6 +159,35 @@ def emit_mmove(program, bindings, return_to, context=None):
             elif op in (0x12, 0x49, 0x1d):
                 sample = arg
                 emit('fighter->sample_override = %d;' % sample)
+            elif op in (0x2f, 0x44, 0x45, 0x42):
+                condition = {0x2f: 'fighter_airborne(fighter)', 0x44: 'fighter->held & BUTTON_BIT(BUTTON_DOWN)',
+                             0x45: 'fighter_fast_start(fighter)', 0x42: 'fighter->mmove_result & 1u'}[op]
+                branch(condition, int(row['branch'], 16), following)
+                break
+            elif op == 0x37:
+                # The branch successors carry identical clip state but different
+                # bounded holds. Each side owns its rows, with no runtime timer VM.
+                a, b = row['wait_if_set'], row['wait_if_clear']
+                suffix = enqueue((following, sample, count, victim_bound, loop, selector))
+                if a == b:
+                    wait(a)
+                    emit(suffix + '(fighter);')
+                else:
+                    holds = []
+                    for label, ticks in (('set', a), ('clear', b)):
+                        if ticks == 0:
+                            holds.append(suffix + '(fighter);')
+                            continue
+                        hold = name + '_hold_' + label
+                        extra.extend(['static const mframe_t %s_frame[] = {{.sample = %d, .duration = %d}};' % (hold, sample, ticks),
+                                      'static const mmove_t %s = {.frame = %s_frame, .endfunc = %s};' % (hold, hold, suffix)])
+                        holds.append('fighter_mmove_phase(fighter, &%s);' % hold)
+                    emit('if (fighter->mmove_result & 1u) { %s } else { %s }' % tuple(holds))
+                break
+            elif op in (0x51, 0x52, 0x53, 0x5e):
+                emit('fighter->mmove_result = battle_contact(fighter, &retail_contact_%s) != CONTACT_MISS ? 1u : 0u;' % row['contact']['va'][2:])
+            elif op == 0x61:
+                emit('fighter->flags &= ~(unsigned)FF_BUSY;')
             elif op == 0x34:
                 wait(inline)
             elif op in (0x20, 0x27, 0x2b):
@@ -159,7 +217,7 @@ def emit_mmove(program, bindings, return_to, context=None):
 
     # Entry effects run immediately. Each row describes the pose held during a
     # tick; its leave callback performs the decoded work at the tick boundary.
-    lines = []
+    lines = extra
     callbacks = set()
     for tick, statements in enumerate(events[1:], 1):
         # Moving to the next row already selects its sample. Keep assignments

@@ -472,6 +472,7 @@ struct Fighter {
   int mmove_frame, mmove_elapsed;
   FighterFn mmove_cleanup;
   uint64_t mmove_last_tick;
+  unsigned mmove_result; /* Generated phase branch result, local to this action. */
   uint64_t continuation; /* changes on move/phase replacement, even when re-entering the same phase */
   int sequence_event_tick;
   bool sequence_finished;

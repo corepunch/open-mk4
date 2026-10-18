@@ -70,7 +70,7 @@ class CompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'must belong to generated_scripts'):
             generate(self.image, [0x4e6798], 4, 'fighter_ready', mmove_entries=[0x4e84d8])
 
-    def test_mmove_counted_recoil_loops_and_dynamic_branch_rejection(self):
+    def test_mmove_counted_recoil_loops_and_phase_branches(self):
         source = generate(self.image, [0x4e84f8, 0x4e8530], 4, 'fighter_ready',
                           contexts={hex(e): dict(clip=95, count=11, sample=9, evidence='native slide contact boundary')
                                     for e in (0x4e84f8, 0x4e8530)}, mmove_entries=[0x4e84f8, 0x4e8530])
@@ -80,8 +80,10 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('.lastframe = 23', source)  # six four-pose blocked cycles
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x44000000, (self.entry + 20) // 4, 0x34000001, 0x3f000000])
-        with self.assertRaisesRegex(CompileError, 'unsupported frame opcode'):
-            generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+        source = generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('fighter->held & BUTTON_BIT(BUTTON_DOWN)', source)
+        self.assertIn('_branch_1', source)
+        self.assertNotIn('fighter_wait_ticks', source)
 
     def test_mmove_pair_requires_a_victim_binding(self):
         descriptor = (0x4fad7c + 76 * 12) // 4

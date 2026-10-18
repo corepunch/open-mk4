@@ -297,3 +297,11 @@ backends. LP cleanup releases captured peers before damage and leaves released
 victims independent; victim cancellation removes its landing callback. Finish
 window detection includes active mmove phases. LK throw and other unconverted
 moves still use the existing fiber implementation.
+
+Ground-attack phase branches now lower runtime predicates and conditional waits
+to named C callbacks and bounded hold tables. The compiler specializes successors
+by clip cursor, counted-loop state and selector; it rejects excessive expansion.
+Only the native result flags persist on the actor. No runtime program counter,
+bytecode dispatcher or suspended stack is introduced. Native Sub-Zero ground
+contact/recovery loops use mmove tick callbacks, including HP repeats and
+uppercut hit/block/miss recovery.
