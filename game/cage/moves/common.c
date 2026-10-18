@@ -66,7 +66,7 @@ void cage_script_lp_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_fiber_finish(cage_ready);
+  fighter_finish_mmove(fighter, cage_ready);
 }
 
 void cage_script_finish(Fighter *fighter) {
@@ -86,4 +86,10 @@ void cage_script_opponent_reaction(Fighter *fighter, int reaction) {
     return;
   }
   require(false, "Unexpected Cage opponent reaction");
+}
+
+void cage_script_current_reaction(Fighter *fighter, int reaction) {
+  require(reaction == 100, "Unexpected Cage LP victim reaction");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  battle_react(victim, reaction);
 }

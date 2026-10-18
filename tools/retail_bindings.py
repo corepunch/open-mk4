@@ -1185,6 +1185,10 @@ for _cid, _name in ((5, "fujin"), (12, "jarek")):
 for _address in (0x42cc00, 0x42cc40, 0x42ce80, 0x45b1f0):
     CHARACTER_BINDINGS[12][_address] = replace(CHARACTER_BINDINGS[12][_address], mmove=True)
 
+CHARACTER_BINDINGS[14][0x45b1f0] = Binding("cage_script_current_reaction", "game/cage/character.c", ("handler",),
+    ("fighter", "arg_u8"), mmove=True, evidence="45b1f0 installs reaction100 on the task peer; owner continues clip75")
+CHARACTER_BINDINGS[14][0x42ce60] = replace(CHARACTER_BINDINGS[14][0x42ce60], mmove=True)
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

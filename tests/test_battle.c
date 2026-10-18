@@ -1518,6 +1518,7 @@ int main(void) {
   check_peer_release_lp_throw(6, 75);
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);
+  check_peer_release_lp_throw(14, 75);
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
   check_jax_air_grab_command();
