@@ -28,6 +28,7 @@ scripts-audit: $(SCRIPT_AUDIT_TARGETS)
 mmove-frames:
 	python3 tools/generate_mmove_frames.py
 native-frames-check:
+	python3 tests/test_c_reachability.py
 	python3 tools/check_native_frames.py
 	python3 tests/test_native_frames.py
 mmove-frames-check:

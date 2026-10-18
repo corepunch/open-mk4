@@ -16,6 +16,7 @@ from retail_helper_view import port_source
 from retail_moves import EXE_SHA256
 from retail_port import masked_c
 from c_source import read_source, private_aliases
+from c_reachability import unreachable_references
 from retail_query import CONTACT_TABLES
 from scorpion_moves import commands, script_program, attack_record, attack_record_at, DISPATCH
 
@@ -163,6 +164,7 @@ def audit(image, character, return_to=None, profile=None):
     else:
         if profile.get('inventory_sha256') != fingerprint(observed):
             errors.append('EXE/root inventory changed: review --inventory and update its reviewed fingerprint')
+        errors.extend(unreachable_references(profile))
         references = profile.get('moves', {})
         for name in observed['moves']:
             check_reference(references.get(name), errors, 'move ' + name)
