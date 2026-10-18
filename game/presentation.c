@@ -233,6 +233,102 @@ void battle_particles(const Fighter *fighter, int joint, int count, bool ice) {
   }
 }
 
+static BloodDrop *blood_slot(void) {
+  for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
+    if (g_battle.blood[i].kind == BLOOD_NONE) {
+      return &g_battle.blood[i];
+    }
+  }
+  return NULL;
+}
+
+/* Hit blood replaces retail's single hit sprite with MK3-style droplets
+ * that arc away from the attacker and splash on the floor. It reuses the
+ * retail blood drop, crown splash and spatter art from shared_g.geo.
+ * Larger hits throw more and faster drops. */
+void battle_blood_hit(const Fighter *attacker, const Fighter *victim, Vec3 point, q16 damage) {
+  if (damage <= 0 || victim->appearance == APPEARANCE_FROZEN || victim->appearance == APPEARANCE_HIDDEN) {
+    return;
+  }
+  float dx = fighter_x(victim) - fighter_x(attacker), dz = fighter_z(victim) - fighter_z(attacker);
+  float length = hypotf(dx, dz);
+  if (length < .001f) {
+    dx = (float)attacker->facing;
+    dz = 0;
+    length = 1;
+  }
+  dx /= length;
+  dz /= length;
+  /* Bleed from the victim's front, at the attack's height but no farther
+   * from the body than its root (0) and head (2) joints, however posed. */
+  Vec3 root, head;
+  Mat3 unused;
+  fighter_joint_position(victim, 0, &root, &unused);
+  fighter_joint_position(victim, 2, &head, &unused);
+  point.x = fighter_x(victim) - dx * .2f;
+  point.z = fighter_z(victim) - dz * .2f;
+  point.y = clampf(point.y, fminf(root.y, head.y), fmaxf(root.y, head.y));
+  int percent = (int)((int64_t)damage * 100 / Q16_ONE);
+  int count = mini(24, maxi(6, 4 + percent * 3 / 2));
+  float power = fminf(1.6f, .8f + (float)percent * .04f);
+  unsigned seed = (unsigned)g_battle.ticks * 2654435761u ^ (victim == &g_battle.fighters[0] ? 0u : 40503u);
+  BloodDrop *spatter = blood_slot();
+  if (spatter != NULL) {
+    *spatter = (BloodDrop){.kind = BLOOD_SPATTER,
+        .pos = {(q16)(point.x * Q16_ONE), (q16)(point.y * Q16_ONE), (q16)(point.z * Q16_ONE)},
+        .vel = {(q16)(dx * .01f * Q16_ONE), 0, (q16)(dz * .01f * Q16_ONE)},
+        .scale = (q16)((.7f + .04f * (float)mini(percent, 12)) * Q16_ONE),
+        .ticks = 12};
+  }
+  for (int i = 0; i < count; ++i) {
+    BloodDrop *drop = blood_slot();
+    if (drop == NULL) {
+      return;
+    }
+    /* Most drops follow the blow; a few spatter back toward the attacker. */
+    float along = (visual_random(&seed, 0x10000) < 0x3000 ? -.35f : 1.f) * (.025f + q16_float(visual_random(&seed, 0x10000)) * .05f) * power;
+    float side = (q16_float(visual_random(&seed, 0x10000)) - .5f) * .045f;
+    float rise = (.015f + q16_float(visual_random(&seed, 0x10000)) * .06f) * power;
+    float jitter[3];
+    for (int k = 0; k < 3; ++k) {
+      jitter[k] = (q16_float(visual_random(&seed, 0x10000)) - .5f) * .14f;
+    }
+    *drop = (BloodDrop){.kind = BLOOD_DROP,
+        .pos = {(q16)((point.x + jitter[0]) * Q16_ONE), (q16)((point.y + jitter[1]) * Q16_ONE), (q16)((point.z + jitter[2]) * Q16_ONE)},
+        .vel = {(q16)((dx * along - dz * side) * Q16_ONE), (q16)(-rise * Q16_ONE), (q16)((dz * along + dx * side) * Q16_ONE)},
+        .scale = (q16)((.5f + q16_float(visual_random(&seed, 0x10000)) * .55f) * Q16_ONE),
+        .ticks = 150};
+  }
+}
+
+static void step_blood(void) {
+  for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
+    BloodDrop *drop = &g_battle.blood[i];
+    if (drop->kind == BLOOD_NONE) {
+      continue;
+    }
+    drop->age++;
+    if (--drop->ticks <= 0) {
+      drop->kind = BLOOD_NONE;
+      continue;
+    }
+    if (drop->kind == BLOOD_DROP) {
+      drop->vel[AXIS_Y] += 0x1c0;
+    }
+    for (int k = 0; k < 3; ++k) {
+      drop->pos[k] += drop->vel[k];
+    }
+    if (drop->kind == BLOOD_DROP && drop->pos[AXIS_Y] >= 0) {
+      /* As 4745d0 does for retail drops: nine two-tick crown meshes. */
+      drop->kind = BLOOD_SPLASH;
+      drop->pos[AXIS_Y] = -0x7ae;
+      memset(drop->vel, 0, sizeof drop->vel);
+      drop->age = 0;
+      drop->ticks = 18;
+    }
+  }
+}
+
 static ScenePiece *detach(Fighter *victim, int joint, const q16 velocity[3], const q16 spin[3]) {
   if (joint < -128 || joint >= 128 || (joint >= 0 && (victim->hidden_joints[joint / 64] & (UINT64_C(1) << (joint % 64))))) {
     return NULL;
@@ -397,6 +493,7 @@ void battle_step_presentation(void) {
     float t = (float)++camera->ticks / camera->duration;
     camera->target = vec_add(camera->from_target, vec_scale(vec_sub(camera->to_target, camera->from_target), t));
   }
+  step_blood();
   bool splash_sound = false;
   for (int i = 0; i < MAX_PARTICLES; ++i) {
     Particle *p = &g_battle.particles[i];

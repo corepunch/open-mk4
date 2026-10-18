@@ -711,6 +711,21 @@ typedef struct Particle {
   bool splash;
 } Particle;
 
+typedef enum BloodKind {
+  BLOOD_NONE,
+  BLOOD_DROP,   /* shared blood mesh 0 in flight */
+  BLOOD_SPLASH, /* shared floor crown meshes 4-12 */
+  BLOOD_SPATTER /* shared speckle sprite 153 at the impact */
+} BloodKind;
+
+/* Presentation-only hit blood. It never touches the battle's random state. */
+typedef struct BloodDrop {
+  BloodKind kind;
+  q16 pos[3], vel[3];
+  q16 scale;
+  int ticks, age;
+} BloodDrop;
+
 typedef struct CameraShot {
   const q16 (*points)[3];
   int count, hold;
@@ -736,6 +751,7 @@ typedef struct SceneCamera {
 #define MAX_SCENE_ATTACHMENTS 8
 #define MAX_PARTICLES 128
 #define MAX_JOINT_SPRAYS 4
+#define MAX_BLOOD_DROPS 192
 
 typedef struct SoundEvent {
   int bank, selector;
@@ -753,6 +769,7 @@ struct Battle {
   SceneAttachment attachments[MAX_SCENE_ATTACHMENTS];
   Particle particles[MAX_PARTICLES];
   JointSpray sprays[MAX_JOINT_SPRAYS];
+  BloodDrop blood[MAX_BLOOD_DROPS];
   SceneCamera camera;
   SoundEvent sounds[MAX_SOUND_EVENTS];
   int sound_count;
@@ -896,6 +913,9 @@ void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 int projectile_mesh_frame(const Projectile *object);
 void battle_particles(const Fighter *fighter, int joint, int count, bool ice);
+/* Sprays retail blood drops and spatter from a damaging hit near point (world
+ * units), mostly away from the attacker and scaled by damage. */
+void battle_blood_hit(const Fighter *attacker, const Fighter *victim, Vec3 point, q16 damage);
 void battle_spray(const ParticleSpray *spray, Vec3 origin, Vec3 direction, q16 speed, q16 variation);
 void battle_joint_spray(const Fighter *fighter, const JointSprayDef *def);
 ScenePiece *battle_attach_head(Fighter *victim, Fighter *owner, int joint);

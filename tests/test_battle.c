@@ -55,6 +55,52 @@ static void do_attack(int state, bool guard, bool crouch) {
   advance_ticks(20, in);
 }
 
+static int live_blood(BloodKind kind) {
+  int count = 0;
+  for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
+    count += kind == BLOOD_NONE ? g_battle.blood[i].kind != BLOOD_NONE : g_battle.blood[i].kind == kind;
+  }
+  return count;
+}
+
+static void check_hit_blood(void) {
+  fight(1.f);
+  Input in[2] = {0};
+  in[0].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+  for (int i = 0; i < 20 && live_blood(BLOOD_DROP) == 0; ++i) {
+    battle_step(in);
+    in[0] = (Input){0};
+  }
+  check(g_battle.fighters[1].health < Q16_ONE && live_blood(BLOOD_DROP) >= 6 && live_blood(BLOOD_SPATTER) == 1, "A damaging hit must spray drops and spatter");
+  int forward = 0, back = 0;
+  for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
+    if (g_battle.blood[i].kind == BLOOD_DROP) {
+      forward += g_battle.blood[i].vel[AXIS_X] > 0;
+      back += g_battle.blood[i].vel[AXIS_X] < 0;
+    }
+  }
+  check(forward > back, "Most hit blood must follow the blow away from the attacker");
+  bool splashed = false;
+  for (int tick = 0; tick < 150 && live_blood(BLOOD_NONE) > 0; ++tick) {
+    advance_ticks(1, NULL);
+    for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
+      if (g_battle.blood[i].kind == BLOOD_SPLASH) {
+        splashed = true;
+        check(g_battle.blood[i].pos[AXIS_Y] <= 0 && g_battle.blood[i].pos[AXIS_Y] > -Q16_ONE / 8, "Blood must splash at the floor");
+      }
+    }
+  }
+  check(splashed && live_blood(BLOOD_NONE) == 0, "Hit blood must splash on the floor and then expire");
+  fight(1.f);
+  do_attack(S_PUNCH, true, false);
+  check(live_blood(BLOOD_NONE) == 0, "Blocked hits must not bleed");
+  fight(1.f);
+  do_attack(S_PUNCH, false, false);
+  check(live_blood(BLOOD_NONE) > 0, "Hit blood must outlast the attack");
+  battle_next_round();
+  check(live_blood(BLOOD_NONE) == 0, "Round reset must discard hit blood");
+}
+
 static void check_roster(void) {
   const CharacterDef *human = roster_def(0);
   const CharacterDef *goro = roster_def(15);
@@ -1632,6 +1678,7 @@ int main(void) {
     do_attack(S_PUNCH, true, false);
     check(g_battle.fighters[1].health == Q16_ONE - q16_mul(0xa3d, 0x3333) && g_battle.effects[0].blocked, "Blocking fails");
   }
+  check_hit_blood();
   {
     fight(1.f);
     do_attack(S_SWEEP, true, false);

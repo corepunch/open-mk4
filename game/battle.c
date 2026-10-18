@@ -100,6 +100,7 @@ void battle_next_round(void) {
   memset(g_battle.pieces, 0, sizeof g_battle.pieces);
   memset(g_battle.attachments, 0, sizeof g_battle.attachments);
   memset(g_battle.particles, 0, sizeof g_battle.particles);
+  memset(g_battle.blood, 0, sizeof g_battle.blood);
   memset(g_battle.sprays, 0, sizeof g_battle.sprays);
   g_battle.camera = (SceneCamera){0};
   g_battle.sound_count = 0;
@@ -498,8 +499,11 @@ static void resolve_hits(const Fighter snapshot[2]) {
       fighter_note_contact(&g_battle.fighters[i], blocked ? CONTACT_BLOCK : defender_height > 0.f ? CONTACT_AIR_HIT : CONTACT_HIT);
     }
     Fighter *target = &g_battle.fighters[1 - i];
-    if (!blocked)
+    if (!blocked) {
       battle_damage(target, move->damage * Q16_ONE / 100);
+      float height = defender_height + ((move->flags & SF_LOW) ? 0.25f : 1.2f);
+      battle_blood_hit(attacker, target, (Vec3){(fighter_x(attacker) + fighter_x(target)) * .5f, -height, fighter_z(target)}, move->damage * Q16_ONE / 100);
+    }
     target->body.pos[AXIS_X] += to_q16((double)attacker->facing * move->push * (blocked ? 0.4 : 1.0));
     if (!blocked) {
       if ((move->flags & SF_LAUNCH) && target->armed && target->disarm != NULL) {

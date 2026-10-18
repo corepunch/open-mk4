@@ -227,6 +227,59 @@ static void draw_billboard(Canvas *cv, Camera camera, const Geometry *geometry, 
   }
 }
 
+/* Points a drop mesh's long Y axis along its velocity. */
+static Mat3 velocity_basis(const q16 vel[3]) {
+  float horizontal = hypotf(q16_float(vel[0]), q16_float(vel[2]));
+  if (horizontal <= .0001f && vel[1] == 0) {
+    return mat3_identity();
+  }
+  float pitch = atan2f(horizontal, q16_float(vel[1]));
+  float yaw = atan2f(q16_float(vel[0]), q16_float(vel[2]));
+  return mat3_mul(yaw_matrix(yaw), rotation(0, (Vec3){pitch * 4096.f / 6.283185307179586f, 0, 0}));
+}
+
+/* A filtered, alpha-blended camera-facing sprite, half wide in world units. */
+static void draw_blend_billboard(Canvas *cv, Camera camera, const Geometry *geometry, int index, Vec3 origin, float half, uint32_t tint) {
+  require(index >= 0 && (size_t)index < geometry->sprites.count, "Effect sprite outside shared geometry");
+  const Sprite *sprite = &geometry->sprites.data[index];
+  Vec3 center = camera_point(camera, origin);
+  if (center.z < .4f || sprite->w <= 0 || sprite->h <= 0) {
+    return;
+  }
+  float tall = half * (float)sprite->h / (float)sprite->w;
+  ScreenVertex corners[4];
+  for (int i = 0; i < 4; ++i) {
+    bool right = i & 1, down = i & 2;
+    Vertex vertex = {.p = {center.x + (right ? half : -half), center.y + (down ? tall : -tall), center.z},
+        .u = (float)(sprite->u + (right ? sprite->w : 0)),
+        .v = (float)(sprite->v + (down ? sprite->h : 0))};
+    corners[i] = camera_project(camera, vertex, 1);
+  }
+  const Texture *texture = &geometry->textures.data[sprite->texture];
+  canvas_blend_triangle(cv, (ScreenVertex[3]){corners[0], corners[1], corners[2]}, texture, tint);
+  canvas_blend_triangle(cv, (ScreenVertex[3]){corners[2], corners[1], corners[3]}, texture, tint);
+}
+
+/* Hit blood from battle_blood_hit: retail drop mesh 0 in flight, crown
+ * meshes 4-12 on landing and spatter sprite 153 at the impact. */
+static void draw_blood(Canvas *cv, Camera camera, const Assets *assets, const SceneLight *light) {
+  const Geometry *effects = &assets->hud.effects;
+  for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
+    const BloodDrop *drop = &g_battle.blood[i];
+    Vec3 origin = {q16_float(drop->pos[0]), q16_float(drop->pos[1]), q16_float(drop->pos[2])};
+    float scale = q16_float(drop->scale);
+    if (drop->kind == BLOOD_DROP) {
+      draw_shared_mesh(cv, camera, effects, 0, origin, velocity_basis(drop->vel), scale, light);
+    } else if (drop->kind == BLOOD_SPLASH) {
+      draw_shared_mesh(cv, camera, effects, 4 + mini(8, drop->age / 2), origin, mat3_identity(), scale, light);
+    } else if (drop->kind == BLOOD_SPATTER) {
+      float t = (float)drop->age / (float)(drop->age + drop->ticks);
+      unsigned alpha = (unsigned)(255.f * (1.f - t * t));
+      draw_blend_billboard(cv, camera, effects, 153, origin, scale * (.16f + .3f * t), alpha << 24 | 0xffffff);
+    }
+  }
+}
+
 static void draw_weapon(Canvas *cv, Camera camera, const Assets *assets, Vec3 origin, Mat3 basis, const WeaponDef *weapon, const SceneLight *light) {
   require(weapon != NULL && weapon->model >= 0 && (size_t)weapon->model < assets->scene_models.count, "Invalid weapon model");
   const Character *model = &assets->scene_models.data[weapon->model];
@@ -476,18 +529,12 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       if (visual->billboard) {
         draw_billboard(cv, camera, &assets->hud.effects, frame, origin, q16_float(p->scale), visual->additive);
       } else {
-        float horizontal = hypotf(q16_float(p->vel[0]), q16_float(p->vel[2]));
-        Mat3 basis = mat3_identity();
-        if (horizontal > .0001f || p->vel[1] != 0) {
-          float pitch = atan2f(horizontal, q16_float(p->vel[1]));
-          float yaw = atan2f(q16_float(p->vel[0]), q16_float(p->vel[2]));
-          basis = mat3_mul(yaw_matrix(yaw), rotation(0, (Vec3){pitch * 4096.f / 6.283185307179586f, 0, 0}));
-        }
-        draw_shared_mesh(cv, camera, &assets->hud.effects, frame, origin, basis, q16_float(p->scale), &light);
+        draw_shared_mesh(cv, camera, &assets->hud.effects, frame, origin, velocity_basis(p->vel), q16_float(p->scale), &light);
       }
       continue;
     }
   }
+  draw_blood(cv, camera, assets, &light);
   for (size_t i = 0; i < 2; ++i) {
     const HitEffect *e = &g_battle.effects[i];
     if (e->ticks <= 0)
