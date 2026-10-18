@@ -664,6 +664,7 @@ typedef struct ScenePiece {
   bool active, frozen, animated;
   int roster, bone, attached_to, joint;
   q16 pos[3], vel[3], angle[3], spin[3];
+  q16 gravity; /* Zero retains the shared419040 piece gravity. */
   Mat3 orientation;
 } ScenePiece;
 

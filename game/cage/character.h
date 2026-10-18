@@ -145,4 +145,16 @@ void cage_entry_retail_script_004ec4f0(Fighter *fighter);
 void cage_entry_retail_script_004ec7f0(Fighter *fighter);
 void cage_entry_retail_script_004e8cc0(Fighter *fighter);
 void cage_entry_retail_script_004e8d38(Fighter *fighter);
+bool cage_can_close_fatality(const Fighter *fighter);
+void cage_fatality_2(Fighter *fighter);
+void cage_second_charge(Fighter *fighter, int task_type);
+void cage_second_flash(Fighter *fighter, int task_type);
+void cage_second_repeated_uppercuts(Fighter *fighter);
+void cage_second_victim_pause(Fighter *fighter);
+void cage_second_victim_finish(Fighter *fighter);
+void cage_second_victim_hit(Fighter *fighter);
+void cage_entry_retail_script_004e5880(Fighter *fighter);
+void cage_entry_retail_script_004e58d8(Fighter *fighter);
+void cage_entry_retail_script_004e5900(Fighter *fighter);
+void cage_entry_retail_script_004e5b38(Fighter *fighter);
 #endif

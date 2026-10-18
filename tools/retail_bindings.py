@@ -1318,3 +1318,12 @@ CHARACTER_BINDINGS[6][0x45fc40] = Binding('shinnok_weapon_crouch_return', 'game/
 CHARACTER_BINDINGS[6][0x470420] = replace(CHARACTER_BINDINGS[6].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
 CHARACTER_BINDINGS[6][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')
 CHARACTER_BINDINGS[6][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing')
+
+# Cage's second fatality follows its actual293/130/206 and111 streams.
+CHARACTER_BINDINGS[14][0x4658a0] = Binding('cage_script_fatality_2_continue', 'game/cage/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True, evidence='4658a0 ->4658d0 ->4e5880 after the context wait')
+CHARACTER_BINDINGS[14][0x4658f0] = Binding('cage_second_repeated_uppercuts', 'game/cage/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True, evidence='4658f0 native three rewind6/advance8 cycles, finish293, then4e58d8')
+CHARACTER_BINDINGS[14][0x466df0] = Binding('cage_second_victim_pause', 'game/cage/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True, evidence='466df0 retires the auxiliary victim task after dizzy playback')
+CHARACTER_BINDINGS[14][0x465b10] = Binding('cage_second_victim_finish', 'game/cage/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True, evidence='465b10 holds the fallen victim80 then completes the finisher')
+CHARACTER_BINDINGS[14][0x413970] = Binding('cage_second_charge', 'game/cage/moves/fatality_second.c', ('spawn',), ('fighter','task_type'), flow='independent', task_types=(619,), mmove=True, evidence='413970/413ce0 joint10 share2 sprite271..280 charge,19 visits', adaptation='The portable effect object follows joint10 for the bounded native charge lifetime.')
+CHARACTER_BINDINGS[14][0x413a10] = Binding('cage_second_flash', 'game/cage/moves/fatality_second.c', ('spawn',), ('fighter','task_type'), flow='independent', task_types=(619,), mmove=True, evidence='413a10/413ce0 same joint10 share2 sprite271..280 flash,8 visits', adaptation='The portable effect object follows joint10 for eight visits; native alpha fading is represented by its bounded object lifetime.')
+CHARACTER_BINDINGS[14][0x45abf0] = replace(CHARACTER_BINDINGS[14][0x45abf0], inline_values=CHARACTER_BINDINGS[14][0x45abf0].inline_values+(80,))

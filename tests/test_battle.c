@@ -7,6 +7,8 @@
 
 void goro_cpu_projectile(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
+void cage_fatality_2(Fighter *fighter);
+bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void kai_draw_weapon(Fighter *fighter);
@@ -2296,6 +2298,71 @@ static void finish_command(int player, int id) {
   }
 }
 
+static void check_cage_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int reset_at = 0; reset_at < 3; ++reset_at) {
+      battle_init(slot ? 4 : 14, slot ? 14 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->wins = 1;
+      battle_damage(victim, Q16_ONE);
+      advance_ticks(1, NULL);
+      for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+        advance_ticks(1, NULL);
+      }
+      check(battle_can_finish(owner), "Cage fatality must enter through the real deciding-KO window");
+      owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(!cage_can_close_fatality(owner) && !cage_can_close_fatality(victim), "Cage close fatality must reject distance above one and the defeated player");
+      owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      const Controls *controls = roster_def(14)->controls;
+      const CommandDef *selected = NULL;
+      for (int i = 0; i < controls->command_count; ++i) {
+        if (controls->commands[i].enter == cage_fatality_2) {
+          selected = &controls->commands[i];
+        }
+      }
+      check(selected != NULL, "Cage second fatality must have its own generated retail command");
+      for (int i = 0; i < selected->count; ++i) {
+        Button button = selected->tokens[i] == TOKEN_DOWN ? BUTTON_DOWN : slot ? BUTTON_LEFT : BUTTON_RIGHT;
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(button);
+        if (i == selected->count - 1) {
+          input[slot].held |= BUTTON_BIT(selected->button);
+        }
+        battle_step(input);
+        advance_ticks(2, NULL);
+      }
+      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 293, "Cage second command must start its own uppercut scene");
+      int time = g_battle.time_ticks;
+      bool hit = false, fall = false, victory = false;
+      int limit = reset_at == 1 ? 15 : reset_at == 2 ? 90 : 450;
+      for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage fatality owner and victim must never start a fiber");
+        hit |= fighter_move(victim)->clip == 130;
+        fall |= fighter_move(victim)->clip == 206;
+        victory |= fighter_move(owner)->clip == 111;
+      }
+      if (reset_at == 0) {
+        check(hit && fall && victory && g_battle.phase == PHASE_MATCH_OVER, "Cage uppercut must reach its actual victim fall and victory before completing");
+        check((victim->hidden_joints[0] & (UINT64_C(1) << 2)) && victim->health == 0 && owner->wins == 2 && g_battle.time_ticks == time,
+            "Cage decapitation must preserve the decided result, severed head and frozen match clock");
+      }
+      battle_reset_match();
+      check(owner->hidden_joints[0] == 0 && victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner) && !fighter_fiber_active(victim),
+          "Reset before or after Cage's fatality impact must restore both fighters");
+      for (int piece = 0; piece < MAX_SCENE_PIECES; ++piece) {
+        check(!g_battle.pieces[piece].active, "Cage fatality reset must remove detached scene pieces");
+      }
+      for (int object = 0; object < MAX_PROJECTILES; ++object) {
+        check(g_battle.projectiles[object].kind == 0, "Cage fatality reset must remove charge effects");
+      }
+    }
+  }
+}
+
 static void check_fatalities(void) {
   for (int player = 0; player < 2; ++player) {
     for (int id = FINISH_BURN; id <= FINISH_SPIKE; ++id) {
@@ -2504,6 +2571,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_cage_second_fatality();
   check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
   check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);
   check_branch_frame_lp_throw(12, 80, jarek_entry_retail_script_004de640);

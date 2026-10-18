@@ -322,8 +322,8 @@ def _moves_for(character):
         shared.update(
             fatality_1=move(0x467ce0, (('scene setup', 0x4e12a0), ('scene loop', 0x4e12b0)),
                             native=(('roster dispatch', 0x448160), ('scene continuation', 0x448480))),
-            fatality_2=move(0x467cd0, (('scene entry', 0x4e5870),),
-                            native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0))),
+            fatality_2=move(0x467cd0, (('scene entry', 0x4e5870), ('uppercut', 0x4e5880), ('victory', 0x4e58d8), ('victim start', 0x4e5b38), ('victim hit', 0x4e5900)),
+                            native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0), ('three repeats', 0x4658f0), ('head release', 0x465a80))),
             draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('equip return', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0)), native=(('equip', 0x46d260),)),
             weapon_upper=move(0x495860, (('upper strike', 0x4ec4f0),), (('WEAPON', 33),), native=(('contact', 0x4958b0),)),
             weapon_back_hp=move(0x4957b0, contacts=(('WEAPON', 37),)),

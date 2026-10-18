@@ -600,7 +600,7 @@ void battle_step_presentation(void) {
       continue;
     }
     if (piece->pos[AXIS_Y] < -0x1999 || piece->vel[AXIS_Y] < 0) {
-      piece->vel[AXIS_Y] += 0x147; /* 4d0364, used by 419040 */
+      piece->vel[AXIS_Y] += piece->gravity != 0 ? piece->gravity : 0x147; /* 4d0364 default, used by419040 */
       for (int k = 0; k < 3; ++k) {
         piece->pos[k] += piece->vel[k];
         piece->angle[k] = (piece->angle[k] + piece->spin[k]) % 0x6487e;

@@ -860,6 +860,7 @@ static const FighterFn reactions[256] = {
   [139] = cage_weapon_reaction,
   [140] = shinnok_weapon_reaction,
   [141] = shinnok_weapon_reaction,
+  [185] = cage_second_victim_hit,
 };
 // clang-format on
 

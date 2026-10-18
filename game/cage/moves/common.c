@@ -86,6 +86,10 @@ void cage_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void cage_script_current_reaction(Fighter *fighter, int reaction) {
+  if (reaction == 185) {
+    battle_react((Fighter *)fighter_opponent(fighter), reaction);
+    return;
+  }
   require(reaction == 100, "Unexpected Cage LP victim reaction");
   Fighter *victim = mk4_script_release_pair(fighter);
   battle_react(victim, reaction);

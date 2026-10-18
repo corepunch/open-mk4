@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+void cage_fatality_2(Fighter *fighter);
+
 static void check(bool ok, const char *message) {
   require(ok, message);
 }
@@ -592,6 +594,49 @@ static void axe_followup_contacts(const Assets *assets) {
   }
 }
 
+static void cage_second_fatality_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 14, slot ? 14 : 4);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->wins = 1;
+    battle_damage(victim, Q16_ONE);
+    for (int tick = 0; tick < 180 && !battle_can_finish(owner); ++tick) {
+      battle_step((Input[2]){0});
+    }
+    check(battle_can_finish(owner), "Asset-backed Cage fatality needs its actual KO window");
+    owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    fighter_interrupt(owner, cage_fatality_2);
+    bool charge = false, head = false, fall = false;
+    for (int tick = 0; tick < 450 && g_battle.phase != PHASE_MATCH_OVER; ++tick) {
+      battle_step((Input[2]){0});
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, owner, bones);
+      fighter_pose(assets, victim, bones);
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Cage fatality must use independent frame phases");
+      fall |= fighter_move(victim)->clip == 206;
+      for (int object = 0; object < MAX_PROJECTILES; ++object) {
+        const Projectile *effect = &g_battle.projectiles[object];
+        if (effect->kind == PROJECTILE_EFFECT && effect->mesh_animation != NULL) {
+          int frame = projectile_mesh_frame(effect);
+          charge |= effect->mesh_animation->source == MESH_SHARED2 && frame >= 271 && frame <= 280;
+          const Geometry *geometry = mesh_animation_geometry(assets, effect->mesh_animation);
+          check(geometry->sprites.data[frame].w > 0, "Cage charge must render its actual share2 sprite geometry");
+        }
+      }
+      for (int piece = 0; piece < MAX_SCENE_PIECES; ++piece) {
+        head |= g_battle.pieces[piece].active && g_battle.pieces[piece].roster == victim->roster;
+      }
+    }
+    check(
+        charge && head && fall && g_battle.phase == PHASE_MATCH_OVER, "Cage fatality must show its charge and detached victim head, then finish its collapse");
+    battle_reset_match();
+    check(victim->hidden_joints[0] == 0, "Cage asset-backed fatality must restore the victim rig on rematch");
+  }
+}
+
 static void cage_groin_command(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 5; ++scenario) {
@@ -773,6 +818,7 @@ int main(void) {
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   cage_groin_command(&assets);
+  cage_second_fatality_assets(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");
   combat_poses(&assets);
