@@ -1017,6 +1017,25 @@ static void check_selected_high_kick(void) {
   }
 }
 
+static void check_cage_groin_gate(void) {
+  for (int stale = 0; stale < 2; ++stale) {
+    battle_init(14, 0);
+    g_battle.phase = PHASE_FIGHT;
+    g_battle.fighters[0].body.pos[AXIS_X] = -2 * Q16_ONE;
+    g_battle.fighters[1].body.pos[AXIS_X] = 2 * Q16_ONE;
+    Input input[2] = {0};
+    if (stale) {
+      input[0].held = BUTTON_BIT(BUTTON_BLOCK);
+      battle_step(input);
+      advance_ticks(5, input);
+    }
+    input[0].held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | (stale ? 0 : BUTTON_BIT(BUTTON_HIGH_KICK));
+    battle_step(input);
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[0])->clip != 438, "Cage groin gate must reject an extra attack switch or an old BLOCK latch");
+  }
+}
+
 static void check_goro_projectile_completion(void) {
   for (int slot = 0; slot < 2; ++slot) {
     battle_init(slot ? 4 : 15, slot ? 15 : 4);
@@ -1563,6 +1582,7 @@ int main(void) {
   check_peer_release_lp_throw(14, 75);
   check_goro_frame_lp_throw();
   check_goro_projectile_completion();
+  check_cage_groin_gate();
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
   check_jax_air_grab_command();

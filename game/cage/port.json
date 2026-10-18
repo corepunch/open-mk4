@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "62fd51f6a6166bc5535772ec26e806efedee27652b5fef7fb6028ba60d50ec90",
+  "inventory_sha256": "2c6f06302b90d7a26bf18a0ef709080debb566ebd3de48774630ba763f40dc6e",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -47,7 +47,8 @@
     "0x4e80c8",
     "0x4e80d0",
     "0x4e80f4",
-    "0x4e9910"
+    "0x4e9910",
+    "0x4e9f78"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -97,10 +98,10 @@
       "sample": 28
     },
     "0x4e5ba8": {
-      "clip": 71,
-      "count": 28,
-      "evidence": "Cage shadow-kick entry selects clip 71; the root finishes that clip backwards from its final stored sample",
-      "sample": 27
+      "clip": 438,
+      "count": 15,
+      "sample": 14,
+      "evidence": "468e26 enters reverse recovery after the final extension to14 in bound clip438."
     },
     "0x4e6330": {
       "clip": 295,
@@ -149,6 +150,10 @@
       "count": 28,
       "sample": 13,
       "evidence": "46a790 -> block4e6978 emits poses10/11/12 then46a7a0 enters4e6998 with next stored pose13."
+    },
+    "0x4e9f78": {
+      "return_to": "mk4_script_thrown_ready",
+      "evidence": "4879c0 victim stun returns through KO-aware controller cleanup after generated playback."
     }
   },
   "moves": {
@@ -247,11 +252,6 @@
       "symbol": "cage_fatality_2",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
-    "shadow_kick": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_shadow_kick",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
-    },
     "powered_punch": {
       "source": "game/cage/character.c",
       "symbol": "cage_powered_punch",
@@ -276,6 +276,11 @@
       "source": "game/cage/moves/combos.c",
       "symbol": "cage_close_hk",
       "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+    },
+    "groin_punch": {
+      "source": "game/cage/moves/groin_punch.c",
+      "symbol": "cage_groin_punch",
+      "evidence": "468aa0 binds clip438 via53ce10, extends5/11, queries D[27], rewinds/extensions5 times or12 on block, then4e5ba8. Female and1014 victims bypass contacts."
     }
   },
   "entry_adapters": {
@@ -474,6 +479,17 @@
       "source": "game/reactions.c",
       "symbol": "react_kick_hit",
       "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
+    },
+    "164": {
+      "source": "game/cage/moves/groin_punch.c",
+      "symbol": "groin_victim",
+      "adaptation": "After contact selects164, replace its pending approximation with the native4879c0 setup and generated4e9f78 stun.",
+      "evidence": "4ea4e8[164] ->4879c0 ->4e9f78; action1014, disarm, stop, clip126 stun."
+    },
+    "165": {
+      "source": "game/reactions.c",
+      "symbol": "react_slide_block",
+      "evidence": "4ea4e8[165] ->486d00; native D[27] blocked reaction."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",
@@ -507,6 +523,11 @@
       "source": "game/cage/moves/kicks.c",
       "symbol": "cage_cpu_kick",
       "evidence": "Typed Cage command target 0x479b20; generated startup and native 479f00/479b70 contact branches."
+    },
+    "0x468aa0": {
+      "source": "game/cage/moves/groin_punch.c",
+      "symbol": "cage_groin_punch",
+      "evidence": "468aa0 binds clip438 via53ce10, extends5/11, queries D[27], rewinds/extensions5 times or12 on block, then4e5ba8. Female and1014 victims bypass contacts."
     }
   },
   "command_predicates": {
@@ -515,7 +536,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw"
+    "0x45ed80": "mk4_can_air_throw",
+    "0x45f120": "cage_can_groin_punch"
   },
   "cpu_bindings": {
     "0x479b20": {
@@ -541,6 +563,8 @@
     "0x4e6878",
     "0x4de2f8",
     "0x4de318",
-    "0x4de328"
+    "0x4de328",
+    "0x4e5ba8",
+    "0x4e9f78"
   ]
 }

@@ -262,6 +262,48 @@ static void fallback_clip_clock(const Assets *assets) {
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
 }
 
+static void cage_groin_command(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 5; ++scenario) {
+      int enemy = scenario == 3 ? 2 : 0;
+      battle_init(slot ? enemy : 14, slot ? 14 : enemy);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot];
+      Fighter *victim = &g_battle.fighters[1 - slot];
+      q16 distance = scenario == 2 ? 5 * Q16_ONE : Q16_ONE / 2;
+      owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      battle_bind_assets(assets);
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_BLOCK);
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      battle_step(input);
+      input[slot].held = 0;
+      bool selected = false, stunned = false;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        if (scenario == 4 && tick == 20) {
+          fighter_enter_state(owner, S_HIT);
+          check(!(owner->flags & FF_NO_GUARD), "Interrupting groin recovery must immediately remove its guard lock");
+        }
+        selected |= fighter_move(owner)->clip == 438;
+        stunned |= fighter_move(victim)->clip == 126 && victim->action == 0x1014;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage groin punch and its selected stun must use frame tables");
+      }
+      q16 damage = (scenario == 0 || scenario == 4) ? 0x28f5 : scenario == 1 ? q16_mul(0x28f5, 0x3333) : 0;
+      if (victim->health != Q16_ONE - damage) {
+        fprintf(stderr, "Cage groin slot%d scenario%d health%d expected%d selected%d stun%d\n", slot, scenario, victim->health, Q16_ONE - damage, selected,
+            stunned);
+      }
+      check(selected && victim->health == Q16_ONE - damage, "LP+BLOCK must select the native groin attack and its hit/block/miss/female branch");
+      check((scenario != 0 && scenario != 4) || stunned, "Successful groin contact must run the selected native stun, not an approximate reaction");
+      check(owner->state == S_IDLE && !(owner->flags & FF_NO_GUARD), "Cage groin recovery must return controls and restore guarding");
+    }
+  }
+}
+
 int main(void) {
   sound_samples();
 
@@ -393,6 +435,7 @@ int main(void) {
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
   fallback_clip_clock(&assets);
+  cage_groin_command(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");
   combat_poses(&assets);

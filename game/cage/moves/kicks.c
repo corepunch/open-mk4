@@ -2,7 +2,6 @@
 
 static const MoveDef s_narrow_kick = {.clip = 71, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
 
-static void cage_shadow_kick(Fighter *fighter);
 void cage_cpu_kick(Fighter *fighter);
 static void cage_high_kick(Fighter *fighter);
 static void cage_low_kick(Fighter *fighter);
@@ -14,12 +13,6 @@ void cage_script_cpu_kick_tail(Fighter *fighter) {
 
 void cage_script_kick_finish(Fighter *fighter) {
   native_narrow_kick_contact(fighter, cage_entry_retail_script_004e6998);
-}
-
-static void cage_shadow_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &cage_s_kick);
-  fighter->sample_override = 27;
-  fighter_start_fiber(fighter, cage_entry_retail_script_004e5ba8, NULL);
 }
 
 void cage_cpu_kick(Fighter *fighter) {

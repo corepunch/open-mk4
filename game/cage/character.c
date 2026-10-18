@@ -222,3 +222,7 @@ void cage_entry_retail_script_004e69b0(Fighter *fighter) {
 void cage_entry_retail_script_004e6190(Fighter *fighter) {
   retail_script_004e6190(fighter);
 }
+
+void cage_entry_retail_script_004e9f78(Fighter *fighter) {
+  retail_script_004e9f78(fighter);
+}

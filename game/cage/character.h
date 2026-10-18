@@ -121,4 +121,7 @@ void cage_roundhouse(Fighter *fighter);
 void cage_script_roundhouse_finish(Fighter *fighter);
 void cage_powered_punch(Fighter *fighter);
 void cage_cpu_kick(Fighter *fighter);
+void cage_groin_punch(Fighter *fighter);
+bool cage_can_groin_punch(const Fighter *fighter);
+void cage_entry_retail_script_004e9f78(Fighter *fighter);
 #endif
