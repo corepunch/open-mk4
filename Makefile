@@ -58,7 +58,7 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/c_*.c) game/mk4_common.c
-ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/fiber.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
+ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/fiber.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
 GAME_HEADERS = $(wildcard game/generated/*.inc) game/native.h game/script.h game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build

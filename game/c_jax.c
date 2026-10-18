@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include "mk4_characters.h"
 #include "script.h"
@@ -254,41 +255,28 @@ static void jax_roundhouse(Fighter *fighter) {
 }
 
 static void jax_script_roundhouse_start(Fighter *fighter) {
-  fighter->script_timer = fighter_fast_start(fighter);
-  if (fighter->script_timer) {
+  fighter->native_followup = fighter_fast_start(fighter);
+  if (fighter->native_followup) {
     retail_script_004e6890(fighter);
   } else {
     retail_script_004e68a8(fighter);
   }
 }
 
+static const GroundAttack jax_ground_attacks[8] = {
+    [7] = {.active = 14, .end_miss = 39, .end_contact = 67},
+};
+static const NativeGroundProfile jax_ground_profile = {.attacks = jax_ground_attacks,
+    .ready = jax_ready,
+    .fast = 4,
+    .round_pre = 19,
+    .round_first = 20,
+    .round_last = 44,
+    .roundhouse_record = &s_roundhouse_record};
+
 static void jax_script_roundhouse_tail(Fighter *fighter) {
-  const int fast = fighter->script_timer != 0 ? 4 : 0;
-  const int active = 14 - fast;
-  for (;;) {
-    int tick = fighter->ticks;
-    if (!fighter->connected && tick >= active && tick <= active + 2) {
-      battle_contact(fighter, &s_roundhouse_record);
-    }
-    if (tick >= active) {
-      fighter->action = ACTION_RETAIL_1006;
-    }
-    int end = (fighter->connected ? 67 : 39) - fast;
-    if (fighter->contact == CONTACT_BLOCK) {
-      end = 39 - fast;
-    }
-    if (tick <= 6) {
-      fighter->sample_override = tick * 2;
-    } else if (tick < active) {
-      fighter->sample_override = mini(19, 12 + (tick - 6) * (fast != 0 ? 2 : 1));
-    } else {
-      fighter->sample_override = mini(44, 20 + tick - active);
-    }
-    if (tick >= end) {
-      fighter_fiber_finish(jax_ready);
-    }
-    fighter_wait_ticks(1);
-  }
+  fighter->script_phase = 7;
+  native_ground_tail(fighter, &jax_ground_profile);
 }
 
 static void jax_script_finish(Fighter *fighter) {

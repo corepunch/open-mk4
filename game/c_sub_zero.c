@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "mk4_characters.h"
 #include "math_util.h"
 #include <stdlib.h>
@@ -219,12 +220,6 @@ enum {
   G_ROUNDHOUSE
 };
 
-typedef struct GroundAttack {
-  MoveDef move;
-  AttackRecord record;
-  int active, end_miss, end_contact;
-} GroundAttack;
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
   {{.clip = 70, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {0x15c28, -0x35c2, 0x104df, 0x5c28, 17, 10, 6, 0, 0x1c28}, 11, 30, 32},
@@ -242,97 +237,11 @@ static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0
 static const MoveDef s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
 
-static void open_followup(Fighter *fighter, const ButtonTable *buttons) {
-  fighter->buttons = buttons;
-  fighter->flags = (fighter->flags | FF_FOLLOW_UP) & ~(unsigned)FF_BUSY;
-  fighter->action = ACTION_RETAIL_1006;
-}
-
-static void ground_tick(Fighter *fighter) {
-  const int index = fighter->script_phase;
-  const bool followup = fighter->script_timer != 0;
-  const GroundAttack *attack = &ground_attacks[index];
-  int t = fighter->ticks, fast = index == G_ROUNDHOUSE && followup ? 5 : 0;
-  int active = attack->active - fast;
-  bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim_action(fighter) == ACTION_RETAIL_2011;
-  if (index == G_CLOSE_HP) {
-    int action = victim_action(fighter);
-    gate = action == ACTION_RETAIL_2001 || action == ACTION_RETAIL_0106 || action == ACTION_RETAIL_0107;
-  }
-  if (!gate && !fighter->connected && t >= active && t <= active + (index == G_ROUNDHOUSE ? 2 : 0)) {
-    if (battle_contact(fighter, &attack->record) != CONTACT_MISS) {
-      if (index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CLOSE_HK) {
-        open_followup(fighter, index == G_CLOSE_HP ? &close_hp_followup : index == G_COMBO_HP ? &combo_hp_followup : &close_hk_followup);
-      }
-    }
-  }
-  if (t >= active) {
-    fighter->action = ACTION_RETAIL_1006;
-  }
-  int end = (fighter->connected ? attack->end_contact : attack->end_miss) - fast;
-  switch (index) {
-    case G_CROUCH_LP:
-    case G_CROUCH_LK: {
-      int reverse = active + (fighter->connected ? 4 : 1);
-      fighter->sample_override = t < active ? mini(9, t + (index == G_CROUCH_LP ? 2 : 1)) : maxi(0, 9 - maxi(0, t - reverse));
-      break;
-    }
-    case G_CLOSE_HP: {
-      int reverse = fighter->connected ? 18 : 12;
-      fighter->sample_override = t < 10 ? t : t < reverse ? 9 : maxi(0, 8 - t + reverse);
-      if (t >= reverse) {
-        fighter->buttons = NULL;
-        fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
-      }
-      break;
-    }
-    case G_COMBO_HP:
-      fighter->sample_override = mini(28, t - (fighter->connected ? mini(3, t - active) : 0));
-      break;
-    case G_CLOSE_HK: {
-      int reverse = fighter->connected ? 10 : 12;
-      fighter->sample_override = t < 8 ? t + 5 : t < reverse ? 12 : maxi(0, 12 - t + reverse);
-      if (t >= reverse) {
-        fighter->buttons = NULL;
-        fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
-      }
-      break;
-    }
-    case G_LOW_KICK:
-    case G_CROUCH_HK:
-      require(false, "Generated-only attack entered a native recovery runner");
-      break;
-    case G_ROUNDHOUSE:
-      fighter->sample_override = t <= 6 ? t * 2 : t < active ? mini(21, 12 + (t - 6) * (fast ? 2 : 1)) : mini(38, 22 + t - active);
-      if (fighter->contact == CONTACT_BLOCK) {
-        end = attack->end_miss - fast;
-      }
-      break;
-  }
-  if (t >= end) {
-    fighter_finish_mmove(fighter, sub_zero_ready);
-  }
-}
-
-static void ground_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  ground_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !phase_wait(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t ground_frames[1] = {
-  [0] = {.thinkfunc = ground_frames_frame_0},
-};
-// clang-format on
-static const mmove_t ground_phase = {.firstframe = 0, .lastframe = 0, .frame = ground_frames, .endfunc = fighter_stop_mmove};
+static const NativeGroundProfile ground_profile = {
+    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, sub_zero_ready, 5, 0, 28, 21, 22, 38, NULL};
 
 static void ground_native_tail(Fighter *fighter) {
-  hold_phase(fighter, &ground_phase);
-  ground_tick(fighter);
+  native_ground_tail(fighter, &ground_profile);
 }
 
 static void ground_attack(Fighter *fighter, int index) {
@@ -341,64 +250,17 @@ static void ground_attack(Fighter *fighter, int index) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);
   fighter->script_phase = index;
-  fighter->script_timer = followup;
+  fighter->native_followup = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
   static const FighterFn scripts[] = {retail_script_004e6da0, ground_native_tail, retail_script_004e6158, retail_script_004e5fd8, retail_script_004e61e0,
       retail_script_004e69c8, retail_script_004e6190, retail_script_004e6800};
   scripts[index](fighter);
 }
 
-static void hp_script(Fighter *fighter);
-
-static void hp_tick(Fighter *fighter) {
-  int phase = fighter->script_phase;
-  int t = ++fighter->script_timer;
-  if (phase >= 4) {
-    fighter->sample_override = mini(phase == 4 ? 20 : 18, 11 + t);
-    if (t >= (phase == 4 ? 10 : 8)) {
-      fighter_finish_mmove(fighter, sub_zero_ready);
-    }
-    return;
-  }
-  int first = phase == 0 ? 0 : phase == 1 ? 1 : phase == 2 ? 11 : 2;
-  int active = phase == 0 ? 8 : phase == 1 ? 7 : 6;
-  fighter->sample_override = phase == 2 && t == active + 2 ? 17 : first + t;
-  const Fighter *victim = fighter_opponent(fighter);
-  bool ducking_kick = victim->action == ACTION_RETAIL_0102 && victim->avoids_high;
-  if (t >= active && t <= active + 2 && !fighter->connected && !ducking_kick) {
-    battle_contact(fighter, &hp_record);
-  }
-  if (t < active + 3) {
-    return;
-  }
-  bool repeat = (fighter->buffered & BUTTON_BIT(BUTTON_HIGH_PUNCH)) && (victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]) * fighter->facing >= 0;
-  phase = repeat ? (phase == 0 ? 1 : phase == 1 || phase == 3 ? 2 : 3) : phase == 0 || phase == 2 ? 4 : 5;
-  fighter_start_move(fighter, S_PUNCH, phase == 4 ? &s_hp : &s_hp_second);
-  fighter->script_phase = phase;
-  fighter->script_timer = 0;
-  fighter->sample_override = phase == 1 ? 1 : phase == 3 ? 2 : 11;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  hp_script(fighter);
-}
-
-static void hp_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  hp_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !phase_wait(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t hp_frames[1] = {
-  [0] = {.thinkfunc = hp_frames_frame_0},
-};
-// clang-format on
-static const mmove_t hp_phase = {.firstframe = 0, .lastframe = 0, .frame = hp_frames, .endfunc = fighter_stop_mmove};
+static const NativeHPProfile hp_profile = {&hp_record, &s_hp, &s_hp_second, sub_zero_ready};
 
 static void hp_script(Fighter *fighter) {
-  hold_phase(fighter, &hp_phase);
+  native_hp_start(fighter, &hp_profile);
 }
 
 static void sub_zero_hp(Fighter *fighter) {
@@ -490,11 +352,6 @@ static void press_lk(Fighter *fighter) {
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
  * Each extends, queries while holding its strike pose, then retracts. The
  * native contact continuations freeze the body and optionally open a cancel. */
-typedef struct AirAttack {
-  MoveDef move;
-  AttackRecord record;
-  int extend, hold, retract;
-} AirAttack;
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const AirAttack air_attacks[] = {
@@ -522,125 +379,10 @@ static void air_land(Fighter *fighter) {
   mk4_land(fighter);
 }
 
-static int air_index(const Fighter *fighter) {
-  for (int i = 0; i < COUNT(air_attacks); ++i) {
-    if (fighter_move(fighter)->clip == air_attacks[i].move.clip) {
-      return i;
-    }
-  }
-  require(false, "Unknown Sub-Zero air attack clip");
-  return 0;
-}
-
-static bool air_grounded(const Fighter *fighter) {
-  return !fighter_airborne(fighter);
-}
-
-static void air_fall_frames_frame_0(Fighter *fighter) {
-  fighter->mmove_hold = !air_grounded(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t air_fall_frames[1] = {
-  [0] = {.thinkfunc = air_fall_frames_frame_0},
-};
-// clang-format on
-static const mmove_t air_fall_phase = {.firstframe = 0, .lastframe = 0, .frame = air_fall_frames, .endfunc = air_land};
-
-static void air_fall(Fighter *fighter) {
-  fighter->script_phase = AIR_FALL;
-  if (!fighter_airborne(fighter)) {
-    fighter_finish_mmove(fighter, air_land);
-    return;
-  }
-  hold_phase(fighter, &air_fall_phase);
-}
-
-static void air_unfreeze(Fighter *fighter) {
-  fighter->buttons = NULL;
-  fighter->body.gravity = air_index(fighter) >= 3 || fighter->script_phase == AIR_COMBO_FREEZE ? 0x51e : 0x28f;
-  air_fall(fighter);
-}
-
-static const int air_freeze_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static const mframe_t air_freeze_frames[12] = {{0}};
-static const int air_diagonal_freeze_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0};
-static const mframe_t air_diagonal_freeze_frames[8] = {{0}};
-static const mmove_t air_freeze_phase = {
-    .firstframe = 0, .lastframe = 11, .frame = air_freeze_frames, .endfunc = air_unfreeze, .samples = air_freeze_frames_samples};
-static const mmove_t air_diagonal_freeze_phase = {
-    .firstframe = 0, .lastframe = 7, .frame = air_diagonal_freeze_frames, .endfunc = air_unfreeze, .samples = air_diagonal_freeze_frames_samples};
-
-static void air_cleanup(Fighter *fighter) {
-  if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
-    fighter->body.gravity = 0x51e;
-  }
-  if (fighter->buttons == &air_followup || fighter->buttons == &air_ground_followup) {
-    fighter->buttons = NULL;
-  }
-}
-
-static void air_tick(Fighter *fighter) {
-  int index = air_index(fighter);
-  const AirAttack *attack = &air_attacks[index];
-  bool combo = fighter->script_phase == AIR_COMBO;
-  int retract_at = attack->extend + attack->hold;
-  int tick = ++fighter->script_timer;
-  if (!fighter_airborne(fighter)) {
-    fighter_finish_mmove(fighter, air_land);
-    return;
-  }
-  fighter->sample_override = tick < attack->extend ? tick : tick < retract_at ? attack->extend - 1 : maxi(0, attack->retract - 1 - tick + retract_at);
-  if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(fighter, &attack->record) != CONTACT_MISS) {
-    bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
-    stop_body(fighter);
-    fighter->action = ACTION_RETAIL_1006;
-    fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
-    if (index == 0 || index == 2) {
-      if (low) {
-        fighter->body.pos[AXIS_Y] = fighter->body.ground;
-        if (!combo) {
-          fighter->buttons = &air_ground_followup;
-          fighter->flags |= FF_FOLLOW_UP;
-        }
-      } else if (index == 0 && !combo) {
-        fighter->buttons = &air_followup;
-      }
-    }
-    hold_phase(fighter, index >= 3 ? &air_diagonal_freeze_phase : &air_freeze_phase);
-    return;
-  }
-  if (tick >= retract_at + attack->retract) {
-    if (combo) {
-      fighter->body.gravity = 0x51e;
-    }
-    air_fall(fighter);
-  }
-}
-
-static void air_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  air_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !phase_wait(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t air_frames[1] = {
-  [0] = {.thinkfunc = air_frames_frame_0},
-};
-// clang-format on
-static const mmove_t air_phase = {.firstframe = 0, .lastframe = 0, .frame = air_frames, .endfunc = fighter_stop_mmove};
+static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, air_land};
 
 static void air_native_tail(Fighter *fighter, int index, int elapsed) {
-  require(air_index(fighter) == index, "Air native phase differs from selected clip");
-  fighter->script_timer = elapsed ? elapsed - 1 : 0;
-  hold_phase(fighter, &air_phase);
-  if (elapsed) {
-    air_tick(fighter);
-  }
+  native_air_tail(fighter, &air_profile, index, elapsed);
 }
 
 static void start_air_attack(Fighter *fighter, int index) {
@@ -657,7 +399,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->facing = fighter->body.pos[AXIS_X] <= opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
   static const FighterFn scripts[] = {retail_script_004e6658, retail_script_004e6710, retail_script_004e61f8, retail_script_004e6500, retail_script_004e63d8};
-  fighter->mmove_cleanup = air_cleanup;
+  fighter->mmove_cleanup = native_air_cleanup;
   scripts[index](fighter);
 }
 
@@ -1104,7 +846,7 @@ static void clone_done(Fighter *fighter) {
 }
 
 static void clone_land_frames_frame_0(Fighter *fighter) {
-  fighter->mmove_hold = !air_grounded(fighter);
+  fighter->mmove_hold = fighter_airborne(fighter);
 }
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -1930,7 +1672,7 @@ static void script_sweep_tail(Fighter *fighter) {
 }
 
 static void script_crouch_lk_tail(Fighter *fighter) {
-  hold_phase(fighter, &ground_phase);
+  native_ground_next(fighter, &ground_profile);
 }
 
 static void script_knee_tail(Fighter *fighter) {
@@ -1942,15 +1684,15 @@ static void script_close_hp_tail(Fighter *fighter) {
 }
 
 static void script_combo_hp_tail(Fighter *fighter) {
-  hold_phase(fighter, &ground_phase);
+  native_ground_next(fighter, &ground_profile);
 }
 
 static void script_roundhouse_tail(Fighter *fighter) {
-  hold_phase(fighter, &ground_phase);
+  native_ground_next(fighter, &ground_profile);
 }
 
 static void script_roundhouse_start(Fighter *fighter) {
-  if (fighter->script_timer) {
+  if (fighter->native_followup) {
     retail_script_004e6860(fighter);
   } else {
     retail_script_004e6878(fighter);

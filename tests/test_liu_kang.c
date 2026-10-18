@@ -41,7 +41,8 @@ static void normals(void) {
       fight(player, 4.f);
       press(player, buttons[i]);
       check(fighter_move(&g_battle.fighters[player])->clip == clips[i], "stance/character selector chose wrong normal");
-      check(fighter_fiber_active(&g_battle.fighters[player]), "normal must suspend in its actor fiber");
+      check(g_battle.fighters[player].current_mmove != NULL || fighter_fiber_active(&g_battle.fighters[player]),
+          "normal must own frame or generated script playback");
       advance(120);
       check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].health == Q16_ONE, "miss must recover without damage");
       check(!fighter_fiber_active(&g_battle.fighters[player]), "normal recovery must retire its stack");
