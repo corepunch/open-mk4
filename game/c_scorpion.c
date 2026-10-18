@@ -341,18 +341,66 @@ static void scorpion_spear(Fighter *fighter) {
 }
 
 static void teleport_land_script(Fighter *fighter) {
-  fighter_fiber_play_to(fighter, 27, 1);
-  fighter_wait_ticks(1);
-  fighter_fiber_finish(special_ready);
+  native_begin(fighter, 1, 10, special_ready);
+  for (int frame = 1; frame <= 10; ++frame) {
+    native_frame(fighter, frame, mini(27, 18 + frame), NULL);
+  }
+  native_play(fighter, false);
 }
 
-static void teleport_script(Fighter *fighter) {
+static void teleport_drop(Fighter *fighter);
+static void teleport_pause(Fighter *fighter);
+
+static void teleport_land_gate(Fighter *fighter) {
+  fighter->mmove_hold = fighter_airborne(fighter);
+}
+
+static void teleport_drop(Fighter *fighter) {
+  fighter->body.gravity = 0x1999;
+  if (!fighter_airborne(fighter)) {
+    fighter_finish_mmove(fighter, special_ready);
+    return;
+  }
+  native_begin(fighter, 0, 0, special_ready);
+  native_frame(fighter, 0, fighter_sample(fighter), teleport_land_gate);
+  native_play(fighter, false);
+}
+
+static void teleport_pause(Fighter *fighter) {
+  stop_body(fighter);
+  fighter->flags &= ~(unsigned)FF_TELEPORTING;
+  fighter->script_phase = 2;
+  native_hold(fighter, 6, teleport_drop);
+}
+
+static void teleport_block_return(Fighter *fighter) {
+  fighter_start_fiber(fighter, retail_script_004e8818, NULL);
+}
+
+static void teleport_query(Fighter *fighter) {
+  if (!fighter_airborne(fighter)) {
+    fighter_finish_mmove(fighter, special_ready);
+    return;
+  }
+  ContactResult result = battle_contact(fighter, &teleport_record);
+  if (result == CONTACT_MISS) {
+    return;
+  }
+  if (result == CONTACT_BLOCK) {
+    fighter_start_move(fighter, S_JUMP, &s_teleport_block);
+    fighter->sample_override = 8;
+    fighter->body.vel[AXIS_X] = -fighter->facing * 0x28f;
+    fighter->body.vel[AXIS_Y] = -0x2147;
+    fighter->body.gravity = 0x1ca;
+    native_hold(fighter, 21, teleport_block_return);
+  } else {
+    teleport_pause(fighter);
+  }
+}
+
+static void teleport_vanish(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
-  do {
-    fighter_wait_ticks(1);
-    fighter->sample_override = mini(9, fighter->ticks);
-    script_teleport_motion(fighter);
-  } while (!fighter->script_timer);
+  int first = fighter->mmove_frame + 1;
   q16 distance = abs(victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]);
   int direction = victim->body.pos[AXIS_X] >= fighter->body.pos[AXIS_X] ? 1 : -1;
   q16 offset = 0x26666 + maxi(0, 4 * Q16_ONE - distance);
@@ -362,32 +410,27 @@ static void teleport_script(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = -direction * 0x2666;
   fighter->sample_override = 9;
   fighter->script_phase = 1;
-  ContactResult result;
-  do {
-    fighter_wait_ticks(1);
-    if (!fighter_airborne(fighter)) {
-      fighter_fiber_finish(special_ready);
-    }
-    result = battle_contact(fighter, &teleport_record);
-  } while (result == CONTACT_MISS && fighter->ticks < 70);
-  if (result == CONTACT_BLOCK) {
-    fighter_fiber_move(fighter, S_JUMP, &s_teleport_block);
-    fighter->sample_override = 8;
-    fighter->body.vel[AXIS_X] = -fighter->facing * 0x28f;
-    fighter->body.vel[AXIS_Y] = -0x2147;
-    fighter->body.gravity = 0x1ca;
-    fighter_wait_ticks(21);
-    retail_script_004e8818(fighter);
+  native_begin(fighter, first, maxi(first, 70), teleport_pause);
+  for (int frame = first; frame <= maxi(first, 70); ++frame) {
+    native_frame(fighter, frame, 9, teleport_query);
   }
-  stop_body(fighter);
-  fighter->flags &= ~(unsigned)FF_TELEPORTING;
-  fighter->script_phase = 2;
-  fighter_wait_ticks(6);
-  fighter->body.gravity = 0x1999;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
+  native_play(fighter, false);
+}
+
+static void teleport_range(Fighter *fighter) {
+  script_teleport_motion(fighter);
+  if (fighter->native_signal) {
+    teleport_vanish(fighter);
   }
-  fighter_fiber_finish(special_ready);
+}
+
+static void teleport_script(Fighter *fighter) {
+  int first = fighter->ticks + 1;
+  native_begin(fighter, first, maxi(first, 10), teleport_vanish);
+  for (int frame = first; frame <= maxi(first, 10); ++frame) {
+    native_frame(fighter, frame, mini(9, frame), teleport_range);
+  }
+  native_play(fighter, false);
 }
 
 static bool can_teleport(const Fighter *fighter) {
@@ -398,27 +441,25 @@ static void scorpion_teleport(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_teleport);
   fighter->sample_override = 0;
   fighter->teleport_ready = g_battle.ticks + 69;
+  fighter->native_signal = false;
   fighter->flags |= FF_TELEPORTING;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? -1 : 1;
   fighter_start_fiber(fighter, retail_script_004e87b0, NULL);
 }
 
+static void fire_contact(Fighter *fighter) {
+  battle_contact(fighter, &fire_record);
+}
+
 static void fire_script(Fighter *fighter) {
-  const bool fast = fighter->script_phase != 0;
-  for (int tick = fighter->ticks + 1;; ++tick) {
-    fighter_wait_ticks(1);
-    if (fast) {
-      fighter->sample_override = mini(34, tick < 19 ? tick - 2 : tick < 32 ? tick - 3 : tick - 4);
-    } else {
-      fighter->sample_override = mini(34, tick < 48 ? 11 + (tick - 13) / 2 : tick - 19);
-    }
-    if (tick == (fast ? 19 : 27)) {
-      battle_contact(fighter, &fire_record);
-    }
-    if (tick >= (fast ? 39 : 54)) {
-      fighter_fiber_finish(special_ready);
-    }
+  bool fast = fighter->script_phase != 0;
+  int first = fighter->ticks + 1, last = fast ? 39 : 54;
+  native_begin(fighter, first, last, special_ready);
+  for (int frame = first; frame <= last; ++frame) {
+    int pose = fast ? mini(34, frame < 19 ? frame - 2 : frame < 32 ? frame - 3 : frame - 4) : mini(34, frame < 48 ? 11 + (frame - 13) / 2 : frame - 19);
+    native_frame(fighter, frame, pose, frame == (fast ? 19 : 27) ? fire_contact : NULL);
   }
+  native_play(fighter, false);
 }
 
 static void scorpion_fire(Fighter *fighter) {
@@ -617,7 +658,7 @@ static void air_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
   fighter_start_move(fighter, S_JUMP, &s_teleport_land);
   fighter->sample_override = 18;
-  fighter_start_fiber(fighter, teleport_land_script, NULL);
+  teleport_land_script(fighter);
 }
 
 static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, air_land};
@@ -997,41 +1038,29 @@ static void script_weapon_ready(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
-static void sword_slash_tick(Fighter *fighter) {
-  int tick = fighter->ticks;
-  if (tick >= 17 && tick < 21 && !fighter->connected) {
-    battle_contact(fighter, &sword_records[0]);
-  }
-  if (fighter->connected || tick >= 21) {
-    fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
-    fighter->action = ACTION_RETAIL_1006;
-  }
-  fighter->sample_override = tick + (fighter->connected ? 1 : 0);
-  if (tick >= (fighter->connected ? 42 : 43)) {
-    fighter_finish_mmove(fighter, special_ready);
+static void sword_slash_build(Fighter *fighter, int first, bool hit);
+
+static void sword_slash_recover(Fighter *fighter) {
+  fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
+  fighter->action = ACTION_RETAIL_1006;
+}
+
+static void sword_slash_query(Fighter *fighter) {
+  if (!fighter->connected && battle_contact(fighter, &sword_records[0]) != CONTACT_MISS) {
+    sword_slash_recover(fighter);
+    sword_slash_build(fighter, fighter->mmove_frame, true);
   }
 }
 
-static bool sword_phase_wait(const Fighter *fighter) {
-  (void)fighter;
-  return false;
-}
-
-static void sword_slash_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  sword_slash_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
+static void sword_slash_build(Fighter *fighter, int first, bool hit) {
+  int last = hit ? 42 : 43;
+  native_begin(fighter, first, last, special_ready);
+  for (int frame = first; frame <= last; ++frame) {
+    FighterFn action = !hit && frame >= 17 && frame < 21 ? sword_slash_query : !hit && frame == 21 ? sword_slash_recover : NULL;
+    native_frame(fighter, frame, frame + hit, action);
   }
-  fighter->mmove_hold = !sword_phase_wait(fighter);
+  native_play(fighter, hit);
 }
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t sword_slash_frames[1] = {
-  [0] = {.thinkfunc = sword_slash_frames_frame_0},
-};
-// clang-format on
-static const mmove_t sword_slash_phase = {.firstframe = 0, .lastframe = 0, .frame = sword_slash_frames, .endfunc = fighter_stop_mmove};
 
 static void sword_attack(Fighter *fighter, bool hp, bool back) {
   if (fighter_airborne(fighter)) {
@@ -1044,7 +1073,7 @@ static void sword_attack(Fighter *fighter, bool hp, bool back) {
   if (back) {
     (hp ? retail_script_004ec918 : retail_script_004ec8b0)(fighter);
   } else {
-    fighter_mmove_phase(fighter, &sword_slash_phase);
+    sword_slash_build(fighter, 1, false);
   }
 }
 
@@ -1064,24 +1093,15 @@ static void sword_back_lp(Fighter *fighter) {
   sword_attack(fighter, false, true);
 }
 
-static const int sword_spin_recover_frames_samples[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static const mframe_t sword_spin_recover_frames[12] = {{0}};
-static const mmove_t sword_spin_recover = {
-    .firstframe = 0, .lastframe = 11, .frame = sword_spin_recover_frames, .endfunc = special_ready, .samples = sword_spin_recover_frames_samples};
+static void sword_spin_recover(Fighter *fighter) {
+  stop_body(fighter);
+  fighter->script_phase = 1;
+  native_hold(fighter, 12, special_ready);
+}
 
-static void sword_spin_tick(Fighter *fighter) {
-  int tick = ++fighter->script_timer;
-  fighter->sample_override = tick % 12;
-  ContactResult result = CONTACT_MISS;
-  if (tick % 12 == 0) {
-    result = battle_contact(fighter, &sword_records[3]);
-  }
-  if (result == CONTACT_BLOCK || fighter_opponent(fighter)->hits >= 3) {
-    stop_body(fighter);
-    fighter->script_phase = 1;
-    int pose = fighter_sample(fighter);
-    fighter_mmove_phase(fighter, &sword_spin_recover);
-    fighter->sample_override = pose;
+static void sword_spin_control(Fighter *fighter) {
+  if (fighter_opponent(fighter)->hits >= 3) {
+    sword_spin_recover(fighter);
     return;
   }
   if (!(fighter->held & BUTTON_BIT(BUTTON_LOW_PUNCH))) {
@@ -1092,26 +1112,22 @@ static void sword_spin_tick(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = direction * 0xf5c;
 }
 
-static void sword_spin_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  sword_spin_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
+static void sword_spin_query(Fighter *fighter) {
+  if (battle_contact(fighter, &sword_records[3]) == CONTACT_BLOCK) {
+    sword_spin_recover(fighter);
+  } else {
+    sword_spin_control(fighter);
   }
-  fighter->mmove_hold = !sword_phase_wait(fighter);
 }
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t sword_spin_frames[1] = {
-  [0] = {.thinkfunc = sword_spin_frames_frame_0},
-};
-// clang-format on
-static const mmove_t sword_spin_phase = {.firstframe = 0, .lastframe = 0, .frame = sword_spin_frames, .endfunc = fighter_stop_mmove};
-
 static void spin_script(Fighter *fighter) {
-  fighter->script_timer = 0;
   int pose = fighter_sample(fighter);
-  fighter_mmove_phase(fighter, &sword_spin_phase);
+  native_begin(fighter, 1, 12, NULL);
+  for (int frame = 1; frame <= 12; ++frame) {
+    native_frame(fighter, frame, frame % 12, frame == 12 ? sword_spin_query : sword_spin_control);
+  }
+  fighter->native.poses[0] = 0;
+  native_play(fighter, false);
   fighter->sample_override = pose;
 }
 
@@ -1322,10 +1338,9 @@ static void script_reaction(Fighter *fighter, int reaction) {
 static void script_teleport_motion(Fighter *fighter) {
   /* 480040 checks the portable arena/range limits before the native vanish
    * continuation. World physics owns integration of generated launch motion. */
-  if (fighter->script_phase == 0 &&
-      (fighter->ticks >= 10 || fighter_distance(fighter) >= 5.9f || abs(fighter->body.pos[AXIS_X]) >= g_battle.arena_radius - Q16_ONE ||
-          (fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0))) {
-    fighter->script_timer = 1;
+  if (fighter->script_phase == 0 && (fighter_distance(fighter) >= 5.9f || abs(fighter->body.pos[AXIS_X]) >= g_battle.arena_radius - Q16_ONE ||
+                                        (fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0))) {
+    fighter->native_signal = true;
   }
 }
 

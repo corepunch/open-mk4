@@ -485,7 +485,7 @@ struct Fighter {
   NativeMotion native_motion;
   bool native_immediate;
   const void *native_context;
-  bool native_followup;
+  bool native_followup, native_signal;
   int native_variant, native_elapsed;
   int mmove_frame, mmove_nextframe; /* -1 means no pending frame jump */
   bool mmove_hold;

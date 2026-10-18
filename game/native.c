@@ -45,7 +45,11 @@ void native_play(Fighter *fighter, bool immediate) {
 }
 
 void native_hold(Fighter *fighter, int frames, FighterFn end) {
+  int pose = fighter_sample(fighter);
   native_begin(fighter, 0, frames - 1, end);
+  for (int frame = 0; frame < frames; ++frame) {
+    native_frame(fighter, frame, pose, NULL);
+  }
   native_play(fighter, false);
 }
 
