@@ -608,8 +608,17 @@ enum {
 
 /* Portable scene/contact callbacks keep explicit phase and data instead of
  * retaining a retail task stack or pointers into native scratch state. */
+typedef struct BattleEventFrame {
+  BattleEventFn action;
+  int value;
+} BattleEventFrame;
+
+#define EVENT_FRAME_CAPACITY 128
+
 struct BattleEvent {
   BattleEventFn step;
+  BattleEventFrame frames[EVENT_FRAME_CAPACITY];
+  int frame, frame_count, frame_value;
   uint64_t generation, due_tick, owner_continuation;
   int owner, phase, data[8];
   bool active, cancel_on_owner_change, cancel_on_ko;
@@ -818,6 +827,8 @@ void battle_event_cancel(BattleEvent *event);
 void battle_event_cancel_all(void);
 void battle_event_delay(BattleEvent *event, int ticks);
 void battle_event_pump(void);
+void battle_event_program(BattleEvent *event, int frames);
+void battle_event_frame(BattleEvent *event, int frame, int value, BattleEventFn action);
 void battle_shadow_actor_start(Fighter *owner, int variant);
 void battle_shadow_actor_install_physics(Fighter *owner);
 bool battle_shadow_actor_event(const BattleEvent *event);

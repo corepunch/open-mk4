@@ -3,10 +3,8 @@
 /* D[0] is the low-punch contact row selected by the paired shadow task. */
 static const AttackRecord shadow_contact = {0x14f5c, -0xf5c, 0xf5c2, 0x51eb, 82, 82, 0, 0, 0x2666};
 
-static bool shadow_actor_step(BattleEvent *event, Fighter *owner, Fighter *opponent) {
+static bool shadow_actor_frame(BattleEvent *event, Fighter *owner, Fighter *opponent) {
   int variant = event->data[SHADOW_DATA_VARIANT];
-  int age = (event->phase & 0xff) + 1;
-  event->phase = (event->phase & ~0xff) | age;
 
   if (variant == SHADOW_ACTOR_LOW) {
     event->data[SHADOW_DATA_X] = opponent->body.pos[AXIS_X];
@@ -22,10 +20,10 @@ static bool shadow_actor_step(BattleEvent *event, Fighter *owner, Fighter *oppon
         return false;
       }
     }
-    return sample < 13 && age < 20;
+    return sample < 13;
   }
 
-  event->data[SHADOW_DATA_SAMPLE] = age < 5 ? age : 4;
+  event->data[SHADOW_DATA_SAMPLE] = event->frame_value;
   event->data[SHADOW_DATA_Z] += 0x28f;
   event->data[SHADOW_DATA_Y] += event->data[SHADOW_DATA_VELOCITY_Y];
 
@@ -42,7 +40,14 @@ static bool shadow_actor_step(BattleEvent *event, Fighter *owner, Fighter *oppon
     }
   }
 
-  return age < 24 && (sample < 9 || !(event->phase & SHADOW_PHASE_PHYSICS));
+  return sample < 9 || !(event->phase & SHADOW_PHASE_PHYSICS);
+}
+
+static bool shadow_actor_step(BattleEvent *event, Fighter *owner, Fighter *opponent) {
+  (void)event;
+  (void)owner;
+  (void)opponent;
+  return false;
 }
 
 bool battle_shadow_actor_event(const BattleEvent *event) {
@@ -54,6 +59,10 @@ void battle_shadow_actor_start(Fighter *owner, int variant) {
   require(owner->action == (variant == SHADOW_ACTOR_LOW ? 0x309 : 0x30a), "Shadow actor action does not match its move");
 
   BattleEvent *event = battle_event_start(owner, shadow_actor_step, true, true);
+  battle_event_program(event, variant == SHADOW_ACTOR_LOW ? 20 : 24);
+  for (int frame = 0; frame < event->frame_count; ++frame) {
+    battle_event_frame(event, frame, frame < 4 ? frame + 1 : 4, shadow_actor_frame);
+  }
   Fighter *opponent = (Fighter *)fighter_opponent(owner);
   event->data[SHADOW_DATA_KIND] = BATTLE_EVENT_SHADOW_ACTOR;
   event->data[SHADOW_DATA_VARIANT] = variant;

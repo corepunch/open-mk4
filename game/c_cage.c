@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "mk4_characters.h"
 #include "script.h"
 
@@ -54,10 +55,10 @@ enum {
   CAGE_EVENT_FATALITY_2
 };
 
-static void cage_start_event_recovery(BattleEvent *event, int ticks, int kind) {
-  event->phase = kind;
-  event->data[0] = ticks;
-  battle_event_delay(event, 1);
+static void cage_start_event_recovery(BattleEvent *event, int frames, int kind) {
+  (void)kind;
+  Fighter *owner = &g_battle.fighters[event->owner];
+  native_hold(owner, frames, cage_ready);
 }
 
 static bool cage_combo_event(BattleEvent *event, Fighter *owner, Fighter *opponent) {
@@ -74,7 +75,7 @@ static bool cage_combo_event(BattleEvent *event, Fighter *owner, Fighter *oppone
         return false;
       }
       cage_start_event_recovery(event, s_cpu_kick_script.recovery, CAGE_EVENT_CPU_KICK_RECOVERY);
-      return true;
+      return false;
     }
 
     if (event->data[0] == 1) {
@@ -85,21 +86,12 @@ static bool cage_combo_event(BattleEvent *event, Fighter *owner, Fighter *oppone
         return false;
       }
       cage_start_event_recovery(event, 6, CAGE_EVENT_POWERED_RECOVERY);
-      return true;
+      return false;
     }
 
     contact = battle_contact(owner, &s_cage_powered_finish_contact);
     cage_start_event_recovery(event, contact == CONTACT_MISS ? 5 : s_powered_punch_finish.recovery, CAGE_EVENT_FINISH_RECOVERY);
-    return true;
-  }
-
-  if (event->phase == CAGE_EVENT_CPU_KICK_RECOVERY || event->phase == CAGE_EVENT_POWERED_RECOVERY || event->phase == CAGE_EVENT_FINISH_RECOVERY) {
-    if (--event->data[0] <= 0) {
-      fighter_enter_state(owner, S_IDLE);
-      return false;
-    }
-    battle_event_delay(event, 1);
-    return true;
+    return false;
   }
 
   return false;

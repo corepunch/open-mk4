@@ -291,6 +291,39 @@ static void native_frame_schedules(void) {
   check(event_count == 1 && events[0][2] == 42 && fighter->body.physics == NULL, "independent motion frames must execute scheduled actions once and stop");
 }
 
+static bool event_frame_action(BattleEvent *event, Fighter *owner, Fighter *other) {
+  (void)other;
+  record(owner, event->frame_value);
+  return true;
+}
+
+static bool event_frame_end(BattleEvent *event, Fighter *owner, Fighter *other) {
+  (void)event;
+  (void)other;
+  record(owner, 53);
+  return false;
+}
+
+static void event_frame_schedules(void) {
+  for (int interrupted = 0; interrupted < 2; ++interrupted) {
+    setup();
+    Fighter *fighter = &g_battle.fighters[0];
+    BattleEvent *event = battle_event_start(fighter, event_frame_end, true, true);
+    battle_event_program(event, 4);
+    battle_event_frame(event, 1, 51, event_frame_action);
+    advance(1);
+    battle_event_pump();
+    check(event_count == 0, "event action ran before its frame or advanced twice in one pump");
+    advance(1);
+    check(event_count == 1 && events[0][2] == 51, "event frame lost its authored action value");
+    if (interrupted) {
+      fighter_ready(fighter);
+    }
+    advance(2);
+    check(event_count == (interrupted ? 1 : 2) && !event->active, "event frame completion survived cancellation or failed to stop");
+  }
+}
+
 static void advance(int ticks) {
   for (int i = 0; i < ticks; ++i) {
     battle_step((Input[2]){0});
@@ -427,6 +460,7 @@ int main(void) {
   mmove_phases_and_cleanup();
   mmove_hold_jump_and_loop();
   native_frame_schedules();
+  event_frame_schedules();
   deterministic_nested_waits();
   interruptions_and_reset();
   phase_and_paired_playback();

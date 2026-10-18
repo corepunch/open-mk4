@@ -575,6 +575,37 @@ void battle_event_delay(BattleEvent *event, int ticks) {
   event->due_tick = g_battle.ticks + (uint64_t)ticks;
 }
 
+void battle_event_program(BattleEvent *event, int frames) {
+  require(event != NULL && event->active && frames > 0 && frames <= EVENT_FRAME_CAPACITY, "Invalid event frame range");
+  event->generation = ++g_battle.event_generation;
+  event->frame = 0;
+  event->frame_count = frames;
+  memset(event->frames, 0, (size_t)frames * sizeof event->frames[0]);
+  event->due_tick = g_battle.ticks + 1;
+}
+
+void battle_event_frame(BattleEvent *event, int frame, int value, BattleEventFn action) {
+  require(frame >= 0 && frame < event->frame_count, "Invalid event action frame");
+  event->frames[frame] = (BattleEventFrame){action, value};
+}
+
+static bool event_step_frame(BattleEvent *event, Fighter *owner, Fighter *other) {
+  uint64_t generation = event->generation;
+  const BattleEventFrame *frame = &event->frames[event->frame];
+  event->frame_value = frame->value;
+  if (frame->action != NULL && !frame->action(event, owner, other)) {
+    return false;
+  }
+  if (!event->active || event->generation != generation) {
+    return true;
+  }
+  if (++event->frame == event->frame_count) {
+    event->frame_count = 0;
+    return event->step(event, owner, other);
+  }
+  return true;
+}
+
 void battle_event_pump(void) {
   for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
     BattleEvent *event = &g_battle.events[i];
@@ -595,7 +626,8 @@ void battle_event_pump(void) {
     }
     event->due_tick = g_battle.ticks + 1;
     uint64_t generation = event->generation;
-    bool keep = event->step(event, owner, &g_battle.fighters[1 - event->owner]);
+    bool keep = event->frame_count > 0 ? event_step_frame(event, owner, &g_battle.fighters[1 - event->owner])
+                                       : event->step(event, owner, &g_battle.fighters[1 - event->owner]);
     if (event->active && event->generation == generation && !keep) {
       battle_event_cancel(event);
     }

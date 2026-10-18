@@ -71,19 +71,17 @@ static bool jax_scene_event(BattleEvent *event, Fighter *owner, Fighter *opponen
   if (event->phase == JAX_EVENT_FATALITY_1_SIGNAL) {
     event->phase = JAX_EVENT_FATALITY_1_FINISH;
     event->data[0] = owner->sample_override;
-    battle_event_delay(event, 1);
     return true;
   }
   if (event->phase == JAX_EVENT_FATALITY_2_TASK) {
     event->phase = JAX_EVENT_FATALITY_2_FINISH;
     event->data[0] = event->data[1];
     event->data[1] = owner->sample_override;
-    battle_event_delay(event, event->data[0] == 0x26b ? 15 : 1);
+    battle_event_program(event, event->data[0] == 0x26b ? 15 : 1);
     return true;
   }
   if (event->phase == JAX_EVENT_FATALITY_1_FINISH) {
     if (opponent->sample_override < 128) {
-      battle_event_delay(event, 1);
       return true;
     }
     if (opponent->health > 0) {
@@ -95,12 +93,10 @@ static bool jax_scene_event(BattleEvent *event, Fighter *owner, Fighter *opponen
   if (event->phase == JAX_EVENT_FATALITY_2_FINISH) {
     const MoveDef *move = owner->current_move;
     if (move == NULL || (move->clip != 556 && move->clip != 114)) {
-      battle_event_delay(event, 1);
       return true;
     }
     int last_sample = move->clip == 556 ? 33 : 99;
     if (owner->sample_override < last_sample) {
-      battle_event_delay(event, 1);
       return true;
     }
     if (opponent->health > 0) {
@@ -116,18 +112,11 @@ static bool jax_contact_event(BattleEvent *event, Fighter *owner, Fighter *oppon
   (void)opponent;
   if (event->phase == JAX_EVENT_JAB_CONTACT) {
     ContactResult result = battle_contact(owner, &s_jax_jab_record);
-    event->data[0] = result;
-    event->phase = JAX_EVENT_JAB_RECOVERY;
-    event->data[1] = result == CONTACT_MISS ? 8 : 17;
-    battle_event_delay(event, 1);
-    return true;
+    native_hold(owner, result == CONTACT_MISS ? 8 : 17, jax_ready);
+  } else {
+    native_hold(owner, 1, jax_ready);
   }
-  if (--event->data[1] <= 0) {
-    fighter_enter_state(owner, S_IDLE);
-    return false;
-  }
-  battle_event_delay(event, 1);
-  return true;
+  return false;
 }
 
 static void jax_script_fatality_1_scene_signal(Fighter *fighter) {

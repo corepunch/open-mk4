@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "mk4_characters.h"
 #include "script.h"
 
@@ -47,13 +48,9 @@ static void reptile_clone_step(Projectile *projectile) {
 
 static bool reptile_visibility_event(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
   (void)opponent;
-  event->data[0]++;
-  if (event->data[0] >= event->data[2]) {
-    fighter->appearance = event->data[1];
-    fighter->flags &= ~(unsigned)FF_TELEPORTING;
-    return false;
-  }
-  return true;
+  fighter->appearance = event->data[1];
+  fighter->flags &= ~(unsigned)FF_TELEPORTING;
+  return false;
 }
 
 static BattleEvent *reptile_find_event(Fighter *fighter, BattleEventFn step, int kind) {
@@ -75,7 +72,7 @@ static void reptile_script_visibility_start(Fighter *fighter) {
   }
   event = battle_event_start(fighter, reptile_visibility_event, false, true);
   event->data[1] = fighter->appearance;
-  event->data[2] = 104;
+  battle_event_program(event, 104);
   event->data[7] = REPTILE_EVENT_VISIBILITY;
   fighter->appearance = APPEARANCE_HIDDEN;
   fighter->flags |= FF_TELEPORTING;
@@ -85,7 +82,7 @@ static void reptile_script_visibility_extend(Fighter *fighter) {
   BattleEvent *event = reptile_find_event(fighter, reptile_visibility_event, REPTILE_EVENT_VISIBILITY);
   if (event != NULL) {
     event->phase++;
-    event->data[2] = event->data[0] + 104;
+    battle_event_program(event, 104);
   }
 }
 
@@ -105,17 +102,25 @@ static void reptile_script_visibility_phase(Fighter *fighter) {
   }
 }
 
-static bool reptile_task_76_event(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
-  int age = ++event->data[0];
+static bool reptile_clone_pose(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
+  (void)opponent;
   Projectile *clone = &g_battle.projectiles[event->data[1]];
   if (clone->kind == 0) {
     return false;
   }
-  clone->sample = age < 13 ? age : 13;
+  clone->sample = event->frame_value;
   memcpy(clone->pos, fighter->body.pos, sizeof clone->pos);
   clone->facing = fighter->facing;
   memcpy(clone->heading, fighter->heading, sizeof clone->heading);
-  if (clone->sample >= 11 && clone->sample <= 13 && battle_projectile_overlaps(clone, &reptile_script_contact)) {
+  return true;
+}
+
+static bool reptile_clone_contact(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
+  if (!reptile_clone_pose(event, fighter, opponent)) {
+    return false;
+  }
+  Projectile *clone = &g_battle.projectiles[event->data[1]];
+  if (battle_projectile_overlaps(clone, &reptile_script_contact)) {
     ContactResult result = battle_projectile_contact(clone, &reptile_script_contact);
     if (result != CONTACT_MISS) {
       fighter_note_contact(fighter, result);
@@ -124,11 +129,14 @@ static bool reptile_task_76_event(BattleEvent *event, Fighter *fighter, Fighter 
       return false;
     }
   }
-  if (age >= 14) {
-    clone->kind = 0;
-    return false;
-  }
   return true;
+}
+
+static bool reptile_task_76_event(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
+  (void)fighter;
+  (void)opponent;
+  g_battle.projectiles[event->data[1]].kind = 0;
+  return false;
 }
 
 static void reptile_task_76_spawn(Fighter *fighter, int task_type) {
@@ -142,6 +150,10 @@ static void reptile_task_76_spawn(Fighter *fighter, int task_type) {
   memcpy(clone->pos, fighter->body.pos, sizeof clone->pos);
   BattleEvent *event = battle_event_start(fighter, reptile_task_76_event, false, true);
   event->data[1] = (int)(clone - g_battle.projectiles);
+  battle_event_program(event, 14);
+  for (int frame = 1; frame <= 14; ++frame) {
+    battle_event_frame(event, frame - 1, frame < 13 ? frame : 13, frame >= 11 && frame <= 13 ? reptile_clone_contact : reptile_clone_pose);
+  }
   battle_sound(SOUND_C, 0x21);
 }
 

@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include "mk4_characters.h"
 #include "script.h"
@@ -243,26 +244,15 @@ enum {
   JAREK_FAN_FINISH
 };
 
-static void jarek_start_contact_recovery(BattleEvent *event, Fighter *fighter, int ticks) {
-  event->phase = JAREK_CONTACT_RECOVERY;
-  event->data[0] = ticks;
+static void jarek_start_contact_recovery(BattleEvent *event, Fighter *fighter, int frames) {
+  (void)event;
   fighter->flags |= FF_BUSY;
-  battle_event_delay(event, 1);
+  native_hold(fighter, frames, jarek_ready);
 }
 
 static bool jarek_contact_event(BattleEvent *event, Fighter *fighter, Fighter *victim) {
   ContactResult result;
   (void)victim;
-
-  if (event->phase == JAREK_CONTACT_RECOVERY) {
-    if (--event->data[0] <= 0) {
-      fighter->flags &= ~(unsigned)FF_BUSY;
-      jarek_ready(fighter);
-      return false;
-    }
-    battle_event_delay(event, 1);
-    return true;
-  }
 
   if (event->data[0] == 0) {
     result = battle_contact(fighter, &jarek_selector_25_record);
@@ -273,7 +263,7 @@ static bool jarek_contact_event(BattleEvent *event, Fighter *fighter, Fighter *v
       return false;
     }
     jarek_start_contact_recovery(event, fighter, s_low_kick.recovery);
-    return true;
+    return false;
   }
 
   if (event->data[0] == 1) {
@@ -285,12 +275,12 @@ static bool jarek_contact_event(BattleEvent *event, Fighter *fighter, Fighter *v
       return false;
     }
     jarek_start_contact_recovery(event, fighter, 6);
-    return true;
+    return false;
   }
 
   result = battle_contact(fighter, &jarek_selector_24_record);
   jarek_start_contact_recovery(event, fighter, result == CONTACT_MISS ? 5 : s_high_kick.recovery);
-  return true;
+  return false;
 }
 
 static void jarek_contact_dispatch(Fighter *fighter, int stage) {
@@ -311,28 +301,22 @@ static void jarek_script_contact_24(Fighter *fighter) {
 }
 
 static bool jarek_fan_event(BattleEvent *event, Fighter *fighter, Fighter *victim) {
-  (void)victim;
   if (g_battle.phase != PHASE_FATALITY) {
     return false;
   }
   if (event->phase == 0) {
     event->phase = JAREK_FAN_SCENE;
-    event->data[0] = 0;
-    battle_event_delay(event, 1);
+    battle_event_program(event, 1);
     return true;
   }
   if (event->phase == JAREK_FAN_SCENE) {
-    if (event->data[0]++ == 0) {
-      fighter_start_fiber(fighter, retail_script_004e0138, NULL);
-      battle_event_delay(event, 78);
-      return true;
-    }
-    fighter_start_fiber(fighter, retail_script_004e0148, NULL);
-    fighter_start_fiber((Fighter *)fighter_opponent(fighter), retail_script_004e01a0, NULL);
+    fighter_start_fiber(fighter, retail_script_004e0138, NULL);
     event->phase = JAREK_FAN_FINISH;
-    battle_event_delay(event, 29);
+    battle_event_program(event, 78);
     return true;
   }
+  fighter_start_fiber(fighter, retail_script_004e0148, NULL);
+  fighter_start_fiber(victim, retail_script_004e01a0, NULL);
   return false;
 }
 
@@ -348,23 +332,24 @@ static void jarek_script_fan_victim_scene(Fighter *fighter) {
 }
 
 static bool jarek_fan_finish_event(BattleEvent *event, Fighter *fighter, Fighter *victim) {
+  (void)event;
+  (void)fighter;
   (void)victim;
-  if (g_battle.phase != PHASE_FATALITY) {
-    return false;
-  }
-  if (event->data[0]++ >= 102) {
-    battle_end_finisher();
-    return false;
-  }
-  if (event->data[0] == 1) {
-    mk4_script_scene_pose((Fighter *)fighter_opponent(fighter), 416, 108, 69);
-  }
-  battle_event_delay(event, 1);
-  return true;
+  battle_end_finisher();
+  return false;
+}
+
+static bool jarek_fan_finish_pose(BattleEvent *event, Fighter *fighter, Fighter *victim) {
+  (void)event;
+  (void)fighter;
+  mk4_script_scene_pose(victim, 416, 108, 69);
+  return g_battle.phase == PHASE_FATALITY;
 }
 
 static void jarek_script_fan_finish(Fighter *fighter) {
-  (void)battle_event_start(fighter, jarek_fan_finish_event, false, true);
+  BattleEvent *event = battle_event_start(fighter, jarek_fan_finish_event, false, true);
+  battle_event_program(event, 103);
+  battle_event_frame(event, 0, 0, jarek_fan_finish_pose);
 }
 
 static void jarek_ai_projectile_step(Projectile *projectile) {
