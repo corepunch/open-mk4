@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "a28d49b7d35f423125641fd6d2e46ab2ffd69c97a68569d89e0d9d2873936662",
+  "inventory_sha256": "58192bfa277b6de67900b8a327f3dc7dc496e361b2576958720186cc733c78c3",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -42,7 +42,6 @@
     "0x4e6950",
     "0x4e69b0",
     "0x4e80a8",
-    "0x4e80c8",
     "0x4e80d0",
     "0x4e80f4",
     "0x4e9f78",
@@ -72,7 +71,8 @@
     "0x4e1350",
     "0x4e1360",
     "0x4e1370",
-    "0x4e1380"
+    "0x4e1380",
+    "0x4e9718"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -698,6 +698,12 @@
       "symbol": "cage_second_victim_hit",
       "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory.",
       "adaptation": "Shared reaction dispatcher starts the independent generated130/206 victim and detached head; native80-visit completion ends the scene."
+    },
+    "162": {
+      "source": "game/cage/moves/kicks.c",
+      "symbol": "cage_shadow_victim",
+      "evidence": "D25 hit/air162 ->4836b0 disarm494520 then generated4e9718 ballistic183, ground/getup488b40.",
+      "adaptation": "Registered directly in shared reactions[162]; generated Cage-owned victim root is valid for either humanoid player slot. battle_react performs native494520 disarm before entry."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",
@@ -847,7 +853,9 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4e80a8",
+    "0x4e9718"
   ],
   "cpu_finish_min": {
     "CPU_FINISH_1": 0,

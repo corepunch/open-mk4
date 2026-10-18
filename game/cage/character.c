@@ -194,10 +194,6 @@ void cage_entry_retail_script_004e80a8(Fighter *fighter) {
   retail_script_004e80a8(fighter);
 }
 
-void cage_entry_retail_script_004e80c8(Fighter *fighter) {
-  retail_script_004e80c8(fighter);
-}
-
 void cage_entry_retail_script_004e80d0(Fighter *fighter) {
   retail_script_004e80d0(fighter);
 }
@@ -336,4 +332,8 @@ void cage_entry_retail_script_004e1380(Fighter *fighter) {
 
 void cage_entry_retail_script_004e0138(Fighter *fighter) {
   retail_script_004e0138(fighter);
+}
+
+void cage_entry_retail_script_004e9718(Fighter *fighter) {
+  retail_script_004e9718(fighter);
 }

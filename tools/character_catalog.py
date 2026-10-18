@@ -347,11 +347,10 @@ def _moves_for(character):
             low_orb=move(0x497080, (('caster', 0x4ed0d8),), (('C', 0),), native=(('independent projectile', 0x4970d0),)),
             groin_punch=move(0x468aa0, (('owner reverse recovery', 0x4e5ba8), ('victim stun', 0x4e9f78)), (('D', 27),),
                              native=(('contact loop', 0x48d450), ('victim reaction', 0x4879c0))),
-            powered_punch=move(0x479ec0, (('attack', 0x4e80d0), ('powered continuation', 0x4e80c8),
-                                          ('final follow-up', 0x4e80f4)),
+            powered_punch=move(0x479ec0, (('attack', 0x4e80d0), ('final follow-up', 0x4e80f4)),
                                native=(('return continuation', 0x479f00),)),
-            cpu_kick=move(0x479b20, (('attack', 0x4e80a8),),
-                          native=(('return continuation', 0x479b70),)),
+            cpu_kick=move(0x479b20, (('attack', 0x4e80a8), ('victim', 0x4e9718)), (('D', 25),),
+                          native=(('return continuation', 0x479b70), ('contact recovery', 0x479de0), ('motion decay', 0x47bf50))),
         )
         shared['high_kick'] = move(0x46a680, (('selected startup', 0x4e5ca0), ('recovery', 0x4e6998)), (('B', 2),))
         return shared

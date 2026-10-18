@@ -51,6 +51,7 @@ void kai_handstand_reaction(Fighter *fighter);
 void kai_weapon_reaction(Fighter *fighter);
 void liu_kang_entry_retail_script_004e9de8(Fighter *fighter);
 void cage_weapon_reaction(Fighter *fighter);
+void cage_shadow_victim(Fighter *fighter);
 void cage_second_victim_hit(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);
 void shinnok_weapon_reaction(Fighter *fighter);

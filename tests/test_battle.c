@@ -2325,6 +2325,53 @@ static void check_cage_special_commands(void) {
   }
 }
 
+static void check_cage_shadow_kick_branches(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int branch = 0; branch < 4; ++branch) {
+      battle_init(slot ? 4 : 14, slot ? 14 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      bool late = branch == 3;
+      q16 distance = branch == 0 || late ? 12 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      if (branch == 2) {
+        fighter_press(victim, BUTTON_BLOCK);
+      }
+      fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
+      fighter_press(owner, BUTTON_LOW_KICK);
+      bool active = false, moved_target = false;
+      for (int tick = 0; tick < 100; ++tick) {
+        advance_ticks(1, NULL);
+        if (owner->state == S_IDLE && active) {
+          break;
+        }
+        check(fighter_move(owner)->clip == 308, "Shadow kick hit, block, and miss must retain their own clip rather than start powered punch");
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shadow kick and its real victim reaction must use frame continuations");
+        active = true;
+        if (late && !moved_target && fighter_sample(owner) == 24) {
+          victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + (slot ? -0xcccc : 0xcccc);
+          victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
+          moved_target = true;
+        }
+      }
+      check(active && owner->state == S_IDLE, "Shadow kick must complete its own contact or miss recovery");
+      if (branch == 0) {
+        check(victim->health == Q16_ONE, "Whiffed shadow kick must preserve peer health");
+      } else if (branch == 2) {
+        check(victim->health == Q16_ONE - 0x23d7 / 4, "Standing block must use shadow-kick D25 chip");
+      } else {
+        check(victim->health == Q16_ONE - 0x23d7, "Initial or late shadow-kick contact must apply retail D25 fourteen-percent damage exactly once");
+        check(victim->reaction == 162, "Shadow kick must choose its own ballistic reaction162");
+      }
+      check(!late || moved_target, "Late-hit case must exercise the held-pose24 contact window");
+      advance_ticks(160, NULL);
+      check(victim->health == 0 || victim->state == S_IDLE || victim->state == S_BLOCK, "Shadow-kick victim must land and regain control");
+    }
+  }
+}
+
 static void check_reconnected_stage_commands(void) {
   const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -3425,6 +3472,7 @@ int main(void) {
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_cage_special_commands();
+  check_cage_shadow_kick_branches();
   check_cage_orb_commands();
   check_reconnected_stage_commands();
   check_script_reactions();

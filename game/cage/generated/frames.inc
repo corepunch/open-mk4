@@ -92,6 +92,11 @@ static const int cage_s_ground_thrown_samples[262] = {0, 0, 1, 1, 2, 2, 3, 3, 4,
 const mframe_t cage_s_ground_thrown_frames[262] = {{0}};
 const mmove_t cage_s_ground_thrown_mmove = {.firstframe = 0, .lastframe = 261, .frame = cage_s_ground_thrown_frames, .samples = cage_s_ground_thrown_samples};
 
+static const int cage_clip_183_samples[68] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33};
+const mframe_t cage_clip_183_frames[68] = {{0}};
+const mmove_t cage_clip_183_mmove = {.firstframe = 0, .lastframe = 67, .frame = cage_clip_183_frames, .samples = cage_clip_183_samples};
+
 static const int cage_s_knockdown_samples[40] = {
     0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19};
 const mframe_t cage_s_knockdown_frames[40] = {{0}};

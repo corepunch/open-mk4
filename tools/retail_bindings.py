@@ -1404,3 +1404,7 @@ CHARACTER_BINDINGS[5][0x44f5e0] = Binding('fujin_first_loop_start', 'game/fujin/
 CHARACTER_BINDINGS[5][0x44f620] = Binding('fujin_first_cycle', 'game/fujin/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True, evidence='44f620 repeats399 fourteen times total then blends into210 and enters4e1f80')
 CHARACTER_BINDINGS[5][0x44f6f0] = Binding('fujin_first_shoot', 'game/fujin/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True, evidence='44f6f0 independently starts44f810 shots at0/40/85 visits; each plays4e1f98 and spawns native44fa10 bolt')
 CHARACTER_BINDINGS[5][0x49cb60] = Binding('fujin_first_fire_end', 'game/fujin/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True, evidence='49cb60 ends each independent4e1f98 firing stream; portable scene completes after the third stream and its projectile arrival')
+
+# Cage shadow kick owns its native contact window; callback descriptor4e80c8 is not VM.
+CHARACTER_BINDINGS[14][0x479b70] = Binding('cage_script_cpu_kick_tail', 'game/cage/moves/kicks.c', ('tail',), flow='terminal', mmove=True, evidence='479b70/479de0 D25: poses22/23 and12 held24 contacts, decay47bf50, own10-visit recovery')
+CHARACTER_BINDINGS[14][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 shared KO-aware clip185 side getup after shadow-kick victim4e9718')

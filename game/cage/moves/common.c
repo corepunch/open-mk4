@@ -2,7 +2,6 @@
 
 static void cage_start_event_recovery(BattleEvent *event, int frames, int kind);
 static const MoveDef s_powered_punch_finish = {105, 0, 29, 0, 0, 19, 12, 0, 0.f, 0.f, SF_LOCK, NULL, 0};
-static const AttackRecord s_cage_cpu_kick_contact = {0x15c28, -0x35c2, 0x104df, 0x5c28, 17, 10, 6, 0, 0x1c28};
 static const AttackRecord s_cage_powered_punch_contact = {0x107ae, -0x9c28, 0xdc28, 0xa8f5, 38, 10, 143, 0, 0x170a};
 static const AttackRecord s_cage_powered_finish_contact = {0x12b85, -0x4f5c, 0x10a3d, 0xf5c2, 39, 39, 4, 0, 0x1eb8};
 
@@ -25,18 +24,6 @@ bool cage_combo_event(BattleEvent *event, Fighter *owner, Fighter *opponent) {
   (void)opponent;
 
   if (event->phase == 0) {
-    if (event->data[0] == 0) {
-      contact = battle_contact(owner, &s_cage_cpu_kick_contact);
-      if (contact == CONTACT_MISS) {
-        event->data[0] = 1;
-        fighter_start_move(owner, S_PUNCH, &cage_s_powered_punch_script);
-        fighter_start_fiber(owner, cage_entry_retail_script_004e80c8, NULL);
-        return false;
-      }
-      cage_start_event_recovery(event, cage_s_cpu_kick_script.recovery, CAGE_EVENT_CPU_KICK_RECOVERY);
-      return false;
-    }
-
     if (event->data[0] == 1) {
       contact = battle_contact(owner, &s_cage_powered_punch_contact);
       if (contact != CONTACT_MISS) {
