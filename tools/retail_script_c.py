@@ -79,6 +79,8 @@ def instruction_c(row):
     if op == 0x48:
         prefix = ['bind_clip(%s);' % animation_name(row['clip'])] if 'clip' in row else []
         return prefix + ['play_remaining_clip();']
+    if op == 0x69:
+        return ['play_remaining_clip();']
     if op == 0x4e:
         return ['save_reaction_context();']
     if op == 0x71:

@@ -119,6 +119,7 @@ SCRIPT_OPS = {
     0x6b: ('sound helper', 0),
     0x6e: ('disarm opponent through native helper', 0),
     0x6d: ('native helper with word operand', 1),
+    0x69: ('play remaining animation frames', 0),
     0x71: ('blend into clip and resume at sample one', 1),
 }
 

@@ -199,6 +199,14 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('fighter_fiber_play_to(fighter, 17, 2);', source)
         self.assertNotIn('fighter_fiber_play_to(fighter, 529, 2);', source)
 
+    def test_opcode_69_plays_remaining_clip_through_shared_fiber_helper(self):
+        binding = Binding('jax_projectile', 'tests/test_script_codegen.py', ('spawn',), ('fighter', 'task_type'),
+                          flow='independent', task_types=(80,), evidence='synthetic native task boundary')
+        source = generate(self.image, [0x4ed090], 13, 'fighter_ready', bindings={0x496fc0: binding})
+        self.assertIn('mk4_script_finish_clip(fighter, 1);', source)
+        with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
+            self.compile([0x69000000, 0x3f000000])
+
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
         # C control flow; real actor suspension is covered by the native Liu suite.
