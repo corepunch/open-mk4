@@ -17,12 +17,12 @@ static void raiden_uppercut_contact(Fighter *fighter) {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 void raiden_uppercut_script(Fighter *fighter) {
-  native_uppercut_tail(fighter, raiden_uppercut_contact, raiden_ready);
+  native_uppercut_tail(fighter, raiden_uppercut_contact);
 }
 
 void raiden_uppercut(Fighter *fighter) {
   fighter_start_move(fighter, S_UPPERCUT, &raiden_s_uppercut);
-  fighter_start_fiber(fighter, raiden_entry_retail_script_004e62a0, NULL);
+  raiden_entry_retail_script_004e62a0(fighter);
 }
 
 void raiden_enter_uppercut(Fighter *fighter) {

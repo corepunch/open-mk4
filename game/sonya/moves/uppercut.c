@@ -17,12 +17,12 @@ static void sonya_uppercut_contact(Fighter *fighter) {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 void sonya_uppercut_script(Fighter *fighter) {
-  native_uppercut_tail(fighter, sonya_uppercut_contact, sonya_ready);
+  native_uppercut_tail(fighter, sonya_uppercut_contact);
 }
 
 void sonya_uppercut(Fighter *fighter) {
   fighter_start_move(fighter, S_UPPERCUT, &sonya_s_uppercut);
-  fighter_start_fiber(fighter, sonya_entry_retail_script_004e62a0, NULL);
+  sonya_entry_retail_script_004e62a0(fighter);
 }
 
 void sonya_enter_uppercut(Fighter *fighter) {

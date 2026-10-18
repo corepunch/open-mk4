@@ -5,7 +5,8 @@ static const AttackRecord jarek_uppercut_record = {58327, -64880, 38010, 66840, 
 static const AttackRecord jarek_uppercut_followup_record = {73990, -70057, 64159, 96927, 34, 34, 6, 0, 2621};
 
 void jarek_uppercut(Fighter *fighter) {
-  jarek_start(fighter, S_UPPERCUT, &jarek_s_uppercut, jarek_entry_retail_script_004e62a0);
+  fighter_start_move(fighter, S_UPPERCUT, &jarek_s_uppercut);
+  jarek_entry_retail_script_004e62a0(fighter);
 }
 
 static void jarek_uppercut_frame(Fighter *fighter) {

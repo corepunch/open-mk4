@@ -17,12 +17,12 @@ static void liu_kang_uppercut_contact(Fighter *fighter) {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 void liu_kang_uppercut_script(Fighter *fighter) {
-  native_uppercut_tail(fighter, liu_kang_uppercut_contact, liu_kang_ready);
+  native_uppercut_tail(fighter, liu_kang_uppercut_contact);
 }
 
 void liu_kang_uppercut(Fighter *fighter) {
   fighter_start_move(fighter, S_UPPERCUT, &liu_kang_s_uppercut);
-  fighter_start_fiber(fighter, liu_kang_entry_retail_script_004e62a0, NULL);
+  liu_kang_entry_retail_script_004e62a0(fighter);
 }
 
 void liu_kang_enter_uppercut(Fighter *fighter) {

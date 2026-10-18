@@ -5,7 +5,8 @@ static const AttackRecord shinnok_uppercut_record = {58327, -64880, 38010, 66840
 static const AttackRecord shinnok_uppercut_followup_record = {73990, -70057, 64159, 96927, 34, 34, 6, 0, 2621};
 
 void shinnok_uppercut(Fighter *fighter) {
-  shinnok_start(fighter, S_UPPERCUT, &shinnok_s_uppercut, shinnok_entry_retail_script_004e62a0);
+  fighter_start_move(fighter, S_UPPERCUT, &shinnok_s_uppercut);
+  shinnok_entry_retail_script_004e62a0(fighter);
 }
 
 static void shinnok_uppercut_frame(Fighter *fighter) {

@@ -17,12 +17,12 @@ static void scorpion_uppercut_contact(Fighter *fighter) {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 void scorpion_uppercut_script(Fighter *fighter) {
-  native_uppercut_tail(fighter, scorpion_uppercut_contact, scorpion_ready);
+  native_uppercut_tail(fighter, scorpion_uppercut_contact);
 }
 
 void scorpion_uppercut(Fighter *fighter) {
   fighter_start_move(fighter, S_UPPERCUT, &scorpion_s_uppercut);
-  fighter_start_fiber(fighter, scorpion_entry_retail_script_004e62a0, NULL);
+  scorpion_entry_retail_script_004e62a0(fighter);
 }
 
 void scorpion_enter_uppercut(Fighter *fighter) {

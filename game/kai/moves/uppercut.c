@@ -5,5 +5,6 @@ void kai_press_uppercut(Fighter *fighter) {
 }
 
 void kai_uppercut(Fighter *fighter) {
-  kai_start_script(fighter, S_UPPERCUT, &kai_s_uppercut, kai_entry_retail_script_004e62a0);
+  fighter_start_move(fighter, S_UPPERCUT, &kai_s_uppercut);
+  kai_entry_retail_script_004e62a0(fighter);
 }

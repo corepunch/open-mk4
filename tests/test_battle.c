@@ -356,7 +356,7 @@ static void check_scorpion_contact_branches(void) {
     fight(1.f);
     Fighter *fighter = &g_battle.fighters[0];
     fighter_enter_state(fighter, S_UPPERCUT);
-    check(fighter_fiber_active(fighter), "Uppercut must run its branches in a fiber");
+    check(!fighter_fiber_active(fighter) && fighter->current_mmove != NULL, "Uppercut must run its branches through frame tables");
     Input in[2] = {0};
     if (blocked) {
       in[1].held = BUTTON_BIT(BUTTON_BLOCK);
@@ -799,6 +799,48 @@ static void check_reconnected_air_attacks(void) {
         check(fighter_move(fighter)->clip == clip, "Both straight-air kick switches must reach the shared native kick entry");
         advance_ticks(100, NULL);
         check(fighter->state == S_IDLE && !fighter_fiber_active(fighter), "Straight-air kick miss must land and restore controls");
+      }
+    }
+  }
+}
+
+static void check_reconnected_uppercuts(void) {
+  const int roster[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  for (size_t row = 0; row < sizeof roster / sizeof roster[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      int scenarios = row == 0 ? 5 : 1;
+      for (int scenario = 0; scenario < scenarios; ++scenario) {
+        battle_init(slot ? 4 : roster[row], slot ? roster[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 distance = scenario == 2 ? 6 * Q16_ONE : Q16_ONE / 2;
+        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_PUNCH);
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        battle_step(input);
+        battle_step(input);
+        check(owner->state == S_UPPERCUT && fighter_move(owner)->clip == 293, "Crouch HP must enter the owned uppercut startup");
+        if (scenario == 3) {
+          owner->flags |= FF_FOLLOW_UP;
+        }
+        input[slot].held = 0;
+        for (int tick = 0; tick < 120; ++tick) {
+          battle_step(input);
+          if (scenario == 4 && tick == 2) {
+            fighter_enter_state(owner, S_HIT);
+          }
+          check(!fighter_fiber_active(owner), "Uppercut startup, contact and branch recovery must use frame tables");
+        }
+        q16 damage = scenario == 2 || scenario == 4 ? 0 : scenario == 1 ? q16_mul(0x28f5, 0x3333) : scenario == 3 ? 0xa3d : 0x28f5;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(stderr, "Uppercut roster%d slot%d scenario%d health%d expected%d\n", roster[row], slot, scenario, victim->health, Q16_ONE - damage);
+        }
+        check(victim->health == Q16_ONE - damage, "Uppercut must reach its native A2/A6 hit, chip, miss or interruption branch once");
+        check(owner->state == S_IDLE, "Uppercut branch must finish its recovery and restore controls");
       }
     }
   }
@@ -1867,6 +1909,7 @@ int main(void) {
   check_ground_normals();
   check_air_attacks();
   check_reconnected_air_attacks();
+  check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_straight_air_kick_contacts();
   check_reconnected_ground_combos();

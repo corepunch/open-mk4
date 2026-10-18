@@ -35,11 +35,6 @@ void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction) {
   require(false, "Unexpected Quan Chi opponent reaction");
 }
 
-void quan_chi_script_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(quan_chi_ready);
-}
-
 void quan_chi_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;

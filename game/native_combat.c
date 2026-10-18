@@ -306,20 +306,14 @@ bool native_grounded(const Fighter *fighter) {
   return !fighter_airborne(fighter);
 }
 
-void native_uppercut_tail(Fighter *fighter, FighterFn contact, FighterFn ready) {
-  int pose = fighter_sample(fighter);
-  native_begin(fighter, 1, 5, NULL);
-  for (int frame = 1; frame <= 5; ++frame) {
-    native_frame(fighter, frame, frame == 1 ? pose : mini(8, frame + 4), frame >= 2 && frame <= 4 ? contact : NULL);
-  }
-  native_wait(fighter);
+static void uppercut_recovery(Fighter *fighter) {
   static const int cycle[] = {8, 7, 6, 7, 8};
   static const int late[] = {9, 9, 8, 7, 6, 7, 8};
   int repeats = fighter->contact == CONTACT_MISS ? 3 : fighter->contact == CONTACT_BLOCK ? 2 : 8;
   int recovery = fighter->contact == CONTACT_MISS ? 8 : 9;
   bool delayed = fighter->contact_tick == 9;
   int count = repeats * 5 + (delayed ? 2 : 0) + 20 - recovery;
-  native_begin(fighter, 0, count - 1, ready);
+  native_begin(fighter, 0, count - 1, fighter_ready);
   int row = 0;
   for (int repeat = 0; repeat < repeats; ++repeat) {
     const int *poses = delayed && repeat == 0 ? late : cycle;
@@ -332,6 +326,32 @@ void native_uppercut_tail(Fighter *fighter, FighterFn contact, FighterFn ready) 
     fighter->native.poses[row++] = sample;
   }
   native_play(fighter, false);
+}
+
+void native_uppercut_tail(Fighter *fighter, FighterFn contact) {
+  require(fighter_move(fighter)->clip == 293 && fighter_sample(fighter) == 5, "Uppercut needs its generated startup");
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, 5, uppercut_recovery);
+  for (int frame = 1; frame <= 5; ++frame) {
+    native_frame(fighter, frame, frame == 1 ? pose : mini(8, frame + 4), frame >= 2 && frame <= 4 ? contact : NULL);
+  }
+  native_play(fighter, false);
+}
+
+/* 46cde0 queries A[2], or A[6] in a follow-up window, and skips crouch2001. */
+static void uppercut_default_contact(Fighter *fighter) {
+  static const AttackRecord normal = {0xe3d7, -0xfd70, 0x947a, 0x10518, 34, 34, 6, 0, 0x28f5};
+  static const AttackRecord followup = {0x12106, -0x111a9, 0xfa9f, 0x17a9f, 34, 34, 6, 0, 0xa3d};
+  if (fighter->connected || fighter_opponent(fighter)->action == ACTION_RETAIL_2001) {
+    return;
+  }
+  if (battle_contact(fighter, fighter->flags & FF_FOLLOW_UP ? &followup : &normal) != CONTACT_MISS) {
+    fighter->action = ACTION_RETAIL_1006;
+  }
+}
+
+void native_uppercut_default(Fighter *fighter) {
+  native_uppercut_tail(fighter, uppercut_default_contact);
 }
 
 /* 470c60 block 4e6978: B[2], poses 10/11/12, then 46a7a0 -> 4e6998. */

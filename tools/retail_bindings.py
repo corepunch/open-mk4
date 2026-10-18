@@ -1253,6 +1253,15 @@ for _cid in (6, 8, 10, 12, 14):
     CHARACTER_BINDINGS[_cid][0x46c820] = Binding('native_air_straight_land', 'game/native_combat.c', ('tail',),
         flow='terminal', mmove=True, evidence='46c820 preserves gravity or restores51e and waits for landing after generated narrow reversal4e6270')
 
+for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
+    CHARACTER_BINDINGS[_cid][0x46cde0] = Binding('native_uppercut_default', 'game/native_combat.c', ('tail',),
+        flow='terminal', mmove=True, evidence='46cde0 A2/A6 contacts and hit/block/miss recovery use nonblocking shared native frames')
+for _cid in (0, 1, 2, 3, 16):
+    CHARACTER_BINDINGS[_cid][0x46cde0] = replace(CHARACTER_BINDINGS[_cid][0x46cde0], mmove=True)
+
+CHARACTER_BINDINGS[8][0x46cde0] = Binding('quan_chi_script_finish', 'game/quan_chi/moves/uppercut.c', ('tail',),
+    flow='terminal', mmove=True, evidence='Quan Chi uppercut adapter now enters46cde0 contact/recovery rather than finishing the clip without a query')
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

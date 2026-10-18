@@ -17,12 +17,12 @@ static void kitana_uppercut_contact(Fighter *fighter) {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 void kitana_uppercut_script(Fighter *fighter) {
-  native_uppercut_tail(fighter, kitana_uppercut_contact, kitana_ready);
+  native_uppercut_tail(fighter, kitana_uppercut_contact);
 }
 
 void kitana_uppercut(Fighter *fighter) {
   fighter_start_move(fighter, S_UPPERCUT, &kitana_s_uppercut);
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004e62a0, NULL);
+  kitana_entry_retail_script_004e62a0(fighter);
 }
 
 void kitana_enter_uppercut(Fighter *fighter) {
