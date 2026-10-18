@@ -25,7 +25,6 @@ enum {
   CAGE_EVENT_FATALITY_2
 };
 
-bool cage_combo_event(BattleEvent *event, Fighter *owner, Fighter *opponent);
 void cage_lp_throw(Fighter *fighter);
 void cage_press_air_hk(Fighter *fighter);
 void cage_press_air_hp(Fighter *fighter);
@@ -51,7 +50,6 @@ void cage_script_kick_finish(Fighter *fighter);
 void cage_script_lk_throw_return(Fighter *fighter);
 void cage_script_lp_return(Fighter *fighter);
 void cage_script_opponent_reaction(Fighter *fighter, int reaction);
-void cage_script_powered_punch_finish_tail(Fighter *fighter);
 void cage_script_powered_punch_tail(Fighter *fighter);
 void cage_script_roundhouse_start(Fighter *fighter);
 void cage_script_spike_tail(Fighter *fighter);
@@ -89,7 +87,9 @@ void cage_entry_retail_script_004e80a8(Fighter *fighter);
 void cage_entry_retail_script_004e9718(Fighter *fighter);
 void cage_shadow_victim(Fighter *fighter);
 void cage_entry_retail_script_004e80d0(Fighter *fighter);
-void cage_entry_retail_script_004e80f4(Fighter *fighter);
+void cage_entry_retail_script_004ea040(Fighter *fighter);
+void cage_entry_retail_script_004e84b8(Fighter *fighter);
+void cage_power_land(Fighter *fighter);
 extern const MoveDef cage_s_cpu_kick_script;
 extern const MoveDef cage_s_jab;
 extern const MoveDef cage_s_kick;

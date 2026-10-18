@@ -9,23 +9,9 @@ static void cage_jab(Fighter *fighter);
 void cage_powered_punch(Fighter *fighter);
 static void cage_high_punch(Fighter *fighter);
 
-void cage_script_powered_punch_tail(Fighter *fighter) {
-  BattleEvent *event = battle_event_start(fighter, cage_combo_event, false, true);
-  event->data[0] = 1;
-}
-
-void cage_script_powered_punch_finish_tail(Fighter *fighter) {
-  BattleEvent *event = battle_event_start(fighter, cage_combo_event, false, true);
-  event->data[0] = 2;
-}
-
 static void cage_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &cage_s_jab);
   cage_entry_retail_script_004e62f0(fighter);
-}
-
-void cage_powered_punch(Fighter *fighter) {
-  cage_start_script(fighter, S_PUNCH, &cage_s_powered_punch_script, cage_entry_retail_script_004e80d0);
 }
 
 static void cage_high_punch(Fighter *fighter) {

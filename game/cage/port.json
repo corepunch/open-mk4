@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "58192bfa277b6de67900b8a327f3dc7dc496e361b2576958720186cc733c78c3",
+  "inventory_sha256": "0468f4710ab69c2e43bc14610162a88b2a6ea176c832a9bfec4d28fc92aa5e75",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -43,7 +43,6 @@
     "0x4e69b0",
     "0x4e80a8",
     "0x4e80d0",
-    "0x4e80f4",
     "0x4e9f78",
     "0x4e6270",
     "0x4ed0d8",
@@ -72,7 +71,9 @@
     "0x4e1360",
     "0x4e1370",
     "0x4e1380",
-    "0x4e9718"
+    "0x4e9718",
+    "0x4ea040",
+    "0x4e84b8"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -362,9 +363,9 @@
       "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory."
     },
     "powered_punch": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/powered_punch.c",
       "symbol": "cage_powered_punch",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "evidence": "479ec0 ->4e80d0/479f00; six D26 queries, paired163/94/95 hit, blocked47d940 and own clip85 miss recovery."
     },
     "cpu_kick": {
       "source": "game/cage/character.c",
@@ -704,6 +705,17 @@
       "symbol": "cage_shadow_victim",
       "evidence": "D25 hit/air162 ->4836b0 disarm494520 then generated4e9718 ballistic183, ground/getup488b40.",
       "adaptation": "Registered directly in shared reactions[162]; generated Cage-owned victim root is valid for either humanoid player slot. battle_react performs native494520 disarm before entry."
+    },
+    "163": {
+      "source": "game/cage/moves/powered_punch.c",
+      "symbol": "cage_power_victim",
+      "adaptation": "Direct shared reactions[163] entry; two subsequent owner-driven94/95 stages use the existing exact shared Fujin victim adapters.",
+      "evidence": "D26 ->163 ->488400 blood15 then488440/4ea040;47a030 dispatches94/95 once each."
+    },
+    "3": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",
@@ -729,9 +741,9 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x479ec0": {
-      "source": "game/cage/moves/punches.c",
+      "source": "game/cage/moves/powered_punch.c",
       "symbol": "cage_powered_punch",
-      "evidence": "Typed Cage command target 0x479ec0; generated startup and native 479f00/479b70 contact branches."
+      "evidence": "479ec0 ->4e80d0/479f00; six D26 queries, paired163/94/95 hit, blocked47d940 and own clip85 miss recovery."
     },
     "0x479b20": {
       "source": "game/cage/moves/kicks.c",
@@ -855,7 +867,10 @@
     "0x4e01a0",
     "0x4e6950",
     "0x4e80a8",
-    "0x4e9718"
+    "0x4e9718",
+    "0x4e80d0",
+    "0x4ea040",
+    "0x4e84b8"
   ],
   "cpu_finish_min": {
     "CPU_FINISH_1": 0,

@@ -862,6 +862,7 @@ static const FighterFn reactions[256] = {
   [37] = react_jab_hit,
   [165] = react_slide_block,
   [162] = cage_shadow_victim,
+  [163] = cage_power_victim,
   [126] = kai_handstand_reaction,
   [127] = kai_handstand_reaction,
   [167] = kai_handstand_reaction,

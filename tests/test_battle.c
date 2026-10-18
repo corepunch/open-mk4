@@ -2325,6 +2325,72 @@ static void check_cage_special_commands(void) {
   }
 }
 
+static void check_cage_powered_punch_branches(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int branch = 0; branch < 4; ++branch) {
+      battle_init(slot ? 4 : 14, slot ? 14 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 distance = branch == 0 ? 12 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      if (branch == 2) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      fighter_press(owner, BUTTON_DOWN);
+      fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      fighter_press(owner, BUTTON_HIGH_PUNCH);
+      unsigned seen = 0;
+      bool active = false, interrupted = false;
+      for (int tick = 0; tick < 180; ++tick) {
+        advance_ticks(1, input);
+        if (owner->state == S_IDLE && active) {
+          break;
+        }
+        active = true;
+        check(fighter_move(owner)->clip != 105, "Powered punch must never execute the adjacent flip-kick script from a callback descriptor");
+        check(
+            !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Powered punch owner, paired stages and blocked recoil must stay on frame programs");
+        if (victim->reaction == 163) {
+          seen |= 1;
+        } else if (victim->reaction == 94) {
+          seen |= 2;
+        } else if (victim->reaction == 95) {
+          seen |= 4;
+        }
+        if (branch == 3 && !interrupted && (owner->flags & FF_PAIRED)) {
+          fighter_enter_state(owner, S_HIT);
+          interrupted = true;
+        }
+      }
+      if (!(active && (owner->state == S_IDLE || (branch == 3 && owner->state == S_HIT)))) {
+        fprintf(stderr, "Power slot%d branch%d state%d clip%d sample%d y%d vy%d gravity%d seen%u\n", slot, branch, owner->state, fighter_move(owner)->clip,
+            fighter_sample(owner), owner->body.pos[AXIS_Y], owner->body.vel[AXIS_Y], owner->body.gravity, seen);
+      }
+      check(active && (owner->state == S_IDLE || (branch == 3 && owner->state == S_HIT)), "Powered punch must complete its authored recovery");
+      if (branch == 0) {
+        check(victim->health == Q16_ONE, "Powered-punch whiff must preserve opponent health");
+      } else if (branch == 2) {
+        check(victim->health == Q16_ONE - q16_mul(0x1eb8, 0x3333), "Powered-punch block must apply only retail D26 chip");
+      } else {
+        check(victim->health == Q16_ONE - 0x1eb8, "Powered punch must apply retail twelve-percent damage exactly once across its paired stages");
+        check(branch == 3 ? interrupted : seen == 7, "Powered punch must reach163/94/95 or release its captured victim on interruption");
+      }
+      advance_ticks(180, NULL);
+      if (victim->state != S_IDLE) {
+        fprintf(stderr, "Power victim slot%d branch%d state%d reaction%d y%d vy%d gravity%d\n", slot, branch, victim->state, victim->reaction,
+            victim->body.pos[AXIS_Y], victim->body.vel[AXIS_Y], victim->body.gravity);
+      }
+      check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED) && victim->state == S_IDLE,
+          "Powered-punch victim must land and regain control after completion or interruption");
+      battle_reset_match();
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim) && owner->body.physics == NULL, "Reset must retire powered-punch native motion");
+    }
+  }
+}
+
 static void check_cage_shadow_kick_branches(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int branch = 0; branch < 4; ++branch) {
@@ -2335,15 +2401,16 @@ static void check_cage_shadow_kick_branches(void) {
       q16 distance = branch == 0 || late ? 12 * Q16_ONE : Q16_ONE;
       owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
       if (branch == 2) {
-        fighter_press(victim, BUTTON_BLOCK);
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
       }
       fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
       fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
       fighter_press(owner, BUTTON_LOW_KICK);
       bool active = false, moved_target = false;
       for (int tick = 0; tick < 100; ++tick) {
-        advance_ticks(1, NULL);
+        advance_ticks(1, input);
         if (owner->state == S_IDLE && active) {
           break;
         }
@@ -2360,7 +2427,10 @@ static void check_cage_shadow_kick_branches(void) {
       if (branch == 0) {
         check(victim->health == Q16_ONE, "Whiffed shadow kick must preserve peer health");
       } else if (branch == 2) {
-        check(victim->health == Q16_ONE - 0x23d7 / 4, "Standing block must use shadow-kick D25 chip");
+        if (victim->health != Q16_ONE - q16_mul(0x23d7, 0x3333)) {
+          fprintf(stderr, "Shadow block slot%d health%d reaction%d state%d held%u\n", slot, victim->health, victim->reaction, victim->state, victim->held);
+        }
+        check(victim->health == Q16_ONE - q16_mul(0x23d7, 0x3333), "Standing block must use shadow-kick D25 chip");
       } else {
         check(victim->health == Q16_ONE - 0x23d7, "Initial or late shadow-kick contact must apply retail D25 fourteen-percent damage exactly once");
         check(victim->reaction == 162, "Shadow kick must choose its own ballistic reaction162");
@@ -3473,6 +3543,7 @@ int main(void) {
   check_goro_reconnected_counters();
   check_cage_special_commands();
   check_cage_shadow_kick_branches();
+  check_cage_powered_punch_branches();
   check_cage_orb_commands();
   check_reconnected_stage_commands();
   check_script_reactions();

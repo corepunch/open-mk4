@@ -15,14 +15,14 @@ static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOC
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
 static const MoveDef s_victory = {111, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
-const MoveDef cage_s_cpu_kick_script = {308, 0, 24, 0, 0, 18, 11, 0, 0.f, 0.f, SF_LOCK, NULL, 0};
-const MoveDef cage_s_powered_punch_script = {85, 0, 54, 0, 0, 18, 9, 0, 0.f, 0.f, SF_LOCK, NULL, 0};
+const MoveDef cage_s_cpu_kick_script = {.clip = 308, .last = 24, .flags = SF_LOCK | SF_RECORD};
+const MoveDef cage_s_powered_punch_script = {.clip = 85, .last = 54, .flags = SF_LOCK | SF_RECORD};
 
 #include "generated/scripts.inc"
 #include "generated/frames.inc"
 
 /* Contact records from Cage's 53d2b8/53d268 tables, selected by the
- * generated controller callbacks 479b70/479f00/47a500. */
+ * generated controller callbacks479b70/479f00. */
 
 // clang-format off: Keep table entries on one row, including long rows.
 const uint32_t cage_weapon_descriptor[] = {
@@ -198,10 +198,6 @@ void cage_entry_retail_script_004e80d0(Fighter *fighter) {
   retail_script_004e80d0(fighter);
 }
 
-void cage_entry_retail_script_004e80f4(Fighter *fighter) {
-  retail_script_004e80f4(fighter);
-}
-
 const mmove_t *cage_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_phase;
 }
@@ -336,4 +332,12 @@ void cage_entry_retail_script_004e0138(Fighter *fighter) {
 
 void cage_entry_retail_script_004e9718(Fighter *fighter) {
   retail_script_004e9718(fighter);
+}
+
+void cage_entry_retail_script_004ea040(Fighter *fighter) {
+  retail_script_004ea040(fighter);
+}
+
+void cage_entry_retail_script_004e84b8(Fighter *fighter) {
+  retail_script_004e84b8(fighter);
 }

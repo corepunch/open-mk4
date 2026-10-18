@@ -1051,8 +1051,7 @@ CHARACTER_BINDINGS[14] = {
                       evidence='479b70 checks Cage contact selector 0x19 and enters its powered-punch branch on a miss'),
     0x479f00: Binding('cage_script_powered_punch_tail', 'game/cage/character.c', ('tail',), flow='independent',
                       evidence='479f00 checks Cage powered-punch selector 0x1a and starts the final follow-up on contact'),
-    0x47a3b0: Binding('cage_script_powered_punch_finish_tail', 'game/cage/character.c', ('tail',), flow='independent',
-                      evidence='47a3b0 resolves Cage final follow-up selector 0x18 and its contact/recovery phase'),
+
     0x42bdf0: Binding('retail_script_004de318', 'game/cage/generated/scripts.inc', ('tail',),
                       script_target=0x4de318, evidence='42bdf0 only enters Cage paired continuation 4de318'),
     0x42be00: Binding('retail_script_004de328', 'game/cage/generated/scripts.inc', ('tail',),
@@ -1408,3 +1407,6 @@ CHARACTER_BINDINGS[5][0x49cb60] = Binding('fujin_first_fire_end', 'game/fujin/mo
 # Cage shadow kick owns its native contact window; callback descriptor4e80c8 is not VM.
 CHARACTER_BINDINGS[14][0x479b70] = Binding('cage_script_cpu_kick_tail', 'game/cage/moves/kicks.c', ('tail',), flow='terminal', mmove=True, evidence='479b70/479de0 D25: poses22/23 and12 held24 contacts, decay47bf50, own10-visit recovery')
 CHARACTER_BINDINGS[14][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 shared KO-aware clip185 side getup after shadow-kick victim4e9718')
+
+CHARACTER_BINDINGS[14][0x479f00] = Binding('cage_script_powered_punch_tail', 'game/cage/moves/powered_punch.c', ('tail',), flow='terminal', mmove=True, evidence='479f00 six D26 queries then47a030 paired163/94/95 or blocked47d940; descriptor4e80f4 is not VM')
+CHARACTER_BINDINGS[14][0x47dae0] = Binding('cage_power_land', 'game/cage/moves/powered_punch.c', ('tail',), flow='terminal', mmove=True, evidence='47dae0 shared46fd90 landing after4e84b8 rewind301/9')
