@@ -182,4 +182,5 @@ void cage_entry_retail_script_004e1350(Fighter *fighter);
 void cage_entry_retail_script_004e1360(Fighter *fighter);
 void cage_entry_retail_script_004e1370(Fighter *fighter);
 void cage_entry_retail_script_004e1380(Fighter *fighter);
+void cage_entry_retail_script_004e0138(Fighter *fighter);
 #endif

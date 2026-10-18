@@ -207,7 +207,7 @@ void cage_entry_retail_script_004e80f4(Fighter *fighter) {
 }
 
 const mmove_t *cage_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void cage_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -332,4 +332,8 @@ void cage_entry_retail_script_004e1370(Fighter *fighter) {
 
 void cage_entry_retail_script_004e1380(Fighter *fighter) {
   retail_script_004e1380(fighter);
+}
+
+void cage_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
 }

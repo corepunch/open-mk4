@@ -11,5 +11,5 @@ void cage_spike_fatality(Fighter *fighter) {
     return;
   }
 
-  fighter_start_fiber(fighter, cage_entry_retail_script_004e6950, NULL);
+  cage_entry_retail_script_004e6950(fighter);
 }
