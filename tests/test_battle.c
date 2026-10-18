@@ -586,6 +586,17 @@ static void check_specials(void) {
     check(g_battle.fighters[0].state == S_IDLE && !(g_battle.fighters[0].flags & FF_TELEPORTING), "Teleport must land and clear its state");
     check(g_battle.fighters[1].health == Q16_ONE - (guard ? q16_mul(0x170a, 0x3333) : 0x170a), "Teleport hit/block damage");
   }
+  {
+    /* Retail 480140 off-axis row: from (-2, 0) past (1, 2) along the pair axis. */
+    fight(4.f);
+    g_battle.fighters[1].body.pos[AXIS_X] = Q16_ONE;
+    g_battle.fighters[1].body.pos[AXIS_Z] = 2 * Q16_ONE;
+    advance_ticks(1, NULL);
+    command(0, BUTTON_DOWN, BUTTON_LEFT, BUTTON_HIGH_PUNCH);
+    advance_ticks(12, NULL);
+    float dx = fighter_x(&g_battle.fighters[0]) - 1.f, dz = fighter_z(&g_battle.fighters[0]) - 2.f;
+    check(fabsf(dx * 2.f - dz * 3.f) < .05f && dx > 1.5f, "Off-axis teleport must reappear past the opponent along the pair axis");
+  }
 }
 
 static void draw_sword(void) {

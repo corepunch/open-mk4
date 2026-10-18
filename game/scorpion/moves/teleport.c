@@ -57,7 +57,7 @@ static void teleport_query(Fighter *fighter) {
   if (result == CONTACT_BLOCK) {
     fighter_start_move(fighter, S_JUMP, &s_teleport_block);
     fighter->sample_override = 8;
-    fighter->body.vel[AXIS_X] = -fighter->facing * 0x28f;
+    fighter_set_speed(fighter, -0x28f);
     fighter->body.vel[AXIS_Y] = -0x2147;
     fighter->body.gravity = 0x1ca;
     native_hold(fighter, 21, teleport_block_return);
@@ -69,13 +69,20 @@ static void teleport_query(Fighter *fighter) {
 static void teleport_vanish(Fighter *fighter) {
   Fighter *victim = scorpion_opponent(fighter);
   int first = fighter->mmove_frame + 1;
-  q16 distance = abs(victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]);
+  /* 480140 reappears past the opponent along this fighter's pair axis, on
+   * the opponent when that point leaves the arena, then travels back along
+   * the pre-teleport axis. */
+  q16 distance = (q16)(fighter_distance(fighter) * Q16_ONE);
   int direction = victim->body.pos[AXIS_X] >= fighter->body.pos[AXIS_X] ? 1 : -1;
   q16 offset = 0x26666 + maxi(0, 4 * Q16_ONE - distance);
-  q16 x = victim->body.pos[AXIS_X] + direction * offset;
-  fighter->body.pos[AXIS_X] = abs(x) > g_battle.arena_radius ? victim->body.pos[AXIS_X] : x;
+  q16 x = victim->body.pos[AXIS_X] + q16_mul(fighter_axis(fighter, AXIS_X), offset);
+  q16 z = victim->body.pos[AXIS_Z] + q16_mul(fighter_axis(fighter, AXIS_Z), offset);
+  double radius = g_battle.arena_radius;
+  bool outside = (double)x * x + (double)z * z > radius * radius;
+  fighter->body.pos[AXIS_X] = outside ? victim->body.pos[AXIS_X] : x;
+  fighter->body.pos[AXIS_Z] = outside ? victim->body.pos[AXIS_Z] : z;
   fighter->facing = -direction;
-  fighter->body.vel[AXIS_X] = -direction * 0x2666;
+  fighter_set_speed(fighter, -0x2666);
   fighter->sample_override = 9;
   fighter->script_phase = 1;
   native_begin(fighter, first, maxi(first, 70), teleport_pause);
@@ -118,8 +125,9 @@ void scorpion_teleport(Fighter *fighter) {
 void scorpion_script_teleport_motion(Fighter *fighter) {
   /* 480040 checks the portable arena/range limits before the native vanish
    * continuation. World physics owns integration of generated launch motion. */
-  if (fighter->script_phase == 0 && (fighter_distance(fighter) >= 5.9f || abs(fighter->body.pos[AXIS_X]) >= g_battle.arena_radius - Q16_ONE ||
-                                        (fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0))) {
+  double x = fighter->body.pos[AXIS_X], z = fighter->body.pos[AXIS_Z], wall = g_battle.arena_radius - Q16_ONE;
+  if (fighter->script_phase == 0 &&
+      (fighter_distance(fighter) >= 5.9f || x * x + z * z >= wall * wall || (fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0))) {
     fighter->native_signal = true;
   }
 }
