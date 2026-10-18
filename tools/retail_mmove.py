@@ -193,6 +193,11 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                         emit('if (!mk4_mmove_pair_step(fighter)) { return; }')
             elif op in (5, 0x47, 0x4a, 0x4d):
                 advance(inline if op == 5 else arg, -1 if op == 0x4a else 2 if op == 0x4d else 1)
+            elif op == 0x0d:
+                if sample is None or count is None or sample + 1 >= count:
+                    fail('next pose exceeds bound clip')
+                sample += 1
+                emit('fighter->sample_override = %d;' % sample)
             elif op in (0x12, 0x49, 0x1d):
                 sample = arg
                 emit('fighter->sample_override = %d;' % sample)

@@ -68,6 +68,32 @@ class CompilerTests(unittest.TestCase):
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
+    def test_immediate_pose_step_requires_bounds_and_does_not_add_a_wait(self):
+        # 45a560 ->4285b0 submits the pose and increments its cursor without
+        # yielding. Kai reaction4e9308 supplies its own two-visit holds.
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        entry = self.fixture([0x0f000000, descriptor, 0x0d000000, 0x34000002, 0x3f000000])
+        legacy = generate(self.image, [entry], 11, 'fighter_ready')
+        frames = generate(self.image, [entry], 11, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('fighter->sample_override = fighter_sample(fighter) + 1;', legacy)
+        self.assertIn('fighter->sample_override = 1;', frames)
+        self.assertIn('.lastframe = 2', frames)  # two explicit waits plus controller return
+        self.assertNotIn('fighter_wait_ticks', frames)
+        entry = self.fixture([0x0d000000, 0x3f000000])
+        with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
+            generate(self.image, [entry], 11, 'fighter_ready')
+        entry = self.fixture([0x1100000c, descriptor, 0x0d000000, 0x3f000000])
+        with self.assertRaisesRegex(CompileError, 'next pose exceeds bound clip'):
+            generate(self.image, [entry], 11, 'fighter_ready')
+        actual = generate(self.image, [0x4e9308], 11, 'mk4_script_thrown_ready', mmove_entries=[0x4e9308])
+        self.assertIn('mk4_mmove_bind(fighter, 134, 18, 0)', actual)
+        self.assertNotIn('fighter_wait_ticks', actual)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'next_pose.c'
+            path.write_text(actual + '\nvoid use_next_pose(Fighter *fighter) { retail_script_004e9308(fighter); }\n')
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
+
     def test_mmove_sweep_is_generated_without_yielding_calls(self):
         source = format_c(generate(self.image, [0x4e6798], 4, 'fighter_ready', mmove_entries=[0x4e6798]))
         self.assertIn('static const mframe_t retail_script_004e6798_frames', source)

@@ -27,7 +27,7 @@ class CompileError(ValueError):
 
 # Fully understood operations. All remaining decoded operations require an
 # explicit handler binding; a readable pseudocode name is not a lowering.
-CORE_OPS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0c, 0x0e, 0x10, 0x60, 0x0f, 0x11, 0x12, 0x19, 0x1d, 0x1f,
+CORE_OPS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0c, 0x0d, 0x0e, 0x10, 0x60, 0x0f, 0x11, 0x12, 0x19, 0x1d, 0x1f,
             0x20, 0x27, 0x2b, 0x29, 0x2d, 0x2e, 0x2f, 0x30, 0x32, 0x33,
             0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
             0x3e, 0x3f, 0x40, 0x42, 0x44, 0x45, 0x47, 0x48, 0x49, 0x4a, 0x4d,
@@ -74,7 +74,7 @@ def reads_defines(row, bindings):
     defines = {'flags'} if op in (0x36, 0x55, 0x51, 0x52, 0x53, 0x5e) else {'loop'} if op == 0x3a else set()
     if 'clip' in row and row.get('clip_owner') != 'victim':
         defines.add('clip')
-    elif op in (3, 4, 5, 6, 7, 0x12, 0x19, 0x1d, 0x47, 0x48, 0x49, 0x4a, 0x4d, 8, 0x10):
+    elif op in (3, 4, 5, 6, 7, 0x0d, 0x12, 0x19, 0x1d, 0x47, 0x48, 0x49, 0x4a, 0x4d, 8, 0x10):
         reads.add('clip')
     if op == 0x71:
         reads.add('clip')
@@ -227,6 +227,8 @@ def validate(program, bindings, return_to, context=None):
             values = {(row['stored_count'], first)}
         if op in (0x12, 0x1d, 0x49):
             return {(n, inline & 255) for n, _ in values}
+        if op == 0x0d:
+            return {(n, min(n, c + 1)) for n, c in values}
         if op in (5, 0x47, 0x4a, 0x4d):
             target = inline & 255 if op in (0x47, 0x4a, 0x4d) else inline
             return {(n, max(c, target) if op != 0x4a else min(c, target)) for n, c in values}
@@ -255,6 +257,8 @@ def validate(program, bindings, return_to, context=None):
     guaranteed = set()
     for pc, row in rows.items():
         op = int(row['opcode'], 16)
+        if op == 0x0d and any(c + 1 >= n for n, c in cursors[pc]):
+            error(pc, 'next pose exceeds bound clip')
         if op in (5, 0x47, 0x4a, 0x4d):
             values = cursors[pc]
             if 'clip' in row:
@@ -314,6 +318,8 @@ def lower(row, bindings, return_to):
         lines.append('mk4_script_finish_clip(fighter, 1);')
     elif op in (7, 9):
         lines.append('mk4_script_finish_clip(fighter, -1);')
+    elif op == 0x0d:
+        lines.append('fighter->sample_override = fighter_sample(fighter) + 1;')
     elif op in (2, 4, 6, 0x19):
         lines.append('mk4_script_advance(fighter, %d, %d);' % ((inline + 1) // 2 if op == 0x19 else arg if op == 2 else inline, -1 if op == 6 else 2 if op == 0x19 else 1))
     elif op in (0x0e, 0x11):
