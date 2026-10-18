@@ -528,51 +528,100 @@ static void air_land(Fighter *fighter) {
   mk4_land(fighter);
 }
 
-static void air_native_tail(Fighter *fighter, int index, int elapsed) {
-  const AirAttack *attack = &air_attacks[index];
-  const bool combo = fighter->script_phase == AIR_COMBO;
-  const int retract_at = attack->extend + attack->hold;
-  for (int tick = elapsed ? elapsed : 1;; ++tick) {
-    if (tick != elapsed) {
-      fighter_wait_ticks(1);
-    }
-    if (!fighter_airborne(fighter)) {
-      fighter_fiber_finish(air_land);
-    }
-    fighter->sample_override = tick < attack->extend ? tick : tick < retract_at ? attack->extend - 1 : maxi(0, attack->retract - 1 - tick + retract_at);
-    if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(fighter, &attack->record) != CONTACT_MISS) {
-      bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
-      stop_body(fighter);
-      fighter->action = ACTION_RETAIL_1006;
-      fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
-      if (index == 0 || index == 2) {
-        if (low) {
-          fighter->body.pos[AXIS_Y] = fighter->body.ground;
-          if (!combo) {
-            fighter->buttons = &air_ground_followup;
-            fighter->flags |= FF_FOLLOW_UP;
-          }
-        } else if (index == 0 && !combo) {
-          fighter->buttons = &air_followup;
-        }
-      }
-      fighter_wait_ticks(index >= 3 ? 8 : 12);
-      fighter->buttons = NULL;
-      fighter->body.gravity = index >= 3 || combo ? 0x51e : 0x28f;
-      break;
-    }
-    if (tick >= retract_at + attack->retract) {
-      if (combo) {
-        fighter->body.gravity = 0x51e;
-      }
-      break;
+static int air_index(const Fighter *fighter) {
+  for (int i = 0; i < COUNT(air_attacks); ++i) {
+    if (fighter_move(fighter)->clip == air_attacks[i].move.clip) {
+      return i;
     }
   }
+  require(false, "Unknown Sub-Zero air attack clip");
+  return 0;
+}
+
+static bool air_grounded(const Fighter *fighter) {
+  return !fighter_airborne(fighter);
+}
+
+static const mframe_t air_fall_frames[] = {{.sample = 0, .duration = 1}};
+static const mmove_t air_fall_phase = {.frame = air_fall_frames, .until = air_grounded, .endfunc = air_land};
+
+static void air_fall(Fighter *fighter) {
   fighter->script_phase = AIR_FALL;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
+  if (!fighter_airborne(fighter)) {
+    fighter_finish_mmove(fighter, air_land);
+    return;
   }
-  fighter_fiber_finish(air_land);
+  hold_phase(fighter, &air_fall_phase);
+}
+
+static void air_unfreeze(Fighter *fighter) {
+  fighter->buttons = NULL;
+  fighter->body.gravity = air_index(fighter) >= 3 || fighter->script_phase == AIR_COMBO_FREEZE ? 0x51e : 0x28f;
+  air_fall(fighter);
+}
+
+static const mframe_t air_freeze_frames[] = {{.sample = 0, .duration = 12}};
+static const mframe_t air_diagonal_freeze_frames[] = {{.sample = 0, .duration = 8}};
+static const mmove_t air_freeze_phase = {.frame = air_freeze_frames, .endfunc = air_unfreeze};
+static const mmove_t air_diagonal_freeze_phase = {.frame = air_diagonal_freeze_frames, .endfunc = air_unfreeze};
+
+static void air_cleanup(Fighter *fighter) {
+  if (fighter->script_phase == AIR_FREEZE || fighter->script_phase == AIR_COMBO_FREEZE) {
+    fighter->body.gravity = 0x51e;
+  }
+  if (fighter->buttons == &air_followup || fighter->buttons == &air_ground_followup) {
+    fighter->buttons = NULL;
+  }
+}
+
+static void air_tick(Fighter *fighter) {
+  int index = air_index(fighter);
+  const AirAttack *attack = &air_attacks[index];
+  bool combo = fighter->script_phase == AIR_COMBO;
+  int retract_at = attack->extend + attack->hold;
+  int tick = ++fighter->script_timer;
+  if (!fighter_airborne(fighter)) {
+    fighter_finish_mmove(fighter, air_land);
+    return;
+  }
+  fighter->sample_override = tick < attack->extend ? tick : tick < retract_at ? attack->extend - 1 : maxi(0, attack->retract - 1 - tick + retract_at);
+  if (tick >= attack->extend && tick < retract_at && !fighter->connected && battle_contact(fighter, &attack->record) != CONTACT_MISS) {
+    bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
+    stop_body(fighter);
+    fighter->action = ACTION_RETAIL_1006;
+    fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
+    if (index == 0 || index == 2) {
+      if (low) {
+        fighter->body.pos[AXIS_Y] = fighter->body.ground;
+        if (!combo) {
+          fighter->buttons = &air_ground_followup;
+          fighter->flags |= FF_FOLLOW_UP;
+        }
+      } else if (index == 0 && !combo) {
+        fighter->buttons = &air_followup;
+      }
+    }
+    hold_phase(fighter, index >= 3 ? &air_diagonal_freeze_phase : &air_freeze_phase);
+    return;
+  }
+  if (tick >= retract_at + attack->retract) {
+    if (combo) {
+      fighter->body.gravity = 0x51e;
+    }
+    air_fall(fighter);
+  }
+}
+
+static const mframe_t air_frames[] = {{.sample = 0, .duration = 1, .tick = air_tick}};
+static const mmove_t air_phase = {.frame = air_frames, .until = phase_wait};
+
+static void air_native_tail(Fighter *fighter, int index, int elapsed) {
+  require(air_index(fighter) == index, "Air native phase differs from selected clip");
+  fighter->script_timer = elapsed ? elapsed - 1 : 0;
+  hold_phase(fighter, &air_phase);
+  if (elapsed) {
+    air_tick(fighter);
+  }
 }
 
 static void start_air_attack(Fighter *fighter, int index) {
@@ -586,7 +635,8 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->facing = fighter->body.pos[AXIS_X] <= opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
   static const FighterFn scripts[] = {retail_script_004e6658, retail_script_004e6710, retail_script_004e61f8, retail_script_004e6500, retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  fighter->mmove_cleanup = air_cleanup;
+  scripts[index](fighter);
 }
 
 static void air_hp(Fighter *fighter) {

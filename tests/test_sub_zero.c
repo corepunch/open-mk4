@@ -120,9 +120,30 @@ static void normals(void) {
       fighter_enter_state(&g_battle.fighters[player], S_JUMP);
       press(player, BUTTON_BIT(button));
       check(fighter_move(&g_battle.fighters[player])->flags & SF_RECORD, "air attack must use script records");
+      check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "air attacks must use phases");
       advance(160);
       check(g_battle.fighters[player].state == S_IDLE && !fighter_airborne(&g_battle.fighters[player]), "air attack must land and restore controls");
     }
+  }
+}
+
+static void air_phase_interrupt(void) {
+  for (int player = 0; player < 2; ++player) {
+    fight(player, 1.f);
+    Fighter *fighter = &g_battle.fighters[player];
+    fighter->body.pos[AXIS_Y] -= Q16_ONE;
+    fighter_enter_state(fighter, S_JUMP);
+    fighter->body.gravity = 0;
+    g_battle.fighters[1 - player].body.pos[AXIS_Y] -= Q16_ONE;
+    check(battle_cpu_action(fighter, CPU_AIR_HP), "air regression must use the actual attack entry");
+    advance(8);
+    check(fighter->connected && fighter->body.gravity == 0 && fighter->current_mmove != NULL, "air contact must enter its pause phase");
+    fighter_interrupt(fighter, fighter_ready);
+    advance(1);
+    check(!fighter_fiber_active(fighter) && fighter->current_mmove == NULL && fighter->body.gravity != 0,
+        "interrupting the air contact pause must release its phase and resume falling");
+    advance(160);
+    check(fighter->state == S_IDLE, "interrupted air attack must land");
   }
 }
 
@@ -1598,6 +1619,7 @@ int main(void) {
   fatalities();
   weapons();
   normals();
+  air_phase_interrupt();
   sweep_frames();
   ground_throws();
   ice();
