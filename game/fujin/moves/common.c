@@ -62,14 +62,12 @@ void fujin_script_lp_short_finish(Fighter *fighter) {
 }
 
 void fujin_script_finish(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(fujin_ready);
+  fujin_sweep_tail(fighter);
 }
 
-void fujin_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
-  fighter_start_move(fighter, state, move);
-  fighter->sample_override = 0;
-  fighter_start_fiber(fighter, script, NULL);
+void fujin_start(Fighter *fighter, StateId state, FighterFn script) {
+  fujin_state_move(fighter, state);
+  script(fighter);
 }
 
 static void fujin_state_move(Fighter *fighter, int state) {

@@ -2481,6 +2481,51 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_fujin_sweep(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 5; ++scenario) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 distance = scenario == 3 ? 6 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      if (scenario == 1 || scenario == 2) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      if (scenario == 2) {
+        input[1 - slot].held |= BUTTON_BIT(BUTTON_DOWN);
+      }
+      battle_step(input);
+      input[slot] = (Input){0};
+      advance_ticks(2, input);
+      if (owner->state != S_SWEEP || fighter_move(owner)->clip != 62 || owner->action != ACTION_RETAIL_010C) {
+        fprintf(stderr, "sweep slot%d scenario%d state%d clip%d action%x facing%d\n", slot, scenario, owner->state, fighter_move(owner)->clip, owner->action,
+            owner->facing);
+      }
+      check(owner->state == S_SWEEP && fighter_move(owner)->clip == 62 && owner->action == ACTION_RETAIL_010C,
+          "Back+LK must enter Fujin's own generated clip62 sweep");
+      input[slot] = (Input){0};
+      bool recovered = false;
+      for (int tick = 0; tick < 100; ++tick) {
+        if (scenario == 4 && tick == 3) {
+          battle_react(owner, 11);
+        }
+        battle_step(input);
+        recovered |= owner->action == 0x1006;
+        check(!fighter_fiber_active(owner), "Fujin sweep startup, contact and recovery must never start a fiber");
+      }
+      q16 damage = scenario >= 3 ? 0 : scenario == 2 ? q16_mul(0x23d7, 0x3333) : 0x23d7;
+      check(victim->health == Q16_ONE - damage, "Fujin B36 sweep must retain fourteen-percent damage, low guard and startup interruption");
+      check(owner->state == S_IDLE && !fighter_airborne(owner) && (scenario == 4 || recovered),
+          "Fujin sweep must reach native action1006 recovery and return to its controller");
+      battle_reset_match();
+    }
+  }
+}
+
 static void check_fujin_wind_grab(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 5; ++scenario) {
@@ -3136,6 +3181,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_sweep();
   check_fujin_wind_grab();
   check_fujin_triple_kick();
   check_fujin_wind();

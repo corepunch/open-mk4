@@ -1371,3 +1371,5 @@ CHARACTER_BINDINGS[5][0x47f070] = Binding('fujin_triple_contact', 'game/fujin/mo
 CHARACTER_BINDINGS[5][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 shared KO-aware clip185 side getup after4ea0b8 final triple-kick victim flight')
 
 CHARACTER_BINDINGS[5][0x4803a0] = Binding('fujin_grab_control_start', 'game/fujin/moves/wind_grab.c', ('tail',), flow='terminal', mmove=True, evidence='4803a0 steers while LP is held, checks distance below1 before the hold gate, then480510/480660 selects capture or blocked recovery')
+
+CHARACTER_BINDINGS[5][0x46efd0] = Binding('fujin_script_finish', 'game/fujin/moves/common.c', ('tail',), flow='terminal', mmove=True, evidence='46efd0 submits23/24 with B36 contact;46f130 sets action1006 and finishes the current clip before controller return')

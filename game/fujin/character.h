@@ -37,7 +37,7 @@ void fujin_script_lp_select(Fighter *fighter);
 void fujin_script_lp_short_finish(Fighter *fighter);
 void fujin_script_opponent_reaction(Fighter *fighter, int reaction);
 void fujin_script_roundhouse_start(Fighter *fighter);
-void fujin_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
+void fujin_start(Fighter *fighter, StateId state, FighterFn script);
 extern const MoveDef *const fujin_moves[13];
 void fujin_entry_retail_script_004de2f8(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
@@ -148,4 +148,5 @@ void fujin_grab_control_start(Fighter *fighter);
 void fujin_grab_victim(Fighter *fighter);
 void fujin_entry_retail_script_004e8830(Fighter *fighter);
 void fujin_entry_retail_script_004e9fb0(Fighter *fighter);
+void fujin_sweep_tail(Fighter *fighter);
 #endif
