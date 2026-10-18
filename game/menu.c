@@ -217,33 +217,43 @@ static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu
   int width = canvas->w;
   int height = canvas->h;
   canvas_rect(canvas, (Rect){0, 0, width, height}, 0xff6e6e65);
-  blit_page(canvas, &assets->hud.select_scene, 0, (Rect){0, 0, 205, 190}, (Rect){0, 0, width, height});
-  int tile_width = width * 18 / 100;
-  int tile_height = height * 25 / 100;
-  int gap_x = width / 200;
-  int gap_y = height / 100;
-  int grid_width = tile_width * 5 + gap_x * 4;
-  int grid_x = (width - grid_width) / 2;
+  // The full-size portraits occupy page 3; page 2 contains only the tiny
+  // GROUP SELECT thumbnail, whose frame and labels must not enter the grid.
+  static const int portrait_cells[15] = {10, 0, 9, 2, 11, -1, 5, 6, 7, 13, 12, 8, 3, 4, 1};
+  // Use the clean marble regions, excluding the player-number/color swatches.
+  for (int row = 0; row < 2; ++row) {
+    int y = row * height / 2;
+    int h = (row + 1) * height / 2 - y;
+    blit_page(canvas, &assets->hud.select_scene, 0, (Rect){0, 0, 212, 112}, (Rect){0, y, width / 2, h});
+    blit_page(canvas, &assets->hud.select_scene, 1, (Rect){0, 0, 168, 112}, (Rect){width / 2, y, width - width / 2, h});
+  }
+  int grid_x = width * 5 / 100;
   int grid_y = height * 8 / 100;
-  blit_page(canvas, &assets->hud.select_scene, 2, (Rect){0, 229, 232, 20}, (Rect){width * 29 / 100, 8, width * 42 / 100, height * 7 / 100});
+  int grid_width = width * 90 / 100;
+  int grid_height = height * 84 / 100;
+  int gap = 3;
+  blit_page(canvas, &assets->hud.select_scene, 2, (Rect){66, 229, 180, 16}, (Rect){width * 28 / 100, height / 100, width * 44 / 100, height * 6 / 100});
   for (int i = 0; i < 15; ++i) {
     int col = i % 5;
     int row = i / 5;
-    Rect dst = {grid_x + col * (tile_width + gap_x), grid_y + row * (tile_height + gap_y), tile_width, tile_height};
-    int source_cell = i;
-    Rect src = {(source_cell % 5) * 25, 16 + (source_cell / 5) * 26, 25, 26};
-    blit_page(canvas, &assets->hud.select_scene, 2, src, dst);
+    int x = grid_x + col * grid_width / 5;
+    int y = grid_y + row * grid_height / 3;
+    Rect dst = {x, y, grid_x + (col + 1) * grid_width / 5 - x - gap, grid_y + (row + 1) * grid_height / 3 - y - gap};
+    int cell = portrait_cells[i];
+    Rect src = cell < 0 ? (Rect){168, 112, 64, 64} : (Rect){(cell % 4) * 64, (cell / 4) * 64, 64, 64};
+    blit_page(canvas, &assets->hud.select_scene, cell < 0 ? 1 : 3, src, dst);
+    canvas_outline(canvas, dst, edge);
     if (i == menu->cursor) {
-      canvas_outline(canvas, (Rect){dst.x - 5, dst.y - 4, dst.w + 10, dst.h + 8}, red);
+      canvas_outline(canvas, (Rect){dst.x - 1, dst.y - 1, dst.w + 2, dst.h + 2}, red);
     }
   }
-  int footer_y = height - height * 10 / 100;
-  blit_page(canvas, &assets->hud.select_scene, 0, (Rect){83, 225, 124, 28}, (Rect){width * 23 / 100, footer_y, width * 18 / 100, height * 9 / 100});
-  blit_page(canvas, &assets->hud.select_scene, 1, (Rect){0, 225, 84, 28}, (Rect){width * 41 / 100, footer_y, width * 18 / 100, height * 9 / 100});
-  blit_page(canvas, &assets->hud.select_scene, 2, (Rect){64, 198, 124, 29}, (Rect){width * 59 / 100, footer_y, width * 18 / 100, height * 9 / 100});
+  int footer_y = height * 93 / 100;
+  blit_page(canvas, &assets->hud.select_scene, 0, (Rect){84, 225, 128, 30}, (Rect){width * 23 / 100, footer_y, width * 18 / 100, height * 6 / 100});
+  blit_page(canvas, &assets->hud.select_scene, 1, (Rect){0, 225, 128, 30}, (Rect){width * 41 / 100, footer_y, width * 18 / 100, height * 6 / 100});
+  blit_page(canvas, &assets->hud.select_scene, 2, (Rect){64, 197, 128, 30}, (Rect){width * 59 / 100, footer_y, width * 18 / 100, height * 6 / 100});
   if (menu->cursor >= 15) {
     int button_x = width * (23 + (menu->cursor - 15) * 18) / 100;
-    canvas_outline(canvas, (Rect){button_x - 4, footer_y - 4, width * 18 / 100 + 8, height * 9 / 100 + 8}, red);
+    canvas_outline(canvas, (Rect){button_x - 4, footer_y - 4, width * 18 / 100 + 8, height * 6 / 100 + 8}, red);
   }
 }
 
