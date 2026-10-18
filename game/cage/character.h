@@ -119,4 +119,6 @@ void cage_fan_fatality(Fighter *fighter);
 void cage_spike_fatality(Fighter *fighter);
 void cage_roundhouse(Fighter *fighter);
 void cage_script_roundhouse_finish(Fighter *fighter);
+void cage_powered_punch(Fighter *fighter);
+void cage_cpu_kick(Fighter *fighter);
 #endif

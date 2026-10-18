@@ -1,7 +1,7 @@
 #include "../character.h"
 
 static void cage_shadow_kick(Fighter *fighter);
-static void cage_cpu_kick(Fighter *fighter);
+void cage_cpu_kick(Fighter *fighter);
 static void cage_high_kick(Fighter *fighter);
 static void cage_low_kick(Fighter *fighter);
 
@@ -20,7 +20,7 @@ static void cage_shadow_kick(Fighter *fighter) {
   fighter_start_fiber(fighter, cage_entry_retail_script_004e5ba8, NULL);
 }
 
-static void cage_cpu_kick(Fighter *fighter) {
+void cage_cpu_kick(Fighter *fighter) {
   cage_start_script(fighter, S_KICK, &cage_s_cpu_kick_script, cage_entry_retail_script_004e80a8);
 }
 

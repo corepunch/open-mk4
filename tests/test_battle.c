@@ -852,6 +852,67 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
+static void check_cage_special_commands(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int kind = 0; kind < 2; ++kind) {
+      for (int miss = 0; miss < 2; ++miss) {
+        battle_init(slot ? 4 : 14, slot ? 14 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot];
+        Fighter *victim = &g_battle.fighters[1 - slot];
+        q16 distance = miss ? 12 * Q16_ONE : Q16_ONE;
+        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+        Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+        fighter_press(owner, back);
+        fighter_press(owner, kind ? BUTTON_DOWN : forward);
+        if (kind) {
+          fighter_press(owner, back);
+        }
+        fighter_press(owner, kind ? BUTTON_HIGH_PUNCH : BUTTON_LOW_KICK);
+        advance_ticks(1, NULL);
+        check(fighter_move(owner)->clip == (kind ? 85 : 308), "Cage motion command must start its owned special stream");
+        advance_ticks(180, NULL);
+        if (!(owner->state == S_IDLE && (miss ? victim->health == Q16_ONE : victim->health < Q16_ONE))) {
+          fprintf(stderr, "Cage special slot %d kind %d miss %d state %d health %d clip %d\n", slot, kind, miss, owner->state, victim->health,
+              fighter_move(owner)->clip);
+        }
+        check(owner->state == S_IDLE, "Cage special must finish recovery");
+        check(miss ? victim->health == Q16_ONE : victim->health < Q16_ONE, "Cage special must use its contact branch rather than inflict damage on a miss");
+      }
+    }
+    for (int kind = 0; kind < 2; ++kind) {
+      battle_init(slot ? 4 : 14, slot ? 14 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot];
+      Fighter *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      const CommandDef *command = NULL;
+      const Controls *controls = roster_def(14)->controls;
+      for (int i = 0; i < controls->command_count; ++i) {
+        if (controls->commands[i].button == (kind ? BUTTON_HIGH_PUNCH : BUTTON_LOW_KICK) && controls->commands[i].predicate == NULL) {
+          command = &controls->commands[i];
+          break;
+        }
+      }
+      check(command != NULL, "Cage special command must remain registered");
+      fighter_interrupt(owner, command->enter);
+      advance_ticks(1, NULL);
+      fighter_enter_state(owner, S_HIT);
+      advance_ticks(180, NULL);
+      check(victim->health == Q16_ONE, "Interrupted Cage special must not leave a delayed contact behind");
+    }
+    battle_init(slot ? 4 : 14, slot ? 14 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Cage CPU special row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 308, "Cage CPU special must select the same owned kick as the retail row");
+    advance_ticks(180, NULL);
+  }
+}
+
 static void check_reconnected_stage_commands(void) {
   const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -1142,6 +1203,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_cage_special_commands();
   check_reconnected_stage_commands();
   check_script_reactions();
   check_ground_throws();

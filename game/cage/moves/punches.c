@@ -1,7 +1,7 @@
 #include "../character.h"
 
 static void cage_jab(Fighter *fighter);
-static void cage_powered_punch(Fighter *fighter);
+void cage_powered_punch(Fighter *fighter);
 static void cage_high_punch(Fighter *fighter);
 
 void cage_script_powered_punch_tail(Fighter *fighter) {
@@ -18,7 +18,7 @@ static void cage_jab(Fighter *fighter) {
   cage_start_script(fighter, S_PUNCH, &cage_s_jab, cage_entry_retail_script_004e62f0);
 }
 
-static void cage_powered_punch(Fighter *fighter) {
+void cage_powered_punch(Fighter *fighter) {
   cage_start_script(fighter, S_PUNCH, &cage_s_powered_punch_script, cage_entry_retail_script_004e80d0);
 }
 
