@@ -204,7 +204,7 @@ def moves_for(character):
                           (('selected attacker/victim', 0x4de798),
                            ('extended throw', 0x4de610), ('short throw', 0x4de6b8)),
                           native=(('variant selector', 0x42cb80),)),
-            high_kick=move(0x46a680, (('Kai selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            high_kick=move(0x46a680, (('selected startup', 0x4e5ca0), ('recovery', 0x4e6998)), (('B', 2),)),
             roundhouse=move(0x46f1f0,
                             (('Kai attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)),
                             (('B', 34),)),
@@ -308,6 +308,7 @@ def moves_for(character):
             cpu_kick=move(0x479b20, (('attack', 0x4e80a8),),
                           native=(('return continuation', 0x479b70),)),
         )
+        shared['high_kick'] = move(0x46a680, (('selected startup', 0x4e5ca0), ('recovery', 0x4e6998)), (('B', 2),))
         return shared
     if character == 15:
         # Goro shares the common combat streams, while roster-selected
@@ -519,7 +520,7 @@ def moves_for(character):
                                ('owner release', 0x4e0148), ('victory', 0x4e0158), ('victim release', 0x4e01a0)),
                               native=(('Quan Chi scene entry', 0x43d040),)),
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),), native=(('stage continuation', 0x467fc0),)),
-            high_kick=move(0x46a680, (('Quan Chi attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 0),)),
+            high_kick=move(0x46a680, (('selected startup', 0x4e5ca0), ('recovery', 0x4e6998)), (('B', 2),)),
             low_kick=move(0x46a7b0, (('Quan Chi attacker', 0x4e5d90),), (('B', 5),)),
             roundhouse=move(0x46f1f0,
                             (('Quan Chi attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),

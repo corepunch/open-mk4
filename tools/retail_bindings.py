@@ -1174,6 +1174,10 @@ CHARACTER_BINDINGS[9][0x45b1f0] = replace(CHARACTER_BINDINGS[9][0x45b1f0], mmove
 CHARACTER_BINDINGS[9][0x470420] = Binding("tanya_script_lp_return", "game/tanya/character.c", ("tail",),
     flow="terminal", mmove=True, evidence="470420 nonblocking owner ready after peer release")
 
+for _cid in (8, 11, 14):
+    CHARACTER_BINDINGS[_cid][0x46a790] = replace(CHARACTER_BINDINGS[_cid][0x46a790], mmove=True,
+        evidence="46a790 -> 470c60 block4e6978: B[2] poses10/11/12, then46a7a0 ->4e6998")
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

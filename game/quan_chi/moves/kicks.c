@@ -1,13 +1,16 @@
 #include "../character.h"
 
+static const MoveDef s_narrow_kick = {.clip = 71, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+
 static void quan_chi_low_kick(Fighter *fighter);
 
 void quan_chi_script_kick_finish(Fighter *fighter) {
-  quan_chi_entry_retail_script_004e5c70(fighter);
+  native_narrow_kick_contact(fighter, quan_chi_entry_retail_script_004e6998);
 }
 
 void quan_chi_high_kick(Fighter *fighter) {
-  quan_chi_start(fighter, S_KICK, &quan_chi_s_high_kick, quan_chi_entry_retail_script_004e5ca0);
+  fighter_start_move(fighter, S_KICK, &s_narrow_kick);
+  quan_chi_entry_retail_script_004e5ca0(fighter);
 }
 
 static void quan_chi_low_kick(Fighter *fighter) {

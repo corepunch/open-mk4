@@ -289,32 +289,6 @@
         ]
       }
     ],
-    "0x4e5c70": [
-      {
-        "pc": "0x4e5c70",
-        "words": [
-          "0x6000002"
-        ]
-      },
-      {
-        "pc": "0x4e5c74",
-        "words": [
-          "0x24000000"
-        ]
-      },
-      {
-        "pc": "0x4e5c78",
-        "words": [
-          "0x7000000"
-        ]
-      },
-      {
-        "pc": "0x4e5c7c",
-        "words": [
-          "0x3f000000"
-        ]
-      }
-    ],
     "0x4e5ca0": [
       {
         "pc": "0x4e5c80",
@@ -1871,6 +1845,38 @@
           "0x46f270"
         ]
       }
+    ],
+    "0x4e6998": [
+      {
+        "pc": "0x4e6998",
+        "words": [
+          "0x29000000"
+        ]
+      },
+      {
+        "pc": "0x4e699c",
+        "words": [
+          "0x4000002"
+        ]
+      },
+      {
+        "pc": "0x4e69a0",
+        "words": [
+          "0x24000000"
+        ]
+      },
+      {
+        "pc": "0x4e69a4",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e69a8",
+        "words": [
+          "0x3f000000"
+        ]
+      }
     ]
   },
   "entry_contexts": {
@@ -1911,12 +1917,6 @@
       "count": 108,
       "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
       "sample": 69
-    },
-    "0x4e5c70": {
-      "clip": 71,
-      "count": 28,
-      "sample": 17,
-      "evidence": "Kai high-kick recovery enters at stored sample 17 of clip 71/28; bounded Kai script 0x4e5ca0 and native contact recovery 0x46a790."
     },
     "0x4e5e50": {
       "clip": 82,
@@ -1971,12 +1971,18 @@
       "count": 45,
       "sample": 0,
       "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
+    },
+    "0x4e6998": {
+      "clip": 71,
+      "count": 28,
+      "sample": 13,
+      "evidence": "46a790 -> block4e6978 emits poses10/11/12 then46a7a0 enters4e6998 with next stored pose13."
     }
   },
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "664e41cc0af5dba27437baa61e2f68645f7966433b21b2a86a42579f395311c4",
+  "inventory_sha256": "a871e7798ba0bca7e552cd27dba971fe51773b6683387d880dff4dcf845d8fae",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2021,7 +2027,7 @@
     "high_kick": {
       "source": "game/kai/character.c",
       "symbol": "kai_high_kick",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5ca0, 0x4e5c70); verified by typed Kai inventory."
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5ca0, 0x4e6998); verified by typed Kai inventory."
     },
     "high_punch": {
       "source": "game/kai/character.c",
@@ -2370,5 +2376,9 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw"
-  }
+  },
+  "mmove_scripts": [
+    "0x4e5ca0",
+    "0x4e6998"
+  ]
 }

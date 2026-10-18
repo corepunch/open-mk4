@@ -4,6 +4,7 @@
 
 /* Assemble a bounded native move once on entry. Rows run through the same
  * fixed-frame runner as generated scripts; callbacks never count elapsed time. */
+void native_narrow_kick_contact(Fighter *fighter, FighterFn recovery);
 void native_begin(Fighter *fighter, int first, int last, FighterFn end);
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action);
 void native_play(Fighter *fighter, bool immediate);

@@ -1,5 +1,7 @@
 #include "../character.h"
 
+static const MoveDef s_narrow_kick = {.clip = 71, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+
 static void kai_low_kick(Fighter *fighter);
 
 void kai_press_high_kick(Fighter *fighter) {
@@ -26,7 +28,8 @@ void kai_press_low_kick(Fighter *fighter) {
 }
 
 void kai_high_kick(Fighter *fighter) {
-  kai_start_script(fighter, S_KICK, &kai_s_high_kick, kai_entry_retail_script_004e5ca0);
+  fighter_start_move(fighter, S_KICK, &s_narrow_kick);
+  kai_entry_retail_script_004e5ca0(fighter);
 }
 
 static void kai_low_kick(Fighter *fighter) {
@@ -34,5 +37,5 @@ static void kai_low_kick(Fighter *fighter) {
 }
 
 void kai_script_kick_finish(Fighter *fighter) {
-  kai_entry_retail_script_004e5c70(fighter);
+  native_narrow_kick_contact(fighter, kai_entry_retail_script_004e6998);
 }

@@ -71,7 +71,7 @@ void cage_entry_retail_script_004e12a0(Fighter *fighter);
 void cage_entry_retail_script_004e12b0(Fighter *fighter);
 void cage_entry_retail_script_004e5870(Fighter *fighter);
 void cage_entry_retail_script_004e5ba8(Fighter *fighter);
-void cage_entry_retail_script_004e5c70(Fighter *fighter);
+void cage_entry_retail_script_004e6998(Fighter *fighter);
 void cage_entry_retail_script_004e5ca0(Fighter *fighter);
 void cage_entry_retail_script_004e5d90(Fighter *fighter);
 void cage_entry_retail_script_004e5e28(Fighter *fighter);

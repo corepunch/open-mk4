@@ -923,6 +923,37 @@ static void check_peer_release_lp_throw(int roster, int clip) {
   }
 }
 
+static void check_narrow_high_kick(void) {
+  const int roster[] = {8, 11, 14};
+  for (int index = 0; index < 3; ++index) {
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      battle_init(roster[index], 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[0];
+      Fighter *victim = &g_battle.fighters[1];
+      q16 distance = scenario == 2 ? 5 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = -distance / 2;
+      victim->body.pos[AXIS_X] = distance / 2;
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      fighter_press(owner, BUTTON_HIGH_KICK);
+      for (int tick = 0; tick < 45; ++tick) {
+        advance_ticks(1, input);
+        check(!fighter_fiber_active(owner), "Selected narrow high kicks must use frame tables throughout contact and recovery");
+      }
+      /* Native46a790 selects B[2], not the wide-kick B[1] record. */
+      q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? (int)(((int64_t)0x2147 * 0x3333) >> 16) : 0;
+      if (victim->health != Q16_ONE - damage) {
+        fprintf(stderr, "Narrow kick roster%d scenario%d health%d expected%d\n", roster[index], scenario, victim->health, Q16_ONE - damage);
+      }
+      check(victim->health == Q16_ONE - damage, "Narrow high kick must latch one B[2] contact, chip or miss");
+      check(owner->state == S_IDLE, "Narrow high kick must finish its own forward clip recovery");
+    }
+  }
+}
+
 static void check_short_diagonal_air_recovery(void) {
   battle_init(4, 0);
   g_battle.phase = PHASE_FIGHT;
@@ -1448,6 +1479,7 @@ int main(void) {
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);
   check_short_diagonal_air_recovery();
+  check_narrow_high_kick();
   check_jax_air_grab_command();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();

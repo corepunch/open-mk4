@@ -113,8 +113,8 @@ void quan_chi_entry_retail_script_004e01a0(Fighter *fighter) {
   retail_script_004e01a0(fighter);
 }
 
-void quan_chi_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+void quan_chi_entry_retail_script_004e6998(Fighter *fighter) {
+  retail_script_004e6998(fighter);
 }
 
 void quan_chi_entry_retail_script_004e5ca0(Fighter *fighter) {
