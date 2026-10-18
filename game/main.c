@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
           p1 = menu.p1;
           p2 = menu.p2;
           arena = menu.arena;
-          cpu = menu.mode == MENU_ARCADE;
+          cpu = menu.mode != MENU_TEAM;
           demo = false;
           battle_init(p1, p2);
           g_battle.cpu_level = difficulty;

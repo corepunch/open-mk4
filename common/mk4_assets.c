@@ -616,6 +616,8 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
     PUSH(assets->arenas, a);
   }
   assets->hud.font = load_geometry(package_geo(&archive, "mk4font_.geo"));
+  assets->hud.title_scene.textures = load_textures(package_geo(&archive, "mklogo_g.geo"));
+  assets->hud.select_scene.textures = load_textures(package_geo(&archive, "select_g.geo"));
   sound_bank_load(&assets->audio, &archive);
   /* 48a0d0 accepts indexed selectors 0..65 at 4ead30. Do not alias B. */
   const uint32_t sound_tables[] = {
@@ -778,6 +780,8 @@ void assets_free(Assets *a) {
   }
   geometry_free(&a->hud.font);
   geometry_free(&a->hud.effects);
+  geometry_free(&a->hud.title_scene);
+  geometry_free(&a->hud.select_scene);
   FREE_ARRAY(a->characters);
   FREE_ARRAY(a->clips);
   FREE_ARRAY(a->arenas);

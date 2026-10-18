@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 typedef enum MenuScreen {
-  MENU_TITLE,
   MENU_MODE,
   MENU_SELECT,
   MENU_ARENA
@@ -13,7 +12,11 @@ typedef enum MenuScreen {
 
 typedef enum MenuMode {
   MENU_ARCADE,
-  MENU_VERSUS
+  MENU_TEAM,
+  MENU_ENDURANCE,
+  MENU_TOURNAMENT,
+  MENU_PRACTICE,
+  MENU_EXIT
 } MenuMode;
 
 typedef struct FrontendMenu {
