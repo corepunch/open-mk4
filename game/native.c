@@ -58,6 +58,13 @@ void native_wait(Fighter *fighter) {
   fighter_fiber_await_frames(fighter);
 }
 
+void native_wait_loop(Fighter *fighter) {
+  fighter->native.move.endfunc = NULL;
+  fighter->native_immediate = false;
+  native_install(fighter);
+  fighter_fiber_await_frames(fighter);
+}
+
 void native_delay(Fighter *fighter, int frames) {
   if (frames <= 0) {
     return;
@@ -236,6 +243,6 @@ void native_until(Fighter *fighter, FighterTest condition) {
   }
   fighter->native_condition = condition;
   native_begin(fighter, 0, 0, NULL);
-  native_frame(fighter, 0, fighter_sample(fighter), condition_frame);
+  fighter->native.frames[0].thinkfunc = condition_frame;
   native_wait(fighter);
 }

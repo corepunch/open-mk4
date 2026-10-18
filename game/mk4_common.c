@@ -412,20 +412,26 @@ void mk4_script_air_getup(Fighter *victim) {
   victim->facing = -victim->facing;
   fighter_fiber_move(victim, S_KNOCKDOWN, &s_throw_getup);
   victim->sample_override = 46;
-  fighter_fiber_play_to(victim, 79, 1);
-  fighter_wait_ticks(1);
+  native_play_to(victim, 79, 1);
+  native_delay(victim, 1);
   fighter_fiber_finish(fighter_ready);
 }
 
+static void air_victim_frame(Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  if (owner->pending != NULL || owner->action != 0x502) {
+    air_throw_drop(victim);
+    victim->sample_override = air_throw_release_sample(victim);
+  }
+  memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+  victim->mmove_hold = (victim->flags & FF_PAIRED) != 0;
+}
+
 static void air_generated_victim(Fighter *victim) {
-  Fighter *owner = (Fighter *)fighter_opponent(victim);
-  while (victim->flags & FF_PAIRED) {
-    fighter_wait_ticks(1);
-    if (owner->pending != NULL || owner->action != 0x502) {
-      air_throw_drop(victim);
-      victim->sample_override = air_throw_release_sample(victim);
-    }
-    memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
+  if (victim->flags & FF_PAIRED) {
+    native_begin(victim, 0, 0, NULL);
+    victim->native.frames[0].thinkfunc = air_victim_frame;
+    native_wait(victim);
   }
   victim->sample_override = air_throw_release_sample(victim);
   victim->paired_release(victim);

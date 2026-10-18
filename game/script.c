@@ -66,18 +66,19 @@ bool mk4_mmove_pair_step(Fighter *owner) {
   return true;
 }
 
-void mk4_script_pair_advance(Fighter *fighter, int count) {
+static void pair_advance_frame(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  for (int i = 0; i < count; ++i) {
-    fighter_wait_ticks(1);
-    if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
-      fighter_fiber_finish(fighter_ready);
-    }
-    fighter->sample_override = mini(fighter_move(fighter)->last, fighter->sample_override + 1);
-    if (!(victim->flags & FF_PAIR_RELEASE)) {
-      victim->sample_override = mini(fighter_move(victim)->last, victim->sample_override + 1);
-    }
+  if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
+    fighter_finish_mmove(fighter, fighter_ready);
+    return;
   }
+  if (!(victim->flags & FF_PAIR_RELEASE)) {
+    victim->sample_override = mini(fighter_move(victim)->last, fighter_sample(victim) + 1);
+  }
+}
+
+void mk4_script_pair_advance(Fighter *fighter, int count) {
+  native_calls(fighter, count, 1, pair_advance_frame);
 }
 
 /* 45a780 submits the remaining cursor through ordinary playback. */
@@ -93,36 +94,39 @@ void mk4_script_blend_bind(Fighter *fighter, int clip, int count) {
   fighter->sample_override = 1;
 }
 
+static void blend_weight_frame(Fighter *fighter, float weight) {
+  fighter->blend_weight = (q16)weight;
+}
+
 void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first) {
   require(step > 0 && first >= 0 && first <= Q16_ONE, "Invalid native pose blend");
   int source = fighter_move(fighter)->clip;
-  int sample = fighter->sample_override;
+  int sample = fighter_sample(fighter);
   bind_clip(fighter, clip, count, target);
   fighter->blend_clip = source;
   fighter->blend_sample = sample;
   fighter->blend_duration = 1;
-  for (q16 weight = first; weight <= Q16_ONE; weight += step) {
-    fighter->blend_weight = weight;
-    fighter_wait_ticks(1);
+  fighter->blend_weight = first;
+  int frames = (Q16_ONE - first) / step + 1;
+  native_begin(fighter, 1, frames, NULL);
+  for (int frame = 1; frame <= frames; ++frame) {
+    fighter->native.frames[frame - 1] = (mframe_t){blend_weight_frame, (float)(first + mini(frame, frames - 1) * step), NULL};
   }
+  native_wait(fighter);
   fighter->blend_duration = 0;
   fighter->blend_weight = -1;
 }
 
 void mk4_script_advance(Fighter *fighter, int count, int step) {
-  require(count >= 0 && step != 0 && fighter->sample_override >= 0, "Invalid generated counted playback");
-  for (int i = 0; i < count; ++i) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = maxi(0, mini(fighter_move(fighter)->last, fighter->sample_override + step));
-  }
+  require(count >= 0 && step != 0 && fighter_sample(fighter) >= 0, "Invalid generated counted playback");
+  native_advance(fighter, count, step);
 }
 
 void mk4_script_finish_clip(Fighter *fighter, int step) {
   int last = fighter_move(fighter)->last;
   require(last != MOVE_END && last >= 0, "Generated playback needs a decoded clip length");
-  fighter_fiber_play_to(fighter, step > 0 ? last : 0, step);
-  /* A full-clip request submits its final sample before returning. */
-  fighter_wait_ticks(1);
+  native_play_to(fighter, step > 0 ? last : 0, step);
+  native_delay(fighter, 1);
 }
 
 void mk4_script_stop(Fighter *fighter) {
@@ -140,8 +144,8 @@ void mk4_script_avoid_set(Fighter *fighter) {
 }
 
 void mk4_script_reverse_return(Fighter *fighter) {
-  fighter_fiber_play_to(fighter, 0, -1);
-  fighter_wait_ticks(1);
+  native_play_to(fighter, 0, -1);
+  native_delay(fighter, 1);
   fighter_fiber_finish(fighter_ready);
 }
 
@@ -220,9 +224,7 @@ void mk4_script_touchable(Fighter *fighter) {
 }
 
 void mk4_script_wait_land(Fighter *fighter) {
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
 }
 
 void mk4_script_damage(Fighter *fighter, int damage) {
@@ -260,14 +262,14 @@ void mk4_script_pair_to(Fighter *owner, int sample) {
 }
 
 /* 45bbc0/45beb0: reverse both live cursors, then hand off for one actor tick. */
-void mk4_script_pair_back_to(Fighter *owner, int sample) {
+static void pair_back_frame(Fighter *owner) {
   Fighter *victim = (Fighter *)fighter_opponent(owner);
-  while (owner->sample_override > sample) {
-    fighter_wait_ticks(1);
-    --owner->sample_override;
-    victim->sample_override = maxi(0, victim->sample_override - 1);
-  }
-  fighter_wait_ticks(1);
+  victim->sample_override = maxi(0, fighter_sample(victim) - 1);
+}
+
+void mk4_script_pair_back_to(Fighter *owner, int sample) {
+  native_calls(owner, fighter_sample(owner) - sample, -1, pair_back_frame);
+  native_delay(owner, 1);
 }
 
 void mk4_script_thrown_finish(Fighter *fighter) {
@@ -275,12 +277,21 @@ void mk4_script_thrown_finish(Fighter *fighter) {
   fighter_fiber_finish(fighter->health > 0 ? fighter_ready : NULL);
 }
 
-static void throw_hold(Fighter *victim) {
+static void throw_hold_frame(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
-  while (victim->flags & FF_PAIRED) {
-    fighter_wait_ticks(1);
+  if (owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+  }
+  victim->mmove_hold = (victim->flags & FF_PAIRED) != 0;
+}
+
+static void throw_hold(Fighter *victim) {
+  if (victim->flags & FF_PAIRED) {
+    native_begin(victim, 0, 0, NULL);
+    victim->native.frames[0].thinkfunc = throw_hold_frame;
+    native_wait(victim);
+    const Fighter *owner = fighter_opponent(victim);
     if (owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
-      victim->flags &= ~(unsigned)FF_PAIRED;
       mk4_script_thrown_finish(victim);
     }
   }
@@ -558,13 +569,7 @@ void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int dura
 }
 
 void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {
-  for (int visit = 0; visit < queries; ++visit) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = mini(fighter_move(fighter)->last, fighter->sample_override + 1);
-    if (battle_contact(fighter, record) != CONTACT_MISS) {
-      break;
-    }
-  }
+  native_queries(fighter, record, queries, 1);
   fighter->action = ACTION_RETAIL_1006;
   fighter->body.physics = NULL;
   fighter_set_speed(fighter, 0);
