@@ -521,7 +521,17 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       float x = q16_float(p->heading[0]), z = q16_float(p->heading[1]);
       Mat3 basis = {{x, 0, -z, 0, 1, 0, z, 0, x}};
       Vec3 origin = {q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])};
-      draw_shared_mesh(cv, camera, &assets->hud.effects, projectile_mesh_frame(p), origin, basis, q16_float(p->mesh_animation->scale), NULL);
+      const MeshAnimation *animation = p->mesh_animation;
+      Vec3 offset = {q16_float(animation->offset[0]), q16_float(animation->offset[1]), q16_float(animation->offset[2])};
+      origin = vec_add(origin, mat3_apply(basis, vec_scale(offset, q16_float(animation->scale))));
+      const Geometry *geometry = mesh_animation_geometry(assets, animation);
+      int frame = projectile_mesh_frame(p);
+      require(frame >= 0 && (size_t)frame < geometry->meshes.count, "Projectile frame outside geometry bank");
+      if (geometry->sprites.data[frame].w > 0) {
+        draw_billboard(cv, camera, geometry, frame, origin, q16_float(animation->scale), animation->additive);
+      } else {
+        draw_shared_mesh(cv, camera, geometry, frame, origin, basis, q16_float(animation->scale), NULL);
+      }
     }
     if (p->kind == PROJECTILE_SWORD) {
       Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
@@ -571,11 +581,11 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       const ParticleVisual *visual = p->visual;
       int frame = visual->animation.first + mini(visual->animation.count - 1, p->age / visual->animation.period);
       Vec3 origin = {q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])};
+      const Geometry *geometry = mesh_animation_geometry(assets, &visual->animation);
       if (visual->billboard) {
-        draw_billboard(cv, camera, &assets->hud.effects, frame, origin, q16_float(p->scale), visual->additive);
+        draw_billboard(cv, camera, geometry, frame, origin, q16_float(p->scale), visual->additive);
       } else {
-        draw_shared_mesh(
-            cv, camera, &assets->hud.effects, frame, origin, frame <= 3 ? drop_basis(p->vel) : velocity_basis(p->vel), q16_float(p->scale), &light);
+        draw_shared_mesh(cv, camera, geometry, frame, origin, frame <= 3 ? drop_basis(p->vel) : velocity_basis(p->vel), q16_float(p->scale), &light);
       }
       continue;
     }

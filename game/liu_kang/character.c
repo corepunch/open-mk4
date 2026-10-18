@@ -389,3 +389,7 @@ void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter) {
 const mmove_t *liu_kang_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_repeat_phase;
 }
+
+void liu_kang_entry_retail_script_004e9de8(Fighter *fighter) {
+  retail_script_004e9de8(fighter);
+}

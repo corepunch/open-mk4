@@ -48,7 +48,11 @@ class ControlTests(unittest.TestCase):
         text = generate_controls(self.image, 14, profile_for(14))
         for slot in ('CPU_SPECIAL_NEAR', 'CPU_SPECIAL_1', 'CPU_SPECIAL_2'):
             self.assertIn('[%s] = cage_cpu_kick' % slot, text)
-        self.assertNotIn('[CPU_PROJECTILE]', text)
+        self.assertIn('[CPU_PROJECTILE] = cage_low_orb', text)
+        profile = copy.deepcopy(profile_for(14))
+        del profile['cpu_bindings']['0x497080']
+        self.assertNotIn('[CPU_PROJECTILE]', generate_controls(self.image, 14, profile))
+        self.assertIn('unregistered retail CPU target 0x497080', audit(self.image, 14, profile=profile)['coverage_errors'])
 
     def test_cpu_reachability_through_input_does_not_supply_missing_cpu_rows(self):
         profile = copy.deepcopy(profile_for(14))

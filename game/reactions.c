@@ -718,11 +718,7 @@ static void liu_record_impact(Fighter *fighter) {
 
 static void liu_record_script(Fighter *fighter) {
   int id = fighter->reaction;
-  if (id == 64) {
-    slide(fighter, 0x4000);
-    battle_sound(SOUND_B, 1);
-    native_play_to(fighter, 39, 1);
-  } else if (id == 65) {
+  if (id == 65) {
     battle_sound(SOUND_A, 38);
     slide(fighter, 0x5999);
     native_play_to(fighter, 26, 1);
@@ -763,7 +759,11 @@ static void react_liu_record(Fighter *fighter) {
   int index = fighter->reaction == 64 ? 0 : fighter->reaction == 65 ? 1 : fighter->reaction == 31 ? 2 : 3;
   fighter_start_move(fighter, index < 2 ? S_HIT : S_KNOCKDOWN, &liu_reaction_moves[index]);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, liu_record_script, NULL);
+  if (fighter->reaction == 64) {
+    liu_kang_entry_retail_script_004e9de8(fighter);
+  } else {
+    fighter_start_fiber(fighter, liu_record_script, NULL);
+  }
 }
 
 // clang-format off: Keep table entries on one row, including long rows.

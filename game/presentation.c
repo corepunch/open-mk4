@@ -40,6 +40,11 @@ void battle_object_light(Projectile *object, const OrbitLightDef *def) {
   orbit_light_step(&object->light);
 }
 
+const Geometry *mesh_animation_geometry(const Assets *assets, const MeshAnimation *animation) {
+  require(assets != NULL && animation != NULL && (animation->source == MESH_SHARED || animation->source == MESH_SHARED2), "Invalid effect geometry bank");
+  return animation->source == MESH_SHARED2 ? &assets->hud.effects2 : &assets->hud.effects;
+}
+
 int projectile_mesh_frame(const Projectile *object) {
   const MeshAnimation *animation = object->mesh_animation;
   require(animation != NULL && animation->count > 0 && animation->period > 0, "Invalid object mesh animation");
@@ -241,8 +246,8 @@ void battle_camera_shake(int pulses, int interval, q16 amount) {
 }
 
 void battle_particles(const Fighter *fighter, int joint, int count, bool ice) {
-  static const ParticleVisual blood = {.animation = {0, 1, 1, Q16_ONE}};
-  static const ParticleVisual chip = {.animation = {73, 1, 1, Q16_ONE}};
+  static const ParticleVisual blood = {.animation = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE}};
+  static const ParticleVisual chip = {.animation = {.first = 73, .count = 1, .period = 1, .scale = Q16_ONE}};
   Vec3 origin;
   Mat3 unused;
   fighter_joint_position(fighter, joint, &origin, &unused);
@@ -566,7 +571,7 @@ void battle_step_presentation(void) {
       if (p->splash && p->pos[AXIS_Y] >= 0 && p->vel[AXIS_Y] > 0) {
         /* 4745d0: floor contact replaces the drop with 4e7ab0's
          * nine two-tick meshes and a final one-tick tail. */
-        static const ParticleVisual splash = {.animation = {4, 9, 2, Q16_ONE}};
+        static const ParticleVisual splash = {.animation = {.first = 4, .count = 9, .period = 2, .scale = Q16_ONE}};
         p->visual = &splash;
         p->pos[AXIS_Y] = -0x7ae;
         memset(p->vel, 0, sizeof p->vel);

@@ -578,9 +578,17 @@ typedef struct OrbitLight {
   q16 phase, strength, pos[3];
 } OrbitLight;
 
+enum {
+  MESH_SHARED,
+  MESH_SHARED2
+};
+
 typedef struct MeshAnimation {
   int first, count, period;
   q16 scale;
+  int source;
+  q16 offset[3];
+  bool additive;
 } MeshAnimation;
 
 struct Projectile {
@@ -588,6 +596,7 @@ struct Projectile {
   const WeaponDef *weapon;
   int clip, sample; /* stationary clone's captured pose */
   q16 pos[3], vel[3];
+  q16 gravity;
   q16 heading[2];
   q16 angle[3], root_y; /* captured clone orientation/root offset */
   ProjectileFn step;
@@ -929,6 +938,7 @@ Vec3 battle_follow_eye(Vec3 *heading);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 int projectile_mesh_frame(const Projectile *object);
+const Geometry *mesh_animation_geometry(const Assets *assets, const MeshAnimation *animation);
 void battle_particles(const Fighter *fighter, int joint, int count, bool ice);
 /* Sprays retail blood drops and spatter from a damaging hit near point (world
  * units), mostly away from the attacker and scaled by damage. */

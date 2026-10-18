@@ -309,4 +309,5 @@ void liu_kang_thrown_play_to(Fighter *victim, int sample, int step);
 void liu_kang_uppercut_script(Fighter *fighter);
 int liu_kang_victim_action(const Fighter *fighter);
 
+void liu_kang_entry_retail_script_004e9de8(Fighter *fighter);
 #endif

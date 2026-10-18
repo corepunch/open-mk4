@@ -71,7 +71,7 @@ static const AttachmentDef first_spine = {.model = SCENE_MODEL_SPINE,
     .piece_offset = {0, 0x2b43 / 65536.f, 0},
     .piece_kind = 0,
     .scene_space = true};
-static const ParticleVisual neck_blood_visual = {.animation = {0, 1, 1, Q16_ONE}};
+static const ParticleVisual neck_blood_visual = {.animation = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE}};
 static const ParticleSpray neck_blood = {
     .visual = &neck_blood_visual, .count = 1, .lifetime = 180, .gravity = 0x51e, .spread = {0x7ae, 0x7ae, 0x7ae}, .splash = true};
 // clang-format off: Keep table entries on one row, including long rows.

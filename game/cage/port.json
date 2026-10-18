@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "1e1e8bceb096df3fbc673254cc942b533ae7330b280b1d4fba159e4b178896fc",
+  "inventory_sha256": "4bf4aceeb6dbc8fbd5bf13757fe1449bfbf9a97349741c8e50b82c88cdf3dd7d",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -49,7 +49,8 @@
     "0x4e80f4",
     "0x4e9910",
     "0x4e9f78",
-    "0x4e6270"
+    "0x4e6270",
+    "0x4ed0d8"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -282,6 +283,16 @@
       "source": "game/cage/moves/groin_punch.c",
       "symbol": "cage_groin_punch",
       "evidence": "468aa0 binds clip438 via53ce10, extends5/11, queries D[27], rewinds/extensions5 times or12 on block, then4e5ba8. Female and1014 victims bypass contacts."
+    },
+    "high_orb": {
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_high_orb",
+      "evidence": "Native497070/80 ->4ed0d8; independent4970d0 orb uses C0/4ebed0 and ten share2 mesh frames."
+    },
+    "low_orb": {
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_low_orb",
+      "evidence": "Native497070/80 ->4ed0d8; independent4970d0 orb uses C0/4ebed0 and ten share2 mesh frames."
     }
   },
   "entry_adapters": {
@@ -301,14 +312,14 @@
       "evidence": "Cage input/CPU inventory selects this exact target at 0x46d1d0."
     },
     "0x497070": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_cpu_projectile",
-      "evidence": "Cage input/CPU inventory selects this exact target at 0x497070."
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_high_orb",
+      "evidence": "Native497070 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
     "0x497080": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_cpu_projectile",
-      "evidence": "Cage input/CPU inventory selects this exact target at 0x497080."
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_low_orb",
+      "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
     "0x467e00": {
       "source": "game/cage/moves/fan.c",
@@ -496,6 +507,16 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "64": {
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record",
+      "evidence": "Cage orb C0 selects shared reaction64; generated64 body4e9de8 and existing block frame recovery."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Cage orb C0 selects shared reaction2; generated64 body4e9de8 and existing block frame recovery."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",
@@ -534,6 +555,16 @@
       "source": "game/cage/moves/groin_punch.c",
       "symbol": "cage_groin_punch",
       "evidence": "468aa0 binds clip438 via53ce10, extends5/11, queries D[27], rewinds/extensions5 times or12 on block, then4e5ba8. Female and1014 victims bypass contacts."
+    },
+    "0x497070": {
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_high_orb",
+      "evidence": "Native497070 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
+    },
+    "0x497080": {
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_low_orb",
+      "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     }
   },
   "command_predicates": {
@@ -549,7 +580,12 @@
     "0x479b20": {
       "source": "game/cage/moves/kicks.c",
       "symbol": "cage_cpu_kick",
-      "evidence": "Typed Cage command target 0x479b20; generated startup and native 479f00/479b70 contact branches."
+      "evidence": "Typed near/medium/far Cage CPU rows all select native479b20 shadow kick."
+    },
+    "0x497080": {
+      "source": "game/cage/moves/projectile.c",
+      "symbol": "cage_low_orb",
+      "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     }
   },
   "mmove_scripts": [
@@ -578,6 +614,7 @@
     "0x4e6360",
     "0x4e63b0",
     "0x4e62a0",
-    "0x4e5d90"
+    "0x4e5d90",
+    "0x4ed0d8"
   ]
 }

@@ -97,6 +97,10 @@
     "0x4e9ad0": {
       "evidence": "reaction81 victim owns released recovery including KO",
       "return_to": "mk4_script_thrown_ready"
+    },
+    "0x4e9de8": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Shared native C0 reaction64 completes clip130 with friction and KO-aware controller return."
     }
   },
   "generated_scripts": [
@@ -156,10 +160,11 @@
     "0x4ec7f0",
     "0x4ed678",
     "0x4ed6c0",
-    "0x4ed6f8"
+    "0x4ed6f8",
+    "0x4e9de8"
   ],
   "integration_source": "game/liu_kang/character.c",
-  "inventory_sha256": "cc39cc69fc7f9db78cecfd99840684051a8f9026a10ed6e28c7d8cdfa5618bf9",
+  "inventory_sha256": "053a2cc67cf25fae7314534f66ec89a746ad76f3f4b09374bddc0e4eedb4c935",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
@@ -341,6 +346,11 @@
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
       "source": "game/weapons.c",
       "symbol": "weapon_throw"
+    },
+    "fireball_reaction": {
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record",
+      "evidence": "Shared64 dispatcher selects the generated4e9de8 victim stream for C0 fireballs."
     }
   },
   "output": "game/liu_kang/generated/scripts.inc",
@@ -625,6 +635,7 @@
     "0x4e6360",
     "0x4e63b0",
     "0x4e62a0",
-    "0x4e6d08"
+    "0x4e6d08",
+    "0x4e9de8"
   ]
 }

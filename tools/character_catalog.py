@@ -318,6 +318,8 @@ def _moves_for(character):
                             native=(('roster dispatch', 0x448160), ('scene continuation', 0x448480))),
             fatality_2=move(0x467cd0, (('scene entry', 0x4e5870),),
                             native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0))),
+            high_orb=move(0x497070, (('caster', 0x4ed0d8),), (('C', 0),), native=(('independent projectile', 0x4970d0),)),
+            low_orb=move(0x497080, (('caster', 0x4ed0d8),), (('C', 0),), native=(('independent projectile', 0x4970d0),)),
             groin_punch=move(0x468aa0, (('owner reverse recovery', 0x4e5ba8), ('victim stun', 0x4e9f78)), (('D', 27),),
                              native=(('contact loop', 0x48d450), ('victim reaction', 0x4879c0))),
             powered_punch=move(0x479ec0, (('attack', 0x4e80d0), ('powered continuation', 0x4e80c8),
@@ -446,6 +448,7 @@ def _moves_for(character):
                 shared[name] = {**shared[name], 'contacts': (("D", selector),)}
     if character == 3:
         shared.update(
+            fireball_reaction=move(0x486730, (('native C0 victim', 0x4e9de8),)),
             fatality_1=move(0x467ce0, native=(('Liu Kang dragon scene', 0x450930), ('victim', 0x451190), ('blood/cuts', 0x451300))),
             fatality_2=move(0x467cd0, (('setup events', 0x4dfff8), ('paired opening/projectile', 0x4e0020)), native=(('Liu Kang scene', 0x43c3d0), ('fireball object', 0x43c540), ('victim hold', 0x481360), ('victim explosion', 0x481420))),
             sidestep=move(0x469250, native=(('direction/playback', 0x4692e0),)),

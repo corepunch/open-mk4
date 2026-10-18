@@ -2,6 +2,7 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 14. */
 #include "script.h"
 
+void cage_orb_spawn(Fighter *, int);
 void cage_script_air_finish(Fighter *);
 void cage_script_air_release(Fighter *);
 void cage_script_close_hk_tail(Fighter *);
@@ -3160,4 +3161,45 @@ static inline void retail_script_004e9f78(Fighter *fighter) {
   /* EXE 004e9f8c: 0x4700020e 0x13ecd9 */
   mk4_mmove_bind(fighter, 126, 15, 0);
   fighter_mmove_phase(fighter, &retail_script_004e9f78_phase);
+}
+
+static inline void retail_script_004ed0d8(Fighter *fighter);
+
+static void retail_script_004ed0d8_at_16(Fighter *fighter) {
+  fighter->sample_override = 20;
+  /* EXE 004ed0ec: 0x40000000 0x4f 0x4970d0 */
+  cage_orb_spawn(fighter, 79);
+  /* EXE 004ed0f8: 0x3000000 */
+}
+
+static void retail_script_004ed0d8_at_26(Fighter *fighter) {
+  /* EXE 004ed0fc: 0x2d000000 */
+  fighter->action = ACTION_RETAIL_1007;
+  /* EXE 004ed100: 0x34000016 */
+}
+
+static void retail_script_004ed0d8_at_49(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static const int retail_script_004ed0d8_samples[] = {0, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 29, 29,
+    29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed0d8_frames[49] = {
+  [15] = {.thinkfunc = retail_script_004ed0d8_at_16},
+  [25] = {.thinkfunc = retail_script_004ed0d8_at_26},
+  [48] = {.thinkfunc = retail_script_004ed0d8_at_49},
+};
+// clang-format on
+static const mmove_t retail_script_004ed0d8_phase = {
+    .firstframe = 0, .lastframe = 48, .frame = retail_script_004ed0d8_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ed0d8_samples};
+
+static inline void retail_script_004ed0d8(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed0d8: 0x2700005f */
+  battle_sound(SOUND_C, 95);
+  /* EXE 004ed0dc: 0xf000000 0x13ebb3 */
+  mk4_mmove_bind(fighter, 28, 30, 0);
+  /* EXE 004ed0e4: 0x4d000008 */
+  fighter_mmove_phase(fighter, &retail_script_004ed0d8_phase);
 }

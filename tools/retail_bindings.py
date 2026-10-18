@@ -1306,3 +1306,5 @@ CHARACTER_BINDINGS[11][0x490bd0] = Binding('kai_weapon_face_peer', 'game/kai/mov
 CHARACTER_BINDINGS[11][0x470420] = replace(CHARACTER_BINDINGS[11].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
 CHARACTER_BINDINGS[11][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared weapon air native contact and landing frame runner')
 CHARACTER_BINDINGS[11][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared weapon air native contact and landing frame runner')
+
+CHARACTER_BINDINGS[14][0x4970d0] = Binding('cage_orb_spawn', 'game/cage/moves/projectile.c', ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(79,), mmove=True, evidence='4970d0 snapshots311/312, selects ten share2 meshes, sets parabolic motion and installs C0 contact descriptor4ed108')

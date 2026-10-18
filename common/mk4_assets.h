@@ -113,7 +113,7 @@ typedef struct Arena {
 ARRAY_TYPE(Arenas, Arena);
 
 typedef struct Hud {
-  Geometry font, effects, title_scene, select_scene;
+  Geometry font, effects, effects2, title_scene, select_scene;
   int names[MK4_ROSTER_COUNT];
 } Hud;
 

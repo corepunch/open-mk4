@@ -125,4 +125,8 @@ void cage_groin_punch(Fighter *fighter);
 bool cage_can_groin_punch(const Fighter *fighter);
 void cage_entry_retail_script_004e9f78(Fighter *fighter);
 void cage_entry_retail_script_004e6270(Fighter *fighter);
+void cage_high_orb(Fighter *fighter);
+void cage_low_orb(Fighter *fighter);
+void cage_orb_spawn(Fighter *fighter, int task_type);
+void cage_entry_retail_script_004ed0d8(Fighter *fighter);
 #endif

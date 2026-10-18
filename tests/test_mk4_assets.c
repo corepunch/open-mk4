@@ -265,6 +265,50 @@ static void fallback_clip_clock(const Assets *assets) {
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
 }
 
+static void cage_orb_assets(const Assets *assets) {
+  check(assets->hud.effects2.meshes.count > 280 && assets->hud.effects2.textures.count > 0, "Cage orbs require the original share2 geometry and materials");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int high = 0; high < 2; ++high) {
+      battle_init(slot ? 4 : 14, slot ? 14 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 half_distance = (high ? 4 : 3) * Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      const Button sequence[] = {
+          BUTTON_DOWN, high ? (slot ? BUTTON_LEFT : BUTTON_RIGHT) : (slot ? BUTTON_RIGHT : BUTTON_LEFT), high ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH};
+      for (int entry = 0; entry < 3; ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      bool visible = false;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        for (int index = 0; index < MAX_PROJECTILES; ++index) {
+          const Projectile *orb = &g_battle.projectiles[index];
+          if (orb->kind == PROJECTILE_FIREBALL && orb->mesh_animation != NULL && orb->mesh_animation->source == MESH_SHARED2) {
+            visible = true;
+            const Geometry *geometry = mesh_animation_geometry(assets, orb->mesh_animation);
+            int mesh = projectile_mesh_frame(orb);
+            check(geometry == &assets->hud.effects2 && mesh >= 271 && mesh <= 280 && geometry->sprites.data[mesh].w > 0 && orb->mesh_animation->additive,
+                "Orb animation must select the extracted native sprite frames from their own geometry bank");
+          }
+        }
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Cage orb owner and victim must use frame tables");
+      }
+      check(visible && victim->health == Q16_ONE - 0x1999 && owner->state == S_IDLE, "Both Cage arcs must resolve native contact with animated victim bounds");
+    }
+  }
+}
+
 static void restored_high_punch_contacts(const Assets *assets) {
   const int rosters[] = {5, 11};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -574,6 +618,7 @@ int main(void) {
   axe_followup_contacts(&assets);
   kai_weapon_contacts(&assets);
   restored_high_punch_contacts(&assets);
+  cage_orb_assets(&assets);
   cage_groin_command(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

@@ -1843,6 +1843,75 @@ static void check_goro_reconnected_counters(void) {
   }
 }
 
+static Projectile *cage_orb(void) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *projectile = &g_battle.projectiles[i];
+    if (projectile->kind == PROJECTILE_FIREBALL && projectile->mesh_animation != NULL && projectile->mesh_animation->first == 271) {
+      return projectile;
+    }
+  }
+  return NULL;
+}
+
+static void check_cage_orb_commands(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int high = 0; high < 2; ++high) {
+      for (int scenario = 0; scenario < 7; ++scenario) {
+        battle_init(slot ? 4 : 14, slot ? 14 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 half_distance = scenario == 3 ? 6 * Q16_ONE : high ? 4 * Q16_ONE : 3 * Q16_ONE;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        command(
+            slot, BUTTON_DOWN, high ? (slot ? BUTTON_LEFT : BUTTON_RIGHT) : (slot ? BUTTON_RIGHT : BUTTON_LEFT), high ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH);
+        check(fighter_move(owner)->clip == 28 && owner->action == (high ? 0x312 : 0x311),
+            "Cage orb commands must select the shared cast with distinct native actions");
+        Input input[2] = {0};
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        } else if (scenario == 2) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+        } else if (scenario == 6) {
+          victim->body.pos[AXIS_Z] = 2 * Q16_ONE;
+        }
+        if (scenario == 4) {
+          battle_react(owner, 37);
+        }
+        bool launched = false;
+        for (int tick = 0; tick < 180; ++tick) {
+          battle_step(input);
+          Projectile *projectile = cage_orb();
+          if (!launched && projectile != NULL) {
+            launched = true;
+            check(projectile->gravity == (high ? 0x28f : 0x189), "Each Cage orb must retain its native arc");
+            check(projectile->mesh_animation->source == MESH_SHARED2 && projectile->heading[1] == 0,
+                "Orb geometry and heading must come from the native bank and cast-time snapshot");
+            if (scenario == 5) {
+              battle_react(owner, 37);
+            }
+          }
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage orb casts and all reached victim reactions must use frame tables");
+        }
+        q16 damage = scenario == 0 || scenario == 5 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(
+              stderr, "Cage orb slot%d high%d scenario%d health%d expected%d launched%d\n", slot, high, scenario, victim->health, Q16_ONE - damage, launched);
+        }
+        check(launched == (scenario != 4) && victim->health == Q16_ONE - damage,
+            "Orb must preserve native hit/chip/crouch/miss behavior and independent lifetime across owner interruption");
+        check(owner->state == S_IDLE && cage_orb() == NULL, "Cage caster and independent orb must recover and retire");
+      }
+    }
+    battle_init(slot ? 4 : 14, slot ? 14 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_PROJECTILE), "Cage CPU projectile row must be registered");
+    advance_ticks(1, NULL);
+    check(
+        fighter_move(&g_battle.fighters[slot])->clip == 28 && g_battle.fighters[slot].action == 0x311, "Cage CPU row must use the low orb rather than a sweep");
+  }
+}
+
 static void check_cage_special_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kind = 0; kind < 2; ++kind) {
@@ -2218,6 +2287,7 @@ int main(void) {
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_cage_special_commands();
+  check_cage_orb_commands();
   check_reconnected_stage_commands();
   check_script_reactions();
   check_ground_throws();
