@@ -124,6 +124,26 @@ class CompilerTests(unittest.TestCase):
         self.assertNotIn('goto L_00570000;', source)
         self.assertNotIn('goto L_00570004;', source)
 
+    def test_postprocessor_cli_updates_inc_files_in_place(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'sample.inc'
+            path.write_text('''static inline void sample(void) {
+L_00000000: {
+  work();
+  goto L_00000004;
+}
+L_00000004: {
+  goto L_00000000;
+}
+}
+''')
+            subprocess.run([sys.executable, str(ROOT / 'tools/retail_c_postprocess.py'), str(path)],
+                           check=True, capture_output=True, text=True)
+            source = path.read_text()
+        self.assertNotIn('goto L_00000004;', source)
+        self.assertIn('for (;;) {', source)
+        self.assertIn('continue;', source)
+
     def test_character_selector_is_specialized_and_optional_prefix_is_not_speed(self):
         program, _ = compile_program(self.image, 0x4e5ca0, 3, bindings={0x46a760: Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic selector continuation')})
         self.assertEqual(next(row for row in program['instructions'] if row['opcode'] == '0x3c')['selected_character'], 3)

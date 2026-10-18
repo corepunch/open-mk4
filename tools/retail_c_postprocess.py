@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Simplify the control flow emitted by the retail script compiler."""
+"""Simplify generated retail script C, either during compilation or in place."""
+import argparse
 import re
+from pathlib import Path
+import sys
 
+ROOT = Path(__file__).resolve().parents[1]
 
-LABEL = re.compile(r'^L_([0-9a-f]{8}): \{$')
+LABEL = re.compile(r'^L_([0-9a-f]{8}): \{(?: /\*.*\*/)?$')
 GOTO = re.compile(r'^\s*goto L_([0-9a-f]{8});$')
 
 
@@ -115,3 +119,40 @@ def postprocess(source):
                       if LABEL.match(line) and LABEL.match(line).group(1) not in referenced else line
                       for line in function)
     return '\n'.join(output) + ('\n' if source.endswith('\n') else '')
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('paths', nargs='*', type=Path,
+                        help='generated .inc files or directories; defaults to game/generated')
+    args = parser.parse_args(argv)
+    paths = args.paths or [ROOT / 'game/generated']
+    files = set()
+    for path in paths:
+        if path.is_dir():
+            files.update(path.rglob('*.inc'))
+        elif path.is_file() and path.suffix == '.inc':
+            files.add(path)
+        else:
+            parser.error('expected an existing .inc file or directory: %s' % path)
+    if not files:
+        parser.error('no generated .inc files found')
+
+    # Use the same canonical formatter as compiler generation so in-place runs
+    # leave files byte-for-byte consistent with --generate --check.
+    sys.path.insert(0, str(ROOT / 'tools'))
+    from retail_codegen import format_c
+
+    changed = 0
+    for path in sorted(files):
+        source = path.read_text()
+        output = format_c(postprocess(source))
+        if output != source:
+            path.write_text(output)
+            changed += 1
+    print('Processed %d generated .inc files; updated %d.' % (len(files), changed))
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
