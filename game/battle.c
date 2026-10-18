@@ -255,6 +255,8 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
     fighter->ticks++;
     if (fighter->script != NULL) {
       fighter->script(fighter);
+    } else if (fighter->current_mmove != NULL) {
+      fighter_step_mmove(fighter);
     } else if (fighter->sequence != NULL) {
       fighter_step_sequence(fighter);
     } else if (state->flags & SF_ATTACK) {
@@ -644,6 +646,8 @@ void battle_step(const Input input[2]) {
           /* Finisher presentation may keep a generated pose loop after the
            * result. The next round/reset retires its actor-owned stack. */
           fighter_step_fiber(fighter);
+        } else if (fighter->current_mmove != NULL) {
+          fighter_step_mmove(fighter);
         } else if (fighter->sequence != NULL) {
           fighter_step_sequence(fighter);
         }

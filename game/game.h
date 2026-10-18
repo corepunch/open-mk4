@@ -122,6 +122,10 @@ enum {
 #define MOVE_END (-1)
 
 typedef struct MoveSequence MoveSequence;
+typedef struct mmove_s mmove_t;
+typedef struct Battle Battle;
+typedef struct Fighter Fighter;
+typedef void (*FighterFn)(Fighter *fighter);
 
 typedef enum RetailAction {
 #define RETAIL_ACTION(name, value, confidence, description) name = value,
@@ -143,6 +147,26 @@ typedef struct MoveDef {
   int action; /* retail action code at controller +0x74; 0 uses the state default */
 } MoveDef;
 
+/* Quake II-style animation frame. ai/dist retain the familiar per-frame
+ * movement hook; sample and duration map a pose to the MK4 clip clock. */
+typedef void (*FighterAIFn)(Fighter *fighter, float distance);
+
+typedef struct mframe_s {
+  FighterAIFn ai;
+  float dist;
+  FighterFn think;
+  int sample;
+  int duration;
+} mframe_t;
+
+/* A contiguous animation range. Callbacks can replace the active move, which
+ * is how conditional branches select another mmove_t at a frame boundary. */
+struct mmove_s {
+  int firstframe, lastframe;
+  const mframe_t *frame;
+  FighterFn endfunc;
+};
+
 /* Per-tick Q16 movement values. */
 typedef struct Motion {
   q16 walk, run, jump_velocity, gravity;
@@ -162,10 +186,6 @@ typedef struct AttackRecord {
   uint8_t hit, air, blocked, flags; /* reaction ids for hit / air hit / block */
   q16 damage;                       /* fraction of full health */
 } AttackRecord;
-
-typedef struct Battle Battle;
-typedef struct Fighter Fighter;
-typedef void (*FighterFn)(Fighter *fighter);
 
 typedef enum CpuAction {
   CPU_JAB,
@@ -440,7 +460,9 @@ struct Fighter {
   const MoveDef *current_move;
   MoveDef playback_move;        /* actor-owned clip binding for generated C fibers */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
-  uint64_t continuation;        /* changes on move/phase replacement, even when re-entering the same phase */
+  const mmove_t *current_mmove;
+  int mmove_frame, mmove_elapsed;
+  uint64_t continuation; /* changes on move/phase replacement, even when re-entering the same phase */
   int sequence_event_tick;
   bool sequence_finished;
   unsigned buffered; /* pressed buttons since the current move phase began */
@@ -705,6 +727,8 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move);
 void fighter_enter_state(Fighter *fighter, int state);
 void fighter_step_sequence(Fighter *fighter);
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence);
+void fighter_start_mmove(Fighter *fighter, int state, const MoveDef *move, const mmove_t *mmove);
+void fighter_step_mmove(Fighter *fighter);
 /* Stackful move prototype: one scheduler-owned fiber per active fighter. */
 void fighter_start_fiber(Fighter *fighter, FighterFn entry, FighterFn cleanup);
 bool fighter_fiber_active(const Fighter *fighter);

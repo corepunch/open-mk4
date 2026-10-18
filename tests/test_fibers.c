@@ -12,7 +12,9 @@ static void check(bool yes, const char *message) {
 
 static int events[32][3];
 static int event_count, cleaned[2], completed[2];
+static int frame_ai_calls, frame_think_calls, mmove_finished;
 static const MoveDef test_move = {.clip = 14, .flags = SF_LOCK};
+static void advance(int ticks);
 
 static int player(const Fighter *fighter) {
   return fighter == &g_battle.fighters[0] ? 0 : 1;
@@ -31,6 +33,21 @@ static void cleanup(Fighter *fighter) {
 
 static void finish(Fighter *fighter) {
   completed[player(fighter)]++;
+  fighter_ready(fighter);
+}
+
+static void frame_ai(Fighter *fighter, float distance) {
+  check(fighter == &g_battle.fighters[0] && distance == 1.5f, "mframe ai callback or distance changed");
+  frame_ai_calls++;
+}
+
+static void frame_think(Fighter *fighter) {
+  check(fighter_sample(fighter) == 3 || fighter_sample(fighter) == 4, "mframe think ran outside its displayed sample");
+  frame_think_calls++;
+}
+
+static void mmove_end(Fighter *fighter) {
+  mmove_finished++;
   fighter_ready(fighter);
 }
 
@@ -68,9 +85,32 @@ static void setup(void) {
   memset(events, 0, sizeof events);
   memset(cleaned, 0, sizeof cleaned);
   memset(completed, 0, sizeof completed);
+  frame_ai_calls = 0;
+  frame_think_calls = 0;
+  mmove_finished = 0;
   for (int i = 0; i < 2; ++i) {
     fighter_start_move(&g_battle.fighters[i], S_PUNCH, &test_move);
   }
+}
+
+static const mframe_t test_mframes[] = {
+    {frame_ai, 1.5f, frame_think, 3, 2},
+    {NULL, 0.0f, frame_think, 4, 1},
+};
+static const mmove_t test_mmove = {0, 1, test_mframes, mmove_end};
+
+static void mmove_frames_and_callbacks(void) {
+  setup();
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_mmove(fighter, S_PUNCH, &test_move, &test_mmove);
+  check(fighter_sample(fighter) == 3, "mmove did not select its first frame sample");
+  advance(1);
+  check(fighter_sample(fighter) == 3 && frame_ai_calls == 1 && frame_think_calls == 1, "first mframe duration or callback timing changed");
+  advance(1);
+  check(fighter_sample(fighter) == 4 && frame_ai_calls == 2 && frame_think_calls == 2, "mmove did not advance after the frame duration");
+  advance(1);
+  check(mmove_finished == 1 && fighter->state == S_IDLE && fighter->current_mmove == NULL && frame_think_calls == 3,
+      "mmove end callback did not run exactly once after the final frame");
 }
 
 static void advance(int ticks) {
@@ -205,6 +245,7 @@ static void phase_and_paired_playback(void) {
 }
 
 int main(void) {
+  mmove_frames_and_callbacks();
   deterministic_nested_waits();
   interruptions_and_reset();
   phase_and_paired_playback();
