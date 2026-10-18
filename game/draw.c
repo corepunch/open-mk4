@@ -112,19 +112,16 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
   const Clip *clip = fighter_clip(assets, fighter);
   double frame = fighter_frame(fighter, (int)clip->frames.count);
   Pose bones[MK4_MAX_BONES];
-  Vec3 current;
   if (model != NULL) {
     pose(ch, clip, frame, bones);
-    current = clip->frames.data[(size_t)fmod(fmax(0., frame), (double)clip->frames.count)].translation;
   } else {
-    fighter_render_pose(assets, fighter, interpolation, &current, bones);
+    fighter_render_pose(assets, fighter, interpolation, bones);
   }
   Mat3 turn = fighter_turn(assets, fighter);
-  /* Root-motion Y plants the sole on the floor. Dropping that channel lifts
-   * the pose by the frame's Y. Uppercut 293 opens near +0.41, crouch 259
-   * settles near +0.44, and knockdown 186 settles near +0.97. X/Z stay with
-   * the fighter record. */
-  Vec3 root = {current.x, 0.f, current.z};
+  /* The pose keeps every root-motion channel, as 0x4b8140 does for joints.
+   * Y plants the sole: uppercut 293 opens near +0.41, crouch 259 settles
+   * near +0.44 and knockdown 186 near +0.97. X/Z keep planted feet still:
+   * idle root X/Z swings up to 0.25 while the soles move under 0.06. */
   for (size_t n = 0; n < ch->bones.count; ++n) {
     const Bone *b = &ch->bones.data[n];
     if (b->flags & 4)
@@ -137,7 +134,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
       Triangle t = mesh->data[j];
       for (size_t k = 0; k < 3; ++k) {
         Vertex *v = &t.v[k];
-        Vec3 local = vec_sub(vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p)), root);
+        Vec3 local = vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p));
         Vec3 bind = ch->bones.data[0].translation;
         if (fighter->appearance != APPEARANCE_BEAST) {
           local = vec_sub(local, bind);

@@ -78,14 +78,7 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   }
 }
 
-static Vec3 clip_root_translation(const Clip *clip, double sample) {
-  double frame = fmod(fmax(0., sample), (double)clip->frames.count);
-  size_t a = (size_t)frame, b = (a + 1) % clip->frames.count;
-  float fraction = (float)(frame - (double)a);
-  return vec_add(vec_scale(clip->frames.data[a].translation, 1.f - fraction), vec_scale(clip->frames.data[b].translation, fraction));
-}
-
-void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Vec3 *root_translation, Pose output[MK4_MAX_BONES]) {
+void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
   const Character *ch = fighter_model(assets, fighter);
   const Clip *clip = fighter_clip(assets, fighter);
   if (fighter->blend_duration > 0) {
@@ -93,7 +86,6 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
     float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
     int sample = fighter_pose_sample(fighter);
     pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, sample, fraction, output);
-    *root_translation = clip_root_translation(clip, sample);
     return;
   }
   int fighter_index = fighter == &g_battle.fighters[0] ? 0 : fighter == &g_battle.fighters[1] ? 1 : -1;
@@ -103,7 +95,6 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
       previous->fighters[fighter_index].model != ch || current->fighters[fighter_index].model != ch) {
     double sample = fighter_frame(fighter, (int)clip->frames.count);
     pose(ch, clip, sample, output);
-    *root_translation = clip_root_translation(clip, sample);
     return;
   }
   const FighterAnimationFrame *from = &previous->fighters[fighter_index];
@@ -119,9 +110,6 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
   } else {
     pose_blend_frames(ch, from_clip, from->sample, to_clip, to->sample, fraction, output);
   }
-  Vec3 from_root = clip_root_translation(from_clip, from->sample);
-  Vec3 to_root = clip_root_translation(to_clip, to->sample);
-  *root_translation = vec_add(vec_scale(from_root, 1.f - fraction), vec_scale(to_root, fraction));
 }
 
 /* Joint positions include animation root translation, as in 4b8140.

@@ -34,9 +34,10 @@ joint(fighter, n)      = (x, −height, z) + turn · (pose[n].position − rig_r
 
 `pose[n].position` is `pose()` output (root includes per-frame root
 motion). Retail keeps root-motion X/Z in the joints (root world = group +
-M·rootmotion, 0x4b8140); `game/draw.c` drops X/Z for rendering — do **not**
-drop them for contact. HYPOTHESIS: retail group matrix M (built from group
-+0x60 angles through table 0x4f2820) equals the runtime `turn`.
+M·rootmotion, 0x4b8140); `game/draw.c` keeps them for rendering too, so
+contact, attachments and the drawn mesh agree. HYPOTHESIS: retail group
+matrix M (built from group +0x60 angles through table 0x4f2820) equals the
+runtime `turn`.
 
 ---
 

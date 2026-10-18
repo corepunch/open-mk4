@@ -208,18 +208,17 @@ static void fighter_render_snapshots(const Assets *assets) {
   check(from->clip == 293 && to->clip == 66 && from->sample != to->sample, "Animation snapshots must preserve a branch into a different clip");
   const Character *model = fighter_model(assets, fighter);
   Pose source[MK4_MAX_BONES], target[MK4_MAX_BONES], rendered[MK4_MAX_BONES];
-  Vec3 root;
   pose(model, &assets->clips.data[from->clip], from->sample, source);
   pose(model, &assets->clips.data[to->clip], to->sample, target);
-  fighter_render_pose(assets, fighter, 0.0, &root, rendered);
+  fighter_render_pose(assets, fighter, 0.0, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(fabsf(rendered[i].position.x - source[i].position.x) < .0001f, "Render snapshot starts from the previous clip pose");
   }
-  fighter_render_pose(assets, fighter, 1.0, &root, rendered);
+  fighter_render_pose(assets, fighter, 1.0, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(fabsf(rendered[i].position.x - target[i].position.x) < .0001f, "Render snapshot reaches the new clip pose");
   }
-  fighter_render_pose(assets, fighter, 0.5, &root, rendered);
+  fighter_render_pose(assets, fighter, 0.5, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(isfinite(rendered[i].position.x) && isfinite(rendered[i].rotation.m[0]), "Cross-animation render snapshot must remain finite");
   }

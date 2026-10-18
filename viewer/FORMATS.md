@@ -133,8 +133,10 @@ His punch 597 (0x43ae70, script 0x4dfb40), kick 598 (0x43b170), uppercut 600
 low knockdown in place of a sweep), jump 602 (0x43b7e0) and win roar 594 come
 from his code. His duck plays 603, a rise from the crouch, backwards through
 the move's frame range. His hit (593) and knockdown (581) remain visual.
-Battle placement keeps each frame's root-motion Y and drops root-motion X/Z.
-That Y channel is the ground plant (positive Y is down). Subtracting a frame's
+Battle placement keeps all three root-motion channels, as joint placement at
+0x4b8140 does. X/Z hold planted feet still: idle root X/Z swings by up to 0.25,
+and dropping it slid the idle soles 0.05 to 0.25 per cycle instead of under
+0.06. The Y channel is the ground plant (positive Y is down). Subtracting a frame's
 Y lifts the pose by that amount. On the clips the roster plays, uppercut 293
 opens near +0.41, crouch 259 settles near +0.44, and knockdown 186 settles
 near +0.97. Win poses open near +0.05 to +0.11; the held frame reaches about
