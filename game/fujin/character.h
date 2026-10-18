@@ -89,4 +89,6 @@ void fujin_entry_retail_script_004e61e0(Fighter *fighter);
 void fujin_entry_retail_script_004e69b0(Fighter *fighter);
 void fujin_entry_retail_script_004e6190(Fighter *fighter);
 void fujin_lk_throw(Fighter *fighter);
+void fujin_entry_fan(Fighter *fighter);
+void fujin_entry_spike(Fighter *fighter);
 #endif

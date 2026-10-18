@@ -1,8 +1,8 @@
 #include "../character.h"
 
-static void kai_spike_fatality(Fighter *fighter);
+void kai_spike_fatality(Fighter *fighter);
 
-static void kai_spike_fatality(Fighter *fighter) {
+void kai_spike_fatality(Fighter *fighter) {
   if (!battle_begin_finisher(fighter, FINISH_SPIKE)) {
     kai_ready(fighter);
     return;

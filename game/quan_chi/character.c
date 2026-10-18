@@ -37,8 +37,10 @@ static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_a
     [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
     [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
 
-static const Controls quan_chi_controls = {
-    NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
+#include "generated/controls.inc"
+
+static const Controls quan_chi_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
+    {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {

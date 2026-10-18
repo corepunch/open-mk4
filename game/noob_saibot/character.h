@@ -108,4 +108,7 @@ void noob_saibot_entry_retail_script_004e61e0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e69b0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e6190(Fighter *fighter);
 void noob_saibot_lk_throw(Fighter *fighter);
+void noob_saibot_fan_fatality(Fighter *fighter);
+void noob_saibot_spike_fatality(Fighter *fighter);
+void noob_saibot_air_throw(Fighter *fighter);
 #endif

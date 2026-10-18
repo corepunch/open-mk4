@@ -469,7 +469,6 @@ static inline void retail_script_004e0158(Fighter *fighter) {
 static inline void retail_script_004e0188(Fighter *fighter) {
   unsigned result_flags = 0;
   (void)result_flags;
-  mk4_script_inherit(fighter, 416, 108, 69);
   {
     /* EXE 004e0188: 0x47000245 0x13f03f */
     mk4_script_bind(fighter, 416, 108, 0);

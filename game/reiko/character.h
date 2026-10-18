@@ -95,4 +95,6 @@ void reiko_entry_retail_script_004e61e0(Fighter *fighter);
 void reiko_entry_retail_script_004e69b0(Fighter *fighter);
 void reiko_entry_retail_script_004e6190(Fighter *fighter);
 void reiko_lk_throw(Fighter *fighter);
+void reiko_fan_fatality(Fighter *fighter);
+void reiko_spike_fatality(Fighter *fighter);
 #endif

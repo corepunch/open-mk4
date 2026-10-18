@@ -129,7 +129,7 @@
     "0x469250": {
       "source": "game/mk4_common.c",
       "symbol": "mk4_sidestep",
-      "evidence": "Shared MK4 sidestep input action and native playback routine 0x469250"
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x469a00": {
       "source": "game/shinnok/character.c",
@@ -204,12 +204,22 @@
     "0x46a020": {
       "source": "game/weapons.c",
       "symbol": "weapon_pickup",
-      "evidence": "Shared pickup continuation entered from Shinnok run input 0x46a020"
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
       "source": "game/shinnok/character.c",
       "symbol": "shinnok_command_46d1d0",
       "evidence": "Shinnok input/CPU table target 0x46d1d0; bounded native query"
+    },
+    "0x467e00": {
+      "source": "game/shinnok/moves/fan.c",
+      "symbol": "shinnok_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/shinnok/moves/spike.c",
+      "symbol": "shinnok_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
   "moves": {
@@ -455,5 +465,36 @@
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
     }
   },
-  "schema": 1
+  "schema": 1,
+  "controls_output": "game/shinnok/generated/controls.inc",
+  "command_bindings": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    },
+    "0x467e00": {
+      "source": "game/shinnok/moves/fan.c",
+      "symbol": "shinnok_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/shinnok/moves/spike.c",
+      "symbol": "shinnok_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup",
+    "0x45e5a0": "mk4_can_fan_finish",
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ed70": "mk4_can_air_throw",
+    "0x45ed80": "mk4_can_air_throw"
+  }
 }

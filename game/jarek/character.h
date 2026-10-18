@@ -30,6 +30,7 @@ void jarek_ai_projectile_spawn(Fighter *fighter, int task_type);
 void jarek_block(Fighter *fighter);
 void jarek_crouch(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
+void jarek_fan_tail(Fighter *fighter);
 void jarek_fan_victory(Fighter *fighter);
 void jarek_fatality_contact_hold(Fighter *fighter);
 void jarek_high_kick(Fighter *fighter);
@@ -142,4 +143,7 @@ void jarek_entry_retail_script_004e61e0(Fighter *fighter);
 void jarek_entry_retail_script_004e69b0(Fighter *fighter);
 void jarek_entry_retail_script_004e6190(Fighter *fighter);
 void jarek_lk_throw(Fighter *fighter);
+void jarek_fan_fatality(Fighter *fighter);
+void jarek_fan_tail(Fighter *fighter);
+void jarek_spike_fatality(Fighter *fighter);
 #endif

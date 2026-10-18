@@ -1,7 +1,7 @@
 #include "../character.h"
 
 static void jarek_fan_start(Fighter *fighter);
-static void jarek_fan_tail(Fighter *fighter);
+void jarek_fan_tail(Fighter *fighter);
 static bool jarek_fan_event(BattleEvent *event, Fighter *fighter, Fighter *victim);
 static bool jarek_fan_finish_event(BattleEvent *event, Fighter *fighter, Fighter *victim);
 static bool jarek_fan_finish_pose(BattleEvent *event, Fighter *fighter, Fighter *victim);
@@ -12,7 +12,7 @@ static void jarek_fan_start(Fighter *fighter) {
   jarek_entry_retail_script_004e0118(fighter);
 }
 
-static void jarek_fan_tail(Fighter *fighter) {
+void jarek_fan_tail(Fighter *fighter) {
   mk4_script_fan_tail(fighter, jarek_retail_script_004e0138_repeat_phase(), jarek_entry_retail_script_004e0148, jarek_entry_retail_script_004e01a0);
 }
 

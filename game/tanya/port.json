@@ -14,12 +14,12 @@
     "0x469250": {
       "source": "game/mk4_common.c",
       "symbol": "mk4_sidestep",
-      "evidence": "Tanya run input selects the shared sidestep helper; local callback is in mk4_common.c."
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x46a020": {
       "source": "game/weapons.c",
       "symbol": "weapon_pickup",
-      "evidence": "Tanya inventory resolves this input target to the shared pickup handler in weapons.c."
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
       "source": "game/tanya/character.c",
@@ -45,6 +45,16 @@
       "source": "game/tanya/character.c",
       "symbol": "tanya_jab",
       "evidence": "Tanya low-punch event target 498e70 maps to c_tanya.c."
+    },
+    "0x467e00": {
+      "source": "game/tanya/moves/fan.c",
+      "symbol": "tanya_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/tanya/moves/spike.c",
+      "symbol": "tanya_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
   "entry_contexts": {
@@ -449,5 +459,36 @@
     "source": "game/tanya/character.c",
     "symbol": "tanya_weapon_descriptor",
     "evidence": "Encoded Tanya descriptor words preserved from retail descriptor 0x4ecd98; no pointer values are interpreted as host addresses."
+  },
+  "controls_output": "game/tanya/generated/controls.inc",
+  "command_bindings": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    },
+    "0x467e00": {
+      "source": "game/tanya/moves/fan.c",
+      "symbol": "tanya_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/tanya/moves/spike.c",
+      "symbol": "tanya_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup",
+    "0x45e5a0": "mk4_can_fan_finish",
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ed70": "mk4_can_air_throw",
+    "0x45ed80": "mk4_can_air_throw"
   }
 }

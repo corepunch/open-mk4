@@ -37,8 +37,10 @@ static const ButtonTable kai_jumping = {{[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
     [BUTTON_HIGH_KICK] = kai_press_air_hk,
     [BUTTON_LOW_KICK] = kai_press_air_lk}};
 
-static const Controls kai_controls = {
-    NULL, 0, {[STANCE_STANDING] = &kai_standing, [STANCE_CROUCHING] = &kai_crouching, [STANCE_JUMP] = &kai_jumping, [STANCE_DIAGONAL_AIR] = &kai_diagonal_air}};
+#include "generated/controls.inc"
+
+static const Controls kai_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
+    {[STANCE_STANDING] = &kai_standing, [STANCE_CROUCHING] = &kai_crouching, [STANCE_JUMP] = &kai_jumping, [STANCE_DIAGONAL_AIR] = &kai_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {

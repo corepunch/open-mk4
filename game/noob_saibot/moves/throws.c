@@ -3,7 +3,7 @@
 static const MoveDef s_ground_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 
 void noob_saibot_lk_throw(Fighter *fighter);
-static void noob_saibot_air_throw(Fighter *fighter);
+void noob_saibot_air_throw(Fighter *fighter);
 static const MoveDef s_noob_air_throw = {.clip = 74, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
 static const MoveDef s_noob_air_thrown = {.clip = 150, .last = 27, .flags = SF_LOCK, .action = 0x4003};
 
@@ -30,7 +30,7 @@ void noob_saibot_lk_throw(Fighter *fighter) {
   mk4_script_throw_start(fighter, &noob_saibot_s_throw, &s_ground_thrown, noob_saibot_entry_retail_script_004de2f8);
 }
 
-static void noob_saibot_air_throw(Fighter *fighter) {
+void noob_saibot_air_throw(Fighter *fighter) {
   mk4_air_throw_generated_with_moves(
       fighter, &s_noob_air_throw, &s_noob_air_thrown, noob_saibot_entry_retail_script_004e5e78, noob_saibot_entry_retail_script_004e9910);
 }

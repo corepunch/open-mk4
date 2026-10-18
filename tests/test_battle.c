@@ -1,4 +1,5 @@
 #include "game.h"
+#include "mk4_characters.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -822,6 +823,58 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
+static void check_reconnected_stage_commands(void) {
+  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int stage = 0; stage < 2; ++stage) {
+      for (int slot = 0; slot < 2; ++slot) {
+        battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        g_battle.arena = stage ? 0 : 8;
+        g_battle.fighters[slot].wins = 1;
+        battle_damage(&g_battle.fighters[1 - slot], Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        check(battle_can_finish(&g_battle.fighters[slot]), "Stage command needs the completed defeat/finish window");
+        g_battle.fighters[0].body.pos[AXIS_X] = -0x6666;
+        g_battle.fighters[1].body.pos[AXIS_X] = 0x6666;
+        const Controls *controls = roster_def(rosters[row])->controls;
+        const CommandDef *command = NULL;
+        for (int i = 0; i < controls->command_count; ++i) {
+          if (controls->commands[i].predicate == (stage ? mk4_can_spike_finish : mk4_can_fan_finish)) {
+            command = &controls->commands[i];
+            break;
+          }
+        }
+        check(command != NULL, "Retail-listed stage command must be registered");
+        Fighter *fighter = &g_battle.fighters[slot];
+        for (int i = 0; i < command->count; ++i) {
+          CommandToken token = command->tokens[i];
+          Button button = token == TOKEN_UP     ? BUTTON_UP
+                          : token == TOKEN_DOWN ? BUTTON_DOWN
+                          : token == TOKEN_BACK ? (slot ? BUTTON_RIGHT : BUTTON_LEFT)
+                                                : (slot ? BUTTON_LEFT : BUTTON_RIGHT);
+          fighter_press(fighter, button);
+        }
+        fighter_press(fighter, command->button);
+        advance_ticks(1, NULL);
+        if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != (stage ? FINISH_SPIKE : FINISH_FAN)) {
+          fprintf(stderr, "Stage command roster %d slot %d stage %d phase %d finisher %d\n", rosters[row], slot, stage, g_battle.phase, g_battle.finisher);
+        }
+        check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (stage ? FINISH_SPIKE : FINISH_FAN),
+            "Stage command must acquire the correct scene for either player");
+        advance_ticks(650, NULL);
+        if (g_battle.phase != PHASE_MATCH_OVER) {
+          fprintf(stderr, "Stage recovery roster %d slot %d stage %d phase %d\n", rosters[row], slot, stage, g_battle.phase);
+        }
+        check(g_battle.phase == PHASE_MATCH_OVER, "Reconnected stage scene must complete");
+      }
+    }
+  }
+}
+
 static void finish_command(int player, int id) {
   Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
   Button forward = player ? BUTTON_LEFT : BUTTON_RIGHT;
@@ -1060,6 +1113,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_reconnected_stage_commands();
   check_script_reactions();
   check_ground_throws();
   check_air_throw();

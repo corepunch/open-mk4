@@ -2,14 +2,14 @@
   "character": "fujin",
   "entry_adapters": {
     "0x469250": {
-      "evidence": "Fujin's selected RUN input reaches the shared double-tap sidestep entry 0x469250; portable implementation uses the shared sidestep helper.",
       "source": "game/mk4_common.c",
-      "symbol": "mk4_sidestep"
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x46a020": {
-      "evidence": "Fujin's selected input route reaches the shared weapon pickup continuation 0x46a020; portable pickup lifecycle is in game/weapons.c.",
       "source": "game/weapons.c",
-      "symbol": "weapon_pickup"
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
       "evidence": "Fujin's weapon input route uses the shared draw-or-throw lifecycle at 0x46d1d0; encoded Fujin descriptor is retained in game/fujin/character.c.",
@@ -50,6 +50,16 @@
       "source": "game/fujin/character.c",
       "symbol": "fujin_entry_high_punch",
       "evidence": "Fujin low-punch command target 480360 selects close throw or jab handling."
+    },
+    "0x467e00": {
+      "source": "game/fujin/moves/fan.c",
+      "symbol": "fujin_entry_fan",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/fujin/moves/spike.c",
+      "symbol": "fujin_entry_spike",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
   "entry_contexts": {
@@ -446,5 +456,36 @@
     "source": "game/fujin/character.c",
     "symbol": "fujin_weapon_descriptor",
     "evidence": "Retail Fujin inventory descriptor 0x4ece98; eight encoded descriptor words copied from the pinned EXE inventory query."
+  },
+  "controls_output": "game/fujin/generated/controls.inc",
+  "command_bindings": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    },
+    "0x467e00": {
+      "source": "game/fujin/moves/fan.c",
+      "symbol": "fujin_entry_fan",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/fujin/moves/spike.c",
+      "symbol": "fujin_entry_spike",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup",
+    "0x45e5a0": "mk4_can_fan_finish",
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ed70": "mk4_can_air_throw",
+    "0x45ed80": "mk4_can_air_throw"
   }
 }

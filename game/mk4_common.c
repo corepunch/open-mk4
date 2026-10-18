@@ -366,6 +366,27 @@ static void air_throw_drop(Fighter *victim) {
   victim->body.gravity = 0x28f;
 }
 
+bool mk4_can_fan_finish(const Fighter *fighter) {
+  return g_battle.arena == 8 && battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
+}
+
+bool mk4_can_spike_finish(const Fighter *fighter) {
+  return g_battle.arena == 0 && battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
+}
+
+/* 467e00/467e70 enter the stage coordinator after the winner/range gate.
+ * Native scene ownership must be established before either generated actor
+ * starts, since the child may immediately bind or release its peer. */
+bool mk4_begin_stage_finish(Fighter *fighter, int id) {
+  if (!battle_begin_finisher(fighter, id)) {
+    fighter_ready(fighter);
+    return false;
+  }
+  mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, id == FINISH_FAN ? 130 : 20, 0);
+  mk4_script_scene_pose((Fighter *)fighter_opponent(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
+  return true;
+}
+
 /* Shared 46c6f0/46c740 ground throw gates, also used by the fully ported
  * normal entries: LK's close comparison is strict, LP's is inclusive. */
 bool mk4_can_ground_throw(const Fighter *fighter, bool low_kick) {

@@ -322,3 +322,24 @@ terminal generated phase stops explicitly to preserve its final pose. Native sce
 advance from tick callbacks and preserve their original blend increments. Cameras,
 particles and projectiles remain independently scheduled. The first fatality
 intentionally keeps its final pose loop after match completion until reset.
+
+### Runtime control registration
+
+A definition in a coverage profile does not establish a gameplay entry. The
+coverage audit follows C function and initialized-data references from each
+fighter's `CharacterDef`, including generated code and callback tables. Static
+symbols retain their translation-unit ownership; prototypes and detached
+reference cycles cannot satisfy coverage. The runtime roster lookup does not
+make another fighter's registration count for the current fighter. This is a
+conservative source-connectivity check, not native-behavior or branch parity.
+
+Profiles with `controls_output`, `command_bindings` and `command_predicates`
+compile their reviewed command registrations with `tools/retail_controls.py`.
+The output retains the EXE's record order, direction patterns, inclusive timing
+windows, air/block flags and release events. Native addresses remain offline
+keys; runtime records hold typed C callbacks. The audit rejects missing retail
+command targets, unknown predicates, stale generated tables and generated
+arrays that are not reachable from the owning `CharacterDef`. A partially bound
+profile may emit its implemented rows, but remains an audit failure until every
+retail command target is registered. `make scripts` regenerates these tables;
+`make scripts-check` verifies their canonical contents alongside VM output.

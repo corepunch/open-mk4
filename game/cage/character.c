@@ -50,7 +50,9 @@ static const ButtonTable cage_straight_air = {{[BUTTON_HIGH_PUNCH] = cage_press_
     [BUTTON_HIGH_KICK] = cage_press_air_hk,
     [BUTTON_LOW_KICK] = cage_press_air_lk}};
 
-static const Controls cage_controls = {NULL, 0,
+#include "generated/controls.inc"
+
+static const Controls cage_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
     {[STANCE_STANDING] = &cage_standing, [STANCE_CROUCHING] = &cage_crouching, [STANCE_JUMP] = &cage_straight_air, [STANCE_DIAGONAL_AIR] = &cage_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.

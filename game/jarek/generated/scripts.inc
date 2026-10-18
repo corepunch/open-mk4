@@ -3,6 +3,7 @@
 #include "script.h"
 
 void jarek_ai_projectile_spawn(Fighter *, int);
+void jarek_fan_tail(Fighter *);
 void jarek_fan_victory(Fighter *);
 void jarek_script_47b600(Fighter *);
 void jarek_script_air_finish(Fighter *);
@@ -336,18 +337,7 @@ static inline void retail_script_004e0118(Fighter *fighter) {
   }
   {
     /* EXE 004e0120: 0x32000000 0x43d460 */
-  }
-  {
-    /* EXE 004e0128: 0x5000008 */
-    fighter_fiber_play_to(fighter, 8, 1);
-  }
-  {
-    /* EXE 004e012c: 0x12000000 */
-    fighter->sample_override = 0;
-  }
-  {
-    /* EXE 004e0130: 0x32000000 0x43d510 */
-    jarek_script_fan_scene(fighter);
+    jarek_fan_tail(fighter);
     return;
   }
 }

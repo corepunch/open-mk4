@@ -52,11 +52,13 @@ static const FighterFn enter[S_COUNT] = {
   [S_BLOCK] = jarek_block,
   [S_HIT] = NULL,
   [S_KNOCKDOWN] = NULL,
-  [S_VICTORY] = jarek_fan_victory,
+  [S_VICTORY] = NULL,
 };
 // clang-format on
 
-static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
+#include "generated/controls.inc"
+
+static const Controls controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]), {&standing, &crouching, &jumping}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {

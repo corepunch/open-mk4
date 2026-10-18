@@ -1,7 +1,7 @@
 #include "../character.h"
 
 static void kai_fan_start(Fighter *fighter);
-static void kai_fan_fatality(Fighter *fighter);
+void kai_fan_fatality(Fighter *fighter);
 
 static void kai_fan_start(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
@@ -9,7 +9,7 @@ static void kai_fan_start(Fighter *fighter) {
   kai_entry_retail_script_004e0118(fighter);
 }
 
-static void kai_fan_fatality(Fighter *fighter) {
+void kai_fan_fatality(Fighter *fighter) {
   if (!battle_begin_finisher(fighter, FINISH_FAN)) {
     kai_ready(fighter);
     return;

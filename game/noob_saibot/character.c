@@ -52,13 +52,6 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const CommandDef noob_saibot_commands[] = {
-  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0, NULL, noob_saibot_command_498b70},
-  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, CMD_AIR, noob_saibot_shadow_up_enabled, noob_saibot_command_498e70},
-};
-// clang-format on
-
 static const ButtonTable noob_saibot_standing = {{[BUTTON_HIGH_PUNCH] = noob_saibot_press_high_punch,
     [BUTTON_LOW_PUNCH] = noob_saibot_press_low_punch,
     [BUTTON_HIGH_KICK] = noob_saibot_press_high_kick,
@@ -72,7 +65,9 @@ static const ButtonTable noob_saibot_air = {{[BUTTON_HIGH_PUNCH] = noob_saibot_p
     [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
     [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
 
-static const Controls noob_saibot_controls = {noob_saibot_commands, (int)(sizeof noob_saibot_commands / sizeof noob_saibot_commands[0]),
+#include "generated/controls.inc"
+
+static const Controls noob_saibot_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
     {[STANCE_STANDING] = &noob_saibot_standing,
         [STANCE_CROUCHING] = &noob_saibot_crouching,
         [STANCE_JUMP] = &noob_saibot_air,

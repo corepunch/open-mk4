@@ -280,12 +280,12 @@
     "0x469250": {
       "source": "game/mk4_common.c",
       "symbol": "mk4_sidestep",
-      "evidence": "Cage input/CPU inventory selects this exact target at 0x469250."
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x46a020": {
       "source": "game/weapons.c",
       "symbol": "weapon_pickup",
-      "evidence": "Cage input/CPU inventory selects this exact target at 0x46a020."
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
       "source": "game/weapons.c",
@@ -301,6 +301,16 @@
       "source": "game/cage/character.c",
       "symbol": "cage_cpu_projectile",
       "evidence": "Cage input/CPU inventory selects this exact target at 0x497080."
+    },
+    "0x467e00": {
+      "source": "game/cage/moves/fan.c",
+      "symbol": "cage_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/cage/moves/spike.c",
+      "symbol": "cage_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
   "stances": {
@@ -453,5 +463,36 @@
       "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
       "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."
     }
+  },
+  "controls_output": "game/cage/generated/controls.inc",
+  "command_bindings": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    },
+    "0x467e00": {
+      "source": "game/cage/moves/fan.c",
+      "symbol": "cage_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/cage/moves/spike.c",
+      "symbol": "cage_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup",
+    "0x45e5a0": "mk4_can_fan_finish",
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ed70": "mk4_can_air_throw",
+    "0x45ed80": "mk4_can_air_throw"
   }
 }

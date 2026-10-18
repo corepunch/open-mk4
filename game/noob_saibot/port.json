@@ -12,14 +12,14 @@
       "symbol": "noob_saibot_fan_fatality"
     },
     "0x469250": {
-      "evidence": "Shared direction/playback sidestep routine 0x469250.",
       "source": "game/mk4_common.c",
-      "symbol": "mk4_sidestep"
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x46a020": {
-      "evidence": "Shared run-input continuation into pickup handler 0x46a020.",
       "source": "game/weapons.c",
-      "symbol": "weapon_pickup"
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
       "evidence": "Native 0x46d1d0 draws or throws the weapon selected by retail descriptor 0x4eced8; shared weapon lifecycle helper. Noob Saibot weapon attack callbacks are not yet implemented.",
@@ -47,9 +47,9 @@
       "symbol": "noob_saibot_jab"
     },
     "0x46aba0": {
-      "evidence": "Noob-specific airborne throw command target starts paired clips 74/45 and 150/28 via its dedicated wrapper.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_throw"
+      "source": "game/noob_saibot/moves/throws.c",
+      "symbol": "noob_saibot_air_throw",
+      "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
     },
     "0x498b70": {
       "evidence": "Low-punch command record 4e44b0 enters Noob shadow move action 0x309 and VM root 4ed268.",
@@ -60,6 +60,16 @@
       "evidence": "Low-punch command record 4e44bc enters distinct Noob shadow move action 0x30a and VM root 4ed2c0.",
       "source": "game/noob_saibot/character.c",
       "symbol": "noob_saibot_command_498e70"
+    },
+    "0x467e00": {
+      "source": "game/noob_saibot/moves/fan.c",
+      "symbol": "noob_saibot_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/noob_saibot/moves/spike.c",
+      "symbol": "noob_saibot_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
   "entry_contexts": {
@@ -510,5 +520,52 @@
     "evidence": "Retail Noob Saibot inventory descriptor 0x4eced8 (type 0x69); raw descriptor words preserved for reviewed coverage",
     "source": "game/noob_saibot/character.c",
     "symbol": "noob_saibot_weapon_descriptor"
+  },
+  "controls_output": "game/noob_saibot/generated/controls.inc",
+  "command_bindings": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    },
+    "0x467e00": {
+      "source": "game/noob_saibot/moves/fan.c",
+      "symbol": "noob_saibot_fan_fatality",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/noob_saibot/moves/spike.c",
+      "symbol": "noob_saibot_spike_fatality",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x46aba0": {
+      "source": "game/noob_saibot/moves/throws.c",
+      "symbol": "noob_saibot_air_throw",
+      "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
+    },
+    "0x498b70": {
+      "source": "game/noob_saibot/moves/controls.c",
+      "symbol": "noob_saibot_command_498b70",
+      "evidence": "Existing recovered shadow command, preserved in generated retail table with its original order and air gate."
+    },
+    "0x498e70": {
+      "source": "game/noob_saibot/moves/controls.c",
+      "symbol": "noob_saibot_command_498e70",
+      "evidence": "Existing recovered shadow command, preserved in generated retail table with its original order and air gate."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup",
+    "0x45e5a0": "mk4_can_fan_finish",
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ed70": "mk4_can_air_throw",
+    "0x45ed80": "mk4_can_air_throw",
+    "0x45ef20": "noob_saibot_shadow_up_enabled"
   }
 }

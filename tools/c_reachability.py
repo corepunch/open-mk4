@@ -102,8 +102,10 @@ def unreachable_references(profile):
     reached = graph.reachable(['mk4_' + profile['character']], stop={'roster'})
     errors = []
     references = []
-    for section in ('moves', 'entry_adapters', 'stances'):
+    for section in ('moves', 'entry_adapters', 'stances', 'command_bindings'):
         references.extend((section + ' ' + label, ref) for label, ref in profile.get(section, {}).items())
+    if profile.get('controls_output'):
+        references.append(('runtime command table', {'source': profile['integration_source'], 'symbol': 'retail_commands'}))
     for label, ref in references:
         path, name = ref.get('source'), ref.get('symbol')
         if not path or not name:

@@ -2,7 +2,7 @@
 
 static void jax_fan_start(Fighter *fighter);
 static void jax_fan_fatality(Fighter *fighter);
-static void jax_command_fan(Fighter *fighter);
+void jax_command_fan(Fighter *fighter);
 
 static void jax_fan_start(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
@@ -25,6 +25,6 @@ static void jax_fan_fatality(Fighter *fighter) {
   fighter_start_fiber(fighter, jax_fan_start, NULL);
 }
 
-static void jax_command_fan(Fighter *fighter) {
+void jax_command_fan(Fighter *fighter) {
   jax_fan_fatality(fighter);
 }

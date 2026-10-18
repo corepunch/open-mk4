@@ -12,19 +12,19 @@
       "evidence": "Reptile finisher target 0x467ce0 starts generated spike stream 0x4e6950."
     },
     "0x467e00": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/fan.c",
       "symbol": "reptile_entry_fan",
-      "evidence": "Reptile fan-fatality input target starts generated owner root 0x4e0118 and victim root 0x4e0188."
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/spike.c",
       "symbol": "reptile_entry_spike",
-      "evidence": "Reptile spike-fatality input target starts generated root 0x4e6950."
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x469250": {
       "source": "game/mk4_common.c",
       "symbol": "mk4_sidestep",
-      "evidence": "Reptile RUN input uses shared double-tap sidestep entry 0x469250."
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x4698a0": {
       "source": "game/reptile/character.c",
@@ -34,7 +34,7 @@
     "0x46a020": {
       "source": "game/weapons.c",
       "symbol": "weapon_pickup",
-      "evidence": "Reptile inventory resolves this input target to the shared weapon pickup lifecycle."
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
       "source": "game/weapons.c",
@@ -502,5 +502,36 @@
     "evidence": "Retail Reptile inventory descriptor 0x4ece78; encoded words copied from the pinned inventory query."
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
-  "legacy_scripts": {}
+  "legacy_scripts": {},
+  "controls_output": "game/reptile/generated/controls.inc",
+  "command_bindings": {
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    },
+    "0x467e00": {
+      "source": "game/reptile/moves/fan.c",
+      "symbol": "reptile_entry_fan",
+      "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
+    },
+    "0x467e70": {
+      "source": "game/reptile/moves/spike.c",
+      "symbol": "reptile_entry_spike",
+      "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup",
+    "0x45e5a0": "mk4_can_fan_finish",
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ed70": "mk4_can_air_throw",
+    "0x45ed80": "mk4_can_air_throw"
+  }
 }

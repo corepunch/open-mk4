@@ -4,7 +4,7 @@ static void fujin_script_fan_cycle(Fighter *fighter);
 static void fujin_script_fan_victim_end(Fighter *fighter);
 static void fujin_script_fan_victory(Fighter *fighter);
 static void fujin_fan_fatality(Fighter *fighter);
-static void fujin_entry_fan(Fighter *fighter);
+void fujin_entry_fan(Fighter *fighter);
 
 static void fujin_script_fan_cycle(Fighter *fighter) {
   mk4_script_fan_cycle(fighter);
@@ -23,11 +23,15 @@ void fujin_script_fan_tail(Fighter *fighter) {
 }
 
 static void fujin_fan_fatality(Fighter *fighter) {
+  if (!mk4_begin_stage_finish(fighter, FINISH_FAN)) {
+    return;
+  }
+
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_fiber(victim, fujin_entry_retail_script_004e0188, NULL);
   fighter_start_fiber(fighter, fujin_entry_retail_script_004e0118, NULL);
 }
 
-static void fujin_entry_fan(Fighter *fighter) {
+void fujin_entry_fan(Fighter *fighter) {
   fujin_fan_fatality(fighter);
 }
