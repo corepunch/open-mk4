@@ -105,6 +105,7 @@ void battle_next_round(void) {
   g_battle.splat_next = 0;
   memset(g_battle.sprays, 0, sizeof g_battle.sprays);
   g_battle.camera = (SceneCamera){0};
+  g_battle.view = (Vec3){0, 0, -1};
   g_battle.sound_count = 0;
   g_battle.phase = PHASE_READY;
   g_battle.phase_ticks = 0;
@@ -518,8 +519,8 @@ static void resolve_hits(const Fighter snapshot[2]) {
         target->body.gravity = 0x111;
       }
     }
-    g_battle.effects[i] =
-        (HitEffect){(fighter_x(attacker) + fighter_x(defender)) * 0.5f, defender_height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
+    g_battle.effects[i] = (HitEffect){(fighter_x(attacker) + fighter_x(defender)) * 0.5f, (fighter_z(attacker) + fighter_z(defender)) * 0.5f,
+        defender_height + ((move->flags & SF_LOW) ? 0.25f : 1.2f), 10, blocked};
   }
 }
 

@@ -96,8 +96,7 @@ static void camera_shot(void) {
 void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count) {
   require(shots != NULL && count > 0, "Invalid camera sequence");
   SceneCamera *camera = &g_battle.camera;
-  float ax = fighter_x(&g_battle.fighters[0]), bx = fighter_x(&g_battle.fighters[1]);
-  Vec3 initial = camera->active ? camera->eye : (Vec3){(ax + bx) * .25f, -2.8f, fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f)};
+  Vec3 initial = camera->active ? camera->eye : battle_follow_eye(NULL);
   *camera = (SceneCamera){.active = true, .eye = initial, .shots = shots, .shot_count = count, .target_player = target == &g_battle.fighters[0] ? 0 : 1};
   camera->axis = (Vec3){q16_float(owner->heading[0]), 0, q16_float(owner->heading[1])};
   camera->origin = (Vec3){fighter_x(target) - camera->axis.x * q16_float(0xe666), -1.25f, fighter_z(target) - camera->axis.z * q16_float(0xe666)};
@@ -195,6 +194,40 @@ void battle_joint_spray(const Fighter *fighter, const JointSprayDef *def) {
       return;
     }
   }
+}
+
+/* Our fight framing, not the retail camera director: look across the pair
+ * axis at the fighters' midpoint and pull back with their separation. */
+Vec3 battle_follow_eye(Vec3 *heading) {
+  const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
+  Vec3 view = g_battle.view;
+  float length = hypotf(view.x, view.z);
+  view = length > .001f ? (Vec3){view.x / length, 0, view.z / length} : (Vec3){0, 0, -1};
+  float distance = hypotf(fighter_x(b) - fighter_x(a), fighter_z(b) - fighter_z(a));
+  float back = fmaxf(7.5f, distance * .85f + 3.f);
+  if (heading != NULL) {
+    *heading = view;
+  }
+  return (Vec3){(fighter_x(a) + fighter_x(b)) * .5f - view.x * back, -2.8f, (fighter_z(a) + fighter_z(b)) * .5f - view.z * back};
+}
+
+/* The heading stays perpendicular to the pair axis on the side it already
+ * views from, so a crossover keeps the camera put, and eases toward each
+ * new axis so sidesteps swing the view rather than snap it. */
+static void step_follow_view(void) {
+  const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
+  float dx = fighter_x(b) - fighter_x(a), dz = fighter_z(b) - fighter_z(a);
+  float distance = hypotf(dx, dz);
+  Vec3 view;
+  battle_follow_eye(&view);
+  if (distance > .05f) {
+    Vec3 goal = {dz / distance, 0, -dx / distance};
+    if (goal.x * view.x + goal.z * view.z < 0) {
+      goal = vec_scale(goal, -1);
+    }
+    view = vec_add(view, vec_scale(vec_sub(goal, view), .1f));
+  }
+  g_battle.view = view;
 }
 
 /* 457b50/457b90: alternate a vertical camera offset and its removal,
@@ -491,6 +524,7 @@ void battle_step_presentation(void) {
       }
     }
   }
+  step_follow_view();
   SceneCamera *camera = &g_battle.camera;
   if (camera->shake_pulses > 0 && --camera->shake_ticks == 0) {
     if (camera->shake_y != 0) {

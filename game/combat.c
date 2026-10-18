@@ -117,8 +117,9 @@ ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record,
   int side = fighter_index(attacker);
   /* Absolute retail Y has the soles at 0, so height above the floor is -Y. */
   float x = q16_float(attacker->body.pos[AXIS_X] / 2 + victim->body.pos[AXIS_X] / 2);
+  float z = q16_float(attacker->body.pos[AXIS_Z] / 2 + victim->body.pos[AXIS_Z] / 2);
   float height = -q16_float(origin[AXIS_Y] + record->top + record->height / 2);
-  g_battle.effects[side] = (HitEffect){x, height, 10, result == CONTACT_BLOCK};
+  g_battle.effects[side] = (HitEffect){x, z, height, 10, result == CONTACT_BLOCK};
   if (result != CONTACT_BLOCK && !chip_ko) {
     battle_blood_hit(attacker, victim, (Vec3){x, -height, (fighter_z(attacker) + fighter_z(victim)) * .5f}, record->damage);
   }

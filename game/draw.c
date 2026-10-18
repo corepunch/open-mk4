@@ -8,16 +8,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* The fight camera keeps a fixed downward tilt along its horizontal
+ * heading; scene shots use their full eye/target basis. */
 typedef struct Camera {
-  float x, z, focal, shake_y;
+  float focal, shake_y;
   int w, h;
   bool scene;
-  Vec3 eye, right, up, forward;
+  Vec3 eye, heading, right, up, forward;
 } Camera;
-
-static Vec3 camera_position(Camera c) {
-  return c.scene ? c.eye : (Vec3){c.x, -2.8f + c.shake_y, c.z};
-}
 
 static float dot(Vec3 a, Vec3 b) {
   return a.x * b.x + a.y * b.y + a.z * b.z;
@@ -28,8 +26,9 @@ static Vec3 camera_point(Camera c, Vec3 p) {
     Vec3 relative = vec_sub(p, c.eye);
     return (Vec3){dot(relative, c.right), dot(relative, c.up), dot(relative, c.forward)};
   }
-  float y = p.y + 2.8f - c.shake_y, d = c.z - p.z;
-  return (Vec3){p.x - c.x, y * .978f - d * .208f, y * .208f + d * .978f};
+  Vec3 relative = vec_sub(p, c.eye);
+  float y = relative.y, d = dot(relative, c.heading);
+  return (Vec3){dot(relative, c.right), y * .978f - d * .208f, y * .208f + d * .978f};
 }
 
 static ScreenVertex camera_project(Camera c, Vertex v, float light) {
@@ -273,7 +272,7 @@ static void draw_blood_splats(Canvas *cv, Camera camera, const Assets *assets, f
     }
     const Sprite *sprite = &effects->sprites.data[splat->sprite];
     Vec3 across = {q16_float(splat->axis[0]), 0, q16_float(splat->axis[1])};
-    if (across.x < 0) {
+    if (dot(across, camera.right) < 0) {
       across = vec_scale(across, -1);
     }
     Vec3 toward = {-across.z, 0, across.x};
@@ -391,8 +390,9 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   }
   canvas_clear(cv);
   const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
-  float ax = fighter_x(a), bx = fighter_x(b);
-  Camera camera = {.x = (ax + bx) * .25f, .z = fmaxf(7.5f, fabsf(ax - bx) * .85f + 3.f), .focal = (float)cv->w * .95f, .w = cv->w, .h = cv->h};
+  Camera camera = {.focal = (float)cv->w * .95f, .w = cv->w, .h = cv->h};
+  camera.eye = battle_follow_eye(&camera.heading);
+  camera.right = (Vec3){-camera.heading.z, 0, camera.heading.x};
   if (g_battle.camera.active) {
     camera.scene = true;
     if (g_battle.camera.focal_scale > 0) {
@@ -409,7 +409,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   }
   camera.shake_y = q16_float(g_battle.camera.shake_y);
   camera.eye.y += camera.shake_y;
-  SceneLight light = above_camera_light(camera_position(camera));
+  SceneLight light = above_camera_light(camera.eye);
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
   Triangles fighters[] = {fighter_geometry(assets, a, NULL, animation_fraction), fighter_geometry(assets, b, NULL, animation_fraction)};
   Mat4 shadow;
@@ -578,7 +578,10 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     const HitEffect *e = &g_battle.effects[i];
     if (e->ticks <= 0)
       continue;
-    ScreenVertex p = camera_project(camera, (Vertex){.p = camera_point(camera, (Vec3){e->x, -e->height, .2f})}, 1);
+    /* Lift the flash slightly toward the camera, ahead of both bodies. */
+    Vec3 center = camera_point(camera, (Vec3){e->x, -e->height, e->z});
+    center.z -= .2f;
+    ScreenVertex p = camera_project(camera, (Vertex){.p = center}, 1);
     canvas_blit(cv, &assets->hud.effects.textures.data[2], (Rect){1, 1, 23, 23}, (Rect){(int)p.x - 26, (int)p.y - 26, 52, 52}, false);
   }
   const uint32_t gold = 0xffdcc798;

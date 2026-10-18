@@ -549,7 +549,7 @@ struct Fighter {
 };
 
 typedef struct HitEffect {
-  float x, height;
+  float x, z, height;
   int ticks;
   bool blocked;
 } HitEffect;
@@ -783,6 +783,7 @@ struct Battle {
   BloodSplat splats[MAX_BLOOD_SPLATS];
   int splat_next; /* oldest stain, reused when the pool is full */
   SceneCamera camera;
+  Vec3 view; /* fight-camera horizontal heading, kept on its side when the pair crosses */
   SoundEvent sounds[MAX_SOUND_EVENTS];
   int sound_count;
   Phase phase;
@@ -921,6 +922,8 @@ void scene_blend_advance(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
 void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
 void battle_camera_shake(int pulses, int interval, q16 amount);
+/* The normal fight camera's eye and horizontal heading toward the pair. */
+Vec3 battle_follow_eye(Vec3 *heading);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 int projectile_mesh_frame(const Projectile *object);
