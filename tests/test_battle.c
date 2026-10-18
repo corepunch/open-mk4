@@ -2486,9 +2486,9 @@ static void check_reconnected_stage_commands(void) {
             "Stage command must acquire the correct scene for either player");
         for (int tick = 0; tick < 650; ++tick) {
           advance_ticks(1, NULL);
-          if (rosters[row] == 5 || rosters[row] == 14) {
+          if (rosters[row] != 12) {
             check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
-                "Cage and Fujin stage-scene owner and victim must stay on frame phases");
+                "Shared stage-scene owner and victim must stay on frame phases");
           }
         }
         if (g_battle.phase != PHASE_MATCH_OVER) {

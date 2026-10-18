@@ -232,7 +232,7 @@ void noob_saibot_entry_retail_script_004ed2c0(Fighter *fighter) {
 }
 
 const mmove_t *noob_saibot_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void noob_saibot_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -269,4 +269,8 @@ void noob_saibot_entry_retail_script_004ea040(Fighter *fighter) {
 
 void noob_saibot_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_script_004ea0b8(fighter);
+}
+
+void noob_saibot_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
 }

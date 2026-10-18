@@ -107,4 +107,5 @@ void reiko_entry_retail_script_004e66d0(Fighter *fighter);
 void reiko_entry_retail_script_004e66f0(Fighter *fighter);
 void reiko_entry_retail_script_004ea040(Fighter *fighter);
 void reiko_entry_retail_script_004ea0b8(Fighter *fighter);
+void reiko_entry_retail_script_004e0138(Fighter *fighter);
 #endif

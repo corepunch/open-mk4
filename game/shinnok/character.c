@@ -167,7 +167,7 @@ void shinnok_entry_retail_script_004e6950(Fighter *fighter) {
 }
 
 const mmove_t *shinnok_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void shinnok_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -216,4 +216,8 @@ void shinnok_entry_retail_script_004e9498(Fighter *fighter) {
 
 void shinnok_entry_retail_script_004ec8b0(Fighter *fighter) {
   retail_script_004ec8b0(fighter);
+}
+
+void shinnok_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
 }

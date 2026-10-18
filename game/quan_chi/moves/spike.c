@@ -11,5 +11,5 @@ void quan_chi_spike_fatality(Fighter *fighter) {
     return;
   }
 
-  fighter_start_fiber(fighter, quan_chi_entry_retail_script_004e6950, NULL);
+  quan_chi_entry_retail_script_004e6950(fighter);
 }

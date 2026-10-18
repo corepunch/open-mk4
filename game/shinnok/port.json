@@ -50,27 +50,28 @@
     "0x4e0138": {
       "clip": 415,
       "count": 130,
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
+      "return_to": "caller",
       "sample": 69,
-      "evidence": "Native owner loop preserves clip 415 at sample 69; bounded Shinnok fan-script and native continuation",
       "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,
       "count": 130,
-      "sample": 69,
-      "evidence": "Native owner release preserves clip 415 at sample 69; bounded Shinnok fan-script and native continuation"
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
+      "sample": 69
     },
     "0x4e0158": {
       "clip": 415,
       "count": 130,
-      "sample": 107,
-      "evidence": "Native victory continuation enters clip 415 at sample 107; bounded Shinnok fan-script and native continuation"
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
+      "sample": 107
     },
     "0x4e01a0": {
       "clip": 416,
       "count": 108,
-      "sample": 69,
-      "evidence": "Native victim release preserves clip 416 at sample 69; bounded Shinnok fan-script and native continuation"
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
+      "sample": 69
     },
     "0x4e5c70": {
       "clip": 66,
@@ -139,6 +140,12 @@
     "0x4e9498": {
       "return_to": "mk4_mmove_thrown_finish",
       "evidence": "Native weapon victim stream with independent KO-aware frame recovery."
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "sample": 0,
+      "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
     }
   },
   "entry_adapters": {
@@ -637,6 +644,13 @@
     "0x4e9460",
     "0x4e9498",
     "0x4ec8b0",
-    "0x4e6798"
+    "0x4e6798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e6950"
   ]
 }

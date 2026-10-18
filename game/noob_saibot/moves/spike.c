@@ -11,5 +11,5 @@ void noob_saibot_spike_fatality(Fighter *fighter) {
     return;
   }
 
-  fighter_start_fiber(fighter, noob_saibot_entry_retail_script_004e6950, NULL);
+  noob_saibot_entry_retail_script_004e6950(fighter);
 }

@@ -46,26 +46,27 @@
     "0x4e0138": {
       "clip": 415,
       "count": 130,
-      "evidence": "Native fan cycle preserves clip 415 at sample 69; Jax fan-fatality continuation",
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
+      "return_to": "caller",
       "sample": 69,
       "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,
       "count": 130,
-      "evidence": "Native fan release preserves clip 415 at sample 69; Jax fan-fatality continuation",
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
       "sample": 69
     },
     "0x4e0158": {
       "clip": 415,
       "count": 130,
-      "evidence": "Native victory continuation enters clip 415 at sample 107; Jax fan-fatality",
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
       "sample": 107
     },
     "0x4e01a0": {
       "clip": 416,
       "count": 108,
-      "evidence": "Jax fan victim release preserves clip 416 at sample 69",
+      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
       "sample": 69
     },
     "0x4e1390": {
@@ -218,6 +219,12 @@
     "0x4ea0b8": {
       "return_to": "mk4_script_thrown_ready",
       "evidence": "Native93/138 victim entry; generated clip/motion with independent KO-aware completion."
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "sample": 0,
+      "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
     }
   },
   "generated_scripts": [
@@ -736,6 +743,13 @@
     "0x4e63b0",
     "0x4e62a0",
     "0x4e5d90",
-    "0x4e6798"
+    "0x4e6798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e6950"
   ]
 }

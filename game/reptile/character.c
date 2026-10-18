@@ -218,7 +218,7 @@ void reptile_entry_retail_script_004ed1e8(Fighter *fighter) {
 }
 
 const mmove_t *reptile_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void reptile_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -235,4 +235,12 @@ void reptile_entry_retail_script_004e6190(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e6270(Fighter *fighter) {
   retail_script_004e6270(fighter);
+}
+
+void reptile_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
+}
+
+void reptile_entry_retail_script_004e0158(Fighter *fighter) {
+  retail_script_004e0158(fighter);
 }

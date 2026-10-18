@@ -1,9 +1,15 @@
 #include "../character.h"
 
+void shinnok_spike_fatality(Fighter *fighter);
+
+void shinnok_script_spike_tail(Fighter *fighter) {
+  mk4_script_spike_tail(fighter);
+}
+
 void shinnok_spike_fatality(Fighter *fighter) {
-  if (!battle_begin_finisher(fighter, FINISH_SPIKE)) {
-    shinnok_ready(fighter);
+  if (!mk4_begin_stage_finish(fighter, FINISH_SPIKE)) {
     return;
   }
-  fighter_start_fiber(fighter, shinnok_entry_retail_script_004e6950, NULL);
+
+  shinnok_entry_retail_script_004e6950(fighter);
 }

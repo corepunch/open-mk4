@@ -165,4 +165,5 @@ void kai_entry_retail_script_004ec5a8(Fighter *fighter);
 void kai_entry_retail_script_004e8b78(Fighter *fighter);
 void kai_entry_retail_script_004e8bc0(Fighter *fighter);
 void kai_entry_retail_script_004e8f50(Fighter *fighter);
+void kai_entry_retail_script_004e0138(Fighter *fighter);
 #endif

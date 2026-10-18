@@ -125,4 +125,5 @@ void shinnok_entry_retail_script_004e8d08(Fighter *fighter);
 void shinnok_entry_retail_script_004e9460(Fighter *fighter);
 void shinnok_entry_retail_script_004e9498(Fighter *fighter);
 void shinnok_entry_retail_script_004ec8b0(Fighter *fighter);
+void shinnok_entry_retail_script_004e0138(Fighter *fighter);
 #endif

@@ -1,19 +1,17 @@
 #include "../character.h"
 
-static void jax_spike_tail(Fighter *fighter);
-static void jax_spike_fatality(Fighter *fighter);
-void jax_command_spike(Fighter *fighter);
+void jax_spike_fatality(Fighter *fighter);
 
-static void jax_spike_tail(Fighter *fighter) {
+void jax_script_spike_tail(Fighter *fighter) {
   mk4_script_spike_tail(fighter);
 }
 
-static void jax_spike_fatality(Fighter *fighter) {
-  if (!battle_begin_finisher(fighter, FINISH_SPIKE)) {
-    jax_ready(fighter);
+void jax_spike_fatality(Fighter *fighter) {
+  if (!mk4_begin_stage_finish(fighter, FINISH_SPIKE)) {
     return;
   }
-  fighter_start_fiber(fighter, jax_entry_retail_script_004e6950, NULL);
+
+  jax_entry_retail_script_004e6950(fighter);
 }
 
 void jax_command_spike(Fighter *fighter) {

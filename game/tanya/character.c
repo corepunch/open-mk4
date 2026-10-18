@@ -173,7 +173,7 @@ void tanya_entry_retail_script_004e6950(Fighter *fighter) {
 }
 
 const mmove_t *tanya_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void tanya_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -186,4 +186,8 @@ void tanya_entry_retail_script_004e69b0(Fighter *fighter) {
 
 void tanya_entry_retail_script_004e6190(Fighter *fighter) {
   retail_script_004e6190(fighter);
+}
+
+void tanya_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
 }

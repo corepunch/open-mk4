@@ -89,4 +89,5 @@ void tanya_fan_fatality(Fighter *fighter);
 void tanya_spike_fatality(Fighter *fighter);
 void tanya_roundhouse(Fighter *fighter);
 void tanya_script_roundhouse_finish(Fighter *fighter);
+void tanya_entry_retail_script_004e0138(Fighter *fighter);
 #endif

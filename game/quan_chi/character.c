@@ -187,7 +187,7 @@ void quan_chi_entry_retail_script_004e9910(Fighter *fighter) {
 }
 
 const mmove_t *quan_chi_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void quan_chi_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -204,4 +204,8 @@ void quan_chi_entry_retail_script_004e6190(Fighter *fighter) {
 
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter) {
   retail_script_004e6270(fighter);
+}
+
+void quan_chi_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
 }

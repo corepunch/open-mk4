@@ -250,7 +250,7 @@ void jax_entry_retail_script_004ed090(Fighter *fighter) {
 }
 
 const mmove_t *jax_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void jax_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -287,4 +287,12 @@ void jax_entry_retail_script_004ea040(Fighter *fighter) {
 
 void jax_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_script_004ea0b8(fighter);
+}
+
+void jax_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
+}
+
+void jax_entry_retail_script_004e0158(Fighter *fighter) {
+  retail_script_004e0158(fighter);
 }
