@@ -462,6 +462,16 @@
       "symbol": "cage_script_opponent_reaction",
       "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
       "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."
+    },
+    "13": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air",
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction13; 4ea4e8[13] ->0x481d30."
+    },
+    "16": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit",
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",

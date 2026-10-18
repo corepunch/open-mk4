@@ -2181,7 +2181,7 @@
     "13": {
       "source": "game/reactions.c",
       "symbol": "react_kick_air",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 13 at 0x481d30."
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction13; 4ea4e8[13] ->0x481d30."
     },
     "143": {
       "source": "game/reactions.c",
@@ -2196,7 +2196,7 @@
     "16": {
       "source": "game/reactions.c",
       "symbol": "react_kick_hit",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 16 at 0x482a10."
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
     },
     "17": {
       "source": "game/reactions.c",

@@ -296,7 +296,7 @@
     "13": {
       "source": "game/reactions.c",
       "symbol": "react_kick_air",
-      "evidence": "Fujin uses global reaction selector 13 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction13; 4ea4e8[13] ->0x481d30."
     },
     "143": {
       "source": "game/reactions.c",
@@ -311,7 +311,7 @@
     "16": {
       "source": "game/reactions.c",
       "symbol": "react_kick_hit",
-      "evidence": "Fujin uses global reaction selector 16 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
     },
     "17": {
       "source": "game/reactions.c",

@@ -526,12 +526,12 @@
     "13": {
       "source": "game/reactions.c",
       "symbol": "react_kick_air",
-      "evidence": "Pinned EXE Jarek contact record and reaction table"
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction13; 4ea4e8[13] ->0x481d30."
     },
     "16": {
       "source": "game/reactions.c",
       "symbol": "react_kick_hit",
-      "evidence": "Pinned EXE Jarek contact record and reaction table"
+      "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
     },
     "17": {
       "source": "game/reactions.c",
