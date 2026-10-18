@@ -185,6 +185,21 @@ A predicate returns flags; a spawn binding declares accepted task types and
 creates an independent object. The compiler never treats a callback as an
 inline call or substitutes a prose helper name for a C implementation.
 
+Noob Saibot and Kitana share a task-type-75 boundary in low-punch roots
+`4ed268` and `4ed2c0`. Their callbacks select player-group contexts and
+initialize the retail packed transform chain, then wait on the paired actor's
+contact window. The portable `ShadowActor` stores its clip, owner/victim group,
+contact phases and lifetime, and uses the render hierarchy and overlap contact
+model. Kitana's upper branch also preserves its action, gravity, and landing
+phases. The runtime task record itself is unavailable, so this is an explicit
+portable event model rather than a reconstructed retail scheduler.
+
+Other global callback sequences use `BattleEvent` when their task state is
+not present in the VM graph. Keep phase, clip, contact, and recovery state in
+the event record; do not retain retail scratch pointers or make the callback
+a no-op. When descriptor data is missing, reuse the fighter's reviewed contact
+record and document the approximation in its adapter.
+
 If no existing helper fits, implement the verified native behavior once in
 shared engine code or a small character adapter. Keep SDL out of simulation.
 Then add the root to the generation profile and regenerate:

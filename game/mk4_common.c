@@ -292,6 +292,11 @@ static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | S
 static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
 
+static int air_throw_release_sample(const Fighter *victim) {
+  int last = fighter_move(victim)->last;
+  return last < 28 ? last : 28;
+}
+
 /* 480f50[89] -> 484b40 / 4e9910: release is owned by the attacker,
  * before world physics, so P1/P2 update order cannot delay the drop. */
 static void air_throw_drop(Fighter *victim) {
@@ -314,10 +319,10 @@ bool mk4_can_air_throw(const Fighter *fighter) {
          !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
 }
 
-static void air_throw_start(Fighter *fighter) {
+static bool air_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
   if (!mk4_can_air_throw(fighter)) {
     fighter_ready(fighter);
-    return;
+    return false;
   }
   Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
   if (victim->armed && victim->disarm != NULL) {
@@ -331,14 +336,15 @@ static void air_throw_start(Fighter *fighter) {
     actor->body.physics = NULL;
     actor->body.on_land = NULL;
   }
-  fighter_start_move(fighter, S_THROW, &s_air_throw);
-  fighter_start_move(victim, S_KNOCKDOWN, &s_air_thrown);
+  fighter_start_move(fighter, S_THROW, owner_move);
+  fighter_start_move(victim, S_KNOCKDOWN, victim_move);
   fighter->sample_override = victim->sample_override = 0;
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  return true;
 }
 
 void mk4_script_air_getup(Fighter *victim) {
@@ -359,11 +365,11 @@ static void air_generated_victim(Fighter *victim) {
     fighter_wait_ticks(1);
     if (owner->pending != NULL || owner->action != 0x502) {
       air_throw_drop(victim);
-      victim->sample_override = 28;
+      victim->sample_override = air_throw_release_sample(victim);
     }
     memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
   }
-  victim->sample_override = 28;
+  victim->sample_override = air_throw_release_sample(victim);
   victim->paired_release(victim);
 }
 
@@ -371,7 +377,7 @@ void mk4_script_air_throw_release(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   air_throw_drop(victim);
-  victim->sample_override = 28;
+  victim->sample_override = air_throw_release_sample(victim);
   victim->reaction = 89;
   battle_damage(victim, 0x2147);
   if (victim->health <= 0) {
@@ -387,13 +393,24 @@ static void air_generated_cleanup(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   if (victim->flags & FF_PAIRED) {
     air_throw_drop(victim);
-    victim->sample_override = 28;
+    victim->sample_override = air_throw_release_sample(victim);
   }
 }
 
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
-  air_throw_start(fighter);
-  if (!(fighter->flags & FF_PAIRED)) {
+  if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
+    return;
+  }
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  victim->paired_release = victim_script;
+  fighter_start_fiber(fighter, owner_script, air_generated_cleanup);
+  fighter_start_fiber(victim, air_generated_victim, NULL);
+}
+
+void mk4_air_throw_generated_with_moves(
+    Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
+  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
+  if (!air_throw_start(fighter, owner_move, victim_move)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

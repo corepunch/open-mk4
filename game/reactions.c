@@ -1,5 +1,7 @@
 #include "game.h"
 #include "mk4_characters.h"
+
+void reptile_reaction_40(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
 
@@ -813,6 +815,12 @@ void battle_react(Fighter *victim, int reaction) {
   }
   FighterFn entry = reactions[reaction] != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? reactions[reaction]
                                                                                                                                       : react_approximate;
+  if (victim->roster == 10 && reaction == 40) {
+    entry = reptile_reaction_40;
+  }
+  if (victim->roster == 16 && (reaction == 24 || reaction == 55 || reaction == 56 || reaction == 68 || reaction == 86 || reaction == 87 || reaction == 121)) {
+    entry = kitana_generated_reaction;
+  }
 
   for (int i = 0; i < 3; ++i) {
     victim->body.vel[i] = 0;

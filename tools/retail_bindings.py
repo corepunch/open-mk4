@@ -254,7 +254,7 @@ CHARACTER_BINDINGS[0][0x450d40] = Binding('script_transform_effect', 'game/c_sco
 CHARACTER_BINDINGS[0][0x41ed80] = Binding('script_beast_gore', 'game/c_scorpion.c', ('spawn',), ('fighter', 'task_type'), evidence='41ed80 exact-entry native contract; docs/scorpion-retail-moves.md', flow='independent', task_types=(0,))
 BINDINGS[0x45afe0] = Binding('fighter_set_speed', 'game/moves.c', ('handler',), ('fighter', 'word0_i32'), evidence='45afe0 -> 490c60 horizontal signed velocity')
 BINDINGS[0x4595a0] = Binding('mk4_script_shake', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='4595a0 -> 457b50 camera pulse selector table 4e3638', inline_values=(0, 1, 2, 3, 4, 5, 6))
-BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector', inline_values=tuple(range(20)))
+BINDINGS[0x45b310] = Binding('mk4_script_effect', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), evidence='45b310 -> 40a470 independent decorative effect selector, including Goro throw selector 21', inline_values=tuple(range(22)))
 
 CHARACTER_BINDINGS[0][0x444190] = Binding('script_burn_victim_end', 'game/c_scorpion.c', ('tail',), evidence='444190 native scene completion after 4e0358')
 
@@ -614,6 +614,17 @@ CHARACTER_BINDINGS[5] = {
 }
 
 CHARACTER_BINDINGS[10] = {
+    0x40eb80: Binding('reptile_script_visibility_end', 'game/c_reptile.c', ('call',),
+                      evidence='40eb80 closes the Reptile invisibility stream; adapter restores the saved appearance and clears teleport presentation state'),
+    0x40ec40: Binding('reptile_script_visibility_start', 'game/c_reptile.c', ('call',),
+                      evidence='40ec40 begins the clip-driven Reptile visibility event after the opening clip samples'),
+    0x40ed20: Binding('reptile_script_visibility_phase', 'game/c_reptile.c', ('call',),
+                      evidence='40ed20 marks the next observed Reptile visibility phase'),
+    0x40ee00: Binding('reptile_script_visibility_extend', 'game/c_reptile.c', ('call',),
+                      evidence='40ee00 extends the Reptile visibility event for its sample-30 loop and task76 continuation'),
+    0x498920: Binding('reptile_task_76_spawn', 'game/c_reptile.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(76,),
+                      evidence='498920 copies the actor transform and launches the clip26 contact waiter; the adapter uses a timed clone event and geometry-only contact probe'),
     0x47ab50: Binding('retail_script_004e8174', 'game/generated/reptile.inc', ('tail',),
                       script_target=0x4e8174,
                       evidence='47ab50 callback state enters the selected clip 106/22 continuation 4e8174'),
@@ -1101,20 +1112,20 @@ CHARACTER_BINDINGS[14] = {
                       evidence='46f270 completes Cage roundhouse contact recovery through controller-ready'),
 }
 
+CHARACTER_BINDINGS[17][0x46ac10] = Binding(
+    'noob_saibot_script_air_throw_continue', 'game/c_noob_saibot.c', ('tail',),
+    flow='terminal', evidence='46ac10 sets both paired bodies to gravity 0x147a and vertical velocity -0x1999 before entering 4e5ea0')
+CHARACTER_BINDINGS[17][0x46ac90] = Binding(
+    'noob_saibot_script_air_throw_continue', 'game/c_noob_saibot.c', ('tail',),
+    script_target=0x4e5eb0, evidence='46ac90 directly enters the Noob paired landing continuation 4e5eb0')
+CHARACTER_BINDINGS[17][0x46aca0] = Binding(
+    'noob_saibot_script_air_throw_end', 'game/c_noob_saibot.c', ('tail',),
+    flow='terminal', evidence='46aca0 subtracts 0x30a3 from the victim, releases the pair and returns to the fighter controller')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/generated/%s.inc' % CHARACTERS[character], ('tail',),
                               script_target=target, evidence='%x: script_enter(%x); exact-entry native listing' % (address, target))
              for address, target in ((0x46dd00, 0x4e6330), (0x46dd10, 0x4e6360), (0x46dd20, 0x4e63b0))}
     return {**BINDINGS, **links, **CHARACTER_BINDINGS.get(character, {})}
-    0x40eb80: Binding('reptile_script_visibility_end', 'game/c_reptile.c', ('call',),
-                      evidence='40eb80 closes the Reptile invisibility stream; adapter restores the saved appearance and clears teleport presentation state'),
-    0x40ec40: Binding('reptile_script_visibility_start', 'game/c_reptile.c', ('call',),
-                      evidence='40ec40 begins the clip-driven Reptile visibility event after the opening clip samples'),
-    0x40ed20: Binding('reptile_script_visibility_phase', 'game/c_reptile.c', ('call',),
-                      evidence='40ed20 marks the next observed Reptile visibility phase'),
-    0x40ee00: Binding('reptile_script_visibility_extend', 'game/c_reptile.c', ('call',),
-                      evidence='40ee00 extends the Reptile visibility event for its sample-30 loop and task76 continuation'),
-    0x498920: Binding('reptile_task_76_spawn', 'game/c_reptile.c', ('spawn',), ('fighter', 'task_type'),
-                      flow='independent', task_types=(76,),
-                      evidence='498920 copies the actor transform and launches the clip26 contact waiter; the adapter uses a timed clone event and geometry-only contact probe'),

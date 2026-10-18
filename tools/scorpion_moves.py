@@ -121,6 +121,8 @@ SCRIPT_OPS = {
     0x6d: ('native helper with word operand', 1),
     0x69: ('play remaining animation frames', 0),
     0x71: ('blend into clip and resume at sample one', 1),
+    0x75: ('play indexed block sound when selected player is blocking', 0),
+    0x76: ('play alternate indexed block sound when selected player is blocking', 0),
 }
 
 

@@ -162,6 +162,7 @@ typedef struct AttackRecord {
   uint8_t hit, air, blocked, flags; /* reaction ids for hit / air hit / block */
   q16 damage;                       /* fraction of full health */
 } AttackRecord;
+
 typedef struct Battle Battle;
 typedef struct Fighter Fighter;
 typedef void (*FighterFn)(Fighter *fighter);
@@ -342,6 +343,8 @@ enum {
   FINISH_RAIDEN_2,
   FINISH_SONYA_1,
   FINISH_SONYA_2,
+  FINISH_JAX_1,
+  FINISH_JAX_2,
   FINISH_KITANA_1,
   FINISH_KITANA_2
 };
@@ -530,9 +533,6 @@ struct Projectile {
 
 #define MAX_BATTLE_EVENTS 16
 
-/* Portable scene/contact callbacks keep explicit phase and data instead of
- * retaining a retail task stack or pointers into native scratch state. */
-struct BattleEvent {
 enum {
   BATTLE_EVENT_SHADOW_ACTOR = 0x53484144,
   SHADOW_ACTOR_LOW,
@@ -551,6 +551,9 @@ enum {
   SHADOW_DATA_VELOCITY_Y
 };
 
+/* Portable scene/contact callbacks keep explicit phase and data instead of
+ * retaining a retail task stack or pointers into native scratch state. */
+struct BattleEvent {
   BattleEventFn step;
   uint64_t generation, due_tick, owner_continuation;
   int owner, phase, data[8];
@@ -735,12 +738,12 @@ void battle_event_cancel(BattleEvent *event);
 void battle_event_cancel_all(void);
 void battle_event_delay(BattleEvent *event, int ticks);
 void battle_event_pump(void);
-void battle_damage(Fighter *victim, q16 damage);
-void battle_react(Fighter *victim, int reaction);
-void battle_wall_recoil(Fighter *victim);
 void battle_shadow_actor_start(Fighter *owner, int variant);
 void battle_shadow_actor_install_physics(Fighter *owner);
 bool battle_shadow_actor_event(const BattleEvent *event);
+void battle_damage(Fighter *victim, q16 damage);
+void battle_react(Fighter *victim, int reaction);
+void battle_wall_recoil(Fighter *victim);
 void battle_world(void);
 void battle_set_arena(int arena);
 bool battle_can_finish(const Fighter *fighter);

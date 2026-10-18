@@ -154,6 +154,204 @@ def moves_for(character):
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
         )
+    if character == 10:
+        # Reptile's input and CPU tables expose three additional script
+        # families beyond the common combat roots. The 0x47a690 loop can
+        # enter a second generated stream after its D-contact window.
+        shared.update(
+            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('extended throw', 0x4de640),
+                                     ('short throw', 0x4de6b8), ('extended continuation', 0x4de664),
+                                     ('owner return', 0x4de668), ('victim reaction 107', 0x4e9b40),
+                                     ('victim reaction 102', 0x4e9bd0)),
+                          native=(('selector', 0x42cc00), ('extended continuation', 0x42cc40),
+                                  ('short continuation', 0x42ce80))),
+            input_47a690=move(0x47a690,
+                              (('selected stream', 0x4e8128), ('loop idle stream', 0x4e8148),
+                               ('loop timeout stream', 0x4e8174)),
+                              native=(('contact-loop callback', 0x47a6d0), ('loop idle tail', 0x47ab50))),
+            input_47afe0=move(0x47afe0, (('selected stream', 0x4e8178),),
+                              native=(('contact query', 0x48d450),)),
+            input_4988d0=move(0x4988d0, (('selected stream', 0x4ed1e8),)),
+            reaction_40=move(0x483550, (('reaction continuation', 0x4e9620),),
+                             native=(('shared landing', 0x488b40),)),
+        )
+        return shared
+    if character == 11:
+        # Kai's selected input/CPU targets include additional kick, recovery,
+        # victory and draw streams beyond the shared fighter roots.
+        shared.update(
+            input_47bd10=move(0x47bd10, (('selected continuation', 0x4e8210),),
+                              native=(('motion finish', 0x47bd40),)),
+            input_47bd40=move(0x47bd40, (('selected continuation', 0x4e8238),),
+                              native=(('recovery finish', 0x47bf90),)),
+            input_47c520=move(0x47c520, (('selected continuation', 0x4e8320),),
+                              native=(('clip finish', 0x47c580),)),
+            input_47cc10=move(0x47cc10, (('selected continuation', 0x4e8358), ('scheduler continuation', 0x4e8390)),
+                              native=(('clip finish', 0x47cc50),)),
+            input_478df0=move(0x478df0, (('selected continuation', 0x4e8870),),
+                              native=(('clip finish', 0x478e20),)),
+            input_47cbf0=move(0x47cbf0, (('selected continuation', 0x4e88c8),),
+                              native=(('clip finish', 0x47cc10),)),
+            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
+                             native=(('follow-up draw', 0x46d260),)),
+            lk_throw=move(0x42b6b0,
+                          (('paired opening', 0x4de2f8), ('damage', 0x4de318),
+                           ('release', 0x4de328), ('victim continuation', 0x4de358)),
+                          native=(('victim continuation', 0x42be10),)),
+            lp_throw=move(0x42c560,
+                          (('selected attacker/victim', 0x4de798),
+                           ('extended throw', 0x4de610), ('short throw', 0x4de6b8)),
+                          native=(('variant selector', 0x42cb80),)),
+            high_kick=move(0x46a680, (('Kai selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            roundhouse=move(0x46f1f0,
+                            (('Kai attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),
+                            (('B', 34),)),
+        )
+        return shared
+    if character == 12:
+        # Jarek's LP throw branches into four separately reached VM streams;
+        # its high/low kick and roundhouse selectors use Jarek's roster slot.
+        shared.update(
+            fan_fatality=move(0x467e00,
+                              (('performer', 0x4e0118), ('victim', 0x4e0188),
+                               ('owner cycle', 0x4e0138), ('owner release', 0x4e0148),
+                               ('victory', 0x4e0158), ('victim release', 0x4e01a0),
+                               ('owner setup continuation', 0x4e0128),
+                               ('victory setup continuation', 0x4e01b0)),
+                              native=(('scene entry', 0x43d040), ('owner setup', 0x43d460),
+                                      ('victory setup', 0x43db50))),
+            lp_throw=move(0x42c560,
+                          (('Jarek selected attacker/victim', 0x4de798),
+                           ('extended throw', 0x4de640), ('short throw', 0x4de6b8),
+                           ('extended continuation', 0x4de664), ('owner return', 0x4de668)),
+                          native=(('selector', 0x42cc00), ('extended continuation', 0x42cc40),
+                                  ('short continuation', 0x42ce80))),
+            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
+                             native=(('follow-up draw', 0x46d260),)),
+            input_47b5d0=move(0x47b5d0, (('high-kick continuation', 0x4e81a8),),
+                              native=(('clip finish', 0x47b600),)),
+            input_4797f0=move(0x4797f0, (('standing HP special', 0x4e80a0),)),
+            cpu_479b20=move(0x479b20, (('CPU kick', 0x4e80a8), ('high-kick follow-up', 0x4e80c8),
+                                       ('second follow-up', 0x4e80f4)),
+                            native=(('contact selector', 0x479b70), ('first follow-up tail', 0x479f00),
+                                    ('second follow-up selector', 0x47a030), ('final follow-up selector', 0x47a160))),
+            cpu_497540=move(0x497540,
+                            (('projectile response', 0x4ed118), ('projectile impact', 0x4ed190)),
+                            native=(('projectile callback', 0x497580), ('contact completion', 0x497b60),
+                                    ('impact setup', 0x497b00))),
+            high_kick=move(0x46a680, (('Jarek attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            low_kick=move(0x46a7b0, (('Jarek attacker', 0x4e5d90),), (('B', 5),)),
+            sweep=move(0x46ef90, (('Jarek attacker', 0x4e6798),), (('B', 35),)),
+            uppercut=move(0x46ccd0, (('Jarek attacker', 0x4e62a0),), (('A', 2), ('A', 6))),
+            roundhouse=move(0x46f1f0,
+                            (('Jarek attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),
+                            (('B', 33),)),
+        )
+        return shared
+    if character == 13:
+        # Jax's throw selector enters a separate attacker/victim stream and
+        # the heavy punch command exposes the common stage finisher path.
+        shared.update(
+            lp_throw=move(0x42c560, (('Jax selector', 0x4de798), ('selected throw', 0x4de4f0)),
+                          native=(('throw continuation', 0x42c7f0),)),
+            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328),
+                                     ('follow-up return', 0x4de358))),
+            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
+                             native=(('follow-up draw', 0x46d260),)),
+            input_47ab10=move(0x47ab10, (('selected jab script', 0x4e8150), ('retry script', 0x4e8174)),
+                              native=(('jab continuation', 0x47ab50),)),
+            cpu_496f80=move(0x496f80, (('selected projectile script', 0x4ed090),),
+                            native=(('independent task', 0x496fc0),)),
+            input_46a990=move(0x46a990, (('cancel/recovery script', 0x4e5dd8), ('throw exit', 0x4e5df8)),
+                              native=(('throw exit', 0x46a9f0),)),
+            spike_fatality=move(0x467e70, (('selected special', 0x4e6950),),
+                                native=(('stage continuation', 0x467fc0),)),
+            fatality_1=move(0x467ce0, (('scene opening', 0x4e1390), ('performer loop', 0x4e13a0),
+                                      ('victim presentation A', 0x4e13b0), ('victim presentation B', 0x4e13c0),
+                                      ('victim continuation A', 0x4e13d0), ('victim continuation B', 0x4e13e0),
+                                      ('scene actor task A', 0x4e18f0), ('scene actor task B', 0x4e1958)),
+                            native=(('Jax roster-selected scene entry', 0x4494c0), ('scene callback', 0x449620),
+                                    ('performer continuation', 0x4496d0), ('secondary actor continuation', 0x44a9f0),
+                                    ('victim task continuation', 0x449890), ('victim final continuation', 0x4498d0),
+                                    ('scene actor setup', 0x43d720), ('global F1 dispatcher', 0x43cbb0))),
+            fatality_2=move(0x467cd0, (('scene opening', 0x4e5a80), ('performer loop', 0x4e5a98),
+                                      ('victim continuation', 0x4e5b38), ('victim reaction task', 0x4e5b10)),
+                            native=(('Jax roster-selected scene entry', 0x4669c0), ('scene callback', 0x466a90),
+                                    ('victim task callback', 0x466dd0), ('victim task finish', 0x466df0),
+                                    ('reaction task setup', 0x466b40), ('reaction task continuation', 0x466bb0),
+                                    ('global F2 dispatcher', 0x43bd70))),
+            input_468f00=move(0x468f00, native=(('persistent action controller', 0x428750),
+                                                 ('controller return', 0x46f650))),
+            roundhouse=move(0x46f1f0,
+                            (('Jax selected attacker', 0x4e6800),
+                             ('fast start', 0x4e6890), ('normal start', 0x4e68a8)),
+                            ),
+        )
+        return shared
+    if character == 14:
+        # Cage uses the shared combat VM roots, with two distinct fatality
+        # scene entries selected by the roster's F1/F2 tables. His command
+        # tables also select a powered punch, a shadow kick, and a CPU kick.
+        shared.update(
+            fatality_1=move(0x467ce0, (('scene setup', 0x4e12a0), ('scene loop', 0x4e12b0)),
+                            native=(('roster dispatch', 0x448160), ('scene continuation', 0x448480))),
+            fatality_2=move(0x467cd0, (('scene entry', 0x4e5870),),
+                            native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0))),
+            shadow_kick=move(0x468aa0, (('contact or recovery', 0x4e5ba8),),
+                             native=(('contact loop', 0x48d450),)),
+            powered_punch=move(0x479ec0, (('attack', 0x4e80d0), ('powered continuation', 0x4e80c8),
+                                          ('final follow-up', 0x4e80f4)),
+                               native=(('return continuation', 0x479f00),)),
+            cpu_kick=move(0x479b20, (('attack', 0x4e80a8),),
+                          native=(('return continuation', 0x479b70),)),
+        )
+        return shared
+    if character == 15:
+        # Goro shares the common combat streams, while roster-selected
+        # contact records and scene tables keep their own character context.
+        shared.update(
+            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328),
+                                    ('follow-up return', 0x4de358)),
+                          native=(('roster continuation', 0x42bdd0), ('victim continuation', 0x42bdf0),
+                                  ('follow-up return', 0x42be10))),
+            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('repeated damage', 0x4de7e8),
+                                     ('final damage', 0x4de6e4)),
+                          native=(('selector', 0x42c3d0), ('throw continuation', 0x42c590), ('victim continuation', 0x42ceb0),
+                                  ('five-phase sequence', 0x42c770), ('phase repeat', 0x42c7b0))),
+            jab=move(0x46dca0, (('attacker', 0x4e62f0), ('second punch', 0x4e6330),
+                                ('repeat', 0x4e6360), ('recovery', 0x4e63b0)), (('A', 1),),
+                     native=(('recovery callback', 0x46de60),)),
+            uppercut=move(0x46ccd0, (('attacker', 0x4e62a0),), (('A', 2), ('A', 6))),
+            sweep=move(0x46ef90, (('attacker', 0x4e6798),), (('B', 36),)),
+            air_hp=move(0x46e6c0, (('attacker', 0x4e6658),), (('A', 4),),
+                        native=(('recovery callback', 0x46e7c0),)),
+            air_lp=move(0x46ee30, (('attacker', 0x4e6710),), (('A', 5),),
+                        native=(('recovery callback', 0x46ef10),)),
+            air_kick=move(0x46c7a0, (('straight kick', 0x4e61f8),), (('B', 40),),
+                          native=(('recovery callback', 0x46cb10),)),
+            air_diagonal_hk=move(0x46e380, (('attacker', 0x4e6500),), (('B', 32),)),
+            air_diagonal_lk=move(0x46df50, (('attacker', 0x4e63d8),), (('B', 29),)),
+            air_throw=move(0x46aa80, (('paired attacker/victim', 0x4e5e28), ('release', 0x4e5e50),
+                                      ('victim release', 0x4e9910)),
+                           native=(('command gate', 0x45ed70), ('release damage', 0x46aae0),
+                                   ('landing', 0x46ab20), ('victim continuation', 0x4878c0),
+                                   ('victim getup', 0x484b60))),
+            fan_fatality=move(0x467e00, (('performer', 0x4e0118), ('victim', 0x4e0188),
+                                         ('owner cycle', 0x4e0138), ('owner release', 0x4e0148),
+                                         ('victory', 0x4e0158), ('victim release', 0x4e01a0)),
+                              native=(('scene entry', 0x43d040),)),
+            spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
+            high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
+            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),
+                                       ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
+            progress_event=move(0x43af90, (('actor clip', 0x4dfb60),)),
+            counter_kick_event=move(0x43b170, (('actor clip', 0x4dfb70),)),
+            counter_sweep_event=move(0x43b320, (('actor clip', 0x4dfbb8),)),
+            cpu_projectile=move(0x49ca70, (('clip 592 launch program', 0x4ed790),),
+                                native=(('heading snapshot and launch', 0x49ca70),)),
+        )
+        return shared
     if character in (1, 2):
         # Exact roster dispatch: 4ddfb8[1/2] -> 42bce0/42bed0.
         # Shared selector roots remain explicit; native-entered recoveries are
@@ -325,103 +523,6 @@ def moves_for(character):
                             (('B', 34),)),
         )
         return shared
-    if character == 15:
-        # Goro shares the common combat streams, while roster-selected
-        # contact records and scene tables keep their own character context.
-        shared.update(
-            lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328),
-                                    ('follow-up return', 0x4de358)),
-                          native=(('roster continuation', 0x42bdd0), ('victim continuation', 0x42bdf0),
-                                  ('follow-up return', 0x42be10))),
-            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('repeated damage', 0x4de7e8),
-                                     ('final damage', 0x4de6e4)),
-                          native=(('selector', 0x42c3d0), ('throw continuation', 0x42c590), ('victim continuation', 0x42ceb0),
-                                  ('five-phase sequence', 0x42c770), ('phase repeat', 0x42c7b0))),
-            jab=move(0x46dca0, (('attacker', 0x4e62f0), ('second punch', 0x4e6330),
-                                ('repeat', 0x4e6360), ('recovery', 0x4e63b0)), (('A', 1),),
-                     native=(('recovery callback', 0x46de60),)),
-            uppercut=move(0x46ccd0, (('attacker', 0x4e62a0),), (('A', 2), ('A', 6))),
-            sweep=move(0x46ef90, (('attacker', 0x4e6798),), (('B', 36),)),
-            air_hp=move(0x46e6c0, (('attacker', 0x4e6658),), (('A', 4),),
-                        native=(('recovery callback', 0x46e7c0),)),
-            air_lp=move(0x46ee30, (('attacker', 0x4e6710),), (('A', 5),),
-                        native=(('recovery callback', 0x46ef10),)),
-            air_kick=move(0x46c7a0, (('straight kick', 0x4e61f8),), (('B', 40),),
-                          native=(('recovery callback', 0x46cb10),)),
-            air_diagonal_hk=move(0x46e380, (('attacker', 0x4e6500),), (('B', 32),)),
-            air_diagonal_lk=move(0x46df50, (('attacker', 0x4e63d8),), (('B', 29),)),
-            air_throw=move(0x46aa80, (('paired attacker/victim', 0x4e5e28), ('release', 0x4e5e50),
-                                      ('victim release', 0x4e9910)),
-                           native=(('command gate', 0x45ed70), ('release damage', 0x46aae0),
-                                   ('landing', 0x46ab20), ('victim continuation', 0x4878c0),
-                                   ('victim getup', 0x484b60))),
-            fan_fatality=move(0x467e00, (('performer', 0x4e0118), ('victim', 0x4e0188),
-                                         ('owner cycle', 0x4e0138), ('owner release', 0x4e0148),
-                                         ('victory', 0x4e0158), ('victim release', 0x4e01a0)),
-                              native=(('scene entry', 0x43d040),)),
-            spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
-            high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
-            low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
-            roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),
-                                       ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
-            progress_event=move(0x43af90, (('actor clip', 0x4dfb60),)),
-            counter_kick_event=move(0x43b170, (('actor clip', 0x4dfb70),)),
-            counter_sweep_event=move(0x43b320, (('actor clip', 0x4dfbb8),)),
-            cpu_projectile=move(0x49ca70, (('clip 592 launch program', 0x4ed790),),
-                                native=(('heading snapshot and launch', 0x49ca70),)),
-        )
-        return shared
-
-    if character == 11:
-        # Kai's selected input/CPU targets include additional kick, recovery,
-        # victory and draw streams beyond the shared fighter roots.
-        shared.update(
-            input_47bd10=move(0x47bd10, (('selected continuation', 0x4e8210),),
-                              native=(('motion finish', 0x47bd40),)),
-            input_47bd40=move(0x47bd40, (('selected continuation', 0x4e8238),),
-                              native=(('recovery finish', 0x47bf90),)),
-            input_47c520=move(0x47c520, (('selected continuation', 0x4e8320),),
-                              native=(('clip finish', 0x47c580),)),
-            input_47cc10=move(0x47cc10, (('selected continuation', 0x4e8358), ('scheduler continuation', 0x4e8390)),
-                              native=(('clip finish', 0x47cc50),)),
-            input_478df0=move(0x478df0, (('selected continuation', 0x4e8870),),
-                              native=(('clip finish', 0x478e20),)),
-            input_47cbf0=move(0x47cbf0, (('selected continuation', 0x4e88c8),),
-                              native=(('clip finish', 0x47cc10),)),
-            draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
-                             native=(('follow-up draw', 0x46d260),)),
-            lk_throw=move(0x42b6b0,
-                          (('paired opening', 0x4de2f8), ('damage', 0x4de318),
-                           ('release', 0x4de328), ('victim continuation', 0x4de358)),
-                          native=(('victim continuation', 0x42be10),)),
-            lp_throw=move(0x42c560,
-                          (('selected attacker/victim', 0x4de798),
-                           ('extended throw', 0x4de610), ('short throw', 0x4de6b8)),
-                          native=(('variant selector', 0x42cb80),)),
-            high_kick=move(0x46a680, (('Kai selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
-            roundhouse=move(0x46f1f0,
-                            (('Kai attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),
-                            (('B', 34),)),
-        )
-        return shared
-    if character == 14:
-        # Cage's controller-selected streams include a fatality scene loop and
-        # a three-stage powered punch continuation.
-        shared.update(
-            fatality_1=move(0x467ce0, (('scene setup', 0x4e12a0), ('scene loop', 0x4e12b0)),
-                            native=(('roster dispatch', 0x448160), ('scene continuation', 0x448480))),
-            fatality_2=move(0x467cd0, (('scene entry', 0x4e5870),),
-                            native=(('roster dispatch', 0x465790), ('scene continuation', 0x4658a0))),
-            shadow_kick=move(0x468aa0, (('contact or recovery', 0x4e5ba8),),
-                             native=(('contact loop', 0x48d450),)),
-            powered_punch=move(0x479ec0, (('attack', 0x4e80d0), ('powered continuation', 0x4e80c8),
-                                          ('final follow-up', 0x4e80f4)),
-                               native=(('return continuation', 0x479f00),)),
-            cpu_kick=move(0x479b20, (('attack', 0x4e80a8),),
-                          native=(('return continuation', 0x479b70),)),
-        )
-        return shared
-
     if character != 4:
         return shared
     shared.update(

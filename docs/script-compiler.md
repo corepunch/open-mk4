@@ -108,9 +108,12 @@ engine continuation rather than an invented retail task stack.
 
 For a root entered from native code with an inherited clip, declare an
 `entry_contexts` record keyed by its hex entry. It requires `clip`, `count`,
-`sample` and an evidence string naming the native entry. Compilation seeds its
-initialization/cursor analysis from that contract; generated C checks the actual
-clip and sample before rebinding actor-owned storage. Missing context fails
+`sample` and an evidence string naming the native entry. Set `clip` to the
+decoded integer when all incoming paths establish one clip. Use `"current"`
+when evidence establishes a common sample count and cursor but paths preserve
+different clip IDs; generated C verifies that count and cursor, then rebinds
+the actor-owned storage with the live clip ID. Compilation seeds its
+initialization/cursor analysis from that contract. Missing context fails
 compilation. Do not initialize unknown flags, selectors or loop counters to
 invented values. A per-entry `return_to` overrides the profile continuation;
 `"caller"` means ordinary C return for a native coordinator's script subroutine.

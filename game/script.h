@@ -20,9 +20,9 @@ void mk4_script_avoid_set(Fighter *fighter);
 void mk4_script_reverse_return(Fighter *fighter);
 void mk4_script_attack_return(Fighter *fighter);
 void mk4_script_indexed_sound(Fighter *fighter, int selector);
-
 void mk4_script_guard_block_sound_26(Fighter *fighter);
 void mk4_script_guard_block_sound_28(Fighter *fighter);
+
 void mk4_script_ready(Fighter *fighter);
 void mk4_script_land(Fighter *fighter);
 void mk4_script_thrown_ready(Fighter *fighter);

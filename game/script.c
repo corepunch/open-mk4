@@ -138,13 +138,6 @@ void mk4_script_indexed_sound(Fighter *fighter, int selector) {
   battle_sound(SOUND_INDEXED, selector);
 }
 
-/* Native contracts shared by generated fighter scripts. */
-static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d}; /* 4ebd38 */
-
-static bool script_repeat_jab(const Fighter *fighter);
-
-void mk4_script_ready(Fighter *fighter) {
-  (void)fighter;
 static void script_guard_block_sound(Fighter *fighter, int selector) {
   if ((fighter == &g_battle.fighters[0] || fighter == &g_battle.fighters[1]) && fighter->state == S_BLOCK) {
     battle_sound(SOUND_INDEXED, selector);
@@ -159,6 +152,13 @@ void mk4_script_guard_block_sound_28(Fighter *fighter) {
   script_guard_block_sound(fighter, 28);
 }
 
+/* Native contracts shared by generated fighter scripts. */
+static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d}; /* 4ebd38 */
+
+static bool script_repeat_jab(const Fighter *fighter);
+
+void mk4_script_ready(Fighter *fighter) {
+  (void)fighter;
   fighter_fiber_finish(fighter_ready);
 }
 
@@ -219,7 +219,7 @@ void mk4_script_context(Fighter *fighter, int selector) {
   /* 431520/431700 create a camera task. Our camera already follows both
    * live actors; paired positions remain the source of its framing. */
   (void)fighter;
-  require(selector >= 0 && selector < 80, "Unexpected paired camera context");
+  require(selector >= 0 && selector <= 81, "Unexpected paired camera context");
 }
 
 void mk4_script_roster_sound(Fighter *fighter, int selector) {
@@ -466,7 +466,7 @@ void mk4_script_shake(Fighter *fighter, int selector) {
 }
 
 void mk4_script_effect(Fighter *fighter, int selector) {
-  require(selector >= 0 && selector <= 19, "Unexpected decorative effect selector");
+  require(selector >= 0 && selector <= 21, "Unexpected decorative effect selector");
   battle_particles(fighter, selector, 3, true);
 }
 
