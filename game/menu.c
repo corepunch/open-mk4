@@ -250,7 +250,7 @@ static void select_quad(const SelectCamera *camera, Vec3 center, Vec3 right, Vec
 /* Lays the portraits on the inside of a shallow dish facing the camera: the
  * outer columns and rows turn inward, so their outer edges come closer and
  * the wall opens toward the two fighters. */
-static SelectTile select_tile(const SelectCamera *camera, int cursor, bool focused, float seconds) {
+static SelectTile select_tile(const SelectCamera *camera, int cursor, bool focused) {
   const float distance = 4.f;
   const float column_step = .58f;
   const float row_step = .08f;
@@ -258,17 +258,18 @@ static SelectTile select_tile(const SelectCamera *camera, int cursor, bool focus
   const float row_radius = 1.08f / row_step;
   int column = cursor % SELECT_COLUMNS;
   int row = cursor / SELECT_COLUMNS;
-  float yaw = (float)(column - 1) * column_step + .045f * sinf(seconds * .6f);
-  float pitch = (float)(2 - row) * row_step + .015f * sinf(seconds * .45f);
+  float yaw = (float)(column - 1) * column_step;
+  float pitch = (float)(2 - row) * row_step;
   Vec3 center = {column_radius * sinf(yaw), row_radius * sinf(pitch), distance - column_radius * (1 - cosf(yaw)) - row_radius * (1 - cosf(pitch))};
   Vec3 right = {cosf(yaw), 0, -sinf(yaw)};
   Vec3 up = {0, cosf(pitch), -sinf(pitch)};
   float half = .5f;
   if (focused) {
-    center.z -= .12f + .02f * sinf(seconds * 4.f);
+    center.z -= .12f;
     half = .53f;
   }
-  SelectTile tile = {cursor, center.z, {{0}}, {{0}}};
+  // The focused tile always paints last, over any nearer outer neighbor.
+  SelectTile tile = {cursor, focused ? -INFINITY : center.z, {{0}}, {{0}}};
   select_quad(camera, center, right, up, half, tile.corners);
   select_quad(camera, center, right, up, half + (focused ? .08f : .035f), tile.frame);
   return tile;
@@ -435,9 +436,9 @@ static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu
   SelectCamera camera = {(float)width * .5f, (float)height * .48f, (float)height * .475f};
   SelectTile tiles[15];
   for (int i = 0; i < 15; ++i) {
-    tiles[i] = select_tile(&camera, i, i == menu->cursor, seconds);
+    tiles[i] = select_tile(&camera, i, i == menu->cursor);
   }
-  // Paint far tiles first; the focused tile is the nearest.
+  // Paint far tiles first, then the focused tile.
   for (int i = 1; i < 15; ++i) {
     SelectTile tile = tiles[i];
     int j = i - 1;
