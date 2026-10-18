@@ -75,11 +75,11 @@ void cage_script_air_finish(Fighter *fighter) {
 }
 
 void cage_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, cage_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : cage_air_hp);
 }
 
 void cage_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &cage_air_punch_followup ? cage_air_combo_lp : cage_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &cage_air_punch_followup ? cage_air_combo_lp : cage_air_lp);
 }
 
 void cage_press_air_kick(Fighter *fighter) {

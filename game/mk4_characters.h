@@ -50,4 +50,5 @@ void mk4_mmove_air_throw_release(Fighter *fighter);
 void kai_handstand_reaction(Fighter *fighter);
 void kai_weapon_reaction(Fighter *fighter);
 void liu_kang_entry_retail_script_004e9de8(Fighter *fighter);
+void cage_weapon_reaction(Fighter *fighter);
 #endif

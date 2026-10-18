@@ -138,7 +138,8 @@ enum {
   SCENE_MODEL_RAIDEN_STAFF,
   SCENE_MODEL_SONYA_WEAPON,
   SCENE_MODEL_AXE,
-  SCENE_MODEL_KAI_WEAPON
+  SCENE_MODEL_KAI_WEAPON,
+  SCENE_MODEL_CAGE_WEAPON
 };
 
 const Texture *character_texture(const Character *character, int page);

@@ -2308,34 +2308,37 @@ L_004ecba8: {
   }
 }
 
+static inline void retail_script_004ec7f0(Fighter *fighter);
+
+static void retail_script_004ec7f0_at_8(Fighter *fighter) {
+  fighter->sample_override = 16;
+  /* EXE 004ec7fc: 0x2700001f */
+  battle_sound(SOUND_C, 31);
+  /* EXE 004ec800: 0x4d00001a */
+}
+
+static void retail_script_004ec7f0_at_16(Fighter *fighter) {
+  fighter->sample_override = 29;
+  /* EXE 004ec808: 0x32000000 0x496970 */
+  liu_script_back_lp_tail(fighter);
+}
+
+static const int retail_script_004ec7f0_samples[] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 27, 28};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ec7f0_frames[16] = {
+  [7] = {.thinkfunc = retail_script_004ec7f0_at_8},
+  [15] = {.thinkfunc = retail_script_004ec7f0_at_16},
+};
+// clang-format on
+static const mmove_t retail_script_004ec7f0_phase = {
+    .firstframe = 0, .lastframe = 15, .frame = retail_script_004ec7f0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ec7f0_samples};
+
 static inline void retail_script_004ec7f0(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  {
-    /* EXE 004ec7f0: 0xf000000 0x13ee08 */
-    mk4_script_bind(fighter, 227, 60, 0);
-  }
-  {
-    /* EXE 004ec7f8: 0x4d000010 */
-    fighter_fiber_play_to(fighter, 16, 2);
-  }
-  {
-    /* EXE 004ec7fc: 0x2700001f */
-    battle_sound(SOUND_C, 31);
-  }
-  {
-    /* EXE 004ec800: 0x4d00001a */
-    fighter_fiber_play_to(fighter, 26, 2);
-  }
-  {
-    /* EXE 004ec804: 0x500001d */
-    fighter_fiber_play_to(fighter, 29, 1);
-  }
-  {
-    /* EXE 004ec808: 0x32000000 0x496970 */
-    liu_script_back_lp_tail(fighter);
-    return;
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ec7f0: 0xf000000 0x13ee08 */
+  mk4_mmove_bind(fighter, 227, 60, 0);
+  /* EXE 004ec7f8: 0x4d000010 */
+  fighter_mmove_phase(fighter, &retail_script_004ec7f0_phase);
 }
 
 static inline void retail_script_004ed678(Fighter *fighter) {

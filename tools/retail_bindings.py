@@ -1290,3 +1290,14 @@ CHARACTER_BINDINGS[11][0x46eab0] = Binding('weapon_air_frames_native', 'game/wea
 CHARACTER_BINDINGS[11][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared weapon air native contact and landing frame runner')
 
 CHARACTER_BINDINGS[14][0x4970d0] = Binding('cage_orb_spawn', 'game/cage/moves/projectile.c', ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(79,), mmove=True, evidence='4970d0 snapshots311/312, selects ten share2 meshes, sets parabolic motion and installs C0 contact descriptor4ed108')
+
+# Cage mace scripts and native victim/getup contracts.
+CHARACTER_BINDINGS[14][0x46d260] = Binding('cage_script_draw_equip', 'game/cage/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native46d260 mace owner or landed victim continuation on frame tables')
+CHARACTER_BINDINGS[14][0x4958b0] = Binding('cage_weapon_upper_contact', 'game/cage/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native4958b0 mace owner or landed victim continuation on frame tables')
+CHARACTER_BINDINGS[14][0x496970] = Binding('cage_weapon_back_lp_contact', 'game/cage/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native496970 mace owner or landed victim continuation on frame tables')
+CHARACTER_BINDINGS[14][0x482790] = Binding('cage_weapon_getup_back', 'game/cage/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native482790 mace owner or landed victim continuation on frame tables')
+CHARACTER_BINDINGS[14][0x488c00] = Binding('cage_weapon_getup_roll', 'game/cage/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Native488c00 mace owner or landed victim continuation on frame tables')
+CHARACTER_BINDINGS[14][0x470420] = replace(CHARACTER_BINDINGS[14].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
+CHARACTER_BINDINGS[14][0x46eab0] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing phase')
+CHARACTER_BINDINGS[14][0x46ec10] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing phase')
+CHARACTER_BINDINGS[3][0x496970] = replace(CHARACTER_BINDINGS[3][0x496970], mmove=True, evidence='496970 weapon11 two-query tail reuses the shared native frame continuation')

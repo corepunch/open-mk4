@@ -38,11 +38,11 @@ static void cage_high_punch(Fighter *fighter) {
 }
 
 void cage_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, cage_high_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : cage_high_punch);
 }
 
 void cage_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= 0.7f ? cage_lp_throw : cage_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? cage_lp_throw : cage_jab);
 }
 
 void cage_press_crouching_hp(Fighter *fighter) {

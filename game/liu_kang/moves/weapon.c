@@ -97,10 +97,17 @@ static void sword_attack(Fighter *fighter, int index) {
   fighter->script_phase = index;
   fighter->weapon_strike = &liu_kang_sword_attacks[index];
   fighter->sample_override = liu_kang_sword_attacks[index].first;
+  if (index == 3) {
+    const WeaponStrike *strike = &liu_kang_sword_attacks[index];
+    native_schedule_speed(fighter, strike->speed, maxi(0, strike->delay - 1), strike->travel);
+    fighter->mmove_cleanup = sword_cleanup;
+    liu_kang_entry_retail_script_004ec7f0(fighter);
+    return;
+  }
   if (liu_kang_sword_attacks[index].travel != 0) {
     sword_travel(fighter, liu_kang_sword_attacks[index].delay, liu_kang_sword_attacks[index].travel);
   }
-  fighter_start_fiber(fighter, index == 3 ? liu_kang_entry_retail_script_004ec7f0 : sword_strike_script, sword_cleanup);
+  fighter_start_fiber(fighter, sword_strike_script, sword_cleanup);
 }
 
 static void sword_hp(Fighter *fighter) {

@@ -5,7 +5,6 @@ static void weapon_hp(Fighter *fighter);
 static void weapon_lp(Fighter *fighter);
 static void weapon_back(Fighter *fighter);
 static void weapon_cleanup(Fighter *fighter);
-static void weapon_back_recover(Fighter *fighter);
 static const MoveDef back_move = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
 static const MoveDef victim_move = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
 // clang-format off: Keep table entries on one row, including long rows.
@@ -57,28 +56,9 @@ static void weapon_back(Fighter *fighter) {
   kai_entry_retail_script_004ec5a8(fighter);
 }
 
-static void weapon_back_recover(Fighter *fighter) {
-  weapon_cleanup(fighter);
-  int sample = fighter_sample(fighter);
-  native_begin(fighter, sample + 1, 60, mk4_mmove_thrown_finish);
-  for (int frame = sample + 1; frame <= 60; ++frame) {
-    native_frame(fighter, frame, mini(frame, 59), NULL);
-  }
-  native_play(fighter, false);
-}
-
-static void weapon_back_query(Fighter *fighter) {
-  if (battle_contact(fighter, &back_record) != CONTACT_MISS) {
-    weapon_back_recover(fighter);
-  }
-}
-
 void kai_weapon_back_contact(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 226 && fighter_sample(fighter) == 29, "Kai back weapon contact needs its selected VM startup");
-  native_begin(fighter, 1, 2, weapon_back_recover);
-  native_frame(fighter, 1, 30, weapon_back_query);
-  native_frame(fighter, 2, 31, weapon_back_query);
-  native_play(fighter, false);
+  weapon_script_contact_tail(fighter, &back_record, 2);
 }
 
 void kai_script_draw_equip(Fighter *fighter) {
@@ -103,28 +83,9 @@ void kai_weapon_face_peer(Fighter *fighter) {
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
 }
 
-static void weapon_getup(Fighter *fighter) {
-  mk4_script_stop_body(fighter);
-  if (fighter->health <= 0) {
-    fighter_finish_mmove(fighter, NULL);
-    return;
-  }
-  fighter->facing = -fighter->facing;
-  mk4_mmove_bind(fighter, 328, 15, 0);
-  native_begin(fighter, 0, 15, mk4_mmove_thrown_finish);
-  for (int frame = 0; frame <= 15; ++frame) {
-    native_frame(fighter, frame, mini(frame, 14), NULL);
-  }
-  native_play(fighter, false);
-}
-
 void kai_weapon_victim_getup(Fighter *fighter) {
-  int first = fighter_sample(fighter);
-  native_begin(fighter, first, 59, weapon_getup);
-  for (int frame = first; frame <= 59; ++frame) {
-    native_frame(fighter, frame, frame, NULL);
-  }
-  native_play(fighter, false);
+  static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
+  mk4_mmove_finish_getup(fighter, &profile);
 }
 
 void kai_weapon_reaction(Fighter *fighter) {

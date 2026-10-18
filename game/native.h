@@ -35,6 +35,14 @@ typedef struct NativeAxeProfile {
   FighterFn first_hit, followup_hit;
 } NativeAxeProfile;
 
+typedef struct NativeGetupDef {
+  int clip, count, crouch_clip, crouch_count;
+  q16 speed, crouch_speed;
+} NativeGetupDef;
+
+void mk4_mmove_getup(Fighter *fighter, const NativeGetupDef *profile);
+void mk4_mmove_finish_getup(Fighter *fighter, const NativeGetupDef *profile);
+void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, int queries);
 bool weapon_can_draw(const Fighter *fighter);
 void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *profile);
 void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script);

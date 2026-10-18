@@ -470,3 +470,33 @@ void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script) {
   mk4_script_effect(victim, followup ? 0 : 9);
   script(victim);
 }
+
+static void script_strike_recover(Fighter *fighter) {
+  weapon_cleanup(fighter);
+  fighter->action = ACTION_RETAIL_1006;
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  native_begin(fighter, first + 1, last + 1, mk4_mmove_thrown_finish);
+  for (int frame = first + 1; frame <= last + 1; ++frame) {
+    native_frame(fighter, frame, mini(frame, last), NULL);
+  }
+  native_play(fighter, false);
+}
+
+static void script_strike_query(Fighter *fighter) {
+  if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
+    script_strike_recover(fighter);
+  }
+}
+
+/* 4958b0/495ae0/496970: probe once per advancing pose, finish the
+ * remaining selected clip on either contact or exhausted queries. */
+void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, int queries) {
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  require(record != NULL && queries > 0 && last != MOVE_END && first + queries - 1 <= last, "Invalid scripted weapon contact boundary");
+  fighter->native_record = record;
+  native_begin(fighter, 1, queries, script_strike_recover);
+  for (int frame = 1; frame <= queries; ++frame) {
+    native_frame(fighter, frame, first + frame - 1, script_strike_query);
+  }
+  native_play(fighter, false);
+}

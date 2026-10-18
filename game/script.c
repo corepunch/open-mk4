@@ -719,3 +719,52 @@ void mk4_mmove_side_getup(Fighter *fighter) {
   }
   native_play(fighter, false);
 }
+
+static const MoveDef getup_move = {.clip = 328, .last = 14, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
+
+static void getup_crouch_finish(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter_finish_mmove(fighter, NULL);
+  if (fighter->health > 0) {
+    fighter_enter_state(fighter, S_CROUCH);
+  }
+}
+
+/* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
+ * owns the selected data; the shared phase owns KO and controller return. */
+void mk4_mmove_getup(Fighter *fighter, const NativeGetupDef *profile) {
+  require(profile != NULL && profile->count > 0 && profile->crouch_count > 0, "Invalid native getup profile");
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  if (fighter->health <= 0) {
+    fighter_finish_mmove(fighter, NULL);
+    return;
+  }
+  bool crouch = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+  int clip = crouch ? profile->crouch_clip : profile->clip;
+  int count = crouch ? profile->crouch_count : profile->count;
+  q16 speed = crouch ? profile->crouch_speed : profile->speed;
+  fighter_start_move(fighter, S_KNOCKDOWN, &getup_move);
+  mk4_mmove_bind(fighter, clip, count, 0);
+  fighter_set_speed(fighter, speed);
+  native_begin(fighter, 0, count - 1, crouch ? getup_crouch_finish : mk4_mmove_thrown_finish);
+  for (int frame = 0; frame < count; ++frame) {
+    native_frame(fighter, frame, frame, NULL);
+  }
+  native_play(fighter, false);
+}
+
+static void finish_getup_ready(Fighter *fighter) {
+  mk4_mmove_getup(fighter, fighter->native_context);
+}
+
+void mk4_mmove_finish_getup(Fighter *fighter, const NativeGetupDef *profile) {
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  require(first >= 0 && last != MOVE_END && first <= last, "Getup continuation needs its bounded source pose");
+  fighter->native_context = profile;
+  native_begin(fighter, first, last, finish_getup_ready);
+  for (int frame = first; frame <= last; ++frame) {
+    native_frame(fighter, frame, frame, NULL);
+  }
+  native_play(fighter, false);
+}

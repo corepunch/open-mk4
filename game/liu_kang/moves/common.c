@@ -110,11 +110,5 @@ void liu_kang_liu_script_motion(Fighter *fighter, int speed, int delay, int dura
 
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter) {
   const WeaponStrike *strike = &liu_kang_sword_attacks[3];
-  native_queries(fighter, &strike->record, strike->queries, 1);
-  fighter->action = ACTION_RETAIL_1006;
-  fighter_set_speed(fighter, 0);
-  fighter->body.physics = NULL;
-  native_play_to(fighter, strike->move.last, 1);
-  native_delay(fighter, 1);
-  fighter_fiber_finish(fighter_ready);
+  weapon_script_contact_tail(fighter, &strike->record, strike->queries);
 }

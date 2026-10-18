@@ -1575,6 +1575,78 @@ static void check_kai_weapon_commands(void) {
   }
 }
 
+static void check_cage_weapon_commands(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 4; ++strike) {
+      for (int scenario = 0; scenario < (strike == 1 || strike == 2 ? 5 : 4); ++scenario) {
+        battle_init(slot ? 4 : 14, slot ? 14 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+        Input draw[2] = {0};
+        draw[slot].held = BUTTON_BIT(slot ? BUTTON_LEFT : BUTTON_RIGHT);
+        battle_step(draw);
+        advance_ticks(2, NULL);
+        command(slot, BUTTON_DOWN, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_LOW_KICK);
+        check(fighter_move(owner)->clip == 244 && !owner->armed, "Cage's real draw command must play before equipping");
+        advance_ticks(65, NULL);
+        check(owner->armed && owner->weapon->type == 0x6e && owner->weapon->model == SCENE_MODEL_CAGE_WEAPON && owner->state == S_IDLE,
+            "Cage must equip his own extracted weapon rig and persistent armed controls");
+        q16 half_distance = scenario == 2 ? 4 * Q16_ONE : 0xa666;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        if (scenario == 3) {
+          victim->health = 1;
+        }
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(strike == 1 || strike == 3 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+        if (strike >= 2) {
+          input[slot].held |= BUTTON_BIT(back);
+        }
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        advance_ticks(2, input);
+        const int clips[] = {226, 230, 239, 227};
+        check(fighter_move(owner)->clip == clips[strike], "Cage armed punches must select their own native strike rather than a normal or recursive callback");
+        input[slot].held = 0;
+        bool crouch_getup = false;
+        for (int tick = 0; tick < 180; ++tick) {
+          if (scenario == 4 && victim->health < Q16_ONE) {
+            input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+          }
+          battle_step(input);
+          crouch_getup |= fighter_move(victim)->clip == 184 || fighter_move(victim)->clip == 190;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage weapon attacks and victim recoveries must use frame tables");
+        }
+        if (scenario == 4) {
+          check(crouch_getup && victim->state == S_CROUCH, "Held DOWN must select the native crouching getup and return to crouch controls");
+        }
+        q16 damage = scenario == 2 ? 0 : strike == 0 ? 11796 : strike == 1 ? 9830 : strike == 2 ? 10485 : 9175;
+        if (scenario == 1) {
+          damage = q16_mul(damage, 0x3333);
+        }
+        q16 expected = scenario == 3 ? 0 : Q16_ONE - damage;
+        if (victim->health != expected) {
+          fprintf(stderr, "Cage weapon slot%d strike%d scenario%d health%d expected%d\n", slot, strike, scenario, victim->health, expected);
+        }
+        check(victim->health == expected, "Cage weapon records must preserve native damage, chip and miss behavior");
+        check((owner->state == S_IDLE || (scenario == 3 && owner->state == S_VICTORY)) && owner->armed && owner->body.physics == NULL &&
+                  owner->body.vel[AXIS_X] == 0,
+            "Cage weapon recovery must clear travel and restore armed controls");
+        check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
+        if (scenario == 3) {
+          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          battle_reset_match();
+          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+        }
+      }
+    }
+  }
+}
+
 static void check_type69_weapon_commands(void) {
   const int roster[] = {7, 13, 17};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
@@ -2279,6 +2351,7 @@ int main(void) {
   check_weapon_frame_startups();
   check_type69_weapon_commands();
   check_kai_weapon_commands();
+  check_cage_weapon_commands();
   check_reaction_motion_components();
   check_roster_throw_state_entries();
   check_short_diagonal_air_recovery();

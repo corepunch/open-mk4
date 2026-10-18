@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "163fdac8e468fcc0d92e5ed20b6a7dfe1bb56492d70ddfca383f0af6953291d7",
+  "inventory_sha256": "388e3973108565887bfa75d9bea8bc0f2478ef8c31e05bd7994886e93faea6e4",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -47,7 +47,15 @@
     "0x4e80f4",
     "0x4e9f78",
     "0x4e6270",
-    "0x4ed0d8"
+    "0x4ed0d8",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ec4f0",
+    "0x4ec7f0",
+    "0x4e8cc0",
+    "0x4e8d38"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -141,6 +149,20 @@
     "0x4e9f78": {
       "return_to": "mk4_script_thrown_ready",
       "evidence": "4879c0 victim stun returns through KO-aware controller cleanup after generated playback."
+    },
+    "0x4e8cc0": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon victim streams land and enter their KO-aware standing/crouching getup."
+    },
+    "0x4e8d38": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon victim streams land and enter their KO-aware standing/crouching getup."
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "sample": 22,
+      "evidence": "46d260 equips after draw clip244 reaches22, then resumes its recovery."
     }
   },
   "moves": {
@@ -273,6 +295,36 @@
       "source": "game/cage/moves/projectile.c",
       "symbol": "cage_low_orb",
       "evidence": "Native497070/80 ->4ed0d8; independent4970d0 orb uses C0/4ebed0 and ten share2 mesh frames."
+    },
+    "draw_weapon": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_action",
+      "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
+    },
+    "weapon_upper": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "weapon_upper",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+    },
+    "weapon_lp": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "weapon_lp",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+    },
+    "weapon_back_hp": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "weapon_back_hp",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+    },
+    "weapon_back_lp": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "weapon_back_lp",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+    },
+    "weapon_reaction": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_reaction",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
     }
   },
   "entry_adapters": {
@@ -287,9 +339,9 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/weapons.c",
-      "symbol": "weapon_draw",
-      "evidence": "Cage input/CPU inventory selects this exact target at 0x46d1d0."
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_action",
+      "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     },
     "0x497070": {
       "source": "game/cage/moves/projectile.c",
@@ -360,9 +412,9 @@
     }
   },
   "weapon": {
-    "source": "game/cage/character.c",
-    "symbol": "cage_weapon_descriptor",
-    "evidence": "Retail Cage weapon descriptor 0x4ecf58; all eight words are retained from the inventory."
+    "source": "game/cage/moves/weapon.c",
+    "symbol": "mace",
+    "evidence": "4ecf58 type6e points to rig50c32c in share2_g.geo and button table4ecc60."
   },
   "reactions": {
     "1": {
@@ -497,6 +549,34 @@
       "source": "game/reactions.c",
       "symbol": "react_fireball_block",
       "evidence": "Cage orb C0 selects shared reaction2; generated64 body4e9de8 and existing block frame recovery."
+    },
+    "63": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_reaction",
+      "evidence": "Native482380/482300 select4e8d38/4e8cc0;149 applies half damage scaling before flight.",
+      "adaptation": "The shared reaction dispatcher runs generated victim streams with native standing/crouching getup profiles."
+    },
+    "149": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_reaction",
+      "evidence": "Native482380/482300 select4e8d38/4e8cc0;149 applies half damage scaling before flight.",
+      "adaptation": "The shared reaction dispatcher runs generated victim streams with native standing/crouching getup profiles."
+    },
+    "146": {
+      "source": "game/kai/moves/weapon.c",
+      "symbol": "kai_weapon_reaction",
+      "evidence": "Native4821c0 shared weapon33 victim stream4e8bc0 is already generated and frame-driven.",
+      "adaptation": "Reuse the shared native146 dispatcher across weapon owners."
+    },
+    "57": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Native weapon contact record selects shared frame reaction57."
+    },
+    "119": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Native weapon contact record selects shared frame reaction119."
     }
   },
   "controls_output": "game/cage/generated/controls.inc",
@@ -545,6 +625,11 @@
       "source": "game/cage/moves/projectile.c",
       "symbol": "cage_low_orb",
       "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
+    },
+    "0x46d1d0": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_action",
+      "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     }
   },
   "command_predicates": {
@@ -552,7 +637,8 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45f120": "cage_can_groin_punch"
+    "0x45f120": "cage_can_groin_punch",
+    "0x45ef50": "weapon_can_draw"
   },
   "cpu_bindings": {
     "0x479b20": {
@@ -593,6 +679,14 @@
     "0x4e63b0",
     "0x4e62a0",
     "0x4e5d90",
-    "0x4ed0d8"
+    "0x4ed0d8",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ec4f0",
+    "0x4ec7f0",
+    "0x4e8cc0",
+    "0x4e8d38"
   ]
 }
