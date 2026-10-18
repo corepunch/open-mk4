@@ -24,7 +24,7 @@ static void equip_weapon(Fighter *fighter) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, true, sonya_entry_retail_script_004e66d0);
+    weapon_air_frames(fighter, true, sonya_entry_retail_script_004e66d0);
   } else {
     weapon_start_strike(fighter, &weapon_attacks[0], true);
   }
@@ -32,7 +32,7 @@ static void weapon_hp(Fighter *fighter) {
 
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, false, sonya_entry_retail_script_004e66f0);
+    weapon_air_frames(fighter, false, sonya_entry_retail_script_004e66f0);
   } else {
     weapon_start_strike(fighter, &weapon_attacks[1], true);
   }
@@ -76,7 +76,7 @@ void sonya_weapon(Fighter *fighter) {
     weapon_back_hp(fighter);
   } else {
     weapon_draw(fighter, &native_weapon);
-    fighter_start_fiber(fighter, sonya_entry_retail_script_004e62c0, NULL);
+    sonya_entry_retail_script_004e62c0(fighter);
   }
 }
 

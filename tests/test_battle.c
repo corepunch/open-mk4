@@ -1086,6 +1086,40 @@ static void check_selected_high_kick(void) {
   }
 }
 
+static void check_weapon_frame_startups(void) {
+  for (int roster = 1; roster <= 3; ++roster) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int high = 0; high < 2; ++high) {
+        battle_init(slot ? 4 : roster, slot ? roster : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+        check(battle_cpu_action(owner, CPU_DRAW), "Weapon draw must retain its real CPU entry");
+        for (int tick = 0; tick < 70; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner), "Weapon draw must complete entirely through generated frame phases");
+        }
+        check(owner->armed && owner->state == S_IDLE, "Frame draw must equip and restore armed controls");
+        fighter_enter_state(owner, S_JUMP);
+        owner->body.pos[AXIS_Y] = -2 * Q16_ONE;
+        owner->body.vel[AXIS_Y] = -0x1000;
+        owner->body.gravity = 0x28f;
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(high ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH);
+        battle_step(input);
+        battle_step(input);
+        check(fighter_move(owner)->clip == (high ? 252 : 251), "Armed air punches must select their weapon clip");
+        for (int tick = 0; tick < 90; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner), "Armed air startup, contact window and landing must use frame tables");
+        }
+        check(owner->state == S_IDLE && owner->armed, "Weapon air landing must restore armed controls");
+      }
+    }
+  }
+}
+
 static void check_type69_weapon_commands(void) {
   const int roster[] = {7, 13, 17};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
@@ -1718,6 +1752,7 @@ int main(void) {
   check_goro_frame_lp_throw();
   check_goro_projectile_completion();
   check_cage_groin_gate();
+  check_weapon_frame_startups();
   check_type69_weapon_commands();
   check_roster_throw_state_entries();
   check_short_diagonal_air_recovery();

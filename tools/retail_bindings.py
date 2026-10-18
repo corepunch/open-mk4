@@ -27,12 +27,12 @@ class Binding:
     mmove: bool = False  # reviewed nonblocking native callback for frame-table lowering
 
     def __post_init__(self):
-        if self.mmove_lowering not in ('', 'pair_to', 'reverse_return', 'current'):
+        if self.mmove_lowering not in ('', 'pair_to', 'reverse_return', 'controller_return', 'current'):
             raise ValueError('Unknown mmove native lowering')
         if self.mmove_lowering in ('pair_to', 'current') and (self.flow != 'suspend' or self.roles != ('handler',)):
             raise ValueError('Mmove playback lowering requires a yielding handler')
-        if self.mmove_lowering == 'reverse_return' and (self.flow != 'terminal' or self.roles != ('tail',)):
-            raise ValueError('Reverse-return lowering requires a terminal tail')
+        if self.mmove_lowering in ('reverse_return', 'controller_return') and (self.flow != 'terminal' or self.roles != ('tail',)):
+            raise ValueError('Controller-return lowering requires a terminal tail')
         if self.cursor_effect not in ('preserve', 'finish', 'unknown'):
             raise ValueError('Invalid binding cursor effect')
         if self.script_target and (self.roles != ('tail',) or self.flow != 'immediate'):
@@ -1240,6 +1240,14 @@ for _cid, _name in ((7, 'reiko'), (13, 'jax'), (17, 'noob_saibot')):
     CHARACTER_BINDINGS[_cid][0x470420] = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',),
         flow='terminal', mmove=True, evidence='470420 nonblocking stop/reset and controller return')
 
+
+for _cid in (1, 2, 3):
+    _ready = CHARACTER_BINDINGS[_cid].get(0x470420, BINDINGS[0x470420])
+    CHARACTER_BINDINGS[_cid][0x470420] = replace(_ready, mmove_lowering='controller_return')
+    CHARACTER_BINDINGS[_cid][0x46d260] = replace(CHARACTER_BINDINGS[_cid][0x46d260], mmove=True)
+    for _address in (0x46eab0, 0x46ec10):
+        CHARACTER_BINDINGS[_cid][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',),
+            ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Native weapon air104/108 uses shared contact and landing frame phases')
 
 def bindings_for(character):
     from character_catalog import CHARACTERS

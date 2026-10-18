@@ -90,7 +90,7 @@ static void equip_dragon_sword(Fighter *fighter) {
 
 static void sword_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, index == 2, (index == 2) ? liu_kang_entry_retail_script_004e66d0 : liu_kang_entry_retail_script_004e66f0);
+    weapon_air_frames(fighter, index == 2, (index == 2) ? liu_kang_entry_retail_script_004e66d0 : liu_kang_entry_retail_script_004e66f0);
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &liu_kang_sword_attacks[index].move);
@@ -105,7 +105,7 @@ static void sword_attack(Fighter *fighter, int index) {
 
 static void sword_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, true, liu_kang_entry_retail_script_004e66d0);
+    weapon_air_frames(fighter, true, liu_kang_entry_retail_script_004e66d0);
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_sword_hp);
@@ -139,7 +139,7 @@ void liu_kang_weapon(Fighter *fighter) {
     sword_lp(fighter); /* 4ecb40[type 66 - 60] -> 4964d0. */
   } else {
     weapon_draw(fighter, &dragon_sword);
-    fighter_start_fiber(fighter, liu_kang_entry_retail_script_004e62c0, NULL);
+    liu_kang_entry_retail_script_004e62c0(fighter);
   }
 }
 

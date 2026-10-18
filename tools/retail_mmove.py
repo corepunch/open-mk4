@@ -135,6 +135,9 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             wait(1)
             emit('fighter_finish_mmove(fighter, fighter_ready);')
             break
+        elif key and binding.mmove_lowering == 'controller_return':
+            emit('mk4_mmove_thrown_finish(fighter);')
+            break
         elif key and binding.mmove_lowering == 'current':
             advance(count - 1)
             wait(1)

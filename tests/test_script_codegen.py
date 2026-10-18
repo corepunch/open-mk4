@@ -28,6 +28,18 @@ class CompilerTests(unittest.TestCase):
     def compile(self, words, bindings=None):
         return generate(self.image, [self.fixture(words)], 3, return_to='fighter_ready', bindings=bindings)
 
+    def test_controller_return_lowering_preserves_legacy_boundary(self):
+        entry = self.fixture([0x32000000, 0x470420])
+        binding = Binding('mk4_script_ready', 'game/script.c', ('tail',), flow='terminal',
+                          mmove_lowering='controller_return', evidence='470420 resets motion and returns the controller')
+        legacy = generate(self.image, [entry], 3, 'fighter_ready', bindings={0x470420: binding})
+        frames = generate(self.image, [entry], 3, 'fighter_ready', bindings={0x470420: binding}, mmove_entries=[entry])
+        self.assertIn('mk4_script_ready(fighter);', legacy)
+        self.assertIn('mk4_mmove_thrown_finish(fighter);', frames)
+        self.assertNotIn('mk4_script_ready(fighter);', frames)
+        self.assertNotIn('fighter_fiber_finish(', frames)
+        self.assertNotIn('fighter_wait_ticks(', frames)
+
     def test_scheduler_completion_rejects_fiber_only_shared_helpers(self):
         entry = self.fixture([0x3f000000])
         for callback in ('mk4_script_ready', 'mk4_script_land', 'mk4_script_thrown_finish'):

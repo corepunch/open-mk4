@@ -72,8 +72,8 @@
     "0x4e62d8": {
       "clip": 244,
       "count": 49,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 22
+      "sample": 22,
+      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48."
     },
     "0x4e6330": {
       "clip": 295,
@@ -642,5 +642,11 @@
     "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
     "source": "game/raiden/character.c",
     "symbol": "native_weapon"
-  }
+  },
+  "mmove_scripts": [
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0"
+  ]
 }
