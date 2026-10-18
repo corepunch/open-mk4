@@ -778,7 +778,8 @@ static void weapon_recovery(void) {
   check(
       victim->reaction == 120 && victim->damage_scale == 0x4ccc && (victim->flags & FF_NO_GUARD), "follow-up draw must prepare victim and scale a long combo");
   advance(10);
-  check(!fighter->weapon_travel && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0, "follow-up draw must omit ordinary back-HP travel");
+  check(fighter->native_motion.count == 0 && fighter->body.vel[AXIS_X] == 0 && fighter->body.vel[AXIS_Z] == 0,
+      "follow-up draw must omit ordinary back-HP travel");
 }
 
 static void air_throw_setup(void) {
@@ -1466,13 +1467,12 @@ static void fatality_blends(void) {
   sub_zero_finish(0, 0xcccc, 0);
   sub_zero_finish_command(0, FINISH_SUB_ZERO_1, BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN), 60);
   Fighter *victim = &g_battle.fighters[1];
-  for (int i = 0; i < 300 && !(victim->blend_duration > 0 && victim->sample_override == 46); ++i) {
+  for (int i = 0; i < 300 && !(victim->blend_duration > 0 && fighter_sample(victim) == 46); ++i) {
     advance(1);
   }
-  check(
-      victim->blend_duration > 0 && victim->blend_sample == 48 && victim->sample_override == 46, "first fatality must blend from victim sample 48 back to 46");
+  check(victim->blend_duration > 0 && victim->blend_sample == 48 && fighter_sample(victim) == 46, "first fatality must blend from victim sample 48 back to 46");
   advance(30);
-  check(victim->blend_duration > 0 && victim->sample_override == 46 && victim->blend_weight < Q16_ONE, "victim blend must retain its native 0x666 progression");
+  check(victim->blend_duration > 0 && fighter_sample(victim) == 46 && victim->blend_weight < Q16_ONE, "victim blend must retain its native 0x666 progression");
 }
 
 static void fatality_camera(void) {

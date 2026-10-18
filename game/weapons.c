@@ -37,12 +37,6 @@ void weapon_stance(Fighter *fighter, int state) {
   fighter_start_move(fighter, state, move);
 }
 
-static void weapon_hold(Fighter *fighter, const mmove_t *phase) {
-  int sample = fighter_sample(fighter);
-  fighter_mmove_phase(fighter, phase);
-  fighter->sample_override = sample;
-}
-
 static void weapon_cleanup(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
   native_motion_stop(fighter);
@@ -125,7 +119,6 @@ void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool trav
   require(strike->first <= strike->windup && strike->windup <= strike->target && strike->queries > 0, "Invalid weapon phases");
   fighter_start_move(fighter, S_PUNCH, &strike->move);
   fighter->weapon_strike = strike;
-  fighter->weapon_travel = travel;
   fighter->sample_override = strike->first;
   int active = strike->target - strike->first + 1;
   int sound = strike->windup - strike->first + 1;

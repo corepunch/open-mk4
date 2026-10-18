@@ -499,7 +499,6 @@ struct Fighter {
   int sequence_event_tick;
   bool sequence_finished;
   unsigned buffered; /* pressed buttons since the current move phase began */
-  int move_loops;
   ContactResult contact;
   int contact_tick;
   unsigned held, prev[2]; /* switch samples for the two-sample press rule */
@@ -516,7 +515,6 @@ struct Fighter {
   FighterFn paired_release; /* native peer continuation selected by a paired move */
   q16 saved_motion[3];      /* native save/restore around blocking generated playback */
   const WeaponStrike *weapon_strike;
-  bool weapon_travel;
   int blend_clip, blend_sample, blend_ticks, blend_duration;
   q16 blend_weight;
   ScenePlayback scene;
@@ -873,6 +871,8 @@ void weapon_followup_victim(Fighter *fighter);
 void weapon_stance(Fighter *fighter, int state);
 void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);
 bool scene_step(Fighter *fighter);
+int scene_frame_count(const SceneClip *clips, int count);
+void scene_blend_advance(Fighter *fighter);
 bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, Mat3 *orientation);
 void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
 void battle_camera_shake(int pulses, int interval, q16 amount);

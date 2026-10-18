@@ -32,7 +32,8 @@
       "clip": 415,
       "count": 130,
       "evidence": "Native fan cycle preserves clip 415 at sample 69; Jax fan-fatality continuation",
-      "sample": 69
+      "sample": 69,
+      "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,

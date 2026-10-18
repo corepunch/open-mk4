@@ -198,7 +198,7 @@ def audit(image, character, return_to=None, profile=None):
                 source = (ROOT / integration).read_text()
                 if profile.get('mmove_only') and re.search(r'\bfighter_(?:start_fiber|wait_ticks|fiber_(?:move|sequence|play_to|finish))\s*\(', masked_c(source)):
                     errors.append('mmove-only integration still contains coroutine calls: ' + integration)
-                referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b|&' + symbol(entry) + r'_phase\b', masked_c(source))}
+                referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b|&' + symbol(entry) + r'_(?:repeat_)?phase\b', masked_c(source))}
                 reachable = set(referenced)
                 for entry in referenced:
                     try:

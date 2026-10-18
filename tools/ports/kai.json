@@ -1888,7 +1888,8 @@
       "count": 130,
       "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
       "return_to": "caller",
-      "sample": 69
+      "sample": 69,
+      "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,

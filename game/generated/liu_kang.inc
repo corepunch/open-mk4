@@ -387,6 +387,32 @@ static inline void retail_script_004e0118(Fighter *fighter) {
   }
 }
 
+/* Reusable generated phase for native frame composition. */
+static inline void retail_script_004e0138_repeat(Fighter *fighter);
+
+static void retail_script_004e0138_repeat_at_8(Fighter *fighter) {
+  fighter->sample_override = 77;
+  /* EXE 004e013c: 0x12000045 */
+  fighter->sample_override = 69;
+  /* EXE 004e0140: 0x32000000 0x43d530 */
+  liu_script_fan_cycle(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e0138_repeat_frames[8] = {
+  [7] = {.thinkfunc = retail_script_004e0138_repeat_at_8},
+};
+// clang-format on
+static const mmove_t retail_script_004e0138_repeat_phase = {
+    .firstframe = 69, .lastframe = 76, .frame = retail_script_004e0138_repeat_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e0138_repeat(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_script_inherit(fighter, 415, 130, 69);
+  /* EXE 004e0138: 0x500004d */
+  fighter_mmove_phase(fighter, &retail_script_004e0138_repeat_phase);
+}
+
 static inline void retail_script_004e0138(Fighter *fighter) {
   unsigned result_flags = 0;
   (void)result_flags;

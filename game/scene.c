@@ -58,3 +58,30 @@ bool scene_step(Fighter *fighter) {
   begin_clip(fighter);
   return false;
 }
+
+int scene_frame_count(const SceneClip *clips, int count) {
+  int frames = 0;
+  for (int index = 0; index < count; ++index) {
+    const SceneClip *clip = &clips[index];
+    int span = clip->last >= clip->first ? clip->last - clip->first : clip->first - clip->last;
+    int visits = clip->blend_step > 0 ? (Q16_ONE - clip->blend_first) / clip->blend_step + 1 : span + 1;
+    frames += visits * clip->repeats;
+  }
+  return frames;
+}
+
+/* Blend boundaries are selected by authored mframe rows, never by testing
+ * a live weight or an elapsed counter. */
+void scene_blend_advance(Fighter *fighter) {
+  ScenePlayback *scene = &fighter->scene;
+  fighter->sample_override = scene->clips[scene->index].last;
+  fighter->blend_duration = 0;
+  fighter->blend_weight = -1;
+  if (++scene->index == scene->count) {
+    scene->index--;
+    scene->done = true;
+    scene->clips = NULL;
+  } else {
+    begin_clip(fighter);
+  }
+}

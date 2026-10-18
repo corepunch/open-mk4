@@ -1234,38 +1234,9 @@ static void scene_blend_cleanup(Fighter *fighter) {
   fighter->blend_weight = -1;
 }
 
-static void scene_blend_tick(Fighter *fighter) {
-  if (scene_step(fighter)) {
-    fighter->scene.clips = NULL;
-  }
-}
-
-static bool scene_blend_done(const Fighter *fighter) {
-  return fighter->scene.clips == NULL;
-}
-
-static void scene_blend_frames_frame_0(Fighter *fighter) {
-  uint64_t continuation = fighter->continuation;
-  scene_blend_tick(fighter);
-  if (fighter->continuation != continuation || fighter->pending != NULL) {
-    return;
-  }
-  fighter->mmove_hold = !scene_blend_done(fighter);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const mframe_t scene_blend_frames[1] = {
-  [0] = {.thinkfunc = scene_blend_frames_frame_0},
-};
-// clang-format on
-static const mmove_t first_actor_blend_phase = {.firstframe = 0, .lastframe = 0, .frame = scene_blend_frames, .endfunc = retail_script_004e0378};
-static const mmove_t first_victim_setup_phase = {.firstframe = 0, .lastframe = 0, .frame = scene_blend_frames, .endfunc = retail_script_004e03f0};
-static const mmove_t first_victim_blend_phase = {.firstframe = 0, .lastframe = 0, .frame = scene_blend_frames, .endfunc = retail_script_004e0420};
-
-static void native_blends(Fighter *fighter, const SceneClip *clips, int count, const mmove_t *phase) {
-  scene_begin(fighter, clips, count, -1);
+static void native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end) {
   fighter->mmove_cleanup = scene_blend_cleanup;
-  hold_phase(fighter, phase);
+  native_scene_blends(fighter, clips, count, end);
 }
 
 static void first_camera_start(Fighter *fighter) {
@@ -1278,12 +1249,12 @@ static void first_fatality_script(Fighter *fighter) {
 }
 
 static void first_victim_start(Fighter *victim) {
-  native_blends(victim, first_victim_setup, COUNT(first_victim_setup), &first_victim_setup_phase);
+  native_blends(victim, first_victim_setup, COUNT(first_victim_setup), retail_script_004e03f0);
 }
 
 static void script_first_begin(Fighter *fighter) {
   fighter->script_phase = 1;
-  native_blends(fighter, first_actor_blend, COUNT(first_actor_blend), &first_actor_blend_phase);
+  native_blends(fighter, first_actor_blend, COUNT(first_actor_blend), retail_script_004e0378);
 }
 
 static void script_first_pull(Fighter *fighter) {
@@ -1323,7 +1294,7 @@ static void script_first_head(Fighter *fighter) {
 }
 
 static void script_first_victim_blends(Fighter *victim) {
-  native_blends(victim, first_victim_blends, COUNT(first_victim_blends), &first_victim_blend_phase);
+  native_blends(victim, first_victim_blends, COUNT(first_victim_blends), retail_script_004e0420);
 }
 
 static void script_first_victim_collapse(Fighter *victim) {
@@ -1451,16 +1422,7 @@ static void script_fan_victory(Fighter *fighter) {
 }
 
 static void script_fan_tail(Fighter *fighter) {
-  const mmove_t *cycle = &retail_script_004e0138_phase;
-  int length = cycle->lastframe - cycle->firstframe + 1;
-  native_begin(fighter, 0, 31 * length - 1, fan_release);
-  for (int repeat = 0; repeat < 31; ++repeat) {
-    for (int frame = 0; frame < length; ++frame) {
-      int row = repeat * length + frame;
-      fighter->native.frames[row] = cycle->frame[frame];
-      fighter->native.poses[row] = cycle->samples != NULL ? cycle->samples[frame] : cycle->firstframe + frame;
-    }
-  }
+  native_repeat(fighter, &retail_script_004e0138_phase, 31, fan_release);
   native_play(fighter, false);
 }
 

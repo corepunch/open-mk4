@@ -458,10 +458,9 @@ void mk4_native_fan_rise(Fighter *fighter) {
   native_motion_play(fighter);
 }
 
-void mk4_script_fan_tail(Fighter *fighter, FighterFn cycle, FighterFn release, FighterFn victim_release) {
-  for (int i = 0; i < 31; ++i) {
-    cycle(fighter);
-  }
+void mk4_script_fan_tail(Fighter *fighter, const mmove_t *cycle, FighterFn release, FighterFn victim_release) {
+  native_repeat(fighter, cycle, 31, NULL);
+  native_wait(fighter);
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_cancel_fiber(victim);
   victim->sample_override = 69;

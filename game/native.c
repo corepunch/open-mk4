@@ -246,3 +246,40 @@ void native_until(Fighter *fighter, FighterTest condition) {
   fighter->native.frames[0].thinkfunc = condition_frame;
   native_wait(fighter);
 }
+
+void native_repeat(Fighter *fighter, const mmove_t *move, int repetitions, FighterFn end) {
+  int count = move->lastframe - move->firstframe + 1;
+  require(repetitions > 0, "Native frame repetition must be bounded");
+  native_begin(fighter, 0, repetitions * count - 1, end);
+  for (int repeat = 0; repeat < repetitions; ++repeat) {
+    for (int frame = 0; frame < count; ++frame) {
+      int row = repeat * count + frame;
+      fighter->native.frames[row] = move->frame[frame];
+      fighter->native.poses[row] = move->samples != NULL ? move->samples[frame] : move->firstframe + frame;
+    }
+  }
+}
+
+static void scene_weight_frame(Fighter *fighter, float weight) {
+  fighter->blend_weight = (q16)weight;
+}
+
+void native_scene_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end) {
+  scene_begin(fighter, clips, count, -1);
+  native_begin(fighter, 0, scene_frame_count(clips, count) - 1, end);
+  int row = 0;
+  for (int clip = 0; clip < count; ++clip) {
+    require(clips[clip].blend_step > 0 && clips[clip].repeats == 1, "Native blend range needs single blend clips");
+    int frames = (Q16_ONE - clips[clip].blend_first) / clips[clip].blend_step + 1;
+    for (int frame = 1; frame <= frames; ++frame) {
+      q16 weight = clips[clip].blend_first + mini(frame, frames - 1) * clips[clip].blend_step;
+      fighter->native.poses[row] = clips[clip].first;
+      fighter->native.frames[row++] = (mframe_t){scene_weight_frame, (float)weight, frame == frames ? scene_blend_advance : NULL};
+    }
+  }
+  if (fighter_fiber_running(fighter)) {
+    native_wait(fighter);
+  } else {
+    native_play(fighter, false);
+  }
+}

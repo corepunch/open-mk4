@@ -92,7 +92,9 @@ def reads_defines(row, bindings):
 
 def validate(program, bindings, return_to, context=None):
     context = context or {}
-    allowed = {"clip", "count", "sample", "evidence", "return_to", "paired"}
+    allowed = {"clip", "count", "sample", "evidence", "return_to", "paired", "export_frames"}
+    if "export_frames" in context and not isinstance(context["export_frames"], bool):
+        raise ValueError("Frame export selection must be boolean")
     if context.keys() & {'count', 'sample'} and 'clip' not in context:
         raise ValueError('Entry cursor requires a clip contract')
     if context.keys() - allowed or (context and not context.get("evidence")):
@@ -468,6 +470,12 @@ def generate(image, entries, character=0, return_to=None, bindings=None, context
         lines.append('static const AttackRecord retail_contact_%s = {%s};' % (address[2:], ', '.join(map(str, values))))
     for program, binding in programs:
         emitter = emit_mmove if int(program['entry'], 16) in mmove_entries else emit_program
+        context = contexts.get(program['entry'], {})
+        if context.get('export_frames') and emitter != emit_mmove:
+            exported = emit_mmove(program, binding, context.get('return_to', return_to), context)
+            root = symbol(int(program['entry'], 16))
+            lines += ['', '/* Reusable generated phase for native frame composition. */', exported.replace(root, root + '_repeat')]
+
         lines += ['', emitter(program, binding, contexts.get(program['entry'], {}).get('return_to', return_to), contexts.get(program['entry']))]
     return postprocess('\n'.join(lines) + '\n')
 

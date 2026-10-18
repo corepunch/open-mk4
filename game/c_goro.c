@@ -113,7 +113,7 @@ static void goro_script_fan_victory(Fighter *fighter) {
 }
 
 static void goro_script_fan_tail(Fighter *fighter) {
-  mk4_script_fan_tail(fighter, retail_script_004e0138, retail_script_004e0148, retail_script_004e01a0);
+  mk4_script_fan_tail(fighter, &retail_script_004e0138_repeat_phase, retail_script_004e0148, retail_script_004e01a0);
 }
 
 static void goro_script_air_release(Fighter *fighter) {

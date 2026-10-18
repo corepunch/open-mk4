@@ -1075,10 +1075,6 @@ static void dragon_stream(Fighter *fighter) {
   if (victim->scene.clips != NULL) {
     scene_step(victim);
   }
-  if (victim->scene.done && fighter->scene.index >= 2) {
-    native_motion_stop(fighter);
-    finish_scene(fighter);
-  }
 }
 
 static void dragon_spawn(Fighter *fighter) {
@@ -1123,21 +1119,17 @@ static void dragon_detach(Fighter *fighter) {
   battle_detach_piece(opponent(fighter), 6, (q16[3]){0}, (q16[3]){0});
 }
 
-static void dragon_wait(Fighter *fighter) {
-  native_motion_begin(fighter, 1, NULL);
-  native_motion_frame(fighter, 0, NULL, 0, dragon_stream);
-  fighter->native_motion.loop = true;
-  native_motion_play(fighter);
-}
-
 static void dragon_play(Fighter *fighter) {
   native_motion_play(fighter);
 }
 
 static void dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
-  native_motion_begin(fighter, 542 - first, dragon_wait);
-  for (int frame = first; frame <= 541; ++frame) {
+  int actor_end = 121 + scene_frame_count(dragon_actor, 2);
+  int victim_end = 269 + scene_frame_count(dragon_target, COUNT(dragon_target));
+  int last = maxi(actor_end, victim_end);
+  native_motion_begin(fighter, last - first + 1, finish_scene);
+  for (int frame = first; frame <= last; ++frame) {
     FighterFn action = dragon_stream;
     if (frame == 101) {
       action = dragon_spawn;
@@ -1241,7 +1233,7 @@ static void liu_script_fan_victory(Fighter *fighter) {
 }
 
 static void liu_script_fan_tail(Fighter *fighter) {
-  mk4_script_fan_tail(fighter, retail_script_004e0138, retail_script_004e0148, retail_script_004e01a0);
+  mk4_script_fan_tail(fighter, &retail_script_004e0138_repeat_phase, retail_script_004e0148, retail_script_004e01a0);
 }
 
 static void liu_spike_finish(Fighter *fighter) {

@@ -77,7 +77,8 @@
       "count": 130,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "return_to": "caller",
-      "sample": 69
+      "sample": 69,
+      "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,

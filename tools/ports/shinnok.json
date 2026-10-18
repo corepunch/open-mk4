@@ -42,7 +42,8 @@
       "clip": 415,
       "count": 130,
       "sample": 69,
-      "evidence": "Native owner loop preserves clip 415 at sample 69; bounded Shinnok fan-script and native continuation"
+      "evidence": "Native owner loop preserves clip 415 at sample 69; bounded Shinnok fan-script and native continuation",
+      "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,

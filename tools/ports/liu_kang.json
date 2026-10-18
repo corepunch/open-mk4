@@ -25,7 +25,8 @@
       "clip": 415,
       "count": 130,
       "evidence": "43d460/43d530 native loop, 31 calls from C owner",
-      "sample": 69
+      "sample": 69,
+      "export_frames": true
     },
     "0x4e0148": {
       "clip": 415,

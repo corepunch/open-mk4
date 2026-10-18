@@ -147,7 +147,6 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   fighter->sample_override = -1;
   fighter->script_phase = 0;
   fighter->weapon_strike = NULL;
-  fighter->weapon_travel = false;
   fighter->blend_duration = 0;
   fighter->blend_weight = -1;
   fighter->scene = (ScenePlayback){0};

@@ -5,7 +5,7 @@ predicate or a spawn as a synchronous native call. Arguments describe the
 actual engine signature, never a guessed retail C ABI. The pinned RetailImage
 hash establishes the binary revision; evidence names its inspected routines.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 
 
@@ -1136,7 +1136,12 @@ def bindings_for(character):
     links = {address: Binding('retail_script_%08x' % target, 'game/generated/%s.inc' % CHARACTERS[character], ('tail',),
                               script_target=target, evidence='%x: script_enter(%x); exact-entry native listing' % (address, target))
              for address, target in ((0x46dd00, 0x4e6330), (0x46dd10, 0x4e6360), (0x46dd20, 0x4e63b0))}
-    return {**BINDINGS, **links, **CHARACTER_BINDINGS.get(character, {})}
+    result = {**BINDINGS, **links, **CHARACTER_BINDINGS.get(character, {})}
+    # 43d530 is a reviewed nonblocking cycle boundary. Native coordinators
+    # expand its generated frame phase rather than decrementing a counter.
+    if 0x43d530 in result:
+        result[0x43d530] = replace(result[0x43d530], mmove=True)
+    return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/c_sub_zero.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')
 CHARACTER_BINDINGS[4][0x484b60] = Binding('script_air_getup', 'game/c_sub_zero.c', ('tail',), flow='terminal', mmove=True, evidence='484b60 clip131 samples46..79 after release and landing')
