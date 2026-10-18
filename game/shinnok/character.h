@@ -112,4 +112,6 @@ void shinnok_entry_retail_script_004e6190(Fighter *fighter);
 void shinnok_lk_throw(Fighter *fighter);
 void shinnok_fan_fatality(Fighter *fighter);
 void shinnok_spike_fatality(Fighter *fighter);
+void shinnok_roundhouse(Fighter *fighter);
+void shinnok_script_roundhouse_finish(Fighter *fighter);
 #endif

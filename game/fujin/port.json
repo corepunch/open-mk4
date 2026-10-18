@@ -101,18 +101,6 @@
       "sample": 28,
       "evidence": "Fujin air-throw root 4e5e28 binds clip 82 and advances the paired owner to sample 28 before native release 46aae0 enters this owner continuation."
     },
-    "0x4e6860": {
-      "clip": 313,
-      "count": 39,
-      "sample": 0,
-      "evidence": "Fujin roundhouse fast-start path selects clip 313 at its initial cursor before entering this character script continuation; bounded Fujin roundhouse query."
-    },
-    "0x4e6878": {
-      "clip": 313,
-      "count": 39,
-      "sample": 0,
-      "evidence": "Fujin roundhouse normal-start path selects clip 313 at its initial cursor before entering this character script continuation; bounded Fujin roundhouse query."
-    },
     "0x4e9910": {
       "clip": 202,
       "count": 45,
@@ -130,6 +118,18 @@
       "count": 10,
       "sample": 0,
       "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
+    },
+    "0x4e6890": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
+    },
+    "0x4e68a8": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -165,8 +165,8 @@
     "0x4e6710",
     "0x4e6798",
     "0x4e6800",
-    "0x4e6860",
-    "0x4e6878",
+    "0x4e6890",
+    "0x4e68a8",
     "0x4e6950",
     "0x4e69b0",
     "0x4e9910"

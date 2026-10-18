@@ -767,6 +767,31 @@ static void check_reconnected_lk_throws(void) {
   check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Round reset must retire both throw fibers");
 }
 
+static void check_reconnected_roundhouses(void) {
+  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int hit = 0; hit < 2; ++hit) {
+      battle_init(rosters[row], 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[0];
+      Fighter *victim = &g_battle.fighters[1];
+      q16 distance = hit ? 0xe666 : 8 * Q16_ONE;
+      owner->body.pos[AXIS_X] = -distance / 2;
+      victim->body.pos[AXIS_X] = distance / 2;
+      battle_step((Input[2]){{BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(BUTTON_HIGH_KICK)}, {0}});
+      advance_ticks(1, NULL);
+      int clip = fighter_move(owner)->clip;
+      check(clip == 64 || clip == 313, "Back HK must enter a roundhouse, not the ordinary high kick");
+      advance_ticks(100, NULL);
+      if (owner->state != S_IDLE || victim->health != (hit ? Q16_ONE - 0x2e14 : Q16_ONE)) {
+        fprintf(stderr, "Roundhouse roster %d hit %d state %d health %d\n", rosters[row], hit, owner->state, victim->health);
+      }
+      check(owner->state == S_IDLE && owner->buttons != NULL, "Reconnected roundhouse must recover");
+      check(victim->health == (hit ? Q16_ONE - 0x2e14 : Q16_ONE), "Roundhouse must use its retail eighteen-percent record and miss at range");
+    }
+  }
+}
+
 static void check_ground_normals(void) {
   const unsigned buttons[] = {BUTTON_BIT(BUTTON_HIGH_PUNCH), BUTTON_BIT(BUTTON_LOW_KICK), BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LEFT),
       BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH), BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK),
@@ -1126,6 +1151,7 @@ int main(void) {
   check_reconnected_air_attacks();
   check_reconnected_ground_combos();
   check_reconnected_lk_throws();
+  check_reconnected_roundhouses();
   check_weapon();
   check_specials();
   check_retail_input();

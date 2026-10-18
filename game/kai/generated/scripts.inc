@@ -25,6 +25,7 @@ void kai_script_lp_extended_finish(Fighter *);
 void kai_script_lp_select(Fighter *);
 void kai_script_lp_short_finish(Fighter *);
 void kai_script_opponent_reaction(Fighter *, int);
+void kai_script_roundhouse_finish(Fighter *);
 void kai_script_roundhouse_start(Fighter *);
 void kai_script_spike_tail(Fighter *);
 void kai_script_stage_event(Fighter *);
@@ -1428,48 +1429,48 @@ static inline void retail_script_004e6800(Fighter *fighter) {
   }
 }
 
-static inline void retail_script_004e6860(Fighter *fighter) {
+static inline void retail_script_004e6890(Fighter *fighter) {
   unsigned result_flags = 0;
   (void)result_flags;
   mk4_script_inherit(fighter, 64, 45, 0);
   {
-    /* EXE 004e6860: 0x4d00000c */
+    /* EXE 004e6890: 0x4d00000c */
     fighter_fiber_play_to(fighter, 12, 2);
   }
   {
-    /* EXE 004e6864: 0x2700001c */
+    /* EXE 004e6894: 0x2700001c */
     battle_sound(SOUND_C, 28);
   }
   {
-    /* EXE 004e6868: 0x4d000015 */
-    fighter_fiber_play_to(fighter, 21, 2);
+    /* EXE 004e6898: 0x4d000014 */
+    fighter_fiber_play_to(fighter, 20, 2);
   }
   {
-    /* EXE 004e686c: 0x32000000 0x46f270 */
-    kai_script_finish(fighter);
+    /* EXE 004e689c: 0x32000000 0x46f3e0 */
+    kai_script_roundhouse_finish(fighter);
     return;
   }
 }
 
-static inline void retail_script_004e6878(Fighter *fighter) {
+static inline void retail_script_004e68a8(Fighter *fighter) {
   unsigned result_flags = 0;
   (void)result_flags;
   mk4_script_inherit(fighter, 64, 45, 0);
   {
-    /* EXE 004e6878: 0x4d00000c */
+    /* EXE 004e68a8: 0x4d00000c */
     fighter_fiber_play_to(fighter, 12, 2);
   }
   {
-    /* EXE 004e687c: 0x2700001c */
+    /* EXE 004e68ac: 0x2700001c */
     battle_sound(SOUND_C, 28);
   }
   {
-    /* EXE 004e6880: 0x5000015 */
-    fighter_fiber_play_to(fighter, 21, 1);
+    /* EXE 004e68b0: 0x5000014 */
+    fighter_fiber_play_to(fighter, 20, 1);
   }
   {
-    /* EXE 004e6884: 0x32000000 0x46f270 */
-    kai_script_finish(fighter);
+    /* EXE 004e68b4: 0x32000000 0x46f3e0 */
+    kai_script_roundhouse_finish(fighter);
     return;
   }
 }

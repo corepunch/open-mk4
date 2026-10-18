@@ -16,6 +16,7 @@ void quan_chi_script_finish(Fighter *);
 void quan_chi_script_kick_finish(Fighter *);
 void quan_chi_script_lk_return(Fighter *);
 void quan_chi_script_opponent_reaction(Fighter *, int);
+void quan_chi_script_roundhouse_finish(Fighter *);
 void quan_chi_script_roundhouse_start(Fighter *);
 void quan_chi_script_spike_tail(Fighter *);
 void quan_chi_script_sweep_finish(Fighter *);
@@ -1265,7 +1266,7 @@ static inline void retail_script_004e6860(Fighter *fighter) {
   }
   {
     /* EXE 004e686c: 0x32000000 0x46f270 */
-    quan_chi_script_finish(fighter);
+    quan_chi_script_roundhouse_finish(fighter);
     return;
   }
 }
@@ -1288,7 +1289,7 @@ static inline void retail_script_004e6878(Fighter *fighter) {
   }
   {
     /* EXE 004e6884: 0x32000000 0x46f270 */
-    quan_chi_script_finish(fighter);
+    quan_chi_script_roundhouse_finish(fighter);
     return;
   }
 }

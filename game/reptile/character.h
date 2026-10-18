@@ -117,4 +117,6 @@ void reptile_entry_retail_script_004e6190(Fighter *fighter);
 void reptile_lk_throw(Fighter *fighter);
 void reptile_entry_fan(Fighter *fighter);
 void reptile_entry_spike(Fighter *fighter);
+void reptile_roundhouse(Fighter *fighter);
+void reptile_script_roundhouse_finish(Fighter *fighter);
 #endif

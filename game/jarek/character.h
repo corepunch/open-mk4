@@ -146,4 +146,6 @@ void jarek_lk_throw(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
 void jarek_fan_tail(Fighter *fighter);
 void jarek_spike_fatality(Fighter *fighter);
+void jarek_roundhouse(Fighter *fighter);
+void jarek_script_roundhouse_finish(Fighter *fighter);
 #endif

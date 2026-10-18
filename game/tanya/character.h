@@ -36,8 +36,8 @@ void tanya_entry_retail_script_004e6658(Fighter *fighter);
 void tanya_entry_retail_script_004e6710(Fighter *fighter);
 void tanya_entry_retail_script_004e6798(Fighter *fighter);
 void tanya_entry_retail_script_004e6800(Fighter *fighter);
-void tanya_entry_retail_script_004e6860(Fighter *fighter);
-void tanya_entry_retail_script_004e6878(Fighter *fighter);
+void tanya_entry_retail_script_004e6890(Fighter *fighter);
+void tanya_entry_retail_script_004e68a8(Fighter *fighter);
 void tanya_entry_retail_script_004e6950(Fighter *fighter);
 void tanya_entry_retail_script_004e9910(Fighter *fighter);
 extern const MoveDef tanya_s_jab;
@@ -91,4 +91,6 @@ void tanya_entry_retail_script_004e6190(Fighter *fighter);
 void tanya_lk_throw(Fighter *fighter);
 void tanya_fan_fatality(Fighter *fighter);
 void tanya_spike_fatality(Fighter *fighter);
+void tanya_roundhouse(Fighter *fighter);
+void tanya_script_roundhouse_finish(Fighter *fighter);
 #endif

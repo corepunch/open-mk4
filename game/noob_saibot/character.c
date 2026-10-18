@@ -187,12 +187,12 @@ void noob_saibot_entry_retail_script_004e6800(Fighter *fighter) {
   retail_script_004e6800(fighter);
 }
 
-void noob_saibot_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_script_004e6860(fighter);
+void noob_saibot_entry_retail_script_004e6890(Fighter *fighter) {
+  retail_script_004e6890(fighter);
 }
 
-void noob_saibot_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_script_004e6878(fighter);
+void noob_saibot_entry_retail_script_004e68a8(Fighter *fighter) {
+  retail_script_004e68a8(fighter);
 }
 
 void noob_saibot_entry_retail_script_004e6950(Fighter *fighter) {

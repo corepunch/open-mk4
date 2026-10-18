@@ -1,25 +1,38 @@
 #include "../character.h"
 
-static void fujin_roundhouse(Fighter *fighter);
-static void fujin_entry_roundhouse(Fighter *fighter);
-static void fujin_press_roundhouse(Fighter *fighter);
+// clang-format off: Keep table entries on one row, including long rows.
+static const GroundAttack attacks[8] = {
+  [7] = {{.clip = 64, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_010D}, {69468, -43909, 61603, 27525, 15, 15, 5, 0, 11796}, 14, 39, 67},
+};
+// clang-format on
+static const NativeGroundProfile profile = {.attacks = attacks, .ready = fighter_ready, .fast = 4, .round_pre = 19, .round_first = 20, .round_last = 44};
+
+void fujin_roundhouse(Fighter *fighter) {
+  bool fast = fighter_fast_start(fighter);
+  mk4_script_stop_body(fighter);
+  fighter_start_move(fighter, S_KICK, &attacks[7].move);
+  fighter->script_phase = 7;
+  fighter->native_followup = fast;
+  fighter_start_fiber(fighter, fujin_entry_retail_script_004e6800, NULL);
+}
 
 void fujin_script_roundhouse_start(Fighter *fighter) {
-  if (fighter_fast_start(fighter)) {
-    fujin_entry_retail_script_004e6860(fighter);
+  if (fighter->native_followup) {
+    fujin_entry_retail_script_004e6890(fighter);
   } else {
-    fujin_entry_retail_script_004e6878(fighter);
+    fujin_entry_retail_script_004e68a8(fighter);
   }
 }
 
-static void fujin_roundhouse(Fighter *fighter) {
-  fujin_start(fighter, S_KICK, &fujin_s_kick, fujin_entry_retail_script_004e6800);
+void fujin_script_roundhouse_finish(Fighter *fighter) {
+  fighter->script_phase = 7;
+  native_ground_tail(fighter, &profile);
 }
 
-static void fujin_entry_roundhouse(Fighter *fighter) {
+void fujin_entry_roundhouse(Fighter *fighter) {
   fujin_roundhouse(fighter);
 }
 
-static void fujin_press_roundhouse(Fighter *fighter) {
-  fighter_interrupt(fighter, fujin_roundhouse);
+void fujin_press_roundhouse(Fighter *fighter) {
+  fighter_interrupt(fighter, fujin_entry_roundhouse);
 }

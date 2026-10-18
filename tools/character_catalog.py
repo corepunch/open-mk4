@@ -36,6 +36,9 @@ def moves_for(character):
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878))))
     if character in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
         shared.update(close_hp=SCORPION['close_hp'], combo_hp=SCORPION['combo_hp'], close_hk=SCORPION['close_hk'])
+        if character in (5, 7, 9, 11, 17):
+            shared['roundhouse'] = move(0x46f1f0, (('roster-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)))
+
     if character == 16:
         # Kitana's roster slot aliases Sonya's retail script slot. Keep a
         # distinct Kitana profile while auditing the same selected roots.

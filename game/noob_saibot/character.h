@@ -80,8 +80,8 @@ void noob_saibot_entry_retail_script_004e6658(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e6710(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e6798(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e6800(Fighter *fighter);
-void noob_saibot_entry_retail_script_004e6860(Fighter *fighter);
-void noob_saibot_entry_retail_script_004e6878(Fighter *fighter);
+void noob_saibot_entry_retail_script_004e6890(Fighter *fighter);
+void noob_saibot_entry_retail_script_004e68a8(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e6950(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e9910(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e9b40(Fighter *fighter);
@@ -111,4 +111,6 @@ void noob_saibot_lk_throw(Fighter *fighter);
 void noob_saibot_fan_fatality(Fighter *fighter);
 void noob_saibot_spike_fatality(Fighter *fighter);
 void noob_saibot_air_throw(Fighter *fighter);
+void noob_saibot_roundhouse(Fighter *fighter);
+void noob_saibot_script_roundhouse_finish(Fighter *fighter);
 #endif

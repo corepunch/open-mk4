@@ -1141,6 +1141,16 @@ for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
             evidence='Shared native close-attack contact/recovery runner; 46bf10, 46c2c0 and 46bb60 with roster-owned follow-up tables')
 
 
+for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 14, 17):
+    _name = _CONTROL_CHARACTERS[_cid]
+    _wide = _cid in (5, 7, 9, 11, 17)
+    for _address, _suffix, _flow in ((0x46f390 if _wide else 0x46f220, 'start', 'immediate'),
+                                    (0x46f3e0 if _wide else 0x46f270, 'finish', 'terminal')):
+        CHARACTER_BINDINGS.setdefault(_cid, {})[_address] = Binding(
+            _name + '_script_roundhouse_' + _suffix, 'game/' + _name + '/moves/roundhouse.c', ('tail',), flow=_flow,
+            evidence='Selected 64/45 or 313/39 native roundhouse startup and shared contact/recovery runner; exact native entry and source-selected script branch')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

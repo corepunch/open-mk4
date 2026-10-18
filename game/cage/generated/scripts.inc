@@ -21,6 +21,7 @@ void cage_script_lp_return(Fighter *);
 void cage_script_opponent_reaction(Fighter *, int);
 void cage_script_powered_punch_finish_tail(Fighter *);
 void cage_script_powered_punch_tail(Fighter *);
+void cage_script_roundhouse_finish(Fighter *);
 void cage_script_roundhouse_start(Fighter *);
 void cage_script_spike_tail(Fighter *);
 static const AttackRecord retail_contact_4ebb40 = {89128, -13762, 66783, 23592, 17, 10, 6, 0, 7208};
@@ -1331,7 +1332,7 @@ static inline void retail_script_004e6860(Fighter *fighter) {
   }
   {
     /* EXE 004e686c: 0x32000000 0x46f270 */
-    cage_script_finish(fighter);
+    cage_script_roundhouse_finish(fighter);
     return;
   }
 }
@@ -1354,7 +1355,7 @@ static inline void retail_script_004e6878(Fighter *fighter) {
   }
   {
     /* EXE 004e6884: 0x32000000 0x46f270 */
-    cage_script_finish(fighter);
+    cage_script_roundhouse_finish(fighter);
     return;
   }
 }

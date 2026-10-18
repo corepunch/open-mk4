@@ -16,6 +16,11 @@ static void noob_saibot_low_kick(Fighter *fighter) {
 }
 
 void noob_saibot_press_high_kick(Fighter *fighter) {
+  if (!fighter->armed && fighter_holds_back(fighter)) {
+    fighter_interrupt(fighter, noob_saibot_roundhouse);
+    return;
+  }
+
   if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
     fighter_interrupt(fighter, noob_saibot_close_hk);
     return;

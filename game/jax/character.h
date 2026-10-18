@@ -144,4 +144,5 @@ void jax_entry_retail_script_004e6190(Fighter *fighter);
 void jax_lk_throw(Fighter *fighter);
 void jax_command_fan(Fighter *fighter);
 void jax_command_spike(Fighter *fighter);
+void jax_roundhouse(Fighter *fighter);
 #endif

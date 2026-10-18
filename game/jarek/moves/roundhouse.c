@@ -1,16 +1,23 @@
 #include "../character.h"
 
-static const AttackRecord jarek_roundhouse_record;
-static void jarek_roundhouse(Fighter *fighter);
-static const MoveDef s_roundhouse = {.clip = 313, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_010D};
-static const AttackRecord jarek_roundhouse_record = {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796};
+// clang-format off: Keep table entries on one row, including long rows.
+static const GroundAttack attacks[8] = {
+  [7] = {{.clip = 313, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_010D}, {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796}, 16, 33, 61},
+};
+// clang-format on
+static const NativeGroundProfile profile = {.attacks = attacks, .ready = fighter_ready, .fast = 5, .round_pre = 21, .round_first = 22, .round_last = 38};
 
-static void jarek_roundhouse(Fighter *fighter) {
-  jarek_start(fighter, S_KICK, &s_roundhouse, jarek_entry_retail_script_004e6800);
+void jarek_roundhouse(Fighter *fighter) {
+  bool fast = fighter_fast_start(fighter);
+  mk4_script_stop_body(fighter);
+  fighter_start_move(fighter, S_KICK, &attacks[7].move);
+  fighter->script_phase = 7;
+  fighter->native_followup = fast;
+  fighter_start_fiber(fighter, jarek_entry_retail_script_004e6800, NULL);
 }
 
 void jarek_script_roundhouse_start(Fighter *fighter) {
-  if (fighter_fast_start(fighter)) {
+  if (fighter->native_followup) {
     jarek_entry_retail_script_004e6860(fighter);
   } else {
     jarek_entry_retail_script_004e6878(fighter);
@@ -18,8 +25,6 @@ void jarek_script_roundhouse_start(Fighter *fighter) {
 }
 
 void jarek_script_roundhouse_finish(Fighter *fighter) {
-  if (!fighter->connected) {
-    battle_contact(fighter, &jarek_roundhouse_record);
-  }
-  fighter_fiber_finish(jarek_ready);
+  fighter->script_phase = 7;
+  native_ground_tail(fighter, &profile);
 }

@@ -19,6 +19,7 @@ void reptile_script_lp_end(Fighter *);
 void reptile_script_lp_return(Fighter *);
 void reptile_script_opponent_reaction(Fighter *, int);
 void reptile_script_reaction_side_getup(Fighter *);
+void reptile_script_roundhouse_finish(Fighter *);
 void reptile_script_roundhouse_start(Fighter *);
 void reptile_script_spike_tail(Fighter *);
 void reptile_script_visibility_end(Fighter *);
@@ -1496,7 +1497,7 @@ static inline void retail_script_004e6860(Fighter *fighter) {
   }
   {
     /* EXE 004e686c: 0x32000000 0x46f270 */
-    reptile_script_finish(fighter);
+    reptile_script_roundhouse_finish(fighter);
     return;
   }
 }
@@ -1519,7 +1520,7 @@ static inline void retail_script_004e6878(Fighter *fighter) {
   }
   {
     /* EXE 004e6884: 0x32000000 0x46f270 */
-    reptile_script_finish(fighter);
+    reptile_script_roundhouse_finish(fighter);
     return;
   }
 }

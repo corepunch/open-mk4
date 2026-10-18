@@ -37,6 +37,11 @@ static void jarek_script_low_kick_finish(Fighter *fighter) {
 }
 
 void jarek_press_kick(Fighter *fighter) {
+  if (!fighter->armed && fighter_holds_back(fighter)) {
+    fighter_interrupt(fighter, jarek_roundhouse);
+    return;
+  }
+
   if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
     fighter_interrupt(fighter, jarek_close_hk);
     return;

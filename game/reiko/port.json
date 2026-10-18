@@ -132,18 +132,6 @@
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 18
     },
-    "0x4e6860": {
-      "clip": 313,
-      "count": 39,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 0
-    },
-    "0x4e6878": {
-      "clip": 313,
-      "count": 39,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 0
-    },
     "0x4e9910": {
       "clip": 202,
       "count": 45,
@@ -155,6 +143,18 @@
       "count": 10,
       "sample": 0,
       "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
+    },
+    "0x4e6890": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
+    },
+    "0x4e68a8": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
     }
   },
   "generated_scripts": [
@@ -191,8 +191,8 @@
     "0x4e6710",
     "0x4e6798",
     "0x4e6800",
-    "0x4e6860",
-    "0x4e6878",
+    "0x4e6890",
+    "0x4e68a8",
     "0x4e6950",
     "0x4e69b0",
     "0x4e9910",

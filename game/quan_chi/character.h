@@ -104,4 +104,6 @@ void quan_chi_lk_throw(Fighter *fighter);
 void quan_chi_fan_fatality(Fighter *fighter);
 void quan_chi_spike_fatality(Fighter *fighter);
 void quan_chi_air_throw(Fighter *fighter);
+void quan_chi_roundhouse(Fighter *fighter);
+void quan_chi_script_roundhouse_finish(Fighter *fighter);
 #endif

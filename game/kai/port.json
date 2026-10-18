@@ -1239,60 +1239,6 @@
         ]
       }
     ],
-    "0x4e6860": [
-      {
-        "pc": "0x4e6860",
-        "words": [
-          "0x4d00000c"
-        ]
-      },
-      {
-        "pc": "0x4e6864",
-        "words": [
-          "0x2700001c"
-        ]
-      },
-      {
-        "pc": "0x4e6868",
-        "words": [
-          "0x4d000015"
-        ]
-      },
-      {
-        "pc": "0x4e686c",
-        "words": [
-          "0x32000000",
-          "0x46f270"
-        ]
-      }
-    ],
-    "0x4e6878": [
-      {
-        "pc": "0x4e6878",
-        "words": [
-          "0x4d00000c"
-        ]
-      },
-      {
-        "pc": "0x4e687c",
-        "words": [
-          "0x2700001c"
-        ]
-      },
-      {
-        "pc": "0x4e6880",
-        "words": [
-          "0x5000015"
-        ]
-      },
-      {
-        "pc": "0x4e6884",
-        "words": [
-          "0x32000000",
-          "0x46f270"
-        ]
-      }
-    ],
     "0x4e6950": [
       {
         "pc": "0x4e6950",
@@ -1871,7 +1817,61 @@
     ],
     "0x4e61e0": "Reviewed shared close-attack VM startup; native contact and follow-up runner.",
     "0x4e69b0": "Reviewed shared close-attack VM startup; native contact and follow-up runner.",
-    "0x4e6190": "Reviewed shared close-attack VM startup; native contact and follow-up runner."
+    "0x4e6190": "Reviewed shared close-attack VM startup; native contact and follow-up runner.",
+    "0x4e6890": [
+      {
+        "pc": "0x4e6860",
+        "words": [
+          "0x4d00000c"
+        ]
+      },
+      {
+        "pc": "0x4e6864",
+        "words": [
+          "0x2700001c"
+        ]
+      },
+      {
+        "pc": "0x4e6868",
+        "words": [
+          "0x4d000015"
+        ]
+      },
+      {
+        "pc": "0x4e686c",
+        "words": [
+          "0x32000000",
+          "0x46f270"
+        ]
+      }
+    ],
+    "0x4e68a8": [
+      {
+        "pc": "0x4e6878",
+        "words": [
+          "0x4d00000c"
+        ]
+      },
+      {
+        "pc": "0x4e687c",
+        "words": [
+          "0x2700001c"
+        ]
+      },
+      {
+        "pc": "0x4e6880",
+        "words": [
+          "0x5000015"
+        ]
+      },
+      {
+        "pc": "0x4e6884",
+        "words": [
+          "0x32000000",
+          "0x46f270"
+        ]
+      }
+    ]
   },
   "entry_contexts": {
     "0x4de318": {
@@ -1936,18 +1936,6 @@
       "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
       "sample": 18
     },
-    "0x4e6860": {
-      "clip": 64,
-      "count": 45,
-      "sample": 0,
-      "evidence": "Kai roundhouse startup branches retain clip 64/45 at native chooser 0x46f390; bounded Kai script selection."
-    },
-    "0x4e6878": {
-      "clip": 64,
-      "count": 45,
-      "sample": 0,
-      "evidence": "Kai roundhouse startup branches retain clip 64/45 at native chooser 0x46f390; bounded Kai script selection."
-    },
     "0x4e9910": {
       "clip": 202,
       "count": 45,
@@ -1971,6 +1959,18 @@
       "count": 10,
       "sample": 0,
       "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
+    },
+    "0x4e6890": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
+    },
+    "0x4e68a8": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
     }
   },
   "character": "kai",
