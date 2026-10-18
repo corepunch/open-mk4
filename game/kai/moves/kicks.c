@@ -24,7 +24,7 @@ void kai_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, kai_input_47c520);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? kai_sweep : kai_low_kick);
 }
 
 void kai_high_kick(Fighter *fighter) {
@@ -33,7 +33,9 @@ void kai_high_kick(Fighter *fighter) {
 }
 
 static void kai_low_kick(Fighter *fighter) {
-  kai_start_script(fighter, S_KICK, &kai_s_low_kick, kai_entry_retail_script_004e5d90);
+  fighter_start_move(fighter, S_KICK, &kai_s_low_kick);
+  fighter->action = ACTION_RETAIL_0102;
+  kai_entry_retail_script_004e5d90(fighter);
 }
 
 void kai_script_kick_finish(Fighter *fighter) {

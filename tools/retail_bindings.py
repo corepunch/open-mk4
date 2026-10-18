@@ -1287,3 +1287,13 @@ for _cid in (0, 4):
         CHARACTER_BINDINGS[_cid][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='46eab0/46ec10 weapon air contact and landing phases')
 
 CHARACTER_BINDINGS[0][0x470420] = Binding('script_weapon_ready', 'game/scorpion/character.c', ('tail',), flow='terminal', mmove=True, evidence='470420 nonblocking return for generated sword recovery')
+
+
+# Kai handstand control and victim boundaries, verified from bounded native listings.
+CHARACTER_BINDINGS[11][0x47c580] = Binding('kai_script_stage_event', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native47c580 handstand control or victim continuation; frame runner owns the selected clip')
+CHARACTER_BINDINGS[11][0x47c880] = Binding('kai_handstand_spin_begin', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native47c880 handstand control or victim continuation; frame runner owns the selected clip')
+CHARACTER_BINDINGS[11][0x47cc50] = Binding('kai_script_contact_b10_continuation', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native47cc50 handstand control or victim continuation; frame runner owns the selected clip')
+CHARACTER_BINDINGS[11][0x47ccc0] = Binding('kai_handstand_rear_contact', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native47ccc0 handstand control or victim continuation; frame runner owns the selected clip')
+CHARACTER_BINDINGS[11][0x488ac0] = Binding('kai_handstand_victim_tail', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native488ac0 handstand control or victim continuation; frame runner owns the selected clip')
+CHARACTER_BINDINGS[11][0x45fc40] = Binding('kai_handstand_crouch_return', 'game/kai/moves/handstand.c', ('tail',), flow='terminal', mmove=True, evidence='Native45fc40 handstand control or victim continuation; frame runner owns the selected clip')
+CHARACTER_BINDINGS[11][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 KO-aware clip185 side getup')

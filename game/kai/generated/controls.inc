@@ -3,6 +3,7 @@
 static const CommandDef retail_commands[] = {
   {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x40, mk4_can_fan_finish, kai_fan_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_spike_finish, kai_spike_fatality},
+  {BUTTON_LOW_KICK, {0}, 0, 0, 0x0, kai_can_handstand, kai_input_47c520},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };

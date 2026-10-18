@@ -847,6 +847,9 @@ static const FighterFn reactions[256] = {
   [34] = react_uppercut,
   [37] = react_jab_hit,
   [165] = react_slide_block,
+  [126] = kai_handstand_reaction,
+  [127] = kai_handstand_reaction,
+  [167] = kai_handstand_reaction,
 };
 // clang-format on
 

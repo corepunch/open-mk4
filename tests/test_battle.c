@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 void goro_cpu_projectile(Fighter *fighter);
+bool kai_can_handstand(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
@@ -852,8 +853,91 @@ static void check_reconnected_air_attacks(void) {
   }
 }
 
+static void check_kai_handstand_frames(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int branch = 0; branch < 10; ++branch) {
+      int attack = branch == 9 ? 3 : branch / 3;
+      int scenario = branch % 3;
+      battle_init(slot ? 4 : 11, slot ? 11 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 half_distance = scenario == 2 ? 3 * Q16_ONE : 0x8ccc;
+      owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      advance_ticks(50, input);
+      owner->held |= BUTTON_BIT(BUTTON_LOW_KICK);
+      check(kai_can_handstand(owner), "Handstand gate must accept an old BLOCK latch");
+      const Button forbidden[] = {BUTTON_UP, BUTTON_HIGH_PUNCH, BUTTON_LOW_PUNCH, BUTTON_HIGH_KICK, BUTTON_RUN};
+      for (size_t index = 0; index < sizeof forbidden / sizeof forbidden[0]; ++index) {
+        owner->held |= BUTTON_BIT(forbidden[index]);
+        check(!kai_can_handstand(owner), "Handstand gate must reject additional attack and UP switches");
+        owner->held &= ~BUTTON_BIT(forbidden[index]);
+      }
+      owner->held |= BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(BUTTON_RIGHT);
+      check(kai_can_handstand(owner), "Handstand gate must allow DOWN and horizontal switches");
+      owner->held = BUTTON_BIT(BUTTON_BLOCK);
+      input[slot].held |= BUTTON_BIT(BUTTON_LOW_KICK);
+      advance_ticks(2, input);
+      check(fighter_move(owner)->clip == 1 && !fighter_fiber_active(owner), "BLOCK+LK must select Kai's handstand intro through the real command gate");
+      input[slot].held = 0;
+      advance_ticks(120, input);
+      check(fighter_move(owner)->clip == 4 && owner->action == 0x200d && !fighter_fiber_active(owner),
+          "Handstand must install persistent controls after its intro");
+      if (attack == 3) {
+        input[slot].held = BUTTON_BIT(BUTTON_RIGHT);
+        advance_ticks(10, input);
+        check(fighter_move(owner)->clip == 5 && owner->body.vel[AXIS_X] > 0, "Handstand walking must follow raw horizontal input in both player slots");
+        input[slot].held = 0;
+        advance_ticks(2, input);
+        check(fighter_move(owner)->clip == 4, "Releasing handstand movement must restore idle");
+        input[slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        battle_step(input);
+        input[slot].held = 0;
+        advance_ticks(60, input);
+        check(owner->state == S_IDLE && !fighter_fiber_active(owner), "Handstand BLOCK must reverse the intro and restore ordinary controls");
+        continue;
+      }
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      Button button = attack == 0 ? BUTTON_HIGH_KICK : attack == 1 ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH;
+      input[slot].held = BUTTON_BIT(button);
+      advance_ticks(2, input);
+      check(fighter_move(owner)->clip == (attack == 0 ? 0 : attack == 1 ? 6 : 2), "Each handstand button must select its own retail attack clip");
+      for (int tick = 0; tick < 35; ++tick) {
+        battle_step(input);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Handstand owner and victim paths must remain on frame tables");
+        if (attack != 2) {
+          input[slot].held = 0;
+        }
+      }
+      if (scenario != 2 && victim->health == Q16_ONE) {
+        fprintf(stderr, "Kai handstand contact miss slot%d attack%d clip%d sample%d\n", slot, attack, fighter_move(owner)->clip, fighter_sample(owner));
+      }
+      if (attack != 2 || scenario == 2) {
+        q16 damage = scenario == 2 ? 0 : attack == 0 ? 0x1c28 : 0x170a;
+        if (scenario == 1) {
+          damage = q16_mul(damage, 0x3333);
+        }
+        check(victim->health == Q16_ONE - damage, "Handstand kicks must preserve native hit, chip and miss damage");
+      } else {
+        check(victim->health < Q16_ONE, "Held handstand spin must execute its native attack record");
+      }
+      input[slot].held = 0;
+      advance_ticks(180, input);
+      check(fighter_move(owner)->clip == 4 && !fighter_fiber_active(owner) && !fighter_fiber_active(victim),
+          "Handstand attacks must recover to their persistent stance");
+      battle_react(owner, 37);
+      advance_ticks(100, NULL);
+      check(owner->state == S_IDLE && !fighter_fiber_active(owner), "Interrupting handstand must restore ordinary control and retire its motion");
+    }
+  }
+}
+
 static void check_roster_low_kick_frames(void) {
-  const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17};
+  const int roster[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17};
   for (size_t row = 0; row < sizeof roster / sizeof roster[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       int scenarios = row == 0 ? 3 : 1;
@@ -2023,6 +2107,7 @@ int main(void) {
   check_air_attacks();
   check_reconnected_air_attacks();
   check_roster_low_kick_frames();
+  check_kai_handstand_frames();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_straight_air_kick_contacts();

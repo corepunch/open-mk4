@@ -143,4 +143,18 @@ void kai_fan_fatality(Fighter *fighter);
 void kai_spike_fatality(Fighter *fighter);
 void kai_roundhouse(Fighter *fighter);
 void kai_script_roundhouse_finish(Fighter *fighter);
+bool kai_can_handstand(const Fighter *fighter);
+void kai_handstand_spin_begin(Fighter *fighter);
+void kai_handstand_rear_contact(Fighter *fighter);
+void kai_handstand_victim_tail(Fighter *fighter);
+void kai_handstand_crouch_return(Fighter *fighter);
+void kai_handstand_reaction(Fighter *fighter);
+void kai_entry_retail_script_004e8338(Fighter *fighter);
+void kai_entry_retail_script_004e83a0(Fighter *fighter);
+void kai_entry_retail_script_004e83d8(Fighter *fighter);
+void kai_entry_retail_script_004e83e8(Fighter *fighter);
+void kai_entry_retail_script_004e9308(Fighter *fighter);
+void kai_entry_retail_script_004e9360(Fighter *fighter);
+void kai_entry_retail_script_004ea170(Fighter *fighter);
+void kai_entry_retail_script_004ea1c0(Fighter *fighter);
 #endif

@@ -1,13 +1,8 @@
 #include "../character.h"
 
 static void kai_input_47bd40(Fighter *fighter);
-static void kai_input_47cbf0(Fighter *fighter);
-static void kai_input_47cc10(Fighter *fighter);
 static void kai_contact_frame(Fighter *fighter);
-static bool kai_stage_event_step(BattleEvent *event, Fighter *owner, Fighter *opponent);
-static const MoveDef s_stage_event_clip = {.clip = 0, .last = 0, .flags = SF_LOCK};
 static const AttackRecord s_kai_attack_b9 = {0x18000, -0xa8b4, 0xe147, 0x13ced, 127, 127, 5, 0, 0x23d7};
-static const AttackRecord s_kai_attack_b10 = {0x1851e, -0xbd2f, 0x10000, 0x9958, 127, 127, 5, 0, 0x1c28};
 
 void kai_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
@@ -46,18 +41,6 @@ static void kai_input_47bd40(Fighter *fighter) {
   fighter_start_fiber(fighter, kai_entry_retail_script_004e8238, NULL);
 }
 
-void kai_input_47c520(Fighter *fighter) {
-  kai_start_script(fighter, S_KICK, &kai_s_low_kick, kai_entry_retail_script_004e8320);
-}
-
-static void kai_input_47cbf0(Fighter *fighter) {
-  fighter_start_fiber(fighter, kai_entry_retail_script_004e88c8, NULL);
-}
-
-static void kai_input_47cc10(Fighter *fighter) {
-  fighter_start_fiber(fighter, kai_entry_retail_script_004e8358, NULL);
-}
-
 void kai_script_lk_return(Fighter *fighter) {
   /* Retail 42be10 enters the follow-up VM root after its global task checks. */
   kai_entry_retail_script_004de358(fighter);
@@ -94,49 +77,10 @@ void kai_script_contact_b9_continuation(Fighter *fighter) {
   native_play_to(fighter, 29, 1);
   fighter->native_record = &s_kai_attack_b9;
   native_calls(fighter, 5, 1, kai_contact_frame);
+  if (fighter_fiber_running(fighter)) {
+    fighter_fiber_handoff(kai_entry_retail_script_004e88c8);
+  }
   kai_entry_retail_script_004e88c8(fighter);
-}
-
-void kai_script_contact_b10_continuation(Fighter *fighter) {
-  native_play_to(fighter, 9, 1);
-  fighter->native_record = &s_kai_attack_b10;
-  native_begin(fighter, 1, 3, NULL);
-  for (int frame = 1; frame <= 3; ++frame) {
-    native_frame(fighter, frame, frame == 1 ? 10 : 11, kai_contact_frame);
-  }
-  native_wait(fighter);
-  kai_entry_retail_script_004e8390(fighter);
-}
-
-static bool kai_stage_event_step(BattleEvent *event, Fighter *owner, Fighter *opponent) {
-  (void)opponent;
-  int clip = event->data[0], sample = event->data[1], last = event->data[2];
-  fighter_start_move(owner, S_KICK, &s_stage_event_clip);
-  owner->playback_move = *fighter_move(owner);
-  owner->playback_move.clip = clip;
-  owner->playback_move.first = 0;
-  owner->playback_move.last = last;
-  owner->playback_move.sequence = NULL;
-  owner->playback_move.flags = SF_LOCK;
-  owner->current_move = &owner->playback_move;
-  owner->sample_override = sample;
-  owner->action = 0x200d;
-  native_begin(owner, 1, last - sample + 2, kai_ready);
-  for (int frame = 1; frame <= last - sample + 2; ++frame) {
-    native_frame(owner, frame, mini(last, sample + frame), NULL);
-  }
-  native_play(owner, false);
-  return false;
-}
-
-void kai_script_stage_event(Fighter *fighter) {
-  const MoveDef *move = fighter_move(fighter);
-  require((move->clip == 1 && move->last == 19) || (move->clip == 9 && move->last == 65), "Kai stage event needs clip 1 or clip 9 context");
-  require(fighter->sample_override >= 0 && fighter->sample_override <= move->last, "Kai stage event needs a valid clip sample");
-  BattleEvent *event = battle_event_start(fighter, kai_stage_event_step, false, true);
-  event->data[0] = move->clip;
-  event->data[1] = fighter->sample_override;
-  event->data[2] = move->last;
 }
 
 void kai_script_lp_select(Fighter *fighter) {

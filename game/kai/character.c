@@ -260,3 +260,35 @@ void kai_entry_retail_script_004e69b0(Fighter *fighter) {
 void kai_entry_retail_script_004e6190(Fighter *fighter) {
   retail_script_004e6190(fighter);
 }
+
+void kai_entry_retail_script_004e8338(Fighter *fighter) {
+  retail_script_004e8338(fighter);
+}
+
+void kai_entry_retail_script_004e83a0(Fighter *fighter) {
+  retail_script_004e83a0(fighter);
+}
+
+void kai_entry_retail_script_004e83d8(Fighter *fighter) {
+  retail_script_004e83d8(fighter);
+}
+
+void kai_entry_retail_script_004e83e8(Fighter *fighter) {
+  retail_script_004e83e8(fighter);
+}
+
+void kai_entry_retail_script_004e9308(Fighter *fighter) {
+  retail_script_004e9308(fighter);
+}
+
+void kai_entry_retail_script_004e9360(Fighter *fighter) {
+  retail_script_004e9360(fighter);
+}
+
+void kai_entry_retail_script_004ea170(Fighter *fighter) {
+  retail_script_004ea170(fighter);
+}
+
+void kai_entry_retail_script_004ea1c0(Fighter *fighter) {
+  retail_script_004ea1c0(fighter);
+}
