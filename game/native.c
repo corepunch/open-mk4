@@ -185,3 +185,57 @@ void native_schedule_speed(Fighter *fighter, q16 speed, int delay, int frames) {
   native_motion_frame(fighter, delay + frames, NULL, 0, motion_stop_speed);
   native_motion_play(fighter);
 }
+
+void native_play_to(Fighter *fighter, int sample, int step) {
+  int start = fighter_sample(fighter);
+  require(step != 0, "Native playback requires a pose step");
+  int distance = step > 0 ? sample - start : start - sample;
+  if (distance <= 0) {
+    return;
+  }
+  int stride = step > 0 ? step : -step;
+  int count = (distance + stride - 1) / stride;
+  native_begin(fighter, 1, count, NULL);
+  for (int frame = 1; frame <= count; ++frame) {
+    int pose = start + frame * step;
+    native_frame(fighter, frame, step > 0 ? mini(sample, pose) : maxi(sample, pose), NULL);
+  }
+  native_wait(fighter);
+}
+
+void native_calls(Fighter *fighter, int frames, int pose_step, FighterFn action) {
+  if (frames <= 0) {
+    return;
+  }
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, frames, NULL);
+  for (int frame = 1; frame <= frames; ++frame) {
+    native_frame(fighter, frame, maxi(0, pose + frame * pose_step), action);
+  }
+  native_wait(fighter);
+}
+
+static void query_frame(Fighter *fighter) {
+  if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
+    fighter_stop_mmove(fighter);
+  }
+}
+
+void native_queries(Fighter *fighter, const AttackRecord *record, int frames, int pose_step) {
+  fighter->native_record = record;
+  native_calls(fighter, frames, pose_step, query_frame);
+}
+
+static void condition_frame(Fighter *fighter) {
+  fighter->mmove_hold = !fighter->native_condition(fighter);
+}
+
+void native_until(Fighter *fighter, FighterTest condition) {
+  if (condition(fighter)) {
+    return;
+  }
+  fighter->native_condition = condition;
+  native_begin(fighter, 0, 0, NULL);
+  native_frame(fighter, 0, fighter_sample(fighter), condition_frame);
+  native_wait(fighter);
+}
