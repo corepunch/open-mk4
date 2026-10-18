@@ -675,3 +675,17 @@ void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
 void mk4_mmove_lk_owner_ready(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
+
+void mk4_mmove_side_getup(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  if (fighter->health <= 0) {
+    fighter_finish_mmove(fighter, NULL);
+    return;
+  }
+  mk4_mmove_bind(fighter, 185, 16, 0);
+  native_begin(fighter, 0, 15, mk4_mmove_thrown_finish);
+  for (int sample = 0; sample < 16; ++sample) {
+    native_frame(fighter, sample, sample, NULL);
+  }
+  native_play(fighter, false);
+}

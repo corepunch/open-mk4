@@ -113,4 +113,16 @@ void noob_saibot_spike_fatality(Fighter *fighter);
 void noob_saibot_air_throw(Fighter *fighter);
 void noob_saibot_roundhouse(Fighter *fighter);
 void noob_saibot_script_roundhouse_finish(Fighter *fighter);
+void noob_saibot_weapon_action(Fighter *fighter);
+void noob_saibot_script_weapon_draw_finish(Fighter *fighter);
+void noob_saibot_armed_idle(Fighter *fighter);
+void noob_saibot_armed_walk(Fighter *fighter);
+void noob_saibot_armed_crouch(Fighter *fighter);
+void noob_saibot_armed_block(Fighter *fighter);
+void noob_saibot_entry_retail_script_004e62c0(Fighter *fighter);
+void noob_saibot_entry_retail_script_004e62d8(Fighter *fighter);
+void noob_saibot_entry_retail_script_004e66d0(Fighter *fighter);
+void noob_saibot_entry_retail_script_004e66f0(Fighter *fighter);
+void noob_saibot_entry_retail_script_004ea040(Fighter *fighter);
+void noob_saibot_entry_retail_script_004ea0b8(Fighter *fighter);
 #endif

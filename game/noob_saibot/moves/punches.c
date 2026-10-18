@@ -17,11 +17,11 @@ static void noob_saibot_jab(Fighter *fighter) {
 }
 
 void noob_saibot_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, noob_saibot_high_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : noob_saibot_high_punch);
 }
 
 void noob_saibot_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= 0.7f ? noob_saibot_lp_throw : noob_saibot_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? noob_saibot_lp_throw : noob_saibot_jab);
 }
 
 void noob_saibot_press_crouching_hp(Fighter *fighter) {

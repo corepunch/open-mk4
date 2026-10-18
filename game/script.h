@@ -52,6 +52,7 @@ void mk4_mmove_thrown_finish(Fighter *fighter);
 void mk4_mmove_lk_release(Fighter *fighter, int reaction);
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end);
 void mk4_mmove_lk_owner_ready(Fighter *fighter);
+void mk4_mmove_side_getup(Fighter *fighter);
 void mk4_script_save_motion(Fighter *fighter);
 void mk4_script_restore_motion(Fighter *fighter);
 unsigned mk4_script_jab_gate(Fighter *fighter);

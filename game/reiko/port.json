@@ -22,9 +22,9 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "evidence": "Native 0x46d1d0 draws or throws the weapon selected by retail descriptor 0x4eced8; shared weapon lifecycle helper. Reiko weapon attack callbacks are not yet implemented.",
-      "source": "game/weapons.c",
-      "symbol": "weapon_draw"
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "reiko_weapon_action",
+      "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x478ee0": {
       "evidence": "Reiko CPU far-range selector route to a generated kick entry.",
@@ -151,6 +151,20 @@
       "count": 45,
       "sample": 0,
       "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "sample": 22,
+      "evidence": "46d260 equips weapon after generated draw reaches22; continue native draw recovery."
+    },
+    "0x4ea040": {
+      "return_to": "mk4_script_thrown_ready",
+      "evidence": "Native93/138 victim entry; generated clip/motion with independent KO-aware completion."
+    },
+    "0x4ea0b8": {
+      "return_to": "mk4_script_thrown_ready",
+      "evidence": "Native93/138 victim entry; generated clip/motion with independent KO-aware completion."
     }
   },
   "generated_scripts": [
@@ -192,10 +206,16 @@
     "0x4e69b0",
     "0x4e9910",
     "0x4e9b40",
-    "0x4e9bd0"
+    "0x4e9bd0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ea040",
+    "0x4ea0b8"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "fe0f504017433db222ce5a10deaca6296a4747f9781ffc827c50e3aa0bb50ee4",
+  "inventory_sha256": "05c89a22f74dc0aea58f7ee60d164c8acacca4e2835abb01c90ce0a9a158bb6c",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -296,6 +316,36 @@
       "source": "game/reiko/moves/combos.c",
       "symbol": "reiko_close_hk",
       "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+    },
+    "draw_weapon": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "reiko_weapon_action",
+      "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
+    },
+    "axe_hp": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "weapon_hp",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+    },
+    "axe_lp": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "weapon_lp",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+    },
+    "axe_back_hp": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "weapon_back_hp",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+    },
+    "axe_back_lp": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "weapon_back_lp",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+    },
+    "weapon_throw": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_throw",
+      "evidence": "Shared498270 weapon throw, retained type/model and independent pickup/drop lifecycle."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -423,6 +473,50 @@
       "evidence": "Retail reaction selector 8 (0x486c70) routes to the shared MK4 reaction table.",
       "source": "game/reactions.c",
       "symbol": "react_extra_block"
+    },
+    "93": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "weapon_first_victim",
+      "adaptation": "Type69 native contact starts the selected independent generated victim stream, without an approximate fallback.",
+      "evidence": "Native488420/488440 ->4ea040 and488810/488850 ->4ea0b8; native recovery7 queries WEAPON27."
+    },
+    "138": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "weapon_second_victim",
+      "adaptation": "Type69 native contact starts the selected independent generated victim stream, without an approximate fallback.",
+      "evidence": "Native488420/488440 ->4ea040 and488810/488850 ->4ea0b8; native recovery7 queries WEAPON27."
+    },
+    "0": {
+      "evidence": "4ea4e8[0] -> 0x486cd0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "119": {
+      "evidence": "4ea4e8[119] -> 0x486a70; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_block"
+    },
+    "154": {
+      "evidence": "4ea4e8[154] -> 0x4835e0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "51": {
+      "evidence": "4ea4e8[51] -> 0x482420; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "47": {
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_generated_reaction",
+      "evidence": "4ea4e8[47] ->488530; shared dispatch selects the existing generated victim stream.",
+      "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
+    },
+    "53": {
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_generated_reaction",
+      "evidence": "4ea4e8[53] ->482450; shared dispatch selects the existing generated victim stream.",
+      "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
     }
   },
   "return_to": "fighter_ready",
@@ -475,9 +569,9 @@
     }
   },
   "weapon": {
-    "evidence": "Retail Reiko inventory descriptor 0x4eced8 (type 0x69); raw descriptor words preserved for reviewed coverage",
-    "source": "game/reiko/character.c",
-    "symbol": "reiko_weapon_descriptor"
+    "source": "game/reiko/moves/weapon.c",
+    "symbol": "native_weapon",
+    "evidence": "Descriptor4eced8 type69 and extracted rig; owned callbacks use shared native strike descriptors."
   },
   "controls_output": "game/reiko/generated/controls.inc",
   "command_bindings": {
@@ -500,6 +594,11 @@
       "source": "game/reiko/moves/spike.c",
       "symbol": "reiko_spike_fatality",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x46d1d0": {
+      "source": "game/reiko/moves/weapon.c",
+      "symbol": "reiko_weapon_action",
+      "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     }
   },
   "command_predicates": {
@@ -508,7 +607,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw"
+    "0x45ed80": "mk4_can_air_throw",
+    "0x45ef50": "weapon_can_draw"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -530,6 +630,12 @@
     "0x4e68a8",
     "0x4de2f8",
     "0x4de318",
-    "0x4de328"
+    "0x4de328",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ea040",
+    "0x4ea0b8"
   ]
 }

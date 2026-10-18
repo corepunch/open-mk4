@@ -1086,6 +1086,54 @@ static void check_selected_high_kick(void) {
   }
 }
 
+static void check_type69_weapon_commands(void) {
+  const int roster[] = {7, 13, 17};
+  for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
+    for (int player = 0; player < 2; ++player) {
+      for (int strike = 0; strike < 4; ++strike) {
+        battle_init(player ? 4 : roster[index], player ? roster[index] : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[player];
+        Fighter *victim = &g_battle.fighters[1 - player];
+        g_battle.fighters[0].body.pos[AXIS_X] = -3 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 3 * Q16_ONE;
+        Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
+        Button forward = player ? BUTTON_LEFT : BUTTON_RIGHT;
+        command(player, roster[index] == 17 ? forward : BUTTON_DOWN, roster[index] == 7 ? back : forward,
+            roster[index] == 17 ? BUTTON_HIGH_KICK : BUTTON_HIGH_PUNCH);
+        if (fighter_move(owner)->clip != 244 || owner->armed) {
+          fprintf(stderr, "Axe draw roster%d slot%d clip%d armed%d action%x\n", roster[index], player, fighter_move(owner)->clip, owner->armed, owner->action);
+        }
+        check(fighter_move(owner)->clip == 244 && !owner->armed, "Axe command must start its draw before equipping");
+        for (int tick = 0; tick < 65; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner), "Axe draw and completion must use frame tables");
+        }
+        check(owner->armed && owner->weapon->type == 0x69 && owner->weapon->model == SCENE_MODEL_AXE && owner->state == S_IDLE,
+            "All three axe commands must equip their extracted model and restore armed controls");
+        Input input[2] = {0};
+        input[player].held = BUTTON_BIT(strike & 1 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+        if (strike >= 2) {
+          input[player].held |= BUTTON_BIT(back);
+        }
+        battle_step(input);
+        battle_step(input);
+        const int clips[] = {231, 232, 229, 230};
+        if (fighter_move(owner)->clip != clips[strike]) {
+          fprintf(stderr, "Axe strike roster%d slot%d strike%d clip%d state%d\n", roster[index], player, strike, fighter_move(owner)->clip, owner->state);
+        }
+        check(fighter_move(owner)->clip == clips[strike], "Armed buttons must enter the matching axe strike, without recursive callbacks");
+        for (int tick = 0; tick < 100; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner), "Axe strike and miss recovery must use frame tables");
+        }
+        check(owner->state == S_IDLE && victim->health == Q16_ONE && owner->body.physics == NULL,
+            "Missed axe strike must recover, clear strafe and leave a distant victim untouched");
+      }
+    }
+  }
+}
+
 static void check_roster_throw_state_entries(void) {
   const int roster[] = {5, 7, 10, 14, 15, 17};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
@@ -1670,6 +1718,7 @@ int main(void) {
   check_goro_frame_lp_throw();
   check_goro_projectile_completion();
   check_cage_groin_gate();
+  check_type69_weapon_commands();
   check_roster_throw_state_entries();
   check_short_diagonal_air_recovery();
   check_selected_high_kick();

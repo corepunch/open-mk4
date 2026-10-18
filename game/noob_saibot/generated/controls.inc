@@ -6,6 +6,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_BLOCK, {0}, 0, 0, 0x10, mk4_can_air_throw, noob_saibot_air_throw},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_spike_finish, noob_saibot_spike_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_BACK, TOKEN_BACK}, 3, 40, 0x0, mk4_can_fan_finish, noob_saibot_fan_fatality},
+  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 26, 0x0, weapon_can_draw, noob_saibot_weapon_action},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };

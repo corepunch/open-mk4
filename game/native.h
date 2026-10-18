@@ -31,6 +31,14 @@ void native_motion_stop(Fighter *fighter);
 void native_motion_speed(Fighter *fighter, float speed);
 void native_schedule_speed(Fighter *fighter, q16 speed, int delay, int frames);
 
+typedef struct NativeAxeProfile {
+  FighterFn first_hit, followup_hit;
+} NativeAxeProfile;
+
+bool weapon_can_draw(const Fighter *fighter);
+void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *profile);
+void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script);
+
 typedef struct GroundAttack {
   MoveDef move;
   AttackRecord record;

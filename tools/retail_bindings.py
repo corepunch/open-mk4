@@ -1229,6 +1229,18 @@ for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17):
             evidence='42be10 native retreat uses4de358 speed data and clip282; no VM entry at4de358')
 
 
+for _cid, _name in ((7, 'reiko'), (13, 'jax'), (17, 'noob_saibot')):
+    CHARACTER_BINDINGS[_cid][0x46d260] = Binding(_name + '_script_weapon_draw_finish', 'game/' + _name + '/moves/weapon.c',
+        ('tail',), flow='terminal', mmove=True, evidence='46d260 equips type69 then enters generated4e62d8')
+    for _address in (0x46eab0, 0x46ec10):
+        CHARACTER_BINDINGS[_cid][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',),
+            ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing frame phases')
+    CHARACTER_BINDINGS[_cid][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',),
+        flow='terminal', mmove=True, evidence='488b40 KO-aware native side getup on clip185')
+    CHARACTER_BINDINGS[_cid][0x470420] = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',),
+        flow='terminal', mmove=True, evidence='470420 nonblocking stop/reset and controller return')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

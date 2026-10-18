@@ -21,17 +21,17 @@ void jax_press_lp(Fighter *fighter) {
 }
 
 void jax_press_hk(Fighter *fighter) {
-  if (!fighter->armed && fighter_holds_back(fighter)) {
+  if (fighter_holds_back(fighter)) {
     fighter_interrupt(fighter, jax_roundhouse);
     return;
   }
 
-  if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
+  if (!fighter_holds_back(fighter) && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
     fighter_interrupt(fighter, jax_close_hk);
     return;
   }
 
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : jax_high_kick);
+  fighter_interrupt(fighter, jax_high_kick);
 }
 
 void jax_press_lk(Fighter *fighter) {

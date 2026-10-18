@@ -149,4 +149,10 @@ void jax_script_input_46a990(Fighter *fighter);
 void jax_script_input_46a9f0(Fighter *fighter);
 void jax_entry_retail_script_004e5e18(Fighter *fighter);
 void jax_entry_retail_script_004e98e8(Fighter *fighter);
+void jax_script_weapon_draw_finish(Fighter *fighter);
+void jax_command_weapon(Fighter *fighter);
+void jax_entry_retail_script_004e66d0(Fighter *fighter);
+void jax_entry_retail_script_004e66f0(Fighter *fighter);
+void jax_entry_retail_script_004ea040(Fighter *fighter);
+void jax_entry_retail_script_004ea0b8(Fighter *fighter);
 #endif

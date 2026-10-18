@@ -71,6 +71,11 @@ static const Controls reiko_controls = {retail_commands, (int)(sizeof retail_com
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
+  [S_IDLE] = reiko_armed_idle,
+  [S_WALK] = reiko_armed_walk,
+  [S_CROUCH] = reiko_armed_crouch,
+  [S_BLOCK] = reiko_armed_block,
+
   [S_THROW] = reiko_lp_throw,
 };
 // clang-format on
@@ -216,4 +221,28 @@ void reiko_entry_retail_script_004e69b0(Fighter *fighter) {
 
 void reiko_entry_retail_script_004e6190(Fighter *fighter) {
   retail_script_004e6190(fighter);
+}
+
+void reiko_entry_retail_script_004e62c0(Fighter *fighter) {
+  retail_script_004e62c0(fighter);
+}
+
+void reiko_entry_retail_script_004e62d8(Fighter *fighter) {
+  retail_script_004e62d8(fighter);
+}
+
+void reiko_entry_retail_script_004e66d0(Fighter *fighter) {
+  retail_script_004e66d0(fighter);
+}
+
+void reiko_entry_retail_script_004e66f0(Fighter *fighter) {
+  retail_script_004e66f0(fighter);
+}
+
+void reiko_entry_retail_script_004ea040(Fighter *fighter) {
+  retail_script_004ea040(fighter);
+}
+
+void reiko_entry_retail_script_004ea0b8(Fighter *fighter) {
+  retail_script_004ea0b8(fighter);
 }

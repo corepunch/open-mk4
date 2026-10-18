@@ -262,6 +262,68 @@ static void fallback_clip_clock(const Assets *assets) {
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
 }
 
+static void axe_followup_contacts(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 4 : 7, slot ? 7 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      const Button sequence[] = {BUTTON_DOWN, slot ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_HIGH_PUNCH};
+      for (int entry = 0; entry < 3; ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      for (int tick = 0; tick < 65; ++tick) {
+        battle_step(input);
+      }
+      check(owner->armed && owner->weapon->model == SCENE_MODEL_AXE, "Retail axe command must equip the extracted shared rig");
+      q16 distance = scenario == 2 ? 6 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      battle_step(input);
+      battle_step(input);
+      input[slot].held = 0;
+      bool first = false, second = false;
+      int health_changes = 0;
+      q16 previous = victim->health;
+      for (int tick = 0; tick < 220; ++tick) {
+        battle_step(input);
+        if (scenario == 3 && tick == 3) {
+          fighter_enter_state(owner, S_HIT);
+          check(owner->body.physics == NULL, "Interrupting axe startup must cancel its strafe callback");
+        }
+        first |= fighter_move(victim)->clip == 127;
+        second |= fighter_move(victim)->clip == 131;
+        health_changes += victim->health < previous;
+        previous = victim->health;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Axe follow-up and both victim streams must use frame tables");
+      }
+      if ((scenario == 0 && (!first || !second || health_changes != 2)) || (scenario >= 2 && health_changes != 0)) {
+        fprintf(stderr, "Axe slot%d scenario%d first%d second%d contacts%d health%d\n", slot, scenario, first, second, health_changes, victim->health);
+      }
+      check(scenario != 0 || (first && second && health_changes == 2), "Back-LP must connect both distinct native axe strikes and victim streams");
+      check(scenario < 2 || victim->health == Q16_ONE, "Axe follow-up must not run after a missed first strike");
+      if (owner->state != S_IDLE || victim->state != (scenario == 1 ? S_BLOCK : S_IDLE) || owner->body.physics != NULL) {
+        fprintf(stderr, "Axe recovery slot%d scenario%d owner%d victim%d clip%d health%d y%d vel%d gravity%d\n", slot, scenario, owner->state, victim->state,
+            fighter_move(victim)->clip, victim->health, victim->body.pos[AXIS_Y], victim->body.vel[AXIS_Y], victim->body.gravity);
+      }
+      check(owner->state == S_IDLE && victim->state == (scenario == 1 ? S_BLOCK : S_IDLE) && owner->body.physics == NULL,
+          "Axe follow-up must release movement and recover both participants");
+    }
+  }
+}
+
 static void cage_groin_command(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 5; ++scenario) {
@@ -435,6 +497,7 @@ int main(void) {
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
   fallback_clip_clock(&assets);
+  axe_followup_contacts(&assets);
   cage_groin_command(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

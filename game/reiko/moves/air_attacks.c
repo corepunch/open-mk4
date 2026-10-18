@@ -78,11 +78,11 @@ void reiko_script_air_finish(Fighter *fighter) {
 }
 
 void reiko_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, reiko_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : reiko_air_hp);
 }
 
 void reiko_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &reiko_air_punch_followup ? reiko_air_combo_lp : reiko_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &reiko_air_punch_followup ? reiko_air_combo_lp : reiko_air_lp);
 }
 
 void reiko_press_air_kick(Fighter *fighter) {

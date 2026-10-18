@@ -1,8 +1,13 @@
 #include "game.h"
 #include "native.h"
+#include "script.h"
 #include "math_util.h"
 #include <stdlib.h>
 #include <string.h>
+
+static void axe_strafe(Fighter *fighter);
+static void axe_followup(Fighter *fighter);
+static const WeaponStrike axe_strikes[4];
 
 #define WEAPON_MOVE(c, a, end) {.clip = c, .last = end, .flags = SF_LOCK | SF_RECORD, .action = a}
 static const MoveDef draw_move = WEAPON_MOVE(244, ACTION_RETAIL_1004, 49);
@@ -38,6 +43,9 @@ void weapon_stance(Fighter *fighter, int state) {
 }
 
 static void weapon_cleanup(Fighter *fighter) {
+  if (fighter->body.physics == axe_strafe) {
+    fighter->body.physics = NULL;
+  }
   fighter_set_speed(fighter, 0);
   native_motion_stop(fighter);
   fighter->blend_duration = 0;
@@ -93,10 +101,17 @@ static void strike_recover(Fighter *fighter) {
 }
 
 static void strike_recovery(Fighter *fighter) {
+  if (fighter->body.physics == axe_strafe) {
+    fighter->body.physics = NULL;
+  }
   native_motion_stop(fighter);
   fighter_set_speed(fighter, 0);
   fighter->script_phase = 1;
   fighter->action = ACTION_RETAIL_1006;
+  if (fighter->connected && fighter->weapon_strike == &axe_strikes[3]) {
+    axe_followup(fighter);
+    return;
+  }
   if (fighter->connected && (fighter->weapon_strike->recovery == 5 || fighter->weapon_strike->recovery == 9)) {
     native_hold(fighter, 1, strike_recover);
   } else {
@@ -105,7 +120,12 @@ static void strike_recovery(Fighter *fighter) {
 }
 
 static void strike_query(Fighter *fighter) {
-  if (battle_contact(fighter, &fighter->weapon_strike->record) != CONTACT_MISS) {
+  ContactResult result = battle_contact(fighter, &fighter->weapon_strike->record);
+  if (result != CONTACT_MISS) {
+    if (fighter->weapon_strike == &axe_strikes[3] && result != CONTACT_BLOCK) {
+      const NativeAxeProfile *profile = fighter->native_context;
+      fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->first_hit);
+    }
     strike_recovery(fighter);
   }
 }
@@ -379,4 +399,74 @@ void weapon_pickup(Fighter *fighter) {
   g_battle.projectiles[index].kind = 0;
   fighter_start_mmove(fighter, S_PUNCH, &pickup_move, &pickup_phase);
   fighter->sample_override = 0;
+}
+
+/* Type69: native496cd0/496cf0, descriptors4ec988/4ec9a0/4ec9b0/4ec9c8. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const WeaponStrike axe_strikes[4] = {
+  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {128385, -35323, 92274, 22872, 51, 51, 119, 0, 11796}, 6, 10, 16, 4, 1, 0, 0, 0, 32},
+  {{.clip = 232, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {85131, -32636, 67436, 19005, 47, 47, 119, 0, 11796}, 0, 4, 13, 4, 1, 0, 0, 0, 32},
+  {{.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {114688, -47185, 71434, 68157, 53, 10, 119, 0, 11796}, 0, 4, 7, 3, 1, 0, 0, 0, 32},
+  {{.clip = 230, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {119209, -46530, 71434, 73990, 93, 93, 119, 0, 8519}, 0, 5, 10, 3, 7, 0, 0, 0, 32},
+};
+// clang-format on
+static const AttackRecord axe_second_record = {119209, -46530, 71434, 73990, 138, 138, 119, 0, 8519};
+
+bool weapon_can_draw(const Fighter *fighter) {
+  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
+}
+
+static void axe_strafe(Fighter *fighter) {
+  q16 speed = (fighter->held & BUTTON_BIT(BUTTON_RIGHT)) ? 0x1999 : (fighter->held & BUTTON_BIT(BUTTON_LEFT)) ? -0x1999 : 0;
+  bool facing_left = fighter_opponent(fighter)->body.pos[AXIS_X] < fighter->body.pos[AXIS_X];
+  fighter_set_speed(fighter, facing_left ? -speed : speed);
+}
+
+void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *profile) {
+  require(index >= 0 && index < 4 && profile != NULL, "Invalid type69 weapon entry");
+  weapon_start_strike(fighter, &axe_strikes[index], index < 2);
+  fighter->native_context = profile;
+  if (index == 3) {
+    fighter->body.physics = axe_strafe;
+  }
+}
+
+static void axe_second_contact(Fighter *fighter) {
+  ContactResult result = battle_contact(fighter, &axe_second_record);
+  if (result != CONTACT_MISS && result != CONTACT_BLOCK) {
+    const NativeAxeProfile *profile = fighter->native_context;
+    fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->followup_hit);
+  }
+}
+
+/* Recovery7 ->494f30 aligns the peer1.8 units away, holds poses11/12/13
+ * for two visits each, queries WEAPON[27] at14, then finishes the clip. */
+static void axe_followup(Fighter *fighter) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x1cccc);
+  }
+  fighter->sample_override = 11;
+  native_begin(fighter, 1, 6, strike_recover);
+  native_frame(fighter, 1, 11, NULL);
+  native_frame(fighter, 2, 12, NULL);
+  native_frame(fighter, 3, 12, NULL);
+  native_frame(fighter, 4, 13, NULL);
+  native_frame(fighter, 5, 13, NULL);
+  native_frame(fighter, 6, 14, axe_second_contact);
+  native_play(fighter, false);
+}
+
+void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script) {
+  static const MoveDef first = {.clip = 127, .last = 39, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
+  static const MoveDef second = {.clip = 131, .last = 79, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
+  mk4_script_stop_body(victim);
+  if (followup) {
+    mk4_script_disarm_self(victim);
+    battle_wall_recoil(victim);
+  }
+  fighter_start_move(victim, followup ? S_KNOCKDOWN : S_HIT, followup ? &second : &first);
+  victim->flags |= FF_REACTING;
+  mk4_script_effect(victim, followup ? 0 : 9);
+  script(victim);
 }

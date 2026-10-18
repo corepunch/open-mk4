@@ -39,15 +39,15 @@ void jax_start(Fighter *fighter, int state, const MoveDef *move, FighterFn scrip
 }
 
 void jax_idle(Fighter *fighter) {
-  fighter_start_move(fighter, S_IDLE, &jax_s_idle);
+  weapon_stance(fighter, S_IDLE);
 }
 
 void jax_walk(Fighter *fighter) {
-  fighter_start_move(fighter, S_WALK, &jax_s_walk);
+  weapon_stance(fighter, S_WALK);
 }
 
 void jax_block(Fighter *fighter) {
-  fighter_start_move(fighter, S_BLOCK, &jax_s_block);
+  weapon_stance(fighter, S_BLOCK);
 }
 
 void jax_script_finish(Fighter *fighter) {

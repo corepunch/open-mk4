@@ -99,4 +99,16 @@ void reiko_fan_fatality(Fighter *fighter);
 void reiko_spike_fatality(Fighter *fighter);
 void reiko_roundhouse(Fighter *fighter);
 void reiko_script_roundhouse_finish(Fighter *fighter);
+void reiko_weapon_action(Fighter *fighter);
+void reiko_script_weapon_draw_finish(Fighter *fighter);
+void reiko_armed_idle(Fighter *fighter);
+void reiko_armed_walk(Fighter *fighter);
+void reiko_armed_crouch(Fighter *fighter);
+void reiko_armed_block(Fighter *fighter);
+void reiko_entry_retail_script_004e62c0(Fighter *fighter);
+void reiko_entry_retail_script_004e62d8(Fighter *fighter);
+void reiko_entry_retail_script_004e66d0(Fighter *fighter);
+void reiko_entry_retail_script_004e66f0(Fighter *fighter);
+void reiko_entry_retail_script_004ea040(Fighter *fighter);
+void reiko_entry_retail_script_004ea0b8(Fighter *fighter);
 #endif

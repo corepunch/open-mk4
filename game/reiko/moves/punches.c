@@ -17,11 +17,11 @@ static void reiko_jab(Fighter *fighter) {
 }
 
 void reiko_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, reiko_high_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : reiko_high_punch);
 }
 
 void reiko_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= 0.7f ? reiko_lp_throw : reiko_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? reiko_lp_throw : reiko_jab);
 }
 
 void reiko_press_crouching_hp(Fighter *fighter) {

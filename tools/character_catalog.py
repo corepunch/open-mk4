@@ -23,6 +23,19 @@ def character_name(character):
     return CHARACTERS[character].replace('_', ' ').title().replace('Sub Zero', 'Sub-Zero')
 
 
+def type69_weapon_moves():
+    return dict(
+        draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('return', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0)),
+                         native=(('equip', 0x46d260),)),
+        axe_hp=move(0x496cd0, contacts=(('WEAPON', 26),)),
+        axe_lp=move(0x496cf0, contacts=(('WEAPON', 24),)),
+        axe_back_hp=move(0x496ce0, contacts=(('WEAPON', 23),)),
+        axe_back_lp=move(0x496d10, (('first victim', 0x4ea040), ('follow-up victim', 0x4ea0b8)), (('WEAPON', 25), ('WEAPON', 27)),
+                         native=(('input motion', 0x496d20), ('secondary strike', 0x494f30))),
+        weapon_throw=SCORPION['sword_throw'],
+    )
+
+
 def moves_for(character):
     if character == 0:
         return SCORPION
@@ -131,6 +144,8 @@ def moves_for(character):
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 33),)),
         )
+    if character == 7:
+        shared.update(type69_weapon_moves())
     if character == 9:
         # Tanya uses the same decoded common VM entry set, but the selector
         # branches in these streams land on Tanya's own body clips and attack
@@ -288,6 +303,7 @@ def moves_for(character):
                              ('fast start', 0x4e6890), ('normal start', 0x4e68a8)),
                             ),
         )
+        shared.update(type69_weapon_moves())
         return shared
     if character == 14:
         # Cage uses the shared combat VM roots, with two distinct fatality

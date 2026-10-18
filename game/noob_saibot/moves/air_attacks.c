@@ -78,11 +78,13 @@ void noob_saibot_script_air_finish(Fighter *fighter) {
 }
 
 void noob_saibot_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, noob_saibot_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : noob_saibot_air_hp);
 }
 
 void noob_saibot_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &noob_saibot_air_punch_followup ? noob_saibot_air_combo_lp : noob_saibot_air_lp);
+  fighter_interrupt(fighter, fighter->armed                                        ? fighter->weapon->lp
+                             : fighter->buttons == &noob_saibot_air_punch_followup ? noob_saibot_air_combo_lp
+                                                                                   : noob_saibot_air_lp);
 }
 
 void noob_saibot_press_air_kick(Fighter *fighter) {
