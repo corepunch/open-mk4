@@ -802,7 +802,10 @@ static void check_reconnected_roundhouses(void) {
       advance_ticks(1, NULL);
       int clip = fighter_move(owner)->clip;
       check(clip == 64 || clip == 313, "Back HK must enter a roundhouse, not the ordinary high kick");
-      advance_ticks(100, NULL);
+      for (int tick = 0; tick < 100; ++tick) {
+        check(!fighter_fiber_active(owner), "Roster roundhouse startup/contact/recovery must remain on frame tables");
+        advance_ticks(1, NULL);
+      }
       if (owner->state != S_IDLE || victim->health != (hit ? Q16_ONE - 0x2e14 : Q16_ONE)) {
         fprintf(stderr, "Roundhouse roster %d hit %d state %d health %d\n", rosters[row], hit, owner->state, victim->health);
       }

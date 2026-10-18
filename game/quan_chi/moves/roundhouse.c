@@ -13,7 +13,7 @@ void quan_chi_roundhouse(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &attacks[7].move);
   fighter->script_phase = 7;
   fighter->native_followup = fast;
-  fighter_start_fiber(fighter, quan_chi_entry_retail_script_004e6800, NULL);
+  quan_chi_entry_retail_script_004e6800(fighter);
 }
 
 void quan_chi_script_roundhouse_start(Fighter *fighter) {

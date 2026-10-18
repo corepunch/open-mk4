@@ -1946,77 +1946,81 @@ static inline void retail_script_004e6798(Fighter *fighter) {
   }
 }
 
+static inline void retail_script_004e6800(Fighter *fighter);
+
 static inline void retail_script_004e6800(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  int attack_selector = 0;
-  (void)attack_selector;
-  {
-    /* EXE 004e6800: 0x3c000000 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139a10 */
-  }
-  {
-    /* EXE 004e6840: 0x139a10 */
-    (void)fighter; /* decoded VM no-op */
-  }
-  {
-    /* EXE 004e6844: 0x1f000000 0x21 */
-    attack_selector = 33;
-  }
-  {
-    /* EXE 004e684c: 0xf000000 0x13ef0a */
-    mk4_script_bind(fighter, 313, 39, 0);
-  }
-  {
-    /* EXE 004e6854: 0x32000000 0x46f220 */
-    jarek_script_roundhouse_start(fighter);
-    return;
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e6800: 0x3c000000 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139a10 */
+  /* EXE 004e6840: 0x139a10 */
+  /* EXE 004e6844: 0x1f000000 0x21 */
+  /* EXE 004e684c: 0xf000000 0x13ef0a */
+  mk4_mmove_bind(fighter, 313, 39, 0);
+  /* EXE 004e6854: 0x32000000 0x46f220 */
+  jarek_script_roundhouse_start(fighter);
 }
+
+static inline void retail_script_004e6860(Fighter *fighter);
+
+static void retail_script_004e6860_at_6(Fighter *fighter) {
+  fighter->sample_override = 12;
+  /* EXE 004e6864: 0x2700001c */
+  battle_sound(SOUND_C, 28);
+  /* EXE 004e6868: 0x4d000015 */
+}
+
+static void retail_script_004e6860_at_11(Fighter *fighter) {
+  fighter->sample_override = 21;
+  /* EXE 004e686c: 0x32000000 0x46f270 */
+  jarek_script_roundhouse_finish(fighter);
+}
+
+static const int retail_script_004e6860_samples[] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e6860_frames[11] = {
+  [5] = {.thinkfunc = retail_script_004e6860_at_6},
+  [10] = {.thinkfunc = retail_script_004e6860_at_11},
+};
+// clang-format on
+static const mmove_t retail_script_004e6860_phase = {
+    .firstframe = 0, .lastframe = 10, .frame = retail_script_004e6860_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6860_samples};
 
 static inline void retail_script_004e6860(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 313, 39, 0);
-  {
-    /* EXE 004e6860: 0x4d00000c */
-    fighter_fiber_play_to(fighter, 12, 2);
-  }
-  {
-    /* EXE 004e6864: 0x2700001c */
-    battle_sound(SOUND_C, 28);
-  }
-  {
-    /* EXE 004e6868: 0x4d000015 */
-    fighter_fiber_play_to(fighter, 21, 2);
-  }
-  {
-    /* EXE 004e686c: 0x32000000 0x46f270 */
-    jarek_script_roundhouse_finish(fighter);
-    return;
-  }
+  /* EXE 004e6860: 0x4d00000c */
+  fighter_mmove_phase(fighter, &retail_script_004e6860_phase);
 }
 
+static inline void retail_script_004e6878(Fighter *fighter);
+
+static void retail_script_004e6878_at_6(Fighter *fighter) {
+  fighter->sample_override = 12;
+  /* EXE 004e687c: 0x2700001c */
+  battle_sound(SOUND_C, 28);
+  /* EXE 004e6880: 0x5000015 */
+}
+
+static void retail_script_004e6878_at_15(Fighter *fighter) {
+  fighter->sample_override = 21;
+  /* EXE 004e6884: 0x32000000 0x46f270 */
+  jarek_script_roundhouse_finish(fighter);
+}
+
+static const int retail_script_004e6878_samples[] = {0, 2, 4, 6, 8, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e6878_frames[15] = {
+  [5] = {.thinkfunc = retail_script_004e6878_at_6},
+  [14] = {.thinkfunc = retail_script_004e6878_at_15},
+};
+// clang-format on
+static const mmove_t retail_script_004e6878_phase = {
+    .firstframe = 0, .lastframe = 14, .frame = retail_script_004e6878_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6878_samples};
+
 static inline void retail_script_004e6878(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 313, 39, 0);
-  {
-    /* EXE 004e6878: 0x4d00000c */
-    fighter_fiber_play_to(fighter, 12, 2);
-  }
-  {
-    /* EXE 004e687c: 0x2700001c */
-    battle_sound(SOUND_C, 28);
-  }
-  {
-    /* EXE 004e6880: 0x5000015 */
-    fighter_fiber_play_to(fighter, 21, 1);
-  }
-  {
-    /* EXE 004e6884: 0x32000000 0x46f270 */
-    jarek_script_roundhouse_finish(fighter);
-    return;
-  }
+  /* EXE 004e6878: 0x4d00000c */
+  fighter_mmove_phase(fighter, &retail_script_004e6878_phase);
 }
 
 static inline void retail_script_004e6950(Fighter *fighter) {

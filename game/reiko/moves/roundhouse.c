@@ -13,7 +13,7 @@ void reiko_roundhouse(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &attacks[7].move);
   fighter->script_phase = 7;
   fighter->native_followup = fast;
-  fighter_start_fiber(fighter, reiko_entry_retail_script_004e6800, NULL);
+  reiko_entry_retail_script_004e6800(fighter);
 }
 
 void reiko_script_roundhouse_start(Fighter *fighter) {

@@ -15,7 +15,8 @@ static const NativeGroundProfile jax_ground_profile = {.attacks = jax_ground_att
     .roundhouse_record = &s_roundhouse_record};
 
 void jax_roundhouse(Fighter *fighter) {
-  jax_start(fighter, S_KICK, &s_roundhouse, jax_entry_retail_script_004e6800);
+  fighter_start_move(fighter, S_KICK, &s_roundhouse);
+  jax_entry_retail_script_004e6800(fighter);
 }
 
 void jax_script_roundhouse_start(Fighter *fighter) {
