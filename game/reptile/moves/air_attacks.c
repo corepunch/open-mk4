@@ -42,7 +42,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->flags &= ~(unsigned)FF_BUSY;
   static const FighterFn scripts[] = {reptile_entry_retail_script_004e6658, reptile_entry_retail_script_004e6710, reptile_entry_retail_script_004e61f8,
       reptile_entry_retail_script_004e6500, reptile_entry_retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  scripts[index](fighter);
 }
 
 static void reptile_air_hp(Fighter *fighter) {

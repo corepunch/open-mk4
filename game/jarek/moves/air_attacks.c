@@ -42,7 +42,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->flags &= ~(unsigned)FF_BUSY;
   static const FighterFn scripts[] = {jarek_entry_retail_script_004e6658, jarek_entry_retail_script_004e6710, jarek_entry_retail_script_004e61f8,
       jarek_entry_retail_script_004e6500, jarek_entry_retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  scripts[index](fighter);
 }
 
 static void jarek_air_hp(Fighter *fighter) {

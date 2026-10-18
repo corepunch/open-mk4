@@ -688,7 +688,10 @@ static void check_reconnected_air_attacks(void) {
       Input input[2] = {0};
       input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
       battle_step(input);
-      advance_ticks(7, NULL);
+      for (int tick = 0; tick < 7; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(fighter), "Roster air HP startup/contact must remain on frame tables");
+      }
       if (!(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL)) {
         fprintf(stderr, "Air follow-up roster %d slot %d health %d clip %d gravity %d\n", rosters[row], slot, victim->health, fighter_move(fighter)->clip,
             fighter->body.gravity);
@@ -699,7 +702,10 @@ static void check_reconnected_air_attacks(void) {
       battle_step(input);
       advance_ticks(1, NULL);
       check(fighter_move(fighter)->clip == 96 && fighter->body.gravity == 0, "Reconnected air LP follow-up must retain the contact freeze");
-      advance_ticks(150, NULL);
+      for (int tick = 0; tick < 150; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(fighter), "Roster air LP follow-up/recovery must remain on frame tables");
+      }
       check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Reconnected air follow-up must land and restore control");
     }
   }

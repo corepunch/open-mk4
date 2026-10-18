@@ -492,6 +492,11 @@
     "0x45ed80": "mk4_can_air_throw"
   },
   "mmove_scripts": [
-    "0x4de798"
+    "0x4de798",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e61f8",
+    "0x4e6500",
+    "0x4e63d8"
   ]
 }

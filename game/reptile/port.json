@@ -556,5 +556,12 @@
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
     }
-  }
+  },
+  "mmove_scripts": [
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e61f8",
+    "0x4e6500",
+    "0x4e63d8"
+  ]
 }

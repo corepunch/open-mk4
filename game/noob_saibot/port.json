@@ -567,5 +567,12 @@
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw",
     "0x45ef20": "noob_saibot_shadow_up_enabled"
-  }
+  },
+  "mmove_scripts": [
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e61f8",
+    "0x4e6500",
+    "0x4e63d8"
+  ]
 }

@@ -42,7 +42,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->flags &= ~(unsigned)FF_BUSY;
   static const FighterFn scripts[] = {shinnok_entry_retail_script_004e6658, shinnok_entry_retail_script_004e6710, shinnok_entry_retail_script_004e61f8,
       shinnok_entry_retail_script_004e6500, shinnok_entry_retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  scripts[index](fighter);
 }
 
 static void shinnok_air_hp(Fighter *fighter) {
