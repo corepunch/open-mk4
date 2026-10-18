@@ -5,6 +5,7 @@
 void goro_cpu_projectile_spawn(Fighter *, int);
 void goro_script_air_finish(Fighter *);
 void goro_script_air_release(Fighter *);
+void goro_script_counter_kick_tail(Fighter *);
 void goro_script_current_reaction(Fighter *, int);
 void goro_script_event_finish(Fighter *);
 void goro_script_fan_cycle(Fighter *);
@@ -18,6 +19,7 @@ void goro_script_lk_return(Fighter *);
 void goro_script_lp_pair_start(Fighter *);
 void goro_script_lp_phase_repeat(Fighter *);
 void goro_script_opponent_reaction(Fighter *, int);
+void goro_script_punch_tail(Fighter *);
 void goro_script_roundhouse_start(Fighter *);
 void goro_script_spike_tail(Fighter *);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
@@ -499,7 +501,7 @@ static inline void retail_script_004dfb60(Fighter *fighter) {
   }
   {
     /* EXE 004dfb68: 0x32000000 0x43afc0 */
-    goro_script_event_finish(fighter);
+    goro_script_punch_tail(fighter);
     return;
   }
 }
@@ -514,7 +516,7 @@ static inline void retail_script_004dfb70(Fighter *fighter) {
   }
   {
     /* EXE 004dfb78: 0x32000000 0x43b1a0 */
-    goro_script_event_finish(fighter);
+    goro_script_counter_kick_tail(fighter);
     return;
   }
 }

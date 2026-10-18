@@ -123,7 +123,7 @@
     "0x4ed790"
   ],
   "integration_source": "game/goro/character.c",
-  "inventory_sha256": "057cb3f9868758a04fe81cb9dd7d34039db977508d82b9757cb5dbd48bc718a6",
+  "inventory_sha256": "82f193d4f15901e9e8d2e7aa8e47f6c409aed7fb953df6cf2661ac94c554c971",
   "output": "game/goro/generated/scripts.inc",
   "return_to": "mk4_script_ready",
   "schema": 1,
@@ -214,14 +214,14 @@
       "evidence": "Portable Goro punch fallback used by the current standing controls; the separate CPU projectile target 0x49ca70 is still unimplemented."
     },
     "progress_event": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/common.c",
       "symbol": "goro_event_progress",
-      "evidence": "The actor-local adaptation plays generated clip 599 through sample 14, then returns ready; global GameStateProgress scheduling is outside the fighter model."
+      "evidence": "43af90 enters clip 599; 43afc0 and 43b940 query D[32] for three advancing rows, then finish the clip."
     },
     "counter_kick_event": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/kicks.c",
       "symbol": "goro_event_counter_kick",
-      "evidence": "The actor-local adaptation plays generated clip 598 through sample 8, then returns ready; CrouchCounter controller state is omitted."
+      "evidence": "43b170 enters clip 598; 43b1a0 and 43b940 query D[33] for eight advancing rows, then finish the clip."
     },
     "counter_sweep_event": {
       "source": "game/goro/character.c",
@@ -400,6 +400,18 @@
       "symbol": "goro_script_current_reaction",
       "adaptation": "The portable Goro adapter routes reaction 78 through battle_react, which selects Goro\u2019s roster-15 react_approximate fallback.",
       "evidence": "Goro reaction 78 dispatches through native 484d50; current-context reactions in the Goro port use battle_react and the roster-15 fallback."
+    },
+    "189": {
+      "source": "game/reactions.c",
+      "symbol": "react_approximate",
+      "adaptation": "Goro roster 15 uses battle_react\u2019s existing approximate reaction route; the typed hit ID is preserved.",
+      "evidence": "Native 43b940 selects D[32]/D[33], whose hit and air reactions are 189/190. Exact victim animation remains outside this reconnection step."
+    },
+    "190": {
+      "source": "game/reactions.c",
+      "symbol": "react_approximate",
+      "adaptation": "Goro roster 15 uses battle_react\u2019s existing approximate reaction route; the typed hit ID is preserved.",
+      "evidence": "Native 43b940 selects D[32]/D[33], whose hit and air reactions are 189/190. Exact victim animation remains outside this reconnection step."
     }
   },
   "stances": {

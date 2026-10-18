@@ -1,10 +1,10 @@
 #include "../character.h"
 
-static void goro_event_counter_kick(Fighter *fighter);
+void goro_event_counter_kick(Fighter *fighter);
 static void goro_high_kick(Fighter *fighter);
 static void goro_low_kick(Fighter *fighter);
 
-static void goro_event_counter_kick(Fighter *fighter) {
+void goro_event_counter_kick(Fighter *fighter) {
   goro_start_actor_event(fighter, goro_entry_retail_script_004dfb70, 598, 31, 0);
 }
 

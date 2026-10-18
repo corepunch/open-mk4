@@ -852,6 +852,42 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
+static void check_goro_reconnected_counters(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int kick = 0; kick < 2; ++kick) {
+      for (int scenario = 0; scenario < 4; ++scenario) {
+        battle_init(slot ? 4 : 15, slot ? 15 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot];
+        Fighter *victim = &g_battle.fighters[1 - slot];
+        q16 distance = scenario == 1 ? 8 * Q16_ONE : Q16_ONE;
+        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Button direction = kick ? (slot ? BUTTON_RIGHT : BUTTON_LEFT) : (slot ? BUTTON_LEFT : BUTTON_RIGHT);
+        fighter_press(owner, direction);
+        fighter_press(owner, direction);
+        fighter_press(owner, kick ? BUTTON_HIGH_KICK : BUTTON_HIGH_PUNCH);
+        advance_ticks(1, NULL);
+        check(fighter_move(owner)->clip == (kick ? 598 : 599), "Goro counter command must select its owned rig clip");
+        if (scenario == 3) {
+          fighter_enter_state(owner, S_HIT);
+        }
+        Input held[2] = {0};
+        if (scenario == 2) {
+          held[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        advance_ticks(140, held);
+        q16 expected = scenario == 0 ? Q16_ONE - 0x2666 : scenario == 2 ? Q16_ONE - q16_mul(0x2666, 0x3333) : Q16_ONE;
+        if (!(victim->health == expected && owner->state == S_IDLE)) {
+          fprintf(stderr, "Goro counter slot %d kick %d scenario %d health %d state %d\n", slot, kick, scenario, victim->health, owner->state);
+        }
+        check(victim->health == expected, "Goro counter must resolve exactly one retail contact, with miss, block and cancellation gates");
+        check(owner->state == S_IDLE, "Goro counter must finish its remaining clip and recover");
+      }
+    }
+  }
+}
+
 static void check_cage_special_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kind = 0; kind < 2; ++kind) {
@@ -1203,6 +1239,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_goro_reconnected_counters();
   check_cage_special_commands();
   check_reconnected_stage_commands();
   check_script_reactions();

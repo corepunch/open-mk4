@@ -68,11 +68,13 @@ static const ButtonTable goro_jumping = {{[BUTTON_HIGH_PUNCH] = goro_enter_air_h
     [BUTTON_LOW_KICK] = goro_enter_air_lk}};
 
 static const CommandDef goro_commands[] = {
+    {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 48, 0, NULL, goro_event_progress},
+    {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_BACK}, 2, 48, 0, NULL, goro_event_counter_kick},
     {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, mk4_can_air_throw, goro_air_throw},
 };
 
-static const Controls goro_controls = {
-    goro_commands, 1, {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
+static const Controls goro_controls = {goro_commands, (int)(sizeof goro_commands / sizeof goro_commands[0]),
+    {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
 
 static const CpuMoves goro_cpu_moves = {.enter = {[CPU_PROJECTILE] = goro_cpu_projectile}};
 

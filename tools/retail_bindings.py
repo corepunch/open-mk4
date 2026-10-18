@@ -842,10 +842,10 @@ CHARACTER_BINDINGS[12] = {
 }
 
 CHARACTER_BINDINGS[15] = {
-    0x43afc0: Binding('goro_script_event_finish', 'game/goro/character.c', ('tail',), flow='terminal',
-                      evidence='43afc0 is the generated progress clip tail; its actor-local adapter finishes the pose event without controller scheduler effects'),
-    0x43b1a0: Binding('goro_script_event_finish', 'game/goro/character.c', ('tail',), flow='terminal',
-                      evidence='43b1a0 is the generated counter-kick clip tail; its actor-local adapter finishes the pose event without controller scheduler effects'),
+    0x43afc0: Binding('goro_script_punch_tail', 'game/goro/moves/common.c', ('tail',), flow='terminal',
+                      evidence='43afc0 selects D[32] and three advancing contact rows through 43b940, then finishes the bound clip'),
+    0x43b1a0: Binding('goro_script_counter_kick_tail', 'game/goro/moves/common.c', ('tail',), flow='terminal',
+                      evidence='43b1a0 selects D[33] and eight advancing contact rows through 43b940, then finishes the bound clip'),
     0x43b370: Binding('goro_script_event_finish', 'game/goro/character.c', ('tail',), flow='terminal',
                       evidence='43b370 follows the generated counter-sweep clip; the actor-local adapter finishes the pose event and omits versus/controller state'),
     0x42b680: Binding('goro_script_lp_pair_start', 'game/goro/character.c', ('call',), ('fighter',),

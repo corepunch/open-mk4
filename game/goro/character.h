@@ -88,4 +88,8 @@ extern const MoveDef goro_s_sweep;
 extern const MoveDef goro_s_throw;
 extern const MoveDef goro_s_uppercut;
 
+void goro_event_progress(Fighter *fighter);
+void goro_event_counter_kick(Fighter *fighter);
+void goro_script_punch_tail(Fighter *fighter);
+void goro_script_counter_kick_tail(Fighter *fighter);
 #endif
