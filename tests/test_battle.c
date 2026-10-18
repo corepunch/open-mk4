@@ -14,6 +14,7 @@ void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
+void fujin_weapon_action(Fighter *fighter);
 void kai_draw_weapon(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
@@ -1785,6 +1786,101 @@ static void check_cage_weapon_commands(void) {
   }
 }
 
+static void check_fujin_crossbow(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int shot = 0; shot < 3; ++shot) {
+      for (int scenario = 0; scenario < 5; ++scenario) {
+        battle_init(slot ? 4 : 5, slot ? 5 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->body.pos[AXIS_X] = slot ? 4 * Q16_ONE : -4 * Q16_ONE;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+        command(slot, back, back, BUTTON_LOW_PUNCH);
+        advance_ticks(65, NULL);
+        check(owner->armed && owner->weapon->type == 0x68 && owner->weapon->model == SCENE_MODEL_FUJIN_WEAPON && owner->state == S_IDLE,
+            "Fujin's Back,Back+LP must equip his extracted crossbow and armed controls");
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(shot == 1 ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH) | (shot == 2 ? BUTTON_BIT(back) : 0);
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        battle_step(input);
+        advance_ticks(1, input);
+        check(fighter_move(owner)->clip == (shot == 1 ? 212 : shot == 2 ? 214 : 211), "Crossbow buttons must select their actual distinct shooting clips");
+        input[slot].held = 0;
+        bool spawned = false, independent = false, victim_pose = false;
+        int launches = 0;
+        for (int tick = 0; tick < 250; ++tick) {
+          if (scenario == 2) {
+            victim->body.pos[AXIS_Z] = 4 * Q16_ONE;
+          }
+          if (scenario == 3 && tick == 1) {
+            battle_react(owner, 11);
+          }
+          for (int i = 0; i < MAX_PROJECTILES; ++i) {
+            Projectile *bolt = &g_battle.projectiles[i];
+            if (bolt->kind == PROJECTILE_FIREBALL && bolt->owner == slot && bolt->mesh_animation != NULL && bolt->mesh_animation->first == 106) {
+              if (!spawned) {
+                launches++;
+                spawned = true;
+                check(bolt->vel[AXIS_Y] == (shot == 1      ? -0x3333
+                                               : shot == 2 ? 0x3333
+                                                           : 0),
+                    "Crossbow bolts must retain straight, upward and downward launch motion");
+                if (scenario == 4) {
+                  battle_react(owner, 11);
+                  independent = true;
+                }
+              }
+              if (scenario == 0 || scenario == 1 || scenario == 4) {
+                bolt->pos[AXIS_X] = victim->body.pos[AXIS_X] - q16_mul(bolt->heading[0], 0x3333);
+                bolt->pos[AXIS_Z] = victim->body.pos[AXIS_Z] - q16_mul(bolt->heading[1], 0x3333);
+                bolt->pos[AXIS_Y] = victim->body.ground;
+                bolt->vel[AXIS_Y] = 0;
+              }
+            }
+          }
+          battle_step(input);
+          victim_pose |= fighter_move(victim)->clip == 311;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Crossbow shots and bolt victim recovery must stay on frame phases");
+        }
+        check((scenario == 3 ? !spawned : spawned && launches == 1) && owner->state == S_IDLE && owner->armed == (scenario < 3),
+            "Crossbow shooting must recover; interrupting hits must drop the weapon and cancel only shots not yet launched");
+        q16 damage = scenario == 2 || scenario == 3 ? 0 : scenario == 1 ? q16_mul(0xccc, 0x3333) : 0xccc;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(
+              stderr, "Crossbow slot%d shot%d scenario%d health%d expected%d launches%d\n", slot, shot, scenario, victim->health, Q16_ONE - damage, launches);
+        }
+        check(victim->health == Q16_ONE - damage, "Crossbow C[16] must preserve five-percent damage, chip, miss and interruption");
+        check((scenario != 0 && scenario != 4) || victim_pose, "A grounded bolt hit must play the actual311 friction reaction");
+        check(scenario != 4 || independent, "A launched crossbow bolt must survive owner interruption");
+        battle_reset_match();
+        for (int i = 0; i < MAX_PROJECTILES; ++i) {
+          check(g_battle.projectiles[i].kind == 0, "Crossbow reset must remove every independent bolt");
+        }
+      }
+    }
+    battle_init(slot ? 4 : 5, slot ? 5 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->flags |= FF_FOLLOW_UP;
+    victim->flags |= FF_UNTOUCHABLE;
+    fighter_interrupt(owner, fujin_weapon_action);
+    int shots = 0;
+    for (int tick = 0; tick < 180; ++tick) {
+      battle_step((Input[2]){0});
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        Projectile *bolt = &g_battle.projectiles[i];
+        shots += bolt->kind == PROJECTILE_FIREBALL && bolt->owner == slot && bolt->ticks == 1;
+      }
+      check(!fighter_fiber_active(owner), "Crossbow's actual follow-up sequence must never start a fiber");
+    }
+    check(shots == 4 && owner->armed && owner->state == S_IDLE, "Type68 draw follow-up must fire three short bolts and one full shot before recovery");
+    battle_reset_match();
+  }
+}
+
 static void check_weapon_followup_selection(void) {
   const int rosters[] = {14, 12, 6, 11};
   const FighterFn entries[] = {cage_weapon_action, jarek_weapon_action, shinnok_weapon_action, kai_draw_weapon};
@@ -2787,6 +2883,7 @@ int main(void) {
   check_cage_weapon_commands();
   check_jarek_weapon_commands();
   check_shinnok_weapon_commands();
+  check_fujin_crossbow();
   check_weapon_followup_selection();
   check_reaction_motion_components();
   check_roster_throw_state_entries();

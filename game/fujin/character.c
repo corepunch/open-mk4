@@ -74,6 +74,10 @@ static const Controls fujin_controls = {retail_commands, (int)(sizeof retail_com
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
+  [S_IDLE] = fujin_armed_idle,
+  [S_WALK] = fujin_armed_walk,
+  [S_CROUCH] = fujin_armed_crouch,
+  [S_BLOCK] = fujin_armed_block,
   [S_THROW] = fujin_enter_throw,
 };
 // clang-format on
@@ -203,4 +207,32 @@ void fujin_entry_retail_script_004e8298(Fighter *fighter) {
 
 void fujin_entry_retail_script_004e0138(Fighter *fighter) {
   retail_script_004e0138(fighter);
+}
+
+void fujin_entry_retail_script_004e62c0(Fighter *fighter) {
+  retail_script_004e62c0(fighter);
+}
+
+void fujin_entry_retail_script_004e62d8(Fighter *fighter) {
+  retail_script_004e62d8(fighter);
+}
+
+void fujin_entry_retail_script_004e66d0(Fighter *fighter) {
+  retail_script_004e66d0(fighter);
+}
+
+void fujin_entry_retail_script_004e66f0(Fighter *fighter) {
+  retail_script_004e66f0(fighter);
+}
+
+void fujin_entry_retail_script_004ed408(Fighter *fighter) {
+  retail_script_004ed408(fighter);
+}
+
+void fujin_entry_retail_script_004ed788(Fighter *fighter) {
+  retail_script_004ed788(fighter);
+}
+
+void fujin_entry_retail_script_004e9e10(Fighter *fighter) {
+  retail_script_004e9e10(fighter);
 }

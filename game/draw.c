@@ -544,6 +544,8 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       float x = q16_float(p->heading[0]), z = q16_float(p->heading[1]);
       Mat3 basis = {{x, 0, -z, 0, 1, 0, z, 0, x}};
       Vec3 origin = {q16_float(p->pos[0]), q16_float(p->pos[1]), q16_float(p->pos[2])};
+      float angle_factor = 4096.f / (6.283185307179586f * Q16_ONE);
+      basis = mat3_mul(basis, rotation(0, (Vec3){p->angle[0] * angle_factor, p->angle[1] * angle_factor, p->angle[2] * angle_factor}));
       const MeshAnimation *animation = p->mesh_animation;
       Vec3 offset = {q16_float(animation->offset[0]), q16_float(animation->offset[1]), q16_float(animation->offset[2])};
       origin = vec_add(origin, mat3_apply(basis, vec_scale(offset, q16_float(animation->scale))));

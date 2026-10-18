@@ -76,6 +76,17 @@ static const int fujin_s_knockdown_samples[40] = {
 const mframe_t fujin_s_knockdown_frames[40] = {{0}};
 const mmove_t fujin_s_knockdown_mmove = {.firstframe = 0, .lastframe = 39, .frame = fujin_s_knockdown_frames, .samples = fujin_s_knockdown_samples};
 
+static const int fujin_bow_move_samples[58] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28};
+const mframe_t fujin_bow_move_frames[58] = {{0}};
+const mmove_t fujin_bow_move_mmove = {.firstframe = 0, .lastframe = 57, .frame = fujin_bow_move_frames, .samples = fujin_bow_move_samples};
+
+static const int fujin_clip_244_samples[98] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48};
+const mframe_t fujin_clip_244_frames[98] = {{0}};
+const mmove_t fujin_clip_244_mmove = {.firstframe = 0, .lastframe = 97, .frame = fujin_clip_244_frames, .samples = fujin_clip_244_samples};
+
 static const int fujin_s_hit_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
 const mframe_t fujin_s_hit_frames[10] = {{0}};
 const mmove_t fujin_s_hit_mmove = {.firstframe = 0, .lastframe = 9, .frame = fujin_s_hit_frames, .samples = fujin_s_hit_samples};
@@ -133,6 +144,11 @@ static const int fujin_s_low_kick_samples[50] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24};
 const mframe_t fujin_s_low_kick_frames[50] = {{0}};
 const mmove_t fujin_s_low_kick_mmove = {.firstframe = 0, .lastframe = 49, .frame = fujin_s_low_kick_frames, .samples = fujin_s_low_kick_samples};
+
+static const int fujin_bolt_victim_samples[38] = {
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18};
+const mframe_t fujin_bolt_victim_frames[38] = {{0}};
+const mmove_t fujin_bolt_victim_mmove = {.firstframe = 0, .lastframe = 37, .frame = fujin_bolt_victim_frames, .samples = fujin_bolt_victim_samples};
 
 static const int fujin_clip_314_samples[26] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12};
 const mframe_t fujin_clip_314_frames[26] = {{0}};

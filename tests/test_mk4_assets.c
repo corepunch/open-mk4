@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+void fujin_weapon_action(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 
@@ -602,6 +603,48 @@ static void scene_pose_entry(Fighter *actor) {
   fighter_mmove_phase(actor, &scene_pose_phase);
 }
 
+static void fujin_crossbow_assets(const Assets *assets) {
+  const Character *bow = &assets->scene_models.data[SCENE_MODEL_FUJIN_WEAPON];
+  check(bow->bones.count == 1 && bow->bones.data[0].mesh == 105, "Fujin crossbow must use descriptor4ece98's original shared105 rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int shot = 0; shot < 3; ++shot) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 4 * Q16_ONE : -4 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_interrupt(owner, fujin_weapon_action);
+      for (int tick = 0; tick < 65; ++tick) {
+        battle_step((Input[2]){0});
+      }
+      check(owner->armed && owner->weapon->model == SCENE_MODEL_FUJIN_WEAPON, "Asset-backed draw must equip Fujin's own crossbow");
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(shot == 1 ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH) | (shot == 2 ? BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT) : 0);
+      bool bolt = false;
+      for (int tick = 0; tick < 220; ++tick) {
+        battle_step(input);
+        input[slot].held = 0;
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed crossbow action and victim must never use a fiber");
+        for (int i = 0; i < MAX_PROJECTILES; ++i) {
+          const Projectile *object = &g_battle.projectiles[i];
+          if (object->kind != 0 && object->mesh_animation != NULL && object->mesh_animation->first == 106) {
+            bolt = true;
+            const Geometry *geometry = mesh_animation_geometry(assets, object->mesh_animation);
+            check(geometry == &assets->hud.effects && geometry->meshes.data[106].triangles.count > 0 && geometry->sprites.data[106].w == 0,
+                "Crossbow bolt must render its original three-dimensional shared106 geometry");
+          }
+        }
+      }
+      check(bolt && owner->state == S_IDLE && owner->armed, "All three asset-backed crossbow shots must launch their own bolt and recover");
+      battle_reset_match();
+    }
+  }
+}
+
 static void independent_scene_poses(const Assets *assets) {
   const int sources[] = {4, 2};
   for (int variant = 0; variant < 2; ++variant) {
@@ -895,6 +938,7 @@ int main(void) {
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
+  fujin_crossbow_assets(&assets);
   independent_scene_poses(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");

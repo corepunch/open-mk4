@@ -75,11 +75,11 @@ void fujin_script_air_finish(Fighter *fighter) {
 }
 
 void fujin_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, fujin_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : fujin_air_hp);
 }
 
 void fujin_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &fujin_air_punch_followup ? fujin_air_combo_lp : fujin_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &fujin_air_punch_followup ? fujin_air_combo_lp : fujin_air_lp);
 }
 
 void fujin_press_air_kick(Fighter *fighter) {

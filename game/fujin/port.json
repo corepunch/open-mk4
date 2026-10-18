@@ -12,9 +12,9 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "evidence": "Fujin's weapon input route uses the shared draw-or-throw lifecycle at 0x46d1d0; encoded Fujin descriptor is retained in game/fujin/character.c.",
-      "source": "game/weapons.c",
-      "symbol": "weapon_draw"
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "fujin_weapon_action",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "0x467cd0": {
       "source": "game/fujin/character.c",
@@ -149,6 +149,25 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4ed408": {
+      "clip": 211,
+      "count": 29,
+      "sample": 4,
+      "evidence": "49a3b0 advances clip211 to4 then spawns the straight bolt and enters4ed408."
+    },
+    "0x4ed788": {
+      "clip": 211,
+      "count": 29,
+      "sample": 4,
+      "return_to": "fujin_bow_followup_next",
+      "evidence": "49a290 advances clip211 to4 and spawns;4ed788 reaches8 then resumes49a190 for the next short or final shot."
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "sample": 22,
+      "evidence": "46d260 equips after draw clip244 reaches22, then resumes its recovery."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -187,10 +206,17 @@
     "0x4e6950",
     "0x4e69b0",
     "0x4e8258",
-    "0x4e8298"
+    "0x4e8298",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ed408",
+    "0x4ed788",
+    "0x4e9e10"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "620773bdc0e2ad0dc48c03e1ec88eac66ed610ea9a1e552b178b657c78039c22",
+  "inventory_sha256": "8846779b59450d31d3299e89fffcd8872b9bca8d64550b8959ba4c5192a2258c",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -292,6 +318,31 @@
       "source": "game/fujin/moves/dive.c",
       "symbol": "fujin_dive",
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
+    },
+    "draw_weapon": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "fujin_weapon_action",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+    },
+    "crossbow_hp": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "weapon_hp",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+    },
+    "crossbow_lp": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "weapon_lp",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+    },
+    "crossbow_followup": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "bow_followup_begin",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+    },
+    "crossbow_reaction": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "fujin_bolt_victim",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     }
   },
   "output": "game/fujin/generated/scripts.inc",
@@ -429,6 +480,37 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Dive D[15] blocked reaction0 selects486cd0 shared block recovery."
+    },
+    "101": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "fujin_bolt_victim",
+      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction.",
+      "adaptation": "Shared reaction table entry101 dispatches to the generated crossbow victim in its owning move module; reactions.c registers this same function globally for any struck humanoid."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+    },
+    "120": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+    },
+    "154": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+    },
+    "155": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+    },
+    "156": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
     }
   },
   "return_to": "fighter_ready",
@@ -511,6 +593,11 @@
       "source": "game/fujin/moves/dive.c",
       "symbol": "fujin_dive",
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
+    },
+    "0x46d1d0": {
+      "source": "game/fujin/moves/weapon.c",
+      "symbol": "fujin_weapon_action",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     }
   },
   "command_predicates": {
@@ -518,7 +605,8 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45eeb0": "fujin_can_dive"
+    "0x45eeb0": "fujin_can_dive",
+    "0x45ef50": "weapon_can_draw"
   },
   "mmove_scripts": [
     "0x4de610",
@@ -554,6 +642,13 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ed408",
+    "0x4ed788",
+    "0x4e9e10"
   ]
 }

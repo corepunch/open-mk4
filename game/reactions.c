@@ -3,6 +3,7 @@
 #include "mk4_characters.h"
 
 void reptile_reaction_40(Fighter *fighter);
+void fujin_bolt_victim(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
 
@@ -828,6 +829,7 @@ static const FighterFn reactions[256] = {
   [90] = react_extra,
   [99] = react_extra,
   [100] = react_extra,
+  [101] = fujin_bolt_victim,
   [122] = react_extra,
   [154] = react_extra,
   [155] = react_extra,

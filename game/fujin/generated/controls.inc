@@ -2,6 +2,7 @@
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0x0, mk4_can_spike_finish, fujin_entry_spike},
+  {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_BACK}, 2, 24, 0x0, weapon_can_draw, fujin_weapon_action},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_fan_finish, fujin_entry_fan},
   {BUTTON_LOW_KICK, {TOKEN_UP, TOKEN_DOWN}, 2, 36, 0x10, fujin_can_dive, fujin_dive},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},

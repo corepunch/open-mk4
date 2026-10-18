@@ -93,6 +93,11 @@ def _moves_for(character):
         # these common attacks, but its selectors and contact records are
         # roster-specific. Keep the roots explicit for compiler coverage.
         shared.update(
+            draw_weapon=move(0x46d1d0, (("draw", 0x4e62c0), ("equip return", 0x4e62d8), ("air HP", 0x4e66d0), ("air LP", 0x4e66f0)), native=(("equip", 0x46d260),)),
+            crossbow_hp=move(0x495c30, native=(("upward shot", 0x499db0), ("independent bolt", 0x499f90))),
+            crossbow_lp=move(0x495c60, (("shot recovery", 0x4ed408),), (("C", 16),), native=(("straight shot", 0x49a370), ("downward shot", 0x499c30))),
+            crossbow_followup=move(0x495cf0, (("short shot", 0x4ed788),), native=(("four-shot sequence", 0x49a190),)),
+            crossbow_reaction=move(0x486770, (("bolt victim", 0x4e9e10),)),
             aerial_dive=move(0x47bf60, (("startup", 0x4e8258), ("recoil", 0x4e8298)), (("D", 15),), native=(("contact table", 0x47bf90), ("land", 0x47bfd0))),
             lp_throw=move(0x42c560, (('Fujin selector', 0x4de798), ('extended throw', 0x4de610), ('short throw', 0x4de6b8))),
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328))),

@@ -29,11 +29,11 @@ static void fujin_enter_punch(Fighter *fighter) {
 }
 
 void fujin_press_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fujin_enter_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : fujin_enter_punch);
 }
 
 void fujin_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= 0.7f ? fujin_enter_throw : fujin_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? fujin_enter_throw : fujin_jab);
 }
 
 /* 46d290/46d9b3: select the native HP record and 296/297 repeat phases. */

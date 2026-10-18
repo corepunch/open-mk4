@@ -1352,3 +1352,10 @@ CHARACTER_BINDINGS[5][0x43d530] = Binding('fujin_script_fan_cycle', 'game/fujin/
 CHARACTER_BINDINGS[5][0x43d6f0] = Binding('fujin_script_fan_victory', 'game/fujin/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Native43d6f0 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
 CHARACTER_BINDINGS[5][0x43db50] = Binding('fujin_script_fan_victim_end', 'game/fujin/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Native43db50 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
 CHARACTER_BINDINGS[5][0x467fc0] = Binding('fujin_script_spike_tail', 'game/fujin/moves/spike.c', ('tail',), flow='terminal', mmove=True, evidence='Native467fc0 shared stage-scene continuation; compiler-owned owner/victim phases and fixed native composition')
+
+# Fujin crossbow draw and native shot recovery.
+CHARACTER_BINDINGS[5][0x46d260] = Binding('fujin_draw_equip', 'game/fujin/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='46d260 equips descriptor4ece98 then enters4e62d8')
+CHARACTER_BINDINGS[5][0x49a480] = Binding('fujin_bow_finish', 'game/fujin/moves/weapon.c', ('tail',), flow='terminal', mmove=True, evidence='49a480 sets action1016 and finishes the current crossbow clip with428d10 before controller return')
+CHARACTER_BINDINGS[5][0x470420] = replace(CHARACTER_BINDINGS[5].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
+for _address in (0x46eab0, 0x46ec10):
+    CHARACTER_BINDINGS[5][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Shared armed air contact and landing frame runner')
