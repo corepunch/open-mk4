@@ -28,6 +28,16 @@ class CompilerTests(unittest.TestCase):
     def compile(self, words, bindings=None):
         return generate(self.image, [self.fixture(words)], 3, return_to='fighter_ready', bindings=bindings)
 
+    def test_scheduler_completion_rejects_fiber_only_shared_helpers(self):
+        entry = self.fixture([0x3f000000])
+        for callback in ('mk4_script_ready', 'mk4_script_land', 'mk4_script_thrown_finish'):
+            with self.subTest(callback=callback):
+                with self.assertRaisesRegex(CompileError, 'completion callback requires a running fiber'):
+                    generate(self.image, [entry], 15, callback)
+                with self.assertRaisesRegex(CompileError, 'completion callback requires a running fiber'):
+                    generate(self.image, [entry], 15, callback, mmove_entries=[entry])
+        self.assertIn('fighter_fiber_finish(mk4_script_thrown_ready)', generate(self.image, [entry], 15, 'mk4_script_thrown_ready'))
+
     def test_real_normal_and_loop_scripts_compile_as_C11(self):
         entries = [0x4e6d08, 0x4e60b8]
         source = format_c(generate(self.image, entries, 3, 'fighter_ready'))

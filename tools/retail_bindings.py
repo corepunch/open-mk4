@@ -1194,6 +1194,8 @@ for _address in (0x42b680, 0x42c7b0, 0x45b1f0):
 CHARACTER_BINDINGS[15][0x42ce60] = Binding("goro_script_lp_finish", "game/goro/character.c", ("tail",),
     flow="terminal", mmove=True, evidence="42ce60 completes the generated LP owner after reaction100 releases the peer")
 
+CHARACTER_BINDINGS[15][0x49ca90] = replace(CHARACTER_BINDINGS[15][0x49ca90], mmove=True)
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

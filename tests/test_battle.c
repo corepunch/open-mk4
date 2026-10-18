@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void goro_cpu_projectile(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 
@@ -1023,6 +1024,20 @@ static void check_selected_high_kick(void) {
   }
 }
 
+static void check_goro_projectile_completion(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 15, slot ? 15 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot];
+    goro_cpu_projectile(owner);
+    for (int tick = 0; tick < 100; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(owner), "Goro projectile owner must complete through frame tables without a retired-fiber callback");
+    }
+    check(owner->state == S_IDLE, "Goro projectile must return its owner to controls after recovery");
+  }
+}
+
 static void check_short_diagonal_air_recovery(void) {
   battle_init(4, 0);
   g_battle.phase = PHASE_FIGHT;
@@ -1550,6 +1565,7 @@ int main(void) {
   check_peer_release_lp_throw(9, 79);
   check_peer_release_lp_throw(14, 75);
   check_goro_frame_lp_throw();
+  check_goro_projectile_completion();
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
   check_jax_air_grab_command();

@@ -125,7 +125,7 @@
   "integration_source": "game/goro/character.c",
   "inventory_sha256": "82f193d4f15901e9e8d2e7aa8e47f6c409aed7fb953df6cf2661ac94c554c971",
   "output": "game/goro/generated/scripts.inc",
-  "return_to": "mk4_script_ready",
+  "return_to": "fighter_ready",
   "schema": 1,
   "moves": {
     "lk_throw": {
@@ -469,6 +469,7 @@
   "mmove_scripts": [
     "0x4de798",
     "0x4de7e8",
-    "0x4de6e4"
+    "0x4de6e4",
+    "0x4ed790"
   ]
 }

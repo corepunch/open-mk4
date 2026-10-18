@@ -36,5 +36,6 @@ void goro_cpu_projectile_spawn(Fighter *fighter, int task_type) {
 }
 
 void goro_cpu_projectile(Fighter *fighter) {
-  goro_start_script(fighter, S_PUNCH, &s_cpu_projectile, goro_entry_retail_script_004ed790);
+  fighter_start_move(fighter, S_PUNCH, &s_cpu_projectile);
+  goro_entry_retail_script_004ed790(fighter);
 }

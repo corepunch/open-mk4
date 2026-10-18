@@ -5,6 +5,7 @@ Every reachable instruction is lowered from the existing decoder's graph;
 unsupported instructions/edges fail before any output is written.
 """
 import re
+from functools import lru_cache
 import os
 from pathlib import Path
 import shutil
@@ -382,9 +383,34 @@ def lower(row, bindings, return_to):
     return lines
 
 
+@lru_cache(maxsize=1)
+def shared_fiber_only_continuations():
+    # Completion callbacks run after the owning fiber has been retired, and
+    # frame completions have no coroutine. Follow shared helper calls so a
+    # wrapper cannot accidentally re-enter a yielding/finish boundary.
+    from c_reachability import definitions
+    source = (Path(__file__).resolve().parents[1] / 'game/script.c').read_text()
+    functions = {name: body for name, _, body in definitions(source)}
+    forbidden = {'fighter_fiber_finish', 'fighter_wait_ticks', 'fighter_fiber_move',
+                 'fighter_fiber_play_to', 'fighter_fiber_sequence', 'fighter_fiber_await_frames',
+                 'native_wait', 'native_delay', 'native_calls', 'native_play_to', 'native_until'}
+    unsafe = set()
+    changed = True
+    while changed:
+        changed = False
+        for name, body in functions.items():
+            calls = set(re.findall(r'\b([A-Za-z_]\w*)\s*\(', body)) - {name}
+            if name not in unsafe and calls & (forbidden | unsafe):
+                unsafe.add(name)
+                changed = True
+    return unsafe
+
+
 def compile_program(image, entry, character=0, bindings=None, return_to=None, context=None):
     if return_to is not None and not re.fullmatch(r'[A-Za-z_]\w*', return_to):
         raise ValueError('Invalid continuation symbol')
+    if return_to in shared_fiber_only_continuations():
+        raise CompileError([{'pc': hex(entry), 'reason': 'completion callback requires a running fiber: ' + return_to}])
     bindings = bindings_for(character) if bindings is None else bindings
     program = script_program(image, entry, character)
     rows = {row['va']: row for row in program['instructions']}
