@@ -300,7 +300,7 @@ int main(int argc, char **argv) {
         battle_reset_match();
     }
     if (match_started)
-      draw_battle(&cv, &assets, arena, cpu, paused);
+      draw_battle(&cv, &assets, arena, cpu, paused, accumulator * 60.0);
     else
       menu_draw(&cv, &assets, &menu);
     sdl_app_present(&app, &cv);

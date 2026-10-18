@@ -28,6 +28,7 @@ static void shinnok_ready(Fighter *fighter) {
 }
 
 #include "generated/shinnok.inc"
+#include "generated/frames_shinnok.inc"
 
 static void shinnok_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);

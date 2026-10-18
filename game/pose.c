@@ -77,6 +77,19 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   }
 }
 
+void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
+  const Character *ch = fighter_model(assets, fighter);
+  const Clip *clip = fighter_clip(assets, fighter);
+  if (fighter->blend_duration > 0) {
+    int id = fighter->blend_clip < 0 ? ch->idle : fighter->blend_clip;
+    float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
+    double frame = fighter_render_frame(fighter, (int)clip->frames.count, interpolation);
+    pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, (int)frame, fraction, output);
+  } else {
+    pose(ch, clip, fighter_render_frame(fighter, (int)clip->frames.count, interpolation), output);
+  }
+}
+
 /* Joint positions include animation root translation, as in 4b8140.
  * Group Y is the bind-root height plus the fighter's displacement. */
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]) {

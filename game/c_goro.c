@@ -22,6 +22,7 @@ static void goro_cpu_projectile_spawn(Fighter *fighter, int task_type);
 static const MoveDef s_knockdown;
 
 #include "generated/goro.inc"
+#include "generated/frames_goro.inc"
 
 /* Encoded Goro roster descriptor retained from the EXE inventory at 0x4ecf18. */
 // clang-format off: Keep table entries on one row, including long rows.

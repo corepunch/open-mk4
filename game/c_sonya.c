@@ -14,6 +14,7 @@ static void sonya_ready(Fighter *fighter) {
 }
 
 #include "generated/sonya.inc"
+#include "generated/frames_sonya.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 // clang-format off: Keep table entries on one row, including long rows.

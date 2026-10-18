@@ -105,8 +105,9 @@ static void mmove_frames_and_callbacks(void) {
   fighter_start_mmove(fighter, S_PUNCH, &test_move, &test_mmove);
   check(fighter_sample(fighter) == 3, "mmove did not select its first frame sample");
   advance(1);
-  check(fighter_sample(fighter) == 3 && fighter_frame(fighter, 8) == 3.5 && frame_ai_calls == 1 && frame_think_calls == 1,
-      "30 Hz mframe interpolation or callback timing changed");
+  check(fighter_sample(fighter) == 3 && fighter_frame(fighter, 8) == 3 && fighter_render_frame(fighter, 8, 0.0) == 3.5 &&
+            fighter_render_frame(fighter, 8, 1.0) == 4.0 && frame_ai_calls == 1 && frame_think_calls == 1,
+      "30 Hz gameplay frame, render interpolation or callback timing changed");
   advance(1);
   check(fighter_sample(fighter) == 4 && frame_ai_calls == 1 && frame_think_calls == 1, "mmove did not advance after the frame duration");
   advance(1);

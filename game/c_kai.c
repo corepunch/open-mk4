@@ -38,6 +38,7 @@ static void kai_ready(Fighter *fighter) {
 }
 
 #include "generated/kai.inc"
+#include "generated/frames_kai.inc"
 
 static void kai_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);

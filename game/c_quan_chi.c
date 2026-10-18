@@ -11,6 +11,7 @@ static void quan_chi_ready(Fighter *fighter) {
 }
 
 #include "generated/quan_chi.inc"
+#include "generated/frames_quan_chi.inc"
 
 static const MoveDef s_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END};
 static const MoveDef s_walk = {.clip = 267, .last = MOVE_END};

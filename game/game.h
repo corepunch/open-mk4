@@ -786,6 +786,7 @@ bool fighter_fast_start(const Fighter *fighter);
 void fighter_press(Fighter *fighter, Button button);
 void fighter_release(Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
+double fighter_render_frame(const Fighter *fighter, int frame_count, double interpolation);
 int fighter_sample(const Fighter *fighter);
 void battle_bind_assets(const Assets *assets);
 const Character *fighter_model(const Assets *assets, const Fighter *fighter);
@@ -794,6 +795,7 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
 int fighter_pose_sample(const Fighter *fighter);
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
+void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]);
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
@@ -830,6 +832,6 @@ void battle_next_round(void);
 void battle_step(const Input input[2]);
 const char *state_name(int state);
 
-void draw_battle(Canvas *canvas, const Assets *assets, int arena, bool cpu, bool paused);
+void draw_battle(Canvas *canvas, const Assets *assets, int arena, bool cpu, bool paused, double interpolation);
 void draw_sprite(Canvas *canvas, const Geometry *geometry, int sprite, Rect dest, bool flip);
 #endif

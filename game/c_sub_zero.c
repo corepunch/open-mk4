@@ -17,6 +17,7 @@ static void script_thrown_return(Fighter *fighter);
 static void script_lp_getup(Fighter *fighter);
 static void script_ready(Fighter *fighter);
 #include "generated/sub_zero.inc"
+#include "generated/frames_sub_zero.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 // clang-format off: Keep table entries on one row, including long rows.

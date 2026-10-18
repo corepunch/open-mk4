@@ -298,15 +298,8 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
   if (fighter->current_mmove != NULL) {
     const mmove_t *mmove = fighter->current_mmove;
     const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
-    int sample = frame->sample;
-    require(sample < frame_count, "Mmove sample outside clip");
-    if (fighter->mmove_frame == mmove->lastframe) {
-      return sample;
-    }
-    const mframe_t *next = &mmove->frame[fighter->mmove_frame + 1 - mmove->firstframe];
-    require(next->sample < frame_count, "Next mmove sample outside clip");
-    double fraction = (double)fighter->mmove_elapsed / frame->duration;
-    return sample + (next->sample - sample) * fraction;
+    require(frame->sample < frame_count, "Mmove sample outside clip");
+    return frame->sample;
   }
   if (fighter->sequence != NULL) {
     const MoveSequence *sequence = fighter->sequence;
@@ -339,4 +332,18 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
     at = fmod(fmax(0., at), span + 1.0);
   }
   return last < first ? (double)first - at : (double)first + at;
+}
+
+double fighter_render_frame(const Fighter *fighter, int frame_count, double interpolation) {
+  const mmove_t *mmove = fighter->current_mmove;
+  if (mmove == NULL || fighter->sample_override >= 0 || fighter->mmove_frame >= mmove->lastframe) {
+    return fighter_frame(fighter, frame_count);
+  }
+  const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
+  const mframe_t *next = frame + 1;
+  require(frame->sample < frame_count, "Mmove sample outside clip");
+  require(next->sample < frame_count, "Next mmove sample outside clip");
+  double alpha = fmax(0., fmin(1., interpolation));
+  double fraction = (fighter->mmove_elapsed + alpha) / frame->duration;
+  return frame->sample + (next->sample - frame->sample) * fraction;
 }

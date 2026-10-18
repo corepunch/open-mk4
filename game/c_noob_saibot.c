@@ -15,6 +15,7 @@ static void noob_saibot_script_air_throw_continue(Fighter *fighter);
 static void noob_saibot_script_air_throw_end(Fighter *fighter);
 
 #include "generated/noob_saibot.inc"
+#include "generated/frames_noob_saibot.inc"
 
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};

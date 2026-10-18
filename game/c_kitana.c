@@ -14,6 +14,7 @@ static void kitana_ready(Fighter *fighter) {
 }
 
 #include "generated/kitana.inc"
+#include "generated/frames_kitana.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 // clang-format off: Keep table entries on one row, including long rows.

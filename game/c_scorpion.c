@@ -18,6 +18,7 @@ static void scorpion_air_throw(Fighter *fighter);
 static void fan_start(Fighter *fighter);
 static void spike_start(Fighter *fighter);
 #include "generated/scorpion.inc"
+#include "generated/frames_scorpion.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 // clang-format off: Keep table entries on one row, including long rows.

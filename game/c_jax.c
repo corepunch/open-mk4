@@ -48,6 +48,7 @@ static void jax_ready(Fighter *fighter) {
 }
 
 #include "generated/jax.inc"
+#include "generated/frames_jax.inc"
 
 enum {
   JAX_EVENT_FATALITY_1_SIGNAL = 1,

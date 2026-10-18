@@ -37,6 +37,7 @@ static void cage_ready(Fighter *fighter) {
 }
 
 #include "generated/cage.inc"
+#include "generated/frames_cage.inc"
 
 /* Contact records from Cage's 53d2b8/53d268 tables, selected by the
  * generated controller callbacks 479b70/479f00/47a500. */

@@ -103,19 +103,19 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
   return isfinite(floor_y) ? floor_y : 0.f;
 }
 
-static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, const Character *model) {
+static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, const Character *model, double interpolation) {
   Triangles triangles = {0};
   const Character *ch = model != NULL ? model : fighter_model(assets, fighter);
   if (fighter->appearance == APPEARANCE_HIDDEN) {
     return triangles;
   }
   const Clip *clip = fighter_clip(assets, fighter);
-  double frame = fighter_frame(fighter, (int)clip->frames.count);
+  double frame = fighter_render_frame(fighter, (int)clip->frames.count, interpolation);
   Pose bones[MK4_MAX_BONES];
   if (model != NULL) {
     pose(ch, clip, frame, bones);
   } else {
-    fighter_pose(assets, fighter, bones);
+    fighter_render_pose(assets, fighter, interpolation, bones);
   }
   Mat3 turn = fighter_turn(assets, fighter);
   double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
@@ -294,7 +294,7 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
   }
 }
 
-void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool paused) {
+void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool paused, double interpolation) {
   canvas_clear(cv);
   const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
   float ax = fighter_x(a), bx = fighter_x(b);
@@ -317,7 +317,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   camera.eye.y += camera.shake_y;
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
-  Triangles fighters[] = {fighter_geometry(assets, a, NULL), fighter_geometry(assets, b, NULL)};
+  Triangles fighters[] = {fighter_geometry(assets, a, NULL, interpolation), fighter_geometry(assets, b, NULL, interpolation)};
   Mat4 shadow;
   require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
@@ -382,7 +382,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     actor.body.pos[AXIS_Z] = event->data[SHADOW_DATA_Z];
     actor.visual_offset[1] = 0;
     const Character *model = fighter_model(assets, owner);
-    Triangles geometry = fighter_geometry(assets, &actor, model);
+    Triangles geometry = fighter_geometry(assets, &actor, model, interpolation);
     for (size_t j = 0; j < geometry.count; ++j) {
       render_triangle(cv, camera, geometry.data[j], &model->texture, .38f, PASS_COLOR, &light);
     }
@@ -405,7 +405,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       clone.body.root_y = p->root_y;
       memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
       const Character *model = &assets->scene_models.data[SCENE_MODEL_ICE_CLONE];
-      Triangles geometry = fighter_geometry(assets, &clone, model);
+      Triangles geometry = fighter_geometry(assets, &clone, model, interpolation);
       SceneLight clone_light = light;
       if (p->light.def != NULL) {
         clone_light.position = (Vec3){q16_float(p->light.pos[0]), q16_float(p->light.pos[1]), q16_float(p->light.pos[2])};

@@ -32,6 +32,7 @@ static void jarek_ready(Fighter *fighter) {
 }
 
 #include "generated/jarek.inc"
+#include "generated/frames_jarek.inc"
 
 static void jarek_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);

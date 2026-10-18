@@ -19,12 +19,16 @@ SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: scripts scripts-check scripts-audit $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: $(SCRIPT_GENERATE_TARGETS)
 scripts-check: scripts-audit $(SCRIPT_CHECK_TARGETS)
 scripts-audit: $(SCRIPT_AUDIT_TARGETS)
+mmove-frames:
+	python3 tools/generate_mmove_frames.py
+mmove-frames-check:
+	python3 tools/generate_mmove_frames.py --check
 $(SCRIPT_GENERATE_TARGETS): scripts-generate-%:
 	python3 tools/compile_retail.py --character $* --generate
 $(SCRIPT_CHECK_TARGETS): scripts-check-%:

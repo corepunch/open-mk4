@@ -28,6 +28,7 @@ static void tanya_ready(Fighter *fighter) {
 }
 
 #include "generated/tanya.inc"
+#include "generated/frames_tanya.inc"
 
 static void tanya_script_lk_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;

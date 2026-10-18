@@ -15,6 +15,7 @@ static void liu_kang_ready(Fighter *fighter) {
 }
 
 #include "generated/liu_kang.inc"
+#include "generated/frames_liu_kang.inc"
 
 /* Retail attack records; source addresses identify the supplied EXE. */
 // clang-format off: Keep table entries on one row, including long rows.

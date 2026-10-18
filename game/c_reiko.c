@@ -12,6 +12,7 @@ static void reiko_ready(Fighter *fighter) {
 }
 
 #include "generated/reiko.inc"
+#include "generated/frames_reiko.inc"
 
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};

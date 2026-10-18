@@ -14,6 +14,7 @@ static void raiden_ready(Fighter *fighter) {
 }
 
 #include "generated/raiden.inc"
+#include "generated/frames_raiden.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 // clang-format off: Keep table entries on one row, including long rows.
