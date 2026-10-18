@@ -367,6 +367,8 @@ def moves_for(character):
             progress_event=move(0x43af90, (('actor clip', 0x4dfb60),)),
             counter_kick_event=move(0x43b170, (('actor clip', 0x4dfb70),)),
             counter_sweep_event=move(0x43b320, (('actor clip', 0x4dfbb8),)),
+            cpu_projectile=move(0x49ca70, (('clip 592 launch program', 0x4ed790),),
+                                native=(('heading snapshot and launch', 0x49ca70),)),
         )
         return shared
 

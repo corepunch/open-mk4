@@ -18,6 +18,7 @@ static void goro_script_event_finish(Fighter *fighter);
 static void goro_event_progress(Fighter *fighter);
 static void goro_event_counter_kick(Fighter *fighter);
 static void goro_event_counter_sweep(Fighter *fighter);
+static void goro_cpu_projectile_spawn(Fighter *fighter, int task_type);
 static const MoveDef s_knockdown;
 
 #include "generated/goro.inc"
@@ -166,6 +167,7 @@ static const MoveDef s_kick = {598, 0, MOVE_END, 10, 5, 18, 12, 25, 1.85f, 0.32f
 static const MoveDef s_sweep = {601, 0, MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, NULL, 0};
 static const MoveDef s_uppercut = {600, 0, MOVE_END, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH, NULL, 0};
 static const MoveDef s_throw = {604, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
+static const MoveDef s_cpu_projectile = {.clip = 592, .last = 24, .flags = SF_ATTACK | SF_LOCK};
 static const MoveDef s_block = {595, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {593, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {581, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -193,6 +195,44 @@ static void goro_start_script(Fighter *fighter, StateId state, const MoveDef *mo
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;
   fighter_start_fiber(fighter, script, NULL);
+}
+
+/* Portable task83 fallback uses a known Goro box while its retail payload remains unavailable. */
+static const AttackRecord goro_cpu_projectile_record = {0x12147, 0x51e, 0x9999, 0x4ccc, 23, 23, 4, ATTACK_MARK, 0x1999};
+
+static void goro_cpu_projectile_step(Projectile *projectile) {
+  if (g_battle.contacts_off) {
+    projectile->kind = 0;
+    return;
+  }
+  for (int axis = 0; axis < 3; ++axis) {
+    projectile->pos[axis] += projectile->vel[axis];
+  }
+  projectile->sample = projectile->ticks < 24 ? projectile->ticks : 24;
+  if (battle_projectile_overlaps(projectile, &goro_cpu_projectile_record) &&
+      battle_projectile_contact(projectile, &goro_cpu_projectile_record) != CONTACT_MISS) {
+    projectile->kind = 0;
+  }
+}
+
+static void goro_cpu_projectile_spawn(Fighter *fighter, int task_type) {
+  require(task_type == 83, "Unexpected Goro cooperative task");
+  Projectile *projectile = battle_spawn_projectile(fighter, PROJECTILE_FIREBALL, 48, goro_cpu_projectile_step);
+  if (projectile == NULL) {
+    return;
+  }
+  projectile->clip = 592;
+  projectile->sample = 14;
+  memcpy(projectile->pos, fighter->body.pos, sizeof projectile->pos);
+  memcpy(projectile->heading, fighter->heading, sizeof projectile->heading);
+  projectile->facing = fighter->facing;
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    projectile->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
+  }
+}
+
+static void goro_cpu_projectile(Fighter *fighter) {
+  goro_start_script(fighter, S_PUNCH, &s_cpu_projectile, retail_script_004ed790);
 }
 
 void goro_roundhouse(Fighter *fighter) {
@@ -313,4 +353,6 @@ static const CommandDef goro_commands[] = {
 static const Controls goro_controls = {
     goro_commands, 1, {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
 
-const CharacterDef mk4_goro = {GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, NULL, -85458, mk4_walk, NULL, NULL};
+static const CpuMoves goro_cpu_moves = {.enter = {[CPU_PROJECTILE] = goro_cpu_projectile}};
+
+const CharacterDef mk4_goro = {GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, NULL, -85458, mk4_walk, NULL, &goro_cpu_moves};

@@ -118,10 +118,11 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
-    "0x4e9910"
+    "0x4e9910",
+    "0x4ed790"
   ],
   "integration_source": "game/c_goro.c",
-  "inventory_sha256": "318385ee7f8da46057159dc664e10857990703b6298334a39a6356f6a07f4656",
+  "inventory_sha256": "057cb3f9868758a04fe81cb9dd7d34039db977508d82b9757cb5dbd48bc718a6",
   "output": "game/generated/goro.inc",
   "return_to": "mk4_script_ready",
   "schema": 1,
@@ -225,6 +226,11 @@
       "source": "game/c_goro.c",
       "symbol": "goro_event_counter_sweep",
       "evidence": "The actor-local adaptation plays generated clip 601 through sample 23 with action 0x0409, then returns ready; versus/controller state is omitted."
+    },
+    "cpu_projectile": {
+      "source": "game/c_goro.c",
+      "symbol": "goro_cpu_projectile",
+      "evidence": "Goro CPU action 49ca70 snapshots the heading and enters clip-592 script 4ed790; portable projectile task83 follows the observed launch timing."
     }
   },
   "entry_adapters": {
@@ -237,6 +243,16 @@
       "source": "game/mk4_common.c",
       "symbol": "mk4_walk",
       "evidence": "Goro RUN direction route reaches the shared roster walk/run continuation at 0x46a020."
+    },
+    "0x43b640": {
+      "source": "game/c_goro.c",
+      "symbol": "goro_event_progress",
+      "evidence": "Goro high-punch input target 43b640 reuses the existing clip-599 progress scene event adapter."
+    },
+    "0x43b7e0": {
+      "source": "game/c_goro.c",
+      "symbol": "goro_event_counter_kick",
+      "evidence": "Goro high-kick input target 43b7e0 reuses the existing clip-598 counter-kick scene event adapter."
     }
   },
   "reactions": {
@@ -377,6 +393,12 @@
       "symbol": "goro_script_current_reaction",
       "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
       "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
+    },
+    "78": {
+      "source": "game/c_goro.c",
+      "symbol": "goro_script_current_reaction",
+      "adaptation": "The portable Goro adapter routes reaction 78 through battle_react, which selects Goro\u2019s roster-15 react_approximate fallback.",
+      "evidence": "Goro reaction 78 dispatches through native 484d50; current-context reactions in the Goro port use battle_react and the roster-15 fallback."
     }
   },
   "stances": {

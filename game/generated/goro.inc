@@ -2,6 +2,7 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 15. */
 #include "script.h"
 
+static void goro_cpu_projectile_spawn(Fighter *, int);
 static void goro_script_air_finish(Fighter *);
 static void goro_script_air_release(Fighter *);
 static void goro_script_current_reaction(Fighter *, int);
@@ -1927,5 +1928,76 @@ L_004e9930: {
   /* EXE 004e9930: 0x32000000 0x484b60 */
   mk4_script_air_getup(fighter);
   return;
+}
+}
+
+static inline void retail_script_004ed790(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  goto L_004ed790;
+L_004ed790: {
+  /* EXE 004ed790: 0xf000000 0x13f24f */
+  mk4_script_bind(fighter, 592, 25, 0);
+  goto L_004ed798;
+}
+L_004ed798: {
+  /* EXE 004ed798: 0x500000e */
+  fighter_fiber_play_to(fighter, 14, 1);
+  goto L_004ed79c;
+}
+L_004ed79c: {
+  /* EXE 004ed79c: 0x20000021 */
+  battle_sound(SOUND_A, 33);
+  goto L_004ed7a0;
+}
+L_004ed7a0: {
+  /* EXE 004ed7a0: 0x40000000 0x53 0x49ca90 */
+  goro_cpu_projectile_spawn(fighter, 83);
+  goto L_004ed7ac;
+}
+L_004ed7ac: {
+  /* EXE 004ed7ac: 0x4a00000c */
+  fighter_fiber_play_to(fighter, 12, -1);
+  goto L_004ed7b0;
+}
+L_004ed7b0: {
+  /* EXE 004ed7b0: 0x500000e */
+  fighter_fiber_play_to(fighter, 14, 1);
+  goto L_004ed7b4;
+}
+L_004ed7b4: {
+  /* EXE 004ed7b4: 0x4a00000c */
+  fighter_fiber_play_to(fighter, 12, -1);
+  goto L_004ed7b8;
+}
+L_004ed7b8: {
+  /* EXE 004ed7b8: 0x500000e */
+  fighter_fiber_play_to(fighter, 14, 1);
+  goto L_004ed7bc;
+}
+L_004ed7bc: {
+  /* EXE 004ed7bc: 0x4a00000c */
+  fighter_fiber_play_to(fighter, 12, -1);
+  goto L_004ed7c0;
+}
+L_004ed7c0: {
+  /* EXE 004ed7c0: 0x500000e */
+  fighter_fiber_play_to(fighter, 14, 1);
+  goto L_004ed7c4;
+}
+L_004ed7c4: {
+  /* EXE 004ed7c4: 0x4a00000c */
+  fighter_fiber_play_to(fighter, 12, -1);
+  goto L_004ed7c8;
+}
+L_004ed7c8: {
+  /* EXE 004ed7c8: 0x3000000 */
+  mk4_script_finish_clip(fighter, 1);
+  goto L_004ed7cc;
+}
+L_004ed7cc: {
+  /* EXE 004ed7cc: 0x3f000000 */
+  fighter_wait_ticks(1);
+  fighter_fiber_finish(mk4_script_ready);
 }
 }

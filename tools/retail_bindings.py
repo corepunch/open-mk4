@@ -885,6 +885,9 @@ CHARACTER_BINDINGS[15] = {
                       evidence='46f270 completes Goro roundhouse contact and recovery'),
     0x467fc0: Binding('goro_script_spike_tail', 'game/c_goro.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes Goro stage-fatality continuation'),
+    0x49ca90: Binding('goro_cpu_projectile_spawn', 'game/c_goro.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(83,),
+                      evidence='49ca90 launches task83 from Goro script 4ed790; portable adapter captures heading, advances clip592, and resolves contact through the shared projectile helper'),
 }
 
 from dataclasses import replace as _clone_binding
