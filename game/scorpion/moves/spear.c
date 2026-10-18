@@ -1,4 +1,5 @@
 #include "../character.h"
+#include <math.h>
 
 static bool spear_not_pulling(const Fighter *fighter);
 static void spear_cleanup(Fighter *fighter);
@@ -57,8 +58,9 @@ static void spear_projectile(Projectile *p) {
       p->kind = 0;
       return;
     }
-    q16 dx = owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X];
-    if (abs(dx) <= 0xcccc) {
+    /* 49b170/487350: pull along the throw direction until the pair is
+     * within 0.8. */
+    if (fighter_distance(owner) <= q16_float(0xcccc)) {
       scorpion_stop_body(victim);
       fighter_start_move(victim, S_HIT, &s_spear_stun);
       victim->sample_override = 0;
@@ -69,18 +71,21 @@ static void spear_projectile(Projectile *p) {
       fighter_start_fiber(owner, scorpion_entry_retail_script_004ed4a8, spear_cleanup);
       p->kind = 0;
     } else {
-      victim->body.pos[AXIS_X] += dx > 0 ? 0x3333 : -0x3333;
+      victim->body.pos[AXIS_X] -= q16_mul(p->heading[0], 0x3333);
+      victim->body.pos[AXIS_Z] -= q16_mul(p->heading[1], 0x3333);
       victim->body.pos[AXIS_Y] = victim->body.ground;
       memcpy(p->pos, victim->body.pos, sizeof p->pos);
     }
     return;
   }
   if (p->phase == 2) {
-    q16 dx = owner->body.pos[AXIS_X] - p->pos[AXIS_X];
-    if (abs(dx) <= 0x3333) {
+    double dx = owner->body.pos[AXIS_X] - p->pos[AXIS_X], dz = owner->body.pos[AXIS_Z] - p->pos[AXIS_Z];
+    double distance = sqrt(dx * dx + dz * dz);
+    if (distance <= 0x3333) {
       p->kind = 0;
     } else {
-      p->pos[AXIS_X] += dx > 0 ? 0x3333 : -0x3333;
+      p->pos[AXIS_X] += (q16)lround(dx / distance * 0x3333);
+      p->pos[AXIS_Z] += (q16)lround(dz / distance * 0x3333);
     }
     return;
   }
@@ -97,7 +102,7 @@ static void spear_projectile(Projectile *p) {
     victim->damage_scale = 0x9999; /* 0x485fb0: subsequent combo damage scales to 60%. */
     p->phase = 1;
     p->lifetime = 100;
-  } else if (result == CONTACT_BLOCK || p->ticks >= 30 || abs(p->pos[AXIS_X]) > g_battle.arena_radius) {
+  } else if (result == CONTACT_BLOCK || p->ticks >= 30 || hypot(p->pos[AXIS_X], p->pos[AXIS_Z]) > g_battle.arena_radius) {
     p->phase = 2;
     p->lifetime = 45;
   }
@@ -106,9 +111,12 @@ static void spear_projectile(Projectile *p) {
 static void spear_spawn(Fighter *fighter) {
   Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SPEAR, 90, spear_projectile);
   if (p != NULL) {
-    p->pos[AXIS_X] += fighter->facing * 0xc000;
+    /* 49a6a0 launches 0.75 ahead along the owner's heading at 0.2/tick. */
+    p->pos[AXIS_X] += q16_mul(p->heading[0], 0xc000);
+    p->pos[AXIS_Z] += q16_mul(p->heading[1], 0xc000);
     p->pos[AXIS_Y] = -0x16666;
-    p->vel[AXIS_X] = fighter->facing * 0x3333;
+    p->vel[AXIS_X] = q16_mul(p->heading[0], 0x3333);
+    p->vel[AXIS_Z] = q16_mul(p->heading[1], 0x3333);
   }
 }
 

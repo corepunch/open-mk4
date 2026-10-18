@@ -109,8 +109,10 @@ void scorpion_sword_spin_control(Fighter *fighter) {
     fighter_finish_mmove(fighter, scorpion_special_ready);
     return;
   }
-  int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
-  fighter->body.vel[AXIS_X] = direction * 0xf5c;
+  /* 496d20: raw Left, then Right (which wins), steer at 0.1 * 0.6 along the
+   * screen-side axis. */
+  int direction = (fighter->held & BUTTON_BIT(BUTTON_RIGHT)) ? 1 : (fighter->held & BUTTON_BIT(BUTTON_LEFT)) ? -1 : 0;
+  fighter_set_screen_speed(fighter, direction * 0xf5c);
 }
 
 void scorpion_sword_spin_query(Fighter *fighter) {

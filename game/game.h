@@ -860,6 +860,7 @@ void fighter_neutral(Fighter *fighter);
 void fighter_upright(Fighter *fighter);
 q16 fighter_axis(const Fighter *fighter, int axis);
 void fighter_set_speed(Fighter *fighter, q16 speed);
+void fighter_set_screen_speed(Fighter *fighter, q16 speed);
 void fighter_friction(Fighter *fighter);
 ContactResult battle_contact(Fighter *attacker, const AttackRecord *record);
 ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);

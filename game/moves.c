@@ -111,6 +111,24 @@ void fighter_set_speed(Fighter *fighter, q16 speed) {
   fighter->body.vel[AXIS_Z] = q16_mul(fighter_axis(fighter, AXIS_Z), speed);
 }
 
+/* 0x491050: horizontal velocity along the pair axis, positive toward the
+ * screen's right. Retail orients the axis toward +X and reverses it when
+ * camera flag 0x534af0 (4895ca) puts the camera behind the pair line; the
+ * follow-camera heading answers the same side test. */
+void fighter_set_screen_speed(Fighter *fighter, q16 speed) {
+  q16 x = fighter_axis(fighter, AXIS_X), z = fighter_axis(fighter, AXIS_Z);
+  if (x < 0) {
+    x = -x;
+    z = -z;
+  }
+  float right_x = -g_battle.view.z, right_z = g_battle.view.x;
+  if (q16_float(x) * right_x + q16_float(z) * right_z < 0) {
+    speed = -speed;
+  }
+  fighter->body.vel[AXIS_X] = q16_mul(x, speed);
+  fighter->body.vel[AXIS_Z] = q16_mul(z, speed);
+}
+
 void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
   fighter_cancel_fiber(fighter);

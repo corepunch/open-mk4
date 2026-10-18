@@ -551,6 +551,20 @@ static void check_specials(void) {
     }
   }
   {
+    /* 49a6a0/49b170: the spear flies and pulls along the throw direction. */
+    fight(4.f);
+    for (int i = 0; i < 2; ++i) {
+      g_battle.fighters[i].body.pos[AXIS_X] = (q16)((i ? 1.6f : -1.6f) * Q16_ONE);
+      g_battle.fighters[i].body.pos[AXIS_Z] = (q16)((i ? 1.2f : -1.2f) * Q16_ONE);
+    }
+    advance_ticks(1, NULL);
+    command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
+    advance_ticks(45, NULL);
+    const Fighter *victim = &g_battle.fighters[1];
+    check(victim->health == Q16_ONE - 0xccc && fighter_distance(victim) < 0.9f && fabsf(fighter_x(victim) * .75f - fighter_z(victim)) < .02f,
+        "Off-axis spear must hit and pull its victim along the throw line");
+  }
+  {
     fight(4.f);
     command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
     Input guard[2] = {{0}, {BUTTON_BIT(BUTTON_BLOCK)}};
@@ -688,6 +702,29 @@ static void check_weapon(void) {
     check(g_battle.fighters[0].current_move->clip == 224, "Crouching armed LP must enter held spin");
     advance_ticks(2, NULL);
     check(g_battle.fighters[0].state == S_IDLE, "Releasing LP must end spin");
+  }
+  for (int behind = 0; behind < 2; ++behind) {
+    /* 496d20/491050: Right steers along the pair axis toward screen right. */
+    fight(4.f);
+    for (int i = 0; i < 2; ++i) {
+      g_battle.fighters[i].body.pos[AXIS_X] = (q16)((i ? 1.6f : -1.6f) * Q16_ONE);
+      g_battle.fighters[i].body.pos[AXIS_Z] = (q16)((i ? 1.2f : -1.2f) * Q16_ONE);
+    }
+    advance_ticks(1, NULL);
+    draw_sword();
+    g_battle.view = behind ? (Vec3){-.6f, 0, .8f} : (Vec3){.6f, 0, -.8f};
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN)}, {0}});
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
+    Input steer[2] = {{BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_RIGHT)}, {0}};
+    for (int i = 0; i < 20; ++i) {
+      g_battle.view = behind ? (Vec3){-.6f, 0, .8f} : (Vec3){.6f, 0, -.8f};
+      battle_step(steer);
+    }
+    const Body *body = &g_battle.fighters[0].body;
+    q16 along = (behind ? -1 : 1) * 0xf5c;
+    check(g_battle.fighters[0].current_move->clip == 224 && abs(body->vel[AXIS_X] - q16_mul(0xcccc, along)) <= 2 &&
+              abs(body->vel[AXIS_Z] - q16_mul(0x9999, along)) <= 2,
+        "Steered spin must move along the pair axis toward screen right");
   }
 }
 
