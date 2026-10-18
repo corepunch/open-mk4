@@ -427,16 +427,56 @@ bool mk4_can_sidestep(const Fighter *fighter) {
          g_battle.ticks >= fighter->sidestep_ready;
 }
 
-static void sidestep_script(Fighter *fighter) {
-  for (;;) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = fighter->script_phase ? mini(17, fighter->ticks) : maxi(0, 17 - fighter->ticks);
-    if (fighter->ticks >= 18) {
-      mk4_script_stop_body(fighter);
-      fighter_fiber_finish(fighter_ready);
-    }
-  }
+static void sidestep_done(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
 }
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t sidestep_forward_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 11, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 13, .duration = 1},
+  {.sample = 14, .duration = 1},
+  {.sample = 15, .duration = 1},
+  {.sample = 16, .duration = 1},
+  {.sample = 17, .duration = 1},
+};
+// clang-format on
+static const mmove_t sidestep_forward = {.frame = sidestep_forward_frames, .lastframe = 17, .endfunc = sidestep_done};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t sidestep_backward_frames[] = {
+  {.sample = 17, .duration = 1},
+  {.sample = 16, .duration = 1},
+  {.sample = 15, .duration = 1},
+  {.sample = 14, .duration = 1},
+  {.sample = 13, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 11, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 0, .duration = 1},
+};
+// clang-format on
+static const mmove_t sidestep_backward = {.frame = sidestep_backward_frames, .lastframe = 17, .endfunc = sidestep_done};
 
 void mk4_sidestep(Fighter *fighter) {
   bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
@@ -453,5 +493,6 @@ void mk4_sidestep(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = q16_mul(x, along) - q16_mul(z, across);
   fighter->body.vel[AXIS_Z] = q16_mul(z, along) + q16_mul(x, across);
   fighter->sidestep_ready = g_battle.ticks + 80;
-  fighter_start_fiber(fighter, sidestep_script, NULL);
+  fighter->mmove_cleanup = mk4_script_stop_body;
+  fighter_mmove_phase(fighter, down ? &sidestep_forward : &sidestep_backward);
 }

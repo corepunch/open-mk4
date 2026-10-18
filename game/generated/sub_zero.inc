@@ -2846,81 +2846,194 @@ static inline void retail_script_004e9ee0(Fighter *fighter) {
   }
 }
 
+static inline void retail_script_004ed588(Fighter *fighter);
+static inline void retail_script_004ed588_branch_1(Fighter *fighter);
+static inline void retail_script_004ed588_branch_2(Fighter *fighter);
+
 static inline void retail_script_004ed588(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  uint32_t loop_counter = 0;
-  (void)loop_counter;
-  {
-    /* EXE 004ed588: 0x25000004 */
-    mk4_script_indexed_sound(fighter, 4);
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed588: 0x25000004 */
+  mk4_script_indexed_sound(fighter, 4);
+  /* EXE 004ed58c: 0xf000000 0x13eb8f */
+  mk4_mmove_bind(fighter, 16, 36, 0);
+  /* EXE 004ed594: 0x45000000 0x13b606 */
+  if (fighter_fast_start(fighter)) {
+    retail_script_004ed588_branch_1(fighter);
+  } else {
+    retail_script_004ed588_branch_2(fighter);
   }
-  {
-    /* EXE 004ed58c: 0xf000000 0x13eb8f */
-    mk4_script_bind(fighter, 16, 36, 0);
-  }
-  {
-    /* EXE 004ed594: 0x45000000 0x13b606 */
-    if (fighter_fast_start(fighter)) {
-      goto L_004ed818;
-    }
-  }
-  {
-    /* EXE 004ed59c: 0x500000f */
-    fighter_fiber_play_to(fighter, 15, 1);
-  }
-L_004ed5a0: {
+}
+
+static void retail_script_004ed588_branch_1_at_8(Fighter *fighter) {
+  fighter->sample_override = 15;
+  /* EXE 004ed81c: 0x33000000 0x13b568 */
   /* EXE 004ed5a0: 0x27000000 */
   battle_sound(SOUND_C, 0);
+  /* EXE 004ed5a4: 0x40000000 0x42 0x49bcb0 */
+  script_spawn_ice(fighter, 66);
+  /* EXE 004ed5b0: 0x34000001 */
 }
-  {
-    /* EXE 004ed5a4: 0x40000000 0x42 0x49bcb0 */
-    script_spawn_ice(fighter, 66);
-  }
-  {
-    /* EXE 004ed5b0: 0x34000001 */
-    fighter_wait_ticks(1);
-  }
-  {
-    /* EXE 004ed5b4: 0x2d000000 */
-    fighter->action = ACTION_RETAIL_1007;
-  }
-  {
-    /* EXE 004ed5b8: 0x3a000002 */
-    loop_counter = 2u;
-  }
-  for (;;) {
-    {
-      /* EXE 004ed5bc: 0x5000017 */
-      fighter_fiber_play_to(fighter, 23, 1);
-    }
-    {
-      /* EXE 004ed5c0: 0x4a000012 */
-      fighter_fiber_play_to(fighter, 18, -1);
-    }
-    {
-      /* EXE 004ed5c4: 0x3b000000 */
-      if (--loop_counter != 0) {
-        continue;
-      }
-      break;
-    }
-  }
-  {
-    /* EXE 004ed5c8: 0x3000000 */
-    mk4_script_finish_clip(fighter, 1);
-  }
-  {
-    /* EXE 004ed5cc: 0x3f000000 */
-    fighter_wait_ticks(1);
-    fighter_fiber_finish(fighter_ready);
-  }
-L_004ed818: {
+
+static void retail_script_004ed588_branch_1_at_9(Fighter *fighter) {
+  /* EXE 004ed5b4: 0x2d000000 */
+  fighter->action = ACTION_RETAIL_1007;
+  /* EXE 004ed5b8: 0x3a000002 */
+  /* EXE 004ed5bc: 0x5000017 */
+}
+
+static void retail_script_004ed588_branch_1_at_51(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed588_branch_1_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 14, .duration = 1, .leave = retail_script_004ed588_branch_1_at_8},
+  {.sample = 15, .duration = 1, .leave = retail_script_004ed588_branch_1_at_9},
+  {.sample = 15, .duration = 1},
+  {.sample = 16, .duration = 1},
+  {.sample = 17, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 24, .duration = 1},
+  {.sample = 25, .duration = 1},
+  {.sample = 26, .duration = 1},
+  {.sample = 27, .duration = 1},
+  {.sample = 28, .duration = 1},
+  {.sample = 29, .duration = 1},
+  {.sample = 30, .duration = 1},
+  {.sample = 31, .duration = 1},
+  {.sample = 32, .duration = 1},
+  {.sample = 33, .duration = 1},
+  {.sample = 34, .duration = 1},
+  {.sample = 35, .duration = 1},
+  {.sample = 35, .duration = 1, .leave = retail_script_004ed588_branch_1_at_51},
+};
+// clang-format on
+static const mmove_t retail_script_004ed588_branch_1_phase = {.firstframe = 0, .lastframe = 50, .frame = retail_script_004ed588_branch_1_frames};
+
+static inline void retail_script_004ed588_branch_1(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ed818: 0x4d00000f */
-  fighter_fiber_play_to(fighter, 15, 2);
+  fighter_mmove_phase(fighter, &retail_script_004ed588_branch_1_phase);
 }
-  {
-    /* EXE 004ed81c: 0x33000000 0x13b568 */
-    goto L_004ed5a0;
-  }
+
+static void retail_script_004ed588_branch_2_at_15(Fighter *fighter) {
+  fighter->sample_override = 15;
+  /* EXE 004ed5a0: 0x27000000 */
+  battle_sound(SOUND_C, 0);
+  /* EXE 004ed5a4: 0x40000000 0x42 0x49bcb0 */
+  script_spawn_ice(fighter, 66);
+  /* EXE 004ed5b0: 0x34000001 */
+}
+
+static void retail_script_004ed588_branch_2_at_16(Fighter *fighter) {
+  /* EXE 004ed5b4: 0x2d000000 */
+  fighter->action = ACTION_RETAIL_1007;
+  /* EXE 004ed5b8: 0x3a000002 */
+  /* EXE 004ed5bc: 0x5000017 */
+}
+
+static void retail_script_004ed588_branch_2_at_58(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed588_branch_2_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 11, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 13, .duration = 1},
+  {.sample = 14, .duration = 1, .leave = retail_script_004ed588_branch_2_at_15},
+  {.sample = 15, .duration = 1, .leave = retail_script_004ed588_branch_2_at_16},
+  {.sample = 15, .duration = 1},
+  {.sample = 16, .duration = 1},
+  {.sample = 17, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 18, .duration = 1},
+  {.sample = 19, .duration = 1},
+  {.sample = 20, .duration = 1},
+  {.sample = 21, .duration = 1},
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 24, .duration = 1},
+  {.sample = 25, .duration = 1},
+  {.sample = 26, .duration = 1},
+  {.sample = 27, .duration = 1},
+  {.sample = 28, .duration = 1},
+  {.sample = 29, .duration = 1},
+  {.sample = 30, .duration = 1},
+  {.sample = 31, .duration = 1},
+  {.sample = 32, .duration = 1},
+  {.sample = 33, .duration = 1},
+  {.sample = 34, .duration = 1},
+  {.sample = 35, .duration = 1},
+  {.sample = 35, .duration = 1, .leave = retail_script_004ed588_branch_2_at_58},
+};
+// clang-format on
+static const mmove_t retail_script_004ed588_branch_2_phase = {.firstframe = 0, .lastframe = 57, .frame = retail_script_004ed588_branch_2_frames};
+
+static inline void retail_script_004ed588_branch_2(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed59c: 0x500000f */
+  fighter_mmove_phase(fighter, &retail_script_004ed588_branch_2_phase);
 }

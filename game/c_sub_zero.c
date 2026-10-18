@@ -1079,7 +1079,7 @@ static void sub_zero_ice(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_ice);
   fighter->script_phase = followup;
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, retail_script_004ed588, NULL);
+  retail_script_004ed588(fighter);
 }
 
 /* 47f4d0 copies the current pose before the retreat. Both ice predicates
@@ -1096,26 +1096,84 @@ static void clone_object(Projectile *p) {
   }
 }
 
-static void clone_script(Fighter *fighter) {
-  fighter_fiber_play_to(fighter, 3, 1);
-  fighter->body.root_y += 0x3333;
-  fighter->body.pos[AXIS_Y] -= 0x3333;
-  fighter->body.spin[AXIS_X] = -0x6147;
-  fighter_fiber_play_to(fighter, 8, 1);
-  do {
-    fighter_wait_ticks(1);
-  } while (fighter->body.vel[AXIS_Y] < 0);
-  /* 47f880 restores facing; 429460 reverses before the landing wait. */
+static void clone_cleanup(Fighter *fighter) {
+  fighter_upright(fighter);
+}
+
+static void clone_done(Fighter *fighter) {
+  fighter_finish_mmove(fighter, air_land);
+}
+
+static const mframe_t clone_land_frames[] = {{.sample = 0, .duration = 1}};
+static const mmove_t clone_land_phase = {.frame = clone_land_frames, .until = air_grounded, .endfunc = clone_done};
+
+static void clone_land(Fighter *fighter) {
+  fighter->sample_override = 0;
+  if (fighter_airborne(fighter)) {
+    fighter_mmove_phase(fighter, &clone_land_phase);
+  } else {
+    clone_done(fighter);
+  }
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t clone_reverse_frames[] = {
+  {.sample = 8, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 1, .duration = 1},
+};
+// clang-format on
+static const mmove_t clone_reverse = {.frame = clone_reverse_frames, .lastframe = 7, .endfunc = clone_land};
+
+static void clone_turn(Fighter *fighter) {
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   fighter->script_phase = 1;
-  fighter_fiber_play_to(fighter, 0, -1);
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
-  fighter->body.root_y = 0;
-  fighter_fiber_finish(air_land);
+  fighter_mmove_phase(fighter, &clone_reverse);
 }
+
+static bool clone_falling(const Fighter *fighter) {
+  return fighter->body.vel[AXIS_Y] >= 0;
+}
+
+static const mframe_t clone_apex_frames[] = {{.sample = 8, .duration = 1}};
+static const mmove_t clone_apex = {.frame = clone_apex_frames, .until = clone_falling, .endfunc = clone_turn};
+
+static void clone_apex_wait(Fighter *fighter) {
+  fighter_mmove_phase(fighter, &clone_apex);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t clone_extend_frames[] = {
+  {.sample = 3, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 7, .duration = 1},
+};
+// clang-format on
+static const mmove_t clone_extend = {.frame = clone_extend_frames, .lastframe = 4, .endfunc = clone_apex_wait};
+
+static void clone_spin(Fighter *fighter) {
+  fighter->body.root_y += 0x3333;
+  fighter->body.pos[AXIS_Y] -= 0x3333;
+  fighter->body.spin[AXIS_X] = -0x6147;
+  fighter_mmove_phase(fighter, &clone_extend);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t clone_start_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 2, .duration = 1},
+};
+// clang-format on
+static const mmove_t clone_start = {.frame = clone_start_frames, .lastframe = 2, .endfunc = clone_spin};
 
 static bool can_clone(const Fighter *fighter) {
   return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->clone_ready && fighter_opponent(fighter)->action != ACTION_RETAIL_1003 &&
@@ -1140,7 +1198,8 @@ static void sub_zero_clone(Fighter *fighter) {
   fighter->body.gravity = 0x28f;
   fighter->clone_ready = g_battle.ticks + 180;
   battle_sound(SOUND_C, 0xa);
-  fighter_start_fiber(fighter, clone_script, NULL);
+  fighter->mmove_cleanup = clone_cleanup;
+  fighter_mmove_phase(fighter, &clone_start);
 }
 
 /* Slide: 47dc00/4e84d8 -> 47dc40; hit 4e84f8, block 4e8530.

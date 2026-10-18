@@ -198,6 +198,7 @@ static void ice(void) {
     Fighter *victim = &g_battle.fighters[1 - player];
     ice_command(player, 2, 0);
     check(fighter_move(&g_battle.fighters[player])->clip == 16, "D,F,LP must enter ice");
+    check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "ice must use generated phases");
     check(sound_events(SOUND_INDEXED, 4) == 1 && sound_events(SOUND_C, 0) == 0, "ice entry must queue its indexed cue once before the release sound");
     advance(14);
     check(objects(PROJECTILE_ICE) == 0, "ice must wait for startup");
@@ -364,7 +365,7 @@ static void clone_tests(void) {
   fight(0, 4.f);
   clone_command(0);
   advance(8);
-  check(g_battle.fighters[0].sample_override == 8 && g_battle.fighters[0].body.spin[AXIS_X] == -0x6147,
+  check(fighter_sample(&g_battle.fighters[0]) == 8 && g_battle.fighters[0].body.spin[AXIS_X] == -0x6147,
       "clone retreat must finish forward with native angular motion");
   advance(15);
   check(g_battle.fighters[0].script_phase == 1 && g_battle.fighters[0].body.spin[AXIS_X] == 0 && g_battle.fighters[0].body.angle[AXIS_X] == 0,
@@ -375,6 +376,7 @@ static void clone_tests(void) {
     fight(player, 2.f);
     clone_command(player);
     check(objects(PROJECTILE_CLONE) == 1 && g_battle.fighters[player].action == 0x405, "clone must capture pose immediately");
+    check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "clone must use phases");
     Projectile *clone = NULL;
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
       if (g_battle.projectiles[i].kind == PROJECTILE_CLONE) {
@@ -1543,7 +1545,8 @@ static void sidesteps(void) {
         bool accepted = interval >= 3 && interval <= 8;
         check((fighter_move(fighter)->clip == 300) == accepted, "RUN two-sample rule and inclusive eight-tick window");
         if (accepted) {
-          check(fighter->sample_override == (down ? 0 : 17) && fighter->sidestep_ready == g_battle.ticks + 80, "sidestep cursor direction/cooldown");
+          check(fighter_sample(fighter) == (down ? 0 : 17) && fighter->sidestep_ready == g_battle.ticks + 80, "sidestep cursor direction/cooldown");
+          check(fighter->current_mmove != NULL && !fighter_fiber_active(fighter), "sidestep must use phases");
           check(fighter->body.vel[AXIS_X] == (player ? -0x443 : 0x443) && fighter->body.vel[AXIS_Z] == (player ? -1 : 1) * (down ? -0xccc : 0xccc),
               "sidestep must use pair-axis forward and perpendicular motion");
           q16 z = fighter->body.pos[AXIS_Z];
