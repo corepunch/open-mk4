@@ -242,6 +242,18 @@ int main(void) {
         self.assertTrue(any('inventory changed' in error for error in errors))
         self.assertTrue(any('input/CPU target' in error for error in errors))
 
+    def test_reviewed_audit_skips_zeroed_cpu_rows(self):
+        from unittest.mock import patch
+        from retail_coverage import audit as coverage_audit, profile_for, inventory, fingerprint
+        observed = inventory(self.image, 3)
+        for row in observed['cpu'].values():
+            row['target'] = None
+        profile = profile_for(3)
+        profile['inventory_sha256'] = fingerprint(observed)
+        with patch('retail_coverage.inventory', return_value=observed):
+            errors = coverage_audit(self.image, 3, profile=profile)['coverage_errors']
+        self.assertFalse(any('input/CPU target None' in error for error in errors))
+
     def test_selected_air_table_word_is_a_valid_overlapping_no_op(self):
         binding = Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic native boundary')
         source = generate(self.image, [0x4e6500], 3, bindings={0x46e3d0: binding})

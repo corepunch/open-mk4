@@ -170,6 +170,7 @@ def audit(image, character, return_to=None, profile=None):
         entry_targets = {move['entry'] for move in observed['moves'].values()}
         extras = profile.get('entry_adapters', {})
         targets = {row['target'] for table in observed['inputs'] for row in table['records']} | {row['target'] for row in observed['cpu'].values()}
+        targets.discard(None)  # Zeroed CPU rows have no retail action to implement.
         for target in sorted(targets - entry_targets, key=str):
             check_reference(extras.get(target), errors, 'input/CPU target ' + str(target))
         for name in observed['stances']:
