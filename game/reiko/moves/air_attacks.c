@@ -27,7 +27,7 @@ static const ButtonTable reiko_air_followup = {{[BUTTON_HIGH_PUNCH] = reiko_pres
     [BUTTON_LOW_PUNCH] = reiko_press_low_punch,
     [BUTTON_HIGH_KICK] = reiko_press_high_kick,
     [BUTTON_LOW_KICK] = reiko_press_low_kick}};
-static const NativeAirProfile air_profile = {air_attacks, &reiko_air_punch_followup, &reiko_air_followup, mk4_land};
+static const NativeAirProfile air_profile = {air_attacks, &reiko_air_punch_followup, &reiko_air_followup, mk4_land, NULL};
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
@@ -74,6 +74,10 @@ void reiko_script_air_release(Fighter *fighter) {
 
 void reiko_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
+  if (index == 2) {
+    native_air_straight_tail(fighter, &air_profile);
+    return;
+  }
   native_air_tail(fighter, &air_profile, index, index == 2 ? 8 : index == 4 ? air_attacks[4].extend : 0);
 }
 

@@ -122,4 +122,5 @@ void reptile_script_roundhouse_finish(Fighter *fighter);
 void reptile_input_47a690(Fighter *fighter);
 void reptile_input_47afe0(Fighter *fighter);
 bool reptile_can_dash(const Fighter *fighter);
+void reptile_entry_retail_script_004e6270(Fighter *fighter);
 #endif

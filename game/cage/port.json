@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "2c6f06302b90d7a26bf18a0ef709080debb566ebd3de48774630ba763f40dc6e",
+  "inventory_sha256": "6e8838a30a13d10fe7e7e4d1772fe9c3ae003c2d7b59c956d6fc042da5dcb433",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -48,7 +48,8 @@
     "0x4e80d0",
     "0x4e80f4",
     "0x4e9910",
-    "0x4e9f78"
+    "0x4e9f78",
+    "0x4e6270"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -565,6 +566,7 @@
     "0x4de318",
     "0x4de328",
     "0x4e5ba8",
-    "0x4e9f78"
+    "0x4e9f78",
+    "0x4e6270"
   ]
 }

@@ -25,7 +25,7 @@ static const ButtonTable jax_air_punch_followup = {
     {[BUTTON_LOW_PUNCH] = jax_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
 static const ButtonTable jax_air_followup = {
     {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
-static const NativeAirProfile air_profile = {air_attacks, &jax_air_punch_followup, &jax_air_followup, mk4_land};
+static const NativeAirProfile air_profile = {air_attacks, &jax_air_punch_followup, &jax_air_followup, mk4_land, NULL};
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
@@ -65,6 +65,10 @@ static void jax_air_diagonal_lk(Fighter *fighter) {
 
 void jax_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
+  if (index == 2) {
+    native_air_straight_tail(fighter, &air_profile);
+    return;
+  }
   native_air_tail(fighter, &air_profile, index, index == 2 ? 8 : index == 4 ? air_attacks[4].extend : 0);
 }
 

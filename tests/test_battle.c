@@ -804,6 +804,53 @@ static void check_reconnected_air_attacks(void) {
   }
 }
 
+static void check_straight_air_kick_contacts(void) {
+  for (int narrow = 0; narrow < 2; ++narrow) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        int roster = narrow ? 6 : 5;
+        battle_init(slot ? 4 : roster, slot ? roster : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 distance = scenario == 2 ? 6 * Q16_ONE : Q16_ONE / 2;
+        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        fighter_start_move(owner, S_JUMP, roster_def(roster)->moves[S_JUMP]);
+        owner->body.pos[AXIS_Y] = owner->body.ground - (scenario == 2 ? 2 * Q16_ONE : 0x9999);
+        owner->body.vel[AXIS_Y] = 0;
+        owner->body.gravity = 0x28f;
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(BUTTON_HIGH_KICK);
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        battle_step(input);
+        input[slot].held = 0;
+        bool reversed = false;
+        int contact_pose = -1;
+        for (int tick = 0; tick < 150; ++tick) {
+          battle_step(input);
+          if (owner->connected && contact_pose < 0) {
+            contact_pose = fighter_sample(owner);
+          }
+          reversed |= tick > 12 && fighter_move(owner)->clip == 327 && fighter_sample(owner) <= 3;
+          check(!fighter_fiber_active(owner), "Both straight-air kick branches must retain frame ownership through contact and miss recovery");
+        }
+        q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? q16_mul(0x2147, 0x3333) : 0;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(stderr, "Straight kick branch%d slot%d scenario%d health%d expected%d pose%d\n", narrow, slot, scenario, victim->health, Q16_ONE - damage,
+              contact_pose);
+        }
+        check(victim->health == Q16_ONE - damage, "Straight-air kick must use its native hit, block or miss record once");
+        check(scenario == 2 || (narrow ? contact_pose == 7 : contact_pose >= 11 && contact_pose <= 13),
+            "Narrow kick queries its held pose; wide kick queries only advancing poses11..13");
+        check(!narrow || scenario != 2 || reversed, "Missed narrow kick must execute its generated reversal before landing");
+        check(owner->state == S_IDLE, "Straight-air kick branch must land and recover");
+      }
+    }
+  }
+}
+
 static void check_reconnected_ground_combos(void) {
   const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -1789,6 +1836,7 @@ int main(void) {
   check_ground_normals();
   check_air_attacks();
   check_reconnected_air_attacks();
+  check_straight_air_kick_contacts();
   check_reconnected_ground_combos();
   check_reconnected_lk_throws();
   check_reconnected_roundhouses();

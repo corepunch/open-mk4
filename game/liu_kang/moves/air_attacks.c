@@ -22,7 +22,7 @@ static const AirAttack air_attacks[] = {
   {{.clip = 58, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0601}, {75366, -2621, 67502, 34078, 22, 22, 4, ATTACK_MARK, 9830}, 10, 10, 10},
 };
 // clang-format on
-static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, air_land};
+static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, air_land, NULL};
 static const ButtonTable air_followup = {
     {[BUTTON_LOW_PUNCH] = liu_kang_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
 static const ButtonTable air_ground_followup = {{[BUTTON_HIGH_PUNCH] = press_air_ground_hp,

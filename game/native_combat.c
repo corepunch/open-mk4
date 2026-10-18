@@ -242,6 +242,35 @@ static void air_query(Fighter *fighter) {
   native_hold(fighter, index >= 3 ? 8 : 12, air_unfreeze);
 }
 
+/* 46c820 keeps existing gravity, restores51e if frozen and waits for landing. */
+void native_air_straight_land(Fighter *fighter) {
+  if (fighter->body.gravity == 0) {
+    fighter->body.gravity = 0x51e;
+  }
+  air_fall(fighter);
+}
+
+static void air_straight_miss(Fighter *fighter) {
+  const NativeAirProfile *profile = fighter->native_context;
+  if (profile->straight_miss != NULL) {
+    profile->straight_miss(fighter);
+  } else {
+    air_fall(fighter);
+  }
+}
+
+/* 46c7f0/4e6258 holds narrow pose7 for four B[40] queries. The wide
+ * 46c970 branch advances poses11..13 and queries B[39] three times. */
+static void air_straight_build(Fighter *fighter) {
+  bool narrow = fighter_move(fighter)->clip == 327;
+  int count = narrow ? 4 : 3;
+  native_begin(fighter, 1, count, air_straight_miss);
+  for (int frame = 1; frame <= count; ++frame) {
+    native_frame(fighter, frame, narrow ? 7 : 10 + frame, air_query);
+  }
+  native_play(fighter, true);
+}
+
 static void air_build(Fighter *fighter) {
   const NativeAirProfile *profile = fighter->native_context;
   const AirAttack *attack = &profile->attacks[fighter->native_variant];
@@ -330,4 +359,12 @@ void native_kick_contact_phase(Fighter *fighter, FighterFn query, FighterFn reco
     native_frame(fighter, frame, pose, query);
   }
   native_play(fighter, false);
+}
+
+void native_air_straight_tail(Fighter *fighter, const NativeAirProfile *profile) {
+  int clip = fighter_move(fighter)->clip;
+  require(clip == 61 || (clip == 327 && profile->straight_miss != NULL), "Straight-air kick needs its selected clip and recovery");
+  fighter->native_context = profile;
+  fighter->native_variant = 2;
+  air_straight_build(fighter);
 }

@@ -27,7 +27,7 @@ static const ButtonTable fujin_air_followup = {{[BUTTON_HIGH_PUNCH] = fujin_pres
     [BUTTON_LOW_PUNCH] = fujin_press_low_punch,
     [BUTTON_HIGH_KICK] = fujin_press_kick,
     [BUTTON_LOW_KICK] = fujin_press_low_kick}};
-static const NativeAirProfile air_profile = {air_attacks, &fujin_air_punch_followup, &fujin_air_followup, mk4_land};
+static const NativeAirProfile air_profile = {air_attacks, &fujin_air_punch_followup, &fujin_air_followup, mk4_land, NULL};
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
@@ -74,6 +74,10 @@ void fujin_script_air_release(Fighter *fighter) {
 
 void fujin_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
+  if (index == 2) {
+    native_air_straight_tail(fighter, &air_profile);
+    return;
+  }
   native_air_tail(fighter, &air_profile, index, index == 2 ? 8 : index == 4 ? air_attacks[4].extend : 0);
 }
 

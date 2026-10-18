@@ -68,7 +68,7 @@ typedef struct AirAttack {
 typedef struct NativeAirProfile {
   const AirAttack *attacks;
   const ButtonTable *followup, *ground_followup;
-  FighterFn land;
+  FighterFn land, straight_miss;
 } NativeAirProfile;
 
 bool native_grounded(const Fighter *fighter);
@@ -78,4 +78,6 @@ void native_ground_next(Fighter *fighter, const NativeGroundProfile *profile);
 void native_hp_start(Fighter *fighter, const NativeHPProfile *profile);
 void native_air_tail(Fighter *fighter, const NativeAirProfile *profile, int index, int elapsed);
 void native_air_cleanup(Fighter *fighter);
+void native_air_straight_land(Fighter *fighter);
+void native_air_straight_tail(Fighter *fighter, const NativeAirProfile *profile);
 #endif

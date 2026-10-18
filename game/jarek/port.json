@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "e2a7fe60b98b8bf7145d2c055a27c24baa78bc6562664386f19d6d5de0155bd3",
+  "inventory_sha256": "fbf59c3a3b697cb1b0683a88b23a705e06fd9d916e5ffa2d1794065e8d4f99f9",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -52,7 +52,8 @@
     "0x4e81a8",
     "0x4e9910",
     "0x4ed118",
-    "0x4ed190"
+    "0x4ed190",
+    "0x4e6270"
   ],
   "entry_contexts": {
     "0x4e0128": {
@@ -684,6 +685,7 @@
     "0x4e6878",
     "0x4de2f8",
     "0x4de318",
-    "0x4de328"
+    "0x4de328",
+    "0x4e6270"
   ]
 }

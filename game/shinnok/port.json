@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/shinnok/generated/scripts.inc",
   "integration_source": "game/shinnok/character.c",
-  "inventory_sha256": "f920ee3961325f8b33366b0d1f4e67ce90765da00d4b00385b5b5a0cf8df26cd",
+  "inventory_sha256": "b22e72a17219ab8356a6703d71f51f97bda26a76eace773c9ce35da1b74d547c",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -38,7 +38,8 @@
     "0x4e6878",
     "0x4e6950",
     "0x4e69b0",
-    "0x4e9910"
+    "0x4e9910",
+    "0x4e6270"
   ],
   "entry_contexts": {
     "0x4e0138": {
@@ -526,6 +527,7 @@
     "0x4e6878",
     "0x4de2f8",
     "0x4de318",
-    "0x4de328"
+    "0x4de328",
+    "0x4e6270"
   ]
 }

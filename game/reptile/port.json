@@ -198,10 +198,11 @@
     "0x4e9910",
     "0x4e9b40",
     "0x4e9bd0",
-    "0x4ed1e8"
+    "0x4ed1e8",
+    "0x4e6270"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "befb057a8bded7199447db99662088ac403a50d0dadfb451a97aeb8b08cf74fd",
+  "inventory_sha256": "407cbc30eb7be8e8057581418c4c80f6484bebe11d02967e929c4c9ff2e83985",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -572,6 +573,7 @@
     "0x4e6878",
     "0x4de2f8",
     "0x4de318",
-    "0x4de328"
+    "0x4de328",
+    "0x4e6270"
   ]
 }

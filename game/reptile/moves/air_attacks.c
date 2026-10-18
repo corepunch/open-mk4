@@ -13,7 +13,7 @@ static void press_air_followup_kick(Fighter *fighter);
 static const AirAttack air_attacks[] = {
   {{.clip = 97, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
   {{.clip = 96, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x604}, {76677, -20316, 68157, 62914, 39, 39, 4, 0, 7864}, 10, 10, 11},
-  {{.clip = 327, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x600}, {67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
+  {{.clip = 327, .last = 7, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x600}, {67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
   {{.clip = 56, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x602}, {71434, -4587, 66846, 24903, 23, 23, 4, 2, 6553}, 6, 10, 6},
   {{.clip = 59, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x601}, {55705, -2621, 51773, 38010, 22, 22, 4, 2, 9830}, 6, 10, 10},
 };
@@ -27,7 +27,7 @@ static const ButtonTable reptile_air_followup = {{[BUTTON_HIGH_PUNCH] = reptile_
     [BUTTON_LOW_PUNCH] = reptile_press_low_punch,
     [BUTTON_HIGH_KICK] = reptile_press_kick,
     [BUTTON_LOW_KICK] = reptile_press_low_kick}};
-static const NativeAirProfile air_profile = {air_attacks, &reptile_air_punch_followup, &reptile_air_followup, mk4_land};
+static const NativeAirProfile air_profile = {air_attacks, &reptile_air_punch_followup, &reptile_air_followup, mk4_land, reptile_entry_retail_script_004e6270};
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
@@ -74,6 +74,10 @@ void reptile_script_air_release(Fighter *fighter) {
 
 void reptile_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
+  if (index == 2) {
+    native_air_straight_tail(fighter, &air_profile);
+    return;
+  }
   native_air_tail(fighter, &air_profile, index, index == 2 ? 8 : index == 4 ? air_attacks[4].extend : 0);
 }
 

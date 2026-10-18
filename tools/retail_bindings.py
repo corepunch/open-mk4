@@ -1249,6 +1249,10 @@ for _cid in (1, 2, 3):
         CHARACTER_BINDINGS[_cid][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',),
             ('fighter', 'selector_u32'), flow='terminal', mmove=True, evidence='Native weapon air104/108 uses shared contact and landing frame phases')
 
+for _cid in (6, 8, 10, 12, 14):
+    CHARACTER_BINDINGS[_cid][0x46c820] = Binding('native_air_straight_land', 'game/native_combat.c', ('tail',),
+        flow='terminal', mmove=True, evidence='46c820 preserves gravity or restores51e and waits for landing after generated narrow reversal4e6270')
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),
