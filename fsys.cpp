@@ -1,4 +1,4 @@
-/* MK4 PC FILESYS.DAT inspector, extractor and polling tool.
+/* MK4 FILESYS.DAT / War Gods WARGODS.DAT inspector, extractor and polling tool.
  * C++17 / POSIX (macOS and Linux); no external libraries.
  * Format independently checked against MK4/MK-4.EXE's FSYS routines.
  */
@@ -93,10 +93,13 @@ static int parse_archive(Archive *a) {
   PackageEntry entries[MAX_ENTRIES];
   const char *error;
   if (!parse_package({a->data, a->size}, entries, &a->count, &error))
-    return fail(error, "FILESYS.DAT");
+    return fail(error, "archive");
   for (size_t i = 0; i < a->count; ++i) {
     a->entries[i] = Entry{};
     static_cast<PackageEntry &>(a->entries[i]) = entries[i];
+    if (entries[i].name[0]) {
+      snprintf(a->entries[i].original, NAME_SIZE, "%s", entries[i].name);
+    }
   }
   return 0;
 }
@@ -150,6 +153,9 @@ static void try_name(Archive *a, const char *name) {
 }
 
 static void recover_names(Archive *a, const unsigned char *exe, size_t size) {
+  if (a->count && a->entries[0].name[0]) {
+    return;
+  }
   size_t i = 0;
   unsigned int n;
   char candidate[NAME_SIZE];
@@ -184,12 +190,22 @@ static const char *entry_type(const Archive *a, const Entry *e) {
     return "esf";
   if (e->size >= 12 && !memcmp(p, "0.1v", 4))
     return "geo";
+  if (e->name[0]) {
+    const char *dot = strrchr(e->name, '.');
+    if (dot) {
+      return dot + 1;
+    }
+  }
   if (e->original[0] && !e->ambiguous && strstr(leaf_name(e->original), ".tga"))
     return "tga";
   return "bin";
 }
 
 static void entry_path(const Archive *a, const Entry *e, char *out, size_t size) {
+  if (e->name[0]) {
+    snprintf(out, size, "files/%s", e->name);
+    return;
+  }
   const char *type = entry_type(a, e);
   const char *dir = !strcmp(type, "esf") ? "sound" : !strcmp(type, "geo") ? "geogfx" : "other";
   if (e->original[0] && !e->ambiguous)
@@ -295,7 +311,7 @@ static int process_archive(Archive *a, const char *output, int list) {
   used = (size_t)snprintf(manifest, capacity, "index\thash\toffset\tsize\ttype\tpath\tname_status\toriginal_path_candidate\n");
   for (i = 0; i < a->count; ++i) {
     Entry *e = &a->entries[i];
-    const char *status = e->ambiguous ? "ambiguous" : e->original[0] ? "candidate" : "unknown";
+    const char *status = e->ambiguous ? "ambiguous" : e->name[0] ? "stored" : e->original[0] ? "candidate" : "unknown";
     int n;
     entry_path(a, e, relative, sizeof relative);
     if (e->original[0] && !e->ambiguous)
@@ -345,7 +361,8 @@ static int process_archive(Archive *a, const char *output, int list) {
     return -1;
   }
   free(manifest);
-  printf("%zu entries, %zu filename candidates; %zu files updated in %s\n", a->count, known, written, output);
+  printf(
+      "%zu entries, %zu %s; %zu files updated in %s\n", a->count, known, a->entries[0].name[0] ? "stored filenames" : "filename candidates", written, output);
   fflush(stdout);
   return 0;
 }

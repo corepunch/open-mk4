@@ -15,6 +15,72 @@ uint32_t name_hash(const char *path) {
   return h + (uint32_t)i;
 }
 
+static bool same_name(const char *a, const char *b) {
+  while (*a && *b) {
+    unsigned char ca = (unsigned char)*a++, cb = (unsigned char)*b++;
+    if (ca >= 'a' && ca <= 'z') {
+      ca -= 32;
+    }
+    if (cb >= 'a' && cb <= 'z') {
+      cb -= 32;
+    }
+    if (ca != cb) {
+      return false;
+    }
+  }
+  return *a == *b;
+}
+
+/* Supplied WARGODS.DAT: count includes a final empty-name EOF record.
+ * Each packed directory record is an absolute u32 offset and a 13-byte name.
+ * Payload lengths are the differences between consecutive offsets.
+ */
+static bool parse_wargods(View data, PackageEntry *entries, size_t *count, const char **error) {
+  uint32_t records = view_u32(data, 0);
+  size_t table_end = 4 + (size_t)records * 17;
+#define WG_VALIDATE(ok, message)                                                                                                                               \
+  do {                                                                                                                                                         \
+    if (!(ok)) {                                                                                                                                               \
+      *error = message;                                                                                                                                        \
+      return false;                                                                                                                                            \
+    }                                                                                                                                                          \
+  } while (0)
+  WG_VALIDATE(records >= 2 && records <= PACKAGE_MAX_ENTRIES && table_end <= data.n, "invalid War Gods directory size");
+  for (size_t i = 0; i < records; ++i) {
+    size_t p = 4 + i * 17;
+    uint32_t offset = view_u32(data, p);
+    const uint8_t *name = data.p + p + 4;
+    WG_VALIDATE(offset >= table_end && offset <= data.n, "War Gods entry outside payload");
+    if (i == records - 1) {
+      WG_VALIDATE(!name[0] && offset == data.n, "invalid War Gods end marker");
+      for (size_t j = 0; j < 13; ++j) {
+        WG_VALIDATE(!name[j], "invalid War Gods end marker");
+      }
+      break;
+    }
+    PackageEntry e = {0};
+    size_t length = 0;
+    while (length < 13 && name[length]) {
+      uint8_t c = name[length];
+      WG_VALIDATE((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_' || c == '-' || c == '.' || c == '~',
+          "unsafe War Gods filename");
+      e.name[length++] = (char)c;
+    }
+    WG_VALIDATE(length && length < 13 && e.name[0] != '.', "invalid War Gods filename");
+    e.hash = name_hash(e.name);
+    for (size_t j = 0; j < *count; ++j) {
+      WG_VALIDATE(!same_name(e.name, entries[j].name), "duplicate War Gods filename");
+    }
+    uint32_t next = view_u32(data, p + 17);
+    WG_VALIDATE(next >= offset && next <= data.n, "invalid War Gods payload ordering");
+    e.offset = offset;
+    e.size = next - offset;
+    entries[(*count)++] = e;
+  }
+  return true;
+#undef WG_VALIDATE
+}
+
 bool parse_package(View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t *count, const char **error) {
   *count = 0;
   *error = NULL;
@@ -25,10 +91,16 @@ bool parse_package(View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t 
       return false;                                                                                                                                            \
     }                                                                                                                                                          \
   } while (0)
+  if (data.n >= 8 && view_u32(data, 0) >= 2 && view_u32(data, 0) <= PACKAGE_MAX_ENTRIES && view_u32(data, 4) == 4 + view_u32(data, 0) * 17) {
+    return parse_wargods(data, entries, count, error);
+  }
   VALIDATE(data.n >= PACKAGE_TABLE_SIZE, "truncated archive index");
   bool padding = false;
   for (size_t p = 0; p < PACKAGE_TABLE_SIZE; p += 12) {
-    PackageEntry e = {view_u32(data, p), view_u32(data, p + 4), view_u32(data, p + 8)};
+    PackageEntry e = {0};
+    e.hash = view_u32(data, p);
+    e.offset = view_u32(data, p + 4);
+    e.size = view_u32(data, p + 8);
     if (!e.hash && !e.offset && !e.size) {
       padding = true;
       continue;
@@ -63,6 +135,17 @@ void package_free(Package *p) {
 }
 
 View package_get(const Package *p, uint32_t hash) {
+  if (p->count && p->entries[0].name[0]) {
+    const PackageEntry *found = NULL;
+    for (size_t i = 0; i < p->count; ++i) {
+      if (p->entries[i].hash == hash) {
+        require(!found, "Ambiguous named archive hash; use package_named");
+        found = &p->entries[i];
+      }
+    }
+    require(found != NULL, "Missing named archive hash");
+    return view_sub(view(p->bytes), found->offset, found->size);
+  }
   size_t lo = 0, hi = p->count;
   while (lo < hi) {
     size_t mid = lo + (hi - lo) / 2;
@@ -74,6 +157,16 @@ View package_get(const Package *p, uint32_t hash) {
   if (lo == p->count || p->entries[lo].hash != hash)
     fatal("Missing archive entry %u", hash);
   return view_sub(view(p->bytes), p->entries[lo].offset, p->entries[lo].size);
+}
+
+View package_named(const Package *p, const char *name) {
+  for (size_t i = 0; i < p->count; ++i) {
+    if (same_name(p->entries[i].name, name) && name[0]) {
+      return view_sub(view(p->bytes), p->entries[i].offset, p->entries[i].size);
+    }
+  }
+  fatal("Missing archive filename %s", name);
+  return (View){0};
 }
 
 View package_geo(const Package *p, const char *name) {

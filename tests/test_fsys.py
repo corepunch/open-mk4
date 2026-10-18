@@ -25,6 +25,18 @@ def archive(entries):
     return bytes(table + data)
 
 
+def wargods_archive(entries):
+    table = bytearray(struct.pack('<I', len(entries) + 1))
+    offset = 4 + (len(entries) + 1) * 17
+    payloads = bytearray()
+    for name, payload in entries:
+        table.extend(struct.pack('<I13s', offset, name.encode()))
+        payloads.extend(payload)
+        offset += len(payload)
+    table.extend(struct.pack('<I13s', offset, b''))
+    return bytes(table + payloads)
+
+
 def rows(text):
     return list(csv.DictReader(io.StringIO(text), delimiter='\t'))
 
@@ -116,6 +128,49 @@ class FsysTests(unittest.TestCase):
         (self.output / 'other').symlink_to(elsewhere, target_is_directory=True)
         self.run_tool('-o', self.output, expected=1)
         self.assertEqual(list(elsewhere.iterdir()), [])
+
+    def test_wargods_names_payloads_and_validation(self):
+        entries = [('0', b'directory'), ('TEST~1.TGA', b'image'),
+                   ('ABCDE.W', b'one'), ('EBCDA.W', b'two'), ('EMPTY.W', b'')]
+        good = wargods_archive(entries)
+        self.source.write_bytes(good)
+        self.run_tool('-o', self.output)
+        manifest = rows((self.output / 'manifest.tsv').read_text())
+        self.assertEqual(len(manifest), len(entries))
+        for row, (name, payload) in zip(manifest, entries):
+            self.assertEqual(row['name_status'], 'stored')
+            self.assertEqual(row['path'], 'files/' + name)
+            self.assertEqual((self.output / row['path']).read_bytes(), payload)
+        self.assertIn('0 files updated', self.run_tool('-o', self.output).stdout)
+        cases = [good[:20], good[:-1]]
+        for offset, value in [(21, 1), (21, len(good) + 1), (4 + len(entries) * 17, len(good) - 1)]:
+            bad = bytearray(good)
+            struct.pack_into('<I', bad, offset, value)
+            cases.append(bad)
+        for name in [b'../BAD', b'BAD/FILE', b'BAD\\FILE', b'A' * 13, b'']:
+            bad = bytearray(good)
+            bad[25:38] = name.ljust(13, b'\0')
+            cases.append(bad)
+        bad = bytearray(good)
+        bad[25:38] = b'0'.ljust(13, b'\0')
+        cases.append(bad)
+        for data in cases:
+            self.source.write_bytes(data)
+            self.run_tool('--list', expected=1)
+
+    @unittest.skipUnless((ROOT / 'Wargods/WARGODS.DAT').exists(), 'local War Gods archive absent')
+    def test_real_wargods_payload_identity(self):
+        self.source.write_bytes((ROOT / 'Wargods/WARGODS.DAT').read_bytes())
+        self.run_tool('-o', self.output)
+        data = self.source.read_bytes()
+        manifest = rows((self.output / 'manifest.tsv').read_text())
+        self.assertEqual(len(manifest), 558)
+        for i, row in enumerate(manifest):
+            offset = struct.unpack_from('<I', data, 4 + i * 17)[0]
+            end = struct.unpack_from('<I', data, 21 + i * 17)[0]
+            name = data[8 + i * 17:21 + i * 17].split(b'\0')[0].decode()
+            self.assertEqual(row['original_path_candidate'], name)
+            self.assertEqual((self.output / row['path']).read_bytes(), data[offset:end])
 
     def test_bad_cli(self):
         for args in [('--watch', 'nan'), ('--watch', '0'), ('--watch', '-1'),

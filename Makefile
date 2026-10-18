@@ -19,7 +19,7 @@ SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: $(SCRIPT_GENERATE_TARGETS)
@@ -50,12 +50,18 @@ build/%.o: common/%.c $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 fsys: fsys.cpp $(PACKAGE_OBJECTS) $(HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) fsys.cpp $(PACKAGE_OBJECTS) -o $@
+extract-wargods: fsys
+	./fsys Wargods/WARGODS.DAT -o extracted/wargods
 extract: fsys
 	./fsys MK4/FILESYS.DAT --exe MK4/MK-4.EXE -o extracted
-test: fsys
+build/test-package: tests/test_package.c $(PACKAGE) $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) tests/test_package.c $(PACKAGE) -o $@
+test: fsys build/test-package
+	./build/test-package
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-fibers
+	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-fibers
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)

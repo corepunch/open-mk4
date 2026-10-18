@@ -8,7 +8,8 @@ Supply the original game files separately in `MK4/`; game binaries, extracted
 assets, generated images, and build outputs are ignored by Git.
 
 `fsys.cpp` is a dependency-free C++17 tool for inspecting, extracting, and polling
-the PC version of Mortal Kombat 4's `FILESYS.DAT`. Builds on macOS and Linux.
+the PC versions of Mortal Kombat 4's `FILESYS.DAT` and War Gods' `WARGODS.DAT`.
+Builds on macOS and Linux; archive format detection is automatic.
 
 ```sh
 make
@@ -29,6 +30,32 @@ archive hash to avoid filename collisions. `manifest.tsv` records the entry
 index, hash, offset, size, detected type, output path, and original path candidate.
 The hash is weak: a matching name is a candidate, not proof of the original name.
 Conflicting candidates fall back to hash-only filenames and are marked ambiguous.
+
+For War Gods, supply `Wargods/WARGODS.DAT` and run:
+
+```sh
+make extract-wargods
+./fsys Wargods/WARGODS.DAT --list
+```
+
+This extracts to `extracted/wargods/files/`, preserving the directory's actual
+filenames, including DOS short names. The manifest marks these as `stored`.
+No executable is needed. The hash column is our convenience hash of the stored
+name, not an on-disk War Gods identifier; named lookup handles collisions.
+The engine's shared C package layer loads either archive with `package_load`;
+`package_named` retrieves War Gods payloads by case-insensitive stored filename.
+Existing MK4 full-path hash lookup is unchanged. War Gods model, animation and
+arena decoding is separate work; accepting its archive does not make those
+assets playable yet.
+
+The supplied War Gods archive has 559 packed directory records: 558 files and
+an empty-name EOF sentinel. A little-endian count precedes 17-byte records
+(`u32 absolute offset`, `char name[13]`). The first payload starts immediately
+after the directory; adjacent offsets determine sizes. The loader validates
+bounds, ordering, safe unique names and the EOF sentinel before extraction.
+There are 112 TGA images, 219 `.W` files, 181 `.SBK` files, 44 `.D00/.H00/.D01/.H01`
+files, `HISCORE.BIN`, and a file named `0` containing a DOS directory listing.
+These extensions are inventory evidence, not yet decoded format definitions.
 
 Polling requires two consecutive, identical, valid snapshots before publishing
 an update, including the initial extraction. It compares archive bytes, so it

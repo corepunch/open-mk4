@@ -9,6 +9,7 @@ extern "C" {
 
 typedef struct PackageEntry {
   uint32_t hash, offset, size;
+  char name[14]; /* War Gods directory name; empty for hashed MK4 entries. */
 } PackageEntry;
 
 typedef struct Package {
@@ -22,6 +23,7 @@ bool parse_package(View data, PackageEntry entries[PACKAGE_MAX_ENTRIES], size_t 
 void package_load(Package *package, const char *path);
 void package_free(Package *package);
 View package_get(const Package *package, uint32_t hash);
+View package_named(const Package *package, const char *name);
 View package_geo(const Package *package, const char *name);
 #ifdef __cplusplus
 }
