@@ -9,7 +9,6 @@
 #include <string.h>
 
 static const uint32_t panel = 0xff1a2430;
-static const uint32_t red = 0xffff1818;
 
 static const int retail_roster[15] = {3, 7, 5, 12, 10, 0, 13, 8, 14, 11, 9, 1, 4, 6, 2};
 
@@ -178,35 +177,50 @@ bool menu_key(FrontendMenu *menu, int keycode, bool *quit) {
 
 static void draw_mode(Canvas *canvas, const Assets *assets, const FrontendMenu *menu) {
   static const char *rows[] = {"ARCADE", "TEAM", "ENDURANCE", "TOURNAMENT", "PRACTICE", "EXIT GAME"};
+  const Geometry *font = &assets->hud.font;
   int width = canvas->w;
   int height = canvas->h;
-  canvas_rect(canvas, (Rect){0, 0, width, height}, 0xff071728);
-  blit_page(canvas, &assets->hud.title_scene, 0, (Rect){0, 0, 203, 210}, (Rect){0, 0, width / 2, height});
-  blit_page(canvas, &assets->hud.title_scene, 1, (Rect){100, 0, 103, 210}, (Rect){width / 2, 0, width / 2, height});
-  int menu_width = width * 46 / 100;
-  int menu_x = (width - menu_width) / 2;
-  int row_height = height * 8 / 100;
-  int gap = 0;
-  int block_height = row_height * 6;
-  int top = height * 49 / 100;
-  if (top + block_height > height - 40) {
-    top = height - 40 - block_height;
+  // mklogo_g.geo stores the 408x256 title backdrop as four 102-pixel strips:
+  // the left and right halves of page 0 and page 1, interleaved.
+  static const int strips[4][2] = {{0, 0}, {1, 0}, {0, 102}, {1, 102}};
+  for (int i = 0; i < 4; ++i) {
+    int x = i * width / 4;
+    blit_page(canvas, &assets->hud.title_scene, strips[i][0], (Rect){strips[i][1], 0, 102, 256}, (Rect){x, 0, (i + 1) * width / 4 - x, height});
   }
+  // Retail proportions: six stacked bars across the middle 45% of the
+  // screen, from 42% of its height, with a lit top edge, a darker right
+  // bevel and a dark separator below each bar.
+  int bar_x = width * 275 / 1000;
+  int bar_w = width * 450 / 1000;
+  int pitch = height * 84 / 1000;
+  int top = height * 42 / 100;
+  int separator = maxi(2, pitch / 10);
+  int bevel = bar_w * 2 / 100;
   for (int i = 0; i < 6; ++i) {
-    Rect row = {menu_x, top + i * (row_height + gap), menu_width, row_height - 2};
-    canvas_rect(canvas, row, 0xe8001424);
+    int y = top + i * pitch;
+    int h = pitch - separator;
+    canvas_rect(canvas, (Rect){bar_x, y, bar_w, h}, 0xff0f2d51);
+    canvas_rect(canvas, (Rect){bar_x + bar_w - bevel, y, bevel, h}, 0xff0c2041);
+    canvas_rect(canvas, (Rect){bar_x, y, bar_w, maxi(2, pitch / 22)}, 0xff2d5075);
+    canvas_rect(canvas, (Rect){bar_x, y + h, bar_w, separator}, 0xff02060f);
+    // Capital glyphs stand about 15.5 font units tall from the pen.
+    float text_scale = 1.9f;
+    int text_width = font_width(font, rows[i], text_scale);
+    font_draw(font, canvas, bar_x + (bar_w - text_width) / 2, y + (h - (int)(15.5f * text_scale)) / 2, rows[i], text_scale);
     if (i == menu->cursor) {
-      canvas_outline(canvas, row, red);
+      for (int ring = 0; ring < 3; ++ring) {
+        canvas_outline(canvas, (Rect){bar_x - 1 - ring, y - 1 - ring, bar_w + 2 + 2 * ring, h + 2 + 2 * ring}, 0xffd03c2d);
+      }
     }
-    float text_scale = 1.1f;
-    int text_width = font_width(&assets->hud.font, rows[i], text_scale);
-    int text_x = row.x + (row.w - text_width) / 2;
-    font_draw(&assets->hud.font, canvas, text_x, row.y + (row.h - (int)(30 * text_scale)) / 2, rows[i], text_scale);
   }
-  font_draw(&assets->hud.font, canvas, width * 7 / 100, height - 80, "UP/DOWN", 1.f);
-  font_draw(&assets->hud.font, canvas, width * 7 / 100, height - 49, "TO CHOOSE", 1.f);
-  font_draw(&assets->hud.font, canvas, width * 74 / 100, height - 80, "ACTION KEYS", 1.f);
-  font_draw(&assets->hud.font, canvas, width * 79 / 100, height - 49, "SELECT", 1.f);
+  static const char *hints[2][2] = {{"UP/DOWN", "TO CHOOSE"}, {"ACTION KEYS", "TO SELECT"}};
+  for (int side = 0; side < 2; ++side) {
+    int center = width * (side == 0 ? 155 : 845) / 1000;
+    for (int line = 0; line < 2; ++line) {
+      const char *text = hints[side][line];
+      font_draw(font, canvas, center - font_width(font, text, 1.15f) / 2, height * (84 + line * 5) / 100, text, 1.15f);
+    }
+  }
 }
 
 static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, float yaw) {
