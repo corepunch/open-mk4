@@ -24,7 +24,7 @@ def main(argv=None):
     action.add_argument('--script', type=lambda value: int(value, 16), action='append', help='repeat to emit several scripts atomically')
     action.add_argument('--audit', action='store_true')
     action.add_argument('--inventory', action='store_true', help='read typed EXE roots and graph fingerprints before implementation')
-    action.add_argument('--generate', action='store_true', help='generate the character profile checked into tools/ports')
+    action.add_argument('--generate', action='store_true', help='generate the character profile beside its character source')
     parser.add_argument('--return-to', help='explicit controller/tagged-return engine continuation')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--check', action='store_true', help='compare output without writing')

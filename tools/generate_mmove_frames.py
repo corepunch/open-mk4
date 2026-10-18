@@ -6,6 +6,7 @@ from pathlib import Path
 
 from retail_moves import RetailImage, clip_inventory
 from retail_codegen import format_c
+from c_source import read_source
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,7 +17,7 @@ SCRIPT_CLIP = re.compile(r"mk4_(?:script|mmove)_(?:bind|bind_victim|inherit|scen
 
 
 def clip_names(character):
-    source = (ROOT / "game" / ("c_" + character + ".c")).read_text()
+    source = read_source(ROOT / "game/characters" / character / "character.c")
     names = {}
     for match in CHARACTER.finditer(source):
         symbol, body = match.groups()
@@ -25,7 +26,7 @@ def clip_names(character):
             clip = POSITIONAL_CLIP.search(body)
         if clip is not None:
             names.setdefault(int(clip.group(1)), []).append(symbol)
-    generated = ROOT / "game" / "generated" / (character + ".inc")
+    generated = ROOT / "game/characters" / character / "generated/scripts.inc"
     if generated.exists():
         for match in SCRIPT_CLIP.finditer(generated.read_text()):
             names.setdefault(int(match.group(1)), [])
@@ -61,7 +62,7 @@ def output_for(character, clips):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--character", help="fighter name; defaults to all c_*.c characters")
+    parser.add_argument("--character", help="fighter name; defaults to all character folders")
     parser.add_argument("--archive", default=str(ROOT / "MK4/FILESYS.DAT"))
     parser.add_argument("--exe", default=str(ROOT / "MK4/MK-4.EXE"))
     parser.add_argument("--check", action="store_true", help="fail if generated output is stale")
@@ -69,14 +70,14 @@ def main():
 
     image = RetailImage(args.exe)
     clips = {row["id"]: row for row in clip_inventory(image, args.archive)}
-    characters = [args.character] if args.character else sorted(path.stem[2:] for path in (ROOT / "game").glob("c_*.c"))
+    characters = [args.character] if args.character else sorted(path.parent.name for path in (ROOT / "game/characters").glob("*/character.c"))
     errors = []
     for character in characters:
-        source = ROOT / "game" / ("c_" + character + ".c")
+        source = ROOT / "game/characters" / character / "character.c"
         if not source.is_file():
             errors.append("unknown character: " + character)
             continue
-        target = ROOT / "game" / "generated" / ("frames_" + character + ".inc")
+        target = ROOT / "game/characters" / character / "generated/frames.inc"
         output = format_c(output_for(character, clips))
         if args.check:
             if not target.is_file() or target.read_text() != output:

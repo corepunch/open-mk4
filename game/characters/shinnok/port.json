@@ -1,0 +1,435 @@
+{
+  "character": "shinnok",
+  "return_to": "fighter_ready",
+  "output": "game/characters/shinnok/generated/scripts.inc",
+  "integration_source": "game/characters/shinnok/character.c",
+  "inventory_sha256": "e0a1cacbb72e3034165acc7d074316a822594e2baa90ffac04f5e98d91a63ceb",
+  "generated_scripts": [
+    "0x4de2f8",
+    "0x4de318",
+    "0x4de328",
+    "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e5d90",
+    "0x4e5e28",
+    "0x4e5e50",
+    "0x4e61f8",
+    "0x4e62a0",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6860",
+    "0x4e6878",
+    "0x4e6950",
+    "0x4e9910"
+  ],
+  "entry_contexts": {
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "sample": 69,
+      "evidence": "Native owner loop preserves clip 415 at sample 69; bounded Shinnok fan-script and native continuation",
+      "export_frames": true
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "sample": 69,
+      "evidence": "Native owner release preserves clip 415 at sample 69; bounded Shinnok fan-script and native continuation"
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "sample": 107,
+      "evidence": "Native victory continuation enters clip 415 at sample 107; bounded Shinnok fan-script and native continuation"
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "sample": 69,
+      "evidence": "Native victim release preserves clip 416 at sample 69; bounded Shinnok fan-script and native continuation"
+    },
+    "0x4e5c70": {
+      "clip": 66,
+      "count": 18,
+      "sample": 17,
+      "evidence": "Shinnok high-kick recovery entered from native continuation 46a760; bounded EXE query"
+    },
+    "0x4e5e50": {
+      "clip": 82,
+      "count": 45,
+      "sample": 28,
+      "evidence": "Shinnok air-throw release retains inherited clip 82 sample 28; bounded EXE query"
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "sample": 0,
+      "evidence": "Native jab continuation 46dd00 enters clip 295 sample 0; bounded EXE query"
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "sample": 18,
+      "evidence": "Native jab repeat continuation 46dd10 enters clip 295 sample 18; bounded EXE query"
+    },
+    "0x4e6860": {
+      "clip": 313,
+      "count": 39,
+      "sample": 0,
+      "evidence": "Shinnok roundhouse fast startup entry preserves clip 313; bounded EXE query"
+    },
+    "0x4e6878": {
+      "clip": 313,
+      "count": 39,
+      "sample": 0,
+      "evidence": "Shinnok roundhouse normal startup entry preserves clip 313; bounded EXE query"
+    },
+    "0x4e9910": {
+      "clip": 202,
+      "count": 45,
+      "sample": 28,
+      "evidence": "Shinnok air-throw victim release retains inherited clip 202 sample 28; bounded EXE query"
+    }
+  },
+  "entry_adapters": {
+    "0x467cd0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_467cd0",
+      "evidence": "Shinnok input/CPU table target 0x467cd0; bounded native query"
+    },
+    "0x467ce0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_467ce0",
+      "evidence": "Shinnok input/CPU table target 0x467ce0; bounded native query"
+    },
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Shared MK4 sidestep input action and native playback routine 0x469250"
+    },
+    "0x469a00": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a00",
+      "evidence": "Shinnok input/CPU table target 0x469a00; bounded native query"
+    },
+    "0x469a10": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a10",
+      "evidence": "Shinnok input/CPU table target 0x469a10; bounded native query"
+    },
+    "0x469a20": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a20",
+      "evidence": "Shinnok input/CPU table target 0x469a20; bounded native query"
+    },
+    "0x469a30": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a30",
+      "evidence": "Shinnok input/CPU table target 0x469a30; bounded native query"
+    },
+    "0x469a40": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a40",
+      "evidence": "Shinnok input/CPU table target 0x469a40; bounded native query"
+    },
+    "0x469a50": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a50",
+      "evidence": "Shinnok input/CPU table target 0x469a50; bounded native query"
+    },
+    "0x469a60": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a60",
+      "evidence": "Shinnok input/CPU table target 0x469a60; bounded native query"
+    },
+    "0x469a70": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a70",
+      "evidence": "Shinnok input/CPU table target 0x469a70; bounded native query"
+    },
+    "0x469a80": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a80",
+      "evidence": "Shinnok input/CPU table target 0x469a80; bounded native query"
+    },
+    "0x469a90": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469a90",
+      "evidence": "Shinnok input/CPU table target 0x469a90; bounded native query"
+    },
+    "0x469aa0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469aa0",
+      "evidence": "Shinnok input/CPU table target 0x469aa0; bounded native query"
+    },
+    "0x469ab0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469ab0",
+      "evidence": "Shinnok input/CPU table target 0x469ab0; bounded native query"
+    },
+    "0x469ac0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469ac0",
+      "evidence": "Shinnok input/CPU table target 0x469ac0; bounded native query"
+    },
+    "0x469ad0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_469ad0",
+      "evidence": "Shinnok input/CPU table target 0x469ad0; bounded native query"
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Shared pickup continuation entered from Shinnok run input 0x46a020"
+    },
+    "0x46d1d0": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_command_46d1d0",
+      "evidence": "Shinnok input/CPU table target 0x46d1d0; bounded native query"
+    }
+  },
+  "moves": {
+    "air_diagonal_hk": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_air_diagonal_hk",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046e380 and selected EXE script roots"
+    },
+    "air_diagonal_lk": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_air_diagonal_lk",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046df50 and selected EXE script roots"
+    },
+    "air_hp": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_air_hp",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046e6c0 and selected EXE script roots"
+    },
+    "air_kick": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_air_kick",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046c7a0 and selected EXE script roots"
+    },
+    "air_lp": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_air_lp",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046ee30 and selected EXE script roots"
+    },
+    "air_throw": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_air_throw",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046aa80 and selected EXE script roots"
+    },
+    "fan_fatality": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_fan_fatality",
+      "evidence": "Shinnok roster slot 6 native entry 0x00467e00 and selected EXE script roots"
+    },
+    "high_kick": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_high_kick",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046a680 and selected EXE script roots"
+    },
+    "high_punch": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_high_punch",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046d290 and selected EXE script roots"
+    },
+    "jab": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_jab",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046dca0 and selected EXE script roots"
+    },
+    "lk_throw": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_lk_throw",
+      "evidence": "Shinnok roster slot 6 native entry 0x0042b6b0 and selected EXE script roots"
+    },
+    "low_kick": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_low_kick",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046a7b0 and selected EXE script roots"
+    },
+    "lp_throw": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_lp_throw",
+      "evidence": "Shinnok roster slot 6 native entry 0x0042c560 and selected EXE script roots"
+    },
+    "roundhouse": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_roundhouse",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046f1f0 and selected EXE script roots"
+    },
+    "spike_fatality": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_spike_fatality",
+      "evidence": "Shinnok roster slot 6 native entry 0x00467e70 and selected EXE script roots"
+    },
+    "sweep": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_sweep",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046ef90 and selected EXE script roots"
+    },
+    "uppercut": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_uppercut",
+      "evidence": "Shinnok roster slot 6 native entry 0x0046ccd0 and selected EXE script roots"
+    }
+  },
+  "stances": {
+    "standing": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "standing",
+      "evidence": "Shinnok selected stance table standing; typed EXE entries in reviewed inventory"
+    },
+    "crouching": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "crouching",
+      "evidence": "Shinnok selected stance table crouching; typed EXE entries in reviewed inventory"
+    },
+    "straight_air": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "jumping",
+      "evidence": "Shinnok selected stance table straight_air; typed EXE entries in reviewed inventory"
+    },
+    "diagonal_air": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "jumping",
+      "evidence": "Shinnok selected stance table diagonal_air; typed EXE entries in reviewed inventory"
+    },
+    "air_punch_followup": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "air_punch_followup",
+      "evidence": "Shinnok selected stance table air_punch_followup; typed EXE entries in reviewed inventory"
+    },
+    "air_followup": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "air_followup",
+      "evidence": "Shinnok selected stance table air_followup; typed EXE entries in reviewed inventory"
+    },
+    "close_hp_followup": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "close_hp_followup",
+      "evidence": "Shinnok selected stance table close_hp_followup; typed EXE entries in reviewed inventory"
+    },
+    "combo_hp_followup": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "combo_hp_followup",
+      "evidence": "Shinnok selected stance table combo_hp_followup; typed EXE entries in reviewed inventory"
+    },
+    "close_hk_followup": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "close_hk_followup",
+      "evidence": "Shinnok selected stance table close_hk_followup; typed EXE entries in reviewed inventory"
+    }
+  },
+  "weapon": {
+    "source": "game/characters/shinnok/character.c",
+    "symbol": "shinnok_weapon",
+    "evidence": "Shinnok inventory default weapon descriptor 0x4eceb8, type 0x64; local adapter uses shared weapon attack helpers"
+  },
+  "reactions": {
+    "1": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "4": {
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "5": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "6": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "13": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "16": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "18": {
+      "source": "game/reactions.c",
+      "symbol": "react_sweep",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "20": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "77": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_throw_reaction",
+      "evidence": "Shinnok victim reaction 77 at native entry 0x484f10; paired throw release dispatch",
+      "adaptation": "Dedicated KO-aware Shinnok throw victim recovery"
+    },
+    "100": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+    },
+    "175": {
+      "source": "game/characters/shinnok/character.c",
+      "symbol": "shinnok_fatality_contact_hold",
+      "evidence": "Shinnok spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
+      "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
+    }
+  },
+  "schema": 1
+}

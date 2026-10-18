@@ -1,0 +1,16 @@
+static void kitana_roundhouse(Fighter *fighter) {
+  ground_attack(fighter, G_ROUNDHOUSE);
+}
+
+static void script_roundhouse_tail(Fighter *fighter) {
+  native_delay(fighter, 1);
+  ground_native_tail(fighter);
+}
+
+static void script_roundhouse_start(Fighter *fighter) {
+  if (fighter->native_followup) {
+    retail_script_004e6860(fighter);
+  } else {
+    retail_script_004e6878(fighter);
+  }
+}

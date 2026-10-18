@@ -115,8 +115,9 @@ a missing lowering once, reusing existing engine helpers. Use bounded
 `docs/script-decoder.md`. Use these static queries and the existing `build/retail-disassembly/` bundle as the primary source for
 character ports. Full bundle generation requires explicit `--bundle`; do not
 regenerate bulk dumps for routine move research.
-Keep native adapters and move entries in `game/c_<character>.c`, and include
-the compiler-generated C from the reviewed character profile. Run
+Keep native adapters and move entries in `game/characters/<character>/moves/`.
+Each character compiles through its `character.c` and private `character.h`.
+Keep its reviewed `port.json` and compiler-generated C in that same folder. Run
 `make scripts-check` and the strict coverage audit; new ports also require
 `--require-generated`. Consult native listings and the included reference
 source for unresolved called helpers.

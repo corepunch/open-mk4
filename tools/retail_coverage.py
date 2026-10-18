@@ -15,6 +15,7 @@ from retail_codegen import CompileError, compile_program, instruction_binding, s
 from retail_helper_view import port_source
 from retail_moves import EXE_SHA256
 from retail_port import masked_c
+from c_source import read_source
 from retail_query import CONTACT_TABLES
 from scorpion_moves import commands, script_program, attack_record, attack_record_at, DISPATCH
 
@@ -30,7 +31,7 @@ CPU_TABLES = {'near': 0x4df8e8, 'medium': 0x4df928, 'far': 0x4df968, 'projectile
 
 
 def profile_for(character):
-    path = ROOT / 'tools/ports' / (CHARACTERS[character] + '.json')
+    path = ROOT / 'game/characters' / CHARACTERS[character] / 'port.json'
     if not path.is_file():
         return None
     profile = json.loads(path.read_text())
@@ -108,7 +109,7 @@ def check_reference(reference, errors, label, table=False):
         return
     if table:
         pattern = r'\b' + re.escape(reference['symbol']) + r'\s*(?:\[[^;={}]*\])?\s*='
-        if re.search(pattern, masked_c(path.read_text())) is None:
+        if re.search(pattern, masked_c(read_source(path))) is None:
             errors.append('%s: missing C table %s' % (label, reference['symbol']))
     else:
         try:
@@ -195,7 +196,7 @@ def audit(image, character, return_to=None, profile=None):
             if not integration or not (ROOT / integration).is_file():
                 errors.append('generated scripts need an integration source')
             else:
-                source = (ROOT / integration).read_text()
+                source = read_source(ROOT / integration)
                 if profile.get('mmove_only') and re.search(r'\bfighter_(?:start_fiber|wait_ticks|fiber_(?:move|sequence|play_to|finish))\s*\(', masked_c(source)):
                     errors.append('mmove-only integration still contains coroutine calls: ' + integration)
                 referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b|&' + symbol(entry) + r'_(?:repeat_)?phase\b', masked_c(source))}

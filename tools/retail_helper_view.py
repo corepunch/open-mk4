@@ -1,5 +1,6 @@
 """Actionable helper contracts, decoded data and existing portable C sources."""
 from dataclasses import dataclass
+from c_source import function_source
 from pathlib import Path
 import re
 import struct
@@ -106,22 +107,9 @@ def table_rows(image, names, limit=512):
 
 
 def port_source(port):
-    """Extract one local C definition, preserving its real source and line."""
-    path, name = port
-    text = (ROOT / path).read_text()
-    # Mask comments/strings while preserving offsets for balanced-brace lookup.
-    masked = re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',
-                    lambda match: re.sub(r'[^\n]', ' ', match[0]), text, flags=re.S)
-    match = re.search(r'^([A-Za-z_][\w* \t]*\b' + re.escape(name) + r'\s*\([^;{}]*\)\s*)\{', masked, re.M)
-    if match is None:
-        raise ValueError('Missing portable C definition %s in %s' % (name, path))
-    depth, end = 1, match.end()
-    while depth and end < len(masked):
-        depth += (masked[end] == '{') - (masked[end] == '}')
-        end += 1
-    if depth:
-        raise ValueError('Unbalanced portable C definition ' + name)
-    return text.count('\n', 0, match.start()) + 1, text[match.start():end]
+    """Extract a local C definition, including private move fragments."""
+    _, line, code = function_source(*port)
+    return line, code
 
 
 def helper_rows(addresses, image=None, include_related=False, include_tables=True, limit=512):
@@ -144,8 +132,8 @@ def helper_rows(addresses, image=None, include_related=False, include_tables=Tru
         rows += ['### `%08x` — %s' % (address, helper.name), '',
                  '- Inputs: ' + helper.inputs, '- Effects/data: ' + helper.effects, '- Timing/control: ' + helper.flow]
         if helper.port:
-            line, _ = port_source(helper.port)
-            path, function = helper.port
+            path, line, _ = function_source(*helper.port)
+            function = helper.port[1]
             rows.append('- Reuse: [`%s`](%s:%d).' % (function, ROOT / path, line))
         else:
             rows.append('- Reuse: no direct engine adapter recorded; preserve the contract above.')

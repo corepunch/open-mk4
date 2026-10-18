@@ -11,6 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from character_catalog import moves_for
+from c_source import function_source, read_source
 from disassemble_retail import Disassembly
 from retail_actions import NATIVE, native_evidence
 from retail_moves import RetailImage
@@ -38,11 +39,11 @@ class PortTests(unittest.TestCase):
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
         self.assertIn('retail_script_004ed588', ice)
-        self.assertIn('ice_projectile', source_closure(('game/c_sub_zero.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
+        self.assertIn('ice_projectile', source_closure(('game/characters/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
-            port_source(('game/c_sub_zero.c', 'if'))
+            port_source(('game/characters/sub_zero/character.c', 'if'))
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
-            port_source(('game/c_sub_zero.c', 'battle_spray'))
+            port_source(('game/characters/sub_zero/character.c', 'battle_spray'))
 
     def test_ice_and_native_clone_have_reusable_phases_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
@@ -78,7 +79,7 @@ class PortTests(unittest.TestCase):
         source = '\n'.join(source_rows(port_entry(4, 'clone'), 1))
         self.assertNotIn('```c', source)
         self.assertIn('No partial function', source)
-        self.assertIn('c_sub_zero.c:', source)
+        self.assertIn('sub_zero/moves/clone.inc:', source)
         with self.assertRaisesRegex(ValueError, 'Unknown'):
             port_text(disassembly, 'not_a_move', 4)
 
@@ -154,6 +155,16 @@ class PortTests(unittest.TestCase):
                          ['--port', '--move', 'ice', '--raw'], ['--move', 'ice', '--port', '--limit', '0']):
                 result = subprocess.run([*base, *args], cwd=directory, text=True, capture_output=True)
                 self.assertNotEqual(result.returncode, 0, args)
+
+    def test_private_move_navigation_keeps_generated_code_separate(self):
+        integration = 'game/characters/scorpion/character.c'
+        actual, line, code = function_source(integration, 'scorpion_teleport')
+        self.assertEqual(actual, 'game/characters/scorpion/moves/teleport.inc')
+        self.assertTrue((ROOT / actual).read_text().splitlines()[line - 1].startswith('static void scorpion_teleport('))
+        native = read_source(integration)
+        self.assertIn(code, native)
+        self.assertNotIn('static inline void retail_script_', native)
+        self.assertIn(actual, '\n'.join(source_rows((integration, 'scorpion_teleport'), 512)))
 
 
 if __name__ == '__main__':

@@ -35,7 +35,7 @@ Every profile must satisfy `--require-generated`; Make has no migration bypass.
 ### 1. Inventory the fighter and choose a move
 
 Read [ARCHITECTURE.md](../ARCHITECTURE.md), then inspect the existing
-`game/c_<character>.c`, its `CharacterDef`, and `game/roster.c`. Separate shared
+`game/characters/<character>/character.c`, its `CharacterDef`, and `game/roster.c`. Separate shared
 locomotion/reactions from character decisions. Inventory standing and crouching
 attacks, close attacks/combos, air attacks, both throws, specials, weapons,
 finishers and CPU entries. Mark each as researched, implemented, tested or
@@ -53,7 +53,7 @@ choice rows, stance/follow-up tables, the default weapon descriptor and buttons,
 contact reactions and the selected catalog's decoded script/native frontiers.
 Do not infer completeness from `--list-moves`: it is a curated navigation index.
 Add missing research roots to `tools/character_catalog.py` and implementation
-references to a reviewed `tools/ports/<character>.json` profile. Review every
+references to a reviewed `game/characters/<character>/port.json` profile. Review every
 new input/CPU target, reaction, and inventory fingerprint change. The audit
 rejects dropped release tables, missing definitions, unreviewed VM roots,
 changed reaction dispatch and stale generated output.
@@ -136,7 +136,7 @@ alongside the implementation:
 | Researched move entries and script roots | `tools/character_catalog.py` |
 | Local helper contracts and engine equivalents | `tools/retail_helpers.py` |
 | Typed compiler bindings, actor arguments, roles and native flow | `tools/retail_bindings.py` |
-| Generated roots, integration and reviewed coverage boundaries | `tools/ports/<character>.json` |
+| Generated roots, integration and reviewed coverage boundaries | `game/characters/<character>/port.json` |
 | Typed executable data views | `tools/retail_helper_view.py` |
 | Local aliases and checked reference correspondences | `tools/retail_symbols.py`, `tools/retail_symbol_map.json` |
 | Action names/confidence and checked native evidence | `game/retail_actions.inc`, `tools/retail_action_evidence.json` |
@@ -248,7 +248,7 @@ Use engine state and predicates for landing/contact waits, rather than sleeping
 or waiting for the drawing loop.
 
 Scorpion's current spear body illustrates the pattern (helpers and entry setup
-are in [c_scorpion.c](../game/c_scorpion.c)):
+are in [c_scorpion.c](../game/characters/scorpion/character.c)):
 
 ```c
 static void spear_script(Fighter *fighter) {
@@ -276,7 +276,7 @@ Define which actor owns each phase and when the victim becomes independent.
 Peer fiber starts are deferred to the host scheduler; a peer may still receive
 its regular pump that battle tick. Do not infer a full displayed tick from
 startup order. Check both P1 and P2 ownership. Paired pose submission and
-released recovery helpers in `game/c_sub_zero.c` are examples, including the
+released recovery helpers in `game/characters/sub_zero/character.c` are examples, including the
 victim's committed five-sample LK tail after damage.
 
 Release a victim through its own roster's recovery controller. Preserve its
@@ -302,7 +302,7 @@ stance controls and optional `CpuMoves` as required. Preserve command priority,
 button masks, inclusive windows, ground/range/cooldown gates and follow-up
 branches. For a newly added roster definition, wire `game/mk4_characters.h` and
 `game/roster.c`; asset identity and retail script-selector identity are distinct.
-Character C files are already included by the Makefile's `game/c_*.c` wildcard.
+Character C files are already included by the Makefile's `game/characters/*/character.c` wildcard.
 
 Test through the real command or move entry, not only a directly invoked helper.
 Keep the set small and choose assertions for plausible failures: a changed
@@ -449,7 +449,7 @@ Scorpion's `spear_script` is the first fiber port. A normal C helper
 Normal/fast paths launch at ticks 10/8, reach sample 30 at 15/11, then wait
 45 ticks. The existing live-pull predicate may extend that hold. Projectile
 contacts and movement retain their independent C callback. Pull arrival first
-installs independent victim-stun and owner-return fibers. `spear_cleanup` removes owner projectiles and
+installs an independent victim-stun frame program and generated owner-return continuation. `spear_cleanup` removes owner projectiles and
 releases a still-snared victim on cancellation, while preserving an already
 installed arrival stun. These paired-return mechanics remain portable engine
 adaptations; this prototype does not claim full retail spear-native parity.
@@ -457,14 +457,16 @@ adaptations; this prototype does not claim full retail spear-native parity.
 Focused regressions cover both players and startup paths, exact recovery,
 blocked/hit pull behavior, direct hit and queued interruption during nested
 startup/recovery/pull waits, full object pools, rematch during pull, and two
-simultaneous actor fibers whose projectiles can interrupt one another.
+simultaneous actor continuations whose projectiles can interrupt one another.
 
-All timed continuations owned by `c_scorpion.c` and `c_sub_zero.c` now run in
-fibers, including finishers. SceneClip/FatalPhase tables remain presentation
-data. Sub-Zero's breath finisher is sequential C: breath, range-dependent
-approach, uppercut/shatter, eight cursor passes, a 60-tick wait, then victory.
-Its nested wait helper also advances the victim scene and impact sounds. Scene
-completion returns to the scheduler before ending the finisher or resetting.
+Native action timing across the roster now uses fixed `mframe_t` programs,
+including specials, reactions and finishers. Generated VM continuations can
+await a frame program while retaining their locals; terminal native phases
+transfer cleanup to the frame runner. Scene blend boundaries, fan repetitions,
+delayed cues and completion actions are resolved when their frame ranges are
+constructed. The timing guard rejects native actor/scene deadline branches and
+legacy coroutine waits. Scene completion returns to the scheduler before ending
+a finisher or resetting.
 
 Use `--move NAME --port` (with `--character sub_zero` where appropriate) to
 extract these actual C bodies, nested helpers/callbacks, supporting data links,
@@ -496,7 +498,7 @@ the fiber. Existing original kick and 27 Scorpion branch fixtures still apply.
 
 ## Sub-Zero source-to-code ledger
 
-Implementation: [game/c_sub_zero.c](../game/c_sub_zero.c). Retail, roster and
+Implementation: [game/characters/sub_zero/character.c](../game/characters/sub_zero/character.c). Retail, roster and
 asset IDs happen to be 4 here; other characters need not share those indices.
 The catalog links these sources directly through `--character sub_zero --move`.
 
@@ -755,3 +757,11 @@ context emits a reusable generated phase; native fan coordinators compose that
 phase into their complete repetition schedule. Regenerate with `make scripts`.
 `make native-frames-check` rejects native coroutine waits and actor/scene clock
 branches, and runs as part of `make check`.
+
+## Character folders
+
+See [the source layout](../game/characters/README.md). Each character owns its
+`character.c`, private header, move fragments, generated scripts/frame maps and
+reviewed `port.json`. Move helpers remain private to one C11 translation unit.
+The source query and coverage tools follow native fragments while preserving
+actual file/line links and separate generated-code boundaries.

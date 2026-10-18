@@ -27,7 +27,7 @@ python3 tools/compile_retail.py --character liu_kang --audit --strict --summary
 python3 tools/compile_retail.py --character liu_kang --audit --strict --require-generated --summary
 ```
 
-Make discovers all profiles in `tools/ports/`. Every profile participates in
+Make discovers all profiles in `game/characters/*/port.json`. Every profile participates in
 generation, canonical regeneration checks and the generated-only audit. There
 are no character exceptions in the Makefile. Scorpion passes with 70/70 and
 Sub-Zero with 63/63 generated roots; Liu Kang passes with 57/57 generated
@@ -69,7 +69,7 @@ body with a new handwritten timing table merely to make the audit pass.
 
 ## Generation profiles and coverage
 
-`tools/ports/<character>.json` declares generated script roots, output include,
+`game/characters/<character>/port.json` declares generated script roots, output include,
 controller/tagged-return adaptation, integration source, move references,
 entry contexts, stance/weapon/reaction adapters and a reviewed inventory
 fingerprint. `legacy_scripts` remains readable for auditing older profiles, but
@@ -150,7 +150,7 @@ cancelled. Native adapters retain responsibility for physics/object lifetimes.
 
 ## Liu Kang proof and validation
 
-All catalogued Liu Kang VM roots run from `game/generated/liu_kang.inc`:
+All catalogued Liu Kang VM roots run from `game/characters/liu_kang/generated/scripts.inc`:
 normals and jab branches, paired throws and releases, air attacks, weapon draw
 and sword programs, projectiles, flying/bicycle exits, and the fireball/fan/spike
 scene scripts. Native-only attacks and native portions of contact/recovery/scene

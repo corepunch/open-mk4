@@ -459,7 +459,7 @@ def generate(image, entries, character=0, return_to=None, bindings=None, context
         for row in program['instructions']:
             key = instruction_binding(row)
             binding = table.get(key[0]) if key else None
-            if binding and binding.source.startswith('game/c_') and not binding.script_target:
+            if binding and binding.source.startswith('game/characters/') and not binding.script_target:
                 local[binding.symbol] = binding
     for name, binding in sorted(local.items()):
         types = ['Fighter *' if arg == 'fighter' else 'int' for arg in binding.arguments]
@@ -489,7 +489,7 @@ def format_c(source):
         formatter = result.stdout.strip() if result.returncode == 0 else None
     if not formatter:
         raise ValueError('clang-format is required for canonical generated C')
-    command = [formatter, '--style=file', '--assume-filename=' + str(root / 'game/generated/script.inc')]
+    command = [formatter, '--style=file', '--assume-filename=' + str(root / 'game/characters/generated.inc')]
     # clang-format can move a trailing comment out of an empty labeled block
     # on its first pass and then reflow that block on its second pass. Generated
     # output must match the repository's in-place formatter, so use its stable

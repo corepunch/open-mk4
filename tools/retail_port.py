@@ -1,10 +1,11 @@
 """Bounded source extraction and operand ledger for translating a move to C.
 
-Existing ports are source excerpts, never automatic decompilation. Only same-file
+Existing ports are source excerpts, never automatic decompilation. Only same-translation-unit
 function references are expanded. Native literals retain instruction provenance;
 no operand is called Q16, damage, action or a host pointer just from its number.
 """
 from collections import deque
+from c_source import read_source, source_files, function_source
 import re
 
 from character_catalog import moves_for, character_name
@@ -39,35 +40,35 @@ SPECIFIC = {
         'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': 'sonya_sidestep',
         'air_throw': 'sonya_air_throw', 'victory': 'enter_victory', 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
     3: {
-        'jab': ('game/generated/liu_kang.inc', 'retail_script_004e62f0'),
-        'high_kick': ('game/generated/liu_kang.inc', 'retail_script_004e6c90'),
-        'low_kick': ('game/generated/liu_kang.inc', 'retail_script_004e6d08'),
-        'uppercut': ('game/generated/liu_kang.inc', 'retail_script_004e62a0'),
-        'sweep': ('game/generated/liu_kang.inc', 'retail_script_004e67d8'),
-        'roundhouse': ('game/generated/liu_kang.inc', 'retail_script_004e6e90'),
-        'close_hp': ('game/generated/liu_kang.inc', 'retail_script_004e61e0'),
-        'combo_hp': ('game/generated/liu_kang.inc', 'retail_script_004e69b0'),
-        'close_hk': ('game/generated/liu_kang.inc', 'retail_script_004e6190'),
-        'crouch_lk': ('game/generated/liu_kang.inc', 'retail_script_004e6158'),
-        'crouch_hk': ('game/generated/liu_kang.inc', 'retail_script_004e60b8'),
-        'air_hp': ('game/generated/liu_kang.inc', 'retail_script_004e6658'),
-        'air_lp': ('game/generated/liu_kang.inc', 'retail_script_004e6710'),
-        'air_kick': ('game/generated/liu_kang.inc', 'retail_script_004e6df0'),
-        'air_diagonal_hk': ('game/generated/liu_kang.inc', 'retail_script_004e6500'),
-        'air_diagonal_lk': ('game/generated/liu_kang.inc', 'retail_script_004e63d8'),
-        'lp_throw': ('game/generated/liu_kang.inc', 'retail_script_004de798'),
-        'lk_throw': ('game/generated/liu_kang.inc', 'retail_script_004de3b0'),
-        'bicycle_kick': ('game/generated/liu_kang.inc', 'retail_script_004e8610'),
-        'flying_kick': ('game/generated/liu_kang.inc', 'retail_script_004e86a8'),
-        'high_fireball': ('game/generated/liu_kang.inc', 'retail_script_004ed6c0'),
-        'low_fireball': ('game/generated/liu_kang.inc', 'retail_script_004ed678'),
-        'air_fireball': ('game/generated/liu_kang.inc', 'retail_script_004ed6f8'),
-        'sword_hp': ('game/generated/liu_kang.inc', 'retail_script_004ec680'),
-        'sword_back_lp': ('game/generated/liu_kang.inc', 'retail_script_004ec7f0'),
-        'draw_weapon': ('game/generated/liu_kang.inc', 'retail_script_004e62c0'),
-        'fatality_2': ('game/generated/liu_kang.inc', 'retail_script_004dfff8'),
-        'fan_fatality': ('game/generated/liu_kang.inc', 'retail_script_004e0118'),
-        'spike_fatality': ('game/generated/liu_kang.inc', 'retail_script_004e6950'),
+        'jab': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e62f0'),
+        'high_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6c90'),
+        'low_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6d08'),
+        'uppercut': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e62a0'),
+        'sweep': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e67d8'),
+        'roundhouse': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6e90'),
+        'close_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e61e0'),
+        'combo_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e69b0'),
+        'close_hk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6190'),
+        'crouch_lk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6158'),
+        'crouch_hk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e60b8'),
+        'air_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6658'),
+        'air_lp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6710'),
+        'air_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6df0'),
+        'air_diagonal_hk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6500'),
+        'air_diagonal_lk': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e63d8'),
+        'lp_throw': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004de798'),
+        'lk_throw': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004de3b0'),
+        'bicycle_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e8610'),
+        'flying_kick': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e86a8'),
+        'high_fireball': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ed6c0'),
+        'low_fireball': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ed678'),
+        'air_fireball': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ed6f8'),
+        'sword_hp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ec680'),
+        'sword_back_lp': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004ec7f0'),
+        'draw_weapon': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e62c0'),
+        'fatality_2': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004dfff8'),
+        'fan_fatality': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e0118'),
+        'spike_fatality': ('game/characters/liu_kang/generated/scripts.inc', 'retail_script_004e6950'),
         'fatality_1': 'liu_kang_first_fatality',
         'sidestep': 'liu_kang_sidestep',
         'sword_lp': 'sword_lp',
@@ -85,7 +86,7 @@ SPECIFIC = {
 for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub_zero')):
     for _name, _move in moves_for(_character).items():
         if _move['scripts'] and (_character not in (1, 2) or _name not in SPECIFIC[_character]):
-            SPECIFIC[_character][_name] = ('game/generated/%s.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
+            SPECIFIC[_character][_name] = ('game/characters/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
 
 
 PORT_NOTES = {
@@ -113,13 +114,13 @@ def port_entry(character, name):
     entry = SPECIFIC[character].get(name, ENTRIES.get(name))
     if isinstance(entry, tuple):
         return entry
-    return ('game/c_%s.c' % c, entry.format(c=c)) if entry else None
+    return ('game/characters/%s/character.c' % c, entry.format(c=c)) if entry else None
 
 
 def source_closure(port):
-    """Lexical same-file references, including callback arguments; no C call-graph claim."""
+    """Lexical same-translation-unit references, including callback arguments; no C call-graph claim."""
     path, root = port
-    source = (ROOT / path).read_text()
+    source = read_source(ROOT / path)
     masked = masked_c(source)
     definitions = {m[1] for m in re.finditer(r'^[A-Za-z_][\w* \t]*\b(\w+)\s*\([^;{}]*\)\s*\{', masked, re.M)}
     pending, found = deque([root]), {}
@@ -137,12 +138,13 @@ def source_closure(port):
 def source_rows(port, limit):
     path, entry = port
     found = source_closure(port)
-    rows = ['', '## Existing engine C — entry and nested fiber helpers', '',
-            'Read from the current workspace, not decompiled x86. Same-file function references (including callbacks) are expanded.',
+    rows = ['', '## Existing engine C — entry and local helpers', '',
+            'Read from the current workspace, not decompiled x86. Same-translation-unit function references (including callbacks) are expanded.',
             'These are review/extraction fragments: retain their supporting data/macros and engine APIs; they are not a standalone translation unit.', '']
     remaining = limit
     for name, (line, code) in found.items():
-        rows.append('- [%s](%s:%d).' % (name, ROOT / path, line))
+        actual, line, _ = function_source(path, name)
+        rows.append('- [%s](%s:%d).' % (name, ROOT / actual, line))
         count = len(code.splitlines())
         if count <= remaining:
             rows += ['', '```c', code, '```', '']
@@ -152,14 +154,15 @@ def source_rows(port, limit):
     # Supporting data are navigation links: include exact definitions, not guesses
     # at C initializer types or macro expansion. Do not recursively expand tables.
     used = set(re.findall(r'\b\w+\b', masked_c('\n'.join(code for _, code in found.values()))))
-    source = (ROOT / path).read_text()
-    masked = masked_c(source)
-    data = [(m[1], masked.count('\n', 0, m.start()) + 1) for m in
-            re.finditer(r'^static const [^;={}]+?\b(\w+)\s*(?:\[[^;={}]*\])?\s*=', masked, re.M) if m[1] in used]
+    data = []
+    for actual in source_files(ROOT / path):
+        masked = masked_c(actual.read_text())
+        data.extend((m[1], actual, masked.count('\n', 0, m.start()) + 1) for m in
+                    re.finditer(r'^static const [^;={}]+?\b(\w+)\s*(?:\[[^;={}]*\])?\s*=', masked, re.M) if m[1] in used)
     rows += ['### Supporting local data', '']
-    rows += ['- [%s](%s:%d).' % (name, ROOT / path, line) for name, line in data]
+    rows += ['- [%s](%s:%d).' % (name, actual, line) for name, actual, line in data]
     if not data:
-        rows.append('No direct same-file const definitions referenced.')
+        rows.append('No direct local const definitions referenced.')
     rows += ['', 'Engine calls and dynamically selected weapon/button callbacks remain explicit source boundaries. '
              'Use `--c` for retail control flow and helper contracts; source references are lexical navigation, not exhaustive C data flow.']
     return rows

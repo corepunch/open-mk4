@@ -1,0 +1,2309 @@
+{
+  "schema": 1,
+  "return_to": "fighter_ready",
+  "generated_scripts": {
+    "0x4de2f8": [
+      {
+        "pc": "0x4de2f8",
+        "words": [
+          "0x4f000004"
+        ]
+      },
+      {
+        "pc": "0x4de2fc",
+        "words": [
+          "0xe000000",
+          "0x13ed36"
+        ]
+      },
+      {
+        "pc": "0x4de304",
+        "words": [
+          "0xf000000",
+          "0x13ebce"
+        ]
+      },
+      {
+        "pc": "0x4de30c",
+        "words": [
+          "0x4b000012"
+        ]
+      },
+      {
+        "pc": "0x4de310",
+        "words": [
+          "0x32000000",
+          "0x42bdf0"
+        ]
+      }
+    ],
+    "0x4de318": [
+      {
+        "pc": "0x4de318",
+        "words": [
+          "0x4b00002a"
+        ]
+      },
+      {
+        "pc": "0x4de31c",
+        "words": [
+          "0x32000000",
+          "0x42be00"
+        ]
+      }
+    ],
+    "0x4de328": [
+      {
+        "pc": "0x4de328",
+        "words": [
+          "0x63000000",
+          "0x2e14"
+        ]
+      },
+      {
+        "pc": "0x4de330",
+        "words": [
+          "0x6e000000"
+        ]
+      },
+      {
+        "pc": "0x4de334",
+        "words": [
+          "0x20000024"
+        ]
+      },
+      {
+        "pc": "0x4de338",
+        "words": [
+          "0x6b000008"
+        ]
+      },
+      {
+        "pc": "0x4de33c",
+        "words": [
+          "0x2a000000"
+        ]
+      },
+      {
+        "pc": "0x4de340",
+        "words": [
+          "0x4b000041"
+        ]
+      },
+      {
+        "pc": "0x4de344",
+        "words": [
+          "0x38000000",
+          "0x4913a0"
+        ]
+      },
+      {
+        "pc": "0x4de34c",
+        "words": [
+          "0x1e00004d"
+        ]
+      },
+      {
+        "pc": "0x4de350",
+        "words": [
+          "0x32000000",
+          "0x42be10"
+        ]
+      }
+    ],
+    "0x4de798": [
+      {
+        "pc": "0x4de608",
+        "words": [
+          "0x32000000",
+          "0x42cb80"
+        ]
+      },
+      {
+        "pc": "0x4de798",
+        "words": [
+          "0x2b000007"
+        ]
+      },
+      {
+        "pc": "0x4de79c",
+        "words": [
+          "0x3c000000",
+          "0x1379b9",
+          "0x137a16",
+          "0x137a18",
+          "0x13799e",
+          "0x1379ae",
+          "0x137982",
+          "0x1379b9",
+          "0x137a16",
+          "0x137a18",
+          "0x13799e",
+          "0x1379ae",
+          "0x137982",
+          "0x137a16",
+          "0x1379f7",
+          "0x1379b9",
+          "0x1379d8"
+        ]
+      }
+    ],
+    "0x4e0118": [
+      {
+        "pc": "0x4e0118",
+        "words": [
+          "0x47000245",
+          "0x13f03c"
+        ]
+      },
+      {
+        "pc": "0x4e0120",
+        "words": [
+          "0x32000000",
+          "0x43d460"
+        ]
+      }
+    ],
+    "0x4e0138": [
+      {
+        "pc": "0x4e0138",
+        "words": [
+          "0x500004d"
+        ]
+      },
+      {
+        "pc": "0x4e013c",
+        "words": [
+          "0x12000045"
+        ]
+      },
+      {
+        "pc": "0x4e0140",
+        "words": [
+          "0x32000000",
+          "0x43d530"
+        ]
+      }
+    ],
+    "0x4e0148": [
+      {
+        "pc": "0x4e0148",
+        "words": [
+          "0x1200004e"
+        ]
+      },
+      {
+        "pc": "0x4e014c",
+        "words": [
+          "0x500006b"
+        ]
+      },
+      {
+        "pc": "0x4e0150",
+        "words": [
+          "0x32000000",
+          "0x43d6f0"
+        ]
+      }
+    ],
+    "0x4e0158": [
+      {
+        "pc": "0x4e0158",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e015c",
+        "words": [
+          "0x48000200",
+          "0x13f033"
+        ]
+      },
+      {
+        "pc": "0x4e0164",
+        "words": [
+          "0x12000012"
+        ]
+      },
+      {
+        "pc": "0x4e0168",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e016c",
+        "words": [
+          "0x33000000",
+          "0x138059"
+        ]
+      }
+    ],
+    "0x4e0188": [
+      {
+        "pc": "0x4e0188",
+        "words": [
+          "0x47000245",
+          "0x13f03f"
+        ]
+      },
+      {
+        "pc": "0x4e0190",
+        "words": [
+          "0x500004d"
+        ]
+      },
+      {
+        "pc": "0x4e0194",
+        "words": [
+          "0x12000045"
+        ]
+      },
+      {
+        "pc": "0x4e0198",
+        "words": [
+          "0x33000000",
+          "0x138064"
+        ]
+      }
+    ],
+    "0x4e01a0": [
+      {
+        "pc": "0x4e01a0",
+        "words": [
+          "0x1200004e"
+        ]
+      },
+      {
+        "pc": "0x4e01a4",
+        "words": [
+          "0x500006b"
+        ]
+      },
+      {
+        "pc": "0x4e01a8",
+        "words": [
+          "0x32000000",
+          "0x43db50"
+        ]
+      }
+    ],
+    "0x4e5c70": [
+      {
+        "pc": "0x4e5c70",
+        "words": [
+          "0x6000002"
+        ]
+      },
+      {
+        "pc": "0x4e5c74",
+        "words": [
+          "0x24000000"
+        ]
+      },
+      {
+        "pc": "0x4e5c78",
+        "words": [
+          "0x7000000"
+        ]
+      },
+      {
+        "pc": "0x4e5c7c",
+        "words": [
+          "0x3f000000"
+        ]
+      }
+    ],
+    "0x4e5ca0": [
+      {
+        "pc": "0x4e5c80",
+        "words": [
+          "0x1f000000",
+          "0x2"
+        ]
+      },
+      {
+        "pc": "0x4e5c88",
+        "words": [
+          "0x20000001"
+        ]
+      },
+      {
+        "pc": "0x4e5c8c",
+        "words": [
+          "0x4700020a",
+          "0x13ec34"
+        ]
+      },
+      {
+        "pc": "0x4e5c94",
+        "words": [
+          "0x32000000",
+          "0x46a790"
+        ]
+      },
+      {
+        "pc": "0x4e5ca0",
+        "words": [
+          "0x3c000000",
+          "0x139b24",
+          "0x139720",
+          "0x139738",
+          "0x139b24",
+          "0x139720",
+          "0x139738",
+          "0x139b24",
+          "0x139b24",
+          "0x139720",
+          "0x139b24",
+          "0x139b24",
+          "0x139720",
+          "0x139738",
+          "0x139b24",
+          "0x139720",
+          "0x139b24"
+        ]
+      }
+    ],
+    "0x4e5d90": [
+      {
+        "pc": "0x4e5d90",
+        "words": [
+          "0x3c000000",
+          "0x139b42",
+          "0x139b68",
+          "0x139b2c",
+          "0x139b42",
+          "0x139b68",
+          "0x139b2c",
+          "0x139b42",
+          "0x139b42",
+          "0x139b68",
+          "0x139b2c",
+          "0x139b42",
+          "0x139b68",
+          "0x139b2c",
+          "0x139b42",
+          "0x139b68",
+          "0x139b42"
+        ]
+      },
+      {
+        "pc": "0x4e6da0",
+        "words": [
+          "0x35000000",
+          "0x46a950"
+        ]
+      },
+      {
+        "pc": "0x4e6da8",
+        "words": [
+          "0x1f000000",
+          "0x7"
+        ]
+      },
+      {
+        "pc": "0x4e6db0",
+        "words": [
+          "0x20000001"
+        ]
+      },
+      {
+        "pc": "0x4e6db4",
+        "words": [
+          "0xf000000",
+          "0x13ec31"
+        ]
+      },
+      {
+        "pc": "0x4e6dbc",
+        "words": [
+          "0x47000006"
+        ]
+      },
+      {
+        "pc": "0x4e6dc0",
+        "words": [
+          "0x35000000",
+          "0x46a970"
+        ]
+      },
+      {
+        "pc": "0x4e6dc8",
+        "words": [
+          "0x500000b"
+        ]
+      },
+      {
+        "pc": "0x4e6dcc",
+        "words": [
+          "0x35000000",
+          "0x46a950"
+        ]
+      },
+      {
+        "pc": "0x4e6dd4",
+        "words": [
+          "0x51000007"
+        ]
+      },
+      {
+        "pc": "0x4e6dd8",
+        "words": [
+          "0x29000000"
+        ]
+      },
+      {
+        "pc": "0x4e6ddc",
+        "words": [
+          "0x37004002"
+        ]
+      },
+      {
+        "pc": "0x4e6de0",
+        "words": [
+          "0x4000002"
+        ]
+      },
+      {
+        "pc": "0x4e6de4",
+        "words": [
+          "0x24000000"
+        ]
+      },
+      {
+        "pc": "0x4e6de8",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e6dec",
+        "words": [
+          "0x3f000000"
+        ]
+      }
+    ],
+    "0x4e5e28": [
+      {
+        "pc": "0x4e5e28",
+        "words": [
+          "0x4f000017"
+        ]
+      },
+      {
+        "pc": "0x4e5e2c",
+        "words": [
+          "0x2500000d"
+        ]
+      },
+      {
+        "pc": "0x4e5e30",
+        "words": [
+          "0xe000000",
+          "0x13edbd"
+        ]
+      },
+      {
+        "pc": "0x4e5e38",
+        "words": [
+          "0xf000000",
+          "0x13ec55"
+        ]
+      },
+      {
+        "pc": "0x4e5e40",
+        "words": [
+          "0x4b00001c"
+        ]
+      },
+      {
+        "pc": "0x4e5e44",
+        "words": [
+          "0x32000000",
+          "0x46aae0"
+        ]
+      }
+    ],
+    "0x4e5e50": [
+      {
+        "pc": "0x4e5e50",
+        "words": [
+          "0x4000001"
+        ]
+      },
+      {
+        "pc": "0x4e5e54",
+        "words": [
+          "0x58000000",
+          "0x7ae",
+          "0xffffe667",
+          "0x28f"
+        ]
+      },
+      {
+        "pc": "0x4e5e64",
+        "words": [
+          "0x3400000a"
+        ]
+      },
+      {
+        "pc": "0x4e5e68",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e5e6c",
+        "words": [
+          "0x60000000"
+        ]
+      },
+      {
+        "pc": "0x4e5e70",
+        "words": [
+          "0x32000000",
+          "0x46ab20"
+        ]
+      }
+    ],
+    "0x4e61f8": [
+      {
+        "pc": "0x4e61f8",
+        "words": [
+          "0x3c000000",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x139b7c",
+          "0x13988e",
+          "0x13988e"
+        ]
+      },
+      {
+        "pc": "0x4e6df0",
+        "words": [
+          "0x1f000000",
+          "0x27"
+        ]
+      },
+      {
+        "pc": "0x4e6df8",
+        "words": [
+          "0xf000000",
+          "0x13ec16"
+        ]
+      },
+      {
+        "pc": "0x4e6e00",
+        "words": [
+          "0x12000004"
+        ]
+      },
+      {
+        "pc": "0x4e6e04",
+        "words": [
+          "0x5000007"
+        ]
+      },
+      {
+        "pc": "0x4e6e08",
+        "words": [
+          "0x2000001f"
+        ]
+      },
+      {
+        "pc": "0x4e6e0c",
+        "words": [
+          "0x500000a"
+        ]
+      },
+      {
+        "pc": "0x4e6e10",
+        "words": [
+          "0x32000000",
+          "0x46c970"
+        ]
+      }
+    ],
+    "0x4e62a0": [
+      {
+        "pc": "0x4e62a0",
+        "words": [
+          "0x1f000000",
+          "0x102"
+        ]
+      },
+      {
+        "pc": "0x4e62a8",
+        "words": [
+          "0x47000205",
+          "0x13eece"
+        ]
+      },
+      {
+        "pc": "0x4e62b0",
+        "words": [
+          "0x2700001c"
+        ]
+      },
+      {
+        "pc": "0x4e62b4",
+        "words": [
+          "0x32000000",
+          "0x46cde0"
+        ]
+      }
+    ],
+    "0x4e62c0": [
+      {
+        "pc": "0x4e62c0",
+        "words": [
+          "0x2c000000"
+        ]
+      },
+      {
+        "pc": "0x4e62c4",
+        "words": [
+          "0x2000016",
+          "0x13ee3b"
+        ]
+      },
+      {
+        "pc": "0x4e62cc",
+        "words": [
+          "0x32000000",
+          "0x46d260"
+        ]
+      }
+    ],
+    "0x4e62d8": [
+      {
+        "pc": "0x4e62d8",
+        "words": [
+          "0x400000d"
+        ]
+      },
+      {
+        "pc": "0x4e62dc",
+        "words": [
+          "0x27000012"
+        ]
+      },
+      {
+        "pc": "0x4e62e0",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e62e4",
+        "words": [
+          "0x32000000",
+          "0x470420"
+        ]
+      }
+    ],
+    "0x4e62f0": [
+      {
+        "pc": "0x4e62f0",
+        "words": [
+          "0x35000000",
+          "0x46de60"
+        ]
+      },
+      {
+        "pc": "0x4e62f8",
+        "words": [
+          "0x2000000a"
+        ]
+      },
+      {
+        "pc": "0x4e62fc",
+        "words": [
+          "0x2000008",
+          "0x13eed1"
+        ]
+      },
+      {
+        "pc": "0x4e6304",
+        "words": [
+          "0x35000000",
+          "0x46ddd0"
+        ]
+      },
+      {
+        "pc": "0x4e630c",
+        "words": [
+          "0x34000001"
+        ]
+      },
+      {
+        "pc": "0x4e6310",
+        "words": [
+          "0x36000000",
+          "0x46de60",
+          "0x1398e8"
+        ]
+      },
+      {
+        "pc": "0x4e631c",
+        "words": [
+          "0x2000000a"
+        ]
+      },
+      {
+        "pc": "0x4e6320",
+        "words": [
+          "0xf000000",
+          "0x13eed4"
+        ]
+      },
+      {
+        "pc": "0x4e6328",
+        "words": [
+          "0x32000000",
+          "0x46dd00"
+        ]
+      },
+      {
+        "pc": "0x4e63a0",
+        "words": [
+          "0x32000000",
+          "0x46dd20"
+        ]
+      }
+    ],
+    "0x4e6330": [
+      {
+        "pc": "0x4e6330",
+        "words": [
+          "0x12000000"
+        ]
+      },
+      {
+        "pc": "0x4e6334",
+        "words": [
+          "0x400000a"
+        ]
+      },
+      {
+        "pc": "0x4e6338",
+        "words": [
+          "0x35000000",
+          "0x46ddd0"
+        ]
+      },
+      {
+        "pc": "0x4e6340",
+        "words": [
+          "0x36000000",
+          "0x46de60",
+          "0x1398f2"
+        ]
+      },
+      {
+        "pc": "0x4e634c",
+        "words": [
+          "0x2000000a"
+        ]
+      },
+      {
+        "pc": "0x4e6350",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e6354",
+        "words": [
+          "0x32000000",
+          "0x46dd10"
+        ]
+      },
+      {
+        "pc": "0x4e63c8",
+        "words": [
+          "0x29000000"
+        ]
+      },
+      {
+        "pc": "0x4e63cc",
+        "words": [
+          "0x4000003"
+        ]
+      },
+      {
+        "pc": "0x4e63d0",
+        "words": [
+          "0x3f000000"
+        ]
+      }
+    ],
+    "0x4e6360": [
+      {
+        "pc": "0x4e634c",
+        "words": [
+          "0x2000000a"
+        ]
+      },
+      {
+        "pc": "0x4e6350",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e6354",
+        "words": [
+          "0x32000000",
+          "0x46dd10"
+        ]
+      },
+      {
+        "pc": "0x4e6360",
+        "words": [
+          "0x34000001"
+        ]
+      },
+      {
+        "pc": "0x4e6364",
+        "words": [
+          "0x35000000",
+          "0x46ddd0"
+        ]
+      },
+      {
+        "pc": "0x4e636c",
+        "words": [
+          "0x36000000",
+          "0x46de60",
+          "0x1398e8"
+        ]
+      },
+      {
+        "pc": "0x4e6378",
+        "words": [
+          "0x2000000a"
+        ]
+      },
+      {
+        "pc": "0x4e637c",
+        "words": [
+          "0x200000a",
+          "0x13eed4"
+        ]
+      },
+      {
+        "pc": "0x4e6384",
+        "words": [
+          "0x35000000",
+          "0x46ddd0"
+        ]
+      },
+      {
+        "pc": "0x4e638c",
+        "words": [
+          "0x36000000",
+          "0x46de60",
+          "0x1398f2"
+        ]
+      },
+      {
+        "pc": "0x4e6398",
+        "words": [
+          "0x33000000",
+          "0x1398d3"
+        ]
+      },
+      {
+        "pc": "0x4e63a0",
+        "words": [
+          "0x32000000",
+          "0x46dd20"
+        ]
+      },
+      {
+        "pc": "0x4e63c8",
+        "words": [
+          "0x29000000"
+        ]
+      },
+      {
+        "pc": "0x4e63cc",
+        "words": [
+          "0x4000003"
+        ]
+      },
+      {
+        "pc": "0x4e63d0",
+        "words": [
+          "0x3f000000"
+        ]
+      }
+    ],
+    "0x4e63b0": [
+      {
+        "pc": "0x4e63b0",
+        "words": [
+          "0x29000000"
+        ]
+      },
+      {
+        "pc": "0x4e63b4",
+        "words": [
+          "0xf000009",
+          "0x13eed1"
+        ]
+      },
+      {
+        "pc": "0x4e63bc",
+        "words": [
+          "0x4d000011"
+        ]
+      },
+      {
+        "pc": "0x4e63c0",
+        "words": [
+          "0x6a000000"
+        ]
+      },
+      {
+        "pc": "0x4e63c4",
+        "words": [
+          "0x3f000000"
+        ]
+      }
+    ],
+    "0x4e63d8": [
+      {
+        "pc": "0x4e63d8",
+        "words": [
+          "0x20000019"
+        ]
+      },
+      {
+        "pc": "0x4e63dc",
+        "words": [
+          "0x3c000000",
+          "0x139907",
+          "0x139b86",
+          "0x139b8c",
+          "0x139907",
+          "0x139b86",
+          "0x139b8c",
+          "0x139907",
+          "0x139b86",
+          "0x139b8c",
+          "0x139907",
+          "0x139b86",
+          "0x139b8c",
+          "0x139907",
+          "0x139b86",
+          "0x139b8c",
+          "0x139b8c"
+        ]
+      },
+      {
+        "pc": "0x4e6e30",
+        "words": [
+          "0x1000000",
+          "0x13ec13"
+        ]
+      },
+      {
+        "pc": "0x4e6e38",
+        "words": [
+          "0x1f000000",
+          "0x1d"
+        ]
+      },
+      {
+        "pc": "0x4e6e40",
+        "words": [
+          "0x32000000",
+          "0x46e150"
+        ]
+      }
+    ],
+    "0x4e6500": [
+      {
+        "pc": "0x4e6500",
+        "words": [
+          "0x20000019"
+        ]
+      },
+      {
+        "pc": "0x4e6504",
+        "words": [
+          "0x3c000000",
+          "0x139951",
+          "0x139b92",
+          "0x139b96",
+          "0x139951",
+          "0x139b92",
+          "0x139b96",
+          "0x139951",
+          "0x139b92",
+          "0x139b96",
+          "0x139951",
+          "0x139b92",
+          "0x139b96",
+          "0x139951",
+          "0x139b92",
+          "0x139b96",
+          "0x139b92"
+        ]
+      },
+      {
+        "pc": "0x4e6e58",
+        "words": [
+          "0x1f000000",
+          "0x20"
+        ]
+      },
+      {
+        "pc": "0x4e6e60",
+        "words": [
+          "0x32000000",
+          "0x46e5c0"
+        ]
+      }
+    ],
+    "0x4e6658": [
+      {
+        "pc": "0x4e6658",
+        "words": [
+          "0x1f000000",
+          "0x104"
+        ]
+      },
+      {
+        "pc": "0x4e6660",
+        "words": [
+          "0x20000019"
+        ]
+      },
+      {
+        "pc": "0x4e6664",
+        "words": [
+          "0x32000000",
+          "0x46e730"
+        ]
+      }
+    ],
+    "0x4e6710": [
+      {
+        "pc": "0x4e6710",
+        "words": [
+          "0x1f000000",
+          "0x105"
+        ]
+      },
+      {
+        "pc": "0x4e6718",
+        "words": [
+          "0x20000019"
+        ]
+      },
+      {
+        "pc": "0x4e671c",
+        "words": [
+          "0x32000000",
+          "0x46eea0"
+        ]
+      }
+    ],
+    "0x4e6798": [
+      {
+        "pc": "0x4e6798",
+        "words": [
+          "0x3c000000",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x1399f6",
+          "0x139b9a",
+          "0x139b9a"
+        ]
+      },
+      {
+        "pc": "0x4e67d8",
+        "words": [
+          "0x139b9a"
+        ]
+      },
+      {
+        "pc": "0x4e67dc",
+        "words": [
+          "0x1f000000",
+          "0x24"
+        ]
+      },
+      {
+        "pc": "0x4e67e4",
+        "words": [
+          "0xf000000",
+          "0x13ec19"
+        ]
+      },
+      {
+        "pc": "0x4e67ec",
+        "words": [
+          "0x4d00000a"
+        ]
+      },
+      {
+        "pc": "0x4e67f0",
+        "words": [
+          "0x200000af"
+        ]
+      },
+      {
+        "pc": "0x4e67f4",
+        "words": [
+          "0x5000016"
+        ]
+      },
+      {
+        "pc": "0x4e67f8",
+        "words": [
+          "0x32000000",
+          "0x46efd0"
+        ]
+      }
+    ],
+    "0x4e6800": [
+      {
+        "pc": "0x4e6800",
+        "words": [
+          "0x3c000000",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139ba4",
+          "0x139a10",
+          "0x139a10"
+        ]
+      },
+      {
+        "pc": "0x4e6e90",
+        "words": [
+          "0x1f000000",
+          "0x22"
+        ]
+      },
+      {
+        "pc": "0x4e6e98",
+        "words": [
+          "0xf000000",
+          "0x13ec1f"
+        ]
+      },
+      {
+        "pc": "0x4e6ea0",
+        "words": [
+          "0x32000000",
+          "0x46f390"
+        ]
+      }
+    ],
+    "0x4e6860": [
+      {
+        "pc": "0x4e6860",
+        "words": [
+          "0x4d00000c"
+        ]
+      },
+      {
+        "pc": "0x4e6864",
+        "words": [
+          "0x2700001c"
+        ]
+      },
+      {
+        "pc": "0x4e6868",
+        "words": [
+          "0x4d000015"
+        ]
+      },
+      {
+        "pc": "0x4e686c",
+        "words": [
+          "0x32000000",
+          "0x46f270"
+        ]
+      }
+    ],
+    "0x4e6878": [
+      {
+        "pc": "0x4e6878",
+        "words": [
+          "0x4d00000c"
+        ]
+      },
+      {
+        "pc": "0x4e687c",
+        "words": [
+          "0x2700001c"
+        ]
+      },
+      {
+        "pc": "0x4e6880",
+        "words": [
+          "0x5000015"
+        ]
+      },
+      {
+        "pc": "0x4e6884",
+        "words": [
+          "0x32000000",
+          "0x46f270"
+        ]
+      }
+    ],
+    "0x4e6950": [
+      {
+        "pc": "0x4e6950",
+        "words": [
+          "0x3400001c"
+        ]
+      },
+      {
+        "pc": "0x4e6954",
+        "words": [
+          "0x47000205",
+          "0x13eece"
+        ]
+      },
+      {
+        "pc": "0x4e695c",
+        "words": [
+          "0x2700001c"
+        ]
+      },
+      {
+        "pc": "0x4e6960",
+        "words": [
+          "0x52000012"
+        ]
+      },
+      {
+        "pc": "0x4e6964",
+        "words": [
+          "0x32000000",
+          "0x467fc0"
+        ]
+      }
+    ],
+    "0x4e8210": [
+      {
+        "pc": "0x4e8210",
+        "words": [
+          "0x2700003c"
+        ]
+      },
+      {
+        "pc": "0x4e8214",
+        "words": [
+          "0x58000000",
+          "0x2e14",
+          "0xffffe667",
+          "0x41"
+        ]
+      },
+      {
+        "pc": "0x4e8224",
+        "words": [
+          "0x47000209",
+          "0x13eedd"
+        ]
+      },
+      {
+        "pc": "0x4e822c",
+        "words": [
+          "0x32000000",
+          "0x47bd40"
+        ]
+      }
+    ],
+    "0x4e8238": [
+      {
+        "pc": "0x4e8238",
+        "words": [
+          "0xf"
+        ]
+      },
+      {
+        "pc": "0x4e823c",
+        "words": [
+          "0x10"
+        ]
+      },
+      {
+        "pc": "0x4e8240",
+        "words": [
+          "0x48d450"
+        ]
+      },
+      {
+        "pc": "0x4e8244",
+        "words": [
+          "0x47be50"
+        ]
+      },
+      {
+        "pc": "0x4e8248",
+        "words": [
+          "0x47bed0"
+        ]
+      },
+      {
+        "pc": "0x4e824c",
+        "words": [
+          "0x47bd60"
+        ]
+      },
+      {
+        "pc": "0x4e8250",
+        "words": [
+          "0x47bf50"
+        ]
+      },
+      {
+        "pc": "0x4e8254",
+        "words": [
+          "0x0"
+        ]
+      },
+      {
+        "pc": "0x4e8258",
+        "words": [
+          "0x27000039"
+        ]
+      },
+      {
+        "pc": "0x4e825c",
+        "words": [
+          "0x58000000",
+          "0x1eb8",
+          "0xf5c",
+          "0x41"
+        ]
+      },
+      {
+        "pc": "0x4e826c",
+        "words": [
+          "0x48000200",
+          "0x13ec0d"
+        ]
+      },
+      {
+        "pc": "0x4e8274",
+        "words": [
+          "0x32000000",
+          "0x47bf90"
+        ]
+      }
+    ],
+    "0x4e8320": [
+      {
+        "pc": "0x4e8320",
+        "words": [
+          "0x25000017"
+        ]
+      },
+      {
+        "pc": "0x4e8324",
+        "words": [
+          "0x48000200",
+          "0x13eb62"
+        ]
+      },
+      {
+        "pc": "0x4e832c",
+        "words": [
+          "0x32000000",
+          "0x47c580"
+        ]
+      }
+    ],
+    "0x4e8358": [
+      {
+        "pc": "0x4e8358",
+        "words": [
+          "0x20000001"
+        ]
+      },
+      {
+        "pc": "0x4e835c",
+        "words": [
+          "0x47000209",
+          "0x13eb5f"
+        ]
+      },
+      {
+        "pc": "0x4e8364",
+        "words": [
+          "0x32000000",
+          "0x47cc50"
+        ]
+      }
+    ],
+    "0x4e8870": [
+      {
+        "pc": "0x4e8870",
+        "words": [
+          "0x2500003b"
+        ]
+      },
+      {
+        "pc": "0x4e8874",
+        "words": [
+          "0xf000000",
+          "0x13f1d4"
+        ]
+      },
+      {
+        "pc": "0x4e887c",
+        "words": [
+          "0x45000000",
+          "0x13a238"
+        ]
+      },
+      {
+        "pc": "0x4e8884",
+        "words": [
+          "0x4d00001a"
+        ]
+      },
+      {
+        "pc": "0x4e8888",
+        "words": [
+          "0x2700001f"
+        ]
+      },
+      {
+        "pc": "0x4e888c",
+        "words": [
+          "0x5f000000",
+          "0x2666"
+        ]
+      },
+      {
+        "pc": "0x4e8894",
+        "words": [
+          "0x500001d"
+        ]
+      },
+      {
+        "pc": "0x4e8898",
+        "words": [
+          "0x32000000",
+          "0x478e20"
+        ]
+      },
+      {
+        "pc": "0x4e88e0",
+        "words": [
+          "0x1200000e"
+        ]
+      },
+      {
+        "pc": "0x4e88e4",
+        "words": [
+          "0x33000000",
+          "0x13a221"
+        ]
+      }
+    ],
+    "0x4e88c8": [
+      {
+        "pc": "0x4e88c8",
+        "words": [
+          "0x25000017"
+        ]
+      },
+      {
+        "pc": "0x4e88cc",
+        "words": [
+          "0xf000000",
+          "0x13eb62"
+        ]
+      },
+      {
+        "pc": "0x4e88d4",
+        "words": [
+          "0x6a000000"
+        ]
+      },
+      {
+        "pc": "0x4e88d8",
+        "words": [
+          "0x32000000",
+          "0x47cc10"
+        ]
+      }
+    ],
+    "0x4e9910": [
+      {
+        "pc": "0x4e9910",
+        "words": [
+          "0x58000000",
+          "0x0",
+          "0x3333",
+          "0x28f"
+        ]
+      },
+      {
+        "pc": "0x4e9920",
+        "words": [
+          "0x60000000"
+        ]
+      },
+      {
+        "pc": "0x4e9924",
+        "words": [
+          "0x28000000"
+        ]
+      },
+      {
+        "pc": "0x4e9928",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e992c",
+        "words": [
+          "0x34000004"
+        ]
+      },
+      {
+        "pc": "0x4e9930",
+        "words": [
+          "0x32000000",
+          "0x484b60"
+        ]
+      }
+    ],
+    "0x4de358": [
+      {
+        "pc": "0x4de358",
+        "words": [
+          "0x3333"
+        ]
+      },
+      {
+        "pc": "0x4de35c",
+        "words": [
+          "0x0"
+        ]
+      },
+      {
+        "pc": "0x4de360",
+        "words": [
+          "0x25000013"
+        ]
+      },
+      {
+        "pc": "0x4de364",
+        "words": [
+          "0xe000000",
+          "0x13ed48"
+        ]
+      },
+      {
+        "pc": "0x4de36c",
+        "words": [
+          "0xf000000",
+          "0x13ebe0"
+        ]
+      },
+      {
+        "pc": "0x4de374",
+        "words": [
+          "0x4b000006"
+        ]
+      },
+      {
+        "pc": "0x4de378",
+        "words": [
+          "0x4b000018"
+        ]
+      },
+      {
+        "pc": "0x4de37c",
+        "words": [
+          "0x4f000003"
+        ]
+      },
+      {
+        "pc": "0x4de380",
+        "words": [
+          "0x4b00002c"
+        ]
+      },
+      {
+        "pc": "0x4de384",
+        "words": [
+          "0x63000000",
+          "0x2e14"
+        ]
+      },
+      {
+        "pc": "0x4de38c",
+        "words": [
+          "0x2a000000"
+        ]
+      },
+      {
+        "pc": "0x4de390",
+        "words": [
+          "0x6e000000"
+        ]
+      },
+      {
+        "pc": "0x4de394",
+        "words": [
+          "0x20000024"
+        ]
+      },
+      {
+        "pc": "0x4de398",
+        "words": [
+          "0x6b000008"
+        ]
+      },
+      {
+        "pc": "0x4de39c",
+        "words": [
+          "0x4b00004b"
+        ]
+      },
+      {
+        "pc": "0x4de3a0",
+        "words": [
+          "0x1e00004e"
+        ]
+      },
+      {
+        "pc": "0x4de3a4",
+        "words": [
+          "0x32000000",
+          "0x42bf00"
+        ]
+      }
+    ],
+    "0x4de610": [
+      {
+        "pc": "0x4de610",
+        "words": [
+          "0x4f00000b"
+        ]
+      },
+      {
+        "pc": "0x4de614",
+        "words": [
+          "0xe000000",
+          "0x13ed39"
+        ]
+      },
+      {
+        "pc": "0x4de61c",
+        "words": [
+          "0xf000000",
+          "0x13ec52"
+        ]
+      },
+      {
+        "pc": "0x4de624",
+        "words": [
+          "0x4b00002e"
+        ]
+      },
+      {
+        "pc": "0x4de628",
+        "words": [
+          "0x4100006d"
+        ]
+      },
+      {
+        "pc": "0x4de62c",
+        "words": [
+          "0x63000000",
+          "0x2e14"
+        ]
+      },
+      {
+        "pc": "0x4de634",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4de638",
+        "words": [
+          "0x32000000",
+          "0x42cbc0"
+        ]
+      }
+    ],
+    "0x4de6b8": [
+      {
+        "pc": "0x4de6b8",
+        "words": [
+          "0x4f000016"
+        ]
+      },
+      {
+        "pc": "0x4de6bc",
+        "words": [
+          "0xe000000",
+          "0x13ed2a"
+        ]
+      },
+      {
+        "pc": "0x4de6c4",
+        "words": [
+          "0xf000000",
+          "0x13ec43"
+        ]
+      },
+      {
+        "pc": "0x4de6cc",
+        "words": [
+          "0x4b000019"
+        ]
+      },
+      {
+        "pc": "0x4de6d0",
+        "words": [
+          "0x41000066"
+        ]
+      },
+      {
+        "pc": "0x4de6d4",
+        "words": [
+          "0x6d000000",
+          "0x1eb8"
+        ]
+      },
+      {
+        "pc": "0x4de6dc",
+        "words": [
+          "0x33000000",
+          "0x137a26"
+        ]
+      },
+      {
+        "pc": "0x4de898",
+        "words": [
+          "0x63000000",
+          "0x2666"
+        ]
+      },
+      {
+        "pc": "0x4de8a0",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4de8a4",
+        "words": [
+          "0x32000000",
+          "0x42ce80"
+        ]
+      }
+    ],
+    "0x4e8390": [
+      {
+        "pc": "0x4e8390",
+        "words": [
+          "0x34000008"
+        ]
+      },
+      {
+        "pc": "0x4e8394",
+        "words": [
+          "0x4a000000"
+        ]
+      },
+      {
+        "pc": "0x4e8398",
+        "words": [
+          "0x32000000",
+          "0x47c580"
+        ]
+      }
+    ]
+  },
+  "entry_contexts": {
+    "0x4de318": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 18
+    },
+    "0x4de328": {
+      "clip": 37,
+      "count": 66,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 42
+    },
+    "0x4e0138": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "return_to": "caller",
+      "sample": 69,
+      "export_frames": true
+    },
+    "0x4e0148": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 69
+    },
+    "0x4e0158": {
+      "clip": 415,
+      "count": 130,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 107
+    },
+    "0x4e01a0": {
+      "clip": 416,
+      "count": 108,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 69
+    },
+    "0x4e5c70": {
+      "clip": 71,
+      "count": 28,
+      "sample": 17,
+      "evidence": "Kai high-kick recovery enters at stored sample 17 of clip 71/28; bounded Kai script 0x4e5ca0 and native contact recovery 0x46a790."
+    },
+    "0x4e5e50": {
+      "clip": 82,
+      "count": 45,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 28
+    },
+    "0x4e6330": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 0
+    },
+    "0x4e6360": {
+      "clip": 295,
+      "count": 19,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 18
+    },
+    "0x4e6860": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "Kai roundhouse startup branches retain clip 64/45 at native chooser 0x46f390; bounded Kai script selection."
+    },
+    "0x4e6878": {
+      "clip": 64,
+      "count": 45,
+      "sample": 0,
+      "evidence": "Kai roundhouse startup branches retain clip 64/45 at native chooser 0x46f390; bounded Kai script selection."
+    },
+    "0x4e9910": {
+      "clip": 202,
+      "count": 45,
+      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
+      "sample": 28
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "sample": 22,
+      "evidence": "Kai draw/equip continuation 0x46d260 resumes at sample 22 of clip 244/49 after 0x4e62c0."
+    },
+    "0x4e8390": {
+      "clip": 9,
+      "count": 66,
+      "sample": 11,
+      "evidence": "47cc50 schedules Kai table-B selector 10 at samples 10, 11 and 11; postlude 47cc70 enters 4e8390 after the same clip has reached sample 11."
+    }
+  },
+  "character": "kai",
+  "output": "game/characters/kai/generated/scripts.inc",
+  "integration_source": "game/characters/kai/character.c",
+  "inventory_sha256": "2802f0686ef4221852bfb1617b93bdf692629695bd05d61c710f1da1da0f58de",
+  "moves": {
+    "air_diagonal_hk": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_air_diagonal_hk",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6500); verified by typed Kai inventory."
+    },
+    "air_diagonal_lk": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_air_diagonal_lk",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e63d8); verified by typed Kai inventory."
+    },
+    "air_hp": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_air_hp",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6658); verified by typed Kai inventory."
+    },
+    "air_kick": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_air_kick",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e61f8); verified by typed Kai inventory."
+    },
+    "air_lp": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_air_lp",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6710); verified by typed Kai inventory."
+    },
+    "air_throw": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_air_throw",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5e28, 0x4e5e50, 0x4e9910); verified by typed Kai inventory."
+    },
+    "draw_weapon": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_draw_weapon",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62c0, 0x4e62d8); verified by typed Kai inventory."
+    },
+    "fan_fatality": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_fan_fatality",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e0118, 0x4e0188, 0x4e0138, 0x4e0148, 0x4e0158, 0x4e01a0); verified by typed Kai inventory."
+    },
+    "high_kick": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_high_kick",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5ca0, 0x4e5c70); verified by typed Kai inventory."
+    },
+    "high_punch": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_high_punch",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (); verified by typed Kai inventory."
+    },
+    "input_478df0": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_input_478df0",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8870); verified by typed Kai inventory."
+    },
+    "input_47bd10": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_input_47bd10",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8210); verified by typed Kai inventory."
+    },
+    "input_47bd40": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_input_47bd40",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8238); verified by typed Kai inventory."
+    },
+    "input_47c520": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_input_47c520",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8320); verified by typed Kai inventory."
+    },
+    "input_47cbf0": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_input_47cbf0",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e88c8); verified by typed Kai inventory."
+    },
+    "input_47cc10": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_input_47cc10",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8358); verified by typed Kai inventory."
+    },
+    "jab": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_jab",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62f0, 0x4e6330, 0x4e6360, 0x4e63b0); verified by typed Kai inventory."
+    },
+    "lk_throw": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_lk_throw",
+      "evidence": "Kai slot-11 LK throw enters generated 0x4de2f8, 0x4de318, 0x4de328, then native 0x42be10 starts generated follow-up 0x4de358; typed inventory and exact-entry listings."
+    },
+    "low_kick": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_low_kick",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5d90); verified by typed Kai inventory."
+    },
+    "lp_throw": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_lp_throw",
+      "evidence": "Kai slot-11 LP throw enters generated 0x4de798; native 0x42cb80 selects generated 0x4de610 or 0x4de6b8 from the paired ordering/range result; typed inventory and exact-entry listings."
+    },
+    "roundhouse": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_roundhouse",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6800, 0x4e6860, 0x4e6878); verified by typed Kai inventory."
+    },
+    "spike_fatality": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_spike_fatality",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6950); verified by typed Kai inventory."
+    },
+    "sweep": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_sweep",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6798); verified by typed Kai inventory."
+    },
+    "uppercut": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_uppercut",
+      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62a0); verified by typed Kai inventory."
+    }
+  },
+  "entry_adapters": {
+    "0x467cd0": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_block",
+      "evidence": "Kai slot-11 block event route from typed input table 0x4e48d4."
+    },
+    "0x467ce0": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_high_kick",
+      "evidence": "Kai slot-11 high-kick event route from typed input table 0x4e48e8."
+    },
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Kai run-direction inventory dispatch uses shared sidestep handler 0x469250."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Kai run inventory pickup continuation 0x46a020 uses shared weapon pickup implementation."
+    },
+    "0x498fc0": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_low_punch",
+      "evidence": "Kai CPU/input low-punch action target 0x498fc0."
+    },
+    "0x499410": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_high_punch",
+      "evidence": "Kai CPU/input high-punch action target 0x499410."
+    }
+  },
+  "reactions": {
+    "1": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 1 at 0x486c40."
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 10 at 0x481320."
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 11 at 0x482070."
+    },
+    "13": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 13 at 0x481d30."
+    },
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 143 at 0x486970."
+    },
+    "15": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 15 at 0x483450."
+    },
+    "16": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 16 at 0x482a10."
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 17 at 0x482e00."
+    },
+    "175": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_script_opponent_reaction",
+      "adaptation": "The typed native reaction handler preserves paired owner/victim ownership and hands reaction 77 to the victim after release.",
+      "evidence": "Kai script handler 0x45b230 dispatches selected reaction 175 at address 0x4836e0."
+    },
+    "18": {
+      "source": "game/reactions.c",
+      "symbol": "react_sweep",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 18 at 0x483050."
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 21 at 0x482e80."
+    },
+    "22": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 22 at 0x482f00."
+    },
+    "23": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 23 at 0x481fc0."
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 34 at 0x4838e0."
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 37 at 0x483b40."
+    },
+    "38": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 38 at 0x482e90."
+    },
+    "39": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 39 at 0x482ef0."
+    },
+    "4": {
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 4 at 0x486bb0."
+    },
+    "5": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 5 at 0x486b70."
+    },
+    "6": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 6 at 0x486af0."
+    },
+    "77": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_script_opponent_reaction",
+      "adaptation": "The typed native reaction handler preserves paired owner/victim ownership and hands reaction 77 to the victim after release.",
+      "evidence": "Kai script handler 0x45b230 dispatches selected reaction 77 at address 0x484f10."
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 8 at 0x486c70."
+    },
+    "78": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_script_opponent_reaction",
+      "adaptation": "The 0x45b230 opponent-context dispatch preserves paired actor ownership until the generated 0x4de358 sequence reaches its native pair cleanup.",
+      "evidence": "Kai generated root 0x4de358 invokes opponent reaction selector 78 before native tail 0x42bf00; verified by exact-entry disassembly."
+    },
+    "102": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_script_current_reaction",
+      "adaptation": "The 0x45b1f0 current-context dispatch forwards reaction 102 through battle_react after the generated short LP throw playback.",
+      "evidence": "Kai root 0x4de6b8 calls current reaction 0x45b1f0 with selector 0x66, then reaches tail 0x42ce80."
+    },
+    "109": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_script_current_reaction",
+      "adaptation": "The 0x45b1f0 current-context dispatch forwards reaction 109 through battle_react after the generated extended LP throw playback.",
+      "evidence": "Kai root 0x4de610 calls current reaction 0x45b1f0 with selector 0x6d, then reaches tail 0x42cbc0."
+    }
+  },
+  "stances": {
+    "air_followup": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_jumping",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e70c0 recorded for this stance."
+    },
+    "air_punch_followup": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_jumping",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e6ee0 recorded for this stance."
+    },
+    "close_hk_followup": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_standing",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e70a8 recorded for this stance."
+    },
+    "close_hp_followup": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_standing",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e7078 recorded for this stance."
+    },
+    "combo_hp_followup": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_standing",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e7090 recorded for this stance."
+    },
+    "crouching": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_crouching",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e5070 recorded for this stance."
+    },
+    "diagonal_air": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_jumping",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e70d8 recorded for this stance."
+    },
+    "standing": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_standing",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e5058 recorded for this stance."
+    },
+    "straight_air": {
+      "source": "game/characters/kai/character.c",
+      "symbol": "kai_jumping",
+      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e6ec8 recorded for this stance."
+    }
+  },
+  "weapon": {
+    "source": "game/characters/kai/character.c",
+    "symbol": "kai_weapon_descriptor",
+    "evidence": "Kai slot-11 weapon inventory descriptor 0x4ecef8 as eight words from typed inventory."
+  }
+}

@@ -38,7 +38,10 @@ def audit_text(path, text):
 
 
 def main():
-    paths = sorted((ROOT / 'game').glob('c_*.c'))
+    characters = sorted((ROOT / 'game/characters').glob('*/character.c'))
+    if not characters:
+        raise ValueError('Native character sources are missing')
+    paths = characters + sorted((ROOT / 'game/characters').glob('*/moves/*.inc'))
     paths += [ROOT / 'game' / name for name in NATIVE]
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]
     if errors:

@@ -124,9 +124,9 @@ def postprocess(source):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('paths', nargs='*', type=Path,
-                        help='generated .inc files or directories; defaults to game/generated')
+                        help='generated .inc files or directories; defaults to each character generated directory')
     args = parser.parse_args(argv)
-    paths = args.paths or [ROOT / 'game/generated']
+    paths = args.paths or sorted((ROOT / 'game/characters').glob('*/generated'))
     files = set()
     for path in paths:
         if path.is_dir():

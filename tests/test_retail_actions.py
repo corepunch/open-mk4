@@ -52,8 +52,8 @@ class ActionTests(unittest.TestCase):
     def test_portable_navigation_unknown_and_limit(self):
         entries = catalog()
         refs = '\n'.join(portable_references(0x1007, entries))
-        self.assertIn('game/generated/scorpion.inc:', refs)
-        self.assertIn('game/generated/sub_zero.inc:', refs)
+        self.assertIn('game/characters/scorpion/generated/scripts.inc:', refs)
+        self.assertIn('game/characters/sub_zero/generated/scripts.inc:', refs)
         self.assertIn('ACTION_RETAIL_1007', refs)
         self.assertIn('**reader**', '\n'.join(portable_references(0x1003, entries)))
         unknown = action_text(self.image, 0xdeadbeef)
