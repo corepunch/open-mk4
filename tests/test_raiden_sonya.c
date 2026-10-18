@@ -151,6 +151,19 @@ static void specials(void) {
     check(owner()->action == 0x202, "torpedo command");
     advance(200);
     check(owner()->state == S_IDLE && victim()->state == S_IDLE, "torpedo owner or carried victim did not recover");
+    setup(3.f);
+    command(torpedo, 2, BUTTON_LOW_KICK);
+    for (int tick = 0; tick < 60 && !(victim()->flags & FF_PAIRED); ++tick) {
+      advance(1);
+    }
+    check((owner()->flags & FF_PAIRED) && (victim()->flags & FF_PAIRED), "torpedo did not capture its victim before interruption");
+    battle_react(victim(), 37);
+    q16 released_x = victim()->body.pos[AXIS_X] = current_player ? -6 * Q16_ONE : 6 * Q16_ONE;
+    advance(2);
+    check(victim()->body.pos[AXIS_X] == released_x && victim()->reaction == 37, "torpedo moved or replaced an interrupted victim");
+    advance(200);
+    check(owner()->state == S_IDLE && victim()->state == S_IDLE && !(owner()->flags & FF_PAIRED) && !(victim()->flags & FF_PAIRED),
+        "interrupted torpedo pair did not recover independently");
     for (int blocked = 0; blocked < 2; ++blocked) {
       setup(blocked ? 3.f : 16.f);
       command(torpedo, 2, BUTTON_LOW_KICK);

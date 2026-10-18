@@ -152,6 +152,10 @@ static void script_torpedo_step(Fighter *fighter) {
 
 static void torpedo_pair(Fighter *fighter) {
   Fighter *victim = opponent(fighter);
+  if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
+    fighter_stop_mmove(fighter);
+    return;
+  }
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x18000);
   }
@@ -168,8 +172,12 @@ static void script_torpedo_contact(Fighter *fighter) {
     mk4_script_pair_victim(fighter, &s_torpedo_victim);
     fighter_start_fiber(victim, retail_script_004ea108, NULL);
     native_calls(fighter, 50, 0, torpedo_pair);
-    mk4_script_release_pair(fighter);
-    battle_react(victim, 83);
+    if (victim->pending == NULL && (fighter->flags & FF_PAIRED) && (victim->flags & FF_PAIRED)) {
+      mk4_script_release_pair(fighter);
+      battle_react(victim, 83);
+    } else {
+      fighter->flags &= ~(unsigned)FF_PAIRED;
+    }
   }
   fighter->action = 0x1010;
   fighter_set_speed(fighter, -0xccc);
