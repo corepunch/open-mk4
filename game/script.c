@@ -378,16 +378,23 @@ void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const Mo
   script(fighter);
 }
 
-void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {
+/* Captures the victim in place, keeping its own facing (e.g. Raiden's torpedo 47d7f0). */
+void mk4_script_carry_victim(Fighter *fighter, const MoveDef *move) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   mk4_script_stop_body(victim);
   fighter_start_move(victim, S_KNOCKDOWN, move);
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   victim->sample_override = 0;
+  fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
+}
+
+/* 48f9f0 also copies the owner's facing bit, so the victim clip plays in the owner's frame. */
+void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
+  mk4_script_carry_victim(fighter, move);
 }
 
 Fighter *mk4_script_release_pair(Fighter *fighter) {

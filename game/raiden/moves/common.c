@@ -185,7 +185,7 @@ void raiden_script_torpedo_contact(Fighter *fighter) {
   fighter->body.physics = NULL;
   if (fighter->contact != CONTACT_BLOCK) {
     Fighter *victim = raiden_opponent(fighter);
-    mk4_script_pair_victim(fighter, &s_torpedo_victim);
+    mk4_script_carry_victim(fighter, &s_torpedo_victim);
     fighter_start_fiber(victim, raiden_entry_retail_script_004ea108, NULL);
     native_calls(fighter, 50, 0, torpedo_pair);
     if (victim->pending == NULL && (fighter->flags & FF_PAIRED) && (victim->flags & FF_PAIRED)) {

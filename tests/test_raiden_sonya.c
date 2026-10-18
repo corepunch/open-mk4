@@ -157,6 +157,7 @@ static void specials(void) {
       advance(1);
     }
     check((owner()->flags & FF_PAIRED) && (victim()->flags & FF_PAIRED), "torpedo did not capture its victim before interruption");
+    check(victim()->facing == -owner()->facing, "torpedo victim turned its back to Raiden");
     battle_react(victim(), 13);
     q16 released_x = victim()->body.pos[AXIS_X] = current_player ? -6 * Q16_ONE : 6 * Q16_ONE;
     advance(2);

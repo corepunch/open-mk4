@@ -46,6 +46,7 @@ void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const Mo
 void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move);
+void mk4_script_carry_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_pair_cleanup(Fighter *fighter);
 void mk4_script_thrown_finish(Fighter *fighter);
 void mk4_mmove_thrown_finish(Fighter *fighter);
