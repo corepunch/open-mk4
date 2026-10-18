@@ -96,6 +96,17 @@ void mk4_script_current(Fighter *fighter) {
 
 /* 45bc70/45bd20 -> 428b10: blend from the live pose into sample zero,
  * with step 0xa3d and first weight 0x4000, then resume at sample one. */
+void mk4_mmove_blend_bind(Fighter *fighter, int clip, int count) {
+  require(count > 1, "Blend continuation needs sample one");
+  int source = fighter_move(fighter)->clip;
+  int sample = fighter_sample(fighter);
+  mk4_mmove_bind(fighter, clip, count, 0);
+  fighter->blend_clip = source;
+  fighter->blend_sample = sample;
+  fighter->blend_duration = 1;
+  fighter->blend_weight = 0x4000;
+}
+
 void mk4_script_blend_bind(Fighter *fighter, int clip, int count) {
   require(count > 1, "Blend continuation needs sample one");
   mk4_script_blend_to(fighter, clip, count, 0, 0xa3d, 0x4000);

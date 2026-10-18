@@ -163,7 +163,7 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             if key[1] == 'tail' or (key[1] == 'handler' and 'unresearched' in row['operation']):
                 break
         else:
-            if 'clip' in row:
+            if 'clip' in row and op != 0x71:
                 first = row.get('start_sample', inline if op == 8 else 0)
                 if op == 9:
                     first = row['stored_count'] - 1
@@ -180,6 +180,18 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             elif op in (1, 3, 7, 8, 9, 0x48):
                 advance(0 if op in (7, 9) else count - 1, -1 if op in (7, 9) else 1)
                 wait(1)
+            elif op == 0x71:
+                sample, count = 0, row['stored_count']
+                emit('mk4_mmove_blend_bind(fighter, %d, %d);' % (row['clip'], count))
+                step, first = 0xa3d, 0x4000
+                frames = (0x10000 - first) // step + 1
+                for frame in range(1, frames + 1):
+                    wait(1)
+                    emit('fighter->blend_weight = %d;' % (first + min(frame, frames - 1) * step))
+                emit('fighter->blend_duration = 0;')
+                emit('fighter->blend_weight = -1;')
+                sample = 1
+                emit('fighter->sample_override = 1;')
             elif op == 0x46:
                 first = sample
                 advance(min(count - 1, sample + arg) if arg else count - 1, period=2)

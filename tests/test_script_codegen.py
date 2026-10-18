@@ -407,6 +407,21 @@ L_00000004: {
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             self.compile([0x46000004, 0x3f000000])
 
+    def test_generated_blend_keeps_source_pose_without_yielding(self):
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        entry = self.fixture([0x1100000a, descriptor, 0x71000000, descriptor, 0x3f000000])
+        source = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('mk4_mmove_blend_bind(fighter, 54, 13);', source)
+        self.assertIn('fighter->blend_weight = 19005;', source)
+        self.assertIn('fighter->blend_duration = 0;', source)
+        self.assertNotIn('mk4_script_blend_bind(', source)
+        self.assertNotIn('native_wait(', source)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'blend_frames.c'
+            path.write_text(source + '\nvoid use_blend_frames(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
+
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
         # C control flow; real actor suspension is covered by the native Liu suite.
