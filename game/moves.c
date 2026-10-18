@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include <math.h>
 #include <stdlib.h>
@@ -114,6 +115,7 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
   fighter_cancel_fiber(fighter);
   fighter_cancel_mmove(fighter);
+  native_motion_stop(fighter);
   if (fighter->state == S_WALK && !fighter_airborne(fighter) && (move->flags & SF_LOCK)) {
     fighter_set_speed(fighter, 0);
   }
@@ -136,7 +138,6 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   fighter->mmove_hold = false;
   fighter->continuation++;
   fighter->ticks = 0;
-  fighter->native_motion.binding = NULL;
   fighter->connected = false;
   fighter->avoids_high = false;
   fighter->buffered = 0;

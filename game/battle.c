@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include <math.h>
 #include <string.h>
@@ -140,6 +141,7 @@ static const MoveDef dizzy = {.clip = 13, .last = 55, .flags = SF_LOCK, .action 
 static const MoveDef defeated = {.clip = 128, .first = 109, .last = 109, .flags = SF_LOCK | SF_HOLD, .action = 0x4003};
 
 static void stop_fighter(Fighter *fighter) {
+  native_motion_stop(fighter);
   memset(fighter->body.vel, 0, sizeof fighter->body.vel);
   fighter->body.gravity = 0;
   fighter->body.physics = fighter->body.on_land = NULL;

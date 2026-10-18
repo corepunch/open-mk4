@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "math_util.h"
 #include <math.h>
 
@@ -29,6 +30,7 @@ void fighter_interrupt(Fighter *fighter, FighterFn entry) {
   require(entry != NULL, "Interrupt without an entry");
   fighter_cancel_fiber(fighter);
   fighter_cancel_mmove(fighter);
+  native_motion_stop(fighter);
   fighter->pending = entry;
   fighter->buttons = NULL;
   fighter->flags = (fighter->flags | FF_BUSY) & ~(unsigned)FF_PAIRED;

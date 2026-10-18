@@ -298,6 +298,28 @@ static void native_frame_schedules(void) {
   native_motion_play(fighter);
   advance(6);
   check(event_count == 1 && events[0][2] == 42 && fighter->body.physics == NULL, "independent motion frames must execute scheduled actions once and stop");
+  for (int player = 0; player < 2; ++player) {
+    for (int replace = 0; replace < 3; ++replace) {
+      setup();
+      fighter = &g_battle.fighters[player];
+      native_motion_begin(fighter, 4, finish);
+      native_motion_frame(fighter, 1, NULL, 0, native_motion_action);
+      native_motion_play(fighter);
+      advance(1);
+      if (replace == 2) {
+        g_battle.phase = PHASE_FATALITY;
+        g_battle.finisher = FINISH_LIU_KANG_1;
+        battle_end_finisher();
+      } else if (replace == 1) {
+        fighter_start_move(fighter, S_HIT, &test_move);
+      } else {
+        fighter_interrupt(fighter, fighter_ready);
+      }
+      check(fighter->native_motion.count == 0 && fighter->body.physics == NULL, "action replacement must cancel its auxiliary frame program");
+      advance(6);
+      check(event_count == 0 && completed[player] == 0, "interrupted auxiliary frames ran a stale action or completion");
+    }
+  }
 }
 
 static bool event_frame_action(BattleEvent *event, Fighter *owner, Fighter *other) {
