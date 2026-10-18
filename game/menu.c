@@ -266,8 +266,8 @@ static void select_quad(const SelectCamera *camera, Vec3 center, Vec3 right, Vec
  * the wall opens toward the two fighters. */
 static SelectTile select_tile(const SelectCamera *camera, int cursor, bool focused) {
   const float distance = 4.f;
-  const float column_step = .58f;
-  const float row_step = .08f;
+  const float column_step = .29f;
+  const float row_step = .04f;
   const float column_radius = 1.1f / column_step;
   const float row_radius = 1.08f / row_step;
   int column = cursor % SELECT_COLUMNS;
@@ -447,7 +447,7 @@ static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu
   // matched against each fighter's model; Scorpion's is on page one. Page 2
   // contains only the tiny GROUP SELECT thumbnail.
   static const int portrait_cells[15] = {-1, 0, 1, 2, 3, 8, 9, 6, 4, 12, 11, 10, 13, 5, 7};
-  SelectCamera camera = {(float)width * .5f, (float)height * .48f, (float)height * .475f};
+  SelectCamera camera = {(float)width * .5f, (float)height * .48f, (float)height * .54f};
   SelectTile tiles[15];
   for (int i = 0; i < 15; ++i) {
     tiles[i] = select_tile(&camera, i, i == menu->cursor);
