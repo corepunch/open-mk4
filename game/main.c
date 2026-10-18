@@ -88,6 +88,26 @@ static void validate(const Assets *assets) {
       }
     }
   }
+  /* Retired projectiles keep their immutable mesh reference until reuse.
+   *Rendering must honor lifetime rather than drawing that stale reference. */
+  battle_init(0, 4);
+  battle_bind_assets(assets);
+  g_battle.phase = PHASE_FIGHT;
+  Canvas baseline, effect;
+  canvas_init(&baseline, 640, 480);
+  canvas_init(&effect, 640, 480);
+  draw_battle(&baseline, assets, 8, false, false, 1);
+  static const MeshAnimation marker = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_FUJIN_WIND};
+  Projectile *object = &g_battle.projectiles[0];
+  *object = (Projectile){.kind = PROJECTILE_EFFECT, .mesh_animation = &marker, .initial_mesh = 0, .heading = {Q16_ONE, 0}, .pos = {0, -Q16_ONE, 0}};
+  draw_battle(&effect, assets, 8, false, false, 1);
+  size_t bytes = (size_t)baseline.w * baseline.h * sizeof *baseline.pixels;
+  require(memcmp(baseline.pixels, effect.pixels, bytes) != 0, "Effect lifecycle fixture must be visible while active");
+  object->kind = 0;
+  draw_battle(&effect, assets, 8, false, false, 1);
+  require(memcmp(baseline.pixels, effect.pixels, bytes) == 0, "Retired effect mesh must disappear without clearing its immutable reference");
+  canvas_free(&effect);
+  canvas_free(&baseline);
   puts("PASS: 11 textured arena hierarchies; original HUD/name sprites; all 18 combat rigs compatible");
 }
 

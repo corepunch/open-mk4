@@ -13,12 +13,12 @@ static const int fujin_clip_011_samples[16] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 
 const mframe_t fujin_clip_011_frames[16] = {{0}};
 const mmove_t fujin_clip_011_mmove = {.firstframe = 0, .lastframe = 15, .frame = fujin_clip_011_frames, .samples = fujin_clip_011_samples};
 
-static const int fujin_victim_pose_samples[112] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+static const int fujin_first_victim_samples[112] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
     16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
     35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54,
     55, 55};
-const mframe_t fujin_victim_pose_frames[112] = {{0}};
-const mmove_t fujin_victim_pose_mmove = {.firstframe = 0, .lastframe = 111, .frame = fujin_victim_pose_frames, .samples = fujin_victim_pose_samples};
+const mframe_t fujin_first_victim_frames[112] = {{0}};
+const mmove_t fujin_first_victim_mmove = {.firstframe = 0, .lastframe = 111, .frame = fujin_first_victim_frames, .samples = fujin_first_victim_samples};
 
 static const int fujin_clip_037_samples[132] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
@@ -147,10 +147,25 @@ static const int fujin_clip_196_samples[32] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 
 const mframe_t fujin_clip_196_frames[32] = {{0}};
 const mmove_t fujin_clip_196_mmove = {.firstframe = 0, .lastframe = 31, .frame = fujin_clip_196_frames, .samples = fujin_clip_196_samples};
 
+static const int fujin_clip_210_samples[74] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36};
+const mframe_t fujin_clip_210_frames[74] = {{0}};
+const mmove_t fujin_clip_210_mmove = {.firstframe = 0, .lastframe = 73, .frame = fujin_clip_210_frames, .samples = fujin_clip_210_samples};
+
 static const int fujin_bow_move_samples[58] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28};
 const mframe_t fujin_bow_move_frames[58] = {{0}};
 const mmove_t fujin_bow_move_mmove = {.firstframe = 0, .lastframe = 57, .frame = fujin_bow_move_frames, .samples = fujin_bow_move_samples};
+
+static const int fujin_clip_212_samples[20] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9};
+const mframe_t fujin_clip_212_frames[20] = {{0}};
+const mmove_t fujin_clip_212_mmove = {.firstframe = 0, .lastframe = 19, .frame = fujin_clip_212_frames, .samples = fujin_clip_212_samples};
+
+static const int fujin_clip_213_samples[60] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29};
+const mframe_t fujin_clip_213_frames[60] = {{0}};
+const mmove_t fujin_clip_213_mmove = {.firstframe = 0, .lastframe = 59, .frame = fujin_clip_213_frames, .samples = fujin_clip_213_samples};
 
 static const int fujin_clip_244_samples[98] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
@@ -235,6 +250,16 @@ const mmove_t fujin_clip_314_mmove = {.firstframe = 0, .lastframe = 25, .frame =
 static const int fujin_s_block_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
 const mframe_t fujin_s_block_frames[10] = {{0}};
 const mmove_t fujin_s_block_mmove = {.firstframe = 0, .lastframe = 9, .frame = fujin_s_block_frames, .samples = fujin_s_block_samples};
+
+static const int fujin_first_owner_samples[54] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26};
+const mframe_t fujin_first_owner_frames[54] = {{0}};
+const mmove_t fujin_first_owner_mmove = {.firstframe = 0, .lastframe = 53, .frame = fujin_first_owner_frames, .samples = fujin_first_owner_samples};
+
+static const int fujin_clip_399_samples[36] = {
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17};
+const mframe_t fujin_clip_399_frames[36] = {{0}};
+const mmove_t fujin_clip_399_mmove = {.firstframe = 0, .lastframe = 35, .frame = fujin_clip_399_frames, .samples = fujin_clip_399_samples};
 
 static const int fujin_clip_412_samples[98] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,

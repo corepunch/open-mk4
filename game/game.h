@@ -547,6 +547,7 @@ struct Fighter {
   uint64_t slide_ready, sidestep_ready;
   uint64_t leg_grab_ready, cartwheel_ready;
   uint64_t wind_grab_ready;
+  unsigned fujin_finish_inputs;
   bool armed, weapon_used;
   const WeaponDef *weapon;
   FighterFn disarm; /* character-owned weapon drop entry */
@@ -584,7 +585,8 @@ typedef struct OrbitLight {
 
 enum {
   MESH_SHARED,
-  MESH_SHARED2
+  MESH_SHARED2,
+  MESH_FUJIN_WIND
 };
 
 typedef struct MeshAnimation {
@@ -669,6 +671,7 @@ typedef struct ScenePiece {
   int roster, bone, attached_to, joint;
   const Character *model;
   int lifetime; /* Zero keeps a corpse piece until reset. */
+  q16 scale;    /* Zero preserves the default unit scale. */
   q16 pos[3], vel[3], angle[3], spin[3];
   q16 gravity; /* Zero retains the shared419040 piece gravity. */
   Mat3 orientation;
@@ -759,7 +762,7 @@ typedef struct CameraShot {
 } CameraShot;
 
 typedef struct SceneCamera {
-  bool active;
+  bool active, follow_height;
   q16 focal_scale; /* zero keeps the standard focal length */
   Vec3 eye, target, from_target, to_target;
   int ticks, duration;

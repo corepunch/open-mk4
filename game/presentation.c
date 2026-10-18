@@ -41,7 +41,10 @@ void battle_object_light(Projectile *object, const OrbitLightDef *def) {
 }
 
 const Geometry *mesh_animation_geometry(const Assets *assets, const MeshAnimation *animation) {
-  require(assets != NULL && animation != NULL && (animation->source == MESH_SHARED || animation->source == MESH_SHARED2), "Invalid effect geometry bank");
+  require(assets != NULL && animation != NULL && animation->source >= MESH_SHARED && animation->source <= MESH_FUJIN_WIND, "Invalid effect geometry bank");
+  if (animation->source == MESH_FUJIN_WIND) {
+    return &assets->hud.fujin_wind;
+  }
   return animation->source == MESH_SHARED2 ? &assets->hud.effects2 : &assets->hud.effects;
 }
 
@@ -209,11 +212,16 @@ Vec3 battle_follow_eye(Vec3 *heading) {
   float length = hypotf(view.x, view.z);
   view = length > .001f ? (Vec3){view.x / length, 0, view.z / length} : (Vec3){0, 0, -1};
   float distance = hypotf(fighter_x(b) - fighter_x(a), fighter_z(b) - fighter_z(a));
-  float back = fmaxf(7.5f, distance * .85f + 3.f);
+  float lift = 0;
+  if (g_battle.camera.follow_height) {
+    lift = fmaxf(a->appearance == APPEARANCE_HIDDEN ? 0 : fighter_height(a), b->appearance == APPEARANCE_HIDDEN ? 0 : fighter_height(b));
+    lift = fmaxf(0, lift);
+  }
+  float back = fmaxf(7.5f + lift, distance * .85f + 3.f);
   if (heading != NULL) {
     *heading = view;
   }
-  return (Vec3){(fighter_x(a) + fighter_x(b)) * .5f - view.x * back, -2.8f, (fighter_z(a) + fighter_z(b)) * .5f - view.z * back};
+  return (Vec3){(fighter_x(a) + fighter_x(b)) * .5f - view.x * back, -2.8f - lift * .8f, (fighter_z(a) + fighter_z(b)) * .5f - view.z * back};
 }
 
 /* The heading stays perpendicular to the pair axis on the side it already

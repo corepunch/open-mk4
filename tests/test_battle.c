@@ -17,6 +17,7 @@ void shinnok_weapon_action(Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
+void fujin_first_fatality(Fighter *fighter);
 bool fujin_can_second_fatality(const Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
@@ -2483,6 +2484,75 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_fujin_first_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int target = 2; target <= 4; target += 2) {
+      for (int reset_at = 0; reset_at < 4; ++reset_at) {
+        battle_init(slot ? target : 5, slot ? 5 : target);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        check(battle_can_finish(owner), "Fujin first fatality needs a deciding KO");
+        for (int button = BUTTON_BLOCK; button <= BUTTON_RUN; ++button) {
+          Input input[2] = {0};
+          input[slot].held = BUTTON_BIT(button);
+          battle_step(input);
+          advance_ticks(3, NULL);
+        }
+        check(owner->fujin_finish_inputs == 0, "Fujin counted finish gate must require Block and Run together");
+        for (int press = 0; press < 20 && g_battle.phase == PHASE_FINISH; ++press) {
+          Input input[2] = {0};
+          input[slot].held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN);
+          battle_step(input);
+          advance_ticks(3, NULL);
+        }
+        check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_FUJIN_1 && owner->fujin_finish_inputs >= 14,
+            "The fourteenth valid native Block+Run gate visit must start Fujin's first scene");
+        bool wind = false, draw = false, fire = false, lifted = false, spinning = false, visual = false;
+        int bolts = 0;
+        int limit = reset_at == 1 ? 80 : reset_at == 2 ? 250 : reset_at == 3 ? 420 : 700;
+        for (int tick = 0; tick < limit; ++tick) {
+          advance_ticks(1, NULL);
+          wind |= fighter_move(owner)->clip == 399;
+          draw |= fighter_move(owner)->clip == 210 || fighter_move(owner)->clip == 212;
+          fire |= fighter_move(owner)->clip == 213;
+          lifted |= victim->body.pos[AXIS_Y] < victim->body.ground - Q16_ONE;
+          spinning |= victim->body.spin[AXIS_Y] != 0;
+          for (int i = 0; i < MAX_PROJECTILES; ++i) {
+            const Projectile *object = &g_battle.projectiles[i];
+            bolts += object->kind != 0 && object->mesh_animation != NULL && object->mesh_animation->first == 106 && object->ticks == 0;
+          }
+          for (int i = 0; i < MAX_PARTICLES; ++i) {
+            const Particle *particle = &g_battle.particles[i];
+            visual |= particle->ticks > 0 && particle->visual != NULL && particle->visual->animation.source == MESH_FUJIN_WIND;
+          }
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Fujin tornado, draw and independent shots must remain fiber-free");
+        }
+        if (reset_at == 0) {
+          check(wind && draw && fire && lifted && spinning && visual && owner->native_variant == 3 && bolts == 3 && g_battle.phase == PHASE_MATCH_OVER,
+              "Fujin first scene must lift/spin, draw its crossbow, fire three times and complete");
+          check(owner->armed && fighter_move(owner)->clip == 213 && victim->appearance == APPEARANCE_HIDDEN,
+              "Fujin first ending must retain its actual armed pose and exploded victim");
+        }
+        battle_reset_match();
+        advance_ticks(180, NULL);
+        check(owner->health == Q16_ONE && victim->health == Q16_ONE && !owner->armed && owner->fujin_finish_inputs == 0,
+            "Reset must clear counted input, tornado state and pending crossbow shots");
+        for (int i = 0; i < MAX_PROJECTILES; ++i) {
+          check(g_battle.projectiles[i].kind == 0, "Reset must retire all wind and finisher bolts");
+        }
+      }
+    }
+  }
+}
+
 static void check_fujin_second_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int target = 2; target <= 4; target += 2) {
@@ -3252,6 +3322,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_first_fatality();
   check_fujin_second_fatality();
   check_advancing_sweeps();
   check_fujin_wind_grab();

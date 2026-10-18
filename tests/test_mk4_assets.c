@@ -8,6 +8,7 @@
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
+void fujin_first_fatality(Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
@@ -608,6 +609,63 @@ static void scene_pose_entry(Fighter *actor) {
   fighter_mmove_phase(actor, &scene_pose_phase);
 }
 
+static void fujin_first_fatality_assets(const Assets *assets) {
+  check(assets->hud.fujin_wind.meshes.count >= 6, "Fujin tornado must load its actual six fj_fat_g.geo surfaces");
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 2 : 5, slot ? 5 : 2);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FINISH;
+    g_battle.winner = slot;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    victim->health = 0;
+    victim->action = 0x1009;
+    fujin_first_fatality(owner);
+    bool wind = false, bolt = false, debris = false;
+    int bolts = 0;
+    for (int tick = 0; tick < 700; ++tick) {
+      battle_step((Input[2]){0});
+      Pose pose[MK4_MAX_BONES];
+      fighter_pose(assets, owner, pose);
+      fighter_pose(assets, victim, pose);
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        const Projectile *object = &g_battle.projectiles[i];
+        if (object->kind == 0 || object->mesh_animation == NULL) {
+          continue;
+        }
+        const Geometry *geometry = mesh_animation_geometry(assets, object->mesh_animation);
+        if (object->mesh_animation->first == 106) {
+          bolt = true;
+          bolts += object->ticks == 0;
+          check(geometry == &assets->hud.effects, "Fujin fatality must fire the original shared106 crossbow bolt");
+        }
+      }
+      for (int i = 0; i < MAX_PARTICLES; ++i) {
+        const Particle *particle = &g_battle.particles[i];
+        if (particle->ticks > 0 && particle->visual != NULL && particle->visual->animation.source == MESH_FUJIN_WIND) {
+          wind = true;
+          const Geometry *geometry = mesh_animation_geometry(assets, &particle->visual->animation);
+          check(geometry == &assets->hud.fujin_wind && geometry->sprites.data[particle->visual->animation.first].w > 0,
+              "Tornado must use its own sprite bank without occupying projectile slots");
+        }
+      }
+      for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
+        const ScenePiece *piece = &g_battle.pieces[i];
+        if (piece->active) {
+          debris = true;
+          check(piece->model == &assets->cut_characters.data[2] && (piece->scale == 0x1999 || piece->scale == 0x147a),
+              "Explosive head/hand debris must preserve its closed source model and authored tiny scale");
+        }
+      }
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Real tornado and three-shot scene must stay on native frame/event programs");
+    }
+    check(wind && bolt && debris && g_battle.phase == PHASE_MATCH_OVER && owner->armed && owner->native_variant == 3 && bolts == 3,
+        "Asset-backed Fujin first scene must retain wind, crossbow, three impacts and native debris");
+    battle_reset_match();
+  }
+}
+
 static void fujin_second_fatality_assets(const Assets *assets) {
   const Character *flesh = &assets->scene_models.data[SCENE_MODEL_FLAYED_BODY];
   check(flesh->bones.count >= 16 && flesh->meshes.data == assets->hud.effects2.meshes.data, "Wind victim must load the actual50c444 share2 flesh rig");
@@ -1105,6 +1163,7 @@ int main(void) {
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
+  fujin_first_fatality_assets(&assets);
   fujin_second_fatality_assets(&assets);
   fujin_wind_grab_assets(&assets);
   fujin_triple_kick_assets(&assets);

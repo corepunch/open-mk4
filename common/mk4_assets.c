@@ -518,6 +518,8 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 47f4d0 uses the shared ice statue, not the owner's body meshes. */
   assets->hud.effects = load_geometry(package_geo(&archive, "shared_g.geo"));
   assets->hud.effects2 = load_geometry(package_geo(&archive, "share2_g.geo"));
+  /*450730 selects the six authored tornado surfaces through slot5061d4. */
+  assets->hud.fujin_wind = load_geometry(package_geo(&archive, "fj_fat_g.geo"));
   Character statue = assets->characters.data[4];
   snprintf(statue.file, sizeof statue.file, "shared_g.geo");
   statue.meshes = assets->hud.effects.meshes;
@@ -852,6 +854,7 @@ void assets_free(Assets *a) {
   geometry_free(&a->hud.font);
   geometry_free(&a->hud.effects);
   geometry_free(&a->hud.effects2);
+  geometry_free(&a->hud.fujin_wind);
   geometry_free(&a->hud.title_scene);
   geometry_free(&a->hud.select_scene);
   FREE_ARRAY(a->characters);

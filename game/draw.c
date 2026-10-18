@@ -459,7 +459,8 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     for (size_t n = 0; n < mesh->count; ++n) {
       Triangle triangle = mesh->data[n];
       for (int k = 0; k < 3; ++k) {
-        triangle.v[k].p = vec_add(mat3_apply(transform, triangle.v[k].p), (Vec3){q16_float(piece->pos[0]), q16_float(piece->pos[1]), q16_float(piece->pos[2])});
+        triangle.v[k].p = vec_add(mat3_apply(transform, vec_scale(triangle.v[k].p, piece->scale != 0 ? q16_float(piece->scale) : 1.f)),
+            (Vec3){q16_float(piece->pos[0]), q16_float(piece->pos[1]), q16_float(piece->pos[2])});
         triangle.v[k].normal = mat3_apply(transform, triangle.v[k].normal);
       }
       render_triangle(cv, camera, triangle, piece->frozen ? &ice_texture : &ch->texture, 1, PASS_COLOR, &light);
@@ -517,6 +518,9 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &g_battle.projectiles[i];
+    if (p->kind == 0) {
+      continue;
+    }
     if (p->kind == PROJECTILE_CLONE) {
       Fighter clone = g_battle.fighters[p->owner];
       MoveDef captured = {.clip = p->clip, .last = MOVE_END};

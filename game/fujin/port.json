@@ -22,9 +22,9 @@
       "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
     },
     "0x467ce0": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_entry_spike",
-      "evidence": "Fujin fatality input target 467ce0 starts generated spike fatality root 4e6950."
+      "source": "game/fujin/moves/fatality_first.c",
+      "symbol": "fujin_first_fatality",
+      "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
     },
     "0x46a5f0": {
       "source": "game/fujin/moves/wind.c",
@@ -259,10 +259,14 @@
     "0x4e9fb0",
     "0x4dfed0",
     "0x4ea2d8",
-    "0x4ea2a8"
+    "0x4ea2a8",
+    "0x4e1f58",
+    "0x4e1f68",
+    "0x4e1f80",
+    "0x4e1f98"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "bad0ce40af00ef83ffd5e22d5d5516289e0460b5b1f219deb9fe7f7b6e43efa9",
+  "inventory_sha256": "7f1bd8dc883cb38692ebf440426136148bd2538ec09bae11ffbbe4c94003ab0c",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -419,6 +423,11 @@
       "source": "game/fujin/moves/fatality_second.c",
       "symbol": "fujin_second_fatality",
       "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
+    },
+    "fatality_1": {
+      "source": "game/fujin/moves/fatality_first.c",
+      "symbol": "fujin_first_fatality",
+      "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
     }
   },
   "output": "game/fujin/generated/scripts.inc",
@@ -756,6 +765,11 @@
       "source": "game/fujin/moves/fatality_second.c",
       "symbol": "fujin_second_fatality",
       "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
+    },
+    "0x467ce0": {
+      "source": "game/fujin/moves/fatality_first.c",
+      "symbol": "fujin_first_fatality",
+      "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
     }
   },
   "command_predicates": {
@@ -768,7 +782,8 @@
     "0x45ec10": "fujin_can_wind",
     "0x45ebf0": "fujin_can_wind_slam",
     "0x45ec60": "fujin_can_wind_grab",
-    "0x45e530": "fujin_can_second_fatality"
+    "0x45e530": "fujin_can_second_fatality",
+    "0x45e3b0": "fujin_can_first_fatality"
   },
   "mmove_scripts": [
     "0x4de610",
@@ -827,7 +842,11 @@
     "0x4e6798",
     "0x4dfed0",
     "0x4ea2d8",
-    "0x4ea2a8"
+    "0x4ea2a8",
+    "0x4e1f58",
+    "0x4e1f68",
+    "0x4e1f80",
+    "0x4e1f98"
   ],
   "cpu_bindings": {
     "0x46a620": {
