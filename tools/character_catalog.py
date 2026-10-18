@@ -583,8 +583,15 @@ def _moves_for(character):
     return shared
 
 
+# Roster slots whose retail BLOCK command list has no airborne-throw record.
+# Sub-Zero, Raiden and Goro keep theirs as portable extensions.
+NO_AIR_THROW = (5, 6, 7, 9, 10, 11, 12, 14)
+
+
 def moves_for(character):
     result = dict(_moves_for(character))
+    if character in NO_AIR_THROW:
+        result.pop('air_throw', None)
     if character in (6, 8, 10, 12, 14):
         entry = dict(result['air_kick'])
         result['air_kick'] = entry

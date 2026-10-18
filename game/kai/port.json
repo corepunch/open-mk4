@@ -459,89 +459,6 @@
         ]
       }
     ],
-    "0x4e5e28": [
-      {
-        "pc": "0x4e5e28",
-        "words": [
-          "0x4f000017"
-        ]
-      },
-      {
-        "pc": "0x4e5e2c",
-        "words": [
-          "0x2500000d"
-        ]
-      },
-      {
-        "pc": "0x4e5e30",
-        "words": [
-          "0xe000000",
-          "0x13edbd"
-        ]
-      },
-      {
-        "pc": "0x4e5e38",
-        "words": [
-          "0xf000000",
-          "0x13ec55"
-        ]
-      },
-      {
-        "pc": "0x4e5e40",
-        "words": [
-          "0x4b00001c"
-        ]
-      },
-      {
-        "pc": "0x4e5e44",
-        "words": [
-          "0x32000000",
-          "0x46aae0"
-        ]
-      }
-    ],
-    "0x4e5e50": [
-      {
-        "pc": "0x4e5e50",
-        "words": [
-          "0x4000001"
-        ]
-      },
-      {
-        "pc": "0x4e5e54",
-        "words": [
-          "0x58000000",
-          "0x7ae",
-          "0xffffe667",
-          "0x28f"
-        ]
-      },
-      {
-        "pc": "0x4e5e64",
-        "words": [
-          "0x3400000a"
-        ]
-      },
-      {
-        "pc": "0x4e5e68",
-        "words": [
-          "0x3000000"
-        ]
-      },
-      {
-        "pc": "0x4e5e6c",
-        "words": [
-          "0x60000000"
-        ]
-      },
-      {
-        "pc": "0x4e5e70",
-        "words": [
-          "0x32000000",
-          "0x46ab20"
-        ]
-      }
-    ],
     "0x4e61f8": [
       {
         "pc": "0x4e61f8",
@@ -1496,48 +1413,6 @@
         ]
       }
     ],
-    "0x4e9910": [
-      {
-        "pc": "0x4e9910",
-        "words": [
-          "0x58000000",
-          "0x0",
-          "0x3333",
-          "0x28f"
-        ]
-      },
-      {
-        "pc": "0x4e9920",
-        "words": [
-          "0x60000000"
-        ]
-      },
-      {
-        "pc": "0x4e9924",
-        "words": [
-          "0x28000000"
-        ]
-      },
-      {
-        "pc": "0x4e9928",
-        "words": [
-          "0x3000000"
-        ]
-      },
-      {
-        "pc": "0x4e992c",
-        "words": [
-          "0x34000004"
-        ]
-      },
-      {
-        "pc": "0x4e9930",
-        "words": [
-          "0x32000000",
-          "0x484b60"
-        ]
-      }
-    ],
     "0x4de610": [
       {
         "pc": "0x4de610",
@@ -2433,12 +2308,6 @@
       "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
       "sample": 69
     },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
-      "sample": 28
-    },
     "0x4e6330": {
       "clip": 295,
       "count": 19,
@@ -2450,12 +2319,6 @@
       "count": 19,
       "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
       "sample": 18
-    },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Kai slot 11 native caller context; shared script boundary confirmed by bounded exact-entry listing (Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary).",
-      "sample": 28
     },
     "0x4e62d8": {
       "clip": 244,
@@ -2535,7 +2398,7 @@
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "6b100c072817c9cb5d9561c328e83ff9d1991bcff780f3876b5b019068d1690b",
+  "inventory_sha256": "fef00fcbed38e35897b73c7e5cff730740defcac51d137bf949c2c1e4332529f",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2561,11 +2424,6 @@
       "source": "game/kai/character.c",
       "symbol": "kai_air_lp",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6710); verified by typed Kai inventory."
-    },
-    "air_throw": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_air_throw",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5e28, 0x4e5e50, 0x4e9910); verified by typed Kai inventory."
     },
     "draw_weapon": {
       "source": "game/kai/moves/weapon.c",
@@ -3007,8 +2865,6 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw",
     "0x45eb80": "kai_can_handstand",
     "0x45ef50": "weapon_can_draw"
   },

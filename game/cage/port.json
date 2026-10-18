@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "4bf4aceeb6dbc8fbd5bf13757fe1449bfbf9a97349741c8e50b82c88cdf3dd7d",
+  "inventory_sha256": "163fdac8e468fcc0d92e5ed20b6a7dfe1bb56492d70ddfca383f0af6953291d7",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -23,8 +23,6 @@
     "0x4e6998",
     "0x4e5ca0",
     "0x4e5d90",
-    "0x4e5e28",
-    "0x4e5e50",
     "0x4e6190",
     "0x4e61e0",
     "0x4e61f8",
@@ -47,7 +45,6 @@
     "0x4e80c8",
     "0x4e80d0",
     "0x4e80f4",
-    "0x4e9910",
     "0x4e9f78",
     "0x4e6270",
     "0x4ed0d8"
@@ -93,12 +90,6 @@
       "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
       "sample": 69
     },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
-      "sample": 28
-    },
     "0x4e5ba8": {
       "clip": 438,
       "count": 15,
@@ -128,12 +119,6 @@
       "count": 39,
       "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
       "sample": 0
-    },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Quan Chi native continuation preserves this inherited pose context; exact-entry script/caller boundary",
-      "sample": 28
     },
     "0x4e12a0": {
       "clip": 443,
@@ -212,11 +197,6 @@
     "air_diagonal_lk": {
       "source": "game/cage/character.c",
       "symbol": "cage_air_diagonal_lk",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
-    },
-    "air_throw": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_air_throw",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "fan_fatality": {
@@ -572,8 +552,6 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw",
     "0x45f120": "cage_can_groin_punch"
   },
   "cpu_bindings": {

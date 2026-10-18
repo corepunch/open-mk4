@@ -15,8 +15,6 @@ const MoveDef reptile_s_uppercut = {293, 0, MOVE_END, 9, 5, 30, 18, 60, 1.35f, 0
 const MoveDef reptile_s_throw = {76, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 const MoveDef reptile_s_lp_thrown = {.clip = 153, .last = 26, .flags = SF_LOCK | SF_REACTION};
-static const MoveDef s_air_throw = {.clip = 82, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_UNBLOCKABLE};
-static const MoveDef s_air_thrown = {.clip = 202, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION};
 
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
@@ -139,14 +137,6 @@ void reptile_entry_retail_script_004e5d90(Fighter *fighter) {
   retail_script_004e5d90(fighter);
 }
 
-void reptile_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_script_004e5e28(fighter);
-}
-
-void reptile_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_script_004e5e50(fighter);
-}
-
 void reptile_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_script_004e61f8(fighter);
 }
@@ -213,10 +203,6 @@ void reptile_entry_retail_script_004e8178(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e9620(Fighter *fighter) {
   retail_script_004e9620(fighter);
-}
-
-void reptile_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_script_004e9910(fighter);
 }
 
 void reptile_entry_retail_script_004e9b40(Fighter *fighter) {

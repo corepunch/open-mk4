@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/shinnok/generated/scripts.inc",
   "integration_source": "game/shinnok/character.c",
-  "inventory_sha256": "75e2349ce90c22767e6f912c6c11bbf4cfe3523872982703967661173f09e5e5",
+  "inventory_sha256": "87c1b87c890605de41ea4cde61aef05be1c2e45d2365e7b3f50b8f2f7b60239a",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -18,8 +18,6 @@
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
-    "0x4e5e28",
-    "0x4e5e50",
     "0x4e6190",
     "0x4e61e0",
     "0x4e61f8",
@@ -38,7 +36,6 @@
     "0x4e6878",
     "0x4e6950",
     "0x4e69b0",
-    "0x4e9910",
     "0x4e6270"
   ],
   "entry_contexts": {
@@ -73,12 +70,6 @@
       "sample": 17,
       "evidence": "Shinnok high-kick recovery entered from native continuation 46a760; bounded EXE query"
     },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "sample": 28,
-      "evidence": "Shinnok air-throw release retains inherited clip 82 sample 28; bounded EXE query"
-    },
     "0x4e6330": {
       "clip": 295,
       "count": 19,
@@ -102,12 +93,6 @@
       "count": 39,
       "sample": 0,
       "evidence": "Shinnok roundhouse normal startup entry preserves clip 313; bounded EXE query"
-    },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "sample": 28,
-      "evidence": "Shinnok air-throw victim release retains inherited clip 202 sample 28; bounded EXE query"
     },
     "0x4e61e0": {
       "clip": 262,
@@ -262,11 +247,6 @@
       "source": "game/shinnok/character.c",
       "symbol": "shinnok_air_lp",
       "evidence": "Shinnok roster slot 6 native entry 0x0046ee30 and selected EXE script roots"
-    },
-    "air_throw": {
-      "source": "game/shinnok/character.c",
-      "symbol": "shinnok_air_throw",
-      "evidence": "Shinnok roster slot 6 native entry 0x0046aa80 and selected EXE script roots"
     },
     "fan_fatality": {
       "source": "game/shinnok/character.c",
@@ -513,9 +493,7 @@
     "0x45e820": "mk4_can_sidestep",
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
-    "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw"
+    "0x45e4f0": "mk4_can_spike_finish"
   },
   "mmove_scripts": [
     "0x4de798",

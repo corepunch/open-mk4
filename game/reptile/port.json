@@ -104,12 +104,6 @@
       "sample": 17,
       "evidence": "Reptile root 0x4e5ca0 selects root 0x4e6c90, which opens clip 66/18 at sample 3 then advances to sample 17 before native tail 0x46a760 enters recovery."
     },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
-    },
     "0x4e6330": {
       "clip": 295,
       "count": 19,
@@ -133,12 +127,6 @@
       "count": 39,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 0
-    },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
     },
     "0x4de668": {
       "clip": 80,
@@ -170,8 +158,6 @@
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
-    "0x4e5e28",
-    "0x4e5e50",
     "0x4e6190",
     "0x4e61e0",
     "0x4e61f8",
@@ -195,14 +181,13 @@
     "0x4e8174",
     "0x4e8178",
     "0x4e9620",
-    "0x4e9910",
     "0x4e9b40",
     "0x4e9bd0",
     "0x4ed1e8",
     "0x4e6270"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "90efde974f27e0160c7c729dd55164357001f6f5de3a0df7c51c31112dfbf319",
+  "inventory_sha256": "b571162b4c10b99f940bd58eb8776b0ef4564c8be88bf069cc459d8f719f5bff",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -228,11 +213,6 @@
       "source": "game/reptile/character.c",
       "symbol": "reptile_air_lp",
       "evidence": "Reptile air lp entry starts its reviewed generated VM stream through the portable fighter adapter."
-    },
-    "air_throw": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_air_throw",
-      "evidence": "Reptile air throw entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "fan_fatality": {
       "source": "game/reptile/character.c",
@@ -542,8 +522,6 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw",
     "0x45e950": "reptile_can_dash"
   },
   "cpu_bindings": {

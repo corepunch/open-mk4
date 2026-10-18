@@ -14,8 +14,6 @@ const MoveDef kai_s_uppercut = {293, 0, MOVE_END, 9, 5, 30, 18, 20, 1.35f, 0.5f,
 const MoveDef kai_s_throw = {37, 0, MOVE_END, 6, 2, 25, 14, 66, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 const MoveDef kai_s_air_attack = {61, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_ATTACK | SF_LOCK, NULL, 0};
-static const MoveDef s_air_throw = {82, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_ATTACK | SF_LOCK | SF_UNBLOCKABLE, NULL, 0};
-static const MoveDef s_air_thrown = {202, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION, NULL, 0};
 const MoveDef kai_s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -149,14 +147,6 @@ void kai_entry_retail_script_004e5d90(Fighter *fighter) {
   retail_script_004e5d90(fighter);
 }
 
-void kai_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_script_004e5e28(fighter);
-}
-
-void kai_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_script_004e5e50(fighter);
-}
-
 void kai_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_script_004e61f8(fighter);
 }
@@ -239,10 +229,6 @@ void kai_entry_retail_script_004e8870(Fighter *fighter) {
 
 void kai_entry_retail_script_004e88c8(Fighter *fighter) {
   retail_script_004e88c8(fighter);
-}
-
-void kai_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_script_004e9910(fighter);
 }
 
 const mmove_t *kai_retail_script_004e0138_repeat_phase(void) {

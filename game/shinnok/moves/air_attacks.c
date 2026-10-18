@@ -65,11 +65,6 @@ static void shinnok_air_diagonal_lk(Fighter *fighter) {
   start_air_attack(fighter, 4);
 }
 
-void shinnok_script_air_release(Fighter *fighter) {
-  mk4_script_air_throw_release(fighter);
-  shinnok_entry_retail_script_004e5e50(fighter);
-}
-
 void shinnok_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
   if (index == 2) {

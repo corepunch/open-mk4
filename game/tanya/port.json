@@ -104,12 +104,6 @@
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "sample": 17
     },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
-    },
     "0x4e6330": {
       "clip": 295,
       "count": 19,
@@ -121,12 +115,6 @@
       "count": 19,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 18
-    },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
     },
     "0x4e61e0": {
       "clip": 262,
@@ -161,8 +149,6 @@
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
-    "0x4e5e28",
-    "0x4e5e50",
     "0x4e6190",
     "0x4e61e0",
     "0x4e61f8",
@@ -180,11 +166,10 @@
     "0x4e6890",
     "0x4e68a8",
     "0x4e6950",
-    "0x4e69b0",
-    "0x4e9910"
+    "0x4e69b0"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "09327b30a5d192b164679a92dfe1e12a6b2862396c1018f61dc48ac1fd44abcb",
+  "inventory_sha256": "0adc058b55e5841d407063d4df7733ef39644cbfbe2148d10a5c83a6c9edc8c9",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",
@@ -240,11 +225,6 @@
       "source": "game/tanya/character.c",
       "symbol": "tanya_air_diagonal_lk",
       "evidence": "Tanya air_diagonal_lk entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
-    },
-    "air_throw": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_air_throw",
-      "evidence": "Tanya air_throw entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "fan_fatality": {
       "source": "game/tanya/character.c",
@@ -494,9 +474,7 @@
     "0x45e820": "mk4_can_sidestep",
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
-    "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw"
+    "0x45e4f0": "mk4_can_spike_finish"
   },
   "mmove_scripts": [
     "0x4de798",

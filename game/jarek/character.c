@@ -146,14 +146,6 @@ void jarek_entry_retail_script_004e5d90(Fighter *fighter) {
   retail_script_004e5d90(fighter);
 }
 
-void jarek_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_script_004e5e28(fighter);
-}
-
-void jarek_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_script_004e5e50(fighter);
-}
-
 void jarek_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_script_004e61f8(fighter);
 }
@@ -224,10 +216,6 @@ void jarek_entry_retail_script_004e80f4(Fighter *fighter) {
 
 void jarek_entry_retail_script_004e81a8(Fighter *fighter) {
   retail_script_004e81a8(fighter);
-}
-
-void jarek_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_script_004e9910(fighter);
 }
 
 void jarek_entry_retail_script_004ed118(Fighter *fighter) {

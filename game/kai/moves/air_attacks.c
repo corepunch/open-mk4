@@ -65,13 +65,6 @@ static void kai_air_diagonal_lk(Fighter *fighter) {
   start_air_attack(fighter, 4);
 }
 
-void kai_script_air_release(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter_start_fiber(victim, kai_entry_retail_script_004e9910, NULL);
-  mk4_script_air_throw_release(fighter);
-  kai_entry_retail_script_004e5e50(fighter);
-}
-
 void kai_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
   if (index == 2) {
