@@ -1,4 +1,5 @@
 #include "game.h"
+#include "native.h"
 #include "script.h"
 #include "mk4_characters.h"
 #include "math_util.h"
@@ -96,7 +97,16 @@ void mk4_walk(Fighter *fighter) {
     if (fighter->current_move != move) {
       fighter_start_move(fighter, S_WALK, move);
     }
-    fighter->sample_override = continuing ? 11 + fighter->ticks % 13 : 0;
+    if (fighter->current_mmove == NULL) {
+      if (continuing) {
+        native_begin(fighter, 1, 13, NULL);
+        for (int frame = 1; frame <= 13; ++frame) {
+          native_frame(fighter, frame, 11 + frame % 13, NULL);
+        }
+        native_play(fighter, false);
+      }
+      fighter->sample_override = continuing ? 11 : 0;
+    }
     if (fighter->human) {
       fighter->run_energy = maxi(0, fighter->run_energy - 0x51e);
       fighter->run_delay = 40;
@@ -114,7 +124,14 @@ void mk4_walk(Fighter *fighter) {
     }
   }
   int count = fighter->assets != NULL ? (int)fighter_clip(fighter->assets, fighter)->frames.count : 30;
-  fighter->sample_override = fighter->ticks % count;
+  if (fighter->current_mmove == NULL) {
+    native_begin(fighter, 1, count, NULL);
+    for (int frame = 1; frame <= count; ++frame) {
+      native_frame(fighter, frame, frame % count, NULL);
+    }
+    native_play(fighter, false);
+    fighter->sample_override = 0;
+  }
   q16 speed = forward ? mk4_motion.walk : -q16_mul(mk4_motion.walk, 0xb333);
   fighter_set_speed(fighter, speed);
   fighter->body.walking = true;
@@ -128,17 +145,19 @@ static const MoveDef jump_forward = {.clip = 301, .last = MOVE_END, .flags = SF_
 static const MoveDef jump_backward = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = 0x200a};
 static const MoveDef jump_landing = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = 0x2008};
 
-static void jump_tick(Fighter *fighter);
+static void start_flip(Fighter *fighter, int direction, bool from_straight);
+static void jump_physics(Fighter *fighter);
 
-static void stance_blend_tick(Fighter *fighter) {
+static void stance_blend_add(Fighter *fighter) {
   fighter->blend_weight += 0x3333;
-  if (fighter->blend_weight > Q16_ONE) {
-    fighter->blend_duration = 0;
-    fighter->blend_weight = -1;
-    fighter->sample_override = -1;
-    fighter->script = NULL;
-    fighter->ticks = 0;
-  }
+}
+
+static void stance_blend_done(Fighter *fighter) {
+  fighter_stop_mmove(fighter);
+  fighter->blend_duration = 0;
+  fighter->blend_weight = -1;
+  fighter->sample_override = -1;
+  fighter->ticks = 0;
 }
 
 /* 46f650/6e0/740: recover the current pose into the character's
@@ -154,7 +173,11 @@ void mk4_return_to_stance(Fighter *fighter) {
   fighter->blend_duration = 5;
   fighter->blend_weight = 0x3333;
   fighter->sample_override = 0;
-  fighter->script = stance_blend_tick;
+  native_begin(fighter, 1, 5, stance_blend_done);
+  for (int frame = 1; frame <= 5; ++frame) {
+    native_frame(fighter, frame, 0, stance_blend_add);
+  }
+  native_play(fighter, false);
 }
 
 /* 46fcd0/470650/4706f0 and shared tail 4707e0. CPU air attacks
@@ -174,21 +197,15 @@ static void jump_physics(Fighter *fighter) {
       battle_cpu_action(fighter, action);
     }
   }
-  if (fighter->action != 0x2007 && --fighter->move_loops <= 0) {
-    fighter->move_loops = 12;
-    battle_sound(SOUND_C, 0x58);
+  if (fighter->action != 0x2007) {
+    native_motion_step(fighter);
   }
 }
 
-static void jump_land_tick(Fighter *fighter) {
+static void jump_land_cancel(Fighter *fighter) {
   unsigned directions = fighter->held & (BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LEFT) | BUTTON_BIT(BUTTON_RIGHT));
   if (directions != 0) {
     fighter_enter_state(fighter, S_IDLE);
-    return;
-  }
-  fighter->sample_override = mini(27, 18 + fighter->ticks);
-  if (fighter->ticks >= 10) {
-    mk4_return_to_stance(fighter);
   }
 }
 
@@ -203,18 +220,81 @@ static void jump_land(Fighter *fighter) {
 void mk4_land(Fighter *fighter) {
   fighter->body.physics = NULL;
   fighter_start_move(fighter, S_JUMP, &jump_landing);
-  fighter->script = jump_land_tick;
   fighter->sample_override = 18;
+  native_begin(fighter, 1, 10, mk4_return_to_stance);
+  for (int frame = 1; frame <= 10; ++frame) {
+    native_frame(fighter, frame, mini(27, 18 + frame), jump_land_cancel);
+  }
+  native_play(fighter, false);
   fighter_enter_stance(fighter, STANCE_STANDING);
+}
+
+static void flip_retract(Fighter *fighter);
+static void flip_wait(Fighter *fighter);
+
+static void jump_whoosh(Fighter *fighter) {
+  (void)fighter;
+  battle_sound(SOUND_C, 0x58);
+}
+
+static const mframe_t jump_sound_frames[12] = {{.thinkfunc = jump_whoosh}};
+
+static void flip_ground(Fighter *fighter) {
+  fighter->mmove_hold = fighter->body.gravity != 0;
+}
+
+static void flip_finish(Fighter *fighter) {
+  if (fighter->body.gravity == 0) {
+    mk4_return_to_stance(fighter);
+    return;
+  }
+  native_begin(fighter, 0, 0, mk4_return_to_stance);
+  native_frame(fighter, 0, 1, flip_ground);
+  native_play(fighter, false);
+}
+
+static void flip_apex(Fighter *fighter) {
+  Body *body = &fighter->body;
+  if (body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] >= -0x24ccc) {
+    flip_retract(fighter);
+  }
+}
+
+static void flip_wait(Fighter *fighter) {
+  native_begin(fighter, 0, 0, NULL);
+  native_frame(fighter, 0, 8, flip_apex);
+  native_play(fighter, false);
+}
+
+static void flip_retract(Fighter *fighter) {
+  fighter->body.angle[AXIS_X] = fighter->body.spin[AXIS_X] = 0;
+  fighter->script_phase = 2;
+  fighter->sample_override = 7;
+  fighter->buttons = NULL;
+  native_begin(fighter, 1, 7, flip_finish);
+  for (int frame = 1; frame <= 7; ++frame) {
+    native_frame(fighter, frame, maxi(1, 7 - frame), NULL);
+  }
+  native_play(fighter, false);
+}
+
+static void flip_buttons(Fighter *fighter) {
+  fighter_enter_stance(fighter, STANCE_JUMP);
+}
+
+static void flip_spin(Fighter *fighter) {
+  fighter->body.spin[AXIS_X] = fighter->saved_motion[2];
+  fighter->body.root_y += 0x3333;
+  fighter->body.pos[AXIS_Y] -= 0x3333;
+  fighter->script_phase = 1;
 }
 
 static void start_flip(Fighter *fighter, int direction, bool from_straight) {
   bool forward = direction * fighter->facing > 0;
   fighter_start_move(fighter, S_JUMP, forward ? &jump_forward : &jump_backward);
-  fighter->script = jump_tick;
   fighter->sample_override = 0;
   fighter->buttons = NULL;
-  fighter->script_timer = forward || from_straight ? 0x4ccc : -0x4ccc;
+  fighter->saved_motion[2] = forward || from_straight ? 0x4ccc : -0x4ccc;
   fighter_set_speed(fighter, forward ? 0xe14 : -0xe14);
   if (!from_straight) {
     fighter->body.vel[AXIS_Y] = forward ? -0x30a3 : -0x2e14;
@@ -222,50 +302,24 @@ static void start_flip(Fighter *fighter, int direction, bool from_straight) {
   }
   fighter->body.gravity = 0x24d;
   fighter->body.on_land = jump_land;
+  native_motion_bind(fighter, jump_physics, jump_sound_frames, 12);
   fighter->body.physics = jump_physics;
-  fighter->move_loops = 1;
+  native_begin(fighter, 1, 8, flip_wait);
+  for (int frame = 1; frame <= 8; ++frame) {
+    native_frame(fighter, frame, frame, frame == 2 ? flip_buttons : frame == 6 ? flip_spin : frame > 6 ? flip_apex : NULL);
+  }
+  native_play(fighter, false);
 }
 
-static void jump_tick(Fighter *fighter) {
-  Body *body = &fighter->body;
-  int tick = fighter->ticks;
-  if (fighter->current_move == &jump_straight) {
-    int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
-    if (direction != 0 && fighter->human && tick <= 3) {
-      start_flip(fighter, direction, true);
-      return;
-    }
-    fighter->sample_override = tick < 3 ? tick : mini(17, tick - 1);
-    return;
+static void straight_direction(Fighter *fighter) {
+  int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
+  if (direction != 0 && fighter->human) {
+    start_flip(fighter, direction, true);
   }
-  if (fighter->script_phase == 0) {
-    fighter->sample_override = mini(8, tick);
-    if (tick == 2) {
-      fighter_enter_stance(fighter, STANCE_JUMP);
-    }
-    if (tick >= 6) {
-      body->spin[AXIS_X] = fighter->script_timer;
-      body->root_y += 0x3333;
-      body->pos[AXIS_Y] -= 0x3333;
-      fighter->script_phase = 1;
-    }
-  } else if (fighter->script_phase == 1) {
-    fighter->sample_override = mini(8, tick);
-    if (body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] >= -0x24ccc) {
-      body->angle[AXIS_X] = body->spin[AXIS_X] = 0;
-      fighter->script_phase = 2;
-      fighter->script_timer = 7;
-      fighter->sample_override = 7;
-      fighter->buttons = NULL;
-    }
-  } else if (fighter->script_phase == 2) {
-    if (fighter->script_timer > 0 && --fighter->script_timer > 0) {
-      fighter->sample_override--;
-    }
-    if (fighter->script_timer == 0 && body->gravity == 0) {
-      mk4_return_to_stance(fighter);
-    }
-  }
+}
+
+static void straight_hold(Fighter *fighter) {
+  fighter_stop_mmove(fighter);
 }
 
 void mk4_jump(Fighter *fighter) {
@@ -281,7 +335,11 @@ void mk4_jump(Fighter *fighter) {
   fighter->body.gravity = 0x28f;
   fighter->body.on_land = jump_land;
   fighter->body.physics = fighter->human || g_battle.cpu_level <= 1 ? NULL : jump_physics;
-  fighter->script = jump_tick;
+  native_begin(fighter, 1, 18, straight_hold);
+  for (int frame = 1; frame <= 18; ++frame) {
+    native_frame(fighter, frame, frame < 3 ? frame : mini(17, frame - 1), frame <= 3 ? straight_direction : NULL);
+  }
+  native_play(fighter, false);
   battle_sound(SOUND_B, 4);
 }
 

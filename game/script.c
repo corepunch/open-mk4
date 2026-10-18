@@ -1,4 +1,5 @@
 #include "script.h"
+#include "native.h"
 #include "mk4_characters.h"
 #include "math_util.h"
 #include <string.h>
@@ -397,12 +398,18 @@ void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, i
   fighter->body.gravity = gravity;
 }
 
+static void landing_whoosh(Fighter *fighter) {
+  (void)fighter;
+  battle_sound(SOUND_C, 0x58);
+}
+
+static const mframe_t landing_sound_frames[12] = {
+    [11] = {.thinkfunc = landing_whoosh},
+};
+
 void mk4_script_landing_motion(Fighter *fighter) {
-  /* 4707e0 is a twelve-tick sound clock, separate from world landing. */
-  if (++fighter->script_timer >= 12) {
-    fighter->script_timer = 0;
-    battle_sound(SOUND_C, 0x58);
-  }
+  native_motion_bind(fighter, mk4_script_landing_motion, landing_sound_frames, 12);
+  native_motion_step(fighter);
 }
 
 void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample) {
@@ -519,25 +526,9 @@ Projectile *mk4_script_projectile_spawn(Fighter *fighter, ProjectileFn step, con
   return object;
 }
 
-static void scheduled_motion(Fighter *fighter) {
-  if (fighter->script_timer > 0) {
-    --fighter->script_timer;
-  } else if (fighter->move_loops > 0) {
-    fighter_set_speed(fighter, fighter->saved_motion[0]);
-    --fighter->move_loops;
-  } else {
-    fighter_set_speed(fighter, 0);
-    fighter->body.physics = NULL;
-  }
-}
-
 void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int duration) {
-  require(delay >= 0 && duration >= 0, "Invalid scheduled script motion");
-  fighter_set_speed(fighter, 0);
   fighter->saved_motion[0] = speed;
-  fighter->script_timer = delay;
-  fighter->move_loops = duration;
-  fighter->body.physics = scheduled_motion;
+  native_schedule_speed(fighter, speed, delay, duration);
 }
 
 void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {

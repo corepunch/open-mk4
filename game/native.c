@@ -30,6 +30,7 @@ void native_frame(Fighter *fighter, int frame, int pose, FighterFn action) {
 
 static void native_install(Fighter *fighter) {
   fighter_mmove_phase(fighter, &fighter->native.move);
+  fighter->sample_override = fighter->native.poses[0];
   if (fighter->native_immediate) {
     fighter->mmove_last_tick--;
     fighter_step_mmove(fighter);
@@ -53,9 +54,9 @@ void native_hold(Fighter *fighter, int frames, FighterFn end) {
   native_play(fighter, false);
 }
 
-static void motion_step(Fighter *fighter) {
+void native_motion_step(Fighter *fighter) {
   NativeMotion *motion = &fighter->native_motion;
-  if (motion->last_tick == g_battle.ticks) {
+  if (motion->count == 0 || motion->last_tick == g_battle.ticks) {
     return;
   }
   motion->last_tick = g_battle.ticks;
@@ -74,6 +75,10 @@ static void motion_step(Fighter *fighter) {
     return;
   }
   if (++motion->frame == motion->count) {
+    if (motion->loop) {
+      motion->frame = 0;
+      return;
+    }
     FighterFn end = motion->end;
     native_motion_stop(fighter);
     if (end != NULL) {
@@ -89,6 +94,8 @@ void native_motion_begin(Fighter *fighter, int frames, FighterFn end) {
   motion->count = frames;
   motion->frame = 0;
   motion->end = end;
+  motion->binding = NULL;
+  motion->loop = false;
   memset(motion->frames, 0, (size_t)frames * sizeof motion->frames[0]);
 }
 
@@ -99,14 +106,27 @@ void native_motion_frame(Fighter *fighter, int frame, FighterAIFn movement, floa
 
 void native_motion_play(Fighter *fighter) {
   fighter->native_motion.last_tick = UINT64_MAX;
-  fighter->body.physics = motion_step;
+  fighter->body.physics = native_motion_step;
 }
 
 void native_motion_stop(Fighter *fighter) {
   fighter->native_motion.generation++;
   fighter->native_motion.count = 0;
-  if (fighter->body.physics == motion_step) {
+  if (fighter->body.physics == native_motion_step || fighter->body.physics == fighter->native_motion.binding) {
     fighter->body.physics = NULL;
+  }
+  fighter->native_motion.binding = NULL;
+  fighter->native_motion.loop = false;
+}
+
+void native_motion_bind(Fighter *fighter, FighterFn binding, const mframe_t *frames, int count) {
+  if (fighter->native_motion.binding != binding || fighter->native_motion.count == 0) {
+    native_motion_begin(fighter, count, NULL);
+    memcpy(fighter->native_motion.frames, frames, (size_t)count * sizeof *frames);
+    fighter->native_motion.binding = binding;
+    fighter->native_motion.loop = true;
+    native_motion_play(fighter);
+    fighter->body.physics = binding;
   }
 }
 

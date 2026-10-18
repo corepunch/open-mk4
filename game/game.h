@@ -183,7 +183,8 @@ typedef struct NativeFrames {
 typedef struct NativeMotion {
   mframe_t frames[NATIVE_FRAME_CAPACITY];
   int frame, count;
-  FighterFn end;
+  FighterFn end, binding;
+  bool loop;
   uint64_t generation, last_tick;
 } NativeMotion;
 

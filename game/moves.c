@@ -136,6 +136,7 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   fighter->mmove_hold = false;
   fighter->continuation++;
   fighter->ticks = 0;
+  fighter->native_motion.binding = NULL;
   fighter->connected = false;
   fighter->avoids_high = false;
   fighter->buffered = 0;

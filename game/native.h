@@ -11,6 +11,8 @@ void native_hold(Fighter *fighter, int frames, FighterFn end);
 void native_motion_begin(Fighter *fighter, int frames, FighterFn end);
 void native_motion_frame(Fighter *fighter, int frame, FighterAIFn movement, float distance, FighterFn action);
 void native_motion_play(Fighter *fighter);
+void native_motion_step(Fighter *fighter);
+void native_motion_bind(Fighter *fighter, FighterFn binding, const mframe_t *frames, int count);
 void native_motion_stop(Fighter *fighter);
 void native_motion_speed(Fighter *fighter, float speed);
 void native_schedule_speed(Fighter *fighter, q16 speed, int delay, int frames);

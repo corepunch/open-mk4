@@ -867,29 +867,15 @@ static const WeaponStrike sword_attacks[] = {
 static const MoveDef s_sword_hp = {.clip = 233, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_021C};
 // clang-format on
 
-static void sword_motion(Fighter *fighter) {
-  if (fighter->script_timer > 0) {
-    fighter->script_timer--;
-  } else if (fighter->move_loops > 0) {
-    fighter_set_speed(fighter, fighter->saved_motion[0]);
-    fighter->move_loops--;
-  } else {
-    fighter_set_speed(fighter, 0);
-    fighter->body.physics = NULL;
-  }
-}
-
 static void sword_travel(Fighter *fighter, int delay, int duration) {
-  fighter_set_speed(fighter, 0);
-  fighter->saved_motion[0] = fighter->weapon_strike == NULL ? 0x11eb : fighter->weapon_strike->speed;
-  fighter->script_timer = delay;
-  fighter->move_loops = duration;
-  fighter->body.physics = sword_motion;
+  q16 speed = fighter->weapon_strike == NULL ? 0x11eb : fighter->weapon_strike->speed;
+  fighter->saved_motion[0] = speed;
+  native_schedule_speed(fighter, speed, delay, duration);
 }
 
 static void sword_cleanup(Fighter *fighter) {
-  if (fighter->body.physics == sword_motion) {
-    fighter->body.physics = NULL;
+  if (fighter->body.physics == native_motion_step) {
+    native_motion_stop(fighter);
     fighter_set_speed(fighter, 0);
   }
 }
@@ -1442,8 +1428,8 @@ static void liu_script_sword_blend(Fighter *fighter) {
 }
 
 static void liu_script_motion(Fighter *fighter, int speed, int delay, int duration) {
-  sword_travel(fighter, delay, duration);
   fighter->saved_motion[0] = speed;
+  native_schedule_speed(fighter, speed, delay, duration);
 }
 
 static void liu_script_back_lp_tail(Fighter *fighter) {
