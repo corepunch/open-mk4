@@ -226,15 +226,23 @@ static void draw_billboard(Canvas *cv, Camera camera, const Geometry *geometry, 
   }
 }
 
-/* Points a drop mesh's long Y axis along its velocity. */
+/* Points a mesh's local +Y along its velocity. The yaw matrix turns +Z
+ * toward the heading, so the pitch about X is negative to tip +Y forward
+ * rather than backward. */
 static Mat3 velocity_basis(const q16 vel[3]) {
   float horizontal = hypotf(q16_float(vel[0]), q16_float(vel[2]));
   if (horizontal <= .0001f && vel[1] == 0) {
     return mat3_identity();
   }
-  float pitch = atan2f(horizontal, q16_float(vel[1]));
+  float pitch = atan2f(-horizontal, q16_float(vel[1]));
   float yaw = atan2f(q16_float(vel[0]), q16_float(vel[2]));
   return mat3_mul(yaw_matrix(yaw), rotation(0, (Vec3){pitch * 4096.f / 6.283185307179586f, 0, 0}));
+}
+
+/* Shared blood drop meshes 0-3 have a round head at -Y and their point at
+ * +Y, so the point trails the drop's flight. */
+static Mat3 drop_basis(const q16 vel[3]) {
+  return velocity_basis((q16[3]){-vel[0], -vel[1], -vel[2]});
 }
 
 /* A filtered, alpha-blended camera-facing sprite, half wide in world units. */
@@ -306,7 +314,7 @@ static void draw_blood(Canvas *cv, Camera camera, const Assets *assets, const Sc
     Vec3 origin = {q16_float(drop->pos[0]), q16_float(drop->pos[1]), q16_float(drop->pos[2])};
     float scale = q16_float(drop->scale);
     if (drop->kind == BLOOD_DROP) {
-      draw_shared_mesh(cv, camera, effects, 0, origin, velocity_basis(drop->vel), scale, light);
+      draw_shared_mesh(cv, camera, effects, 0, origin, drop_basis(drop->vel), scale, light);
     } else if (drop->kind == BLOOD_SPLASH) {
       draw_shared_mesh(cv, camera, effects, 4 + mini(8, drop->age / 2), origin, mat3_identity(), scale, light);
     } else if (drop->kind == BLOOD_SPATTER) {
@@ -568,7 +576,8 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       if (visual->billboard) {
         draw_billboard(cv, camera, &assets->hud.effects, frame, origin, q16_float(p->scale), visual->additive);
       } else {
-        draw_shared_mesh(cv, camera, &assets->hud.effects, frame, origin, velocity_basis(p->vel), q16_float(p->scale), &light);
+        draw_shared_mesh(
+            cv, camera, &assets->hud.effects, frame, origin, frame <= 3 ? drop_basis(p->vel) : velocity_basis(p->vel), q16_float(p->scale), &light);
       }
       continue;
     }
