@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CHARACTER = re.compile(r"static const MoveDef\s+(\w+)\s*=\s*\{([^;]+)\};", re.S)
 CLIP_MEMBER = re.compile(r"\.clip\s*=\s*(\d+)")
 POSITIONAL_CLIP = re.compile(r"^\s*(\d+)\s*,")
-SCRIPT_CLIP = re.compile(r"mk4_script_(?:bind|bind_victim|inherit|scene_pose)\(fighter,\s*(\d+)\s*,")
+SCRIPT_CLIP = re.compile(r"mk4_(?:script|mmove)_(?:bind|bind_victim|inherit|scene_pose)\(fighter,\s*(\d+)\s*,")
 
 
 def clip_names(character):

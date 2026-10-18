@@ -675,13 +675,20 @@ static void thrown_finish(Fighter *victim) {
 }
 
 static void lp_thrown_cleanup(Fighter *victim) {
+  if (victim->body.physics == mk4_script_landing_motion) {
+    victim->body.physics = NULL;
+  }
   if (victim->body.on_land == mk4_script_impact) {
     victim->body.on_land = NULL;
   }
 }
 
 static void script_ready(Fighter *fighter) {
-  fighter_fiber_finish(fighter->reaction == 102 && fighter_move(fighter)->clip == 143 ? script_thrown_return : fighter_ready);
+  FighterFn next = fighter->reaction == 102 && fighter_move(fighter)->clip == 143 ? script_thrown_return : fighter_ready;
+  if (fighter_fiber_running(fighter)) {
+    fighter_fiber_finish(next);
+  }
+  fighter_finish_mmove(fighter, next);
 }
 
 static void script_thrown_return(Fighter *victim) {
@@ -696,13 +703,38 @@ static void script_thrown_return(Fighter *victim) {
   victim->facing = -victim->facing;
   fighter_start_move(victim, S_KNOCKDOWN, &s_lp_thrown_getup);
   victim->sample_override = 0;
-  fighter_start_fiber(victim, script_lp_getup, NULL);
+  script_lp_getup(victim);
 }
 
+static void lp_getup_done(Fighter *victim) {
+  stop_body(victim);
+  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+}
+
+/* Native 488b80: reversed getup clip 328, final sample held for one tick. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t lp_getup_frames[] = {
+  {.sample = 0, .duration = 1},
+  {.sample = 1, .duration = 1},
+  {.sample = 2, .duration = 1},
+  {.sample = 3, .duration = 1},
+  {.sample = 4, .duration = 1},
+  {.sample = 5, .duration = 1},
+  {.sample = 6, .duration = 1},
+  {.sample = 7, .duration = 1},
+  {.sample = 8, .duration = 1},
+  {.sample = 9, .duration = 1},
+  {.sample = 10, .duration = 1},
+  {.sample = 11, .duration = 1},
+  {.sample = 12, .duration = 1},
+  {.sample = 13, .duration = 1},
+  {.sample = 14, .duration = 1},
+};
+// clang-format on
+static const mmove_t lp_getup_phase = {.firstframe = 0, .lastframe = COUNT(lp_getup_frames) - 1, .frame = lp_getup_frames, .endfunc = lp_getup_done};
+
 static void script_lp_getup(Fighter *victim) {
-  thrown_play_to(victim, 14, 1);
-  fighter_wait_ticks(1);
-  thrown_finish(victim);
+  fighter_mmove_phase(victim, &lp_getup_phase);
 }
 
 static void lk_thrown_script(Fighter *victim) {
@@ -750,6 +782,7 @@ static void throw_cleanup(Fighter *owner) {
     }
     stop_body(victim);
     fighter_cancel_fiber(victim);
+    fighter_cancel_mmove(victim);
     if (victim->pending == NULL && victim->health > 0) {
       fighter_ready(victim);
     }
@@ -792,8 +825,7 @@ static void script_lk_owner_return(Fighter *fighter) {
 }
 
 static void script_lp_owner_return(Fighter *fighter) {
-  (void)fighter;
-  fighter_fiber_finish(sub_zero_ready);
+  fighter_finish_mmove(fighter, sub_zero_ready);
 }
 
 static void script_lk_victim_rise(Fighter *victim) {
@@ -803,6 +835,21 @@ static void script_lk_victim_rise(Fighter *victim) {
   fighter_wait_ticks(1);
   thrown_finish(victim);
 }
+
+static bool lp_pair_released(const Fighter *victim) {
+  const Fighter *owner = fighter_opponent(victim);
+  return !(owner->flags & FF_PAIRED) || owner->pending != NULL;
+}
+
+static void lp_capture_done(Fighter *victim) {
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  stop_body(victim);
+  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+}
+
+/* Owner submits paired samples; the victim only watches capture lifetime. */
+static const mframe_t lp_capture_frames[] = {{.sample = 0, .duration = 1}};
+static const mmove_t lp_capture_phase = {.firstframe = 0, .lastframe = 0, .frame = lp_capture_frames, .until = lp_pair_released, .endfunc = lp_capture_done};
 
 static void ground_throw(Fighter *fighter, bool lk) {
   if (!can_ground_throw(fighter, lk)) {
@@ -827,8 +874,14 @@ static void ground_throw(Fighter *fighter, bool lk) {
     fighter_set_speed(fighter, -0x1999);
     mk4_script_save_motion(fighter);
   }
-  fighter_start_fiber(fighter, lk ? retail_script_004de490 : retail_script_004de798, throw_cleanup);
-  fighter_start_fiber(victim, ground_thrown_script, NULL);
+  if (lk) {
+    fighter_start_fiber(fighter, retail_script_004de490, throw_cleanup);
+    fighter_start_fiber(victim, ground_thrown_script, NULL);
+  } else {
+    fighter_mmove_phase(victim, &lp_capture_phase);
+    fighter->mmove_cleanup = throw_cleanup;
+    retail_script_004de798(fighter);
+  }
 }
 
 static void enter_throw(Fighter *fighter) {
@@ -1523,7 +1576,8 @@ static void script_reaction(Fighter *fighter, int reaction) {
   victim->reaction = reaction;
   victim->sample_override = 25;
   victim->flags |= FF_REACTING;
-  fighter_start_fiber(victim, retail_script_004e9bd0, lp_thrown_cleanup);
+  victim->mmove_cleanup = lp_thrown_cleanup;
+  retail_script_004e9bd0(victim);
 }
 
 static void script_kick_tail(Fighter *fighter) {

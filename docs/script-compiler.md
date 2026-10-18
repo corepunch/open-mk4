@@ -283,3 +283,17 @@ backend. The native contact phase checks each simulation tick from 9 through
 retain four/six repetitions of samples 10,9,8,9; only an unblocked hit stamps
 the cooldown. Native return reverses samples 10 through 0. Action cleanup
 stops motion and clears no-guard even when interrupted during blocked recoil.
+
+Sub-Zero LP throw `4de798` and reaction `4e9bd0` use generated frame rows
+for both participants. The pair-to native primitive has an explicit offline
+lowering: owner rows advance the captured victim at the same boundary and
+abort if either participant loses capture ownership. No yielding helper is
+called. Release at tick 25 starts the victim's independent frame phase; its
+first duration cannot elapse during its installation tick, in either player
+slot. Native getup 328 is a separate nonblocking phase. Owner recovery ends at
+49; victim tumble/hold/getup ends at 123, with dead victims staying down.
+The frame-program entry rejects an active fiber rather than silently nesting
+backends. LP cleanup releases captured peers before damage and leaves released
+victims independent; victim cancellation removes its landing callback. Finish
+window detection includes active mmove phases. LK throw and other unconverted
+moves still use the existing fiber implementation.

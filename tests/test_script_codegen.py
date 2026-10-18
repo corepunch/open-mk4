@@ -51,7 +51,8 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('static const mframe_t retail_script_004e6798_frames', source)
         self.assertIn('battle_sound(SOUND_A, 175)', source)
         self.assertNotIn('fighter_wait_ticks', source)
-        self.assertNotIn('fighter_fiber_', source)
+        self.assertNotIn('fighter_fiber_finish', source)
+        self.assertNotIn('fighter_start_fiber', source)
         self.assertNotIn('mk4_script_advance', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'frames.c'
@@ -81,6 +82,27 @@ class CompilerTests(unittest.TestCase):
         entry = self.fixture([0x0f000000, descriptor, 0x44000000, (self.entry + 20) // 4, 0x34000001, 0x3f000000])
         with self.assertRaisesRegex(CompileError, 'unsupported frame opcode'):
             generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+
+    def test_mmove_pair_requires_a_victim_binding(self):
+        descriptor = (0x4fad7c + 76 * 12) // 4
+        entry = self.fixture([0x0f000000, descriptor, 0x4b000019, 0x3f000000])
+        with self.assertRaisesRegex(CompileError, 'known victim clip'):
+            generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+        source = generate(self.image, [0x4de798, 0x4e9bd0], 4, 'fighter_ready',
+                          contexts={'0x4e9bd0': dict(clip=153, count=26, sample=25, evidence='native reaction 102 release')},
+                          mmove_entries=[0x4de798, 0x4e9bd0])
+        self.assertIn('mk4_mmove_pair_step', source)
+        self.assertNotIn('fighter_wait_ticks', source)
+        self.assertNotIn('fighter_start_fiber', source)
+        self.assertNotIn('mk4_script_pair_to(fighter', source)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'pair.c'
+            path.write_text(source + '\nstatic void script_reaction(Fighter *f, int r) { (void)f; (void)r; }\n'
+                            'static void script_lp_owner_return(Fighter *f) { fighter_ready(f); }\n'
+                            'static void script_ready(Fighter *f) { fighter_ready(f); }\n'
+                            'void use_frames(Fighter *f) { retail_script_004de798(f); retail_script_004e9bd0(f); }\n')
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
     def test_blend_bind_requires_source_pose_and_valid_sample_one(self):
         # Raiden's finisher opcode 71 blends the inherited pose, then resumes

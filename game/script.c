@@ -50,6 +50,21 @@ void mk4_script_inherit_current(Fighter *fighter, int count, int sample) {
   bind_clip(fighter, current->clip, count, sample);
 }
 
+/* A paired frame boundary advances the captured victim only. The generated
+ * owner row supplies its own pose. Release gives the victim an independent
+ * phase whose first duration starts on the following simulation tick. */
+bool mk4_mmove_pair_step(Fighter *owner) {
+  Fighter *victim = (Fighter *)fighter_opponent(owner);
+  if (victim->pending != NULL || !(owner->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
+    fighter_finish_mmove(owner, fighter_ready);
+    return false;
+  }
+  if (!(victim->flags & FF_PAIR_RELEASE)) {
+    victim->sample_override = mini(fighter_move(victim)->last, fighter_sample(victim) + 1);
+  }
+  return true;
+}
+
 void mk4_script_pair_advance(Fighter *fighter, int count) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   for (int i = 0; i < count; ++i) {

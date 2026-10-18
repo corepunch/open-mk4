@@ -218,7 +218,7 @@ static void begin_finish_window(void) {
  * Keep native continuations and airborne bodies alive until that boundary. */
 static bool defeat_settled(const Fighter *fighter) {
   const MoveDef *move = fighter_move(fighter);
-  if (fighter->pending != NULL || fighter->script != NULL || fighter_airborne(fighter) || fighter->body.gravity != 0) {
+  if (fighter->pending != NULL || fighter->script != NULL || fighter->current_mmove != NULL || fighter_airborne(fighter) || fighter->body.gravity != 0) {
     return false;
   }
   if (fighter->sequence != NULL) {

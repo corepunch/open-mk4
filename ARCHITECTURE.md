@@ -262,3 +262,12 @@ retained across phases and detached before invocation on completion,
 replacement, interruption or round/match reset. Camera and object updates
 remain independent. Fibers coexist during migration; generated script coverage
 and behavioral checks remain required for each converted move.
+
+Sub-Zero sweep, slide, and LP throw (including independent victim recovery)
+now use the frame backend. Reviewed profile roots select compiler-generated
+frame tables from the same decoded graphs as the fiber backend. Native phase
+callbacks provide contact decisions and lifetime coordination. Source-defined
+waits, counted loops and sample paths are expanded offline; no runtime bytecode
+or hidden continuation stack is introduced. Unsupported frame operations fail
+generation, and bindings need an explicit nonblocking review or a dedicated
+frame lowering. Other moves retain fibers during the incremental migration.

@@ -19,6 +19,7 @@ def emit_mmove(program, bindings, return_to, context=None):
     samples = []
     sample = context.get('sample')
     count = context.get('count')
+    victim_bound = False
     loop = selector = None
     pc = entry
 
@@ -39,6 +40,8 @@ def emit_mmove(program, bindings, return_to, context=None):
 
     def advance(target, step=1, paired=False):
         nonlocal sample
+        if paired and not victim_bound:
+            fail('paired playback without a known victim clip')
         if sample is None or count is None:
             fail('playback without a known clip')
         while sample < target if step > 0 else sample > target:
@@ -77,6 +80,8 @@ def emit_mmove(program, bindings, return_to, context=None):
             loop -= 1
             if loop:
                 following = int(row['branch'], 16)
+        elif key and binding.mmove_lowering == 'pair_to':
+            advance(arg, paired=True)
         elif key:
             if not binding.mmove:
                 fail('native binding is not reviewed for nonblocking frame callbacks: ' + binding.symbol)
@@ -101,10 +106,12 @@ def emit_mmove(program, bindings, return_to, context=None):
                 if op == 9:
                     first = row['stored_count'] - 1
                 if op == 0x0e:
-                    fail('paired clip binding not yet lowered')
-                sample, count = first, row['stored_count']
-                emit('mk4_mmove_bind(fighter, %d, %d, %d);' % (row['clip'], count, sample))
-            if op in (0, 0x0f, 0x11, 0x4e):
+                    victim_bound = True
+                    emit('mk4_mmove_bind((Fighter *)fighter_opponent(fighter), %d, %d, %d);' % (row['clip'], row['stored_count'], first))
+                else:
+                    sample, count = first, row['stored_count']
+                    emit('mk4_mmove_bind(fighter, %d, %d, %d);' % (row['clip'], count, sample))
+            if op in (0, 0x0e, 0x0f, 0x11, 0x4e):
                 pass
             elif op == 0x1f:
                 selector = int(row['operands'][0], 16)
@@ -173,7 +180,8 @@ def emit_mmove(program, bindings, return_to, context=None):
             lines.append('  {.sample = %d, .duration = 1%s},' % (pose, callback))
         lines += ['};', '// clang-format on',
                   'static const mmove_t %s_phase = {.firstframe = 0, .lastframe = %d, .frame = %s_frames};' % (name, len(samples) - 1, name)]
-    lines += ['static inline void %s(Fighter *fighter) {' % name]
+    lines += ['static inline void %s(Fighter *fighter) {' % name,
+              '  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");']
     lines += ['  ' + statement for statement in events[0]]
     if samples:
         lines += ['  fighter_mmove_phase(fighter, &%s_phase);' % name]
