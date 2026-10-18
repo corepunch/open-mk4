@@ -11,7 +11,7 @@ const MoveDef jarek_s_low_kick = {.clip = 308, .last = MOVE_END, .flags = SF_ATT
 const MoveDef jarek_s_sweep = {.clip = 63, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW, .action = ACTION_RETAIL_010C};
 const MoveDef jarek_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LAUNCH, .action = ACTION_RETAIL_0109};
 
-const MoveDef jarek_s_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
+const MoveDef jarek_s_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD, .action = ACTION_RETAIL_0500};
 
 const MoveDef jarek_s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
@@ -89,7 +89,9 @@ void jarek_entry_retail_script_004de640(Fighter *fighter) {
 }
 
 void jarek_entry_retail_script_004de664(Fighter *fighter) {
-  retail_script_004de664(fighter);
+  /* 4de664 is callback data consumed by48fcd0, not a VM stream.
+   * Its native490350 toggles the captured peer facing. */
+  fighter->facing = -fighter->facing;
 }
 
 void jarek_entry_retail_script_004de668(Fighter *fighter) {

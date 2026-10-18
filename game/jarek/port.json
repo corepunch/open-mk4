@@ -3,13 +3,12 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "98988c1bc5bf0fa16d798d0bc8db6ec311777c30da5b240baa905df7274ed64c",
+  "inventory_sha256": "e2a7fe60b98b8bf7145d2c055a27c24baa78bc6562664386f19d6d5de0155bd3",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
     "0x4de328",
     "0x4de640",
-    "0x4de664",
     "0x4de668",
     "0x4de6b8",
     "0x4de798",
@@ -122,12 +121,6 @@
       "count": 45,
       "sample": 28,
       "evidence": "Jarek air-throw victim release retains inherited clip 202 sample 28; bounded EXE query"
-    },
-    "0x4de664": {
-      "clip": 80,
-      "count": 75,
-      "sample": 57,
-      "evidence": "Jarek LP throw continuation follows paired clip 80 to sample 57 before owner continuation 4de664; bounded native/script listings"
     },
     "0x4de668": {
       "clip": 80,
@@ -659,6 +652,10 @@
   },
   "mmove_scripts": [
     "0x4e5ca0",
-    "0x4e5d20"
+    "0x4e5d20",
+    "0x4de798",
+    "0x4de640",
+    "0x4de6b8",
+    "0x4de668"
   ]
 }

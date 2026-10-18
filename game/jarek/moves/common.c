@@ -52,7 +52,7 @@ void jarek_script_lp_select(Fighter *fighter) {
 
 void jarek_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter_start_fiber(victim, jarek_entry_retail_script_004de664, NULL);
+  jarek_entry_retail_script_004de664(victim);
   jarek_entry_retail_script_004de668(fighter);
 }
 
@@ -61,7 +61,7 @@ void jarek_script_lp_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_fiber_finish(jarek_ready);
+  fighter_finish_mmove(fighter, jarek_ready);
 }
 
 void jarek_script_current_reaction(Fighter *fighter, int reaction) {
@@ -69,7 +69,9 @@ void jarek_script_current_reaction(Fighter *fighter, int reaction) {
     jarek_fatality_contact_hold(fighter);
     return;
   }
-  battle_react(fighter, reaction);
+  require(reaction == 102 || reaction == 107, "Unexpected Jarek LP victim reaction");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  battle_react(victim, reaction);
 }
 
 void jarek_script_opponent_reaction(Fighter *fighter, int reaction) {
