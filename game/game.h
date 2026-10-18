@@ -484,6 +484,8 @@ typedef struct HitEffect {
 
 typedef struct Projectile Projectile;
 typedef void (*ProjectileFn)(Projectile *projectile);
+typedef struct BattleEvent BattleEvent;
+typedef bool (*BattleEventFn)(BattleEvent *event, Fighter *owner, Fighter *opponent);
 
 enum {
   PROJECTILE_SPEAR = 1,
@@ -525,6 +527,17 @@ struct Projectile {
 };
 
 #define MAX_PROJECTILES 4
+
+#define MAX_BATTLE_EVENTS 16
+
+/* Portable scene/contact callbacks keep explicit phase and data instead of
+ * retaining a retail task stack or pointers into native scratch state. */
+struct BattleEvent {
+  BattleEventFn step;
+  uint64_t generation, due_tick, owner_continuation;
+  int owner, phase, data[8];
+  bool active, cancel_on_owner_change, cancel_on_ko;
+};
 
 typedef struct ScenePiece {
   bool active, frozen, animated;
@@ -623,6 +636,7 @@ struct Battle {
   Fighter fighters[2];
   HitEffect effects[2];
   Projectile projectiles[MAX_PROJECTILES];
+  BattleEvent events[MAX_BATTLE_EVENTS];
   ScenePiece pieces[MAX_SCENE_PIECES];
   SceneAttachment attachments[MAX_SCENE_ATTACHMENTS];
   Particle particles[MAX_PARTICLES];
@@ -634,6 +648,7 @@ struct Battle {
   int phase_ticks, time_ticks, round, winner;
   bool finish_waiting; /* final KO recovery must reach the dizzy controller before entry */
   uint32_t random[2];
+  uint64_t event_generation;
   int cpu_level, cpu_rank, cpu_progress; /* 534780, 5345b0, 53c370 */
   bool cpu_adaptive;
   int arena, finisher; /* stage id and completed/active character finisher id */
@@ -696,6 +711,11 @@ ContactResult battle_contact(Fighter *attacker, const AttackRecord *record);
 ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
 ContactResult battle_projectile_contact(Projectile *projectile, const AttackRecord *record);
 Projectile *battle_spawn_projectile(Fighter *owner, int kind, int lifetime, ProjectileFn step);
+BattleEvent *battle_event_start(Fighter *owner, BattleEventFn step, bool cancel_on_owner_change, bool cancel_on_ko);
+void battle_event_cancel(BattleEvent *event);
+void battle_event_cancel_all(void);
+void battle_event_delay(BattleEvent *event, int ticks);
+void battle_event_pump(void);
 void battle_damage(Fighter *victim, q16 damage);
 void battle_react(Fighter *victim, int reaction);
 void battle_wall_recoil(Fighter *victim);

@@ -70,6 +70,7 @@ void battle_reset_match(void) {
 
 void battle_next_round(void) {
   fighter_cancel_all_fibers();
+  battle_event_cancel_all();
   size_t i;
   battle_set_arena(g_battle.arena);
   g_battle.round++;
@@ -491,6 +492,80 @@ static void step_projectiles(void) {
   }
 }
 
+static int battle_event_owner_index(const Fighter *owner) {
+  if (owner == &g_battle.fighters[0]) {
+    return 0;
+  }
+  if (owner == &g_battle.fighters[1]) {
+    return 1;
+  }
+  require(false, "Battle event owner must be an active fighter");
+  return 0;
+}
+
+BattleEvent *battle_event_start(Fighter *owner, BattleEventFn step, bool cancel_on_owner_change, bool cancel_on_ko) {
+  require(owner != NULL && step != NULL, "Battle event requires an owner and callback");
+  int owner_index = battle_event_owner_index(owner);
+  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
+    BattleEvent *event = &g_battle.events[i];
+    if (!event->active) {
+      *event = (BattleEvent){.step = step,
+          .generation = ++g_battle.event_generation,
+          .due_tick = g_battle.ticks + 1,
+          .owner_continuation = owner->continuation,
+          .owner = owner_index,
+          .active = true,
+          .cancel_on_owner_change = cancel_on_owner_change,
+          .cancel_on_ko = cancel_on_ko};
+      return event;
+    }
+  }
+  require(false, "Battle event pool exhausted");
+  return NULL;
+}
+
+void battle_event_cancel(BattleEvent *event) {
+  if (event != NULL) {
+    *event = (BattleEvent){0};
+  }
+}
+
+void battle_event_cancel_all(void) {
+  memset(g_battle.events, 0, sizeof g_battle.events);
+}
+
+void battle_event_delay(BattleEvent *event, int ticks) {
+  require(event != NULL && event->active && ticks > 0, "Battle event delay must be positive");
+  event->due_tick = g_battle.ticks + (uint64_t)ticks;
+}
+
+void battle_event_pump(void) {
+  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
+    BattleEvent *event = &g_battle.events[i];
+    if (!event->active) {
+      continue;
+    }
+    if (event->owner < 0 || event->owner >= 2) {
+      battle_event_cancel(event);
+      continue;
+    }
+    Fighter *owner = &g_battle.fighters[event->owner];
+    if ((event->cancel_on_ko && owner->health <= 0) || (event->cancel_on_owner_change && owner->continuation != event->owner_continuation)) {
+      battle_event_cancel(event);
+      continue;
+    }
+    if (event->due_tick > g_battle.ticks) {
+      continue;
+    }
+    event->due_tick = g_battle.ticks + 1;
+    uint64_t generation = event->generation;
+    bool keep = event->step(event, owner, &g_battle.fighters[1 - event->owner]);
+    if (event->active && event->generation == generation && !keep) {
+      battle_event_cancel(event);
+    }
+  }
+}
+
 void battle_step(const Input input[2]) {
   int i;
   g_battle.ticks++;
@@ -526,6 +601,7 @@ void battle_step(const Input input[2]) {
     Fighter *victim = &g_battle.fighters[1 - g_battle.winner];
     if (g_battle.finish_waiting) {
       advance_fighter(victim, winner);
+      battle_event_pump();
       battle_world();
       if (defeat_settled(victim)) {
         begin_finish_window();
@@ -534,6 +610,7 @@ void battle_step(const Input input[2]) {
     }
     advance_fighter(winner, victim);
     advance_fighter(victim, winner);
+    battle_event_pump();
     for (int button = 0; button < BUTTON_COUNT; ++button) {
       if (g_battle.phase_ticks < 300 && (winner->pressed & BUTTON_BIT(button))) {
         fighter_press(winner, (Button)button);
@@ -578,6 +655,7 @@ void battle_step(const Input input[2]) {
     if (g_battle.phase == PHASE_FATALITY) {
       step_projectiles();
     }
+    battle_event_pump();
     battle_world();
     if (g_battle.phase == PHASE_ROUND_OVER && g_battle.phase_ticks >= 180)
       battle_next_round();
@@ -588,6 +666,7 @@ void battle_step(const Input input[2]) {
   /* Retail tick 0x41fd70: task pump (fighters, then press tasks), world pump. */
   for (i = 0; i < 2; ++i)
     advance_fighter(&g_battle.fighters[i], &g_battle.fighters[1 - i]);
+  battle_event_pump();
   step_projectiles();
   dispatch_presses();
   battle_world();
