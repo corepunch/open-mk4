@@ -141,10 +141,12 @@ def audit(image, character, return_to=None, profile=None):
     for entry in contexts.keys() - {hex(root) for root in generated}:
         errors.append('%s: stale generated entry context' % entry)
     scripts = []
+    compiled_graphs = {}
     for entry, names in sorted(root_names.items()):
         try:
             program, _ = compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', continuation), contexts.get(hex(entry)))
             status, diagnostics = 'compilable', []
+            compiled_graphs[entry] = {int(row['va'], 16) for row in program['instructions']}
         except (CompileError, ValueError) as exc:
             status = 'unsupported'
             diagnostics = exc.diagnostics if isinstance(exc, CompileError) else [dict(pc=hex(entry), reason=str(exc))]
@@ -170,7 +172,7 @@ def audit(image, character, return_to=None, profile=None):
     else:
         if profile.get('inventory_sha256') != fingerprint(observed):
             errors.append('EXE/root inventory changed: review --inventory and update its reviewed fingerprint')
-        errors.extend(unreachable_references(profile))
+        errors.extend(unreachable_references(profile, compiled_graphs))
         references = profile.get('moves', {})
         for name in observed['moves']:
             check_reference(references.get(name), errors, 'move ' + name)

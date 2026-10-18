@@ -123,7 +123,7 @@ def weapon_dispatch_cycles(graph, reached, directory):
     return errors
 
 
-def unreachable_references(profile):
+def unreachable_references(profile, compiled_graphs=None):
     graph = workspace_graph()
     # The roster lookup is an indirect runtime selection, not an edge from
     # every fighter to every other fighter's command tables.
@@ -156,6 +156,20 @@ def unreachable_references(profile):
     # are checked through the catalog roots above, not as independent moves.
     directory = 'game/' + profile['character'] + '/'
     errors.extend(weapon_dispatch_cycles(graph, reached, directory))
+    # A generated phase may be entered through its native loop coordinator.
+    # Linked continuations can be folded into another generated C function;
+    # use the compiler's decoded CFG, not a requirement to call every wrapper.
+    live_programs = set()
+    for path, name in reached:
+        match = re.match(r'retail_script_([0-9a-fA-F]{8})(?:_|$)', name)
+        if path.startswith(directory) and match:
+            live_programs.add(int(match[1], 16))
+    implemented = set(live_programs)
+    for entry in live_programs:
+        implemented.update((compiled_graphs or {}).get(entry, ()))
+    for entry in profile.get('generated_scripts', ()):
+        if int(entry, 16) not in implemented:
+            errors.append('generated script %s: compiled implementation is unreachable from gameplay' % entry)
     for key, body in graph.nodes.items():
         path, name = key
         if not path.startswith(directory) or key in reached or key in reported:
