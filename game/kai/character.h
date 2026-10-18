@@ -128,4 +128,14 @@ extern const MoveDef kai_s_walk;
 extern const ButtonTable kai_diagonal_air;
 void kai_press_air_hk(Fighter *fighter);
 void kai_press_air_lk(Fighter *fighter);
+void kai_close_hp(Fighter *fighter);
+void kai_combo_hp(Fighter *fighter);
+void kai_close_hk(Fighter *fighter);
+void kai_press_air_ground_hp(Fighter *fighter);
+void kai_script_close_hp_tail(Fighter *fighter);
+void kai_script_combo_hp_tail(Fighter *fighter);
+void kai_script_close_hk_tail(Fighter *fighter);
+void kai_entry_retail_script_004e61e0(Fighter *fighter);
+void kai_entry_retail_script_004e69b0(Fighter *fighter);
+void kai_entry_retail_script_004e6190(Fighter *fighter);
 #endif

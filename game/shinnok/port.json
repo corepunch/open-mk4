@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/shinnok/generated/scripts.inc",
   "integration_source": "game/shinnok/character.c",
-  "inventory_sha256": "e0a1cacbb72e3034165acc7d074316a822594e2baa90ffac04f5e98d91a63ceb",
+  "inventory_sha256": "f920ee3961325f8b33366b0d1f4e67ce90765da00d4b00385b5b5a0cf8df26cd",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -20,6 +20,8 @@
     "0x4e5d90",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
     "0x4e62a0",
     "0x4e62f0",
@@ -35,6 +37,7 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e9910"
   ],
   "entry_contexts": {
@@ -104,6 +107,12 @@
       "count": 45,
       "sample": 28,
       "evidence": "Shinnok air-throw victim release retains inherited clip 202 sample 28; bounded EXE query"
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "entry_adapters": {
@@ -288,6 +297,21 @@
       "source": "game/shinnok/character.c",
       "symbol": "shinnok_uppercut",
       "evidence": "Shinnok roster slot 6 native entry 0x0046ccd0 and selected EXE script roots"
+    },
+    "close_hp": {
+      "source": "game/shinnok/moves/combos.c",
+      "symbol": "shinnok_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/shinnok/moves/combos.c",
+      "symbol": "shinnok_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/shinnok/moves/combos.c",
+      "symbol": "shinnok_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "stances": {
@@ -322,19 +346,19 @@
       "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hp_followup": {
-      "source": "game/shinnok/character.c",
-      "symbol": "close_hp_followup",
-      "evidence": "Shinnok selected stance table close_hp_followup; typed EXE entries in reviewed inventory"
+      "source": "game/shinnok/moves/combos.c",
+      "symbol": "shinnok_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "source": "game/shinnok/character.c",
-      "symbol": "combo_hp_followup",
-      "evidence": "Shinnok selected stance table combo_hp_followup; typed EXE entries in reviewed inventory"
+      "source": "game/shinnok/moves/combos.c",
+      "symbol": "shinnok_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "close_hk_followup": {
-      "source": "game/shinnok/character.c",
-      "symbol": "close_hk_followup",
-      "evidence": "Shinnok selected stance table close_hk_followup; typed EXE entries in reviewed inventory"
+      "source": "game/shinnok/moves/combos.c",
+      "symbol": "shinnok_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     }
   },
   "weapon": {

@@ -33,6 +33,11 @@ static void cage_low_kick(Fighter *fighter) {
 }
 
 void cage_press_high_kick(Fighter *fighter) {
+  if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
+    fighter_interrupt(fighter, cage_close_hk);
+    return;
+  }
+
   fighter_interrupt(fighter, cage_high_kick);
 }
 

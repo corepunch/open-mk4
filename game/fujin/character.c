@@ -185,3 +185,15 @@ void fujin_entry_retail_script_004e9910(Fighter *fighter) {
 const mmove_t *fujin_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_repeat_phase;
 }
+
+void fujin_entry_retail_script_004e61e0(Fighter *fighter) {
+  retail_script_004e61e0(fighter);
+}
+
+void fujin_entry_retail_script_004e69b0(Fighter *fighter) {
+  retail_script_004e69b0(fighter);
+}
+
+void fujin_entry_retail_script_004e6190(Fighter *fighter) {
+  retail_script_004e6190(fighter);
+}

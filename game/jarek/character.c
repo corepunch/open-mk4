@@ -37,9 +37,6 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = jarek_press_air_hp,
     [BUTTON_LOW_PUNCH] = jarek_press_air_lp,
     [BUTTON_HIGH_KICK] = jarek_press_air_hk,
     [BUTTON_LOW_KICK] = jarek_press_air_lk}};
-static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch}};
-static const ButtonTable combo_hp_followup = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch}};
-static const ButtonTable close_hk_followup = {{[BUTTON_HIGH_KICK] = jarek_press_kick}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
@@ -239,4 +236,16 @@ void jarek_entry_retail_script_004ed190(Fighter *fighter) {
 
 const mmove_t *jarek_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_repeat_phase;
+}
+
+void jarek_entry_retail_script_004e61e0(Fighter *fighter) {
+  retail_script_004e61e0(fighter);
+}
+
+void jarek_entry_retail_script_004e69b0(Fighter *fighter) {
+  retail_script_004e69b0(fighter);
+}
+
+void jarek_entry_retail_script_004e6190(Fighter *fighter) {
+  retail_script_004e6190(fighter);
 }

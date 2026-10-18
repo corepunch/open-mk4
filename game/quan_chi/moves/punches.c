@@ -7,11 +7,16 @@ void quan_chi_jab(Fighter *fighter) {
 }
 
 static void quan_chi_high_punch(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &quan_chi_s_jab);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    quan_chi_close_hp(fighter);
+  } else {
+    quan_chi_jab(fighter);
+  }
 }
 
 void quan_chi_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, quan_chi_jab);
+  fighter_interrupt(fighter, quan_chi_high_punch);
 }
 
 void quan_chi_press_low_punch(Fighter *fighter) {

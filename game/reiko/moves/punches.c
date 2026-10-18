@@ -4,7 +4,12 @@ static void reiko_high_punch(Fighter *fighter);
 static void reiko_jab(Fighter *fighter);
 
 static void reiko_high_punch(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &reiko_s_jab);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    reiko_close_hp(fighter);
+  } else {
+    reiko_jab(fighter);
+  }
 }
 
 static void reiko_jab(Fighter *fighter) {
@@ -12,7 +17,7 @@ static void reiko_jab(Fighter *fighter) {
 }
 
 void reiko_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, reiko_jab);
+  fighter_interrupt(fighter, reiko_high_punch);
 }
 
 void reiko_press_low_punch(Fighter *fighter) {

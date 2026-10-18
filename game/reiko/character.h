@@ -84,4 +84,14 @@ extern const MoveDef reiko_s_uppercut;
 extern const ButtonTable reiko_diagonal_air;
 void reiko_press_air_hk(Fighter *fighter);
 void reiko_press_air_lk(Fighter *fighter);
+void reiko_close_hp(Fighter *fighter);
+void reiko_combo_hp(Fighter *fighter);
+void reiko_close_hk(Fighter *fighter);
+void reiko_press_air_ground_hp(Fighter *fighter);
+void reiko_script_close_hp_tail(Fighter *fighter);
+void reiko_script_combo_hp_tail(Fighter *fighter);
+void reiko_script_close_hk_tail(Fighter *fighter);
+void reiko_entry_retail_script_004e61e0(Fighter *fighter);
+void reiko_entry_retail_script_004e69b0(Fighter *fighter);
+void reiko_entry_retail_script_004e6190(Fighter *fighter);
 #endif

@@ -49,9 +49,6 @@ static const ButtonTable cage_straight_air = {{[BUTTON_HIGH_PUNCH] = cage_press_
     [BUTTON_LOW_PUNCH] = cage_press_air_lp,
     [BUTTON_HIGH_KICK] = cage_press_air_hk,
     [BUTTON_LOW_KICK] = cage_press_air_lk}};
-static const ButtonTable cage_close_hp_followup = {{[BUTTON_HIGH_PUNCH] = cage_press_high_punch}};
-static const ButtonTable cage_combo_hp_followup = {{[BUTTON_HIGH_PUNCH] = cage_press_high_punch}};
-static const ButtonTable cage_close_hk_followup = {{[BUTTON_HIGH_KICK] = cage_press_high_kick}};
 
 static const Controls cage_controls = {NULL, 0,
     {[STANCE_STANDING] = &cage_standing, [STANCE_CROUCHING] = &cage_crouching, [STANCE_JUMP] = &cage_straight_air, [STANCE_DIAGONAL_AIR] = &cage_diagonal_air}};
@@ -210,4 +207,16 @@ void cage_entry_retail_script_004e9910(Fighter *fighter) {
 
 const mmove_t *cage_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_repeat_phase;
+}
+
+void cage_entry_retail_script_004e61e0(Fighter *fighter) {
+  retail_script_004e61e0(fighter);
+}
+
+void cage_entry_retail_script_004e69b0(Fighter *fighter) {
+  retail_script_004e69b0(fighter);
+}
+
+void cage_entry_retail_script_004e6190(Fighter *fighter) {
+  retail_script_004e6190(fighter);
 }

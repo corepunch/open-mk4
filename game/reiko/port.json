@@ -139,6 +139,12 @@
       "count": 45,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 28
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "generated_scripts": [
@@ -161,6 +167,8 @@
     "0x4e5d90",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
     "0x4e62a0",
     "0x4e62f0",
@@ -176,12 +184,13 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e9910",
     "0x4e9b40",
     "0x4e9bd0"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "0d945564038211fbd083a6e3a0c33e6761830cb94ec017a8610f9cefd8c6961f",
+  "inventory_sha256": "d9f97647cd0a2097e5d9892758285afa6f0dd7401bbb180116168deff666112f",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -267,6 +276,21 @@
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
       "source": "game/reiko/character.c",
       "symbol": "reiko_uppercut"
+    },
+    "close_hp": {
+      "source": "game/reiko/moves/combos.c",
+      "symbol": "reiko_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/reiko/moves/combos.c",
+      "symbol": "reiko_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/reiko/moves/combos.c",
+      "symbol": "reiko_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -410,19 +434,19 @@
       "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
-      "evidence": "Retail Reiko stance table 0x4e70a8; shared base button map with Reiko generated move entries in game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_standing"
+      "source": "game/reiko/moves/combos.c",
+      "symbol": "reiko_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     },
     "close_hp_followup": {
-      "evidence": "Retail Reiko stance table 0x4e7078; shared base button map with Reiko generated move entries in game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_standing"
+      "source": "game/reiko/moves/combos.c",
+      "symbol": "reiko_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "evidence": "Retail Reiko stance table 0x4e7090; shared base button map with Reiko generated move entries in game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_standing"
+      "source": "game/reiko/moves/combos.c",
+      "symbol": "reiko_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "crouching": {
       "evidence": "Retail Reiko stance table 0x4e5070; shared base button map with Reiko generated move entries in game/reiko/character.c",

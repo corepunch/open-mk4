@@ -16,6 +16,11 @@ void shinnok_script_kick_finish(Fighter *fighter) {
 }
 
 void shinnok_press_kick(Fighter *fighter) {
+  if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
+    fighter_interrupt(fighter, shinnok_close_hk);
+    return;
+  }
+
   fighter_interrupt(fighter, shinnok_high_kick);
 }
 

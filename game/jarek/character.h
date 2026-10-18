@@ -131,4 +131,14 @@ extern const MoveDef jarek_s_throw;
 extern const MoveDef jarek_s_uppercut;
 extern const MoveDef jarek_s_walk;
 
+void jarek_close_hp(Fighter *fighter);
+void jarek_combo_hp(Fighter *fighter);
+void jarek_close_hk(Fighter *fighter);
+void jarek_press_air_ground_hp(Fighter *fighter);
+void jarek_script_close_hp_tail(Fighter *fighter);
+void jarek_script_combo_hp_tail(Fighter *fighter);
+void jarek_script_close_hk_tail(Fighter *fighter);
+void jarek_entry_retail_script_004e61e0(Fighter *fighter);
+void jarek_entry_retail_script_004e69b0(Fighter *fighter);
+void jarek_entry_retail_script_004e6190(Fighter *fighter);
 #endif

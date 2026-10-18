@@ -36,18 +36,6 @@ static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_a
     [BUTTON_LOW_PUNCH] = quan_chi_press_air_lp,
     [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
     [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
-static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_high_punch,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
-    [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
-    [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
-static const ButtonTable combo_hp_followup = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_high_punch,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
-    [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
-    [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
-static const ButtonTable close_hk_followup = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_high_punch,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
-    [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
-    [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
 
 static const Controls quan_chi_controls = {
     NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
@@ -197,4 +185,16 @@ void quan_chi_entry_retail_script_004e9910(Fighter *fighter) {
 
 const mmove_t *quan_chi_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_repeat_phase;
+}
+
+void quan_chi_entry_retail_script_004e61e0(Fighter *fighter) {
+  retail_script_004e61e0(fighter);
+}
+
+void quan_chi_entry_retail_script_004e69b0(Fighter *fighter) {
+  retail_script_004e69b0(fighter);
+}
+
+void quan_chi_entry_retail_script_004e6190(Fighter *fighter) {
+  retail_script_004e6190(fighter);
 }

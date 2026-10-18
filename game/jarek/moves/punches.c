@@ -8,7 +8,12 @@ void jarek_jab(Fighter *fighter) {
 }
 
 static void jarek_high_punch(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &s_high_punch);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    jarek_close_hp(fighter);
+  } else {
+    jarek_jab(fighter);
+  }
 }
 
 void jarek_press_punch(Fighter *fighter) {

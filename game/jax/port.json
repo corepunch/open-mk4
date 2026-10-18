@@ -175,6 +175,12 @@
       "count": 35,
       "sample": 0,
       "evidence": "F2? Jax jab callback enters clip 299/35 at its start; native continuation advances to sample 18 before selector 21 contact."
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "generated_scripts": [
@@ -209,6 +215,8 @@
     "0x4e5df8",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
     "0x4e62a0",
     "0x4e62c0",
@@ -226,13 +234,14 @@
     "0x4e6890",
     "0x4e68a8",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e8150",
     "0x4e8174",
     "0x4e9910",
     "0x4ed090"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "020a84dd42440b8967ebf017ac138b8adf4f78859195884788db564d3bd11cdf",
+  "inventory_sha256": "13434069b92f8c2119b2a7dd520cb7bf2a30a404744f86f90a74a9bf37972c5f",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -353,6 +362,21 @@
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for uppercut",
       "source": "game/jax/character.c",
       "symbol": "jax_uppercut"
+    },
+    "close_hp": {
+      "source": "game/jax/moves/combos.c",
+      "symbol": "jax_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/jax/moves/combos.c",
+      "symbol": "jax_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/jax/moves/combos.c",
+      "symbol": "jax_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "output": "game/jax/generated/scripts.inc",
@@ -487,19 +511,19 @@
       "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
-      "evidence": "Jax slot 13 uses shared portable close_hk_followup stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/moves/combos.c",
+      "symbol": "jax_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     },
     "close_hp_followup": {
-      "evidence": "Jax slot 13 uses shared portable close_hp_followup stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/moves/combos.c",
+      "symbol": "jax_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "evidence": "Jax slot 13 uses shared portable combo_hp_followup stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/moves/combos.c",
+      "symbol": "jax_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "crouching": {
       "evidence": "Jax slot 13 uses shared portable crouching stance; typed inventory table recorded",

@@ -78,4 +78,14 @@ extern const MoveDef fujin_s_uppercut;
 extern const ButtonTable fujin_diagonal_air;
 void fujin_press_air_hk(Fighter *fighter);
 void fujin_press_air_lk(Fighter *fighter);
+void fujin_close_hp(Fighter *fighter);
+void fujin_combo_hp(Fighter *fighter);
+void fujin_close_hk(Fighter *fighter);
+void fujin_press_air_ground_hp(Fighter *fighter);
+void fujin_script_close_hp_tail(Fighter *fighter);
+void fujin_script_combo_hp_tail(Fighter *fighter);
+void fujin_script_close_hk_tail(Fighter *fighter);
+void fujin_entry_retail_script_004e61e0(Fighter *fighter);
+void fujin_entry_retail_script_004e69b0(Fighter *fighter);
+void fujin_entry_retail_script_004e6190(Fighter *fighter);
 #endif

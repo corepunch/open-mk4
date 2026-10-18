@@ -104,4 +104,14 @@ extern const MoveDef cage_s_uppercut;
 extern const ButtonTable cage_diagonal_air;
 void cage_press_air_hk(Fighter *fighter);
 void cage_press_air_lk(Fighter *fighter);
+void cage_close_hp(Fighter *fighter);
+void cage_combo_hp(Fighter *fighter);
+void cage_close_hk(Fighter *fighter);
+void cage_press_air_ground_hp(Fighter *fighter);
+void cage_script_close_hp_tail(Fighter *fighter);
+void cage_script_combo_hp_tail(Fighter *fighter);
+void cage_script_close_hk_tail(Fighter *fighter);
+void cage_entry_retail_script_004e61e0(Fighter *fighter);
+void cage_entry_retail_script_004e69b0(Fighter *fighter);
+void cage_entry_retail_script_004e6190(Fighter *fighter);
 #endif

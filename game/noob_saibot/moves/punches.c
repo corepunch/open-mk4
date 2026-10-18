@@ -4,7 +4,12 @@ static void noob_saibot_high_punch(Fighter *fighter);
 static void noob_saibot_jab(Fighter *fighter);
 
 static void noob_saibot_high_punch(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &noob_saibot_s_jab);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    noob_saibot_close_hp(fighter);
+  } else {
+    noob_saibot_jab(fighter);
+  }
 }
 
 static void noob_saibot_jab(Fighter *fighter) {
@@ -12,7 +17,7 @@ static void noob_saibot_jab(Fighter *fighter) {
 }
 
 void noob_saibot_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, noob_saibot_jab);
+  fighter_interrupt(fighter, noob_saibot_high_punch);
 }
 
 void noob_saibot_press_low_punch(Fighter *fighter) {

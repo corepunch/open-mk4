@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "2661907bf76853ffa63d83829998cf969528d83bbffbb235e5c9cce478388c43",
+  "inventory_sha256": "d5e71bfa61bd3f10ff18cdeaeb56fc3a54fc27ceb2d2849bab00fb32327ba316",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -26,6 +26,8 @@
     "0x4e5d90",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
     "0x4e62a0",
     "0x4e62c0",
@@ -43,6 +45,7 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e80a0",
     "0x4e80a8",
     "0x4e80c8",
@@ -167,6 +170,12 @@
       "count": 30,
       "sample": 0,
       "evidence": "Native chain 0x47a160 enters this follow-up with clip 105 sample 0; bounded native and script listings"
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "entry_adapters": {
@@ -406,6 +415,21 @@
       "source": "game/jarek/character.c",
       "symbol": "jarek_command_47b310",
       "evidence": "Jarek CPU near, medium and far rows target native 0x47b310; the portable adapter starts the matching low kick, based on the reviewed CPU table and native entry"
+    },
+    "close_hp": {
+      "source": "game/jarek/moves/combos.c",
+      "symbol": "jarek_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/jarek/moves/combos.c",
+      "symbol": "jarek_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/jarek/moves/combos.c",
+      "symbol": "jarek_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "stances": {
@@ -440,19 +464,19 @@
       "evidence": "Jarek selected stance table air_followup; typed EXE entries in reviewed inventory"
     },
     "close_hp_followup": {
-      "source": "game/jarek/character.c",
-      "symbol": "close_hp_followup",
-      "evidence": "Jarek selected stance table close_hp_followup; typed EXE entries in reviewed inventory"
+      "source": "game/jarek/moves/combos.c",
+      "symbol": "jarek_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "source": "game/jarek/character.c",
-      "symbol": "combo_hp_followup",
-      "evidence": "Jarek selected stance table combo_hp_followup; typed EXE entries in reviewed inventory"
+      "source": "game/jarek/moves/combos.c",
+      "symbol": "jarek_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "close_hk_followup": {
-      "source": "game/jarek/character.c",
-      "symbol": "close_hk_followup",
-      "evidence": "Jarek selected stance table close_hk_followup; typed EXE entries in reviewed inventory"
+      "source": "game/jarek/moves/combos.c",
+      "symbol": "jarek_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     }
   },
   "weapon": {

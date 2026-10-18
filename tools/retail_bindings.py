@@ -1131,6 +1131,16 @@ CHARACTER_BINDINGS[17][0x46aca0] = Binding(
     flow='terminal', evidence='46aca0 subtracts 0x30a3 from the victim, releases the pair and returns to the fighter controller')
 
 
+# Shared close attacks retain character-owned generated startup and native tails.
+for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
+    from character_catalog import CHARACTERS as _CONTROL_CHARACTERS
+    _name = _CONTROL_CHARACTERS[_cid]
+    for _address, _suffix in ((0x46bf10, 'close_hp'), (0x46c2c0, 'combo_hp'), (0x46bb60, 'close_hk')):
+        CHARACTER_BINDINGS.setdefault(_cid, {})[_address] = Binding(
+            _name + '_script_' + _suffix + '_tail', 'game/' + _name + '/moves/combos.c', ('tail',), flow='terminal',
+            evidence='Shared native close-attack contact/recovery runner; 46bf10, 46c2c0 and 46bb60 with roster-owned follow-up tables')
+
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

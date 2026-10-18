@@ -6,6 +6,9 @@ void jax_fan_tail(Fighter *);
 void jax_script_air_finish(Fighter *);
 void jax_script_air_throw_ground_release(Fighter *);
 void jax_script_air_throw_release(Fighter *);
+void jax_script_close_hk_tail(Fighter *);
+void jax_script_close_hp_tail(Fighter *);
+void jax_script_combo_hp_tail(Fighter *);
 void jax_script_cpu_projectile_spawn(Fighter *, int);
 void jax_script_current_reaction(Fighter *, int);
 void jax_script_fatality_1_finish(Fighter *);
@@ -1199,6 +1202,81 @@ static inline void retail_script_004e5e50(Fighter *fighter) {
   }
 }
 
+static inline void retail_script_004e6190(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  {
+    /* EXE 004e6190: 0xf000000 0x13ef0d */
+    mk4_script_bind(fighter, 314, 13, 0);
+  }
+  {
+    /* EXE 004e6198: 0x1d000005 */
+    fighter->sample_override = 5;
+  }
+  {
+    /* EXE 004e619c: 0x34000001 */
+    fighter_wait_ticks(1);
+  }
+  {
+    /* EXE 004e61a0: 0x1d000006 */
+    fighter->sample_override = 6;
+  }
+  {
+    /* EXE 004e61a4: 0x34000001 */
+    fighter_wait_ticks(1);
+  }
+  {
+    /* EXE 004e61a8: 0x1d000007 */
+    fighter->sample_override = 7;
+  }
+  {
+    /* EXE 004e61ac: 0x34000001 */
+    fighter_wait_ticks(1);
+  }
+  {
+    /* EXE 004e61b0: 0x1d000008 */
+    fighter->sample_override = 8;
+  }
+  {
+    /* EXE 004e61b4: 0x34000001 */
+    fighter_wait_ticks(1);
+  }
+  {
+    /* EXE 004e61b8: 0x1d000009 */
+    fighter->sample_override = 9;
+  }
+  {
+    /* EXE 004e61bc: 0x29000000 */
+    fighter->action = ACTION_RETAIL_1006;
+  }
+  {
+    /* EXE 004e61c0: 0x32000000 0x46bb60 */
+    jax_script_close_hk_tail(fighter);
+    return;
+  }
+}
+
+static inline void retail_script_004e61e0(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  int attack_selector = 0;
+  (void)attack_selector;
+  mk4_script_inherit(fighter, 262, 10, 0);
+  {
+    /* EXE 004e61e0: 0x1f000000 0x110 */
+    attack_selector = 272;
+  }
+  {
+    /* EXE 004e61e8: 0x5000007 */
+    fighter_fiber_play_to(fighter, 7, 1);
+  }
+  {
+    /* EXE 004e61ec: 0x32000000 0x46bf10 */
+    jax_script_close_hp_tail(fighter);
+    return;
+  }
+}
+
 static inline void retail_script_004e61f8(Fighter *fighter) {
   unsigned result_flags = 0;
   (void)result_flags;
@@ -1926,6 +2004,24 @@ static inline void retail_script_004e6950(Fighter *fighter) {
   {
     /* EXE 004e6964: 0x32000000 0x467fc0 */
     mk4_script_spike_tail(fighter);
+    return;
+  }
+}
+
+static inline void retail_script_004e69b0(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  {
+    /* EXE 004e69b0: 0xf000002 0x13ee6e */
+    mk4_script_bind(fighter, 261, 28, 2);
+  }
+  {
+    /* EXE 004e69b8: 0x500000b */
+    fighter_fiber_play_to(fighter, 11, 1);
+  }
+  {
+    /* EXE 004e69bc: 0x32000000 0x46c2c0 */
+    jax_script_combo_hp_tail(fighter);
     return;
   }
 }

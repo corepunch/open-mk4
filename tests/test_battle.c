@@ -699,6 +699,30 @@ static void check_reconnected_air_attacks(void) {
   }
 }
 
+static void check_reconnected_ground_combos(void) {
+  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    battle_init(rosters[row], 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *fighter = &g_battle.fighters[0];
+    Fighter *victim = &g_battle.fighters[1];
+    fighter->body.pos[AXIS_X] = -0x5333;
+    victim->body.pos[AXIS_X] = 0x5333;
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(8, NULL);
+    if (!(fighter_move(fighter)->clip == 262 && (fighter->flags & FF_FOLLOW_UP))) {
+      fprintf(stderr, "Ground combo roster %d clip %d flags %u health %d\n", rosters[row], fighter_move(fighter)->clip, fighter->flags, victim->health);
+    }
+    check(fighter_move(fighter)->clip == 262 && (fighter->flags & FF_FOLLOW_UP), "Close HP must install a live follow-up table");
+    check(victim->health < Q16_ONE, "Close HP must resolve its retail contact before the follow-up");
+    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+    advance_ticks(1, NULL);
+    check(fighter_move(fighter)->clip == 261, "Close HP follow-up must enter the generated combo HP stream");
+    advance_ticks(100, NULL);
+    check(fighter->state == S_IDLE && fighter->buttons != NULL, "Reconnected ground combo must recover and restore controls");
+  }
+}
+
 static void check_ground_normals(void) {
   const unsigned buttons[] = {BUTTON_BIT(BUTTON_HIGH_PUNCH), BUTTON_BIT(BUTTON_LOW_KICK), BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LEFT),
       BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH), BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK),
@@ -1003,6 +1027,7 @@ int main(void) {
   check_ground_normals();
   check_air_attacks();
   check_reconnected_air_attacks();
+  check_reconnected_ground_combos();
   check_weapon();
   check_specials();
   check_retail_input();

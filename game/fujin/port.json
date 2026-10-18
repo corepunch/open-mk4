@@ -114,6 +114,12 @@
       "count": 19,
       "sample": 0,
       "evidence": "Fujin jab root 4e62f0 opens clip 295 at sample 0 immediately before native tail 46dd00 enters this continuation; bounded Fujin jab query."
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -135,6 +141,8 @@
     "0x4e5d90",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
     "0x4e62a0",
     "0x4e62f0",
@@ -150,10 +158,11 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e9910"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "8d61f251b209b4ccb4646db14beec3a5ad1106e89894a21ed03c2cf8555e2eca",
+  "inventory_sha256": "d585e161e789253c0f910eb511fcb2d1608eee9d003e6e3c6ab776c1aa6c3bc2",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -240,6 +249,21 @@
       "source": "game/fujin/character.c",
       "symbol": "fujin_uppercut",
       "evidence": "Fujin uppercut command starts generated stream 4e62a0."
+    },
+    "close_hp": {
+      "source": "game/fujin/moves/combos.c",
+      "symbol": "fujin_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/fujin/moves/combos.c",
+      "symbol": "fujin_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/fujin/moves/combos.c",
+      "symbol": "fujin_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "output": "game/fujin/generated/scripts.inc",
@@ -383,19 +407,19 @@
       "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_standing",
-      "evidence": "Fujin close high-kick follow-up uses the portable standing button table; selected EXE stance table 0x4e70a8."
+      "source": "game/fujin/moves/combos.c",
+      "symbol": "fujin_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     },
     "close_hp_followup": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_standing",
-      "evidence": "Fujin close high-punch follow-up uses the portable standing button table; selected EXE stance table 0x4e7078."
+      "source": "game/fujin/moves/combos.c",
+      "symbol": "fujin_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_standing",
-      "evidence": "Fujin combo high-punch follow-up uses the portable standing button table; selected EXE stance table 0x4e7090."
+      "source": "game/fujin/moves/combos.c",
+      "symbol": "fujin_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "crouching": {
       "source": "game/fujin/character.c",

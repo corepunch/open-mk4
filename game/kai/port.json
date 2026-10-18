@@ -1868,7 +1868,10 @@
           "0x47c580"
         ]
       }
-    ]
+    ],
+    "0x4e61e0": "Reviewed shared close-attack VM startup; native contact and follow-up runner.",
+    "0x4e69b0": "Reviewed shared close-attack VM startup; native contact and follow-up runner.",
+    "0x4e6190": "Reviewed shared close-attack VM startup; native contact and follow-up runner."
   },
   "entry_contexts": {
     "0x4de318": {
@@ -1962,12 +1965,18 @@
       "count": 66,
       "sample": 11,
       "evidence": "47cc50 schedules Kai table-B selector 10 at samples 10, 11 and 11; postlude 47cc70 enters 4e8390 after the same clip has reached sample 11."
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "2802f0686ef4221852bfb1617b93bdf692629695bd05d61c710f1da1da0f58de",
+  "inventory_sha256": "6c9ba8247e91604c6beb1e2b3f4b1f95e7227c1560fdd44b4e4a583b0a432473",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2088,6 +2097,21 @@
       "source": "game/kai/character.c",
       "symbol": "kai_uppercut",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62a0); verified by typed Kai inventory."
+    },
+    "close_hp": {
+      "source": "game/kai/moves/combos.c",
+      "symbol": "kai_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/kai/moves/combos.c",
+      "symbol": "kai_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/kai/moves/combos.c",
+      "symbol": "kai_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "entry_adapters": {
@@ -2266,19 +2290,19 @@
       "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_standing",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e70a8 recorded for this stance."
+      "source": "game/kai/moves/combos.c",
+      "symbol": "kai_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     },
     "close_hp_followup": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_standing",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e7078 recorded for this stance."
+      "source": "game/kai/moves/combos.c",
+      "symbol": "kai_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_standing",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e7090 recorded for this stance."
+      "source": "game/kai/moves/combos.c",
+      "symbol": "kai_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "crouching": {
       "source": "game/kai/character.c",

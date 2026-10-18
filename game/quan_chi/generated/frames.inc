@@ -89,6 +89,15 @@ static const int quan_chi_s_crouch_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
 const mframe_t quan_chi_s_crouch_frames[10] = {{0}};
 const mmove_t quan_chi_s_crouch_mmove = {.firstframe = 0, .lastframe = 9, .frame = quan_chi_s_crouch_frames, .samples = quan_chi_s_crouch_samples};
 
+static const int quan_chi_clip_261_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
+const mframe_t quan_chi_clip_261_frames[56] = {{0}};
+const mmove_t quan_chi_clip_261_mmove = {.firstframe = 0, .lastframe = 55, .frame = quan_chi_clip_261_frames, .samples = quan_chi_clip_261_samples};
+
+static const int quan_chi_clip_262_samples[20] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9};
+const mframe_t quan_chi_clip_262_frames[20] = {{0}};
+const mmove_t quan_chi_clip_262_mmove = {.firstframe = 0, .lastframe = 19, .frame = quan_chi_clip_262_frames, .samples = quan_chi_clip_262_samples};
+
 static const int quan_chi_s_walk_samples[60] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29};
 const mframe_t quan_chi_s_walk_frames[60] = {{0}};
@@ -119,6 +128,10 @@ static const int quan_chi_clip_313_samples[78] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 
     35, 36, 36, 37, 37, 38, 38};
 const mframe_t quan_chi_clip_313_frames[78] = {{0}};
 const mmove_t quan_chi_clip_313_mmove = {.firstframe = 0, .lastframe = 77, .frame = quan_chi_clip_313_frames, .samples = quan_chi_clip_313_samples};
+
+static const int quan_chi_clip_314_samples[26] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12};
+const mframe_t quan_chi_clip_314_frames[26] = {{0}};
+const mmove_t quan_chi_clip_314_mmove = {.firstframe = 0, .lastframe = 25, .frame = quan_chi_clip_314_frames, .samples = quan_chi_clip_314_samples};
 
 static const int quan_chi_s_block_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
 const mframe_t quan_chi_s_block_frames[10] = {{0}};

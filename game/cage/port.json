@@ -4,7 +4,7 @@
   "return_to": "fighter_ready",
   "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
-  "inventory_sha256": "31c8aaea50d89aff29d3c72a6822eeec01e17b06cd7f641edd902c72f9cd564d",
+  "inventory_sha256": "d6c672ad3c134a540fcb92dfc7f964d2e265b14ab5abd23536d10218e32584ce",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -25,6 +25,8 @@
     "0x4e5d90",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
     "0x4e62a0",
     "0x4e62f0",
@@ -40,6 +42,7 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e80a8",
     "0x4e80c8",
     "0x4e80d0",
@@ -138,6 +141,12 @@
       "count": 30,
       "evidence": "Cage fatality signal begins from the selected scene actor's clip 443 pose context",
       "sample": 0
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "moves": {
@@ -250,6 +259,21 @@
       "source": "game/cage/character.c",
       "symbol": "cage_cpu_kick",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+    },
+    "close_hp": {
+      "source": "game/cage/moves/combos.c",
+      "symbol": "cage_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/cage/moves/combos.c",
+      "symbol": "cage_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/cage/moves/combos.c",
+      "symbol": "cage_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "entry_adapters": {
@@ -306,19 +330,19 @@
       "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "close_hp_followup": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/combos.c",
       "symbol": "cage_close_hp_followup",
-      "evidence": "Retail Cage stance table 0x4e7078; C input selectors route the generated Cage move entries."
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/combos.c",
       "symbol": "cage_combo_hp_followup",
-      "evidence": "Retail Cage stance table 0x4e7090; C input selectors route the generated Cage move entries."
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "close_hk_followup": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/combos.c",
       "symbol": "cage_close_hk_followup",
-      "evidence": "Retail Cage stance table 0x4e70a8; C input selectors route the generated Cage move entries."
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     },
     "air_followup": {
       "source": "game/cage/moves/air_attacks.c",

@@ -78,4 +78,14 @@ void tanya_uppercut(Fighter *fighter);
 extern const ButtonTable tanya_diagonal_air;
 void tanya_press_air_hk(Fighter *fighter);
 void tanya_press_air_lk(Fighter *fighter);
+void tanya_close_hp(Fighter *fighter);
+void tanya_combo_hp(Fighter *fighter);
+void tanya_close_hk(Fighter *fighter);
+void tanya_press_air_ground_hp(Fighter *fighter);
+void tanya_script_close_hp_tail(Fighter *fighter);
+void tanya_script_combo_hp_tail(Fighter *fighter);
+void tanya_script_close_hk_tail(Fighter *fighter);
+void tanya_entry_retail_script_004e61e0(Fighter *fighter);
+void tanya_entry_retail_script_004e69b0(Fighter *fighter);
+void tanya_entry_retail_script_004e6190(Fighter *fighter);
 #endif

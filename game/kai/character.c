@@ -245,3 +245,15 @@ void kai_entry_retail_script_004e9910(Fighter *fighter) {
 const mmove_t *kai_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_repeat_phase;
 }
+
+void kai_entry_retail_script_004e61e0(Fighter *fighter) {
+  retail_script_004e61e0(fighter);
+}
+
+void kai_entry_retail_script_004e69b0(Fighter *fighter) {
+  retail_script_004e69b0(fighter);
+}
+
+void kai_entry_retail_script_004e6190(Fighter *fighter) {
+  retail_script_004e6190(fighter);
+}

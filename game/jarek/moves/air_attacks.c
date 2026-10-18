@@ -23,7 +23,7 @@ static const AirAttack air_attacks[] = {
  * the grounded follow-up table after a low air contact, not another air kick. */
 static const ButtonTable air_punch_followup = {
     {[BUTTON_LOW_PUNCH] = jarek_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable air_followup = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch,
+static const ButtonTable air_followup = {{[BUTTON_HIGH_PUNCH] = jarek_press_air_ground_hp,
     [BUTTON_LOW_PUNCH] = jarek_press_low_punch,
     [BUTTON_HIGH_KICK] = jarek_press_kick,
     [BUTTON_LOW_KICK] = jarek_press_low_kick}};

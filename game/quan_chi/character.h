@@ -90,4 +90,14 @@ extern const MoveDef quan_chi_s_uppercut;
 extern const ButtonTable quan_chi_diagonal_air;
 void quan_chi_press_air_hk(Fighter *fighter);
 void quan_chi_press_air_lk(Fighter *fighter);
+void quan_chi_close_hp(Fighter *fighter);
+void quan_chi_combo_hp(Fighter *fighter);
+void quan_chi_close_hk(Fighter *fighter);
+void quan_chi_press_air_ground_hp(Fighter *fighter);
+void quan_chi_script_close_hp_tail(Fighter *fighter);
+void quan_chi_script_combo_hp_tail(Fighter *fighter);
+void quan_chi_script_close_hk_tail(Fighter *fighter);
+void quan_chi_entry_retail_script_004e61e0(Fighter *fighter);
+void quan_chi_entry_retail_script_004e69b0(Fighter *fighter);
+void quan_chi_entry_retail_script_004e6190(Fighter *fighter);
 #endif

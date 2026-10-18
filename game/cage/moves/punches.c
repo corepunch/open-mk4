@@ -23,11 +23,16 @@ static void cage_powered_punch(Fighter *fighter) {
 }
 
 static void cage_high_punch(Fighter *fighter) {
-  cage_powered_punch(fighter);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    cage_close_hp(fighter);
+  } else {
+    cage_jab(fighter);
+  }
 }
 
 void cage_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, cage_jab);
+  fighter_interrupt(fighter, cage_high_punch);
 }
 
 void cage_press_low_punch(Fighter *fighter) {

@@ -16,9 +16,14 @@ void jax_jab(Fighter *fighter) {
 }
 
 static void jax_high_punch(Fighter *fighter) {
-  jax_jab(fighter);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    jax_close_hp(fighter);
+  } else {
+    jax_jab(fighter);
+  }
 }
 
 void jax_press_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : jax_weapon_action);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : jax_high_punch);
 }

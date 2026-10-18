@@ -3,6 +3,11 @@
 static void kai_low_kick(Fighter *fighter);
 
 void kai_press_high_kick(Fighter *fighter) {
+  if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
+    fighter_interrupt(fighter, kai_close_hk);
+    return;
+  }
+
   fighter_interrupt(fighter, kai_high_kick);
 }
 

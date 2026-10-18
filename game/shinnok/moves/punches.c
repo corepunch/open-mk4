@@ -8,11 +8,16 @@ void shinnok_jab(Fighter *fighter) {
 }
 
 static void shinnok_high_punch(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &s_high_punch);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    shinnok_close_hp(fighter);
+  } else {
+    shinnok_jab(fighter);
+  }
 }
 
 void shinnok_press_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, shinnok_jab);
+  fighter_interrupt(fighter, shinnok_high_punch);
 }
 
 void shinnok_press_low_punch(Fighter *fighter) {

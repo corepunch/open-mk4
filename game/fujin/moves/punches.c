@@ -6,7 +6,12 @@ static void fujin_enter_punch(Fighter *fighter);
 static const MoveDef s_retail_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_010B};
 
 static void fujin_entry_high_punch(Fighter *fighter) {
-  fujin_jab(fighter);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    fujin_close_hp(fighter);
+  } else {
+    fujin_jab(fighter);
+  }
 }
 
 static void fujin_jab(Fighter *fighter) {
@@ -15,7 +20,7 @@ static void fujin_jab(Fighter *fighter) {
 }
 
 static void fujin_enter_punch(Fighter *fighter) {
-  fujin_jab(fighter);
+  fujin_entry_high_punch(fighter);
 }
 
 void fujin_press_punch(Fighter *fighter) {

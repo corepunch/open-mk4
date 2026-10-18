@@ -162,6 +162,12 @@
       "count": 45,
       "evidence": "Native air throw release entry inherits clip 82 and the paired sample 28 from the generated opener.",
       "sample": 28
+    },
+    "0x4e61e0": {
+      "clip": 262,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
     }
   },
   "generated_scripts": [
@@ -186,6 +192,8 @@
     "0x004e5e78",
     "0x004e5ea0",
     "0x004e5eb0",
+    "0x4e6190",
+    "0x4e61e0",
     "0x004e61f8",
     "0x004e62a0",
     "0x004e62f0",
@@ -201,6 +209,7 @@
     "0x004e6860",
     "0x004e6878",
     "0x004e6950",
+    "0x4e69b0",
     "0x004e9910",
     "0x004e9b40",
     "0x004e9bd0",
@@ -208,7 +217,7 @@
     "0x004ed2c0"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "9dda729514deeb8148be682326b650dfce4f20dedee6ea67d2463c9dacb1bdaa",
+  "inventory_sha256": "6f715bc07c0ef6922edd0731314f08d444b1b6860aea5f59a0d3bc9bd5d5378c",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -304,6 +313,21 @@
       "evidence": "Noob Saibot command target has its own generated shadow playback and callback route.",
       "symbol": "noob_saibot_command_498e70",
       "source": "game/noob_saibot/character.c"
+    },
+    "close_hp": {
+      "source": "game/noob_saibot/moves/combos.c",
+      "symbol": "noob_saibot_close_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "combo_hp": {
+      "source": "game/noob_saibot/moves/combos.c",
+      "symbol": "noob_saibot_combo_hp",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+    },
+    "close_hk": {
+      "source": "game/noob_saibot/moves/combos.c",
+      "symbol": "noob_saibot_close_hk",
+      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
     }
   },
   "output": "game/noob_saibot/generated/scripts.inc",
@@ -447,19 +471,19 @@
       "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
-      "evidence": "Retail Noob Saibot stance table 0x4e70a8; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_standing"
+      "source": "game/noob_saibot/moves/combos.c",
+      "symbol": "noob_saibot_close_hk_followup",
+      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
     },
     "close_hp_followup": {
-      "evidence": "Retail Noob Saibot stance table 0x4e7078; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_standing"
+      "source": "game/noob_saibot/moves/combos.c",
+      "symbol": "noob_saibot_close_hp_followup",
+      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
     },
     "combo_hp_followup": {
-      "evidence": "Retail Noob Saibot stance table 0x4e7090; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_standing"
+      "source": "game/noob_saibot/moves/combos.c",
+      "symbol": "noob_saibot_combo_hp_followup",
+      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
     },
     "crouching": {
       "evidence": "Retail Noob Saibot stance table 0x4e5070; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",

@@ -7,7 +7,12 @@ void kai_jab(Fighter *fighter) {
 }
 
 void kai_high_punch(Fighter *fighter) {
-  kai_start_script(fighter, S_PUNCH, &kai_s_air_attack, kai_entry_retail_script_004e8210);
+  const Fighter *victim = fighter_opponent(fighter);
+  if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
+    kai_close_hp(fighter);
+  } else {
+    kai_jab(fighter);
+  }
 }
 
 static void kai_low_punch(Fighter *fighter) {
