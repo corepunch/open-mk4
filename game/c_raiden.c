@@ -55,16 +55,6 @@ static void raiden_uppercut_contact(Fighter *fighter) {
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveSegment uppercut_loop_segments[] = {{0, 8, -1, 1}, {3, 7, 1, 1}};
-static const MoveSegment uppercut_late_segments[] = {{0, 9, 0, 1}, {2, 8, -1, 1}, {5, 7, 1, 1}};
-static const MoveSegment uppercut_miss_end_segments[] = {{0, 8, 1, 1}};
-static const MoveSegment uppercut_hit_end_segments[] = {{0, 9, 1, 1}};
-// clang-format on
-static const MoveSequence uppercut_loop_sequence = SEQUENCE(uppercut_loop_segments, 5, raiden_ready);
-static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segments, 7, raiden_ready);
-static const MoveSequence uppercut_miss_end_sequence = SEQUENCE(uppercut_miss_end_segments, 12, raiden_ready);
-static const MoveSequence uppercut_hit_end_sequence = SEQUENCE(uppercut_hit_end_segments, 11, raiden_ready);
 
 /* Attack entries query source contact records through SF_RECORD. Locomotion
  * and generic reaction states retain the shared portable controllers. */
@@ -78,10 +68,6 @@ static const MoveDef s_kick = {.clip = 71, .last = MOVE_END, .flags = RETAIL, .a
 static const MoveDef s_sweep = {.clip = 62, .last = MOVE_END, .flags = RETAIL | SF_LOW, .action = ACTION_RETAIL_010C};
 static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0109};
 /* Native uppercut recovery uses contact-selected pose sequences. */
-static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_loop_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
 
 static const MoveDef s_throw = {.clip = 76, .last = 48, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -110,34 +96,7 @@ static const MoveDef *const moves[S_COUNT] = {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_script(Fighter *fighter) {
-  for (int sample = 6; sample <= 8; ++sample) {
-    fighter_wait_ticks(sample == 6 ? 2 : 1);
-    fighter->sample_override = sample;
-    raiden_uppercut_contact(fighter);
-  }
-  fighter_wait_ticks(1);
-  ContactResult result = fighter->contact;
-  bool late = fighter->contact_tick == 9;
-  int loops = result == CONTACT_MISS ? 3 : result == CONTACT_BLOCK ? 2 : 8;
-  for (int i = 0; i < loops; ++i) {
-    const MoveDef *move = late && i == 0 ? &s_uppercut_late : &s_uppercut_loop;
-    fighter_fiber_move(fighter, S_UPPERCUT, move);
-    fighter->contact = result;
-    fighter->connected = result != CONTACT_MISS;
-    if (result != CONTACT_MISS) {
-      fighter->action = ACTION_RETAIL_1006;
-    }
-    fighter_fiber_sequence(fighter, move->sequence);
-  }
-  const MoveDef *end = result == CONTACT_MISS ? &s_uppercut_miss_end : &s_uppercut_hit_end;
-  fighter_fiber_move(fighter, S_UPPERCUT, end);
-  fighter->contact = result;
-  fighter->connected = result != CONTACT_MISS;
-  if (result != CONTACT_MISS) {
-    fighter->action = ACTION_RETAIL_1006;
-  }
-  fighter_fiber_sequence(fighter, end->sequence);
-  fighter_fiber_finish(raiden_ready);
+  native_uppercut_tail(fighter, raiden_uppercut_contact, raiden_ready);
 }
 
 static void raiden_uppercut(Fighter *fighter) {
@@ -619,9 +578,7 @@ static const MoveDef s_lk_thrown = {.clip = 149, .last = MOVE_END, .flags = SF_L
 static const MoveDef s_lp_thrown = {.clip = 154, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 static void script_throw_getup(Fighter *victim) {
-  while (fighter_airborne(victim)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(victim, native_grounded);
   if (victim->health <= 0) {
     mk4_script_thrown_finish(victim);
   }
@@ -660,9 +617,7 @@ static void script_thrown_return(Fighter *fighter) {
 }
 
 static void script_lk_victim_end(Fighter *victim) {
-  while (fighter_airborne(victim)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(victim, native_grounded);
   battle_scene_impact(victim);
   mk4_script_finish_clip(victim, 1);
   mk4_script_thrown_finish(victim);
@@ -752,10 +707,34 @@ static const MoveDef s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK
 static const MoveDef s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const AttackRecord torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
 
-static void script_torpedo_motion(Fighter *fighter) {
-  if ((fighter->ticks & 1) == 0) {
-    fighter->sample_override = fighter->sample_override >= 30 ? 20 : fighter->sample_override + 1;
+static void torpedo_pose(Fighter *fighter, float pose) {
+  fighter->sample_override = (int)pose;
+}
+
+static void torpedo_cycle(Fighter *fighter) {
+  native_motion_begin(fighter, 22, NULL);
+  for (int frame = 0; frame < 22; ++frame) {
+    native_motion_frame(fighter, frame, torpedo_pose, (float)(20 + frame / 2), NULL);
   }
+  fighter->native_motion.loop = true;
+  native_motion_play(fighter);
+}
+
+static void script_torpedo_motion(Fighter *fighter) {
+  int pose = fighter_sample(fighter);
+  int delay = fighter->ticks & 1;
+  int count = delay + (30 - pose) * 2;
+  if (count <= 0) {
+    torpedo_cycle(fighter);
+  } else {
+    native_motion_begin(fighter, count, torpedo_cycle);
+    for (int frame = 0; frame < count; ++frame) {
+      int sample = pose + (frame >= delay ? 1 + (frame - delay) / 2 : 0);
+      native_motion_frame(fighter, frame, torpedo_pose, (float)sample, NULL);
+    }
+    native_motion_play(fighter);
+  }
+  native_motion_step(fighter);
 }
 
 static unsigned script_torpedo_query(Fighter *fighter) {
@@ -768,9 +747,7 @@ static void script_torpedo_miss(Fighter *fighter) {
     fighter->body.vel[axis] = q16_mul(fighter->body.vel[axis], 0x4000);
   }
   fighter->body.gravity = 0x28f;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
   fighter_fiber_finish(raiden_ready);
 }
 
@@ -787,22 +764,24 @@ static void script_torpedo_step(Fighter *fighter) {
   }
 }
 
+static void torpedo_pair(Fighter *fighter) {
+  Fighter *victim = opponent(fighter);
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x18000);
+  }
+  victim->body.pos[AXIS_Y] = fighter->body.pos[AXIS_Y];
+  if (fighter_distance(fighter) > 10.f) {
+    fighter_stop_mmove(fighter);
+  }
+}
+
 static void script_torpedo_contact(Fighter *fighter) {
   fighter->body.physics = NULL;
   if (fighter->contact != CONTACT_BLOCK) {
     Fighter *victim = opponent(fighter);
     mk4_script_pair_victim(fighter, &s_torpedo_victim);
     fighter_start_fiber(victim, retail_script_004ea108, NULL);
-    for (int tick = 0; tick < 50; ++tick) {
-      fighter_wait_ticks(1);
-      for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-        victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x18000);
-      }
-      victim->body.pos[AXIS_Y] = fighter->body.pos[AXIS_Y];
-      if (fighter_distance(fighter) > 10.f) {
-        break;
-      }
-    }
+    native_calls(fighter, 50, 0, torpedo_pair);
     mk4_script_release_pair(fighter);
     battle_react(victim, 83);
   }
@@ -810,9 +789,7 @@ static void script_torpedo_contact(Fighter *fighter) {
   fighter_set_speed(fighter, -0xccc);
   fighter->body.vel[AXIS_Y] = -0x23d7;
   fighter->body.gravity = 0x168;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
   fighter_fiber_finish(raiden_ready);
 }
 
@@ -843,9 +820,7 @@ static void teleport_script(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x451e;
   fighter->body.gravity = 0x28f;
   fighter->flags |= FF_UNTOUCHABLE;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
   fighter->flags &= ~(unsigned)FF_UNTOUCHABLE;
   fighter->teleport_ready = g_battle.ticks + 32;
   fighter_wait_ticks(4);

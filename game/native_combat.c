@@ -260,3 +260,35 @@ void native_air_tail(Fighter *fighter, const NativeAirProfile *profile, int inde
   }
   air_build(fighter);
 }
+
+bool native_grounded(const Fighter *fighter) {
+  return !fighter_airborne(fighter);
+}
+
+void native_uppercut_tail(Fighter *fighter, FighterFn contact, FighterFn ready) {
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, 5, NULL);
+  for (int frame = 1; frame <= 5; ++frame) {
+    native_frame(fighter, frame, frame == 1 ? pose : mini(8, frame + 4), frame >= 2 && frame <= 4 ? contact : NULL);
+  }
+  native_wait(fighter);
+  static const int cycle[] = {8, 7, 6, 7, 8};
+  static const int late[] = {9, 9, 8, 7, 6, 7, 8};
+  int repeats = fighter->contact == CONTACT_MISS ? 3 : fighter->contact == CONTACT_BLOCK ? 2 : 8;
+  int recovery = fighter->contact == CONTACT_MISS ? 8 : 9;
+  bool delayed = fighter->contact_tick == 9;
+  int count = repeats * 5 + (delayed ? 2 : 0) + 20 - recovery;
+  native_begin(fighter, 0, count - 1, ready);
+  int row = 0;
+  for (int repeat = 0; repeat < repeats; ++repeat) {
+    const int *poses = delayed && repeat == 0 ? late : cycle;
+    int length = delayed && repeat == 0 ? 7 : 5;
+    for (int frame = 0; frame < length; ++frame) {
+      fighter->native.poses[row++] = poses[frame];
+    }
+  }
+  for (int sample = recovery; sample < 20; ++sample) {
+    fighter->native.poses[row++] = sample;
+  }
+  native_play(fighter, false);
+}

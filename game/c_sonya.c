@@ -55,16 +55,6 @@ static void sonya_uppercut_contact(Fighter *fighter) {
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveSegment uppercut_loop_segments[] = {{0, 8, -1, 1}, {3, 7, 1, 1}};
-static const MoveSegment uppercut_late_segments[] = {{0, 9, 0, 1}, {2, 8, -1, 1}, {5, 7, 1, 1}};
-static const MoveSegment uppercut_miss_end_segments[] = {{0, 8, 1, 1}};
-static const MoveSegment uppercut_hit_end_segments[] = {{0, 9, 1, 1}};
-// clang-format on
-static const MoveSequence uppercut_loop_sequence = SEQUENCE(uppercut_loop_segments, 5, sonya_ready);
-static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segments, 7, sonya_ready);
-static const MoveSequence uppercut_miss_end_sequence = SEQUENCE(uppercut_miss_end_segments, 12, sonya_ready);
-static const MoveSequence uppercut_hit_end_sequence = SEQUENCE(uppercut_hit_end_segments, 11, sonya_ready);
 
 /* Attack entries query source contact records through SF_RECORD. Locomotion
  * and generic reaction states retain the shared portable controllers. */
@@ -78,10 +68,6 @@ static const MoveDef s_kick = {.clip = 65, .last = MOVE_END, .flags = RETAIL, .a
 static const MoveDef s_sweep = {.clip = 63, .last = MOVE_END, .flags = RETAIL | SF_LOW, .action = ACTION_RETAIL_010C};
 static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0109};
 /* Native uppercut recovery uses contact-selected pose sequences. */
-static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_loop_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
 
 static const MoveDef s_throw = {.clip = 76, .last = 48, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -110,34 +96,7 @@ static const MoveDef *const moves[S_COUNT] = {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_script(Fighter *fighter) {
-  for (int sample = 6; sample <= 8; ++sample) {
-    fighter_wait_ticks(sample == 6 ? 2 : 1);
-    fighter->sample_override = sample;
-    sonya_uppercut_contact(fighter);
-  }
-  fighter_wait_ticks(1);
-  ContactResult result = fighter->contact;
-  bool late = fighter->contact_tick == 9;
-  int loops = result == CONTACT_MISS ? 3 : result == CONTACT_BLOCK ? 2 : 8;
-  for (int i = 0; i < loops; ++i) {
-    const MoveDef *move = late && i == 0 ? &s_uppercut_late : &s_uppercut_loop;
-    fighter_fiber_move(fighter, S_UPPERCUT, move);
-    fighter->contact = result;
-    fighter->connected = result != CONTACT_MISS;
-    if (result != CONTACT_MISS) {
-      fighter->action = ACTION_RETAIL_1006;
-    }
-    fighter_fiber_sequence(fighter, move->sequence);
-  }
-  const MoveDef *end = result == CONTACT_MISS ? &s_uppercut_miss_end : &s_uppercut_hit_end;
-  fighter_fiber_move(fighter, S_UPPERCUT, end);
-  fighter->contact = result;
-  fighter->connected = result != CONTACT_MISS;
-  if (result != CONTACT_MISS) {
-    fighter->action = ACTION_RETAIL_1006;
-  }
-  fighter_fiber_sequence(fighter, end->sequence);
-  fighter_fiber_finish(sonya_ready);
+  native_uppercut_tail(fighter, sonya_uppercut_contact, sonya_ready);
 }
 
 static void sonya_uppercut(Fighter *fighter) {
@@ -573,9 +532,7 @@ static void script_air_release(Fighter *fighter) {
   mk4_script_finish_clip(fighter, 1);
   fighter->body.gravity = 0x20c;
   fighter->body.vel[AXIS_Y] = -0x51e;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
   fighter_fiber_finish(mk4_land);
 }
 
@@ -628,9 +585,7 @@ static const MoveDef s_lk_thrown = {.clip = 163, .last = MOVE_END, .flags = SF_L
 static const MoveDef s_lp_thrown = {.clip = 156, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 static void script_throw_getup(Fighter *victim) {
-  while (fighter_airborne(victim)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(victim, native_grounded);
   if (victim->health <= 0) {
     mk4_script_thrown_finish(victim);
   }
@@ -661,17 +616,13 @@ static void lk_victim(Fighter *victim) {
   mk4_script_bind(victim, 203, 112, 75);
   mk4_script_advance(victim, 7, 1);
   mk4_script_finish_clip(victim, 1);
-  while (fighter_airborne(victim)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(victim, native_grounded);
   mk4_script_thrown_finish(victim);
 }
 
 static void script_leg_victim_end(Fighter *victim) {
   mk4_script_bind(victim, 185, 16, 0);
-  while (fighter_airborne(victim)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(victim, native_grounded);
   script_throw_getup(victim);
 }
 
@@ -750,15 +701,17 @@ static void script_leg_grab_tail(Fighter *fighter) {
   fighter_fiber_finish(sonya_ready);
 }
 
+static void leg_stop(Fighter *fighter) {
+  fighter_set_speed(fighter, 0);
+}
+
 static void leg_grab_script(Fighter *fighter) {
   fighter_set_speed(fighter, 0x3333);
-  for (int sample = 1; sample <= 11; ++sample) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = sample;
-    if (sample == 7) {
-      fighter_set_speed(fighter, 0);
-    }
+  native_begin(fighter, 1, 11, NULL);
+  for (int frame = 1; frame <= 11; ++frame) {
+    native_frame(fighter, frame, frame, frame == 7 ? leg_stop : NULL);
   }
+  native_wait(fighter);
   if (battle_contact(fighter, &leg_record) == CONTACT_MISS || fighter->contact == CONTACT_BLOCK) {
     fighter->action = 0x1012;
     retail_script_004e85a8(fighter);
@@ -779,19 +732,23 @@ static void sonya_leg_grab(Fighter *fighter) {
   fighter_start_fiber(fighter, leg_grab_script, special_cleanup);
 }
 
+static void square_query(Fighter *fighter) {
+  battle_contact(fighter, &square_record);
+  fighter->mmove_hold = fighter_height(fighter) < 2.4f && !fighter->connected;
+}
+
 static void script_square_wave_tail(Fighter *fighter) {
-  while (fighter_height(fighter) < 2.4f && !fighter->connected) {
-    fighter_wait_ticks(1);
-    battle_contact(fighter, &square_record);
+  if (fighter_height(fighter) < 2.4f && !fighter->connected) {
+    native_begin(fighter, 0, 0, NULL);
+    native_frame(fighter, 0, fighter_sample(fighter), square_query);
+    native_wait(fighter);
   }
   fighter->body.gravity = 0x28f;
   fighter_set_speed(fighter, fighter->connected ? -0x1999 : 0);
   if (fighter->connected) {
-    fighter_wait_ticks(32);
+    native_delay(fighter, 32);
   }
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
   fighter_set_speed(fighter, 0);
   fighter_fiber_finish(sonya_ready);
 }
@@ -806,18 +763,12 @@ static void sonya_square_wave(Fighter *fighter) {
 
 static void script_cartwheel_tail(Fighter *fighter) {
   fighter->cartwheel_ready = g_battle.ticks + 48;
-  for (int count = 0; count < 9; ++count) {
-    fighter_wait_ticks(1);
-    ++fighter->sample_override;
-    if (battle_contact(fighter, &cartwheel_record) != CONTACT_MISS) {
-      break;
-    }
-  }
+  native_queries(fighter, &cartwheel_record, 9, 1);
   fighter->action = ACTION_RETAIL_1006;
   mk4_script_finish_clip(fighter, 1);
   fighter_set_speed(fighter, 0);
   if (fighter->connected) {
-    fighter_wait_ticks(20); /* Native 47b8a0 stance blend, step 0xccc. */
+    native_delay(fighter, 20);
   }
   fighter_fiber_finish(sonya_ready);
 }
@@ -830,27 +781,33 @@ static void sonya_cartwheel(Fighter *fighter) {
   fighter_start_fiber(fighter, retail_script_004e81d0, special_cleanup);
 }
 
+static bool bicycle_height(const Fighter *fighter) {
+  return fighter_height(fighter) >= 2.5f;
+}
+
+static void bicycle_contact(Fighter *fighter) {
+  if (battle_contact(fighter, &bicycle_record) != CONTACT_MISS) {
+    fighter_stop_mmove(fighter);
+  }
+}
+
 static void bicycle_script(Fighter *fighter) {
   fighter->body.gravity = 0;
   fighter->body.vel[AXIS_Y] = -0x2666;
   battle_sound(SOUND_A, 6);
   battle_sound(SOUND_INDEXED, 12);
-  while (fighter_height(fighter) < 2.5f) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, bicycle_height);
   stop_body(fighter);
   mk4_script_bind(fighter, 101, 9, 0);
   fighter_set_speed(fighter, 0x3333);
-  for (int sample = 0; sample < 9 && !fighter->connected; ++sample) {
-    fighter_wait_ticks(1);
-    fighter->sample_override = sample;
-    battle_contact(fighter, &bicycle_record);
+  native_begin(fighter, 0, 8, NULL);
+  for (int frame = 0; frame < 9; ++frame) {
+    native_frame(fighter, frame, frame, bicycle_contact);
   }
+  native_wait(fighter);
   fighter_set_speed(fighter, 0);
   fighter->body.gravity = 0x28f;
-  while (fighter_airborne(fighter)) {
-    fighter_wait_ticks(1);
-  }
+  native_until(fighter, native_grounded);
   fighter_fiber_finish(sonya_ready);
 }
 

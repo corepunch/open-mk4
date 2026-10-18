@@ -59,16 +59,6 @@ static void scorpion_uppercut_contact(Fighter *fighter) {
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveSegment uppercut_loop_segments[] = {{0, 8, -1, 1}, {3, 7, 1, 1}};
-static const MoveSegment uppercut_late_segments[] = {{0, 9, 0, 1}, {2, 8, -1, 1}, {5, 7, 1, 1}};
-static const MoveSegment uppercut_miss_end_segments[] = {{0, 8, 1, 1}};
-static const MoveSegment uppercut_hit_end_segments[] = {{0, 9, 1, 1}};
-// clang-format on
-static const MoveSequence uppercut_loop_sequence = SEQUENCE(uppercut_loop_segments, 5, scorpion_ready);
-static const MoveSequence uppercut_late_sequence = SEQUENCE(uppercut_late_segments, 7, scorpion_ready);
-static const MoveSequence uppercut_miss_end_sequence = SEQUENCE(uppercut_miss_end_segments, 12, scorpion_ready);
-static const MoveSequence uppercut_hit_end_sequence = SEQUENCE(uppercut_hit_end_segments, 11, scorpion_ready);
 
 /* Recovered moves query retail records from their events (SF_RECORD). The
  * remaining moves keep the approximate damage, reach and push columns. */
@@ -83,10 +73,6 @@ static const MoveDef s_sweep = {.clip = 63, .last = MOVE_END, .flags = RETAIL | 
 static const MoveDef s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0109};
 /* The jab graph alternates an opening/recovery with a second clip. Contact
  * requests at phase boundaries execute before the next branch is committed. */
-static const MoveDef s_uppercut_loop = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_loop_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_late = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_late_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_miss_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_miss_end_sequence, .action = ACTION_RETAIL_0109};
-static const MoveDef s_uppercut_hit_end = {.clip = 293, .flags = RETAIL, .sequence = &uppercut_hit_end_sequence, .action = ACTION_RETAIL_0109};
 
 static const MoveDef s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -115,34 +101,7 @@ static const MoveDef *const moves[S_COUNT] = {
 /* Phase branches are ordinary C; blocking playback owns only samples/events. */
 
 static void uppercut_script(Fighter *fighter) {
-  for (int sample = 6; sample <= 8; ++sample) {
-    fighter_wait_ticks(sample == 6 ? 2 : 1);
-    fighter->sample_override = sample;
-    scorpion_uppercut_contact(fighter);
-  }
-  fighter_wait_ticks(1);
-  ContactResult result = fighter->contact;
-  bool late = fighter->contact_tick == 9;
-  int loops = result == CONTACT_MISS ? 3 : result == CONTACT_BLOCK ? 2 : 8;
-  for (int i = 0; i < loops; ++i) {
-    const MoveDef *move = late && i == 0 ? &s_uppercut_late : &s_uppercut_loop;
-    fighter_fiber_move(fighter, S_UPPERCUT, move);
-    fighter->contact = result;
-    fighter->connected = result != CONTACT_MISS;
-    if (result != CONTACT_MISS) {
-      fighter->action = ACTION_RETAIL_1006;
-    }
-    fighter_fiber_sequence(fighter, move->sequence);
-  }
-  const MoveDef *end = result == CONTACT_MISS ? &s_uppercut_miss_end : &s_uppercut_hit_end;
-  fighter_fiber_move(fighter, S_UPPERCUT, end);
-  fighter->contact = result;
-  fighter->connected = result != CONTACT_MISS;
-  if (result != CONTACT_MISS) {
-    fighter->action = ACTION_RETAIL_1006;
-  }
-  fighter_fiber_sequence(fighter, end->sequence);
-  fighter_fiber_finish(scorpion_ready);
+  native_uppercut_tail(fighter, scorpion_uppercut_contact, scorpion_ready);
 }
 
 static void scorpion_uppercut(Fighter *fighter) {
