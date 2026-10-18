@@ -405,3 +405,48 @@ void canvas_quad(Canvas *cv, const Texture *t, Rect src, const float q[4][2], ui
     }
   }
 }
+
+void canvas_blend_triangle(Canvas *cv, const ScreenVertex p[3], const Texture *tex, uint32_t tint) {
+  float area = edge(&p[0], &p[1], p[2].x, p[2].y);
+  unsigned alpha = tint >> 24;
+  if (fabsf(area) < 0.001f || !alpha) {
+    return;
+  }
+  int x0 = maxi(0, (int)floorf(fminf(p[0].x, fminf(p[1].x, p[2].x))));
+  int x1 = mini(cv->w - 1, (int)ceilf(fmaxf(p[0].x, fmaxf(p[1].x, p[2].x))));
+  int y0 = maxi(0, (int)floorf(fminf(p[0].y, fminf(p[1].y, p[2].y))));
+  int y1 = mini(cv->h - 1, (int)ceilf(fmaxf(p[0].y, fmaxf(p[1].y, p[2].y))));
+  Rect whole = {0, 0, tex->width, tex->height};
+  float inv = 1.f / area;
+  for (int y = y0; y <= y1; ++y) {
+    for (int x = x0; x <= x1; ++x) {
+      float a = edge(&p[1], &p[2], (float)x + .5f, (float)y + .5f) * inv;
+      float b = edge(&p[2], &p[0], (float)x + .5f, (float)y + .5f) * inv;
+      float c = 1 - a - b;
+      if (a < -.00001f || b < -.00001f || c < -.00001f) {
+        continue;
+      }
+      size_t at = (size_t)y * (size_t)cv->w + (size_t)x;
+      float z = a * p[0].z + b * p[1].z + c * p[2].z;
+      float q = a * p[0].q + b * p[1].q + c * p[2].q;
+      if (z < cv->depth[at] || q <= 0) {
+        continue;
+      }
+      float u = (a * p[0].u * p[0].q + b * p[1].u * p[1].q + c * p[2].u * p[2].q) / q;
+      float v = (a * p[0].v * p[0].q + b * p[1].v * p[1].q + c * p[2].v * p[2].q) / q;
+      uint32_t color = bilinear(tex, whole, u, v);
+      unsigned cover = ((color >> 24) * alpha) / 255;
+      if (!cover) {
+        continue;
+      }
+      uint32_t under = cv->pixels[at];
+      uint32_t out = 0xff000000;
+      for (int shift = 0; shift < 24; shift += 8) {
+        unsigned value = ((color >> shift) & 255) * ((tint >> shift) & 255) / 255;
+        unsigned below = (under >> shift) & 255;
+        out |= ((value * cover + below * (255 - cover)) / 255) << shift;
+      }
+      cv->pixels[at] = out;
+    }
+  }
+}

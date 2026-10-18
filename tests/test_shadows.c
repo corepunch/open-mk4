@@ -164,11 +164,40 @@ static void stencil_checks(void) {
   canvas_free(&cv);
 }
 
+static void blend_checks(void) {
+  Canvas cv;
+  canvas_init(&cv, 8, 8);
+  canvas_clear(&cv);
+  uint32_t opaque = 0xff000000, red = 0xffff0000;
+  const Texture black = {1, 1, {&opaque, 1, 1}}, splat = {1, 1, {&red, 1, 1}};
+  const size_t at = 9;
+  triangle(&cv, .1f, &black, PASS_SHADOW_RECEIVER);
+  // clang-format off: Keep table entries on one row, including long rows.
+  const ScreenVertex near[] = {
+    {0, 0, .2f, 0, 0, 1, 1},
+    {8, 0, .2f, 1, 0, 1, 1},
+    {0, 8, .2f, 0, 1, 1, 1}
+  };
+  const ScreenVertex far[] = {
+    {0, 0, .05f, 0, 0, 1, 1},
+    {8, 0, .05f, 1, 0, 1, 1},
+    {0, 8, .05f, 0, 1, 1, 1}
+  };
+  // clang-format on
+  canvas_blend_triangle(&cv, near, &splat, 0x80ffffff);
+  check(cv.pixels[at] == 0xff800000 && closef(cv.depth[at], .1f) && cv.stencil[at] == CANVAS_RECEIVER_BIT,
+      "Blended sprites must mix by alpha while preserving scene depth and receiver coverage");
+  canvas_blend_triangle(&cv, far, &splat, 0xffffffff);
+  check(cv.pixels[at] == 0xff800000, "Scene geometry must occlude blended sprites behind it");
+  canvas_free(&cv);
+}
+
 int main(void) {
   matrix_checks();
   lighting_checks();
   stencil_checks();
+  blend_checks();
   puts(
-      "PASS: camera light; Lambert shading; animated normals; perspective lighting; matching light/shadow rays; directional/point shadow matrices; homogeneous divide; tilted planes; airborne casters; stencil union; receiver/depth/alpha tests; single blend; frame reset");
+      "PASS: camera light; Lambert shading; animated normals; perspective lighting; matching light/shadow rays; directional/point shadow matrices; homogeneous divide; tilted planes; airborne casters; stencil union; receiver/depth/alpha tests; single blend; frame reset; alpha-blended sprites");
   return 0;
 }

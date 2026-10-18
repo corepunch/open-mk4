@@ -45,6 +45,11 @@ void canvas_blit(Canvas *canvas, const Texture *texture, Rect source, Rect dest,
  * bilinear filtering. tint multiplies each channel and its alpha blends the
  * result; a NULL texture fills the quad with tint. Depth is ignored. */
 void canvas_quad(Canvas *canvas, const Texture *texture, Rect source, const float corners[4][2], uint32_t tint);
+/* Draws a perspective-correct, bilinear-filtered triangle that blends by
+ * texture alpha. It tests against scene depth without writing it, so draw
+ * soft effects after the opaque geometry they overlap. tint multiplies
+ * each channel, including alpha. */
+void canvas_blend_triangle(Canvas *canvas, const ScreenVertex points[3], const Texture *texture, uint32_t tint);
 Mat3 yaw_matrix(float angle);
 Bounds character_bounds(const Character *ch, const Clip *clip);
 void draw_character(Canvas *canvas, const Character *ch, const Clip *clip, double frame, Rect rect, Bounds bounds, float yaw, bool wire, bool skeleton);

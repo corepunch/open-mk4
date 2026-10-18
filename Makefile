@@ -76,7 +76,7 @@ run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/*/character.c game/*/moves/*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/fiber.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
-GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch] game/*/generated/*.inc) game/native.h game/script.h game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
+GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch] game/*/generated/*.inc) game/native.h game/script.h game/game.h game/blood_atlas.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc third_party/minicoro/minicoro.h
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -84,7 +84,7 @@ viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-GAME_SOURCES = game/main.c game/menu.c game/input.c game/audio.c $(ROSTER_SOURCES) game/battle.c game/draw.c
+GAME_SOURCES = game/main.c game/menu.c game/input.c game/audio.c $(ROSTER_SOURCES) game/battle.c game/draw.c game/blood_atlas.c
 mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
