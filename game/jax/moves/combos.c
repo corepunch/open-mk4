@@ -22,19 +22,19 @@ static const NativeGroundProfile profile = {
 void jax_close_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[4].move);
   fighter->script_phase = 4;
-  fighter_start_fiber(fighter, jax_entry_retail_script_004e61e0, NULL);
+  jax_entry_retail_script_004e61e0(fighter);
 }
 
 void jax_combo_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[5].move);
   fighter->script_phase = 5;
-  fighter_start_fiber(fighter, jax_entry_retail_script_004e69b0, NULL);
+  jax_entry_retail_script_004e69b0(fighter);
 }
 
 void jax_close_hk(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &attacks[6].move);
   fighter->script_phase = 6;
-  fighter_start_fiber(fighter, jax_entry_retail_script_004e6190, NULL);
+  jax_entry_retail_script_004e6190(fighter);
 }
 
 static void combo_tail(Fighter *fighter) {
@@ -46,8 +46,7 @@ void jax_script_close_hp_tail(Fighter *fighter) {
 }
 
 void jax_script_combo_hp_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  combo_tail(fighter);
+  native_hold(fighter, 1, combo_tail);
 }
 
 void jax_script_close_hk_tail(Fighter *fighter) {

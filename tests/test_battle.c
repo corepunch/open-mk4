@@ -721,7 +721,10 @@ static void check_reconnected_ground_combos(void) {
     fighter->body.pos[AXIS_X] = -0x5333;
     victim->body.pos[AXIS_X] = 0x5333;
     battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(8, NULL);
+    for (int tick = 0; tick < 8; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(fighter), "Roster close HP startup/contact must stay on frame tables");
+    }
     for (int wait = 0; wait < 12 && !(fighter->flags & FF_FOLLOW_UP); ++wait) {
       advance_ticks(1, NULL);
     }
@@ -733,7 +736,10 @@ static void check_reconnected_ground_combos(void) {
     battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
     advance_ticks(1, NULL);
     check(fighter_move(fighter)->clip == 261, "Close HP follow-up must enter the generated combo HP stream");
-    advance_ticks(100, NULL);
+    for (int tick = 0; tick < 100; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(fighter), "Roster combo HP startup/contact/recovery must stay on frame tables");
+    }
     check(fighter->state == S_IDLE && fighter->buttons != NULL, "Reconnected ground combo must recover and restore controls");
     check(victim->health < Q16_ONE - 2621, "Close HP to combo HP must resolve both contacts");
   }

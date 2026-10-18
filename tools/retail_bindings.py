@@ -1199,10 +1199,10 @@ CHARACTER_BINDINGS[15][0x49ca90] = replace(CHARACTER_BINDINGS[15][0x49ca90], mmo
 for _address in (0x42cb80, 0x42cbc0, 0x42ce80, 0x45b1f0):
     CHARACTER_BINDINGS[11][_address] = replace(CHARACTER_BINDINGS[11][_address], mmove=True)
 
-# These adapters only construct the reviewed native_air_tail frame phases.
+# These adapters construct reviewed native air/close-attack frame phases.
 for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
     for _address, _binding in list(CHARACTER_BINDINGS[_cid].items()):
-        if _binding.symbol.endswith('_script_air_finish'):
+        if _binding.symbol.endswith(('_script_air_finish', '_script_close_hp_tail', '_script_combo_hp_tail', '_script_close_hk_tail')):
             CHARACTER_BINDINGS[_cid][_address] = replace(_binding, mmove=True)
 
 
