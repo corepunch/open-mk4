@@ -3,6 +3,7 @@
 #include "sdl_app.h"
 #include "math_util.h"
 #include "cli.h"
+#include "menu.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -16,13 +17,15 @@ static void usage(void) {
        "  --demo             CPU controls both fighters\n"
        "  --difficulty N     CPU level 1..9 (default 3)\n"
        "  --headless         render without a window\n"
+       "  --menu             show the front-end menu (also available in headless mode)\n"
        "  --frames N         stop after N frames (headless advances exactly 1/60s)\n"
        "  --screenshot PATH  save final frame as BMP\n"
        "  --list             show original roster and arenas\n"
        "  --self-test        validate battle resources and animation compatibility\n"
        "P1: A/D W/S move, U HP, J LP, I HK, K LK, L block, H run.\n"
        "P2: arrows, keypad 4 HP, 1 LP, 5 HK, 2 LK, 3 block, right Shift run.\n"
-       "F1/F2 change fighters, F3 CPU/local, F4 arena, R reset, Enter rematch, Space pause.\n");
+       "Menu: Enter starts, arrows/WASD choose, Escape goes back.\n"
+       "In a match: F1/F2 change fighters, F3 CPU/local, F4 arena, R reset, Enter rematch, Space pause.\n");
 }
 
 static void validate(const Assets *assets) {
@@ -142,6 +145,7 @@ int main(int argc, char **argv) {
   const char *exe = "MK4/MK-4.EXE";
   const char *shot = NULL;
   bool headless = false, demo = false, cpu = true, selftest = false, list = false;
+  bool menu_requested = false, explicit_match = false;
   int p1 = 0, p2 = 4, arena = 8, limit = 0, difficulty = 3;
   Assets assets = {0};
   SdlApp app;
@@ -149,6 +153,8 @@ int main(int argc, char **argv) {
   GameAudio audio;
   InputDevice pads[2];
   bool running = true, paused = false;
+  bool match_started;
+  FrontendMenu menu;
   int rendered = 0;
   double accumulator = 0;
   uint64_t last;
@@ -161,22 +167,29 @@ int main(int argc, char **argv) {
       exe = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--screenshot"))
       shot = cli_value(argc, argv, &i);
-    else if (!strcmp(arg, "--p1"))
+    else if (!strcmp(arg, "--p1")) {
       p1 = cli_int(cli_value(argc, argv, &i));
-    else if (!strcmp(arg, "--p2"))
+      explicit_match = true;
+    } else if (!strcmp(arg, "--p2")) {
       p2 = cli_int(cli_value(argc, argv, &i));
-    else if (!strcmp(arg, "--arena"))
+      explicit_match = true;
+    } else if (!strcmp(arg, "--arena")) {
       arena = cli_int(cli_value(argc, argv, &i));
-    else if (!strcmp(arg, "--frames"))
+      explicit_match = true;
+    } else if (!strcmp(arg, "--frames"))
       limit = cli_int(cli_value(argc, argv, &i));
     else if (!strcmp(arg, "--difficulty"))
       difficulty = cli_int(cli_value(argc, argv, &i));
     else if (!strcmp(arg, "--headless"))
       headless = true;
-    else if (!strcmp(arg, "--demo"))
+    else if (!strcmp(arg, "--demo")) {
       demo = true;
-    else if (!strcmp(arg, "--two-player"))
+      explicit_match = true;
+    } else if (!strcmp(arg, "--two-player")) {
       cpu = false;
+      explicit_match = true;
+    } else if (!strcmp(arg, "--menu"))
+      menu_requested = true;
     else if (!strcmp(arg, "--self-test"))
       selftest = true;
     else if (!strcmp(arg, "--list"))
@@ -207,16 +220,20 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  sdl_app_init(&app, "Mortal Kombat 4 - Battle", 1280, 800, headless);
+  sdl_app_init(&app, "Mortal Kombat 4", 1280, 800, headless);
   canvas_init(&cv, 1280, 800);
   battle_init(p1, p2);
   require(difficulty >= 1 && difficulty <= 9, "CPU difficulty must be between 1 and 9");
   g_battle.cpu_level = difficulty;
-  battle_bind_assets(&assets);
   game_audio_init(&audio, headless);
-  battle_set_arena(arena);
   input_bind_player(&pads[0], 0);
   input_bind_player(&pads[1], 1);
+  menu_init(&menu);
+  match_started = !menu_requested && (headless || explicit_match);
+  if (match_started) {
+    battle_bind_assets(&assets);
+    battle_set_arena(arena);
+  }
   last = SDL_GetPerformanceCounter();
   if (headless && !limit)
     limit = 1;
@@ -236,20 +253,37 @@ int main(int argc, char **argv) {
       if (ev.type != SDL_KEYDOWN || ev.key.repeat)
         continue;
       keys = SDL_GetKeyboardState(NULL);
-      apply_shell(input_shell_command((int)ev.key.keysym.sym), &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, pads, keys);
+      if (!match_started) {
+        if (menu_key(&menu, (int)ev.key.keysym.sym, &running)) {
+          p1 = menu.p1;
+          p2 = menu.p2;
+          arena = menu.arena;
+          cpu = menu.mode == MENU_ARCADE;
+          demo = false;
+          battle_init(p1, p2);
+          g_battle.cpu_level = difficulty;
+          battle_bind_assets(&assets);
+          battle_set_arena(arena);
+          input_sync(&pads[0], keys);
+          input_sync(&pads[1], keys);
+          match_started = true;
+        }
+      } else {
+        apply_shell(input_shell_command((int)ev.key.keysym.sym), &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, pads, keys);
+      }
     }
 
     {
       uint64_t now = SDL_GetPerformanceCounter();
       double dt = headless ? 1.0 / 60.0 : fmin(0.1, (double)(now - last) / (double)SDL_GetPerformanceFrequency());
       last = now;
-      if (!paused)
+      if (match_started && !paused)
         accumulator += dt;
       else
         accumulator = 0;
     }
     keys = SDL_GetKeyboardState(NULL);
-    while (accumulator >= 1.0 / 60.0) {
+    while (match_started && accumulator >= 1.0 / 60.0) {
       Input in[2];
       input_sample(&pads[0], keys, &in[0]);
       input_sample(&pads[1], keys, &in[1]);
@@ -265,7 +299,10 @@ int main(int argc, char **argv) {
       if (demo && g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks > 240)
         battle_reset_match();
     }
-    draw_battle(&cv, &assets, arena, cpu, paused);
+    if (match_started)
+      draw_battle(&cv, &assets, arena, cpu, paused);
+    else
+      menu_draw(&cv, &assets, &menu);
     sdl_app_present(&app, &cv);
     ++rendered;
     if (limit && rendered >= limit)
