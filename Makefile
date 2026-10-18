@@ -19,7 +19,7 @@ SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: $(SCRIPT_GENERATE_TARGETS)
@@ -54,6 +54,11 @@ extract-wargods: fsys
 	./fsys Wargods/WARGODS.DAT -o extracted/wargods
 extract: fsys
 	./fsys MK4/FILESYS.DAT --exe MK4/MK-4.EXE -o extracted
+build/test-wargods: tests/test_wargods.c common/wargods_wiff.c common/wargods_wiff.h $(PACKAGE) $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) tests/test_wargods.c common/wargods_wiff.c $(PACKAGE) -o $@ $(LDLIBS)
+wargods-test: build/test-wargods
+	./build/test-wargods
 build/test-package: tests/test_package.c $(PACKAGE) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) tests/test_package.c $(PACKAGE) -o $@
