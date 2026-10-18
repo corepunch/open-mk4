@@ -923,9 +923,9 @@ static void check_peer_release_lp_throw(int roster, int clip) {
   }
 }
 
-static void check_narrow_high_kick(void) {
-  const int roster[] = {8, 11, 14};
-  for (int index = 0; index < 3; ++index) {
+static void check_selected_high_kick(void) {
+  const int roster[] = {5, 8, 11, 12, 14};
+  for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
     for (int scenario = 0; scenario < 3; ++scenario) {
       battle_init(roster[index], 4);
       g_battle.phase = PHASE_FIGHT;
@@ -941,15 +941,15 @@ static void check_narrow_high_kick(void) {
       fighter_press(owner, BUTTON_HIGH_KICK);
       for (int tick = 0; tick < 45; ++tick) {
         advance_ticks(1, input);
-        check(!fighter_fiber_active(owner), "Selected narrow high kicks must use frame tables throughout contact and recovery");
+        check(!fighter_fiber_active(owner), "Selected high kicks must use frame tables throughout contact and recovery");
       }
-      /* Native46a790 selects B[2], not the wide-kick B[1] record. */
+      /* B[0]/B[2] parameter runners share 13% damage and native 20% chip. */
       q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? (int)(((int64_t)0x2147 * 0x3333) >> 16) : 0;
       if (victim->health != Q16_ONE - damage) {
-        fprintf(stderr, "Narrow kick roster%d scenario%d health%d expected%d\n", roster[index], scenario, victim->health, Q16_ONE - damage);
+        fprintf(stderr, "Selected kick roster%d scenario%d health%d expected%d\n", roster[index], scenario, victim->health, Q16_ONE - damage);
       }
-      check(victim->health == Q16_ONE - damage, "Narrow high kick must latch one B[2] contact, chip or miss");
-      check(owner->state == S_IDLE, "Narrow high kick must finish its own forward clip recovery");
+      check(victim->health == Q16_ONE - damage, "Selected high kick must latch one native contact, chip or miss");
+      check(owner->state == S_IDLE, "Selected high kick must finish its own clip recovery");
     }
   }
 }
@@ -1479,7 +1479,7 @@ int main(void) {
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);
   check_short_diagonal_air_recovery();
-  check_narrow_high_kick();
+  check_selected_high_kick();
   check_jax_air_grab_command();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();

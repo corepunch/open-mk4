@@ -322,3 +322,12 @@ void native_narrow_kick_contact(Fighter *fighter, FighterFn recovery) {
   }
   native_play(fighter, false);
 }
+
+void native_kick_contact_phase(Fighter *fighter, FighterFn query, FighterFn recovery) {
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, 3, recovery);
+  for (int frame = 1; frame <= 3; ++frame) {
+    native_frame(fighter, frame, pose, query);
+  }
+  native_play(fighter, false);
+}

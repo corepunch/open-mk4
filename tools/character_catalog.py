@@ -94,7 +94,7 @@ def moves_for(character):
                            native=(('command gate', 0x45ed70), ('release damage', 0x46aae0), ('landing', 0x46ab20), ('victim continuation', 0x4878c0), ('victim getup', 0x484b60))),
             fan_fatality=move(0x467e00, (('performer', 0x4e0118), ('victim', 0x4e0188), ('owner cycle', 0x4e0138), ('owner release', 0x4e0148), ('victory', 0x4e0158), ('victim release', 0x4e01a0)), native=(('scene entry', 0x43d040),)),
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
-            high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 0),)),
+            high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5d20)), (('B', 0),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 34),)),
         )
@@ -241,7 +241,7 @@ def moves_for(character):
                             (('projectile response', 0x4ed118), ('projectile impact', 0x4ed190)),
                             native=(('projectile callback', 0x497580), ('contact completion', 0x497b60),
                                     ('impact setup', 0x497b00))),
-            high_kick=move(0x46a680, (('Jarek attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
+            high_kick=move(0x46a680, (('Jarek attacker', 0x4e5ca0), ('recovery', 0x4e5d20)), (('B', 0),)),
             low_kick=move(0x46a7b0, (('Jarek attacker', 0x4e5d90),), (('B', 5),)),
             sweep=move(0x46ef90, (('Jarek attacker', 0x4e6798),), (('B', 35),)),
             uppercut=move(0x46ccd0, (('Jarek attacker', 0x4e62a0),), (('A', 2), ('A', 6))),

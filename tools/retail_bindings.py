@@ -1178,6 +1178,10 @@ for _cid in (8, 11, 14):
     CHARACTER_BINDINGS[_cid][0x46a790] = replace(CHARACTER_BINDINGS[_cid][0x46a790], mmove=True,
         evidence="46a790 -> 470c60 block4e6978: B[2] poses10/11/12, then46a7a0 ->4e6998")
 
+for _cid, _name in ((5, "fujin"), (12, "jarek")):
+    CHARACTER_BINDINGS[_cid][0x46a6b0] = Binding(_name + "_script_kick_finish", "game/" + _name + "/character.c", ("tail",),
+        flow="terminal", mmove=True, evidence="46a6b0 ->470c60 block4e5d00 B[0], then46a6c0 ->4e5d20")
+
 def bindings_for(character):
     from character_catalog import CHARACTERS
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),

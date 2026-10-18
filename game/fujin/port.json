@@ -89,12 +89,6 @@
       "evidence": "Fujin bounded fan script/caller query preserves this inherited clip and sample context; the address is shared with the selected roster graph.",
       "sample": 69
     },
-    "0x4e5c70": {
-      "clip": 65,
-      "count": 11,
-      "sample": 10,
-      "evidence": "Fujin root 4e5ca0 opens clip 65 with 11 samples, advances to sample 10, then native tail 46a6b0 enters this two-sample backward recovery root."
-    },
     "0x4e5e50": {
       "clip": 82,
       "count": 45,
@@ -130,6 +124,12 @@
       "count": 45,
       "sample": 0,
       "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
+    },
+    "0x4e5d20": {
+      "clip": 65,
+      "count": 11,
+      "sample": 10,
+      "evidence": "46a6b0 ->470c60 block4e5d00 B[0]; 46a6c0 enters4e5d20, then46a6e0 reverses the remaining clip."
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
@@ -146,7 +146,7 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e5c70",
+    "0x4e5d20",
     "0x4e5ca0",
     "0x4e5d90",
     "0x4e5e28",
@@ -172,7 +172,7 @@
     "0x4e9910"
   ],
   "integration_source": "game/fujin/character.c",
-  "inventory_sha256": "1fc50b17b4982fe604ef79a5f4070f14a81e50c890fae585811e1a8a42c63fed",
+  "inventory_sha256": "5ef06c5743e80275ec1262349330f0c609b46e9a6e0a2b494f19ac55659bed03",
   "legacy_scripts": {},
   "moves": {
     "jab": {
@@ -491,6 +491,8 @@
   "mmove_scripts": [
     "0x4de610",
     "0x4de6b8",
-    "0x4de798"
+    "0x4de798",
+    "0x4e5ca0",
+    "0x4e5d20"
   ]
 }

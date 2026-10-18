@@ -112,8 +112,8 @@ void fujin_entry_retail_script_004e01a0(Fighter *fighter) {
   retail_script_004e01a0(fighter);
 }
 
-void fujin_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+void fujin_entry_retail_script_004e5d20(Fighter *fighter) {
+  retail_script_004e5d20(fighter);
 }
 
 void fujin_entry_retail_script_004e5ca0(Fighter *fighter) {

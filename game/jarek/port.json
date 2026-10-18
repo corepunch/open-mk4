@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "d5e71bfa61bd3f10ff18cdeaeb56fc3a54fc27ceb2d2849bab00fb32327ba316",
+  "inventory_sha256": "98988c1bc5bf0fa16d798d0bc8db6ec311777c30da5b240baa905df7274ed64c",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -21,7 +21,7 @@
     "0x4e0188",
     "0x4e01a0",
     "0x4e01b0",
-    "0x4e5c70",
+    "0x4e5d20",
     "0x4e5ca0",
     "0x4e5d90",
     "0x4e5e28",
@@ -86,12 +86,6 @@
       "count": 108,
       "sample": 69,
       "evidence": "Native victim release preserves clip 416 at sample 69; bounded Jarek fan-script and native continuation"
-    },
-    "0x4e5c70": {
-      "clip": 65,
-      "count": 11,
-      "sample": 10,
-      "evidence": "Jarek high-kick entry 4e5ca0 plays clip 65 through sample 10 before native runner 46a6b0; bounded raw script and native listing"
     },
     "0x4e5e50": {
       "clip": 82,
@@ -176,6 +170,12 @@
       "count": 10,
       "sample": 0,
       "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
+    },
+    "0x4e5d20": {
+      "clip": 65,
+      "count": 11,
+      "sample": 10,
+      "evidence": "46a6b0 ->470c60 block4e5d00 B[0]; 46a6c0 enters4e5d20, then46a6e0 reverses the remaining clip."
     }
   },
   "entry_adapters": {
@@ -656,5 +656,9 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw"
-  }
+  },
+  "mmove_scripts": [
+    "0x4e5ca0",
+    "0x4e5d20"
+  ]
 }

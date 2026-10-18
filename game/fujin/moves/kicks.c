@@ -1,14 +1,24 @@
 #include "../character.h"
 
-static void fujin_script_kick_finish(Fighter *fighter);
+static const MoveDef s_short_kick = {.clip = 65, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+
+void fujin_script_kick_finish(Fighter *fighter);
 static void fujin_low_kick(Fighter *fighter);
 static void fujin_high_kick(Fighter *fighter);
 static void fujin_entry_low_kick(Fighter *fighter);
 static void fujin_enter_kick(Fighter *fighter);
 static const MoveDef s_low_kick = {.clip = 308, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD | SF_LOW};
 
-static void fujin_script_kick_finish(Fighter *fighter) {
-  fujin_entry_retail_script_004e5c70(fighter);
+static const AttackRecord fujin_high_kick_record = {0x1451e, -0xc7ae, 0x10000, 0xc7ae, 16, 13, 6, 0, 0x2147};
+
+static void fujin_kick_frame(Fighter *fighter) {
+  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
+    battle_contact(fighter, &fujin_high_kick_record);
+  }
+}
+
+void fujin_script_kick_finish(Fighter *fighter) {
+  native_kick_contact_phase(fighter, fujin_kick_frame, fujin_entry_retail_script_004e5d20);
 }
 
 static void fujin_low_kick(Fighter *fighter) {
@@ -17,7 +27,8 @@ static void fujin_low_kick(Fighter *fighter) {
 }
 
 static void fujin_high_kick(Fighter *fighter) {
-  fujin_start(fighter, S_KICK, &fujin_s_kick, fujin_entry_retail_script_004e5ca0);
+  fighter_start_move(fighter, S_KICK, &s_short_kick);
+  fujin_entry_retail_script_004e5ca0(fighter);
 }
 
 static void fujin_entry_low_kick(Fighter *fighter) {

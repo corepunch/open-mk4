@@ -95,7 +95,7 @@ void jarek_entry_retail_script_004e0158(Fighter *fighter);
 void jarek_entry_retail_script_004e0188(Fighter *fighter);
 void jarek_entry_retail_script_004e01a0(Fighter *fighter);
 void jarek_entry_retail_script_004e01b0(Fighter *fighter);
-void jarek_entry_retail_script_004e5c70(Fighter *fighter);
+void jarek_entry_retail_script_004e5d20(Fighter *fighter);
 void jarek_entry_retail_script_004e5ca0(Fighter *fighter);
 void jarek_entry_retail_script_004e5d90(Fighter *fighter);
 void jarek_entry_retail_script_004e5e28(Fighter *fighter);

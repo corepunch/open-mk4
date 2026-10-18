@@ -1,11 +1,14 @@
 #include "../character.h"
 
+static const MoveDef s_short_kick = {.clip = 65, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+
 static void jarek_kick_frame(Fighter *fighter);
 static void jarek_script_low_kick_finish(Fighter *fighter);
-static const AttackRecord jarek_high_kick_record = {89718, -55705, 86441, 70123, 16, 13, 6, 0, 8519};
+static const AttackRecord jarek_high_kick_record = {0x1451e, -0xc7ae, 0x10000, 0xc7ae, 16, 13, 6, 0, 0x2147};
 
 void jarek_high_kick(Fighter *fighter) {
-  jarek_start(fighter, S_KICK, &jarek_s_high_kick, jarek_entry_retail_script_004e5ca0);
+  fighter_start_move(fighter, S_KICK, &s_short_kick);
+  jarek_entry_retail_script_004e5ca0(fighter);
 }
 
 void jarek_low_kick(Fighter *fighter) {
@@ -19,8 +22,7 @@ static void jarek_kick_frame(Fighter *fighter) {
 }
 
 void jarek_script_kick_finish(Fighter *fighter) {
-  native_calls(fighter, 2, 1, jarek_kick_frame);
-  jarek_entry_retail_script_004e5c70(fighter);
+  native_kick_contact_phase(fighter, jarek_kick_frame, jarek_entry_retail_script_004e5d20);
 }
 
 void jarek_script_low_kick_avoid(Fighter *fighter) {
