@@ -12,7 +12,7 @@ typedef struct MoveFiber {
   Fighter *fighter;
   FighterFn entry, cleanup, next;
   uint64_t clock, wake, last_tick;
-  bool finished, started, rebinding;
+  bool finished, started, rebinding, frame_wait;
 } MoveFiber;
 
 /* Runtime stacks are not simulation snapshots. A slot belongs to one of the
@@ -172,6 +172,15 @@ void fighter_step_fiber(Fighter *fighter) {
     return;
   }
   slot->last_tick = g_battle.ticks;
+  if (slot->frame_wait) {
+    fighter_step_mmove(fighter);
+    if (slot->coroutine != NULL && slot->frame_wait && fighter->current_mmove == NULL) {
+      slot->frame_wait = false;
+      fighter->script = fighter_step_fiber;
+      fiber_resume(slot);
+    }
+    return;
+  }
   slot->clock++;
   if (slot->clock >= slot->wake) {
     fiber_resume(slot);
@@ -205,4 +214,23 @@ _Noreturn void fighter_fiber_handoff(FighterFn next) {
   }
   running->cleanup = NULL;
   fighter_fiber_finish(next);
+}
+
+/* A returning native binding suspends its VM stack while ordinary frame
+ * callbacks own playback. Completion resumes that stack on the same boundary. */
+void fighter_fiber_await_frames(Fighter *fighter) {
+  require(fighter_fiber_running(fighter) && fighter->current_mmove != NULL, "Native frame wait needs its running owner");
+  running->frame_wait = true;
+  fighter->script = fighter_step_fiber;
+  require(mco_yield(running->coroutine) == MCO_SUCCESS, "Cannot await native frames");
+}
+
+void fighter_fiber_release_to_mmove(Fighter *fighter) {
+  MoveFiber *slot = fiber_slot(fighter);
+  require(running != slot, "Running native handoff must yield");
+  if (slot->cleanup != NULL) {
+    fighter->mmove_cleanup = slot->cleanup;
+    slot->cleanup = NULL;
+  }
+  fighter_cancel_fiber(fighter);
 }

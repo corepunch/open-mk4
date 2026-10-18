@@ -7,6 +7,11 @@
 void native_begin(Fighter *fighter, int first, int last, FighterFn end);
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action);
 void native_play(Fighter *fighter, bool immediate);
+/* Returning bindings retain their VM continuation, but playback and actions
+ * are dispatched by mframe rows rather than a native tick loop. */
+void native_wait(Fighter *fighter);
+void native_delay(Fighter *fighter, int frames);
+void native_advance(Fighter *fighter, int count, int step);
 void native_hold(Fighter *fighter, int frames, FighterFn end);
 void native_motion_begin(Fighter *fighter, int frames, FighterFn end);
 void native_motion_frame(Fighter *fighter, int frame, FighterAIFn movement, float distance, FighterFn action);

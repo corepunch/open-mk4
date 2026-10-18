@@ -1,4 +1,5 @@
 #include "native.h"
+#include "math_util.h"
 #include <string.h>
 
 static void frame_pose(Fighter *fighter, float pose) {
@@ -42,7 +43,41 @@ void native_play(Fighter *fighter, bool immediate) {
   if (fighter_fiber_running(fighter)) {
     fighter_fiber_handoff(native_install);
   }
+  if (fighter_fiber_active(fighter)) {
+    fighter_fiber_release_to_mmove(fighter);
+  }
   native_install(fighter);
+}
+
+void native_wait(Fighter *fighter) {
+  fighter->native.move.endfunc = fighter_stop_mmove;
+  fighter->native_immediate = false;
+  native_install(fighter);
+  fighter_fiber_await_frames(fighter);
+}
+
+void native_delay(Fighter *fighter, int frames) {
+  if (frames <= 0) {
+    return;
+  }
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 0, frames - 1, NULL);
+  for (int frame = 0; frame < frames; ++frame) {
+    native_frame(fighter, frame, pose, NULL);
+  }
+  native_wait(fighter);
+}
+
+void native_advance(Fighter *fighter, int count, int step) {
+  if (count <= 0) {
+    return;
+  }
+  int pose = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  native_begin(fighter, 1, count, NULL);
+  for (int frame = 1; frame <= count; ++frame) {
+    native_frame(fighter, frame, maxi(0, last == MOVE_END ? pose + step * frame : mini(last, pose + step * frame)), NULL);
+  }
+  native_wait(fighter);
 }
 
 void native_hold(Fighter *fighter, int frames, FighterFn end) {

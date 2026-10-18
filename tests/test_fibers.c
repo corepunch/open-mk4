@@ -238,6 +238,18 @@ static void native_handoff(Fighter *fighter) {
   native_play(fighter, false);
 }
 
+static void native_returning(Fighter *fighter) {
+  int retained = 17;
+  native_begin(fighter, 1, 3, NULL);
+  native_frame(fighter, 1, 3, NULL);
+  native_frame(fighter, 2, 4, native_action);
+  native_frame(fighter, 3, 5, NULL);
+  native_wait(fighter);
+  record(fighter, retained);
+  native_delay(fighter, 2);
+  fighter_fiber_finish(finish);
+}
+
 static void native_frame_schedules(void) {
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     setup();
@@ -253,6 +265,22 @@ static void native_frame_schedules(void) {
     advance(4);
     check(event_count == (interrupted ? 0 : 1) && cleaned[0] == 1 && completed[0] == (interrupted ? 0 : 1),
         "native frame action/cleanup survived replacement or ran twice");
+  }
+  for (int interrupted = 0; interrupted < 2; ++interrupted) {
+    setup();
+    Fighter *fighter = &g_battle.fighters[0];
+    fighter_start_fiber(fighter, native_returning, cleanup);
+    advance(2);
+    check(event_count == 1 && events[0][2] == 41, "returning native binding lost its frame action");
+    if (interrupted) {
+      fighter_interrupt(fighter, fighter_ready);
+    }
+    advance(3);
+    check(event_count == (interrupted ? 1 : 2) && cleaned[0] == 1 && completed[0] == (interrupted ? 0 : 1),
+        "native binding resumed after interruption or lost its retained continuation");
+    if (!interrupted) {
+      check(events[1][0] == 3 && events[1][2] == 17, "native completion must resume its VM continuation at the final frame");
+    }
   }
   setup();
   Fighter *fighter = &g_battle.fighters[0];

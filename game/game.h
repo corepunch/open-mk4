@@ -793,6 +793,8 @@ void fighter_cancel_fiber(Fighter *fighter);
 void fighter_cancel_all_fibers(void);
 void fighter_wait_ticks(int ticks);
 _Noreturn void fighter_fiber_finish(FighterFn next);
+void fighter_fiber_await_frames(Fighter *fighter);
+void fighter_fiber_release_to_mmove(Fighter *fighter);
 _Noreturn void fighter_fiber_handoff(FighterFn next);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
