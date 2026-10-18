@@ -149,4 +149,5 @@ void assets_free(Assets *assets);
 void pose(const Character *ch, const Clip *clip, double frame, Pose output[MK4_MAX_BONES]);
 void pose_static(const Character *ch, Pose output[MK4_MAX_BONES]);
 void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *to, int target, float fraction, Pose output[MK4_MAX_BONES]);
+void pose_blend_frames(const Character *ch, const Clip *from, double from_frame, const Clip *to, double to_frame, float fraction, Pose output[MK4_MAX_BONES]);
 #endif

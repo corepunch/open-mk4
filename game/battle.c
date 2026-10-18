@@ -58,6 +58,8 @@ void battle_init(int p1, int p2) {
 
 void battle_reset_match(void) {
   fighter_cancel_all_fibers();
+  g_battle.previous_animation.valid = false;
+  g_battle.current_animation.valid = false;
   int i;
   for (i = 0; i < 2; ++i)
     g_battle.fighters[i].wins = 0;
@@ -71,6 +73,8 @@ void battle_reset_match(void) {
 void battle_next_round(void) {
   fighter_cancel_all_fibers();
   battle_event_cancel_all();
+  g_battle.previous_animation.valid = false;
+  g_battle.current_animation.valid = false;
   size_t i;
   battle_set_arena(g_battle.arena);
   g_battle.round++;
@@ -100,6 +104,33 @@ void battle_next_round(void) {
   g_battle.finish_waiting = false;
   g_battle.time_ticks = 99 * 60;
   g_battle.winner = -1;
+  battle_capture_render_snapshot();
+}
+
+void battle_capture_render_snapshot(void) {
+  if (g_battle.assets == NULL) {
+    return;
+  }
+  if (g_battle.current_animation.valid && g_battle.current_animation.tick > g_battle.ticks) {
+    g_battle.previous_animation.valid = false;
+    g_battle.current_animation.valid = false;
+  }
+  if (g_battle.current_animation.valid && g_battle.ticks - g_battle.current_animation.tick < 2) {
+    return;
+  }
+  AnimationSnapshot next = {.tick = g_battle.ticks, .valid = true};
+  for (int i = 0; i < 2; ++i) {
+    const Fighter *fighter = &g_battle.fighters[i];
+    const Character *model = fighter_model(g_battle.assets, fighter);
+    const Clip *clip = fighter_clip(g_battle.assets, fighter);
+    next.fighters[i] = (FighterAnimationFrame){model, (int)(clip - g_battle.assets->clips.data), fighter_frame(fighter, (int)clip->frames.count), true};
+  }
+  if (!g_battle.current_animation.valid) {
+    g_battle.previous_animation = next;
+  } else {
+    g_battle.previous_animation = g_battle.current_animation;
+  }
+  g_battle.current_animation = next;
 }
 
 static const MoveDef dizzy = {.clip = 13, .last = 55, .flags = SF_LOCK, .action = 0x1009};
@@ -570,6 +601,7 @@ void battle_event_pump(void) {
 
 void battle_step(const Input input[2]) {
   int i;
+  battle_capture_render_snapshot();
   g_battle.ticks++;
   g_battle.sound_count = 0;
   battle_step_presentation();

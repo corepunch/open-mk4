@@ -716,11 +716,60 @@ void pose(const Character *ch, const Clip *clip, double frame, Pose out[MK4_MAX_
 }
 
 void pose_blend(const Character *ch, const Clip *from, int sample, const Clip *to, int target, float fraction, Pose out[MK4_MAX_BONES]) {
+  pose_blend_frames(ch, from, sample, to, target, fraction, out);
+}
+
+void pose_blend_frames(const Character *ch, const Clip *from, double from_frame, const Clip *to, double to_frame, float fraction, Pose out[MK4_MAX_BONES]) {
   require(from->frames.count > 0 && to->frames.count > 0, "Empty blend clip");
-  const Frame *a = &from->frames.data[(size_t)sample % from->frames.count];
-  const Frame *b = &to->frames.data[(size_t)target % to->frames.count];
-  require(a->angles.count == b->angles.count, "Blend clips have different rigs");
-  pose_frames(ch, a, b, fraction, out);
+  double source = fmod(fmax(0., from_frame), (double)from->frames.count);
+  double target = fmod(fmax(0., to_frame), (double)to->frames.count);
+  size_t source_a = (size_t)source, source_b = (source_a + 1) % from->frames.count;
+  size_t target_a = (size_t)target, target_b = (target_a + 1) % to->frames.count;
+  float source_fraction = (float)(source - (double)source_a);
+  float target_fraction = (float)(target - (double)target_a);
+  fraction = fmaxf(0.f, fminf(1.f, fraction));
+  const Frame *sa = &from->frames.data[source_a], *sb = &from->frames.data[source_b];
+  const Frame *ta = &to->frames.data[target_a], *tb = &to->frames.data[target_b];
+  require(sa->angles.count == ta->angles.count && ta->angles.count == tb->angles.count, "Blend clips have different rigs");
+  require(ch->bones.count <= MK4_MAX_BONES, "Too many rig bones");
+  for (size_t i = 0; i < ch->bones.count; ++i) {
+    const Bone *bone = &ch->bones.data[i];
+    Pose p;
+    Vec3 angle = {0};
+    if (bone->channel >= 0 && (size_t)bone->channel < sa->angles.count) {
+      Vec3 s0 = sa->angles.data[bone->channel], s1 = sb->angles.data[bone->channel];
+      Vec3 t0 = ta->angles.data[bone->channel], t1 = tb->angles.data[bone->channel];
+      Vec3 source_angle = {
+          s0.x + remainderf(s1.x - s0.x, 4096.f) * source_fraction,
+          s0.y + remainderf(s1.y - s0.y, 4096.f) * source_fraction,
+          s0.z + remainderf(s1.z - s0.z, 4096.f) * source_fraction,
+      };
+      Vec3 target_angle = {
+          t0.x + remainderf(t1.x - t0.x, 4096.f) * target_fraction,
+          t0.y + remainderf(t1.y - t0.y, 4096.f) * target_fraction,
+          t0.z + remainderf(t1.z - t0.z, 4096.f) * target_fraction,
+      };
+      angle = (Vec3){
+          source_angle.x + remainderf(target_angle.x - source_angle.x, 4096.f) * fraction,
+          source_angle.y + remainderf(target_angle.y - source_angle.y, 4096.f) * fraction,
+          source_angle.z + remainderf(target_angle.z - source_angle.z, 4096.f) * fraction,
+      };
+    }
+    p.rotation = bone->channel >= 0 ? rotation(bone->kind, angle) : mat3_identity();
+    p.position = bone->translation;
+    if (bone->parent < 0) {
+      Vec3 source_root = vec_add(vec_scale(sa->translation, 1.f - source_fraction), vec_scale(sb->translation, source_fraction));
+      Vec3 target_root = vec_add(vec_scale(ta->translation, 1.f - target_fraction), vec_scale(tb->translation, target_fraction));
+      p.position = vec_add(p.position, vec_add(vec_scale(source_root, 1.f - fraction), vec_scale(target_root, fraction)));
+    }
+    if (bone->parent >= 0) {
+      require((size_t)bone->parent < i, "Skeleton is not in parent order");
+      const Pose *parent = &out[bone->parent];
+      p.position = vec_add(parent->position, mat3_apply(parent->rotation, p.position));
+      p.rotation = mat3_mul(parent->rotation, p.rotation);
+    }
+    out[i] = p;
+  }
 }
 
 static void meshes_free(Meshes *meshes) {

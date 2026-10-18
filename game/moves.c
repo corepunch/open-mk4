@@ -333,17 +333,3 @@ double fighter_frame(const Fighter *fighter, int frame_count) {
   }
   return last < first ? (double)first - at : (double)first + at;
 }
-
-double fighter_render_frame(const Fighter *fighter, int frame_count, double interpolation) {
-  const mmove_t *mmove = fighter->current_mmove;
-  if (mmove == NULL || fighter->sample_override >= 0 || fighter->mmove_frame >= mmove->lastframe) {
-    return fighter_frame(fighter, frame_count);
-  }
-  const mframe_t *frame = &mmove->frame[fighter->mmove_frame - mmove->firstframe];
-  const mframe_t *next = frame + 1;
-  require(frame->sample < frame_count, "Mmove sample outside clip");
-  require(next->sample < frame_count, "Next mmove sample outside clip");
-  double alpha = fmax(0., fmin(1., interpolation));
-  double fraction = (fighter->mmove_elapsed + alpha) / frame->duration;
-  return frame->sample + (next->sample - frame->sample) * fraction;
-}

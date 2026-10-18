@@ -167,6 +167,64 @@ static void combat_poses(const Assets *assets) {
   }
 }
 
+static void cross_clip_pose_interpolation(const Assets *assets) {
+  const Character *scorpion = roster_character(assets, 0);
+  const Clip *from = &assets->clips.data[293];
+  const Clip *to = &assets->clips.data[66];
+  Pose source[MK4_MAX_BONES], target[MK4_MAX_BONES], blend[MK4_MAX_BONES];
+  pose(scorpion, from, 15, source);
+  pose(scorpion, to, 12, target);
+  pose_blend_frames(scorpion, from, 15, to, 12, 0.f, blend);
+  for (size_t i = 0; i < scorpion->bones.count; ++i) {
+    check(fabsf(blend[i].position.x - source[i].position.x) < .0001f && fabsf(blend[i].position.y - source[i].position.y) < .0001f &&
+              fabsf(blend[i].position.z - source[i].position.z) < .0001f,
+        "Cross-clip interpolation does not begin at the previous animation frame");
+    for (size_t k = 0; k < 9; ++k) {
+      check(fabsf(blend[i].rotation.m[k] - source[i].rotation.m[k]) < .0001f, "Cross-clip interpolation changes its source endpoint");
+    }
+  }
+  pose_blend_frames(scorpion, from, 15, to, 12, 1.f, blend);
+  for (size_t i = 0; i < scorpion->bones.count; ++i) {
+    check(fabsf(blend[i].position.x - target[i].position.x) < .0001f && fabsf(blend[i].position.y - target[i].position.y) < .0001f &&
+              fabsf(blend[i].position.z - target[i].position.z) < .0001f,
+        "Cross-clip interpolation does not end at the next animation frame");
+    for (size_t k = 0; k < 9; ++k) {
+      check(fabsf(blend[i].rotation.m[k] - target[i].rotation.m[k]) < .0001f, "Cross-clip interpolation changes its target endpoint");
+    }
+  }
+}
+
+static void fighter_render_snapshots(const Assets *assets) {
+  battle_init(0, 0);
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_move(fighter, S_UPPERCUT, roster_def(0)->moves[S_UPPERCUT]);
+  battle_bind_assets(assets);
+  fighter_start_move(fighter, S_KICK, roster_def(0)->moves[S_KICK]);
+  fighter->sample_override = 12;
+  g_battle.ticks = 2;
+  battle_capture_render_snapshot();
+  const FighterAnimationFrame *from = &g_battle.previous_animation.fighters[0];
+  const FighterAnimationFrame *to = &g_battle.current_animation.fighters[0];
+  check(from->clip == 293 && to->clip == 66 && from->sample != to->sample, "Animation snapshots must preserve a branch into a different clip");
+  const Character *model = fighter_model(assets, fighter);
+  Pose source[MK4_MAX_BONES], target[MK4_MAX_BONES], rendered[MK4_MAX_BONES];
+  Vec3 root;
+  pose(model, &assets->clips.data[from->clip], from->sample, source);
+  pose(model, &assets->clips.data[to->clip], to->sample, target);
+  fighter_render_pose(assets, fighter, 0.0, &root, rendered);
+  for (size_t i = 0; i < model->bones.count; ++i) {
+    check(fabsf(rendered[i].position.x - source[i].position.x) < .0001f, "Render snapshot starts from the previous clip pose");
+  }
+  fighter_render_pose(assets, fighter, 1.0, &root, rendered);
+  for (size_t i = 0; i < model->bones.count; ++i) {
+    check(fabsf(rendered[i].position.x - target[i].position.x) < .0001f, "Render snapshot reaches the new clip pose");
+  }
+  fighter_render_pose(assets, fighter, 0.5, &root, rendered);
+  for (size_t i = 0; i < model->bones.count; ++i) {
+    check(isfinite(rendered[i].position.x) && isfinite(rendered[i].rotation.m[0]), "Cross-animation render snapshot must remain finite");
+  }
+}
+
 static void sound_samples(void) {
   Package archive;
   package_load(&archive, "MK4/FILESYS.DAT");
@@ -310,6 +368,8 @@ int main(void) {
   /* 489ff0 selector8: Liu remap1 reads token1275 -> pcmk0255.esf.
    * This catches accidental routing through indexed sounds (opcode25). */
   assets_load_battle(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
+  cross_clip_pose_interpolation(&assets);
+  fighter_render_snapshots(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");
   combat_poses(&assets);

@@ -586,6 +586,19 @@ struct BattleEvent {
   bool active, cancel_on_owner_change, cancel_on_ko;
 };
 
+typedef struct FighterAnimationFrame {
+  const Character *model;
+  int clip;
+  double sample;
+  bool valid;
+} FighterAnimationFrame;
+
+typedef struct AnimationSnapshot {
+  FighterAnimationFrame fighters[2];
+  uint64_t tick;
+  bool valid;
+} AnimationSnapshot;
+
 typedef struct ScenePiece {
   bool active, frozen, animated;
   int roster, bone, attached_to, joint;
@@ -706,6 +719,7 @@ struct Battle {
   int ko_winner;     /* 0x532354: 1 or 2 after a KO */
   bool contacts_off; /* 0x527ae4 */
   bool contacted;    /* 0x532358: any contact this round */
+  AnimationSnapshot previous_animation, current_animation;
 };
 
 /* One active simulation, defined in battle.c and initialized by battle_init.
@@ -786,7 +800,6 @@ bool fighter_fast_start(const Fighter *fighter);
 void fighter_press(Fighter *fighter, Button button);
 void fighter_release(Fighter *fighter, Button button);
 double fighter_frame(const Fighter *fighter, int frame_count);
-double fighter_render_frame(const Fighter *fighter, int frame_count, double interpolation);
 int fighter_sample(const Fighter *fighter);
 void battle_bind_assets(const Assets *assets);
 const Character *fighter_model(const Assets *assets, const Fighter *fighter);
@@ -795,7 +808,7 @@ Mat3 fighter_turn(const Assets *assets, const Fighter *fighter);
 bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16 axis[2], q16 bounds[4]);
 int fighter_pose_sample(const Fighter *fighter);
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
-void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]);
+void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Vec3 *root_translation, Pose output[MK4_MAX_BONES]);
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
@@ -830,6 +843,7 @@ void battle_init(int p1, int p2);
 void battle_reset_match(void);
 void battle_next_round(void);
 void battle_step(const Input input[2]);
+void battle_capture_render_snapshot(void);
 const char *state_name(int state);
 
 void draw_battle(Canvas *canvas, const Assets *assets, int arena, bool cpu, bool paused, double interpolation);

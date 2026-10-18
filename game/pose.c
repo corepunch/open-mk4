@@ -7,6 +7,7 @@ void battle_bind_assets(const Assets *assets) {
   for (int i = 0; i < 2; ++i) {
     g_battle.fighters[i].assets = assets;
   }
+  battle_capture_render_snapshot();
 }
 
 const Character *fighter_model(const Assets *assets, const Fighter *fighter) {
@@ -77,17 +78,50 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   }
 }
 
-void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
+static Vec3 clip_root_translation(const Clip *clip, double sample) {
+  double frame = fmod(fmax(0., sample), (double)clip->frames.count);
+  size_t a = (size_t)frame, b = (a + 1) % clip->frames.count;
+  float fraction = (float)(frame - (double)a);
+  return vec_add(vec_scale(clip->frames.data[a].translation, 1.f - fraction), vec_scale(clip->frames.data[b].translation, fraction));
+}
+
+void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Vec3 *root_translation, Pose output[MK4_MAX_BONES]) {
   const Character *ch = fighter_model(assets, fighter);
   const Clip *clip = fighter_clip(assets, fighter);
   if (fighter->blend_duration > 0) {
     int id = fighter->blend_clip < 0 ? ch->idle : fighter->blend_clip;
     float fraction = fighter->blend_weight >= 0 ? q16_float(fighter->blend_weight) : fminf(1.f, (float)fighter->blend_ticks / fighter->blend_duration);
-    double frame = fighter_render_frame(fighter, (int)clip->frames.count, interpolation);
-    pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, (int)frame, fraction, output);
-  } else {
-    pose(ch, clip, fighter_render_frame(fighter, (int)clip->frames.count, interpolation), output);
+    int sample = fighter_pose_sample(fighter);
+    pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, sample, fraction, output);
+    *root_translation = clip_root_translation(clip, sample);
+    return;
   }
+  int fighter_index = fighter == &g_battle.fighters[0] ? 0 : fighter == &g_battle.fighters[1] ? 1 : -1;
+  const AnimationSnapshot *previous = &g_battle.previous_animation;
+  const AnimationSnapshot *current = &g_battle.current_animation;
+  if (fighter_index < 0 || !previous->valid || !current->valid || !previous->fighters[fighter_index].valid || !current->fighters[fighter_index].valid ||
+      previous->fighters[fighter_index].model != ch || current->fighters[fighter_index].model != ch) {
+    double sample = fighter_frame(fighter, (int)clip->frames.count);
+    pose(ch, clip, sample, output);
+    *root_translation = clip_root_translation(clip, sample);
+    return;
+  }
+  const FighterAnimationFrame *from = &previous->fighters[fighter_index];
+  const FighterAnimationFrame *to = &current->fighters[fighter_index];
+  require(from->clip >= 0 && (size_t)from->clip < assets->clips.count, "Invalid previous render clip");
+  require(to->clip >= 0 && (size_t)to->clip < assets->clips.count, "Invalid current render clip");
+  const Clip *from_clip = &assets->clips.data[from->clip];
+  const Clip *to_clip = &assets->clips.data[to->clip];
+  float fraction = (float)fmax(0., fmin(1., interpolation));
+  if (from->clip == to->clip) {
+    double sample = from->sample + (to->sample - from->sample) * fraction;
+    pose(ch, to_clip, sample, output);
+  } else {
+    pose_blend_frames(ch, from_clip, from->sample, to_clip, to->sample, fraction, output);
+  }
+  Vec3 from_root = clip_root_translation(from_clip, from->sample);
+  Vec3 to_root = clip_root_translation(to_clip, to->sample);
+  *root_translation = vec_add(vec_scale(from_root, 1.f - fraction), vec_scale(to_root, fraction));
 }
 
 /* Joint positions include animation root translation, as in 4b8140.

@@ -110,16 +110,16 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
     return triangles;
   }
   const Clip *clip = fighter_clip(assets, fighter);
-  double frame = fighter_render_frame(fighter, (int)clip->frames.count, interpolation);
+  double frame = fighter_frame(fighter, (int)clip->frames.count);
   Pose bones[MK4_MAX_BONES];
+  Vec3 current;
   if (model != NULL) {
     pose(ch, clip, frame, bones);
+    current = clip->frames.data[(size_t)fmod(fmax(0., frame), (double)clip->frames.count)].translation;
   } else {
-    fighter_render_pose(assets, fighter, interpolation, bones);
+    fighter_render_pose(assets, fighter, interpolation, &current, bones);
   }
   Mat3 turn = fighter_turn(assets, fighter);
-  double wrapped = fmod(fmax(0., frame), (double)clip->frames.count);
-  Vec3 current = clip->frames.data[(size_t)wrapped].translation;
   /* Root-motion Y plants the sole on the floor. Dropping that channel lifts
    * the pose by the frame's Y. Uppercut 293 opens near +0.41, crouch 259
    * settles near +0.44, and knockdown 186 settles near +0.97. X/Z stay with
@@ -295,6 +295,12 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
 }
 
 void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool paused, double interpolation) {
+  battle_capture_render_snapshot();
+  double animation_fraction = 1.0;
+  if (g_battle.current_animation.valid) {
+    double ticks_since_snapshot = (double)(g_battle.ticks - g_battle.current_animation.tick);
+    animation_fraction = fmax(0., fmin(1., (ticks_since_snapshot + fmax(0., fmin(1., interpolation))) / 2.0));
+  }
   canvas_clear(cv);
   const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
   float ax = fighter_x(a), bx = fighter_x(b);
@@ -317,7 +323,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   camera.eye.y += camera.shake_y;
   SceneLight light = above_camera_light(camera_position(camera));
   float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
-  Triangles fighters[] = {fighter_geometry(assets, a, NULL, interpolation), fighter_geometry(assets, b, NULL, interpolation)};
+  Triangles fighters[] = {fighter_geometry(assets, a, NULL, animation_fraction), fighter_geometry(assets, b, NULL, animation_fraction)};
   Mat4 shadow;
   require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
@@ -382,7 +388,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     actor.body.pos[AXIS_Z] = event->data[SHADOW_DATA_Z];
     actor.visual_offset[1] = 0;
     const Character *model = fighter_model(assets, owner);
-    Triangles geometry = fighter_geometry(assets, &actor, model, interpolation);
+    Triangles geometry = fighter_geometry(assets, &actor, model, animation_fraction);
     for (size_t j = 0; j < geometry.count; ++j) {
       render_triangle(cv, camera, geometry.data[j], &model->texture, .38f, PASS_COLOR, &light);
     }
@@ -405,7 +411,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       clone.body.root_y = p->root_y;
       memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
       const Character *model = &assets->scene_models.data[SCENE_MODEL_ICE_CLONE];
-      Triangles geometry = fighter_geometry(assets, &clone, model, interpolation);
+      Triangles geometry = fighter_geometry(assets, &clone, model, animation_fraction);
       SceneLight clone_light = light;
       if (p->light.def != NULL) {
         clone_light.position = (Vec3){q16_float(p->light.pos[0]), q16_float(p->light.pos[1]), q16_float(p->light.pos[2])};
