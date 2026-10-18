@@ -76,7 +76,15 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
         no = enqueue((following, sample, count, victim_bound, loop, selector))
         emit('if (%s) { %s(fighter); } else { %s(fighter); }' % (condition, yes, no))
 
+    visited = set()
     for _ in range(8192):
+        cursor = (pc, sample, count, victim_bound, loop, selector)
+        if cursor in visited:
+            if not samples:
+                fail('cycle without a timed frame')
+            emit(enqueue(cursor) + '(fighter);')
+            break
+        visited.add(cursor)
         row = rows[pc]
         op = int(row['opcode'], 16)
         inline = row.get('inline', 0)
@@ -210,6 +218,14 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 emit('fighter_set_speed(fighter, %d);' % words[0])
                 emit('fighter->body.vel[AXIS_Y] = %d;' % words[1])
                 emit('fighter->body.gravity = %d;' % words[2])
+            elif op == 0x3e:
+                if sample is None:
+                    fail('park without a known pose')
+                hold = name + '_park'
+                extra.extend(['static const mframe_t %s_frame[] = {{.sample = %d, .duration = 1}};' % (hold, sample),
+                              'static const mmove_t %s = {.frame = %s_frame, .until = mk4_mmove_parked};' % (hold, hold)])
+                emit('fighter_mmove_phase(fighter, &%s);' % hold)
+                break
             elif op == 0x60:
                 suffix = enqueue((following, sample, count, victim_bound, loop, selector))
                 hold = name + '_landing'

@@ -716,3 +716,19 @@ native clip/cursor entry contracts. Opcode 71 uses a shared yielding pose blend;
 shared projectile, pair cleanup, delayed motion and weapon helpers serve both
 characters. See [the combined ledger](raiden-sonya-scripts.md) for evidence,
 commands, native adaptations and validation.
+
+### Coroutine-free phase ports
+
+Sub-Zero's complete profile uses generated mmove phases. Run the same inventory,
+compiler and strict generated-coverage checks described above. `mmove_only` also
+requires every generated root to use the frame backend and rejects coroutine
+calls in the fighter integration file. Do not replace a compiler-supported VM
+body with a handwritten timeline. Keep native contact decisions in callbacks,
+use phase transitions for waits and branches, and attach action cleanup for
+interruption. Paired moves give released victims independent phases.
+
+The shared weapon strike/throw/pickup and sidestep runners also use phases. The
+foreign sword paths were migrated so Sub-Zero's existing cross-pickup behavior
+remains available. Other fighters' scripts and their victim continuations can
+still use the existing fiber scheduler; this migration does not remove that
+scheduler from the engine.

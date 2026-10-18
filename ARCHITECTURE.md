@@ -263,11 +263,15 @@ replacement, interruption or round/match reset. Camera and object updates
 remain independent. Fibers coexist during migration; generated script coverage
 and behavioral checks remain required for each converted move.
 
-Sub-Zero sweep, slide, and LP throw (including independent victim recovery)
-now use the frame backend. Reviewed profile roots select compiler-generated
+All 63 Sub-Zero script roots, native move continuations, paired victims and
+fatality actors now use the frame backend. His profile requires phase generation
+for every root. Reviewed profile roots select compiler-generated
 frame tables from the same decoded graphs as the fiber backend. Native phase
 callbacks provide contact decisions and lifetime coordination. Source-defined
 waits, counted loops and sample paths are expanded offline; no runtime bytecode
 or hidden continuation stack is introduced. Unsupported frame operations fail
 generation, and bindings need an explicit nonblocking review or a dedicated
-frame lowering. Other moves retain fibers during the incremental migration.
+frame lowering. Runtime predicates select named successor phases, and repeating
+scene streams form finite phase cycles. Shared weapon strikes, throw/pickup,
+sidestep and the foreign sword paths also use phases. Other fighters and their
+victim continuations retain fibers during the incremental migration.

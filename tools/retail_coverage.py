@@ -196,6 +196,8 @@ def audit(image, character, return_to=None, profile=None):
                 errors.append('generated scripts need an integration source')
             else:
                 source = (ROOT / integration).read_text()
+                if profile.get('mmove_only') and re.search(r'\bfighter_(?:start_fiber|wait_ticks|fiber_(?:move|sequence|play_to|finish))\s*\(', masked_c(source)):
+                    errors.append('mmove-only integration still contains coroutine calls: ' + integration)
                 referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b', masked_c(source))}
                 reachable = set(referenced)
                 for entry in referenced:
@@ -213,7 +215,7 @@ def audit(image, character, return_to=None, profile=None):
     if generated and all(row['status'] == 'compilable' for row in scripts if row['implementation'] == 'generated'):
         output = ROOT / profile['output']
         try:
-            expected = format_c(generate(image, generated, character, continuation, contexts=contexts, mmove_entries=profile.get('mmove_scripts', [])))
+            expected = format_c(generate(image, generated, character, continuation, contexts=contexts, mmove_entries=profile.get('mmove_scripts', []), mmove_only=profile.get('mmove_only', False)))
             if not output.is_file() or output.read_text() != expected:
                 errors.append('generated output is missing, stale or manually edited: ' + str(profile['output']))
         except ValueError as exc:

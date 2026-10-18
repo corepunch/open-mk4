@@ -1358,7 +1358,11 @@ static void fatalities(void) {
         check(g_battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN && fighter_move(&g_battle.fighters[player])->clip == 293,
             "second fatality must shatter on uppercut");
       }
-      advance(700);
+      for (int tick = 0; tick < 700; ++tick) {
+        advance(1);
+        check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
+            "Sub-Zero scene actors must remain on phases through completion");
+      }
       check(
           g_battle.phase == PHASE_MATCH_OVER && g_battle.finisher == id && g_battle.fighters[player].script == NULL, "finisher must complete once and settle");
       if (id == FINISH_FAN) {
@@ -1367,9 +1371,9 @@ static void fatalities(void) {
         check(g_battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "spikes must retain impaled position");
       } else if (id == FINISH_SUB_ZERO_1) {
         Fighter *owner = &g_battle.fighters[player];
-        int sample = owner->sample_override;
+        int sample = fighter_sample(owner);
         advance(1);
-        check(owner->sample_override != sample && owner->sample_override >= 96 && owner->sample_override <= 140,
+        check(fighter_sample(owner) != sample && fighter_sample(owner) >= 96 && fighter_sample(owner) <= 140,
             "first fatality must keep its retail final loop after the result");
       }
       battle_reset_match();

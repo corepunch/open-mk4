@@ -573,3 +573,8 @@ void mk4_script_scene_task(Fighter *fighter, int task_type) {
 bool mk4_mmove_grounded(const Fighter *fighter) {
   return !fighter_airborne(fighter);
 }
+
+bool mk4_mmove_parked(const Fighter *fighter) {
+  (void)fighter;
+  return false;
+}

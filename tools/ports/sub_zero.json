@@ -8,6 +8,12 @@
     }
   },
   "entry_contexts": {
+    "0x4d2c78": {
+      "clip": 552,
+      "count": 105,
+      "evidence": "41b440 inherits completed breath clip552 from 4d2c10 before the approach wait",
+      "sample": 104
+    },
     "0x4d2cc8": {
       "clip": 293,
       "count": 20,
@@ -51,6 +57,12 @@
       "count": 108,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 69
+    },
+    "0x4e0368": {
+      "clip": 385,
+      "count": 141,
+      "evidence": "Native fatality entry binds this scene pose before its initial wait",
+      "sample": 0
     },
     "0x4e0388": {
       "clip": 385,
@@ -140,6 +152,12 @@
       "clip": 313,
       "count": 39,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
+      "sample": 0
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "evidence": "Native fatality entry binds this scene pose before its initial wait",
       "sample": 0
     },
     "0x4e6998": {
@@ -247,11 +265,34 @@
   "integration_source": "game/c_sub_zero.c",
   "inventory_sha256": "94567a38d8e8fa6a4f7e92a0ab6ed1874d0cf599b1f05a54f6e20b963fc275b5",
   "legacy_scripts": {},
+  "mmove_only": true,
   "mmove_scripts": [
+    "0x4d2bf0",
+    "0x4d2c10",
+    "0x4d2c78",
+    "0x4d2ca0",
+    "0x4d2cc8",
     "0x4de490",
     "0x4de4b8",
     "0x4de4e0",
     "0x4de798",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e0368",
+    "0x4e0378",
+    "0x4e0388",
+    "0x4e0398",
+    "0x4e03a8",
+    "0x4e03b8",
+    "0x4e03c8",
+    "0x4e03d8",
+    "0x4e03f0",
+    "0x4e0420",
+    "0x4e0430",
     "0x4e5c80",
     "0x4e5e28",
     "0x4e5e50",
@@ -277,8 +318,10 @@
     "0x4e6800",
     "0x4e6860",
     "0x4e6878",
+    "0x4e6950",
     "0x4e6998",
     "0x4e69c8",
+    "0x4e6a40",
     "0x4e6da0",
     "0x4e84d8",
     "0x4e84f8",

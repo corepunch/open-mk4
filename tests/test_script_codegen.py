@@ -85,6 +85,27 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('_branch_1', source)
         self.assertNotIn('fighter_wait_ticks', source)
 
+    def test_mmove_repeating_scene_and_complete_profile(self):
+        from retail_coverage import profile_for
+        profile = profile_for(4)
+        entries = [int(root, 16) for root in profile['generated_scripts']]
+        source = generate(self.image, entries, 4, profile['return_to'], contexts=profile['entry_contexts'],
+                          mmove_entries=profile['mmove_scripts'], mmove_only=True)
+        self.assertIn('mk4_mmove_parked', source)
+        self.assertIn('retail_script_004e03d8_branch_', source)
+        for forbidden in ('fighter_wait_ticks(', 'fighter_start_fiber(', 'fighter_fiber_finish(', 'mk4_script_advance(',
+                          'mk4_script_pair_advance(', 'mk4_script_finish_clip(', 'goto L_'):
+            self.assertNotIn(forbidden, source)
+        broken = dict(profile, mmove_scripts=profile['mmove_scripts'][1:])
+        errors = audit(self.image, 4, profile=broken)['coverage_errors']
+        self.assertTrue(any('mmove-only profile requires every generated root' in error for error in errors))
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        entry = self.fixture([0x0f000000, descriptor, 0x34000001, 0x33000000, (self.entry + 8) // 4])
+        source = generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+        self.assertIn('.duration = 1', source)
+        self.assertIn('_branch_1', source)
+        self.assertNotIn('fighter_wait_ticks', source)
+
     def test_mmove_pair_requires_a_victim_binding(self):
         descriptor = (0x4fad7c + 76 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x4b000019, 0x3f000000])

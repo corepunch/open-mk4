@@ -305,3 +305,15 @@ Only the native result flags persist on the actor. No runtime program counter,
 bytecode dispatcher or suspended stack is introduced. Native Sub-Zero ground
 contact/recovery loops use mmove tick callbacks, including HP repeats and
 uppercut hit/block/miss recovery.
+
+Sub-Zero is now an `mmove_only` profile: all 63 catalogued roots must be listed
+in `mmove_scripts`, and the strict audit rejects coroutine calls in its native
+integration source. Removing a root from phase generation fails both generation
+and coverage. The normal EXE inventory, typed binding review and canonical
+generated-output checks still apply. Other fighters can migrate incrementally.
+
+Repeating scene streams compile into finite, named phase cycles. Parking uses
+an explicit held phase; landing uses a floor predicate. Native scene blends
+advance from tick callbacks and preserve their original blend increments. Cameras,
+particles and projectiles remain independently scheduled. The first fatality
+intentionally keeps its final pose loop after match completion until reset.

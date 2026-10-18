@@ -439,12 +439,14 @@ def emit_program(program, bindings, return_to=None, context=None):
     return '\n'.join(lines)
 
 
-def generate(image, entries, character=0, return_to=None, bindings=None, contexts=None, mmove_entries=()):
+def generate(image, entries, character=0, return_to=None, bindings=None, contexts=None, mmove_entries=(), mmove_only=False):
     from retail_mmove import emit_mmove
     entries = set(entries)
     mmove_entries = {int(entry, 16) if isinstance(entry, str) else entry for entry in mmove_entries}
     if mmove_entries - set(entries):
         raise ValueError("mmove roots must belong to generated_scripts")
+    if mmove_only and mmove_entries != entries:
+        raise ValueError("mmove-only profile requires every generated root to use phases")
     contexts = contexts or {}
     programs = [compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', return_to), contexts.get(hex(entry)))
                 for entry in sorted(set(entries))]

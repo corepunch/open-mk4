@@ -44,14 +44,14 @@ class PortTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
             port_source(('game/c_sub_zero.c', 'battle_spray'))
 
-    def test_ice_and_native_clone_have_reusable_fibers_and_exact_values(self):
+    def test_ice_and_native_clone_have_reusable_phases_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
-        for value in ('static inline void retail_script_004ed588(', 'fighter_wait_ticks(1);', 'loop_counter = 2u', 'fighter_fiber_play_to(fighter, 18, -1);',
-                      'ACTION_RETAIL_1007', 'raw_fixed=', 'retail_contact_', '0x570a', '0049bc74', 'mk4decomp',
+        for value in ('static inline void retail_script_004ed588(', 'fighter_mmove_phase(', 'retail_script_004ed588_branch_',
+                      'script_spawn_ice', 'raw_fixed=', 'retail_contact_', '0x570a', '0049bc74', 'mk4decomp',
                       'Existing engine C', 'not a standalone translation unit', 'literal', 'control target'):
             self.assertIn(value, ice)
         clone = port_text(self.disassembly, 'clone', 4)
-        for value in ('clone_script', 'clone_object', '0x6147', 'ACTION_RETAIL_0406', 'Native move: no VM script root'):
+        for value in ('clone_start', 'clone_object', '0x6147', 'ACTION_RETAIL_0406', 'Native move: no VM script root'):
             self.assertIn(value, clone)
         spear = port_text(self.disassembly, 'spear')
         self.assertIn('fighter_wait_ticks(45);', spear)
