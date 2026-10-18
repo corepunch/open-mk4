@@ -343,3 +343,12 @@ arrays that are not reachable from the owning `CharacterDef`. A partially bound
 profile may emit its implemented rows, but remains an audit failure until every
 retail command target is registered. `make scripts` regenerates these tables;
 `make scripts-check` verifies their canonical contents alongside VM output.
+
+For profiles using generated controls, `cpu_bindings` separately reviews the
+native targets selected by the four typed CPU rows. The same output emits
+`retail_cpu_moves` with near, medium, far and projectile entries in their
+portable slots. An input command reaching a special does not satisfy a missing
+CPU registration. The audit checks the required CPU targets and requires the
+CPU table itself to be reachable from the owning character registration.
+Partial bindings remain explicit coverage errors rather than falling back to
+an unrelated move.

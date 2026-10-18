@@ -44,6 +44,29 @@ class ControlTests(unittest.TestCase):
         self.assertIn('unregistered retail command target 0x467e00', errors)
         self.assertTrue(any('runtime command table differs' in error for error in errors))
 
+    def test_cpu_rows_preserve_retail_selection_without_inventing_projectiles(self):
+        text = generate_controls(self.image, 14, profile_for(14))
+        for slot in ('CPU_SPECIAL_NEAR', 'CPU_SPECIAL_1', 'CPU_SPECIAL_2'):
+            self.assertIn('[%s] = cage_cpu_kick' % slot, text)
+        self.assertNotIn('[CPU_PROJECTILE]', text)
+
+    def test_cpu_reachability_through_input_does_not_supply_missing_cpu_rows(self):
+        profile = copy.deepcopy(profile_for(14))
+        del profile['cpu_bindings']['0x479b20']
+        errors = audit(self.image, 14, profile=profile)['coverage_errors']
+        self.assertIn('unregistered retail CPU target 0x479b20', errors)
+
+    def test_cpu_table_must_be_connected_even_when_its_move_is_live(self):
+        graph = DefinitionGraph({'game/cage/character.c': '''
+void cage_cpu_kick(void) {}
+static const Commands retail_commands = {cage_cpu_kick};
+static const CpuMoves retail_cpu_moves = {cage_cpu_kick};
+const CharacterDef mk4_cage = {retail_commands};
+'''})
+        with patch('c_reachability.workspace_graph', return_value=graph):
+            errors = unreachable_references(profile_for(14))
+        self.assertTrue(any('runtime CPU table: unreachable implementation' in error for error in errors))
+
     def test_generated_table_must_be_connected_to_the_character(self):
         graph = DefinitionGraph({'game/cage/character.c': '''
 static const Commands retail_commands = {0};

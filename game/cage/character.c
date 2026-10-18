@@ -73,13 +73,7 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static const CpuMoves cpu_moves = {.enter = {
-                                       [CPU_SPECIAL_NEAR] = cage_cpu_kick,
-                                       [CPU_SPECIAL_1] = cage_cpu_kick,
-                                       [CPU_SPECIAL_2] = cage_cpu_kick,
-                                   }};
-
-const CharacterDef mk4_cage = {GAME_MK4, 14, "CAGE", &mk4_motion, moves, S_COUNT, &cage_controls, NULL, -74645, mk4_walk, mk4_jump, &cpu_moves, NULL, 0};
+const CharacterDef mk4_cage = {GAME_MK4, 14, "CAGE", &mk4_motion, moves, S_COUNT, &cage_controls, NULL, -74645, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
 
 void cage_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

@@ -41,6 +41,18 @@ def profile_for(character):
     return profile
 
 
+def cpu_records(image, character):
+    slot = 2 if character == 16 else 7 if character == 17 else character
+    cpu = {}
+    for name, base in CPU_TABLES.items():
+        word = image.word(base + slot * 4)
+        flags, action = word >> 16 & 255, word & 255
+        dispatch = next((table for bit, table in DISPATCH if flags & bit), None)
+        target = image.word(dispatch + action * 4) if dispatch else None
+        cpu[name] = dict(table='0x%08x' % (base + slot * 4), word=hex(word), target=hex(target) if target else None)
+    return cpu
+
+
 def inventory(image, character):
     moves = moves_for(character)
     roots = sorted({root for move in moves.values() for _, root in move['scripts']})
@@ -69,13 +81,7 @@ def inventory(image, character):
                 dependency(key[0], row['va'] + ':' + key[1])
     inputs = commands(image, character)
     slot = 2 if character == 16 else 7 if character == 17 else character
-    cpu = {}
-    for name, base in CPU_TABLES.items():
-        word = image.word(base + slot * 4)
-        flags, action = word >> 16 & 255, word & 255
-        dispatch = next((table for bit, table in DISPATCH if flags & bit), None)
-        target = image.word(dispatch + action * 4) if dispatch else None
-        cpu[name] = dict(table='0x%08x' % (base + slot * 4), word=hex(word), target=hex(target) if target else None)
+    cpu = cpu_records(image, character)
     stances = {name: dict(table=hex(base), entries=[hex(image.word(base + index * 4)) for index in range(6)]) for name, base in STANCE_TABLES.items()}
     descriptor = image.word(0x53d5c0 + slot * 4) * 4
     weapon = None
@@ -180,6 +186,14 @@ def audit(image, character, return_to=None, profile=None):
                 errors.append('stale runtime command binding ' + target)
             for target, reference in bound.items():
                 check_reference(reference, errors, 'runtime command ' + target)
+            cpu_bound = profile.get('cpu_bindings', {})
+            cpu_required = {row['target'] for row in observed['cpu'].values()} - {None}
+            for target in sorted(cpu_required - cpu_bound.keys()):
+                errors.append('unregistered retail CPU target ' + str(target))
+            for target in cpu_bound.keys() - cpu_required:
+                errors.append('stale runtime CPU binding ' + target)
+            for target, reference in cpu_bound.items():
+                check_reference(reference, errors, 'runtime CPU ' + target)
             try:
                 expected = generate_controls(image, character, profile)
                 output = ROOT / profile['controls_output']
