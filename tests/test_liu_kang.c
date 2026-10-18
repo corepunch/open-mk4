@@ -447,6 +447,11 @@ static void fatalities(void) {
       advance(800);
       check(g_battle.phase == PHASE_MATCH_OVER && !fighter_fiber_active(&g_battle.fighters[player]), "finisher completes and retires actor stack");
       check(g_battle.fighters[player].wins == 2, "finisher must not award an extra win");
+      int result_age = g_battle.phase_ticks;
+      advance(360);
+      check(g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks == result_age + 360 && g_battle.fighters[player].native_motion.count == 0 &&
+                g_battle.fighters[player].body.physics == NULL,
+          "completed scene must retire auxiliary cues and never resubmit completion");
       battle_reset_match();
       check(g_battle.finisher == 0 && g_battle.fighters[player].appearance == APPEARANCE_NORMAL, "rematch clears finisher appearance and ownership");
       finish_setup(player, kind == 0 ? 0x26666 : 0xcccc, id == FINISH_FAN ? 8 : 0);

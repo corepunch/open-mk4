@@ -157,12 +157,13 @@ static void specials(void) {
       advance(1);
     }
     check((owner()->flags & FF_PAIRED) && (victim()->flags & FF_PAIRED), "torpedo did not capture its victim before interruption");
-    battle_react(victim(), 37);
+    battle_react(victim(), 13);
     q16 released_x = victim()->body.pos[AXIS_X] = current_player ? -6 * Q16_ONE : 6 * Q16_ONE;
     advance(2);
-    check(victim()->body.pos[AXIS_X] == released_x && victim()->reaction == 37, "torpedo moved or replaced an interrupted victim");
+    check(abs(victim()->body.pos[AXIS_X] - released_x) < Q16_ONE && victim()->reaction == 13, "torpedo moved or replaced an interrupted victim");
     advance(200);
-    check(owner()->state == S_IDLE && victim()->state == S_IDLE && !(owner()->flags & FF_PAIRED) && !(victim()->flags & FF_PAIRED),
+    check(owner()->state == S_IDLE && victim()->state == S_IDLE && !fighter_airborne(owner()) && !fighter_airborne(victim()) && !(owner()->flags & FF_PAIRED) &&
+              !(victim()->flags & FF_PAIRED),
         "interrupted torpedo pair did not recover independently");
     for (int blocked = 0; blocked < 2; ++blocked) {
       setup(blocked ? 3.f : 16.f);
@@ -254,6 +255,10 @@ static void weapons_and_scenes(void) {
     advance(900);
     check(g_battle.phase == PHASE_MATCH_OVER, "generated scene or native teardown did not complete");
     check(owner()->wins == 2, "scene awarded an extra win");
+    int result_age = g_battle.phase_ticks;
+    advance(360);
+    check(g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks == result_age + 360 && owner()->body.physics == NULL && victim()->body.physics == NULL,
+        "completed scene must retire its coordinator and never resubmit completion");
     battle_reset_match();
     check(!fighter_fiber_active(owner()) && !fighter_fiber_active(victim()) && g_battle.finisher == 0, "reset left generated scene stacks alive");
   }

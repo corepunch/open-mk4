@@ -776,6 +776,10 @@ static void check_fatalities(void) {
       if (id == FINISH_SPIKE) {
         check(g_battle.fighters[1 - player].body.pos[AXIS_Y] == -0x59999, "Spike victim must stay impaled until rematch");
       }
+      int result_age = g_battle.phase_ticks;
+      advance_ticks(360, NULL);
+      check(g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks == result_age + 360 && g_battle.fighters[player].wins == 2,
+          "Completed Scorpion scene must not restart completion or award another result");
       battle_reset_match();
       check(g_battle.finisher == 0 && g_battle.fighters[player].appearance == APPEARANCE_NORMAL, "Rematch must clear finisher state and restore model");
     }

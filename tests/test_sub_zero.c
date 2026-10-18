@@ -1411,6 +1411,11 @@ static void fatalities(void) {
         check(fighter_sample(owner) != sample && fighter_sample(owner) >= 96 && fighter_sample(owner) <= 140,
             "first fatality must keep its retail final loop after the result");
       }
+      int result_age = g_battle.phase_ticks;
+      advance(360);
+      check(g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks == result_age + 360 && g_battle.fighters[player].native_motion.count == 0 &&
+                g_battle.fighters[player].body.physics == NULL,
+          "completed Sub-Zero scene must retire auxiliary cues while keeping its result pose alive");
       battle_reset_match();
       check(g_battle.finisher == 0 && g_battle.fighters[0].appearance == APPEARANCE_NORMAL && g_battle.fighters[1].appearance == APPEARANCE_NORMAL,
           "rematch must clear all finisher state");
