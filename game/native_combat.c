@@ -247,10 +247,17 @@ static void air_build(Fighter *fighter) {
   const AirAttack *attack = &profile->attacks[fighter->native_variant];
   int retract = attack->extend + attack->hold;
   int first = fighter->native_elapsed ? fighter->native_elapsed : 1;
-  int last = retract + attack->retract;
+  /* Native reverse-clip playback starts at the bound descriptor's last
+   * stored pose. A profile's recovery budget can exceed a selected short
+   * diagonal clip; those extra rows are not additional animation poses. */
+  int reverse = attack->retract;
+  if (fighter_move(fighter)->last != MOVE_END) {
+    reverse = mini(reverse, fighter_move(fighter)->last + 1);
+  }
+  int last = retract + reverse;
   native_begin(fighter, first, last, air_fall);
   for (int frame = first; frame <= last; ++frame) {
-    int sample = frame < attack->extend ? frame : frame < retract ? attack->extend - 1 : maxi(0, attack->retract - 1 - frame + retract);
+    int sample = frame < attack->extend ? frame : frame < retract ? attack->extend - 1 : maxi(0, reverse - 1 - frame + retract);
     native_frame(fighter, frame, sample, frame >= attack->extend && frame < retract ? air_query : air_guard);
   }
   native_play(fighter, fighter->native_elapsed != 0);

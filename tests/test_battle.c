@@ -852,6 +852,29 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
+static void check_short_diagonal_air_recovery(void) {
+  battle_init(4, 0);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *fighter = &g_battle.fighters[0];
+  fighter_start_move(fighter, S_JUMP, roster_def(4)->moves[S_JUMP]);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground - 3 * Q16_ONE;
+  fighter->body.gravity = 1;
+  fighter->body.vel[AXIS_X] = 1;
+  fighter_press(fighter, BUTTON_LOW_KICK);
+  advance_ticks(1, NULL);
+  check(fighter_move(fighter)->clip == 59, "Diagonal LK must select Sub-Zero's six-pose clip");
+  bool extended = false, reversed = false;
+  for (int tick = 0; tick < 40; ++tick) {
+    /* EXE descriptor 4fb040 stores six poses. An assetless simulation using
+     * the old 65536-pose sentinel hid the same out-of-bounds render crash. */
+    int sample = (int)fighter_frame(fighter, 6);
+    extended |= sample == 5;
+    reversed |= extended && sample == 0;
+    advance_ticks(1, NULL);
+  }
+  check(extended && reversed, "Short diagonal air attack must extend and reverse within its stored poses");
+}
+
 static void check_jax_air_grab_command(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 5; ++scenario) {
@@ -1349,6 +1372,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_short_diagonal_air_recovery();
   check_jax_air_grab_command();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
