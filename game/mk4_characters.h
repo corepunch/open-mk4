@@ -23,6 +23,7 @@ extern const CharacterDef mk4_cage;
 extern const CharacterDef mk4_goro;
 extern const CharacterDef mk4_kitana;
 extern const CharacterDef mk4_noob_saibot;
+bool mk4_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool mk4_can_air_throw(const Fighter *fighter);
 bool mk4_can_sidestep(const Fighter *fighter);
 void mk4_sidestep(Fighter *fighter);

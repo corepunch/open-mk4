@@ -138,4 +138,5 @@ void kai_script_close_hk_tail(Fighter *fighter);
 void kai_entry_retail_script_004e61e0(Fighter *fighter);
 void kai_entry_retail_script_004e69b0(Fighter *fighter);
 void kai_entry_retail_script_004e6190(Fighter *fighter);
+void kai_lk_throw(Fighter *fighter);
 #endif

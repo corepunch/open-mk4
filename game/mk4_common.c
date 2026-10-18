@@ -366,6 +366,17 @@ static void air_throw_drop(Fighter *victim) {
   victim->body.gravity = 0x28f;
 }
 
+/* Shared 46c6f0/46c740 ground throw gates, also used by the fully ported
+ * normal entries: LK's close comparison is strict, LP's is inclusive. */
+bool mk4_can_ground_throw(const Fighter *fighter, bool low_kick) {
+  const Fighter *victim = fighter_opponent(fighter);
+  int action = victim->action;
+  float distance = fighter_distance(fighter);
+  return (low_kick ? distance < .7f : distance <= .7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
+         action != ACTION_RETAIL_010A && action != ACTION_RETAIL_010B && action != ACTION_RETAIL_0100 && action != ACTION_RETAIL_0102 &&
+         action != ACTION_RETAIL_010E && !(action >= ACTION_RETAIL_0111 && action <= ACTION_RETAIL_0113);
+}
+
 bool mk4_can_air_throw(const Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   int64_t distance2 = 0;

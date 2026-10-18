@@ -723,6 +723,45 @@ static void check_reconnected_ground_combos(void) {
   }
 }
 
+static void check_reconnected_lk_throws(void) {
+  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot];
+      Fighter *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 4 : -Q16_ONE / 4;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
+      battle_step(input);
+      advance_ticks(1, NULL);
+      if (!(owner->flags & FF_PAIRED)) {
+        fprintf(stderr, "LK throw entry roster %d slot %d clip %d\n", rosters[row], slot, fighter_move(owner)->clip);
+      }
+      check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "Close LK must enter the paired throw for either player");
+      advance_ticks(240, NULL);
+      if (victim->health >= Q16_ONE || owner->state != S_IDLE || ((owner->flags | victim->flags) & FF_PAIRED)) {
+        fprintf(stderr, "LK throw recovery roster %d slot %d health %d state %d flags %u/%u\n", rosters[row], slot, victim->health, owner->state, owner->flags,
+            victim->flags);
+      }
+      check(victim->health < Q16_ONE && owner->state == S_IDLE && !((owner->flags | victim->flags) & FF_PAIRED),
+          "Reconnected LK throw must deal damage, release both actors and recover");
+    }
+  }
+  battle_init(7, 4);
+  g_battle.phase = PHASE_FIGHT;
+  g_battle.fighters[0].body.pos[AXIS_X] = -Q16_ONE / 4;
+  g_battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 4;
+  g_battle.fighters[1].health = 1;
+  battle_step((Input[2]){{BUTTON_BIT(BUTTON_LOW_KICK)}, {0}});
+  advance_ticks(240, NULL);
+  check(!((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED), "Lethal reconnected throw must release its pair");
+  battle_init(7, 4);
+  check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Round reset must retire both throw fibers");
+}
+
 static void check_ground_normals(void) {
   const unsigned buttons[] = {BUTTON_BIT(BUTTON_HIGH_PUNCH), BUTTON_BIT(BUTTON_LOW_KICK), BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LEFT),
       BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH), BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK),
@@ -1028,6 +1067,7 @@ int main(void) {
   check_air_attacks();
   check_reconnected_air_attacks();
   check_reconnected_ground_combos();
+  check_reconnected_lk_throws();
   check_weapon();
   check_specials();
   check_retail_input();

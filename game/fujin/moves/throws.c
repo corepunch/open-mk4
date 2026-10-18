@@ -1,13 +1,13 @@
 #include "../character.h"
 
-static void fujin_lk_throw(Fighter *fighter);
+void fujin_lk_throw(Fighter *fighter);
 static void fujin_lp_throw(Fighter *fighter);
 static void fujin_air_throw(Fighter *fighter);
 static const MoveDef s_lk_throw = {.clip = 81, .last = 79, .flags = SF_ATTACK | SF_LOCK | SF_UNBLOCKABLE};
 static const MoveDef s_lk_thrown = {.clip = 158, .last = 47, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef s_lp_thrown = {.clip = 153, .last = 26, .flags = SF_LOCK | SF_REACTION};
 
-static void fujin_lk_throw(Fighter *fighter) {
+void fujin_lk_throw(Fighter *fighter) {
   mk4_script_throw_start(fighter, &s_lk_throw, &s_lk_thrown, fujin_entry_retail_script_004de2f8);
 }
 

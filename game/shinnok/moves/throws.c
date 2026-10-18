@@ -1,7 +1,7 @@
 #include "../character.h"
 
 static void shinnok_ground_throw(Fighter *fighter, FighterFn script);
-static void shinnok_lk_throw(Fighter *fighter);
+void shinnok_lk_throw(Fighter *fighter);
 static void shinnok_air_throw(Fighter *fighter);
 static void shinnok_throw_reaction(Fighter *fighter);
 static void shinnok_press_air_throw(Fighter *fighter);
@@ -15,7 +15,7 @@ void shinnok_lp_throw(Fighter *fighter) {
   shinnok_ground_throw(fighter, shinnok_entry_retail_script_004de798);
 }
 
-static void shinnok_lk_throw(Fighter *fighter) {
+void shinnok_lk_throw(Fighter *fighter) {
   shinnok_ground_throw(fighter, shinnok_entry_retail_script_004de2f8);
 }
 

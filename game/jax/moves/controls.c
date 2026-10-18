@@ -30,6 +30,11 @@ void jax_press_hk(Fighter *fighter) {
 }
 
 void jax_press_lk(Fighter *fighter) {
+  if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
+    fighter_interrupt(fighter, jax_lk_throw);
+    return;
+  }
+
   FighterFn entry = fighter_holds_back(fighter) ? jax_sweep : jax_low_kick;
   fighter_interrupt(fighter, entry);
 }

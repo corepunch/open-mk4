@@ -1,7 +1,7 @@
 #include "../character.h"
 
 static void jarek_ground_throw(Fighter *fighter, FighterFn script);
-static void jarek_lk_throw(Fighter *fighter);
+void jarek_lk_throw(Fighter *fighter);
 static void jarek_air_throw(Fighter *fighter);
 static void jarek_throw_reaction(Fighter *fighter);
 static void jarek_press_air_throw(Fighter *fighter);
@@ -15,7 +15,7 @@ void jarek_lp_throw(Fighter *fighter) {
   jarek_ground_throw(fighter, jarek_entry_retail_script_004de798);
 }
 
-static void jarek_lk_throw(Fighter *fighter) {
+void jarek_lk_throw(Fighter *fighter) {
   jarek_ground_throw(fighter, jarek_entry_retail_script_004de2f8);
 }
 
