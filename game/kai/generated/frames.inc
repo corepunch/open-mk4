@@ -97,11 +97,6 @@ static const int kai_s_victory_samples[280] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 
 const mframe_t kai_s_victory_frames[280] = {{0}};
 const mmove_t kai_s_victory_mmove = {.firstframe = 0, .lastframe = 279, .frame = kai_s_victory_frames, .samples = kai_s_victory_samples};
 
-static const int kai_s_lp_thrown_samples[52] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
-    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25};
-const mframe_t kai_s_lp_thrown_frames[52] = {{0}};
-const mmove_t kai_s_lp_thrown_mmove = {.firstframe = 0, .lastframe = 51, .frame = kai_s_lp_thrown_frames, .samples = kai_s_lp_thrown_samples};
-
 static const int kai_s_thrown_samples[262] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
     36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
@@ -112,12 +107,6 @@ static const int kai_s_thrown_samples[262] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5
     126, 127, 127, 128, 128, 129, 129, 130, 130};
 const mframe_t kai_s_thrown_frames[262] = {{0}};
 const mmove_t kai_s_thrown_mmove = {.firstframe = 0, .lastframe = 261, .frame = kai_s_thrown_frames, .samples = kai_s_thrown_samples};
-
-static const int kai_s_lk_thrown_samples[94] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
-    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
-    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46};
-const mframe_t kai_s_lk_thrown_frames[94] = {{0}};
-const mmove_t kai_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 93, .frame = kai_s_lk_thrown_frames, .samples = kai_s_lk_thrown_samples};
 
 static const int kai_clip_163_samples[224] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,

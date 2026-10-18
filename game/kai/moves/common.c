@@ -5,8 +5,6 @@ static void kai_input_47cbf0(Fighter *fighter);
 static void kai_input_47cc10(Fighter *fighter);
 static void kai_contact_frame(Fighter *fighter);
 static bool kai_stage_event_step(BattleEvent *event, Fighter *owner, Fighter *opponent);
-static const MoveDef s_lk_thrown = {.clip = 158, .last = 47, .flags = SF_LOCK | SF_REACTION};
-static const MoveDef s_lp_thrown = {.clip = 153, .last = 26, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef s_stage_event_clip = {.clip = 0, .last = 0, .flags = SF_LOCK};
 static const AttackRecord s_kai_attack_b9 = {0x18000, -0xa8b4, 0xe147, 0x13ced, 127, 127, 5, 0, 0x23d7};
 static const AttackRecord s_kai_attack_b10 = {0x1851e, -0xbd2f, 0x10000, 0x9958, 127, 127, 5, 0, 0x1c28};
@@ -160,25 +158,17 @@ void kai_script_lp_select(Fighter *fighter) {
 }
 
 void kai_script_current_reaction(Fighter *fighter, int reaction) {
-  battle_react(fighter, reaction);
+  require(reaction == 102 || reaction == 109, "Unexpected Kai LP victim reaction");
+  Fighter *victim = mk4_script_release_pair(fighter);
+  battle_react(victim, reaction);
 }
 
 void kai_script_lp_extended_finish(Fighter *fighter) {
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = 109;
-  victim->flags |= FF_REACTING;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown);
-  battle_react(victim, 109);
-  fighter_fiber_finish(kai_ready);
+  fighter_finish_mmove(fighter, kai_ready);
 }
 
 void kai_script_lp_short_finish(Fighter *fighter) {
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = 102;
-  victim->flags |= FF_REACTING;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_lp_thrown);
-  battle_react(victim, 102);
-  fighter_fiber_finish(kai_ready);
+  fighter_finish_mmove(fighter, kai_ready);
 }
 
 void kai_script_opponent_reaction(Fighter *fighter, int reaction) {

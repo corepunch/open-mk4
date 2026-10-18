@@ -11,7 +11,7 @@ const MoveDef kai_s_high_kick = {71, 0, MOVE_END, 10, 5, 18, 12, 28, 1.85f, 0.32
 const MoveDef kai_s_low_kick = {70, 0, MOVE_END, 9, 5, 18, 12, 28, 1.55f, 0.27f, SF_ATTACK | SF_LOCK | SF_LOW, NULL, 0};
 const MoveDef kai_s_sweep = {62, 0, MOVE_END, 11, 5, 23, 10, 44, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, NULL, 0};
 const MoveDef kai_s_uppercut = {293, 0, MOVE_END, 9, 5, 30, 18, 20, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH, NULL, 0};
-const MoveDef kai_s_throw = {37, 0, MOVE_END, 6, 2, 25, 14, 66, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
+const MoveDef kai_s_throw = {37, 0, MOVE_END, 6, 2, 25, 14, 66, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 const MoveDef kai_s_air_attack = {61, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_ATTACK | SF_LOCK, NULL, 0};
 static const MoveDef s_air_throw = {82, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_ATTACK | SF_LOCK | SF_UNBLOCKABLE, NULL, 0};

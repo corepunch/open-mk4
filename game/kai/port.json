@@ -2284,13 +2284,13 @@
     "102": {
       "source": "game/kai/character.c",
       "symbol": "kai_script_current_reaction",
-      "adaptation": "The 0x45b1f0 current-context dispatch forwards reaction 102 through battle_react after the generated short LP throw playback.",
+      "adaptation": "Release the captured peer and install reaction102 through battle_react; generated owner recovery continues independently on frame tables.",
       "evidence": "Kai root 0x4de6b8 calls current reaction 0x45b1f0 with selector 0x66, then reaches tail 0x42ce80."
     },
     "109": {
       "source": "game/kai/character.c",
       "symbol": "kai_script_current_reaction",
-      "adaptation": "The 0x45b1f0 current-context dispatch forwards reaction 109 through battle_react after the generated extended LP throw playback.",
+      "adaptation": "Release the captured peer and install reaction109 through battle_react; generated owner recovery continues independently on frame tables.",
       "evidence": "Kai root 0x4de610 calls current reaction 0x45b1f0 with selector 0x6d, then reaches tail 0x42cbc0."
     }
   },
@@ -2379,6 +2379,9 @@
   },
   "mmove_scripts": [
     "0x4e5ca0",
-    "0x4e6998"
+    "0x4e6998",
+    "0x4de798",
+    "0x4de610",
+    "0x4de6b8"
   ]
 }

@@ -7,6 +7,7 @@
 void goro_cpu_projectile(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
+void kai_entry_retail_script_004de610(Fighter *fighter);
 
 static void check(bool yes, const char *message) {
   if (!yes) {
@@ -856,11 +857,11 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
-static void check_fujin_frame_lp_throw(void) {
+static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn alternate) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int extended = 0; extended < 2; ++extended) {
       for (int interrupted = 0; interrupted < 2; ++interrupted) {
-        battle_init(slot ? 4 : 5, slot ? 5 : 4);
+        battle_init(slot ? 4 : roster, slot ? roster : 4);
         g_battle.phase = PHASE_FIGHT;
         Fighter *owner = &g_battle.fighters[slot];
         Fighter *victim = &g_battle.fighters[1 - slot];
@@ -868,65 +869,27 @@ static void check_fujin_frame_lp_throw(void) {
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
         fighter_press(owner, BUTTON_LOW_PUNCH);
         advance_ticks(1, NULL);
-        check(fighter_move(owner)->clip == 76, "Close LP input must reach Fujin's selected capture");
+        check(fighter_move(owner)->clip == 76, "Close LP input must reach Branch LP's selected capture");
         if (extended) {
           /* Exercise the real alternate VM entry with its acquired pair;
            * arena-dependent native branch selection is a separate boundary. */
-          fujin_entry_retail_script_004de610(owner);
+          alternate(owner);
         }
-        check(fighter_move(owner)->clip == (extended ? 81 : 76), "Fujin LP entries must retain both reviewed owner/victim branches");
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Fujin LP capture must allocate no fiber");
+        check(fighter_move(owner)->clip == (extended ? extended_clip : 76), "Branch LP LP entries must retain both reviewed owner/victim branches");
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Branch LP LP capture must allocate no fiber");
         advance_ticks(8, NULL);
         if (interrupted) {
           fighter_enter_state(owner, S_HIT);
         }
         for (int tick = 0; tick < 160; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Fujin LP throw and independent victim release must stay on frame tables");
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Branch LP LP throw and independent victim release must stay on frame tables");
         }
         q16 damage = interrupted ? 0 : extended ? 11796 : 9830;
         check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
-            "Fujin throw must damage its captured victim once and never react against its owner");
+            "Branch LP throw must damage its captured victim once and never react against its owner");
         check(owner->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
-            "Fujin LP throw or cancellation must release the pair and return controls");
-      }
-    }
-  }
-}
-
-static void check_jarek_frame_lp_throw(void) {
-  for (int slot = 0; slot < 2; ++slot) {
-    for (int extended = 0; extended < 2; ++extended) {
-      for (int interrupted = 0; interrupted < 2; ++interrupted) {
-        battle_init(slot ? 4 : 12, slot ? 12 : 4);
-        g_battle.phase = PHASE_FIGHT;
-        Fighter *owner = &g_battle.fighters[slot];
-        Fighter *victim = &g_battle.fighters[1 - slot];
-        owner->body.pos[AXIS_X] = slot ? Q16_ONE / 4 : -Q16_ONE / 4;
-        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        fighter_press(owner, BUTTON_LOW_PUNCH);
-        advance_ticks(1, NULL);
-        check(fighter_move(owner)->clip == 76, "Close LP input must reach Jarek's selected capture");
-        if (extended) {
-          /* Exercise the real alternate VM entry with its acquired pair;
-           * arena-dependent native branch selection is a separate boundary. */
-          jarek_entry_retail_script_004de640(owner);
-        }
-        check(fighter_move(owner)->clip == (extended ? 80 : 76), "Jarek LP entries must retain both reviewed owner/victim branches");
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek LP capture must allocate no fiber");
-        advance_ticks(8, NULL);
-        if (interrupted) {
-          fighter_enter_state(owner, S_HIT);
-        }
-        for (int tick = 0; tick < 160; ++tick) {
-          advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek LP throw and independent victim release must stay on frame tables");
-        }
-        q16 damage = interrupted ? 0 : extended ? 11796 : 9830;
-        check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
-            "Jarek throw must damage its captured victim once and never react against its owner");
-        check(owner->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
-            "Jarek LP throw or cancellation must release the pair and return controls");
+            "Branch LP LP throw or cancellation must release the pair and return controls");
       }
     }
   }
@@ -1558,8 +1521,9 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
-  check_fujin_frame_lp_throw();
-  check_jarek_frame_lp_throw();
+  check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
+  check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);
+  check_branch_frame_lp_throw(12, 80, jarek_entry_retail_script_004de640);
   check_peer_release_lp_throw(6, 75);
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);

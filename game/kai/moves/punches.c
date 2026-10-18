@@ -24,5 +24,9 @@ void kai_press_high_punch(Fighter *fighter) {
 }
 
 void kai_press_low_punch(Fighter *fighter) {
+  if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, false)) {
+    fighter_interrupt(fighter, kai_lp_throw);
+    return;
+  }
   fighter_interrupt(fighter, kai_low_punch);
 }

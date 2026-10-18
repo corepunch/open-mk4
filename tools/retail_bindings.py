@@ -712,11 +712,11 @@ CHARACTER_BINDINGS[11] = {
     0x42cb80: Binding('kai_script_lp_select', 'game/kai/character.c', ('tail',),
                       evidence='42cb80 selects Kai 4de610 or 4de6b8 from the pair-distance bit'),
     0x42cbc0: Binding('kai_script_lp_extended_finish', 'game/kai/character.c', ('tail',), flow='terminal',
-                      evidence='42cbc0 releases Kai extended LP throw and applies reaction 109'),
+                      evidence='42cbc0 returns the Kai extended LP owner after its peer was released with reaction109'),
     0x42ce80: Binding('kai_script_lp_short_finish', 'game/kai/character.c', ('tail',), flow='terminal',
-                      evidence='42ce80 releases Kai short LP throw and applies reaction 102'),
+                      evidence='42ce80 returns the Kai short LP owner after its peer was released with reaction102'),
     0x45b1f0: Binding('kai_script_current_reaction', 'game/kai/character.c', ('handler',), ('fighter', 'arg_u8'),
-                      evidence='45b1f0 dispatches Kai current-context reactions from generated throw roots'),
+                      evidence='45b1f0 ->480f80/48f880/48fd00 installs reaction102/109 on the captured Kai peer'),
     0x43d460: Binding('kai_script_fan_tail', 'game/kai/character.c', ('tail',), flow='terminal',
                       evidence='43d460 coordinates Kai fan owner and victim scene fibers'),
     0x43d530: Binding('kai_script_fan_cycle', 'game/kai/character.c', ('tail',),
@@ -1195,6 +1195,9 @@ CHARACTER_BINDINGS[15][0x42ce60] = Binding("goro_script_lp_finish", "game/goro/c
     flow="terminal", mmove=True, evidence="42ce60 completes the generated LP owner after reaction100 releases the peer")
 
 CHARACTER_BINDINGS[15][0x49ca90] = replace(CHARACTER_BINDINGS[15][0x49ca90], mmove=True)
+
+for _address in (0x42cb80, 0x42cbc0, 0x42ce80, 0x45b1f0):
+    CHARACTER_BINDINGS[11][_address] = replace(CHARACTER_BINDINGS[11][_address], mmove=True)
 
 def bindings_for(character):
     from character_catalog import CHARACTERS
