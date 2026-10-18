@@ -98,6 +98,7 @@ SCRIPT_OPS = {
     0x4e: ('save active fighter in reaction context', 0),
     0x4f: ('native helper', 0),
     0x51: ('contact query B with inline selector', 0),
+    0x53: ('contact query D with inline selector', 0),
     0x52: ('contact query A with inline selector', 0),
     0x55: ('native predicate and conditional script branch', 2),
     0x56: ('dispatch scene event with inline selector', 0),
@@ -185,8 +186,9 @@ def script_program(image, entry, character=0):
                 row['argument'] = word & 255 if op != 0x61 else None
                 open_edges.append(dict(source=hex(pc), kind='native helper dependency',
                                        target=row['native_target']))
-            if op in (0x51, 0x52, 0x5e):
-                table, label = {0x51: (0x53d2b8, 'B'), 0x52: (0x53d268, 'A'), 0x5e: (0x53d0c0, 'weapon')}[op]
+            if op in (0x51, 0x52, 0x53, 0x5e):
+                table, label = {0x51: (0x53d2b8, 'B'), 0x52: (0x53d268, 'A'),
+                                0x53: (0x53d178, 'D'), 0x5e: (0x53d0c0, 'weapon')}[op]
                 row['contact_table'] = label
                 row['contact'] = attack_record(image, table, word & 255)
             if op == 0x5a:

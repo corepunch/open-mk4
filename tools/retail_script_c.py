@@ -94,12 +94,13 @@ def instruction_c(row):
     if op == 0x12:
         return ['set_animation_cursor(%d);' % inline]
     if op in (0x19, 0x4d):
-        return ['%s(%d);' % ('advance_twice_for_count' if op == 0x19 else 'advance_twice_to_sample', inline)]
+        value = inline if op == 0x19 else inline & 255
+        return ['%s(%d);' % ('advance_twice_for_count' if op == 0x19 else 'advance_twice_to_sample', value)]
     if op in (0x20, 0x27, 0x2b):
         return ['sound_event_%s(%d);' % ({0x20: 'a', 0x27: 'c', 0x2b: 'b'}[op], arg)]
     if op == 0x1f:
         return ['set_attack_selector(%d);' % words[0]]
-    if op in (0x51, 0x52, 0x5e):
+    if op in (0x51, 0x52, 0x53, 0x5e):
         return ['contact_query_%s(%d);' % (row['contact_table'].lower(), row['contact']['selector'])]
     if op in (0x29, 0x2d):
         return ['set_action(%s);' % ('ACTION_RETAIL_1006' if op == 0x29 else 'ACTION_RETAIL_1007')]

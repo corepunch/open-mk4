@@ -183,6 +183,22 @@ class CompilerTests(unittest.TestCase):
         source = self.compile([0x11000003, descriptor, 0x34000001, 0x3f000000])
         self.assertIn('mk4_script_bind(fighter, 54, 13, 3)', source)
 
+    def test_contact_query_d_lowers_inline_selector_to_researched_record(self):
+        bindings = bindings_for(10)
+        for address in (0x47a6d0, 0x47b010):
+            bindings[address] = Binding('reptile_loop', 'game/c_reptile.c', ('tail',), flow='terminal',
+                                        evidence='synthetic native-loop boundary for the retail D-contact fixture')
+        source = generate(self.image, [0x4e8178], 10, 'fighter_ready', bindings=bindings)
+        self.assertIn('static const AttackRecord retail_contact_4ec080', source)
+        self.assertIn('battle_contact(fighter, &retail_contact_4ec080)', source)
+
+    def test_advance_twice_to_sample_uses_packed_low_byte_target(self):
+        binding = Binding('jarek_projectile', 'game/c_jarek.c', ('spawn',), ('fighter', 'task_type'),
+                          flow='independent', task_types=(78,), evidence='synthetic native task boundary')
+        source = generate(self.image, [0x4ed7f0], 12, 'fighter_ready', bindings={0x497580: binding})
+        self.assertIn('fighter_fiber_play_to(fighter, 17, 2);', source)
+        self.assertNotIn('fighter_fiber_play_to(fighter, 529, 2);', source)
+
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
         # C control flow; real actor suspension is covered by the native Liu suite.

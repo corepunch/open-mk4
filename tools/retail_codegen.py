@@ -28,7 +28,7 @@ CORE_OPS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0x0c, 0x0e, 0x10, 0x60, 0x0f, 0x11, 0x
             0x20, 0x27, 0x2b, 0x29, 0x2d, 0x2e, 0x2f, 0x30, 0x32, 0x33,
             0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c,
             0x3e, 0x3f, 0x40, 0x42, 0x44, 0x45, 0x47, 0x48, 0x49, 0x4a, 0x4d,
-            0x4e, 0x51, 0x52, 0x55, 0x58, 0x5a, 0x5b, 0x5c, 0x5e, 0x61, 0x71}
+            0x4e, 0x51, 0x52, 0x53, 0x55, 0x58, 0x5a, 0x5b, 0x5c, 0x5e, 0x61, 0x71}
 
 
 def symbol(entry):
@@ -66,7 +66,7 @@ def expression(binding, row):
 def reads_defines(row, bindings):
     op = int(row['opcode'], 16)
     reads = {'flags'} if op in (0x37, 0x42) else {'loop'} if op == 0x3b else set()
-    defines = {'flags'} if op in (0x36, 0x55, 0x51, 0x52, 0x5e) else {'loop'} if op == 0x3a else set()
+    defines = {'flags'} if op in (0x36, 0x55, 0x51, 0x52, 0x53, 0x5e) else {'loop'} if op == 0x3a else set()
     if 'clip' in row and row.get('clip_owner') != 'victim':
         defines.add('clip')
     elif op in (3, 4, 5, 6, 7, 0x12, 0x19, 0x1d, 0x47, 0x48, 0x49, 0x4a, 0x4d, 8, 0x10):
@@ -195,7 +195,7 @@ def validate(program, bindings, return_to, context=None):
         op = int(row['opcode'], 16)
         if op in (5, 0x12, 0x1d, 0x47, 0x49, 0x4a, 0x4d):
             lengths = {row['stored_count']} if 'clip' in row else clip_in[pc] - {None}
-            target = row['inline'] & 255 if op in (0x12, 0x1d, 0x47, 0x49, 0x4a) else row['inline']
+            target = row['inline'] & 255 if op in (0x12, 0x1d, 0x47, 0x49, 0x4a, 0x4d) else row['inline']
             if any(target >= count for count in lengths):
                 error(pc, 'target sample %d is outside an incoming clip' % target)
     # Delete guaranteed-yield instructions, then reject cycles in the
@@ -215,7 +215,7 @@ def validate(program, bindings, return_to, context=None):
         if op in (0x12, 0x1d, 0x49):
             return {(n, inline & 255) for n, _ in values}
         if op in (5, 0x47, 0x4a, 0x4d):
-            target = inline & 255 if op in (0x47, 0x4a) else inline
+            target = inline & 255 if op in (0x47, 0x4a, 0x4d) else inline
             return {(n, max(c, target) if op != 0x4a else min(c, target)) for n, c in values}
         key = instruction_binding(row)
         binding = bindings.get(key[0]) if key else None
@@ -246,7 +246,7 @@ def validate(program, bindings, return_to, context=None):
             values = cursors[pc]
             if 'clip' in row:
                 values = {(row['stored_count'], row.get('start_sample', 0))}
-            target = row['inline'] & 255 if op in (0x47, 0x4a) else row['inline']
+            target = row['inline'] & 255 if op in (0x47, 0x4a, 0x4d) else row['inline']
             if values and all(c > target if op == 0x4a else c < target for _, c in values):
                 guaranteed.add(pc)
     active, done = set(), set()
@@ -313,7 +313,7 @@ def lower(row, bindings, return_to):
     elif op == 0x0c:
         lines.append('mk4_script_advance(fighter, 1, 1);')
     elif op in (5, 0x47, 0x4a, 0x4d):
-        lines.append('fighter_fiber_play_to(fighter, %d, %d);' % (arg if op in (0x47, 0x4a) else inline, -1 if op == 0x4a else 2 if op == 0x4d else 1))
+        lines.append('fighter_fiber_play_to(fighter, %d, %d);' % (arg if op in (0x47, 0x4a, 0x4d) else inline, -1 if op == 0x4a else 2 if op == 0x4d else 1))
     elif op == 0x1f:
         lines.append('attack_selector = %d;' % words[0])
     elif op in (0x20, 0x27, 0x2b):
@@ -349,7 +349,7 @@ def lower(row, bindings, return_to):
     elif op in (0x2f, 0x44, 0x45):
         condition = {0x2f: 'fighter_airborne(fighter)', 0x44: 'fighter->held & BUTTON_BIT(BUTTON_DOWN)', 0x45: 'fighter_fast_start(fighter)'}[op]
         lines += ['if (%s) {' % condition, '  goto L_%08x;' % int(row['branch'], 16), '}']
-    elif op in (0x51, 0x52, 0x5e):
+    elif op in (0x51, 0x52, 0x53, 0x5e):
         lines.append('result_flags = battle_contact(fighter, &retail_contact_%s) != CONTACT_MISS ? 1u : 0u;' % row['contact']['va'][2:])
     elif op == 0x58:
         lines += ['fighter_set_speed(fighter, %d);' % words[0], 'fighter->body.vel[AXIS_Y] = %d;' % words[1],
@@ -396,7 +396,7 @@ def emit_program(program, bindings, return_to=None, context=None):
     entry = int(program['entry'], 16)
     ops = {int(row['opcode'], 16) for row in rows}
     lines = ['static inline void %s(Fighter *fighter) {' % symbol(entry)]
-    if ops & {0x36, 0x55, 0x51, 0x52, 0x5e, 0x37, 0x42} or any(binding.result == 'flags' for binding in bindings.values()):
+    if ops & {0x36, 0x55, 0x51, 0x52, 0x53, 0x5e, 0x37, 0x42} or any(binding.result == 'flags' for binding in bindings.values()):
         lines.append('  unsigned result_flags = 0;')
         lines.append('  (void)result_flags;')
     if ops & {0x3a, 0x3b}:
