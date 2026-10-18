@@ -852,6 +852,58 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
+static void check_jax_air_grab_command(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 5; ++scenario) {
+      battle_init(slot ? 4 : 13, slot ? 13 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot];
+      Fighter *victim = &g_battle.fighters[1 - slot];
+      for (int player = 0; player < 2; ++player) {
+        Fighter *fighter = &g_battle.fighters[player];
+        fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
+        fighter->body.pos[AXIS_Y] = fighter->body.ground - 2 * Q16_ONE;
+        fighter->body.gravity = 0x28f;
+      }
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 4 : -Q16_ONE / 4;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      if (scenario == 3) {
+        victim->health = 0x1000;
+        owner->wins = 1;
+      }
+      fighter_press(owner, BUTTON_BLOCK);
+      advance_ticks(1, NULL);
+      check(fighter_move(owner)->clip == 84 && fighter_move(victim)->clip == 144 && (owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED),
+          "Jax air-grab command must acquire its distinct owner/victim pair");
+      advance_ticks(7, NULL);
+      if (scenario == 1 || scenario == 2) {
+        fighter_enter_state(scenario == 1 ? owner : victim, S_HIT);
+      } else if (scenario == 4) {
+        battle_init(13, 4);
+        advance_ticks(5, NULL);
+        check(!(g_battle.fighters[0].flags & FF_PAIRED) && !(g_battle.fighters[1].flags & FF_PAIRED), "Reset must discard the Jax air-grab pair");
+        continue;
+      } else {
+        bool falling_pair = false;
+        for (int tick = 0; tick < 40 && !falling_pair; ++tick) {
+          advance_ticks(1, NULL);
+          falling_pair = owner->body.gravity == 0x3d7 && victim->body.gravity == 0x3d7;
+        }
+        check(falling_pair, "Jax air-grab handoff must restore the native falling-pair gravity");
+      }
+      advance_ticks(240, NULL);
+      q16 expected = scenario == 0 ? Q16_ONE - 0x2147 : scenario == 3 ? 0 : Q16_ONE;
+      if (victim->health != expected || fighter_airborne(owner) || fighter_airborne(victim)) {
+        fprintf(stderr, "Jax air grab slot %d scenario %d health %d ownerY %d victimY %d phase %d\n", slot, scenario, victim->health, owner->body.pos[AXIS_Y],
+            victim->body.pos[AXIS_Y], g_battle.phase);
+      }
+      check(victim->health == expected, "Jax air-grab damage must occur once after its paired contact, with interruption and KO");
+      check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED) && !fighter_airborne(owner) && !fighter_airborne(victim),
+          "Jax air-grab completion or interruption must release both actors and let them land");
+    }
+  }
+}
+
 static void check_reptile_reconnected_specials(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int dash = 0; dash < 2; ++dash) {
@@ -1297,6 +1349,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_jax_air_grab_command();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_cage_special_commands();

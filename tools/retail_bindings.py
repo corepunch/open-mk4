@@ -954,9 +954,10 @@ CHARACTER_BINDINGS[17].update({
 })
 
 CHARACTER_BINDINGS[13] = {
-    0x46a9f0: Binding('retail_script_004e5df8', 'game/jax/generated/scripts.inc', ('tail',),
-                      script_target=0x4e5df8,
-                      evidence='46a9f0 enters continuation 4e5df8 through script_enter'),
+    0x46a9f0: Binding('jax_script_input_46a9f0', 'game/jax/moves/common.c', ('tail',), flow='terminal',
+                      evidence='46a9f0 sets both paired actors gravity to 0x3d7 and enters continuation 4e5df8'),
+    0x484a30: Binding('mk4_script_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal',
+                      evidence='484a30 waits for the thrown victim landing and routes living getup versus KO; shared portable air getup owns that boundary'),
     0x42be10: Binding('jax_script_lk_return', 'game/jax/character.c', ('tail',),
                       evidence='42be10 first-entry branch resumes Jax paired-throw follow-up root 4de358'),
     0x42bf00: Binding('jax_script_lk_finish', 'game/jax/character.c', ('tail',), flow='terminal',

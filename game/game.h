@@ -449,7 +449,7 @@ enum {
   FF_UNTOUCHABLE = 0x020,  /* contacts are ignored */
   FF_TELEPORTING = 0x040,  /* camera ignores this fighter */
   FF_FOLLOW_UP = 0x200,    /* commands allowed off the ground */
-  FF_PAIR_RELEASE = 0x800, /* committed victim owns its pose before body separation */
+  FF_PAIR_RELEASE = 0x800, /* released actor owns its pose while paired recovery finishes */
   FF_PAIRED = 0x400,       /* bodies attached by a paired move; skip separation */
   FF_NEUTRAL_CLEAR = 0x6e8 /* bits cleared by the return to neutral 0x48e080 */
 };

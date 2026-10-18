@@ -67,6 +67,11 @@ bool mk4_mmove_pair_step(Fighter *owner) {
 }
 
 static void pair_advance_frame(Fighter *fighter) {
+  /* Some pair exits keep advancing the owner's compiled recovery after the
+   * victim has entered an independent reaction. */
+  if (fighter->flags & FF_PAIR_RELEASE) {
+    return;
+  }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
     fighter_finish_mmove(fighter, fighter_ready);
@@ -285,6 +290,12 @@ static void throw_hold_frame(Fighter *victim) {
   victim->mmove_hold = (victim->flags & FF_PAIRED) != 0;
 }
 
+static void throw_hold_cleanup(Fighter *victim) {
+  if (fighter_airborne(victim) && victim->body.gravity == 0) {
+    victim->body.gravity = 0x28f;
+  }
+}
+
 static void throw_hold(Fighter *victim) {
   if (victim->flags & FF_PAIRED) {
     native_begin(victim, 0, 0, NULL);
@@ -299,13 +310,20 @@ static void throw_hold(Fighter *victim) {
 
 void mk4_script_pair_cleanup(Fighter *owner) {
   Fighter *victim = (Fighter *)fighter_opponent(owner);
+  bool captured = (owner->flags & FF_PAIRED) != 0;
   owner->flags &= ~(unsigned)FF_PAIRED;
+  if (captured && fighter_airborne(owner) && owner->body.gravity == 0) {
+    owner->body.gravity = 0x28f;
+  }
   if (victim->flags & FF_PAIRED) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     mk4_script_stop_body(victim);
     fighter_cancel_fiber(victim);
     if (victim->pending == NULL && victim->health > 0) {
       fighter_ready(victim);
+    }
+    if (fighter_airborne(victim)) {
+      victim->body.gravity = 0x28f;
     }
   }
 }
@@ -328,7 +346,7 @@ void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const M
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
   fighter_start_fiber(fighter, script, mk4_script_pair_cleanup);
   if (victim->flags & FF_PAIRED) {
-    fighter_start_fiber(victim, throw_hold, NULL);
+    fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
   }
 }
 
@@ -341,7 +359,7 @@ void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {
   victim->sample_override = 0;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  fighter_start_fiber(victim, throw_hold, NULL);
+  fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
 }
 
 Fighter *mk4_script_release_pair(Fighter *fighter) {

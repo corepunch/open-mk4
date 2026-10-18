@@ -6,12 +6,20 @@ static void jax_press_air_throw(Fighter *fighter);
 static const MoveDef s_lk_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_lk_thrown = {.clip = 157, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 
+static void jax_air_grab_victim(Fighter *victim) {
+  jax_entry_retail_script_004e98e8(victim);
+}
+
 void jax_script_air_throw_ground_release(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  battle_react(victim, 78);
   battle_damage(victim, 0x2147);
   mk4_script_pair_cleanup(fighter);
-  fighter_fiber_finish(jax_ready);
+  static const MoveDef released = {.clip = 140, .last = 62, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
+  fighter_start_move(victim, S_KNOCKDOWN, &released);
+  victim->reaction = 166;
+  fighter_start_fiber(victim, jax_air_grab_victim, NULL);
+  fighter->flags |= FF_PAIR_RELEASE;
+  jax_entry_retail_script_004e5e18(fighter);
 }
 
 void jax_lp_throw(Fighter *fighter) {

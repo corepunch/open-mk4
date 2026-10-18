@@ -17,6 +17,7 @@ void jax_script_fatality_2_scene_finish(Fighter *);
 void jax_script_fatality_2_tail(Fighter *);
 void jax_script_fatality_2_task(Fighter *, int);
 void jax_script_finish(Fighter *);
+void jax_script_input_46a9f0(Fighter *);
 void jax_script_jab_contact(Fighter *);
 void jax_script_jab_followup(Fighter *);
 void jax_script_lk_finish(Fighter *);
@@ -1069,34 +1070,7 @@ static inline void retail_script_004e5dd8(Fighter *fighter) {
   }
   {
     /* EXE 004e5df0: 0x32000000 0x46a9f0 */
-  }
-  {
-    /* EXE 004e5df8: 0x4b000020 */
-    mk4_script_pair_to(fighter, 32);
-  }
-  {
-    /* EXE 004e5dfc: 0x20000024 */
-    battle_sound(SOUND_A, 36);
-  }
-  {
-    /* EXE 004e5e00: 0x6b000001 */
-    mk4_script_roster_sound(fighter, 1);
-  }
-  {
-    /* EXE 004e5e04: 0x2a000006 */
-    mk4_script_shake(fighter, 6);
-  }
-  {
-    /* EXE 004e5e08: 0x4b00002b */
-    mk4_script_pair_to(fighter, 43);
-  }
-  {
-    /* EXE 004e5e0c: 0x6e000000 */
-    mk4_script_disarm(fighter);
-  }
-  {
-    /* EXE 004e5e10: 0x32000000 0x46aa40 */
-    jax_script_air_throw_ground_release(fighter);
+    jax_script_input_46a9f0(fighter);
     return;
   }
 }
@@ -1133,6 +1107,25 @@ static inline void retail_script_004e5df8(Fighter *fighter) {
     /* EXE 004e5e10: 0x32000000 0x46aa40 */
     jax_script_air_throw_ground_release(fighter);
     return;
+  }
+}
+
+static inline void retail_script_004e5e18(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  mk4_script_inherit(fighter, 84, 72, 43);
+  {
+    /* EXE 004e5e18: 0x4b000030 */
+    mk4_script_pair_to(fighter, 48);
+  }
+  {
+    /* EXE 004e5e1c: 0x3000000 */
+    mk4_script_finish_clip(fighter, 1);
+  }
+  {
+    /* EXE 004e5e20: 0x3f000000 */
+    fighter_wait_ticks(1);
+    fighter_fiber_finish(fighter_ready);
   }
 }
 
@@ -2096,6 +2089,37 @@ static inline void retail_script_004e8174(Fighter *fighter) {
   {
     /* EXE 004e819c: 0x32000000 0x47b010 */
     jax_script_jab_followup(fighter);
+    return;
+  }
+}
+
+static inline void retail_script_004e98e8(Fighter *fighter) {
+  unsigned result_flags = 0;
+  (void)result_flags;
+  {
+    /* EXE 004e98e8: 0x58000000 0xffffe667 0xffffd99a 0x28f */
+    fighter_set_speed(fighter, -6553);
+    fighter->body.vel[AXIS_Y] = -9830;
+    fighter->body.gravity = 655;
+  }
+  {
+    /* EXE 004e98f8: 0x22000000 */
+    mk4_script_impact_callback(fighter);
+  }
+  {
+    /* EXE 004e98fc: 0x47000223 0x13ed03 */
+    mk4_script_bind(fighter, 140, 63, 0);
+    fighter_fiber_play_to(fighter, 35, 1);
+  }
+  {
+    /* EXE 004e9904: 0x60000000 */
+    while (fighter_airborne(fighter)) {
+      fighter_wait_ticks(1);
+    }
+  }
+  {
+    /* EXE 004e9908: 0x32000000 0x484a30 */
+    mk4_script_air_getup(fighter);
     return;
   }
 }

@@ -185,6 +185,12 @@
       "count": 10,
       "sample": 0,
       "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
+    },
+    "0x4e5e18": {
+      "clip": 84,
+      "count": 72,
+      "sample": 43,
+      "evidence": "46aa40 enters owner release after paired cursor43; victim now owns reaction166."
     }
   },
   "generated_scripts": [
@@ -217,6 +223,7 @@
     "0x4e5d90",
     "0x4e5dd8",
     "0x4e5df8",
+    "0x4e5e18",
     "0x4e5e28",
     "0x4e5e50",
     "0x4e6190",
@@ -241,11 +248,12 @@
     "0x4e69b0",
     "0x4e8150",
     "0x4e8174",
+    "0x4e98e8",
     "0x4e9910",
     "0x4ed090"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "13434069b92f8c2119b2a7dd520cb7bf2a30a404744f86f90a74a9bf37972c5f",
+  "inventory_sha256": "57973ff0238c546f05304109651365cb70769e7fb581d585108e0b296967bf80",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -499,6 +507,12 @@
       "symbol": "jax_script_current_reaction",
       "evidence": "Jax F2 selector 183 starts its scene callback task through the portable BattleEvent adapter at native entry 0x466b40.",
       "adaptation": "The task callback uses explicit scene phases and completion boundaries from clips 557, 206 and 556."
+    },
+    "166": {
+      "source": "game/jax/moves/throws.c",
+      "symbol": "jax_air_grab_victim",
+      "adaptation": "46aa40 releases reaction166 into an independent generated victim fiber, with shared landing/getup rather than a global reaction-table entry.",
+      "evidence": "484a10 enters4e98e8: victim140 motion/impact/landing, then484a30."
     }
   },
   "return_to": "fighter_ready",
@@ -576,6 +590,11 @@
       "source": "game/jax/moves/spike.c",
       "symbol": "jax_command_spike",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x46a990": {
+      "source": "game/jax/moves/common.c",
+      "symbol": "jax_script_input_46a990",
+      "evidence": "Typed BLOCK air-grab target 46a990 with 45ed70 gate; owner84/victim144 generated pair."
     }
   },
   "command_predicates": {
