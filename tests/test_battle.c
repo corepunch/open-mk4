@@ -2298,6 +2298,50 @@ static void finish_command(int player, int id) {
   }
 }
 
+static const mframe_t scene_actor_rows[3] = {{0}};
+static const mmove_t scene_actor_phase = {.firstframe = 0, .lastframe = 2, .frame = scene_actor_rows, .endfunc = battle_scene_actor_stop};
+
+static int scene_actor_cleanups;
+
+static void scene_actor_cleanup(Fighter *actor) {
+  (void)actor;
+  ++scene_actor_cleanups;
+}
+
+static void scene_actor_entry(Fighter *actor) {
+  fighter_mmove_phase(actor, &scene_actor_phase);
+  actor->mmove_cleanup = scene_actor_cleanup;
+}
+
+static void check_independent_scene_actor_lifetime(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(14, 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *source = &g_battle.fighters[1 - slot];
+    const MoveDef *source_move = fighter_move(source);
+    scene_actor_cleanups = 0;
+    static const MoveDef pose = {.clip = 130, .last = 39};
+    Fighter *actor = battle_scene_actor_start(owner, source, &pose, scene_actor_entry);
+    check(actor != NULL && actor->roster == source->roster && !fighter_fiber_active(actor) && actor->buttons == NULL,
+        "Independent scene body must borrow the selected model without controls or a fiber slot");
+    check(fighter_move(source) == source_move && source->current_mmove == NULL, "Creating a scene body must preserve the source fighter's playback");
+    check(
+        battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL && battle_scene_actor_start(owner, source, &pose, scene_actor_entry) == NULL,
+        "Scene actor pool must remain bounded");
+    advance_ticks(4, NULL);
+    for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+      check(!g_battle.scene_actors[i].active, "Scene frame completion must release its own actor slot");
+    }
+    check(scene_actor_cleanups == 2, "Each completed scene actor must clean up once");
+    check(battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL, "A completed scene slot must be reusable");
+    battle_reset_match();
+    for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+      check(!g_battle.scene_actors[i].active && !fighter_fiber_active(&g_battle.scene_actors[i].actor), "Reset must retire every independent scene body");
+    }
+    check(scene_actor_cleanups == 3, "Reset must run the remaining scene actor cleanup exactly once");
+  }
+}
+
 static void check_cage_second_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int reset_at = 0; reset_at < 3; ++reset_at) {
@@ -2572,6 +2616,7 @@ int main(void) {
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
   check_cage_second_fatality();
+  check_independent_scene_actor_lifetime();
   check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
   check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);
   check_branch_frame_lp_throw(12, 80, jarek_entry_retail_script_004de640);

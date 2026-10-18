@@ -489,6 +489,19 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     }
     FREE_ARRAY(geometry);
   }
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    const SceneActor *slot = &g_battle.scene_actors[i];
+    if (!slot->active) {
+      continue;
+    }
+    const Fighter *actor = &slot->actor;
+    const Character *model = fighter_model(assets, actor);
+    Triangles geometry = fighter_geometry(assets, actor, model, animation_fraction);
+    for (size_t j = 0; j < geometry.count; ++j) {
+      render_triangle(cv, camera, geometry.data[j], &model->texture, 1.f, PASS_COLOR, &light);
+    }
+    FREE_ARRAY(geometry);
+  }
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     const Projectile *p = &g_battle.projectiles[i];

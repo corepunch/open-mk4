@@ -32,6 +32,11 @@ static MoveFiber *fiber_slot(const Fighter *fighter) {
 }
 
 bool fighter_fiber_active(const Fighter *fighter) {
+  /* Independent render bodies share only the frame runner. Mutating fiber
+   * APIs still require a live player slot through fiber_slot. */
+  if (battle_is_scene_actor(fighter)) {
+    return false;
+  }
   return fiber_slot(fighter)->coroutine != NULL;
 }
 

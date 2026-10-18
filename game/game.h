@@ -777,11 +777,23 @@ typedef struct SoundEvent {
   int bank, selector;
 } SoundEvent;
 
+/* Render-only bodies may own frame programs, but never player controls,
+ * combat dispatch or a fiber slot. They borrow the live fighter's model. */
+#define MAX_SCENE_ACTORS 2
+
+typedef struct SceneActor {
+  Fighter actor;
+  MoveDef move;
+  int owner, source;
+  bool active;
+} SceneActor;
+
 #define MAX_SOUND_EVENTS 16
 
 struct Battle {
   const Assets *assets;
   Fighter fighters[2];
+  SceneActor scene_actors[MAX_SCENE_ACTORS];
   HitEffect effects[2];
   Projectile projectiles[MAX_PROJECTILES];
   BattleEvent events[MAX_BATTLE_EVENTS];
@@ -884,6 +896,10 @@ void battle_event_delay(BattleEvent *event, int ticks);
 void battle_event_pump(void);
 void battle_event_program(BattleEvent *event, int frames);
 void battle_event_frame(BattleEvent *event, int frame, int value, BattleEventFn action);
+bool battle_is_scene_actor(const Fighter *actor);
+Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const MoveDef *move, FighterFn entry);
+void battle_scene_actor_stop(Fighter *actor);
+void battle_step_scene_actors(void);
 void battle_shadow_actor_start(Fighter *owner, int variant);
 void battle_shadow_actor_install_physics(Fighter *owner);
 bool battle_shadow_actor_event(const BattleEvent *event);

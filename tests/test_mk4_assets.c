@@ -594,6 +594,37 @@ static void axe_followup_contacts(const Assets *assets) {
   }
 }
 
+static const mframe_t scene_pose_rows[3] = {{0}};
+static const mmove_t scene_pose_phase = {.firstframe = 0, .lastframe = 2, .frame = scene_pose_rows, .endfunc = battle_scene_actor_stop};
+
+static void scene_pose_entry(Fighter *actor) {
+  fighter_mmove_phase(actor, &scene_pose_phase);
+}
+
+static void independent_scene_poses(const Assets *assets) {
+  const int sources[] = {4, 2};
+  for (int variant = 0; variant < 2; ++variant) {
+    battle_init(14, sources[variant]);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    static const MoveDef pose = {.clip = 408, .last = 142};
+    Fighter *actor = battle_scene_actor_start(&g_battle.fighters[0], &g_battle.fighters[1], &pose, scene_pose_entry);
+    check(actor != NULL && actor->assets == assets, "Independent scene actor must borrow its source's decoded assets");
+    for (int tick = 0; tick < 2; ++tick) {
+      battle_step((Input[2]){0});
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, actor, bones);
+      const Character *model = fighter_model(assets, actor);
+      for (size_t bone = 0; bone < model->bones.count; ++bone) {
+        check(isfinite(bones[bone].position.x) && isfinite(bones[bone].position.y) && isfinite(bones[bone].position.z),
+            "Independent male/female rig poses must remain finite without borrowing a player's animation snapshot");
+      }
+    }
+    battle_reset_match();
+    check(!g_battle.scene_actors[0].active, "Asset-backed independent scene actor must retire on reset");
+  }
+}
+
 static void cage_second_fatality_assets(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     battle_init(slot ? 4 : 14, slot ? 14 : 4);
@@ -819,6 +850,7 @@ int main(void) {
   cage_orb_assets(&assets);
   cage_groin_command(&assets);
   cage_second_fatality_assets(&assets);
+  independent_scene_poses(&assets);
   const Sound *throw_voice = sound_event(&assets.audio, SOUND_THROW_VOICE, 3);
   check(throw_voice != NULL && throw_voice->id == 255, "Roster throw voice must resolve through the native list remap");
   combat_poses(&assets);

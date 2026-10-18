@@ -389,6 +389,7 @@ static q16 to_q16(double value) {
 /* Our world update: arena bounds, pair axis, body separation, callbacks,
  * gravity and integration. Script motion is expressed in units per tick. */
 void battle_world(void) {
+  battle_step_scene_actors();
   Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
   double r2 = (double)g_battle.arena_radius * g_battle.arena_radius;
   for (int i = 0; i < 2; ++i) {

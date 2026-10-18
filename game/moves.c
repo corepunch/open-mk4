@@ -276,6 +276,11 @@ void fighter_cancel_all_mmoves(void) {
   for (int i = 0; i < 2; ++i) {
     fighter_cancel_mmove(&g_battle.fighters[i]);
   }
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    SceneActor *slot = &g_battle.scene_actors[i];
+    fighter_cancel_mmove(&slot->actor);
+    slot->active = false;
+  }
 }
 
 void fighter_finish_mmove(Fighter *fighter, FighterFn next) {

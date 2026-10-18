@@ -85,3 +85,101 @@ void scene_blend_advance(Fighter *fighter) {
     begin_clip(fighter);
   }
 }
+
+bool battle_is_scene_actor(const Fighter *actor) {
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    if (actor == &g_battle.scene_actors[i].actor) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static SceneActor *scene_slot(Fighter *actor) {
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    if (actor == &g_battle.scene_actors[i].actor) {
+      return &g_battle.scene_actors[i];
+    }
+  }
+  require(false, "Unknown independent scene actor");
+  return NULL;
+}
+
+Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const MoveDef *move, FighterFn entry) {
+  require((owner == &g_battle.fighters[0] || owner == &g_battle.fighters[1]) && (source == &g_battle.fighters[0] || source == &g_battle.fighters[1]),
+      "Scene actor needs live owner and source fighters");
+  require(move != NULL && entry != NULL, "Scene actor needs a pose and frame entry");
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    SceneActor *slot = &g_battle.scene_actors[i];
+    if (slot->active) {
+      continue;
+    }
+    memset(slot, 0, sizeof *slot);
+    slot->active = true;
+    slot->owner = owner == &g_battle.fighters[0] ? 0 : 1;
+    slot->source = source == &g_battle.fighters[0] ? 0 : 1;
+    slot->move = *move;
+    slot->move.flags |= SF_LOCK | SF_RECORD;
+    Fighter *actor = &slot->actor;
+    actor->assets = source->assets;
+    actor->roster = source->roster;
+    actor->facing = source->facing;
+    memcpy(actor->heading, source->heading, sizeof actor->heading);
+    actor->body = source->body;
+    memset(actor->body.vel, 0, sizeof actor->body.vel);
+    memset(actor->body.spin, 0, sizeof actor->body.spin);
+    actor->body.gravity = 0;
+    actor->body.root_y = 0;
+    actor->body.walking = false;
+    actor->body.physics = actor->body.on_land = NULL;
+    actor->current_move = &slot->move;
+    actor->sample_override = move->first;
+    actor->blend_weight = -1;
+    actor->state = S_KNOCKDOWN;
+    actor->action = move->action;
+    actor->flags = FF_BUSY | FF_UNTOUCHABLE;
+    entry(actor);
+    return actor;
+  }
+  return NULL;
+}
+
+void battle_scene_actor_stop(Fighter *actor) {
+  SceneActor *slot = scene_slot(actor);
+  fighter_cancel_mmove(actor);
+  slot->active = false;
+}
+
+void battle_step_scene_actors(void) {
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    SceneActor *slot = &g_battle.scene_actors[i];
+    if (!slot->active) {
+      continue;
+    }
+    Fighter *actor = &slot->actor;
+    if (actor->current_mmove != NULL) {
+      fighter_step_mmove(actor);
+    }
+    if (!slot->active) {
+      continue;
+    }
+    Body *body = &actor->body;
+    if (body->physics != NULL) {
+      body->physics(actor);
+    }
+    body->vel[AXIS_Y] += body->gravity;
+    for (int axis = 0; axis < 3; ++axis) {
+      body->pos[axis] += body->vel[axis];
+    }
+    if (body->gravity > 0 && body->vel[AXIS_Y] >= 0 && body->pos[AXIS_Y] >= body->ground) {
+      body->pos[AXIS_Y] = body->ground;
+      memset(body->vel, 0, sizeof body->vel);
+      body->gravity = 0;
+      FighterFn land = body->on_land;
+      body->on_land = NULL;
+      if (land != NULL) {
+        land(actor);
+      }
+    }
+  }
+}

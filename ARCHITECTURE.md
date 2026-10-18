@@ -315,3 +315,15 @@ Generated includes belong only to `character.c`, with typed entry functions and
 phase accessors connecting native moves to compiler-owned code. Source queries
 and strict coverage audits search the character module without folding generated
 bodies into native evidence.
+
+
+### Independent cinematic bodies
+
+A detached body may keep animating while both players retain their own scene
+phases. `Battle.scene_actors` is a bounded pool for those render-only bodies.
+Each slot borrows a roster model and assets, owns its pose/clip/frame state,
+and runs the existing fixed-frame player. It receives no input table, CPU,
+combat entry or fiber storage. Only the nonblocking clip/frame APIs apply;
+fiber mutation APIs continue to reject a scene body. Rendering reads its
+state without advancing it. Reset and round changes cancel its frame program
+and run cleanup once, just as explicit scene-body retirement does.
