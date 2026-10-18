@@ -97,7 +97,8 @@ def validate(program, bindings, return_to, context=None):
     if context.keys() - allowed or (context and not context.get("evidence")):
         raise ValueError("Entry context requires evidence and known fields")
     initial = {"clip"} if "clip" in context else set()
-    if initial and (not isinstance(context.get("clip"), int) or context['clip'] < 0 or
+    inherited_clip = context.get("clip") == "current"
+    if initial and ((not inherited_clip and (not isinstance(context.get("clip"), int) or context['clip'] < 0)) or
                     not isinstance(context.get("count"), int) or context["count"] <= 0 or
                     not isinstance(context.get('sample'), int) or not 0 <= context["sample"] < context["count"]):
         raise ValueError("Invalid entry clip context")
@@ -110,7 +111,10 @@ def validate(program, bindings, return_to, context=None):
     for pc, row in rows.items():
         op = int(row['opcode'], 16)
         if 'unresearched' in row['operation']:
-            error(pc, 'unsupported opcode %#x' % op)
+            key = instruction_binding(row)
+            binding = bindings.get(key[0]) if key and key[1] == 'handler' else None
+            if binding is None:
+                error(pc, 'unsupported opcode %#x' % op)
         for word in range(pc, pc + 4 * (1 + len(row.get('operands', []))), 4):
             if word in occupied and occupied[word] != pc:
                 owner = rows[occupied[word]]
@@ -270,7 +274,7 @@ def validate(program, bindings, return_to, context=None):
 
 
 def lower(row, bindings, return_to):
-    op, inline = int(row['opcode'], 16), row['inline']
+    op, inline = int(row['opcode'], 16), row.get('inline', 0)
     arg = inline & 255
     words = [signed_word(int(word, 16)) for word in row.get('operands', [])]
     key = instruction_binding(row)
@@ -286,7 +290,8 @@ def lower(row, bindings, return_to):
             bit = 4 if op == 0x36 else 1
             return ['result_flags = %s;' % call, 'if (result_flags & %du) {' % bit,
                     '  goto L_%08x;' % int(row['branch'], 16), '}']
-        return [('result_flags = ' if binding.result == 'flags' else '') + call + ';'] + (['return;'] if role == 'tail' else [])
+        terminal_handler = role == 'handler' and 'unresearched' in row['operation']
+        return [('result_flags = ' if binding.result == 'flags' else '') + call + ';'] + (['return;'] if role == 'tail' or terminal_handler else [])
     lines = []
     if 'clip' in row and op != 0x71:
         first = row.get('start_sample', inline if op == 8 else 0)
@@ -407,7 +412,10 @@ def emit_program(program, bindings, return_to=None, context=None):
     if 0x1f in ops:
         lines += ['  int attack_selector = 0;', '  (void)attack_selector;']
     if 'clip' in context:
-        lines.append('  mk4_script_inherit(fighter, %d, %d, %d);' % (context['clip'], context['count'], context.get('sample', 0)))
+        if context['clip'] == 'current':
+            lines.append('  mk4_script_inherit_current(fighter, %d, %d);' % (context['count'], context['sample']))
+        else:
+            lines.append('  mk4_script_inherit(fighter, %d, %d, %d);' % (context['clip'], context['count'], context.get('sample', 0)))
     lines.append('  goto L_%08x;' % entry)
     for row in rows:
         pc = int(row['va'], 16)
@@ -416,7 +424,10 @@ def emit_program(program, bindings, return_to=None, context=None):
         for statement in lower(row, bindings, return_to):
             lines.extend('  ' + part for part in statement.splitlines())
         op = int(row['opcode'], 16)
-        if op not in (0x30, 0x32, 0x33, 0x3c, 0x3e, 0x3f):
+        key = instruction_binding(row)
+        binding = bindings.get(key[0]) if key else None
+        terminal_handler = key is not None and key[1] == 'handler' and binding is not None and 'unresearched' in row['operation']
+        if op not in (0x30, 0x32, 0x33, 0x3c, 0x3e, 0x3f) and not terminal_handler:
             # Explicit fallthrough protects against address ordering and gaps.
             following = pc + 4 * (1 + len(row.get('operands', [])))
             lines.append('  goto L_%08x;' % following)
