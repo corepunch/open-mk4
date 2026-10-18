@@ -1364,3 +1364,8 @@ for _address in (0x46eab0, 0x46ec10):
 CHARACTER_BINDINGS[5][0x46a650] = Binding('fujin_wind_recovery', 'game/fujin/moves/wind.c', ('tail',), flow='terminal', mmove=True, evidence='Native46a650 wind recovery/getup boundary, backed by the supplied executable and fixed-frame portable continuations')
 CHARACTER_BINDINGS[5][0x488ba0] = Binding('fujin_wind_getup', 'game/fujin/moves/wind.c', ('tail',), flow='terminal', mmove=True, evidence='Native488ba0 wind recovery/getup boundary, backed by the supplied executable and fixed-frame portable continuations')
 CHARACTER_BINDINGS[5][0x45fc40] = Binding('fujin_wind_crouch_return', 'game/fujin/moves/wind.c', ('tail',), flow='terminal', mmove=True, evidence='Native45fc40 wind recovery/getup boundary, backed by the supplied executable and fixed-frame portable continuations')
+
+# Fujin advancing triple-kick native dispatch and common final victim getup.
+CHARACTER_BINDINGS[5][0x47f060] = Binding('fujin_triple_fast', 'game/fujin/moves/triple_kick.c', ('tail',), flow='terminal', mmove=True, evidence='Native47f060 selects fast startup or the four D9 queries;47f140/47f390 owns the three paired follow-through stages')
+CHARACTER_BINDINGS[5][0x47f070] = Binding('fujin_triple_contact', 'game/fujin/moves/triple_kick.c', ('tail',), flow='terminal', mmove=True, evidence='Native47f070 selects fast startup or the four D9 queries;47f140/47f390 owns the three paired follow-through stages')
+CHARACTER_BINDINGS[5][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 shared KO-aware clip185 side getup after4ea0b8 final triple-kick victim flight')

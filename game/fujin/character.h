@@ -133,4 +133,13 @@ void fujin_entry_retail_script_004e5c20(Fighter *fighter);
 void fujin_entry_retail_script_004e5c50(Fighter *fighter);
 void fujin_entry_retail_script_004e9fe0(Fighter *fighter);
 void fujin_entry_retail_script_004e9ff0(Fighter *fighter);
+void fujin_triple_kick(Fighter *fighter);
+void fujin_triple_contact(Fighter *fighter);
+void fujin_triple_fast(Fighter *fighter);
+void fujin_triple_victim(Fighter *fighter);
+void fujin_entry_retail_script_004e8740(Fighter *fighter);
+void fujin_entry_retail_script_004e8770(Fighter *fighter);
+void fujin_entry_retail_script_004ea040(Fighter *fighter);
+void fujin_entry_retail_script_004ea050(Fighter *fighter);
+void fujin_entry_retail_script_004ea0b8(Fighter *fighter);
 #endif

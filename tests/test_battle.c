@@ -15,6 +15,7 @@ bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
+void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
 bool fujin_can_wind(const Fighter *fighter);
@@ -2478,6 +2479,75 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_fujin_triple_kick(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 7; ++scenario) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->wins = 1;
+      q16 distance = scenario == 2 ? 4 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? distance : -distance;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      if (scenario == 4) {
+        victim->health = 1;
+      }
+      if (scenario == 5) {
+        owner->flags |= FF_FOLLOW_UP;
+      }
+      drive_owned_command(slot, fujin_triple_kick);
+      check(fighter_move(owner)->clip == 100 && owner->action == 0x208, "Down,Forward+HK must select Fujin's actual advancing triple kick");
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      bool interrupted = false, first = false, middle = false, last = false, recoil = false;
+      for (int tick = 0; tick < 300; ++tick) {
+        first |= victim->reaction == 93 && fighter_move(victim)->clip == 127;
+        middle |= victim->reaction == 94 && fighter_move(victim)->clip == 311;
+        last |= victim->reaction == 95 && fighter_move(victim)->clip == 131;
+        recoil |= fighter_airborne(owner) && owner->body.gravity == 0x147;
+        if ((scenario == 3 && first && !interrupted) || (scenario == 6 && tick == 1)) {
+          battle_react(owner, 11);
+          interrupted = true;
+        }
+        battle_step(input);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim),
+            "Triple-kick startup, paired motion, recoil and victim recovery must never start fibers");
+      }
+      q16 damage = scenario == 2 || scenario == 6 ? 0 : scenario == 1 ? q16_mul(0x30a3, 0x3333) : 0x30a3;
+      q16 expected = scenario == 4 ? 0 : Q16_ONE - damage;
+      if (victim->health != expected) {
+        fprintf(stderr, "Triple kick slot%d scenario%d health%d expected%d stages%d%d%d recoil%d\n", slot, scenario, victim->health, expected, first, middle,
+            last, recoil);
+      }
+      check(victim->health == expected, "Fujin triple kick must apply its nineteen-percent D9 record exactly once, with native chip/miss behavior");
+      if (scenario == 0 || scenario == 5) {
+        if (!(first && middle && last)) {
+          fprintf(stderr, "Triple stages slot%d scenario%d seen%d%d%d finalreaction%d clip%d ownerstage%d\n", slot, scenario, first, middle, last,
+              victim->reaction, fighter_move(victim)->clip, owner->native_variant);
+        }
+        check(first && middle && last, "Successful triple kick must reach all three actual victim stages");
+      }
+      if (scenario == 4) {
+        check(owner->wins == 2 && g_battle.winner == slot, "Lethal triple-kick contact must award the result once and cancel captured follow-through safely");
+      }
+      check(scenario != 1 || recoil, "Blocked triple kick must enter its native backward recoil and landing");
+      check(scenario != 3 || (interrupted && !middle && !last), "Interrupting the captured first stage must cancel later paired stages");
+      check(!fighter_airborne(owner) && !fighter_airborne(victim) && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
+          "Triple-kick completion or interruption must release both actors and settle their floor positions");
+      battle_reset_match();
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Triple-kick reset must clear both actor continuations");
+    }
+    battle_init(slot ? 4 : 5, slot ? 5 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Fujin's CPU triple-kick row must remain registered");
+    advance_ticks(2, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 100, "Fujin CPU near choice must enter the same actual triple-kick implementation");
+    battle_reset_match();
+  }
+}
+
 static void check_fujin_wind(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 6; ++scenario) {
@@ -2978,6 +3048,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_triple_kick();
   check_fujin_wind();
   check_fujin_dive();
   check_cage_first_fatality();

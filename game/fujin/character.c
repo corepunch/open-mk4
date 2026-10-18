@@ -256,3 +256,23 @@ void fujin_entry_retail_script_004e9fe0(Fighter *fighter) {
 void fujin_entry_retail_script_004e9ff0(Fighter *fighter) {
   retail_script_004e9ff0(fighter);
 }
+
+void fujin_entry_retail_script_004e8740(Fighter *fighter) {
+  retail_script_004e8740(fighter);
+}
+
+void fujin_entry_retail_script_004e8770(Fighter *fighter) {
+  retail_script_004e8770(fighter);
+}
+
+void fujin_entry_retail_script_004ea040(Fighter *fighter) {
+  retail_script_004ea040(fighter);
+}
+
+void fujin_entry_retail_script_004ea050(Fighter *fighter) {
+  retail_script_004ea050(fighter);
+}
+
+void fujin_entry_retail_script_004ea0b8(Fighter *fighter) {
+  retail_script_004ea0b8(fighter);
+}

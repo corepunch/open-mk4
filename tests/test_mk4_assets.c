@@ -6,6 +6,7 @@
 #include <string.h>
 
 void fujin_weapon_action(Fighter *fighter);
+void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
@@ -605,6 +606,38 @@ static void scene_pose_entry(Fighter *actor) {
   fighter_mmove_phase(actor, &scene_pose_phase);
 }
 
+static void fujin_triple_kick_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int blocked = 0; blocked < 2; ++blocked) {
+      battle_init(slot ? 2 : 5, slot ? 5 : 2);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_interrupt(owner, fujin_triple_kick);
+      Input input[2] = {0};
+      input[1 - slot].held = blocked ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      bool first = false, middle = false, last = false, recoil = false;
+      for (int tick = 0; tick < 240; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        first |= victim->reaction == 93 && fighter_move(victim)->clip == 127;
+        middle |= victim->reaction == 94 && fighter_move(victim)->clip == 311;
+        last |= victim->reaction == 95 && fighter_move(victim)->clip == 131;
+        recoil |= owner->body.gravity == 0x147 && fighter_airborne(owner);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed triple kick and victim phases must use frame tables");
+      }
+      check(blocked ? recoil : first && middle && last, "Real triple-kick poses must follow actual contact or blocked-recoil branches");
+      check(victim->health == Q16_ONE - (blocked ? q16_mul(0x30a3, 0x3333) : 0x30a3) && !fighter_airborne(owner) && !fighter_airborne(victim),
+          "Real-asset triple kick must preserve damage and settle both bodies");
+      battle_reset_match();
+    }
+  }
+}
+
 static void fujin_wind_assets(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int slam = 0; slam < 2; ++slam) {
@@ -982,6 +1015,7 @@ int main(void) {
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
+  fujin_triple_kick_assets(&assets);
   fujin_wind_assets(&assets);
   fujin_crossbow_assets(&assets);
   independent_scene_poses(&assets);
