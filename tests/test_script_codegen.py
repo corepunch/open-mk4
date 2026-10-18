@@ -422,6 +422,22 @@ L_00000004: {
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
+    def test_frame_entry_can_preserve_a_reviewed_runtime_clip_choice(self):
+        entry = self.fixture([0x03000000, 0x3f000000])
+        context = {'clip': 'current', 'count': 13, 'sample': 10,
+                   'evidence': 'Native caller selects one of equal-length clips at the same resume pose.'}
+        source = generate(self.image, [entry], 3, 'fighter_ready', contexts={hex(entry): context}, mmove_entries=[entry])
+        self.assertIn('mk4_mmove_inherit_current(fighter, 13, 10);', source)
+        self.assertNotIn('mk4_script_inherit_current(', source)
+        self.assertNotIn('mk4_mmove_bind(fighter, 54', source)
+        with self.assertRaises(ValueError):
+            generate(self.image, [entry], 3, 'fighter_ready', contexts={hex(entry): dict(context, sample=13)}, mmove_entries=[entry])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'inherited_frames.c'
+            path.write_text(source + '\nvoid use_inherited_frames(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
+
     def test_generated_conditional_code_runs_both_paths_in_C(self):
         # Execute only generated portable C. Wait/finish stubs inspect emitted
         # C control flow; real actor suspension is covered by the native Liu suite.

@@ -90,8 +90,9 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
 
     if 'clip' in context:
         if context['clip'] == 'current':
-            fail('dynamic inherited clip is not supported')
-        emit('mk4_script_inherit(fighter, %d, %d, %d);' % (context['clip'], count, sample))
+            emit('mk4_mmove_inherit_current(fighter, %d, %d);' % (count, sample))
+        else:
+            emit('mk4_script_inherit(fighter, %d, %d, %d);' % (context['clip'], count, sample))
 
     def branch(condition, target, following):
         yes = enqueue((target, sample, count, victim_bound, loop, selector))

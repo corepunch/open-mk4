@@ -10,6 +10,7 @@ void mk4_script_bind(Fighter *fighter, int clip, int count, int first);
 void mk4_script_bind_victim(Fighter *fighter, int clip, int count, int first);
 void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample);
 void mk4_script_inherit_current(Fighter *fighter, int count, int sample);
+void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample);
 void mk4_script_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_mmove_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first);

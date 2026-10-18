@@ -54,6 +54,14 @@ void mk4_script_inherit_current(Fighter *fighter, int count, int sample) {
   bind_clip(fighter, current->clip, count, sample);
 }
 
+void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample) {
+  const MoveDef *current = fighter_move(fighter);
+  require(!fighter_fiber_active(fighter), "Frame inheritance cannot execute in a fiber");
+  require(current->clip >= 0 && current->last == count - 1 && fighter_sample(fighter) == sample,
+      "Generated frame entry needs the inherited clip length and sample");
+  mk4_mmove_bind(fighter, current->clip, count, sample);
+}
+
 /* A paired frame boundary advances the captured victim only. The generated
  * owner row supplies its own pose. Release gives the victim an independent
  * phase whose first duration starts on the following simulation tick. */
