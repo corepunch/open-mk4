@@ -142,4 +142,10 @@ void fujin_entry_retail_script_004e8770(Fighter *fighter);
 void fujin_entry_retail_script_004ea040(Fighter *fighter);
 void fujin_entry_retail_script_004ea050(Fighter *fighter);
 void fujin_entry_retail_script_004ea0b8(Fighter *fighter);
+bool fujin_can_wind_grab(const Fighter *fighter);
+void fujin_wind_grab(Fighter *fighter);
+void fujin_grab_control_start(Fighter *fighter);
+void fujin_grab_victim(Fighter *fighter);
+void fujin_entry_retail_script_004e8830(Fighter *fighter);
+void fujin_entry_retail_script_004e9fb0(Fighter *fighter);
 #endif

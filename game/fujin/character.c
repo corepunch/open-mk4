@@ -276,3 +276,11 @@ void fujin_entry_retail_script_004ea050(Fighter *fighter) {
 void fujin_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_script_004ea0b8(fighter);
 }
+
+void fujin_entry_retail_script_004e8830(Fighter *fighter) {
+  retail_script_004e8830(fighter);
+}
+
+void fujin_entry_retail_script_004e9fb0(Fighter *fighter) {
+  retail_script_004e9fb0(fighter);
+}

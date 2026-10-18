@@ -15,6 +15,8 @@ bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
+void fujin_wind_grab(Fighter *fighter);
+bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
@@ -2479,6 +2481,92 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+static void check_fujin_wind_grab(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 5; ++scenario) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->wins = 1;
+      owner->body.pos[AXIS_X] = slot ? 4 * Q16_ONE : -4 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      victim->hits = 3;
+      check(!fujin_can_wind_grab(owner), "Wind grab must reject targets beyond its two-hit combo gate");
+      victim->hits = 0;
+      victim->action = 0x1001;
+      check(!fujin_can_wind_grab(owner), "Wind grab must reject an existing vortex victim");
+      victim->action = 0;
+      if (scenario == 4) {
+        victim->health = 1;
+      }
+      drive_owned_command(slot, fujin_wind_grab);
+      check(fighter_move(owner)->clip == 10 && owner->action == 0x20a, "Forward,Down+LP must select the real wind-grab opening");
+      q16 start = owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      bool captured = false, orbit = false, blocked = false, interrupted = false, released = false;
+      for (int tick = 0; tick < 350; ++tick) {
+        input[slot].held = scenario == 0 && tick >= 20 ? 0 : BUTTON_BIT(BUTTON_LOW_PUNCH);
+        if (scenario != 0 && !captured && !blocked) {
+          input[slot].held |= BUTTON_BIT(slot ? BUTTON_LEFT : BUTTON_RIGHT);
+        }
+        input[1 - slot].held = scenario == 2 ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+        if (scenario == 3 && captured && !interrupted) {
+          battle_react(owner, 11);
+          interrupted = true;
+        }
+        battle_step(input);
+        captured |= victim->action == 0x100d;
+        blocked |= owner->action == 0x1015 && fighter_move(owner)->clip == 13;
+        orbit |= victim->action == 0x100d && abs(victim->body.pos[AXIS_Z] - owner->body.pos[AXIS_Z]) > 0x1999;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Held wind grab, orbit and release must remain on frame phases");
+        if (scenario == 0 && owner->state == S_IDLE) {
+          released = true;
+          check(owner->wind_grab_ready == g_battle.ticks + 90 && !fujin_can_wind_grab(owner), "LP release must start the actual ninety-tick reuse delay");
+          uint64_t ready = owner->wind_grab_ready;
+          advance_ticks(89, NULL);
+          check(g_battle.ticks == ready - 1 && !fujin_can_wind_grab(owner), "Wind-grab cooldown must not open one tick early");
+          advance_ticks(1, NULL);
+          check(fujin_can_wind_grab(owner), "Wind-grab reuse gate must open on its native boundary");
+          break;
+        }
+      }
+      if (scenario == 0) {
+        check(released && !captured && victim->health == Q16_ONE, "Releasing LP before reaching the target must cancel without delayed damage");
+      } else if (scenario == 2) {
+        check(blocked && !captured && victim->health == Q16_ONE && victim->reaction == 7,
+            "A grounded block must select reaction7 and the long owner recovery without grab damage");
+      } else {
+        check(
+            captured && orbit && abs(owner->body.pos[AXIS_X] - start) > 2 * Q16_ONE, "Held LP and screen steering must reach and orbit the captured opponent");
+        q16 expected = scenario == 3 ? Q16_ONE : scenario == 4 ? 0 : Q16_ONE - 0x1eb8;
+        if (victim->health != expected) {
+          fprintf(stderr, "Wind grab slot%d scenario%d health%d expected%d reaction%d owneraction%x\n", slot, scenario, victim->health, expected,
+              victim->reaction, owner->action);
+        }
+        check(victim->health == expected, "Wind grab must preserve twelve-percent delayed damage and cancel it on owner interruption");
+      }
+      check(!(victim->flags & (FF_PAIRED | FF_UNTOUCHABLE)) && !fighter_airborne(victim),
+          "Orbit release or interruption must restore contact and settle the victim");
+      battle_reset_match();
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        check(g_battle.projectiles[i].kind == 0, "Wind-grab reset must retire both independent wind objects");
+      }
+    }
+    for (int delay = 0; delay < 2; ++delay) {
+      battle_init(slot ? 4 : 5, slot ? 5 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      fighter_interrupt(&g_battle.fighters[slot], fujin_wind_grab);
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(slot ? BUTTON_LEFT : BUTTON_RIGHT);
+      advance_ticks(delay ? 80 : 2, input);
+      battle_reset_match();
+      advance_ticks(120, NULL);
+      check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE,
+          "Reset during wind-grab startup or capture must discard its delayed damage and actor callbacks");
+    }
+  }
+}
+
 static void check_fujin_triple_kick(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int scenario = 0; scenario < 7; ++scenario) {
@@ -3048,6 +3136,7 @@ int main(void) {
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();
+  check_fujin_wind_grab();
   check_fujin_triple_kick();
   check_fujin_wind();
   check_fujin_dive();

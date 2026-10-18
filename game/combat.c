@@ -40,8 +40,8 @@ static bool contact_geometry(const q16 origin[3], int facing, const Fighter *vic
 
 /* 0x48e890 / 0x48e800. Fighters driven by input frames block like retail
  * humans; others block through their action codes like retail CPUs. */
-static bool blocks(const Fighter *victim, const AttackRecord *record) {
-  if ((record->flags & ATTACK_UNBLOCKABLE) || fighter_airborne(victim)) {
+bool battle_blocks_attack(const Fighter *victim, unsigned attack_flags) {
+  if ((attack_flags & ATTACK_UNBLOCKABLE) || fighter_airborne(victim)) {
     return false;
   }
   if (!victim->human) {
@@ -53,7 +53,7 @@ static bool blocks(const Fighter *victim, const AttackRecord *record) {
   if (!(victim->held & BUTTON_BIT(BUTTON_BLOCK))) {
     return false;
   }
-  return !(record->flags & ATTACK_LOW) || (victim->held & BUTTON_BIT(BUTTON_DOWN));
+  return !(attack_flags & ATTACK_LOW) || (victim->held & BUTTON_BIT(BUTTON_DOWN));
 }
 
 /* 0x48de80 */
@@ -91,7 +91,7 @@ ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record,
   ContactResult result = CONTACT_HIT;
   int reaction = record->blocked;
   bool chip_ko = false;
-  if (!(victim->flags & FF_NO_GUARD) && blocks(victim, record)) {
+  if (!(victim->flags & FF_NO_GUARD) && battle_blocks_attack(victim, record->flags)) {
     battle_damage(victim, q16_mul(record->damage, 0x3333));
     if (victim->health > 0) {
       result = CONTACT_BLOCK;

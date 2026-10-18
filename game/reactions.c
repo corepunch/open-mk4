@@ -7,6 +7,7 @@ void fujin_bolt_victim(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
 void fujin_wind_slam_victim(Fighter *fighter);
 void fujin_triple_victim(Fighter *fighter);
+void fujin_grab_victim(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
 
@@ -835,6 +836,7 @@ static const FighterFn reactions[256] = {
   [94] = fujin_triple_victim,
   [95] = fujin_triple_victim,
   [97] = fujin_wind_slam_victim,
+  [98] = fujin_grab_victim,
   [99] = react_extra,
   [100] = react_extra,
   [101] = fujin_bolt_victim,

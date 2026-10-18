@@ -6,6 +6,7 @@
 #include <string.h>
 
 void fujin_weapon_action(Fighter *fighter);
+void fujin_wind_grab(Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
@@ -606,6 +607,51 @@ static void scene_pose_entry(Fighter *actor) {
   fighter_mmove_phase(actor, &scene_pose_phase);
 }
 
+static void fujin_wind_grab_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int blocked = 0; blocked < 2; ++blocked) {
+      battle_init(slot ? 2 : 5, slot ? 5 : 2);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 2 * Q16_ONE : -2 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_interrupt(owner, fujin_wind_grab);
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(slot ? BUTTON_LEFT : BUTTON_RIGHT);
+      input[1 - slot].held = blocked ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      bool caught = false, flight = false, visual = false, recoil = false;
+      for (int tick = 0; tick < 280; ++tick) {
+        battle_step(input);
+        caught |= victim->action == 0x100d;
+        flight |= fighter_move(victim)->clip == 183;
+        recoil |= owner->action == 0x1015 && fighter_move(owner)->clip == 13;
+        if (caught || recoil) {
+          input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+        }
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        for (int i = 0; i < MAX_PROJECTILES; ++i) {
+          const Projectile *effect = &g_battle.projectiles[i];
+          if (effect->kind == PROJECTILE_EFFECT && effect->mesh_animation != NULL &&
+              (effect->mesh_animation->first == 356 || effect->mesh_animation->first == 350)) {
+            visual = true;
+            const Geometry *geometry = mesh_animation_geometry(assets, effect->mesh_animation);
+            check(geometry == &assets->hud.effects && geometry->sprites.data[effect->mesh_animation->first].w > 0,
+                "Held wind-grab effect must retain its actual4d1a18 shared wind sprites");
+          }
+        }
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Real wind-grab opening, orbit and183 release must remain on frame phases");
+      }
+      check(visual && (blocked ? recoil && !caught : caught && flight), "Asset-backed wind grab must follow its own capture or blocked branch");
+      check(victim->health == Q16_ONE - (blocked ? 0 : 0x1eb8) && !fighter_airborne(victim) && !(victim->flags & FF_UNTOUCHABLE),
+          "Real wind-grab release must retain twelve-percent damage and restore the victim's contact and floor state");
+      battle_reset_match();
+    }
+  }
+}
+
 static void fujin_triple_kick_assets(const Assets *assets) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int blocked = 0; blocked < 2; ++blocked) {
@@ -1015,6 +1061,7 @@ int main(void) {
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);
+  fujin_wind_grab_assets(&assets);
   fujin_triple_kick_assets(&assets);
   fujin_wind_assets(&assets);
   fujin_crossbow_assets(&assets);

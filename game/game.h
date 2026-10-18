@@ -543,6 +543,7 @@ struct Fighter {
   uint64_t clone_ready;
   uint64_t slide_ready, sidestep_ready;
   uint64_t leg_grab_ready, cartwheel_ready;
+  uint64_t wind_grab_ready;
   bool armed, weapon_used;
   const WeaponDef *weapon;
   FighterFn disarm; /* character-owned weapon drop entry */
@@ -884,6 +885,7 @@ q16 fighter_axis(const Fighter *fighter, int axis);
 void fighter_set_speed(Fighter *fighter, q16 speed);
 void fighter_set_screen_speed(Fighter *fighter, q16 speed);
 void fighter_friction(Fighter *fighter);
+bool battle_blocks_attack(const Fighter *victim, unsigned attack_flags);
 ContactResult battle_contact(Fighter *attacker, const AttackRecord *record);
 ContactResult battle_contact_from(Fighter *attacker, const AttackRecord *record, const q16 origin[3], int facing);
 ContactResult battle_projectile_contact(Projectile *projectile, const AttackRecord *record);
