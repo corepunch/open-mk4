@@ -54,11 +54,17 @@ void fighter_cancel_fiber(Fighter *fighter) {
   require(running != slot, "A running fiber must use fighter_fiber_move or fighter_fiber_finish for its own move transition");
   mco_coro *coroutine = slot->coroutine;
   FighterFn cleanup = slot->cleanup;
+  bool frame_wait = slot->frame_wait;
   *slot = (MoveFiber){0};
   if (fighter->script == fighter_step_fiber) {
     fighter->script = NULL;
   }
   require(mco_destroy(coroutine) == MCO_SUCCESS, "Cannot destroy suspended move fiber");
+  /* An awaited native phase belongs to this stack. Leaving it installed
+   * would let a released pair or scene keep running orphaned callbacks. */
+  if (frame_wait && fighter->current_mmove != NULL) {
+    fighter_stop_mmove(fighter);
+  }
   if (cleanup != NULL) {
     cleanup(fighter);
   }

@@ -250,6 +250,16 @@ static void native_returning(Fighter *fighter) {
 }
 
 static void native_frame_schedules(void) {
+  for (int player = 0; player < 2; ++player) {
+    setup();
+    Fighter *fighter = &g_battle.fighters[player];
+    fighter_start_fiber(fighter, native_returning, cleanup);
+    advance(1);
+    fighter_cancel_fiber(fighter);
+    check(fighter->current_mmove == NULL && cleaned[player] == 1, "cancelling an awaited native program must retire its frames with the stack");
+    advance(6);
+    check(event_count == 0 && completed[player] == 0 && cleaned[player] == 1, "cancelled native frames ran a stale action or completion");
+  }
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     setup();
     Fighter *fighter = &g_battle.fighters[0];
