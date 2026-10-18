@@ -31,10 +31,8 @@ static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = shinnok_press_upper
     [BUTTON_LOW_KICK] = shinnok_press_sweep}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = shinnok_press_air_hp,
     [BUTTON_LOW_PUNCH] = shinnok_press_air_lp,
-    [BUTTON_HIGH_KICK] = shinnok_press_air_kick,
-    [BUTTON_LOW_KICK] = shinnok_press_air_kick}};
-static const ButtonTable air_punch_followup = {{[BUTTON_LOW_PUNCH] = shinnok_press_air_lp}};
-static const ButtonTable air_followup = {{[BUTTON_HIGH_KICK] = shinnok_press_air_kick, [BUTTON_LOW_KICK] = shinnok_press_air_kick}};
+    [BUTTON_HIGH_KICK] = shinnok_press_air_hk,
+    [BUTTON_LOW_KICK] = shinnok_press_air_lk}};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = shinnok_press_punch}};
 static const ButtonTable combo_hp_followup = {{[BUTTON_HIGH_PUNCH] = shinnok_press_punch}};
 static const ButtonTable close_hk_followup = {{[BUTTON_HIGH_KICK] = shinnok_press_kick}};
@@ -57,7 +55,7 @@ static const FighterFn enter[S_COUNT] = {
 };
 // clang-format on
 
-static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
+static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping, [STANCE_DIAGONAL_AIR] = &shinnok_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {

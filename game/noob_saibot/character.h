@@ -94,4 +94,7 @@ extern const MoveDef noob_saibot_s_sweep;
 extern const MoveDef noob_saibot_s_throw;
 extern const MoveDef noob_saibot_s_uppercut;
 
+extern const ButtonTable noob_saibot_diagonal_air;
+void noob_saibot_press_air_hk(Fighter *fighter);
+void noob_saibot_press_air_lk(Fighter *fighter);
 #endif

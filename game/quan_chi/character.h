@@ -87,4 +87,7 @@ extern const MoveDef quan_chi_s_sweep;
 extern const MoveDef quan_chi_s_throw;
 extern const MoveDef quan_chi_s_uppercut;
 
+extern const ButtonTable quan_chi_diagonal_air;
+void quan_chi_press_air_hk(Fighter *fighter);
+void quan_chi_press_air_lk(Fighter *fighter);
 #endif

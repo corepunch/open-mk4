@@ -373,14 +373,14 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_jumping",
-      "evidence": "Fujin air follow-up handlers share the portable air button table; selected EXE stance table 0x4e70c0."
+      "source": "game/fujin/moves/air_attacks.c",
+      "symbol": "fujin_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_jumping",
-      "evidence": "Fujin air-punch follow-up handlers share the portable air button table; selected EXE stance table 0x4e6ee0."
+      "source": "game/fujin/moves/air_attacks.c",
+      "symbol": "fujin_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "source": "game/fujin/character.c",
@@ -403,9 +403,9 @@
       "evidence": "Fujin crouching command handlers use this portable crouch button table; selected EXE stance table 0x4e5070."
     },
     "diagonal_air": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_jumping",
-      "evidence": "Fujin diagonal-air handlers share the portable air button table; selected EXE stance table 0x4e70d8."
+      "source": "game/fujin/moves/air_attacks.c",
+      "symbol": "fujin_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "source": "game/fujin/character.c",

@@ -437,14 +437,14 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "evidence": "Retail Noob Saibot stance table 0x4e70c0; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air"
+      "source": "game/noob_saibot/moves/air_attacks.c",
+      "symbol": "noob_saibot_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "evidence": "Retail Noob Saibot stance table 0x4e6ee0; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air"
+      "source": "game/noob_saibot/moves/air_attacks.c",
+      "symbol": "noob_saibot_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "evidence": "Retail Noob Saibot stance table 0x4e70a8; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
@@ -467,9 +467,9 @@
       "symbol": "noob_saibot_crouching"
     },
     "diagonal_air": {
-      "evidence": "Retail Noob Saibot stance table 0x4e70d8; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air"
+      "source": "game/noob_saibot/moves/air_attacks.c",
+      "symbol": "noob_saibot_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "evidence": "Retail Noob Saibot stance table 0x4e5058; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",

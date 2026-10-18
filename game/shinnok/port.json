@@ -307,19 +307,19 @@
       "evidence": "Shinnok selected stance table straight_air; typed EXE entries in reviewed inventory"
     },
     "diagonal_air": {
-      "source": "game/shinnok/character.c",
-      "symbol": "jumping",
-      "evidence": "Shinnok selected stance table diagonal_air; typed EXE entries in reviewed inventory"
+      "source": "game/shinnok/moves/air_attacks.c",
+      "symbol": "shinnok_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "source": "game/shinnok/character.c",
-      "symbol": "air_punch_followup",
-      "evidence": "Shinnok selected stance table air_punch_followup; typed EXE entries in reviewed inventory"
+      "source": "game/shinnok/moves/air_attacks.c",
+      "symbol": "shinnok_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_followup": {
-      "source": "game/shinnok/character.c",
-      "symbol": "air_followup",
-      "evidence": "Shinnok selected stance table air_followup; typed EXE entries in reviewed inventory"
+      "source": "game/shinnok/moves/air_attacks.c",
+      "symbol": "shinnok_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hp_followup": {
       "source": "game/shinnok/character.c",

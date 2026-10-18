@@ -81,4 +81,7 @@ extern const MoveDef reiko_s_sweep;
 extern const MoveDef reiko_s_throw;
 extern const MoveDef reiko_s_uppercut;
 
+extern const ButtonTable reiko_diagonal_air;
+void reiko_press_air_hk(Fighter *fighter);
+void reiko_press_air_lk(Fighter *fighter);
 #endif

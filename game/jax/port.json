@@ -477,14 +477,14 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "evidence": "Jax slot 13 uses shared portable air_followup stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/moves/air_attacks.c",
+      "symbol": "jax_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "evidence": "Jax slot 13 uses shared portable air_punch_followup stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/moves/air_attacks.c",
+      "symbol": "jax_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "evidence": "Jax slot 13 uses shared portable close_hk_followup stance; typed inventory table recorded",
@@ -503,23 +503,23 @@
     },
     "crouching": {
       "evidence": "Jax slot 13 uses shared portable crouching stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/character.c",
+      "symbol": "s_crouching"
     },
     "diagonal_air": {
-      "evidence": "Jax slot 13 uses shared portable diagonal_air stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/moves/air_attacks.c",
+      "symbol": "jax_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "evidence": "Jax slot 13 uses shared portable standing stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/character.c",
+      "symbol": "s_standing"
     },
     "straight_air": {
       "evidence": "Jax slot 13 uses shared portable straight_air stance; typed inventory table recorded",
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_controls"
+      "source": "game/jax/character.c",
+      "symbol": "s_jumping"
     }
   },
   "weapon": {

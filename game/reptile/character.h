@@ -101,4 +101,7 @@ extern const MoveDef reptile_s_sweep;
 extern const MoveDef reptile_s_throw;
 extern const MoveDef reptile_s_uppercut;
 
+extern const ButtonTable reptile_diagonal_air;
+void reptile_press_air_hk(Fighter *fighter);
+void reptile_press_air_lk(Fighter *fighter);
 #endif

@@ -31,9 +31,9 @@ static const ButtonTable s_crouching = {{[BUTTON_HIGH_PUNCH] = jax_press_uppercu
     [BUTTON_LOW_KICK] = jax_press_sweep}};
 static const ButtonTable s_jumping = {{[BUTTON_HIGH_PUNCH] = jax_press_air_hp,
     [BUTTON_LOW_PUNCH] = jax_press_air_lp,
-    [BUTTON_HIGH_KICK] = jax_press_air_kick,
-    [BUTTON_LOW_KICK] = jax_press_air_kick}};
-static const Controls s_controls = {NULL, 0, {&s_standing, &s_crouching, &s_jumping}};
+    [BUTTON_HIGH_KICK] = jax_press_air_hk,
+    [BUTTON_LOW_KICK] = jax_press_air_lk}};
+static const Controls s_controls = {NULL, 0, {&s_standing, &s_crouching, &s_jumping, [STANCE_DIAGONAL_AIR] = &jax_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {

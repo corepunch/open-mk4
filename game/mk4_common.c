@@ -279,7 +279,7 @@ static void flip_retract(Fighter *fighter) {
 }
 
 static void flip_buttons(Fighter *fighter) {
-  fighter_enter_stance(fighter, STANCE_JUMP);
+  fighter_enter_stance(fighter, STANCE_DIAGONAL_AIR);
 }
 
 static void flip_spin(Fighter *fighter) {

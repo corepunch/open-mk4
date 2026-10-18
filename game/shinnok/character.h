@@ -96,4 +96,7 @@ void shinnok_weapon_equip(Fighter *fighter);
 void shinnok_weapon_hp(Fighter *fighter);
 void shinnok_weapon_lp(Fighter *fighter);
 
+extern const ButtonTable shinnok_diagonal_air;
+void shinnok_press_air_hk(Fighter *fighter);
+void shinnok_press_air_lk(Fighter *fighter);
 #endif

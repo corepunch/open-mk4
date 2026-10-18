@@ -128,4 +128,7 @@ extern const MoveDef jax_s_thrown;
 extern const MoveDef jax_s_uppercut;
 extern const MoveDef jax_s_walk;
 
+extern const ButtonTable jax_diagonal_air;
+void jax_press_air_hk(Fighter *fighter);
+void jax_press_air_lk(Fighter *fighter);
 #endif

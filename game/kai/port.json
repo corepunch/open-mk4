@@ -2256,14 +2256,14 @@
   },
   "stances": {
     "air_followup": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_jumping",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e70c0 recorded for this stance."
+      "source": "game/kai/moves/air_attacks.c",
+      "symbol": "kai_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_jumping",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e6ee0 recorded for this stance."
+      "source": "game/kai/moves/air_attacks.c",
+      "symbol": "kai_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "source": "game/kai/character.c",
@@ -2286,9 +2286,9 @@
       "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e5070 recorded for this stance."
     },
     "diagonal_air": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_jumping",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e70d8 recorded for this stance."
+      "source": "game/kai/moves/air_attacks.c",
+      "symbol": "kai_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "source": "game/kai/character.c",

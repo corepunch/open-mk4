@@ -125,4 +125,7 @@ extern const MoveDef kai_s_throw;
 extern const MoveDef kai_s_uppercut;
 extern const MoveDef kai_s_walk;
 
+extern const ButtonTable kai_diagonal_air;
+void kai_press_air_hk(Fighter *fighter);
+void kai_press_air_lk(Fighter *fighter);
 #endif

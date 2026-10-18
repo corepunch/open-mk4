@@ -101,4 +101,7 @@ extern const MoveDef cage_s_sweep;
 extern const MoveDef cage_s_throw;
 extern const MoveDef cage_s_uppercut;
 
+extern const ButtonTable cage_diagonal_air;
+void cage_press_air_hk(Fighter *fighter);
+void cage_press_air_lk(Fighter *fighter);
 #endif

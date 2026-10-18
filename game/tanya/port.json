@@ -376,14 +376,14 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "source": "game/tanya/character.c",
-      "symbol": "jumping",
-      "evidence": "Tanya's normalized air followup buttons are the corresponding local stance table in tanya_controls."
+      "source": "game/tanya/moves/air_attacks.c",
+      "symbol": "tanya_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "source": "game/tanya/character.c",
-      "symbol": "jumping",
-      "evidence": "Tanya's normalized air punch followup buttons are the corresponding local stance table in tanya_controls."
+      "source": "game/tanya/moves/air_attacks.c",
+      "symbol": "tanya_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "source": "game/tanya/character.c",
@@ -406,9 +406,9 @@
       "evidence": "Tanya's normalized crouching buttons are the corresponding local stance table in tanya_controls."
     },
     "diagonal_air": {
-      "source": "game/tanya/character.c",
-      "symbol": "jumping",
-      "evidence": "Tanya's normalized diagonal air buttons are the corresponding local stance table in tanya_controls."
+      "source": "game/tanya/moves/air_attacks.c",
+      "symbol": "tanya_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "source": "game/tanya/character.c",

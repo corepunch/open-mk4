@@ -75,4 +75,7 @@ void tanya_start_script(Fighter *fighter, StateId state, const MoveDef *move, Fi
 void tanya_sweep(Fighter *fighter);
 void tanya_uppercut(Fighter *fighter);
 
+extern const ButtonTable tanya_diagonal_air;
+void tanya_press_air_hk(Fighter *fighter);
+void tanya_press_air_lk(Fighter *fighter);
 #endif

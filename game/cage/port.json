@@ -296,14 +296,14 @@
       "evidence": "Retail Cage stance table 0x4e6ec8; C input selectors route the generated Cage move entries."
     },
     "air_punch_followup": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/air_attacks.c",
       "symbol": "cage_air_punch_followup",
-      "evidence": "Retail Cage stance table 0x4e6ee0; C input selectors route the generated Cage move entries."
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "diagonal_air": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/air_attacks.c",
       "symbol": "cage_diagonal_air",
-      "evidence": "Retail Cage stance table 0x4e70d8; C input selectors route the generated Cage move entries."
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "close_hp_followup": {
       "source": "game/cage/character.c",
@@ -321,9 +321,9 @@
       "evidence": "Retail Cage stance table 0x4e70a8; C input selectors route the generated Cage move entries."
     },
     "air_followup": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/air_attacks.c",
       "symbol": "cage_air_followup",
-      "evidence": "Retail Cage stance table 0x4e70c0; C input selectors route the generated Cage move entries."
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     }
   },
   "weapon": {

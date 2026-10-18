@@ -380,14 +380,14 @@
   },
   "stances": {
     "air_followup": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "air_followup",
-      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+      "source": "game/quan_chi/moves/air_attacks.c",
+      "symbol": "quan_chi_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "air_punch_followup",
-      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+      "source": "game/quan_chi/moves/air_attacks.c",
+      "symbol": "quan_chi_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "source": "game/quan_chi/character.c",
@@ -410,9 +410,9 @@
       "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
     },
     "diagonal_air": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "diagonal_air",
-      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+      "source": "game/quan_chi/moves/air_attacks.c",
+      "symbol": "quan_chi_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "source": "game/quan_chi/character.c",

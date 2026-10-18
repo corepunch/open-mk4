@@ -665,30 +665,37 @@ static void check_air_attacks(void) {
 }
 
 static void check_reconnected_air_attacks(void) {
-  for (int slot = 0; slot < 2; ++slot) {
-    battle_init(slot ? 4 : 12, slot ? 12 : 4);
-    g_battle.phase = PHASE_FIGHT;
-    Fighter *fighter = &g_battle.fighters[slot];
-    Fighter *victim = &g_battle.fighters[1 - slot];
-    fighter->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
-    victim->body.pos[AXIS_X] = -fighter->body.pos[AXIS_X];
-    fighter_enter_state(fighter, S_JUMP);
-    fighter_enter_state(victim, S_JUMP);
-    fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
-    victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
-    fighter->body.gravity = victim->body.gravity = 1;
-    Input input[2] = {0};
-    input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
-    battle_step(input);
-    advance_ticks(7, NULL);
-    check(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
-        "Jarek air HP must reach its native contact and frozen follow-up for either player");
-    input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
-    battle_step(input);
-    advance_ticks(1, NULL);
-    check(fighter_move(fighter)->clip == 96 && fighter->body.gravity == 0, "Jarek air LP follow-up must retain the contact freeze");
-    advance_ticks(150, NULL);
-    check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Jarek air follow-up must land and restore control");
+  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
+  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
+    for (int slot = 0; slot < 2; ++slot) {
+      battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *fighter = &g_battle.fighters[slot];
+      Fighter *victim = &g_battle.fighters[1 - slot];
+      fighter->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
+      victim->body.pos[AXIS_X] = -fighter->body.pos[AXIS_X];
+      fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
+      fighter_enter_state(victim, S_JUMP);
+      fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
+      victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
+      fighter->body.gravity = victim->body.gravity = 1;
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
+      battle_step(input);
+      advance_ticks(7, NULL);
+      if (!(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL)) {
+        fprintf(stderr, "Air follow-up roster %d slot %d health %d clip %d gravity %d\n", rosters[row], slot, victim->health, fighter_move(fighter)->clip,
+            fighter->body.gravity);
+      }
+      check(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
+          "Reconnected air HP must reach its native contact and frozen follow-up for either player");
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+      battle_step(input);
+      advance_ticks(1, NULL);
+      check(fighter_move(fighter)->clip == 96 && fighter->body.gravity == 0, "Reconnected air LP follow-up must retain the contact freeze");
+      advance_ticks(150, NULL);
+      check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Reconnected air follow-up must land and restore control");
+    }
   }
 }
 

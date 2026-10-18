@@ -73,7 +73,10 @@ static const ButtonTable noob_saibot_air = {{[BUTTON_HIGH_PUNCH] = noob_saibot_p
     [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
 
 static const Controls noob_saibot_controls = {noob_saibot_commands, (int)(sizeof noob_saibot_commands / sizeof noob_saibot_commands[0]),
-    {[STANCE_STANDING] = &noob_saibot_standing, [STANCE_CROUCHING] = &noob_saibot_crouching, [STANCE_JUMP] = &noob_saibot_air}};
+    {[STANCE_STANDING] = &noob_saibot_standing,
+        [STANCE_CROUCHING] = &noob_saibot_crouching,
+        [STANCE_JUMP] = &noob_saibot_air,
+        [STANCE_DIAGONAL_AIR] = &noob_saibot_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveListEntry move_list[] = {

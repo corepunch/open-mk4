@@ -75,4 +75,7 @@ extern const MoveDef fujin_s_sweep;
 extern const MoveDef fujin_s_throw;
 extern const MoveDef fujin_s_uppercut;
 
+extern const ButtonTable fujin_diagonal_air;
+void fujin_press_air_hk(Fighter *fighter);
+void fujin_press_air_lk(Fighter *fighter);
 #endif

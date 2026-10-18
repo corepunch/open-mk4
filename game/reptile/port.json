@@ -427,14 +427,14 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_jumping",
-      "evidence": "Reptile's normalized air followup buttons are the corresponding local stance table in reptile_controls."
+      "source": "game/reptile/moves/air_attacks.c",
+      "symbol": "reptile_air_followup",
+      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
     },
     "air_punch_followup": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_jumping",
-      "evidence": "Reptile's normalized air punch followup buttons are the corresponding local stance table in reptile_controls."
+      "source": "game/reptile/moves/air_attacks.c",
+      "symbol": "reptile_air_punch_followup",
+      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
     },
     "close_hk_followup": {
       "source": "game/reptile/character.c",
@@ -457,9 +457,9 @@
       "evidence": "Reptile's normalized crouching buttons are the corresponding local stance table in reptile_controls."
     },
     "diagonal_air": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_jumping",
-      "evidence": "Reptile's normalized diagonal air buttons are the corresponding local stance table in reptile_controls."
+      "source": "game/reptile/moves/air_attacks.c",
+      "symbol": "reptile_diagonal_air",
+      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
       "source": "game/reptile/character.c",

@@ -135,6 +135,10 @@ void fighter_release(Fighter *fighter, Button button) {
 
 void fighter_enter_stance(Fighter *fighter, Stance stance) {
   require(stance >= 0 && stance < STANCE_COUNT, "Invalid stance");
-  fighter->buttons = roster_def(fighter->roster)->controls->stances[stance];
+  const Controls *controls = roster_def(fighter->roster)->controls;
+  fighter->buttons = controls->stances[stance];
+  if (stance == STANCE_DIAGONAL_AIR && fighter->buttons == NULL) {
+    fighter->buttons = controls->stances[STANCE_JUMP];
+  }
   fighter->flags &= ~(unsigned)FF_BUSY;
 }

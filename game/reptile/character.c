@@ -55,8 +55,11 @@ static const ButtonTable reptile_jumping = {{[BUTTON_HIGH_PUNCH] = reptile_press
     [BUTTON_HIGH_KICK] = reptile_press_air_hk,
     [BUTTON_LOW_KICK] = reptile_press_air_lk}};
 
-static const Controls reptile_controls = {
-    NULL, 0, {[STANCE_STANDING] = &reptile_standing, [STANCE_CROUCHING] = &reptile_crouching, [STANCE_JUMP] = &reptile_jumping}};
+static const Controls reptile_controls = {NULL, 0,
+    {[STANCE_STANDING] = &reptile_standing,
+        [STANCE_CROUCHING] = &reptile_crouching,
+        [STANCE_JUMP] = &reptile_jumping,
+        [STANCE_DIAGONAL_AIR] = &reptile_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
