@@ -1,31 +1,40 @@
 #include "menu.h"
 #include "game.h"
 #include "sprite_font.h"
+#include "math_util.h"
 #include <SDL.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 static const uint32_t panel = 0xff1a2430;
-static const uint32_t edge = 0xff485b6c;
 static const uint32_t red = 0xffff1818;
 
 static const int retail_roster[15] = {3, 7, 5, 12, 10, 0, 13, 8, 14, 11, 9, 1, 4, 6, 2};
+
+enum {
+  SELECT_COLUMNS = 3,
+  SELECT_ROWS = 5
+};
 
 static void centered(const Geometry *font, Canvas *canvas, int y, const char *text, float scale) {
   int x = (canvas->w - font_width(font, text, scale)) / 2;
   font_draw(font, canvas, x, y, text, scale);
 }
 
-static void blit_name(Canvas *canvas, const Geometry *geometry, int index, Rect destination) {
-  if (index < 0 || (size_t)index >= geometry->sprites.count) {
+/* Fighter name plates are sprites in the HUD font atlas; center one at y. */
+static void blit_name(Canvas *canvas, const Geometry *font, int index, int center_x, int y, float scale) {
+  if (index < 0 || (size_t)index >= font->sprites.count) {
     return;
   }
-  const Sprite *sprite = &geometry->sprites.data[index];
-  if (sprite->texture < 0 || (size_t)sprite->texture >= geometry->textures.count) {
+  const Sprite *sprite = &font->sprites.data[index];
+  if (sprite->texture < 0 || (size_t)sprite->texture >= font->textures.count) {
     return;
   }
-  canvas_blit(canvas, &geometry->textures.data[sprite->texture], (Rect){sprite->u, sprite->v, sprite->w, sprite->h}, destination, false);
+  int w = (int)((float)sprite->w * scale);
+  int h = (int)((float)sprite->h * scale);
+  canvas_blit(canvas, &font->textures.data[sprite->texture], (Rect){sprite->u, sprite->v, sprite->w, sprite->h}, (Rect){center_x - w / 2, y, w, h}, false);
 }
 
 static void blit_page(Canvas *canvas, const Geometry *geometry, int page, Rect source, Rect destination) {
@@ -68,27 +77,28 @@ void menu_init(FrontendMenu *menu) {
 }
 
 static void move_character(FrontendMenu *menu, int dx, int dy) {
+  // The custom wall stacks the retail order in three columns; the three
+  // footer buttons sit directly below them.
   if (menu->cursor >= 15) {
+    int column = menu->cursor - 15;
     if (dy < 0) {
-      menu->cursor = 10 + menu->cursor - 15;
+      menu->cursor = (SELECT_ROWS - 1) * SELECT_COLUMNS + column;
+    } else if (dy > 0) {
+      menu->cursor = column;
     } else if (dx != 0) {
-      menu->cursor = 15 + (menu->cursor - 15 + dx + 3) % 3;
+      menu->cursor = 15 + (column + dx + SELECT_COLUMNS) % SELECT_COLUMNS;
     }
     return;
   }
-  int column = menu->cursor % 5;
-  int row = menu->cursor / 5;
-  if (dy != 0 && row == 2 && dy > 0) {
-    menu->cursor = 15 + (column * 3) / 5;
+  int column = menu->cursor % SELECT_COLUMNS;
+  int row = menu->cursor / SELECT_COLUMNS;
+  if ((dy > 0 && row == SELECT_ROWS - 1) || (dy < 0 && row == 0)) {
+    menu->cursor = 15 + column;
     return;
   }
-  if (dy != 0 && row == 0 && dy < 0) {
-    menu->cursor = 15 + (column * 3) / 5;
-    return;
-  }
-  column = (column + dx + 5) % 5;
-  row = (row + dy + 3) % 3;
-  menu->cursor = row * 5 + column;
+  column = (column + dx + SELECT_COLUMNS) % SELECT_COLUMNS;
+  row += dy;
+  menu->cursor = row * SELECT_COLUMNS + column;
 }
 
 bool menu_key(FrontendMenu *menu, int keycode, bool *quit) {
@@ -210,16 +220,202 @@ static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect 
   }
   double frame = fmod((double)SDL_GetTicks() * 0.024, (double)clip->frames.count);
   draw_character(canvas, character, clip, frame, bounds, bounds_cache[roster], yaw, false, false);
-  blit_name(canvas, &assets->hud.effects, assets->hud.names[roster], (Rect){bounds.x + 14, bounds.y + bounds.h - 46, bounds.w - 28, 29});
+  blit_name(canvas, &assets->hud.font, assets->hud.names[roster], bounds.x + bounds.w / 2, bounds.y + bounds.h - 46, 1.5f);
+}
+
+typedef struct SelectTile {
+  int cursor;
+  float depth;
+  float corners[4][2];
+  float frame[4][2];
+} SelectTile;
+
+typedef struct SelectCamera {
+  float cx, cy, focal;
+} SelectCamera;
+
+static void select_project(const SelectCamera *camera, Vec3 p, float out[2]) {
+  out[0] = camera->cx + camera->focal * p.x / p.z;
+  out[1] = camera->cy - camera->focal * p.y / p.z;
+}
+
+static void select_quad(const SelectCamera *camera, Vec3 center, Vec3 right, Vec3 up, float half, float out[4][2]) {
+  static const float signs[4][2] = {{-1, 1}, {1, 1}, {1, -1}, {-1, -1}};
+  for (int i = 0; i < 4; ++i) {
+    Vec3 corner = vec_add(center, vec_add(vec_scale(right, signs[i][0] * half), vec_scale(up, signs[i][1] * half)));
+    select_project(camera, corner, out[i]);
+  }
+}
+
+/* Lays the portraits on the inside of a shallow dish facing the camera: the
+ * outer columns and rows turn inward, so their outer edges come closer and
+ * the wall opens toward the two fighters. */
+static SelectTile select_tile(const SelectCamera *camera, int cursor, bool focused, float seconds) {
+  const float distance = 4.f;
+  const float column_step = .58f;
+  const float row_step = .08f;
+  const float column_radius = 1.1f / column_step;
+  const float row_radius = 1.08f / row_step;
+  int column = cursor % SELECT_COLUMNS;
+  int row = cursor / SELECT_COLUMNS;
+  float yaw = (float)(column - 1) * column_step + .045f * sinf(seconds * .6f);
+  float pitch = (float)(2 - row) * row_step + .015f * sinf(seconds * .45f);
+  Vec3 center = {column_radius * sinf(yaw), row_radius * sinf(pitch), distance - column_radius * (1 - cosf(yaw)) - row_radius * (1 - cosf(pitch))};
+  Vec3 right = {cosf(yaw), 0, -sinf(yaw)};
+  Vec3 up = {0, cosf(pitch), -sinf(pitch)};
+  float half = .5f;
+  if (focused) {
+    center.z -= .12f + .02f * sinf(seconds * 4.f);
+    half = .53f;
+  }
+  SelectTile tile = {cursor, center.z, {{0}}, {{0}}};
+  select_quad(camera, center, right, up, half, tile.corners);
+  select_quad(camera, center, right, up, half + (focused ? .08f : .035f), tile.frame);
+  return tile;
+}
+
+static void select_shade(Canvas *canvas, Rect area, uint32_t color) {
+  float corners[4][2] = {{(float)area.x, (float)area.y}, {(float)(area.x + area.w), (float)area.y}, {(float)(area.x + area.w), (float)(area.y + area.h)},
+      {(float)area.x, (float)(area.y + area.h)}};
+  canvas_quad(canvas, NULL, (Rect){0, 0, 0, 0}, corners, color);
+}
+
+static void select_floor(Canvas *canvas, int cx, int cy, int rx, int ry) {
+  // A soft dark pool grounds the fighter on the marble backdrop.
+  for (int y = cy - ry; y <= cy + ry; ++y) {
+    for (int x = cx - rx; x <= cx + rx; ++x) {
+      if (x < 0 || y < 0 || x >= canvas->w || y >= canvas->h) {
+        continue;
+      }
+      float dx = (float)(x - cx) / (float)rx;
+      float dy = (float)(y - cy) / (float)ry;
+      float d = dx * dx + dy * dy;
+      if (d >= 1) {
+        continue;
+      }
+      unsigned keep = (unsigned)(255.f * (.35f + .65f * d));
+      uint32_t *at = &canvas->pixels[(size_t)y * (size_t)canvas->w + (size_t)x];
+      uint32_t c = *at;
+      *at = 0xff000000 | ((((c >> 16) & 255) * keep / 255) << 16) | ((((c >> 8) & 255) * keep / 255) << 8) | ((c & 255) * keep / 255);
+    }
+  }
+}
+
+static void select_silhouette(Canvas *canvas, Rect area) {
+  for (int y = maxi(0, area.y); y < mini(canvas->h, area.y + area.h); ++y) {
+    for (int x = maxi(0, area.x); x < mini(canvas->w, area.x + area.w); ++x) {
+      size_t at = (size_t)y * (size_t)canvas->w + (size_t)x;
+      if (canvas->depth[at] != -INFINITY) {
+        canvas->pixels[at] = 0xff2b3038;
+      }
+    }
+  }
+}
+
+static int select_hovered(const FrontendMenu *menu, int player) {
+  int current = player == 0 ? menu->p1 : menu->p2;
+  if (menu->cursor < 15) {
+    return retail_roster[menu->cursor];
+  }
+  return menu->cursor == 16 ? current : -1;
+}
+
+static void draw_move_list(Canvas *canvas, const Assets *assets, const CharacterDef *def, Rect area) {
+  const Geometry *font = &assets->hud.font;
+  const float text = .55f;
+  const float heading = .6f;
+  int rows = def->move_list_count == 0 ? 2 : 0;
+  for (int i = 0; i < def->move_list_count; ++i) {
+    rows += i == 0 || def->move_list[i].kind != def->move_list[i - 1].kind ? 2 : 1;
+  }
+  int line = mini(22, (area.h - 16) / rows);
+  select_shade(canvas, (Rect){area.x, area.y, area.w, rows * line + 16}, 0xb0080606);
+  canvas_rect(canvas, (Rect){area.x, area.y, area.w, 2}, 0xffb01810);
+  int x = area.x + 12;
+  int y = area.y + 8;
+  int right = area.x + area.w - 12;
+  if (def->move_list_count == 0) {
+    font_draw(font, canvas, x, y, "SPECIAL MOVES", heading);
+    font_draw(font, canvas, x + 6, y + line, "BASIC ATTACKS ONLY", text);
+    return;
+  }
+  for (int i = 0; i < def->move_list_count; ++i) {
+    const MoveListEntry *entry = &def->move_list[i];
+    if (i == 0 || entry->kind != def->move_list[i - 1].kind) {
+      font_draw(font, canvas, x, y, entry->kind == MOVE_LIST_SPECIAL ? "SPECIAL MOVES" : "FINISHERS", heading);
+      y += line;
+    }
+    font_draw(font, canvas, x + 6, y, entry->name, text);
+    font_draw(font, canvas, right - font_width(font, entry->input, text), y, entry->input, text);
+    y += line;
+  }
+}
+
+static void draw_select_side(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, int player, Rect side, float seconds) {
+  static Bounds bounds_cache[MK4_ROSTER_COUNT];
+  static bool cached[MK4_ROSTER_COUNT];
+  const Geometry *font = &assets->hud.font;
+  bool team = menu->mode == MENU_TEAM;
+  bool active = menu->selecting_player == player;
+  bool cpu = player == 1 && !team;
+  int roster = -1;
+  if (active) {
+    roster = select_hovered(menu, player);
+  } else if (player == 0) {
+    roster = menu->p1;
+  } else if (cpu) {
+    // Single-player modes face the next roster slot; see menu_key.
+    int hovered = select_hovered(menu, 0);
+    roster = hovered < 0 ? -1 : (hovered + 1) % roster_count();
+  } else {
+    roster = menu->p2;
+  }
+  const char *label = cpu ? "CPU" : player == 0 ? "PLAYER 1" : "PLAYER 2";
+  int label_x = player == 0 ? side.x + 24 : side.x + side.w - 24 - font_width(font, label, .75f);
+  font_draw(font, canvas, label_x, side.y + 6, label, .75f);
+
+  // draw_character centers the idle bounds, leaving the feet 46 pixels
+  // above the bottom of the stage rectangle.
+  Rect stage = {side.x + 10, side.y + 24, side.w - 20, 452};
+  int floor_y = stage.y + stage.h - 46;
+  select_floor(canvas, stage.x + stage.w / 2, floor_y - 4, stage.w * 36 / 100, 20);
+  if (roster < 0) {
+    const char *mystery = "?";
+    const char *caption = menu->cursor == 15 ? "RANDOM FIGHTER" : "HIDDEN FIGHTER";
+    font_draw(font, canvas, stage.x + (stage.w - font_width(font, mystery, 7.f)) / 2, stage.y + 90, mystery, 7.f);
+    font_draw(font, canvas, stage.x + (stage.w - font_width(font, caption, .9f)) / 2, floor_y + 8, caption, .9f);
+  } else {
+    const Character *character = roster_character(assets, roster);
+    const Clip *clip = &assets->clips.data[character->idle];
+    if (!cached[roster]) {
+      bounds_cache[roster] = character_bounds(character, clip);
+      cached[roster] = true;
+    }
+    double frame = fmod((double)seconds * 24.0, (double)clip->frames.count);
+    // Both previews share one turn toward the wall; player two is mirrored
+    // the way a fighter facing left is in battle.
+    if (player == 0) {
+      draw_character(canvas, character, clip, frame, stage, bounds_cache[roster], -.55f, false, false);
+    } else {
+      draw_character_mirrored(canvas, character, clip, frame, stage, bounds_cache[roster], -.55f);
+    }
+    if (cpu || (!active && player == 1)) {
+      // Team mode shows player two's previous pick until their turn.
+      select_silhouette(canvas, stage);
+    } else {
+      blit_name(canvas, font, assets->hud.names[roster], stage.x + stage.w / 2, floor_y + 8, 2.f);
+    }
+  }
+  Rect list = {side.x + 16, side.y + 482, side.w - 32, side.h - 482};
+  if (roster >= 0 && !cpu && (active || player == 0)) {
+    draw_move_list(canvas, assets, roster_def(roster), list);
+  }
 }
 
 static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu *menu) {
   int width = canvas->w;
   int height = canvas->h;
-  canvas_rect(canvas, (Rect){0, 0, width, height}, 0xff6e6e65);
-  // The full-size portraits occupy page 3; page 2 contains only the tiny
-  // GROUP SELECT thumbnail, whose frame and labels must not enter the grid.
-  static const int portrait_cells[15] = {10, 0, 9, 2, 11, -1, 5, 6, 7, 13, 12, 8, 3, 4, 1};
+  float seconds = (float)SDL_GetTicks() / 1000.f;
   // Use the clean marble regions, excluding the player-number/color swatches.
   for (int row = 0; row < 2; ++row) {
     int y = row * height / 2;
@@ -227,33 +423,60 @@ static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu
     blit_page(canvas, &assets->hud.select_scene, 0, (Rect){0, 0, 212, 112}, (Rect){0, y, width / 2, h});
     blit_page(canvas, &assets->hud.select_scene, 1, (Rect){0, 0, 168, 112}, (Rect){width / 2, y, width - width / 2, h});
   }
-  int grid_x = width * 5 / 100;
-  int grid_y = height * 8 / 100;
-  int grid_width = width * 90 / 100;
-  int grid_height = height * 84 / 100;
-  int gap = 3;
-  blit_page(canvas, &assets->hud.select_scene, 2, (Rect){66, 229, 180, 16}, (Rect){width * 28 / 100, height / 100, width * 44 / 100, height * 6 / 100});
+  select_shade(canvas, (Rect){0, 0, width, height}, 0x8c000000);
+  select_shade(canvas, (Rect){0, 0, width * 31 / 100, height}, 0x50000000);
+  select_shade(canvas, (Rect){width - width * 31 / 100, 0, width * 31 / 100, height}, 0x50000000);
+  blit_page(canvas, &assets->hud.select_scene, 2, (Rect){66, 229, 180, 16}, (Rect){width * 30 / 100, height / 100, width * 40 / 100, height * 55 / 1000});
+
+  // The full-size portraits occupy page 3, indexed here by roster slot and
+  // matched against each fighter's model; Scorpion's is on page one. Page 2
+  // contains only the tiny GROUP SELECT thumbnail.
+  static const int portrait_cells[15] = {-1, 0, 1, 2, 3, 8, 9, 6, 4, 12, 11, 10, 13, 5, 7};
+  SelectCamera camera = {(float)width * .5f, (float)height * .48f, (float)height * .475f};
+  SelectTile tiles[15];
   for (int i = 0; i < 15; ++i) {
-    int col = i % 5;
-    int row = i / 5;
-    int x = grid_x + col * grid_width / 5;
-    int y = grid_y + row * grid_height / 3;
-    Rect dst = {x, y, grid_x + (col + 1) * grid_width / 5 - x - gap, grid_y + (row + 1) * grid_height / 3 - y - gap};
-    int cell = portrait_cells[i];
-    Rect src = cell < 0 ? (Rect){168, 112, 64, 64} : (Rect){(cell % 4) * 64, (cell / 4) * 64, 64, 64};
-    blit_page(canvas, &assets->hud.select_scene, cell < 0 ? 1 : 3, src, dst);
-    canvas_outline(canvas, dst, edge);
-    if (i == menu->cursor) {
-      canvas_outline(canvas, (Rect){dst.x - 1, dst.y - 1, dst.w + 2, dst.h + 2}, red);
-    }
+    tiles[i] = select_tile(&camera, i, i == menu->cursor, seconds);
   }
+  // Paint far tiles first; the focused tile is the nearest.
+  for (int i = 1; i < 15; ++i) {
+    SelectTile tile = tiles[i];
+    int j = i - 1;
+    for (; j >= 0 && tiles[j].depth < tile.depth; --j) {
+      tiles[j + 1] = tiles[j];
+    }
+    tiles[j + 1] = tile;
+  }
+  float pulse = .5f + .5f * sinf(seconds * 6.f);
+  uint32_t player_color = menu->selecting_player == 0 ? 0xffe02010 : 0xff3080ff;
+  for (int i = 0; i < 15; ++i) {
+    const SelectTile *tile = &tiles[i];
+    bool focused = tile->cursor == menu->cursor;
+    int cell = portrait_cells[retail_roster[tile->cursor]];
+    Rect source = cell < 0 ? (Rect){168, 112, 64, 64} : (Rect){(cell % 4) * 64, (cell / 4) * 64, 64, 64};
+    const Texture *page = &assets->hud.select_scene.textures.data[cell < 0 ? 1 : 3];
+    uint32_t frame = 0xff14100c;
+    if (focused) {
+      unsigned glow = (unsigned)(200 + 55 * pulse);
+      frame = (player_color & 0xff000000) | ((((player_color >> 16) & 255) * glow / 255) << 16) | ((((player_color >> 8) & 255) * glow / 255) << 8) |
+              ((player_color & 255) * glow / 255);
+    }
+    canvas_quad(canvas, NULL, (Rect){0, 0, 0, 0}, tile->frame, frame);
+    canvas_quad(canvas, page, source, tile->corners, focused ? 0xffffffff : 0xff9c948c);
+  }
+
+  int side_width = width * 31 / 100;
   int footer_y = height * 93 / 100;
+  draw_select_side(canvas, assets, menu, 0, (Rect){0, 0, side_width, footer_y - 8}, seconds);
+  draw_select_side(canvas, assets, menu, 1, (Rect){width - side_width, 0, side_width, footer_y - 8}, seconds);
+
   blit_page(canvas, &assets->hud.select_scene, 0, (Rect){84, 225, 128, 30}, (Rect){width * 23 / 100, footer_y, width * 18 / 100, height * 6 / 100});
   blit_page(canvas, &assets->hud.select_scene, 1, (Rect){0, 225, 128, 30}, (Rect){width * 41 / 100, footer_y, width * 18 / 100, height * 6 / 100});
   blit_page(canvas, &assets->hud.select_scene, 2, (Rect){64, 197, 128, 30}, (Rect){width * 59 / 100, footer_y, width * 18 / 100, height * 6 / 100});
   if (menu->cursor >= 15) {
     int button_x = width * (23 + (menu->cursor - 15) * 18) / 100;
-    canvas_outline(canvas, (Rect){button_x - 4, footer_y - 4, width * 18 / 100 + 8, height * 6 / 100 + 8}, red);
+    for (int ring = 0; ring < 3; ++ring) {
+      canvas_outline(canvas, (Rect){button_x - 3 - ring, footer_y - 3 - ring, width * 18 / 100 + 6 + 2 * ring, height * 6 / 100 + 6 + 2 * ring}, player_color);
+    }
   }
 }
 
@@ -280,6 +503,8 @@ static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu 
 }
 
 void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu) {
+  // Resets depth for the fighter previews; each screen repaints every pixel.
+  canvas_clear(canvas);
   if (menu->screen == MENU_MODE) {
     draw_mode(canvas, assets, menu);
   } else if (menu->screen == MENU_SELECT) {

@@ -117,7 +117,21 @@ static const Controls scorpion_controls = {commands, COUNT(commands), {&scorpion
 /* Weapon scripts 0x4e62c0/0x4e62d8, 0x4ec8b0/0x4ec918 and 0x4e8850;
  * slash parameter blocks 0x4ec880/0x4ec898; native throw 0x498290. */
 
-const CharacterDef mk4_scorpion = {GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump, NULL};
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveListEntry move_list[] = {
+  {MOVE_LIST_SPECIAL, "SPEAR", "B,B+LP"},
+  {MOVE_LIST_SPECIAL, "HELLFIRE", "D,F+LP"},
+  {MOVE_LIST_SPECIAL, "TELEPORT", "D,B+HP (AIR OK)"},
+  {MOVE_LIST_SPECIAL, "WEAPON", "F,F+HK"},
+  {MOVE_LIST_FINISHER, "FATALITY 1", "B,F,F,B+BL"},
+  {MOVE_LIST_FINISHER, "FATALITY 2", "B,F,D,U+HP"},
+  {MOVE_LIST_FINISHER, "FAN STAGE", "F,D,D+LK"},
+  {MOVE_LIST_FINISHER, "SPIKE STAGE", "B,F,F+LK"},
+};
+// clang-format on
+
+const CharacterDef mk4_scorpion = {
+    GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump, NULL, move_list, COUNT(move_list)};
 
 /* Native-only blends; no VM timing tables. */
 

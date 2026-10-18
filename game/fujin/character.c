@@ -71,7 +71,7 @@ static const ButtonTable fujin_jumping = {{[BUTTON_HIGH_PUNCH] = fujin_press_air
 
 static const Controls fujin_controls = {NULL, 0, {[STANCE_STANDING] = &fujin_standing, [STANCE_CROUCHING] = &fujin_crouching, [STANCE_JUMP] = &fujin_jumping}};
 
-const CharacterDef mk4_fujin = {GAME_MK4, 5, "FUJIN", &mk4_motion, fujin_moves, S_COUNT, &fujin_controls, NULL, -73531, mk4_walk, mk4_jump, NULL};
+const CharacterDef mk4_fujin = {GAME_MK4, 5, "FUJIN", &mk4_motion, fujin_moves, S_COUNT, &fujin_controls, NULL, -73531, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void fujin_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

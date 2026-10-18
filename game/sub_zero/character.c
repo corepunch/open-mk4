@@ -205,7 +205,21 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_FINISH_SPIKE] = sub_zero_spike_fatality,
                                    }};
 
-const CharacterDef mk4_sub_zero = {GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, &controls, enter, -77660, mk4_walk, mk4_jump, &cpu_moves};
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveListEntry move_list[] = {
+  {MOVE_LIST_SPECIAL, "ICE BLAST", "D,F+LP"},
+  {MOVE_LIST_SPECIAL, "ICE CLONE", "D,B+LP (AIR OK)"},
+  {MOVE_LIST_SPECIAL, "SLIDE", "LP+BL+LK"},
+  {MOVE_LIST_SPECIAL, "WEAPON", "D,F+HK"},
+  {MOVE_LIST_FINISHER, "FATALITY 1", "F,B,F,D+HP"},
+  {MOVE_LIST_FINISHER, "FATALITY 2", "B,B,D,B+HP"},
+  {MOVE_LIST_FINISHER, "FAN STAGE", "D,U,U,U+HK"},
+  {MOVE_LIST_FINISHER, "SPIKE STAGE", "D,D,D+LK"},
+};
+// clang-format on
+
+const CharacterDef mk4_sub_zero = {
+    GAME_MK4, 4, "SUB ZERO", &mk4_motion, moves, S_COUNT, &controls, enter, -77660, mk4_walk, mk4_jump, &cpu_moves, move_list, COUNT(move_list)};
 
 void sub_zero_entry_retail_script_004d2bf0(Fighter *fighter) {
   retail_script_004d2bf0(fighter);

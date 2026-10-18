@@ -143,7 +143,24 @@ static const CpuMoves cpu_moves = {
     .finish_distance = {0x30000, 0x30000},
 };
 
-const CharacterDef mk4_kitana = {GAME_MK4, 16, "KITANA", &mk4_motion, moves, S_COUNT, &controls, enter, -73629, mk4_walk, mk4_jump, &cpu_moves};
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveListEntry move_list[] = {
+  {MOVE_LIST_SPECIAL, "RING TOSS", "D,F+LP"},
+  {MOVE_LIST_SPECIAL, "AIR SHADOW", "D,F+LP (AIR)"},
+  {MOVE_LIST_SPECIAL, "BICYCLE KICK", "F,B+HP"},
+  {MOVE_LIST_SPECIAL, "SQUARE WAVE", "B,B,D+HK"},
+  {MOVE_LIST_SPECIAL, "CARTWHEEL", "B,D,F+LK"},
+  {MOVE_LIST_SPECIAL, "LEG GRAB", "D+LP+BL"},
+  {MOVE_LIST_SPECIAL, "WEAPON", "F,F+LK"},
+  {MOVE_LIST_FINISHER, "FATALITY 1", "D,D,D,U+RUN"},
+  {MOVE_LIST_FINISHER, "FATALITY 2", "U,D,D,U+HK"},
+  {MOVE_LIST_FINISHER, "FAN STAGE", "D,B,B+HK"},
+  {MOVE_LIST_FINISHER, "SPIKE STAGE", "F,D,F+HP"},
+};
+// clang-format on
+
+const CharacterDef mk4_kitana = {
+    GAME_MK4, 16, "KITANA", &mk4_motion, moves, S_COUNT, &controls, enter, -73629, mk4_walk, mk4_jump, &cpu_moves, move_list, COUNT(move_list)};
 
 void kitana_entry_retail_script_004de360(Fighter *fighter) {
   retail_script_004de360(fighter);

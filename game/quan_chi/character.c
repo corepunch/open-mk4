@@ -101,7 +101,7 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_quan_chi = {GAME_MK4, 8, "QUAN CHI", &mk4_motion, moves, S_COUNT, &quan_chi_controls, enter, -78643, mk4_walk, mk4_jump, NULL};
+const CharacterDef mk4_quan_chi = {GAME_MK4, 8, "QUAN CHI", &mk4_motion, moves, S_COUNT, &quan_chi_controls, enter, -78643, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void quan_chi_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

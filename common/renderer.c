@@ -237,12 +237,13 @@ Bounds character_bounds(const Character *ch, const Clip *clip) {
   return b;
 }
 
-static Vec3 gallery_project(Vec3 p, Mat3 turn, Mat3 front, Vec3 center, Rect r, float scale) {
+static Vec3 gallery_project(Vec3 p, Mat3 turn, Mat3 front, Vec3 center, Rect r, float scale, float mirror) {
   p = mat3_apply(turn, vec_sub(mat3_apply(front, p), center));
-  return (Vec3){(float)(r.x + r.w / 2) + p.x * scale, (float)(r.y + 30 + (r.h - 76) / 2) + p.y * scale, p.z};
+  return (Vec3){(float)(r.x + r.w / 2) + mirror * p.x * scale, (float)(r.y + 30 + (r.h - 76) / 2) + p.y * scale, p.z};
 }
 
-void draw_character(Canvas *cv, const Character *ch, const Clip *clip, double frame, Rect r, Bounds b, float yaw, bool wire, bool skeleton) {
+static void draw_gallery_character(
+    Canvas *cv, const Character *ch, const Clip *clip, double frame, Rect r, Bounds b, float yaw, float mirror, bool wire, bool skeleton) {
   Pose nodes[MK4_MAX_BONES];
   pose(ch, clip, frame, nodes);
   Mat3 turn = yaw_matrix(yaw), front = yaw_matrix(ch->front_yaw);
@@ -259,7 +260,9 @@ void draw_character(Canvas *cv, const Character *ch, const Clip *clip, double fr
       for (size_t i = 0; i < 3; ++i) {
         Vertex v = triangles->data[j].v[i];
         Vec3 world = vec_add(nodes[n].position, mat3_apply(nodes[n].rotation, v.p));
-        Vec3 pos = gallery_project(world, turn, front, center, r, scale), normal = mat3_apply(turn, mat3_apply(front, mat3_apply(nodes[n].rotation, v.normal)));
+        Vec3 pos = gallery_project(world, turn, front, center, r, scale, mirror),
+             normal = mat3_apply(turn, mat3_apply(front, mat3_apply(nodes[n].rotation, v.normal)));
+        normal.x *= mirror;
         float len = sqrtf(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
         float light = .86f;
         if (len > .01f)
@@ -274,10 +277,19 @@ void draw_character(Canvas *cv, const Character *ch, const Clip *clip, double fr
       int parent = ch->bones.data[n].parent;
       if (parent < 0)
         continue;
-      Vec3 a = gallery_project(nodes[n].position, turn, front, center, r, scale), z = gallery_project(nodes[parent].position, turn, front, center, r, scale);
+      Vec3 a = gallery_project(nodes[n].position, turn, front, center, r, scale, mirror);
+      Vec3 z = gallery_project(nodes[parent].position, turn, front, center, r, scale, mirror);
       canvas_line(cv, (int)a.x, (int)a.y, (int)z.x, (int)z.y, 0xffe6bd5f);
       canvas_rect(cv, (Rect){(int)a.x - 2, (int)a.y - 2, 4, 4}, 0xffe6bd5f);
     }
+}
+
+void draw_character(Canvas *cv, const Character *ch, const Clip *clip, double frame, Rect r, Bounds b, float yaw, bool wire, bool skeleton) {
+  draw_gallery_character(cv, ch, clip, frame, r, b, yaw, 1.f, wire, skeleton);
+}
+
+void draw_character_mirrored(Canvas *cv, const Character *ch, const Clip *clip, double frame, Rect r, Bounds b, float yaw) {
+  draw_gallery_character(cv, ch, clip, frame, r, b, yaw, -1.f, false, false);
 }
 
 void save_bmp(const Canvas *cv, const char *path) {
@@ -306,4 +318,90 @@ void canvas_blit(Canvas *cv, const Texture *t, Rect src, Rect dst, bool flip) {
       if (c >> 24)
         cv->pixels[(size_t)y * (size_t)cv->w + (size_t)x] = c;
     }
+}
+
+static uint32_t bilinear(const Texture *t, Rect src, float u, float v) {
+  u = clampf(u - .5f, (float)src.x, (float)(src.x + src.w - 1));
+  v = clampf(v - .5f, (float)src.y, (float)(src.y + src.h - 1));
+  int x0 = (int)u;
+  int y0 = (int)v;
+  int x1 = mini(x0 + 1, src.x + src.w - 1);
+  int y1 = mini(y0 + 1, src.y + src.h - 1);
+  float fx = u - (float)x0;
+  float fy = v - (float)y0;
+  uint32_t c[4] = {t->pixels.data[(size_t)y0 * (size_t)t->width + (size_t)x0], t->pixels.data[(size_t)y0 * (size_t)t->width + (size_t)x1],
+      t->pixels.data[(size_t)y1 * (size_t)t->width + (size_t)x0], t->pixels.data[(size_t)y1 * (size_t)t->width + (size_t)x1]};
+  float w[4] = {(1 - fx) * (1 - fy), fx * (1 - fy), (1 - fx) * fy, fx * fy};
+  uint32_t out = 0;
+  for (int shift = 0; shift < 32; shift += 8) {
+    float sum = 0;
+    for (int i = 0; i < 4; ++i) {
+      sum += (float)((c[i] >> shift) & 255) * w[i];
+    }
+    out |= (uint32_t)mini(255, (int)(sum + .5f)) << shift;
+  }
+  return out;
+}
+
+void canvas_quad(Canvas *cv, const Texture *t, Rect src, const float q[4][2], uint32_t tint) {
+  // Heckbert's unit-square-to-quad projective map, inverted through its
+  // adjugate so each covered pixel finds its texture coordinate.
+  float dx1 = q[1][0] - q[2][0];
+  float dx2 = q[3][0] - q[2][0];
+  float dx3 = q[0][0] - q[1][0] + q[2][0] - q[3][0];
+  float dy1 = q[1][1] - q[2][1];
+  float dy2 = q[3][1] - q[2][1];
+  float dy3 = q[0][1] - q[1][1] + q[2][1] - q[3][1];
+  float det = dx1 * dy2 - dx2 * dy1;
+  if (fabsf(det) < 1e-6f) {
+    return;
+  }
+  float g = (dx3 * dy2 - dx2 * dy3) / det;
+  float h = (dx1 * dy3 - dx3 * dy1) / det;
+  float a = q[1][0] - q[0][0] + g * q[1][0];
+  float b = q[3][0] - q[0][0] + h * q[3][0];
+  float c = q[0][0];
+  float d = q[1][1] - q[0][1] + g * q[1][1];
+  float e = q[3][1] - q[0][1] + h * q[3][1];
+  float f = q[0][1];
+  float m[9] = {e - f * h, c * h - b, b * f - c * e, f * g - d, a - c * g, c * d - a * f, d * h - e * g, b * g - a * h, a * e - b * d};
+  float lo_x = fminf(fminf(q[0][0], q[1][0]), fminf(q[2][0], q[3][0]));
+  float hi_x = fmaxf(fmaxf(q[0][0], q[1][0]), fmaxf(q[2][0], q[3][0]));
+  float lo_y = fminf(fminf(q[0][1], q[1][1]), fminf(q[2][1], q[3][1]));
+  float hi_y = fmaxf(fmaxf(q[0][1], q[1][1]), fmaxf(q[2][1], q[3][1]));
+  unsigned alpha = tint >> 24;
+  if (!alpha) {
+    return;
+  }
+  for (int y = maxi(0, (int)floorf(lo_y)); y < mini(cv->h, (int)ceilf(hi_y)); ++y) {
+    for (int x = maxi(0, (int)floorf(lo_x)); x < mini(cv->w, (int)ceilf(hi_x)); ++x) {
+      float px = (float)x + .5f;
+      float py = (float)y + .5f;
+      float w = m[6] * px + m[7] * py + m[8];
+      if (fabsf(w) < 1e-9f) {
+        continue;
+      }
+      float s = (m[0] * px + m[1] * py + m[2]) / w;
+      float tt = (m[3] * px + m[4] * py + m[5]) / w;
+      if (s < 0 || s >= 1 || tt < 0 || tt >= 1) {
+        continue;
+      }
+      uint32_t color = 0xffffffff;
+      if (t != NULL) {
+        color = bilinear(t, src, (float)src.x + s * (float)src.w, (float)src.y + tt * (float)src.h);
+      }
+      unsigned cover = ((color >> 24) * alpha) / 255;
+      if (!cover) {
+        continue;
+      }
+      uint32_t *at = &cv->pixels[(size_t)y * (size_t)cv->w + (size_t)x];
+      uint32_t out = 0xff000000;
+      for (int shift = 0; shift < 24; shift += 8) {
+        unsigned value = ((color >> shift) & 255) * ((tint >> shift) & 255) / 255;
+        unsigned under = (*at >> shift) & 255;
+        out |= ((value * cover + under * (255 - cover)) / 255) << shift;
+      }
+      *at = out;
+    }
+  }
 }

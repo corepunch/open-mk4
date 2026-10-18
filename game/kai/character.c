@@ -91,7 +91,7 @@ const uint32_t kai_weapon_descriptor[] = {
 };
 // clang-format on
 
-const CharacterDef mk4_kai = {GAME_MK4, 11, "KAI", &mk4_motion, moves, S_COUNT, &kai_controls, enter, -74829, mk4_walk, mk4_jump, NULL};
+const CharacterDef mk4_kai = {GAME_MK4, 11, "KAI", &mk4_motion, moves, S_COUNT, &kai_controls, enter, -74829, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void kai_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

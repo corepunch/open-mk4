@@ -161,7 +161,22 @@ static const CpuMoves cpu_moves = {
     .finish_distance = {0x20000, 0x10000}, /* 4dfe10/4dfe50[3]. */
 };
 
-const CharacterDef mk4_liu_kang = {GAME_MK4, 3, "LIU KANG", &mk4_motion, moves, S_COUNT, &controls, enter, -70320, mk4_walk, mk4_jump, &cpu_moves};
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveListEntry move_list[] = {
+  {MOVE_LIST_SPECIAL, "HIGH FIREBALL", "F,F+HP (AIR OK)"},
+  {MOVE_LIST_SPECIAL, "LOW FIREBALL", "F,F+LP"},
+  {MOVE_LIST_SPECIAL, "FLYING KICK", "F,F+HK"},
+  {MOVE_LIST_SPECIAL, "BICYCLE KICK", "HOLD LK 2S, RELEASE"},
+  {MOVE_LIST_SPECIAL, "WEAPON", "B,F+LK"},
+  {MOVE_LIST_FINISHER, "FATALITY 1", "F,F,F,D+BL"},
+  {MOVE_LIST_FINISHER, "FATALITY 2", "F,D,D,U+HP"},
+  {MOVE_LIST_FINISHER, "FAN STAGE", "F,F,B+LP"},
+  {MOVE_LIST_FINISHER, "SPIKE STAGE", "F,F,B+HK"},
+};
+// clang-format on
+
+const CharacterDef mk4_liu_kang = {
+    GAME_MK4, 3, "LIU KANG", &mk4_motion, moves, S_COUNT, &controls, enter, -70320, mk4_walk, mk4_jump, &cpu_moves, move_list, COUNT(move_list)};
 
 void liu_kang_entry_retail_script_004de3b0(Fighter *fighter) {
   retail_script_004de3b0(fighter);

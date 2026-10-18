@@ -80,7 +80,7 @@ static const MoveDef *const moves[S_COUNT] = {
 const WeaponDef shinnok_weapon = {
     0x64, shinnok_weapon_hp, shinnok_weapon_lp, shinnok_weapon_back_hp, shinnok_weapon_back_lp, NULL, weapon_throw, shinnok_weapon_equip, SCENE_MODEL_SWORD};
 
-const CharacterDef mk4_shinnok = {GAME_MK4, 6, "SHINNOK", &mk4_motion, moves, S_COUNT, &controls, enter, -73531, mk4_walk, mk4_jump, NULL};
+const CharacterDef mk4_shinnok = {GAME_MK4, 6, "SHINNOK", &mk4_motion, moves, S_COUNT, &controls, enter, -73531, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void shinnok_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

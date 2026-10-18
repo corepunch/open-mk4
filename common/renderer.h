@@ -41,8 +41,15 @@ void canvas_text(Canvas *canvas, int x, int y, const char *text, int scale, uint
 void canvas_triangle(Canvas *canvas, const ScreenVertex points[3], const Texture *texture, Rect clip, bool wire, TrianglePass pass);
 void canvas_resolve_shadows(Canvas *canvas, uint8_t opacity);
 void canvas_blit(Canvas *canvas, const Texture *texture, Rect source, Rect dest, bool flip);
+/* Maps source onto a projected quad (corners clockwise from top-left) with
+ * bilinear filtering. tint multiplies each channel and its alpha blends the
+ * result; a NULL texture fills the quad with tint. Depth is ignored. */
+void canvas_quad(Canvas *canvas, const Texture *texture, Rect source, const float corners[4][2], uint32_t tint);
 Mat3 yaw_matrix(float angle);
 Bounds character_bounds(const Character *ch, const Clip *clip);
 void draw_character(Canvas *canvas, const Character *ch, const Clip *clip, double frame, Rect rect, Bounds bounds, float yaw, bool wire, bool skeleton);
+/* Draws the character reflected across the rectangle's vertical axis, as a
+ * fighter facing left. */
+void draw_character_mirrored(Canvas *canvas, const Character *ch, const Clip *clip, double frame, Rect rect, Bounds bounds, float yaw);
 void save_bmp(const Canvas *canvas, const char *path);
 #endif

@@ -356,6 +356,19 @@ struct MoveSequence {
   FighterTest until;
 };
 
+typedef enum MoveListKind {
+  MOVE_LIST_SPECIAL,
+  MOVE_LIST_FINISHER
+} MoveListKind;
+
+/* A selection-screen move list row. input describes the matching command
+ * records in the character's controls table. */
+typedef struct MoveListEntry {
+  MoveListKind kind;
+  const char *name;
+  const char *input;
+} MoveListEntry;
+
 typedef struct CharacterDef {
   GameId game;
   int asset;
@@ -364,11 +377,13 @@ typedef struct CharacterDef {
   const MoveDef *const *moves; /* move_count pointers, indexed by StateId */
   int move_count;
   const Controls *controls;
-  const FighterFn *enter; /* optional move_count callbacks; NULL entries use the default move */
-  q16 ground;             /* retail standing group Y: the rig root's Y translation (soles at 0) */
-  FighterFn walk;         /* game-owned ground locomotion; reads held direction/run */
-  FighterFn jump;         /* grounded jump entry; owns takeoff, flight and landing */
-  const CpuMoves *cpu;    /* translated action entries, selected by the shared CPU controller */
+  const FighterFn *enter;         /* optional move_count callbacks; NULL entries use the default move */
+  q16 ground;                     /* retail standing group Y: the rig root's Y translation (soles at 0) */
+  FighterFn walk;                 /* game-owned ground locomotion; reads held direction/run */
+  FighterFn jump;                 /* grounded jump entry; owns takeoff, flight and landing */
+  const CpuMoves *cpu;            /* translated action entries, selected by the shared CPU controller */
+  const MoveListEntry *move_list; /* optional player-reachable commands shown at selection */
+  int move_list_count;
 } CharacterDef;
 
 enum {

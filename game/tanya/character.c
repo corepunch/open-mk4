@@ -78,7 +78,7 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_tanya = {GAME_MK4, 9, "TANYA", &mk4_motion, moves, S_COUNT, &tanya_controls, enter, -71100, mk4_walk, mk4_jump, NULL};
+const CharacterDef mk4_tanya = {GAME_MK4, 9, "TANYA", &mk4_motion, moves, S_COUNT, &tanya_controls, enter, -71100, mk4_walk, mk4_jump, NULL, NULL, 0};
 
 void tanya_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

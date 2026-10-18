@@ -18,6 +18,7 @@ static void usage(void) {
        "  --difficulty N     CPU level 1..9 (default 3)\n"
        "  --headless         render without a window\n"
        "  --menu             show the front-end menu (also available in headless mode)\n"
+       "  --select           open character selection (team mode with --two-player)\n"
        "  --frames N         stop after N frames (headless advances exactly 1/60s)\n"
        "  --screenshot PATH  save final frame as BMP\n"
        "  --list             show original roster and arenas\n"
@@ -145,7 +146,7 @@ int main(int argc, char **argv) {
   const char *exe = "MK4/MK-4.EXE";
   const char *shot = NULL;
   bool headless = false, demo = false, cpu = true, selftest = false, list = false;
-  bool menu_requested = false, explicit_match = false;
+  bool menu_requested = false, select_requested = false, explicit_match = false;
   int p1 = 0, p2 = 4, arena = 8, limit = 0, difficulty = 3;
   Assets assets = {0};
   SdlApp app;
@@ -190,6 +191,8 @@ int main(int argc, char **argv) {
       explicit_match = true;
     } else if (!strcmp(arg, "--menu"))
       menu_requested = true;
+    else if (!strcmp(arg, "--select"))
+      menu_requested = select_requested = true;
     else if (!strcmp(arg, "--self-test"))
       selftest = true;
     else if (!strcmp(arg, "--list"))
@@ -229,6 +232,12 @@ int main(int argc, char **argv) {
   input_bind_player(&pads[0], 0);
   input_bind_player(&pads[1], 1);
   menu_init(&menu);
+  if (select_requested) {
+    menu.p1 = p1;
+    menu.p2 = p2;
+    menu.cursor = cpu ? MENU_ARCADE : MENU_TEAM;
+    menu_key(&menu, SDLK_RETURN, &running);
+  }
   match_started = !menu_requested && (headless || explicit_match);
   if (match_started) {
     battle_bind_assets(&assets);

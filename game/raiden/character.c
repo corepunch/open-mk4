@@ -137,7 +137,21 @@ static const CpuMoves cpu_moves = {
     .finish_distance = {0x10000, 0x10000},
 };
 
-const CharacterDef mk4_raiden = {GAME_MK4, 1, "RAIDEN", &mk4_motion, moves, S_COUNT, &controls, enter, -75497, mk4_walk, mk4_jump, &cpu_moves};
+// clang-format off: Keep table entries on one row, including long rows.
+static const MoveListEntry move_list[] = {
+  {MOVE_LIST_SPECIAL, "LIGHTNING", "D,B+LP"},
+  {MOVE_LIST_SPECIAL, "TORPEDO", "F,F+LK (AIR OK)"},
+  {MOVE_LIST_SPECIAL, "TELEPORT", "D,U"},
+  {MOVE_LIST_SPECIAL, "WEAPON", "F,B+HP"},
+  {MOVE_LIST_FINISHER, "FATALITY 1", "F,B,U,U+HK"},
+  {MOVE_LIST_FINISHER, "FATALITY 2", "D,U,U,U+HP"},
+  {MOVE_LIST_FINISHER, "FAN STAGE", "D,F,B+BL"},
+  {MOVE_LIST_FINISHER, "SPIKE STAGE", "F,F,D+LP"},
+};
+// clang-format on
+
+const CharacterDef mk4_raiden = {
+    GAME_MK4, 1, "RAIDEN", &mk4_motion, moves, S_COUNT, &controls, enter, -75497, mk4_walk, mk4_jump, &cpu_moves, move_list, COUNT(move_list)};
 
 void raiden_entry_retail_script_004de218(Fighter *fighter) {
   retail_script_004de218(fighter);
