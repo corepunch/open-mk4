@@ -23,6 +23,7 @@ class Binding:
     script_target: int = 0
     inline_values: tuple = ()
     cursor_effect: str = 'preserve'
+    mmove: bool = False  # reviewed nonblocking native callback for frame-table lowering
 
     def __post_init__(self):
         if self.cursor_effect not in ('preserve', 'finish', 'unknown'):
@@ -159,7 +160,7 @@ CHARACTER_BINDINGS[4] = {
     0x46e4d0: Binding('script_air_diagonal_tail', 'game/c_sub_zero.c', ('tail',), evidence='46e4d0; bounded native listing; docs/character-script-port.md'),
     0x46e730: Binding('script_air_hp_tail', 'game/c_sub_zero.c', ('tail',), evidence='46e730; bounded native listing; docs/character-script-port.md'),
     0x46eea0: Binding('script_air_lp_tail', 'game/c_sub_zero.c', ('tail',), evidence='46eea0; bounded native listing; docs/character-script-port.md'),
-    0x46f080: Binding('script_sweep_tail', 'game/c_sub_zero.c', ('tail',), evidence='46f080; bounded native listing; docs/character-script-port.md'),
+    0x46f080: Binding('script_sweep_tail', 'game/c_sub_zero.c', ('tail',), mmove=True, evidence='46f080; bounded native listing; docs/character-script-port.md'),
     0x46f220: Binding('script_roundhouse_start', 'game/c_sub_zero.c', ('tail',), evidence='46f220; bounded native listing; docs/character-script-port.md'),
     0x46f270: Binding('script_roundhouse_tail', 'game/c_sub_zero.c', ('tail',), evidence='46f270; bounded native listing; docs/character-script-port.md'),
     0x42c200: Binding('script_lk_rebase', 'game/c_sub_zero.c', ('tail',), evidence='42c200; bounded native listing; docs/character-script-port.md'),

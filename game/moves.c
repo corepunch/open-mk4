@@ -323,6 +323,12 @@ void fighter_step_mmove(Fighter *fighter) {
   }
   if (fighter->mmove_elapsed < frame->duration) {
     fighter->mmove_elapsed++;
+    if (fighter->mmove_elapsed == frame->duration && frame->leave != NULL) {
+      frame->leave(fighter);
+      if (mmove_changed(fighter, mmove, continuation)) {
+        return;
+      }
+    }
   }
   if (fighter->mmove_elapsed < frame->duration) {
     return;
@@ -330,13 +336,16 @@ void fighter_step_mmove(Fighter *fighter) {
   if (fighter->mmove_frame < mmove->lastframe) {
     fighter->mmove_elapsed = 0;
     fighter->mmove_frame++;
+    fighter->sample_override = -1;
     return;
   }
   if (mmove->until != NULL && !mmove->until(fighter)) {
     return;
   }
   /* A terminal phase without a successor holds its final pose. */
-  fighter->sample_override = frame->sample;
+  if (fighter->sample_override < 0) {
+    fighter->sample_override = frame->sample;
+  }
   fighter->current_mmove = NULL;
   if (mmove->endfunc != NULL) {
     mmove->endfunc(fighter);

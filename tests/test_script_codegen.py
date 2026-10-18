@@ -46,6 +46,29 @@ class CompilerTests(unittest.TestCase):
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
+    def test_mmove_sweep_is_generated_without_yielding_calls(self):
+        source = format_c(generate(self.image, [0x4e6798], 4, 'fighter_ready', mmove_entries=[0x4e6798]))
+        self.assertIn('static const mframe_t retail_script_004e6798_frames', source)
+        self.assertIn('battle_sound(SOUND_A, 175)', source)
+        self.assertNotIn('fighter_wait_ticks', source)
+        self.assertNotIn('fighter_fiber_', source)
+        self.assertNotIn('mk4_script_advance', source)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'frames.c'
+            path.write_text(source + '\nstatic void script_sweep_tail(Fighter *fighter) { fighter_ready(fighter); }\n'
+                            'void use_frames(Fighter *fighter) { retail_script_004e6798(fighter); }\n')
+            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
+                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
+        bindings = bindings_for(4)
+        bindings[0x46f080] = dataclasses.replace(bindings[0x46f080], mmove=False)
+        with self.assertRaisesRegex(CompileError, 'not reviewed for nonblocking'):
+            generate(self.image, [0x4e6798], 4, 'fighter_ready', bindings, mmove_entries=[0x4e6798])
+        bindings[0x46f080] = dataclasses.replace(bindings[0x46f080], mmove=True, flow='suspend')
+        with self.assertRaisesRegex(CompileError, 'yielding binding'):
+            generate(self.image, [0x4e6798], 4, 'fighter_ready', bindings, mmove_entries=[0x4e6798])
+        with self.assertRaisesRegex(ValueError, 'must belong to generated_scripts'):
+            generate(self.image, [0x4e6798], 4, 'fighter_ready', mmove_entries=[0x4e84d8])
+
     def test_blend_bind_requires_source_pose_and_valid_sample_one(self):
         # Raiden's finisher opcode 71 blends the inherited pose, then resumes
         # destination playback at sample one. It must not silently start at zero.

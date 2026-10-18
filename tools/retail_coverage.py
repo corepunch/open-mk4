@@ -212,8 +212,12 @@ def audit(image, character, return_to=None, profile=None):
                     errors.append('integration source does not include ' + include)
     if generated and all(row['status'] == 'compilable' for row in scripts if row['implementation'] == 'generated'):
         output = ROOT / profile['output']
-        if not output.is_file() or output.read_text() != format_c(generate(image, generated, character, continuation, contexts=contexts)):
-            errors.append('generated output is missing, stale or manually edited: ' + str(profile['output']))
+        try:
+            expected = format_c(generate(image, generated, character, continuation, contexts=contexts, mmove_entries=profile.get('mmove_scripts', [])))
+            if not output.is_file() or output.read_text() != expected:
+                errors.append('generated output is missing, stale or manually edited: ' + str(profile['output']))
+        except ValueError as exc:
+            errors.append('generation failed: ' + str(exc))
     # Every typed boundary is navigable to a real definition. Prose helper
     # names alone never satisfy this check.
     for address, binding in sorted(bindings.items()):

@@ -437,7 +437,12 @@ def emit_program(program, bindings, return_to=None, context=None):
     return '\n'.join(lines)
 
 
-def generate(image, entries, character=0, return_to=None, bindings=None, contexts=None):
+def generate(image, entries, character=0, return_to=None, bindings=None, contexts=None, mmove_entries=()):
+    from retail_mmove import emit_mmove
+    entries = set(entries)
+    mmove_entries = {int(entry, 16) if isinstance(entry, str) else entry for entry in mmove_entries}
+    if mmove_entries - set(entries):
+        raise ValueError("mmove roots must belong to generated_scripts")
     contexts = contexts or {}
     programs = [compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', return_to), contexts.get(hex(entry)))
                 for entry in sorted(set(entries))]
@@ -458,7 +463,8 @@ def generate(image, entries, character=0, return_to=None, bindings=None, context
         values = [*record['rectangle_q16'], record['reaction'], record['alternate_reaction'], record['blocked_reaction'], record['flags'], record['damage_q16']]
         lines.append('static const AttackRecord retail_contact_%s = {%s};' % (address[2:], ', '.join(map(str, values))))
     for program, binding in programs:
-        lines += ['', emit_program(program, binding, contexts.get(program['entry'], {}).get('return_to', return_to), contexts.get(program['entry']))]
+        emitter = emit_mmove if int(program['entry'], 16) in mmove_entries else emit_program
+        lines += ['', emitter(program, binding, contexts.get(program['entry'], {}).get('return_to', return_to), contexts.get(program['entry']))]
     return postprocess('\n'.join(lines) + '\n')
 
 

@@ -253,3 +253,26 @@ pose blending, delayed horizontal motion, independent projectile objects,
 weapon tails and scene task lifetimes. Direction press commands match against
 prior input history before recording their own trigger (Raiden Down,Up).
 No alternate script scheduler or retail execution harness is introduced.
+
+## Incremental mmove backend
+
+A profile's `mmove_scripts` is a subset of `generated_scripts`. Those roots
+use the same decoder, graph/cursor validation, typed bindings, inventory and
+canonical-output checks, but emit const frame rows and nonblocking boundary
+callbacks. Statically selected roster branches and counted loops are expanded
+offline. Playback preserves source sample skips, reverse playback and waits;
+a row's `leave` callback runs after its duration, so native effects occur at
+the decoded boundary rather than at the next rendering update. Plain sample
+changes need no callback. Runtime branches not yet supported by this backend
+fail generation. Native branches may select another generated phase explicitly.
+
+Bindings used by this backend must opt in with `mmove=True` after their native
+implementation has been reviewed as nonblocking. Yielding bindings are rejected,
+not replaced with no-ops or fibers. The strict audit reports failed frame
+lowering and still requires regeneration and all reviewed roots. Existing roots
+continue to use fibers until individually migrated.
+
+The first converted root is Sub-Zero sweep `4e6798`: roster slot 4 selects
+`4e6e68`, clip 63, doubled startup through sample 10, A[175], then sample 22.
+Native `46f080/46f130` retains the established two contact visits and remaining
+clip recovery in native frame phases. Its command entry allocates no fiber.

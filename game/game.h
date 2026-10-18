@@ -159,10 +159,11 @@ typedef struct mframe_s {
   FighterFn think;
   int sample;
   int duration;
-  FighterFn tick; /* runs once per simulation tick, including held frames */
+  FighterFn tick;  /* runs once per simulation tick, including held frames */
+  FighterFn leave; /* once after duration, before entering the next row */
 } mframe_t;
 
-#define MFRAME(sample_) {NULL, 0.0f, NULL, (sample_), MMOVE_FRAME_TICKS, NULL}
+#define MFRAME(sample_) {NULL, 0.0f, NULL, (sample_), MMOVE_FRAME_TICKS, NULL, NULL}
 
 /* A contiguous animation range. Callbacks can replace the active move, which
  * is how conditional branches select another mmove_t at a frame boundary. */

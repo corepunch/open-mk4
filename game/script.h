@@ -4,6 +4,7 @@
 #include "game.h"
 
 /* Primitives for generated ordinary C fibers. No bytecode or address dispatch. */
+void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first);
 void mk4_script_bind(Fighter *fighter, int clip, int count, int first);
 void mk4_script_bind_victim(Fighter *fighter, int clip, int count, int first);
 void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample);

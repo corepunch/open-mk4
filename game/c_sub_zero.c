@@ -150,7 +150,7 @@ static void sub_zero_uppercut(Fighter *fighter) {
 
 static void sub_zero_sweep(Fighter *fighter) {
   fighter_start_move(fighter, S_SWEEP, &s_sweep);
-  fighter_start_fiber(fighter, retail_script_004e6798, NULL);
+  retail_script_004e6798(fighter);
 }
 
 static void sub_zero_jab(Fighter *fighter) {
@@ -1513,13 +1513,48 @@ static void script_kick_tail(Fighter *fighter) {
   retail_script_004e6998(fighter);
 }
 
+/* 46f080/46f130: two native contact visits, then remaining clip playback.
+ * Keep the established portable timing; source-script startup is generated. */
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t sweep_recovery_frames[] = {
+  {.sample = 22, .duration = 1},
+  {.sample = 23, .duration = 1},
+  {.sample = 24, .duration = 1},
+  {.sample = 25, .duration = 1},
+  {.sample = 26, .duration = 1},
+  {.sample = 27, .duration = 1},
+  {.sample = 28, .duration = 1},
+  {.sample = 29, .duration = 1},
+  {.sample = 30, .duration = 1},
+  {.sample = 31, .duration = 1},
+  {.sample = 32, .duration = 1},
+  {.sample = 33, .duration = 1},
+  {.sample = 34, .duration = 1},
+  {.sample = 35, .duration = 1},
+  {.sample = 36, .duration = 1},
+  {.sample = 37, .duration = 1},
+  {.sample = 38, .duration = 1},
+  {.sample = 39, .duration = 1},
+  {.sample = 40, .duration = 1},
+  {.sample = 41, .duration = 1},
+  {.sample = 42, .duration = 1},
+  {.sample = 43, .duration = 1},
+  {.sample = 44, .duration = 1},
+  {.sample = 45, .duration = 1},
+};
+// clang-format on
+static const mmove_t sweep_recovery = {
+    .firstframe = 0, .lastframe = COUNT(sweep_recovery_frames) - 1, .frame = sweep_recovery_frames, .endfunc = sub_zero_ready};
+
+static void sweep_recover(Fighter *fighter) {
+  fighter_mmove_phase(fighter, &sweep_recovery);
+}
+
+static const mframe_t sweep_contact_frames[] = {{.sample = 22, .duration = 2, .tick = sub_zero_sweep_contact}};
+static const mmove_t sweep_contact = {.firstframe = 0, .lastframe = 0, .frame = sweep_contact_frames, .endfunc = sweep_recover};
+
 static void script_sweep_tail(Fighter *fighter) {
-  for (int visit = 0; visit < 2; ++visit) {
-    fighter_wait_ticks(1);
-    sub_zero_sweep_contact(fighter);
-  }
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(sub_zero_ready);
+  fighter_mmove_phase(fighter, &sweep_contact);
 }
 
 static void script_crouch_lk_tail(Fighter *fighter) {

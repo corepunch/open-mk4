@@ -30,6 +30,25 @@ static void press(int player, unsigned held) {
   advance(1);
 }
 
+static void sweep_frames(void) {
+  for (int player = 0; player < 2; ++player) {
+    for (int interrupt = 0; interrupt < 2; ++interrupt) {
+      fight(player, 1.f);
+      Fighter *fighter = &g_battle.fighters[player];
+      Fighter *victim = &g_battle.fighters[1 - player];
+      press(player, BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT));
+      advance(17);
+      check(victim->health == Q16_ONE && !fighter_fiber_active(fighter), "sweep startup damaged early or allocated a fiber");
+      if (interrupt) {
+        fighter_interrupt(fighter, fighter_ready);
+      }
+      advance(80);
+      check(victim->health == Q16_ONE - (interrupt ? 0 : 0x23d7), "sweep contact or interruption damage changed");
+      check(fighter->state == S_IDLE && fighter->current_mmove == NULL, "sweep failed to recover");
+    }
+  }
+}
+
 static void normals(void) {
   for (int player = 0; player < 2; ++player) {
     unsigned back = BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT);
@@ -41,7 +60,9 @@ static void normals(void) {
       fight(player, 4.f);
       press(player, buttons[i]);
       check(fighter_move(&g_battle.fighters[player])->clip == clips[i], "stance/character selector chose wrong normal");
-      check(fighter_fiber_active(&g_battle.fighters[player]), "normal must suspend in its actor fiber");
+      check(i == 5 ? g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player])
+                   : fighter_fiber_active(&g_battle.fighters[player]),
+          "normal must enter its selected playback backend");
       advance(120);
       check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].health == Q16_ONE, "miss must recover without damage");
       check(!fighter_fiber_active(&g_battle.fighters[player]), "normal recovery must retire its stack");
@@ -1566,6 +1587,7 @@ int main(void) {
   fatalities();
   weapons();
   normals();
+  sweep_frames();
   ground_throws();
   ice();
   clone_tests();

@@ -94,8 +94,8 @@ static void setup(void) {
 }
 
 static const mframe_t test_mframes[] = {
-    {frame_ai, 1.5f, frame_think, 3, 2, NULL},
-    {NULL, 0.0f, frame_think, 4, 1, NULL},
+    {frame_ai, 1.5f, frame_think, 3, 2, NULL, NULL},
+    {NULL, 0.0f, frame_think, 4, 1, NULL, NULL},
 };
 static const mmove_t test_mmove = {.firstframe = 0, .lastframe = 1, .frame = test_mframes, .endfunc = mmove_end};
 

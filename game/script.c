@@ -19,6 +19,10 @@ static void bind_clip(Fighter *fighter, int clip, int count, int first) {
   fighter->sample_override = first;
 }
 
+void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first) {
+  bind_clip(fighter, clip, count, first);
+}
+
 void mk4_script_bind(Fighter *fighter, int clip, int count, int first) {
   require(fighter_fiber_running(fighter), "Generated clip needs a running owner");
   bind_clip(fighter, clip, count, first);
@@ -30,10 +34,10 @@ void mk4_script_bind_victim(Fighter *fighter, int clip, int count, int first) {
 }
 
 void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample) {
-  if (fighter_move(fighter)->clip != clip || fighter->sample_override != sample) {
+  if (fighter_move(fighter)->clip != clip || fighter_sample(fighter) != sample) {
     char message[160];
     snprintf(message, sizeof message, "Generated entry needs clip %d sample %d; native continuation has clip %d sample %d", clip, sample,
-        fighter_move(fighter)->clip, fighter->sample_override);
+        fighter_move(fighter)->clip, fighter_sample(fighter));
     require(false, message);
   }
   bind_clip(fighter, clip, count, sample);
