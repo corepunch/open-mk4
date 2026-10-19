@@ -644,10 +644,6 @@ CHARACTER_BINDINGS[10].update({
                       script_target=0x4de328, evidence='42be00 enters Reptile paired release stream 4de328'),
     0x42be10: Binding('reptile_script_lk_return', 'game/reptile/character.c', ('tail',), flow='terminal',
                       evidence='42be10 clears pair state and returns Reptile through its controller-ready boundary'),
-    0x42cc00: Binding('reptile_script_lp_select', 'game/reptile/character.c', ('tail',),
-                      evidence='42cc00 selects Reptile extended or short LP throw from pair ordering and range'),
-    0x42cc40: Binding('reptile_script_lp_end', 'game/reptile/character.c', ('tail',), flow='terminal',
-                      evidence='42cc40 releases the Reptile extended LP throw pair through owner recovery'),
     0x42ce80: Binding('reptile_script_lp_return', 'game/reptile/character.c', ('tail',), flow='terminal',
                       evidence='42ce80 closes Reptile short LP throw pair state before controller return'),
     0x45b1f0: Binding('reptile_script_current_reaction', 'game/reptile/character.c', ('handler',), ('fighter', 'arg_u8'),
@@ -1254,7 +1250,9 @@ for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
 
 for _cid, _name in ((7, 'reiko'), (10, 'reptile'), (17, 'noob_saibot')):
     for _address in (0x42cc00, 0x42cc40, 0x42ce80):
-        CHARACTER_BINDINGS[_cid][_address] = replace(CHARACTER_BINDINGS[_cid][_address], mmove=True)
+        # Reptile's 4de79c slot reaches only the short 42ce80 continuation.
+        if _address in CHARACTER_BINDINGS[_cid]:
+            CHARACTER_BINDINGS[_cid][_address] = replace(CHARACTER_BINDINGS[_cid][_address], mmove=True)
     if 0x45abf0 in CHARACTER_BINDINGS[_cid]:
         CHARACTER_BINDINGS[_cid][0x45abf0] = replace(CHARACTER_BINDINGS[_cid][0x45abf0], mmove=True)
     CHARACTER_BINDINGS[_cid][0x45b1f0] = Binding(_name + '_script_lp_reaction', 'game/' + _name + '/moves/common.c',

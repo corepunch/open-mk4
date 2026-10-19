@@ -45,7 +45,6 @@ void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
 void reiko_entry_retail_script_004de640(Fighter *fighter);
-void reptile_entry_retail_script_004de640(Fighter *fighter);
 void noob_saibot_entry_retail_script_004de640(Fighter *fighter);
 
 static void check(bool yes, const char *message) {
@@ -1360,7 +1359,8 @@ static void finish_window(int winner, float distance, int arena) {
 
 static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn alternate) {
   for (int slot = 0; slot < 2; ++slot) {
-    for (int extended = 0; extended < 2; ++extended) {
+    /* A NULL alternate marks a roster whose 4de79c slot reaches only the short throw. */
+    for (int extended = 0; extended < (alternate != NULL ? 2 : 1); ++extended) {
       for (int interrupted = 0; interrupted < 2; ++interrupted) {
         battle_init(slot ? 4 : roster, slot ? roster : 4);
         g_battle.phase = PHASE_FIGHT;
@@ -4414,7 +4414,7 @@ int main(void) {
   check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);
   check_branch_frame_lp_throw(12, 80, jarek_entry_retail_script_004de640);
   check_branch_frame_lp_throw(7, 80, reiko_entry_retail_script_004de640);
-  check_branch_frame_lp_throw(10, 80, reptile_entry_retail_script_004de640);
+  check_branch_frame_lp_throw(10, 80, NULL);
   check_branch_frame_lp_throw(17, 80, noob_saibot_entry_retail_script_004de640);
   check_peer_release_lp_throw(6, 75);
   check_peer_release_lp_throw(8, 78);

@@ -92,19 +92,6 @@ void reptile_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);
 }
 
-void reptile_entry_retail_script_004de640(Fighter *fighter) {
-  retail_script_004de640(fighter);
-}
-
-void reptile_entry_retail_script_004de664(Fighter *fighter) {
-  /* 4de664 is a490350 callback table, not a VM body. */
-  fighter->facing = -fighter->facing;
-}
-
-void reptile_entry_retail_script_004de668(Fighter *fighter) {
-  retail_script_004de668(fighter);
-}
-
 void reptile_entry_retail_script_004de6b8(Fighter *fighter) {
   retail_script_004de6b8(fighter);
 }
@@ -203,10 +190,6 @@ void reptile_entry_retail_script_004e8178(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e9620(Fighter *fighter) {
   retail_script_004e9620(fighter);
-}
-
-void reptile_entry_retail_script_004e9b40(Fighter *fighter) {
-  retail_script_004e9b40(fighter);
 }
 
 void reptile_entry_retail_script_004e9bd0(Fighter *fighter) {

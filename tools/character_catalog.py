@@ -188,12 +188,11 @@ def _moves_for(character):
         # families beyond the common combat roots. The 0x47a690 loop can
         # enter a second generated stream after its D-contact window.
         shared.update(
-            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('extended throw', 0x4de640),
-                                     ('short throw', 0x4de6b8),
-                                     ('owner return', 0x4de668), ('victim reaction 107', 0x4e9b40),
+            # 4de79c's roster table sends slot 10 straight to the short
+            # 4de6b8 throw; only the 4de858 slots (1, 7, 12) reach 42cc00/4de640.
+            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('short throw', 0x4de6b8),
                                      ('victim reaction 102', 0x4e9bd0)),
-                          native=(('selector', 0x42cc00), ('extended continuation', 0x42cc40),
-                                  ('short continuation', 0x42ce80))),
+                          native=(('short continuation', 0x42ce80),)),
             input_47a690=move(0x47a690,
                               (('selected stream', 0x4e8128), ('loop idle stream', 0x4e8148),
                                ('loop timeout stream', 0x4e8174)),

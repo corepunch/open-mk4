@@ -128,12 +128,6 @@
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 0
     },
-    "0x4de668": {
-      "clip": 80,
-      "count": 75,
-      "sample": 57,
-      "evidence": "Native 0x42cc40 enters this continuation from the clip 80/75 paired LP stream at sample 57; decoded script 0x4de640 and bounded native listing."
-    },
     "0x4e61e0": {
       "clip": 262,
       "count": 10,
@@ -151,8 +145,6 @@
     "0x4de2f8",
     "0x4de318",
     "0x4de328",
-    "0x4de640",
-    "0x4de668",
     "0x4de6b8",
     "0x4de798",
     "0x4e0118",
@@ -187,13 +179,12 @@
     "0x4e8174",
     "0x4e8178",
     "0x4e9620",
-    "0x4e9b40",
     "0x4e9bd0",
     "0x4ed1e8",
     "0x4e6270"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "b571162b4c10b99f940bd58eb8776b0ef4564c8be88bf069cc459d8f719f5bff",
+  "inventory_sha256": "d63c2c398b8483ed2eb348954329e2f1277f631a525e7a786edf61e5338a1e86",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -409,13 +400,7 @@
       "source": "game/reptile/moves/common.c",
       "symbol": "reptile_script_lp_reaction",
       "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
-      "evidence": "Contact selector 102 at 0x485b70 dispatches through current-context handler 0x45b1f0; the matching victim streams are 0x4e9bd0 and 0x4e9b40."
-    },
-    "107": {
-      "source": "game/reptile/moves/common.c",
-      "symbol": "reptile_script_lp_reaction",
-      "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
-      "evidence": "Contact selector 107 at 0x485a90 dispatches through current-context handler 0x45b1f0; the matching victim streams are 0x4e9bd0 and 0x4e9b40."
+      "evidence": "Contact selector 102 at 0x485b70 dispatches through current-context handler 0x45b1f0; the short 4de6b8 throw's victim stream is 0x4e9bd0."
     },
     "143": {
       "source": "game/reactions.c",
@@ -552,10 +537,7 @@
     "0x4e69b0",
     "0x4e6190",
     "0x4de798",
-    "0x4de640",
     "0x4de6b8",
-    "0x4de668",
-    "0x4e9b40",
     "0x4e9bd0",
     "0x4e6800",
     "0x4e6860",

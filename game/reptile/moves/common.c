@@ -7,7 +7,6 @@ static void reptile_ready(Fighter *fighter);
 static void reptile_script_47ab50(Fighter *fighter);
 static void reptile_script_47b260(Fighter *fighter);
 static void reptile_loop_frame(Fighter *fighter);
-static void reptile_script_lp_select(Fighter *fighter);
 void reptile_input_47a690(Fighter *fighter);
 void reptile_input_47afe0(Fighter *fighter);
 static void reptile_input_4988d0(Fighter *fighter);
@@ -159,27 +158,6 @@ void reptile_script_reaction_side_getup(Fighter *fighter) {
   mk4_script_thrown_finish(fighter);
 }
 
-static void reptile_script_lp_select(Fighter *fighter) {
-  q16 along = 0;
-  int64_t distance2 = 0;
-  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-    q16 delta = fighter->saved_motion[axis];
-    along += q16_mul(delta, fighter_axis(fighter, axis));
-    distance2 += ((int64_t)delta * delta) >> 16;
-  }
-  if (along >= 0 && distance2 < 0x280000) {
-    reptile_entry_retail_script_004de6b8(fighter);
-  } else {
-    reptile_entry_retail_script_004de640(fighter);
-  }
-}
-
-void reptile_script_lp_end(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  reptile_entry_retail_script_004de664(victim);
-  reptile_entry_retail_script_004de668(fighter);
-}
-
 void reptile_script_lp_return(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
@@ -250,14 +228,10 @@ static void reptile_entry_block(Fighter *fighter) {
 }
 
 void reptile_script_lp_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 102 || reaction == 107, "Unexpected reptile LP victim reaction");
+  require(reaction == 102, "Unexpected reptile LP victim reaction");
   Fighter *victim = mk4_script_release_pair(fighter);
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
   fighter_start_move(victim, S_KNOCKDOWN, &reptile_s_lp_thrown);
-  if (reaction == 102) {
-    reptile_entry_retail_script_004e9bd0(victim);
-  } else {
-    reptile_entry_retail_script_004e9b40(victim);
-  }
+  reptile_entry_retail_script_004e9bd0(victim);
 }
