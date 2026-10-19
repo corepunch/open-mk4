@@ -581,6 +581,13 @@ void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn vi
   mk4_air_throw_frames_with_moves(fighter, &s_air_throw, &s_air_thrown, owner_script, victim_script);
 }
 
+/* An interrupted captured victim must not stay suspended without gravity. */
+static void air_frame_victim_cleanup(Fighter *victim) {
+  if (fighter_airborne(victim) && victim->body.gravity == 0) {
+    victim->body.gravity = 0x28f;
+  }
+}
+
 /* Roster-specific air throws keep the shared 48f9f0 pair acquisition and
  * captured-victim hold while selecting their own owner and victim clips. */
 void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
@@ -596,27 +603,6 @@ void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move
 void mk4_air_pair_frames(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
   require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
   air_pair_capture(fighter, owner_move, victim_move);
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  victim->paired_release = victim_script;
-  fighter_mmove_phase(victim, &air_frame_victim_phase);
-  fighter->mmove_cleanup = air_frame_cleanup;
-  owner_script(fighter);
-}
-
-/* An interrupted captured victim must not stay suspended without gravity. */
-static void air_frame_victim_cleanup(Fighter *victim) {
-  if (fighter_airborne(victim) && victim->body.gravity == 0) {
-    victim->body.gravity = 0x28f;
-  }
-}
-
-/* Same native capture as 46aa80, for roster entries whose own opener binds
- * different paired clips (Jax 46a990 -> 4e5dd8 opens 84/144). */
-void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
-  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
-  if (!air_throw_start(fighter, owner_move, victim_move)) {
-    return;
-  }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   victim->paired_release = victim_script;
   fighter_mmove_phase(victim, &air_frame_victim_phase);
