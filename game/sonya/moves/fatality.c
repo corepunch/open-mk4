@@ -9,7 +9,7 @@ void sonya_arena_fatality(Fighter *fighter, int id) {
   }
   mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, id == FINISH_FAN ? 130 : 20, 0);
   mk4_script_scene_pose(sonya_opponent(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
-  fighter_start_fiber(fighter, id == FINISH_FAN ? sonya_fan_start : sonya_spike_start, NULL);
+  (id == FINISH_FAN ? sonya_fan_start : sonya_spike_start)(fighter);
 }
 
 /* Native scenes retain independent victims, blends, particles and teardown.
@@ -21,7 +21,7 @@ void sonya_scene_end_watch(Fighter *fighter) {
     fighter->body.physics = NULL;
     return;
   }
-  if (fighter->sample_override == fighter_move(fighter)->last && (clip == 573 || clip == 388 || clip == 114)) {
+  if (fighter_sample(fighter) == fighter_move(fighter)->last && (clip == 573 || clip == 388 || clip == 114)) {
     fighter->body.physics = NULL;
     battle_end_finisher();
   }
@@ -33,7 +33,7 @@ static void script_victory(Fighter *fighter) {
 
 void sonya_enter_victory(Fighter *fighter) {
   fighter_start_move(fighter, S_VICTORY, &sonya_s_victory);
-  fighter_start_fiber(fighter, script_victory, NULL);
+  script_victory(fighter);
 }
 
 bool sonya_can_close_fatality(const Fighter *fighter) {

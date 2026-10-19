@@ -5,8 +5,12 @@ void sonya_script_spike_tail(Fighter *fighter) {
 }
 
 void sonya_spike_start(Fighter *fighter) {
-  native_delay(fighter, maxi(0, 30 - g_battle.phase_ticks));
-  sonya_entry_retail_script_004e6950(fighter);
+  int frames = 30 - g_battle.phase_ticks;
+  if (frames > 0) {
+    native_hold(fighter, frames, sonya_entry_retail_script_004e6950);
+  } else {
+    sonya_entry_retail_script_004e6950(fighter);
+  }
 }
 
 void sonya_spike_fatality(Fighter *fighter) {

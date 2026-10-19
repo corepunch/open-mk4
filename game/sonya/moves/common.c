@@ -1,5 +1,7 @@
 #include "../character.h"
 
+static void lk_return_done(Fighter *fighter);
+static void lk_return_hold(Fighter *fighter);
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
 static const NativeHPProfile hp_profile = {&hp_record, &sonya_s_hp, &s_hp_second, sonya_ready};
@@ -51,7 +53,8 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 184) {
     Fighter *victim = sonya_opponent(fighter);
     mk4_script_scene_pose(victim, 561, 79, 0);
-    fighter_start_fiber(victim, sonya_entry_retail_script_004e59c8, NULL);
+    fighter_cancel_mmove(victim);
+    sonya_entry_retail_script_004e59c8(victim);
     return;
   }
   if (reaction == 175) {
@@ -61,17 +64,21 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
   Fighter *victim = mk4_script_release_pair(fighter);
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
-  fighter_start_fiber(victim,
-      reaction == 78   ? sonya_lk_victim
-      : reaction == 79 ? sonya_entry_retail_script_004e9a68
-                       : sonya_entry_retail_script_004e9b88,
-      NULL);
+  fighter_cancel_mmove(victim);
+  FighterFn script = reaction == 78 ? sonya_lk_victim : reaction == 79 ? sonya_entry_retail_script_004e9a68 : sonya_entry_retail_script_004e9b88;
+  script(victim);
+}
+
+static void lk_return_done(Fighter *fighter) {
+  fighter_finish_mmove(fighter, sonya_ready);
+}
+
+static void lk_return_hold(Fighter *fighter) {
+  native_hold(fighter, 20, lk_return_done); /* Native stance blend, step 0xccc. */
 }
 
 void sonya_script_lk_return(Fighter *fighter) {
-  mk4_script_finish_clip(fighter, 1);
-  native_delay(fighter, 20); /* Native stance blend, step 0xccc. */
-  fighter_fiber_finish(sonya_ready);
+  native_finish_clip(fighter, lk_return_hold);
 }
 
 void sonya_special_cleanup(Fighter *fighter) {
@@ -81,15 +88,6 @@ void sonya_special_cleanup(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
   }
-}
-
-void sonya_script_reaction_side_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    mk4_script_thrown_finish(victim);
-  }
-  mk4_script_bind(victim, 185, 16, 0);
-  mk4_script_finish_clip(victim, 1);
-  mk4_script_thrown_finish(victim);
 }
 
 void sonya_generated_reaction(Fighter *victim) {
@@ -128,5 +126,5 @@ void sonya_generated_reaction(Fighter *victim) {
   if (fighter_airborne(victim) && victim->body.gravity == 0) {
     victim->body.gravity = 0x28f;
   }
-  fighter_start_fiber(victim, script, NULL);
+  script(victim);
 }

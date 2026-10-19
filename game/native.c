@@ -233,6 +233,28 @@ void native_queries(Fighter *fighter, const AttackRecord *record, int frames, in
   native_calls(fighter, frames, pose_step, query_frame);
 }
 
+/* Contact leaves early through the continuation, which replaces the rows. */
+static void query_continue(Fighter *fighter) {
+  if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
+    fighter->native.move.endfunc(fighter);
+  }
+}
+
+/* Nonblocking native_queries: up to frames contact rows, then end. */
+void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames, int pose_step, FighterFn end) {
+  if (frames <= 0) {
+    end(fighter);
+    return;
+  }
+  int pose = fighter_sample(fighter);
+  fighter->native_record = record;
+  native_begin(fighter, 1, frames, end);
+  for (int frame = 1; frame <= frames; ++frame) {
+    native_frame(fighter, frame, maxi(0, pose + frame * pose_step), query_continue);
+  }
+  native_play(fighter, false);
+}
+
 static void condition_frame(Fighter *fighter) {
   fighter->mmove_hold = !fighter->native_condition(fighter);
 }

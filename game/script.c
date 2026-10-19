@@ -344,14 +344,15 @@ void mk4_script_pair_to(Fighter *owner, int sample) {
   mk4_script_pair_advance(owner, sample - owner->sample_override);
 }
 
-/* 45bbc0/45beb0: reverse both live cursors, then hand off for one actor tick. */
-static void pair_back_frame(Fighter *owner) {
+/* 45bbc0/45beb0: reverse both live cursors, then hand off for one actor tick.
+ * Each owner visit steps the victim back one pose. */
+void mk4_mmove_pair_back_step(Fighter *owner) {
   Fighter *victim = (Fighter *)fighter_opponent(owner);
   victim->sample_override = maxi(0, fighter_sample(victim) - 1);
 }
 
 void mk4_script_pair_back_to(Fighter *owner, int sample) {
-  native_calls(owner, fighter_sample(owner) - sample, -1, pair_back_frame);
+  native_calls(owner, fighter_sample(owner) - sample, -1, mk4_mmove_pair_back_step);
   native_delay(owner, 1);
 }
 
@@ -483,6 +484,13 @@ void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
   mk4_script_carry_victim(fighter, move);
+}
+
+void mk4_mmove_pair_victim(Fighter *fighter, const MoveDef *move) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  victim->facing = fighter->facing;
+  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  mk4_mmove_carry_victim(fighter, move);
 }
 
 Fighter *mk4_script_release_pair(Fighter *fighter) {
@@ -721,6 +729,21 @@ void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int qu
   fighter_set_speed(fighter, 0);
   mk4_script_finish_clip(fighter, 1);
   fighter_fiber_finish(fighter_ready);
+}
+
+static void weapon_tail_done(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static void weapon_tail_recover(Fighter *fighter) {
+  fighter->action = ACTION_RETAIL_1006;
+  fighter->body.physics = NULL;
+  fighter_set_speed(fighter, 0);
+  native_finish_clip(fighter, weapon_tail_done);
+}
+
+void mk4_mmove_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {
+  native_query_rows(fighter, record, queries, 1, weapon_tail_recover);
 }
 
 static void scene_task_step(Projectile *object) {

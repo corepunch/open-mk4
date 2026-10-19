@@ -144,6 +144,19 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
             wait(1)
         elif key and binding.mmove_lowering == 'pair_to':
             advance(arg, paired=True)
+        elif key and binding.mmove_lowering == 'pair_back_to':
+            # 45beb0 reverses both cursors one pose per visit, then holds
+            # the owner for one visit before the following row.
+            if not victim_bound:
+                fail('paired playback without a known victim clip')
+            if sample is None or count is None:
+                fail('playback without a known clip')
+            while sample > arg:
+                wait(1)
+                sample -= 1
+                emit('fighter->sample_override = %d;' % sample)
+                emit('mk4_mmove_pair_back_step(fighter);')
+            wait(1)
         elif key:
             if not binding.mmove:
                 fail('native binding is not reviewed for nonblocking frame callbacks: ' + binding.symbol)

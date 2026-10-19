@@ -51,8 +51,7 @@ void sonya_script_close_hp_tail(Fighter *fighter) {
 }
 
 void sonya_script_combo_hp_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  sonya_ground_native_tail(fighter);
+  sonya_ground_native_next(fighter);
 }
 
 void sonya_cpu_close_hp(Fighter *fighter) {

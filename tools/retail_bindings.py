@@ -27,9 +27,9 @@ class Binding:
     mmove: bool = False  # reviewed nonblocking native callback for frame-table lowering
 
     def __post_init__(self):
-        if self.mmove_lowering not in ('', 'pair_to', 'reverse_return', 'controller_return', 'current'):
+        if self.mmove_lowering not in ('', 'pair_to', 'pair_back_to', 'reverse_return', 'controller_return', 'current'):
             raise ValueError('Unknown mmove native lowering')
-        if self.mmove_lowering in ('pair_to', 'current') and (self.flow != 'suspend' or self.roles != ('handler',)):
+        if self.mmove_lowering in ('pair_to', 'pair_back_to', 'current') and (self.flow != 'suspend' or self.roles != ('handler',)):
             raise ValueError('Mmove playback lowering requires a yielding handler')
         if self.mmove_lowering in ('reverse_return', 'controller_return') and (self.flow != 'terminal' or self.roles != ('tail',)):
             raise ValueError('Controller-return lowering requires a terminal tail')
@@ -363,7 +363,7 @@ CHARACTER_BINDINGS[1][0x4889b0] = Binding('script_torpedo_victim_motion', 'game/
 CHARACTER_BINDINGS[2][0x488c10] = Binding('script_weapon_victim_getup', 'game/sonya/character.c', ('tail',), evidence='488c10 KO-aware front/back getup; uses shared native getup')
 BINDINGS[0x46a850] = Binding('mk4_script_reverse_return', 'game/script.c', ('tail',), flow='terminal', evidence='46a850 -> 429380 reverses the current clip then 46f650 controller return', mmove_lowering='reverse_return')
 BINDINGS[0x46a6e0] = Binding('mk4_script_reverse_return', 'game/script.c', ('tail',), flow='terminal', evidence='46a6e0 kick reversal -> 429380 then 46f650 controller return', mmove_lowering='reverse_return')
-BINDINGS[0x45bbc0] = Binding('mk4_script_pair_back_to', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), flow='suspend', cursor_effect='unknown', evidence='45bbc0 -> 45beb0 decrements owner and victim cursors to the inline target')
+BINDINGS[0x45bbc0] = Binding('mk4_script_pair_back_to', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), flow='suspend', cursor_effect='unknown', mmove_lowering='pair_back_to', evidence='45bbc0 -> 45beb0 decrements owner and victim cursors to the inline target')
 
 # Reiko's selected roots share native continuations with the established
 # roster ports. Keep the fighter-specific behavior in c_reiko.c and reuse
@@ -1777,3 +1777,20 @@ CHARACTER_BINDINGS[1][0x484b60] = Binding('mk4_mmove_air_getup', 'game/mk4_commo
 CHARACTER_BINDINGS[1][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
     evidence='488b40 KO-aware native side getup on clip 185')
 CHARACTER_BINDINGS[1][0x48f750] = replace(BINDINGS[0x48f750], mmove=True)
+
+
+# Sonya runs every generated root as a frame program, with the same
+# nonblocking native continuations as Raiden plus her own specials.
+for _address in (0x45b1f0, 0x45b230, 0x42bf00, 0x43d6f0, 0x43f510, 0x464bd0, 0x465e10, 0x465e70, 0x465ea0, 0x465ed0, 0x466000,
+                 0x466190, 0x46a6b0, 0x46aed0, 0x46b740, 0x46bb60, 0x46bf10, 0x46c2c0, 0x46c7f0, 0x46e150, 0x46e5c0, 0x46e730,
+                 0x46eea0, 0x46f220, 0x46f270, 0x47b6c0, 0x47e0a0, 0x47e1d0, 0x482790, 0x488c10, 0x4847e0, 0x4858d0, 0x485b50,
+                 0x496770, 0x496970, 0x49ba50, 0x49b9e0, 0x467fc0, 0x4712e0):
+    CHARACTER_BINDINGS[2][_address] = replace(CHARACTER_BINDINGS[2][_address], mmove=True)
+CHARACTER_BINDINGS[2][0x43d460] = replace(CHARACTER_BINDINGS[2][0x43d460], flow='terminal', mmove=True,
+    evidence='43d460 enters generated 4e0138, expands its frame phase for 31 fan cycles, then releases owner 4e0148 and victim 4e01a0')
+CHARACTER_BINDINGS[2][0x43db50] = Binding('script_fan_victim_end', 'game/sonya/moves/fan.c', ('tail',), flow='terminal', mmove=True,
+    evidence='43db50 hides the released fan victim and retires its frame program')
+CHARACTER_BINDINGS[2][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+    evidence='488b40 KO-aware native side getup on clip 185')
+for _address in (0x490290, 0x494520):
+    CHARACTER_BINDINGS[2][_address] = replace(BINDINGS[_address], mmove=True)

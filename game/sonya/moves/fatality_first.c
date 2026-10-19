@@ -12,7 +12,7 @@ void sonya_first_fatality(Fighter *fighter) {
   }
   mk4_script_scene_pose(fighter, 388, 129, 0);
   mk4_script_scene_pose(sonya_opponent(fighter), 389, 1, 0);
-  fighter_start_fiber(fighter, sonya_entry_retail_script_004e01c0, NULL);
+  sonya_entry_retail_script_004e01c0(fighter);
 }
 
 bool sonya_can_first_fatality(const Fighter *fighter) {

@@ -47,10 +47,12 @@ void mk4_script_draw_voice(Fighter *fighter);
 void mk4_script_scene_active(Fighter *fighter);
 void mk4_script_pair_to(Fighter *owner, int sample);
 void mk4_script_pair_back_to(Fighter *owner, int sample);
+void mk4_mmove_pair_back_step(Fighter *owner);
 void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move);
+void mk4_mmove_pair_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_carry_victim(Fighter *fighter, const MoveDef *move);
 void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_pair_cleanup(Fighter *fighter);
@@ -82,6 +84,7 @@ void mk4_script_projectile_step(Projectile *object, const AttackRecord *record, 
 Projectile *mk4_script_projectile_spawn(Fighter *fighter, ProjectileFn step, const MeshAnimation *mesh, q16 forward, q16 y, int lifetime);
 void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int duration);
 void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries);
+void mk4_mmove_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries);
 void mk4_script_scene_task(Fighter *fighter, int task_type);
 
 void mk4_mmove_hold(Fighter *fighter);

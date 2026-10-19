@@ -5,8 +5,7 @@ void sonya_roundhouse(Fighter *fighter) {
 }
 
 void sonya_script_roundhouse_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  sonya_ground_native_tail(fighter);
+  sonya_ground_native_next(fighter);
 }
 
 void sonya_script_roundhouse_start(Fighter *fighter) {

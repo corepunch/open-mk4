@@ -32,6 +32,10 @@ void sonya_ground_native_tail(Fighter *fighter) {
   native_ground_tail(fighter, &ground_profile);
 }
 
+void sonya_ground_native_next(Fighter *fighter) {
+  native_ground_next(fighter, &ground_profile);
+}
+
 void sonya_ground_attack(Fighter *fighter, int index) {
   bool followup = fighter_fast_start(fighter);
   sonya_stop_body(fighter);
@@ -43,11 +47,7 @@ void sonya_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {sonya_entry_retail_script_004e5d90, sonya_ground_native_tail, sonya_entry_retail_script_004e6158,
       sonya_entry_retail_script_004e6020, sonya_entry_retail_script_004e61e0, sonya_entry_retail_script_004e69b0, sonya_entry_retail_script_004e6190,
       sonya_entry_retail_script_004e6800};
-  if (index == G_LOW_KICK) {
-    scripts[index](fighter);
-  } else {
-    fighter_start_fiber(fighter, scripts[index], NULL);
-  }
+  scripts[index](fighter);
 }
 
 void sonya_crouch_lp(Fighter *fighter) {
@@ -75,8 +75,7 @@ void sonya_press_crouch_lk(Fighter *fighter) {
 }
 
 void sonya_script_crouch_lk_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  sonya_ground_native_tail(fighter);
+  sonya_ground_native_next(fighter);
 }
 
 void sonya_script_knee_tail(Fighter *fighter) {

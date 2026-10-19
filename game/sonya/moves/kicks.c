@@ -12,7 +12,7 @@ static void sonya_kick_contact(Fighter *fighter) {
 
 void sonya_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &sonya_s_kick);
-  fighter_start_fiber(fighter, sonya_entry_retail_script_004e5ca0, NULL);
+  sonya_entry_retail_script_004e5ca0(fighter);
 }
 
 void sonya_press_kick(Fighter *fighter) {
@@ -20,6 +20,5 @@ void sonya_press_kick(Fighter *fighter) {
 }
 
 void sonya_script_kick_tail(Fighter *fighter) {
-  native_calls(fighter, 3, 0, sonya_kick_contact);
-  sonya_entry_retail_script_004e5d20(fighter);
+  native_kick_contact_phase(fighter, sonya_kick_contact, sonya_entry_retail_script_004e5d20);
 }

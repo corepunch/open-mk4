@@ -39,23 +39,25 @@ static void weapon_lp(Fighter *fighter) {
 }
 
 void sonya_script_weapon_hp_tail(Fighter *fighter) {
-  mk4_script_weapon_tail(fighter, &weapon_back_hp_record, 7);
+  mk4_mmove_weapon_tail(fighter, &weapon_back_hp_record, 7);
 }
 
 void sonya_script_weapon_lp_tail(Fighter *fighter) {
-  mk4_script_weapon_tail(fighter, &weapon_back_lp_record, 2);
+  mk4_mmove_weapon_tail(fighter, &weapon_back_lp_record, 2);
 }
 
 static void weapon_back_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
-  fighter_start_fiber(fighter, sonya_entry_retail_script_004ec7a0, sonya_special_cleanup);
+  fighter->mmove_cleanup = sonya_special_cleanup;
+  sonya_entry_retail_script_004ec7a0(fighter);
 }
 
 static void weapon_back_lp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_lp);
   mk4_script_schedule_motion(fighter, 0x1999, 8, 13);
-  fighter_start_fiber(fighter, sonya_entry_retail_script_004ec7f0, sonya_special_cleanup);
+  fighter->mmove_cleanup = sonya_special_cleanup;
+  sonya_entry_retail_script_004ec7f0(fighter);
 }
 
 void sonya_script_draw_equip(Fighter *fighter) {
@@ -97,6 +99,5 @@ void sonya_armed_block(Fighter *fighter) {
 }
 
 void sonya_script_weapon_victim_getup(Fighter *victim) {
-  mk4_script_finish_clip(victim, 1);
-  sonya_script_throw_getup(victim);
+  native_finish_clip(victim, sonya_script_throw_getup);
 }

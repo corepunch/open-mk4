@@ -37,6 +37,7 @@
 #define fan_start sonya_fan_start
 #define first_fatality sonya_first_fatality
 #define ground_attack sonya_ground_attack
+#define ground_native_next sonya_ground_native_next
 #define ground_native_tail sonya_ground_native_tail
 #define hp_script sonya_hp_script
 #define lk_victim sonya_lk_victim
@@ -78,6 +79,7 @@
 #define script_crouch_lk_tail sonya_script_crouch_lk_tail
 #define script_draw_equip sonya_script_draw_equip
 #define script_fan_tail sonya_script_fan_tail
+#define script_fan_victim_end sonya_script_fan_victim_end
 #define script_fan_victory sonya_script_fan_victory
 #define script_first_release sonya_script_first_release
 #define script_kick_tail sonya_script_kick_tail
@@ -86,7 +88,6 @@
 #define script_leg_victim_end sonya_script_leg_victim_end
 #define script_lk_return sonya_script_lk_return
 #define script_reaction sonya_script_reaction
-#define script_reaction_side_getup sonya_script_reaction_side_getup
 #define script_ring_flash sonya_script_ring_flash
 #define script_ring_spawn sonya_script_ring_spawn
 #define script_roundhouse_start sonya_script_roundhouse_start
@@ -162,6 +163,7 @@ void sonya_enter_victory(Fighter *fighter);
 void sonya_fan_start(Fighter *fighter);
 void sonya_first_fatality(Fighter *fighter);
 void sonya_ground_attack(Fighter *fighter, int index);
+void sonya_ground_native_next(Fighter *fighter);
 void sonya_ground_native_tail(Fighter *fighter);
 void sonya_hp_script(Fighter *fighter);
 void sonya_lk_victim(Fighter *victim);
@@ -184,6 +186,7 @@ void sonya_press_uppercut(Fighter *fighter);
 void sonya_entry_retail_script_004de360(Fighter *fighter);
 void sonya_entry_retail_script_004de798(Fighter *fighter);
 void sonya_entry_retail_script_004e0118(Fighter *fighter);
+void sonya_entry_retail_script_004e0138(Fighter *fighter);
 const mmove_t *sonya_retail_script_004e0138_repeat_phase(void);
 void sonya_entry_retail_script_004e0148(Fighter *fighter);
 void sonya_entry_retail_script_004e0158(Fighter *fighter);
@@ -263,6 +266,7 @@ void sonya_script_combo_hp_tail(Fighter *fighter);
 void sonya_script_crouch_lk_tail(Fighter *fighter);
 void sonya_script_draw_equip(Fighter *fighter);
 void sonya_script_fan_tail(Fighter *fighter);
+void sonya_script_fan_victim_end(Fighter *fighter);
 void sonya_script_fan_victory(Fighter *fighter);
 void sonya_script_first_release(Fighter *fighter);
 void sonya_script_kick_tail(Fighter *fighter);
@@ -271,7 +275,6 @@ void sonya_script_leg_grab_tail(Fighter *fighter);
 void sonya_script_leg_victim_end(Fighter *victim);
 void sonya_script_lk_return(Fighter *fighter);
 void sonya_script_reaction(Fighter *fighter, int reaction);
-void sonya_script_reaction_side_getup(Fighter *victim);
 void sonya_script_ring_flash(Fighter *fighter, int task_type);
 void sonya_script_ring_spawn(Fighter *fighter, int task_type);
 void sonya_script_roundhouse_start(Fighter *fighter);

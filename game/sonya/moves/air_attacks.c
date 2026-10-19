@@ -3,6 +3,9 @@
 static const ButtonTable air_followup;
 static const ButtonTable air_ground_followup;
 static void air_land(Fighter *fighter);
+static void air_release_land(Fighter *fighter);
+static void air_release_fall(Fighter *fighter);
+static void air_getup_rise(Fighter *victim);
 static void air_native_tail(Fighter *fighter, int index, int elapsed);
 static void start_air_attack(Fighter *fighter, int index);
 static void air_lp(Fighter *fighter);
@@ -53,7 +56,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
   static const FighterFn scripts[] = {sonya_entry_retail_script_004e6658, sonya_entry_retail_script_004e6710, sonya_entry_retail_script_004e61f8,
       sonya_entry_retail_script_004e6500, sonya_entry_retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  scripts[index](fighter);
 }
 
 void sonya_air_hp(Fighter *fighter) {
@@ -134,27 +137,39 @@ void sonya_script_air_diagonal_tail(Fighter *fighter) {
   air_native_tail(fighter, 3, 0);
 }
 
+static void air_release_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
+static void air_release_fall(Fighter *fighter) {
+  fighter->body.gravity = 0x20c;
+  fighter->body.vel[AXIS_Y] = -0x51e;
+  native_await(fighter, native_grounded, air_release_land);
+}
+
+/* The released victim's stream starts after the owner's damage, as the
+ * deferred victim fiber did. */
 void sonya_script_air_release(Fighter *fighter) {
   Fighter *victim = mk4_script_release_pair(fighter);
   victim->reaction = 85;
-  fighter_start_fiber(victim, sonya_entry_retail_script_004e98a0, NULL);
   battle_damage(victim, 0x2666);
-  mk4_script_finish_clip(fighter, 1);
-  fighter->body.gravity = 0x20c;
-  fighter->body.vel[AXIS_Y] = -0x51e;
-  native_until(fighter, native_grounded);
-  fighter_fiber_finish(mk4_land);
+  fighter_cancel_mmove(victim);
+  sonya_entry_retail_script_004e98a0(victim);
+  native_finish_clip(fighter, air_release_fall);
+}
+
+static void air_getup_rise(Fighter *victim) {
+  mk4_script_stop_body(victim);
+  if (victim->health <= 0) {
+    fighter_finish_mmove(victim, NULL);
+    return;
+  }
+  mk4_mmove_bind(victim, 197, 29, 0);
+  native_finish_clip(victim, mk4_mmove_thrown_finish);
 }
 
 void sonya_script_air_getup(Fighter *victim) {
-  mk4_script_finish_clip(victim, 1);
-  mk4_script_stop_body(victim);
-  if (victim->health <= 0) {
-    fighter_fiber_finish(NULL);
-  }
-  mk4_script_bind(victim, 197, 29, 0);
-  mk4_script_finish_clip(victim, 1);
-  mk4_script_thrown_finish(victim);
+  native_finish_clip(victim, air_getup_rise);
 }
 
 void sonya_cpu_air_hk(Fighter *fighter) {
