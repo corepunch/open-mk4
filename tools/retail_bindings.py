@@ -746,6 +746,19 @@ CHARACTER_BINDINGS[11] = {
 }
 CHARACTER_BINDINGS[11][0x47bd40] = Binding('kai_aerial_punch_contact', 'game/kai/moves/aerial_punch.c', ('tail',), flow='terminal', mmove=True,
                                            evidence='47bd40 runs 4704d0 record4e8238: 15 airborne D[16] visits, contact47be50, floor47bed0, timeout47bd60; not a VM program')
+# Kai's first fatality: 44ad70 owner, 44b0e0 victim and 44b4a0 torso continuations on frame phases.
+for _address, _symbol, _evidence in (
+        (0x44aeb0, 'kai_first_owner_grab', '44aeb0 victim voice list2, B[31]/B[2f], cursor46 then4e1440'),
+        (0x44af20, 'kai_first_owner_spin', '44af20 enters4e1450 two clip445 passes'),
+        (0x44af30, 'kai_first_owner_tear', '44af30 clip440 124..364, impact/shake5/female .1 lift, 365..393, impact/shake7, then4e1468'),
+        (0x44b260, 'kai_first_victim_71', '44b260 cursor71 then4e1490'),
+        (0x44b290, 'kai_first_victim_turn', '44b290 B[29] then4e14a8'),
+        (0x44b2c0, 'kai_first_victim_sever', '44b2c0 B[2a] 441 124..145, B[2b] ..161, 476eb0 waist, torso task44b4a0, then4e14b8'),
+        (0x44b600, 'kai_first_torso_203', '44b600 female torso .1 lift, cursor203 then4e14d8'),
+        (0x44b650, 'kai_first_torso_impact', '44b650 B[12] then4e14e8'),
+        (0x49cb60, 'kai_first_task_end', '49cb60 retires the first-fatality victim or torso task, leaving its final pose')):
+    CHARACTER_BINDINGS[11][_address] = Binding(_symbol, 'game/kai/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True, evidence=_evidence)
+
 # Kai's skull specials: native task spawns and owner returns on frame phases.
 CHARACTER_BINDINGS[11][0x499450] = Binding('kai_rising_skull_spawn', 'game/kai/moves/skull.c', ('tail',), flow='terminal', mmove=True,
                                            evidence='499450 spawns task499490 type48 (4ed390 rig, rise to Y-4, drop over the peer with C[8]) and enters4ed348')

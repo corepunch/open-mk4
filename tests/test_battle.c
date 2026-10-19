@@ -37,6 +37,8 @@ void kai_rising_skull(Fighter *fighter);
 void kai_ground_skull(Fighter *fighter);
 bool kai_can_rising_skull(const Fighter *fighter);
 bool kai_can_ground_skull(const Fighter *fighter);
+void kai_fatality_1(Fighter *fighter);
+bool kai_can_first_fatality(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
@@ -3086,8 +3088,105 @@ static void check_kai_skulls(void) {
   }
 }
 
+/* Kai fatalities: deciding-KO window shared by both finisher checks. */
+static void kai_finish_window(int slot, int target, q16 half_distance) {
+  battle_init(slot ? target : 11, slot ? 11 : target);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+  owner->wins = 1;
+  battle_damage(victim, Q16_ONE);
+  advance_ticks(1, NULL);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance_ticks(1, NULL);
+  }
+  check(battle_can_finish(owner), "Kai fatality needs the deciding-KO command window");
+  owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+}
+
+/* Type a generated Kai command while holding extra buttons throughout. */
+static void kai_enter_command(int slot, FighterFn entry, unsigned held) {
+  const Controls *controls = roster_def(11)->controls;
+  const CommandDef *command = NULL;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].enter == entry) {
+      command = &controls->commands[i];
+    }
+  }
+  check(command != NULL, "Kai fatality needs its real generated command");
+  Input input[2] = {0};
+  input[slot].held = held;
+  advance_ticks(2, input);
+  for (int i = 0; i < command->count; ++i) {
+    CommandToken token = command->tokens[i];
+    Button direction = token == TOKEN_UP        ? BUTTON_UP
+                       : token == TOKEN_DOWN    ? BUTTON_DOWN
+                       : token == TOKEN_FORWARD ? (slot ? BUTTON_LEFT : BUTTON_RIGHT)
+                                                : (slot ? BUTTON_RIGHT : BUTTON_LEFT);
+    input[slot].held = held | BUTTON_BIT(direction);
+    battle_step(input);
+    input[slot].held = held;
+    advance_ticks(2, input);
+  }
+  input[slot].held = held | BUTTON_BIT(command->button);
+  battle_step(input);
+  advance_ticks(2, NULL);
+}
+
+static void check_kai_first_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int variant = 0; variant < 3; ++variant) {
+      bool female = variant == 1;
+      kai_finish_window(slot, female ? 2 : 4, 0x6666);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_UP);
+      check(kai_can_first_fatality(owner), "Kai first gate must accept BLK+HK with Up outside its mask");
+      owner->held |= BUTTON_BIT(BUTTON_LOW_PUNCH);
+      check(!kai_can_first_fatality(owner), "Kai first gate must reject another held attack");
+      owner->held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_HIGH_KICK);
+      owner->body.pos[AXIS_X] = slot ? 0xa000 : -0xa000;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(!kai_can_first_fatality(owner), "Kai first gate must reject a pair beyond one unit");
+      owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      owner->held = 0;
+      kai_enter_command(slot, kai_fatality_1, BUTTON_BIT(BUTTON_BLOCK));
+      check(g_battle.phase == PHASE_FATALITY && !fighter_fiber_active(owner), "Kai first command must start its own frame-only scene");
+      int timer = g_battle.time_ticks;
+      bool torso = false, paired = false;
+      int limit = variant == 2 ? 300 : 900;
+      for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai first fatality must stay on frame phases");
+        paired |= fighter_move(owner)->clip == 440 && fighter_move(victim)->clip == 441 && owner->body.pos[AXIS_X] == victim->body.pos[AXIS_X];
+        for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+          const SceneActor *body = &g_battle.scene_actors[i];
+          if (body->active) {
+            torso = true;
+            check(body->source == 1 - slot && body->owner == slot && fighter_move(&body->actor)->clip == 442 &&
+                      body->actor.hidden_joints[0] == ((UINT64_C(1) << 11) | (UINT64_C(1) << 12)) && !fighter_fiber_active(&body->actor),
+                "Kai's detached torso must keep its source rig, clip 442 and leg mask without a fiber");
+          }
+        }
+      }
+      check(paired && torso, "Kai first fatality must share the 440/441 origin and detach the torso");
+      if (variant != 2) {
+        check(g_battle.phase == PHASE_MATCH_OVER && fighter_move(owner)->clip == 443 && fighter_sample(victim) == 401 && owner->native_variant == 7,
+            "Kai first fatality must finish victim and torso before the result while the owner loops 443");
+        check(victim->hidden_joints[0] == (UINT64_C(1) << 3) && owner->wins == 2 && victim->health == 0 && g_battle.time_ticks == timer,
+            "Kai first fatality must preserve the severed waist, decided result and frozen clock");
+      }
+      battle_reset_match();
+      check(victim->hidden_joints[0] == 0, "Kai first fatality reset must restore the victim");
+      for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+        check(!g_battle.scene_actors[i].active, "Kai first fatality reset must retire the torso");
+      }
+    }
+  }
+}
+
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 8, 9, 11, 12, 15, 17};
+  const int rosters[] = {7, 8, 9, 12, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -4314,6 +4413,7 @@ int main(void) {
   check_kai_handstand_frames();
   check_kai_df_specials();
   check_kai_skulls();
+  check_kai_first_fatality();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_roster_high_punch_frames();

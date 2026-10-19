@@ -2344,6 +2344,197 @@
           "0x499000"
         ]
       }
+    ],
+    "0x4e1430": [
+      {
+        "pc": "0x4e1430",
+        "words": [
+          "0x4700022d",
+          "0x13f087"
+        ]
+      },
+      {
+        "pc": "0x4e1438",
+        "words": [
+          "0x32000000",
+          "0x44aeb0"
+        ]
+      }
+    ],
+    "0x4e1440": [
+      {
+        "pc": "0x4e1440",
+        "words": [
+          "0x500007b"
+        ]
+      },
+      {
+        "pc": "0x4e1444",
+        "words": [
+          "0x32000000",
+          "0x44af20"
+        ]
+      }
+    ],
+    "0x4e1450": [
+      {
+        "pc": "0x4e1450",
+        "words": [
+          "0x48000200",
+          "0x13f096"
+        ]
+      },
+      {
+        "pc": "0x4e1458",
+        "words": [
+          "0x48000200",
+          "0x13f096"
+        ]
+      },
+      {
+        "pc": "0x4e1460",
+        "words": [
+          "0x32000000",
+          "0x44af30"
+        ]
+      }
+    ],
+    "0x4e1468": [
+      {
+        "pc": "0x4e1468",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e146c",
+        "words": [
+          "0x48000200",
+          "0x13f090"
+        ]
+      },
+      {
+        "pc": "0x4e1474",
+        "words": [
+          "0x33000000",
+          "0x13851b"
+        ]
+      }
+    ],
+    "0x4e1480": [
+      {
+        "pc": "0x4e1480",
+        "words": [
+          "0x47000246",
+          "0x13f08a"
+        ]
+      },
+      {
+        "pc": "0x4e1488",
+        "words": [
+          "0x32000000",
+          "0x44b260"
+        ]
+      }
+    ],
+    "0x4e1490": [
+      {
+        "pc": "0x4e1490",
+        "words": [
+          "0x500007b"
+        ]
+      },
+      {
+        "pc": "0x4e1494",
+        "words": [
+          "0x48000200",
+          "0x13f093"
+        ]
+      },
+      {
+        "pc": "0x4e149c",
+        "words": [
+          "0x32000000",
+          "0x44b290"
+        ]
+      }
+    ],
+    "0x4e14a8": [
+      {
+        "pc": "0x4e14a8",
+        "words": [
+          "0x48000200",
+          "0x13f093"
+        ]
+      },
+      {
+        "pc": "0x4e14b0",
+        "words": [
+          "0x32000000",
+          "0x44b2c0"
+        ]
+      }
+    ],
+    "0x4e14b8": [
+      {
+        "pc": "0x4e14b8",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e14bc",
+        "words": [
+          "0x32000000",
+          "0x49cb60"
+        ]
+      }
+    ],
+    "0x4e14c8": [
+      {
+        "pc": "0x4e14c8",
+        "words": [
+          "0x470002ca",
+          "0x13f08d"
+        ]
+      },
+      {
+        "pc": "0x4e14d0",
+        "words": [
+          "0x32000000",
+          "0x44b600"
+        ]
+      }
+    ],
+    "0x4e14d8": [
+      {
+        "pc": "0x4e14d8",
+        "words": [
+          "0x50000f2"
+        ]
+      },
+      {
+        "pc": "0x4e14dc",
+        "words": [
+          "0x32000000",
+          "0x44b650"
+        ]
+      }
+    ],
+    "0x4e14e8": [
+      {
+        "pc": "0x4e14e8",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e14ec",
+        "words": [
+          "0x32000000",
+          "0x49cb60"
+        ]
+      }
     ]
   },
   "entry_contexts": {
@@ -2484,12 +2675,48 @@
       "count": 7,
       "sample": 6,
       "evidence": "Kai 4ed330 advances clip 21 (7 stored samples) to its final sample before 499450 enters the 4ed348 rewind loop."
+    },
+    "0x4e1440": {
+      "clip": 440,
+      "count": 440,
+      "sample": 46,
+      "evidence": "Kai 44aeb0 advances the owner's clip-440 cursor from 4e1430's sample 45 to 46 before entering 4e1440."
+    },
+    "0x4e1468": {
+      "clip": 440,
+      "count": 440,
+      "sample": 393,
+      "evidence": "Kai 44af30's 428d70 playback stops clip 440 at sample 393 before 4e1468 finishes it."
+    },
+    "0x4e1490": {
+      "clip": 441,
+      "count": 402,
+      "sample": 71,
+      "evidence": "Kai 44b260 sets the victim's clip-441 cursor to 71 before entering 4e1490."
+    },
+    "0x4e14b8": {
+      "clip": 441,
+      "count": 402,
+      "sample": 161,
+      "evidence": "Kai 44b2c0's 428d70 playback stops clip 441 at sample 161 before 4e14b8 finishes it."
+    },
+    "0x4e14d8": {
+      "clip": 442,
+      "count": 336,
+      "sample": 203,
+      "evidence": "Kai 44b600 sets the torso's clip-442 cursor to 203 before entering 4e14d8."
+    },
+    "0x4e14e8": {
+      "clip": 442,
+      "count": 336,
+      "sample": 242,
+      "evidence": "Kai 4e14d8 advances torso clip 442 to 242; 44b650 enters 4e14e8 without changing it."
     }
   },
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "6a472bbbe1813637e88baeaecd7e2088a4083408b30ebd7f85dfe8eb08334923",
+  "inventory_sha256": "f0c504a193d9868bf601114f0d68705708da7986960b8c9eee84a3b69b913697",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2650,6 +2877,11 @@
       "source": "game/kai/moves/skull.c",
       "symbol": "kai_ground_skull",
       "evidence": "498fc0 action308 ->4ed2f8 clip22 hop; 499000 task4990f0 sinks and rises under the peer with C[9]; owner rewinds22 then47e990 or46f650."
+    },
+    "fatality_1": {
+      "source": "game/kai/moves/fatality_first.c",
+      "symbol": "kai_fatality_1",
+      "evidence": "First-fatality roster table4e0498[11] selects44ad70: owner440/445/443, victim task44b0e0 441/444, torso task44b4a0 442 after the44b2c0 waist sever."
     }
   },
   "entry_adapters": {
@@ -2659,9 +2891,9 @@
       "evidence": "Kai slot-11 block event route from typed input table 0x4e48d4."
     },
     "0x467ce0": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_high_kick",
-      "evidence": "Kai slot-11 high-kick event route from typed input table 0x4e48e8."
+      "source": "game/kai/moves/fatality_first.c",
+      "symbol": "kai_fatality_1",
+      "evidence": "First-fatality dispatcher467ce0 ->43cbb0 ->4e0498[11]=44ad70."
     },
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -3004,6 +3236,11 @@
       "source": "game/kai/moves/skull.c",
       "symbol": "kai_ground_skull",
       "evidence": "Typed Kai LP F,F record4e48a8 (flags 12, airborne allowed) selects498fc0 through gate45eb10."
+    },
+    "0x467ce0": {
+      "source": "game/kai/moves/fatality_first.c",
+      "symbol": "kai_fatality_1",
+      "evidence": "Typed Kai HK U,F,U,B record4e48e8 (gate45e220) selects first-fatality dispatcher467ce0 ->4e0498[11]=44ad70."
     }
   },
   "command_predicates": {
@@ -3014,7 +3251,8 @@
     "0x45eb80": "kai_can_handstand",
     "0x45ef50": "weapon_can_draw",
     "0x45eb40": "kai_can_rising_skull",
-    "0x45eb10": "kai_can_ground_skull"
+    "0x45eb10": "kai_can_ground_skull",
+    "0x45e220": "kai_can_first_fatality"
   },
   "mmove_scripts": [
     "0x4e5ca0",
@@ -3074,7 +3312,18 @@
     "0x4e8870",
     "0x4ed330",
     "0x4ed348",
-    "0x4ed2f8"
+    "0x4ed2f8",
+    "0x4e1430",
+    "0x4e1440",
+    "0x4e1450",
+    "0x4e1468",
+    "0x4e1480",
+    "0x4e1490",
+    "0x4e14a8",
+    "0x4e14b8",
+    "0x4e14c8",
+    "0x4e14d8",
+    "0x4e14e8"
   ],
   "cpu_bindings": {
     "0x499410": {
@@ -3087,5 +3336,9 @@
       "symbol": "kai_ground_skull",
       "evidence": "Typed Kai CPU medium row4df954 word20009 selects498fc0."
     }
+  },
+  "cpu_finish_min": {
+    "CPU_FINISH_1": 0,
+    "evidence": "Kai first45e220 uses the45e570 close gate up to1 unit; CPU first target4dfe10[11] is.8 units and the CPU scene entry bypasses the held mask."
   }
 }

@@ -27,6 +27,11 @@ enum {
   KAI_STAGE_EVENT_SETTLE
 };
 
+enum {
+  KAI_EVENT_FATALITY_1 = 21,
+  KAI_EVENT_FATALITY_2
+};
+
 void kai_block(Fighter *fighter);
 void kai_crouch(Fighter *fighter);
 void kai_high_kick(Fighter *fighter);
@@ -173,4 +178,26 @@ void kai_ground_skull_spawn(Fighter *fighter);
 void kai_entry_retail_script_004ed330(Fighter *fighter);
 void kai_entry_retail_script_004ed348(Fighter *fighter);
 void kai_entry_retail_script_004ed2f8(Fighter *fighter);
+bool kai_can_first_fatality(const Fighter *fighter);
+void kai_fatality_1(Fighter *fighter);
+void kai_first_owner_grab(Fighter *fighter);
+void kai_first_owner_spin(Fighter *fighter);
+void kai_first_owner_tear(Fighter *fighter);
+void kai_first_victim_71(Fighter *fighter);
+void kai_first_victim_turn(Fighter *fighter);
+void kai_first_victim_sever(Fighter *fighter);
+void kai_first_torso_203(Fighter *fighter);
+void kai_first_torso_impact(Fighter *fighter);
+void kai_first_task_end(Fighter *fighter);
+void kai_entry_retail_script_004e1430(Fighter *fighter);
+void kai_entry_retail_script_004e1440(Fighter *fighter);
+void kai_entry_retail_script_004e1450(Fighter *fighter);
+void kai_entry_retail_script_004e1468(Fighter *fighter);
+void kai_entry_retail_script_004e1480(Fighter *fighter);
+void kai_entry_retail_script_004e1490(Fighter *fighter);
+void kai_entry_retail_script_004e14a8(Fighter *fighter);
+void kai_entry_retail_script_004e14b8(Fighter *fighter);
+void kai_entry_retail_script_004e14c8(Fighter *fighter);
+void kai_entry_retail_script_004e14d8(Fighter *fighter);
+void kai_entry_retail_script_004e14e8(Fighter *fighter);
 #endif
