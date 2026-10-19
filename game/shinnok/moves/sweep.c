@@ -1,7 +1,8 @@
 #include "../character.h"
 
 void shinnok_sweep(Fighter *fighter) {
-  shinnok_start(fighter, S_SWEEP, &shinnok_s_sweep, shinnok_entry_retail_script_004e6798);
+  fighter_start_move(fighter, S_SWEEP, &shinnok_s_sweep);
+  shinnok_entry_retail_script_004e6798(fighter);
 }
 
 void shinnok_script_sweep_finish(Fighter *fighter) {

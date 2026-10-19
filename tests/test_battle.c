@@ -1449,7 +1449,7 @@ static void check_goro_frame_lp_throw(void) {
 }
 
 static void check_selected_high_kick(void) {
-  const int roster[] = {5, 8, 11, 12, 14};
+  const int roster[] = {5, 6, 8, 11, 12, 14};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
     for (int scenario = 0; scenario < 3; ++scenario) {
       battle_init(roster[index], 4);

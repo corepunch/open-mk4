@@ -2,7 +2,6 @@
 
 static void shinnok_ground_throw(Fighter *fighter, FighterFn script);
 void shinnok_lk_throw(Fighter *fighter);
-static void shinnok_throw_reaction(Fighter *fighter);
 static const MoveDef s_thrown = {.clip = 157, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 
 static void shinnok_ground_throw(Fighter *fighter, FighterFn script) {
@@ -19,8 +18,4 @@ void shinnok_lp_throw(Fighter *fighter) {
 
 void shinnok_lk_throw(Fighter *fighter) {
   shinnok_ground_throw(fighter, shinnok_entry_retail_script_004de2f8);
-}
-
-static void shinnok_throw_reaction(Fighter *fighter) {
-  mk4_script_thrown_finish(fighter);
 }

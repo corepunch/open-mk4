@@ -575,6 +575,16 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Native type64 follow-up weapon2 selects this shared frame reaction."
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Shinnok straight air kick contact (air_attacks[2], clip 327) selects global reaction 21; 4ea4e8[21] enters 0x482e80, dispatched by the shared portable reaction table."
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Shinnok straight air kick contact (air_attacks[2], clip 327) selects blocked reaction 8; 4ea4e8[8] enters 0x486c70, dispatched by the shared portable reaction table."
     }
   },
   "schema": 1,
@@ -651,6 +661,9 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
-  ]
+    "0x4e6950",
+    "0x4e5ca0",
+    "0x4e5c70"
+  ],
+  "mmove_only": true
 }

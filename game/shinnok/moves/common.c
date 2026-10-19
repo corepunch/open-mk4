@@ -4,16 +4,6 @@ void shinnok_ready(Fighter *fighter) {
   fighter_ready(fighter);
 }
 
-void shinnok_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
-  fighter_start_move(fighter, state, move);
-  fighter->sample_override = 0;
-  if (state == S_SWEEP) {
-    script(fighter);
-  } else {
-    fighter_start_fiber(fighter, script, NULL);
-  }
-}
-
 void shinnok_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
 }
