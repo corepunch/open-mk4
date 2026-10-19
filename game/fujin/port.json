@@ -72,8 +72,7 @@
       "clip": 415,
       "count": 130,
       "evidence": "Fujin bounded fan script/caller query preserves this inherited clip and sample context; the address is shared with the selected roster graph.",
-      "sample": 69,
-      "export_frames": true
+      "sample": 69
     },
     "0x4e0148": {
       "clip": 415,

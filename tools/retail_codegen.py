@@ -92,9 +92,7 @@ def reads_defines(row, bindings):
 
 def validate(program, bindings, return_to, context=None):
     context = context or {}
-    allowed = {"clip", "count", "sample", "evidence", "return_to", "paired", "export_frames", "successor"}
-    if "export_frames" in context and not isinstance(context["export_frames"], bool):
-        raise ValueError("Frame export selection must be boolean")
+    allowed = {"clip", "count", "sample", "evidence", "return_to", "paired", "successor"}
     if "successor" in context and (context.get("return_to") != "caller" or not re.fullmatch(r'retail_script_[0-9a-f]{8}', str(context["successor"]))):
         raise ValueError("A frame successor continues a caller-returning root into a generated phase")
     if context.keys() & {'count', 'sample'} and 'clip' not in context:

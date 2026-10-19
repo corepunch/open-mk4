@@ -77,8 +77,7 @@
       "count": 130,
       "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
       "return_to": "caller",
-      "sample": 69,
-      "export_frames": true
+      "sample": 69
     },
     "0x4e0148": {
       "clip": 415,

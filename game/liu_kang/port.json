@@ -29,7 +29,6 @@
       "count": 130,
       "evidence": "43d460/43d530 native loop, 31 calls from C owner",
       "sample": 69,
-      "export_frames": true,
       "return_to": "caller"
     },
     "0x4e0148": {

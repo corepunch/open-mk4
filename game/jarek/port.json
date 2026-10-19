@@ -69,15 +69,13 @@
       "clip": 414,
       "count": 9,
       "sample": 0,
-      "evidence": "Native 43d4cf binds clip414 (4fc0e4) at cursor0 before script_enter(4e0128) when 474e70 reports a non-female peer; 4e0128 advances to8, resets the cursor and tails to 43d510 -> 43d540.",
-      "export_frames": true
+      "evidence": "Native 43d4cf binds clip414 (4fc0e4) at cursor0 before script_enter(4e0128) when 474e70 reports a non-female peer; 4e0128 advances to8, resets the cursor and tails to 43d510 -> 43d540."
     },
     "0x4e0138": {
       "clip": 415,
       "count": 130,
       "sample": 69,
-      "evidence": "Native owner loop preserves clip 415 at sample 69; bounded Jarek fan-script and native continuation",
-      "export_frames": true
+      "evidence": "Native owner loop preserves clip 415 at sample 69; bounded Jarek fan-script and native continuation"
     },
     "0x4e0148": {
       "clip": 415,
