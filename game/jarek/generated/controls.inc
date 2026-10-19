@@ -9,6 +9,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_DOWN, TOKEN_BACK}, 3, 32, 0x0, NULL, jarek_quake},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_fan_finish, jarek_fan_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 16, 0x0, NULL, jarek_cannonball},
+  {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD}, 4, 40, 0x0, jarek_can_close_fatality, jarek_fatality_1},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };
@@ -20,9 +21,10 @@ static const CpuMoves retail_cpu_moves = {.enter =
                                                   [CPU_SPECIAL_1] = jarek_cannonball,
                                                   [CPU_SPECIAL_2] = jarek_cannonball,
                                                   [CPU_PROJECTILE] = jarek_blade,
+                                                  [CPU_FINISH_1] = jarek_fatality_1,
                                                   [CPU_FINISH_2] = jarek_fatality_2,
                                                   [CPU_FINISH_FAN] = jarek_fan_fatality,
                                                   [CPU_FINISH_SPIKE] = jarek_spike_fatality,
                                               },
     .finish_min = {0x0, 0x1cccc},
-    .finish_distance = {0x0, 0x2cccc}};
+    .finish_distance = {0xcccc, 0x2cccc}};

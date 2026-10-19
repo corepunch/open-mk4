@@ -16,6 +16,8 @@ bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
 void jarek_fatality_2(Fighter *fighter);
+void jarek_fatality_1(Fighter *fighter);
+bool jarek_can_close_fatality(const Fighter *fighter);
 bool jarek_can_second_fatality(const Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
@@ -1866,6 +1868,55 @@ static void check_jarek_second_fatality(void) {
   check(battle_cpu_action(&g_battle.fighters[0], CPU_FINISH_2), "Jarek's CPU second fatality must be registered");
   advance_ticks(1, NULL);
   check(g_battle.phase == PHASE_FATALITY && fighter_move(&g_battle.fighters[0])->clip == 577, "Jarek's CPU second fatality must enter the same scene");
+}
+
+/* 467ce0 -> 446d00: the owner clip follows the victim's roster, the victim
+ * task plays 404, the heart rides joint 10 and the scene completes. */
+static void check_jarek_first_fatality(void) {
+  for (int run = 0; run < 3; ++run) {
+    int slot = run == 1, female = run == 2;
+    battle_init(slot ? (female ? 2 : 4) : 12, slot ? 12 : (female ? 2 : 4));
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->wins = 1;
+    battle_damage(victim, Q16_ONE);
+    advance_ticks(1, NULL);
+    for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+      advance_ticks(1, NULL);
+    }
+    owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    check(!jarek_can_close_fatality(owner), "Jarek's first fatality must reject distances above one unit");
+    owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    check(jarek_can_close_fatality(owner) && !jarek_can_close_fatality(victim), "Jarek's first gate must accept the close winner only");
+    jarek_finish_command(owner, jarek_fatality_1, slot);
+    check(g_battle.phase == PHASE_FATALITY, "Jarek's F,B,F,F+LK must start his own scene");
+    bool owner_clip = false, ripped = false, heart = false;
+    for (int tick = 0; tick < 700 && g_battle.phase == PHASE_FATALITY; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek's first fatality must stay on frame programs");
+      owner_clip |= fighter_move(owner)->clip == (female ? 403 : 402);
+      check(fighter_move(owner)->clip != (female ? 402 : 403), "Jarek's heart rip must select the owner clip by victim roster");
+      ripped |= fighter_move(victim)->clip == 404 && fighter_sample(victim) >= 148;
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        heart |= g_battle.projectiles[i].kind == PROJECTILE_EFFECT && g_battle.projectiles[i].mesh_animation != NULL;
+      }
+    }
+    if (!(owner_clip && ripped && heart && g_battle.phase == PHASE_MATCH_OVER)) {
+      fprintf(stderr, "Jarek F1 run%d owner%d ripped%d heart%d phase%d oclip%d os%d vclip%d vs%d\n", run, owner_clip, ripped, heart, g_battle.phase,
+          fighter_move(owner)->clip, fighter_sample(owner), fighter_move(victim)->clip, fighter_sample(victim));
+    }
+    check(owner_clip && ripped && heart && g_battle.phase == PHASE_MATCH_OVER, "Jarek's heart rip must play both actors, attach the heart and complete");
+    battle_reset_match();
+    check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reset must retire the heart-rip programs");
+  }
+  jarek_finish_window(0);
+  g_battle.fighters[0].body.pos[AXIS_X] = -0x6666;
+  g_battle.fighters[1].body.pos[AXIS_X] = 0x6666;
+  check(battle_cpu_action(&g_battle.fighters[0], CPU_FINISH_1), "Jarek's CPU first fatality must be registered");
+  advance_ticks(1, NULL);
+  check(g_battle.phase == PHASE_FATALITY, "Jarek's CPU first fatality must enter the same scene");
 }
 
 static void check_jarek_weapon_commands(void) {
@@ -4943,6 +4994,7 @@ int main(void) {
   check_jarek_blade();
   check_jarek_fan_victims();
   check_jarek_second_fatality();
+  check_jarek_first_fatality();
   check_shinnok_weapon_commands();
   check_shinnok_morph();
   check_fujin_crossbow();

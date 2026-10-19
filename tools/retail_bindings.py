@@ -1584,3 +1584,15 @@ CHARACTER_BINDINGS[12][0x41e0a0] = Binding('jarek_second_victim_hold', 'game/jar
     evidence='41e0a0 restores the victim node, then 41f1b0 parks it in 60-visit waits')
 CHARACTER_BINDINGS[12][0x4712e0] = Binding('retail_script_004e6a40', 'game/jarek/generated/scripts.inc', ('tail',), script_target=0x4e6a40, mmove=True,
     evidence='4712e0 enters roster victory script 4e6a40 (slot 12: context 35, clip 125, loop from 85)')
+
+# Jarek's first fatality (467ce0 -> 43cbb0 -> 4e0498[12] = 446d00).
+CHARACTER_BINDINGS[12][0x446f80] = Binding('jarek_first_heart', 'game/jarek/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='446f80 -> 446fa0 attaches ja_fat_g rig 50831c to owner joint 10, then enters 4e1248')
+CHARACTER_BINDINGS[12][0x447310] = Binding('jarek_first_victim_rip', 'game/jarek/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='447310 sets victim cursor 44, starts blood task 447450, cues bank B 0x23/0x16 and voice 0xc, then 4e1270')
+CHARACTER_BINDINGS[12][0x4473b0] = Binding('jarek_first_victim_impact', 'game/jarek/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='4473b0 cues bank B 0x12 and shake 5, sets cursor 148 and enters 4e1280')
+CHARACTER_BINDINGS[12][0x447410] = Binding('jarek_first_victim_end', 'game/jarek/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='447410 runs 472800 and shake 5, then enters 4e1290')
+CHARACTER_BINDINGS[12][0x49cb60] = Binding('jarek_first_victim_done', 'game/jarek/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='4e1290 finishes clip 404 and retires the victim task through 49cb60; the body keeps its last pose')

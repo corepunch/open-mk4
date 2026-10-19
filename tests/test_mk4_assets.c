@@ -730,6 +730,7 @@ static void scene_pose_entry(Fighter *actor) {
 
 static void fujin_first_fatality_assets(const Assets *assets) {
   check(assets->hud.fujin_wind.meshes.count >= 6, "Fujin tornado must load its actual six fj_fat_g.geo surfaces");
+  check(assets->hud.jarek_fatality.meshes.count >= 1, "Jarek's heart rip must load the ja_fat_g.geo prop geometry");
   for (int slot = 0; slot < 2; ++slot) {
     battle_init(slot ? 2 : 5, slot ? 5 : 2);
     battle_bind_assets(assets);

@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "9f0f21b33cfbae7d67c0f8cf4bb237a6fb221e930401c71a0b97f06ee9971113",
+  "inventory_sha256": "dcdc83d1544cbe959edcfc67904ccf0576848ae1556ce90885b6987fa4e3f9d3",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -56,7 +56,14 @@
     "0x4d2db0",
     "0x4d2de0",
     "0x4d2e10",
-    "0x4e6a40"
+    "0x4e6a40",
+    "0x4e1220",
+    "0x4e1230",
+    "0x4e1248",
+    "0x4e1260",
+    "0x4e1270",
+    "0x4e1280",
+    "0x4e1290"
   ],
   "entry_contexts": {
     "0x4e0128": {
@@ -174,6 +181,48 @@
       "count": 115,
       "sample": 26,
       "evidence": "4d2db0 opens clip577 and advances 1+6+19 poses before tail 41dfc0 enters 4d2de0 without rebinding."
+    },
+    "0x4e1220": {
+      "clip": 403,
+      "count": 238,
+      "sample": 0,
+      "evidence": "446d00 blends the owner into clip403 (4fc060) for a female peer after 475250 (step 0x32f1 from 0x3333) and a 15-visit wait, then enters this root."
+    },
+    "0x4e1230": {
+      "clip": 402,
+      "count": 238,
+      "sample": 0,
+      "evidence": "446d00 blends the owner into clip402 (4fc054) otherwise after 475250 (step 0x32f1 from 0x3333) and a 15-visit wait, then enters this root."
+    },
+    "0x4e1260": {
+      "clip": 404,
+      "count": 205,
+      "sample": 0,
+      "evidence": "447150 blends the victim through 389 into clip404 (4fc06c), copies the owner X/Z (4756f0) and waits 15 before 4e1260."
+    },
+    "0x4e1270": {
+      "clip": 404,
+      "count": 205,
+      "sample": 44,
+      "evidence": "447310 sets victim cursor 0x2c before 4e1270."
+    },
+    "0x4e1280": {
+      "clip": 404,
+      "count": 205,
+      "sample": 148,
+      "evidence": "4473b0 sets victim cursor 0x94 before 4e1280."
+    },
+    "0x4e1290": {
+      "clip": 404,
+      "count": 205,
+      "sample": 194,
+      "evidence": "4e1280 advances clip404 to 194 before 447410 enters 4e1290."
+    },
+    "0x4e1248": {
+      "clip": "current",
+      "count": 238,
+      "sample": 43,
+      "evidence": "4e1220/4e1230 advance the selected owner clip 403 or 402 (238 poses each) to pose 43 before 446f80 enters 4e1248."
     }
   },
   "entry_adapters": {
@@ -183,9 +232,9 @@
       "evidence": "467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
     },
     "0x467ce0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_467ce0",
-      "evidence": "Jarek input/CPU table target 0x467ce0; bounded native query"
+      "source": "game/jarek/moves/fatality_first.c",
+      "symbol": "jarek_fatality_1",
+      "evidence": "467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410."
     },
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -388,6 +437,11 @@
       "source": "game/jarek/moves/fatality_second.c",
       "symbol": "jarek_fatality_2",
       "evidence": "467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
+    },
+    "fatality_1": {
+      "source": "game/jarek/moves/fatality_first.c",
+      "symbol": "jarek_fatality_1",
+      "evidence": "467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410."
     }
   },
   "stances": {
@@ -692,6 +746,11 @@
       "source": "game/jarek/moves/fatality_second.c",
       "symbol": "jarek_fatality_2",
       "evidence": "Typed BLOCK record 0x4e4438 U,U,F,F (flags 0x41, gate 45e530). 467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
+    },
+    "0x467ce0": {
+      "source": "game/jarek/moves/fatality_first.c",
+      "symbol": "jarek_fatality_1",
+      "evidence": "Typed LK record 0x4e4474 F,B,F,F (gate 45e570). 467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410."
     }
   },
   "command_predicates": {
@@ -700,7 +759,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ef50": "weapon_can_draw",
-    "0x45e530": "jarek_can_second_fatality"
+    "0x45e530": "jarek_can_second_fatality",
+    "0x45e570": "jarek_can_close_fatality"
   },
   "mmove_scripts": [
     "0x4e5ca0",
@@ -754,7 +814,14 @@
     "0x4d2db0",
     "0x4d2de0",
     "0x4d2e10",
-    "0x4e6a40"
+    "0x4e6a40",
+    "0x4e1220",
+    "0x4e1230",
+    "0x4e1248",
+    "0x4e1260",
+    "0x4e1270",
+    "0x4e1280",
+    "0x4e1290"
   ],
   "cpu_bindings": {
     "0x47b310": {
@@ -770,6 +837,7 @@
   },
   "cpu_finish_min": {
     "CPU_FINISH_2": 117964,
-    "evidence": "Jarek second gate45e530 accepts 1.8..3 units; CPU target4dfe50[12] is 0x2cccc."
+    "evidence": "Jarek first gate45e570 accepts up to1 unit and CPU target4dfe10[12] is0xcccc; second gate45e530 accepts 1.8..3 units and4dfe50[12] is0x2cccc.",
+    "CPU_FINISH_1": 0
   }
 }

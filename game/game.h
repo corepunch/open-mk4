@@ -598,7 +598,8 @@ typedef struct OrbitLight {
 enum {
   MESH_SHARED,
   MESH_SHARED2,
-  MESH_FUJIN_WIND
+  MESH_FUJIN_WIND,
+  MESH_JAREK_FATALITY
 };
 
 typedef struct MeshAnimation {

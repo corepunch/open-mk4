@@ -42,9 +42,12 @@ void battle_object_light(Projectile *object, const OrbitLightDef *def) {
 }
 
 const Geometry *mesh_animation_geometry(const Assets *assets, const MeshAnimation *animation) {
-  require(assets != NULL && animation != NULL && animation->source >= MESH_SHARED && animation->source <= MESH_FUJIN_WIND, "Invalid effect geometry bank");
+  require(assets != NULL && animation != NULL && animation->source >= MESH_SHARED && animation->source <= MESH_JAREK_FATALITY, "Invalid effect geometry bank");
   if (animation->source == MESH_FUJIN_WIND) {
     return &assets->hud.fujin_wind;
+  }
+  if (animation->source == MESH_JAREK_FATALITY) {
+    return &assets->hud.jarek_fatality;
   }
   return animation->source == MESH_SHARED2 ? &assets->hud.effects2 : &assets->hud.effects;
 }

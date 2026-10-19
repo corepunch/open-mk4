@@ -520,6 +520,8 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   assets->hud.effects2 = load_geometry(package_geo(&archive, "share2_g.geo"));
   /*450730 selects the six authored tornado surfaces through slot5061d4. */
   assets->hud.fujin_wind = load_geometry(package_geo(&archive, "fj_fat_g.geo"));
+  /* 5061bc resolves to ja_fat_g.geo, the geometry of Jarek's fatality props. */
+  assets->hud.jarek_fatality = load_geometry(package_geo(&archive, "ja_fat_g.geo"));
   Character statue = assets->characters.data[4];
   snprintf(statue.file, sizeof statue.file, "shared_g.geo");
   statue.meshes = assets->hud.effects.meshes;
@@ -886,6 +888,7 @@ void assets_free(Assets *a) {
   geometry_free(&a->hud.effects);
   geometry_free(&a->hud.effects2);
   geometry_free(&a->hud.fujin_wind);
+  geometry_free(&a->hud.jarek_fatality);
   geometry_free(&a->hud.title_scene);
   geometry_free(&a->hud.select_scene);
   FREE_ARRAY(a->characters);
