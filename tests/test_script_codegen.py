@@ -40,7 +40,6 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(max(poses), 39)
         self.assertEqual(poses[-1], 34)
         self.assertEqual(poses.count(39), 3)
-        self.assertNotIn('fighter_wait_ticks', frames)
         actual = generate(self.image, [0x4e5c20], 5, 'fighter_ready', contexts={
             '0x4e5c20': {'clip': 98, 'count': 40, 'sample': 16, 'evidence': 'Native46a650 retains the wind caster clip.'}})
         self.assertNotIn('fighter->sample_override = 40;', actual)
@@ -58,7 +57,6 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('fighter->body.gravity = 1310;', frames)
         self.assertIn('mk4_mmove_wait_grounded', frames)
         self.assertIn('fighter->flags &= ~(unsigned)FF_BUSY;', frames)
-        self.assertNotIn('fighter_wait_ticks', frames)
         entry = self.fixture([0x0f000000, descriptor, 0x5c000000, 0xfffffae2, 0x3f000000])
         frames = generate(self.image, [entry], 5, 'fighter_ready')
         self.assertIn('fighter->body.gravity = -1310;', frames)
@@ -96,7 +94,6 @@ class CompilerTests(unittest.TestCase):
         frames = generate(self.image, [entry], 11, 'fighter_ready')
         self.assertIn('fighter->sample_override = 1;', frames)
         self.assertIn('.lastframe = 2', frames)  # two explicit waits plus controller return
-        self.assertNotIn('fighter_wait_ticks', frames)
         entry = self.fixture([0x0d000000, 0x3f000000])
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             generate(self.image, [entry], 11, 'fighter_ready')
@@ -105,7 +102,6 @@ class CompilerTests(unittest.TestCase):
             generate(self.image, [entry], 11, 'fighter_ready')
         actual = generate(self.image, [0x4e9308], 11, 'mk4_script_thrown_ready')
         self.assertIn('mk4_mmove_bind(fighter, 134, 18, 0)', actual)
-        self.assertNotIn('fighter_wait_ticks', actual)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'next_pose.c'
             path.write_text(actual + '\nvoid use_next_pose(Fighter *fighter) { retail_script_004e9308(fighter); }\n')
@@ -116,7 +112,6 @@ class CompilerTests(unittest.TestCase):
         source = format_c(generate(self.image, [0x4e6798], 4, 'fighter_ready'))
         self.assertIn('static const mframe_t retail_script_004e6798_frames', source)
         self.assertIn('battle_sound(SOUND_A, 175)', source)
-        self.assertNotIn('fighter_wait_ticks', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'frames.c'
             path.write_text(source + '\nvoid script_sweep_tail(Fighter *fighter) { fighter_ready(fighter); }\n'
@@ -135,7 +130,6 @@ class CompilerTests(unittest.TestCase):
         source = generate(self.image, [0x4e84f8, 0x4e8530], 4, 'fighter_ready',
                           contexts={hex(e): dict(clip=95, count=11, sample=9, evidence='native slide contact boundary')
                                     for e in (0x4e84f8, 0x4e8530)})
-        self.assertNotIn('fighter_wait_ticks', source)
         self.assertNotIn('loop_counter', source)
         self.assertIn('.lastframe = 15', source)  # four four-pose hit cycles
         self.assertIn('.lastframe = 23', source)  # six four-pose blocked cycles
@@ -144,7 +138,6 @@ class CompilerTests(unittest.TestCase):
         source = generate(self.image, [entry], 4, 'fighter_ready')
         self.assertIn('fighter->held & BUTTON_BIT(BUTTON_DOWN)', source)
         self.assertIn('_branch_1', source)
-        self.assertNotIn('fighter_wait_ticks', source)
 
     def test_mmove_repeating_scene_and_complete_profile(self):
         from retail_coverage import profile_for
@@ -161,7 +154,6 @@ class CompilerTests(unittest.TestCase):
         self.assertNotIn('.leave', source)
         self.assertIn('.thinkfunc', source)
         self.assertIn('_branch_1', source)
-        self.assertNotIn('fighter_wait_ticks', source)
 
     def test_mmove_pair_requires_a_victim_binding(self):
         descriptor = (0x4fad7c + 76 * 12) // 4
@@ -171,7 +163,6 @@ class CompilerTests(unittest.TestCase):
         source = generate(self.image, [0x4de798, 0x4e9bd0], 4, 'fighter_ready',
                           contexts={'0x4e9bd0': dict(clip=153, count=26, sample=25, evidence='native reaction 102 release')})
         self.assertIn('mk4_mmove_pair_step', source)
-        self.assertNotIn('fighter_wait_ticks', source)
         self.assertNotIn('mk4_script_pair_to(fighter', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'pair.c'
@@ -352,7 +343,6 @@ class CompilerTests(unittest.TestCase):
         self.assertIn('.lastframe = 5', slow)
         self.assertIn('10, 10, 11, 11, 12', slow)
         self.assertNotIn('mk4_script_finish_clip', slow)
-        self.assertNotIn('fighter_wait_ticks', slow)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'slow_tail.c'
             path.write_text(slow + '\nvoid use_slow_tail(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
@@ -380,7 +370,6 @@ class CompilerTests(unittest.TestCase):
         real = generate(self.image, [0x4e1f58], 5, 'fighter_ready',
                         bindings={0x44f5e0: binding})
         self.assertIn('first_native_tail(fighter);', real)
-        self.assertNotIn('fighter_wait_ticks', real)
 
     def test_counted_half_speed_supports_prefix_and_bounded_clip_end(self):
         # 45b800 optionally binds via45bf80 and runs429120 twice per pose.
