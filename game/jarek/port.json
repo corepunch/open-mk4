@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "00ff490f81f614f656c95ebaabf3074b496fe7f4f710bd847cc917db49699393",
+  "inventory_sha256": "7f206452cd0e5d3d97f9c1f0828b06ebf4702e993a3ca8f648aeefc975cee26e",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -43,10 +43,6 @@
     "0x4e6878",
     "0x4e6950",
     "0x4e69b0",
-    "0x4e80a0",
-    "0x4e80a8",
-    "0x4e80c8",
-    "0x4e80f4",
     "0x4e81a8",
     "0x4ed118",
     "0x4ed190",
@@ -124,30 +120,6 @@
       "sample": 22,
       "evidence": "46d260 equips the type6a knife before resuming draw recovery."
     },
-    "0x4e80a0": {
-      "clip": 308,
-      "count": 25,
-      "sample": 0,
-      "evidence": "Jarek high-punch action 0x4797f0 starts this continuation with clip 308; bounded EXE/script listing"
-    },
-    "0x4e80a8": {
-      "clip": 308,
-      "count": 25,
-      "sample": 0,
-      "evidence": "CPU action 0x479b20 enters clip 308 sample 0 before tail 0x479b70; bounded native and script listings"
-    },
-    "0x4e80c8": {
-      "clip": 85,
-      "count": 55,
-      "sample": 0,
-      "evidence": "Native chain 0x479b70 enters this follow-up with clip 85 sample 0; bounded script listing"
-    },
-    "0x4e80f4": {
-      "clip": 105,
-      "count": 30,
-      "sample": 0,
-      "evidence": "Native chain 0x47a160 enters this follow-up with clip 105 sample 0; bounded native and script listings"
-    },
     "0x4e61e0": {
       "clip": 262,
       "count": 10,
@@ -195,76 +167,6 @@
       "symbol": "mk4_sidestep",
       "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
-    "0x469a00": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a00",
-      "evidence": "Jarek input/CPU table target 0x469a00; bounded native query"
-    },
-    "0x469a10": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a10",
-      "evidence": "Jarek input/CPU table target 0x469a10; bounded native query"
-    },
-    "0x469a20": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a20",
-      "evidence": "Jarek input/CPU table target 0x469a20; bounded native query"
-    },
-    "0x469a30": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a30",
-      "evidence": "Jarek input/CPU table target 0x469a30; bounded native query"
-    },
-    "0x469a40": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a40",
-      "evidence": "Jarek input/CPU table target 0x469a40; bounded native query"
-    },
-    "0x469a50": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a50",
-      "evidence": "Jarek input/CPU table target 0x469a50; bounded native query"
-    },
-    "0x469a60": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a60",
-      "evidence": "Jarek input/CPU table target 0x469a60; bounded native query"
-    },
-    "0x469a70": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a70",
-      "evidence": "Jarek input/CPU table target 0x469a70; bounded native query"
-    },
-    "0x469a80": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a80",
-      "evidence": "Jarek input/CPU table target 0x469a80; bounded native query"
-    },
-    "0x469a90": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469a90",
-      "evidence": "Jarek input/CPU table target 0x469a90; bounded native query"
-    },
-    "0x469aa0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469aa0",
-      "evidence": "Jarek input/CPU table target 0x469aa0; bounded native query"
-    },
-    "0x469ab0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469ab0",
-      "evidence": "Jarek input/CPU table target 0x469ab0; bounded native query"
-    },
-    "0x469ac0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469ac0",
-      "evidence": "Jarek input/CPU table target 0x469ac0; bounded native query"
-    },
-    "0x469ad0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_469ad0",
-      "evidence": "Jarek input/CPU table target 0x469ad0; bounded native query"
-    },
     "0x46a020": {
       "source": "game/weapons.c",
       "symbol": "weapon_pickup",
@@ -274,11 +176,6 @@
       "source": "game/jarek/moves/weapon.c",
       "symbol": "jarek_weapon_action",
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
-    },
-    "0x4797f0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_4797f0",
-      "evidence": "Jarek high-punch input action target; bounded native listing, typed input record 0x4e43f8"
     },
     "0x47b310": {
       "source": "game/jarek/character.c",
@@ -402,11 +299,6 @@
       "symbol": "jarek_weapon_action",
       "evidence": "Jarek target 46d1d0 selects throw, follow-up equip or generated draw script 4e62c0"
     },
-    "input_4797f0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_4797f0",
-      "evidence": "Jarek standing high-punch target 0x4797f0 enters generated script 0x4e80a0 after selected HP action; bounded input record and native/script listing"
-    },
     "input_47b5d0": {
       "source": "game/jarek/character.c",
       "symbol": "jarek_command_47b5d0",
@@ -416,11 +308,6 @@
       "source": "game/jarek/character.c",
       "symbol": "jarek_command_497540",
       "evidence": "Jarek CPU projectile row target 0x497540 enters generated script 0x4ed118; both conditional paths bind clip 27 and target sample 17 (0x211 low byte) via opcodes 0x47 and 0x4d, with two-sample stepping on fast startup; bounded raw EXE/script listing"
-    },
-    "cpu_479b20": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_47b310",
-      "evidence": "Jarek CPU near, medium and far rows target native 0x47b310; the portable adapter starts the matching low kick, based on the reviewed CPU table and native entry"
     },
     "close_hp": {
       "source": "game/jarek/moves/combos.c",

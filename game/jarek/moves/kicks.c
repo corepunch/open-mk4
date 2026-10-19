@@ -3,7 +3,6 @@
 static const MoveDef s_short_kick = {.clip = 65, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
 
 static void jarek_kick_frame(Fighter *fighter);
-static void jarek_script_low_kick_finish(Fighter *fighter);
 static const AttackRecord jarek_high_kick_record = {0x1451e, -0xc7ae, 0x10000, 0xc7ae, 16, 13, 6, 0, 0x2147};
 
 void jarek_high_kick(Fighter *fighter) {
@@ -33,11 +32,6 @@ void jarek_script_low_kick_avoid(Fighter *fighter) {
 
 void jarek_script_low_kick_clear(Fighter *fighter) {
   fighter->avoids_high = false;
-}
-
-static void jarek_script_low_kick_finish(Fighter *fighter) {
-  fighter->avoids_high = false;
-  fighter_fiber_finish(jarek_ready);
 }
 
 void jarek_press_kick(Fighter *fighter) {

@@ -21,8 +21,6 @@ static const MoveDef s_victory = {.clip = 111, .last = MOVE_END, .flags = SF_HOL
 #include "generated/scripts.inc"
 #include "generated/frames.inc"
 
-static const AttackRecord jarek_low_kick_record = {97648, -17039, 64225, 28835, 17, 10, 6, 0, 7208};
-
 const AttackRecord jarek_selector_25_record = {0x17fbe, -0x51a9, 0x13020, 0x2b43, 162, 162, 165, 0, 0x23d7};
 
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch,
@@ -200,18 +198,6 @@ void jarek_entry_retail_script_004e6878(Fighter *fighter) {
 
 void jarek_entry_retail_script_004e6950(Fighter *fighter) {
   retail_script_004e6950(fighter);
-}
-
-void jarek_entry_retail_script_004e80a0(Fighter *fighter) {
-  retail_script_004e80a0(fighter);
-}
-
-void jarek_entry_retail_script_004e80c8(Fighter *fighter) {
-  retail_script_004e80c8(fighter);
-}
-
-void jarek_entry_retail_script_004e80f4(Fighter *fighter) {
-  retail_script_004e80f4(fighter);
 }
 
 void jarek_entry_retail_script_004e81a8(Fighter *fighter) {
