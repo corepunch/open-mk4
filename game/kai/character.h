@@ -163,4 +163,14 @@ void kai_entry_retail_script_004e8b78(Fighter *fighter);
 void kai_entry_retail_script_004e8bc0(Fighter *fighter);
 void kai_entry_retail_script_004e8f50(Fighter *fighter);
 void kai_entry_retail_script_004e0138(Fighter *fighter);
+bool kai_can_rising_skull(const Fighter *fighter);
+bool kai_can_ground_skull(const Fighter *fighter);
+void kai_rising_skull(Fighter *fighter);
+void kai_rising_skull_spawn(Fighter *fighter);
+void kai_rising_skull_finish(Fighter *fighter);
+void kai_ground_skull(Fighter *fighter);
+void kai_ground_skull_spawn(Fighter *fighter);
+void kai_entry_retail_script_004ed330(Fighter *fighter);
+void kai_entry_retail_script_004ed348(Fighter *fighter);
+void kai_entry_retail_script_004ed2f8(Fighter *fighter);
 #endif

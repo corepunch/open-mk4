@@ -746,6 +746,13 @@ CHARACTER_BINDINGS[11] = {
 }
 CHARACTER_BINDINGS[11][0x47bd40] = Binding('kai_aerial_punch_contact', 'game/kai/moves/aerial_punch.c', ('tail',), flow='terminal', mmove=True,
                                            evidence='47bd40 runs 4704d0 record4e8238: 15 airborne D[16] visits, contact47be50, floor47bed0, timeout47bd60; not a VM program')
+# Kai's skull specials: native task spawns and owner returns on frame phases.
+CHARACTER_BINDINGS[11][0x499450] = Binding('kai_rising_skull_spawn', 'game/kai/moves/skull.c', ('tail',), flow='terminal', mmove=True,
+                                           evidence='499450 spawns task499490 type48 (4ed390 rig, rise to Y-4, drop over the peer with C[8]) and enters4ed348')
+CHARACTER_BINDINGS[11][0x499470] = Binding('kai_rising_skull_finish', 'game/kai/moves/skull.c', ('tail',), flow='terminal', mmove=True,
+                                           evidence='499470 stamps48e3a0 slot3 for the45eb40 48-tick gate, then46f650 controller return')
+CHARACTER_BINDINGS[11][0x499000] = Binding('kai_ground_skull_spawn', 'game/kai/moves/skull.c', ('tail',), flow='terminal', mmove=True,
+                                           evidence='499000 spawns task4990f0 type4a (4ed320 rig, sink, rise under the peer with C[9]), sleeps20, rewinds clip22, then47e990 or46f650')
 CHARACTER_BINDINGS[11][0x47cc50] = Binding('kai_script_contact_b10_continuation', 'game/kai/character.c', ('tail',), flow='terminal',
                                            evidence='47cc50 dispatches Kai table-B selector 10 at samples 10, 11 and 11, then enters the generated wait-and-rewind continuation 4e8390')
 CHARACTER_BINDINGS[11][0x478e20] = Binding('kai_lunge_kick_contact', 'game/kai/moves/lunge_kick.c', ('tail',), flow='terminal', mmove=True,

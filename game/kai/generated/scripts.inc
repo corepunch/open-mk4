@@ -3,11 +3,14 @@
 #include "script.h"
 
 void kai_aerial_punch_contact(Fighter *);
+void kai_ground_skull_spawn(Fighter *);
 void kai_handstand_crouch_return(Fighter *);
 void kai_handstand_rear_contact(Fighter *);
 void kai_handstand_spin_begin(Fighter *);
 void kai_handstand_victim_tail(Fighter *);
 void kai_lunge_kick_contact(Fighter *);
+void kai_rising_skull_finish(Fighter *);
+void kai_rising_skull_spawn(Fighter *);
 void kai_script_air_finish(Fighter *);
 void kai_script_close_hk_tail(Fighter *);
 void kai_script_close_hp_tail(Fighter *);
@@ -3899,4 +3902,79 @@ static inline void retail_script_004ec5a8(Fighter *fighter) {
   mk4_mmove_bind(fighter, 226, 60, 0);
   /* EXE 004ec5b0: 0x4d000010 */
   fighter_mmove_phase(fighter, &retail_script_004ec5a8_phase);
+}
+
+static inline void retail_script_004ed2f8(Fighter *fighter);
+
+static void retail_script_004ed2f8_at_5(Fighter *fighter) {
+  /* EXE 004ed300: 0x27000033 */
+  battle_sound(SOUND_C, 51);
+  /* EXE 004ed304: 0x58000000 0x0 0xffffcccd 0x28f */
+  fighter_set_speed(fighter, 0);
+  fighter->body.vel[AXIS_Y] = -13107;
+  fighter->body.gravity = 655;
+  /* EXE 004ed314: 0x32000000 0x499000 */
+  kai_ground_skull_spawn(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed2f8_frames[5] = {
+  [4] = {.thinkfunc = retail_script_004ed2f8_at_5},
+};
+// clang-format on
+static const mmove_t retail_script_004ed2f8_phase = {.firstframe = 0, .lastframe = 4, .frame = retail_script_004ed2f8_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004ed2f8(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed2f8: 0x48000200 0x13eba1 */
+  mk4_mmove_bind(fighter, 22, 5, 0);
+  fighter_mmove_phase(fighter, &retail_script_004ed2f8_phase);
+}
+
+static inline void retail_script_004ed330(Fighter *fighter);
+
+static void retail_script_004ed330_at_7(Fighter *fighter) {
+  fighter->sample_override = 6;
+  /* EXE 004ed338: 0x27000033 */
+  battle_sound(SOUND_C, 51);
+  /* EXE 004ed33c: 0x32000000 0x499450 */
+  kai_rising_skull_spawn(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed330_frames[7] = {
+  [6] = {.thinkfunc = retail_script_004ed330_at_7},
+};
+// clang-format on
+static const mmove_t retail_script_004ed330_phase = {.firstframe = 0, .lastframe = 6, .frame = retail_script_004ed330_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004ed330(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed330: 0x47000207 0x13eb9e */
+  mk4_mmove_bind(fighter, 21, 7, 0);
+  fighter_mmove_phase(fighter, &retail_script_004ed330_phase);
+}
+
+static inline void retail_script_004ed348(Fighter *fighter);
+
+static void retail_script_004ed348_at_32(Fighter *fighter) {
+  fighter->sample_override = 6;
+  /* EXE 004ed388: 0x32000000 0x499470 */
+  kai_rising_skull_finish(fighter);
+}
+
+static const int retail_script_004ed348_samples[] = {6, 5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5, 6, 5, 4, 5};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed348_frames[32] = {
+  [31] = {.thinkfunc = retail_script_004ed348_at_32},
+};
+// clang-format on
+static const mmove_t retail_script_004ed348_phase = {
+    .firstframe = 0, .lastframe = 31, .frame = retail_script_004ed348_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ed348_samples};
+
+static inline void retail_script_004ed348(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_script_inherit(fighter, 21, 7, 6);
+  /* EXE 004ed348: 0x4a000004 */
+  fighter_mmove_phase(fighter, &retail_script_004ed348_phase);
 }

@@ -549,6 +549,7 @@ struct Fighter {
   uint64_t slide_ready, sidestep_ready;
   uint64_t leg_grab_ready, cartwheel_ready;
   uint64_t wind_grab_ready;
+  uint64_t skull_ready; /* Kai 48e3a0 slot-3 stamp plus the 45eb40 48-tick gate */
   unsigned fujin_finish_inputs;
   /* Task +0x34 is the live character; round setup restores the selection
    * (532308/5324a0). A morph keeps that selection here and stamps slot 5. */
@@ -618,6 +619,7 @@ struct Projectile {
   int bounce;
   const MeshAnimation *mesh_animation;
   int initial_mesh; /* Spawn rig before the first mesh animation tick. */
+  q16 target[2];    /* Saved peer X/Z for objects that relocate over their target. */
 };
 
 #define MAX_PROJECTILES 4

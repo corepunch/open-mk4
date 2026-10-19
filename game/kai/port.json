@@ -2186,6 +2186,164 @@
           "0x482790"
         ]
       }
+    ],
+    "0x4ed330": [
+      {
+        "pc": "0x4ed330",
+        "words": [
+          "0x47000207",
+          "0x13eb9e"
+        ]
+      },
+      {
+        "pc": "0x4ed338",
+        "words": [
+          "0x27000033"
+        ]
+      },
+      {
+        "pc": "0x4ed33c",
+        "words": [
+          "0x32000000",
+          "0x499450"
+        ]
+      }
+    ],
+    "0x4ed348": [
+      {
+        "pc": "0x4ed348",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed34c",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed350",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed354",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed358",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed35c",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed360",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed364",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed368",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed36c",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed370",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed374",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed378",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed37c",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed380",
+        "words": [
+          "0x4a000004"
+        ]
+      },
+      {
+        "pc": "0x4ed384",
+        "words": [
+          "0x5000006"
+        ]
+      },
+      {
+        "pc": "0x4ed388",
+        "words": [
+          "0x32000000",
+          "0x499470"
+        ]
+      }
+    ],
+    "0x4ed2f8": [
+      {
+        "pc": "0x4ed2f8",
+        "words": [
+          "0x48000200",
+          "0x13eba1"
+        ]
+      },
+      {
+        "pc": "0x4ed300",
+        "words": [
+          "0x27000033"
+        ]
+      },
+      {
+        "pc": "0x4ed304",
+        "words": [
+          "0x58000000",
+          "0x0",
+          "0xffffcccd",
+          "0x28f"
+        ]
+      },
+      {
+        "pc": "0x4ed314",
+        "words": [
+          "0x32000000",
+          "0x499000"
+        ]
+      }
     ]
   },
   "entry_contexts": {
@@ -2320,12 +2478,18 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4ed348": {
+      "clip": 21,
+      "count": 7,
+      "sample": 6,
+      "evidence": "Kai 4ed330 advances clip 21 (7 stored samples) to its final sample before 499450 enters the 4ed348 rewind loop."
     }
   },
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "afbc9d080e56cbf6e58208f0b4839a001d658054afc108b6f962d8f469c0a4a2",
+  "inventory_sha256": "6a472bbbe1813637e88baeaecd7e2088a4083408b30ebd7f85dfe8eb08334923",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2476,6 +2640,16 @@
       "source": "game/kai/moves/weapon.c",
       "symbol": "weapon_followup",
       "evidence": "4ecb40[type63-60] selects4959f0:4eca08 motion and4eca18 clip230/weapon31, bypassing air/back selectors."
+    },
+    "rising_skull": {
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_rising_skull",
+      "evidence": "499410 action307 ->4ed330 clip21; 499450 task499490 rises to Y-4 and drops over the peer with C[8]; 4ed348 loop and499470 cooldown return."
+    },
+    "ground_skull": {
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_ground_skull",
+      "evidence": "498fc0 action308 ->4ed2f8 clip22 hop; 499000 task4990f0 sinks and rises under the peer with C[9]; owner rewinds22 then47e990 or46f650."
     }
   },
   "entry_adapters": {
@@ -2500,14 +2674,14 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x498fc0": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_low_punch",
-      "evidence": "Kai CPU/input low-punch action target 0x498fc0."
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_ground_skull",
+      "evidence": "Kai LP F,F record4e48a8 and CPU medium row select native498fc0 ground skull."
     },
     "0x499410": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_high_punch",
-      "evidence": "Kai CPU/input high-punch action target 0x499410."
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_rising_skull",
+      "evidence": "Kai HP B,B record4e4888 and CPU near/projectile rows select native499410 rising skull."
     },
     "0x467e00": {
       "source": "game/kai/moves/fan.c",
@@ -2715,6 +2889,16 @@
       "source": "game/reactions.c",
       "symbol": "react_kick_air_impact",
       "evidence": "Kai aerial punch D[16] contact selects shared reaction123; 4ea4e8[123] ->0x481ce0 ->4e89d8 clip189 launch and488c00 getup."
+    },
+    "129": {
+      "source": "game/reactions.c",
+      "symbol": "react_kai_skull",
+      "evidence": "Kai rising skull C[8] selects shared reaction129; 4ea4e8[129] ->0x485f10: airborne 483030/4e9430, grounded4e9c80 and488ba0 getup."
+    },
+    "130": {
+      "source": "game/reactions.c",
+      "symbol": "react_kai_skull",
+      "evidence": "Kai ground skull C[9] selects shared reaction130; 4ea4e8[130] ->0x485f50 action100a,4e9ca8 clip179 and488b80 getup."
     }
   },
   "stances": {
@@ -2810,6 +2994,16 @@
       "source": "game/kai/moves/lunge_kick.c",
       "symbol": "kai_input_478df0",
       "evidence": "Typed Kai LK D,F record4e4914 selects478df0; 4e8870 clip551 with478e20 B[9] contacts."
+    },
+    "0x499410": {
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_rising_skull",
+      "evidence": "Typed Kai HP B,B record4e4888 selects499410 through cooldown gate45eb40."
+    },
+    "0x498fc0": {
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_ground_skull",
+      "evidence": "Typed Kai LP F,F record4e48a8 (flags 12, airborne allowed) selects498fc0 through gate45eb10."
     }
   },
   "command_predicates": {
@@ -2818,7 +3012,9 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45eb80": "kai_can_handstand",
-    "0x45ef50": "weapon_can_draw"
+    "0x45ef50": "weapon_can_draw",
+    "0x45eb40": "kai_can_rising_skull",
+    "0x45eb10": "kai_can_ground_skull"
   },
   "mmove_scripts": [
     "0x4e5ca0",
@@ -2875,6 +3071,21 @@
     "0x4e01a0",
     "0x4e6950",
     "0x4e8210",
-    "0x4e8870"
-  ]
+    "0x4e8870",
+    "0x4ed330",
+    "0x4ed348",
+    "0x4ed2f8"
+  ],
+  "cpu_bindings": {
+    "0x499410": {
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_rising_skull",
+      "evidence": "Typed Kai CPU near and projectile rows4df914/4df9d4 word20008 select499410."
+    },
+    "0x498fc0": {
+      "source": "game/kai/moves/skull.c",
+      "symbol": "kai_ground_skull",
+      "evidence": "Typed Kai CPU medium row4df954 word20009 selects498fc0."
+    }
+  }
 }

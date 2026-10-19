@@ -33,6 +33,10 @@ void kai_draw_weapon(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void kai_input_47bd10(Fighter *fighter);
 void kai_input_478df0(Fighter *fighter);
+void kai_rising_skull(Fighter *fighter);
+void kai_ground_skull(Fighter *fighter);
+bool kai_can_rising_skull(const Fighter *fighter);
+bool kai_can_ground_skull(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
@@ -3024,6 +3028,64 @@ static void check_kai_df_specials(void) {
   }
 }
 
+/* Kai B,B HP (499410) and F,F LP (498fc0) skulls: real commands in both
+ * slots, independent relocated objects, one-time C[8]/C[9] damage, block
+ * chip, a peer that leaves the saved target, gates and recovery. */
+static void check_kai_skulls(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int move = 0; move < 2; ++move) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        battle_init(slot ? 4 : 11, slot ? 11 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->body.pos[AXIS_X] = slot ? 0x18000 : -0x18000;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Input input[2] = {0};
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+          advance_ticks(4, input);
+        }
+        drive_owned_command(slot, move == 0 ? kai_rising_skull : kai_ground_skull);
+        check(fighter_move(owner)->clip == (move == 0 ? 21 : 22) && owner->action == (move == 0 ? 0x307 : 0x308) && !fighter_fiber_active(owner),
+            "Kai skull commands must enter their own retail cast");
+        bool spawned = false, relocated = false;
+        for (int tick = 0; tick < 240; ++tick) {
+          const Projectile *object = &g_battle.projectiles[0];
+          spawned |= object->kind == PROJECTILE_FIREBALL;
+          if (object->kind == PROJECTILE_FIREBALL && object->phase != 0) {
+            relocated |= object->pos[AXIS_X] == victim->body.pos[AXIS_X] || scenario == 2;
+            if (scenario == 2) {
+              /* Step back from the target position saved at spawn. */
+              victim->body.pos[AXIS_X] = slot ? -0x28000 : 0x28000;
+            }
+          }
+          battle_step(input);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai skull owner and victim must stay on frame phases");
+        }
+        check(spawned && relocated && g_battle.projectiles[0].kind == 0, "Kai skulls must relocate over the saved target and retire");
+        q16 damage = scenario == 2 ? 0 : scenario == 1 ? q16_mul(0x2147, 0x3333) : 0x2147;
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(stderr, "Kai skull slot%d move%d scenario%d health %x expected %x\n", slot, move, scenario, victim->health, Q16_ONE - damage);
+        }
+        check(victim->health == Q16_ONE - damage, "Kai skulls must preserve native hit, chip and miss damage once");
+        check(owner->state == S_IDLE && victim->state == (scenario == 1 ? S_BLOCK : S_IDLE) && !fighter_airborne(owner),
+            "Kai skull owner and victim must recover");
+        if (move == 0) {
+          check(owner->skull_ready > 0 && kai_can_rising_skull(owner), "Rising skull must stamp its cooldown when the cast completes");
+          owner->skull_ready = g_battle.ticks + 1;
+          check(!kai_can_rising_skull(owner), "Rising skull must reject a cast inside its 48-tick slot-3 window");
+        } else {
+          victim->action = 0x100a;
+          check(!kai_can_ground_skull(owner), "Ground skull must reject a peer in action 100a");
+          victim->action = 0;
+          victim->hits = 4;
+          check(!kai_can_ground_skull(owner), "Ground skull must reject a peer with more than three combo hits");
+        }
+      }
+    }
+  }
+}
+
 static void check_partial_cpu_stage_dispatch(void) {
   const int rosters[] = {7, 8, 9, 11, 12, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -4251,6 +4313,7 @@ int main(void) {
   check_roster_low_kick_frames();
   check_kai_handstand_frames();
   check_kai_df_specials();
+  check_kai_skulls();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_roster_high_punch_frames();

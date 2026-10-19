@@ -271,6 +271,22 @@ static void react_kick_air_impact(Fighter *fighter) {
   launch(fighter, 0x11eb, -0x23d7, 0x28f);
 }
 
+/* Kai skull reactions. 129 (485f10) disarms, then airborne victims take
+ * reaction 22's 483030/4e9430 path; grounded ones run 4e9c80: sound B[1],
+ * clip 132 two samples per visit to 14, stop, then 488ba0 getup 328.
+ * 130 (485f50) disarms, sets action 100a and runs 4e9ca8: sound B[3],
+ * clip 179 launch, landing at 39 and 488b80's getup 328. */
+static void react_extra(Fighter *fighter);
+
+static void react_kai_skull(Fighter *fighter) {
+  if (fighter->reaction == 129 && fighter_airborne(fighter)) {
+    fighter->reaction = 22;
+  } else {
+    battle_sound(SOUND_B, fighter->reaction == 129 ? 1 : 3);
+  }
+  react_extra(fighter);
+}
+
 /* 16 (0x482a10): kick hit, including the wall recoil check. */
 static void react_kick_hit(Fighter *fighter) {
   battle_wall_recoil(fighter);
@@ -347,6 +363,8 @@ static const ReactionSpec extra_reactions[256] = {
   [90] = {.move = R(311, 18, 0x4001), .land_at = -1},
   [99] = {R(326, 19, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
+  [129] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0xa3d, 0, 0, 0, false, false},
+  [130] = {R(179, 53, 0x100a), 0, 0, 39, 328, -0x51e, -0x4ccc, 0x353, 0, false, false},
   [154] = {R(131, 79, 0x4003), 0, 0, 40, 0, 0x1999, -0x23d7, 0x24d, 0, false, false},
   [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
@@ -391,6 +409,12 @@ static void reaction_land_gate(Fighter *fighter) {
   fighter->mmove_hold = fighter_airborne(fighter);
 }
 
+/* 4e9c98 opcode 5b (45b010) stops reaction 129 at its sample-14 boundary. */
+static void reaction_stop_gate(Fighter *fighter) {
+  mk4_script_stop(fighter);
+  fighter->mmove_hold = fighter_airborne(fighter);
+}
+
 static void extra_reaction_end(Fighter *fighter) {
   begin_getup(fighter, extra_reactions[fighter->reaction].getup);
 }
@@ -400,7 +424,7 @@ static int reaction_pose(const Fighter *fighter, const ReactionSpec *spec, int e
     return mini(4, elapsed);
   }
   int sample = elapsed;
-  if (fighter->reaction == 23) {
+  if (fighter->reaction == 23 || fighter->reaction == 129) {
     sample = elapsed < 7 ? elapsed * 2 : elapsed + 7;
   }
   if (spec->hold_ticks) {
@@ -425,7 +449,7 @@ static void extra_reaction_play(Fighter *fighter) {
   for (int frame = first; frame <= last; ++frame) {
     int pose = reaction_pose(fighter, spec, frame);
     bool gate = !crouch && !landing && spec->land_at >= 0 && pose >= spec->land_at;
-    native_frame(fighter, frame, mini(crouch ? 4 : spec->move.last, pose), gate ? reaction_land_gate : NULL);
+    native_frame(fighter, frame, mini(crouch ? 4 : spec->move.last, pose), gate ? (fighter->reaction == 129 ? reaction_stop_gate : reaction_land_gate) : NULL);
     landing |= gate;
   }
   native_play(fighter, false);
@@ -876,6 +900,8 @@ static const FighterFn reactions[256] = {
   [11] = react_jab_air,
   [13] = react_kick_air,
   [123] = react_kick_air_impact,
+  [129] = react_kai_skull,
+  [130] = react_kai_skull,
   [16] = react_kick_hit,
   [18] = react_sweep,
   [34] = react_uppercut,
@@ -925,7 +951,7 @@ void battle_react(Fighter *victim, int reaction) {
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 31 || reaction == 64 || reaction == 65 || reaction == 34 ||
           (reaction >= 48 && reaction <= 62) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
           reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
-          reaction == 156 || reaction == 162 || reaction == 173)) {
+          reaction == 156 || reaction == 162 || reaction == 173 || reaction == 123 || reaction == 129 || reaction == 130)) {
     victim->disarm(victim);
   }
   victim->reaction = reaction;
