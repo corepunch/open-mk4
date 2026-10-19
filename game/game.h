@@ -539,6 +539,8 @@ struct Fighter {
   q16 blend_weight;
   ScenePlayback scene;
   uint64_t hidden_joints[2];
+  int mesh_swap_joint;  /* retail joint ID drawn with mesh_swap instead of its rig mesh; 0 keeps the rig */
+  int mesh_swap;        /* replacement mesh index in the fighter's own geometry */
   int appearance;       /* character-script rendering variant; reset at round spawn */
   int frozen_clip;      /* preserve the victim's current pose while frozen */
   q16 visual_offset[3]; /* presentation translation; never integrated as combat velocity */
@@ -550,6 +552,7 @@ struct Fighter {
   uint64_t leg_grab_ready, cartwheel_ready;
   uint64_t wind_grab_ready;
   uint64_t skull_ready; /* Kai 48e3a0 slot-3 stamp plus the 45eb40 48-tick gate */
+  uint64_t projectile_ready; /* 48e3a0 action-family-7 timestamp plus the 45e9d0 delay */
   unsigned fujin_finish_inputs;
   /* Task +0x34 is the live character; round setup restores the selection
    * (532308/5324a0). A morph keeps that selection here and stamps slot 5. */

@@ -136,7 +136,14 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
     if (hidden) {
       continue;
     }
-    const Triangles *mesh = &ch->meshes.data[b->mesh].triangles;
+    int mesh_index = b->mesh;
+    /* Native 406ce0 replaces one node's render descriptor with another
+     * record from the same rig asset, such as Reptile's 517c24 head. */
+    if (model == NULL && fighter->mesh_swap_joint != 0 && b->id == fighter->mesh_swap_joint && fighter->mesh_swap >= 0 &&
+        (size_t)fighter->mesh_swap < ch->meshes.count) {
+      mesh_index = fighter->mesh_swap;
+    }
+    const Triangles *mesh = &ch->meshes.data[mesh_index].triangles;
     for (size_t j = 0; j < mesh->count; ++j) {
       Triangle t = mesh->data[j];
       for (size_t k = 0; k < 3; ++k) {

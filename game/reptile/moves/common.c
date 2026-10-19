@@ -1,101 +1,16 @@
 #include "../character.h"
 
-static bool reptile_visibility_event(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-static BattleEvent *reptile_find_event(Fighter *fighter, BattleEventFn step, int kind);
-static bool reptile_task_76_event(BattleEvent *event, Fighter *fighter, Fighter *opponent);
 static void reptile_ready(Fighter *fighter);
 static void reptile_script_47ab50(Fighter *fighter);
 static void reptile_script_47b260(Fighter *fighter);
 static void reptile_loop_frame(Fighter *fighter);
 void reptile_input_47a690(Fighter *fighter);
 void reptile_input_47afe0(Fighter *fighter);
-static void reptile_input_4988d0(Fighter *fighter);
 static void reptile_entry_block(Fighter *fighter);
 static const MoveDef s_dash = {.clip = 302, .last = 7, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x216};
 static const MoveDef s_roll = {.clip = 106, .last = 21, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x20d};
 static const MoveDef s_reaction_40 = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const AttackRecord reptile_loop_contact = {0xe872, -0x3f7c, 0xb84b, 0x56c8, 40, 10, 9, 0, 0x170a};
-
-static bool reptile_visibility_event(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
-  (void)opponent;
-  fighter->appearance = event->data[1];
-  fighter->flags &= ~(unsigned)FF_TELEPORTING;
-  return false;
-}
-
-static BattleEvent *reptile_find_event(Fighter *fighter, BattleEventFn step, int kind) {
-  int owner = fighter == &g_battle.fighters[0] ? 0 : 1;
-  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
-    BattleEvent *event = &g_battle.events[i];
-    if (event->active && event->owner == owner && event->step == step && event->data[7] == kind) {
-      return event;
-    }
-  }
-  return NULL;
-}
-
-void reptile_script_visibility_start(Fighter *fighter) {
-  BattleEvent *event = reptile_find_event(fighter, reptile_visibility_event, REPTILE_EVENT_VISIBILITY);
-  if (event != NULL) {
-    event->phase++;
-    return;
-  }
-  event = battle_event_start(fighter, reptile_visibility_event, false, true);
-  event->data[1] = fighter->appearance;
-  battle_event_program(event, 104);
-  event->data[7] = REPTILE_EVENT_VISIBILITY;
-  fighter->appearance = APPEARANCE_HIDDEN;
-  fighter->flags |= FF_TELEPORTING;
-}
-
-void reptile_script_visibility_extend(Fighter *fighter) {
-  BattleEvent *event = reptile_find_event(fighter, reptile_visibility_event, REPTILE_EVENT_VISIBILITY);
-  if (event != NULL) {
-    event->phase++;
-    battle_event_program(event, 104);
-  }
-}
-
-void reptile_script_visibility_end(Fighter *fighter) {
-  BattleEvent *event = reptile_find_event(fighter, reptile_visibility_event, REPTILE_EVENT_VISIBILITY);
-  if (event != NULL) {
-    fighter->appearance = event->data[1];
-    fighter->flags &= ~(unsigned)FF_TELEPORTING;
-    battle_event_cancel(event);
-  }
-}
-
-void reptile_script_visibility_phase(Fighter *fighter) {
-  BattleEvent *event = reptile_find_event(fighter, reptile_visibility_event, REPTILE_EVENT_VISIBILITY);
-  if (event != NULL) {
-    event->phase++;
-  }
-}
-
-static bool reptile_task_76_event(BattleEvent *event, Fighter *fighter, Fighter *opponent) {
-  (void)fighter;
-  (void)opponent;
-  g_battle.projectiles[event->data[1]].kind = 0;
-  return false;
-}
-
-void reptile_task_76_spawn(Fighter *fighter, int task_type) {
-  require(task_type == 76, "Unexpected Reptile cooperative task");
-  Projectile *clone = battle_spawn_projectile(fighter, PROJECTILE_CLONE, 20, reptile_clone_step);
-  if (clone == NULL) {
-    return;
-  }
-  clone->clip = 26;
-  clone->sample = 0;
-  memcpy(clone->pos, fighter->body.pos, sizeof clone->pos);
-  BattleEvent *event = battle_event_start(fighter, reptile_task_76_event, false, true);
-  event->data[1] = (int)(clone - g_battle.projectiles);
-  battle_event_program(event, 14);
-  for (int frame = 1; frame <= 14; ++frame) {
-    battle_event_frame(event, frame - 1, frame < 13 ? frame : 13, frame >= 11 && frame <= 13 ? reptile_clone_contact : reptile_clone_pose);
-  }
-  battle_sound(SOUND_C, 0x21);
-}
 
 static void reptile_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
@@ -217,10 +132,6 @@ void reptile_input_47a690(Fighter *fighter) {
 void reptile_input_47afe0(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   reptile_start(fighter, S_KICK, &s_roll, reptile_entry_retail_script_004e8178);
-}
-
-static void reptile_input_4988d0(Fighter *fighter) {
-  reptile_start(fighter, S_PUNCH, &reptile_s_jab, reptile_entry_retail_script_004ed1e8);
 }
 
 static void reptile_entry_block(Fighter *fighter) {

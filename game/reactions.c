@@ -3,6 +3,7 @@
 #include "mk4_characters.h"
 
 void reptile_reaction_40(Fighter *fighter);
+void reptile_acid_victim(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
 void fujin_wind_slam_victim(Fighter *fighter);
@@ -934,6 +935,7 @@ static const FighterFn reactions[256] = {
   [191] = goro_stomp_victim,
   [192] = goro_uppercut_victim,
   [178] = kai_second_victim,
+  [41] = reptile_acid_victim,
 };
 // clang-format on
 
@@ -953,8 +955,12 @@ void battle_react(Fighter *victim, int reaction) {
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 31 || reaction == 64 || reaction == 65 || reaction == 34 ||
           (reaction >= 48 && reaction <= 62) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
           reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
-          reaction == 156 || reaction == 162 || reaction == 173 || reaction == 123 || reaction == 129 || reaction == 130)) {
+          reaction == 156 || reaction == 162 || reaction == 173 || reaction == 123 || reaction == 129 || reaction == 130 || reaction == 41)) {
     victim->disarm(victim);
+  }
+  /* 483d60 hands an airborne acid victim (48ef30) to reaction 10's 481320. */
+  if (reaction == 41 && fighter_airborne(victim)) {
+    reaction = 10;
   }
   victim->reaction = reaction;
   if (reaction != 67 && reaction != 151) {

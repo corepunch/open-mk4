@@ -2341,6 +2341,54 @@ static void check_goro_frame_specials(void) {
     fighter_press(owner, BUTTON_HIGH_KICK);
     advance_ticks(1, NULL);
     check(fighter_move(owner)->clip == 313, "Goro back+HK must enter the shared roundhouse 46f1f0");
+/* Reptile fighter block: acid spit 4988d0/4ed1e8 and its reaction 41. */
+static void check_reptile_acid_spit(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      battle_init(slot ? 4 : 10, slot ? 10 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      battle_step(input);
+      fighter_press(owner, BUTTON_DOWN);
+      fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
+      fighter_press(owner, BUTTON_HIGH_PUNCH);
+      battle_step(input);
+      check(fighter_move(owner)->clip == 25 && owner->action == 0x30b, "Down, forward+HP must enter Reptile's acid spit");
+      const Controls *controls = roster_def(10)->controls;
+      CommandPredicate gate = NULL;
+      for (int i = 0; i < controls->command_count; ++i) {
+        if (controls->commands[i].button == BUTTON_HIGH_PUNCH && controls->commands[i].count == 2) {
+          gate = controls->commands[i].predicate;
+        }
+      }
+      check(gate != NULL && !gate(owner), "Acid spit must stamp its family-7 delay");
+      bool opened = false, victim_clip = false;
+      for (int tick = 0; tick < 150; ++tick) {
+        battle_step(input);
+        if (scenario == 2 && tick == 4) {
+          fighter_enter_state(owner, S_HIT);
+        }
+        opened |= owner->mesh_swap_joint == 2;
+        victim_clip |= fighter_move(victim)->clip == 182;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Acid spit and its victim must use frame tables");
+      }
+      q16 damage = scenario == 0 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
+      if (victim->health != Q16_ONE - damage || owner->state != S_IDLE) {
+        fprintf(stderr, "Reptile acid slot%d scenario%d health%d expected%d owner%d victim%d\n", slot, scenario, victim->health, Q16_ONE - damage, owner->state,
+            victim->state);
+      }
+      check(victim->health == Q16_ONE - damage, "Acid must hit, chip or be cancelled before its carrier spawns");
+      check(victim_clip == (scenario == 0), "Only an unblocked acid hit enters reaction 41's clip 182");
+      check(opened == (scenario != 2) && owner->mesh_swap_joint == 0, "Acid spit must open and then restore Reptile's head mesh");
+      check(owner->state == S_IDLE && victim->state == (scenario == 1 ? S_BLOCK : S_IDLE), "Acid spit owner and victim must recover");
+      check(gate(owner), "Acid spit delay must expire after 0x50 ticks");
+    }
   }
 }
 
@@ -4444,6 +4492,7 @@ int main(void) {
   check_jax_first_fatality();
   check_jax_second_fatality();
   check_reptile_reconnected_specials();
+  check_reptile_acid_spit();
   check_goro_reconnected_counters();
   check_goro_frame_specials();
   check_cage_special_commands();

@@ -2,8 +2,11 @@
 /* EXE SHA-256: 4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d; roster 10. */
 #include "script.h"
 
+void reptile_acid_spawn(Fighter *, int);
+void reptile_acid_victim_tail(Fighter *);
 void reptile_script_47a6d0(Fighter *);
 void reptile_script_47b010(Fighter *);
+void reptile_script_acid_drool(Fighter *);
 void reptile_script_air_finish(Fighter *);
 void reptile_script_close_hk_tail(Fighter *);
 void reptile_script_close_hp_tail(Fighter *);
@@ -13,6 +16,9 @@ void reptile_script_fan_tail(Fighter *);
 void reptile_script_fan_victim_end(Fighter *);
 void reptile_script_fan_victory(Fighter *);
 void reptile_script_finish(Fighter *);
+void reptile_script_head_close(Fighter *);
+void reptile_script_head_open(Fighter *);
+void reptile_script_head_wide(Fighter *);
 void reptile_script_lk_return(Fighter *);
 void reptile_script_lp_reaction(Fighter *, int);
 void reptile_script_lp_return(Fighter *);
@@ -21,11 +27,6 @@ void reptile_script_reaction_side_getup(Fighter *);
 void reptile_script_roundhouse_finish(Fighter *);
 void reptile_script_roundhouse_start(Fighter *);
 void reptile_script_spike_tail(Fighter *);
-void reptile_script_visibility_end(Fighter *);
-void reptile_script_visibility_extend(Fighter *);
-void reptile_script_visibility_phase(Fighter *);
-void reptile_script_visibility_start(Fighter *);
-void reptile_task_76_spawn(Fighter *, int);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 static const AttackRecord retail_contact_4ec080 = {59506, -16252, 47179, 22216, 40, 10, 9, 0, 5898};
@@ -3214,6 +3215,20 @@ static inline void retail_script_004e9620(Fighter *fighter) {
   }
 }
 
+static inline void retail_script_004e97f8(Fighter *fighter);
+
+static inline void retail_script_004e97f8(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e97f8: 0x2b000001 */
+  battle_sound(SOUND_B, 1);
+  /* EXE 004e97fc: 0x5a000000 0x3333 */
+  fighter_set_speed(fighter, -13107);
+  /* EXE 004e9804: 0xf000000 0x13ed81 */
+  mk4_mmove_bind(fighter, 182, 65, 0);
+  /* EXE 004e980c: 0x32000000 0x483df0 */
+  reptile_acid_victim_tail(fighter);
+}
+
 static inline void retail_script_004e9bd0(Fighter *fighter);
 
 static void retail_script_004e9bd0_at_17(Fighter *fighter) {
@@ -3270,85 +3285,69 @@ static inline void retail_script_004e9bd0(Fighter *fighter) {
   fighter_mmove_phase(fighter, &retail_script_004e9bd0_phase);
 }
 
+static inline void retail_script_004ed1e8(Fighter *fighter);
+
+static void retail_script_004ed1e8_at_11(Fighter *fighter) {
+  fighter->sample_override = 11;
+  /* EXE 004ed1f0: 0x35000000 0x40ec40 */
+  reptile_script_head_open(fighter);
+  /* EXE 004ed1f8: 0x4000005 */
+}
+
+static void retail_script_004ed1e8_at_16(Fighter *fighter) {
+  fighter->sample_override = 16;
+  /* EXE 004ed1fc: 0x35000000 0x40ed20 */
+  reptile_script_head_wide(fighter);
+  /* EXE 004ed204: 0x4000005 */
+}
+
+static void retail_script_004ed1e8_at_21(Fighter *fighter) {
+  fighter->sample_override = 21;
+  /* EXE 004ed208: 0x40000000 0x4c 0x498920 */
+  reptile_acid_spawn(fighter, 76);
+  /* EXE 004ed214: 0x35000000 0x40ee00 */
+  reptile_script_acid_drool(fighter);
+  /* EXE 004ed21c: 0x4000008 */
+}
+
+static void retail_script_004ed1e8_at_29(Fighter *fighter) {
+  fighter->sample_override = 29;
+  /* EXE 004ed220: 0x35000000 0x40ec40 */
+  reptile_script_head_open(fighter);
+  /* EXE 004ed228: 0x2d000000 */
+  fighter->action = ACTION_RETAIL_1007;
+  /* EXE 004ed22c: 0x500001e */
+}
+
+static void retail_script_004ed1e8_at_45(Fighter *fighter) {
+  fighter->sample_override = 27;
+  /* EXE 004ed244: 0x35000000 0x40eb80 */
+  reptile_script_head_close(fighter);
+  /* EXE 004ed24c: 0x3000000 */
+}
+
+static void retail_script_004ed1e8_at_61(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static const int retail_script_004ed1e8_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+    29, 30, 29, 28, 27, 28, 29, 30, 29, 28, 27, 28, 29, 30, 29, 28, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 41};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed1e8_frames[61] = {
+  [10] = {.thinkfunc = retail_script_004ed1e8_at_11},
+  [15] = {.thinkfunc = retail_script_004ed1e8_at_16},
+  [20] = {.thinkfunc = retail_script_004ed1e8_at_21},
+  [28] = {.thinkfunc = retail_script_004ed1e8_at_29},
+  [44] = {.thinkfunc = retail_script_004ed1e8_at_45},
+  [60] = {.thinkfunc = retail_script_004ed1e8_at_61},
+};
+// clang-format on
+static const mmove_t retail_script_004ed1e8_phase = {
+    .firstframe = 0, .lastframe = 60, .frame = retail_script_004ed1e8_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ed1e8_samples};
+
 static inline void retail_script_004ed1e8(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  {
-    /* EXE 004ed1e8: 0x200000b 0x13ebaa */
-    mk4_script_bind(fighter, 25, 42, 0);
-    mk4_script_advance(fighter, 11, 1);
-  }
-  {
-    /* EXE 004ed1f0: 0x35000000 0x40ec40 */
-    reptile_script_visibility_start(fighter);
-  }
-  {
-    /* EXE 004ed1f8: 0x4000005 */
-    mk4_script_advance(fighter, 5, 1);
-  }
-  {
-    /* EXE 004ed1fc: 0x35000000 0x40ed20 */
-    reptile_script_visibility_phase(fighter);
-  }
-  {
-    /* EXE 004ed204: 0x4000005 */
-    mk4_script_advance(fighter, 5, 1);
-  }
-  {
-    /* EXE 004ed208: 0x40000000 0x4c 0x498920 */
-    reptile_task_76_spawn(fighter, 76);
-  }
-  {
-    /* EXE 004ed214: 0x35000000 0x40ee00 */
-    reptile_script_visibility_extend(fighter);
-  }
-  {
-    /* EXE 004ed21c: 0x4000008 */
-    mk4_script_advance(fighter, 8, 1);
-  }
-  {
-    /* EXE 004ed220: 0x35000000 0x40ec40 */
-    reptile_script_visibility_start(fighter);
-  }
-  {
-    /* EXE 004ed228: 0x2d000000 */
-    fighter->action = ACTION_RETAIL_1007;
-  }
-  {
-    /* EXE 004ed22c: 0x500001e */
-    fighter_fiber_play_to(fighter, 30, 1);
-  }
-  {
-    /* EXE 004ed230: 0x4a00001b */
-    fighter_fiber_play_to(fighter, 27, -1);
-  }
-  {
-    /* EXE 004ed234: 0x500001e */
-    fighter_fiber_play_to(fighter, 30, 1);
-  }
-  {
-    /* EXE 004ed238: 0x4a00001b */
-    fighter_fiber_play_to(fighter, 27, -1);
-  }
-  {
-    /* EXE 004ed23c: 0x500001e */
-    fighter_fiber_play_to(fighter, 30, 1);
-  }
-  {
-    /* EXE 004ed240: 0x4a00001b */
-    fighter_fiber_play_to(fighter, 27, -1);
-  }
-  {
-    /* EXE 004ed244: 0x35000000 0x40eb80 */
-    reptile_script_visibility_end(fighter);
-  }
-  {
-    /* EXE 004ed24c: 0x3000000 */
-    mk4_script_finish_clip(fighter, 1);
-  }
-  {
-    /* EXE 004ed250: 0x3f000000 */
-    fighter_wait_ticks(1);
-    fighter_fiber_finish(fighter_ready);
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed1e8: 0x200000b 0x13ebaa */
+  mk4_mmove_bind(fighter, 25, 42, 0);
+  fighter_mmove_phase(fighter, &retail_script_004ed1e8_phase);
 }

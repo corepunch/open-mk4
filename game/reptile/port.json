@@ -52,9 +52,9 @@
       "evidence": "Exact Reptile input target sets action 0x20d and enters generated script 0x4e8178."
     },
     "0x4988d0": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_input_4988d0",
-      "evidence": "Exact Reptile input target sets action 0x30b and enters generated script 0x4ed1e8."
+      "source": "game/reptile/moves/projectile.c",
+      "symbol": "reptile_acid_spit",
+      "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
   },
   "entry_contexts": {
@@ -181,10 +181,11 @@
     "0x4e9620",
     "0x4e9bd0",
     "0x4ed1e8",
-    "0x4e6270"
+    "0x4e6270",
+    "0x4e97f8"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "d63c2c398b8483ed2eb348954329e2f1277f631a525e7a786edf61e5338a1e86",
+  "inventory_sha256": "6d017ca1cb3be43b6f94389b056dd0109eee02bfa8f6a72bbdd55f57453b5504",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -235,11 +236,6 @@
       "source": "game/reptile/character.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Reptile native input route enters generated root 0x004e8178."
-    },
-    "input_4988d0": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_input_4988d0",
-      "evidence": "Reptile native input route enters generated root 0x004ed1e8."
     },
     "jab": {
       "source": "game/reptile/character.c",
@@ -300,6 +296,11 @@
       "source": "game/reptile/moves/combos.c",
       "symbol": "reptile_close_hk",
       "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+    },
+    "acid_spit": {
+      "source": "game/reptile/moves/projectile.c",
+      "symbol": "reptile_acid_spit",
+      "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
   },
   "output": "game/reptile/generated/scripts.inc",
@@ -417,6 +418,17 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "41": {
+      "source": "game/reptile/moves/projectile.c",
+      "symbol": "reptile_acid_victim",
+      "adaptation": "Shared reactions.c entry 41 dispatches grounded victims to the move-owned acid reaction; battle_react redirects airborne victims to reaction 10.",
+      "evidence": "C[17] selects 41 (483d60): action 1013, 494520 disarm, 48ef30 airborne -> 481320 (reaction 10), else friction 4e97f0 and VM 4e97f8 with tail 483df0."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Acid C[17] blocked reaction 2 uses the shared projectile block handler 486ca0."
     }
   },
   "return_to": "fighter_ready",
@@ -506,6 +518,11 @@
       "source": "game/reptile/moves/common.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
+    },
+    "0x4988d0": {
+      "source": "game/reptile/moves/projectile.c",
+      "symbol": "reptile_acid_spit",
+      "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
   },
   "command_predicates": {
@@ -513,7 +530,8 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45e950": "reptile_can_dash"
+    "0x45e950": "reptile_can_dash",
+    "0x45e9d0": "reptile_can_spit"
   },
   "cpu_bindings": {
     "0x47a690": {
@@ -525,6 +543,11 @@
       "source": "game/reptile/moves/common.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
+    },
+    "0x4988d0": {
+      "source": "game/reptile/moves/projectile.c",
+      "symbol": "reptile_acid_spit",
+      "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
   },
   "mmove_scripts": [
@@ -559,6 +582,8 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4ed1e8",
+    "0x4e97f8"
   ]
 }

@@ -5,7 +5,6 @@
 #include "native.h"
 #include "mk4_characters.h"
 #include "script.h"
-#include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_jab reptile_s_jab
@@ -15,14 +14,6 @@
 #define s_throw reptile_s_throw
 #define s_uppercut reptile_s_uppercut
 
-enum {
-  REPTILE_EVENT_VISIBILITY = 1,
-  REPTILE_EVENT_TASK_76
-};
-
-bool reptile_clone_contact(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-bool reptile_clone_pose(BattleEvent *event, Fighter *fighter, Fighter *opponent);
-void reptile_clone_step(Projectile *projectile);
 void reptile_lp_throw(Fighter *fighter);
 void reptile_press_air_hk(Fighter *fighter);
 void reptile_press_air_hp(Fighter *fighter);
@@ -49,13 +40,8 @@ void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
 void reptile_script_reaction_side_getup(Fighter *fighter);
 void reptile_script_roundhouse_start(Fighter *fighter);
 void reptile_script_spike_tail(Fighter *fighter);
-void reptile_script_visibility_end(Fighter *fighter);
-void reptile_script_visibility_extend(Fighter *fighter);
-void reptile_script_visibility_phase(Fighter *fighter);
-void reptile_script_visibility_start(Fighter *fighter);
 void reptile_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
 void reptile_sweep(Fighter *fighter);
-void reptile_task_76_spawn(Fighter *fighter, int task_type);
 void reptile_entry_retail_script_004de2f8(Fighter *fighter);
 void reptile_entry_retail_script_004de6b8(Fighter *fighter);
 void reptile_entry_retail_script_004de798(Fighter *fighter);
@@ -116,4 +102,14 @@ bool reptile_can_dash(const Fighter *fighter);
 void reptile_entry_retail_script_004e6270(Fighter *fighter);
 void reptile_entry_retail_script_004e0138(Fighter *fighter);
 void reptile_entry_retail_script_004e0158(Fighter *fighter);
+void reptile_entry_retail_script_004e97f8(Fighter *fighter);
+bool reptile_can_spit(const Fighter *fighter);
+void reptile_acid_spit(Fighter *fighter);
+void reptile_acid_spawn(Fighter *fighter, int task_type);
+void reptile_acid_victim(Fighter *fighter);
+void reptile_acid_victim_tail(Fighter *fighter);
+void reptile_script_acid_drool(Fighter *fighter);
+void reptile_script_head_close(Fighter *fighter);
+void reptile_script_head_open(Fighter *fighter);
+void reptile_script_head_wide(Fighter *fighter);
 #endif
