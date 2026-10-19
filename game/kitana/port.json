@@ -481,7 +481,7 @@
       "symbol": "react_block"
     },
     "121": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"
@@ -549,7 +549,7 @@
       "symbol": "react_extra"
     },
     "24": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"
@@ -595,13 +595,13 @@
       "symbol": "react_extra"
     },
     "55": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"
     },
     "56": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"
@@ -617,7 +617,7 @@
       "symbol": "react_block"
     },
     "68": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"
@@ -640,13 +640,13 @@
       "symbol": "react_extra_block"
     },
     "86": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"
     },
     "87": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/kitana/character.c",
       "symbol": "kitana_generated_reaction"

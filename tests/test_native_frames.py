@@ -14,8 +14,7 @@ void helper(Fighter *fighter) { if (fighter->ticks == 9) { hit(fighter); } }'''
         self.assertTrue(audit_text('hidden.c', source))
         self.assertTrue(audit_text('scene.c', 'void tick(Fighter *fighter) { if (g_battle.phase_ticks >= 64) { release(fighter); } }'))
 
-    def test_native_waits_and_counter_storage_are_rejected(self):
-        self.assertTrue(audit_text('wait.c', 'void action(Fighter *fighter) { fighter_wait_ticks(3); }'))
+    def test_counter_storage_is_rejected(self):
         self.assertTrue(audit_text('counter.c', 'void action(Fighter *fighter) { --fighter->script_timer; }'))
 
     def test_native_tick_sequences_are_rejected(self):

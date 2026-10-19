@@ -4,9 +4,9 @@
 
 static int current_character, current_player;
 
-/* A move program owns the actor until it completes or is cancelled. */
+/* A frame program owns the actor until it completes or is cancelled. */
 static bool program_active(const Fighter *fighter) {
-  return fighter_fiber_active(fighter) || fighter->current_mmove != NULL;
+  return fighter->current_mmove != NULL;
 }
 
 static void check(bool condition, const char *message) {

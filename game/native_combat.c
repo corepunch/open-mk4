@@ -113,9 +113,6 @@ static void ground_begin(Fighter *fighter) {
 void native_ground_tail(Fighter *fighter, const NativeGroundProfile *profile) {
   fighter->native_context = profile;
   fighter->native_elapsed = fighter->ticks;
-  if (fighter_fiber_running(fighter)) {
-    fighter_fiber_handoff(ground_begin);
-  }
   ground_begin(fighter);
 }
 
@@ -169,9 +166,6 @@ static void hp_build(Fighter *fighter) {
 void native_hp_start(Fighter *fighter, const NativeHPProfile *profile) {
   battle_sound(SOUND_A, 10);
   fighter->native_context = profile;
-  if (fighter_fiber_running(fighter)) {
-    fighter_fiber_handoff(hp_build);
-  }
   hp_build(fighter);
 }
 
@@ -300,9 +294,6 @@ void native_air_tail(Fighter *fighter, const NativeAirProfile *profile, int inde
   fighter->native_context = profile;
   fighter->native_variant = index;
   fighter->native_elapsed = elapsed;
-  if (fighter_fiber_running(fighter)) {
-    fighter_fiber_handoff(air_build);
-  }
   air_build(fighter);
 }
 

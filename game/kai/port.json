@@ -2853,19 +2853,19 @@
     },
     "0x4ec5a8": {
       "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+      "evidence": "Native weapon continuation returns to the controller when its frame program ends."
     },
     "0x4e8b78": {
       "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+      "evidence": "Native weapon continuation returns to the controller when its frame program ends."
     },
     "0x4e8bc0": {
       "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+      "evidence": "Native weapon continuation returns to the controller when its frame program ends."
     },
     "0x4e8f50": {
       "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Native weapon continuation returns to the controller without fiber ownership."
+      "evidence": "Native weapon continuation returns to the controller when its frame program ends."
     },
     "0x4e6950": {
       "clip": 293,
@@ -3278,19 +3278,19 @@
       "source": "game/kai/moves/handstand.c",
       "symbol": "kai_handstand_reaction",
       "evidence": "Native482de0/488a50/488a80 select standing/crouching stagger, knockdown and rear kick recovery.",
-      "adaptation": "Frame phases preserve native motion and KO-aware recovery without retained fiber stacks."
+      "adaptation": "Frame phases preserve native motion and KO-aware recovery as actor-owned frame programs."
     },
     "127": {
       "source": "game/kai/moves/handstand.c",
       "symbol": "kai_handstand_reaction",
       "evidence": "Native482de0/488a50/488a80 select standing/crouching stagger, knockdown and rear kick recovery.",
-      "adaptation": "Frame phases preserve native motion and KO-aware recovery without retained fiber stacks."
+      "adaptation": "Frame phases preserve native motion and KO-aware recovery as actor-owned frame programs."
     },
     "167": {
       "source": "game/kai/moves/handstand.c",
       "symbol": "kai_handstand_reaction",
       "evidence": "Native482de0/488a50/488a80 select standing/crouching stagger, knockdown and rear kick recovery.",
-      "adaptation": "Frame phases preserve native motion and KO-aware recovery without retained fiber stacks."
+      "adaptation": "Frame phases preserve native motion and KO-aware recovery as actor-owned frame programs."
     },
     "0": {
       "source": "game/reactions.c",

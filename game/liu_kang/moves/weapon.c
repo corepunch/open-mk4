@@ -80,8 +80,8 @@ static void sword_recover(Fighter *fighter) {
   bool hit = fighter->connected;
   fighter->action = ACTION_RETAIL_1006;
   if (index == 0 && hit && sword_repeat(fighter)) {
-    /* 496500 -> 4ec720/730, delayed travel then second strike. The phase
-     * change keeps the action's cleanup, as the previous fiber rebind did. */
+    /* 496500 -> 4ec720/730, delayed travel then second strike. The move
+     * rebind keeps the action's cleanup for the second strike. */
     fighter->mmove_cleanup = NULL;
     fighter_start_move(fighter, S_PUNCH, &liu_kang_sword_attacks[1].move);
     fighter->mmove_cleanup = sword_cleanup;

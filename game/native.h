@@ -9,16 +9,8 @@ void native_narrow_kick_contact(Fighter *fighter, FighterFn recovery);
 void native_begin(Fighter *fighter, int first, int last, FighterFn end);
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action);
 void native_play(Fighter *fighter, bool immediate);
-/* Returning bindings retain their VM continuation, but playback and actions
- * are dispatched by mframe rows rather than a native tick loop. */
-void native_wait(Fighter *fighter);
-void native_delay(Fighter *fighter, int frames);
-void native_advance(Fighter *fighter, int count, int step);
-void native_play_to(Fighter *fighter, int sample, int step);
 void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end);
-void native_calls(Fighter *fighter, int frames, int pose_step, FighterFn action);
 void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames, int pose_step, FighterFn end);
-void native_until(Fighter *fighter, FighterTest condition);
 void native_await(Fighter *fighter, FighterTest condition, FighterFn end);
 void native_finish_clip(Fighter *fighter, FighterFn end);
 void native_repeat(Fighter *fighter, const mmove_t *move, int repetitions, FighterFn end);

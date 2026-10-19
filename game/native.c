@@ -42,44 +42,7 @@ static void native_install(Fighter *fighter) {
 
 void native_play(Fighter *fighter, bool immediate) {
   fighter->native_immediate = immediate;
-  if (fighter_fiber_running(fighter)) {
-    fighter_fiber_handoff(native_install);
-  }
-  if (fighter_fiber_active(fighter)) {
-    fighter_fiber_release_to_mmove(fighter);
-  }
   native_install(fighter);
-}
-
-void native_wait(Fighter *fighter) {
-  fighter->native.move.endfunc = fighter_stop_mmove;
-  fighter->native_immediate = false;
-  native_install(fighter);
-  fighter_fiber_await_frames(fighter);
-}
-
-void native_delay(Fighter *fighter, int frames) {
-  if (frames <= 0) {
-    return;
-  }
-  int pose = fighter_sample(fighter);
-  native_begin(fighter, 0, frames - 1, NULL);
-  for (int frame = 0; frame < frames; ++frame) {
-    native_frame(fighter, frame, pose, NULL);
-  }
-  native_wait(fighter);
-}
-
-void native_advance(Fighter *fighter, int count, int step) {
-  if (count <= 0) {
-    return;
-  }
-  int pose = fighter_sample(fighter), last = fighter_move(fighter)->last;
-  native_begin(fighter, 1, count, NULL);
-  for (int frame = 1; frame <= count; ++frame) {
-    native_frame(fighter, frame, maxi(0, last == MOVE_END ? pose + step * frame : mini(last, pose + step * frame)), NULL);
-  }
-  native_wait(fighter);
 }
 
 void native_hold(Fighter *fighter, int frames, FighterFn end) {
@@ -186,24 +149,7 @@ void native_schedule_speed(Fighter *fighter, q16 speed, int delay, int frames) {
   native_motion_play(fighter);
 }
 
-void native_play_to(Fighter *fighter, int sample, int step) {
-  int start = fighter_sample(fighter);
-  require(step != 0, "Native playback requires a pose step");
-  int distance = step > 0 ? sample - start : start - sample;
-  if (distance <= 0) {
-    return;
-  }
-  int stride = step > 0 ? step : -step;
-  int count = (distance + stride - 1) / stride;
-  native_begin(fighter, 1, count, NULL);
-  for (int frame = 1; frame <= count; ++frame) {
-    int pose = start + frame * step;
-    native_frame(fighter, frame, step > 0 ? mini(sample, pose) : maxi(sample, pose), NULL);
-  }
-  native_wait(fighter);
-}
-
-/* Nonblocking native_play_to: one row per pose step, then end. */
+/* One row per pose step toward sample, then end. */
 void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end) {
   int start = fighter_sample(fighter);
   require(step != 0, "Native playback requires a pose step");
@@ -220,18 +166,6 @@ void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end) {
     native_frame(fighter, frame, step > 0 ? mini(sample, pose) : maxi(sample, pose), NULL);
   }
   native_play(fighter, false);
-}
-
-void native_calls(Fighter *fighter, int frames, int pose_step, FighterFn action) {
-  if (frames <= 0) {
-    return;
-  }
-  int pose = fighter_sample(fighter);
-  native_begin(fighter, 1, frames, NULL);
-  for (int frame = 1; frame <= frames; ++frame) {
-    native_frame(fighter, frame, maxi(0, pose + frame * pose_step), action);
-  }
-  native_wait(fighter);
 }
 
 /* Contact leaves early through the continuation, which replaces the rows. */
@@ -260,17 +194,7 @@ static void condition_frame(Fighter *fighter) {
   fighter->mmove_hold = !fighter->native_condition(fighter);
 }
 
-void native_until(Fighter *fighter, FighterTest condition) {
-  if (condition(fighter)) {
-    return;
-  }
-  fighter->native_condition = condition;
-  native_begin(fighter, 0, 0, NULL);
-  fighter->native.frames[0].thinkfunc = condition_frame;
-  native_wait(fighter);
-}
-
-/* Nonblocking native_until: the continuation is the end of a held row. */
+/* Holds the current pose until condition holds; the continuation is the end of that row. */
 void native_await(Fighter *fighter, FighterTest condition, FighterFn end) {
   if (condition(fighter)) {
     end(fighter);
@@ -324,11 +248,7 @@ void native_scene_blends(Fighter *fighter, const SceneClip *clips, int count, Fi
       fighter->native.frames[row++] = (mframe_t){scene_weight_frame, (float)weight, frame == frames ? scene_blend_advance : NULL};
     }
   }
-  if (fighter_fiber_running(fighter)) {
-    native_wait(fighter);
-  } else {
-    native_play(fighter, false);
-  }
+  native_play(fighter, false);
 }
 
 static const AttackRecord advancing_sweep_record = {0x170a3, 0x8518, 0xdeb8, 0x8000, 19, 19, 4, ATTACK_LOW, 0x23d7};

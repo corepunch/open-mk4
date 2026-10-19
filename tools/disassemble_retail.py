@@ -652,7 +652,7 @@ def main():
     parser.add_argument('--limit', type=int, help='Query limit, 1..512 (default 512 for --c/--port, otherwise 80)')
     parser.add_argument('--raw', action='store_true', help='Include fixed script words or native bytes in queries')
     parser.add_argument('--c', action='store_true', help='C-like script flow or researched native contract and portable C adaptation')
-    parser.add_argument('--port', action='store_true', help='Move worksheet: actual fiber C, dependencies, exact operands and checked mk4decomp links (requires Capstone)')
+    parser.add_argument('--port', action='store_true', help='Move worksheet: actual frame-program C, dependencies, exact operands and checked mk4decomp links (requires Capstone)')
     parser.add_argument('--no-linear', action='store_true', help='For --bundle, omit the large linear recovery fallback')
     args = parser.parse_args()
     if args.limit is None:

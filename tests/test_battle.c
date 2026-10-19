@@ -298,7 +298,7 @@ static void check_original_scorpion(void) {
       battle_step((Input[2]){0});
     }
     check(second == expected_second, "Jab must preserve the recorded repeat/away branch");
-    check(fighter->state == S_IDLE && !fighter_fiber_active(fighter), "Generated normal must finish recovery and retire its stack");
+    check(fighter->state == S_IDLE, "Generated normal must finish recovery and retire its stack");
   }
 }
 
@@ -394,7 +394,7 @@ static void check_wait_phases(void) {
   battle_init(4, 0);
   check(g_battle.fighters[0].roster == 4 && g_battle.fighters[1].roster == 0 && g_battle.phase == PHASE_READY && g_battle.ticks == 0,
       "Singleton initialization must start the requested fresh match");
-  check(g_battle.fighters[0].sequence == NULL && g_battle.fighters[0].script == NULL && g_battle.fighters[0].pending == NULL &&
+  check(g_battle.fighters[0].sequence == NULL && g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[0].pending == NULL &&
             g_battle.projectiles[0].kind == 0 && !g_battle.camera.active && !g_battle.contacts_off,
       "Singleton initialization must discard old continuations, objects and scene state");
   advance_ticks(45, NULL);
@@ -407,7 +407,7 @@ static void check_scorpion_contact_branches(void) {
     fight(1.f);
     Fighter *fighter = &g_battle.fighters[0];
     fighter_enter_state(fighter, S_UPPERCUT);
-    check(!fighter_fiber_active(fighter) && fighter->current_mmove != NULL, "Uppercut must run its branches through frame tables");
+    check(fighter->current_mmove != NULL, "Uppercut must run its branches through frame tables");
     Input in[2] = {0};
     if (blocked) {
       in[1].held = BUTTON_BIT(BUTTON_BLOCK);
@@ -533,7 +533,7 @@ static void check_spear_allocation_and_reset(void) {
   advance_ticks(27, NULL);
   check(g_battle.fighters[1].action == 0x4000, "Reset must occur during a live spear pull");
   battle_reset_match();
-  check(g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[0].script == NULL && g_battle.fighters[1].state == S_IDLE,
+  check(g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[1].state == S_IDLE,
       "Rematch must cancel the spear program and discard both paired controllers");
   advance_ticks(100, NULL);
   check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE && g_battle.fighters[0].state == S_IDLE,
@@ -861,7 +861,6 @@ static void check_reconnected_air_attacks(void) {
       battle_step(input);
       for (int tick = 0; tick < 7; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(fighter), "Roster air HP startup/contact must remain on frame tables");
       }
       if (!(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL)) {
         fprintf(stderr, "Air follow-up roster %d slot %d health %d clip %d gravity %d\n", rosters[row], slot, victim->health, fighter_move(fighter)->clip,
@@ -875,7 +874,6 @@ static void check_reconnected_air_attacks(void) {
       check(fighter_move(fighter)->clip == 96 && fighter->body.gravity == 0, "Reconnected air LP follow-up must retain the contact freeze");
       for (int tick = 0; tick < 150; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(fighter), "Roster air LP follow-up/recovery must remain on frame tables");
       }
       check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Reconnected air follow-up must land and restore control");
       for (int low = 0; low < 2; ++low) {
@@ -897,7 +895,7 @@ static void check_reconnected_air_attacks(void) {
         }
         check(fighter_move(fighter)->clip == clip, "Both straight-air kick switches must reach the shared native kick entry");
         advance_ticks(100, NULL);
-        check(fighter->state == S_IDLE && !fighter_fiber_active(fighter), "Straight-air kick miss must land and restore controls");
+        check(fighter->state == S_IDLE, "Straight-air kick miss must land and restore controls");
       }
     }
   }
@@ -930,11 +928,10 @@ static void check_kai_handstand_frames(void) {
       owner->held = BUTTON_BIT(BUTTON_BLOCK);
       input[slot].held |= BUTTON_BIT(BUTTON_LOW_KICK);
       advance_ticks(2, input);
-      check(fighter_move(owner)->clip == 1 && !fighter_fiber_active(owner), "BLOCK+LK must select Kai's handstand intro through the real command gate");
+      check(fighter_move(owner)->clip == 1, "BLOCK+LK must select Kai's handstand intro through the real command gate");
       input[slot].held = 0;
       advance_ticks(120, input);
-      check(fighter_move(owner)->clip == 4 && owner->action == 0x200d && !fighter_fiber_active(owner),
-          "Handstand must install persistent controls after its intro");
+      check(fighter_move(owner)->clip == 4 && owner->action == 0x200d, "Handstand must install persistent controls after its intro");
       if (attack == 3) {
         input[slot].held = BUTTON_BIT(BUTTON_RIGHT);
         advance_ticks(10, input);
@@ -946,7 +943,7 @@ static void check_kai_handstand_frames(void) {
         battle_step(input);
         input[slot].held = 0;
         advance_ticks(60, input);
-        check(owner->state == S_IDLE && !fighter_fiber_active(owner), "Handstand BLOCK must reverse the intro and restore ordinary controls");
+        check(owner->state == S_IDLE, "Handstand BLOCK must reverse the intro and restore ordinary controls");
         continue;
       }
       if (scenario == 1) {
@@ -958,7 +955,6 @@ static void check_kai_handstand_frames(void) {
       check(fighter_move(owner)->clip == (attack == 0 ? 0 : attack == 1 ? 6 : 2), "Each handstand button must select its own retail attack clip");
       for (int tick = 0; tick < 35; ++tick) {
         battle_step(input);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Handstand owner and victim paths must remain on frame tables");
         if (attack != 2) {
           input[slot].held = 0;
         }
@@ -977,11 +973,10 @@ static void check_kai_handstand_frames(void) {
       }
       input[slot].held = 0;
       advance_ticks(180, input);
-      check(fighter_move(owner)->clip == 4 && !fighter_fiber_active(owner) && !fighter_fiber_active(victim),
-          "Handstand attacks must recover to their persistent stance");
+      check(fighter_move(owner)->clip == 4, "Handstand attacks must recover to their persistent stance");
       battle_react(owner, 37);
       advance_ticks(100, NULL);
-      check(owner->state == S_IDLE && !fighter_fiber_active(owner), "Interrupting handstand must restore ordinary control and retire its motion");
+      check(owner->state == S_IDLE, "Interrupting handstand must restore ordinary control and retire its motion");
     }
   }
 }
@@ -1007,11 +1002,6 @@ static void check_roster_low_kick_frames(void) {
         input[slot].held = 0;
         for (int tick = 0; tick < 100; ++tick) {
           battle_step(input);
-          if (fighter_fiber_active(owner)) {
-            fprintf(
-                stderr, "Low kick fiber roster%d slot%d scenario%d clip%d action%x\n", roster[row], slot, scenario, fighter_move(owner)->clip, owner->action);
-          }
-          check(!fighter_fiber_active(owner), "Low kick contact, native result wait and reversal must run through generated frames");
         }
         q16 damage = scenario == 2 ? 0 : scenario == 1 ? q16_mul(0x1c28, 0x3333) : 0x1c28;
         if (victim->health != Q16_ONE - damage) {
@@ -1047,7 +1037,7 @@ static void check_roster_low_kick_frames(void) {
     fighter_interrupt(owner, fighter_ready);
     check(!owner->avoids_high, "Interrupt must retire avoidance immediately before the next entry runs");
     advance_ticks(100, NULL);
-    check(owner->state == S_IDLE && !fighter_fiber_active(owner), "Interrupted low kick must not resume its old reversal");
+    check(owner->state == S_IDLE, "Interrupted low kick must not resume its old reversal");
   }
 }
 
@@ -1080,7 +1070,6 @@ static void check_reconnected_uppercuts(void) {
           if (scenario == 4 && tick == 2) {
             fighter_enter_state(owner, S_HIT);
           }
-          check(!fighter_fiber_active(owner), "Uppercut startup, contact and branch recovery must use frame tables");
         }
         q16 damage = scenario == 2 || scenario == 4 ? 0 : scenario == 1 ? q16_mul(0x28f5, 0x3333) : scenario == 3 ? 0xa3d : 0x28f5;
         if (victim->health != Q16_ONE - damage) {
@@ -1115,7 +1104,6 @@ static void check_roster_high_punch_frames(void) {
         for (int tick = 0; tick < 90; ++tick) {
           input[slot].held = scenario == 3 && tick == 4 ? BUTTON_BIT(BUTTON_HIGH_PUNCH) : 0;
           battle_step(input);
-          check(!fighter_fiber_active(owner), "Standing HP startup, repeat and recovery must run directly on native frames");
         }
         q16 damage = scenario == 2 ? 0 : scenario == 1 ? q16_mul(0xccc, 0x3333) : scenario == 3 ? 2 * 0xccc : 0xccc;
         if (victim->health != Q16_ONE - damage) {
@@ -1145,7 +1133,6 @@ static void check_roster_jab_frames(void) {
           input[slot].held = repeat && tick < 45 && tick % 4 == 2 ? BUTTON_BIT(BUTTON_LOW_PUNCH) : 0;
           battle_step(input);
           repeated |= fighter_move(owner)->clip == 295;
-          check(!fighter_fiber_active(owner), "Roster jab, buffered repeat and release recovery must use generated frame programs");
         }
         if (repeat && !repeated) {
           fprintf(stderr, "Jab frames roster%d slot%d did not repeat\n", roster[row], slot);
@@ -1188,7 +1175,6 @@ static void check_straight_air_kick_contacts(void) {
             contact_pose = fighter_sample(owner);
           }
           reversed |= tick > 12 && fighter_move(owner)->clip == 327 && fighter_sample(owner) <= 3;
-          check(!fighter_fiber_active(owner), "Both straight-air kick branches must retain frame ownership through contact and miss recovery");
         }
         q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? q16_mul(0x2147, 0x3333) : 0;
         if (victim->health != Q16_ONE - damage) {
@@ -1217,7 +1203,6 @@ static void check_reconnected_ground_combos(void) {
     battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
     for (int tick = 0; tick < 8; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(fighter), "Roster close HP startup/contact must stay on frame tables");
     }
     for (int wait = 0; wait < 12 && !(fighter->flags & FF_FOLLOW_UP); ++wait) {
       advance_ticks(1, NULL);
@@ -1232,7 +1217,6 @@ static void check_reconnected_ground_combos(void) {
     check(fighter_move(fighter)->clip == 261, "Close HP follow-up must enter the generated combo HP stream");
     for (int tick = 0; tick < 100; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(fighter), "Roster combo HP startup/contact/recovery must stay on frame tables");
     }
     check(fighter->state == S_IDLE && fighter->buttons != NULL, "Reconnected ground combo must recover and restore controls");
     check(victim->health < Q16_ONE - 2621, "Close HP to combo HP must resolve both contacts");
@@ -1259,7 +1243,6 @@ static void check_reconnected_lk_throws(void) {
       check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "Close LK must enter the paired throw for either player");
       bool owner_retreat = false, victim_recovery = false;
       for (int tick = 0; tick < 240; ++tick) {
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Paired LK capture and both released actors must stay on frame tables");
         owner_retreat |= fighter_move(owner)->clip == 282;
         victim_recovery |= fighter_move(victim)->clip == 586;
         advance_ticks(1, NULL);
@@ -1282,7 +1265,6 @@ static void check_reconnected_lk_throws(void) {
   advance_ticks(240, NULL);
   check(!((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED), "Lethal reconnected throw must release its pair");
   battle_init(7, 4);
-  check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Round reset must retire both throw fibers");
 }
 
 static void check_reconnected_roundhouses(void) {
@@ -1301,7 +1283,6 @@ static void check_reconnected_roundhouses(void) {
       int clip = fighter_move(owner)->clip;
       check(clip == 64 || clip == 313, "Back HK must enter a roundhouse, not the ordinary high kick");
       for (int tick = 0; tick < 100; ++tick) {
-        check(!fighter_fiber_active(owner), "Roster roundhouse startup/contact/recovery must remain on frame tables");
         advance_ticks(1, NULL);
       }
       if (owner->state != S_IDLE || victim->health != (hit ? Q16_ONE - 0x2e14 : Q16_ONE)) {
@@ -1393,7 +1374,6 @@ static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn
           alternate(owner);
         }
         check(fighter_move(owner)->clip == (extended ? extended_clip : 76), "Branch LP LP entries must retain both reviewed owner/victim branches");
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Branch LP LP capture must allocate no fiber");
         advance_ticks(8, NULL);
         if (interrupted) {
           fighter_enter_state(owner, S_HIT);
@@ -1402,7 +1382,6 @@ static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn
         for (int tick = 0; tick < 160; ++tick) {
           advance_ticks(1, NULL);
           selected_victim |= fighter_move(victim)->clip == (extended ? 172 : 142);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Branch LP LP throw and independent victim release must stay on frame tables");
         }
         if (!interrupted && (roster == 7 || roster == 10 || roster == 17)) {
           check(selected_victim, "Released LP victim must execute its selected generated reaction rather than an approximate fallback");
@@ -1429,15 +1408,12 @@ static void check_peer_release_lp_throw(int roster, int clip) {
       fighter_press(owner, BUTTON_LOW_PUNCH);
       advance_ticks(1, NULL);
       check(fighter_move(owner)->clip == clip, "Close LP input must reach Peer-release LP's selected capture");
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Peer-release LP LP capture must allocate no fiber");
       advance_ticks(8, NULL);
       if (interrupted) {
         fighter_enter_state(owner, S_HIT);
       }
       for (int tick = 0; tick < 160; ++tick) {
         advance_ticks(1, NULL);
-        check(
-            !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Peer-release LP LP throw and independent victim release must stay on frame tables");
       }
       q16 damage = interrupted ? 0 : 9830;
       check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
@@ -1460,14 +1436,12 @@ static void check_goro_frame_lp_throw(void) {
       fighter_press(owner, BUTTON_LOW_PUNCH);
       advance_ticks(1, NULL);
       check(fighter_move(owner)->clip == 604, "Close LP input must reach Goro LP's selected capture");
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Goro LP LP capture must allocate no fiber");
       advance_ticks(8, NULL);
       if (interrupted) {
         fighter_enter_state(owner, S_HIT);
       }
       for (int tick = 0; tick < 300; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Goro LP LP throw and independent victim release must stay on frame tables");
       }
       q16 damage = interrupted ? 0 : 10 * 1966 + 9830;
       check(victim->health == Q16_ONE - damage && owner->health == Q16_ONE,
@@ -1496,7 +1470,6 @@ static void check_selected_high_kick(void) {
       fighter_press(owner, BUTTON_HIGH_KICK);
       for (int tick = 0; tick < 45; ++tick) {
         advance_ticks(1, input);
-        check(!fighter_fiber_active(owner), "Selected high kicks must use frame tables throughout contact and recovery");
       }
       /* B[0]/B[1]/B[2] parameter runners share 13% damage and native 20% chip. */
       q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? (int)(((int64_t)0x2147 * 0x3333) >> 16) : 0;
@@ -1521,7 +1494,6 @@ static void check_weapon_frame_startups(void) {
         check(battle_cpu_action(owner, CPU_DRAW), "Weapon draw must retain its real CPU entry");
         for (int tick = 0; tick < 70; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner), "Weapon draw must complete entirely through generated frame phases");
         }
         check(owner->armed && owner->state == S_IDLE, "Frame draw must equip and restore armed controls");
         fighter_enter_state(owner, S_JUMP);
@@ -1535,7 +1507,6 @@ static void check_weapon_frame_startups(void) {
         check(fighter_move(owner)->clip == (high ? 252 : 251), "Armed air punches must select their weapon clip");
         for (int tick = 0; tick < 90; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner), "Armed air startup, contact window and landing must use frame tables");
         }
         check(owner->state == S_IDLE && owner->armed, "Weapon air landing must restore armed controls");
       }
@@ -1594,7 +1565,6 @@ static void check_kai_weapon_commands(void) {
         input[slot].held = 0;
         for (int tick = 0; tick < 180; ++tick) {
           battle_step(input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai weapon attacks and victim recoveries must use frame tables");
         }
         q16 damage = scenario == 2 ? 0 : strike == 1 ? 10485 : 11796;
         if (scenario == 1) {
@@ -1609,16 +1579,15 @@ static void check_kai_weapon_commands(void) {
             "Kai weapon recovery must clear travel and restore armed controls");
         check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
         if (scenario == 3) {
-          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          check(victim->current_mmove == NULL, "Weapon KO recovery must retire without standing the defeated victim");
           battle_reset_match();
-          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+          check(!owner->armed, "Rematch must clear the weapon and both move lifetimes");
         } else if (scenario == 2 && strike == 2) {
           input[slot].held = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK);
           advance_ticks(2, input);
           input[slot].held = 0;
           advance_ticks(100, input);
-          check(fighter_move(owner)->clip == 4 && owner->armed && !fighter_fiber_active(owner),
-              "Armed handstand must follow its native intro/front-kick branch into persistent controls");
+          check(fighter_move(owner)->clip == 4 && owner->armed, "Armed handstand must follow its native intro/front-kick branch into persistent controls");
         }
       }
     }
@@ -1653,7 +1622,6 @@ static void check_jarek_balls(void) {
         bool recoiled = false, interrupted = false;
         for (int tick = 0; tick < 150 && owner->state != S_IDLE; ++tick) {
           advance_ticks(1, input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek balls must run on frame programs");
           recoiled |= owner->action == 0x1010;
           if (branch == 3 && tick == 2) {
             fighter_enter_state(owner, S_HIT);
@@ -1715,7 +1683,6 @@ static void check_jarek_quake(void) {
         if (airborne) {
           victim->body.pos[AXIS_Y] = victim->body.ground - 2 * Q16_ONE;
         }
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek's stamp must run on frame programs");
         reacted |= victim->reaction == 136;
       }
       check(owner->state == S_IDLE, "Jarek's stamp must finish clip 107 and return");
@@ -1756,7 +1723,6 @@ static void check_jarek_blade(void) {
       bool spawned = false;
       for (int tick = 0; tick < 120; ++tick) {
         advance_ticks(1, input);
-        check(!fighter_fiber_active(owner), "Jarek's blade throw must run on frame programs");
         for (int i = 0; i < MAX_PROJECTILES; ++i) {
           spawned |= g_battle.projectiles[i].kind == PROJECTILE_FIREBALL && g_battle.projectiles[i].mesh_animation != NULL;
         }
@@ -1795,7 +1761,6 @@ static void check_jarek_fan_victims(void) {
     bool cycled = false;
     for (int tick = 0; tick < 650; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Jarek's fan scene must stay on frame phases");
       cycled |= fighter_move(&g_battle.fighters[0])->clip == 414;
     }
     check(cycled == (row == 0), "The fan cycle must use clip 414 only for a non-female victim");
@@ -1855,7 +1820,6 @@ static void check_jarek_second_fatality(void) {
       int limit = reset_at ? 70 : 600;
       for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek's second fatality must stay on frame programs");
         cut |= fighter_move(victim)->clip == 182 && (victim->hidden_joints[0] & (UINT64_C(1) << 2));
         fall |= fighter_move(victim)->clip == 206;
         victory |= fighter_move(owner)->clip == 125;
@@ -1865,7 +1829,7 @@ static void check_jarek_second_fatality(void) {
             cut && fall && victory && g_battle.phase == PHASE_MATCH_OVER, "Jarek's laser must separate the head, drop the victim, reach victory and complete");
       }
       battle_reset_match();
-      check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reset must restore both fighters");
+      check(victim->hidden_joints[0] == 0, "Reset must restore both fighters");
       for (int object = 0; object < MAX_PROJECTILES; ++object) {
         check(g_battle.projectiles[object].kind == 0, "Reset must remove the laser glow");
       }
@@ -1905,7 +1869,6 @@ static void check_jarek_first_fatality(void) {
     bool owner_clip = false, ripped = false, heart = false;
     for (int tick = 0; tick < 700 && g_battle.phase == PHASE_FATALITY; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek's first fatality must stay on frame programs");
       owner_clip |= fighter_move(owner)->clip == (female ? 403 : 402);
       check(fighter_move(owner)->clip != (female ? 402 : 403), "Jarek's heart rip must select the owner clip by victim roster");
       ripped |= fighter_move(victim)->clip == 404 && fighter_sample(victim) >= 148;
@@ -1919,7 +1882,6 @@ static void check_jarek_first_fatality(void) {
     }
     check(owner_clip && ripped && heart && g_battle.phase == PHASE_MATCH_OVER, "Jarek's heart rip must play both actors, attach the heart and complete");
     battle_reset_match();
-    check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reset must retire the heart-rip programs");
   }
   jarek_finish_window(0);
   g_battle.fighters[0].body.pos[AXIS_X] = -0x6666;
@@ -1964,7 +1926,6 @@ static void check_jarek_weapon_commands(void) {
         input[slot].held = 0;
         for (int tick = 0; tick < 180; ++tick) {
           battle_step(input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek weapon attacks and victim recoveries must use frame tables");
         }
         q16 damage = scenario == 2 ? 0 : strike == 0 ? 10485 : strike == 2 ? 11796 : 9830;
         if (scenario == 1) {
@@ -1980,9 +1941,9 @@ static void check_jarek_weapon_commands(void) {
             "Jarek weapon recovery must clear travel and restore armed controls");
         check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
         if (scenario == 3) {
-          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          check(victim->current_mmove == NULL, "Weapon KO recovery must retire without standing the defeated victim");
           battle_reset_match();
-          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+          check(!owner->armed, "Rematch must clear the weapon and both move lifetimes");
         }
       }
     }
@@ -2102,7 +2063,6 @@ static void check_shinnok_weapon_commands(void) {
           }
           battle_step(input);
           crouch_getup |= fighter_move(victim)->clip == 184 || fighter_move(victim)->clip == 196;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shinnok weapon attacks and victim recoveries must use frame tables");
         }
         if (scenario == 4) {
           check(crouch_getup && victim->state == S_CROUCH, "Polearm victim must honor the native held-DOWN getup branch");
@@ -2121,9 +2081,9 @@ static void check_shinnok_weapon_commands(void) {
             "Shinnok weapon recovery must clear travel and restore armed controls");
         check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
         if (scenario == 3) {
-          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          check(victim->current_mmove == NULL, "Weapon KO recovery must retire without standing the defeated victim");
           battle_reset_match();
-          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+          check(!owner->armed, "Rematch must clear the weapon and both move lifetimes");
         }
       }
     }
@@ -2174,7 +2134,6 @@ static void check_cage_weapon_commands(void) {
           }
           battle_step(input);
           crouch_getup |= fighter_move(victim)->clip == 184 || fighter_move(victim)->clip == 190;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage weapon attacks and victim recoveries must use frame tables");
         }
         if (scenario == 4) {
           check(crouch_getup && victim->state == S_CROUCH, "Held DOWN must select the native crouching getup and return to crouch controls");
@@ -2193,9 +2152,9 @@ static void check_cage_weapon_commands(void) {
             "Cage weapon recovery must clear travel and restore armed controls");
         check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
         if (scenario == 3) {
-          check(victim->current_mmove == NULL && !fighter_fiber_active(victim), "Weapon KO recovery must retire without standing the defeated victim");
+          check(victim->current_mmove == NULL, "Weapon KO recovery must retire without standing the defeated victim");
           battle_reset_match();
-          check(!owner->armed && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Rematch must clear the weapon and both move lifetimes");
+          check(!owner->armed, "Rematch must clear the weapon and both move lifetimes");
         }
       }
     }
@@ -2259,7 +2218,6 @@ static void check_fujin_crossbow(void) {
           }
           battle_step(input);
           victim_pose |= fighter_move(victim)->clip == 311;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Crossbow shots and bolt victim recovery must stay on frame phases");
         }
         check((scenario == 3 ? !spawned : spawned && launches == 1) && owner->state == S_IDLE && owner->armed == (scenario < 3),
             "Crossbow shooting must recover; interrupting hits must drop the weapon and cancel only shots not yet launched");
@@ -2290,7 +2248,6 @@ static void check_fujin_crossbow(void) {
         Projectile *bolt = &g_battle.projectiles[i];
         shots += bolt->kind == PROJECTILE_FIREBALL && bolt->owner == slot && bolt->ticks == 1;
       }
-      check(!fighter_fiber_active(owner), "Crossbow's actual follow-up sequence must never start a fiber");
     }
     check(shots == 4 && owner->armed && owner->state == S_IDLE, "Type68 draw follow-up must fire three short bolts and one full shot before recovery");
     battle_reset_match();
@@ -2327,7 +2284,6 @@ static void check_weapon_followup_selection(void) {
             "Weapon follow-up must apply its selected record and recover without a substitute attack");
         check(owner->body.pos[AXIS_Y] == owner->body.ground && owner->body.physics == NULL,
             "Native controller return must restore the owner floor instead of leaving a frozen airborne fighter");
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Weapon follow-up owner and victim must stay on frame tables");
       }
     }
   }
@@ -2354,7 +2310,6 @@ static void check_type69_weapon_commands(void) {
         check(fighter_move(owner)->clip == 244 && !owner->armed, "Axe command must start its draw before equipping");
         for (int tick = 0; tick < 65; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner), "Axe draw and completion must use frame tables");
         }
         check(owner->armed && owner->weapon->type == 0x69 && owner->weapon->model == SCENE_MODEL_AXE && owner->state == S_IDLE,
             "All three axe commands must equip their extracted model and restore armed controls");
@@ -2372,7 +2327,6 @@ static void check_type69_weapon_commands(void) {
         check(fighter_move(owner)->clip == clips[strike], "Armed buttons must enter the matching axe strike, without recursive callbacks");
         for (int tick = 0; tick < 100; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner), "Axe strike and miss recovery must use frame tables");
         }
         check(owner->state == S_IDLE && victim->health == Q16_ONE && owner->body.physics == NULL,
             "Missed axe strike must recover, clear strafe and leave a distant victim untouched");
@@ -2426,7 +2380,6 @@ static void check_goro_projectile_completion(void) {
     goro_fireball(owner);
     for (int tick = 0; tick < 100; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(owner), "Goro projectile owner must complete through frame tables without a retired-fiber callback");
     }
     check(owner->state == S_IDLE, "Goro projectile must return its owner to controls after recovery");
   }
@@ -2538,7 +2491,6 @@ static void check_reptile_reconnected_specials(void) {
           advance_ticks(1, input);
           /* D[23] selects reaction 158 (clip 179); D[21] selects 40 (clip 183). */
           reacted |= fighter_move(victim)->clip == (dash ? 179 : 183);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile movement specials and their victims must use frame tables");
         }
         check(reacted == (scenario == 0), "Only an unblocked Reptile special enters its own victim reaction");
         q16 damage = dash ? 0x1eb8 : 0x170a;
@@ -2601,13 +2553,6 @@ static void goro_tokens(Fighter *owner, const CommandToken *tokens, int count, B
   advance_ticks(1, NULL);
 }
 
-static void goro_settle(Fighter *owner, Fighter *victim, int ticks) {
-  for (int tick = 0; tick < ticks; ++tick) {
-    advance_ticks(1, NULL);
-    check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Goro specials and their victims must stay on frame tables");
-  }
-}
-
 static void check_goro_frame_specials(void) {
   for (int slot = 0; slot < 2; ++slot) {
     Fighter *owner, *victim;
@@ -2621,7 +2566,7 @@ static void check_goro_frame_specials(void) {
       lowest = owner->body.pos[AXIS_Y] < lowest ? owner->body.pos[AXIS_Y] : lowest;
     }
     check(lowest <= -0x3cccc, "Goro leap must rise past its relocation height");
-    goro_settle(owner, victim, 400);
+    advance_ticks(400, NULL);
     check(victim->health == Q16_ONE - 0x4ccc, "Goro leap stomp must deal its native 30% once");
     check(owner->state == S_IDLE && victim->state == S_IDLE && !(owner->flags & FF_HOLD_SEPARATION) && owner->body.physics == NULL,
         "Goro leap stomp and its 191 victim must both return to control");
@@ -2631,7 +2576,7 @@ static void check_goro_frame_specials(void) {
     goro_tokens(owner, (const CommandToken[]){TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, BUTTON_HIGH_KICK);
     advance_ticks(20, NULL);
     battle_react(owner, 10);
-    goro_settle(owner, victim, 400);
+    advance_ticks(400, NULL);
     check(victim->health == Q16_ONE && owner->body.physics != goro_stomp_hold_separation && owner->state == S_IDLE,
         "Interrupted Goro leap must cancel its drop and stomp hold");
 
@@ -2644,7 +2589,7 @@ static void check_goro_frame_specials(void) {
         victim->body.pos[AXIS_Y] = -0x40000;
         victim->body.gravity = 0x147;
       }
-      goro_settle(owner, victim, 300);
+      advance_ticks(300, NULL);
       check(victim->health == (airborne ? Q16_ONE : Q16_ONE - 0x3d70), "Goro quake must damage only a grounded victim");
       check(owner->state == S_IDLE && victim->state == S_IDLE, "Goro quake and reaction 136 must return to control");
     }
@@ -2653,7 +2598,7 @@ static void check_goro_frame_specials(void) {
     goro_scene(slot, Q16_ONE, &owner, &victim);
     goro_tokens(owner, (const CommandToken[]){TOKEN_DOWN, TOKEN_DOWN}, 2, BUTTON_HIGH_PUNCH);
     check(fighter_move(owner)->clip == 600, "Goro HP D,D must bind clip 600");
-    goro_settle(owner, victim, 300);
+    advance_ticks(300, NULL);
     check(victim->health == Q16_ONE - 0x23d7 && victim->state == S_IDLE && owner->state == S_IDLE,
         "Goro uppercut must deal D[35] once and release reaction 192 to its getup");
 
@@ -2661,7 +2606,7 @@ static void check_goro_frame_specials(void) {
     goro_scene(slot, 3 * Q16_ONE, &owner, &victim);
     goro_tokens(owner, (const CommandToken[]){TOKEN_FORWARD, TOKEN_BACK}, 2, BUTTON_HIGH_PUNCH);
     check(fighter_move(owner)->clip == 592, "Goro HP F,B must enter his clip-592 fireball");
-    goro_settle(owner, victim, 120);
+    advance_ticks(120, NULL);
     check(victim->health == Q16_ONE - 0x23d7 && owner->state == S_IDLE, "Goro fireball must hit once with C[22] and return its owner");
 
     /* 460f40/461030 stance selections: standing HP and back+HK. */
@@ -2712,7 +2657,6 @@ static void check_reptile_acid_spit(void) {
         }
         opened |= owner->mesh_swap_joint == 2;
         victim_clip |= fighter_move(victim)->clip == 182;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Acid spit and its victim must use frame tables");
       }
       q16 damage = scenario == 0 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
       if (victim->health != Q16_ONE - damage || owner->state != S_IDLE) {
@@ -2750,7 +2694,6 @@ static void check_reptile_invisibility(void) {
         if (tick == 10) {
           toggled_late = owner->invisible == (use == 1);
         }
-        check(!fighter_fiber_active(owner), "Invisibility must use frame tables");
       }
       check(toggled_late && owner->invisible == (use == 0), "Invisibility must toggle once at its clip midpoint and toggle back on reuse");
       check(owner->state == S_IDLE, "Invisibility must return controls");
@@ -2800,7 +2743,6 @@ static void check_reptile_second_fatality(void) {
           melt |= fighter_move(victim)->clip == 546;
           flayed |= victim->native_variant == 14;
           fall |= fighter_move(victim)->clip == 550;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile acid fatality must remain fiber-free");
         }
         if (reset_at == 0) {
           check(hovered && vomit && melt && flayed && fall && g_battle.phase == PHASE_MATCH_OVER,
@@ -2847,7 +2789,6 @@ static void check_reptile_first_fatality(void) {
           victim_clip |= fighter_move(victim)->clip == 431;
           headless |= (victim->hidden_joints[0] & (UINT64_C(1) << 2)) != 0;
           looped |= fighter_move(owner)->clip == 432 && fighter_sample(owner) >= 294;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile head-bite fatality must remain fiber-free");
         }
         if (reset_at == 0) {
           check(owner_clip && victim_clip && headless && looped && g_battle.phase == PHASE_MATCH_OVER,
@@ -2897,7 +2838,6 @@ static void check_reptile_weapon_commands(void) {
           battle_step(input);
           int clip = fighter_move(victim)->clip;
           reacted |= strike == 0 ? clip != 322 && victim->reaction == 63 : strike == 1 ? clip == 189 : strike == 2 ? clip == 311 : clip == 182;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile weapon attacks and victims must use frame tables");
         }
         /* WEAPON[18], [21], [20] and [19]; the flurry may land once per cycle. */
         const q16 damages[] = {0x2666, 0x1eb8, 0xccc, 0x2147};
@@ -2997,7 +2937,6 @@ static void check_jax_missile(void) {
           }
         }
         retired |= launched && projectile == NULL;
-        check(!fighter_fiber_active(owner), "Jax missile cast must use frame tables");
       }
       q16 damage = scenario == 0 || scenario == 3 ? 0x1eb8 : scenario == 1 ? q16_mul(0x1eb8, 0x3333) : 0;
       if (victim->health != Q16_ONE - damage) {
@@ -3038,7 +2977,6 @@ static void check_jax_dash_punch(void) {
         stagger |= victim->reaction == 157 && fighter_move(victim)->clip == 311;
         final |= victim->reaction == 168 && fighter_move(victim)->clip == 130;
         unguarded |= (owner->flags & FF_NO_GUARD) != 0;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax dash punch and its reactions must use frame tables");
       }
       q16 expected = scenario == 0 ? Q16_ONE - 0x28f5 : scenario == 1 ? Q16_ONE - q16_mul(0x28f5, 0x3333) : Q16_ONE;
       if (victim->health != expected) {
@@ -3085,7 +3023,6 @@ static void check_jax_ground_pound(void) {
         }
         battle_step((Input[2]){0});
         reacted |= victim->reaction == 136 && fighter_move(victim)->clip == 182;
-        check(!fighter_fiber_active(owner), "Jax ground pound must use frame tables");
       }
       q16 expected = airborne ? Q16_ONE : Q16_ONE - 0x23d7;
       check(victim->health == expected && reacted == !airborne, "Jax ground pound must hit only a grounded opponent, once and at range");
@@ -3127,7 +3064,6 @@ static void check_jax_multi_slam(void) {
         }
         battle_step(input);
         released |= victim->reaction == (slams == 1 ? 125 : 100);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax multi-slam must use frame phases");
       }
       q16 expected = Q16_ONE - (allowed + 1) * 0xccc;
       if (victim->health != expected) {
@@ -3188,7 +3124,6 @@ static void check_cage_orb_commands(void) {
               battle_react(owner, 37);
             }
           }
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage orb casts and all reached victim reactions must use frame tables");
         }
         q16 damage = scenario == 0 || scenario == 5 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
         if (victim->health != Q16_ONE - damage) {
@@ -3296,8 +3231,6 @@ static void check_cage_powered_punch_branches(void) {
         }
         active = true;
         check(fighter_move(owner)->clip != 105, "Powered punch must never execute the adjacent flip-kick script from a callback descriptor");
-        check(
-            !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Powered punch owner, paired stages and blocked recoil must stay on frame programs");
         if (victim->reaction == 163) {
           seen |= 1;
         } else if (victim->reaction == 94) {
@@ -3331,7 +3264,7 @@ static void check_cage_powered_punch_branches(void) {
       check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED) && victim->state == S_IDLE,
           "Powered-punch victim must land and regain control after completion or interruption");
       battle_reset_match();
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim) && owner->body.physics == NULL, "Reset must retire powered-punch native motion");
+      check(owner->body.physics == NULL, "Reset must retire powered-punch native motion");
     }
   }
 }
@@ -3360,7 +3293,6 @@ static void check_cage_shadow_kick_branches(void) {
           break;
         }
         check(fighter_move(owner)->clip == 308, "Shadow kick hit, block, and miss must retain their own clip rather than start powered punch");
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shadow kick and its real victim reaction must use frame continuations");
         active = true;
         if (late && !moved_target && fighter_sample(owner) == 24) {
           victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + (slot ? -0xcccc : 0xcccc);
@@ -3431,8 +3363,6 @@ static void check_reconnected_stage_commands(void) {
             "Stage command must acquire the correct scene for either player");
         for (int tick = 0; tick < 650; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
-              "Shared stage-scene owner and victim must stay on frame phases");
         }
         if (g_battle.phase != PHASE_MATCH_OVER) {
           fprintf(stderr, "Stage recovery roster %d slot %d stage %d phase %d\n", rosters[row], slot, stage, g_battle.phase);
@@ -3497,8 +3427,7 @@ static void check_independent_scene_actor_lifetime(void) {
     scene_actor_cleanups = 0;
     static const MoveDef pose = {.clip = 130, .last = 39};
     Fighter *actor = battle_scene_actor_start(owner, source, &pose, scene_actor_entry);
-    check(actor != NULL && actor->roster == source->roster && !fighter_fiber_active(actor) && actor->buttons == NULL,
-        "Independent scene body must borrow the selected model without controls or a fiber slot");
+    check(actor != NULL && actor->roster == source->roster && actor->buttons == NULL, "Independent scene body must borrow the selected model without controls");
     check(fighter_move(source) == source_move && source->current_mmove == NULL, "Creating a scene body must preserve the source fighter's playback");
     for (int i = 1; i < MAX_SCENE_ACTORS; ++i) {
       check(battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL, "Scene actor pool must fill every bounded slot");
@@ -3512,7 +3441,7 @@ static void check_independent_scene_actor_lifetime(void) {
     check(battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL, "A completed scene slot must be reusable");
     battle_reset_match();
     for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
-      check(!g_battle.scene_actors[i].active && !fighter_fiber_active(&g_battle.scene_actors[i].actor), "Reset must retire every independent scene body");
+      check(!g_battle.scene_actors[i].active, "Reset must retire every independent scene body");
     }
     check(scene_actor_cleanups == MAX_SCENE_ACTORS + 1, "Reset must run the remaining scene actor cleanup exactly once");
   }
@@ -3563,8 +3492,8 @@ static void check_kai_df_specials(void) {
           advance_ticks(4, input);
         }
         drive_owned_command(slot, move == 0 ? kai_input_47bd10 : kai_input_478df0);
-        check(fighter_move(owner)->clip == (move == 0 ? 298 : 551) && owner->action == (move == 0 ? 0x210 : 0x20b) && !fighter_fiber_active(owner),
-            "Kai D,F command must enter its own retail clip and action without a fiber");
+        check(fighter_move(owner)->clip == (move == 0 ? 298 : 551) && owner->action == (move == 0 ? 0x210 : 0x20b),
+            "Kai D,F command must enter its own retail clip and action");
         bool stopped = false, fell = false;
         for (int tick = 0; tick < 200 && !(owner->state == S_IDLE && !fighter_airborne(owner)); ++tick) {
           if (move == 0 && scenario != 2 && owner->action == 0x210 && fighter_sample(owner) == 9 && !owner->connected) {
@@ -3580,7 +3509,6 @@ static void check_kai_df_specials(void) {
             victim->body.on_land = NULL;
           }
           battle_step(input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai D,F specials and their victims must stay on frame phases");
           stopped |= move == 0 && owner->action == ACTION_RETAIL_1006 && fighter_airborne(owner) && owner->body.vel[AXIS_X] == 0;
           fell |= move == 0 && fighter_move(owner)->clip == 310;
         }
@@ -3598,7 +3526,7 @@ static void check_kai_df_specials(void) {
         }
         input[1 - slot].held = 0;
         advance_ticks(200, input);
-        check(victim->state == S_IDLE && !fighter_fiber_active(victim), "Kai D,F victims must recover through their reactions");
+        check(victim->state == S_IDLE, "Kai D,F victims must recover through their reactions");
       }
     }
   }
@@ -3622,7 +3550,7 @@ static void check_kai_skulls(void) {
           advance_ticks(4, input);
         }
         drive_owned_command(slot, move == 0 ? kai_rising_skull : kai_ground_skull);
-        check(fighter_move(owner)->clip == (move == 0 ? 21 : 22) && owner->action == (move == 0 ? 0x307 : 0x308) && !fighter_fiber_active(owner),
+        check(fighter_move(owner)->clip == (move == 0 ? 21 : 22) && owner->action == (move == 0 ? 0x307 : 0x308),
             "Kai skull commands must enter their own retail cast");
         bool spawned = false, relocated = false;
         for (int tick = 0; tick < 240; ++tick) {
@@ -3636,7 +3564,6 @@ static void check_kai_skulls(void) {
             }
           }
           battle_step(input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai skull owner and victim must stay on frame phases");
         }
         check(spawned && relocated && g_battle.projectiles[0].kind == 0, "Kai skulls must relocate over the saved target and retire");
         q16 damage = scenario == 2 ? 0 : scenario == 1 ? q16_mul(0x2147, 0x3333) : 0x2147;
@@ -3730,21 +3657,20 @@ static void check_kai_first_fatality(void) {
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       owner->held = 0;
       kai_enter_command(slot, kai_fatality_1, BUTTON_BIT(BUTTON_BLOCK));
-      check(g_battle.phase == PHASE_FATALITY && !fighter_fiber_active(owner), "Kai first command must start its own frame-only scene");
+      check(g_battle.phase == PHASE_FATALITY, "Kai first command must start its own frame-only scene");
       int timer = g_battle.time_ticks;
       bool torso = false, paired = false;
       int limit = variant == 2 ? 300 : 900;
       for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai first fatality must stay on frame phases");
         paired |= fighter_move(owner)->clip == 440 && fighter_move(victim)->clip == 441 && owner->body.pos[AXIS_X] == victim->body.pos[AXIS_X];
         for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
           const SceneActor *body = &g_battle.scene_actors[i];
           if (body->active) {
             torso = true;
             check(body->source == 1 - slot && body->owner == slot && fighter_move(&body->actor)->clip == 442 &&
-                      body->actor.hidden_joints[0] == ((UINT64_C(1) << 11) | (UINT64_C(1) << 12)) && !fighter_fiber_active(&body->actor),
-                "Kai's detached torso must keep its source rig, clip 442 and leg mask without a fiber");
+                      body->actor.hidden_joints[0] == ((UINT64_C(1) << 11) | (UINT64_C(1) << 12)),
+                "Kai's detached torso must keep its source rig, clip 442 and leg mask");
           }
         }
       }
@@ -3777,14 +3703,12 @@ static void check_kai_second_fatality(void) {
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       check(kai_can_second_fatality(owner) && !kai_can_second_fatality(victim), "Kai second gate must accept 1.8..3 units for the winner");
       kai_enter_command(slot, kai_fatality_2, BUTTON_BIT(BUTTON_BLOCK));
-      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 493 && !fighter_fiber_active(owner),
-          "Kai second command must start the levitation scene without a fiber");
+      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 493, "Kai second command must start the levitation scene");
       check(owner->body.pos[AXIS_X] == 0 && victim->body.pos[AXIS_X] == (slot ? -5 : 5) * Q16_ONE, "Kai second scene must use its fixed origin layout");
       int timer = g_battle.time_ticks;
       bool hovered = false, skull = false, struck = false;
       for (int tick = 0; tick < (reset ? 220 : 600) && g_battle.phase == PHASE_FATALITY; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai second fatality must stay on frame phases");
         hovered |= owner->body.pos[AXIS_Y] < owner->body.ground - 0x8000;
         for (int i = 0; i < MAX_PROJECTILES; ++i) {
           skull |= g_battle.projectiles[i].kind == PROJECTILE_FIREBALL;
@@ -3835,7 +3759,6 @@ static void check_partial_cpu_stage_dispatch(void) {
         advance_ticks(650, NULL);
         check(g_battle.phase == PHASE_MATCH_OVER, "CPU stage scene must complete for both player slots");
         battle_reset_match();
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reset must retire legacy partial-fighter stage tasks");
       }
     }
   }
@@ -3876,8 +3799,7 @@ static void check_generated_cpu_finish_dispatch(void) {
           }
           check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == expected,
               "CPU must approach or retreat into the authored range and enter its selected real fatality");
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim) && owner->fujin_finish_inputs == 0,
-              "CPU scene dispatch must bypass human input counting and use existing frame entries");
+          check(owner->fujin_finish_inputs == 0, "CPU scene dispatch must bypass human input counting and use existing frame entries");
           battle_reset_match();
         }
       }
@@ -3953,7 +3875,6 @@ static void check_fujin_first_fatality(void) {
             const Particle *particle = &g_battle.particles[i];
             visual |= particle->ticks > 0 && particle->visual != NULL && particle->visual->animation.source == MESH_FUJIN_WIND;
           }
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Fujin tornado, draw and independent shots must remain fiber-free");
         }
         if (reset_at == 0) {
           check(wind && draw && fire && lifted && spinning && visual && owner->native_variant == 3 && bolts == 3 && g_battle.phase == PHASE_MATCH_OVER,
@@ -4017,7 +3938,6 @@ static void check_fujin_second_fatality(void) {
           held |= fighter_move(victim)->clip == 549;
           fall |= fighter_move(victim)->clip == 550;
           torn |= victim->native_variant == 14;
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Fujin wind fatality and independent victim must remain fiber-free");
         }
         if (reset_at == 0) {
           check(cast && held && fall && torn && g_battle.phase == PHASE_MATCH_OVER, "Fujin wind scene must tear all native joints, retain550 and finish");
@@ -4075,7 +3995,6 @@ static void check_advancing_sweeps(void) {
             previous_health = victim->health;
           }
           recovered |= owner->action == 0x1006;
-          check(!fighter_fiber_active(owner), "Advancing sweep startup, contact and recovery must never start a fiber");
         }
         q16 damage = scenario >= 3 ? 0 : scenario == 2 ? q16_mul(0x23d7, 0x3333) : 0x23d7;
         check(victim->health == Q16_ONE - damage, "Retail sweep must retain fourteen-percent damage, low guard and startup interruption");
@@ -4124,7 +4043,6 @@ static void check_fujin_wind_grab(void) {
         captured |= victim->action == 0x100d;
         blocked |= owner->action == 0x1015 && fighter_move(owner)->clip == 13;
         orbit |= victim->action == 0x100d && abs(victim->body.pos[AXIS_Z] - owner->body.pos[AXIS_Z]) > 0x1999;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Held wind grab, orbit and release must remain on frame phases");
         if (scenario == 0 && owner->state == S_IDLE) {
           released = true;
           check(owner->wind_grab_ready == g_battle.ticks + 90 && !fujin_can_wind_grab(owner), "LP release must start the actual ninety-tick reuse delay");
@@ -4206,8 +4124,6 @@ static void check_fujin_triple_kick(void) {
           interrupted = true;
         }
         battle_step(input);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim),
-            "Triple-kick startup, paired motion, recoil and victim recovery must never start fibers");
       }
       q16 damage = scenario == 2 || scenario == 6 ? 0 : scenario == 1 ? q16_mul(0x30a3, 0x3333) : 0x30a3;
       q16 expected = scenario == 4 ? 0 : Q16_ONE - damage;
@@ -4231,7 +4147,6 @@ static void check_fujin_triple_kick(void) {
       check(!fighter_airborne(owner) && !fighter_airborne(victim) && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
           "Triple-kick completion or interruption must release both actors and settle their floor positions");
       battle_reset_match();
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Triple-kick reset must clear both actor continuations");
     }
     battle_init(slot ? 4 : 5, slot ? 5 : 4);
     g_battle.phase = PHASE_FIGHT;
@@ -4290,7 +4205,6 @@ static void check_fujin_wind(void) {
           const Particle *p = &g_battle.particles[i];
           effect |= p->ticks > 0 && p->visual != NULL && p->visual->animation.first >= 84 && p->visual->animation.first <= 91;
         }
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Wind catch, slam and victim getup must use frame phases");
       }
       check((scenario == 1 || scenario == 2) ? !caught : caught && effect, "Wind contact must distinguish hit, grounded block and miss");
       if (scenario == 3 || scenario == 5) {
@@ -4350,8 +4264,7 @@ static void check_fujin_dive(void) {
       input[slot].held = BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_KICK);
       battle_step(input);
       advance_ticks(2, NULL);
-      check(fighter_move(owner)->clip == 58 && owner->action == 0x20f && !fighter_fiber_active(owner),
-          "Fujin's Up,Down+LK command must enter the actual aerial dive without a fiber");
+      check(fighter_move(owner)->clip == 58 && owner->action == 0x20f, "Fujin's Up,Down+LK command must enter the actual aerial dive");
       int health = victim->health;
       bool recovered = false;
       for (int tick = 0; tick < 240; ++tick) {
@@ -4378,7 +4291,6 @@ static void check_fujin_dive(void) {
         }
         battle_step(input);
         input[slot].held = 0;
-        check(!fighter_fiber_active(owner), "Fujin dive, recoil and landing must stay on frame phases");
         if (owner->state == S_IDLE && !fighter_airborne(owner)) {
           recovered = true;
           break;
@@ -4393,7 +4305,7 @@ static void check_fujin_dive(void) {
         check(victim->health < health && victim->health > health - 0x147a, "Fujin dive block must apply chip instead of full damage");
       }
       battle_reset_match();
-      check(owner->body.on_land == NULL && !fighter_fiber_active(owner), "Reset must discard Fujin dive motion and continuations");
+      check(owner->body.on_land == NULL, "Reset must discard Fujin dive motion and continuations");
     }
   }
 }
@@ -4441,14 +4353,13 @@ static void check_cage_first_fatality(void) {
         int limit = reset_at == 1 ? 100 : reset_at == 2 ? 690 : 1100;
         for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage first fatality must use frame phases for both players");
           for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
             SceneActor *body = &g_battle.scene_actors[i];
             if (body->active) {
               severed = true;
               check(body->source == 1 - slot && body->owner == slot && fighter_move(&body->actor)->clip == 408 &&
-                        body->actor.hidden_joints[0] == ((UINT64_C(1) << 11) | (UINT64_C(1) << 12)) && !fighter_fiber_active(&body->actor),
-                  "Detached torso must keep its source model, independent clip and correct body mask without a fiber");
+                        body->actor.hidden_joints[0] == ((UINT64_C(1) << 11) | (UINT64_C(1) << 12)),
+                  "Detached torso must keep its source model, independent clip and correct body mask");
             }
           }
         }
@@ -4558,7 +4469,6 @@ static void check_jax_first_fatality(void) {
         int limit = reset_at ? 200 : 900;
         for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax arm rip must use frame phases for both players");
           owner_scene |= fighter_move(owner)->clip == 384;
           victim_scene |= fighter_move(victim)->clip == (listed ? 204 : 400);
           first_arm |= (victim->hidden_joints[0] & (UINT64_C(1) << 5)) != 0;
@@ -4570,7 +4480,7 @@ static void check_jax_first_fatality(void) {
               "Jax arm rip must end in its victory loop with the decided result");
         }
         battle_reset_match();
-        check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner), "Jax arm rip reset must restore the victim");
+        check(victim->hidden_joints[0] == 0, "Jax arm rip reset must restore the victim");
         for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
           check(g_battle.attachments[i].def == NULL, "Jax arm rip reset must retire the detached limbs");
         }
@@ -4593,7 +4503,6 @@ static void check_jax_second_fatality(void) {
       int limit = reset_at ? 60 : 600;
       for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax head clap must use frame phases for both players");
         clap |= fighter_move(owner)->clip == 555;
         head |= (victim->hidden_joints[0] & (UINT64_C(1) << 2)) != 0;
         fall |= fighter_move(victim)->clip == 206;
@@ -4604,7 +4513,7 @@ static void check_jax_second_fatality(void) {
         check(owner->wins == 2 && victim->health == 0, "Jax head clap must preserve the decided result");
       }
       battle_reset_match();
-      check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner), "Jax head clap reset must restore the victim");
+      check(victim->hidden_joints[0] == 0, "Jax head clap reset must restore the victim");
     }
   }
 }
@@ -4651,7 +4560,6 @@ static void check_cage_second_fatality(void) {
       int limit = reset_at == 1 ? 15 : reset_at == 2 ? 90 : 450;
       for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage fatality owner and victim must never start a fiber");
         hit |= fighter_move(victim)->clip == 130;
         fall |= fighter_move(victim)->clip == 206;
         victory |= fighter_move(owner)->clip == 111;
@@ -4662,8 +4570,7 @@ static void check_cage_second_fatality(void) {
             "Cage decapitation must preserve the decided result, severed head and frozen match clock");
       }
       battle_reset_match();
-      check(owner->hidden_joints[0] == 0 && victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner) && !fighter_fiber_active(victim),
-          "Reset before or after Cage's fatality impact must restore both fighters");
+      check(owner->hidden_joints[0] == 0 && victim->hidden_joints[0] == 0, "Reset before or after Cage's fatality impact must restore both fighters");
       for (int piece = 0; piece < MAX_SCENE_PIECES; ++piece) {
         check(!g_battle.pieces[piece].active, "Cage fatality reset must remove detached scene pieces");
       }
@@ -4738,7 +4645,6 @@ static void check_shinnok_fatalities(void) {
         int time = g_battle.time_ticks;
         for (int tick = 0; tick < (reset_at ? 200 : 1000) && g_battle.phase == PHASE_FATALITY; ++tick) {
           advance_ticks(1, NULL);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shinnok fatalities must run on frame tables");
           hidden |= owner->appearance == APPEARANCE_HIDDEN;
           hands |= shinnok_scene_clip(second ? 541 : 434) == (second ? 2 : 1);
           lifted |= victim->body.pos[AXIS_Y] < victim->body.ground - Q16_ONE / 2;
@@ -4912,8 +4818,7 @@ static void check_ground_throws(void) {
       advance_ticks(41, NULL);
       fighter_interrupt(&g_battle.fighters[lk ? player : 1 - player], fighter_ready);
       advance_ticks(180, NULL);
-      check(g_battle.fighters[1 - player].health == Q16_ONE && !((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED) &&
-                !fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
+      check(g_battle.fighters[1 - player].health == Q16_ONE && !((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED),
           "Interrupted generated throws must cancel damage and retire both pair lifetimes");
     }
     start_scorpion_throw(player, true);
@@ -4922,8 +4827,6 @@ static void check_ground_throws(void) {
     check(g_battle.fighters[1 - player].health == 0 && !((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED),
         "Lethal generated throw must detach both actors");
     battle_reset_match();
-    check(
-        !fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Reset must retire a committed throw's remaining stacks");
   }
 }
 
@@ -5006,7 +4909,6 @@ static void check_tanya_fireballs(void) {
             battle_react(owner, 37);
           }
         }
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya fireball and its reactions must use frame tables");
       }
       q16 damage = scenario == 0 || scenario == 3 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
       check(launched && victim->health == Q16_ONE - damage, "Tanya fireball must keep C0 hit, chip and crouch-avoidance behavior after interruption");
@@ -5040,7 +4942,6 @@ static void check_tanya_fireballs(void) {
         Projectile *projectile = tanya_fireball_object();
         launched |= projectile != NULL && projectile->vel[AXIS_Y] == 0x23d7;
         fell |= fighter_move(owner)->clip == 310 && owner->action == 0x1005 && owner->body.gravity == 0x20c;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya air fireball must use frame tables");
       }
       check(launched && fell && !fighter_airborne(owner) && owner->state == S_IDLE, "Tanya air fireball caster must fall on clip 310, land and recover");
       check(victim->health < Q16_ONE && tanya_fireball_object() == NULL, "Tanya's descending fireball must strike even a crouching victim");
@@ -5073,7 +4974,6 @@ static void check_tanya_kicks(void) {
         battle_step(input);
         recoiled |= owner->action == 0x1010 && fighter_move(owner)->clip == 301;
         rewound |= owner->action == 0x21b && (owner->flags & FF_NO_GUARD) && owner->body.vel[AXIS_X] == 0;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya spin kick must use frame tables");
       }
       q16 damage = scenario == 0 ? 0x1eb8 : scenario == 1 ? q16_mul(0x1eb8, 0x3333) : 0;
       check(victim->health == Q16_ONE - damage, "Tanya spin kick must apply D28 hit, chip or miss once");
@@ -5111,7 +5011,6 @@ static void check_tanya_kicks(void) {
       for (int tick = 0; tick < 150; ++tick) {
         battle_step(input);
         followup |= victim->reaction == 95;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya drill kick and its victim reactions must use frame tables");
       }
       q16 damage = scenario == 0 ? 0x2666 : scenario == 1 ? q16_mul(0x2666, 0x3333) : 0;
       check(victim->health == Q16_ONE - damage && followup == (scenario == 0), "Tanya drill kick must keep D17 damage and the grounded reaction-95 follow-up");
@@ -5174,7 +5073,6 @@ static void check_tanya_weapon(void) {
       for (int tick = 0; tick < 180; ++tick) {
         battle_step(input);
         reacted |= victim->reaction == (strike ? 170 : 169) && (victim->flags & FF_REACTING);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya weapon strikes and victims must use frame tables");
       }
       check(victim->health == Q16_ONE - (strike ? 0x23d7 : 0x28f5) && reacted, "Tanya armed strikes must keep WEAPON 42/43 damage and reactions");
       check(owner->state == S_IDLE && owner->armed && owner->body.vel[AXIS_X] == 0 && victim->state == S_IDLE, "Tanya armed strike and victim must recover");
@@ -5211,7 +5109,6 @@ static void check_tanya_weapon(void) {
         if (scenario == 2 && released && !settled && object != NULL) {
           owner->flags |= FF_BUSY;
         }
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya boomerang throw must use frame tables");
       }
       q16 damage = scenario == 0 ? 0x3333 : 0;
       check(released && victim->health == Q16_ONE - damage, "Tanya's boomerang must apply C20 once and miss a crouching victim");
@@ -5295,7 +5192,6 @@ static void check_tanya_second_fatality(void) {
       int limit = reset_at ? 100 : 800;
       for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya fatality actors must never start a fiber");
         owner_scene |= fighter_move(owner)->clip == 565;
         victim_scene |= fighter_move(victim)->clip == 568 && victim->body.pos[AXIS_X] == owner->body.pos[AXIS_X];
         collapse |= fighter_move(victim)->clip == 569;
@@ -5307,8 +5203,7 @@ static void check_tanya_second_fatality(void) {
         check(victim->health == 0 && owner->wins == 2, "Tanya second fatality must preserve the decided result");
       }
       battle_reset_match();
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim) && g_battle.phase != PHASE_FATALITY,
-          "Reset during Tanya's fatality must restore both fighters");
+      check(g_battle.phase != PHASE_FATALITY, "Reset during Tanya's fatality must restore both fighters");
     }
   }
 }
@@ -5327,7 +5222,6 @@ static void check_tanya_first_fatality(void) {
     bool kiss = false, swell = false, shake = false, burst = false;
     for (int tick = 0; tick < 900 && g_battle.phase == PHASE_FATALITY; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya first fatality actors must never start a fiber");
       kiss |= fighter_move(owner)->clip == 396;
       swell |= fighter_move(victim)->clip == 397 && victim->body.pos[AXIS_X] == owner->body.pos[AXIS_X];
       shake |= fighter_move(victim)->clip == 409;
@@ -5336,7 +5230,7 @@ static void check_tanya_first_fatality(void) {
     check(kiss && swell && shake && burst && g_battle.phase == PHASE_MATCH_OVER && owner->wins == 2,
         "Tanya first fatality must reach the kiss, swelling victim, shaking, burst and completion");
     battle_reset_match();
-    check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner), "Reset after Tanya's first fatality must restore both fighters");
+    check(victim->hidden_joints[0] == 0, "Reset after Tanya's first fatality must restore both fighters");
   }
 }
 
@@ -5352,7 +5246,6 @@ static void check_tanya_high_kick(void) {
     battle_step(input);
     for (int tick = 0; tick < 90; ++tick) {
       battle_step((Input[2]){0});
-      check(!fighter_fiber_active(owner), "Tanya high kick must use frame phases");
     }
     check(victim->health == Q16_ONE - 0x2147 && owner->state == S_IDLE, "Tanya high kick must query B[1] once at pose 17 and recover");
   }
@@ -5389,7 +5282,6 @@ static void check_quan_chi_air_throw(void) {
       }
       for (int tick = 0; tick < 170; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi air throw and its victim must use frame tables");
       }
       check(victim->health == (interrupted ? Q16_ONE : Q16_ONE - 0x2147), "Quan Chi air throw must deal 13 percent once, only when released");
       check(victim->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Quan Chi air throw victim must recover independently");
@@ -5445,7 +5337,6 @@ static void check_quan_chi_skull(void) {
         }
         bitten = bitten || (skull != NULL && skull->phase != 0);
         bitten = bitten || fighter_move(victim)->clip == 182;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi skull and its victim reaction must use frame tables");
       }
       q16 damage = scenario == 0 || scenario == 4 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
       if (scenario == 5 ? victim->health > 0 : victim->health != Q16_ONE - damage) {
@@ -5456,8 +5347,7 @@ static void check_quan_chi_skull(void) {
           "Skull must deal C[7] damage once, chip on block, and pass over a crouching victim");
       check(bitten == (scenario != 2 && scenario != 3), "Hit or blocked skull must bite; misses must continue to the arena bound");
       if (scenario == 5) {
-        check(victim->current_mmove == NULL && !fighter_fiber_active(victim) && quan_chi_skull_object() == NULL,
-            "A lethal skull reaction must retire without standing the defeated victim");
+        check(victim->current_mmove == NULL && quan_chi_skull_object() == NULL, "A lethal skull reaction must retire without standing the defeated victim");
         continue;
       }
       advance_ticks(30, NULL);
@@ -5494,7 +5384,6 @@ static void check_quan_chi_flip_kick(void) {
         }
         battle_step(input);
         launched = launched || fighter_move(victim)->clip == 189;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi flip kick and its victim must use frame tables");
       }
       advance_ticks(60, NULL);
       q16 damage = scenario == 0 ? 0x2666 : scenario == 1 ? q16_mul(0x2666, 0x3333) : 0;
@@ -5543,7 +5432,6 @@ static void check_quan_chi_teleport_stomp(void) {
         relocated = relocated || (owner->body.pos[AXIS_Y] < -0x30000 && abs(owner->body.pos[AXIS_X] - target) < 0x1000);
         stomped = stomped || fighter_move(owner)->clip == 89;
         stomp_ticks += fighter_move(owner)->clip == 89;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi teleport stomp and its victim must use frame tables");
       }
       advance_ticks(60, NULL);
       q16 damage = scenario == 0 ? 0x3851 : scenario == 1 ? q16_mul(0x3851, 0x3333) : 0;
@@ -5592,7 +5480,6 @@ static void check_quan_chi_weapon_steal(void) {
           battle_react(owner, 37);
         }
         battle_step(input);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi weapon steal and its victim must use frame tables");
       }
       advance_ticks(60, NULL);
       bool stolen = scenario == 0;
@@ -5646,7 +5533,7 @@ static void check_quan_chi_weapon(void) {
         fprintf(stderr, "Quan Chi weapon slot%d strike%d health%d\n", slot, strike, victim->health);
       }
       check(victim->health == Q16_ONE - damage[strike], "Quan Chi weapon strikes must use their own weapon records");
-      check(owner->state == S_IDLE && owner->armed && !fighter_fiber_active(owner), "Quan Chi weapon strikes must recover armed on frame tables");
+      check(owner->state == S_IDLE && owner->armed, "Quan Chi weapon strikes must recover armed on frame tables");
     }
     battle_init(slot ? 4 : 8, slot ? 8 : 4);
     g_battle.phase = PHASE_FIGHT;
@@ -5707,7 +5594,6 @@ static void check_quan_chi_first_fatality(void) {
       for (int tick = 0; tick < 420; ++tick) {
         advance_ticks(1, NULL);
         ended = ended < 0 && g_battle.phase == PHASE_MATCH_OVER ? tick : ended;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi's leg fatality must run on frame tables");
         owner_clip |= fighter_move(owner)->clip == 420;
         beaten |= fighter_move(owner)->clip == 421;
         for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
@@ -5767,7 +5653,6 @@ static void check_reiko_noob_high_kick(void) {
       bool recovered = false;
       for (int tick = 0; tick < 60 && !recovered; ++tick) {
         advance_ticks(1, input);
-        check(!fighter_fiber_active(owner), "Reiko/Noob high kick must use frame tables");
         recovered = tick > 2 && owner->state == S_IDLE;
       }
       /* 4e5d30: B[1] 13% hit, 20% chip on block, latched once. */
@@ -5797,7 +5682,6 @@ static void check_noob_air_throw(void) {
       int after_slam = 0;
       for (int tick = 0; tick < 240; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Noob air throw must use frame continuations");
         check(grounded || victim->health == (scenario == 2 ? 0x30a3 : Q16_ONE), "Noob air throw damage waits for the owner's landing");
         grounded |= !fighter_airborne(owner);
         slammed |= victim->reaction == 105 && fighter_move(victim)->clip == 175;
@@ -5851,7 +5735,6 @@ static void check_reiko_noob_teleport(void) {
         int tick = 0;
         for (; tick < 300; ++tick) {
           advance_ticks(1, input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reiko/Noob teleport must use frame phases");
           high |= owner->body.pos[AXIS_Y] <= -0x40000;
           under |= high && owner->body.pos[AXIS_Y] > owner->body.ground;
           if (scenario != 0 && !pressed && under && owner->body.gravity == 0x51e && owner->body.vel[AXIS_Y] < 0) {
@@ -5910,7 +5793,6 @@ static void check_reiko_noob_flip_kick(void) {
         int tick = 0;
         for (; tick < 120 && owner->state != S_IDLE; ++tick) {
           advance_ticks(1, input);
-          check(!fighter_fiber_active(owner), "Flip kick must use native frame phases");
           no_guard |= (owner->flags & FF_NO_GUARD) != 0;
         }
         check(owner->state == S_IDLE, "Flip kick must return to stance");
@@ -5963,7 +5845,6 @@ static void check_reiko_noob_star(void) {
             victim->body.gravity = 0x28f;
           }
           advance_ticks(1, input);
-          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Star and its reaction must use frame phases");
           for (int i = 0; i < MAX_PROJECTILES; ++i) {
             spawned |= g_battle.projectiles[i].kind == PROJECTILE_FIREBALL && g_battle.projectiles[i].owner == slot;
           }
@@ -6014,7 +5895,6 @@ static void check_reiko_orbit(void) {
       int tick = 0;
       for (; tick < 80 && owner->state != S_IDLE; ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner), "Circling step must use native frames");
       }
       check(owner->state == S_IDLE && tick >= 30, "Circling step must hold its stance wait before returning");
       check((owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X] > 0) != (side > 0) && fighter_distance(owner) < 1.6f,
@@ -6044,7 +5924,6 @@ static void check_noob_shadow_moves(void) {
       int tick = 0;
       for (; tick < 160 && !(tick > 4 && owner->state == S_IDLE && !fighter_airborne(owner)); ++tick) {
         advance_ticks(1, NULL);
-        check(!fighter_fiber_active(owner), "Noob shadow moves must use frame phases");
         fell |= fighter_move(owner)->clip == 310 && owner->body.gravity == 0x20c;
       }
       check(tick < 160 && owner->state == S_IDLE, "Noob shadow move must return to stance");
@@ -6100,7 +5979,6 @@ static void check_reiko_first_fatality(void) {
     int pieces = 0;
     for (int tick = 0; tick < 800 && g_battle.phase == PHASE_FATALITY; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reiko first fatality must use frame phases");
       int active = 0;
       for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
         active += g_battle.scene_actors[i].active && g_battle.scene_actors[i].actor.subtree_joint > 0;
@@ -6123,7 +6001,6 @@ static void check_reiko_second_fatality(void) {
     bool staggered = false;
     for (int tick = 0; tick < 600 && g_battle.phase == PHASE_FATALITY; ++tick) {
       advance_ticks(1, NULL);
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reiko second fatality must use frame phases");
       staggered |= fighter_move(victim)->clip == 554;
     }
     check(staggered && fighter_distance(owner) > start + 2.5f, "Star arrivals must stagger and push the victim back");

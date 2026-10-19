@@ -6,7 +6,7 @@
 
 static void check(bool yes, const char *message) {
   if (!yes) {
-    fprintf(stderr, "FAIL fibers: %s\n", message);
+    fprintf(stderr, "FAIL frames: %s\n", message);
     exit(1);
   }
 }
@@ -50,31 +50,6 @@ static void frame_think(Fighter *fighter) {
 static void mmove_end(Fighter *fighter) {
   mmove_finished++;
   fighter_ready(fighter);
-}
-
-static int nested_wait(Fighter *fighter, int value) {
-  int local = value;
-  fighter_wait_ticks(2);
-  local += 7;
-  record(fighter, local);
-  fighter_wait_ticks(1);
-  return local + 1;
-}
-
-static void nested_script(Fighter *fighter) {
-  int local = 10;
-  record(fighter, local);
-  local = nested_wait(fighter, local);
-  record(fighter, local);
-  fighter_wait_ticks(3);
-  record(fighter, local + 1);
-  fighter_fiber_finish(finish);
-}
-
-static void short_script(Fighter *fighter) {
-  fighter_wait_ticks(1);
-  record(fighter, 99);
-  /* Returning normally retires the stack and enters fighter_ready. */
 }
 
 static void setup(void) {
@@ -229,7 +204,7 @@ static void native_motion_action(Fighter *fighter) {
   record(fighter, 42);
 }
 
-static void native_handoff(Fighter *fighter) {
+static void native_rows(Fighter *fighter) {
   native_begin(fighter, 1, 3, finish);
   native_frame(fighter, 1, 3, NULL);
   native_frame(fighter, 2, 4, native_action);
@@ -237,44 +212,13 @@ static void native_handoff(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-static void native_returning(Fighter *fighter) {
-  int retained = 17;
-  native_begin(fighter, 1, 3, NULL);
-  native_frame(fighter, 1, 3, NULL);
-  native_frame(fighter, 2, 4, native_action);
-  native_frame(fighter, 3, 5, NULL);
-  native_wait(fighter);
-  record(fighter, retained);
-  native_delay(fighter, 2);
-  fighter_fiber_finish(finish);
-}
-
 static void native_frame_schedules(void) {
-  for (int player = 0; player < 2; ++player) {
-    setup();
-    Fighter *fighter = &g_battle.fighters[player];
-    fighter_start_fiber(fighter, native_returning, cleanup);
-    advance(1);
-    fighter_cancel_fiber(fighter);
-    check(fighter->current_mmove == NULL && cleaned[player] == 1, "cancelling an awaited native program must retire its frames with the stack");
-    advance(6);
-    check(event_count == 0 && completed[player] == 0 && cleaned[player] == 1, "cancelled native frames ran a stale action or completion");
-    setup();
-    fighter = &g_battle.fighters[player];
-    fighter_start_fiber(fighter, native_returning, cleanup);
-    advance(1);
-    native_handoff(fighter);
-    check(!fighter_fiber_active(fighter) && fighter->current_mmove != NULL && cleaned[player] == 0,
-        "replacing an awaited binding with native playback must transfer cleanup without running it");
-    advance(4);
-    check(event_count == 1 && completed[player] == 1 && cleaned[player] == 1, "replacement native playback lost or repeated its transferred cleanup");
-  }
   for (int interrupted = 0; interrupted < 2; ++interrupted) {
     setup();
     Fighter *fighter = &g_battle.fighters[0];
-    fighter_start_fiber(fighter, native_handoff, cleanup);
-    check(!fighter_fiber_active(fighter) && fighter->current_mmove != NULL && cleaned[0] == 0,
-        "native handoff must retire the fiber while retaining action cleanup");
+    fighter->mmove_cleanup = cleanup;
+    native_rows(fighter);
+    check(fighter->current_mmove != NULL && cleaned[0] == 0, "native playback must retain its action cleanup");
     advance(1);
     check(event_count == 0 && fighter_sample(fighter) == 3, "native schedule ran its boundary action early");
     if (interrupted) {
@@ -283,22 +227,6 @@ static void native_frame_schedules(void) {
     advance(4);
     check(event_count == (interrupted ? 0 : 1) && cleaned[0] == 1 && completed[0] == (interrupted ? 0 : 1),
         "native frame action/cleanup survived replacement or ran twice");
-  }
-  for (int interrupted = 0; interrupted < 2; ++interrupted) {
-    setup();
-    Fighter *fighter = &g_battle.fighters[0];
-    fighter_start_fiber(fighter, native_returning, cleanup);
-    advance(2);
-    check(event_count == 1 && events[0][2] == 41, "returning native binding lost its frame action");
-    if (interrupted) {
-      fighter_interrupt(fighter, fighter_ready);
-    }
-    advance(3);
-    check(event_count == (interrupted ? 1 : 2) && cleaned[0] == 1 && completed[0] == (interrupted ? 0 : 1),
-        "native binding resumed after interruption or lost its retained continuation");
-    if (!interrupted) {
-      check(events[1][0] == 3 && events[1][2] == 17, "native completion must resume its VM continuation at the final frame");
-    }
   }
   setup();
   Fighter *fighter = &g_battle.fighters[0];
@@ -370,142 +298,13 @@ static void advance(int ticks) {
   }
 }
 
-static void deterministic_nested_waits(void) {
-  int expected[8][3] = {{0, 0, 10}, {0, 1, 10}, {2, 0, 17}, {2, 1, 17}, {3, 0, 18}, {3, 1, 18}, {6, 0, 19}, {6, 1, 19}};
-  for (int repeat = 0; repeat < 20; ++repeat) {
-    setup();
-    fighter_start_fiber(&g_battle.fighters[0], nested_script, cleanup);
-    fighter_start_fiber(&g_battle.fighters[1], nested_script, cleanup);
-    fighter_step_fiber(&g_battle.fighters[0]);
-    check(event_count == 2, "a same-tick pump must not resume a fiber twice");
-    advance(5);
-    check(event_count == 6 && fighter_fiber_active(&g_battle.fighters[0]), "nested waits resumed before their deadlines");
-    advance(1);
-    check(event_count == 8 && memcmp(events, expected, sizeof expected) == 0, "fiber order/local variables/deadlines must be reproducible");
-    for (int i = 0; i < 2; ++i) {
-      check(!fighter_fiber_active(&g_battle.fighters[i]) && cleaned[i] == 1 && completed[i] == 1 && g_battle.fighters[i].state == S_IDLE,
-          "completion must retire the stack and transition exactly once on the scheduler");
-    }
-    advance(10);
-    check(event_count == 8 && completed[0] == 1 && completed[1] == 1, "completed fibers must never resume again");
-  }
-}
-
-static void interruptions_and_reset(void) {
-  for (int kind = 0; kind < 5; ++kind) {
-    setup();
-    Fighter *fighter = &g_battle.fighters[0];
-    fighter_start_fiber(fighter, nested_script, cleanup);
-    advance(1);
-    if (kind == 0) {
-      fighter_interrupt(fighter, fighter_ready);
-    } else if (kind == 1) {
-      fighter_start_move(fighter, S_HIT, &test_move);
-    } else if (kind == 2) {
-      battle_next_round();
-    } else if (kind == 3) {
-      battle_init(4, 0);
-    } else {
-      fighter_start_fiber(fighter, short_script, cleanup);
-    }
-    check(cleaned[0] == 1, "interruption/replacement/reset must retire the old stack exactly once");
-    advance(10);
-    check(event_count == (kind == 4 ? 2 : 1) && completed[0] == 0, "an interrupted nested wait ran stale code");
-    check(!fighter_fiber_active(fighter), "interruption or normal return leaked an active fiber");
-    if (kind == 4) {
-      check(events[1][2] == 99 && cleaned[0] == 2 && fighter->state == S_IDLE, "replacement must get a fresh deadline and return safely");
-    }
-  }
-  setup();
-  fighter_start_fiber(&g_battle.fighters[0], nested_script, cleanup);
-  fighter_start_fiber(&g_battle.fighters[1], nested_script, cleanup);
-  battle_reset_match();
-  check(cleaned[0] == 1 && cleaned[1] == 1, "rematch must retire both fighter stacks");
-  advance(100);
-  check(event_count == 2 && completed[0] == 0 && completed[1] == 0, "rematch resumed an old fiber");
-}
-
-static void sequence_event(Fighter *fighter) {
-  record(fighter, fighter->ticks);
-}
-
-static void forbidden_end(Fighter *fighter) {
-  (void)fighter;
-  check(false, "blocking sequence must return to its C caller, not invoke the old end callback");
-}
-
-static bool hold_done(const Fighter *fighter) {
-  return fighter->ticks >= 5;
-}
-
-static const MoveSegment phase_segments[] = {{0, 6, -1, 1}};
-static const MoveEvent phase_events[] = {{0, sequence_event}, {2, sequence_event}};
-static const MoveSequence phase_sequence = {phase_segments, 1, phase_events, 2, 3, forbidden_end, hold_done};
-static const MoveDef phase_move = {.clip = 14, .flags = SF_LOCK, .sequence = &phase_sequence};
-
-static void phase_script(Fighter *fighter) {
-  int local = 73;
-  fighter_wait_ticks(2);
-  fighter_fiber_move(fighter, S_PUNCH, &phase_move);
-  fighter_fiber_sequence(fighter, &phase_sequence);
-  check(fighter_sample(fighter) == 4 && fighter->ticks == 5, "sequence reverse/hold timing changed");
-  fighter->sample_override = fighter_sample(fighter);
-  fighter_fiber_play_to(fighter, 0, -2);
-  record(fighter, local);
-  fighter_fiber_finish(NULL);
-}
-
-static void paired_script(Fighter *fighter) {
-  record(fighter, 20);
-  fighter_wait_ticks(1);
-  record(fighter, 21);
-  fighter_fiber_finish(NULL);
-}
-
-static void pair_owner_script(Fighter *fighter) {
-  fighter_wait_ticks(1);
-  Fighter *victim = &g_battle.fighters[1 - player(fighter)];
-  fighter_start_move(victim, S_HIT, &test_move);
-  fighter_start_fiber(victim, paired_script, cleanup);
-  record(fighter, 10);
-  fighter_wait_ticks(2);
-  fighter_fiber_finish(NULL);
-}
-
-static void phase_and_paired_playback(void) {
-  setup();
-  Fighter *fighter = &g_battle.fighters[0];
-  fighter_start_fiber(fighter, phase_script, cleanup);
-  advance(8);
-  check(fighter_fiber_active(fighter) && event_count == 2, "phase playback completed early or duplicated events");
-  advance(1);
-  check(!fighter_fiber_active(fighter) && fighter->script == NULL && cleaned[0] == 1, "explicit parked completion must release its stack");
-  check(events[0][0] == 2 && events[0][2] == 0 && events[1][0] == 4 && events[1][2] == 2 && events[2][0] == 9 && events[2][2] == 73,
-      "phase rebinding must preserve locals and run each event exactly once");
-  for (int owner = 0; owner < 2; ++owner) {
-    setup();
-    fighter_start_fiber(&g_battle.fighters[1 - owner], nested_script, cleanup);
-    fighter_start_fiber(&g_battle.fighters[owner], pair_owner_script, cleanup);
-    advance(4);
-    check(event_count == 4 && events[1][0] == 1 && events[1][1] == owner && events[1][2] == 10 && events[2][0] == 1 && events[2][1] == 1 - owner &&
-              events[2][2] == 20 && events[3][0] == 2 && events[3][2] == 21,
-        "paired entry must start on the host after owner yields and suspend a full tick in either player slot");
-    check(cleaned[owner] == 1 && cleaned[1 - owner] == 2 && !fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
-        "paired replacement/completion must release both stacks exactly once");
-  }
-}
-
 int main(void) {
   mmove_frames_and_callbacks();
   mmove_phases_and_cleanup();
   mmove_hold_jump_and_loop();
   native_frame_schedules();
   event_frame_schedules();
-  deterministic_nested_waits();
-  interruptions_and_reset();
-  phase_and_paired_playback();
-  fighter_cancel_all_fibers();
-  puts(
-      "PASS: fixed frame callbacks, holds, jumps and loops; deterministic P1/P2 fiber scheduling; nested waits and locals; exact deadlines; completion; interruption/replacement/round/rematch/reset cleanup");
+  puts("PASS: fixed frame callbacks, holds, jumps and loops; native rows, motion and event schedules; completion; interruption/replacement/round/rematch/reset "
+       "cleanup");
   return 0;
 }

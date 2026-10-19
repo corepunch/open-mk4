@@ -465,18 +465,6 @@ static void air_pair_capture(Fighter *fighter, const MoveDef *owner_move, const 
   victim->capture_action = fighter->action;
 }
 
-void mk4_script_air_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    fighter_fiber_finish(NULL);
-  }
-  victim->facing = -victim->facing;
-  fighter_fiber_move(victim, S_KNOCKDOWN, &s_throw_getup);
-  victim->sample_override = 46;
-  native_play_to(victim, 79, 1);
-  native_delay(victim, 1);
-  fighter_fiber_finish(fighter_ready);
-}
-
 /* 484b60: KO stays down; otherwise turn and finish clip 131 from pose 46. */
 void mk4_mmove_air_getup(Fighter *victim) {
   if (victim->health <= 0) {

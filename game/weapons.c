@@ -269,10 +269,6 @@ void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon) {
   fighter->weapon = weapon;
 }
 
-void weapon_air_native(Fighter *fighter, unsigned selector) {
-  weapon_air_frames_native(fighter, selector);
-}
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const mframe_t weapon_land_frames[10] = {{0}};
 // clang-format on
@@ -316,9 +312,6 @@ static void weapon_air_begin(Fighter *fighter) {
 void weapon_air_frames_native(Fighter *fighter, unsigned selector) {
   require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
   require(fighter_move(fighter)->clip == (selector == 0x104 ? 252 : 251), "Weapon-air phase differs from selected program");
-  if (fighter_fiber_running(fighter)) {
-    fighter_fiber_handoff(weapon_air_begin);
-  }
   weapon_air_begin(fighter);
 }
 

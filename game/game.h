@@ -499,7 +499,7 @@ struct Fighter {
   bool avoids_high;             /* low-kick script's temporary high-punch avoidance gate */
   const Character *scene_model; /* Optional actor-owned presentation replacement; assets retain ownership. */
   const MoveDef *current_move;
-  MoveDef playback_move;        /* actor-owned clip binding for generated C fibers */
+  MoveDef playback_move;        /* actor-owned clip binding for generated frame programs */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   const mmove_t *current_mmove;
   NativeFrames native;
@@ -529,7 +529,6 @@ struct Fighter {
   const ButtonTable *buttons;   /* current stance table; NULL while locked */
   unsigned flags;
   FighterFn pending;   /* interrupt entry, started on the next tick */
-  FighterFn script;    /* native C move continuation; cleared on interruption */
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase;
   FighterFn paired_release; /* native peer continuation selected by a paired move */
@@ -808,8 +807,8 @@ typedef struct SoundEvent {
   int bank, selector;
 } SoundEvent;
 
-/* Render-only bodies may own frame programs, but never player controls,
- * combat dispatch or a fiber slot. They borrow the live fighter's model. */
+/* Render-only bodies may own frame programs, but never player controls or
+ * combat dispatch. They borrow the live fighter's model. */
 #define MAX_SCENE_ACTORS 4
 
 typedef struct SceneActor {
@@ -888,22 +887,6 @@ void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase);
 void fighter_cancel_mmove(Fighter *fighter);
 void fighter_finish_mmove(Fighter *fighter, FighterFn next);
 void fighter_cancel_all_mmoves(void);
-/* Stackful move prototype: one scheduler-owned fiber per active fighter. */
-void fighter_start_fiber(Fighter *fighter, FighterFn entry, FighterFn cleanup);
-bool fighter_fiber_active(const Fighter *fighter);
-bool fighter_fiber_running(const Fighter *fighter);
-void fighter_fiber_pump_begin(Fighter *fighter);
-void fighter_fiber_move(Fighter *fighter, int state, const MoveDef *move);
-void fighter_fiber_sequence(Fighter *fighter, const MoveSequence *sequence);
-void fighter_fiber_play_to(Fighter *fighter, int sample, int step);
-void fighter_step_fiber(Fighter *fighter);
-void fighter_cancel_fiber(Fighter *fighter);
-void fighter_cancel_all_fibers(void);
-void fighter_wait_ticks(int ticks);
-_Noreturn void fighter_fiber_finish(FighterFn next);
-void fighter_fiber_await_frames(Fighter *fighter);
-void fighter_fiber_release_to_mmove(Fighter *fighter);
-_Noreturn void fighter_fiber_handoff(FighterFn next);
 void fighter_note_contact(Fighter *fighter, ContactResult result);
 float fighter_x(const Fighter *fighter);
 float fighter_z(const Fighter *fighter);
@@ -969,7 +952,6 @@ void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
 void weapon_air_frames(Fighter *fighter, bool high, FighterFn script);
 void weapon_air_frames_native(Fighter *fighter, unsigned selector);
-void weapon_air_native(Fighter *fighter, unsigned selector);
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
 void weapon_throw(Fighter *fighter);
 bool weapon_can_pickup(const Fighter *fighter);

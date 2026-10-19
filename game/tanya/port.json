@@ -148,11 +148,11 @@
     },
     "0x4e9db8": {
       "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Weapon victim stream returns through the KO-aware controller boundary without fiber ownership."
+      "evidence": "Weapon victim stream returns through the KO-aware controller boundary when its frame program ends."
     },
     "0x4e8bb0": {
       "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Weapon victim stream returns through the KO-aware controller boundary without fiber ownership."
+      "evidence": "Weapon victim stream returns through the KO-aware controller boundary when its frame program ends."
     },
     "0x4e5b38": {
       "clip": 13,

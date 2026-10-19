@@ -73,7 +73,7 @@ const MoveDef sonya_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .act
  * native contact continuations freeze the body and optionally open a cancel. */
 
 /* 4ddfb8 roster dispatch and 4de798 LP selector. Owner and victim have
- * independent fibers after release; replacement cancels only a live pair. */
+ * independent frame programs after release; replacement cancels only a live pair. */
 
 /* 49c300 spawns independently of the owner's generated recovery. */
 

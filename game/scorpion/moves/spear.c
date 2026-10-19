@@ -25,7 +25,7 @@ static bool spear_not_pulling(const Fighter *fighter) {
   return true;
 }
 
-/* Runs on the scheduler stack, after the old fiber has been retired. Pull
+/* Runs when the spear frame program is cancelled or completes. Pull
  * arrival installs stun before replacing the owner's move, so that victim
  * is already released from s_snared and must retain its follow-up opening. */
 static void spear_cleanup(Fighter *fighter) {
@@ -123,7 +123,7 @@ static void spear_spawn(Fighter *fighter) {
 
 /* 4ed448/4ed47c -> 4ed470/4ed498. Normal/fast launch is at tick 10/8;
  * sample 30 follows at 15/11. Keep the existing paired-pull policy: arrival
- * replaces this fiber with spear_return_script, while cancellation cleans up. */
+ * replaces this program with the 4ed4a8 return, while cancellation cleans up. */
 
 bool scorpion_can_spear(const Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);

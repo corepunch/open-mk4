@@ -38,7 +38,7 @@ static void sweep_frames(void) {
       Fighter *victim = &g_battle.fighters[1 - player];
       press(player, BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(player ? BUTTON_RIGHT : BUTTON_LEFT));
       advance(17);
-      check(victim->health == Q16_ONE && !fighter_fiber_active(fighter), "sweep startup damaged early or allocated a fiber");
+      check(victim->health == Q16_ONE, "sweep startup damaged early");
       if (interrupt) {
         fighter_interrupt(fighter, fighter_ready);
       }
@@ -60,10 +60,9 @@ static void normals(void) {
       fight(player, 4.f);
       press(player, buttons[i]);
       check(fighter_move(&g_battle.fighters[player])->clip == clips[i], "stance/character selector chose wrong normal");
-      check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "normal must enter frame phases");
+      check(g_battle.fighters[player].current_mmove != NULL, "normal must enter frame phases");
       advance(120);
       check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].health == Q16_ONE, "miss must recover without damage");
-      check(!fighter_fiber_active(&g_battle.fighters[player]), "normal recovery must retire its stack");
     }
     for (int outcome = 0; outcome < 4; ++outcome) {
       fight(player, outcome == 3 ? 4.f : 1.f);
@@ -120,7 +119,7 @@ static void normals(void) {
       fighter_enter_state(&g_battle.fighters[player], S_JUMP);
       press(player, BUTTON_BIT(button));
       check(fighter_move(&g_battle.fighters[player])->flags & SF_RECORD, "air attack must use script records");
-      check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "air attacks must use phases");
+      check(g_battle.fighters[player].current_mmove != NULL, "air attacks must use phases");
       advance(160);
       check(g_battle.fighters[player].state == S_IDLE && !fighter_airborne(&g_battle.fighters[player]), "air attack must land and restore controls");
     }
@@ -140,8 +139,7 @@ static void air_phase_interrupt(void) {
     check(fighter->connected && fighter->body.gravity == 0 && fighter->current_mmove != NULL, "air contact must enter its pause phase");
     fighter_interrupt(fighter, fighter_ready);
     advance(1);
-    check(!fighter_fiber_active(fighter) && fighter->current_mmove == NULL && fighter->body.gravity != 0,
-        "interrupting the air contact pause must release its phase and resume falling");
+    check(fighter->current_mmove == NULL && fighter->body.gravity != 0, "interrupting the air contact pause must release its phase and resume falling");
     advance(160);
     check(fighter->state == S_IDLE, "interrupted air attack must land");
   }
@@ -160,8 +158,8 @@ static void air_phase_followup(void) {
       advance(8);
       check(fighter->connected && fighter->body.gravity == 0 && fighter->buttons != NULL, "air HP must open its contact follow-up");
       press(player, BUTTON_BIT(kick ? BUTTON_HIGH_KICK : BUTTON_LOW_PUNCH));
-      check(fighter_move(fighter)->clip == (kick ? 327 : 96) && fighter->body.gravity == 0 && !fighter_fiber_active(fighter),
-          "queued air follow-up must take over the contact pause without falling or allocating a fiber");
+      check(fighter_move(fighter)->clip == (kick ? 327 : 96) && fighter->body.gravity == 0,
+          "queued air follow-up must take over the contact pause without falling");
       fighter_interrupt(fighter, fighter_ready);
       advance(1);
       check(fighter->body.gravity != 0 && fighter->current_mmove == NULL, "interrupting combo startup must release its inherited pause");
@@ -222,7 +220,7 @@ static void ice(void) {
     Fighter *victim = &g_battle.fighters[1 - player];
     ice_command(player, 2, 0);
     check(fighter_move(&g_battle.fighters[player])->clip == 16, "D,F,LP must enter ice");
-    check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "ice must use generated phases");
+    check(g_battle.fighters[player].current_mmove != NULL, "ice must use generated phases");
     check(sound_events(SOUND_INDEXED, 4) == 1 && sound_events(SOUND_C, 0) == 0, "ice entry must queue its indexed cue once before the release sound");
     advance(14);
     check(objects(PROJECTILE_ICE) == 0, "ice must wait for startup");
@@ -400,7 +398,7 @@ static void clone_tests(void) {
     fight(player, 2.f);
     clone_command(player);
     check(objects(PROJECTILE_CLONE) == 1 && g_battle.fighters[player].action == 0x405, "clone must capture pose immediately");
-    check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "clone must use phases");
+    check(g_battle.fighters[player].current_mmove != NULL, "clone must use phases");
     Projectile *clone = NULL;
     for (int i = 0; i < MAX_PROJECTILES; ++i) {
       if (g_battle.projectiles[i].kind == PROJECTILE_CLONE) {
@@ -496,7 +494,7 @@ static void slide_tests(void) {
       input[player].held = 0;
       battle_step(input);
       check(fighter_move(&g_battle.fighters[player])->clip == 95, "slide chord must enter clip 95");
-      check(g_battle.fighters[player].current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]), "slide entry must use frame phases");
+      check(g_battle.fighters[player].current_mmove != NULL, "slide entry must use frame phases");
       for (int t = 0; t < 8; ++t) {
         battle_step(input);
       }
@@ -508,7 +506,6 @@ static void slide_tests(void) {
       check(g_battle.fighters[1 - player].health == Q16_ONE - damage, "slide hit/block/miss/air record damage");
       check(g_battle.fighters[1 - player].reaction == (outcome == 2 ? 0 : outcome == 1 ? 165 : 122), "slide must select explicit victim reaction");
       check((g_battle.fighters[player].slide_ready != 0) == (outcome == 0 || outcome == 3), "only unblocked slide contact starts cooldown");
-      check(!fighter_fiber_active(&g_battle.fighters[player]), "slide branch allocated a coroutine");
       advance(180);
       check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].state == S_IDLE, "slide must recover both fighters");
       check(!(g_battle.fighters[player].flags & FF_NO_GUARD), "blocked slide must clear its recovery guard restriction");
@@ -731,12 +728,10 @@ static void weapons(void) {
     g_battle.fighters[sword_owner].body.pos[AXIS_X] = player ? -3 * Q16_ONE : 3 * Q16_ONE;
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     check(fighter_move(&g_battle.fighters[player])->clip == 235, "Sub-Zero's foreign sword must retain sword attacks");
-    check(!fighter_fiber_active(&g_battle.fighters[player]), "picked-up sword attacks must use phases");
     advance(80);
     press(player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_LOW_PUNCH));
     advance(4);
     check(fighter_move(&g_battle.fighters[player])->clip == 224, "foreign sword must enable the sword spin");
-    check(!fighter_fiber_active(&g_battle.fighters[player]), "picked-up sword spin must use generated phases");
     advance(20);
     check(g_battle.fighters[player].state == S_IDLE, "foreign sword spin must release");
 
@@ -809,7 +804,6 @@ static void air_throws(void) {
     check(sound_events(SOUND_INDEXED, 13) == 1, "air throw must play indexed selector 13 once on entry");
     advance(27);
     check(victim->health == Q16_ONE && fighter_sample(owner) == 27 && fighter_sample(victim) == 27, "air throw must hold both poses in sync until sample 28");
-    check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "paired air throw must use phases for both actors");
     advance(1);
     check(victim->health == Q16_ONE - 0x2147 && victim->reaction == 89 && victim->script_phase == 1,
         "air throw must damage once and start victim release at tick 28");
@@ -930,8 +924,8 @@ static void start_ground_throw(int player, bool lk) {
   check(g_battle.fighters[player].ticks == 0 && fighter_move(&g_battle.fighters[player])->clip == (lk ? 41 : 76) &&
             fighter_move(victim)->clip == (lk ? 165 : 153),
       "Sub-Zero throws must select retail owner/victim clips for both player slots");
-  check(g_battle.fighters[player].current_mmove != NULL && victim->current_mmove != NULL && !fighter_fiber_active(&g_battle.fighters[player]) &&
-            !fighter_fiber_active(victim) && (g_battle.fighters[player].flags & FF_PAIRED) && (victim->flags & FF_PAIRED),
+  check(g_battle.fighters[player].current_mmove != NULL && victim->current_mmove != NULL && (g_battle.fighters[player].flags & FF_PAIRED) &&
+            (victim->flags & FF_PAIRED),
       "retail throw entry must own both playback lifetimes and lock the pair");
 }
 
@@ -945,7 +939,6 @@ static void ground_throws(void) {
       const q16 damage = lk ? 0x2e14 : 0x2666;
       for (int tick = 1; tick <= 130; ++tick) {
         advance(1);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "throw allocated a fiber during capture, release or getup");
         check(victim->health == Q16_ONE - (tick >= damage_at ? damage : 0), "throw must damage once at LP 25 / LK 52 without chip or Scorpion timing");
         check(ground_throw_disarms == (tick >= disarm_at ? 1 : 0), "LP must disarm on release; LK must disarm earlier at sample 39");
         if (tick < release_at) {
@@ -954,10 +947,9 @@ static void ground_throws(void) {
           check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "release must detach both actors in the same world tick");
         }
         if (tick < owner_end) {
-          check(owner->state == S_THROW && (owner->current_mmove != NULL && !fighter_fiber_active(owner)),
-              "owner must remain locked through its full retail recovery");
+          check(owner->state == S_THROW && owner->current_mmove != NULL, "owner must remain locked through its full retail recovery");
         } else {
-          check(owner->state == S_IDLE && !fighter_fiber_active(owner), "owner must return at LP 49 / LK 117");
+          check(owner->state == S_IDLE, "owner must return at LP 49 / LK 117");
         }
         if (!lk) {
           if (tick < 25) {
@@ -980,7 +972,7 @@ static void ground_throws(void) {
             check(victim->facing == -entry_facing, "LP reverse getup must turn from the aligned throw facing");
           }
           if (tick == 123) {
-            check(victim->state == S_IDLE && !fighter_fiber_active(victim), "LP victim must finish its own getup independently of the owner");
+            check(victim->state == S_IDLE, "LP victim must finish its own getup independently of the owner");
           }
         } else {
           if (tick <= 10) {
@@ -1007,7 +999,7 @@ static void ground_throws(void) {
             check(fighter_move(victim)->clip == 200 && fighter_sample(victim) == tick - 86, "LK victim must finish with retail clip 200");
           }
           if (tick == 127) {
-            check(victim->state == S_IDLE && !fighter_fiber_active(victim), "LK victim must release control after clip 200");
+            check(victim->state == S_IDLE, "LK victim must release control after clip 200");
           }
         }
       }
@@ -1020,13 +1012,11 @@ static void ground_throws(void) {
         advance(damage_at - 1);
         fighter_interrupt(&g_battle.fighters[interrupted ? 1 - player : player], fighter_ready);
         advance(150);
-        if (victim->health != Q16_ONE || owner->state != S_IDLE || victim->state != S_IDLE || fighter_fiber_active(owner) || fighter_fiber_active(victim) ||
-            (owner->flags & FF_PAIRED) || (victim->flags & FF_PAIRED)) {
-          fprintf(stderr, "throw interruption player=%d lk=%d target=%d health=%x states=%d/%d fibers=%d/%d flags=%x/%x\n", player, lk, interrupted,
-              victim->health, owner->state, victim->state, fighter_fiber_active(owner), fighter_fiber_active(victim), owner->flags, victim->flags);
+        if (victim->health != Q16_ONE || owner->state != S_IDLE || victim->state != S_IDLE || (owner->flags & FF_PAIRED) || (victim->flags & FF_PAIRED)) {
+          fprintf(stderr, "throw interruption player=%d lk=%d target=%d health=%x states=%d/%d flags=%x/%x\n", player, lk, interrupted, victim->health,
+              owner->state, victim->state, owner->flags, victim->flags);
         }
-        check(victim->health == Q16_ONE && owner->state == S_IDLE && victim->state == S_IDLE && !fighter_fiber_active(owner) && !fighter_fiber_active(victim) &&
-                  !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
+        check(victim->health == Q16_ONE && owner->state == S_IDLE && victim->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
             "interrupting either actor immediately before damage must cancel the paired throw and all stale continuations");
       }
       start_ground_throw(player, lk);
@@ -1037,7 +1027,7 @@ static void ground_throws(void) {
       start_ground_throw(player, lk);
       advance(release_at);
       fighter_interrupt(owner, fighter_ready);
-      check(victim->current_mmove != NULL && !fighter_fiber_active(victim), "owner interruption after release must preserve the victim's independent recovery");
+      check(victim->current_mmove != NULL, "owner interruption after release must preserve the victim's independent recovery");
       advance(150);
       check(owner->state == S_IDLE && victim->state == S_IDLE && victim->health == Q16_ONE - damage, "released victim must recover without repeated damage");
 
@@ -1045,8 +1035,7 @@ static void ground_throws(void) {
       advance(release_at);
       battle_react(victim, 67);
       advance(40);
-      check(victim->action == ACTION_RETAIL_1003 && !fighter_fiber_active(victim),
-          "hit interruption must cancel old victim recovery instead of resuming its getup");
+      check(victim->action == ACTION_RETAIL_1003, "hit interruption must cancel old victim recovery instead of resuming its getup");
       advance(150);
       check(victim->state == S_IDLE, "interrupted victim must finish the new reaction");
 
@@ -1055,7 +1044,7 @@ static void ground_throws(void) {
         advance(release_at);
         check(victim->body.on_land != NULL, "LP tumble must install its landing impact callback");
         fighter_interrupt(victim, fighter_ready);
-        check(victim->body.on_land == NULL && !fighter_fiber_active(victim), "queued interruption must retire the LP landing callback with its move");
+        check(victim->body.on_land == NULL, "queued interruption must retire the LP landing callback with its move");
         advance(150);
         check(victim->state == S_IDLE && victim->health == Q16_ONE - damage, "cancelled LP recovery must not resume or leave a suspended body");
       }
@@ -1064,19 +1053,17 @@ static void ground_throws(void) {
       owner->wins = 1;
       victim->health = damage / 2;
       advance(damage_at);
-      check(
-          g_battle.phase == PHASE_FINISH && g_battle.finish_waiting && victim->health == 0 && (victim->current_mmove != NULL && !fighter_fiber_active(victim)),
+      check(g_battle.phase == PHASE_FINISH && g_battle.finish_waiting && victim->health == 0 && victim->current_mmove != NULL,
           "lethal throw must preserve the victim recovery when the winner enters victory");
       advance(160);
-      check(g_battle.phase == PHASE_FINISH && !g_battle.finish_waiting && victim->action == ACTION_RETAIL_1009 && !fighter_fiber_active(victim),
+      check(g_battle.phase == PHASE_FINISH && !g_battle.finish_waiting && victim->action == ACTION_RETAIL_1009,
           "lethal throw must settle its victim and open the finish window without a stuck pair");
 
       start_ground_throw(player, lk);
       advance(release_at);
       battle_reset_match();
       advance(150);
-      check(owner->health == Q16_ONE && victim->health == Q16_ONE && !fighter_fiber_active(owner) && !fighter_fiber_active(victim),
-          "rematch must cancel both throw recoveries without later damage or callback work");
+      check(owner->health == Q16_ONE && victim->health == Q16_ONE, "rematch must cancel both throw recoveries without later damage or callback work");
     }
   }
 }
@@ -1197,7 +1184,7 @@ static void jumps(void) {
   advance(4);
   check(fighter->blend_weight == 0xffff && fighter_sample(fighter) == 0, "standing return must hold its target sample through five native weights");
   advance(1);
-  check(fighter->blend_duration == 0 && fighter->script == NULL, "standing return must release the pose blend");
+  check(fighter->blend_duration == 0, "standing return must release the pose blend");
 
   for (int back = 0; back < 2; ++back) {
     fight(0, 8.f);
@@ -1395,11 +1382,8 @@ static void fatalities(void) {
       }
       for (int tick = 0; tick < 700; ++tick) {
         advance(1);
-        check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
-            "Sub-Zero scene actors must remain on phases through completion");
       }
-      check(
-          g_battle.phase == PHASE_MATCH_OVER && g_battle.finisher == id && g_battle.fighters[player].script == NULL, "finisher must complete once and settle");
+      check(g_battle.phase == PHASE_MATCH_OVER && g_battle.finisher == id, "finisher must complete once and settle");
       if (id == FINISH_FAN) {
         check(g_battle.fighters[1 - player].appearance == APPEARANCE_HIDDEN, "fan must remove victim");
       } else if (id == FINISH_SPIKE) {
@@ -1575,7 +1559,7 @@ static void sidesteps(void) {
       for (int interval = 2; interval <= 9; ++interval) {
         fight(player, 4.f);
         press(player, BUTTON_BIT(BUTTON_RUN));
-        check(g_battle.fighters[player].script == NULL, "first RUN press must not manufacture a double tap");
+        check(g_battle.fighters[player].current_mmove == NULL, "first RUN press must not manufacture a double tap");
         advance(interval - 2);
         Input run_input[2] = {0};
         run_input[player].held = BUTTON_BIT(BUTTON_RUN) | (down ? BUTTON_BIT(BUTTON_DOWN) : 0);
@@ -1587,7 +1571,7 @@ static void sidesteps(void) {
         check((fighter_move(fighter)->clip == 300) == accepted, "RUN two-sample rule and inclusive eight-tick window");
         if (accepted) {
           check(fighter_sample(fighter) == (down ? 0 : 17) && fighter->sidestep_ready == g_battle.ticks + 80, "sidestep cursor direction/cooldown");
-          check(fighter->current_mmove != NULL && !fighter_fiber_active(fighter), "sidestep must use phases");
+          check(fighter->current_mmove != NULL, "sidestep must use phases");
           check(fighter->body.vel[AXIS_X] == (player ? -0x443 : 0x443) && fighter->body.vel[AXIS_Z] == (player ? -1 : 1) * (down ? -0xccc : 0xccc),
               "sidestep must use pair-axis forward and perpendicular motion");
           q16 z = fighter->body.pos[AXIS_Z];

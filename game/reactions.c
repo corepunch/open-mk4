@@ -396,7 +396,6 @@ static void reaction_play(Fighter *fighter, int first, int last, int final, Figh
 static void begin_getup(Fighter *fighter, int clip) {
   stop_sliding(fighter);
   if (fighter->health <= 0) {
-    fighter->script = NULL;
     fighter_stop_mmove(fighter);
     return;
   }

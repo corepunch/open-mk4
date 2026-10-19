@@ -45,7 +45,6 @@ static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facin
 }
 
 void battle_init(int p1, int p2) {
-  fighter_cancel_all_fibers();
   fighter_cancel_all_mmoves();
   memset(&g_battle, 0, sizeof g_battle);
   battle_set_arena(0);
@@ -59,7 +58,6 @@ void battle_init(int p1, int p2) {
 }
 
 void battle_reset_match(void) {
-  fighter_cancel_all_fibers();
   fighter_cancel_all_mmoves();
   g_battle.previous_animation.valid = false;
   g_battle.current_animation.valid = false;
@@ -74,7 +72,6 @@ void battle_reset_match(void) {
 }
 
 void battle_next_round(void) {
-  fighter_cancel_all_fibers();
   fighter_cancel_all_mmoves();
   battle_event_cancel_all();
   g_battle.previous_animation.valid = false;
@@ -171,7 +168,7 @@ bool battle_begin_finisher(Fighter *fighter, int id) {
       f->disarm(f);
     }
     stop_fighter(f);
-    f->pending = f->script = NULL;
+    f->pending = NULL;
     f->buttons = NULL;
     f->flags = FF_BUSY | FF_UNTOUCHABLE;
   }
@@ -190,7 +187,7 @@ void battle_end_finisher(void) {
     if (g_battle.finisher) {
       f->body.pos[AXIS_Y] = y;
     }
-    f->pending = f->script = NULL;
+    f->pending = NULL;
     f->flags &= ~(unsigned)FF_PAIRED;
     if (g_battle.finisher == 0) {
       if (i == g_battle.winner) {
@@ -225,7 +222,7 @@ static void begin_finish_window(void) {
  * Keep native continuations and airborne bodies alive until that boundary. */
 static bool defeat_settled(const Fighter *fighter) {
   const MoveDef *move = fighter_move(fighter);
-  if (fighter->pending != NULL || fighter->script != NULL || fighter->current_mmove != NULL || fighter_airborne(fighter) || fighter->body.gravity != 0) {
+  if (fighter->pending != NULL || fighter->current_mmove != NULL || fighter_airborne(fighter) || fighter->body.gravity != 0) {
     return false;
   }
   if (fighter->sequence != NULL) {
@@ -278,7 +275,6 @@ static void land_idle(Fighter *fighter) {
 }
 
 static void advance_fighter(Fighter *fighter, const Fighter *other) {
-  fighter_fiber_pump_begin(fighter);
   const CharacterDef *def = roster_def(fighter->roster);
   const Motion *motion = def->motion;
   bool grounded = !fighter_airborne(fighter);
@@ -294,9 +290,7 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
   } else {
     const MoveDef *state = fighter_move(fighter);
     fighter->ticks++;
-    if (fighter->script != NULL) {
-      fighter->script(fighter);
-    } else if (fighter->current_mmove != NULL) {
+    if (fighter->current_mmove != NULL) {
       fighter_step_mmove(fighter);
     } else if (fighter->sequence != NULL) {
       fighter_step_sequence(fighter);
@@ -720,20 +714,15 @@ void battle_step(const Input input[2]) {
     /* Poses keep playing to their last sample and bodies keep falling. */
     for (i = 0; i < 2; ++i) {
       Fighter *fighter = &g_battle.fighters[i];
-      fighter_fiber_pump_begin(fighter);
       if (fighter->pending != NULL) {
         FighterFn entry = fighter->pending;
         fighter->pending = NULL;
         entry(fighter);
       } else {
         fighter->ticks++;
-        if (fighter->script != NULL) {
-          fighter->script(fighter);
-        } else if (g_battle.phase == PHASE_MATCH_OVER && fighter_fiber_active(fighter)) {
-          /* Finisher presentation may keep a generated pose loop after the
-           * result. The next round/reset retires its actor-owned stack. */
-          fighter_step_fiber(fighter);
-        } else if (fighter->current_mmove != NULL) {
+        /* Finisher presentation may keep a generated pose loop after the
+         * result; the next round or reset cancels its frame program. */
+        if (fighter->current_mmove != NULL) {
           fighter_step_mmove(fighter);
         } else if (fighter->sequence != NULL) {
           fighter_step_sequence(fighter);

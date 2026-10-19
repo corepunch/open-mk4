@@ -3,35 +3,21 @@
 
 #include "game.h"
 
-/* Primitives for generated ordinary C fibers. No bytecode or address dispatch. */
+/* Primitives for generated frame programs. No bytecode or address dispatch. */
 bool mk4_mmove_pair_step(Fighter *fighter);
 void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first);
-void mk4_script_bind(Fighter *fighter, int clip, int count, int first);
-void mk4_script_bind_victim(Fighter *fighter, int clip, int count, int first);
 void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample);
-void mk4_script_inherit_current(Fighter *fighter, int count, int sample);
 void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample);
-void mk4_script_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_mmove_blend_bind(Fighter *fighter, int clip, int count);
-void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first);
 void mk4_mmove_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first, FighterFn end);
-void mk4_script_pair_advance(Fighter *fighter, int count);
-void mk4_script_current(Fighter *fighter);
-void mk4_script_advance(Fighter *fighter, int count, int step);
-void mk4_script_advance_slow(Fighter *fighter, int count);
-/* step -1 reverses, +1 advances normally, 0 uses two visits per pose. */
-void mk4_script_finish_clip(Fighter *fighter, int step);
 void mk4_script_stop(Fighter *fighter);
 void mk4_script_avoid_clear(Fighter *fighter);
 void mk4_script_avoid_set(Fighter *fighter);
-void mk4_script_reverse_return(Fighter *fighter);
 void mk4_script_attack_return(Fighter *fighter);
 void mk4_script_indexed_sound(Fighter *fighter, int selector);
 void mk4_script_guard_block_sound_26(Fighter *fighter);
 void mk4_script_guard_block_sound_28(Fighter *fighter);
 
-void mk4_script_ready(Fighter *fighter);
-void mk4_script_land(Fighter *fighter);
 void mk4_mmove_land(Fighter *fighter);
 void mk4_script_thrown_ready(Fighter *fighter);
 void mk4_script_impact(Fighter *fighter);
@@ -39,22 +25,18 @@ void mk4_script_impact_callback(Fighter *fighter);
 void mk4_script_disarm(Fighter *fighter);
 void mk4_script_disarm_self(Fighter *fighter);
 void mk4_script_touchable(Fighter *fighter);
-void mk4_script_wait_land(Fighter *fighter);
 void mk4_script_damage(Fighter *fighter, int damage);
 void mk4_script_pair_adjust(Fighter *fighter, int amount);
 void mk4_script_context(Fighter *fighter, int selector);
 void mk4_script_roster_sound(Fighter *fighter, int selector);
 void mk4_script_draw_voice(Fighter *fighter);
 void mk4_script_scene_active(Fighter *fighter);
-void mk4_script_pair_to(Fighter *owner, int sample);
-void mk4_script_pair_back_to(Fighter *owner, int sample);
 void mk4_mmove_pair_back_step(Fighter *owner);
 void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_mmove_pair_victim(Fighter *fighter, const MoveDef *move);
 void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_pair_cleanup(Fighter *fighter);
-void mk4_script_thrown_finish(Fighter *fighter);
 void mk4_mmove_thrown_finish(Fighter *fighter);
 void mk4_mmove_lk_release(Fighter *fighter, int reaction);
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end);
@@ -71,9 +53,7 @@ void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, i
 void mk4_script_landing_motion(Fighter *fighter);
 void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample);
 void mk4_script_fan_cycle(Fighter *fighter);
-void mk4_script_fan_victim_end(Fighter *fighter);
 void mk4_mmove_fan_victim_end(Fighter *fighter);
-void mk4_script_fan_tail(Fighter *fighter, const mmove_t *cycle, FighterFn release, FighterFn victim_release);
 void mk4_native_fan_rise(Fighter *fighter);
 void mk4_native_spike_tail(Fighter *fighter, FighterFn end);
 void mk4_script_spike_tail(Fighter *fighter);

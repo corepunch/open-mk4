@@ -172,7 +172,6 @@ class CompilerTests(unittest.TestCase):
                           contexts={'0x4e9bd0': dict(clip=153, count=26, sample=25, evidence='native reaction 102 release')})
         self.assertIn('mk4_mmove_pair_step', source)
         self.assertNotIn('fighter_wait_ticks', source)
-        self.assertNotIn('fighter_start_fiber', source)
         self.assertNotIn('mk4_script_pair_to(fighter', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'pair.c'
@@ -272,7 +271,7 @@ class CompilerTests(unittest.TestCase):
 
     def test_native_script_links_and_explicit_entry_contracts(self):
         # The three native jab tails only enter another VM script; flattening
-        # them preserves the repeated branch without growing a fiber's stack.
+        # them preserves the repeated branch as phases, without a C call chain.
         source = generate(self.image, [0x4e62f0], 3, 'fighter_ready')
         self.assertIn('retail_script_004e62f0_branch_', source)
         for target in ('004e6330', '004e6360', '004e63b0'):

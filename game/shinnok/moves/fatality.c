@@ -4,7 +4,6 @@
  * stage coordinator owns the victim pose and recovery for that scene. */
 void shinnok_fatality_contact_hold(Fighter *fighter) {
   require(g_battle.phase == PHASE_FATALITY, "Shinnok reaction 175 outside fatality");
-  fighter->script = NULL;
   fighter->pending = NULL;
   fighter->flags |= FF_REACTING | FF_BUSY;
 }

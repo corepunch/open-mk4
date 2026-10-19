@@ -166,7 +166,6 @@ void fighter_set_screen_speed(Fighter *fighter, q16 speed) {
 
 void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   require(move != NULL && state >= 0 && state < S_COUNT, "Invalid move entry");
-  fighter_cancel_fiber(fighter);
   fighter_cancel_mmove(fighter);
   native_motion_stop(fighter);
   if (fighter->state == S_WALK && !fighter_airborne(fighter) && (move->flags & SF_LOCK)) {
@@ -197,7 +196,6 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   fighter->contact = CONTACT_MISS;
   fighter->contact_tick = -1;
   fighter->pending = NULL;
-  fighter->script = NULL;
   fighter->sample_override = -1;
   fighter->script_phase = 0;
   fighter->weapon_strike = NULL;
@@ -258,7 +256,6 @@ void fighter_enter_state(Fighter *fighter, int state) {
 /* A phase owns its tick clock and continuation, but retains the move's
  * combat identity, action, contact result and input restrictions. */
 void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence) {
-  fighter_cancel_fiber(fighter);
   fighter_cancel_mmove(fighter);
   require(sequence != NULL && sequence->segments != NULL && sequence->segment_count > 0 && sequence->count > 0 && sequence->end != NULL &&
               sequence->segments[0].at == 0 && sequence->event_count >= 0 && (sequence->event_count == 0 || sequence->events != NULL),
@@ -278,7 +275,6 @@ void fighter_start_sequence(Fighter *fighter, const MoveSequence *sequence) {
   fighter->ticks = 0;
   fighter->sequence_event_tick = -1;
   fighter->sequence_finished = false;
-  fighter->script = NULL;
   fighter->sample_override = -1;
   frame_event(fighter);
 }
@@ -348,7 +344,6 @@ void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase) {
   fighter->mmove_hold = false;
   fighter->mmove_last_tick = g_battle.ticks;
   fighter->sequence = NULL;
-  fighter->script = NULL;
   fighter->sample_override = -1;
   fighter->continuation++;
 }

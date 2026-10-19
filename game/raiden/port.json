@@ -553,7 +553,7 @@
       "symbol": "react_low_block"
     },
     "47": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/raiden/character.c",
       "symbol": "raiden_generated_reaction"
@@ -569,7 +569,7 @@
       "symbol": "react_extra"
     },
     "53": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/raiden/character.c",
       "symbol": "raiden_generated_reaction"
@@ -580,7 +580,7 @@
       "symbol": "react_block"
     },
     "66": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/raiden/character.c",
       "symbol": "raiden_generated_reaction"
@@ -596,7 +596,7 @@
       "symbol": "react_extra_block"
     },
     "82": {
-      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated fiber owns recovery.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/raiden/character.c",
       "symbol": "raiden_generated_reaction"

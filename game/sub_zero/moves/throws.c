@@ -83,7 +83,6 @@ static void throw_cleanup(Fighter *owner) {
       return;
     }
     sub_zero_stop_body(victim);
-    fighter_cancel_fiber(victim);
     fighter_cancel_mmove(victim);
     if (victim->pending == NULL && victim->health > 0) {
       fighter_ready(victim);

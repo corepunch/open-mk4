@@ -345,7 +345,6 @@ int main(int argc, char **argv) {
     save_bmp(&cv, shot);
   printf("Rendered %d frames; simulated %llu ticks; health %.4f / %.4f; round %d\n", rendered, (unsigned long long)g_battle.ticks,
       q16_float(g_battle.fighters[0].health), q16_float(g_battle.fighters[1].health), g_battle.round);
-  fighter_cancel_all_fibers();
   game_audio_free(&audio);
   sdl_app_free(&app);
   canvas_free(&cv);

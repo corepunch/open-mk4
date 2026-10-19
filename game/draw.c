@@ -688,7 +688,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       fighter_joint_position(f, 10, &hand, &grip);
       draw_weapon(cv, camera, assets, hand, grip, f->weapon, &light);
     }
-    if ((fighter_move(f)->clip == 448 && f->script != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
+    if ((fighter_move(f)->clip == 448 && f->current_mmove != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
         (g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_BURN && i == g_battle.winner && g_battle.phase_ticks >= 51 &&
             g_battle.phase_ticks < 191)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};

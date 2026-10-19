@@ -393,7 +393,7 @@
       "symbol": "react_extra"
     },
     "104": {
-      "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
+      "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 104 -> 0x485af0; docs/liu-kang-scripts.md",
       "source": "game/liu_kang/character.c",
       "symbol": "liu_script_lp_getup"
@@ -455,7 +455,7 @@
       "symbol": "liu_script_spike_tail"
     },
     "176": {
-      "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
+      "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 176 -> 0x481360; docs/liu-kang-scripts.md",
       "source": "game/liu_kang/character.c",
       "symbol": "liu_script_fatal_setup"
@@ -577,7 +577,7 @@
       "symbol": "react_extra_block"
     },
     "80": {
-      "adaptation": "Existing independent victim/scene fiber implements this dispatch outside the shared reaction table",
+      "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 80 -> 0x485910; docs/liu-kang-scripts.md",
       "source": "game/liu_kang/character.c",
       "symbol": "lk_thrown_script"

@@ -421,7 +421,6 @@ static void tanya_fatality_assets(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Tanya fatality must use frame phases");
         for (int piece = 0; piece < MAX_SCENE_PIECES; ++piece) {
           pieces |= g_battle.pieces[piece].active && g_battle.pieces[piece].roster == victim->roster;
         }
@@ -469,7 +468,6 @@ static void cage_orb_assets(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Cage orb owner and victim must use frame tables");
       }
       check(visible && victim->health == Q16_ONE - 0x1999 && owner->state == S_IDLE, "Both Cage arcs must resolve native contact with animated victim bounds");
     }
@@ -529,7 +527,7 @@ static void restored_high_punch_contacts(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
       }
-      check(victim->health == Q16_ONE - 0xccc && owner->state == S_IDLE && !fighter_fiber_active(owner),
+      check(victim->health == Q16_ONE - 0xccc && owner->state == S_IDLE,
           "Restored ordinary HP must hit once through actual pose bounds and complete native frame recovery");
     }
   }
@@ -573,7 +571,6 @@ static void kai_weapon_contacts(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Kai weapon owner and victim must remain on frame tables");
       }
       check(victim->health == Q16_ONE - (strike == 1 ? 10485 : 11796) && owner->state == S_IDLE,
           "Kai weapon records must hit once with real animated bounds and recover");
@@ -619,7 +616,6 @@ static void jarek_weapon_contacts(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Jarek weapon owner and victim must remain on frame tables");
       }
       check(victim->health == Q16_ONE - (strike == 0      ? 10485
                                             : strike == 2 ? 11796
@@ -668,7 +664,6 @@ static void shinnok_weapon_contacts(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Shinnok weapon owner and victim must remain on frame tables");
       }
       const q16 damages[] = {11141, 13107, 9830, 11796};
       if (victim->health != Q16_ONE - damages[strike] || owner->state != S_IDLE) {
@@ -834,7 +829,6 @@ static void cage_weapon_contacts(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Cage weapon owner and victim must remain on frame tables");
       }
       check(victim->health == Q16_ONE - (strike == 0      ? 11796
                                             : strike == 1 ? 9830
@@ -891,7 +885,6 @@ static void axe_followup_contacts(const Assets *assets) {
         second |= fighter_move(victim)->clip == 131;
         health_changes += victim->health < previous;
         previous = victim->health;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Axe follow-up and both victim streams must use frame tables");
       }
       if ((scenario == 0 && (!first || !second || health_changes != 2)) || (scenario >= 2 && health_changes != 0)) {
         fprintf(stderr, "Axe slot%d scenario%d first%d second%d contacts%d health%d\n", slot, scenario, first, second, health_changes, victim->health);
@@ -965,7 +958,6 @@ static void fujin_first_fatality_assets(const Assets *assets) {
               "Explosive head/hand debris must preserve its closed source model and authored tiny scale");
         }
       }
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Real tornado and three-shot scene must stay on native frame/event programs");
     }
     check(wind && bolt && debris && g_battle.phase == PHASE_MATCH_OVER && owner->armed && owner->native_variant == 3 && bolts == 3,
         "Asset-backed Fujin first scene must retain wind, crossbow, three impacts and native debris");
@@ -1005,7 +997,6 @@ static void fujin_second_fatality_assets(const Assets *assets) {
               "Torn skin must retain its actual4ea420 closed part and native forty-five-visit lifetime");
         }
       }
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed wind fatality must never start fibers");
     }
     check(skin && flayed && landing && g_battle.phase == PHASE_MATCH_OVER && victim->hidden_joints[0] == 0,
         "Wind fatality must replace torn skin with a complete posed flesh body and land its550 ending");
@@ -1051,7 +1042,6 @@ static void fujin_wind_grab_assets(const Assets *assets) {
                 "Held wind-grab effect must retain its actual4d1a18 shared wind sprites");
           }
         }
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Real wind-grab opening, orbit and183 release must remain on frame phases");
       }
       check(visual && (blocked ? recoil && !caught : caught && flight), "Asset-backed wind grab must follow its own capture or blocked branch");
       check(victim->health == Q16_ONE - (blocked ? 0 : 0x1eb8) && !fighter_airborne(victim) && !(victim->flags & FF_UNTOUCHABLE),
@@ -1083,7 +1073,6 @@ static void fujin_triple_kick_assets(const Assets *assets) {
         middle |= victim->reaction == 94 && fighter_move(victim)->clip == 311;
         last |= victim->reaction == 95 && fighter_move(victim)->clip == 131;
         recoil |= owner->body.gravity == 0x147 && fighter_airborne(owner);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed triple kick and victim phases must use frame tables");
       }
       check(blocked ? recoil : first && middle && last, "Real triple-kick poses must follow actual contact or blocked-recoil branches");
       check(victim->health == Q16_ONE - (blocked ? q16_mul(0x30a3, 0x3333) : 0x30a3) && !fighter_airborne(owner) && !fighter_airborne(victim),
@@ -1126,7 +1115,6 @@ static void fujin_wind_assets(const Assets *assets) {
                 "Wind emitter must use the actual three-dimensional shared84..91 mesh geometry");
           }
         }
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Real wind, slam and getup clips must remain on frame phases");
       }
       check(caught && emitted && (!slam || (slammed && bounce)) && victim->state == S_IDLE && victim->health == Q16_ONE - (slam ? 0x147a : 0),
           "Real-asset wind catch, optional slam and landing must complete with the authored damage");
@@ -1160,7 +1148,6 @@ static void fujin_crossbow_assets(const Assets *assets) {
         Pose bones[MK4_MAX_BONES];
         fighter_pose(assets, owner, bones);
         fighter_pose(assets, victim, bones);
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed crossbow action and victim must never use a fiber");
         for (int i = 0; i < MAX_PROJECTILES; ++i) {
           const Projectile *object = &g_battle.projectiles[i];
           if (object->kind != 0 && object->mesh_animation != NULL && object->mesh_animation->first == 106) {
@@ -1265,7 +1252,6 @@ static void cage_second_fatality_assets(const Assets *assets) {
       Pose bones[MK4_MAX_BONES];
       fighter_pose(assets, owner, bones);
       fighter_pose(assets, victim, bones);
-      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Cage fatality must use independent frame phases");
       fall |= fighter_move(victim)->clip == 206;
       for (int object = 0; object < MAX_PROJECTILES; ++object) {
         const Projectile *effect = &g_battle.projectiles[object];
@@ -1315,7 +1301,6 @@ static void cage_groin_command(const Assets *assets) {
         }
         selected |= fighter_move(owner)->clip == 438;
         stunned |= fighter_move(victim)->clip == 126 && victim->action == 0x1014;
-        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Cage groin punch and its selected stun must use frame tables");
       }
       q16 damage = (scenario == 0 || scenario == 4) ? 0x28f5 : scenario == 1 ? q16_mul(0x28f5, 0x3333) : 0;
       if (victim->health != Q16_ONE - damage) {

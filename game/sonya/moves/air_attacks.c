@@ -147,8 +147,8 @@ static void air_release_fall(Fighter *fighter) {
   native_await(fighter, native_grounded, air_release_land);
 }
 
-/* The released victim's stream starts after the owner's damage, as the
- * deferred victim fiber did. */
+/* The released victim's stream starts after the owner's damage, so its
+ * setup sees the damaged victim. */
 void sonya_script_air_release(Fighter *fighter) {
   Fighter *victim = mk4_script_release_pair(fighter);
   victim->reaction = 85;
