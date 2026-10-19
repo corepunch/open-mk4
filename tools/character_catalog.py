@@ -195,6 +195,10 @@ def _moves_for(character):
             weapon_lp=move(0x495610, (('boomerang throw', 0x4ed190),), (('C', 20),),
                            native=(('release', 0x497b60), ('flight task', 0x497c50), ('return and catch', 0x497e60))),
             weapon_reaction=move(0x486710, (('reaction 169 victim', 0x4e9db8), ('reaction 170 victim', 0x4e8bb0)), native=(('reaction 170 entry', 0x4821a0),)),
+            fatality_2=move(0x467cd0, (('owner opening', 0x4e5798), ('owner cycles', 0x4e57c0), ('victim dizzy', 0x4e5b38), ('victim scene', 0x4e5820),
+                                      ('victim collapse', 0x4e5860), ('victory', 0x4e6a40)),
+                            native=(('roster dispatch', 0x464f30), ('height', 0x4650b0), ('owner finish', 0x465130), ('victim reaction 186', 0x465200),
+                                    ('owner cue', 0x465270), ('victim cue', 0x465390))),
         )
     if character == 10:
         # Reptile's input and CPU tables expose three additional script

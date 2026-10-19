@@ -6,6 +6,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 26, 0x10, tanya_can_air_fireball, tanya_air_fireball},
   {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_spike_finish, tanya_spike_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 26, 0x0, weapon_can_draw, tanya_weapon_action},
+  {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 4, 50, 0x0, tanya_can_close_fatality, tanya_fatality_2},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 28, 0x0, tanya_can_spin_kick, tanya_spin_kick},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_BACK}, 3, 28, 0x0, NULL, tanya_drill_kick},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
@@ -13,11 +14,15 @@ static const CommandDef retail_commands[] = {
 };
 // clang-format on
 
-static const CpuMoves retail_cpu_moves = {.enter = {
-                                              [CPU_SPECIAL_NEAR] = tanya_drill_kick,
-                                              [CPU_SPECIAL_1] = tanya_drill_kick,
-                                              [CPU_SPECIAL_2] = tanya_drill_kick,
-                                              [CPU_PROJECTILE] = tanya_fireball,
-                                              [CPU_FINISH_FAN] = tanya_fan_fatality,
-                                              [CPU_FINISH_SPIKE] = tanya_spike_fatality,
-                                          }};
+static const CpuMoves retail_cpu_moves = {.enter =
+                                              {
+                                                  [CPU_SPECIAL_NEAR] = tanya_drill_kick,
+                                                  [CPU_SPECIAL_1] = tanya_drill_kick,
+                                                  [CPU_SPECIAL_2] = tanya_drill_kick,
+                                                  [CPU_PROJECTILE] = tanya_fireball,
+                                                  [CPU_FINISH_2] = tanya_fatality_2,
+                                                  [CPU_FINISH_FAN] = tanya_fan_fatality,
+                                                  [CPU_FINISH_SPIKE] = tanya_spike_fatality,
+                                              },
+    .finish_min = {0x0, 0x0},
+    .finish_distance = {0x0, 0xe666}};

@@ -39,6 +39,11 @@ void tanya_start_script(Fighter *fighter, StateId state, const MoveDef *move, Fi
 }
 
 void tanya_script_current_reaction(Fighter *fighter, int reaction) {
+  if (reaction == 186) {
+    /* 4e5798's opcode 41 installs reaction 186 (465200) on the victim. */
+    tanya_second_reaction(fighter);
+    return;
+  }
   require(reaction == 104, "Unexpected tanya LP release reaction");
   Fighter *victim = mk4_script_release_pair(fighter);
   battle_react(victim, reaction);

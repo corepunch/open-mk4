@@ -2,14 +2,9 @@
   "character": "tanya",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_fan_fatality",
-      "evidence": "Tanya finisher input target 467cd0 maps to the fan-fatality adapter and its reviewed 4e0118 root."
-    },
-    "0x467ce0": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_spike_fatality",
-      "evidence": "Tanya finisher input target 467ce0 maps to the spike-fatality adapter and its reviewed 4e6950 root."
+      "source": "game/tanya/moves/fatality_second.c",
+      "symbol": "tanya_fatality_2",
+      "evidence": "HK D,F,D,F record 4e453c (T1[0x43], gate 45e570). 467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
     },
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -153,6 +148,18 @@
     "0x4e8bb0": {
       "return_to": "mk4_mmove_thrown_finish",
       "evidence": "Weapon victim stream returns through the KO-aware controller boundary without fiber ownership."
+    },
+    "0x4e5b38": {
+      "clip": 13,
+      "count": 56,
+      "sample": 0,
+      "evidence": "Native 464f30 task 466dd0 enters 4e5b38 on the victim in its dizzy clip 13."
+    },
+    "0x4e5798": {
+      "clip": 439,
+      "count": 45,
+      "sample": 0,
+      "evidence": "464f30 4611c0 binds the roster stance 53d408[9] = clip 439 before entering 4e5798."
     }
   },
   "generated_scripts": [
@@ -197,10 +204,16 @@
     "0x4e66f0",
     "0x4ed190",
     "0x4e9db8",
-    "0x4e8bb0"
+    "0x4e8bb0",
+    "0x4e5798",
+    "0x4e57c0",
+    "0x4e5820",
+    "0x4e5860",
+    "0x4e5b38",
+    "0x4e6a40"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "61ca9164f799dd54606184e883e91d4efe5ab391a946a68397ef0df193a83716",
+  "inventory_sha256": "3f32c75d1433395f10cd8ab9cb2aab658e9ead34342e44412f70e912cb1fae55",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",
@@ -341,6 +354,11 @@
       "source": "game/tanya/moves/weapon.c",
       "symbol": "tanya_weapon_reaction",
       "evidence": "Reactions 169 (486710 -> 4e9db8) and 170 (4821a0 -> 4e8bb0) disarm through 494520 before their generated victim streams."
+    },
+    "fatality_2": {
+      "source": "game/tanya/moves/fatality_second.c",
+      "symbol": "tanya_fatality_2",
+      "evidence": "467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
     }
   },
   "output": "game/tanya/generated/scripts.inc",
@@ -536,6 +554,12 @@
       "symbol": "tanya_weapon_reaction",
       "evidence": "Weapon 43 selects 170: 4821a0 disarms (494520) and enters 4e8bb0 (effect 16, then the shared 4e8bc8 clip 182 fall).",
       "adaptation": "The shared reaction dispatcher runs this character-owned generated victim frame stream for every humanoid roster."
+    },
+    "186": {
+      "source": "game/tanya/moves/fatality_second.c",
+      "symbol": "tanya_second_reaction",
+      "evidence": "4e5798 opcode 41 installs reaction 186 (465200): copy facing/angles/X-Z from the owner and enter 4e5820.",
+      "adaptation": "The second-fatality scene owns this victim continuation through the current-reaction handler, not the shared table."
     }
   },
   "return_to": "fighter_ready",
@@ -638,6 +662,11 @@
       "source": "game/tanya/moves/weapon.c",
       "symbol": "tanya_weapon_action",
       "evidence": "HK F,F record 4e4530 (T1[0x29], gate 45ef50). 46d1d0: armed -> T2[0xd] 498270 throw; follow-up -> 494610 and 4ecb40[0xd] 4955b0; otherwise action 1004, 4e62c0 and 46d260 equip of type 6d."
+    },
+    "0x467cd0": {
+      "source": "game/tanya/moves/fatality_second.c",
+      "symbol": "tanya_fatality_2",
+      "evidence": "HK D,F,D,F record 4e453c (T1[0x43], gate 45e570). 467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
     }
   },
   "command_predicates": {
@@ -647,7 +676,8 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ef20": "tanya_can_air_fireball",
     "0x45e8d0": "tanya_can_spin_kick",
-    "0x45ef50": "weapon_can_draw"
+    "0x45ef50": "weapon_can_draw",
+    "0x45e570": "tanya_can_close_fatality"
   },
   "mmove_scripts": [
     "0x4de798",
@@ -689,7 +719,13 @@
     "0x4e66f0",
     "0x4ed190",
     "0x4e9db8",
-    "0x4e8bb0"
+    "0x4e8bb0",
+    "0x4e5798",
+    "0x4e57c0",
+    "0x4e5820",
+    "0x4e5860",
+    "0x4e5b38",
+    "0x4e6a40"
   ],
   "cpu_bindings": {
     "0x498b70": {
@@ -702,5 +738,9 @@
       "symbol": "tanya_drill_kick",
       "evidence": "Near/medium/far CPU rows 4df90c/94c/98c[9] word 0x40012 select T4[18]. 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     }
+  },
+  "cpu_finish_min": {
+    "CPU_FINISH_2": 0,
+    "evidence": "Tanya 45e570 close gate accepts up to 1 unit; CPU second target 4dfe50[9] = 0xe666."
   }
 }

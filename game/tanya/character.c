@@ -239,3 +239,23 @@ void tanya_entry_retail_script_004e9db8(Fighter *fighter) {
 void tanya_entry_retail_script_004e8bb0(Fighter *fighter) {
   retail_script_004e8bb0(fighter);
 }
+
+void tanya_entry_retail_script_004e5798(Fighter *fighter) {
+  retail_script_004e5798(fighter);
+}
+
+void tanya_entry_retail_script_004e57c0(Fighter *fighter) {
+  retail_script_004e57c0(fighter);
+}
+
+void tanya_entry_retail_script_004e5820(Fighter *fighter) {
+  retail_script_004e5820(fighter);
+}
+
+void tanya_entry_retail_script_004e5b38(Fighter *fighter) {
+  retail_script_004e5b38(fighter);
+}
+
+void tanya_entry_retail_script_004e6a40(Fighter *fighter) {
+  retail_script_004e6a40(fighter);
+}

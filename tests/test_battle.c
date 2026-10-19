@@ -13,6 +13,9 @@ void fujin_dive(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
+void tanya_fatality_1(Fighter *fighter);
+void tanya_fatality_2(Fighter *fighter);
+bool tanya_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
 void jarek_fatality_2(Fighter *fighter);
@@ -3796,7 +3799,7 @@ static void check_kai_second_fatality(void) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 8, 9, 15, 17};
+  const int rosters[] = {7, 8, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -5216,10 +5219,78 @@ static void check_tanya_weapon(void) {
   }
 }
 
+/* Enter Tanya's deciding-KO window and type a generated finisher record. */
+static void tanya_finisher_command(int slot, FighterFn entry, unsigned chord) {
+  Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+  owner->wins = 1;
+  battle_damage(victim, Q16_ONE);
+  advance_ticks(1, NULL);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance_ticks(1, NULL);
+  }
+  check(battle_can_finish(owner), "Tanya fatality must enter through the real deciding-KO window");
+  owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+  check(!tanya_can_close_fatality(owner) && !tanya_can_close_fatality(victim), "Tanya close fatality must reject distance above one and the defeated player");
+  owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+  const Controls *controls = roster_def(9)->controls;
+  const CommandDef *selected = NULL;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].enter == entry) {
+      selected = &controls->commands[i];
+    }
+  }
+  check(selected != NULL, "Tanya fatality must have its own generated retail command");
+  for (int i = 0; i < selected->count; ++i) {
+    CommandToken token = selected->tokens[i];
+    Button button = token == TOKEN_DOWN ? BUTTON_DOWN : token == TOKEN_UP ? BUTTON_UP : slot ? BUTTON_LEFT : BUTTON_RIGHT;
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(button) | chord;
+    if (i == selected->count - 1) {
+      battle_step(input);
+      input[slot].held |= BUTTON_BIT(selected->button);
+    }
+    battle_step(input);
+    advance_ticks(2, NULL);
+  }
+}
+
+static void check_tanya_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int reset_at = 0; reset_at < 2; ++reset_at) {
+      battle_init(slot ? 2 : 9, slot ? 9 : 2);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      tanya_finisher_command(slot, tanya_fatality_2, 0);
+      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 439, "Tanya HK D,F,D,F must start her second fatality from the roster stance");
+      bool owner_scene = false, victim_scene = false, collapse = false, victory = false;
+      int limit = reset_at ? 100 : 800;
+      for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya fatality actors must never start a fiber");
+        owner_scene |= fighter_move(owner)->clip == 565;
+        victim_scene |= fighter_move(victim)->clip == 568 && victim->body.pos[AXIS_X] == owner->body.pos[AXIS_X];
+        collapse |= fighter_move(victim)->clip == 569;
+        victory |= fighter_move(owner)->clip == 124;
+      }
+      if (reset_at == 0) {
+        check(owner_scene && victim_scene && collapse && victory && g_battle.phase == PHASE_MATCH_OVER,
+            "Tanya second fatality must run the paired 565/568 cycles, the 569 collapse and victory");
+        check(victim->health == 0 && owner->wins == 2, "Tanya second fatality must preserve the decided result");
+      }
+      battle_reset_match();
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim) && g_battle.phase != PHASE_FATALITY,
+          "Reset during Tanya's fatality must restore both fighters");
+    }
+  }
+}
+
 static void check_tanya_ports(void) {
   check_tanya_fireballs();
   check_tanya_kicks();
   check_tanya_weapon();
+  check_tanya_second_fatality();
 }
 
 int main(void) {

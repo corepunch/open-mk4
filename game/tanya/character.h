@@ -8,6 +8,11 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
+enum {
+  TANYA_EVENT_FATALITY_1 = 21,
+  TANYA_EVENT_FATALITY_2
+};
+
 #define s_jab tanya_s_jab
 #define s_kick tanya_s_kick
 #define s_sweep tanya_s_sweep
@@ -121,4 +126,19 @@ void tanya_armed_idle(Fighter *fighter);
 void tanya_armed_walk(Fighter *fighter);
 void tanya_armed_crouch(Fighter *fighter);
 void tanya_armed_block(Fighter *fighter);
+void tanya_entry_retail_script_004e5798(Fighter *fighter);
+void tanya_entry_retail_script_004e57c0(Fighter *fighter);
+void tanya_entry_retail_script_004e5820(Fighter *fighter);
+void tanya_entry_retail_script_004e5b38(Fighter *fighter);
+void tanya_entry_retail_script_004e6a40(Fighter *fighter);
+bool tanya_can_close_fatality(const Fighter *fighter);
+void tanya_fatality_2(Fighter *fighter);
+void tanya_second_height(Fighter *fighter);
+void tanya_second_owner_cue(Fighter *fighter, int task_type);
+void tanya_second_victim_cue(Fighter *fighter, int task_type);
+void tanya_second_event(Fighter *fighter, int selector);
+void tanya_second_finish(Fighter *fighter);
+void tanya_second_victim_pause(Fighter *fighter);
+void tanya_second_reaction(Fighter *fighter);
+void tanya_script_victory(Fighter *fighter);
 #endif
