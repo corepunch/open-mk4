@@ -209,10 +209,10 @@ def _moves_for(character):
         # Kai's selected input/CPU targets include additional kick, recovery,
         # victory and draw streams beyond the shared fighter roots.
         shared.update(
-            input_47bd10=move(0x47bd10, (('selected continuation', 0x4e8210),),
-                              native=(('motion finish', 0x47bd40),)),
-            input_47bd40=move(0x47bd40, (('selected continuation', 0x4e8238),),
-                              native=(('recovery finish', 0x47bf90),)),
+            # 47bd40 runs the 4704d0 frame record 4e8238, not a VM program.
+            input_47bd10=move(0x47bd10, (('selected continuation', 0x4e8210),), contacts=(('D', 16),),
+                              native=(('contact record', 0x47bd40), ('contact stop', 0x47be50), ('landing', 0x47bed0),
+                                      ('timeout fall', 0x47bd60), ('shared fall', 0x480cf0))),
             input_47c520=move(0x47c520, (('selected continuation', 0x4e8320),),
                               native=(('handstand controls', 0x47c580),)),
             handstand_spin=move(0x47c850, (('spin startup', 0x4e8338),), contacts=(('D', 13),), native=(('spin controls', 0x47c880),)),
@@ -221,8 +221,8 @@ def _moves_for(character):
             handstand_reaction=move(0x482de0, (('standing stagger', 0x4e9308), ('crouching stagger', 0x4e9360), ('knockdown', 0x4ea170), ('rear stagger', 0x4ea1c0))),
             input_47cc10=move(0x47cc10, (('selected continuation', 0x4e8358), ('scheduler continuation', 0x4e8390)),
                               contacts=(('B', 10),), native=(('clip finish', 0x47cc50),)),
-            input_478df0=move(0x478df0, (('selected continuation', 0x4e8870),),
-                              native=(('clip finish', 0x478e20),)),
+            input_478df0=move(0x478df0, (('selected continuation', 0x4e8870),), contacts=(('B', 9),),
+                              native=(('contact list', 0x478e20), ('clip finish', 0x478e40))),
             input_47cbf0=move(0x47cbf0, (('selected continuation', 0x4e88c8),),
                               native=(('clip finish', 0x47cc10),)),
             draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0), ('back strike', 0x4ec5a8), ('HP victim', 0x4e8b78), ('LP victim', 0x4e8f50), ('back victim', 0x4e8bc0)), contacts=(('weapon', 31), ('weapon', 32), ('weapon', 33)),

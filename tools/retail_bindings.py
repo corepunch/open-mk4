@@ -744,14 +744,12 @@ CHARACTER_BINDINGS[11] = {
     0x47cc10: Binding('retail_script_004e8358', 'game/kai/generated/scripts.inc', ('tail',),
                       script_target=0x4e8358, evidence='47cc10 enters the selected Kai continuation 4e8358'),
 }
-CHARACTER_BINDINGS[11][0x47bd40] = Binding('kai_script_aerial_transition', 'game/kai/character.c', ('tail',), flow='terminal',
-                                           evidence='47bd40 explicitly resumes Kai aerial continuation at generated root 4e8238')
-CHARACTER_BINDINGS[11][0x47bf90] = Binding('kai_script_aerial_recovery', 'game/kai/character.c', ('tail',), flow='terminal',
-                                           evidence='47bf90 clears aerial motion, waits eight ticks, restores gravity and lands through the portable recovery helper')
+CHARACTER_BINDINGS[11][0x47bd40] = Binding('kai_aerial_punch_contact', 'game/kai/moves/aerial_punch.c', ('tail',), flow='terminal', mmove=True,
+                                           evidence='47bd40 runs 4704d0 record4e8238: 15 airborne D[16] visits, contact47be50, floor47bed0, timeout47bd60; not a VM program')
 CHARACTER_BINDINGS[11][0x47cc50] = Binding('kai_script_contact_b10_continuation', 'game/kai/character.c', ('tail',), flow='terminal',
                                            evidence='47cc50 dispatches Kai table-B selector 10 at samples 10, 11 and 11, then enters the generated wait-and-rewind continuation 4e8390')
-CHARACTER_BINDINGS[11][0x478e20] = Binding('kai_script_contact_b9_continuation', 'game/kai/character.c', ('tail',), flow='terminal',
-                                           evidence='478e20 dispatches Kai table-B selector 9 at samples 30 through 34, then enters generated continuation 4e88c8')
+CHARACTER_BINDINGS[11][0x478e20] = Binding('kai_lunge_kick_contact', 'game/kai/moves/lunge_kick.c', ('tail',), flow='terminal', mmove=True,
+                                           evidence='478e20 runs 470b30 list4e88a0: B[9] at samples30..34, then478e40 stops motion, finishes clip551 and returns')
 
 CHARACTER_BINDINGS[12] = {
     0x42bdf0: Binding('retail_script_004de318', 'game/jarek/generated/scripts.inc', ('tail',),

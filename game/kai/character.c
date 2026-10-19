@@ -207,10 +207,6 @@ void kai_entry_retail_script_004e8210(Fighter *fighter) {
   retail_script_004e8210(fighter);
 }
 
-void kai_entry_retail_script_004e8238(Fighter *fighter) {
-  retail_script_004e8238(fighter);
-}
-
 void kai_entry_retail_script_004e8320(Fighter *fighter) {
   retail_script_004e8320(fighter);
 }

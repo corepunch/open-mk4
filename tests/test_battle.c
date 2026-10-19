@@ -31,6 +31,8 @@ bool fujin_can_wind(const Fighter *fighter);
 bool fujin_can_wind_slam(const Fighter *fighter);
 void kai_draw_weapon(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
+void kai_input_47bd10(Fighter *fighter);
+void kai_input_478df0(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
@@ -2963,6 +2965,65 @@ static void drive_owned_command(int slot, FighterFn entry) {
   advance_ticks(2, NULL);
 }
 
+/* Kai D,F HP (47bd10) and D,F LK (478df0): real command records, hit/block/
+ * miss branches, one-time native damage and frame-only recovery. */
+static void check_kai_df_specials(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int move = 0; move < 2; ++move) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        battle_init(slot ? 4 : 11, slot ? 11 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 half_distance = scenario == 2 ? 4 * Q16_ONE : move == 0 ? 0x10000 : 0x9999;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Input input[2] = {0};
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+          advance_ticks(4, input);
+        }
+        drive_owned_command(slot, move == 0 ? kai_input_47bd10 : kai_input_478df0);
+        check(fighter_move(owner)->clip == (move == 0 ? 298 : 551) && owner->action == (move == 0 ? 0x210 : 0x20b) && !fighter_fiber_active(owner),
+            "Kai D,F command must enter its own retail clip and action without a fiber");
+        bool stopped = false, fell = false;
+        for (int tick = 0; tick < 200 && !(owner->state == S_IDLE && !fighter_airborne(owner)); ++tick) {
+          if (move == 0 && scenario != 2 && owner->action == 0x210 && fighter_sample(owner) == 9 && !owner->connected) {
+            /* The rising hop passes over a standing target; place the target
+             * on the D[16] plane to check the contact branch itself. */
+            victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + q16_mul(owner->heading[0], 0x9999);
+            victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z] + q16_mul(owner->heading[1], 0x9999);
+            victim->body.pos[AXIS_Y] = scenario == 1 ? victim->body.ground : owner->body.pos[AXIS_Y];
+            if (scenario == 1) {
+              owner->body.pos[AXIS_Y] = owner->body.ground - 0x6666;
+            }
+            victim->body.gravity = 0;
+            victim->body.on_land = NULL;
+          }
+          battle_step(input);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai D,F specials and their victims must stay on frame phases");
+          stopped |= move == 0 && owner->action == ACTION_RETAIL_1006 && fighter_airborne(owner) && owner->body.vel[AXIS_X] == 0;
+          fell |= move == 0 && fighter_move(owner)->clip == 310;
+        }
+        check(owner->state == S_IDLE && !fighter_airborne(owner) && owner->body.physics == NULL, "Kai D,F specials must land and return to control");
+        q16 damage = scenario == 2 ? 0 : move == 0 ? 0x2147 : 0x23d7;
+        if (scenario == 1) {
+          damage = q16_mul(damage, 0x3333);
+        }
+        if (victim->health != Q16_ONE - damage) {
+          fprintf(stderr, "Kai D,F slot%d move%d scenario%d health %x expected %x\n", slot, move, scenario, victim->health, Q16_ONE - damage);
+        }
+        check(victim->health == Q16_ONE - damage, "Kai D,F specials must preserve native hit, chip and miss damage once");
+        if (move == 0) {
+          check(fell && stopped == (scenario != 2), "Kai aerial punch contact must stop in the air before the shared fall; a miss times out into it");
+        }
+        input[1 - slot].held = 0;
+        advance_ticks(200, input);
+        check(victim->state == S_IDLE && !fighter_fiber_active(victim), "Kai D,F victims must recover through their reactions");
+      }
+    }
+  }
+}
+
 static void check_partial_cpu_stage_dispatch(void) {
   const int rosters[] = {7, 8, 9, 11, 12, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -4189,6 +4250,7 @@ int main(void) {
   check_reconnected_air_attacks();
   check_roster_low_kick_frames();
   check_kai_handstand_frames();
+  check_kai_df_specials();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_roster_high_punch_frames();

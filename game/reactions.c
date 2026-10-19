@@ -258,6 +258,19 @@ static void react_kick_air(Fighter *fighter) {
   launch(fighter, 0x11eb, -0x23d7, 0x28f); /* 0.07, -0.14, 0.01 */
 }
 
+/* 123 (0x481ce0 -> 4e89d8): reaction 13's clip-189 launch, landing and
+ * 488c00 getup without its 0x9999 damage scale or 488ea0 wall recoil. The
+ * native and its script both restart camera shake row 0 {3, 4, .15}; the
+ * script adds sound B[1] and context sound 0. Its decorative 40a470
+ * selectors 9/4 remain omitted, as for reaction 13's selector 4. */
+static void react_kick_air_impact(Fighter *fighter) {
+  battle_camera_shake(3, 4, 0x2666);
+  battle_sound(SOUND_B, 1);
+  mk4_script_context_sound(fighter, 0);
+  start_reaction(fighter, S_KNOCKDOWN, &kick_air);
+  launch(fighter, 0x11eb, -0x23d7, 0x28f);
+}
+
 /* 16 (0x482a10): kick hit, including the wall recoil check. */
 static void react_kick_hit(Fighter *fighter) {
   battle_wall_recoil(fighter);
@@ -862,6 +875,7 @@ static const FighterFn reactions[256] = {
   [6] = react_block,
   [11] = react_jab_air,
   [13] = react_kick_air,
+  [123] = react_kick_air_impact,
   [16] = react_kick_hit,
   [18] = react_sweep,
   [34] = react_uppercut,

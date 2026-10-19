@@ -1195,85 +1195,6 @@
         ]
       }
     ],
-    "0x4e8238": [
-      {
-        "pc": "0x4e8238",
-        "words": [
-          "0xf"
-        ]
-      },
-      {
-        "pc": "0x4e823c",
-        "words": [
-          "0x10"
-        ]
-      },
-      {
-        "pc": "0x4e8240",
-        "words": [
-          "0x48d450"
-        ]
-      },
-      {
-        "pc": "0x4e8244",
-        "words": [
-          "0x47be50"
-        ]
-      },
-      {
-        "pc": "0x4e8248",
-        "words": [
-          "0x47bed0"
-        ]
-      },
-      {
-        "pc": "0x4e824c",
-        "words": [
-          "0x47bd60"
-        ]
-      },
-      {
-        "pc": "0x4e8250",
-        "words": [
-          "0x47bf50"
-        ]
-      },
-      {
-        "pc": "0x4e8254",
-        "words": [
-          "0x0"
-        ]
-      },
-      {
-        "pc": "0x4e8258",
-        "words": [
-          "0x27000039"
-        ]
-      },
-      {
-        "pc": "0x4e825c",
-        "words": [
-          "0x58000000",
-          "0x1eb8",
-          "0xf5c",
-          "0x41"
-        ]
-      },
-      {
-        "pc": "0x4e826c",
-        "words": [
-          "0x48000200",
-          "0x13ec0d"
-        ]
-      },
-      {
-        "pc": "0x4e8274",
-        "words": [
-          "0x32000000",
-          "0x47bf90"
-        ]
-      }
-    ],
     "0x4e8320": [
       {
         "pc": "0x4e8320",
@@ -2404,7 +2325,7 @@
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "81e05891212d414fae36d181c1695d1644c33a6d357c7c439a66c2f7d07e6be3",
+  "inventory_sha256": "afbc9d080e56cbf6e58208f0b4839a001d658054afc108b6f962d8f469c0a4a2",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2452,19 +2373,14 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (); verified by typed Kai inventory."
     },
     "input_478df0": {
-      "source": "game/kai/character.c",
+      "source": "game/kai/moves/lunge_kick.c",
       "symbol": "kai_input_478df0",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8870); verified by typed Kai inventory."
+      "evidence": "478df0 action20b enters4e8870 clip551; 478e20 queries B[9] at samples30..34, then478e40 finishes551 and returns."
     },
     "input_47bd10": {
-      "source": "game/kai/character.c",
+      "source": "game/kai/moves/aerial_punch.c",
       "symbol": "kai_input_47bd10",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8210); verified by typed Kai inventory."
-    },
-    "input_47bd40": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_input_47bd40",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8238); verified by typed Kai inventory."
+      "evidence": "47bd10 action210 enters4e8210 clip298 hop; 47bd40 runs record4e8238 with D[16] contact, floor and timeout fall continuations."
     },
     "input_47c520": {
       "source": "game/kai/moves/handstand.c",
@@ -2607,6 +2523,16 @@
       "source": "game/kai/moves/weapon.c",
       "symbol": "kai_draw_weapon",
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
+    },
+    "0x47bd10": {
+      "source": "game/kai/moves/aerial_punch.c",
+      "symbol": "kai_input_47bd10",
+      "evidence": "Typed Kai HP D,F record4e4894 selects47bd10; 4e8210 hop and native4e8238 contact record."
+    },
+    "0x478df0": {
+      "source": "game/kai/moves/lunge_kick.c",
+      "symbol": "kai_input_478df0",
+      "evidence": "Typed Kai LK D,F record4e4914 selects478df0; 4e8870 clip551 with478e20 B[9] contacts."
     }
   },
   "reactions": {
@@ -2784,6 +2710,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "123": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air_impact",
+      "evidence": "Kai aerial punch D[16] contact selects shared reaction123; 4ea4e8[123] ->0x481ce0 ->4e89d8 clip189 launch and488c00 getup."
     }
   },
   "stances": {
@@ -2869,6 +2800,16 @@
       "source": "game/kai/moves/weapon.c",
       "symbol": "kai_draw_weapon",
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
+    },
+    "0x47bd10": {
+      "source": "game/kai/moves/aerial_punch.c",
+      "symbol": "kai_input_47bd10",
+      "evidence": "Typed Kai HP D,F record4e4894 selects47bd10; 4e8210 hop and native4e8238 contact record."
+    },
+    "0x478df0": {
+      "source": "game/kai/moves/lunge_kick.c",
+      "symbol": "kai_input_478df0",
+      "evidence": "Typed Kai LK D,F record4e4914 selects478df0; 4e8870 clip551 with478e20 B[9] contacts."
     }
   },
   "command_predicates": {
@@ -2932,6 +2873,8 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4e8210",
+    "0x4e8870"
   ]
 }
