@@ -1219,6 +1219,15 @@ for _cid, _name in ((7, 'reiko'), (17, 'noob_saibot')):
         evidence='47ffc0 enters shared landing 46fd90, then the controller')
 
 
+# Reiko/Noob Saibot throwing star 496db0 (LP record 4e4e30, projectile CPU row).
+for _cid, _name in ((7, 'reiko'), (17, 'noob_saibot')):
+    CHARACTER_BINDINGS[_cid][0x496e00] = Binding(_name + '_star_spawn', 'game/%s/moves/star.c' % _name, ('spawn',), ('fighter', 'task_type'),
+        flow='independent', task_types=(82,), mmove=True,
+        evidence='496e00 places task 82 at the owner origin, 0x30a3 along the axis snapshot, and waits through 4ed080 on C[21]')
+CHARACTER_BINDINGS[7][0x483df0] = Binding('reiko_script_star_victim_tail', 'game/reiko/moves/star.c', ('tail',), flow='terminal', mmove=True,
+    evidence='483df0 plays clip 182 for twenty visits and ten blocks of four, returns to neutral (48e080), finishes the clip and enters the controller')
+
+
 # Shared close attacks retain character-owned generated startup and native tails.
 for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
     from character_catalog import CHARACTERS as _CONTROL_CHARACTERS

@@ -123,4 +123,10 @@ void reiko_slam_released_fall(Fighter *fighter);
 void reiko_slam_reaction(Fighter *victim);
 void reiko_flip_kick(Fighter *fighter);
 bool reiko_can_flip_kick(const Fighter *fighter);
+void reiko_entry_retail_script_004ed038(Fighter *fighter);
+void reiko_entry_retail_script_004e97f8(Fighter *fighter);
+void reiko_star(Fighter *fighter);
+void reiko_star_spawn(Fighter *fighter, int task_type);
+bool reiko_can_star(const Fighter *fighter);
+void reiko_script_star_victim_tail(Fighter *fighter);
 #endif

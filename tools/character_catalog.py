@@ -81,6 +81,9 @@ def _moves_for(character):
                     ('landing link', 0x46ac90), ('landing damage', 0x46aca0),
                     ('slam tail', 0x46acc0), ('slam reaction', 0x484760)),
         )
+        # Reaction 45's grounded victim stream belongs to the shared reaction
+        # table entry in Reiko's profile, not to Noob's CPU-only star entry.
+        noob_moves['star'] = dict(noob_moves['star'], scripts=tuple(row for row in noob_moves['star']['scripts'] if row[1] != 0x4e97f8))
         noob_moves['shadow_low'] = move(
             0x498b70,
             (('shadow low playback', 0x4ed268),),
@@ -158,6 +161,9 @@ def _moves_for(character):
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 33),)),
+            # LP record 4e4e30 (D,F) and the projectile CPU row shared with Noob.
+            star=move(0x496db0, (('throw', 0x4ed038), ('grounded victim', 0x4e97f8)), (('C', 21),),
+                      native=(('object', 0x496e00), ('contact waiter', 0x49c690), ('reaction 45', 0x483d40), ('victim stagger', 0x483df0))),
             # HK record 4e4e60 (B,D,F) and the far CPU row shared with Noob.
             flip_kick=move(0x4791a0, contacts=(('D', 29),), native=(('clip 110 contact states', 0x4791a0), ('speed decay', 0x47bf50))),
             # Up record 4e4e20 (shared by Noob Saibot) and both close CPU rows.

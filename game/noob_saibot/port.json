@@ -42,9 +42,9 @@
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "0x496db0": {
-      "evidence": "Noob Saibot CPU punch action route uses generated jab entry.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_jab"
+      "source": "game/noob_saibot/moves/star.c",
+      "symbol": "noob_saibot_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     },
     "0x46aba0": {
       "source": "game/noob_saibot/moves/throws.c",
@@ -266,10 +266,11 @@
     "0x4e82b8",
     "0x4e82e0",
     "0x4e8310",
-    "0x4e8818"
+    "0x4e8818",
+    "0x4ed038"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "be29f4717854db84de7b1f7f40d82b0fb8d58d87026e93635e0226495e46958e",
+  "inventory_sha256": "92e926b21a4df8884bb75760e38f0eaf1bf820b4267be4f27a32e228fdc0540b",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -420,6 +421,11 @@
       "source": "game/noob_saibot/moves/flip_kick.c",
       "symbol": "noob_saibot_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
+    },
+    "star": {
+      "source": "game/noob_saibot/moves/star.c",
+      "symbol": "noob_saibot_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   },
   "output": "game/noob_saibot/generated/scripts.inc",
@@ -624,6 +630,17 @@
       "source": "game/reactions.c",
       "symbol": "react_fireball_block",
       "evidence": "D[29] blocked reaction 9: 4ea4e8[9] = 0x486b30, shared C reaction dispatch."
+    },
+    "45": {
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star_reaction",
+      "adaptation": "Shared reaction table entry: airborne victims continue as reaction 10; grounded ones run generated 4e97f8 and the native 483df0 stagger.",
+      "evidence": "C[21] hit/air reaction 45: 4ea4e8[45] = 0x483d40."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "C[21] blocked reaction 2: 4ea4e8[2] = 0x486ca0, shared C reaction dispatch."
     }
   },
   "return_to": "fighter_ready",
@@ -788,7 +805,8 @@
     "0x4e82b8",
     "0x4e82e0",
     "0x4e8310",
-    "0x4e8818"
+    "0x4e8818",
+    "0x4ed038"
   ],
   "cpu_bindings": {
     "0x47c070": {
@@ -800,6 +818,11 @@
       "source": "game/noob_saibot/moves/flip_kick.c",
       "symbol": "noob_saibot_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
+    },
+    "0x496db0": {
+      "source": "game/noob_saibot/moves/star.c",
+      "symbol": "noob_saibot_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   }
 }

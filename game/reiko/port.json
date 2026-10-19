@@ -37,9 +37,9 @@
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "0x496db0": {
-      "evidence": "Reiko CPU punch action route uses generated jab entry.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_jab"
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     },
     "0x467e00": {
       "source": "game/reiko/moves/fan.c",
@@ -176,6 +176,10 @@
     "0x4e9880": {
       "return_to": "mk4_script_thrown_ready",
       "evidence": "46acc0 -> 480f50[105] -> 484760 releases the landed peer into 4e9880; its controller return keeps a KO victim down."
+    },
+    "0x4e97f8": {
+      "return_to": "caller",
+      "evidence": "Reaction 45 (483d40/483d80) enters 4e97f8 on a grounded peer; its native 483df0 tail owns the clip-182 stagger and return."
     }
   },
   "generated_scripts": [
@@ -225,10 +229,12 @@
     "0x4e82e0",
     "0x4e8310",
     "0x4e8818",
-    "0x4e9880"
+    "0x4e9880",
+    "0x4ed038",
+    "0x4e97f8"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "37b7affcf0cc2f69f92b36734feba2a5f8712fc3168851b116950102cb0be5d9",
+  "inventory_sha256": "aa0b408cc5a4c8b9a408436b17d875ed7a1574143b30c4a58ff92ff592c7957d",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -364,6 +370,11 @@
       "source": "game/reiko/moves/flip_kick.c",
       "symbol": "reiko_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
+    },
+    "star": {
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -568,6 +579,17 @@
       "source": "game/reactions.c",
       "symbol": "react_fireball_block",
       "evidence": "D[29] blocked reaction 9: 4ea4e8[9] = 0x486b30, shared C reaction dispatch."
+    },
+    "45": {
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star_reaction",
+      "adaptation": "Shared reaction table entry: airborne victims continue as reaction 10; grounded ones run generated 4e97f8 and the native 483df0 stagger.",
+      "evidence": "C[21] hit/air reaction 45: 4ea4e8[45] = 0x483d40."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "C[21] blocked reaction 2: 4ea4e8[2] = 0x486ca0, shared C reaction dispatch."
     }
   },
   "return_to": "fighter_ready",
@@ -660,6 +682,11 @@
       "source": "game/reiko/moves/flip_kick.c",
       "symbol": "reiko_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
+    },
+    "0x496db0": {
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   },
   "command_predicates": {
@@ -668,7 +695,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ef50": "weapon_can_draw",
-    "0x45e7a0": "reiko_can_flip_kick"
+    "0x45e7a0": "reiko_can_flip_kick",
+    "0x45e6d0": "reiko_can_star"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -717,7 +745,9 @@
     "0x4e82e0",
     "0x4e8310",
     "0x4e8818",
-    "0x4e9880"
+    "0x4e9880",
+    "0x4ed038",
+    "0x4e97f8"
   ],
   "cpu_bindings": {
     "0x47c070": {
@@ -729,6 +759,11 @@
       "source": "game/reiko/moves/flip_kick.c",
       "symbol": "reiko_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
+    },
+    "0x496db0": {
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
+      "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   }
 }

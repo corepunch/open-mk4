@@ -286,3 +286,7 @@ void noob_saibot_entry_retail_script_004e8310(Fighter *fighter) {
 void noob_saibot_entry_retail_script_004e8818(Fighter *fighter) {
   retail_script_004e8818(fighter);
 }
+
+void noob_saibot_entry_retail_script_004ed038(Fighter *fighter) {
+  retail_script_004ed038(fighter);
+}

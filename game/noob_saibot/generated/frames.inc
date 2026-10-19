@@ -261,3 +261,9 @@ static const int noob_saibot_clip_416_samples[216] = {0, 0, 1, 1, 2, 2, 3, 3, 4,
     93, 94, 94, 95, 95, 96, 96, 97, 97, 98, 98, 99, 99, 100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 105, 106, 106, 107, 107};
 const mframe_t noob_saibot_clip_416_frames[216] = {{0}};
 const mmove_t noob_saibot_clip_416_mmove = {.firstframe = 0, .lastframe = 215, .frame = noob_saibot_clip_416_frames, .samples = noob_saibot_clip_416_samples};
+
+static const int noob_saibot_s_star_throw_samples[48] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
+    15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23};
+const mframe_t noob_saibot_s_star_throw_frames[48] = {{0}};
+const mmove_t noob_saibot_s_star_throw_mmove = {
+    .firstframe = 0, .lastframe = 47, .frame = noob_saibot_s_star_throw_frames, .samples = noob_saibot_s_star_throw_samples};

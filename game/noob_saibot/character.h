@@ -138,4 +138,7 @@ void noob_saibot_script_teleport_slam_drop(Fighter *fighter);
 void noob_saibot_script_teleport_land(Fighter *fighter);
 void noob_saibot_slam_released_fall(Fighter *fighter);
 void noob_saibot_flip_kick(Fighter *fighter);
+void noob_saibot_entry_retail_script_004ed038(Fighter *fighter);
+void noob_saibot_star(Fighter *fighter);
+void noob_saibot_star_spawn(Fighter *fighter, int task_type);
 #endif

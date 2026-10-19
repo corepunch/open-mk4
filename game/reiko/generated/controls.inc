@@ -3,6 +3,7 @@
 static const CommandDef retail_commands[] = {
   {BUTTON_UP, {TOKEN_DOWN}, 1, 32, 0x10, NULL, reiko_teleport},
   {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 16, 0x0, weapon_can_draw, reiko_weapon_action},
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0x0, reiko_can_star, reiko_star},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_BACK}, 3, 40, 0x0, mk4_can_fan_finish, reiko_fan_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_DOWN, TOKEN_FORWARD}, 3, 24, 0x0, reiko_can_flip_kick, reiko_flip_kick},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_spike_finish, reiko_spike_fatality},
@@ -15,6 +16,7 @@ static const CpuMoves retail_cpu_moves = {.enter = {
                                               [CPU_SPECIAL_NEAR] = reiko_teleport,
                                               [CPU_SPECIAL_1] = reiko_teleport,
                                               [CPU_SPECIAL_2] = reiko_flip_kick,
+                                              [CPU_PROJECTILE] = reiko_star,
                                               [CPU_FINISH_FAN] = reiko_fan_fatality,
                                               [CPU_FINISH_SPIKE] = reiko_spike_fatality,
                                           }};

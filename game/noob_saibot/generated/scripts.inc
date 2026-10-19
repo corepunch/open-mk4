@@ -31,6 +31,7 @@ void noob_saibot_script_weapon_draw_finish(Fighter *);
 void noob_saibot_shadow_install_physics(Fighter *);
 void noob_saibot_shadow_task_low(Fighter *, int);
 void noob_saibot_shadow_task_up(Fighter *, int);
+void noob_saibot_star_spawn(Fighter *, int);
 static const AttackRecord retail_contact_4ebb28 = {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208};
 static const AttackRecord retail_contact_4ebd80 = {113311, -70057, 103481, 96927, 175, 175, 175, 0, 0};
 
@@ -4165,6 +4166,39 @@ static inline void retail_script_004ea0b8_branch_1(Fighter *fighter) {
   require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ea0ec: 0x4000004 */
   fighter_mmove_phase(fighter, &retail_script_004ea0b8_branch_1_phase);
+}
+
+static inline void retail_script_004ed038(Fighter *fighter);
+
+static void retail_script_004ed038_at_13(Fighter *fighter) {
+  fighter->sample_override = 13;
+  /* EXE 004ed044: 0x40000000 0x52 0x496e00 */
+  noob_saibot_star_spawn(fighter, 82);
+  /* EXE 004ed050: 0x5000012 */
+}
+
+static void retail_script_004ed038_at_45(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static const int retail_script_004ed038_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 17, 16, 17, 18, 17, 16, 17, 18, 17, 16,
+    17, 18, 17, 16, 17, 18, 17, 16, 17, 18, 19, 20, 21, 22, 23, 23};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed038_frames[45] = {
+  [12] = {.thinkfunc = retail_script_004ed038_at_13},
+  [44] = {.thinkfunc = retail_script_004ed038_at_45},
+};
+// clang-format on
+static const mmove_t retail_script_004ed038_phase = {
+    .firstframe = 0, .lastframe = 44, .frame = retail_script_004ed038_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ed038_samples};
+
+static inline void retail_script_004ed038(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed038: 0x27000064 */
+  battle_sound(SOUND_C, 100);
+  /* EXE 004ed03c: 0x4700020d 0x13f07e */
+  mk4_mmove_bind(fighter, 437, 24, 0);
+  fighter_mmove_phase(fighter, &retail_script_004ed038_phase);
 }
 
 static inline void retail_script_004ed268(Fighter *fighter) {
