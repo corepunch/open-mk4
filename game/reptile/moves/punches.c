@@ -32,11 +32,11 @@ static void reptile_entry_low_punch(Fighter *fighter) {
 }
 
 void reptile_press_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, reptile_entry_high_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : reptile_entry_high_punch);
 }
 
 void reptile_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, reptile_entry_low_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : reptile_entry_low_punch);
 }
 
 /* 46d290/46d9b3: select the native HP record and 296/297 repeat phases. */

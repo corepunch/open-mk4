@@ -37,9 +37,9 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/weapons.c",
-      "symbol": "weapon_draw",
-      "evidence": "Reptile weapon input target 0x46d1d0 uses the shared draw-or-throw lifecycle."
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_action",
+      "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
     },
     "0x47a690": {
       "source": "game/reptile/moves/dash.c",
@@ -169,6 +169,24 @@
       "count": 415,
       "sample": 124,
       "evidence": "4541b0 enters 4e2ed0 after 4e2ec0 reached sample 124 on clip 431."
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "sample": 22,
+      "evidence": "46d260 equips after draw clip 244 reaches 22, then resumes its recovery."
+    },
+    "0x4e8bc0": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon victim streams return through their KO-aware controller boundary."
+    },
+    "0x4e8c98": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon victim streams return through their KO-aware controller boundary."
+    },
+    "0x4e8cc0": {
+      "return_to": "mk4_mmove_thrown_finish",
+      "evidence": "Native weapon victim streams return through their KO-aware controller boundary."
     }
   },
   "generated_scripts": [
@@ -222,10 +240,18 @@
     "0x4e2ea8",
     "0x4e2eb0",
     "0x4e2ec0",
-    "0x4e2ed0"
+    "0x4e2ed0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ec640",
+    "0x4e8bc0",
+    "0x4e8c98",
+    "0x4e8cc0"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "6138531f1db5364fb2195dbea41a107f4487f30905c0b52dbf990d75cf8d39b2",
+  "inventory_sha256": "df3bf7607be2e666177be39f6bb67034d4dc2a82caf80deb17fb1a10d7881db2",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -356,6 +382,36 @@
       "source": "game/reptile/moves/fatality.c",
       "symbol": "reptile_fatality_1",
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
+    },
+    "draw_weapon": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_action",
+      "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
+    },
+    "weapon_hp": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "weapon_hp",
+      "evidence": "495d40 action 111 and shared strike 4ec628 (clip 230, WEAPON[18]); back held selects 495d70."
+    },
+    "weapon_lp": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "weapon_lp",
+      "evidence": "496100 close-throw gate 46dbb0, then strike 4ec658 (clip 240, WEAPON[21]); back held selects 496140."
+    },
+    "weapon_back_hp": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "weapon_back_hp",
+      "evidence": "495d70 action 404 and VM 4ec640 (248 to 8) into the 495db0 WEAPON[20] flurry."
+    },
+    "weapon_back_lp": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "weapon_back_lp",
+      "evidence": "496140 action 10e, travel record 4ec670, clip 233 and four WEAPON[19] queries before 496840."
+    },
+    "weapon_reaction": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_reaction",
+      "evidence": "4821c0/482270/482300 select 4e8bc0, 4e8c98 and 4e8cc0 for reactions 96, 137 and 144."
     }
   },
   "output": "game/reptile/generated/scripts.inc",
@@ -501,6 +557,40 @@
       "symbol": "reptile_second_victim",
       "adaptation": "Shared reactions.c entry 180 dispatches the struck victim to the move-owned melt phases; 45b1f0 installs it on the captured peer.",
       "evidence": "4dff08 dispatches 180 through 45b1f0 (480f80/48f880, peer task): 481530 holds 28, 481670 turns, VM 4ea290 and native 481590 tear/flesh/4ea2a8 fall."
+    },
+    "96": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_reaction",
+      "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
+      "evidence": "4821c0 disarms and enters 4e8bc0 (clip 182 knockback, 490bd0 facing callback)."
+    },
+    "137": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_reaction",
+      "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
+      "evidence": "482270 enters 4e8c98 (clip 311 stagger) and 482280 replays it before the controller return."
+    },
+    "144": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_reaction",
+      "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
+      "evidence": "482300: damage scale 0x8000, wall recoil, disarm, 4e8cc0 clip 189 launch and 482790 getup."
+    },
+    "112": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Weapon flurry WEAPON[20] blocked reaction 112 (4869c0) uses the shared block handler."
+    },
+    "119": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Reptile weapon records WEAPON[18/19/21] block with shared reaction 119 (486a70)."
+    },
+    "63": {
+      "source": "game/cage/moves/weapon.c",
+      "symbol": "cage_weapon_reaction",
+      "adaptation": "The shared reactions.c entry 63 already dispatches native 482380 (4e8d38 flight and 488c00 getup) for any struck victim; Reptile HP WEAPON[18] reuses it.",
+      "evidence": "WEAPON[18] selects reaction 63 (482380), the same native shared with Cage mace LP."
     }
   },
   "return_to": "fighter_ready",
@@ -555,7 +645,7 @@
   "weapon": {
     "source": "game/reptile/character.c",
     "symbol": "reptile_weapon_descriptor",
-    "evidence": "Retail Reptile inventory descriptor 0x4ece78; encoded words copied from the pinned inventory query."
+    "evidence": "Retail Reptile inventory descriptor 0x4ece78 (type 67, shared_g rig 506d90, button table 4ecd68); encoded words copied from the pinned inventory query."
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
   "legacy_scripts": {},
@@ -610,6 +700,11 @@
       "source": "game/reptile/moves/fatality.c",
       "symbol": "reptile_fatality_1",
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
+    },
+    "0x46d1d0": {
+      "source": "game/reptile/moves/weapon.c",
+      "symbol": "reptile_weapon_action",
+      "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
     }
   },
   "command_predicates": {
@@ -621,7 +716,8 @@
     "0x45e9d0": "reptile_can_spit",
     "0x45f260": "reptile_can_invisibility",
     "0x45e530": "reptile_can_second_fatality",
-    "0x45e250": "reptile_can_first_fatality"
+    "0x45e250": "reptile_can_first_fatality",
+    "0x45ef50": "weapon_can_draw"
   },
   "cpu_bindings": {
     "0x47a690": {
@@ -691,7 +787,15 @@
     "0x4e2ea8",
     "0x4e2eb0",
     "0x4e2ec0",
-    "0x4e2ed0"
+    "0x4e2ed0",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4ec640",
+    "0x4e8bc0",
+    "0x4e8c98",
+    "0x4e8cc0"
   ],
   "mmove_only": true,
   "cpu_finish_min": {

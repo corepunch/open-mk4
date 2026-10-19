@@ -77,6 +77,10 @@ static const MoveDef *const moves[S_COUNT] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
+  [S_IDLE] = reptile_armed_idle,
+  [S_WALK] = reptile_armed_walk,
+  [S_CROUCH] = reptile_armed_crouch,
+  [S_BLOCK] = reptile_armed_block,
   [S_THROW] = reptile_lp_throw,
 };
 // clang-format on
@@ -270,4 +274,36 @@ void reptile_entry_retail_script_004e2ec0(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e2ed0(Fighter *fighter) {
   retail_script_004e2ed0(fighter);
+}
+
+void reptile_entry_retail_script_004e62c0(Fighter *fighter) {
+  retail_script_004e62c0(fighter);
+}
+
+void reptile_entry_retail_script_004e62d8(Fighter *fighter) {
+  retail_script_004e62d8(fighter);
+}
+
+void reptile_entry_retail_script_004e66d0(Fighter *fighter) {
+  retail_script_004e66d0(fighter);
+}
+
+void reptile_entry_retail_script_004e66f0(Fighter *fighter) {
+  retail_script_004e66f0(fighter);
+}
+
+void reptile_entry_retail_script_004ec640(Fighter *fighter) {
+  retail_script_004ec640(fighter);
+}
+
+void reptile_entry_retail_script_004e8bc0(Fighter *fighter) {
+  retail_script_004e8bc0(fighter);
+}
+
+void reptile_entry_retail_script_004e8c98(Fighter *fighter) {
+  retail_script_004e8c98(fighter);
+}
+
+void reptile_entry_retail_script_004e8cc0(Fighter *fighter) {
+  retail_script_004e8cc0(fighter);
 }

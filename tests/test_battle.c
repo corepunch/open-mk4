@@ -2540,6 +2540,62 @@ static void check_reptile_first_fatality(void) {
   }
 }
 
+/* Reptile fighter block: type-67 weapon draw, strikes and victims. */
+static void check_reptile_weapon_commands(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 4; ++strike) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        battle_init(slot ? 4 : 10, slot ? 10 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+        command(slot, back, back, BUTTON_LOW_KICK);
+        check(fighter_move(owner)->clip == 244 && !owner->armed, "Reptile's back,back+LK must play the weapon draw");
+        advance_ticks(65, NULL);
+        check(owner->armed && owner->weapon->type == 0x67 && owner->weapon->model == SCENE_MODEL_REPTILE_WEAPON && owner->state == S_IDLE,
+            "Reptile must equip his own type-67 weapon rig and armed controls");
+        q16 half_distance = scenario == 2 ? 4 * Q16_ONE : 0xa666;
+        owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Input input[2] = {0};
+        input[slot].held = BUTTON_BIT(strike == 1 || strike == 3 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH);
+        if (strike >= 2) {
+          input[slot].held |= BUTTON_BIT(back);
+        }
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        advance_ticks(2, input);
+        const int clips[] = {230, 240, 248, 233};
+        check(fighter_move(owner)->clip == clips[strike], "Reptile armed punches must select their own native strike");
+        input[slot].held = 0;
+        bool reacted = false;
+        for (int tick = 0; tick < 200; ++tick) {
+          battle_step(input);
+          int clip = fighter_move(victim)->clip;
+          reacted |= strike == 0 ? clip != 322 && victim->reaction == 63 : strike == 1 ? clip == 189 : strike == 2 ? clip == 311 : clip == 182;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile weapon attacks and victims must use frame tables");
+        }
+        /* WEAPON[18], [21], [20] and [19]; the flurry may land once per cycle. */
+        const q16 damages[] = {0x2666, 0x1eb8, 0xccc, 0x2147};
+        q16 lost = Q16_ONE - victim->health;
+        bool damaged = scenario == 2   ? lost == 0
+                       : scenario == 1 ? lost > 0 && lost % q16_mul(damages[strike], 0x3333) == 0
+                                       : lost > 0 && lost % damages[strike] == 0 && (strike == 2 || lost == damages[strike]);
+        if (!damaged || (scenario == 0 && !reacted)) {
+          fprintf(stderr, "Reptile weapon slot%d strike%d scenario%d lost%d reacted%d\n", slot, strike, scenario, lost, reacted);
+        }
+        check(damaged, "Reptile weapon records must keep their native damage, chip and miss");
+        check(scenario != 0 || reacted, "Unblocked Reptile weapon hits must enter their own victim programs");
+        check(owner->state == S_IDLE && owner->armed && owner->body.physics == NULL, "Reptile weapon recovery must restore armed controls");
+        check(victim->health > 0 && (victim->state == S_IDLE || victim->state == S_BLOCK || victim->state == S_CROUCH), "Weapon victims must recover");
+      }
+    }
+  }
+}
+
 static void check_goro_reconnected_counters(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kick = 0; kick < 2; ++kick) {
@@ -4644,6 +4700,7 @@ int main(void) {
   check_reptile_invisibility();
   check_reptile_second_fatality();
   check_reptile_first_fatality();
+  check_reptile_weapon_commands();
   check_goro_reconnected_counters();
   check_goro_frame_specials();
   check_cage_special_commands();

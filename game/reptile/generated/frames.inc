@@ -129,9 +129,34 @@ static const int reptile_s_knockdown_samples[40] = {
 const mframe_t reptile_s_knockdown_frames[40] = {{0}};
 const mmove_t reptile_s_knockdown_mmove = {.firstframe = 0, .lastframe = 39, .frame = reptile_s_knockdown_frames, .samples = reptile_s_knockdown_samples};
 
+static const int reptile_weapon_launch_samples[60] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
+    15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29};
+const mframe_t reptile_weapon_launch_frames[60] = {{0}};
+const mmove_t reptile_weapon_launch_mmove = {.firstframe = 0, .lastframe = 59, .frame = reptile_weapon_launch_frames, .samples = reptile_weapon_launch_samples};
+
+static const int reptile_back_low_samples[90] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44};
+const mframe_t reptile_back_low_frames[90] = {{0}};
+const mmove_t reptile_back_low_mmove = {.firstframe = 0, .lastframe = 89, .frame = reptile_back_low_frames, .samples = reptile_back_low_samples};
+
+static const int reptile_clip_244_samples[98] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48};
+const mframe_t reptile_clip_244_frames[98] = {{0}};
+const mmove_t reptile_clip_244_mmove = {.firstframe = 0, .lastframe = 97, .frame = reptile_clip_244_frames, .samples = reptile_clip_244_samples};
+
 static const int reptile_s_hit_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
 const mframe_t reptile_s_hit_frames[10] = {{0}};
 const mmove_t reptile_s_hit_mmove = {.firstframe = 0, .lastframe = 9, .frame = reptile_s_hit_frames, .samples = reptile_s_hit_samples};
+
+static const int reptile_flurry_start_samples[26] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12};
+const mframe_t reptile_flurry_start_frames[26] = {{0}};
+const mmove_t reptile_flurry_start_mmove = {.firstframe = 0, .lastframe = 25, .frame = reptile_flurry_start_frames, .samples = reptile_flurry_start_samples};
+
+static const int reptile_flurry_cycle_samples[24] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11};
+const mframe_t reptile_flurry_cycle_frames[24] = {{0}};
+const mmove_t reptile_flurry_cycle_mmove = {.firstframe = 0, .lastframe = 23, .frame = reptile_flurry_cycle_frames, .samples = reptile_flurry_cycle_samples};
 
 static const int reptile_s_crouch_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
 const mframe_t reptile_s_crouch_frames[10] = {{0}};
@@ -190,6 +215,12 @@ static const int reptile_s_jump_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
 const mframe_t reptile_s_jump_frames[56] = {{0}};
 const mmove_t reptile_s_jump_mmove = {.firstframe = 0, .lastframe = 55, .frame = reptile_s_jump_frames, .samples = reptile_s_jump_samples};
+
+static const int reptile_weapon_stagger_samples[38] = {
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18};
+const mframe_t reptile_weapon_stagger_frames[38] = {{0}};
+const mmove_t reptile_weapon_stagger_mmove = {
+    .firstframe = 0, .lastframe = 37, .frame = reptile_weapon_stagger_frames, .samples = reptile_weapon_stagger_samples};
 
 static const int reptile_clip_313_samples[78] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,

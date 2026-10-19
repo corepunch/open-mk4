@@ -574,6 +574,41 @@ static void shinnok_fatality_assets(const Assets *assets) {
   }
 }
 
+/* Reptile fighter block: real rig records, weapon rig and asset-backed strikes. */
+static void reptile_asset_checks(const Assets *assets) {
+  const Character *reptile = &assets->characters.data[roster_def(10)->asset];
+  /* 40ec40/40ed20 select head records 517c24/517c40, meshes 4 and 5 of re_geo.geo. */
+  check(reptile->meshes.count > 5, "Reptile geometry must provide the open-mouth head meshes 4 and 5");
+  check(assets->scene_models.count > SCENE_MODEL_REPTILE_WEAPON && assets->scene_models.data[SCENE_MODEL_REPTILE_WEAPON].bones.count > 0,
+      "Reptile weapon extraction must provide its own shared-geometry rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 10, slot ? 10 : 4);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    Input input[2] = {0};
+    const Button sequence[] = {BUTTON_DOWN, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_HIGH_PUNCH};
+    for (int entry = 0; entry < 3; ++entry) {
+      input[slot].held = BUTTON_BIT(sequence[entry]);
+      battle_step(input);
+      input[slot].held = 0;
+      battle_step(input);
+    }
+    bool opened = false;
+    for (int tick = 0; tick < 150; ++tick) {
+      battle_step(input);
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, owner, bones);
+      fighter_pose(assets, victim, bones);
+      opened |= owner->mesh_swap_joint == 2 && owner->mesh_swap < (int)reptile->meshes.count;
+    }
+    check(opened && owner->mesh_swap_joint == 0 && victim->health == Q16_ONE - 0x1999 && owner->state == S_IDLE,
+        "Asset-backed acid spit must swap and restore the real head mesh and hit with real bounds");
+  }
+}
+
 static void cage_weapon_contacts(const Assets *assets) {
   check(assets->scene_models.count > SCENE_MODEL_CAGE_WEAPON && assets->scene_models.data[SCENE_MODEL_CAGE_WEAPON].bones.count > 0,
       "Cage weapon extraction must provide its own complete shared-geometry rig");
@@ -1240,6 +1275,7 @@ int main(void) {
   axe_followup_contacts(&assets);
   kai_weapon_contacts(&assets);
   cage_weapon_contacts(&assets);
+  reptile_asset_checks(&assets);
   jarek_weapon_contacts(&assets);
   shinnok_weapon_contacts(&assets);
   shinnok_morph_rigs(&assets);

@@ -9,6 +9,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_BLOCK, {0}, 0, 0, 0x0, reptile_can_invisibility, reptile_invisibility},
   {BUTTON_HIGH_KICK, {0}, 0, 0, 0x0, reptile_can_invisibility, reptile_invisibility},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_spike_finish, reptile_entry_spike},
+  {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_BACK}, 2, 24, 0x0, weapon_can_draw, reptile_weapon_action},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0x0, reptile_can_dash, reptile_input_47a690},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},

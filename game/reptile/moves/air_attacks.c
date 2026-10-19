@@ -75,11 +75,11 @@ void reptile_script_air_finish(Fighter *fighter) {
 }
 
 void reptile_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, reptile_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : reptile_air_hp);
 }
 
 void reptile_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &reptile_air_punch_followup ? reptile_air_combo_lp : reptile_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &reptile_air_punch_followup ? reptile_air_combo_lp : reptile_air_lp);
 }
 
 void reptile_press_air_kick(Fighter *fighter) {
