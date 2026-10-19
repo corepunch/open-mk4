@@ -572,9 +572,10 @@
       "evidence": "Drill kick D17 air reaction 122 dispatches native 483500 -> 4e95f0."
     },
     "158": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Spin kick D28 reaction 158 dispatches the same native 483500 -> 4e95f0 as 122."
+      "source": "game/reptile/moves/dash.c",
+      "symbol": "reptile_dash_victim",
+      "evidence": "Spin kick D28 reaction 158: 4ea4e8[158] -> 483500 (the same native as 122): damage scale 0x9999, disarm, VM 4e95f0.",
+      "adaptation": "Roster-generic victim handler; the shared reactions[158] entry runs the Reptile-owned generated 4e95f0 program for any victim."
     },
     "0": {
       "source": "game/reactions.c",
