@@ -1196,14 +1196,14 @@ CHARACTER_BINDINGS[14] = {
 }
 
 CHARACTER_BINDINGS[17][0x46ac10] = Binding(
-    'noob_saibot_script_air_throw_continue', 'game/noob_saibot/character.c', ('tail',),
+    'noob_saibot_script_air_throw_continue', 'game/noob_saibot/moves/throws.c', ('tail',), mmove=True,
     flow='terminal', evidence='46ac10 sets both paired bodies to gravity 0x147a and vertical velocity -0x1999 before entering 4e5ea0')
 CHARACTER_BINDINGS[17][0x46ac90] = Binding(
     'noob_saibot_script_air_throw_continue', 'game/noob_saibot/character.c', ('tail',),
     script_target=0x4e5eb0, evidence='46ac90 directly enters the Noob paired landing continuation 4e5eb0')
 CHARACTER_BINDINGS[17][0x46aca0] = Binding(
-    'noob_saibot_script_air_throw_end', 'game/noob_saibot/character.c', ('tail',),
-    flow='terminal', evidence='46aca0 subtracts 0x30a3 from the victim, releases the pair and returns to the fighter controller')
+    'noob_saibot_script_air_throw_end', 'game/noob_saibot/moves/throws.c', ('tail',), mmove=True,
+    flow='terminal', evidence='46aca0 subtracts 0x30a3 from the peer, then 46acc0 applies reaction 105, the 4e5ec0 hop and the 470080 flip tail')
 
 
 # Shared close attacks retain character-owned generated startup and native tails.

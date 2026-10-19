@@ -284,6 +284,19 @@ static void flip_retract(Fighter *fighter) {
   native_play(fighter, false);
 }
 
+/* 46acc0 state 1 -> 470080: after a slam hop, 428720 binds clip 301 at
+ * its last sample; spin 0x4ccc and the 0.2 root offset (4702e0) precede
+ * the shared apex wait, 470140 retraction and landing. The action stays. */
+void mk4_throw_flip_tail(Fighter *fighter) {
+  mk4_mmove_bind(fighter, 301, 9, 8);
+  fighter->buttons = NULL;
+  fighter->body.spin[AXIS_X] = 0x4ccc;
+  fighter->body.root_y += 0x3333;
+  fighter->body.pos[AXIS_Y] -= 0x3333;
+  fighter->script_phase = 1;
+  flip_wait(fighter);
+}
+
 static void flip_buttons(Fighter *fighter) {
   fighter_enter_stance(fighter, STANCE_DIAGONAL_AIR);
 }
@@ -547,7 +560,14 @@ void mk4_mmove_air_throw_release(Fighter *fighter) {
 }
 
 void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
-  if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
+  mk4_air_throw_frames_with_moves(fighter, &s_air_throw, &s_air_thrown, owner_script, victim_script);
+}
+
+/* Roster-specific air throws keep the shared 48f9f0 pair acquisition and
+ * captured-victim hold while selecting their own owner and victim clips. */
+void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
+  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
+  if (!air_throw_start(fighter, owner_move, victim_move)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
@@ -581,18 +601,6 @@ void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move
 
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
   if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
-    return;
-  }
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  victim->paired_release = victim_script;
-  fighter_start_fiber(fighter, owner_script, air_generated_cleanup);
-  fighter_start_fiber(victim, air_generated_victim, NULL);
-}
-
-void mk4_air_throw_generated_with_moves(
-    Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
-  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
-  if (!air_throw_start(fighter, owner_move, victim_move)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

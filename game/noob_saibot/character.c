@@ -151,10 +151,6 @@ void noob_saibot_entry_retail_script_004e5d90(Fighter *fighter) {
   retail_script_004e5d90(fighter);
 }
 
-void noob_saibot_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_script_004e5e50(fighter);
-}
-
 void noob_saibot_entry_retail_script_004e5e78(Fighter *fighter) {
   retail_script_004e5e78(fighter);
 }
@@ -211,8 +207,8 @@ void noob_saibot_entry_retail_script_004e6950(Fighter *fighter) {
   retail_script_004e6950(fighter);
 }
 
-void noob_saibot_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_script_004e9910(fighter);
+void noob_saibot_entry_retail_script_004e9880(Fighter *fighter) {
+  retail_script_004e9880(fighter);
 }
 
 void noob_saibot_entry_retail_script_004e9b40(Fighter *fighter) {

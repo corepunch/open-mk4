@@ -66,18 +66,20 @@ def _moves_for(character):
         # Noob Saibot's roster slot aliases Reiko's retail script slot. Keep
         # the same selected roots while auditing the slot under its own ID.
         noob_moves = moves_for(7)
+        # BLOCK record 4e4b08 enters 46aba0, not Scorpion's 46aa80: the pair
+        # falls together, 46aca0 damages on landing and 46acc0 applies
+        # reaction 105 (484760 -> 4e9880) before the owner's flip tail.
         noob_moves['air_throw'] = move(
-            0x46aa80,
+            0x46aba0,
             (
-                ('victim release', 0x4e9910),
                 ('Noob air-throw opener', 0x4e5e78),
-                ('Noob air-throw release', 0x4e5e50),
                 ('Noob pair continuation', 0x4e5ea0),
                 ('Noob landing continuation', 0x4e5eb0),
+                ('slam victim', 0x4e9880),
             ),
-            native=(('command gate', 0x45ed70), ('release damage', 0x46aae0),
-                    ('landing', 0x46ab20), ('victim continuation', 0x4878c0),
-                    ('victim getup', 0x484b60)),
+            native=(('command gate', 0x45ed70), ('pair fall', 0x46ac10),
+                    ('landing link', 0x46ac90), ('landing damage', 0x46aca0),
+                    ('slam tail', 0x46acc0), ('slam reaction', 0x484760)),
         )
         noob_moves['shadow_low'] = move(
             0x498b70,

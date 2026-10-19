@@ -49,7 +49,7 @@
     "0x46aba0": {
       "source": "game/noob_saibot/moves/throws.c",
       "symbol": "noob_saibot_air_throw",
-      "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
+      "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail."
     },
     "0x498b70": {
       "evidence": "Low-punch command record 4e44b0 enters Noob shadow move action 0x309 and VM root 4ed268.",
@@ -137,12 +137,6 @@
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 18
     },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
-    },
     "0x4ed268": {
       "return_to": "caller",
       "evidence": "Noob low shadow VM root begins by binding clip 26 with 14 stored samples."
@@ -150,12 +144,6 @@
     "0x4ed2c0": {
       "return_to": "caller",
       "evidence": "Noob second shadow VM root binds clip 24 with 10 stored samples through its typed playback prefix."
-    },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Native air throw release entry inherits clip 82 and the paired sample 28 from the generated opener.",
-      "sample": 28
     },
     "0x4e61e0": {
       "clip": 262,
@@ -194,6 +182,23 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4e9880": {
+      "return_to": "mk4_script_thrown_ready",
+      "evidence": "46acc0 -> 480f50[105] -> 484760 releases the landed peer into 4e9880; its controller return keeps a KO victim down."
+    },
+    "0x4e5ea0": {
+      "clip": 74,
+      "count": 45,
+      "sample": 18,
+      "paired": true,
+      "evidence": "4e5e78 opens owner clip 74 and victim clip 150, advances the pair to 18, then 46ac10 enters this paired continuation."
+    },
+    "0x4e5eb0": {
+      "clip": 74,
+      "count": 45,
+      "sample": 27,
+      "evidence": "46ac90 enters this landing wait after 4e5ea0 advanced the owner and victim to sample 27."
     }
   },
   "generated_scripts": [
@@ -213,7 +218,6 @@
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
-    "0x4e5e50",
     "0x4e5e78",
     "0x4e5ea0",
     "0x4e5eb0",
@@ -235,7 +239,6 @@
     "0x4e68a8",
     "0x4e6950",
     "0x4e69b0",
-    "0x4e9910",
     "0x4e9b40",
     "0x4e9bd0",
     "0x4ed268",
@@ -245,10 +248,11 @@
     "0x4e66d0",
     "0x4e66f0",
     "0x4ea040",
-    "0x4ea0b8"
+    "0x4ea0b8",
+    "0x4e9880"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "2d6d387450a81bc815d8f8d3d8567b8633696a3cfb8ef8dce4235186ec07eb0f",
+  "inventory_sha256": "55ba1105c90cd4fed4cf337f272901f1171eac7692b9275f05d0d20f12c3cf40",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -276,8 +280,8 @@
       "symbol": "noob_saibot_air_lp"
     },
     "air_throw": {
-      "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
+      "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail.",
+      "source": "game/noob_saibot/moves/throws.c",
       "symbol": "noob_saibot_air_throw"
     },
     "fan_fatality": {
@@ -565,6 +569,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "105": {
+      "source": "game/noob_saibot/moves/throws.c",
+      "symbol": "noob_saibot_slam_reaction",
+      "evidence": "46acc0 -> 480f50[105] -> 484760: disarm, floor snap, stop and generated 4e9880."
     }
   },
   "return_to": "fighter_ready",
@@ -646,7 +655,7 @@
     "0x46aba0": {
       "source": "game/noob_saibot/moves/throws.c",
       "symbol": "noob_saibot_air_throw",
-      "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
+      "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail."
     },
     "0x498b70": {
       "source": "game/noob_saibot/moves/controls.c",
@@ -716,6 +725,10 @@
     "0x4e01a0",
     "0x4e6950",
     "0x4e5ca0",
-    "0x4e5c70"
+    "0x4e5c70",
+    "0x4e5e78",
+    "0x4e5ea0",
+    "0x4e5eb0",
+    "0x4e9880"
   ]
 }

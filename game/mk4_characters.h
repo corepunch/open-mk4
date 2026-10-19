@@ -31,8 +31,6 @@ bool mk4_can_air_throw(const Fighter *fighter);
 bool mk4_can_sidestep(const Fighter *fighter);
 void mk4_sidestep(Fighter *fighter);
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
-void mk4_air_throw_generated_with_moves(
-    Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script);
 void mk4_script_air_throw_release(Fighter *fighter);
 void mk4_script_air_getup(Fighter *fighter);
 void scorpion_generated_reaction(Fighter *fighter);
@@ -47,6 +45,7 @@ void mk4_flip_apex_return(Fighter *fighter);
 
 void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
 void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script);
+void mk4_throw_flip_tail(Fighter *fighter);
 void mk4_mmove_air_throw_release(Fighter *fighter);
 
 void kai_handstand_reaction(Fighter *fighter);
