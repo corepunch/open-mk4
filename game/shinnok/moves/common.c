@@ -21,6 +21,11 @@ void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
     shinnok_fatality_contact_hold(fighter);
     return;
   }
+  if (reaction == 179) {
+    /* 4e0088 installs the clap victim's lift and float on the task peer. */
+    battle_react((Fighter *)fighter_opponent(fighter), reaction);
+    return;
+  }
   require(reaction == 100, "Unexpected Shinnok LP release reaction");
   Fighter *victim = mk4_script_release_pair(fighter);
   battle_react(victim, reaction);

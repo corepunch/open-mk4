@@ -11,6 +11,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_BLOCK, {TOKEN_BACK, TOKEN_BACK, TOKEN_BACK}, 3, 36, 0x40, shinnok_can_morph, shinnok_morph_reiko},
   {BUTTON_BLOCK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 3, 36, 0x40, shinnok_can_morph, shinnok_morph_tanya},
   {BUTTON_BLOCK, {TOKEN_BACK, TOKEN_BACK, TOKEN_FORWARD}, 3, 36, 0x40, shinnok_can_morph, shinnok_morph_reptile},
+  {BUTTON_BLOCK, {TOKEN_DOWN, TOKEN_UP, TOKEN_UP, TOKEN_DOWN}, 4, 50, 0x40, shinnok_can_close_fatality, shinnok_fatality_2},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_BACK, TOKEN_FORWARD}, 3, 36, 0x0, shinnok_can_morph, shinnok_morph_liu_kang},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 36, 0x0, shinnok_can_morph, shinnok_morph_fujin},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 36, 0x0, shinnok_can_morph, shinnok_morph_jax},
@@ -18,12 +19,18 @@ static const CommandDef retail_commands[] = {
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_BACK, TOKEN_BACK}, 3, 36, 0x0, shinnok_can_morph, shinnok_morph_jarek},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD}, 3, 36, 0x0, shinnok_can_morph, shinnok_morph_quan_chi},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 36, 0x0, shinnok_can_morph, shinnok_morph_kai},
+  {BUTTON_RUN, {TOKEN_DOWN, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 80, 0x40, shinnok_can_close_fatality, shinnok_fatality_1},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };
 // clang-format on
 
-static const CpuMoves retail_cpu_moves = {.enter = {
-                                              [CPU_FINISH_FAN] = shinnok_fan_fatality,
-                                              [CPU_FINISH_SPIKE] = shinnok_spike_fatality,
-                                          }};
+static const CpuMoves retail_cpu_moves = {.enter =
+                                              {
+                                                  [CPU_FINISH_1] = shinnok_fatality_1,
+                                                  [CPU_FINISH_2] = shinnok_fatality_2,
+                                                  [CPU_FINISH_FAN] = shinnok_fan_fatality,
+                                                  [CPU_FINISH_SPIKE] = shinnok_spike_fatality,
+                                              },
+    .finish_min = {0x0, 0x0},
+    .finish_distance = {0x10000, 0x1cccc}};

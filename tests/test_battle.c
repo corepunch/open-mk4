@@ -14,6 +14,9 @@ void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
+void shinnok_fatality_1(Fighter *fighter);
+void shinnok_fatality_2(Fighter *fighter);
+bool shinnok_can_close_fatality(const Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
@@ -2674,7 +2677,7 @@ static void drive_owned_command(int slot, FighterFn entry) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {6, 7, 8, 9, 11, 12, 13, 17};
+  const int rosters[] = {7, 8, 9, 11, 12, 13, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -2710,7 +2713,7 @@ static void check_partial_cpu_stage_dispatch(void) {
 }
 
 static void check_generated_cpu_finish_dispatch(void) {
-  const int fighters[] = {14, 5};
+  const int fighters[] = {14, 5, 6};
   for (size_t index = 0; index < sizeof fighters / sizeof fighters[0]; ++index) {
     int selected = fighters[index];
     for (int slot = 0; slot < 2; ++slot) {
@@ -2737,7 +2740,7 @@ static void check_generated_cpu_finish_dispatch(void) {
           for (int tick = 0; tick < 240 && g_battle.phase == PHASE_FINISH; ++tick) {
             advance_ticks(1, NULL);
           }
-          int expected = selected == 14 ? 17 + finish : FINISH_FUJIN_1 + finish;
+          int expected = selected == 14 ? 17 + finish : selected == 6 ? 21 + finish : FINISH_FUJIN_1 + finish;
           if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != expected) {
             fprintf(stderr, "CPU finish roster%d slot%d finish%d far%d phase%d id%d distance%f\n", selected, slot, finish, far, g_battle.phase,
                 g_battle.finisher, fighter_distance(owner));
@@ -3402,6 +3405,93 @@ static void check_cage_second_fatality(void) {
   }
 }
 
+/* Shinnok: 455000 hand grab and 43c6d0 hand clap through their own records. */
+static void shinnok_fatality_command(int slot, FighterFn entry) {
+  const Controls *controls = roster_def(6)->controls;
+  const CommandDef *selected = NULL;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].enter == entry) {
+      selected = &controls->commands[i];
+    }
+  }
+  check(selected != NULL && selected->count == 4, "Shinnok fatality must have its own generated retail command");
+  for (int i = 0; i < selected->count; ++i) {
+    CommandToken token = selected->tokens[i];
+    Button button = token == TOKEN_DOWN ? BUTTON_DOWN : token == TOKEN_UP ? BUTTON_UP : (token == TOKEN_FORWARD) == (slot == 0) ? BUTTON_RIGHT : BUTTON_LEFT;
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(button);
+    if (i == selected->count - 1) {
+      input[slot].held |= BUTTON_BIT(selected->button);
+    } else if (token == TOKEN_UP) {
+      /* Block-held Up directions do not jump (CMD_BLOCK_OK record 4e4694). */
+      input[slot].held |= BUTTON_BIT(BUTTON_BLOCK);
+    }
+    battle_step(input);
+    advance_ticks(2, NULL);
+  }
+}
+
+static int shinnok_scene_clip(int clip) {
+  int count = 0;
+  for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+    count += g_battle.scene_actors[i].active && fighter_move(&g_battle.scene_actors[i].actor)->clip == clip;
+  }
+  return count;
+}
+
+static void check_shinnok_fatalities(void) {
+  for (int second = 0; second < 2; ++second) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int reset_at = 0; reset_at < 2; ++reset_at) {
+        battle_init(slot ? 4 : 6, slot ? 6 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        check(battle_can_finish(owner) && !shinnok_can_close_fatality(owner), "Shinnok's 45e570 gate must reject distance above one unit");
+        owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        shinnok_fatality_command(slot, second ? shinnok_fatality_2 : shinnok_fatality_1);
+        check(g_battle.phase == PHASE_FATALITY, "Shinnok fatality command must start its own scene");
+        if (second) {
+          check(owner->body.pos[AXIS_X] == 0 && owner->body.pos[AXIS_Z] == 0 && victim->body.pos[AXIS_X] == (slot ? -Q16_ONE : Q16_ONE),
+              "43c6d0 must place the owner at the origin and the victim one unit to its own side");
+        } else {
+          check(fighter_distance(owner) > 1.39f && fighter_distance(owner) < 1.41f, "475530 must align the hand-grab pair 1.4 units apart");
+        }
+        bool hidden = false, hands = false, lifted = false, burst = false, crushed = false, landed = false;
+        int time = g_battle.time_ticks;
+        for (int tick = 0; tick < (reset_at ? 200 : 1000) && g_battle.phase == PHASE_FATALITY; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Shinnok fatalities must run on frame tables");
+          hidden |= owner->appearance == APPEARANCE_HIDDEN;
+          hands |= shinnok_scene_clip(second ? 541 : 434) == (second ? 2 : 1);
+          lifted |= victim->body.pos[AXIS_Y] < victim->body.ground - Q16_ONE / 2;
+          burst |= second && victim->appearance == APPEARANCE_HIDDEN;
+          crushed |= !second && fighter_move(victim)->clip == 435 && fighter_sample(victim) >= 139;
+          landed |= hidden && owner->appearance == APPEARANCE_NORMAL && fighter_move(owner)->clip == 443;
+        }
+        if (reset_at) {
+          check(hidden && hands, "Shinnok must vanish and raise his hand before the reset point");
+        } else {
+          check(hidden && hands && landed && g_battle.phase == PHASE_MATCH_OVER, "Shinnok must vanish, use the hands, return and finish with his victory loop");
+          check(second ? lifted && burst : crushed, "Each fatality must reach its own victim crush");
+          check(victim->health == 0 && owner->wins == 2 && g_battle.time_ticks == time, "The fatality must preserve the decided result and frozen clock");
+        }
+        battle_reset_match();
+        check(owner->appearance == APPEARANCE_NORMAL && victim->appearance == APPEARANCE_NORMAL && shinnok_scene_clip(434) + shinnok_scene_clip(541) == 0,
+            "Reset during or after a Shinnok fatality must restore both fighters and retire the hands");
+      }
+    }
+  }
+}
+
 static void check_fatalities(void) {
   for (int player = 0; player < 2; ++player) {
     for (int id = FINISH_BURN; id <= FINISH_SPIKE; ++id) {
@@ -3621,6 +3711,7 @@ int main(void) {
   check_fujin_dive();
   check_cage_first_fatality();
   check_cage_second_fatality();
+  check_shinnok_fatalities();
   check_independent_scene_actor_lifetime();
   check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
   check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);

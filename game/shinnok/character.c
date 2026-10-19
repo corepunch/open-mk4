@@ -221,3 +221,83 @@ void shinnok_entry_retail_script_004ec8b0(Fighter *fighter) {
 void shinnok_entry_retail_script_004e0138(Fighter *fighter) {
   retail_script_004e0138(fighter);
 }
+
+void shinnok_entry_retail_script_004e2ef0(Fighter *fighter) {
+  retail_script_004e2ef0(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f00(Fighter *fighter) {
+  retail_script_004e2f00(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f10(Fighter *fighter) {
+  retail_script_004e2f10(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f20(Fighter *fighter) {
+  retail_script_004e2f20(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f30(Fighter *fighter) {
+  retail_script_004e2f30(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f40(Fighter *fighter) {
+  retail_script_004e2f40(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f68(Fighter *fighter) {
+  retail_script_004e2f68(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f78(Fighter *fighter) {
+  retail_script_004e2f78(fighter);
+}
+
+void shinnok_entry_retail_script_004e2f88(Fighter *fighter) {
+  retail_script_004e2f88(fighter);
+}
+
+void shinnok_entry_retail_script_004e2fa8(Fighter *fighter) {
+  retail_script_004e2fa8(fighter);
+}
+
+void shinnok_entry_retail_script_004e2fb8(Fighter *fighter) {
+  retail_script_004e2fb8(fighter);
+}
+
+void shinnok_entry_retail_script_004e0088(Fighter *fighter) {
+  retail_script_004e0088(fighter);
+}
+
+void shinnok_entry_retail_script_004e2fc8(Fighter *fighter) {
+  retail_script_004e2fc8(fighter);
+}
+
+void shinnok_entry_retail_script_004e2fd8(Fighter *fighter) {
+  retail_script_004e2fd8(fighter);
+}
+
+void shinnok_entry_retail_script_004e00b8(Fighter *fighter) {
+  retail_script_004e00b8(fighter);
+}
+
+void shinnok_entry_retail_script_004e00e0(Fighter *fighter) {
+  retail_script_004e00e0(fighter);
+}
+
+void shinnok_entry_retail_script_004e00f8(Fighter *fighter) {
+  retail_script_004e00f8(fighter);
+}
+
+void shinnok_entry_retail_script_004ea270(Fighter *fighter) {
+  retail_script_004ea270(fighter);
+}
+
+const mmove_t *shinnok_retail_script_004e2f58_repeat_phase(void) {
+  return &retail_script_004e2f58_phase;
+}
+
+const mmove_t *shinnok_retail_script_004e2f98_repeat_phase(void) {
+  return &retail_script_004e2f98_phase;
+}

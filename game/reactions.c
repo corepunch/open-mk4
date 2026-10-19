@@ -839,6 +839,7 @@ static const FighterFn reactions[256] = {
   [97] = fujin_wind_slam_victim,
   [98] = fujin_grab_victim,
   [181] = fujin_second_victim,
+  [179] = shinnok_second_victim,
   [99] = react_extra,
   [100] = react_extra,
   [101] = fujin_bolt_victim,

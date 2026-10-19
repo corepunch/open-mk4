@@ -16,6 +16,8 @@ void fujin_wind_slam(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 bool shinnok_can_morph(const Fighter *fighter);
+void shinnok_fatality_1(Fighter *fighter);
+void shinnok_fatality_2(Fighter *fighter);
 
 static void check(bool ok, const char *message) {
   require(ok, message);
@@ -528,6 +530,48 @@ static void shinnok_morph_rigs(const Assets *assets) {
     check(owner->roster == 6 && fighter_model(assets, owner) == roster_character(assets, 6), "The KO neutral reset must restore Shinnok's own rig");
   }
   check(morphs == 14, "Shinnok's command table must register all fourteen retail morphs");
+}
+
+/* Shinnok: both fatalities pose the owner, victim and the rig-5083c4 hands
+ * (clips 434/541) every tick until the finisher completes. */
+static void shinnok_fatality_assets(const Assets *assets) {
+  for (int second = 0; second < 2; ++second) {
+    battle_init(6, 4);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[0], *victim = &g_battle.fighters[1];
+    owner->wins = 1;
+    battle_damage(victim, Q16_ONE);
+    Input input[2] = {0};
+    battle_step(input);
+    for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+      battle_step(input);
+    }
+    owner->body.pos[AXIS_X] = -0x6666;
+    victim->body.pos[AXIS_X] = 0x6666;
+    check(battle_can_finish(owner), "Shinnok asset fatality needs the finish window");
+    if (second) {
+      shinnok_fatality_2(owner);
+    } else {
+      shinnok_fatality_1(owner);
+    }
+    int hands = 0;
+    for (int tick = 0; tick < 1000 && g_battle.phase == PHASE_FATALITY; ++tick) {
+      battle_step(input);
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, owner, bones);
+      fighter_pose(assets, victim, bones);
+      for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+        const Fighter *hand = &g_battle.scene_actors[i].actor;
+        if (g_battle.scene_actors[i].active) {
+          check(fighter_model(assets, hand) == &assets->shinnok_hand, "Shinnok's hand bodies must render rig 5083c4");
+          fighter_pose(assets, hand, bones);
+          hands = hands > i + 1 ? hands : i + 1;
+        }
+      }
+    }
+    check(g_battle.phase == PHASE_MATCH_OVER && hands == (second ? 2 : 1), "Asset-backed Shinnok fatalities must pose their hands and complete");
+  }
 }
 
 static void cage_weapon_contacts(const Assets *assets) {
@@ -1199,6 +1243,7 @@ int main(void) {
   jarek_weapon_contacts(&assets);
   shinnok_weapon_contacts(&assets);
   shinnok_morph_rigs(&assets);
+  shinnok_fatality_assets(&assets);
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   cage_groin_command(&assets);

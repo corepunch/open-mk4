@@ -603,6 +603,30 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     dragon_channels = maxi(dragon_channels, dragon->bones.data[i].channel + 1);
   }
   require((int)assets->clips.data[418].frames.data[0].angles.count == dragon_channels, "Liu Kang dragon animation/rig mismatch");
+  /* 4556d0 and 43caa0 create rig 5083c4. Its asset slot 5061e0 resolves
+   * to nf_fat_g.geo; fatality I plays clip 434 and II plays clip 541. */
+  Character *hand = &assets->shinnok_hand;
+  image_string(&exe, image_u32(&exe, image_u32(&exe, 0x5061e0)), hand->file);
+  snprintf(hand->name, sizeof hand->name, "SHINNOK HAND");
+  View hand_data = package_geo(&archive, hand->file);
+  hand->meshes = load_meshes(hand_data);
+  hand->material_pages = load_textures(hand_data);
+  hand->texture = hand->material_pages.data[0];
+  hand->bones = load_rig(&exe, 0x5083c4, 0x5061e0, hand->meshes.count);
+  hand->idle = 541;
+  hand->scale = 1.f;
+  int hand_channels = 0;
+  for (size_t i = 0; i < hand->bones.count; ++i) {
+    /* Like the dragon, the clip stream starts at ID one: animated
+     * joints 2..17 occupy channels 1..16 of the 17-channel clips. */
+    if (hand->bones.data[i].flags & 0x100) {
+      hand->bones.data[i].channel++;
+    }
+    hand_channels = maxi(hand_channels, hand->bones.data[i].channel + 1);
+  }
+  require(
+      (int)assets->clips.data[434].frames.data[0].angles.count == hand_channels && (int)assets->clips.data[541].frames.data[0].angles.count == hand_channels,
+      "Shinnok hand animation/rig mismatch");
   package_free(&archive);
   FREE_ARRAY(exe.bytes);
 }
@@ -838,6 +862,12 @@ void assets_free(Assets *a) {
   }
   FREE_ARRAY(a->liu_dragon.material_pages);
   FREE_ARRAY(a->liu_dragon.bones);
+  meshes_free(&a->shinnok_hand.meshes);
+  for (size_t i = 0; i < a->shinnok_hand.material_pages.count; ++i) {
+    FREE_ARRAY(a->shinnok_hand.material_pages.data[i].pixels);
+  }
+  FREE_ARRAY(a->shinnok_hand.material_pages);
+  FREE_ARRAY(a->shinnok_hand.bones);
   meshes_free(&a->scorpion_beast.meshes);
   FREE_ARRAY(a->scorpion_beast.texture.pixels);
   FREE_ARRAY(a->scorpion_beast.bones);

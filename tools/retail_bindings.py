@@ -1450,3 +1450,37 @@ CHARACTER_BINDINGS[17][0x43d530] = Binding('noob_saibot_script_fan_cycle', 'game
 CHARACTER_BINDINGS[17][0x43d6f0] = Binding('noob_saibot_script_fan_victory', 'game/noob_saibot/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d6f0 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[17][0x43db50] = Binding('noob_saibot_script_fan_victim_end', 'game/noob_saibot/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43db50 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[17][0x467fc0] = Binding('noob_saibot_script_spike_tail', 'game/noob_saibot/moves/spike.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native467fc0 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
+
+# Shinnok fatalities: 455000 (hand grab) and 43c6d0 (hand clap) share the
+# 455110/455190 vanish and return continuations. Native task scheduling is
+# replaced by fixed-frame actor rows, scene bodies and bounded events.
+_SF1 = 'game/shinnok/moves/fatality_first.c'
+_SF2 = 'game/shinnok/moves/fatality_second.c'
+_SFC = 'game/shinnok/moves/fatality.c'
+for _address, _symbol, _source, _evidence in (
+        (0x455110, 'shinnok_first_vanished', _SF1, '455110 sets owner group bit4 (hidden) at clip12 sample32 and enters 4e2f00'),
+        (0x455140, 'shinnok_first_hidden', _SF1, '455140 sleeps 0x235 ticks after clip12, then 455190 returns the owner'),
+        (0x4551b0, 'shinnok_fatality_reappear', _SFC, '4551b0 cursor19, clears bit4, gravity0x28f, Y speed -0x2666, landing cue 455460, enters 4e2f20'),
+        (0x455230, 'shinnok_fatality_victory', _SFC, '455230 blends descriptor4fc240 (clip443) at step0xccc, then loops 4e2f30'),
+        (0x4558b0, 'shinnok_first_hand_squeeze', _SF1, '4558b0 counter22 repeats 4e2f58 23 times, then 4e2f68 finishes clip434'),
+        (0x49cb60, 'shinnok_first_task_end', _SF1, '49cb60 retires the hand or victim task; its body keeps the final pose'),
+        (0x455ae0, 'shinnok_first_victim_held', _SF1, '455ae0 marks the victim group 0x1000, detaches its player slot (4773a0), enters 4e2f88'),
+        (0x455b60, 'shinnok_first_victim_squeeze', _SF1, '455b60 counter22 repeats 4e2f98 23 times, then 4e2fa8'),
+        (0x455ba0, 'shinnok_first_victim_crush', _SF1, '455ba0 cursor139, random roster grunt 472800, camera pulse5 457b50, enters 4e2fb8'),
+        (0x43c820, 'shinnok_second_vanish', _SF2, '43c820 state0: 4552e0 vanish cue and clip12 stream 4e2fc8'),
+        (0x455330, 'shinnok_second_vanished', _SF2, '455330 sets owner bit4 (hidden) at clip12 sample32 and enters 4e2fd8'),
+        (0x455360, 'shinnok_second_hands', _SF2, '455360 pops to 43c820 state1: spawn hands 43c9d0/43ca00, wait300, then 455190'),
+        (0x43ca30, 'shinnok_second_clap', _SF2, '43ca30 hides the victim (4900b0), bursts it (41d550) and enters hand tail 4e00f8'),
+):
+    CHARACTER_BINDINGS[6][_address] = Binding(_symbol, _source, ('tail',), flow='terminal', mmove=True, evidence=_evidence)
+for _address in (0x4558d0, 0x455b80):
+    CHARACTER_BINDINGS[6][_address] = Binding('shinnok_first_squeeze_cycle', _SF1, ('tail',), mmove=True,
+        evidence='%x decrements the native repeat counter; the bounded repetition owns the cycle count' % _address)
+for _address, _table in ((0x41db70, '4d3a18'), (0x41dba0, '4d3c80'), (0x41dbd0, '4d3d88')):
+    CHARACTER_BINDINGS[6][_address] = Binding('shinnok_second_gore', _SF2, ('call',), mmove=True,
+        evidence='%x -> 41dc00 spawns the piece table %s at the hand' % (_address, _table),
+        adaptation='Portable blood bursts replace the generic retail flesh-piece allocation')
+CHARACTER_BINDINGS[6][0x45ac30] = Binding('shinnok_second_event', _SF2, ('handler',), ('fighter', 'arg_u8'), inline_values=(48, 49, 50), mmove=True,
+    evidence='45ac30 -> 4315b0 queues camera director 4dea40 shots 48/49/50 during the clap intro')
+CHARACTER_BINDINGS[6][0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=BINDINGS[0x45abf0].inline_values + (51,),
+    evidence='Shinnok second fatality 4e0088 enqueues camera context 51; portable camera follows the live actors')

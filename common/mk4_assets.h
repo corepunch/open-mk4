@@ -123,6 +123,7 @@ typedef struct Assets {
   Characters scene_models;   /* shared immutable geometry; independently owned accessory rigs */
   Character liu_dragon;      /* fatality I creature, separate from the roster */
   Character scorpion_beast;  /* fatality II model, separate from the roster */
+  Character shinnok_hand;    /* rig 5083c4 / nf_fat_g.geo, both Shinnok fatalities */
   Clips clips;
   Arenas arenas;
   Hud hud;

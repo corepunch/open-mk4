@@ -540,6 +540,16 @@ def _moves_for(character):
                               ('owner release', 0x4e0148), ('victory', 0x4e0158), ('victim release', 0x4e01a0)),
                              native=(('Shinnok scene', 0x43d040),)),
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),), native=(('Shinnok stage entry', 0x467fc0),)),
+            fatality_1=move(0x467ce0,
+                            (('owner vanish', 0x4e2ef0), ('owner hidden', 0x4e2f00), ('owner return', 0x4e2f10), ('owner landing', 0x4e2f20),
+                             ('victory', 0x4e2f30), ('hand grab', 0x4e2f40), ('hand squeeze', 0x4e2f58), ('hand release', 0x4e2f68),
+                             ('victim lift', 0x4e2f78), ('victim hold', 0x4e2f88), ('victim squeeze', 0x4e2f98), ('victim crush', 0x4e2fa8),
+                             ('victim end', 0x4e2fb8)),
+                            native=(('roster dispatch', 0x455000), ('victim', 0x4558f0), ('hand', 0x4556d0), ('owner return', 0x455190))),
+            fatality_2=move(0x467cd0,
+                            (('camera intro', 0x4e0088), ('owner vanish', 0x4e2fc8), ('owner hidden', 0x4e2fd8), ('first hand', 0x4e00b8),
+                             ('second hand', 0x4e00e0), ('second hand tail', 0x4e00f8), ('victim', 0x4ea270)),
+                            native=(('roster dispatch', 0x43c6d0), ('hands', 0x43c820), ('clap', 0x43ca30))),
         )
         return shared
     if character == 8:
