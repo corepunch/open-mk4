@@ -129,4 +129,6 @@ void reiko_star(Fighter *fighter);
 void reiko_star_spawn(Fighter *fighter, int task_type);
 bool reiko_can_star(const Fighter *fighter);
 void reiko_script_star_victim_tail(Fighter *fighter);
+void reiko_orbit(Fighter *fighter);
+bool reiko_can_orbit(const Fighter *fighter);
 #endif

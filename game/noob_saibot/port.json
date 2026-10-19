@@ -1,16 +1,6 @@
 {
   "character": "noob_saibot",
   "entry_adapters": {
-    "0x467cd0": {
-      "evidence": "Noob Saibot fatality-2 dispatch; roster table selects the second finish entry.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_spike_fatality"
-    },
-    "0x467ce0": {
-      "evidence": "Noob Saibot fatality-1 dispatch; roster table selects the first finish entry.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_fan_fatality"
-    },
     "0x469250": {
       "source": "game/mk4_common.c",
       "symbol": "mk4_sidestep",
@@ -25,11 +15,6 @@
       "source": "game/noob_saibot/moves/weapon.c",
       "symbol": "noob_saibot_weapon_action",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
-    },
-    "0x478ee0": {
-      "evidence": "Noob Saibot CPU far-range selector route to a generated kick entry.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_roundhouse"
     },
     "0x4791a0": {
       "source": "game/noob_saibot/moves/flip_kick.c",

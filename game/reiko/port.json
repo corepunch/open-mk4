@@ -27,9 +27,9 @@
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x478ee0": {
-      "evidence": "Reiko CPU far-range selector route to a generated kick entry.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_roundhouse"
+      "source": "game/reiko/moves/orbit.c",
+      "symbol": "reiko_orbit",
+      "evidence": "478ee0 stamps slot 17, action 0x2014, C[0x63], clip 306; twenty 487e20 placements around the live peer from pi past the approach angle, -0x283a per visit with the radius shrinking to 1.2; then face, stance clip 284, 20 visits and 470420."
     },
     "0x4791a0": {
       "source": "game/reiko/moves/flip_kick.c",
@@ -234,7 +234,7 @@
     "0x4e97f8"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "aa0b408cc5a4c8b9a408436b17d875ed7a1574143b30c4a58ff92ff592c7957d",
+  "inventory_sha256": "0287ca65dfa3f55c4fa629c1938d287c3d87ad8ee880484355c417b9123c1b48",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -375,6 +375,11 @@
       "source": "game/reiko/moves/star.c",
       "symbol": "reiko_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
+    },
+    "orbit": {
+      "source": "game/reiko/moves/orbit.c",
+      "symbol": "reiko_orbit",
+      "evidence": "478ee0 stamps slot 17, action 0x2014, C[0x63], clip 306; twenty 487e20 placements around the live peer from pi past the approach angle, -0x283a per visit with the radius shrinking to 1.2; then face, stance clip 284, 20 visits and 470420."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -687,6 +692,11 @@
       "source": "game/reiko/moves/star.c",
       "symbol": "reiko_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
+    },
+    "0x478ee0": {
+      "source": "game/reiko/moves/orbit.c",
+      "symbol": "reiko_orbit",
+      "evidence": "478ee0 stamps slot 17, action 0x2014, C[0x63], clip 306; twenty 487e20 placements around the live peer from pi past the approach angle, -0x283a per visit with the radius shrinking to 1.2; then face, stance clip 284, 20 visits and 470420."
     }
   },
   "command_predicates": {
@@ -696,7 +706,8 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ef50": "weapon_can_draw",
     "0x45e7a0": "reiko_can_flip_kick",
-    "0x45e6d0": "reiko_can_star"
+    "0x45e6d0": "reiko_can_star",
+    "0x45e710": "reiko_can_orbit"
   },
   "mmove_scripts": [
     "0x4e6658",
