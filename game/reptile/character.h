@@ -9,7 +9,7 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 
 enum {
-  REPTILE_EVENT_FATALITY_1 = 21,
+  REPTILE_EVENT_FATALITY_1 = 33,
   REPTILE_EVENT_FATALITY_2
 };
 
