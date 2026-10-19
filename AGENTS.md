@@ -103,7 +103,7 @@ post-processing.
 ## Character script ports
 
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
-end-to-end research, fiber implementation, validation and commit procedure.
+end-to-end research, frame-program implementation, validation and commit procedure.
 
 Start character ports with
 `python3 tools/compile_retail.py --character NAME --inventory` and

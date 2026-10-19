@@ -8,7 +8,7 @@ For new ports, start with the deterministic compiler and coverage audit in
 [script-compiler.md](script-compiler.md). `tools/compile_retail.py --inventory`
 reads typed character roots; `--audit` exposes unsupported operations/native
 bindings and reviewed legacy boundaries; `--generate` emits compilable C11
-fibers. The decoder's `--c` and `--port` views below remain research/navigation
+frame programs. The decoder's `--c` and `--port` views below remain research/navigation
 reports, not the code-generation workflow. Research only unresolved boundaries,
 add a typed compiler binding or lowering once, then regenerate.
 
@@ -86,7 +86,7 @@ complete semantic mapping from that upstream name or the code's bit pattern.
 
 ## Readable C-style view
 
-`--move NAME --port` collects the current engine entry and nested fiber C
+`--move NAME --port` collects the current engine entry and nested frame-program C
 functions, supporting data links, exact script words/decoded operand roles,
 contact-record C initializers, and native literals with their instruction bytes.
 It includes helper contracts, action evidence, and checked mk4decomp source and

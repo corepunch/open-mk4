@@ -99,19 +99,13 @@ owners and arguments. No C++ classes, STL, references or
 exceptions in migrated game/engine modules. Keep simulation independent of SDL
 and rendering, and keep archive ownership separate from decoded assets.
 
-The move-fiber prototype uses pinned minicoro in `third_party/minicoro`, under
-its MIT No Attribution license option. Only `game/fiber.c` includes the backend
-implementation. Two runtime slots provide one 64 KiB stack per fighter; stacks
-are allocated on entry and freed on completion, replacement or reset. The
-existing P1/P2 actor pump resumes them on one thread, with positive waits in
-actor simulation ticks and at most one resume per battle tick. There are no
-worker threads, wall-clock sleeps or retail task-stack emulation. Runtime
-stacks live outside `g_battle`; copying Battle cannot snapshot an active fiber.
-Explicit phase rebinding preserves a running fiber's locals. Blocking
-MoveSequence playback retains the shared sample/event data and returns to C
-for branches. Peer entries are deferred to the scheduler stack; no actor resumes
-on another actor's stack. Callbacks remain supported for independent objects,
-physics and shared engine behaviors.
+Moves run as actor-owned frame programs (see the frame-table migration below).
+The existing P1/P2 actor pump steps each fighter's program once per battle tick
+on one thread. There are no coroutine stacks, worker threads, wall-clock sleeps
+or retail task-stack emulation, so all move state lives in `g_battle`. A wait is
+a held row whose end function is its continuation. A newly started peer program
+runs its setup immediately and its first row on its next actor tick. Callbacks
+remain supported for independent objects, physics and shared engine behaviors.
 
 Do not reproduce the original global-address memory model or introduce an ECS
 framework merely to imitate the retail callback trees. Add an explicit event
@@ -152,9 +146,9 @@ checks canonical regeneration and typed input/CPU/stance/weapon/reaction coverag
 
 The old x86 normal-move fixtures remain research evidence. Regression scenarios
 reuse their branch inputs and check control-flow choices, damage, interruption,
-clip bounds and bounded recovery; portable fiber visits do not claim per-tick
-retail task-scheduler identity. Shared fiber tests establish full-tick peer waits
-for both player orders. Source playback and architecture details are documented
+clip bounds and bounded recovery; portable frame visits do not claim per-tick
+retail task-scheduler identity. Shared frame-runner tests cover holds, jumps,
+loops, cleanup and both player orders. Source playback and architecture details are documented
 in [the porting guide](docs/character-script-port.md) and
 [compiler guide](docs/script-compiler.md).
 `battle_step` remains
@@ -225,16 +219,16 @@ their focal scale without changing ordinary fight framing.
 ## Deterministic script compilation
 
 `tools/compile_retail.py` lowers the decoded, roster-specialized VM graph to
-ordinary C11 fiber functions in `game/generated/`. Branches are C control flow,
-waits use the existing actor scheduler, and contacts use the shared battle API.
+C11 frame programs in each fighter's `generated/` folder. Branches select named
+phases, waits are fixed rows, and contacts use the shared battle API.
 Native boundaries have explicit engine symbols, roles, arguments and timing in
 `tools/retail_bindings.py`; unsupported instructions and bindings fail before
 output. This is offline compilation, without runtime bytecode/address dispatch.
 
 `game/script.c` owns the small shared clip primitives. A clip-only binding
-preserves combat state, action, flags, physics and the fiber clock. Its MoveDef
-storage is the actor's `playback_move`, so cancelling a stack cannot invalidate
-`current_move`. Full move transitions still use the normal engine entry API.
+preserves combat state, action, flags, physics and the running frame program.
+Its MoveDef storage is the actor's `playback_move`, so cancelling a program cannot
+invalidate `current_move`. Full move transitions still use the normal engine entry API.
 
 Reviewed character profiles keep generated roots separate from existing legacy
 C adaptations. The strict audit checks typed input/CPU/stance/weapon/reaction
@@ -246,8 +240,8 @@ integrations. See [their port ledger](docs/raiden-sonya-scripts.md). Native-entr
 contracts seed clip/cursor validation and are checked at runtime. Pure native
 script-enter thunks link directly into the generated CFG; proven cursor progress
 allows loops without adding a dispatcher. Committed paired victims own their
-pose independently before separation, while native scene completion retires
-parked fibers on the simulation stack.
+pose independently before separation, while native scene completion cancels
+parked frame programs.
 See [the compiler contract](docs/script-compiler.md).
 
 ## Frame-table migration
@@ -275,33 +269,31 @@ actor scheduling boundary is intentional; the runner does not inherit Quake
 II's 10 Hz clock or process a newly installed phase in the same update.
 Action cleanup is retained across phases and detached before invocation on
 completion, replacement, interruption or round/match reset. Camera and object
-updates remain independent. Fibers coexist during migration; generated script
-coverage and behavioral checks remain required for each converted move.
+updates remain independent. Generated script coverage and behavioral checks
+remain required for each move.
 
 Reference reviewed: the local Quake-2-master `game/g_local.h`, `g_monster.c`
 (`M_MoveFrame`) and `m_infantry.c` (attack and held firing callbacks). Its source
 is GPL-licensed; this runner is an independent implementation of the callback
 contract within our existing actor/simulation boundaries.
 
-All 63 Sub-Zero script roots, native move continuations, paired victims and
-fatality actors now use the frame backend. His profile requires phase generation
-for every root. Reviewed profile roots select compiler-generated
-frame tables from the same decoded graphs as the fiber backend. Native phase
+Every fighter's script roots, native move continuations, paired victims and
+fatality actors use frame programs; the compiler has no other backend.
+Compiler-generated frame tables come from the decoded VM graphs. Native phase
 callbacks provide contact decisions and lifetime coordination. Source-defined
 waits, counted loops and sample paths are expanded offline; no runtime bytecode
 or hidden continuation stack is introduced. Unsupported frame operations fail
 generation, and bindings need an explicit nonblocking review or a dedicated
 frame lowering. Runtime predicates select named successor phases, and repeating
 scene streams form finite phase cycles. Shared weapon strikes, throw/pickup,
-sidestep and the foreign sword paths also use phases. Other fighters and their
-victim continuations retain fibers during the incremental migration.
+sidestep and the foreign sword paths also use phases.
 
 Native phases whose frame ranges depend on a selected attack profile assemble
 bounded actor-owned `mframe_t` rows once at phase entry (`game/native.c`). Each
 row names its action callback; callback bodies do not test elapsed ticks or
 count down an action timer. Source-pose boundary callbacks select the pose used
-by contact before the action, then the next row displays it. Native tails hand
-off their fiber on the scheduler stack, transferring cleanup to frame playback.
+by contact before the action, then the next row displays it. Native tails
+install their rows directly; the action's cleanup carries across phases.
 Independent movement uses bounded fixed-frame callback rows on the existing body
 physics clock; collision, friction and landing remain physical conditions.
 
@@ -323,7 +315,6 @@ A detached body may keep animating while both players retain their own scene
 phases. `Battle.scene_actors` is a bounded pool for those render-only bodies.
 Each slot borrows a roster model and assets, owns its pose/clip/frame state,
 and runs the existing fixed-frame player. It receives no input table, CPU,
-combat entry or fiber storage. Only the nonblocking clip/frame APIs apply;
-fiber mutation APIs continue to reject a scene body. Rendering reads its
+combat entry. Only the clip and frame APIs apply. Rendering reads its
 state without advancing it. Reset and round changes cancel its frame program
 and run cleanup once, just as explicit scene-body retirement does.

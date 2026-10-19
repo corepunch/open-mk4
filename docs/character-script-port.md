@@ -211,89 +211,100 @@ make scripts-check
 
 The profile declares `generated_scripts`, `return_to`, `output`, and the C
 integration source. Add evidence-backed `entry_contexts` for inherited clips
-and samples; use per-root `return_to: "caller"` for scripts invoked as native
-subroutines. Bind pure script-enter native tails with `script_target` so the
-compiler links their CFG directly. Extend cursor progress analysis or shared
-lowerings when required; never bypass the audit with unused function references.
-Include its generated `.inc` and start those functions from
-the existing command/move entries. Never edit the generated include. Ordinary
-C11 functions and labels express VM branches; fiber waits preserve locals.
-No runtime VM, byte-address dispatcher, scheduler emulation or new execution
-harness is introduced. `game/script.c` owns shared clip primitives and stores
-rebound animation data on the actor, avoiding dangling fiber-stack pointers.
+and samples. A root that returns to a native caller which then enters another
+generated root uses `return_to: "caller"` with a `successor` naming that root.
+Bind pure script-enter native tails with `script_target` so the compiler links
+their CFG directly. Extend cursor progress analysis or shared lowerings when
+required; never bypass the audit with unused function references. Include its
+generated `.inc` and start those functions from the existing command/move
+entries. Never edit the generated include. Every root becomes a frame program:
+fixed rows, named branch phases and boundary callbacks. No runtime VM,
+byte-address dispatcher, scheduler emulation or new execution harness is
+introduced. `game/script.c` owns shared clip primitives and stores rebound
+animation data on the actor.
 
-Native adapters still use the existing fiber rules and APIs below. The
-handwritten Scorpion example is a legacy illustration of these APIs, not the
-workflow for translating another VM body.
+Native adapters build frame rows too. A blocking wait does not exist: each
+wait is a held row whose end function is the continuation.
 
-The external move entry validates its gates, calls `fighter_start_move`, and
-initializes phase data and pose before `fighter_start_fiber`. Starting a fiber
-executes it immediately until its first wait or completion. Nested helpers can
-call `fighter_wait_ticks(n)`; locals survive. All scheduling stays on the single
-simulation thread, in P1/P2 order, with positive actor-tick waits at 60 Hz.
+The external move entry validates its gates, calls `fighter_start_move`,
+initializes phase data and pose, sets any action cleanup in `mmove_cleanup`, and
+then enters the generated root or native rows. Entry setup runs immediately; the
+first row runs on the actor's next tick. All scheduling stays on the single
+simulation thread, in P1/P2 order, at 60 Hz.
 
-| From a running fiber | Purpose |
+| Frame helper | Purpose |
 | --- | --- |
-| `fighter_wait_ticks(n)` | Hold execution for positive simulation ticks; other actors and objects continue |
-| `fighter_fiber_play_to(fighter, sample, step)` | Advance an initialized `sample_override` cursor forwards or backwards to a target |
-| `fighter_fiber_sequence(fighter, &sequence)` | Run shared `MoveSequence` playback/events/hold, then return to the next C statement |
-| `fighter_fiber_move(fighter, state, &move)` | Rebind a phase while preserving the current fiber and locals |
-| `fighter_fiber_finish(next)` | Retire this stack and let the host invoke the continuation; never returns |
+| `native_begin`, `native_frame`, `native_play` | Build bounded rows with poses and per-row actions, then install them |
+| `native_hold(fighter, frames, end)` | Hold the current pose, then continue |
+| `native_play_rows(fighter, sample, step, end)` | Step the pose toward a target, then continue |
+| `native_finish_clip(fighter, end)` | Finish the bound clip and hold its last pose one visit |
+| `native_query_rows(fighter, record, frames, step, end)` | Contact rows that leave early through `end` on contact |
+| `native_await(fighter, condition, end)` | Hold the live pose until a condition (landing, height) holds |
+| `fighter_finish_mmove(fighter, next)` | End the program, run its cleanup once, then enter `next` |
 
-Do not call plain `fighter_start_move` to change phases inside the running
-fiber: external move replacement cancels the old fiber. Blocking sequence
-playback does not invoke the sequence's legacy `end` callback; put that branch
-after `fighter_fiber_sequence`. Give every loop a real yield or terminating path.
-Use engine state and predicates for landing/contact waits, rather than sleeping
-or waiting for the drawing loop.
+A row callback that changes the program (a new phase, `fighter_start_move`, or a
+finish) ends that row; the runner does not run the old row further. A
+continuation must always install new rows or finish, never return to the old
+rows. Changing the move with `fighter_start_move` runs the current cleanup, so
+detach `mmove_cleanup` around an internal rebind that must keep it. A `call`
+binding runs inside a generated row that installs its own successor afterwards,
+so it must not swap the phase itself; defer that through a physics hook or a
+separate tail binding (Raiden's torpedo miss is an example). Use engine state
+and predicates for landing/contact waits, rather than sleeping or waiting for
+the drawing loop.
 
-Scorpion's current spear body illustrates the pattern (helpers and entry setup
-are in [c_scorpion.c](../game/scorpion/character.c)):
+Scorpion's spear entry shows the pattern (see
+[spear.c](../game/scorpion/moves/spear.c)):
 
 ```c
-static void spear_script(Fighter *fighter) {
-  bool fast = fighter->script_phase != 0;
-  spear_play_to(fighter, fast ? 25 : 20);
-  spear_spawn(fighter);
-  spear_play_to(fighter, 30);
-  fighter->action = ACTION_RETAIL_1007;
-  fighter->ticks = 0;
-  fighter_wait_ticks(45);
-  while (!spear_not_pulling(fighter)) {
-    fighter_wait_ticks(1);
+void scorpion_spear(Fighter *fighter) {
+  ...
+  fighter_start_move(fighter, S_PUNCH, &s_spear);
+  fighter->spear_ready = g_battle.ticks + 90;
+  fighter->mmove_cleanup = spear_cleanup;
+  scorpion_entry_retail_script_004ed448(fighter);
+}
+
+void scorpion_script_spear_done(Fighter *fighter) {
+  if (spear_not_pulling(fighter)) {
+    scorpion_special_ready(fighter);
+  } else {
+    fighter->mmove_cleanup = spear_cleanup;
+    native_await(fighter, spear_not_pulling, spear_wait_done);
   }
-  fighter_fiber_finish(special_ready);
 }
 ```
 
-The wait begins after sample 30, at normal/fast elapsed tick 15/11. Projectile
-callbacks can replace this script with the return/pull continuation. Extract the
-complete entry, helpers and cleanup with `--move spear --port` when studying it.
+The generated `4ed448` waits 45 ticks after sample 30, at normal/fast elapsed
+tick 15/11. Projectile callbacks can replace this program with the pull-arrival
+return. Extract the complete entry, helpers and cleanup with
+`--move spear --port` when studying it.
 
 ### 6. Give paired actors and objects explicit lifetimes
 
 Define which actor owns each phase and when the victim becomes independent.
-Peer fiber starts are deferred to the host scheduler; a peer may still receive
-its regular pump that battle tick. Do not infer a full displayed tick from
-startup order. Check both P1 and P2 ownership. Paired pose submission and
-released recovery helpers in `game/sub_zero/character.c` are examples, including the
-victim's committed five-sample LK tail after damage.
+A released victim's generated or native program starts immediately, with its
+first row on its next actor tick; a peer may still receive its regular pump
+that battle tick. Do not infer a full displayed tick from startup order. Check
+both P1 and P2 ownership. Paired pose submission and released recovery helpers
+in `game/sub_zero/moves/throws.c` and `game/script.c` are examples. Cancel a
+victim's capture hold with `fighter_cancel_mmove` before entering its released
+program, so the hold's cleanup runs once.
 
 Release a victim through its own roster's recovery controller. Preserve its
 bind-ground Y offset when aligning it to another rig, and clear paired flags,
 input restrictions, temporary presentation and callbacks at the correct boundary.
 Owner interruption or victory must not erase an already released victim's fall
 and getup. Conversely, interruption before the damage event must not allow a
-cancelled script to wake later and apply damage.
+cancelled program to run later and apply damage.
 
-Use the fiber cleanup callback for owned temporary state on completion,
-replacement or reset. It runs once after the stack retires: never retain pointers
-to fiber locals in fighter/projectile state, and do not start a replacement fiber
-from cleanup. Independent projectiles/statues use object callbacks and the source's
-lifetime policy; they need not disappear when their owner resumes controls.
-Handle full object pools, either participant's interruption, KO and round/rematch
-cleanup using the shared engine boundaries. See the API details below and
-[game/fiber.c](../game/fiber.c).
+Use `mmove_cleanup` for owned temporary state on completion, replacement or
+reset. It survives phase changes and runs once when the program ends: do not
+start a replacement program from cleanup. Independent projectiles/statues use
+object callbacks and the source's lifetime policy; they need not disappear when
+their owner resumes controls. Handle full object pools, either participant's
+interruption, KO and round/rematch cleanup using the shared engine boundaries.
+See the API details below and [game/native.c](../game/native.c).
 
 ### 7. Wire real inputs and verify the behavior
 
@@ -325,10 +336,10 @@ For example, after changing Liu Kang generated scripts or native adapters:
 make format
 make scripts-check
 python3 tests/test_script_codegen.py
-make build/test-liu-kang build/test-battle build/test-fibers
+make build/test-liu-kang build/test-battle build/test-frames
 ./build/test-liu-kang
 ./build/test-battle
-./build/test-fibers
+./build/test-frames
 python3 tests/test_retail_port.py
 make check
 ```
@@ -337,7 +348,7 @@ Run the relevant decoder/helper/action tests when changing their research data.
 Add compact EXE-backed assertions for newly decoded table layouts or constants;
 use native C tests for gameplay. Do not add retail-execution harnesses, binary
 scheduler emulation or large per-tick JSON traces. `tests/test_sub_zero.c` and
-`tests/test_fibers.c` provide existing gameplay and scheduling examples.
+`tests/test_frames.c` provide existing gameplay and scheduling examples.
 
 ### 8. Record scope and commit the verified step
 
@@ -371,8 +382,8 @@ infer complete fighter coverage from the curated move catalog.
 | --- | --- | --- |
 | Commands | `game/commands.c`, ordered `CommandDef` and stance tables | Preserve unconditional-record priority, two-sample presses, inclusive windows and predicate masks; entries start next tick |
 | Generated VM control flow | `tools/compile_retail.py`, `game/script.c`, checked generation profiles | Fail unsupported paths before output; require regeneration and coverage gates |
-| Fixed playback / waits | `MoveSequence`, sparse `MoveSegment`/`MoveEvent`, blocking `fighter_fiber_sequence`, `fighter_wait_ticks` | Active phases have their own tick clock; simulation ticks and stored pose samples are different clocks |
-| Native continuations | Sequential C fibers and nested helpers; callbacks for independent engine work | Initialize the move before starting its fiber; use `fighter_fiber_move` for an internal phase change |
+| Fixed playback / waits | Generated frame programs, `native_*` rows (`game/native.c`), held rows with continuations | Rows have no duration; simulation ticks and stored pose samples are different clocks |
+| Native continuations | Frame rows and named continuations; callbacks for independent engine work | Initialize the move and its `mmove_cleanup` before entering the program; detach cleanup around an internal move rebind |
 | Poses | `game/pose.c`, `fighter_pose_sample`, `fighter_pose` | Bind host-owned assets with `battle_bind_assets`; capture real wrapped samples, rig, heading and root offsets |
 | Contact | `battle_contact` for a fighter, `battle_contact_from` for an independent object | Object contacts return their result without consuming the owner's current attack latch |
 | Geometry | Shared decoded joint poses and pair-axis projection | Asset-backed play uses the `48d750` joint interval and 8% trim; rule-only callers without assets use an explicit fallback hull |
@@ -392,109 +403,55 @@ round/finisher cleanup follows the reached source path.
 
 ### Shared move phases
 
-Character fibers normally use blocking `fighter_fiber_sequence`. The callback
-interface below remains available for shared engine continuations.
+`fighter_start_sequence` remains for shared engine continuations. It replaces
+the current continuation without restarting the move, resets the phase tick to
+zero, clears the sample override, and preserves action, contact results and
+input restrictions. A hold segment `{0, sample, 0, 1}` plus `count = 45`
+expresses a 45-tick wait; `end` is its C continuation. Character moves use frame
+programs instead.
 
-`fighter_start_sequence` replaces the current continuation without restarting
-the move. It resets the phase tick to zero, clears the native script and sample
-override, and preserves action, contact results and input restrictions. A hold
-segment `{0, sample, 0, 1}` plus `count = 45` expresses a 45-tick wait; `end`
-is its C continuation. The world and independent objects continue stepping.
-Tick zero runs entry events once; completion runs on tick 45, once. An optional
-`until` predicate delays completion while retaining the last pose. The runner
-stops old events when a callback replaces even the same phase or queues an
-interruption. A new move clears the active sequence.
+### Frame programs
 
-The original spear wait-phase port established sample-30 recovery at normal/fast
-startup tick 15/11, action `0x1007`, and a 45-tick hold (`4ed470/4ed498`). The
-fiber prototype below now expresses that move's same timing as sequential C;
-MoveSequence remains the shared playback/event mechanism for other moves.
+Every character move, victim continuation and scene runs as an actor-owned frame
+program: generated phases and native rows stepped once per actor tick by the
+P1/P2 pump. Entry setup runs immediately; the first row runs on the actor's next
+tick, so a released peer cannot run a row twice when its slot is pumped later in
+the same tick. A wait is a held row whose end function is the continuation;
+there are no coroutine stacks. External move replacement, queued interruption,
+round reset, rematch and `battle_init` cancel the program and run its cleanup
+once. Cleanup releases independent objects or paired victims and must not start
+another program. All move state lives in `g_battle`.
 
-### Stackful character scripts
-
-`fighter_start_fiber(fighter, entry, cleanup)` starts a C entry immediately,
-until its first `fighter_wait_ticks(n)` or completion. The wait may be nested
-inside ordinary C helpers and loops; locals survive. Subsequent execution
-uses the existing fighter script pump in P1/P2 order. A wait advances only
-when its actor is pumped, never through a sleep or another thread. Repeated
-pumps in the same battle tick do not resume again. This is bounded to one
-fiber per live fighter, with a 64 KiB stack and no nested actor scheduling.
-
-Use `fighter_fiber_finish(next)` for a move transition from a running fiber;
-it never returns. The scheduler destroys the old stack, invokes cleanup once,
-then calls `next` on its own stack. Returning normally uses `fighter_ready`.
-Use `fighter_fiber_move(fighter, state, move)` to bind another animation phase
-while preserving the running stack and locals. Ordinary `fighter_start_move`
-still cancels suspended stacks. `fighter_fiber_sequence` blocks through a
-MoveSequence's samples, contact events and optional hold predicate, then returns
-to its C caller instead of invoking the legacy end callback.
-`fighter_fiber_play_to` advances an explicit sample override in either direction.
-A running actor may start a peer fiber: its entry is queued until the caller
-yields to the host. Subsequent waits follow P1/P2 pump order, including whether
-the peer has already taken its turn this tick. There is no nested actor resume.
-`fighter_fiber_finish(NULL)` releases the stack and parks the actor.
-External move replacement, queued interruption, round reset, rematch and
-`battle_init` cancel suspended stacks without resuming them. The optional
-cleanup releases independent objects or paired victims; it must not depend
-on fiber locals or start another fiber. Never store pointers to fiber locals
-in simulation state. Reset cancels both actors before overwriting any fighter.
-
-The backend is the unmodified pinned minicoro header; see
-`third_party/minicoro/UPSTREAM.md` and LICENSE. Runtime stacks are outside
-Battle and cannot be restored by copying the struct. This remains an actor
-move prototype, not a general task scheduler or rollback implementation.
-
-Scorpion's `spear_script` is the first fiber port. A normal C helper
-`spear_play_to` advances two stored samples after each nested one-tick wait.
-Normal/fast paths launch at ticks 10/8, reach sample 30 at 15/11, then wait
-45 ticks. The existing live-pull predicate may extend that hold. Projectile
-contacts and movement retain their independent C callback. Pull arrival first
-installs an independent victim-stun frame program and generated owner-return continuation. `spear_cleanup` removes owner projectiles and
-releases a still-snared victim on cancellation, while preserving an already
-installed arrival stun. These paired-return mechanics remain portable engine
-adaptations; this prototype does not claim full retail spear-native parity.
-
+Scorpion's spear shows the timing: normal/fast paths launch at ticks 10/8, reach
+sample 30 at 15/11, then wait 45 ticks; the live-pull predicate may extend that
+hold. Projectile contacts and movement keep their independent callback. Pull
+arrival installs an independent victim-stun program and the generated owner
+return. `spear_cleanup` removes owner projectiles and releases a still-snared
+victim on cancellation, while preserving an already installed arrival stun.
 Focused regressions cover both players and startup paths, exact recovery,
-blocked/hit pull behavior, direct hit and queued interruption during nested
-startup/recovery/pull waits, full object pools, rematch during pull, and two
-simultaneous actor continuations whose projectiles can interrupt one another.
+blocked/hit pull behavior, interruption during startup/recovery/pull, full
+object pools, rematch during pull, and two simultaneous spears whose projectiles
+can interrupt one another.
 
-Native action timing across the roster now uses fixed `mframe_t` programs,
-including specials, reactions and finishers. Generated VM continuations can
-await a frame program while retaining their locals; terminal native phases
-transfer cleanup to the frame runner. Scene blend boundaries, fan repetitions,
-delayed cues and completion actions are resolved when their frame ranges are
-constructed. The timing guard rejects native actor/scene deadline branches and
-legacy coroutine waits. Scene completion returns to the scheduler before ending
-a finisher or resetting.
+Scene blend boundaries, fan repetitions, delayed cues and completion actions are
+resolved when their frame ranges are constructed. The timing guard rejects
+native actor/scene deadline branches.
 
 Use `--move NAME --port` (with `--character sub_zero` where appropriate) to
 extract these actual C bodies, nested helpers/callbacks, supporting data links,
 raw operands and native values. `--c` remains the retail control-flow view.
-`high_punch`, `lp_throw` and `lk_throw` are now catalogued alongside the special
+`high_punch`, `lp_throw` and `lk_throw` are catalogued alongside the special
 moves. Native throw math, random roster sound lists and auxiliary tasks remain
 explicit boundaries; the portable engine's existing gameplay adaptations are
 retained rather than silently claiming those routines have been fully translated.
-Sub-Zero ground throws now follow their own retail programs: LP 76/153,
-damage at 25, reaction 102 and reversed getup 328; LK 41/165, disarm at 39,
-damage at 52, release at 57, a 60-tick owner wait and independent victim
-41..46 cursor cycles followed by clip 200. See [throw evidence and timing](sub-zero-throws.md).
+Sub-Zero ground throws follow their own retail programs: LP 76/153, damage at
+25, reaction 102 and reversed getup 328; LK 41/165, disarm at 39, damage at 52,
+release at 57, a 60-tick owner wait and independent victim 41..46 cursor cycles
+followed by clip 200. See [throw evidence and timing](sub-zero-throws.md).
 
-Air attack hit-stops, paired ground and air throws, and weapon draw/strike/
-throw/pickup/recovery now use actor fibers too. Paired victims retain their own
-fall/getup lifetimes. Weapon objects still fly and settle independently, and
-shared locomotion and generic hit reactions remain engine callbacks.
-
-The special-move fibers cover ice, clone, slide, sidestep, spear return/stun,
-teleport and fire. Independent projectile and clone callbacks retain their own
-lifetimes. Ice plays two forward/backward recovery cycles; clone suspends until
-its apex and landing; teleport retains live contact and wall/range gates.
-
-Scorpion and Sub-Zero ground normals now start actor fibers. Jabs keep their
-repeat/recovery graph in C; uppercuts retain contact and loop count across phase
-rebindings. Their MoveSequences supply sample timing and sparse contact events.
-HP repeats and the other ground attacks keep live input/contact decisions inside
-the fiber. Existing original kick and 27 Scorpion branch fixtures still apply.
+Paired victims keep their own fall/getup lifetimes. Weapon objects fly and
+settle independently, and shared locomotion and generic hit reactions remain
+engine callbacks.
 
 ## Sub-Zero source-to-code ledger
 
@@ -661,7 +618,7 @@ and victim functions own VM playback, sound, motion instructions and branches.
 Shared bindings and primitives are in `game/script.c`; independent air-throw
 release/getup uses `game/mk4_common.c`. See the compiler integration notes for
 source-derived corrections to diagonal clips, draw/air-throw playback and peer
-fiber deadlines. Native behavioral tests cover commands in both slots, contact
+first-row timing. Native behavioral tests cover commands in both slots, contact
 branches, interruption, KO, independent recovery and finisher reset.
 
 
@@ -687,7 +644,7 @@ are removed; both fighters supply generated owner and victim functions to the
 same native pair setup/release/getup helpers. RUN sidestep uses one shared
 native helper across the three completed ports.
 
-Generated playback uses one explicit actor-owned cursor and positive fiber
+Generated playback uses one explicit actor-owned cursor and held-row
 waits. It preserves script control flow and source values without copying the
 retail distinction between last submitted pose and its advanced cursor or its
 continuation-stack scheduling. Consequently the native tests reuse the old
@@ -719,21 +676,15 @@ shared projectile, pair cleanup, delayed motion and weapon helpers serve both
 characters. See [the combined ledger](raiden-sonya-scripts.md) for evidence,
 commands, native adaptations and validation.
 
-### Coroutine-free phase ports
+### Frame-program ports
 
-Sub-Zero's complete profile uses generated mmove phases. Run the same inventory,
-compiler and strict generated-coverage checks described above. `mmove_only` also
-requires every generated root to use the frame backend and rejects coroutine
-calls in the fighter integration file. Do not replace a compiler-supported VM
-body with a handwritten timeline. Keep native contact decisions in callbacks,
-use phase transitions for waits and branches, and attach action cleanup for
-interruption. Paired moves give released victims independent phases.
-
-The shared weapon strike/throw/pickup and sidestep runners also use phases. The
-foreign sword paths were migrated so Sub-Zero's existing cross-pickup behavior
-remains available. Other fighters' scripts and their victim continuations can
-still use the existing fiber scheduler; this migration does not remove that
-scheduler from the engine.
+Every profile generates its roots as frame programs; the compiler has no other
+backend. Run the inventory, compiler and strict generated-coverage checks
+described above. Do not replace a compiler-supported VM body with a handwritten
+timeline. Keep native contact decisions in callbacks, use phase transitions for
+waits and branches, and attach action cleanup for interruption. Paired moves
+give released victims independent phases. The shared weapon strike/throw/pickup
+and sidestep runners use phases too, including the foreign sword paths.
 
 ## Native action frames
 
@@ -745,18 +696,16 @@ branch or scene phase; callbacks must not compare elapsed actor/scene clocks or
 count down scratch fields.
 
 Use the helpers in `game/native.h` for bounded playback, contacts, blends,
-repetitions and physical holds. A returning native binding can await a frame
-program while retaining its generated VM continuation. Terminal native tails
-hand off cleanup to the frame runner. Independent motion and battle-event rows
+repetitions and physical holds. Native tails install their rows directly and
+keep the action cleanup; a wait is a held row with a continuation. Independent motion and battle-event rows
 support concurrent actor/scene work. Landing and ownership guards inspect live
 state on held frames. Keep input charge/cooldown rules and independent world
 object lifetimes in their owning systems.
 
-Supported VM bodies remain compiler-owned. A reviewed `export_frames` entry
-context emits a reusable generated phase; native fan coordinators compose that
-phase into their complete repetition schedule. Regenerate with `make scripts`.
-`make native-frames-check` rejects native coroutine waits and actor/scene clock
-branches, and runs as part of `make check`.
+Supported VM bodies remain compiler-owned. Native fan coordinators compose a
+generated root's phase into their complete repetition schedule. Regenerate with
+`make scripts`. `make native-frames-check` rejects actor/scene clock branches and
+runs as part of `make check`.
 
 ## Character folders
 

@@ -4,8 +4,8 @@
 ordinary C11 fighter functions. It reads the pinned EXE, specializes character
 selectors, preserves explicit branch/fallthrough targets, and emits exact contact
 records and source-word comments. It never executes retail code. Generated C
-calls the existing fighter fibers, combat, audio and physics APIs. There is no
-runtime bytecode interpreter or native-address dispatch.
+runs as actor-owned frame programs over the existing combat, audio and physics
+APIs. There is no runtime bytecode interpreter or native-address dispatch.
 
 ## Commands
 
@@ -145,8 +145,8 @@ sample, and a target request already passed in that direction does not rewind.
 The controller return has one actor-tick handoff; tagged return uses the
 profile's declared continuation. These preserve the portable engine's tested
 behavior, not exact retail scheduler ordering or pose interpolation. Actor-owned
-`playback_move` storage survives suspension and cannot dangle when a fiber is
-cancelled. Native adapters retain responsibility for physics/object lifetimes.
+`playback_move` storage survives phase changes and cannot dangle when a frame
+program is cancelled. Native adapters retain responsibility for physics/object lifetimes.
 
 ## Liu Kang proof and validation
 
@@ -167,7 +167,7 @@ portable gameplay adaptation, not exact retail scheduler/pose identity.
 boundaries, definite initialization, wait-free cycles, selector specialization,
 optional descriptor prefixes, inherited-entry contracts, native script links,
 proven cursor progress, deterministic generation, atomic validation
-failures, real C11 compilation and execution of both emitted conditional paths.
+failures and real C11 compilation.
 Coverage mutation tests catch dropped release tables, changed CPU targets,
 missing implementation references and wrong reaction adapters.
 
@@ -177,8 +177,8 @@ fireball release timing, independent projectile interruption, crouch/block/armed
 reactions, air contact/follow-ups and landing, paired interruption/KO, weapon repeats,
 finisher completion/reset and allocation failure. The additional throw voice uses
 the existing audio loader with the native roster remap, rather than aliasing the
-unrelated indexed sound bank. Shared scheduling is covered once
-by the existing fiber suite. `make check` includes regeneration, strict generated-only
+unrelated indexed sound bank. Shared frame scheduling is covered once
+by `tests/test_frames.c`. `make check` includes regeneration, strict generated-only
 coverage, compiler tests and existing game/asset/archive regressions.
 
 ## Sub-Zero integration
@@ -186,7 +186,7 @@ coverage, compiler tests and existing game/asset/archive regressions.
 Sub-Zero generates all 63 reviewed roots, including the native-entered spine
 continuations, fan continuations, the victory selector reached by `4712e0`, and both shared
 air-weapon selectors.
-Its owner and victim fibers call generated code independently; native adapters
+Its owner and victim frame programs run generated code independently; native adapters
 retain contact runners, pair alignment, object allocation, blends and camera
 operations. The former VM timing/finisher phase tables are removed.
 
@@ -198,11 +198,11 @@ Static selection also corrects Sub-Zero's diagonal air clips to 56 and 59 and
 uses their own contact records. Generated draw includes the script's final wait;
 air throw holds sample 29 after its counted advance, before forward playback.
 
-A newly started peer fiber starts its wait deadline on the current simulation
-tick. It cannot consume that wait again when its player slot is pumped later
-in the same tick. Shared fiber tests cover both actor orders. Result-screen
-presentation may continue an existing generated finisher pose loop; reset retires
-that actor stack through the normal fiber lifetime API.
+A newly started peer program runs its setup immediately and its first row on its
+next actor tick, so it cannot consume a row twice when its player slot is pumped
+later in the same tick. Shared frame tests cover both actor orders. Result-screen
+presentation may continue an existing generated finisher pose loop; reset cancels
+that frame program.
 
 Portable scene adaptations remain explicit: context-camera requests use shared
 framing, ice breath uses the bounded effect pool, native blends use scene helpers,
@@ -254,10 +254,10 @@ weapon tails and scene task lifetimes. Direction press commands match against
 prior input history before recording their own trigger (Raiden Down,Up).
 No alternate script scheduler or retail execution harness is introduced.
 
-## Incremental mmove backend
+## Frame-program backend
 
-A profile's `mmove_scripts` is a subset of `generated_scripts`. Those roots
-use the same decoder, graph/cursor validation, typed bindings, inventory and
+Every root in a profile's `generated_scripts` lowers to frame rows. Roots use the
+same decoder, graph/cursor validation, typed bindings, inventory and
 canonical-output checks, but emit const frame rows and nonblocking boundary
 callbacks. Statically selected roster branches and counted loops are expanded
 offline. Playback preserves source sample skips, reverse playback and waits through
@@ -268,16 +268,16 @@ frames. Optional move-owned pose maps handle skipped, reversed and repeated
 source samples; plain sample changes need no callback. No frame has a duration. Runtime branches not yet supported by this backend
 fail generation. Native branches may select another generated phase explicitly.
 
-Bindings used by this backend must opt in with `mmove=True` after their native
-implementation has been reviewed as nonblocking. Yielding bindings are rejected,
-not replaced with no-ops or fibers. The strict audit reports failed frame
-lowering and still requires regeneration and all reviewed roots. Existing roots
-continue to use fibers until individually migrated.
+Bindings must opt in with `mmove=True` after their native implementation has
+been reviewed as nonblocking. Yielding bindings are rejected, not replaced with
+no-ops. The strict audit reports failed frame lowering and still requires
+regeneration and all reviewed roots. There is no coroutine backend to fall back
+on: a missing lowering fails generation and coverage.
 
 The first converted root is Sub-Zero sweep `4e6798`: roster slot 4 selects
 `4e6e68`, clip 63, doubled startup through sample 10, A[175], then sample 22.
 Native `46f080/46f130` retains the established two contact visits and remaining
-clip recovery in native frame phases. Its command entry allocates no fiber.
+clip recovery in native frame phases.
 
 Sub-Zero slide roots `4e84d8`, `4e84f8`, and `4e8530` now use the mmove
 backend. The native contact phase checks each simulation tick from 9 through
@@ -294,11 +294,9 @@ called. Release at tick 25 starts the victim's independent frame phase; its
 first frame cannot execute during its installation tick, in either player
 slot. Native getup 328 is a separate nonblocking phase. Owner recovery ends at
 49; victim tumble/hold/getup ends at 123, with dead victims staying down.
-The frame-program entry rejects an active fiber rather than silently nesting
-backends. LP cleanup releases captured peers before damage and leaves released
+LP cleanup releases captured peers before damage and leaves released
 victims independent; victim cancellation removes its landing callback. Finish
-window detection includes active mmove phases. LK throw and other unconverted
-moves still use the existing fiber implementation.
+window detection includes active mmove phases.
 
 Ground-attack phase branches now lower runtime predicates and conditional waits
 to named C callbacks and bounded hold tables. The compiler specializes successors
@@ -308,11 +306,9 @@ bytecode dispatcher or suspended stack is introduced. Native Sub-Zero ground
 contact/recovery loops use held-frame action callbacks, including HP repeats and
 uppercut hit/block/miss recovery.
 
-Sub-Zero is now an `mmove_only` profile: all 63 catalogued roots must be listed
-in `mmove_scripts`, and the strict audit rejects coroutine calls in its native
-integration source. Removing a root from phase generation fails both generation
-and coverage. The normal EXE inventory, typed binding review and canonical
-generated-output checks still apply. Other fighters can migrate incrementally.
+All eighteen fighters generate every catalogued root this way. The normal EXE
+inventory, typed binding review and canonical generated-output checks apply to
+each profile.
 
 Repeating scene streams compile into finite, named phase cycles. Parking uses
 a callback that holds its frame; landing releases a held frame when grounded.
@@ -367,7 +363,7 @@ release replaces only the captured peer, while the owner finishes its generated
 stream. Native 45b1f0's historical current-context name is misleading here:
 480f80 reaches 48f880/48fd00, which installs the selected reaction through the
 task's peer fields +38/+3c. Applying it to the executing owner cancels that
-owner mid-script. Neither LP branch allocates a coroutine.
+owner mid-script.
 
 The shared LK throw return at `42be10` consumes `4de358` as motion data
 (`0x3333, 0`) through `490ab0`; it does not enter a VM at that address.

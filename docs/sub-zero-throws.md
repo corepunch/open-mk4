@@ -2,7 +2,8 @@
 
 These ports use the supplied EXE's roster-selected scripts and native tails.
 They replace the former shared Scorpion throw implementation. Both actors run
-fibers; the owner submits paired poses, and released victims own their recovery.
+frame programs; the owner submits paired poses, and released victims own their
+recovery.
 Simulation updates are deterministic on the existing single P1/P2 thread.
 
 ## LP: clips 76 / 153

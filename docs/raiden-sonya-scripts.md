@@ -24,7 +24,7 @@ bytecode interpreter or native-address dispatcher is added.
 | --- | --- | --- | --- |
 | Normals, crouch and combo branches | 4e5ca0[1], 4e5d90[1], 4e6020[1], 4e6798[1], 4e6800[1] | Same selectors at slot 2 | Generated branches; typed native contact/recovery adapters and stance tables |
 | Air attacks | 4e6658, 4e6710, 4e61f8[1], 4e6500[1], 4e63d8[1] | Same selectors at slot 2 | Existing body/landing helpers, generated playback and native active visits |
-| LP throw | 4de798[1] -> 42cc00 -> 4de6b8 or 4de640; 4de668, 4e9bd0/4e9b40 | 4de798[2] -> 4de690; 4e9b88 | Shared pair setup/cleanup, independent victim fibers |
+| LP throw | 4de798[1] -> 42cc00 -> 4de6b8 or 4de640; 4de668, 4e9bd0/4e9b40 | 4de798[2] -> 4de690; 4e9b88 | Shared pair setup/cleanup, independent victim frame programs |
 | LK throw | 4ddfb8[1] -> 42bce0 -> 4de218; 4e99c0 | 4ddfb8[2] -> 42bed0 -> 4de360 | Roster-specific owner/victim programs |
 | Air throw | Shared 4e5e28/50, 4e9910 | 46ae60 -> 4e5ed0; 46aed0 release; 4e98a0 | Shared pair ownership; Sonya-specific release/getup |
 | Projectile | 49bdd0 -> 4ed5f0, independent 49be10 | 49b9a0 -> 4ed4c0, independent 49ba50 | Shared object pool/contact helper, generated owner and victim programs |
@@ -99,9 +99,9 @@ least two destination samples. Other native blends reuse the same helper.
 
 Typed shared bindings cover reverse paired playback, motion scheduling,
 projectile ownership, weapon contact tails, landing, disarm, impact and bounded
-scene task lifetimes. Existing actor fibers and actor-owned clip bindings retain
-state and storage across suspension. No new scheduler or retail execution
-harness is needed. Pure script-enter thunks become static generated CFG links.
+scene task lifetimes. Actor-owned frame programs and clip bindings retain state
+and storage between rows; waits are held rows with continuations. No retail
+execution harness is needed. Pure script-enter thunks become static generated CFG links.
 
 ## Portable adaptations and limits
 
@@ -124,7 +124,7 @@ slots: roster-selected normals, hit/block damage, missed recovery, LP/LK throw
 release, interruption and KO, projectile survival after interruption, teleport,
 torpedo, Sonya's special entries and air throw, weapon draw/back attacks,
 all eight character/arena scene choices and reset cleanup. Shared scheduler,
-contact and scene behavior also reuse the existing fiber/battle/fighter tests.
+contact and scene behavior also reuse the existing frame/battle/fighter tests.
 `tests/test_script_codegen.py` covers opcode-71 source initialization and
 sample-one bounds alongside deterministic graph and C11 compilation checks.
 

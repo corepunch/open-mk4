@@ -10,8 +10,8 @@ previous five and five newly catalogued throw/fan continuations (`4de468`,
 `4e0138/148/158/1a0`), the audit passes **57/57 generated, zero legacy**, including the two shared air-weapon selector programs.
 `make scripts` regenerates `game/liu_kang/generated/scripts.inc` from the pinned EXE;
 `game/liu_kang/port.json` supplies reviewed native entry contexts and returns.
-Normal command/CPU entries call these generated fibers, and script-only native
-thunks become direct C jumps. Shared fibers, contacts, clip binding, pair
+Normal command/CPU entries call these generated frame programs, and script-only
+native thunks become static phase links. Shared frame rows, contacts, clip binding, pair
 playback, landing, weapon motion, audio and scene pools supply the engine work.
 Native contact/recovery portions and native-only programs remain procedural C.
 
@@ -181,7 +181,7 @@ The fan owner runs generated `4e0138` from the existing bounded native scene
 counter, then generated release/victory scripts. Its victim runs generated
 `4e0188` until the native arena continuation replaces it with `4e01a0`.
 Fireball-fatality `4e0020` parks as authored; the independent explosion's
-160-tick native completion retires the parked fibers on the simulation stack.
+160-tick native completion cancels the parked frame programs.
 Object-pool exhaustion uses the same completion path. These routines reuse the
 portable scene pools/framing; retail camera-task interpolation and decorative
 scheduling remain the documented presentation adaptations.

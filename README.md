@@ -143,7 +143,7 @@ sidestep, both character fatalities and both stage fatalities. Commands, source
 addresses, verification and presentation limits are recorded in
 [the character port guide](docs/character-script-port.md).
 For another fighter, follow its [research-to-commit workflow](docs/character-script-port.md#workflow):
-bounded script/native queries, evidence for constants, sequential C fibers,
+bounded script/native queries, evidence for constants, generated frame programs,
 paired recovery, command wiring and focused regression tests.
 
 Combat runs at a fixed 60 ticks per second. It implements walking/running,
