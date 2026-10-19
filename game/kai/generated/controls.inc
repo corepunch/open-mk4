@@ -6,6 +6,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 26, 0x10, kai_can_ground_skull, kai_ground_skull},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, 0x0, weapon_can_draw, kai_draw_weapon},
   {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x40, mk4_can_fan_finish, kai_fan_fatality},
+  {BUTTON_BLOCK, {TOKEN_UP, TOKEN_UP, TOKEN_UP, TOKEN_DOWN}, 4, 50, 0x40, kai_can_second_fatality, kai_fatality_2},
   {BUTTON_HIGH_KICK, {TOKEN_UP, TOKEN_FORWARD, TOKEN_UP, TOKEN_BACK}, 4, 60, 0x40, kai_can_first_fatality, kai_fatality_1},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_spike_finish, kai_spike_fatality},
   {BUTTON_LOW_KICK, {0}, 0, 0, 0x0, kai_can_handstand, kai_input_47c520},
@@ -21,8 +22,9 @@ static const CpuMoves retail_cpu_moves = {.enter =
                                                   [CPU_SPECIAL_1] = kai_ground_skull,
                                                   [CPU_PROJECTILE] = kai_rising_skull,
                                                   [CPU_FINISH_1] = kai_fatality_1,
+                                                  [CPU_FINISH_2] = kai_fatality_2,
                                                   [CPU_FINISH_FAN] = kai_fan_fatality,
                                                   [CPU_FINISH_SPIKE] = kai_spike_fatality,
                                               },
     .finish_min = {0x0, 0x0},
-    .finish_distance = {0xcccc, 0x0}};
+    .finish_distance = {0xcccc, 0x1cccc}};

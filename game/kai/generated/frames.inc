@@ -32,6 +32,13 @@ static const int kai_rear_samples[26] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 
 const mframe_t kai_rear_frames[26] = {{0}};
 const mmove_t kai_rear_mmove = {.firstframe = 0, .lastframe = 25, .frame = kai_rear_frames, .samples = kai_rear_samples};
 
+static const int kai_victim_pose_samples[112] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
+    55};
+const mframe_t kai_victim_pose_frames[112] = {{0}};
+const mmove_t kai_victim_pose_mmove = {.firstframe = 0, .lastframe = 111, .frame = kai_victim_pose_frames, .samples = kai_victim_pose_samples};
+
 static const int kai_rising_cast_samples[14] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6};
 const mframe_t kai_rising_cast_frames[14] = {{0}};
 const mmove_t kai_rising_cast_mmove = {.firstframe = 0, .lastframe = 13, .frame = kai_rising_cast_frames, .samples = kai_rising_cast_samples};
@@ -109,6 +116,12 @@ static const int kai_clip_127_samples[80] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5,
 const mframe_t kai_clip_127_frames[80] = {{0}};
 const mmove_t kai_clip_127_mmove = {.firstframe = 0, .lastframe = 79, .frame = kai_clip_127_frames, .samples = kai_clip_127_samples};
 
+static const int kai_clip_130_samples[80] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
+    17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35, 36,
+    36, 37, 37, 38, 38, 39, 39};
+const mframe_t kai_clip_130_frames[80] = {{0}};
+const mmove_t kai_clip_130_mmove = {.firstframe = 0, .lastframe = 79, .frame = kai_clip_130_frames, .samples = kai_clip_130_samples};
+
 static const int kai_knockdown_samples[160] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
     36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
@@ -156,6 +169,15 @@ static const int kai_s_knockdown_samples[40] = {
     0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19};
 const mframe_t kai_s_knockdown_frames[40] = {{0}};
 const mmove_t kai_s_knockdown_mmove = {.firstframe = 0, .lastframe = 39, .frame = kai_s_knockdown_frames, .samples = kai_s_knockdown_samples};
+
+static const int kai_clip_206_samples[200] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
+    55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65, 66, 66, 67, 67, 68, 68, 69, 69, 70, 70, 71, 71, 72, 72, 73, 73, 74, 74,
+    75, 75, 76, 76, 77, 77, 78, 78, 79, 79, 80, 80, 81, 81, 82, 82, 83, 83, 84, 84, 85, 85, 86, 86, 87, 87, 88, 88, 89, 89, 90, 90, 91, 91, 92, 92, 93, 93, 94,
+    94, 95, 95, 96, 96, 97, 97, 98, 98, 99, 99};
+const mframe_t kai_clip_206_frames[200] = {{0}};
+const mmove_t kai_clip_206_mmove = {.firstframe = 0, .lastframe = 199, .frame = kai_clip_206_frames, .samples = kai_clip_206_samples};
 
 static const int kai_back_move_samples[120] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
@@ -363,6 +385,23 @@ static const int kai_clip_445_samples[62] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5,
     17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30};
 const mframe_t kai_clip_445_frames[62] = {{0}};
 const mmove_t kai_clip_445_mmove = {.firstframe = 0, .lastframe = 61, .frame = kai_clip_445_frames, .samples = kai_clip_445_samples};
+
+static const int kai_clip_486_samples[110] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54};
+const mframe_t kai_clip_486_frames[110] = {{0}};
+const mmove_t kai_clip_486_mmove = {.firstframe = 0, .lastframe = 109, .frame = kai_clip_486_frames, .samples = kai_clip_486_samples};
+
+static const int kai_clip_487_samples[40] = {
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19};
+const mframe_t kai_clip_487_frames[40] = {{0}};
+const mmove_t kai_clip_487_mmove = {.firstframe = 0, .lastframe = 39, .frame = kai_clip_487_frames, .samples = kai_clip_487_samples};
+
+static const int kai_owner_pose_samples[80] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39};
+const mframe_t kai_owner_pose_frames[80] = {{0}};
+const mmove_t kai_owner_pose_mmove = {.firstframe = 0, .lastframe = 79, .frame = kai_owner_pose_frames, .samples = kai_owner_pose_samples};
 
 static const int kai_lunge_kick_samples[120] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,

@@ -28,7 +28,7 @@ enum {
 };
 
 enum {
-  KAI_EVENT_FATALITY_1 = 21,
+  KAI_EVENT_FATALITY_1 = 23,
   KAI_EVENT_FATALITY_2
 };
 
@@ -200,4 +200,15 @@ void kai_entry_retail_script_004e14b8(Fighter *fighter);
 void kai_entry_retail_script_004e14c8(Fighter *fighter);
 void kai_entry_retail_script_004e14d8(Fighter *fighter);
 void kai_entry_retail_script_004e14e8(Fighter *fighter);
+bool kai_can_second_fatality(const Fighter *fighter);
+void kai_fatality_2(Fighter *fighter);
+void kai_second_event(Fighter *fighter, int selector);
+void kai_second_child_walk(Fighter *fighter);
+void kai_second_hover(Fighter *fighter, int task_type);
+void kai_second_skull(Fighter *fighter, int task_type);
+void kai_second_victim_fall(Fighter *fighter);
+void kai_second_victim(Fighter *fighter);
+void kai_entry_retail_script_004dff88(Fighter *fighter);
+void kai_entry_retail_script_004ea240(Fighter *fighter);
+void kai_entry_retail_script_004e5be0(Fighter *fighter);
 #endif

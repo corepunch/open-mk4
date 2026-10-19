@@ -358,3 +358,15 @@ void kai_entry_retail_script_004e14d8(Fighter *fighter) {
 void kai_entry_retail_script_004e14e8(Fighter *fighter) {
   retail_script_004e14e8(fighter);
 }
+
+void kai_entry_retail_script_004dff88(Fighter *fighter) {
+  retail_script_004dff88(fighter);
+}
+
+void kai_entry_retail_script_004ea240(Fighter *fighter) {
+  retail_script_004ea240(fighter);
+}
+
+void kai_entry_retail_script_004e5be0(Fighter *fighter) {
+  retail_script_004e5be0(fighter);
+}

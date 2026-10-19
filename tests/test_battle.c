@@ -39,6 +39,8 @@ bool kai_can_rising_skull(const Fighter *fighter);
 bool kai_can_ground_skull(const Fighter *fighter);
 void kai_fatality_1(Fighter *fighter);
 bool kai_can_first_fatality(const Fighter *fighter);
+void kai_fatality_2(Fighter *fighter);
+bool kai_can_second_fatality(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
@@ -3128,6 +3130,11 @@ static void kai_enter_command(int slot, FighterFn entry, unsigned held) {
     input[slot].held = held;
     advance_ticks(2, input);
   }
+  if (held & BUTTON_BIT(command->button)) {
+    /* 45c560 needs the switch up for two samples before a new press. */
+    input[slot].held = held & ~BUTTON_BIT(command->button);
+    advance_ticks(2, input);
+  }
   input[slot].held = held | BUTTON_BIT(command->button);
   battle_step(input);
   advance_ticks(2, NULL);
@@ -3185,6 +3192,47 @@ static void check_kai_first_fatality(void) {
   }
 }
 
+static void check_kai_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int reset = 0; reset < 2; ++reset) {
+      kai_finish_window(slot, 4, 0xc000);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      check(!kai_can_second_fatality(owner), "Kai second gate must reject a pair closer than 1.8 units");
+      owner->body.pos[AXIS_X] = slot ? 0x1a000 : -0x1a000;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(!kai_can_second_fatality(owner), "Kai second gate must reject a pair beyond three units");
+      owner->body.pos[AXIS_X] = slot ? 0x10000 : -0x10000;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(kai_can_second_fatality(owner) && !kai_can_second_fatality(victim), "Kai second gate must accept 1.8..3 units for the winner");
+      kai_enter_command(slot, kai_fatality_2, BUTTON_BIT(BUTTON_BLOCK));
+      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 493 && !fighter_fiber_active(owner),
+          "Kai second command must start the levitation scene without a fiber");
+      check(owner->body.pos[AXIS_X] == 0 && victim->body.pos[AXIS_X] == (slot ? -5 : 5) * Q16_ONE, "Kai second scene must use its fixed origin layout");
+      int timer = g_battle.time_ticks;
+      bool hovered = false, skull = false, struck = false;
+      for (int tick = 0; tick < (reset ? 220 : 600) && g_battle.phase == PHASE_FATALITY; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Kai second fatality must stay on frame phases");
+        hovered |= owner->body.pos[AXIS_Y] < owner->body.ground - 0x8000;
+        for (int i = 0; i < MAX_PROJECTILES; ++i) {
+          skull |= g_battle.projectiles[i].kind == PROJECTILE_FIREBALL;
+        }
+        struck |= victim->reaction == 178 && fighter_move(victim)->clip == 130;
+      }
+      check(hovered && skull && struck, "Kai second fatality must levitate, throw its skull object and install reaction 178");
+      if (!reset) {
+        check(g_battle.phase == PHASE_MATCH_OVER && fighter_move(victim)->clip == 206 && fighter_sample(victim) == 99 && fighter_move(owner)->clip == 487,
+            "Kai second fatality must drop the victim through clip 206 before the result");
+        check(owner->wins == 2 && victim->health == 0 && g_battle.time_ticks == timer, "Kai second fatality must preserve the decided result and frozen clock");
+      }
+      battle_reset_match();
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        check(g_battle.projectiles[i].kind == 0, "Kai second fatality reset must retire its hover and skull tasks");
+      }
+    }
+  }
+}
+
 static void check_partial_cpu_stage_dispatch(void) {
   const int rosters[] = {7, 8, 9, 12, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -3222,7 +3270,7 @@ static void check_partial_cpu_stage_dispatch(void) {
 }
 
 static void check_generated_cpu_finish_dispatch(void) {
-  const int fighters[] = {14, 5, 6};
+  const int fighters[] = {14, 5, 6, 11};
   for (size_t index = 0; index < sizeof fighters / sizeof fighters[0]; ++index) {
     int selected = fighters[index];
     for (int slot = 0; slot < 2; ++slot) {
@@ -3249,7 +3297,7 @@ static void check_generated_cpu_finish_dispatch(void) {
           for (int tick = 0; tick < 240 && g_battle.phase == PHASE_FINISH; ++tick) {
             advance_ticks(1, NULL);
           }
-          int expected = selected == 14 ? 17 + finish : selected == 6 ? 21 + finish : FINISH_FUJIN_1 + finish;
+          int expected = selected == 14 ? 17 + finish : selected == 6 ? 21 + finish : selected == 11 ? 23 + finish : FINISH_FUJIN_1 + finish;
           if (g_battle.phase != PHASE_FATALITY || g_battle.finisher != expected) {
             fprintf(stderr, "CPU finish roster%d slot%d finish%d far%d phase%d id%d distance%f\n", selected, slot, finish, far, g_battle.phase,
                 g_battle.finisher, fighter_distance(owner));
@@ -4414,6 +4462,7 @@ int main(void) {
   check_kai_df_specials();
   check_kai_skulls();
   check_kai_first_fatality();
+  check_kai_second_fatality();
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_roster_high_punch_frames();

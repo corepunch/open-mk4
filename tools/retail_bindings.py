@@ -759,6 +759,21 @@ for _address, _symbol, _evidence in (
         (0x49cb60, 'kai_first_task_end', '49cb60 retires the first-fatality victim or torso task, leaving its final pose')):
     CHARACTER_BINDINGS[11][_address] = Binding(_symbol, 'game/kai/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True, evidence=_evidence)
 
+# Kai's second fatality: 43bfe0 owner levitation, skull task and reaction-178 victim continuations.
+_K2 = 'game/kai/moves/fatality_second.c'
+CHARACTER_BINDINGS[11][0x45ac30] = Binding('kai_second_event', _K2, ('handler',), ('fighter', 'arg_u8'), inline_values=(45,), mmove=True,
+                                           evidence='45ac30 ->4315b0 queues scene camera event45 at the start of4dff88; portable finisher retains scene ownership')
+CHARACTER_BINDINGS[11][0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=BINDINGS[0x45abf0].inline_values + (46, 47),
+                                           evidence='Kai second fatality enqueues camera contexts46 (4dffa4) and47 (4ea264) through45abf0; portable camera follows the live actors')
+CHARACTER_BINDINGS[11][0x46a280] = Binding('kai_second_hover', _K2, ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(38,), mmove=True,
+                                           evidence='46a280/46a340/46a380 type38 task: owner gravity -28f, ten +41 steps, then alternating 83/-83 at velocity reversals with ten-visit holds')
+CHARACTER_BINDINGS[11][0x43c140] = Binding('kai_second_skull', _K2, ('spawn',), ('fighter', 'task_type'), flow='independent', task_types=(38,), mmove=True,
+                                           evidence='43c140 type38 skull from4dffe8 flies .3 toward the peer, Y .08; within1.3 units on X it installs reaction178 and retires15 visits later')
+CHARACTER_BINDINGS[11][0x406ba0] = Binding('kai_second_child_walk', _K2, ('call',), mmove=True,
+                                           evidence='406ba0 walks the node +10 child list with selector3; finisher actors carry no child nodes at this point')
+CHARACTER_BINDINGS[11][0x46a500] = Binding('kai_second_victim_fall', _K2, ('tail',), flow='terminal', mmove=True,
+                                           evidence='46a500 calls406ba0 then enters4e5be0 clip206 and parks; the scene ends after one 60-visit park interval')
+
 # Kai's skull specials: native task spawns and owner returns on frame phases.
 CHARACTER_BINDINGS[11][0x499450] = Binding('kai_rising_skull_spawn', 'game/kai/moves/skull.c', ('tail',), flow='terminal', mmove=True,
                                            evidence='499450 spawns task499490 type48 (4ed390 rig, rise to Y-4, drop over the peer with C[8]) and enters4ed348')

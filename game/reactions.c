@@ -14,6 +14,7 @@ void goro_punch_victim(Fighter *fighter);
 void goro_kick_victim(Fighter *fighter);
 void goro_stomp_victim(Fighter *fighter);
 void goro_uppercut_victim(Fighter *fighter);
+void kai_second_victim(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
 
@@ -932,6 +933,7 @@ static const FighterFn reactions[256] = {
   [190] = goro_kick_victim,
   [191] = goro_stomp_victim,
   [192] = goro_uppercut_victim,
+  [178] = kai_second_victim,
 };
 // clang-format on
 

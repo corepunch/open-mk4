@@ -2535,6 +2535,209 @@
           "0x49cb60"
         ]
       }
+    ],
+    "0x4dff88": [
+      {
+        "pc": "0x4dff88",
+        "words": [
+          "0x11000000",
+          "0x13f126"
+        ]
+      },
+      {
+        "pc": "0x4dff90",
+        "words": [
+          "0x5600002d"
+        ]
+      },
+      {
+        "pc": "0x4dff94",
+        "words": [
+          "0x34000028"
+        ]
+      },
+      {
+        "pc": "0x4dff98",
+        "words": [
+          "0x40000000",
+          "0x26",
+          "0x46a280"
+        ]
+      },
+      {
+        "pc": "0x4dffa4",
+        "words": [
+          "0x4f00002e"
+        ]
+      },
+      {
+        "pc": "0x4dffa8",
+        "words": [
+          "0x3400003c"
+        ]
+      },
+      {
+        "pc": "0x4dffac",
+        "words": [
+          "0x2500003a"
+        ]
+      },
+      {
+        "pc": "0x4dffb0",
+        "words": [
+          "0x16000000"
+        ]
+      },
+      {
+        "pc": "0x4dffb4",
+        "words": [
+          "0x3400001e"
+        ]
+      },
+      {
+        "pc": "0x4dffb8",
+        "words": [
+          "0x35000000",
+          "0x406ba0"
+        ]
+      },
+      {
+        "pc": "0x4dffc0",
+        "words": [
+          "0x48000200",
+          "0x13f111"
+        ]
+      },
+      {
+        "pc": "0x4dffc8",
+        "words": [
+          "0x27000033"
+        ]
+      },
+      {
+        "pc": "0x4dffcc",
+        "words": [
+          "0x40000000",
+          "0x26",
+          "0x43c140"
+        ]
+      },
+      {
+        "pc": "0x4dffd8",
+        "words": [
+          "0x11000000",
+          "0x13f114"
+        ]
+      },
+      {
+        "pc": "0x4dffe0",
+        "words": [
+          "0x3e000000"
+        ]
+      }
+    ],
+    "0x4ea240": [
+      {
+        "pc": "0x4ea240",
+        "words": [
+          "0x62000000"
+        ]
+      },
+      {
+        "pc": "0x4ea244",
+        "words": [
+          "0x62000008"
+        ]
+      },
+      {
+        "pc": "0x4ea248",
+        "words": [
+          "0x27000069"
+        ]
+      },
+      {
+        "pc": "0x4ea24c",
+        "words": [
+          "0x2a000006"
+        ]
+      },
+      {
+        "pc": "0x4ea250",
+        "words": [
+          "0x2b000008"
+        ]
+      },
+      {
+        "pc": "0x4ea254",
+        "words": [
+          "0x27000034"
+        ]
+      },
+      {
+        "pc": "0x4ea258",
+        "words": [
+          "0x4700020a",
+          "0x13ece5"
+        ]
+      },
+      {
+        "pc": "0x4ea260",
+        "words": [
+          "0x69000000"
+        ]
+      },
+      {
+        "pc": "0x4ea264",
+        "words": [
+          "0x4f00002f"
+        ]
+      },
+      {
+        "pc": "0x4ea268",
+        "words": [
+          "0x32000000",
+          "0x46a500"
+        ]
+      }
+    ],
+    "0x4e5be0": [
+      {
+        "pc": "0x4e5be0",
+        "words": [
+          "0x47000214",
+          "0x13edc9"
+        ]
+      },
+      {
+        "pc": "0x4e5be8",
+        "words": [
+          "0x28000000"
+        ]
+      },
+      {
+        "pc": "0x4e5bec",
+        "words": [
+          "0x500005a"
+        ]
+      },
+      {
+        "pc": "0x4e5bf0",
+        "words": [
+          "0x28000000"
+        ]
+      },
+      {
+        "pc": "0x4e5bf4",
+        "words": [
+          "0x3000000"
+        ]
+      },
+      {
+        "pc": "0x4e5bf8",
+        "words": [
+          "0x3e000000"
+        ]
+      }
     ]
   },
   "entry_contexts": {
@@ -2716,7 +2919,7 @@
   "character": "kai",
   "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
-  "inventory_sha256": "f0c504a193d9868bf601114f0d68705708da7986960b8c9eee84a3b69b913697",
+  "inventory_sha256": "e0e19c3f62ee129bfb5cfeea513ad30520060dc97b63a6002ce5ab4e48ae39ce",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/kai/character.c",
@@ -2882,13 +3085,18 @@
       "source": "game/kai/moves/fatality_first.c",
       "symbol": "kai_fatality_1",
       "evidence": "First-fatality roster table4e0498[11] selects44ad70: owner440/445/443, victim task44b0e0 441/444, torso task44b4a0 442 after the44b2c0 waist sever."
+    },
+    "fatality_2": {
+      "source": "game/kai/moves/fatality_second.c",
+      "symbol": "kai_fatality_2",
+      "evidence": "Second-fatality table4dfe90[11] selects43bfe0: owner4dff88 493/486/487 with hover task46a280, skull task43c140 and reaction178 (4814c0/455bf0) victim4ea240 ->46a500 ->4e5be0."
     }
   },
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_block",
-      "evidence": "Kai slot-11 block event route from typed input table 0x4e48d4."
+      "source": "game/kai/moves/fatality_second.c",
+      "symbol": "kai_fatality_2",
+      "evidence": "Second-fatality dispatcher467cd0 ->43bd70 ->4dfe90[11]=43bfe0."
     },
     "0x467ce0": {
       "source": "game/kai/moves/fatality_first.c",
@@ -3241,6 +3449,11 @@
       "source": "game/kai/moves/fatality_first.c",
       "symbol": "kai_fatality_1",
       "evidence": "Typed Kai HK U,F,U,B record4e48e8 (gate45e220) selects first-fatality dispatcher467ce0 ->4e0498[11]=44ad70."
+    },
+    "0x467cd0": {
+      "source": "game/kai/moves/fatality_second.c",
+      "symbol": "kai_fatality_2",
+      "evidence": "Typed Kai BLOCK U,U,U,D record4e48d4 (gate45e530) selects second-fatality dispatcher467cd0 ->4dfe90[11]=43bfe0."
     }
   },
   "command_predicates": {
@@ -3252,7 +3465,8 @@
     "0x45ef50": "weapon_can_draw",
     "0x45eb40": "kai_can_rising_skull",
     "0x45eb10": "kai_can_ground_skull",
-    "0x45e220": "kai_can_first_fatality"
+    "0x45e220": "kai_can_first_fatality",
+    "0x45e530": "kai_can_second_fatality"
   },
   "mmove_scripts": [
     "0x4e5ca0",
@@ -3323,7 +3537,10 @@
     "0x4e14b8",
     "0x4e14c8",
     "0x4e14d8",
-    "0x4e14e8"
+    "0x4e14e8",
+    "0x4dff88",
+    "0x4ea240",
+    "0x4e5be0"
   ],
   "cpu_bindings": {
     "0x499410": {
@@ -3339,6 +3556,7 @@
   },
   "cpu_finish_min": {
     "CPU_FINISH_1": 0,
-    "evidence": "Kai first45e220 uses the45e570 close gate up to1 unit; CPU first target4dfe10[11] is.8 units and the CPU scene entry bypasses the held mask."
+    "evidence": "Kai first45e220 uses the45e570 close gate up to1 unit and second45e530 accepts1.8..3; CPU targets4dfe10/4dfe50[11] are.8 and1.8 units, and the CPU scene entry bypasses both human gates.",
+    "CPU_FINISH_2": 0
   }
 }
