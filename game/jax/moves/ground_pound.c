@@ -9,7 +9,6 @@
  * playing to 38. Phases 3..5 alternate poses 37/38 for ten cycles, 428d10
  * finishes the clip and 46f650 returns to the controller. */
 static const MoveDef s_pound = {.clip = 108, .last = 56, .flags = SF_LOCK | SF_RECORD, .action = 0x101};
-static const MoveDef s_pound_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION};
 
 enum {
   POUND_RAISE = 15,
@@ -28,6 +27,8 @@ static void pound_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 3);
   if (!fighter_airborne(victim)) {
     battle_damage(victim, 0x23d7);
+    /* 4ea4e8[136] -> 4834d0 is roster-generic: the shared reaction table
+     * runs Goro's port of it (disarm, 4ea8f8 voice, victim script 4e95c8). */
     battle_react(victim, 136);
   }
 }
@@ -49,12 +50,4 @@ void jax_ground_pound(Fighter *fighter) {
     native_frame(fighter, frame, pose, NULL);
   }
   native_play(fighter, false);
-}
-
-/* 4ea4e8[136] -> 4834d0: disarm, a random voice from 4ea8f8 and 4e95c8
- * (B[1], speed -0x1999, clip 182 to 38, stop, to 50, controller return). */
-void jax_pound_victim(Fighter *victim) {
-  mk4_script_disarm_self(victim);
-  fighter_start_move(victim, S_HIT, &s_pound_victim);
-  jax_entry_retail_script_004e95c8(victim);
 }

@@ -869,7 +869,6 @@ static const FighterFn reactions[256] = {
   [165] = react_slide_block,
   [157] = jax_dash_victim_hit,
   [168] = jax_dash_victim_throw,
-  [136] = jax_pound_victim,
   [183] = jax_fatality_2_head,
   [125] = jax_slam_victim,
   [162] = cage_shadow_victim,

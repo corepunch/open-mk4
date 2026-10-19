@@ -51,7 +51,6 @@ void jax_fatality_task_end(Fighter *fighter);
 void jax_script_peer_reaction(Fighter *fighter, int reaction);
 void jax_entry_retail_script_004e13f0(Fighter *fighter);
 void jax_ground_pound(Fighter *fighter);
-void jax_entry_retail_script_004e95c8(Fighter *fighter);
 bool jax_can_dash_punch(const Fighter *fighter);
 void jax_dash_punch(Fighter *fighter);
 void jax_dash_punch_contact(Fighter *fighter);

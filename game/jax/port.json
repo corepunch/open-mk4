@@ -284,7 +284,6 @@
     "0x4ea028",
     "0x4e9e38",
     "0x4e89d8",
-    "0x4e95c8",
     "0x4e13f0",
     "0x4de518",
     "0x4de538",
@@ -292,7 +291,7 @@
     "0x4de568"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "fe95b372d58c1a7db524caac60fbc42fab8d1540ecedf2c65395b6c7d179b4ae",
+  "inventory_sha256": "82619a4adc344f621810d1c3870444cd199dfc441503035f1fe23cc58c27141e",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -639,10 +638,10 @@
       "evidence": "D[22] blocked reaction 165; 4ea4e8[165] -> 486d00 shared block recovery."
     },
     "136": {
-      "source": "game/jax/moves/ground_pound.c",
-      "symbol": "jax_pound_victim",
+      "source": "game/goro/moves/victims.c",
+      "symbol": "goro_quake_victim",
       "evidence": "468f00 480f80[0x88]; 4ea4e8[136] -> 4834d0: disarm, 48a320 voice list 4ea8f8, script 4e95c8 clip 182.",
-      "adaptation": "Registered directly in shared reactions[136]; the Jax-owned generated victim program is valid for either humanoid player slot."
+      "adaptation": "Roster-generic victim handler; the shared reactions[136] entry runs the Goro-owned port, which Goro's quake stomp also dispatches."
     },
     "125": {
       "source": "game/jax/moves/throws.c",
@@ -825,7 +824,6 @@
     "0x4ea028",
     "0x4e9e38",
     "0x4e89d8",
-    "0x4e95c8",
     "0x4e1390",
     "0x4e13a0",
     "0x4e13b0",
