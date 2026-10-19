@@ -123,12 +123,10 @@
       "sample": 18
     },
     "0x4ed268": {
-      "return_to": "caller",
-      "evidence": "Noob low shadow VM root begins by binding clip 26 with 14 stored samples."
+      "evidence": "Noob low shadow VM root begins by binding clip 26 with 14 stored samples and returns to the controller."
     },
     "0x4ed2c0": {
-      "return_to": "caller",
-      "evidence": "Noob second shadow VM root binds clip 24 with 10 stored samples through its typed playback prefix."
+      "evidence": "Noob second shadow VM root binds clip 24 with 10 stored samples and leaves through the 498eb0 owner fall."
     },
     "0x4e61e0": {
       "clip": 262,
@@ -791,7 +789,9 @@
     "0x4e82e0",
     "0x4e8310",
     "0x4e8818",
-    "0x4ed038"
+    "0x4ed038",
+    "0x4ed268",
+    "0x4ed2c0"
   ],
   "cpu_bindings": {
     "0x47c070": {
@@ -809,5 +809,6 @@
       "symbol": "noob_saibot_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
-  }
+  },
+  "mmove_only": true
 }

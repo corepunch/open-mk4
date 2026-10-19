@@ -1020,12 +1020,12 @@ CHARACTER_BINDINGS[16].update({
                       evidence='498eb0 installs gravity 0x20c and clears vertical position for the Kitana paired actor'),
 })
 CHARACTER_BINDINGS[17].update({
-    0x498bb0: Binding('noob_saibot_shadow_task_low', 'game/noob_saibot/character.c', ('spawn',), ('fighter', 'task_type'),
-                      flow='independent', task_types=(75,), evidence='498bb0 starts the clip-26 paired task and contact-wait phase for Noob Saibot'),
-    0x498ed0: Binding('noob_saibot_shadow_task_up', 'game/noob_saibot/character.c', ('spawn',), ('fighter', 'task_type'),
-                      flow='independent', task_types=(75,), evidence='498ed0 starts Noob Saibot child clip 22, action 0x23d7 and the paired contact phase'),
-    0x498eb0: Binding('noob_saibot_shadow_install_physics', 'game/noob_saibot/character.c', ('tail',), flow='terminal',
-                      evidence='498eb0 installs gravity 0x20c and clears vertical position for the Noob Saibot paired actor'),
+    0x498bb0: Binding('noob_saibot_shadow_task_low', 'game/noob_saibot/moves/common.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', mmove=True, task_types=(75,), evidence='498bb0 starts the clip-26 paired task and contact-wait phase for Noob Saibot'),
+    0x498ed0: Binding('noob_saibot_shadow_task_up', 'game/noob_saibot/moves/common.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', mmove=True, task_types=(75,), evidence='498ed0 starts Noob Saibot child clip 22, action 0x23d7 and the paired contact phase'),
+    0x498eb0: Binding('noob_saibot_shadow_install_physics', 'game/noob_saibot/moves/common.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='498eb0 -> 480cf0(0x20c, 0): the owner falls on clip 310 from pose 7 with action 0x1005, lands at 18 and returns'),
 })
 
 CHARACTER_BINDINGS[13] = {

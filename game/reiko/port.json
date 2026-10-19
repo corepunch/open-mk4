@@ -776,5 +776,6 @@
       "symbol": "reiko_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
-  }
+  },
+  "mmove_only": true
 }

@@ -50,7 +50,6 @@ void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
 void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
 void noob_saibot_shadow_up(Fighter *fighter);
 bool noob_saibot_shadow_up_enabled(const Fighter *fighter);
-void noob_saibot_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
 void noob_saibot_sweep(Fighter *fighter);
 void noob_saibot_uppercut(Fighter *fighter);
 void noob_saibot_entry_retail_script_004de2f8(Fighter *fighter);
