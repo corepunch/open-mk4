@@ -32,7 +32,6 @@ bool mk4_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool mk4_can_air_throw(const Fighter *fighter);
 bool mk4_can_sidestep(const Fighter *fighter);
 void mk4_sidestep(Fighter *fighter);
-void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
 void mk4_script_air_throw_release(Fighter *fighter);
 void mk4_script_air_getup(Fighter *fighter);
 void mk4_mmove_air_getup(Fighter *fighter);

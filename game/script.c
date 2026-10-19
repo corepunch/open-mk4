@@ -382,18 +382,6 @@ static void throw_hold_cleanup(Fighter *victim) {
   }
 }
 
-static void throw_hold(Fighter *victim) {
-  if (victim->flags & FF_PAIRED) {
-    native_begin(victim, 0, 0, NULL);
-    victim->native.frames[0].thinkfunc = throw_hold_frame;
-    native_wait(victim);
-    const Fighter *owner = fighter_opponent(victim);
-    if (owner->pending != NULL || !(owner->flags & FF_PAIRED)) {
-      mk4_script_thrown_finish(victim);
-    }
-  }
-}
-
 void mk4_script_pair_cleanup(Fighter *owner) {
   Fighter *victim = (Fighter *)fighter_opponent(owner);
   bool captured = (owner->flags & FF_PAIRED) != 0;
@@ -433,14 +421,6 @@ static Fighter *start_throw_pair(Fighter *fighter, const MoveDef *owner_move, co
   return victim;
 }
 
-void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
-  Fighter *victim = start_throw_pair(fighter, owner_move, victim_move);
-  fighter_start_fiber(fighter, script, mk4_script_pair_cleanup);
-  if (victim->flags & FF_PAIRED) {
-    fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
-  }
-}
-
 static void captured_throw_done(Fighter *victim) {
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
@@ -457,16 +437,6 @@ void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const Mo
 }
 
 /* Captures the victim in place, keeping its own facing (e.g. Raiden's torpedo 47d7f0). */
-void mk4_script_carry_victim(Fighter *fighter, const MoveDef *move) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  mk4_script_stop_body(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, move);
-  fighter->flags |= FF_PAIRED;
-  victim->flags |= FF_PAIRED | FF_REACTING;
-  victim->sample_override = 0;
-  fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
-}
-
 void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   mk4_script_stop_body(victim);
@@ -479,13 +449,6 @@ void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move) {
 }
 
 /* 48f9f0 also copies the owner's facing bit, so the victim clip plays in the owner's frame. */
-void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  victim->facing = fighter->facing;
-  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  mk4_script_carry_victim(fighter, move);
-}
-
 void mk4_mmove_pair_victim(Fighter *fighter, const MoveDef *move) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   victim->facing = fighter->facing;
@@ -720,15 +683,6 @@ Projectile *mk4_script_projectile_spawn(Fighter *fighter, ProjectileFn step, con
 void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int duration) {
   fighter->saved_motion[0] = speed;
   native_schedule_speed(fighter, speed, delay, duration);
-}
-
-void mk4_script_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {
-  native_queries(fighter, record, queries, 1);
-  fighter->action = ACTION_RETAIL_1006;
-  fighter->body.physics = NULL;
-  fighter_set_speed(fighter, 0);
-  mk4_script_finish_clip(fighter, 1);
-  fighter_fiber_finish(fighter_ready);
 }
 
 static void weapon_tail_done(Fighter *fighter) {

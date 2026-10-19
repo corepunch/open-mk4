@@ -58,13 +58,6 @@ void native_wait(Fighter *fighter) {
   fighter_fiber_await_frames(fighter);
 }
 
-void native_wait_loop(Fighter *fighter) {
-  fighter->native.move.endfunc = NULL;
-  fighter->native_immediate = false;
-  native_install(fighter);
-  fighter_fiber_await_frames(fighter);
-}
-
 void native_delay(Fighter *fighter, int frames) {
   if (frames <= 0) {
     return;
@@ -241,17 +234,6 @@ void native_calls(Fighter *fighter, int frames, int pose_step, FighterFn action)
   native_wait(fighter);
 }
 
-static void query_frame(Fighter *fighter) {
-  if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
-    fighter_stop_mmove(fighter);
-  }
-}
-
-void native_queries(Fighter *fighter, const AttackRecord *record, int frames, int pose_step) {
-  fighter->native_record = record;
-  native_calls(fighter, frames, pose_step, query_frame);
-}
-
 /* Contact leaves early through the continuation, which replaces the rows. */
 static void query_continue(Fighter *fighter) {
   if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
@@ -259,7 +241,7 @@ static void query_continue(Fighter *fighter) {
   }
 }
 
-/* Nonblocking native_queries: up to frames contact rows, then end. */
+/* Up to frames contact rows, then end; contact leaves early through end. */
 void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames, int pose_step, FighterFn end) {
   if (frames <= 0) {
     end(fighter);

@@ -329,13 +329,6 @@ void weapon_air_frames(Fighter *fighter, bool high, FighterFn script) {
   script(fighter);
 }
 
-void weapon_air_attack(Fighter *fighter, bool high, FighterFn script) {
-  fighter_start_move(fighter, S_JUMP, high ? &air_hp : &air_lp);
-  fighter->sample_override = 0;
-  fighter->body.on_land = NULL;
-  fighter_start_fiber(fighter, script, NULL);
-}
-
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {
   fighter_start_move(fighter, S_PUNCH, &draw_move);
   fighter->weapon = weapon;

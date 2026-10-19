@@ -465,15 +465,6 @@ static void air_pair_capture(Fighter *fighter, const MoveDef *owner_move, const 
   victim->capture_action = fighter->action;
 }
 
-static bool air_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
-  if (!mk4_can_air_throw(fighter)) {
-    fighter_ready(fighter);
-    return false;
-  }
-  air_pair_capture(fighter, owner_move, victim_move);
-  return true;
-}
-
 void mk4_script_air_getup(Fighter *victim) {
   if (victim->health <= 0) {
     fighter_fiber_finish(NULL);
@@ -496,26 +487,6 @@ void mk4_mmove_air_getup(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &s_throw_getup);
   victim->sample_override = 46;
   native_finish_clip(victim, fighter_ready);
-}
-
-static void air_victim_frame(Fighter *victim) {
-  const Fighter *owner = fighter_opponent(victim);
-  if (owner->pending != NULL || owner->action != victim->capture_action) {
-    air_throw_drop(victim);
-    victim->sample_override = air_throw_release_sample(victim);
-  }
-  memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
-  victim->mmove_hold = (victim->flags & FF_PAIRED) != 0;
-}
-
-static void air_generated_victim(Fighter *victim) {
-  if (victim->flags & FF_PAIRED) {
-    native_begin(victim, 0, 0, NULL);
-    victim->native.frames[0].thinkfunc = air_victim_frame;
-    native_wait(victim);
-  }
-  victim->sample_override = air_throw_release_sample(victim);
-  victim->paired_release(victim);
 }
 
 void mk4_script_air_throw_release(Fighter *fighter) {
@@ -621,16 +592,6 @@ void mk4_air_pair_frames(Fighter *fighter, const MoveDef *owner_move, const Move
   victim->mmove_cleanup = air_frame_victim_cleanup;
   fighter->mmove_cleanup = air_frame_cleanup;
   owner_script(fighter);
-}
-
-void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
-  if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
-    return;
-  }
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  victim->paired_release = victim_script;
-  fighter_start_fiber(fighter, owner_script, air_generated_cleanup);
-  fighter_start_fiber(victim, air_generated_victim, NULL);
 }
 
 static const MoveDef s_sidestep = {.clip = 300, .last = 17, .flags = SF_LOCK};

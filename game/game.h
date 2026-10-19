@@ -969,7 +969,6 @@ void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
 void weapon_air_frames(Fighter *fighter, bool high, FighterFn script);
 void weapon_air_frames_native(Fighter *fighter, unsigned selector);
-void weapon_air_attack(Fighter *fighter, bool high, FighterFn script);
 void weapon_air_native(Fighter *fighter, unsigned selector);
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
 void weapon_throw(Fighter *fighter);

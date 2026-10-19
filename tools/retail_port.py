@@ -15,7 +15,7 @@ from retail_symbols import native_name, reference_rows
 from scorpion_moves import script_program
 
 # This is a portable implementation index, separate from the retail root map.
-COMMON = {'air_throw': ('game/mk4_common.c', 'mk4_air_throw_generated')}
+COMMON = {'air_throw': ('game/mk4_common.c', 'mk4_air_throw_frames')}
 ENTRIES = {
     'high_punch': '{c}_hp', 'lp_throw': 'enter_throw', 'lk_throw': 'enter_lk_throw',
     'jab': '{c}_jab', 'high_kick': '{c}_kick', 'low_kick': '{c}_lk',
