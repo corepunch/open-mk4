@@ -507,6 +507,20 @@ CHARACTER_BINDINGS[9] = {
                       evidence='466df0 retires the auxiliary victim task after its dizzy playback'),
     0x4712e0: Binding('tanya_script_victory', 'game/tanya/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True,
                       evidence='4712e0 enters roster victory 4e6a40 (Tanya 4e6b88: clip 124, loop from 88)'),
+    0x44d4a0: Binding('tanya_first_owner_53', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d4a0 binds clip 395 sample 53, sound B 0x27, then 4e15a8'),
+    0x44d4e0: Binding('tanya_first_owner_drift', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d4e0 scales the saved scene heading by -0x439 (44dd20), then 4e15b8'),
+    0x44d510: Binding('tanya_first_owner_replays', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d510/44d530 replay clip 396 through 4e15d0 ten times, then stop and park'),
+    0x44d530: Binding('tanya_first_owner_loop', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d530 counts the 4e15d0 replays of clip 396, then stops and parks the owner'),
+    0x44d6e0: Binding('tanya_first_victim_swell', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d6e0 starts the 44d7c0 bob task, sound B 0x2b and two 4e15f0 passes'),
+    0x44d750: Binding('tanya_first_victim_repeat', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d750 repeats 4e15f0 once more, then starts task 44d8d0 and 4e1600'),
+    0x44d7a0: Binding('tanya_first_victim_burst', 'game/tanya/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='44d7a0 starts the 44dd90 burst task and the looping 4e16d0 shake'),
 }
 
 # Shinnok's throw and fan continuations enter selected generated streams

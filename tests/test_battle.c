@@ -14,6 +14,7 @@ void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
 void tanya_fatality_1(Fighter *fighter);
+bool tanya_can_first_fatality(const Fighter *fighter);
 void tanya_fatality_2(Fighter *fighter);
 bool tanya_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
@@ -5234,6 +5235,19 @@ static void tanya_finisher_command(int slot, FighterFn entry, unsigned chord) {
   check(!tanya_can_close_fatality(owner) && !tanya_can_close_fatality(victim), "Tanya close fatality must reject distance above one and the defeated player");
   owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
   victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+  if (chord != 0) {
+    /* Pressing the held chord first may start an ordinary attack; type the
+     * pattern once that has recovered, still holding the chord. */
+    Input held[2] = {0};
+    held[slot].held = chord;
+    owner->body.pos[AXIS_X] = slot ? 0x30000 : -0x30000;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    for (int tick = 0; tick < 60; ++tick) {
+      battle_step(held);
+    }
+    owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+  }
   const Controls *controls = roster_def(9)->controls;
   const CommandDef *selected = NULL;
   for (int i = 0; i < controls->command_count; ++i) {
@@ -5246,13 +5260,20 @@ static void tanya_finisher_command(int slot, FighterFn entry, unsigned chord) {
     CommandToken token = selected->tokens[i];
     Button button = token == TOKEN_DOWN ? BUTTON_DOWN : token == TOKEN_UP ? BUTTON_UP : slot ? BUTTON_LEFT : BUTTON_RIGHT;
     Input input[2] = {0};
-    input[slot].held = BUTTON_BIT(button) | chord;
+    /* With a chord, block is held through the pattern so Up cannot jump,
+     * then released for the final block press. */
+    input[slot].held = BUTTON_BIT(button) | chord | (chord != 0 && i < selected->count - 1 ? BUTTON_BIT(BUTTON_BLOCK) : 0);
     if (i == selected->count - 1) {
       battle_step(input);
+      battle_step(input);
       input[slot].held |= BUTTON_BIT(selected->button);
+      battle_step(input);
     }
     battle_step(input);
-    advance_ticks(2, NULL);
+    Input gap[2] = {0};
+    gap[slot].held = chord | (chord != 0 ? BUTTON_BIT(BUTTON_BLOCK) : 0);
+    battle_step(gap);
+    battle_step(gap);
   }
 }
 
@@ -5286,7 +5307,35 @@ static void check_tanya_second_fatality(void) {
   }
 }
 
+static void check_tanya_first_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 0 : 9, slot ? 9 : 0);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    tanya_finisher_command(slot, tanya_fatality_1, 0);
+    check(g_battle.phase != PHASE_FATALITY, "Tanya's first fatality must require HP held with BLOCK");
+    battle_init(slot ? 0 : 9, slot ? 9 : 0);
+    g_battle.phase = PHASE_FIGHT;
+    tanya_finisher_command(slot, tanya_fatality_1, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    check(g_battle.phase == PHASE_FATALITY, "Tanya HP+BLK D,D,U,D must start her first fatality");
+    bool kiss = false, swell = false, shake = false, burst = false;
+    for (int tick = 0; tick < 900 && g_battle.phase == PHASE_FATALITY; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya first fatality actors must never start a fiber");
+      kiss |= fighter_move(owner)->clip == 396;
+      swell |= fighter_move(victim)->clip == 397 && victim->body.pos[AXIS_X] == owner->body.pos[AXIS_X];
+      shake |= fighter_move(victim)->clip == 409;
+      burst |= (victim->hidden_joints[0] & (UINT64_C(1) << 2)) != 0;
+    }
+    check(kiss && swell && shake && burst && g_battle.phase == PHASE_MATCH_OVER && owner->wins == 2,
+        "Tanya first fatality must reach the kiss, swelling victim, shaking, burst and completion");
+    battle_reset_match();
+    check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner), "Reset after Tanya's first fatality must restore both fighters");
+  }
+}
+
 static void check_tanya_ports(void) {
+  check_tanya_first_fatality();
   check_tanya_fireballs();
   check_tanya_kicks();
   check_tanya_weapon();

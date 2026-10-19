@@ -9,7 +9,7 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 enum {
-  TANYA_EVENT_FATALITY_1 = 21,
+  TANYA_EVENT_FATALITY_1 = 35,
   TANYA_EVENT_FATALITY_2
 };
 
@@ -141,4 +141,21 @@ void tanya_second_finish(Fighter *fighter);
 void tanya_second_victim_pause(Fighter *fighter);
 void tanya_second_reaction(Fighter *fighter);
 void tanya_script_victory(Fighter *fighter);
+void tanya_entry_retail_script_004e1598(Fighter *fighter);
+void tanya_entry_retail_script_004e15a8(Fighter *fighter);
+void tanya_entry_retail_script_004e15b8(Fighter *fighter);
+void tanya_entry_retail_script_004e15d0(Fighter *fighter);
+void tanya_entry_retail_script_004e15e0(Fighter *fighter);
+void tanya_entry_retail_script_004e15f0(Fighter *fighter);
+void tanya_entry_retail_script_004e1600(Fighter *fighter);
+void tanya_entry_retail_script_004e16d0(Fighter *fighter);
+bool tanya_can_first_fatality(const Fighter *fighter);
+void tanya_fatality_1(Fighter *fighter);
+void tanya_first_owner_53(Fighter *fighter);
+void tanya_first_owner_drift(Fighter *fighter);
+void tanya_first_owner_replays(Fighter *fighter);
+void tanya_first_owner_loop(Fighter *fighter);
+void tanya_first_victim_swell(Fighter *fighter);
+void tanya_first_victim_repeat(Fighter *fighter);
+void tanya_first_victim_burst(Fighter *fighter);
 #endif

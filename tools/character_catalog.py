@@ -199,6 +199,10 @@ def _moves_for(character):
                                       ('victim collapse', 0x4e5860), ('victory', 0x4e6a40)),
                             native=(('roster dispatch', 0x464f30), ('height', 0x4650b0), ('owner finish', 0x465130), ('victim reaction 186', 0x465200),
                                     ('owner cue', 0x465270), ('victim cue', 0x465390))),
+            fatality_1=move(0x467ce0, (('owner kiss', 0x4e1598), ('owner 53', 0x4e15a8), ('owner 396', 0x4e15b8), ('owner replay', 0x4e15d0),
+                                      ('victim swell', 0x4e15e0), ('victim pulse', 0x4e15f0), ('victim shake', 0x4e1600), ('victim loop', 0x4e16d0)),
+                            native=(('roster dispatch', 0x44d340), ('victim controller', 0x44d560), ('camera', 0x44f180), ('bob', 0x44d7c0),
+                                    ('voice cues', 0x44d8d0), ('burst', 0x44dd90))),
         )
     if character == 10:
         # Reptile's input and CPU tables expose three additional script

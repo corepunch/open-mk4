@@ -18,6 +18,8 @@ void cage_fatality_2(Fighter *fighter);
 bool shinnok_can_morph(const Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
 void shinnok_fatality_2(Fighter *fighter);
+void tanya_fatality_1(Fighter *fighter);
+void tanya_fatality_2(Fighter *fighter);
 
 static void check(bool ok, const char *message) {
   require(ok, message);
@@ -392,6 +394,39 @@ static void tanya_weapon_assets(const Assets *assets) {
                                                           : 0x3333) &&
                 owner->state == S_IDLE,
           "Tanya's armed strikes and boomerang must hit animated victim bounds once and recover");
+    }
+  }
+}
+
+static void tanya_fatality_assets(const Assets *assets) {
+  for (int which = 0; which < 2; ++which) {
+    for (int slot = 0; slot < 2; ++slot) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->wins = 1;
+      battle_damage(victim, Q16_ONE);
+      for (int tick = 0; tick < 180 && !battle_can_finish(owner); ++tick) {
+        battle_step((Input[2]){0});
+      }
+      check(battle_can_finish(owner), "Asset-backed Tanya fatality needs its actual KO window");
+      owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_interrupt(owner, which ? tanya_fatality_2 : tanya_fatality_1);
+      bool pieces = false;
+      for (int tick = 0; tick < 900 && g_battle.phase != PHASE_MATCH_OVER; ++tick) {
+        battle_step((Input[2]){0});
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Asset-backed Tanya fatality must use frame phases");
+        for (int piece = 0; piece < MAX_SCENE_PIECES; ++piece) {
+          pieces |= g_battle.pieces[piece].active && g_battle.pieces[piece].roster == victim->roster;
+        }
+      }
+      check(g_battle.phase == PHASE_MATCH_OVER && (which || pieces), "Asset-backed Tanya fatalities must pose both rigs to completion");
+      battle_reset_match();
     }
   }
 }
@@ -1403,6 +1438,7 @@ int main(void) {
   tanya_fireball_assets(&assets);
   tanya_kick_assets(&assets);
   tanya_weapon_assets(&assets);
+  tanya_fatality_assets(&assets);
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);

@@ -259,3 +259,35 @@ void tanya_entry_retail_script_004e5b38(Fighter *fighter) {
 void tanya_entry_retail_script_004e6a40(Fighter *fighter) {
   retail_script_004e6a40(fighter);
 }
+
+void tanya_entry_retail_script_004e1598(Fighter *fighter) {
+  retail_script_004e1598(fighter);
+}
+
+void tanya_entry_retail_script_004e15a8(Fighter *fighter) {
+  retail_script_004e15a8(fighter);
+}
+
+void tanya_entry_retail_script_004e15b8(Fighter *fighter) {
+  retail_script_004e15b8(fighter);
+}
+
+void tanya_entry_retail_script_004e15d0(Fighter *fighter) {
+  retail_script_004e15d0(fighter);
+}
+
+void tanya_entry_retail_script_004e15e0(Fighter *fighter) {
+  retail_script_004e15e0(fighter);
+}
+
+void tanya_entry_retail_script_004e15f0(Fighter *fighter) {
+  retail_script_004e15f0(fighter);
+}
+
+void tanya_entry_retail_script_004e1600(Fighter *fighter) {
+  retail_script_004e1600(fighter);
+}
+
+void tanya_entry_retail_script_004e16d0(Fighter *fighter) {
+  retail_script_004e16d0(fighter);
+}

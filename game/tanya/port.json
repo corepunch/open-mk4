@@ -50,6 +50,11 @@
       "source": "game/tanya/moves/spike.c",
       "symbol": "tanya_spike_fatality",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x467ce0": {
+      "source": "game/tanya/moves/fatality_first.c",
+      "symbol": "tanya_fatality_1",
+      "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
   },
   "entry_contexts": {
@@ -160,6 +165,36 @@
       "count": 45,
       "sample": 0,
       "evidence": "464f30 4611c0 binds the roster stance 53d408[9] = clip 439 before entering 4e5798."
+    },
+    "0x4e15a8": {
+      "clip": 395,
+      "count": 141,
+      "sample": 53,
+      "evidence": "44d4a0 binds clip 395 sample 53 before entering 4e15a8."
+    },
+    "0x4e15b8": {
+      "clip": 395,
+      "count": 141,
+      "sample": 104,
+      "evidence": "4e15a8 advances clip 395 to 104 before the 44d4e0 tail."
+    },
+    "0x4e15d0": {
+      "clip": 396,
+      "count": 77,
+      "sample": 76,
+      "evidence": "4e15b8 and each 4e15d0 pass finish clip 396 before 44d510/44d530."
+    },
+    "0x4e15f0": {
+      "clip": 397,
+      "count": 196,
+      "sample": 195,
+      "evidence": "4e15e0 and each 4e15f0 pass finish clip 397 before 44d6e0/44d750."
+    },
+    "0x4e16d0": {
+      "clip": 409,
+      "count": 75,
+      "sample": 72,
+      "evidence": "4e1600 advances clip 409 to 74 and rewinds to 72 before 44d7a0."
     }
   },
   "generated_scripts": [
@@ -210,10 +245,18 @@
     "0x4e5820",
     "0x4e5860",
     "0x4e5b38",
-    "0x4e6a40"
+    "0x4e6a40",
+    "0x4e1598",
+    "0x4e15a8",
+    "0x4e15b8",
+    "0x4e15d0",
+    "0x4e15e0",
+    "0x4e15f0",
+    "0x4e1600",
+    "0x4e16d0"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "3f32c75d1433395f10cd8ab9cb2aab658e9ead34342e44412f70e912cb1fae55",
+  "inventory_sha256": "12669c85e57afbe3212efd3f59be3bc12da5d354915e7ee2227a21fa10ccc38f",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",
@@ -359,6 +402,11 @@
       "source": "game/tanya/moves/fatality_second.c",
       "symbol": "tanya_fatality_2",
       "evidence": "467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
+    },
+    "fatality_1": {
+      "source": "game/tanya/moves/fatality_first.c",
+      "symbol": "tanya_fatality_1",
+      "evidence": "467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
   },
   "output": "game/tanya/generated/scripts.inc",
@@ -667,6 +715,11 @@
       "source": "game/tanya/moves/fatality_second.c",
       "symbol": "tanya_fatality_2",
       "evidence": "HK D,F,D,F record 4e453c (T1[0x43], gate 45e570). 467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
+    },
+    "0x467ce0": {
+      "source": "game/tanya/moves/fatality_first.c",
+      "symbol": "tanya_fatality_1",
+      "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
   },
   "command_predicates": {
@@ -677,7 +730,8 @@
     "0x45ef20": "tanya_can_air_fireball",
     "0x45e8d0": "tanya_can_spin_kick",
     "0x45ef50": "weapon_can_draw",
-    "0x45e570": "tanya_can_close_fatality"
+    "0x45e570": "tanya_can_close_fatality",
+    "0x45e2a0": "tanya_can_first_fatality"
   },
   "mmove_scripts": [
     "0x4de798",
@@ -725,7 +779,15 @@
     "0x4e5820",
     "0x4e5860",
     "0x4e5b38",
-    "0x4e6a40"
+    "0x4e6a40",
+    "0x4e1598",
+    "0x4e15a8",
+    "0x4e15b8",
+    "0x4e15d0",
+    "0x4e15e0",
+    "0x4e15f0",
+    "0x4e1600",
+    "0x4e16d0"
   ],
   "cpu_bindings": {
     "0x498b70": {
@@ -740,7 +802,8 @@
     }
   },
   "cpu_finish_min": {
+    "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 0,
-    "evidence": "Tanya 45e570 close gate accepts up to 1 unit; CPU second target 4dfe50[9] = 0xe666."
+    "evidence": "Tanya 45e570/45e2a0 close gates accept up to 1 unit; CPU targets 4dfe10[9] and 4dfe50[9] are both 0xe666."
   }
 }
