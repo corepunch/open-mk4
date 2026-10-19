@@ -274,6 +274,11 @@ void mk4_script_land(Fighter *fighter) {
   fighter_fiber_finish(mk4_land);
 }
 
+/* 46ab20/47ed40/47ef10 finish the generated stream before the shared landing controller. */
+void mk4_mmove_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
 void mk4_script_thrown_ready(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   if (fighter->health > 0) {
@@ -549,6 +554,12 @@ void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample) {
 
 void mk4_script_fan_cycle(Fighter *fighter) {
   (void)fighter; /* Native 43d530 returns to its scene coordinator. */
+}
+
+/* 43db50 hides the released fan victim and retires its frame program. */
+void mk4_mmove_fan_victim_end(Fighter *victim) {
+  victim->appearance = APPEARANCE_HIDDEN;
+  fighter_finish_mmove(victim, NULL);
 }
 
 void mk4_script_fan_victim_end(Fighter *victim) {

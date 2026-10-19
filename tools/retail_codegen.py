@@ -1,11 +1,10 @@
-"""Deterministic, fail-closed lowering of decoded retail scripts to C11 fibers.
+"""Deterministic, fail-closed lowering of decoded retail scripts to C11 frame programs.
 
 No native code execution, runtime opcode dispatch, or text-to-text translation.
 Every reachable instruction is lowered from the existing decoder's graph;
 unsupported instructions/edges fail before any output is written.
 """
 import re
-from functools import lru_cache
 import os
 from pathlib import Path
 import shutil
@@ -16,7 +15,6 @@ from character_catalog import CHARACTERS
 from scorpion_moves import script_program, signed_word
 from retail_script_c import successors
 from retail_bindings import bindings_for
-from retail_c_postprocess import postprocess
 
 
 class CompileError(ValueError):
@@ -292,145 +290,9 @@ def validate(program, bindings, return_to, context=None):
         raise CompileError(errors)
 
 
-def lower(row, bindings, return_to):
-    op, inline = int(row['opcode'], 16), row.get('inline', 0)
-    arg = inline & 255
-    words = [signed_word(int(word, 16)) for word in row.get('operands', [])]
-    key = instruction_binding(row)
-    if key:
-        address, role = key
-        binding = bindings[address]
-        if binding.script_target:
-            return ['goto L_%08x;' % binding.script_target]
-        call = expression(binding, row)
-        if role == 'physics':
-            return ['fighter->body.physics = %s;' % binding.symbol]
-        if role == 'predicate':
-            bit = 4 if op == 0x36 else 1
-            return ['result_flags = %s;' % call, 'if (result_flags & %du) {' % bit,
-                    '  goto L_%08x;' % int(row['branch'], 16), '}']
-        terminal_handler = role == 'handler' and 'unresearched' in row['operation']
-        return [('result_flags = ' if binding.result == 'flags' else '') + call + ';'] + (['return;'] if role == 'tail' or terminal_handler else [])
-    lines = []
-    if 'clip' in row and op != 0x71:
-        first = row.get('start_sample', inline if op == 8 else 0)
-        if op == 9:
-            first = row['stored_count'] - 1
-        lines.append('%s(fighter, %d, %d, %d);' % ('mk4_script_bind_victim' if op == 0x0e else 'mk4_script_bind', row['clip'], row['stored_count'], first))
-    if op == 0:
-        lines.append('(void)fighter; /* decoded VM no-op */')
-    elif op in (0x0f, 0x12, 0x49, 0x1d):
-        if op != 0x0f:
-            lines.append('fighter->sample_override = %d;' % arg)
-    elif op == 0x46:
-        lines.append('mk4_script_advance_slow(fighter, %d);' % arg)
-    elif op in (0x68, 0x69):
-        if op == 0x68:
-            lines.append('fighter->sample_override = 0;')
-        lines.append('mk4_script_finish_clip(fighter, 0);')
-    elif op in (1, 3, 8, 0x48):
-        lines.append('mk4_script_finish_clip(fighter, 1);')
-    elif op in (7, 9):
-        lines.append('mk4_script_finish_clip(fighter, -1);')
-    elif op == 0x0d:
-        lines.append('fighter->sample_override = fighter_sample(fighter) + 1;')
-    elif op in (2, 4, 6, 0x19):
-        lines.append('mk4_script_advance(fighter, %d, %d);' % ((inline + 1) // 2 if op == 0x19 else arg if op == 2 else inline, -1 if op == 6 else 2 if op == 0x19 else 1))
-    elif op in (0x0e, 0x11):
-        pass
-    elif op == 0x4e:
-        lines.append('(void)fighter; /* explicit Fighter argument owns reaction context */')
-    elif op == 0x42:
-        lines += ['if (result_flags & 1u) {', '  goto L_%08x;' % int(row['branch'], 16), '}']
-    elif op == 0x10:
-        lines.append('mk4_script_pair_advance(fighter, %d);' % arg)
-    elif op == 0x0c:
-        lines.append('mk4_script_advance(fighter, 1, 1);')
-    elif op in (5, 0x47, 0x4a, 0x4d):
-        lines.append('fighter_fiber_play_to(fighter, %d, %d);' % (arg if op in (0x47, 0x4a, 0x4d) else inline, -1 if op == 0x4a else 2 if op == 0x4d else 1))
-    elif op == 0x1f:
-        lines.append('attack_selector = %d;' % words[0])
-    elif op in (0x20, 0x27, 0x2b):
-        lines.append('battle_sound(SOUND_%s, %d);' % ({0x20: 'A', 0x27: 'C', 0x2b: 'B'}[op], arg))
-    elif op in (0x29, 0x2d):
-        lines.append('fighter->action = ACTION_RETAIL_%s;' % ('1006' if op == 0x29 else '1007'))
-    elif op == 0x2e:
-        lines.append('fighter->flags |= FF_NO_GUARD;')
-    elif op == 0x61:
-        lines.append('fighter->flags &= ~(unsigned)FF_BUSY;')
-    elif op in (0x30, 0x3f):
-        if op == 0x3f:
-            lines.append('fighter_wait_ticks(1);')
-        lines.append('return;' if return_to == 'caller' else 'fighter_fiber_finish(%s);' % return_to)
-    elif op in (0x33, 0x3c):
-        lines.append('goto L_%08x;' % successors(row)[0])
-    elif op == 0x34:
-        if inline:
-            lines.append('fighter_wait_ticks(%d);' % inline)
-        else:
-            lines.append('(void)fighter; /* zero-duration wait */')
-    elif op == 0x37:
-        lines += ['int wait_ticks = result_flags & 1u ? %d : %d;' % (row['wait_if_set'], row['wait_if_clear']),
-                  'if (wait_ticks > 0) {', '  fighter_wait_ticks(wait_ticks);', '}']
-    elif op == 0x39:
-        lines.append('fighter->body.physics = NULL;')
-    elif op == 0x3a:
-        lines.append('loop_counter = %du;' % arg)
-    elif op == 0x3b:
-        lines += ['if (--loop_counter != 0) {', '  goto L_%08x;' % int(row['branch'], 16), '}']
-    elif op == 0x3e:
-        lines += ['for (;;) {', '  fighter_wait_ticks(60);', '}']
-    elif op in (0x2f, 0x44, 0x45):
-        condition = {0x2f: 'fighter_airborne(fighter)', 0x44: 'fighter->held & BUTTON_BIT(BUTTON_DOWN)', 0x45: 'fighter_fast_start(fighter)'}[op]
-        lines += ['if (%s) {' % condition, '  goto L_%08x;' % int(row['branch'], 16), '}']
-    elif op in (0x51, 0x52, 0x53, 0x5e):
-        lines.append('result_flags = battle_contact(fighter, &retail_contact_%s) != CONTACT_MISS ? 1u : 0u;' % row['contact']['va'][2:])
-    elif op == 0x58:
-        lines += ['fighter_set_speed(fighter, %d);' % words[0], 'fighter->body.vel[AXIS_Y] = %d;' % words[1],
-                  'fighter->body.gravity = %d;' % words[2]]
-    elif op == 0x5a:
-        lines.append('fighter_set_speed(fighter, %d);' % row['speed_q16'])
-    elif op == 0x5c:
-        lines.append('fighter->body.gravity = %d;' % words[0])
-    elif op == 0x5b:
-        lines.append('mk4_script_stop(fighter);')
-    elif op == 0x60:
-        lines.append('while (fighter_airborne(fighter)) {\n  fighter_wait_ticks(1);\n}')
-    elif op == 0x71:
-        lines.append('mk4_script_blend_bind(fighter, %d, %d);' % (row['clip'], row['stored_count']))
-    else:
-        raise AssertionError('Missing lowering for %#x' % op)
-    return lines
-
-
-@lru_cache(maxsize=1)
-def shared_fiber_only_continuations():
-    # Completion callbacks run after the owning fiber has been retired, and
-    # frame completions have no coroutine. Follow shared helper calls so a
-    # wrapper cannot accidentally re-enter a yielding/finish boundary.
-    from c_reachability import definitions
-    source = (Path(__file__).resolve().parents[1] / 'game/script.c').read_text()
-    functions = {name: body for name, _, body in definitions(source)}
-    forbidden = {'fighter_fiber_finish', 'fighter_wait_ticks', 'fighter_fiber_move',
-                 'fighter_fiber_play_to', 'fighter_fiber_sequence', 'fighter_fiber_await_frames',
-                 'native_wait', 'native_delay', 'native_calls', 'native_play_to', 'native_until'}
-    unsafe = set()
-    changed = True
-    while changed:
-        changed = False
-        for name, body in functions.items():
-            calls = set(re.findall(r'\b([A-Za-z_]\w*)\s*\(', body)) - {name}
-            if name not in unsafe and calls & (forbidden | unsafe):
-                unsafe.add(name)
-                changed = True
-    return unsafe
-
-
 def compile_program(image, entry, character=0, bindings=None, return_to=None, context=None):
     if return_to is not None and not re.fullmatch(r'[A-Za-z_]\w*', return_to):
         raise ValueError('Invalid continuation symbol')
-    if return_to in shared_fiber_only_continuations():
-        raise CompileError([{'pc': hex(entry), 'reason': 'completion callback requires a running fiber: ' + return_to}])
     bindings = bindings_for(character) if bindings is None else bindings
     program = script_program(image, entry, character)
     rows = {row['va']: row for row in program['instructions']}
@@ -449,53 +311,9 @@ def compile_program(image, entry, character=0, bindings=None, return_to=None, co
     return program, bindings
 
 
-def emit_program(program, bindings, return_to=None, context=None):
-    context = context or {}
-    rows = program['instructions']
-    entry = int(program['entry'], 16)
-    ops = {int(row['opcode'], 16) for row in rows}
-    lines = ['static inline void %s(Fighter *fighter) {' % symbol(entry)]
-    if ops & {0x36, 0x55, 0x51, 0x52, 0x53, 0x5e, 0x37, 0x42} or any(binding.result == 'flags' for binding in bindings.values()):
-        lines.append('  unsigned result_flags = 0;')
-        lines.append('  (void)result_flags;')
-    if ops & {0x3a, 0x3b}:
-        lines.append('  uint32_t loop_counter = 0;')
-        lines.append('  (void)loop_counter;')
-    if 0x1f in ops:
-        lines += ['  int attack_selector = 0;', '  (void)attack_selector;']
-    if 'clip' in context:
-        if context['clip'] == 'current':
-            lines.append('  mk4_script_inherit_current(fighter, %d, %d);' % (context['count'], context['sample']))
-        else:
-            lines.append('  mk4_script_inherit(fighter, %d, %d, %d);' % (context['clip'], context['count'], context.get('sample', 0)))
-    lines.append('  goto L_%08x;' % entry)
-    for row in rows:
-        pc = int(row['va'], 16)
-        raw = ' '.join([row['word'], *row.get('operands', [])])
-        lines += ['L_%08x: {' % pc, '  /* EXE %08x: %s */' % (pc, raw)]
-        for statement in lower(row, bindings, return_to):
-            lines.extend('  ' + part for part in statement.splitlines())
-        op = int(row['opcode'], 16)
-        key = instruction_binding(row)
-        binding = bindings.get(key[0]) if key else None
-        terminal_handler = key is not None and key[1] == 'handler' and binding is not None and 'unresearched' in row['operation']
-        if op not in (0x30, 0x32, 0x33, 0x3c, 0x3e, 0x3f) and not terminal_handler:
-            # Explicit fallthrough protects against address ordering and gaps.
-            following = pc + 4 * (1 + len(row.get('operands', [])))
-            lines.append('  goto L_%08x;' % following)
-        lines.append('}')
-    lines.append('}')
-    return '\n'.join(lines)
-
-
-def generate(image, entries, character=0, return_to=None, bindings=None, contexts=None, mmove_entries=(), mmove_only=False):
+def generate(image, entries, character=0, return_to=None, bindings=None, contexts=None):
+    """Every root becomes a frame program; there is no coroutine backend."""
     from retail_mmove import emit_mmove
-    entries = set(entries)
-    mmove_entries = {int(entry, 16) if isinstance(entry, str) else entry for entry in mmove_entries}
-    if mmove_entries - set(entries):
-        raise ValueError("mmove roots must belong to generated_scripts")
-    if mmove_only and mmove_entries != entries:
-        raise ValueError("mmove-only profile requires every generated root to use phases")
     contexts = contexts or {}
     programs = [compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', return_to), contexts.get(hex(entry)))
                 for entry in sorted(set(entries))]
@@ -516,15 +334,9 @@ def generate(image, entries, character=0, return_to=None, bindings=None, context
         values = [*record['rectangle_q16'], record['reaction'], record['alternate_reaction'], record['blocked_reaction'], record['flags'], record['damage_q16']]
         lines.append('static const AttackRecord retail_contact_%s = {%s};' % (address[2:], ', '.join(map(str, values))))
     for program, binding in programs:
-        emitter = emit_mmove if int(program['entry'], 16) in mmove_entries else emit_program
         context = contexts.get(program['entry'], {})
-        if context.get('export_frames') and emitter != emit_mmove:
-            exported = emit_mmove(program, binding, context.get('return_to', return_to), context)
-            root = symbol(int(program['entry'], 16))
-            lines += ['', '/* Reusable generated phase for native frame composition. */', exported.replace(root, root + '_repeat')]
-
-        lines += ['', emitter(program, binding, contexts.get(program['entry'], {}).get('return_to', return_to), contexts.get(program['entry']))]
-    return postprocess('\n'.join(lines) + '\n')
+        lines += ['', emit_mmove(program, binding, context.get('return_to', return_to), contexts.get(program['entry']))]
+    return '\n'.join(lines) + '\n'
 
 
 def format_c(source):

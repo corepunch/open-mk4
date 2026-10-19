@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile decoded retail scripts to C11 phases or fibers, or audit coverage."""
+"""Compile decoded retail scripts to C11 frame programs, or audit coverage."""
 import argparse
 import json
 import os
@@ -34,8 +34,6 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         contexts = {}
-        mmove_entries = ()
-        mmove_only = False
         if args.generate:
             profile = profile_for(args.character)
             if profile is None:
@@ -45,8 +43,6 @@ def main(argv=None):
             args.script = [int(entry, 16) for entry in profile['generated_scripts']]
             args.return_to = profile['return_to']
             contexts = profile.get('entry_contexts', {})
-            mmove_entries = profile.get('mmove_scripts', [])
-            mmove_only = profile.get('mmove_only', False)
             if args.output is None:
                 args.output = ROOT / profile['output']
         if args.check and not args.output:
@@ -65,7 +61,7 @@ def main(argv=None):
             output = json.dumps(inventory(image, args.character), indent=2, sort_keys=True) + '\n'
             status = 0
         else:
-            output = format_c(generate(image, args.script, args.character, args.return_to, contexts=contexts, mmove_entries=mmove_entries, mmove_only=mmove_only))
+            output = format_c(generate(image, args.script, args.character, args.return_to, contexts=contexts))
             status = 0
         if args.check:
             if not args.output.is_file() or args.output.read_text() != output:

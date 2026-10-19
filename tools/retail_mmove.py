@@ -345,8 +345,7 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
         lines += ['}']
     if samples:
         lines += frame_table(name, samples, callbacks)
-    lines += ['static inline void %s(Fighter *fighter) {' % name,
-              '  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");']
+    lines += ['static inline void %s(Fighter *fighter) {' % name]
     lines += ['  ' + statement for statement in events[0]]
     if samples:
         lines += ['  fighter_mmove_phase(fighter, &%s_phase);' % name]

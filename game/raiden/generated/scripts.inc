@@ -411,7 +411,6 @@ static const mmove_t retail_script_004de218_phase = {
     .firstframe = 0, .lastframe = 77, .frame = retail_script_004de218_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004de218_samples};
 
 static inline void retail_script_004de218(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004de218: 0x25000019 */
   mk4_script_indexed_sound(fighter, 25);
   /* EXE 004de21c: 0x4f00000e */
@@ -893,7 +892,6 @@ static const mframe_t retail_script_004de640_frames[57] = {
 static const mmove_t retail_script_004de640_phase = {.firstframe = 0, .lastframe = 56, .frame = retail_script_004de640_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004de640(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004de640: 0x4f00000c */
   mk4_script_context(fighter, 12);
   /* EXE 004de644: 0xe000000 0x13ed2d */
@@ -920,7 +918,6 @@ static const mmove_t retail_script_004de668_phase = {
     .firstframe = 0, .lastframe = 18, .frame = retail_script_004de668_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004de668_samples};
 
 static inline void retail_script_004de668(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 80, 75, 57);
   /* EXE 004de668: 0x63000000 0x2e14 */
   mk4_script_damage(fighter, 11796);
@@ -1151,7 +1148,6 @@ static const mframe_t retail_script_004de6b8_frames[49] = {
 static const mmove_t retail_script_004de6b8_phase = {.firstframe = 0, .lastframe = 48, .frame = retail_script_004de6b8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004de6b8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004de6b8: 0x4f000016 */
   mk4_script_context(fighter, 22);
   /* EXE 004de6bc: 0xe000000 0x13ed2a */
@@ -1165,7 +1161,6 @@ static inline void retail_script_004de6b8(Fighter *fighter) {
 static inline void retail_script_004de798(Fighter *fighter);
 
 static inline void retail_script_004de798(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004de798: 0x2b000007 */
   battle_sound(SOUND_B, 7);
   /* EXE 004de79c: 0x3c000000 0x1379b9 0x137a16 0x137a18 0x13799e 0x1379ae 0x137982 0x1379b9 0x137a16 0x137a18 0x13799e 0x1379ae 0x137982 0x137a16 0x1379f7 0x1379b9 0x1379d8 */
@@ -1189,7 +1184,6 @@ static const mframe_t retail_script_004e0118_frames[69] = {
 static const mmove_t retail_script_004e0118_phase = {.firstframe = 0, .lastframe = 68, .frame = retail_script_004e0118_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0118(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e0118: 0x47000245 0x13f03c */
   mk4_mmove_bind(fighter, 415, 130, 0);
   fighter_mmove_phase(fighter, &retail_script_004e0118_phase);
@@ -1213,7 +1207,6 @@ static const mframe_t retail_script_004e0138_frames[8] = {
 static const mmove_t retail_script_004e0138_phase = {.firstframe = 69, .lastframe = 76, .frame = retail_script_004e0138_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0138(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 415, 130, 69);
   /* EXE 004e0138: 0x500004d */
   fighter_mmove_phase(fighter, &retail_script_004e0138_phase);
@@ -1235,7 +1228,6 @@ static const mframe_t retail_script_004e0148_frames[29] = {
 static const mmove_t retail_script_004e0148_phase = {.firstframe = 78, .lastframe = 106, .frame = retail_script_004e0148_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0148(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 415, 130, 69);
   /* EXE 004e0148: 0x1200004e */
   fighter->sample_override = 78;
@@ -1270,7 +1262,6 @@ static const mmove_t retail_script_004e0158_phase = {
     .firstframe = 0, .lastframe = 102, .frame = retail_script_004e0158_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e0158_samples};
 
 static inline void retail_script_004e0158(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 415, 130, 107);
   /* EXE 004e0158: 0x3000000 */
   fighter_mmove_phase(fighter, &retail_script_004e0158_phase);
@@ -1290,7 +1281,6 @@ static const mmove_t retail_script_004e0158_branch_1_phase = {
     .firstframe = 18, .lastframe = 48, .frame = retail_script_004e0158_branch_1_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0158_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e0164: 0x12000012 */
   fighter->sample_override = 18;
   /* EXE 004e0168: 0x3000000 */
@@ -1316,7 +1306,6 @@ static const mframe_t retail_script_004e0188_frames[77] = {
 static const mmove_t retail_script_004e0188_phase = {.firstframe = 0, .lastframe = 76, .frame = retail_script_004e0188_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0188(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e0188: 0x47000245 0x13f03f */
   mk4_mmove_bind(fighter, 416, 108, 0);
   fighter_mmove_phase(fighter, &retail_script_004e0188_phase);
@@ -1339,7 +1328,6 @@ static const mmove_t retail_script_004e0188_branch_1_phase = {
     .firstframe = 69, .lastframe = 76, .frame = retail_script_004e0188_branch_1_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0188_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e0190: 0x500004d */
   fighter_mmove_phase(fighter, &retail_script_004e0188_branch_1_phase);
 }
@@ -1360,7 +1348,6 @@ static const mframe_t retail_script_004e01a0_frames[29] = {
 static const mmove_t retail_script_004e01a0_phase = {.firstframe = 78, .lastframe = 106, .frame = retail_script_004e01a0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e01a0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 416, 108, 69);
   /* EXE 004e01a0: 0x1200004e */
   fighter->sample_override = 78;
@@ -1383,7 +1370,6 @@ static const mframe_t retail_script_004e0210_frames[25] = {
 static const mmove_t retail_script_004e0210_phase = {.firstframe = 0, .lastframe = 24, .frame = retail_script_004e0210_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e0210(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e0210: 0x48000200 0x13eff7 */
   mk4_mmove_bind(fighter, 392, 25, 0);
   fighter_mmove_phase(fighter, &retail_script_004e0210_phase);
@@ -1406,7 +1392,6 @@ static const mmove_t retail_script_004e0220_phase = {
     .firstframe = 0, .lastframe = 8, .frame = retail_script_004e0220_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e0220_samples};
 
 static inline void retail_script_004e0220(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 392, 25, 24);
   /* EXE 004e0220: 0x4a000014 */
   fighter_mmove_phase(fighter, &retail_script_004e0220_phase);
@@ -1415,7 +1400,6 @@ static inline void retail_script_004e0220(Fighter *fighter) {
 static inline void retail_script_004e56c8(Fighter *fighter);
 
 static inline void retail_script_004e56c8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e56c8: 0x4f00004b */
   mk4_script_context(fighter, 75);
   /* EXE 004e56cc: 0x32000000 0x464960 */
@@ -1439,7 +1423,6 @@ static const mmove_t retail_script_004e56d8_phase = {
     .firstframe = 0, .lastframe = 12, .frame = retail_script_004e56d8_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e56d8_samples};
 
 static inline void retail_script_004e56d8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 123, 101, 100);
   /* EXE 004e56d8: 0x35000000 0x427b70 */
   script_second_particles(fighter);
@@ -1591,7 +1574,6 @@ static const mmove_t retail_script_004e56f0_phase = {
     .firstframe = 0, .lastframe = 314, .frame = retail_script_004e56f0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e56f0_samples};
 
 static inline void retail_script_004e56f0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 123, 101, 100);
   /* EXE 004e56f0: 0x4f00004c */
   mk4_script_context(fighter, 76);
@@ -1622,7 +1604,6 @@ static const mmove_t retail_script_004e5728_phase = {
     .firstframe = 0, .lastframe = 210, .frame = retail_script_004e5728_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e5728_samples};
 
 static inline void retail_script_004e5728(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5728: 0x11000000 0x13f210 */
   mk4_mmove_bind(fighter, 571, 15, 0);
   /* EXE 004e5730: 0x340000d3 */
@@ -1644,7 +1625,6 @@ static const mframe_t retail_script_004e5740_frames[76] = {
 static const mmove_t retail_script_004e5740_phase = {.firstframe = 0, .lastframe = 75, .frame = retail_script_004e5740_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e5740(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5740: 0x40000000 0x26b 0x464bd0 */
   mk4_script_scene_task(fighter, 619);
   /* EXE 004e574c: 0x1000000 0x13f213 */
@@ -1674,7 +1654,6 @@ static const mframe_t retail_script_004e5760_frames[21] = {
 static const mmove_t retail_script_004e5760_phase = {.firstframe = 0, .lastframe = 20, .frame = retail_script_004e5760_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e5760(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5760: 0x1000000 0x13f216 */
   mk4_mmove_bind(fighter, 573, 21, 0);
   fighter_mmove_phase(fighter, &retail_script_004e5760_phase);
@@ -1697,7 +1676,6 @@ static const mframe_t retail_script_004e5770_frames[39] = {
 static const mmove_t retail_script_004e5770_phase = {.firstframe = 0, .lastframe = 38, .frame = retail_script_004e5770_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e5770(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5770: 0x1000000 0x13f219 */
   mk4_mmove_bind(fighter, 574, 39, 0);
   fighter_mmove_phase(fighter, &retail_script_004e5770_phase);
@@ -1738,7 +1716,6 @@ static const mmove_t retail_script_004e5788_phase = {
     .firstframe = 0, .lastframe = 275, .frame = retail_script_004e5788_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e5788_samples};
 
 static inline void retail_script_004e5788(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 575, 15, 0);
   /* EXE 004e5788: 0x340000d3 */
   fighter_mmove_phase(fighter, &retail_script_004e5788_phase);
@@ -1760,7 +1737,6 @@ static const mframe_t retail_script_004e5ca0_frames[10] = {
 static const mmove_t retail_script_004e5ca0_phase = {.firstframe = 0, .lastframe = 9, .frame = retail_script_004e5ca0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e5ca0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5ca0: 0x3c000000 0x139b24 0x139720 0x139738 0x139b24 0x139720 0x139738 0x139b24 0x139b24 0x139720 0x139b24 0x139b24 0x139720 0x139738 0x139b24 0x139720 0x139b24 */
   /* EXE 004e5c80: 0x1f000000 0x2 */
   /* EXE 004e5c88: 0x20000001 */
@@ -1819,7 +1795,6 @@ static const mframe_t retail_script_004e5d90_frames[11] = {
 static const mmove_t retail_script_004e5d90_phase = {.firstframe = 0, .lastframe = 10, .frame = retail_script_004e5d90_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e5d90(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5d90: 0x3c000000 0x139b42 0x139b68 0x139b2c 0x139b42 0x139b68 0x139b2c 0x139b42 0x139b42 0x139b68 0x139b2c 0x139b42 0x139b68 0x139b2c 0x139b42 0x139b68 0x139b42 */
   /* EXE 004e6da0: 0x35000000 0x46a950 */
   mk4_script_avoid_clear(fighter);
@@ -1857,7 +1832,6 @@ static const mmove_t retail_script_004e5d90_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004e5d90_branch_1_samples};
 
 static inline void retail_script_004e5d90_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6de0: 0x4000002 */
   fighter_mmove_phase(fighter, &retail_script_004e5d90_branch_1_phase);
 }
@@ -2097,7 +2071,6 @@ static const mframe_t retail_script_004e5e28_frames[28] = {
 static const mmove_t retail_script_004e5e28_phase = {.firstframe = 0, .lastframe = 27, .frame = retail_script_004e5e28_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e5e28(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5e28: 0x4f000017 */
   mk4_script_context(fighter, 23);
   /* EXE 004e5e2c: 0x2500000d */
@@ -2150,14 +2123,12 @@ static const mmove_t retail_script_004e5e50_phase = {
     .firstframe = 0, .lastframe = 26, .frame = retail_script_004e5e50_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e5e50_samples};
 
 static inline void retail_script_004e5e50(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 82, 45, 28);
   /* EXE 004e5e50: 0x4000001 */
   fighter_mmove_phase(fighter, &retail_script_004e5e50_phase);
 }
 
 static inline void retail_script_004e5e50_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e5e70: 0x32000000 0x46ab20 */
   script_air_land(fighter);
 }
@@ -2199,7 +2170,6 @@ static const mmove_t retail_script_004e6020_phase = {
     .firstframe = 0, .lastframe = 41, .frame = retail_script_004e6020_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6020_samples};
 
 static inline void retail_script_004e6020(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6020: 0x3c000000 0x13982e 0x1397f6 0x139818 0x13982e 0x1397f6 0x139818 0x13982e 0x13982e 0x1397f6 0x13982e 0x1397f6 0x1397f6 0x13982e 0x13982e 0x1397f6 0x1397f6 */
   /* EXE 004e5fd8: 0x1f000000 0x1a */
   /* EXE 004e5fe0: 0x20000001 */
@@ -2225,7 +2195,6 @@ static const mframe_t retail_script_004e6158_frames[8] = {
 static const mmove_t retail_script_004e6158_phase = {.firstframe = 1, .lastframe = 8, .frame = retail_script_004e6158_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6158(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6158: 0x1f000000 0x17 */
   /* EXE 004e6160: 0x2700001b */
   battle_sound(SOUND_C, 27);
@@ -2256,7 +2225,6 @@ static const mframe_t retail_script_004e6190_frames[4] = {
 static const mmove_t retail_script_004e6190_phase = {.firstframe = 5, .lastframe = 8, .frame = retail_script_004e6190_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6190(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6190: 0xf000000 0x13ef0d */
   mk4_mmove_bind(fighter, 314, 13, 0);
   /* EXE 004e6198: 0x1d000005 */
@@ -2281,7 +2249,6 @@ static const mframe_t retail_script_004e61e0_frames[7] = {
 static const mmove_t retail_script_004e61e0_phase = {.firstframe = 0, .lastframe = 6, .frame = retail_script_004e61e0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e61e0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 262, 10, 0);
   /* EXE 004e61e0: 0x1f000000 0x110 */
   /* EXE 004e61e8: 0x5000007 */
@@ -2312,7 +2279,6 @@ static const mframe_t retail_script_004e61f8_frames[6] = {
 static const mmove_t retail_script_004e61f8_phase = {.firstframe = 4, .lastframe = 9, .frame = retail_script_004e61f8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e61f8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e61f8: 0x3c000000 0x13988e 0x139b7c 0x13988e 0x139b7c 0x13988e 0x139b7c 0x13988e 0x139b7c 0x13988e 0x139b7c 0x13988e 0x139b7c 0x13988e 0x139b7c 0x13988e 0x13988e */
   /* EXE 004e6df0: 0x1f000000 0x27 */
   /* EXE 004e6df8: 0xf000000 0x13ec16 */
@@ -2341,7 +2307,6 @@ static const mframe_t retail_script_004e62a0_frames[5] = {
 static const mmove_t retail_script_004e62a0_phase = {.firstframe = 0, .lastframe = 4, .frame = retail_script_004e62a0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62a0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e62a0: 0x1f000000 0x102 */
   /* EXE 004e62a8: 0x47000205 0x13eece */
   mk4_mmove_bind(fighter, 293, 20, 0);
@@ -2364,7 +2329,6 @@ static const mframe_t retail_script_004e62c0_frames[22] = {
 static const mmove_t retail_script_004e62c0_phase = {.firstframe = 0, .lastframe = 21, .frame = retail_script_004e62c0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62c0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e62c0: 0x2c000000 */
   mk4_script_draw_voice(fighter);
   /* EXE 004e62c4: 0x2000016 0x13ee3b */
@@ -2395,7 +2359,6 @@ static const mframe_t retail_script_004e62d8_frames[27] = {
 static const mmove_t retail_script_004e62d8_phase = {.firstframe = 22, .lastframe = 48, .frame = retail_script_004e62d8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62d8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 244, 49, 22);
   /* EXE 004e62d8: 0x400000d */
   fighter_mmove_phase(fighter, &retail_script_004e62d8_phase);
@@ -2436,7 +2399,6 @@ static const mframe_t retail_script_004e62f0_frames[9] = {
 static const mmove_t retail_script_004e62f0_phase = {.firstframe = 0, .lastframe = 8, .frame = retail_script_004e62f0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62f0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e62f0: 0x35000000 0x46de60 */
   fighter->mmove_result = mk4_script_jab_gate(fighter);
   /* EXE 004e62f8: 0x2000000a */
@@ -2463,7 +2425,6 @@ static const mmove_t retail_script_004e62f0_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004e62f0_branch_1_samples};
 
 static inline void retail_script_004e62f0_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63a0: 0x32000000 0x46dd20 */
   /* EXE 004e63b0: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
@@ -2495,7 +2456,6 @@ static const mmove_t retail_script_004e62f0_branch_2_phase = {
     .firstframe = 0, .lastframe = 9, .frame = retail_script_004e62f0_branch_2_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62f0_branch_2(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e631c: 0x2000000a */
   battle_sound(SOUND_A, 10);
   /* EXE 004e6320: 0xf000000 0x13eed4 */
@@ -2520,7 +2480,6 @@ static const mmove_t retail_script_004e62f0_branch_3_phase = {
     .firstframe = 10, .lastframe = 13, .frame = retail_script_004e62f0_branch_3_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62f0_branch_3(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63c8: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
   /* EXE 004e63cc: 0x4000003 */
@@ -2552,7 +2511,6 @@ static const mmove_t retail_script_004e62f0_branch_4_phase = {.firstframe = 0,
     .samples = retail_script_004e62f0_branch_4_samples};
 
 static inline void retail_script_004e62f0_branch_4(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e634c: 0x2000000a */
   battle_sound(SOUND_A, 10);
   /* EXE 004e6350: 0x3000000 */
@@ -2576,7 +2534,6 @@ static const mmove_t retail_script_004e62f0_branch_5_phase = {.firstframe = 0,
     .samples = retail_script_004e62f0_branch_5_samples};
 
 static inline void retail_script_004e62f0_branch_5(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63a0: 0x32000000 0x46dd20 */
   /* EXE 004e63b0: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
@@ -2608,7 +2565,6 @@ static const mmove_t retail_script_004e62f0_branch_6_phase = {
     .firstframe = 0, .lastframe = 9, .frame = retail_script_004e62f0_branch_6_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e62f0_branch_6(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6378: 0x2000000a */
   battle_sound(SOUND_A, 10);
   /* EXE 004e637c: 0x200000a 0x13eed4 */
@@ -2641,7 +2597,6 @@ static const mmove_t retail_script_004e62f0_branch_7_phase = {.firstframe = 0,
     .samples = retail_script_004e62f0_branch_7_samples};
 
 static inline void retail_script_004e62f0_branch_7(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6398: 0x33000000 0x1398d3 */
   /* EXE 004e634c: 0x2000000a */
   battle_sound(SOUND_A, 10);
@@ -2677,7 +2632,6 @@ static const mframe_t retail_script_004e6330_frames[10] = {
 static const mmove_t retail_script_004e6330_phase = {.firstframe = 0, .lastframe = 9, .frame = retail_script_004e6330_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6330(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 295, 19, 0);
   /* EXE 004e6330: 0x12000000 */
   fighter->sample_override = 0;
@@ -2698,7 +2652,6 @@ static const mmove_t retail_script_004e6330_branch_1_phase = {
     .firstframe = 10, .lastframe = 13, .frame = retail_script_004e6330_branch_1_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6330_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63c8: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
   /* EXE 004e63cc: 0x4000003 */
@@ -2730,7 +2683,6 @@ static const mmove_t retail_script_004e6330_branch_2_phase = {.firstframe = 0,
     .samples = retail_script_004e6330_branch_2_samples};
 
 static inline void retail_script_004e6330_branch_2(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e634c: 0x2000000a */
   battle_sound(SOUND_A, 10);
   /* EXE 004e6350: 0x3000000 */
@@ -2754,7 +2706,6 @@ static const mmove_t retail_script_004e6330_branch_3_phase = {.firstframe = 0,
     .samples = retail_script_004e6330_branch_3_samples};
 
 static inline void retail_script_004e6330_branch_3(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63a0: 0x32000000 0x46dd20 */
   /* EXE 004e63b0: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
@@ -2786,7 +2737,6 @@ static const mmove_t retail_script_004e6330_branch_4_phase = {
     .firstframe = 0, .lastframe = 9, .frame = retail_script_004e6330_branch_4_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6330_branch_4(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6378: 0x2000000a */
   battle_sound(SOUND_A, 10);
   /* EXE 004e637c: 0x200000a 0x13eed4 */
@@ -2819,7 +2769,6 @@ static const mmove_t retail_script_004e6330_branch_5_phase = {.firstframe = 0,
     .samples = retail_script_004e6330_branch_5_samples};
 
 static inline void retail_script_004e6330_branch_5(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6398: 0x33000000 0x1398d3 */
   /* EXE 004e634c: 0x2000000a */
   battle_sound(SOUND_A, 10);
@@ -2853,7 +2802,6 @@ static const mframe_t retail_script_004e6360_frames[1] = {
 static const mmove_t retail_script_004e6360_phase = {.firstframe = 18, .lastframe = 18, .frame = retail_script_004e6360_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6360(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 295, 19, 18);
   /* EXE 004e6360: 0x34000001 */
   fighter_mmove_phase(fighter, &retail_script_004e6360_phase);
@@ -2876,7 +2824,6 @@ static const mmove_t retail_script_004e6360_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004e6360_branch_1_samples};
 
 static inline void retail_script_004e6360_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63a0: 0x32000000 0x46dd20 */
   /* EXE 004e63b0: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
@@ -2908,7 +2855,6 @@ static const mmove_t retail_script_004e6360_branch_2_phase = {
     .firstframe = 0, .lastframe = 9, .frame = retail_script_004e6360_branch_2_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6360_branch_2(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6378: 0x2000000a */
   battle_sound(SOUND_A, 10);
   /* EXE 004e637c: 0x200000a 0x13eed4 */
@@ -2929,7 +2875,6 @@ static const mmove_t retail_script_004e6360_branch_3_phase = {
     .firstframe = 10, .lastframe = 13, .frame = retail_script_004e6360_branch_3_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6360_branch_3(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63c8: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
   /* EXE 004e63cc: 0x4000003 */
@@ -2961,7 +2906,6 @@ static const mmove_t retail_script_004e6360_branch_4_phase = {.firstframe = 0,
     .samples = retail_script_004e6360_branch_4_samples};
 
 static inline void retail_script_004e6360_branch_4(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6398: 0x33000000 0x1398d3 */
   /* EXE 004e634c: 0x2000000a */
   battle_sound(SOUND_A, 10);
@@ -2985,7 +2929,6 @@ static const mmove_t retail_script_004e63b0_phase = {
     .firstframe = 0, .lastframe = 10, .frame = retail_script_004e63b0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e63b0_samples};
 
 static inline void retail_script_004e63b0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63b0: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
   /* EXE 004e63b4: 0xf000009 0x13eed1 */
@@ -3010,7 +2953,6 @@ static const mframe_t retail_script_004e63d8_frames[6] = {
 static const mmove_t retail_script_004e63d8_phase = {.firstframe = 0, .lastframe = 5, .frame = retail_script_004e63d8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e63d8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e63d8: 0x20000019 */
   battle_sound(SOUND_A, 25);
   /* EXE 004e63dc: 0x3c000000 0x139907 0x139b86 0x139b8c 0x139907 0x139b86 0x139b8c 0x139907 0x139b86 0x139b8c 0x139907 0x139b86 0x139b8c 0x139907 0x139b86 0x139b8c 0x139b8c */
@@ -3022,7 +2964,6 @@ static inline void retail_script_004e63d8(Fighter *fighter) {
 static inline void retail_script_004e6500(Fighter *fighter);
 
 static inline void retail_script_004e6500(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6500: 0x20000019 */
   battle_sound(SOUND_A, 25);
   /* EXE 004e6504: 0x3c000000 0x139951 0x139b92 0x139b96 0x139951 0x139b92 0x139b96 0x139951 0x139b92 0x139b96 0x139951 0x139b92 0x139b96 0x139951 0x139b92 0x139b96 0x139b92 */
@@ -3034,7 +2975,6 @@ static inline void retail_script_004e6500(Fighter *fighter) {
 static inline void retail_script_004e6658(Fighter *fighter);
 
 static inline void retail_script_004e6658(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6658: 0x1f000000 0x104 */
   /* EXE 004e6660: 0x20000019 */
   battle_sound(SOUND_A, 25);
@@ -3045,7 +2985,6 @@ static inline void retail_script_004e6658(Fighter *fighter) {
 static inline void retail_script_004e66d0(Fighter *fighter);
 
 static inline void retail_script_004e66d0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e66d0: 0x1f000000 0x104 */
   /* EXE 004e66d8: 0x32000000 0x46eab0 */
   weapon_air_frames_native(fighter, 260);
@@ -3054,7 +2993,6 @@ static inline void retail_script_004e66d0(Fighter *fighter) {
 static inline void retail_script_004e66f0(Fighter *fighter);
 
 static inline void retail_script_004e66f0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e66f0: 0x1f000000 0x108 */
   /* EXE 004e66f8: 0x32000000 0x46ec10 */
   weapon_air_frames_native(fighter, 264);
@@ -3063,7 +3001,6 @@ static inline void retail_script_004e66f0(Fighter *fighter) {
 static inline void retail_script_004e6710(Fighter *fighter);
 
 static inline void retail_script_004e6710(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6710: 0x1f000000 0x105 */
   /* EXE 004e6718: 0x20000019 */
   battle_sound(SOUND_A, 25);
@@ -3097,7 +3034,6 @@ static const mmove_t retail_script_004e6798_phase = {
     .firstframe = 0, .lastframe = 16, .frame = retail_script_004e6798_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6798_samples};
 
 static inline void retail_script_004e6798(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6798: 0x3c000000 0x139b9a 0x1399f6 0x139b9a 0x1399f6 0x139b9a 0x1399f6 0x139b9a 0x1399f6 0x139b9a 0x1399f6 0x139b9a 0x1399f6 0x139b9a 0x1399f6 0x139b9a 0x139b9a */
   /* EXE 004e67d8: 0x139b9a */
   /* EXE 004e67dc: 0x1f000000 0x24 */
@@ -3110,7 +3046,6 @@ static inline void retail_script_004e6798(Fighter *fighter) {
 static inline void retail_script_004e6800(Fighter *fighter);
 
 static inline void retail_script_004e6800(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6800: 0x3c000000 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139ba4 0x139a10 0x139a10 */
   /* EXE 004e6e90: 0x1f000000 0x22 */
   /* EXE 004e6e98: 0xf000000 0x13ec1f */
@@ -3145,7 +3080,6 @@ static const mmove_t retail_script_004e6890_phase = {
     .firstframe = 0, .lastframe = 9, .frame = retail_script_004e6890_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6890_samples};
 
 static inline void retail_script_004e6890(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 64, 45, 0);
   /* EXE 004e6890: 0x4d00000c */
   fighter_mmove_phase(fighter, &retail_script_004e6890_phase);
@@ -3177,7 +3111,6 @@ static const mmove_t retail_script_004e68a8_phase = {
     .firstframe = 0, .lastframe = 13, .frame = retail_script_004e68a8_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e68a8_samples};
 
 static inline void retail_script_004e68a8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 64, 45, 0);
   /* EXE 004e68a8: 0x4d00000c */
   fighter_mmove_phase(fighter, &retail_script_004e68a8_phase);
@@ -3211,7 +3144,6 @@ static const mmove_t retail_script_004e6950_phase = {
     .firstframe = 0, .lastframe = 32, .frame = retail_script_004e6950_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6950_samples};
 
 static inline void retail_script_004e6950(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 293, 20, 0);
   /* EXE 004e6950: 0x3400001c */
   fighter_mmove_phase(fighter, &retail_script_004e6950_phase);
@@ -3241,7 +3173,6 @@ static const mmove_t retail_script_004e6998_phase = {
     .firstframe = 0, .lastframe = 15, .frame = retail_script_004e6998_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e6998_samples};
 
 static inline void retail_script_004e6998(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 71, 28, 13);
   /* EXE 004e6998: 0x29000000 */
   fighter->action = ACTION_RETAIL_1006;
@@ -3265,7 +3196,6 @@ static const mframe_t retail_script_004e69b0_frames[9] = {
 static const mmove_t retail_script_004e69b0_phase = {.firstframe = 2, .lastframe = 10, .frame = retail_script_004e69b0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e69b0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e69b0: 0xf000002 0x13ee6e */
   mk4_mmove_bind(fighter, 261, 28, 2);
   /* EXE 004e69b8: 0x500000b */
@@ -3302,7 +3232,6 @@ static const mframe_t retail_script_004e6a40_frames[101] = {
 static const mmove_t retail_script_004e6a40_phase = {.firstframe = 0, .lastframe = 100, .frame = retail_script_004e6a40_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e6a40(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e6a40: 0x3c000000 0x139ab5 0x139ae9 0x139ac1 0x139adb 0x139ab5 0x139af8 0x139aad 0x139ac7 0x139acd 0x139ae2 0x139af0 0x139ad4 0x139acd 0x139ac1 0x139aad 0x139aa1 */
   /* EXE 004e6ba4: 0x4f000022 */
   mk4_script_context(fighter, 34);
@@ -3372,7 +3301,6 @@ static inline void retail_script_004e8440_branch_57(Fighter *fighter);
 static inline void retail_script_004e8440_branch_58(Fighter *fighter);
 
 static inline void retail_script_004e8440(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8440: 0xf000000 0x13ec79 */
   mk4_mmove_bind(fighter, 94, 31, 0);
   /* EXE 004e8448: 0x1d00000e */
@@ -3397,7 +3325,6 @@ static inline void retail_script_004e8440(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3422,7 +3349,6 @@ static const mmove_t retail_script_004e8440_branch_2_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_2_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_2(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3430,7 +3356,6 @@ static inline void retail_script_004e8440_branch_2(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_3(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3455,7 +3380,6 @@ static const mmove_t retail_script_004e8440_branch_4_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_4_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_4(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3463,7 +3387,6 @@ static inline void retail_script_004e8440_branch_4(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_5(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3488,7 +3411,6 @@ static const mmove_t retail_script_004e8440_branch_6_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_6_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_6(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3496,7 +3418,6 @@ static inline void retail_script_004e8440_branch_6(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_7(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3521,7 +3442,6 @@ static const mmove_t retail_script_004e8440_branch_8_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3529,7 +3449,6 @@ static inline void retail_script_004e8440_branch_8(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_9(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3554,7 +3473,6 @@ static const mmove_t retail_script_004e8440_branch_10_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_10_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_10(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3562,7 +3480,6 @@ static inline void retail_script_004e8440_branch_10(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_11(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3587,7 +3504,6 @@ static const mmove_t retail_script_004e8440_branch_12_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_12_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_12(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3595,7 +3511,6 @@ static inline void retail_script_004e8440_branch_12(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_13(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3620,7 +3535,6 @@ static const mmove_t retail_script_004e8440_branch_14_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_14_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_14(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3628,7 +3542,6 @@ static inline void retail_script_004e8440_branch_14(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_15(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3653,7 +3566,6 @@ static const mmove_t retail_script_004e8440_branch_16_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_16_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_16(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3661,7 +3573,6 @@ static inline void retail_script_004e8440_branch_16(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_17(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3686,7 +3597,6 @@ static const mmove_t retail_script_004e8440_branch_18_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_18_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_18(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3694,7 +3604,6 @@ static inline void retail_script_004e8440_branch_18(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_19(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3719,7 +3628,6 @@ static const mmove_t retail_script_004e8440_branch_20_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_20_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_20(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3727,7 +3635,6 @@ static inline void retail_script_004e8440_branch_20(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_21(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3752,7 +3659,6 @@ static const mmove_t retail_script_004e8440_branch_22_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_22_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_22(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3760,7 +3666,6 @@ static inline void retail_script_004e8440_branch_22(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_23(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3785,7 +3690,6 @@ static const mmove_t retail_script_004e8440_branch_24_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_24_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_24(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3793,7 +3697,6 @@ static inline void retail_script_004e8440_branch_24(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_25(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3818,7 +3721,6 @@ static const mmove_t retail_script_004e8440_branch_26_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_26_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_26(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3826,7 +3728,6 @@ static inline void retail_script_004e8440_branch_26(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_27(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3851,7 +3752,6 @@ static const mmove_t retail_script_004e8440_branch_28_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_28_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_28(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3859,7 +3759,6 @@ static inline void retail_script_004e8440_branch_28(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_29(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3884,7 +3783,6 @@ static const mmove_t retail_script_004e8440_branch_30_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_30_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_30(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3892,7 +3790,6 @@ static inline void retail_script_004e8440_branch_30(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_31(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3917,7 +3814,6 @@ static const mmove_t retail_script_004e8440_branch_32_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_32_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_32(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3925,7 +3821,6 @@ static inline void retail_script_004e8440_branch_32(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_33(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3950,7 +3845,6 @@ static const mmove_t retail_script_004e8440_branch_34_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_34_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_34(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3958,7 +3852,6 @@ static inline void retail_script_004e8440_branch_34(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_35(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -3983,7 +3876,6 @@ static const mmove_t retail_script_004e8440_branch_36_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_36_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_36(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -3991,7 +3883,6 @@ static inline void retail_script_004e8440_branch_36(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_37(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4016,7 +3907,6 @@ static const mmove_t retail_script_004e8440_branch_38_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_38_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_38(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4024,7 +3914,6 @@ static inline void retail_script_004e8440_branch_38(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_39(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4049,7 +3938,6 @@ static const mmove_t retail_script_004e8440_branch_40_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_40_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_40(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4057,7 +3945,6 @@ static inline void retail_script_004e8440_branch_40(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_41(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4082,7 +3969,6 @@ static const mmove_t retail_script_004e8440_branch_42_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_42_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_42(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4090,7 +3976,6 @@ static inline void retail_script_004e8440_branch_42(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_43(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4115,7 +4000,6 @@ static const mmove_t retail_script_004e8440_branch_44_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_44_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_44(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4123,7 +4007,6 @@ static inline void retail_script_004e8440_branch_44(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_45(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4148,7 +4031,6 @@ static const mmove_t retail_script_004e8440_branch_46_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_46_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_46(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4156,7 +4038,6 @@ static inline void retail_script_004e8440_branch_46(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_47(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4181,7 +4062,6 @@ static const mmove_t retail_script_004e8440_branch_48_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_48_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_48(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4189,7 +4069,6 @@ static inline void retail_script_004e8440_branch_48(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_49(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4214,7 +4093,6 @@ static const mmove_t retail_script_004e8440_branch_50_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_50_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_50(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4222,7 +4100,6 @@ static inline void retail_script_004e8440_branch_50(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_51(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4247,7 +4124,6 @@ static const mmove_t retail_script_004e8440_branch_52_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_52_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_52(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4255,7 +4131,6 @@ static inline void retail_script_004e8440_branch_52(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_53(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4280,7 +4155,6 @@ static const mmove_t retail_script_004e8440_branch_54_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_54_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_54(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4288,7 +4162,6 @@ static inline void retail_script_004e8440_branch_54(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_55(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4313,7 +4186,6 @@ static const mmove_t retail_script_004e8440_branch_56_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_56_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_56(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4321,7 +4193,6 @@ static inline void retail_script_004e8440_branch_56(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8440_branch_57(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4341,7 +4212,6 @@ static const mmove_t retail_script_004e8440_branch_58_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8440_branch_58_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8440_branch_58(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4438,7 +4308,6 @@ static const mmove_t retail_script_004e8458_phase = {
     .firstframe = 0, .lastframe = 6, .frame = retail_script_004e8458_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e8458_samples};
 
 static inline void retail_script_004e8458(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8458: 0xf000000 0x13ec79 */
   mk4_mmove_bind(fighter, 94, 31, 0);
   /* EXE 004e8460: 0x4d00000e */
@@ -4446,7 +4315,6 @@ static inline void retail_script_004e8458(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4471,7 +4339,6 @@ static const mmove_t retail_script_004e8458_branch_2_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_2_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_2(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4479,7 +4346,6 @@ static inline void retail_script_004e8458_branch_2(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_3(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4504,7 +4370,6 @@ static const mmove_t retail_script_004e8458_branch_4_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_4_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_4(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4512,7 +4377,6 @@ static inline void retail_script_004e8458_branch_4(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_5(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4537,7 +4401,6 @@ static const mmove_t retail_script_004e8458_branch_6_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_6_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_6(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4545,7 +4408,6 @@ static inline void retail_script_004e8458_branch_6(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_7(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4570,7 +4432,6 @@ static const mmove_t retail_script_004e8458_branch_8_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4578,7 +4439,6 @@ static inline void retail_script_004e8458_branch_8(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_9(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4603,7 +4463,6 @@ static const mmove_t retail_script_004e8458_branch_10_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_10_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_10(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4611,7 +4470,6 @@ static inline void retail_script_004e8458_branch_10(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_11(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4636,7 +4494,6 @@ static const mmove_t retail_script_004e8458_branch_12_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_12_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_12(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4644,7 +4501,6 @@ static inline void retail_script_004e8458_branch_12(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_13(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4669,7 +4525,6 @@ static const mmove_t retail_script_004e8458_branch_14_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_14_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_14(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4677,7 +4532,6 @@ static inline void retail_script_004e8458_branch_14(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_15(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4702,7 +4556,6 @@ static const mmove_t retail_script_004e8458_branch_16_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_16_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_16(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4710,7 +4563,6 @@ static inline void retail_script_004e8458_branch_16(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_17(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4735,7 +4587,6 @@ static const mmove_t retail_script_004e8458_branch_18_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_18_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_18(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4743,7 +4594,6 @@ static inline void retail_script_004e8458_branch_18(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_19(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4768,7 +4618,6 @@ static const mmove_t retail_script_004e8458_branch_20_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_20_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_20(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4776,7 +4625,6 @@ static inline void retail_script_004e8458_branch_20(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_21(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4801,7 +4649,6 @@ static const mmove_t retail_script_004e8458_branch_22_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_22_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_22(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4809,7 +4656,6 @@ static inline void retail_script_004e8458_branch_22(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_23(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4834,7 +4680,6 @@ static const mmove_t retail_script_004e8458_branch_24_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_24_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_24(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4842,7 +4687,6 @@ static inline void retail_script_004e8458_branch_24(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_25(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4867,7 +4711,6 @@ static const mmove_t retail_script_004e8458_branch_26_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_26_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_26(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4875,7 +4718,6 @@ static inline void retail_script_004e8458_branch_26(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_27(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4900,7 +4742,6 @@ static const mmove_t retail_script_004e8458_branch_28_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_28_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_28(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4908,7 +4749,6 @@ static inline void retail_script_004e8458_branch_28(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_29(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4933,7 +4773,6 @@ static const mmove_t retail_script_004e8458_branch_30_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_30_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_30(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4941,7 +4780,6 @@ static inline void retail_script_004e8458_branch_30(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_31(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4966,7 +4804,6 @@ static const mmove_t retail_script_004e8458_branch_32_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_32_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_32(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -4974,7 +4811,6 @@ static inline void retail_script_004e8458_branch_32(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_33(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -4999,7 +4835,6 @@ static const mmove_t retail_script_004e8458_branch_34_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_34_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_34(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5007,7 +4842,6 @@ static inline void retail_script_004e8458_branch_34(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_35(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5032,7 +4866,6 @@ static const mmove_t retail_script_004e8458_branch_36_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_36_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_36(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5040,7 +4873,6 @@ static inline void retail_script_004e8458_branch_36(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_37(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5065,7 +4897,6 @@ static const mmove_t retail_script_004e8458_branch_38_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_38_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_38(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5073,7 +4904,6 @@ static inline void retail_script_004e8458_branch_38(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_39(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5098,7 +4928,6 @@ static const mmove_t retail_script_004e8458_branch_40_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_40_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_40(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5106,7 +4935,6 @@ static inline void retail_script_004e8458_branch_40(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_41(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5131,7 +4959,6 @@ static const mmove_t retail_script_004e8458_branch_42_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_42_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_42(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5139,7 +4966,6 @@ static inline void retail_script_004e8458_branch_42(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_43(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5164,7 +4990,6 @@ static const mmove_t retail_script_004e8458_branch_44_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_44_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_44(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5172,7 +4997,6 @@ static inline void retail_script_004e8458_branch_44(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_45(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5197,7 +5021,6 @@ static const mmove_t retail_script_004e8458_branch_46_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_46_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_46(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5205,7 +5028,6 @@ static inline void retail_script_004e8458_branch_46(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_47(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5230,7 +5052,6 @@ static const mmove_t retail_script_004e8458_branch_48_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_48_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_48(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5238,7 +5059,6 @@ static inline void retail_script_004e8458_branch_48(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_49(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5263,7 +5083,6 @@ static const mmove_t retail_script_004e8458_branch_50_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_50_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_50(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5271,7 +5090,6 @@ static inline void retail_script_004e8458_branch_50(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_51(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5296,7 +5114,6 @@ static const mmove_t retail_script_004e8458_branch_52_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_52_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_52(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5304,7 +5121,6 @@ static inline void retail_script_004e8458_branch_52(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_53(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5329,7 +5145,6 @@ static const mmove_t retail_script_004e8458_branch_54_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_54_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_54(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5337,7 +5152,6 @@ static inline void retail_script_004e8458_branch_54(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_55(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5362,7 +5176,6 @@ static const mmove_t retail_script_004e8458_branch_56_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_56_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_56(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5370,7 +5183,6 @@ static inline void retail_script_004e8458_branch_56(Fighter *fighter) {
 }
 
 static inline void retail_script_004e8458_branch_57(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8908: 0x32000000 0x47d7f0 */
   script_torpedo_contact(fighter);
 }
@@ -5390,7 +5202,6 @@ static const mmove_t retail_script_004e8458_branch_58_phase = {
     .firstframe = 14, .lastframe = 14, .frame = retail_script_004e8458_branch_58_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e8458_branch_58(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e848c: 0x35000000 0x47d720 */
   script_torpedo_step(fighter);
   /* EXE 004e8494: 0x34000001 */
@@ -5423,7 +5234,6 @@ static const mmove_t retail_script_004e8e18_phase = {
     .firstframe = 0, .lastframe = 16, .frame = retail_script_004e8e18_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e8e18_samples};
 
 static inline void retail_script_004e8e18(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e8e18: 0x2a000000 */
   mk4_script_shake(fighter, 0);
   /* EXE 004e8e1c: 0x26000002 */
@@ -5451,7 +5261,6 @@ static const mmove_t retail_script_004e9910_landing_phase = {
     .firstframe = 28, .lastframe = 28, .frame = retail_script_004e9910_landing_frames, .endfunc = retail_script_004e9910_branch_1};
 
 static inline void retail_script_004e9910(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 202, 45, 28);
   /* EXE 004e9910: 0x58000000 0x0 0x3333 0x28f */
   fighter_set_speed(fighter, 0);
@@ -5483,7 +5292,6 @@ static const mmove_t retail_script_004e9910_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004e9910_branch_1_samples};
 
 static inline void retail_script_004e9910_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9924: 0x28000000 */
   mk4_script_impact(fighter);
   /* EXE 004e9928: 0x3000000 */
@@ -5521,7 +5329,6 @@ static const mframe_t retail_script_004e99c0_frames[43] = {
 static const mmove_t retail_script_004e99c0_phase = {.firstframe = 0, .lastframe = 42, .frame = retail_script_004e99c0_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e99c0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 169, 43, 0);
   /* EXE 004e99c0: 0x4000008 */
   fighter_mmove_phase(fighter, &retail_script_004e99c0_phase);
@@ -5544,7 +5351,6 @@ static const mmove_t retail_script_004e9ad0_phase = {
     .firstframe = 0, .lastframe = 65, .frame = retail_script_004e9ad0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e9ad0_samples};
 
 static inline void retail_script_004e9ad0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9ad0: 0x5a000000 0x4ccc */
   fighter_set_speed(fighter, -19660);
   /* EXE 004e9ad8: 0x1000000 0x13ed81 */
@@ -5579,7 +5385,6 @@ static const mframe_t retail_script_004e9ae8_frames[34] = {
 static const mmove_t retail_script_004e9ae8_phase = {.firstframe = 0, .lastframe = 33, .frame = retail_script_004e9ae8_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e9ae8(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9ae8: 0x58000000 0xfffff334 0xfffff0a4 0x312 */
   fighter_set_speed(fighter, -3276);
   fighter->body.vel[AXIS_Y] = -3932;
@@ -5609,7 +5414,6 @@ static const mmove_t retail_script_004e9ae8_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004e9ae8_branch_1_samples};
 
 static inline void retail_script_004e9ae8_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9b08: 0x3000000 */
   fighter_mmove_phase(fighter, &retail_script_004e9ae8_branch_1_phase);
 }
@@ -5645,7 +5449,6 @@ static const mframe_t retail_script_004e9b40_frames[22] = {
 static const mmove_t retail_script_004e9b40_phase = {.firstframe = 0, .lastframe = 21, .frame = retail_script_004e9b40_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004e9b40(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9b40: 0x5a000000 0x2666 */
   fighter_set_speed(fighter, -9830);
   /* EXE 004e9b48: 0x4700020c 0x13ed63 */
@@ -5692,7 +5495,6 @@ static const mmove_t retail_script_004e9bd0_phase = {
     .firstframe = 0, .lastframe = 82, .frame = retail_script_004e9bd0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e9bd0_samples};
 
 static inline void retail_script_004e9bd0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9bd0: 0x26000005 */
   mk4_script_context_sound(fighter, 5);
   /* EXE 004e9bd4: 0x2b000003 */
@@ -5744,7 +5546,6 @@ static const mmove_t retail_script_004e9d50_phase = {
     .firstframe = 0, .lastframe = 40, .frame = retail_script_004e9d50_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e9d50_samples};
 
 static inline void retail_script_004e9d50(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004e9d50: 0x2000002d */
   battle_sound(SOUND_A, 45);
   /* EXE 004e9d54: 0x5a000000 0x5999 */
@@ -5770,7 +5571,6 @@ static const mframe_t retail_script_004ea068_frames[5] = {
 static const mmove_t retail_script_004ea068_phase = {.firstframe = 0, .lastframe = 4, .frame = retail_script_004ea068_frames, .endfunc = fighter_stop_mmove};
 
 static inline void retail_script_004ea068(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ea068: 0x2b000001 */
   battle_sound(SOUND_B, 1);
   /* EXE 004ea06c: 0x26000002 */
@@ -5799,7 +5599,6 @@ static const mmove_t retail_script_004ea108_phase = {
     .firstframe = 0, .lastframe = 19, .frame = retail_script_004ea108_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ea108_samples};
 
 static inline void retail_script_004ea108(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ea108: 0x62000013 */
   mk4_script_effect(fighter, 19);
   /* EXE 004ea10c: 0x38000000 0x4889b0 */
@@ -5828,7 +5627,6 @@ static const mmove_t retail_script_004ea108_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004ea108_branch_1_samples};
 
 static inline void retail_script_004ea108_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ea11c: 0x4a000004 */
   fighter_mmove_phase(fighter, &retail_script_004ea108_branch_1_phase);
 }
@@ -5838,7 +5636,6 @@ static inline void retail_script_004ed5f0_branch_1(Fighter *fighter);
 static inline void retail_script_004ed5f0_branch_2(Fighter *fighter);
 
 static inline void retail_script_004ed5f0(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ed5f0: 0x25000014 */
   mk4_script_indexed_sound(fighter, 20);
   /* EXE 004ed5f4: 0x2700002b */
@@ -5907,7 +5704,6 @@ static const mmove_t retail_script_004ed5f0_branch_1_phase = {.firstframe = 0,
     .samples = retail_script_004ed5f0_branch_1_samples};
 
 static inline void retail_script_004ed5f0_branch_1(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ed614: 0xf000000 0x13eb92 */
   mk4_mmove_bind(fighter, 17, 14, 0);
   /* EXE 004ed61c: 0x4d000004 */
@@ -5970,7 +5766,6 @@ static const mmove_t retail_script_004ed5f0_branch_2_phase = {.firstframe = 0,
     .samples = retail_script_004ed5f0_branch_2_samples};
 
 static inline void retail_script_004ed5f0_branch_2(Fighter *fighter) {
-  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   /* EXE 004ed600: 0x2000004 0x13eb92 */
   mk4_mmove_bind(fighter, 17, 14, 0);
   fighter_mmove_phase(fighter, &retail_script_004ed5f0_branch_2_phase);

@@ -33,9 +33,7 @@ class CompilerTests(unittest.TestCase):
         # Fujin4e5c20 advances to cursor40 on a40-sample clip, then
         # rewinds34. Native429990 never submits pose40 at the end cursor.
         entry = self.fixture([0x0f000000, descriptor, 0x05000028, 0x4a000022, 0x3f000000])
-        legacy = generate(self.image, [entry], 5, 'fighter_ready')
-        frames = generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
-        self.assertIn('fighter_fiber_play_to(fighter, 40, 1);', legacy)
+        frames = generate(self.image, [entry], 5, 'fighter_ready')
         self.assertNotIn('fighter->sample_override = 40;', frames)
         samples = frames.split('_samples[] = {', 1)[1].split('}', 1)[0]
         poses = [int(value) for value in samples.split(',')]
@@ -44,49 +42,33 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(poses.count(39), 3)
         self.assertNotIn('fighter_wait_ticks', frames)
         actual = generate(self.image, [0x4e5c20], 5, 'fighter_ready', contexts={
-            '0x4e5c20': {'clip': 98, 'count': 40, 'sample': 16, 'evidence': 'Native46a650 retains the wind caster clip.'}},
-            mmove_entries=[0x4e5c20])
+            '0x4e5c20': {'clip': 98, 'count': 40, 'sample': 16, 'evidence': 'Native46a650 retains the wind caster clip.'}})
         self.assertNotIn('fighter->sample_override = 40;', actual)
         for opcode, target in [(5, 41), (0x49, 40), (0x12, 40), (0x4a, 40)]:
             entry = self.fixture([0x0f000000, descriptor, opcode << 24 | target, 0x3f000000])
             with self.assertRaisesRegex(CompileError, 'outside an incoming clip'):
-                generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+                generate(self.image, [entry], 5, 'fighter_ready')
 
     def test_gravity_operand_survives_nonblocking_landing_lowering(self):
         descriptor = (0x4fad7c + 58 * 12) // 4
         # Freeze, hold, clear busy, restore gravity and wait for the floor.
         entry = self.fixture([0x0f000000, descriptor, 0x5b000000, 0x34000008,
                               0x61000000, 0x5c000000, 0x51e, 0x60000000, 0x3f000000])
-        frames = generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+        frames = generate(self.image, [entry], 5, 'fighter_ready')
         self.assertIn('fighter->body.gravity = 1310;', frames)
         self.assertIn('mk4_mmove_wait_grounded', frames)
         self.assertIn('fighter->flags &= ~(unsigned)FF_BUSY;', frames)
         self.assertNotIn('fighter_wait_ticks', frames)
         entry = self.fixture([0x0f000000, descriptor, 0x5c000000, 0xfffffae2, 0x3f000000])
-        frames = generate(self.image, [entry], 5, 'fighter_ready', mmove_entries=[entry])
+        frames = generate(self.image, [entry], 5, 'fighter_ready')
         self.assertIn('fighter->body.gravity = -1310;', frames)
 
-    def test_controller_return_lowering_preserves_legacy_boundary(self):
+    def test_controller_return_lowering_finishes_the_frame_program(self):
         entry = self.fixture([0x32000000, 0x470420])
-        binding = Binding('mk4_script_ready', 'game/script.c', ('tail',), flow='terminal',
+        binding = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',), flow='terminal',
                           mmove_lowering='controller_return', evidence='470420 resets motion and returns the controller')
-        legacy = generate(self.image, [entry], 3, 'fighter_ready', bindings={0x470420: binding})
-        frames = generate(self.image, [entry], 3, 'fighter_ready', bindings={0x470420: binding}, mmove_entries=[entry])
-        self.assertIn('mk4_script_ready(fighter);', legacy)
+        frames = generate(self.image, [entry], 3, 'fighter_ready', bindings={0x470420: binding})
         self.assertIn('mk4_mmove_thrown_finish(fighter);', frames)
-        self.assertNotIn('mk4_script_ready(fighter);', frames)
-        self.assertNotIn('fighter_fiber_finish(', frames)
-        self.assertNotIn('fighter_wait_ticks(', frames)
-
-    def test_scheduler_completion_rejects_fiber_only_shared_helpers(self):
-        entry = self.fixture([0x3f000000])
-        for callback in ('mk4_script_ready', 'mk4_script_land', 'mk4_script_thrown_finish'):
-            with self.subTest(callback=callback):
-                with self.assertRaisesRegex(CompileError, 'completion callback requires a running fiber'):
-                    generate(self.image, [entry], 15, callback)
-                with self.assertRaisesRegex(CompileError, 'completion callback requires a running fiber'):
-                    generate(self.image, [entry], 15, callback, mmove_entries=[entry])
-        self.assertIn('fighter_fiber_finish(mk4_script_thrown_ready)', generate(self.image, [entry], 15, 'mk4_script_thrown_ready'))
 
     def test_real_normal_and_loop_scripts_compile_as_C11(self):
         entries = [0x4e6d08, 0x4e60b8]
@@ -94,11 +76,11 @@ class CompilerTests(unittest.TestCase):
         self.assertEqual(source, format_c(generate(self.image, reversed(entries), 3, 'fighter_ready')))
         for entry in entries:
             self.assertIn(symbol(entry), source)
-        self.assertIn('mk4_script_reverse_return(fighter);', source)
-        self.assertIn('if (--loop_counter != 0)', source)
-        self.assertIn('mk4_script_finish_clip(fighter, -1);', source)
-        self.assertIn('result_flags & 1u ? 8 : 5', source)
-        self.assertIn('0x9000000 0x13ec01', source)
+        self.assertIn('fighter_finish_mmove(fighter, fighter_ready);', source)  # reverse return
+        self.assertNotIn('loop_counter', source)  # counted loops unroll into rows
+        self.assertIn('fighter->mmove_result = battle_contact(', source)
+        self.assertIn('_hold_set_phase', source)  # contact-selected 8 or 5 visit holds
+        self.assertIn('_hold_clear_phase', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'compiled.c'
             path.write_text(source + '\nvoid use_generated(Fighter *fighter) {\n' +
@@ -111,9 +93,7 @@ class CompilerTests(unittest.TestCase):
         # yielding. Kai reaction4e9308 supplies its own two-visit holds.
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x0d000000, 0x34000002, 0x3f000000])
-        legacy = generate(self.image, [entry], 11, 'fighter_ready')
-        frames = generate(self.image, [entry], 11, 'fighter_ready', mmove_entries=[entry])
-        self.assertIn('fighter->sample_override = fighter_sample(fighter) + 1;', legacy)
+        frames = generate(self.image, [entry], 11, 'fighter_ready')
         self.assertIn('fighter->sample_override = 1;', frames)
         self.assertIn('.lastframe = 2', frames)  # two explicit waits plus controller return
         self.assertNotIn('fighter_wait_ticks', frames)
@@ -123,7 +103,7 @@ class CompilerTests(unittest.TestCase):
         entry = self.fixture([0x1100000c, descriptor, 0x0d000000, 0x3f000000])
         with self.assertRaisesRegex(CompileError, 'next pose exceeds bound clip'):
             generate(self.image, [entry], 11, 'fighter_ready')
-        actual = generate(self.image, [0x4e9308], 11, 'mk4_script_thrown_ready', mmove_entries=[0x4e9308])
+        actual = generate(self.image, [0x4e9308], 11, 'mk4_script_thrown_ready')
         self.assertIn('mk4_mmove_bind(fighter, 134, 18, 0)', actual)
         self.assertNotIn('fighter_wait_ticks', actual)
         with tempfile.TemporaryDirectory() as directory:
@@ -133,13 +113,10 @@ class CompilerTests(unittest.TestCase):
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
 
     def test_mmove_sweep_is_generated_without_yielding_calls(self):
-        source = format_c(generate(self.image, [0x4e6798], 4, 'fighter_ready', mmove_entries=[0x4e6798]))
+        source = format_c(generate(self.image, [0x4e6798], 4, 'fighter_ready'))
         self.assertIn('static const mframe_t retail_script_004e6798_frames', source)
         self.assertIn('battle_sound(SOUND_A, 175)', source)
         self.assertNotIn('fighter_wait_ticks', source)
-        self.assertNotIn('fighter_fiber_finish', source)
-        self.assertNotIn('fighter_start_fiber', source)
-        self.assertNotIn('mk4_script_advance', source)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'frames.c'
             path.write_text(source + '\nvoid script_sweep_tail(Fighter *fighter) { fighter_ready(fighter); }\n'
@@ -149,24 +126,22 @@ class CompilerTests(unittest.TestCase):
         bindings = bindings_for(4)
         bindings[0x46f080] = dataclasses.replace(bindings[0x46f080], mmove=False)
         with self.assertRaisesRegex(CompileError, 'not reviewed for nonblocking'):
-            generate(self.image, [0x4e6798], 4, 'fighter_ready', bindings, mmove_entries=[0x4e6798])
+            generate(self.image, [0x4e6798], 4, 'fighter_ready', bindings)
         bindings[0x46f080] = dataclasses.replace(bindings[0x46f080], mmove=True, flow='suspend')
         with self.assertRaisesRegex(CompileError, 'yielding binding'):
-            generate(self.image, [0x4e6798], 4, 'fighter_ready', bindings, mmove_entries=[0x4e6798])
-        with self.assertRaisesRegex(ValueError, 'must belong to generated_scripts'):
-            generate(self.image, [0x4e6798], 4, 'fighter_ready', mmove_entries=[0x4e84d8])
+            generate(self.image, [0x4e6798], 4, 'fighter_ready', bindings)
 
     def test_mmove_counted_recoil_loops_and_phase_branches(self):
         source = generate(self.image, [0x4e84f8, 0x4e8530], 4, 'fighter_ready',
                           contexts={hex(e): dict(clip=95, count=11, sample=9, evidence='native slide contact boundary')
-                                    for e in (0x4e84f8, 0x4e8530)}, mmove_entries=[0x4e84f8, 0x4e8530])
+                                    for e in (0x4e84f8, 0x4e8530)})
         self.assertNotIn('fighter_wait_ticks', source)
         self.assertNotIn('loop_counter', source)
         self.assertIn('.lastframe = 15', source)  # four four-pose hit cycles
         self.assertIn('.lastframe = 23', source)  # six four-pose blocked cycles
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x44000000, (self.entry + 20) // 4, 0x34000001, 0x3f000000])
-        source = generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+        source = generate(self.image, [entry], 4, 'fighter_ready')
         self.assertIn('fighter->held & BUTTON_BIT(BUTTON_DOWN)', source)
         self.assertIn('_branch_1', source)
         self.assertNotIn('fighter_wait_ticks', source)
@@ -175,19 +150,13 @@ class CompilerTests(unittest.TestCase):
         from retail_coverage import profile_for
         profile = profile_for(4)
         entries = [int(root, 16) for root in profile['generated_scripts']]
-        source = generate(self.image, entries, 4, profile['return_to'], contexts=profile['entry_contexts'],
-                          mmove_entries=profile['mmove_scripts'], mmove_only=True)
+        source = generate(self.image, entries, 4, profile['return_to'], contexts=profile['entry_contexts'])
         self.assertIn('mk4_mmove_hold', source)
         self.assertIn('retail_script_004e03d8_branch_', source)
-        for forbidden in ('fighter_wait_ticks(', 'fighter_start_fiber(', 'fighter_fiber_finish(', 'mk4_script_advance(',
-                          'mk4_script_pair_advance(', 'mk4_script_finish_clip(', 'goto L_'):
-            self.assertNotIn(forbidden, source)
-        broken = dict(profile, mmove_scripts=profile['mmove_scripts'][1:])
-        errors = audit(self.image, 4, profile=broken)['coverage_errors']
-        self.assertTrue(any('mmove-only profile requires every generated root' in error for error in errors))
+        self.assertNotIn('goto L_', source)
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x34000001, 0x33000000, (self.entry + 8) // 4])
-        source = generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+        source = generate(self.image, [entry], 4, 'fighter_ready')
         self.assertNotIn('.duration', source)
         self.assertNotIn('.leave', source)
         self.assertIn('.thinkfunc', source)
@@ -198,10 +167,9 @@ class CompilerTests(unittest.TestCase):
         descriptor = (0x4fad7c + 76 * 12) // 4
         entry = self.fixture([0x0f000000, descriptor, 0x4b000019, 0x3f000000])
         with self.assertRaisesRegex(CompileError, 'known victim clip'):
-            generate(self.image, [entry], 4, 'fighter_ready', mmove_entries=[entry])
+            generate(self.image, [entry], 4, 'fighter_ready')
         source = generate(self.image, [0x4de798, 0x4e9bd0], 4, 'fighter_ready',
-                          contexts={'0x4e9bd0': dict(clip=153, count=26, sample=25, evidence='native reaction 102 release')},
-                          mmove_entries=[0x4de798, 0x4e9bd0])
+                          contexts={'0x4e9bd0': dict(clip=153, count=26, sample=25, evidence='native reaction 102 release')})
         self.assertIn('mk4_mmove_pair_step', source)
         self.assertNotIn('fighter_wait_ticks', source)
         self.assertNotIn('fighter_start_fiber', source)
@@ -222,7 +190,7 @@ class CompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             self.compile([0x71000000, descriptor, 0x3f000000])
         source = self.compile([0x0f000000, descriptor, 0x71000000, descriptor, 0x3f000000])
-        self.assertIn('mk4_script_blend_bind(fighter, 54,', source)
+        self.assertIn('mk4_mmove_blend_bind(fighter, 54,', source)
         # Descriptor decoding and ordinary cursor validation apply to blends.
         struct.pack_into('<I', self.image.memory, descriptor * 4 + 4 - 0x400000, 1)
         with self.assertRaisesRegex(CompileError, 'animation cursor outside stored clip'):
@@ -232,24 +200,24 @@ class CompilerTests(unittest.TestCase):
         # Down branches into the second wait, which must remain a distinct
         # target rather than being folded into its predecessor.
         e = self.entry
-        source = self.compile([0x44000000, (e + 12) // 4, 0x34000005, 0x34000002, 0x3f000000])
-        self.assertIn('goto L_0057000c;', source)
-        self.assertIn('fighter_wait_ticks(5);', source)
-        self.assertIn('fighter_wait_ticks(2);', source)
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        source = self.compile([0x0f000000, descriptor, 0x44000000, (e + 20) // 4, 0x34000005, 0x34000002, 0x3f000000])
         self.assertIn('fighter->held & BUTTON_BIT(BUTTON_DOWN)', source)
-        self.assertNotIn('goto L_00570008;', source)
+        self.assertIn('.lastframe = 2', source)  # Down: the second wait and return
+        self.assertIn('.lastframe = 7', source)  # Otherwise both waits and return
 
     def test_predicate_flags_and_binding_roles_are_typed(self):
         e = self.entry
-        binding = Binding('test_gate', 'tests/test_script_codegen.py', ('predicate',), result='flags', evidence='synthetic predicate fixture')
-        source = self.compile([0x36000000, 0x46de60, (e + 16) // 4, 0x34000001, 0x3f000000], {0x46de60: binding})
-        self.assertIn('result_flags = test_gate(fighter);', source)
-        self.assertIn('result_flags & 4u', source)
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        binding = Binding('test_gate', 'tests/test_script_codegen.py', ('predicate',), result='flags', mmove=True, evidence='synthetic predicate fixture')
+        source = self.compile([0x0f000000, descriptor, 0x36000000, 0x46de60, (e + 24) // 4, 0x34000001, 0x3f000000], {0x46de60: binding})
+        self.assertIn('fighter->mmove_result = test_gate(fighter);', source)
+        self.assertIn('fighter->mmove_result & 4u', source)
         with self.assertRaisesRegex(CompileError, 'cannot be used as predicate'):
             self.compile([0x36000000, 0x46a950, (e + 16) // 4, 0x34000001, 0x3f000000])
         with self.assertRaisesRegex(CompileError, 'does not accept inline selector'):
             self.compile([0x6b000007, 0x3f000000])
-        source = self.compile([0x6c123456, 17, 0x3f000000])
+        source = self.compile([0x0f000000, descriptor, 0x6c123456, 17, 0x3f000000])
         self.assertIn('liu_script_motion(fighter, 17, 1110, 291)', source)
         with self.assertRaisesRegex(ValueError, 'Predicate must return flags'):
             dataclasses.replace(binding, result='void')
@@ -284,42 +252,13 @@ class CompilerTests(unittest.TestCase):
             descriptor = (0x4fad7c + 54 * 12) // 4
             self.compile([0x02000100, descriptor, 0x33000000, e // 4])
 
-    def test_postprocessor_removes_fallthrough_and_structures_simple_loops(self):
-        e = self.entry
-        source = self.compile([0x34000001, 0x33000000, e // 4])
-        self.assertIn('for (;;) {', source)
-        self.assertIn('fighter_wait_ticks(1);', source)
-        self.assertIn('continue;', source)
-        self.assertNotIn('goto L_00570000;', source)
-        self.assertNotIn('goto L_00570004;', source)
-
-    def test_postprocessor_cli_updates_inc_files_in_place(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'sample.inc'
-            path.write_text('''static inline void sample(void) {
-L_00000000: {
-  work();
-  goto L_00000004;
-}
-L_00000004: {
-  goto L_00000000;
-}
-}
-''')
-            subprocess.run([sys.executable, str(ROOT / 'tools/retail_c_postprocess.py'), str(path)],
-                           check=True, capture_output=True, text=True)
-            source = path.read_text()
-        self.assertNotIn('goto L_00000004;', source)
-        self.assertIn('for (;;) {', source)
-        self.assertIn('continue;', source)
-
     def test_character_selector_is_specialized_and_optional_prefix_is_not_speed(self):
-        program, _ = compile_program(self.image, 0x4e5ca0, 3, bindings={0x46a760: Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic selector continuation')})
+        program, _ = compile_program(self.image, 0x4e5ca0, 3, bindings={0x46a760: Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', mmove=True, evidence='synthetic selector continuation')})
         self.assertEqual(next(row for row in program['instructions'] if row['opcode'] == '0x3c')['selected_character'], 3)
         source = generate(self.image, [0x4e9ec8], 3, bindings={0x460250: Binding('fighter_ready', 'game/moves.c', ('tail',),
-                          flow='terminal', evidence='synthetic continuation binding for playback syntax test')})
-        self.assertIn('mk4_script_bind(fighter, 247, 5, 0);', source)
-        self.assertIn('mk4_script_finish_clip(fighter, 1);', source)
+                          flow='terminal', mmove=True, evidence='synthetic continuation binding for playback syntax test')})
+        self.assertIn('mk4_mmove_bind(fighter, 247, 5, 0);', source)
+        self.assertIn('{0, 1, 2, 3, 4, 4, 3, 2, 1}', source)
         self.assertNotIn('fighter, 2)', source)
 
     def test_generated_only_audit_without_claiming_whole_native_parity(self):
@@ -335,9 +274,8 @@ L_00000004: {
         # The three native jab tails only enter another VM script; flattening
         # them preserves the repeated branch without growing a fiber's stack.
         source = generate(self.image, [0x4e62f0], 3, 'fighter_ready')
+        self.assertIn('retail_script_004e62f0_branch_', source)
         for target in ('004e6330', '004e6360', '004e63b0'):
-            self.assertNotIn('goto L_' + target, source)
-            self.assertIn('EXE ' + target, source)
             self.assertNotIn('retail_script_' + target + '(fighter)', source)
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             compile_program(self.image, 0x4e61e0, 3, return_to='fighter_ready')
@@ -346,10 +284,11 @@ L_00000004: {
         self.assertIn('mk4_script_inherit(fighter, 262, 10, 0)', source)
         with self.assertRaisesRegex(ValueError, 'Invalid entry clip'):
             compile_program(self.image, 0x4e61e0, 3, return_to='fighter_ready', context={**context, 'sample': 10})
-        source = generate(self.image, [0x4de428], 3, 'caller', contexts={
-            '0x4de428': dict(clip=35, count=44, sample=38, evidence='42c0d0 damage continuation')})
-        self.assertNotIn('fighter_fiber_finish(caller)', source)
-        self.assertIn('return;', source)
+        context = dict(clip=35, count=44, sample=38, paired=True, return_to='caller', evidence='42c0d0 damage continuation')
+        with self.assertRaisesRegex(CompileError, 'explicit phase successor'):
+            generate(self.image, [0x4de428], 3, contexts={'0x4de428': context})
+        source = generate(self.image, [0x4de428], 3, contexts={'0x4de428': dict(context, successor='retail_script_004de468')})
+        self.assertIn('retail_script_004de468(fighter);', source)
 
     def test_cursor_progress_proves_loops_but_rejects_zero_progress(self):
         e = self.entry
@@ -366,26 +305,26 @@ L_00000004: {
                           0x05000004, 0x33000000, (e + 8) // 4], {0x460000: clobber})
         # Source 459f80 decrements the packed count twice, not once per wait.
         source = self.compile([0x0f000000, descriptor, 0x19000011, 0x3f000000])
-        self.assertIn('mk4_script_advance(fighter, 9, 2)', source)
+        self.assertIn('{0, 2, 4, 6, 8, 10, 12, 12, 12, 12}', source)  # nine double-step visits, clamped
 
     def test_contact_branch_and_reaction_context_are_structural(self):
         e = self.entry
-        source = self.compile([0x51000006, 0x42000000, (e + 16) // 4, 0x34000002, 0x3f000000])
-        self.assertIn('result_flags & 1u', source)
-        self.assertIn('goto L_00570010', source)
+        descriptor = (0x4fad7c + 54 * 12) // 4
+        source = self.compile([0x0f000000, descriptor, 0x51000006, 0x42000000, (e + 24) // 4, 0x34000002, 0x3f000000])
+        self.assertIn('fighter->mmove_result = battle_contact(', source)
+        self.assertIn('fighter->mmove_result & 1u', source)
+        self.assertIn('_branch_', source)
         with self.assertRaisesRegex(CompileError, 'flags is not initialized'):
             self.compile([0x42000000, (e + 8) // 4, 0x3f000000])
-        source = self.compile([0x4e000000, 0x3f000000])
-        self.assertNotIn('mk4_script_finish_clip', source)
-        self.assertIn('owns reaction context', source)
-        descriptor = (0x4fad7c + 54 * 12) // 4
+        source = self.compile([0x0f000000, descriptor, 0x4e000000, 0x3f000000])
+        self.assertIn('fighter_finish_mmove(fighter, fighter_ready);', source)
         source = self.compile([0x11000003, descriptor, 0x34000001, 0x3f000000])
-        self.assertIn('mk4_script_bind(fighter, 54, 13, 3)', source)
+        self.assertIn('mk4_mmove_bind(fighter, 54, 13, 3)', source)
 
     def test_contact_query_d_lowers_inline_selector_to_researched_record(self):
         bindings = bindings_for(10)
         for address in (0x47a6d0, 0x47b010):
-            bindings[address] = Binding('reptile_loop', 'game/reptile/character.c', ('tail',), flow='terminal',
+            bindings[address] = Binding('reptile_loop', 'game/reptile/character.c', ('tail',), flow='terminal', mmove=True,
                                         evidence='synthetic native-loop boundary for the retail D-contact fixture')
         source = generate(self.image, [0x4e8178], 10, 'fighter_ready', bindings=bindings)
         self.assertIn('static const AttackRecord retail_contact_4ec080', source)
@@ -393,16 +332,16 @@ L_00000004: {
 
     def test_advance_twice_to_sample_uses_packed_low_byte_target(self):
         binding = Binding('jarek_projectile', 'game/jarek/character.c', ('spawn',), ('fighter', 'task_type'),
-                          flow='independent', task_types=(78,), evidence='synthetic native task boundary')
+                          flow='independent', task_types=(78,), mmove=True, evidence='synthetic native task boundary')
         source = generate(self.image, [0x4ed7f0], 12, 'fighter_ready', bindings={0x497580: binding})
-        self.assertIn('fighter_fiber_play_to(fighter, 17, 2);', source)
-        self.assertNotIn('fighter_fiber_play_to(fighter, 529, 2);', source)
+        self.assertIn('{0, 2, 4, 6, 8, 10, 12, 14, 16, 17,', source)
+        self.assertNotIn('529', source)
 
-    def test_opcode_69_preserves_native_half_speed_in_both_lowerings(self):
+    def test_opcode_69_preserves_native_half_speed(self):
         binding = Binding('jax_projectile', 'tests/test_script_codegen.py', ('spawn',), ('fighter', 'task_type'),
-                          flow='independent', task_types=(80,), evidence='synthetic native task boundary')
+                          flow='independent', task_types=(80,), mmove=True, evidence='synthetic native task boundary')
         source = generate(self.image, [0x4ed090], 13, 'fighter_ready', bindings={0x496fc0: binding})
-        self.assertIn('mk4_script_finish_clip(fighter, 0);', source)
+        self.assertIn('25, 25, 26, 26, 27, 27', source)  # two visits per remaining pose
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
             self.compile([0x69000000, 0x3f000000])
 
@@ -410,7 +349,7 @@ L_00000004: {
         # at10 of clip54's13 samples: the tail takes five visits, not three.
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x1100000a, descriptor, 0x69000000, 0x3f000000])
-        slow = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+        slow = generate(self.image, [entry], 3, 'fighter_ready')
         self.assertIn('.lastframe = 5', slow)
         self.assertIn('10, 10, 11, 11, 12', slow)
         self.assertNotIn('mk4_script_finish_clip', slow)
@@ -428,10 +367,7 @@ L_00000004: {
         for words in ([0x68000200, descriptor, 0x3f000000],
                       [0x1100000a, descriptor, 0x68000000, 0x3f000000]):
             entry = self.fixture(words)
-            legacy = generate(self.image, [entry], 3, 'fighter_ready')
-            self.assertIn('fighter->sample_override = 0;', legacy)
-            self.assertIn('mk4_script_finish_clip(fighter, 0);', legacy)
-            frames = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+            frames = generate(self.image, [entry], 3, 'fighter_ready')
             self.assertIn('.lastframe = 25', frames)
             self.assertIn('0, 0, 1, 1, 2, 2, 3, 3', frames)
             self.assertNotIn('mk4_script_finish_clip', frames)
@@ -443,7 +379,7 @@ L_00000004: {
         binding = Binding('first_native_tail', 'tests/test_script_codegen.py', ('tail',),
                           flow='terminal', mmove=True, evidence='bounded native boundary44f5e0')
         real = generate(self.image, [0x4e1f58], 5, 'fighter_ready',
-                        bindings={0x44f5e0: binding}, mmove_entries=[0x4e1f58])
+                        bindings={0x44f5e0: binding})
         self.assertIn('first_native_tail(fighter);', real)
         self.assertNotIn('fighter_wait_ticks', real)
 
@@ -451,7 +387,7 @@ L_00000004: {
         # 45b800 optionally binds via45bf80 and runs429120 twice per pose.
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x46000204, descriptor, 0x3f000000])
-        slow = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+        slow = generate(self.image, [entry], 3, 'fighter_ready')
         self.assertIn('.lastframe = 8', slow)
         self.assertIn('0, 0, 1, 1, 2, 2, 3, 3', slow)
         self.assertIn('0, 0, 1, 1, 2, 2, 3, 3, 4', slow)
@@ -461,11 +397,9 @@ L_00000004: {
             path.write_text(slow + '\nvoid use_slow_count(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
-        legacy = generate(self.image, [entry], 3, 'fighter_ready')
-        self.assertIn('mk4_script_advance_slow(fighter, 4);', legacy)
         for count in (0, 4):
             entry = self.fixture([0x1100000a, descriptor, 0x46000000 | count, 0x3f000000])
-            end = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+            end = generate(self.image, [entry], 3, 'fighter_ready')
             self.assertIn('.lastframe = 5', end)
             self.assertIn('10, 10, 11, 11, 12', end)
         with self.assertRaisesRegex(CompileError, 'clip is not initialized'):
@@ -474,7 +408,7 @@ L_00000004: {
     def test_generated_blend_keeps_source_pose_without_yielding(self):
         descriptor = (0x4fad7c + 54 * 12) // 4
         entry = self.fixture([0x1100000a, descriptor, 0x71000000, descriptor, 0x3f000000])
-        source = generate(self.image, [entry], 3, 'fighter_ready', mmove_entries=[entry])
+        source = generate(self.image, [entry], 3, 'fighter_ready')
         self.assertIn('mk4_mmove_blend_bind(fighter, 54, 13);', source)
         self.assertIn('fighter->blend_weight = 19005;', source)
         self.assertIn('fighter->blend_duration = 0;', source)
@@ -490,52 +424,17 @@ L_00000004: {
         entry = self.fixture([0x03000000, 0x3f000000])
         context = {'clip': 'current', 'count': 13, 'sample': 10,
                    'evidence': 'Native caller selects one of equal-length clips at the same resume pose.'}
-        source = generate(self.image, [entry], 3, 'fighter_ready', contexts={hex(entry): context}, mmove_entries=[entry])
+        source = generate(self.image, [entry], 3, 'fighter_ready', contexts={hex(entry): context})
         self.assertIn('mk4_mmove_inherit_current(fighter, 13, 10);', source)
         self.assertNotIn('mk4_script_inherit_current(', source)
         self.assertNotIn('mk4_mmove_bind(fighter, 54', source)
         with self.assertRaises(ValueError):
-            generate(self.image, [entry], 3, 'fighter_ready', contexts={hex(entry): dict(context, sample=13)}, mmove_entries=[entry])
+            generate(self.image, [entry], 3, 'fighter_ready', contexts={hex(entry): dict(context, sample=13)})
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'inherited_frames.c'
             path.write_text(source + '\nvoid use_inherited_frames(Fighter *fighter) { retail_script_%08x(fighter); }\n' % entry)
             subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fsyntax-only',
                             '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path)], check=True, capture_output=True, text=True)
-
-    def test_generated_conditional_code_runs_both_paths_in_C(self):
-        # Execute only generated portable C. Wait/finish stubs inspect emitted
-        # C control flow; real actor suspension is covered by the native Liu suite.
-        e = self.entry
-        words = [0x44000000, (e + 20) // 4, 0x34000005, 0x33000000, (e + 24) // 4,
-                 0x34000002, 0x3f000000]
-        source = self.compile(words)
-        harness = r"""
-#include <setjmp.h>
-#include <stdlib.h>
-static jmp_buf done;
-static int elapsed;
-void fighter_ready(Fighter *fighter) { (void)fighter; }
-void fighter_wait_ticks(int ticks) { if (ticks <= 0) { abort(); } elapsed += ticks; }
-_Noreturn void fighter_fiber_finish(FighterFn next) { if (next != fighter_ready) { abort(); } longjmp(done, 1); }
-int main(void) {
-  Fighter fighter = {0};
-  for (int down = 0; down < 2; ++down) {
-    fighter.held = down ? BUTTON_BIT(BUTTON_DOWN) : 0;
-    elapsed = 0;
-    if (setjmp(done) == 0) { retail_script_00570000(&fighter); abort(); }
-    if (elapsed != (down ? 3 : 6)) { return 1; }
-  }
-  return 0;
-}
-"""
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'branches.c'
-            binary = Path(directory) / 'branches'
-            path.write_text(source + harness)
-            subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-pedantic-errors',
-                            '-I' + str(ROOT / 'game'), '-I' + str(ROOT / 'common'), str(path), '-o', str(binary)],
-                           check=True, capture_output=True, text=True)
-            subprocess.run([str(binary)], check=True)
 
     def test_reviewed_audit_detects_input_cpu_reaction_and_manifest_regressions(self):
         import copy
@@ -560,20 +459,6 @@ int main(void) {
         errors = coverage_audit(self.image, 3)['coverage_errors']
         self.assertTrue(any('inventory changed' in error for error in errors))
         self.assertTrue(any('input/CPU target' in error for error in errors))
-
-    def test_frame_only_profiles_reject_direct_and_hidden_fiber_waits(self):
-        from unittest.mock import patch
-        from retail_coverage import audit as coverage_audit, profile_for, legacy_frame_calls
-        for name in ('fighter_start_fiber', 'fighter_fiber_finish', 'native_wait', 'native_calls', 'native_until', 'mk4_script_fan_tail'):
-            source = 'void start(Fighter *actor) { helper(actor); } void helper(Fighter *actor) { %s(actor); }' % name
-            self.assertEqual(legacy_frame_calls(source), [name])
-        self.assertEqual(legacy_frame_calls('/* native_wait(actor); */ void start(Fighter *actor) { native_play(actor, false); fighter_cancel_fiber(actor); }'), [])
-        for character in (5, 14):
-            self.assertTrue(profile_for(character)['mmove_only'])
-            self.assertEqual(coverage_audit(self.image, character)['coverage_errors'], [])
-        with patch('retail_coverage.read_source', return_value='void helper(Fighter *actor) { native_wait(actor); }'):
-            errors = coverage_audit(self.image, 14)['coverage_errors']
-        self.assertTrue(any('coroutine call native_wait' in error for error in errors))
 
     def test_cpu_fatalities_require_reviewed_minimums_and_use_retail_targets(self):
         import copy
@@ -624,10 +509,9 @@ int main(void) {
         self.assertFalse(any('input/CPU target None' in error for error in errors))
 
     def test_selected_air_table_word_is_a_valid_overlapping_no_op(self):
-        binding = Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', evidence='synthetic native boundary')
+        binding = Binding('fighter_ready', 'game/moves.c', ('tail',), flow='terminal', mmove=True, evidence='synthetic native boundary')
         source = generate(self.image, [0x4e6500], 3, bindings={0x46e3d0: binding})
         self.assertIn('EXE 004e6544', source)
-        self.assertIn('decoded VM no-op', source)
 
     def test_cli_fails_atomically_and_check_never_writes(self):
         tool = ROOT / 'tools/compile_retail.py'
