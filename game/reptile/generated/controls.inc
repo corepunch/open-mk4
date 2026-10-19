@@ -2,6 +2,7 @@
 // clang-format off: Keep table entries on one row, including long rows.
 static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0x0, reptile_can_spit, reptile_acid_spit},
+  {BUTTON_HIGH_PUNCH, {TOKEN_UP, TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN}, 4, 50, 0x0, reptile_can_second_fatality, reptile_fatality_2},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_FORWARD}, 2, 18, 0x0, NULL, reptile_input_47afe0},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_fan_finish, reptile_entry_fan},
   {BUTTON_BLOCK, {0}, 0, 0, 0x0, reptile_can_invisibility, reptile_invisibility},
@@ -13,11 +14,15 @@ static const CommandDef retail_commands[] = {
 };
 // clang-format on
 
-static const CpuMoves retail_cpu_moves = {.enter = {
-                                              [CPU_SPECIAL_NEAR] = reptile_input_47a690,
-                                              [CPU_SPECIAL_1] = reptile_input_47a690,
-                                              [CPU_SPECIAL_2] = reptile_input_47afe0,
-                                              [CPU_PROJECTILE] = reptile_acid_spit,
-                                              [CPU_FINISH_FAN] = reptile_entry_fan,
-                                              [CPU_FINISH_SPIKE] = reptile_entry_spike,
-                                          }};
+static const CpuMoves retail_cpu_moves = {.enter =
+                                              {
+                                                  [CPU_SPECIAL_NEAR] = reptile_input_47a690,
+                                                  [CPU_SPECIAL_1] = reptile_input_47a690,
+                                                  [CPU_SPECIAL_2] = reptile_input_47afe0,
+                                                  [CPU_PROJECTILE] = reptile_acid_spit,
+                                                  [CPU_FINISH_2] = reptile_fatality_2,
+                                                  [CPU_FINISH_FAN] = reptile_entry_fan,
+                                                  [CPU_FINISH_SPIKE] = reptile_entry_spike,
+                                              },
+    .finish_min = {0x0, 0x1cccc},
+    .finish_distance = {0x0, 0x23333}};

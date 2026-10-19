@@ -231,3 +231,15 @@ void reptile_entry_retail_script_004e5c70(Fighter *fighter) {
 void reptile_entry_retail_script_004e95f0(Fighter *fighter) {
   retail_script_004e95f0(fighter);
 }
+
+void reptile_entry_retail_script_004dff08(Fighter *fighter) {
+  retail_script_004dff08(fighter);
+}
+
+void reptile_entry_retail_script_004ea290(Fighter *fighter) {
+  retail_script_004ea290(fighter);
+}
+
+void reptile_entry_retail_script_004ea2a8(Fighter *fighter) {
+  retail_script_004ea2a8(fighter);
+}

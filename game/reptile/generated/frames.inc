@@ -7,6 +7,13 @@ static const int reptile_invisibility_samples[116] = {0, 0, 1, 1, 2, 2, 3, 3, 4,
 const mframe_t reptile_invisibility_frames[116] = {{0}};
 const mmove_t reptile_invisibility_mmove = {.firstframe = 0, .lastframe = 115, .frame = reptile_invisibility_frames, .samples = reptile_invisibility_samples};
 
+static const int reptile_victim_pose_samples[112] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
+    35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54,
+    55, 55};
+const mframe_t reptile_victim_pose_frames[112] = {{0}};
+const mmove_t reptile_victim_pose_mmove = {.firstframe = 0, .lastframe = 111, .frame = reptile_victim_pose_frames, .samples = reptile_victim_pose_samples};
+
 static const int reptile_spit_samples[84] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
     17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35, 36,
     36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41};
@@ -227,3 +234,33 @@ static const int reptile_clip_416_samples[216] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 
     94, 94, 95, 95, 96, 96, 97, 97, 98, 98, 99, 99, 100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 105, 106, 106, 107, 107};
 const mframe_t reptile_clip_416_frames[216] = {{0}};
 const mmove_t reptile_clip_416_mmove = {.firstframe = 0, .lastframe = 215, .frame = reptile_clip_416_frames, .samples = reptile_clip_416_samples};
+
+static const int reptile_owner_pose_samples[80] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
+    35, 36, 36, 37, 37, 38, 38, 39, 39};
+const mframe_t reptile_owner_pose_frames[80] = {{0}};
+const mmove_t reptile_owner_pose_mmove = {.firstframe = 0, .lastframe = 79, .frame = reptile_owner_pose_frames, .samples = reptile_owner_pose_samples};
+
+static const int reptile_clip_544_samples[32] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15};
+const mframe_t reptile_clip_544_frames[32] = {{0}};
+const mmove_t reptile_clip_544_mmove = {.firstframe = 0, .lastframe = 31, .frame = reptile_clip_544_frames, .samples = reptile_clip_544_samples};
+
+static const int reptile_clip_545_samples[20] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9};
+const mframe_t reptile_clip_545_frames[20] = {{0}};
+const mmove_t reptile_clip_545_mmove = {.firstframe = 0, .lastframe = 19, .frame = reptile_clip_545_frames, .samples = reptile_clip_545_samples};
+
+static const int reptile_clip_546_samples[214] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
+    35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54,
+    55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65, 66, 66, 67, 67, 68, 68, 69, 69, 70, 70, 71, 71, 72, 72, 73, 73, 74,
+    74, 75, 75, 76, 76, 77, 77, 78, 78, 79, 79, 80, 80, 81, 81, 82, 82, 83, 83, 84, 84, 85, 85, 86, 86, 87, 87, 88, 88, 89, 89, 90, 90, 91, 91, 92, 92, 93, 93,
+    94, 94, 95, 95, 96, 96, 97, 97, 98, 98, 99, 99, 100, 100, 101, 101, 102, 102, 103, 103, 104, 104, 105, 105, 106, 106};
+const mframe_t reptile_clip_546_frames[214] = {{0}};
+const mmove_t reptile_clip_546_mmove = {.firstframe = 0, .lastframe = 213, .frame = reptile_clip_546_frames, .samples = reptile_clip_546_samples};
+
+static const int reptile_clip_550_samples[132] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
+    35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54,
+    55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65};
+const mframe_t reptile_clip_550_frames[132] = {{0}};
+const mmove_t reptile_clip_550_mmove = {.firstframe = 0, .lastframe = 131, .frame = reptile_clip_550_frames, .samples = reptile_clip_550_samples};

@@ -23,6 +23,7 @@ void fujin_wind_grab(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
 void fujin_first_fatality(Fighter *fighter);
 bool fujin_can_second_fatality(const Fighter *fighter);
+bool reptile_can_second_fatality(const Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
@@ -2437,6 +2438,61 @@ static void check_reptile_invisibility(void) {
   }
 }
 
+/* Reptile fighter block: 467cd0 -> 43bf40 acid fatality and reaction 180. */
+static void check_reptile_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int target = 2; target <= 4; target += 2) {
+      for (int reset_at = 0; reset_at < 3; ++reset_at) {
+        battle_init(slot ? target : 10, slot ? 10 : target);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        check(battle_can_finish(owner), "Reptile acid fatality needs the deciding-KO command window");
+        owner->body.pos[AXIS_X] = slot ? 0x18200 : -0x18200;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        check(!reptile_can_second_fatality(owner), "45e530 rejects 3.0+ unit separations");
+        owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        check(reptile_can_second_fatality(owner), "45e530 accepts a two-unit separation");
+        static const Button sequence[] = {BUTTON_UP, BUTTON_DOWN, BUTTON_DOWN, BUTTON_DOWN};
+        for (int i = 0; i < 4; ++i) {
+          Input input[2] = {0};
+          /* Holding BLOCK suppresses the Up jump; it is released for the final press. */
+          input[slot].held = BUTTON_BIT(sequence[i]) | (i == 3 ? BUTTON_BIT(BUTTON_HIGH_PUNCH) : BUTTON_BIT(BUTTON_BLOCK));
+          battle_step(input);
+          input[slot].held &= BUTTON_BIT(BUTTON_BLOCK);
+          advance_ticks(2, input);
+        }
+        check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 493, "Up,Down,Down,Down+HP must start Reptile's acid scene");
+        bool hovered = false, vomit = false, melt = false, flayed = false, fall = false;
+        int limit = reset_at == 1 ? 120 : reset_at == 2 ? 260 : 600;
+        for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+          advance_ticks(1, NULL);
+          hovered |= owner->body.pos[AXIS_Y] < owner->body.ground - Q16_ONE;
+          vomit |= fighter_move(owner)->clip == 544 || fighter_move(owner)->clip == 545;
+          melt |= fighter_move(victim)->clip == 546;
+          flayed |= victim->native_variant == 14;
+          fall |= fighter_move(victim)->clip == 550;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile acid fatality must remain fiber-free");
+        }
+        if (reset_at == 0) {
+          check(hovered && vomit && melt && flayed && fall && g_battle.phase == PHASE_MATCH_OVER,
+              "Reptile acid scene must hover, vomit, tear all joints, fall in flesh and finish");
+        }
+        battle_reset_match();
+        advance_ticks(180, NULL);
+        check(owner->scene_model == NULL && victim->scene_model == NULL && owner->health == Q16_ONE && victim->health == Q16_ONE && !fighter_airborne(owner),
+            "Reset must clear the acid scene, its hover and replacement models");
+      }
+    }
+  }
+}
+
 static void check_goro_reconnected_counters(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kick = 0; kick < 2; ++kick) {
@@ -4539,6 +4595,7 @@ int main(void) {
   check_reptile_reconnected_specials();
   check_reptile_acid_spit();
   check_reptile_invisibility();
+  check_reptile_second_fatality();
   check_goro_reconnected_counters();
   check_goro_frame_specials();
   check_cage_special_commands();

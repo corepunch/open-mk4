@@ -5,6 +5,7 @@
 void reptile_reaction_40(Fighter *fighter);
 void reptile_acid_victim(Fighter *fighter);
 void reptile_dash_victim(Fighter *fighter);
+void reptile_second_victim(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
 void fujin_wind_slam_victim(Fighter *fighter);
@@ -939,6 +940,7 @@ static const FighterFn reactions[256] = {
   [41] = reptile_acid_victim,
   [40] = reptile_reaction_40,
   [158] = reptile_dash_victim,
+  [180] = reptile_second_victim,
 };
 // clang-format on
 

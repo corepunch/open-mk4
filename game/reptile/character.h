@@ -7,6 +7,12 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
+
+enum {
+  REPTILE_EVENT_FATALITY_1 = 21,
+  REPTILE_EVENT_FATALITY_2
+};
+
 #define s_jab reptile_s_jab
 #define s_kick reptile_s_kick
 #define s_lp_thrown reptile_s_lp_thrown
@@ -116,4 +122,16 @@ void reptile_dash_victim_getup(Fighter *fighter);
 void reptile_reaction_40(Fighter *fighter);
 void reptile_entry_retail_script_004e5c70(Fighter *fighter);
 void reptile_entry_retail_script_004e95f0(Fighter *fighter);
+void reptile_entry_retail_script_004dff08(Fighter *fighter);
+void reptile_entry_retail_script_004ea290(Fighter *fighter);
+void reptile_entry_retail_script_004ea2a8(Fighter *fighter);
+bool reptile_can_second_fatality(const Fighter *fighter);
+void reptile_fatality_2(Fighter *fighter);
+void reptile_second_acid(Fighter *fighter, int task_type);
+void reptile_second_event(Fighter *fighter, int selector);
+void reptile_second_face(Fighter *fighter);
+void reptile_second_finish(Fighter *fighter);
+void reptile_second_hover(Fighter *fighter, int task_type);
+void reptile_second_melt(Fighter *fighter);
+void reptile_second_victim(Fighter *fighter);
 #endif

@@ -2,9 +2,9 @@
   "character": "reptile",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_entry_fan",
-      "evidence": "Reptile finisher target 0x467cd0 starts the generated fan owner and victim streams."
+      "source": "game/reptile/moves/fatality_second.c",
+      "symbol": "reptile_fatality_2",
+      "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
     },
     "0x467ce0": {
       "source": "game/reptile/character.c",
@@ -182,10 +182,13 @@
     "0x4e6270",
     "0x4e97f8",
     "0x4e5bb0",
-    "0x4e95f0"
+    "0x4e95f0",
+    "0x4dff08",
+    "0x4ea290",
+    "0x4ea2a8"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "678db25dce274b8a0e255aa2a368b3e29a47855813b7f16a442421bca9732da5",
+  "inventory_sha256": "e45fd87ed78cd396b0cb58435d3b8bd58e85a9b5e2d2e8a4b3a19a3e0fe2a8c2",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -306,6 +309,11 @@
       "source": "game/reptile/moves/invisibility.c",
       "symbol": "reptile_invisibility",
       "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
+    },
+    "fatality_2": {
+      "source": "game/reptile/moves/fatality_second.c",
+      "symbol": "reptile_fatality_2",
+      "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
     }
   },
   "output": "game/reptile/generated/scripts.inc",
@@ -445,6 +453,12 @@
       "source": "game/reactions.c",
       "symbol": "react_slide_block",
       "evidence": "Dash D[23] blocked reaction 165 (486d00) uses the shared slide-block handler."
+    },
+    "180": {
+      "source": "game/reptile/moves/fatality_second.c",
+      "symbol": "reptile_second_victim",
+      "adaptation": "Shared reactions.c entry 180 dispatches the struck victim to the move-owned melt phases; 45b1f0 installs it on the captured peer.",
+      "evidence": "4dff08 dispatches 180 through 45b1f0 (480f80/48f880, peer task): 481530 holds 28, 481670 turns, VM 4ea290 and native 481590 tear/flesh/4ea2a8 fall."
     }
   },
   "return_to": "fighter_ready",
@@ -544,6 +558,11 @@
       "source": "game/reptile/moves/invisibility.c",
       "symbol": "reptile_invisibility",
       "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
+    },
+    "0x467cd0": {
+      "source": "game/reptile/moves/fatality_second.c",
+      "symbol": "reptile_fatality_2",
+      "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
     }
   },
   "command_predicates": {
@@ -553,7 +572,8 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45e950": "reptile_can_dash",
     "0x45e9d0": "reptile_can_spit",
-    "0x45f260": "reptile_can_invisibility"
+    "0x45f260": "reptile_can_invisibility",
+    "0x45e530": "reptile_can_second_fatality"
   },
   "cpu_bindings": {
     "0x47a690": {
@@ -613,7 +633,14 @@
     "0x4e5ca0",
     "0x4e8128",
     "0x4e8178",
-    "0x4e9620"
+    "0x4e9620",
+    "0x4dff08",
+    "0x4ea290",
+    "0x4ea2a8"
   ],
-  "mmove_only": true
+  "mmove_only": true,
+  "cpu_finish_min": {
+    "CPU_FINISH_2": 117964,
+    "evidence": "45e530 rejects distances below 0x1cccc; the CPU second-fatality distance 4dfe50[10] is 0x23333."
+  }
 }
