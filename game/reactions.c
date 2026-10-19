@@ -928,6 +928,7 @@ static const FighterFn reactions[256] = {
   [149] = cage_weapon_reaction,
   [44] = kai_weapon_reaction,
   [148] = jarek_weapon_reaction,
+  [42] = jarek_ball_victim,
   [139] = cage_weapon_reaction,
   [140] = shinnok_weapon_reaction,
   [141] = shinnok_weapon_reaction,

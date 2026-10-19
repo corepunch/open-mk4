@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "7f206452cd0e5d3d97f9c1f0828b06ebf4702e993a3ca8f648aeefc975cee26e",
+  "inventory_sha256": "d05aa237e15c723599211eb1091d38b5907d9b3394ef3b2980c721e7f1a31e61",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -50,7 +50,9 @@
     "0x4ec4f0",
     "0x4e66d0",
     "0x4e66f0",
-    "0x4e8c08"
+    "0x4e8c08",
+    "0x4e84b8",
+    "0x4e9658"
   ],
   "entry_contexts": {
     "0x4e0128": {
@@ -178,9 +180,9 @@
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
     },
     "0x47b310": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_47b310",
-      "evidence": "Jarek low-kick input/CPU action target; typed input record 0x4e4468 and CPU rows 0xdf900/940/980"
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_cannonball",
+      "evidence": "47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
     },
     "0x47b5d0": {
       "source": "game/jarek/character.c",
@@ -211,6 +213,11 @@
       "source": "game/jarek/moves/spike.c",
       "symbol": "jarek_spike_fatality",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x4797f0": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_upward_ball",
+      "evidence": "4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
     }
   },
   "moves": {
@@ -348,6 +355,16 @@
       "source": "game/jarek/moves/weapon.c",
       "symbol": "jarek_weapon_reaction",
       "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases."
+    },
+    "cannonball": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_cannonball",
+      "evidence": "47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
+    },
+    "upward_ball": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_upward_ball",
+      "evidence": "4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
     }
   },
   "stances": {
@@ -570,6 +587,17 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Native knife weapon records select reaction119; use its actual shared generated victim path."
+    },
+    "42": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_ball_victim",
+      "evidence": "D19 hit/air reaction42: 4ea4e8[42] ->4835a0 disarms, then generated4e9658 clip183 knockdown and488b40 side getup.",
+      "adaptation": "The shared reaction table enters this exported victim entry for any roster."
+    },
+    "0": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Ball D[19] blocked reaction0 selects 4ea4e8[0] ->486cd0 shared block recovery."
     }
   },
   "schema": 1,
@@ -599,6 +627,16 @@
       "source": "game/jarek/moves/weapon.c",
       "symbol": "jarek_weapon_action",
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
+    },
+    "0x47b310": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_cannonball",
+      "evidence": "Typed LK record 0x4e4468 B,F selects native 47b310. 47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
+    },
+    "0x4797f0": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_upward_ball",
+      "evidence": "Typed HP record 0x4e43f8 F,D,F selects native 4797f0. 4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
     }
   },
   "command_predicates": {
@@ -642,6 +680,15 @@
     "0x4e8c08",
     "0x4e62c0",
     "0x4e62d8",
-    "0x4e6798"
-  ]
+    "0x4e6798",
+    "0x4e84b8",
+    "0x4e9658"
+  ],
+  "cpu_bindings": {
+    "0x47b310": {
+      "source": "game/jarek/moves/ball.c",
+      "symbol": "jarek_cannonball",
+      "evidence": "Typed near/medium/far Jarek CPU rows 4df918/958/998 all select native 47b310 cannonball."
+    }
+  }
 }

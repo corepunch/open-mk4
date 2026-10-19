@@ -1565,3 +1565,9 @@ CHARACTER_BINDINGS[6][0x45ac30] = Binding('shinnok_second_event', _SF2, ('handle
     evidence='45ac30 -> 4315b0 queues camera director 4dea40 shots 48/49/50 during the clap intro')
 CHARACTER_BINDINGS[6][0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=BINDINGS[0x45abf0].inline_values + (51,),
     evidence='Shinnok second fatality 4e0088 enqueues camera context 51; portable camera follows the live actors')
+# Jarek's cannonball and upward ball share the 47d940 contact recoil; its
+# generated 4e84b8 rewind lands through 47dae0 -> 46fd90.
+CHARACTER_BINDINGS[12][0x47dae0] = Binding('jarek_ball_land', 'game/jarek/moves/ball.c', ('tail',), flow='terminal', mmove=True,
+    evidence='47dae0 runs shared 46fd90 landing after generated 4e84b8 rewinds clip 301 from 8 to 0')
+CHARACTER_BINDINGS[12][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+    evidence='488b40 KO-aware clip185 side getup after the reaction-42 ball knockdown 4e9658')

@@ -1611,6 +1611,70 @@ static void check_kai_weapon_commands(void) {
   }
 }
 
+/* Jarek: cannonball 47b310 (B,F+LK, CPU rows) and upward ball 4797f0
+ * (F,D,F+HP) share D[19] and the 47d940 contact recoil. */
+static void check_jarek_balls(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int kind = 0; kind < 2; ++kind) {
+      for (int branch = 0; branch < 4; ++branch) {
+        battle_init(slot ? 4 : 12, slot ? 12 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        q16 distance = branch == 0 ? 12 * Q16_ONE : Q16_ONE;
+        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT, forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+        Input input[2] = {0};
+        if (branch == 2) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        fighter_press(owner, kind ? forward : back);
+        if (kind) {
+          fighter_press(owner, BUTTON_DOWN);
+        }
+        fighter_press(owner, forward);
+        fighter_press(owner, kind ? BUTTON_HIGH_PUNCH : BUTTON_LOW_KICK);
+        advance_ticks(1, input);
+        check(fighter_move(owner)->clip == 301 && owner->action == (kind ? 0x21a : 0x214), "Jarek ball commands must bind their tuck clip and native action");
+        bool recoiled = false, interrupted = false;
+        for (int tick = 0; tick < 150 && owner->state != S_IDLE; ++tick) {
+          advance_ticks(1, input);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek balls must run on frame programs");
+          recoiled |= owner->action == 0x1010;
+          if (branch == 3 && tick == 2) {
+            fighter_enter_state(owner, S_HIT);
+            interrupted = true;
+          }
+        }
+        if (branch == 3) {
+          check(interrupted && victim->health == Q16_ONE, "An interrupted ball must not leave a delayed contact behind");
+        } else {
+          if (owner->state != S_IDLE) {
+            fprintf(stderr, "Jarek ball slot%d kind%d branch%d state%d action%x clip%d y%d vy%d\n", slot, kind, branch, owner->state, owner->action,
+                fighter_move(owner)->clip, owner->body.pos[AXIS_Y], owner->body.vel[AXIS_Y]);
+          }
+          check(owner->state == S_IDLE && !fighter_airborne(owner) && owner->body.root_y == 0 && owner->body.angle[AXIS_X] == 0,
+              "Jarek balls must land upright and return to control");
+          check(recoiled == (branch != 0), "Only a D[19] contact may enter the 47d940 recoil");
+          q16 expected = branch == 0 ? Q16_ONE : branch == 2 ? Q16_ONE - q16_mul(0x23d7, 0x3333) : Q16_ONE - 0x23d7;
+          check(victim->health == expected, "Jarek balls must apply D[19] damage once, or block chip");
+          if (branch == 1) {
+            check(victim->reaction == 42, "A ball hit must select reaction 42");
+          }
+        }
+        advance_ticks(240, NULL);
+        check(victim->state == S_IDLE && owner->body.physics == NULL, "The ball victim must get up and both actors must retire native motion");
+      }
+    }
+    battle_init(slot ? 4 : 12, slot ? 12 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Jarek CPU special rows must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 301 && g_battle.fighters[slot].action == 0x214, "Jarek CPU rows must select the cannonball");
+    advance_ticks(180, NULL);
+  }
+}
+
 static void check_jarek_weapon_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int strike = 0; strike < 4; ++strike) {
@@ -4683,6 +4747,7 @@ int main(void) {
   check_kai_weapon_commands();
   check_cage_weapon_commands();
   check_jarek_weapon_commands();
+  check_jarek_balls();
   check_shinnok_weapon_commands();
   check_shinnok_morph();
   check_fujin_crossbow();
