@@ -951,6 +951,7 @@ static const FighterFn reactions[256] = {
   [128] = quan_chi_skull_reaction,
   [160] = quan_chi_flip_reaction,
   [106] = quan_chi_stomp_reaction,
+  [108] = quan_chi_steal_reaction,
 };
 // clang-format on
 

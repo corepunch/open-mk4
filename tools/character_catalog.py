@@ -678,6 +678,9 @@ def _moves_for(character):
             skull=move(0x499740, (('caster', 0x4ed3a0), ('release recovery', 0x4ed3c0), ('reaction 128 victim', 0x4e9cd8)), (('C', 7),),
                        native=(('heading snapshot', 0x49c610), ('release and spawn', 0x499780), ('independent skull', 0x4998d0),
                                ('flight step', 0x499ae0), ('bite', 0x499b40), ('expiry', 0x499c00), ('reaction 128', 0x485f90))),
+            # Retail HP [F,B] record 4e47f8.
+            weapon_steal=move(0x469c80, (('grounded victim', 0x4e9818), ('airborne victim', 0x4e9838)), (('D', 11),),
+                              native=(('failed recovery', 0x469d7a), ('reaction 108', 0x484060), ('homing weapon', 0x484100), ('equip', 0x46a180), ('side getup', 0x488b40))),
             # Retail LK [F,D] record 4e4838 and the medium/far CPU rows.
             teleport_stomp=move(0x47cf30, (('reaction 106 victim', 0x4e9868), ('blocked landing', 0x4e8818)), (('D', 10),),
                                 native=(('sink callback', 0x47d550), ('stomps', 0x47d1a0), ('flip exit', 0x47d320), ('missed landing', 0x47d500), ('blocked recoil', 0x47fe60),

@@ -241,6 +241,13 @@ static void object_tick(Projectile *p) {
   }
 }
 
+/* 494590: a detached weapon object that is no longer carried falls,
+ * bounces and settles exactly like a dropped weapon. */
+void weapon_object_drop(Projectile *p) {
+  p->step = object_tick;
+  begin_bounce(p);
+}
+
 static void drop(Fighter *fighter) {
   if (!fighter->armed) {
     return;

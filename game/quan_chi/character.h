@@ -122,4 +122,7 @@ void quan_chi_script_teleport_land(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *fighter);
 void quan_chi_entry_retail_script_004e9868(Fighter *fighter);
 void quan_chi_entry_retail_script_004e8818(Fighter *fighter);
+void quan_chi_weapon_steal(Fighter *fighter);
+void quan_chi_entry_retail_script_004e9818(Fighter *fighter);
+void quan_chi_entry_retail_script_004e9838(Fighter *fighter);
 #endif

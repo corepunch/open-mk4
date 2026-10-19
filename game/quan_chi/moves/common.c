@@ -1,7 +1,5 @@
 #include "../character.h"
 
-static void quan_chi_entry_469c80(Fighter *fighter);
-
 void quan_chi_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
@@ -21,8 +19,4 @@ void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction) {
     return;
   }
   require(false, "Unexpected Quan Chi opponent reaction");
-}
-
-static void quan_chi_entry_469c80(Fighter *fighter) {
-  fighter_enter_state(fighter, S_PUNCH);
 }

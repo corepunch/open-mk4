@@ -46,7 +46,9 @@
     "0x4e8100",
     "0x4e8a48",
     "0x4e9868",
-    "0x4e8818"
+    "0x4e8818",
+    "0x4e9818",
+    "0x4e9838"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -173,9 +175,9 @@
       "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x469c80": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_entry_469c80",
-      "evidence": "Quan Chi input target 0x469c80; bounded command-entry boundary."
+      "source": "game/quan_chi/moves/steal.c",
+      "symbol": "quan_chi_weapon_steal",
+      "evidence": "Native469c80 weapon steal: clip7, D11 against an armed victim, homing task70 weapon 484100 and 46a180 equip; otherwise 469d7a recovery."
     },
     "0x46a020": {
       "source": "game/weapons.c",
@@ -333,6 +335,11 @@
       "source": "game/quan_chi/moves/teleport.c",
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Native47cf30: action400, sink callback47d550 relocates to the saved opponent X/Z at Y-4 with gravity0xa3d; D10 stomp, 47d1a0 three clip89 stomps, 47d320 flip exit; block47fe60, miss47d500."
+    },
+    "weapon_steal": {
+      "source": "game/quan_chi/moves/steal.c",
+      "symbol": "quan_chi_weapon_steal",
+      "evidence": "Native469c80: action401, C37, clip7 to10; armed victim/unarmed thief D11 query; hit waits up to30 ticks for task70 484100 to home within0x8000 and 46a180 equips it; miss/block 469d7a."
     }
   },
   "reactions": {
@@ -481,6 +488,12 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Teleport stomp D10/4ec158 selects block reaction0; 4ea4e8[0] ->486cd0 shared block recovery, after 47fe60's 48fed0 separation."
+    },
+    "108": {
+      "source": "game/quan_chi/moves/steal.c",
+      "symbol": "quan_chi_steal_reaction",
+      "evidence": "D11/4ec140 hit and air select reaction108; 4ea4e8[108] ->484060: 493370 detaches the weapon into task70 484100, 48ef30 selects VM4e9838 air or4e9818 ground.",
+      "adaptation": "Registered directly in shared reactions[108]; the Quan Chi-owned generated victim roots run for either humanoid player slot and the homing weapon falls through the shared 494590 drop when the thief stops."
     }
   },
   "stances": {
@@ -535,7 +548,7 @@
     "symbol": "quan_chi_weapon_descriptor",
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
-  "inventory_sha256": "f9dfe42cee4f8f9f1989233ee2da61fcef2cd2c2776e21c80ac42ec30df49a8b",
+  "inventory_sha256": "14f94d9c73fa3e722e9849dc42acfcf009efaa2c089a75b9f3102aa0e6817a6e",
   "controls_output": "game/quan_chi/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
@@ -577,6 +590,11 @@
       "source": "game/quan_chi/moves/teleport.c",
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Native47cf30 teleport stomp: clip87 sink, relocation by47d550, D10 query while falling, hit47cfbd/47d1a0/47d320, block47fe60, miss47d500."
+    },
+    "0x469c80": {
+      "source": "game/quan_chi/moves/steal.c",
+      "symbol": "quan_chi_weapon_steal",
+      "evidence": "Native469c80 weapon steal: clip7, D11 against an armed victim, homing task70 weapon 484100 and 46a180 equip; otherwise 469d7a recovery."
     }
   },
   "command_predicates": {
@@ -629,7 +647,9 @@
     "0x4e8100",
     "0x4e8a48",
     "0x4e9868",
-    "0x4e8818"
+    "0x4e8818",
+    "0x4e9818",
+    "0x4e9838"
   ],
   "cpu_bindings": {
     "0x499740": {

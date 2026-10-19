@@ -68,4 +68,5 @@ void shinnok_weapon_reaction(Fighter *fighter);
 void quan_chi_skull_reaction(Fighter *fighter);
 void quan_chi_flip_reaction(Fighter *fighter);
 void quan_chi_stomp_reaction(Fighter *fighter);
+void quan_chi_steal_reaction(Fighter *fighter);
 #endif

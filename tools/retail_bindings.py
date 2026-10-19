@@ -1540,6 +1540,8 @@ CHARACTER_BINDINGS[8][0x484420] = Binding('quan_chi_script_stomp_victim', 'game/
     evidence='484420 four 484650 cycles: shake0, effect13, clip178 from15 to its end while the stomper keeps action400/409; 4845f0 waits20 then 488ba0 getup')
 CHARACTER_BINDINGS[8][0x47ffc0] = Binding('quan_chi_script_teleport_land', 'game/quan_chi/moves/teleport.c', ('tail',), flow='terminal', mmove=True,
     evidence='47ffc0 enters 46fd90 landing then the controller return after the blocked-stomp recoil')
+CHARACTER_BINDINGS[8][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='488b40 shared KO-aware clip185 side getup after weapon-steal air victim4e9838')
+CHARACTER_BINDINGS[8][0x470420] = replace(CHARACTER_BINDINGS[8].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
 # End of Quan Chi frame-backend boundaries.
 CHARACTER_BINDINGS[9][0x43d460] = Binding('tanya_script_fan_tail', 'game/tanya/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d460 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[9][0x43d530] = Binding('tanya_script_fan_cycle', 'game/tanya/moves/fan.c', ('tail',), flow='immediate', mmove=True, evidence='Shared native43d530 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
