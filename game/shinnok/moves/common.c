@@ -30,10 +30,6 @@ void shinnok_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);
 }
 
-void shinnok_input_target(Fighter *fighter, Button button) {
-  fighter_press(fighter, button);
-}
-
 void shinnok_script_lp_return(Fighter *fighter) {
   fighter_finish_mmove(fighter, shinnok_ready);
 }

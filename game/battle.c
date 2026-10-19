@@ -83,7 +83,8 @@ void battle_next_round(void) {
   battle_set_arena(g_battle.arena);
   g_battle.round++;
   for (i = 0; i < 2; ++i) {
-    int roster_index = g_battle.fighters[i].roster;
+    /* 4233e0/423460 rebuild each task from the selected character. */
+    int roster_index = fighter_selected_roster(&g_battle.fighters[i]);
     int wins = g_battle.fighters[i].wins;
     int facing = i ? -1 : 1;
     place(&g_battle.fighters[i], roster_index, wins, i ? START_X : -START_X, facing);

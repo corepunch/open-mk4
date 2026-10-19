@@ -138,7 +138,8 @@ static void apply_shell(
     case SHELL_NEXT_P1:
     case SHELL_NEXT_P2:
       player = command == SHELL_NEXT_P1 ? 0 : 1;
-      g_battle.fighters[player].roster = (g_battle.fighters[player].roster + 1) % roster_count();
+      g_battle.fighters[player].roster = (fighter_selected_roster(&g_battle.fighters[player]) + 1) % roster_count();
+      g_battle.fighters[player].morphed = false;
       battle_reset_match();
       input_sync(&pads[0], keys);
       input_sync(&pads[1], keys);

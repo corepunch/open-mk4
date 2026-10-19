@@ -63,9 +63,44 @@ void fighter_upright(Fighter *fighter) {
   fighter->body.root_y = 0;
 }
 
+int fighter_selected_roster(const Fighter *fighter) {
+  return fighter->morphed ? fighter->selected_roster : fighter->roster;
+}
+
+/* Retail controllers read the live character from task +0x34 (commands,
+ * stance and move tables, CPU rows, rig and voices). 469ae0 rewrites it
+ * during a round; 4233e0/423460 restore the selection at the next round.
+ * Only the per-rig standing ground changes with it; combat, weapon and
+ * stamp state stay with the actor. */
+void fighter_change_character(Fighter *fighter, int roster) {
+  const CharacterDef *def = roster_def(roster);
+  bool grounded = !fighter_airborne(fighter);
+  int selected = fighter_selected_roster(fighter);
+  fighter->selected_roster = selected;
+  fighter->morphed = roster != selected;
+  fighter->roster = roster;
+  fighter->body.ground = def->ground;
+  if (grounded) {
+    fighter->body.pos[AXIS_Y] = def->ground;
+  }
+}
+
+/* 48e080 -> 48e1e0: a morphed actor restores its selected character at
+ * a neutral reset once a round winner exists, or 600 ticks (0x258) after
+ * the morph stamp. Retail queues indexed cue 0x2c, Shinnok's name entry
+ * 4ead30[38 + 6]; the restored character's own name entry generalizes it. */
+static void fighter_morph_expiry(Fighter *fighter) {
+  if (!fighter->morphed || (g_battle.ko_winner == 0 && g_battle.ticks - fighter->morph_tick < 600)) {
+    return;
+  }
+  fighter_change_character(fighter, fighter->selected_roster);
+  battle_sound(SOUND_INDEXED, 38 + fighter->roster);
+}
+
 /* 0x46f650 / 0x48e080: return to neutral control. Grounded fighters are
  * snapped to the floor and stopped; combo counters and damage scaling reset. */
 void fighter_neutral(Fighter *fighter) {
+  fighter_morph_expiry(fighter);
   fighter->hits = 0;
   fighter->damage_total = 0;
   fighter->damage_scale = Q16_ONE;
@@ -170,7 +205,15 @@ void fighter_start_move(Fighter *fighter, int state, const MoveDef *move) {
   fighter->blend_weight = -1;
   fighter->scene = (ScenePlayback){0};
   if (was_locked && !(move->flags & SF_LOCK)) {
+    int roster = fighter->roster;
     fighter_neutral(fighter);
+    if (fighter->roster != roster) {
+      /* The neutral reset restored the selected character; enter this
+       * state through that character's own definition. */
+      fighter->current_move = NULL;
+      fighter_enter_state(fighter, state);
+      return;
+    }
   }
   fighter->action = move->action != 0 ? move->action : default_action[state];
   if (move->flags & SF_LOCK) {

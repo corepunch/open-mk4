@@ -548,6 +548,11 @@ struct Fighter {
   uint64_t leg_grab_ready, cartwheel_ready;
   uint64_t wind_grab_ready;
   unsigned fujin_finish_inputs;
+  /* Task +0x34 is the live character; round setup restores the selection
+   * (532308/5324a0). A morph keeps that selection here and stamps slot 5. */
+  int selected_roster;
+  bool morphed;
+  uint64_t morph_tick;
   bool armed, weapon_used;
   const WeaponDef *weapon;
   FighterFn disarm; /* character-owned weapon drop entry */
@@ -888,6 +893,8 @@ float fighter_z(const Fighter *fighter);
 float fighter_height(const Fighter *fighter);
 bool fighter_airborne(const Fighter *fighter);
 void fighter_neutral(Fighter *fighter);
+void fighter_change_character(Fighter *fighter, int roster);
+int fighter_selected_roster(const Fighter *fighter);
 void fighter_upright(Fighter *fighter);
 q16 fighter_axis(const Fighter *fighter, int axis);
 void fighter_set_speed(Fighter *fighter, q16 speed);

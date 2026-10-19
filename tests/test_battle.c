@@ -1655,6 +1655,78 @@ static void check_jarek_weapon_commands(void) {
   }
 }
 
+/* Shinnok: 469a00..469ad0 morphs and the 48e1e0 neutral-reset restore. */
+static bool queued_sound(int bank, int selector) {
+  for (int i = 0; i < g_battle.sound_count; ++i) {
+    if (g_battle.sounds[i].bank == bank && g_battle.sounds[i].selector == selector) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static bool shinnok_morph_into_sub_zero(int slot) {
+  /* LP record 4e4648: Down, Back + LP selects 469a40 (roster 4). */
+  Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+  command(slot, BUTTON_DOWN, back, BUTTON_LOW_PUNCH);
+  bool cue = false;
+  for (int tick = 0; tick < 6; ++tick) {
+    cue |= queued_sound(SOUND_INDEXED, 38 + 4);
+    advance_ticks(1, NULL);
+  }
+  return cue | queued_sound(SOUND_INDEXED, 38 + 4);
+}
+
+static bool shinnok_jab_recovers(int slot, int ticks) {
+  Input input[2] = {0};
+  input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+  battle_step(input);
+  bool restored = false;
+  for (int tick = 0; tick < ticks; ++tick) {
+    advance_ticks(1, NULL);
+    restored |= queued_sound(SOUND_INDEXED, 38 + 6);
+  }
+  return restored;
+}
+
+static void check_shinnok_morph(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 0 : 6, slot ? 6 : 0);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot];
+    g_battle.fighters[0].body.pos[AXIS_X] = -3 * Q16_ONE;
+    g_battle.fighters[1].body.pos[AXIS_X] = 3 * Q16_ONE;
+    check(shinnok_morph_into_sub_zero(slot), "Shinnok's morph must queue the target's name cue once the four-tick hold ends");
+    check(owner->roster == 4 && owner->morphed && fighter_selected_roster(owner) == 6 && owner->state == S_IDLE && owner->buttons != NULL,
+        "Shinnok's morph must install the target character and return to its standing controls");
+    check(owner->body.ground == mk4_sub_zero.ground && owner->body.pos[AXIS_Y] == mk4_sub_zero.ground, "A morph must adopt the target rig's standing ground");
+    /* The target's own command table now drives the actor: Down, Forward + LP is Sub-Zero's ice. */
+    Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+    command(slot, BUTTON_DOWN, forward, BUTTON_LOW_PUNCH);
+    advance_ticks(1, NULL);
+    check(fighter_move(owner)->clip == 16, "A morphed Shinnok must use the target's own special commands");
+    advance_ticks(120, NULL);
+    check(owner->roster == 4 && owner->state == S_IDLE, "A neutral reset inside 600 ticks must keep the morph");
+    advance_ticks(600, NULL);
+    check(owner->roster == 4, "The morph expires only at a neutral reset, not while standing");
+    check(shinnok_jab_recovers(slot, 60), "The expiry reset must queue Shinnok's indexed name cue 0x2c");
+    check(owner->roster == 6 && !owner->morphed && owner->state == S_IDLE && owner->body.ground == mk4_shinnok.ground,
+        "The first neutral reset 600 ticks after the morph must restore Shinnok");
+
+    check(shinnok_morph_into_sub_zero(slot) && owner->roster == 4, "Shinnok must be able to morph again after reverting");
+    battle_next_round();
+    check(owner->roster == 6 && !owner->morphed, "Round setup must rebuild the actor from the selected character");
+    g_battle.phase = PHASE_FIGHT;
+
+    check(shinnok_morph_into_sub_zero(slot) && owner->roster == 4, "Morph before the round winner is known");
+    g_battle.ko_winner = slot + 1;
+    shinnok_jab_recovers(slot, 60);
+    check(owner->roster == 6, "A round winner must restore the selected character at the next neutral reset");
+    shinnok_morph_into_sub_zero(slot);
+    check(owner->roster == 6, "45e6a0 must reject morph commands once a round winner exists");
+  }
+}
+
 static void check_shinnok_weapon_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int strike = 0; strike < 4; ++strike) {
@@ -3569,6 +3641,7 @@ int main(void) {
   check_cage_weapon_commands();
   check_jarek_weapon_commands();
   check_shinnok_weapon_commands();
+  check_shinnok_morph();
   check_fujin_crossbow();
   check_weapon_followup_selection();
   check_reaction_motion_components();

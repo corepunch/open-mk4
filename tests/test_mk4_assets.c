@@ -1,5 +1,6 @@
 #include "game.h"
 #include "mk4_assets.h"
+#include "mk4_characters.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +15,7 @@ void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
+bool shinnok_can_morph(const Fighter *fighter);
 
 static void check(bool ok, const char *message) {
   require(ok, message);
@@ -488,6 +490,44 @@ static void shinnok_weapon_contacts(const Assets *assets) {
           victim->health == Q16_ONE - damages[strike] && owner->state == S_IDLE, "Shinnok weapon records must hit once with real animated bounds and recover");
     }
   }
+}
+
+/* Shinnok: every 469a00..469ad0 morph poses its target rig, then the KO
+ * neutral reset (48e1e0) restores and poses Shinnok again. */
+static void shinnok_morph_rigs(const Assets *assets) {
+  const Controls *controls = mk4_shinnok.controls;
+  int morphs = 0;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].predicate != shinnok_can_morph) {
+      continue;
+    }
+    ++morphs;
+    battle_init(6, 4);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[0];
+    owner->body.pos[AXIS_X] = -3 * Q16_ONE;
+    g_battle.fighters[1].body.pos[AXIS_X] = 3 * Q16_ONE;
+    controls->commands[i].enter(owner);
+    Pose bones[MK4_MAX_BONES];
+    Input input[2] = {0};
+    for (int tick = 0; tick < 10; ++tick) {
+      battle_step(input);
+      fighter_pose(assets, owner, bones);
+    }
+    check(owner->roster != 6 && owner->roster < 15 && owner->state == S_IDLE && fighter_model(assets, owner) == roster_character(assets, owner->roster),
+        "Each Shinnok morph must render the target character's own rig");
+    g_battle.ko_winner = 1;
+    input[0].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+    battle_step(input);
+    input[0].held = 0;
+    for (int tick = 0; tick < 90; ++tick) {
+      battle_step(input);
+      fighter_pose(assets, owner, bones);
+    }
+    check(owner->roster == 6 && fighter_model(assets, owner) == roster_character(assets, 6), "The KO neutral reset must restore Shinnok's own rig");
+  }
+  check(morphs == 14, "Shinnok's command table must register all fourteen retail morphs");
 }
 
 static void cage_weapon_contacts(const Assets *assets) {
@@ -1158,6 +1198,7 @@ int main(void) {
   cage_weapon_contacts(&assets);
   jarek_weapon_contacts(&assets);
   shinnok_weapon_contacts(&assets);
+  shinnok_morph_rigs(&assets);
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   cage_groin_command(&assets);
