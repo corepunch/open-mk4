@@ -126,10 +126,6 @@ void jarek_entry_retail_script_004e01a0(Fighter *fighter) {
   retail_script_004e01a0(fighter);
 }
 
-void jarek_entry_retail_script_004e01b0(Fighter *fighter) {
-  retail_script_004e01b0(fighter);
-}
-
 void jarek_entry_retail_script_004e5d20(Fighter *fighter) {
   retail_script_004e5d20(fighter);
 }
@@ -207,7 +203,15 @@ void jarek_entry_retail_script_004ed118(Fighter *fighter) {
 }
 
 const mmove_t *jarek_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
+}
+
+void jarek_entry_retail_script_004e0128(Fighter *fighter) {
+  retail_script_004e0128(fighter);
+}
+
+const mmove_t *jarek_retail_script_004e0128_repeat_phase(void) {
+  return &retail_script_004e0128_phase;
 }
 
 void jarek_entry_retail_script_004e61e0(Fighter *fighter) {

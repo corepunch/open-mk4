@@ -803,18 +803,6 @@ CHARACTER_BINDINGS[12] = {
                       evidence='45b1f0 dispatches Jarek current-context reactions'),
     0x45b230: Binding('jarek_script_opponent_reaction', 'game/jarek/character.c', ('handler',), ('fighter', 'arg_u8'),
                       evidence='45b230 dispatches Jarek paired victim reactions'),
-    0x43d460: Binding('jarek_fan_tail', 'game/jarek/moves/fan.c', ('tail',), flow='terminal',
-                      evidence='43d460 coordinates the fan cycle/release through the shared native scene helper before the generated owner/victim releases'),
-    0x43d530: Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',),
-                      evidence='43d530 advances the fan scene through the shared scene helper'),
-    0x43d6f0: Binding('jarek_fan_victory', 'game/jarek/character.c', ('tail',),
-                      evidence='43d6f0 enters Jarek fan victory root 4e0158'),
-    0x43d510: Binding('jarek_script_fan_scene', 'game/jarek/character.c', ('tail',), flow='terminal',
-                      evidence='43d510 begins the observed Jarek fan scene continuation through a BattleEvent phase sequence'),
-    0x43db50: Binding('jarek_script_fan_victim_scene', 'game/jarek/character.c', ('tail',), flow='terminal',
-                      evidence='43db50 continues from victim clip 4e01a0 into owner release clip 4e01b0'),
-    0x43dc90: Binding('jarek_script_fan_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
-                      evidence='43dc90 enters a clip-driven BattleEvent for Jarek finisher camera and scene cleanup'),
     0x46a6b0: Binding('jarek_script_kick_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
                       evidence='46a6b0 resolves Jarek high-kick contact and recovery'),
     0x46a950: Binding('jarek_script_low_kick_avoid', 'game/jarek/character.c', ('call',),
@@ -839,8 +827,6 @@ CHARACTER_BINDINGS[12] = {
                       evidence='46f220 selects Jarek fast or normal roundhouse startup'),
     0x46f270: Binding('jarek_script_roundhouse_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
                       evidence='46f270 resolves Jarek roundhouse contact and recovery'),
-    0x467fc0: Binding('mk4_script_spike_tail', 'game/script.c', ('tail',), flow='terminal',
-                      evidence='467fc0 completes the stage-fatality continuation'),
 }
 
 CHARACTER_BINDINGS[15] = {
@@ -1569,3 +1555,17 @@ CHARACTER_BINDINGS[12][0x47b600] = Binding('jarek_quake_tail', 'game/jarek/moves
 CHARACTER_BINDINGS[12][0x497580] = Binding('jarek_blade_spawn', 'game/jarek/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
     flow='independent', task_types=(78,), mmove=True,
     evidence='497580 spawns heading object 4ed170 (share2 mesh34) .2 per visit with 4ed180 C4 contacts: 4976b0 flight, 4978e0 stab, 497730 blocked deflect, 48-visit expiry')
+
+# Jarek's stage scenes on owned nonblocking frame continuations.
+CHARACTER_BINDINGS[12][0x43d460] = Binding('jarek_script_fan_tail', 'game/jarek/moves/fan.c', ('tail',), flow='terminal', mmove=True,
+    evidence='Shared native 43d460 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
+CHARACTER_BINDINGS[12][0x43d510] = Binding('jarek_script_fan_cycle', 'game/jarek/moves/fan.c', ('tail',), flow='immediate', mmove=True,
+    evidence='Shared native 43d510 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
+CHARACTER_BINDINGS[12][0x43d530] = Binding('jarek_script_fan_cycle', 'game/jarek/moves/fan.c', ('tail',), flow='immediate', mmove=True,
+    evidence='Shared native 43d530 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
+CHARACTER_BINDINGS[12][0x43d6f0] = Binding('jarek_script_fan_victory', 'game/jarek/moves/fan.c', ('tail',), flow='terminal', mmove=True,
+    evidence='Shared native 43d6f0 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
+CHARACTER_BINDINGS[12][0x43db50] = Binding('jarek_script_fan_victim_end', 'game/jarek/moves/fan.c', ('tail',), flow='terminal', mmove=True,
+    evidence='Shared native 43db50 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
+CHARACTER_BINDINGS[12][0x467fc0] = Binding('jarek_script_spike_tail', 'game/jarek/moves/spike.c', ('tail',), flow='terminal', mmove=True,
+    evidence='Shared native 467fc0 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')

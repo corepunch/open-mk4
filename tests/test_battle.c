@@ -14,6 +14,7 @@ void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
+void jarek_fan_fatality(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
 void shinnok_fatality_2(Fighter *fighter);
@@ -1760,6 +1761,35 @@ static void check_jarek_blade(void) {
   }
 }
 
+/* Jarek's fan scene: 474e70 selects owner clip 414 cycles for a male victim
+ * and the 415 cycle for a female one, then the shared release completes. */
+static void check_jarek_fan_victims(void) {
+  const int victims[] = {4, 2};
+  for (int row = 0; row < 2; ++row) {
+    battle_init(12, victims[row]);
+    g_battle.phase = PHASE_FIGHT;
+    g_battle.arena = 8;
+    g_battle.fighters[0].wins = 1;
+    battle_damage(&g_battle.fighters[1], Q16_ONE);
+    advance_ticks(1, NULL);
+    for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+      advance_ticks(1, NULL);
+    }
+    g_battle.fighters[0].body.pos[AXIS_X] = -0x6666;
+    g_battle.fighters[1].body.pos[AXIS_X] = 0x6666;
+    jarek_fan_fatality(&g_battle.fighters[0]);
+    check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_FAN, "Jarek's fan entry must start the fan scene");
+    bool cycled = false;
+    for (int tick = 0; tick < 650; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "Jarek's fan scene must stay on frame phases");
+      cycled |= fighter_move(&g_battle.fighters[0])->clip == 414;
+    }
+    check(cycled == (row == 0), "The fan cycle must use clip 414 only for a non-female victim");
+    check(g_battle.phase == PHASE_MATCH_OVER, "Jarek's fan scene must complete for either victim");
+  }
+}
+
 static void check_jarek_weapon_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int strike = 0; strike < 4; ++strike) {
@@ -3262,10 +3292,8 @@ static void check_reconnected_stage_commands(void) {
             "Stage command must acquire the correct scene for either player");
         for (int tick = 0; tick < 650; ++tick) {
           advance_ticks(1, NULL);
-          if (rosters[row] != 12) {
-            check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
-                "Shared stage-scene owner and victim must stay on frame phases");
-          }
+          check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]),
+              "Shared stage-scene owner and victim must stay on frame phases");
         }
         if (g_battle.phase != PHASE_MATCH_OVER) {
           fprintf(stderr, "Stage recovery roster %d slot %d stage %d phase %d\n", rosters[row], slot, stage, g_battle.phase);
@@ -4835,6 +4863,7 @@ int main(void) {
   check_jarek_balls();
   check_jarek_quake();
   check_jarek_blade();
+  check_jarek_fan_victims();
   check_shinnok_weapon_commands();
   check_shinnok_morph();
   check_fujin_crossbow();

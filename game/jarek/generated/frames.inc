@@ -190,10 +190,6 @@ static const int jarek_clip_412_samples[98] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 
 const mframe_t jarek_clip_412_frames[98] = {{0}};
 const mmove_t jarek_clip_412_mmove = {.firstframe = 0, .lastframe = 97, .frame = jarek_clip_412_frames, .samples = jarek_clip_412_samples};
 
-static const int jarek_clip_413_samples[2] = {0, 0};
-const mframe_t jarek_clip_413_frames[2] = {{0}};
-const mmove_t jarek_clip_413_mmove = {.firstframe = 0, .lastframe = 1, .frame = jarek_clip_413_frames, .samples = jarek_clip_413_samples};
-
 static const int jarek_clip_414_samples[18] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8};
 const mframe_t jarek_clip_414_frames[18] = {{0}};
 const mmove_t jarek_clip_414_mmove = {.firstframe = 0, .lastframe = 17, .frame = jarek_clip_414_frames, .samples = jarek_clip_414_samples};
