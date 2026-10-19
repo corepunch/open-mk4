@@ -137,4 +137,5 @@ void noob_saibot_script_teleport_slam_fall(Fighter *fighter);
 void noob_saibot_script_teleport_slam_drop(Fighter *fighter);
 void noob_saibot_script_teleport_land(Fighter *fighter);
 void noob_saibot_slam_released_fall(Fighter *fighter);
+void noob_saibot_flip_kick(Fighter *fighter);
 #endif

@@ -32,9 +32,9 @@
       "symbol": "reiko_roundhouse"
     },
     "0x4791a0": {
-      "evidence": "Reiko CPU action entry routed through translated uppercut.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_uppercut"
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "0x496db0": {
       "evidence": "Reiko CPU punch action route uses generated jab entry.",
@@ -228,7 +228,7 @@
     "0x4e9880"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "e17899f0acf515e8fadf1e8d0f68e17a7831555dadcfae964c43fc77c60d2f32",
+  "inventory_sha256": "37b7affcf0cc2f69f92b36734feba2a5f8712fc3168851b116950102cb0be5d9",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -359,6 +359,11 @@
       "source": "game/reiko/moves/teleport.c",
       "symbol": "reiko_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
+    },
+    "flip_kick": {
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -553,6 +558,16 @@
       "symbol": "reiko_slam_reaction",
       "adaptation": "The landing owner applies the reaction directly and starts its own generated 4e9880.",
       "evidence": "46acc0 -> 480f50[105] -> 484760: disarm, floor snap, stop and generated 4e9880."
+    },
+    "171": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "D[29] hit/air reaction 171: 4ea4e8[171] = 0x4838e0, the same routine as uppercut reaction 34."
+    },
+    "9": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "D[29] blocked reaction 9: 4ea4e8[9] = 0x486b30, shared C reaction dispatch."
     }
   },
   "return_to": "fighter_ready",
@@ -640,6 +655,11 @@
       "source": "game/reiko/moves/teleport.c",
       "symbol": "reiko_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
+    },
+    "0x4791a0": {
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     }
   },
   "command_predicates": {
@@ -647,7 +667,8 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ef50": "weapon_can_draw"
+    "0x45ef50": "weapon_can_draw",
+    "0x45e7a0": "reiko_can_flip_kick"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -703,6 +724,11 @@
       "source": "game/reiko/moves/teleport.c",
       "symbol": "reiko_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
+    },
+    "0x4791a0": {
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     }
   }
 }

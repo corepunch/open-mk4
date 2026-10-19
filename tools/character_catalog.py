@@ -158,6 +158,8 @@ def _moves_for(character):
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 33),)),
+            # HK record 4e4e60 (B,D,F) and the far CPU row shared with Noob.
+            flip_kick=move(0x4791a0, contacts=(('D', 29),), native=(('clip 110 contact states', 0x4791a0), ('speed decay', 0x47bf50))),
             # Up record 4e4e20 (shared by Noob Saibot) and both close CPU rows.
             teleport=move(0x47c070, (('rise', 0x4e82b8), ('slam opener', 0x4e82e0), ('slam fall', 0x4e8310), ('blocked landing', 0x4e8818), ('slam victim', 0x4e9880)),
                           (('D', 14),), native=(('vanish/relocate/emerge', 0x47c0a0), ('landing', 0x47c230), ('air BLOCK', 0x47c2a0), ('blocked recoil', 0x47fec0),

@@ -910,6 +910,7 @@ static const FighterFn reactions[256] = {
   [16] = react_kick_hit,
   [18] = react_sweep,
   [34] = react_uppercut,
+  [171] = react_uppercut,
   [37] = react_jab_hit,
   [165] = react_slide_block,
   [157] = jax_dash_victim_hit,

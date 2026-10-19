@@ -121,4 +121,6 @@ void reiko_script_teleport_land(Fighter *fighter);
 void reiko_slam_tail(Fighter *fighter);
 void reiko_slam_released_fall(Fighter *fighter);
 void reiko_slam_reaction(Fighter *victim);
+void reiko_flip_kick(Fighter *fighter);
+bool reiko_can_flip_kick(const Fighter *fighter);
 #endif

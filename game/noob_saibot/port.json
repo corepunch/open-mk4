@@ -32,9 +32,9 @@
       "symbol": "noob_saibot_roundhouse"
     },
     "0x4791a0": {
-      "evidence": "Noob Saibot CPU action entry routed through translated uppercut.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_uppercut"
+      "source": "game/noob_saibot/moves/flip_kick.c",
+      "symbol": "noob_saibot_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "0x47c070": {
       "source": "game/noob_saibot/moves/teleport.c",
@@ -269,7 +269,7 @@
     "0x4e8818"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "57c96c08490d6165019cb48d2ad51de19b2d892437c914d3656ad39f8a6f4809",
+  "inventory_sha256": "be29f4717854db84de7b1f7f40d82b0fb8d58d87026e93635e0226495e46958e",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -415,6 +415,11 @@
       "source": "game/noob_saibot/moves/teleport.c",
       "symbol": "noob_saibot_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
+    },
+    "flip_kick": {
+      "source": "game/noob_saibot/moves/flip_kick.c",
+      "symbol": "noob_saibot_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     }
   },
   "output": "game/noob_saibot/generated/scripts.inc",
@@ -609,6 +614,16 @@
       "symbol": "noob_saibot_teleport",
       "adaptation": "D14 has no damage; 480fc0(8) replaces this contact reaction in the same visit with the shared paired capture.",
       "evidence": "47c2d5 D[14] hit/air reaction 24, superseded by 47c33e capture before the victim runs it."
+    },
+    "171": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "D[29] hit/air reaction 171: 4ea4e8[171] = 0x4838e0, the same routine as uppercut reaction 34."
+    },
+    "9": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "D[29] blocked reaction 9: 4ea4e8[9] = 0x486b30, shared C reaction dispatch."
     }
   },
   "return_to": "fighter_ready",
@@ -780,6 +795,11 @@
       "source": "game/noob_saibot/moves/teleport.c",
       "symbol": "noob_saibot_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
+    },
+    "0x4791a0": {
+      "source": "game/noob_saibot/moves/flip_kick.c",
+      "symbol": "noob_saibot_flip_kick",
+      "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     }
   }
 }

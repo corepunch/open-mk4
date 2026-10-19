@@ -385,6 +385,19 @@ static void air_throw_drop(Fighter *victim) {
   victim->body.gravity = 0x28f;
 }
 
+/* 48e3a0 stamps a per-player special slot; 48e3f0 reports the ticks
+ * since that stamp to the reuse-delay predicates. */
+void mk4_special_stamp(Fighter *fighter, int slot) {
+  require(slot >= 0 && slot < (int)(sizeof fighter->special_stamp / sizeof fighter->special_stamp[0]), "Invalid special stamp slot");
+  fighter->special_stamp[slot] = g_battle.ticks + 1;
+}
+
+bool mk4_special_elapsed(const Fighter *fighter, int slot, uint64_t ticks) {
+  require(slot >= 0 && slot < (int)(sizeof fighter->special_stamp / sizeof fighter->special_stamp[0]), "Invalid special stamp slot");
+  uint64_t stamp = fighter->special_stamp[slot];
+  return stamp == 0 || g_battle.ticks - (stamp - 1) >= ticks;
+}
+
 bool mk4_can_fan_finish(const Fighter *fighter) {
   return g_battle.arena == 8 && battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
 }
