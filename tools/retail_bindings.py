@@ -1263,6 +1263,20 @@ CHARACTER_BINDINGS[7][0x4530f0] = Binding('reiko_first_piece_end', 'game/reiko/m
     evidence='4530f0 joint-6 arm pool and finish')
 
 
+# Reiko second fatality 467cd0 -> 41c360 native boundaries.
+CHARACTER_BINDINGS[7][0x41d260] = Binding('reiko_second_stars', 'game/reiko/moves/fatality_second.c', ('spawn',), ('fighter', 'task_type'),
+    flow='independent', task_types=(0,), mmove=True, evidence='41d260 throws the 61 stars of table 4d3018 from alternating hands')
+CHARACTER_BINDINGS[7][0x41f1b0] = Binding('reiko_second_owner_park', 'game/reiko/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True,
+    evidence='41f1b0 parks the owner on its final pose')
+CHARACTER_BINDINGS[7][0x41c4b0] = Binding('reiko_second_victim_fall', 'game/reiko/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True,
+    evidence='41c4b0 leaves a joint-4 pool and enters 4d2d90')
+CHARACTER_BINDINGS[7][0x41c4e0] = Binding('reiko_second_victim_end', 'game/reiko/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True,
+    evidence='41c4e0 leaves a joint-2 pool and parks the victim')
+_context = CHARACTER_BINDINGS[7].get(0x45abf0, BINDINGS.get(0x45abf0))
+CHARACTER_BINDINGS[7][0x45abf0] = replace(_context, inline_values=tuple(sorted(set(_context.inline_values) | {64, 65, 66})),
+    evidence=_context.evidence + '; star-barrage camera contexts 64/65/66')
+
+
 # Shared close attacks retain character-owned generated startup and native tails.
 for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
     from character_catalog import CHARACTERS as _CONTROL_CHARACTERS

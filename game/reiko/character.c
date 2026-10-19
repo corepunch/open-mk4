@@ -335,3 +335,15 @@ void reiko_entry_retail_script_004e2e40(Fighter *fighter) {
 void reiko_entry_retail_script_004e2e50(Fighter *fighter) {
   retail_script_004e2e50(fighter);
 }
+
+void reiko_entry_retail_script_004d2d10(Fighter *fighter) {
+  retail_script_004d2d10(fighter);
+}
+
+void reiko_entry_retail_script_004d2d60(Fighter *fighter) {
+  retail_script_004d2d60(fighter);
+}
+
+void reiko_entry_retail_script_004d2d90(Fighter *fighter) {
+  retail_script_004d2d90(fighter);
+}

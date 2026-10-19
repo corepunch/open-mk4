@@ -2,9 +2,9 @@
   "character": "reiko",
   "entry_adapters": {
     "0x467cd0": {
-      "evidence": "Reiko fatality-2 dispatch; roster table selects the second finish entry.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_spike_fatality"
+      "source": "game/reiko/moves/fatality_second.c",
+      "symbol": "reiko_second_fatality",
+      "evidence": "467cd0 -> 4dfe90[7] = 41c360: owner 4d2d10 on clip 553 throws the 61-star 41d260 barrage; first arrival starts the victim 4d2d60 stagger with 41c510 push-back and 41c690 jolt, the head star ends them and 4d2d90 falls; gate 45e530 = 0x1cccc..0x30000."
     },
     "0x467ce0": {
       "source": "game/reiko/moves/fatality_first.c",
@@ -240,6 +240,24 @@
       "count": 89,
       "sample": 68,
       "evidence": "4e2e40 advances arm clip 426 to pose 68 before 4530d0."
+    },
+    "0x4d2d10": {
+      "clip": 284,
+      "count": 40,
+      "sample": 0,
+      "evidence": "41c360 state 1 binds the stance clip 284 (4611c0 -> 490f60 -> 53d408[7]) before entering 4d2d10."
+    },
+    "0x4d2d90": {
+      "clip": 554,
+      "count": 160,
+      "sample": 135,
+      "evidence": "4d2d60 advances victim clip 554 to pose 135 before 41c4b0 enters this continuation."
+    },
+    "0x4d2d60": {
+      "clip": 13,
+      "count": 56,
+      "sample": 0,
+      "evidence": "41c430 keeps the dizzy finish pose (clip 13) until the first star arrives, then blends into 554 through 4d2d60."
     }
   },
   "generated_scripts": [
@@ -308,10 +326,13 @@
     "0x4e2e08",
     "0x4e2e18",
     "0x4e2e40",
-    "0x4e2e50"
+    "0x4e2e50",
+    "0x4d2d10",
+    "0x4d2d60",
+    "0x4d2d90"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "11b7ce8f6647e5ef6301a793695693c8c496404f818d3a8dd52b4b94f980e509",
+  "inventory_sha256": "346495e28f8f65daf4c90f67cd03b33b30f8b476d584e06cef5ef99f902c0460",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -462,6 +483,11 @@
       "source": "game/reiko/moves/fatality_first.c",
       "symbol": "reiko_first_fatality",
       "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK."
+    },
+    "fatality_2": {
+      "source": "game/reiko/moves/fatality_second.c",
+      "symbol": "reiko_second_fatality",
+      "evidence": "467cd0 -> 4dfe90[7] = 41c360: owner 4d2d10 on clip 553 throws the 61-star 41d260 barrage; first arrival starts the victim 4d2d60 stagger with 41c510 push-back and 41c690 jolt, the head star ends them and 4d2d90 falls; gate 45e530 = 0x1cccc..0x30000."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -784,6 +810,11 @@
       "source": "game/reiko/moves/fatality_first.c",
       "symbol": "reiko_first_fatality",
       "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK."
+    },
+    "0x467cd0": {
+      "source": "game/reiko/moves/fatality_second.c",
+      "symbol": "reiko_second_fatality",
+      "evidence": "467cd0 -> 4dfe90[7] = 41c360: owner 4d2d10 on clip 553 throws the 61-star 41d260 barrage; first arrival starts the victim 4d2d60 stagger with 41c510 push-back and 41c690 jolt, the head star ends them and 4d2d90 falls; gate 45e530 = 0x1cccc..0x30000."
     }
   },
   "command_predicates": {
@@ -795,7 +826,8 @@
     "0x45e7a0": "reiko_can_flip_kick",
     "0x45e6d0": "reiko_can_star",
     "0x45e710": "reiko_can_orbit",
-    "0x45e360": "reiko_can_first_fatality"
+    "0x45e360": "reiko_can_first_fatality",
+    "0x45e530": "reiko_can_second_fatality"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -863,7 +895,10 @@
     "0x4e2e08",
     "0x4e2e18",
     "0x4e2e40",
-    "0x4e2e50"
+    "0x4e2e50",
+    "0x4d2d10",
+    "0x4d2d60",
+    "0x4d2d90"
   ],
   "cpu_bindings": {
     "0x47c070": {

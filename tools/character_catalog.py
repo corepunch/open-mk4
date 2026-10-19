@@ -172,6 +172,10 @@ def _moves_for(character):
                                        ('left arm 56', 0x4e2df8), ('left arm finish', 0x4e2e08), ('right arm', 0x4e2e18), ('right arm 44', 0x4e2e40),
                                        ('right arm finish', 0x4e2e50)),
                             native=(('scene', 0x452730), ('victim task', 0x452950), ('tear', 0x452ac0), ('victory blend', 0x4528a0))),
+            # HK record 4e4e6c (B,B,D,D) -> 467cd0 -> 4dfe90[7] = 41c360.
+            fatality_2=move(0x467cd0, (('owner barrage', 0x4d2d10), ('victim stagger', 0x4d2d60), ('victim fall', 0x4d2d90)),
+                            native=(('scene', 0x41c360), ('victim callback', 0x41c430), ('star thrower', 0x41d260), ('star homing', 0x41cc00),
+                                    ('push-back', 0x41c510), ('jolt', 0x41c690))),
             # LK record 4e4e80 (B,F): Reiko-only circling step, no contact query.
             orbit=move(0x478ee0, native=(('circling placements', 0x478ee0), ('polar placement', 0x487e20), ('stance clip', 0x4611c0))),
             # LP record 4e4e30 (D,F) and the projectile CPU row shared with Noob.

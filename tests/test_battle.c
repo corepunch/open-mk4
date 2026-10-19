@@ -60,6 +60,8 @@ void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
 void reiko_entry_retail_script_004de640(Fighter *fighter);
 void noob_saibot_entry_retail_script_004de640(Fighter *fighter);
+void reiko_first_fatality(Fighter *fighter);
+void reiko_second_fatality(Fighter *fighter);
 
 static void check(bool yes, const char *message) {
   if (!yes) {
@@ -3498,20 +3500,21 @@ static void check_independent_scene_actor_lifetime(void) {
     check(actor != NULL && actor->roster == source->roster && !fighter_fiber_active(actor) && actor->buttons == NULL,
         "Independent scene body must borrow the selected model without controls or a fiber slot");
     check(fighter_move(source) == source_move && source->current_mmove == NULL, "Creating a scene body must preserve the source fighter's playback");
-    check(
-        battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL && battle_scene_actor_start(owner, source, &pose, scene_actor_entry) == NULL,
-        "Scene actor pool must remain bounded");
+    for (int i = 1; i < MAX_SCENE_ACTORS; ++i) {
+      check(battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL, "Scene actor pool must fill every bounded slot");
+    }
+    check(battle_scene_actor_start(owner, source, &pose, scene_actor_entry) == NULL, "Scene actor pool must remain bounded");
     advance_ticks(4, NULL);
     for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
       check(!g_battle.scene_actors[i].active, "Scene frame completion must release its own actor slot");
     }
-    check(scene_actor_cleanups == 2, "Each completed scene actor must clean up once");
+    check(scene_actor_cleanups == MAX_SCENE_ACTORS, "Each completed scene actor must clean up once");
     check(battle_scene_actor_start(owner, source, &pose, scene_actor_entry) != NULL, "A completed scene slot must be reusable");
     battle_reset_match();
     for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
       check(!g_battle.scene_actors[i].active && !fighter_fiber_active(&g_battle.scene_actors[i].actor), "Reset must retire every independent scene body");
     }
-    check(scene_actor_cleanups == 3, "Reset must run the remaining scene actor cleanup exactly once");
+    check(scene_actor_cleanups == MAX_SCENE_ACTORS + 1, "Reset must run the remaining scene actor cleanup exactly once");
   }
 }
 
@@ -3803,7 +3806,7 @@ static void check_kai_second_fatality(void) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 15, 17};
+  const int rosters[] = {15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -5740,7 +5743,409 @@ static void check_quan_chi_second_fatality(void) {
   }
 }
 
+/* Reiko (slot 7) and Noob Saibot (slot 17) share Reiko's retail script slot
+ * and CPU rows. These checks exercise their own command and CPU entries. */
+static void reiko_noob_fight(int owner_roster, int victim_roster, int slot, float distance) {
+  battle_init(slot ? victim_roster : owner_roster, slot ? owner_roster : victim_roster);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+  owner->body.pos[AXIS_X] = (q16)((slot ? 0.5f : -0.5f) * distance * Q16_ONE);
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+}
+
+static void check_reiko_noob_high_kick(void) {
+  const int roster[] = {7, 17};
+  for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      reiko_noob_fight(roster[index], 4, 0, scenario == 2 ? 5.f : 1.f);
+      Fighter *owner = &g_battle.fighters[0], *victim = &g_battle.fighters[1];
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      fighter_press(owner, BUTTON_HIGH_KICK);
+      bool recovered = false;
+      for (int tick = 0; tick < 60 && !recovered; ++tick) {
+        advance_ticks(1, input);
+        check(!fighter_fiber_active(owner), "Reiko/Noob high kick must use frame tables");
+        recovered = tick > 2 && owner->state == S_IDLE;
+      }
+      /* 4e5d30: B[1] 13% hit, 20% chip on block, latched once. */
+      q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? q16_mul(0x2147, 0x3333) : 0;
+      check(recovered && victim->health == Q16_ONE - damage, "Reiko/Noob high kick must latch one B[1] contact and recover");
+    }
+  }
+}
+
+/* Noob BLOCK record 4e4b08 -> 46aba0: the pair falls together, 46aca0
+ * deals 19% on landing and 46acc0 slams the peer with reaction 105. */
+static void check_noob_air_throw(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      reiko_noob_fight(17, scenario == 1 ? 2 : 4, slot, 1.f);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -3 * Q16_ONE;
+      fighter_enter_state(owner, S_JUMP);
+      fighter_enter_state(victim, S_JUMP);
+      if (scenario == 2) {
+        victim->health = 0x30a3;
+      }
+      fighter_press(owner, BUTTON_BLOCK);
+      advance_ticks(2, NULL);
+      check(fighter_move(owner)->clip == 74 && fighter_move(victim)->clip == 150, "Noob air throw must take its own owner and victim clips");
+      bool grounded = false, slammed = false;
+      int after_slam = 0;
+      for (int tick = 0; tick < 240; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Noob air throw must use frame continuations");
+        check(grounded || victim->health == (scenario == 2 ? 0x30a3 : Q16_ONE), "Noob air throw damage waits for the owner's landing");
+        grounded |= !fighter_airborne(owner);
+        slammed |= victim->reaction == 105 && fighter_move(victim)->clip == 175;
+        after_slam += slammed;
+        if ((owner->state == S_IDLE && victim->state == S_IDLE) || (scenario == 2 && after_slam > 60)) {
+          break;
+        }
+      }
+      check(slammed, "Noob air throw must release its peer through reaction 105");
+      if (scenario == 2) {
+        check(victim->health == 0 && victim->state != S_IDLE, "A KO slam must keep the victim down");
+        continue;
+      }
+      check(victim->health == Q16_ONE - 0x30a3, "Noob air throw must deal 46aca0 damage once");
+      check(owner->state == S_IDLE && victim->state == S_IDLE, "Both Noob air throw participants must recover");
+      check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Noob air throw must release body attachment");
+    }
+  }
+  reiko_noob_fight(17, 4, 0, 1.f);
+  for (int i = 0; i < 2; ++i) {
+    g_battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
+    fighter_enter_state(&g_battle.fighters[i], S_JUMP);
+  }
+  fighter_press(&g_battle.fighters[0], BUTTON_BLOCK);
+  advance_ticks(4, NULL);
+  battle_react(&g_battle.fighters[0], 11);
+  advance_ticks(200, NULL);
+  check(g_battle.fighters[1].state == S_IDLE && g_battle.fighters[1].health == Q16_ONE, "Interrupted Noob air throw must release its victim without damage");
+}
+
+/* Up record 4e4e20 (D,U) -> 47c070 for both fighters. Without BLOCK the
+ * body rises off the top, reappears below the floor one unit past the peer
+ * and emerges; BLOCK during the rise queries D[14] for the slam or the
+ * 47fec0 recoil. */
+static void check_reiko_noob_teleport(void) {
+  const int roster[] = {7, 17};
+  for (size_t index = 0; index < 2; ++index) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        reiko_noob_fight(roster[index], 4, slot, 2.f);
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->human = true;
+        Input input[2] = {0};
+        if (scenario == 2) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        q16 side = owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X];
+        fighter_press(owner, BUTTON_DOWN);
+        fighter_press(owner, BUTTON_UP);
+        bool high = false, under = false, pressed = false, slammed = false, recoiled = false;
+        int tick = 0;
+        for (; tick < 300; ++tick) {
+          advance_ticks(1, input);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reiko/Noob teleport must use frame phases");
+          high |= owner->body.pos[AXIS_Y] <= -0x40000;
+          under |= high && owner->body.pos[AXIS_Y] > owner->body.ground;
+          if (scenario != 0 && !pressed && under && owner->body.gravity == 0x51e && owner->body.vel[AXIS_Y] < 0) {
+            fighter_press(owner, BUTTON_BLOCK);
+            pressed = true;
+          }
+          slammed |= victim->reaction == 105;
+          recoiled |= owner->action == ACTION_RETAIL_1011;
+          if (tick > 40 && owner->state == S_IDLE && victim->state != S_KNOCKDOWN && !fighter_airborne(owner) && owner->current_mmove == NULL) {
+            break;
+          }
+        }
+        check(high && under, "Teleport must vanish four units up and reappear below the floor");
+        check(tick < 300 && owner->state == S_IDLE, "Teleport must land and return to stance");
+        if (scenario == 0) {
+          check((owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X] > 0) != (side > 0), "Teleport must reappear past the peer");
+          check(victim->health == Q16_ONE, "Plain teleport must not damage");
+        } else if (scenario == 1) {
+          check(slammed && victim->health == Q16_ONE - 0x1c28, "Teleport slam must deal 47c4b0 damage once and apply reaction 105");
+        } else {
+          check(recoiled && !slammed && victim->health == Q16_ONE, "Blocked teleport slam must recoil without capture");
+        }
+        advance_ticks(60, NULL);
+        check(victim->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Teleport peer must regain control");
+      }
+    }
+  }
+}
+
+/* Reiko B,D,F+HK record 4e4e60 and both fighters' far CPU row enter 4791a0:
+ * D[29] 12% with reaction 171, a no-guard block wait, and the 45e7a0
+ * 90-tick reuse gate on the command. */
+static void check_reiko_noob_flip_kick(void) {
+  const int roster[] = {7, 17};
+  for (size_t index = 0; index < 2; ++index) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        reiko_noob_fight(roster[index], 4, slot, scenario == 2 ? 6.f : 1.2f);
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        Input input[2] = {0};
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        if (roster[index] == 7) {
+          Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT, forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+          fighter_press(owner, back);
+          fighter_press(owner, BUTTON_DOWN);
+          fighter_press(owner, forward);
+          fighter_press(owner, BUTTON_HIGH_KICK);
+        } else {
+          check(battle_cpu_action(owner, CPU_SPECIAL_2), "Noob's far CPU row must select the flip kick");
+        }
+        advance_ticks(2, input);
+        check(fighter_move(owner)->clip == 110, "Flip kick must play its own clip 110");
+        bool no_guard = false;
+        int tick = 0;
+        for (; tick < 120 && owner->state != S_IDLE; ++tick) {
+          advance_ticks(1, input);
+          check(!fighter_fiber_active(owner), "Flip kick must use native frame phases");
+          no_guard |= (owner->flags & FF_NO_GUARD) != 0;
+        }
+        check(owner->state == S_IDLE, "Flip kick must return to stance");
+        if (scenario == 0) {
+          check(victim->health == Q16_ONE - 0x1eb8 && victim->reaction == 171, "Flip kick must apply D[29] once with reaction 171");
+        } else if (scenario == 1) {
+          check(victim->health == Q16_ONE - q16_mul(0x1eb8, 0x3333) && no_guard, "Blocked flip kick must chip and wait without guard");
+        } else {
+          check(victim->health == Q16_ONE, "Distant flip kick must miss");
+        }
+        if (roster[index] == 7 && scenario == 2) {
+          Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT, forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+          fighter_press(owner, back);
+          fighter_press(owner, BUTTON_DOWN);
+          fighter_press(owner, forward);
+          fighter_press(owner, BUTTON_HIGH_KICK);
+          advance_ticks(2, NULL);
+          check(fighter_move(owner)->clip != 110 || tick >= 88, "Flip kick reuse must wait 90 ticks after its stamp");
+        }
+      }
+    }
+  }
+}
+
+/* Reiko D,F+LP record 4e4e30 and both projectile CPU rows enter 496db0:
+ * an independent task-82 star queries C[21]; reaction 45 staggers a
+ * grounded victim on clip 182 and an airborne one continues as reaction 10. */
+static void check_reiko_noob_star(void) {
+  const int roster[] = {7, 17};
+  for (size_t index = 0; index < 2; ++index) {
+    for (int slot = 0; slot < 2; ++slot) {
+      for (int scenario = 0; scenario < 3; ++scenario) {
+        reiko_noob_fight(roster[index], 4, slot, 3.f);
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        Input input[2] = {0};
+        if (scenario == 1) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+        }
+        if (roster[index] == 7) {
+          fighter_press(owner, BUTTON_DOWN);
+          fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
+          fighter_press(owner, BUTTON_LOW_PUNCH);
+        } else {
+          check(battle_cpu_action(owner, CPU_PROJECTILE), "Noob's projectile CPU row must select the star");
+        }
+        bool spawned = false, staggered = false, air = false;
+        for (int tick = 0; tick < 160; ++tick) {
+          if (scenario == 2 && tick == 12) {
+            victim->body.pos[AXIS_Y] = victim->body.ground - Q16_ONE;
+            victim->body.gravity = 0x28f;
+          }
+          advance_ticks(1, input);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Star and its reaction must use frame phases");
+          for (int i = 0; i < MAX_PROJECTILES; ++i) {
+            spawned |= g_battle.projectiles[i].kind == PROJECTILE_FIREBALL && g_battle.projectiles[i].owner == slot;
+          }
+          staggered |= fighter_move(victim)->clip == 182;
+          air |= victim->reaction == 10;
+        }
+        check(spawned && owner->state == S_IDLE, "Star must spawn its object and the thrower must recover");
+        if (scenario == 0) {
+          check(victim->health == Q16_ONE - 0x2147 && staggered && victim->state == S_IDLE, "Grounded star hit must stagger on clip 182 and recover");
+        } else if (scenario == 1) {
+          check(victim->health == Q16_ONE - q16_mul(0x2147, 0x3333) && !staggered, "Blocked star must chip without the stagger");
+        } else {
+          check(victim->health == Q16_ONE - 0x2147 && air && !staggered, "Airborne star hit must continue as reaction 10");
+        }
+      }
+    }
+  }
+  reiko_noob_fight(7, 4, 0, 3.f);
+  Fighter *owner = &g_battle.fighters[0];
+  fighter_press(owner, BUTTON_DOWN);
+  fighter_press(owner, BUTTON_RIGHT);
+  fighter_press(owner, BUTTON_LOW_PUNCH);
+  advance_ticks(50, NULL);
+  fighter_press(owner, BUTTON_DOWN);
+  fighter_press(owner, BUTTON_RIGHT);
+  fighter_press(owner, BUTTON_LOW_PUNCH);
+  advance_ticks(2, NULL);
+  check(fighter_move(owner)->clip != 437, "45e6d0 must reject a second star within 80 ticks");
+}
+
+/* Reiko B,F+LK record 4e4e80 -> 478ee0: twenty placements circle half way
+ * around the peer, ending about 1.2 units behind it, then a 20-visit wait. */
+static void check_reiko_orbit(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 2; ++scenario) {
+      reiko_noob_fight(7, 4, slot, scenario == 0 ? 3.f : 1.f);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 side = owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X];
+      fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
+      fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
+      fighter_press(owner, BUTTON_LOW_KICK);
+      advance_ticks(2, NULL);
+      if (scenario == 1) {
+        check(fighter_move(owner)->clip != 306, "45e710 must reject the circling step inside 1.3 units");
+        continue;
+      }
+      check(fighter_move(owner)->clip == 306, "Circling step must play clip 306");
+      int tick = 0;
+      for (; tick < 80 && owner->state != S_IDLE; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner), "Circling step must use native frames");
+      }
+      check(owner->state == S_IDLE && tick >= 30, "Circling step must hold its stance wait before returning");
+      check((owner->body.pos[AXIS_X] - victim->body.pos[AXIS_X] > 0) != (side > 0) && fighter_distance(owner) < 1.6f,
+          "Circling step must finish close behind the peer");
+      check(victim->health == Q16_ONE, "Circling step has no contact");
+    }
+  }
+}
+
+/* Noob D,F+LP records 4e44b0/4e44bc: the grounded shadow charge returns to
+ * the controller; the airborne one leaves through 498eb0 -> 480cf0, where
+ * Noob himself falls on clip 310 with gravity 0x20c and lands. */
+static void check_noob_shadow_moves(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int air = 0; air < 2; ++air) {
+      reiko_noob_fight(17, 4, slot, 1.5f);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      if (air) {
+        owner->body.pos[AXIS_Y] = owner->body.ground - 2 * Q16_ONE;
+        owner->body.gravity = 0x28f;
+        fighter_enter_state(owner, S_JUMP);
+      }
+      fighter_press(owner, BUTTON_DOWN);
+      fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
+      fighter_press(owner, BUTTON_LOW_PUNCH);
+      bool fell = false;
+      int tick = 0;
+      for (; tick < 160 && !(tick > 4 && owner->state == S_IDLE && !fighter_airborne(owner)); ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner), "Noob shadow moves must use frame phases");
+        fell |= fighter_move(owner)->clip == 310 && owner->body.gravity == 0x20c;
+      }
+      check(tick < 160 && owner->state == S_IDLE, "Noob shadow move must return to stance");
+      check(!air || fell, "Air shadow must leave through the clip-310 owner fall");
+      check(air || victim->health < Q16_ONE, "Grounded shadow charge must reach its peer");
+    }
+  }
+}
+
+/* Open Reiko's deciding-KO window and enter a finisher through its real
+ * generated command record while holding the record's extra switches. */
+static bool reiko_finish_command(int slot, FighterFn entry, unsigned held, q16 distance) {
+  battle_init(slot ? 4 : 7, slot ? 7 : 4);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+  owner->wins = 1;
+  battle_damage(victim, Q16_ONE);
+  advance_ticks(1, NULL);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance_ticks(1, NULL);
+  }
+  owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+  const Controls *controls = roster_def(7)->controls;
+  const CommandDef *selected = NULL;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].enter == entry) {
+      selected = &controls->commands[i];
+    }
+  }
+  check(selected != NULL, "Reiko finisher needs its real generated command");
+  for (int i = 0; i < selected->count; ++i) {
+    bool forward = selected->tokens[i] == TOKEN_FORWARD;
+    Button direction = selected->tokens[i] == TOKEN_DOWN ? BUTTON_DOWN : (forward != (slot != 0) ? BUTTON_RIGHT : BUTTON_LEFT);
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(direction);
+    if (i == selected->count - 1) {
+      input[slot].held |= BUTTON_BIT(selected->button) | held;
+    }
+    battle_step(input);
+    advance_ticks(2, NULL);
+  }
+  return g_battle.phase == PHASE_FATALITY;
+}
+
+/* 467ce0: F,D,F+BLK with BLK+HK+LP+LK held; four detached subtrees, then
+ * the owner's 443 victory loop and the result. */
+static void check_reiko_first_fatality(void) {
+  unsigned chord = BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK);
+  for (int slot = 0; slot < 2; ++slot) {
+    check(reiko_finish_command(slot, reiko_first_fatality, chord, 0xcccc), "Reiko first fatality must start from its held-switch command");
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    int pieces = 0;
+    for (int tick = 0; tick < 800 && g_battle.phase == PHASE_FATALITY; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reiko first fatality must use frame phases");
+      int active = 0;
+      for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+        active += g_battle.scene_actors[i].active && g_battle.scene_actors[i].actor.subtree_joint > 0;
+      }
+      pieces = active > pieces ? active : pieces;
+    }
+    check(pieces == 4 && (victim->hidden_joints[0] & (UINT64_C(1) << 3)), "Reiko's tear must detach torso, head and both arms");
+    check(g_battle.phase == PHASE_MATCH_OVER && fighter_move(owner)->clip == 443, "Reiko first fatality must end in its victory loop");
+  }
+  check(!reiko_finish_command(0, reiko_first_fatality, 0, 0xcccc), "45e360 must require its held switches");
+}
+
+/* 467cd0: B,B,D,D+HK at 1.8..3 units; the star barrage's first arrival
+ * starts the clip-554 stagger and push-back, and the victim falls. */
+static void check_reiko_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    check(reiko_finish_command(slot, reiko_second_fatality, 0, 0x26666), "Reiko second fatality must start from its command");
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    float start = fighter_distance(owner);
+    bool staggered = false;
+    for (int tick = 0; tick < 600 && g_battle.phase == PHASE_FATALITY; ++tick) {
+      advance_ticks(1, NULL);
+      check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reiko second fatality must use frame phases");
+      staggered |= fighter_move(victim)->clip == 554;
+    }
+    check(staggered && fighter_distance(owner) > start + 2.5f, "Star arrivals must stagger and push the victim back");
+    check(g_battle.phase == PHASE_MATCH_OVER && fighter_sample(victim) == 159, "Reiko second fatality must finish the fall before the result");
+  }
+  check(!reiko_finish_command(0, reiko_second_fatality, 0, 0x10000), "45e530 must reject a close victim");
+}
+
+static void check_reiko_noob(void) {
+  check_reiko_second_fatality();
+  check_reiko_first_fatality();
+  check_reiko_noob_high_kick();
+  check_noob_shadow_moves();
+  check_reiko_orbit();
+  check_reiko_noob_star();
+  check_reiko_noob_flip_kick();
+  check_noob_air_throw();
+  check_reiko_noob_teleport();
+}
+
 int main(void) {
+  check_reiko_noob();
   check_tanya_ports();
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();

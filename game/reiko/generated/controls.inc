@@ -7,6 +7,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_BACK}, 3, 40, 0x0, mk4_can_fan_finish, reiko_fan_fatality},
   {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 28, 0x40, reiko_can_first_fatality, reiko_first_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_DOWN, TOKEN_FORWARD}, 3, 24, 0x0, reiko_can_flip_kick, reiko_flip_kick},
+  {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_BACK, TOKEN_DOWN, TOKEN_DOWN}, 4, 50, 0x0, reiko_can_second_fatality, reiko_second_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0x0, reiko_can_orbit, reiko_orbit},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_spike_finish, reiko_spike_fatality},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
@@ -21,8 +22,9 @@ static const CpuMoves retail_cpu_moves = {.enter =
                                                   [CPU_SPECIAL_2] = reiko_flip_kick,
                                                   [CPU_PROJECTILE] = reiko_star,
                                                   [CPU_FINISH_1] = reiko_first_fatality,
+                                                  [CPU_FINISH_2] = reiko_second_fatality,
                                                   [CPU_FINISH_FAN] = reiko_fan_fatality,
                                                   [CPU_FINISH_SPIKE] = reiko_spike_fatality,
                                               },
-    .finish_min = {0x0, 0x0},
-    .finish_distance = {0xcccc, 0x0}};
+    .finish_min = {0x0, 0x1cccc},
+    .finish_distance = {0xcccc, 0x26666}};
