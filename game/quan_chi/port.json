@@ -48,7 +48,11 @@
     "0x4e9868",
     "0x4e8818",
     "0x4e9818",
-    "0x4e9838"
+    "0x4e9838",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -156,6 +160,12 @@
       "count": 9,
       "sample": 8,
       "evidence": "47fe60 -> 47db60 binds clip301 at its tuck sample; 48f490/48f410 wait for the apex and Y>=-2.5 before 47ff80 enters 4e8818."
+    },
+    "0x4e62d8": {
+      "clip": 244,
+      "count": 49,
+      "sample": 22,
+      "evidence": "46d260 equips after draw clip244 reaches22, then resumes its recovery."
     }
   },
   "entry_adapters": {
@@ -190,9 +200,9 @@
       "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
     },
     "0x46d1d0": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_weapon_draw",
-      "evidence": "Quan Chi descriptor-backed weapon-draw command target 0x46d1d0."
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "quan_chi_weapon_action",
+      "evidence": "46d1d0 selects draw/throw/follow-up for type6f; follow-up table4ecb40 selects496be0, not another normal."
     },
     "0x47a370": {
       "source": "game/quan_chi/moves/flip_kick.c",
@@ -340,6 +350,31 @@
       "source": "game/quan_chi/moves/steal.c",
       "symbol": "quan_chi_weapon_steal",
       "evidence": "Native469c80: action401, C37, clip7 to10; armed victim/unarmed thief D11 query; hit waits up to30 ticks for task70 484100 to home within0x8000 and 46a180 equips it; miss/block 469d7a."
+    },
+    "draw_weapon": {
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "quan_chi_weapon_action",
+      "evidence": "46d1d0 selects throw (45f5f0), follow-up 494610 with table4ecb40[0x6f-0x60]=496be0, or draw4e62c0/46d260 for type6f."
+    },
+    "weapon_hp": {
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "weapon_hp",
+      "evidence": "Button table4ecc48 HP495780: Back strikes4ec9d8 (clip231, W26); otherwise496a70 travels4ec828 into4ec838 (clip238, W7)."
+    },
+    "weapon_lp": {
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "weapon_lp",
+      "evidence": "Button table4ecc48 LP496ba0: 46dbb0 close LP throw, then494990 strikes4ec848 (clip234, W5) or Back496be0 (travel4ec860, clip237, W6)."
+    },
+    "weapon_back_hp": {
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "weapon_back_hp",
+      "evidence": "495780 with Back held (48ebd0) strikes4ec9d8: clip231, phases6/10/16, four W26 queries, recovery1."
+    },
+    "weapon_back_lp": {
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "weapon_back_lp",
+      "evidence": "494990's Back variant496be0: 4947d0 travel4ec860 (delay9, 11 frames, 0x147a) into4ec870 clip237 W6; also the4ecb40 follow-up."
     }
   },
   "reactions": {
@@ -494,6 +529,33 @@
       "symbol": "quan_chi_steal_reaction",
       "evidence": "D11/4ec140 hit and air select reaction108; 4ea4e8[108] ->484060: 493370 detaches the weapon into task70 484100, 48ef30 selects VM4e9838 air or4e9818 ground.",
       "adaptation": "Registered directly in shared reactions[108]; the Quan Chi-owned generated victim roots run for either humanoid player slot and the homing weapon falls through the shared 494590 drop when the thief stops."
+    },
+    "47": {
+      "source": "game/raiden/character.c",
+      "symbol": "raiden_generated_reaction",
+      "evidence": "Weapon record W5 (4ec848) selects reaction47, the same staff LP victim root registered by Raiden.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
+    },
+    "53": {
+      "source": "game/raiden/character.c",
+      "symbol": "raiden_generated_reaction",
+      "evidence": "Weapon record W7 (4ec838) selects reaction53, the same staff travel-strike victim root registered by Raiden.",
+      "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
+    },
+    "51": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Weapon record W26 (4ec9d8 back HP) selects shared reaction51 through retail dispatcher 0x482420."
+    },
+    "52": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Weapon record W6 (4ec870 back LP) selects shared reaction52 through retail dispatcher 0x4824a0."
+    },
+    "119": {
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Every type6f weapon record selects shared block reaction119 (0x486a70)."
     }
   },
   "stances": {
@@ -548,7 +610,7 @@
     "symbol": "quan_chi_weapon_descriptor",
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
-  "inventory_sha256": "14f94d9c73fa3e722e9849dc42acfcf009efaa2c089a75b9f3102aa0e6817a6e",
+  "inventory_sha256": "1f589fb7b5aac98aec0a1ccfa8263fe95ae05d55d4221d58df73ee596e840030",
   "controls_output": "game/quan_chi/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
@@ -595,6 +657,11 @@
       "source": "game/quan_chi/moves/steal.c",
       "symbol": "quan_chi_weapon_steal",
       "evidence": "Native469c80 weapon steal: clip7, D11 against an armed victim, homing task70 weapon 484100 and 46a180 equip; otherwise 469d7a recovery."
+    },
+    "0x46d1d0": {
+      "source": "game/quan_chi/moves/weapon.c",
+      "symbol": "quan_chi_weapon_action",
+      "evidence": "46d1d0 selects draw/throw/follow-up for type6f; follow-up table4ecb40 selects496be0, not another normal."
     }
   },
   "command_predicates": {
@@ -603,7 +670,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
-    "0x45ed80": "mk4_can_air_throw"
+    "0x45ed80": "mk4_can_air_throw",
+    "0x45ef50": "weapon_can_draw"
   },
   "mmove_scripts": [
     "0x4de798",
@@ -649,7 +717,11 @@
     "0x4e9868",
     "0x4e8818",
     "0x4e9818",
-    "0x4e9838"
+    "0x4e9838",
+    "0x4e62c0",
+    "0x4e62d8",
+    "0x4e66d0",
+    "0x4e66f0"
   ],
   "cpu_bindings": {
     "0x499740": {

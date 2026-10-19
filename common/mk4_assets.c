@@ -530,12 +530,12 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   statue.bones = load_rig(&exe, 0x50686c, 0x50609c, statue.meshes.count);
   PUSH(assets->scene_models, statue);
   const uint32_t weapon_descriptors[] = {
-      0x4ecdf8, 0x4ecdb8, 0x4ece58, 0x4ece18, 0x4ece38, 0x4eced8, 0x4ecef8, 0x4ecf58, 0x4ecdd8, 0x4eceb8, 0x4ece98, 0x4ece78, 0x4ecd98};
+      0x4ecdf8, 0x4ecdb8, 0x4ece58, 0x4ece18, 0x4ece38, 0x4eced8, 0x4ecef8, 0x4ecf58, 0x4ecdd8, 0x4eceb8, 0x4ece98, 0x4ece78, 0x4ecd98, 0x4ecf38};
   for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
     uint32_t descriptor = weapon_descriptors[i];
     uint32_t root = image_u32(&exe, descriptor + 4) * 4;
     Character weapon = statue;
-    if (descriptor == 0x4ecf58) {
+    if (descriptor == 0x4ecf58 || descriptor == 0x4ecf38) { /* Cage and Quan Chi rigs are in share2_g.geo. */
       snprintf(weapon.file, sizeof weapon.file, "share2_g.geo");
       weapon.meshes = assets->hud.effects2.meshes;
       weapon.material_pages = assets->hud.effects2.textures;

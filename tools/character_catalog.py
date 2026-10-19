@@ -678,6 +678,12 @@ def _moves_for(character):
             skull=move(0x499740, (('caster', 0x4ed3a0), ('release recovery', 0x4ed3c0), ('reaction 128 victim', 0x4e9cd8)), (('C', 7),),
                        native=(('heading snapshot', 0x49c610), ('release and spawn', 0x499780), ('independent skull', 0x4998d0),
                                ('flight step', 0x499ae0), ('bite', 0x499b40), ('expiry', 0x499c00), ('reaction 128', 0x485f90))),
+            # Retail HK [D,B] record 4e4864 (predicate 45ef50) and armed table 4ecc48.
+            draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('equip return', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0)), native=(('equip', 0x46d260), ('follow-up draw', 0x494610))),
+            weapon_back_hp=move(0x495780, contacts=(('WEAPON', 26),)),
+            weapon_hp=move(0x496a70, contacts=(('WEAPON', 7),), native=(('travel', 0x4947d0), ('spin cue task', 0x496ad0))),
+            weapon_lp=move(0x496ba0, contacts=(('WEAPON', 5),), native=(('close throw gate', 0x46dbb0),)),
+            weapon_back_lp=move(0x496be0, contacts=(('WEAPON', 6),)),
             # Retail HP [F,B] record 4e47f8.
             weapon_steal=move(0x469c80, (('grounded victim', 0x4e9818), ('airborne victim', 0x4e9838)), (('D', 11),),
                               native=(('failed recovery', 0x469d7a), ('reaction 108', 0x484060), ('homing weapon', 0x484100), ('equip', 0x46a180), ('side getup', 0x488b40))),

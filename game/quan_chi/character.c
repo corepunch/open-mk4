@@ -38,6 +38,10 @@ static const Controls quan_chi_controls = {retail_commands, (int)(sizeof retail_
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
+  [S_IDLE] = quan_chi_armed_idle,
+  [S_WALK] = quan_chi_armed_walk,
+  [S_CROUCH] = quan_chi_armed_crouch,
+  [S_BLOCK] = quan_chi_armed_block,
   [S_PUNCH] = quan_chi_jab,
   [S_KICK] = quan_chi_high_kick,
   [S_SWEEP] = quan_chi_sweep,
@@ -47,7 +51,7 @@ static const FighterFn enter[S_COUNT] = {
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const uint32_t quan_chi_weapon_descriptor[] = {
+const uint32_t quan_chi_weapon_descriptor[] = {
   0x6f,
   0x1430c4,
   0x144356,
@@ -238,4 +242,20 @@ void quan_chi_entry_retail_script_004e9818(Fighter *fighter) {
 
 void quan_chi_entry_retail_script_004e9838(Fighter *fighter) {
   retail_script_004e9838(fighter);
+}
+
+void quan_chi_entry_retail_script_004e62c0(Fighter *fighter) {
+  retail_script_004e62c0(fighter);
+}
+
+void quan_chi_entry_retail_script_004e62d8(Fighter *fighter) {
+  retail_script_004e62d8(fighter);
+}
+
+void quan_chi_entry_retail_script_004e66d0(Fighter *fighter) {
+  retail_script_004e66d0(fighter);
+}
+
+void quan_chi_entry_retail_script_004e66f0(Fighter *fighter) {
+  retail_script_004e66f0(fighter);
 }

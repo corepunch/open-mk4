@@ -100,11 +100,11 @@ void quan_chi_script_air_finish(Fighter *fighter) {
 }
 
 void quan_chi_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, quan_chi_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : quan_chi_air_hp);
 }
 
 void quan_chi_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &quan_chi_air_punch_followup ? quan_chi_air_combo_lp : quan_chi_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &quan_chi_air_punch_followup ? quan_chi_air_combo_lp : quan_chi_air_lp);
 }
 
 void quan_chi_press_air_kick(Fighter *fighter) {

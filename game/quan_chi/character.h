@@ -125,4 +125,15 @@ void quan_chi_entry_retail_script_004e8818(Fighter *fighter);
 void quan_chi_weapon_steal(Fighter *fighter);
 void quan_chi_entry_retail_script_004e9818(Fighter *fighter);
 void quan_chi_entry_retail_script_004e9838(Fighter *fighter);
+void quan_chi_weapon_action(Fighter *fighter);
+void quan_chi_script_draw_equip(Fighter *fighter);
+void quan_chi_armed_idle(Fighter *fighter);
+void quan_chi_armed_walk(Fighter *fighter);
+void quan_chi_armed_crouch(Fighter *fighter);
+void quan_chi_armed_block(Fighter *fighter);
+extern const uint32_t quan_chi_weapon_descriptor[];
+void quan_chi_entry_retail_script_004e62c0(Fighter *fighter);
+void quan_chi_entry_retail_script_004e62d8(Fighter *fighter);
+void quan_chi_entry_retail_script_004e66d0(Fighter *fighter);
+void quan_chi_entry_retail_script_004e66f0(Fighter *fighter);
 #endif
