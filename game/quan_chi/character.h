@@ -136,4 +136,27 @@ void quan_chi_entry_retail_script_004e62c0(Fighter *fighter);
 void quan_chi_entry_retail_script_004e62d8(Fighter *fighter);
 void quan_chi_entry_retail_script_004e66d0(Fighter *fighter);
 void quan_chi_entry_retail_script_004e66f0(Fighter *fighter);
+void quan_chi_first_fatality(Fighter *fighter);
+void quan_chi_second_fatality(Fighter *fighter);
+bool quan_chi_can_first_fatality(const Fighter *fighter);
+bool quan_chi_can_second_fatality(const Fighter *fighter);
+void quan_chi_fatality_cue_40(Fighter *fighter);
+void quan_chi_fatality_leg(Fighter *fighter);
+void quan_chi_fatality_hit_179(Fighter *fighter);
+void quan_chi_fatality_hit_241(Fighter *fighter);
+void quan_chi_fatality_beat(Fighter *fighter);
+void quan_chi_entry_retail_script_004e14f8(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1508(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1518(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1528(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1538(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1558(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1568(Fighter *fighter);
+void quan_chi_entry_retail_script_004e1580(Fighter *fighter);
+
+/* Roster-unique finisher identity for the first fatality scene (44bcd0).
+ * The second fatality (43be30) runs the victim roster's own scene and id. */
+enum {
+  QUAN_CHI_FINISH_LEG = 31
+};
 #endif

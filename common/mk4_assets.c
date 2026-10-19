@@ -560,6 +560,36 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     skin.bones = load_rig(&exe, root, image_u32(&exe, root + 4), skin.meshes.count);
     PUSH(assets->scene_models, skin);
   }
+  /* Quan Chi fatality I: 44ccf0 copies the victim's own leg joints
+   * 12 -> 14 -> 16 (with their unnamed caps) into a separate three-channel
+   * rig, which clips 422/423 animate after the leg is torn off. */
+  require(assets->scene_models.count == SCENE_MODEL_SEVERED_LEGS, "Severed leg rigs follow the wind pieces");
+  for (size_t i = 0; i < assets->characters.count; ++i) {
+    const Character *source = &assets->characters.data[i];
+    Character leg = *source;
+    leg.bones = (Bones){0};
+    int mapped[MK4_MAX_BONES];
+    for (size_t n = 0; n < source->bones.count; ++n) {
+      const Bone *bone = &source->bones.data[n];
+      int parent = bone->parent >= 0 ? mapped[bone->parent] : -1;
+      mapped[n] = -1;
+      if (bone->id != 12 && parent < 0) {
+        continue;
+      }
+      Bone copy = *bone;
+      copy.parent = bone->id == 12 ? -1 : parent;
+      copy.kind = bone->id == 12 ? 9 : 10;
+      copy.flags = (copy.flags & 0xfffff) | (uint32_t)copy.kind << 24;
+      copy.channel = bone->id == 12 ? 0 : bone->id == 14 ? 1 : bone->id == 16 ? 2 : -1;
+      if (bone->id == 12) {
+        copy.translation = (Vec3){0, 0, 0};
+      }
+      mapped[n] = (int)leg.bones.count;
+      PUSH(leg.bones, copy);
+    }
+    require(leg.bones.count >= 3, "Fighter rig lacks the leg joints 12/14/16");
+    PUSH(assets->scene_models, leg);
+  }
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;

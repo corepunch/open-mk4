@@ -259,3 +259,35 @@ void quan_chi_entry_retail_script_004e66d0(Fighter *fighter) {
 void quan_chi_entry_retail_script_004e66f0(Fighter *fighter) {
   retail_script_004e66f0(fighter);
 }
+
+void quan_chi_entry_retail_script_004e14f8(Fighter *fighter) {
+  retail_script_004e14f8(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1508(Fighter *fighter) {
+  retail_script_004e1508(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1518(Fighter *fighter) {
+  retail_script_004e1518(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1528(Fighter *fighter) {
+  retail_script_004e1528(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1538(Fighter *fighter) {
+  retail_script_004e1538(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1558(Fighter *fighter) {
+  retail_script_004e1558(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1568(Fighter *fighter) {
+  retail_script_004e1568(fighter);
+}
+
+void quan_chi_entry_retail_script_004e1580(Fighter *fighter) {
+  retail_script_004e1580(fighter);
+}

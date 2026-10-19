@@ -149,7 +149,8 @@ enum {
   SCENE_MODEL_TANYA_WEAPON,
   SCENE_MODEL_QUAN_CHI_WEAPON,
   SCENE_MODEL_FLAYED_BODY,
-  SCENE_MODEL_WIND_PIECES /* Fourteen closed part rigs in4ea420 order. */
+  SCENE_MODEL_WIND_PIECES,                                /* Fourteen closed part rigs in4ea420 order. */
+  SCENE_MODEL_SEVERED_LEGS = SCENE_MODEL_WIND_PIECES + 14 /* One leg rig per roster asset. */
 };
 
 const Texture *character_texture(const Character *character, int page);

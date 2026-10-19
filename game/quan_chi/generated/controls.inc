@@ -4,21 +4,28 @@ static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_BACK}, 2, 16, 0x0, NULL, quan_chi_weapon_steal},
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_fan_finish, quan_chi_fan_fatality},
   {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0x0, NULL, quan_chi_skull},
+  {BUTTON_LOW_PUNCH, {TOKEN_UP, TOKEN_UP, TOKEN_DOWN, TOKEN_DOWN}, 4, 50, 0x0, quan_chi_can_second_fatality, quan_chi_second_fatality},
   {BUTTON_BLOCK, {0}, 0, 0, 0x10, mk4_can_air_throw, quan_chi_air_throw},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 26, 0x0, NULL, quan_chi_flip_kick},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, 0x0, weapon_can_draw, quan_chi_weapon_action},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN}, 2, 26, 0x0, NULL, quan_chi_teleport_stomp},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0x0, mk4_can_spike_finish, quan_chi_spike_fatality},
+  {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 32, 0x100, quan_chi_can_first_fatality, quan_chi_first_fatality},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };
 // clang-format on
 
-static const CpuMoves retail_cpu_moves = {.enter = {
-                                              [CPU_SPECIAL_NEAR] = quan_chi_flip_kick,
-                                              [CPU_SPECIAL_1] = quan_chi_teleport_stomp,
-                                              [CPU_SPECIAL_2] = quan_chi_teleport_stomp,
-                                              [CPU_PROJECTILE] = quan_chi_skull,
-                                              [CPU_FINISH_FAN] = quan_chi_fan_fatality,
-                                              [CPU_FINISH_SPIKE] = quan_chi_spike_fatality,
-                                          }};
+static const CpuMoves retail_cpu_moves = {.enter =
+                                              {
+                                                  [CPU_SPECIAL_NEAR] = quan_chi_flip_kick,
+                                                  [CPU_SPECIAL_1] = quan_chi_teleport_stomp,
+                                                  [CPU_SPECIAL_2] = quan_chi_teleport_stomp,
+                                                  [CPU_PROJECTILE] = quan_chi_skull,
+                                                  [CPU_FINISH_1] = quan_chi_first_fatality,
+                                                  [CPU_FINISH_2] = quan_chi_second_fatality,
+                                                  [CPU_FINISH_FAN] = quan_chi_fan_fatality,
+                                                  [CPU_FINISH_SPIKE] = quan_chi_spike_fatality,
+                                              },
+    .finish_min = {0x0, 0x0},
+    .finish_distance = {0xcccc, 0x18000}};

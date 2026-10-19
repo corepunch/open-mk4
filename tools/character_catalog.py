@@ -678,6 +678,10 @@ def _moves_for(character):
             skull=move(0x499740, (('caster', 0x4ed3a0), ('release recovery', 0x4ed3c0), ('reaction 128 victim', 0x4e9cd8)), (('C', 7),),
                        native=(('heading snapshot', 0x49c610), ('release and spawn', 0x499780), ('independent skull', 0x4998d0),
                                ('flight step', 0x499ae0), ('bite', 0x499b40), ('expiry', 0x499c00), ('reaction 128', 0x485f90))),
+            # Retail F1 (LK release [F,D,F], 4e0498[8]=44bcd0) and F2 (LP [U,U,D,D], 4dfe90[8]=43be30).
+            fatality_1=move(0x467ce0, (('owner opening', 0x4e14f8), ('owner 117', 0x4e1508), ('owner 179', 0x4e1518), ('owner 241', 0x4e1528), ('owner finish', 0x4e1538), ('owner beat', 0x4e1548), ('owner beat end', 0x4e1558), ('victim', 0x4e1568), ('torn leg', 0x4e1580)),
+                            native=(('roster dispatch', 0x44bcd0), ('victim task', 0x44bf60), ('camera task', 0x44c700), ('leg task', 0x44c0f0), ('leg rig', 0x44ccf0), ('blood', 0x44c280), ('stump blood', 0x44c550))),
+            fatality_2=move(0x467cd0, native=(('victim-roster dispatch', 0x43be30), ('own first fatality', 0x43cbb0))),
             # Retail HK [D,B] record 4e4864 (predicate 45ef50) and armed table 4ecc48.
             draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('equip return', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0)), native=(('equip', 0x46d260), ('follow-up draw', 0x494610))),
             weapon_back_hp=move(0x495780, contacts=(('WEAPON', 26),)),
