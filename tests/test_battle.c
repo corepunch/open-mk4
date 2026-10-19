@@ -2356,6 +2356,9 @@ static void check_goro_frame_specials(void) {
     fighter_press(owner, BUTTON_HIGH_KICK);
     advance_ticks(1, NULL);
     check(fighter_move(owner)->clip == 313, "Goro back+HK must enter the shared roundhouse 46f1f0");
+  }
+}
+
 /* Reptile fighter block: acid spit 4988d0/4ed1e8 and its reaction 41. */
 static void check_reptile_acid_spit(void) {
   for (int slot = 0; slot < 2; ++slot) {
