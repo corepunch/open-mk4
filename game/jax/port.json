@@ -146,12 +146,6 @@
       "evidence": "Jax jab recovery inherits clip295 at sample18",
       "sample": 18
     },
-    "0x4e8174": {
-      "clip": 106,
-      "count": 22,
-      "evidence": "The generated jab follow-up starts clip 106/22 at sample 0; its native tail dispatches selector 21 and drives contact/recovery through a BattleEvent.",
-      "sample": 0
-    },
     "0x4e6890": {
       "clip": 64,
       "count": 45,
@@ -163,12 +157,6 @@
       "count": 45,
       "evidence": "Jax selector path 4e6800 -> 4e6e90 opens clip 64 at sample 0/count 45; native callback 46f390 enters 4e68a8 when actor flag 0x200 is clear.",
       "sample": 0
-    },
-    "0x4e8150": {
-      "clip": 299,
-      "count": 35,
-      "sample": 0,
-      "evidence": "F2? Jax jab callback enters clip 299/35 at its start; native continuation advances to sample 18 before selector 21 contact."
     },
     "0x4e61e0": {
       "clip": 262,
@@ -263,16 +251,18 @@
     "0x4e6950",
     "0x4e69b0",
     "0x4e8150",
-    "0x4e8174",
     "0x4e98e8",
     "0x4ed090",
     "0x4e66d0",
     "0x4e66f0",
     "0x4ea040",
-    "0x4ea0b8"
+    "0x4ea0b8",
+    "0x4ea028",
+    "0x4e9e38",
+    "0x4e89d8"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "610d2e39da0ac8aa14a528c52b4006f55b20ac541cc83d44b37121e4145983ed",
+  "inventory_sha256": "8da421ef999d4204a40d022a31babd9f64248db6820b2fef1644cff15794c120",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -338,11 +328,6 @@
       "evidence": "Retail low-kick action44 and CPU medium row both select native phase machine 468f00; its full portable mapping remains pending because scene-global flags and controller context are not exposed.",
       "source": "game/jax/character.c",
       "symbol": "jax_cpu_medium"
-    },
-    "input_47ab10": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for input_47ab10",
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_input_47ab10"
     },
     "jab": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for jab",
@@ -428,6 +413,11 @@
       "source": "game/jax/moves/projectile.c",
       "symbol": "jax_missile",
       "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
+    },
+    "dash_punch": {
+      "source": "game/jax/moves/dash_punch.c",
+      "symbol": "jax_dash_punch",
+      "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
     }
   },
   "output": "game/jax/generated/scripts.inc",
@@ -606,6 +596,23 @@
       "source": "game/reactions.c",
       "symbol": "react_fireball_block",
       "evidence": "Missile C[4] blocked reaction 2; 4ea4e8[2] -> 486ca0 shared block recovery."
+    },
+    "157": {
+      "source": "game/jax/moves/dash_punch.c",
+      "symbol": "jax_dash_victim_hit",
+      "evidence": "D[22] hit and 47acc0 480f80[0x9d]; 4ea4e8[157] -> 4883f0 -> 4ea028 clip 311 stagger.",
+      "adaptation": "Registered directly in shared reactions[157]; the Jax-owned generated victim program is valid for either humanoid player slot."
+    },
+    "168": {
+      "source": "game/jax/moves/dash_punch.c",
+      "symbol": "jax_dash_victim_throw",
+      "evidence": "47ae90 480f80[0xa8]; 4ea4e8[168] -> 4867b0: grounded 4e9e38 clip 130, airborne 481ce0 -> 4e89d8 and 488c00.",
+      "adaptation": "Registered directly in shared reactions[168]; the Jax-owned generated victim program is valid for either humanoid player slot."
+    },
+    "165": {
+      "source": "game/reactions.c",
+      "symbol": "react_slide_block",
+      "evidence": "D[22] blocked reaction 165; 4ea4e8[165] -> 486d00 shared block recovery."
     }
   },
   "return_to": "fighter_ready",
@@ -698,6 +705,11 @@
       "source": "game/jax/moves/projectile.c",
       "symbol": "jax_missile",
       "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
+    },
+    "0x47ab10": {
+      "source": "game/jax/moves/dash_punch.c",
+      "symbol": "jax_dash_punch",
+      "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
     }
   },
   "command_predicates": {
@@ -708,7 +720,8 @@
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw",
     "0x45ef50": "weapon_can_draw",
-    "0x45e7e0": "jax_can_missile"
+    "0x45e7e0": "jax_can_missile",
+    "0x45e910": "jax_can_dash_punch"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -749,13 +762,22 @@
     "0x4e5df8",
     "0x4e5e18",
     "0x4e98e8",
-    "0x4ed090"
+    "0x4ed090",
+    "0x4e8150",
+    "0x4ea028",
+    "0x4e9e38",
+    "0x4e89d8"
   ],
   "cpu_bindings": {
     "0x496f80": {
       "source": "game/jax/moves/projectile.c",
       "symbol": "jax_missile",
       "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
+    },
+    "0x47ab10": {
+      "source": "game/jax/moves/dash_punch.c",
+      "symbol": "jax_dash_punch",
+      "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
     }
   }
 }

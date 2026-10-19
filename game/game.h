@@ -545,6 +545,7 @@ struct Fighter {
   int reaction;         /* last selected attack-record reaction, retained across its phases */
   uint64_t spear_ready, teleport_ready;
   uint64_t clone_ready;
+  uint64_t dash_punch_ready; /* Jax 47ab10 stamp 0xc, gate 45e910 */
   uint64_t slide_ready, sidestep_ready;
   uint64_t leg_grab_ready, cartwheel_ready;
   uint64_t wind_grab_ready;

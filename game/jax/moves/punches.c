@@ -7,15 +7,6 @@ static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0
 
 static void jax_high_punch(Fighter *fighter);
 
-void jax_script_jab_contact(Fighter *fighter) {
-  BattleEvent *event = battle_event_start(fighter, jax_contact_event, false, true);
-  event->phase = JAX_EVENT_JAB_CONTACT;
-}
-
-void jax_script_jab_followup(Fighter *fighter) {
-  (void)battle_event_start(fighter, jax_contact_event, false, true);
-}
-
 void jax_jab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &jax_s_jab);
   jax_entry_retail_script_004e62f0(fighter);

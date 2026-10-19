@@ -14,7 +14,6 @@
 #define s_high_kick jax_s_high_kick
 #define s_idle jax_s_idle
 #define s_jab jax_s_jab
-#define s_jax_jab_record jax_s_jax_jab_record
 #define s_sweep jax_s_sweep
 #define s_throw jax_s_throw
 #define s_thrown jax_s_thrown
@@ -25,9 +24,7 @@ enum {
   JAX_EVENT_FATALITY_1_SIGNAL = 1,
   JAX_EVENT_FATALITY_1_FINISH,
   JAX_EVENT_FATALITY_2_TASK,
-  JAX_EVENT_FATALITY_2_FINISH,
-  JAX_EVENT_JAB_CONTACT,
-  JAX_EVENT_JAB_RECOVERY
+  JAX_EVENT_FATALITY_2_FINISH
 };
 
 void jax_air_throw(Fighter *fighter);
@@ -35,10 +32,16 @@ void jax_air_throw_fall(Fighter *fighter);
 void jax_air_throw_getup(Fighter *fighter);
 void jax_air_throw_release(Fighter *fighter);
 void jax_block(Fighter *fighter);
+bool jax_can_dash_punch(const Fighter *fighter);
+void jax_dash_punch(Fighter *fighter);
+void jax_dash_punch_contact(Fighter *fighter);
+void jax_dash_victim_getup(Fighter *fighter);
+void jax_entry_retail_script_004ea028(Fighter *fighter);
+void jax_entry_retail_script_004e9e38(Fighter *fighter);
+void jax_entry_retail_script_004e89d8(Fighter *fighter);
 bool jax_can_missile(const Fighter *fighter);
 void jax_missile(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);
-bool jax_contact_event(BattleEvent *event, Fighter *owner, Fighter *opponent);
 void jax_crouch(Fighter *fighter);
 void jax_fan_tail(Fighter *fighter);
 void jax_high_kick(Fighter *fighter);
@@ -64,8 +67,6 @@ void jax_script_fatality_2_scene_finish(Fighter *fighter);
 void jax_script_fatality_2_tail(Fighter *fighter);
 void jax_script_fatality_2_task(Fighter *fighter, int task_type);
 void jax_script_finish(Fighter *fighter);
-void jax_script_jab_contact(Fighter *fighter);
-void jax_script_jab_followup(Fighter *fighter);
 void jax_script_lk_finish(Fighter *fighter);
 void jax_script_lk_return(Fighter *fighter);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
@@ -115,14 +116,12 @@ void jax_entry_retail_script_004e6890(Fighter *fighter);
 void jax_entry_retail_script_004e68a8(Fighter *fighter);
 void jax_entry_retail_script_004e6950(Fighter *fighter);
 void jax_entry_retail_script_004e8150(Fighter *fighter);
-void jax_entry_retail_script_004e8174(Fighter *fighter);
 void jax_entry_retail_script_004ed090(Fighter *fighter);
 extern const MoveDef jax_s_block;
 extern const MoveDef jax_s_crouch;
 extern const MoveDef jax_s_high_kick;
 extern const MoveDef jax_s_idle;
 extern const MoveDef jax_s_jab;
-extern const AttackRecord jax_s_jax_jab_record;
 extern const MoveDef jax_s_sweep;
 extern const MoveDef jax_s_throw;
 extern const MoveDef jax_s_thrown;

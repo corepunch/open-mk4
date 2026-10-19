@@ -2431,6 +2431,50 @@ static void check_jax_missile(void) {
   }
 }
 
+/* Jax 47ab10: D,B,LP dashes into 15 D[22] visits. A grounded hit takes
+ * two more 157 reactions and the final 168 slide; a block leaves Jax
+ * without guard for 40 ticks; a miss rewinds clip 299 before returning. */
+static void check_jax_dash_punch(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      battle_init(slot ? 4 : 13, slot ? 13 : 4);
+      advance_ticks(90, NULL);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 half = scenario == 2 ? 4 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      command(slot, BUTTON_DOWN, slot ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
+      check(fighter_move(owner)->clip == 299 && owner->action == 0x215, "Jax D,B,LP must start the native dash punch");
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      bool final = false, unguarded = false, stagger = false;
+      for (int tick = 0; tick < 150; ++tick) {
+        battle_step(input);
+        stagger |= victim->reaction == 157 && fighter_move(victim)->clip == 311;
+        final |= victim->reaction == 168 && fighter_move(victim)->clip == 130;
+        unguarded |= (owner->flags & FF_NO_GUARD) != 0;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax dash punch and its reactions must use frame tables");
+      }
+      q16 expected = scenario == 0 ? Q16_ONE - 0x28f5 : scenario == 1 ? Q16_ONE - q16_mul(0x28f5, 0x3333) : Q16_ONE;
+      if (victim->health != expected) {
+        fprintf(stderr, "Jax dash slot%d scenario%d health%d expected%d\n", slot, scenario, victim->health, expected);
+      }
+      check(victim->health == expected, "Jax dash punch must apply D[22] once, chip on block and miss at range");
+      check((scenario == 0) == final && (scenario == 0) == stagger, "Only a grounded hit must reach the 157 pummel and the 168 slide");
+      check(unguarded == (scenario != 0), "Blocked and missed dashes must leave Jax without guard");
+      check(owner->state == S_IDLE && !(owner->flags & FF_NO_GUARD) && owner->body.physics == NULL, "Jax dash punch must return and clear its callback");
+      check(scenario != 0 || victim->state == S_IDLE, "The dash-punch victim must recover from the slide");
+    }
+    battle_init(slot ? 4 : 13, slot ? 13 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Jax near CPU row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 299, "Jax near CPU row must select the dash punch");
+  }
+}
+
 static Projectile *cage_orb(void) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     Projectile *projectile = &g_battle.projectiles[i];
@@ -3902,6 +3946,7 @@ int main(void) {
   check_selected_high_kick();
   check_jax_air_grab_command();
   check_jax_missile();
+  check_jax_dash_punch();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_goro_frame_specials();

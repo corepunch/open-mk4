@@ -21,8 +21,6 @@ static const MoveDef s_victory = {.clip = 412, .last = MOVE_END, .flags = SF_HOL
 #include "generated/scripts.inc"
 #include "generated/frames.inc"
 
-const AttackRecord jax_s_jax_jab_record = {0xe872, -0x3f7c, 0xb84b, 0x56c8, 10, 10, 40, 0, 0x170a};
-
 static const ButtonTable s_standing = {
     {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
 static const ButtonTable s_crouching = {{[BUTTON_HIGH_PUNCH] = jax_press_uppercut,
@@ -229,8 +227,16 @@ void jax_entry_retail_script_004e8150(Fighter *fighter) {
   retail_script_004e8150(fighter);
 }
 
-void jax_entry_retail_script_004e8174(Fighter *fighter) {
-  retail_script_004e8174(fighter);
+void jax_entry_retail_script_004ea028(Fighter *fighter) {
+  retail_script_004ea028(fighter);
+}
+
+void jax_entry_retail_script_004e9e38(Fighter *fighter) {
+  retail_script_004e9e38(fighter);
+}
+
+void jax_entry_retail_script_004e89d8(Fighter *fighter) {
+  retail_script_004e89d8(fighter);
 }
 
 void jax_entry_retail_script_004ed090(Fighter *fighter) {

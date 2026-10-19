@@ -54,6 +54,8 @@ void liu_kang_entry_retail_script_004e9de8(Fighter *fighter);
 void cage_weapon_reaction(Fighter *fighter);
 void cage_shadow_victim(Fighter *fighter);
 void cage_power_victim(Fighter *fighter);
+void jax_dash_victim_hit(Fighter *fighter);
+void jax_dash_victim_throw(Fighter *fighter);
 void cage_second_victim_hit(Fighter *fighter);
 void shinnok_second_victim(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);

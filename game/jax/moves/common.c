@@ -1,21 +1,7 @@
 #include "../character.h"
 
-static void jax_script_input_47ab10(Fighter *fighter);
-static void jax_script_input_47ab50(Fighter *fighter);
-
 void jax_ready(Fighter *fighter) {
   fighter_ready(fighter);
-}
-
-bool jax_contact_event(BattleEvent *event, Fighter *owner, Fighter *opponent) {
-  (void)opponent;
-  if (event->phase == JAX_EVENT_JAB_CONTACT) {
-    ContactResult result = battle_contact(owner, &jax_s_jax_jab_record);
-    native_hold(owner, result == CONTACT_MISS ? 8 : 17, jax_ready);
-  } else {
-    native_hold(owner, 1, jax_ready);
-  }
-  return false;
 }
 
 void jax_script_opponent_reaction(Fighter *fighter, int reaction) {
@@ -54,14 +40,6 @@ void jax_block(Fighter *fighter) {
 
 void jax_script_finish(Fighter *fighter) {
   native_advancing_sweep(fighter);
-}
-
-static void jax_script_input_47ab10(Fighter *fighter) {
-  jax_start(fighter, S_PUNCH, &jax_s_jab, jax_entry_retail_script_004e8150);
-}
-
-static void jax_script_input_47ab50(Fighter *fighter) {
-  jax_entry_retail_script_004e8174(fighter);
 }
 
 void jax_script_lk_return(Fighter *fighter) {

@@ -66,11 +66,6 @@ static const int jax_s_air_grab_samples[144] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5,
 const mframe_t jax_s_air_grab_frames[144] = {{0}};
 const mmove_t jax_s_air_grab_mmove = {.firstframe = 0, .lastframe = 143, .frame = jax_s_air_grab_frames, .samples = jax_s_air_grab_samples};
 
-static const int jax_clip_106_samples[44] = {
-    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21};
-const mframe_t jax_clip_106_frames[44] = {{0}};
-const mmove_t jax_clip_106_mmove = {.firstframe = 0, .lastframe = 43, .frame = jax_clip_106_frames, .samples = jax_clip_106_samples};
-
 static const int jax_clip_114_samples[200] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
     36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
@@ -85,6 +80,12 @@ static const int jax_clip_127_samples[80] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5,
     36, 37, 37, 38, 38, 39, 39};
 const mframe_t jax_clip_127_frames[80] = {{0}};
 const mmove_t jax_clip_127_mmove = {.firstframe = 0, .lastframe = 79, .frame = jax_clip_127_frames, .samples = jax_clip_127_samples};
+
+static const int jax_s_dash_fall_samples[80] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39};
+const mframe_t jax_s_dash_fall_frames[80] = {{0}};
+const mmove_t jax_s_dash_fall_mmove = {.firstframe = 0, .lastframe = 79, .frame = jax_s_dash_fall_frames, .samples = jax_s_dash_fall_samples};
 
 static const int jax_clip_131_samples[160] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
@@ -132,6 +133,11 @@ static const int jax_s_knockdown_samples[40] = {
     0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19};
 const mframe_t jax_s_knockdown_frames[40] = {{0}};
 const mmove_t jax_s_knockdown_mmove = {.firstframe = 0, .lastframe = 39, .frame = jax_s_knockdown_frames, .samples = jax_s_knockdown_samples};
+
+static const int jax_s_dash_air_fall_samples[60] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29};
+const mframe_t jax_s_dash_air_fall_frames[60] = {{0}};
+const mmove_t jax_s_dash_air_fall_mmove = {.firstframe = 0, .lastframe = 59, .frame = jax_s_dash_air_fall_frames, .samples = jax_s_dash_air_fall_samples};
 
 static const int jax_s_fatality_1_victim_samples[772] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
     15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34,
@@ -231,15 +237,20 @@ const mframe_t jax_s_high_punch_second_frames[38] = {{0}};
 const mmove_t jax_s_high_punch_second_mmove = {
     .firstframe = 0, .lastframe = 37, .frame = jax_s_high_punch_second_frames, .samples = jax_s_high_punch_second_samples};
 
-static const int jax_clip_299_samples[70] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
+static const int jax_s_dash_samples[70] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
     17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34};
-const mframe_t jax_clip_299_frames[70] = {{0}};
-const mmove_t jax_clip_299_mmove = {.firstframe = 0, .lastframe = 69, .frame = jax_clip_299_frames, .samples = jax_clip_299_samples};
+const mframe_t jax_s_dash_frames[70] = {{0}};
+const mmove_t jax_s_dash_mmove = {.firstframe = 0, .lastframe = 69, .frame = jax_s_dash_frames, .samples = jax_s_dash_samples};
 
 static const int jax_s_jump_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
     17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
 const mframe_t jax_s_jump_frames[56] = {{0}};
 const mmove_t jax_s_jump_mmove = {.firstframe = 0, .lastframe = 55, .frame = jax_s_jump_frames, .samples = jax_s_jump_samples};
+
+static const int jax_s_dash_stagger_samples[38] = {
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18};
+const mframe_t jax_s_dash_stagger_frames[38] = {{0}};
+const mmove_t jax_s_dash_stagger_mmove = {.firstframe = 0, .lastframe = 37, .frame = jax_s_dash_stagger_frames, .samples = jax_s_dash_stagger_samples};
 
 static const int jax_clip_314_samples[26] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12};
 const mframe_t jax_clip_314_frames[26] = {{0}};

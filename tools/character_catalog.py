@@ -296,8 +296,13 @@ def _moves_for(character):
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328))),
             draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
                              native=(('follow-up draw', 0x46d260),)),
-            input_47ab10=move(0x47ab10, (('selected jab script', 0x4e8150), ('retry script', 0x4e8174)),
-                              native=(('jab continuation', 0x47ab50),)),
+            # 4e8174 is the 47af90 callback word read by 490ae0, not a VM
+            # program; 4e8178 behind it is Jarek's 47afe0 stream.
+            dash_punch=move(0x47ab10, (('dash', 0x4e8150), ('hit victim 157', 0x4ea028),
+                                       ('grounded victim 168', 0x4e9e38), ('airborne victim 168', 0x4e89d8)), (('D', 22),),
+                            native=(('contact window', 0x47ab50), ('dash callback', 0x47af90), ('contact branches', 0x47acc0),
+                                    ('blocked', 0x47af10), ('final reaction', 0x47ae90), ('victim 157', 0x4883f0),
+                                    ('victim 168', 0x4867b0), ('air victim 168', 0x481ce0), ('roll getup', 0x488c00))),
             missile=move(0x496f80, (('cast', 0x4ed090),), (('C', 4),),
                          native=(('heading snapshot', 0x49c610), ('independent task 80', 0x496fc0),
                                  ('contact waiter', 0x49c690), ('contact removal', 0x49bb00), ('arena bounds', 0x49bbd0))),
