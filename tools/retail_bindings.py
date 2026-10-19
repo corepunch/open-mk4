@@ -1228,6 +1228,41 @@ CHARACTER_BINDINGS[7][0x483df0] = Binding('reiko_script_star_victim_tail', 'game
     evidence='483df0 plays clip 182 for twenty visits and ten blocks of four, returns to neutral (48e080), finishes the clip and enters the controller')
 
 
+# Reiko first fatality 467ce0 -> 452730 native continuations.
+CHARACTER_BINDINGS[7][0x4528a0] = Binding('reiko_first_victory', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='4528a0 blends into victory clip 443 (475430, step 0xccc) before the 4e2d18 loop')
+CHARACTER_BINDINGS[7][0x452ac0] = Binding('reiko_first_tear', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452ac0 at victim pose 37 spawns four detached subtree tasks, sounds, shake 7 and hides joint 3')
+CHARACTER_BINDINGS[7][0x452bb0] = Binding('reiko_first_victim_118', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452bb0 plays B[0x40], shake 6 and sets pose 118 for 4e2d48')
+CHARACTER_BINDINGS[7][0x452c10] = Binding('reiko_first_victim_165', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452c10 plays a random hit sound and shake 2 for 4e2d58')
+CHARACTER_BINDINGS[7][0x452c50] = Binding('reiko_first_piece_end', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452c50 leaves a floor pool and finishes the victim task')
+CHARACTER_BINDINGS[7][0x452e50] = Binding('reiko_first_torso_29', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452e50 torso piece sound and shake 7 for 4e2d78')
+CHARACTER_BINDINGS[7][0x452e90] = Binding('reiko_first_torso_end', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452e90 torso piece sound, shake 7, pool and finish')
+CHARACTER_BINDINGS[7][0x452f00] = Binding('reiko_first_head_59', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452f00 head piece B[0x3f] and pose 59 for 4e2dc0')
+CHARACTER_BINDINGS[7][0x452f40] = Binding('reiko_first_head_83', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452f40 head piece sounds and pose 83 for 4e2dd0')
+CHARACTER_BINDINGS[7][0x452f90] = Binding('reiko_first_piece_end', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452f90 head piece pool and finish')
+CHARACTER_BINDINGS[7][0x452fe0] = Binding('reiko_first_left_arm_56', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='452fe0 joint-5 arm sound and pose 56 for 4e2df8')
+CHARACTER_BINDINGS[7][0x453020] = Binding('reiko_first_left_arm_land', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='453020 joint-5 arm sound for 4e2e08')
+CHARACTER_BINDINGS[7][0x453040] = Binding('reiko_first_piece_end', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='453040 joint-5 arm pool and finish')
+CHARACTER_BINDINGS[7][0x453090] = Binding('reiko_first_right_arm_44', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='453090 joint-6 arm sound and pose 44 for 4e2e40')
+CHARACTER_BINDINGS[7][0x4530d0] = Binding('reiko_first_right_arm_land', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='4530d0 joint-6 arm sound for 4e2e50')
+CHARACTER_BINDINGS[7][0x4530f0] = Binding('reiko_first_piece_end', 'game/reiko/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
+    evidence='4530f0 joint-6 arm pool and finish')
+
+
 # Shared close attacks retain character-owned generated startup and native tails.
 for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
     from character_catalog import CHARACTERS as _CONTROL_CHARACTERS

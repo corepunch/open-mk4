@@ -7,6 +7,12 @@
 #include "script.h"
 #include "script.h"
 
+/* Finisher IDs are unique across the roster (coordinator allocation). */
+enum {
+  REIKO_FINISH_1 = 27,
+  REIKO_FINISH_2
+};
+
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_jab reiko_s_jab
 #define s_kick reiko_s_kick
@@ -131,4 +137,36 @@ bool reiko_can_star(const Fighter *fighter);
 void reiko_script_star_victim_tail(Fighter *fighter);
 void reiko_orbit(Fighter *fighter);
 bool reiko_can_orbit(const Fighter *fighter);
+void reiko_entry_retail_script_004e2cf0(Fighter *fighter);
+void reiko_entry_retail_script_004e2d18(Fighter *fighter);
+void reiko_entry_retail_script_004e2d28(Fighter *fighter);
+void reiko_entry_retail_script_004e2d38(Fighter *fighter);
+void reiko_entry_retail_script_004e2d48(Fighter *fighter);
+void reiko_entry_retail_script_004e2d58(Fighter *fighter);
+void reiko_entry_retail_script_004e2d68(Fighter *fighter);
+void reiko_entry_retail_script_004e2d78(Fighter *fighter);
+void reiko_entry_retail_script_004e2d88(Fighter *fighter);
+void reiko_entry_retail_script_004e2dc0(Fighter *fighter);
+void reiko_entry_retail_script_004e2dd0(Fighter *fighter);
+void reiko_entry_retail_script_004e2de0(Fighter *fighter);
+void reiko_entry_retail_script_004e2df8(Fighter *fighter);
+void reiko_entry_retail_script_004e2e08(Fighter *fighter);
+void reiko_entry_retail_script_004e2e18(Fighter *fighter);
+void reiko_entry_retail_script_004e2e40(Fighter *fighter);
+void reiko_entry_retail_script_004e2e50(Fighter *fighter);
+void reiko_first_head_59(Fighter *fighter);
+void reiko_first_head_83(Fighter *fighter);
+void reiko_first_left_arm_56(Fighter *fighter);
+void reiko_first_left_arm_land(Fighter *fighter);
+void reiko_first_piece_end(Fighter *fighter);
+void reiko_first_right_arm_44(Fighter *fighter);
+void reiko_first_right_arm_land(Fighter *fighter);
+void reiko_first_tear(Fighter *fighter);
+void reiko_first_torso_29(Fighter *fighter);
+void reiko_first_torso_end(Fighter *fighter);
+void reiko_first_victim_118(Fighter *fighter);
+void reiko_first_victim_165(Fighter *fighter);
+void reiko_first_victory(Fighter *fighter);
+void reiko_first_fatality(Fighter *fighter);
+bool reiko_can_first_fatality(const Fighter *fighter);
 #endif

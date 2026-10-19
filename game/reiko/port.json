@@ -7,9 +7,9 @@
       "symbol": "reiko_spike_fatality"
     },
     "0x467ce0": {
-      "evidence": "Reiko fatality-1 dispatch; roster table selects the first finish entry.",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_fan_fatality"
+      "source": "game/reiko/moves/fatality_first.c",
+      "symbol": "reiko_first_fatality",
+      "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK."
     },
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -180,6 +180,66 @@
     "0x4e97f8": {
       "return_to": "caller",
       "evidence": "Reaction 45 (483d40/483d80) enters 4e97f8 on a grounded peer; its native 483df0 tail owns the clip-182 stagger and return."
+    },
+    "0x4e2d38": {
+      "clip": 428,
+      "count": 194,
+      "sample": 37,
+      "evidence": "4e2d28 advances victim clip 428 to pose 37 before 452ac0 enters this continuation."
+    },
+    "0x4e2d48": {
+      "clip": 428,
+      "count": 194,
+      "sample": 118,
+      "evidence": "452bb0 sets victim clip 428 to pose 118 before this continuation."
+    },
+    "0x4e2d58": {
+      "clip": 428,
+      "count": 194,
+      "sample": 165,
+      "evidence": "4e2d48 advances victim clip 428 to pose 165 before 452c10 enters this continuation."
+    },
+    "0x4e2d78": {
+      "clip": 429,
+      "count": 51,
+      "sample": 29,
+      "evidence": "4e2d68 advances torso clip 429 to pose 29 before 452e50."
+    },
+    "0x4e2dc0": {
+      "clip": 430,
+      "count": 125,
+      "sample": 59,
+      "evidence": "452f00 sets head clip 430 to pose 59 before this continuation."
+    },
+    "0x4e2dd0": {
+      "clip": 430,
+      "count": 125,
+      "sample": 83,
+      "evidence": "452f40 sets head clip 430 to pose 83 before this continuation."
+    },
+    "0x4e2df8": {
+      "clip": 427,
+      "count": 70,
+      "sample": 56,
+      "evidence": "452fe0 sets arm clip 427 to pose 56 before this continuation."
+    },
+    "0x4e2e08": {
+      "clip": 427,
+      "count": 70,
+      "sample": 66,
+      "evidence": "4e2df8 advances arm clip 427 to pose 66 before 453020."
+    },
+    "0x4e2e40": {
+      "clip": 426,
+      "count": 89,
+      "sample": 44,
+      "evidence": "453090 sets arm clip 426 to pose 44 before this continuation."
+    },
+    "0x4e2e50": {
+      "clip": 426,
+      "count": 89,
+      "sample": 68,
+      "evidence": "4e2e40 advances arm clip 426 to pose 68 before 4530d0."
     }
   },
   "generated_scripts": [
@@ -231,10 +291,27 @@
     "0x4e8818",
     "0x4e9880",
     "0x4ed038",
-    "0x4e97f8"
+    "0x4e97f8",
+    "0x4e2cf0",
+    "0x4e2d18",
+    "0x4e2d28",
+    "0x4e2d38",
+    "0x4e2d48",
+    "0x4e2d58",
+    "0x4e2d68",
+    "0x4e2d78",
+    "0x4e2d88",
+    "0x4e2dc0",
+    "0x4e2dd0",
+    "0x4e2de0",
+    "0x4e2df8",
+    "0x4e2e08",
+    "0x4e2e18",
+    "0x4e2e40",
+    "0x4e2e50"
   ],
   "integration_source": "game/reiko/character.c",
-  "inventory_sha256": "0287ca65dfa3f55c4fa629c1938d287c3d87ad8ee880484355c417b9123c1b48",
+  "inventory_sha256": "11b7ce8f6647e5ef6301a793695693c8c496404f818d3a8dd52b4b94f980e509",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -380,6 +457,11 @@
       "source": "game/reiko/moves/orbit.c",
       "symbol": "reiko_orbit",
       "evidence": "478ee0 stamps slot 17, action 0x2014, C[0x63], clip 306; twenty 487e20 placements around the live peer from pi past the approach angle, -0x283a per visit with the radius shrinking to 1.2; then face, stance clip 284, 20 visits and 470420."
+    },
+    "fatality_1": {
+      "source": "game/reiko/moves/fatality_first.c",
+      "symbol": "reiko_first_fatality",
+      "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK."
     }
   },
   "output": "game/reiko/generated/scripts.inc",
@@ -697,6 +779,11 @@
       "source": "game/reiko/moves/orbit.c",
       "symbol": "reiko_orbit",
       "evidence": "478ee0 stamps slot 17, action 0x2014, C[0x63], clip 306; twenty 487e20 placements around the live peer from pi past the approach angle, -0x283a per visit with the radius shrinking to 1.2; then face, stance clip 284, 20 visits and 470420."
+    },
+    "0x467ce0": {
+      "source": "game/reiko/moves/fatality_first.c",
+      "symbol": "reiko_first_fatality",
+      "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK."
     }
   },
   "command_predicates": {
@@ -707,7 +794,8 @@
     "0x45ef50": "weapon_can_draw",
     "0x45e7a0": "reiko_can_flip_kick",
     "0x45e6d0": "reiko_can_star",
-    "0x45e710": "reiko_can_orbit"
+    "0x45e710": "reiko_can_orbit",
+    "0x45e360": "reiko_can_first_fatality"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -758,7 +846,24 @@
     "0x4e8818",
     "0x4e9880",
     "0x4ed038",
-    "0x4e97f8"
+    "0x4e97f8",
+    "0x4e2cf0",
+    "0x4e2d18",
+    "0x4e2d28",
+    "0x4e2d38",
+    "0x4e2d48",
+    "0x4e2d58",
+    "0x4e2d68",
+    "0x4e2d78",
+    "0x4e2d88",
+    "0x4e2dc0",
+    "0x4e2dd0",
+    "0x4e2de0",
+    "0x4e2df8",
+    "0x4e2e08",
+    "0x4e2e18",
+    "0x4e2e40",
+    "0x4e2e50"
   ],
   "cpu_bindings": {
     "0x47c070": {
@@ -777,5 +882,10 @@
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   },
-  "mmove_only": true
+  "mmove_only": true,
+  "cpu_finish_min": {
+    "CPU_FINISH_1": 0,
+    "CPU_FINISH_2": 117964,
+    "evidence": "Reiko 45e360 close gate accepts up to 1 unit; 45e530 accepts 0x1cccc..0x30000. CPU targets 4dfe10/4dfe50[7] are 0xcccc and 0x26666."
+  }
 }

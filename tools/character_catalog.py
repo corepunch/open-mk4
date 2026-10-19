@@ -81,8 +81,10 @@ def _moves_for(character):
                     ('landing link', 0x46ac90), ('landing damage', 0x46aca0),
                     ('slam tail', 0x46acc0), ('slam reaction', 0x484760)),
         )
-        # Noob's command tables have no LK record 4e4e80.
-        noob_moves.pop('orbit')
+        # Noob's command tables have no LK record 4e4e80 and no 467ce0/467cd0
+        # fatality records; his finishers are the shared stage scenes.
+        for _name in ('orbit', 'fatality_1', 'fatality_2'):
+            noob_moves.pop(_name, None)
         # Reaction 45's grounded victim stream belongs to the shared reaction
         # table entry in Reiko's profile, not to Noob's CPU-only star entry.
         noob_moves['star'] = dict(noob_moves['star'], scripts=tuple(row for row in noob_moves['star']['scripts'] if row[1] != 0x4e97f8))
@@ -163,6 +165,13 @@ def _moves_for(character):
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 33),)),
+            # BLOCK record 4e4e50 (F,D,F) -> 467ce0 -> 4e0498[7] = 452730.
+            fatality_1=move(0x467ce0, (('owner tear', 0x4e2cf0), ('owner victory', 0x4e2d18), ('victim', 0x4e2d28), ('victim after tear', 0x4e2d38),
+                                       ('victim 118', 0x4e2d48), ('victim finish', 0x4e2d58), ('torso', 0x4e2d68), ('torso finish', 0x4e2d78),
+                                       ('head', 0x4e2d88), ('head 59', 0x4e2dc0), ('head finish', 0x4e2dd0), ('left arm', 0x4e2de0),
+                                       ('left arm 56', 0x4e2df8), ('left arm finish', 0x4e2e08), ('right arm', 0x4e2e18), ('right arm 44', 0x4e2e40),
+                                       ('right arm finish', 0x4e2e50)),
+                            native=(('scene', 0x452730), ('victim task', 0x452950), ('tear', 0x452ac0), ('victory blend', 0x4528a0))),
             # LK record 4e4e80 (B,F): Reiko-only circling step, no contact query.
             orbit=move(0x478ee0, native=(('circling placements', 0x478ee0), ('polar placement', 0x487e20), ('stance clip', 0x4611c0))),
             # LP record 4e4e30 (D,F) and the projectile CPU row shared with Noob.

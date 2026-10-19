@@ -102,6 +102,41 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
   return isfinite(floor_y) ? floor_y : 0.f;
 }
 
+/* 407330 detaches a joint's rig subtree into its own object. Its clips carry
+ * only that subtree's channels in rig order, with the root translation
+ * applied to the detached joint's own bind offset. */
+static void subtree_pose(const Character *ch, const Clip *clip, double frame, int root, Pose out[MK4_MAX_BONES], bool member[MK4_MAX_BONES]) {
+  require(clip->frames.count > 0 && ch->bones.count <= MK4_MAX_BONES, "Invalid detached subtree clip");
+  double f = fmod(fmax(0., frame), (double)clip->frames.count);
+  size_t a = (size_t)f, b = (a + 1) % clip->frames.count;
+  float fraction = (float)(f - (double)a);
+  const Frame *fa = &clip->frames.data[a], *fb = &clip->frames.data[b];
+  size_t channel = 0;
+  for (size_t i = 0; i < ch->bones.count; ++i) {
+    const Bone *bone = &ch->bones.data[i];
+    member[i] = (int)i == root || (bone->parent >= 0 && member[bone->parent]);
+    if (!member[i]) {
+      continue;
+    }
+    Vec3 angle = {0};
+    if (bone->channel >= 0 && channel < fa->angles.count) {
+      Vec3 a0 = fa->angles.data[channel], a1 = fb->angles.data[channel];
+      angle = (Vec3){a0.x + remainderf(a1.x - a0.x, 4096.f) * fraction, a0.y + remainderf(a1.y - a0.y, 4096.f) * fraction,
+          a0.z + remainderf(a1.z - a0.z, 4096.f) * fraction};
+    }
+    channel += bone->channel >= 0;
+    Pose p = {.rotation = bone->channel >= 0 ? rotation(bone->kind, angle) : mat3_identity(), .position = bone->translation};
+    if ((int)i == root) {
+      p.position = vec_add(p.position, vec_add(vec_scale(fa->translation, 1.f - fraction), vec_scale(fb->translation, fraction)));
+    } else {
+      const Pose *parent = &out[bone->parent];
+      p.position = vec_add(parent->position, mat3_apply(parent->rotation, p.position));
+      p.rotation = mat3_mul(parent->rotation, p.rotation);
+    }
+    out[i] = p;
+  }
+}
+
 static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, const Character *model, double interpolation) {
   Triangles triangles = {0};
   const Character *ch = model != NULL ? model : fighter_model(assets, fighter);
@@ -109,7 +144,16 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
     return triangles;
   }
   Pose bones[MK4_MAX_BONES];
-  if (model != NULL) {
+  bool member[MK4_MAX_BONES] = {0};
+  int subtree = -1;
+  for (size_t n = 0; fighter->subtree_joint > 0 && n < ch->bones.count; ++n) {
+    if (ch->bones.data[n].id == fighter->subtree_joint - 1) {
+      subtree = (int)n;
+    }
+  }
+  if (subtree >= 0) {
+    subtree_pose(ch, fighter_clip(assets, fighter), fighter_pose_frame(fighter), subtree, bones, member);
+  } else if (model != NULL) {
     pose(ch, fighter_clip(assets, fighter), fighter_pose_frame(fighter), bones);
   } else {
     fighter_render_pose(assets, fighter, interpolation, bones);
@@ -121,7 +165,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
    * idle root X/Z swings up to 0.25 while the soles move under 0.06. */
   for (size_t n = 0; n < ch->bones.count; ++n) {
     const Bone *b = &ch->bones.data[n];
-    if (b->flags & 4)
+    if ((b->flags & 4) || (subtree >= 0 && !member[n]))
       continue;
     /* Retail subtree masking hides all meshes descending from the selected
      * joint, while their transforms still pose independent scene bodies. */
@@ -150,7 +194,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
         Vertex *v = &t.v[k];
         Vec3 local = vec_add(bones[n].position, mat3_apply(bones[n].rotation, v->p));
         Vec3 bind = ch->bones.data[0].translation;
-        if (fighter->appearance != APPEARANCE_BEAST) {
+        if (fighter->appearance != APPEARANCE_BEAST && subtree < 0) {
           local = vec_sub(local, bind);
           local.y += q16_float(fighter->body.root_y);
         }

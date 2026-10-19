@@ -542,6 +542,7 @@ struct Fighter {
   uint64_t hidden_joints[2];
   int mesh_swap_joint;  /* retail joint ID drawn with mesh_swap instead of its rig mesh; 0 keeps the rig */
   int mesh_swap;        /* replacement mesh index in the fighter's own geometry */
+  int subtree_joint;    /* scene body detached at this retail joint ID + 1, posed by a subtree-local clip; zero for a full rig */
   int appearance;       /* character-script rendering variant; reset at round spawn */
   bool invisible;       /* 4698b0 toggles the root render node's culled bit; contacts are unchanged */
   int frozen_clip;      /* preserve the victim's current pose while frozen */
@@ -809,7 +810,7 @@ typedef struct SoundEvent {
 
 /* Render-only bodies may own frame programs, but never player controls,
  * combat dispatch or a fiber slot. They borrow the live fighter's model. */
-#define MAX_SCENE_ACTORS 2
+#define MAX_SCENE_ACTORS 4
 
 typedef struct SceneActor {
   Fighter actor;
