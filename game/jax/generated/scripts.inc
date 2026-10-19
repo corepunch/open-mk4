@@ -5,11 +5,11 @@
 void jax_air_throw_fall(Fighter *);
 void jax_air_throw_getup(Fighter *);
 void jax_air_throw_release(Fighter *);
+void jax_missile_spawn(Fighter *, int);
 void jax_script_air_finish(Fighter *);
 void jax_script_close_hk_tail(Fighter *);
 void jax_script_close_hp_tail(Fighter *);
 void jax_script_combo_hp_tail(Fighter *);
-void jax_script_cpu_projectile_spawn(Fighter *, int);
 void jax_script_current_reaction(Fighter *, int);
 void jax_script_fan_cycle(Fighter *);
 void jax_script_fan_tail(Fighter *);
@@ -3651,33 +3651,35 @@ static inline void retail_script_004ea0b8_branch_1(Fighter *fighter) {
   fighter_mmove_phase(fighter, &retail_script_004ea0b8_branch_1_phase);
 }
 
+static inline void retail_script_004ed090(Fighter *fighter);
+
+static void retail_script_004ed090_at_10(Fighter *fighter) {
+  fighter->sample_override = 10;
+  /* EXE 004ed098: 0x2700005d */
+  battle_sound(SOUND_C, 93);
+  /* EXE 004ed09c: 0x40000000 0x50 0x496fc0 */
+  jax_missile_spawn(fighter, 80);
+  /* EXE 004ed0a8: 0x5000019 */
+}
+
+static void retail_script_004ed090_at_55(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static const int retail_script_004ed090_samples[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 25, 26, 26,
+    27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004ed090_frames[55] = {
+  [9] = {.thinkfunc = retail_script_004ed090_at_10},
+  [54] = {.thinkfunc = retail_script_004ed090_at_55},
+};
+// clang-format on
+static const mmove_t retail_script_004ed090_phase = {
+    .firstframe = 0, .lastframe = 54, .frame = retail_script_004ed090_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004ed090_samples};
+
 static inline void retail_script_004ed090(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  {
-    /* EXE 004ed090: 0x4700020a 0x13ebb6 */
-    mk4_script_bind(fighter, 29, 40, 0);
-    fighter_fiber_play_to(fighter, 10, 1);
-  }
-  {
-    /* EXE 004ed098: 0x2700005d */
-    battle_sound(SOUND_C, 93);
-  }
-  {
-    /* EXE 004ed09c: 0x40000000 0x50 0x496fc0 */
-    jax_script_cpu_projectile_spawn(fighter, 80);
-  }
-  {
-    /* EXE 004ed0a8: 0x5000019 */
-    fighter_fiber_play_to(fighter, 25, 1);
-  }
-  {
-    /* EXE 004ed0ac: 0x69000000 */
-    mk4_script_finish_clip(fighter, 0);
-  }
-  {
-    /* EXE 004ed0b0: 0x3f000000 */
-    fighter_wait_ticks(1);
-    fighter_fiber_finish(fighter_ready);
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004ed090: 0x4700020a 0x13ebb6 */
+  mk4_mmove_bind(fighter, 29, 40, 0);
+  fighter_mmove_phase(fighter, &retail_script_004ed090_phase);
 }

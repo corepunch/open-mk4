@@ -1059,8 +1059,9 @@ CHARACTER_BINDINGS[13].update({
                       evidence='47ab50 queries Jax jab selector 21 and schedules contact/recovery phases'),
     0x47b010: Binding('jax_script_jab_followup', 'game/jax/character.c', ('tail',), flow='independent',
                       evidence='47b010 owns the Jax follow-up contact window and recovery phase'),
-    0x496fc0: Binding('jax_script_cpu_projectile_spawn', 'game/jax/character.c', ('spawn',), ('fighter', 'task_type'), flow='independent',
-                      task_types=(80,), evidence='496fc0 spawns the CPU projectile from its scene task callback'),
+    0x496fc0: Binding('jax_missile_spawn', 'game/jax/moves/projectile.c', ('spawn',), ('fighter', 'task_type'), flow='independent',
+                      task_types=(80,), mmove=True,
+                      evidence='496fc0 spawns 4ed0b8 (rig 5066ac, forward 0x7333, Y -0x1999) with snapshotted heading x 0x3333 and waits on C[4] descriptor 4ed0c8'),
     0x00000000: Binding('jax_script_fatality_1_scene_signal', 'game/jax/character.c', ('handler',), ('fighter',),
                         evidence='Jax F1 scene task uses a portable BattleEvent at the unsupported task-signal opcode'),
 })

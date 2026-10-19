@@ -298,8 +298,9 @@ def _moves_for(character):
                              native=(('follow-up draw', 0x46d260),)),
             input_47ab10=move(0x47ab10, (('selected jab script', 0x4e8150), ('retry script', 0x4e8174)),
                               native=(('jab continuation', 0x47ab50),)),
-            cpu_496f80=move(0x496f80, (('selected projectile script', 0x4ed090),),
-                            native=(('independent task', 0x496fc0),)),
+            missile=move(0x496f80, (('cast', 0x4ed090),), (('C', 4),),
+                         native=(('heading snapshot', 0x49c610), ('independent task 80', 0x496fc0),
+                                 ('contact waiter', 0x49c690), ('contact removal', 0x49bb00), ('arena bounds', 0x49bbd0))),
             # Jax's BLOCK air record targets 46a990, not the shared 46aa80
             # runner: 4e5dd8 opens owner 84/victim 144, 46a9f0 drops the pair
             # at gravity 0x3d7 and 46aa40 releases reaction 166 into 4e98e8.

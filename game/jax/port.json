@@ -272,7 +272,7 @@
     "0x4ea0b8"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "21c0693d3f982630a8e1413a2271a9f3536517f6c126f32434c3c3912986470f",
+  "inventory_sha256": "610d2e39da0ac8aa14a528c52b4006f55b20ac541cc83d44b37121e4145983ed",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -303,11 +303,6 @@
       "source": "game/jax/moves/air_throw.c",
       "symbol": "jax_air_throw",
       "evidence": "BLOCK air record 4e43d4 (flags 0x11, gate 45ed70) -> 46a990: 480fc0[8] capture, 4e5dd8 owner 84/victim 144, 46a9f0 gravity 0x3d7, 46aa40 reaction 166 and 0x2147 damage, owner 4e5e18, victim 4e98e8 and 484a30."
-    },
-    "cpu_496f80": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for cpu_496f80",
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_cpu_496f80"
     },
     "draw_weapon": {
       "source": "game/jax/moves/weapon.c",
@@ -428,6 +423,11 @@
       "source": "game/weapons.c",
       "symbol": "weapon_throw",
       "evidence": "Shared498270 weapon throw, retained type/model and independent pickup/drop lifecycle."
+    },
+    "missile": {
+      "source": "game/jax/moves/projectile.c",
+      "symbol": "jax_missile",
+      "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
     }
   },
   "output": "game/jax/generated/scripts.inc",
@@ -595,6 +595,17 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "68": {
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_generated_reaction",
+      "evidence": "Missile C[4] hit reaction 68; 4ea4e8[68] -> 486750 runs the shared generated 4e9de8 victim body.",
+      "adaptation": "Shared reactions[68] dispatches the existing generated 4e9de8 victim program for any attacker roster."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Missile C[4] blocked reaction 2; 4ea4e8[2] -> 486ca0 shared block recovery."
     }
   },
   "return_to": "fighter_ready",
@@ -682,6 +693,11 @@
       "source": "game/jax/moves/weapon.c",
       "symbol": "jax_command_weapon",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
+    },
+    "0x496f80": {
+      "source": "game/jax/moves/projectile.c",
+      "symbol": "jax_missile",
+      "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
     }
   },
   "command_predicates": {
@@ -691,7 +707,8 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw",
-    "0x45ef50": "weapon_can_draw"
+    "0x45ef50": "weapon_can_draw",
+    "0x45e7e0": "jax_can_missile"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -731,6 +748,14 @@
     "0x4e5dd8",
     "0x4e5df8",
     "0x4e5e18",
-    "0x4e98e8"
-  ]
+    "0x4e98e8",
+    "0x4ed090"
+  ],
+  "cpu_bindings": {
+    "0x496f80": {
+      "source": "game/jax/moves/projectile.c",
+      "symbol": "jax_missile",
+      "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
+    }
+  }
 }

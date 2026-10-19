@@ -2370,6 +2370,67 @@ static void check_goro_reconnected_counters(void) {
   }
 }
 
+static Projectile *jax_missile_object(void) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *projectile = &g_battle.projectiles[i];
+    if (projectile->kind == PROJECTILE_FIREBALL && projectile->mesh_animation != NULL && projectile->mesh_animation->first == 43) {
+      return projectile;
+    }
+  }
+  return NULL;
+}
+
+/* Jax 496f80/4ed090: D,F,LP and the CPU projectile row cast clip 29 and an
+ * independent C[4] missile that hits, chips on block, survives owner
+ * interruption and retires at the arena bounds. */
+static void check_jax_missile(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 4 : 13, slot ? 13 : 4);
+      advance_ticks(90, NULL);
+      check(g_battle.phase == PHASE_FIGHT, "Jax missile scenarios start after the countdown");
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      command(slot, BUTTON_DOWN, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_LOW_PUNCH);
+      check(fighter_move(owner)->clip == 29 && owner->action == 0x314, "Jax D,F,LP must select the native missile cast");
+      if (scenario == 2) {
+        /* The flight keeps the cast-time heading snapshot. */
+        victim->body.pos[AXIS_Z] = 2 * Q16_ONE;
+      }
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      bool launched = false, retired = false;
+      for (int tick = 0; tick < 240; ++tick) {
+        battle_step(input);
+        Projectile *projectile = jax_missile_object();
+        if (!launched && projectile != NULL) {
+          launched = true;
+          check(projectile->initial_mesh == 42 && projectile->vel[AXIS_Y] == 0, "Jax missile must spawn from its native rig and fly level");
+          if (scenario == 3) {
+            battle_react(owner, 37);
+          }
+        }
+        retired |= launched && projectile == NULL;
+        check(!fighter_fiber_active(owner), "Jax missile cast must use frame tables");
+      }
+      q16 damage = scenario == 0 || scenario == 3 ? 0x1eb8 : scenario == 1 ? q16_mul(0x1eb8, 0x3333) : 0;
+      if (victim->health != Q16_ONE - damage) {
+        fprintf(stderr, "Jax missile slot%d scenario%d health%d expected%d launched%d\n", slot, scenario, victim->health, Q16_ONE - damage, launched);
+      }
+      check(launched && retired && victim->health == Q16_ONE - damage, "Jax missile must hit once, chip on block, miss and retire, and outlive interruption");
+      check(owner->state == S_IDLE, "Jax missile caster must recover");
+    }
+    battle_init(slot ? 4 : 13, slot ? 13 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_PROJECTILE), "Jax CPU projectile row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 29 && g_battle.fighters[slot].action == 0x314, "Jax CPU projectile row must cast the missile");
+  }
+}
+
 static Projectile *cage_orb(void) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     Projectile *projectile = &g_battle.projectiles[i];
@@ -3840,6 +3901,7 @@ int main(void) {
   check_short_diagonal_air_recovery();
   check_selected_high_kick();
   check_jax_air_grab_command();
+  check_jax_missile();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_goro_frame_specials();

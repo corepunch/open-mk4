@@ -1,13 +1,8 @@
 #include "../character.h"
 
-static void jax_script_cpu_496f80(Fighter *fighter);
 static void jax_cpu_medium(Fighter *fighter);
 static void jax_command_run(Fighter *fighter);
 static void jax_command_medium(Fighter *fighter);
-
-static void jax_script_cpu_496f80(Fighter *fighter) {
-  fighter_start_fiber(fighter, jax_entry_retail_script_004ed090, NULL);
-}
 
 static void jax_cpu_medium(Fighter *fighter) {
   fighter->action = 0x101;
