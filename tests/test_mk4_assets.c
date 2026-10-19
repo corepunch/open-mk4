@@ -318,6 +318,38 @@ static void tanya_fireball_assets(const Assets *assets) {
   }
 }
 
+static void tanya_kick_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int drill = 0; drill < 2; ++drill) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT, back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+      const Button spin[] = {forward, forward, BUTTON_LOW_KICK}, rocket[] = {forward, BUTTON_DOWN, back, BUTTON_LOW_KICK};
+      const Button *sequence = drill ? rocket : spin;
+      Input input[2] = {0};
+      for (int entry = 0; entry < (drill ? 4 : 3); ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      for (int tick = 0; tick < 150; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+      }
+      check(victim->health == Q16_ONE - (drill ? 0x2666 : 0x1eb8) && owner->state == S_IDLE,
+          "Tanya's spin and drill kicks must reach animated victim bounds once and recover");
+    }
+  }
+}
+
 static void cage_orb_assets(const Assets *assets) {
   check(assets->hud.effects2.meshes.count > 280 && assets->hud.effects2.textures.count > 0, "Cage orbs require the original share2 geometry and materials");
   for (int slot = 0; slot < 2; ++slot) {
@@ -1323,6 +1355,7 @@ int main(void) {
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
   tanya_fireball_assets(&assets);
+  tanya_kick_assets(&assets);
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);

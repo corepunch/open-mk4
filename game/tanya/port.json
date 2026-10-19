@@ -27,14 +27,14 @@
       "evidence": "Tanya input target 46d1d0 uses the portable kick callback in c_tanya.c."
     },
     "0x479520": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_low_kick",
-      "evidence": "Tanya CPU low-kick target 479520 uses the portable low-kick callback in c_tanya.c."
+      "source": "game/tanya/moves/spin_kick.c",
+      "symbol": "tanya_spin_kick",
+      "evidence": "LK F,F record 4e4550 (T4[30], gate 45e8d0). 479520 stamps 0xd, sets 21b, binds clip 109 with the 4797c0 14..28 loop at speed .15, sounds indexed 35/C57 after eight visits, fifteen D28 queries; hit waits twelve, block enters 47d940 (generated 4e84b8, 47dae0 landing), recovery 479705 rewinds 10..0."
     },
     "0x47b9f0": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_sweep",
-      "evidence": "Tanya CPU selector target 47b9f0 maps through the low-kick selection to c_tanya.c."
+      "source": "game/tanya/moves/drill_kick.c",
+      "symbol": "tanya_drill_kick",
+      "evidence": "LK F,D,B record 4e455c (T4[18]). 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
     "0x498b70": {
       "source": "game/tanya/moves/projectile.c",
@@ -174,10 +174,12 @@
     "0x4e6950",
     "0x4e69b0",
     "0x4ed268",
-    "0x4ed2c0"
+    "0x4ed2c0",
+    "0x4e81f0",
+    "0x4e84b8"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "6dd0cf4b991723d4e8fdf13e8af1b99c62d3a18efc9604c966aee70c5445d073",
+  "inventory_sha256": "7aec237ab011347077c8b78a1a56d21f24f30df041c51bcdd6763ce20c947d74",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",
@@ -283,6 +285,16 @@
       "source": "game/tanya/moves/projectile.c",
       "symbol": "tanya_air_fireball",
       "evidence": "Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
+    },
+    "spin_kick": {
+      "source": "game/tanya/moves/spin_kick.c",
+      "symbol": "tanya_spin_kick",
+      "evidence": "479520 stamps 0xd, sets 21b, binds clip 109 with the 4797c0 14..28 loop at speed .15, sounds indexed 35/C57 after eight visits, fifteen D28 queries; hit waits twelve, block enters 47d940 (generated 4e84b8, 47dae0 landing), recovery 479705 rewinds 10..0."
+    },
+    "drill_kick": {
+      "source": "game/tanya/moves/drill_kick.c",
+      "symbol": "tanya_drill_kick",
+      "evidence": "47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     }
   },
   "output": "game/tanya/generated/scripts.inc",
@@ -419,6 +431,38 @@
       "source": "game/reactions.c",
       "symbol": "react_fireball_block",
       "evidence": "Tanya fireball C0 (4ebed0) selects shared block reaction 2 and its native frame recovery."
+    },
+    "3": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Spin kick D28 block reaction 3 (486bf0) uses the shared extra block table entry."
+    },
+    "9": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Drill kick D17 block reaction 9 (486b30) uses the shared fireball block retreat .2."
+    },
+    "94": {
+      "source": "game/fujin/moves/triple_kick.c",
+      "symbol": "fujin_triple_victim",
+      "evidence": "Drill kick D17 hit reaction 94 (488450) is the shared middle-kick victim 4ea050.",
+      "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
+    },
+    "95": {
+      "source": "game/fujin/moves/triple_kick.c",
+      "symbol": "fujin_triple_victim",
+      "evidence": "Drill kick 47ba90 installs shared reaction 95 through 480f80 on a grounded victim.",
+      "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
+    },
+    "122": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Drill kick D17 air reaction 122 dispatches native 483500 -> 4e95f0."
+    },
+    "158": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Spin kick D28 reaction 158 dispatches the same native 483500 -> 4e95f0 as 122."
     }
   },
   "return_to": "fighter_ready",
@@ -506,6 +550,16 @@
       "source": "game/tanya/moves/projectile.c",
       "symbol": "tanya_air_fireball",
       "evidence": "LP D,B record 4e4500 (T2[11], flags 0x12, gate 45ef20). Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
+    },
+    "0x479520": {
+      "source": "game/tanya/moves/spin_kick.c",
+      "symbol": "tanya_spin_kick",
+      "evidence": "LK F,F record 4e4550 (T4[30], gate 45e8d0). 479520 stamps 0xd, sets 21b, binds clip 109 with the 4797c0 14..28 loop at speed .15, sounds indexed 35/C57 after eight visits, fifteen D28 queries; hit waits twelve, block enters 47d940 (generated 4e84b8, 47dae0 landing), recovery 479705 rewinds 10..0."
+    },
+    "0x47b9f0": {
+      "source": "game/tanya/moves/drill_kick.c",
+      "symbol": "tanya_drill_kick",
+      "evidence": "LK F,D,B record 4e455c (T4[18]). 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     }
   },
   "command_predicates": {
@@ -513,7 +567,8 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ef20": "tanya_can_air_fireball"
+    "0x45ef20": "tanya_can_air_fireball",
+    "0x45e8d0": "tanya_can_spin_kick"
   },
   "mmove_scripts": [
     "0x4de798",
@@ -546,13 +601,20 @@
     "0x4e01a0",
     "0x4e6950",
     "0x4ed268",
-    "0x4ed2c0"
+    "0x4ed2c0",
+    "0x4e81f0",
+    "0x4e84b8"
   ],
   "cpu_bindings": {
     "0x498b70": {
       "source": "game/tanya/moves/projectile.c",
       "symbol": "tanya_fireball",
       "evidence": "Projectile CPU row 4df9cc[9] word 0x2000a selects T2[10] 498b70. Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+    },
+    "0x47b9f0": {
+      "source": "game/tanya/moves/drill_kick.c",
+      "symbol": "tanya_drill_kick",
+      "evidence": "Near/medium/far CPU rows 4df90c/94c/98c[9] word 0x40012 select T4[18]. 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     }
   }
 }

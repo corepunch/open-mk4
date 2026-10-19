@@ -472,6 +472,10 @@ CHARACTER_BINDINGS[9] = {
                       evidence='498ed0 -> 498be0 adds Y velocity 0x23d7 and C0 waiter 4ed2e8 through 49c670, which ignores action 2001'),
     0x498eb0: Binding('tanya_air_fireball_fall', 'game/tanya/moves/projectile.c', ('tail',), flow='terminal', mmove=True,
                       evidence='498eb0 -> 480cf0 gravity 0x20c, action 1005, clip 310 samples 7..18 until landing, then the clip tail'),
+    0x47ba20: Binding('tanya_drill_kick_contact', 'game/tanya/moves/drill_kick.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='47ba20 two advancing D17 queries; 47ba90 shake 0, grounded victim gets reaction 95 after six samples; 47bbd0 recovery'),
+    0x47dae0: Binding('tanya_blocked_recoil_land', 'game/tanya/moves/spin_kick.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='47dae0 shared 46fd90 landing after generated 4e84b8 rewinds clip 301'),
 }
 
 # Shinnok's throw and fan continuations enter selected generated streams

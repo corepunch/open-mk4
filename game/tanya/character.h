@@ -98,4 +98,11 @@ bool tanya_can_air_fireball(const Fighter *fighter);
 void tanya_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_air_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_air_fireball_fall(Fighter *fighter);
+void tanya_entry_retail_script_004e81f0(Fighter *fighter);
+void tanya_entry_retail_script_004e84b8(Fighter *fighter);
+bool tanya_can_spin_kick(const Fighter *fighter);
+void tanya_spin_kick(Fighter *fighter);
+void tanya_blocked_recoil_land(Fighter *fighter);
+void tanya_drill_kick(Fighter *fighter);
+void tanya_drill_kick_contact(Fighter *fighter);
 #endif

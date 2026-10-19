@@ -48,6 +48,17 @@ static const int tanya_s_throw_samples[122] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 
 const mframe_t tanya_s_throw_frames[122] = {{0}};
 const mmove_t tanya_s_throw_mmove = {.firstframe = 0, .lastframe = 121, .frame = tanya_s_throw_frames, .samples = tanya_s_throw_samples};
 
+static const int tanya_drill_samples[100] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
+    17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35, 36,
+    36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49};
+const mframe_t tanya_drill_frames[100] = {{0}};
+const mmove_t tanya_drill_mmove = {.firstframe = 0, .lastframe = 99, .frame = tanya_drill_frames, .samples = tanya_drill_samples};
+
+static const int tanya_spin_samples[58] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
+    17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28};
+const mframe_t tanya_spin_frames[58] = {{0}};
+const mmove_t tanya_spin_mmove = {.firstframe = 0, .lastframe = 57, .frame = tanya_spin_frames, .samples = tanya_spin_samples};
+
 static const int tanya_s_victory_samples[238] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
     36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
@@ -122,6 +133,10 @@ static const int tanya_s_high_punch_second_samples[38] = {
 const mframe_t tanya_s_high_punch_second_frames[38] = {{0}};
 const mmove_t tanya_s_high_punch_second_mmove = {
     .firstframe = 0, .lastframe = 37, .frame = tanya_s_high_punch_second_frames, .samples = tanya_s_high_punch_second_samples};
+
+static const int tanya_clip_301_samples[18] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8};
+const mframe_t tanya_clip_301_frames[18] = {{0}};
+const mmove_t tanya_clip_301_mmove = {.firstframe = 0, .lastframe = 17, .frame = tanya_clip_301_frames, .samples = tanya_clip_301_samples};
 
 static const int tanya_s_jump_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
     17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};

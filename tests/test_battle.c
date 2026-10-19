@@ -5043,8 +5043,81 @@ static void check_tanya_fireballs(void) {
   }
 }
 
+static void check_tanya_kicks(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT, back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+    /* F,F+LK 479520: hit, blocked 47d940 recoil, miss, then the 60-tick gate. */
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 half = scenario == 2 ? 5 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[1 - slot].held = scenario == 1 ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      command(slot, forward, forward, BUTTON_LOW_KICK);
+      check(fighter_move(owner)->clip == 109 && owner->action == 0x21b && owner->body.vel[AXIS_X] != 0, "Tanya F,F+LK must start the advancing clip-109 spin");
+      bool recoiled = false, rewound = false;
+      for (int tick = 0; tick < 150; ++tick) {
+        battle_step(input);
+        recoiled |= owner->action == 0x1010 && fighter_move(owner)->clip == 301;
+        rewound |= owner->action == 0x21b && (owner->flags & FF_NO_GUARD) && owner->body.vel[AXIS_X] == 0;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya spin kick must use frame tables");
+      }
+      q16 damage = scenario == 0 ? 0x1eb8 : scenario == 1 ? q16_mul(0x1eb8, 0x3333) : 0;
+      check(victim->health == Q16_ONE - damage, "Tanya spin kick must apply D28 hit, chip or miss once");
+      check(recoiled == (scenario == 1) && rewound == (scenario != 1), "Tanya spin kick must select the blocked recoil or its reverse recovery");
+      check(owner->state == S_IDLE && !fighter_airborne(owner) && !(owner->flags & FF_NO_GUARD), "Tanya spin kick must return to stance");
+      if (scenario == 2) {
+        command(slot, forward, forward, BUTTON_LOW_KICK);
+        check(owner->action == 0x21b, "Tanya spin kick must be available again after its 60-tick stamp");
+        battle_init(slot ? 4 : 9, slot ? 9 : 4);
+        g_battle.phase = PHASE_FIGHT;
+        g_battle.fighters[1 - slot].hits = 5;
+        command(slot, forward, forward, BUTTON_LOW_KICK);
+        check(g_battle.fighters[slot].action != 0x21b, "Tanya spin kick gate must reject an opponent combo count above four");
+      }
+    }
+    /* F,D,B+LK 47b9f0: grounded hit adds reaction 95, block chips, miss recovers. */
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 half = scenario == 2 ? 5 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[1 - slot].held = scenario == 1 ? BUTTON_BIT(BUTTON_BLOCK) : 0;
+      Input step[2] = {0};
+      const Button sequence[] = {forward, BUTTON_DOWN, back, BUTTON_LOW_KICK};
+      for (int entry = 0; entry < 4; ++entry) {
+        step[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(step);
+        advance_ticks(entry < 3 ? 2 : 1, NULL);
+      }
+      check(fighter_move(owner)->clip == 103 && owner->action == 0x211, "Tanya F,D,B+LK must enter the clip-103 drill kick");
+      bool followup = false;
+      for (int tick = 0; tick < 150; ++tick) {
+        battle_step(input);
+        followup |= victim->reaction == 95;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya drill kick and its victim reactions must use frame tables");
+      }
+      q16 damage = scenario == 0 ? 0x2666 : scenario == 1 ? q16_mul(0x2666, 0x3333) : 0;
+      check(victim->health == Q16_ONE - damage && followup == (scenario == 0), "Tanya drill kick must keep D17 damage and the grounded reaction-95 follow-up");
+      check(owner->state == S_IDLE && fighter_move(victim)->clip != 103, "Tanya drill kick caster must finish clip 103 and recover");
+    }
+    battle_init(slot ? 4 : 9, slot ? 9 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Tanya near CPU row must be registered");
+    advance_ticks(1, NULL);
+    check(g_battle.fighters[slot].action == 0x211, "Tanya CPU range rows must select the drill kick");
+  }
+}
+
 static void check_tanya_ports(void) {
   check_tanya_fireballs();
+  check_tanya_kicks();
 }
 
 int main(void) {

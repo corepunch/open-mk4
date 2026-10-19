@@ -185,6 +185,10 @@ def _moves_for(character):
             fireball=move(0x498b70, (('caster', 0x4ed268),), (('C', 0),), native=(('independent projectile', 0x498bb0), ('object setup', 0x498be0))),
             air_fireball=move(0x498e70, (('caster', 0x4ed2c0),), (('C', 0),),
                               native=(('independent projectile', 0x498ed0), ('object setup', 0x498be0), ('owner fall', 0x480cf0))),
+            spin_kick=move(0x479520, (('blocked rewind', 0x4e84b8),), (('D', 28),),
+                           native=(('spin animation', 0x4797c0), ('reverse recovery', 0x429600), ('blocked recoil', 0x47d940), ('recoil landing', 0x47dae0))),
+            drill_kick=move(0x47b9f0, (('attacker', 0x4e81f0),), (('D', 17),),
+                            native=(('contact', 0x47ba20), ('grounded follow-up', 0x47ba90), ('recovery', 0x47bbd0))),
         )
     if character == 10:
         # Reptile's input and CPU tables expose three additional script

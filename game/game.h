@@ -554,6 +554,7 @@ struct Fighter {
   uint64_t wind_grab_ready;
   uint64_t skull_ready;      /* Kai 48e3a0 slot-3 stamp plus the 45eb40 48-tick gate */
   uint64_t projectile_ready; /* 48e3a0 action-family-7 timestamp plus the 45e9d0 delay */
+  uint64_t spin_kick_ready; /* Tanya 48e3a0 stamp 0xd plus the 60-tick 45e8d0 gate */
   unsigned fujin_finish_inputs;
   /* Task +0x34 is the live character; round setup restores the selection
    * (532308/5324a0). A morph keeps that selection here and stamps slot 5. */
