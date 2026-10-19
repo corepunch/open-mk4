@@ -787,7 +787,9 @@
     "0x4e15e0",
     "0x4e15f0",
     "0x4e1600",
-    "0x4e16d0"
+    "0x4e16d0",
+    "0x4e5c70",
+    "0x4e5ca0"
   ],
   "cpu_bindings": {
     "0x498b70": {
@@ -805,5 +807,6 @@
     "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 0,
     "evidence": "Tanya 45e570/45e2a0 close gates accept up to 1 unit; CPU targets 4dfe10[9] and 4dfe50[9] are both 0xe666."
-  }
+  },
+  "mmove_only": true
 }

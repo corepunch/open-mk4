@@ -29,15 +29,6 @@ void tanya_script_finish(Fighter *fighter) {
   native_advancing_sweep(fighter);
 }
 
-void tanya_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
-  fighter_start_move(fighter, state, move);
-  if (state == S_SWEEP) {
-    script(fighter);
-  } else {
-    fighter_start_fiber(fighter, script, NULL);
-  }
-}
-
 void tanya_script_current_reaction(Fighter *fighter, int reaction) {
   if (reaction == 186) {
     /* 4e5798's opcode 41 installs reaction 186 (465200) on the victim. */

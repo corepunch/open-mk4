@@ -5334,7 +5334,26 @@ static void check_tanya_first_fatality(void) {
   }
 }
 
+static void check_tanya_high_kick(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 9, slot ? 9 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? 0x9999 : -0x9999;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(BUTTON_HIGH_KICK);
+    battle_step(input);
+    for (int tick = 0; tick < 90; ++tick) {
+      battle_step((Input[2]){0});
+      check(!fighter_fiber_active(owner), "Tanya high kick must use frame phases");
+    }
+    check(victim->health == Q16_ONE - 0x2147 && owner->state == S_IDLE, "Tanya high kick must query B[1] once at pose 17 and recover");
+  }
+}
+
 static void check_tanya_ports(void) {
+  check_tanya_high_kick();
   check_tanya_first_fatality();
   check_tanya_fireballs();
   check_tanya_kicks();

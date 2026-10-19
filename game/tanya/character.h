@@ -72,7 +72,6 @@ void tanya_script_lk_return(Fighter *fighter);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 void tanya_script_roundhouse_start(Fighter *fighter);
 void tanya_script_spike_tail(Fighter *fighter);
-void tanya_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
 void tanya_sweep(Fighter *fighter);
 void tanya_uppercut(Fighter *fighter);
 
