@@ -91,7 +91,6 @@ void jarek_blade(Fighter *fighter);
 void jarek_blade_spawn(Fighter *fighter, int task_type);
 void jarek_quake_tail(Fighter *fighter);
 void jarek_entry_retail_script_004e81c8(Fighter *fighter);
-void jarek_entry_retail_script_004e95c8(Fighter *fighter);
 void jarek_upward_ball(Fighter *fighter);
 void jarek_ball_land(Fighter *fighter);
 void jarek_entry_retail_script_004e84b8(Fighter *fighter);

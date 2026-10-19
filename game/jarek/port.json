@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "dcdc83d1544cbe959edcfc67904ccf0576848ae1556ce90885b6987fa4e3f9d3",
+  "inventory_sha256": "02c1744360f975e739fb22dddb15ef370de22cf2896c2a04abd13b9017b98867",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -52,7 +52,6 @@
     "0x4e84b8",
     "0x4e9658",
     "0x4e81c8",
-    "0x4e95c8",
     "0x4d2db0",
     "0x4d2de0",
     "0x4d2e10",
@@ -677,10 +676,10 @@
       "evidence": "Ball D[19] blocked reaction0 selects 4ea4e8[0] ->486cd0 shared block recovery."
     },
     "136": {
-      "source": "game/jarek/moves/quake.c",
-      "symbol": "jarek_quake_victim",
+      "source": "game/goro/moves/victims.c",
+      "symbol": "goro_quake_victim",
       "evidence": "47b600 reaction136: 4ea4e8[136] ->4834d0 disarms, picks a4ea8f8 voice and enters generated4e95c8 clip182 stumble.",
-      "adaptation": "The shared reaction table enters this exported victim entry for any roster."
+      "adaptation": "Roster-generic victim handler; the shared reactions[136] entry runs the Goro-owned port, which Goro's quake stomp and Jax's ground pound also dispatch."
     },
     "2": {
       "source": "game/reactions.c",
@@ -801,7 +800,6 @@
     "0x4e9658",
     "0x4e81a8",
     "0x4e81c8",
-    "0x4e95c8",
     "0x4ed118",
     "0x4e0118",
     "0x4e0128",
