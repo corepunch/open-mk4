@@ -22,7 +22,7 @@
 
 /* Character-owned finisher ids, outside the shared FINISH_* range. */
 enum {
-  JAREK_EVENT_FATALITY_1 = 21,
+  JAREK_EVENT_FATALITY_1 = 25,
   JAREK_EVENT_FATALITY_2
 };
 

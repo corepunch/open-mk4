@@ -839,5 +839,6 @@
     "CPU_FINISH_2": 117964,
     "evidence": "Jarek first gate45e570 accepts up to1 unit and CPU target4dfe10[12] is0xcccc; second gate45e530 accepts 1.8..3 units and4dfe50[12] is0x2cccc.",
     "CPU_FINISH_1": 0
-  }
+  },
+  "mmove_only": true
 }

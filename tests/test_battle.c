@@ -1867,7 +1867,8 @@ static void check_jarek_second_fatality(void) {
   g_battle.fighters[1].body.pos[AXIS_X] = 0x11999;
   check(battle_cpu_action(&g_battle.fighters[0], CPU_FINISH_2), "Jarek's CPU second fatality must be registered");
   advance_ticks(1, NULL);
-  check(g_battle.phase == PHASE_FATALITY && fighter_move(&g_battle.fighters[0])->clip == 577, "Jarek's CPU second fatality must enter the same scene");
+  check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == 26 && fighter_move(&g_battle.fighters[0])->clip == 577,
+      "Jarek's CPU second fatality must enter the same scene");
 }
 
 /* 467ce0 -> 446d00: the owner clip follows the victim's roster, the victim
@@ -1916,7 +1917,7 @@ static void check_jarek_first_fatality(void) {
   g_battle.fighters[1].body.pos[AXIS_X] = 0x6666;
   check(battle_cpu_action(&g_battle.fighters[0], CPU_FINISH_1), "Jarek's CPU first fatality must be registered");
   advance_ticks(1, NULL);
-  check(g_battle.phase == PHASE_FATALITY, "Jarek's CPU first fatality must enter the same scene");
+  check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == 25, "Jarek's CPU first fatality must enter the same scene");
 }
 
 static void check_jarek_weapon_commands(void) {
