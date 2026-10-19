@@ -190,7 +190,23 @@ static void begin_bounce(Projectile *p) {
   p->vel[AXIS_Z] = q16_mul(p->heading[1], speed);
 }
 
+/* 43a6d0/43a7d0 hop: phase 3 is the first arc, phase 4 the second. */
+static void hop_tick(Projectile *p) {
+  p->vel[AXIS_Y] += 0x3d7;
+  p->pos[AXIS_Y] += p->vel[AXIS_Y];
+  if (p->vel[AXIS_Y] >= 0 && p->pos[AXIS_Y] >= -0x1999) {
+    p->pos[AXIS_Y] = -0x1999;
+    p->vel[AXIS_Y] = p->phase == 3 ? -0x147a : 0;
+    p->phase = p->phase == 3 ? 4 : 2;
+  }
+}
+
 static void object_tick(Projectile *p) {
+  if (p->phase >= 3) {
+    p->lifetime = 2;
+    hop_tick(p);
+    return;
+  }
   if (p->phase == 2) {
     p->lifetime = 2;
     return;
@@ -377,6 +393,19 @@ static int pickup_index(const Fighter *fighter) {
     }
   }
   return -1;
+}
+
+/* 43a5c0 -> 43a610 walks the world objects for resting objects of one
+ * descriptor type and starts task 50 (43a6d0): a hop of -(0x2666 + random
+ * 0xccc), then -0x147a, under 0x3d7 gravity back to the resting height. */
+void weapon_hop_resting(int type) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *p = &g_battle.projectiles[i];
+    if (p->kind == PROJECTILE_SWORD && p->step == object_tick && p->phase == 2 && p->weapon != NULL && p->weapon->type == type) {
+      p->phase = 3;
+      p->vel[AXIS_Y] = -(q16)(0x2666 + battle_random(0xccc));
+    }
+  }
 }
 
 bool weapon_can_pickup(const Fighter *fighter) {

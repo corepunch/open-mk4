@@ -47,7 +47,13 @@ def generate_controls(image, character, profile):
             '// clang-format off: Keep table entries on one row, including long rows.\n'
             'static const CommandDef retail_commands[] = {\n' + '\n'.join(rows) + '\n};\n// clang-format on\n')
     cpu_bound = profile.get('cpu_bindings', {})
-    finishes = {slot: bindings[target] for slot, target in CPU_FINISH_TARGETS.items() if target in bindings}
+    # A roster-generic CPU finish (434520 stage dispatch) may have no command
+    # record; its reviewed CPU-only binding attaches the same runtime slot.
+    cpu_finishes = profile.get('cpu_finish_bindings', {})
+    if cpu_finishes.keys() - set(CPU_FINISH_TARGETS.values()) or cpu_finishes.keys() & bindings.keys():
+        raise ValueError('CPU-only finish bindings must name an unrecorded finish target')
+    finishes = {slot: bindings.get(target) or cpu_finishes[target] for slot, target in CPU_FINISH_TARGETS.items()
+                if target in bindings or target in cpu_finishes}
     if cpu_bound or finishes:
         slots = {'near': 'CPU_SPECIAL_NEAR', 'medium': 'CPU_SPECIAL_1', 'far': 'CPU_SPECIAL_2', 'projectile': 'CPU_PROJECTILE'}
         entries = ['    [%s] = %s,' % (slots[name], cpu_bound[row['target']]['symbol'])

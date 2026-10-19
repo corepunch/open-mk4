@@ -15,6 +15,24 @@
       "sample": 42,
       "paired": true
     },
+    "0x4dfbd0": {
+      "clip": 601,
+      "count": 52,
+      "sample": 41,
+      "evidence": "43b370 rises one pose per visit from 23 for ceil(0x3cccc / 0x3851) = 18 visits; the drop holds pose 41 until contact or landing. Contact enters 4dfbd0."
+    },
+    "0x4dfc38": {
+      "clip": 601,
+      "count": 52,
+      "sample": 41,
+      "evidence": "43b370 rises one pose per visit from 23 for ceil(0x3cccc / 0x3851) = 18 visits; the drop holds pose 41 until contact or landing. Landing enters 43b620 -> 4dfc38."
+    },
+    "0x4dfc60": {
+      "clip": 602,
+      "count": 30,
+      "sample": 21,
+      "evidence": "4dfc50 binds 602 and advances to 21 before 43b8c0 enters 4dfc60."
+    },
     "0x4e0138": {
       "clip": 415,
       "count": 130,
@@ -106,6 +124,10 @@
     "0x4dfb60",
     "0x4dfb70",
     "0x4dfbb8",
+    "0x4dfbd0",
+    "0x4dfc38",
+    "0x4dfc50",
+    "0x4dfc60",
     "0x4e0118",
     "0x4e0138",
     "0x4e0148",
@@ -136,11 +158,17 @@
     "0x4e6878",
     "0x4e6950",
     "0x4e69b0",
+    "0x4e8dd0",
+    "0x4e8e50",
+    "0x4e8e80",
+    "0x4e95c8",
     "0x4e9910",
+    "0x4ea3e0",
+    "0x4ea400",
     "0x4ed790"
   ],
   "integration_source": "game/goro/character.c",
-  "inventory_sha256": "2498a9d5155ad52c474f76937da440d5679298dd5356c723767e1197a9585c32",
+  "inventory_sha256": "63454822bc9afb04cab589a527085be56dd6ec9b27ccd413cdf5145b8585dc66",
   "output": "game/goro/generated/scripts.inc",
   "return_to": "fighter_ready",
   "schema": 1,
@@ -230,26 +258,6 @@
       "symbol": "goro_high_punch",
       "evidence": "Shared stance 4e5058 HP 460f40 selects 46d290/46d9b3 (clip 296/297, action 010a, A[0]) or close HP 46be40 within 0.8."
     },
-    "progress_event": {
-      "source": "game/goro/moves/specials.c",
-      "symbol": "goro_event_progress",
-      "evidence": "43af90 enters clip 599; 43afc0 and 43b940 query D[32] for three advancing rows, then finish the clip."
-    },
-    "counter_kick_event": {
-      "source": "game/goro/moves/specials.c",
-      "symbol": "goro_event_counter_kick",
-      "evidence": "43b170 enters clip 598; 43b1a0 and 43b940 query D[33] for eight advancing rows, then finish the clip."
-    },
-    "counter_sweep_event": {
-      "source": "game/goro/moves/specials.c",
-      "symbol": "goro_event_counter_sweep",
-      "evidence": "The actor-local adaptation plays generated clip 601 through sample 23 with action 0x0409, then returns ready; versus/controller state is omitted."
-    },
-    "cpu_projectile": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_cpu_projectile",
-      "evidence": "Goro CPU action 49ca70 snapshots the heading and enters clip-592 script 4ed790; portable projectile task83 follows the observed launch timing."
-    },
     "close_hp": {
       "source": "game/goro/moves/combos.c",
       "symbol": "goro_close_hp",
@@ -264,28 +272,58 @@
       "source": "game/goro/moves/combos.c",
       "symbol": "goro_close_hk",
       "evidence": "461030 within 0.8 against a grounded, non-4001/4005 victim enters 46ba60 -> 4e6190 clip 314 and runner 46bb60."
+    },
+    "special_punch": {
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_punch",
+      "evidence": "HP F,F (4e4bf4, action 49) -> 43af90: voice 0x5fa, 45f870, 4dfb60 clip 599 to 14, 43afc0 three D[32] rows, finish and return."
+    },
+    "special_kick": {
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_kick",
+      "evidence": "HK B,B (4e4c1c, action 50) -> 43b170: voice 0x5fa, 45f870, 4dfb70 clip 598 to 8, 43b1a0 eight D[33] rows, finish and return."
+    },
+    "special_uppercut": {
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_uppercut",
+      "evidence": "HP D,D (4e4c00, action 51) -> 43b640: voice 0x5fa, 45f870, slot 53c6bc clip 600 at 0, nine poses, five D[35] rows, finish and return."
+    },
+    "leap_stomp": {
+      "source": "game/goro/moves/stomp.c",
+      "symbol": "goro_leap_stomp",
+      "evidence": "HK F,F,B (4e4c10, action 48) and the far CPU row -> 43b320: voice 0x64f, action 0409, 4dfbb8 clip 601, 43b370 rise/relocate/drop with D[34] and 30% damage."
+    },
+    "quake_stomp": {
+      "source": "game/goro/moves/quake.c",
+      "symbol": "goro_quake_stomp",
+      "evidence": "HK B,F,D,D (4e4c28, action 52) -> 43b7e0: voice 0x604, 48fde0 blend to clip 602, 4dfc50 jump, 43b8c0 24% and reaction 136 to a grounded victim."
+    },
+    "fireball": {
+      "source": "game/goro/moves/projectile.c",
+      "symbol": "goro_fireball",
+      "evidence": "HP F,B (4e4be8, 4ed828[0]) and the CPU projectile row -> 49ca70: heading snapshot, clip-592 script 4ed790, task 83 C[22] object."
     }
   },
   "entry_adapters": {
     "0x469250": {
       "source": "game/mk4_common.c",
       "symbol": "mk4_sidestep",
-      "evidence": "Goro RUN command selects the shared sidestep handler at 0x469250; the portable shared handler is mk4_sidestep."
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x46a020": {
-      "source": "game/mk4_common.c",
-      "symbol": "mk4_walk",
-      "evidence": "Goro RUN direction route reaches the shared roster walk/run continuation at 0x46a020."
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x43b640": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_event_progress",
-      "evidence": "Goro high-punch input target 43b640 reuses the existing clip-599 progress scene event adapter."
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_uppercut",
+      "evidence": "Typed HP D,D target 43b640; native clip-600 rows and D[35] queries."
     },
     "0x43b7e0": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_event_counter_kick",
-      "evidence": "Goro high-kick input target 43b7e0 reuses the existing clip-598 counter-kick scene event adapter."
+      "source": "game/goro/moves/quake.c",
+      "symbol": "goro_quake_stomp",
+      "evidence": "Typed HK B,F,D,D target 43b7e0; native blend, generated 4dfc50 jump and 43b8c0 landing."
     }
   },
   "reactions": {
@@ -394,6 +432,11 @@
       "symbol": "react_extra",
       "evidence": "Goro contact reaches shared reaction 39 through retail dispatcher 0x482ef0."
     },
+    "64": {
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record",
+      "evidence": "Goro contact reaches shared reaction 64 through retail dispatcher 0x486730."
+    },
     "77": {
       "source": "game/script.c",
       "symbol": "mk4_mmove_lk_release",
@@ -417,16 +460,28 @@
       "evidence": "4ea4e8[175] -> 0x4836e0; spike stage root 4e6950 queries A[18] before native 467fc0."
     },
     "189": {
-      "source": "game/reactions.c",
-      "symbol": "react_approximate",
-      "adaptation": "Goro roster 15 uses battle_react\u2019s existing approximate reaction route; the typed hit ID is preserved.",
-      "evidence": "Native 43b940 selects D[32]/D[33], whose hit and air reactions are 189/190. Exact victim animation remains outside this reconnection step."
+      "source": "game/goro/moves/victims.c",
+      "symbol": "goro_punch_victim",
+      "adaptation": "Registered directly in shared reactions[189]; the Goro-owned victim program runs on any non-Goro victim.",
+      "evidence": "4ea4e8[189] -> 482420: wall recoil 488ea0, disarm 494520, generated 4e8dd0 clip 319 flight and 482790 getup."
     },
     "190": {
-      "source": "game/reactions.c",
-      "symbol": "react_approximate",
-      "adaptation": "Goro roster 15 uses battle_react\u2019s existing approximate reaction route; the typed hit ID is preserved.",
-      "evidence": "Native 43b940 selects D[32]/D[33], whose hit and air reactions are 189/190. Exact victim animation remains outside this reconnection step."
+      "source": "game/goro/moves/victims.c",
+      "symbol": "goro_kick_victim",
+      "adaptation": "Registered directly in shared reactions[190]; the Goro-owned victim program runs on any non-Goro victim.",
+      "evidence": "4ea4e8[190] -> 483570: disarm 494520, generated 4ea3e0 -> 4e9670 clip 183 flight and 488b40 side getup."
+    },
+    "191": {
+      "source": "game/goro/moves/victims.c",
+      "symbol": "goro_stomp_victim",
+      "adaptation": "Registered directly in shared reactions[191]; the Goro-owned victim program runs on any non-Goro victim.",
+      "evidence": "4ea4e8[191] -> 4842d0: disarm, airborne fall 0x1999, generated 4ea400 clip 178 and native 484330 stomp cycles."
+    },
+    "192": {
+      "source": "game/goro/moves/victims.c",
+      "symbol": "goro_uppercut_victim",
+      "adaptation": "Registered directly in shared reactions[192]; the Goro-owned victim program runs on any non-Goro victim.",
+      "evidence": "4ea4e8[192] -> 482480: shake 6, 40% scale, wall recoil, disarm, attacker run drain, generated 4e8e50/4e8e80 clip 181 and getup."
     }
   },
   "stances": {
@@ -488,6 +543,13 @@
     "0x4de6e4",
     "0x4de798",
     "0x4de7e8",
+    "0x4dfb60",
+    "0x4dfb70",
+    "0x4dfbb8",
+    "0x4dfbd0",
+    "0x4dfc38",
+    "0x4dfc50",
+    "0x4dfc60",
     "0x4e0118",
     "0x4e0138",
     "0x4e0148",
@@ -518,7 +580,85 @@
     "0x4e6878",
     "0x4e6950",
     "0x4e69b0",
+    "0x4e8dd0",
+    "0x4e8e50",
+    "0x4e8e80",
+    "0x4e95c8",
     "0x4e9910",
+    "0x4ea3e0",
+    "0x4ea400",
     "0x4ed790"
-  ]
+  ],
+  "mmove_only": true,
+  "controls_output": "game/goro/generated/controls.inc",
+  "command_bindings": {
+    "0x49ca70": {
+      "source": "game/goro/moves/projectile.c",
+      "symbol": "goro_fireball",
+      "evidence": "Typed HP F,B target 49ca70 (dispatch 4ed828[0]); heading snapshot and script 4ed790."
+    },
+    "0x43af90": {
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_punch",
+      "evidence": "Typed HP F,F target 43af90 (4e6ef8[49]); clip 599 and D[32] rows."
+    },
+    "0x43b640": {
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_uppercut",
+      "evidence": "Typed HP D,D target 43b640 (4e6ef8[51]); clip 600 and D[35] rows."
+    },
+    "0x43b320": {
+      "source": "game/goro/moves/stomp.c",
+      "symbol": "goro_leap_stomp",
+      "evidence": "Typed HK F,F,B target 43b320 (4e6ef8[48]); leap, drop and D[34] stomp."
+    },
+    "0x43b170": {
+      "source": "game/goro/moves/specials.c",
+      "symbol": "goro_special_kick",
+      "evidence": "Typed HK B,B target 43b170 (4e6ef8[50]); clip 598 and D[33] rows."
+    },
+    "0x43b7e0": {
+      "source": "game/goro/moves/quake.c",
+      "symbol": "goro_quake_stomp",
+      "evidence": "Typed HK B,F,D,D target 43b7e0 (4e6ef8[52]); clip 602 jump and landing quake."
+    },
+    "0x469250": {
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep",
+      "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
+    },
+    "0x46a020": {
+      "source": "game/weapons.c",
+      "symbol": "weapon_pickup",
+      "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
+    }
+  },
+  "command_predicates": {
+    "0x45e820": "mk4_can_sidestep",
+    "0x45efc0": "weapon_can_pickup"
+  },
+  "cpu_bindings": {
+    "0x43b320": {
+      "source": "game/goro/moves/stomp.c",
+      "symbol": "goro_leap_stomp",
+      "evidence": "Typed far CPU row 4df9a4[15] word 200005 selects 43b320; near/medium rows are zero."
+    },
+    "0x49ca70": {
+      "source": "game/goro/moves/projectile.c",
+      "symbol": "goro_fireball",
+      "evidence": "Typed projectile CPU row 4df9e4[15] word 2001a selects 49ca70."
+    }
+  },
+  "cpu_finish_bindings": {
+    "0x467e00": {
+      "source": "game/goro/moves/fan.c",
+      "symbol": "goro_fan_fatality",
+      "evidence": "CPU stage-8 finish 434940 dispatches 10041 -> 467e00; Goro has no fan command record."
+    },
+    "0x467e70": {
+      "source": "game/goro/moves/spike.c",
+      "symbol": "goro_spike_fatality",
+      "evidence": "CPU stage-0 finish 4348b0 dispatches 10042 -> 467e70; Goro has no spike command record."
+    }
+  }
 }

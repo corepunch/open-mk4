@@ -392,11 +392,20 @@ def _moves_for(character):
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),
                                        ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 33),)),
-            progress_event=move(0x43af90, (('actor clip', 0x4dfb60),), (('D', 32),)),
-            counter_kick_event=move(0x43b170, (('actor clip', 0x4dfb70),), (('D', 33),)),
-            counter_sweep_event=move(0x43b320, (('actor clip', 0x4dfbb8),)),
-            cpu_projectile=move(0x49ca70, (('clip 592 launch program', 0x4ed790),),
-                                native=(('heading snapshot and launch', 0x49ca70),)),
+            # Goro's own command handlers (4e6ef8[48..52]) and their victims.
+            special_punch=move(0x43af90, (('attacker', 0x4dfb60), ('189 victim', 0x4e8dd0)), (('D', 32),),
+                               native=(('contact rows', 0x43afc0), ('189 entry', 0x482420))),
+            special_kick=move(0x43b170, (('attacker', 0x4dfb70), ('190 victim', 0x4ea3e0)), (('D', 33),),
+                              native=(('contact rows', 0x43b1a0), ('190 entry', 0x483570))),
+            special_uppercut=move(0x43b640, (('192 victim', 0x4e8e50), ('192 victim slide', 0x4e8e80)), (('D', 35),),
+                                  native=(('clip 600 rows', 0x43b640), ('192 entry', 0x482480))),
+            leap_stomp=move(0x43b320, (('rise', 0x4dfbb8), ('stomp hit', 0x4dfbd0), ('miss landing', 0x4dfc38),
+                                       ('191 victim', 0x4ea400)), (('D', 34),),
+                            native=(('rise/drop/contact', 0x43b370), ('return', 0x43b590), ('191 victim hold', 0x484330))),
+            quake_stomp=move(0x43b7e0, (('jump', 0x4dfc50), ('landing', 0x4dfc60), ('136 victim', 0x4e95c8)),
+                             native=(('pose blend', 0x48fde0), ('landing damage', 0x43b8c0), ('136 entry', 0x4834d0))),
+            fireball=move(0x49ca70, (('clip 592 launch program', 0x4ed790),), (('C', 22),),
+                          native=(('heading snapshot and launch', 0x49ca70), ('task 83 object', 0x49ca90))),
         )
         return shared
     if character in (1, 2):

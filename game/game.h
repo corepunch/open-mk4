@@ -443,17 +443,18 @@ typedef struct InputHistory {
 
 /* Retail group +0x40 bits. */
 enum {
-  FF_BUSY = 0x001,         /* special commands rejected; a human cannot block */
-  FF_WEAPON_LOST = 0x002,  /* draw-weapon predicate fails (HYPOTHESIS) */
-  FF_REACTING = 0x004,     /* in a hit reaction; commands rejected */
-  FF_NO_GUARD = 0x008,     /* contacts skip the block test; back is not held */
-  FF_MARK = 0x010,         /* copied from the last attack record's MARK bit */
-  FF_UNTOUCHABLE = 0x020,  /* contacts are ignored */
-  FF_TELEPORTING = 0x040,  /* camera ignores this fighter */
-  FF_FOLLOW_UP = 0x200,    /* commands allowed off the ground */
-  FF_PAIR_RELEASE = 0x800, /* released actor owns its pose while paired recovery finishes */
-  FF_PAIRED = 0x400,       /* bodies attached by a paired move; skip separation */
-  FF_NEUTRAL_CLEAR = 0x6e8 /* bits cleared by the return to neutral 0x48e080 */
+  FF_BUSY = 0x001,             /* special commands rejected; a human cannot block */
+  FF_WEAPON_LOST = 0x002,      /* draw-weapon predicate fails (HYPOTHESIS) */
+  FF_REACTING = 0x004,         /* in a hit reaction; commands rejected */
+  FF_NO_GUARD = 0x008,         /* contacts skip the block test; back is not held */
+  FF_MARK = 0x010,             /* copied from the last attack record's MARK bit */
+  FF_UNTOUCHABLE = 0x020,      /* contacts are ignored */
+  FF_TELEPORTING = 0x040,      /* camera ignores this fighter */
+  FF_FOLLOW_UP = 0x200,        /* commands allowed off the ground */
+  FF_PAIR_RELEASE = 0x800,     /* released actor owns its pose while paired recovery finishes */
+  FF_PAIRED = 0x400,           /* bodies attached by a paired move; skip separation */
+  FF_HOLD_SEPARATION = 0x1000, /* 480f40: skip the next world visit's body separation */
+  FF_NEUTRAL_CLEAR = 0x6e8     /* bits cleared by the return to neutral 0x48e080 */
 };
 
 /* Retail group motion: Q16 position (+0x54, Y down), velocity (+0x6c),
@@ -958,6 +959,7 @@ void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
 void weapon_throw(Fighter *fighter);
 bool weapon_can_pickup(const Fighter *fighter);
 void weapon_pickup(Fighter *fighter);
+void weapon_hop_resting(int type);
 void weapon_followup_victim(Fighter *fighter);
 void weapon_stance(Fighter *fighter, int state);
 void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);

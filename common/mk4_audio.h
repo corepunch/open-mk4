@@ -21,10 +21,12 @@ enum {
   SOUND_THROW_VOICE,  /* 489ff0 selector 8, roster remap 4ead18. */
   SOUND_DRAW_VOICE,   /* 48a230 selector 0, weapon draw voice. */
   SOUND_CONTEXT,      /* Opcode 26 / 48a100, table 4eaaf8. */
+  SOUND_TOKEN,        /* 489ef0: the selector is the sampled token itself. */
   SOUND_BANK_COUNT
 };
 
 #define SOUND_EVENT_COUNT 184
+#define SOUND_TOKEN_LIMIT 0x8000
 
 typedef struct SoundBank {
   Sounds sounds;

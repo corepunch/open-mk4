@@ -65,20 +65,14 @@ static const ButtonTable goro_crouching = {{[BUTTON_HIGH_PUNCH] = goro_press_cro
     [BUTTON_LOW_KICK] = goro_press_crouching_kick}};
 static const ButtonTable goro_jumping = {{[BUTTON_HIGH_PUNCH] = goro_press_air_hp,
     [BUTTON_LOW_PUNCH] = goro_press_air_lp,
+    [BUTTON_BLOCK] = goro_press_air_block,
     [BUTTON_HIGH_KICK] = goro_press_air_hk,
     [BUTTON_LOW_KICK] = goro_press_air_lk}};
 
-static const CommandDef goro_commands[] = {
-    {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 48, 0, NULL, goro_event_progress},
-    {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_BACK}, 2, 48, 0, NULL, goro_event_counter_kick},
-    {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, mk4_can_air_throw, goro_air_throw},
-};
+#include "generated/controls.inc"
 
-static const Controls goro_controls = {goro_commands, (int)(sizeof goro_commands / sizeof goro_commands[0]),
+static const Controls goro_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
     {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
-
-static const CpuMoves goro_cpu_moves = {
-    .enter = {[CPU_PROJECTILE] = goro_cpu_projectile, [CPU_FINISH_FAN] = goro_fan_fatality, [CPU_FINISH_SPIKE] = goro_spike_fatality}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
@@ -87,7 +81,7 @@ static const FighterFn state_entries[S_COUNT] = {
 // clang-format on
 
 const CharacterDef mk4_goro = {
-    GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, state_entries, -85458, mk4_walk, NULL, &goro_cpu_moves, NULL, 0};
+    GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, state_entries, -85458, mk4_walk, NULL, &retail_cpu_moves, NULL, 0};
 
 const mmove_t *goro_retail_script_004e0138_repeat_phase(void) {
   return &retail_script_004e0138_phase;
@@ -235,4 +229,44 @@ void goro_entry_retail_script_004e9910(Fighter *fighter) {
 
 void goro_entry_retail_script_004ed790(Fighter *fighter) {
   retail_script_004ed790(fighter);
+}
+
+void goro_entry_retail_script_004dfbd0(Fighter *fighter) {
+  retail_script_004dfbd0(fighter);
+}
+
+void goro_entry_retail_script_004dfc38(Fighter *fighter) {
+  retail_script_004dfc38(fighter);
+}
+
+void goro_entry_retail_script_004dfc50(Fighter *fighter) {
+  retail_script_004dfc50(fighter);
+}
+
+void goro_entry_retail_script_004dfc60(Fighter *fighter) {
+  retail_script_004dfc60(fighter);
+}
+
+void goro_entry_retail_script_004e8dd0(Fighter *fighter) {
+  retail_script_004e8dd0(fighter);
+}
+
+void goro_entry_retail_script_004e8e50(Fighter *fighter) {
+  retail_script_004e8e50(fighter);
+}
+
+void goro_entry_retail_script_004e8e80(Fighter *fighter) {
+  retail_script_004e8e80(fighter);
+}
+
+void goro_entry_retail_script_004e95c8(Fighter *fighter) {
+  retail_script_004e95c8(fighter);
+}
+
+void goro_entry_retail_script_004ea3e0(Fighter *fighter) {
+  retail_script_004ea3e0(fighter);
+}
+
+void goro_entry_retail_script_004ea400(Fighter *fighter) {
+  retail_script_004ea400(fighter);
 }

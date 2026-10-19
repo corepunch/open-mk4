@@ -508,7 +508,7 @@ def generate(image, entries, character=0, return_to=None, bindings=None, context
                 local[binding.symbol] = binding
     for name, binding in sorted(local.items()):
         types = ['Fighter *' if arg == 'fighter' else 'int' for arg in binding.arguments]
-        lines.append('%s %s(%s);' % ('unsigned' if binding.result == 'flags' else 'void', name, ', '.join(types)))
+        lines.append('%s %s(%s);' % ('unsigned' if binding.result == 'flags' else 'void', name, ', '.join(types) or 'void'))
     contacts = {row['contact']['va']: row['contact'] for program, _ in programs for row in program['instructions'] if 'contact' in row}
     for address, record in sorted(contacts.items()):
         values = [*record['rectangle_q16'], record['reaction'], record['alternate_reaction'], record['blocked_reaction'], record['flags'], record['damage_q16']]

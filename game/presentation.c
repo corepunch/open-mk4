@@ -4,7 +4,8 @@
 #include <string.h>
 
 void battle_sound(int bank, int selector) {
-  require(bank >= 0 && bank < SOUND_BANK_COUNT && selector >= 0 && selector < SOUND_EVENT_COUNT, "Invalid sound event");
+  require(
+      bank >= 0 && bank < SOUND_BANK_COUNT && selector >= 0 && selector < (bank == SOUND_TOKEN ? SOUND_TOKEN_LIMIT : SOUND_EVENT_COUNT), "Invalid sound event");
   if (g_battle.sound_count < MAX_SOUND_EVENTS) {
     g_battle.sounds[g_battle.sound_count++] = (SoundEvent){bank, selector};
   }

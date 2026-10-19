@@ -25,7 +25,7 @@ CPU_FINISH_TARGETS = {
 def cpu_finish_dispatch_errors(graph, profile):
     if not profile.get('controls_output'):
         return []
-    expected = {slot: profile.get('command_bindings', {}).get(target)
+    expected = {slot: profile.get('command_bindings', {}).get(target) or profile.get('cpu_finish_bindings', {}).get(target)
                 for slot, target in CPU_FINISH_TARGETS.items()}
     expected = {slot: ref for slot, ref in expected.items() if ref}
     if not expected:
@@ -166,11 +166,12 @@ def unreachable_references(profile, compiled_graphs=None):
     reached = graph.reachable(['mk4_' + profile['character']], stop={'roster'})
     errors = []
     references = []
-    for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings'):
+    for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings'):
         references.extend((section + ' ' + label, ref) for label, ref in profile.get(section, {}).items())
     if profile.get('controls_output'):
         references.append(('runtime command table', {'source': profile['integration_source'], 'symbol': 'retail_commands'}))
-    if profile.get('cpu_bindings') or (profile.get('controls_output') and any(target in profile.get('command_bindings', {}) for target in CPU_FINISH_TARGETS.values())):
+    if profile.get('cpu_bindings') or profile.get('cpu_finish_bindings') or (
+            profile.get('controls_output') and any(target in profile.get('command_bindings', {}) for target in CPU_FINISH_TARGETS.values())):
         references.append(('runtime CPU table', {'source': profile['integration_source'], 'symbol': 'retail_cpu_moves'}))
     reported = set()
     for label, ref in references:

@@ -93,6 +93,9 @@ const Sound *sound_find(const SoundBank *bank, int id) {
 }
 
 const Sound *sound_event(const SoundBank *bank, int category, int selector) {
+  if (category == SOUND_TOKEN) {
+    return selector > 100 && selector < SOUND_TOKEN_LIMIT ? sound_find(bank, selector / 5) : NULL;
+  }
   if (category < 0 || category >= SOUND_BANK_COUNT || selector < 0 || selector >= SOUND_EVENT_COUNT || selector >= bank->event_counts[category]) {
     return NULL;
   }

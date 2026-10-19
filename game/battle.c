@@ -419,7 +419,11 @@ void battle_world(void) {
   }
   g_battle.distance = (q16)floor(length);
   q16 dy = a->body.pos[AXIS_Y] - b->body.pos[AXIS_Y];
-  if (!(a->flags & FF_PAIRED) && !(b->flags & FF_PAIRED) && g_battle.distance < 0x8000 && (dy < 0 ? -dy : dy) <= 0xb333) {
+  /* 489791: a separation hold written by a physics callback lasts one visit. */
+  bool separation_held = ((a->flags | b->flags) & FF_HOLD_SEPARATION) != 0;
+  a->flags &= ~(unsigned)FF_HOLD_SEPARATION;
+  b->flags &= ~(unsigned)FF_HOLD_SEPARATION;
+  if (!separation_held && !(a->flags & FF_PAIRED) && !(b->flags & FF_PAIRED) && g_battle.distance < 0x8000 && (dy < 0 ? -dy : dy) <= 0xb333) {
     q16 push = (0x8000 - g_battle.distance) / 2 + 1;
     for (int k = 0; k < 2; ++k) {
       q16 step = q16_mul(g_battle.axis[k], push);

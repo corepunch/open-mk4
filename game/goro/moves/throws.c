@@ -30,6 +30,14 @@ void goro_air_throw(Fighter *fighter) {
   mk4_air_throw_frames(fighter, goro_entry_retail_script_004e5e28, goro_entry_retail_script_004e9910);
 }
 
+/* The extension lives on the jump stance because the generated retail
+ * command list keeps Goro's BLOCK records exactly as typed (none). */
+void goro_press_air_block(Fighter *fighter) {
+  if (mk4_can_air_throw(fighter)) {
+    fighter_interrupt(fighter, goro_air_throw);
+  }
+}
+
 /* 46aae0 releases the pair with the shared damage, then enters 4e5e50. */
 void goro_script_air_release(Fighter *fighter) {
   mk4_mmove_air_throw_release(fighter);

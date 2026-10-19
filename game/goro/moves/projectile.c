@@ -1,10 +1,13 @@
 #include "../character.h"
 
-static void goro_cpu_projectile_step(Projectile *projectile);
-static const MoveDef s_cpu_projectile = {.clip = 592, .last = 24, .flags = SF_ATTACK | SF_LOCK};
-static const AttackRecord goro_cpu_projectile_record = {0x12147, 0x51e, 0x9999, 0x4ccc, 23, 23, 4, ATTACK_MARK, 0x1999};
+static void fireball_step(Projectile *projectile);
+static const MoveDef s_fireball = {.clip = 592, .last = 24, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+/* 4ed7e0 selects C[22]; 49c670 queries it every visit without the
+ * selector-zero projectile's crouching (2001) exemption. */
+static const AttackRecord fireball_record = {0x3d70, -0x51eb, 0x7d70, 0x7333, 64, 10, 7, ATTACK_MARK, 0x23d7};
+static const MeshAnimation fireball_mesh = {.first = 50, .count = 1, .period = 1, .scale = Q16_ONE};
 
-static void goro_cpu_projectile_step(Projectile *projectile) {
+static void fireball_step(Projectile *projectile) {
   if (g_battle.contacts_off) {
     projectile->kind = 0;
     return;
@@ -12,30 +15,35 @@ static void goro_cpu_projectile_step(Projectile *projectile) {
   for (int axis = 0; axis < 3; ++axis) {
     projectile->pos[axis] += projectile->vel[axis];
   }
-  projectile->sample = projectile->ticks < 24 ? projectile->ticks : 24;
-  if (battle_projectile_overlaps(projectile, &goro_cpu_projectile_record) &&
-      battle_projectile_contact(projectile, &goro_cpu_projectile_record) != CONTACT_MISS) {
+  if (battle_projectile_contact(projectile, &fireball_record) != CONTACT_MISS) {
     projectile->kind = 0;
   }
 }
 
-void goro_cpu_projectile_spawn(Fighter *fighter, int task_type) {
-  require(task_type == 83, "Unexpected Goro cooperative task");
-  Projectile *projectile = battle_spawn_projectile(fighter, PROJECTILE_FIREBALL, 48, goro_cpu_projectile_step);
+/* 49ca90 is Liu Kang's 49c110 task with descriptor 4ed7d0 (rig 50678c,
+ * mesh 50, forward 0x2e14, Y -0x1999, track 5047f8) and contact block
+ * 4ed7e0: speed 0x3333 along the 49c610 heading snapshot, 48-tick life. */
+void goro_fireball_spawn(Fighter *fighter, int task_type) {
+  require(task_type == 83, "Unexpected Goro fireball task");
+  Projectile *projectile = battle_spawn_projectile(fighter, PROJECTILE_FIREBALL, 48, fireball_step);
   if (projectile == NULL) {
     return;
   }
-  projectile->clip = 592;
-  projectile->sample = 14;
-  memcpy(projectile->pos, fighter->body.pos, sizeof projectile->pos);
-  memcpy(projectile->heading, fighter->heading, sizeof projectile->heading);
-  projectile->facing = fighter->facing;
-  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-    projectile->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
-  }
+  projectile->mesh_animation = &fireball_mesh;
+  projectile->initial_mesh = 50;
+  projectile->pos[AXIS_Y] -= 0x1999;
+  projectile->pos[AXIS_X] += q16_mul(fighter->saved_motion[0], 0x2e14);
+  projectile->pos[AXIS_Z] += q16_mul(fighter->saved_motion[1], 0x2e14);
+  projectile->vel[AXIS_X] = q16_mul(fighter->saved_motion[0], 0x3333);
+  projectile->vel[AXIS_Z] = q16_mul(fighter->saved_motion[1], 0x3333);
 }
 
-void goro_cpu_projectile(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &s_cpu_projectile);
+/* HP F,B (4ed828[0]) and the CPU projectile row both enter 49ca70: 49c610
+ * snapshots the pair heading, then clip-592 script 4ed790 launches task 83. */
+void goro_fireball(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter_start_move(fighter, S_PUNCH, &s_fireball);
+  fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
+  fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   goro_entry_retail_script_004ed790(fighter);
 }

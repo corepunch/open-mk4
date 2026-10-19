@@ -209,6 +209,8 @@ def audit(image, character, return_to=None, profile=None):
                 errors.append('stale runtime CPU binding ' + target)
             for target, reference in cpu_bound.items():
                 check_reference(reference, errors, 'runtime CPU ' + target)
+            for target, reference in profile.get('cpu_finish_bindings', {}).items():
+                check_reference(reference, errors, 'runtime CPU finish ' + target)
             try:
                 expected = generate_controls(image, character, profile)
                 output = ROOT / profile['controls_output']

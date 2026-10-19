@@ -48,11 +48,40 @@ static const int goro_s_air_getup_samples[160] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 
 const mframe_t goro_s_air_getup_frames[160] = {{0}};
 const mmove_t goro_s_air_getup_mmove = {.firstframe = 0, .lastframe = 159, .frame = goro_s_air_getup_frames, .samples = goro_s_air_getup_samples};
 
+static const int goro_clip_178_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
+const mframe_t goro_clip_178_frames[56] = {{0}};
+const mmove_t goro_clip_178_mmove = {.firstframe = 0, .lastframe = 55, .frame = goro_clip_178_frames, .samples = goro_clip_178_samples};
+
+static const int goro_clip_181_samples[166] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
+    55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65, 66, 66, 67, 67, 68, 68, 69, 69, 70, 70, 71, 71, 72, 72, 73, 73, 74, 74,
+    75, 75, 76, 76, 77, 77, 78, 78, 79, 79, 80, 80, 81, 81, 82, 82};
+const mframe_t goro_clip_181_frames[166] = {{0}};
+const mmove_t goro_clip_181_mmove = {.firstframe = 0, .lastframe = 165, .frame = goro_clip_181_frames, .samples = goro_clip_181_samples};
+
+static const int goro_clip_182_samples[130] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
+    55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64};
+const mframe_t goro_clip_182_frames[130] = {{0}};
+const mmove_t goro_clip_182_mmove = {.firstframe = 0, .lastframe = 129, .frame = goro_clip_182_frames, .samples = goro_clip_182_samples};
+
+static const int goro_clip_183_samples[68] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33};
+const mframe_t goro_clip_183_frames[68] = {{0}};
+const mmove_t goro_clip_183_mmove = {.firstframe = 0, .lastframe = 67, .frame = goro_clip_183_frames, .samples = goro_clip_183_samples};
+
 static const int goro_clip_202_samples[90] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
     36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44};
 const mframe_t goro_clip_202_frames[90] = {{0}};
 const mmove_t goro_clip_202_mmove = {.firstframe = 0, .lastframe = 89, .frame = goro_clip_202_frames, .samples = goro_clip_202_samples};
+
+static const int goro_s_victim_samples[10] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
+const mframe_t goro_s_victim_frames[10] = {{0}};
+const mmove_t goro_s_victim_mmove = {.firstframe = 0, .lastframe = 9, .frame = goro_s_victim_frames, .samples = goro_s_victim_samples};
 
 static const int goro_clip_261_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
@@ -99,6 +128,14 @@ static const int goro_clip_314_samples[26] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5
 const mframe_t goro_clip_314_frames[26] = {{0}};
 const mmove_t goro_clip_314_mmove = {.firstframe = 0, .lastframe = 25, .frame = goro_clip_314_frames, .samples = goro_clip_314_samples};
 
+static const int goro_clip_319_samples[166] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
+    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
+    55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63, 63, 64, 64, 65, 65, 66, 66, 67, 67, 68, 68, 69, 69, 70, 70, 71, 71, 72, 72, 73, 73, 74, 74,
+    75, 75, 76, 76, 77, 77, 78, 78, 79, 79, 80, 80, 81, 81, 82, 82};
+const mframe_t goro_clip_319_frames[166] = {{0}};
+const mmove_t goro_clip_319_mmove = {.firstframe = 0, .lastframe = 165, .frame = goro_clip_319_frames, .samples = goro_clip_319_samples};
+
 static const int goro_clip_327_samples[16] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
 const mframe_t goro_clip_327_frames[16] = {{0}};
 const mmove_t goro_clip_327_mmove = {.firstframe = 0, .lastframe = 15, .frame = goro_clip_327_frames, .samples = goro_clip_327_samples};
@@ -141,10 +178,10 @@ static const int goro_s_walk_samples[76] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 
 const mframe_t goro_s_walk_frames[76] = {{0}};
 const mmove_t goro_s_walk_mmove = {.firstframe = 0, .lastframe = 75, .frame = goro_s_walk_frames, .samples = goro_s_walk_samples};
 
-static const int goro_s_cpu_projectile_samples[50] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
-    15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24};
-const mframe_t goro_s_cpu_projectile_frames[50] = {{0}};
-const mmove_t goro_s_cpu_projectile_mmove = {.firstframe = 0, .lastframe = 49, .frame = goro_s_cpu_projectile_frames, .samples = goro_s_cpu_projectile_samples};
+static const int goro_s_fireball_samples[50] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24};
+const mframe_t goro_s_fireball_frames[50] = {{0}};
+const mmove_t goro_s_fireball_mmove = {.firstframe = 0, .lastframe = 49, .frame = goro_s_fireball_frames, .samples = goro_s_fireball_samples};
 
 static const int goro_s_hit_samples[66] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16,
     17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32};
@@ -176,12 +213,12 @@ static const int goro_s_kick_samples[62] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 
 const mframe_t goro_s_kick_frames[62] = {{0}};
 const mmove_t goro_s_kick_mmove = {.firstframe = 0, .lastframe = 61, .frame = goro_s_kick_frames, .samples = goro_s_kick_samples};
 
-static const int goro_clip_599_samples[114] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
-    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,
-    36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55,
-    55, 56, 56};
-const mframe_t goro_clip_599_frames[114] = {{0}};
-const mmove_t goro_clip_599_mmove = {.firstframe = 0, .lastframe = 113, .frame = goro_clip_599_frames, .samples = goro_clip_599_samples};
+static const int goro_s_special_punch_samples[114] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
+    15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34,
+    35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 48, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54,
+    54, 55, 55, 56, 56};
+const mframe_t goro_s_special_punch_frames[114] = {{0}};
+const mmove_t goro_s_special_punch_mmove = {.firstframe = 0, .lastframe = 113, .frame = goro_s_special_punch_frames, .samples = goro_s_special_punch_samples};
 
 static const int goro_s_uppercut_samples[74] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35, 35,

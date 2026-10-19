@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void goro_cpu_projectile(Fighter *fighter);
+void goro_fireball(Fighter *fighter);
+void goro_stomp_hold_separation(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
 bool fujin_can_dive(const Fighter *fighter);
 void fujin_dive(Fighter *fighter);
@@ -2092,7 +2093,7 @@ static void check_goro_projectile_completion(void) {
     battle_init(slot ? 4 : 15, slot ? 15 : 4);
     g_battle.phase = PHASE_FIGHT;
     Fighter *owner = &g_battle.fighters[slot];
-    goro_cpu_projectile(owner);
+    goro_fireball(owner);
     for (int tick = 0; tick < 100; ++tick) {
       advance_ticks(1, NULL);
       check(!fighter_fiber_active(owner), "Goro projectile owner must complete through frame tables without a retired-fiber callback");
@@ -2231,6 +2232,105 @@ static void check_reptile_reconnected_specials(void) {
     advance_ticks(1, NULL);
     check(fighter_move(&g_battle.fighters[slot])->clip == 106, "Reptile CPU far row must select the forward attack");
     advance_ticks(180, NULL);
+  }
+}
+
+/* Goro frame-only specials: retail command entries in both slots. */
+static void goro_scene(int slot, q16 distance, Fighter **owner, Fighter **victim) {
+  battle_init(slot ? 4 : 15, slot ? 15 : 4);
+  g_battle.phase = PHASE_FIGHT;
+  *owner = &g_battle.fighters[slot];
+  *victim = &g_battle.fighters[1 - slot];
+  (*owner)->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
+  (*victim)->body.pos[AXIS_X] = -(*owner)->body.pos[AXIS_X];
+}
+
+static void goro_tokens(Fighter *owner, const CommandToken *tokens, int count, Button button) {
+  bool left = fighter_opponent(owner)->body.pos[AXIS_X] < owner->body.pos[AXIS_X];
+  for (int i = 0; i < count; ++i) {
+    Button direction = tokens[i] == TOKEN_UP     ? BUTTON_UP
+                       : tokens[i] == TOKEN_DOWN ? BUTTON_DOWN
+                       : tokens[i] == TOKEN_BACK ? (left ? BUTTON_RIGHT : BUTTON_LEFT)
+                                                 : (left ? BUTTON_LEFT : BUTTON_RIGHT);
+    fighter_press(owner, direction);
+  }
+  fighter_press(owner, button);
+  advance_ticks(1, NULL);
+}
+
+static void goro_settle(Fighter *owner, Fighter *victim, int ticks) {
+  for (int tick = 0; tick < ticks; ++tick) {
+    advance_ticks(1, NULL);
+    check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Goro specials and their victims must stay on frame tables");
+  }
+}
+
+static void check_goro_frame_specials(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    Fighter *owner, *victim;
+    /* 43b320: rise, relocate above the victim, drop and stomp once for 30%. */
+    goro_scene(slot, 4 * Q16_ONE, &owner, &victim);
+    goro_tokens(owner, (const CommandToken[]){TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, BUTTON_HIGH_KICK);
+    check(fighter_move(owner)->clip == 601 && owner->action == 0x409, "Goro HK F,F,B must enter his clip-601 leap stomp");
+    q16 lowest = 0;
+    for (int tick = 0; tick < 40; ++tick) {
+      advance_ticks(1, NULL);
+      lowest = owner->body.pos[AXIS_Y] < lowest ? owner->body.pos[AXIS_Y] : lowest;
+    }
+    check(lowest <= -0x3cccc, "Goro leap must rise past its relocation height");
+    goro_settle(owner, victim, 400);
+    check(victim->health == Q16_ONE - 0x4ccc, "Goro leap stomp must deal its native 30% once");
+    check(owner->state == S_IDLE && victim->state == S_IDLE && !(owner->flags & FF_HOLD_SEPARATION) && owner->body.physics == NULL,
+        "Goro leap stomp and its 191 victim must both return to control");
+
+    /* Interrupting the leap before its drop must not leave a later stomp. */
+    goro_scene(slot, 4 * Q16_ONE, &owner, &victim);
+    goro_tokens(owner, (const CommandToken[]){TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, BUTTON_HIGH_KICK);
+    advance_ticks(20, NULL);
+    battle_react(owner, 10);
+    goro_settle(owner, victim, 400);
+    check(victim->health == Q16_ONE && owner->body.physics != goro_stomp_hold_separation && owner->state == S_IDLE,
+        "Interrupted Goro leap must cancel its drop and stomp hold");
+
+    /* 43b7e0: the landing quake damages only a grounded victim. */
+    for (int airborne = 0; airborne < 2; ++airborne) {
+      goro_scene(slot, 3 * Q16_ONE, &owner, &victim);
+      goro_tokens(owner, (const CommandToken[]){TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN, TOKEN_DOWN}, 4, BUTTON_HIGH_KICK);
+      check(fighter_move(owner)->clip == 602, "Goro HK B,F,D,D must blend into clip 602");
+      if (airborne) {
+        victim->body.pos[AXIS_Y] = -0x40000;
+        victim->body.gravity = 0x147;
+      }
+      goro_settle(owner, victim, 300);
+      check(victim->health == (airborne ? Q16_ONE : Q16_ONE - 0x3d70), "Goro quake must damage only a grounded victim");
+      check(owner->state == S_IDLE && victim->state == S_IDLE, "Goro quake and reaction 136 must return to control");
+    }
+
+    /* 43b640: close clip-600 uppercut, D[35] and reaction 192. */
+    goro_scene(slot, Q16_ONE, &owner, &victim);
+    goro_tokens(owner, (const CommandToken[]){TOKEN_DOWN, TOKEN_DOWN}, 2, BUTTON_HIGH_PUNCH);
+    check(fighter_move(owner)->clip == 600, "Goro HP D,D must bind clip 600");
+    goro_settle(owner, victim, 300);
+    check(victim->health == Q16_ONE - 0x23d7 && victim->state == S_IDLE && owner->state == S_IDLE,
+        "Goro uppercut must deal D[35] once and release reaction 192 to its getup");
+
+    /* 49ca70: HP F,B launches the independent C[22] object. */
+    goro_scene(slot, 3 * Q16_ONE, &owner, &victim);
+    goro_tokens(owner, (const CommandToken[]){TOKEN_FORWARD, TOKEN_BACK}, 2, BUTTON_HIGH_PUNCH);
+    check(fighter_move(owner)->clip == 592, "Goro HP F,B must enter his clip-592 fireball");
+    goro_settle(owner, victim, 120);
+    check(victim->health == Q16_ONE - 0x23d7 && owner->state == S_IDLE, "Goro fireball must hit once with C[22] and return its owner");
+
+    /* 460f40/461030 stance selections: standing HP and back+HK. */
+    goro_scene(slot, 3 * Q16_ONE, &owner, &victim);
+    fighter_press(owner, BUTTON_HIGH_PUNCH);
+    advance_ticks(1, NULL);
+    check(fighter_move(owner)->clip == 296, "Goro ranged HP must enter native high punch 46d290");
+    goro_scene(slot, 3 * Q16_ONE, &owner, &victim);
+    owner->held = BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT);
+    fighter_press(owner, BUTTON_HIGH_KICK);
+    advance_ticks(1, NULL);
+    check(fighter_move(owner)->clip == 313, "Goro back+HK must enter the shared roundhouse 46f1f0");
   }
 }
 
@@ -2677,7 +2777,7 @@ static void drive_owned_command(int slot, FighterFn entry) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 8, 9, 11, 12, 13, 17};
+  const int rosters[] = {7, 8, 9, 11, 12, 13, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -3742,6 +3842,7 @@ int main(void) {
   check_jax_air_grab_command();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
+  check_goro_frame_specials();
   check_cage_special_commands();
   check_cage_shadow_kick_branches();
   check_cage_powered_punch_branches();

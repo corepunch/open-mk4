@@ -9,6 +9,11 @@ void fujin_wind_slam_victim(Fighter *fighter);
 void fujin_triple_victim(Fighter *fighter);
 void fujin_grab_victim(Fighter *fighter);
 void fujin_second_victim(Fighter *fighter);
+void goro_quake_victim(Fighter *fighter);
+void goro_punch_victim(Fighter *fighter);
+void goro_kick_victim(Fighter *fighter);
+void goro_stomp_victim(Fighter *fighter);
+void goro_uppercut_victim(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
 
@@ -878,6 +883,11 @@ static const FighterFn reactions[256] = {
   [140] = shinnok_weapon_reaction,
   [141] = shinnok_weapon_reaction,
   [185] = cage_second_victim_hit,
+  [136] = goro_quake_victim,
+  [189] = goro_punch_victim,
+  [190] = goro_kick_victim,
+  [191] = goro_stomp_victim,
+  [192] = goro_uppercut_victim,
 };
 // clang-format on
 
