@@ -3,6 +3,7 @@
 static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 32, 0x0, NULL, jarek_upward_ball},
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0x0, weapon_can_draw, jarek_weapon_action},
+  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, 0x0, NULL, jarek_blade},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_spike_finish, jarek_spike_fatality},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_DOWN, TOKEN_BACK}, 3, 32, 0x0, NULL, jarek_quake},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_fan_finish, jarek_fan_fatality},
@@ -16,6 +17,7 @@ static const CpuMoves retail_cpu_moves = {.enter = {
                                               [CPU_SPECIAL_NEAR] = jarek_cannonball,
                                               [CPU_SPECIAL_1] = jarek_cannonball,
                                               [CPU_SPECIAL_2] = jarek_cannonball,
+                                              [CPU_PROJECTILE] = jarek_blade,
                                               [CPU_FINISH_FAN] = jarek_fan_fatality,
                                               [CPU_FINISH_SPIKE] = jarek_spike_fatality,
                                           }};

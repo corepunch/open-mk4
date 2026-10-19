@@ -815,9 +815,6 @@ CHARACTER_BINDINGS[12] = {
                       evidence='43db50 continues from victim clip 4e01a0 into owner release clip 4e01b0'),
     0x43dc90: Binding('jarek_script_fan_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
                       evidence='43dc90 enters a clip-driven BattleEvent for Jarek finisher camera and scene cleanup'),
-    0x497580: Binding('jarek_ai_projectile_spawn', 'game/jarek/character.c', ('spawn',), ('fighter', 'task_type'),
-                      flow='independent', task_types=(78,),
-                      evidence='497580 creates heading object 4ed170 and starts the observed 48-tick projectile contact waiter; descriptor payload is unavailable'),
     0x46a6b0: Binding('jarek_script_kick_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
                       evidence='46a6b0 resolves Jarek high-kick contact and recovery'),
     0x46a950: Binding('jarek_script_low_kick_avoid', 'game/jarek/character.c', ('call',),
@@ -844,8 +841,6 @@ CHARACTER_BINDINGS[12] = {
                       evidence='46f270 resolves Jarek roundhouse contact and recovery'),
     0x467fc0: Binding('mk4_script_spike_tail', 'game/script.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes the stage-fatality continuation'),
-    0x497b60: Binding('jarek_script_sweep_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
-                      evidence='497b60 enters Jarek sweep contact and recovery through the existing portable contact helper'),
 }
 
 CHARACTER_BINDINGS[15] = {
@@ -1571,3 +1566,6 @@ CHARACTER_BINDINGS[12][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.
     evidence='488b40 KO-aware clip185 side getup after the reaction-42 ball knockdown 4e9658')
 CHARACTER_BINDINGS[12][0x47b600] = Binding('jarek_quake_tail', 'game/jarek/moves/quake.c', ('tail',), flow='terminal', mmove=True,
     evidence='47b600 sets action200f, damages a grounded peer 0x23d7 with reaction136 via48ee60/48de80/480f80, then47b680 enters4e81c8')
+CHARACTER_BINDINGS[12][0x497580] = Binding('jarek_blade_spawn', 'game/jarek/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
+    flow='independent', task_types=(78,), mmove=True,
+    evidence='497580 spawns heading object 4ed170 (share2 mesh34) .2 per visit with 4ed180 C4 contacts: 4976b0 flight, 4978e0 stab, 497730 blocked deflect, 48-visit expiry')

@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "b93df186f6579468d849813641c0ffa8a9749de2914af86788cf708dea64b4fd",
+  "inventory_sha256": "e6a0436e512516d8cabdfe41f8ffba1d4c1ad0ddafdd24b58a6ddfe2fd8350d3",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -45,7 +45,6 @@
     "0x4e69b0",
     "0x4e81a8",
     "0x4ed118",
-    "0x4ed190",
     "0x4e6270",
     "0x4ec4f0",
     "0x4e66d0",
@@ -198,9 +197,9 @@
       "evidence": "47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     },
     "0x497540": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_497540",
-      "evidence": "Jarek CPU projectile target enters script 4ed118; typed CPU row 0xdf9d8"
+      "source": "game/jarek/moves/projectile.c",
+      "symbol": "jarek_blade",
+      "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
     "0x46d260": {
       "source": "game/jarek/character.c",
@@ -309,11 +308,6 @@
       "symbol": "jarek_weapon_action",
       "evidence": "Jarek target 46d1d0 selects throw, follow-up equip or generated draw script 4e62c0"
     },
-    "cpu_497540": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_497540",
-      "evidence": "Jarek CPU projectile row target 0x497540 enters generated script 0x4ed118; both conditional paths bind clip 27 and target sample 17 (0x211 low byte) via opcodes 0x47 and 0x4d, with two-sample stepping on fast startup; bounded raw EXE/script listing"
-    },
     "close_hp": {
       "source": "game/jarek/moves/combos.c",
       "symbol": "jarek_close_hp",
@@ -368,6 +362,11 @@
       "source": "game/jarek/moves/quake.c",
       "symbol": "jarek_quake",
       "evidence": "47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
+    },
+    "blade": {
+      "source": "game/jarek/moves/projectile.c",
+      "symbol": "jarek_blade",
+      "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     }
   },
   "stances": {
@@ -607,6 +606,17 @@
       "symbol": "jarek_quake_victim",
       "evidence": "47b600 reaction136: 4ea4e8[136] ->4834d0 disarms, picks a4ea8f8 voice and enters generated4e95c8 clip182 stumble.",
       "adaptation": "The shared reaction table enters this exported victim entry for any roster."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Blade C[4] blocked reaction2: 4ea4e8[2] ->486ca0 shared projectile block."
+    },
+    "68": {
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_generated_reaction",
+      "evidence": "Blade C[4] hit reaction68: 4ea4e8[68] ->486750, the shared generated victim stream registered by Sonya.",
+      "adaptation": "The shared reaction table enters the existing generated reaction-68 victim program for any roster."
     }
   },
   "schema": 1,
@@ -651,6 +661,11 @@
       "source": "game/jarek/moves/quake.c",
       "symbol": "jarek_quake",
       "evidence": "Typed HK record 0x4e4448 B,D,B selects native 47b5d0. 47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
+    },
+    "0x497540": {
+      "source": "game/jarek/moves/projectile.c",
+      "symbol": "jarek_blade",
+      "evidence": "Typed LP record 0x4e4418 D,B selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     }
   },
   "command_predicates": {
@@ -699,13 +714,19 @@
     "0x4e9658",
     "0x4e81a8",
     "0x4e81c8",
-    "0x4e95c8"
+    "0x4e95c8",
+    "0x4ed118"
   ],
   "cpu_bindings": {
     "0x47b310": {
       "source": "game/jarek/moves/ball.c",
       "symbol": "jarek_cannonball",
       "evidence": "Typed near/medium/far Jarek CPU rows 4df918/958/998 all select native 47b310 cannonball."
+    },
+    "0x497540": {
+      "source": "game/jarek/moves/projectile.c",
+      "symbol": "jarek_blade",
+      "evidence": "Typed Jarek CPU projectile row 4df9d8 selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     }
   }
 }

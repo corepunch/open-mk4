@@ -1715,6 +1715,51 @@ static void check_jarek_quake(void) {
   }
 }
 
+/* Jarek: D,B+LP and the CPU projectile row 497540 throw the 4ed170 blade. */
+static void check_jarek_blade(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int branch = 0; branch < 4; ++branch) {
+      battle_init(slot ? 4 : 12, slot ? 12 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 2 * Q16_ONE : -2 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      if (branch == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      } else if (branch == 2) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+      }
+      if (branch == 3) {
+        check(battle_cpu_action(owner, CPU_PROJECTILE), "Jarek's CPU projectile row must be registered");
+      } else {
+        fighter_press(owner, BUTTON_DOWN);
+        fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
+        fighter_press(owner, BUTTON_LOW_PUNCH);
+      }
+      advance_ticks(1, input);
+      check(fighter_move(owner)->clip == 27 && owner->action == 0x310, "Jarek's blade throw must enter 4ed118 with action 310");
+      bool spawned = false;
+      for (int tick = 0; tick < 120; ++tick) {
+        advance_ticks(1, input);
+        check(!fighter_fiber_active(owner), "Jarek's blade throw must run on frame programs");
+        for (int i = 0; i < MAX_PROJECTILES; ++i) {
+          spawned |= g_battle.projectiles[i].kind == PROJECTILE_FIREBALL && g_battle.projectiles[i].mesh_animation != NULL;
+        }
+      }
+      check(spawned && owner->state == S_IDLE, "The blade must leave as an independent object while Jarek recovers");
+      q16 expected = branch == 0 || branch == 3 ? Q16_ONE - 0x1eb8 : branch == 1 ? Q16_ONE - q16_mul(0x1eb8, 0x3333) : Q16_ONE;
+      if (victim->health != expected) {
+        fprintf(stderr, "Jarek blade slot%d branch%d health %d expected %d\n", slot, branch, victim->health, expected);
+      }
+      check(victim->health == expected, "The blade must hit once with C[4], chip on block and pass over a crouch");
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        check(g_battle.projectiles[i].kind == 0, "The blade object must expire after its stab, deflect or flight lifetime");
+      }
+    }
+  }
+}
+
 static void check_jarek_weapon_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int strike = 0; strike < 4; ++strike) {
@@ -4789,6 +4834,7 @@ int main(void) {
   check_jarek_weapon_commands();
   check_jarek_balls();
   check_jarek_quake();
+  check_jarek_blade();
   check_shinnok_weapon_commands();
   check_shinnok_morph();
   check_fujin_crossbow();

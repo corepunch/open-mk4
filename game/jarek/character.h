@@ -26,7 +26,6 @@ enum {
   JAREK_FAN_FINISH
 };
 
-void jarek_ai_projectile_spawn(Fighter *fighter, int task_type);
 void jarek_block(Fighter *fighter);
 void jarek_crouch(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
@@ -65,13 +64,13 @@ void jarek_script_lp_select(Fighter *fighter);
 void jarek_script_opponent_reaction(Fighter *fighter, int reaction);
 void jarek_script_roundhouse_finish(Fighter *fighter);
 void jarek_script_roundhouse_start(Fighter *fighter);
-void jarek_script_sweep_finish(Fighter *fighter);
 void jarek_script_weapon_draw_finish(Fighter *fighter);
-extern const AttackRecord jarek_selector_25_record;
 void jarek_spike_fatality(Fighter *fighter);
 void jarek_sweep(Fighter *fighter);
 void jarek_cannonball(Fighter *fighter);
 void jarek_quake(Fighter *fighter);
+void jarek_blade(Fighter *fighter);
+void jarek_blade_spawn(Fighter *fighter, int task_type);
 void jarek_quake_tail(Fighter *fighter);
 void jarek_entry_retail_script_004e81c8(Fighter *fighter);
 void jarek_entry_retail_script_004e95c8(Fighter *fighter);
@@ -115,7 +114,6 @@ void jarek_entry_retail_script_004e6878(Fighter *fighter);
 void jarek_entry_retail_script_004e6950(Fighter *fighter);
 void jarek_entry_retail_script_004e81a8(Fighter *fighter);
 void jarek_entry_retail_script_004ed118(Fighter *fighter);
-void jarek_entry_retail_script_004ed190(Fighter *fighter);
 extern const MoveDef jarek_s_block;
 extern const MoveDef jarek_s_crouch;
 extern const MoveDef jarek_s_high_kick;
