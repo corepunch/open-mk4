@@ -975,7 +975,6 @@ void weapon_pickup(Fighter *fighter);
 void weapon_hop_resting(int type);
 Projectile *weapon_release_object(Fighter *fighter, int lifetime, ProjectileFn step);
 void weapon_object_settle(Projectile *p);
-void weapon_object_drop(Projectile *p);
 void weapon_followup_victim(Fighter *fighter);
 void weapon_stance(Fighter *fighter, int state);
 void scene_begin(Fighter *fighter, const SceneClip *clips, int count, int loop_from);

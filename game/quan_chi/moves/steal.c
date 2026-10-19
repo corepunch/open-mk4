@@ -18,7 +18,7 @@ enum {
 static void stolen_weapon_step(Projectile *weapon) {
   const Fighter *thief = fighter_opponent(&g_battle.fighters[weapon->owner]);
   if (thief->action != 0x401) {
-    weapon_object_drop(weapon);
+    weapon_object_settle(weapon);
     return;
   }
   double dx = (double)thief->body.pos[AXIS_X] - weapon->pos[AXIS_X];
