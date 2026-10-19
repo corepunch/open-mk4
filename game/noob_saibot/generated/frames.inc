@@ -48,12 +48,11 @@ static const int noob_saibot_clip_067_samples[36] = {
 const mframe_t noob_saibot_clip_067_frames[36] = {{0}};
 const mmove_t noob_saibot_clip_067_mmove = {.firstframe = 0, .lastframe = 35, .frame = noob_saibot_clip_067_frames, .samples = noob_saibot_clip_067_samples};
 
-static const int noob_saibot_s_noob_air_throw_samples[90] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14,
-    15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34,
-    34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44};
-const mframe_t noob_saibot_s_noob_air_throw_frames[90] = {{0}};
-const mmove_t noob_saibot_s_noob_air_throw_mmove = {
-    .firstframe = 0, .lastframe = 89, .frame = noob_saibot_s_noob_air_throw_frames, .samples = noob_saibot_s_noob_air_throw_samples};
+static const int noob_saibot_s_slam_samples[90] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
+    35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44};
+const mframe_t noob_saibot_s_slam_frames[90] = {{0}};
+const mmove_t noob_saibot_s_slam_mmove = {.firstframe = 0, .lastframe = 89, .frame = noob_saibot_s_slam_frames, .samples = noob_saibot_s_slam_samples};
 
 static const int noob_saibot_clip_076_samples[98] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
     16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
@@ -74,6 +73,11 @@ static const int noob_saibot_clip_080_samples[150] = {0, 0, 1, 1, 2, 2, 3, 3, 4,
     74, 74};
 const mframe_t noob_saibot_clip_080_frames[150] = {{0}};
 const mmove_t noob_saibot_clip_080_mmove = {.firstframe = 0, .lastframe = 149, .frame = noob_saibot_clip_080_frames, .samples = noob_saibot_clip_080_samples};
+
+static const int noob_saibot_s_teleport_samples[20] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9};
+const mframe_t noob_saibot_s_teleport_frames[20] = {{0}};
+const mmove_t noob_saibot_s_teleport_mmove = {
+    .firstframe = 0, .lastframe = 19, .frame = noob_saibot_s_teleport_frames, .samples = noob_saibot_s_teleport_samples};
 
 static const int noob_saibot_s_victory_samples[178] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
     15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34,
@@ -113,11 +117,10 @@ static const int noob_saibot_clip_143_samples[58] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 
 const mframe_t noob_saibot_clip_143_frames[58] = {{0}};
 const mmove_t noob_saibot_clip_143_mmove = {.firstframe = 0, .lastframe = 57, .frame = noob_saibot_clip_143_frames, .samples = noob_saibot_clip_143_samples};
 
-static const int noob_saibot_s_noob_air_thrown_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14,
-    14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
-const mframe_t noob_saibot_s_noob_air_thrown_frames[56] = {{0}};
-const mmove_t noob_saibot_s_noob_air_thrown_mmove = {
-    .firstframe = 0, .lastframe = 55, .frame = noob_saibot_s_noob_air_thrown_frames, .samples = noob_saibot_s_noob_air_thrown_samples};
+static const int noob_saibot_s_slammed_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
+    15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
+const mframe_t noob_saibot_s_slammed_frames[56] = {{0}};
+const mmove_t noob_saibot_s_slammed_mmove = {.firstframe = 0, .lastframe = 55, .frame = noob_saibot_s_slammed_frames, .samples = noob_saibot_s_slammed_samples};
 
 static const int noob_saibot_s_lp_thrown_samples[52] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15,
     15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25};
@@ -209,6 +212,10 @@ static const int noob_saibot_s_high_punch_second_samples[38] = {
 const mframe_t noob_saibot_s_high_punch_second_frames[38] = {{0}};
 const mmove_t noob_saibot_s_high_punch_second_mmove = {
     .firstframe = 0, .lastframe = 37, .frame = noob_saibot_s_high_punch_second_frames, .samples = noob_saibot_s_high_punch_second_samples};
+
+static const int noob_saibot_s_recoil_samples[18] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8};
+const mframe_t noob_saibot_s_recoil_frames[18] = {{0}};
+const mmove_t noob_saibot_s_recoil_mmove = {.firstframe = 0, .lastframe = 17, .frame = noob_saibot_s_recoil_frames, .samples = noob_saibot_s_recoil_samples};
 
 static const int noob_saibot_s_jump_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
     16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};

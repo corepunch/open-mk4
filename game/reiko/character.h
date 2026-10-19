@@ -107,4 +107,18 @@ void reiko_entry_retail_script_004e66f0(Fighter *fighter);
 void reiko_entry_retail_script_004ea040(Fighter *fighter);
 void reiko_entry_retail_script_004ea0b8(Fighter *fighter);
 void reiko_entry_retail_script_004e0138(Fighter *fighter);
+void reiko_entry_retail_script_004e82b8(Fighter *fighter);
+void reiko_entry_retail_script_004e82e0(Fighter *fighter);
+void reiko_entry_retail_script_004e8310(Fighter *fighter);
+void reiko_entry_retail_script_004e8818(Fighter *fighter);
+void reiko_entry_retail_script_004e9880(Fighter *fighter);
+void reiko_entry_retail_script_004e9880(Fighter *fighter);
+void reiko_teleport(Fighter *fighter);
+void reiko_script_teleport_vanish(Fighter *fighter);
+void reiko_script_teleport_slam_fall(Fighter *fighter);
+void reiko_script_teleport_slam_drop(Fighter *fighter);
+void reiko_script_teleport_land(Fighter *fighter);
+void reiko_slam_tail(Fighter *fighter);
+void reiko_slam_released_fall(Fighter *fighter);
+void reiko_slam_reaction(Fighter *victim);
 #endif

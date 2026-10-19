@@ -428,11 +428,7 @@ bool mk4_can_air_throw(const Fighter *fighter) {
          !(victim->flags & (FF_REACTING | FF_UNTOUCHABLE | FF_PAIRED));
 }
 
-static bool air_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
-  if (!mk4_can_air_throw(fighter)) {
-    fighter_ready(fighter);
-    return false;
-  }
+static void air_pair_capture(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
   Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
   if (victim->armed && victim->disarm != NULL) {
     victim->disarm(victim);
@@ -453,6 +449,15 @@ static bool air_throw_start(Fighter *fighter, const MoveDef *owner_move, const M
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  victim->capture_action = fighter->action;
+}
+
+static bool air_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
+  if (!mk4_can_air_throw(fighter)) {
+    fighter_ready(fighter);
+    return false;
+  }
+  air_pair_capture(fighter, owner_move, victim_move);
   return true;
 }
 
@@ -470,7 +475,7 @@ void mk4_script_air_getup(Fighter *victim) {
 
 static void air_victim_frame(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
-  if (owner->pending != NULL || owner->action != 0x502) {
+  if (owner->pending != NULL || owner->action != victim->capture_action) {
     air_throw_drop(victim);
     victim->sample_override = air_throw_release_sample(victim);
   }
@@ -514,7 +519,7 @@ static void air_generated_cleanup(Fighter *fighter) {
 
 static void air_frame_victim_tick(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
-  if (owner->pending != NULL || owner->action != ACTION_RETAIL_0502 || !(owner->flags & FF_PAIRED)) {
+  if (owner->pending != NULL || owner->action != victim->capture_action || !(owner->flags & FF_PAIRED)) {
     air_throw_drop(victim);
     victim->sample_override = air_throw_release_sample(victim);
     victim->paired_release(victim);
@@ -566,10 +571,18 @@ void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn vi
 /* Roster-specific air throws keep the shared 48f9f0 pair acquisition and
  * captured-victim hold while selecting their own owner and victim clips. */
 void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
-  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
-  if (!air_throw_start(fighter, owner_move, victim_move)) {
+  if (!mk4_can_air_throw(fighter)) {
+    fighter_ready(fighter);
     return;
   }
+  mk4_air_pair_frames(fighter, owner_move, victim_move, owner_script, victim_script);
+}
+
+/* The same capture and held victim after a caller-owned contact decision,
+ * such as a teleport slam that can take a grounded peer. */
+void mk4_air_pair_frames(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
+  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
+  air_pair_capture(fighter, owner_move, victim_move);
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   victim->paired_release = victim_script;
   fighter_mmove_phase(victim, &air_frame_victim_phase);

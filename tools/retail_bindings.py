@@ -1206,6 +1206,19 @@ CHARACTER_BINDINGS[17][0x46aca0] = Binding(
     flow='terminal', evidence='46aca0 subtracts 0x30a3 from the peer, then 46acc0 applies reaction 105, the 4e5ec0 hop and the 470080 flip tail')
 
 
+# Reiko/Noob Saibot D,U teleport 47c070 (Up record 4e4e20, both close CPU rows).
+for _cid, _name in ((7, 'reiko'), (17, 'noob_saibot')):
+    _source = 'game/%s/moves/teleport.c' % _name
+    CHARACTER_BINDINGS[_cid][0x47c0a0] = Binding(_name + '_script_teleport_vanish', _source, ('tail',), flow='terminal', mmove=True,
+        evidence='47c0a0 snapshots the peer (480cc0), waits for Y <= -4 (480a60), relocates below the floor past the peer (480b20), faces it and emerges with gravity 0x51e')
+    CHARACTER_BINDINGS[_cid][0x47c360] = Binding(_name + '_script_teleport_slam_fall', _source, ('tail',), flow='terminal', mmove=True,
+        evidence='47c360 installs 47c4d0 (+0x51e per visit, copied to the peer) and enters 4e8310')
+    CHARACTER_BINDINGS[_cid][0x47c390] = Binding(_name + '_script_teleport_slam_drop', _source, ('tail',), flow='terminal', mmove=True,
+        evidence='47c390 waits for Y >= 3, sets both bodies to Y -4 with gravity 0x51e, waits for landing and enters 47c4b0 damage 0x1c28 and 46acc0')
+    CHARACTER_BINDINGS[_cid][0x47ffc0] = Binding(_name + '_script_teleport_land', _source, ('tail',), flow='terminal', mmove=True,
+        evidence='47ffc0 enters shared landing 46fd90, then the controller')
+
+
 # Shared close attacks retain character-owned generated startup and native tails.
 for _cid in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
     from character_catalog import CHARACTERS as _CONTROL_CHARACTERS

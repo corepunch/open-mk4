@@ -37,9 +37,9 @@
       "symbol": "noob_saibot_uppercut"
     },
     "0x47c070": {
-      "evidence": "Paired aerial action route uses Noob Saibot air-throw entry.",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_throw"
+      "source": "game/noob_saibot/moves/teleport.c",
+      "symbol": "noob_saibot_teleport",
+      "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "0x496db0": {
       "evidence": "Noob Saibot CPU punch action route uses generated jab entry.",
@@ -199,6 +199,19 @@
       "count": 45,
       "sample": 27,
       "evidence": "46ac90 enters this landing wait after 4e5ea0 advanced the owner and victim to sample 27."
+    },
+    "0x4e8310": {
+      "clip": 74,
+      "count": 45,
+      "sample": 18,
+      "paired": true,
+      "evidence": "4e82e0 opens owner clip 74 and victim clip 150 and advances the pair to 18; 47c360 then enters this continuation."
+    },
+    "0x4e8818": {
+      "clip": 301,
+      "count": 9,
+      "sample": 8,
+      "evidence": "47fec0 -> 47ff20/47db60 binds clip 301 at its last sample before 47ff80 enters this blocked-slam landing."
     }
   },
   "generated_scripts": [
@@ -249,10 +262,14 @@
     "0x4e66f0",
     "0x4ea040",
     "0x4ea0b8",
-    "0x4e9880"
+    "0x4e9880",
+    "0x4e82b8",
+    "0x4e82e0",
+    "0x4e8310",
+    "0x4e8818"
   ],
   "integration_source": "game/noob_saibot/character.c",
-  "inventory_sha256": "55ba1105c90cd4fed4cf337f272901f1171eac7692b9275f05d0d20f12c3cf40",
+  "inventory_sha256": "57c96c08490d6165019cb48d2ad51de19b2d892437c914d3656ad39f8a6f4809",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -393,6 +410,11 @@
       "source": "game/weapons.c",
       "symbol": "weapon_throw",
       "evidence": "Shared498270 weapon throw, retained type/model and independent pickup/drop lifecycle."
+    },
+    "teleport": {
+      "source": "game/noob_saibot/moves/teleport.c",
+      "symbol": "noob_saibot_teleport",
+      "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     }
   },
   "output": "game/noob_saibot/generated/scripts.inc",
@@ -571,9 +593,22 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "105": {
-      "source": "game/noob_saibot/moves/throws.c",
+      "source": "game/noob_saibot/moves/slam.c",
       "symbol": "noob_saibot_slam_reaction",
+      "adaptation": "The landing owner applies the reaction directly and starts its own generated 4e9880.",
       "evidence": "46acc0 -> 480f50[105] -> 484760: disarm, floor snap, stop and generated 4e9880."
+    },
+    "88": {
+      "source": "game/noob_saibot/moves/teleport.c",
+      "symbol": "noob_saibot_teleport",
+      "adaptation": "D14 has no damage; 480fc0(8) replaces this contact reaction in the same visit with the shared paired capture.",
+      "evidence": "47c2d5 D[14] hit/air reaction 88, superseded by 47c33e capture before the victim runs it."
+    },
+    "24": {
+      "source": "game/noob_saibot/moves/teleport.c",
+      "symbol": "noob_saibot_teleport",
+      "adaptation": "D14 has no damage; 480fc0(8) replaces this contact reaction in the same visit with the shared paired capture.",
+      "evidence": "47c2d5 D[14] hit/air reaction 24, superseded by 47c33e capture before the victim runs it."
     }
   },
   "return_to": "fighter_ready",
@@ -671,6 +706,11 @@
       "source": "game/noob_saibot/moves/weapon.c",
       "symbol": "noob_saibot_weapon_action",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
+    },
+    "0x47c070": {
+      "source": "game/noob_saibot/moves/teleport.c",
+      "symbol": "noob_saibot_teleport",
+      "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     }
   },
   "command_predicates": {
@@ -729,6 +769,17 @@
     "0x4e5e78",
     "0x4e5ea0",
     "0x4e5eb0",
-    "0x4e9880"
-  ]
+    "0x4e9880",
+    "0x4e82b8",
+    "0x4e82e0",
+    "0x4e8310",
+    "0x4e8818"
+  ],
+  "cpu_bindings": {
+    "0x47c070": {
+      "source": "game/noob_saibot/moves/teleport.c",
+      "symbol": "noob_saibot_teleport",
+      "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
+    }
+  }
 }

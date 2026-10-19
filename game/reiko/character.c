@@ -239,3 +239,23 @@ void reiko_entry_retail_script_004ea0b8(Fighter *fighter) {
 void reiko_entry_retail_script_004e0138(Fighter *fighter) {
   retail_script_004e0138(fighter);
 }
+
+void reiko_entry_retail_script_004e82b8(Fighter *fighter) {
+  retail_script_004e82b8(fighter);
+}
+
+void reiko_entry_retail_script_004e82e0(Fighter *fighter) {
+  retail_script_004e82e0(fighter);
+}
+
+void reiko_entry_retail_script_004e8310(Fighter *fighter) {
+  retail_script_004e8310(fighter);
+}
+
+void reiko_entry_retail_script_004e8818(Fighter *fighter) {
+  retail_script_004e8818(fighter);
+}
+
+void reiko_entry_retail_script_004e9880(Fighter *fighter) {
+  retail_script_004e9880(fighter);
+}

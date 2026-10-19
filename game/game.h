@@ -533,6 +533,7 @@ struct Fighter {
   int sample_override; /* -1 uses the move playback, otherwise an explicit script cursor */
   int script_phase;
   FighterFn paired_release; /* native peer continuation selected by a paired move */
+  int capture_action;       /* owner action that keeps a shared air capture held */
   q16 saved_motion[3];      /* native save/restore around blocking generated playback */
   const WeaponStrike *weapon_strike;
   int blend_clip, blend_sample, blend_ticks, blend_duration;

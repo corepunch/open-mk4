@@ -158,6 +158,10 @@ def _moves_for(character):
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 33),)),
+            # Up record 4e4e20 (shared by Noob Saibot) and both close CPU rows.
+            teleport=move(0x47c070, (('rise', 0x4e82b8), ('slam opener', 0x4e82e0), ('slam fall', 0x4e8310), ('blocked landing', 0x4e8818), ('slam victim', 0x4e9880)),
+                          (('D', 14),), native=(('vanish/relocate/emerge', 0x47c0a0), ('landing', 0x47c230), ('air BLOCK', 0x47c2a0), ('blocked recoil', 0x47fec0),
+                                               ('slam fall', 0x47c360), ('slam drop', 0x47c390), ('slam damage', 0x47c4b0), ('slam tail', 0x46acc0))),
         )
     if character == 7:
         shared.update(type69_weapon_moves())
