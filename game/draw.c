@@ -363,6 +363,43 @@ static Mat3 piece_basis(const Assets *assets, int index) {
   return mat3_mul(spin, piece->orientation);
 }
 
+/* A limb clip (e.g. Jax's 446/447, three channels) animates a detached
+ * subtree of the source rig: its root takes channel 0 and the clip's root
+ * translation, each descendant the next channel in bone order. */
+static void draw_limb(Canvas *cv, Camera camera, const SceneAttachment *attachment, const ScenePiece *piece, const Clip *clip, const SceneLight *light) {
+  const Character *model = piece->model;
+  const Frame *frame = &clip->frames.data[attachment->sample];
+  Pose bones[MK4_MAX_BONES];
+  bool member[MK4_MAX_BONES] = {false};
+  size_t channel = 0;
+  for (size_t n = (size_t)piece->bone; n < model->bones.count; ++n) {
+    const Bone *bone = &model->bones.data[n];
+    member[n] = (int)n == piece->bone || (bone->parent >= 0 && member[bone->parent]);
+    if (!member[n]) {
+      continue;
+    }
+    Vec3 angle = channel < frame->angles.count ? frame->angles.data[channel] : (Vec3){0};
+    ++channel;
+    Mat3 local = rotation(bone->kind, angle);
+    if ((int)n == piece->bone) {
+      bones[n] = (Pose){.position = frame->translation, .rotation = local};
+    } else {
+      const Pose *parent = &bones[bone->parent];
+      bones[n] = (Pose){.position = vec_add(parent->position, mat3_apply(parent->rotation, bone->translation)), .rotation = mat3_mul(parent->rotation, local)};
+    }
+    const Triangles *mesh = &model->meshes.data[bone->mesh].triangles;
+    for (size_t j = 0; j < mesh->count; ++j) {
+      Triangle t = mesh->data[j];
+      for (int k = 0; k < 3; ++k) {
+        Vec3 position = vec_add(bones[n].position, mat3_apply(bones[n].rotation, t.v[k].p));
+        t.v[k].p = vec_add(attachment->origin, mat3_apply(attachment->orientation, vec_add(position, attachment->def->piece_offset)));
+        t.v[k].normal = mat3_apply(attachment->orientation, mat3_apply(bones[n].rotation, t.v[k].normal));
+      }
+      render_triangle(cv, camera, t, character_texture(model, t.texture), 1, PASS_COLOR, light);
+    }
+  }
+}
+
 static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, const SceneLight *light) {
   for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
     const SceneAttachment *attachment = &g_battle.attachments[i];
@@ -371,6 +408,10 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
     }
     const AttachmentDef *def = attachment->def;
     const ScenePiece *piece = &g_battle.pieces[attachment->piece];
+    if (def->limb) {
+      draw_limb(cv, camera, attachment, piece, &assets->clips.data[def->clip], light);
+      continue;
+    }
     const Character *model = &assets->scene_models.data[def->model];
     const Clip *clip = &assets->clips.data[def->clip];
     Pose bones[MK4_MAX_BONES];

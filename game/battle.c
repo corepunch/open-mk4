@@ -700,6 +700,11 @@ void battle_step(const Input input[2]) {
         fighter_press(winner, (Button)button);
       }
     }
+    /* The LK-release list (53ca6c/53cab4) is a press task too, e.g. Jax's
+     * 4e43e8 fatality record. */
+    if (g_battle.phase_ticks < 300 && (winner->released & BUTTON_BIT(BUTTON_LOW_KICK))) {
+      fighter_release(winner, BUTTON_LOW_KICK);
+    }
     battle_world();
     /* 421d40: 60-tick grace, clear the contact latch, then 240 ticks
      * ending early on contact. A press on expiry cannot extend the clock. */

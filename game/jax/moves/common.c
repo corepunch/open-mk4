@@ -8,14 +8,6 @@ void jax_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);
 }
 
-void jax_script_current_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 183) {
-    fighter_start_fiber(fighter, jax_entry_retail_script_004e5b10, NULL);
-    return;
-  }
-  battle_react(fighter, reaction);
-}
-
 void jax_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   fighter->sample_override = 0;

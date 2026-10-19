@@ -2923,7 +2923,7 @@ static void drive_owned_command(int slot, FighterFn entry) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 8, 9, 11, 12, 13, 15, 17};
+  const int rosters[] = {7, 8, 9, 11, 12, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -3586,6 +3586,146 @@ static void check_cage_first_fatality(void) {
   }
 }
 
+/* Jax fatalities: the LK-release F,F,D,F arm rip needs a 240-tick LK hold;
+ * BLOCK B,F,F,D claps the head. Both scenes run on frame phases, keep the
+ * decided result and reset cleanly. */
+static const CommandDef *jax_finish_command(Button button, int count, unsigned flags) {
+  const Controls *controls = roster_def(13)->controls;
+  for (int i = 0; i < controls->command_count; ++i) {
+    const CommandDef *command = &controls->commands[i];
+    if (command->button == button && command->count == count && (command->flags & 0x100) == flags) {
+      return command;
+    }
+  }
+  return NULL;
+}
+
+static void jax_enter_finish(int slot, int target) {
+  battle_init(slot ? target : 13, slot ? 13 : target);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+  owner->wins = 1;
+  battle_damage(victim, Q16_ONE);
+  advance_ticks(1, NULL);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance_ticks(1, NULL);
+  }
+  check(battle_can_finish(owner), "Jax fatality needs the deciding-KO window");
+  owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+}
+
+static void jax_enter_tokens(int slot, const CommandDef *command, unsigned held, bool release) {
+  for (int i = 0; i < command->count; ++i) {
+    Button direction = command->tokens[i] == TOKEN_DOWN ? BUTTON_DOWN : (command->tokens[i] == TOKEN_FORWARD) != (slot != 0) ? BUTTON_RIGHT : BUTTON_LEFT;
+    Input input[2] = {0};
+    input[slot].held = BUTTON_BIT(direction) | held;
+    if (i == command->count - 1 && !release) {
+      input[slot].held |= BUTTON_BIT(command->button);
+    }
+    battle_step(input);
+    input[slot].held = held;
+    if (i < command->count - 1 || release) {
+      battle_step(input);
+      battle_step(input);
+    }
+  }
+  if (release) {
+    Input input[2] = {0};
+    battle_step(input);
+    advance_ticks(2, NULL);
+  }
+}
+
+static void check_jax_first_fatality(void) {
+  const CommandDef *command = jax_finish_command(BUTTON_LOW_KICK, 4, 0x100);
+  check(command != NULL, "Jax first fatality needs its LK-release command record");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int listed = 0; listed < 2; ++listed) {
+      for (int reset_at = 0; reset_at < 2; ++reset_at) {
+        int target = listed ? 4 : 2;
+        battle_init(slot ? target : 13, slot ? 13 : target);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        owner->wins = 1;
+        Input hold[2] = {0};
+        hold[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
+        battle_step(hold);
+        uint64_t pressed = g_battle.ticks;
+        for (int tick = 0; tick < 60; ++tick) {
+          battle_step(hold);
+        }
+        battle_damage(victim, Q16_ONE);
+        uint64_t needed = slot == 0 && listed && reset_at ? 150 : 232;
+        for (int tick = 0; tick < 400 && (g_battle.finish_waiting || g_battle.ticks - pressed < needed); ++tick) {
+          battle_step(hold);
+        }
+        check(battle_can_finish(owner) && owner->latch[BUTTON_LOW_KICK] == pressed, "Jax arm rip test needs the window with LK held since its press");
+        owner->body.pos[AXIS_X] = slot ? 0x4000 : -0x4000;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        jax_enter_tokens(slot, command, BUTTON_BIT(BUTTON_LOW_KICK), true);
+        if (needed < 232) {
+          check(g_battle.phase == PHASE_FINISH, "Jax arm rip must reject an LK hold shorter than 240 ticks");
+          continue;
+        }
+        check(g_battle.phase == PHASE_FATALITY, "Jax F,F,D,F LK release must start the arm rip");
+        bool owner_scene = false, victim_scene = false, first_arm = false, second_arm = false;
+        int limit = reset_at ? 200 : 900;
+        for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+          advance_ticks(1, NULL);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax arm rip must use frame phases for both players");
+          owner_scene |= fighter_move(owner)->clip == 384;
+          victim_scene |= fighter_move(victim)->clip == (listed ? 204 : 400);
+          first_arm |= (victim->hidden_joints[0] & (UINT64_C(1) << 5)) != 0;
+          second_arm |= (victim->hidden_joints[0] & (UINT64_C(1) << 6)) != 0;
+        }
+        if (!reset_at) {
+          check(owner_scene && victim_scene && first_arm && second_arm, "Jax arm rip must reach both arms on the roster-selected victim clip");
+          check(g_battle.phase == PHASE_MATCH_OVER && fighter_move(owner)->clip == 443 && owner->wins == 2 && victim->health == 0,
+              "Jax arm rip must end in its victory loop with the decided result");
+        }
+        battle_reset_match();
+        check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner), "Jax arm rip reset must restore the victim");
+        for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
+          check(g_battle.attachments[i].def == NULL, "Jax arm rip reset must retire the detached limbs");
+        }
+      }
+    }
+  }
+}
+
+static void check_jax_second_fatality(void) {
+  const CommandDef *command = jax_finish_command(BUTTON_BLOCK, 4, 0);
+  check(command != NULL, "Jax second fatality needs its BLOCK command record");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int reset_at = 0; reset_at < 2; ++reset_at) {
+      jax_enter_finish(slot, 4);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      jax_enter_tokens(slot, command, 0, false);
+      advance_ticks(1, NULL);
+      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 284, "Jax B,F,F,D,BLK must start the head clap");
+      bool clap = false, head = false, fall = false, loop = false;
+      int limit = reset_at ? 60 : 600;
+      for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax head clap must use frame phases for both players");
+        clap |= fighter_move(owner)->clip == 555;
+        head |= (victim->hidden_joints[0] & (UINT64_C(1) << 2)) != 0;
+        fall |= fighter_move(victim)->clip == 206;
+        loop |= fighter_move(owner)->clip == 114;
+      }
+      if (!reset_at) {
+        check(clap && head && fall && loop && g_battle.phase == PHASE_MATCH_OVER, "Jax head clap must crush the head, drop the body and end the scene");
+        check(owner->wins == 2 && victim->health == 0, "Jax head clap must preserve the decided result");
+      }
+      battle_reset_match();
+      check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner), "Jax head clap reset must restore the victim");
+    }
+  }
+}
+
 static void check_cage_second_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int reset_at = 0; reset_at < 3; ++reset_at) {
@@ -3989,6 +4129,8 @@ int main(void) {
   check_jax_missile();
   check_jax_dash_punch();
   check_jax_ground_pound();
+  check_jax_first_fatality();
+  check_jax_second_fatality();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_goro_frame_specials();

@@ -127,12 +127,8 @@ void jax_entry_retail_script_004e13e0(Fighter *fighter) {
   retail_script_004e13e0(fighter);
 }
 
-void jax_entry_retail_script_004e18f0(Fighter *fighter) {
-  retail_script_004e18f0(fighter);
-}
-
-void jax_entry_retail_script_004e1958(Fighter *fighter) {
-  retail_script_004e1958(fighter);
+void jax_entry_retail_script_004e13f0(Fighter *fighter) {
+  retail_script_004e13f0(fighter);
 }
 
 void jax_entry_retail_script_004e5a80(Fighter *fighter) {

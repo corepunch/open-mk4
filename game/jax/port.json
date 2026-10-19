@@ -65,49 +65,46 @@
       "sample": 69
     },
     "0x4e1390": {
-      "evidence": "F1 selector 4e0498[13] -> 4494c0; Jax performer opening clip384"
+      "evidence": "4494c0 phase 2 enters 4e1390 after the 475250 blend into clip 384; the script binds and plays 384 itself."
     },
     "0x4e13a0": {
-      "evidence": "F1 continuation 449620 switches performer to looping clip443"
+      "evidence": "449620 enters the 443 loop after its 475430 blend; the script binds 443 itself."
     },
     "0x4e13b0": {
-      "evidence": "Native callback 4496d0 chooses animation descriptor 204, advances to sample49, then tail 449890; independent F1 scene actor context."
+      "evidence": "4496d0 enters 4e13b0 for victims in roster list 4e7b08 after the 389/204 blends; the script binds 204."
     },
     "0x4e13c0": {
-      "evidence": "Native callback 4496d0 chooses alternate animation descriptor 400, advances to sample49, then tail 449890; independent F1 scene actor context."
+      "evidence": "4496d0 enters 4e13c0 for other victims; the script binds 400."
     },
     "0x4e13d0": {
       "clip": "current",
       "count": 386,
-      "evidence": "Native 449890 enters this continuation from either 4e13b0 (clip 204) or 4e13c0 (clip 400), both at sample 49; preserve the live descriptor.",
-      "sample": 49
+      "sample": 50,
+      "evidence": "449890 sets the 204/400 cursor to 50 before entering 4e13d0."
     },
     "0x4e13e0": {
       "clip": "current",
       "count": 386,
-      "evidence": "Native 4498d0 enters from 4e13d0 after it advances the same live clip (204 or 400, count 386) to sample 78.",
-      "sample": 78
-    },
-    "0x4e18f0": {
-      "evidence": "Native callback 44a9f0 enters the independent F1 scene-task context with descriptor 4e18f0; VM ends at unresearched opcode 0xfffd3334."
-    },
-    "0x4e1958": {
-      "evidence": "Native callback 44a9f0 enters the alternate independent F1 scene-task context with descriptor 4e1958; VM ends at unresearched opcode 0xfff00000."
+      "sample": 79,
+      "evidence": "4498d0 sets the 204/400 cursor to 79 before entering 4e13e0."
     },
     "0x4e5a80": {
-      "evidence": "F2 selector 4dfe90[13] -> 4669c0; Jax performer clip284 opening"
+      "evidence": "4669c0 phase 1 enters 4e5a80 on Jax; the script binds clip 284."
     },
     "0x4e5a98": {
-      "evidence": "F2 owner continuation 466a90; Jax scene clip555/556/114 phases"
+      "clip": 284,
+      "count": 40,
+      "sample": 0,
+      "evidence": "466a90 enters 4e5a98 after 4e5a80 bound clip 284 and waited; the clap binds its own clips."
     },
     "0x4e5b38": {
-      "clip": 556,
-      "count": 34,
+      "clip": 13,
+      "count": 56,
       "sample": 0,
-      "evidence": "The native F2 victim callback starts this continuation on clip 556/34 at sample 0 before task cleanup at 466df0."
+      "evidence": "466dd0 runs 4e5b38 on the victim, finishing its current dazed clip 13 before 466df0."
     },
     "0x4e5b10": {
-      "evidence": "Native reaction callback 466b40 allocates task type 0x26b for the current scene actor, enters 4e5b10, and continues at 466bb0; scene-task context, not the victim fighter fiber."
+      "evidence": "466b40 enters 4e5b10 on the reaction-183 victim; the script binds 557 then 206."
     },
     "0x4e5c70": {
       "clip": 66,
@@ -198,6 +195,12 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4e13f0": {
+      "clip": "current",
+      "count": 386,
+      "sample": 376,
+      "evidence": "449940 sets the cursor to 376 before entering 4e13f0."
     }
   },
   "generated_scripts": [
@@ -218,8 +221,6 @@
     "0x4e13c0",
     "0x4e13d0",
     "0x4e13e0",
-    "0x4e18f0",
-    "0x4e1958",
     "0x4e5a80",
     "0x4e5a98",
     "0x4e5b10",
@@ -260,10 +261,11 @@
     "0x4ea028",
     "0x4e9e38",
     "0x4e89d8",
-    "0x4e95c8"
+    "0x4e95c8",
+    "0x4e13f0"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "5f587780069050ea141e97f1e50807fd8cc9b1fead10ca8a905a65be9426af0e",
+  "inventory_sha256": "a266bbaf79abf5bf36e681d96cba1a19bbae708fd225e24e79418ea66fd15949",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -306,14 +308,14 @@
       "symbol": "jax_fan_fatality"
     },
     "fatality_1": {
-      "evidence": "Roster slot 13 selects native F1 entry 4494c0; generated performer roots 4e1390/13a0 and selected actor continuations are integrated in this adapter. F1 task signal and finish callbacks use stateful BattleEvents at the observed clip boundaries.",
-      "source": "game/jax/character.c",
-      "symbol": "jax_fatality_1"
+      "source": "game/jax/moves/fatality_first.c",
+      "symbol": "jax_fatality_1",
+      "evidence": "LK-release record 4e43e8 (F,F,D,F, gate 45e1b0) -> 467ce0/43cbb0/4e0498[13] = 4494c0 arm-rip scene: owner 384/443, victim 389/204 or 400 to 386, arms 446/447 on limb objects."
     },
     "fatality_2": {
-      "evidence": "Roster slot 13 selects native F2 entry 4669c0; generated owner and victim roots 4e5a80/5a98/5b38 are integrated in this adapter. F2 task spawns and victim callbacks use stateful BattleEvents tied to the known clip phases.",
-      "source": "game/jax/character.c",
-      "symbol": "jax_fatality_2"
+      "source": "game/jax/moves/fatality_second.c",
+      "symbol": "jax_fatality_2",
+      "evidence": "BLOCK record 4e43c8 (B,F,F,D, gate 45e570) -> 467cd0/43bd70/4dfe90[13] = 4669c0 head clap: owner 284/555/556/114 loop, victim reaction 183 557/206."
     },
     "high_kick": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for high_kick",
@@ -508,12 +510,6 @@
       "symbol": "react_fireball_block",
       "evidence": "Jax script reaction selector 9 follows the shared reaction table entry."
     },
-    "40": {
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_current_reaction",
-      "evidence": "Jax fatality scene contact callback at native entry 0x483550 is handled through the Jax reaction adapter.",
-      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
-    },
     "77": {
       "source": "game/script.c",
       "symbol": "mk4_mmove_lk_release",
@@ -521,16 +517,16 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "175": {
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_current_reaction",
-      "evidence": "Jax scene contact hold callback at native entry 0x4836e0 is handled through the Jax reaction adapter.",
-      "adaptation": "Dispatch through battle_react and retain scene-owned BattleEvent phases when the selector denotes a cinematic callback."
+      "source": "game/jax/moves/spike.c",
+      "symbol": "jax_script_spike_tail",
+      "evidence": "4ea4e8[175] -> 0x4836e0; spike stage contact 4ebd80 (175/175/175, no damage) in 4e6950.",
+      "adaptation": "Explicit stage-scene continuation 467fc0 owns the impaled victim outside the ordinary hit table, as for Sub-Zero."
     },
     "183": {
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_current_reaction",
-      "evidence": "Jax F2 selector 183 starts its scene callback task through the portable BattleEvent adapter at native entry 0x466b40.",
-      "adaptation": "The task callback uses explicit scene phases and completion boundaries from clips 557, 206 and 556."
+      "source": "game/jax/moves/fatality_second.c",
+      "symbol": "jax_fatality_2_head",
+      "evidence": "4e5a98 45b1f0[0xb7]; 4ea4e8[183] -> 466b40: hide head node 2, effect 4, neck blood 455ea0, 4e5b10.",
+      "adaptation": "Registered directly in shared reactions[183]; the Jax-owned generated victim program runs on either player slot."
     },
     "166": {
       "source": "game/jax/moves/air_throw.c",
@@ -722,6 +718,16 @@
       "source": "game/jax/moves/ground_pound.c",
       "symbol": "jax_ground_pound",
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
+    },
+    "0x467ce0": {
+      "source": "game/jax/moves/fatality_first.c",
+      "symbol": "jax_fatality_1",
+      "evidence": "LK-release record 4e43e8 (F,F,D,F, gate 45e1b0) -> 467ce0/43cbb0/4e0498[13] = 4494c0 arm-rip scene: owner 384/443, victim 389/204 or 400 to 386, arms 446/447 on limb objects."
+    },
+    "0x467cd0": {
+      "source": "game/jax/moves/fatality_second.c",
+      "symbol": "jax_fatality_2",
+      "evidence": "BLOCK record 4e43c8 (B,F,F,D, gate 45e570) -> 467cd0/43bd70/4dfe90[13] = 4669c0 head clap: owner 284/555/556/114 loop, victim reaction 183 557/206."
     }
   },
   "command_predicates": {
@@ -733,7 +739,9 @@
     "0x45ed80": "mk4_can_air_throw",
     "0x45ef50": "weapon_can_draw",
     "0x45e7e0": "jax_can_missile",
-    "0x45e910": "jax_can_dash_punch"
+    "0x45e910": "jax_can_dash_punch",
+    "0x45e1b0": "jax_can_fatality_1",
+    "0x45e570": "jax_can_fatality_2"
   },
   "mmove_scripts": [
     "0x4e6658",
@@ -779,7 +787,18 @@
     "0x4ea028",
     "0x4e9e38",
     "0x4e89d8",
-    "0x4e95c8"
+    "0x4e95c8",
+    "0x4e1390",
+    "0x4e13a0",
+    "0x4e13b0",
+    "0x4e13c0",
+    "0x4e13d0",
+    "0x4e13e0",
+    "0x4e13f0",
+    "0x4e5a80",
+    "0x4e5a98",
+    "0x4e5b10",
+    "0x4e5b38"
   ],
   "cpu_bindings": {
     "0x496f80": {
@@ -797,5 +816,10 @@
       "symbol": "jax_ground_pound",
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }
+  },
+  "cpu_finish_min": {
+    "CPU_FINISH_1": 0,
+    "CPU_FINISH_2": 0,
+    "evidence": "Jax 45e570 close gate accepts up to 1 unit; CPU first/second targets come from 4dfe10/4dfe50[13]."
   }
 }

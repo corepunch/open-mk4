@@ -20,18 +20,27 @@
 #define s_uppercut jax_s_uppercut
 #define s_walk jax_s_walk
 
-enum {
-  JAX_EVENT_FATALITY_1_SIGNAL = 1,
-  JAX_EVENT_FATALITY_1_FINISH,
-  JAX_EVENT_FATALITY_2_TASK,
-  JAX_EVENT_FATALITY_2_FINISH
-};
-
 void jax_air_throw(Fighter *fighter);
 void jax_air_throw_fall(Fighter *fighter);
 void jax_air_throw_getup(Fighter *fighter);
 void jax_air_throw_release(Fighter *fighter);
 void jax_block(Fighter *fighter);
+bool jax_can_fatality_1(const Fighter *fighter);
+bool jax_can_fatality_2(const Fighter *fighter);
+void jax_fatality_1(Fighter *fighter);
+void jax_fatality_1_first_arm(Fighter *fighter);
+void jax_fatality_1_grab(Fighter *fighter);
+void jax_fatality_1_second_arm(Fighter *fighter);
+void jax_fatality_1_victory(Fighter *fighter);
+void jax_fatality_2(Fighter *fighter);
+void jax_fatality_2_approach(Fighter *fighter);
+void jax_fatality_2_finish(Fighter *fighter);
+void jax_fatality_2_flash(Fighter *fighter, int task_type);
+void jax_fatality_2_sparks(Fighter *fighter, int task_type);
+void jax_fatality_2_victim_pause(Fighter *fighter);
+void jax_fatality_task_end(Fighter *fighter);
+void jax_script_peer_reaction(Fighter *fighter, int reaction);
+void jax_entry_retail_script_004e13f0(Fighter *fighter);
 void jax_ground_pound(Fighter *fighter);
 void jax_entry_retail_script_004e95c8(Fighter *fighter);
 bool jax_can_dash_punch(const Fighter *fighter);
@@ -62,12 +71,6 @@ void jax_press_sweep(Fighter *fighter);
 void jax_press_uppercut(Fighter *fighter);
 void jax_ready(Fighter *fighter);
 void jax_script_air_finish(Fighter *fighter);
-void jax_script_current_reaction(Fighter *fighter, int reaction);
-void jax_script_fatality_1_finish(Fighter *fighter);
-void jax_script_fatality_1_scene_signal(Fighter *fighter);
-void jax_script_fatality_2_scene_finish(Fighter *fighter);
-void jax_script_fatality_2_tail(Fighter *fighter);
-void jax_script_fatality_2_task(Fighter *fighter, int task_type);
 void jax_script_finish(Fighter *fighter);
 void jax_script_lk_finish(Fighter *fighter);
 void jax_script_lk_return(Fighter *fighter);
@@ -93,8 +96,6 @@ void jax_entry_retail_script_004e13b0(Fighter *fighter);
 void jax_entry_retail_script_004e13c0(Fighter *fighter);
 void jax_entry_retail_script_004e13d0(Fighter *fighter);
 void jax_entry_retail_script_004e13e0(Fighter *fighter);
-void jax_entry_retail_script_004e18f0(Fighter *fighter);
-void jax_entry_retail_script_004e1958(Fighter *fighter);
 void jax_entry_retail_script_004e5a80(Fighter *fighter);
 void jax_entry_retail_script_004e5a98(Fighter *fighter);
 void jax_entry_retail_script_004e5b10(Fighter *fighter);

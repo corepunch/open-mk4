@@ -689,6 +689,7 @@ typedef struct AttachmentDef {
   Vec3 group_offset, piece_offset;
   int piece_kind;
   bool scene_space;
+  bool limb; /* pose the detached piece's own subtree with the clip channels in bone order */
 } AttachmentDef;
 
 typedef struct SceneAttachment {

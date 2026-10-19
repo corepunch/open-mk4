@@ -5,19 +5,26 @@ static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0x0, mk4_can_spike_finish, jax_command_spike},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 24, 0x0, jax_can_missile, jax_missile},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, 0x0, jax_can_dash_punch, jax_dash_punch},
+  {BUTTON_BLOCK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 4, 50, 0x40, jax_can_fatality_2, jax_fatality_2},
   {BUTTON_BLOCK, {0}, 0, 0, 0x10, mk4_can_air_throw, jax_air_throw},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 32, 0x0, NULL, jax_ground_pound},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0x0, mk4_can_fan_finish, jax_command_fan},
+  {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 4, 70, 0x100, jax_can_fatality_1, jax_fatality_1},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
 };
 // clang-format on
 
-static const CpuMoves retail_cpu_moves = {.enter = {
-                                              [CPU_SPECIAL_NEAR] = jax_dash_punch,
-                                              [CPU_SPECIAL_1] = jax_ground_pound,
-                                              [CPU_SPECIAL_2] = jax_dash_punch,
-                                              [CPU_PROJECTILE] = jax_missile,
-                                              [CPU_FINISH_FAN] = jax_command_fan,
-                                              [CPU_FINISH_SPIKE] = jax_command_spike,
-                                          }};
+static const CpuMoves retail_cpu_moves = {.enter =
+                                              {
+                                                  [CPU_SPECIAL_NEAR] = jax_dash_punch,
+                                                  [CPU_SPECIAL_1] = jax_ground_pound,
+                                                  [CPU_SPECIAL_2] = jax_dash_punch,
+                                                  [CPU_PROJECTILE] = jax_missile,
+                                                  [CPU_FINISH_1] = jax_fatality_1,
+                                                  [CPU_FINISH_2] = jax_fatality_2,
+                                                  [CPU_FINISH_FAN] = jax_command_fan,
+                                                  [CPU_FINISH_SPIKE] = jax_command_spike,
+                                              },
+    .finish_min = {0x0, 0x0},
+    .finish_distance = {0xcccc, 0x10000}};
