@@ -20,10 +20,10 @@
 #define s_uppercut jarek_s_uppercut
 #define s_walk jarek_s_walk
 
+/* Character-owned finisher ids, outside the shared FINISH_* range. */
 enum {
-  JAREK_CONTACT_RECOVERY = 1,
-  JAREK_FAN_SCENE = 16,
-  JAREK_FAN_FINISH
+  JAREK_EVENT_FATALITY_1 = 21,
+  JAREK_EVENT_FATALITY_2
 };
 
 void jarek_block(Fighter *fighter);
@@ -63,6 +63,15 @@ void jarek_script_weapon_draw_finish(Fighter *fighter);
 void jarek_spike_fatality(Fighter *fighter);
 void jarek_sweep(Fighter *fighter);
 void jarek_cannonball(Fighter *fighter);
+bool jarek_can_second_fatality(const Fighter *fighter);
+void jarek_fatality_2(Fighter *fighter);
+void jarek_second_glow(Fighter *fighter);
+void jarek_second_handoff(Fighter *fighter);
+void jarek_second_head_fall(Fighter *fighter, int task_type);
+void jarek_second_victim_hold(Fighter *fighter);
+void jarek_entry_retail_script_004d2db0(Fighter *fighter);
+void jarek_entry_retail_script_004d2de0(Fighter *fighter);
+void jarek_entry_retail_script_004d2e10(Fighter *fighter);
 void jarek_quake(Fighter *fighter);
 void jarek_blade(Fighter *fighter);
 void jarek_blade_spawn(Fighter *fighter, int task_type);

@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "d1d6337d0e9bbf94ff87bf403b075bc627110f1d041e2dd72c53923e8573a9d2",
+  "inventory_sha256": "9f0f21b33cfbae7d67c0f8cf4bb237a6fb221e930401c71a0b97f06ee9971113",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -52,7 +52,11 @@
     "0x4e84b8",
     "0x4e9658",
     "0x4e81c8",
-    "0x4e95c8"
+    "0x4e95c8",
+    "0x4d2db0",
+    "0x4d2de0",
+    "0x4d2e10",
+    "0x4e6a40"
   ],
   "entry_contexts": {
     "0x4e0128": {
@@ -164,13 +168,19 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4d2de0": {
+      "clip": 577,
+      "count": 115,
+      "sample": 26,
+      "evidence": "4d2db0 opens clip577 and advances 1+6+19 poses before tail 41dfc0 enters 4d2de0 without rebinding."
     }
   },
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_467cd0",
-      "evidence": "Jarek input/CPU table target 0x467cd0; bounded native query"
+      "source": "game/jarek/moves/fatality_second.c",
+      "symbol": "jarek_fatality_2",
+      "evidence": "467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
     },
     "0x467ce0": {
       "source": "game/jarek/character.c",
@@ -373,6 +383,11 @@
       "source": "game/jarek/moves/projectile.c",
       "symbol": "jarek_blade",
       "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
+    },
+    "fatality_2": {
+      "source": "game/jarek/moves/fatality_second.c",
+      "symbol": "jarek_fatality_2",
+      "evidence": "467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
     }
   },
   "stances": {
@@ -672,6 +687,11 @@
       "source": "game/jarek/moves/projectile.c",
       "symbol": "jarek_blade",
       "evidence": "Typed LP record 0x4e4418 D,B selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
+    },
+    "0x467cd0": {
+      "source": "game/jarek/moves/fatality_second.c",
+      "symbol": "jarek_fatality_2",
+      "evidence": "Typed BLOCK record 0x4e4438 U,U,F,F (flags 0x41, gate 45e530). 467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
     }
   },
   "command_predicates": {
@@ -679,7 +699,8 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ef50": "weapon_can_draw"
+    "0x45ef50": "weapon_can_draw",
+    "0x45e530": "jarek_can_second_fatality"
   },
   "mmove_scripts": [
     "0x4e5ca0",
@@ -729,7 +750,11 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4d2db0",
+    "0x4d2de0",
+    "0x4d2e10",
+    "0x4e6a40"
   ],
   "cpu_bindings": {
     "0x47b310": {
@@ -742,5 +767,9 @@
       "symbol": "jarek_blade",
       "evidence": "Typed Jarek CPU projectile row 4df9d8 selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     }
+  },
+  "cpu_finish_min": {
+    "CPU_FINISH_2": 117964,
+    "evidence": "Jarek second gate45e530 accepts 1.8..3 units; CPU target4dfe50[12] is 0x2cccc."
   }
 }

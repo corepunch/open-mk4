@@ -1569,3 +1569,18 @@ CHARACTER_BINDINGS[12][0x43db50] = Binding('jarek_script_fan_victim_end', 'game/
     evidence='Shared native 43db50 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
 CHARACTER_BINDINGS[12][0x467fc0] = Binding('jarek_script_spike_tail', 'game/jarek/moves/spike.c', ('tail',), flow='terminal', mmove=True,
     evidence='Shared native 467fc0 fan/spike continuation for Jarek: 31 counted 43d540 passes, each selecting 4e0138 (female peer) or 4e0128 on clip414; explicit release/hide; or spike rise/recovery')
+
+# Jarek's second fatality (467cd0 -> 43bd70 -> 4dfe90[12] = 41df20).
+CHARACTER_BINDINGS[12][0x45abf0] = replace(CHARACTER_BINDINGS[12].get(0x45abf0, BINDINGS[0x45abf0]), mmove=True,
+    inline_values=BINDINGS[0x45abf0].inline_values + (35, 59))
+CHARACTER_BINDINGS[12][0x41de30] = Binding('jarek_second_glow', 'game/jarek/moves/fatality_second.c', ('call',), mmove=True,
+    evidence='41de30 cues bank C 11 and attaches share2 rig 50c604 to the owner joint 2 node')
+CHARACTER_BINDINGS[12][0x41dfc0] = Binding('jarek_second_handoff', 'game/jarek/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True,
+    evidence='41dfc0 installs victim continuation 41dff0 through 48f880, then enters owner script 4d2de0')
+CHARACTER_BINDINGS[12][0x41e0e0] = Binding('jarek_second_head_fall', 'game/jarek/moves/fatality_second.c', ('spawn',), ('fighter', 'task_type'),
+    flow='independent', task_types=(0,), mmove=True,
+    evidence='41e0e0 drops the separated head with gravity 0x20c and impacts; the portable head is a bounded scene piece')
+CHARACTER_BINDINGS[12][0x41e0a0] = Binding('jarek_second_victim_hold', 'game/jarek/moves/fatality_second.c', ('tail',), flow='terminal', mmove=True,
+    evidence='41e0a0 restores the victim node, then 41f1b0 parks it in 60-visit waits')
+CHARACTER_BINDINGS[12][0x4712e0] = Binding('retail_script_004e6a40', 'game/jarek/generated/scripts.inc', ('tail',), script_target=0x4e6a40, mmove=True,
+    evidence='4712e0 enters roster victory script 4e6a40 (slot 12: context 35, clip 125, loop from 85)')

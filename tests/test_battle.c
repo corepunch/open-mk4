@@ -15,6 +15,8 @@ void cage_fatality_2(Fighter *fighter);
 bool cage_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
+void jarek_fatality_2(Fighter *fighter);
+bool jarek_can_second_fatality(const Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
 void shinnok_fatality_2(Fighter *fighter);
@@ -1788,6 +1790,82 @@ static void check_jarek_fan_victims(void) {
     check(cycled == (row == 0), "The fan cycle must use clip 414 only for a non-female victim");
     check(g_battle.phase == PHASE_MATCH_OVER, "Jarek's fan scene must complete for either victim");
   }
+}
+
+/* Enter a Jarek finisher command from his generated table through presses. */
+static void jarek_finish_command(Fighter *fighter, FighterFn enter, int slot) {
+  const Controls *controls = roster_def(12)->controls;
+  const CommandDef *selected = NULL;
+  for (int i = 0; i < controls->command_count; ++i) {
+    if (controls->commands[i].enter == enter) {
+      selected = &controls->commands[i];
+    }
+  }
+  check(selected != NULL, "Jarek fatality must have its own generated retail command");
+  for (int i = 0; i < selected->count; ++i) {
+    CommandToken token = selected->tokens[i];
+    fighter_press(fighter, token == TOKEN_UP     ? BUTTON_UP
+                           : token == TOKEN_DOWN ? BUTTON_DOWN
+                           : token == TOKEN_BACK ? (slot ? BUTTON_RIGHT : BUTTON_LEFT)
+                                                 : (slot ? BUTTON_LEFT : BUTTON_RIGHT));
+  }
+  fighter_press(fighter, selected->button);
+  advance_ticks(1, NULL);
+}
+
+static void jarek_finish_window(int slot) {
+  battle_init(slot ? 4 : 12, slot ? 12 : 4);
+  g_battle.phase = PHASE_FIGHT;
+  g_battle.fighters[slot].wins = 1;
+  battle_damage(&g_battle.fighters[1 - slot], Q16_ONE);
+  advance_ticks(1, NULL);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance_ticks(1, NULL);
+  }
+  check(battle_can_finish(&g_battle.fighters[slot]), "Jarek fatality must enter through the deciding-KO window");
+}
+
+/* 467cd0 -> 41df20: owner clip 577, victim handoff to 182/206 with the
+ * separated head, victory 4e6a40 and completion after the victim hold. */
+static void check_jarek_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int reset_at = 0; reset_at < 2; ++reset_at) {
+      jarek_finish_window(slot);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(!jarek_can_second_fatality(owner), "Jarek's second fatality must reject distances below 1.8");
+      owner->body.pos[AXIS_X] = slot ? 0x11999 : -0x11999;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(jarek_can_second_fatality(owner) && !jarek_can_second_fatality(victim), "Jarek's second gate must accept 1.8..3 for the winner only");
+      jarek_finish_command(owner, jarek_fatality_2, slot);
+      check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 577, "Jarek's U,U,F,F+BLK must start his own clip-577 scene");
+      bool cut = false, fall = false, victory = false;
+      int limit = reset_at ? 70 : 600;
+      for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek's second fatality must stay on frame programs");
+        cut |= fighter_move(victim)->clip == 182 && (victim->hidden_joints[0] & (UINT64_C(1) << 2));
+        fall |= fighter_move(victim)->clip == 206;
+        victory |= fighter_move(owner)->clip == 125;
+      }
+      if (!reset_at) {
+        check(
+            cut && fall && victory && g_battle.phase == PHASE_MATCH_OVER, "Jarek's laser must separate the head, drop the victim, reach victory and complete");
+      }
+      battle_reset_match();
+      check(victim->hidden_joints[0] == 0 && !fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reset must restore both fighters");
+      for (int object = 0; object < MAX_PROJECTILES; ++object) {
+        check(g_battle.projectiles[object].kind == 0, "Reset must remove the laser glow");
+      }
+    }
+  }
+  jarek_finish_window(0);
+  g_battle.fighters[0].body.pos[AXIS_X] = -0x11999;
+  g_battle.fighters[1].body.pos[AXIS_X] = 0x11999;
+  check(battle_cpu_action(&g_battle.fighters[0], CPU_FINISH_2), "Jarek's CPU second fatality must be registered");
+  advance_ticks(1, NULL);
+  check(g_battle.phase == PHASE_FATALITY && fighter_move(&g_battle.fighters[0])->clip == 577, "Jarek's CPU second fatality must enter the same scene");
 }
 
 static void check_jarek_weapon_commands(void) {
@@ -3666,7 +3744,7 @@ static void check_kai_second_fatality(void) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 8, 9, 12, 15, 17};
+  const int rosters[] = {7, 8, 9, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -4864,6 +4942,7 @@ int main(void) {
   check_jarek_quake();
   check_jarek_blade();
   check_jarek_fan_victims();
+  check_jarek_second_fatality();
   check_shinnok_weapon_commands();
   check_shinnok_morph();
   check_fujin_crossbow();

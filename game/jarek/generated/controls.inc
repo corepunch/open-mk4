@@ -5,6 +5,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0x0, weapon_can_draw, jarek_weapon_action},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, 0x0, NULL, jarek_blade},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_spike_finish, jarek_spike_fatality},
+  {BUTTON_BLOCK, {TOKEN_UP, TOKEN_UP, TOKEN_FORWARD, TOKEN_FORWARD}, 4, 50, 0x40, jarek_can_second_fatality, jarek_fatality_2},
   {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_DOWN, TOKEN_BACK}, 3, 32, 0x0, NULL, jarek_quake},
   {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_fan_finish, jarek_fan_fatality},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 16, 0x0, NULL, jarek_cannonball},
@@ -13,11 +14,15 @@ static const CommandDef retail_commands[] = {
 };
 // clang-format on
 
-static const CpuMoves retail_cpu_moves = {.enter = {
-                                              [CPU_SPECIAL_NEAR] = jarek_cannonball,
-                                              [CPU_SPECIAL_1] = jarek_cannonball,
-                                              [CPU_SPECIAL_2] = jarek_cannonball,
-                                              [CPU_PROJECTILE] = jarek_blade,
-                                              [CPU_FINISH_FAN] = jarek_fan_fatality,
-                                              [CPU_FINISH_SPIKE] = jarek_spike_fatality,
-                                          }};
+static const CpuMoves retail_cpu_moves = {.enter =
+                                              {
+                                                  [CPU_SPECIAL_NEAR] = jarek_cannonball,
+                                                  [CPU_SPECIAL_1] = jarek_cannonball,
+                                                  [CPU_SPECIAL_2] = jarek_cannonball,
+                                                  [CPU_PROJECTILE] = jarek_blade,
+                                                  [CPU_FINISH_2] = jarek_fatality_2,
+                                                  [CPU_FINISH_FAN] = jarek_fan_fatality,
+                                                  [CPU_FINISH_SPIKE] = jarek_spike_fatality,
+                                              },
+    .finish_min = {0x0, 0x1cccc},
+    .finish_distance = {0x0, 0x2cccc}};
