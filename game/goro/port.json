@@ -53,6 +53,12 @@
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 28
     },
+    "0x4e61e0": {
+      "clip": 263,
+      "count": 10,
+      "sample": 0,
+      "evidence": "46be40 selects 4e6c10[15] = close HP clip 263 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
+    },
     "0x4e6330": {
       "clip": 295,
       "count": 19,
@@ -76,6 +82,12 @@
       "count": 39,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 0
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "sample": 0,
+      "evidence": "mk4_begin_stage_finish binds the scene-specific 293/20 owner pose before 4e6950 initial 28-tick hold."
     },
     "0x4e9910": {
       "clip": 202,
@@ -105,7 +117,10 @@
     "0x4e5d90",
     "0x4e5e28",
     "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
     "0x4e61f8",
+    "0x4e6270",
     "0x4e62a0",
     "0x4e62f0",
     "0x4e6330",
@@ -120,112 +135,113 @@
     "0x4e6860",
     "0x4e6878",
     "0x4e6950",
+    "0x4e69b0",
     "0x4e9910",
     "0x4ed790"
   ],
   "integration_source": "game/goro/character.c",
-  "inventory_sha256": "12dca7a885997723d867822e579f6eff7d7c41732ff767936fa9629ff9a90fa4",
+  "inventory_sha256": "2498a9d5155ad52c474f76937da440d5679298dd5356c723767e1197a9585c32",
   "output": "game/goro/generated/scripts.inc",
   "return_to": "fighter_ready",
   "schema": 1,
   "moves": {
     "lk_throw": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/throws.c",
       "symbol": "goro_lk_throw",
       "evidence": "Selected4de2f8/318/328 paired streams, native42be10 retreats through clip282;4de358 is Q16 motion data, not a script."
     },
     "lp_throw": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/throws.c",
       "symbol": "goro_lp_throw",
       "evidence": "Goro close low punch selects paired throw root 0x4de798; its owner/victim clips and five damage follow-up phases are retained in generated roots."
     },
     "jab": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e62f0",
+      "source": "game/goro/moves/punches.c",
+      "symbol": "goro_jab",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "uppercut": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e62a0",
+      "source": "game/goro/moves/uppercut.c",
+      "symbol": "goro_uppercut",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "sweep": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e6798",
+      "source": "game/goro/moves/sweep.c",
+      "symbol": "goro_sweep",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_hp": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e6658",
+      "source": "game/goro/moves/air_attacks.c",
+      "symbol": "goro_air_hp",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_lp": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e6710",
+      "source": "game/goro/moves/air_attacks.c",
+      "symbol": "goro_air_lp",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_kick": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e61f8",
+      "source": "game/goro/moves/air_attacks.c",
+      "symbol": "goro_air_kick",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_diagonal_hk": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e6500",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/goro/moves/air_attacks.c",
+      "symbol": "goro_air_diagonal_hk",
+      "evidence": "Goro slot 4e6e48 sets selector 31 and enters 46e4d0, whose block 4e65a0 binds clip 56 and B[31]."
     },
     "air_diagonal_lk": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e63d8",
+      "source": "game/goro/moves/air_attacks.c",
+      "symbol": "goro_air_diagonal_lk",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_throw": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e5e28",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/goro/moves/throws.c",
+      "symbol": "goro_air_throw",
+      "evidence": "Requested portable extension: Goro BLOCK list 53c99c is empty; shared 46aa80 pair with generated owner 4e5e28/4e5e50 and victim 4e9910 frame streams."
     },
     "fan_fatality": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/fan.c",
       "symbol": "goro_fan_fatality",
-      "evidence": "Goro fan fatality starts performer and victim generated roots 0x4e0118 and 0x4e0188."
+      "evidence": "CPU stage-8 finish 434520 -> 434940 dispatches action 10041 -> 4e6ef8[65] = 467e00 for every roster; generated owner/victim roots 4e0118/4e0188."
     },
     "spike_fatality": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/spike.c",
       "symbol": "goro_spike_fatality",
-      "evidence": "Goro spike fatality starts generated stage root 0x4e6950."
+      "evidence": "CPU stage-0 finish 434520 -> 4348b0 dispatches action 10042 -> 4e6ef8[66] = 467e70; generated stage root 4e6950."
     },
     "high_kick": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e5ca0",
+      "source": "game/goro/moves/kicks.c",
+      "symbol": "goro_high_kick",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "low_kick": {
-      "source": "game/goro/generated/scripts.inc",
-      "symbol": "retail_script_004e5d90",
+      "source": "game/goro/moves/kicks.c",
+      "symbol": "goro_low_kick",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "roundhouse": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/roundhouse.c",
       "symbol": "goro_roundhouse",
-      "evidence": "Goro roundhouse entry starts generated root 0x4e6800."
+      "evidence": "461030 with back held enters 46f1f0; Goro slot 4e6840 binds 313, 46f220 selects 4e6860/4e6878 and 46f270 queries B[33]."
     },
     "high_punch": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/punches.c",
       "symbol": "goro_high_punch",
-      "evidence": "Portable Goro punch fallback used by the current standing controls; the separate CPU projectile target 0x49ca70 is still unimplemented."
+      "evidence": "Shared stance 4e5058 HP 460f40 selects 46d290/46d9b3 (clip 296/297, action 010a, A[0]) or close HP 46be40 within 0.8."
     },
     "progress_event": {
-      "source": "game/goro/moves/common.c",
+      "source": "game/goro/moves/specials.c",
       "symbol": "goro_event_progress",
       "evidence": "43af90 enters clip 599; 43afc0 and 43b940 query D[32] for three advancing rows, then finish the clip."
     },
     "counter_kick_event": {
-      "source": "game/goro/moves/kicks.c",
+      "source": "game/goro/moves/specials.c",
       "symbol": "goro_event_counter_kick",
       "evidence": "43b170 enters clip 598; 43b1a0 and 43b940 query D[33] for eight advancing rows, then finish the clip."
     },
     "counter_sweep_event": {
-      "source": "game/goro/character.c",
+      "source": "game/goro/moves/specials.c",
       "symbol": "goro_event_counter_sweep",
       "evidence": "The actor-local adaptation plays generated clip 601 through sample 23 with action 0x0409, then returns ready; versus/controller state is omitted."
     },
@@ -233,6 +249,21 @@
       "source": "game/goro/character.c",
       "symbol": "goro_cpu_projectile",
       "evidence": "Goro CPU action 49ca70 snapshots the heading and enters clip-592 script 4ed790; portable projectile task83 follows the observed launch timing."
+    },
+    "close_hp": {
+      "source": "game/goro/moves/combos.c",
+      "symbol": "goro_close_hp",
+      "evidence": "46be40 selects 4e6c10[15] clip 263, then 4e61e0 and shared runner 46bf10 with follow-up table 4e7078."
+    },
+    "combo_hp": {
+      "source": "game/goro/moves/combos.c",
+      "symbol": "goro_combo_hp",
+      "evidence": "Close-HP follow-up 4e7078 HP enters 46c290 -> 4e69b0 clip 261 and shared runner 46c2c0."
+    },
+    "close_hk": {
+      "source": "game/goro/moves/combos.c",
+      "symbol": "goro_close_hk",
+      "evidence": "461030 within 0.8 against a grounded, non-4001/4005 victim enters 46ba60 -> 4e6190 clip 314 and runner 46bb60."
     }
   },
   "entry_adapters": {
@@ -259,124 +290,109 @@
   },
   "reactions": {
     "1": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "10": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "11": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "13": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "143": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "15": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "16": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "17": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "175": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "19": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "21": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "22": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "23": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "34": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "37": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "38": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
-    },
-    "39": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
+      "source": "game/reactions.c",
+      "symbol": "react_jab_block",
+      "evidence": "Goro contact reaches shared reaction 1 through retail dispatcher 0x486c40."
     },
     "4": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
+      "source": "game/reactions.c",
+      "symbol": "react_low_block",
+      "evidence": "Goro contact reaches shared reaction 4 through retail dispatcher 0x486bb0."
     },
     "5": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Goro contact reaches shared reaction 5 through retail dispatcher 0x486b70."
     },
     "6": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
+      "source": "game/reactions.c",
+      "symbol": "react_block",
+      "evidence": "Goro contact reaches shared reaction 6 through retail dispatcher 0x486af0."
+    },
+    "7": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Goro contact reaches shared reaction 7 through retail dispatcher 0x486ab0."
+    },
+    "8": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Goro contact reaches shared reaction 8 through retail dispatcher 0x486c70."
+    },
+    "10": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 10 through retail dispatcher 0x481320."
+    },
+    "11": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_air",
+      "evidence": "Goro contact reaches shared reaction 11 through retail dispatcher 0x482070."
+    },
+    "13": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_air",
+      "evidence": "Goro contact reaches shared reaction 13 through retail dispatcher 0x481d30."
+    },
+    "16": {
+      "source": "game/reactions.c",
+      "symbol": "react_kick_hit",
+      "evidence": "Goro contact reaches shared reaction 16 through retail dispatcher 0x482a10."
+    },
+    "17": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 17 through retail dispatcher 0x482e00."
+    },
+    "18": {
+      "source": "game/reactions.c",
+      "symbol": "react_sweep",
+      "evidence": "Goro contact reaches shared reaction 18 through retail dispatcher 0x483050."
+    },
+    "20": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 20 through retail dispatcher 0x483490."
+    },
+    "21": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 21 through retail dispatcher 0x482e80."
+    },
+    "22": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 22 through retail dispatcher 0x482f00."
+    },
+    "23": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 23 through retail dispatcher 0x481fc0."
+    },
+    "32": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 32 through retail dispatcher 0x485e30."
+    },
+    "34": {
+      "source": "game/reactions.c",
+      "symbol": "react_uppercut",
+      "evidence": "Goro contact reaches shared reaction 34 through retail dispatcher 0x4838e0."
+    },
+    "37": {
+      "source": "game/reactions.c",
+      "symbol": "react_jab_hit",
+      "evidence": "Goro contact reaches shared reaction 37 through retail dispatcher 0x483b40."
+    },
+    "38": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 38 through retail dispatcher 0x482e90."
+    },
+    "39": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 39 through retail dispatcher 0x482ef0."
     },
     "77": {
       "source": "game/script.c",
@@ -385,16 +401,20 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "100": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro's final LP-throw damage phase dispatches reaction 100 through the same current-context roster reaction adapter.",
-      "evidence": "Retail 4de6e4 passes inline selector 100 to current-context reaction dispatcher 45b1f0; Goro routes current-context reactions through goro_script_current_reaction."
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Goro contact reaches shared reaction 100 through retail dispatcher 0x485bf0."
     },
-    "8": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_script_current_reaction",
-      "adaptation": "Goro contact reactions enter battle_react; the roster-15 branch selects react_approximate instead of the generic indexed reaction table. The generated opponent-context handler separately retains Goro paired reaction 77 behavior.",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro roster ID 15 is explicit in mk4_goro and the reaction override is in battle_react."
+    "143": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "Goro contact reaches shared reaction 143 through retail dispatcher 0x486970."
+    },
+    "175": {
+      "source": "game/goro/moves/spike.c",
+      "symbol": "goro_script_spike_tail",
+      "adaptation": "Explicit stage-scene victim continuation, outside the ordinary hit table; the shared spike tail owns the impaled victim.",
+      "evidence": "4ea4e8[175] -> 0x4836e0; spike stage root 4e6950 queries A[18] before native 467fc0."
     },
     "189": {
       "source": "game/reactions.c",
@@ -462,13 +482,43 @@
     "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Preserves the encoded retail descriptor words at 0x4ecf18."
   },
   "mmove_scripts": [
-    "0x4de798",
-    "0x4de7e8",
-    "0x4de6e4",
-    "0x4ed790",
     "0x4de2f8",
     "0x4de318",
     "0x4de328",
-    "0x4e6798"
+    "0x4de6e4",
+    "0x4de798",
+    "0x4de7e8",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e5d90",
+    "0x4e5e28",
+    "0x4e5e50",
+    "0x4e6190",
+    "0x4e61e0",
+    "0x4e61f8",
+    "0x4e6270",
+    "0x4e62a0",
+    "0x4e62f0",
+    "0x4e6330",
+    "0x4e6360",
+    "0x4e63b0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e6710",
+    "0x4e6798",
+    "0x4e6800",
+    "0x4e6860",
+    "0x4e6878",
+    "0x4e6950",
+    "0x4e69b0",
+    "0x4e9910",
+    "0x4ed790"
   ]
 }

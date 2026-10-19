@@ -47,7 +47,7 @@ def _moves_for(character):
     shared.update(high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70))),
                   low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),)),
                   roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878))))
-    if character in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17):
+    if character in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17):
         shared.update(close_hp=SCORPION['close_hp'], combo_hp=SCORPION['combo_hp'], close_hk=SCORPION['close_hk'])
     if character == 16:
         # Kitana's roster slot aliases Sonya's retail script slot. Keep a
@@ -369,14 +369,14 @@ def _moves_for(character):
                                 ('repeat', 0x4e6360), ('recovery', 0x4e63b0)), (('A', 1),),
                      native=(('recovery callback', 0x46de60),)),
             uppercut=move(0x46ccd0, (('attacker', 0x4e62a0),), (('A', 2), ('A', 6))),
-            sweep=move(0x46ef90, (('attacker', 0x4e6798),), (('B', 36),)),
+            sweep=move(0x46ef90, (('attacker', 0x4e6798),), (('B', 35),)),
             air_hp=move(0x46e6c0, (('attacker', 0x4e6658),), (('A', 4),),
                         native=(('recovery callback', 0x46e7c0),)),
             air_lp=move(0x46ee30, (('attacker', 0x4e6710),), (('A', 5),),
                         native=(('recovery callback', 0x46ef10),)),
             air_kick=move(0x46c7a0, (('straight kick', 0x4e61f8),), (('B', 40),),
                           native=(('recovery callback', 0x46cb10),)),
-            air_diagonal_hk=move(0x46e380, (('attacker', 0x4e6500),), (('B', 32),)),
+            air_diagonal_hk=move(0x46e380, (('attacker', 0x4e6500),), (('B', 31),)),
             air_diagonal_lk=move(0x46df50, (('attacker', 0x4e63d8),), (('B', 29),)),
             air_throw=move(0x46aa80, (('paired attacker/victim', 0x4e5e28), ('release', 0x4e5e50),
                                       ('victim release', 0x4e9910)),
@@ -389,9 +389,9 @@ def _moves_for(character):
                               native=(('scene entry', 0x43d040),)),
             spike_fatality=move(0x467e70, (('stage script', 0x4e6950),)),
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
-            low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
+            low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 6),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800),
-                                       ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 34),)),
+                                       ('fast start', 0x4e6860), ('normal start', 0x4e6878)), (('B', 33),)),
             progress_event=move(0x43af90, (('actor clip', 0x4dfb60),), (('D', 32),)),
             counter_kick_event=move(0x43b170, (('actor clip', 0x4dfb70),), (('D', 33),)),
             counter_sweep_event=move(0x43b320, (('actor clip', 0x4dfbb8),)),
@@ -633,11 +633,10 @@ def moves_for(character):
     result = dict(_moves_for(character))
     if character in NO_AIR_THROW:
         result.pop('air_throw', None)
-    if character in (6, 8, 10, 12, 14):
+    if character in (6, 8, 10, 12, 14, 15):
         entry = dict(result['air_kick'])
         result['air_kick'] = entry
         entry['scripts'] = tuple(entry['scripts']) + (('narrow miss reversal', 0x4e6270),)
         entry['contacts'] = (('B', 40),)
-    if character != 15:
-        result['high_punch'] = dict(result['high_punch'], contacts=(('A', 0),))
+    result['high_punch'] = dict(result['high_punch'], contacts=(('A', 0),))
     return result

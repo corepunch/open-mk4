@@ -52,20 +52,21 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-/* Portable task83 fallback uses a known Goro box while its retail payload remains unavailable. */
-
-static const ButtonTable goro_standing = {{[BUTTON_HIGH_PUNCH] = goro_enter_jab,
-    [BUTTON_LOW_PUNCH] = goro_enter_low_punch,
-    [BUTTON_HIGH_KICK] = goro_enter_high_kick,
-    [BUTTON_LOW_KICK] = goro_enter_low_kick}};
-static const ButtonTable goro_crouching = {{[BUTTON_HIGH_PUNCH] = goro_enter_uppercut,
-    [BUTTON_LOW_PUNCH] = goro_enter_uppercut,
-    [BUTTON_HIGH_KICK] = goro_enter_sweep,
-    [BUTTON_LOW_KICK] = goro_enter_sweep}};
-static const ButtonTable goro_jumping = {{[BUTTON_HIGH_PUNCH] = goro_enter_air_hp,
-    [BUTTON_LOW_PUNCH] = goro_enter_air_lp,
-    [BUTTON_HIGH_KICK] = goro_enter_air_hk,
-    [BUTTON_LOW_KICK] = goro_enter_air_lk}};
+/* Goro's roster slot selects the shared stance tables 4e5058/4e5070/4e6ec8
+ * (typed inventory), so stance presses enter the same native selectors as
+ * the humanoid roster with Goro's own script slots and clip choices. */
+static const ButtonTable goro_standing = {{[BUTTON_HIGH_PUNCH] = goro_press_high_punch,
+    [BUTTON_LOW_PUNCH] = goro_press_low_punch,
+    [BUTTON_HIGH_KICK] = goro_press_high_kick,
+    [BUTTON_LOW_KICK] = goro_press_low_kick}};
+static const ButtonTable goro_crouching = {{[BUTTON_HIGH_PUNCH] = goro_press_crouching_punch,
+    [BUTTON_LOW_PUNCH] = goro_press_crouching_punch,
+    [BUTTON_HIGH_KICK] = goro_press_crouching_kick,
+    [BUTTON_LOW_KICK] = goro_press_crouching_kick}};
+static const ButtonTable goro_jumping = {{[BUTTON_HIGH_PUNCH] = goro_press_air_hp,
+    [BUTTON_LOW_PUNCH] = goro_press_air_lp,
+    [BUTTON_HIGH_KICK] = goro_press_air_hk,
+    [BUTTON_LOW_KICK] = goro_press_air_lk}};
 
 static const CommandDef goro_commands[] = {
     {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 48, 0, NULL, goro_event_progress},
@@ -76,7 +77,8 @@ static const CommandDef goro_commands[] = {
 static const Controls goro_controls = {goro_commands, (int)(sizeof goro_commands / sizeof goro_commands[0]),
     {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
 
-static const CpuMoves goro_cpu_moves = {.enter = {[CPU_PROJECTILE] = goro_cpu_projectile}};
+static const CpuMoves goro_cpu_moves = {
+    .enter = {[CPU_PROJECTILE] = goro_cpu_projectile, [CPU_FINISH_FAN] = goro_fan_fatality, [CPU_FINISH_SPIKE] = goro_spike_fatality}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
@@ -87,13 +89,12 @@ static const FighterFn state_entries[S_COUNT] = {
 const CharacterDef mk4_goro = {
     GAME_MK4, 15, "GORO", &mk4_motion, moves, S_COUNT, &goro_controls, state_entries, -85458, mk4_walk, NULL, &goro_cpu_moves, NULL, 0};
 
-void goro_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+const mmove_t *goro_retail_script_004e0138_repeat_phase(void) {
+  return &retail_script_004e0138_phase;
 }
 
-void goro_entry_retail_script_004de358(Fighter *fighter) {
-  /* 4de358 is speed data consumed by490ab0, not a VM program. */
-  mk4_mmove_lk_owner_return(fighter, goro_script_lk_finish);
+void goro_entry_retail_script_004de2f8(Fighter *fighter) {
+  retail_script_004de2f8(fighter);
 }
 
 void goro_entry_retail_script_004de6e4(Fighter *fighter) {
@@ -122,6 +123,10 @@ void goro_entry_retail_script_004dfbb8(Fighter *fighter) {
 
 void goro_entry_retail_script_004e0118(Fighter *fighter) {
   retail_script_004e0118(fighter);
+}
+
+void goro_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
 }
 
 void goro_entry_retail_script_004e0148(Fighter *fighter) {
@@ -160,8 +165,20 @@ void goro_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_script_004e5e50(fighter);
 }
 
+void goro_entry_retail_script_004e6190(Fighter *fighter) {
+  retail_script_004e6190(fighter);
+}
+
+void goro_entry_retail_script_004e61e0(Fighter *fighter) {
+  retail_script_004e61e0(fighter);
+}
+
 void goro_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_script_004e61f8(fighter);
+}
+
+void goro_entry_retail_script_004e6270(Fighter *fighter) {
+  retail_script_004e6270(fighter);
 }
 
 void goro_entry_retail_script_004e62a0(Fighter *fighter) {
@@ -208,14 +225,14 @@ void goro_entry_retail_script_004e6950(Fighter *fighter) {
   retail_script_004e6950(fighter);
 }
 
+void goro_entry_retail_script_004e69b0(Fighter *fighter) {
+  retail_script_004e69b0(fighter);
+}
+
 void goro_entry_retail_script_004e9910(Fighter *fighter) {
   retail_script_004e9910(fighter);
 }
 
 void goro_entry_retail_script_004ed790(Fighter *fighter) {
   retail_script_004ed790(fighter);
-}
-
-const mmove_t *goro_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
 }
