@@ -1463,7 +1463,7 @@ static void check_goro_frame_lp_throw(void) {
 }
 
 static void check_selected_high_kick(void) {
-  const int roster[] = {5, 6, 8, 11, 12, 14};
+  const int roster[] = {5, 6, 8, 10, 11, 12, 14};
   for (size_t index = 0; index < sizeof roster / sizeof roster[0]; ++index) {
     for (int scenario = 0; scenario < 3; ++scenario) {
       battle_init(roster[index], 4);
@@ -1482,7 +1482,7 @@ static void check_selected_high_kick(void) {
         advance_ticks(1, input);
         check(!fighter_fiber_active(owner), "Selected high kicks must use frame tables throughout contact and recovery");
       }
-      /* B[0]/B[2] parameter runners share 13% damage and native 20% chip. */
+      /* B[0]/B[1]/B[2] parameter runners share 13% damage and native 20% chip. */
       q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? (int)(((int64_t)0x2147 * 0x3333) >> 16) : 0;
       if (victim->health != Q16_ONE - damage) {
         fprintf(stderr, "Selected kick roster%d scenario%d health%d expected%d\n", roster[index], scenario, victim->health, Q16_ONE - damage);
@@ -2190,7 +2190,7 @@ static void check_jax_air_grab_command(void) {
 static void check_reptile_reconnected_specials(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int dash = 0; dash < 2; ++dash) {
-      for (int scenario = 0; scenario < 3; ++scenario) {
+      for (int scenario = 0; scenario < 4; ++scenario) {
         battle_init(slot ? 4 : 10, slot ? 10 : 4);
         g_battle.phase = PHASE_FIGHT;
         Fighter *owner = &g_battle.fighters[slot];
@@ -2200,16 +2200,29 @@ static void check_reptile_reconnected_specials(void) {
         if (scenario == 1) {
           victim->flags |= FF_UNTOUCHABLE;
         }
+        Input input[2] = {0};
+        if (scenario == 3) {
+          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+          advance_ticks(2, input);
+        }
         fighter_press(owner, slot ? BUTTON_RIGHT : BUTTON_LEFT);
         fighter_press(owner, slot ? BUTTON_LEFT : BUTTON_RIGHT);
         fighter_press(owner, dash ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH);
-        advance_ticks(1, NULL);
+        advance_ticks(1, input);
         check(fighter_move(owner)->clip == (dash ? 302 : 106), "Reptile motion command must enter its owned movement attack");
         if (scenario == 2) {
           fighter_enter_state(owner, S_HIT);
         }
-        advance_ticks(180, NULL);
-        q16 expected = scenario == 0 ? Q16_ONE - (dash ? 0x1eb8 : 0x170a) : Q16_ONE;
+        bool reacted = false;
+        for (int tick = 0; tick < 180; ++tick) {
+          advance_ticks(1, input);
+          /* D[23] selects reaction 158 (clip 179); D[21] selects 40 (clip 183). */
+          reacted |= fighter_move(victim)->clip == (dash ? 179 : 183);
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile movement specials and their victims must use frame tables");
+        }
+        check(reacted == (scenario == 0), "Only an unblocked Reptile special enters its own victim reaction");
+        q16 damage = dash ? 0x1eb8 : 0x170a;
+        q16 expected = scenario == 0 ? Q16_ONE - damage : scenario == 3 ? Q16_ONE - q16_mul(damage, 0x3333) : Q16_ONE;
         if (owner->state != S_IDLE || victim->health != expected) {
           fprintf(stderr, "Reptile slot %d dash %d scenario %d state %d health %d expected %d\n", slot, dash, scenario, owner->state, victim->health, expected);
         }

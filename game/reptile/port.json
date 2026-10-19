@@ -42,12 +42,12 @@
       "evidence": "Reptile weapon input target 0x46d1d0 uses the shared draw-or-throw lifecycle."
     },
     "0x47a690": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47a690",
       "evidence": "Exact Reptile input target sets action 0x216 and enters generated script 0x4e8128."
     },
     "0x47afe0": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Exact Reptile input target sets action 0x20d and enters generated script 0x4e8178."
     },
@@ -101,8 +101,8 @@
     "0x4e5c70": {
       "clip": 66,
       "count": 18,
-      "sample": 17,
-      "evidence": "Reptile root 0x4e5ca0 selects root 0x4e6c90, which opens clip 66/18 at sample 3 then advances to sample 17 before native tail 0x46a760 enters recovery."
+      "sample": 16,
+      "evidence": "470c60 block 4e5d30 submits poses 17, 17 and 16 before 46a770 enters 4e5c70 on clip 66."
     },
     "0x4e6330": {
       "clip": 295,
@@ -175,18 +175,17 @@
     "0x4e6950",
     "0x4e69b0",
     "0x4e8128",
-    "0x4e8148",
-    "0x4e8174",
     "0x4e8178",
     "0x4e9620",
     "0x4e9bd0",
     "0x4ed1e8",
     "0x4e6270",
     "0x4e97f8",
-    "0x4e5bb0"
+    "0x4e5bb0",
+    "0x4e95f0"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "e300c2c7fb4a595cc8f1cee5a621038ac691b8c5c11657b3986761e316b70de1",
+  "inventory_sha256": "678db25dce274b8a0e255aa2a368b3e29a47855813b7f16a442421bca9732da5",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -229,14 +228,14 @@
       "evidence": "Reptile high punch entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "input_47a690": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47a690",
-      "evidence": "Reptile input action 0x216 enters generated root 0x4e8128; its timeout/idle native continuation starts generated stream 0x4e8148 before callback 0x47ab50."
+      "evidence": "47a690 action 216 enters 4e8128 (302, then 303 at 0x2e14) and 47a6d0: sixteen D[23] queries with hit, block-recoil and reverse-302 recoveries."
     },
     "input_47afe0": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47afe0",
-      "evidence": "Reptile native input route enters generated root 0x004e8178."
+      "evidence": "47afe0 action 20d enters 4e8178 (clip 106, D[21] at 13) and 47b010 probe cycles."
     },
     "jab": {
       "source": "game/reptile/character.c",
@@ -259,9 +258,9 @@
       "evidence": "Reptile lp throw entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "reaction_40": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_reaction_40",
-      "evidence": "Native reaction selector 40 enters root 0x4e9620, which opens clip 183/34 and waits for landing."
+      "evidence": "Native selector 0x483550 disarms and enters 0x4e9620: clip 183 launch, landing wait and 488b40 side getup."
     },
     "roundhouse": {
       "source": "game/reptile/character.c",
@@ -392,10 +391,10 @@
       "evidence": "Reptile contact record selects reaction 39; reviewed against the portable shared reaction table."
     },
     "40": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_reaction_40",
-      "adaptation": "Reptile reaction selector 40 starts its generated VM root, which owns the clip, motion, wait-land, and side-getup sequence.",
-      "evidence": "Native selector 0x483550 enters 0x4e9620 when no script is already active."
+      "adaptation": "Shared reactions.c entry 40 dispatches any struck victim to the move-owned generated 4e9620 program.",
+      "evidence": "Roll D[21] selects reaction 40 (483550): disarm and VM 4e9620 with tail 488b40."
     },
     "77": {
       "source": "game/script.c",
@@ -435,6 +434,17 @@
       "source": "game/reactions.c",
       "symbol": "react_fireball_block",
       "evidence": "Acid C[17] blocked reaction 2 uses the shared projectile block handler 486ca0."
+    },
+    "158": {
+      "source": "game/reptile/moves/dash.c",
+      "symbol": "reptile_dash_victim",
+      "adaptation": "Shared reactions.c entry 158 dispatches any struck victim to the move-owned generated 4e95f0 program.",
+      "evidence": "Dash D[23] selects reaction 158 (483500): damage scale 0x9999, disarm, VM 4e95f0 clip 179 launch and 488b80 getup."
+    },
+    "165": {
+      "source": "game/reactions.c",
+      "symbol": "react_slide_block",
+      "evidence": "Dash D[23] blocked reaction 165 (486d00) uses the shared slide-block handler."
     }
   },
   "return_to": "fighter_ready",
@@ -516,12 +526,12 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x47a690": {
-      "source": "game/reptile/moves/common.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47a690",
       "evidence": "Typed Reptile native command 0x47a690 and generated owned script/contact continuation."
     },
     "0x47afe0": {
-      "source": "game/reptile/moves/common.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
     },
@@ -547,12 +557,12 @@
   },
   "cpu_bindings": {
     "0x47a690": {
-      "source": "game/reptile/moves/common.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47a690",
       "evidence": "Typed Reptile native command 0x47a690 and generated owned script/contact continuation."
     },
     "0x47afe0": {
-      "source": "game/reptile/moves/common.c",
+      "source": "game/reptile/moves/dash.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
     },
@@ -597,6 +607,13 @@
     "0x4e6950",
     "0x4ed1e8",
     "0x4e97f8",
-    "0x4e5bb0"
-  ]
+    "0x4e5bb0",
+    "0x4e95f0",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4e8128",
+    "0x4e8178",
+    "0x4e9620"
+  ],
+  "mmove_only": true
 }

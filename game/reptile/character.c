@@ -36,10 +36,6 @@ const uint32_t reptile_weapon_descriptor[] = {
 };
 // clang-format on
 
-/* Retail D[23] at 0x4ec038; the 0x47a6d0 callback queries it during its loop. */
-const AttackRecord reptile_script_contact = {0xd1eb, 0x570a, 0x16872, 0xbfbe, 158, 158, 165, 0, 0x1eb8};
-/* Retail D[21] at 0x4ec028; callback 0x47b260 probes it during recovery. */
-
 static const ButtonTable reptile_standing = {{[BUTTON_HIGH_PUNCH] = reptile_press_punch,
     [BUTTON_LOW_PUNCH] = reptile_press_low_punch,
     [BUTTON_HIGH_KICK] = reptile_press_kick,
@@ -176,14 +172,6 @@ void reptile_entry_retail_script_004e8128(Fighter *fighter) {
   retail_script_004e8128(fighter);
 }
 
-void reptile_entry_retail_script_004e8148(Fighter *fighter) {
-  retail_script_004e8148(fighter);
-}
-
-void reptile_entry_retail_script_004e8174(Fighter *fighter) {
-  retail_script_004e8174(fighter);
-}
-
 void reptile_entry_retail_script_004e8178(Fighter *fighter) {
   retail_script_004e8178(fighter);
 }
@@ -234,4 +222,12 @@ void reptile_entry_retail_script_004e97f8(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e5bb0(Fighter *fighter) {
   retail_script_004e5bb0(fighter);
+}
+
+void reptile_entry_retail_script_004e5c70(Fighter *fighter) {
+  retail_script_004e5c70(fighter);
+}
+
+void reptile_entry_retail_script_004e95f0(Fighter *fighter) {
+  retail_script_004e95f0(fighter);
 }

@@ -626,15 +626,18 @@ CHARACTER_BINDINGS[10] = {
                       evidence='498920 C[71] cue, invisible 4deae0 carrier at the owner, 0x23d7 along the 49c610 heading, waiter 49c690 with 4ed258 (C[17], 498ac0 hit, 498b50 bounds)'),
     0x4698b0: Binding('reptile_script_invisibility', 'game/reptile/moves/invisibility.c', ('tail',), flow='terminal', mmove=True,
                       evidence='4698b0 plays clip 12 to 40 (428d70), toggles render node +0x34 bit 4, plays out from 41 (428cf0) and returns (470420)'),
+    0x46a760: Binding('reptile_script_kick_tail', 'game/reptile/moves/kicks.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='46a760 -> 470c60 block 4e5d30: B[1] at poses 17/17/16, then 46a770 action 1006 and VM 4e5c70'),
+    0x47a6d0: Binding('reptile_script_dash_contact', 'game/reptile/moves/dash.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='47a6d0 sixteen D[23] queries holding 303/0; hit 47a890, block 47a8f0, timeout 47a7e0 reverse 302'),
+    0x47b010: Binding('reptile_script_roll_tail', 'game/reptile/moves/dash.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='47b010 D[21] probes at 18/19/18, six 21/19 cycles, 429380 reverse and 46f650 return'),
+    0x488b40: Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='488b40 shared KO-aware clip185 side getup after reaction-40 victim 4e9620'),
+    0x488b80: Binding('reptile_dash_victim_getup', 'game/reptile/moves/dash.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='488b80: 490350 mirror toggle and 4914c0 with getup pairs 4ea210 (328/184)'),
     0x483df0: Binding('reptile_acid_victim_tail', 'game/reptile/moves/projectile.c', ('tail',), flow='terminal', mmove=True,
                       evidence='483df0/483ed0/483fa0 clip 182: 20 + 10x4 samples, 48e080 neutral, 428810 remainder, 46f650 return'),
-    0x47ab50: Binding('retail_script_004e8174', 'game/reptile/generated/scripts.inc', ('tail',),
-                      script_target=0x4e8174,
-                      evidence='47ab50 callback state enters the selected clip 106/22 continuation 4e8174'),
-    0x47b010: Binding('reptile_script_47b010', 'game/reptile/character.c', ('tail',), flow='terminal',
-                      evidence='47b010 owns the stateful D[21] contact window and six-tick retry callback'),
-    0x488b40: Binding('reptile_script_reaction_side_getup', 'game/reptile/character.c', ('tail',), flow='terminal',
-                      evidence='488b40 selects Reptile reaction 40 side-getup continuation after generated 4e9620'),
 }
 
 # Reptile's common combat roots use the same VM streams as the earlier ports,
@@ -663,8 +666,6 @@ CHARACTER_BINDINGS[10].update({
                       script_target=0x4e0158, evidence='43d6f0 enters Reptile fan victory stream 4e0158'),
     0x43db50: Binding('reptile_script_fan_victim_end', 'game/reptile/character.c', ('tail',), flow='terminal',
                       evidence='43db50 hides the fan victim and retires its scene fiber'),
-    0x46a760: Binding('retail_script_004e5c70', 'game/reptile/generated/scripts.inc', ('tail',),
-                      script_target=0x4e5c70, evidence='46a760 enters Reptile high-kick recovery stream 4e5c70'),
     0x46c7f0: Binding('reptile_script_air_finish', 'game/reptile/character.c', ('tail',), flow='terminal',
                       evidence='46c7f0 completes Reptile straight air-kick landing'),
     0x46cde0: Binding('reptile_script_finish', 'game/reptile/character.c', ('tail',), flow='terminal',
@@ -685,8 +686,6 @@ CHARACTER_BINDINGS[10].update({
                       evidence='46f270 completes Reptile roundhouse contact and recovery'),
     0x467fc0: Binding('reptile_script_spike_tail', 'game/reptile/character.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes Reptile stage-fatality continuation'),
-    0x47a6d0: Binding('reptile_script_47a6d0', 'game/reptile/character.c', ('tail',), flow='terminal',
-                      evidence='47a6d0 probes Reptile D[23] during the 47a690 contact loop'),
 })
 
 CHARACTER_BINDINGS[11] = {
