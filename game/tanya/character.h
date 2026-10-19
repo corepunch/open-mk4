@@ -90,4 +90,12 @@ void tanya_spike_fatality(Fighter *fighter);
 void tanya_roundhouse(Fighter *fighter);
 void tanya_script_roundhouse_finish(Fighter *fighter);
 void tanya_entry_retail_script_004e0138(Fighter *fighter);
+void tanya_entry_retail_script_004ed268(Fighter *fighter);
+void tanya_entry_retail_script_004ed2c0(Fighter *fighter);
+void tanya_fireball(Fighter *fighter);
+void tanya_air_fireball(Fighter *fighter);
+bool tanya_can_air_fireball(const Fighter *fighter);
+void tanya_fireball_spawn(Fighter *fighter, int task_type);
+void tanya_air_fireball_spawn(Fighter *fighter, int task_type);
+void tanya_air_fireball_fall(Fighter *fighter);
 #endif

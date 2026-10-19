@@ -182,6 +182,9 @@ def _moves_for(character):
             high_kick=move(0x46a680, (('character-selected attacker', 0x4e5ca0), ('recovery', 0x4e5c70)), (('B', 1),)),
             low_kick=move(0x46a7b0, (('character-selected attacker', 0x4e5d90),), (('B', 5),)),
             roundhouse=move(0x46f1f0, (('character-selected attacker', 0x4e6800), ('fast start', 0x4e6890), ('normal start', 0x4e68a8)), (('B', 34),)),
+            fireball=move(0x498b70, (('caster', 0x4ed268),), (('C', 0),), native=(('independent projectile', 0x498bb0), ('object setup', 0x498be0))),
+            air_fireball=move(0x498e70, (('caster', 0x4ed2c0),), (('C', 0),),
+                              native=(('independent projectile', 0x498ed0), ('object setup', 0x498be0), ('owner fall', 0x480cf0))),
         )
     if character == 10:
         # Reptile's input and CPU tables expose three additional script

@@ -191,3 +191,11 @@ void tanya_entry_retail_script_004e6190(Fighter *fighter) {
 void tanya_entry_retail_script_004e0138(Fighter *fighter) {
   retail_script_004e0138(fighter);
 }
+
+void tanya_entry_retail_script_004ed268(Fighter *fighter) {
+  retail_script_004ed268(fighter);
+}
+
+void tanya_entry_retail_script_004ed2c0(Fighter *fighter) {
+  retail_script_004ed2c0(fighter);
+}

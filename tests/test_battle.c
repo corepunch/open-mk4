@@ -4955,7 +4955,100 @@ static void check_air_throw(void) {
   check(g_battle.fighters[0].pending == NULL, "Grounded BLOCK must not air throw");
 }
 
+/* Tanya (roster 9) native specials. */
+static Projectile *tanya_fireball_object(void) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *projectile = &g_battle.projectiles[i];
+    if (projectile->kind == PROJECTILE_FIREBALL && projectile->mesh_animation != NULL && projectile->mesh_animation->first == 261) {
+      return projectile;
+    }
+  }
+  return NULL;
+}
+
+static void check_tanya_fireballs(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT, back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+    /* Ground D,F+HP: hit, chip, crouch (action 2001) and caster interruption. */
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      command(slot, BUTTON_DOWN, forward, BUTTON_HIGH_PUNCH);
+      check(fighter_move(owner)->clip == 26 && owner->action == 0x309, "Tanya D,F+HP must enter the native 309 clip-26 cast");
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      } else if (scenario == 2) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+      }
+      bool launched = false;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        Projectile *projectile = tanya_fireball_object();
+        if (!launched && projectile != NULL) {
+          launched = true;
+          check(projectile->vel[AXIS_Y] == 0 && projectile->gravity == 0 && projectile->mesh_animation->source == MESH_SHARED2,
+              "Tanya's ground fireball must fly straight with its share2 meshes");
+          if (scenario == 3) {
+            battle_react(owner, 37);
+          }
+        }
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya fireball and its reactions must use frame tables");
+      }
+      q16 damage = scenario == 0 || scenario == 3 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
+      check(launched && victim->health == Q16_ONE - damage, "Tanya fireball must keep C0 hit, chip and crouch-avoidance behavior after interruption");
+      check(owner->state == S_IDLE && tanya_fireball_object() == NULL, "Tanya caster and her independent fireball must recover and retire");
+    }
+    /* Airborne D,B+LP: the descending object ignores action 2001 and the
+     * caster falls on clip 310 before returning to stance. */
+    for (int scenario = 0; scenario < 2; ++scenario) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
+      victim->body.pos[AXIS_X] = slot ? -0x18000 : 0x18000;
+      command(slot, BUTTON_DOWN, back, BUTTON_LOW_PUNCH);
+      check(owner->action != 0x30a, "Tanya's air fireball gate must reject a grounded caster");
+      advance_ticks(60, NULL);
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_UP);
+      battle_step(input);
+      advance_ticks(8, NULL);
+      check(fighter_airborne(owner) && owner->body.gravity != 0, "Tanya must be in a falling jump before the air fireball");
+      command(slot, BUTTON_DOWN, back, BUTTON_LOW_PUNCH);
+      check(fighter_move(owner)->clip == 24 && owner->action == 0x30a && owner->body.gravity == 0, "Tanya air D,B+LP must stop motion and enter clip 24");
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+      }
+      input[slot].held = 0;
+      bool launched = false, fell = false;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        Projectile *projectile = tanya_fireball_object();
+        launched |= projectile != NULL && projectile->vel[AXIS_Y] == 0x23d7;
+        fell |= fighter_move(owner)->clip == 310 && owner->action == 0x1005 && owner->body.gravity == 0x20c;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya air fireball must use frame tables");
+      }
+      check(launched && fell && !fighter_airborne(owner) && owner->state == S_IDLE, "Tanya air fireball caster must fall on clip 310, land and recover");
+      check(victim->health < Q16_ONE && tanya_fireball_object() == NULL, "Tanya's descending fireball must strike even a crouching victim");
+    }
+    battle_init(slot ? 4 : 9, slot ? 9 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_PROJECTILE), "Tanya CPU projectile row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 26 && g_battle.fighters[slot].action == 0x309, "Tanya CPU projectile row must cast her fireball");
+  }
+}
+
+static void check_tanya_ports(void) {
+  check_tanya_fireballs();
+}
+
 int main(void) {
+  check_tanya_ports();
   check_spear_fiber_interruption();
   check_spear_fiber_allocation_and_reset();
   check_fatalities();

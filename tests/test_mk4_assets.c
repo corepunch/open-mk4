@@ -279,6 +279,45 @@ static void fallback_clip_clock(const Assets *assets) {
   check(reached && fighter->state == S_IDLE, "Asset-backed Goro LP throw must complete its selected final recovery");
 }
 
+/* Tanya (roster 9): 4d1718 fireball sprites and actual-rig contact. */
+static void tanya_fireball_assets(const Assets *assets) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 9, slot ? 9 : 4);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    Input input[2] = {0};
+    const Button sequence[] = {BUTTON_DOWN, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_HIGH_PUNCH};
+    for (int entry = 0; entry < 3; ++entry) {
+      input[slot].held = BUTTON_BIT(sequence[entry]);
+      battle_step(input);
+      input[slot].held = 0;
+      battle_step(input);
+      battle_step(input);
+    }
+    bool visible = false;
+    for (int tick = 0; tick < 180; ++tick) {
+      battle_step(input);
+      for (int index = 0; index < MAX_PROJECTILES; ++index) {
+        const Projectile *fireball = &g_battle.projectiles[index];
+        if (fireball->kind == PROJECTILE_FIREBALL && fireball->mesh_animation != NULL && fireball->mesh_animation->first == 261) {
+          visible = true;
+          const Geometry *geometry = mesh_animation_geometry(assets, fireball->mesh_animation);
+          int mesh = projectile_mesh_frame(fireball);
+          check(geometry == &assets->hud.effects2 && mesh >= 261 && mesh <= 270 && geometry->sprites.data[mesh].w > 0,
+              "Tanya's fireball must cycle the extracted share2 sprite frames 261..270");
+        }
+      }
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, owner, bones);
+      fighter_pose(assets, victim, bones);
+    }
+    check(visible && victim->health == Q16_ONE - 0x1999 && owner->state == S_IDLE, "Tanya's fireball must resolve C0 contact against animated victim bounds");
+  }
+}
+
 static void cage_orb_assets(const Assets *assets) {
   check(assets->hud.effects2.meshes.count > 280 && assets->hud.effects2.textures.count > 0, "Cage orbs require the original share2 geometry and materials");
   for (int slot = 0; slot < 2; ++slot) {
@@ -1283,6 +1322,7 @@ int main(void) {
   shinnok_fatality_assets(&assets);
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
+  tanya_fireball_assets(&assets);
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);

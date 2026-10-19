@@ -37,14 +37,14 @@
       "evidence": "Tanya CPU selector target 47b9f0 maps through the low-kick selection to c_tanya.c."
     },
     "0x498b70": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_high_punch",
-      "evidence": "Tanya high-punch event target 498b70 maps to c_tanya.c."
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_fireball",
+      "evidence": "Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
     },
     "0x498e70": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_jab",
-      "evidence": "Tanya low-punch event target 498e70 maps to c_tanya.c."
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_air_fireball",
+      "evidence": "Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
     },
     "0x467e00": {
       "source": "game/tanya/moves/fan.c",
@@ -172,10 +172,12 @@
     "0x4e6890",
     "0x4e68a8",
     "0x4e6950",
-    "0x4e69b0"
+    "0x4e69b0",
+    "0x4ed268",
+    "0x4ed2c0"
   ],
   "integration_source": "game/tanya/character.c",
-  "inventory_sha256": "0adc058b55e5841d407063d4df7733ef39644cbfbe2148d10a5c83a6c9edc8c9",
+  "inventory_sha256": "6dd0cf4b991723d4e8fdf13e8af1b99c62d3a18efc9604c966aee70c5445d073",
   "moves": {
     "high_punch": {
       "source": "game/tanya/character.c",
@@ -271,6 +273,16 @@
       "source": "game/tanya/moves/combos.c",
       "symbol": "tanya_close_hk",
       "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+    },
+    "fireball": {
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_fireball",
+      "evidence": "Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+    },
+    "air_fireball": {
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_air_fireball",
+      "evidence": "Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
     }
   },
   "output": "game/tanya/generated/scripts.inc",
@@ -397,6 +409,16 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "64": {
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record",
+      "evidence": "Tanya fireball C0 (4ebed0) selects shared reaction 64; generated 64 body 4e9de8 and KO-aware recovery."
+    },
+    "2": {
+      "source": "game/reactions.c",
+      "symbol": "react_fireball_block",
+      "evidence": "Tanya fireball C0 (4ebed0) selects shared block reaction 2 and its native frame recovery."
     }
   },
   "return_to": "fighter_ready",
@@ -474,13 +496,24 @@
       "source": "game/tanya/moves/spike.c",
       "symbol": "tanya_spike_fatality",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
+    },
+    "0x498b70": {
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_fireball",
+      "evidence": "HP D,F record 4e44e0 (T2[10], window 26). Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+    },
+    "0x498e70": {
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_air_fireball",
+      "evidence": "LP D,B record 4e4500 (T2[11], flags 0x12, gate 45ef20). Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
     }
   },
   "command_predicates": {
     "0x45e820": "mk4_can_sidestep",
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
-    "0x45e4f0": "mk4_can_spike_finish"
+    "0x45e4f0": "mk4_can_spike_finish",
+    "0x45ef20": "tanya_can_air_fireball"
   },
   "mmove_scripts": [
     "0x4de798",
@@ -511,6 +544,15 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
-  ]
+    "0x4e6950",
+    "0x4ed268",
+    "0x4ed2c0"
+  ],
+  "cpu_bindings": {
+    "0x498b70": {
+      "source": "game/tanya/moves/projectile.c",
+      "symbol": "tanya_fireball",
+      "evidence": "Projectile CPU row 4df9cc[9] word 0x2000a selects T2[10] 498b70. Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+    }
+  }
 }

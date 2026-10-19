@@ -464,6 +464,14 @@ CHARACTER_BINDINGS[9] = {
                       evidence='46f390 selects Tanya fast or ordinary roundhouse startup streams'),
     0x467fc0: Binding('tanya_script_spike_tail', 'game/tanya/character.c', ('tail',), flow='terminal',
                       evidence='467fc0 stage-fatality coordinator; shared spike helper'),
+    0x498bb0: Binding('tanya_fireball_spawn', 'game/tanya/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(75,), mmove=True,
+                      evidence='498bb0 -> 498be0 builds ten share2 meshes 4d1718, offset 4ed808, heading speed .2 and C0 waiter 4ed2b0'),
+    0x498ed0: Binding('tanya_air_fireball_spawn', 'game/tanya/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
+                      flow='independent', task_types=(75,), mmove=True,
+                      evidence='498ed0 -> 498be0 adds Y velocity 0x23d7 and C0 waiter 4ed2e8 through 49c670, which ignores action 2001'),
+    0x498eb0: Binding('tanya_air_fireball_fall', 'game/tanya/moves/projectile.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='498eb0 -> 480cf0 gravity 0x20c, action 1005, clip 310 samples 7..18 until landing, then the clip tail'),
 }
 
 # Shinnok's throw and fan continuations enter selected generated streams
