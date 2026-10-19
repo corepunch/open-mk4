@@ -350,6 +350,52 @@ static void tanya_kick_assets(const Assets *assets) {
   }
 }
 
+static void tanya_weapon_assets(const Assets *assets) {
+  check(assets->scene_models.count > SCENE_MODEL_TANYA_WEAPON && assets->scene_models.data[SCENE_MODEL_TANYA_WEAPON].bones.count > 0,
+      "Tanya weapon extraction must provide the 4ecd98 shared-geometry rig");
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 3; ++strike) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      battle_bind_assets(assets);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      const Button sequence[] = {slot ? BUTTON_LEFT : BUTTON_RIGHT, slot ? BUTTON_LEFT : BUTTON_RIGHT, BUTTON_HIGH_KICK};
+      for (int entry = 0; entry < 3; ++entry) {
+        input[slot].held = BUTTON_BIT(sequence[entry]);
+        battle_step(input);
+        input[slot].held = 0;
+        battle_step(input);
+        battle_step(input);
+      }
+      for (int tick = 0; tick < 65; ++tick) {
+        battle_step(input);
+      }
+      check(owner->armed && owner->weapon->model == SCENE_MODEL_TANYA_WEAPON, "Tanya draw command must equip her extracted retail weapon");
+      q16 half = strike == 2 ? 2 * Q16_ONE : 0xc000;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      input[slot].held = BUTTON_BIT(strike == 2 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH) | (strike == 1 ? BUTTON_BIT(slot ? BUTTON_RIGHT : BUTTON_LEFT) : 0);
+      battle_step(input);
+      battle_step(input);
+      input[slot].held = 0;
+      for (int tick = 0; tick < 240; ++tick) {
+        battle_step(input);
+        Pose bones[MK4_MAX_BONES];
+        fighter_pose(assets, owner, bones);
+        fighter_pose(assets, victim, bones);
+      }
+      check(victim->health == Q16_ONE - (strike == 0      ? 0x28f5
+                                            : strike == 1 ? 0x23d7
+                                                          : 0x3333) &&
+                owner->state == S_IDLE,
+          "Tanya's armed strikes and boomerang must hit animated victim bounds once and recover");
+    }
+  }
+}
+
 static void cage_orb_assets(const Assets *assets) {
   check(assets->hud.effects2.meshes.count > 280 && assets->hud.effects2.textures.count > 0, "Cage orbs require the original share2 geometry and materials");
   for (int slot = 0; slot < 2; ++slot) {
@@ -1356,6 +1402,7 @@ int main(void) {
   cage_orb_assets(&assets);
   tanya_fireball_assets(&assets);
   tanya_kick_assets(&assets);
+  tanya_weapon_assets(&assets);
   cage_groin_command(&assets);
   cage_first_fatality_assets(&assets);
   cage_second_fatality_assets(&assets);

@@ -476,6 +476,16 @@ CHARACTER_BINDINGS[9] = {
                       evidence='47ba20 two advancing D17 queries; 47ba90 shake 0, grounded victim gets reaction 95 after six samples; 47bbd0 recovery'),
     0x47dae0: Binding('tanya_blocked_recoil_land', 'game/tanya/moves/spin_kick.c', ('tail',), flow='terminal', mmove=True,
                       evidence='47dae0 shared 46fd90 landing after generated 4e84b8 rewinds clip 301'),
+    0x46d260: Binding('tanya_script_draw_equip', 'game/tanya/moves/weapon.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='46d260 equips type 6d from descriptor 4ecd98, then enters generated 4e62d8'),
+    0x46eab0: Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True,
+                      evidence='Shared armed air HP contact and landing frame phase'),
+    0x46ec10: Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal', mmove=True,
+                      evidence='Shared armed air LP contact and landing frame phase'),
+    0x497b60: Binding('tanya_boomerang_release', 'game/tanya/moves/weapon.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='497b60 releases the weapon (498480), spawns task 51 497c50 and finishes clip 229 before 46f650'),
+    0x490bd0: Binding('tanya_weapon_face_peer', 'game/tanya/moves/weapon.c', ('physics',), mmove=True,
+                      evidence='490bd0 corrects facing toward the peer as the 4e8bc8 victim group callback'),
 }
 
 # Shinnok's throw and fan continuations enter selected generated streams

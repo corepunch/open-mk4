@@ -38,6 +38,10 @@ static const Controls tanya_controls = {retail_commands, (int)(sizeof retail_com
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
+  [S_IDLE] = tanya_armed_idle,
+  [S_WALK] = tanya_armed_walk,
+  [S_CROUCH] = tanya_armed_crouch,
+  [S_BLOCK] = tanya_armed_block,
   [S_PUNCH] = tanya_jab,
   [S_KICK] = tanya_high_kick,
   [S_SWEEP] = tanya_sweep,
@@ -206,4 +210,32 @@ void tanya_entry_retail_script_004e81f0(Fighter *fighter) {
 
 void tanya_entry_retail_script_004e84b8(Fighter *fighter) {
   retail_script_004e84b8(fighter);
+}
+
+void tanya_entry_retail_script_004e62c0(Fighter *fighter) {
+  retail_script_004e62c0(fighter);
+}
+
+void tanya_entry_retail_script_004e62d8(Fighter *fighter) {
+  retail_script_004e62d8(fighter);
+}
+
+void tanya_entry_retail_script_004e66d0(Fighter *fighter) {
+  retail_script_004e66d0(fighter);
+}
+
+void tanya_entry_retail_script_004e66f0(Fighter *fighter) {
+  retail_script_004e66f0(fighter);
+}
+
+void tanya_entry_retail_script_004ed190(Fighter *fighter) {
+  retail_script_004ed190(fighter);
+}
+
+void tanya_entry_retail_script_004e9db8(Fighter *fighter) {
+  retail_script_004e9db8(fighter);
+}
+
+void tanya_entry_retail_script_004e8bb0(Fighter *fighter) {
+  retail_script_004e8bb0(fighter);
 }

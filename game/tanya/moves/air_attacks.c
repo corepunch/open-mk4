@@ -75,11 +75,11 @@ void tanya_script_air_finish(Fighter *fighter) {
 }
 
 void tanya_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, tanya_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : tanya_air_hp);
 }
 
 void tanya_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &tanya_air_punch_followup ? tanya_air_combo_lp : tanya_air_lp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &tanya_air_punch_followup ? tanya_air_combo_lp : tanya_air_lp);
 }
 
 void tanya_press_air_kick(Fighter *fighter) {

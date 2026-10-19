@@ -340,11 +340,13 @@ void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {
   /* The character starts its generated 4e62c0/4e62d8 program. */
 }
 
-static void throw_release(Fighter *fighter) {
+/* 498480: detach the held weapon .75 along the heading at Y -1.2 as an
+ * independent world object; the caller supplies its flight. */
+Projectile *weapon_release_object(Fighter *fighter, int lifetime, ProjectileFn step) {
   if (!fighter->armed) {
-    return;
+    return NULL;
   }
-  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SWORD, 90, object_tick);
+  Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_SWORD, lifetime, step);
   if (p != NULL) {
     p->weapon = fighter->weapon;
     p->spin[AXIS_Z] = -0x6666; /* 493a70 / 493c20 */
@@ -356,6 +358,19 @@ static void throw_release(Fighter *fighter) {
     p->pos[AXIS_Y] = -0x13333;
   }
   fighter->armed = false;
+  return p;
+}
+
+/* 494590 -> 4941b0: a free weapon object settles through the shared arcs
+ * and then remains available to weapon_pickup. */
+void weapon_object_settle(Projectile *p) {
+  p->step = object_tick;
+  p->bounce = 0;
+  begin_bounce(p);
+}
+
+static void throw_release(Fighter *fighter) {
+  weapon_release_object(fighter, 90, object_tick);
 }
 
 enum {

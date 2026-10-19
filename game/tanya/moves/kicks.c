@@ -17,12 +17,12 @@ static void tanya_low_kick(Fighter *fighter) {
 }
 
 void tanya_press_high_kick(Fighter *fighter) {
-  if (!fighter->armed && fighter_holds_back(fighter)) {
+  if (fighter_holds_back(fighter)) {
     fighter_interrupt(fighter, tanya_roundhouse);
     return;
   }
 
-  if (!fighter_holds_back(fighter) && !fighter->armed && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
+  if (!fighter_holds_back(fighter) && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
     fighter_interrupt(fighter, tanya_close_hk);
     return;
   }

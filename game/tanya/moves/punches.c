@@ -20,11 +20,11 @@ void tanya_high_punch(Fighter *fighter) {
 }
 
 void tanya_press_high_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, tanya_high_punch);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : tanya_high_punch);
 }
 
 void tanya_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= 0.7f ? tanya_lp_throw : tanya_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? tanya_lp_throw : tanya_jab);
 }
 
 /* 46d290/46d9b3: select the native HP record and 296/297 repeat phases. */

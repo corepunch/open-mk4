@@ -5115,9 +5115,111 @@ static void check_tanya_kicks(void) {
   }
 }
 
+static Projectile *tanya_weapon_object(void) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    if (g_battle.projectiles[i].kind == PROJECTILE_SWORD) {
+      return &g_battle.projectiles[i];
+    }
+  }
+  return NULL;
+}
+
+static void tanya_draw(int slot) {
+  Fighter *owner = &g_battle.fighters[slot];
+  Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+  Input input[2] = {0};
+  input[slot].held = BUTTON_BIT(forward);
+  battle_step(input);
+  advance_ticks(2, NULL);
+  battle_step(input);
+  advance_ticks(1, NULL);
+  input[slot].held = BUTTON_BIT(BUTTON_HIGH_KICK);
+  battle_step(input);
+  advance_ticks(1, NULL);
+  check(fighter_move(owner)->clip == 244 && !owner->armed, "Tanya F,F+HK must play the real draw before equipping");
+  advance_ticks(65, NULL);
+  check(owner->armed && owner->weapon->type == 0x6d && owner->weapon->model == SCENE_MODEL_TANYA_WEAPON && owner->state == S_IDLE,
+      "Tanya must equip her type-6d weapon rig and armed controls");
+}
+
+static void check_tanya_weapon(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+    /* Armed HP 4955b0 (WEAPON 42 -> 169) and held-back 4955e0 (WEAPON 43 -> 170). */
+    for (int strike = 0; strike < 2; ++strike) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+      g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+      tanya_draw(slot);
+      owner->body.pos[AXIS_X] = slot ? 0xc000 : -0xc000;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH) | (strike ? BUTTON_BIT(back) : 0);
+      advance_ticks(2, input);
+      check(fighter_move(owner)->clip == (strike ? 231 : 229) && owner->action == 0x111, "Tanya armed HP must select its own native strike");
+      input[slot].held = 0;
+      bool reacted = false;
+      for (int tick = 0; tick < 180; ++tick) {
+        battle_step(input);
+        reacted |= victim->reaction == (strike ? 170 : 169) && (victim->flags & FF_REACTING);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya weapon strikes and victims must use frame tables");
+      }
+      check(victim->health == Q16_ONE - (strike ? 0x23d7 : 0x28f5) && reacted, "Tanya armed strikes must keep WEAPON 42/43 damage and reactions");
+      check(owner->state == S_IDLE && owner->armed && owner->body.vel[AXIS_X] == 0 && victim->state == S_IDLE, "Tanya armed strike and victim must recover");
+    }
+    /* Armed LP 495610: the boomerang hits or reaches the arena edge, returns
+     * and is caught; a busy owner lets it settle as a free world weapon. */
+    for (int scenario = 0; scenario < 3; ++scenario) {
+      battle_init(slot ? 4 : 9, slot ? 9 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
+      g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
+      tanya_draw(slot);
+      q16 half = scenario == 0 ? 2 * Q16_ONE + 0x8000 : 2 * Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      if (scenario != 0) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+      }
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+      battle_step(input);
+      input[slot].held = 0;
+      battle_step(input);
+      check(fighter_move(owner)->clip == 229 && owner->action == 0x316, "Tanya armed LP must start the action-316 boomerang throw");
+      bool released = false, settled = false;
+      for (int tick = 0; tick < 400; ++tick) {
+        battle_step(input);
+        Projectile *object = tanya_weapon_object();
+        released |= object != NULL && !owner->armed;
+        if (scenario == 2 && object != NULL && object->phase == 2 && object->step != NULL && owner->state == S_IDLE) {
+          settled = true;
+        }
+        if (scenario == 2 && released && !settled && object != NULL) {
+          owner->flags |= FF_BUSY;
+        }
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Tanya boomerang throw must use frame tables");
+      }
+      q16 damage = scenario == 0 ? 0x3333 : 0;
+      check(released && victim->health == Q16_ONE - damage, "Tanya's boomerang must apply C20 once and miss a crouching victim");
+      if (scenario < 2) {
+        check(owner->armed && owner->state == S_IDLE && tanya_weapon_object() == NULL, "Tanya must catch her returning boomerang");
+      } else {
+        owner->flags &= ~(unsigned)FF_BUSY;
+        check(
+            !owner->armed && tanya_weapon_object() != NULL && tanya_weapon_object()->phase == 2, "A busy owner must leave the boomerang settled in the arena");
+      }
+    }
+  }
+}
+
 static void check_tanya_ports(void) {
   check_tanya_fireballs();
   check_tanya_kicks();
+  check_tanya_weapon();
 }
 
 int main(void) {

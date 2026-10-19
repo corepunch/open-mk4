@@ -189,6 +189,12 @@ def _moves_for(character):
                            native=(('spin animation', 0x4797c0), ('reverse recovery', 0x429600), ('blocked recoil', 0x47d940), ('recoil landing', 0x47dae0))),
             drill_kick=move(0x47b9f0, (('attacker', 0x4e81f0),), (('D', 17),),
                             native=(('contact', 0x47ba20), ('grounded follow-up', 0x47ba90), ('recovery', 0x47bbd0))),
+            draw_weapon=move(0x46d1d0, (('draw', 0x4e62c0), ('equip return', 0x4e62d8), ('air HP', 0x4e66d0), ('air LP', 0x4e66f0)), native=(('equip', 0x46d260),)),
+            weapon_hp=move(0x4955b0, contacts=(('WEAPON', 42),), native=(('strike', 0x494990),)),
+            weapon_back_hp=move(0x4955e0, contacts=(('WEAPON', 43),), native=(('travel', 0x4947d0), ('strike', 0x494950))),
+            weapon_lp=move(0x495610, (('boomerang throw', 0x4ed190),), (('C', 20),),
+                           native=(('release', 0x497b60), ('flight task', 0x497c50), ('return and catch', 0x497e60))),
+            weapon_reaction=move(0x486710, (('reaction 169 victim', 0x4e9db8), ('reaction 170 victim', 0x4e8bb0)), native=(('reaction 170 entry', 0x4821a0),)),
         )
     if character == 10:
         # Reptile's input and CPU tables expose three additional script
