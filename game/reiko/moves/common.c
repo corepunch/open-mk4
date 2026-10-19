@@ -61,15 +61,6 @@ void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
   require(false, "Unexpected Reiko opponent reaction");
 }
 
-void reiko_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
-  fighter_start_move(fighter, state, move);
-  if (state == S_SWEEP) {
-    script(fighter);
-  } else {
-    fighter_start_fiber(fighter, script, NULL);
-  }
-}
-
 void reiko_script_lp_reaction(Fighter *fighter, int reaction) {
   require(reaction == 102 || reaction == 107, "Unexpected reiko LP victim reaction");
   Fighter *victim = mk4_script_release_pair(fighter);

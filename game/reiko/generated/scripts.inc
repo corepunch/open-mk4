@@ -2153,59 +2153,62 @@ static inline void retail_script_004e01a0(Fighter *fighter) {
   fighter_mmove_phase(fighter, &retail_script_004e01a0_phase);
 }
 
-static inline void retail_script_004e5c70(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  mk4_script_inherit(fighter, 66, 18, 17);
-  {
-    /* EXE 004e5c70: 0x6000002 */
-    mk4_script_advance(fighter, 2, -1);
-  }
-  {
-    /* EXE 004e5c74: 0x24000000 */
-    mk4_script_attack_return(fighter);
-  }
-  {
-    /* EXE 004e5c78: 0x7000000 */
-    mk4_script_finish_clip(fighter, -1);
-  }
-  {
-    /* EXE 004e5c7c: 0x3f000000 */
-    fighter_wait_ticks(1);
-    fighter_fiber_finish(fighter_ready);
-  }
+static inline void retail_script_004e5c70(Fighter *fighter);
+
+static void retail_script_004e5c70_at_2(Fighter *fighter) {
+  fighter->sample_override = 14;
+  /* EXE 004e5c74: 0x24000000 */
+  mk4_script_attack_return(fighter);
+  /* EXE 004e5c78: 0x7000000 */
 }
 
+static void retail_script_004e5c70_at_18(Fighter *fighter) {
+  fighter_finish_mmove(fighter, fighter_ready);
+}
+
+static const int retail_script_004e5c70_samples[] = {16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e5c70_frames[18] = {
+  [1] = {.thinkfunc = retail_script_004e5c70_at_2},
+  [17] = {.thinkfunc = retail_script_004e5c70_at_18},
+};
+// clang-format on
+static const mmove_t retail_script_004e5c70_phase = {
+    .firstframe = 0, .lastframe = 17, .frame = retail_script_004e5c70_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e5c70_samples};
+
+static inline void retail_script_004e5c70(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_script_inherit(fighter, 66, 18, 16);
+  /* EXE 004e5c70: 0x6000002 */
+  fighter_mmove_phase(fighter, &retail_script_004e5c70_phase);
+}
+
+static inline void retail_script_004e5ca0(Fighter *fighter);
+
+static void retail_script_004e5ca0_at_12(Fighter *fighter) {
+  fighter->sample_override = 17;
+  /* EXE 004e6ca8: 0x32000000 0x46a760 */
+  reiko_script_kick_finish(fighter);
+}
+
+static const int retail_script_004e5ca0_samples[] = {0, 1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 17};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e5ca0_frames[12] = {
+  [11] = {.thinkfunc = retail_script_004e5ca0_at_12},
+};
+// clang-format on
+static const mmove_t retail_script_004e5ca0_phase = {
+    .firstframe = 0, .lastframe = 11, .frame = retail_script_004e5ca0_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e5ca0_samples};
+
 static inline void retail_script_004e5ca0(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  int attack_selector = 0;
-  (void)attack_selector;
-  {
-    /* EXE 004e5ca0: 0x3c000000 0x139b24 0x139720 0x139738 0x139b24 0x139720 0x139738 0x139b24 0x139b24 0x139720 0x139b24 0x139b24 0x139720 0x139738 0x139b24 0x139720 0x139b24 */
-  }
-  {
-    /* EXE 004e6c90: 0x1f000000 0x1 */
-    attack_selector = 1;
-  }
-  {
-    /* EXE 004e6c98: 0x20000001 */
-    battle_sound(SOUND_A, 1);
-  }
-  {
-    /* EXE 004e6c9c: 0x2000003 0x13ec25 */
-    mk4_script_bind(fighter, 66, 18, 0);
-    mk4_script_advance(fighter, 3, 1);
-  }
-  {
-    /* EXE 004e6ca4: 0x19000011 */
-    mk4_script_advance(fighter, 9, 2);
-  }
-  {
-    /* EXE 004e6ca8: 0x32000000 0x46a760 */
-    reiko_script_kick_finish(fighter);
-    return;
-  }
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e5ca0: 0x3c000000 0x139b24 0x139720 0x139738 0x139b24 0x139720 0x139738 0x139b24 0x139b24 0x139720 0x139b24 0x139b24 0x139720 0x139738 0x139b24 0x139720 0x139b24 */
+  /* EXE 004e6c90: 0x1f000000 0x1 */
+  /* EXE 004e6c98: 0x20000001 */
+  battle_sound(SOUND_A, 1);
+  /* EXE 004e6c9c: 0x2000003 0x13ec25 */
+  mk4_mmove_bind(fighter, 66, 18, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e5ca0_phase);
 }
 
 static inline void retail_script_004e5d90(Fighter *fighter);

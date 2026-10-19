@@ -102,8 +102,8 @@
     "0x4e5c70": {
       "clip": 66,
       "count": 18,
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "sample": 17
+      "evidence": "46a760 -> 470c60 block 4e5d30 submits poses 17, 17 and 16 before 46a770 enters this recovery on clip 66.",
+      "sample": 16
     },
     "0x4e6330": {
       "clip": 295,
@@ -634,6 +634,8 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4e5ca0",
+    "0x4e5c70"
   ]
 }

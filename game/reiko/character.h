@@ -39,7 +39,6 @@ void reiko_script_lp_select(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void reiko_script_roundhouse_start(Fighter *fighter);
 void reiko_script_spike_tail(Fighter *fighter);
-void reiko_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
 void reiko_sweep(Fighter *fighter);
 void reiko_uppercut(Fighter *fighter);
 void reiko_entry_retail_script_004de2f8(Fighter *fighter);
