@@ -844,8 +844,6 @@ CHARACTER_BINDINGS[12] = {
                       evidence='46f270 resolves Jarek roundhouse contact and recovery'),
     0x467fc0: Binding('mk4_script_spike_tail', 'game/script.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes the stage-fatality continuation'),
-    0x47b600: Binding('jarek_script_47b600', 'game/jarek/character.c', ('tail',), flow='terminal',
-                      evidence='47b600 applies Jarek follow-up contact damage and reaction'),
     0x497b60: Binding('jarek_script_sweep_finish', 'game/jarek/character.c', ('tail',), flow='terminal',
                       evidence='497b60 enters Jarek sweep contact and recovery through the existing portable contact helper'),
 }
@@ -1571,3 +1569,5 @@ CHARACTER_BINDINGS[12][0x47dae0] = Binding('jarek_ball_land', 'game/jarek/moves/
     evidence='47dae0 runs shared 46fd90 landing after generated 4e84b8 rewinds clip 301 from 8 to 0')
 CHARACTER_BINDINGS[12][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
     evidence='488b40 KO-aware clip185 side getup after the reaction-42 ball knockdown 4e9658')
+CHARACTER_BINDINGS[12][0x47b600] = Binding('jarek_quake_tail', 'game/jarek/moves/quake.c', ('tail',), flow='terminal', mmove=True,
+    evidence='47b600 sets action200f, damages a grounded peer 0x23d7 with reaction136 via48ee60/48de80/480f80, then47b680 enters4e81c8')

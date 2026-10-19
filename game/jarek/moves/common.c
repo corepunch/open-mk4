@@ -4,16 +4,6 @@ void jarek_ready(Fighter *fighter) {
   fighter_ready(fighter);
 }
 
-void jarek_start(Fighter *fighter, int state, const MoveDef *move, FighterFn script) {
-  fighter_start_move(fighter, state, move);
-  fighter->sample_override = 0;
-  if (state == S_SWEEP) {
-    script(fighter);
-  } else {
-    fighter_start_fiber(fighter, script, NULL);
-  }
-}
-
 void jarek_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
 }
@@ -71,11 +61,4 @@ void jarek_script_current_reaction(Fighter *fighter, int reaction) {
 
 void jarek_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);
-}
-
-void jarek_script_47b600(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  battle_damage(victim, 0x23d7);
-  battle_react(victim, 136);
-  fighter_fiber_finish(jarek_ready);
 }

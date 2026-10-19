@@ -62,5 +62,6 @@ void cage_second_victim_hit(Fighter *fighter);
 void shinnok_second_victim(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);
 void jarek_ball_victim(Fighter *fighter);
+void jarek_quake_victim(Fighter *fighter);
 void shinnok_weapon_reaction(Fighter *fighter);
 #endif

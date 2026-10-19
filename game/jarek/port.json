@@ -3,7 +3,7 @@
   "return_to": "fighter_ready",
   "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "d05aa237e15c723599211eb1091d38b5907d9b3394ef3b2980c721e7f1a31e61",
+  "inventory_sha256": "b93df186f6579468d849813641c0ffa8a9749de2914af86788cf708dea64b4fd",
   "generated_scripts": [
     "0x4de2f8",
     "0x4de318",
@@ -52,7 +52,9 @@
     "0x4e66f0",
     "0x4e8c08",
     "0x4e84b8",
-    "0x4e9658"
+    "0x4e9658",
+    "0x4e81c8",
+    "0x4e95c8"
   ],
   "entry_contexts": {
     "0x4e0128": {
@@ -151,6 +153,12 @@
     "0x4e8c08": {
       "return_to": "mk4_mmove_thrown_finish",
       "evidence": "4821e0 repositions the disarmed grounded victim before the generated130/40 stream."
+    },
+    "0x4e81c8": {
+      "clip": 107,
+      "count": 70,
+      "sample": 20,
+      "evidence": "4e81a8 advances clip107 to pose20 before tail47b600; 47b680 enters4e81c8 without rebinding."
     }
   },
   "entry_adapters": {
@@ -185,9 +193,9 @@
       "evidence": "47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
     },
     "0x47b5d0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_47b5d0",
-      "evidence": "Jarek high-kick input action target enters script 4e81a8; typed input record 0x4e4448"
+      "source": "game/jarek/moves/quake.c",
+      "symbol": "jarek_quake",
+      "evidence": "47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     },
     "0x497540": {
       "source": "game/jarek/character.c",
@@ -198,11 +206,6 @@
       "source": "game/jarek/character.c",
       "symbol": "jarek_script_weapon_draw_finish",
       "evidence": "46d260 is the Jarek weapon draw script tail from 4e62c0; bounded native/script listing"
-    },
-    "0x47b600": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_script_47b600",
-      "evidence": "47b600 is the native tail of Jarek selected script 4e81a8; bounded query"
     },
     "0x467e00": {
       "source": "game/jarek/moves/fan.c",
@@ -306,11 +309,6 @@
       "symbol": "jarek_weapon_action",
       "evidence": "Jarek target 46d1d0 selects throw, follow-up equip or generated draw script 4e62c0"
     },
-    "input_47b5d0": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_command_47b5d0",
-      "evidence": "Jarek high-kick input target 0x47b5d0 enters generated script 0x4e81a8; bounded input record/native listing"
-    },
     "cpu_497540": {
       "source": "game/jarek/character.c",
       "symbol": "jarek_command_497540",
@@ -365,6 +363,11 @@
       "source": "game/jarek/moves/ball.c",
       "symbol": "jarek_upward_ball",
       "evidence": "4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
+    },
+    "quake": {
+      "source": "game/jarek/moves/quake.c",
+      "symbol": "jarek_quake",
+      "evidence": "47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     }
   },
   "stances": {
@@ -598,6 +601,12 @@
       "source": "game/reactions.c",
       "symbol": "react_block",
       "evidence": "Ball D[19] blocked reaction0 selects 4ea4e8[0] ->486cd0 shared block recovery."
+    },
+    "136": {
+      "source": "game/jarek/moves/quake.c",
+      "symbol": "jarek_quake_victim",
+      "evidence": "47b600 reaction136: 4ea4e8[136] ->4834d0 disarms, picks a4ea8f8 voice and enters generated4e95c8 clip182 stumble.",
+      "adaptation": "The shared reaction table enters this exported victim entry for any roster."
     }
   },
   "schema": 1,
@@ -637,6 +646,11 @@
       "source": "game/jarek/moves/ball.c",
       "symbol": "jarek_upward_ball",
       "evidence": "Typed HP record 0x4e43f8 F,D,F selects native 4797f0. 4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
+    },
+    "0x47b5d0": {
+      "source": "game/jarek/moves/quake.c",
+      "symbol": "jarek_quake",
+      "evidence": "Typed HK record 0x4e4448 B,D,B selects native 47b5d0. 47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     }
   },
   "command_predicates": {
@@ -682,7 +696,10 @@
     "0x4e62d8",
     "0x4e6798",
     "0x4e84b8",
-    "0x4e9658"
+    "0x4e9658",
+    "0x4e81a8",
+    "0x4e81c8",
+    "0x4e95c8"
   ],
   "cpu_bindings": {
     "0x47b310": {

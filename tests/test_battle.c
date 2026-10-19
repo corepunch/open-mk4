@@ -1675,6 +1675,46 @@ static void check_jarek_balls(void) {
   }
 }
 
+/* Jarek: B,D,B+HK 47b5d0 stamps the floor; 47b600 hurts only a grounded peer. */
+static void check_jarek_quake(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int airborne = 0; airborne < 2; ++airborne) {
+      battle_init(slot ? 4 : 12, slot ? 12 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+      fighter_press(owner, back);
+      fighter_press(owner, BUTTON_DOWN);
+      fighter_press(owner, back);
+      fighter_press(owner, BUTTON_HIGH_KICK);
+      advance_ticks(1, NULL);
+      check(fighter_move(owner)->clip == 107 && owner->action == 0x105, "Jarek's B,D,B+HK must enter his own 4e81a8 stamp");
+      if (airborne) {
+        victim->body.pos[AXIS_Y] = victim->body.ground - 2 * Q16_ONE;
+        victim->body.gravity = 0;
+      }
+      bool reacted = false;
+      for (int tick = 0; tick < 120 && owner->state != S_IDLE; ++tick) {
+        advance_ticks(1, NULL);
+        if (airborne) {
+          victim->body.pos[AXIS_Y] = victim->body.ground - 2 * Q16_ONE;
+        }
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jarek's stamp must run on frame programs");
+        reacted |= victim->reaction == 136;
+      }
+      check(owner->state == S_IDLE, "Jarek's stamp must finish clip 107 and return");
+      check(airborne ? victim->health == Q16_ONE && !reacted : victim->health == Q16_ONE - 0x23d7 && reacted,
+          "The stamp must hit only a grounded peer, once, with reaction 136");
+      if (!airborne) {
+        advance_ticks(120, NULL);
+        check(victim->state == S_IDLE, "The reaction-136 stumble must return the victim to control");
+      }
+    }
+  }
+}
+
 static void check_jarek_weapon_commands(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int strike = 0; strike < 4; ++strike) {
@@ -4748,6 +4788,7 @@ int main(void) {
   check_cage_weapon_commands();
   check_jarek_weapon_commands();
   check_jarek_balls();
+  check_jarek_quake();
   check_shinnok_weapon_commands();
   check_shinnok_morph();
   check_fujin_crossbow();
