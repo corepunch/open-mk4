@@ -4,6 +4,8 @@ static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0x0, reptile_can_spit, reptile_acid_spit},
   {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_FORWARD}, 2, 18, 0x0, NULL, reptile_input_47afe0},
   {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_fan_finish, reptile_entry_fan},
+  {BUTTON_BLOCK, {0}, 0, 0, 0x0, reptile_can_invisibility, reptile_invisibility},
+  {BUTTON_HIGH_KICK, {0}, 0, 0, 0x0, reptile_can_invisibility, reptile_invisibility},
   {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, mk4_can_spike_finish, reptile_entry_spike},
   {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0x0, reptile_can_dash, reptile_input_47a690},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},

@@ -27,9 +27,9 @@
       "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x4698a0": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_entry_block",
-      "evidence": "Reptile block input target 0x4698a0 enters the portable block state."
+      "source": "game/reptile/moves/invisibility.c",
+      "symbol": "reptile_invisibility",
+      "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     },
     "0x46a020": {
       "source": "game/weapons.c",
@@ -182,10 +182,11 @@
     "0x4e9bd0",
     "0x4ed1e8",
     "0x4e6270",
-    "0x4e97f8"
+    "0x4e97f8",
+    "0x4e5bb0"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "6d017ca1cb3be43b6f94389b056dd0109eee02bfa8f6a72bbdd55f57453b5504",
+  "inventory_sha256": "e300c2c7fb4a595cc8f1cee5a621038ac691b8c5c11657b3986761e316b70de1",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -301,6 +302,11 @@
       "source": "game/reptile/moves/projectile.c",
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
+    },
+    "invisibility": {
+      "source": "game/reptile/moves/invisibility.c",
+      "symbol": "reptile_invisibility",
+      "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     }
   },
   "output": "game/reptile/generated/scripts.inc",
@@ -523,6 +529,11 @@
       "source": "game/reptile/moves/projectile.c",
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
+    },
+    "0x4698a0": {
+      "source": "game/reptile/moves/invisibility.c",
+      "symbol": "reptile_invisibility",
+      "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     }
   },
   "command_predicates": {
@@ -531,7 +542,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45e950": "reptile_can_dash",
-    "0x45e9d0": "reptile_can_spit"
+    "0x45e9d0": "reptile_can_spit",
+    "0x45f260": "reptile_can_invisibility"
   },
   "cpu_bindings": {
     "0x47a690": {
@@ -584,6 +596,7 @@
     "0x4e01a0",
     "0x4e6950",
     "0x4ed1e8",
-    "0x4e97f8"
+    "0x4e97f8",
+    "0x4e5bb0"
   ]
 }

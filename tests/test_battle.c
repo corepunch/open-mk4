@@ -2392,6 +2392,38 @@ static void check_reptile_acid_spit(void) {
   }
 }
 
+/* Reptile fighter block: 4698a0 BLOCK+HK chord visibility toggle. */
+static void check_reptile_invisibility(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 10, slot ? 10 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot];
+    for (int use = 0; use < 3; ++use) {
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_BLOCK) | (use == 2 ? BUTTON_BIT(BUTTON_LOW_PUNCH) : 0);
+      battle_step(input);
+      battle_step(input);
+      input[slot].held |= BUTTON_BIT(BUTTON_HIGH_KICK);
+      battle_step(input);
+      battle_step(input);
+      check((fighter_move(owner)->clip == 12) == (use != 2), "BLOCK+HK chord must enter clip 12, and a held LP must reject it");
+      input[slot].held = 0;
+      bool toggled_late = true;
+      for (int tick = 0; tick < 70; ++tick) {
+        battle_step(input);
+        if (tick == 10) {
+          toggled_late = owner->invisible == (use == 1);
+        }
+        check(!fighter_fiber_active(owner), "Invisibility must use frame tables");
+      }
+      check(toggled_late && owner->invisible == (use == 0), "Invisibility must toggle once at its clip midpoint and toggle back on reuse");
+      check(owner->state == S_IDLE, "Invisibility must return controls");
+    }
+    battle_next_round();
+    check(!owner->invisible, "A new round must restore Reptile's visibility");
+  }
+}
+
 static void check_goro_reconnected_counters(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kick = 0; kick < 2; ++kick) {
@@ -4493,6 +4525,7 @@ int main(void) {
   check_jax_second_fatality();
   check_reptile_reconnected_specials();
   check_reptile_acid_spit();
+  check_reptile_invisibility();
   check_goro_reconnected_counters();
   check_goro_frame_specials();
   check_cage_special_commands();

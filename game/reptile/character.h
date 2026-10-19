@@ -112,4 +112,8 @@ void reptile_script_acid_drool(Fighter *fighter);
 void reptile_script_head_close(Fighter *fighter);
 void reptile_script_head_open(Fighter *fighter);
 void reptile_script_head_wide(Fighter *fighter);
+void reptile_entry_retail_script_004e5bb0(Fighter *fighter);
+bool reptile_can_invisibility(const Fighter *fighter);
+void reptile_invisibility(Fighter *fighter);
+void reptile_script_invisibility(Fighter *fighter);
 #endif

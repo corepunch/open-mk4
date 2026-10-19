@@ -105,7 +105,7 @@ static float draw_arena(Canvas *cv, Camera camera, const Arena *arena, SceneLigh
 static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, const Character *model, double interpolation) {
   Triangles triangles = {0};
   const Character *ch = model != NULL ? model : fighter_model(assets, fighter);
-  if (fighter->appearance == APPEARANCE_HIDDEN) {
+  if (fighter->appearance == APPEARANCE_HIDDEN || (model == NULL && fighter->invisible)) {
     return triangles;
   }
   Pose bones[MK4_MAX_BONES];
@@ -633,7 +633,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   }
   for (int i = 0; i < 2; ++i) {
     const Fighter *f = &g_battle.fighters[i];
-    if (f->armed) {
+    if (f->armed && !f->invisible) {
       Vec3 hand;
       Mat3 grip;
       fighter_joint_position(f, 10, &hand, &grip);

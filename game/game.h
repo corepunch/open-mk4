@@ -542,6 +542,7 @@ struct Fighter {
   int mesh_swap_joint;  /* retail joint ID drawn with mesh_swap instead of its rig mesh; 0 keeps the rig */
   int mesh_swap;        /* replacement mesh index in the fighter's own geometry */
   int appearance;       /* character-script rendering variant; reset at round spawn */
+  bool invisible;       /* 4698b0 toggles the root render node's culled bit; contacts are unchanged */
   int frozen_clip;      /* preserve the victim's current pose while frozen */
   q16 visual_offset[3]; /* presentation translation; never integrated as combat velocity */
   int reaction;         /* last selected attack-record reaction, retained across its phases */

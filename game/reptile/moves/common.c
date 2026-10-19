@@ -6,7 +6,6 @@ static void reptile_script_47b260(Fighter *fighter);
 static void reptile_loop_frame(Fighter *fighter);
 void reptile_input_47a690(Fighter *fighter);
 void reptile_input_47afe0(Fighter *fighter);
-static void reptile_entry_block(Fighter *fighter);
 static const MoveDef s_dash = {.clip = 302, .last = 7, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x216};
 static const MoveDef s_roll = {.clip = 106, .last = 21, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x20d};
 static const MoveDef s_reaction_40 = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
@@ -132,10 +131,6 @@ void reptile_input_47a690(Fighter *fighter) {
 void reptile_input_47afe0(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   reptile_start(fighter, S_KICK, &s_roll, reptile_entry_retail_script_004e8178);
-}
-
-static void reptile_entry_block(Fighter *fighter) {
-  fighter_enter_state(fighter, S_BLOCK);
 }
 
 void reptile_script_lp_reaction(Fighter *fighter, int reaction) {

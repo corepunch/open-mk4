@@ -201,6 +201,7 @@ def _moves_for(character):
                               native=(('contact query', 0x48d450),)),
             acid_spit=move(0x4988d0, (('selected stream', 0x4ed1e8), ('acid victim', 0x4e97f8)), (('C', 17),),
                            native=(('acid object', 0x498920), ('acid drool', 0x40ee30), ('victim chunks', 0x483df0))),
+            invisibility=move(0x4698a0, (('toggle startup', 0x4e5bb0),), native=(('visibility toggle', 0x4698b0),)),
             reaction_40=move(0x483550, (('reaction continuation', 0x4e9620),),
                              native=(('shared landing', 0x488b40),)),
         )

@@ -624,6 +624,8 @@ CHARACTER_BINDINGS[10] = {
     0x498920: Binding('reptile_acid_spawn', 'game/reptile/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', task_types=(76,), mmove=True,
                       evidence='498920 C[71] cue, invisible 4deae0 carrier at the owner, 0x23d7 along the 49c610 heading, waiter 49c690 with 4ed258 (C[17], 498ac0 hit, 498b50 bounds)'),
+    0x4698b0: Binding('reptile_script_invisibility', 'game/reptile/moves/invisibility.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='4698b0 plays clip 12 to 40 (428d70), toggles render node +0x34 bit 4, plays out from 41 (428cf0) and returns (470420)'),
     0x483df0: Binding('reptile_acid_victim_tail', 'game/reptile/moves/projectile.c', ('tail',), flow='terminal', mmove=True,
                       evidence='483df0/483ed0/483fa0 clip 182: 20 + 10x4 samples, 48e080 neutral, 428810 remainder, 46f650 return'),
     0x47ab50: Binding('retail_script_004e8174', 'game/reptile/generated/scripts.inc', ('tail',),
