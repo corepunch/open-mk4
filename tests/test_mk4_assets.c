@@ -15,6 +15,7 @@ void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
+void quan_chi_weapon_action(Fighter *fighter);
 bool shinnok_can_morph(const Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
 void shinnok_fatality_2(Fighter *fighter);
@@ -472,6 +473,40 @@ static void cage_orb_assets(const Assets *assets) {
       }
       check(visible && victim->health == Q16_ONE - 0x1999 && owner->state == S_IDLE, "Both Cage arcs must resolve native contact with animated victim bounds");
     }
+  }
+}
+
+/* Quan Chi checks: descriptor 4ecf38 rig 50c310 and an asset-backed strike. */
+static void quan_chi_weapon_assets(const Assets *assets) {
+  const Character *model = &assets->scene_models.data[SCENE_MODEL_QUAN_CHI_WEAPON];
+  check(assets->scene_models.count > SCENE_MODEL_QUAN_CHI_WEAPON && model->bones.count == 1 && model->bones.data[0].mesh == 1 &&
+            model->meshes.data == assets->hud.effects2.meshes.data,
+      "Quan Chi weapon must load its own share2 rig 50c310");
+  for (int slot = 0; slot < 2; ++slot) {
+    battle_init(slot ? 4 : 8, slot ? 8 : 4);
+    battle_bind_assets(assets);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+    owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    fighter_interrupt(owner, quan_chi_weapon_action);
+    Input input[2] = {0};
+    for (int tick = 0; tick < 70; ++tick) {
+      battle_step(input);
+    }
+    check(owner->armed && owner->weapon->model == SCENE_MODEL_QUAN_CHI_WEAPON, "Quan Chi draw must equip his extracted weapon");
+    owner->body.pos[AXIS_X] = slot ? 0xa666 : -0xa666;
+    victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
+    battle_step(input);
+    battle_step(input);
+    input[slot].held = 0;
+    for (int tick = 0; tick < 120; ++tick) {
+      battle_step(input);
+      Pose bones[MK4_MAX_BONES];
+      fighter_pose(assets, owner, bones);
+    }
+    check(victim->health == Q16_ONE - 0x2666 && owner->state == S_IDLE, "Quan Chi weapon LP must connect with animated asset bounds");
   }
 }
 
@@ -1435,6 +1470,7 @@ int main(void) {
   shinnok_fatality_assets(&assets);
   restored_high_punch_contacts(&assets);
   cage_orb_assets(&assets);
+  quan_chi_weapon_assets(&assets);
   tanya_fireball_assets(&assets);
   tanya_kick_assets(&assets);
   tanya_weapon_assets(&assets);

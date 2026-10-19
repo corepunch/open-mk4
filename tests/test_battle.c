@@ -8,6 +8,9 @@
 void goro_fireball(Fighter *fighter);
 void goro_stomp_hold_separation(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
+void quan_chi_weapon_action(Fighter *fighter);
+void quan_chi_second_fatality(Fighter *fighter);
+bool quan_chi_can_second_fatality(const Fighter *fighter);
 bool fujin_can_dive(const Fighter *fighter);
 void fujin_dive(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
@@ -3800,7 +3803,7 @@ static void check_kai_second_fatality(void) {
 }
 
 static void check_partial_cpu_stage_dispatch(void) {
-  const int rosters[] = {7, 8, 15, 17};
+  const int rosters[] = {7, 15, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
     for (int slot = 0; slot < 2; ++slot) {
       for (int fan = 0; fan < 2; ++fan) {
@@ -5361,6 +5364,382 @@ static void check_tanya_ports(void) {
   check_tanya_second_fatality();
 }
 
+/* Quan Chi checks: retail command and CPU records for roster slot 8. */
+static void check_quan_chi_air_throw(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int interrupted = 0; interrupted < 2; ++interrupted) {
+      battle_init(slot ? 4 : 8, slot ? 8 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = 0;
+      victim->body.pos[AXIS_X] = slot ? -Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -3 * Q16_ONE;
+      fighter_enter_state(owner, S_JUMP);
+      fighter_enter_state(victim, S_JUMP);
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      battle_step(input);
+      advance_ticks(1, NULL);
+      check(owner->current_move->clip == 82 && victim->current_move->clip == 202, "Quan Chi BLOCK record must enter the retail air throw");
+      if (interrupted) {
+        battle_react(owner, 11);
+      }
+      for (int tick = 0; tick < 170; ++tick) {
+        advance_ticks(1, NULL);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi air throw and its victim must use frame tables");
+      }
+      check(victim->health == (interrupted ? Q16_ONE : Q16_ONE - 0x2147), "Quan Chi air throw must deal 13 percent once, only when released");
+      check(victim->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Quan Chi air throw victim must recover independently");
+      check(interrupted || owner->state == S_IDLE, "Quan Chi air throw owner must land and recover");
+    }
+  }
+}
+
+static Projectile *quan_chi_skull_object(void) {
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    Projectile *projectile = &g_battle.projectiles[i];
+    if (projectile->kind == PROJECTILE_FIREBALL && projectile->mesh_animation != NULL && projectile->mesh_animation->first == 4 &&
+        projectile->mesh_animation->source == MESH_SHARED2) {
+      return projectile;
+    }
+  }
+  return NULL;
+}
+
+static void check_quan_chi_skull(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 6; ++scenario) {
+      battle_init(slot ? 4 : 8, slot ? 8 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      if (scenario == 5) {
+        victim->health = 1;
+        owner->wins = 1;
+      }
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+      command(slot, forward, forward, BUTTON_LOW_PUNCH);
+      check(fighter_move(owner)->clip == 23 && owner->action == 0x306, "Quan Chi LP [F,F] must enter native 499740 skull startup");
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      } else if (scenario == 2) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_DOWN);
+      } else if (scenario == 3) {
+        battle_react(owner, 37);
+      }
+      bool launched = false, bitten = false;
+      for (int tick = 0; tick < 240; ++tick) {
+        battle_step(input);
+        Projectile *skull = quan_chi_skull_object();
+        if (!launched && skull != NULL) {
+          launched = true;
+          check(skull->vel[AXIS_Y] == 0 && skull->gravity == 0, "The skull must fly level at its 0.2-unit heading speed");
+          if (scenario == 4) {
+            battle_react(owner, 37);
+          }
+        }
+        bitten = bitten || (skull != NULL && skull->phase != 0);
+        bitten = bitten || fighter_move(victim)->clip == 182;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi skull and its victim reaction must use frame tables");
+      }
+      q16 damage = scenario == 0 || scenario == 4 ? 0x1999 : scenario == 1 ? q16_mul(0x1999, 0x3333) : 0;
+      if (scenario == 5 ? victim->health > 0 : victim->health != Q16_ONE - damage) {
+        fprintf(stderr, "Quan Chi skull slot%d scenario%d health%d launched%d bitten%d\n", slot, scenario, victim->health, launched, bitten);
+      }
+      check(launched == (scenario != 3), "Only an uninterrupted startup may release the skull");
+      check(scenario == 5 ? victim->health <= 0 : victim->health == Q16_ONE - damage,
+          "Skull must deal C[7] damage once, chip on block, and pass over a crouching victim");
+      check(bitten == (scenario != 2 && scenario != 3), "Hit or blocked skull must bite; misses must continue to the arena bound");
+      if (scenario == 5) {
+        check(victim->current_mmove == NULL && !fighter_fiber_active(victim) && quan_chi_skull_object() == NULL,
+            "A lethal skull reaction must retire without standing the defeated victim");
+        continue;
+      }
+      advance_ticks(30, NULL);
+      check(owner->state == S_IDLE && victim->state == S_IDLE && quan_chi_skull_object() == NULL, "Quan Chi skull caster, victim and object must all retire");
+    }
+    battle_init(slot ? 4 : 8, slot ? 8 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_PROJECTILE), "Quan Chi CPU projectile row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 23 && g_battle.fighters[slot].action == 0x306, "Quan Chi CPU projectile row must throw the skull");
+  }
+}
+
+static void check_quan_chi_flip_kick(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 4 : 8, slot ? 8 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      q16 half = scenario == 2 ? 6 * Q16_ONE : Q16_ONE;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+      command(slot, forward, forward, BUTTON_HIGH_KICK);
+      check(fighter_move(owner)->clip == 105 && owner->action == 0x217, "Quan Chi HK [F,F] must enter native 47a370 flip kick");
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      bool launched = false;
+      for (int tick = 0; tick < 200; ++tick) {
+        if (scenario == 3 && tick == 5) {
+          battle_react(owner, 37);
+        }
+        battle_step(input);
+        launched = launched || fighter_move(victim)->clip == 189;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi flip kick and its victim must use frame tables");
+      }
+      advance_ticks(60, NULL);
+      q16 damage = scenario == 0 ? 0x2666 : scenario == 1 ? q16_mul(0x2666, 0x3333) : 0;
+      if (victim->health != Q16_ONE - damage || owner->state != S_IDLE || victim->state != S_IDLE) {
+        fprintf(stderr, "Quan Chi flip slot%d scenario%d health%d owner%d victim%d\n", slot, scenario, victim->health, owner->state, victim->state);
+      }
+      check(victim->health == Q16_ONE - damage && launched == (scenario == 0),
+          "Flip kick must deal D[24] once with reaction 160, chip on block and nothing on a miss");
+      check(owner->state == S_IDLE && victim->state == S_IDLE && !(owner->flags & FF_NO_GUARD) && owner->body.physics == NULL,
+          "Flip kick owner and victim must recover and clear the native decay and no-guard state");
+    }
+    battle_init(slot ? 4 : 8, slot ? 8 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_NEAR), "Quan Chi near CPU row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 105, "Quan Chi near CPU row must select the flip kick");
+  }
+}
+
+static void check_quan_chi_teleport_stomp(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 4 : 8, slot ? 8 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 2 * Q16_ONE : -2 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+      command(slot, forward, BUTTON_DOWN, BUTTON_LOW_KICK);
+      check(fighter_move(owner)->clip == 87 && owner->action == 0x400, "Quan Chi LK [F,D] must enter native 47cf30 teleport stomp");
+      Input input[2] = {0};
+      if (scenario == 1) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      bool relocated = false, stomped = false;
+      int stomp_ticks = 0;
+      q16 target = victim->body.pos[AXIS_X];
+      for (int tick = 0; tick < 300; ++tick) {
+        if (scenario == 2 && tick == 17) {
+          victim->body.pos[AXIS_X] = -target; /* leave the saved landing point */
+        }
+        if (scenario == 3 && tick == 5) {
+          battle_react(owner, 37);
+        }
+        battle_step(input);
+        relocated = relocated || (owner->body.pos[AXIS_Y] < -0x30000 && abs(owner->body.pos[AXIS_X] - target) < 0x1000);
+        stomped = stomped || fighter_move(owner)->clip == 89;
+        stomp_ticks += fighter_move(owner)->clip == 89;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi teleport stomp and its victim must use frame tables");
+      }
+      advance_ticks(60, NULL);
+      q16 damage = scenario == 0 ? 0x3851 : scenario == 1 ? q16_mul(0x3851, 0x3333) : 0;
+      if (victim->health != Q16_ONE - damage || owner->state != S_IDLE || victim->state != S_IDLE || relocated != (scenario != 3)) {
+        fprintf(stderr, "Quan Chi teleport slot%d scenario%d health%d owner%d/%d victim%d relocated%d stomped%d y%d\n", slot, scenario, victim->health,
+            owner->state, fighter_move(owner)->clip, victim->state, relocated, stomped, owner->body.pos[AXIS_Y]);
+      }
+      check(relocated == (scenario != 3), "The teleport must reappear above the opponent position saved during the sink");
+      check(victim->health == Q16_ONE - damage && stomped == (scenario == 0), "Teleport stomp must deal D[10] once and stomp only after a hit");
+      check(scenario != 0 || stomp_ticks == 3 * 14, "A connected teleport stomp must repeat clip 89 three times");
+      check(owner->state == S_IDLE && victim->state == S_IDLE && owner->body.pos[AXIS_Y] == owner->body.ground && owner->body.physics == NULL,
+          "Teleport stomp owner and victim must recover on the floor");
+    }
+    for (int row = 0; row < 2; ++row) {
+      battle_init(slot ? 4 : 8, slot ? 8 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      check(battle_cpu_action(&g_battle.fighters[slot], row ? CPU_SPECIAL_2 : CPU_SPECIAL_1), "Quan Chi medium and far CPU rows must be registered");
+      advance_ticks(1, NULL);
+      check(fighter_move(&g_battle.fighters[slot])->clip == 87, "Quan Chi medium and far CPU rows must select the teleport stomp");
+    }
+  }
+}
+
+static void check_quan_chi_weapon_steal(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int scenario = 0; scenario < 4; ++scenario) {
+      battle_init(slot ? 14 : 8, slot ? 8 : 14);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE / 2 : -3 * Q16_ONE / 2;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      if (scenario != 1) {
+        fighter_interrupt(victim, cage_weapon_action);
+        advance_ticks(70, NULL);
+        check(victim->armed && victim->weapon->type == 0x6e, "Weapon steal scenarios need Cage's drawn mace");
+      }
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT, back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+      command(slot, forward, back, BUTTON_HIGH_PUNCH);
+      check(fighter_move(owner)->clip == 7 && owner->action == 0x401, "Quan Chi HP [F,B] must enter native 469c80 weapon steal");
+      Input input[2] = {0};
+      if (scenario == 2) {
+        input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
+      }
+      for (int tick = 0; tick < 150; ++tick) {
+        if (scenario == 3 && tick == 14) {
+          battle_react(owner, 37);
+        }
+        battle_step(input);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi weapon steal and its victim must use frame tables");
+      }
+      advance_ticks(60, NULL);
+      bool stolen = scenario == 0;
+      q16 health = scenario == 0 || scenario == 3 ? Q16_ONE - 0x7ae : scenario == 2 ? Q16_ONE - q16_mul(0x7ae, 0x3333) : Q16_ONE;
+      if (owner->armed != stolen || victim->health != health) {
+        fprintf(stderr, "Quan Chi steal slot%d scenario%d owner armed%d victim armed%d health%d state%d/%d\n", slot, scenario, owner->armed, victim->armed,
+            victim->health, owner->state, victim->state);
+      }
+      check(owner->armed == stolen && (!stolen || owner->weapon->type == 0x6e) && victim->armed == (scenario == 2),
+          "Weapon steal must take the victim's own weapon only after an unblocked D[11] contact");
+      check(victim->health == health, "Weapon steal must deal D[11] once, chip on block and skip an unarmed victim");
+      check(owner->state == S_IDLE && victim->state == S_IDLE, "Weapon steal owner and victim must recover");
+      bool dropped = false;
+      for (int i = 0; i < MAX_PROJECTILES; ++i) {
+        dropped = dropped || (g_battle.projectiles[i].kind == PROJECTILE_SWORD && g_battle.projectiles[i].phase == 2);
+      }
+      check(dropped == (scenario == 3), "An interrupted steal must leave the weapon on the floor for a normal pickup");
+    }
+  }
+}
+
+static void check_quan_chi_weapon(void) {
+  const int clips[] = {238, 231, 234, 237};
+  const q16 damage[] = {0x2666, 0x2e14, 0x2666, 0x2666};
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int strike = 0; strike < 4; ++strike) {
+      battle_init(slot ? 4 : 8, slot ? 8 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 4 * Q16_ONE : -4 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button back = slot ? BUTTON_RIGHT : BUTTON_LEFT;
+      command(slot, BUTTON_DOWN, back, BUTTON_HIGH_KICK);
+      check(fighter_move(owner)->clip == 244 && !owner->armed, "Quan Chi HK [D,B] must play the shared draw before equipping");
+      advance_ticks(65, NULL);
+      check(owner->armed && owner->weapon->type == 0x6f && owner->weapon->model == SCENE_MODEL_QUAN_CHI_WEAPON && owner->state == S_IDLE,
+          "Quan Chi must equip his own type-6f weapon rig");
+      q16 half = strike == 0 || strike == 3 ? Q16_ONE : 0xa666;
+      owner->body.pos[AXIS_X] = slot ? half : -half;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(strike < 2 ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH);
+      if (strike == 1 || strike == 3) {
+        input[slot].held |= BUTTON_BIT(back);
+      }
+      advance_ticks(2, input);
+      check(fighter_move(owner)->clip == clips[strike], "Quan Chi armed punches must select table 4ecc48's own strikes");
+      input[slot].held = 0;
+      advance_ticks(150, input);
+      if (victim->health != Q16_ONE - damage[strike]) {
+        fprintf(stderr, "Quan Chi weapon slot%d strike%d health%d\n", slot, strike, victim->health);
+      }
+      check(victim->health == Q16_ONE - damage[strike], "Quan Chi weapon strikes must use their own weapon records");
+      check(owner->state == S_IDLE && owner->armed && !fighter_fiber_active(owner), "Quan Chi weapon strikes must recover armed on frame tables");
+    }
+    battle_init(slot ? 4 : 8, slot ? 8 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    Fighter *owner = &g_battle.fighters[slot];
+    owner->body.pos[AXIS_X] = slot ? 4 * Q16_ONE : -4 * Q16_ONE;
+    g_battle.fighters[1 - slot].body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+    fighter_interrupt(owner, quan_chi_weapon_action);
+    advance_ticks(70, NULL);
+    check(owner->armed, "Quan Chi draw entry must equip");
+    fighter_interrupt(owner, quan_chi_weapon_action);
+    advance_ticks(90, NULL);
+    check(!owner->armed && owner->state == S_IDLE, "An armed Quan Chi weapon command must throw the weapon");
+  }
+}
+
+static void quan_chi_finish_window(int slot, int victim_roster, q16 half_distance) {
+  battle_init(slot ? victim_roster : 8, slot ? 8 : victim_roster);
+  g_battle.phase = PHASE_FIGHT;
+  Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+  owner->wins = 1;
+  battle_damage(victim, Q16_ONE);
+  advance_ticks(1, NULL);
+  for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+    advance_ticks(1, NULL);
+  }
+  check(battle_can_finish(owner), "Quan Chi fatalities need the deciding-KO window");
+  owner->body.pos[AXIS_X] = slot ? half_distance : -half_distance;
+  victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+}
+
+static void check_quan_chi_first_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int held = 0; held < 2; ++held) {
+      /* Hold LK out of kick range, then step into the close gate. */
+      quan_chi_finish_window(slot, 4, 0x20000);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
+      advance_ticks(held ? 0xf0 : 0x80, input);
+      owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+      const Button sequence[] = {forward, BUTTON_DOWN, forward};
+      for (int i = 0; i < 3; ++i) {
+        input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(sequence[i]);
+        battle_step(input);
+        input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
+        advance_ticks(2, input);
+      }
+      advance_ticks(2, NULL);
+      check((g_battle.phase == PHASE_FATALITY) == (held == 1), "Quan Chi's leg fatality needs LK held for 0xf0 ticks before F,D,F and release");
+      if (!held) {
+        continue;
+      }
+      check(g_battle.finisher == 31, "LK-release [F,D,F] must enter 44bcd0 rather than a stage finish");
+      bool owner_clip = false, torn = false, beaten = false;
+      int ended = -1;
+      for (int tick = 0; tick < 420; ++tick) {
+        advance_ticks(1, NULL);
+        ended = ended < 0 && g_battle.phase == PHASE_MATCH_OVER ? tick : ended;
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Quan Chi's leg fatality must run on frame tables");
+        owner_clip |= fighter_move(owner)->clip == 420;
+        beaten |= fighter_move(owner)->clip == 421;
+        for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
+          torn |= g_battle.scene_actors[i].active && fighter_move(&g_battle.scene_actors[i].actor)->clip == 422;
+        }
+      }
+      check(owner_clip && torn && beaten && (victim->hidden_joints[0] & (UINT64_C(1) << 12)),
+          "The leg must be torn off into its own 422 actor and used for the 421 beating");
+      check(ended >= 250 && ended < 290 && g_battle.phase == PHASE_MATCH_OVER && owner->wins == 2 && victim->health == 0,
+          "The leg fatality result follows the 44c700 camera program while the beating continues");
+      battle_reset_match();
+      check(victim->hidden_joints[0] == 0 && owner->hidden_joints[0] == 0, "Reset must restore the torn leg");
+    }
+  }
+}
+
+static void check_quan_chi_second_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int against = 0; against < 2; ++against) {
+      int roster = against ? 8 : 14;
+      quan_chi_finish_window(slot, roster, 0x10000);
+      Fighter *owner = &g_battle.fighters[slot];
+      check(quan_chi_can_second_fatality(owner), "Quan Chi second fatality must accept its 1.8..3 range");
+      owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
+      g_battle.fighters[1 - slot].body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      check(!quan_chi_can_second_fatality(owner), "Quan Chi second fatality must reject close range");
+      fighter_interrupt(owner, quan_chi_second_fatality);
+      advance_ticks(2, NULL);
+      check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (against ? 31 : 18),
+          "43be30 must perform the victim roster's own second fatality, or the leg fatality against Quan Chi");
+      battle_reset_match();
+    }
+  }
+}
+
 int main(void) {
   check_tanya_ports();
   check_spear_fiber_interruption();
@@ -5434,6 +5813,14 @@ int main(void) {
   check_script_reactions();
   check_ground_throws();
   check_air_throw();
+  check_quan_chi_air_throw();
+  check_quan_chi_skull();
+  check_quan_chi_flip_kick();
+  check_quan_chi_teleport_stomp();
+  check_quan_chi_weapon_steal();
+  check_quan_chi_weapon();
+  check_quan_chi_first_fatality();
+  check_quan_chi_second_fatality();
   check_ground_normals();
   check_air_attacks();
   check_reconnected_air_attacks();

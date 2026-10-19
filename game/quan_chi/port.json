@@ -814,5 +814,6 @@
     "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 0,
     "evidence": "Quan Chi CPU first/second targets 4dfe10/4dfe50[8] are 0.8 and 1.5 units; 467ce0/467cd0 scene entries have no lower range once selected."
-  }
+  },
+  "mmove_only": true
 }
