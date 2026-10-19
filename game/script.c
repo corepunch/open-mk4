@@ -66,6 +66,11 @@ void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample) {
  * owner row supplies its own pose. Release gives the victim an independent
  * phase whose first duration starts on the following simulation tick. */
 bool mk4_mmove_pair_step(Fighter *owner) {
+  /* As in pair_advance_frame, a released owner keeps its compiled recovery
+   * after the victim entered an independent reaction. */
+  if (owner->flags & FF_PAIR_RELEASE) {
+    return true;
+  }
   Fighter *victim = (Fighter *)fighter_opponent(owner);
   if (victim->pending != NULL || !(owner->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
     fighter_finish_mmove(owner, fighter_ready);

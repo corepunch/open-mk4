@@ -21,11 +21,6 @@
       "source": "game/jax/character.c",
       "symbol": "jax_script_roundhouse_tail"
     },
-    "0x46aae0": {
-      "evidence": "Retail releases victim with reaction 89, applies 0x2147 damage, then enters the generated owner air-throw recovery root 4e5e50.",
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_air_throw_release"
-    },
     "0x467e00": {
       "source": "game/jax/moves/fan.c",
       "symbol": "jax_command_fan",
@@ -120,17 +115,12 @@
       "evidence": "Jax high-kick recovery inherits clip 66 at sample 10; selector path 46a680",
       "sample": 10
     },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Jax air-throw release owner path enters 4e5e50 after advancing paired clip 82 to sample 28",
-      "sample": 28
-    },
     "0x4e5df8": {
       "clip": 84,
       "count": 72,
-      "evidence": "Jax paired throw exit 46a9f0 enters continuation after clip84 sample20",
-      "sample": 20
+      "sample": 20,
+      "paired": true,
+      "evidence": "46a9f0 enters 4e5df8 after 4e5dd8 bound victim clip 144 and advanced the pair to cursor 20; owner clip 84/72."
     },
     "0x4e62d8": {
       "clip": 244,
@@ -162,12 +152,6 @@
       "evidence": "The generated jab follow-up starts clip 106/22 at sample 0; its native tail dispatches selector 21 and drives contact/recovery through a BattleEvent.",
       "sample": 0
     },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Jax air-throw victim release inherits clip202 at sample28",
-      "sample": 28
-    },
     "0x4e6890": {
       "clip": 64,
       "count": 45,
@@ -196,7 +180,8 @@
       "clip": 84,
       "count": 72,
       "sample": 43,
-      "evidence": "46aa40 enters owner release after paired cursor43; victim now owns reaction166."
+      "paired": true,
+      "evidence": "46aa40 enters owner release 4e5e18 after paired cursor 43; victim 144 was bound by 4e5dd8 and is released through reaction 166."
     },
     "0x4de318": {
       "clip": 37,
@@ -257,8 +242,6 @@
     "0x4e5dd8",
     "0x4e5df8",
     "0x4e5e18",
-    "0x4e5e28",
-    "0x4e5e50",
     "0x4e6190",
     "0x4e61e0",
     "0x4e61f8",
@@ -282,7 +265,6 @@
     "0x4e8150",
     "0x4e8174",
     "0x4e98e8",
-    "0x4e9910",
     "0x4ed090",
     "0x4e66d0",
     "0x4e66f0",
@@ -290,7 +272,7 @@
     "0x4ea0b8"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "1ee17578aae8b2e25c27a566a122bf5d555a6950db868769525416c7af2829cc",
+  "inventory_sha256": "21c0693d3f982630a8e1413a2271a9f3536517f6c126f32434c3c3912986470f",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -318,9 +300,9 @@
       "symbol": "jax_air_lp"
     },
     "air_throw": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_throw",
-      "source": "game/jax/character.c",
-      "symbol": "jax_air_throw"
+      "source": "game/jax/moves/air_throw.c",
+      "symbol": "jax_air_throw",
+      "evidence": "BLOCK air record 4e43d4 (flags 0x11, gate 45ed70) -> 46a990: 480fc0[8] capture, 4e5dd8 owner 84/victim 144, 46a9f0 gravity 0x3d7, 46aa40 reaction 166 and 0x2147 damage, owner 4e5e18, victim 4e98e8 and 484a30."
     },
     "cpu_496f80": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for cpu_496f80",
@@ -361,11 +343,6 @@
       "evidence": "Retail low-kick action44 and CPU medium row both select native phase machine 468f00; its full portable mapping remains pending because scene-global flags and controller context are not exposed.",
       "source": "game/jax/character.c",
       "symbol": "jax_cpu_medium"
-    },
-    "input_46a990": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for input_46a990",
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_input_46a990"
     },
     "input_47ab10": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for input_47ab10",
@@ -565,10 +542,10 @@
       "adaptation": "The task callback uses explicit scene phases and completion boundaries from clips 557, 206 and 556."
     },
     "166": {
-      "source": "game/jax/moves/throws.c",
-      "symbol": "jax_air_grab_victim",
-      "adaptation": "46aa40 releases reaction166 into an independent generated victim fiber, with shared landing/getup rather than a global reaction-table entry.",
-      "evidence": "484a10 enters4e98e8: victim140 motion/impact/landing, then484a30."
+      "source": "game/jax/moves/air_throw.c",
+      "symbol": "air_grab_victim",
+      "adaptation": "46aa40 releases reaction 166 directly into the paired victim phase; the victim owns its generated fall and 484a30 getup rather than a global reaction-table entry.",
+      "evidence": "4ea4e8[166] -> 484a10 clears the paired bit and enters 4e98e8: clip 140 motion, landing wait and 484a30."
     },
     "93": {
       "source": "game/jax/moves/weapon.c",
@@ -697,9 +674,9 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46a990": {
-      "source": "game/jax/moves/common.c",
-      "symbol": "jax_script_input_46a990",
-      "evidence": "Typed BLOCK air-grab target 46a990 with 45ed70 gate; owner84/victim144 generated pair."
+      "source": "game/jax/moves/air_throw.c",
+      "symbol": "jax_air_throw",
+      "evidence": "Typed BLOCK air record 4e43d4 target 46a990 with 45ed70 gate; Jax-specific 84/144 pair, not the shared 46aa80 runner."
     },
     "0x46d1d0": {
       "source": "game/jax/moves/weapon.c",
@@ -750,6 +727,10 @@
     "0x4e0158",
     "0x4e0188",
     "0x4e01a0",
-    "0x4e6950"
+    "0x4e6950",
+    "0x4e5dd8",
+    "0x4e5df8",
+    "0x4e5e18",
+    "0x4e98e8"
   ]
 }

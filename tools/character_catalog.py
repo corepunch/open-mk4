@@ -300,9 +300,13 @@ def _moves_for(character):
                               native=(('jab continuation', 0x47ab50),)),
             cpu_496f80=move(0x496f80, (('selected projectile script', 0x4ed090),),
                             native=(('independent task', 0x496fc0),)),
-            input_46a990=move(0x46a990, (('paired capture', 0x4e5dd8), ('falling pair', 0x4e5df8),
-                                         ('owner release', 0x4e5e18), ('victim release', 0x4e98e8)),
-                              native=(('throw exit', 0x46a9f0),)),
+            # Jax's BLOCK air record targets 46a990, not the shared 46aa80
+            # runner: 4e5dd8 opens owner 84/victim 144, 46a9f0 drops the pair
+            # at gravity 0x3d7 and 46aa40 releases reaction 166 into 4e98e8.
+            air_throw=move(0x46a990, (('paired capture', 0x4e5dd8), ('falling pair', 0x4e5df8),
+                                      ('owner release', 0x4e5e18), ('victim release', 0x4e98e8)),
+                           native=(('command gate', 0x45ed70), ('falling pair', 0x46a9f0), ('release damage', 0x46aa40),
+                                   ('victim reaction 166', 0x484a10), ('victim getup', 0x484a30))),
             spike_fatality=move(0x467e70, (('selected special', 0x4e6950),),
                                 native=(('stage continuation', 0x467fc0),)),
             fatality_1=move(0x467ce0, (('scene opening', 0x4e1390), ('performer loop', 0x4e13a0),

@@ -551,6 +551,28 @@ void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn vi
   owner_script(fighter);
 }
 
+/* An interrupted captured victim must not stay suspended without gravity. */
+static void air_frame_victim_cleanup(Fighter *victim) {
+  if (fighter_airborne(victim) && victim->body.gravity == 0) {
+    victim->body.gravity = 0x28f;
+  }
+}
+
+/* Same native capture as 46aa80, for roster entries whose own opener binds
+ * different paired clips (Jax 46a990 -> 4e5dd8 opens 84/144). */
+void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
+  require(owner_move != NULL && victim_move != NULL && owner_script != NULL && victim_script != NULL, "Paired air throw needs moves and both scripts");
+  if (!air_throw_start(fighter, owner_move, victim_move)) {
+    return;
+  }
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  victim->paired_release = victim_script;
+  fighter_mmove_phase(victim, &air_frame_victim_phase);
+  victim->mmove_cleanup = air_frame_victim_cleanup;
+  fighter->mmove_cleanup = air_frame_cleanup;
+  owner_script(fighter);
+}
+
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
   if (!air_throw_start(fighter, &s_air_throw, &s_air_thrown)) {
     return;

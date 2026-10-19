@@ -968,10 +968,10 @@ CHARACTER_BINDINGS[17].update({
 })
 
 CHARACTER_BINDINGS[13] = {
-    0x46a9f0: Binding('jax_script_input_46a9f0', 'game/jax/moves/common.c', ('tail',), flow='terminal',
+    0x46a9f0: Binding('jax_air_throw_fall', 'game/jax/moves/air_throw.c', ('tail',), flow='terminal', mmove=True,
                       evidence='46a9f0 sets both paired actors gravity to 0x3d7 and enters continuation 4e5df8'),
-    0x484a30: Binding('mk4_script_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal',
-                      evidence='484a30 waits for the thrown victim landing and routes living getup versus KO; shared portable air getup owns that boundary'),
+    0x484a30: Binding('jax_air_throw_getup', 'game/jax/moves/air_throw.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='484a30 reschedules once, then advances clip 140 one pose per visit (4285d0) to its end; held Up jumps through 4711f0(2) while 532354 is clear'),
     0x42be10: Binding('jax_script_lk_return', 'game/jax/character.c', ('tail',),
                       evidence='42be10 first-entry branch resumes Jax paired-throw follow-up root 4de358'),
     0x42bf00: Binding('jax_script_lk_finish', 'game/jax/character.c', ('tail',), flow='terminal',
@@ -1013,8 +1013,6 @@ CHARACTER_BINDINGS[13] = {
                       evidence='46eea0 selects the generated air low-punch clip and completes through landing'),
     0x46efd0: Binding('jax_script_finish', 'game/jax/character.c', ('tail',), flow='terminal',
                       evidence='46efd0 completes Jax sweep clip and returns the fighter to ready'),
-    0x46aae0: Binding('jax_script_air_throw_release', 'game/jax/character.c', ('tail',), flow='terminal',
-                      evidence='46aae0 dispatches victim reaction 89 and damage 0x2147, then enters owner recovery 4e5e50'),
     0x467fc0: Binding('mk4_script_spike_tail', 'game/script.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes the stage-fatality continuation through the shared scene helper'),
 }
@@ -1053,8 +1051,8 @@ CHARACTER_BINDINGS[13].update({
                       evidence='466bb0 completes the Jax F2 victim scene task through BattleEvent phase state'),
     0x466df0: Binding('jax_script_fatality_2_scene_finish', 'game/jax/character.c', ('tail',), flow='independent',
                       evidence='466df0 retires the Jax F2 victim scene after its clip 556 phase'),
-    0x46aa40: Binding('jax_script_air_throw_ground_release', 'game/jax/character.c', ('tail',), flow='terminal',
-                      evidence='46aa40 applies the Jax paired throw victim reaction and damage before closing the pair'),
+    0x46aa40: Binding('jax_air_throw_release', 'game/jax/moves/air_throw.c', ('tail',), flow='terminal', mmove=True,
+                      evidence='46aa40 dispatches victim reaction 166 (480f50 -> 484a10 -> 4e98e8), subtracts 0x2147 and enters owner release 4e5e18'),
     0x46d260: Binding('retail_script_004e62d8', 'game/jax/generated/scripts.inc', ('tail',), script_target=0x4e62d8,
                       evidence='46d260 returns Jax weapon draw to its generated clip-244 follow-up'),
     0x47ab50: Binding('jax_script_jab_contact', 'game/jax/character.c', ('tail',), flow='independent',

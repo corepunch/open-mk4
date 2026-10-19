@@ -169,14 +169,6 @@ void jax_entry_retail_script_004e5df8(Fighter *fighter) {
   retail_script_004e5df8(fighter);
 }
 
-void jax_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_script_004e5e28(fighter);
-}
-
-void jax_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_script_004e5e50(fighter);
-}
-
 void jax_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_script_004e61f8(fighter);
 }
@@ -239,10 +231,6 @@ void jax_entry_retail_script_004e8150(Fighter *fighter) {
 
 void jax_entry_retail_script_004e8174(Fighter *fighter) {
   retail_script_004e8174(fighter);
-}
-
-void jax_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_script_004e9910(fighter);
 }
 
 void jax_entry_retail_script_004ed090(Fighter *fighter) {

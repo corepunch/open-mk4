@@ -2,8 +2,6 @@
 
 static void jax_script_input_47ab10(Fighter *fighter);
 static void jax_script_input_47ab50(Fighter *fighter);
-void jax_script_input_46a990(Fighter *fighter);
-void jax_script_input_46a9f0(Fighter *fighter);
 
 void jax_ready(Fighter *fighter) {
   fighter_ready(fighter);
@@ -64,18 +62,6 @@ static void jax_script_input_47ab10(Fighter *fighter) {
 
 static void jax_script_input_47ab50(Fighter *fighter) {
   jax_entry_retail_script_004e8174(fighter);
-}
-
-void jax_script_input_46a990(Fighter *fighter) {
-  static const MoveDef owner = {.clip = 84, .last = 71, .flags = SF_ATTACK | SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0502};
-  static const MoveDef victim = {.clip = 144, .last = 43, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
-  mk4_script_throw_start(fighter, &owner, &victim, jax_entry_retail_script_004e5dd8);
-}
-
-void jax_script_input_46a9f0(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter->body.gravity = victim->body.gravity = 0x3d7;
-  jax_entry_retail_script_004e5df8(fighter);
 }
 
 void jax_script_lk_return(Fighter *fighter) {
