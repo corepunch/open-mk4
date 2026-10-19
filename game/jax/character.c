@@ -239,6 +239,10 @@ void jax_entry_retail_script_004e89d8(Fighter *fighter) {
   retail_script_004e89d8(fighter);
 }
 
+void jax_entry_retail_script_004e95c8(Fighter *fighter) {
+  retail_script_004e95c8(fighter);
+}
+
 void jax_entry_retail_script_004ed090(Fighter *fighter) {
   retail_script_004ed090(fighter);
 }

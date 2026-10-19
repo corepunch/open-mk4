@@ -259,10 +259,11 @@
     "0x4ea0b8",
     "0x4ea028",
     "0x4e9e38",
-    "0x4e89d8"
+    "0x4e89d8",
+    "0x4e95c8"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "8da421ef999d4204a40d022a31babd9f64248db6820b2fef1644cff15794c120",
+  "inventory_sha256": "5f587780069050ea141e97f1e50807fd8cc9b1fead10ca8a905a65be9426af0e",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -323,11 +324,6 @@
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for high_punch",
       "source": "game/jax/character.c",
       "symbol": "jax_high_punch"
-    },
-    "input_468f00": {
-      "evidence": "Retail low-kick action44 and CPU medium row both select native phase machine 468f00; its full portable mapping remains pending because scene-global flags and controller context are not exposed.",
-      "source": "game/jax/character.c",
-      "symbol": "jax_cpu_medium"
     },
     "jab": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for jab",
@@ -418,6 +414,11 @@
       "source": "game/jax/moves/dash_punch.c",
       "symbol": "jax_dash_punch",
       "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
+    },
+    "ground_pound": {
+      "source": "game/jax/moves/ground_pound.c",
+      "symbol": "jax_ground_pound",
+      "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }
   },
   "output": "game/jax/generated/scripts.inc",
@@ -613,6 +614,12 @@
       "source": "game/reactions.c",
       "symbol": "react_slide_block",
       "evidence": "D[22] blocked reaction 165; 4ea4e8[165] -> 486d00 shared block recovery."
+    },
+    "136": {
+      "source": "game/jax/moves/ground_pound.c",
+      "symbol": "jax_pound_victim",
+      "evidence": "468f00 480f80[0x88]; 4ea4e8[136] -> 4834d0: disarm, 48a320 voice list 4ea8f8, script 4e95c8 clip 182.",
+      "adaptation": "Registered directly in shared reactions[136]; the Jax-owned generated victim program is valid for either humanoid player slot."
     }
   },
   "return_to": "fighter_ready",
@@ -710,6 +717,11 @@
       "source": "game/jax/moves/dash_punch.c",
       "symbol": "jax_dash_punch",
       "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
+    },
+    "0x468f00": {
+      "source": "game/jax/moves/ground_pound.c",
+      "symbol": "jax_ground_pound",
+      "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }
   },
   "command_predicates": {
@@ -766,7 +778,8 @@
     "0x4e8150",
     "0x4ea028",
     "0x4e9e38",
-    "0x4e89d8"
+    "0x4e89d8",
+    "0x4e95c8"
   ],
   "cpu_bindings": {
     "0x496f80": {
@@ -778,6 +791,11 @@
       "source": "game/jax/moves/dash_punch.c",
       "symbol": "jax_dash_punch",
       "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
+    },
+    "0x468f00": {
+      "source": "game/jax/moves/ground_pound.c",
+      "symbol": "jax_ground_pound",
+      "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }
   }
 }

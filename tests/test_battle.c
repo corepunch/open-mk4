@@ -2475,6 +2475,47 @@ static void check_jax_dash_punch(void) {
   }
 }
 
+/* Jax 468f00: F,F,D,LK pounds the floor at pose 35 of clip 108. Only a
+ * grounded opponent takes 0x23d7 and reaction 136, regardless of range. */
+static void check_jax_ground_pound(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int airborne = 0; airborne < 2; ++airborne) {
+      battle_init(slot ? 4 : 13, slot ? 13 : 4);
+      advance_ticks(90, NULL);
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 3 * Q16_ONE : -3 * Q16_ONE;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
+      Input input[2] = {0};
+      input[slot].held = BUTTON_BIT(forward);
+      battle_step(input);
+      advance_ticks(2, NULL);
+      battle_step(input);
+      advance_ticks(2, NULL);
+      command(slot, forward, BUTTON_DOWN, BUTTON_LOW_KICK);
+      check(fighter_move(owner)->clip == 108 && owner->action == 0x101, "Jax F,F,D,LK must start the native ground pound");
+      bool reacted = false;
+      for (int tick = 0; tick < 120; ++tick) {
+        if (airborne) {
+          victim->body.pos[AXIS_Y] = victim->body.ground - Q16_ONE;
+          victim->body.gravity = 0;
+        }
+        battle_step((Input[2]){0});
+        reacted |= victim->reaction == 136 && fighter_move(victim)->clip == 182;
+        check(!fighter_fiber_active(owner), "Jax ground pound must use frame tables");
+      }
+      q16 expected = airborne ? Q16_ONE : Q16_ONE - 0x23d7;
+      check(victim->health == expected && reacted == !airborne, "Jax ground pound must hit only a grounded opponent, once and at range");
+      check(owner->state == S_IDLE, "Jax ground pound must return to the controller");
+    }
+    battle_init(slot ? 4 : 13, slot ? 13 : 4);
+    g_battle.phase = PHASE_FIGHT;
+    check(battle_cpu_action(&g_battle.fighters[slot], CPU_SPECIAL_1), "Jax medium CPU row must be registered");
+    advance_ticks(1, NULL);
+    check(fighter_move(&g_battle.fighters[slot])->clip == 108, "Jax medium CPU row must select the ground pound");
+  }
+}
+
 static Projectile *cage_orb(void) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     Projectile *projectile = &g_battle.projectiles[i];
@@ -3947,6 +3988,7 @@ int main(void) {
   check_jax_air_grab_command();
   check_jax_missile();
   check_jax_dash_punch();
+  check_jax_ground_pound();
   check_reptile_reconnected_specials();
   check_goro_reconnected_counters();
   check_goro_frame_specials();

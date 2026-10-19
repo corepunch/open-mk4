@@ -56,11 +56,3 @@ void jax_script_close_hk_tail(Fighter *fighter) {
 static void press_combo_hp(Fighter *fighter) {
   fighter_interrupt(fighter, jax_combo_hp);
 }
-
-void jax_press_air_ground_hp(Fighter *fighter) {
-  if (fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
-    fighter_interrupt(fighter, jax_close_hp);
-  } else {
-    jax_press_hp(fighter);
-  }
-}
