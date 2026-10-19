@@ -3,7 +3,6 @@
 static void quan_chi_entry_469c80(Fighter *fighter);
 static void quan_chi_entry_47a370(Fighter *fighter);
 static void quan_chi_entry_47cf30(Fighter *fighter);
-static void quan_chi_entry_499740(Fighter *fighter);
 
 void quan_chi_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
@@ -36,8 +35,4 @@ static void quan_chi_entry_47a370(Fighter *fighter) {
 
 static void quan_chi_entry_47cf30(Fighter *fighter) {
   fighter_enter_state(fighter, S_KICK);
-}
-
-static void quan_chi_entry_499740(Fighter *fighter) {
-  fighter_enter_state(fighter, S_PUNCH);
 }

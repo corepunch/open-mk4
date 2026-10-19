@@ -611,6 +611,11 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       } else {
         draw_shared_mesh(cv, camera, geometry, frame, origin, basis, q16_float(animation->scale), NULL);
       }
+      if (animation->child) {
+        Vec3 child = {q16_float(animation->child_offset[0]), q16_float(animation->child_offset[1]), q16_float(animation->child_offset[2])};
+        Vec3 at = vec_add(origin, mat3_apply(basis, vec_scale(child, q16_float(animation->scale))));
+        draw_shared_mesh(cv, camera, geometry, animation->child_mesh, at, basis, q16_float(animation->scale), NULL);
+      }
     }
     if (p->kind == PROJECTILE_SWORD) {
       Vec3 base = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};

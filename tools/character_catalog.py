@@ -674,6 +674,10 @@ def _moves_for(character):
             roundhouse=move(0x46f1f0,
                             (('Quan Chi attacker', 0x4e6800), ('fast start', 0x4e6860), ('normal start', 0x4e6878)),
                             (('B', 34),)),
+            # Retail LP [F,F] record 4e4818 and the CPU projectile row.
+            skull=move(0x499740, (('caster', 0x4ed3a0), ('release recovery', 0x4ed3c0), ('reaction 128 victim', 0x4e9cd8)), (('C', 7),),
+                       native=(('heading snapshot', 0x49c610), ('release and spawn', 0x499780), ('independent skull', 0x4998d0),
+                               ('flight step', 0x499ae0), ('bite', 0x499b40), ('expiry', 0x499c00), ('reaction 128', 0x485f90))),
         )
         return shared
     if character != 4:

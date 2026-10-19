@@ -948,6 +948,7 @@ static const FighterFn reactions[256] = {
   [96] = reptile_weapon_reaction,
   [137] = reptile_weapon_reaction,
   [144] = reptile_weapon_reaction,
+  [128] = quan_chi_skull_reaction,
 };
 // clang-format on
 

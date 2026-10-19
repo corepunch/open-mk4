@@ -39,7 +39,10 @@
     "0x4e6950",
     "0x4e69b0",
     "0x4e9910",
-    "0x4e6270"
+    "0x4e6270",
+    "0x4ed3a0",
+    "0x4ed3c0",
+    "0x4e9cd8"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -135,6 +138,12 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4ed3c0": {
+      "clip": 23,
+      "count": 36,
+      "sample": 17,
+      "evidence": "499740 action306 enters4ed3a0 clip23; both startup branches reach sample17 before native499780 spawns the skull and enters4ed3c0."
     }
   },
   "entry_adapters": {
@@ -184,9 +193,9 @@
       "evidence": "Quan Chi CPU move target 0x47cf30; bounded native entry boundary."
     },
     "0x499740": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_entry_499740",
-      "evidence": "Quan Chi projectile CPU target 0x499740; bounded native entry boundary."
+      "source": "game/quan_chi/moves/skull.c",
+      "symbol": "quan_chi_skull",
+      "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
     },
     "0x467e00": {
       "source": "game/quan_chi/moves/fan.c",
@@ -299,6 +308,11 @@
       "source": "game/quan_chi/moves/combos.c",
       "symbol": "quan_chi_close_hk",
       "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+    },
+    "skull": {
+      "source": "game/quan_chi/moves/skull.c",
+      "symbol": "quan_chi_skull",
+      "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
     }
   },
   "reactions": {
@@ -424,6 +438,12 @@
       "source": "game/reactions.c",
       "symbol": "react_extra",
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
+    },
+    "128": {
+      "source": "game/quan_chi/moves/skull.c",
+      "symbol": "quan_chi_skull_reaction",
+      "evidence": "Skull C7/4ebe88 selects reaction128; 4ea4e8[128] ->485f90: 494520 disarm then generated4e9cd8 clip182 knockback.",
+      "adaptation": "Registered directly in shared reactions[128]; the Quan Chi-owned generated victim root runs for either humanoid player slot and performs the 494520 disarm itself."
     }
   },
   "stances": {
@@ -478,7 +498,7 @@
     "symbol": "quan_chi_weapon_descriptor",
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
-  "inventory_sha256": "c428d0374016073abec5a0409c8d0dccb819fb3b77dd07ec43bb97ee3ddcc261",
+  "inventory_sha256": "0010769bc88b69613177e332dc0b92defbc4c936cd88a0392e67c6fe938b6c65",
   "controls_output": "game/quan_chi/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
@@ -505,6 +525,11 @@
       "source": "game/quan_chi/moves/throws.c",
       "symbol": "quan_chi_air_throw",
       "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
+    },
+    "0x499740": {
+      "source": "game/quan_chi/moves/skull.c",
+      "symbol": "quan_chi_skull",
+      "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
     }
   },
   "command_predicates": {
@@ -550,6 +575,16 @@
     "0x4e6950",
     "0x4e5e28",
     "0x4e5e50",
-    "0x4e9910"
-  ]
+    "0x4e9910",
+    "0x4ed3a0",
+    "0x4ed3c0",
+    "0x4e9cd8"
+  ],
+  "cpu_bindings": {
+    "0x499740": {
+      "source": "game/quan_chi/moves/skull.c",
+      "symbol": "quan_chi_skull",
+      "evidence": "Typed projectile CPU row 4df9c8 word0x20007 selects native499740, the same skull as LP [F,F]."
+    }
+  }
 }

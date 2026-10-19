@@ -107,4 +107,9 @@ void quan_chi_roundhouse(Fighter *fighter);
 void quan_chi_script_roundhouse_finish(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter);
 void quan_chi_entry_retail_script_004e0138(Fighter *fighter);
+void quan_chi_skull(Fighter *fighter);
+void quan_chi_script_skull_release(Fighter *fighter);
+void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter);
+void quan_chi_entry_retail_script_004ed3c0(Fighter *fighter);
+void quan_chi_entry_retail_script_004e9cd8(Fighter *fighter);
 #endif

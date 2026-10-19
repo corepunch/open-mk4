@@ -609,6 +609,9 @@ typedef struct MeshAnimation {
   int source;
   q16 offset[3];
   bool additive;
+  bool child; /* optional second rig node drawn with the same basis */
+  int child_mesh;
+  q16 child_offset[3];
 } MeshAnimation;
 
 struct Projectile {

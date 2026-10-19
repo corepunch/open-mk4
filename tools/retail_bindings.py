@@ -1530,6 +1530,8 @@ CHARACTER_BINDINGS[8][0x46ab20] = Binding('quan_chi_script_air_land', 'game/quan
     evidence='46ab20 shared nonblocking landing continuation after clip82')
 CHARACTER_BINDINGS[8][0x484b60] = Binding('quan_chi_script_air_getup', 'game/quan_chi/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
     evidence='484b60 clip131 samples46..79 after release and landing')
+CHARACTER_BINDINGS[8][0x499780] = Binding('quan_chi_script_skull_release', 'game/quan_chi/moves/skull.c', ('tail',), flow='terminal', mmove=True,
+    evidence='499780 spawns task73 4998d0 (rig50c364, heading speed0x3333, C7 waiter4ed3f8), then enters recovery4ed3c0')
 CHARACTER_BINDINGS[9][0x43d460] = Binding('tanya_script_fan_tail', 'game/tanya/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d460 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[9][0x43d530] = Binding('tanya_script_fan_cycle', 'game/tanya/moves/fan.c', ('tail',), flow='immediate', mmove=True, evidence='Shared native43d530 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[9][0x43d6f0] = Binding('tanya_script_fan_victory', 'game/tanya/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d6f0 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
