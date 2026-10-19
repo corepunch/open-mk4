@@ -3,6 +3,8 @@
 #include "script.h"
 
 void quan_chi_script_air_finish(Fighter *);
+void quan_chi_script_air_getup(Fighter *);
+void quan_chi_script_air_land(Fighter *);
 void quan_chi_script_air_release(Fighter *);
 void quan_chi_script_close_hk_tail(Fighter *);
 void quan_chi_script_close_hp_tail(Fighter *);
@@ -1724,69 +1726,304 @@ static inline void retail_script_004e5d90_branch_1(Fighter *fighter) {
   fighter_mmove_phase(fighter, &retail_script_004e5d90_branch_1_phase);
 }
 
-static inline void retail_script_004e5e28(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  {
-    /* EXE 004e5e28: 0x4f000017 */
-    mk4_script_context(fighter, 23);
-  }
-  {
-    /* EXE 004e5e2c: 0x2500000d */
-    mk4_script_indexed_sound(fighter, 13);
-  }
-  {
-    /* EXE 004e5e30: 0xe000000 0x13edbd */
-    mk4_script_bind_victim(fighter, 202, 45, 0);
-  }
-  {
-    /* EXE 004e5e38: 0xf000000 0x13ec55 */
-    mk4_script_bind(fighter, 82, 45, 0);
-  }
-  {
-    /* EXE 004e5e40: 0x4b00001c */
-    mk4_script_pair_to(fighter, 28);
-  }
-  {
-    /* EXE 004e5e44: 0x32000000 0x46aae0 */
-    quan_chi_script_air_release(fighter);
+static inline void retail_script_004e5e28(Fighter *fighter);
+
+static void retail_script_004e5e28_at_1(Fighter *fighter) {
+  fighter->sample_override = 1;
+  if (!mk4_mmove_pair_step(fighter)) {
     return;
   }
 }
 
-static inline void retail_script_004e5e50(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
-  mk4_script_inherit(fighter, 82, 45, 28);
-  {
-    /* EXE 004e5e50: 0x4000001 */
-    mk4_script_advance(fighter, 1, 1);
-  }
-  {
-    /* EXE 004e5e54: 0x58000000 0x7ae 0xffffe667 0x28f */
-    fighter_set_speed(fighter, 1966);
-    fighter->body.vel[AXIS_Y] = -6553;
-    fighter->body.gravity = 655;
-  }
-  {
-    /* EXE 004e5e64: 0x3400000a */
-    fighter_wait_ticks(10);
-  }
-  {
-    /* EXE 004e5e68: 0x3000000 */
-    mk4_script_finish_clip(fighter, 1);
-  }
-  {
-    /* EXE 004e5e6c: 0x60000000 */
-    while (fighter_airborne(fighter)) {
-      fighter_wait_ticks(1);
-    }
-  }
-  {
-    /* EXE 004e5e70: 0x32000000 0x46ab20 */
-    mk4_script_land(fighter);
+static void retail_script_004e5e28_at_2(Fighter *fighter) {
+  fighter->sample_override = 2;
+  if (!mk4_mmove_pair_step(fighter)) {
     return;
   }
+}
+
+static void retail_script_004e5e28_at_3(Fighter *fighter) {
+  fighter->sample_override = 3;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_4(Fighter *fighter) {
+  fighter->sample_override = 4;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_5(Fighter *fighter) {
+  fighter->sample_override = 5;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_6(Fighter *fighter) {
+  fighter->sample_override = 6;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_7(Fighter *fighter) {
+  fighter->sample_override = 7;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_8(Fighter *fighter) {
+  fighter->sample_override = 8;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_9(Fighter *fighter) {
+  fighter->sample_override = 9;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_10(Fighter *fighter) {
+  fighter->sample_override = 10;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_11(Fighter *fighter) {
+  fighter->sample_override = 11;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_12(Fighter *fighter) {
+  fighter->sample_override = 12;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_13(Fighter *fighter) {
+  fighter->sample_override = 13;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_14(Fighter *fighter) {
+  fighter->sample_override = 14;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_15(Fighter *fighter) {
+  fighter->sample_override = 15;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_16(Fighter *fighter) {
+  fighter->sample_override = 16;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_17(Fighter *fighter) {
+  fighter->sample_override = 17;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_18(Fighter *fighter) {
+  fighter->sample_override = 18;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_19(Fighter *fighter) {
+  fighter->sample_override = 19;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_20(Fighter *fighter) {
+  fighter->sample_override = 20;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_21(Fighter *fighter) {
+  fighter->sample_override = 21;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_22(Fighter *fighter) {
+  fighter->sample_override = 22;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_23(Fighter *fighter) {
+  fighter->sample_override = 23;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_24(Fighter *fighter) {
+  fighter->sample_override = 24;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_25(Fighter *fighter) {
+  fighter->sample_override = 25;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_26(Fighter *fighter) {
+  fighter->sample_override = 26;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_27(Fighter *fighter) {
+  fighter->sample_override = 27;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+}
+
+static void retail_script_004e5e28_at_28(Fighter *fighter) {
+  fighter->sample_override = 28;
+  if (!mk4_mmove_pair_step(fighter)) {
+    return;
+  }
+  /* EXE 004e5e44: 0x32000000 0x46aae0 */
+  quan_chi_script_air_release(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e5e28_frames[28] = {
+  [0] = {.thinkfunc = retail_script_004e5e28_at_1},
+  [1] = {.thinkfunc = retail_script_004e5e28_at_2},
+  [2] = {.thinkfunc = retail_script_004e5e28_at_3},
+  [3] = {.thinkfunc = retail_script_004e5e28_at_4},
+  [4] = {.thinkfunc = retail_script_004e5e28_at_5},
+  [5] = {.thinkfunc = retail_script_004e5e28_at_6},
+  [6] = {.thinkfunc = retail_script_004e5e28_at_7},
+  [7] = {.thinkfunc = retail_script_004e5e28_at_8},
+  [8] = {.thinkfunc = retail_script_004e5e28_at_9},
+  [9] = {.thinkfunc = retail_script_004e5e28_at_10},
+  [10] = {.thinkfunc = retail_script_004e5e28_at_11},
+  [11] = {.thinkfunc = retail_script_004e5e28_at_12},
+  [12] = {.thinkfunc = retail_script_004e5e28_at_13},
+  [13] = {.thinkfunc = retail_script_004e5e28_at_14},
+  [14] = {.thinkfunc = retail_script_004e5e28_at_15},
+  [15] = {.thinkfunc = retail_script_004e5e28_at_16},
+  [16] = {.thinkfunc = retail_script_004e5e28_at_17},
+  [17] = {.thinkfunc = retail_script_004e5e28_at_18},
+  [18] = {.thinkfunc = retail_script_004e5e28_at_19},
+  [19] = {.thinkfunc = retail_script_004e5e28_at_20},
+  [20] = {.thinkfunc = retail_script_004e5e28_at_21},
+  [21] = {.thinkfunc = retail_script_004e5e28_at_22},
+  [22] = {.thinkfunc = retail_script_004e5e28_at_23},
+  [23] = {.thinkfunc = retail_script_004e5e28_at_24},
+  [24] = {.thinkfunc = retail_script_004e5e28_at_25},
+  [25] = {.thinkfunc = retail_script_004e5e28_at_26},
+  [26] = {.thinkfunc = retail_script_004e5e28_at_27},
+  [27] = {.thinkfunc = retail_script_004e5e28_at_28},
+};
+// clang-format on
+static const mmove_t retail_script_004e5e28_phase = {.firstframe = 0, .lastframe = 27, .frame = retail_script_004e5e28_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e5e28(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e5e28: 0x4f000017 */
+  mk4_script_context(fighter, 23);
+  /* EXE 004e5e2c: 0x2500000d */
+  mk4_script_indexed_sound(fighter, 13);
+  /* EXE 004e5e30: 0xe000000 0x13edbd */
+  mk4_mmove_bind((Fighter *)fighter_opponent(fighter), 202, 45, 0);
+  /* EXE 004e5e38: 0xf000000 0x13ec55 */
+  mk4_mmove_bind(fighter, 82, 45, 0);
+  /* EXE 004e5e40: 0x4b00001c */
+  fighter_mmove_phase(fighter, &retail_script_004e5e28_phase);
+}
+
+static inline void retail_script_004e5e50(Fighter *fighter);
+static inline void retail_script_004e5e50_branch_1(Fighter *fighter);
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e5e50_landing_frames[1] = {
+  [0] = {.thinkfunc = mk4_mmove_wait_grounded},
+};
+// clang-format on
+static const mmove_t retail_script_004e5e50_landing_phase = {
+    .firstframe = 44, .lastframe = 44, .frame = retail_script_004e5e50_landing_frames, .endfunc = retail_script_004e5e50_branch_1};
+
+static void retail_script_004e5e50_at_1(Fighter *fighter) {
+  fighter->sample_override = 29;
+  /* EXE 004e5e54: 0x58000000 0x7ae 0xffffe667 0x28f */
+  fighter_set_speed(fighter, 1966);
+  fighter->body.vel[AXIS_Y] = -6553;
+  fighter->body.gravity = 655;
+  /* EXE 004e5e64: 0x3400000a */
+}
+
+static void retail_script_004e5e50_at_27(Fighter *fighter) {
+  /* EXE 004e5e6c: 0x60000000 */
+  if (fighter_airborne(fighter)) {
+    fighter_mmove_phase(fighter, &retail_script_004e5e50_landing_phase);
+  } else {
+    retail_script_004e5e50_branch_1(fighter);
+  }
+}
+
+static const int retail_script_004e5e50_samples[] = {
+    28, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e5e50_frames[27] = {
+  [0] = {.thinkfunc = retail_script_004e5e50_at_1},
+  [26] = {.thinkfunc = retail_script_004e5e50_at_27},
+};
+// clang-format on
+static const mmove_t retail_script_004e5e50_phase = {
+    .firstframe = 0, .lastframe = 26, .frame = retail_script_004e5e50_frames, .endfunc = fighter_stop_mmove, .samples = retail_script_004e5e50_samples};
+
+static inline void retail_script_004e5e50(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  mk4_script_inherit(fighter, 82, 45, 28);
+  /* EXE 004e5e50: 0x4000001 */
+  fighter_mmove_phase(fighter, &retail_script_004e5e50_phase);
+}
+
+static inline void retail_script_004e5e50_branch_1(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e5e70: 0x32000000 0x46ab20 */
+  quan_chi_script_air_land(fighter);
 }
 
 static inline void retail_script_004e6190(Fighter *fighter);
@@ -2767,37 +3004,52 @@ static inline void retail_script_004e69b0(Fighter *fighter) {
   fighter_mmove_phase(fighter, &retail_script_004e69b0_phase);
 }
 
+static inline void retail_script_004e9910(Fighter *fighter);
+static inline void retail_script_004e9910_branch_1(Fighter *fighter);
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e9910_landing_frames[1] = {
+  [0] = {.thinkfunc = mk4_mmove_wait_grounded},
+};
+// clang-format on
+static const mmove_t retail_script_004e9910_landing_phase = {
+    .firstframe = 28, .lastframe = 28, .frame = retail_script_004e9910_landing_frames, .endfunc = retail_script_004e9910_branch_1};
+
 static inline void retail_script_004e9910(Fighter *fighter) {
-  unsigned result_flags = 0;
-  (void)result_flags;
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
   mk4_script_inherit(fighter, 202, 45, 28);
-  {
-    /* EXE 004e9910: 0x58000000 0x0 0x3333 0x28f */
-    fighter_set_speed(fighter, 0);
-    fighter->body.vel[AXIS_Y] = 13107;
-    fighter->body.gravity = 655;
+  /* EXE 004e9910: 0x58000000 0x0 0x3333 0x28f */
+  fighter_set_speed(fighter, 0);
+  fighter->body.vel[AXIS_Y] = 13107;
+  fighter->body.gravity = 655;
+  /* EXE 004e9920: 0x60000000 */
+  if (fighter_airborne(fighter)) {
+    fighter_mmove_phase(fighter, &retail_script_004e9910_landing_phase);
+  } else {
+    retail_script_004e9910_branch_1(fighter);
   }
-  {
-    /* EXE 004e9920: 0x60000000 */
-    while (fighter_airborne(fighter)) {
-      fighter_wait_ticks(1);
-    }
-  }
-  {
-    /* EXE 004e9924: 0x28000000 */
-    mk4_script_impact(fighter);
-  }
-  {
-    /* EXE 004e9928: 0x3000000 */
-    mk4_script_finish_clip(fighter, 1);
-  }
-  {
-    /* EXE 004e992c: 0x34000004 */
-    fighter_wait_ticks(4);
-  }
-  {
-    /* EXE 004e9930: 0x32000000 0x484b60 */
-    mk4_script_air_getup(fighter);
-    return;
-  }
+}
+
+static void retail_script_004e9910_branch_1_at_21(Fighter *fighter) {
+  /* EXE 004e9930: 0x32000000 0x484b60 */
+  quan_chi_script_air_getup(fighter);
+}
+
+static const int retail_script_004e9910_branch_1_samples[] = {28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 44, 44, 44, 44};
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e9910_branch_1_frames[21] = {
+  [20] = {.thinkfunc = retail_script_004e9910_branch_1_at_21},
+};
+// clang-format on
+static const mmove_t retail_script_004e9910_branch_1_phase = {.firstframe = 0,
+    .lastframe = 20,
+    .frame = retail_script_004e9910_branch_1_frames,
+    .endfunc = fighter_stop_mmove,
+    .samples = retail_script_004e9910_branch_1_samples};
+
+static inline void retail_script_004e9910_branch_1(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e9924: 0x28000000 */
+  mk4_script_impact(fighter);
+  /* EXE 004e9928: 0x3000000 */
+  fighter_mmove_phase(fighter, &retail_script_004e9910_branch_1_phase);
 }

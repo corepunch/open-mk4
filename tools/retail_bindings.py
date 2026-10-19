@@ -1522,6 +1522,14 @@ CHARACTER_BINDINGS[8][0x43d530] = Binding('quan_chi_script_fan_cycle', 'game/qua
 CHARACTER_BINDINGS[8][0x43d6f0] = Binding('quan_chi_script_fan_victory', 'game/quan_chi/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d6f0 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[8][0x43db50] = Binding('quan_chi_script_fan_victim_end', 'game/quan_chi/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43db50 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[8][0x467fc0] = Binding('quan_chi_script_spike_tail', 'game/quan_chi/moves/spike.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native467fc0 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
+# Quan Chi's retail BLOCK record 4e4b08 enters the shared 46aa80 air throw;
+# its owner/victim streams run on frame tables with independent recovery.
+CHARACTER_BINDINGS[8][0x46aae0] = Binding('quan_chi_script_air_release', 'game/quan_chi/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+    evidence='46aae0 releases reaction89, applies0x2147 once, then enters4e5e50 on the owner frame phase')
+CHARACTER_BINDINGS[8][0x46ab20] = Binding('quan_chi_script_air_land', 'game/quan_chi/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+    evidence='46ab20 shared nonblocking landing continuation after clip82')
+CHARACTER_BINDINGS[8][0x484b60] = Binding('quan_chi_script_air_getup', 'game/quan_chi/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+    evidence='484b60 clip131 samples46..79 after release and landing')
 CHARACTER_BINDINGS[9][0x43d460] = Binding('tanya_script_fan_tail', 'game/tanya/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d460 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[9][0x43d530] = Binding('tanya_script_fan_cycle', 'game/tanya/moves/fan.c', ('tail',), flow='immediate', mmove=True, evidence='Shared native43d530 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')
 CHARACTER_BINDINGS[9][0x43d6f0] = Binding('tanya_script_fan_victory', 'game/tanya/moves/fan.c', ('tail',), flow='terminal', mmove=True, evidence='Shared native43d6f0 scene continuation: compiler-owned actor phases,31 fan cycles and explicit release/hide, or native spike rise/recovery')

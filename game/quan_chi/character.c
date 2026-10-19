@@ -13,8 +13,6 @@ const MoveDef quan_chi_s_sweep = {.clip = 63, .last = MOVE_END, .flags = SF_ATTA
 const MoveDef quan_chi_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LAUNCH};
 const MoveDef quan_chi_s_throw = {.clip = 78, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD};
 
-static const MoveDef s_air_throw = {.clip = 82, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE};
-static const MoveDef s_air_thrown = {.clip = 202, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION};
 static const MoveDef s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
@@ -28,10 +26,6 @@ static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_uppe
     [BUTTON_LOW_PUNCH] = quan_chi_press_uppercut,
     [BUTTON_HIGH_KICK] = quan_chi_press_sweep,
     [BUTTON_LOW_KICK] = quan_chi_press_sweep}};
-static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_air_hp,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_air_lp,
-    [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
-    [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
 static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_air_hp,
     [BUTTON_LOW_PUNCH] = quan_chi_press_air_lp,
     [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
@@ -40,7 +34,7 @@ static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_a
 #include "generated/controls.inc"
 
 static const Controls quan_chi_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
-    {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
+    {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &straight_air, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {

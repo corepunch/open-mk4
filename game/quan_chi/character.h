@@ -5,7 +5,6 @@
 #include "native.h"
 #include "mk4_characters.h"
 #include "script.h"
-#include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define press_air_hk quan_chi_press_air_hk
@@ -37,9 +36,10 @@ void quan_chi_press_uppercut(Fighter *fighter);
 void quan_chi_high_kick(Fighter *fighter);
 void quan_chi_jab(Fighter *fighter);
 void quan_chi_lp_throw(Fighter *fighter);
-void quan_chi_ready(Fighter *fighter);
 void quan_chi_script_air_finish(Fighter *fighter);
 void quan_chi_script_air_release(Fighter *fighter);
+void quan_chi_script_air_land(Fighter *fighter);
+void quan_chi_script_air_getup(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_fan_cycle(Fighter *fighter);
 void quan_chi_script_fan_tail(Fighter *fighter);
@@ -52,7 +52,6 @@ void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_roundhouse_start(Fighter *fighter);
 void quan_chi_script_spike_tail(Fighter *fighter);
 void quan_chi_script_sweep_finish(Fighter *fighter);
-void quan_chi_start(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script);
 void quan_chi_sweep(Fighter *fighter);
 void quan_chi_uppercut(Fighter *fighter);
 void quan_chi_entry_retail_script_004de2f8(Fighter *fighter);
