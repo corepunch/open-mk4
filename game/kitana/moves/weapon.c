@@ -27,7 +27,7 @@ static void equip_weapon(Fighter *fighter) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, true, kitana_entry_retail_script_004e66d0);
+    weapon_air_frames(fighter, true, kitana_entry_retail_script_004e66d0);
   } else {
     weapon_start_strike(fighter, &weapon_attacks[0], true);
   }
@@ -35,30 +35,32 @@ static void weapon_hp(Fighter *fighter) {
 
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_attack(fighter, false, kitana_entry_retail_script_004e66f0);
+    weapon_air_frames(fighter, false, kitana_entry_retail_script_004e66f0);
   } else {
     weapon_start_strike(fighter, &weapon_attacks[1], true);
   }
 }
 
 void kitana_script_weapon_hp_tail(Fighter *fighter) {
-  mk4_script_weapon_tail(fighter, &weapon_back_hp_record, 7);
+  mk4_mmove_weapon_tail(fighter, &weapon_back_hp_record, 7);
 }
 
 void kitana_script_weapon_lp_tail(Fighter *fighter) {
-  mk4_script_weapon_tail(fighter, &weapon_back_lp_record, 2);
+  mk4_mmove_weapon_tail(fighter, &weapon_back_lp_record, 2);
 }
 
 static void weapon_back_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004ec7a0, kitana_special_cleanup);
+  fighter->mmove_cleanup = kitana_special_cleanup;
+  kitana_entry_retail_script_004ec7a0(fighter);
 }
 
 static void weapon_back_lp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_lp);
   mk4_script_schedule_motion(fighter, 0x1999, 8, 13);
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004ec7f0, kitana_special_cleanup);
+  fighter->mmove_cleanup = kitana_special_cleanup;
+  kitana_entry_retail_script_004ec7f0(fighter);
 }
 
 void kitana_script_draw_equip(Fighter *fighter) {
@@ -79,7 +81,7 @@ void kitana_weapon(Fighter *fighter) {
     weapon_back_hp(fighter);
   } else {
     weapon_draw(fighter, &native_weapon);
-    fighter_start_fiber(fighter, kitana_entry_retail_script_004e62c0, NULL);
+    kitana_entry_retail_script_004e62c0(fighter);
   }
 }
 
@@ -100,6 +102,5 @@ void kitana_armed_block(Fighter *fighter) {
 }
 
 void kitana_script_weapon_victim_getup(Fighter *victim) {
-  mk4_script_finish_clip(victim, 1);
-  kitana_script_throw_getup(victim);
+  native_finish_clip(victim, kitana_script_throw_getup);
 }

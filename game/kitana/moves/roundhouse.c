@@ -5,8 +5,7 @@ void kitana_roundhouse(Fighter *fighter) {
 }
 
 void kitana_script_roundhouse_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  kitana_ground_native_tail(fighter);
+  kitana_ground_native_next(fighter);
 }
 
 void kitana_script_roundhouse_start(Fighter *fighter) {

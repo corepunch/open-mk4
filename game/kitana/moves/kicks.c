@@ -12,7 +12,7 @@ static void kitana_kick_contact(Fighter *fighter) {
 
 void kitana_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &kitana_s_kick);
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004e5ca0, NULL);
+  kitana_entry_retail_script_004e5ca0(fighter);
 }
 
 void kitana_press_kick(Fighter *fighter) {
@@ -20,6 +20,5 @@ void kitana_press_kick(Fighter *fighter) {
 }
 
 void kitana_script_kick_tail(Fighter *fighter) {
-  native_calls(fighter, 3, 0, kitana_kick_contact);
-  kitana_entry_retail_script_004e5d20(fighter);
+  native_kick_contact_phase(fighter, kitana_kick_contact, kitana_entry_retail_script_004e5d20);
 }

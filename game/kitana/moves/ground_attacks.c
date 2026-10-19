@@ -34,6 +34,10 @@ void kitana_ground_native_tail(Fighter *fighter) {
   native_ground_tail(fighter, &ground_profile);
 }
 
+void kitana_ground_native_next(Fighter *fighter) {
+  native_ground_next(fighter, &ground_profile);
+}
+
 void kitana_ground_attack(Fighter *fighter, int index) {
   bool followup = fighter_fast_start(fighter);
   kitana_stop_body(fighter);
@@ -45,11 +49,7 @@ void kitana_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {kitana_entry_retail_script_004e5d90, kitana_ground_native_tail, kitana_entry_retail_script_004e6158,
       kitana_entry_retail_script_004e6020, kitana_entry_retail_script_004e61e0, kitana_entry_retail_script_004e69b0, kitana_entry_retail_script_004e6190,
       kitana_entry_retail_script_004e6800};
-  if (index == G_LOW_KICK) {
-    scripts[index](fighter);
-  } else {
-    fighter_start_fiber(fighter, scripts[index], NULL);
-  }
+  scripts[index](fighter);
 }
 
 void kitana_crouch_lp(Fighter *fighter) {
@@ -77,8 +77,7 @@ void kitana_press_crouch_lk(Fighter *fighter) {
 }
 
 void kitana_script_crouch_lk_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  kitana_ground_native_tail(fighter);
+  kitana_ground_native_next(fighter);
 }
 
 void kitana_script_knee_tail(Fighter *fighter) {

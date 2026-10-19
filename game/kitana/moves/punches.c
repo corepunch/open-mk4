@@ -51,8 +51,7 @@ void kitana_script_close_hp_tail(Fighter *fighter) {
 }
 
 void kitana_script_combo_hp_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  kitana_ground_native_tail(fighter);
+  kitana_ground_native_next(fighter);
 }
 
 void kitana_cpu_close_hp(Fighter *fighter) {

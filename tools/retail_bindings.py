@@ -1794,3 +1794,24 @@ CHARACTER_BINDINGS[2][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c
     evidence='488b40 KO-aware native side getup on clip 185')
 for _address in (0x490290, 0x494520):
     CHARACTER_BINDINGS[2][_address] = replace(BINDINGS[_address], mmove=True)
+
+
+# Kitana uses Sonya's script slot and native continuations, plus her shadow
+# kicks; her cloned bindings receive the same frame review.
+for _address in (0x45b1f0, 0x45b230, 0x42bf00, 0x43d6f0, 0x43f510, 0x464bd0, 0x465e10, 0x465e70, 0x465ea0, 0x465ed0, 0x466000,
+                 0x466190, 0x46a6b0, 0x46aed0, 0x46b740, 0x46bb60, 0x46bf10, 0x46c2c0, 0x46c7f0, 0x46e150, 0x46e5c0, 0x46e730,
+                 0x46eea0, 0x46f220, 0x46f270, 0x47b6c0, 0x47e0a0, 0x47e1d0, 0x482790, 0x488c10, 0x4847e0, 0x4858d0, 0x485b50,
+                 0x496770, 0x496970, 0x49ba50, 0x49b9e0, 0x467fc0, 0x4712e0, 0x46d260, 0x498bb0, 0x498ed0, 0x498eb0):
+    CHARACTER_BINDINGS[16][_address] = replace(CHARACTER_BINDINGS[16][_address], mmove=True)
+CHARACTER_BINDINGS[16][0x43d460] = replace(CHARACTER_BINDINGS[16][0x43d460], flow='terminal', mmove=True,
+    evidence='43d460 enters generated 4e0138, expands its frame phase for 31 fan cycles, then releases owner 4e0148 and victim 4e01a0')
+CHARACTER_BINDINGS[16][0x43db50] = Binding('script_fan_victim_end', 'game/kitana/moves/fan.c', ('tail',), flow='terminal', mmove=True,
+    evidence='43db50 hides the released fan victim and retires its frame program')
+CHARACTER_BINDINGS[16][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+    evidence='488b40 KO-aware native side getup on clip 185')
+CHARACTER_BINDINGS[16][0x470420] = replace(CHARACTER_BINDINGS[16].get(0x470420, BINDINGS[0x470420]), mmove_lowering='controller_return')
+for _address in (0x490290, 0x494520):
+    CHARACTER_BINDINGS[16][_address] = replace(BINDINGS[_address], mmove=True)
+for _address in (0x46eab0, 0x46ec10):
+    CHARACTER_BINDINGS[16][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal',
+        mmove=True, evidence='Native weapon air 104/108 uses shared contact and landing frame phases')

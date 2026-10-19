@@ -19,7 +19,7 @@ void kitana_ring(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_projectile);
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004ed4c0, NULL);
+  kitana_entry_retail_script_004ed4c0(fighter);
 }
 
 void kitana_script_ring_flash(Fighter *fighter, int task_type) {

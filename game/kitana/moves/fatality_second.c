@@ -1,12 +1,19 @@
 #include "../character.h"
 
+/* 465ed0 holds 15 visits before returning to the two-cycle coordinator. */
 void kitana_script_second_pause(Fighter *fighter) {
-  (void)fighter;
-  native_delay(fighter, 15);
+  native_hold(fighter, 15, kitana_script_second_cycle_end);
 }
 
+/* 466000 returns to the native coordinator: script_phase counts the cycles
+ * that remain, and the result pose follows the second. */
 void kitana_script_second_cycle_end(Fighter *fighter) {
-  (void)fighter; /* 466000 returns to the native two-cycle coordinator. */
+  if (--fighter->script_phase > 0) {
+    kitana_entry_retail_script_004e5960(fighter);
+    return;
+  }
+  fighter->body.physics = kitana_scene_end_watch;
+  kitana_entry_retail_script_004e59a8(fighter);
 }
 
 void kitana_script_second_branch(Fighter *fighter) {
@@ -18,12 +25,8 @@ void kitana_script_second_branch(Fighter *fighter) {
 }
 
 void kitana_script_second_repeat(Fighter *fighter) {
-  for (int remaining = 2; remaining > 0; --remaining) {
-    fighter->script_phase = remaining;
-    kitana_entry_retail_script_004e5960(fighter);
-  }
-  fighter->body.physics = kitana_scene_end_watch;
-  kitana_entry_retail_script_004e59a8(fighter);
+  fighter->script_phase = 2;
+  kitana_entry_retail_script_004e5960(fighter);
 }
 
 void kitana_script_second_open(Fighter *fighter) {
@@ -46,7 +49,7 @@ void kitana_second_fatality(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x18000);
   }
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004e5930, NULL);
+  kitana_entry_retail_script_004e5930(fighter);
 }
 
 bool kitana_can_second_fatality(const Fighter *fighter) {

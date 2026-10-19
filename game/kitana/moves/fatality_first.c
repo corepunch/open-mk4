@@ -12,7 +12,7 @@ void kitana_first_fatality(Fighter *fighter) {
   }
   mk4_script_scene_pose(fighter, 388, 129, 0);
   mk4_script_scene_pose(kitana_opponent(fighter), 389, 1, 0);
-  fighter_start_fiber(fighter, kitana_entry_retail_script_004e01c0, NULL);
+  kitana_entry_retail_script_004e01c0(fighter);
 }
 
 bool kitana_can_first_fatality(const Fighter *fighter) {
