@@ -3558,5 +3558,6 @@
     "CPU_FINISH_1": 0,
     "evidence": "Kai first45e220 uses the45e570 close gate up to1 unit and second45e530 accepts1.8..3; CPU targets4dfe10/4dfe50[11] are.8 and1.8 units, and the CPU scene entry bypasses both human gates.",
     "CPU_FINISH_2": 0
-  }
+  },
+  "mmove_only": true
 }
