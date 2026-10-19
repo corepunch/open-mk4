@@ -2,6 +2,10 @@
 
 static void torpedo_pose(Fighter *fighter, float pose);
 static void torpedo_cycle(Fighter *fighter);
+static void torpedo_land(Fighter *fighter);
+static void torpedo_miss_motion(Fighter *fighter);
+static void torpedo_recoil(Fighter *fighter);
+static void torpedo_release(Fighter *fighter);
 static void torpedo_pair(Fighter *fighter);
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
@@ -57,7 +61,8 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 187) {
     Fighter *victim = raiden_opponent(fighter);
     mk4_script_scene_pose(victim, 574, 39, 0);
-    fighter_start_fiber(victim, raiden_entry_retail_script_004e5770, NULL);
+    fighter_cancel_mmove(victim);
+    raiden_entry_retail_script_004e5770(victim);
     return;
   }
   if (reaction == 175) {
@@ -67,11 +72,9 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   Fighter *victim = mk4_script_release_pair(fighter);
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
-  fighter_start_fiber(victim,
-      reaction == 111   ? raiden_lk_victim
-      : reaction == 107 ? raiden_entry_retail_script_004e9b40
-                        : raiden_entry_retail_script_004e9bd0,
-      NULL);
+  fighter_cancel_mmove(victim);
+  FighterFn script = reaction == 111 ? raiden_lk_victim : reaction == 107 ? raiden_entry_retail_script_004e9b40 : raiden_entry_retail_script_004e9bd0;
+  script(victim);
 }
 
 void raiden_script_lp_select(Fighter *fighter) {
@@ -96,8 +99,7 @@ void raiden_script_lp_end(Fighter *fighter) {
 }
 
 void raiden_script_lp_return(Fighter *fighter) {
-  (void)fighter;
-  fighter_fiber_finish(raiden_ready);
+  fighter_finish_mmove(fighter, raiden_ready);
 }
 
 void raiden_special_cleanup(Fighter *fighter) {
@@ -143,14 +145,24 @@ unsigned raiden_script_torpedo_query(Fighter *fighter) {
   return battle_contact(fighter, &torpedo_record) == CONTACT_MISS ? 0u : 1u;
 }
 
+static void torpedo_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, raiden_ready);
+}
+
 void raiden_script_torpedo_miss(Fighter *fighter) {
   fighter->body.physics = NULL;
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     fighter->body.vel[axis] = q16_mul(fighter->body.vel[axis], 0x4000);
   }
   fighter->body.gravity = 0x28f;
-  native_until(fighter, native_grounded);
-  fighter_fiber_finish(raiden_ready);
+  native_await(fighter, native_grounded, torpedo_land);
+}
+
+/* The step runs inside a generated frame row that installs its successor
+ * afterwards. The world pump runs this physics later in the same tick,
+ * before gravity and integration, so the miss keeps the 47d720 timing. */
+static void torpedo_miss_motion(Fighter *fighter) {
+  raiden_script_torpedo_miss(fighter);
 }
 
 void raiden_script_torpedo_step(Fighter *fighter) {
@@ -162,14 +174,33 @@ void raiden_script_torpedo_step(Fighter *fighter) {
     next2 += next * next;
   }
   if (radius2 >= (int64_t)10 * Q16_ONE * 10 * Q16_ONE && next2 >= radius2) {
-    raiden_script_torpedo_miss(fighter);
+    fighter->body.physics = torpedo_miss_motion;
   }
+}
+
+static void torpedo_recoil(Fighter *fighter) {
+  fighter->action = 0x1010;
+  fighter_set_speed(fighter, -0xccc);
+  fighter->body.vel[AXIS_Y] = -0x23d7;
+  fighter->body.gravity = 0x168;
+  native_await(fighter, native_grounded, torpedo_land);
+}
+
+static void torpedo_release(Fighter *fighter) {
+  Fighter *victim = raiden_opponent(fighter);
+  if (victim->pending == NULL && (fighter->flags & FF_PAIRED) && (victim->flags & FF_PAIRED)) {
+    mk4_script_release_pair(fighter);
+    battle_react(victim, 83);
+  } else {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+  }
+  torpedo_recoil(fighter);
 }
 
 static void torpedo_pair(Fighter *fighter) {
   Fighter *victim = raiden_opponent(fighter);
   if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
-    fighter_stop_mmove(fighter);
+    torpedo_release(fighter);
     return;
   }
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
@@ -177,30 +208,26 @@ static void torpedo_pair(Fighter *fighter) {
   }
   victim->body.pos[AXIS_Y] = fighter->body.pos[AXIS_Y];
   if (fighter_distance(fighter) > 10.f) {
-    fighter_stop_mmove(fighter);
+    torpedo_release(fighter);
   }
 }
 
 void raiden_script_torpedo_contact(Fighter *fighter) {
   fighter->body.physics = NULL;
-  if (fighter->contact != CONTACT_BLOCK) {
-    Fighter *victim = raiden_opponent(fighter);
-    mk4_script_carry_victim(fighter, &s_torpedo_victim);
-    fighter_start_fiber(victim, raiden_entry_retail_script_004ea108, NULL);
-    native_calls(fighter, 50, 0, torpedo_pair);
-    if (victim->pending == NULL && (fighter->flags & FF_PAIRED) && (victim->flags & FF_PAIRED)) {
-      mk4_script_release_pair(fighter);
-      battle_react(victim, 83);
-    } else {
-      fighter->flags &= ~(unsigned)FF_PAIRED;
-    }
+  if (fighter->contact == CONTACT_BLOCK) {
+    torpedo_recoil(fighter);
+    return;
   }
-  fighter->action = 0x1010;
-  fighter_set_speed(fighter, -0xccc);
-  fighter->body.vel[AXIS_Y] = -0x23d7;
-  fighter->body.gravity = 0x168;
-  native_until(fighter, native_grounded);
-  fighter_fiber_finish(raiden_ready);
+  Fighter *victim = raiden_opponent(fighter);
+  mk4_mmove_carry_victim(fighter, &s_torpedo_victim);
+  fighter_cancel_mmove(victim);
+  raiden_entry_retail_script_004ea108(victim);
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, 50, torpedo_release);
+  for (int frame = 1; frame <= 50; ++frame) {
+    native_frame(fighter, frame, pose, torpedo_pair);
+  }
+  native_play(fighter, false);
 }
 
 void raiden_torpedo(Fighter *fighter) {
@@ -211,16 +238,8 @@ void raiden_torpedo(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_torpedo);
   fighter_set_speed(fighter, 0x2666);
   mk4_script_save_motion(fighter);
-  fighter_start_fiber(fighter, fast ? raiden_entry_retail_script_004e8440 : raiden_entry_retail_script_004e8458, raiden_special_cleanup);
-}
-
-void raiden_script_reaction_side_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    mk4_script_thrown_finish(victim);
-  }
-  mk4_script_bind(victim, 185, 16, 0);
-  mk4_script_finish_clip(victim, 1);
-  mk4_script_thrown_finish(victim);
+  fighter->mmove_cleanup = raiden_special_cleanup;
+  (fast ? raiden_entry_retail_script_004e8440 : raiden_entry_retail_script_004e8458)(fighter);
 }
 
 void raiden_script_torpedo_victim_motion(Fighter *victim) {
@@ -265,5 +284,5 @@ void raiden_generated_reaction(Fighter *victim) {
   if (fighter_airborne(victim) && victim->body.gravity == 0) {
     victim->body.gravity = 0x28f;
   }
-  fighter_start_fiber(victim, script, NULL);
+  script(victim);
 }

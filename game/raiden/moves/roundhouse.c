@@ -5,8 +5,7 @@ void raiden_roundhouse(Fighter *fighter) {
 }
 
 void raiden_script_roundhouse_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  raiden_ground_native_tail(fighter);
+  raiden_ground_native_next(fighter);
 }
 
 void raiden_script_roundhouse_start(Fighter *fighter) {

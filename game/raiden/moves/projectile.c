@@ -19,5 +19,5 @@ void raiden_lightning(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_projectile);
-  fighter_start_fiber(fighter, raiden_entry_retail_script_004ed5f0, NULL);
+  raiden_entry_retail_script_004ed5f0(fighter);
 }

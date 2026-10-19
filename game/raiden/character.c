@@ -177,6 +177,10 @@ void raiden_entry_retail_script_004e0118(Fighter *fighter) {
   retail_script_004e0118(fighter);
 }
 
+void raiden_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
+}
+
 void raiden_entry_retail_script_004e0148(Fighter *fighter) {
   retail_script_004e0148(fighter);
 }
@@ -390,5 +394,5 @@ void raiden_entry_retail_script_004ed5f0(Fighter *fighter) {
 }
 
 const mmove_t *raiden_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }

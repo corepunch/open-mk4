@@ -4,13 +4,18 @@
 
 static int current_character, current_player;
 
+/* A move program owns the actor until it completes or is cancelled. */
+static bool program_active(const Fighter *fighter) {
+  return fighter_fiber_active(fighter) || fighter->current_mmove != NULL;
+}
+
 static void check(bool condition, const char *message) {
   if (!condition) {
     fprintf(stderr, "FAIL %s P%d: %s\n", current_character == 1 ? "Raiden" : "Sonya", current_player + 1, message);
     for (int i = 0; i < 2; ++i) {
       Fighter *f = &g_battle.fighters[i];
-      fprintf(stderr, "  P%d health=%d state=%d clip=%d sample=%d flags=%x fiber=%d reaction=%d y=%d phase=%d\n", i + 1, f->health, f->state,
-          fighter_move(f)->clip, f->sample_override, f->flags, fighter_fiber_active(f), f->reaction, f->body.pos[AXIS_Y], g_battle.phase);
+      fprintf(stderr, "  P%d health=%d state=%d clip=%d sample=%d flags=%x program=%d reaction=%d y=%d phase=%d\n", i + 1, f->health, f->state,
+          fighter_move(f)->clip, f->sample_override, f->flags, program_active(f), f->reaction, f->body.pos[AXIS_Y], g_battle.phase);
     }
     exit(1);
   }
@@ -69,7 +74,7 @@ static void normals(void) {
     press(buttons[i]);
     check(fighter_move(owner())->clip == clips[current_character - 1][i], "normal selected the wrong roster stream");
     advance(150);
-    check(owner()->state == S_IDLE && !fighter_fiber_active(owner()), "normal miss did not restore control");
+    check(owner()->state == S_IDLE && !program_active(owner()), "normal miss did not restore control");
     check(victim()->health == Q16_ONE, "normal miss damaged the other fighter");
   }
   for (int blocked = 0; blocked < 2; ++blocked) {
@@ -100,7 +105,7 @@ static void throws(void) {
     advance(250);
     check(victim()->health == Q16_ONE - damage, "paired throw damage");
     check(owner()->state == S_IDLE && victim()->state == S_IDLE, "throw participants did not recover independently");
-    check(!(victim()->flags & FF_PAIRED) && !fighter_fiber_active(victim()), "throw left a victim lifetime attached");
+    check(!(victim()->flags & FF_PAIRED) && !program_active(victim()), "throw left a victim lifetime attached");
     setup(.5f);
     press(BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
     advance(10);
@@ -112,7 +117,7 @@ static void throws(void) {
     victim()->health = 1;
     press(BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
     advance(250);
-    check(victim()->health == 0 && !(victim()->flags & FF_PAIRED) && !fighter_fiber_active(victim()), "lethal throw left a paired/fiber lifetime");
+    check(victim()->health == 0 && !(victim()->flags & FF_PAIRED) && !program_active(victim()), "lethal throw left a paired/program lifetime");
   }
 }
 
@@ -142,7 +147,7 @@ static void specials(void) {
     press(BUTTON_BIT(BUTTON_DOWN));
     advance(2);
     press(BUTTON_BIT(BUTTON_UP));
-    check(owner()->action == 0x20c && fighter_fiber_active(owner()), "Down/Up did not replace the pending jump with teleport");
+    check(owner()->action == 0x20c && program_active(owner()), "Down/Up did not replace the pending jump with teleport");
     advance(200);
     check(owner()->state == S_IDLE && !fighter_airborne(owner()), "teleport did not return through landing");
     setup(3.f);
@@ -240,7 +245,7 @@ static void weapons_and_scenes(void) {
   for (int button = 0; button < 2; ++button) {
     press(BUTTON_BIT(back()) | BUTTON_BIT(button ? BUTTON_LOW_PUNCH : BUTTON_HIGH_PUNCH));
     advance(120);
-    check(owner()->state == S_IDLE && owner()->armed && !fighter_fiber_active(owner()), "armed back attack did not recover");
+    check(owner()->state == S_IDLE && owner()->armed && !program_active(owner()), "armed back attack did not recover");
   }
   for (int which = 0; which < 4; ++which) {
     setup(2.f);
@@ -261,7 +266,7 @@ static void weapons_and_scenes(void) {
     check(g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks == result_age + 360 && owner()->body.physics == NULL && victim()->body.physics == NULL,
         "completed scene must retire its coordinator and never resubmit completion");
     battle_reset_match();
-    check(!fighter_fiber_active(owner()) && !fighter_fiber_active(victim()) && g_battle.finisher == 0, "reset left generated scene stacks alive");
+    check(!program_active(owner()) && !program_active(victim()) && g_battle.finisher == 0, "reset left generated scene stacks alive");
   }
 }
 

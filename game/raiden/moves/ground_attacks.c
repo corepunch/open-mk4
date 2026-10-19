@@ -34,6 +34,10 @@ void raiden_ground_native_tail(Fighter *fighter) {
   native_ground_tail(fighter, &ground_profile);
 }
 
+void raiden_ground_native_next(Fighter *fighter) {
+  native_ground_next(fighter, &ground_profile);
+}
+
 void raiden_ground_attack(Fighter *fighter, int index) {
   bool followup = fighter_fast_start(fighter);
   raiden_stop_body(fighter);
@@ -45,11 +49,7 @@ void raiden_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {raiden_entry_retail_script_004e5d90, raiden_ground_native_tail, raiden_entry_retail_script_004e6158,
       raiden_entry_retail_script_004e6020, raiden_entry_retail_script_004e61e0, raiden_entry_retail_script_004e69b0, raiden_entry_retail_script_004e6190,
       raiden_entry_retail_script_004e6800};
-  if (index == G_LOW_KICK) {
-    scripts[index](fighter);
-  } else {
-    fighter_start_fiber(fighter, scripts[index], NULL);
-  }
+  scripts[index](fighter);
 }
 
 void raiden_crouch_lp(Fighter *fighter) {
@@ -77,8 +77,7 @@ void raiden_press_crouch_lk(Fighter *fighter) {
 }
 
 void raiden_script_crouch_lk_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  raiden_ground_native_tail(fighter);
+  raiden_ground_native_next(fighter);
 }
 
 void raiden_script_knee_tail(Fighter *fighter) {

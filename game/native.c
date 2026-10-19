@@ -247,6 +247,30 @@ void native_until(Fighter *fighter, FighterTest condition) {
   native_wait(fighter);
 }
 
+/* Nonblocking native_until: the continuation is the end of a held row. */
+void native_await(Fighter *fighter, FighterTest condition, FighterFn end) {
+  if (condition(fighter)) {
+    end(fighter);
+    return;
+  }
+  fighter->native_condition = condition;
+  native_begin(fighter, 0, 0, end);
+  fighter->native.frames[0].thinkfunc = condition_frame;
+  native_play(fighter, false);
+}
+
+/* Nonblocking 45a7b0 completion: advance to the bound clip's last pose and
+ * hold it for one visit before the continuation. */
+void native_finish_clip(Fighter *fighter, FighterFn end) {
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  require(last != MOVE_END && first >= 0 && first <= last, "Clip completion needs a bounded cursor");
+  native_begin(fighter, 1, last - first + 1, end);
+  for (int frame = 1; frame <= last - first + 1; ++frame) {
+    native_frame(fighter, frame, mini(last, first + frame), NULL);
+  }
+  native_play(fighter, false);
+}
+
 void native_repeat(Fighter *fighter, const mmove_t *move, int repetitions, FighterFn end) {
   int count = move->lastframe - move->firstframe + 1;
   require(repetitions > 0, "Native frame repetition must be bounded");

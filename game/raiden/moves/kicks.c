@@ -12,7 +12,7 @@ static void raiden_kick_contact(Fighter *fighter) {
 
 void raiden_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &raiden_s_kick);
-  fighter_start_fiber(fighter, raiden_entry_retail_script_004e5ca0, NULL);
+  raiden_entry_retail_script_004e5ca0(fighter);
 }
 
 void raiden_press_kick(Fighter *fighter) {
@@ -20,6 +20,10 @@ void raiden_press_kick(Fighter *fighter) {
 }
 
 void raiden_script_kick_tail(Fighter *fighter) {
-  native_calls(fighter, 3, 1, raiden_kick_contact);
-  raiden_entry_retail_script_004e6998(fighter);
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, 3, raiden_entry_retail_script_004e6998);
+  for (int frame = 1; frame <= 3; ++frame) {
+    native_frame(fighter, frame, pose + frame, raiden_kick_contact);
+  }
+  native_play(fighter, false);
 }

@@ -2,6 +2,7 @@
 
 static void first_end_shake(Fighter *fighter);
 static void first_end_particles(Fighter *fighter);
+static void first_end_finish(Fighter *fighter);
 
 void raiden_script_first_release(Fighter *fighter) {
   mk4_script_scene_pose(raiden_opponent(fighter), 393, 25, 0);
@@ -17,16 +18,19 @@ static void first_end_particles(Fighter *fighter) {
   battle_particles(raiden_opponent(fighter), 2, 24, true);
 }
 
-void raiden_script_first_end(Fighter *fighter) {
-  first_end_shake(fighter);
-  native_begin(fighter, 1, 60, NULL);
-  for (int frame = 1; frame <= 60; ++frame) {
-    native_frame(fighter, frame, fighter_sample(fighter), frame == 30 ? first_end_shake : frame == 28 || frame == 58 ? first_end_particles : NULL);
-  }
-  native_wait(fighter);
+static void first_end_finish(Fighter *fighter) {
   battle_shatter(raiden_opponent(fighter));
   battle_end_finisher();
   raiden_script_victory(fighter);
+}
+
+void raiden_script_first_end(Fighter *fighter) {
+  first_end_shake(fighter);
+  native_begin(fighter, 1, 60, first_end_finish);
+  for (int frame = 1; frame <= 60; ++frame) {
+    native_frame(fighter, frame, fighter_sample(fighter), frame == 30 ? first_end_shake : frame == 28 || frame == 58 ? first_end_particles : NULL);
+  }
+  native_play(fighter, false);
 }
 
 void raiden_first_fatality(Fighter *fighter) {
@@ -35,5 +39,5 @@ void raiden_first_fatality(Fighter *fighter) {
   }
   mk4_script_scene_pose(fighter, 392, 25, 0);
   mk4_script_scene_pose(raiden_opponent(fighter), 393, 25, 0);
-  fighter_start_fiber(fighter, raiden_entry_retail_script_004e0210, NULL);
+  raiden_entry_retail_script_004e0210(fighter);
 }

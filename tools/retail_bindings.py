@@ -1754,3 +1754,26 @@ CHARACTER_BINDINGS[12][0x447410] = Binding('jarek_first_victim_end', 'game/jarek
     evidence='447410 runs 472800 and shake 5, then enters 4e1290')
 CHARACTER_BINDINGS[12][0x49cb60] = Binding('jarek_first_victim_done', 'game/jarek/moves/fatality_first.c', ('tail',), flow='terminal', mmove=True,
     evidence='4e1290 finishes clip 404 and retires the victim task through 49cb60; the body keeps its last pose')
+
+
+# Raiden runs every generated root as a frame program. Its native tails build
+# nonblocking rows or enter the selected generated phase; released victims
+# get independent phases and waits become held rows with continuations.
+for _address in (0x45b1f0, 0x45b230, 0x42cc00, 0x42cc40, 0x42ce80, 0x43d6f0, 0x441140, 0x441180, 0x464960, 0x464a60, 0x464aa0,
+                 0x464bb0, 0x464ee0, 0x427b70, 0x464bd0, 0x46a790, 0x46aae0, 0x46b740, 0x46bb60, 0x46bf10, 0x46c2c0, 0x46c970,
+                 0x46e070, 0x46e4d0, 0x46e730, 0x46eea0, 0x46f390, 0x46f3e0, 0x4712e0, 0x410380, 0x482790, 0x485510, 0x485ad0,
+                 0x488590, 0x4889b0, 0x49be10, 0x47d6e0, 0x47d720, 0x48d450, 0x47d680, 0x47d7f0, 0x467fc0):
+    CHARACTER_BINDINGS[1][_address] = replace(CHARACTER_BINDINGS[1][_address], mmove=True)
+CHARACTER_BINDINGS[1][0x43d460] = replace(CHARACTER_BINDINGS[1][0x43d460], flow='terminal', mmove=True,
+    evidence='43d460 enters generated 4e0138, expands its frame phase for 31 fan cycles, then releases owner 4e0148 and victim 4e01a0')
+CHARACTER_BINDINGS[1][0x43db50] = Binding('script_fan_victim_end', 'game/raiden/moves/fan.c', ('tail',), flow='terminal', mmove=True,
+    evidence='43db50 hides the released fan victim and retires its frame program')
+CHARACTER_BINDINGS[1][0x470420] = replace(CHARACTER_BINDINGS[1][0x470420], mmove_lowering='', mmove=True,
+    evidence='470420 controller return; reaction 102 on clip 143 continues through native 485ad0 getup')
+CHARACTER_BINDINGS[1][0x46ab20] = Binding('script_air_land', 'game/raiden/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+    evidence='46ab20 shared landing return after the generated air-throw owner stream')
+CHARACTER_BINDINGS[1][0x484b60] = Binding('mk4_mmove_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal', mmove=True,
+    evidence='484b60 KO-aware airborne throw victim getup on clip 131 samples 46..79')
+CHARACTER_BINDINGS[1][0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+    evidence='488b40 KO-aware native side getup on clip 185')
+CHARACTER_BINDINGS[1][0x48f750] = replace(BINDINGS[0x48f750], mmove=True)

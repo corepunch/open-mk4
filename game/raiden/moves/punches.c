@@ -51,8 +51,7 @@ void raiden_script_close_hp_tail(Fighter *fighter) {
 }
 
 void raiden_script_combo_hp_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  raiden_ground_native_tail(fighter);
+  raiden_ground_native_next(fighter);
 }
 
 void raiden_cpu_close_hp(Fighter *fighter) {

@@ -83,13 +83,10 @@ void raiden_armed_block(Fighter *fighter) {
 }
 
 void raiden_script_weapon_victim_getup(Fighter *victim) {
-  mk4_script_finish_clip(victim, 1);
-  raiden_script_throw_getup(victim);
+  native_finish_clip(victim, raiden_script_throw_getup);
 }
 
 void raiden_script_staff_victim_tail(Fighter *victim) {
   victim->body.physics = fighter_friction;
-  native_delay(victim, 20);
-  mk4_script_finish_clip(victim, 1);
-  raiden_script_throw_getup(victim);
+  native_hold(victim, 20, raiden_script_weapon_victim_getup);
 }

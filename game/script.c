@@ -149,6 +149,29 @@ void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 
   fighter->blend_weight = -1;
 }
 
+static void blend_finish_frame(Fighter *fighter) {
+  fighter->blend_duration = 0;
+  fighter->blend_weight = -1;
+}
+
+void mk4_mmove_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first, FighterFn end) {
+  require(step > 0 && first >= 0 && first <= Q16_ONE, "Invalid native pose blend");
+  int source = fighter_move(fighter)->clip;
+  int sample = fighter_sample(fighter);
+  bind_clip(fighter, clip, count, target);
+  fighter->blend_clip = source;
+  fighter->blend_sample = sample;
+  fighter->blend_duration = 1;
+  fighter->blend_weight = first;
+  int frames = (Q16_ONE - first) / step + 1;
+  native_begin(fighter, 1, frames, end);
+  for (int frame = 1; frame <= frames; ++frame) {
+    q16 weight = first + mini(frame, frames - 1) * step;
+    fighter->native.frames[frame - 1] = (mframe_t){blend_weight_frame, (float)weight, frame == frames ? blend_finish_frame : NULL};
+  }
+  native_play(fighter, false);
+}
+
 void mk4_script_advance(Fighter *fighter, int count, int step) {
   require(count >= 0 && step != 0 && fighter_sample(fighter) >= 0, "Invalid generated counted playback");
   native_advance(fighter, count, step);
@@ -441,6 +464,17 @@ void mk4_script_carry_victim(Fighter *fighter, const MoveDef *move) {
   victim->flags |= FF_PAIRED | FF_REACTING;
   victim->sample_override = 0;
   fighter_start_fiber(victim, throw_hold, throw_hold_cleanup);
+}
+
+void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move) {
+  Fighter *victim = (Fighter *)fighter_opponent(fighter);
+  mk4_script_stop_body(victim);
+  fighter_start_move(victim, S_KNOCKDOWN, move);
+  fighter->flags |= FF_PAIRED;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  victim->sample_override = 0;
+  fighter_mmove_phase(victim, &captured_throw);
+  victim->mmove_cleanup = throw_hold_cleanup;
 }
 
 /* 48f9f0 also copies the owner's facing bit, so the victim clip plays in the owner's frame. */

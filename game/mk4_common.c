@@ -486,6 +486,18 @@ void mk4_script_air_getup(Fighter *victim) {
   fighter_fiber_finish(fighter_ready);
 }
 
+/* 484b60: KO stays down; otherwise turn and finish clip 131 from pose 46. */
+void mk4_mmove_air_getup(Fighter *victim) {
+  if (victim->health <= 0) {
+    fighter_finish_mmove(victim, NULL);
+    return;
+  }
+  victim->facing = -victim->facing;
+  fighter_start_move(victim, S_KNOCKDOWN, &s_throw_getup);
+  victim->sample_override = 46;
+  native_finish_clip(victim, fighter_ready);
+}
+
 static void air_victim_frame(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   if (owner->pending != NULL || owner->action != victim->capture_action) {

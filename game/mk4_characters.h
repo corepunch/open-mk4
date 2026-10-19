@@ -35,6 +35,7 @@ void mk4_sidestep(Fighter *fighter);
 void mk4_air_throw_generated(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
 void mk4_script_air_throw_release(Fighter *fighter);
 void mk4_script_air_getup(Fighter *fighter);
+void mk4_mmove_air_getup(Fighter *fighter);
 void scorpion_generated_reaction(Fighter *fighter);
 void raiden_generated_reaction(Fighter *fighter);
 void reiko_star_reaction(Fighter *fighter);

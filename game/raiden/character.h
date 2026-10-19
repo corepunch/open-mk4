@@ -34,6 +34,7 @@
 #define fan_start raiden_fan_start
 #define first_fatality raiden_first_fatality
 #define ground_attack raiden_ground_attack
+#define ground_native_next raiden_ground_native_next
 #define ground_native_tail raiden_ground_native_tail
 #define hp_script raiden_hp_script
 #define lk_victim raiden_lk_victim
@@ -65,6 +66,7 @@
 #define script_air_diagonal_tail raiden_script_air_diagonal_tail
 #define script_air_hp_tail raiden_script_air_hp_tail
 #define script_air_kick_tail raiden_script_air_kick_tail
+#define script_air_land raiden_script_air_land
 #define script_air_lk_tail raiden_script_air_lk_tail
 #define script_air_lp_tail raiden_script_air_lp_tail
 #define script_air_release raiden_script_air_release
@@ -73,6 +75,7 @@
 #define script_crouch_lk_tail raiden_script_crouch_lk_tail
 #define script_draw_equip raiden_script_draw_equip
 #define script_fan_tail raiden_script_fan_tail
+#define script_fan_victim_end raiden_script_fan_victim_end
 #define script_fan_victory raiden_script_fan_victory
 #define script_first_end raiden_script_first_end
 #define script_first_release raiden_script_first_release
@@ -84,7 +87,6 @@
 #define script_lp_return raiden_script_lp_return
 #define script_lp_select raiden_script_lp_select
 #define script_reaction raiden_script_reaction
-#define script_reaction_side_getup raiden_script_reaction_side_getup
 #define script_roundhouse_start raiden_script_roundhouse_start
 #define script_roundhouse_tail raiden_script_roundhouse_tail
 #define script_second_blend raiden_script_second_blend
@@ -161,6 +163,7 @@ void raiden_enter_victory(Fighter *fighter);
 void raiden_fan_start(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
 void raiden_ground_attack(Fighter *fighter, int index);
+void raiden_ground_native_next(Fighter *fighter);
 void raiden_ground_native_tail(Fighter *fighter);
 void raiden_hp_script(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
@@ -203,6 +206,7 @@ void raiden_entry_retail_script_004de668(Fighter *fighter);
 void raiden_entry_retail_script_004de6b8(Fighter *fighter);
 void raiden_entry_retail_script_004de798(Fighter *fighter);
 void raiden_entry_retail_script_004e0118(Fighter *fighter);
+void raiden_entry_retail_script_004e0138(Fighter *fighter);
 const mmove_t *raiden_retail_script_004e0138_repeat_phase(void);
 void raiden_entry_retail_script_004e0148(Fighter *fighter);
 void raiden_entry_retail_script_004e0158(Fighter *fighter);
@@ -269,6 +273,7 @@ void raiden_scene_end_watch(Fighter *fighter);
 void raiden_script_air_diagonal_tail(Fighter *fighter);
 void raiden_script_air_hp_tail(Fighter *fighter);
 void raiden_script_air_kick_tail(Fighter *fighter);
+void raiden_script_air_land(Fighter *fighter);
 void raiden_script_air_lk_tail(Fighter *fighter);
 void raiden_script_air_lp_tail(Fighter *fighter);
 void raiden_script_air_release(Fighter *fighter);
@@ -277,6 +282,7 @@ void raiden_script_combo_hp_tail(Fighter *fighter);
 void raiden_script_crouch_lk_tail(Fighter *fighter);
 void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_fan_tail(Fighter *fighter);
+void raiden_script_fan_victim_end(Fighter *fighter);
 void raiden_script_fan_victory(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
@@ -288,7 +294,6 @@ void raiden_script_lp_end(Fighter *fighter);
 void raiden_script_lp_return(Fighter *fighter);
 void raiden_script_lp_select(Fighter *fighter);
 void raiden_script_reaction(Fighter *fighter, int reaction);
-void raiden_script_reaction_side_getup(Fighter *victim);
 void raiden_script_roundhouse_start(Fighter *fighter);
 void raiden_script_roundhouse_tail(Fighter *fighter);
 void raiden_script_second_blend(Fighter *fighter);

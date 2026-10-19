@@ -14,6 +14,7 @@ void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample);
 void mk4_script_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_mmove_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_script_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first);
+void mk4_mmove_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first, FighterFn end);
 void mk4_script_pair_advance(Fighter *fighter, int count);
 void mk4_script_current(Fighter *fighter);
 void mk4_script_advance(Fighter *fighter, int count, int step);
@@ -51,6 +52,7 @@ void mk4_script_throw_start(Fighter *fighter, const MoveDef *owner_move, const M
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_script_pair_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_carry_victim(Fighter *fighter, const MoveDef *move);
+void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move);
 void mk4_script_pair_cleanup(Fighter *fighter);
 void mk4_script_thrown_finish(Fighter *fighter);
 void mk4_mmove_thrown_finish(Fighter *fighter);

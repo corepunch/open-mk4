@@ -1,8 +1,7 @@
 #include "../character.h"
 
 void raiden_script_second_blend(Fighter *fighter) {
-  mk4_script_blend_to(fighter, 123, 101, 100, 0xccc, 0x1999);
-  raiden_entry_retail_script_004e56d8(fighter);
+  mk4_mmove_blend_to(fighter, 123, 101, 100, 0xccc, 0x1999, raiden_entry_retail_script_004e56d8);
 }
 
 void raiden_script_second_particles(Fighter *fighter) {
@@ -39,5 +38,5 @@ void raiden_second_fatality(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x14000);
   }
-  fighter_start_fiber(fighter, raiden_entry_retail_script_004e56c8, NULL);
+  raiden_entry_retail_script_004e56c8(fighter);
 }
