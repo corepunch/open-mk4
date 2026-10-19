@@ -117,4 +117,9 @@ void quan_chi_script_flip_kick_tail(Fighter *fighter);
 void quan_chi_script_getup_roll(Fighter *fighter);
 void quan_chi_entry_retail_script_004e8100(Fighter *fighter);
 void quan_chi_entry_retail_script_004e8a48(Fighter *fighter);
+void quan_chi_teleport_stomp(Fighter *fighter);
+void quan_chi_script_teleport_land(Fighter *fighter);
+void quan_chi_script_stomp_victim(Fighter *fighter);
+void quan_chi_entry_retail_script_004e9868(Fighter *fighter);
+void quan_chi_entry_retail_script_004e8818(Fighter *fighter);
 #endif

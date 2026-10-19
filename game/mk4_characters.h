@@ -43,6 +43,7 @@ void mk4_walk(Fighter *fighter);
 void mk4_jump(Fighter *fighter);
 void mk4_land(Fighter *fighter);
 void mk4_return_to_stance(Fighter *fighter);
+void mk4_flip_apex_return(Fighter *fighter);
 
 void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
 void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script);
@@ -66,4 +67,5 @@ void jarek_ball_victim(Fighter *fighter);
 void shinnok_weapon_reaction(Fighter *fighter);
 void quan_chi_skull_reaction(Fighter *fighter);
 void quan_chi_flip_reaction(Fighter *fighter);
+void quan_chi_stomp_reaction(Fighter *fighter);
 #endif

@@ -678,6 +678,10 @@ def _moves_for(character):
             skull=move(0x499740, (('caster', 0x4ed3a0), ('release recovery', 0x4ed3c0), ('reaction 128 victim', 0x4e9cd8)), (('C', 7),),
                        native=(('heading snapshot', 0x49c610), ('release and spawn', 0x499780), ('independent skull', 0x4998d0),
                                ('flight step', 0x499ae0), ('bite', 0x499b40), ('expiry', 0x499c00), ('reaction 128', 0x485f90))),
+            # Retail LK [F,D] record 4e4838 and the medium/far CPU rows.
+            teleport_stomp=move(0x47cf30, (('reaction 106 victim', 0x4e9868), ('blocked landing', 0x4e8818)), (('D', 10),),
+                                native=(('sink callback', 0x47d550), ('stomps', 0x47d1a0), ('flip exit', 0x47d320), ('missed landing', 0x47d500), ('blocked recoil', 0x47fe60),
+                                        ('reaction 106', 0x4843b0), ('victim stomp cycles', 0x484420), ('victim getup', 0x4845f0))),
             # Retail HK [F,F] record 4e4858 and the near CPU row.
             flip_kick=move(0x47a370, (('startup', 0x4e8100), ('reaction 160 victim', 0x4e8a48)), (('D', 24),),
                            native=(('motion decay', 0x47bf50), ('contact loop', 0x47a3b0), ('contact hold', 0x47a500), ('finish', 0x47a610), ('reaction 160', 0x481d90), ('roll getup', 0x488c00))),

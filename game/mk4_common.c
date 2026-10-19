@@ -266,6 +266,12 @@ static void flip_wait(Fighter *fighter) {
   native_play(fighter, false);
 }
 
+/* 470080 is also entered directly by native specials after binding clip 301
+ * at its tuck sample: spin to the apex, retract and land through 46f650. */
+void mk4_flip_apex_return(Fighter *fighter) {
+  flip_wait(fighter);
+}
+
 static void flip_retract(Fighter *fighter) {
   fighter->body.angle[AXIS_X] = fighter->body.spin[AXIS_X] = 0;
   fighter->script_phase = 2;

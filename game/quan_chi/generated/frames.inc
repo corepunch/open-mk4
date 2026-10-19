@@ -50,6 +50,11 @@ static const int quan_chi_clip_082_samples[90] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 
 const mframe_t quan_chi_clip_082_frames[90] = {{0}};
 const mmove_t quan_chi_clip_082_mmove = {.firstframe = 0, .lastframe = 89, .frame = quan_chi_clip_082_frames, .samples = quan_chi_clip_082_samples};
 
+static const int quan_chi_s_sink_samples[40] = {
+    0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19};
+const mframe_t quan_chi_s_sink_frames[40] = {{0}};
+const mmove_t quan_chi_s_sink_mmove = {.firstframe = 0, .lastframe = 39, .frame = quan_chi_s_sink_frames, .samples = quan_chi_s_sink_samples};
+
 static const int quan_chi_s_flip_kick_samples[60] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
     16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29};
 const mframe_t quan_chi_s_flip_kick_frames[60] = {{0}};
@@ -83,6 +88,11 @@ static const int quan_chi_s_lk_thrown_samples[262] = {0, 0, 1, 1, 2, 2, 3, 3, 4,
     126, 126, 127, 127, 128, 128, 129, 129, 130, 130};
 const mframe_t quan_chi_s_lk_thrown_frames[262] = {{0}};
 const mmove_t quan_chi_s_lk_thrown_mmove = {.firstframe = 0, .lastframe = 261, .frame = quan_chi_s_lk_thrown_frames, .samples = quan_chi_s_lk_thrown_samples};
+
+static const int quan_chi_s_stomped_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
+const mframe_t quan_chi_s_stomped_frames[56] = {{0}};
+const mmove_t quan_chi_s_stomped_mmove = {.firstframe = 0, .lastframe = 55, .frame = quan_chi_s_stomped_frames, .samples = quan_chi_s_stomped_samples};
 
 static const int quan_chi_s_bitten_samples[130] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
     16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 33, 34, 34, 35,
@@ -155,6 +165,10 @@ static const int quan_chi_s_high_punch_second_samples[38] = {
 const mframe_t quan_chi_s_high_punch_second_frames[38] = {{0}};
 const mmove_t quan_chi_s_high_punch_second_mmove = {
     .firstframe = 0, .lastframe = 37, .frame = quan_chi_s_high_punch_second_frames, .samples = quan_chi_s_high_punch_second_samples};
+
+static const int quan_chi_clip_301_samples[18] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8};
+const mframe_t quan_chi_clip_301_frames[18] = {{0}};
+const mmove_t quan_chi_clip_301_mmove = {.firstframe = 0, .lastframe = 17, .frame = quan_chi_clip_301_frames, .samples = quan_chi_clip_301_samples};
 
 static const int quan_chi_s_jump_samples[56] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
     16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27};
