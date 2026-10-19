@@ -27,6 +27,7 @@
 #define fighting scorpion_fighting
 #define fire_script scorpion_fire_script
 #define ground_attack scorpion_ground_attack
+#define ground_native_next scorpion_ground_native_next
 #define ground_native_tail scorpion_ground_native_tail
 #define hp_script scorpion_hp_script
 #define native_blend scorpion_native_blend
@@ -58,6 +59,7 @@
 #define script_air_kick_tail scorpion_script_air_kick_tail
 #define script_air_lk_tail scorpion_script_air_lk_tail
 #define script_air_lp_tail scorpion_script_air_lp_tail
+#define script_air_land scorpion_script_air_land
 #define script_air_release scorpion_script_air_release
 #define script_beast_attack scorpion_script_beast_attack
 #define script_beast_begin scorpion_script_beast_begin
@@ -166,9 +168,10 @@ void scorpion_fan_start(Fighter *fighter);
 bool scorpion_fighting(const Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
 void scorpion_ground_attack(Fighter *fighter, int index);
+void scorpion_ground_native_next(Fighter *fighter);
 void scorpion_ground_native_tail(Fighter *fighter);
 void scorpion_hp_script(Fighter *fighter);
-void scorpion_native_blend(Fighter *fighter, const SceneClip *blend);
+void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end);
 Fighter *scorpion_opponent(Fighter *fighter);
 void scorpion_press_air_hk(Fighter *fighter);
 void scorpion_press_air_hp(Fighter *fighter);
@@ -195,6 +198,7 @@ void scorpion_entry_retail_script_004de318(Fighter *fighter);
 void scorpion_entry_retail_script_004de328(Fighter *fighter);
 void scorpion_entry_retail_script_004de798(Fighter *fighter);
 void scorpion_entry_retail_script_004e0118(Fighter *fighter);
+void scorpion_entry_retail_script_004e0138(Fighter *fighter);
 const mmove_t *scorpion_retail_script_004e0138_repeat_phase(void);
 void scorpion_entry_retail_script_004e0148(Fighter *fighter);
 void scorpion_entry_retail_script_004e0158(Fighter *fighter);
@@ -287,6 +291,7 @@ void scorpion_script_air_hp_tail(Fighter *fighter);
 void scorpion_script_air_kick_tail(Fighter *fighter);
 void scorpion_script_air_lk_tail(Fighter *fighter);
 void scorpion_script_air_lp_tail(Fighter *fighter);
+void scorpion_script_air_land(Fighter *fighter);
 void scorpion_script_air_release(Fighter *fighter);
 void scorpion_script_beast_attack(Fighter *fighter);
 void scorpion_script_beast_begin(Fighter *fighter);

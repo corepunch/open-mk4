@@ -35,9 +35,6 @@ static void equip_sword(Fighter *fighter) {
 }
 
 void scorpion_script_weapon_ready(Fighter *fighter) {
-  if (fighter_fiber_running(fighter)) {
-    fighter_fiber_finish(fighter_ready);
-  }
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
@@ -145,7 +142,7 @@ void scorpion_weapon(Fighter *fighter) {
     scorpion_entry_retail_script_004ec8b0(fighter);
   } else {
     weapon_draw(fighter, &sword);
-    fighter_start_fiber(fighter, scorpion_entry_retail_script_004e62c0, NULL);
+    scorpion_entry_retail_script_004e62c0(fighter);
   }
   fighter->sample_override = 0;
 }

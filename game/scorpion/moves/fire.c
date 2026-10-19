@@ -24,7 +24,7 @@ void scorpion_fire(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_fire);
   fighter->sample_override = 1;
   fighter->script_phase = (fighter_opponent(fighter)->flags & FF_REACTING) != 0;
-  fighter_start_fiber(fighter, scorpion_entry_retail_script_004e5b58, NULL);
+  scorpion_entry_retail_script_004e5b58(fighter);
 }
 
 void scorpion_script_fire_decor(Fighter *fighter) {

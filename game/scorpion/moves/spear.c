@@ -5,7 +5,7 @@ static bool spear_not_pulling(const Fighter *fighter);
 static void spear_cleanup(Fighter *fighter);
 static void spear_projectile(Projectile *p);
 static void spear_spawn(Fighter *fighter);
-static void spear_wait_native(Fighter *fighter);
+static void spear_wait_done(Fighter *fighter);
 static const AttackRecord spear_record = {0x3333, -0x1eb8, 0x947a, 0x3ae1, 70, 70, 112, ATTACK_MARK, 0xccc};
 static const MoveDef s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0300};
 static const MoveDef s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4000};
@@ -45,7 +45,7 @@ static void spear_cleanup(Fighter *fighter) {
 
 static void spear_projectile(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner], *victim = scorpion_opponent(owner);
-  bool interrupted = fighter_move(owner)->clip != 14 || (!fighter_fiber_active(owner) && owner->current_mmove == NULL) || owner->pending != NULL;
+  bool interrupted = fighter_move(owner)->clip != 14 || owner->current_mmove == NULL || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && fighter_move(victim)->clip == 199) {
       scorpion_special_ready(victim);
@@ -65,10 +65,11 @@ static void spear_projectile(Projectile *p) {
       fighter_start_move(victim, S_HIT, &s_spear_stun);
       victim->sample_override = 0;
       victim->flags |= FF_REACTING;
-      fighter_start_fiber(victim, scorpion_entry_retail_script_004e9f20, NULL);
+      scorpion_entry_retail_script_004e9f20(victim);
       fighter_start_move(owner, S_PUNCH, &s_spear);
       owner->sample_override = 31;
-      fighter_start_fiber(owner, scorpion_entry_retail_script_004ed4a8, spear_cleanup);
+      owner->mmove_cleanup = spear_cleanup;
+      scorpion_entry_retail_script_004ed4a8(owner);
       p->kind = 0;
     } else {
       victim->body.pos[AXIS_X] -= q16_mul(p->heading[0], 0x3333);
@@ -98,7 +99,7 @@ static void spear_projectile(Projectile *p) {
     fighter_start_move(victim, S_HIT, &s_snared);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
-    fighter_start_fiber(victim, scorpion_entry_retail_script_004e9d00, NULL);
+    scorpion_entry_retail_script_004e9d00(victim);
     victim->damage_scale = 0x9999; /* 0x485fb0: subsequent combo damage scales to 60%. */
     p->phase = 1;
     p->lifetime = 100;
@@ -136,25 +137,26 @@ void scorpion_spear(Fighter *fighter) {
   fighter->script_phase = followup;
   fighter->sample_override = followup ? 9 : 0;
   fighter->spear_ready = g_battle.ticks + 90;
-  fighter_start_fiber(fighter, scorpion_entry_retail_script_004ed448, spear_cleanup);
+  fighter->mmove_cleanup = spear_cleanup;
+  scorpion_entry_retail_script_004ed448(fighter);
 }
 
-static void spear_wait_native(Fighter *fighter) {
-  native_until(fighter, spear_not_pulling);
-  fighter_fiber_finish(scorpion_special_ready);
+static void spear_wait_done(Fighter *fighter) {
+  fighter_finish_mmove(fighter, scorpion_special_ready);
 }
 
 void scorpion_script_spear_done(Fighter *fighter) {
   if (spear_not_pulling(fighter)) {
     scorpion_special_ready(fighter);
   } else {
-    fighter_start_fiber(fighter, spear_wait_native, spear_cleanup);
+    fighter->mmove_cleanup = spear_cleanup;
+    native_await(fighter, spear_not_pulling, spear_wait_done);
   }
 }
 
 void scorpion_script_spear_return(Fighter *fighter) {
   fighter->spear_ready = g_battle.ticks + 90;
-  fighter_fiber_finish(scorpion_special_ready);
+  fighter_finish_mmove(fighter, scorpion_special_ready);
 }
 
 void scorpion_script_spawn_spear(Fighter *fighter, int type) {

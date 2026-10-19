@@ -3,6 +3,7 @@
 static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner);
 static void finish_scene(Fighter *fighter);
 static void burn_start(Fighter *fighter);
+static void burn_tail_done(Fighter *victim);
 static void beast_start(Fighter *fighter);
 static void beast_watch(Fighter *fighter);
 static void beast_gore_object(Projectile *object);
@@ -38,11 +39,7 @@ static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   if (fighter_move(fighter)->clip != clip) {
     for (int i = 0; i < COUNT(fatal_moves); ++i) {
       if (fatal_moves[i].clip == clip) {
-        if (owner && fighter_fiber_running(fighter)) {
-          fighter_fiber_move(fighter, S_VICTORY, &fatal_moves[i]);
-        } else {
-          fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        }
+        fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
         break;
       }
     }
@@ -66,8 +63,12 @@ static void finish_scene(Fighter *fighter) {
 }
 
 static void burn_start(Fighter *fighter) {
-  native_delay(fighter, maxi(0, 8 - g_battle.phase_ticks));
-  scorpion_entry_retail_script_004e0278(fighter);
+  int frames = 8 - g_battle.phase_ticks;
+  if (frames > 0) {
+    native_hold(fighter, frames, scorpion_entry_retail_script_004e0278);
+  } else {
+    scorpion_entry_retail_script_004e0278(fighter);
+  }
 }
 
 static void beast_start(Fighter *fighter) {
@@ -85,12 +86,8 @@ void scorpion_start_fatality(Fighter *fighter, int id) {
   if (id == FINISH_FAN) {
     fatal_pose(victim, 416, 0, false);
   }
-  fighter_start_fiber(fighter,
-      id == FINISH_BURN    ? burn_start
-      : id == FINISH_BEAST ? beast_start
-      : id == FINISH_FAN   ? scorpion_fan_start
-                           : scorpion_spike_start,
-      NULL);
+  FighterFn start = id == FINISH_BURN ? burn_start : id == FINISH_BEAST ? beast_start : id == FINISH_FAN ? scorpion_fan_start : scorpion_spike_start;
+  start(fighter);
 }
 
 void scorpion_burn_fatality(Fighter *fighter) {
@@ -101,10 +98,13 @@ void scorpion_beast_fatality(Fighter *fighter) {
   scorpion_start_fatality(fighter, FINISH_BEAST);
 }
 
+static void burn_tail_done(Fighter *victim) {
+  fighter_finish_mmove(victim, mk4_script_thrown_ready);
+}
+
 void scorpion_script_burn_tail(Fighter *victim) {
   victim->body.physics = fighter_friction;
-  mk4_script_finish_clip(victim, 1);
-  fighter_fiber_finish(mk4_script_thrown_ready);
+  native_finish_clip(victim, burn_tail_done);
 }
 
 void scorpion_script_burn_begin(Fighter *fighter) {
@@ -116,24 +116,22 @@ void scorpion_script_burn_begin(Fighter *fighter) {
 void scorpion_script_burn_victim_start(Fighter *fighter) {
   Fighter *victim = scorpion_opponent(fighter);
   victim->appearance = APPEARANCE_BURNED;
-  fighter_start_fiber(victim, scorpion_entry_retail_script_004e0300, NULL);
+  fighter_cancel_mmove(victim);
+  scorpion_entry_retail_script_004e0300(victim);
   battle_sound(SOUND_B, 15);
   scorpion_entry_retail_script_004e0298(fighter);
 }
 
 void scorpion_script_burn_repeat1(Fighter *fighter) {
-  scorpion_native_blend(fighter, burn_repeat_blend);
-  scorpion_entry_retail_script_004e02a8(fighter);
+  scorpion_native_blend(fighter, burn_repeat_blend, scorpion_entry_retail_script_004e02a8);
 }
 
 void scorpion_script_burn_repeat2(Fighter *fighter) {
-  scorpion_native_blend(fighter, burn_repeat_blend);
-  scorpion_entry_retail_script_004e02b8(fighter);
+  scorpion_native_blend(fighter, burn_repeat_blend, scorpion_entry_retail_script_004e02b8);
 }
 
 void scorpion_script_burn_victory(Fighter *fighter) {
-  scorpion_native_blend(fighter, burn_victory_blend);
-  scorpion_entry_retail_script_004e02d0(fighter);
+  scorpion_native_blend(fighter, burn_victory_blend, scorpion_entry_retail_script_004e02d0);
 }
 
 void scorpion_script_burn_victim_cue(Fighter *victim) {
@@ -146,8 +144,7 @@ void scorpion_script_burn_victim_repeat(Fighter *victim) {
 }
 
 void scorpion_script_burn_victim_blend(Fighter *victim) {
-  scorpion_native_blend(victim, burn_victim_blend);
-  scorpion_entry_retail_script_004e0338(victim);
+  scorpion_native_blend(victim, burn_victim_blend, scorpion_entry_retail_script_004e0338);
 }
 
 void scorpion_script_burn_victim_impact(Fighter *victim) {
@@ -162,13 +159,13 @@ void scorpion_script_burn_victim_settle(Fighter *victim) {
 }
 
 void scorpion_script_burn_victim_end(Fighter *victim) {
-  fighter_fiber_finish(finish_scene);
-  (void)victim;
+  fighter_finish_mmove(victim, finish_scene);
 }
 
+/* Both scene actors have parked their frame programs; the parked poses
+ * remain while the finisher completes. */
 static void beast_watch(Fighter *fighter) {
   if (fighter->script_phase == 9 && scorpion_opponent(fighter)->script_phase == 9) {
-    fighter_cancel_all_fibers();
     battle_end_finisher();
   }
 }
@@ -180,7 +177,9 @@ void scorpion_script_beast_begin(Fighter *fighter) {
 }
 
 void scorpion_script_beast_attack(Fighter *fighter) {
-  fighter_start_fiber(scorpion_opponent(fighter), scorpion_entry_retail_script_004d2ef8, NULL);
+  Fighter *victim = scorpion_opponent(fighter);
+  fighter_cancel_mmove(victim);
+  scorpion_entry_retail_script_004d2ef8(victim);
   scorpion_entry_retail_script_004d2eb0(fighter);
 }
 

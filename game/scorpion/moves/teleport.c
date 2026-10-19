@@ -42,7 +42,7 @@ static void teleport_pause(Fighter *fighter) {
 }
 
 static void teleport_block_return(Fighter *fighter) {
-  fighter_start_fiber(fighter, scorpion_entry_retail_script_004e8818, NULL);
+  scorpion_entry_retail_script_004e8818(fighter);
 }
 
 static void teleport_query(Fighter *fighter) {
@@ -119,7 +119,7 @@ void scorpion_teleport(Fighter *fighter) {
   fighter->native_signal = false;
   fighter->flags |= FF_TELEPORTING;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? -1 : 1;
-  fighter_start_fiber(fighter, scorpion_entry_retail_script_004e87b0, NULL);
+  scorpion_entry_retail_script_004e87b0(fighter);
 }
 
 void scorpion_script_teleport_motion(Fighter *fighter) {
@@ -133,7 +133,7 @@ void scorpion_script_teleport_motion(Fighter *fighter) {
 }
 
 void scorpion_script_teleport_land(Fighter *fighter) {
-  fighter_fiber_move(fighter, S_JUMP, &scorpion_s_teleport_land);
+  fighter_start_move(fighter, S_JUMP, &scorpion_s_teleport_land);
   fighter->sample_override = 18;
   scorpion_teleport_land_script(fighter);
 }

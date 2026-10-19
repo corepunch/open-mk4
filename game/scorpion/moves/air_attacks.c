@@ -56,7 +56,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
   static const FighterFn scripts[] = {scorpion_entry_retail_script_004e6658, scorpion_entry_retail_script_004e6710, scorpion_entry_retail_script_004e61f8,
       scorpion_entry_retail_script_004e6500, scorpion_entry_retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  scripts[index](fighter);
 }
 
 static void air_hp(Fighter *fighter) {
@@ -138,6 +138,10 @@ void scorpion_script_air_diagonal_tail(Fighter *fighter) {
 }
 
 void scorpion_script_air_release(Fighter *fighter) {
-  mk4_script_air_throw_release(fighter);
+  mk4_mmove_air_throw_release(fighter);
   scorpion_entry_retail_script_004e5e50(fighter);
+}
+
+void scorpion_script_air_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
 }

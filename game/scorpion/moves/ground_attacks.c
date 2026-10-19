@@ -35,6 +35,10 @@ void scorpion_ground_native_tail(Fighter *fighter) {
   native_ground_tail(fighter, &ground_profile);
 }
 
+void scorpion_ground_native_next(Fighter *fighter) {
+  native_ground_next(fighter, &ground_profile);
+}
+
 void scorpion_ground_attack(Fighter *fighter, int index) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
   scorpion_stop_body(fighter);
@@ -46,11 +50,7 @@ void scorpion_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {scorpion_entry_retail_script_004e6d08, scorpion_ground_native_tail, scorpion_entry_retail_script_004e6158,
       scorpion_entry_retail_script_004e60b8, scorpion_entry_retail_script_004e61e0, scorpion_entry_retail_script_004e69b0,
       scorpion_entry_retail_script_004e6190, scorpion_entry_retail_script_004e6844};
-  if (index == G_LOW_KICK) {
-    scripts[index](fighter);
-  } else {
-    fighter_start_fiber(fighter, scripts[index], NULL);
-  }
+  scripts[index](fighter);
 }
 
 static void scorpion_crouch_lp(Fighter *fighter) {
@@ -82,8 +82,7 @@ void scorpion_crouch(Fighter *fighter) {
 }
 
 void scorpion_script_crouch_lk_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  scorpion_ground_native_tail(fighter);
+  scorpion_ground_native_next(fighter);
 }
 
 void scorpion_script_knee_tail(Fighter *fighter) {

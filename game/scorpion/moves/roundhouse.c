@@ -5,8 +5,7 @@ void scorpion_roundhouse(Fighter *fighter) {
 }
 
 void scorpion_script_roundhouse_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  scorpion_ground_native_tail(fighter);
+  scorpion_ground_native_next(fighter);
 }
 
 void scorpion_script_roundhouse_start(Fighter *fighter) {

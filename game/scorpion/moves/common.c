@@ -73,12 +73,11 @@ void scorpion_script_lk_damage(Fighter *fighter) {
 
 void scorpion_script_lk_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
-  fighter_fiber_finish(scorpion_ready);
+  fighter_finish_mmove(fighter, scorpion_ready);
 }
 
 void scorpion_script_lp_return(Fighter *fighter) {
-  fighter_fiber_finish(scorpion_ready);
-  (void)fighter;
+  fighter_finish_mmove(fighter, scorpion_ready);
 }
 
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction) {
@@ -88,7 +87,7 @@ void scorpion_script_opponent_reaction(Fighter *fighter, int reaction) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown_end);
   victim->sample_override = 65;
-  fighter_start_fiber(victim, scorpion_thrown_end_script, NULL);
+  scorpion_thrown_end_script(victim);
 }
 
 void scorpion_idle(Fighter *fighter) {
@@ -132,11 +131,11 @@ void scorpion_script_reaction(Fighter *fighter, int reaction) {
 }
 
 void scorpion_generated_reaction(Fighter *victim) {
-  fighter_start_fiber(victim, victim->reaction == 173 ? scorpion_entry_retail_script_004e97f8 : scorpion_entry_retail_script_004e9938, NULL);
+  (victim->reaction == 173 ? scorpion_entry_retail_script_004e97f8 : scorpion_entry_retail_script_004e9938)(victim);
 }
 
-void scorpion_native_blend(Fighter *fighter, const SceneClip *blend) {
-  native_scene_blends(fighter, blend, 1, NULL);
+void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end) {
+  native_scene_blends(fighter, blend, 1, end);
 }
 
 void scorpion_script_transform_effect(Fighter *fighter, int type) {

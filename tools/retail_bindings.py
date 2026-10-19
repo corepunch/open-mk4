@@ -1815,3 +1815,15 @@ for _address in (0x490290, 0x494520):
 for _address in (0x46eab0, 0x46ec10):
     CHARACTER_BINDINGS[16][_address] = Binding('weapon_air_frames_native', 'game/weapons.c', ('tail',), ('fighter', 'selector_u32'), flow='terminal',
         mmove=True, evidence='Native weapon air 104/108 uses shared contact and landing frame phases')
+
+
+# Scorpion runs every generated root as a frame program. Each native
+# continuation below builds nonblocking rows or enters a selected generated
+# phase; LK/LP pairs keep their own captured-victim hold.
+for _address, _binding in list(CHARACTER_BINDINGS[0].items()):
+    CHARACTER_BINDINGS[0][_address] = replace(_binding, mmove=True)
+CHARACTER_BINDINGS[0][0x46ab20] = Binding('script_air_land', 'game/scorpion/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+    evidence='46ab20 shared landing return after the generated air-throw owner stream')
+CHARACTER_BINDINGS[0][0x484b60] = Binding('mk4_mmove_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal', mmove=True,
+    evidence='484b60 KO-aware airborne throw victim getup on clip 131 samples 46..79')
+CHARACTER_BINDINGS[0][0x48f750] = replace(BINDINGS[0x48f750], mmove=True)

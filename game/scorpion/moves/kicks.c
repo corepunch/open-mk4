@@ -12,7 +12,7 @@ static void scorpion_kick_contact(Fighter *fighter) {
 
 void scorpion_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &scorpion_s_kick);
-  fighter_start_fiber(fighter, scorpion_entry_retail_script_004e5ca0, NULL);
+  scorpion_entry_retail_script_004e5ca0(fighter);
 }
 
 void scorpion_press_kick(Fighter *fighter) {
@@ -21,6 +21,10 @@ void scorpion_press_kick(Fighter *fighter) {
 
 void scorpion_script_kick_tail(Fighter *fighter) {
   scorpion_kick_contact(fighter);
-  native_calls(fighter, 2, 0, scorpion_kick_contact);
-  scorpion_entry_retail_script_004e5c70(fighter);
+  int pose = fighter_sample(fighter);
+  native_begin(fighter, 1, 2, scorpion_entry_retail_script_004e5c70);
+  for (int frame = 1; frame <= 2; ++frame) {
+    native_frame(fighter, frame, pose, scorpion_kick_contact);
+  }
+  native_play(fighter, false);
 }

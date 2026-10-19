@@ -175,6 +175,10 @@ void scorpion_entry_retail_script_004e0118(Fighter *fighter) {
   retail_script_004e0118(fighter);
 }
 
+void scorpion_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
+}
+
 void scorpion_entry_retail_script_004e0148(Fighter *fighter) {
   retail_script_004e0148(fighter);
 }
@@ -400,5 +404,5 @@ void scorpion_entry_retail_script_004ed4a8(Fighter *fighter) {
 }
 
 const mmove_t *scorpion_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }

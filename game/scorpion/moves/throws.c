@@ -1,5 +1,6 @@
 #include "../character.h"
 
+static void thrown_end_done(Fighter *victim);
 static void ground_thrown_frame(Fighter *victim);
 static void ground_thrown_script(Fighter *victim);
 static void ground_throw(Fighter *fighter, bool lk);
@@ -16,17 +17,19 @@ bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick) {
          !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
 }
 
+static void thrown_end_done(Fighter *victim) {
+  fighter_finish_mmove(victim, victim->health > 0 ? scorpion_ready : NULL);
+}
+
 void scorpion_thrown_end_script(Fighter *victim) {
-  native_play_to(victim, 130, 1);
-  native_delay(victim, 1);
-  fighter_fiber_finish(victim->health > 0 ? scorpion_ready : NULL);
+  native_finish_clip(victim, thrown_end_done);
 }
 
 static void ground_thrown_frame(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
     victim->flags &= ~(unsigned)FF_PAIRED;
-    fighter_stop_mmove(victim);
+    thrown_end_done(victim);
     return;
   }
   memcpy(victim->body.pos, owner->body.pos, sizeof victim->body.pos);
@@ -37,8 +40,7 @@ static void ground_thrown_frame(Fighter *victim) {
 static void ground_thrown_script(Fighter *victim) {
   native_begin(victim, 0, 0, NULL);
   victim->native.frames[0].thinkfunc = ground_thrown_frame;
-  native_wait(victim);
-  fighter_fiber_finish(victim->health > 0 ? scorpion_ready : NULL);
+  native_play(victim, false);
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
@@ -54,8 +56,8 @@ static void ground_throw(Fighter *fighter, bool lk) {
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   fighter->sample_override = victim->sample_override = 0;
-  fighter_start_fiber(fighter, lk ? scorpion_entry_retail_script_004de2f8 : scorpion_entry_retail_script_004de798, NULL);
-  fighter_start_fiber(victim, ground_thrown_script, NULL);
+  (lk ? scorpion_entry_retail_script_004de2f8 : scorpion_entry_retail_script_004de798)(fighter);
+  ground_thrown_script(victim);
 }
 
 void scorpion_enter_throw(Fighter *fighter) {
@@ -67,5 +69,5 @@ void scorpion_enter_lk_throw(Fighter *fighter) {
 }
 
 void scorpion_air_throw(Fighter *fighter) {
-  mk4_air_throw_generated(fighter, scorpion_entry_retail_script_004e5e28, scorpion_entry_retail_script_004e9910);
+  mk4_air_throw_frames(fighter, scorpion_entry_retail_script_004e5e28, scorpion_entry_retail_script_004e9910);
 }
