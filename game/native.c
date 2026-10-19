@@ -210,6 +210,25 @@ void native_play_to(Fighter *fighter, int sample, int step) {
   native_wait(fighter);
 }
 
+/* Nonblocking native_play_to: one row per pose step, then end. */
+void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end) {
+  int start = fighter_sample(fighter);
+  require(step != 0, "Native playback requires a pose step");
+  int distance = step > 0 ? sample - start : start - sample;
+  if (distance <= 0) {
+    end(fighter);
+    return;
+  }
+  int stride = step > 0 ? step : -step;
+  int count = (distance + stride - 1) / stride;
+  native_begin(fighter, 1, count, end);
+  for (int frame = 1; frame <= count; ++frame) {
+    int pose = start + frame * step;
+    native_frame(fighter, frame, step > 0 ? mini(sample, pose) : maxi(sample, pose), NULL);
+  }
+  native_play(fighter, false);
+}
+
 void native_calls(Fighter *fighter, int frames, int pose_step, FighterFn action) {
   if (frames <= 0) {
     return;

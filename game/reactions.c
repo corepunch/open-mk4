@@ -769,43 +769,73 @@ static void liu_record_impact(Fighter *fighter) {
   battle_scene_impact(fighter);
 }
 
+static void liu_record_done(Fighter *fighter) {
+  fighter->body.on_land = NULL;
+  stop_sliding(fighter);
+  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
+}
+
+static void liu_record_end(Fighter *fighter) {
+  native_hold(fighter, 1, liu_record_done);
+}
+
+static void liu_record_slide_stop(Fighter *fighter) {
+  stop_sliding(fighter);
+  native_play_rows(fighter, 39, 1, liu_record_end);
+}
+
+static void liu_record_slide_push(Fighter *fighter) {
+  fighter->body.physics = NULL;
+  fighter_set_speed(fighter, 0x147a);
+  native_play_rows(fighter, 31, 1, liu_record_slide_stop);
+}
+
+static void liu_record_landed(Fighter *fighter) {
+  native_play_rows(fighter, 79, 1, liu_record_end);
+}
+
+static void liu_record_fall(Fighter *fighter) {
+  native_await(fighter, native_grounded, liu_record_landed);
+}
+
+static void liu_record_getup(Fighter *fighter) {
+  if (fighter->health <= 0) {
+    fighter_finish_mmove(fighter, NULL);
+    return;
+  }
+  bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
+  fighter_start_move(fighter, S_KNOCKDOWN, &liu_reaction_moves[down ? 4 : 5]);
+  fighter->sample_override = 0;
+  native_play_rows(fighter, down ? 15 : 23, 1, liu_record_end);
+}
+
+static void liu_record_settle(Fighter *fighter) {
+  native_hold(fighter, 1, liu_record_getup);
+}
+
+static void liu_record_impact_stop(Fighter *fighter) {
+  battle_scene_impact(fighter);
+  stop_sliding(fighter);
+  native_play_rows(fighter, 34, 1, liu_record_settle);
+}
+
+/* Each record runs as frame rows: 65 slides and pushes back, 31 launches
+ * and lands, the others recoil into a crouched or standing getup. */
 static void liu_record_script(Fighter *fighter) {
   int id = fighter->reaction;
   if (id == 65) {
     battle_sound(SOUND_A, 38);
     slide(fighter, 0x5999);
-    native_play_to(fighter, 26, 1);
-    fighter->body.physics = NULL;
-    fighter_set_speed(fighter, 0x147a);
-    native_play_to(fighter, 31, 1);
-    stop_sliding(fighter);
-    native_play_to(fighter, 39, 1);
+    native_play_rows(fighter, 26, 1, liu_record_slide_push);
   } else if (id == 31) {
     launch(fighter, 0x1999, -0x23d7, 0x24d);
     battle_sound(SOUND_B, 3);
     fighter->body.on_land = liu_record_impact;
-    native_play_to(fighter, 39, 1);
-    native_until(fighter, native_grounded);
-    native_play_to(fighter, 79, 1);
+    native_play_rows(fighter, 39, 1, liu_record_fall);
   } else {
     fighter_set_speed(fighter, -0xf5c);
-    native_play_to(fighter, 24, 1);
-    battle_scene_impact(fighter);
-    stop_sliding(fighter);
-    native_play_to(fighter, 34, 1);
-    native_delay(fighter, 1);
-    if (fighter->health <= 0) {
-      fighter_fiber_finish(NULL);
-    }
-    bool down = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-    fighter_fiber_move(fighter, S_KNOCKDOWN, &liu_reaction_moves[down ? 4 : 5]);
-    fighter->sample_override = 0;
-    native_play_to(fighter, down ? 15 : 23, 1);
+    native_play_rows(fighter, 24, 1, liu_record_impact_stop);
   }
-  native_delay(fighter, 1);
-  fighter->body.on_land = NULL;
-  stop_sliding(fighter);
-  fighter_fiber_finish(fighter->health > 0 ? fighter_ready : NULL);
 }
 
 static void react_liu_record(Fighter *fighter) {
@@ -815,7 +845,7 @@ static void react_liu_record(Fighter *fighter) {
   if (fighter->reaction == 64) {
     liu_kang_entry_retail_script_004e9de8(fighter);
   } else {
-    fighter_start_fiber(fighter, liu_record_script, NULL);
+    liu_record_script(fighter);
   }
 }
 

@@ -12,21 +12,25 @@
       "clip": 35,
       "count": 44,
       "evidence": "42c0b0 resumes after paired opening",
-      "sample": 10
+      "sample": 10,
+      "paired": true
     },
     "0x4de428": {
       "clip": 35,
       "count": 44,
       "evidence": "42c0d0 applies damage then resumes",
       "return_to": "caller",
-      "sample": 38
+      "sample": 38,
+      "paired": true,
+      "successor": "retail_script_004de468"
     },
     "0x4e0138": {
       "clip": 415,
       "count": 130,
       "evidence": "43d460/43d530 native loop, 31 calls from C owner",
       "sample": 69,
-      "export_frames": true
+      "export_frames": true,
+      "return_to": "caller"
     },
     "0x4e0148": {
       "clip": 415,
@@ -101,6 +105,24 @@
     "0x4e9de8": {
       "return_to": "mk4_mmove_thrown_finish",
       "evidence": "Shared native C0 reaction64 completes clip130 with friction and KO-aware controller return."
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "sample": 0,
+      "evidence": "liu_kang_start_fatality poses the owner on clip 293 at sample 0 before 4e6950's initial 28-tick hold."
+    },
+    "0x4dfff8": {
+      "clip": 119,
+      "count": 60,
+      "sample": 0,
+      "evidence": "liu_kang_start_fatality poses the second-fatality owner on clip 119 at sample 0 before 4dfff8's scene-event holds."
+    },
+    "0x4e8718": {
+      "clip": 92,
+      "count": 6,
+      "sample": 5,
+      "evidence": "Native 47ee00 completes flying-kick clip 92 to pose 5 and holds it while querying before the blocked branch 4e8718."
     }
   },
   "generated_scripts": [
@@ -627,18 +649,64 @@
     "symbol": "dragon_sword"
   },
   "mmove_scripts": [
+    "0x4de3b0",
+    "0x4de410",
+    "0x4de428",
+    "0x4de468",
+    "0x4de478",
+    "0x4de798",
+    "0x4dfff8",
+    "0x4e0020",
+    "0x4e0118",
+    "0x4e0138",
+    "0x4e0148",
+    "0x4e0158",
+    "0x4e0188",
+    "0x4e01a0",
+    "0x4e5c70",
+    "0x4e60b8",
+    "0x4e6158",
+    "0x4e6190",
+    "0x4e61e0",
+    "0x4e62a0",
     "0x4e62c0",
     "0x4e62d8",
-    "0x4e66d0",
-    "0x4e66f0",
     "0x4e62f0",
     "0x4e6330",
     "0x4e6360",
     "0x4e63b0",
-    "0x4e62a0",
+    "0x4e63d8",
+    "0x4e6500",
+    "0x4e6658",
+    "0x4e66d0",
+    "0x4e66f0",
+    "0x4e6710",
+    "0x4e67d8",
+    "0x4e6890",
+    "0x4e68a8",
+    "0x4e6950",
+    "0x4e69b0",
+    "0x4e6c90",
     "0x4e6d08",
+    "0x4e6df0",
+    "0x4e6e90",
+    "0x4e8610",
+    "0x4e8678",
+    "0x4e8688",
+    "0x4e86a8",
+    "0x4e86d0",
+    "0x4e86e8",
+    "0x4e8718",
+    "0x4e9a90",
+    "0x4e9ad0",
+    "0x4e9ae8",
+    "0x4e9b68",
     "0x4e9de8",
+    "0x4ec680",
     "0x4ec7f0",
-    "0x4e67d8"
-  ]
+    "0x4ed678",
+    "0x4ed6c0",
+    "0x4ed6f8"
+  ],
+  "mmove_only": true
 }

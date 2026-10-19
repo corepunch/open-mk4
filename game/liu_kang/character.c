@@ -210,6 +210,10 @@ void liu_kang_entry_retail_script_004e0118(Fighter *fighter) {
   retail_script_004e0118(fighter);
 }
 
+void liu_kang_entry_retail_script_004e0138(Fighter *fighter) {
+  retail_script_004e0138(fighter);
+}
+
 void liu_kang_entry_retail_script_004e0148(Fighter *fighter) {
   retail_script_004e0148(fighter);
 }
@@ -387,7 +391,7 @@ void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter) {
 }
 
 const mmove_t *liu_kang_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_repeat_phase;
+  return &retail_script_004e0138_phase;
 }
 
 void liu_kang_entry_retail_script_004e9de8(Fighter *fighter) {

@@ -3,6 +3,7 @@
 static const ButtonTable air_followup;
 static const ButtonTable air_ground_followup;
 static void air_land(Fighter *fighter);
+static void air_return_land(Fighter *fighter);
 static void air_native_tail(Fighter *fighter, int index, int elapsed);
 static void start_air_attack(Fighter *fighter, int index);
 static void air_hp(Fighter *fighter);
@@ -54,7 +55,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
   static const FighterFn scripts[] = {liu_kang_entry_retail_script_004e6658, liu_kang_entry_retail_script_004e6710, liu_kang_entry_retail_script_004e6df0,
       liu_kang_entry_retail_script_004e6500, liu_kang_entry_retail_script_004e63d8};
-  fighter_start_fiber(fighter, scripts[index], NULL);
+  scripts[index](fighter);
 }
 
 static void air_hp(Fighter *fighter) {
@@ -120,10 +121,17 @@ void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type) {
   liu_kang_fireball_spawn(fighter, 2);
 }
 
+static void air_return_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
+void liu_kang_liu_script_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
 void liu_kang_liu_script_air_return(Fighter *fighter) {
   fighter->body.gravity = 0x20c;
-  native_until(fighter, native_grounded);
-  fighter_fiber_finish(mk4_land);
+  native_await(fighter, native_grounded, air_return_land);
 }
 
 void liu_kang_liu_script_air_hp_tail(Fighter *fighter) {
@@ -148,7 +156,7 @@ void liu_kang_liu_script_air_lk_tail(Fighter *fighter) {
 
 void liu_kang_cpu_air_hp(Fighter *fighter) {
   if (fighter->armed) {
-    weapon_air_attack(fighter, true, liu_kang_entry_retail_script_004e66d0);
+    weapon_air_frames(fighter, true, liu_kang_entry_retail_script_004e66d0);
   } else {
     air_hp(fighter);
   }

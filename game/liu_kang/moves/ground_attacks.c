@@ -34,6 +34,10 @@ void liu_kang_ground_native_tail(Fighter *fighter) {
   native_ground_tail(fighter, &ground_profile);
 }
 
+void liu_kang_ground_native_next(Fighter *fighter) {
+  native_ground_next(fighter, &ground_profile);
+}
+
 void liu_kang_ground_attack(Fighter *fighter, int index) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
   mk4_script_stop_body(fighter);
@@ -45,12 +49,7 @@ void liu_kang_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {liu_kang_entry_retail_script_004e6d08, liu_kang_ground_native_tail, liu_kang_entry_retail_script_004e6158,
       liu_kang_entry_retail_script_004e60b8, liu_kang_entry_retail_script_004e61e0, liu_kang_entry_retail_script_004e69b0,
       liu_kang_entry_retail_script_004e6190, liu_kang_entry_retail_script_004e6e90};
-  FighterFn script = scripts[index];
-  if (index == G_LOW_KICK) {
-    script(fighter);
-  } else {
-    fighter_start_fiber(fighter, script, NULL);
-  }
+  scripts[index](fighter);
 }
 
 void liu_kang_crouch_lp(Fighter *fighter) {
@@ -78,8 +77,7 @@ void liu_kang_press_crouch_lk(Fighter *fighter) {
 }
 
 void liu_kang_liu_script_crouch_lk_tail(Fighter *fighter) {
-  native_delay(fighter, 1);
-  liu_kang_ground_native_tail(fighter);
+  liu_kang_ground_native_next(fighter);
 }
 
 void liu_kang_liu_script_knee_tail(Fighter *fighter) {

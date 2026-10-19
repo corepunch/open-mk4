@@ -1827,3 +1827,15 @@ CHARACTER_BINDINGS[0][0x46ab20] = Binding('script_air_land', 'game/scorpion/move
 CHARACTER_BINDINGS[0][0x484b60] = Binding('mk4_mmove_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal', mmove=True,
     evidence='484b60 KO-aware airborne throw victim getup on clip 131 samples 46..79')
 CHARACTER_BINDINGS[0][0x48f750] = replace(BINDINGS[0x48f750], mmove=True)
+
+
+# Liu Kang runs every generated root as a frame program. His native
+# continuations build nonblocking rows; the shared landing returns 47ed40 and
+# 47ef10 finish the frame program before the common landing controller.
+for _address, _binding in list(CHARACTER_BINDINGS[3].items()):
+    CHARACTER_BINDINGS[3][_address] = replace(_binding, mmove=True)
+for _address in (0x47ed40, 0x47ef10):
+    CHARACTER_BINDINGS[3][_address] = Binding('liu_script_land', 'game/liu_kang/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+        evidence='%x finishes the generated stream and enters the common landing controller' % _address)
+for _address in (0x48f6e0, 0x48f750):
+    CHARACTER_BINDINGS[3][_address] = replace(BINDINGS[_address], mmove=True)

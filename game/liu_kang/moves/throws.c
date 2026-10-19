@@ -1,5 +1,7 @@
 #include "../character.h"
 
+static void lk_thrown_release(Fighter *victim);
+static void lk_thrown_turn(Fighter *victim);
 static void ground_thrown_frame(Fighter *victim);
 static void ground_thrown_script(Fighter *victim);
 static void throw_cleanup(Fighter *owner);
@@ -17,29 +19,28 @@ bool liu_kang_can_ground_throw(const Fighter *fighter, bool low_kick) {
          !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
 }
 
-void liu_kang_thrown_play_to(Fighter *victim, int sample, int step) {
-  native_play_to(victim, sample, step);
-}
-
 void liu_kang_thrown_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
-  fighter_fiber_finish(victim->health > 0 ? fighter_ready : NULL);
+  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
+}
+
+static void lk_thrown_release(Fighter *victim) {
+  victim->flags &= ~(unsigned)FF_PAIRED;
+  victim->reaction = 80;
+  liu_kang_entry_retail_script_004e9a90(victim);
 }
 
 void liu_kang_lk_thrown_script(Fighter *victim) {
   victim->script_phase = 1;
   victim->sample_override = 30;
-  native_delay(victim, 2);
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  victim->reaction = 80;
-  liu_kang_entry_retail_script_004e9a90(victim);
+  native_hold(victim, 2, lk_thrown_release);
 }
 
 static void ground_thrown_frame(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   if ((owner->action != ACTION_RETAIL_0500 && owner->action != ACTION_RETAIL_0501) || owner->pending != NULL) {
     victim->flags &= ~(unsigned)FF_PAIRED;
-    fighter_stop_mmove(victim);
+    liu_kang_thrown_finish(victim);
     return;
   }
   victim->mmove_hold = true;
@@ -48,8 +49,7 @@ static void ground_thrown_frame(Fighter *victim) {
 static void ground_thrown_script(Fighter *victim) {
   native_begin(victim, 0, 0, NULL);
   victim->native.frames[0].thinkfunc = ground_thrown_frame;
-  native_wait(victim);
-  liu_kang_thrown_finish(victim);
+  native_play(victim, false);
 }
 
 void liu_kang_throw_disarm(Fighter *victim) {
@@ -66,7 +66,7 @@ static void throw_cleanup(Fighter *owner) {
       return;
     }
     mk4_script_stop_body(victim);
-    fighter_cancel_fiber(victim);
+    fighter_cancel_mmove(victim);
     if (victim->pending == NULL && victim->health > 0) {
       fighter_ready(victim);
     }
@@ -92,8 +92,9 @@ static void ground_throw(Fighter *fighter, bool lk) {
   victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  fighter_start_fiber(fighter, lk ? liu_kang_entry_retail_script_004de3b0 : liu_kang_entry_retail_script_004de798, throw_cleanup);
-  fighter_start_fiber(victim, ground_thrown_script, NULL);
+  fighter->mmove_cleanup = throw_cleanup;
+  (lk ? liu_kang_entry_retail_script_004de3b0 : liu_kang_entry_retail_script_004de798)(fighter);
+  ground_thrown_script(victim);
 }
 
 void liu_kang_enter_throw(Fighter *fighter) {
@@ -104,11 +105,19 @@ void liu_kang_enter_lk_throw(Fighter *fighter) {
   ground_throw(fighter, true);
 }
 
+static void lk_thrown_turn(Fighter *victim) {
+  victim->facing = -victim->facing;
+  liu_kang_thrown_finish(victim);
+}
+
+/* 485930 reverses the clip to pose 0 and holds it one visit before turning. */
 void liu_kang_liu_script_lk_thrown_tail(Fighter *victim) {
   fighter_set_speed(victim, -0x3333);
   victim->body.physics = fighter_friction;
-  liu_kang_thrown_play_to(victim, 0, -1);
-  native_delay(victim, 1);
-  victim->facing = -victim->facing;
-  liu_kang_thrown_finish(victim);
+  int first = fighter_sample(victim);
+  native_begin(victim, 1, first + 1, lk_thrown_turn);
+  for (int frame = 1; frame <= first + 1; ++frame) {
+    native_frame(victim, frame, maxi(0, first - frame), NULL);
+  }
+  native_play(victim, false);
 }

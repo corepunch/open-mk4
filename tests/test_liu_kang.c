@@ -41,11 +41,10 @@ static void normals(void) {
       fight(player, 4.f);
       press(player, buttons[i]);
       check(fighter_move(&g_battle.fighters[player])->clip == clips[i], "stance/character selector chose wrong normal");
-      check(g_battle.fighters[player].current_mmove != NULL || fighter_fiber_active(&g_battle.fighters[player]),
-          "normal must own frame or generated script playback");
+      check(g_battle.fighters[player].current_mmove != NULL, "normal must own frame or generated script playback");
       advance(120);
       check(g_battle.fighters[player].state == S_IDLE && g_battle.fighters[1 - player].health == Q16_ONE, "miss must recover without damage");
-      check(!fighter_fiber_active(&g_battle.fighters[player]), "normal recovery must retire its stack");
+      check(g_battle.fighters[player].current_mmove == NULL, "normal recovery must retire its stack");
     }
     for (int outcome = 0; outcome < 4; ++outcome) {
       fight(player, outcome == 3 ? 4.f : 1.f);
@@ -83,7 +82,7 @@ static void normals(void) {
       input[1 - player].held = outcome == 1 ? BUTTON_BIT(BUTTON_BLOCK) : 0;
       battle_step(input);
       input[player].held = 0;
-      battle_step(input); /* generated fiber enters at elapsed zero */
+      battle_step(input); /* generated program enters at elapsed zero */
       for (int t = 0; t < 9; ++t) {
         battle_step(input);
       }
@@ -97,7 +96,7 @@ static void normals(void) {
       }
       check(owner->state == S_KICK, "generated LK must finish its contact-selected reverse tail");
       battle_step(input);
-      check(owner->state == S_IDLE && !fighter_fiber_active(owner), "generated LK returns at the selected recovery deadline");
+      check(owner->state == S_IDLE && owner->current_mmove == NULL, "generated LK returns at the selected recovery deadline");
     }
     fight(player, .65f);
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
@@ -117,9 +116,9 @@ static void normals(void) {
     fight(player, 4.f);
     press(player, BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_HIGH_KICK));
     advance(30);
-    check(fighter_fiber_active(&g_battle.fighters[player]), "crouching HK must finish its reverse-to-start tail");
+    check(g_battle.fighters[player].current_mmove != NULL, "crouching HK must finish its reverse-to-start tail");
     advance(12);
-    check(!fighter_fiber_active(&g_battle.fighters[player]), "crouching HK releases after the reversed clip");
+    check(g_battle.fighters[player].current_mmove == NULL, "crouching HK releases after the reversed clip");
     fight(player, 4.f);
     press(player, BUTTON_BIT(BUTTON_LOW_KICK));
     advance(7);
@@ -183,7 +182,7 @@ static void throws(void) {
       check(victim->health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "throw damage at owner sample boundary");
       advance(240);
       check(owner->state == S_IDLE && victim->state == S_IDLE, "both throw participants recover");
-      check(!(victim->flags & FF_PAIRED) && !fighter_fiber_active(victim), "throw victim must release pair and fiber");
+      check(!(victim->flags & FF_PAIRED) && victim->current_mmove == NULL, "throw victim must release pair and program");
       fight(player, .5f);
       press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
       advance(20);
@@ -195,9 +194,9 @@ static void throws(void) {
       press(player, BUTTON_BIT(lk ? BUTTON_LOW_KICK : BUTTON_LOW_PUNCH));
       advance(130);
       check(victim->health == 0 && !(victim->flags & FF_PAIRED), "lethal throw must release independent victim tail");
-      check(!fighter_fiber_active(victim), "lethal victim tail must finish");
+      check(victim->current_mmove == NULL, "lethal victim tail must finish");
       battle_init(3, 0);
-      check(!fighter_fiber_active(&g_battle.fighters[0]) && !fighter_fiber_active(&g_battle.fighters[1]), "throw reset frees actor stacks");
+      check(g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[1].current_mmove == NULL, "throw reset frees actor stacks");
     }
   }
 }
@@ -333,13 +332,13 @@ static void weapons(void) {
       press(player, (mode ? back : 0) | BUTTON_BIT(mode == 1 ? BUTTON_HIGH_PUNCH : BUTTON_LOW_PUNCH));
       check(fighter_move(owner)->clip == (mode == 0 ? 240 : mode == 1 ? 242 : 227), "weapon stance/back selector");
       advance(100);
-      check(owner->state == S_IDLE && !fighter_fiber_active(owner), "weapon attack miss restores control");
+      check(owner->state == S_IDLE && owner->current_mmove == NULL, "weapon attack miss restores control");
     }
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     advance(3);
     press(player, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     advance(7);
-    check(fighter_move(owner)->clip == 216 && fighter_fiber_active(owner), "buffered HP extends armed repeat program");
+    check(fighter_move(owner)->clip == 216 && owner->current_mmove != NULL, "buffered HP extends armed repeat program");
     advance(100);
     victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X] + owner->facing * (q16)(1.4f * Q16_ONE);
     press(player, BUTTON_BIT(BUTTON_LOW_PUNCH));
@@ -445,7 +444,7 @@ static void fatalities(void) {
             "finisher projectile commits victim explosion");
       }
       advance(800);
-      check(g_battle.phase == PHASE_MATCH_OVER && !fighter_fiber_active(&g_battle.fighters[player]), "finisher completes and retires actor stack");
+      check(g_battle.phase == PHASE_MATCH_OVER && g_battle.fighters[player].current_mmove == NULL, "finisher completes and retires actor stack");
       check(g_battle.fighters[player].wins == 2, "finisher must not award an extra win");
       int result_age = g_battle.phase_ticks;
       advance(360);
@@ -474,7 +473,7 @@ static void fatalities(void) {
       check(battle_spawn_projectile(&g_battle.fighters[player], PROJECTILE_ICE, 500, pool_object) != NULL, "fill finisher object pool");
     }
     advance(500);
-    check(g_battle.phase == PHASE_MATCH_OVER && !fighter_fiber_active(&g_battle.fighters[player]),
+    check(g_battle.phase == PHASE_MATCH_OVER && g_battle.fighters[player].current_mmove == NULL,
         "failed fatality spawn retires generated parked owner through native completion");
   }
 }
@@ -518,7 +517,7 @@ static void bicycle(void) {
       q16 damage = outcome == 3 ? 0 : outcome == 1 ? q16_mul(0x2666, 0x3333) : 0x2666;
       check(victim->health == Q16_ONE - damage, "bicycle hit/block/air/miss deals one retail contact");
       check(owner->state == S_IDLE && victim->state == (outcome == 1 ? S_BLOCK : S_IDLE), "bicycle owner and victim settle");
-      check(!(victim->flags & FF_PAIRED) && !fighter_fiber_active(victim), "bicycle releases victim lifetime");
+      check(!(victim->flags & FF_PAIRED) && victim->current_mmove == NULL, "bicycle releases victim lifetime");
     }
     fight(player, 6.f);
     Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
@@ -543,7 +542,7 @@ static void bicycle(void) {
     victim->health = 1;
     charge_bicycle(player, 120, 1.4f, 0, 0);
     advance(120);
-    check(victim->health == 0 && !(victim->flags & FF_PAIRED) && !fighter_fiber_active(victim), "lethal bicycle settles committed victim");
+    check(victim->health == 0 && !(victim->flags & FF_PAIRED) && victim->current_mmove == NULL, "lethal bicycle settles committed victim");
   }
 }
 

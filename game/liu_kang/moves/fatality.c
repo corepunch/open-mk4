@@ -8,7 +8,6 @@ static void dragon_tear(Fighter *fighter);
 static void dragon_bite_sound(Fighter *fighter);
 static void dragon_delayed_sound(Fighter *fighter);
 static void dragon_detach(Fighter *fighter);
-static void dragon_play(Fighter *fighter);
 static void dragon_fatality_script(Fighter *fighter);
 static void liu_script_fatal_watch(Fighter *fighter);
 static void liu_script_fatal_hit(Fighter *owner);
@@ -48,11 +47,7 @@ void liu_kang_fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   if (fighter_move(fighter)->clip != clip) {
     for (int i = 0; i < COUNT(fatal_moves); ++i) {
       if (fatal_moves[i].clip == clip) {
-        if (owner && fighter_fiber_running(fighter)) {
-          fighter_fiber_move(fighter, S_VICTORY, &fatal_moves[i]);
-        } else {
-          fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        }
+        fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
         break;
       }
     }
@@ -122,10 +117,6 @@ static void dragon_detach(Fighter *fighter) {
   battle_detach_piece(liu_kang_opponent(fighter), 6, (q16[3]){0}, (q16[3]){0});
 }
 
-static void dragon_play(Fighter *fighter) {
-  native_motion_play(fighter);
-}
-
 static void dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
   int actor_end = 121 + scene_frame_count(dragon_actor, 2);
@@ -154,12 +145,11 @@ static void dragon_fatality_script(Fighter *fighter) {
     }
     native_motion_frame(fighter, frame - first, NULL, 0, action);
   }
-  fighter_fiber_handoff(dragon_play);
+  native_motion_play(fighter);
 }
 
 static void liu_script_fatal_watch(Fighter *fighter) {
   (void)fighter;
-  fighter_cancel_all_fibers();
   fighter_cancel_all_mmoves();
   battle_end_finisher();
 }
@@ -236,14 +226,13 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
   }
   if (id == FINISH_FAN) {
     liu_kang_fatal_pose(victim, 416, 0, false);
-    fighter_start_fiber(victim, liu_kang_entry_retail_script_004e0188, NULL);
+    liu_kang_entry_retail_script_004e0188(victim);
   }
-  fighter_start_fiber(fighter,
-      id == FINISH_LIU_KANG_1   ? dragon_fatality_script
-      : id == FINISH_LIU_KANG_2 ? liu_kang_entry_retail_script_004dfff8
-      : id == FINISH_FAN        ? liu_kang_entry_retail_script_004e0118
-                                : liu_kang_entry_retail_script_004e6950,
-      NULL);
+  FighterFn start = id == FINISH_LIU_KANG_1   ? dragon_fatality_script
+                    : id == FINISH_LIU_KANG_2 ? liu_kang_entry_retail_script_004dfff8
+                    : id == FINISH_FAN        ? liu_kang_entry_retail_script_004e0118
+                                              : liu_kang_entry_retail_script_004e6950;
+  start(fighter);
 }
 
 /* Typed native boundaries used by generated VM code. These contain native

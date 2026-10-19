@@ -6,8 +6,8 @@ static const NativeHPProfile hp_profile = {&hp_record, &liu_kang_s_hp, &s_hp_sec
 static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 
-/* VM control flow is generated; native adapters reuse C fibers. Playback need not
- * match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
+/* VM control flow is generated; native adapters build frame rows. Playback need
+ * not match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
 void liu_kang_ready(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
@@ -46,14 +46,13 @@ void liu_kang_hk(Fighter *fighter) {
 void liu_kang_liu_script_lp_getup(Fighter *victim) {
   if (victim->health <= 0) {
     liu_kang_thrown_finish(victim);
+    return;
   }
   victim->facing = -victim->facing;
-  fighter_fiber_move(victim, S_KNOCKDOWN, &s_lp_getup);
+  fighter_start_move(victim, S_KNOCKDOWN, &s_lp_getup);
   victim->sample_override = 0;
   fighter_set_speed(victim, -0x147a);
-  liu_kang_thrown_play_to(victim, 15, 1);
-  native_delay(victim, 1);
-  liu_kang_thrown_finish(victim);
+  native_finish_clip(victim, liu_kang_thrown_finish);
 }
 
 void liu_kang_liu_script_lk_continue(Fighter *fighter) {
@@ -67,10 +66,11 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   }
   victim->script_phase = 1;
   victim->flags |= FF_PAIR_RELEASE;
-  fighter_start_fiber(victim, liu_kang_lk_thrown_script, NULL);
+  fighter_cancel_mmove(victim);
+  liu_kang_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
+  /* 4de428 returns to this native caller, which then enters 4de468. */
   liu_kang_entry_retail_script_004de428(fighter);
-  liu_kang_entry_retail_script_004de468(fighter);
 }
 
 void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type) {
@@ -94,7 +94,7 @@ void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
     fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
-    fighter_start_fiber(victim, liu_kang_entry_retail_script_004e9b68, NULL);
+    liu_kang_entry_retail_script_004e9b68(victim);
   } else if (reaction == 80) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
     victim->flags &= ~(unsigned)FF_PAIRED;

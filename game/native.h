@@ -16,6 +16,7 @@ void native_wait_loop(Fighter *fighter);
 void native_delay(Fighter *fighter, int frames);
 void native_advance(Fighter *fighter, int count, int step);
 void native_play_to(Fighter *fighter, int sample, int step);
+void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end);
 void native_calls(Fighter *fighter, int frames, int pose_step, FighterFn action);
 void native_queries(Fighter *fighter, const AttackRecord *record, int frames, int pose_step);
 void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames, int pose_step, FighterFn end);

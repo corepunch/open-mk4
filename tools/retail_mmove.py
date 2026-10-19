@@ -35,6 +35,11 @@ def frame_table(name, samples, callbacks=None, endfunc='fighter_stop_mmove'):
 def emit_mmove(program, bindings, return_to, context=None):
     context = context or {}
     root = symbol(int(program['entry'], 16))
+    successor = context.get('successor')
+    if successor:
+        # A native caller that resumes with another generated root after
+        # this one returns: continue into that phase, keeping the action.
+        return_to = ('successor', successor)
     pending = [(int(program['entry'], 16), context.get('sample'), context.get('count'), context.get('paired', False), None, None)]
     names = {pending[0]: root}
     def enqueue(state):
@@ -48,7 +53,7 @@ def emit_mmove(program, bindings, return_to, context=None):
     for state in pending:
         bodies.append(emit_phase(program, bindings, return_to, context if names[state] == root else {},
                                  names[state], state, enqueue))
-    declarations = ['static inline void %s(Fighter *fighter);' % name for name in names.values()]
+    declarations = ['static inline void %s(Fighter *fighter);' % name for name in [*names.values(), *([successor] if successor else [])]]
     return '\n'.join(declarations + bodies)
 
 
@@ -291,6 +296,11 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                 extra.extend(frame_table(hold, [sample], {0: 'mk4_mmove_hold'}))
                 emit('fighter_mmove_phase(fighter, &%s_phase);' % hold)
                 break
+            elif op == 0x60 and sample is None:
+                # A runtime-selected pose holds live until the body lands.
+                suffix = enqueue((following, sample, count, victim_bound, loop, selector))
+                emit('mk4_mmove_wait_land(fighter, %s);' % suffix)
+                break
             elif op == 0x60:
                 suffix = enqueue((following, sample, count, victim_bound, loop, selector))
                 hold = name + '_landing'
@@ -307,7 +317,10 @@ def emit_phase(program, bindings, return_to, context, name, state, enqueue):
                     fail('caller continuation needs an explicit phase successor')
                 if op == 0x3f:
                     wait(1)
-                emit('fighter_finish_mmove(fighter, %s);' % return_to)
+                if isinstance(return_to, tuple):
+                    emit('%s(fighter);' % return_to[1])
+                else:
+                    emit('fighter_finish_mmove(fighter, %s);' % return_to)
                 break
             else:
                 fail('unsupported frame opcode ' + hex(op))

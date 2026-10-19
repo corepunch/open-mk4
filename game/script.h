@@ -89,5 +89,6 @@ void mk4_script_scene_task(Fighter *fighter, int task_type);
 
 void mk4_mmove_hold(Fighter *fighter);
 void mk4_mmove_wait_grounded(Fighter *fighter);
+void mk4_mmove_wait_land(Fighter *fighter, FighterFn next);
 
 #endif

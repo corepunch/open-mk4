@@ -1,6 +1,5 @@
 #include "../character.h"
 
-static void bicycle_release_script(Fighter *victim);
 static void bicycle_release(Fighter *victim);
 static void bicycle_victim_guard(Fighter *victim);
 static void bicycle_victim_cycle(Fighter *victim);
@@ -9,6 +8,10 @@ static void bicycle_cleanup(Fighter *fighter);
 static void bicycle_query(Fighter *fighter);
 static void bicycle_pair(Fighter *fighter);
 static bool bicycle_grounded(const Fighter *fighter);
+static void bicycle_land(Fighter *fighter);
+static void bicycle_descend(Fighter *fighter);
+static void bicycle_carry_end(Fighter *fighter);
+static void bicycle_contact_end(Fighter *fighter);
 static void bicycle_motion_pose(Fighter *fighter, float pose);
 static const MoveDef s_bicycle = {.clip = 68, .last = 22, .flags = RETAIL, .action = ACTION_RETAIL_0206};
 static const MoveDef s_bicycle_victim = {.clip = 136, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
@@ -17,10 +20,10 @@ static const MoveDef s_bicycle_air_release = {.clip = 183, .last = 33, .flags = 
 static const MoveDef s_bicycle_getup = {.clip = 185, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 static const AttackRecord bicycle_record = {0xf851, -0x547a, 0xf5c2, 0x70a3, 84, 84, 0, 0, 0x2666};
 
-static void bicycle_release_script(Fighter *victim) {
+static void bicycle_release(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   bool air = victim->body.ground - victim->body.pos[AXIS_Y] > 0x3333;
-  fighter_fiber_move(victim, S_KNOCKDOWN, air ? &s_bicycle_air_release : &s_bicycle_release);
+  fighter_start_move(victim, S_KNOCKDOWN, air ? &s_bicycle_air_release : &s_bicycle_release);
   victim->reaction = 81;
   victim->sample_override = 0;
   if (air) {
@@ -29,10 +32,6 @@ static void bicycle_release_script(Fighter *victim) {
     victim->body.physics = fighter_friction;
     liu_kang_entry_retail_script_004e9ad0(victim);
   }
-}
-
-static void bicycle_release(Fighter *victim) {
-  fighter_start_fiber(victim, bicycle_release_script, NULL);
 }
 
 static void bicycle_victim_guard(Fighter *victim) {
@@ -68,7 +67,7 @@ static void bicycle_cleanup(Fighter *fighter) {
 
 static void bicycle_query(Fighter *fighter) {
   if (!fighter_airborne(fighter) || battle_contact(fighter, &bicycle_record) != CONTACT_MISS) {
-    fighter_stop_mmove(fighter);
+    bicycle_contact_end(fighter);
   }
 }
 
@@ -76,7 +75,7 @@ static void bicycle_pair(Fighter *fighter) {
   Fighter *victim = liu_kang_opponent(fighter);
   if (victim->current_move != &s_bicycle_victim || victim->pending != NULL || victim->current_mmove == NULL || !(fighter->flags & FF_PAIRED) ||
       !(victim->flags & FF_PAIRED)) {
-    fighter_stop_mmove(fighter);
+    bicycle_carry_end(fighter);
     return;
   }
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
@@ -88,45 +87,65 @@ static bool bicycle_grounded(const Fighter *fighter) {
   return !fighter_airborne(fighter);
 }
 
+static void bicycle_land(Fighter *fighter) {
+  liu_kang_entry_retail_script_004e8678(fighter);
+}
+
+static void bicycle_descend(Fighter *fighter) {
+  if (fighter_airborne(fighter)) {
+    fighter->body.gravity = 0xc4;
+    native_await(fighter, bicycle_grounded, bicycle_land);
+  } else {
+    bicycle_land(fighter);
+  }
+}
+
+static void bicycle_carry_end(Fighter *fighter) {
+  Fighter *victim = liu_kang_opponent(fighter);
+  if (victim->current_move == &s_bicycle_victim && victim->pending == NULL && (victim->flags & FF_PAIRED)) {
+    victim->flags &= ~(unsigned)FF_PAIRED;
+    victim->script_phase = 1;
+  }
+  fighter->flags &= ~(unsigned)FF_PAIRED;
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  mk4_script_stop_body(fighter);
+  bicycle_descend(fighter);
+}
+
+/* The query rows end on landing, contact or their last visit. */
+static void bicycle_contact_end(Fighter *fighter) {
+  if (fighter->contact == CONTACT_BLOCK) {
+    liu_kang_entry_retail_script_004e8688(fighter);
+    return;
+  }
+  if (fighter->contact != CONTACT_HIT) {
+    bicycle_descend(fighter);
+    return;
+  }
+  Fighter *victim = liu_kang_opponent(fighter);
+  liu_kang_throw_disarm(victim);
+  fighter_start_move(victim, S_KNOCKDOWN, &s_bicycle_victim);
+  victim->sample_override = 0;
+  victim->reaction = 84;
+  victim->flags |= FF_PAIRED | FF_REACTING;
+  fighter->flags |= FF_PAIRED;
+  fighter->body.pos[AXIS_Y] = mini(fighter->body.pos[AXIS_Y], -0x15999);
+  fighter_set_speed(fighter, 0x10a3);
+  fighter->body.vel[AXIS_Y] = fighter->body.gravity = 0;
+  bicycle_victim_script(victim);
+  native_begin(fighter, 0, 57, bicycle_carry_end);
+  for (int frame = 0; frame < 58; ++frame) {
+    native_frame(fighter, frame, 7 + frame % 16, bicycle_pair);
+  }
+  native_play(fighter, false);
+}
+
 void liu_kang_bicycle_script(Fighter *fighter) {
-  native_begin(fighter, 0, 59, NULL);
+  native_begin(fighter, 0, 59, bicycle_contact_end);
   for (int frame = 0; frame < 60; ++frame) {
     native_frame(fighter, frame, 7 + frame % 16, bicycle_query);
   }
-  native_wait(fighter);
-  if (fighter->contact == CONTACT_BLOCK) {
-    liu_kang_entry_retail_script_004e8688(fighter);
-  }
-  if (fighter->contact == CONTACT_HIT) {
-    Fighter *victim = liu_kang_opponent(fighter);
-    liu_kang_throw_disarm(victim);
-    fighter_start_move(victim, S_KNOCKDOWN, &s_bicycle_victim);
-    victim->sample_override = 0;
-    victim->reaction = 84;
-    victim->flags |= FF_PAIRED | FF_REACTING;
-    fighter->flags |= FF_PAIRED;
-    fighter->body.pos[AXIS_Y] = mini(fighter->body.pos[AXIS_Y], -0x15999);
-    fighter_set_speed(fighter, 0x10a3);
-    fighter->body.vel[AXIS_Y] = fighter->body.gravity = 0;
-    fighter_start_fiber(victim, bicycle_victim_script, NULL);
-    native_begin(fighter, 0, 57, NULL);
-    for (int frame = 0; frame < 58; ++frame) {
-      native_frame(fighter, frame, 7 + frame % 16, bicycle_pair);
-    }
-    native_wait(fighter);
-    if (victim->current_move == &s_bicycle_victim && victim->pending == NULL && (victim->flags & FF_PAIRED)) {
-      victim->flags &= ~(unsigned)FF_PAIRED;
-      victim->script_phase = 1;
-    }
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    fighter->body.pos[AXIS_Y] = fighter->body.ground;
-    mk4_script_stop_body(fighter);
-  }
-  if (fighter_airborne(fighter)) {
-    fighter->body.gravity = 0xc4;
-    native_until(fighter, bicycle_grounded);
-  }
-  liu_kang_entry_retail_script_004e8678(fighter);
+  native_play(fighter, false);
 }
 
 bool liu_kang_can_bicycle(const Fighter *fighter) {
@@ -141,16 +160,18 @@ void liu_kang_bicycle_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_bicycle);
   fighter->sample_override = 0;
-  fighter_start_fiber(fighter, liu_kang_entry_retail_script_004e8610, bicycle_cleanup);
+  fighter->mmove_cleanup = bicycle_cleanup;
+  liu_kang_entry_retail_script_004e8610(fighter);
 }
 
 void liu_kang_liu_script_bicycle_getup(Fighter *victim) {
-  if (victim->health > 0) {
-    fighter_fiber_move(victim, S_KNOCKDOWN, &s_bicycle_getup);
-    victim->sample_override = 0;
-    liu_kang_thrown_play_to(victim, 15, 1);
+  if (victim->health <= 0) {
+    liu_kang_thrown_finish(victim);
+    return;
   }
-  liu_kang_thrown_finish(victim);
+  fighter_start_move(victim, S_KNOCKDOWN, &s_bicycle_getup);
+  victim->sample_override = 0;
+  native_play_rows(victim, 15, 1, liu_kang_thrown_finish);
 }
 
 static void bicycle_motion_pose(Fighter *fighter, float pose) {

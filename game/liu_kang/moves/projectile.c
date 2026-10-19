@@ -55,7 +55,7 @@ static void fireball(Fighter *fighter, bool low) {
   fighter->script_phase = air ? 2 : low ? 1 : 0;
   fighter->sample_override = 0;
   FighterFn script = air ? liu_kang_entry_retail_script_004ed6f8 : low ? liu_kang_entry_retail_script_004ed678 : liu_kang_entry_retail_script_004ed6c0;
-  fighter_start_fiber(fighter, script, NULL);
+  script(fighter);
 }
 
 void liu_kang_high_fireball(Fighter *fighter) {

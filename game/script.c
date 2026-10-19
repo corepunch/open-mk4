@@ -761,6 +761,12 @@ void mk4_script_scene_task(Fighter *fighter, int task_type) {
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 2, scene_task_step);
 }
 
+/* 48f390 landing continuation from a runtime-selected pose: hold the live
+ * pose until the body lands, then enter the generated successor. */
+void mk4_mmove_wait_land(Fighter *fighter, FighterFn next) {
+  native_await(fighter, native_grounded, next);
+}
+
 void mk4_mmove_wait_grounded(Fighter *fighter) {
   fighter->mmove_hold = fighter_airborne(fighter);
 }
