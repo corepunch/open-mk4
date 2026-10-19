@@ -678,6 +678,9 @@ def _moves_for(character):
             skull=move(0x499740, (('caster', 0x4ed3a0), ('release recovery', 0x4ed3c0), ('reaction 128 victim', 0x4e9cd8)), (('C', 7),),
                        native=(('heading snapshot', 0x49c610), ('release and spawn', 0x499780), ('independent skull', 0x4998d0),
                                ('flight step', 0x499ae0), ('bite', 0x499b40), ('expiry', 0x499c00), ('reaction 128', 0x485f90))),
+            # Retail HK [F,F] record 4e4858 and the near CPU row.
+            flip_kick=move(0x47a370, (('startup', 0x4e8100), ('reaction 160 victim', 0x4e8a48)), (('D', 24),),
+                           native=(('motion decay', 0x47bf50), ('contact loop', 0x47a3b0), ('contact hold', 0x47a500), ('finish', 0x47a610), ('reaction 160', 0x481d90), ('roll getup', 0x488c00))),
         )
         return shared
     if character != 4:

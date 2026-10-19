@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static void quan_chi_entry_469c80(Fighter *fighter);
-static void quan_chi_entry_47a370(Fighter *fighter);
 static void quan_chi_entry_47cf30(Fighter *fighter);
 
 void quan_chi_script_lk_return(Fighter *fighter) {
@@ -27,10 +26,6 @@ void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction) {
 
 static void quan_chi_entry_469c80(Fighter *fighter) {
   fighter_enter_state(fighter, S_PUNCH);
-}
-
-static void quan_chi_entry_47a370(Fighter *fighter) {
-  fighter_enter_state(fighter, S_KICK);
 }
 
 static void quan_chi_entry_47cf30(Fighter *fighter) {

@@ -112,4 +112,9 @@ void quan_chi_script_skull_release(Fighter *fighter);
 void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter);
 void quan_chi_entry_retail_script_004ed3c0(Fighter *fighter);
 void quan_chi_entry_retail_script_004e9cd8(Fighter *fighter);
+void quan_chi_flip_kick(Fighter *fighter);
+void quan_chi_script_flip_kick_tail(Fighter *fighter);
+void quan_chi_script_getup_roll(Fighter *fighter);
+void quan_chi_entry_retail_script_004e8100(Fighter *fighter);
+void quan_chi_entry_retail_script_004e8a48(Fighter *fighter);
 #endif

@@ -42,7 +42,9 @@
     "0x4e6270",
     "0x4ed3a0",
     "0x4ed3c0",
-    "0x4e9cd8"
+    "0x4e9cd8",
+    "0x4e8100",
+    "0x4e8a48"
   ],
   "entry_contexts": {
     "0x4de318": {
@@ -183,9 +185,9 @@
       "evidence": "Quan Chi descriptor-backed weapon-draw command target 0x46d1d0."
     },
     "0x47a370": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_entry_47a370",
-      "evidence": "Quan Chi CPU move target 0x47a370; bounded native entry boundary."
+      "source": "game/quan_chi/moves/flip_kick.c",
+      "symbol": "quan_chi_flip_kick",
+      "evidence": "Native47a370: action217, decay47bf50, VM4e8100 clip105 and 47a3b0 D24 contact/recovery."
     },
     "0x47cf30": {
       "source": "game/quan_chi/character.c",
@@ -313,6 +315,11 @@
       "source": "game/quan_chi/moves/skull.c",
       "symbol": "quan_chi_skull",
       "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
+    },
+    "flip_kick": {
+      "source": "game/quan_chi/moves/flip_kick.c",
+      "symbol": "quan_chi_flip_kick",
+      "evidence": "Native47a370: action217, 490ae0(4e80f8) installs decay47bf50, VM4e8100 clip105 to15 with speed0x547a; 47a3b0 four D24 visits, 47a500 hit/block holds and 47a610 finish."
     }
   },
   "reactions": {
@@ -444,6 +451,12 @@
       "symbol": "quan_chi_skull_reaction",
       "evidence": "Skull C7/4ebe88 selects reaction128; 4ea4e8[128] ->485f90: 494520 disarm then generated4e9cd8 clip182 knockback.",
       "adaptation": "Registered directly in shared reactions[128]; the Quan Chi-owned generated victim root runs for either humanoid player slot and performs the 494520 disarm itself."
+    },
+    "160": {
+      "source": "game/quan_chi/moves/flip_kick.c",
+      "symbol": "quan_chi_flip_reaction",
+      "evidence": "D24/4ec020 hit and air select reaction160; 4ea4e8[160] ->481d90: 488ea0 wall recoil, 494520 disarm, VM4e8a48 clip189 launch and 488c00 roll getup.",
+      "adaptation": "Registered directly in shared reactions[160]; the Quan Chi-owned generated victim root runs for either humanoid player slot."
     }
   },
   "stances": {
@@ -498,7 +511,7 @@
     "symbol": "quan_chi_weapon_descriptor",
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
-  "inventory_sha256": "0010769bc88b69613177e332dc0b92defbc4c936cd88a0392e67c6fe938b6c65",
+  "inventory_sha256": "2f16403da1e42421c185f6de933e1651c455aeb707b2a1fdd1b7cc18362f195f",
   "controls_output": "game/quan_chi/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
@@ -530,6 +543,11 @@
       "source": "game/quan_chi/moves/skull.c",
       "symbol": "quan_chi_skull",
       "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
+    },
+    "0x47a370": {
+      "source": "game/quan_chi/moves/flip_kick.c",
+      "symbol": "quan_chi_flip_kick",
+      "evidence": "Native47a370: action217, decay47bf50, VM4e8100 clip105 and 47a3b0 D24 contact/recovery."
     }
   },
   "command_predicates": {
@@ -578,13 +596,20 @@
     "0x4e9910",
     "0x4ed3a0",
     "0x4ed3c0",
-    "0x4e9cd8"
+    "0x4e9cd8",
+    "0x4e8100",
+    "0x4e8a48"
   ],
   "cpu_bindings": {
     "0x499740": {
       "source": "game/quan_chi/moves/skull.c",
       "symbol": "quan_chi_skull",
       "evidence": "Typed projectile CPU row 4df9c8 word0x20007 selects native499740, the same skull as LP [F,F]."
+    },
+    "0x47a370": {
+      "source": "game/quan_chi/moves/flip_kick.c",
+      "symbol": "quan_chi_flip_kick",
+      "evidence": "Typed near CPU row 4df908 word0x4001a selects native47a370, the HK [F,F] flip kick."
     }
   }
 }

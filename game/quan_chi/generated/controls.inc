@@ -4,6 +4,7 @@ static const CommandDef retail_commands[] = {
   {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 3, 40, 0x0, mk4_can_fan_finish, quan_chi_fan_fatality},
   {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0x0, NULL, quan_chi_skull},
   {BUTTON_BLOCK, {0}, 0, 0, 0x10, mk4_can_air_throw, quan_chi_air_throw},
+  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 26, 0x0, NULL, quan_chi_flip_kick},
   {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0x0, mk4_can_spike_finish, quan_chi_spike_fatality},
   {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, mk4_sidestep},
   {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
@@ -11,6 +12,7 @@ static const CommandDef retail_commands[] = {
 // clang-format on
 
 static const CpuMoves retail_cpu_moves = {.enter = {
+                                              [CPU_SPECIAL_NEAR] = quan_chi_flip_kick,
                                               [CPU_PROJECTILE] = quan_chi_skull,
                                               [CPU_FINISH_FAN] = quan_chi_fan_fatality,
                                               [CPU_FINISH_SPIKE] = quan_chi_spike_fatality,

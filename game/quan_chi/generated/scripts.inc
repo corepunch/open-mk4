@@ -15,6 +15,8 @@ void quan_chi_script_fan_tail(Fighter *);
 void quan_chi_script_fan_victim_end(Fighter *);
 void quan_chi_script_fan_victory(Fighter *);
 void quan_chi_script_finish(Fighter *);
+void quan_chi_script_flip_kick_tail(Fighter *);
+void quan_chi_script_getup_roll(Fighter *);
 void quan_chi_script_kick_finish(Fighter *);
 void quan_chi_script_lk_return(Fighter *);
 void quan_chi_script_opponent_reaction(Fighter *, int);
@@ -3003,6 +3005,88 @@ static inline void retail_script_004e69b0(Fighter *fighter) {
   mk4_mmove_bind(fighter, 261, 28, 2);
   /* EXE 004e69b8: 0x500000b */
   fighter_mmove_phase(fighter, &retail_script_004e69b0_phase);
+}
+
+static inline void retail_script_004e8100(Fighter *fighter);
+
+static void retail_script_004e8100_at_10(Fighter *fighter) {
+  fighter->sample_override = 10;
+  /* EXE 004e8110: 0x5f000000 0x547a */
+  fighter_set_speed(fighter, 21626);
+  /* EXE 004e8118: 0x500000f */
+}
+
+static void retail_script_004e8100_at_15(Fighter *fighter) {
+  fighter->sample_override = 15;
+  /* EXE 004e811c: 0x32000000 0x47a3b0 */
+  quan_chi_script_flip_kick_tail(fighter);
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e8100_frames[15] = {
+  [9] = {.thinkfunc = retail_script_004e8100_at_10},
+  [14] = {.thinkfunc = retail_script_004e8100_at_15},
+};
+// clang-format on
+static const mmove_t retail_script_004e8100_phase = {.firstframe = 0, .lastframe = 14, .frame = retail_script_004e8100_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e8100(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e8100: 0x27000056 */
+  battle_sound(SOUND_C, 86);
+  /* EXE 004e8104: 0xf000000 0x13ec9a */
+  mk4_mmove_bind(fighter, 105, 30, 0);
+  /* EXE 004e810c: 0x4700000a */
+  fighter_mmove_phase(fighter, &retail_script_004e8100_phase);
+}
+
+static inline void retail_script_004e8a48(Fighter *fighter);
+static inline void retail_script_004e8a48_branch_1(Fighter *fighter);
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e8a48_landing_frames[1] = {
+  [0] = {.thinkfunc = mk4_mmove_wait_grounded},
+};
+// clang-format on
+static const mmove_t retail_script_004e8a48_landing_phase = {
+    .firstframe = 29, .lastframe = 29, .frame = retail_script_004e8a48_landing_frames, .endfunc = retail_script_004e8a48_branch_1};
+
+static void retail_script_004e8a48_at_30(Fighter *fighter) {
+  /* EXE 004e8a6c: 0x60000000 */
+  if (fighter_airborne(fighter)) {
+    fighter_mmove_phase(fighter, &retail_script_004e8a48_landing_phase);
+  } else {
+    retail_script_004e8a48_branch_1(fighter);
+  }
+}
+
+// clang-format off: Keep table entries on one row, including long rows.
+static const mframe_t retail_script_004e8a48_frames[30] = {
+  [29] = {.thinkfunc = retail_script_004e8a48_at_30},
+};
+// clang-format on
+static const mmove_t retail_script_004e8a48_phase = {.firstframe = 0, .lastframe = 29, .frame = retail_script_004e8a48_frames, .endfunc = fighter_stop_mmove};
+
+static inline void retail_script_004e8a48(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e8a48: 0x2b000003 */
+  battle_sound(SOUND_B, 3);
+  /* EXE 004e8a4c: 0x2600000b */
+  mk4_script_context_sound(fighter, 11);
+  /* EXE 004e8a50: 0x58000000 0xffffee15 0xffffdc29 0x28f */
+  fighter_set_speed(fighter, -4587);
+  fighter->body.vel[AXIS_Y] = -9175;
+  fighter->body.gravity = 655;
+  /* EXE 004e8a60: 0x22000000 */
+  mk4_script_impact_callback(fighter);
+  /* EXE 004e8a64: 0x1000000 0x13ed96 */
+  mk4_mmove_bind(fighter, 189, 30, 0);
+  fighter_mmove_phase(fighter, &retail_script_004e8a48_phase);
+}
+
+static inline void retail_script_004e8a48_branch_1(Fighter *fighter) {
+  require(!fighter_fiber_active(fighter), "Frame program cannot execute in a fiber");
+  /* EXE 004e8a70: 0x32000000 0x488c00 */
+  quan_chi_script_getup_roll(fighter);
 }
 
 static inline void retail_script_004e9910(Fighter *fighter);

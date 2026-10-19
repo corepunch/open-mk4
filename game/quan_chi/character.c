@@ -215,3 +215,11 @@ void quan_chi_entry_retail_script_004ed3c0(Fighter *fighter) {
 void quan_chi_entry_retail_script_004e9cd8(Fighter *fighter) {
   retail_script_004e9cd8(fighter);
 }
+
+void quan_chi_entry_retail_script_004e8100(Fighter *fighter) {
+  retail_script_004e8100(fighter);
+}
+
+void quan_chi_entry_retail_script_004e8a48(Fighter *fighter) {
+  retail_script_004e8a48(fighter);
+}

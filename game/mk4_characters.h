@@ -65,4 +65,5 @@ void jarek_weapon_reaction(Fighter *fighter);
 void jarek_ball_victim(Fighter *fighter);
 void shinnok_weapon_reaction(Fighter *fighter);
 void quan_chi_skull_reaction(Fighter *fighter);
+void quan_chi_flip_reaction(Fighter *fighter);
 #endif
