@@ -83,6 +83,22 @@ void jax_entry_retail_script_004de358(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, jax_script_lk_finish);
 }
 
+void jax_entry_retail_script_004de518(Fighter *fighter) {
+  retail_script_004de518(fighter);
+}
+
+void jax_entry_retail_script_004de538(Fighter *fighter) {
+  retail_script_004de538(fighter);
+}
+
+void jax_entry_retail_script_004de558(Fighter *fighter) {
+  retail_script_004de558(fighter);
+}
+
+void jax_entry_retail_script_004de568(Fighter *fighter) {
+  retail_script_004de568(fighter);
+}
+
 void jax_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }

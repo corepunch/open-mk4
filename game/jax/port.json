@@ -201,6 +201,29 @@
       "count": 386,
       "sample": 376,
       "evidence": "449940 sets the cursor to 376 before entering 4e13f0."
+    },
+    "0x4de518": {
+      "clip": 83,
+      "count": 117,
+      "sample": 55,
+      "paired": true,
+      "evidence": "42c820/42c8f0 enter 4de518 with the 83/145 pair at cursor 55."
+    },
+    "0x4de538": {
+      "clip": 83,
+      "count": 117,
+      "sample": 82,
+      "paired": true,
+      "evidence": "42c8c0 enters 4de538 after 4de518 advanced the pair to 82."
+    },
+    "0x4de558": {
+      "clip": 83,
+      "count": 117,
+      "sample": 82,
+      "evidence": "42c9b0 enters 4de558 after the pair reached 82."
+    },
+    "0x4de568": {
+      "evidence": "42c9e0 enters 4de568 after cursor 55 or 116; the script has no playback."
     }
   },
   "generated_scripts": [
@@ -262,10 +285,14 @@
     "0x4e9e38",
     "0x4e89d8",
     "0x4e95c8",
-    "0x4e13f0"
+    "0x4e13f0",
+    "0x4de518",
+    "0x4de538",
+    "0x4de558",
+    "0x4de568"
   ],
   "integration_source": "game/jax/character.c",
-  "inventory_sha256": "a266bbaf79abf5bf36e681d96cba1a19bbae708fd225e24e79418ea66fd15949",
+  "inventory_sha256": "fe95b372d58c1a7db524caac60fbc42fab8d1540ecedf2c65395b6c7d179b4ae",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
@@ -616,6 +643,17 @@
       "symbol": "jax_pound_victim",
       "evidence": "468f00 480f80[0x88]; 4ea4e8[136] -> 4834d0: disarm, 48a320 voice list 4ea8f8, script 4e95c8 clip 182.",
       "adaptation": "Registered directly in shared reactions[136]; the Jax-owned generated victim program is valid for either humanoid player slot."
+    },
+    "125": {
+      "source": "game/jax/moves/throws.c",
+      "symbol": "jax_slam_victim",
+      "evidence": "4de558 45b1f0[0x7d]; 4ea4e8[125] -> 485ba0: 485c60 disarm/grunt/shake/floor, clip 173 (4e9bc0), 485c40 facing flip and 488ba0 back getup 328/184.",
+      "adaptation": "Registered directly in shared reactions[125]; the native victim phase runs for any humanoid victim roster."
+    },
+    "100": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "4de568 45b1f0[0x64]; 4ea4e8[100] -> 485bf0 shared LP-throw release, as for Cage."
     }
   },
   "return_to": "fighter_ready",
@@ -798,7 +836,15 @@
     "0x4e5a80",
     "0x4e5a98",
     "0x4e5b10",
-    "0x4e5b38"
+    "0x4e5b38",
+    "0x4de4f0",
+    "0x4de798",
+    "0x4e5c70",
+    "0x4e5ca0",
+    "0x4de518",
+    "0x4de538",
+    "0x4de558",
+    "0x4de568"
   ],
   "cpu_bindings": {
     "0x496f80": {
@@ -821,5 +867,6 @@
     "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 0,
     "evidence": "Jax 45e570 close gate accepts up to 1 unit; CPU first/second targets come from 4dfe10/4dfe50[13]."
-  }
+  },
+  "mmove_only": true
 }

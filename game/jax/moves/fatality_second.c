@@ -46,12 +46,6 @@ void jax_fatality_2_flash(Fighter *fighter, int task_type) {
   }
 }
 
-/* 45b1f0 in 4e5a98: reaction 183 is installed on the task peer. */
-void jax_script_peer_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 183, "Unexpected Jax scene reaction");
-  battle_react((Fighter *)fighter_opponent(fighter), reaction);
-}
-
 /* 466a90: 475530 at 0xd999, then 15 ticks before 4e5a98. */
 void jax_fatality_2_approach(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

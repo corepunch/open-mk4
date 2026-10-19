@@ -291,8 +291,11 @@ def _moves_for(character):
         # Jax's throw selector enters a separate attacker/victim stream and
         # the heavy punch command exposes the common stage finisher path.
         shared.update(
-            lp_throw=move(0x42c560, (('Jax selector', 0x4de798), ('selected throw', 0x4de4f0)),
-                          native=(('throw continuation', 0x42c7f0),)),
+            lp_throw=move(0x42c560, (('Jax selector', 0x4de798), ('first slam', 0x4de4f0), ('second slam', 0x4de518),
+                                     ('third slam', 0x4de538), ('release 125', 0x4de558), ('release 100', 0x4de568)),
+                          native=(('throw continuation', 0x42c7f0), ('slam gate', 0x42c820), ('slam gate', 0x42c8c0),
+                                  ('slam gate', 0x42c8f0), ('counter and chords', 0x42cab0), ('owner return', 0x42c9f0),
+                                  ('victim 125', 0x485ba0))),
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328))),
             draw_weapon=move(0x46d1d0, (('weapon draw', 0x4e62c0), ('draw continuation', 0x4e62d8)),
                              native=(('follow-up draw', 0x46d260),)),

@@ -2516,6 +2516,47 @@ static void check_jax_ground_pound(void) {
   }
 }
 
+/* Jax LP throw 4de4f0: each held 45f2b0 chord at a decision adds a slam
+ * and 5%; the release costs a last 5% through reaction 100 or 125. */
+static void check_jax_multi_slam(void) {
+  const unsigned chords[4] = {
+      BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_RUN),
+      BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK),
+      BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK),
+      BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK),
+  };
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int slams = 0; slams < 3; ++slams) {
+      battle_init(slot ? 4 : 13, slot ? 13 : 4);
+      g_battle.phase = PHASE_FIGHT;
+      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+      owner->body.pos[AXIS_X] = slot ? 0x4000 : -0x4000;
+      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+      fighter_press(owner, BUTTON_LOW_PUNCH);
+      advance_ticks(1, NULL);
+      check(fighter_move(owner)->clip == 83 && fighter_move(victim)->clip == 145, "Jax LP throw must open its 83/145 slam pair");
+      int allowed = slams == 0 ? 0 : slams == 1 ? 1 : 4;
+      bool released = false;
+      for (int tick = 0; tick < 400; ++tick) {
+        Input input[2] = {0};
+        if (owner->native_variant < allowed) {
+          input[slot].held = chords[owner->native_variant];
+        }
+        battle_step(input);
+        released |= victim->reaction == (slams == 1 ? 125 : 100);
+        check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Jax multi-slam must use frame phases");
+      }
+      q16 expected = Q16_ONE - (allowed + 1) * 0xccc;
+      if (victim->health != expected) {
+        fprintf(stderr, "Jax slam slot%d slams%d health%d expected%d count%d\n", slot, slams, victim->health, expected, owner->native_variant);
+      }
+      check(victim->health == expected && released, "Jax multi-slam must add 5% per held chord and release with its retail reaction");
+      check(owner->state == S_IDLE && victim->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED),
+          "Jax multi-slam must release and recover both fighters");
+    }
+  }
+}
+
 static Projectile *cage_orb(void) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     Projectile *projectile = &g_battle.projectiles[i];
@@ -4129,6 +4170,7 @@ int main(void) {
   check_jax_missile();
   check_jax_dash_punch();
   check_jax_ground_pound();
+  check_jax_multi_slam();
   check_jax_first_fatality();
   check_jax_second_fatality();
   check_reptile_reconnected_specials();
