@@ -243,3 +243,31 @@ void reptile_entry_retail_script_004ea290(Fighter *fighter) {
 void reptile_entry_retail_script_004ea2a8(Fighter *fighter) {
   retail_script_004ea2a8(fighter);
 }
+
+void reptile_entry_retail_script_004e2e60(Fighter *fighter) {
+  retail_script_004e2e60(fighter);
+}
+
+void reptile_entry_retail_script_004e2e70(Fighter *fighter) {
+  retail_script_004e2e70(fighter);
+}
+
+void reptile_entry_retail_script_004e2e98(Fighter *fighter) {
+  retail_script_004e2e98(fighter);
+}
+
+void reptile_entry_retail_script_004e2ea8(Fighter *fighter) {
+  retail_script_004e2ea8(fighter);
+}
+
+void reptile_entry_retail_script_004e2eb0(Fighter *fighter) {
+  retail_script_004e2eb0(fighter);
+}
+
+void reptile_entry_retail_script_004e2ec0(Fighter *fighter) {
+  retail_script_004e2ec0(fighter);
+}
+
+void reptile_entry_retail_script_004e2ed0(Fighter *fighter) {
+  retail_script_004e2ed0(fighter);
+}

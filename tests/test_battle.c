@@ -24,6 +24,7 @@ void fujin_second_fatality(Fighter *fighter);
 void fujin_first_fatality(Fighter *fighter);
 bool fujin_can_second_fatality(const Fighter *fighter);
 bool reptile_can_second_fatality(const Fighter *fighter);
+bool reptile_can_first_fatality(const Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
@@ -2493,6 +2494,52 @@ static void check_reptile_second_fatality(void) {
   }
 }
 
+/* Reptile fighter block: 467ce0 -> 4539b0 head-bite fatality. */
+static void check_reptile_first_fatality(void) {
+  for (int slot = 0; slot < 2; ++slot) {
+    for (int target = 2; target <= 4; target += 2) {
+      for (int reset_at = 0; reset_at < 3; ++reset_at) {
+        battle_init(slot ? target : 10, slot ? 10 : target);
+        g_battle.phase = PHASE_FIGHT;
+        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
+        owner->wins = 1;
+        battle_damage(victim, Q16_ONE);
+        advance_ticks(1, NULL);
+        for (int tick = 0; tick < 180 && g_battle.finish_waiting; ++tick) {
+          advance_ticks(1, NULL);
+        }
+        owner->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
+        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
+        unsigned chord = BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK);
+        owner->held = chord | BUTTON_BIT(BUTTON_BLOCK);
+        check(!reptile_can_first_fatality(owner), "45e250 rejects a held BLOCK");
+        owner->held = chord;
+        check(reptile_can_first_fatality(owner), "45e250 accepts HP+HK+LP+LK within one unit");
+        fighter_press(owner, BUTTON_UP);
+        advance_ticks(1, NULL);
+        check(g_battle.phase == PHASE_FATALITY, "UP with the four-attack chord must start Reptile's head-bite scene");
+        bool owner_clip = false, victim_clip = false, headless = false, looped = false;
+        int limit = reset_at == 1 ? 60 : reset_at == 2 ? 300 : 900;
+        for (int tick = 0; tick < limit && g_battle.phase == PHASE_FATALITY; ++tick) {
+          advance_ticks(1, NULL);
+          owner_clip |= fighter_move(owner)->clip == 432;
+          victim_clip |= fighter_move(victim)->clip == 431;
+          headless |= (victim->hidden_joints[0] & (UINT64_C(1) << 2)) != 0;
+          looped |= fighter_move(owner)->clip == 432 && fighter_sample(owner) >= 294;
+          check(!fighter_fiber_active(owner) && !fighter_fiber_active(victim), "Reptile head-bite fatality must remain fiber-free");
+        }
+        if (reset_at == 0) {
+          check(owner_clip && victim_clip && headless && looped && g_battle.phase == PHASE_MATCH_OVER,
+              "Reptile head-bite scene must pair clips 432/431, remove the head, loop the owner and finish");
+        }
+        battle_reset_match();
+        advance_ticks(180, NULL);
+        check(victim->hidden_joints[0] == 0 && owner->health == Q16_ONE && victim->health == Q16_ONE, "Reset must clear the head-bite scene");
+      }
+    }
+  }
+}
+
 static void check_goro_reconnected_counters(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int kick = 0; kick < 2; ++kick) {
@@ -4596,6 +4643,7 @@ int main(void) {
   check_reptile_acid_spit();
   check_reptile_invisibility();
   check_reptile_second_fatality();
+  check_reptile_first_fatality();
   check_goro_reconnected_counters();
   check_goro_frame_specials();
   check_cage_special_commands();

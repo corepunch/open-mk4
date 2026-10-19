@@ -7,9 +7,9 @@
       "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
     },
     "0x467ce0": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_entry_spike",
-      "evidence": "Reptile finisher target 0x467ce0 starts generated spike stream 0x4e6950."
+      "source": "game/reptile/moves/fatality.c",
+      "symbol": "reptile_fatality_1",
+      "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     },
     "0x467e00": {
       "source": "game/reptile/moves/fan.c",
@@ -139,6 +139,36 @@
       "count": 20,
       "sample": 0,
       "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
+    },
+    "0x4e2e70": {
+      "clip": 432,
+      "count": 339,
+      "sample": 11,
+      "evidence": "453ae0 sets cursor 11 on clip 432 before entering 4e2e70."
+    },
+    "0x4e2e98": {
+      "clip": 432,
+      "count": 339,
+      "sample": 169,
+      "evidence": "453b20 sets cursor 169 on clip 432 before entering 4e2e98."
+    },
+    "0x4e2ea8": {
+      "clip": 432,
+      "count": 339,
+      "sample": 294,
+      "evidence": "453ba0 sets cursor 294 on clip 432 before entering 4e2ea8."
+    },
+    "0x4e2ec0": {
+      "clip": 431,
+      "count": 415,
+      "sample": 86,
+      "evidence": "454130 sets cursor 86 on clip 431 before entering 4e2ec0."
+    },
+    "0x4e2ed0": {
+      "clip": 431,
+      "count": 415,
+      "sample": 124,
+      "evidence": "4541b0 enters 4e2ed0 after 4e2ec0 reached sample 124 on clip 431."
     }
   },
   "generated_scripts": [
@@ -185,10 +215,17 @@
     "0x4e95f0",
     "0x4dff08",
     "0x4ea290",
-    "0x4ea2a8"
+    "0x4ea2a8",
+    "0x4e2e60",
+    "0x4e2e70",
+    "0x4e2e98",
+    "0x4e2ea8",
+    "0x4e2eb0",
+    "0x4e2ec0",
+    "0x4e2ed0"
   ],
   "integration_source": "game/reptile/character.c",
-  "inventory_sha256": "e45fd87ed78cd396b0cb58435d3b8bd58e85a9b5e2d2e8a4b3a19a3e0fe2a8c2",
+  "inventory_sha256": "6138531f1db5364fb2195dbea41a107f4487f30905c0b52dbf990d75cf8d39b2",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/reptile/character.c",
@@ -314,6 +351,11 @@
       "source": "game/reptile/moves/fatality_second.c",
       "symbol": "reptile_fatality_2",
       "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
+    },
+    "fatality_1": {
+      "source": "game/reptile/moves/fatality.c",
+      "symbol": "reptile_fatality_1",
+      "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     }
   },
   "output": "game/reptile/generated/scripts.inc",
@@ -563,6 +605,11 @@
       "source": "game/reptile/moves/fatality_second.c",
       "symbol": "reptile_fatality_2",
       "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
+    },
+    "0x467ce0": {
+      "source": "game/reptile/moves/fatality.c",
+      "symbol": "reptile_fatality_1",
+      "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     }
   },
   "command_predicates": {
@@ -573,7 +620,8 @@
     "0x45e950": "reptile_can_dash",
     "0x45e9d0": "reptile_can_spit",
     "0x45f260": "reptile_can_invisibility",
-    "0x45e530": "reptile_can_second_fatality"
+    "0x45e530": "reptile_can_second_fatality",
+    "0x45e250": "reptile_can_first_fatality"
   },
   "cpu_bindings": {
     "0x47a690": {
@@ -636,11 +684,19 @@
     "0x4e9620",
     "0x4dff08",
     "0x4ea290",
-    "0x4ea2a8"
+    "0x4ea2a8",
+    "0x4e2e60",
+    "0x4e2e70",
+    "0x4e2e98",
+    "0x4e2ea8",
+    "0x4e2eb0",
+    "0x4e2ec0",
+    "0x4e2ed0"
   ],
   "mmove_only": true,
   "cpu_finish_min": {
+    "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 117964,
-    "evidence": "45e530 rejects distances below 0x1cccc; the CPU second-fatality distance 4dfe50[10] is 0x23333."
+    "evidence": "45e570 (first) has no lower bound and accepts up to one unit; 45e530 (second) rejects distances below 0x1cccc. CPU distances 4dfe10/4dfe50[10] are 0xcccc and 0x23333."
   }
 }
