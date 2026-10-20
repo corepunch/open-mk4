@@ -9,7 +9,7 @@ CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clan
 export CLANG_FORMAT
 FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.[ch] game/*/generated/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
-ASSETS = common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
+ASSETS = common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
 HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o

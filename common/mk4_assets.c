@@ -1,66 +1,19 @@
 #include "mk4_assets.h"
 #include "mk4_package.h"
+#include "mk4_image.h"
 #include "math_util.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Image {
-  Bytes bytes;
-} Image;
-
-static uint32_t image_u32(const Image *exe, uint32_t va) {
-  require(va >= 0x400000, "Invalid asset VA");
-  return view_u32(view(exe->bytes), va - 0x400000);
+static int32_t image_s32(const Mk4Image *exe, uint32_t va) {
+  return (int32_t)mk4_image_u32(exe, va);
 }
 
-static int32_t image_s32(const Image *exe, uint32_t va) {
-  return (int32_t)image_u32(exe, va);
-}
-
-static void image_string(const Image *exe, uint32_t va, char out[1024]) {
+static void image_string(const Mk4Image *exe, uint32_t va, char out[1024]) {
   require(va >= 0x400000, "Invalid string VA");
   view_string(view(exe->bytes), va - 0x400000, out, 1024);
-}
-
-static Image image_load(const char *name) {
-  Bytes raw = read_file(name);
-  View v = view(raw);
-  require(view_u16(v, 0) == 0x5a4d, "Executable is not an MZ/PE image");
-  size_t pe = view_u32(v, 0x3c);
-  require(view_u32(v, pe) == 0x4550, "Executable is not PE");
-  require(view_u16(v, pe + 4) == 0x14c && view_u16(v, pe + 24) == 0x10b, "Expected 32-bit x86 MK4 executable");
-  require(view_u32(v, pe + 52) == 0x400000, "Unexpected executable image base");
-  Image exe = {0};
-  RESIZE(exe.bytes, 0x180000);
-  size_t sec = pe + 24 + view_u16(v, pe + 20);
-  for (size_t i = 0; i < view_u16(v, pe + 6); ++i) {
-    size_t h = sec + i * 40, va = view_u32(v, h + 12), z = view_u32(v, h + 16), o = view_u32(v, h + 20);
-    if (va >= exe.bytes.count)
-      continue;
-    require(z <= exe.bytes.count - va, "Oversized executable section");
-    view_check(v, o, z);
-    memcpy(exe.bytes.data + va, v.p + o, z);
-  }
-  require(image_u32(&exe, 0x4fad7c) == 0 && image_u32(&exe, 0x4fad80) == 13 && image_u32(&exe, 0x4fad7c + 612 * 12) == 0xffffffff,
-      "Unsupported MK4 executable revision (animation table differs)");
-  // clang-format off: Keep table entries on one row, including long rows.
-  const uint32_t ranges[][2] = {
-    {0x4d3e80, 0x4d93f0},
-    {0x4d93f8, 0x4d9d60}
-  };
-  // clang-format on
-  for (size_t i = 0; i < 2; ++i)
-    for (uint32_t p = ranges[i][0]; p < ranges[i][1]; p += 8) {
-      uint32_t dst = image_u32(&exe, p), src = image_u32(&exe, p + 4);
-      require(dst >= 0x4d0000 && dst + 4 <= 0x580000 && (!src || (src >= 0x4d0000 && src < 0x580000)), "Invalid asset pointer fixup");
-      uint32_t w = src >> 2;
-      for (int k = 0; k < 4; ++k)
-        exe.bytes.data[dst - 0x400000 + (size_t)k] = (uint8_t)(w >> (k * 8));
-    }
-  FREE_ARRAY(raw);
-  return exe;
 }
 
 ARRAY_TYPE(Vertices, Vertex);
@@ -310,7 +263,7 @@ static Geometry load_geometry(View v) {
   return g;
 }
 
-static Clips load_clips(const Package *archive, const Image *exe) {
+static Clips load_clips(const Package *archive, const Mk4Image *exe) {
   View ap0 = package_get(archive, 0x2da2df95), ap1 = package_get(archive, 0x2da3df95);
   Clips clips = {0};
   RESIZE(clips, MK4_CLIP_COUNT);
@@ -325,7 +278,7 @@ static Clips load_clips(const Package *archive, const Image *exe) {
     require(id < (int)clips.count && !seen[id], "Invalid animation index");
     seen[id] = true;
     uint32_t desc = 0x4fad7c + (uint32_t)id * 12;
-    int frames = (int)image_u32(exe, desc + 4), words = (int)(image_u32(exe, desc + 8) >> 16);
+    int frames = (int)mk4_image_u32(exe, desc + 4), words = (int)(mk4_image_u32(exe, desc + 8) >> 16);
     require(frames > 0 && frames <= 600 && words >= 3 && words <= 24, "Invalid animation descriptor");
     View stream = view_sub(ap1, offset, size);
     offset += size;
@@ -357,7 +310,7 @@ static Clips load_clips(const Package *archive, const Image *exe) {
 }
 
 typedef struct RigReader {
-  const Image *exe;
+  const Mk4Image *exe;
   uint32_t cursor, slot;
   size_t meshes;
   Bones bones;
@@ -365,8 +318,8 @@ typedef struct RigReader {
 
 static void rig_walk(RigReader *r, int parent, int depth) {
   require(depth < 32 && r->bones.count < MK4_MAX_BONES, "Invalid skeleton hierarchy");
-  uint32_t flags = image_u32(r->exe, r->cursor);
-  require(image_u32(r->exe, r->cursor + 4) == r->slot, "Skeleton asset slot mismatch");
+  uint32_t flags = mk4_image_u32(r->exe, r->cursor);
+  require(mk4_image_u32(r->exe, r->cursor + 4) == r->slot, "Skeleton asset slot mismatch");
   Bone b = {0};
   b.parent = parent;
   b.flags = (flags & 0xfffff) | (parent < 0 ? 0x09000000u : 0x0a000000u);
@@ -376,7 +329,7 @@ static void rig_walk(RigReader *r, int parent, int depth) {
   int id = image_s32(r->exe, r->cursor) >> 20;
   b.id = id;
   b.channel = (b.flags & 0x100) ? id - 2 : -1;
-  b.mesh = (int)image_u32(r->exe, r->cursor + 24);
+  b.mesh = (int)mk4_image_u32(r->exe, r->cursor + 24);
   require(b.mesh >= 0 && (size_t)b.mesh < r->meshes, "Skeleton mesh index out of range");
   b.translation = (Vec3){image_s32(r->exe, r->cursor + 12) / 65536.f, image_s32(r->exe, r->cursor + 16) / 65536.f, image_s32(r->exe, r->cursor + 20) / 65536.f};
   int index = (int)r->bones.count;
@@ -384,14 +337,14 @@ static void rig_walk(RigReader *r, int parent, int depth) {
   r->cursor += 28;
   if (!(flags & 8))
     for (;;) {
-      uint32_t f = image_u32(r->exe, r->cursor);
+      uint32_t f = mk4_image_u32(r->exe, r->cursor);
       rig_walk(r, index, depth + 1);
       if (f & 16)
         break;
     }
 }
 
-static Bones load_rig(const Image *exe, uint32_t start, uint32_t slot, size_t meshes) {
+static Bones load_rig(const Mk4Image *exe, uint32_t start, uint32_t slot, size_t meshes) {
   RigReader r = {.exe = exe, .cursor = start, .slot = slot, .meshes = meshes};
   rig_walk(&r, -1, 0);
   return r.bones;
@@ -450,13 +403,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   require(!assets->characters.count && !assets->clips.count, "Assets already loaded");
   Package archive;
   package_load(&archive, archive_path);
-  Image exe = image_load(executable);
+  Mk4Image exe = mk4_image_load(executable);
   assets->clips = load_clips(&archive, &exe);
   for (int i = 0; i < MK4_ROSTER_COUNT; ++i) {
-    uint32_t rec = 0x4eb2e8 + (uint32_t)i * 32, slot = image_u32(&exe, rec) * 4;
-    uint32_t asset = image_u32(&exe, slot), name = image_u32(&exe, asset);
+    uint32_t rec = 0x4eb2e8 + (uint32_t)i * 32, slot = mk4_image_u32(&exe, rec) * 4;
+    uint32_t asset = mk4_image_u32(&exe, slot), name = mk4_image_u32(&exe, asset);
     Character ch = {0};
-    image_string(&exe, image_u32(&exe, 0x4ee1f0 + (uint32_t)i * 4), ch.name);
+    image_string(&exe, mk4_image_u32(&exe, 0x4ee1f0 + (uint32_t)i * 4), ch.name);
     image_string(&exe, name, ch.file);
     for (size_t k = 0; ch.name[k]; ++k)
       if (ch.name[k] >= 'a' && ch.name[k] <= 'z')
@@ -468,11 +421,11 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     for (size_t j = 1; j < pages.count; ++j)
       FREE_ARRAY(pages.data[j].pixels);
     FREE_ARRAY(pages);
-    ch.bones = load_rig(&exe, image_u32(&exe, rec + 12) * 4, slot, ch.meshes.count);
-    ch.scale = (float)image_u32(&exe, rec + 28) / 65536.f;
+    ch.bones = load_rig(&exe, mk4_image_u32(&exe, rec + 12) * 4, slot, ch.meshes.count);
+    ch.scale = (float)mk4_image_u32(&exe, rec + 28) / 65536.f;
     /* StateDispatchTable special roster-ID stance remapping. */
     int stance_index = i == 16 ? 2 : i == 17 ? 7 : i;
-    uint32_t stance = image_u32(&exe, 0x53d408 + (uint32_t)stance_index * 4) * 4;
+    uint32_t stance = mk4_image_u32(&exe, 0x53d408 + (uint32_t)stance_index * 4) * 4;
     require(stance >= 0x4fad7c && (stance - 0x4fad7c) % 12 == 0 && stance < 0x4fad7c + 612 * 12, "Invalid default stance descriptor");
     ch.idle = (int)((stance - 0x4fad7c) / 12);
     Pose initial[MK4_MAX_BONES];
@@ -487,9 +440,9 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     /* 48ce00 selects roster +0x14 when freezing; these alternate
      * meshes close the exposed cuts used by detached body parts. */
     Character cut = ch;
-    uint32_t cut_root = image_u32(&exe, rec + 20) * 4;
-    uint32_t cut_slot = image_u32(&exe, cut_root + 4);
-    image_string(&exe, image_u32(&exe, image_u32(&exe, cut_slot)), cut.file);
+    uint32_t cut_root = mk4_image_u32(&exe, rec + 20) * 4;
+    uint32_t cut_slot = mk4_image_u32(&exe, cut_root + 4);
+    image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, cut_slot)), cut.file);
     if (strcmp(cut.file, ch.file) != 0) {
       /* Kitana's recovered freeze row selects Tanya's cut geometry. */
       View cut_data = package_geo(&archive, cut.file);
@@ -533,7 +486,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       0x4ecdf8, 0x4ecdb8, 0x4ece58, 0x4ece18, 0x4ece38, 0x4eced8, 0x4ecef8, 0x4ecf58, 0x4ecdd8, 0x4eceb8, 0x4ece98, 0x4ece78, 0x4ecd98, 0x4ecf38};
   for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
     uint32_t descriptor = weapon_descriptors[i];
-    uint32_t root = image_u32(&exe, descriptor + 4) * 4;
+    uint32_t root = mk4_image_u32(&exe, descriptor + 4) * 4;
     Character weapon = statue;
     if (descriptor == 0x4ecf58 || descriptor == 0x4ecf38) { /* Cage and Quan Chi rigs are in share2_g.geo. */
       snprintf(weapon.file, sizeof weapon.file, "share2_g.geo");
@@ -541,7 +494,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       weapon.material_pages = assets->hud.effects2.textures;
       weapon.texture = assets->hud.effects2.textures.data[0];
     }
-    weapon.bones = load_rig(&exe, root, image_u32(&exe, root + 4), weapon.meshes.count);
+    weapon.bones = load_rig(&exe, root, mk4_image_u32(&exe, root + 4), weapon.meshes.count);
     weapon.bones.data[0].translation.y = image_s32(&exe, descriptor + 28) / 65536.f;
     PUSH(assets->scene_models, weapon);
   }
@@ -555,9 +508,9 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   flesh.bones = load_rig(&exe, 0x50c444, 0x50c2a0, flesh.meshes.count);
   PUSH(assets->scene_models, flesh);
   for (uint32_t part = 0; part < 14; ++part) {
-    uint32_t root = image_u32(&exe, 0x4ea424 + part * 12) * 4;
+    uint32_t root = mk4_image_u32(&exe, 0x4ea424 + part * 12) * 4;
     Character skin = flesh;
-    skin.bones = load_rig(&exe, root, image_u32(&exe, root + 4), skin.meshes.count);
+    skin.bones = load_rig(&exe, root, mk4_image_u32(&exe, root + 4), skin.meshes.count);
     PUSH(assets->scene_models, skin);
   }
   /* Quan Chi fatality I: 44ccf0 copies the victim's own leg joints
@@ -593,7 +546,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;
-  image_string(&exe, image_u32(&exe, image_u32(&exe, 0x50c2e8)), beast->file);
+  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, 0x50c2e8)), beast->file);
   snprintf(beast->name, sizeof beast->name, "SCORPION CREATURE");
   View beast_data = package_geo(&archive, beast->file);
   beast->meshes = load_meshes(beast_data);
@@ -619,7 +572,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 450930 creates the original Liu Kang dragon rig 508204. Its
    * asset slot 5061b0 resolves to lk_fat_g.geo; IDs start at one. */
   Character *dragon = &assets->liu_dragon;
-  image_string(&exe, image_u32(&exe, image_u32(&exe, 0x5061b0)), dragon->file);
+  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, 0x5061b0)), dragon->file);
   snprintf(dragon->name, sizeof dragon->name, "LIU KANG DRAGON");
   View dragon_data = package_geo(&archive, dragon->file);
   dragon->meshes = load_meshes(dragon_data);
@@ -639,7 +592,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 4556d0 and 43caa0 create rig 5083c4. Its asset slot 5061e0 resolves
    * to nf_fat_g.geo; fatality I plays clip 434 and II plays clip 541. */
   Character *hand = &assets->shinnok_hand;
-  image_string(&exe, image_u32(&exe, image_u32(&exe, 0x5061e0)), hand->file);
+  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, 0x5061e0)), hand->file);
   snprintf(hand->name, sizeof hand->name, "SHINNOK HAND");
   View hand_data = package_geo(&archive, hand->file);
   hand->meshes = load_meshes(hand_data);
@@ -661,14 +614,14 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       (int)assets->clips.data[434].frames.data[0].angles.count == hand_channels && (int)assets->clips.data[541].frames.data[0].angles.count == hand_channels,
       "Shinnok hand animation/rig mismatch");
   package_free(&archive);
-  FREE_ARRAY(exe.bytes);
+  mk4_image_free(&exe);
 }
 
 void assets_load_battle(Assets *assets, const char *archive_path, const char *executable) {
   require(assets->characters.count == MK4_ROSTER_COUNT && !assets->arenas.count, "Load fighters before battle assets");
   Package archive;
   package_load(&archive, archive_path);
-  Image exe = image_load(executable);
+  Mk4Image exe = mk4_image_load(executable);
   // clang-format off: Keep table entries on one row, including long rows.
   const char *names[] = {
     "GORO'S LAIR",
@@ -686,12 +639,12 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   // clang-format on
   /* June 1998 stage table, verified against the supplied executable. */
   for (size_t i = 0; i < MK4_ARENA_COUNT; ++i) {
-    uint32_t rec = 0x4dd960 + (uint32_t)i * 64, slot = image_u32(&exe, rec) * 4;
+    uint32_t rec = 0x4dd960 + (uint32_t)i * 64, slot = mk4_image_u32(&exe, rec) * 4;
     Arena a = {0};
     snprintf(a.name, sizeof a.name, "%s", names[i]);
-    image_string(&exe, image_u32(&exe, image_u32(&exe, slot)), a.file);
+    image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, slot)), a.file);
     a.geometry = load_geometry(package_geo(&archive, a.file));
-    a.nodes = load_rig(&exe, image_u32(&exe, rec + 12) * 4, slot, a.geometry.meshes.count);
+    a.nodes = load_rig(&exe, mk4_image_u32(&exe, rec + 12) * 4, slot, a.geometry.meshes.count);
     for (size_t j = 0; j < a.nodes.count; ++j)
       a.nodes.data[j].channel = -1;
     PUSH(assets->arenas, a);
@@ -701,8 +654,8 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   assets->hud.select_scene.textures = load_textures(package_geo(&archive, "select_g.geo"));
   sound_bank_load(&assets->audio, &archive);
   /* 48a0d0 accepts indexed selectors 0..65 at 4ead30. Do not alias B. */
-  const uint32_t sound_tables[] = {
-      0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, image_u32(&exe, 0x53d0a4) * 4, image_u32(&exe, 0x53d000 + 8 * 4) * 4, image_u32(&exe, 0x53d0a0) * 4, 0x4eaaf8, 0};
+  const uint32_t sound_tables[] = {0x4ea9b0, 0x4e77b8, 0x4eaa18, 0x4ead30, mk4_image_u32(&exe, 0x53d0a4) * 4, mk4_image_u32(&exe, 0x53d000 + 8 * 4) * 4,
+      mk4_image_u32(&exe, 0x53d0a0) * 4, 0x4eaaf8, 0};
   const int sound_counts[] = {51, 184, 113, 66, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT, MK4_ROSTER_COUNT, 20, 0};
   for (int bank = 0; bank < SOUND_BANK_COUNT; ++bank) {
     assets->audio.event_counts[bank] = sound_counts[bank];
@@ -749,7 +702,7 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
     require(assets->hud.names[i] >= 0, "Missing HUD name");
   }
   package_free(&archive);
-  FREE_ARRAY(exe.bytes);
+  mk4_image_free(&exe);
 }
 
 const Texture *character_texture(const Character *character, int page) {
