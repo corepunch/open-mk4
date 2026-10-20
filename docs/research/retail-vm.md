@@ -133,3 +133,21 @@ per-move matrices. Full opcode coverage is necessary but does not by itself
 verify native function contracts. Redundant new spear scenarios were removed;
 the existing spear regressions now exercise the VM and a small lethal-contact
 regression protects our cleanup bridge.
+
+## Shared cursor and playback expansion
+
+Following mk4decomp `fight_script_vm.c`, `MoveListCursorCluster`, and
+`PauseTestCmp2CallStore`, the runtime now supports packed absolute jumps,
+16-way character selection (including the retail Kitana/Noob remaps), counted
+reverse playback, reverse completion, cursor submission and the optional clip
+prefix on forward-to-sample playback. Eleven more Scorpion normal-attack roots
+now execute original words and reuse their existing native tails: high-kick
+startup/recovery, sweep, uppercut, crouching LK, close HK/HP, combo HP, and the
+three roundhouse entry streams. Their generated bodies are removed.
+
+Coverage is 17 interpreted roots and 53 retained generated roots. Verification
+uses the small shared-runtime suite (including one cursor/control-flow fixture),
+strict source coverage and canonical generation checks. No new character move
+or balance tests were added. Runtime development should primarily follow the
+actual mk4decomp interpreter and matching handler assembly, not duplicate the
+old frame compiler's execution model.

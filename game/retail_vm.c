@@ -35,6 +35,14 @@ static uint32_t fetch(Fighter *fighter) {
   return word;
 }
 
+static void jump(Fighter *fighter, uint32_t packed) {
+  RetailVm *vm = &fighter->retail_vm;
+  if (packed < vm->begin / 4 || packed >= vm->end / 4) {
+    vm_error(fighter, "script branch outside reviewed range");
+  }
+  vm->pc = packed * 4;
+}
+
 static void finish(Fighter *fighter) {
   FighterFn next = fighter->retail_vm.finish;
   next(fighter);
@@ -127,14 +135,14 @@ static void contact(Fighter *fighter, unsigned selector) {
 
 void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
   require(image != NULL && image->bytes.count != 0 && next != NULL && native != NULL, "Retail VM needs owned image and typed continuations");
-  require(begin < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= 2048, "Invalid reviewed retail script range");
+  require(begin < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= 65536, "Invalid reviewed retail script range");
   fighter_cancel_mmove(fighter);
   fighter->sequence = NULL;
   fighter->retail_vm = (RetailVm){.image = image, .pc = begin, .begin = begin, .end = end, .active = true, .finish = next, .native = native};
   fighter->continuation++;
   const MoveDef *move = fighter_move(fighter);
-  if (move->clip >= 0 && move->last == MOVE_END && fighter->sample_override >= 0) {
-    bind(fighter, (0x4fad7c + (uint32_t)move->clip * 12) / 4, fighter->sample_override);
+  if (move->clip >= 0 && move->last == MOVE_END) {
+    bind(fighter, (0x4fad7c + (uint32_t)move->clip * 12) / 4, fighter_sample(fighter));
   }
   retail_vm_step(fighter);
 }
@@ -186,6 +194,30 @@ void retail_vm_step(Fighter *fighter) {
         }
         break;
       }
+      case 0x06: {
+        int target = fighter_sample(fighter) - (int)(word & 0xffffffu);
+        play(fighter, target < 0 ? 0 : target, false);
+        break;
+      }
+      case 0x07:
+        play(fighter, 0, true);
+        break;
+      case 0x05:
+      case 0x47: {
+        if (opcode == 0x47) {
+          unsigned prefix = (word >> 8) & 255u;
+          if (prefix == 2) {
+            bind(fighter, fetch(fighter), 0);
+          } else if (prefix != 0) {
+            vm_error(fighter, "unreviewed playback prefix");
+          }
+        }
+        int target = opcode == 0x05 ? (int)(word & 0xffffffu) : (int)arg;
+        if (target > fighter_sample(fighter)) {
+          play(fighter, target, false);
+        }
+        break;
+      }
       case 0x04:
       case 0x19:
       case 0x4d: {
@@ -201,6 +233,7 @@ void retail_vm_step(Fighter *fighter) {
       case 0x03:
         play(fighter, fighter_move(fighter)->last, true);
         break;
+      case 0x12:
       case 0x1d:
       case 0x49:
         if ((word & 0xffff00u) != 0) {
@@ -259,13 +292,28 @@ void retail_vm_step(Fighter *fighter) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
+      case 0x33:
+        jump(fighter, fetch(fighter));
+        break;
+      case 0x3c: {
+        /* mk4decomp MoveListCursorCluster: task character selects one of
+         * sixteen packed script pointers; Kitana/Noob reuse Sonya/Reiko. */
+        unsigned character = (unsigned)fighter->roster;
+        character = character == 16 ? 2 : character == 17 ? 7 : character;
+        uint32_t packed = 0;
+        for (unsigned index = 0; index < 16; ++index) {
+          uint32_t candidate = fetch(fighter);
+          if (index == character) {
+            packed = candidate;
+          }
+        }
+        jump(fighter, packed);
+        break;
+      }
       case 0x45: {
         uint32_t packed = fetch(fighter);
         if (fighter_fast_start(fighter)) {
-          if (packed < vm->begin / 4 || packed >= vm->end / 4) {
-            vm_error(fighter, "script branch outside reviewed range");
-          }
-          vm->pc = packed * 4;
+          jump(fighter, packed);
         }
         break;
       }

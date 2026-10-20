@@ -128,7 +128,9 @@ reviewed `port.json` coverage current, distinguishing interpreted roots from
 generated and legacy bodies. Run `make scripts-check` and the strict
 `--require-implemented` audit. Neither runtime registration nor generated
 coverage alone proves native gameplay parity. Trust retail script control flow
-and data. Test interpreter opcode semantics and native/lifetime integration once;
+and data. Heavily rely on mk4decomp interpreter/handler sources and matching assembly,
+checking local EXE addresses rather than copying upstream VAs. Test only the
+shared runtime we implement, including opcode and native/lifetime contracts;
 reuse existing move regressions instead of adding per-move timing/damage matrices.
 Run focused checks during migration and the full suite at meaningful shared
 runtime boundaries, not repeatedly for each move.

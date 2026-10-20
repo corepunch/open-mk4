@@ -247,11 +247,11 @@ void scorpion_entry_retail_script_004e5b58(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e5c70), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e5ca0), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e5e28(Fighter *fighter) {
@@ -267,15 +267,15 @@ void scorpion_entry_retail_script_004e60b8(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_script_004e6158(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6158), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6190), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e61e0), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e61f8(Fighter *fighter) {
@@ -283,7 +283,7 @@ void scorpion_entry_retail_script_004e61f8(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e62a0), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e62c0(Fighter *fighter) {
@@ -323,19 +323,19 @@ void scorpion_entry_retail_script_004e6710(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6798), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6844(Fighter *fighter) {
-  retail_script_004e6844(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6844), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_script_004e6860(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6860), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_script_004e6878(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6878), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6950(Fighter *fighter) {
@@ -343,7 +343,7 @@ void scorpion_entry_retail_script_004e6950(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e69b0), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6d08(Fighter *fighter) {

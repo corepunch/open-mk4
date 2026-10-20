@@ -106,23 +106,11 @@
       "evidence": "444150 enters remaining 206 playback at sample 89",
       "sample": 89
     },
-    "0x4e5c70": {
-      "clip": 66,
-      "count": 18,
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "sample": 17
-    },
     "0x4e5e50": {
       "clip": 82,
       "count": 45,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 28
-    },
-    "0x4e61e0": {
-      "clip": 262,
-      "count": 10,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 0
     },
     "0x4e62d8": {
       "clip": 244,
@@ -141,18 +129,6 @@
       "count": 19,
       "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
       "sample": 18
-    },
-    "0x4e6860": {
-      "clip": 313,
-      "count": 39,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 0
-    },
-    "0x4e6878": {
-      "clip": 313,
-      "count": 39,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 0
     },
     "0x4e8818": {
       "clip": 301,
@@ -209,15 +185,9 @@
     "0x4e0348",
     "0x4e0358",
     "0x4e5b58",
-    "0x4e5c70",
-    "0x4e5ca0",
     "0x4e5e28",
     "0x4e5e50",
-    "0x4e6158",
-    "0x4e6190",
-    "0x4e61e0",
     "0x4e61f8",
-    "0x4e62a0",
     "0x4e62c0",
     "0x4e62d8",
     "0x4e62f0",
@@ -230,12 +200,7 @@
     "0x4e66d0",
     "0x4e66f0",
     "0x4e6710",
-    "0x4e6798",
-    "0x4e6844",
-    "0x4e6860",
-    "0x4e6878",
     "0x4e6950",
-    "0x4e69b0",
     "0x4e87b0",
     "0x4e8818",
     "0x4e8850",
@@ -699,6 +664,61 @@
       "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
     },
     "0x4e9f20": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e5ca0": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e5c70": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e6798": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e62a0": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e6158": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e6190": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e61e0": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e69b0": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e6844": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e6860": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e6878": {
       "source": "game/scorpion/moves/retail_vm.c",
       "symbol": "scorpion_try_retail_vm",
       "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"

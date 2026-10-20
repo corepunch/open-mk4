@@ -139,6 +139,46 @@ static void lifetimes(void) {
   }
 }
 
+static int control_finished;
+
+static void control_end(Fighter *fighter) {
+  control_finished++;
+  retail_vm_cancel(fighter);
+}
+
+static bool reject_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
+  (void)fighter;
+  (void)address;
+  (void)kind;
+  (void)argument;
+  return false;
+}
+
+static void control_flow(void) {
+  /* One shared-runtime fixture: counted playback, absolute jump and packed
+   * character selection. It tests our cursor implementation, not a fighter. */
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  const uint32_t base = 0x570000;
+  const uint32_t words[] = {0x0f000000, (0x4fad7c + 54 * 12) / 4, 0x3a000002, 0x04000001, 0x3b000000, 0x33000000, (base + 32) / 4, 0xff000000, 0x3c000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  for (unsigned i = 0; i < 16; ++i) {
+    put_word(base + 36 + i * 4, (base + 100) / 4);
+  }
+  put_word(base + 100, 0x06000001);
+  put_word(base + 104, 0x07000000);
+  put_word(base + 108, 0x30000000);
+  control_finished = 0;
+  retail_vm_start(owner, &image, base, base + 112, control_end, reject_native);
+  for (int n = 0; n < 10 && owner->retail_vm.active; ++n) {
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 0, "runtime must jump over invalid data, select packed streams and finish reverse playback");
+}
+
 static void assets_bound(void) {
   Assets assets = {0};
   assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
@@ -178,6 +218,7 @@ int main(int argc, char **argv) {
   }
   behavior();
   runtime_words();
+  control_flow();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

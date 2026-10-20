@@ -20,6 +20,24 @@ static bool native(Fighter *fighter, uint32_t address, RetailNativeKind kind, un
     scorpion_script_spear_return(fighter);
   } else if (kind == RETAIL_HANDLER && address == 0x45b1f0 && argument == 71) {
     scorpion_script_reaction(fighter, (int)argument);
+  } else if (kind == RETAIL_TAIL && address == 0x46a760) {
+    scorpion_script_kick_tail(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46f080) {
+    scorpion_script_sweep_tail(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46cde0) {
+    scorpion_uppercut_script(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46b740) {
+    scorpion_script_crouch_lk_tail(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46bb60) {
+    scorpion_script_knee_tail(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46bf10) {
+    scorpion_script_close_hp_tail(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46c2c0) {
+    scorpion_script_combo_hp_tail(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46f220) {
+    scorpion_script_roundhouse_start(fighter);
+  } else if (kind == RETAIL_TAIL && address == 0x46f270) {
+    scorpion_script_roundhouse_tail(fighter);
   } else {
     return false;
   }
@@ -49,6 +67,39 @@ bool scorpion_try_retail_vm(Fighter *fighter, uint32_t entry) {
       break;
     case 0x4e9f20:
       end = 0x4e9f30;
+      break;
+    case 0x4e5ca0:
+      end = 0x4e6cb0;
+      break;
+    case 0x4e5c70:
+      end = 0x4e5c80;
+      break;
+    case 0x4e6798:
+      end = 0x4e6e8c;
+      break;
+    case 0x4e62a0:
+      end = 0x4e62bc;
+      break;
+    case 0x4e6158:
+      end = 0x4e617c;
+      break;
+    case 0x4e6190:
+      end = 0x4e61c8;
+      break;
+    case 0x4e61e0:
+      end = 0x4e61f4;
+      break;
+    case 0x4e69b0:
+      end = 0x4e69c4;
+      break;
+    case 0x4e6844:
+      end = 0x4e685c;
+      break;
+    case 0x4e6860:
+      end = 0x4e6874;
+      break;
+    case 0x4e6878:
+      end = 0x4e688c;
       break;
     default:
       return false;
