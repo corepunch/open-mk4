@@ -483,7 +483,9 @@ typedef enum RetailNativeKind {
   RETAIL_CALL,
   RETAIL_TAIL,
   RETAIL_SPAWN,
-  RETAIL_HANDLER
+  RETAIL_HANDLER,
+  RETAIL_PREDICATE,
+  RETAIL_PHYSICS
 } RetailNativeKind;
 
 typedef bool (*RetailNativeFn)(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument);
@@ -494,7 +496,7 @@ typedef struct RetailVm {
   uint64_t wake;
   unsigned result, selector, loop_count;
   int play_ticks, target, direction, stride;
-  bool active, return_after_play, parked;
+  bool active, return_after_play, parked, paired, wait_ground;
   FighterFn finish, cleanup, native_resume;
   RetailNativeFn native;
 } RetailVm;

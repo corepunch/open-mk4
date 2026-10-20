@@ -135,13 +135,14 @@ have explicit jab/kick entry callbacks. Other entries select a default move
 through the shared runner. Goro names clips from his separate animation bank.
 Spawn writes the roster index and initializes `Fighter.current_move`.
 `game/moves.c` owns move entry, frame/end callbacks and sample selection.
-Scorpion, Raiden, Sonya, Sub-Zero and Liu Kang lower their reviewed VM roots deterministically
-into C11 functions in `game/generated/`. Typed bindings connect decoded native
-edges to shared engine helpers and character-owned native continuations. No
-runtime bytecode or address dispatcher is introduced. Fighter clip bindings own
+Scorpion executes its 70 reviewed VM roots directly from the retail image
+through `game/retail_vm.c`. Other fighters retain generated C11 bodies until
+migrated. Typed bindings connect retail native edges to shared engine helpers
+and character-owned native continuations; image addresses are validated data
+indices and never host code pointers. Fighter clip bindings own
 their storage; animation changes preserve action, contact and controller state.
 Native contact/recovery runners, pair coordination, objects and scene blends
-remain procedural C. The generated-only audit rejects legacy VM bodies and
+remain procedural C. The coverage audit distinguishes interpreted and generated roots, rejects legacy VM bodies and
 checks canonical regeneration and typed input/CPU/stance/weapon/reaction coverage.
 
 The old x86 normal-move fixtures remain research evidence. Regression scenarios

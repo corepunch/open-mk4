@@ -151,3 +151,35 @@ strict source coverage and canonical generation checks. No new character move
 or balance tests were added. Runtime development should primarily follow the
 actual mk4decomp interpreter and matching handler assembly, not duplicate the
 old frame compiler's execution model.
+
+## Complete Scorpion script-body migration
+
+All 70 reviewed Scorpion roots now execute retail image words. The remaining
+53 generated bodies and `game/scorpion/generated/scripts.inc` are removed;
+`frames.inc` was already removed in the spear step. Native callbacks, physics,
+projectiles and scene coordinators remain C because the retail scripts call
+native routines for those operations. Per-fighter native organization is still
+present; this step removes script-to-C execution, not every native adaptation.
+
+The runtime adds predicate/contact branches, opponent clip binding, paired
+playback, physics installation, landing waits, task parking and the remaining
+reviewed native opcode boundaries. mk4decomp `fight_script_vm.c` supplies the
+fetch/dispatch and dirty-bit branch contracts; its matching
+`pending_match_variants.c` preserves the paired wait state machine (upstream
+0x45bb70, local 0x45bb10), including the final reschedule. Local bounded handler
+queries resolve revision differences. `anim_frame_advance.c` supplies the
+separate cursor/completion model. No upstream global arena or host execution
+of image addresses is introduced.
+
+Native action cleanup transfers between VM and native playback without firing
+at a continuation boundary; cancellation releases it once. Independent scene
+actors now also resume the shared VM. The fan's native coordinator re-enters
+its retail repeat stream instead of expanding a generated frame phase.
+
+Validation: C11 runtime suite and game build, strict Scorpion inventory audit
+(70 interpreted, zero generated/legacy, zero errors), canonical script/control
+checks and native source/reachability checks. One compact shared fixture covers
+predicate flags and cleanup ownership; no character scenario matrix was added.
+This is coverage of Scorpion's reviewed roots, not support for every retail
+opcode or the full original tagged scheduler. Other fighters still use their
+existing generated bodies.

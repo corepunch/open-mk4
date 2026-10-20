@@ -179,6 +179,44 @@ static void control_flow(void) {
   check(control_finished == 1 && fighter_sample(owner) == 0, "runtime must jump over invalid data, select packed streams and finish reverse playback");
 }
 
+static int cleanup_calls;
+
+static void cleanup_once(Fighter *fighter) {
+  (void)fighter;
+  cleanup_calls++;
+}
+
+static bool predicate_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
+  (void)argument;
+  check(address == 0x12345678 && kind == RETAIL_PREDICATE, "predicate must use its typed native boundary");
+  fighter->retail_vm.result = 4;
+  return true;
+}
+
+static void native_handoff(void) {
+  /* Shared contracts: predicate flags select a packed branch, and cleanup
+   * survives VM/native playback transitions until the action is cancelled. */
+  Fighter *owner = setup(0, 2);
+  const uint32_t base = 0x570000;
+  const uint32_t words[] = {0x36000000, 0x12345678, (base + 16) / 4, 0xff000000, 0x3e000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  retail_vm_start(owner, &image, base, base + sizeof words, control_end, predicate_native);
+  check(owner->retail_vm.parked, "predicate branch must skip invalid data and reach the parked continuation");
+  cleanup_calls = 0;
+  owner->retail_vm.cleanup = cleanup_once;
+  static const mframe_t frames[] = {{0}};
+  static const mmove_t phase = {.frame = frames};
+  fighter_mmove_phase(owner, &phase);
+  check(!owner->retail_vm.active && cleanup_calls == 0, "native takeover must retain action cleanup");
+  retail_vm_start_at(owner, &image, base + 16, base, base + sizeof words, control_end, predicate_native);
+  check(owner->current_mmove == NULL && cleanup_calls == 0, "retail continuation must inherit native action cleanup");
+  fighter_cancel_mmove(owner);
+  fighter_cancel_mmove(owner);
+  check(cleanup_calls == 1, "interruption must release inherited cleanup exactly once");
+}
+
 static void assets_bound(void) {
   Assets assets = {0};
   assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
@@ -219,6 +257,7 @@ int main(int argc, char **argv) {
   behavior();
   runtime_words();
   control_flow();
+  native_handoff();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

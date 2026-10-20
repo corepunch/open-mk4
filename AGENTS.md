@@ -105,7 +105,7 @@ post-processing.
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
 end-to-end research, frame-program implementation, validation and commit procedure.
 
-Scorpion is migrating to direct retail script execution. Run original words
+Scorpion runs all 70 reviewed roots through direct retail script execution. Run original words
 through the shared C11 interpreter; do not translate branches, waits, loops or
 animation commands into generated C, frame rows or handwritten move logic.
 Extend a missing opcode once and reuse the existing native engine helpers for
@@ -139,6 +139,5 @@ Preserve move timing, command gates, branches, damage and balance intent while
 using our engine's own implementation and state boundaries. Binary identity,
 exact retail scheduler emulation and per-tick trace identity are not goals.
 Do not build new retail-execution harnesses or record large JSON traces for
-character work. Use focused native tests of commands, move branches, damage,
-interruption and recovery. Add engine features only when a translated move
-needs them.
+character work. Add engine features only when retail execution needs them,
+and keep new tests focused on our shared runtime and native integration.

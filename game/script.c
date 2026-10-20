@@ -159,6 +159,8 @@ void mk4_script_thrown_ready(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   if (fighter->health > 0) {
     fighter_ready(fighter);
+  } else {
+    fighter_finish_mmove(fighter, NULL);
   }
 }
 

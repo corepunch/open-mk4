@@ -152,7 +152,9 @@ def audit(image, character, return_to=None, profile=None):
             source = read_source(ROOT / reference['source'])
             match = re.search(r'case\s+0x0*' + format(entry, 'x') + r':\s*end\s*=\s*(0x[0-9a-f]+)', source)
             end = int(match[1], 16) if match else entry
-            if any(int(row['va'], 16) < entry or int(row['va'], 16) + 4 * (1 + len(row.get('operands', []))) > end
+            lower = re.search(r'case\s+0x0*' + format(entry, 'x') + r':(?:(?!break;).)*?begin\s*=\s*(0x[0-9a-f]+)', source, re.S)
+            begin = int(lower[1], 16) if lower else entry
+            if any(int(row['va'], 16) < begin or int(row['va'], 16) + 4 * (1 + len(row.get('operands', []))) > end
                    for row in program['instructions']):
                 errors.append('%s: runtime registration does not contain the decoded graph' % hex(entry))
             supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/retail_vm.c').read_text())}

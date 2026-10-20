@@ -1,7 +1,8 @@
 #include "game.h"
+#include "retail_vm.h"
 
-/* Small C playback records for translated scene continuations. There are
- * no bytecodes, task stacks, virtual addresses or implicit global operands. */
+/* Playback records for native scene continuations. Independent scene actors
+ * can also resume their retail script through the shared interpreter. */
 static void begin_clip(Fighter *fighter) {
   const SceneClip *clip = &fighter->scene.clips[fighter->scene.index];
   int source = fighter->assets != NULL ? fighter_clip(fighter->assets, fighter)->id : fighter_move(fighter)->clip;
@@ -157,7 +158,9 @@ void battle_step_scene_actors(void) {
       continue;
     }
     Fighter *actor = &slot->actor;
-    if (actor->current_mmove != NULL) {
+    if (actor->retail_vm.active) {
+      retail_vm_step(actor);
+    } else if (actor->current_mmove != NULL) {
       fighter_step_mmove(actor);
     }
     if (!slot->active) {

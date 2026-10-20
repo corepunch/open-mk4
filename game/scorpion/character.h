@@ -120,7 +120,6 @@
 #define sword_spin_query scorpion_sword_spin_query
 #define teleport_land_script scorpion_teleport_land_script
 #define teleport_script scorpion_teleport_script
-#define thrown_end_script scorpion_thrown_end_script
 #define uppercut_script scorpion_uppercut_script
 #define victim_action scorpion_victim_action
 
@@ -199,7 +198,6 @@ void scorpion_entry_retail_script_004de328(Fighter *fighter);
 void scorpion_entry_retail_script_004de798(Fighter *fighter);
 void scorpion_entry_retail_script_004e0118(Fighter *fighter);
 void scorpion_entry_retail_script_004e0138(Fighter *fighter);
-const mmove_t *scorpion_retail_script_004e0138_repeat_phase(void);
 void scorpion_entry_retail_script_004e0148(Fighter *fighter);
 void scorpion_entry_retail_script_004e0158(Fighter *fighter);
 void scorpion_entry_retail_script_004e0188(Fighter *fighter);
@@ -328,6 +326,7 @@ void scorpion_script_lk_rebase(Fighter *fighter);
 void scorpion_script_lk_return(Fighter *fighter);
 void scorpion_script_lp_return(Fighter *fighter);
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction);
+void scorpion_thrown_end_script(Fighter *victim);
 void scorpion_script_reaction(Fighter *fighter, int reaction);
 void scorpion_script_roundhouse_start(Fighter *fighter);
 void scorpion_script_roundhouse_tail(Fighter *fighter);
@@ -352,7 +351,6 @@ void scorpion_sword_spin_control(Fighter *fighter);
 void scorpion_sword_spin_query(Fighter *fighter);
 void scorpion_teleport_land_script(Fighter *fighter);
 void scorpion_teleport_script(Fighter *fighter);
-void scorpion_thrown_end_script(Fighter *victim);
 void scorpion_uppercut_script(Fighter *fighter);
 int scorpion_victim_action(const Fighter *fighter);
 

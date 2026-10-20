@@ -334,6 +334,10 @@ void fighter_finish_mmove(Fighter *fighter, FighterFn next) {
 /* This changes only playback, retaining combat identity, contact, buttons,
  * paired ownership and action-local state. New phases start next actor tick. */
 void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase) {
+  if (fighter->mmove_cleanup == NULL) {
+    fighter->mmove_cleanup = fighter->retail_vm.cleanup;
+  }
+  fighter->retail_vm.cleanup = NULL;
   retail_vm_cancel(fighter);
   require(phase != NULL && phase->frame != NULL && phase->lastframe >= phase->firstframe, "Invalid mmove phase");
   for (int frame = phase->firstframe; frame <= phase->lastframe; ++frame) {

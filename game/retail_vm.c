@@ -60,14 +60,13 @@ void retail_vm_cancel(Fighter *fighter) {
   }
 }
 
-static void bind(Fighter *fighter, uint32_t packed, int first) {
-  RetailVm *vm = &fighter->retail_vm;
+static void bind_image(Fighter *fighter, const Mk4Image *image, uint32_t packed, int first) {
   /* Descriptors are packed word addresses after the retail data fixups. */
   if (packed < 0x4fad7c / 4 || packed >= (0x4fad7c + MK4_CLIP_COUNT * 12) / 4 || (packed * 4 - 0x4fad7c) % 12 != 0) {
     vm_error(fighter, "invalid animation descriptor");
   }
   int clip = (int)((packed * 4 - 0x4fad7c) / 12);
-  uint32_t count = mk4_image_u32(vm->image, packed * 4 + 4);
+  uint32_t count = mk4_image_u32(image, packed * 4 + 4);
   if (count == 0 || count > 65535 || first >= (int)count) {
     vm_error(fighter, "invalid animation length or initial cursor");
   }
@@ -80,6 +79,10 @@ static void bind(Fighter *fighter, uint32_t packed, int first) {
   fighter->current_move = &fighter->playback_move;
   fighter->sequence = NULL;
   fighter->sample_override = first < 0 ? (int)count - 1 : first;
+}
+
+static void bind(Fighter *fighter, uint32_t packed, int first) {
+  bind_image(fighter, fighter->retail_vm.image, packed, first);
 }
 
 static void sample(Fighter *fighter, int pose) {
@@ -115,13 +118,9 @@ AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
       (q16)mk4_image_u32(image, address + 20)};
 }
 
-static void contact(Fighter *fighter, unsigned selector) {
+static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
   RetailVm *vm = &fighter->retail_vm;
-  /* Only B[6] and B[25] are reviewed for this Scorpion prototype. */
-  if (selector != vm->selector || (selector != 6 && selector != 25)) {
-    vm_error(fighter, "unreviewed contact selector");
-  }
-  uint32_t packed = mk4_image_u32(vm->image, 0x53d2b8 + selector * 4);
+  uint32_t packed = mk4_image_u32(vm->image, table + selector * 4);
   if (packed < 0x4eb000 / 4 || packed > (0x4ec000 - 24) / 4) {
     vm_error(fighter, "contact record outside reviewed data");
   }
@@ -133,12 +132,26 @@ static void contact(Fighter *fighter, unsigned selector) {
   }
 }
 
-void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
+void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
   require(image != NULL && image->bytes.count != 0 && next != NULL && native != NULL, "Retail VM needs owned image and typed continuations");
-  require(begin < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= 65536, "Invalid reviewed retail script range");
+  require(begin <= entry && entry < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= 65536, "Invalid reviewed retail script range");
+  RetailVm previous = fighter->retail_vm;
+  FighterFn cleanup = previous.cleanup != NULL ? previous.cleanup : fighter->mmove_cleanup;
+  fighter->retail_vm.cleanup = NULL;
+  fighter->mmove_cleanup = NULL;
   fighter_cancel_mmove(fighter);
   fighter->sequence = NULL;
-  fighter->retail_vm = (RetailVm){.image = image, .pc = begin, .begin = begin, .end = end, .active = true, .finish = next, .native = native};
+  fighter->retail_vm = (RetailVm){.image = image,
+      .pc = entry,
+      .begin = begin,
+      .end = end,
+      .active = true,
+      .finish = next,
+      .cleanup = cleanup,
+      .native = native,
+      .loop_count = previous.loop_count,
+      .result = previous.result,
+      .selector = previous.selector};
   fighter->continuation++;
   const MoveDef *move = fighter_move(fighter);
   if (move->clip >= 0 && move->last == MOVE_END) {
@@ -147,10 +160,20 @@ void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, ui
   retail_vm_step(fighter);
 }
 
+void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
+  retail_vm_start_at(fighter, image, begin, begin, end, next, native);
+}
+
 void retail_vm_step(Fighter *fighter) {
   RetailVm *vm = &fighter->retail_vm;
   if (!vm->active || g_battle.ticks < vm->wake) {
     return;
+  }
+  if (vm->wait_ground) {
+    if (fighter_airborne(fighter)) {
+      return;
+    }
+    vm->wait_ground = false;
   }
   if (vm->parked) {
     FighterFn next = vm->native_resume;
@@ -167,11 +190,25 @@ void retail_vm_step(Fighter *fighter) {
       int distance = vm->target >= pose ? vm->target - pose : pose - vm->target;
       sample(fighter, distance <= vm->stride ? vm->target : pose + vm->direction * vm->stride);
     }
+    if (vm->paired && !(fighter->flags & FF_PAIR_RELEASE)) {
+      Fighter *victim = (Fighter *)fighter_opponent(fighter);
+      if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
+        fighter_ready(fighter);
+        return;
+      }
+      if (pose != fighter_sample(fighter) && !(victim->flags & FF_PAIR_RELEASE)) {
+        int pose = fighter_sample(victim) + vm->direction;
+        if (pose >= 0 && pose <= fighter_move(victim)->last) {
+          victim->sample_override = pose;
+        }
+      }
+    }
     vm->play_ticks--;
     if (vm->play_ticks > 0) {
       vm->wake = g_battle.ticks + 1;
       return;
     }
+    vm->paired = false;
     if (vm->return_after_play) {
       finish(fighter);
       return;
@@ -182,12 +219,24 @@ void retail_vm_step(Fighter *fighter) {
     uint32_t word = fetch(fighter);
     unsigned opcode = word >> 24, arg = word & 255u;
     switch (opcode) {
+      case 0x00:
+        break;
+      case 0x0e:
+        bind_image((Fighter *)fighter_opponent(fighter), vm->image, fetch(fighter), 0);
+        break;
+      case 0x01:
+      case 0x0c:
       case 0x02:
       case 0x09:
       case 0x11:
       case 0x0f: {
-        bind(fighter, fetch(fighter), opcode == 9 ? -1 : (opcode == 0x0f || opcode == 0x11) ? (int)arg : 0);
-        if (opcode == 0x02) {
+        bind(fighter, fetch(fighter), opcode == 9 ? -1 : (opcode == 0x0f || opcode == 0x11 || opcode == 0x0c) ? (int)arg : 0);
+        if (opcode == 0x01) {
+          play(fighter, fighter_move(fighter)->last, true);
+        } else if (opcode == 0x0c) {
+          int current = fighter_sample(fighter);
+          play(fighter, current < fighter_move(fighter)->last ? current + 1 : current, false);
+        } else if (opcode == 0x02) {
           play(fighter, (int)arg, false);
         } else if (opcode == 9) {
           play(fighter, 0, true);
@@ -203,8 +252,9 @@ void retail_vm_step(Fighter *fighter) {
         play(fighter, 0, true);
         break;
       case 0x05:
-      case 0x47: {
-        if (opcode == 0x47) {
+      case 0x47:
+      case 0x48: {
+        if (opcode == 0x47 || opcode == 0x48) {
           unsigned prefix = (word >> 8) & 255u;
           if (prefix == 2) {
             bind(fighter, fetch(fighter), 0);
@@ -212,12 +262,16 @@ void retail_vm_step(Fighter *fighter) {
             vm_error(fighter, "unreviewed playback prefix");
           }
         }
-        int target = opcode == 0x05 ? (int)(word & 0xffffffu) : (int)arg;
-        if (target > fighter_sample(fighter)) {
-          play(fighter, target, false);
+        int target = opcode == 0x48 ? fighter_move(fighter)->last : opcode == 0x05 ? (int)(word & 0xffffffu) : (int)arg;
+        if (opcode == 0x48 || target > fighter_sample(fighter)) {
+          play(fighter, target, opcode == 0x48);
         }
         break;
       }
+      case 0x4b:
+        play(fighter, (int)arg, true);
+        vm->paired = true;
+        break;
       case 0x04:
       case 0x19:
       case 0x4d: {
@@ -230,6 +284,7 @@ void retail_vm_step(Fighter *fighter) {
         }
         break;
       }
+      case 0x6a:
       case 0x03:
         play(fighter, fighter_move(fighter)->last, true);
         break;
@@ -273,8 +328,40 @@ void retail_vm_step(Fighter *fighter) {
         break;
       }
       case 0x25:
-      case 0x26:
         mk4_script_indexed_sound(fighter, (int)arg);
+        break;
+      case 0x26:
+        mk4_script_context_sound(fighter, (int)arg);
+        break;
+      case 0x16:
+        mk4_script_scene_active(fighter);
+        break;
+      case 0x28:
+        mk4_script_impact(fighter);
+        break;
+      case 0x2a:
+        mk4_script_shake(fighter, (int)arg);
+        break;
+      case 0x2c:
+        mk4_script_draw_voice(fighter);
+        break;
+      case 0x4f:
+        mk4_script_context(fighter, (int)arg);
+        break;
+      case 0x5f:
+        fighter_set_speed(fighter, (q16)fetch(fighter));
+        break;
+      case 0x63:
+        mk4_script_damage(fighter, (q16)fetch(fighter));
+        break;
+      case 0x6b:
+        mk4_script_roster_sound(fighter, (int)arg);
+        break;
+      case 0x6d:
+        mk4_script_pair_adjust(fighter, (q16)fetch(fighter));
+        break;
+      case 0x6e:
+        mk4_script_disarm(fighter);
         break;
       case 0x62:
         mk4_script_effect(fighter, (int)arg);
@@ -288,10 +375,59 @@ void retail_vm_step(Fighter *fighter) {
         break;
       }
       case 0x41:
-        if (!vm->native(fighter, 0x45b1f0, RETAIL_HANDLER, arg)) {
+      case 0x1e:
+        if (!vm->native(fighter, opcode == 0x41 ? 0x45b1f0 : 0x45b230, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
+      case 0x36: {
+        uint32_t address = fetch(fighter);
+        uint32_t target = fetch(fighter);
+        if (!vm->native(fighter, address, RETAIL_PREDICATE, 0)) {
+          vm_error(fighter, "unreviewed predicate binding");
+        }
+        if (vm->result & 4u) {
+          jump(fighter, target);
+        }
+        break;
+      }
+      case 0x42: {
+        uint32_t target = fetch(fighter);
+        if (vm->result & 1u) {
+          jump(fighter, target);
+        }
+        break;
+      }
+      case 0x38: {
+        uint32_t address = fetch(fighter);
+        if (!vm->native(fighter, address, RETAIL_PHYSICS, 0)) {
+          vm_error(fighter, "unreviewed physics binding");
+        }
+        break;
+      }
+      case 0x39:
+        fighter->body.physics = NULL;
+        break;
+      case 0x58:
+        fighter_set_speed(fighter, (q16)fetch(fighter));
+        fighter->body.vel[AXIS_Y] = (q16)fetch(fighter);
+        fighter->body.gravity = (q16)fetch(fighter);
+        break;
+      case 0x5a:
+        fighter_set_speed(fighter, (q16)(0u - fetch(fighter)));
+        break;
+      case 0x5b:
+        mk4_script_stop(fighter);
+        break;
+      case 0x60:
+        vm->wait_ground = fighter_airborne(fighter);
+        if (vm->wait_ground) {
+          return;
+        }
+        break;
+      case 0x3e:
+        retail_vm_wait_native(fighter, 0, NULL);
+        return;
       case 0x33:
         jump(fighter, fetch(fighter));
         break;
@@ -346,7 +482,9 @@ void retail_vm_step(Fighter *fighter) {
         break;
       }
       case 0x51:
-        contact(fighter, arg);
+      case 0x52:
+      case 0x5e:
+        contact(fighter, opcode == 0x51 ? 0x53d2b8 : opcode == 0x52 ? 0x53d268 : 0x53d0c0, arg);
         break;
       default:
         vm_error(fighter, "unsupported opcode");

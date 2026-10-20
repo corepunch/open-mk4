@@ -1419,6 +1419,9 @@ def bindings_for(character):
     links = {address: Binding('retail_script_%08x' % target, 'game/%s/generated/scripts.inc' % CHARACTERS[character], ('tail',),
                               script_target=target, evidence='%x: script_enter(%x); exact-entry native listing' % (address, target))
              for address, target in ((0x46dd00, 0x4e6330), (0x46dd10, 0x4e6360), (0x46dd20, 0x4e63b0))}
+    if character == 0:
+        links = {address: replace(binding, symbol="scorpion_try_retail_vm", source="game/scorpion/moves/retail_vm.c")
+                 for address, binding in links.items()}
     result = {**BINDINGS, **links, **CHARACTER_BINDINGS.get(character, {})}
     # 43d530 is a reviewed nonblocking cycle boundary. Native coordinators
     # expand its generated frame phase rather than decrementing a counter.

@@ -42,6 +42,11 @@ def main(argv=None):
             if profile.get('schema') != 1 or profile.get('character') != CHARACTERS[args.character]:
                 raise ValueError('Invalid character generation profile')
             args.script = [int(entry, 16) for entry in profile['generated_scripts']]
+            if not args.script:
+                output = ROOT / profile['output']
+                if output.exists():
+                    raise ValueError('unused generated script output remains: %s' % output)
+                return 0
             args.return_to = profile['return_to']
             contexts = profile.get('entry_contexts', {})
             if args.output is None:

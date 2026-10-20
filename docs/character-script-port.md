@@ -1,6 +1,7 @@
 # Direct retail execution migration
 
-Current Scorpion work runs original script words in `game/retail_vm.c`.
+All 70 reviewed Scorpion roots now run original script words in `game/retail_vm.c`;
+Scorpion has no generated script or frame include. Its native adapters remain C.
 Do not re-express script control flow as C or frame programs. Keep native calls
 in procedural C and reuse existing helpers; C module boundaries may shrink as
 scripts replace their generated bodies. The historical compiler workflow below
@@ -633,7 +634,7 @@ first-row timing. Native behavioral tests cover commands in both slots, contact
 branches, interruption, KO, independent recovery and finisher reset.
 
 
-## Scorpion generated coverage
+## Scorpion generated coverage (historical)
 
 Scorpion generates all 70 reviewed VM roots. The 48 initial roots grew by 22
 when bounded native queries exposed roundhouse starts, fan continuations,

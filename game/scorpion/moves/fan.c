@@ -12,6 +12,11 @@ void scorpion_fan_fatality(Fighter *fighter) {
 
 void scorpion_script_fan_cycle(Fighter *fighter) {
   mk4_script_fan_cycle(fighter);
+  if (--fighter->native_variant > 0) {
+    scorpion_entry_retail_script_004e0138(fighter);
+  } else {
+    fan_release(fighter);
+  }
 }
 
 void scorpion_script_fan_victim_end(Fighter *fighter) {
@@ -33,9 +38,8 @@ static void fan_release(Fighter *fighter) {
 }
 
 void scorpion_script_fan_tail(Fighter *fighter) {
+  fighter->native_variant = 31;
   scorpion_entry_retail_script_004e0138(fighter);
-  native_repeat(fighter, scorpion_retail_script_004e0138_repeat_phase(), 31, fan_release);
-  native_play(fighter, false);
 }
 
 void scorpion_fan_start(Fighter *fighter) {
