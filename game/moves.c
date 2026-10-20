@@ -1,5 +1,6 @@
 #include "game.h"
 #include "native.h"
+#include "retail_vm.h"
 #include "math_util.h"
 #include <math.h>
 #include <stdlib.h>
@@ -298,6 +299,7 @@ void fighter_step_sequence(Fighter *fighter) {
 /* Cleanup is detached before calling user code, so replacement/reset cannot
  * run it twice. A phase change deliberately retains the action's cleanup. */
 void fighter_cancel_mmove(Fighter *fighter) {
+  retail_vm_cancel(fighter);
   FighterFn cleanup = fighter->mmove_cleanup;
   if (fighter->current_mmove != NULL || cleanup != NULL) {
     fighter->continuation++;
@@ -332,6 +334,7 @@ void fighter_finish_mmove(Fighter *fighter, FighterFn next) {
 /* This changes only playback, retaining combat identity, contact, buttons,
  * paired ownership and action-local state. New phases start next actor tick. */
 void fighter_mmove_phase(Fighter *fighter, const mmove_t *phase) {
+  retail_vm_cancel(fighter);
   require(phase != NULL && phase->frame != NULL && phase->lastframe >= phase->firstframe, "Invalid mmove phase");
   for (int frame = phase->firstframe; frame <= phase->lastframe; ++frame) {
     if (phase->samples != NULL) {

@@ -41,7 +41,57 @@ The first has contact-dependent recovery and a reverse native tail; the second
 has a counted loop, forward completion and reverse playback. Low kick itself
 has no counted contact loop. Keep existing generated entries for other moves.
 No coroutine library or retail global arena is required for these entries.
+Bounded local native queries also checked 0x46a8d0 -> 0x429380 -> 0x429600:
+the first installs its resume tag and calls the animation continuation;
+0x429380 supplies the current cursor and 0x429600 calls the decrement helper
+0x429740 until completion, then returns through the tag to controller 0x46f650.
 
 Validate real move entries, hit/block/miss, bounded recovery, both actor slots,
 interruption and reset. This is not a claim of retail per-tick scheduler identity,
 full Scorpion coverage, generic tagged returns or paired-task support.
+
+## Implemented prototype
+
+`game/retail_vm.c` reads the relocated image directly. It implements only the
+operations reached by the two reviewed roots. `game/scorpion/moves/retail_vm.c`
+owns the three native bindings: clear/set high-punch avoidance and reverse
+playback followed by controller return. Contact geometry, damage and reactions
+use `battle_contact`; its record is decoded from the image B table, not copied
+into a new attack table. Native recovery advances one cursor on the simulation
+clock; it does not install an mmove or compile frame rows.
+
+Assets retain their selected EXE image and `battle_bind_assets` exposes it as
+borrowed read-only script data. In the regular game these two Scorpion button
+entries automatically use the interpreter. Rule-only callers without an image
+retain generated entries. Tests may bind a caller-owned image through
+`g_battle.retail_scripts` after battle initialization, without loading graphics.
+The image must outlive the battle that borrows it. Reset cancels VM state;
+interruptions and replacement playback retire it immediately.
+
+Run `make retail-vm-test` for command-entry regressions and malformed-stream
+rejection. The loop test changes one word in an in-memory test image and checks
+that an extra loop adds its source-defined waits, without C regeneration.
+Other tests exercise hit/block/miss, both player slots, bounded pose/recovery,
+interruption, KO and match reset. No source EXE is modified.
+
+The prototype deliberately does not implement arbitrary native calls, tasks,
+paired scripts, special moves, general tagged call stacks or the whole opcode
+set. Script fetch is limited to each reviewed root range; unsupported operations,
+unbound natives, invalid samples and non-yielding instruction runs fail with
+source-PC diagnostics. The shared image loader retains the asset loader's
+structural revision checks; it is not a cryptographic whole-EXE verifier.
+Existing compiler audits still validate retained generated paths and do not
+establish interpreter coverage. This is a first migration seam, not removal
+of the compiler or completion of the Scorpion port.
+
+## Verification
+
+- `make format` and `make format-check` passed.
+- `PYTHONPATH=/tmp/open-mk4-test-deps make check` passed, including the new
+  runtime tests, all strict generated audits, existing gameplay/assets/render
+  regressions, disassembly/port/compiler tests and the 360-frame headless run.
+  Capstone 5.0.9 was installed only under `/tmp/open-mk4-test-deps`; the pinned
+  upstream checkout lives in ignored `reference/mk4decomp` for source-link tests.
+- The runtime test rebuilt with C11, `-Werror -pedantic-errors`, ASan and UBSan
+  and passed, including real asset ownership/binding and teardown.
+- `git diff --check` passed. No original asset files or upstream sources changed.

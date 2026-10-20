@@ -14,6 +14,7 @@
  * game's state and clip tables, and load a second asset bank. The step
  * function does not branch on the game id. */
 #include "renderer.h"
+#include "mk4_image.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -478,6 +479,19 @@ enum {
   AXIS_Z
 };
 
+typedef bool (*RetailNativeFn)(Fighter *fighter, uint32_t address, bool tail);
+
+typedef struct RetailVm {
+  const Mk4Image *image; /* borrowed immutable data, owned by assets or the caller */
+  uint32_t pc, begin, end, instruction;
+  uint64_t wake;
+  unsigned result, selector, loop_count;
+  int play_ticks, target, direction;
+  bool active, return_after_play;
+  FighterFn finish;
+  RetailNativeFn native;
+} RetailVm;
+
 struct Fighter {
   const Assets *assets; /* borrowed decoded clips/rigs; owned by the host */
   q16 heading[2];       /* model's forward X/Z, independent of the camera */
@@ -502,6 +516,7 @@ struct Fighter {
   MoveDef playback_move;        /* actor-owned clip binding for generated frame programs */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   const mmove_t *current_mmove;
+  RetailVm retail_vm;
   NativeFrames native;
   NativeMotion native_motion;
   bool native_immediate;
@@ -821,6 +836,7 @@ typedef struct SceneActor {
 #define MAX_SOUND_EVENTS 16
 
 struct Battle {
+  const Mk4Image *retail_scripts; /* borrowed script data; NULL keeps existing generated entries */
   const Assets *assets;
   Fighter fighters[2];
   SceneActor scene_actors[MAX_SCENE_ACTORS];

@@ -19,7 +19,7 @@ SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: retail-vm-test native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: $(SCRIPT_GENERATE_TARGETS)
@@ -68,15 +68,15 @@ test: fsys build/test-package
 	./build/test-package
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-frames
+	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-frames build/test-retail-vm
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/*/character.c game/*/moves/*.c) game/mk4_common.c
-ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
-GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch] game/*/generated/*.inc) game/native.h game/script.h game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc
+ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/retail_vm.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
+GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch] game/*/generated/*.inc) game/native.h game/script.h game/retail_vm.h game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -107,6 +107,12 @@ build/test-frames: tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(GAME_HE
 build/test-raiden-sonya: tests/test_raiden_sonya.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_raiden_sonya.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
+build/test-retail-vm: tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
+retail-vm-test: build/test-retail-vm
+	./build/test-retail-vm
+	python3 tests/test_retail_vm.py
 game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-frames
 	./build/test-battle
 	./build/test-sub-zero
@@ -116,7 +122,7 @@ game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang bu
 	./build/test-frames
 	./mk4-game --self-test
 	./mk4-game --headless --demo --frames 360 --screenshot build/battle.bmp
-check: format-check scripts-check mmove-frames-check native-frames-check test viewer-test game-test
+check: retail-vm-test format-check scripts-check mmove-frames-check native-frames-check test viewer-test game-test
 	python3 tests/test_apps.py
 	python3 tests/test_retail_moves.py
 	python3 tests/test_disassembly.py

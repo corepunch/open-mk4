@@ -1,6 +1,7 @@
 #ifndef MK4_ASSETS_H
 #define MK4_ASSETS_H
 #include "binary.h"
+#include "mk4_image.h"
 #include "mk4_audio.h"
 #define MK4_MAX_BONES 128
 #define MK4_ROSTER_COUNT 18
@@ -119,6 +120,7 @@ typedef struct Hud {
 } Hud;
 
 typedef struct Assets {
+  Mk4Image retail_image; /* immutable script/descriptor data, retained from the selected EXE */
   Characters characters;
   Characters cut_characters; /* closed-surface rigs; share normal meshes/textures when the file matches */
   Characters scene_models;   /* shared immutable geometry; independently owned accessory rigs */

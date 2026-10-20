@@ -356,4 +356,6 @@ void scorpion_thrown_end_script(Fighter *victim);
 void scorpion_uppercut_script(Fighter *fighter);
 int scorpion_victim_action(const Fighter *fighter);
 
+bool scorpion_try_retail_vm(Fighter *fighter, uint32_t entry);
+
 #endif

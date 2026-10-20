@@ -216,6 +216,21 @@ distance metadata retains the previous shared defaults. Cinematic objects
 step on the simulation clock during fatalities, and scene cameras may widen
 their focal scale without changing ordinary fight framing.
 
+## Direct retail script prototype
+
+Scorpion low kick (0x4e6d08) and crouching high kick (0x4e60b8) now read
+retail script words at runtime when a retail image is bound. Actor-owned VM
+state stores the instruction cursor, waits, counted loop, contact result and
+animation continuation. The image is immutable asset data; checked VAs never
+become host code pointers. Typed Scorpion adapters handle the three reviewed
+native boundaries. Interruption, move replacement and reset cancel VM state.
+
+This user-requested prototype is an exception to the frame-only/compiler-only
+policy below. Other entries and rule-only callers without image data retain
+their generated programs. No coroutine stacks or retail global arena are used.
+See [interpreter evidence and scope](docs/research/retail-vm.md). The retained
+generated audits do not measure interpreter coverage or prove retail timing.
+
 ## Deterministic script compilation
 
 `tools/compile_retail.py` lowers the decoded, roster-specialized VM graph to

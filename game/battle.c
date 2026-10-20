@@ -1,5 +1,6 @@
 #include "game.h"
 #include "native.h"
+#include "retail_vm.h"
 #include "math_util.h"
 #include <math.h>
 #include <string.h>
@@ -290,7 +291,9 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
   } else {
     const MoveDef *state = fighter_move(fighter);
     fighter->ticks++;
-    if (fighter->current_mmove != NULL) {
+    if (fighter->retail_vm.active) {
+      retail_vm_step(fighter);
+    } else if (fighter->current_mmove != NULL) {
       fighter_step_mmove(fighter);
     } else if (fighter->sequence != NULL) {
       fighter_step_sequence(fighter);
@@ -722,7 +725,9 @@ void battle_step(const Input input[2]) {
         fighter->ticks++;
         /* Finisher presentation may keep a generated pose loop after the
          * result; the next round or reset cancels its frame program. */
-        if (fighter->current_mmove != NULL) {
+        if (fighter->retail_vm.active) {
+          retail_vm_step(fighter);
+        } else if (fighter->current_mmove != NULL) {
           fighter_step_mmove(fighter);
         } else if (fighter->sequence != NULL) {
           fighter_step_sequence(fighter);

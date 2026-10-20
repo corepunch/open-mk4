@@ -4,6 +4,7 @@
 
 void battle_bind_assets(const Assets *assets) {
   g_battle.assets = assets;
+  g_battle.retail_scripts = assets != NULL && assets->retail_image.bytes.count != 0 ? &assets->retail_image : NULL;
   for (int i = 0; i < 2; ++i) {
     g_battle.fighters[i].assets = assets;
   }
