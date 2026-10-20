@@ -484,7 +484,7 @@ static void check_spear_interruption(void) {
         Button back = player ? BUTTON_RIGHT : BUTTON_LEFT;
         command(player, back, back, BUTTON_LOW_PUNCH);
         advance_ticks(phase == 0 ? 1 : phase == 1 ? 15 : 27, NULL);
-        check(owner->current_mmove != NULL, "Spear must retain its frame program until interrupted or pull arrival");
+        check(owner->retail_vm.active, "Spear must retain its retail script until interrupted or pull arrival");
         if (phase == 1) {
           check(owner->action == ACTION_RETAIL_1007, "Recovery interruption must reach the 45-tick nested wait");
         } else if (phase == 2) {
@@ -496,7 +496,7 @@ static void check_spear_interruption(void) {
         } else {
           battle_react(owner, 67);
         }
-        check(owner->current_mmove == NULL, "Interrupt must cancel a waiting spear program immediately");
+        check(!owner->retail_vm.active, "Interrupt must cancel a waiting spear program immediately");
         check(victim->state == S_IDLE, "Canceling a pulling spear must release its victim immediately");
         for (int i = 0; i < MAX_PROJECTILES; ++i) {
           check(g_battle.projectiles[i].kind != PROJECTILE_SPEAR, "Cancellation left a live spear object");
@@ -520,10 +520,10 @@ static void check_spear_allocation_and_reset(void) {
     check(battle_spawn_projectile(&g_battle.fighters[1], PROJECTILE_ICE, 100, unused_projectile) != NULL, "Fill the independent object pool");
   }
   command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
-  advance_ticks(60, NULL);
-  check(g_battle.fighters[0].current_mmove != NULL, "Failed projectile allocation must retain the recovery wait");
-  advance_ticks(1, NULL);
-  check(g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[0].state == S_IDLE, "Failed projectile allocation must still retire the spear program");
+  advance_ticks(59, NULL);
+  check(g_battle.fighters[0].retail_vm.active, "Failed projectile allocation must retain the recovery wait");
+  advance_ticks(2, NULL);
+  check(!g_battle.fighters[0].retail_vm.active && g_battle.fighters[0].state == S_IDLE, "Failed projectile allocation must still retire the spear program");
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     check(g_battle.projectiles[i].kind == PROJECTILE_ICE, "Failed spear allocation overwrote another object");
   }
@@ -533,7 +533,7 @@ static void check_spear_allocation_and_reset(void) {
   advance_ticks(27, NULL);
   check(g_battle.fighters[1].action == 0x4000, "Reset must occur during a live spear pull");
   battle_reset_match();
-  check(g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[1].state == S_IDLE,
+  check(!g_battle.fighters[0].retail_vm.active && g_battle.fighters[1].state == S_IDLE,
       "Rematch must cancel the spear program and discard both paired controllers");
   advance_ticks(100, NULL);
   check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE && g_battle.fighters[0].state == S_IDLE,
@@ -547,14 +547,20 @@ static void check_spear_allocation_and_reset(void) {
   g_battle.fighters[1].body.pos[AXIS_X] = 2 * Q16_ONE;
   command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
   command(1, BUTTON_RIGHT, BUTTON_RIGHT, BUTTON_LOW_PUNCH);
-  check(g_battle.fighters[0].current_mmove != NULL && g_battle.fighters[1].current_mmove != NULL, "Mirror spears must have independent waiting programs");
+  check(g_battle.fighters[0].retail_vm.active && g_battle.fighters[1].retail_vm.active, "Mirror spears must have independent waiting programs");
   advance_ticks(45, NULL);
   check(g_battle.fighters[0].health == Q16_ONE && g_battle.fighters[1].health == Q16_ONE - 0xccc && g_battle.fighters[1].action == 0x1008,
       "Earlier spear must cancel the other program and projectile, then finish its victim pull");
-  check(g_battle.fighters[0].current_mmove != NULL && g_battle.fighters[1].current_mmove != NULL,
-      "Mirror pull arrival must start independent return and frame-driven stun");
+  check(g_battle.fighters[0].retail_vm.active && g_battle.fighters[1].retail_vm.active, "Mirror pull arrival must start independent return and native stun");
   advance_ticks(100, NULL);
   check(g_battle.fighters[0].state == S_IDLE && g_battle.fighters[1].state == S_IDLE, "Mirror pull must return both actors without stale waits");
+  /* Our VM cancellation must not park a victim after a lethal spear retires
+   * its projectile. This checks the engine bridge, not retail move balance. */
+  fight(4.f);
+  g_battle.fighters[1].health = 1;
+  command(0, BUTTON_LEFT, BUTTON_LEFT, BUTTON_LOW_PUNCH);
+  advance_ticks(120, NULL);
+  check(g_battle.fighters[1].health == 0 && !g_battle.fighters[1].retail_vm.active, "Lethal spear must not leave a parked victim task");
 }
 
 static void check_specials(void) {
@@ -571,13 +577,12 @@ static void check_specials(void) {
       command(player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
       check(fighter->script_phase == fast, "Spear must select the requested normal/fast startup");
       advance_ticks(fast ? 11 : 15, NULL);
-      check(fighter->action == 0x1007 && fighter->current_mmove != NULL && fighter_sample(fighter) == 30,
+      check(fighter->action == 0x1007 && fighter->retail_vm.active && fighter_sample(fighter) == 30,
           "Spear startup must enter a fresh recovery wait with action 0x1007");
       advance_ticks(44, NULL);
       check(fighter->state == S_PUNCH && fighter_sample(fighter) == 30, "Spear recovery returned before its 45-tick wait");
       advance_ticks(2, NULL);
-      check(fighter->state == S_IDLE && fighter->current_mmove == NULL,
-          "Normal and fast spear must each retire after its 45-tick recovery and tagged return wait");
+      check(fighter->state == S_IDLE && !fighter->retail_vm.active, "Normal and fast spear must each retire after its 45-tick recovery and tagged return wait");
     }
   }
   for (int player = 0; player < 2; ++player) {
@@ -590,11 +595,11 @@ static void check_specials(void) {
     }
     Fighter *fighter = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
     command(player, player ? BUTTON_RIGHT : BUTTON_LEFT, player ? BUTTON_RIGHT : BUTTON_LEFT, BUTTON_LOW_PUNCH);
-    check(fighter->current_move->clip == 14 && fighter->current_mmove != NULL, "B,B,LP must enter spear for either player");
+    check(fighter->current_move->clip == 14 && fighter->retail_vm.active, "B,B,LP must enter spear for either player");
     advance_ticks(45, NULL);
     check(victim->health == Q16_ONE - 0xccc && fighter_distance(fighter) < 0.9f, "Spear must damage once and pull into follow-up range");
     check(victim->action == 0x1008 && victim->damage_scale == 0x9999, "Spear must leave scaled combo stun");
-    check(fighter->current_mmove != NULL && victim->current_mmove != NULL, "Pull arrival must start independent return and frame-driven stun");
+    check(fighter->retail_vm.active && victim->retail_vm.active, "Pull arrival must start independent return and native stun");
     advance_ticks(100, NULL);
     check(fighter->state == S_IDLE && victim->state == S_IDLE, "Spear must release both fighters");
     for (int i = 0; i < MAX_PROJECTILES; ++i) {

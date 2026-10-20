@@ -55,7 +55,7 @@ class PortTests(unittest.TestCase):
         for value in ('clone_start', 'clone_object', '0x6147', 'ACTION_RETAIL_0406', 'Native move: no VM script root'):
             self.assertIn(value, clone)
         spear = port_text(self.disassembly, 'spear')
-        self.assertIn('fighter_mmove_phase(fighter, &retail_script_004ed448_branch_', spear)
+        self.assertIn('scorpion_try_retail_vm(fighter, 0x4ed448)', spear)
         self.assertIn('scheduler wait; ticks=45', spear)
         self.assertIn('script_spear_return', spear)
         self.assertIn('Typed compiler boundaries', spear)

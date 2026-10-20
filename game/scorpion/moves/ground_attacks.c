@@ -50,9 +50,6 @@ void scorpion_ground_attack(Fighter *fighter, int index) {
   static const FighterFn scripts[] = {scorpion_entry_retail_script_004e6d08, scorpion_ground_native_tail, scorpion_entry_retail_script_004e6158,
       scorpion_entry_retail_script_004e60b8, scorpion_entry_retail_script_004e61e0, scorpion_entry_retail_script_004e69b0,
       scorpion_entry_retail_script_004e6190, scorpion_entry_retail_script_004e6844};
-  if ((index == G_LOW_KICK && scorpion_try_retail_vm(fighter, 0x4e6d08)) || (index == G_CROUCH_HK && scorpion_try_retail_vm(fighter, 0x4e60b8))) {
-    return;
-  }
   scripts[index](fighter);
 }
 

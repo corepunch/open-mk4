@@ -52,7 +52,7 @@ class ActionTests(unittest.TestCase):
     def test_portable_navigation_unknown_and_limit(self):
         entries = catalog()
         refs = '\n'.join(portable_references(0x1007, entries))
-        self.assertIn('game/scorpion/generated/scripts.inc:', refs)
+        self.assertIn('game/retail_vm.c:', refs)
         self.assertIn('game/sub_zero/generated/scripts.inc:', refs)
         self.assertIn('ACTION_RETAIL_1007', refs)
         self.assertIn('**reader**', '\n'.join(portable_references(0x1003, entries)))

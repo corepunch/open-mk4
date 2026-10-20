@@ -105,24 +105,34 @@ post-processing.
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
 end-to-end research, frame-program implementation, validation and commit procedure.
 
-Start character ports with
-`python3 tools/compile_retail.py --character NAME --inventory` and
-`--audit --summary`. Generate supported VM bodies through the
-compiler; do not manually transcribe them into C. Add typed native bindings or
-a missing lowering once, reusing existing engine helpers. Use bounded
-`tools/disassemble_retail.py --character NAME --move MOVE`, `--script`,
-`--native` and `--attack` queries only for unresolved boundaries. See
-`docs/script-decoder.md`. Use these static queries and the existing `build/retail-disassembly/` bundle as the primary source for
-character ports. Full bundle generation requires explicit `--bundle`; do not
-regenerate bulk dumps for routine move research.
-Keep native adapters and move entries in `game/<character>/moves/`.
-Each move compiles as a separate C11 source with file-local helpers and data.
-Expose only required cross-file entries in the private `character.h`;
-`character.c` owns roster and generated-script integration.
-Keep its reviewed `port.json` and compiler-generated C in that same folder. Run
-`make scripts-check` and the strict coverage audit; new ports also require
-`--require-generated`. Consult native listings and the included reference
-source for unresolved called helpers.
+Scorpion is migrating to direct retail script execution. Run original words
+through the shared C11 interpreter; do not translate branches, waits, loops or
+animation commands into generated C, frame rows or handwritten move logic.
+Extend a missing opcode once and reuse the existing native engine helpers for
+retail native calls. Script data must remain the source of script behavior.
+Remove generated roots, tables and adapters as their last callers migrate.
+Per-fighter/per-move C folders are transitional organization for remaining
+native implementations, not a required end-state architecture.
+
+Start research with `tools/compile_retail.py --character NAME --inventory` and
+`--audit --summary`. Use bounded `tools/disassemble_retail.py --character NAME
+--move MOVE`, `--script`, `--native` and `--attack` queries for unresolved
+boundaries; consult the existing `build/retail-disassembly/` material first.
+Full bundle generation requires explicit `--bundle`; do not regenerate bulk
+dumps for routine move research. Consult native listings and reference source
+for unresolved helpers. See `docs/research/retail-vm.md` and
+`docs/script-decoder.md`.
+
+Other fighters retain their generated implementations until migrated. Keep
+reviewed `port.json` coverage current, distinguishing interpreted roots from
+generated and legacy bodies. Run `make scripts-check` and the strict
+`--require-implemented` audit. Neither runtime registration nor generated
+coverage alone proves native gameplay parity. Trust retail script control flow
+and data. Test interpreter opcode semantics and native/lifetime integration once;
+reuse existing move regressions instead of adding per-move timing/damage matrices.
+Run focused checks during migration and the full suite at meaningful shared
+runtime boundaries, not repeatedly for each move.
+
 Preserve move timing, command gates, branches, damage and balance intent while
 using our engine's own implementation and state boundaries. Binary identity,
 exact retail scheduler emulation and per-tick trace identity are not goals.

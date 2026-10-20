@@ -40,7 +40,7 @@ $(SCRIPT_CHECK_TARGETS): scripts-check-%:
 	python3 tools/compile_retail.py --character $* --generate --check
 	python3 tools/retail_controls.py --character $* --check
 $(SCRIPT_AUDIT_TARGETS): scripts-audit-%:
-	python3 tools/compile_retail.py --character $* --audit --strict --summary --require-generated
+	python3 tools/compile_retail.py --character $* --audit --strict --summary --require-implemented
 
 format:
 	$(CLANG_FORMAT) --style=file -i $(FORMAT_FILES)

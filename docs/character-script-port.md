@@ -1,4 +1,15 @@
-# Porting a character's scripts to C
+# Direct retail execution migration
+
+Current Scorpion work runs original script words in `game/retail_vm.c`.
+Do not re-express script control flow as C or frame programs. Keep native calls
+in procedural C and reuse existing helpers; C module boundaries may shrink as
+scripts replace their generated bodies. The historical compiler workflow below
+still applies to fighters that have not migrated. The strict coverage gate now
+uses `--require-implemented`, accepting reviewed interpreted or generated roots
+while rejecting duplicate, legacy and unreviewed implementations. See
+[the runtime evidence and migration ledger](research/retail-vm.md).
+
+# Historical compiler workflow
 
 Retail scripts and their native continuations are the specification. Generate
 VM control flow with `tools/compile_retail.py`; preserve commands, branches,

@@ -484,6 +484,22 @@ class CompilerTests(unittest.TestCase):
                 self.assertFalse(generated - selected, 'Generated entries must survive the final fighter-specific catalog overrides')
                 self.assertEqual(profile['inventory_sha256'], fingerprint(inventory(self.image, character)))
 
+    def test_runtime_roots_require_live_registration_and_no_generated_duplicate(self):
+        import copy
+        from retail_coverage import audit as coverage_audit, profile_for
+        profile = profile_for(0)
+        report = coverage_audit(self.image, 0)
+        self.assertEqual(report['coverage_errors'], [])
+        self.assertEqual(report['runtime'], len(profile['runtime_scripts']))
+        broken = copy.deepcopy(profile)
+        broken['generated_scripts'].append('0x4ed448')
+        self.assertTrue(any('retains a generated' in error for error in coverage_audit(self.image, 0, profile=broken)['coverage_errors']))
+        broken = copy.deepcopy(profile)
+        broken['runtime_scripts']['0x4ed448'].update(source='game/scorpion/moves/spear.c', symbol='scorpion_spear')
+        self.assertTrue(any('does not contain the decoded graph' in error for error in coverage_audit(self.image, 0, profile=broken)['coverage_errors']))
+        struct.pack_into('<I', self.image.memory, 0x4ed448 - 0x400000, 0xff000000)
+        self.assertTrue(any('runtime opcode is unsupported' in error for error in coverage_audit(self.image, 0)['coverage_errors']))
+
     def test_reviewed_audit_skips_zeroed_cpu_rows(self):
         from unittest.mock import patch
         from retail_coverage import audit as coverage_audit, profile_for, inventory, fingerprint

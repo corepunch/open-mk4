@@ -1,5 +1,15 @@
 # Deterministic retail script compiler
 
+Scorpion is moving to direct script execution. `port.json.runtime_scripts`
+registers interpreted roots; generation omits them. The strict audit checks
+that their decoded graphs fit live interpreter registrations and use supported
+opcodes, rejects generated/runtime duplicates, and retains existing gameplay
+boundary checks. `--require-implemented` requires every root to be generated
+or interpreted, without legacy/unreviewed bodies. `--require-generated` retains
+its stricter generated-only meaning for unmigrated ports. Runtime registration is a static coverage check, not a
+substitute for behavioral tests. See [the migration ledger](research/retail-vm.md).
+
+
 `tools/compile_retail.py` lowers the existing decoder's selected graph to
 ordinary C11 fighter functions. It reads the pinned EXE, specializes character
 selectors, preserves explicit branch/fallthrough targets, and emits exact contact

@@ -50,7 +50,7 @@ Validate real move entries, hit/block/miss, bounded recovery, both actor slots,
 interruption and reset. This is not a claim of retail per-tick scheduler identity,
 full Scorpion coverage, generic tagged returns or paired-task support.
 
-## Implemented prototype
+## Initial prototype (historical)
 
 `game/retail_vm.c` reads the relocated image directly. It implements only the
 operations reached by the two reviewed roots. `game/scorpion/moves/retail_vm.c`
@@ -95,3 +95,41 @@ of the compiler or completion of the Scorpion port.
 - The runtime test rebuilt with C11, `-Werror -pedantic-errors`, ASan and UBSan
   and passed, including real asset ownership/binding and teardown.
 - `git diff --check` passed. No original asset files or upstream sources changed.
+
+## Spear migration
+
+Migrated retail roots: low kick 0x4e6d08, crouching high kick 0x4e60b8,
+spear startup 0x4ed448, owner return 0x4ed4a8, captured victim 0x4e9d00,
+and stun victim 0x4e9f20. Their generated C/frame programs are removed. Scorpion's standalone generic
+clip frame atlas also had no consumers and is removed; its generator no longer
+recreates atlases for modules that do not include one.
+Rule-only tests now use an immutable default EXE cache when no host image is
+bound; migrated roots never fall back to generated programs.
+
+The shared VM executes the source fast-start branch, two-sample playback,
+task-spawn operand, 45-tick recovery wait, and victim clip/return operations.
+It reads the spear attack record from retail data at 0x4ebeb8. Existing native
+spear helpers still own projectile flight, contact, pull movement, arrival,
+combo scaling, stun/cooldown and cleanup. Those routines were native in retail;
+the migration does not move their behavior into invented scripts. Native waits
+now suspend the VM directly instead of constructing frame rows. Cleanup is
+detached before invocation and cancels committed victim work on interruption.
+Lethal contacts retain the ordinary defeated reaction instead of parking a
+victim after the round retires projectile objects.
+
+Bounded local queries inspected 0x49a680, 0x486000, 0x487420 and 0x45b1f0.
+The native stun owns its 0x40 countdown; the script owns clip 13 and the tail
+call. No synthetic VM body or retail-execution harness was introduced.
+
+`port.json.runtime_scripts` and `--require-implemented` distinguish interpreted
+roots from generated roots, reject duplicates and verify decoded bounds/opcodes.
+The remaining compiler bindings and generated paths stay for unmigrated moves.
+The old per-fighter folders are not the intended final script representation.
+
+Validation policy: trust the retail scripts rather than re-test their authored
+balance and frame timing. Verify shared interpreter semantics and our native /
+actor lifetime boundaries, reuse existing move regressions, and avoid duplicate
+per-move matrices. Full opcode coverage is necessary but does not by itself
+verify native function contracts. Redundant new spear scenarios were removed;
+the existing spear regressions now exercise the VM and a small lethal-contact
+regression protects our cleanup bridge.

@@ -173,16 +173,6 @@
       "return_to": "mk4_script_thrown_ready",
       "sample": 5
     },
-    "0x4ed448": {
-      "evidence": "Native owner policy waits for a committed spear pull after VM recovery",
-      "return_to": "script_spear_done"
-    },
-    "0x4ed4a8": {
-      "clip": 14,
-      "count": 80,
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "sample": 31
-    },
     "0x4e6950": {
       "clip": 293,
       "count": 20,
@@ -223,7 +213,6 @@
     "0x4e5ca0",
     "0x4e5e28",
     "0x4e5e50",
-    "0x4e60b8",
     "0x4e6158",
     "0x4e6190",
     "0x4e61e0",
@@ -247,7 +236,6 @@
     "0x4e6878",
     "0x4e6950",
     "0x4e69b0",
-    "0x4e6d08",
     "0x4e87b0",
     "0x4e8818",
     "0x4e8850",
@@ -255,12 +243,8 @@
     "0x4e9910",
     "0x4e9938",
     "0x4e9970",
-    "0x4e9d00",
-    "0x4e9f20",
     "0x4ec8b0",
-    "0x4ec918",
-    "0x4ed448",
-    "0x4ed4a8"
+    "0x4ec918"
   ],
   "integration_source": "game/scorpion/character.c",
   "inventory_sha256": "b515bb4b7f8a397f24a1ca654d281474963279863da9190d8e59c47eeb49d787",
@@ -687,5 +671,37 @@
     "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
     "source": "game/scorpion/character.c",
     "symbol": "sword"
+  },
+  "runtime_scripts": {
+    "0x4e6d08": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e60b8": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4ed448": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4ed4a8": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e9d00": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    },
+    "0x4e9f20": {
+      "source": "game/scorpion/moves/retail_vm.c",
+      "symbol": "scorpion_try_retail_vm",
+      "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c"
+    }
   }
 }

@@ -1,6 +1,26 @@
 #include "retail_vm.h"
 #include "script.h"
 
+/* Rule-only clients still execute retail words. The game supplies its selected
+ * image through assets; this immutable cache owns the default test image. */
+const Mk4Image *retail_vm_image(void) {
+  static Mk4Image image;
+  if (g_battle.retail_scripts != NULL) {
+    return g_battle.retail_scripts;
+  }
+  if (image.bytes.data == NULL) {
+    image = mk4_image_load("MK4/MK-4.EXE");
+  }
+  return &image;
+}
+
+void retail_vm_wait_native(Fighter *fighter, unsigned ticks, FighterFn next) {
+  require(fighter->retail_vm.active, "Native wait without a retail task");
+  fighter->retail_vm.parked = true;
+  fighter->retail_vm.native_resume = next;
+  fighter->retail_vm.wake = g_battle.ticks + ticks;
+}
+
 static _Noreturn void vm_error(const Fighter *fighter, const char *message) {
   fatal("Retail VM at %08x (next %08x): %s", fighter->retail_vm.instruction, fighter->retail_vm.pc, message);
 }
@@ -17,15 +37,18 @@ static uint32_t fetch(Fighter *fighter) {
 
 static void finish(Fighter *fighter) {
   FighterFn next = fighter->retail_vm.finish;
-  retail_vm_cancel(fighter);
   next(fighter);
 }
 
 void retail_vm_cancel(Fighter *fighter) {
   if (fighter->retail_vm.active) {
+    FighterFn cleanup = fighter->retail_vm.cleanup;
     fighter->retail_vm = (RetailVm){0};
     fighter->avoids_high = false;
     fighter->continuation++;
+    if (cleanup != NULL) {
+      cleanup(fighter);
+    }
   }
 }
 
@@ -64,6 +87,7 @@ static void play(Fighter *fighter, int target, bool inclusive) {
   if (target < 0 || target > fighter_move(fighter)->last) {
     vm_error(fighter, "playback target outside clip");
   }
+  vm->stride = 1;
   vm->target = target;
   vm->direction = target >= current ? 1 : -1;
   vm->play_ticks = (target >= current ? target - current : current - target) + (inclusive ? 1 : 0);
@@ -73,6 +97,14 @@ static void play(Fighter *fighter, int target, bool inclusive) {
 void retail_vm_reverse_return(Fighter *fighter) {
   play(fighter, 0, true);
   fighter->retail_vm.return_after_play = true;
+}
+
+AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
+  require(address >= 0x4eb000 && address <= 0x4ec000 - 24, "Attack record outside reviewed retail data");
+  uint32_t reactions = mk4_image_u32(image, address + 16);
+  return (AttackRecord){(q16)mk4_image_u32(image, address), (q16)mk4_image_u32(image, address + 4), (q16)mk4_image_u32(image, address + 8),
+      (q16)mk4_image_u32(image, address + 12), reactions & 255u, (reactions >> 8) & 255u, (reactions >> 16) & 255u, reactions >> 24,
+      (q16)mk4_image_u32(image, address + 20)};
 }
 
 static void contact(Fighter *fighter, unsigned selector) {
@@ -85,11 +117,7 @@ static void contact(Fighter *fighter, unsigned selector) {
   if (packed < 0x4eb000 / 4 || packed > (0x4ec000 - 24) / 4) {
     vm_error(fighter, "contact record outside reviewed data");
   }
-  uint32_t address = packed * 4;
-  uint32_t reactions = mk4_image_u32(vm->image, address + 16);
-  AttackRecord record = {(q16)mk4_image_u32(vm->image, address), (q16)mk4_image_u32(vm->image, address + 4), (q16)mk4_image_u32(vm->image, address + 8),
-      (q16)mk4_image_u32(vm->image, address + 12), reactions & 255u, (reactions >> 8) & 255u, (reactions >> 16) & 255u, reactions >> 24,
-      (q16)mk4_image_u32(vm->image, address + 20)};
+  AttackRecord record = retail_vm_attack_record(vm->image, packed * 4);
   uint64_t continuation = fighter->continuation;
   ContactResult result = battle_contact(fighter, &record);
   if (vm->active && fighter->continuation == continuation) {
@@ -104,6 +132,10 @@ void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, ui
   fighter->sequence = NULL;
   fighter->retail_vm = (RetailVm){.image = image, .pc = begin, .begin = begin, .end = end, .active = true, .finish = next, .native = native};
   fighter->continuation++;
+  const MoveDef *move = fighter_move(fighter);
+  if (move->clip >= 0 && move->last == MOVE_END && fighter->sample_override >= 0) {
+    bind(fighter, (0x4fad7c + (uint32_t)move->clip * 12) / 4, fighter->sample_override);
+  }
   retail_vm_step(fighter);
 }
 
@@ -112,10 +144,20 @@ void retail_vm_step(Fighter *fighter) {
   if (!vm->active || g_battle.ticks < vm->wake) {
     return;
   }
+  if (vm->parked) {
+    FighterFn next = vm->native_resume;
+    if (next != NULL) {
+      vm->native_resume = NULL;
+      vm->parked = false;
+      next(fighter);
+    }
+    return;
+  }
   if (vm->play_ticks > 0) {
     int pose = fighter_sample(fighter);
     if (pose != vm->target) {
-      sample(fighter, pose + vm->direction);
+      int distance = vm->target >= pose ? vm->target - pose : pose - vm->target;
+      sample(fighter, distance <= vm->stride ? vm->target : pose + vm->direction * vm->stride);
     }
     vm->play_ticks--;
     if (vm->play_ticks > 0) {
@@ -134,12 +176,25 @@ void retail_vm_step(Fighter *fighter) {
     switch (opcode) {
       case 0x02:
       case 0x09:
+      case 0x11:
       case 0x0f: {
-        bind(fighter, fetch(fighter), opcode == 9 ? -1 : opcode == 0x0f ? (int)arg : 0);
+        bind(fighter, fetch(fighter), opcode == 9 ? -1 : (opcode == 0x0f || opcode == 0x11) ? (int)arg : 0);
         if (opcode == 0x02) {
           play(fighter, (int)arg, false);
         } else if (opcode == 9) {
           play(fighter, 0, true);
+        }
+        break;
+      }
+      case 0x04:
+      case 0x19:
+      case 0x4d: {
+        int current = fighter_sample(fighter);
+        int target = opcode == 0x4d ? (int)arg : current + (int)arg;
+        play(fighter, target, false);
+        if (opcode != 0x04) {
+          vm->stride = 2;
+          vm->play_ticks = (target - current + 1) / 2;
         }
         break;
       }
@@ -157,7 +212,9 @@ void retail_vm_step(Fighter *fighter) {
         vm->selector = fetch(fighter);
         break;
       case 0x20:
-        battle_sound(SOUND_A, (int)arg);
+      case 0x27:
+      case 0x2b:
+        battle_sound(opcode == 0x20 ? SOUND_A : opcode == 0x27 ? SOUND_C : SOUND_B, (int)arg);
         break;
       case 0x24:
         mk4_script_attack_return(fighter);
@@ -165,6 +222,10 @@ void retail_vm_step(Fighter *fighter) {
       case 0x29:
         fighter->action = ACTION_RETAIL_1006;
         break;
+      case 0x2d:
+        fighter->action = ACTION_RETAIL_1007;
+        break;
+      case 0x3f:
       case 0x30:
         /* These roots entered from the controller; this is their explicit
          * return continuation, not a general retail tagged-stack emulation. */
@@ -173,8 +234,38 @@ void retail_vm_step(Fighter *fighter) {
       case 0x32:
       case 0x35: {
         uint32_t address = fetch(fighter);
-        if (!vm->native(fighter, address, opcode == 0x32)) {
+        if (!vm->native(fighter, address, opcode == 0x32 ? RETAIL_TAIL : RETAIL_CALL, 0)) {
           vm_error(fighter, "unreviewed native binding");
+        }
+        break;
+      }
+      case 0x25:
+      case 0x26:
+        mk4_script_indexed_sound(fighter, (int)arg);
+        break;
+      case 0x62:
+        mk4_script_effect(fighter, (int)arg);
+        break;
+      case 0x40: {
+        unsigned type = fetch(fighter);
+        uint32_t address = fetch(fighter);
+        if (!vm->native(fighter, address, RETAIL_SPAWN, type)) {
+          vm_error(fighter, "unreviewed task binding");
+        }
+        break;
+      }
+      case 0x41:
+        if (!vm->native(fighter, 0x45b1f0, RETAIL_HANDLER, arg)) {
+          vm_error(fighter, "unreviewed reaction binding");
+        }
+        break;
+      case 0x45: {
+        uint32_t packed = fetch(fighter);
+        if (fighter_fast_start(fighter)) {
+          if (packed < vm->begin / 4 || packed >= vm->end / 4) {
+            vm_error(fighter, "script branch outside reviewed range");
+          }
+          vm->pc = packed * 4;
         }
         break;
       }
@@ -212,7 +303,7 @@ void retail_vm_step(Fighter *fighter) {
       default:
         vm_error(fighter, "unsupported opcode");
     }
-    if (!vm->active || fighter->pending != NULL) {
+    if (!vm->active || vm->parked || fighter->pending != NULL) {
       return;
     }
     if (vm->play_ticks > 0 || g_battle.ticks < vm->wake) {

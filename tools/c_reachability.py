@@ -166,7 +166,7 @@ def unreachable_references(profile, compiled_graphs=None):
     reached = graph.reachable(['mk4_' + profile['character']], stop={'roster'})
     errors = []
     references = []
-    for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings'):
+    for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings', 'runtime_scripts'):
         references.extend((section + ' ' + label, ref) for label, ref in profile.get(section, {}).items())
     if profile.get('controls_output'):
         references.append(('runtime command table', {'source': profile['integration_source'], 'symbol': 'retail_commands'}))

@@ -7,6 +7,7 @@ no operand is called Q16, damage, action or a host pointer just from its number.
 from collections import deque
 from c_source import read_source, source_files, function_source
 import re
+import json
 
 from character_catalog import moves_for, character_name
 from retail_actions import catalog, native_evidence, NATIVE
@@ -87,7 +88,12 @@ SPECIFIC = {
 for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub_zero')):
     for _name, _move in moves_for(_character).items():
         if _move['scripts'] and (_character not in (1, 2) or _name not in SPECIFIC[_character]):
-            SPECIFIC[_character][_name] = ('game/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _move['scripts'][0][1])
+            _root = _move['scripts'][0][1]
+            _profile = json.loads((ROOT / 'game' / _slug / 'port.json').read_text())
+            if hex(_root) in _profile.get('runtime_scripts', {}):
+                SPECIFIC[_character][_name] = ('game/%s/character.c' % _slug, '%s_entry_retail_script_%08x' % (_slug, _root))
+            else:
+                SPECIFIC[_character][_name] = ('game/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _root)
 
 
 PORT_NOTES = {

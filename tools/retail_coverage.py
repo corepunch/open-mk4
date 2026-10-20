@@ -137,12 +137,29 @@ def audit(image, character, return_to=None, profile=None):
             root_names.setdefault(entry, []).append('%s: %s' % (name, role))
     generated = {int(entry, 16) for entry in (profile or {}).get('generated_scripts', [])}
     legacy = (profile or {}).get('legacy_scripts', {})
+    runtime = (profile or {}).get('runtime_scripts', {})
     contexts = (profile or {}).get('entry_contexts', {})
     for entry in contexts.keys() - {hex(root) for root in generated}:
         errors.append('%s: stale generated entry context' % entry)
     scripts = []
     compiled_graphs = {}
     for entry, names in sorted(root_names.items()):
+        if hex(entry) in runtime:
+            reference = runtime[hex(entry)]
+            check_reference(reference, errors, 'runtime script ' + hex(entry))
+            program = script_program(image, entry, character)
+            compiled_graphs[entry] = {int(row['va'], 16) for row in program['instructions']}
+            source = read_source(ROOT / reference['source'])
+            match = re.search(r'case\s+0x0*' + format(entry, 'x') + r':\s*end\s*=\s*(0x[0-9a-f]+)', source)
+            end = int(match[1], 16) if match else entry
+            if any(int(row['va'], 16) < entry or int(row['va'], 16) + 4 * (1 + len(row.get('operands', []))) > end
+                   for row in program['instructions']):
+                errors.append('%s: runtime registration does not contain the decoded graph' % hex(entry))
+            supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/retail_vm.c').read_text())}
+            if any(int(row['opcode'], 16) not in supported for row in program['instructions']):
+                errors.append('%s: runtime opcode is unsupported' % hex(entry))
+            scripts.append(dict(entry=hex(entry), moves=names, status='interpreted', implementation='runtime', diagnostics=[]))
+            continue
         try:
             program, _ = compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', continuation), contexts.get(hex(entry)))
             status, diagnostics = 'compilable', []
@@ -162,6 +179,10 @@ def audit(image, character, return_to=None, profile=None):
         errors.append('%s: generation entry is outside the selected catalog' % hex(entry))
     for entry in set(legacy) - {hex(root) for root in root_names}:
         errors.append('%s: stale legacy script boundary' % entry)
+    for entry in set(runtime) - {hex(root) for root in root_names}:
+        errors.append('%s: stale runtime script boundary' % entry)
+    for entry in set(runtime) & ({hex(root) for root in generated} | set(legacy)):
+        errors.append('%s: runtime script retains a generated or legacy body' % entry)
     for entry in {hex(root) for root in generated} & set(legacy):
         errors.append('%s: script cannot be both generated and legacy' % entry)
     event_names = {table['button'] for table in observed['inputs']}
@@ -270,12 +291,13 @@ def audit(image, character, return_to=None, profile=None):
                 stances=observed['stances'], weapon=observed['weapon'], reactions=observed['reactions'],
                 compilable=sum(row['status'] == 'compilable' for row in scripts), total=len(scripts),
                 generated=sum(row['implementation'] == 'generated' for row in scripts),
+                runtime=sum(row['implementation'] == 'runtime' for row in scripts),
                 legacy=sum(row['implementation'] == 'legacy' for row in scripts), coverage_errors=sorted(set(errors)))
 
 
 def summary(report):
-    lines = ['%s: %d generated, %d legacy VM roots; %d/%d graphs compilable.' %
-             (report['character'], report['generated'], report['legacy'], report['compilable'], report['total']),
+    lines = ['%s: %d generated, %d interpreted, %d legacy VM roots; %d/%d graphs compilable.' %
+             (report['character'], report['generated'], report.get('runtime', 0), report['legacy'], report['compilable'], report['total']),
              '%d input event tables, %d CPU rows, %d stance tables, %d reactions (contacts and VM dispatch).' %
              (len(report['inputs']), len(report['cpu']), len(report['stances']), len(report['reactions'])),
              '%d coverage errors. Legacy bodies do not count as generated.' % len(report['coverage_errors'])]

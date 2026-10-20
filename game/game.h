@@ -479,16 +479,23 @@ enum {
   AXIS_Z
 };
 
-typedef bool (*RetailNativeFn)(Fighter *fighter, uint32_t address, bool tail);
+typedef enum RetailNativeKind {
+  RETAIL_CALL,
+  RETAIL_TAIL,
+  RETAIL_SPAWN,
+  RETAIL_HANDLER
+} RetailNativeKind;
+
+typedef bool (*RetailNativeFn)(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument);
 
 typedef struct RetailVm {
   const Mk4Image *image; /* borrowed immutable data, owned by assets or the caller */
   uint32_t pc, begin, end, instruction;
   uint64_t wake;
   unsigned result, selector, loop_count;
-  int play_ticks, target, direction;
-  bool active, return_after_play;
-  FighterFn finish;
+  int play_ticks, target, direction, stride;
+  bool active, return_after_play, parked;
+  FighterFn finish, cleanup, native_resume;
   RetailNativeFn native;
 } RetailVm;
 

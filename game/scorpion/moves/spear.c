@@ -1,18 +1,17 @@
 #include "../character.h"
 #include <math.h>
+#include "retail_vm.h"
 
 static bool spear_not_pulling(const Fighter *fighter);
 static void spear_cleanup(Fighter *fighter);
 static void spear_projectile(Projectile *p);
 static void spear_spawn(Fighter *fighter);
-static void spear_wait_done(Fighter *fighter);
-static const AttackRecord spear_record = {0x3333, -0x1eb8, 0x947a, 0x3ae1, 70, 70, 112, ATTACK_MARK, 0xccc};
 static const MoveDef s_spear = {.clip = 14, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0300};
 static const MoveDef s_snared = {.clip = 199, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4000};
 static const MoveDef s_spear_stun = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1008};
 
 void scorpion_spear_stun_script(Fighter *fighter) {
-  native_hold(fighter, 64, scorpion_special_ready);
+  retail_vm_wait_native(fighter, 64, scorpion_special_ready);
 }
 
 static bool spear_not_pulling(const Fighter *fighter) {
@@ -25,7 +24,7 @@ static bool spear_not_pulling(const Fighter *fighter) {
   return true;
 }
 
-/* Runs when the spear frame program is cancelled or completes. Pull
+/* Runs when the spear task is cancelled or completes. Pull
  * arrival installs stun before replacing the owner's move, so that victim
  * is already released from s_snared and must retain its follow-up opening. */
 static void spear_cleanup(Fighter *fighter) {
@@ -45,7 +44,7 @@ static void spear_cleanup(Fighter *fighter) {
 
 static void spear_projectile(Projectile *p) {
   Fighter *owner = &g_battle.fighters[p->owner], *victim = scorpion_opponent(owner);
-  bool interrupted = fighter_move(owner)->clip != 14 || owner->current_mmove == NULL || owner->pending != NULL;
+  bool interrupted = fighter_move(owner)->clip != 14 || !owner->retail_vm.active || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && fighter_move(victim)->clip == 199) {
       scorpion_special_ready(victim);
@@ -68,8 +67,8 @@ static void spear_projectile(Projectile *p) {
       scorpion_entry_retail_script_004e9f20(victim);
       fighter_start_move(owner, S_PUNCH, &s_spear);
       owner->sample_override = 31;
-      owner->mmove_cleanup = spear_cleanup;
       scorpion_entry_retail_script_004ed4a8(owner);
+      owner->retail_vm.cleanup = spear_cleanup;
       p->kind = 0;
     } else {
       victim->body.pos[AXIS_X] -= q16_mul(p->heading[0], 0x3333);
@@ -93,8 +92,13 @@ static void spear_projectile(Projectile *p) {
   for (int k = 0; k < 3; ++k) {
     p->pos[k] += p->vel[k];
   }
-  ContactResult result = battle_contact_from(owner, &spear_record, p->pos, p->facing);
-  if (result == CONTACT_HIT || result == CONTACT_AIR_HIT) {
+  AttackRecord record = retail_vm_attack_record(retail_vm_image(), 0x4ebeb8);
+  ContactResult result = battle_contact_from(owner, &record, p->pos, p->facing);
+  if ((result == CONTACT_HIT || result == CONTACT_AIR_HIT) && victim->health <= 0) {
+    /* Retain the lethal contact's ordinary reaction; no live pull may park
+     * the defeated controller after the round retires projectile objects. */
+    p->kind = 0;
+  } else if (result == CONTACT_HIT || result == CONTACT_AIR_HIT) {
     scorpion_stop_body(victim);
     fighter_start_move(victim, S_HIT, &s_snared);
     victim->sample_override = 0;
@@ -137,26 +141,21 @@ void scorpion_spear(Fighter *fighter) {
   fighter->script_phase = followup;
   fighter->sample_override = followup ? 9 : 0;
   fighter->spear_ready = g_battle.ticks + 90;
-  fighter->mmove_cleanup = spear_cleanup;
   scorpion_entry_retail_script_004ed448(fighter);
-}
-
-static void spear_wait_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, scorpion_special_ready);
+  fighter->retail_vm.cleanup = spear_cleanup;
 }
 
 void scorpion_script_spear_done(Fighter *fighter) {
   if (spear_not_pulling(fighter)) {
     scorpion_special_ready(fighter);
   } else {
-    fighter->mmove_cleanup = spear_cleanup;
-    native_await(fighter, spear_not_pulling, spear_wait_done);
+    retail_vm_wait_native(fighter, 1, scorpion_script_spear_done);
   }
 }
 
 void scorpion_script_spear_return(Fighter *fighter) {
   fighter->spear_ready = g_battle.ticks + 90;
-  fighter_finish_mmove(fighter, scorpion_special_ready);
+  scorpion_special_ready(fighter);
 }
 
 void scorpion_script_spawn_spear(Fighter *fighter, int type) {
@@ -166,7 +165,5 @@ void scorpion_script_spawn_spear(Fighter *fighter, int type) {
 
 void scorpion_script_spear_pull(Fighter *fighter) {
   fighter->damage_scale = 0x9999;
-  native_begin(fighter, 0, 0, NULL);
-  fighter->native.frames[0].thinkfunc = mk4_mmove_hold;
-  native_play(fighter, false);
+  retail_vm_wait_native(fighter, 0, NULL);
 }

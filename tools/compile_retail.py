@@ -29,7 +29,8 @@ def main(argv=None):
     parser.add_argument('--output', type=Path)
     parser.add_argument('--check', action='store_true', help='compare output without writing')
     parser.add_argument('--strict', action='store_true', help='audit fails for unreviewed roots, missing adapters or changed inventory')
-    parser.add_argument('--require-generated', action='store_true', help='also fail audit when any catalogued VM root remains legacy/unreviewed')
+    parser.add_argument('--require-generated', action='store_true', help='require every catalogued root to use generated C')
+    parser.add_argument('--require-implemented', action='store_true', help='require generated or interpreted roots, with no legacy/unreviewed bodies')
     parser.add_argument('--summary', action='store_true', help='compact audit report; default is detailed JSON')
     args = parser.parse_args(argv)
     try:
@@ -47,16 +48,17 @@ def main(argv=None):
                 args.output = ROOT / profile['output']
         if args.check and not args.output:
             raise ValueError('--check requires --output')
-        if (args.summary or args.require_generated) and not args.audit:
-            raise ValueError('--summary/--require-generated require --audit')
+        if (args.summary or args.require_generated or args.require_implemented) and not args.audit:
+            raise ValueError('--summary/--require-generated/--require-implemented require --audit')
         if args.strict and not args.audit:
             raise ValueError('--strict requires --audit')
         image = RetailImage(args.exe)
         if args.audit:
             report = audit(image, args.character, args.return_to)
             output = summary(report) if args.summary else json.dumps(report, indent=2, sort_keys=True) + '\n'
-            status = 1 if (((args.strict or args.require_generated) and report['coverage_errors']) or
-                           (args.require_generated and report['generated'] != report['total'])) else 0
+            status = 1 if (((args.strict or args.require_generated or args.require_implemented) and report['coverage_errors']) or
+                           (args.require_generated and report['generated'] != report['total']) or
+                           (args.require_implemented and report['generated'] + report.get('runtime', 0) != report['total'])) else 0
         elif args.inventory:
             output = json.dumps(inventory(image, args.character), indent=2, sort_keys=True) + '\n'
             status = 0

@@ -79,6 +79,13 @@ def main():
             errors.append("unknown character: " + character)
             continue
         target = ROOT / "game" / character / "generated/frames.inc"
+        if '#include "generated/frames.inc"' not in source.read_text():
+            if target.exists():
+                if args.check:
+                    errors.append("unused generated frame table: " + str(target.relative_to(ROOT)))
+                else:
+                    target.unlink()
+            continue
         output = format_c(output_for(character, clips))
         if args.check:
             if not target.is_file() or target.read_text() != output:

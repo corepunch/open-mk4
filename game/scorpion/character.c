@@ -3,7 +3,6 @@
 static const ButtonTable scorpion_standing;
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 
@@ -264,7 +263,7 @@ void scorpion_entry_retail_script_004e5e50(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e60b8(Fighter *fighter) {
-  retail_script_004e60b8(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e60b8), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e6158(Fighter *fighter) {
@@ -348,7 +347,7 @@ void scorpion_entry_retail_script_004e69b0(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e6d08(Fighter *fighter) {
-  retail_script_004e6d08(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e6d08), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e87b0(Fighter *fighter) {
@@ -380,11 +379,11 @@ void scorpion_entry_retail_script_004e9970(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004e9d00(Fighter *fighter) {
-  retail_script_004e9d00(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e9d00), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004e9f20(Fighter *fighter) {
-  retail_script_004e9f20(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4e9f20), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004ec8b0(Fighter *fighter) {
@@ -396,11 +395,11 @@ void scorpion_entry_retail_script_004ec918(Fighter *fighter) {
 }
 
 void scorpion_entry_retail_script_004ed448(Fighter *fighter) {
-  retail_script_004ed448(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4ed448), "Unregistered retail script entry");
 }
 
 void scorpion_entry_retail_script_004ed4a8(Fighter *fighter) {
-  retail_script_004ed4a8(fighter);
+  require(scorpion_try_retail_vm(fighter, 0x4ed4a8), "Unregistered retail script entry");
 }
 
 const mmove_t *scorpion_retail_script_004e0138_repeat_phase(void) {

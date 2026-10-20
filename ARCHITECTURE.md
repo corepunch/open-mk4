@@ -216,20 +216,26 @@ distance metadata retains the previous shared defaults. Cinematic objects
 step on the simulation clock during fatalities, and scene cameras may widen
 their focal scale without changing ordinary fight framing.
 
-## Direct retail script prototype
+## Direct retail script execution
 
-Scorpion low kick (0x4e6d08) and crouching high kick (0x4e60b8) now read
-retail script words at runtime when a retail image is bound. Actor-owned VM
-state stores the instruction cursor, waits, counted loop, contact result and
-animation continuation. The image is immutable asset data; checked VAs never
-become host code pointers. Typed Scorpion adapters handle the three reviewed
-native boundaries. Interruption, move replacement and reset cancel VM state.
+The current direction is to execute original retail script words, with shared
+opcode implementations and typed native bindings instead of generated C/frame
+bodies. Script control flow stays in the EXE data. Native engine behavior still
+uses C11; per-fighter move folders are transitional native organization.
 
-This user-requested prototype is an exception to the frame-only/compiler-only
-policy below. Other entries and rule-only callers without image data retain
-their generated programs. No coroutine stacks or retail global arena are used.
-See [interpreter evidence and scope](docs/research/retail-vm.md). The retained
-generated audits do not measure interpreter coverage or prove retail timing.
+Scorpion low kick, crouching high kick, spear startup/return, and spear
+capture/stun victims now use this interpreter exclusively. Actor-owned state
+stores the instruction cursor, waits, counted loop, contact result and animation
+continuation. Images are immutable asset data; checked VAs never become host
+code pointers. The host supplies its selected image through Assets. Rule-only
+clients lazily share the default EXE image, so there is no generated fallback
+for migrated roots. Native spear flight/pull/cooldown remain existing engine
+adapters, with VM-owned cleanup and native suspension.
+
+Other roots retain generated programs until their migration. The manifest and
+strict audit distinguish both implementations and reject duplicate bodies.
+Interruption, move replacement and reset cancel VM state. No coroutine stacks
+or retail global arena are used. See [runtime evidence and scope](docs/research/retail-vm.md).
 
 ## Deterministic script compilation
 
