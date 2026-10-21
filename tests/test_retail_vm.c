@@ -1,5 +1,6 @@
 #include "game.h"
 #include "retail_vm.h"
+#include "script.h"
 #include "retail_data.h"
 #include "retail_native.h"
 #include "native.h"
@@ -628,6 +629,36 @@ static void native_return_ownership(void) {
       "native controller return must not revive a defeated actor");
 }
 
+static void native_sound_data(void) {
+  Fighter *actor = setup(0, 2);
+  uint32_t pointer = mk4_image_u32(&image, 0x53d018);
+  uint32_t remap = mk4_image_u32(&image, 0x4ead18);
+  const uint32_t table = 0x570100, list = table + 32;
+  put_word(0x53d018, table / 4);
+  put_word(0x4ead18, (remap & 0xffffff00u) | 1);
+  put_word(table, 0x01240123);
+  g_battle.sound_count = 0;
+  mk4_script_roster_sound(actor, 6);
+  check(g_battle.sound_count == 1 && g_battle.sounds[0].bank == SOUND_TOKEN && g_battle.sounds[0].selector == 0x124,
+      "native roster sound must use loaded remap bytes and direct half-word tokens");
+  put_word(table, 0);
+  put_word(table + 8, list / 4);
+  put_word(list, 0x01250001);
+  g_battle.sound_count = 0;
+  mk4_script_roster_sound(actor, 6);
+  check(g_battle.sound_count == 1 && g_battle.sounds[0].selector == 0x125, "native roster sound must decode the selected half-word token list");
+  put_word(0x53d018, pointer);
+  put_word(0x4ead18, remap);
+  uint32_t count = mk4_image_u32(&image, 0x4ea828), token = mk4_image_u32(&image, 0x4ea82c);
+  put_word(0x4ea828, 1);
+  put_word(0x4ea82c, 0x126);
+  g_battle.sound_count = 0;
+  retail_throw_grunt();
+  check(g_battle.sound_count == 1 && g_battle.sounds[0].selector == 0x126, "native throw voice must read its word-sized token list");
+  put_word(0x4ea828, count);
+  put_word(0x4ea82c, token);
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -850,6 +881,7 @@ int main(int argc, char **argv) {
   native_contact_record_lifetime();
   native_projectile_context();
   native_return_ownership();
+  native_sound_data();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

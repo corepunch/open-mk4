@@ -1291,3 +1291,23 @@ GameSectionSwitcher/controller references. Verified formatting, shared
 VM/rejections, strict audits, native frame gates and helper/port navigation.
 One shared fixture checks context-independent pair/motion cleanup and prevents
 KO revival; no authored throw timing/damage matrices were added.
+
+### Decode the shared native roster sound lists
+
+Native489ff0 now reads the original roster-remap byte, selector pointer and
+direct half-word token/per-roster random-list formats. This replaces the old
+two-selector audio alias and supplies selector6 required by native485c60.
+The raw16->10 sound remap follows the native code independently of script and
+weapon aliases. The reviewed selector pointer block is53d000..53d054.
+
+Native48a220's throw grunt moved out of the Jax module and reads original
+word-sized token list4ea828 through the same list helper as impact voices.
+Compared bounded local489ff0/48a220 listings with mk4decomp
+ByteWordTableTaggedDispatch (upstream48a050) and the relocated token wrapper.
+Upstream comments contain a reversed branch description; the actual matching
+assembly and local EXE establish the remap.
+
+Verified formatting, shared VM/rejections, strict audits and native frame gates.
+One shared data-format fixture mutates the remap and checks direct tokens,
+per-roster half-word lists and word-sized native lists. No character audio or
+move matrices were added.

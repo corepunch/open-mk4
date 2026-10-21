@@ -109,6 +109,7 @@ void retail_crouch_low_kick_tail(Fighter *fighter);
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction);
 void retail_throw_victim_continue(Fighter *fighter);
 void retail_throw_victim_impact(Fighter *fighter);
+void retail_throw_grunt(void);
 void retail_impact_voice(Fighter *fighter);
 void retail_lk_continue_840(Fighter *fighter);
 void retail_lk_throw(Fighter *fighter);

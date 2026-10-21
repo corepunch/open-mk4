@@ -78,3 +78,5 @@ LEGACY_NATIVE_NAMES.update({
     'shinnok_weapon_crouch_return': 'retail_crouch_return',
     'sub_zero_script_lp_owner_return': 'retail_throw_ready',
 })
+
+LEGACY_NATIVE_NAMES['jax_throw_grunt'] = 'retail_throw_grunt'

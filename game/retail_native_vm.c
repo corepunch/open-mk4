@@ -99,7 +99,6 @@ void jax_lp_throw_return(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
 void jax_script_peer_reaction(Fighter *fighter, int reaction);
-void jax_throw_grunt(void);
 void kai_aerial_punch_contact(Fighter *fighter);
 void kai_first_owner_grab(Fighter *fighter);
 void kai_first_owner_spin(Fighter *fighter);
@@ -453,7 +452,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           scorpion_script_beast_voice(fighter);
           return true;
         case 0x48a220:
-          jax_throw_grunt();
+          retail_throw_grunt();
           return true;
         case 0x48f6e0:
           mk4_script_save_motion(fighter);

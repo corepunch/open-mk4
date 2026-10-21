@@ -16,9 +16,6 @@ enum {
  * with reaction 100/125 and a last 5%. */
 
 /* 48a220 -> 489e80(4ea828): one of tokens 760, 765, 770, 775, 780. */
-void jax_throw_grunt(void) {
-  battle_sound(SOUND_TOKEN, 760 + 5 * (int)battle_random(5));
-}
 
 /* 45f2b0 rows: switches 4d00a4 (HP 0x10, BLK 0x20, HK 0x40, Up 0x01) and
  * 4d00a8 (LP 1, LK 2, RUN 4) under masks 0x71/7 must equal the chord. */
@@ -94,7 +91,7 @@ static void slam_victim_getup(Fighter *victim) {
  * geometry, then 4287a0(4e9bc0) plays clip 173 before 485c40. */
 void jax_slam_victim(Fighter *victim) {
   mk4_script_disarm_self(victim);
-  jax_throw_grunt();
+  retail_throw_grunt();
   mk4_script_shake(victim, 0);
   victim->body.pos[AXIS_Y] = victim->body.ground;
   fighter_start_move(victim, S_KNOCKDOWN, &s_slam_fall);

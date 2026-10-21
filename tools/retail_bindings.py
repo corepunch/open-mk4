@@ -137,7 +137,7 @@ CHARACTER_BINDINGS[3][0x43d6f0] = Binding('liu_script_fan_victory', 'game/liu_ka
 CHARACTER_BINDINGS[3][0x43db50] = Binding('liu_script_fan_victim_end', 'game/liu_kang/character.c', ('tail',), evidence='43db50 victim arena release/hide native continuation')
 
 BINDINGS[0x4595e0] = Binding('mk4_script_draw_voice', 'game/script.c', ('handler',), ('fighter',), result='void', mmove=True, evidence='4595e0; bounded native listing and docs/liu-kang-scripts.md', inline_values=(0,))
-BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', mmove=True, evidence='459720 -> 489ff0, selector8 table53d000 and remap4ead18', adaptation='Shared audio loader resolves roster throw voices from the same table', inline_values=(1, 8))
+BINDINGS[0x459720] = Binding('mk4_script_roster_sound', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', mmove=True, evidence='459720 -> 489ff0, reviewed selector pointer block53d000..53d054 and remap4ead18', adaptation='Shared native decoder reads direct half-word tokens or per-roster token lists', inline_values=tuple(range(22)))
 BINDINGS[0x45abf0] = Binding('mk4_script_context', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', mmove=True, evidence='45abf0 -> 431520 -> descriptor4de9f0, native camera task431700', adaptation='Portable camera tracks live paired actors; do not allocate the retail camera task', inline_values=(1, 2, 3, 4, 6, 12, 14, 22, 23, 34, 36, 37, 56, 57, 58, 60, 61, 62))
 BINDINGS[0x45ae50] = Binding('mk4_script_pair_adjust', 'game/script.c', ('handler',), ('fighter', 'word0_i32'), result='void', mmove=True, evidence='45ae50; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b030] = Binding('mk4_script_disarm', 'game/script.c', ('handler',), ('fighter',), result='void', mmove=True, evidence='45b030; bounded native listing and docs/liu-kang-scripts.md')
@@ -1548,6 +1548,7 @@ def bindings_for(character):
     result[0x42ce60] = Binding('retail_throw_ready', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
     result[0x42ce80] = Binding('retail_throw_ready', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
     result[0x45fc40] = Binding('retail_crouch_return', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
+    result[0x48a220] = Binding('retail_throw_grunt', 'game/retail_throw.c', ('call',), (), mmove=True, evidence='Original48a220 selects loaded token list4ea828 through489e80')
     # Historical research aliases resolve to the current native definition.
     from c_source import function_source, canonical_name
     for address, binding in tuple(result.items()):

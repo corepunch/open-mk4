@@ -150,9 +150,39 @@ void mk4_script_context(Fighter *fighter, int selector) {
   require(selector >= 0 && selector <= 255, "Unexpected paired camera context");
 }
 
+static uint16_t sound_half(const Mk4Image *image, uint32_t address) {
+  require(address % 2 == 0, "Unaligned retail sound token");
+  return (uint16_t)(mk4_image_u32(image, address & ~3u) >> ((address & 2u) * 8));
+}
+
+/* Native489ff0 selects a direct token row or a per-roster random-list row.
+ * This remap is independent of script and native-action roster aliases. */
 void mk4_script_roster_sound(Fighter *fighter, int selector) {
-  require(selector == 8 || selector == 1, "Unexpected roster sound list");
-  battle_sound(selector == 8 ? SOUND_THROW_VOICE : SOUND_IMPACT_VOICE, roster_def(fighter->roster)->asset);
+  require(selector >= 0 && selector < 22 && fighter->roster >= 0 && fighter->roster < MK4_ROSTER_COUNT, "Invalid roster sound selector");
+  const Mk4Image *image = retail_vm_image();
+  unsigned roster = fighter->roster == 16 ? 10u : (unsigned)fighter->roster;
+  uint32_t remap_address = 0x4ead18 + roster;
+  int remap = (int8_t)(mk4_image_u32(image, remap_address & ~3u) >> ((remap_address & 3u) * 8));
+  require(remap >= 0 && remap < MK4_ROSTER_COUNT, "Invalid roster sound remap");
+  uint32_t table = mk4_image_u32(image, 0x53d000 + (unsigned)selector * 4) * 4;
+  if (table == 0) {
+    return;
+  }
+  unsigned token;
+  if (mk4_image_u32(image, table) != 0) {
+    token = sound_half(image, table + (unsigned)remap * 2);
+  } else {
+    uint32_t list = mk4_image_u32(image, table + ((unsigned)remap + 1) * 4) * 4;
+    if (list == 0) {
+      return;
+    }
+    unsigned count = sound_half(image, list);
+    require(count > 0 && count <= 256, "Invalid roster sound token list");
+    token = sound_half(image, list + 2 + battle_random(count) * 2);
+  }
+  if (token != 0) {
+    battle_sound(SOUND_TOKEN, (int)token);
+  }
 }
 
 void mk4_script_draw_voice(Fighter *fighter) {

@@ -16,7 +16,6 @@ void jax_lp_slam_first(Fighter *fighter);
 void jax_lp_slam_second(Fighter *fighter);
 void jax_lp_slam_third(Fighter *fighter);
 void jax_lp_throw_return(Fighter *fighter);
-void jax_throw_grunt(void);
 bool jax_can_fatality_1(const Fighter *fighter);
 void jax_fatality_1(Fighter *fighter);
 void jax_fatality_1_first_arm(Fighter *fighter);
