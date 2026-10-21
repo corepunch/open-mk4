@@ -12,7 +12,6 @@ static const MoveDef roll = {.clip = 106, .last = 21, .flags = SF_LOCK | SF_RECO
 static const AttackRecord roll_record = {0xe872, -0x3f7c, 0xb84b, 0x56c8, 40, 10, 9, 0, 0x170a};
 static const MoveDef roll_victim = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef dash_victim = {.clip = 179, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
-static const NativeGetupDef dash_getup = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
 
 bool reptile_can_dash(const Fighter *fighter) {
   /* 45e950: action family 11 must be at least 70 ticks old and the peer
@@ -147,5 +146,5 @@ void reptile_dash_victim(Fighter *fighter) {
 /* 488b80: 490350 toggles the model mirror bit, which the pair-axis
  * heading supersedes here, then 4914c0 runs the 4ea210 getup pairs. */
 void reptile_dash_victim_getup(Fighter *fighter) {
-  mk4_mmove_getup(fighter, &dash_getup);
+  mk4_mmove_getup(fighter, 0x4ea210);
 }

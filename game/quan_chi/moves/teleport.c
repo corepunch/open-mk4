@@ -246,8 +246,7 @@ static void victim_cycle(Fighter *victim);
 
 /* 4845f0: wait 20 ticks, then 488ba0 reversed getup 328 (crouch 184). */
 static void victim_getup(Fighter *victim) {
-  static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
-  mk4_mmove_getup(victim, &profile);
+  mk4_mmove_getup(victim, 0x4ea210);
 }
 
 static void victim_release(Fighter *victim) {

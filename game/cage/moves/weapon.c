@@ -95,13 +95,11 @@ void cage_weapon_action(Fighter *fighter) {
 }
 
 void cage_weapon_getup_back(Fighter *fighter) {
-  static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
-  mk4_mmove_finish_getup(fighter, &profile);
+  mk4_mmove_finish_getup(fighter, 0x4ea210);
 }
 
 void cage_weapon_getup_roll(Fighter *fighter) {
-  static const NativeGetupDef profile = {.clip = 191, .count = 16, .crouch_clip = 190, .crouch_count = 16, .speed = -0x147a, .crouch_speed = -0xa3d};
-  mk4_mmove_getup(fighter, &profile);
+  mk4_mmove_getup(fighter, 0x4ea220);
 }
 
 void cage_weapon_reaction(Fighter *fighter) {

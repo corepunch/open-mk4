@@ -89,11 +89,10 @@ void jax_lp_throw_return(Fighter *fighter) {
 }
 
 static void slam_victim_getup(Fighter *victim) {
-  static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
   /* 485c40: stop motion, 490350 flips the facing bit, 488ba0 -> 4914c0(4ea210). */
   mk4_script_stop_body(victim);
   victim->facing = -victim->facing;
-  mk4_mmove_getup(victim, &profile);
+  mk4_mmove_getup(victim, 0x4ea210);
 }
 
 /* 4ea4e8[125] -> 485ba0: 485c60 (disarm, 48a220 grunt, shake 0, 489ff0

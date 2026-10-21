@@ -650,3 +650,16 @@ and checks continuation retirement. Runtime checks, all strict roster audits,
 native source gates and formatting pass. Battle integration reaches the known
 ground-throw assertion. This is preparation for replacing the copied LK starts;
 the catalogue's existing1,109 roots still omit those correct LK selections.
+
+## Retail-loaded native get-up records
+
+All copied NativeGetupDef profiles are removed. Shared4914c0 recovery now reads
+standing/crouching speed and packed descriptor pairs from original4ea210 or
+4ea220, and obtains lengths through checked animation binding. Deferred recovery
+stores a typed retail record address rather than a pointer to fighter-owned C
+configuration. Actor state views are unbound until the descriptor is loaded.
+
+The local488ba0/488c00 callers and4914c0 listing establish the records. Reading
+the checked EXE confirms both records exactly match the retired profile values,
+including descriptor-derived lengths. Runtime checks, all strict roster audits,
+native source gates and formatting pass. No new tests were added.

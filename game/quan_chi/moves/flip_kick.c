@@ -74,8 +74,7 @@ void quan_chi_flip_kick(Fighter *fighter) {
 
 /* 488c00: shared roll getup after the reaction-160 landing. */
 void quan_chi_script_getup_roll(Fighter *fighter) {
-  static const NativeGetupDef profile = {.clip = 191, .count = 16, .crouch_clip = 190, .crouch_count = 16, .speed = -0x147a, .crouch_speed = -0xa3d};
-  mk4_mmove_getup(fighter, &profile);
+  mk4_mmove_getup(fighter, 0x4ea220);
 }
 
 /* Reaction 160 (481d90): 488ea0 wall recoil, 494520 disarm, then VM 4e8a48

@@ -574,7 +574,7 @@ void mk4_mmove_side_getup(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-static const MoveDef getup_move = {.clip = 328, .last = 14, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
+static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
 
 static void getup_crouch_finish(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -586,8 +586,8 @@ static void getup_crouch_finish(Fighter *fighter) {
 
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
-void mk4_mmove_getup(Fighter *fighter, const NativeGetupDef *profile) {
-  require(profile != NULL && profile->count > 0 && profile->crouch_count > 0, "Invalid native getup profile");
+void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
+  require(record == 0x4ea210 || record == 0x4ea220, "Unreviewed native getup record");
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   if (fighter->health <= 0) {
@@ -595,27 +595,29 @@ void mk4_mmove_getup(Fighter *fighter, const NativeGetupDef *profile) {
     return;
   }
   bool crouch = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-  int clip = crouch ? profile->crouch_clip : profile->clip;
-  int count = crouch ? profile->crouch_count : profile->count;
-  q16 speed = crouch ? profile->crouch_speed : profile->speed;
+  const Mk4Image *image = retail_vm_image();
+  uint32_t pair = record + (crouch ? 8 : 0);
+  q16 speed = (q16)mk4_image_u32(image, pair);
+  uint32_t descriptor = mk4_image_u32(image, pair + 4) * 4;
   fighter_start_move(fighter, S_KNOCKDOWN, &getup_move);
-  mk4_mmove_bind(fighter, clip, count, 0);
+  retail_vm_bind_animation(fighter, descriptor, 0);
   fighter_set_speed(fighter, speed);
-  native_begin(fighter, 0, count - 1, crouch ? getup_crouch_finish : mk4_mmove_thrown_finish);
-  for (int frame = 0; frame < count; ++frame) {
+  int last = fighter_move(fighter)->last;
+  native_begin(fighter, 0, last, crouch ? getup_crouch_finish : mk4_mmove_thrown_finish);
+  for (int frame = 0; frame <= last; ++frame) {
     native_frame(fighter, frame, frame, NULL);
   }
   native_play(fighter, false);
 }
 
 static void finish_getup_ready(Fighter *fighter) {
-  mk4_mmove_getup(fighter, fighter->native_context);
+  mk4_mmove_getup(fighter, fighter->native_getup);
 }
 
-void mk4_mmove_finish_getup(Fighter *fighter, const NativeGetupDef *profile) {
+void mk4_mmove_finish_getup(Fighter *fighter, uint32_t record) {
   int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
   require(first >= 0 && last != MOVE_END && first <= last, "Getup continuation needs its bounded source pose");
-  fighter->native_context = profile;
+  fighter->native_getup = record;
   native_begin(fighter, first, last, finish_getup_ready);
   for (int frame = first; frame <= last; ++frame) {
     native_frame(fighter, frame, frame, NULL);

@@ -268,6 +268,5 @@ void reptile_weapon_stagger_tail(Fighter *fighter) {
 }
 
 void reptile_weapon_getup_back(Fighter *fighter) {
-  static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
-  mk4_mmove_finish_getup(fighter, &profile);
+  mk4_mmove_finish_getup(fighter, 0x4ea210);
 }

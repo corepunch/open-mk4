@@ -191,6 +191,5 @@ void jax_dash_victim_throw(Fighter *victim) {
 
 /* 488c00 -> 4914c0(4ea220): roll getup 191/16 at -0x147a, crouch 190/16. */
 void jax_dash_victim_getup(Fighter *victim) {
-  static const NativeGetupDef profile = {.clip = 191, .count = 16, .crouch_clip = 190, .crouch_count = 16, .speed = -0x147a, .crouch_speed = -0xa3d};
-  mk4_mmove_getup(victim, &profile);
+  mk4_mmove_getup(victim, 0x4ea220);
 }

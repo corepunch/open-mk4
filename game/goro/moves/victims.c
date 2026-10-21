@@ -4,8 +4,8 @@ static void begin_victim(Fighter *victim);
 static void stomp_victim_next(Fighter *victim);
 static void stomp_victim_rest(Fighter *victim);
 static const MoveDef s_victim = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
+
 /* 488ba0 and 482790 select 4ea210: standing 328 or held-DOWN crouching 184. */
-static const NativeGetupDef getup = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
 
 enum {
   STOMP_VICTIM_CLIP = 178,
@@ -95,7 +95,7 @@ static void stomp_victim_next(Fighter *victim) {
 }
 
 static void stomp_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, &getup);
+  mk4_mmove_getup(victim, 0x4ea210);
 }
 
 static void stomp_victim_rest(Fighter *victim) {
@@ -119,10 +119,10 @@ void goro_script_stomp_victim_hold(Fighter *victim) {
 
 /* 482790 finishes the bound clip before 488ba0's getup. */
 void goro_victim_finish_getup(Fighter *victim) {
-  mk4_mmove_finish_getup(victim, &getup);
+  mk4_mmove_finish_getup(victim, 0x4ea210);
 }
 
 /* 482540: 433c00 clears the CPU reaction latch, then 488ba0. */
 void goro_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, &getup);
+  mk4_mmove_getup(victim, 0x4ea210);
 }
