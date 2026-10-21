@@ -8,13 +8,6 @@ static void back_hp(Fighter *fighter);
 static void back_lp(Fighter *fighter);
 static const MoveDef upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x113};
 static const MoveDef victim = {.clip = 130, .last = 39, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4001};
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike strikes[] = {
-  {{.clip = 239, .last = 40, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {85196, -54394, 68812, 57016, 149, 149, 119, 0, 10485}, 0, 3, 9, 2, 5, 0, 0, 0, 34},
-  {{.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {126484, -32768, 64880, 57016, 44, 44, 119, 0, 9830}, 0, 4, 7, 3, 1, 0, 0, 0, 32},
-  {{.clip = 228, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x10e}, {111411, -35389, 85852, 27459, 148, 148, 118, 0, 9830}, 0, 10, 16, 5, 5, 1, 14, 0x2666, 34},
-};
-// clang-format on
 static const AttackRecord upper_record = {98959, -45809, 67502, 28835, 146, 10, 119, 0, 11796};
 static const WeaponDef knife = {0x6a, hp, lp, back_hp, back_lp, NULL, weapon_throw, equip, SCENE_MODEL_JAREK_WEAPON};
 
@@ -35,7 +28,7 @@ static void back_hp(Fighter *fighter) {
 }
 
 static void back_lp(Fighter *fighter) {
-  weapon_start_strike(fighter, &strikes[2], true);
+  weapon_start_retail_strike(fighter, 0x4ec538, 0x4ec528, 0x10e, true);
 }
 
 static void hp(Fighter *fighter) {
@@ -44,7 +37,7 @@ static void hp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     back_hp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[0], false);
+    weapon_start_retail_strike(fighter, 0x4ec4c8, 0x0, 0x111, false);
   }
 }
 
@@ -56,7 +49,7 @@ static void ground_lp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     back_lp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[1], false);
+    weapon_start_retail_strike(fighter, 0x4ec510, 0x0, 0x111, false);
   }
 }
 

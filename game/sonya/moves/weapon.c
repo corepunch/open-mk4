@@ -7,12 +7,6 @@ static void weapon_hp(Fighter *fighter);
 static void weapon_lp(Fighter *fighter);
 static void weapon_back_hp(Fighter *fighter);
 static void weapon_back_lp(Fighter *fighter);
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike weapon_attacks[] = {
-  {{.clip = 230, .last = 44, .flags = RETAIL, .action = 0x111}, {124518, -34078, 83230, 51118, 54, 54, 119, 0, 11796}, 0, 8, 11, 3, 1, 0, 0, 0, 34}, /* 4ec760 */
-  {{.clip = 229, .last = 44, .flags = RETAIL, .action = 0x111}, {126484, -32768, 64880, 57016, 56, 56, 119, 0, 9830}, 0, 4, 7, 3, 1, 0, 0, 0, 32}, /* 4ec778 */
-};
-// clang-format on
 static const MoveDef s_weapon_back_hp = {.clip = 228, .last = 39, .flags = RETAIL, .action = 0x112};
 static const MoveDef s_weapon_back_lp = {.clip = 227, .last = 59, .flags = RETAIL, .action = 0x112};
 static const AttackRecord weapon_back_hp_record = {98959, -28835, 67502, 36700, 55, 55, 119, 0, 13107};
@@ -27,7 +21,7 @@ static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     retail_air_high_punch(fighter);
   } else {
-    weapon_start_strike(fighter, &weapon_attacks[0], true);
+    weapon_start_retail_strike(fighter, 0x4ec760, 0x0, 0x111, true);
   }
 }
 
@@ -35,7 +29,7 @@ static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     retail_air_low_punch(fighter);
   } else {
-    weapon_start_strike(fighter, &weapon_attacks[1], true);
+    weapon_start_retail_strike(fighter, 0x4ec778, 0x0, 0x111, true);
   }
 }
 

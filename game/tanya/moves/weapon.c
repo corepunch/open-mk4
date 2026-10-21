@@ -11,12 +11,6 @@ static void weapon_back_hp(Fighter *fighter);
 /* 4955b0 descriptor 4ec420 and its held-back alternate 4955e0 (travel
  * 4ec438, strike 4ec448): clip, first/windup/target/queries/recovery,
  * WEAPON selector 42/43 and sound 0x20. */
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike strikes[] = {
-  {{.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {0x1a666, -0xc24d, 0x12b43, 0x12106, 169, 10, 119, 0, 0x28f5}, 0, 4, 7, 3, 1, 0, 0, 0, 0x20},
-  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {0x204dd, -0x89fb, 0x15439, 0xb062, 170, 10, 119, 0, 0x23d7}, 6, 10, 16, 4, 1, 3, 8, 0x147a, 0x20},
-};
-// clang-format on
 /* T2[0x16]/[0x17] 497ae0/497ad0 -> 497af0: action 316 and VM 4ed190. */
 static const MoveDef boomerang_throw = {.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x316};
 /* 497c50 waiter descriptor 4ed1a8 selects C[20] 4ebde0. */
@@ -36,7 +30,7 @@ static void equip_weapon(Fighter *fighter) {
 }
 
 static void weapon_back_hp(Fighter *fighter) {
-  weapon_start_strike(fighter, &strikes[1], true);
+  weapon_start_retail_strike(fighter, 0x4ec448, 0x4ec438, 0x111, true);
 }
 
 /* 494990 takes descriptor word 3 (4955e0) when back is held. */
@@ -44,7 +38,7 @@ static void weapon_ground_hp(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
     weapon_back_hp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[0], false);
+    weapon_start_retail_strike(fighter, 0x4ec420, 0x0, 0x111, false);
   }
 }
 

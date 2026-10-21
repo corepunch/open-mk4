@@ -9,12 +9,6 @@ static void weapon_back_lp(Fighter *fighter);
 static const MoveDef upper = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x113};
 static const MoveDef back_lp = {.clip = 227, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x112};
 static const MoveDef victim = {.clip = 189, .last = 29, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike strikes[] = {
-  {{.clip = 239, .last = 40, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {85196, -54394, 68812, 57016, 149, 149, 119, 0, 10485}, 0, 3, 9, 2, 5, 0, 0, 0, 34},
-  {{.clip = 230, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {152043, -62259, 99614, 85131, 63, 63, 119, 0, 9830}, 0, 8, 10, 3, 5, 0, 0, 0, 34},
-};
-// clang-format on
 static const AttackRecord upper_record = {98959, -45809, 67502, 28835, 146, 10, 119, 0, 11796};
 static const AttackRecord back_lp_record = {98959, -28835, 67502, 36700, 57, 57, 119, 0, 9175};
 static const WeaponDef mace = {0x6e, weapon_hp, weapon_lp, weapon_back_hp, weapon_back_lp, NULL, weapon_throw, equip_weapon, SCENE_MODEL_CAGE_WEAPON};
@@ -36,7 +30,7 @@ static void weapon_upper(Fighter *fighter) {
 }
 
 static void weapon_back_hp(Fighter *fighter) {
-  weapon_start_strike(fighter, &strikes[0], false);
+  weapon_start_retail_strike(fighter, 0x4ec9e8, 0x0, 0x111, false);
 }
 
 static void weapon_back_lp(Fighter *fighter) {
@@ -62,7 +56,7 @@ static void weapon_lp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     weapon_back_lp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[1], false);
+    weapon_start_retail_strike(fighter, 0x4ec9f8, 0x0, 0x111, false);
   }
 }
 

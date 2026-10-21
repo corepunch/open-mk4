@@ -1,25 +1,17 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike strikes[] = {
-  {{.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x10e}, {125763, -34603, 98304, 68157, 139, 139, 118, 0, 11141}, 0, 9, 16, 4, 0, 9, 11, 0x147a, 34},
-  {{.clip = 238, .last = 36, .flags = SF_LOCK | SF_RECORD, .action = 0x10e}, {125763, -34603, 98304, 68157, 140, 140, 118, 0, 13107}, 0, 9, 25, 4, 5, 1, 16, 0x1999, 34},
-  {{.clip = 242, .last = 30, .flags = SF_LOCK | SF_RECORD, .action = 0x212}, {111411, -25552, 89784, 11796, 62, 62, 118, 0, 9830}, 0, 9, 11, 3, 8, 2, 18, 0x28f5, 34},
-  {{.clip = 243, .last = 27, .flags = SF_LOCK | SF_RECORD, .action = 0x10e}, {115277, 41287, 73400, 31457, 141, 141, 118, ATTACK_MARK, 11796}, 0, 3, 15, 2, 9, 0, 0, 0, 34},
-};
-// clang-format on
 static const MoveDef followup = {.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x112};
 static const MoveDef victim = {.clip = 132, .last = 59, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4003};
 static const WeaponDef polearm = {0x64, shinnok_weapon_hp, shinnok_weapon_lp, shinnok_weapon_back_hp, shinnok_weapon_back_lp, NULL, weapon_throw,
     shinnok_weapon_equip, SCENE_MODEL_SHINNOK_WEAPON};
 
 void shinnok_weapon_back_hp(Fighter *fighter) {
-  weapon_start_strike(fighter, &strikes[2], true);
+  weapon_start_retail_strike(fighter, 0x4ec750, 0x4ec740, 0x212, true);
 }
 
 void shinnok_weapon_back_lp(Fighter *fighter) {
-  weapon_start_strike(fighter, &strikes[3], false);
+  weapon_start_retail_strike(fighter, 0x4ec618, 0x0, 0x10e, false);
 }
 
 void shinnok_weapon_hp(Fighter *fighter) {
@@ -28,7 +20,7 @@ void shinnok_weapon_hp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     shinnok_weapon_back_hp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[0], true);
+    weapon_start_retail_strike(fighter, 0x4ec5d8, 0x4ec5c8, 0x10e, true);
   }
 }
 
@@ -40,7 +32,7 @@ void shinnok_weapon_lp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     shinnok_weapon_back_lp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[1], true);
+    weapon_start_retail_strike(fighter, 0x4ec600, 0x4ec5f0, 0x10e, true);
   }
 }
 

@@ -175,6 +175,36 @@ void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool trav
   native_play(fighter, false);
 }
 
+/* Native494990/494a00 read these original packed parameters. Motion
+ * is the optional4947d0 row supplied by the native frontend, not script data. */
+void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel) {
+  const Mk4Image *image = retail_vm_image();
+  require(parameters >= 0x4ec400 && parameters <= 0x4ecb00 && parameters % 4 == 0, "Invalid native weapon parameter row");
+  uint32_t descriptor = mk4_image_u32(image, parameters) * 4;
+  require(
+      descriptor >= 0x4fad7c && descriptor < 0x4fad7c + MK4_CLIP_COUNT * 12 && (descriptor - 0x4fad7c) % 12 == 0, "Invalid native weapon animation descriptor");
+  uint32_t count = mk4_image_u32(image, descriptor + 4);
+  require(count > 0 && count <= 65535, "Invalid native weapon animation length");
+  uint32_t phases = mk4_image_u32(image, parameters + 4);
+  uint32_t query = mk4_image_u32(image, parameters + 8);
+  WeaponStrike strike = {.move = {.clip = (int)((descriptor - 0x4fad7c) / 12), .last = (int)count - 1, .flags = SF_LOCK | SF_RECORD, .action = action},
+      .record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d0c0 + (query & 255) * 4) * 4),
+      .first = (int)((query >> 8) & 255),
+      .windup = (int)(phases >> 24),
+      .target = (int)((phases >> 16) & 255),
+      .queries = (int)((phases >> 8) & 255),
+      .recovery = (int)(phases & 255),
+      .sound = (int)(query >> 16)};
+  if (motion != 0) {
+    require(motion >= 0x4ec400 && motion <= 0x4ecb00 && motion % 4 == 0, "Invalid native weapon motion row");
+    strike.delay = (int)mk4_image_u32(image, motion);
+    strike.speed = (q16)mk4_image_u32(image, motion + 4);
+    strike.travel = (int)mk4_image_u32(image, motion + 8);
+  }
+  fighter->loaded_weapon_strike = strike;
+  weapon_start_strike(fighter, &fighter->loaded_weapon_strike, travel);
+}
+
 /* 494610 / 4946f0. This is separate from a back-punch's motion setup. */
 void weapon_followup_victim(Fighter *fighter) {
   Fighter *victim = &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];

@@ -8,12 +8,6 @@ static void weapon_back(Fighter *fighter);
 static void weapon_cleanup(Fighter *fighter);
 static const MoveDef back_move = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
 static const MoveDef victim_move = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike strikes[] = {
-  {{.clip = 230, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x10e}, {124518, -34078, 83230, 51118, 142, 142, 119, 0, 11796}, 0, 8, 11, 3, 1, 1, 10, 0x2147, 34},
-  {{.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x10e}, {124518, -34078, 83230, 51118, 145, 145, 119, 0, 10485}, 0, 4, 7, 3, 1, 1, 8, 0x1999, 32},
-};
-// clang-format on
 static const AttackRecord back_record = {98959, -45809, 67502, 28835, 146, 10, 119, 0, 11796};
 static const WeaponDef native_weapon = {0x63, weapon_hp, weapon_lp, weapon_back, weapon_back, NULL, weapon_throw, equip_weapon, SCENE_MODEL_KAI_WEAPON};
 
@@ -27,7 +21,7 @@ static void weapon_hp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     weapon_back(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[0], true);
+    weapon_start_retail_strike(fighter, 0x4ec558, 0x4ec548, 0x10e, true);
   }
 }
 
@@ -39,7 +33,7 @@ static void weapon_lp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     weapon_back(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[1], true);
+    weapon_start_retail_strike(fighter, 0x4ec580, 0x4ec570, 0x10e, true);
   }
 }
 
@@ -69,7 +63,7 @@ void kai_script_draw_equip(Fighter *fighter) {
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
  * the HP strike data directly, bypassing ordinary air/back input selection. */
 static void weapon_followup(Fighter *fighter) {
-  weapon_start_strike(fighter, &strikes[0], true);
+  weapon_start_retail_strike(fighter, 0x4ec558, 0x4ec548, 0x10e, true);
 }
 
 void kai_draw_weapon(Fighter *fighter) {

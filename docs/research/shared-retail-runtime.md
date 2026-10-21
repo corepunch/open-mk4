@@ -1145,3 +1145,19 @@ from bounded local listings and mk4decomp SfxBlockCluster's matching assembly.
 Verified formatting, shared VM/rejections, strict script audits and native frame
 gates. Added one shared native-boundary fixture for facing parity, crouch-row
 selection, owner independence and interruption; no character timing assertions.
+
+### Load native weapon strike parameters
+
+Removed ten copied WeaponStrike arrays (28 rows). The shared494990/494a00
+adaptation now reads the original animation descriptor and count, packed phase
+bytes, start cursor, sound, weapon contact selector and optional4947d0 motion
+row into actor-owned native state. Source data no longer comes from the old
+C copies, including Shinnok's omitted start cursor in shared4ec750. Native
+frontends still supply their original row addresses and action classes.
+
+Checked bounded local494990/494a00/48d430 listings against mk4decomp
+MoveDispatch4StateFsm and its matching assembly. Verified formatting, shared
+VM/rejection checks, all strict audits and native frame gates. One shared loader
+fixture mutates phase, contact selector and motion data and checks actor-owned
+lifetime. Three remaining strike arrays and fighter equipment/routing adapters
+still need migration; this does not claim complete native recovery parity.

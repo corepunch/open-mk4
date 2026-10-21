@@ -512,6 +512,26 @@ static void native_getup_entries(void) {
   }
 }
 
+static void native_weapon_parameters(void) {
+  Fighter *actor = setup(0, 2);
+  const uint32_t parameters = 0x4ec458, motion = 0x4ec470;
+  uint32_t original_phases = mk4_image_u32(&image, parameters + 4);
+  uint32_t original_query = mk4_image_u32(&image, parameters + 8);
+  uint32_t original_speed = mk4_image_u32(&image, motion + 4);
+  put_word(parameters + 4, (original_phases & 0x00ffffff) | 9u << 24);
+  put_word(parameters + 8, original_query & 0xffffff00);
+  put_word(motion + 4, 0x1234);
+  weapon_start_retail_strike(actor, parameters, motion, ACTION_RETAIL_0111, true);
+  AttackRecord expected = retail_vm_attack_record(&image, mk4_image_u32(&image, 0x53d0c0) * 4);
+  check(actor->weapon_strike == &actor->loaded_weapon_strike, "native strike parameters must have actor-owned lifetime");
+  check(actor->weapon_strike->windup == 9 && actor->weapon_strike->record.damage == expected.damage && actor->weapon_strike->speed == 0x1234,
+      "native weapon phases, selector and motion must come from the supplied retail rows");
+  fighter_cancel_mmove(actor);
+  put_word(parameters + 4, original_phases);
+  put_word(parameters + 8, original_query);
+  put_word(motion + 4, original_speed);
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -729,6 +749,7 @@ int main(int argc, char **argv) {
   data_tables();
   reaction_native_table();
   native_getup_entries();
+  native_weapon_parameters();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

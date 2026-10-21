@@ -571,6 +571,7 @@ struct Fighter {
   int capture_action;       /* owner action that keeps a shared air capture held */
   q16 saved_motion[3];      /* native save/restore around blocking generated playback */
   const WeaponStrike *weapon_strike;
+  WeaponStrike loaded_weapon_strike;
   int blend_clip, blend_sample, blend_ticks, blend_duration;
   q16 blend_weight;
   ScenePlayback scene;
@@ -990,6 +991,7 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
+void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel);
 void weapon_air_frames_native(Fighter *fighter, unsigned selector);
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon);
 void weapon_throw(Fighter *fighter);
