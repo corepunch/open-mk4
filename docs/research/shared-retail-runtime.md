@@ -1082,3 +1082,26 @@ for VM/native ownership separation, raw scene-actor context and reset cleanup;
 no fighter timing/damage matrices were added. Character.c files now contain
 only residual native data or are empty; their source-index/data migration and
 removal are next, along with consolidation of the remaining native services.
+
+### Original default weapon inventory loader
+
+Added one typed loader for all eight words of the original53d5c0 inventory
+record, including object/hand bindings, button table and stance descriptors.
+Native493080 indexes this table with the raw roster id: no script/native action
+alias applies. Local493080 and mk4decomp ScaledLoadCmp0fJmp/StrikeAnim4Picker
+confirm that choice and the boss equip exclusion.
+
+Removed ten copied inventory arrays and assertions comparing those copies to
+other C constants. The resting-object native reads its inventory type from the
+image. Inventory auditing now names the loader rather than requiring a duplicate
+C table. Corrected the research inventory's hidden-slot alias error: slot16
+is4ecfd8/type6d and slot17 is4ed018/type6a, rather than inherited62/69. Reviewed
+and updated only those two inventory fingerprints against the original words.
+The remaining WeaponDef/native profiles still require migration to this data;
+this loader step alone does not claim hidden-weapon gameplay parity.
+
+Verified formatting, shared VM/rejections,18 strict audits, native/source gates
+and seven navigation checks. Extended the existing data-loading fixture by
+changing a raw inventory slot independently of script/CPU aliases; no authored
+fighter behavior matrices were added. Alternative kombat-code inventory tables
+are not selected by the current engine settings.

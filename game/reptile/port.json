@@ -481,9 +481,9 @@
     }
   },
   "weapon": {
-    "source": "game/reptile/character.c",
-    "symbol": "reptile_weapon_descriptor",
-    "evidence": "Retail Reptile inventory descriptor 0x4ece78 (type 67, shared_g rig 506d90, button table 4ecd68); encoded words copied from the pinned inventory query."
+    "source": "game/retail_data.c",
+    "symbol": "retail_weapon_read",
+    "evidence": "Original493080 indexes53d5c0 with the unremapped roster slot; native493080 and mk4decomp StrikeAnim4Picker; loaded descriptor supplies every inventory word"
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
   "command_bindings": {

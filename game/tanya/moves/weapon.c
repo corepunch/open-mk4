@@ -32,7 +32,6 @@ enum {
 };
 
 static void equip_weapon(Fighter *fighter) {
-  require(tanya_weapon_descriptor[0] == (uint32_t)boomerang.type, "Tanya weapon identity must match the reviewed retail descriptor");
   fighter_equip_weapon(fighter, &boomerang);
 }
 

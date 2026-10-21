@@ -88,7 +88,7 @@ def inventory(image, character):
     slot = 2 if character == 16 else 7 if character == 17 else character
     cpu = cpu_records(image, character)
     stances = {name: dict(table=hex(base), entries=[hex(image.word(base + index * 4)) for index in range(6)]) for name, base in STANCE_TABLES.items()}
-    descriptor = image.word(0x53d5c0 + slot * 4) * 4
+    descriptor = image.word(0x53d5c0 + character * 4) * 4
     weapon = None
     if descriptor:
         values = [image.word(descriptor + index * 4) for index in range(8)]
@@ -214,7 +214,7 @@ def audit(image, character, profile=None):
         for name in observed['stances']:
             check_reference(profile.get('stances', {}).get(name), errors, 'stance ' + name, table=True)
         if observed['weapon']:
-            check_reference(profile.get('weapon'), errors, 'weapon', table=True)
+            check_reference(profile.get('weapon'), errors, 'weapon')
         # A registered reaction must match the actual C dispatch, rather than
         # just naming an arbitrary existing function. Paired/cinematic native
         # adapters explicitly declare their different dispatch ownership.

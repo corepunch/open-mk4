@@ -8,6 +8,13 @@ typedef struct RetailRoster {
   int idle, walk;
 } RetailRoster;
 
+typedef struct RetailWeaponInventory {
+  uint32_t address, type;
+  uint32_t object_template, hand_binding, buttons;
+  uint32_t idle, forward, backward;
+  uint32_t reserved;
+} RetailWeaponInventory;
+
 typedef struct RetailCommandCursor {
   uint32_t address;
   unsigned remaining;
@@ -19,6 +26,7 @@ typedef struct RetailCommand {
 } RetailCommand;
 
 /* Addresses refer to the checked local image, never host function pointers. */
+void retail_weapon_read(const Mk4Image *image, unsigned character, RetailWeaponInventory *inventory);
 void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster *roster);
 unsigned retail_character_slot(unsigned character);
 unsigned retail_native_character_slot(unsigned character);

@@ -483,9 +483,9 @@
     }
   },
   "weapon": {
-    "source": "game/quan_chi/character.c",
-    "symbol": "quan_chi_weapon_descriptor",
-    "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
+    "source": "game/retail_data.c",
+    "symbol": "retail_weapon_read",
+    "evidence": "Original493080 indexes53d5c0 with the unremapped roster slot; native493080 and mk4decomp StrikeAnim4Picker; loaded descriptor supplies every inventory word"
   },
   "inventory_sha256": "770f5cf3f44ba59abdcc9792b693a617a268f2c9da9542b2abed4e1641efa1b7",
   "command_bindings": {

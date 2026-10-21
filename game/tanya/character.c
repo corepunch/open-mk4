@@ -11,16 +11,6 @@
 
 /* Retail descriptor 4ecd98: preserve the encoded eight-word data block. */
 // clang-format off: Keep table entries on one row, including long rows.
-const uint32_t tanya_weapon_descriptor[] = {
-  0x6d,
-  0x141bfe,
-  0x142dd9,
-  0x13b31e,
-  0x13eeb6,
-  0x13ee98,
-  0x13ee9b,
-  0xffffcccd,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.

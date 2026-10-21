@@ -10,16 +10,6 @@ const MoveDef cage_s_powered_punch_script = {.clip = 85, .last = 54, .flags = SF
  * generated controller callbacks479b70/479f00. */
 
 // clang-format off: Keep table entries on one row, including long rows.
-const uint32_t cage_weapon_descriptor[] = {
-  0x6e,
-  0x1430cb,
-  0x144359,
-  0x13b318,
-  0x13eeb9,
-  0x13ee9e,
-  0x13eea1,
-  0xffffb334,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.

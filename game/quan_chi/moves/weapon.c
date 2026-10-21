@@ -26,7 +26,6 @@ static const WeaponDef native_weapon = {
     0x6f, weapon_hp, weapon_lp, weapon_back_hp, weapon_back_lp, NULL, weapon_throw, equip_weapon, SCENE_MODEL_QUAN_CHI_WEAPON};
 
 static void equip_weapon(Fighter *fighter) {
-  require(quan_chi_weapon_descriptor[0] == (uint32_t)native_weapon.type, "Quan Chi weapon identity must match the reviewed retail descriptor");
   fighter_equip_weapon(fighter, &native_weapon);
 }
 

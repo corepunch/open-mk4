@@ -20,7 +20,6 @@ static const AttackRecord back_lp_record = {98959, -28835, 67502, 36700, 57, 57,
 static const WeaponDef mace = {0x6e, weapon_hp, weapon_lp, weapon_back_hp, weapon_back_lp, NULL, weapon_throw, equip_weapon, SCENE_MODEL_CAGE_WEAPON};
 
 static void equip_weapon(Fighter *fighter) {
-  require(cage_weapon_descriptor[0] == mace.type, "Cage weapon identity must match the reviewed retail descriptor");
   fighter_equip_weapon(fighter, &mace);
 }
 

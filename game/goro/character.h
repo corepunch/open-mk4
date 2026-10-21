@@ -14,7 +14,6 @@ void goro_script_lp_finish(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
 void goro_script_opponent_reaction(Fighter *fighter, int reaction);
 
-extern const uint32_t goro_retail_weapon_descriptor[];
 void goro_begin_special(Fighter *fighter, StateId state, const MoveDef *move, int token);
 void goro_fireball(Fighter *fighter);
 void goro_fireball_spawn(Fighter *fighter, int task_type);

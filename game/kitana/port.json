@@ -18,7 +18,7 @@
     }
   },
   "integration_source": "game/kitana/character.c",
-  "inventory_sha256": "5550a878feb93289cd7790eb4795298e02f0b0d5809328e3c8d0e18613c9be08",
+  "inventory_sha256": "ade3d43800a8d6c7835f30794c2e804742419d5292312725163438f3806a37c8",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
@@ -517,9 +517,9 @@
     }
   },
   "weapon": {
-    "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-    "source": "game/sonya/character.c",
-    "symbol": "native_weapon"
+    "source": "game/retail_data.c",
+    "symbol": "retail_weapon_read",
+    "evidence": "Original493080 indexes53d5c0 with the unremapped roster slot; native493080 and mk4decomp StrikeAnim4Picker; loaded descriptor supplies every inventory word"
   },
   "runtime_scripts": {
     "0x4de360": {

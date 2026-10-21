@@ -260,9 +260,9 @@
     }
   },
   "weapon": {
-    "source": "game/cage/moves/weapon.c",
-    "symbol": "mace",
-    "evidence": "4ecf58 type6e points to rig50c32c in share2_g.geo and button table4ecc60."
+    "source": "game/retail_data.c",
+    "symbol": "retail_weapon_read",
+    "evidence": "Original493080 indexes53d5c0 with the unremapped roster slot; native493080 and mk4decomp StrikeAnim4Picker; loaded descriptor supplies every inventory word"
   },
   "reactions": {
     "1": {

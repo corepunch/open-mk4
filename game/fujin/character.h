@@ -27,7 +27,6 @@ void fujin_equip_crossbow(Fighter *fighter);
 void fujin_bow_finish(Fighter *fighter);
 void fujin_bow_followup_next(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
-extern const uint32_t fujin_weapon_descriptor[];
 bool fujin_can_wind(const Fighter *fighter);
 bool fujin_can_wind_slam(const Fighter *fighter);
 void fujin_wind(Fighter *fighter);

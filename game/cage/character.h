@@ -40,7 +40,6 @@ bool cage_can_groin_punch(const Fighter *fighter);
 void cage_high_orb(Fighter *fighter);
 void cage_low_orb(Fighter *fighter);
 void cage_orb_spawn(Fighter *fighter, int task_type);
-extern const uint32_t cage_weapon_descriptor[];
 void cage_weapon_action(Fighter *fighter);
 void cage_weapon_upper_contact(Fighter *fighter);
 void cage_weapon_back_lp_contact(Fighter *fighter);

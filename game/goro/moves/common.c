@@ -1,4 +1,5 @@
 #include "retail_vm.h"
+#include "retail_data.h"
 #include "../character.h"
 
 /* 4de6e4 passes reaction 100 to current-context dispatcher 45b1f0 while the
@@ -30,5 +31,7 @@ void goro_script_lp_finish(Fighter *fighter) {
 /* 43a5c0 -> 43a610 disturbs resting world objects of Goro's own descriptor
  * type (4ecf18 word 0 = 0x6c) after his stomp landings. */
 void goro_quake_resting_weapons(void) {
-  weapon_hop_resting((int)goro_retail_weapon_descriptor[0]);
+  RetailWeaponInventory inventory;
+  retail_weapon_read(retail_vm_image(), 15, &inventory);
+  weapon_hop_resting((int)inventory.type);
 }

@@ -18,7 +18,6 @@ static const AttackRecord back_record = {98959, -45809, 67502, 28835, 146, 10, 1
 static const WeaponDef native_weapon = {0x63, weapon_hp, weapon_lp, weapon_back, weapon_back, NULL, weapon_throw, equip_weapon, SCENE_MODEL_KAI_WEAPON};
 
 static void equip_weapon(Fighter *fighter) {
-  require(kai_weapon_descriptor[0] == native_weapon.type, "Kai weapon identity must match the reviewed retail descriptor");
   fighter_equip_weapon(fighter, &native_weapon);
 }
 

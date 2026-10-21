@@ -512,9 +512,9 @@
     }
   },
   "weapon": {
-    "source": "game/reiko/moves/weapon.c",
-    "symbol": "native_weapon",
-    "evidence": "Descriptor4eced8 type69 and extracted rig; owned callbacks use shared native strike descriptors."
+    "source": "game/retail_data.c",
+    "symbol": "retail_weapon_read",
+    "evidence": "Original493080 indexes53d5c0 with the unremapped roster slot; native493080 and mk4decomp StrikeAnim4Picker; loaded descriptor supplies every inventory word"
   },
   "command_bindings": {
     "0x469250": {

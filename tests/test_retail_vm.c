@@ -389,6 +389,15 @@ static void data_tables(void) {
   put_word(slot, saved);
   put_word(action_slot, action_saved);
   check(retail_character_slot(16) == 2 && retail_character_slot(17) == 7, "shared stance selection must apply retail hidden-roster remaps");
+  uint32_t inventory_slot = 0x53d5c0 + 17 * 4;
+  uint32_t inventory_saved = mk4_image_u32(&image, inventory_slot);
+  uint32_t inventory_selected = mk4_image_u32(&image, 0x53d5c0);
+  put_word(inventory_slot, inventory_selected);
+  RetailWeaponInventory inventory;
+  retail_weapon_read(&image, 17, &inventory);
+  check(inventory.address == inventory_selected * 4, "inventory dispatch must read the changed raw slot independently of script and CPU aliases");
+  put_word(inventory_slot, inventory_saved);
+
   for (int character = 0; character < MK4_ROSTER_COUNT; ++character) {
     roster_def(character);
   }

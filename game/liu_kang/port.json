@@ -490,9 +490,9 @@
     }
   },
   "weapon": {
-    "evidence": "53d5c0[3] -> 4ece58/type 66 and armed table 4ecd50; docs/liu-kang-scripts.md",
-    "source": "game/liu_kang/character.c",
-    "symbol": "dragon_sword"
+    "source": "game/retail_data.c",
+    "symbol": "retail_weapon_read",
+    "evidence": "Original493080 indexes53d5c0 with the unremapped roster slot; native493080 and mk4decomp StrikeAnim4Picker; loaded descriptor supplies every inventory word"
   },
   "runtime_scripts": {
     "0x4de3b0": {

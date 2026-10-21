@@ -27,7 +27,6 @@ static const WeaponDef native_weapon = {
     0x67, weapon_hp, weapon_lp, weapon_back_hp, weapon_back_lp, NULL, weapon_throw, equip_weapon, SCENE_MODEL_REPTILE_WEAPON};
 
 static void equip_weapon(Fighter *fighter) {
-  require(reptile_weapon_descriptor[0] == native_weapon.type, "Reptile weapon identity must match the reviewed retail descriptor");
   fighter_equip_weapon(fighter, &native_weapon);
 }
 

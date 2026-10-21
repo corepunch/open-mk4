@@ -62,5 +62,4 @@ void reptile_weapon_flurry(Fighter *fighter);
 void reptile_weapon_getup_back(Fighter *fighter);
 void reptile_weapon_reaction(Fighter *fighter);
 void reptile_weapon_stagger_tail(Fighter *fighter);
-extern const uint32_t reptile_weapon_descriptor[];
 #endif

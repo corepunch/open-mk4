@@ -15,7 +15,6 @@ static const AttackRecord bolt_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 101, 1
 static const MeshAnimation bolt_mesh = {.first = 106, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED};
 
 void fujin_equip_crossbow(Fighter *fighter) {
-  require(fujin_weapon_descriptor[0] == crossbow.type, "Fujin crossbow must match its reviewed retail descriptor");
   fighter_equip_weapon(fighter, &crossbow);
 }
 

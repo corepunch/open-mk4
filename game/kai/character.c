@@ -17,14 +17,4 @@ const MoveDef kai_s_air_attack = {61, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_A
  * the selected weapon's native inventory entry until their strike records
  * are ported. */
 // clang-format off: Keep table entries on one row, including long rows.
-const uint32_t kai_weapon_descriptor[] = {
-  0x63,
-  0x141b33,
-  0x142daf,
-  0x13b330,
-  0x13eeb6,
-  0x13ee98,
-  0x13ee9b,
-  0xffffc000,
-};
 // clang-format on

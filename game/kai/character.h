@@ -46,7 +46,6 @@ void kai_handstand_rear_contact(Fighter *fighter);
 void kai_handstand_victim_tail(Fighter *fighter);
 void kai_handstand_crouch_return(Fighter *fighter);
 void kai_handstand_reaction(Fighter *fighter);
-extern const uint32_t kai_weapon_descriptor[];
 void kai_draw_weapon(Fighter *fighter);
 void kai_weapon_back_contact(Fighter *fighter);
 void kai_weapon_victim_getup(Fighter *fighter);

@@ -255,3 +255,20 @@ void retail_bind_move_list(CharacterDef *definition, const Mk4Image *image, unsi
   definition->move_list = entries[character];
   definition->move_list_count = (int)count;
 }
+
+/* Native493080/StrikeAnim4Picker indexes the default inventory with the raw
+ * roster slot. Script, stance and native action aliases do not apply here. */
+void retail_weapon_read(const Mk4Image *image, unsigned character, RetailWeaponInventory *inventory) {
+  require(character < MK4_ROSTER_COUNT && inventory != NULL, "Invalid retail inventory owner");
+  uint32_t address = mk4_image_u32(image, 0x53d5c0 + character * 4) * 4;
+  require(address >= 0x4d0000 && address <= 0x4ef000 - 32 && address % 4 == 0, "Invalid retail inventory descriptor");
+  *inventory = (RetailWeaponInventory){.address = address,
+      .type = mk4_image_u32(image, address),
+      .object_template = mk4_image_u32(image, address + 4) * 4,
+      .hand_binding = mk4_image_u32(image, address + 8) * 4,
+      .buttons = mk4_image_u32(image, address + 12) * 4,
+      .idle = mk4_image_u32(image, address + 16) * 4,
+      .forward = mk4_image_u32(image, address + 20) * 4,
+      .backward = mk4_image_u32(image, address + 24) * 4,
+      .reserved = mk4_image_u32(image, address + 28)};
+}
