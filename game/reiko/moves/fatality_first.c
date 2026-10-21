@@ -287,7 +287,7 @@ void reiko_first_fatality(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &first_owner);
   fighter->sample_override = 0;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x14ccc);

@@ -1,52 +1,14 @@
 #include "../character.h"
 
-static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner);
 static void finish_scene(Fighter *fighter);
 static void burn_start(Fighter *fighter);
 static void burn_tail_done(Fighter *victim);
 static void beast_start(Fighter *fighter);
 static void beast_watch(Fighter *fighter);
 static void beast_gore_object(Projectile *object);
-// clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef fatal_moves[] = {
-  FATAL_MOVE(13, 55),
-  FATAL_MOVE(390, 144),
-  FATAL_MOVE(391, 169),
-  FATAL_MOVE(206, 99),
-  FATAL_MOVE(115, 18),
-  FATAL_MOVE(116, 49),
-  FATAL_MOVE(117, 18),
-  FATAL_MOVE(118, 49),
-  FATAL_MOVE(12, 57),
-  FATAL_MOVE(578, 48),
-  FATAL_MOVE(579, 34),
-  FATAL_MOVE(580, 77),
-  FATAL_MOVE(581, 37),
-  FATAL_MOVE(584, 77),
-  FATAL_MOVE(585, 47),
-  FATAL_MOVE(415, 129),
-  FATAL_MOVE(416, 107),
-  FATAL_MOVE(412, 48),
-  FATAL_MOVE(293, 19),
-  FATAL_MOVE(128, 109),
-};
-// clang-format on
 static const SceneClip burn_repeat_blend[] = {BLEND(390, 105)};
 static const SceneClip burn_victory_blend[] = {BLEND(115, 0)};
 static const SceneClip burn_victim_blend[] = {BLEND(206, 0)};
-
-static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
-  if (fighter_move(fighter)->clip != clip) {
-    for (int i = 0; i < COUNT(fatal_moves); ++i) {
-      if (fatal_moves[i].clip == clip) {
-        fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        break;
-      }
-    }
-  }
-  fighter->sample_override = sample;
-  fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
-}
 
 static void finish_scene(Fighter *fighter) {
   (void)fighter;
@@ -73,8 +35,8 @@ void scorpion_start_fatality(Fighter *fighter, int id) {
     return;
   }
   Fighter *victim = fighter_peer(fighter);
-  fatal_pose(victim, 13, 0, false);
-  fatal_pose(fighter, id == FINISH_BEAST ? 12 : 390, 0, true);
+  retail_scene_pose(victim, 13, 0, false);
+  retail_scene_pose(fighter, id == FINISH_BEAST ? 12 : 390, 0, true);
   FighterFn start = id == FINISH_BURN ? burn_start : beast_start;
   start(fighter);
 }

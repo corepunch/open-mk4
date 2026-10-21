@@ -43,4 +43,5 @@ void retail_press_uppercut(Fighter *fighter);
 void retail_finish_first(Fighter *fighter);
 void retail_finish_second(Fighter *fighter);
 void retail_spike_finish(Fighter *fighter);
+void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner);
 #endif

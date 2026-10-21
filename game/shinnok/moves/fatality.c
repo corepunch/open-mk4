@@ -87,5 +87,5 @@ void shinnok_fatality_begin(Fighter *fighter, unsigned done) {
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter->native_variant = (int)(SHINNOK_FATALITY_DONE & ~done);
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
 }

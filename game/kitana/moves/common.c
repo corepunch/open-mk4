@@ -29,7 +29,7 @@ void kitana_hk(Fighter *fighter) {
 void kitana_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 184) {
     Fighter *victim = fighter_peer(fighter);
-    mk4_script_scene_pose(victim, 561, 79, 0);
+    mk4_script_scene_pose(victim, 561, 0);
     fighter_cancel_mmove(victim);
     kitana_entry_retail_script_004e59c8(victim);
     return;

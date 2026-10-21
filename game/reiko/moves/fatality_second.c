@@ -168,7 +168,7 @@ void reiko_second_fatality(Fighter *fighter) {
   fighter->native_variant = 0;
   /* 41c430 turns the dizzy victim towards its peer (490bd0) and polls the
    * first-arrival signal before 4d2d60. */
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
   victim->facing = victim->body.pos[AXIS_X] <= fighter->body.pos[AXIS_X] ? 1 : -1;
   native_begin(victim, 0, 0, victim_stagger);

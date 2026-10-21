@@ -13,22 +13,6 @@ static void liu_script_fatal_watch(Fighter *fighter);
 static void liu_script_fatal_hit(Fighter *owner);
 static void fatal_fireball_object(Projectile *p);
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef fatal_moves[] = {
-  FATAL_MOVE(13, 55),
-  FATAL_MOVE(119, 59),
-  FATAL_MOVE(418, 518),
-  FATAL_MOVE(419, 288),
-  FATAL_MOVE(537, 59),
-  FATAL_MOVE(538, 16),
-  FATAL_MOVE(539, 37),
-  FATAL_MOVE(415, 129),
-  FATAL_MOVE(416, 107),
-  FATAL_MOVE(412, 48),
-  FATAL_MOVE(293, 19),
-  FATAL_MOVE(128, 109),
-};
-// clang-format on
-// clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip dragon_actor[] = {
   SCENE(418, 0, 159),
   SCENE(418, 160, 518),
@@ -42,19 +26,6 @@ static const SceneClip dragon_target[] = {
   SCENE(419, 0, 288),
 };
 // clang-format on
-
-void liu_kang_fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
-  if (fighter_move(fighter)->clip != clip) {
-    for (int i = 0; i < COUNT(fatal_moves); ++i) {
-      if (fatal_moves[i].clip == clip) {
-        fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &fatal_moves[i]);
-        break;
-      }
-    }
-  }
-  fighter->sample_override = sample;
-  fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
-}
 
 void liu_kang_finish_scene(Fighter *fighter) {
   (void)fighter;
@@ -178,8 +149,8 @@ static void fatal_fireball_object(Projectile *p) {
 }
 
 void liu_kang_liu_script_fatal_setup(Fighter *fighter) {
-  liu_kang_fatal_pose(fighter, 537, 0, true);
-  liu_kang_fatal_pose(fighter_peer(fighter), 539, 0, false);
+  retail_scene_pose(fighter, 537, 0, true);
+  retail_scene_pose(fighter_peer(fighter), 539, 0, false);
   fighter->flags |= FF_PAIRED;
   fighter_peer(fighter)->flags |= FF_PAIRED;
   liu_kang_entry_retail_script_004e0020(fighter);
@@ -214,8 +185,8 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
     return;
   }
   Fighter *victim = fighter_peer(fighter);
-  liu_kang_fatal_pose(victim, 13, 0, false);
-  liu_kang_fatal_pose(fighter, 119, 0, true);
+  retail_scene_pose(victim, 13, 0, false);
+  retail_scene_pose(fighter, 119, 0, true);
   if (id == FINISH_LIU_KANG_1) {
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x20ccc);

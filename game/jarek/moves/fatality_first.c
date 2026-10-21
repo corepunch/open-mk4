@@ -149,7 +149,7 @@ void jarek_fatality_1(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), Q16_ONE);
   }
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   /* 404ef0(447150): the victim task waits 11 visits before its blends. */
   native_hold(victim, 11, victim_blend);
   native_hold(fighter, 16, owner_blend);

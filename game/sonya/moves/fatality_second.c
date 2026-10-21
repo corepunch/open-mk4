@@ -43,8 +43,8 @@ void sonya_second_fatality(Fighter *fighter) {
   if (!battle_begin_finisher(fighter, FINISH_SONYA_2)) {
     return;
   }
-  mk4_script_scene_pose(fighter, 558, 16, 0);
-  mk4_script_scene_pose(fighter_peer(fighter), 13, 56, 0);
+  mk4_script_scene_pose(fighter, 558, 0);
+  mk4_script_scene_pose(fighter_peer(fighter), 13, 0);
   Fighter *victim = fighter_peer(fighter);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x18000);

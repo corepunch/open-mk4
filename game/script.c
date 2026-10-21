@@ -7,9 +7,9 @@
 #include <stdio.h>
 
 static void bind_clip(Fighter *fighter, int clip, int count, int first) {
-  require(count > 0 && first >= 0 && first < count, "Invalid generated clip binding");
+  require(count > 0 && first >= 0 && first < count, "Invalid native clip binding");
   /* Changing animation is not an attack re-entry: retain action, contact,
-   * flags, buttons, physics and the running frame program. The bound move
+   * flags, buttons, physics and the running native continuation. The bound move
    * is actor-owned storage. */
   fighter->playback_move = *fighter_move(fighter);
   fighter->playback_move.clip = clip;
@@ -23,7 +23,7 @@ static void bind_clip(Fighter *fighter, int clip, int count, int first) {
 
 void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first) {
   bind_clip(fighter, clip, count, first);
-  /* Generated programs own contact queries. Do not also resolve the
+  /* Native frame continuations own contact queries. Do not also resolve the
    * approximate startup/active/damage window from an old move header. */
   fighter->playback_move.flags |= SF_RECORD;
 }
@@ -408,8 +408,9 @@ void mk4_script_landing_motion(Fighter *fighter) {
   native_motion_step(fighter);
 }
 
-void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample) {
-  bind_clip(fighter, clip, count, sample);
+void mk4_script_scene_pose(Fighter *fighter, int clip, int sample) {
+  require(clip >= 0 && clip < MK4_CLIP_COUNT, "Invalid native scene animation");
+  retail_vm_bind_animation(fighter, 0x4fad7c + (uint32_t)clip * 12, sample);
   fighter->action = ACTION_RETAIL_0700;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
@@ -451,7 +452,7 @@ static void finish_scene(Fighter *fighter) {
 static void spike_rise(Fighter *fighter, float rise) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   int height = (int)rise;
-  mk4_script_scene_pose(victim, 128, 110, mini(31, height * 2));
+  mk4_script_scene_pose(victim, 128, mini(31, height * 2));
   victim->body.pos[AXIS_Y] = height == 22 ? -0x59999 : victim->body.ground - height * 0x3333;
 }
 

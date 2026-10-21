@@ -197,7 +197,7 @@ void jax_fatality_1(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x11999);
   }
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   native_hold(victim, 11, first_victim_start);
   native_hold(fighter, 16, first_owner_start);
 }

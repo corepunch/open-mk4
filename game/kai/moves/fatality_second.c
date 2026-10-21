@@ -199,7 +199,7 @@ void kai_fatality_2(Fighter *fighter) {
   fighter->body.pos[AXIS_X] = fighter->body.pos[AXIS_Z] = 0;
   victim->body.pos[AXIS_X] = 5 * side;
   victim->body.pos[AXIS_Z] = 0;
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   native_hold(victim, 1, NULL);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;

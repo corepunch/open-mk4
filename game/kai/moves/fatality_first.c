@@ -211,7 +211,7 @@ void kai_fatality_1(Fighter *fighter) {
   fighter->sample_override = pose;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter->native_variant = 0;
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   /* 44ad70 -> 475530 places the victim 1.15 units along the pair axis.
    * Camera tasks 44bad0/44bbf0 remain portable fight framing. */
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {

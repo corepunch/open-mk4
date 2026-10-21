@@ -420,8 +420,8 @@ bool mk4_begin_stage_finish(Fighter *fighter, int id) {
   static const MoveDef scene_move = {.clip = -1, .last = 0, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
   fighter_start_move(fighter, S_VICTORY, &scene_move);
   fighter_start_move((Fighter *)fighter_opponent(fighter), S_KNOCKDOWN, &scene_move);
-  mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, id == FINISH_FAN ? 130 : 20, 0);
-  mk4_script_scene_pose((Fighter *)fighter_opponent(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
+  mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, 0);
+  mk4_script_scene_pose((Fighter *)fighter_opponent(fighter), id == FINISH_FAN ? 416 : 13, 0);
   return true;
 }
 

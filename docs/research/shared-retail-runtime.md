@@ -537,3 +537,21 @@ query tests (33) pass. Inventory fingerprints and 1,109 interpreted roots remain
 unchanged. The workflow and compiler-era documentation now describe direct
 retail execution. This tooling cleanup does not claim remaining per-fighter
 native/controller architecture is finished.
+
+## Shared native scene animation binding
+
+Three private fatal-pose helpers and47 copied clip/length rows are removed.
+Native scene setup now shares one actor-state/ownership helper and the same
+checked descriptor binding as the interpreter. The other native scene call
+sites no longer pass authored clip lengths; the original descriptors supply
+them. Pose selection inside an actual native routine remains native work;
+script animation commands continue to execute original words.
+
+This reuses the existing checked animation binding boundary (including native
+428750's descriptor-load path) rather than adding a second scene decoder.
+State, untouchable/busy flags and actor-owned playback storage retain their
+existing engine boundaries.
+
+Shared VM checks, all strict roster audits, native source gates and formatting
+pass. Existing native scene/CPU/stage integrations pass before the known throw
+assertion. No additional tests or fighter timing expectations were added.

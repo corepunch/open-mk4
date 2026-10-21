@@ -51,7 +51,7 @@ void mk4_script_stop_body(Fighter *fighter);
 void mk4_script_context_sound(Fighter *fighter, int selector);
 void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, int gravity);
 void mk4_script_landing_motion(Fighter *fighter);
-void mk4_script_scene_pose(Fighter *fighter, int clip, int count, int sample);
+void mk4_script_scene_pose(Fighter *fighter, int clip, int sample);
 void mk4_script_fan_cycle(Fighter *fighter);
 void mk4_mmove_fan_victim_end(Fighter *fighter);
 void mk4_native_fan_rise(Fighter *fighter);

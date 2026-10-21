@@ -232,7 +232,7 @@ void tanya_fatality_1(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   /* 44d340 state 0 -> 475530 aligns the victim 1.15 ahead. */
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x12666);

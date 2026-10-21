@@ -150,7 +150,7 @@ void quan_chi_first_fatality(Fighter *fighter) {
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(fighter, S_PUNCH, &owner_hold);
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   /* 44bd9b -> 475530 aligns the scene pair at 1.1 units. */
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x11999);

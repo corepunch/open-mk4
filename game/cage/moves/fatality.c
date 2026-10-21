@@ -210,7 +210,7 @@ void cage_fatality_1(Fighter *fighter) {
   fighter->native_variant = 0;
   fighter->state = S_PUNCH;
   fighter->action = 0x700;
-  mk4_script_scene_pose(victim, 13, 56, 0);
+  mk4_script_scene_pose(victim, 13, 0);
   native_hold(victim, 1, NULL);
   battle_sound(SOUND_B, 0x30);
   native_scene_blends(fighter, female_victim(victim) ? owner_female : owner_male, 1, first_intro);

@@ -132,7 +132,6 @@ enum {
 
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
-#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
 #define BLEND(c, sample, step, first)                                                                                                                          \
   {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, sample, sample, 1, step, first}
 

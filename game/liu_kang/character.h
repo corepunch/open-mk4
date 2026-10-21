@@ -23,7 +23,6 @@
 #define cpu_close_hp liu_kang_cpu_close_hp
 #define enter_lk_throw liu_kang_enter_lk_throw
 #define enter_throw liu_kang_enter_throw
-#define fatal_pose liu_kang_fatal_pose
 #define finish_scene liu_kang_finish_scene
 #define fireball_mesh liu_kang_fireball_mesh
 #define fireball_spawn liu_kang_fireball_spawn
@@ -102,7 +101,6 @@ enum {
 #define COUNT(array) ((int)(sizeof array / sizeof array[0]))
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
-#define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
 #define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
 
 void liu_kang_bicycle_script(Fighter *fighter);
@@ -116,7 +114,6 @@ void liu_kang_cpu_close_hk(Fighter *fighter);
 void liu_kang_cpu_close_hp(Fighter *fighter);
 void liu_kang_enter_lk_throw(Fighter *fighter);
 void liu_kang_enter_throw(Fighter *fighter);
-void liu_kang_fatal_pose(Fighter *fighter, int clip, int sample, bool owner);
 void liu_kang_finish_scene(Fighter *fighter);
 extern const MeshAnimation liu_kang_fireball_mesh;
 void liu_kang_fireball_spawn(Fighter *fighter, int type);

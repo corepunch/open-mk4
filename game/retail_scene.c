@@ -76,3 +76,13 @@ void retail_spike_finish(Fighter *fighter) {
     retail_spike_delay(fighter);
   }
 }
+
+/* Native scene setup owns actor state; clip lengths remain in the same
+ * retail descriptors used by the interpreter. No fighter clip table exists. */
+void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner) {
+  static const MoveDef scene = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+  if (fighter_move(fighter)->clip != clip) {
+    fighter_start_move(fighter, owner ? S_VICTORY : S_KNOCKDOWN, &scene);
+  }
+  mk4_script_scene_pose(fighter, clip, sample);
+}

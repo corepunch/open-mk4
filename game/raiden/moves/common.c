@@ -26,7 +26,7 @@ void raiden_hk(Fighter *fighter) {
 void raiden_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 187) {
     Fighter *victim = fighter_peer(fighter);
-    mk4_script_scene_pose(victim, 574, 39, 0);
+    mk4_script_scene_pose(victim, 574, 0);
     fighter_cancel_mmove(victim);
     raiden_entry_retail_script_004e5770(victim);
     return;
