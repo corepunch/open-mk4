@@ -15,10 +15,7 @@ void kitana_hp(Fighter *fighter) {
     kitana_ground_attack(fighter, G_CLOSE_HP);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &kitana_s_hp);
-  fighter->sample_override = 0;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  kitana_hp_script(fighter);
+  retail_high_punch(fighter);
 }
 
 static void kitana_combo_hp(Fighter *fighter) {

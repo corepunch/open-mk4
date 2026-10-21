@@ -2,13 +2,6 @@
 
 static void lk_return_done(Fighter *fighter);
 static void lk_return_hold(Fighter *fighter);
-static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
-static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &sonya_s_hp, &s_hp_second, fighter_ready};
-
-void sonya_hp_script(Fighter *fighter) {
-  native_hp_start(fighter, &hp_profile);
-}
 
 void sonya_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);

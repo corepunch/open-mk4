@@ -4,9 +4,6 @@ static const MoveDef s_shadow_low = {.clip = 26, .last = 13, .flags = SF_LOCK, .
 static const MoveDef s_shadow_up = {.clip = 24, .last = 9, .flags = SF_LOCK, .action = 0x30a};
 static void lk_return_done(Fighter *fighter);
 static void lk_return_hold(Fighter *fighter);
-static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
-static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &kitana_s_hp, &s_hp_second, fighter_ready};
 
 void kitana_shadow_low(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_shadow_low);
@@ -16,10 +13,6 @@ void kitana_shadow_low(Fighter *fighter) {
 void kitana_shadow_up(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_shadow_up);
   kitana_entry_retail_script_004ed2c0(fighter);
-}
-
-void kitana_hp_script(Fighter *fighter) {
-  native_hp_start(fighter, &hp_profile);
 }
 
 void kitana_hk(Fighter *fighter) {

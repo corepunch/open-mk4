@@ -15,10 +15,7 @@ void liu_kang_hp(Fighter *fighter) {
     liu_kang_ground_attack(fighter, G_CLOSE_HP);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &liu_kang_s_hp);
-  fighter->sample_override = 0;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  liu_kang_hp_script(fighter);
+  retail_high_punch(fighter);
 }
 
 static void liu_kang_combo_hp(Fighter *fighter) {

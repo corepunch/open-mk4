@@ -270,6 +270,26 @@ static void native_row_data(void) {
   }
 }
 
+static void native_shared_record(void) {
+  Fighter *owner = setup(0, 0);
+  Fighter *victim = fighter_peer(owner);
+  uint32_t record = mk4_image_u32(&image, 0x53d268) * 4;
+  uint32_t saved = mk4_image_u32(&image, record + 20);
+  put_word(record + 20, 0);
+  FighterFn entry = retail_native_entry((unsigned)owner->roster, 0x46d290);
+  entry(owner);
+  check(fighter_move(owner)->last == (int)mk4_image_u32(&image, 0x4fbb60) - 1, "shared native must bind the loaded descriptor length");
+  bool contacted = false;
+  for (int i = 0; i < 64 && owner->current_mmove != NULL; ++i) {
+    check(fighter_sample(owner) >= 0 && fighter_sample(owner) <= fighter_move(owner)->last, "shared native pose must stay within its loaded descriptor");
+    tick();
+    contacted |= owner->connected;
+  }
+  check(contacted && victim->health == Q16_ONE, "native contact must use the mutated retail record rather than a C damage copy");
+  check(owner->current_mmove == NULL && owner->state == S_IDLE, "shared native must return through the normal actor controller");
+  put_word(record + 20, saved);
+}
+
 static void native_contracts(void) {
   Fighter *owner = setup(0, 2);
   check(retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0) && owner->body.physics == fighter_friction,
@@ -424,6 +444,7 @@ int main(int argc, char **argv) {
   native_contracts();
   native_repetition();
   native_row_data();
+  native_shared_record();
   data_tables();
   lifetimes();
   assets_bound();

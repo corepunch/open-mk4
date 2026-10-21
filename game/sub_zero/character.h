@@ -40,7 +40,6 @@
 #define ground_native_tail sub_zero_ground_native_tail
 #define ground_profile sub_zero_ground_profile
 #define hold_phase sub_zero_hold_phase
-#define hp_script sub_zero_hp_script
 #define ice_projectile sub_zero_ice_projectile
 #define lk_thrown_script sub_zero_lk_thrown_script
 #define lp_capture_done sub_zero_lp_capture_done
@@ -64,7 +63,6 @@
 #define press_lk sub_zero_press_lk
 #define press_lp sub_zero_press_lp
 #define press_uppercut sub_zero_press_uppercut
-#define s_hp sub_zero_s_hp
 #define s_jab sub_zero_s_jab
 #define s_kick sub_zero_s_kick
 #define s_lp_thrown sub_zero_s_lp_thrown
@@ -185,7 +183,6 @@ extern const GroundAttack sub_zero_ground_attacks[8];
 void sub_zero_ground_native_tail(Fighter *fighter);
 extern const NativeGroundProfile sub_zero_ground_profile;
 void sub_zero_hold_phase(Fighter *fighter, const mmove_t *phase);
-void sub_zero_hp_script(Fighter *fighter);
 void sub_zero_ice_projectile(Projectile *p);
 void sub_zero_lk_thrown_script(Fighter *victim);
 void sub_zero_lp_capture_done(Fighter *victim);
@@ -263,7 +260,6 @@ void sub_zero_entry_retail_script_004e9910(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9bd0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter);
 void sub_zero_entry_retail_script_004ed588(Fighter *fighter);
-extern const MoveDef sub_zero_s_hp;
 extern const MoveDef sub_zero_s_jab;
 extern const MoveDef sub_zero_s_kick;
 extern const MoveDef sub_zero_s_lp_thrown;

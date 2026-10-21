@@ -15,11 +15,7 @@ void sub_zero_hp(Fighter *fighter) {
     sub_zero_ground_attack(fighter, G_CLOSE_HP);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &sub_zero_s_hp);
-  fighter->sample_override = 0;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  fighter->script_phase = 0;
-  sub_zero_hp_script(fighter);
+  retail_high_punch(fighter);
 }
 
 static void sub_zero_combo_hp(Fighter *fighter) {

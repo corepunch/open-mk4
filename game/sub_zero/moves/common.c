@@ -1,9 +1,7 @@
 #include "../character.h"
 
 static void lp_getup_done(Fighter *victim);
-static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
-static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &sub_zero_s_hp, &s_hp_second, fighter_ready};
+
 static const MoveDef s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
 static const mframe_t lp_getup_frames[15] = {{0}};
 static const mmove_t lp_getup_phase = {.firstframe = 0, .lastframe = 14, .frame = lp_getup_frames, .endfunc = lp_getup_done};
@@ -81,10 +79,6 @@ void sub_zero_hold_phase(Fighter *fighter, const mmove_t *phase) {
   int sample = fighter_sample(fighter);
   fighter_mmove_phase(fighter, phase);
   fighter->sample_override = sample;
-}
-
-void sub_zero_hp_script(Fighter *fighter) {
-  native_hp_start(fighter, &hp_profile);
 }
 
 void sub_zero_hk(Fighter *fighter) {

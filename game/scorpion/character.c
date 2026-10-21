@@ -68,8 +68,6 @@ const MoveDef scorpion_s_teleport_land = {.clip = 304, .first = 18, .last = 27, 
  * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69b0/46c2c0,
  * 4e6190/46bb60 and 4e6844/46f220. Times are our script ticks. */
 
-const MoveDef scorpion_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
  * Each extends, queries while holding its strike pose, then retracts. The
  * native contact continuations freeze the body and optionally open a cancel. */

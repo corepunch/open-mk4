@@ -24,7 +24,6 @@
 #define ground_attack scorpion_ground_attack
 #define ground_native_next scorpion_ground_native_next
 #define ground_native_tail scorpion_ground_native_tail
-#define hp_script scorpion_hp_script
 #define native_blend scorpion_native_blend
 #define press_air_hk scorpion_press_air_hk
 #define press_air_hp scorpion_press_air_hp
@@ -41,7 +40,6 @@
 #define press_lk scorpion_press_lk
 #define press_lp scorpion_press_lp
 #define press_uppercut scorpion_press_uppercut
-#define s_hp scorpion_s_hp
 #define s_jab scorpion_s_jab
 #define s_kick scorpion_s_kick
 #define s_sweep scorpion_s_sweep
@@ -148,7 +146,6 @@ void scorpion_fire_script(Fighter *fighter);
 void scorpion_ground_attack(Fighter *fighter, int index);
 void scorpion_ground_native_next(Fighter *fighter);
 void scorpion_ground_native_tail(Fighter *fighter);
-void scorpion_hp_script(Fighter *fighter);
 void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end);
 void scorpion_press_air_hk(Fighter *fighter);
 void scorpion_press_air_hp(Fighter *fighter);
@@ -226,7 +223,6 @@ void scorpion_entry_retail_script_004ec8b0(Fighter *fighter);
 void scorpion_entry_retail_script_004ec918(Fighter *fighter);
 void scorpion_entry_retail_script_004ed448(Fighter *fighter);
 void scorpion_entry_retail_script_004ed4a8(Fighter *fighter);
-extern const MoveDef scorpion_s_hp;
 extern const MoveDef scorpion_s_jab;
 extern const MoveDef scorpion_s_kick;
 extern const MoveDef scorpion_s_sweep;

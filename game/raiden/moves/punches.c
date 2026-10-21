@@ -15,10 +15,7 @@ void raiden_hp(Fighter *fighter) {
     raiden_ground_attack(fighter, G_CLOSE_HP);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &raiden_s_hp);
-  fighter->sample_override = 0;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  raiden_hp_script(fighter);
+  retail_high_punch(fighter);
 }
 
 static void raiden_combo_hp(Fighter *fighter) {

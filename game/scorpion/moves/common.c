@@ -1,17 +1,10 @@
 #include "../character.h"
 
-static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
-static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &scorpion_s_hp, &s_hp_second, fighter_ready};
 static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 void scorpion_special_ready(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_TELEPORTING;
   fighter_ready(fighter);
-}
-
-void scorpion_hp_script(Fighter *fighter) {
-  native_hp_start(fighter, &hp_profile);
 }
 
 void scorpion_hk(Fighter *fighter) {

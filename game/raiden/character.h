@@ -33,7 +33,6 @@
 #define ground_attack raiden_ground_attack
 #define ground_native_next raiden_ground_native_next
 #define ground_native_tail raiden_ground_native_tail
-#define hp_script raiden_hp_script
 #define lk_victim raiden_lk_victim
 #define press_air_hk raiden_press_air_hk
 #define press_air_hp raiden_press_air_hp
@@ -50,7 +49,6 @@
 #define press_lk raiden_press_lk
 #define press_lp raiden_press_lp
 #define press_uppercut raiden_press_uppercut
-#define s_hp raiden_s_hp
 #define s_jab raiden_s_jab
 #define s_kick raiden_s_kick
 #define s_knockdown raiden_s_knockdown
@@ -150,7 +148,6 @@ void raiden_first_fatality(Fighter *fighter);
 void raiden_ground_attack(Fighter *fighter, int index);
 void raiden_ground_native_next(Fighter *fighter);
 void raiden_ground_native_tail(Fighter *fighter);
-void raiden_hp_script(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
 void raiden_press_air_hk(Fighter *fighter);
 void raiden_press_air_hp(Fighter *fighter);
@@ -233,7 +230,6 @@ void raiden_entry_retail_script_004e9d50(Fighter *fighter);
 void raiden_entry_retail_script_004ea068(Fighter *fighter);
 void raiden_entry_retail_script_004ea108(Fighter *fighter);
 void raiden_entry_retail_script_004ed5f0(Fighter *fighter);
-extern const MoveDef raiden_s_hp;
 extern const MoveDef raiden_s_jab;
 extern const MoveDef raiden_s_kick;
 extern const MoveDef raiden_s_knockdown;

@@ -52,12 +52,6 @@ typedef struct NativeGroundProfile {
   const AttackRecord *roundhouse_record;
 } NativeGroundProfile;
 
-typedef struct NativeHPProfile {
-  const AttackRecord *record;
-  const MoveDef *first, *second;
-  FighterFn ready;
-} NativeHPProfile;
-
 typedef struct AirAttack {
   MoveDef move;
   AttackRecord record;
@@ -77,7 +71,6 @@ void native_advancing_sweep(Fighter *fighter);
 void native_standard_sweep(Fighter *fighter);
 void native_ground_tail(Fighter *fighter, const NativeGroundProfile *profile);
 void native_ground_next(Fighter *fighter, const NativeGroundProfile *profile);
-void native_hp_start(Fighter *fighter, const NativeHPProfile *profile);
 void native_air_tail(Fighter *fighter, const NativeAirProfile *profile, int index, int elapsed);
 void native_air_cleanup(Fighter *fighter);
 void native_air_straight_land(Fighter *fighter);

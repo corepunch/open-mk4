@@ -253,3 +253,5 @@ for _address, _helper in list(HELPERS.items()):
 
 HELPERS[0x46a680] = H('high_kick_entry', 'active fighter', 'Store action 0100 and enter the retail character selector 4e5ca0.', 'Direct retail execution.', ('game/retail_combat.c', 'retail_high_kick'))
 HELPERS[0x46a7b0] = H('low_kick_entry', 'active fighter', 'After throw gates, 46a81a stores action 0102 and enters selector 4e5d90. Existing controller code still owns the throw gates.', 'Direct retail execution.', ('game/retail_combat.c', 'retail_low_kick'))
+
+HELPERS[0x46d290] = H('standing_high_punch', 'active fighter and HP repeat input', 'One shared native repeat/contact controller; bind original descriptors and read contact A[0] live.', 'Native attack controller.', ('game/native_combat.c', 'retail_high_punch'), (0x46d9b3,))

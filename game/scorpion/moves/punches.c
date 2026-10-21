@@ -15,10 +15,7 @@ void scorpion_hp(Fighter *fighter) {
     scorpion_ground_attack(fighter, G_CLOSE_HP);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &scorpion_s_hp);
-  fighter->sample_override = 0;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  scorpion_hp_script(fighter);
+  retail_high_punch(fighter);
 }
 
 static void scorpion_combo_hp(Fighter *fighter) {

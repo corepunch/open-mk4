@@ -276,3 +276,24 @@ native consolidation. The full 46a7b0 includes throw gates before 46a81a;
 it is not registered as a completed shared native entry by this step. Existing low-kick/runtime integration coverage is reused; its
 entry assertion now names the original selector rather than a former direct
 selected-root adapter. No new tests were added.
+
+## One native standing high-punch controller
+
+All eighteen standing high-punch integrations now call `retail_high_punch`.
+The fighter-local entry/profile adapters, copied HP attack records and
+296/297 clip seeds are removed, along with the public `NativeHPProfile` API.
+The existing shared native repeat/contact phase implementation remains native
+code because 46d290 is a native state machine, not a retail script program.
+
+Its source contact comes from live A[0]; descriptor 4fbb5c/4fbb68 lengths are
+loaded through the checked image binding helper. Native recovery uses the
+loaded last sample and rendering clamps within it. The checked local 46d9b3
+entry stores action 010a, clears busy, emits A[10] and binds 4fbb5c; its native
+helper links include mk4decomp `TriCounterReinitChain` (local 46dd30).
+
+One shared native fixture changes the source record to zero damage, verifies
+that contact still occurs, checks descriptor bounds and normal controller
+return. It tests our native data boundary rather than copied fighter balance.
+Shared VM checks, strict roster audits and helper/navigation checks (6/7)
+pass. The existing battle run again stops at the documented baseline throw
+tick assertion.

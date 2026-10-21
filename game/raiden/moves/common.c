@@ -7,16 +7,10 @@ static void torpedo_miss_motion(Fighter *fighter);
 static void torpedo_recoil(Fighter *fighter);
 static void torpedo_release(Fighter *fighter);
 static void torpedo_pair(Fighter *fighter);
-static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
-static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &raiden_s_hp, &s_hp_second, fighter_ready};
+
 static const MoveDef s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x202};
 static const MoveDef s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const AttackRecord torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
-
-void raiden_hp_script(Fighter *fighter) {
-  native_hp_start(fighter, &hp_profile);
-}
 
 void raiden_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);

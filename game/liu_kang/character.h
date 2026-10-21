@@ -37,7 +37,6 @@
 #define ground_attack liu_kang_ground_attack
 #define ground_native_next liu_kang_ground_native_next
 #define ground_native_tail liu_kang_ground_native_tail
-#define hp_script liu_kang_hp_script
 #define liu_script_air_diagonal_tail liu_kang_liu_script_air_diagonal_tail
 #define liu_script_air_hp_tail liu_kang_liu_script_air_hp_tail
 #define liu_script_air_kick_tail liu_kang_liu_script_air_kick_tail
@@ -87,7 +86,6 @@
 #define press_lk liu_kang_press_lk
 #define press_lp liu_kang_press_lp
 #define press_uppercut liu_kang_press_uppercut
-#define s_hp liu_kang_s_hp
 #define s_jab liu_kang_s_jab
 #define s_kick liu_kang_s_kick
 #define s_sweep liu_kang_s_sweep
@@ -149,7 +147,6 @@ void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_ground_attack(Fighter *fighter, int index);
 void liu_kang_ground_native_next(Fighter *fighter);
 void liu_kang_ground_native_tail(Fighter *fighter);
-void liu_kang_hp_script(Fighter *fighter);
 void liu_kang_bicycle_kick(Fighter *fighter);
 void liu_kang_crouch_lp(Fighter *fighter);
 void liu_kang_first_fatality(Fighter *fighter);
@@ -261,7 +258,6 @@ void liu_kang_entry_retail_script_004ec7f0(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed678(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter);
-extern const MoveDef liu_kang_s_hp;
 extern const MoveDef liu_kang_s_jab;
 extern const MoveDef liu_kang_s_kick;
 extern const MoveDef liu_kang_s_sweep;

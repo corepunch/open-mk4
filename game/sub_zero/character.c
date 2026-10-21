@@ -71,8 +71,6 @@ const GroundAttack sub_zero_ground_attacks[] = {
 };
 // clang-format on
 
-const MoveDef sub_zero_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-
 const NativeGroundProfile sub_zero_ground_profile = {
     sub_zero_ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 0, 28, 21, 22, 38, NULL};
 

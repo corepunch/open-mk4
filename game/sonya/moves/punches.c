@@ -15,10 +15,7 @@ void sonya_hp(Fighter *fighter) {
     sonya_ground_attack(fighter, G_CLOSE_HP);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &sonya_s_hp);
-  fighter->sample_override = 0;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  sonya_hp_script(fighter);
+  retail_high_punch(fighter);
 }
 
 static void sonya_combo_hp(Fighter *fighter) {

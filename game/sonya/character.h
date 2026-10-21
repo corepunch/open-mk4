@@ -35,7 +35,6 @@
 #define ground_attack sonya_ground_attack
 #define ground_native_next sonya_ground_native_next
 #define ground_native_tail sonya_ground_native_tail
-#define hp_script sonya_hp_script
 #define lk_victim sonya_lk_victim
 #define press_air_hk sonya_press_air_hk
 #define press_air_hp sonya_press_air_hp
@@ -52,7 +51,6 @@
 #define press_lk sonya_press_lk
 #define press_lp sonya_press_lp
 #define press_uppercut sonya_press_uppercut
-#define s_hp sonya_s_hp
 #define s_jab sonya_s_jab
 #define s_kick sonya_s_kick
 #define s_knockdown sonya_s_knockdown
@@ -148,7 +146,6 @@ void sonya_first_fatality(Fighter *fighter);
 void sonya_ground_attack(Fighter *fighter, int index);
 void sonya_ground_native_next(Fighter *fighter);
 void sonya_ground_native_tail(Fighter *fighter);
-void sonya_hp_script(Fighter *fighter);
 void sonya_lk_victim(Fighter *victim);
 void sonya_press_air_hk(Fighter *fighter);
 void sonya_press_air_hp(Fighter *fighter);
@@ -219,7 +216,6 @@ void sonya_entry_retail_script_004ea130(Fighter *fighter);
 void sonya_entry_retail_script_004ec7a0(Fighter *fighter);
 void sonya_entry_retail_script_004ec7f0(Fighter *fighter);
 void sonya_entry_retail_script_004ed4c0(Fighter *fighter);
-extern const MoveDef sonya_s_hp;
 extern const MoveDef sonya_s_jab;
 extern const MoveDef sonya_s_kick;
 extern const MoveDef sonya_s_knockdown;

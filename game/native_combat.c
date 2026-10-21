@@ -1,4 +1,6 @@
 #include "native.h"
+#include "retail_native.h"
+#include "retail_vm.h"
 #include "math_util.h"
 #include <string.h>
 
@@ -121,19 +123,28 @@ void native_ground_next(Fighter *fighter, const NativeGroundProfile *profile) {
   ground_build(fighter, fighter->ticks + 1, false);
 }
 
+/* Native 46d290/46d9b3 binds these two descriptors directly; unlike the
+ * authored move programs, its repeat/contact controller is native code. */
+static void hp_bind(Fighter *fighter, bool second, int first) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_010A};
+  fighter_start_move(fighter, S_PUNCH, &move);
+  retail_vm_bind_animation(fighter, second ? 0x4fbb68 : 0x4fbb5c, first);
+}
+
 static void hp_build(Fighter *fighter);
 
 static void hp_query(Fighter *fighter) {
-  const NativeHPProfile *profile = fighter->native_context;
   const Fighter *victim = fighter_opponent(fighter);
   bool ducking_kick = victim->action == ACTION_RETAIL_0102 && victim->avoids_high;
   if (!fighter->connected && !ducking_kick) {
-    battle_contact(fighter, profile->record);
+    const Mk4Image *image = retail_vm_image();
+    uint32_t record = mk4_image_u32(image, 0x53d268);
+    AttackRecord attack = retail_vm_attack_record(image, record * 4);
+    battle_contact(fighter, &attack);
   }
 }
 
 static void hp_branch(Fighter *fighter) {
-  const NativeHPProfile *profile = fighter->native_context;
   const Fighter *victim = fighter_opponent(fighter);
   int phase = fighter->script_phase;
   bool repeat = (fighter->buffered & BUTTON_BIT(BUTTON_HIGH_PUNCH)) && (victim->body.pos[AXIS_X] - fighter->body.pos[AXIS_X]) * fighter->facing >= 0;
@@ -141,31 +152,29 @@ static void hp_branch(Fighter *fighter) {
     battle_sound(SOUND_A, 10);
   }
   phase = repeat ? (phase == 0 ? 1 : phase == 1 || phase == 3 ? 2 : 3) : phase == 0 || phase == 2 ? 4 : 5;
-  fighter_start_move(fighter, S_PUNCH, phase == 4 ? profile->first : profile->second);
-  fighter->native_context = profile;
+  hp_bind(fighter, phase != 4, phase == 1 ? 1 : phase == 3 ? 2 : 11);
   fighter->script_phase = phase;
-  fighter->sample_override = phase == 1 ? 1 : phase == 3 ? 2 : 11;
   fighter->flags &= ~(unsigned)FF_BUSY;
   hp_build(fighter);
 }
 
 static void hp_build(Fighter *fighter) {
-  const NativeHPProfile *profile = fighter->native_context;
   int phase = fighter->script_phase;
   int active = phase == 0 ? 8 : phase == 1 ? 7 : 6;
   int first = phase == 0 ? 0 : phase == 1 ? 1 : phase == 2 ? 11 : 2;
-  int count = phase >= 4 ? (phase == 4 ? 10 : 8) : active + 3;
-  native_begin(fighter, 1, count, phase >= 4 ? profile->ready : hp_branch);
+  int count = phase >= 4 ? fighter_move(fighter)->last - 11 + 1 : active + 3;
+  native_begin(fighter, 1, count, phase >= 4 ? fighter_ready : hp_branch);
   for (int frame = 1; frame <= count; ++frame) {
-    int sample = phase >= 4 ? mini(phase == 4 ? 20 : 18, 11 + frame) : phase == 2 && frame == active + 2 ? 17 : first + frame;
-    native_frame(fighter, frame, sample, phase < 4 && frame >= active && frame <= active + 2 ? hp_query : NULL);
+    int sample = phase >= 4 ? 11 + frame : phase == 2 && frame == active + 2 ? 17 : first + frame;
+    native_frame(fighter, frame, mini(sample, fighter_move(fighter)->last), phase < 4 && frame >= active && frame <= active + 2 ? hp_query : NULL);
   }
   native_play(fighter, false);
 }
 
-void native_hp_start(Fighter *fighter, const NativeHPProfile *profile) {
+void retail_high_punch(Fighter *fighter) {
+  hp_bind(fighter, false, 0);
+  fighter->flags &= ~(unsigned)FF_BUSY;
   battle_sound(SOUND_A, 10);
-  fighter->native_context = profile;
   hp_build(fighter);
 }
 

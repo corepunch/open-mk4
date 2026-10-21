@@ -31,7 +31,6 @@
 #define ground_attack kitana_ground_attack
 #define ground_native_next kitana_ground_native_next
 #define ground_native_tail kitana_ground_native_tail
-#define hp_script kitana_hp_script
 #define lk_victim kitana_lk_victim
 #define press_air_hk kitana_press_air_hk
 #define press_air_hp kitana_press_air_hp
@@ -48,7 +47,6 @@
 #define press_lk kitana_press_lk
 #define press_lp kitana_press_lp
 #define press_uppercut kitana_press_uppercut
-#define s_hp kitana_s_hp
 #define s_jab kitana_s_jab
 #define s_kick kitana_s_kick
 #define s_knockdown kitana_s_knockdown
@@ -141,7 +139,6 @@ void kitana_first_fatality(Fighter *fighter);
 void kitana_ground_attack(Fighter *fighter, int index);
 void kitana_ground_native_next(Fighter *fighter);
 void kitana_ground_native_tail(Fighter *fighter);
-void kitana_hp_script(Fighter *fighter);
 void kitana_air_throw(Fighter *fighter);
 void kitana_bicycle(Fighter *fighter);
 void kitana_cartwheel(Fighter *fighter);
@@ -236,7 +233,6 @@ void kitana_entry_retail_script_004ec7f0(Fighter *fighter);
 void kitana_entry_retail_script_004ed268(Fighter *fighter);
 void kitana_entry_retail_script_004ed2c0(Fighter *fighter);
 void kitana_entry_retail_script_004ed4c0(Fighter *fighter);
-extern const MoveDef kitana_s_hp;
 extern const MoveDef kitana_s_jab;
 extern const MoveDef kitana_s_kick;
 extern const MoveDef kitana_s_knockdown;
