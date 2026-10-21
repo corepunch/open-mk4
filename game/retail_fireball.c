@@ -1,13 +1,16 @@
 #include "retail_vm.h"
-#include "../character.h"
+#include "retail_native.h"
+#include "native.h"
+#include "script.h"
+#include "mk4_characters.h"
+#include "math_util.h"
 
 /* T2 actions 10/11 (498b70/498e70) set 309/30a and enter 4ed268/4ed2c0. */
-static const MoveDef cast = {.clip = 26, .last = 13, .flags = SF_LOCK | SF_RECORD, .action = 0x309};
-static const MoveDef air_cast = {.clip = 24, .last = 9, .flags = SF_LOCK | SF_RECORD, .action = 0x30a};
+static const MoveDef cast = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x309};
+static const MoveDef air_cast = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x30a};
 /* 480cf0 binds clip 310 at sample 7 and advances to 18 while falling. */
-static const MoveDef fall = {.clip = 310, .first = 7, .last = 27, .flags = SF_LOCK, .action = 0x1005};
+static const MoveDef fall = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK, .action = 0x1005};
 /* Both waiter descriptors (4ed2b0/4ed2e8) select contact C[0]. */
-static const AttackRecord fireball_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 64, 10, 2, ATTACK_MARK, 0x1999};
 /* 4d1718 -> ten share2 roots 50e3c4..50e4c0, meshes 261..270, two ticks
  * each. They carry the same authored origin as Cage's orb roots, and
  * 498be0 sets the root's .75 scale. */
@@ -28,7 +31,12 @@ static bool fireball_contact(Projectile *projectile, bool air) {
   if (!air && victim->action == ACTION_RETAIL_2001) {
     return false;
   }
-  if (battle_projectile_contact(projectile, &fireball_record) == CONTACT_MISS) {
+  const Mk4Image *image = retail_vm_image();
+  uint32_t waiter = air ? 0x4ed2e8 : 0x4ed2b0;
+  unsigned selector = mk4_image_u32(image, waiter);
+  require(selector < 256, "Invalid native projectile contact selector");
+  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d208 + selector * 4) * 4);
+  if (battle_projectile_contact(projectile, &record) == CONTACT_MISS) {
     return false;
   }
   projectile->kind = 0;
@@ -81,21 +89,23 @@ static Projectile *spawn(Fighter *fighter, ProjectileFn step) {
   projectile->initial_mesh = fireball_mesh.first;
   projectile->heading[0] = fighter_axis(fighter, AXIS_X);
   projectile->heading[1] = fighter_axis(fighter, AXIS_Z);
-  projectile->pos[AXIS_Y] += 0x1999;
+  const Mk4Image *image = retail_vm_image();
+  q16 offset = (q16)mk4_image_u32(image, 0x4ed808);
+  projectile->pos[AXIS_Y] += (q16)mk4_image_u32(image, 0x4ed80c);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-    projectile->pos[axis] += q16_mul(fighter_axis(fighter, axis), 0x3333);
+    projectile->pos[axis] += q16_mul(fighter_axis(fighter, axis), offset);
     projectile->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);
   }
   return projectile;
 }
 
-void tanya_fireball_spawn(Fighter *fighter, int task_type) {
+void retail_fireball_spawn(Fighter *fighter, int task_type) {
   require(task_type == 75, "Unexpected Tanya fireball task");
   spawn(fighter, fireball_step);
 }
 
 /* 498ed0 adds a 0x23d7 descent to the same object. */
-void tanya_air_fireball_spawn(Fighter *fighter, int task_type) {
+void retail_air_fireball_spawn(Fighter *fighter, int task_type) {
   require(task_type == 75, "Unexpected Tanya air fireball task");
   Projectile *projectile = spawn(fighter, air_fireball_step);
   if (projectile != NULL) {
@@ -110,8 +120,9 @@ static void fall_ready(Fighter *fighter) {
 
 /* 480d46: landing binds sample 18 and 428d10 plays the rest of clip 310. */
 static void fall_land(Fighter *fighter) {
-  native_begin(fighter, 18, 27, fall_ready);
-  for (int pose = 18; pose <= 27; ++pose) {
+  int last = fighter_move(fighter)->last;
+  native_begin(fighter, 18, last, fall_ready);
+  for (int pose = 18; pose <= last; ++pose) {
     native_frame(fighter, pose, pose, NULL);
   }
   native_play(fighter, false);
@@ -131,9 +142,9 @@ static void fall_hold(Fighter *fighter) {
 
 /* 498eb0 -> 480cf0: gravity 0x20c with no vertical velocity, action 1005
  * and the peer-facing update 490bd0; one fall sample per visit until 18. */
-void tanya_air_fireball_fall(Fighter *fighter) {
+void retail_fireball_fall(Fighter *fighter) {
   fighter_start_move(fighter, S_JUMP, &fall);
-  fighter->sample_override = 7;
+  retail_vm_bind_animation(fighter, 0x4fbc04, 7);
   fighter->body.vel[AXIS_Y] = 0;
   fighter->body.gravity = 0x20c;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
@@ -145,15 +156,15 @@ void tanya_air_fireball_fall(Fighter *fighter) {
 }
 
 /* 45f5f0 stops all motion before every T2 action. */
-void tanya_fireball(Fighter *fighter) {
+void retail_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &cast);
-  retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 9);
+  retail_vm_enter(fighter, 0x4ed268, fighter_ready);
 }
 
 /* Command flag 0x10 and 45ef20 require an airborne fighter with gravity. */
-void tanya_air_fireball(Fighter *fighter) {
+void retail_air_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &air_cast);
-  retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 9);
+  retail_vm_enter(fighter, 0x4ed2c0, fighter_ready);
 }

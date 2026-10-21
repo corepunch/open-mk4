@@ -588,6 +588,27 @@ static void native_contact_record_lifetime(void) {
   fighter_cancel_mmove(actor);
 }
 
+static void native_projectile_context(void) {
+  Fighter *actor = setup(0, 2);
+  actor->retail_vm.native_owner_set = true;
+  actor->retail_vm.native_owner = 15;
+  check(!retail_native_vm(actor, 0x498bb0, RETAIL_SPAWN, 74), "shared projectile native must reject the wrong typed task argument");
+  check(retail_native_vm(actor, 0x498bb0, RETAIL_SPAWN, 75), "shared projectile spawn must be independent of fighter owner masks");
+  Projectile *projectile = NULL;
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    if (g_battle.projectiles[i].kind != 0) {
+      projectile = &g_battle.projectiles[i];
+      break;
+    }
+  }
+  check(projectile != NULL && projectile->kind == PROJECTILE_FIREBALL && projectile->owner == 0 && projectile->mesh_animation != NULL,
+      "original native task must allocate the common projectile resource with its caller identity");
+  battle_init(0, 2);
+  for (int i = 0; i < MAX_PROJECTILES; ++i) {
+    check(g_battle.projectiles[i].kind == 0, "reset must retire the independent native projectile");
+  }
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -808,6 +829,7 @@ int main(int argc, char **argv) {
   native_weapon_parameters();
   native_weapon_inventory();
   native_contact_record_lifetime();
+  native_projectile_context();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

@@ -44,8 +44,6 @@ extern void kai_input_47bd10(Fighter *fighter);
 extern void kai_input_47c520(Fighter *fighter);
 extern void kai_rising_skull(Fighter *fighter);
 extern void sonya_bicycle(Fighter *fighter);
-extern void kitana_command_shadow_low(Fighter *fighter);
-extern void kitana_command_shadow_up(Fighter *fighter);
 extern void kitana_air_throw(Fighter *fighter);
 extern void sonya_square_wave(Fighter *fighter);
 extern void sub_zero_air_throw(Fighter *fighter);
@@ -62,8 +60,6 @@ extern void liu_kang_low_fireball(Fighter *fighter);
 extern void liu_kang_second_fatality(Fighter *fighter);
 extern void mk4_sidestep(Fighter *fighter);
 extern void noob_saibot_air_throw(Fighter *fighter);
-extern void noob_saibot_command_498b70(Fighter *fighter);
-extern void noob_saibot_command_498e70(Fighter *fighter);
 extern void noob_saibot_teleport(Fighter *fighter);
 extern void quan_chi_air_throw(Fighter *fighter);
 extern void quan_chi_first_fatality(Fighter *fighter);
@@ -117,11 +113,9 @@ extern void sub_zero_first_fatality(Fighter *fighter);
 extern void sub_zero_ice(Fighter *fighter);
 extern void sub_zero_second_fatality(Fighter *fighter);
 extern void sub_zero_slide(Fighter *fighter);
-extern void tanya_air_fireball(Fighter *fighter);
 extern void tanya_drill_kick(Fighter *fighter);
 extern void tanya_fatality_1(Fighter *fighter);
 extern void tanya_fatality_2(Fighter *fighter);
-extern void tanya_fireball(Fighter *fighter);
 extern void tanya_spin_kick(Fighter *fighter);
 extern void weapon_pickup(Fighter *fighter);
 extern bool cage_can_groin_punch(const Fighter *fighter);
@@ -170,6 +164,8 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeAction entries[] = {
+  {0x498b70, 0x3ffff, retail_fireball},
+  {0x498e70, 0x3ffff, retail_air_fireball},
   {0x46d1d0, 0x3ffff, retail_weapon_draw},
   {0x47c070, 0x3ffff, retail_teleport},
   {0x47c2a0, 0x3ffff, retail_teleport_slam},
@@ -302,12 +298,6 @@ static const NativeAction entries[] = {
   {0x497080, 0x4000, cage_low_orb},
   {0x497540, 0x1000, jarek_blade},
   {0x4988d0, 0x400, reptile_acid_spit},
-  {0x498b70, 0x10000, kitana_command_shadow_low},
-  {0x498b70, 0x20000, noob_saibot_command_498b70},
-  {0x498b70, 0x200, tanya_fireball},
-  {0x498e70, 0x10000, kitana_command_shadow_up},
-  {0x498e70, 0x20000, noob_saibot_command_498e70},
-  {0x498e70, 0x200, tanya_air_fireball},
   {0x498fc0, 0x800, kai_ground_skull},
   {0x499410, 0x800, kai_rising_skull},
   {0x499740, 0x100, quan_chi_skull},

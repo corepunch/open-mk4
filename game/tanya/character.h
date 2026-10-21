@@ -18,11 +18,6 @@ void tanya_script_current_reaction(Fighter *fighter, int reaction);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable tanya_diagonal_air;
-void tanya_fireball(Fighter *fighter);
-void tanya_air_fireball(Fighter *fighter);
-void tanya_fireball_spawn(Fighter *fighter, int task_type);
-void tanya_air_fireball_spawn(Fighter *fighter, int task_type);
-void tanya_air_fireball_fall(Fighter *fighter);
 bool tanya_can_spin_kick(const Fighter *fighter);
 void tanya_spin_kick(Fighter *fighter);
 void tanya_blocked_recoil_land(Fighter *fighter);

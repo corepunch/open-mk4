@@ -37,14 +37,16 @@
       "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail."
     },
     "0x498b70": {
-      "evidence": "Low-punch command record 4e44b0 enters Noob shadow move action 0x309 and VM root 4ed268.",
-      "source": "game/noob_saibot/moves/controls.c",
-      "symbol": "noob_saibot_command_498b70"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x498e70": {
-      "evidence": "Low-punch command record 4e44bc enters distinct Noob shadow move action 0x30a and VM root 4ed2c0.",
-      "source": "game/noob_saibot/moves/controls.c",
-      "symbol": "noob_saibot_command_498e70"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x467e00": {
       "source": "game/retail_scene.c",
@@ -146,14 +148,16 @@
       "symbol": "retail_uppercut"
     },
     "shadow_low": {
-      "evidence": "Noob Saibot command target has its own generated shadow playback and callback route.",
-      "symbol": "noob_saibot_command_498b70",
-      "source": "game/noob_saibot/moves/controls.c"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "symbol": "retail_fireball",
+      "source": "game/retail_fireball.c",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "shadow_up": {
-      "evidence": "Noob Saibot command target has its own generated shadow playback and callback route.",
-      "symbol": "noob_saibot_command_498e70",
-      "source": "game/noob_saibot/moves/controls.c"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "symbol": "retail_air_fireball",
+      "source": "game/retail_fireball.c",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "close_hp": {
       "source": "game/retail_combat.c",
@@ -541,14 +545,16 @@
       "evidence": "Loaded command selects this original native address; shared capture and original scripts"
     },
     "0x498b70": {
-      "source": "game/noob_saibot/moves/controls.c",
-      "symbol": "noob_saibot_command_498b70",
-      "evidence": "Existing recovered shadow command, preserved in generated retail table with its original order and air gate."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x498e70": {
-      "source": "game/noob_saibot/moves/controls.c",
-      "symbol": "noob_saibot_command_498e70",
-      "evidence": "Existing recovered shadow command, preserved in generated retail table with its original order and air gate."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x46d1d0": {
       "source": "game/retail_weapon.c",

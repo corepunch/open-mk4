@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-NATIVE = ('native.c', 'native_combat.c', 'script.c', 'mk4_common.c', 'reactions.c', 'weapons.c', 'shadow_actor.c', 'retail_combat.c', 'retail_scene.c', 'retail_native.c', 'retail_native_vm.c')
+NATIVE = ('native.c', 'native_combat.c', 'script.c', 'mk4_common.c', 'reactions.c', 'weapons.c', 'retail_combat.c', 'retail_scene.c', 'retail_native.c', 'retail_native_vm.c')
 
 
 def masked(text):

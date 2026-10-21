@@ -152,9 +152,6 @@ void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
 void sonya_script_square_wave_tail(Fighter *fighter);
 void sonya_script_weapon_victim_getup(Fighter *victim);
-void kitana_shadow_install_physics(Fighter *fighter);
-void kitana_shadow_task_low(Fighter *fighter, int task_type);
-void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void liu_kang_bicycle_script(Fighter *fighter);
 void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
@@ -192,9 +189,6 @@ void reiko_script_lp_end(Fighter *fighter);
 void reiko_script_lp_reaction(Fighter *fighter, int reaction);
 void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
-void noob_saibot_shadow_install_physics(Fighter *fighter);
-void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
-void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
 void reiko_star_spawn(Fighter *fighter, int task_type);
 void quan_chi_fatality_beat(Fighter *fighter);
 void quan_chi_fatality_cue_40(Fighter *fighter);
@@ -361,12 +355,9 @@ void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
 void sub_zero_script_victory(Fighter *fighter);
 void sub_zero_slide_script(Fighter *fighter);
-void tanya_air_fireball_fall(Fighter *fighter);
-void tanya_air_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_blocked_recoil_land(Fighter *fighter);
 void tanya_boomerang_release(Fighter *fighter);
 void tanya_drill_kick_contact(Fighter *fighter);
-void tanya_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_first_owner_53(Fighter *fighter);
 void tanya_first_owner_drift(Fighter *fighter);
 void tanya_first_owner_loop(Fighter *fighter);
@@ -1638,19 +1629,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           tanya_boomerang_release(fighter);
           return true;
         case 0x498eb0:
-          if (owner & 0x10000u) {
-            kitana_shadow_install_physics(fighter);
-            return true;
-          }
-          if (owner & 0x20000u) {
-            noob_saibot_shadow_install_physics(fighter);
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_air_fireball_fall(fighter);
-            return true;
-          }
-          return false;
+          retail_fireball_fall(fighter);
+          return true;
         case 0x499000:
           kai_ground_skull_spawn(fighter);
           return true;
@@ -1862,51 +1842,17 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           reptile_acid_spawn(fighter, (int)argument);
           return true;
         case 0x498bb0:
-          if (owner & 0x10000u) {
-            if (argument != 75u) {
-              return false;
-            }
-            kitana_shadow_task_low(fighter, (int)argument);
-            return true;
+          if (argument != 75u) {
+            return false;
           }
-          if (owner & 0x20000u) {
-            if (argument != 75u) {
-              return false;
-            }
-            noob_saibot_shadow_task_low(fighter, (int)argument);
-            return true;
-          }
-          if (owner & 0x200u) {
-            if (argument != 75u) {
-              return false;
-            }
-            tanya_fireball_spawn(fighter, (int)argument);
-            return true;
-          }
-          return false;
+          retail_fireball_spawn(fighter, (int)argument);
+          return true;
         case 0x498ed0:
-          if (owner & 0x10000u) {
-            if (argument != 75u) {
-              return false;
-            }
-            kitana_shadow_task_up(fighter, (int)argument);
-            return true;
+          if (argument != 75u) {
+            return false;
           }
-          if (owner & 0x20000u) {
-            if (argument != 75u) {
-              return false;
-            }
-            noob_saibot_shadow_task_up(fighter, (int)argument);
-            return true;
-          }
-          if (owner & 0x200u) {
-            if (argument != 75u) {
-              return false;
-            }
-            tanya_air_fireball_spawn(fighter, (int)argument);
-            return true;
-          }
-          return false;
+          retail_air_fireball_spawn(fighter, (int)argument);
+          return true;
         case 0x49a6a0:
           if (argument != 67u) {
             return false;

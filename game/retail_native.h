@@ -2,6 +2,11 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_fireball(Fighter *fighter);
+void retail_air_fireball(Fighter *fighter);
+void retail_fireball_spawn(Fighter *fighter, int task_type);
+void retail_air_fireball_spawn(Fighter *fighter, int task_type);
+void retail_fireball_fall(Fighter *fighter);
 void retail_weapon_contact(Fighter *fighter, uint32_t address);
 void retail_weapon_equip(Fighter *fighter);
 void retail_weapon_draw(Fighter *fighter);

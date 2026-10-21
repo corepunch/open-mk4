@@ -1252,3 +1252,26 @@ canonical native definitions.
 Verified formatting, shared VM/rejection checks, all strict audits, native frame
 gates, six helper checks, seven port/source checks and six reachability checks.
 No new character behavior tests were added.
+
+### Use the original shared projectile task for hidden fighters
+
+Local498b70/498e70 cast original4ed268/4ed2c0. Their498bb0/498ed0 native
+spawns call49c540 and498be0, which always select the same4d1718 mesh template
+and4ed2b0/4ed2e8 waiter data.49c810 queries the C contact bank. These native
+paths contain no roster-specific cloned-actor branch. Removed the unsupported
+shadow-actor event/renderer subsystem and the remaining Kitana/Noob C units and
+private headers. One shared retail_fireball service now implements these native
+addresses for all actors.
+
+Contact selectors, origin offsets and the falling descriptor now read original
+data. Cast timing stays in original script words; native480cf0 recovery binds
+4fbc04 and its stored length. Research names resolve through the shared native
+index rather than requiring deleted fighter headers. Source evidence includes
+mk4decomp MstackPushPackChainInit, PendingMatch_MStackCall and
+TwoPhaseInstallScaledPackedPtr, checked against bounded local listings.
+
+Verified formatting, shared VM/rejections, strict script audits, native frame
+gates, helper/port/reachability checks and SDL self-test for18 rigs/11 arenas.
+One shared ABI fixture checks typed task rejection, owner-independent spawning
+and reset cleanup; no fighter timing/damage matrices were added. The existing
+projectile burst/trail presentation omissions remain native integration work.

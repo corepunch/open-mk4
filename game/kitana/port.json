@@ -7,14 +7,16 @@
       "symbol": "weapon_pickup"
     },
     "0x498b70": {
-      "evidence": "Kitana low-punch command record 4e44b0 enters the clip-26 paired shadow action and VM root 4ed268.",
-      "source": "game/kitana/moves/controls.c",
-      "symbol": "kitana_command_shadow_low"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x498e70": {
-      "evidence": "Kitana airborne low-punch command record 4e44bc enters the clip-24 paired shadow action and VM root 4ed2c0.",
-      "source": "game/kitana/moves/controls.c",
-      "symbol": "kitana_command_shadow_up"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     }
   },
   "integration_source": "game/retail_native.c",
@@ -156,14 +158,16 @@
       "symbol": "retail_vm_enter"
     },
     "shadow_low": {
-      "evidence": "Kitana low-punch command uses the shared 4ed268 actor and contact phases with its own controller entry.",
-      "source": "game/kitana/moves/controls.c",
-      "symbol": "kitana_command_shadow_low"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "shadow_up": {
-      "evidence": "Kitana airborne low-punch command uses the shared 4ed2c0 actor, motion and recovery phases.",
-      "source": "game/kitana/moves/controls.c",
-      "symbol": "kitana_command_shadow_up"
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "sidestep": {
       "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",

@@ -55,7 +55,16 @@ def private_aliases(path):
 
 def canonical_name(path, name):
     name = private_aliases(path).get(name, name)
-    return LEGACY_NATIVE_NAMES.get(name, name)
+    name = LEGACY_NATIVE_NAMES.get(name, name)
+    try:
+        scope = (ROOT / path).resolve().relative_to(ROOT / 'game').parts[0]
+    except (ValueError, IndexError):
+        return name
+    if '.' not in scope:
+        qualified = LEGACY_NATIVE_NAMES.get(scope + '_' + name, scope + '_' + name)
+        if qualified in public_definitions():
+            return qualified
+    return name
 
 
 @lru_cache(maxsize=1)

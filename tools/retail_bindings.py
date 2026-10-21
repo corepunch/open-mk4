@@ -464,13 +464,13 @@ CHARACTER_BINDINGS[9] = {
                       evidence='46f390 selects Tanya fast or ordinary roundhouse startup streams'),
     0x467fc0: Binding('tanya_script_spike_tail', 'game/tanya/character.c', ('tail',), flow='terminal',
                       evidence='467fc0 stage-fatality coordinator; shared spike helper'),
-    0x498bb0: Binding('tanya_fireball_spawn', 'game/tanya/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
+    0x498bb0: Binding('retail_fireball_spawn', 'game/retail_fireball.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', task_types=(75,), mmove=True,
                       evidence='498bb0 -> 498be0 builds ten share2 meshes 4d1718, offset 4ed808, heading speed .2 and C0 waiter 4ed2b0'),
-    0x498ed0: Binding('tanya_air_fireball_spawn', 'game/tanya/moves/projectile.c', ('spawn',), ('fighter', 'task_type'),
+    0x498ed0: Binding('retail_air_fireball_spawn', 'game/retail_fireball.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', task_types=(75,), mmove=True,
                       evidence='498ed0 -> 498be0 adds Y velocity 0x23d7 and C0 waiter 4ed2e8 through 49c670, which ignores action 2001'),
-    0x498eb0: Binding('tanya_air_fireball_fall', 'game/tanya/moves/projectile.c', ('tail',), flow='terminal', mmove=True,
+    0x498eb0: Binding('retail_fireball_fall', 'game/retail_fireball.c', ('tail',), flow='terminal', mmove=True,
                       evidence='498eb0 -> 480cf0 gravity 0x20c, action 1005, clip 310 samples 7..18 until landing, then the clip tail'),
     0x47ba20: Binding('tanya_drill_kick_contact', 'game/tanya/moves/drill_kick.c', ('tail',), flow='terminal', mmove=True,
                       evidence='47ba20 two advancing D17 queries; 47ba90 shake 0, grounded victim gets reaction 95 after six samples; 47bbd0 recovery'),
@@ -1012,19 +1012,19 @@ CHARACTER_BINDINGS[16] = {
     for _address, _binding in CHARACTER_BINDINGS[2].items()
 }
 CHARACTER_BINDINGS[16].update({
-    0x498bb0: Binding('kitana_shadow_task_low', 'game/kitana/character.c', ('spawn',), ('fighter', 'task_type'),
+    0x498bb0: Binding('retail_fireball_spawn', 'game/kitana/character.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', task_types=(75,), evidence='498bb0 starts the clip-26 paired task and contact-wait phase for Kitana'),
-    0x498ed0: Binding('kitana_shadow_task_up', 'game/kitana/character.c', ('spawn',), ('fighter', 'task_type'),
+    0x498ed0: Binding('retail_air_fireball_spawn', 'game/kitana/character.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', task_types=(75,), evidence='498ed0 starts Kitana child clip 22, action 0x23d7 and the paired contact phase'),
-    0x498eb0: Binding('kitana_shadow_install_physics', 'game/kitana/character.c', ('tail',), flow='terminal',
+    0x498eb0: Binding('retail_fireball_fall', 'game/kitana/character.c', ('tail',), flow='terminal',
                       evidence='498eb0 installs gravity 0x20c and clears vertical position for the Kitana paired actor'),
 })
 CHARACTER_BINDINGS[17].update({
-    0x498bb0: Binding('noob_saibot_shadow_task_low', 'game/noob_saibot/moves/common.c', ('spawn',), ('fighter', 'task_type'),
+    0x498bb0: Binding('retail_fireball_spawn', 'game/noob_saibot/moves/common.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', mmove=True, task_types=(75,), evidence='498bb0 starts the clip-26 paired task and contact-wait phase for Noob Saibot'),
-    0x498ed0: Binding('noob_saibot_shadow_task_up', 'game/noob_saibot/moves/common.c', ('spawn',), ('fighter', 'task_type'),
+    0x498ed0: Binding('retail_air_fireball_spawn', 'game/noob_saibot/moves/common.c', ('spawn',), ('fighter', 'task_type'),
                       flow='independent', mmove=True, task_types=(75,), evidence='498ed0 starts Noob Saibot child clip 22, action 0x23d7 and the paired contact phase'),
-    0x498eb0: Binding('noob_saibot_shadow_install_physics', 'game/noob_saibot/moves/common.c', ('tail',), flow='terminal', mmove=True,
+    0x498eb0: Binding('retail_fireball_fall', 'game/noob_saibot/moves/common.c', ('tail',), flow='terminal', mmove=True,
                       evidence='498eb0 -> 480cf0(0x20c, 0): the owner falls on clip 310 from pose 7 with action 0x1005, lands at 18 and returns'),
 })
 
@@ -1540,6 +1540,9 @@ def bindings_for(character):
     result[0x496770] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
     result[0x496970] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
     result[0x495ae0] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
+    result[0x498eb0] = Binding('retail_fireball_fall', 'game/retail_fireball.c', ('tail',), flow='terminal', mmove=True, evidence='Same original498be0 template4d1718 and waiter data for every actor; no roster branch in local49c540/498be0')
+    result[0x498bb0] = Binding('retail_fireball_spawn', 'game/retail_fireball.c', ('spawn',), ('fighter', 'task_type'), task_types=(75,), flow='independent', mmove=True, evidence='Same original498be0 template4d1718 and waiter data for every actor; no roster branch in local49c540/498be0')
+    result[0x498ed0] = Binding('retail_air_fireball_spawn', 'game/retail_fireball.c', ('spawn',), ('fighter', 'task_type'), task_types=(75,), flow='independent', mmove=True, evidence='Same original498be0 template4d1718 and waiter data for every actor; no roster branch in local49c540/498be0')
     # Historical research aliases resolve to the current native definition.
     from c_source import function_source, canonical_name
     for address, binding in tuple(result.items()):

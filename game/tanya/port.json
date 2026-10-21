@@ -32,14 +32,16 @@
       "evidence": "LK F,D,B record 4e455c (T4[18]). 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
     "0x498b70": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_fireball",
-      "evidence": "Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x498e70": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_air_fireball",
-      "evidence": "Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x467e00": {
       "source": "game/retail_scene.c",
@@ -156,14 +158,16 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "fireball": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_fireball",
-      "evidence": "Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "air_fireball": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_air_fireball",
-      "evidence": "Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "spin_kick": {
       "source": "game/tanya/moves/spin_kick.c",
@@ -518,14 +522,16 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x498b70": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_fireball",
-      "evidence": "HP D,F record 4e44e0 (T2[10], window 26). Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x498e70": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_air_fireball",
-      "evidence": "LP D,B record 4e4500 (T2[11], flags 0x12, gate 45ef20). Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_air_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x479520": {
       "source": "game/tanya/moves/spin_kick.c",
@@ -566,9 +572,10 @@
   },
   "cpu_bindings": {
     "0x498b70": {
-      "source": "game/tanya/moves/projectile.c",
-      "symbol": "tanya_fireball",
-      "evidence": "Projectile CPU row 4df9cc[9] word 0x2000a selects T2[10] 498b70. Native 498b70 sets action 309 and enters 4ed268: clip 26 cast, task 75 498bb0 straight share2 fireball with C0 contact."
+      "source": "game/retail_fireball.c",
+      "symbol": "retail_fireball",
+      "evidence": "Local498b70/498e70 enter original4ed268/4ed2c0;498bb0/498ed0 share template4d1718 and C-bank waiter4ed2b0/4ed2e8 without a roster branch.",
+      "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x47b9f0": {
       "source": "game/tanya/moves/drill_kick.c",

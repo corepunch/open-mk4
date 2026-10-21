@@ -34,3 +34,25 @@ LEGACY_NATIVE_NAMES = {
     'noob_saibot_star': 'reiko_star',
     'noob_saibot_star_spawn': 'reiko_star_spawn',
 }
+
+LEGACY_NATIVE_NAMES.update({
+    'kitana_command_shadow_low': 'retail_fireball',
+    'kitana_command_shadow_up': 'retail_air_fireball',
+    'kitana_shadow_install_physics': 'retail_fireball_fall',
+    'kitana_shadow_low': 'retail_fireball',
+    'kitana_shadow_task_low': 'retail_fireball_spawn',
+    'kitana_shadow_task_up': 'retail_air_fireball_spawn',
+    'kitana_shadow_up': 'retail_air_fireball',
+    'noob_saibot_command_498b70': 'retail_fireball',
+    'noob_saibot_command_498e70': 'retail_air_fireball',
+    'noob_saibot_shadow_install_physics': 'retail_fireball_fall',
+    'noob_saibot_shadow_low': 'retail_fireball',
+    'noob_saibot_shadow_task_low': 'retail_fireball_spawn',
+    'noob_saibot_shadow_task_up': 'retail_air_fireball_spawn',
+    'noob_saibot_shadow_up': 'retail_air_fireball',
+    'tanya_air_fireball': 'retail_air_fireball',
+    'tanya_air_fireball_fall': 'retail_fireball_fall',
+    'tanya_air_fireball_spawn': 'retail_air_fireball_spawn',
+    'tanya_fireball': 'retail_fireball',
+    'tanya_fireball_spawn': 'retail_fireball_spawn',
+})
