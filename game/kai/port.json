@@ -5,29 +5,29 @@
   "inventory_sha256": "f0eac068f066f8a051b28a194b6a73ffbe19726ed7dccb50d94bac3450caf6bf",
   "moves": {
     "air_diagonal_hk": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_air_diagonal_hk",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6500); verified by typed Kai inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_air_diagonal_lk",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e63d8); verified by typed Kai inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_hp": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_air_hp",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6658); verified by typed Kai inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_air_kick",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e61f8); verified by typed Kai inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_air_lp",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6710); verified by typed Kai inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "draw_weapon": {
       "source": "game/kai/moves/weapon.c",

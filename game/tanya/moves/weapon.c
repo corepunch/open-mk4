@@ -50,7 +50,7 @@ static void weapon_ground_hp(Fighter *fighter) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, tanya_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else {
     weapon_ground_hp(fighter);
   }
@@ -181,7 +181,7 @@ static void boomerang_start(Fighter *fighter) {
 /* 495610: 46dbb0's LP throw gate first, then T2[0x16]/[0x17]. */
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, tanya_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else if (mk4_can_ground_throw(fighter, false)) {
     fighter_enter_state(fighter, S_THROW);
   } else {

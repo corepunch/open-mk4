@@ -61,29 +61,29 @@
   "inventory_sha256": "3155c0a13a9a352f554910a8ef9b5927866c7b74a5d4ae3f1cafdd46426e52e5",
   "moves": {
     "air_diagonal_hk": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_air_diagonal_hk",
-      "evidence": "Reptile air diagonal hk entry starts its reviewed generated VM stream through the portable fighter adapter."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_air_diagonal_lk",
-      "evidence": "Reptile air diagonal lk entry starts its reviewed generated VM stream through the portable fighter adapter."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_hp": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_air_hp",
-      "evidence": "Reptile air hp entry starts its reviewed generated VM stream through the portable fighter adapter."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_air_kick",
-      "evidence": "Reptile air kick entry starts its reviewed generated VM stream through the portable fighter adapter."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_air_lp",
-      "evidence": "Reptile air lp entry starts its reviewed generated VM stream through the portable fighter adapter."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",

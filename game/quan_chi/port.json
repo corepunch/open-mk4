@@ -66,29 +66,29 @@
   },
   "moves": {
     "air_diagonal_hk": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_air_diagonal_hk",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_air_diagonal_lk",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_hp": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_air_hp",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_air_kick",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_air_lp",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_throw": {
       "source": "game/quan_chi/character.c",

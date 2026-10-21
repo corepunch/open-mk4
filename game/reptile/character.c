@@ -73,26 +73,6 @@ const CharacterDef mk4_reptile = {
     .move_list_count = 0,
 };
 
-void reptile_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 10);
-}
-
 void reptile_entry_retail_script_004e8128(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8128, fighter_ready, 10);
 }
@@ -175,14 +155,6 @@ void reptile_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 10);
 }
 
 void reptile_entry_retail_script_004ec640(Fighter *fighter) {

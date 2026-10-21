@@ -62,7 +62,7 @@ static void sword_slash_build(Fighter *fighter, int first, bool hit) {
 
 static void sword_attack(Fighter *fighter, bool hp, bool back) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, hp, (hp) ? scorpion_entry_retail_script_004e66d0 : scorpion_entry_retail_script_004e66f0);
+    retail_air_attack(fighter, hp ? 0 : 1);
     return;
   }
   const MoveDef *move = back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);

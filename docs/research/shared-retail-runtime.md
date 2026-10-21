@@ -820,3 +820,33 @@ the retail action target at the press boundary, then queues the selected native
 entry. The existing advancing-sweep integration check passes again and the
 battle suite proceeds to its previously recorded air-throw damage assertion.
 Compilation and formatting pass. No new fighter timing tests were added.
+
+## Shared air startup without fighter animation seeds
+
+The five normal air native entries now supply their original action/script
+operands once in retail_air.c. All rosters enter canonical selectors, including
+Liu Kang's4e61f8 ->4e6df0 path. Armed HP/LP use original4e66d0/4e66f0.
+Native470980's descriptor-binding phase reads its original parameter rows for
+HP/LP, diagonal-HK variants and weapon-air playback. Several of these scripts
+contain selectors and native calls without animation commands, so removing the
+C seeds required implementing that native binding rather than inventing script
+commands. Descriptor validation remains in the shared VM.
+
+Local46e6c0/46ee30/46c7a0/46e380/46df50,4704a0 and470980 listings were checked
+alongside mk4decomp's FiveThunkMStackDispatcher/FiveEntryAlarmInstallChain and
+matching phase-dispatch assembly. Upstream script addresses differ; local
+operands and parameter rows are used. Existing native recovery profiles retain
+their contact/wait/landing adaptation until that next family migrates.
+
+Ninety private air-entry wrappers, eighteen startup selectors, ninety fighter
+MoveDef seeds, the two weapon-air seeds, the old weapon_air_frames adapter and
+124 uncalled script-entry adapters are removed. No authored animation/branch
+program is translated into C. Air press tables and native recovery profiles
+remain migration inputs.
+
+Shared VM/rejection and strict roster audits, native source gates and formatting
+pass. A small native ownership contract covers armed/unarmed descriptor binding
+and interruption without authored timing/damage assertions. Six helper and seven
+port-navigation checks pass. SDL self-test passes18 rigs/11 arenas. Broad battle
+integration exposed the separately committed direction-selection correction;
+after that correction it reaches the known air-throw damage assertion again.

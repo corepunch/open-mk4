@@ -48,7 +48,7 @@ static void weapon_back_lp(Fighter *fighter) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, cage_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else if (fighter_holds_back(fighter)) {
     weapon_back_hp(fighter);
   } else {
@@ -58,7 +58,7 @@ static void weapon_hp(Fighter *fighter) {
 
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, cage_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else if (fighter_holds_back(fighter)) {
     weapon_back_lp(fighter);
   } else {

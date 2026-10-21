@@ -11,7 +11,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define air_hp raiden_air_hp
 #define can_close_fatality retail_can_finish_close
 #define can_teleport raiden_can_teleport
 #define cpu_air_hk raiden_cpu_air_hk
@@ -83,7 +82,6 @@ enum {
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
-void raiden_air_hp(Fighter *fighter);
 bool raiden_can_teleport(const Fighter *fighter);
 void raiden_cpu_air_hk(Fighter *fighter);
 void raiden_cpu_air_lk(Fighter *fighter);
@@ -114,15 +112,8 @@ void raiden_entry_retail_script_004e5770(Fighter *fighter);
 void raiden_entry_retail_script_004e5788(Fighter *fighter);
 void raiden_entry_retail_script_004e5e28(Fighter *fighter);
 void raiden_entry_retail_script_004e5e50(Fighter *fighter);
-void raiden_entry_retail_script_004e61f8(Fighter *fighter);
 void raiden_entry_retail_script_004e62c0(Fighter *fighter);
 void raiden_entry_retail_script_004e62d8(Fighter *fighter);
-void raiden_entry_retail_script_004e63d8(Fighter *fighter);
-void raiden_entry_retail_script_004e6500(Fighter *fighter);
-void raiden_entry_retail_script_004e6658(Fighter *fighter);
-void raiden_entry_retail_script_004e66d0(Fighter *fighter);
-void raiden_entry_retail_script_004e66f0(Fighter *fighter);
-void raiden_entry_retail_script_004e6710(Fighter *fighter);
 void raiden_entry_retail_script_004e6a40(Fighter *fighter);
 void raiden_entry_retail_script_004e8440(Fighter *fighter);
 void raiden_entry_retail_script_004e8458(Fighter *fighter);

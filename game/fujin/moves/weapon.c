@@ -135,7 +135,7 @@ static void bow_start(Fighter *fighter, int variant) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, fujin_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else {
     bow_start(fighter, 1);
   }
@@ -147,7 +147,7 @@ static void weapon_low(Fighter *fighter) {
 
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, fujin_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else if (!(fighter->flags & FF_FOLLOW_UP) && mk4_can_ground_throw(fighter, false)) {
     fujin_enter_throw(fighter);
   } else {

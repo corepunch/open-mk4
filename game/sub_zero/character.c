@@ -108,9 +108,9 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_CLOSE_HP] = sub_zero_cpu_close_hp,
                                        [CPU_CLOSE_HK] = sub_zero_cpu_close_hk,
                                        [CPU_CROUCH_LP] = retail_crouch_low_punch,
-                                       [CPU_AIR_HP] = sub_zero_air_hp,
-                                       [CPU_AIR_HK] = sub_zero_air_hk_diagonal,
-                                       [CPU_AIR_LK] = sub_zero_air_lk_diagonal,
+                                       [CPU_AIR_HP] = retail_air_high_punch,
+                                       [CPU_AIR_HK] = retail_air_diagonal_high_kick,
+                                       [CPU_AIR_LK] = retail_air_diagonal_low_kick,
                                        [CPU_DRAW] = sub_zero_weapon,
                                    }};
 
@@ -220,40 +220,12 @@ void sub_zero_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 4);
 }
 
-void sub_zero_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 4);
-}
-
 void sub_zero_entry_retail_script_004e62c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter) {

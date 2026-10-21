@@ -11,10 +11,7 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define air_hk_diagonal sub_zero_air_hk_diagonal
-#define air_hp sub_zero_air_hp
 #define air_land sub_zero_air_land
-#define air_lk_diagonal sub_zero_air_lk_diagonal
 #define breath_travel sub_zero_breath_travel
 #define can_clone sub_zero_can_clone
 #define can_close_fatality sub_zero_can_close_fatality
@@ -108,10 +105,7 @@ enum {
 #define BLEND(c, sample, step, first)                                                                                                                          \
   {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, sample, sample, 1, step, first}
 
-void sub_zero_air_hk_diagonal(Fighter *fighter);
-void sub_zero_air_hp(Fighter *fighter);
 void sub_zero_air_land(Fighter *fighter);
-void sub_zero_air_lk_diagonal(Fighter *fighter);
 void sub_zero_breath_travel(Fighter *fighter);
 bool sub_zero_can_clone(const Fighter *fighter);
 bool sub_zero_can_close_fatality(const Fighter *fighter);
@@ -151,15 +145,8 @@ void sub_zero_entry_retail_script_004e0420(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0430(Fighter *fighter);
 void sub_zero_entry_retail_script_004e5e28(Fighter *fighter);
 void sub_zero_entry_retail_script_004e5e50(Fighter *fighter);
-void sub_zero_entry_retail_script_004e61f8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62c0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter);
-void sub_zero_entry_retail_script_004e63d8(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6500(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6658(Fighter *fighter);
-void sub_zero_entry_retail_script_004e66d0(Fighter *fighter);
-void sub_zero_entry_retail_script_004e66f0(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6710(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter);
 void sub_zero_entry_retail_script_004e84d8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e84f8(Fighter *fighter);

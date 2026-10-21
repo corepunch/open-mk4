@@ -41,29 +41,29 @@
   "inventory_sha256": "8a4e369f7cd1557d0c10fb60d884da6c3b12e6f9b62bf0ee3a2740d38dfa6694",
   "moves": {
     "air_diagonal_hk": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_hk",
-      "source": "game/jax/character.c",
-      "symbol": "jax_air_diagonal_hk"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick"
     },
     "air_diagonal_lk": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_diagonal_lk",
-      "source": "game/jax/character.c",
-      "symbol": "jax_air_diagonal_lk"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick"
     },
     "air_hp": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_hp",
-      "source": "game/jax/character.c",
-      "symbol": "jax_air_hp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch"
     },
     "air_kick": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_kick",
-      "source": "game/jax/character.c",
-      "symbol": "jax_air_kick"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick"
     },
     "air_lp": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for air_lp",
-      "source": "game/jax/character.c",
-      "symbol": "jax_air_lp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch"
     },
     "air_throw": {
       "source": "game/jax/moves/air_throw.c",

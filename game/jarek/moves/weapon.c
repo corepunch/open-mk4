@@ -39,7 +39,7 @@ static void back_lp(Fighter *fighter) {
 
 static void hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, jarek_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else if (fighter_holds_back(fighter)) {
     back_hp(fighter);
   } else {
@@ -61,7 +61,7 @@ static void ground_lp(Fighter *fighter) {
 
 static void lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, jarek_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else {
     ground_lp(fighter);
   }

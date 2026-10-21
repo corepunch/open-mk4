@@ -16,29 +16,29 @@
   "inventory_sha256": "1f6f879eab6082fc359585c50c6711203d0dfd69ded09b3c5bceddaa7bd8bf27",
   "moves": {
     "air_diagonal_hk": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "air_hk_diagonal"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick"
     },
     "air_diagonal_lk": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "air_lk_diagonal"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick"
     },
     "air_hp": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "air_hp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch"
     },
     "air_kick": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "air_kick"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick"
     },
     "air_lp": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "air_lp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch"
     },
     "air_throw": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

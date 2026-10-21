@@ -30,29 +30,29 @@
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_hp": {
-      "source": "game/goro/moves/air_attacks.c",
-      "symbol": "goro_air_hp",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/goro/moves/air_attacks.c",
-      "symbol": "goro_air_lp",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/goro/moves/air_attacks.c",
-      "symbol": "goro_air_kick",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_hk": {
-      "source": "game/goro/moves/air_attacks.c",
-      "symbol": "goro_air_diagonal_hk",
-      "evidence": "Goro slot 4e6e48 sets selector 31 and enters 46e4d0, whose block 4e65a0 binds clip 56 and B[31]."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/goro/moves/air_attacks.c",
-      "symbol": "goro_air_diagonal_lk",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_throw": {
       "source": "game/goro/moves/throws.c",

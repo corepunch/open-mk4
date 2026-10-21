@@ -76,26 +76,6 @@ void quan_chi_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 8);
 }
 
-void quan_chi_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 8);
-}
-
 void quan_chi_entry_retail_script_004e9910(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e9910, fighter_ready, 8);
 }
@@ -146,14 +126,6 @@ void quan_chi_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void quan_chi_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e14f8(Fighter *fighter) {

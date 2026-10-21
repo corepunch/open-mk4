@@ -13,11 +13,6 @@
 #define s_block shinnok_s_block
 #define s_crouch shinnok_s_crouch
 
-void shinnok_entry_retail_script_004e61f8(Fighter *fighter);
-void shinnok_entry_retail_script_004e63d8(Fighter *fighter);
-void shinnok_entry_retail_script_004e6500(Fighter *fighter);
-void shinnok_entry_retail_script_004e6658(Fighter *fighter);
-void shinnok_entry_retail_script_004e6710(Fighter *fighter);
 extern const MoveDef shinnok_s_block;
 extern const MoveDef shinnok_s_crouch;
 void shinnok_fan_tail(Fighter *fighter);
@@ -48,8 +43,6 @@ void shinnok_weapon_sweep_finish(Fighter *fighter);
 void shinnok_weapon_reaction(Fighter *fighter);
 void shinnok_entry_retail_script_004e62c0(Fighter *fighter);
 void shinnok_entry_retail_script_004e62d8(Fighter *fighter);
-void shinnok_entry_retail_script_004e66d0(Fighter *fighter);
-void shinnok_entry_retail_script_004e66f0(Fighter *fighter);
 void shinnok_entry_retail_script_004e8d08(Fighter *fighter);
 void shinnok_entry_retail_script_004e9460(Fighter *fighter);
 void shinnok_entry_retail_script_004e9498(Fighter *fighter);

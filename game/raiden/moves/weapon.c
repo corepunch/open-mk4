@@ -22,7 +22,7 @@ static void equip_weapon(Fighter *fighter) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, raiden_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else {
     weapon_start_strike(fighter, &weapon_attacks[0], true);
   }
@@ -30,7 +30,7 @@ static void weapon_hp(Fighter *fighter) {
 
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, raiden_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else {
     weapon_start_strike(fighter, &weapon_attacks[1], true);
   }

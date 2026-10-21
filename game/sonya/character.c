@@ -76,7 +76,7 @@ static const CpuMoves cpu_moves = {
             [CPU_CLOSE_HP] = sonya_cpu_close_hp,
             [CPU_CLOSE_HK] = sonya_cpu_close_hk,
             [CPU_CROUCH_LP] = retail_crouch_low_punch,
-            [CPU_AIR_HP] = sonya_air_hp,
+            [CPU_AIR_HP] = retail_air_high_punch,
             [CPU_AIR_HK] = sonya_cpu_air_hk,
             [CPU_AIR_LK] = sonya_cpu_air_lk,
             [CPU_DRAW] = sonya_weapon,
@@ -155,40 +155,12 @@ void sonya_entry_retail_script_004e5ed0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5ed0, fighter_ready, 2);
 }
 
-void sonya_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 2);
-}
-
 void sonya_entry_retail_script_004e62c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 2);
 }
 
 void sonya_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 2);
 }
 
 void sonya_entry_retail_script_004e6a40(Fighter *fighter) {

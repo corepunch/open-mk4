@@ -1693,6 +1693,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46e3d0:
+          retail_air_bind_row(fighter, 0x4e6558);
           if (owner & 0x1000u) {
             jarek_script_air_finish(fighter);
             return true;
@@ -1715,6 +1716,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46e4d0:
+          retail_air_bind_row(fighter, 0x4e65a0);
           if (owner & 0x8000u) {
             goro_script_air_finish(fighter);
             return true;
@@ -1745,6 +1747,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46e5c0:
+          retail_air_bind_row(fighter, 0x4e65e8);
           if (owner & 0x4000u) {
             cage_script_air_finish(fighter);
             return true;
@@ -1771,6 +1774,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46e730:
+          retail_air_bind_row(fighter, 0x4e6670);
           if (owner & 0x4000u) {
             cage_script_air_finish(fighter);
             return true;
@@ -1851,6 +1855,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           weapon_air_frames_native(fighter, fighter->retail_vm.selector);
           return true;
         case 0x46eea0:
+          retail_air_bind_row(fighter, 0x4e6728);
           if (owner & 0x4000u) {
             cage_script_air_finish(fighter);
             return true;

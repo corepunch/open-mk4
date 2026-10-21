@@ -11,7 +11,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define air_hp kitana_air_hp
 #define cpu_air_hk kitana_cpu_air_hk
 #define cpu_air_lk kitana_cpu_air_lk
 #define cpu_close_hk kitana_cpu_close_hk
@@ -74,7 +73,6 @@ enum {
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
-void kitana_air_hp(Fighter *fighter);
 void kitana_cpu_air_hk(Fighter *fighter);
 void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
@@ -109,15 +107,8 @@ void kitana_entry_retail_script_004e59a8(Fighter *fighter);
 void kitana_entry_retail_script_004e59c8(Fighter *fighter);
 void kitana_entry_retail_script_004e5a20(Fighter *fighter);
 void kitana_entry_retail_script_004e5ed0(Fighter *fighter);
-void kitana_entry_retail_script_004e61f8(Fighter *fighter);
 void kitana_entry_retail_script_004e62c0(Fighter *fighter);
 void kitana_entry_retail_script_004e62d8(Fighter *fighter);
-void kitana_entry_retail_script_004e63d8(Fighter *fighter);
-void kitana_entry_retail_script_004e6500(Fighter *fighter);
-void kitana_entry_retail_script_004e6658(Fighter *fighter);
-void kitana_entry_retail_script_004e66d0(Fighter *fighter);
-void kitana_entry_retail_script_004e66f0(Fighter *fighter);
-void kitana_entry_retail_script_004e6710(Fighter *fighter);
 void kitana_entry_retail_script_004e6a40(Fighter *fighter);
 void kitana_entry_retail_script_004e81d0(Fighter *fighter);
 void kitana_entry_retail_script_004e8578(Fighter *fighter);

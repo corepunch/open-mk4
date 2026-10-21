@@ -91,29 +91,29 @@
       "evidence": "Tanya sweep entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "air_hp": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_air_hp",
-      "evidence": "Tanya air_hp entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_air_lp",
-      "evidence": "Tanya air_lp entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_air_kick",
-      "evidence": "Tanya air_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_hk": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_air_diagonal_hk",
-      "evidence": "Tanya air_diagonal_hk entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_air_diagonal_lk",
-      "evidence": "Tanya air_diagonal_lk entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",

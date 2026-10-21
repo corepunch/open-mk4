@@ -66,29 +66,29 @@
   },
   "moves": {
     "air_diagonal_hk": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_air_diagonal_hk",
-      "evidence": "Jarek roster slot 12 native entry 0x0046e380 and selected EXE script roots"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_air_diagonal_lk",
-      "evidence": "Jarek roster slot 12 native entry 0x0046df50 and selected EXE script roots"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_hp": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_air_hp",
-      "evidence": "Jarek roster slot 12 native entry 0x0046e6c0 and selected EXE script roots"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_air_kick",
-      "evidence": "Jarek roster slot 12 native entry 0x0046c7a0 and selected EXE script roots"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_air_lp",
-      "evidence": "Jarek roster slot 12 native entry 0x0046ee30 and selected EXE script roots"
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",

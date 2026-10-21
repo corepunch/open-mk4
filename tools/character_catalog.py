@@ -823,5 +823,7 @@ def moves_for(character):
                               contacts=(('A', 16),), buttons=(('contact follow-up', 0x4e7078),))
     result['close_hk'] = move(0x46ba60, (('attacker', 0x4e6190), ('miss recovery', 0x4e61d0), ('follow-up crouch entry', 0x4e5fd0)),
                               contacts=(('B', 38),), buttons=(('contact follow-up', 0x4e70a8),))
+    if character == 3:
+        result['air_kick'] = dict(result['air_kick'], scripts=(('native entry selector', 0x4e61f8),))
     result['high_punch'] = dict(result['high_punch'], contacts=(('A', 0),))
     return result

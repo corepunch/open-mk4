@@ -72,26 +72,6 @@ const CharacterDef mk4_tanya = {
     .move_list_count = 0,
 };
 
-void tanya_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 9);
-}
-
 void tanya_entry_retail_script_004ed268(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 9);
 }
@@ -114,14 +94,6 @@ void tanya_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void tanya_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004ed190(Fighter *fighter) {

@@ -287,3 +287,7 @@ for _address, _source, _symbol in ((0x46be40, 'game/retail_combat.c', 'retail_cl
 HELPERS[0x46d290] = replace(HELPERS[0x46d290], port=('game/native_combat.c', 'retail_high_punch'))
 HELPERS[0x46dca0] = H('jab_entry', 'active fighter and peer state', 'Original46dbb0 LP throw gate, then shared capture or original4e62f0 playback.', 'Shared native gate and retail execution.', ('game/retail_controls.c', 'retail_normal_low_punch'))
 HELPERS[0x46a7b0] = H('low_kick_entry', 'active fighter and peer state', 'Original LK throw gate and strict range, then shared capture or original4e5d90 playback.', 'Shared native gate and retail execution.', ('game/retail_controls.c', 'retail_normal_low_kick'))
+
+# Native air entries are shared; animation comes from original selectors.
+for _address, _symbol in ((4646592, 'retail_air_high_punch'), (4648496, 'retail_air_low_punch'), (4638624, 'retail_air_kick'), (4645760, 'retail_air_diagonal_high_kick'), (4644688, 'retail_air_diagonal_low_kick')):
+    HELPERS[_address] = replace(HELPERS[_address], port=('game/retail_air.c', _symbol), inputs='active fighter and retail selector', flow='Shared native entry and original script words.')

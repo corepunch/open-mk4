@@ -11,29 +11,29 @@
   "inventory_sha256": "0da08701f7d890ffa90527ec9b233b0ee9a25cbc9b7e5868494a3e96b5b766cc",
   "moves": {
     "air_diagonal_hk": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick"
     },
     "air_diagonal_lk": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick"
     },
     "air_hp": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch"
     },
     "air_kick": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick"
     },
     "air_lp": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch"
     },
     "air_throw": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

@@ -541,6 +541,22 @@ static void native_close_lifetimes(void) {
   }
 }
 
+static void native_air_ownership(void) {
+  for (unsigned armed = 0; armed < 2; ++armed) {
+    Fighter *owner = setup(0, 2);
+    owner->armed = armed != 0;
+    owner->body.pos[AXIS_Y] = owner->body.ground - 2 * Q16_ONE;
+    owner->body.gravity = 0x28f;
+    retail_air_high_punch(owner);
+    check(owner->current_move == &owner->playback_move && fighter_move(owner)->clip >= 0 && fighter_move(owner)->last != MOVE_END,
+        "native air startup must bind loaded animation without a fighter C seed");
+    check(owner->retail_vm.active || owner->current_mmove != NULL, "native/script air handoff must have a playback owner");
+    fighter_interrupt(owner, fighter_ready);
+    tick();
+    check(!owner->retail_vm.active && owner->current_mmove == NULL, "interrupt must retire native/script air playback ownership");
+  }
+}
+
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
   if (argc == 2) {
@@ -581,6 +597,7 @@ int main(int argc, char **argv) {
   native_inherited_descriptor();
   native_button_table();
   native_close_lifetimes();
+  native_air_ownership();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

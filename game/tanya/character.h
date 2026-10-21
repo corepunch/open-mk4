@@ -14,11 +14,6 @@ enum {
   TANYA_EVENT_FATALITY_2
 };
 
-void tanya_entry_retail_script_004e61f8(Fighter *fighter);
-void tanya_entry_retail_script_004e63d8(Fighter *fighter);
-void tanya_entry_retail_script_004e6500(Fighter *fighter);
-void tanya_entry_retail_script_004e6658(Fighter *fighter);
-void tanya_entry_retail_script_004e6710(Fighter *fighter);
 void tanya_press_air_hk(Fighter *fighter);
 void tanya_press_air_hp(Fighter *fighter);
 void tanya_press_air_lk(Fighter *fighter);
@@ -46,8 +41,6 @@ void tanya_drill_kick(Fighter *fighter);
 void tanya_drill_kick_contact(Fighter *fighter);
 void tanya_entry_retail_script_004e62c0(Fighter *fighter);
 void tanya_entry_retail_script_004e62d8(Fighter *fighter);
-void tanya_entry_retail_script_004e66d0(Fighter *fighter);
-void tanya_entry_retail_script_004e66f0(Fighter *fighter);
 void tanya_entry_retail_script_004ed190(Fighter *fighter);
 void tanya_entry_retail_script_004e9db8(Fighter *fighter);
 void tanya_entry_retail_script_004e8bb0(Fighter *fighter);

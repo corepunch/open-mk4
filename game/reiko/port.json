@@ -61,29 +61,29 @@
   "inventory_sha256": "f7c4ff9d0c63330aaa3e77d46446228d9a5e668fbf525fbe98cfb02d50954d12",
   "moves": {
     "air_diagonal_hk": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_air_diagonal_hk"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick"
     },
     "air_diagonal_lk": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_air_diagonal_lk"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick"
     },
     "air_hp": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_air_hp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch"
     },
     "air_kick": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_air_kick"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick"
     },
     "air_lp": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_air_lp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch"
     },
     "fan_fatality": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",

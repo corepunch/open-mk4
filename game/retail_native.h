@@ -2,6 +2,13 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_air_bind_row(Fighter *fighter, uint32_t row);
+void retail_air_attack(Fighter *fighter, unsigned kind);
+void retail_air_high_punch(Fighter *fighter);
+void retail_air_low_punch(Fighter *fighter);
+void retail_air_kick(Fighter *fighter);
+void retail_air_diagonal_high_kick(Fighter *fighter);
+void retail_air_diagonal_low_kick(Fighter *fighter);
 extern const ButtonTable retail_close_buttons[];
 extern const ButtonTable retail_ground_buttons[];
 void retail_normal_low_punch(Fighter *fighter);

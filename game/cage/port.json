@@ -35,29 +35,29 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "air_hp": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_air_hp",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_air_lp",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_air_kick",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_hk": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_air_diagonal_hk",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_air_diagonal_lk",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",

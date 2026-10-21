@@ -38,7 +38,6 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
 void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script);
 
 typedef struct AirAttack {
-  MoveDef move;
   AttackRecord record;
   int extend, hold, retract;
 } AirAttack;

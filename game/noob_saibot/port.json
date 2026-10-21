@@ -61,29 +61,29 @@
   "inventory_sha256": "de8427c6b336d466e5ab51e33774d63ced05b30908706a9d4d473c76c25ba8d6",
   "moves": {
     "air_diagonal_hk": {
-      "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_diagonal_hk"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick"
     },
     "air_diagonal_lk": {
-      "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_diagonal_lk"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick"
     },
     "air_hp": {
-      "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_hp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch"
     },
     "air_kick": {
-      "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_kick"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick"
     },
     "air_lp": {
-      "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air_lp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch"
     },
     "air_throw": {
       "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail.",

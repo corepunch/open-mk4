@@ -17,7 +17,7 @@ static void weapon_equip(Fighter *fighter) {
 
 static void weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, jax_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else {
     weapon_axe_strike(fighter, fighter_holds_back(fighter) ? 2 : 0, &axe_profile);
   }
@@ -25,7 +25,7 @@ static void weapon_hp(Fighter *fighter) {
 
 static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, jax_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else if (fighter_holds_back(fighter)) {
     weapon_back_lp(fighter);
   } else if (mk4_can_ground_throw(fighter, false)) {

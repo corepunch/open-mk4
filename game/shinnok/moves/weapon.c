@@ -23,7 +23,7 @@ void shinnok_weapon_back_lp(Fighter *fighter) {
 
 void shinnok_weapon_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, shinnok_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
   } else if (fighter_holds_back(fighter)) {
     shinnok_weapon_back_hp(fighter);
   } else {
@@ -33,7 +33,7 @@ void shinnok_weapon_hp(Fighter *fighter) {
 
 void shinnok_weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, false, shinnok_entry_retail_script_004e66f0);
+    retail_air_low_punch(fighter);
   } else if (fighter_distance(fighter) <= .7f && !fighter_airborne(fighter_opponent(fighter)) && !(fighter_opponent(fighter)->flags & FF_REACTING)) {
     retail_lp_throw(fighter);
   } else if (fighter_holds_back(fighter)) {

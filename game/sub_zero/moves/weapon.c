@@ -23,8 +23,7 @@ static void equip_scepter(Fighter *fighter) {
 
 static void scepter_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(
-        fighter, index == 0 || index == 2, (index == 0 || index == 2) ? sub_zero_entry_retail_script_004e66d0 : sub_zero_entry_retail_script_004e66f0);
+    retail_air_attack(fighter, index == 0 || index == 2 ? 0 : 1);
   } else {
     weapon_start_strike(fighter, &scepter_attacks[index], true);
   }

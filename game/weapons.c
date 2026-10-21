@@ -1,5 +1,7 @@
 #include "game.h"
 #include "native.h"
+#include "retail_vm.h"
+#include "retail_native.h"
 #include "script.h"
 #include "math_util.h"
 #include <stdlib.h>
@@ -13,8 +15,6 @@ static const WeaponStrike axe_strikes[4];
 static const MoveDef draw_move = WEAPON_MOVE(244, ACTION_RETAIL_1004, 49);
 static const MoveDef throw_move = WEAPON_MOVE(208, ACTION_RETAIL_030F, 60);
 static const MoveDef pickup_move = WEAPON_MOVE(209, ACTION_RETAIL_2006, 14);
-static const MoveDef air_hp = WEAPON_MOVE(252, ACTION_RETAIL_0603, 9);
-static const MoveDef air_lp = WEAPON_MOVE(251, ACTION_RETAIL_0604, 9);
 static const MoveDef landing = WEAPON_MOVE(304, ACTION_RETAIL_2008, 27);
 static const MoveDef blend_stance = WEAPON_MOVE(286, ACTION_RETAIL_1006, 0);
 #undef WEAPON_MOVE
@@ -326,16 +326,11 @@ static void weapon_air_begin(Fighter *fighter) {
 }
 
 void weapon_air_frames_native(Fighter *fighter, unsigned selector) {
-  require(selector == 0x104 || selector == 0x108, "Invalid generated weapon-air selector");
-  require(fighter_move(fighter)->clip == (selector == 0x104 ? 252 : 251), "Weapon-air phase differs from selected program");
+  require(selector == 0x104 || selector == 0x108, "Invalid native weapon-air selector");
+  /* Native470980 binds the descriptor in its parameter row before playback. */
+  uint32_t row = selector == 0x104 ? 0x4e66e0 : 0x4e6700;
+  retail_air_bind_row(fighter, row);
   weapon_air_begin(fighter);
-}
-
-void weapon_air_frames(Fighter *fighter, bool high, FighterFn script) {
-  fighter_start_move(fighter, S_JUMP, high ? &air_hp : &air_lp);
-  fighter->sample_override = 0;
-  fighter->body.on_land = NULL;
-  script(fighter);
 }
 
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {

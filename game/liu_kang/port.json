@@ -8,17 +8,17 @@
     }
   },
   "integration_source": "game/liu_kang/character.c",
-  "inventory_sha256": "4b912caa185adf3e877807b7765561d4be34f00506b70be95c20a9c3ca5bc2bf",
+  "inventory_sha256": "9c22d4cd9cb0b874820c189a8f8f6cee29210856b5626452c2ab53d4513fd945",
   "moves": {
     "air_diagonal_hk": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_hk_diagonal"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick"
     },
     "air_diagonal_lk": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_lk_diagonal"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick"
     },
     "air_fireball": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -26,19 +26,19 @@
       "symbol": "retail_vm_enter"
     },
     "air_hp": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_hp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch"
     },
     "air_kick": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_kick"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick"
     },
     "air_lp": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_lp"
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch"
     },
     "bicycle_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -600,6 +600,11 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
+    "0x4e61f8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original native46c7a0 enters selector4e61f8; Liu slot3 then selects original4e6df0, without a private C shortcut"
+    },
     "0x4e62a0": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
@@ -696,11 +701,6 @@
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
     "0x4e6d08": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e6df0": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"

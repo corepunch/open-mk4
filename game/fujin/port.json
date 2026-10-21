@@ -82,29 +82,29 @@
       "symbol": "retail_normal_low_kick"
     },
     "air_diagonal_hk": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_air_diagonal_hk",
-      "evidence": "Fujin diagonal high-kick entry 4e6500 is selected by the air stance when horizontal movement is active."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_high_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_diagonal_lk": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_air_diagonal_lk",
-      "evidence": "Fujin diagonal low-kick entry 4e63d8 is selected by the air stance when horizontal movement is active."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_diagonal_low_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_hp": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_air_hp",
-      "evidence": "Fujin air high-punch command enters generated stream 4e6658."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_high_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_kick": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_air_kick",
-      "evidence": "Fujin straight air-kick command enters generated stream 4e61f8."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_kick",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_lp": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_air_lp",
-      "evidence": "Fujin air low-punch command enters generated stream 4e6710."
+      "source": "game/retail_air.c",
+      "symbol": "retail_air_low_punch",
+      "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",

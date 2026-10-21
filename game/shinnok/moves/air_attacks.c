@@ -1,21 +1,15 @@
 #include "../character.h"
 
-static void shinnok_air_hp(Fighter *fighter);
-static void shinnok_air_lp(Fighter *fighter);
-static void shinnok_air_kick(Fighter *fighter);
-static void shinnok_air_diagonal_hk(Fighter *fighter);
-static void shinnok_air_diagonal_lk(Fighter *fighter);
-static void start_air_attack(Fighter *fighter, int index);
 static void shinnok_air_combo_lp(Fighter *fighter);
 static void shinnok_air_combo_kick(Fighter *fighter);
 static void press_air_followup_kick(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const AirAttack air_attacks[] = {
-  {{.clip = 97, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
-  {{.clip = 96, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x604}, {76677, -20316, 68157, 62914, 39, 39, 4, 0, 7864}, 10, 10, 11},
-  {{.clip = 327, .last = 7, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x600}, {67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
-  {{.clip = 55, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x602}, {74055, -7864, 60293, 24903, 23, 23, 4, 2, 6553}, 6, 10, 6},
-  {{.clip = 58, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = 0x601}, {75366, -2621, 67502, 34078, 22, 22, 4, 2, 9830}, 10, 10, 10},
+  {{67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
+  {{76677, -20316, 68157, 62914, 39, 39, 4, 0, 7864}, 10, 10, 11},
+  {{67502, -18350, 58982, 43253, 21, 10, 8, 0, 8519}, 8, 4, 8},
+  {{74055, -7864, 60293, 24903, 23, 23, 4, 2, 6553}, 6, 10, 6},
+  {{75366, -2621, 67502, 34078, 22, 22, 4, 2, 9830}, 10, 10, 10},
 };
 // clang-format on
 
@@ -25,42 +19,6 @@ static const ButtonTable shinnok_air_punch_followup = {
     .press = {[BUTTON_LOW_PUNCH] = shinnok_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
 static const NativeAirProfile air_profile = {
     air_attacks, &shinnok_air_punch_followup, &retail_close_buttons[3], mk4_land, shinnok_entry_retail_script_004e6270};
-
-static void start_air_attack(Fighter *fighter, int index) {
-  bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
-  fighter_start_move(fighter, S_JUMP, &air_attacks[index].move);
-  if (combo) {
-    fighter->body.gravity = 0;
-  }
-  fighter->native_variant = index;
-  fighter->script_phase = combo ? 1 : 0;
-  fighter->body.on_land = NULL;
-  fighter->body.physics = NULL;
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  static const FighterFn scripts[] = {shinnok_entry_retail_script_004e6658, shinnok_entry_retail_script_004e6710, shinnok_entry_retail_script_004e61f8,
-      shinnok_entry_retail_script_004e6500, shinnok_entry_retail_script_004e63d8};
-  scripts[index](fighter);
-}
-
-static void shinnok_air_hp(Fighter *fighter) {
-  start_air_attack(fighter, 0);
-}
-
-static void shinnok_air_lp(Fighter *fighter) {
-  start_air_attack(fighter, 1);
-}
-
-static void shinnok_air_kick(Fighter *fighter) {
-  start_air_attack(fighter, 2);
-}
-
-static void shinnok_air_diagonal_hk(Fighter *fighter) {
-  start_air_attack(fighter, 3);
-}
-
-static void shinnok_air_diagonal_lk(Fighter *fighter) {
-  start_air_attack(fighter, 4);
-}
 
 void shinnok_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
@@ -72,20 +30,20 @@ void shinnok_script_air_finish(Fighter *fighter) {
 }
 
 void shinnok_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : shinnok_air_hp);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : retail_air_high_punch);
 }
 
 void shinnok_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->buttons == &shinnok_air_punch_followup ? shinnok_air_combo_lp : shinnok_air_lp);
+  fighter_interrupt(fighter, fighter->buttons == &shinnok_air_punch_followup ? shinnok_air_combo_lp : retail_air_low_punch);
 }
 
 void shinnok_press_air_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, shinnok_air_kick);
+  fighter_interrupt(fighter, retail_air_kick);
 }
 
 void shinnok_press_air_hk(Fighter *fighter) {
   if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
-    fighter_interrupt(fighter, shinnok_air_diagonal_hk);
+    fighter_interrupt(fighter, retail_air_diagonal_high_kick);
   } else {
     shinnok_press_air_kick(fighter);
   }
@@ -93,7 +51,7 @@ void shinnok_press_air_hk(Fighter *fighter) {
 
 void shinnok_press_air_lk(Fighter *fighter) {
   if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
-    fighter_interrupt(fighter, shinnok_air_diagonal_lk);
+    fighter_interrupt(fighter, retail_air_diagonal_low_kick);
   } else {
     shinnok_press_air_kick(fighter);
   }
@@ -101,12 +59,12 @@ void shinnok_press_air_lk(Fighter *fighter) {
 
 static void shinnok_air_combo_lp(Fighter *fighter) {
   fighter->body.gravity = 0;
-  shinnok_air_lp(fighter);
+  retail_air_low_punch(fighter);
 }
 
 static void shinnok_air_combo_kick(Fighter *fighter) {
   fighter->body.gravity = 0;
-  shinnok_air_kick(fighter);
+  retail_air_kick(fighter);
 }
 
 static void press_air_followup_kick(Fighter *fighter) {

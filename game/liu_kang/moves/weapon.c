@@ -133,7 +133,7 @@ static void equip_dragon_sword(Fighter *fighter) {
 
 static void sword_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, index == 2, (index == 2) ? liu_kang_entry_retail_script_004e66d0 : liu_kang_entry_retail_script_004e66f0);
+    retail_air_attack(fighter, index == 2 ? 0 : 1);
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &liu_kang_sword_attacks[index].move);
@@ -156,7 +156,7 @@ static void sword_attack(Fighter *fighter, int index) {
 
 static void sword_hp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
-    weapon_air_frames(fighter, true, liu_kang_entry_retail_script_004e66d0);
+    retail_air_high_punch(fighter);
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_sword_hp);
