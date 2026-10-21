@@ -168,15 +168,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           scorpion_script_beast_victim_pieces(fighter);
           return true;
         case 0x41f1b0:
-          if (owner & 0x80u) {
-            reiko_second_owner_park(fighter);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_beast_park(fighter);
-            return true;
-          }
-          return false;
+          retail_task_pause(fighter);
+          return true;
         case 0x42bdf0:
           retail_vm_enter(fighter, 0x4de318, fighter->retail_vm.finish);
           return true;
@@ -683,19 +676,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           jax_fatality_2_finish(fighter);
           return true;
         case 0x466df0:
-          if (owner & 0x4000u) {
-            cage_second_victim_pause(fighter);
-            return true;
-          }
-          if (owner & 0x2000u) {
-            jax_fatality_2_victim_pause(fighter);
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_second_victim_pause(fighter);
-            return true;
-          }
-          return false;
+          retail_task_pause(fighter);
+          return true;
         case 0x467fc0:
           mk4_script_spike_tail(fighter);
           return true;
@@ -1155,31 +1137,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           liu_kang_liu_script_air_return(fighter);
           return true;
         case 0x49cb60:
-          if (owner & 0x4000u) {
-            cage_first_task_end(fighter);
-            return true;
-          }
-          if (owner & 0x20u) {
-            fujin_first_fire_end(fighter);
-            return true;
-          }
-          if (owner & 0x1000u) {
-            jarek_first_victim_done(fighter);
-            return true;
-          }
-          if (owner & 0x2000u) {
-            jax_fatality_task_end(fighter);
-            return true;
-          }
-          if (owner & 0x800u) {
-            kai_first_task_end(fighter);
-            return true;
-          }
-          if (owner & 0x40u) {
-            shinnok_first_task_end(fighter);
-            return true;
-          }
-          return false;
+          retail_task_retire(fighter);
+          return true;
         default:
           return false;
       }
@@ -1304,21 +1263,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x496e00:
-          if (owner & 0x20000u) {
-            if (argument != 82u) {
-              return false;
-            }
-            reiko_star_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 82u) {
+            return false;
           }
-          if (owner & 0x80u) {
-            if (argument != 82u) {
-              return false;
-            }
-            reiko_star_spawn(fighter, (int)argument);
-            return true;
-          }
-          return false;
+          reiko_star_spawn(fighter, (int)argument);
+          return true;
         case 0x496fc0:
           if (argument != 80u) {
             return false;
@@ -1362,37 +1311,17 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           scorpion_script_spawn_spear(fighter, (int)argument);
           return true;
         case 0x49b9e0:
-          if (owner & 0x10000u) {
-            if (argument != 38u) {
-              return false;
-            }
-            sonya_script_ring_flash(fighter, (int)argument);
-            return true;
+          if (argument != 38u) {
+            return false;
           }
-          if (owner & 0x4u) {
-            if (argument != 38u) {
-              return false;
-            }
-            sonya_script_ring_flash(fighter, (int)argument);
-            return true;
-          }
-          return false;
+          sonya_script_ring_flash(fighter, (int)argument);
+          return true;
         case 0x49ba50:
-          if (owner & 0x10000u) {
-            if (argument != 68u) {
-              return false;
-            }
-            sonya_script_ring_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 68u) {
+            return false;
           }
-          if (owner & 0x4u) {
-            if (argument != 68u) {
-              return false;
-            }
-            sonya_script_ring_spawn(fighter, (int)argument);
-            return true;
-          }
-          return false;
+          sonya_script_ring_spawn(fighter, (int)argument);
+          return true;
         case 0x49bcb0:
           if (argument != 66u) {
             return false;

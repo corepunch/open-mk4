@@ -163,7 +163,7 @@ void cage_first_victim_206(Fighter *victim) {
 static void n448480_first_lower_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   battle_camera_shake(5, 3, 0x2e14);
-  retail_vm_enter_owned(victim, 0x4e1340, fighter_ready, 14);
+  retail_vm_enter_owned(victim, 0x4e1340, retail_scene_448480_complete, 14);
 }
 
 static void n448480_first_lower_impact(Fighter *victim) {
@@ -205,13 +205,12 @@ void cage_first_torso_123(Fighter *torso) {
 void cage_first_torso_finish(Fighter *torso) {
   battle_sound(SOUND_B, 0x17);
   battle_camera_shake(9, 3, 0x2e14);
-  retail_vm_enter_owned(torso, 0x4e1380, fighter_ready, 14);
+  retail_vm_enter_owned(torso, 0x4e1380, retail_scene_448480_complete, 14);
 }
 
-void cage_first_task_end(Fighter *actor) {
+void retail_scene_448480_complete(Fighter *actor) {
   Fighter *owner = battle_is_scene_actor(actor) ? n448480_first_body_owner(actor) : (Fighter *)fighter_opponent(actor);
   bool torso = battle_is_scene_actor(actor);
-  fighter_stop_mmove(actor);
   /* Retiring the retail task leaves its final rendered body in the scene. */
   owner->native_variant |= torso ? FIRST_TORSO_DONE : FIRST_VICTIM_DONE;
   n448480_first_maybe_complete(owner);
@@ -308,12 +307,6 @@ void cage_second_repeated_uppercuts(Fighter *fighter) {
   }
   require(frame == 46, "Cage repeated uppercut frame count differs from the native loop");
   native_play(fighter, false);
-}
-
-void cage_second_victim_pause(Fighter *fighter) {
-  /* 466df0 finishes only the auxiliary victim task; the body remains
-   * at its selected pose until the uppercut installs reaction185. */
-  fighter_finish_mmove(fighter, NULL);
 }
 
 static void n413970_second_scene_end(Fighter *victim) {
@@ -663,10 +656,6 @@ void jax_fatality_2_approach(Fighter *fighter) {
 
 /* 466df0 finishes only the auxiliary victim task; the body keeps its pose
  * until the clap installs reaction 183. */
-void jax_fatality_2_victim_pause(Fighter *victim) {
-  fighter_finish_mmove(victim, NULL);
-}
-
 /* 4ea4e8[183] -> 466b40: 476d80 hides node 2 (head), effect 4, the neck
  * blood task 455ea0 and 4e5b10 (B[8], clip 557, keepalive, clip 206). */
 void jax_fatality_2_head(Fighter *victim) {
@@ -1356,10 +1345,6 @@ void reiko_second_stars(Fighter *fighter, int task_type) {
 }
 
 /* 41f1b0 parks the owner on the final barrage pose. */
-void reiko_second_owner_park(Fighter *fighter) {
-  fighter_stop_mmove(fighter);
-}
-
 static void n41c4b0_arrival_gate(Fighter *victim) {
   victim->mmove_hold = !(fighter_opponent(victim)->native_variant & SECOND_ARRIVED);
 }
@@ -1930,13 +1915,6 @@ void scorpion_script_beast_victim_pieces(Fighter *victim) {
 
 void scorpion_script_beast_voice(Fighter *fighter) {
   battle_sound(SOUND_IMPACT_VOICE, roster_def(fighter->roster)->asset);
-}
-
-void scorpion_script_beast_park(Fighter *fighter) {
-  fighter->script_phase = 9;
-  native_begin(fighter, 0, 0, NULL);
-  fighter->native.frames[0].thinkfunc = mk4_mmove_hold;
-  native_play(fighter, false);
 }
 
 static void n41ea50_beast_gore_object(Projectile *object) {
@@ -2537,11 +2515,6 @@ static void n45ac30_second_victim_scene(Fighter *owner) {
 
 void tanya_second_reaction(Fighter *fighter) {
   n45ac30_second_victim_scene(fighter);
-}
-
-void tanya_second_victim_pause(Fighter *fighter) {
-  /* 466df0 retires the auxiliary victim task; the body keeps its pose. */
-  fighter_finish_mmove(fighter, NULL);
 }
 
 static void n45ac30_victory_finish(Fighter *fighter) {

@@ -758,6 +758,27 @@ static void native_stagger_boundary(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
 }
 
+static void native_task_completion(void) {
+  const uint32_t base = 0x570180;
+  put_word(base, 0x34000001);
+  put_word(base + 4, 0x32000000);
+  put_word(base + 8, 0x49cb60);
+  for (int interrupted = 0; interrupted < 2; ++interrupted) {
+    Fighter *actor = setup(0, 2);
+    actor->retail_vm.native_owner_set = true;
+    actor->retail_vm.native_owner = 15;
+    control_finished = cleanup_calls = 0;
+    retail_vm_start(actor, &image, base, base + 12, control_end, retail_native_vm);
+    actor->retail_vm.cleanup = cleanup_once;
+    if (interrupted) {
+      fighter_interrupt(actor, fighter_ready);
+    }
+    tick();
+    check(control_finished == (interrupted ? 0 : 1) && cleanup_calls == 1 && !actor->retail_vm.active,
+        "native task retirement must consume the caller completion and cleanup once, while interruption suppresses completion");
+  }
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -988,6 +1009,7 @@ int main(int argc, char **argv) {
   native_callback_table();
   native_reaction_table();
   native_stagger_boundary();
+  native_task_completion();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

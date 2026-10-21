@@ -1486,3 +1486,24 @@ and helper/port navigation (6/7 tests). Extended the existing controller
 contract fixture for airborne preservation and KO; no authored timing matrix.
 Checked bounded tumble/helpers/streams against StageGameProgressCluster,
 matching assembly and the supplied EXE. Other legacy reaction copies remain.
+
+### Retire native tasks through caller-owned scene completions
+
+Native49cb60 now has one implementation. Its portable scene-completion callback
+comes from the script caller, not six roster/context branches. Nine terminal
+streams (including the repeated hand stream's entry) now retain their explicit
+scene joins through the existing typed VM completion field. Renamed those joins
+by native scene identity and moved common playback retirement to the shared
+boundary. A live controller callback is rejected as an invalid task completion.
+
+Native41f1b0/466df0 now share final-pose pause handling; removed five copied
+pause/park bodies. Removed identical owner-gated projectile registrations at
+496e00/49b9e0/49ba50 while retaining their typed task arguments. Checked bounded
+41f1b0/466df0/49cb60 entries, original task_finish_and_pause/task_mark_finished
+and matching upstream task-lifetime structure. Scene joins remain engine
+adaptations, not retail scheduler emulation.
+
+Verified formatting, shared VM/rejections, strict audits, native frame gates
+and helper/port navigation (6/7 tests). One runtime fixture checks native task
+retirement consumes completion/cleanup once and interruption suppresses the
+completion, in an unrelated script context. No scene timing/damage matrices.

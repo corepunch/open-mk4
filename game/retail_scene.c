@@ -86,3 +86,19 @@ void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner) {
   }
   mk4_script_scene_pose(fighter, clip, sample);
 }
+
+/* Native41f1b0/466df0 leaves the final rendered pose owned by the scene. */
+void retail_task_pause(Fighter *fighter) {
+  fighter_stop_mmove(fighter);
+}
+
+/* Native49cb60 retires the task. The portable caller owns its scene-join
+ * callback; native identity never depends on a roster/context switch. */
+void retail_task_retire(Fighter *fighter) {
+  FighterFn completed = fighter->retail_vm.active ? fighter->retail_vm.finish : NULL;
+  require(completed != fighter_ready && completed != retail_task_retire, "Task retirement needs a scene completion boundary");
+  fighter_stop_mmove(fighter);
+  if (completed != NULL) {
+    completed(fighter);
+  }
+}

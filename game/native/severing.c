@@ -179,7 +179,7 @@ static bool n44f5e0_first_shot(BattleEvent *event, Fighter *owner, Fighter *vict
     bolt->vel[AXIS_Y] = -0x2e14;
   }
   battle_sound(SOUND_C, 0x29);
-  retail_vm_enter_owned(owner, 0x4e1f98, fighter_ready, 5);
+  retail_vm_enter_owned(owner, 0x4e1f98, retail_scene_44f5e0_complete, 5);
   return true;
 }
 
@@ -200,8 +200,7 @@ void fujin_first_shoot(Fighter *fighter) {
   battle_event_frame(event, 85, 0, n44f5e0_first_shot);
 }
 
-void fujin_first_fire_end(Fighter *fighter) {
-  fighter_stop_mmove(fighter);
+void retail_scene_44f5e0_complete(Fighter *fighter) {
   if (fighter->native_variant == 3) {
     battle_end_finisher();
   }
@@ -357,7 +356,7 @@ void jarek_first_victim_impact(Fighter *victim) {
 /* 447410: shake 5 before the final 4e1290 playback. */
 void jarek_first_victim_end(Fighter *victim) {
   mk4_script_shake(victim, 5);
-  retail_vm_enter_owned(victim, 0x4e1290, fighter_ready, 12);
+  retail_vm_enter_owned(victim, 0x4e1290, retail_scene_446f80_complete, 12);
 }
 
 static void n446f80_scene_wait(Fighter *victim) {
@@ -373,7 +372,7 @@ static void n446f80_scene_end(Fighter *victim) {
 
 /* 49cb60 retires the victim task with its last pose. The owner parks on
  * clip 405 in 4e1248; the portable scene completes once both are done. */
-void jarek_first_victim_done(Fighter *victim) {
+void retail_scene_446f80_complete(Fighter *victim) {
   native_begin(victim, 0, 0, n446f80_scene_end);
   native_frame(victim, 0, fighter_sample(victim), n446f80_scene_wait);
   native_play(victim, false);
@@ -556,7 +555,7 @@ static void n449620_first_drop(Fighter *victim) {
  * 306 with B[0x12] and shake 5, to 375; cursor 376, then 4e13f0. */
 void jax_fatality_1_second_arm(Fighter *victim) {
   native_begin(victim, n449620_FIRST_SECOND_ARM, n449620_FIRST_DROP, NULL);
-  native_script_end(victim, 0x4e13f0, fighter_ready, 13);
+  native_script_end(victim, 0x4e13f0, retail_scene_449620_complete, 13);
   for (int sample = n449620_FIRST_SECOND_ARM; sample <= n449620_FIRST_DROP; ++sample) {
     FighterFn action = NULL;
     int arm = sample - n449620_FIRST_SECOND_ARM + n449620_FIRST_ARM_OFFSET;
@@ -575,9 +574,8 @@ void jax_fatality_1_second_arm(Fighter *victim) {
 }
 
 /* 4e13f0 finishes clip 204/400 and 49cb60 retires the task; the body stays. */
-void jax_fatality_task_end(Fighter *victim) {
+void retail_scene_449620_complete(Fighter *victim) {
   Fighter *owner = (Fighter *)fighter_opponent(victim);
-  fighter_stop_mmove(victim);
   if (g_battle.finisher == FINISH_JAX_1) {
     owner->native_variant |= FIRST_VICTIM_DONE;
     n449620_first_maybe_complete(owner);
@@ -751,7 +749,7 @@ static void n44aeb0_first_sever(Fighter *victim) {
   Mat3 unused;
   fighter_joint_position(victim, 3, &waist, &unused);
   battle_blood_hit(owner, victim, waist, 0x3333);
-  retail_vm_enter_owned(victim, 0x4e14b8, fighter_ready, 11);
+  retail_vm_enter_owned(victim, 0x4e14b8, retail_scene_44aeb0_complete, 11);
 }
 
 static void n44aeb0_first_victim_rip(Fighter *victim) {
@@ -779,14 +777,13 @@ void kai_first_torso_203(Fighter *torso) {
 void kai_first_torso_impact(Fighter *torso) {
   /* 44b650: B[12], then 4e14e8 finishes clip 442. */
   battle_sound(SOUND_B, 0x12);
-  retail_vm_enter_owned(torso, 0x4e14e8, fighter_ready, 11);
+  retail_vm_enter_owned(torso, 0x4e14e8, retail_scene_44aeb0_complete, 11);
 }
 
-void kai_first_task_end(Fighter *actor) {
+void retail_scene_44aeb0_complete(Fighter *actor) {
   /* 49cb60 retires the victim or torso task; its final pose remains. */
   bool torso = battle_is_scene_actor(actor);
   Fighter *owner = torso ? n44aeb0_first_scene_owner(actor) : (Fighter *)fighter_opponent(actor);
-  fighter_stop_mmove(actor);
   owner->native_variant |= torso ? FIRST_TORSO_DONE : FIRST_VICTIM_DONE;
   n44aeb0_first_maybe_complete(owner);
 }
@@ -1483,7 +1480,7 @@ static void n455110_hand_entry(Fighter *hand) {
   if (hand->assets != NULL) {
     hand->scene_model = &hand->assets->shinnok_hand;
   }
-  retail_vm_enter_owned(hand, 0x4e2f40, fighter_ready, 6);
+  retail_vm_enter_owned(hand, 0x4e2f40, retail_scene_455110_complete, 6);
 }
 
 /* 4556d0 state 1: rig 5083c4 is placed 1.4 along the owner's heading at
@@ -1541,9 +1538,8 @@ void shinnok_first_squeeze_cycle(Fighter *fighter) {
   retail_vm_repeat_next(fighter);
 }
 
-void shinnok_first_task_end(Fighter *actor) {
+void retail_scene_455110_complete(Fighter *actor) {
   /* 49cb60 retires the task; the body keeps its final rendered pose. */
-  fighter_stop_mmove(actor);
   bool hand = battle_is_scene_actor(actor);
   Fighter *owner = hand ? n455110_hand_owner(actor) : (Fighter *)fighter_opponent(actor);
   owner->native_variant |= hand ? n455110_SHINNOK_FATALITY_HAND_DONE : n455110_SHINNOK_FATALITY_VICTIM_DONE;
@@ -1570,7 +1566,7 @@ void shinnok_first_victim_crush(Fighter *victim) {
   Mat3 unused;
   fighter_joint_position(victim, 1, &chest, &unused);
   battle_blood_hit(fighter_opponent(victim), victim, chest, 0x8000);
-  retail_vm_enter_owned(victim, 0x4e2fb8, fighter_ready, 6);
+  retail_vm_enter_owned(victim, 0x4e2fb8, retail_scene_455110_complete, 6);
 }
 
 void shinnok_fatality_1(Fighter *fighter) {

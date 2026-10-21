@@ -1,6 +1,18 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'cage_first_task_end': 'retail_scene_448480_complete',
+    'fujin_first_fire_end': 'retail_scene_44f5e0_complete',
+    'jarek_first_victim_done': 'retail_scene_446f80_complete',
+    'jax_fatality_task_end': 'retail_scene_449620_complete',
+    'kai_first_task_end': 'retail_scene_44aeb0_complete',
+    'shinnok_first_task_end': 'retail_scene_455110_complete',
+    'cage_second_victim_pause': 'retail_task_pause',
+    'jax_fatality_2_victim_pause': 'retail_task_pause',
+    'tanya_second_victim_pause': 'retail_task_pause',
+    'reiko_second_owner_park': 'retail_task_pause',
+    'scorpion_script_beast_park': 'retail_task_pause',
+
     'raiden_script_thrown_return': 'retail_controller_return',
     'scorpion_script_weapon_ready': 'retail_controller_return',
     'sub_zero_script_ready': 'retail_controller_return',

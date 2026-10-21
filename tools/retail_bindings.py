@@ -1432,6 +1432,9 @@ def bindings_for(character):
                                   evidence='One checked native descriptor/continuation boundary; original482790/4835f0/483610 and matching mk4decomp assembly')
     result[0x470420] = Binding('retail_controller_return', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True,
                                evidence='470420 controller return uses one KO-aware engine boundary; checked local native and mk4decomp SlotPhaseResetInstallChain')
+    for address, function in ((0x41f1b0, 'retail_task_pause'), (0x466df0, 'retail_task_pause'), (0x49cb60, 'retail_task_retire')):
+        result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='One native pause/retirement boundary; scene completion belongs to the script caller, not roster dispatch')
     # Native script links always enter original words in the shared VM.
     result = {address: replace(binding, symbol='retail_vm_enter', source='game/retail_vm.c')
               if binding.script_target else binding for address, binding in result.items()}
