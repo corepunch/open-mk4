@@ -1,23 +1,23 @@
 #include "../character.h"
+#include "retail_data.h"
+#include "retail_vm.h"
 
 /* 45e530: the second-fatality range gate, 1.8..3 units. */
 /* LP [U,U,D,D] record 4e4824 enters 467cd0, whose table 4dfe90[8] selects
  * 43be30: Quan Chi performs the victim roster's own second fatality
  * (4dfe90[victim], Kitana as Sonya and Noob as Reiko). Against another Quan
  * Chi, 43cbb0 runs his first fatality instead. The portable dispatch uses
- * each roster's registered second-fatality entry, with Quan Chi as owner. */
+ * the victim's original native table target, with the current actor as owner. */
 void quan_chi_second_fatality(Fighter *fighter) {
-  int roster = fighter_opponent(fighter)->roster;
-  roster = roster == 16 ? 2 : roster == 17 ? 7 : roster;
+  unsigned roster = retail_character_slot((unsigned)fighter_opponent(fighter)->roster);
   if (roster == 8) {
-    quan_chi_first_fatality(fighter);
+    retail_finish_first(fighter);
     return;
   }
-  const CpuMoves *moves = roster_def(roster)->cpu;
-  FighterFn entry = moves != NULL ? moves->enter[CPU_FINISH_2] : NULL;
-  if (entry == NULL) {
+  uint32_t target = retail_finish_target(retail_vm_image(), roster, true);
+  if (target == 0) {
     fighter_ready(fighter);
     return;
   }
-  entry(fighter);
+  retail_native_entry((unsigned)fighter->roster, target)(fighter);
 }

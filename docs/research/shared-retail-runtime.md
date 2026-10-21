@@ -850,3 +850,14 @@ and interruption without authored timing/damage assertions. Six helper and seven
 port-navigation checks pass. SDL self-test passes18 rigs/11 arenas. Broad battle
 integration exposed the separately committed direction-selection correction;
 after that correction it reaches the known air-throw damage assertion again.
+
+## Dispatch borrowed fatalities through the victim's retail table
+
+Native43be30 now reads the victim's4dfe90 target and invokes that native entry
+with the current actor. The generic CPU_FINISH_2 view is not a native identity:
+calling it recursively reselected the actor's own borrowed-fatality dispatcher.
+The original16->2/17->7 aliases and peer8 -> generic first-fatality selection
+are retained, as checked against the local native listing and shared selectors.
+Existing borrowed-fatality checks pass for both actor slots and both target
+classes. The bounded broad suite now advances to an obsolete cloned262/261
+close-combo matrix. Build/format checks pass; no tests were added for this fix.
