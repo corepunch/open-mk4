@@ -9,14 +9,6 @@ static void weapon_lp(Fighter *fighter);
 static void weapon_back_hp(Fighter *fighter);
 static void weapon_back_lp(Fighter *fighter);
 static void equip_weapon(Fighter *fighter);
-// clang-format off: Keep table entries on one row, including long rows.
-/* 4ec628 (HP, also follow-up 4eca28) and 4ec658 (LP): clip, recovery,
- * queries, target and windup bytes, record selector, first sample, cue. */
-static const WeaponStrike strikes[] = {
-  {{.clip = 230, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {0x251eb, -0xf333, 0x1851e, 0x14c8b, 63, 63, 119, 0, 0x2666}, 0, 8, 10, 3, 5, 0, 0, 0, 34},
-  {{.clip = 240, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {0x18000, -0xd47a, 0x111eb, 0x13ae1, 144, 144, 119, 0, 0x1eb8}, 0, 8, 13, 3, 6, 0, 0, 0, 34},
-};
-// clang-format on
 /* 495db0 queries WEAPON[20]; 496140 queries WEAPON[19]. */
 static const AttackRecord flurry_record = {0x16666, -0x12e14, 0x1147a, 0xe624, 137, 10, 112, 0, 0xccc};
 static const AttackRecord sweep_record = {0x1cccc, -0xe666, 0x1451e, 0xb0a3, 96, 10, 119, 0, 0x2147};
@@ -187,7 +179,7 @@ static void weapon_hp(Fighter *fighter) {
     weapon_back_hp(fighter);
   } else {
     /* 495d40: action 111 and shared strike 4ec628. */
-    weapon_start_strike(fighter, &strikes[0], false);
+    weapon_start_retail_strike(fighter, 0x4ec628, 0, 0x111, false);
   }
 }
 
@@ -200,7 +192,7 @@ static void weapon_lp(Fighter *fighter) {
   } else if (fighter_holds_back(fighter)) {
     weapon_back_lp(fighter);
   } else {
-    weapon_start_strike(fighter, &strikes[1], false);
+    weapon_start_retail_strike(fighter, 0x4ec658, 0, 0x111, false);
   }
 }
 
@@ -218,7 +210,7 @@ void reptile_weapon_action(Fighter *fighter) {
   } else if (fighter->flags & FF_FOLLOW_UP) {
     equip_weapon(fighter);
     weapon_followup_victim(fighter);
-    weapon_start_strike(fighter, &strikes[0], false);
+    weapon_start_retail_strike(fighter, 0x4ec628, 0, 0x111, false);
   } else {
     weapon_draw(fighter, &native_weapon);
     fighter->action = 0x1004;

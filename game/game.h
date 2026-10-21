@@ -268,6 +268,7 @@ typedef struct WeaponStrike {
   int delay, travel;
   q16 speed;
   int sound;
+  uint32_t parameters;
 } WeaponStrike;
 
 typedef struct SceneClip {
@@ -991,6 +992,7 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
+WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int action);
 void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel);
 void weapon_air_frames_native(Fighter *fighter, unsigned selector);
 void weapon_draw(Fighter *fighter, const WeaponDef *weapon);

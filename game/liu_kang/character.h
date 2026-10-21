@@ -54,7 +54,6 @@
 #define press_combo_hp liu_kang_press_combo_hp
 #define press_knee_hp liu_kang_press_knee_hp
 #define start_fatality liu_kang_start_fatality
-#define sword_attacks liu_kang_sword_attacks
 #define throw_disarm liu_kang_throw_disarm
 #define thrown_finish liu_kang_thrown_finish
 
@@ -105,7 +104,6 @@ void liu_kang_liu_script_sword_blend(Fighter *fighter);
 unsigned int liu_kang_liu_script_sword_gate(Fighter *fighter);
 void liu_kang_lk_thrown_script(Fighter *victim);
 void liu_kang_start_fatality(Fighter *fighter, int id);
-extern const WeaponStrike liu_kang_sword_attacks[4];
 void liu_kang_throw_disarm(Fighter *victim);
 void liu_kang_thrown_finish(Fighter *victim);
 

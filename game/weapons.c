@@ -9,7 +9,6 @@
 
 static void axe_strafe(Fighter *fighter);
 static void axe_followup(Fighter *fighter);
-static const WeaponStrike axe_strikes[4];
 
 #define WEAPON_MOVE(c, a, end) {.clip = c, .last = end, .flags = SF_LOCK | SF_RECORD, .action = a}
 static const MoveDef draw_move = WEAPON_MOVE(244, ACTION_RETAIL_1004, 49);
@@ -128,7 +127,7 @@ static void strike_recovery(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
   fighter->script_phase = 1;
   fighter->action = ACTION_RETAIL_1006;
-  if (fighter->connected && fighter->weapon_strike == &axe_strikes[3]) {
+  if (fighter->connected && fighter->weapon_strike->parameters == 0x4ec9c8) {
     axe_followup(fighter);
     return;
   }
@@ -142,7 +141,7 @@ static void strike_recovery(Fighter *fighter) {
 static void strike_query(Fighter *fighter) {
   ContactResult result = battle_contact(fighter, &fighter->weapon_strike->record);
   if (result != CONTACT_MISS) {
-    if (fighter->weapon_strike == &axe_strikes[3] && result != CONTACT_BLOCK) {
+    if (fighter->weapon_strike->parameters == 0x4ec9c8 && result != CONTACT_BLOCK) {
       const NativeAxeProfile *profile = fighter->native_context;
       fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->first_hit);
     }
@@ -177,7 +176,7 @@ void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool trav
 
 /* Native494990/494a00 read these original packed parameters. Motion
  * is the optional4947d0 row supplied by the native frontend, not script data. */
-void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel) {
+WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int action) {
   const Mk4Image *image = retail_vm_image();
   require(parameters >= 0x4ec400 && parameters <= 0x4ecb00 && parameters % 4 == 0, "Invalid native weapon parameter row");
   uint32_t descriptor = mk4_image_u32(image, parameters) * 4;
@@ -194,14 +193,19 @@ void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t 
       .target = (int)((phases >> 16) & 255),
       .queries = (int)((phases >> 8) & 255),
       .recovery = (int)(phases & 255),
-      .sound = (int)(query >> 16)};
+      .sound = (int)(query >> 16),
+      .parameters = parameters};
   if (motion != 0) {
     require(motion >= 0x4ec400 && motion <= 0x4ecb00 && motion % 4 == 0, "Invalid native weapon motion row");
     strike.delay = (int)mk4_image_u32(image, motion);
     strike.speed = (q16)mk4_image_u32(image, motion + 4);
     strike.travel = (int)mk4_image_u32(image, motion + 8);
   }
-  fighter->loaded_weapon_strike = strike;
+  return strike;
+}
+
+void weapon_start_retail_strike(Fighter *fighter, uint32_t parameters, uint32_t motion, int action, bool travel) {
+  fighter->loaded_weapon_strike = weapon_retail_strike(parameters, motion, action);
   weapon_start_strike(fighter, &fighter->loaded_weapon_strike, travel);
 }
 
@@ -480,14 +484,6 @@ void weapon_pickup(Fighter *fighter) {
 }
 
 /* Type69: native496cd0/496cf0, descriptors4ec988/4ec9a0/4ec9b0/4ec9c8. */
-// clang-format off: Keep table entries on one row, including long rows.
-static const WeaponStrike axe_strikes[4] = {
-  {{.clip = 231, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {128385, -35323, 92274, 22872, 51, 51, 119, 0, 11796}, 6, 10, 16, 4, 1, 0, 0, 0, 32},
-  {{.clip = 232, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {85131, -32636, 67436, 19005, 47, 47, 119, 0, 11796}, 0, 4, 13, 4, 1, 0, 0, 0, 32},
-  {{.clip = 229, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {114688, -47185, 71434, 68157, 53, 10, 119, 0, 11796}, 0, 4, 7, 3, 1, 0, 0, 0, 32},
-  {{.clip = 230, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x111}, {119209, -46530, 71434, 73990, 93, 93, 119, 0, 8519}, 0, 5, 10, 3, 7, 0, 0, 0, 32},
-};
-// clang-format on
 static const AttackRecord axe_second_record = {119209, -46530, 71434, 73990, 138, 138, 119, 0, 8519};
 
 bool weapon_can_draw(const Fighter *fighter) {
@@ -502,7 +498,22 @@ static void axe_strafe(Fighter *fighter) {
 
 void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *profile) {
   require(index >= 0 && index < 4 && profile != NULL, "Invalid type69 weapon entry");
-  weapon_start_strike(fighter, &axe_strikes[index], index < 2);
+  uint32_t parameters;
+  switch (index) {
+    case 0:
+      parameters = 0x4ec988;
+      break;
+    case 1:
+      parameters = 0x4ec9b0;
+      break;
+    case 2:
+      parameters = 0x4ec9a0;
+      break;
+    default:
+      parameters = 0x4ec9c8;
+      break;
+  }
+  weapon_start_retail_strike(fighter, parameters, 0, ACTION_RETAIL_0111, index < 2);
   fighter->native_context = profile;
   if (index == 3) {
     fighter->body.physics = axe_strafe;

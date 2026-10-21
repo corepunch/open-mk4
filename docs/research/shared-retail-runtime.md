@@ -1161,3 +1161,19 @@ VM/rejection checks, all strict audits and native frame gates. One shared loader
 fixture mutates phase, contact selector and motion data and checks actor-owned
 lifetime. Three remaining strike arrays and fighter equipment/routing adapters
 still need migration; this does not claim complete native recovery parity.
+
+### Remove remaining native strike arrays
+
+All WeaponStrike C arrays are removed. Axe and blade native controllers now
+consume original parameter rows through the shared loader. Native strike
+identity uses its retail parameter address rather than a pointer into a C
+configuration table. LP repeat recovery retains actor-owned data across native
+playback; the back-LP script reads its motion and contact data directly rather
+than using a synthetic fourth strike record. Authored back-LP control flow
+continues to execute original4ec7f0 words.
+
+Verified formatting, shared VM/rejections, strict audits and native frame gates.
+The existing Liu Kang suite builds but stops at its old current_mmove-only
+normal-playback assertion before weapons: direct VM ownership is not accepted by
+that legacy generated-program assertion. It is not reported as a passing weapon
+integration check. No new fighter matrices or execution harnesses were added.

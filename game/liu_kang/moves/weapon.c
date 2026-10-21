@@ -1,15 +1,6 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-// clang-format off: Keep table entries on one row, including long rows.
-const WeaponStrike liu_kang_sword_attacks[] = {
-  {{.clip = 240, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_010E}, {106168, -54394, 77987, 80609, 59, 59, 119, 0, 10485}, 0, 8, 13, 3, 4, 0, 0, 0, 34},
-  {{.clip = 237, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_010E}, {99614, -49152, 64880, 55050, 61, 61, 119, 0, 9830}, 0, 9, 16, 4, 0, 9, 11, 0x147a, 34},
-  {{.clip = 242, .last = 30, .flags = RETAIL, .action = ACTION_RETAIL_0212}, {111411, -25552, 89784, 11796, 62, 62, 118, 0, 9830}, 8, 9, 11, 3, 8, 2, 18, 0x28f5, 34},
-  {{.clip = 227, .last = 59, .flags = RETAIL, .action = ACTION_RETAIL_0112}, {98959, -28835, 67502, 36700, 57, 57, 119, 0, 9175}, 0, 16, 29, 2, 0, 8, 13, 0x1999, 31},
-};
-// clang-format on
-
 static const WeaponDef dragon_sword;
 static void sword_travel(Fighter *fighter, int delay, int duration);
 static void sword_cleanup(Fighter *fighter);
@@ -86,19 +77,20 @@ static void sword_hit_blend(Fighter *fighter) {
  * otherwise the clip completes, with the back-HP hit blend, before return. */
 static void sword_recover(Fighter *fighter) {
   int index = fighter->script_phase;
-  const WeaponStrike *strike = &liu_kang_sword_attacks[index];
+  const WeaponStrike *strike = fighter->weapon_strike;
   bool hit = fighter->connected;
   fighter->action = ACTION_RETAIL_1006;
   if (index == 0 && hit && sword_repeat(fighter)) {
     /* 496500 -> 4ec720/730, delayed travel then second strike. The move
      * rebind keeps the action's cleanup for the second strike. */
     fighter->mmove_cleanup = NULL;
-    fighter_start_move(fighter, S_PUNCH, &liu_kang_sword_attacks[1].move);
+    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec730, 0x4ec720, ACTION_RETAIL_010E);
+    fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
     fighter->mmove_cleanup = sword_cleanup;
     fighter->script_phase = 1;
-    fighter->weapon_strike = &liu_kang_sword_attacks[1];
-    fighter->sample_override = liu_kang_sword_attacks[1].first;
-    sword_travel(fighter, liu_kang_sword_attacks[1].delay, liu_kang_sword_attacks[1].travel);
+    fighter->weapon_strike = &fighter->loaded_weapon_strike;
+    fighter->sample_override = fighter->loaded_weapon_strike.first;
+    sword_travel(fighter, fighter->loaded_weapon_strike.delay, fighter->loaded_weapon_strike.travel);
     sword_strike_script(fighter);
     return;
   }
@@ -112,18 +104,18 @@ static void sword_recover(Fighter *fighter) {
 }
 
 static void sword_contact(Fighter *fighter) {
-  const WeaponStrike *strike = &liu_kang_sword_attacks[fighter->script_phase];
+  const WeaponStrike *strike = fighter->weapon_strike;
   native_query_rows(fighter, &strike->record, strike->queries, 1, sword_recover);
 }
 
 static void sword_swing(Fighter *fighter) {
-  const WeaponStrike *strike = &liu_kang_sword_attacks[fighter->script_phase];
+  const WeaponStrike *strike = fighter->weapon_strike;
   battle_sound(SOUND_C, strike->sound);
   native_play_rows(fighter, strike->target, 1, sword_contact);
 }
 
 static void sword_strike_script(Fighter *fighter) {
-  const WeaponStrike *strike = &liu_kang_sword_attacks[fighter->script_phase];
+  const WeaponStrike *strike = fighter->weapon_strike;
   int opening = strike->windup - strike->first;
   if (opening <= 0) {
     sword_swing(fighter);
@@ -146,19 +138,29 @@ static void sword_attack(Fighter *fighter, int index) {
     retail_air_attack(fighter, index == 2 ? 0 : 1);
     return;
   }
-  fighter_start_move(fighter, S_PUNCH, &liu_kang_sword_attacks[index].move);
-  fighter->script_phase = index;
-  fighter->weapon_strike = &liu_kang_sword_attacks[index];
-  fighter->sample_override = liu_kang_sword_attacks[index].first;
   if (index == 3) {
-    const WeaponStrike *strike = &liu_kang_sword_attacks[index];
-    native_schedule_speed(fighter, strike->speed, maxi(0, strike->delay - 1), strike->travel);
+    static const MoveDef back_lp = {.clip = -1, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0112};
+    fighter_start_move(fighter, S_PUNCH, &back_lp);
+    const Mk4Image *image = retail_vm_image();
+    native_schedule_speed(fighter, (q16)mk4_image_u32(image, 0x4ec7e4), maxi(0, (int)mk4_image_u32(image, 0x4ec7e0) - 1), (int)mk4_image_u32(image, 0x4ec7e8));
     fighter->mmove_cleanup = sword_cleanup;
     retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 3);
     return;
   }
-  if (liu_kang_sword_attacks[index].travel != 0) {
-    sword_travel(fighter, liu_kang_sword_attacks[index].delay, liu_kang_sword_attacks[index].travel);
+  require(index >= 0 && index <= 2, "Invalid native weapon strike selection");
+  if (index == 0) {
+    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec708, 0, ACTION_RETAIL_010E);
+  } else if (index == 1) {
+    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec730, 0x4ec720, ACTION_RETAIL_010E);
+  } else {
+    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec750, 0x4ec740, ACTION_RETAIL_0212);
+  }
+  fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
+  fighter->script_phase = index;
+  fighter->weapon_strike = &fighter->loaded_weapon_strike;
+  fighter->sample_override = fighter->weapon_strike->first;
+  if (fighter->weapon_strike->travel != 0) {
+    sword_travel(fighter, fighter->weapon_strike->delay, fighter->weapon_strike->travel);
   }
   fighter->mmove_cleanup = sword_cleanup;
   sword_strike_script(fighter);
