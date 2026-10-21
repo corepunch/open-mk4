@@ -52,7 +52,7 @@ static void start_air_attack(Fighter *fighter, int index) {
   fighter->script_phase = combo ? AIR_COMBO : AIR_FLIGHT;
   fighter->body.on_land = NULL;
   fighter->body.physics = NULL;
-  fighter->facing = fighter->body.pos[AXIS_X] <= sonya_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
+  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_peer(fighter)->body.pos[AXIS_X] ? 1 : -1;
   fighter->flags &= ~(unsigned)FF_BUSY; /* 0x46ea40 -> 0x490330 */
   static const FighterFn scripts[] = {sonya_entry_retail_script_004e6658, sonya_entry_retail_script_004e6710, sonya_entry_retail_script_004e61f8,
       sonya_entry_retail_script_004e6500, sonya_entry_retail_script_004e63d8};

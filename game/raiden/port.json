@@ -391,7 +391,7 @@
       "symbol": "raiden_generated_reaction"
     }
   },
-  "return_to": "raiden_ready",
+  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

@@ -35,7 +35,7 @@ static void teleport_drop(Fighter *fighter) {
 }
 
 static void teleport_pause(Fighter *fighter) {
-  scorpion_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->flags &= ~(unsigned)FF_TELEPORTING;
   fighter->script_phase = 2;
   native_hold(fighter, 6, teleport_drop);
@@ -67,7 +67,7 @@ static void teleport_query(Fighter *fighter) {
 }
 
 static void teleport_vanish(Fighter *fighter) {
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   int first = fighter->mmove_frame + 1;
   /* 480140 reappears past the opponent along this fighter's pair axis, on
    * the opponent when that point leaves the arena, then travels back along

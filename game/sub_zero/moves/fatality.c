@@ -72,10 +72,10 @@ void sub_zero_script_victory(Fighter *fighter) {
 
 void sub_zero_start_fatality(Fighter *fighter, int id) {
   if (!battle_begin_finisher(fighter, id)) {
-    sub_zero_ready(fighter);
+    fighter_ready(fighter);
     return;
   }
-  Fighter *victim = sub_zero_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   fatal_pose(victim, 13, 0, false);
   fatal_pose(fighter, id == FINISH_SUB_ZERO_1 ? 385 : id == FINISH_SUB_ZERO_2 ? 552 : id == FINISH_FAN ? 415 : 293, 0, true);
   if (id == FINISH_SUB_ZERO_1) {

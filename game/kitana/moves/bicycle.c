@@ -20,7 +20,7 @@ static void bicycle_contact(Fighter *fighter) {
 }
 
 static void bicycle_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, kitana_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void bicycle_fall(Fighter *fighter) {
@@ -30,7 +30,7 @@ static void bicycle_fall(Fighter *fighter) {
 }
 
 static void bicycle_spin(Fighter *fighter) {
-  kitana_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   mk4_mmove_bind(fighter, 101, 9, 0);
   fighter_set_speed(fighter, 0x3333);
   native_begin(fighter, 0, 8, bicycle_fall);

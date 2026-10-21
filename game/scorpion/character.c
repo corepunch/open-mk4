@@ -75,7 +75,7 @@ const MoveDef scorpion_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .
  * native contact continuations freeze the body and optionally open a cancel. */
 
 /* Paired ground throws: 0x4de6e4 (LP), 0x4de2f8/318/328 (LK).
- * Native scorpion_opponent-root alignment is represented by a shared world origin. */
+ * Native fighter_peer-root alignment is represented by a shared world origin. */
 
 /* Generated VM finishers use shared scene, blend and object helpers. */
 

@@ -16,6 +16,14 @@ const Fighter *fighter_opponent(const Fighter *fighter) {
   return fighter == &g_battle.fighters[0] ? &g_battle.fighters[1] : &g_battle.fighters[0];
 }
 
+Fighter *fighter_peer(Fighter *fighter) {
+  return (Fighter *)fighter_opponent(fighter);
+}
+
+int fighter_victim_action(const Fighter *fighter) {
+  return fighter_opponent(fighter)->action;
+}
+
 float fighter_distance(const Fighter *fighter) {
   const Fighter *other = fighter_opponent(fighter);
   return hypotf(fighter_x(other) - fighter_x(fighter), fighter_z(other) - fighter_z(fighter));

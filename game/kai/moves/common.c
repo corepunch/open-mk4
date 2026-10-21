@@ -1,13 +1,5 @@
 #include "../character.h"
 
-void kai_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
 void kai_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
 }
@@ -26,7 +18,7 @@ void kai_script_lk_return(Fighter *fighter) {
 }
 
 void kai_script_lk_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, kai_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void kai_script_lp_select(Fighter *fighter) {
@@ -51,11 +43,11 @@ void kai_script_current_reaction(Fighter *fighter, int reaction) {
 }
 
 void kai_script_lp_extended_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, kai_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void kai_script_lp_short_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, kai_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void kai_script_opponent_reaction(Fighter *fighter, int reaction) {

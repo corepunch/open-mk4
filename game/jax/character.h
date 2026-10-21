@@ -75,7 +75,6 @@ void jax_press_lk(Fighter *fighter);
 void jax_press_lp(Fighter *fighter);
 void jax_press_sweep(Fighter *fighter);
 void jax_press_uppercut(Fighter *fighter);
-void jax_ready(Fighter *fighter);
 void jax_script_air_finish(Fighter *fighter);
 void jax_script_finish(Fighter *fighter);
 void jax_script_lk_finish(Fighter *fighter);

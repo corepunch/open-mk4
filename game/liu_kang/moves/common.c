@@ -2,27 +2,12 @@
 
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &liu_kang_s_hp, &s_hp_second, liu_kang_ready};
+static const NativeHPProfile hp_profile = {&hp_record, &liu_kang_s_hp, &s_hp_second, fighter_ready};
 static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 
 /* VM control flow is generated; native adapters build frame rows. Playback need
  * not match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
-void liu_kang_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
-int liu_kang_victim_action(const Fighter *fighter) {
-  return fighter_opponent(fighter)->action;
-}
-
-Fighter *liu_kang_opponent(Fighter *fighter) {
-  return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-}
 
 void liu_kang_hp_script(Fighter *fighter) {
   native_hp_start(fighter, &hp_profile);
@@ -60,7 +45,7 @@ void liu_kang_liu_script_lk_continue(Fighter *fighter) {
 }
 
 void liu_kang_liu_script_lk_damage(Fighter *fighter) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
   }
@@ -84,7 +69,7 @@ void liu_kang_liu_script_spawn_high(Fighter *fighter, int task_type) {
 }
 
 void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   victim->reaction = reaction;
   if (reaction == 104) {
     liu_kang_throw_disarm(victim);

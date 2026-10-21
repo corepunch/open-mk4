@@ -445,7 +445,7 @@
       "symbol": "react_fireball_block"
     }
   },
-  "return_to": "kitana_ready",
+  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

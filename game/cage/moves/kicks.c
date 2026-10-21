@@ -13,7 +13,7 @@ static const AttackRecord shadow_record = {0x17fbe, -0x51a9, 0x13020, 0x2b43, 16
 
 static void shadow_ready(Fighter *fighter) {
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, cage_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void shadow_recover(Fighter *fighter) {

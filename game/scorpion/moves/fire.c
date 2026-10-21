@@ -20,7 +20,7 @@ void scorpion_fire_script(Fighter *fighter) {
 }
 
 void scorpion_fire(Fighter *fighter) {
-  scorpion_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &s_fire);
   fighter->sample_override = 1;
   fighter->script_phase = (fighter_opponent(fighter)->flags & FF_REACTING) != 0;

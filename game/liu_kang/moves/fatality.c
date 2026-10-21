@@ -62,7 +62,7 @@ void liu_kang_finish_scene(Fighter *fighter) {
 }
 
 static void dragon_stream(Fighter *fighter) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (fighter->scene.clips != NULL) {
     scene_step(fighter);
   }
@@ -89,12 +89,12 @@ static void dragon_actor_start(Fighter *fighter) {
 
 static void dragon_victim_start(Fighter *fighter) {
   scene_step(fighter);
-  scene_begin(liu_kang_opponent(fighter), dragon_target, COUNT(dragon_target), -1);
+  scene_begin(fighter_peer(fighter), dragon_target, COUNT(dragon_target), -1);
 }
 
 static void dragon_tear(Fighter *fighter) {
   dragon_stream(fighter);
-  battle_particles(liu_kang_opponent(fighter), 3, 3, false);
+  battle_particles(fighter_peer(fighter), 3, 3, false);
 }
 
 static void dragon_bite_sound(Fighter *fighter) {
@@ -109,8 +109,8 @@ static void dragon_delayed_sound(Fighter *fighter) {
 
 static void dragon_detach(Fighter *fighter) {
   dragon_stream(fighter);
-  battle_detach_piece(liu_kang_opponent(fighter), 5, (q16[3]){0}, (q16[3]){0});
-  battle_detach_piece(liu_kang_opponent(fighter), 6, (q16[3]){0}, (q16[3]){0});
+  battle_detach_piece(fighter_peer(fighter), 5, (q16[3]){0}, (q16[3]){0});
+  battle_detach_piece(fighter_peer(fighter), 6, (q16[3]){0}, (q16[3]){0});
 }
 
 static void dragon_fatality_script(Fighter *fighter) {
@@ -151,7 +151,7 @@ static void liu_script_fatal_watch(Fighter *fighter) {
 }
 
 static void liu_script_fatal_hit(Fighter *owner) {
-  Fighter *victim = liu_kang_opponent(owner);
+  Fighter *victim = fighter_peer(owner);
   victim->script_phase = 2;
   victim->reaction = 177;
   battle_shatter(victim);
@@ -165,7 +165,7 @@ static void fatal_fireball_object(Projectile *p) {
     p->kind = 0;
     return;
   }
-  Fighter *victim = liu_kang_opponent(&g_battle.fighters[p->owner]);
+  Fighter *victim = fighter_peer(&g_battle.fighters[p->owner]);
   for (int axis = 0; axis < 3; ++axis) {
     p->pos[axis] += p->vel[axis];
   }
@@ -179,9 +179,9 @@ static void fatal_fireball_object(Projectile *p) {
 
 void liu_kang_liu_script_fatal_setup(Fighter *fighter) {
   liu_kang_fatal_pose(fighter, 537, 0, true);
-  liu_kang_fatal_pose(liu_kang_opponent(fighter), 539, 0, false);
+  liu_kang_fatal_pose(fighter_peer(fighter), 539, 0, false);
   fighter->flags |= FF_PAIRED;
-  liu_kang_opponent(fighter)->flags |= FF_PAIRED;
+  fighter_peer(fighter)->flags |= FF_PAIRED;
   liu_kang_entry_retail_script_004e0020(fighter);
 }
 
@@ -202,7 +202,7 @@ void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type) {
 }
 
 void liu_kang_liu_script_fatal_align(Fighter *fighter) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
   }
@@ -212,7 +212,7 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
   if (!battle_begin_finisher(fighter, id)) {
     return;
   }
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   liu_kang_fatal_pose(victim, 13, 0, false);
   liu_kang_fatal_pose(fighter, id == FINISH_LIU_KANG_2 ? 119 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 119, 0, true);
   if (id == FINISH_LIU_KANG_1) {

@@ -35,7 +35,7 @@ static void spear_cleanup(Fighter *fighter) {
     }
     bool pulling = p->phase == 1;
     p->kind = 0;
-    Fighter *victim = scorpion_opponent(fighter);
+    Fighter *victim = fighter_peer(fighter);
     if (pulling && fighter_move(victim)->clip == 199) {
       scorpion_special_ready(victim);
     }
@@ -43,7 +43,7 @@ static void spear_cleanup(Fighter *fighter) {
 }
 
 static void spear_projectile(Projectile *p) {
-  Fighter *owner = &g_battle.fighters[p->owner], *victim = scorpion_opponent(owner);
+  Fighter *owner = &g_battle.fighters[p->owner], *victim = fighter_peer(owner);
   bool interrupted = fighter_move(owner)->clip != 14 || !owner->retail_vm.active || owner->pending != NULL;
   if (interrupted || g_battle.contacts_off) {
     if (p->phase == 1 && fighter_move(victim)->clip == 199) {
@@ -60,7 +60,7 @@ static void spear_projectile(Projectile *p) {
     /* 49b170/487350: pull along the throw direction until the pair is
      * within 0.8. */
     if (fighter_distance(owner) <= q16_float(0xcccc)) {
-      scorpion_stop_body(victim);
+      mk4_script_stop_body(victim);
       fighter_start_move(victim, S_HIT, &s_spear_stun);
       victim->sample_override = 0;
       victim->flags |= FF_REACTING;
@@ -99,7 +99,7 @@ static void spear_projectile(Projectile *p) {
      * the defeated controller after the round retires projectile objects. */
     p->kind = 0;
   } else if (result == CONTACT_HIT || result == CONTACT_AIR_HIT) {
-    scorpion_stop_body(victim);
+    mk4_script_stop_body(victim);
     fighter_start_move(victim, S_HIT, &s_snared);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
@@ -136,7 +136,7 @@ bool scorpion_can_spear(const Fighter *fighter) {
 
 void scorpion_spear(Fighter *fighter) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
-  scorpion_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &s_spear);
   fighter->script_phase = followup;
   fighter->sample_override = followup ? 9 : 0;

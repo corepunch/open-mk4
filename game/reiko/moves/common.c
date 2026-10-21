@@ -1,16 +1,6 @@
 #include "../character.h"
 
-static void reiko_ready(Fighter *fighter);
 static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION, NULL, 0};
-
-/* Native controller return used by generated VM programs and native runners. */
-static void reiko_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
 
 void reiko_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
@@ -42,7 +32,7 @@ void reiko_script_lp_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, reiko_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void reiko_script_finish(Fighter *fighter) {

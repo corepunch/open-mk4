@@ -28,7 +28,6 @@ void noob_saibot_press_high_kick(Fighter *fighter);
 void noob_saibot_press_high_punch(Fighter *fighter);
 void noob_saibot_press_low_kick(Fighter *fighter);
 void noob_saibot_press_low_punch(Fighter *fighter);
-void noob_saibot_ready(Fighter *fighter);
 void noob_saibot_script_air_finish(Fighter *fighter);
 void noob_saibot_script_air_throw_continue(Fighter *fighter);
 void noob_saibot_script_air_throw_end(Fighter *fighter);

@@ -37,7 +37,6 @@ void cage_press_high_kick(Fighter *fighter);
 void cage_press_high_punch(Fighter *fighter);
 void cage_press_low_kick(Fighter *fighter);
 void cage_press_low_punch(Fighter *fighter);
-void cage_ready(Fighter *fighter);
 void cage_script_air_finish(Fighter *fighter);
 void cage_script_cpu_kick_tail(Fighter *fighter);
 void cage_script_fatality_1_signal(Fighter *fighter);

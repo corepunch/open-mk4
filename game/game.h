@@ -957,6 +957,8 @@ void battle_end_finisher(void);
 void fighter_interrupt(Fighter *fighter, FighterFn entry);
 void fighter_enter_stance(Fighter *fighter, Stance stance);
 const Fighter *fighter_opponent(const Fighter *fighter);
+Fighter *fighter_peer(Fighter *fighter);
+int fighter_victim_action(const Fighter *fighter);
 float fighter_distance(const Fighter *fighter);
 bool fighter_holds_back(const Fighter *fighter);
 bool fighter_fast_start(const Fighter *fighter);

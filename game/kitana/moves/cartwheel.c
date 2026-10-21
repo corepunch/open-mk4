@@ -7,7 +7,7 @@ static const MoveDef s_cartwheel = {.clip = 104, .last = MOVE_END, .flags = SF_L
 static const AttackRecord cartwheel_record = {75300, -45088, 72083, 89063, 121, 121, 9, 0, 4587};
 
 static void cartwheel_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, kitana_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void cartwheel_stop(Fighter *fighter) {

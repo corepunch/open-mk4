@@ -1,9 +1,5 @@
 #include "../character.h"
 
-void jax_ready(Fighter *fighter) {
-  fighter_ready(fighter);
-}
-
 void jax_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);
 }
@@ -37,5 +33,5 @@ void jax_script_lk_return(Fighter *fighter) {
 }
 
 void jax_script_lk_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, jax_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }

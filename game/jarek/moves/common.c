@@ -1,9 +1,5 @@
 #include "../character.h"
 
-void jarek_ready(Fighter *fighter) {
-  fighter_ready(fighter);
-}
-
 void jarek_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
 }
@@ -46,7 +42,7 @@ void jarek_script_lp_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, jarek_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void jarek_script_current_reaction(Fighter *fighter, int reaction) {

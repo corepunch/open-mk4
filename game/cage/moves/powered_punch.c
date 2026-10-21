@@ -57,7 +57,7 @@ static void power_ready(Fighter *fighter) {
   bool airborne = fighter_airborne(fighter);
   q16 velocity[3], gravity = fighter->body.gravity;
   memcpy(velocity, fighter->body.vel, sizeof velocity);
-  fighter_finish_mmove(fighter, cage_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
   /* Native46f650 restores air control without cancelling the fall. The
    * interrupted-move cleanup still owns stopping a replaced attack. */
   if (airborne) {

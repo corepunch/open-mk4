@@ -9,7 +9,7 @@ void sub_zero_ground_native_tail(Fighter *fighter) {
 
 void sub_zero_ground_attack(Fighter *fighter, int index) {
   bool followup = fighter_fast_start(fighter);
-  sub_zero_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &sub_zero_ground_attacks[index].move);
   fighter->script_phase = index;

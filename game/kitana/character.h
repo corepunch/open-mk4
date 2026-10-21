@@ -33,7 +33,6 @@
 #define ground_native_tail kitana_ground_native_tail
 #define hp_script kitana_hp_script
 #define lk_victim kitana_lk_victim
-#define opponent kitana_opponent
 #define press_air_hk kitana_press_air_hk
 #define press_air_hp kitana_press_air_hp
 #define press_air_lk kitana_press_air_lk
@@ -98,9 +97,7 @@
 #define special_cleanup kitana_special_cleanup
 #define spike_start kitana_spike_start
 #define square_victim kitana_square_victim
-#define stop_body kitana_stop_body
 #define uppercut_script kitana_uppercut_script
-#define victim_action kitana_victim_action
 
 enum {
   G_LOW_KICK,
@@ -158,7 +155,6 @@ void kitana_jab(Fighter *fighter);
 void kitana_kick(Fighter *fighter);
 void kitana_leg_grab(Fighter *fighter);
 void kitana_lk(Fighter *fighter);
-void kitana_ready(Fighter *fighter);
 void kitana_ring(Fighter *fighter);
 void kitana_roundhouse(Fighter *fighter);
 void kitana_shadow_install_physics(Fighter *fighter);
@@ -172,7 +168,6 @@ void kitana_sweep(Fighter *fighter);
 void kitana_uppercut(Fighter *fighter);
 void kitana_weapon(Fighter *fighter);
 void kitana_lk_victim(Fighter *victim);
-Fighter *kitana_opponent(Fighter *fighter);
 void kitana_press_air_hk(Fighter *fighter);
 void kitana_press_air_hp(Fighter *fighter);
 void kitana_press_air_lk(Fighter *fighter);
@@ -293,8 +288,6 @@ void kitana_second_fatality(Fighter *fighter);
 void kitana_special_cleanup(Fighter *fighter);
 void kitana_spike_start(Fighter *fighter);
 void kitana_square_victim(Fighter *victim);
-void kitana_stop_body(Fighter *fighter);
 void kitana_uppercut_script(Fighter *fighter);
-int kitana_victim_action(const Fighter *fighter);
 
 #endif

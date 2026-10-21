@@ -1,9 +1,5 @@
 #include "../character.h"
 
-void shinnok_ready(Fighter *fighter) {
-  fighter_ready(fighter);
-}
-
 void shinnok_idle(Fighter *fighter) {
   weapon_stance(fighter, S_IDLE);
 }
@@ -36,5 +32,5 @@ void shinnok_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void shinnok_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, shinnok_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }

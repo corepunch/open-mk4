@@ -5,8 +5,8 @@ static void first_end_particles(Fighter *fighter);
 static void first_end_finish(Fighter *fighter);
 
 void raiden_script_first_release(Fighter *fighter) {
-  mk4_script_scene_pose(raiden_opponent(fighter), 393, 25, 0);
-  battle_particles(raiden_opponent(fighter), 2, 12, true);
+  mk4_script_scene_pose(fighter_peer(fighter), 393, 25, 0);
+  battle_particles(fighter_peer(fighter), 2, 12, true);
   raiden_entry_retail_script_004e0220(fighter);
 }
 
@@ -15,11 +15,11 @@ static void first_end_shake(Fighter *fighter) {
 }
 
 static void first_end_particles(Fighter *fighter) {
-  battle_particles(raiden_opponent(fighter), 2, 24, true);
+  battle_particles(fighter_peer(fighter), 2, 24, true);
 }
 
 static void first_end_finish(Fighter *fighter) {
-  battle_shatter(raiden_opponent(fighter));
+  battle_shatter(fighter_peer(fighter));
   battle_end_finisher();
   raiden_script_victory(fighter);
 }
@@ -38,6 +38,6 @@ void raiden_first_fatality(Fighter *fighter) {
     return;
   }
   mk4_script_scene_pose(fighter, 392, 25, 0);
-  mk4_script_scene_pose(raiden_opponent(fighter), 393, 25, 0);
+  mk4_script_scene_pose(fighter_peer(fighter), 393, 25, 0);
   raiden_entry_retail_script_004e0210(fighter);
 }

@@ -1,15 +1,5 @@
 #include "../character.h"
 
-static void tanya_ready(Fighter *fighter);
-
-static void tanya_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
 void tanya_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
@@ -41,5 +31,5 @@ void tanya_script_current_reaction(Fighter *fighter, int reaction) {
 }
 
 void tanya_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, tanya_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }

@@ -16,7 +16,7 @@ static const GroundAttack ground_attacks[] = {
 };
 // clang-format on
 static const NativeGroundProfile ground_profile = {
-    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, liu_kang_ready, 4, 2, 27, 19, 20, 44, NULL};
+    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 4, 2, 27, 19, 20, 44, NULL};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = liu_kang_press_combo_hp,
     [BUTTON_LOW_PUNCH] = liu_kang_press_lp,
     [BUTTON_HIGH_KICK] = liu_kang_press_kick,

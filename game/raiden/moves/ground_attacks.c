@@ -16,7 +16,7 @@ static const GroundAttack ground_attacks[] = {
 };
 // clang-format on
 static const NativeGroundProfile ground_profile = {
-    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, raiden_ready, 5, 2, 27, 19, 20, 44, NULL};
+    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 2, 27, 19, 20, 44, NULL};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = raiden_press_combo_hp,
     [BUTTON_LOW_PUNCH] = raiden_press_lp,
     [BUTTON_HIGH_KICK] = raiden_press_kick,
@@ -40,7 +40,7 @@ void raiden_ground_native_next(Fighter *fighter) {
 
 void raiden_ground_attack(Fighter *fighter, int index) {
   bool followup = fighter_fast_start(fighter);
-  raiden_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);
   fighter->script_phase = index;

@@ -4,31 +4,7 @@ static void lk_return_done(Fighter *fighter);
 static void lk_return_hold(Fighter *fighter);
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &sonya_s_hp, &s_hp_second, sonya_ready};
-
-/* Native controller return used by generated VM programs and native runners. */
-void sonya_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
-int sonya_victim_action(const Fighter *fighter) {
-  return fighter_opponent(fighter)->action;
-}
-
-Fighter *sonya_opponent(Fighter *fighter) {
-  return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-}
-
-void sonya_stop_body(Fighter *fighter) {
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-  fighter->body.gravity = 0;
-  fighter->body.physics = NULL;
-  fighter->body.on_land = NULL;
-}
+static const NativeHPProfile hp_profile = {&hp_record, &sonya_s_hp, &s_hp_second, fighter_ready};
 
 void sonya_hp_script(Fighter *fighter) {
   native_hp_start(fighter, &hp_profile);
@@ -51,7 +27,7 @@ void sonya_hk(Fighter *fighter) {
 
 void sonya_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 184) {
-    Fighter *victim = sonya_opponent(fighter);
+    Fighter *victim = fighter_peer(fighter);
     mk4_script_scene_pose(victim, 561, 79, 0);
     fighter_cancel_mmove(victim);
     sonya_entry_retail_script_004e59c8(victim);
@@ -70,7 +46,7 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
 }
 
 static void lk_return_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, sonya_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void lk_return_hold(Fighter *fighter) {

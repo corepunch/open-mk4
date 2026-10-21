@@ -26,7 +26,6 @@
 #define ground_native_tail scorpion_ground_native_tail
 #define hp_script scorpion_hp_script
 #define native_blend scorpion_native_blend
-#define opponent scorpion_opponent
 #define press_air_hk scorpion_press_air_hk
 #define press_air_hp scorpion_press_air_hp
 #define press_air_lk scorpion_press_air_lk
@@ -106,13 +105,11 @@
 #define spike_start scorpion_spike_start
 #define spin_script scorpion_spin_script
 #define start_fatality scorpion_start_fatality
-#define stop_body scorpion_stop_body
 #define sword_spin_control scorpion_sword_spin_control
 #define sword_spin_query scorpion_sword_spin_query
 #define teleport_land_script scorpion_teleport_land_script
 #define teleport_script scorpion_teleport_script
 #define uppercut_script scorpion_uppercut_script
-#define victim_action scorpion_victim_action
 
 enum {
   G_LOW_KICK,
@@ -154,7 +151,6 @@ void scorpion_ground_native_next(Fighter *fighter);
 void scorpion_ground_native_tail(Fighter *fighter);
 void scorpion_hp_script(Fighter *fighter);
 void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end);
-Fighter *scorpion_opponent(Fighter *fighter);
 void scorpion_press_air_hk(Fighter *fighter);
 void scorpion_press_air_hp(Fighter *fighter);
 void scorpion_press_air_lk(Fighter *fighter);
@@ -250,7 +246,6 @@ void scorpion_idle(Fighter *fighter);
 void scorpion_jab(Fighter *fighter);
 void scorpion_kick(Fighter *fighter);
 void scorpion_lk(Fighter *fighter);
-void scorpion_ready(Fighter *fighter);
 void scorpion_roundhouse(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_spike_fatality(Fighter *fighter);
@@ -317,12 +312,10 @@ void scorpion_special_ready(Fighter *fighter);
 void scorpion_spike_start(Fighter *fighter);
 void scorpion_spin_script(Fighter *fighter);
 void scorpion_start_fatality(Fighter *fighter, int id);
-void scorpion_stop_body(Fighter *fighter);
 void scorpion_sword_spin_control(Fighter *fighter);
 void scorpion_sword_spin_query(Fighter *fighter);
 void scorpion_teleport_land_script(Fighter *fighter);
 void scorpion_teleport_script(Fighter *fighter);
 void scorpion_uppercut_script(Fighter *fighter);
-int scorpion_victim_action(const Fighter *fighter);
 
 #endif

@@ -48,7 +48,6 @@
 #define lp_pair_released sub_zero_lp_pair_released
 #define lp_thrown_cleanup sub_zero_lp_thrown_cleanup
 #define native_blends sub_zero_native_blends
-#define opponent sub_zero_opponent
 #define owned_object sub_zero_owned_object
 #define press_air_hk sub_zero_press_air_hk
 #define press_air_hp sub_zero_press_air_hp
@@ -123,10 +122,8 @@
 #define slide_script sub_zero_slide_script
 #define spike_start sub_zero_spike_start
 #define start_fatality sub_zero_start_fatality
-#define stop_body sub_zero_stop_body
 #define throw_disarm sub_zero_throw_disarm
 #define uppercut_script sub_zero_uppercut_script
-#define victim_action sub_zero_victim_action
 
 enum {
   G_LOW_KICK,
@@ -197,7 +194,6 @@ void sub_zero_lp_capture_frames_frame_0(Fighter *fighter);
 bool sub_zero_lp_pair_released(const Fighter *victim);
 void sub_zero_lp_thrown_cleanup(Fighter *victim);
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end);
-Fighter *sub_zero_opponent(Fighter *fighter);
 bool sub_zero_owned_object(const Fighter *fighter, int kind);
 void sub_zero_press_air_hk(Fighter *fighter);
 void sub_zero_press_air_hp(Fighter *fighter);
@@ -326,7 +322,6 @@ void sub_zero_second_fatality_script(Fighter *fighter);
 void sub_zero_slide_script(Fighter *fighter);
 void sub_zero_spike_start(Fighter *fighter);
 void sub_zero_start_fatality(Fighter *fighter, int id);
-void sub_zero_stop_body(Fighter *fighter);
 void sub_zero_air_throw(Fighter *fighter);
 void sub_zero_clone(Fighter *fighter);
 void sub_zero_crouch_lp(Fighter *fighter);
@@ -337,7 +332,6 @@ void sub_zero_ice(Fighter *fighter);
 void sub_zero_jab(Fighter *fighter);
 void sub_zero_kick(Fighter *fighter);
 void sub_zero_lk(Fighter *fighter);
-void sub_zero_ready(Fighter *fighter);
 void sub_zero_roundhouse(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
@@ -347,6 +341,5 @@ void sub_zero_uppercut(Fighter *fighter);
 void sub_zero_weapon(Fighter *fighter);
 void sub_zero_throw_disarm(Fighter *victim);
 void sub_zero_uppercut_script(Fighter *fighter);
-int sub_zero_victim_action(const Fighter *fighter);
 
 #endif

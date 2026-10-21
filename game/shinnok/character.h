@@ -60,7 +60,6 @@ void shinnok_press_low_punch(Fighter *fighter);
 void shinnok_press_punch(Fighter *fighter);
 void shinnok_press_sweep(Fighter *fighter);
 void shinnok_press_uppercut(Fighter *fighter);
-void shinnok_ready(Fighter *fighter);
 void shinnok_script_air_finish(Fighter *fighter);
 void shinnok_script_current_reaction(Fighter *fighter, int reaction);
 void shinnok_script_kick_finish(Fighter *fighter);

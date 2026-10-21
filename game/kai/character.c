@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_BLOCK] = kai_block,
   [S_HIT] = NULL,
   [S_KNOCKDOWN] = NULL,
-  [S_VICTORY] = kai_ready,
+  [S_VICTORY] = fighter_ready,
 };
 // clang-format on
 

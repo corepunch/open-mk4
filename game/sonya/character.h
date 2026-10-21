@@ -37,7 +37,6 @@
 #define ground_native_tail sonya_ground_native_tail
 #define hp_script sonya_hp_script
 #define lk_victim sonya_lk_victim
-#define opponent sonya_opponent
 #define press_air_hk sonya_press_air_hk
 #define press_air_hp sonya_press_air_hp
 #define press_air_lk sonya_press_air_lk
@@ -102,9 +101,7 @@
 #define special_cleanup sonya_special_cleanup
 #define spike_start sonya_spike_start
 #define square_victim sonya_square_victim
-#define stop_body sonya_stop_body
 #define uppercut_script sonya_uppercut_script
-#define victim_action sonya_victim_action
 
 enum {
   G_LOW_KICK,
@@ -154,7 +151,6 @@ void sonya_ground_native_next(Fighter *fighter);
 void sonya_ground_native_tail(Fighter *fighter);
 void sonya_hp_script(Fighter *fighter);
 void sonya_lk_victim(Fighter *victim);
-Fighter *sonya_opponent(Fighter *fighter);
 void sonya_press_air_hk(Fighter *fighter);
 void sonya_press_air_hp(Fighter *fighter);
 void sonya_press_air_lk(Fighter *fighter);
@@ -280,7 +276,6 @@ void sonya_jab(Fighter *fighter);
 void sonya_kick(Fighter *fighter);
 void sonya_leg_grab(Fighter *fighter);
 void sonya_lk(Fighter *fighter);
-void sonya_ready(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
 void sonya_roundhouse(Fighter *fighter);
 void sonya_spike_fatality(Fighter *fighter);
@@ -291,8 +286,6 @@ void sonya_weapon(Fighter *fighter);
 void sonya_special_cleanup(Fighter *fighter);
 void sonya_spike_start(Fighter *fighter);
 void sonya_square_victim(Fighter *victim);
-void sonya_stop_body(Fighter *fighter);
 void sonya_uppercut_script(Fighter *fighter);
-int sonya_victim_action(const Fighter *fighter);
 
 #endif

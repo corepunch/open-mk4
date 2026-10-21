@@ -2,36 +2,12 @@
 
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &scorpion_s_hp, &s_hp_second, scorpion_ready};
+static const NativeHPProfile hp_profile = {&hp_record, &scorpion_s_hp, &s_hp_second, fighter_ready};
 static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-
-/* Native controller return used by generated VM programs and native runners. */
-void scorpion_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
-int scorpion_victim_action(const Fighter *fighter) {
-  return fighter_opponent(fighter)->action;
-}
-
-Fighter *scorpion_opponent(Fighter *fighter) {
-  return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-}
-
-void scorpion_stop_body(Fighter *fighter) {
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-  fighter->body.gravity = 0;
-  fighter->body.physics = NULL;
-  fighter->body.on_land = NULL;
-}
 
 void scorpion_special_ready(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_TELEPORTING;
-  scorpion_ready(fighter);
+  fighter_ready(fighter);
 }
 
 void scorpion_hp_script(Fighter *fighter) {
@@ -54,7 +30,7 @@ void scorpion_hk(Fighter *fighter) {
 }
 
 void scorpion_script_lk_rebase(Fighter *fighter) {
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->body.pos[AXIS_Y] = victim->body.ground;
   victim->facing = fighter->facing;
@@ -68,16 +44,16 @@ void scorpion_script_lk_damage(Fighter *fighter) {
 
 void scorpion_script_lk_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
-  fighter_finish_mmove(fighter, scorpion_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void scorpion_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, scorpion_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction) {
   require(reaction == 77, "Unexpected Scorpion pair release");
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown_end);
@@ -109,7 +85,7 @@ void scorpion_spin_script(Fighter *fighter) {
 }
 
 void scorpion_script_reaction(Fighter *fighter, int reaction) {
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (reaction == 175) {
     return; /* Native arena continuation owns the impalement and completion. */
   }

@@ -5,7 +5,7 @@ static const AttackRecord kick_record = {71368, -56950, 83820, 74645, 16, 13, 6,
 
 /* Runner 0x470c60 with block 0x4e6978: the first contact latches. */
 static void raiden_kick_contact(Fighter *fighter) {
-  if (!fighter->connected && raiden_victim_action(fighter) != ACTION_RETAIL_2001) {
+  if (!fighter->connected && fighter_victim_action(fighter) != ACTION_RETAIL_2001) {
     battle_contact(fighter, &kick_record);
   }
 }

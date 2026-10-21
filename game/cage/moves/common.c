@@ -1,13 +1,5 @@
 #include "../character.h"
 
-void cage_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
 void cage_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
   fighter_start_move(fighter, state, move);
   script(fighter);
@@ -18,7 +10,7 @@ void cage_script_lp_return(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, cage_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void cage_script_finish(Fighter *fighter) {

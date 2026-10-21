@@ -35,7 +35,6 @@
 #define ground_native_tail raiden_ground_native_tail
 #define hp_script raiden_hp_script
 #define lk_victim raiden_lk_victim
-#define opponent raiden_opponent
 #define press_air_hk raiden_press_air_hk
 #define press_air_hp raiden_press_air_hp
 #define press_air_lk raiden_press_air_lk
@@ -106,9 +105,7 @@
 #define second_fatality raiden_second_fatality
 #define special_cleanup raiden_special_cleanup
 #define spike_start raiden_spike_start
-#define stop_body raiden_stop_body
 #define uppercut_script raiden_uppercut_script
-#define victim_action raiden_victim_action
 
 enum {
   G_LOW_KICK,
@@ -156,7 +153,6 @@ void raiden_ground_native_next(Fighter *fighter);
 void raiden_ground_native_tail(Fighter *fighter);
 void raiden_hp_script(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
-Fighter *raiden_opponent(Fighter *fighter);
 void raiden_press_air_hk(Fighter *fighter);
 void raiden_press_air_hp(Fighter *fighter);
 void raiden_press_air_lk(Fighter *fighter);
@@ -179,7 +175,6 @@ void raiden_jab(Fighter *fighter);
 void raiden_kick(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
 void raiden_lk(Fighter *fighter);
-void raiden_ready(Fighter *fighter);
 void raiden_roundhouse(Fighter *fighter);
 void raiden_spike_fatality(Fighter *fighter);
 void raiden_sweep(Fighter *fighter);
@@ -296,8 +291,6 @@ void raiden_script_weapon_victim_getup(Fighter *victim);
 void raiden_second_fatality(Fighter *fighter);
 void raiden_special_cleanup(Fighter *fighter);
 void raiden_spike_start(Fighter *fighter);
-void raiden_stop_body(Fighter *fighter);
 void raiden_uppercut_script(Fighter *fighter);
-int raiden_victim_action(const Fighter *fighter);
 
 #endif

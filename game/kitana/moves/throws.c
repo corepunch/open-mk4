@@ -70,6 +70,6 @@ void kitana_air_throw(Fighter *fighter) {
     return;
   }
   fighter_upright(fighter);
-  fighter_upright(kitana_opponent(fighter));
+  fighter_upright(fighter_peer(fighter));
   mk4_mmove_throw_start(fighter, &s_air_owner, &s_air_victim, kitana_entry_retail_script_004e5ed0);
 }

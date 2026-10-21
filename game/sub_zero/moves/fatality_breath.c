@@ -23,7 +23,7 @@ void sub_zero_script_breath_object(Fighter *fighter, int type) {
 }
 
 static void breath_freeze_object(Projectile *object) {
-  Fighter *victim = sub_zero_opponent(&g_battle.fighters[object->owner]);
+  Fighter *victim = fighter_peer(&g_battle.fighters[object->owner]);
   if (victim->appearance != APPEARANCE_FROZEN || g_battle.phase != PHASE_FATALITY) {
     object->kind = 0;
   } else if (object->ticks % 8 == 0) {
@@ -33,7 +33,7 @@ static void breath_freeze_object(Projectile *object) {
 
 void sub_zero_script_breath_freeze(Fighter *fighter, int type) {
   require(type == 0, "Unexpected freeze task");
-  sub_zero_opponent(fighter)->appearance = APPEARANCE_FROZEN;
+  fighter_peer(fighter)->appearance = APPEARANCE_FROZEN;
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 120, breath_freeze_object);
 }
 
@@ -56,7 +56,7 @@ void sub_zero_breath_travel(Fighter *fighter) {
 }
 
 void sub_zero_script_breath_shatter(Fighter *fighter) {
-  Fighter *victim = sub_zero_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   battle_particles(victim, 3, 32, true);
   battle_shatter(victim);
   sub_zero_entry_retail_script_004d2cc8(fighter);

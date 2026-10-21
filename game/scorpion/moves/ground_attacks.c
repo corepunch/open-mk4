@@ -17,7 +17,7 @@ static const GroundAttack ground_attacks[] = {
 };
 // clang-format on
 static const NativeGroundProfile ground_profile = {
-    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, scorpion_ready, 5, 0, 28, 21, 22, 38, NULL};
+    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 0, 28, 21, 22, 38, NULL};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = scorpion_press_combo_hp,
     [BUTTON_LOW_PUNCH] = scorpion_press_lp,
     [BUTTON_HIGH_KICK] = scorpion_press_kick,
@@ -41,7 +41,7 @@ void scorpion_ground_native_next(Fighter *fighter) {
 
 void scorpion_ground_attack(Fighter *fighter, int index) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
-  scorpion_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &ground_attacks[index].move);
   fighter->script_phase = index;

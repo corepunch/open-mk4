@@ -58,7 +58,7 @@ static void bicycle_victim_script(Fighter *victim) {
 }
 
 static void bicycle_cleanup(Fighter *fighter) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (victim->current_move == &s_bicycle_victim && (victim->flags & FF_PAIRED)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     victim->script_phase = 1;
@@ -72,7 +72,7 @@ static void bicycle_query(Fighter *fighter) {
 }
 
 static void bicycle_pair(Fighter *fighter) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (victim->current_move != &s_bicycle_victim || victim->pending != NULL || victim->current_mmove == NULL || !(fighter->flags & FF_PAIRED) ||
       !(victim->flags & FF_PAIRED)) {
     bicycle_carry_end(fighter);
@@ -101,7 +101,7 @@ static void bicycle_descend(Fighter *fighter) {
 }
 
 static void bicycle_carry_end(Fighter *fighter) {
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (victim->current_move == &s_bicycle_victim && victim->pending == NULL && (victim->flags & FF_PAIRED)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     victim->script_phase = 1;
@@ -122,7 +122,7 @@ static void bicycle_contact_end(Fighter *fighter) {
     bicycle_descend(fighter);
     return;
   }
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   liu_kang_throw_disarm(victim);
   fighter_start_move(victim, S_KNOCKDOWN, &s_bicycle_victim);
   victim->sample_override = 0;

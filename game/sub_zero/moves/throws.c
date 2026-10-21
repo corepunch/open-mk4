@@ -30,7 +30,7 @@ bool sub_zero_can_ground_throw(const Fighter *fighter, bool low_kick) {
  * A displayed victim sample must still last one simulation tick. Keep the
  * first wait on that sample as well; subsequent waits follow the same rule. */
 static void thrown_finish(Fighter *victim) {
-  sub_zero_stop_body(victim);
+  mk4_script_stop_body(victim);
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
@@ -48,7 +48,7 @@ void sub_zero_script_thrown_return(Fighter *victim) {
     mk4_script_thrown_ready(victim);
     return;
   }
-  sub_zero_stop_body(victim);
+  mk4_script_stop_body(victim);
   if (victim->health <= 0) {
     return;
   }
@@ -76,13 +76,13 @@ void sub_zero_throw_disarm(Fighter *victim) {
 }
 
 static void throw_cleanup(Fighter *owner) {
-  Fighter *victim = sub_zero_opponent(owner);
+  Fighter *victim = fighter_peer(owner);
   if ((victim->flags & FF_PAIRED) && (fighter_move(victim)->clip == 153 || fighter_move(victim)->clip == 165)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     if (victim->health <= 0 && victim->script_phase == 1) {
       return;
     }
-    sub_zero_stop_body(victim);
+    mk4_script_stop_body(victim);
     fighter_cancel_mmove(victim);
     if (victim->pending == NULL && victim->health > 0) {
       fighter_ready(victim);
@@ -96,12 +96,12 @@ void sub_zero_script_lk_victim_rise(Fighter *victim) {
 
 static void ground_throw(Fighter *fighter, bool lk) {
   if (!sub_zero_can_ground_throw(fighter, lk)) {
-    sub_zero_ready(fighter);
+    fighter_ready(fighter);
     return;
   }
-  Fighter *victim = sub_zero_opponent(fighter);
-  sub_zero_stop_body(fighter);
-  sub_zero_stop_body(victim);
+  Fighter *victim = fighter_peer(fighter);
+  mk4_script_stop_body(fighter);
+  mk4_script_stop_body(victim);
   fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &sub_zero_s_throw);
   fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &sub_zero_s_lp_thrown);
   fighter->flags |= FF_PAIRED;

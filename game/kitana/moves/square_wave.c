@@ -16,7 +16,7 @@ static void square_query(Fighter *fighter) {
 
 static void square_done(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
-  fighter_finish_mmove(fighter, kitana_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void square_land(Fighter *fighter) {

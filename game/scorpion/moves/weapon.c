@@ -92,7 +92,7 @@ static void sword_back_lp(Fighter *fighter) {
 }
 
 static void sword_spin_recover(Fighter *fighter) {
-  scorpion_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->script_phase = 1;
   native_hold(fighter, 12, scorpion_special_ready);
 }
@@ -123,7 +123,7 @@ void scorpion_sword_spin_query(Fighter *fighter) {
 static void sword_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_spin_start);
   fighter->sample_override = 0;
-  fighter->mmove_cleanup = scorpion_stop_body;
+  fighter->mmove_cleanup = mk4_script_stop_body;
   scorpion_entry_retail_script_004e8850(fighter);
 }
 

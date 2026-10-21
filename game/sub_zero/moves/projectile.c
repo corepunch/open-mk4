@@ -20,7 +20,7 @@ void sub_zero_ice_projectile(Projectile *p) {
     p->pos[i] += p->vel[i];
   }
   Fighter *owner = &g_battle.fighters[p->owner];
-  if (sub_zero_opponent(owner)->action != ACTION_RETAIL_2001 && battle_projectile_contact(p, &ice_record) != CONTACT_MISS) {
+  if (fighter_peer(owner)->action != ACTION_RETAIL_2001 && battle_projectile_contact(p, &ice_record) != CONTACT_MISS) {
     p->kind = 0;
   }
   int64_t radius2 = (int64_t)g_battle.arena_radius * g_battle.arena_radius + (int64_t)0xc0000 * Q16_ONE;

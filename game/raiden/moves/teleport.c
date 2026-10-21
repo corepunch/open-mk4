@@ -12,7 +12,7 @@ static bool teleport_below_ground(const Fighter *fighter) {
 }
 
 static void teleport_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, raiden_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void teleport_land(Fighter *fighter) {

@@ -15,7 +15,7 @@ void kitana_script_leg_victim_end(Fighter *victim) {
 
 static void leg_grab_done(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
-  fighter_finish_mmove(fighter, kitana_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void kitana_script_leg_grab_tail(Fighter *fighter) {

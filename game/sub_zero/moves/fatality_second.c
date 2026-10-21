@@ -1,7 +1,7 @@
 #include "../character.h"
 
 void sub_zero_second_fatality_script(Fighter *fighter) {
-  sub_zero_entry_retail_script_004d2bf0(sub_zero_opponent(fighter));
+  sub_zero_entry_retail_script_004d2bf0(fighter_peer(fighter));
   sub_zero_entry_retail_script_004d2c10(fighter);
 }
 

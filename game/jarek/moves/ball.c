@@ -109,7 +109,7 @@ static void roll_query(Fighter *fighter) {
 
 static void roll_ready(Fighter *fighter) {
   ball_face(fighter);
-  fighter_finish_mmove(fighter, jarek_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 static void roll_end(Fighter *fighter) {

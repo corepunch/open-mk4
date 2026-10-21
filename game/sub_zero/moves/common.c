@@ -3,7 +3,7 @@
 static void lp_getup_done(Fighter *victim);
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &sub_zero_s_hp, &s_hp_second, sub_zero_ready};
+static const NativeHPProfile hp_profile = {&hp_record, &sub_zero_s_hp, &s_hp_second, fighter_ready};
 static const MoveDef s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
 static const mframe_t lp_getup_frames[15] = {{0}};
 static const mmove_t lp_getup_phase = {.firstframe = 0, .lastframe = 14, .frame = lp_getup_frames, .endfunc = lp_getup_done};
@@ -73,38 +73,14 @@ static const int lk_owner_idle_frames_samples[] = {
 // clang-format on
 static const mframe_t lk_owner_idle_frames[60] = {{0}};
 static const mmove_t lk_owner_idle_phase = {
-    .firstframe = 0, .lastframe = 59, .frame = lk_owner_idle_frames, .endfunc = sub_zero_ready, .samples = lk_owner_idle_frames_samples};
+    .firstframe = 0, .lastframe = 59, .frame = lk_owner_idle_frames, .endfunc = fighter_ready, .samples = lk_owner_idle_frames_samples};
 static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0304};
 static const MeshAnimation ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
-
-/* Native controller return used by generated VM programs and native runners. */
-void sub_zero_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
-int sub_zero_victim_action(const Fighter *fighter) {
-  return fighter_opponent(fighter)->action;
-}
 
 void sub_zero_hold_phase(Fighter *fighter, const mmove_t *phase) {
   int sample = fighter_sample(fighter);
   fighter_mmove_phase(fighter, phase);
   fighter->sample_override = sample;
-}
-
-Fighter *sub_zero_opponent(Fighter *fighter) {
-  return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-}
-
-void sub_zero_stop_body(Fighter *fighter) {
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-  fighter->body.gravity = 0;
-  fighter->body.physics = NULL;
-  fighter->body.on_land = NULL;
 }
 
 void sub_zero_hp_script(Fighter *fighter) {
@@ -132,7 +108,7 @@ void sub_zero_script_ready(Fighter *fighter) {
 }
 
 static void lp_getup_done(Fighter *victim) {
-  sub_zero_stop_body(victim);
+  mk4_script_stop_body(victim);
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
@@ -141,9 +117,9 @@ void sub_zero_script_lp_getup(Fighter *victim) {
 }
 
 void sub_zero_script_lk_rebase(Fighter *fighter) {
-  Fighter *victim = sub_zero_opponent(fighter);
-  sub_zero_stop_body(fighter);
-  sub_zero_stop_body(victim);
+  Fighter *victim = fighter_peer(fighter);
+  mk4_script_stop_body(fighter);
+  mk4_script_stop_body(victim);
   memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
   victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
   victim->facing = fighter->facing;
@@ -152,7 +128,7 @@ void sub_zero_script_lk_rebase(Fighter *fighter) {
 }
 
 void sub_zero_script_lk_damage(Fighter *fighter) {
-  Fighter *victim = sub_zero_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   memcpy(fighter->body.vel, fighter->saved_motion, sizeof fighter->body.vel);
   for (int axis = 0; axis < 3; ++axis) {
     victim->body.vel[axis] = -fighter->saved_motion[axis];
@@ -166,19 +142,19 @@ void sub_zero_script_lk_damage(Fighter *fighter) {
 }
 
 void sub_zero_script_lk_owner_return(Fighter *fighter) {
-  Fighter *victim = sub_zero_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   fighter_start_mmove(fighter, S_THROW, &s_lk_throw_idle, &lk_owner_idle_phase);
 }
 
 void sub_zero_script_lp_owner_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, sub_zero_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void sub_zero_lp_capture_done(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
-  sub_zero_stop_body(victim);
+  mk4_script_stop_body(victim);
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
@@ -218,7 +194,7 @@ bool sub_zero_can_ice(const Fighter *fighter) {
 
 void sub_zero_ice(Fighter *fighter) {
   bool followup = fighter_fast_start(fighter);
-  sub_zero_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &s_ice);
   fighter->script_phase = followup;
   fighter->sample_override = 0;
@@ -235,11 +211,11 @@ void sub_zero_script_reaction(Fighter *fighter, int reaction) {
     return; /* Spike's native arena continuation owns the victim. */
   }
   require(reaction == 102, "Unexpected Sub-Zero generated reaction");
-  Fighter *victim = sub_zero_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   sub_zero_throw_disarm(victim);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
-  sub_zero_stop_body(victim);
+  mk4_script_stop_body(victim);
   fighter_start_move(victim, S_KNOCKDOWN, &sub_zero_s_lp_thrown);
   victim->reaction = reaction;
   victim->sample_override = 25;

@@ -224,3 +224,16 @@ migrated earlier integration scenarios and stops at the same pre-existing
 exact-tick Scorpion throw assertion reproduced on 4b234fe. The added fixtures
 exercise shared native repetition and native/model context separation, not
 authored fighter timing or balance.
+
+## Shared native actor helpers
+
+Duplicate fighter-local controller returns, mutable peer lookup, victim action
+queries and body-stop implementations now use the existing shared controller
+and body services plus common typed actor accessors. Their old definitions,
+private aliases and declarations are removed; native callback/profile callers
+refer directly to the shared APIs. This removes native duplication without
+renaming fighter directories or copying their logic into another layout.
+
+Validation uses the existing shared VM/native and lifetime checks, strict
+roster audits, formatting and source-navigation checks. No tests were added
+for these small equivalent helpers.

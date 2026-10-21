@@ -59,7 +59,7 @@ void liu_kang_throw_disarm(Fighter *victim) {
 }
 
 static void throw_cleanup(Fighter *owner) {
-  Fighter *victim = liu_kang_opponent(owner);
+  Fighter *victim = fighter_peer(owner);
   if ((victim->flags & FF_PAIRED) && (fighter_move(victim)->clip == 151 || fighter_move(victim)->clip == 133)) {
     victim->flags &= ~(unsigned)FF_PAIRED;
     if (victim->script_phase == 1) {
@@ -75,10 +75,10 @@ static void throw_cleanup(Fighter *owner) {
 
 static void ground_throw(Fighter *fighter, bool lk) {
   if (!liu_kang_can_ground_throw(fighter, lk)) {
-    liu_kang_ready(fighter);
+    fighter_ready(fighter);
     return;
   }
-  Fighter *victim = liu_kang_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   mk4_script_stop_body(fighter);
   mk4_script_stop_body(victim);
   fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &liu_kang_s_throw);

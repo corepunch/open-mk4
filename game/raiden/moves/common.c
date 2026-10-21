@@ -9,34 +9,10 @@ static void torpedo_release(Fighter *fighter);
 static void torpedo_pair(Fighter *fighter);
 static const AttackRecord hp_record = {51118, -45809, 38666, 28180, 32, 11, 1, 0, 3276};
 static const MoveDef s_hp_second = {.clip = 297, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
-static const NativeHPProfile hp_profile = {&hp_record, &raiden_s_hp, &s_hp_second, raiden_ready};
+static const NativeHPProfile hp_profile = {&hp_record, &raiden_s_hp, &s_hp_second, fighter_ready};
 static const MoveDef s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x202};
 static const MoveDef s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const AttackRecord torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
-
-/* Native controller return used by generated VM programs and native runners. */
-void raiden_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
-
-int raiden_victim_action(const Fighter *fighter) {
-  return fighter_opponent(fighter)->action;
-}
-
-Fighter *raiden_opponent(Fighter *fighter) {
-  return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
-}
-
-void raiden_stop_body(Fighter *fighter) {
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-  fighter->body.gravity = 0;
-  fighter->body.physics = NULL;
-  fighter->body.on_land = NULL;
-}
 
 void raiden_hp_script(Fighter *fighter) {
   native_hp_start(fighter, &hp_profile);
@@ -59,7 +35,7 @@ void raiden_hk(Fighter *fighter) {
 
 void raiden_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 187) {
-    Fighter *victim = raiden_opponent(fighter);
+    Fighter *victim = fighter_peer(fighter);
     mk4_script_scene_pose(victim, 574, 39, 0);
     fighter_cancel_mmove(victim);
     raiden_entry_retail_script_004e5770(victim);
@@ -99,7 +75,7 @@ void raiden_script_lp_end(Fighter *fighter) {
 }
 
 void raiden_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, raiden_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void raiden_special_cleanup(Fighter *fighter) {
@@ -146,7 +122,7 @@ unsigned raiden_script_torpedo_query(Fighter *fighter) {
 }
 
 static void torpedo_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, raiden_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void raiden_script_torpedo_miss(Fighter *fighter) {
@@ -187,7 +163,7 @@ static void torpedo_recoil(Fighter *fighter) {
 }
 
 static void torpedo_release(Fighter *fighter) {
-  Fighter *victim = raiden_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (victim->pending == NULL && (fighter->flags & FF_PAIRED) && (victim->flags & FF_PAIRED)) {
     mk4_script_release_pair(fighter);
     battle_react(victim, 83);
@@ -198,7 +174,7 @@ static void torpedo_release(Fighter *fighter) {
 }
 
 static void torpedo_pair(Fighter *fighter) {
-  Fighter *victim = raiden_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
     torpedo_release(fighter);
     return;
@@ -218,7 +194,7 @@ void raiden_script_torpedo_contact(Fighter *fighter) {
     torpedo_recoil(fighter);
     return;
   }
-  Fighter *victim = raiden_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   mk4_mmove_carry_victim(fighter, &s_torpedo_victim);
   fighter_cancel_mmove(victim);
   raiden_entry_retail_script_004ea108(victim);

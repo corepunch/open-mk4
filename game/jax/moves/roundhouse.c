@@ -7,7 +7,7 @@ static const GroundAttack jax_ground_attacks[8] = {
     [7] = {.active = 14, .end_miss = 39, .end_contact = 67},
 };
 static const NativeGroundProfile jax_ground_profile = {.attacks = jax_ground_attacks,
-    .ready = jax_ready,
+    .ready = fighter_ready,
     .fast = 4,
     .round_pre = 19,
     .round_first = 20,

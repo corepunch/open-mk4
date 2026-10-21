@@ -8,7 +8,7 @@ void sonya_arena_fatality(Fighter *fighter, int id) {
     return;
   }
   mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, id == FINISH_FAN ? 130 : 20, 0);
-  mk4_script_scene_pose(sonya_opponent(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
+  mk4_script_scene_pose(fighter_peer(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
   (id == FINISH_FAN ? retail_fan_start : sonya_spike_start)(fighter);
 }
 

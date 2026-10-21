@@ -111,7 +111,7 @@ void sub_zero_clone(Fighter *fighter) {
       battle_object_light(p, &clone_light);
     }
   }
-  sub_zero_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_JUMP, near ? &s_clone_near : &s_clone);
   fighter->sample_override = 0;
   fighter_set_speed(fighter, -0x170a);

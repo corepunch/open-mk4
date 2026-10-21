@@ -26,7 +26,7 @@ static const mmove_t uppercut_contact_phase = {
 
 /* 0x46cde0: selector 6 inside a follow-up window; contact sets action 0x1006. */
 static void sub_zero_uppercut_contact(Fighter *fighter) {
-  if (fighter->connected || sub_zero_victim_action(fighter) == ACTION_RETAIL_2001) {
+  if (fighter->connected || fighter_victim_action(fighter) == ACTION_RETAIL_2001) {
     return;
   }
   if (battle_contact(fighter, (fighter->flags & FF_FOLLOW_UP) ? &uppercut_alt_record : &uppercut_record) != CONTACT_MISS) {
@@ -43,7 +43,7 @@ static void uppercut_branch(Fighter *fighter) {
   int recovery = fighter->contact == CONTACT_MISS ? 8 : 9;
   bool delayed = fighter->contact_tick == 9;
   int count = repeats * 5 + (delayed ? 2 : 0) + 20 - recovery;
-  native_begin(fighter, 0, count - 1, sub_zero_ready);
+  native_begin(fighter, 0, count - 1, fighter_ready);
   int row = 0;
   for (int repeat = 0; repeat < repeats; ++repeat) {
     const int *poses = delayed && repeat == 0 ? late : cycle;

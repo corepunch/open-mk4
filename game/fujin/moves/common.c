@@ -1,15 +1,6 @@
 #include "../character.h"
 
-static void fujin_ready(Fighter *fighter);
 static void fujin_state_move(Fighter *fighter, int state);
-
-static void fujin_ready(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-  } else {
-    fighter_enter_state(fighter, S_IDLE);
-  }
-}
 
 void fujin_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
@@ -54,11 +45,11 @@ void fujin_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void fujin_script_lp_extended_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fujin_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void fujin_script_lp_short_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fujin_ready);
+  fighter_finish_mmove(fighter, fighter_ready);
 }
 
 void fujin_script_finish(Fighter *fighter) {

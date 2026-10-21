@@ -74,7 +74,7 @@ const GroundAttack sub_zero_ground_attacks[] = {
 const MoveDef sub_zero_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010A};
 
 const NativeGroundProfile sub_zero_ground_profile = {
-    sub_zero_ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, sub_zero_ready, 5, 0, 28, 21, 22, 38, NULL};
+    sub_zero_ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 0, 28, 21, 22, 38, NULL};
 
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
  * Each extends, queries while holding its strike pose, then retracts. The

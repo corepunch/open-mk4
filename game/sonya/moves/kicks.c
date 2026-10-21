@@ -5,7 +5,7 @@ static const AttackRecord kick_record = {83230, -51118, 65536, 51118, 16, 13, 6,
 
 /* Runner 0x470c60 with block 0x4e6978: the first contact latches. */
 static void sonya_kick_contact(Fighter *fighter) {
-  if (!fighter->connected && sonya_victim_action(fighter) != ACTION_RETAIL_2001) {
+  if (!fighter->connected && fighter_victim_action(fighter) != ACTION_RETAIL_2001) {
     battle_contact(fighter, &kick_record);
   }
 }

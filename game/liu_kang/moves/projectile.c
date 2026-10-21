@@ -18,7 +18,7 @@ static void fireball_projectile(Projectile *p) {
   }
   Fighter *owner = &g_battle.fighters[p->owner];
   bool low = p->phase != 0;
-  if ((low || liu_kang_opponent(owner)->action != ACTION_RETAIL_2001) &&
+  if ((low || fighter_peer(owner)->action != ACTION_RETAIL_2001) &&
       battle_projectile_contact(p, low ? &fireball_low_record : &fireball_high_record) != CONTACT_MISS) {
     p->kind = 0;
   }

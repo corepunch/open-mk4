@@ -98,7 +98,7 @@ bool sub_zero_can_first_fatality(const Fighter *fighter) {
 }
 
 static void first_camera_start(Fighter *fighter) {
-  battle_camera_sequence(fighter, sub_zero_opponent(fighter), first_camera_shots, COUNT(first_camera_shots));
+  battle_camera_sequence(fighter, fighter_peer(fighter), first_camera_shots, COUNT(first_camera_shots));
   sub_zero_entry_retail_script_004e0368(fighter);
 }
 
@@ -116,7 +116,7 @@ void sub_zero_script_first_begin(Fighter *fighter) {
 }
 
 void sub_zero_script_first_pull(Fighter *fighter) {
-  first_victim_start(sub_zero_opponent(fighter));
+  first_victim_start(fighter_peer(fighter));
   sub_zero_entry_retail_script_004e0388(fighter);
 }
 
@@ -142,7 +142,7 @@ void sub_zero_script_first_cues4(Fighter *fighter) {
 }
 
 void sub_zero_script_first_head(Fighter *fighter) {
-  Fighter *victim = sub_zero_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   battle_sound(SOUND_B, 0x1c);
   battle_sound(SOUND_B, 0);
   ScenePiece *head = battle_attach_head(victim, fighter, 10);

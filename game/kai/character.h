@@ -53,7 +53,6 @@ void kai_press_low_kick(Fighter *fighter);
 void kai_press_low_punch(Fighter *fighter);
 void kai_press_sweep(Fighter *fighter);
 void kai_press_uppercut(Fighter *fighter);
-void kai_ready(Fighter *fighter);
 void kai_script_air_finish(Fighter *fighter);
 void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_script_current_reaction(Fighter *fighter, int reaction);

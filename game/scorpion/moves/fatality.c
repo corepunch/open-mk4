@@ -68,10 +68,10 @@ static void beast_start(Fighter *fighter) {
 
 void scorpion_start_fatality(Fighter *fighter, int id) {
   if (!battle_begin_finisher(fighter, id)) {
-    scorpion_ready(fighter);
+    fighter_ready(fighter);
     return;
   }
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   fatal_pose(victim, 13, 0, false);
   fatal_pose(fighter, id == FINISH_BEAST ? 12 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 390, 0, true);
   if (id == FINISH_FAN) {
@@ -105,7 +105,7 @@ void scorpion_script_burn_begin(Fighter *fighter) {
 }
 
 void scorpion_script_burn_victim_start(Fighter *fighter) {
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   victim->appearance = APPEARANCE_BURNED;
   fighter_cancel_mmove(victim);
   scorpion_entry_retail_script_004e0300(victim);
@@ -156,7 +156,7 @@ void scorpion_script_burn_victim_end(Fighter *victim) {
 /* Both scene actors have parked their frame programs; the parked poses
  * remain while the finisher completes. */
 static void beast_watch(Fighter *fighter) {
-  if (fighter->script_phase == 9 && scorpion_opponent(fighter)->script_phase == 9) {
+  if (fighter->script_phase == 9 && fighter_peer(fighter)->script_phase == 9) {
     battle_end_finisher();
   }
 }
@@ -168,7 +168,7 @@ void scorpion_script_beast_begin(Fighter *fighter) {
 }
 
 void scorpion_script_beast_attack(Fighter *fighter) {
-  Fighter *victim = scorpion_opponent(fighter);
+  Fighter *victim = fighter_peer(fighter);
   fighter_cancel_mmove(victim);
   scorpion_entry_retail_script_004d2ef8(victim);
   scorpion_entry_retail_script_004d2eb0(fighter);

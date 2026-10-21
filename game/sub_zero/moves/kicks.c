@@ -14,7 +14,7 @@ static const mmove_t kick_contact_phase = {.firstframe = 10, .lastframe = 12, .f
 
 /* Runner 0x470c60 with block 0x4e6978: the first contact latches. */
 static void sub_zero_kick_contact(Fighter *fighter) {
-  if (!fighter->connected && sub_zero_victim_action(fighter) != ACTION_RETAIL_2001) {
+  if (!fighter->connected && fighter_victim_action(fighter) != ACTION_RETAIL_2001) {
     battle_contact(fighter, &kick_record);
   }
 }

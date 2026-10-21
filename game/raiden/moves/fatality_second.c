@@ -9,12 +9,12 @@ void raiden_script_second_particles(Fighter *fighter) {
 }
 
 void raiden_script_second_effect(Fighter *fighter) {
-  battle_particles(raiden_opponent(fighter), 18, 12, true);
+  battle_particles(fighter_peer(fighter), 18, 12, true);
   raiden_entry_retail_script_004e56f0(fighter);
 }
 
 void raiden_script_second_release(Fighter *fighter) {
-  battle_particles(raiden_opponent(fighter), 2, 24, true);
+  battle_particles(fighter_peer(fighter), 2, 24, true);
   raiden_entry_retail_script_004e5740(fighter);
 }
 
@@ -33,8 +33,8 @@ void raiden_second_fatality(Fighter *fighter) {
     return;
   }
   mk4_script_scene_pose(fighter, 123, 101, 0);
-  mk4_script_scene_pose(raiden_opponent(fighter), 13, 56, 0);
-  Fighter *victim = raiden_opponent(fighter);
+  mk4_script_scene_pose(fighter_peer(fighter), 13, 56, 0);
+  Fighter *victim = fighter_peer(fighter);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x14000);
   }

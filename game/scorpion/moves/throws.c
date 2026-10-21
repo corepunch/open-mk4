@@ -18,7 +18,7 @@ bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick) {
 }
 
 static void thrown_end_done(Fighter *victim) {
-  fighter_finish_mmove(victim, victim->health > 0 ? scorpion_ready : NULL);
+  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
 void scorpion_thrown_end_script(Fighter *victim) {
@@ -45,12 +45,12 @@ static void ground_thrown_script(Fighter *victim) {
 
 static void ground_throw(Fighter *fighter, bool lk) {
   if (!scorpion_can_ground_throw(fighter, lk)) {
-    scorpion_ready(fighter);
+    fighter_ready(fighter);
     return;
   }
-  Fighter *victim = scorpion_opponent(fighter);
-  scorpion_stop_body(fighter);
-  scorpion_stop_body(victim);
+  Fighter *victim = fighter_peer(fighter);
+  mk4_script_stop_body(fighter);
+  mk4_script_stop_body(victim);
   fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &scorpion_s_throw);
   fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &s_lp_thrown);
   fighter->flags |= FF_PAIRED;

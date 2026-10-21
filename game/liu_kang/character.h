@@ -73,7 +73,6 @@
 #define liu_script_sword_blend liu_kang_liu_script_sword_blend
 #define liu_script_sword_gate liu_kang_liu_script_sword_gate
 #define lk_thrown_script liu_kang_lk_thrown_script
-#define opponent liu_kang_opponent
 #define press_air_hk liu_kang_press_air_hk
 #define press_air_hp liu_kang_press_air_hp
 #define press_air_lk liu_kang_press_air_lk
@@ -100,7 +99,6 @@
 #define throw_disarm liu_kang_throw_disarm
 #define thrown_finish liu_kang_thrown_finish
 #define uppercut_script liu_kang_uppercut_script
-#define victim_action liu_kang_victim_action
 
 enum {
   G_LOW_KICK,
@@ -164,7 +162,6 @@ void liu_kang_jab(Fighter *fighter);
 void liu_kang_kick(Fighter *fighter);
 void liu_kang_lk(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
-void liu_kang_ready(Fighter *fighter);
 void liu_kang_roundhouse(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
 void liu_kang_spike_fatality(Fighter *fighter);
@@ -206,7 +203,6 @@ void liu_kang_liu_script_sweep_tail(Fighter *fighter);
 void liu_kang_liu_script_sword_blend(Fighter *fighter);
 unsigned int liu_kang_liu_script_sword_gate(Fighter *fighter);
 void liu_kang_lk_thrown_script(Fighter *victim);
-Fighter *liu_kang_opponent(Fighter *fighter);
 void liu_kang_press_air_hk(Fighter *fighter);
 void liu_kang_press_air_hp(Fighter *fighter);
 void liu_kang_press_air_lk(Fighter *fighter);
@@ -280,7 +276,6 @@ extern const WeaponStrike liu_kang_sword_attacks[4];
 void liu_kang_throw_disarm(Fighter *victim);
 void liu_kang_thrown_finish(Fighter *victim);
 void liu_kang_uppercut_script(Fighter *fighter);
-int liu_kang_victim_action(const Fighter *fighter);
 
 void liu_kang_entry_retail_script_004e9de8(Fighter *fighter);
 #endif

@@ -75,11 +75,11 @@ static const int slide_return_frames_samples[] = {
 // clang-format on
 static const mframe_t slide_return_frames[11] = {{0}};
 static const mmove_t slide_return_phase = {
-    .firstframe = 0, .lastframe = 10, .frame = slide_return_frames, .endfunc = sub_zero_ready, .samples = slide_return_frames_samples};
+    .firstframe = 0, .lastframe = 10, .frame = slide_return_frames, .endfunc = fighter_ready, .samples = slide_return_frames_samples};
 
 static void slide_cleanup(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_NO_GUARD;
-  sub_zero_stop_body(fighter);
+  mk4_script_stop_body(fighter);
 }
 
 static void slide_contact(Fighter *fighter) {
@@ -108,7 +108,7 @@ bool sub_zero_can_slide(const Fighter *fighter) {
 }
 
 void sub_zero_slide(Fighter *fighter) {
-  sub_zero_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &s_slide);
   fighter->sample_override = 0;
   fighter->mmove_cleanup = slide_cleanup;
@@ -121,7 +121,7 @@ void sub_zero_script_breath_slide(Fighter *fighter) {
 }
 
 void sub_zero_script_slide_return(Fighter *fighter) {
-  sub_zero_stop_body(fighter);
+  mk4_script_stop_body(fighter);
   fighter->script_phase = 2;
   fighter_mmove_phase(fighter, &slide_return_phase);
 }
