@@ -349,33 +349,6 @@ void native_uppercut_default(Fighter *fighter) {
   native_uppercut_tail(fighter, uppercut_default_contact);
 }
 
-/* 470c60 block 4e6978: B[2], poses 10/11/12, then 46a7a0 -> 4e6998. */
-static const AttackRecord narrow_kick_record = {0x116c8, -0xde76, 0x1476c, 0x12395, 16, 13, 6, 0, 0x2147};
-
-static void narrow_kick_contact(Fighter *fighter) {
-  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
-    battle_contact(fighter, &narrow_kick_record);
-  }
-}
-
-void native_narrow_kick_contact(Fighter *fighter, FighterFn recovery) {
-  require(fighter_move(fighter)->clip == 71 && fighter_sample(fighter) == 10, "Narrow high kick needs its selected startup");
-  native_begin(fighter, 1, 3, recovery);
-  for (int frame = 1; frame <= 3; ++frame) {
-    native_frame(fighter, frame, 10 + frame, narrow_kick_contact);
-  }
-  native_play(fighter, false);
-}
-
-void native_kick_contact_phase(Fighter *fighter, FighterFn query, FighterFn recovery) {
-  int pose = fighter_sample(fighter);
-  native_begin(fighter, 1, 3, recovery);
-  for (int frame = 1; frame <= 3; ++frame) {
-    native_frame(fighter, frame, pose, query);
-  }
-  native_play(fighter, false);
-}
-
 void native_air_straight_tail(Fighter *fighter, const NativeAirProfile *profile) {
   int clip = fighter_move(fighter)->clip;
   require(clip == 61 || (clip == 327 && profile->straight_miss != NULL), "Straight-air kick needs its selected clip and recovery");

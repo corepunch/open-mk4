@@ -2,7 +2,6 @@
 
 static void shinnok_low_kick(Fighter *fighter);
 static const MoveDef s_low_kick = {.clip = 69, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW, .action = ACTION_RETAIL_0106};
-static const AttackRecord kick_record = {0x15e76, -0xd999, 0x151a9, 0x111eb, 16, 13, 6, 0, 0x2147};
 
 void shinnok_high_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &shinnok_s_high_kick);
@@ -15,26 +14,10 @@ static void shinnok_low_kick(Fighter *fighter) {
   shinnok_entry_retail_script_004e5d90(fighter);
 }
 
-static void kick_contact(Fighter *fighter) {
-  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
-    battle_contact(fighter, &kick_record);
-  }
-}
-
-static void kick_recovery(Fighter *fighter) {
-  /* 46a770 -> 470e80 marks recovery 1006 before entering 4e5c70. */
-  fighter->action = ACTION_RETAIL_1006;
-  shinnok_entry_retail_script_004e5c70(fighter);
-}
-
 /* 46a760 runs 470c60 with block 4e5d30 (pose words 17, 17, 16): three
  * B[1] queries latch the first contact and skip crouching (2001) victims.
  * The shared runner keeps the selected pose, as for Fujin's 4e5d00, and
  * 4e5c70 inherits it. */
-void shinnok_script_kick_finish(Fighter *fighter) {
-  require(fighter_move(fighter)->clip == 66 && fighter_sample(fighter) == 17, "Shinnok high kick needs its generated startup");
-  native_kick_contact_phase(fighter, kick_contact, kick_recovery);
-}
 
 void shinnok_press_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {

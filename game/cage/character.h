@@ -42,7 +42,6 @@ void cage_script_cpu_kick_tail(Fighter *fighter);
 void cage_script_fatality_1_signal(Fighter *fighter);
 void cage_script_fatality_2_continue(Fighter *fighter);
 void cage_script_finish(Fighter *fighter);
-void cage_script_kick_finish(Fighter *fighter);
 void cage_script_lk_throw_return(Fighter *fighter);
 void cage_script_lp_return(Fighter *fighter);
 void cage_script_opponent_reaction(Fighter *fighter, int reaction);

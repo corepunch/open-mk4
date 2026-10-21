@@ -37,7 +37,3 @@ static void kai_low_kick(Fighter *fighter) {
   fighter->action = ACTION_RETAIL_0102;
   kai_entry_retail_script_004e5d90(fighter);
 }
-
-void kai_script_kick_finish(Fighter *fighter) {
-  native_narrow_kick_contact(fighter, kai_entry_retail_script_004e6998);
-}

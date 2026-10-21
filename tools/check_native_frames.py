@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-NATIVE = ('native.c', 'native_combat.c', 'script.c', 'mk4_common.c', 'reactions.c', 'weapons.c', 'shadow_actor.c')
+NATIVE = ('native.c', 'native_combat.c', 'script.c', 'mk4_common.c', 'reactions.c', 'weapons.c', 'shadow_actor.c', 'retail_combat.c', 'retail_scene.c')
 
 
 def masked(text):
@@ -47,7 +47,7 @@ def main():
     if errors:
         print('\n'.join(errors))
         return 1
-    print('PASS: native actions use frame programs; no legacy actor clocks or native coroutine waits')
+    print('PASS: native actions use the shared runtime or native frame runners; no legacy actor clocks')
     return 0
 
 

@@ -45,10 +45,6 @@ void cage_shadow_victim(Fighter *fighter) {
   cage_entry_retail_script_004e9718(fighter);
 }
 
-void cage_script_kick_finish(Fighter *fighter) {
-  native_narrow_kick_contact(fighter, cage_entry_retail_script_004e6998);
-}
-
 void cage_cpu_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &cage_s_cpu_kick_script);
   cage_entry_retail_script_004e80a8(fighter);

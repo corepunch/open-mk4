@@ -46,7 +46,6 @@ void jarek_press_sweep(Fighter *fighter);
 void jarek_press_uppercut(Fighter *fighter);
 void jarek_script_air_finish(Fighter *fighter);
 void jarek_script_current_reaction(Fighter *fighter, int reaction);
-void jarek_script_kick_finish(Fighter *fighter);
 void jarek_script_lk_return(Fighter *fighter);
 void jarek_script_low_kick_avoid(Fighter *fighter);
 void jarek_script_low_kick_clear(Fighter *fighter);

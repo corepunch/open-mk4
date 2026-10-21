@@ -2,26 +2,9 @@
 
 static void goro_high_kick(Fighter *fighter);
 static void goro_low_kick(Fighter *fighter);
-static void kick_contact(Fighter *fighter);
 
 /* 46a760 -> 470c60 block 4e5d30: B[1] at poses 17, 17 and 16, skipping
  * a crouching (2001) victim or a consumed contact, then 46a770 -> 4e5c70. */
-static const AttackRecord kick_record = {89718, -55705, 86441, 70123, 16, 13, 6, 0, 8519};
-
-static void kick_contact(Fighter *fighter) {
-  if (!fighter->connected && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
-    battle_contact(fighter, &kick_record);
-  }
-}
-
-void goro_script_kick_finish(Fighter *fighter) {
-  static const int poses[] = {17, 17, 16};
-  native_begin(fighter, 1, 3, goro_entry_retail_script_004e5c70);
-  for (int frame = 1; frame <= 3; ++frame) {
-    native_frame(fighter, frame, poses[frame - 1], kick_contact);
-  }
-  native_play(fighter, false);
-}
 
 static void goro_high_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &goro_s_kick);

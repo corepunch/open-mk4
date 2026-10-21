@@ -244,6 +244,32 @@ static void native_repetition(void) {
   check(owner->retail_vm.repeat_count == 0 && !owner->retail_vm.active, "interruption must retire the native repetition contract");
 }
 
+static void native_row_data(void) {
+  /* Mutate the native parameter source, not an authored move expectation. */
+  const uint32_t table = 0x4e5d30;
+  uint32_t saved[8];
+  for (unsigned i = 0; i < 8; ++i) {
+    saved[i] = mk4_image_u32(&image, table + i * 4);
+  }
+  put_word(table + 8, 2);
+  put_word(table + 12, 0xffffffffu);
+  put_word(table + 16, 0x46a770);
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  put_word(0x570000, 0x3e000000);
+  retail_vm_start(owner, &image, 0x570000, 0x570004, control_end, reject_native);
+  check(retail_native_vm(owner, 0x46a760, RETAIL_TAIL, 0), "native rows must use the shared address binding");
+  check(fighter_sample(owner) == 2 && owner->current_mmove == NULL, "native rows must load live poses without copying frame arrays");
+  tick();
+  check(owner->retail_vm.entry == 0x4e5c70 && owner->action == ACTION_RETAIL_1006, "native row terminator must select its retail continuation");
+  fighter_interrupt(owner, fighter_ready);
+  check(!owner->retail_vm.active && owner->retail_vm.native_resume == NULL, "interruption must retire native row continuation state");
+  for (unsigned i = 0; i < 8; ++i) {
+    put_word(table + i * 4, saved[i]);
+  }
+}
+
 static void native_contracts(void) {
   Fighter *owner = setup(0, 2);
   check(retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0) && owner->body.physics == fighter_friction,
@@ -397,6 +423,7 @@ int main(int argc, char **argv) {
   native_handoff();
   native_contracts();
   native_repetition();
+  native_row_data();
   data_tables();
   lifetimes();
   assets_bound();

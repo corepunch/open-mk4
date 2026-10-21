@@ -106,7 +106,6 @@ void reptile_invisibility(Fighter *fighter);
 void reptile_script_invisibility(Fighter *fighter);
 void reptile_script_dash_contact(Fighter *fighter);
 void reptile_script_roll_tail(Fighter *fighter);
-void reptile_script_kick_tail(Fighter *fighter);
 void reptile_dash_victim(Fighter *fighter);
 void reptile_dash_victim_getup(Fighter *fighter);
 void reptile_reaction_40(Fighter *fighter);

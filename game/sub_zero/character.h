@@ -100,7 +100,6 @@
 #define script_first_victim_blends sub_zero_script_first_victim_blends
 #define script_first_victim_collapse sub_zero_script_first_victim_collapse
 #define script_first_victim_end sub_zero_script_first_victim_end
-#define script_kick_tail sub_zero_script_kick_tail
 #define script_knee_tail sub_zero_script_knee_tail
 #define script_lk_damage sub_zero_script_lk_damage
 #define script_lk_owner_return sub_zero_script_lk_owner_return
@@ -300,7 +299,6 @@ void sub_zero_script_first_pull(Fighter *fighter);
 void sub_zero_script_first_victim_blends(Fighter *victim);
 void sub_zero_script_first_victim_collapse(Fighter *victim);
 void sub_zero_script_first_victim_end(Fighter *victim);
-void sub_zero_script_kick_tail(Fighter *fighter);
 void sub_zero_script_knee_tail(Fighter *fighter);
 void sub_zero_script_lk_damage(Fighter *fighter);
 void sub_zero_script_lk_owner_return(Fighter *fighter);

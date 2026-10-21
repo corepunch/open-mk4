@@ -79,7 +79,6 @@
 #define script_draw_equip scorpion_script_draw_equip
 #define script_fire_decor scorpion_script_fire_decor
 #define script_fire_flame scorpion_script_fire_flame
-#define script_kick_tail scorpion_script_kick_tail
 #define script_knee_tail scorpion_script_knee_tail
 #define script_lk_damage scorpion_script_lk_damage
 #define script_lk_rebase scorpion_script_lk_rebase
@@ -285,7 +284,6 @@ void scorpion_script_crouch_lk_tail(Fighter *fighter);
 void scorpion_script_draw_equip(Fighter *fighter);
 void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);
-void scorpion_script_kick_tail(Fighter *fighter);
 void scorpion_script_knee_tail(Fighter *fighter);
 void scorpion_script_lk_damage(Fighter *fighter);
 void scorpion_script_lk_rebase(Fighter *fighter);

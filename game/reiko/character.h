@@ -34,7 +34,6 @@ void reiko_press_low_kick(Fighter *fighter);
 void reiko_press_low_punch(Fighter *fighter);
 void reiko_script_air_finish(Fighter *fighter);
 void reiko_script_finish(Fighter *fighter);
-void reiko_script_kick_finish(Fighter *fighter);
 void reiko_script_lk_return(Fighter *fighter);
 void reiko_script_lp_end(Fighter *fighter);
 void reiko_script_lp_return(Fighter *fighter);

@@ -237,3 +237,25 @@ renaming fighter directories or copying their logic into another layout.
 Validation uses the existing shared VM/native and lifetime checks, strict
 roster audits, formatting and source-navigation checks. No tests were added
 for these small equivalent helpers.
+
+## One retail-loaded high-kick contact runner
+
+Native entries 46a6b0/46a760/46a790 now share `retail_combat.c`. Their original
+parameter blocks 4e5d00/4e5d30/4e6978 provide the query selector, native query,
+pose rows and terminating continuation. The runner consumes those words live,
+latches the first contact, skips a crouching peer as the original does, and
+resumes the indicated retail script. Seventeen fighter-local implementations,
+copied attack records/pose rows and the old row-copy helpers are removed.
+No roster mask is involved in these shared native entries.
+
+Evidence: mk4decomp `PackedLoadAdvanceJmp` (upstream 470cc0, local 470c60),
+matching `InstallSelfBranchIndirect` (470d10/local 470cb0), and the checked local
+470dc0 latch, 470e80 recovery action and 46a6c0/46a770/46a7a0 continuations.
+Local matching assembly is authoritative where portable comments disagree.
+This also replaces the previous Jax shortcut that skipped the native runner.
+
+A single shared runtime fixture mutates the native parameter source and checks
+live pose/continuation reads and interruption without generated frame arrays.
+Existing shared runtime/native tests and strict roster audits pass. The battle
+integration run again reaches its pre-existing exact-tick Scorpion throw
+assertion; no new character damage or timing cases were introduced.

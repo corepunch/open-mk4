@@ -58,7 +58,6 @@ void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_script_current_reaction(Fighter *fighter, int reaction);
 void kai_script_draw_equip(Fighter *fighter);
 void kai_script_finish(Fighter *fighter);
-void kai_script_kick_finish(Fighter *fighter);
 void kai_script_lk_finish(Fighter *fighter);
 void kai_script_lk_return(Fighter *fighter);
 void kai_script_lp_extended_finish(Fighter *fighter);

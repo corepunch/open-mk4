@@ -74,7 +74,6 @@
 #define script_crouch_lk_tail sonya_script_crouch_lk_tail
 #define script_draw_equip sonya_script_draw_equip
 #define script_first_release sonya_script_first_release
-#define script_kick_tail sonya_script_kick_tail
 #define script_knee_tail sonya_script_knee_tail
 #define script_leg_grab_tail sonya_script_leg_grab_tail
 #define script_leg_victim_end sonya_script_leg_victim_end
@@ -242,7 +241,6 @@ void sonya_script_combo_hp_tail(Fighter *fighter);
 void sonya_script_crouch_lk_tail(Fighter *fighter);
 void sonya_script_draw_equip(Fighter *fighter);
 void sonya_script_first_release(Fighter *fighter);
-void sonya_script_kick_tail(Fighter *fighter);
 void sonya_script_knee_tail(Fighter *fighter);
 void sonya_script_leg_grab_tail(Fighter *fighter);
 void sonya_script_leg_victim_end(Fighter *victim);

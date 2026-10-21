@@ -1437,6 +1437,9 @@ def bindings_for(character):
                               (0x43db50, 'retail_fan_victim_end')):
         result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Shared original native scene counter/peer selection and retail playback; docs/research/shared-retail-runtime.md')
+    for address, function in ((0x46a6b0, 'retail_kick_contact_default'), (0x46a760, 'retail_kick_contact_wide'), (0x46a790, 'retail_kick_contact_narrow')):
+        result[address] = Binding(function, 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='470c60 native parameter rows and checked local entry tables; docs/research/shared-retail-runtime.md')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

@@ -58,7 +58,6 @@ void tanya_press_uppercut(Fighter *fighter);
 void tanya_script_air_finish(Fighter *fighter);
 void tanya_script_current_reaction(Fighter *fighter, int reaction);
 void tanya_script_finish(Fighter *fighter);
-void tanya_script_kick_finish(Fighter *fighter);
 void tanya_script_lk_return(Fighter *fighter);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 void tanya_script_roundhouse_start(Fighter *fighter);

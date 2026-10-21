@@ -32,7 +32,6 @@ void noob_saibot_script_air_finish(Fighter *fighter);
 void noob_saibot_script_air_throw_continue(Fighter *fighter);
 void noob_saibot_script_air_throw_end(Fighter *fighter);
 void noob_saibot_script_finish(Fighter *fighter);
-void noob_saibot_script_kick_finish(Fighter *fighter);
 void noob_saibot_script_lk_return(Fighter *fighter);
 void noob_saibot_script_lp_end(Fighter *fighter);
 void noob_saibot_script_lp_return(Fighter *fighter);

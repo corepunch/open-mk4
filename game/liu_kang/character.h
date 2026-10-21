@@ -54,7 +54,6 @@
 #define liu_script_fatal_align liu_kang_liu_script_fatal_align
 #define liu_script_fatal_setup liu_kang_liu_script_fatal_setup
 #define liu_script_fatal_spawn liu_kang_liu_script_fatal_spawn
-#define liu_script_kick_tail liu_kang_liu_script_kick_tail
 #define liu_script_knee_tail liu_kang_liu_script_knee_tail
 #define liu_script_lk_continue liu_kang_liu_script_lk_continue
 #define liu_script_lk_damage liu_kang_liu_script_lk_damage
@@ -184,7 +183,6 @@ void liu_kang_liu_script_draw_equip(Fighter *fighter);
 void liu_kang_liu_script_fatal_align(Fighter *fighter);
 void liu_kang_liu_script_fatal_setup(Fighter *fighter);
 void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type);
-void liu_kang_liu_script_kick_tail(Fighter *fighter);
 void liu_kang_liu_script_knee_tail(Fighter *fighter);
 void liu_kang_liu_script_lk_continue(Fighter *fighter);
 void liu_kang_liu_script_lk_damage(Fighter *fighter);
