@@ -113,13 +113,8 @@ static const CpuMoves cpu_moves = {
             [CPU_FINISH_2] = kitana_second_fatality,
             [CPU_FINISH_FAN] = kitana_fan_fatality,
             [CPU_FINISH_SPIKE] = kitana_spike_fatality,
-            [CPU_PROJECTILE] = kitana_ring,
-            [CPU_SPECIAL_NEAR] = kitana_leg_grab,
-            [CPU_SPECIAL_1] = kitana_bicycle,
-            [CPU_SPECIAL_2] = kitana_cartwheel,
         },
     .finish_min = {0x10000, 0x1cccc},
-    .finish_distance = {0x30000, 0x30000},
 };
 
 // clang-format off: Keep table entries on one row, including long rows.

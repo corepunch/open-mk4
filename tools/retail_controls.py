@@ -54,8 +54,7 @@ def generate_controls(image, character, profile):
                 if target in bindings or target in cpu_finishes}
     if cpu_bound or finishes:
         slots = {'near': 'CPU_SPECIAL_NEAR', 'medium': 'CPU_SPECIAL_1', 'far': 'CPU_SPECIAL_2', 'projectile': 'CPU_PROJECTILE'}
-        entries = ['    [%s] = %s,' % (slots[name], cpu_bound[row['target']]['symbol'])
-                   for name, row in cpu_records(image, character).items() if row['target'] in cpu_bound]
+        entries = []
         entries += ['    [%s] = %s,' % (slot, ref['symbol']) for slot, ref in finishes.items()]
         if not entries:
             raise ValueError('Reviewed CPU bindings produced no runtime entries')
@@ -74,8 +73,7 @@ def generate_controls(image, character, profile):
                     raise ValueError('CPU fatality minimum must be reviewed below its retail distance for ' + slot)
                 minimums.append(minimum)
                 distances.append(distance)
-            output += ', .finish_min = {%s}, .finish_distance = {%s}' % (
-                ', '.join('0x%x' % value for value in minimums), ', '.join('0x%x' % value for value in distances))
+            output += ', .finish_min = {%s}' % ', '.join('0x%x' % value for value in minimums)
         output += '};\n'
     return format_c(output)
 

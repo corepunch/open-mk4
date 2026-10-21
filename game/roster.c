@@ -2,6 +2,7 @@
 #include "mk4_characters.h"
 #include "retail_data.h"
 #include "retail_vm.h"
+#include "retail_native.h"
 #include <stddef.h>
 
 /* Each fighter owns a move table indexed by StateId. Columns: clip, first
@@ -67,6 +68,7 @@ const CharacterDef *roster_def(int index) {
   require(index >= 0 && index < roster_count(), "Roster index out of range");
   static CharacterDef definitions[MK4_ROSTER_COUNT];
   static Controls controls[MK4_ROSTER_COUNT];
+  static CpuMoves cpu[MK4_ROSTER_COUNT];
   static const Mk4Image *images[MK4_ROSTER_COUNT];
   const Mk4Image *image = retail_vm_image();
   if (images[index] != image) {
@@ -74,6 +76,17 @@ const CharacterDef *roster_def(int index) {
     controls[index] = *roster[index]->controls;
     retail_bind_commands(&controls[index], image, (unsigned)index);
     definitions[index].controls = &controls[index];
+    cpu[index] = roster[index]->cpu != NULL ? *roster[index]->cpu : (CpuMoves){0};
+    const CpuAction slots[4] = {CPU_SPECIAL_NEAR, CPU_SPECIAL_1, CPU_SPECIAL_2, CPU_PROJECTILE};
+    for (unsigned table = 0; table < 4; ++table) {
+      uint32_t target = retail_cpu_target(image, (unsigned)index, table);
+      cpu[index].enter[slots[table]] = target ? retail_native_entry((unsigned)index, target) : NULL;
+    }
+    unsigned slot = retail_character_slot((unsigned)index);
+    for (unsigned finish = 0; finish < 2; ++finish) {
+      cpu[index].finish_distance[finish] = (q16)mk4_image_u32(image, 0x4dfe10 + finish * 0x40 + slot * 4);
+    }
+    definitions[index].cpu = &cpu[index];
     images[index] = image;
   }
   return &definitions[index];

@@ -1,5 +1,8 @@
 #include "game.h"
 #include "math_util.h"
+#include "retail_data.h"
+#include "retail_native.h"
+#include "retail_vm.h"
 #include <math.h>
 
 /* 4ab540/570/5d0: explicit unsigned wrap, low-word scaled draws, strict
@@ -19,8 +22,10 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   const CharacterDef *def = roster_def(fighter->roster);
   require(action >= 0 && action < CPU_ACTION_COUNT, "Invalid CPU action");
   FighterFn entry = def->cpu != NULL ? def->cpu->enter[action] : NULL;
-  if (entry == NULL && action == CPU_SPECIAL_NEAR && def->cpu != NULL) {
-    entry = def->cpu->enter[CPU_SPECIAL_1];
+  unsigned selection = action == CPU_SPECIAL_NEAR ? 0u : action == CPU_SPECIAL_1 ? 1u : action == CPU_SPECIAL_2 ? 2u : 3u;
+  if (action == CPU_SPECIAL_NEAR || action == CPU_SPECIAL_1 || action == CPU_SPECIAL_2 || action == CPU_PROJECTILE) {
+    uint32_t target = retail_cpu_target(retail_vm_image(), (unsigned)fighter->roster, selection);
+    entry = target ? retail_native_entry((unsigned)fighter->roster, target) : NULL;
   }
   if (fighter->armed && fighter->weapon != NULL) {
     if (action == CPU_JAB || action == CPU_CLOSE_HP) {

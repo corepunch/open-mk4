@@ -113,13 +113,8 @@ static const CpuMoves cpu_moves = {
             [CPU_FINISH_2] = raiden_second_fatality,
             [CPU_FINISH_FAN] = raiden_fan_fatality,
             [CPU_FINISH_SPIKE] = raiden_spike_fatality,
-            [CPU_PROJECTILE] = raiden_lightning,
-            [CPU_SPECIAL_NEAR] = raiden_torpedo,
-            [CPU_SPECIAL_1] = raiden_teleport,
-            [CPU_SPECIAL_2] = raiden_torpedo,
         },
     .finish_min = {0, 0},
-    .finish_distance = {0x10000, 0x10000},
 };
 
 // clang-format off: Keep table entries on one row, including long rows.

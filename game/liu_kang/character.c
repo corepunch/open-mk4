@@ -131,18 +131,13 @@ static const CpuMoves cpu_moves = {
             [CPU_AIR_HP] = liu_kang_cpu_air_hp,
             [CPU_AIR_HK] = liu_kang_cpu_air_hk,
             [CPU_AIR_LK] = liu_kang_cpu_air_lk,
-            [CPU_PROJECTILE] = liu_kang_low_fireball,
-            [CPU_SPECIAL_1] = liu_kang_low_fireball,
-            [CPU_SPECIAL_2] = liu_kang_flying_kick,
-            [CPU_SPECIAL_NEAR] = liu_kang_bicycle_kick,
             [CPU_DRAW] = liu_kang_weapon,
             [CPU_FINISH_1] = liu_kang_first_fatality,
             [CPU_FINISH_2] = liu_kang_second_fatality,
             [CPU_FINISH_FAN] = liu_kang_fan_fatality,
             [CPU_FINISH_SPIKE] = liu_kang_spike_fatality,
         },
-    .finish_min = {0x1cccc, 0},
-    .finish_distance = {0x20000, 0x10000}, /* 4dfe10/4dfe50[3]. */
+    .finish_min = {0x1cccc, 0}, /* 4dfe10/4dfe50[3]. */
 };
 
 // clang-format off: Keep table entries on one row, including long rows.

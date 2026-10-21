@@ -214,12 +214,26 @@ static void data_tables(void) {
   fighter_press(owner, BUTTON_HIGH_PUNCH);
   check(owner->pending == retail_native_entry(17, 0x469250), "live input must use the selected retail action rather than a compiled command table");
 
+  roster_def(17);
+  uint32_t cpu_slot = 0x4df8e8 + 7 * 4;
+  uint32_t cpu_saved = mk4_image_u32(&image, cpu_slot);
+  put_word(cpu_slot, 0x0001000f);
+  check(battle_cpu_action(owner, CPU_SPECIAL_NEAR) && owner->pending == retail_native_entry(17, 0x469250),
+      "CPU dispatch must read the live remapped retail action row");
+  put_word(cpu_slot, 0);
+  owner->pending = NULL;
+  check(!battle_cpu_action(owner, CPU_SPECIAL_NEAR) && owner->pending == NULL, "zero CPU rows must not invent another special action");
+  put_word(cpu_slot, cpu_saved);
+
   for (unsigned i = 0; i < 4; ++i) {
     put_word(base + i * 4, words[i]);
   }
   put_word(slot, saved);
   put_word(action_slot, action_saved);
   check(retail_character_slot(16) == 2 && retail_character_slot(17) == 7, "shared stance selection must apply retail hidden-roster remaps");
+  for (int character = 0; character < MK4_ROSTER_COUNT; ++character) {
+    roster_def(character);
+  }
 }
 
 static int cleanup_calls;

@@ -45,3 +45,22 @@ modified retail list/action table. Static source checks retain native entry
 reachability and canonical CPU binding output; they no longer require compiled
 command arrays. Character definitions, stances, CPU bindings, other fighters'
 generated script bodies and native duplication still require migration.
+
+## CPU table integration
+
+CPU near/medium/far/projectile actions now read the four retail action tables
+on dispatch. The compatibility roster view derives those slots and both finish
+distances from the image; compiled special/projectile rows and finish-distance
+copies are removed. A zero source row does not substitute another special.
+Native ABI registrations also cover CPU-only entry points for hidden fighters.
+
+Reference: mk4decomp `CmpDualPatchScaledRangeJmp` in
+`src/engine/cmp_dual_patch_scaled_range_jmp.c` (upstream 4399c0, local 439960),
+with `triple_stub_push_call.c` selecting the source table. It reads task +0x34,
+remaps 16/17 to 2/7, checks for a zero row and passes the action word to
+`HitReactionDispatcher`. Local 438e50 supplies table 4df8e8. The existing
+portable CPU planner remains engine code; this step replaces its fighter rows.
+
+The shared mutation fixture verifies live CPU dispatch and zero-row behavior,
+and resolves the runtime command/CPU ABI for every roster slot. Runtime suite,
+C11 game build, formatting and all 18 canonical script/source checks pass.

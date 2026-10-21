@@ -7,5 +7,4 @@ static const CpuMoves retail_cpu_moves = {.enter =
                                                   [CPU_FINISH_FAN] = shinnok_fan_fatality,
                                                   [CPU_FINISH_SPIKE] = shinnok_spike_fatality,
                                               },
-    .finish_min = {0x0, 0x0},
-    .finish_distance = {0x10000, 0x1cccc}};
+    .finish_min = {0x0, 0x0}};

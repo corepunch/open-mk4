@@ -61,6 +61,11 @@ extern void kitana_fan_fatality(Fighter *fighter);
 extern void kitana_air_throw(Fighter *fighter);
 extern void kitana_square_wave(Fighter *fighter);
 extern void sub_zero_air_throw(Fighter *fighter);
+extern void kitana_cartwheel(Fighter *fighter);
+extern void kitana_leg_grab(Fighter *fighter);
+extern void kitana_ring(Fighter *fighter);
+extern void noob_saibot_flip_kick(Fighter *fighter);
+extern void noob_saibot_star(Fighter *fighter);
 extern void kitana_spike_fatality(Fighter *fighter);
 extern void kitana_weapon(Fighter *fighter);
 extern void liu_kang_bicycle_kick(Fighter *fighter);
@@ -239,6 +244,11 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeAction entries[] = {
+  {0x47b690, 0x10000, kitana_cartwheel},
+  {0x47dee0, 0x10000, kitana_leg_grab},
+  {0x49b9a0, 0x10000, kitana_ring},
+  {0x4791a0, 0x20000, noob_saibot_flip_kick},
+  {0x496db0, 0x20000, noob_saibot_star},
   {0x43af90, 0x8000, goro_special_punch},
   {0x43b170, 0x8000, goro_special_kick},
   {0x43b320, 0x8000, goro_leap_stomp},

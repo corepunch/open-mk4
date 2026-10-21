@@ -111,13 +111,8 @@ static const CpuMoves cpu_moves = {
             [CPU_FINISH_2] = sonya_second_fatality,
             [CPU_FINISH_FAN] = sonya_fan_fatality,
             [CPU_FINISH_SPIKE] = sonya_spike_fatality,
-            [CPU_PROJECTILE] = sonya_ring,
-            [CPU_SPECIAL_NEAR] = sonya_leg_grab,
-            [CPU_SPECIAL_1] = sonya_bicycle,
-            [CPU_SPECIAL_2] = sonya_cartwheel,
         },
     .finish_min = {0x10000, 0x1cccc},
-    .finish_distance = {0x30000, 0x30000},
 };
 
 // clang-format off: Keep table entries on one row, including long rows.
