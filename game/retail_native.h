@@ -2,6 +2,9 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_crouch_high_kick(Fighter *fighter);
+void retail_press_crouch_high_kick(Fighter *fighter);
+void retail_press_crouch_low_kick(Fighter *fighter);
 void retail_crouch_low_kick(Fighter *fighter);
 void retail_crouch_low_kick_tail(Fighter *fighter);
 void retail_face_peer(Fighter *fighter);

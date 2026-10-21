@@ -64,8 +64,8 @@
 #define press_air_lp liu_kang_press_air_lp
 #define press_combo_hk liu_kang_press_combo_hk
 #define press_combo_hp liu_kang_press_combo_hp
-#define press_crouch_hk liu_kang_press_crouch_hk
-#define press_crouch_lk liu_kang_press_crouch_lk
+#define press_crouch_hk retail_press_crouch_high_kick
+#define press_crouch_lk retail_press_crouch_low_kick
 #define press_crouch_lp liu_kang_press_crouch_lp
 #define press_jab liu_kang_press_jab
 #define press_kick liu_kang_press_kick
@@ -162,8 +162,6 @@ void liu_kang_press_air_lk(Fighter *fighter);
 void liu_kang_press_air_lp(Fighter *fighter);
 void liu_kang_press_combo_hk(Fighter *fighter);
 void liu_kang_press_combo_hp(Fighter *fighter);
-void liu_kang_press_crouch_hk(Fighter *fighter);
-void liu_kang_press_crouch_lk(Fighter *fighter);
 void liu_kang_press_crouch_lp(Fighter *fighter);
 void liu_kang_press_jab(Fighter *fighter);
 void liu_kang_press_kick(Fighter *fighter);

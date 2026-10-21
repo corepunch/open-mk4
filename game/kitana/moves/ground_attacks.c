@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
-static void kitana_crouch_hk(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
   {{.clip = 308, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {0x15c28, -0x35c2, 0x104df, 0x5c28, 17, 10, 6, 0, 0x1c28}, 11, 30, 32},
@@ -52,20 +51,8 @@ void kitana_crouch_lp(Fighter *fighter) {
   kitana_ground_attack(fighter, G_CROUCH_LP);
 }
 
-static void kitana_crouch_hk(Fighter *fighter) {
-  kitana_ground_attack(fighter, G_CROUCH_HK);
-}
-
 void kitana_press_crouch_lp(Fighter *fighter) {
   fighter_interrupt(fighter, fighter->armed && fighter->weapon->crouch_lp != NULL ? fighter->weapon->crouch_lp : kitana_crouch_lp);
-}
-
-void kitana_press_crouch_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, kitana_crouch_hk);
-}
-
-void kitana_press_crouch_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_crouch_low_kick);
 }
 
 void kitana_script_knee_tail(Fighter *fighter) {

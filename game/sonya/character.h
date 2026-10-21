@@ -34,8 +34,8 @@
 #define press_air_lp sonya_press_air_lp
 #define press_combo_hk sonya_press_combo_hk
 #define press_combo_hp sonya_press_combo_hp
-#define press_crouch_hk sonya_press_crouch_hk
-#define press_crouch_lk sonya_press_crouch_lk
+#define press_crouch_hk retail_press_crouch_high_kick
+#define press_crouch_lk retail_press_crouch_low_kick
 #define press_crouch_lp sonya_press_crouch_lp
 #define press_jab sonya_press_jab
 #define press_kick sonya_press_kick
@@ -124,8 +124,6 @@ void sonya_press_air_lk(Fighter *fighter);
 void sonya_press_air_lp(Fighter *fighter);
 void sonya_press_combo_hk(Fighter *fighter);
 void sonya_press_combo_hp(Fighter *fighter);
-void sonya_press_crouch_hk(Fighter *fighter);
-void sonya_press_crouch_lk(Fighter *fighter);
 void sonya_press_crouch_lp(Fighter *fighter);
 void sonya_press_jab(Fighter *fighter);
 void sonya_press_kick(Fighter *fighter);

@@ -607,3 +607,13 @@ now point to the actual VM, common landing or shared native scene implementation
 The header describes native services rather than generated script primitives.
 Runtime checks, all strict roster audits, source gates and formatting pass.
 No new tests or behavior paths were introduced.
+
+## Shared crouching high-kick entry
+
+Native46b5a0 now sets0104 and enters original selector4e6020 once for every
+context. The selector owns each authored launcher variant. Six private startup
+callbacks and twelve duplicated crouch kick press wrappers are removed. The
+existing VM button-entry regression now expects the selector root rather than
+its Scorpion-only destination. Matching local listing and mk4decomp's action104
+router establish the entry; no authored timing or contact logic was added to C.
+Runtime checks, all strict roster audits, source gates and formatting pass.

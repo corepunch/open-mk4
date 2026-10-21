@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
-static void liu_kang_crouch_hk(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
   {.move = {.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}}, /* generated 4e6d08 */
@@ -49,20 +48,8 @@ void liu_kang_crouch_lp(Fighter *fighter) {
   liu_kang_ground_attack(fighter, G_CROUCH_LP);
 }
 
-static void liu_kang_crouch_hk(Fighter *fighter) {
-  liu_kang_ground_attack(fighter, G_CROUCH_HK);
-}
-
 void liu_kang_press_crouch_lp(Fighter *fighter) {
   fighter_interrupt(fighter, fighter->armed && fighter->weapon->crouch_lp != NULL ? fighter->weapon->crouch_lp : liu_kang_crouch_lp);
-}
-
-void liu_kang_press_crouch_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, liu_kang_crouch_hk);
-}
-
-void liu_kang_press_crouch_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_crouch_low_kick);
 }
 
 void liu_kang_liu_script_knee_tail(Fighter *fighter) {

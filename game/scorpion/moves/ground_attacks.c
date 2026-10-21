@@ -2,7 +2,6 @@
 
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
 static void scorpion_crouch_lp(Fighter *fighter);
-static void scorpion_crouch_hk(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
   {{.clip = 67, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {94371, -13762, 72024, 23592, 17, 10, 6, 0, 7208}, 10, 33, 36},
@@ -54,20 +53,8 @@ static void scorpion_crouch_lp(Fighter *fighter) {
   scorpion_ground_attack(fighter, G_CROUCH_LP);
 }
 
-static void scorpion_crouch_hk(Fighter *fighter) {
-  scorpion_ground_attack(fighter, G_CROUCH_HK);
-}
-
 void scorpion_press_crouch_lp(Fighter *fighter) {
   fighter_interrupt(fighter, fighter->armed && fighter->weapon->crouch_lp != NULL ? fighter->weapon->crouch_lp : scorpion_crouch_lp);
-}
-
-void scorpion_press_crouch_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, scorpion_crouch_hk);
-}
-
-void scorpion_press_crouch_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_crouch_low_kick);
 }
 
 void scorpion_script_knee_tail(Fighter *fighter) {

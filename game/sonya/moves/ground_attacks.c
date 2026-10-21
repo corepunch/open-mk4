@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
-static void sonya_crouch_hk(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
   {{.clip = 308, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {0x15c28, -0x35c2, 0x104df, 0x5c28, 17, 10, 6, 0, 0x1c28}, 11, 30, 32},
@@ -50,20 +49,8 @@ void sonya_crouch_lp(Fighter *fighter) {
   sonya_ground_attack(fighter, G_CROUCH_LP);
 }
 
-static void sonya_crouch_hk(Fighter *fighter) {
-  sonya_ground_attack(fighter, G_CROUCH_HK);
-}
-
 void sonya_press_crouch_lp(Fighter *fighter) {
   fighter_interrupt(fighter, fighter->armed && fighter->weapon->crouch_lp != NULL ? fighter->weapon->crouch_lp : sonya_crouch_lp);
-}
-
-void sonya_press_crouch_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, sonya_crouch_hk);
-}
-
-void sonya_press_crouch_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_crouch_low_kick);
 }
 
 void sonya_script_knee_tail(Fighter *fighter) {

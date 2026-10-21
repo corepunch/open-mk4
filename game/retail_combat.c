@@ -302,3 +302,19 @@ void retail_crouch_low_kick_tail(Fighter *fighter) {
   fighter->action = ACTION_RETAIL_1006;
   retail_vm_wait_native(fighter, result == CONTACT_MISS ? 1 : 4, crouch_low_kick_recover);
 }
+
+/* Native46b5a0 delegates all authored launcher differences to selector4e6020. */
+void retail_crouch_high_kick(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  retail_native_begin(fighter, S_KICK, ACTION_RETAIL_0104, false);
+  retail_vm_enter(fighter, 0x4e6020, fighter_ready);
+}
+
+void retail_press_crouch_high_kick(Fighter *fighter) {
+  fighter_interrupt(fighter, retail_crouch_high_kick);
+}
+
+void retail_press_crouch_low_kick(Fighter *fighter) {
+  fighter_interrupt(fighter, retail_crouch_low_kick);
+}

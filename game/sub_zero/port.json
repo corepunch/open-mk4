@@ -61,9 +61,9 @@
       "symbol": "sub_zero_combo_hp"
     },
     "crouch_hk": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_crouch_hk"
+      "evidence": "Shared native46b5a0 entry; original character selector4e6020 supplies launcher behavior",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_high_kick"
     },
     "crouch_lk": {
       "evidence": "Shared native46b710 entry and46b740 B23/recovery; original4e6158 and4e6180",

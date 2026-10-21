@@ -71,8 +71,8 @@ static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = scorpion_pr
     [BUTTON_LOW_KICK] = scorpion_press_lk}};
 static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
     [BUTTON_LOW_PUNCH] = scorpion_press_crouch_lp,
-    [BUTTON_HIGH_KICK] = scorpion_press_crouch_hk,
-    [BUTTON_LOW_KICK] = scorpion_press_crouch_lk}};
+    [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
+    [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = scorpion_press_air_hp,
     [BUTTON_LOW_PUNCH] = scorpion_press_air_lp,
     [BUTTON_HIGH_KICK] = scorpion_press_air_hk,

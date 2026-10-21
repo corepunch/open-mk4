@@ -65,8 +65,8 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = kitana_press_jab,
     [BUTTON_LOW_KICK] = kitana_press_lk}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
     [BUTTON_LOW_PUNCH] = kitana_press_crouch_lp,
-    [BUTTON_HIGH_KICK] = kitana_press_crouch_hk,
-    [BUTTON_LOW_KICK] = kitana_press_crouch_lk}};
+    [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
+    [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = kitana_press_air_hp,
     [BUTTON_LOW_PUNCH] = kitana_press_air_lp,
     [BUTTON_HIGH_KICK] = kitana_press_air_hk,

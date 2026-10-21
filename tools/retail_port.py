@@ -106,6 +106,7 @@ for _character in SPECIFIC:
     SPECIFIC[_character]['uppercut'] = ('game/retail_combat.c', 'retail_uppercut')
     SPECIFIC[_character]['sweep'] = ('game/retail_combat.c', 'retail_sweep')
     SPECIFIC[_character]['high_kick'] = ('game/retail_combat.c', 'retail_high_kick')
+    SPECIFIC[_character]['crouch_hk'] = ('game/retail_combat.c', 'retail_crouch_high_kick')
     SPECIFIC[_character]['crouch_lk'] = ('game/retail_combat.c', 'retail_crouch_low_kick')
     SPECIFIC[_character]['low_kick'] = ('game/retail_combat.c', 'retail_low_kick')
 

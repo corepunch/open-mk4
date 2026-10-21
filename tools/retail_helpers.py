@@ -270,3 +270,5 @@ HELPERS[0x467cd0] = H('second_fatality_dispatch', 'active fighter and retail sce
 HELPERS[0x467e70] = H('spike_fatality_dispatch', 'active fighter and stage finish gate', 'Shared stage context, native30-visit delay and original4e6950 playback.', 'Shared native scene.', ('game/retail_scene.c', 'retail_spike_finish'))
 
 HELPERS[0x46b710] = H('crouch_lk_entry', 'active fighter', 'Action0106 and original4e6158 startup; shared B23 contact and4e6180 recovery.', 'Direct retail execution.', ('game/retail_combat.c', 'retail_crouch_low_kick'))
+
+HELPERS[0x46b5a0] = H('crouch_hk_entry', 'active fighter', 'Action0104 and original character selector4e6020; scripts own launcher differences.', 'Direct retail execution.', ('game/retail_combat.c', 'retail_crouch_high_kick'))

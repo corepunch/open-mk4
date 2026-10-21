@@ -46,8 +46,8 @@
 #define press_air_lp sub_zero_press_air_lp
 #define press_combo_hk sub_zero_press_combo_hk
 #define press_combo_hp sub_zero_press_combo_hp
-#define press_crouch_hk sub_zero_press_crouch_hk
-#define press_crouch_lk sub_zero_press_crouch_lk
+#define press_crouch_hk retail_press_crouch_high_kick
+#define press_crouch_lk retail_press_crouch_low_kick
 #define press_crouch_lp sub_zero_press_crouch_lp
 #define press_jab sub_zero_press_jab
 #define press_kick sub_zero_press_kick
@@ -168,8 +168,6 @@ void sub_zero_press_air_lk(Fighter *fighter);
 void sub_zero_press_air_lp(Fighter *fighter);
 void sub_zero_press_combo_hk(Fighter *fighter);
 void sub_zero_press_combo_hp(Fighter *fighter);
-void sub_zero_press_crouch_hk(Fighter *fighter);
-void sub_zero_press_crouch_lk(Fighter *fighter);
 void sub_zero_press_crouch_lp(Fighter *fighter);
 void sub_zero_press_jab(Fighter *fighter);
 void sub_zero_press_kick(Fighter *fighter);
