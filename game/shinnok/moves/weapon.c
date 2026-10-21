@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static const MoveDef victim = {.clip = 132, .last = 59, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4003};
 

@@ -1,5 +1,5 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
 #include <math.h>
 #include <string.h>
 

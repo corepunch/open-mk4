@@ -319,16 +319,21 @@ install their rows directly; the action's cleanup carries across phases.
 Independent movement uses bounded fixed-frame callback rows on the existing body
 physics clock; collision, friction and landing remain physical conditions.
 
-## Character module boundaries
+## Shared retail runtime and native boundaries
 
-Fighter folders live directly under `game/`. Each `moves/*.c` is compiled
-independently and keeps move-owned callbacks and records static. The
-character-private header exposes only cross-file entries, continuations and
-shared records; game-facing declarations stay in the shared character header.
-Generated includes belong only to `character.c`, with typed entry functions and
-phase accessors connecting native moves to compiler-owned code. Source queries
-and strict coverage audits search the character module without folding generated
-bodies into native evidence.
+All fighters use the shared interpreter and retail-loaded selection tables.
+Original script words own script control flow and animation commands. C fighter
+definitions, private character headers and generated script/frame outputs are
+not runtime architecture. `game/native_services.h` exposes the remaining native
+engine implementations; local callbacks and records stay static. Native services
+operate on explicit Fighter/body/scene contexts and are implemented once per
+retail routine rather than copied by roster.
+
+The remaining fighter-named native source paths are migration inputs awaiting
+service consolidation. Per-fighter `port.json` files and historical source aliases
+are research/navigation data only. Strict audits check the reviewed inventory,
+source reachability and runtime/native boundaries; registration does not prove
+native gameplay parity.
 
 
 ### Independent cinematic bodies

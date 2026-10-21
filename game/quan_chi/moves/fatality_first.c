@@ -1,7 +1,10 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
-#define QC_COUNT(array) ((int)(sizeof(array) / sizeof((array)[0])))
+enum {
+  QUAN_CHI_FINISH_LEG = 31
+};
+
+#define QC_NATIVE_COUNT(array) ((int)(sizeof(array) / sizeof((array)[0])))
 
 /* LK-release [F,D,F] record 4e4878 (predicate 45e2f0) enters 467ce0, whose
  * table 4e0498[8] selects 44bcd0: Quan Chi tears off the victim's leg and
@@ -38,8 +41,8 @@ static const q16 camera_orbit[][3] = {
   {-0x80000, -0x14ccc, 0x80000},
 };
 static const CameraShot camera_shots[] = {
-  {camera_side, QC_COUNT(camera_side), 45, 0xccc, 0, 0, 0},
-  {camera_orbit, QC_COUNT(camera_orbit), 0, 0xccc, 0, 0, 0},
+  {camera_side, QC_NATIVE_COUNT(camera_side), 45, 0xccc, 0, 0, 0},
+  {camera_orbit, QC_NATIVE_COUNT(camera_orbit), 0, 0xccc, 0, 0, 0},
 };
 // clang-format on
 /* The owner keeps his stance pose through 44bd9b's sixteen-tick setup. */
@@ -55,8 +58,13 @@ static const EmissionPhase stump_phases[] = {
   {138, 2, -1, 1},
 };
 // clang-format on
-static const JointSprayDef stump_spray = {
-    .spray = &stump_blood, .phases = stump_phases, .count = QC_COUNT(stump_phases), .origin_joint = 12, .base_joint = 3, .speed = 0x23d7, .variation = 0x7ae};
+static const JointSprayDef stump_spray = {.spray = &stump_blood,
+    .phases = stump_phases,
+    .count = QC_NATIVE_COUNT(stump_phases),
+    .origin_joint = 12,
+    .base_joint = 3,
+    .speed = 0x23d7,
+    .variation = 0x7ae};
 
 enum {
   /* Camera task: one tick, side track (5 segments), hold 45, orbit track
@@ -120,7 +128,7 @@ static void victim_stream(Fighter *victim) {
 }
 
 static void victim_blend(Fighter *victim) {
-  native_scene_blends(victim, victim_blends, QC_COUNT(victim_blends), victim_stream);
+  native_scene_blends(victim, victim_blends, QC_NATIVE_COUNT(victim_blends), victim_stream);
 }
 
 static void owner_stream(Fighter *fighter) {
@@ -128,11 +136,11 @@ static void owner_stream(Fighter *fighter) {
 }
 
 static void owner_blend(Fighter *fighter) {
-  native_scene_blends(fighter, owner_blends, QC_COUNT(owner_blends), owner_stream);
+  native_scene_blends(fighter, owner_blends, QC_NATIVE_COUNT(owner_blends), owner_stream);
 }
 
 static void scene_camera(Fighter *fighter) {
-  battle_camera_sequence(fighter, fighter_opponent(fighter), camera_shots, QC_COUNT(camera_shots));
+  battle_camera_sequence(fighter, fighter_opponent(fighter), camera_shots, QC_NATIVE_COUNT(camera_shots));
 }
 
 /* The native beating loops never end themselves. The portable result is

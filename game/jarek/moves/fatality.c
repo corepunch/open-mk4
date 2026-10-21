@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 /* The Jarek fatality contact uses reaction 175 with zero damage. The stage
  * coordinator owns the victim pose and recovery for that scene. */

@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 const MeshAnimation liu_kang_fireball_mesh = {.first = 50, .count = 1, .period = 1, .scale = Q16_ONE};
 

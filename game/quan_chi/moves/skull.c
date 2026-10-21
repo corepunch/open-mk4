@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* LP [F,F] record 4e4818 and the CPU projectile row select native 499740:
  * 49c610 snapshots the pair heading, action 306 enters 4ed3a0 (clip 23). */

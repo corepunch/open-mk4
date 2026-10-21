@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static void clone_object(Projectile *p);
 static void clone_cleanup(Fighter *fighter);

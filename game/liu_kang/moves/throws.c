@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void lk_thrown_release(Fighter *victim);
 static void lk_thrown_turn(Fighter *victim);

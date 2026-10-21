@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* HK [F,F] record 4e4858 and the near CPU row select native 47a370: action
  * 217, 490ae0(4e80f8) installs group callback 47bf50, then VM 4e8100 plays

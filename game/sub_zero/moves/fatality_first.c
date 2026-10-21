@@ -1,6 +1,7 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define BLEND(c, sample, step, first)                                                                                                                          \
+  {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, sample, sample, 1, step, first}
 static void first_camera_start(Fighter *fighter);
 static void first_victim_start(Fighter *victim);
 static const SceneClip first_actor_blend[] = {BLEND(385, 0, 0x32f1, 0x3333)};
@@ -59,8 +60,8 @@ static const q16 orbit_camera[][3] = {
 // clang-format on
 // clang-format off: Keep table entries on one row, including long rows.
 static const CameraShot first_camera_shots[] = {
-  {first_camera, COUNT(first_camera), 50, 0xccc, 0, 0, 0},
-  {orbit_camera, COUNT(orbit_camera), 0, 0x45a, 3, 80, -0x4000},
+  {first_camera, NATIVE_COUNT(first_camera), 50, 0xccc, 0, 0, 0},
+  {orbit_camera, NATIVE_COUNT(orbit_camera), 0, 0x45a, 3, 80, -0x4000},
 };
 // clang-format on
 static const AttachmentDef first_spine = {.model = SCENE_MODEL_SPINE,
@@ -85,7 +86,7 @@ static const EmissionPhase neck_blood_phases[] = {
 // clang-format on
 static const JointSprayDef first_blood = {.spray = &neck_blood,
     .phases = neck_blood_phases,
-    .count = COUNT(neck_blood_phases),
+    .count = NATIVE_COUNT(neck_blood_phases),
     .origin_joint = 2,
     .base_joint = 3,
     .speed = 0x23d7,
@@ -99,7 +100,7 @@ bool sub_zero_can_first_fatality(const Fighter *fighter) {
 }
 
 static void first_camera_start(Fighter *fighter) {
-  battle_camera_sequence(fighter, fighter_peer(fighter), first_camera_shots, COUNT(first_camera_shots));
+  battle_camera_sequence(fighter, fighter_peer(fighter), first_camera_shots, NATIVE_COUNT(first_camera_shots));
   retail_vm_enter_owned(fighter, 0x4e0368, fighter_ready, 4);
 }
 
@@ -108,13 +109,13 @@ void sub_zero_first_fatality_script(Fighter *fighter) {
 }
 
 static void first_victim_start(Fighter *victim) {
-  sub_zero_native_blends(victim, first_victim_setup, COUNT(first_victim_setup), NULL);
+  sub_zero_native_blends(victim, first_victim_setup, NATIVE_COUNT(first_victim_setup), NULL);
   native_script_end(victim, 0x4e03f0, fighter_ready, 4);
 }
 
 void sub_zero_script_first_begin(Fighter *fighter) {
   fighter->script_phase = 1;
-  sub_zero_native_blends(fighter, first_actor_blend, COUNT(first_actor_blend), NULL);
+  sub_zero_native_blends(fighter, first_actor_blend, NATIVE_COUNT(first_actor_blend), NULL);
   native_script_end(fighter, 0x4e0378, fighter_ready, 4);
 }
 
@@ -155,7 +156,7 @@ void sub_zero_script_first_head(Fighter *fighter) {
 }
 
 void sub_zero_script_first_victim_blends(Fighter *victim) {
-  sub_zero_native_blends(victim, first_victim_blends, COUNT(first_victim_blends), NULL);
+  sub_zero_native_blends(victim, first_victim_blends, NATIVE_COUNT(first_victim_blends), NULL);
   native_script_end(victim, 0x4e0420, fighter_ready, 4);
 }
 

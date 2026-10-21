@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 void kai_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {

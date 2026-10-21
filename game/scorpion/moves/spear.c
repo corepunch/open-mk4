@@ -1,6 +1,6 @@
-#include "../character.h"
+#include "native_services.h"
+
 #include <math.h>
-#include "retail_vm.h"
 
 static bool spear_not_pulling(const Fighter *fighter);
 static void spear_cleanup(Fighter *fighter);

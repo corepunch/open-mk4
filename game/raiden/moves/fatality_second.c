@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void raiden_script_second_blend(Fighter *fighter) {
   mk4_mmove_blend_to(fighter, 123, 101, 100, 0xccc, 0x1999, NULL);

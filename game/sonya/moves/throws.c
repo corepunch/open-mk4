@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static void lk_victim_land(Fighter *victim);
 

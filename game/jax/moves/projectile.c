@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* LP D,F record 4e4388 (flags 0x2, gate 45e7e0) and the projectile CPU row
  * 4df9dc both select 496f80: 49c610 snapshots the pair heading into task

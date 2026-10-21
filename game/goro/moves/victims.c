@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void begin_victim(Fighter *victim);
 static void stomp_victim_next(Fighter *victim);

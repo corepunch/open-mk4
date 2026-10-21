@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* B,D,B+HK -> 47b5d0: action 0x105, then generated 4e81a8 stamps clip 107
  * to pose 20 with indexed 33, bank C 68 and shake 3 before tail 47b600. */

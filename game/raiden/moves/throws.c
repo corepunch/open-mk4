@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void raiden_script_thrown_return(Fighter *fighter) {
   if (fighter->reaction == 102 && fighter_move(fighter)->clip == 143) {

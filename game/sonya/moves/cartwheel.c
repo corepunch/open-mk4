@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void cartwheel_done(Fighter *fighter);
 static void cartwheel_stop(Fighter *fighter);

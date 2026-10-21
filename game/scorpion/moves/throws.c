@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static void thrown_end_done(Fighter *victim);
 

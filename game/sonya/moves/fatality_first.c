@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void sonya_script_first_release(Fighter *fighter) {
   battle_shatter(fighter_peer(fighter));

@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 void cage_powered_punch(Fighter *fighter);
 

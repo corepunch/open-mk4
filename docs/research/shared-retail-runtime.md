@@ -1363,3 +1363,19 @@ now one shared service used by LP, stomp and quake callers, without a roster
 inventory wrapper. Verified formatting, shared VM/rejections, strict audits,
 native frame gates and helper/port navigation (6/7 tests). Other native scene
 and reaction services remain migration work; no authored matrices added.
+
+### Remove character-private C interfaces
+
+Removed all16 remaining character-private headers. Expanded their old object
+aliases in native source, retained only used native constants/macros locally,
+and declared actual exported native services through one shared interface.
+The remaining source files contain native implementations, not fighter
+registration/configuration. Historical spelling exceptions remain solely in
+Python research navigation; they do not select game behavior.
+
+Updated architecture/source-layout documentation to remove obsolete generated
+C/frame instructions. Native file consolidation remains the next structural
+step; this interface change preserves existing native behavior and its recorded
+limitations. Verified make format, shared VM/rejections, strict audits, native
+frame gates and helper/port navigation (6/7 tests). All native units compile
+through the shared C11 interface. No tests added for this interface cleanup.

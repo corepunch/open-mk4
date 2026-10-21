@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void breath_object(Projectile *p);
 static void breath_freeze_object(Projectile *object);

@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* Acid spit: D,F+HP record 4e4570 and the CPU projectile row both enter
  * 4988d0. It stamps action family 7 (48e3a0), snapshots the pair heading

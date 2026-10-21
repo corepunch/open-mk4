@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void first_end_shake(Fighter *fighter);
 static void first_end_particles(Fighter *fighter);

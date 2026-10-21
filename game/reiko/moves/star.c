@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* D,F+LP 496db0 (also the projectile CPU row): stamp slot 18, snapshot the
  * pair axis (49c610), action 0x315, then 4ed038 throws on clip 437 and

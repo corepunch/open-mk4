@@ -1,6 +1,11 @@
-#include "retail_vm.h"
+#include "native_services.h"
+
+enum {
+  REPTILE_EVENT_FATALITY_1 = 33,
+  REPTILE_EVENT_FATALITY_2
+};
+
 #include "retail_native.h"
-#include "../character.h"
 
 /* HP record 4e457c (U,D,D,D, window 50, gate 45e530) targets 467cd0, which
  * selects 4dfe90[10] = 43bf40: shared setup 41aaf0, then VM 4dff08. */

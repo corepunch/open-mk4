@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void raiden_script_weapon_victim_getup(Fighter *victim) {
   native_finish_clip(victim, retail_getup_flip);

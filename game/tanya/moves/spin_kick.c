@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* LK F,F record 4e4550 -> T4[30] 479520: action 21b, clip 109 through
  * 428750/53cf40, speed .15 and the 4797c0 cursor callback, which loops

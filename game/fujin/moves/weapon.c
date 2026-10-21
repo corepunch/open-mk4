@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void retail_weapon_native_495c30(Fighter *fighter);
 void retail_weapon_native_495c60(Fighter *fighter);

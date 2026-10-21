@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static const MoveDef cast = {.clip = 28, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x311};
 static const AttackRecord orb_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 64, 10, 2, ATTACK_MARK, 0x1999};

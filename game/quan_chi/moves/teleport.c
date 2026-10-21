@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* LK [F,D] record 4e4838 and the medium/far CPU rows select native 47cf30.
  * Clips: 87 sink (53cf54), 88 stomp opening (4e8418), 89 repeated stomp

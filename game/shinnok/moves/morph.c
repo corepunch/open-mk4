@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 /* 469a00..469ad0 store a roster index in 53c42c and enter 469ae0.
  * State 0 writes it to task +0x34, then 4aa7e0 parks the actor for four

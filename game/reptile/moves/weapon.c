@@ -1,5 +1,5 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
 #include "math_util.h"
 
 /* Descriptor 4ece78: type 67, shared_g rig 506d90 and button table

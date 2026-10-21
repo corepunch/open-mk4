@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* B,F+LK record 4e45dc (gate 45e950) and the near/medium CPU rows enter
  * 47a690: family-11 stamp, action 216, VM 4e8128 plays clip 302, binds

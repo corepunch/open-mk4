@@ -1,5 +1,9 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  KAI_EVENT_FATALITY_1 = 23,
+  KAI_EVENT_FATALITY_2
+};
 
 /* First fatality: 467ce0 -> 43cbb0 -> roster table 4e0498[11] = 44ad70.
  * Owner clip 440 with spin clip 445 and victory loop 443; victim task

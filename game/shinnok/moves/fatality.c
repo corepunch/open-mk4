@@ -1,5 +1,11 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  SHINNOK_FATALITY_OWNER_READY = 1,
+  SHINNOK_FATALITY_VICTIM_DONE = 2,
+  SHINNOK_FATALITY_HAND_DONE = 4,
+  SHINNOK_FATALITY_DONE = 7
+};
 
 /* Spike-fatality contact 0x4ebd80 uses reaction 175 with zero damage. The
  * stage coordinator owns the victim pose and recovery for that scene. */

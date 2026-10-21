@@ -1,5 +1,5 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
 #include <math.h>
 
 /* HP [F,B] record 4e47f8 selects native 469c80: action 401, sound C[37],

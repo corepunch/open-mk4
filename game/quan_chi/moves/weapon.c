@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* Button table 4ecc48: HP 495780, LP 496ba0. 495780 tests Back (48ebd0) and
  * strikes 4ec9d8, otherwise 496a70 travels (4ec828) into 4ec838; 496ba0

@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static const MoveDef caster = {.clip = 98, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x403};
 static const MoveDef slam = {.clip = 99, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x402};

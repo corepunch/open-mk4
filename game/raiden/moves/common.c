@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void torpedo_pose(Fighter *fighter, float pose);
 static void torpedo_cycle(Fighter *fighter);

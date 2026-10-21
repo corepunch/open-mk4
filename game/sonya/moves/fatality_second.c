@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* 465ed0 holds 15 visits before returning to the two-cycle coordinator. */
 void sonya_script_second_pause(Fighter *fighter) {

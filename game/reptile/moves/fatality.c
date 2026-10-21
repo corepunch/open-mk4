@@ -1,5 +1,9 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  REPTILE_EVENT_FATALITY_1 = 33,
+  REPTILE_EVENT_FATALITY_2
+};
 
 /* UP record 4e4600 (gate 45e250) targets 467ce0, which selects
  * 4e0498[10] = 4539b0: Reptile's head-bite scene. */

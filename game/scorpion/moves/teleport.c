@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void teleport_land_gate(Fighter *fighter);
 static void teleport_drop(Fighter *fighter);

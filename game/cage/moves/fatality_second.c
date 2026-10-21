@@ -1,5 +1,13 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  CAGE_EVENT_CPU_KICK_RECOVERY = 1,
+  CAGE_EVENT_POWERED_RECOVERY,
+  CAGE_EVENT_FINISH_RECOVERY,
+  CAGE_EVENT_SCENE_LOOP,
+  CAGE_EVENT_FATALITY_1 = 17,
+  CAGE_EVENT_FATALITY_2
+};
 
 static const MoveDef owner_pose = {.clip = 293, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
 static const MoveDef victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = 0x700};

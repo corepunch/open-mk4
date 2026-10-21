@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static const MoveDef triple = {.clip = 100, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x208};
 static const MoveDef middle_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};

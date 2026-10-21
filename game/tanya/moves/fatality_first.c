@@ -1,6 +1,11 @@
-#include "retail_vm.h"
+#include "native_services.h"
+
+enum {
+  TANYA_EVENT_FATALITY_1 = 35,
+  TANYA_EVENT_FATALITY_2
+};
+
 #include "retail_native.h"
-#include "../character.h"
 #include <math.h>
 #include <string.h>
 

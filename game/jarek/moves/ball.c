@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* Jarek's cannonball 47b310 (B,F+LK and every CPU range row) and upward
  * ball 4797f0 (F,D,F+HP). Both bind tuck clip 301 through 53cf4c/53cf44,

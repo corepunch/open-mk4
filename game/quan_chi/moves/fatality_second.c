@@ -1,6 +1,6 @@
-#include "../character.h"
+#include "native_services.h"
+
 #include "retail_data.h"
-#include "retail_vm.h"
 
 /* 45e530: the second-fatality range gate, 1.8..3 units. */
 /* LP [U,U,D,D] record 4e4824 enters 467cd0, whose table 4dfe90[8] selects

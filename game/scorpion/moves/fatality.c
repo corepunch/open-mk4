@@ -1,6 +1,7 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define BLEND(clip_id, cursor)                                                                                                                                 \
+  {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, cursor, cursor, 1, 0x3333, 0x3333}
 static void finish_scene(Fighter *fighter);
 static void burn_start(Fighter *fighter);
 static void burn_tail_done(Fighter *victim);

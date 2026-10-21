@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static void victory_finish(Fighter *fighter);
 static void victory_watch(Fighter *fighter);

@@ -1,5 +1,9 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  REIKO_FINISH_1 = 27,
+  REIKO_FINISH_2
+};
 
 /* F,D,F+BLK 467ce0 -> first-fatality table 4e0498[7] = 452730: Reiko and
  * the dizzy victim share one origin. Owner clip 425 tears the victim's

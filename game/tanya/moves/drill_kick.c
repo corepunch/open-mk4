@@ -1,5 +1,5 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
 #include "math_util.h"
 
 /* LK F,D,B record 4e455c and all three CPU range rows -> T4[18] 47b9f0:

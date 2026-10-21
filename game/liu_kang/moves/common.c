@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* Original script words own VM control flow; the remaining native adapters
  * implement engine boundaries. See docs/liu-kang-scripts.md for evidence. */

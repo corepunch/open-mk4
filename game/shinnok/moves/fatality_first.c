@@ -1,5 +1,16 @@
-#include "../character.h"
-#include "retail_vm.h"
+#include "native_services.h"
+
+enum {
+  SHINNOK_FINISH_1 = 21,
+  SHINNOK_FINISH_2
+};
+
+enum {
+  SHINNOK_FATALITY_OWNER_READY = 1,
+  SHINNOK_FATALITY_VICTIM_DONE = 2,
+  SHINNOK_FATALITY_HAND_DONE = 4,
+  SHINNOK_FATALITY_DONE = 7
+};
 
 /* Fatality I: 467ce0 -> 43cbb0 -> 4e0498[6] = 455000. Shinnok vanishes
  * through clip 12 while a giant hand (rig 5083c4, nf_fat_g.geo) rises in

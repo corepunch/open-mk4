@@ -1,5 +1,10 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  KAI_EVENT_FATALITY_1 = 23,
+  KAI_EVENT_FATALITY_2
+};
+
 #include <math.h>
 
 /* Second fatality: 467cd0 -> 43bd70 -> roster table 4dfe90[11] = 43bfe0.

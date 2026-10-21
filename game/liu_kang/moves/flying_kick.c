@@ -1,6 +1,6 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 static void flying_query(Fighter *fighter);
 static void flying_branch(Fighter *fighter);
 static void flying_hold(Fighter *fighter);

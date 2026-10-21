@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static const AttackRecord ice_record = {0x570a, -0x1eb8, 0xa147, 0x3ae1, 67, 67, 0, ATTACK_MARK, 0};
 static const ParticleVisual ice_trail_visual = {

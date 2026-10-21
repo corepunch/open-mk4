@@ -1,6 +1,6 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 void retail_weapon_native_496720(Fighter *fighter);
 static const MoveDef s_weapon_back_hp = {.clip = 228, .last = 39, .flags = RETAIL, .action = 0x112};
 

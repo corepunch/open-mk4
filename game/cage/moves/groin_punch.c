@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void groin_choose(Fighter *fighter);
 static void groin_query(Fighter *fighter);

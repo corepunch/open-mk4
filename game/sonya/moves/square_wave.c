@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void square_query(Fighter *fighter);
 static void square_done(Fighter *fighter);

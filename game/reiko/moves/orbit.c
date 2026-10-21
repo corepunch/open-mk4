@@ -1,4 +1,5 @@
-#include "../character.h"
+#include "native_services.h"
+
 #include <math.h>
 
 /* B,F+LK 478ee0: a native-only circling step behind the peer, with no

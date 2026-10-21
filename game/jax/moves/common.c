@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 void jax_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);

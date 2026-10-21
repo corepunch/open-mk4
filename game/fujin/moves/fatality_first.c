@@ -1,6 +1,6 @@
-#include "retail_vm.h"
+#include "native_services.h"
+
 #include "retail_native.h"
-#include "../character.h"
 
 static const MoveDef first_owner = {.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
 static const MoveDef first_victim = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};

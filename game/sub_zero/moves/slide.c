@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void slide_cleanup(Fighter *fighter);
 static void slide_contact(Fighter *fighter);

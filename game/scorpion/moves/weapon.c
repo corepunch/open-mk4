@@ -1,6 +1,6 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
 static void sword_slash_recover(Fighter *fighter);
 static void sword_slash_query(Fighter *fighter);
 static void sword_slash_build(Fighter *fighter, int first, bool hit);

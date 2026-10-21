@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void fireball_step(Projectile *projectile);
 static const MoveDef s_fireball = {.clip = 592, .last = 24, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};

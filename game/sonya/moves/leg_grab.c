@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void leg_stop(Fighter *fighter);
 static void leg_grab_done(Fighter *fighter);

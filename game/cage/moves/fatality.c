@@ -1,5 +1,13 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  CAGE_EVENT_CPU_KICK_RECOVERY = 1,
+  CAGE_EVENT_POWERED_RECOVERY,
+  CAGE_EVENT_FINISH_RECOVERY,
+  CAGE_EVENT_SCENE_LOOP,
+  CAGE_EVENT_FATALITY_1 = 17,
+  CAGE_EVENT_FATALITY_2
+};
 
 #define FIRST_OWNER_READY 1
 #define FIRST_VICTIM_DONE 2

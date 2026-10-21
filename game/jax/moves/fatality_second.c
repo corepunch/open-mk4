@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* BLOCK record 4e43c8 (B,F,F,D, window 50, flags 0x41, gate 45e570) ->
  * 467cd0 -> 43bd70 -> 4dfe90[13] = 4669c0: Jax claps the victim's head.

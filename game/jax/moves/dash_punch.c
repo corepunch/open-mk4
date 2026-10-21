@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* LP D,B record 4e4394 (flags 0x4, gate 45e910) and the near/far CPU rows
  * select 47ab10: stamp 0xc, action 0x215 and script 4e8150 (indexed 37,

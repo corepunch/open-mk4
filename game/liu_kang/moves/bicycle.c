@@ -1,6 +1,6 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 static void bicycle_release(Fighter *victim);
 static void bicycle_victim_guard(Fighter *victim);
 static void bicycle_victim_cycle(Fighter *victim);

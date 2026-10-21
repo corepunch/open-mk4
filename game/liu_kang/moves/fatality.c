@@ -1,6 +1,6 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
 static void dragon_stream(Fighter *fighter);
 static void dragon_spawn(Fighter *fighter);
 static void dragon_actor_start(Fighter *fighter);
@@ -56,12 +56,12 @@ static void dragon_spawn(Fighter *fighter) {
 
 static void dragon_actor_start(Fighter *fighter) {
   battle_sound(SOUND_B, 46);
-  scene_begin(fighter, dragon_actor, COUNT(dragon_actor), 2);
+  scene_begin(fighter, dragon_actor, NATIVE_COUNT(dragon_actor), 2);
 }
 
 static void dragon_victim_start(Fighter *fighter) {
   scene_step(fighter);
-  scene_begin(fighter_peer(fighter), dragon_target, COUNT(dragon_target), -1);
+  scene_begin(fighter_peer(fighter), dragon_target, NATIVE_COUNT(dragon_target), -1);
 }
 
 static void dragon_tear(Fighter *fighter) {
@@ -88,7 +88,7 @@ static void dragon_detach(Fighter *fighter) {
 static void dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
   int actor_end = 121 + scene_frame_count(dragon_actor, 2);
-  int victim_end = 269 + scene_frame_count(dragon_target, COUNT(dragon_target));
+  int victim_end = 269 + scene_frame_count(dragon_target, NATIVE_COUNT(dragon_target));
   int last = maxi(actor_end, victim_end);
   native_motion_begin(fighter, last - first + 1, liu_kang_finish_scene);
   for (int frame = first; frame <= last; ++frame) {

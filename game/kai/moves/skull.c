@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* Kai's two skull specials share task code at 498e50..499734.
  * B,B+HP 499410: action 307, 4ed330 clip 21, task 499490 (type 48) rises

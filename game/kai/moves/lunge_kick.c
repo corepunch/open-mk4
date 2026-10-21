@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* 478df0 sets action 20b and enters 4e8870: indexed cue 59, clip 551 with
  * its fast-start branch, sound C31 and forward .15 at sample 26. */

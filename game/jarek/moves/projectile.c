@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* D,B+LP and the CPU projectile row -> 497540: 49c610 snapshots the pair
  * heading, action 0x310, then generated 4ed118 spawns task 78 (497580). */

@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static bool bicycle_height(const Fighter *fighter);
 static void bicycle_contact(Fighter *fighter);

@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 /* B,D,F+HK 4791a0 (also the far CPU row): native-only state machine. It
  * stamps slot 16, plays C[0x62], stores action 0x21e and moves 0.2 along

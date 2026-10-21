@@ -1,5 +1,5 @@
 #include "retail_vm.h"
-#include "kai/character.h"
+#include "native_services.h"
 
 static void kai_stage_event_step(Fighter *fighter);
 static void kai_input_47cbf0(Fighter *fighter);

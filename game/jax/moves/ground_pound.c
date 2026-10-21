@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 /* LK F,F,D record 4e43a8 (no gate) and the medium CPU row 4df95c select the
  * phase machine 468f00. Phase 0 stores action 0x101, binds 53ce14 (clip

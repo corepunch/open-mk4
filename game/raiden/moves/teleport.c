@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 static bool teleport_below_ground(const Fighter *fighter);
 static void teleport_done(Fighter *fighter);

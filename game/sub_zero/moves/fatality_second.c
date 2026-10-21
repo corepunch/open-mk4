@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void sub_zero_second_fatality_script(Fighter *fighter) {
   retail_vm_enter_owned(fighter_peer(fighter), 0x4d2bf0, fighter_ready, 4);

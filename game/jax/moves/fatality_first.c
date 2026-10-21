@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* LK-release record 4e43e8 (F,F,D,F, window 70, gate 45e1b0) -> 467ce0 ->
  * 43cbb0 -> 4e0498[13] = 4494c0: Jax tears off both of the victim's arms.

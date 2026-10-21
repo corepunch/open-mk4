@@ -1,5 +1,9 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  TANYA_EVENT_FATALITY_1 = 35,
+  TANYA_EVENT_FATALITY_2
+};
 
 /* HK D,F,D,F record 4e453c -> 467cd0 -> 43bd70 -> 4dfe90[9] = 464f30. */
 static const MoveDef victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = 0x700};

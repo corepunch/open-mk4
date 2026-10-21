@@ -1,5 +1,9 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  JAREK_EVENT_FATALITY_1 = 25,
+  JAREK_EVENT_FATALITY_2
+};
 
 /* U,U,F,F+BLK -> 467cd0 -> 43bd70 -> 4dfe90[12] = 41df20. After the shared
  * 41aaf0 preamble the owner runs generated 4d2db0 on clip 577. */

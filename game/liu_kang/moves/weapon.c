@@ -1,6 +1,6 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
+#define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 static void sword_travel(Fighter *fighter, int delay, int duration);
 static void sword_cleanup(Fighter *fighter);
 static bool sword_repeat(Fighter *fighter);

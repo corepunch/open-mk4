@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 bool liu_kang_can_first_fatality(const Fighter *fighter) {
   /* 45e410 / 4e4158: word A requires BLK+HK, word B requires LK;

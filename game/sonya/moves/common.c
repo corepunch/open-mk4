@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void sonya_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 184) {

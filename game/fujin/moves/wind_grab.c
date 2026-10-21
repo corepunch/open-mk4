@@ -1,5 +1,5 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
 #include <math.h>
 
 static const MoveDef wind_grab = {.clip = 10, .last = 2, .flags = SF_LOCK | SF_RECORD, .action = 0x20a};

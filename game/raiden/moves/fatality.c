@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* Native scenes retain independent victims, blends, particles and teardown.
  * Every VM playback/repeat below is a generated function, including result

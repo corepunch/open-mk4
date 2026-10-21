@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {

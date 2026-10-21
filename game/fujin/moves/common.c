@@ -1,4 +1,4 @@
-#include "../character.h"
+#include "native_services.h"
 
 void fujin_script_current_reaction(Fighter *fighter, int reaction) {
   /* 480f80 -> 48f880/48fd00 installs this on the task's captured peer.

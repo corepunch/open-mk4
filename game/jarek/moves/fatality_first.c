@@ -1,5 +1,9 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  JAREK_EVENT_FATALITY_1 = 25,
+  JAREK_EVENT_FATALITY_2
+};
 
 /* F,B,F,F+LK -> 467ce0 -> 43cbb0 -> 4e0498[12] = 446d00 (heart rip). */
 static const MoveDef owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x700};

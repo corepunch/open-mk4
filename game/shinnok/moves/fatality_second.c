@@ -1,5 +1,16 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
+
+enum {
+  SHINNOK_FINISH_1 = 21,
+  SHINNOK_FINISH_2
+};
+
+enum {
+  SHINNOK_FATALITY_OWNER_READY = 1,
+  SHINNOK_FATALITY_VICTIM_DONE = 2,
+  SHINNOK_FATALITY_HAND_DONE = 4,
+  SHINNOK_FATALITY_DONE = 7
+};
 
 /* Fatality II: 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0. The victim floats
  * up while Shinnok vanishes; two mirrored giant hands (rig 5083c4) clap

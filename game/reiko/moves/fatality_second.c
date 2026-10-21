@@ -1,6 +1,11 @@
-#include "retail_vm.h"
+#include "native_services.h"
+
+enum {
+  REIKO_FINISH_1 = 27,
+  REIKO_FINISH_2
+};
+
 #include "retail_native.h"
-#include "../character.h"
 #include "math_util.h"
 #include <math.h>
 

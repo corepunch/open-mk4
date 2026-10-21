@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* BLOCK record 4e45f0 and HK record 4e45b0 both enter 4698a0 -> VM 4e5bb0:
  * clip 12 (58 samples) advances 24 samples, cues C[75]/C[74], then native

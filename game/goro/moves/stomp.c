@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static void leap_rise(Fighter *fighter);
 static void leap_fall(Fighter *fighter);

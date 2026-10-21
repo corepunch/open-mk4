@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 /* 47bd10 sets action 210 and enters 4e8210: sound C60, forward .18, Y -.1,
  * gravity 41, then clip 298 advances to sample 9 before native 47bd40. */

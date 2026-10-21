@@ -1,5 +1,4 @@
-#include "retail_vm.h"
-#include "../character.h"
+#include "native_services.h"
 
 static const MoveDef dive = {.clip = 58, .last = 9, .flags = SF_LOCK | SF_RECORD, .action = 0x20f};
 static const AttackRecord dive_contact = {0x12666, -0xa3d, 0x107ae, 0x851e, 10, 10, 0, 0, 0x147a};
