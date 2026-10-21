@@ -4,7 +4,6 @@
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-const MoveDef cage_s_throw = {75, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -49,7 +48,7 @@ static const Controls cage_controls = {NULL, 0,
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &cage_s_throw,
+
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -79,14 +78,6 @@ const CharacterDef mk4_cage = {
     .move_list = NULL,
     .move_list_count = 0,
 };
-
-void cage_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 14);
-}
 
 void cage_entry_retail_script_004e12a0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e12a0, fighter_ready, 14);

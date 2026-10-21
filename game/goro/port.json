@@ -1,13 +1,13 @@
 {
   "character": "goro",
   "integration_source": "game/goro/character.c",
-  "inventory_sha256": "63454822bc9afb04cab589a527085be56dd6ec9b27ccd413cdf5145b8585dc66",
+  "inventory_sha256": "17ff288d5d2a03750e4a4d9a44b221765271617645c8be5654060f7804dbe549",
   "schema": 1,
   "moves": {
     "lk_throw": {
-      "source": "game/goro/moves/throws.c",
-      "symbol": "goro_lk_throw",
-      "evidence": "Selected4de2f8/318/328 paired streams, native42be10 retreats through clip282;4de358 is Q16 motion data, not a script."
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_throw",
+      "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture"
     },
     "lp_throw": {
       "source": "game/script.c",
@@ -438,55 +438,15 @@
     }
   },
   "runtime_scripts": {
-    "0x4e01a0": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0158": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0148": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0188": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0138": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0118": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4de2f8": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
-    },
-    "0x4de318": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
-    },
-    "0x4de328": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
-    },
     "0x4de6e4": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de720": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original LK script words selected by4ddfb8 native entry; bounded native/script listings and docs/research/shared-retail-runtime.md"
     },
     "0x4de798": {
       "source": "game/retail_vm.c",
@@ -497,6 +457,11 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de840": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original LK script words selected by4ddfb8 native entry; bounded native/script listings and docs/research/shared-retail-runtime.md"
     },
     "0x4dfb60": {
       "source": "game/retail_vm.c",
@@ -532,6 +497,36 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
     },
     "0x4e5c70": {
       "source": "game/retail_vm.c",

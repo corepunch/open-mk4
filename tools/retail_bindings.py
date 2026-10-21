@@ -1472,6 +1472,25 @@ def bindings_for(character):
                                       (0x485510, 'mk4_mmove_thrown_finish', 'game/script.c')):
         result[address] = Binding(function, source, ('tail',), flow='terminal', mmove=True,
                                   evidence='Shared native throw-victim continuation; matching local4854c0/4854d0/485510 and mk4decomp pending_match_variants')
+    for address, function in ((0x42b680, 'retail_throw_pair_start'), (0x42b730, 'retail_lk_return'),
+                              (0x42b7a0, 'retail_lk_return'), (0x42bb80, 'retail_lk_pause_long'),
+                              (0x42bd30, 'retail_lk_pause_short'), (0x42bb00, 'retail_lk_jump_back'),
+                              (0x42b840, 'retail_lk_recoil'), (0x42b800, 'retail_lk_branch_continue'),
+                              (0x42bc90, 'retail_lk_victim_return'), (0x42bc10, 'retail_lk_script_170'),
+                              (0x42bc20, 'retail_lk_script_180'), (0x42bc30, 'retail_lk_script_190')):
+        result[address] = Binding(function, 'game/retail_throw.c', ('call',) if address == 0x42b680 else ('tail',),
+                                  flow='immediate' if address == 0x42b680 else 'terminal', mmove=True,
+                                  evidence='Original native LK entry/continuation; checked local listings and mk4decomp eight_packed_sub_install_self_walk/pending_match_variants')
+    for address in (0x42c200, 0x42c220, 0x42c300, 0x487220):
+        result[address] = CHARACTER_BINDINGS[4][address]
+    result[0x48a350] = Binding('retail_impact_voice', 'game/retail_throw.c', ('call',), mmove=True,
+                               evidence='Native48a350 reads original4ea8a0 sound list through489e80')
+    result[0x46f650] = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Native controller return starts with4906c0 floor snap')
+    result[0x42c7d0] = Binding('retail_lk_continue_840', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='42c7d0 calls shared48f9f0 then enters original4de840')
+    result[0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Native488b40/488b70 chooses original4ea200 getup record or4ea1e8 KO script; shared engine phase gate')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

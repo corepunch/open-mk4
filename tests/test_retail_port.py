@@ -94,8 +94,8 @@ class PortTests(unittest.TestCase):
         self.assertEqual(image.word(0x4ddfb8 + 4 * 4), 0x42c180)  # Native byte address, not VM code.
         self.assertEqual(moves_for(4)['lk_throw']['scripts'][0][1], 0x4de490)
         for name, fragments in (
-                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'retail_script_004de798')),
-                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'retail_script_004de490'))):
+                ('lp_throw', ('76/153', '0x2666', '142/141/143', 'getup 328', 'retail_vm_enter(fighter, 0x4de798')),
+                ('lk_throw', ('41/165', '0x2e14', '29+5+8', 'owner idle hold 60', 'retail_lk_target'))):
             text = port_text(self.disassembly, name, 4, 64)
             self.assertIn('Port notes', text)
             for fragment in fragments:

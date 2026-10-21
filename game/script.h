@@ -26,6 +26,7 @@ void mk4_script_context(Fighter *fighter, int selector);
 void mk4_script_roster_sound(Fighter *fighter, int selector);
 void mk4_script_draw_voice(Fighter *fighter);
 void mk4_script_scene_active(Fighter *fighter);
+void retail_throw_capture(Fighter *fighter, int action, bool align);
 void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_mmove_pair_victim(Fighter *fighter, const MoveDef *move);

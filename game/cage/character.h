@@ -11,7 +11,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_cpu_kick_script cage_s_cpu_kick_script
 #define s_powered_punch_script cage_s_powered_punch_script
-#define s_throw cage_s_throw
 
 enum {
   CAGE_EVENT_CPU_KICK_RECOVERY = 1,
@@ -39,8 +38,6 @@ void cage_script_fatality_2_continue(Fighter *fighter);
 void cage_script_lp_return(Fighter *fighter);
 void cage_script_opponent_reaction(Fighter *fighter, int reaction);
 void cage_script_powered_punch_tail(Fighter *fighter);
-void cage_entry_retail_script_004de2f8(Fighter *fighter);
-void cage_entry_retail_script_004de798(Fighter *fighter);
 void cage_entry_retail_script_004e12a0(Fighter *fighter);
 void cage_entry_retail_script_004e12b0(Fighter *fighter);
 void cage_entry_retail_script_004e5870(Fighter *fighter);
@@ -59,7 +56,6 @@ void cage_entry_retail_script_004e84b8(Fighter *fighter);
 void cage_power_land(Fighter *fighter);
 extern const MoveDef cage_s_cpu_kick_script;
 extern const MoveDef cage_s_powered_punch_script;
-extern const MoveDef cage_s_throw;
 
 extern const ButtonTable cage_diagonal_air;
 void cage_press_air_hk(Fighter *fighter);
@@ -74,7 +70,6 @@ void cage_script_close_hk_tail(Fighter *fighter);
 void cage_entry_retail_script_004e61e0(Fighter *fighter);
 void cage_entry_retail_script_004e69b0(Fighter *fighter);
 void cage_entry_retail_script_004e6190(Fighter *fighter);
-void cage_lk_throw(Fighter *fighter);
 void cage_powered_punch(Fighter *fighter);
 void cage_cpu_kick(Fighter *fighter);
 void cage_groin_punch(Fighter *fighter);

@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 import re
 
-from character_catalog import CHARACTERS, moves_for
+from character_catalog import CHARACTERS, LK_NATIVE_SELECTION, moves_for
 from retail_bindings import bindings_for
 from retail_contracts import instruction_binding
 from retail_helper_view import port_source
@@ -55,6 +55,9 @@ def cpu_records(image, character):
 
 def inventory(image, character):
     moves = moves_for(character)
+    native_slot = 2 if character == 16 else 4 if character == 17 else character
+    if image.word(0x4ddfb8 + native_slot * 4) != LK_NATIVE_SELECTION[character]:
+        raise ValueError('LK native research selection differs from the loaded retail table')
     roots = sorted({root for move in moves.values() for _, root in move['scripts']})
     programs = {root: script_program(image, root, character) for root in roots}
     contacts = {}

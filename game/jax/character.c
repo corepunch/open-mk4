@@ -4,7 +4,6 @@
 const MoveDef jax_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
 
-const MoveDef jax_s_throw = {.clip = 83, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 const MoveDef jax_s_thrown = {.clip = 145, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 
 const MoveDef jax_s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
@@ -43,7 +42,7 @@ static const FighterFn enter[S_COUNT] = {
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &jax_s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &jax_s_throw,
+
   [S_BLOCK] = &jax_s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -64,10 +63,6 @@ const CharacterDef mk4_jax = {
     .move_list_count = 0,
 };
 
-void jax_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 13);
-}
-
 void jax_entry_retail_script_004de518(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de518, fighter_ready, 13);
 }
@@ -82,10 +77,6 @@ void jax_entry_retail_script_004de558(Fighter *fighter) {
 
 void jax_entry_retail_script_004de568(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de568, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 13);
 }
 
 void jax_entry_retail_script_004e1390(Fighter *fighter) {

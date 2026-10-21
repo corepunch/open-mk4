@@ -6,7 +6,6 @@
 const MoveDef kai_s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 const MoveDef kai_s_low_kick = {70, 0, MOVE_END, 9, 5, 18, 12, 28, 1.55f, 0.27f, SF_ATTACK | SF_LOCK | SF_LOW, NULL, 0};
-const MoveDef kai_s_throw = {37, 0, MOVE_END, 6, 2, 25, 14, 66, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 const MoveDef kai_s_air_attack = {61, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_ATTACK | SF_LOCK, NULL, 0};
 const MoveDef kai_s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -48,7 +47,7 @@ static const FighterFn enter[S_COUNT] = {
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &kai_s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &kai_s_throw,
+
   [S_BLOCK] = &kai_s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -84,14 +83,6 @@ const CharacterDef mk4_kai = {
     .move_list = NULL,
     .move_list_count = 0,
 };
-
-void kai_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 11);
-}
 
 void kai_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 11);

@@ -9,7 +9,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_throw noob_saibot_s_throw
 
 void noob_saibot_command_498b70(Fighter *fighter);
 void noob_saibot_command_498e70(Fighter *fighter);
@@ -34,10 +33,8 @@ void noob_saibot_shadow_low(Fighter *fighter);
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
 void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
 void noob_saibot_shadow_up(Fighter *fighter);
-void noob_saibot_entry_retail_script_004de2f8(Fighter *fighter);
 void noob_saibot_entry_retail_script_004de664(Fighter *fighter);
 void noob_saibot_entry_retail_script_004de668(Fighter *fighter);
-void noob_saibot_entry_retail_script_004de798(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e5e78(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e5ea0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e61f8(Fighter *fighter);
@@ -52,7 +49,6 @@ void noob_saibot_entry_retail_script_004e9b40(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e9bd0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ed268(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ed2c0(Fighter *fighter);
-extern const MoveDef noob_saibot_s_throw;
 
 extern const ButtonTable noob_saibot_diagonal_air;
 void noob_saibot_press_air_hk(Fighter *fighter);
@@ -67,7 +63,6 @@ void noob_saibot_script_close_hk_tail(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e61e0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e69b0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e6190(Fighter *fighter);
-void noob_saibot_lk_throw(Fighter *fighter);
 void noob_saibot_air_throw(Fighter *fighter);
 void noob_saibot_weapon_action(Fighter *fighter);
 void noob_saibot_script_weapon_draw_finish(Fighter *fighter);

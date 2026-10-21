@@ -1,8 +1,5 @@
 #include "../character.h"
 
-void jax_lk_throw(Fighter *fighter);
-static const MoveDef s_lk_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
-static const MoveDef s_lk_thrown = {.clip = 157, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 static const MoveDef s_slam_fall = {.clip = 173, .last = 22, .flags = SF_LOCK | SF_REACTION};
 
 enum {
@@ -16,10 +13,6 @@ enum {
  * is held (4de588/5a8/5c8/5e8). Each extra slam (4de518 to 82, 4de538 to
  * 116, then 55..116 again) subtracts 5%; 4de568/4de558 release the victim
  * with reaction 100/125 and a last 5%. */
-
-void jax_lk_throw(Fighter *fighter) {
-  mk4_mmove_throw_start(fighter, &s_lk_throw, &s_lk_thrown, jax_entry_retail_script_004de2f8);
-}
 
 /* 48a220 -> 489e80(4ea828): one of tokens 760, 765, 770, 775, 780. */
 void jax_throw_grunt(void) {

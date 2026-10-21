@@ -10,7 +10,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_knockdown fujin_s_knockdown
-#define s_throw fujin_s_throw
 
 void fujin_enter_throw(Fighter *fighter);
 void fujin_press_air_hk(Fighter *fighter);
@@ -27,15 +26,12 @@ void fujin_script_lp_extended_finish(Fighter *fighter);
 void fujin_script_lp_short_finish(Fighter *fighter);
 void fujin_script_opponent_reaction(Fighter *fighter, int reaction);
 extern const MoveDef *const fujin_moves[13];
-void fujin_entry_retail_script_004de2f8(Fighter *fighter);
-void fujin_entry_retail_script_004de798(Fighter *fighter);
 void fujin_entry_retail_script_004e61f8(Fighter *fighter);
 void fujin_entry_retail_script_004e63d8(Fighter *fighter);
 void fujin_entry_retail_script_004e6500(Fighter *fighter);
 void fujin_entry_retail_script_004e6658(Fighter *fighter);
 void fujin_entry_retail_script_004e6710(Fighter *fighter);
 extern const MoveDef fujin_s_knockdown;
-extern const MoveDef fujin_s_throw;
 
 extern const ButtonTable fujin_diagonal_air;
 void fujin_press_air_hk(Fighter *fighter);
@@ -50,7 +46,6 @@ void fujin_script_close_hk_tail(Fighter *fighter);
 void fujin_entry_retail_script_004e61e0(Fighter *fighter);
 void fujin_entry_retail_script_004e69b0(Fighter *fighter);
 void fujin_entry_retail_script_004e6190(Fighter *fighter);
-void fujin_lk_throw(Fighter *fighter);
 bool fujin_can_dive(const Fighter *fighter);
 void fujin_dive(Fighter *fighter);
 void fujin_dive_contact(Fighter *fighter);

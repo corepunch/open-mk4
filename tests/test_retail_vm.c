@@ -481,6 +481,23 @@ static void reaction_native_table(void) {
   put_word(0x4ea4e8, original);
 }
 
+static void native_throw_selection(void) {
+  Fighter *owner = setup(0, 0);
+  Fighter *peer = &g_battle.fighters[1];
+  owner->body.pos[AXIS_X] = -0x4000;
+  peer->body.pos[AXIS_X] = 0x4000;
+  uint32_t original = mk4_image_u32(&image, 0x4ddfb8);
+  put_word(0x4ddfb8, 0x42bda0);
+  retail_lk_throw(owner);
+  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4de2a0, "native throw selection must follow the loaded table independently of model");
+  for (int visit = 0; visit < 256 && (owner->retail_vm.active || peer->state != S_IDLE); ++visit) {
+    tick();
+  }
+  check(!owner->retail_vm.active && peer->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED),
+      "shared capture and original victim continuation must release both contexts");
+  put_word(0x4ddfb8, original);
+}
+
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
   if (argc == 2) {
@@ -517,6 +534,7 @@ int main(int argc, char **argv) {
   native_shared_record();
   data_tables();
   reaction_native_table();
+  native_throw_selection();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

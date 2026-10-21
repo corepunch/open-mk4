@@ -203,7 +203,7 @@ void mk4_script_pair_cleanup(Fighter *owner) {
   }
 }
 
-static Fighter *start_throw_pair(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move) {
+static Fighter *start_throw_pair(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, bool align) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   mk4_script_stop_body(fighter);
   mk4_script_stop_body(victim);
@@ -214,11 +214,15 @@ static Fighter *start_throw_pair(Fighter *fighter, const MoveDef *owner_move, co
   fighter->sample_override = victim->sample_override = 0;
   for (int axis = 0; axis < 3; ++axis) {
     fighter->saved_motion[axis] = victim->body.pos[axis] - fighter->body.pos[axis];
-    victim->body.pos[axis] = fighter->body.pos[axis];
+    if (align) {
+      victim->body.pos[axis] = fighter->body.pos[axis];
+    }
   }
-  victim->body.pos[AXIS_Y] += victim->body.ground - fighter->body.ground;
-  victim->facing = fighter->facing;
-  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  if (align) {
+    victim->body.pos[AXIS_Y] += victim->body.ground - fighter->body.ground;
+    victim->facing = fighter->facing;
+    memcpy(victim->heading, fighter->heading, sizeof victim->heading);
+  }
   return victim;
 }
 
@@ -230,11 +234,21 @@ static const mframe_t captured_throw_frames[] = {{.thinkfunc = throw_hold_frame}
 static const mmove_t captured_throw = {.firstframe = 0, .lastframe = 0, .frame = captured_throw_frames, .endfunc = captured_throw_done};
 
 void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script) {
-  Fighter *victim = start_throw_pair(fighter, owner_move, victim_move);
+  Fighter *victim = start_throw_pair(fighter, owner_move, victim_move, true);
   fighter_mmove_phase(victim, &captured_throw);
   victim->mmove_cleanup = throw_hold_cleanup;
   fighter->mmove_cleanup = mk4_script_pair_cleanup;
   script(fighter);
+}
+
+void retail_throw_capture(Fighter *fighter, int action, bool align) {
+  static const MoveDef owner = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE};
+  static const MoveDef victim_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
+  Fighter *victim = start_throw_pair(fighter, &owner, &victim_move, align);
+  fighter->action = action;
+  fighter_mmove_phase(victim, &captured_throw);
+  victim->mmove_cleanup = throw_hold_cleanup;
+  fighter->mmove_cleanup = mk4_script_pair_cleanup;
 }
 
 /* Native42c590's capture and original4de798 selector. No fighter clip seed. */
@@ -247,11 +261,10 @@ void retail_lp_throw(Fighter *fighter) {
     fighter_ready(fighter);
     return;
   }
-  static const MoveDef owner = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
-  static const MoveDef victim = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
   fighter->native_variant = 0;
   fighter->script_phase = 0;
-  mk4_mmove_throw_start(fighter, &owner, &victim, lp_throw_script);
+  retail_throw_capture(fighter, ACTION_RETAIL_0500, true);
+  lp_throw_script(fighter);
 }
 
 /* Captures the victim in place, keeping its own facing (e.g. Raiden's torpedo 47d7f0). */
@@ -560,18 +573,13 @@ void mk4_mmove_lk_owner_ready(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
 
+/* Native488b40/488b70 selects the original side-getup record. */
 void mk4_mmove_side_getup(Fighter *fighter) {
-  mk4_script_stop_body(fighter);
   if (fighter->health <= 0) {
-    fighter_finish_mmove(fighter, NULL);
+    retail_vm_enter(fighter, 0x4ea1e8, mk4_mmove_thrown_finish);
     return;
   }
-  mk4_mmove_bind(fighter, 185, 16, 0);
-  native_begin(fighter, 0, 15, mk4_mmove_thrown_finish);
-  for (int sample = 0; sample < 16; ++sample) {
-    native_frame(fighter, sample, sample, NULL);
-  }
-  native_play(fighter, false);
+  mk4_mmove_getup(fighter, 0x4ea200);
 }
 
 static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
@@ -587,7 +595,7 @@ static void getup_crouch_finish(Fighter *fighter) {
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
 void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
-  require(record == 0x4ea210 || record == 0x4ea220, "Unreviewed native getup record");
+  require(record == 0x4ea200 || record == 0x4ea210 || record == 0x4ea220, "Unreviewed native getup record");
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   if (fighter->health <= 0) {

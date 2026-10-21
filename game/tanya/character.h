@@ -14,16 +14,11 @@ enum {
   TANYA_EVENT_FATALITY_2
 };
 
-#define s_throw tanya_s_throw
-
-void tanya_entry_retail_script_004de2f8(Fighter *fighter);
-void tanya_entry_retail_script_004de798(Fighter *fighter);
 void tanya_entry_retail_script_004e61f8(Fighter *fighter);
 void tanya_entry_retail_script_004e63d8(Fighter *fighter);
 void tanya_entry_retail_script_004e6500(Fighter *fighter);
 void tanya_entry_retail_script_004e6658(Fighter *fighter);
 void tanya_entry_retail_script_004e6710(Fighter *fighter);
-extern const MoveDef tanya_s_throw;
 void tanya_press_air_hk(Fighter *fighter);
 void tanya_press_air_hp(Fighter *fighter);
 void tanya_press_air_lk(Fighter *fighter);
@@ -49,7 +44,6 @@ void tanya_script_close_hk_tail(Fighter *fighter);
 void tanya_entry_retail_script_004e61e0(Fighter *fighter);
 void tanya_entry_retail_script_004e69b0(Fighter *fighter);
 void tanya_entry_retail_script_004e6190(Fighter *fighter);
-void tanya_lk_throw(Fighter *fighter);
 void tanya_entry_retail_script_004ed268(Fighter *fighter);
 void tanya_entry_retail_script_004ed2c0(Fighter *fighter);
 void tanya_fireball(Fighter *fighter);

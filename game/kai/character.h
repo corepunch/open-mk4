@@ -15,7 +15,6 @@
 #define s_block kai_s_block
 #define s_crouch kai_s_crouch
 #define s_low_kick kai_s_low_kick
-#define s_throw kai_s_throw
 
 enum {
   KAI_STAGE_EVENT_PLAY_CLIP = 1,
@@ -50,8 +49,6 @@ void kai_script_lp_extended_finish(Fighter *fighter);
 void kai_script_lp_short_finish(Fighter *fighter);
 void kai_script_opponent_reaction(Fighter *fighter, int reaction);
 void kai_script_stage_event(Fighter *fighter);
-void kai_entry_retail_script_004de2f8(Fighter *fighter);
-void kai_entry_retail_script_004de798(Fighter *fighter);
 void kai_entry_retail_script_004e61f8(Fighter *fighter);
 void kai_entry_retail_script_004e62c0(Fighter *fighter);
 void kai_entry_retail_script_004e62d8(Fighter *fighter);
@@ -69,7 +66,6 @@ extern const MoveDef kai_s_air_attack;
 extern const MoveDef kai_s_block;
 extern const MoveDef kai_s_crouch;
 extern const MoveDef kai_s_low_kick;
-extern const MoveDef kai_s_throw;
 
 extern const ButtonTable kai_diagonal_air;
 void kai_press_air_hk(Fighter *fighter);
@@ -84,7 +80,6 @@ void kai_script_close_hk_tail(Fighter *fighter);
 void kai_entry_retail_script_004e61e0(Fighter *fighter);
 void kai_entry_retail_script_004e69b0(Fighter *fighter);
 void kai_entry_retail_script_004e6190(Fighter *fighter);
-void kai_lk_throw(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void kai_handstand_spin_begin(Fighter *fighter);
 void kai_handstand_rear_contact(Fighter *fighter);

@@ -13,7 +13,7 @@
     }
   },
   "integration_source": "game/scorpion/character.c",
-  "inventory_sha256": "b515bb4b7f8a397f24a1ca654d281474963279863da9190d8e59c47eeb49d787",
+  "inventory_sha256": "1b3bbcb7198f2116e8467bfe37366cdc46d1716b09ff18293f87ae852884534d",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -116,9 +116,9 @@
       "symbol": "retail_jab"
     },
     "lk_throw": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "enter_lk_throw"
+      "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_throw"
     },
     "low_kick": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

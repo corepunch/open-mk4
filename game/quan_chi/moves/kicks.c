@@ -16,7 +16,7 @@ void quan_chi_press_high_kick(Fighter *fighter) {
 
 void quan_chi_press_low_kick(Fighter *fighter) {
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
-    fighter_interrupt(fighter, quan_chi_lk_throw);
+    fighter_interrupt(fighter, retail_lk_throw);
     return;
   }
 

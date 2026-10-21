@@ -228,6 +228,7 @@ static const NativeAction entries[] = {
   {0x46d290, 0x3ffff, retail_high_punch},
   {0x46b5a0, 0x3ffff, retail_crouch_high_kick},
   {0x46b710, 0x3ffff, retail_crouch_low_kick},
+  {0x42b6e0, 0x3ffff, retail_lk_throw},
   {0x42c590, 0x3ffff, retail_lp_throw},
   {0x46a680, 0x3ffff, retail_high_kick},
   {0x467e00, 0x3ffff, retail_fan_finish},

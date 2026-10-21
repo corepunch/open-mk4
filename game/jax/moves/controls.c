@@ -21,7 +21,7 @@ void jax_press_hk(Fighter *fighter) {
 
 void jax_press_lk(Fighter *fighter) {
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
-    fighter_interrupt(fighter, jax_lk_throw);
+    fighter_interrupt(fighter, retail_lk_throw);
     return;
   }
 

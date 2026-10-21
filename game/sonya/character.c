@@ -15,7 +15,6 @@ static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NUL
 
 /* Native uppercut recovery uses contact-selected pose sequences. */
 
-const MoveDef sonya_s_throw = {.clip = 76, .last = 48, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 const MoveDef sonya_s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -25,7 +24,7 @@ const MoveDef sonya_s_victory = {114, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_H
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &sonya_s_throw,
+
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &sonya_s_knockdown,
@@ -117,14 +116,6 @@ const CharacterDef mk4_sonya = {
     .move_list = move_list,
     .move_list_count = COUNT(move_list),
 };
-
-void sonya_entry_retail_script_004de360(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de360, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 2);
-}
 
 void sonya_entry_retail_script_004e01c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e01c0, fighter_ready, 2);

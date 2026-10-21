@@ -18,7 +18,7 @@
 #define cpu_air_lk raiden_cpu_air_lk
 #define cpu_close_hk raiden_cpu_close_hk
 #define cpu_close_hp raiden_cpu_close_hp
-#define enter_lk_throw raiden_enter_lk_throw
+#define enter_lk_throw retail_lk_throw
 #define enter_throw raiden_enter_throw
 #define enter_victory raiden_enter_victory
 #define first_fatality raiden_first_fatality
@@ -41,7 +41,6 @@
 #define press_lk raiden_press_lk
 #define press_lp raiden_press_lp
 #define s_knockdown raiden_s_knockdown
-#define s_throw raiden_s_throw
 #define s_victory raiden_s_victory
 #define scene_end_watch raiden_scene_end_watch
 #define script_air_diagonal_tail raiden_script_air_diagonal_tail
@@ -111,7 +110,6 @@ void raiden_cpu_air_hk(Fighter *fighter);
 void raiden_cpu_air_lk(Fighter *fighter);
 void raiden_cpu_close_hk(Fighter *fighter);
 void raiden_cpu_close_hp(Fighter *fighter);
-void raiden_enter_lk_throw(Fighter *fighter);
 void raiden_enter_throw(Fighter *fighter);
 void raiden_enter_victory(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
@@ -138,9 +136,7 @@ void raiden_lightning(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
 void raiden_weapon(Fighter *fighter);
-void raiden_entry_retail_script_004de218(Fighter *fighter);
 void raiden_entry_retail_script_004de668(Fighter *fighter);
-void raiden_entry_retail_script_004de798(Fighter *fighter);
 void raiden_entry_retail_script_004e0210(Fighter *fighter);
 void raiden_entry_retail_script_004e0220(Fighter *fighter);
 void raiden_entry_retail_script_004e56c8(Fighter *fighter);
@@ -182,7 +178,6 @@ void raiden_entry_retail_script_004ea068(Fighter *fighter);
 void raiden_entry_retail_script_004ea108(Fighter *fighter);
 void raiden_entry_retail_script_004ed5f0(Fighter *fighter);
 extern const MoveDef raiden_s_knockdown;
-extern const MoveDef raiden_s_throw;
 extern const MoveDef raiden_s_victory;
 void raiden_scene_end_watch(Fighter *fighter);
 void raiden_script_air_diagonal_tail(Fighter *fighter);

@@ -9,15 +9,12 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_knockdown goro_s_knockdown
-#define s_throw goro_s_throw
 
 extern const MoveDef goro_s_knockdown;
-extern const MoveDef goro_s_throw;
 
 void goro_air_throw(Fighter *fighter);
 void goro_close_hk(Fighter *fighter);
 void goro_close_hp(Fighter *fighter);
-void goro_lk_throw(Fighter *fighter);
 void goro_press_air_ground_hp(Fighter *fighter);
 void goro_press_air_hk(Fighter *fighter);
 void goro_press_air_hp(Fighter *fighter);
@@ -39,7 +36,6 @@ void goro_script_close_hp_tail(Fighter *fighter);
 void goro_script_combo_hp_tail(Fighter *fighter);
 void goro_script_current_reaction(Fighter *fighter, int reaction);
 void goro_script_lp_finish(Fighter *fighter);
-void goro_script_lp_pair_start(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
 void goro_script_opponent_reaction(Fighter *fighter, int reaction);
 
@@ -70,9 +66,7 @@ void goro_uppercut_victim(Fighter *victim);
 void goro_victim_finish_getup(Fighter *victim);
 void goro_victim_getup(Fighter *victim);
 
-void goro_entry_retail_script_004de2f8(Fighter *fighter);
 void goro_entry_retail_script_004de6e4(Fighter *fighter);
-void goro_entry_retail_script_004de798(Fighter *fighter);
 void goro_entry_retail_script_004de7e8(Fighter *fighter);
 void goro_entry_retail_script_004dfb60(Fighter *fighter);
 void goro_entry_retail_script_004dfb70(Fighter *fighter);

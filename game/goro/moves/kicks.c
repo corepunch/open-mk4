@@ -21,7 +21,7 @@ void goro_press_high_kick(Fighter *fighter) {
 /* 460fc0: back selects sweep 46ef90; LK throw 42b6b0 precedes low kick. */
 void goro_press_low_kick(Fighter *fighter) {
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
-    fighter_interrupt(fighter, goro_lk_throw);
+    fighter_interrupt(fighter, retail_lk_throw);
     return;
   }
   fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep : retail_low_kick);

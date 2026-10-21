@@ -1,8 +1,5 @@
 #include "../character.h"
 
-static const MoveDef s_ground_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
-
-void noob_saibot_lk_throw(Fighter *fighter);
 void noob_saibot_air_throw(Fighter *fighter);
 static const MoveDef s_noob_air_throw = {.clip = 74, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
 static const MoveDef s_noob_air_thrown = {.clip = 150, .last = 27, .flags = SF_LOCK, .action = 0x4003};
@@ -23,10 +20,6 @@ void noob_saibot_script_air_throw_continue(Fighter *fighter) {
 void noob_saibot_script_air_throw_end(Fighter *fighter) {
   battle_damage((Fighter *)fighter_opponent(fighter), 0x30a3);
   noob_saibot_slam_tail(fighter);
-}
-
-void noob_saibot_lk_throw(Fighter *fighter) {
-  mk4_mmove_throw_start(fighter, &noob_saibot_s_throw, &s_ground_thrown, noob_saibot_entry_retail_script_004de2f8);
 }
 
 /* 46aba0: action 0x502, face the peer (490bd0), then the shared 480fc0(8)

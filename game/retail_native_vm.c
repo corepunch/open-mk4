@@ -79,7 +79,6 @@ void goro_script_current_reaction(Fighter *fighter, int reaction);
 void goro_script_kick_tail(Fighter *fighter);
 void goro_script_leap_continue(Fighter *fighter);
 void goro_script_lp_finish(Fighter *fighter);
-void goro_script_lp_pair_start(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
 void goro_script_opponent_reaction(Fighter *fighter, int reaction);
 void goro_script_punch_tail(Fighter *fighter);
@@ -219,7 +218,6 @@ void liu_kang_liu_script_air_lk_tail(Fighter *fighter);
 void liu_kang_liu_script_air_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
-void liu_kang_liu_script_bicycle_getup(Fighter *victim);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
 void liu_kang_liu_script_close_hp_tail(Fighter *fighter);
 void liu_kang_liu_script_combo_hp_tail(Fighter *fighter);
@@ -582,6 +580,9 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
   switch (kind) {
     case RETAIL_CALL:
       switch (address) {
+        case 0x48a350:
+          retail_impact_voice(fighter);
+          return true;
         case 0x406ba0:
           kai_second_child_walk(fighter);
           return true;
@@ -622,7 +623,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           raiden_script_second_particles(fighter);
           return true;
         case 0x42b680:
-          goro_script_lp_pair_start(fighter);
+          retail_throw_pair_start(fighter);
           return true;
         case 0x43a5c0:
           goro_quake_resting_weapons();
@@ -682,6 +683,12 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
       }
     case RETAIL_TAIL:
       switch (address) {
+        case 0x46f650:
+          mk4_mmove_thrown_finish(fighter);
+          return true;
+        case 0x42c7d0:
+          retail_lk_continue_840(fighter);
+          return true;
         case 0x41b080:
           sub_zero_script_breath_victim_end(fighter);
           return true;
@@ -745,6 +752,37 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           return false;
+        case 0x42b730:
+        case 0x42b7a0:
+          retail_lk_return(fighter);
+          return true;
+        case 0x42bb80:
+          retail_lk_pause_long(fighter);
+          return true;
+        case 0x42bd30:
+          retail_lk_pause_short(fighter);
+          return true;
+        case 0x42bb00:
+          retail_lk_jump_back(fighter);
+          return true;
+        case 0x42b840:
+          retail_lk_recoil(fighter);
+          return true;
+        case 0x42b800:
+          retail_lk_branch_continue(fighter);
+          return true;
+        case 0x42bc90:
+          retail_lk_victim_return(fighter);
+          return true;
+        case 0x42bc10:
+          retail_lk_script_170(fighter);
+          return true;
+        case 0x42bc20:
+          retail_lk_script_180(fighter);
+          return true;
+        case 0x42bc30:
+          retail_lk_script_190(fighter);
+          return true;
         case 0x42be10:
           mk4_mmove_lk_owner_ready(fighter);
           return true;
@@ -2561,15 +2599,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           kai_handstand_victim_tail(fighter);
           return true;
         case 0x488b40:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_bicycle_getup(fighter);
-            return true;
-          }
-          if (owner & 0x3fda6u) {
-            mk4_mmove_side_getup(fighter);
-            return true;
-          }
-          return false;
+          mk4_mmove_side_getup(fighter);
+          return true;
         case 0x488b80:
           reptile_dash_victim_getup(fighter);
           return true;
@@ -3107,6 +3138,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x45b230:
+          if (retail_throw_reaction(fighter->retail_vm.image, argument & 255u) != NULL) {
+            Fighter *victim = mk4_script_release_pair(fighter);
+            battle_react(victim, (int)(argument & 255u));
+            return true;
+          }
           if (owner & 0x4000u) {
             cage_script_opponent_reaction(fighter, (int)(argument & 255u));
             return true;

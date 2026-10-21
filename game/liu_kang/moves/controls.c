@@ -7,9 +7,7 @@ void liu_kang_press_lp(Fighter *fighter) {
 }
 
 void liu_kang_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)           ? retail_sweep_state
-                             : mk4_can_ground_throw(fighter, true) ? liu_kang_enter_lk_throw
-                                                                   : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep_state : mk4_can_ground_throw(fighter, true) ? retail_lk_throw : retail_low_kick);
 }
 
 void liu_kang_press_combo_hk(Fighter *fighter) {

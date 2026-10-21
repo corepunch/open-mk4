@@ -24,7 +24,7 @@
 #define can_slide sub_zero_can_slide
 #define cpu_close_hk sub_zero_cpu_close_hk
 #define cpu_close_hp sub_zero_cpu_close_hp
-#define enter_lk_throw sub_zero_enter_lk_throw
+#define enter_lk_throw retail_lk_throw
 #define enter_throw retail_lp_throw
 #define finish_scene sub_zero_finish_scene
 #define first_fatality_script sub_zero_first_fatality_script
@@ -34,9 +34,6 @@
 #define ground_profile sub_zero_ground_profile
 #define ice_projectile sub_zero_ice_projectile
 #define lk_thrown_script sub_zero_lk_thrown_script
-#define lp_capture_done sub_zero_lp_capture_done
-#define lp_capture_frames_frame_0 sub_zero_lp_capture_frames_frame_0
-#define lp_pair_released sub_zero_lp_pair_released
 #define lp_thrown_cleanup sub_zero_lp_thrown_cleanup
 #define native_blends sub_zero_native_blends
 #define owned_object sub_zero_owned_object
@@ -55,7 +52,6 @@
 #define press_lk sub_zero_press_lk
 #define press_lp sub_zero_press_lp
 #define s_lp_thrown sub_zero_s_lp_thrown
-#define s_throw sub_zero_s_throw
 #define scene_blend_cleanup sub_zero_scene_blend_cleanup
 #define script_air_diagonal_tail sub_zero_script_air_diagonal_tail
 #define script_air_getup sub_zero_script_air_getup
@@ -146,7 +142,6 @@ bool sub_zero_can_ice(const Fighter *fighter);
 bool sub_zero_can_slide(const Fighter *fighter);
 void sub_zero_cpu_close_hk(Fighter *fighter);
 void sub_zero_cpu_close_hp(Fighter *fighter);
-void sub_zero_enter_lk_throw(Fighter *fighter);
 void sub_zero_finish_scene(Fighter *fighter);
 void sub_zero_first_fatality_script(Fighter *fighter);
 void sub_zero_ground_attack(Fighter *fighter, int index);
@@ -155,9 +150,6 @@ void sub_zero_ground_native_tail(Fighter *fighter);
 extern const NativeGroundProfile sub_zero_ground_profile;
 void sub_zero_ice_projectile(Projectile *p);
 void sub_zero_lk_thrown_script(Fighter *victim);
-void sub_zero_lp_capture_done(Fighter *victim);
-void sub_zero_lp_capture_frames_frame_0(Fighter *fighter);
-bool sub_zero_lp_pair_released(const Fighter *victim);
 void sub_zero_lp_thrown_cleanup(Fighter *victim);
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end);
 bool sub_zero_owned_object(const Fighter *fighter, int kind);
@@ -178,10 +170,8 @@ void sub_zero_entry_retail_script_004d2c10(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c78(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2ca0(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2cc8(Fighter *fighter);
-void sub_zero_entry_retail_script_004de490(Fighter *fighter);
 void sub_zero_entry_retail_script_004de4b8(Fighter *fighter);
 void sub_zero_entry_retail_script_004de4e0(Fighter *fighter);
-void sub_zero_entry_retail_script_004de798(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0368(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0378(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0388(Fighter *fighter);
@@ -219,7 +209,6 @@ void sub_zero_entry_retail_script_004e9bd0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter);
 void sub_zero_entry_retail_script_004ed588(Fighter *fighter);
 extern const MoveDef sub_zero_s_lp_thrown;
-extern const MoveDef sub_zero_s_throw;
 void sub_zero_scene_blend_cleanup(Fighter *fighter);
 void sub_zero_script_air_diagonal_tail(Fighter *fighter);
 void sub_zero_script_air_getup(Fighter *victim);

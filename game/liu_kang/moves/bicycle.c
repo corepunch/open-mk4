@@ -17,7 +17,6 @@ static const MoveDef s_bicycle = {.clip = 68, .last = 22, .flags = RETAIL, .acti
 static const MoveDef s_bicycle_victim = {.clip = 136, .last = 23, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_bicycle_release = {.clip = 182, .last = 64, .flags = SF_LOCK, .action = ACTION_RETAIL_100B};
 static const MoveDef s_bicycle_air_release = {.clip = 183, .last = 33, .flags = SF_LOCK, .action = ACTION_RETAIL_100B};
-static const MoveDef s_bicycle_getup = {.clip = 185, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 static const AttackRecord bicycle_record = {0xf851, -0x547a, 0xf5c2, 0x70a3, 84, 84, 0, 0, 0x2666};
 
 static void bicycle_release(Fighter *victim) {
@@ -162,16 +161,6 @@ void liu_kang_bicycle_kick(Fighter *fighter) {
   fighter->sample_override = 0;
   fighter->mmove_cleanup = bicycle_cleanup;
   liu_kang_entry_retail_script_004e8610(fighter);
-}
-
-void liu_kang_liu_script_bicycle_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    liu_kang_thrown_finish(victim);
-    return;
-  }
-  fighter_start_move(victim, S_KNOCKDOWN, &s_bicycle_getup);
-  victim->sample_override = 0;
-  native_play_rows(victim, 15, 1, liu_kang_thrown_finish);
 }
 
 static void bicycle_motion_pose(Fighter *fighter, float pose) {

@@ -20,7 +20,7 @@
 #define cpu_air_lk sonya_cpu_air_lk
 #define cpu_close_hk sonya_cpu_close_hk
 #define cpu_close_hp sonya_cpu_close_hp
-#define enter_lk_throw sonya_enter_lk_throw
+#define enter_lk_throw retail_lk_throw
 #define enter_throw retail_lp_throw
 #define enter_victory sonya_enter_victory
 #define first_fatality sonya_first_fatality
@@ -43,7 +43,6 @@
 #define press_lk sonya_press_lk
 #define press_lp sonya_press_lp
 #define s_knockdown sonya_s_knockdown
-#define s_throw sonya_s_throw
 #define s_victory sonya_s_victory
 #define scene_end_watch sonya_scene_end_watch
 #define script_air_diagonal_tail sonya_script_air_diagonal_tail
@@ -110,7 +109,6 @@ void sonya_cpu_air_hk(Fighter *fighter);
 void sonya_cpu_air_lk(Fighter *fighter);
 void sonya_cpu_close_hk(Fighter *fighter);
 void sonya_cpu_close_hp(Fighter *fighter);
-void sonya_enter_lk_throw(Fighter *fighter);
 void sonya_enter_victory(Fighter *fighter);
 void sonya_first_fatality(Fighter *fighter);
 void sonya_ground_attack(Fighter *fighter, int index);
@@ -129,8 +127,6 @@ void sonya_press_kick(Fighter *fighter);
 void sonya_press_knee_hp(Fighter *fighter);
 void sonya_press_lk(Fighter *fighter);
 void sonya_press_lp(Fighter *fighter);
-void sonya_entry_retail_script_004de360(Fighter *fighter);
-void sonya_entry_retail_script_004de798(Fighter *fighter);
 void sonya_entry_retail_script_004e01c0(Fighter *fighter);
 void sonya_entry_retail_script_004e01d0(Fighter *fighter);
 void sonya_entry_retail_script_004e5930(Fighter *fighter);
@@ -175,7 +171,6 @@ void sonya_entry_retail_script_004ec7a0(Fighter *fighter);
 void sonya_entry_retail_script_004ec7f0(Fighter *fighter);
 void sonya_entry_retail_script_004ed4c0(Fighter *fighter);
 extern const MoveDef sonya_s_knockdown;
-extern const MoveDef sonya_s_throw;
 extern const MoveDef sonya_s_victory;
 void sonya_scene_end_watch(Fighter *fighter);
 void sonya_script_air_diagonal_tail(Fighter *fighter);

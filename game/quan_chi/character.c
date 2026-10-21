@@ -3,7 +3,6 @@
 
 static const MoveDef s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
-const MoveDef quan_chi_s_throw = {.clip = 78, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD};
 
 static const MoveDef s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
@@ -53,7 +52,7 @@ const uint32_t quan_chi_weapon_descriptor[] = {
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &quan_chi_s_throw,
+
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -73,14 +72,6 @@ const CharacterDef mk4_quan_chi = {
     .move_list = NULL,
     .move_list_count = 0,
 };
-
-void quan_chi_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 8);
-}
 
 void quan_chi_entry_retail_script_004e5e28(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 8);

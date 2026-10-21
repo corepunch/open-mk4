@@ -24,7 +24,7 @@ void reptile_press_kick(Fighter *fighter) {
 
 void reptile_press_low_kick(Fighter *fighter) {
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
-    fighter_interrupt(fighter, reptile_lk_throw);
+    fighter_interrupt(fighter, retail_lk_throw);
     return;
   }
 

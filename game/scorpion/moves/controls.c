@@ -6,9 +6,7 @@ void scorpion_press_lp(Fighter *fighter) {
 }
 
 void scorpion_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)           ? retail_sweep_state
-                             : mk4_can_ground_throw(fighter, true) ? scorpion_enter_lk_throw
-                                                                   : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep_state : mk4_can_ground_throw(fighter, true) ? retail_lk_throw : retail_low_kick);
 }
 
 void scorpion_press_combo_hk(Fighter *fighter) {

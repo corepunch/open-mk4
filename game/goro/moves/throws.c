@@ -4,16 +4,6 @@ static const MoveDef s_air_getup = {.clip = 131, .first = 46, .last = 79, .flags
 static const mframe_t air_getup_frames[34] = {{0}};
 static const mmove_t air_getup = {.firstframe = 46, .lastframe = 79, .frame = air_getup_frames, .endfunc = fighter_ready};
 
-void goro_script_lp_pair_start(Fighter *fighter) {
-  /* Native 42b680 acquires and aligns the captured peer; the shared frame
-   * entry already owns that setup and its interruption cleanup. */
-  require((fighter->flags & FF_PAIRED) && (fighter_opponent(fighter)->flags & FF_PAIRED), "Goro LP needs its captured peer");
-}
-
-void goro_lk_throw(Fighter *fighter) {
-  mk4_mmove_throw_start(fighter, &goro_s_throw, &goro_s_knockdown, goro_entry_retail_script_004de2f8);
-}
-
 /* Requested portable extension: Goro's retail BLOCK list (53c99c) is empty.
  * The shared 46aa80 pair, generated 4e5e28/4e5e50 owner and 4e9910 victim
  * streams run on frame tables. */

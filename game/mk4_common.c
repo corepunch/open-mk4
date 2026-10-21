@@ -341,6 +341,10 @@ static void straight_hold(Fighter *fighter) {
   fighter_stop_mmove(fighter);
 }
 
+void mk4_jump_backward(Fighter *fighter) {
+  start_flip(fighter, -fighter->facing, false);
+}
+
 void mk4_jump(Fighter *fighter) {
   int direction = !!(fighter->held & BUTTON_BIT(BUTTON_RIGHT)) - !!(fighter->held & BUTTON_BIT(BUTTON_LEFT));
   if (direction != 0) {

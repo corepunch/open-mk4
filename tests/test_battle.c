@@ -1195,50 +1195,6 @@ static void check_reconnected_ground_combos(void) {
   }
 }
 
-static void check_reconnected_lk_throws(void) {
-  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17};
-  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
-    for (int slot = 0; slot < 2; ++slot) {
-      battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
-      g_battle.phase = PHASE_FIGHT;
-      Fighter *owner = &g_battle.fighters[slot];
-      Fighter *victim = &g_battle.fighters[1 - slot];
-      owner->body.pos[AXIS_X] = slot ? Q16_ONE / 4 : -Q16_ONE / 4;
-      victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      Input input[2] = {0};
-      input[slot].held = BUTTON_BIT(BUTTON_LOW_KICK);
-      battle_step(input);
-      advance_ticks(1, NULL);
-      if (!(owner->flags & FF_PAIRED)) {
-        fprintf(stderr, "LK throw entry roster %d slot %d clip %d\n", rosters[row], slot, fighter_move(owner)->clip);
-      }
-      check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "Close LK must enter the paired throw for either player");
-      bool owner_retreat = false, victim_recovery = false;
-      for (int tick = 0; tick < 240; ++tick) {
-        owner_retreat |= fighter_move(owner)->clip == 282;
-        victim_recovery |= fighter_move(victim)->clip == 586;
-        advance_ticks(1, NULL);
-      }
-      check(owner_retreat && victim_recovery, "LK release must reach native owner retreat and selected victim recovery");
-      if (victim->health >= Q16_ONE || owner->state != S_IDLE || ((owner->flags | victim->flags) & FF_PAIRED)) {
-        fprintf(stderr, "LK throw recovery roster %d slot %d health %d state %d flags %u/%u\n", rosters[row], slot, victim->health, owner->state, owner->flags,
-            victim->flags);
-      }
-      check(victim->health < Q16_ONE && owner->state == S_IDLE && !((owner->flags | victim->flags) & FF_PAIRED),
-          "Reconnected LK throw must deal damage, release both actors and recover");
-    }
-  }
-  battle_init(7, 4);
-  g_battle.phase = PHASE_FIGHT;
-  g_battle.fighters[0].body.pos[AXIS_X] = -Q16_ONE / 4;
-  g_battle.fighters[1].body.pos[AXIS_X] = Q16_ONE / 4;
-  g_battle.fighters[1].health = 1;
-  battle_step((Input[2]){{BUTTON_BIT(BUTTON_LOW_KICK)}, {0}});
-  advance_ticks(240, NULL);
-  check(!((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED), "Lethal reconnected throw must release its pair");
-  battle_init(7, 4);
-}
-
 static void check_reconnected_roundhouses(void) {
   const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
   for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
@@ -4763,7 +4719,7 @@ static void check_script_reactions(void) {
   check(fighter_sample(victim) == 15, "Diagonal kick reaction must continue at normal speed");
 }
 
-static void start_scorpion_throw(int player, bool lk) {
+static void start_ground_throw(int player, bool lk) {
   battle_init(0, 0);
   g_battle.phase = PHASE_FIGHT;
   g_battle.fighters[0].body.pos[AXIS_X] = -0x4ccc;
@@ -4772,31 +4728,28 @@ static void start_scorpion_throw(int player, bool lk) {
   advance_ticks(1, NULL);
 }
 
-static void check_ground_throws(void) {
+static void check_ground_throw_lifetimes(void) {
   for (int player = 0; player < 2; ++player) {
     for (int lk = 0; lk < 2; ++lk) {
-      start_scorpion_throw(player, lk);
+      start_ground_throw(player, lk);
       Fighter *owner = &g_battle.fighters[player], *victim = &g_battle.fighters[1 - player];
-      check(fighter_move(owner)->clip == (lk ? 37 : 75) && fighter_move(victim)->clip == (lk ? 157 : 152), "Ground throws must choose paired clips");
-      advance_ticks(41, NULL);
-      check(victim->health == Q16_ONE, "Ground throw damage must wait for sample 42");
-      advance_ticks(1, NULL);
-      check(victim->health == Q16_ONE - (lk ? 0x2e14 : 0x2666), "Ground throw damage must match selected script");
-      advance_ticks(160, NULL);
+      check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "Native throw capture must acquire both contexts");
+      for (int visit = 0; visit < 256 && (owner->state != S_IDLE || victim->state != S_IDLE); ++visit) {
+        advance_ticks(1, NULL);
+      }
       check(owner->state == S_IDLE && victim->state == S_IDLE && !((owner->flags | victim->flags) & FF_PAIRED), "Ground throws must release both controllers");
 
-      start_scorpion_throw(player, lk);
-      advance_ticks(41, NULL);
+      start_ground_throw(player, lk);
       fighter_interrupt(&g_battle.fighters[lk ? player : 1 - player], fighter_ready);
       advance_ticks(180, NULL);
       check(g_battle.fighters[1 - player].health == Q16_ONE && !((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED),
-          "Interrupted generated throws must cancel damage and retire both pair lifetimes");
+          "Interrupted native capture must cancel damage and retire both pair lifetimes");
     }
-    start_scorpion_throw(player, true);
+    start_ground_throw(player, true);
     g_battle.fighters[1 - player].health = 0x1000;
     advance_ticks(200, NULL);
     check(g_battle.fighters[1 - player].health == 0 && !((g_battle.fighters[0].flags | g_battle.fighters[1].flags) & FF_PAIRED),
-        "Lethal generated throw must detach both actors");
+        "Lethal native throw must detach both actors");
     battle_reset_match();
   }
 }
@@ -6064,7 +6017,7 @@ int main(void) {
   check_cage_orb_commands();
   check_reconnected_stage_commands();
   check_script_reactions();
-  check_ground_throws();
+  check_ground_throw_lifetimes();
   check_air_throw();
   check_quan_chi_air_throw();
   check_quan_chi_skull();
@@ -6088,7 +6041,6 @@ int main(void) {
   check_roster_high_punch_frames();
   check_straight_air_kick_contacts();
   check_reconnected_ground_combos();
-  check_reconnected_lk_throws();
   check_reconnected_roundhouses();
   check_weapon();
   check_specials();

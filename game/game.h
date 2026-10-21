@@ -848,7 +848,7 @@ typedef struct SceneActor {
 #define MAX_SOUND_EVENTS 16
 
 struct Battle {
-  const Mk4Image *retail_scripts; /* borrowed script data; NULL keeps existing generated entries */
+  const Mk4Image *retail_scripts; /* borrowed script data; NULL uses the shared retail image */
   const Assets *assets;
   Fighter fighters[2];
   SceneActor scene_actors[MAX_SCENE_ACTORS];

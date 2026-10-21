@@ -18,7 +18,7 @@
     }
   },
   "integration_source": "game/kitana/character.c",
-  "inventory_sha256": "f488c4e2303de415b643e6af5cbf63a300aab4fbc9d656d1661ad2ecde7e687f",
+  "inventory_sha256": "8aaff962c68568884db5ebababc2194ca6a5fdbfaf1a550128b77a12af1ad193",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
@@ -131,9 +131,9 @@
       "symbol": "retail_vm_enter"
     },
     "lk_throw": {
-      "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_throw"
     },
     "low_kick": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
@@ -495,36 +495,6 @@
     "symbol": "native_weapon"
   },
   "runtime_scripts": {
-    "0x4e01a0": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0158": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0148": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0188": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0138": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e0118": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
-    },
     "0x4de360": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
@@ -534,6 +504,36 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
     },
     "0x4e01c0": {
       "source": "game/retail_vm.c",

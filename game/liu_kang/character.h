@@ -20,7 +20,7 @@
 #define cpu_air_lk liu_kang_cpu_air_lk
 #define cpu_close_hk liu_kang_cpu_close_hk
 #define cpu_close_hp liu_kang_cpu_close_hp
-#define enter_lk_throw liu_kang_enter_lk_throw
+#define enter_lk_throw retail_lk_throw
 #define enter_throw retail_lp_throw
 #define finish_scene liu_kang_finish_scene
 #define fireball_mesh liu_kang_fireball_mesh
@@ -35,7 +35,6 @@
 #define liu_script_air_lp_tail liu_kang_liu_script_air_lp_tail
 #define liu_script_air_return liu_kang_liu_script_air_return
 #define liu_script_back_lp_tail liu_kang_liu_script_back_lp_tail
-#define liu_script_bicycle_getup liu_kang_liu_script_bicycle_getup
 #define liu_script_bicycle_motion liu_kang_liu_script_bicycle_motion
 #define liu_script_close_hp_tail liu_kang_liu_script_close_hp_tail
 #define liu_script_combo_hp_tail liu_kang_liu_script_combo_hp_tail
@@ -72,7 +71,6 @@
 #define press_knee_hp liu_kang_press_knee_hp
 #define press_lk liu_kang_press_lk
 #define press_lp liu_kang_press_lp
-#define s_throw liu_kang_s_throw
 #define start_fatality liu_kang_start_fatality
 #define sword_attacks liu_kang_sword_attacks
 #define throw_disarm liu_kang_throw_disarm
@@ -109,7 +107,6 @@ void liu_kang_cpu_air_hp(Fighter *fighter);
 void liu_kang_cpu_air_lk(Fighter *fighter);
 void liu_kang_cpu_close_hk(Fighter *fighter);
 void liu_kang_cpu_close_hp(Fighter *fighter);
-void liu_kang_enter_lk_throw(Fighter *fighter);
 void liu_kang_finish_scene(Fighter *fighter);
 extern const MeshAnimation liu_kang_fireball_mesh;
 void liu_kang_fireball_spawn(Fighter *fighter, int type);
@@ -133,7 +130,6 @@ void liu_kang_liu_script_air_lk_tail(Fighter *fighter);
 void liu_kang_liu_script_air_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
-void liu_kang_liu_script_bicycle_getup(Fighter *victim);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
 void liu_kang_liu_script_close_hp_tail(Fighter *fighter);
 void liu_kang_liu_script_combo_hp_tail(Fighter *fighter);
@@ -167,11 +163,9 @@ void liu_kang_press_kick(Fighter *fighter);
 void liu_kang_press_knee_hp(Fighter *fighter);
 void liu_kang_press_lk(Fighter *fighter);
 void liu_kang_press_lp(Fighter *fighter);
-void liu_kang_entry_retail_script_004de3b0(Fighter *fighter);
 void liu_kang_entry_retail_script_004de410(Fighter *fighter);
 void liu_kang_entry_retail_script_004de428(Fighter *fighter);
 void liu_kang_entry_retail_script_004de468(Fighter *fighter);
-void liu_kang_entry_retail_script_004de798(Fighter *fighter);
 void liu_kang_entry_retail_script_004dfff8(Fighter *fighter);
 void liu_kang_entry_retail_script_004e0020(Fighter *fighter);
 void liu_kang_entry_retail_script_004e60b8(Fighter *fighter);
@@ -205,7 +199,6 @@ void liu_kang_entry_retail_script_004ec7f0(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed678(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter);
-extern const MoveDef liu_kang_s_throw;
 void liu_kang_start_fatality(Fighter *fighter, int id);
 extern const WeaponStrike liu_kang_sword_attacks[4];
 void liu_kang_throw_disarm(Fighter *victim);

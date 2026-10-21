@@ -12,7 +12,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_block jax_s_block
 #define s_crouch jax_s_crouch
-#define s_throw jax_s_throw
 #define s_thrown jax_s_thrown
 
 void jax_air_throw(Fighter *fighter);
@@ -65,8 +64,6 @@ void jax_press_lp(Fighter *fighter);
 void jax_script_air_finish(Fighter *fighter);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
 void jax_weapon_action(Fighter *fighter);
-void jax_entry_retail_script_004de2f8(Fighter *fighter);
-void jax_entry_retail_script_004de798(Fighter *fighter);
 void jax_entry_retail_script_004e1390(Fighter *fighter);
 void jax_entry_retail_script_004e13a0(Fighter *fighter);
 void jax_entry_retail_script_004e13b0(Fighter *fighter);
@@ -90,7 +87,6 @@ void jax_entry_retail_script_004e8150(Fighter *fighter);
 void jax_entry_retail_script_004ed090(Fighter *fighter);
 extern const MoveDef jax_s_block;
 extern const MoveDef jax_s_crouch;
-extern const MoveDef jax_s_throw;
 extern const MoveDef jax_s_thrown;
 
 extern const ButtonTable jax_diagonal_air;
@@ -105,7 +101,6 @@ void jax_script_close_hk_tail(Fighter *fighter);
 void jax_entry_retail_script_004e61e0(Fighter *fighter);
 void jax_entry_retail_script_004e69b0(Fighter *fighter);
 void jax_entry_retail_script_004e6190(Fighter *fighter);
-void jax_lk_throw(Fighter *fighter);
 void jax_entry_retail_script_004e5e18(Fighter *fighter);
 void jax_entry_retail_script_004e98e8(Fighter *fighter);
 void jax_script_weapon_draw_finish(Fighter *fighter);

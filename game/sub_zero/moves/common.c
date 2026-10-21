@@ -136,16 +136,7 @@ void sub_zero_script_lp_owner_return(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
-void sub_zero_lp_capture_done(Fighter *victim) {
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  mk4_script_stop_body(victim);
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
-}
-
 /* Owner submits paired samples; the victim only watches capture lifetime. */
-void sub_zero_lp_capture_frames_frame_0(Fighter *fighter) {
-  fighter->mmove_hold = !sub_zero_lp_pair_released(fighter);
-}
 
 bool sub_zero_owned_object(const Fighter *fighter, int kind) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {

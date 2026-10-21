@@ -17,7 +17,6 @@
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
-const MoveDef liu_kang_s_throw = {.clip = 79, .last = 60, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -27,7 +26,7 @@ static const MoveDef s_victory = {119, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &liu_kang_s_throw,
+
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -141,10 +140,6 @@ const CharacterDef mk4_liu_kang = {
     .move_list_count = COUNT(move_list),
 };
 
-void liu_kang_entry_retail_script_004de3b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de3b0, fighter_ready, 3);
-}
-
 void liu_kang_entry_retail_script_004de410(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);
 }
@@ -155,10 +150,6 @@ void liu_kang_entry_retail_script_004de428(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004de468(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de468, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004dfff8(Fighter *fighter) {

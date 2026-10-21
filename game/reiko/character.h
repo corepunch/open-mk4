@@ -15,7 +15,6 @@ enum {
 };
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_throw reiko_s_throw
 
 void reiko_press_air_hk(Fighter *fighter);
 void reiko_press_air_hp(Fighter *fighter);
@@ -31,10 +30,8 @@ void reiko_script_air_finish(Fighter *fighter);
 void reiko_script_lp_end(Fighter *fighter);
 void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
-void reiko_entry_retail_script_004de2f8(Fighter *fighter);
 void reiko_entry_retail_script_004de664(Fighter *fighter);
 void reiko_entry_retail_script_004de668(Fighter *fighter);
-void reiko_entry_retail_script_004de798(Fighter *fighter);
 void reiko_entry_retail_script_004e61f8(Fighter *fighter);
 void reiko_entry_retail_script_004e63d8(Fighter *fighter);
 void reiko_entry_retail_script_004e6500(Fighter *fighter);
@@ -42,7 +39,6 @@ void reiko_entry_retail_script_004e6658(Fighter *fighter);
 void reiko_entry_retail_script_004e6710(Fighter *fighter);
 void reiko_entry_retail_script_004e9b40(Fighter *fighter);
 void reiko_entry_retail_script_004e9bd0(Fighter *fighter);
-extern const MoveDef reiko_s_throw;
 
 extern const ButtonTable reiko_diagonal_air;
 void reiko_press_air_hk(Fighter *fighter);
@@ -57,7 +53,6 @@ void reiko_script_close_hk_tail(Fighter *fighter);
 void reiko_entry_retail_script_004e61e0(Fighter *fighter);
 void reiko_entry_retail_script_004e69b0(Fighter *fighter);
 void reiko_entry_retail_script_004e6190(Fighter *fighter);
-void reiko_lk_throw(Fighter *fighter);
 void reiko_weapon_action(Fighter *fighter);
 void reiko_script_weapon_draw_finish(Fighter *fighter);
 void reiko_entry_retail_script_004e62c0(Fighter *fighter);

@@ -12,10 +12,7 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_block shinnok_s_block
 #define s_crouch shinnok_s_crouch
-#define s_throw shinnok_s_throw
 
-void shinnok_entry_retail_script_004de2f8(Fighter *fighter);
-void shinnok_entry_retail_script_004de798(Fighter *fighter);
 void shinnok_entry_retail_script_004e61f8(Fighter *fighter);
 void shinnok_entry_retail_script_004e63d8(Fighter *fighter);
 void shinnok_entry_retail_script_004e6500(Fighter *fighter);
@@ -23,7 +20,6 @@ void shinnok_entry_retail_script_004e6658(Fighter *fighter);
 void shinnok_entry_retail_script_004e6710(Fighter *fighter);
 extern const MoveDef shinnok_s_block;
 extern const MoveDef shinnok_s_crouch;
-extern const MoveDef shinnok_s_throw;
 void shinnok_fan_tail(Fighter *fighter);
 void shinnok_fan_victory(Fighter *fighter);
 void shinnok_fatality_contact_hold(Fighter *fighter);
@@ -56,7 +52,6 @@ void shinnok_script_close_hk_tail(Fighter *fighter);
 void shinnok_entry_retail_script_004e61e0(Fighter *fighter);
 void shinnok_entry_retail_script_004e69b0(Fighter *fighter);
 void shinnok_entry_retail_script_004e6190(Fighter *fighter);
-void shinnok_lk_throw(Fighter *fighter);
 void shinnok_entry_retail_script_004e6270(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void shinnok_script_draw_equip(Fighter *fighter);

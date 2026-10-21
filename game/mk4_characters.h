@@ -41,6 +41,7 @@ void sonya_generated_reaction(Fighter *fighter);
 void kitana_generated_reaction(Fighter *fighter);
 void mk4_walk(Fighter *fighter);
 void mk4_jump(Fighter *fighter);
+void mk4_jump_backward(Fighter *fighter);
 void mk4_land(Fighter *fighter);
 void mk4_return_to_stance(Fighter *fighter);
 void mk4_flip_apex_return(Fighter *fighter);

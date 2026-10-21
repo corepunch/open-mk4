@@ -15,7 +15,7 @@
 #define can_burn_fatality retail_can_finish_range
 #define can_spear scorpion_can_spear
 #define can_teleport scorpion_can_teleport
-#define enter_lk_throw scorpion_enter_lk_throw
+#define enter_lk_throw retail_lk_throw
 #define enter_throw retail_lp_throw
 #define fire_script scorpion_fire_script
 #define ground_attack scorpion_ground_attack
@@ -37,7 +37,6 @@
 #define press_lk scorpion_press_lk
 #define press_lp scorpion_press_lp
 #define s_teleport_land scorpion_s_teleport_land
-#define s_throw scorpion_s_throw
 #define script_air_diagonal_tail scorpion_script_air_diagonal_tail
 #define script_air_hp_tail scorpion_script_air_hp_tail
 #define script_air_kick_tail scorpion_script_air_kick_tail
@@ -120,7 +119,6 @@ enum {
 
 bool scorpion_can_spear(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);
-void scorpion_enter_lk_throw(Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
 void scorpion_ground_attack(Fighter *fighter, int index);
 void scorpion_ground_native_next(Fighter *fighter);
@@ -143,10 +141,8 @@ void scorpion_entry_retail_script_004d2e88(Fighter *fighter);
 void scorpion_entry_retail_script_004d2eb0(Fighter *fighter);
 void scorpion_entry_retail_script_004d2ef8(Fighter *fighter);
 void scorpion_entry_retail_script_004d2f10(Fighter *fighter);
-void scorpion_entry_retail_script_004de2f8(Fighter *fighter);
 void scorpion_entry_retail_script_004de318(Fighter *fighter);
 void scorpion_entry_retail_script_004de328(Fighter *fighter);
-void scorpion_entry_retail_script_004de798(Fighter *fighter);
 void scorpion_entry_retail_script_004e0278(Fighter *fighter);
 void scorpion_entry_retail_script_004e0288(Fighter *fighter);
 void scorpion_entry_retail_script_004e0298(Fighter *fighter);
@@ -191,7 +187,6 @@ void scorpion_entry_retail_script_004ec918(Fighter *fighter);
 void scorpion_entry_retail_script_004ed448(Fighter *fighter);
 void scorpion_entry_retail_script_004ed4a8(Fighter *fighter);
 extern const MoveDef scorpion_s_teleport_land;
-extern const MoveDef scorpion_s_throw;
 void scorpion_air_throw(Fighter *fighter);
 void scorpion_beast_fatality(Fighter *fighter);
 void scorpion_burn_fatality(Fighter *fighter);

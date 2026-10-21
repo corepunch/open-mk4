@@ -21,7 +21,7 @@ void reiko_press_high_kick(Fighter *fighter) {
 
 void reiko_press_low_kick(Fighter *fighter) {
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, true)) {
-    fighter_interrupt(fighter, reiko_lk_throw);
+    fighter_interrupt(fighter, retail_lk_throw);
     return;
   }
 

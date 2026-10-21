@@ -2,9 +2,6 @@
 
 static void throw_getup_land(Fighter *victim);
 static void lk_victim_land(Fighter *victim);
-static void ground_throw(Fighter *fighter);
-static const MoveDef s_lk_throw = {.clip = 43, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0501};
-static const MoveDef s_lk_thrown = {.clip = 163, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_air_owner = {.clip = 77, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
 static const MoveDef s_air_victim = {.clip = 161, .last = 39, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
@@ -26,18 +23,6 @@ static void throw_getup_land(Fighter *victim) {
 
 void sonya_script_throw_getup(Fighter *victim) {
   native_await(victim, native_grounded, throw_getup_land);
-}
-
-static void ground_throw(Fighter *fighter) {
-  if (!mk4_can_ground_throw(fighter, true)) {
-    fighter_ready(fighter);
-    return;
-  }
-  mk4_mmove_throw_start(fighter, &s_lk_throw, &s_lk_thrown, sonya_entry_retail_script_004de360);
-}
-
-void sonya_enter_lk_throw(Fighter *fighter) {
-  ground_throw(fighter);
 }
 
 static void lk_victim_land(Fighter *victim) {

@@ -130,11 +130,6 @@ static void press_air_ground_hp(Fighter *fighter) {
   }
 }
 
-bool sub_zero_lp_pair_released(const Fighter *victim) {
-  const Fighter *owner = fighter_opponent(victim);
-  return !(owner->flags & FF_PAIRED) || owner->pending != NULL;
-}
-
 void sub_zero_script_air_hp_tail(Fighter *fighter) {
   air_native_tail(fighter, 0, 0);
 }

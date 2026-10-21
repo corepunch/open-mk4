@@ -15,7 +15,6 @@ enum {
 };
 
 #define s_lp_thrown reptile_s_lp_thrown
-#define s_throw reptile_s_throw
 
 void reptile_press_air_hk(Fighter *fighter);
 void reptile_press_air_hp(Fighter *fighter);
@@ -28,8 +27,6 @@ void reptile_press_punch(Fighter *fighter);
 void reptile_script_air_finish(Fighter *fighter);
 void reptile_script_lp_return(Fighter *fighter);
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
-void reptile_entry_retail_script_004de2f8(Fighter *fighter);
-void reptile_entry_retail_script_004de798(Fighter *fighter);
 void reptile_entry_retail_script_004e61f8(Fighter *fighter);
 void reptile_entry_retail_script_004e63d8(Fighter *fighter);
 void reptile_entry_retail_script_004e6500(Fighter *fighter);
@@ -41,7 +38,6 @@ void reptile_entry_retail_script_004e9620(Fighter *fighter);
 void reptile_entry_retail_script_004e9bd0(Fighter *fighter);
 void reptile_entry_retail_script_004ed1e8(Fighter *fighter);
 extern const MoveDef reptile_s_lp_thrown;
-extern const MoveDef reptile_s_throw;
 
 extern const ButtonTable reptile_diagonal_air;
 void reptile_press_air_hk(Fighter *fighter);
@@ -56,7 +52,6 @@ void reptile_script_close_hk_tail(Fighter *fighter);
 void reptile_entry_retail_script_004e61e0(Fighter *fighter);
 void reptile_entry_retail_script_004e69b0(Fighter *fighter);
 void reptile_entry_retail_script_004e6190(Fighter *fighter);
-void reptile_lk_throw(Fighter *fighter);
 void reptile_input_47a690(Fighter *fighter);
 void reptile_input_47afe0(Fighter *fighter);
 bool reptile_can_dash(const Fighter *fighter);

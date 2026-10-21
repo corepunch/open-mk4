@@ -19,7 +19,6 @@ const uint32_t goro_retail_weapon_descriptor[] = {
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {603, 18, 0, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {602, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-const MoveDef goro_s_throw = {604, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 static const MoveDef s_block = {595, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {593, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
@@ -30,7 +29,7 @@ static const MoveDef s_victory = {594, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &goro_s_throw,
+
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &goro_s_knockdown,
@@ -76,16 +75,8 @@ const CharacterDef mk4_goro = {
     .move_list_count = 0,
 };
 
-void goro_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 15);
-}
-
 void goro_entry_retail_script_004de6e4(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de6e4, fighter_ready, 15);
-}
-
-void goro_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 15);
 }
 
 void goro_entry_retail_script_004de7e8(Fighter *fighter) {

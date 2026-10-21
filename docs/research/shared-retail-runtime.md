@@ -676,3 +676,36 @@ clip/hold/get-up chain retires playback ownership; it adds no fighter timing or
 balance expectations. Runtime checks, strict roster audits, source gates and
 formatting pass. These complete the missing nine LK victim entries needed
 before selecting the correct LK scripts.
+
+## Retail-selected LK throws for every roster slot
+
+LK startup now reads native table4ddfb8, including native48e490's16->2 and
+17->4 remaps. A shared native boundary supplies capture and each original
+routine's literal script-enter operand. The twelve copied Scorpion selections
+are replaced by actual retail selections. Original words supply animation,
+paired progression, authored branches and damage. Native continuation entries,
+impact voice list4ea8a0, retained-cursor victim reactions and source get-up
+record4ea200 are shared once. The optional42b930 pair-shift task uses our circular
+arena/camera heading adaptation and retains its independent native lifetime;
+original camera-side swapping remains the existing engine geometry adaptation.
+
+Eighteen private LK startups, all eighteen C throw state seeds, thirty-six
+uncalled VM entry adapters and seven empty throw modules are removed. Shared
+unbound capture views replace fighter configuration. The remaining per-fighter
+modules still contain other native/controller migration inputs.
+
+The research catalogue now verifies its native selections against the EXE table
+and indexes the correct roots rather than counting copied Scorpion fragments.
+The resulting count is1,101 interpreted roots across18 slots (the earlier1,109
+count included those wrong selections). Runtime manifests and fingerprints are
+reviewed against these original native/script queries. No script C is generated.
+
+Shared VM checks, all strict roster audits, native source gates, formatting,
+six helper-navigation checks and seven port-navigation checks pass. A small
+runtime fixture edits the loaded LK target and verifies model-independent
+selection plus pair/victim continuation retirement. The obsolete twelve-fighter
+Scorpion-recovery matrix and exact-tick ground-throw damage assertions are
+retired; existing capture, interruption and KO lifetime checks remain and pass.
+Battle integration proceeds to its next exact-tick air-throw damage assertion,
+so the broad battle suite is not reported as passing. The SDL self-test passes
+all18 rigs and11 arenas. No new fighter timing/damage matrices were added.

@@ -187,3 +187,12 @@ uint32_t retail_reaction_target(const Mk4Image *image, unsigned reaction) {
   require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail reaction native");
   return target;
 }
+
+uint32_t retail_lk_target(const Mk4Image *image, unsigned character) {
+  require(character < MK4_ROSTER_COUNT, "Invalid native LK roster slot");
+  /* Native48e490 remaps17 to4, unlike the script selector's17 to7. */
+  unsigned slot = character == 16 ? 2 : character == 17 ? 4 : character;
+  uint32_t target = mk4_image_u32(image, 0x4ddfb8 + slot * 4);
+  require(target >= 0x400000 && target < 0x4d0000, "Invalid native LK entry");
+  return target;
+}

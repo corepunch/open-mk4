@@ -4,8 +4,6 @@
 const MoveDef shinnok_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
 
-const MoveDef shinnok_s_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD, .action = ACTION_RETAIL_0500};
-
 const MoveDef shinnok_s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
@@ -44,7 +42,7 @@ static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping, [ST
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &shinnok_s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &shinnok_s_throw,
+
   [S_BLOCK] = &shinnok_s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -64,14 +62,6 @@ const CharacterDef mk4_shinnok = {
     .move_list = NULL,
     .move_list_count = 0,
 };
-
-void shinnok_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 6);
-}
-
-void shinnok_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 6);
-}
 
 void shinnok_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 6);

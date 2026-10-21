@@ -16,7 +16,7 @@
 #define cpu_air_lk kitana_cpu_air_lk
 #define cpu_close_hk kitana_cpu_close_hk
 #define cpu_close_hp kitana_cpu_close_hp
-#define enter_lk_throw kitana_enter_lk_throw
+#define enter_lk_throw retail_lk_throw
 #define enter_throw retail_lp_throw
 #define enter_victory kitana_enter_victory
 #define ground_attack kitana_ground_attack
@@ -38,7 +38,6 @@
 #define press_lk kitana_press_lk
 #define press_lp kitana_press_lp
 #define s_knockdown kitana_s_knockdown
-#define s_throw kitana_s_throw
 #define s_victory kitana_s_victory
 #define scene_end_watch kitana_scene_end_watch
 #define script_air_diagonal_tail kitana_script_air_diagonal_tail
@@ -101,7 +100,6 @@ void kitana_cpu_air_hk(Fighter *fighter);
 void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
 void kitana_cpu_close_hp(Fighter *fighter);
-void kitana_enter_lk_throw(Fighter *fighter);
 void kitana_enter_victory(Fighter *fighter);
 void kitana_ground_attack(Fighter *fighter, int index);
 void kitana_ground_native_next(Fighter *fighter);
@@ -136,8 +134,6 @@ void kitana_press_kick(Fighter *fighter);
 void kitana_press_knee_hp(Fighter *fighter);
 void kitana_press_lk(Fighter *fighter);
 void kitana_press_lp(Fighter *fighter);
-void kitana_entry_retail_script_004de360(Fighter *fighter);
-void kitana_entry_retail_script_004de798(Fighter *fighter);
 void kitana_entry_retail_script_004e01d0(Fighter *fighter);
 void kitana_entry_retail_script_004e5940(Fighter *fighter);
 void kitana_entry_retail_script_004e5960(Fighter *fighter);
@@ -182,7 +178,6 @@ void kitana_entry_retail_script_004ed268(Fighter *fighter);
 void kitana_entry_retail_script_004ed2c0(Fighter *fighter);
 void kitana_entry_retail_script_004ed4c0(Fighter *fighter);
 extern const MoveDef kitana_s_knockdown;
-extern const MoveDef kitana_s_throw;
 extern const MoveDef kitana_s_victory;
 void kitana_scene_end_watch(Fighter *fighter);
 void kitana_script_air_diagonal_tail(Fighter *fighter);

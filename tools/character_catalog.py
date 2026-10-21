@@ -772,6 +772,30 @@ def _moves_for(character):
 NO_AIR_THROW = (5, 6, 7, 9, 10, 11, 12, 14)
 
 
+# Research index of the checked4ddfb8 native table and each entry's literal
+# script operand. Runtime selection reads the table itself, never this index.
+LK_NATIVE_SELECTION = (0x42bdd0, 0x42bce0, 0x42bed0, 0x42c040, 0x42c180, 0x42bda0,
+                       0x42bad0, 0x42bbe0, 0x42bc40, 0x42b7e0, 0x42bb50, 0x42bd10,
+                       0x42b770, 0x42b770, 0x42b700, 0x42c750, 0x42bed0, 0x42c180)
+LK_SCRIPT_ROOTS = {
+    0x42bdd0: (0x4de2f8, 0x4de318, 0x4de328),
+    0x42bce0: (0x4de218, 0x4e99c0),
+    0x42bed0: (0x4de360,),
+    0x42c040: (0x4de3b0, 0x4de410, 0x4de428, 0x4de468, 0x4de478, 0x4e9a90),
+    0x42c180: (0x4de490, 0x4de4b8, 0x4de4e0, 0x4e9ee0),
+    0x42bda0: (0x4de2a0, 0x4e9a20),
+    0x42bad0: (0x4de088,),
+    0x42bb50: (0x4de0e8,),
+    0x42bc40: (0x4de1b0, 0x4e99e0),
+    0x42b7e0: (0x4de038, 0x4de060),
+    0x42bbe0: (0x4de138, 0x4de170, 0x4de180, 0x4de190),
+    0x42bd10: (0x4de258, 0x4e99f0),
+    0x42b770: (0x4ddff8, 0x4e99c0),
+    0x42b700: (0x4de3d0, 0x4ea398, 0x4ea3c0, 0x4ea3d0),
+    0x42c750: (0x4de720, 0x4de840),
+}
+
+
 def moves_for(character):
     result = dict(_moves_for(character))
     if character in NO_AIR_THROW:
@@ -781,5 +805,10 @@ def moves_for(character):
         result['air_kick'] = entry
         entry['scripts'] = tuple(entry['scripts']) + (('narrow miss reversal', 0x4e6270),)
         entry['contacts'] = (('B', 40),)
+    selected = LK_NATIVE_SELECTION[character]
+    result['lk_throw'] = move(0x42b6b0,
+                              tuple(('native-selected script' if index == 0 else 'native continuation', root)
+                                    for index, root in enumerate(LK_SCRIPT_ROOTS[selected])),
+                              native=(('selected native entry', selected),))
     result['high_punch'] = dict(result['high_punch'], contacts=(('A', 0),))
     return result

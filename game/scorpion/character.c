@@ -18,7 +18,6 @@ static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NUL
 /* The jab graph alternates an opening/recovery with a second clip. Contact
  * requests at phase boundaries execute before the next branch is committed. */
 
-const MoveDef scorpion_s_throw = {.clip = 75, .last = 64, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
@@ -28,7 +27,7 @@ static const MoveDef s_victory = {115, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_THROW] = &scorpion_s_throw,
+
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
   [S_KNOCKDOWN] = &s_knockdown,
@@ -130,20 +129,12 @@ void scorpion_entry_retail_script_004d2f10(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4d2f10, fighter_ready, 0);
 }
 
-void scorpion_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004de318(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de318, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004de328(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de328, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0278(Fighter *fighter) {

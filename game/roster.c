@@ -53,7 +53,7 @@ const CharacterDef *roster_def(int index) {
     definitions[index].ground = identities[index].ground;
     require(definitions[index].move_count == S_COUNT, "Native state view has an invalid shape");
     for (int state = 0; state < S_COUNT; ++state) {
-      bool retail_attack = state >= S_PUNCH && state <= S_UPPERCUT;
+      bool retail_attack = state >= S_PUNCH && state <= S_THROW;
       states[index][state] = state == S_IDLE || state == S_WALK || retail_attack ? (MoveDef){.clip = -1, .last = MOVE_END} : *roster[index]->moves[state];
       entries[index][state] = roster[index]->enter != NULL ? roster[index]->enter[state] : NULL;
       if (retail_attack) {
