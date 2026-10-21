@@ -57,8 +57,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/fujin/moves/spike.c",
-      "symbol": "fujin_entry_spike",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46a7b0": {
@@ -140,8 +140,8 @@
       "evidence": "Fujin roundhouse command starts generated stream 4e6800 and its native startup selector."
     },
     "spike_fatality": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Fujin spike fatality starts generated stream 4e6950 and shared scene continuation."
     },
     "sweep": {
@@ -532,8 +532,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/fujin/moves/spike.c",
-      "symbol": "fujin_entry_spike",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x47bf60": {

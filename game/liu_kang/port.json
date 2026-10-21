@@ -160,8 +160,8 @@
     },
     "spike_fatality": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_spike_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish"
     },
     "sweep": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -275,8 +275,8 @@
     "175": {
       "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
       "evidence": "4ea4e8[175] -> 0x4836e0; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_script_spike_tail"
+      "source": "game/script.c",
+      "symbol": "mk4_script_spike_tail"
     },
     "176": {
       "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",

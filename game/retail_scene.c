@@ -2,6 +2,7 @@
 #include "retail_vm.h"
 #include "mk4_characters.h"
 #include "script.h"
+#include "native.h"
 
 /* 43d4b0 selects the cycle from the captured peer, not the active fighter.
  * The native routines own the counter and scene; retail words own playback. */
@@ -55,4 +56,23 @@ void retail_fan_victory(Fighter *fighter) {
 void retail_fan_victim_end(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
   fighter_finish_mmove(fighter, NULL);
+}
+
+static void spike_script_enter(Fighter *fighter) {
+  retail_vm_enter(fighter, 0x4e6950, fighter_ready);
+}
+
+static void retail_spike_delay(Fighter *fighter) {
+  int wait = 30 - g_battle.phase_ticks;
+  if (wait > 0) {
+    native_hold(fighter, wait, spike_script_enter);
+  } else {
+    spike_script_enter(fighter);
+  }
+}
+
+void retail_spike_finish(Fighter *fighter) {
+  if (mk4_begin_stage_finish(fighter, FINISH_SPIKE)) {
+    retail_spike_delay(fighter);
+  }
 }

@@ -52,8 +52,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/noob_saibot/moves/spike.c",
-      "symbol": "noob_saibot_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
@@ -134,8 +134,8 @@
     },
     "spike_fatality": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_spike_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish"
     },
     "sweep": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -505,8 +505,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/noob_saibot/moves/spike.c",
-      "symbol": "noob_saibot_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46aba0": {

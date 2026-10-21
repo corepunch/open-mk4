@@ -98,6 +98,7 @@ for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub
 
 # This scene has one native coordinator for all fighters, with direct retail words.
 for _character in SPECIFIC:
+    SPECIFIC[_character]['spike_fatality'] = ('game/retail_scene.c', 'retail_spike_finish')
     SPECIFIC[_character]['fan_fatality'] = ('game/retail_scene.c', 'retail_fan_finish')
     SPECIFIC[_character]['high_punch'] = ('game/native_combat.c', 'retail_high_punch')
     SPECIFIC[_character]['jab'] = ('game/retail_combat.c', 'retail_jab')

@@ -42,4 +42,5 @@ void retail_press_uppercut(Fighter *fighter);
 
 void retail_finish_first(Fighter *fighter);
 void retail_finish_second(Fighter *fighter);
+void retail_spike_finish(Fighter *fighter);
 #endif

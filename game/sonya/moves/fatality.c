@@ -2,16 +2,6 @@
 
 static void script_victory(Fighter *fighter);
 
-void sonya_arena_fatality(Fighter *fighter, int id) {
-  if (!battle_begin_finisher(fighter, id)) {
-    fighter_ready(fighter);
-    return;
-  }
-  mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, id == FINISH_FAN ? 130 : 20, 0);
-  mk4_script_scene_pose(fighter_peer(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
-  (id == FINISH_FAN ? retail_fan_start : sonya_spike_start)(fighter);
-}
-
 /* Native scenes retain independent victims, blends, particles and teardown.
  * Every VM playback/repeat below is a generated function, including result
  * poses that continue until the ordinary round/reset lifetime ends. */

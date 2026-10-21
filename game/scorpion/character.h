@@ -81,7 +81,6 @@
 #define script_spear_done scorpion_script_spear_done
 #define script_spear_pull scorpion_script_spear_pull
 #define script_spear_return scorpion_script_spear_return
-#define script_spike_tail scorpion_script_spike_tail
 #define script_teleport_land scorpion_script_teleport_land
 #define script_teleport_motion scorpion_script_teleport_motion
 #define script_teleport_victim_tail scorpion_script_teleport_victim_tail
@@ -89,7 +88,6 @@
 #define script_weapon_ready scorpion_script_weapon_ready
 #define spear_stun_script scorpion_spear_stun_script
 #define special_ready scorpion_special_ready
-#define spike_start scorpion_spike_start
 #define spin_script scorpion_spin_script
 #define start_fatality scorpion_start_fatality
 #define sword_spin_control scorpion_sword_spin_control
@@ -184,7 +182,6 @@ void scorpion_entry_retail_script_004e6658(Fighter *fighter);
 void scorpion_entry_retail_script_004e66d0(Fighter *fighter);
 void scorpion_entry_retail_script_004e66f0(Fighter *fighter);
 void scorpion_entry_retail_script_004e6710(Fighter *fighter);
-void scorpion_entry_retail_script_004e6950(Fighter *fighter);
 void scorpion_entry_retail_script_004e69b0(Fighter *fighter);
 void scorpion_entry_retail_script_004e6d08(Fighter *fighter);
 void scorpion_entry_retail_script_004e87b0(Fighter *fighter);
@@ -209,7 +206,6 @@ void scorpion_fire(Fighter *fighter);
 void scorpion_hk(Fighter *fighter);
 void scorpion_hp(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
-void scorpion_spike_fatality(Fighter *fighter);
 void scorpion_teleport(Fighter *fighter);
 void scorpion_weapon(Fighter *fighter);
 void scorpion_script_air_diagonal_tail(Fighter *fighter);
@@ -255,7 +251,6 @@ void scorpion_script_spawn_spear(Fighter *fighter, int type);
 void scorpion_script_spear_done(Fighter *fighter);
 void scorpion_script_spear_pull(Fighter *fighter);
 void scorpion_script_spear_return(Fighter *fighter);
-void scorpion_script_spike_tail(Fighter *fighter);
 void scorpion_script_teleport_land(Fighter *fighter);
 void scorpion_script_teleport_motion(Fighter *fighter);
 void scorpion_script_teleport_victim_tail(Fighter *victim);
@@ -263,7 +258,6 @@ void scorpion_script_transform_effect(Fighter *fighter, int type);
 void scorpion_script_weapon_ready(Fighter *fighter);
 void scorpion_spear_stun_script(Fighter *fighter);
 void scorpion_special_ready(Fighter *fighter);
-void scorpion_spike_start(Fighter *fighter);
 void scorpion_spin_script(Fighter *fighter);
 void scorpion_start_fatality(Fighter *fighter, int id);
 void scorpion_sword_spin_control(Fighter *fighter);

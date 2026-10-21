@@ -12,7 +12,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp sonya_air_hp
-#define arena_fatality sonya_arena_fatality
 #define can_cartwheel sonya_can_cartwheel
 #define can_first_fatality sonya_can_first_fatality
 #define can_ground_throw sonya_can_ground_throw
@@ -74,7 +73,6 @@
 #define script_second_pause sonya_script_second_pause
 #define script_second_repeat sonya_script_second_repeat
 #define script_second_victim_end sonya_script_second_victim_end
-#define script_spike_tail sonya_script_spike_tail
 #define script_square_wave_tail sonya_script_square_wave_tail
 #define script_throw_getup sonya_script_throw_getup
 #define script_weapon_hp_tail sonya_script_weapon_hp_tail
@@ -82,7 +80,6 @@
 #define script_weapon_victim_getup sonya_script_weapon_victim_getup
 #define second_fatality sonya_second_fatality
 #define special_cleanup sonya_special_cleanup
-#define spike_start sonya_spike_start
 #define square_victim sonya_square_victim
 
 enum {
@@ -108,7 +105,6 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 void sonya_air_hp(Fighter *fighter);
-void sonya_arena_fatality(Fighter *fighter, int id);
 bool sonya_can_cartwheel(const Fighter *fighter);
 bool sonya_can_first_fatality(const Fighter *fighter);
 bool sonya_can_ground_throw(const Fighter *fighter, bool low_kick);
@@ -166,7 +162,6 @@ void sonya_entry_retail_script_004e6658(Fighter *fighter);
 void sonya_entry_retail_script_004e66d0(Fighter *fighter);
 void sonya_entry_retail_script_004e66f0(Fighter *fighter);
 void sonya_entry_retail_script_004e6710(Fighter *fighter);
-void sonya_entry_retail_script_004e6950(Fighter *fighter);
 void sonya_entry_retail_script_004e69b0(Fighter *fighter);
 void sonya_entry_retail_script_004e6a40(Fighter *fighter);
 void sonya_entry_retail_script_004e81d0(Fighter *fighter);
@@ -215,7 +210,6 @@ void sonya_script_second_open(Fighter *fighter);
 void sonya_script_second_pause(Fighter *fighter);
 void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
-void sonya_script_spike_tail(Fighter *fighter);
 void sonya_script_square_wave_tail(Fighter *fighter);
 void sonya_script_throw_getup(Fighter *victim);
 void sonya_script_weapon_hp_tail(Fighter *fighter);
@@ -230,11 +224,9 @@ void sonya_hk(Fighter *fighter);
 void sonya_hp(Fighter *fighter);
 void sonya_leg_grab(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
-void sonya_spike_fatality(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);
 void sonya_weapon(Fighter *fighter);
 void sonya_special_cleanup(Fighter *fighter);
-void sonya_spike_start(Fighter *fighter);
 void sonya_square_victim(Fighter *victim);
 
 #endif

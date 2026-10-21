@@ -209,24 +209,19 @@ void liu_kang_liu_script_fatal_align(Fighter *fighter) {
 }
 
 void liu_kang_start_fatality(Fighter *fighter, int id) {
+  require(id == FINISH_LIU_KANG_1 || id == FINISH_LIU_KANG_2, "Invalid native scene entry");
   if (!battle_begin_finisher(fighter, id)) {
     return;
   }
   Fighter *victim = fighter_peer(fighter);
   liu_kang_fatal_pose(victim, 13, 0, false);
-  liu_kang_fatal_pose(fighter, id == FINISH_LIU_KANG_2 ? 119 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 119, 0, true);
+  liu_kang_fatal_pose(fighter, 119, 0, true);
   if (id == FINISH_LIU_KANG_1) {
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x20ccc);
     }
   }
-  if (id == FINISH_FAN) {
-    liu_kang_fatal_pose(victim, 416, 0, false);
-  }
-  FighterFn start = id == FINISH_LIU_KANG_1   ? dragon_fatality_script
-                    : id == FINISH_LIU_KANG_2 ? liu_kang_entry_retail_script_004dfff8
-                    : id == FINISH_FAN        ? retail_fan_start
-                                              : liu_kang_entry_retail_script_004e6950;
+  FighterFn start = id == FINISH_LIU_KANG_1 ? dragon_fatality_script : liu_kang_entry_retail_script_004dfff8;
   start(fighter);
 }
 

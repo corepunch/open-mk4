@@ -12,7 +12,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp raiden_air_hp
-#define arena_fatality raiden_arena_fatality
 #define can_close_fatality retail_can_finish_close
 #define can_ground_throw raiden_can_ground_throw
 #define can_teleport raiden_can_teleport
@@ -72,7 +71,6 @@
 #define script_second_particles raiden_script_second_particles
 #define script_second_release raiden_script_second_release
 #define script_second_victim_end raiden_script_second_victim_end
-#define script_spike_tail raiden_script_spike_tail
 #define script_staff_victim_tail raiden_script_staff_victim_tail
 #define script_throw_getup raiden_script_throw_getup
 #define script_thrown_return raiden_script_thrown_return
@@ -87,7 +85,6 @@
 #define script_weapon_victim_getup raiden_script_weapon_victim_getup
 #define second_fatality raiden_second_fatality
 #define special_cleanup raiden_special_cleanup
-#define spike_start raiden_spike_start
 
 enum {
   G_LOW_KICK,
@@ -112,7 +109,6 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 void raiden_air_hp(Fighter *fighter);
-void raiden_arena_fatality(Fighter *fighter, int id);
 bool raiden_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool raiden_can_teleport(const Fighter *fighter);
 void raiden_cpu_air_hk(Fighter *fighter);
@@ -145,7 +141,6 @@ void raiden_crouch_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
 void raiden_hp(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
-void raiden_spike_fatality(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
 void raiden_weapon(Fighter *fighter);
@@ -179,7 +174,6 @@ void raiden_entry_retail_script_004e6658(Fighter *fighter);
 void raiden_entry_retail_script_004e66d0(Fighter *fighter);
 void raiden_entry_retail_script_004e66f0(Fighter *fighter);
 void raiden_entry_retail_script_004e6710(Fighter *fighter);
-void raiden_entry_retail_script_004e6950(Fighter *fighter);
 void raiden_entry_retail_script_004e69b0(Fighter *fighter);
 void raiden_entry_retail_script_004e6a40(Fighter *fighter);
 void raiden_entry_retail_script_004e8440(Fighter *fighter);
@@ -225,7 +219,6 @@ void raiden_script_second_end(Fighter *fighter);
 void raiden_script_second_particles(Fighter *fighter);
 void raiden_script_second_release(Fighter *fighter);
 void raiden_script_second_victim_end(Fighter *fighter);
-void raiden_script_spike_tail(Fighter *fighter);
 void raiden_script_staff_victim_tail(Fighter *victim);
 void raiden_script_throw_getup(Fighter *victim);
 void raiden_script_thrown_return(Fighter *fighter);
@@ -240,6 +233,5 @@ void raiden_script_victory_effect(Fighter *fighter);
 void raiden_script_weapon_victim_getup(Fighter *victim);
 void raiden_second_fatality(Fighter *fighter);
 void raiden_special_cleanup(Fighter *fighter);
-void raiden_spike_start(Fighter *fighter);
 
 #endif

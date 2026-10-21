@@ -170,8 +170,8 @@
     },
     "spike_fatality": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_spike_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish"
     },
     "sweep": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -265,8 +265,8 @@
     "175": {
       "adaptation": "Explicit actor/independent victim native continuation, outside the ordinary hit table",
       "evidence": "4ea4e8[175] -> 0x4836e0; paired/cinematic dispatch",
-      "source": "game/sub_zero/character.c",
-      "symbol": "script_spike_tail"
+      "source": "game/script.c",
+      "symbol": "mk4_script_spike_tail"
     },
     "18": {
       "evidence": "4ea4e8[18] -> 0x483050; shared C reaction dispatch",

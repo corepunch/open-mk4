@@ -7,10 +7,8 @@ extern void cage_groin_punch(Fighter *fighter);
 extern void cage_high_orb(Fighter *fighter);
 extern void cage_low_orb(Fighter *fighter);
 extern void cage_powered_punch(Fighter *fighter);
-extern void cage_spike_fatality(Fighter *fighter);
 extern void cage_weapon_action(Fighter *fighter);
 extern void fujin_dive(Fighter *fighter);
-extern void fujin_entry_spike(Fighter *fighter);
 extern void fujin_first_fatality(Fighter *fighter);
 extern void fujin_second_fatality(Fighter *fighter);
 extern void fujin_triple_kick(Fighter *fighter);
@@ -29,11 +27,9 @@ extern void jarek_cannonball(Fighter *fighter);
 extern void jarek_fatality_1(Fighter *fighter);
 extern void jarek_fatality_2(Fighter *fighter);
 extern void jarek_quake(Fighter *fighter);
-extern void jarek_spike_fatality(Fighter *fighter);
 extern void jarek_upward_ball(Fighter *fighter);
 extern void jarek_weapon_action(Fighter *fighter);
 extern void jax_air_throw(Fighter *fighter);
-extern void jax_command_spike(Fighter *fighter);
 extern void jax_command_weapon(Fighter *fighter);
 extern void jax_dash_punch(Fighter *fighter);
 extern void jax_fatality_1(Fighter *fighter);
@@ -48,7 +44,6 @@ extern void kai_input_478df0(Fighter *fighter);
 extern void kai_input_47bd10(Fighter *fighter);
 extern void kai_input_47c520(Fighter *fighter);
 extern void kai_rising_skull(Fighter *fighter);
-extern void kai_spike_fatality(Fighter *fighter);
 extern void kitana_bicycle(Fighter *fighter);
 extern void kitana_command_shadow_low(Fighter *fighter);
 extern void kitana_command_shadow_up(Fighter *fighter);
@@ -60,7 +55,6 @@ extern void kitana_leg_grab(Fighter *fighter);
 extern void kitana_ring(Fighter *fighter);
 extern void noob_saibot_flip_kick(Fighter *fighter);
 extern void noob_saibot_star(Fighter *fighter);
-extern void kitana_spike_fatality(Fighter *fighter);
 extern void kitana_weapon(Fighter *fighter);
 extern void liu_kang_bicycle_kick(Fighter *fighter);
 extern void liu_kang_first_fatality(Fighter *fighter);
@@ -68,13 +62,11 @@ extern void liu_kang_flying_kick(Fighter *fighter);
 extern void liu_kang_high_fireball(Fighter *fighter);
 extern void liu_kang_low_fireball(Fighter *fighter);
 extern void liu_kang_second_fatality(Fighter *fighter);
-extern void liu_kang_spike_fatality(Fighter *fighter);
 extern void liu_kang_weapon(Fighter *fighter);
 extern void mk4_sidestep(Fighter *fighter);
 extern void noob_saibot_air_throw(Fighter *fighter);
 extern void noob_saibot_command_498b70(Fighter *fighter);
 extern void noob_saibot_command_498e70(Fighter *fighter);
-extern void noob_saibot_spike_fatality(Fighter *fighter);
 extern void noob_saibot_teleport(Fighter *fighter);
 extern void noob_saibot_weapon_action(Fighter *fighter);
 extern void quan_chi_air_throw(Fighter *fighter);
@@ -82,14 +74,12 @@ extern void quan_chi_first_fatality(Fighter *fighter);
 extern void quan_chi_flip_kick(Fighter *fighter);
 extern void quan_chi_second_fatality(Fighter *fighter);
 extern void quan_chi_skull(Fighter *fighter);
-extern void quan_chi_spike_fatality(Fighter *fighter);
 extern void quan_chi_teleport_stomp(Fighter *fighter);
 extern void quan_chi_weapon_action(Fighter *fighter);
 extern void quan_chi_weapon_steal(Fighter *fighter);
 extern void raiden_first_fatality(Fighter *fighter);
 extern void raiden_lightning(Fighter *fighter);
 extern void raiden_second_fatality(Fighter *fighter);
-extern void raiden_spike_fatality(Fighter *fighter);
 extern void raiden_teleport(Fighter *fighter);
 extern void raiden_torpedo(Fighter *fighter);
 extern void raiden_weapon(Fighter *fighter);
@@ -97,12 +87,10 @@ extern void reiko_first_fatality(Fighter *fighter);
 extern void reiko_flip_kick(Fighter *fighter);
 extern void reiko_orbit(Fighter *fighter);
 extern void reiko_second_fatality(Fighter *fighter);
-extern void reiko_spike_fatality(Fighter *fighter);
 extern void reiko_star(Fighter *fighter);
 extern void reiko_teleport(Fighter *fighter);
 extern void reiko_weapon_action(Fighter *fighter);
 extern void reptile_acid_spit(Fighter *fighter);
-extern void reptile_entry_spike(Fighter *fighter);
 extern void reptile_fatality_1(Fighter *fighter);
 extern void reptile_fatality_2(Fighter *fighter);
 extern void reptile_input_47a690(Fighter *fighter);
@@ -114,7 +102,6 @@ extern void scorpion_beast_fatality(Fighter *fighter);
 extern void scorpion_burn_fatality(Fighter *fighter);
 extern void scorpion_fire(Fighter *fighter);
 extern void scorpion_spear(Fighter *fighter);
-extern void scorpion_spike_fatality(Fighter *fighter);
 extern void scorpion_teleport(Fighter *fighter);
 extern void scorpion_weapon(Fighter *fighter);
 extern void shinnok_fatality_1(Fighter *fighter);
@@ -133,7 +120,6 @@ extern void shinnok_morph_scorpion(Fighter *fighter);
 extern void shinnok_morph_sonya(Fighter *fighter);
 extern void shinnok_morph_sub_zero(Fighter *fighter);
 extern void shinnok_morph_tanya(Fighter *fighter);
-extern void shinnok_spike_fatality(Fighter *fighter);
 extern void shinnok_weapon_action(Fighter *fighter);
 extern void sonya_air_throw(Fighter *fighter);
 extern void sonya_bicycle(Fighter *fighter);
@@ -142,7 +128,6 @@ extern void sonya_first_fatality(Fighter *fighter);
 extern void sonya_leg_grab(Fighter *fighter);
 extern void sonya_ring(Fighter *fighter);
 extern void sonya_second_fatality(Fighter *fighter);
-extern void sonya_spike_fatality(Fighter *fighter);
 extern void sonya_square_wave(Fighter *fighter);
 extern void sonya_weapon(Fighter *fighter);
 extern void sub_zero_clone(Fighter *fighter);
@@ -150,14 +135,12 @@ extern void sub_zero_first_fatality(Fighter *fighter);
 extern void sub_zero_ice(Fighter *fighter);
 extern void sub_zero_second_fatality(Fighter *fighter);
 extern void sub_zero_slide(Fighter *fighter);
-extern void sub_zero_spike_fatality(Fighter *fighter);
 extern void sub_zero_weapon(Fighter *fighter);
 extern void tanya_air_fireball(Fighter *fighter);
 extern void tanya_drill_kick(Fighter *fighter);
 extern void tanya_fatality_1(Fighter *fighter);
 extern void tanya_fatality_2(Fighter *fighter);
 extern void tanya_fireball(Fighter *fighter);
-extern void tanya_spike_fatality(Fighter *fighter);
 extern void tanya_spin_kick(Fighter *fighter);
 extern void tanya_weapon_action(Fighter *fighter);
 extern void weapon_pickup(Fighter *fighter);
@@ -207,6 +190,7 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeAction entries[] = {
+  {0x467e70, 0x3ffff, retail_spike_finish},
   {0x448160, 0x3ffff, cage_fatality_1},
   {0x44f4f0, 0x3ffff, fujin_first_fatality},
   {0x446d00, 0x3ffff, jarek_fatality_1},
@@ -254,23 +238,6 @@ static const NativeAction entries[] = {
   {0x43b320, 0x8000, goro_leap_stomp},
   {0x43b640, 0x8000, goro_special_uppercut},
   {0x43b7e0, 0x8000, goro_quake_stomp},
-  {0x467e70, 0x4000, cage_spike_fatality},
-  {0x467e70, 0x20, fujin_entry_spike},
-  {0x467e70, 0x1000, jarek_spike_fatality},
-  {0x467e70, 0x2000, jax_command_spike},
-  {0x467e70, 0x800, kai_spike_fatality},
-  {0x467e70, 0x10000, kitana_spike_fatality},
-  {0x467e70, 0x8, liu_kang_spike_fatality},
-  {0x467e70, 0x20000, noob_saibot_spike_fatality},
-  {0x467e70, 0x100, quan_chi_spike_fatality},
-  {0x467e70, 0x2, raiden_spike_fatality},
-  {0x467e70, 0x80, reiko_spike_fatality},
-  {0x467e70, 0x400, reptile_entry_spike},
-  {0x467e70, 0x1, scorpion_spike_fatality},
-  {0x467e70, 0x40, shinnok_spike_fatality},
-  {0x467e70, 0x4, sonya_spike_fatality},
-  {0x467e70, 0x10, sub_zero_spike_fatality},
-  {0x467e70, 0x200, tanya_spike_fatality},
   {0x468610, 0x1, scorpion_fire},
   {0x468aa0, 0x4000, cage_groin_punch},
   {0x468f00, 0x2000, jax_ground_pound},

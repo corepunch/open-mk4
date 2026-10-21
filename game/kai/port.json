@@ -104,8 +104,8 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6800, 0x4e6860, 0x4e6878); verified by typed Kai inventory."
     },
     "spike_fatality": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6950); verified by typed Kai inventory."
     },
     "sweep": {
@@ -216,8 +216,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/kai/moves/spike.c",
-      "symbol": "kai_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46d1d0": {
@@ -498,8 +498,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/kai/moves/spike.c",
-      "symbol": "kai_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x47c520": {

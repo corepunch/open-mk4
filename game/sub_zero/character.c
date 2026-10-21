@@ -158,7 +158,7 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_FINISH_1] = sub_zero_first_fatality,
                                        [CPU_FINISH_2] = sub_zero_second_fatality,
                                        [CPU_FINISH_FAN] = retail_fan_finish,
-                                       [CPU_FINISH_SPIKE] = sub_zero_spike_fatality,
+                                       [CPU_FINISH_SPIKE] = retail_spike_finish,
                                    }};
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -325,10 +325,6 @@ void sub_zero_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e69c8(Fighter *fighter) {

@@ -58,7 +58,6 @@
 #define liu_script_spawn_air liu_kang_liu_script_spawn_air
 #define liu_script_spawn_high liu_kang_liu_script_spawn_high
 #define liu_script_spawn_low liu_kang_liu_script_spawn_low
-#define liu_script_spike_tail liu_kang_liu_script_spike_tail
 #define liu_script_sword_blend liu_kang_liu_script_sword_blend
 #define liu_script_sword_gate liu_kang_liu_script_sword_gate
 #define lk_thrown_script liu_kang_lk_thrown_script
@@ -134,7 +133,6 @@ void liu_kang_hk(Fighter *fighter);
 void liu_kang_hp(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
-void liu_kang_spike_fatality(Fighter *fighter);
 void liu_kang_weapon(Fighter *fighter);
 void liu_kang_liu_script_air_diagonal_tail(Fighter *fighter);
 void liu_kang_liu_script_air_hp_tail(Fighter *fighter);
@@ -163,7 +161,6 @@ void liu_kang_liu_script_scene_event(Fighter *fighter, int selector);
 void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type);
 void liu_kang_liu_script_spawn_high(Fighter *fighter, int task_type);
 void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type);
-void liu_kang_liu_script_spike_tail(Fighter *fighter);
 void liu_kang_liu_script_sword_blend(Fighter *fighter);
 unsigned int liu_kang_liu_script_sword_gate(Fighter *fighter);
 void liu_kang_lk_thrown_script(Fighter *victim);
@@ -200,7 +197,6 @@ void liu_kang_entry_retail_script_004e6658(Fighter *fighter);
 void liu_kang_entry_retail_script_004e66d0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e66f0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6710(Fighter *fighter);
-void liu_kang_entry_retail_script_004e6950(Fighter *fighter);
 void liu_kang_entry_retail_script_004e69b0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6d08(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6df0(Fighter *fighter);

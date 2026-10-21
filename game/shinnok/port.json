@@ -122,8 +122,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/shinnok/moves/spike.c",
-      "symbol": "shinnok_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     }
   },
@@ -194,8 +194,8 @@
       "evidence": "Shinnok roster slot 6 native entry 0x0046f1f0 and selected EXE script roots"
     },
     "spike_fatality": {
-      "source": "game/shinnok/character.c",
-      "symbol": "shinnok_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Shinnok roster slot 6 native entry 0x00467e70 and selected EXE script roots"
     },
     "sweep": {
@@ -494,8 +494,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/shinnok/moves/spike.c",
-      "symbol": "shinnok_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46d1d0": {

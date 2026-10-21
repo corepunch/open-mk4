@@ -266,3 +266,5 @@ HELPERS[0x46ccd0] = H('uppercut_entry', 'active fighter after finish-window gate
 
 HELPERS[0x467ce0] = H('first_fatality_dispatch', 'active fighter and retail scene table', 'Read4e0498 with the original hidden-roster remaps and invoke its native scene entry.', 'Shared native dispatch.', ('game/retail_native.c', 'retail_finish_first'))
 HELPERS[0x467cd0] = H('second_fatality_dispatch', 'active fighter and retail scene table', 'Read4dfe90 with the original hidden-roster remaps and invoke its native scene entry.', 'Shared native dispatch.', ('game/retail_native.c', 'retail_finish_second'))
+
+HELPERS[0x467e70] = H('spike_fatality_dispatch', 'active fighter and stage finish gate', 'Shared stage context, native30-visit delay and original4e6950 playback.', 'Shared native scene.', ('game/retail_scene.c', 'retail_spike_finish'))

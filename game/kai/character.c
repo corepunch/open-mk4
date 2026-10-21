@@ -136,10 +136,6 @@ void kai_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 11);
 }
 
-void kai_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 11);
-}
-
 void kai_entry_retail_script_004e8210(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8210, fighter_ready, 11);
 }

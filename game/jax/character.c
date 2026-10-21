@@ -174,10 +174,6 @@ void jax_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 13);
 }
 
-void jax_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 13);
-}
-
 void jax_entry_retail_script_004e8150(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8150, fighter_ready, 13);
 }

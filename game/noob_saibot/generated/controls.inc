@@ -2,5 +2,5 @@
 
 static const CpuMoves retail_cpu_moves = {.enter = {
                                               [CPU_FINISH_FAN] = retail_fan_finish,
-                                              [CPU_FINISH_SPIKE] = noob_saibot_spike_fatality,
+                                              [CPU_FINISH_SPIKE] = retail_spike_finish,
                                           }};

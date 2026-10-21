@@ -97,12 +97,10 @@
 #define script_ready sub_zero_script_ready
 #define script_slide_return sub_zero_script_slide_return
 #define script_spawn_ice sub_zero_script_spawn_ice
-#define script_spike_tail sub_zero_script_spike_tail
 #define script_thrown_return sub_zero_script_thrown_return
 #define script_victory sub_zero_script_victory
 #define second_fatality_script sub_zero_second_fatality_script
 #define slide_script sub_zero_slide_script
-#define spike_start sub_zero_spike_start
 #define start_fatality sub_zero_start_fatality
 #define throw_disarm sub_zero_throw_disarm
 
@@ -216,7 +214,6 @@ void sub_zero_entry_retail_script_004e6658(Fighter *fighter);
 void sub_zero_entry_retail_script_004e66d0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e66f0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6950(Fighter *fighter);
 void sub_zero_entry_retail_script_004e69c8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6da0(Fighter *fighter);
@@ -269,12 +266,10 @@ void sub_zero_script_reaction(Fighter *fighter, int reaction);
 void sub_zero_script_ready(Fighter *fighter);
 void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
-void sub_zero_script_spike_tail(Fighter *fighter);
 void sub_zero_script_thrown_return(Fighter *victim);
 void sub_zero_script_victory(Fighter *fighter);
 void sub_zero_second_fatality_script(Fighter *fighter);
 void sub_zero_slide_script(Fighter *fighter);
-void sub_zero_spike_start(Fighter *fighter);
 void sub_zero_start_fatality(Fighter *fighter, int id);
 void sub_zero_air_throw(Fighter *fighter);
 void sub_zero_clone(Fighter *fighter);
@@ -285,7 +280,6 @@ void sub_zero_hp(Fighter *fighter);
 void sub_zero_ice(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
-void sub_zero_spike_fatality(Fighter *fighter);
 void sub_zero_weapon(Fighter *fighter);
 void sub_zero_throw_disarm(Fighter *victim);
 

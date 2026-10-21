@@ -69,8 +69,8 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "spike_fatality": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "high_kick": {
@@ -201,8 +201,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/cage/moves/spike.c",
-      "symbol": "cage_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x467cd0": {
@@ -472,8 +472,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/cage/moves/spike.c",
-      "symbol": "cage_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x479ec0": {

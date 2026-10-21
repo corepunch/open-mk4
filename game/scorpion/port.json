@@ -145,8 +145,8 @@
     },
     "spike_fatality": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_spike_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish"
     },
     "sweep": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -264,8 +264,8 @@
     "175": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "script_spike_tail"
+      "source": "game/script.c",
+      "symbol": "mk4_script_spike_tail"
     },
     "18": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

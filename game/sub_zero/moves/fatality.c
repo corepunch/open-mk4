@@ -71,25 +71,20 @@ void sub_zero_script_victory(Fighter *fighter) {
 }
 
 void sub_zero_start_fatality(Fighter *fighter, int id) {
+  require(id == FINISH_SUB_ZERO_1 || id == FINISH_SUB_ZERO_2, "Invalid native scene entry");
   if (!battle_begin_finisher(fighter, id)) {
     fighter_ready(fighter);
     return;
   }
   Fighter *victim = fighter_peer(fighter);
   fatal_pose(victim, 13, 0, false);
-  fatal_pose(fighter, id == FINISH_SUB_ZERO_1 ? 385 : id == FINISH_SUB_ZERO_2 ? 552 : id == FINISH_FAN ? 415 : 293, 0, true);
+  fatal_pose(fighter, id == FINISH_SUB_ZERO_1 ? 385 : 552, 0, true);
   if (id == FINISH_SUB_ZERO_1) {
     /* 445100 -> 475530 aligns the scene pair at 1.45 units. */
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x17333);
     }
   }
-  if (id == FINISH_FAN) {
-    fatal_pose(victim, 416, 0, false);
-  }
-  FighterFn start = id == FINISH_SUB_ZERO_1   ? sub_zero_first_fatality_script
-                    : id == FINISH_SUB_ZERO_2 ? sub_zero_second_fatality_script
-                    : id == FINISH_FAN        ? retail_fan_start
-                                              : sub_zero_spike_start;
+  FighterFn start = id == FINISH_SUB_ZERO_1 ? sub_zero_first_fatality_script : sub_zero_second_fatality_script;
   start(fighter);
 }

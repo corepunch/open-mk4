@@ -5,6 +5,6 @@ static const CpuMoves retail_cpu_moves = {.enter =
                                                   [CPU_FINISH_1] = retail_finish_first,
                                                   [CPU_FINISH_2] = retail_finish_second,
                                                   [CPU_FINISH_FAN] = retail_fan_finish,
-                                                  [CPU_FINISH_SPIKE] = jax_command_spike,
+                                                  [CPU_FINISH_SPIKE] = retail_spike_finish,
                                               },
     .finish_min = {0x0, 0x0}};

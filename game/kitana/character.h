@@ -12,7 +12,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp kitana_air_hp
-#define arena_fatality kitana_arena_fatality
 #define can_ground_throw kitana_can_ground_throw
 #define cpu_air_hk kitana_cpu_air_hk
 #define cpu_air_lk kitana_cpu_air_lk
@@ -70,7 +69,6 @@
 #define script_second_pause kitana_script_second_pause
 #define script_second_repeat kitana_script_second_repeat
 #define script_second_victim_end kitana_script_second_victim_end
-#define script_spike_tail kitana_script_spike_tail
 #define script_square_wave_tail kitana_script_square_wave_tail
 #define script_throw_getup kitana_script_throw_getup
 #define script_weapon_hp_tail kitana_script_weapon_hp_tail
@@ -78,7 +76,6 @@
 #define script_weapon_victim_getup kitana_script_weapon_victim_getup
 #define second_fatality kitana_second_fatality
 #define special_cleanup kitana_special_cleanup
-#define spike_start kitana_spike_start
 #define square_victim kitana_square_victim
 
 enum {
@@ -104,7 +101,6 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 void kitana_air_hp(Fighter *fighter);
-void kitana_arena_fatality(Fighter *fighter, int id);
 bool kitana_can_ground_throw(const Fighter *fighter, bool low_kick);
 void kitana_cpu_air_hk(Fighter *fighter);
 void kitana_cpu_air_lk(Fighter *fighter);
@@ -132,7 +128,6 @@ void kitana_shadow_low(Fighter *fighter);
 void kitana_shadow_task_low(Fighter *fighter, int task_type);
 void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void kitana_shadow_up(Fighter *fighter);
-void kitana_spike_fatality(Fighter *fighter);
 void kitana_square_wave(Fighter *fighter);
 void kitana_weapon(Fighter *fighter);
 void kitana_lk_victim(Fighter *victim);
@@ -177,7 +172,6 @@ void kitana_entry_retail_script_004e6658(Fighter *fighter);
 void kitana_entry_retail_script_004e66d0(Fighter *fighter);
 void kitana_entry_retail_script_004e66f0(Fighter *fighter);
 void kitana_entry_retail_script_004e6710(Fighter *fighter);
-void kitana_entry_retail_script_004e6950(Fighter *fighter);
 void kitana_entry_retail_script_004e69b0(Fighter *fighter);
 void kitana_entry_retail_script_004e6a40(Fighter *fighter);
 void kitana_entry_retail_script_004e81d0(Fighter *fighter);
@@ -228,7 +222,6 @@ void kitana_script_second_open(Fighter *fighter);
 void kitana_script_second_pause(Fighter *fighter);
 void kitana_script_second_repeat(Fighter *fighter);
 void kitana_script_second_victim_end(Fighter *victim);
-void kitana_script_spike_tail(Fighter *fighter);
 void kitana_script_square_wave_tail(Fighter *fighter);
 void kitana_script_throw_getup(Fighter *victim);
 void kitana_script_weapon_hp_tail(Fighter *fighter);
@@ -236,7 +229,6 @@ void kitana_script_weapon_lp_tail(Fighter *fighter);
 void kitana_script_weapon_victim_getup(Fighter *victim);
 void kitana_second_fatality(Fighter *fighter);
 void kitana_special_cleanup(Fighter *fighter);
-void kitana_spike_start(Fighter *fighter);
 void kitana_square_victim(Fighter *victim);
 
 #endif

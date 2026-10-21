@@ -67,17 +67,15 @@ static void beast_start(Fighter *fighter) {
 }
 
 void scorpion_start_fatality(Fighter *fighter, int id) {
+  require(id == FINISH_BURN || id == FINISH_BEAST, "Invalid native scene entry");
   if (!battle_begin_finisher(fighter, id)) {
     fighter_ready(fighter);
     return;
   }
   Fighter *victim = fighter_peer(fighter);
   fatal_pose(victim, 13, 0, false);
-  fatal_pose(fighter, id == FINISH_BEAST ? 12 : id == FINISH_FAN ? 415 : id == FINISH_SPIKE ? 293 : 390, 0, true);
-  if (id == FINISH_FAN) {
-    fatal_pose(victim, 416, 0, false);
-  }
-  FighterFn start = id == FINISH_BURN ? burn_start : id == FINISH_BEAST ? beast_start : id == FINISH_FAN ? retail_fan_start : scorpion_spike_start;
+  fatal_pose(fighter, id == FINISH_BEAST ? 12 : 390, 0, true);
+  FighterFn start = id == FINISH_BURN ? burn_start : beast_start;
   start(fighter);
 }
 

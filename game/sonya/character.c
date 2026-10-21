@@ -90,7 +90,7 @@ static const CpuMoves cpu_moves = {
             [CPU_FINISH_1] = sonya_first_fatality,
             [CPU_FINISH_2] = sonya_second_fatality,
             [CPU_FINISH_FAN] = retail_fan_finish,
-            [CPU_FINISH_SPIKE] = sonya_spike_fatality,
+            [CPU_FINISH_SPIKE] = retail_spike_finish,
         },
     .finish_min = {0x10000, 0x1cccc},
 };
@@ -229,10 +229,6 @@ void sonya_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void sonya_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 2);
 }
 
 void sonya_entry_retail_script_004e69b0(Fighter *fighter) {

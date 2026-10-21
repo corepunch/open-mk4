@@ -69,8 +69,8 @@
       "evidence": "CPU stage-8 finish 434520 -> 434940 dispatches action 10041 -> 4e6ef8[65] = 467e00 for every roster; generated owner/victim roots 4e0118/4e0188."
     },
     "spike_fatality": {
-      "source": "game/goro/moves/spike.c",
-      "symbol": "goro_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "CPU stage-0 finish 434520 -> 4348b0 dispatches action 10042 -> 4e6ef8[66] = 467e70; generated stage root 4e6950."
     },
     "high_kick": {
@@ -289,8 +289,8 @@
       "evidence": "Goro contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
-      "source": "game/goro/moves/spike.c",
-      "symbol": "goro_script_spike_tail",
+      "source": "game/script.c",
+      "symbol": "mk4_script_spike_tail",
       "adaptation": "Explicit stage-scene victim continuation, outside the ordinary hit table; the shared spike tail owns the impaled victim.",
       "evidence": "4ea4e8[175] -> 0x4836e0; spike stage root 4e6950 queries A[18] before native 467fc0."
     },
@@ -437,8 +437,8 @@
       "evidence": "CPU stage-8 finish 434940 dispatches 10041 -> 467e00; Goro has no fan command record."
     },
     "0x467e70": {
-      "source": "game/goro/moves/spike.c",
-      "symbol": "goro_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "CPU stage-0 finish 4348b0 dispatches 10042 -> 467e70; Goro has no spike command record."
     }
   },

@@ -465,3 +465,22 @@ formatting and native source gates pass. Existing battle finishers/CPU scenes
 pass and the run reaches the known ground-throw assertion. No fighter timing
 or balance tests were added. Private CPU minimum-range configuration and
 other native/controller families remain transitional.
+
+## One shared spike stage native
+
+All eighteen spike modules and eighteen startup thunks are removed. Native
+467e70 now acquires the shared stage context, waits the original30 visits and
+enters4e6950. Native467fc0 uses the existing shared impalement/recovery service.
+The old adapters mixed immediate and delayed starts; the shared entry follows
+the checked native delay. Liu Kang's private end adapter is equivalent to the
+shared roster victory view and is retired. Three unused private arena dispatch
+functions and dead fan/spike branches in the remaining scene setup are removed.
+
+Evidence is local467e70/467fc0, original4e6950 and mk4decomp ArgSarStoreJmp;
+no stage playback is translated to C. Existing native choreography remains
+implemented once in the shared scene/script services.
+
+Validation reuses shared VM/lifetime checks, all eighteen strict audits,
+formatting, native source gates and existing CPU/stage integration. The battle
+run passes the stage scenes and reaches the known ground-throw assertion.
+No new fighter or timing tests were added.

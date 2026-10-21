@@ -47,8 +47,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/tanya/moves/spike.c",
-      "symbol": "tanya_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x467ce0": {
@@ -123,8 +123,8 @@
       "evidence": "Tanya fan_fatality entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "spike_fatality": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Tanya spike_fatality entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "high_kick": {
@@ -487,8 +487,8 @@
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
-      "source": "game/tanya/moves/spike.c",
-      "symbol": "tanya_spike_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_spike_finish",
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x498b70": {
