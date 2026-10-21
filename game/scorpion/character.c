@@ -82,21 +82,6 @@ const MoveDef scorpion_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .
 
 /* Generated VM finishers use shared scene, blend and object helpers. */
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const CommandDef commands[] = {
-  {BUTTON_BLOCK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 4, 50, CMD_BLOCK_OK, scorpion_can_burn_fatality, scorpion_burn_fatality},
-  {BUTTON_HIGH_PUNCH, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0, scorpion_can_beast_fatality, scorpion_beast_fatality},
-  {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, scorpion_can_fan_fatality, scorpion_fan_fatality},
-  {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD, TOKEN_FORWARD}, 3, 40, 0, scorpion_can_spike_fatality, scorpion_spike_fatality},
-  {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, mk4_can_air_throw, scorpion_air_throw},
-  {BUTTON_HIGH_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 24, CMD_AIR, scorpion_can_teleport, scorpion_teleport},
-  {BUTTON_LOW_PUNCH, {TOKEN_BACK, TOKEN_BACK}, 2, 27, 0, scorpion_can_spear, scorpion_spear},
-  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 20, 0, scorpion_fighting, scorpion_fire},
-  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, scorpion_can_weapon, scorpion_weapon},
-  {BUTTON_RUN, {0}, 0, 0, 0, mk4_can_sidestep, mk4_sidestep},
-  {BUTTON_RUN, {0}, 0, 0, 0, scorpion_can_pickup, scorpion_pickup},
-};
-// clang-format on
 static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = scorpion_press_jab,
     [BUTTON_LOW_PUNCH] = scorpion_press_lp,
     [BUTTON_HIGH_KICK] = scorpion_press_kick,
@@ -109,7 +94,7 @@ static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = scorpion_pre
     [BUTTON_LOW_PUNCH] = scorpion_press_air_lp,
     [BUTTON_HIGH_KICK] = scorpion_press_air_hk,
     [BUTTON_LOW_KICK] = scorpion_press_air_lk}};
-static const Controls scorpion_controls = {commands, COUNT(commands), {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
+static const Controls scorpion_controls = {NULL, 0, {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
 
 /* Weapon scripts 0x4e62c0/0x4e62d8, 0x4ec8b0/0x4ec918 and 0x4e8850;
  * slash parameter blocks 0x4ec880/0x4ec898; native throw 0x498290. */

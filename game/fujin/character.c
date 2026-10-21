@@ -69,7 +69,7 @@ static const ButtonTable fujin_jumping = {{[BUTTON_HIGH_PUNCH] = fujin_press_air
 
 #include "generated/controls.inc"
 
-static const Controls fujin_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
+static const Controls fujin_controls = {NULL, 0,
     {[STANCE_STANDING] = &fujin_standing, [STANCE_CROUCHING] = &fujin_crouching, [STANCE_JUMP] = &fujin_jumping, [STANCE_DIAGONAL_AIR] = &fujin_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.

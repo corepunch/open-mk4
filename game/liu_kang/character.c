@@ -102,22 +102,6 @@ const WeaponStrike liu_kang_sword_attacks[] = {
 /* First scene: 4e0498[3] -> 450930. Second: 4dfe90[3] ->
  * 43c3d0/4dfff8/4e0020, victim reactions 176/177. */
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const CommandDef commands[] = {
-  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, CMD_AIR, NULL, liu_kang_high_fireball},
-  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0, liu_kang_can_close_fatality, liu_kang_second_fatality},
-  {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_low_fireball},
-  {BUTTON_LOW_PUNCH, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0, liu_kang_can_fan_fatality, liu_kang_fan_fatality},
-  {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, liu_kang_can_first_fatality, liu_kang_first_fatality},
-  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0, NULL, liu_kang_flying_kick},
-  {BUTTON_HIGH_KICK, {TOKEN_FORWARD, TOKEN_FORWARD, TOKEN_BACK}, 3, 40, 0, liu_kang_can_spike_fatality, liu_kang_spike_fatality},
-  {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_FORWARD}, 2, 24, 0, liu_kang_can_weapon, liu_kang_weapon},
-  {BUTTON_LOW_KICK, {0}, 0, 0, CMD_RELEASE, liu_kang_can_bicycle, liu_kang_bicycle_kick},
-  {BUTTON_RUN, {0}, 0, 0, 0, liu_kang_can_sidestep, liu_kang_sidestep},
-  {BUTTON_RUN, {0}, 0, 0, 0, liu_kang_can_pickup, liu_kang_pickup},
-};
-// clang-format on
-
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = liu_kang_press_jab,
     [BUTTON_LOW_PUNCH] = liu_kang_press_lp,
     [BUTTON_HIGH_KICK] = liu_kang_press_kick,
@@ -130,7 +114,7 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = liu_kang_press_air_hp
     [BUTTON_LOW_PUNCH] = liu_kang_press_air_lp,
     [BUTTON_HIGH_KICK] = liu_kang_press_air_hk,
     [BUTTON_LOW_KICK] = liu_kang_press_air_lk}};
-static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
+static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {
     .enter =

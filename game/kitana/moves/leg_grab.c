@@ -56,10 +56,3 @@ void kitana_leg_grab(Fighter *fighter) {
   fighter->mmove_cleanup = kitana_special_cleanup;
   leg_grab_script(fighter);
 }
-
-bool kitana_can_leg_grab(const Fighter *fighter) {
-  unsigned chord = BUTTON_BIT(BUTTON_DOWN) | BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_PUNCH);
-  unsigned mask =
-      chord | BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(BUTTON_RUN);
-  return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->leg_grab_ready && (fighter->held & mask) == chord;
-}

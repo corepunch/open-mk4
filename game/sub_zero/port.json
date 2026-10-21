@@ -412,9 +412,9 @@
       "symbol": "scepter_lp"
     },
     "sidestep": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_sidestep"
+      "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep"
     },
     "slide": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -551,6 +551,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra"
     },
+    "32": {
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery.",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
     "34": {
       "evidence": "4ea4e8[34] -> 0x4838e0; shared C reaction dispatch",
       "source": "game/reactions.c",
@@ -605,11 +610,6 @@
       "evidence": "4ea4e8[8] -> 0x486c70; shared C reaction dispatch",
       "source": "game/reactions.c",
       "symbol": "react_extra_block"
-    },
-    "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

@@ -1,4 +1,5 @@
 #include "retail_data.h"
+#include "retail_native.h"
 
 unsigned retail_character_slot(unsigned character) {
   require(character < MK4_ROSTER_COUNT, "Invalid retail character");
@@ -56,7 +57,7 @@ RetailCommandCursor retail_command_cursor(const Mk4Image *image, unsigned charac
     return (RetailCommandCursor){0};
   }
   uint32_t packed = mk4_image_u32(image, table + character * 4);
-  require(!packed || (packed >= 0x4d0000 / 4 && packed < 0x4ef000 / 4), "Invalid retail command list");
+  require(!packed || (packed >= 0x4d0000 / 4 && packed < 0x580000 / 4), "Invalid retail command list");
   return (RetailCommandCursor){.address = packed * 4, .remaining = 256};
 }
 
@@ -64,7 +65,7 @@ bool retail_command_next(const Mk4Image *image, RetailCommandCursor *cursor, Ret
   if (cursor->address == 0) {
     return false;
   }
-  require(cursor->remaining > 0 && cursor->address >= 0x4d0000 && cursor->address + 12 <= 0x4ef000, "Unterminated retail command list");
+  require(cursor->remaining > 0 && cursor->address >= 0x4d0000 && cursor->address + 12 <= 0x580000, "Unterminated retail command list");
   uint32_t pattern = mk4_image_u32(image, cursor->address);
   if (pattern == 0) {
     cursor->address = 0;
@@ -94,4 +95,50 @@ int retail_stance_clip(const Mk4Image *image, unsigned character, bool walking) 
   uint32_t packed = mk4_image_u32(image, (walking ? 0x53d388 : 0x53d408) + retail_character_slot(character) * 4);
   require(packed >= 0x4fad7c / 4 && packed < (0x4fad7c + MK4_CLIP_COUNT * 12) / 4 && (packed * 4 - 0x4fad7c) % 12 == 0, "Invalid retail stance descriptor");
   return (int)((packed * 4 - 0x4fad7c) / 12);
+}
+
+/* Compatibility view for UI and existing callers that inspect controls. The
+ * input matcher itself walks the selected player list directly on every press. */
+void retail_bind_commands(Controls *controls, const Mk4Image *image, unsigned character) {
+  static CommandDef records[MK4_ROSTER_COUNT][64];
+  require(character < MK4_ROSTER_COUNT, "Invalid retail controls owner");
+  unsigned count = 0;
+  for (Button button = BUTTON_UP; button < BUTTON_COUNT; button++) {
+    for (unsigned released = 0; released < 2; ++released) {
+      RetailCommandCursor cursor = retail_command_cursor(image, character, 0, button, released != 0);
+      RetailCommand source;
+      while (retail_command_next(image, &cursor, &source)) {
+        require(count < 64, "Retail command list exceeds controls view capacity");
+        CommandDef *record = &records[character][count++];
+        *record = (CommandDef){.button = button,
+            .window = (int)source.window,
+            .flags = (source.flags & (CMD_AIR | CMD_BLOCK_OK)) | (released ? CMD_RELEASE : 0),
+            .predicate = retail_native_predicate(character, source.predicate),
+            .enter = retail_native_entry(character, source.target)};
+        for (uint32_t pattern = source.pattern == 0xffffffffu ? 0 : source.pattern; pattern; pattern >>= 8) {
+          require(record->count < COMMAND_TOKENS, "Retail pattern exceeds controls view capacity");
+          CommandToken token;
+          switch (pattern & 255u) {
+            case 1:
+              token = TOKEN_UP;
+              break;
+            case 2:
+              token = TOKEN_DOWN;
+              break;
+            case 0xaa:
+              token = TOKEN_BACK;
+              break;
+            case 0xdd:
+              token = TOKEN_FORWARD;
+              break;
+            default:
+              fatal("Invalid retail command direction %02x", pattern & 255u);
+          }
+          record->tokens[record->count++] = token;
+        }
+      }
+    }
+  }
+  controls->commands = records[character];
+  controls->command_count = (int)count;
 }

@@ -71,8 +71,7 @@ static const ButtonTable goro_jumping = {{[BUTTON_HIGH_PUNCH] = goro_press_air_h
 
 #include "generated/controls.inc"
 
-static const Controls goro_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
-    {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
+static const Controls goro_controls = {NULL, 0, {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {

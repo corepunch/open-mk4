@@ -34,7 +34,3 @@ void raiden_fan_start(Fighter *fighter) {
 void raiden_fan_fatality(Fighter *fighter) {
   raiden_arena_fatality(fighter, FINISH_FAN);
 }
-
-bool raiden_can_fan_fatality(const Fighter *fighter) {
-  return g_battle.arena == 8 && raiden_can_close_fatality(fighter);
-}

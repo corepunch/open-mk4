@@ -17,14 +17,10 @@
 #define armed_idle sonya_armed_idle
 #define armed_walk sonya_armed_walk
 #define can_cartwheel sonya_can_cartwheel
-#define can_close_fatality sonya_can_close_fatality
-#define can_fan_fatality sonya_can_fan_fatality
 #define can_first_fatality sonya_can_first_fatality
 #define can_ground_throw sonya_can_ground_throw
 #define can_leg_grab sonya_can_leg_grab
 #define can_second_fatality sonya_can_second_fatality
-#define can_spike_fatality sonya_can_spike_fatality
-#define can_weapon sonya_can_weapon
 #define cpu_air_hk sonya_cpu_air_hk
 #define cpu_air_lk sonya_cpu_air_lk
 #define cpu_close_hk sonya_cpu_close_hk
@@ -143,14 +139,10 @@ void sonya_armed_crouch(Fighter *fighter);
 void sonya_armed_idle(Fighter *fighter);
 void sonya_armed_walk(Fighter *fighter);
 bool sonya_can_cartwheel(const Fighter *fighter);
-bool sonya_can_close_fatality(const Fighter *fighter);
-bool sonya_can_fan_fatality(const Fighter *fighter);
 bool sonya_can_first_fatality(const Fighter *fighter);
 bool sonya_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool sonya_can_leg_grab(const Fighter *fighter);
 bool sonya_can_second_fatality(const Fighter *fighter);
-bool sonya_can_spike_fatality(const Fighter *fighter);
-bool sonya_can_weapon(const Fighter *fighter);
 void sonya_cpu_air_hk(Fighter *fighter);
 void sonya_cpu_air_lk(Fighter *fighter);
 void sonya_cpu_close_hk(Fighter *fighter);
@@ -307,7 +299,6 @@ void sonya_lk(Fighter *fighter);
 void sonya_ready(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
 void sonya_roundhouse(Fighter *fighter);
-void sonya_sidestep(Fighter *fighter);
 void sonya_spike_fatality(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);
 void sonya_sweep(Fighter *fighter);

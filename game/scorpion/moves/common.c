@@ -34,11 +34,6 @@ void scorpion_special_ready(Fighter *fighter) {
   scorpion_ready(fighter);
 }
 
-bool scorpion_fighting(const Fighter *fighter) {
-  (void)fighter;
-  return g_battle.phase == PHASE_FIGHT;
-}
-
 void scorpion_hp_script(Fighter *fighter) {
   native_hp_start(fighter, &hp_profile);
 }

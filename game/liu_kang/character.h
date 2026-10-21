@@ -17,13 +17,8 @@
 #define bicycle_script liu_kang_bicycle_script
 #define can_bicycle liu_kang_can_bicycle
 #define can_close_fatality liu_kang_can_close_fatality
-#define can_fan_fatality liu_kang_can_fan_fatality
 #define can_first_fatality liu_kang_can_first_fatality
 #define can_ground_throw liu_kang_can_ground_throw
-#define can_pickup liu_kang_can_pickup
-#define can_sidestep liu_kang_can_sidestep
-#define can_spike_fatality liu_kang_can_spike_fatality
-#define can_weapon liu_kang_can_weapon
 #define cpu_air_hk liu_kang_cpu_air_hk
 #define cpu_air_hp liu_kang_cpu_air_hp
 #define cpu_air_lk liu_kang_cpu_air_lk
@@ -143,13 +138,8 @@ void liu_kang_armed_walk(Fighter *fighter);
 void liu_kang_bicycle_script(Fighter *fighter);
 bool liu_kang_can_bicycle(const Fighter *fighter);
 bool liu_kang_can_close_fatality(const Fighter *fighter);
-bool liu_kang_can_fan_fatality(const Fighter *fighter);
 bool liu_kang_can_first_fatality(const Fighter *fighter);
 bool liu_kang_can_ground_throw(const Fighter *fighter, bool low_kick);
-bool liu_kang_can_pickup(const Fighter *fighter);
-bool liu_kang_can_sidestep(const Fighter *fighter);
-bool liu_kang_can_spike_fatality(const Fighter *fighter);
-bool liu_kang_can_weapon(const Fighter *fighter);
 void liu_kang_cpu_air_hk(Fighter *fighter);
 void liu_kang_cpu_air_hp(Fighter *fighter);
 void liu_kang_cpu_air_lk(Fighter *fighter);
@@ -180,11 +170,9 @@ void liu_kang_jab(Fighter *fighter);
 void liu_kang_kick(Fighter *fighter);
 void liu_kang_lk(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
-void liu_kang_pickup(Fighter *fighter);
 void liu_kang_ready(Fighter *fighter);
 void liu_kang_roundhouse(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
-void liu_kang_sidestep(Fighter *fighter);
 void liu_kang_spike_fatality(Fighter *fighter);
 void liu_kang_sweep(Fighter *fighter);
 void liu_kang_uppercut(Fighter *fighter);

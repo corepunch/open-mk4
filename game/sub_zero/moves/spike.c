@@ -1,9 +1,5 @@
 #include "../character.h"
 
-bool sub_zero_can_spike_fatality(const Fighter *fighter) {
-  return g_battle.arena == 0 && sub_zero_can_close_fatality(fighter);
-}
-
 void sub_zero_script_spike_tail(Fighter *fighter) {
   mk4_script_spike_tail(fighter);
 }

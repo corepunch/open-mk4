@@ -21,16 +21,11 @@
 #define breath_travel sub_zero_breath_travel
 #define can_clone sub_zero_can_clone
 #define can_close_fatality sub_zero_can_close_fatality
-#define can_fan_fatality sub_zero_can_fan_fatality
 #define can_first_fatality sub_zero_can_first_fatality
 #define can_ground_throw sub_zero_can_ground_throw
 #define can_ice sub_zero_can_ice
-#define can_pickup sub_zero_can_pickup
 #define can_second_fatality sub_zero_can_second_fatality
-#define can_sidestep sub_zero_can_sidestep
 #define can_slide sub_zero_can_slide
-#define can_spike_fatality sub_zero_can_spike_fatality
-#define can_weapon sub_zero_can_weapon
 #define cpu_close_hk sub_zero_cpu_close_hk
 #define cpu_close_hp sub_zero_cpu_close_hp
 #define enter_lk_throw sub_zero_enter_lk_throw
@@ -181,16 +176,11 @@ void sub_zero_armed_walk(Fighter *fighter);
 void sub_zero_breath_travel(Fighter *fighter);
 bool sub_zero_can_clone(const Fighter *fighter);
 bool sub_zero_can_close_fatality(const Fighter *fighter);
-bool sub_zero_can_fan_fatality(const Fighter *fighter);
 bool sub_zero_can_first_fatality(const Fighter *fighter);
 bool sub_zero_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool sub_zero_can_ice(const Fighter *fighter);
-bool sub_zero_can_pickup(const Fighter *fighter);
 bool sub_zero_can_second_fatality(const Fighter *fighter);
-bool sub_zero_can_sidestep(const Fighter *fighter);
 bool sub_zero_can_slide(const Fighter *fighter);
-bool sub_zero_can_spike_fatality(const Fighter *fighter);
-bool sub_zero_can_weapon(const Fighter *fighter);
 void sub_zero_cpu_close_hk(Fighter *fighter);
 void sub_zero_cpu_close_hp(Fighter *fighter);
 void sub_zero_enter_lk_throw(Fighter *fighter);
@@ -364,11 +354,9 @@ void sub_zero_ice(Fighter *fighter);
 void sub_zero_jab(Fighter *fighter);
 void sub_zero_kick(Fighter *fighter);
 void sub_zero_lk(Fighter *fighter);
-void sub_zero_pickup(Fighter *fighter);
 void sub_zero_ready(Fighter *fighter);
 void sub_zero_roundhouse(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
-void sub_zero_sidestep(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
 void sub_zero_spike_fatality(Fighter *fighter);
 void sub_zero_sweep(Fighter *fighter);

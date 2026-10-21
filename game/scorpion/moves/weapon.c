@@ -127,10 +127,6 @@ static void sword_spin(Fighter *fighter) {
   scorpion_entry_retail_script_004e8850(fighter);
 }
 
-bool scorpion_can_weapon(const Fighter *fighter) {
-  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
-}
-
 void scorpion_weapon(Fighter *fighter) {
   if (fighter->armed) {
     fighter->weapon->throw_move(fighter);
@@ -145,14 +141,6 @@ void scorpion_weapon(Fighter *fighter) {
     scorpion_entry_retail_script_004e62c0(fighter);
   }
   fighter->sample_override = 0;
-}
-
-bool scorpion_can_pickup(const Fighter *fighter) {
-  return weapon_can_pickup(fighter);
-}
-
-void scorpion_pickup(Fighter *fighter) {
-  weapon_pickup(fighter);
 }
 
 void scorpion_script_draw_equip(Fighter *fighter) {

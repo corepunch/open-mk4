@@ -16,15 +16,7 @@
 #define armed_crouch kitana_armed_crouch
 #define armed_idle kitana_armed_idle
 #define armed_walk kitana_armed_walk
-#define can_cartwheel kitana_can_cartwheel
-#define can_close_fatality kitana_can_close_fatality
-#define can_fan_fatality kitana_can_fan_fatality
-#define can_first_fatality kitana_can_first_fatality
 #define can_ground_throw kitana_can_ground_throw
-#define can_leg_grab kitana_can_leg_grab
-#define can_second_fatality kitana_can_second_fatality
-#define can_spike_fatality kitana_can_spike_fatality
-#define can_weapon kitana_can_weapon
 #define cpu_air_hk kitana_cpu_air_hk
 #define cpu_air_lk kitana_cpu_air_lk
 #define cpu_close_hk kitana_cpu_close_hk
@@ -142,15 +134,7 @@ void kitana_armed_block(Fighter *fighter);
 void kitana_armed_crouch(Fighter *fighter);
 void kitana_armed_idle(Fighter *fighter);
 void kitana_armed_walk(Fighter *fighter);
-bool kitana_can_cartwheel(const Fighter *fighter);
-bool kitana_can_close_fatality(const Fighter *fighter);
-bool kitana_can_fan_fatality(const Fighter *fighter);
-bool kitana_can_first_fatality(const Fighter *fighter);
 bool kitana_can_ground_throw(const Fighter *fighter, bool low_kick);
-bool kitana_can_leg_grab(const Fighter *fighter);
-bool kitana_can_second_fatality(const Fighter *fighter);
-bool kitana_can_spike_fatality(const Fighter *fighter);
-bool kitana_can_weapon(const Fighter *fighter);
 void kitana_cpu_air_hk(Fighter *fighter);
 void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
@@ -188,7 +172,6 @@ void kitana_shadow_task_low(Fighter *fighter, int task_type);
 void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void kitana_shadow_up(Fighter *fighter);
 bool kitana_shadow_up_enabled(const Fighter *fighter);
-void kitana_sidestep(Fighter *fighter);
 void kitana_spike_fatality(Fighter *fighter);
 void kitana_square_wave(Fighter *fighter);
 void kitana_sweep(Fighter *fighter);

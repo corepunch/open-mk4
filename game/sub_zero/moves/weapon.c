@@ -62,10 +62,6 @@ static void scepter_back_lp(Fighter *fighter) {
   scepter_attack(fighter, 3);
 }
 
-bool sub_zero_can_weapon(const Fighter *fighter) {
-  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
-}
-
 void sub_zero_weapon(Fighter *fighter) {
   if (fighter->armed) {
     fighter->weapon->throw_move(fighter);
@@ -78,14 +74,6 @@ void sub_zero_weapon(Fighter *fighter) {
     weapon_draw(fighter, &scepter);
     sub_zero_entry_retail_script_004e62c0(fighter);
   }
-}
-
-bool sub_zero_can_pickup(const Fighter *fighter) {
-  return weapon_can_pickup(fighter);
-}
-
-void sub_zero_pickup(Fighter *fighter) {
-  weapon_pickup(fighter);
 }
 
 void sub_zero_script_draw_equip(Fighter *fighter) {

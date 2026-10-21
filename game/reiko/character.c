@@ -66,7 +66,7 @@ static const ButtonTable reiko_air = {{[BUTTON_HIGH_PUNCH] = reiko_press_air_hp,
 
 #include "generated/controls.inc"
 
-static const Controls reiko_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
+static const Controls reiko_controls = {NULL, 0,
     {[STANCE_STANDING] = &reiko_standing, [STANCE_CROUCHING] = &reiko_crouching, [STANCE_JUMP] = &reiko_air, [STANCE_DIAGONAL_AIR] = &reiko_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.

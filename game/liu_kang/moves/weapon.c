@@ -178,10 +178,6 @@ static void sword_back_lp(Fighter *fighter) {
   sword_attack(fighter, 3);
 }
 
-bool liu_kang_can_weapon(const Fighter *fighter) {
-  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
-}
-
 void liu_kang_weapon(Fighter *fighter) {
   if (fighter->armed) {
     fighter->weapon->throw_move(fighter);
@@ -193,14 +189,6 @@ void liu_kang_weapon(Fighter *fighter) {
     weapon_draw(fighter, &dragon_sword);
     liu_kang_entry_retail_script_004e62c0(fighter);
   }
-}
-
-bool liu_kang_can_pickup(const Fighter *fighter) {
-  return weapon_can_pickup(fighter);
-}
-
-void liu_kang_pickup(Fighter *fighter) {
-  weapon_pickup(fighter);
 }
 
 void liu_kang_liu_script_draw_equip(Fighter *fighter) {

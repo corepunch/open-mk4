@@ -35,7 +35,3 @@ void sonya_enter_victory(Fighter *fighter) {
   fighter_start_move(fighter, S_VICTORY, &sonya_s_victory);
   script_victory(fighter);
 }
-
-bool sonya_can_close_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}

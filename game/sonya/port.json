@@ -39,6 +39,12 @@
       "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
       "sample": 42
     },
+    "0x4e5930": {
+      "clip": 558,
+      "count": 16,
+      "evidence": "sonya_second_fatality binds owner clip 558 at sample 0 before 4e5930's 40-tick hold.",
+      "sample": 0
+    },
     "0x4e5980": {
       "clip": 560,
       "count": 73,
@@ -78,8 +84,8 @@
     "0x4e62d8": {
       "clip": 244,
       "count": 49,
-      "sample": 22,
-      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48."
+      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48.",
+      "sample": 22
     },
     "0x4e6330": {
       "clip": 295,
@@ -104,6 +110,18 @@
       "count": 39,
       "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
       "sample": 0
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "evidence": "sonya_arena_fatality binds the scene-specific 293/20 owner pose before 4e6950's initial 28-tick hold.",
+      "sample": 0
+    },
+    "0x4e8578": {
+      "clip": 102,
+      "count": 65,
+      "evidence": "The native leg-grab startup plays clip 102 samples 1..11 before the contact selects paired 4e8578, as for the 4e85a8 miss branch.",
+      "sample": 11
     },
     "0x4e85a8": {
       "clip": 102,
@@ -144,24 +162,6 @@
     "0x4ea130": {
       "evidence": "Independent victim owns KO-aware native recovery",
       "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e6950": {
-      "clip": 293,
-      "count": 20,
-      "sample": 0,
-      "evidence": "sonya_arena_fatality binds the scene-specific 293/20 owner pose before 4e6950's initial 28-tick hold."
-    },
-    "0x4e5930": {
-      "clip": 558,
-      "count": 16,
-      "sample": 0,
-      "evidence": "sonya_second_fatality binds owner clip 558 at sample 0 before 4e5930's 40-tick hold."
-    },
-    "0x4e8578": {
-      "clip": 102,
-      "count": 65,
-      "sample": 11,
-      "evidence": "The native leg-grab startup plays clip 102 samples 1..11 before the contact selects paired 4e8578, as for the 4e85a8 miss branch."
     }
   },
   "generated_scripts": [
@@ -369,9 +369,9 @@
       "symbol": "retail_script_004e6800"
     },
     "sidestep": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "sonya_sidestep"
+      "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep"
     },
     "spike_fatality": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -536,6 +536,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra"
     },
+    "32": {
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery.",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
     "34": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
@@ -638,11 +643,6 @@
       "evidence": "486b30: two standing block cycles, speed 0x3333, crouch/armed choices through shared 486d30; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
       "symbol": "react_fireball_block"
-    },
-    "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "sonya_ready",

@@ -16,7 +16,3 @@ void sonya_spike_start(Fighter *fighter) {
 void sonya_spike_fatality(Fighter *fighter) {
   sonya_arena_fatality(fighter, FINISH_SPIKE);
 }
-
-bool sonya_can_spike_fatality(const Fighter *fighter) {
-  return g_battle.arena == 0 && sonya_can_close_fatality(fighter);
-}

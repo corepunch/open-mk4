@@ -2,10 +2,6 @@
 
 static void fan_release(Fighter *fighter);
 
-bool liu_kang_can_fan_fatality(const Fighter *fighter) {
-  return g_battle.arena == 8 && liu_kang_can_close_fatality(fighter);
-}
-
 void liu_kang_liu_script_fan_cycle(Fighter *fighter) {
   (void)fighter; /* 43d530 returns to the bounded native scene coordinator. */
 }

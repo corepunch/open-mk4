@@ -37,7 +37,3 @@ void kitana_cartwheel(Fighter *fighter) {
   fighter->mmove_cleanup = kitana_special_cleanup;
   kitana_entry_retail_script_004e81d0(fighter);
 }
-
-bool kitana_can_cartwheel(const Fighter *fighter) {
-  return g_battle.phase == PHASE_FIGHT && g_battle.ticks >= fighter->cartwheel_ready;
-}

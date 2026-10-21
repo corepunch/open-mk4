@@ -148,26 +148,6 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
 /* 46f080/46f130: two native contact visits, then remaining clip playback.
  * Keep the established portable timing; source-script startup is generated. */
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const CommandDef commands[] = {
-  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, sub_zero_can_first_fatality, sub_zero_first_fatality},
-  {BUTTON_HIGH_PUNCH, {TOKEN_BACK, TOKEN_BACK, TOKEN_DOWN, TOKEN_BACK}, 4, 50, 0, sub_zero_can_second_fatality, sub_zero_second_fatality},
-  {BUTTON_LOW_PUNCH, {0}, 0, 0, 0, sub_zero_can_slide, sub_zero_slide},
-  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 26, 0, sub_zero_can_ice, sub_zero_ice},
-  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_BACK}, 2, 18, CMD_AIR, sub_zero_can_clone, sub_zero_clone},
-  {BUTTON_BLOCK, {0}, 0, 0, 0, sub_zero_can_slide, sub_zero_slide},
-  {BUTTON_BLOCK, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, sub_zero_can_first_fatality, sub_zero_first_fatality}, /* Requested extension: retail Sub-Zero has no 4e4a04 air-throw record. * Keep his slide/fatality priority, then reuse the shared retail throw. */
-  {BUTTON_BLOCK, {0}, 0, 0, CMD_AIR | CMD_BLOCK_OK, mk4_can_air_throw, sub_zero_air_throw},
-  {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_UP, TOKEN_UP, TOKEN_UP}, 4, 48, 0, sub_zero_can_fan_fatality, sub_zero_fan_fatality},
-  {BUTTON_LOW_KICK, {0}, 0, 0, 0, sub_zero_can_slide, sub_zero_slide},
-  {BUTTON_LOW_KICK, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN}, 3, 40, 0, sub_zero_can_spike_fatality, sub_zero_spike_fatality},
-  {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 24, 0, sub_zero_can_weapon, sub_zero_weapon},
-  {BUTTON_RUN, {0}, 0, 0, 0, sub_zero_can_sidestep, sub_zero_sidestep},
-  {BUTTON_RUN, {0}, 0, 0, 0, sub_zero_can_pickup, sub_zero_pickup},
-  {BUTTON_RUN, {TOKEN_FORWARD, TOKEN_BACK, TOKEN_FORWARD, TOKEN_DOWN}, 4, 60, CMD_BLOCK_OK, sub_zero_can_first_fatality, sub_zero_first_fatality},
-};
-// clang-format on
-
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
     [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
     [BUTTON_HIGH_KICK] = sub_zero_press_kick,
@@ -180,7 +160,7 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_air_hp
     [BUTTON_LOW_PUNCH] = sub_zero_press_air_lp,
     [BUTTON_HIGH_KICK] = sub_zero_press_air_hk,
     [BUTTON_LOW_KICK] = sub_zero_press_air_lk}};
-static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
+static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_JAB] = sub_zero_jab,

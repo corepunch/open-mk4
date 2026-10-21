@@ -54,8 +54,7 @@ static const FighterFn enter[S_COUNT] = {
 
 #include "generated/controls.inc"
 
-static const Controls controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
-    {&standing, &crouching, &jumping, [STANCE_DIAGONAL_AIR] = &shinnok_diagonal_air}};
+static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping, [STANCE_DIAGONAL_AIR] = &shinnok_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {

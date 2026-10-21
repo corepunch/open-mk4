@@ -51,8 +51,3 @@ void kitana_second_fatality(Fighter *fighter) {
   }
   kitana_entry_retail_script_004e5930(fighter);
 }
-
-bool kitana_can_second_fatality(const Fighter *fighter) {
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
-}

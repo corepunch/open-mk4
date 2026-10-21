@@ -16,7 +16,3 @@ void kitana_spike_start(Fighter *fighter) {
 void kitana_spike_fatality(Fighter *fighter) {
   kitana_arena_fatality(fighter, FINISH_SPIKE);
 }
-
-bool kitana_can_spike_fatality(const Fighter *fighter) {
-  return g_battle.arena == 0 && kitana_can_close_fatality(fighter);
-}

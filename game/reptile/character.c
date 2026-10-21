@@ -51,7 +51,7 @@ static const ButtonTable reptile_jumping = {{[BUTTON_HIGH_PUNCH] = reptile_press
 
 #include "generated/controls.inc"
 
-static const Controls reptile_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
+static const Controls reptile_controls = {NULL, 0,
     {[STANCE_STANDING] = &reptile_standing,
         [STANCE_CROUCHING] = &reptile_crouching,
         [STANCE_JUMP] = &reptile_jumping,

@@ -1,9 +1,5 @@
 #include "../character.h"
 
-bool scorpion_can_spike_fatality(const Fighter *fighter) {
-  return g_battle.arena == 0 && scorpion_can_beast_fatality(fighter);
-}
-
 void scorpion_spike_fatality(Fighter *fighter) {
   scorpion_start_fatality(fighter, FINISH_SPIKE);
 }

@@ -17,11 +17,8 @@
 #define armed_idle raiden_armed_idle
 #define armed_walk raiden_armed_walk
 #define can_close_fatality raiden_can_close_fatality
-#define can_fan_fatality raiden_can_fan_fatality
 #define can_ground_throw raiden_can_ground_throw
-#define can_spike_fatality raiden_can_spike_fatality
 #define can_teleport raiden_can_teleport
-#define can_weapon raiden_can_weapon
 #define cpu_air_hk raiden_cpu_air_hk
 #define cpu_air_lk raiden_cpu_air_lk
 #define cpu_close_hk raiden_cpu_close_hk
@@ -146,11 +143,8 @@ void raiden_armed_crouch(Fighter *fighter);
 void raiden_armed_idle(Fighter *fighter);
 void raiden_armed_walk(Fighter *fighter);
 bool raiden_can_close_fatality(const Fighter *fighter);
-bool raiden_can_fan_fatality(const Fighter *fighter);
 bool raiden_can_ground_throw(const Fighter *fighter, bool low_kick);
-bool raiden_can_spike_fatality(const Fighter *fighter);
 bool raiden_can_teleport(const Fighter *fighter);
-bool raiden_can_weapon(const Fighter *fighter);
 void raiden_cpu_air_hk(Fighter *fighter);
 void raiden_cpu_air_lk(Fighter *fighter);
 void raiden_cpu_close_hk(Fighter *fighter);
@@ -193,7 +187,6 @@ void raiden_lightning(Fighter *fighter);
 void raiden_lk(Fighter *fighter);
 void raiden_ready(Fighter *fighter);
 void raiden_roundhouse(Fighter *fighter);
-void raiden_sidestep(Fighter *fighter);
 void raiden_spike_fatality(Fighter *fighter);
 void raiden_sweep(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);

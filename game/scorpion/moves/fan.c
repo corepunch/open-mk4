@@ -2,10 +2,6 @@
 
 static void fan_release(Fighter *fighter);
 
-bool scorpion_can_fan_fatality(const Fighter *fighter) {
-  return g_battle.arena == 8 && scorpion_can_beast_fatality(fighter);
-}
-
 void scorpion_fan_fatality(Fighter *fighter) {
   scorpion_start_fatality(fighter, FINISH_FAN);
 }

@@ -16,7 +16,3 @@ void raiden_spike_start(Fighter *fighter) {
 void raiden_spike_fatality(Fighter *fighter) {
   raiden_arena_fatality(fighter, FINISH_SPIKE);
 }
-
-bool raiden_can_spike_fatality(const Fighter *fighter) {
-  return g_battle.arena == 0 && raiden_can_close_fatality(fighter);
-}

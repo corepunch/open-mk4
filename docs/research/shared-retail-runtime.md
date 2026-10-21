@@ -23,3 +23,25 @@ are data, never host code pointers.
 One shared fixture modifies source records and dispatch data in memory to
 verify player selection, live reads, predicate/action decoding, termination
 and the hidden-roster remap. It does not test individual character behavior.
+
+## Input integration
+
+`fighter_press` and `fighter_release` now walk the live retail record list for
+all 18 roster slots. Pattern order, windows, action flags, predicate selection,
+and native targets come from the image on each input event. Compiled per-fighter
+command arrays are removed. A runtime-derived compatibility view remains for
+UI/test callers that inspect `Controls`; input matching does not use that cache.
+
+`retail_native.c` is the shared native-address boundary. Its input bridge still
+points to existing native implementations while those implementations are
+consolidated. Character masks in this temporary bridge are not the target
+architecture and do not claim shared native completion. Known native entry
+points remain callable even where a particular character's input list does not
+reference them. Thirty-three redundant C command wrappers and five identical sidestep wrappers
+are removed; sidestep uses one shared native implementation.
+
+The shared source-mutation fixture also routes a real player input through a
+modified retail list/action table. Static source checks retain native entry
+reachability and canonical CPU binding output; they no longer require compiled
+command arrays. Character definitions, stances, CPU bindings, other fighters'
+generated script bodies and native duplication still require migration.

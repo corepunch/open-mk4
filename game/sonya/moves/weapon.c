@@ -65,10 +65,6 @@ void sonya_script_draw_equip(Fighter *fighter) {
   sonya_entry_retail_script_004e62d8(fighter);
 }
 
-bool sonya_can_weapon(const Fighter *fighter) {
-  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
-}
-
 void sonya_weapon(Fighter *fighter) {
   if (fighter->armed) {
     weapon_throw(fighter);

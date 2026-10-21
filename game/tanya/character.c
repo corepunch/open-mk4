@@ -33,8 +33,8 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = tanya_press_air_hp,
 
 #include "generated/controls.inc"
 
-static const Controls tanya_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
-    {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &tanya_diagonal_air}};
+static const Controls tanya_controls = {
+    NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &tanya_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {

@@ -67,7 +67,7 @@ static const ButtonTable noob_saibot_air = {{[BUTTON_HIGH_PUNCH] = noob_saibot_p
 
 #include "generated/controls.inc"
 
-static const Controls noob_saibot_controls = {retail_commands, (int)(sizeof retail_commands / sizeof retail_commands[0]),
+static const Controls noob_saibot_controls = {NULL, 0,
     {[STANCE_STANDING] = &noob_saibot_standing,
         [STANCE_CROUCHING] = &noob_saibot_crouching,
         [STANCE_JUMP] = &noob_saibot_air,

@@ -12,19 +12,14 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define can_beast_fatality scorpion_can_beast_fatality
 #define can_burn_fatality scorpion_can_burn_fatality
-#define can_fan_fatality scorpion_can_fan_fatality
 #define can_ground_throw scorpion_can_ground_throw
-#define can_pickup scorpion_can_pickup
 #define can_spear scorpion_can_spear
-#define can_spike_fatality scorpion_can_spike_fatality
 #define can_teleport scorpion_can_teleport
-#define can_weapon scorpion_can_weapon
 #define enter_lk_throw scorpion_enter_lk_throw
 #define enter_sweep scorpion_enter_sweep
 #define enter_throw scorpion_enter_throw
 #define enter_uppercut scorpion_enter_uppercut
 #define fan_start scorpion_fan_start
-#define fighting scorpion_fighting
 #define fire_script scorpion_fire_script
 #define ground_attack scorpion_ground_attack
 #define ground_native_next scorpion_ground_native_next
@@ -152,19 +147,14 @@ enum {
 
 bool scorpion_can_beast_fatality(const Fighter *fighter);
 bool scorpion_can_burn_fatality(const Fighter *fighter);
-bool scorpion_can_fan_fatality(const Fighter *fighter);
 bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick);
-bool scorpion_can_pickup(const Fighter *fighter);
 bool scorpion_can_spear(const Fighter *fighter);
-bool scorpion_can_spike_fatality(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);
-bool scorpion_can_weapon(const Fighter *fighter);
 void scorpion_enter_lk_throw(Fighter *fighter);
 void scorpion_enter_sweep(Fighter *fighter);
 void scorpion_enter_throw(Fighter *fighter);
 void scorpion_enter_uppercut(Fighter *fighter);
 void scorpion_fan_start(Fighter *fighter);
-bool scorpion_fighting(const Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
 void scorpion_ground_attack(Fighter *fighter, int index);
 void scorpion_ground_native_next(Fighter *fighter);
@@ -274,7 +264,6 @@ void scorpion_idle(Fighter *fighter);
 void scorpion_jab(Fighter *fighter);
 void scorpion_kick(Fighter *fighter);
 void scorpion_lk(Fighter *fighter);
-void scorpion_pickup(Fighter *fighter);
 void scorpion_ready(Fighter *fighter);
 void scorpion_roundhouse(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);

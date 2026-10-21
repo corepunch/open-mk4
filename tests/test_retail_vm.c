@@ -1,6 +1,7 @@
 #include "game.h"
 #include "retail_vm.h"
 #include "retail_data.h"
+#include "retail_native.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -205,6 +206,14 @@ static void data_tables(void) {
             command.predicate == mk4_image_u32(&image, 0x4e4ec4),
       "runtime must decode the record and resolve live predicate/action tables");
   check(!retail_command_next(&image, &cursor, &command), "retail terminator must close the list");
+  Fighter *owner = setup(1, 2);
+  owner->roster = 17;
+  put_word(base, 0xffffffffu);
+  put_word(base + 8, 0x00010001);
+  put_word(action_slot, 0x469250);
+  fighter_press(owner, BUTTON_HIGH_PUNCH);
+  check(owner->pending == retail_native_entry(17, 0x469250), "live input must use the selected retail action rather than a compiled command table");
+
   for (unsigned i = 0; i < 4; ++i) {
     put_word(base + i * 4, words[i]);
   }

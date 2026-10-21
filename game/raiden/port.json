@@ -57,6 +57,12 @@
       "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
       "sample": 100
     },
+    "0x4e5788": {
+      "clip": 575,
+      "count": 15,
+      "evidence": "4e5770 binds victim clip 575 at sample 0, then native 464ee0 enters 4e5788's 211-tick hold.",
+      "sample": 0
+    },
     "0x4e5e50": {
       "clip": 82,
       "count": 45,
@@ -72,8 +78,8 @@
     "0x4e62d8": {
       "clip": 244,
       "count": 49,
-      "sample": 22,
-      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48."
+      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48.",
+      "sample": 22
     },
     "0x4e6330": {
       "clip": 295,
@@ -97,6 +103,12 @@
       "clip": 64,
       "count": 45,
       "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
+      "sample": 0
+    },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "evidence": "raiden_arena_fatality binds the scene-specific 293/20 owner pose before 4e6950's initial 28-tick hold.",
       "sample": 0
     },
     "0x4e6998": {
@@ -144,18 +156,6 @@
     "0x4ea068": {
       "evidence": "Independent victim owns KO-aware native recovery",
       "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e6950": {
-      "clip": 293,
-      "count": 20,
-      "sample": 0,
-      "evidence": "raiden_arena_fatality binds the scene-specific 293/20 owner pose before 4e6950's initial 28-tick hold."
-    },
-    "0x4e5788": {
-      "clip": 575,
-      "count": 15,
-      "sample": 0,
-      "evidence": "4e5770 binds victim clip 575 at sample 0, then native 464ee0 enters 4e5788's 211-tick hold."
     }
   },
   "generated_scripts": [
@@ -349,9 +349,9 @@
       "symbol": "retail_script_004e6800"
     },
     "sidestep": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "raiden_sidestep"
+      "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep"
     },
     "spike_fatality": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -526,6 +526,11 @@
       "source": "game/reactions.c",
       "symbol": "react_extra"
     },
+    "32": {
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery.",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
     "34": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
@@ -599,11 +604,6 @@
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/raiden/character.c",
       "symbol": "raiden_generated_reaction"
-    },
-    "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "raiden_ready",

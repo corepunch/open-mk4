@@ -1,5 +1,8 @@
 #include "game.h"
 #include "native.h"
+#include "retail_data.h"
+#include "retail_native.h"
+#include "retail_vm.h"
 #include "math_util.h"
 #include <math.h>
 
@@ -52,40 +55,59 @@ static Button resolve_token(const Fighter *fighter, CommandToken token) {
   return BUTTON_UP;
 }
 
-static const CommandDef *match_command(const Fighter *fighter, Button button, bool released) {
-  const Controls *controls = roster_def(fighter->roster)->controls;
-  for (int i = 0; i < controls->command_count; ++i) {
-    const CommandDef *command = &controls->commands[i];
-    if (command->button != button || !!(command->flags & CMD_RELEASE) != released) {
-      continue;
-    }
-    if (command->count > 0) {
+static FighterFn match_command(const Fighter *fighter, Button button, bool released) {
+  const Mk4Image *image = retail_vm_image();
+  unsigned player = fighter == &g_battle.fighters[1] ? 1u : 0u;
+  RetailCommandCursor cursor = retail_command_cursor(image, (unsigned)fighter->roster, player, button, released);
+  RetailCommand command;
+  while (retail_command_next(image, &cursor, &command)) {
+    if (command.pattern != 0xffffffffu) {
+      CommandToken tokens[COMMAND_TOKENS];
+      unsigned count = 0;
+      for (uint32_t pattern = command.pattern; pattern; pattern >>= 8) {
+        require(count < COMMAND_TOKENS, "Retail command pattern exceeds input history");
+        switch (pattern & 255u) {
+          case 1:
+            tokens[count++] = TOKEN_UP;
+            break;
+          case 2:
+            tokens[count++] = TOKEN_DOWN;
+            break;
+          case 0xaa:
+            tokens[count++] = TOKEN_BACK;
+            break;
+          case 0xdd:
+            tokens[count++] = TOKEN_FORWARD;
+            break;
+          default:
+            fatal("Invalid retail command direction %02x", pattern & 255u);
+        }
+      }
       bool same = true;
-      require(command->count <= COMMAND_TOKENS && command->count <= INPUT_HISTORY, "Command pattern too long");
-      for (int k = 0; k < command->count && same; ++k) {
-        same = fighter->directions.token[command->count - 1 - k] == resolve_token(fighter, command->tokens[k]) + 1;
+      for (unsigned k = 0; k < count && same; ++k) {
+        same = fighter->directions.token[count - 1 - k] == resolve_token(fighter, tokens[k]) + 1;
       }
       if (!same) {
         continue;
       }
-      if (!(command->flags & CMD_BLOCK_OK) && (fighter->held & BUTTON_BIT(BUTTON_BLOCK))) {
+      if (!(command.flags & CMD_BLOCK_OK) && (fighter->held & BUTTON_BIT(BUTTON_BLOCK))) {
         continue;
       }
-      /* A late pattern ends the whole list, hiding later records. */
-      if (command->window > 0 && g_battle.ticks - fighter->directions.tick[command->count - 1] > (uint64_t)command->window) {
+      /* EventPacketDecoder: a late matching pattern ends the whole list. */
+      if (command.window > 0 && g_battle.ticks - fighter->directions.tick[count - 1] > command.window) {
         return NULL;
       }
     }
-    if (!(command->flags & CMD_AIR) && !(fighter->flags & FF_FOLLOW_UP) && fighter_airborne(fighter)) {
+    if (!(command.flags & CMD_AIR) && !(fighter->flags & FF_FOLLOW_UP) && fighter_airborne(fighter)) {
       continue;
     }
     if (fighter->flags & (FF_BUSY | FF_REACTING)) {
       return NULL;
     }
-    if (command->predicate != NULL && !command->predicate(fighter)) {
+    if (!retail_native_gate(fighter, command.predicate)) {
       continue;
     }
-    return command;
+    return retail_native_entry((unsigned)fighter->roster, command.target);
   }
   return NULL;
 }
@@ -101,10 +123,10 @@ static void push_direction(InputHistory *history, Button direction, uint64_t tic
 
 void fighter_press(Fighter *fighter, Button button) {
   if (button <= BUTTON_RIGHT) {
-    const CommandDef *command = match_command(fighter, button, false);
+    FighterFn command = match_command(fighter, button, false);
     push_direction(&fighter->directions, button, g_battle.ticks);
     if (command != NULL) {
-      fighter_interrupt(fighter, command->enter);
+      fighter_interrupt(fighter, command);
     }
     return;
   }
@@ -113,9 +135,9 @@ void fighter_press(Fighter *fighter, Button button) {
     fighter->latch[button] = g_battle.ticks;
   }
   fighter->buffered |= BUTTON_BIT(button);
-  const CommandDef *command = match_command(fighter, button, false);
+  FighterFn command = match_command(fighter, button, false);
   if (command != NULL) {
-    fighter_interrupt(fighter, command->enter);
+    fighter_interrupt(fighter, command);
   } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
     fighter->buttons->press[button](fighter);
   }
@@ -127,9 +149,9 @@ void fighter_press(Fighter *fighter, Button button) {
 /* LK release has no stance fallback and never rewrites the press latch.
  * sample_switches preserves the retail word-B press/release priority. */
 void fighter_release(Fighter *fighter, Button button) {
-  const CommandDef *command = match_command(fighter, button, true);
+  FighterFn command = match_command(fighter, button, true);
   if (command != NULL) {
-    fighter_interrupt(fighter, command->enter);
+    fighter_interrupt(fighter, command);
   }
 }
 

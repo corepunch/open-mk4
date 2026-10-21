@@ -12,24 +12,30 @@
       "clip": 35,
       "count": 44,
       "evidence": "42c0b0 resumes after paired opening",
-      "sample": 10,
-      "paired": true
+      "paired": true,
+      "sample": 10
     },
     "0x4de428": {
       "clip": 35,
       "count": 44,
       "evidence": "42c0d0 applies damage then resumes",
+      "paired": true,
       "return_to": "caller",
       "sample": 38,
-      "paired": true,
       "successor": "retail_script_004de468"
+    },
+    "0x4dfff8": {
+      "clip": 119,
+      "count": 60,
+      "evidence": "liu_kang_start_fatality poses the second-fatality owner on clip 119 at sample 0 before 4dfff8's scene-event holds.",
+      "sample": 0
     },
     "0x4e0138": {
       "clip": 415,
       "count": 130,
       "evidence": "43d460/43d530 native loop, 31 calls from C owner",
-      "sample": 69,
-      "return_to": "caller"
+      "return_to": "caller",
+      "sample": 69
     },
     "0x4e0148": {
       "clip": 415,
@@ -64,8 +70,8 @@
     "0x4e62d8": {
       "clip": 244,
       "count": 49,
-      "sample": 22,
-      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48."
+      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48.",
+      "sample": 22
     },
     "0x4e6330": {
       "clip": 295,
@@ -91,6 +97,18 @@
       "evidence": "46f390 ordinary roundhouse selection",
       "sample": 0
     },
+    "0x4e6950": {
+      "clip": 293,
+      "count": 20,
+      "evidence": "liu_kang_start_fatality poses the owner on clip 293 at sample 0 before 4e6950's initial 28-tick hold.",
+      "sample": 0
+    },
+    "0x4e8718": {
+      "clip": 92,
+      "count": 6,
+      "evidence": "Native 47ee00 completes flying-kick clip 92 to pose 5 and holds it while querying before the blocked branch 4e8718.",
+      "sample": 5
+    },
     "0x4e9a90": {
       "clip": 133,
       "count": 36,
@@ -102,26 +120,8 @@
       "return_to": "mk4_script_thrown_ready"
     },
     "0x4e9de8": {
-      "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Shared native C0 reaction64 completes clip130 with friction and KO-aware controller return."
-    },
-    "0x4e6950": {
-      "clip": 293,
-      "count": 20,
-      "sample": 0,
-      "evidence": "liu_kang_start_fatality poses the owner on clip 293 at sample 0 before 4e6950's initial 28-tick hold."
-    },
-    "0x4dfff8": {
-      "clip": 119,
-      "count": 60,
-      "sample": 0,
-      "evidence": "liu_kang_start_fatality poses the second-fatality owner on clip 119 at sample 0 before 4dfff8's scene-event holds."
-    },
-    "0x4e8718": {
-      "clip": 92,
-      "count": 6,
-      "sample": 5,
-      "evidence": "Native 47ee00 completes flying-kick clip 92 to pose 5 and holds it while querying before the blocked branch 4e8718."
+      "evidence": "Shared native C0 reaction64 completes clip130 with friction and KO-aware controller return.",
+      "return_to": "mk4_mmove_thrown_finish"
     }
   },
   "generated_scripts": [
@@ -273,6 +273,11 @@
       "source": "game/liu_kang/character.c",
       "symbol": "liu_kang_second_fatality"
     },
+    "fireball_reaction": {
+      "evidence": "Shared64 dispatcher selects the generated4e9de8 victim stream for C0 fireballs.",
+      "source": "game/reactions.c",
+      "symbol": "react_liu_record"
+    },
     "flying_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
       "source": "game/liu_kang/character.c",
@@ -324,9 +329,9 @@
       "symbol": "liu_kang_roundhouse"
     },
     "sidestep": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_sidestep"
+      "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",
+      "source": "game/mk4_common.c",
+      "symbol": "mk4_sidestep"
     },
     "spike_fatality": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -367,11 +372,6 @@
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
       "source": "game/weapons.c",
       "symbol": "weapon_throw"
-    },
-    "fireball_reaction": {
-      "source": "game/reactions.c",
-      "symbol": "react_liu_record",
-      "evidence": "Shared64 dispatcher selects the generated4e9de8 victim stream for C0 fireballs."
     }
   },
   "output": "game/liu_kang/generated/scripts.inc",
@@ -499,6 +499,11 @@
       "source": "game/reactions.c",
       "symbol": "react_liu_record"
     },
+    "32": {
+      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery.",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
     "34": {
       "evidence": "4ea4e8[34] -> 0x4838e0; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
@@ -555,10 +560,10 @@
       "symbol": "react_extra"
     },
     "62": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "jarek_weapon_reaction",
+      "adaptation": "Use the existing generated native victim stream in the shared dispatcher.",
       "evidence": "Reaction62 and148 share native4821e0 and generated4e8c08.",
-      "adaptation": "Use the existing generated native victim stream in the shared dispatcher."
+      "source": "game/jarek/moves/weapon.c",
+      "symbol": "jarek_weapon_reaction"
     },
     "64": {
       "evidence": "4ea4e8[64] -> 0x486730; shared reaction adapter and behavioral regressions",
@@ -586,11 +591,6 @@
       "evidence": "4ea4e8[84] -> 0x488870; docs/liu-kang-scripts.md",
       "source": "game/liu_kang/character.c",
       "symbol": "bicycle_victim_script"
-    },
-    "32": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     }
   },
   "return_to": "fighter_ready",

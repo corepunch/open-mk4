@@ -2,10 +2,6 @@
 
 static void fan_release(Fighter *fighter);
 
-bool sub_zero_can_fan_fatality(const Fighter *fighter) {
-  return g_battle.arena == 8 && sub_zero_can_close_fatality(fighter);
-}
-
 static void fan_release(Fighter *fighter) {
   Fighter *victim = sub_zero_opponent(fighter);
   fighter_cancel_mmove(victim);

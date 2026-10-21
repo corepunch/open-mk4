@@ -34,7 +34,3 @@ void sonya_fan_start(Fighter *fighter) {
 void sonya_fan_fatality(Fighter *fighter) {
   sonya_arena_fatality(fighter, FINISH_FAN);
 }
-
-bool sonya_can_fan_fatality(const Fighter *fighter) {
-  return g_battle.arena == 8 && sonya_can_close_fatality(fighter);
-}

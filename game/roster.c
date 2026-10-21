@@ -1,5 +1,7 @@
 #include "game.h"
 #include "mk4_characters.h"
+#include "retail_data.h"
+#include "retail_vm.h"
 #include <stddef.h>
 
 /* Each fighter owns a move table indexed by StateId. Columns: clip, first
@@ -63,7 +65,18 @@ int roster_count(void) {
 
 const CharacterDef *roster_def(int index) {
   require(index >= 0 && index < roster_count(), "Roster index out of range");
-  return roster[index];
+  static CharacterDef definitions[MK4_ROSTER_COUNT];
+  static Controls controls[MK4_ROSTER_COUNT];
+  static const Mk4Image *images[MK4_ROSTER_COUNT];
+  const Mk4Image *image = retail_vm_image();
+  if (images[index] != image) {
+    definitions[index] = *roster[index];
+    controls[index] = *roster[index]->controls;
+    retail_bind_commands(&controls[index], image, (unsigned)index);
+    definitions[index].controls = &controls[index];
+    images[index] = image;
+  }
+  return &definitions[index];
 }
 
 const MoveDef *fighter_move(const Fighter *fighter) {

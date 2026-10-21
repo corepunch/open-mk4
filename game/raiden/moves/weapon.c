@@ -49,10 +49,6 @@ void raiden_script_draw_equip(Fighter *fighter) {
   raiden_entry_retail_script_004e62d8(fighter);
 }
 
-bool raiden_can_weapon(const Fighter *fighter) {
-  return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
-}
-
 void raiden_weapon(Fighter *fighter) {
   if (fighter->armed) {
     weapon_throw(fighter);

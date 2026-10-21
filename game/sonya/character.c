@@ -79,25 +79,6 @@ const MoveDef sonya_s_hp = {.clip = 296, .last = MOVE_END, .flags = RETAIL, .act
 
 /* Native 494a00 parameter blocks; byte fields are decoded at authoring. */
 
-// clang-format off: Keep table entries on one row, including long rows.
-static const CommandDef commands[] = {
-  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_BACK}, 2, 24, 0x0, NULL, sonya_bicycle},
-  {BUTTON_HIGH_PUNCH, {TOKEN_FORWARD, TOKEN_DOWN, TOKEN_FORWARD}, 3, 40, 0x0, sonya_can_spike_fatality, sonya_spike_fatality},
-  {BUTTON_LOW_PUNCH, {TOKEN_DOWN, TOKEN_FORWARD}, 2, 16, 0x0, NULL, sonya_ring},
-  {BUTTON_LOW_PUNCH, {0}, 0, 0, 0x40, sonya_can_leg_grab, sonya_leg_grab},
-  {BUTTON_BLOCK, {0}, 0, 0, 0x10, mk4_can_air_throw, sonya_air_throw},
-  {BUTTON_BLOCK, {0}, 0, 0, 0x40, sonya_can_leg_grab, sonya_leg_grab},
-  {BUTTON_HIGH_KICK, {TOKEN_BACK, TOKEN_BACK, TOKEN_DOWN}, 3, 40, 0x0, NULL, sonya_square_wave},
-  {BUTTON_HIGH_KICK, {TOKEN_DOWN, TOKEN_BACK, TOKEN_BACK}, 3, 40, 0x0, sonya_can_fan_fatality, sonya_fan_fatality},
-  {BUTTON_HIGH_KICK, {TOKEN_UP, TOKEN_DOWN, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0x0, sonya_can_second_fatality, sonya_second_fatality},
-  {BUTTON_LOW_KICK, {TOKEN_BACK, TOKEN_DOWN, TOKEN_FORWARD}, 3, 29, 0x0, sonya_can_cartwheel, sonya_cartwheel},
-  {BUTTON_LOW_KICK, {TOKEN_FORWARD, TOKEN_FORWARD}, 2, 24, 0x0, sonya_can_weapon, sonya_weapon},
-  {BUTTON_RUN, {TOKEN_DOWN, TOKEN_DOWN, TOKEN_DOWN, TOKEN_UP}, 4, 50, 0x40, sonya_can_first_fatality, sonya_first_fatality},
-  {BUTTON_RUN, {0}, 0, 0, 0x0, mk4_can_sidestep, sonya_sidestep},
-  {BUTTON_RUN, {0}, 0, 0, 0x0, weapon_can_pickup, weapon_pickup},
-};
-// clang-format on
-
 static const ButtonTable standing = {
     {[BUTTON_HIGH_PUNCH] = sonya_press_jab, [BUTTON_LOW_PUNCH] = sonya_press_lp, [BUTTON_HIGH_KICK] = sonya_press_kick, [BUTTON_LOW_KICK] = sonya_press_lk}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = sonya_press_uppercut,
@@ -108,7 +89,7 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = sonya_press_air_hp,
     [BUTTON_LOW_PUNCH] = sonya_press_air_lp,
     [BUTTON_HIGH_KICK] = sonya_press_air_hk,
     [BUTTON_LOW_KICK] = sonya_press_air_lk}};
-static const Controls controls = {commands, COUNT(commands), {&standing, &crouching, &jumping}};
+static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {
     .enter =
