@@ -268,9 +268,10 @@
       "symbol": "react_kick_hit"
     },
     "17": {
-      "evidence": "4ea4e8[17] -> 0x482e00; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "175": {
       "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
@@ -295,9 +296,10 @@
       "symbol": "react_fireball_block"
     },
     "21": {
-      "evidence": "4ea4e8[21] -> 0x482e80; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
       "evidence": "4ea4e8[22] -> 0x482f00; shared reaction adapter and behavioral regressions",
@@ -310,14 +312,16 @@
       "symbol": "react_extra"
     },
     "25": {
-      "evidence": "4ea4e8[25] -> 0x482830; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "28": {
-      "evidence": "4ea4e8[28] -> 0x482870; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "31": {
       "evidence": "4ea4e8[31] -> 0x4835f0; shared reaction adapter and behavioral regressions",
@@ -340,9 +344,10 @@
       "symbol": "react_jab_hit"
     },
     "38": {
-      "evidence": "4ea4e8[38] -> 0x482e90; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
       "evidence": "4ea4e8[39] -> 0x482ef0; shared reaction adapter and behavioral regressions",
@@ -433,16 +438,16 @@
       "symbol": "react_extra"
     },
     "27": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "43": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     }
   },
   "schema": 1,

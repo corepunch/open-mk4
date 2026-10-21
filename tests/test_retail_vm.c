@@ -727,6 +727,29 @@ static void native_reaction_table(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
 }
 
+static void native_stagger_boundary(void) {
+  uint32_t target = mk4_image_u32(&image, 0x4ea4e8 + 100 * 4);
+  put_word(0x4ea4e8 + 100 * 4, 0x482e00);
+  for (int crouch = 0; crouch < 2; ++crouch) {
+    Fighter *actor = setup(0, 0);
+    actor->action = crouch ? 0x2001 : 0x2000;
+    battle_react(actor, 100);
+    tick();
+    check(actor->retail_vm.active && actor->retail_vm.entry == (crouch ? 0x4e9360u : 0x4e9308u) && actor->current_mmove == NULL,
+        "loaded stagger native must preserve the incoming action branch and transfer playback to original script words");
+    if (crouch) {
+      fighter_interrupt(actor, fighter_ready);
+      check(!actor->retail_vm.active, "native-started reaction script must remain independently interruptible");
+    } else {
+      for (int visit = 0; visit < 128 && actor->retail_vm.active; ++visit) {
+        tick();
+      }
+      check(!actor->retail_vm.active && actor->state == S_IDLE, "native-started script playback must return through the shared controller boundary");
+    }
+  }
+  put_word(0x4ea4e8 + 100 * 4, target);
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -956,6 +979,7 @@ int main(int argc, char **argv) {
   native_sound_data();
   native_callback_table();
   native_reaction_table();
+  native_stagger_boundary();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

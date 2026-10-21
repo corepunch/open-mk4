@@ -359,9 +359,10 @@
       "evidence": "Pinned EXE Shinnok contact record and reaction table"
     },
     "17": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Pinned EXE Shinnok contact record and reaction table"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "18": {
       "source": "game/reactions.c",
@@ -455,9 +456,10 @@
       "evidence": "Native type64 follow-up weapon2 selects this shared frame reaction."
     },
     "21": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Shinnok straight air kick contact (air_attacks[2], clip 327) selects global reaction 21; 4ea4e8[21] enters 0x482e80, dispatched by the shared portable reaction table."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "8": {
       "source": "game/reactions.c",
@@ -492,16 +494,16 @@
       "symbol": "react_extra"
     },
     "27": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "43": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     }
   },
   "schema": 1,

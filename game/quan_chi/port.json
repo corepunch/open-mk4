@@ -268,9 +268,10 @@
       "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
     },
     "17": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Quan Chi slot 8 dispatches reaction 17 through the shared C reaction table (0x482e00)"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "175": {
       "source": "game/native/contexts.c",
@@ -284,9 +285,10 @@
       "evidence": "Quan Chi slot 8 dispatches reaction 18 through the shared C reaction table (0x483050)"
     },
     "21": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Quan Chi slot 8 dispatches reaction 21 through the shared C reaction table (0x482e80)"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
       "source": "game/reactions.c",
@@ -309,9 +311,10 @@
       "evidence": "Quan Chi slot 8 dispatches reaction 37 through the shared C reaction table (0x483b40)"
     },
     "38": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Quan Chi slot 8 dispatches reaction 38 through the shared C reaction table (0x482e90)"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
       "source": "game/reactions.c",
@@ -427,16 +430,16 @@
       "symbol": "react_extra"
     },
     "27": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "43": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     }
   },
   "stances": {

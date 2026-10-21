@@ -1501,7 +1501,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x45b1f0:
-          if (retail_throw_reaction(fighter->retail_vm.image, argument & 255u) != NULL) {
+          if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) != NULL) {
             retail_script_release_reaction(fighter, (int)(argument & 255u));
             return true;
           }
@@ -1558,7 +1558,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           if ((argument & 255u) == 175) {
             return true; /* The stage coordinator owns its victim continuation. */
           }
-          if (retail_throw_reaction(fighter->retail_vm.image, argument & 255u) != NULL) {
+          if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) != NULL) {
             Fighter *victim = mk4_script_release_pair(fighter);
             battle_react(victim, (int)(argument & 255u));
             return true;

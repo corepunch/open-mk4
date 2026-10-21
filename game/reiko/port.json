@@ -264,9 +264,10 @@
       "symbol": "react_kick_hit"
     },
     "17": {
-      "evidence": "Retail reaction selector 17 (0x482e00) routes to the shared MK4 reaction table.",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "175": {
       "adaptation": "Reiko selector 175 is handled by the character pair/cinematic continuation, outside the shared hit-reaction table.",
@@ -285,9 +286,10 @@
       "symbol": "react_extra"
     },
     "21": {
-      "evidence": "Retail reaction selector 21 (0x482e80) routes to the shared MK4 reaction table.",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
       "evidence": "Retail reaction selector 22 (0x482f00) routes to the shared MK4 reaction table.",
@@ -310,9 +312,10 @@
       "symbol": "react_jab_hit"
     },
     "38": {
-      "evidence": "Retail reaction selector 38 (0x482e90) routes to the shared MK4 reaction table.",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
       "evidence": "Retail reaction selector 39 (0x482ef0) routes to the shared MK4 reaction table.",
@@ -455,16 +458,16 @@
       "symbol": "react_extra"
     },
     "27": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "43": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
-      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_reaction",
+      "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
+      "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     }
   },
   "schema": 1,

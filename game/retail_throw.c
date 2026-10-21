@@ -25,7 +25,7 @@ static void victim_485860(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e9a20, mk4_mmove_thrown_finish);
 }
 
-static void native_sound_list(uint32_t address) {
+void retail_native_sound_list(uint32_t address) {
   const Mk4Image *image = retail_vm_image();
   unsigned count = mk4_image_u32(image, address);
   require(count > 0 && count <= 32, "Invalid native sound token list");
@@ -34,11 +34,11 @@ static void native_sound_list(uint32_t address) {
 
 void retail_impact_voice(Fighter *fighter) {
   (void)fighter;
-  native_sound_list(0x4ea8a0);
+  retail_native_sound_list(0x4ea8a0);
 }
 
 void retail_throw_grunt(void) {
-  native_sound_list(0x4ea828);
+  retail_native_sound_list(0x4ea828);
 }
 
 static void victim_4857b0(Fighter *fighter) {

@@ -1420,3 +1420,24 @@ task84 resume flag; completion still uses the shared KO-aware return.
 Verified formatting, shared VM/rejections, strict audits, native frame gates
 and helper/port navigation (6/7 tests). The existing loaded-table fixture also
 mutates the release descriptor length through45b230; no authored timing matrix.
+
+### Execute stagger reaction scripts instead of copied C rows
+
+Added the shared loaded-native reaction entry boundary and migrated native
+482e00/482830/482870/4828d0/482be0/482e80/482e90/482b10. Their C implementations
+only perform original native recoil/disarm, incoming-action selection,
+scale and sound preludes, then enter original4e9308/4e9360/4e90e0/4e9130/
+4e9150/4e9170/4e9260/4e9388/4e9238 words. Removed eight ReactionSpec rows and
+unused copied crouch/slow-playback branches. Native sound lists reuse the
+existing shared decoder; no per-fighter handler registrations were added.
+
+Checked each bounded native/helper/stream against the local EXE and matching
+mk4decomp StageGameProgressCluster/CrouchFsmCluster assembly. In particular,
+482aa0 supplies impact sounds, not the no-guard flag; scripts own that flag.
+The broader ReactionSpec/tumble paths still contain legacy copies to migrate.
+Catalogue root counts do not enumerate every newly entered native-frontier stream.
+
+Verified make format, shared VM/rejections, strict audits, native frame gates
+and helper/port navigation (6/7 tests). One small native-boundary fixture swaps
+loaded reaction selection, checks the incoming-action branch, completion and
+interruption. No authored frame timing, damage or per-fighter matrices added.

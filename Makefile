@@ -71,7 +71,7 @@ mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 run: mk4-viewer
 	./mk4-viewer
 NATIVE_SERVICE_SOURCES = $(wildcard game/native/*.c) game/mk4_common.c
-ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/retail_data.c game/retail_native.c game/retail_native_vm.c game/retail_scene.c game/retail_combat.c game/retail_air.c game/retail_air_throw.c game/retail_teleport.c game/retail_handstand.c game/retail_fireball.c game/retail_weapon.c game/retail_controls.c game/retail_throw.c game/retail_vm.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
+ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/retail_data.c game/retail_native.c game/retail_native_vm.c game/retail_scene.c game/retail_combat.c game/retail_air.c game/retail_air_throw.c game/retail_teleport.c game/retail_handstand.c game/retail_fireball.c game/retail_weapon.c game/retail_controls.c game/retail_throw.c game/retail_reaction.c game/retail_vm.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
 GAME_HEADERS = $(wildcard game/native/*.[ch]) game/native_services.h game/native.h game/script.h game/retail_vm.h game/retail_data.h game/retail_native.h game/retail_native_input.inc game/game.h game/menu.h game/native_services.h game/audio.h game/retail_actions.inc
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build

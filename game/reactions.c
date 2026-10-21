@@ -330,9 +330,9 @@ static void react_jab_hit(Fighter *fighter) {
   }
 }
 
-/* Additional Scorpion record reactions. Each row names the decoded clip,
- * pose hold, landing boundary, motion and getup; no runtime script decoding.
- * Camera-relative tumble motion uses our pair axis and no camera roll. */
+/* Remaining legacy reaction specs are migration inputs. New native entries
+ * hand playback to original words through retail_reaction.c; remove each
+ * copied row and its unused playback paths when that native migrates. */
 typedef struct ReactionSpec {
   MoveDef move;
   int hold_at, hold_ticks, land_at, getup;
@@ -345,19 +345,11 @@ typedef struct ReactionSpec {
 static const ReactionSpec extra_reactions[256] = {
   [10] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
   [12] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xccc, -0x23d7, 0x20c, 0, false, false},
-  [17] = {R(134, 17, 0x4001), 6, 8, -1, 0, 0x2666, 0, 0, 0, true, false},
-  [21] = {R(311, 18, 0x4003), 4, 13, -1, 0, 0, 0, 0, 0x8000, false, true},
   [22] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
   [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
-  [25] = {R(311, 18, 0x4001), 4, 13, -1, 0, 0x2666, 0, 0, 0, true, false},
   [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
-  [27] = {R(134, 17, 0x4001), 6, 8, -1, 0, 0x51e, 0, 0, 0x9999, false, true},
-  [28] = {R(134, 17, 0x4001), 0, 0, -1, 0, 0x1eb8, 0, 0, 0, true, false},
-  [29] = {R(134, 17, 0x4001), 0, 0, -1, 0, 0x1eb8, 0, 0, 0, true, false},
   [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
-  [38] = {R(311, 18, 0x4003), 4, 13, -1, 0, 0, 0, 0, 0x8000, false, true},
   [39] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
-  [43] = {R(311, 18, 0x4002), 4, 13, -1, 0, 0, 0, 0, 0x9999, false, true},
   [48] = {R(180, 19, 0x4001), 0, 6, -1, 0, 0x3333, 0, 0, 0, true, false},
   [49] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xa3d, -0x23d7, 0x24d, 0, false, false},
   [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
@@ -376,7 +368,6 @@ static const ReactionSpec extra_reactions[256] = {
   [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
-static const MoveDef crouch_reaction = R(254, 4, 0x4001);
 static const MoveDef tumble_start = R(142, 16, 0x4003);
 static const MoveDef tumble_loop = R(141, 16, 0x4003);
 static const MoveDef tumble_land_move = R(143, 28, 0x4003);
@@ -426,9 +417,6 @@ static void extra_reaction_end(Fighter *fighter) {
 }
 
 static int reaction_pose(const Fighter *fighter, const ReactionSpec *spec, int elapsed) {
-  if (fighter->current_move == &crouch_reaction) {
-    return mini(4, elapsed);
-  }
   int sample = elapsed;
   if (fighter->reaction == 23 || fighter->reaction == 129) {
     sample = elapsed < 7 ? elapsed * 2 : elapsed + 7;
@@ -436,26 +424,22 @@ static int reaction_pose(const Fighter *fighter, const ReactionSpec *spec, int e
   if (spec->hold_ticks) {
     sample = elapsed < spec->hold_at ? elapsed : elapsed < spec->hold_at + spec->hold_ticks ? spec->hold_at : elapsed - spec->hold_ticks;
   }
-  if ((fighter->reaction == 17 || fighter->reaction == 27) && elapsed >= 6) {
-    sample = elapsed < 18 ? 6 + (elapsed - 6) / 3 : elapsed - 8;
-  }
   return sample;
 }
 
 static void extra_reaction_play(Fighter *fighter) {
   const ReactionSpec *spec = &extra_reactions[fighter->reaction];
   int first = spec->hold_at == 4 ? 4 : 0;
-  bool crouch = fighter->current_move == &crouch_reaction;
   int last = first;
-  while (crouch ? last < 9 : reaction_pose(fighter, spec, last) <= spec->move.last) {
+  while (reaction_pose(fighter, spec, last) <= spec->move.last) {
     ++last;
   }
-  native_begin(fighter, first, last, crouch ? neutral : extra_reaction_end);
+  native_begin(fighter, first, last, extra_reaction_end);
   bool landing = false;
   for (int frame = first; frame <= last; ++frame) {
     int pose = reaction_pose(fighter, spec, frame);
-    bool gate = !crouch && !landing && spec->land_at >= 0 && pose >= spec->land_at;
-    native_frame(fighter, frame, mini(crouch ? 4 : spec->move.last, pose), gate ? (fighter->reaction == 129 ? reaction_stop_gate : reaction_land_gate) : NULL);
+    bool gate = !landing && spec->land_at >= 0 && pose >= spec->land_at;
+    native_frame(fighter, frame, mini(spec->move.last, pose), gate ? (fighter->reaction == 129 ? reaction_stop_gate : reaction_land_gate) : NULL);
     landing |= gate;
   }
   native_play(fighter, false);
@@ -511,8 +495,7 @@ static void react_extra(Fighter *fighter) {
     return;
   }
   const ReactionSpec *spec = &extra_reactions[id];
-  bool crouch = fighter->crouching && (id == 17 || id == 28 || id == 29);
-  fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, crouch ? &crouch_reaction : &spec->move);
+  fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, &spec->move);
   if (id == 90 || id == 173) {
     mk4_script_stop_body(fighter);
     scorpion_generated_reaction(fighter);
@@ -527,7 +510,7 @@ static void react_extra(Fighter *fighter) {
     fighter->flags |= FF_NO_GUARD;
   }
   if (spec->friction) {
-    slide(fighter, crouch && id == 17 ? 0x2b85 : spec->speed);
+    slide(fighter, spec->speed);
   } else {
     /* 0x4e9980 shares clip 183 with jab air, but retreats at 0.03. */
     launch(fighter, teleport_air ? 0x7ae : id == 52 && fighter->hits > 1 ? 0xf5c : spec->speed, spec->vy, spec->gravity);
@@ -886,20 +869,12 @@ static const FighterFn reactions[256] = {
   [143] = react_extra_block,
   [10] = react_extra,
   [12] = react_extra,
-  [17] = react_extra,
   [20] = react_extra,
-  [21] = react_extra,
   [22] = react_extra,
   [23] = react_extra,
-  [25] = react_extra,
   [26] = react_extra,
-  [27] = react_extra,
-  [28] = react_extra,
-  [29] = react_extra,
   [32] = react_extra,
-  [38] = react_extra,
   [39] = react_extra,
-  [43] = react_extra,
   [48] = react_extra,
   [49] = react_extra,
   [50] = react_extra,
@@ -1020,7 +995,7 @@ void battle_react(Fighter *victim, int reaction) {
     victim->body.pos[AXIS_Y] += victim->body.root_y;
     victim->body.root_y = 0;
   }
-  FighterFn native = retail_throw_reaction(retail_vm_image(), (unsigned)reaction);
+  FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
   FighterFn selected = native != NULL ? native : reactions[reaction];
   FighterFn entry =
       selected != NULL && (native != NULL || victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
