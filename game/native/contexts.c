@@ -3,17 +3,6 @@
 #include <stdlib.h>
 
 /* Native service cluster: 45b1f0, 45b230. */
-void cage_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Cage opponent reaction");
-}
-
 void cage_script_current_reaction(Fighter *fighter, int reaction) {
   if (reaction == 185) {
     battle_react((Fighter *)fighter_opponent(fighter), reaction);
@@ -37,25 +26,9 @@ void fujin_script_current_reaction(Fighter *fighter, int reaction) {
   battle_react(victim, reaction);
 }
 
-void fujin_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Fujin opponent reaction");
-}
-
 /* Native service cluster: 42c7b0, 45b230. */
 /* 4de6e4 passes reaction 100 to current-context dispatcher 45b1f0 while the
  * LP-throw victim is still captured; the owner continues its own clip. */
-void goro_script_opponent_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 77, "Unexpected Goro opponent reaction");
-  mk4_mmove_lk_release(fighter, reaction);
-}
-
 void goro_script_lp_phase_repeat(Fighter *fighter) {
   fighter->script_phase++;
   if (fighter->script_phase < 5) {
@@ -204,15 +177,7 @@ void jarek_script_current_reaction(Fighter *fighter, int reaction) {
   battle_react(victim, reaction);
 }
 
-void jarek_script_opponent_reaction(Fighter *fighter, int reaction) {
-  mk4_mmove_lk_release(fighter, reaction);
-}
-
 /* Native service cluster: 45b1f0, 45b230. */
-void jax_script_opponent_reaction(Fighter *fighter, int reaction) {
-  mk4_mmove_lk_release(fighter, reaction);
-}
-
 /* 45b1f0 installs the reaction on the task peer: 183 from the head clap;
  * 100/125 end the LP slam, releasing the pair first. */
 void jax_script_peer_reaction(Fighter *fighter, int reaction) {
@@ -222,17 +187,6 @@ void jax_script_peer_reaction(Fighter *fighter, int reaction) {
 }
 
 /* Native service cluster: 45b230. */
-void kai_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Kai paired reaction");
-}
-
 /* Native service cluster: 42c0b0, 42c0d0, 45b1f0, 49c110, 49c160. */
 /* Original script words own VM control flow; the remaining native adapters
  * implement engine boundaries. See docs/liu-kang-scripts.md for evidence. */
@@ -279,17 +233,6 @@ void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
 }
 
 /* Native service cluster: 45b230. */
-void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Quan Chi opponent reaction");
-}
-
 /* Native service cluster: 45b1f0, 45b230, 47d680, 47d6e0, 47d720, 47d7f0, 4889b0, 48d450. */
 static void n45b1f0_5_torpedo_pose(Fighter *fighter, float pose);
 static void n45b1f0_5_torpedo_cycle(Fighter *fighter);
@@ -514,30 +457,7 @@ void raiden_generated_reaction(Fighter *victim) {
 }
 
 /* Native service cluster: 45b230. */
-void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Reiko opponent reaction");
-}
-
 /* Native service cluster: 45b1f0, 45b230. */
-void reptile_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Reptile opponent reaction");
-}
-
 /* 45b1f0 installs a reaction on the current task's captured peer: 102
  * releases the short LP throw victim; 4dff08 dispatches 180 to the
  * second-fatality victim. */
@@ -551,34 +471,10 @@ void reptile_script_lp_reaction(Fighter *fighter, int reaction) {
 }
 
 /* Native service cluster: 42bdf0, 42be00, 450d40, 45b1f0, 45b230, 4807b0. */
-static const MoveDef n42bdf0_s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 void scorpion_special_ready(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_TELEPORTING;
   fighter_ready(fighter);
-}
-
-void scorpion_script_lk_rebase(Fighter *fighter) {
-  Fighter *victim = fighter_peer(fighter);
-  memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
-  victim->body.pos[AXIS_Y] = victim->body.ground;
-  victim->facing = fighter->facing;
-  memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  retail_vm_enter_owned(fighter, 0x4de318, fighter_ready, 0);
-}
-
-void scorpion_script_lk_damage(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de328, fighter_ready, 0);
-}
-
-void scorpion_script_opponent_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 77, "Unexpected Scorpion pair release");
-  Fighter *victim = fighter_peer(fighter);
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  fighter_start_move(victim, S_KNOCKDOWN, &n42bdf0_s_lk_thrown_end);
-  victim->sample_override = 65;
-  scorpion_thrown_end_script(victim);
 }
 
 void scorpion_spin_script(Fighter *fighter) {
@@ -638,10 +534,6 @@ void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
   require(reaction == 100, "Unexpected Shinnok LP release reaction");
   Fighter *victim = mk4_script_release_pair(fighter);
   battle_react(victim, reaction);
-}
-
-void shinnok_script_opponent_reaction(Fighter *fighter, int reaction) {
-  mk4_mmove_lk_release(fighter, reaction);
 }
 
 /* Native service cluster: 45b1f0, 45b230. */
@@ -891,17 +783,6 @@ void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count,
 }
 
 /* Native service cluster: 45b1f0, 45b230, 470420. */
-void tanya_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Tanya opponent reaction");
-}
-
 void tanya_script_current_reaction(Fighter *fighter, int reaction) {
   if (reaction == 186) {
     /* 4e5798's opcode 41 installs reaction 186 (465200) on the victim. */

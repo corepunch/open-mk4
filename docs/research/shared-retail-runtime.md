@@ -1403,3 +1403,20 @@ No new gameplay tests. Old actor-based native bridge specializations and copied
 reaction data still need consolidation against actual native semantics; moving
 native files does not establish their parity. Recorded broad timing-suite
 limitations remain and were not rerun for this layout/interface change.
+
+### Remove copied LK links and victim release variants
+
+Native42bdf0/42be00 only enter4de318/4de328 in the actual EXE. Removed their
+owner-specialized C bodies (including the invented Scorpion peer rebase).
+Reaction77 now selects native484f10 through the loaded table, binds original
+descriptor4fc8f4 at65 and uses its loaded length. Removed the copied131-pose
+range, separate Scorpion victim program and12 opponent-reaction wrappers.
+Both reaction handlers can use the shared release; legacy stage175 remains an
+explicit coordinator-owned boundary. Other non-shared reaction entries remain.
+
+Compared bounded42bdf0/42be00/484f10 listings and matching mk4decomp
+PendingMatch variants. Engine continuation ownership replaces484f10's internal
+task84 resume flag; completion still uses the shared KO-aware return.
+Verified formatting, shared VM/rejections, strict audits, native frame gates
+and helper/port navigation (6/7 tests). The existing loaded-table fixture also
+mutates the release descriptor length through45b230; no authored timing matrix.

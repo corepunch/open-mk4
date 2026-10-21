@@ -361,8 +361,8 @@
       "evidence": "Cage contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
-      "source": "game/native/contexts.c",
-      "symbol": "cage_script_opponent_reaction",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_script_release_reaction",
       "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
       "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."
     },

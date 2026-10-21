@@ -366,8 +366,8 @@
     "77": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/native/contexts.c",
-      "symbol": "scorpion_script_opponent_reaction"
+      "source": "game/retail_throw.c",
+      "symbol": "retail_script_release_reaction"
     },
     "8": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

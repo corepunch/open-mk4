@@ -1,6 +1,21 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'scorpion_script_lk_rebase': 'retail_vm_enter',
+    'scorpion_script_lk_damage': 'retail_vm_enter',
+    'cage_script_opponent_reaction': 'retail_script_release_reaction',
+    'fujin_script_opponent_reaction': 'retail_script_release_reaction',
+    'goro_script_opponent_reaction': 'retail_script_release_reaction',
+    'jarek_script_opponent_reaction': 'retail_script_release_reaction',
+    'jax_script_opponent_reaction': 'retail_script_release_reaction',
+    'kai_script_opponent_reaction': 'retail_script_release_reaction',
+    'quan_chi_script_opponent_reaction': 'retail_script_release_reaction',
+    'reiko_script_opponent_reaction': 'retail_script_release_reaction',
+    'reptile_script_opponent_reaction': 'retail_script_release_reaction',
+    'scorpion_script_opponent_reaction': 'retail_script_release_reaction',
+    'shinnok_script_opponent_reaction': 'retail_script_release_reaction',
+    'tanya_script_opponent_reaction': 'retail_script_release_reaction',
+
     'liu_kang_can_close_fatality': 'retail_can_finish_close',
     'liu_kang_enter_lk_throw': 'retail_lk_throw',
     'liu_kang_enter_throw': 'retail_lp_throw',

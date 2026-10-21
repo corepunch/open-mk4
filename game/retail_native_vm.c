@@ -178,25 +178,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x42bdf0:
-          if (owner & 0x2ffe0u) {
-            retail_vm_enter(fighter, 0x4de318, fighter->retail_vm.finish);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_lk_rebase(fighter);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4de318, fighter->retail_vm.finish);
+          return true;
         case 0x42be00:
-          if (owner & 0x2ffe0u) {
-            retail_vm_enter(fighter, 0x4de328, fighter->retail_vm.finish);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_lk_damage(fighter);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4de328, fighter->retail_vm.finish);
+          return true;
         case 0x42b730:
         case 0x42b7a0:
           retail_lk_return(fighter);
@@ -1569,73 +1555,24 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x45b230:
+          if ((argument & 255u) == 175) {
+            return true; /* The stage coordinator owns its victim continuation. */
+          }
           if (retail_throw_reaction(fighter->retail_vm.image, argument & 255u) != NULL) {
             Fighter *victim = mk4_script_release_pair(fighter);
             battle_react(victim, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x4000u) {
-            cage_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x20u) {
-            fujin_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x8000u) {
-            goro_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x1000u) {
-            jarek_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x2000u) {
-            jax_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x800u) {
-            kai_script_opponent_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x10000u) {
             sonya_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
-          if (owner & 0x20000u) {
-            reiko_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x100u) {
-            quan_chi_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
           if (owner & 0x2u) {
             raiden_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
-          if (owner & 0x80u) {
-            reiko_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x40u) {
-            shinnok_script_opponent_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
           if (owner & 0x4u) {
             sonya_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_script_opponent_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           return false;

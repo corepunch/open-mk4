@@ -330,8 +330,8 @@
       "evidence": "Reptile contact record selects reaction 143; reviewed against the portable shared reaction table."
     },
     "175": {
-      "source": "game/native/contexts.c",
-      "symbol": "reptile_script_opponent_reaction",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_script_release_reaction",
       "adaptation": "Reptile fatality pair selector 175 is handled by its opponent-context continuation outside the global contact table.",
       "evidence": "Reptile fatality contact selector 175 reaches native continuation 0x45b230."
     },

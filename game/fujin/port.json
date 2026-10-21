@@ -276,8 +276,8 @@
       "evidence": "Fujin uses global reaction selector 17 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
     },
     "175": {
-      "source": "game/native/contexts.c",
-      "symbol": "fujin_script_opponent_reaction",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_script_release_reaction",
       "adaptation": "Fujin paired victim and fatality continuations handle this selector outside the shared global contact table.",
       "evidence": "Fujin opponent reaction continuation 0x45b230 handles selector 175."
     },

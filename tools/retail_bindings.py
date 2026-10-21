@@ -1424,6 +1424,9 @@ def bindings_for(character):
         links = {address: replace(binding, symbol="retail_vm_enter", source="game/retail_vm.c")
                  for address, binding in links.items()}
     result = {**BINDINGS, **links, **CHARACTER_BINDINGS.get(character, {})}
+    for address, target in ((0x42bdf0, 0x4de318), (0x42be00, 0x4de328)):
+        result[address] = Binding('retail_vm_enter', 'game/retail_vm.c', ('tail',), script_target=target,
+                                  evidence='Exact local native entry only calls script_enter with this original root; matching mk4decomp VM boundary')
     # Native script links always enter original words in the shared VM.
     result = {address: replace(binding, symbol='retail_vm_enter', source='game/retail_vm.c')
               if binding.script_target else binding for address, binding in result.items()}

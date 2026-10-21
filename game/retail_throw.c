@@ -182,6 +182,13 @@ void retail_script_release_reaction(Fighter *fighter, int reaction) {
   battle_react(mk4_script_release_pair(fighter), reaction);
 }
 
+static void victim_484f10(Fighter *fighter) {
+  victim_begin(fighter);
+  mk4_script_stop_body(fighter);
+  retail_vm_bind_animation(fighter, 0x4fc8f4, 65);
+  native_finish_clip(fighter, mk4_mmove_thrown_finish);
+}
+
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
     case 0x485b70:
@@ -192,6 +199,8 @@ FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
     case 0x485a90:
     case 0x485a30:
       return retail_lp_victim;
+    case 0x484f10:
+      return victim_484f10;
     case 0x484760:
       return retail_slam_reaction;
     case 0x4847a0:

@@ -715,6 +715,16 @@ static void native_reaction_table(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
   put_word(0x4e9bb8, packed);
   put_word(0x4e9bbc, callback);
+  uint32_t count = mk4_image_u32(&image, 0x4fc8f8);
+  put_word(0x4ea4e8 + 100 * 4, 0x484f10);
+  put_word(0x4fc8f8, 67);
+  check(retail_native_vm(owner, 0x45b230, RETAIL_HANDLER, 100), "opponent reaction handler must use the same loaded native selection");
+  tick();
+  check(fighter_move(actor)->clip == (0x4fc8f4 - 0x4fad7c) / 12 && fighter_move(actor)->last == 66 && actor->native.move.lastframe <= 2,
+      "native release must load the descriptor length rather than a copied fighter frame range");
+  fighter_interrupt(actor, fighter_ready);
+  put_word(0x4fc8f8, count);
+  put_word(0x4ea4e8 + 100 * 4, target);
 }
 
 static void native_throw_selection(void) {

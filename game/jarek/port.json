@@ -396,14 +396,14 @@
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
     },
     "102": {
-      "source": "game/native/contexts.c",
-      "symbol": "jarek_script_opponent_reaction",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_script_release_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 102 through native continuation 0x45b1f0; paired clips 76/153, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 102 on the victim actor"
     },
     "107": {
-      "source": "game/native/contexts.c",
-      "symbol": "jarek_script_opponent_reaction",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_script_release_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 107 through native continuation 0x45b1f0; paired clips 80/154, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 107 on the victim actor"
     },

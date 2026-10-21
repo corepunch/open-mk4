@@ -144,15 +144,6 @@ void raiden_lk_victim(Fighter *victim) {
 }
 
 /* Native service cluster: native_throws_2. */
-static void native_throws_2_thrown_end_done(Fighter *victim);
-
-static void native_throws_2_thrown_end_done(Fighter *victim) {
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
-}
-
-void scorpion_thrown_end_script(Fighter *victim) {
-  native_finish_clip(victim, native_throws_2_thrown_end_done);
-}
 
 /* Native service cluster: native_throws_3. */
 static void native_throws_3_lk_victim_land(Fighter *victim);
