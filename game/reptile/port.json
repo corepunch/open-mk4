@@ -440,9 +440,9 @@
       "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "air_punch_followup": {
-      "source": "game/reptile/moves/air_attacks.c",
-      "symbol": "reptile_air_punch_followup",
-      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "close_hk_followup": {
       "source": "game/retail_controls.c",
@@ -465,9 +465,9 @@
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "diagonal_air": {
-      "source": "game/reptile/moves/air_attacks.c",
-      "symbol": "reptile_diagonal_air",
-      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "standing": {
       "source": "game/retail_controls.c",
@@ -475,9 +475,9 @@
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_jumping",
-      "evidence": "Reptile's normalized straight air buttons are the corresponding local stance table in reptile_controls."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     }
   },
   "weapon": {

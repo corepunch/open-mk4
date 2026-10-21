@@ -2,6 +2,11 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_teleport(Fighter *fighter);
+void retail_teleport_vanish(Fighter *fighter);
+void retail_teleport_slam_fall(Fighter *fighter);
+void retail_teleport_slam_drop(Fighter *fighter);
+void retail_teleport_slam(Fighter *fighter);
 void retail_air_throw(Fighter *fighter);
 void retail_air_throw_lift(Fighter *fighter);
 void retail_air_throw_slam(Fighter *fighter);
@@ -30,10 +35,13 @@ void retail_air_diagonal_high_kick(Fighter *fighter);
 void retail_air_diagonal_low_kick(Fighter *fighter);
 extern const ButtonTable retail_close_buttons[];
 extern const ButtonTable retail_ground_buttons[];
+extern const ButtonTable retail_air_buttons[];
+extern const Controls retail_stances;
 void retail_normal_low_punch(Fighter *fighter);
 void retail_normal_low_kick(Fighter *fighter);
 uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button button);
 void retail_press_table(Fighter *fighter, Button button);
+void retail_press_native_button(Fighter *fighter, uint32_t target);
 void retail_combo_high_punch(Fighter *fighter);
 void retail_close_high_kick(Fighter *fighter);
 void retail_close_high_punch_tail(Fighter *fighter);

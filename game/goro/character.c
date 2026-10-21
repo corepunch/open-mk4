@@ -41,15 +41,6 @@ static const MoveDef *const moves[S_COUNT] = {
  * (typed inventory), so stance presses enter the same native selectors as
  * the humanoid roster with Goro's own script slots and clip choices. */
 
-static const ButtonTable goro_jumping = {.press = {[BUTTON_HIGH_PUNCH] = goro_press_air_hp,
-                                             [BUTTON_LOW_PUNCH] = goro_press_air_lp,
-                                             [BUTTON_BLOCK] = goro_press_air_block,
-                                             [BUTTON_HIGH_KICK] = goro_press_air_hk,
-                                             [BUTTON_LOW_KICK] = goro_press_air_lk}};
-
-static const Controls goro_controls = {
-    NULL, 0, {[STANCE_STANDING] = &retail_ground_buttons[0], [STANCE_CROUCHING] = &retail_ground_buttons[1], [STANCE_JUMP] = &goro_jumping}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
   [S_THROW] = retail_lp_throw,
@@ -60,7 +51,7 @@ const CharacterDef mk4_goro = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &goro_controls,
+    .controls = &retail_stances,
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = NULL,

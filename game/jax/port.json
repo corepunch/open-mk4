@@ -442,9 +442,9 @@
       "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "air_punch_followup": {
-      "source": "game/jax/moves/air_attacks.c",
-      "symbol": "jax_air_punch_followup",
-      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "close_hk_followup": {
       "source": "game/retail_controls.c",
@@ -467,9 +467,9 @@
       "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
-      "source": "game/jax/moves/air_attacks.c",
-      "symbol": "jax_diagonal_air",
-      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "standing": {
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
@@ -477,9 +477,9 @@
       "symbol": "retail_ground_buttons"
     },
     "straight_air": {
-      "evidence": "Jax slot 13 uses shared portable straight_air stance; typed inventory table recorded",
-      "source": "game/jax/character.c",
-      "symbol": "s_jumping"
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons"
     }
   },
   "weapon": {

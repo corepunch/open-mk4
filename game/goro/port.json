@@ -349,19 +349,19 @@
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_jumping",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "air_punch_followup": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_jumping",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "diagonal_air": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_jumping",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "close_hp_followup": {
       "source": "game/retail_controls.c",

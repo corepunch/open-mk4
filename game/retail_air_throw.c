@@ -14,39 +14,23 @@ void retail_air_victim_flip(Fighter *victim) {
   retail_vm_enter(victim, 0x4e98a0, mk4_mmove_thrown_finish);
 }
 
-static void air_owner_default(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5e28, fighter_ready);
-}
-
-static void air_owner_lift(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5dd8, fighter_ready);
-}
-
-static void air_owner_slam(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5e78, fighter_ready);
-}
-
-static void air_owner_flip(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5ed0, fighter_ready);
-}
-
 /* Original native entry operands; the scripts bind both participants. */
 void retail_air_throw(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, air_owner_default, retail_air_victim_default);
+  mk4_air_throw_frames(fighter, 0x4e5e28, retail_air_victim_default);
 }
 
 void retail_air_throw_lift(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, air_owner_lift, retail_air_victim_lift);
+  mk4_air_throw_frames(fighter, 0x4e5dd8, retail_air_victim_lift);
 }
 
 void retail_air_throw_slam(Fighter *fighter) {
   retail_face_peer(fighter);
-  mk4_air_throw_frames(fighter, air_owner_slam, retail_slam_released_fall);
+  mk4_air_throw_frames(fighter, 0x4e5e78, retail_slam_released_fall);
 }
 
 void retail_air_throw_flip(Fighter *fighter) {
   retail_face_peer(fighter);
-  mk4_air_throw_frames(fighter, air_owner_flip, retail_air_victim_flip);
+  mk4_air_throw_frames(fighter, 0x4e5ed0, retail_air_victim_flip);
 }
 
 void retail_air_throw_release(Fighter *fighter) {

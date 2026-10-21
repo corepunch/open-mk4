@@ -277,19 +277,19 @@
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
-      "source": "game/shinnok/character.c",
-      "symbol": "jumping",
-      "evidence": "Shinnok selected stance table straight_air; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "diagonal_air": {
-      "source": "game/shinnok/moves/air_attacks.c",
-      "symbol": "shinnok_diagonal_air",
-      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "air_punch_followup": {
-      "source": "game/shinnok/moves/air_attacks.c",
-      "symbol": "shinnok_air_punch_followup",
-      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "air_followup": {
       "source": "game/retail_controls.c",

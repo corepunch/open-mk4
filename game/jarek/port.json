@@ -233,19 +233,19 @@
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
-      "source": "game/jarek/character.c",
-      "symbol": "jumping",
-      "evidence": "Jarek selected stance table straight_air; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "diagonal_air": {
-      "source": "game/jarek/character.c",
-      "symbol": "jumping",
-      "evidence": "Jarek selected stance table diagonal_air; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "air_punch_followup": {
-      "source": "game/jarek/character.c",
-      "symbol": "air_punch_followup",
-      "evidence": "Jarek selected stance table air_punch_followup; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "air_followup": {
       "source": "game/retail_controls.c",

@@ -526,6 +526,19 @@ static void native_button_table(void) {
   check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e5d90, "button dispatch must read the changed native target rather than a C button row");
   fighter_cancel_mmove(owner);
   put_word(0x4e7078, original);
+
+  owner = setup(0, 2);
+  original = mk4_image_u32(&image, 0x4e7008);
+  put_word(0x4e7008, 0x46c7a0);
+  owner->buttons = &retail_air_buttons[0];
+  owner->body.pos[AXIS_Y] = owner->body.ground - 2 * Q16_ONE;
+  owner->body.gravity = 0x28f;
+  fighter_press(owner, BUTTON_HIGH_PUNCH);
+  check(owner->pending != NULL && fighter_airborne(owner), "loaded air controller must preserve airborne state");
+  tick();
+  check(owner->retail_vm.entry == 0x4e61f8, "air dispatch must consume the loaded action target");
+  fighter_cancel_mmove(owner);
+  put_word(0x4e7008, original);
 }
 
 static void native_close_lifetimes(void) {

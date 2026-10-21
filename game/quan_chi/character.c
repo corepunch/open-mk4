@@ -9,17 +9,6 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 120, .last = MOVE_END, .flags = SF_HOLD};
 
-static const ButtonTable straight_air = {.press = {[BUTTON_HIGH_PUNCH] = quan_chi_press_air_hp,
-                                             [BUTTON_LOW_PUNCH] = quan_chi_press_air_lp,
-                                             [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
-                                             [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
-
-static const Controls quan_chi_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &straight_air,
-        [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
   [S_IDLE] = weapon_idle,
@@ -59,7 +48,7 @@ const CharacterDef mk4_quan_chi = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &quan_chi_controls,
+    .controls = &retail_stances,
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,

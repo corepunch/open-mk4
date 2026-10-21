@@ -18,6 +18,49 @@ const ButtonTable retail_ground_buttons[] = {
     {.retail_address = 0x4e5070},
 };
 
+const ButtonTable retail_air_buttons[] = {
+    {.retail_address = 0x4e6ec8},
+    {.retail_address = 0x4e70d8},
+    {.retail_address = 0x4e6ee0},
+    {.retail_address = 0x4e88f0},
+};
+
+const Controls retail_stances = {.stances = {
+                                     [STANCE_STANDING] = &retail_ground_buttons[0],
+                                     [STANCE_CROUCHING] = &retail_ground_buttons[1],
+                                     [STANCE_JUMP] = &retail_air_buttons[0],
+                                     [STANCE_DIAGONAL_AIR] = &retail_air_buttons[1],
+                                 }};
+
+/* Original thin controllers dispatch their0x80000..0x80004 action words. */
+static bool press_air_controller(Fighter *fighter, uint32_t target) {
+  unsigned action;
+  switch (target) {
+    case 0x4712c0:
+    case 0x46c1f0:
+      action = 0;
+      break;
+    case 0x4712d0:
+    case 0x46c200:
+      action = 1;
+      break;
+    case 0x46c1d0:
+      action = 2;
+      break;
+    case 0x46c1e0:
+      action = 3;
+      break;
+    case 0x4712b0:
+      action = 4;
+      break;
+    default:
+      return false;
+  }
+  uint32_t entry = retail_action_target(retail_vm_image(), 8, action);
+  fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, entry));
+  return true;
+}
+
 static FighterFn action_entry(Fighter *fighter, unsigned index) {
   uint32_t target = retail_action_target(retail_vm_image(), 1, index);
   return retail_native_entry((unsigned)fighter->roster, target);
@@ -130,9 +173,12 @@ static void follow_crouch_hk(Fighter *fighter) {
 }
 
 /* Controllers46c210..46c740. Native weapon frontends remain transitional services. */
-void retail_press_table(Fighter *fighter, Button button) {
-  uint32_t target = retail_button_target(retail_vm_image(), fighter->buttons->retail_address, button);
-  if (target == 0) {
+void retail_press_native_button(Fighter *fighter, uint32_t target) {
+  if (target == 0 || press_air_controller(fighter, target)) {
+    return;
+  }
+  if (target == 0x47c2a0) {
+    fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, target));
     return;
   }
   const Fighter *peer = fighter_opponent(fighter);
@@ -347,4 +393,9 @@ void retail_close_high_kick(Fighter *fighter) {
   } else {
     knee_script(fighter);
   }
+}
+
+void retail_press_table(Fighter *fighter, Button button) {
+  uint32_t target = retail_button_target(retail_vm_image(), fighter->buttons->retail_address, button);
+  retail_press_native_button(fighter, target);
 }

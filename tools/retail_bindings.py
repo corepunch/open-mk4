@@ -1502,6 +1502,12 @@ def bindings_for(character):
                                   evidence='Shared checked native air-throw/reaction continuation; local listings and matching mk4decomp pending_match_variants')
     result[0x46ac90] = Binding('retail_vm_enter', 'game/retail_vm.c', ('tail',), script_target=0x4e5eb0,
                                flow='immediate', mmove=True, evidence='Original46ac90 enters4e5eb0')
+    for address, function in ((0x47c0a0, 'retail_teleport_vanish'), (0x47c360, 'retail_teleport_slam_fall'),
+                              (0x47c390, 'retail_teleport_slam_drop')):
+        result[address] = Binding(function, 'game/retail_teleport.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='One shared47c070 native teleport and original scripts; checked4e88f0 input and matching native phase addresses')
+    result[0x47ffc0] = Binding('mk4_land', 'game/mk4_common.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Original47ffc0 calls shared native46fd90 landing before controller return')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

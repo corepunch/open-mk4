@@ -58,12 +58,6 @@ static const FighterFn enter[S_COUNT] = {
 
 /* Native 494a00 parameter blocks; byte fields are decoded at authoring. */
 
-static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = raiden_press_air_hp,
-                                        [BUTTON_LOW_PUNCH] = raiden_press_air_lp,
-                                        [BUTTON_HIGH_KICK] = raiden_press_air_hk,
-                                        [BUTTON_LOW_KICK] = raiden_press_air_lk}};
-static const Controls controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &jumping}};
-
 static const CpuMoves cpu_moves = {
     .enter =
         {
@@ -100,7 +94,7 @@ const CharacterDef mk4_raiden = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &controls,
+    .controls = &retail_stances,
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,

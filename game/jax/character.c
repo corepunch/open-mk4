@@ -11,13 +11,6 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 412, .last = MOVE_END, .flags = SF_HOLD};
 
-static const ButtonTable s_jumping = {.press = {[BUTTON_HIGH_PUNCH] = jax_press_air_hp,
-                                          [BUTTON_LOW_PUNCH] = jax_press_air_lp,
-                                          [BUTTON_HIGH_KICK] = jax_press_air_hk,
-                                          [BUTTON_LOW_KICK] = jax_press_air_lk}};
-
-static const Controls s_controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &s_jumping, [STANCE_DIAGONAL_AIR] = &jax_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
   [S_IDLE] = weapon_idle,
@@ -48,7 +41,7 @@ const CharacterDef mk4_jax = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &s_controls,
+    .controls = &retail_stances,
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,

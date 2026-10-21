@@ -21,11 +21,6 @@ enum {
 };
 
 void jarek_fatality_contact_hold(Fighter *fighter);
-void jarek_press_air_hp(Fighter *fighter);
-void jarek_press_air_kick(Fighter *fighter);
-void jarek_press_air_hk(Fighter *fighter);
-void jarek_press_air_lk(Fighter *fighter);
-void jarek_press_air_lp(Fighter *fighter);
 void jarek_script_air_finish(Fighter *fighter);
 void jarek_script_current_reaction(Fighter *fighter, int reaction);
 void jarek_script_low_kick_avoid(Fighter *fighter);

@@ -12,10 +12,6 @@
 #define s_knockdown fujin_s_knockdown
 
 void fujin_enter_throw(Fighter *fighter);
-void fujin_press_air_hk(Fighter *fighter);
-void fujin_press_air_lk(Fighter *fighter);
-void fujin_press_air_lp(Fighter *fighter);
-void fujin_press_air_punch(Fighter *fighter);
 void fujin_script_air_finish(Fighter *fighter);
 void fujin_script_current_reaction(Fighter *fighter, int reaction);
 void fujin_script_lp_extended_finish(Fighter *fighter);
@@ -25,8 +21,6 @@ extern const MoveDef *const fujin_moves[13];
 extern const MoveDef fujin_s_knockdown;
 
 extern const ButtonTable fujin_diagonal_air;
-void fujin_press_air_hk(Fighter *fighter);
-void fujin_press_air_lk(Fighter *fighter);
 bool fujin_can_dive(const Fighter *fighter);
 void fujin_dive(Fighter *fighter);
 void fujin_dive_contact(Fighter *fighter);

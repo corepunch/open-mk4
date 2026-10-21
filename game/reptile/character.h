@@ -16,10 +16,6 @@ enum {
 
 #define s_lp_thrown reptile_s_lp_thrown
 
-void reptile_press_air_hk(Fighter *fighter);
-void reptile_press_air_hp(Fighter *fighter);
-void reptile_press_air_lk(Fighter *fighter);
-void reptile_press_air_lp(Fighter *fighter);
 void reptile_script_air_finish(Fighter *fighter);
 void reptile_script_lp_return(Fighter *fighter);
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
@@ -31,8 +27,6 @@ void reptile_entry_retail_script_004ed1e8(Fighter *fighter);
 extern const MoveDef reptile_s_lp_thrown;
 
 extern const ButtonTable reptile_diagonal_air;
-void reptile_press_air_hk(Fighter *fighter);
-void reptile_press_air_lk(Fighter *fighter);
 void reptile_input_47a690(Fighter *fighter);
 void reptile_input_47afe0(Fighter *fighter);
 bool reptile_can_dash(const Fighter *fighter);

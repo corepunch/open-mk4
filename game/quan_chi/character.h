@@ -8,23 +8,13 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define press_air_hk quan_chi_press_air_hk
-#define press_air_hp quan_chi_press_air_hp
-#define press_air_lk quan_chi_press_air_lk
-#define press_air_lp quan_chi_press_air_lp
 #define press_sweep retail_press_sweep
 
-void quan_chi_press_air_hk(Fighter *fighter);
-void quan_chi_press_air_hp(Fighter *fighter);
-void quan_chi_press_air_lk(Fighter *fighter);
-void quan_chi_press_air_lp(Fighter *fighter);
 void quan_chi_script_air_finish(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable quan_chi_diagonal_air;
-void quan_chi_press_air_hk(Fighter *fighter);
-void quan_chi_press_air_lk(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter);
 void quan_chi_skull(Fighter *fighter);
 void quan_chi_script_skull_release(Fighter *fighter);
@@ -37,7 +27,6 @@ void quan_chi_script_getup_roll(Fighter *fighter);
 void quan_chi_entry_retail_script_004e8100(Fighter *fighter);
 void quan_chi_entry_retail_script_004e8a48(Fighter *fighter);
 void quan_chi_teleport_stomp(Fighter *fighter);
-void quan_chi_script_teleport_land(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *fighter);
 void quan_chi_entry_retail_script_004e9868(Fighter *fighter);
 void quan_chi_entry_retail_script_004e8818(Fighter *fighter);

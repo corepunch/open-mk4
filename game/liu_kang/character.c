@@ -80,12 +80,6 @@ const WeaponStrike liu_kang_sword_attacks[] = {
 /* First scene: 4e0498[3] -> 450930. Second: 4dfe90[3] ->
  * 43c3d0/4dfff8/4e0020, victim reactions 176/177. */
 
-static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = liu_kang_press_air_hp,
-                                        [BUTTON_LOW_PUNCH] = liu_kang_press_air_lp,
-                                        [BUTTON_HIGH_KICK] = liu_kang_press_air_hk,
-                                        [BUTTON_LOW_KICK] = liu_kang_press_air_lk}};
-static const Controls controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &jumping}};
-
 static const CpuMoves cpu_moves = {
     .enter =
         {
@@ -123,7 +117,7 @@ const CharacterDef mk4_liu_kang = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &controls,
+    .controls = &retail_stances,
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,

@@ -16,10 +16,6 @@ enum {
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 
-void reiko_press_air_hk(Fighter *fighter);
-void reiko_press_air_hp(Fighter *fighter);
-void reiko_press_air_lk(Fighter *fighter);
-void reiko_press_air_lp(Fighter *fighter);
 void reiko_script_air_finish(Fighter *fighter);
 void reiko_script_lp_end(Fighter *fighter);
 void reiko_script_lp_return(Fighter *fighter);
@@ -30,8 +26,6 @@ void reiko_entry_retail_script_004e9b40(Fighter *fighter);
 void reiko_entry_retail_script_004e9bd0(Fighter *fighter);
 
 extern const ButtonTable reiko_diagonal_air;
-void reiko_press_air_hk(Fighter *fighter);
-void reiko_press_air_lk(Fighter *fighter);
 void reiko_weapon_action(Fighter *fighter);
 void reiko_script_weapon_draw_finish(Fighter *fighter);
 void reiko_entry_retail_script_004e62c0(Fighter *fighter);
@@ -42,11 +36,6 @@ void reiko_entry_retail_script_004e82b8(Fighter *fighter);
 void reiko_entry_retail_script_004e82e0(Fighter *fighter);
 void reiko_entry_retail_script_004e8310(Fighter *fighter);
 void reiko_entry_retail_script_004e8818(Fighter *fighter);
-void reiko_teleport(Fighter *fighter);
-void reiko_script_teleport_vanish(Fighter *fighter);
-void reiko_script_teleport_slam_fall(Fighter *fighter);
-void reiko_script_teleport_slam_drop(Fighter *fighter);
-void reiko_script_teleport_land(Fighter *fighter);
 void reiko_flip_kick(Fighter *fighter);
 bool reiko_can_flip_kick(const Fighter *fighter);
 void reiko_entry_retail_script_004ed038(Fighter *fighter);

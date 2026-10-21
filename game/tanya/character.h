@@ -14,17 +14,11 @@ enum {
   TANYA_EVENT_FATALITY_2
 };
 
-void tanya_press_air_hk(Fighter *fighter);
-void tanya_press_air_hp(Fighter *fighter);
-void tanya_press_air_lk(Fighter *fighter);
-void tanya_press_air_lp(Fighter *fighter);
 void tanya_script_air_finish(Fighter *fighter);
 void tanya_script_current_reaction(Fighter *fighter, int reaction);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable tanya_diagonal_air;
-void tanya_press_air_hk(Fighter *fighter);
-void tanya_press_air_lk(Fighter *fighter);
 void tanya_entry_retail_script_004ed268(Fighter *fighter);
 void tanya_entry_retail_script_004ed2c0(Fighter *fighter);
 void tanya_fireball(Fighter *fighter);

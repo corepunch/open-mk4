@@ -30,10 +30,6 @@
 #define lp_thrown_cleanup sub_zero_lp_thrown_cleanup
 #define native_blends sub_zero_native_blends
 #define owned_object sub_zero_owned_object
-#define press_air_hk sub_zero_press_air_hk
-#define press_air_hp sub_zero_press_air_hp
-#define press_air_lk sub_zero_press_air_lk
-#define press_air_lp sub_zero_press_air_lp
 #define press_combo_hk sub_zero_press_combo_hk
 #define press_combo_hp sub_zero_press_combo_hp
 #define press_knee_hp sub_zero_press_knee_hp
@@ -118,10 +114,6 @@ void sub_zero_lk_thrown_script(Fighter *victim);
 void sub_zero_lp_thrown_cleanup(Fighter *victim);
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end);
 bool sub_zero_owned_object(const Fighter *fighter, int kind);
-void sub_zero_press_air_hk(Fighter *fighter);
-void sub_zero_press_air_hp(Fighter *fighter);
-void sub_zero_press_air_lk(Fighter *fighter);
-void sub_zero_press_air_lp(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2bf0(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c10(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c78(Fighter *fighter);

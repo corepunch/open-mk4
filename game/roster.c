@@ -71,7 +71,7 @@ const CharacterDef *roster_def(int index) {
     entries[index][S_SWEEP] = retail_sweep;
     entries[index][S_UPPERCUT] = retail_uppercut;
     definitions[index].enter = entries[index];
-    controls[index] = *roster[index]->controls;
+    controls[index] = retail_stances;
     retail_bind_commands(&controls[index], image, (unsigned)index);
     definitions[index].controls = &controls[index];
     cpu[index] = roster[index]->cpu != NULL ? *roster[index]->cpu : (CpuMoves){0};

@@ -895,3 +895,27 @@ fixtures and their C-output paths were removed; JSON research evidence remains.
 The broad suite currently stops at a legacy direct-S_THROW balance assertion;
 unstarted throw states no longer contain character C behavior. It is not
 reported as passing.
+
+### Loaded air controls and shared teleport native
+
+All roster stance views now use the same loaded standing, crouching, straight-air
+and diagonal-air tables. Air contact and teleport controls read4e6ee0/4e88f0.
+Thin4712b0/c0/d0 and46c1d0/e0/f0/46c200 controllers resolve flag8 action
+entries directly, without the ground-controller floor operation. CPU fallback
+also consumes these tables rather than the retired C callbacks. Removed120
+private air callbacks and the empty Goro throw module.
+
+Reiko/Noob47c070/47c0a0/47c2a0/47c360/47c390 natives were identical after
+actor-name normalization and now have one implementation in retail_teleport.c.
+Original scripts bind their capture views. Shared capture accepts an original
+script VA instead of fighter-specific root adapters. Native47ffc0 now calls
+shared landing46fd90 (mk4_land); bounded local listings and mk4decomp native
+control/landing sources supplied the contracts. Kai handstand still owns the
+remaining private special button table; air recovery and weapon profiles remain
+migration inputs.
+
+Verified: shared VM/rejection checks,18 strict script audits, native source and
+frame checks, formatting. Extended the existing loaded-button fixture to
+change an air action target and check dispatch plus airborne ownership; no
+fighter timing/damage matrices were added. The broad legacy battle-suite
+limitation recorded above remains.

@@ -45,9 +45,9 @@ void mk4_land(Fighter *fighter);
 void mk4_return_to_stance(Fighter *fighter);
 void mk4_flip_apex_return(Fighter *fighter);
 
-void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script);
+void mk4_air_throw_frames(Fighter *fighter, uint32_t owner_script, FighterFn victim_script);
 void mk4_throw_flip_tail(Fighter *fighter);
-void mk4_air_pair_frames(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script);
+void mk4_air_pair_frames(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, uint32_t owner_script, FighterFn victim_script);
 void mk4_mmove_air_throw_release(Fighter *fighter);
 
 void kai_handstand_reaction(Fighter *fighter);

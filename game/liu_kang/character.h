@@ -55,10 +55,6 @@
 #define liu_script_sword_blend liu_kang_liu_script_sword_blend
 #define liu_script_sword_gate liu_kang_liu_script_sword_gate
 #define lk_thrown_script liu_kang_lk_thrown_script
-#define press_air_hk liu_kang_press_air_hk
-#define press_air_hp liu_kang_press_air_hp
-#define press_air_lk liu_kang_press_air_lk
-#define press_air_lp liu_kang_press_air_lp
 #define press_combo_hk liu_kang_press_combo_hk
 #define press_combo_hp liu_kang_press_combo_hp
 #define press_knee_hp liu_kang_press_knee_hp
@@ -125,10 +121,6 @@ void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type);
 void liu_kang_liu_script_sword_blend(Fighter *fighter);
 unsigned int liu_kang_liu_script_sword_gate(Fighter *fighter);
 void liu_kang_lk_thrown_script(Fighter *victim);
-void liu_kang_press_air_hk(Fighter *fighter);
-void liu_kang_press_air_hp(Fighter *fighter);
-void liu_kang_press_air_lk(Fighter *fighter);
-void liu_kang_press_air_lp(Fighter *fighter);
 void liu_kang_entry_retail_script_004de410(Fighter *fighter);
 void liu_kang_entry_retail_script_004de428(Fighter *fighter);
 void liu_kang_entry_retail_script_004de468(Fighter *fighter);

@@ -18,9 +18,6 @@ extern const MoveDef shinnok_s_crouch;
 void shinnok_fan_tail(Fighter *fighter);
 void shinnok_fan_victory(Fighter *fighter);
 void shinnok_fatality_contact_hold(Fighter *fighter);
-void shinnok_press_air_hp(Fighter *fighter);
-void shinnok_press_air_kick(Fighter *fighter);
-void shinnok_press_air_lp(Fighter *fighter);
 void shinnok_script_air_finish(Fighter *fighter);
 void shinnok_script_current_reaction(Fighter *fighter, int reaction);
 void shinnok_script_opponent_reaction(Fighter *fighter, int reaction);
@@ -31,8 +28,6 @@ void shinnok_weapon_hp(Fighter *fighter);
 void shinnok_weapon_lp(Fighter *fighter);
 
 extern const ButtonTable shinnok_diagonal_air;
-void shinnok_press_air_hk(Fighter *fighter);
-void shinnok_press_air_lk(Fighter *fighter);
 void shinnok_entry_retail_script_004e6270(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void shinnok_script_draw_equip(Fighter *fighter);

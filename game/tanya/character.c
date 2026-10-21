@@ -9,17 +9,6 @@ static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOC
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
 static const MoveDef s_victory = {124, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
-static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = tanya_press_air_hp,
-                                        [BUTTON_LOW_PUNCH] = tanya_press_air_lp,
-                                        [BUTTON_HIGH_KICK] = tanya_press_air_hk,
-                                        [BUTTON_LOW_KICK] = tanya_press_air_lk}};
-
-static const Controls tanya_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &jumping,
-        [STANCE_DIAGONAL_AIR] = &tanya_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
   [S_IDLE] = weapon_idle,
@@ -63,7 +52,7 @@ const CharacterDef mk4_tanya = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &tanya_controls,
+    .controls = &retail_stances,
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,

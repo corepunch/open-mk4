@@ -13,17 +13,6 @@ static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOC
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
 static const MoveDef s_victory = {122, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
-static const ButtonTable kai_jumping = {.press = {[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
-                                            [BUTTON_LOW_PUNCH] = kai_press_air_lp,
-                                            [BUTTON_HIGH_KICK] = kai_press_air_hk,
-                                            [BUTTON_LOW_KICK] = kai_press_air_lk}};
-
-static const Controls kai_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &kai_jumping,
-        [STANCE_DIAGONAL_AIR] = &kai_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
   [S_IDLE] = weapon_idle,
@@ -70,7 +59,7 @@ const CharacterDef mk4_kai = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &kai_controls,
+    .controls = &retail_stances,
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,

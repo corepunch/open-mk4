@@ -21,10 +21,6 @@ enum {
   CAGE_EVENT_FATALITY_2
 };
 
-void cage_press_air_hk(Fighter *fighter);
-void cage_press_air_hp(Fighter *fighter);
-void cage_press_air_lk(Fighter *fighter);
-void cage_press_air_lp(Fighter *fighter);
 void cage_script_air_finish(Fighter *fighter);
 void cage_script_cpu_kick_tail(Fighter *fighter);
 void cage_script_fatality_1_signal(Fighter *fighter);
@@ -47,8 +43,6 @@ extern const MoveDef cage_s_cpu_kick_script;
 extern const MoveDef cage_s_powered_punch_script;
 
 extern const ButtonTable cage_diagonal_air;
-void cage_press_air_hk(Fighter *fighter);
-void cage_press_air_lk(Fighter *fighter);
 void cage_powered_punch(Fighter *fighter);
 void cage_cpu_kick(Fighter *fighter);
 void cage_groin_punch(Fighter *fighter);

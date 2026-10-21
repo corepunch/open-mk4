@@ -22,10 +22,6 @@
 #define enter_victory raiden_enter_victory
 #define first_fatality raiden_first_fatality
 #define lk_victim raiden_lk_victim
-#define press_air_hk raiden_press_air_hk
-#define press_air_hp raiden_press_air_hp
-#define press_air_lk raiden_press_air_lk
-#define press_air_lp raiden_press_air_lp
 #define press_combo_hk raiden_press_combo_hk
 #define press_combo_hp raiden_press_combo_hp
 #define press_knee_hp raiden_press_knee_hp
@@ -89,10 +85,6 @@ void raiden_enter_throw(Fighter *fighter);
 void raiden_enter_victory(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
-void raiden_press_air_hk(Fighter *fighter);
-void raiden_press_air_hp(Fighter *fighter);
-void raiden_press_air_lk(Fighter *fighter);
-void raiden_press_air_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);

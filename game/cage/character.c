@@ -28,17 +28,6 @@ const uint32_t cage_weapon_descriptor[] = {
 };
 // clang-format on
 
-static const ButtonTable cage_straight_air = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_air_hp,
-                                                  [BUTTON_LOW_PUNCH] = cage_press_air_lp,
-                                                  [BUTTON_HIGH_KICK] = cage_press_air_hk,
-                                                  [BUTTON_LOW_KICK] = cage_press_air_lk}};
-
-static const Controls cage_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &cage_straight_air,
-        [STANCE_DIAGONAL_AIR] = &cage_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
@@ -65,7 +54,7 @@ const CharacterDef mk4_cage = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &cage_controls,
+    .controls = &retail_stances,
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,

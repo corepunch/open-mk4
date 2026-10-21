@@ -12,11 +12,6 @@
 
 extern const MoveDef goro_s_knockdown;
 
-void goro_press_air_hk(Fighter *fighter);
-void goro_press_air_hp(Fighter *fighter);
-void goro_press_air_lk(Fighter *fighter);
-void goro_press_air_lp(Fighter *fighter);
-
 void goro_script_air_finish(Fighter *fighter);
 void goro_script_current_reaction(Fighter *fighter, int reaction);
 void goro_script_lp_finish(Fighter *fighter);
@@ -29,7 +24,6 @@ void goro_fireball(Fighter *fighter);
 void goro_fireball_spawn(Fighter *fighter, int task_type);
 void goro_kick_victim(Fighter *victim);
 void goro_leap_stomp(Fighter *fighter);
-void goro_press_air_block(Fighter *fighter);
 void goro_punch_victim(Fighter *victim);
 void goro_quake_resting_weapons(void);
 void goro_quake_stomp(Fighter *fighter);

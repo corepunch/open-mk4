@@ -19,10 +19,6 @@
 #define enter_throw retail_lp_throw
 #define fire_script scorpion_fire_script
 #define native_blend scorpion_native_blend
-#define press_air_hk scorpion_press_air_hk
-#define press_air_hp scorpion_press_air_hp
-#define press_air_lk scorpion_press_air_lk
-#define press_air_lp scorpion_press_air_lp
 #define press_combo_hk scorpion_press_combo_hk
 #define press_combo_hp scorpion_press_combo_hp
 #define press_knee_hp scorpion_press_knee_hp
@@ -65,7 +61,6 @@
 #define script_spear_done scorpion_script_spear_done
 #define script_spear_pull scorpion_script_spear_pull
 #define script_spear_return scorpion_script_spear_return
-#define script_teleport_land scorpion_script_teleport_land
 #define script_teleport_motion scorpion_script_teleport_motion
 #define script_teleport_victim_tail scorpion_script_teleport_victim_tail
 #define script_transform_effect scorpion_script_transform_effect
@@ -98,10 +93,6 @@ bool scorpion_can_spear(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
 void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end);
-void scorpion_press_air_hk(Fighter *fighter);
-void scorpion_press_air_hp(Fighter *fighter);
-void scorpion_press_air_lk(Fighter *fighter);
-void scorpion_press_air_lp(Fighter *fighter);
 void scorpion_entry_retail_script_004d2e58(Fighter *fighter);
 void scorpion_entry_retail_script_004d2e88(Fighter *fighter);
 void scorpion_entry_retail_script_004d2eb0(Fighter *fighter);
@@ -179,7 +170,6 @@ void scorpion_script_spawn_spear(Fighter *fighter, int type);
 void scorpion_script_spear_done(Fighter *fighter);
 void scorpion_script_spear_pull(Fighter *fighter);
 void scorpion_script_spear_return(Fighter *fighter);
-void scorpion_script_teleport_land(Fighter *fighter);
 void scorpion_script_teleport_motion(Fighter *fighter);
 void scorpion_script_teleport_victim_tail(Fighter *victim);
 void scorpion_script_transform_effect(Fighter *fighter, int type);

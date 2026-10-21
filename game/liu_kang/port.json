@@ -449,9 +449,9 @@
       "symbol": "retail_close_buttons"
     },
     "air_punch_followup": {
-      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_followup"
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons"
     },
     "close_hk_followup": {
       "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
@@ -474,9 +474,9 @@
       "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
-      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "jumping"
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons"
     },
     "standing": {
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
@@ -484,9 +484,9 @@
       "symbol": "retail_ground_buttons"
     },
     "straight_air": {
-      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "jumping"
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons"
     }
   },
   "weapon": {

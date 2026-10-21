@@ -5,6 +5,8 @@
 #include "retail_vm.h"
 #include "script.h"
 
+void mk4_land(Fighter *fighter);
+
 void cage_first_sever(Fighter *victim);
 void cage_first_task_end(Fighter *actor);
 void cage_first_torso_123(Fighter *torso);
@@ -227,10 +229,6 @@ void noob_saibot_script_lp_end(Fighter *fighter);
 void noob_saibot_script_lp_reaction(Fighter *fighter, int reaction);
 void noob_saibot_script_lp_return(Fighter *fighter);
 void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction);
-void noob_saibot_script_teleport_land(Fighter *fighter);
-void noob_saibot_script_teleport_slam_drop(Fighter *fighter);
-void noob_saibot_script_teleport_slam_fall(Fighter *fighter);
-void noob_saibot_script_teleport_vanish(Fighter *fighter);
 void noob_saibot_script_weapon_draw_finish(Fighter *fighter);
 void noob_saibot_shadow_install_physics(Fighter *fighter);
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
@@ -249,7 +247,6 @@ void quan_chi_script_getup_roll(Fighter *fighter);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_skull_release(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *victim);
-void quan_chi_script_teleport_land(Fighter *fighter);
 void raiden_script_air_diagonal_tail(Fighter *fighter);
 void raiden_script_air_hp_tail(Fighter *fighter);
 void raiden_script_air_kick_tail(Fighter *fighter);
@@ -298,10 +295,6 @@ void reiko_script_lp_reaction(Fighter *fighter, int reaction);
 void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void reiko_script_star_victim_tail(Fighter *fighter);
-void reiko_script_teleport_land(Fighter *fighter);
-void reiko_script_teleport_slam_drop(Fighter *fighter);
-void reiko_script_teleport_slam_fall(Fighter *fighter);
-void reiko_script_teleport_vanish(Fighter *fighter);
 void reiko_script_weapon_draw_finish(Fighter *fighter);
 void reiko_second_owner_park(Fighter *fighter);
 void reiko_second_stars(Fighter *fighter, int task_type);
@@ -376,7 +369,6 @@ void scorpion_script_reaction(Fighter *fighter, int reaction);
 void scorpion_script_spawn_spear(Fighter *fighter, int type);
 void scorpion_script_spear_pull(Fighter *fighter);
 void scorpion_script_spear_return(Fighter *fighter);
-void scorpion_script_teleport_land(Fighter *fighter);
 void scorpion_script_teleport_motion(Fighter *fighter);
 void scorpion_script_teleport_victim_tail(Fighter *victim);
 void scorpion_script_transform_effect(Fighter *fighter, int type);
@@ -1959,35 +1951,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           fujin_dive_land(fighter);
           return true;
         case 0x47c0a0:
-          if (owner & 0x20000u) {
-            noob_saibot_script_teleport_vanish(fighter);
-            return true;
-          }
-          if (owner & 0x80u) {
-            reiko_script_teleport_vanish(fighter);
-            return true;
-          }
-          return false;
+          retail_teleport_vanish(fighter);
+          return true;
         case 0x47c360:
-          if (owner & 0x20000u) {
-            noob_saibot_script_teleport_slam_fall(fighter);
-            return true;
-          }
-          if (owner & 0x80u) {
-            reiko_script_teleport_slam_fall(fighter);
-            return true;
-          }
-          return false;
+          retail_teleport_slam_fall(fighter);
+          return true;
         case 0x47c390:
-          if (owner & 0x20000u) {
-            noob_saibot_script_teleport_slam_drop(fighter);
-            return true;
-          }
-          if (owner & 0x80u) {
-            reiko_script_teleport_slam_drop(fighter);
-            return true;
-          }
-          return false;
+          retail_teleport_slam_drop(fighter);
+          return true;
         case 0x47c580:
           kai_script_stage_event(fighter);
           return true;
@@ -2071,23 +2042,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           scorpion_teleport_script(fighter);
           return true;
         case 0x47ffc0:
-          if (owner & 0x20000u) {
-            noob_saibot_script_teleport_land(fighter);
-            return true;
-          }
-          if (owner & 0x100u) {
-            quan_chi_script_teleport_land(fighter);
-            return true;
-          }
-          if (owner & 0x80u) {
-            reiko_script_teleport_land(fighter);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_teleport_land(fighter);
-            return true;
-          }
-          return false;
+          mk4_land(fighter);
+          return true;
         case 0x4803a0:
           fujin_grab_control_start(fighter);
           return true;

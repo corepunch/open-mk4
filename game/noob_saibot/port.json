@@ -22,8 +22,8 @@
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "0x47c070": {
-      "source": "game/noob_saibot/moves/teleport.c",
-      "symbol": "noob_saibot_teleport",
+      "source": "game/retail_teleport.c",
+      "symbol": "retail_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "0x496db0": {
@@ -201,8 +201,8 @@
       "evidence": "Shared498270 weapon throw, retained type/model and independent pickup/drop lifecycle."
     },
     "teleport": {
-      "source": "game/noob_saibot/moves/teleport.c",
-      "symbol": "noob_saibot_teleport",
+      "source": "game/retail_teleport.c",
+      "symbol": "retail_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "flip_kick": {
@@ -397,14 +397,14 @@
       "evidence": "46acc0 -> 480f50[105] -> 484760: disarm, floor snap, stop and generated 4e9880."
     },
     "88": {
-      "source": "game/noob_saibot/moves/teleport.c",
-      "symbol": "noob_saibot_teleport",
+      "source": "game/retail_teleport.c",
+      "symbol": "retail_teleport",
       "adaptation": "D14 has no damage; 480fc0(8) replaces this contact reaction in the same visit with the shared paired capture.",
       "evidence": "47c2d5 D[14] hit/air reaction 88, superseded by 47c33e capture before the victim runs it."
     },
     "24": {
-      "source": "game/noob_saibot/moves/teleport.c",
-      "symbol": "noob_saibot_teleport",
+      "source": "game/retail_teleport.c",
+      "symbol": "retail_teleport",
       "adaptation": "D14 has no damage; 480fc0(8) replaces this contact reaction in the same visit with the shared paired capture.",
       "evidence": "47c2d5 D[14] hit/air reaction 24, superseded by 47c33e capture before the victim runs it."
     },
@@ -465,9 +465,9 @@
       "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "air_punch_followup": {
-      "source": "game/noob_saibot/moves/air_attacks.c",
-      "symbol": "noob_saibot_air_punch_followup",
-      "evidence": "Retail air_punch_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "close_hk_followup": {
       "source": "game/retail_controls.c",
@@ -490,9 +490,9 @@
       "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
-      "source": "game/noob_saibot/moves/air_attacks.c",
-      "symbol": "noob_saibot_diagonal_air",
-      "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons",
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008"
     },
     "standing": {
       "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
@@ -500,9 +500,9 @@
       "symbol": "retail_ground_buttons"
     },
     "straight_air": {
-      "evidence": "Retail Noob Saibot stance table 0x4e6ec8; shared base button map with Noob Saibot generated move entries in game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_air"
+      "evidence": "Original4e6ec8/4e70d8/4e6ee0 air button tables read live; thin native controllers resolve original0x80000..4 action words through4e7008",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_air_buttons"
     }
   },
   "weapon": {
@@ -552,8 +552,8 @@
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x47c070": {
-      "source": "game/noob_saibot/moves/teleport.c",
-      "symbol": "noob_saibot_teleport",
+      "source": "game/retail_teleport.c",
+      "symbol": "retail_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     }
   },
@@ -569,8 +569,8 @@
   },
   "cpu_bindings": {
     "0x47c070": {
-      "source": "game/noob_saibot/moves/teleport.c",
-      "symbol": "noob_saibot_teleport",
+      "source": "game/retail_teleport.c",
+      "symbol": "retail_teleport",
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "0x4791a0": {

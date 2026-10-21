@@ -238,9 +238,6 @@ void quan_chi_teleport_stomp(Fighter *fighter) {
 }
 
 /* 47ffc0: 46fd90 landing, then the controller return. */
-void quan_chi_script_teleport_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
 
 static void victim_cycle(Fighter *victim);
 

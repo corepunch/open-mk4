@@ -1,11 +1,5 @@
 #include "../character.h"
 
-static void goro_air_combo_lp(Fighter *fighter);
-static void goro_air_combo_kick(Fighter *fighter);
-static void press_air_followup_kick(Fighter *fighter);
-static void press_air_lp(Fighter *fighter);
-static void press_air_kick(Fighter *fighter);
-
 /* Goro shares 46e730/46eea0/46c7f0/46e150 with the humanoid roster. His
  * diagonal HK slot 4e6e48 instead enters 46e4d0, whose block 4e65a0 binds
  * clip 56 and B[31]; its callbacks match Cage's 4e65e8 apart from data. */
@@ -21,9 +15,7 @@ static const AirAttack air_attacks[] = {
 
 /* 4e6ee0 permits LP and either kick after a high air punch. 4e70c0 is
  * the grounded follow-up table after a low air contact. */
-static const ButtonTable goro_air_punch_followup = {
-    .press = {[BUTTON_LOW_PUNCH] = press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const NativeAirProfile air_profile = {air_attacks, &goro_air_punch_followup, &retail_close_buttons[3], mk4_land, goro_entry_retail_script_004e6270};
+static const NativeAirProfile air_profile = {air_attacks, &retail_air_buttons[2], &retail_close_buttons[3], mk4_land, goro_entry_retail_script_004e6270};
 
 void goro_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;
@@ -32,50 +24,4 @@ void goro_script_air_finish(Fighter *fighter) {
     return;
   }
   native_air_tail(fighter, &air_profile, index, index == 4 ? air_attacks[4].extend : 0);
-}
-
-void goro_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : retail_air_high_punch);
-}
-
-static void press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter->buttons == &goro_air_punch_followup ? goro_air_combo_lp : retail_air_low_punch);
-}
-
-static void press_air_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_air_kick);
-}
-
-void goro_press_air_lp(Fighter *fighter) {
-  press_air_lp(fighter);
-}
-
-void goro_press_air_hk(Fighter *fighter) {
-  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
-    fighter_interrupt(fighter, retail_air_diagonal_high_kick);
-  } else {
-    press_air_kick(fighter);
-  }
-}
-
-void goro_press_air_lk(Fighter *fighter) {
-  if (fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) {
-    fighter_interrupt(fighter, retail_air_diagonal_low_kick);
-  } else {
-    press_air_kick(fighter);
-  }
-}
-
-static void goro_air_combo_lp(Fighter *fighter) {
-  fighter->body.gravity = 0;
-  retail_air_low_punch(fighter);
-}
-
-static void goro_air_combo_kick(Fighter *fighter) {
-  fighter->body.gravity = 0;
-  retail_air_kick(fighter);
-}
-
-static void press_air_followup_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, goro_air_combo_kick);
 }

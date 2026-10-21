@@ -45,12 +45,12 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
     fighter_interrupt(fighter, entry);
     return true;
   }
-  /* Unported roster rows retain their own stance entries. No synthetic
-   * direction history or duplicate character move implementation is needed. */
-  Button button = action == CPU_LOW_KICK || action == CPU_SWEEP                                                       ? BUTTON_LOW_KICK
-                  : action == CPU_HIGH_KICK || action == CPU_CLOSE_HK || action == CPU_AIR_HK || action == CPU_AIR_LK ? BUTTON_HIGH_KICK
-                  : action == CPU_THROW                                                                               ? BUTTON_LOW_PUNCH
-                                                                                                                      : BUTTON_HIGH_PUNCH;
+  /* Resolve fallback actions through the loaded stance controls, without
+   * synthetic human command history or per-fighter C button callbacks. */
+  Button button = action == CPU_LOW_KICK || action == CPU_SWEEP || action == CPU_AIR_LK       ? BUTTON_LOW_KICK
+                  : action == CPU_HIGH_KICK || action == CPU_CLOSE_HK || action == CPU_AIR_HK ? BUTTON_HIGH_KICK
+                  : action == CPU_THROW || action == CPU_CROUCH_LP                            ? BUTTON_LOW_PUNCH
+                                                                                              : BUTTON_HIGH_PUNCH;
   if (action >= CPU_PROJECTILE) {
     return false;
   }
@@ -60,9 +60,17 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   } else if (action == CPU_SWEEP) {
     fighter->held = BUTTON_BIT(fighter->facing > 0 ? BUTTON_LEFT : BUTTON_RIGHT);
   }
-  const ButtonTable *table = def->controls->stances[fighter_airborne(fighter)                           ? STANCE_JUMP
-                                                    : action == CPU_UPPERCUT || action == CPU_CROUCH_LP ? STANCE_CROUCHING
-                                                                                                        : STANCE_STANDING];
+  const ButtonTable *table =
+      def->controls->stances[fighter_airborne(fighter) ? ((fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z]) ? STANCE_DIAGONAL_AIR : STANCE_JUMP)
+                             : action == CPU_UPPERCUT || action == CPU_CROUCH_LP ? STANCE_CROUCHING
+                                                                                 : STANCE_STANDING];
+  if (table != NULL && table->retail_address != 0) {
+    uint32_t target = retail_button_target(retail_vm_image(), table->retail_address, button);
+    if (target != 0) {
+      retail_press_native_button(fighter, target);
+      return true;
+    }
+  }
   if (table != NULL && table->press[button] != NULL) {
     table->press[button](fighter);
     return true;

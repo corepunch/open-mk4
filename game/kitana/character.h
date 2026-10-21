@@ -19,10 +19,6 @@
 #define enter_throw retail_lp_throw
 #define enter_victory kitana_enter_victory
 #define lk_victim kitana_lk_victim
-#define press_air_hk kitana_press_air_hk
-#define press_air_hp kitana_press_air_hp
-#define press_air_lk kitana_press_air_lk
-#define press_air_lp kitana_press_air_lp
 #define press_combo_hk kitana_press_combo_hk
 #define press_combo_hp kitana_press_combo_hp
 #define press_knee_hp kitana_press_knee_hp
@@ -91,10 +87,6 @@ void kitana_shadow_up(Fighter *fighter);
 void kitana_square_wave(Fighter *fighter);
 void kitana_weapon(Fighter *fighter);
 void kitana_lk_victim(Fighter *victim);
-void kitana_press_air_hk(Fighter *fighter);
-void kitana_press_air_hp(Fighter *fighter);
-void kitana_press_air_lk(Fighter *fighter);
-void kitana_press_air_lp(Fighter *fighter);
 void kitana_entry_retail_script_004e01d0(Fighter *fighter);
 void kitana_entry_retail_script_004e5940(Fighter *fighter);
 void kitana_entry_retail_script_004e5960(Fighter *fighter);

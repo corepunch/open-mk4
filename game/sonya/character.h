@@ -24,10 +24,6 @@
 #define enter_victory sonya_enter_victory
 #define first_fatality sonya_first_fatality
 #define lk_victim sonya_lk_victim
-#define press_air_hk sonya_press_air_hk
-#define press_air_hp sonya_press_air_hp
-#define press_air_lk sonya_press_air_lk
-#define press_air_lp sonya_press_air_lp
 #define press_combo_hk sonya_press_combo_hk
 #define press_combo_hp sonya_press_combo_hp
 #define press_knee_hp sonya_press_knee_hp
@@ -87,10 +83,6 @@ void sonya_cpu_close_hp(Fighter *fighter);
 void sonya_enter_victory(Fighter *fighter);
 void sonya_first_fatality(Fighter *fighter);
 void sonya_lk_victim(Fighter *victim);
-void sonya_press_air_hk(Fighter *fighter);
-void sonya_press_air_hp(Fighter *fighter);
-void sonya_press_air_lk(Fighter *fighter);
-void sonya_press_air_lp(Fighter *fighter);
 void sonya_entry_retail_script_004e01c0(Fighter *fighter);
 void sonya_entry_retail_script_004e01d0(Fighter *fighter);
 void sonya_entry_retail_script_004e5930(Fighter *fighter);

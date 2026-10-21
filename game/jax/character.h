@@ -50,9 +50,6 @@ bool jax_can_missile(const Fighter *fighter);
 void jax_missile(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);
 void jax_fan_tail(Fighter *fighter);
-void jax_press_air_hp(Fighter *fighter);
-void jax_press_air_kick(Fighter *fighter);
-void jax_press_air_lp(Fighter *fighter);
 void jax_script_air_finish(Fighter *fighter);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
 void jax_weapon_action(Fighter *fighter);
@@ -75,8 +72,6 @@ extern const MoveDef jax_s_crouch;
 extern const MoveDef jax_s_thrown;
 
 extern const ButtonTable jax_diagonal_air;
-void jax_press_air_hk(Fighter *fighter);
-void jax_press_air_lk(Fighter *fighter);
 void jax_script_weapon_draw_finish(Fighter *fighter);
 void jax_command_weapon(Fighter *fighter);
 void jax_entry_retail_script_004ea040(Fighter *fighter);

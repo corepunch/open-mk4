@@ -132,12 +132,6 @@ void scorpion_script_teleport_motion(Fighter *fighter) {
   }
 }
 
-void scorpion_script_teleport_land(Fighter *fighter) {
-  fighter_start_move(fighter, S_JUMP, &scorpion_s_teleport_land);
-  fighter->sample_override = 18;
-  scorpion_teleport_land_script(fighter);
-}
-
 void scorpion_script_teleport_victim_tail(Fighter *victim) {
   scorpion_entry_retail_script_004e9970(victim);
 }

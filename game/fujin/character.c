@@ -37,17 +37,6 @@ const MoveDef *const fujin_moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable fujin_jumping = {.press = {[BUTTON_HIGH_PUNCH] = fujin_press_air_punch,
-                                              [BUTTON_LOW_PUNCH] = fujin_press_air_lp,
-                                              [BUTTON_HIGH_KICK] = fujin_press_air_hk,
-                                              [BUTTON_LOW_KICK] = fujin_press_air_lk}};
-
-static const Controls fujin_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &fujin_jumping,
-        [STANCE_DIAGONAL_AIR] = &fujin_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
   [S_IDLE] = weapon_idle,
@@ -62,7 +51,7 @@ const CharacterDef mk4_fujin = {
     .motion = &mk4_motion,
     .moves = fujin_moves,
     .move_count = S_COUNT,
-    .controls = &fujin_controls,
+    .controls = &retail_stances,
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,

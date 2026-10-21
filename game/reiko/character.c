@@ -36,17 +36,6 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable reiko_air = {.press = {[BUTTON_HIGH_PUNCH] = reiko_press_air_hp,
-                                          [BUTTON_LOW_PUNCH] = reiko_press_air_lp,
-                                          [BUTTON_HIGH_KICK] = reiko_press_air_hk,
-                                          [BUTTON_LOW_KICK] = reiko_press_air_lk}};
-
-static const Controls reiko_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &reiko_air,
-        [STANCE_DIAGONAL_AIR] = &reiko_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
   [S_IDLE] = weapon_idle,
@@ -62,7 +51,7 @@ const CharacterDef mk4_reiko = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &reiko_controls,
+    .controls = &retail_stances,
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,

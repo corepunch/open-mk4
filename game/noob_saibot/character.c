@@ -37,17 +37,6 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable noob_saibot_air = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_air_hp,
-                                                [BUTTON_LOW_PUNCH] = noob_saibot_press_air_lp,
-                                                [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
-                                                [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
-
-static const Controls noob_saibot_controls = {NULL, 0,
-    {[STANCE_STANDING] = &retail_ground_buttons[0],
-        [STANCE_CROUCHING] = &retail_ground_buttons[1],
-        [STANCE_JUMP] = &noob_saibot_air,
-        [STANCE_DIAGONAL_AIR] = &noob_saibot_diagonal_air}};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveListEntry move_list[] = {
   {MOVE_LIST_SPECIAL, "SHADOW CHARGE", "D,F+LP"},
@@ -70,7 +59,7 @@ const CharacterDef mk4_noob_saibot = {
     .motion = &mk4_motion,
     .moves = moves,
     .move_count = S_COUNT,
-    .controls = &noob_saibot_controls,
+    .controls = &retail_stances,
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,

@@ -1,9 +1,7 @@
 #include "../character.h"
 
-static const ButtonTable air_followup;
 static void air_land(Fighter *fighter);
 static void air_native_tail(Fighter *fighter, int index, int elapsed);
-static void press_air_followup_kick(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const AirAttack air_attacks[] = {
   {{67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
@@ -13,9 +11,7 @@ static const AirAttack air_attacks[] = {
   {{55705, -2621, 51773, 38010, 22, 22, 4, 2, 9830}, 6, 10, 10},
 };
 // clang-format on
-static const NativeAirProfile air_profile = {air_attacks, &air_followup, &retail_close_buttons[3], air_land, NULL};
-static const ButtonTable air_followup = {
-    .press = {[BUTTON_LOW_PUNCH] = raiden_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
+static const NativeAirProfile air_profile = {air_attacks, &retail_air_buttons[2], &retail_close_buttons[3], air_land, NULL};
 
 static void air_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
@@ -24,26 +20,6 @@ static void air_land(Fighter *fighter) {
 
 static void air_native_tail(Fighter *fighter, int index, int elapsed) {
   native_air_tail(fighter, &air_profile, index, elapsed);
-}
-
-void raiden_press_air_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : retail_air_high_punch);
-}
-
-void raiden_press_air_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : retail_air_low_punch);
-}
-
-void raiden_press_air_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? retail_air_diagonal_high_kick : retail_air_kick);
-}
-
-void raiden_press_air_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? retail_air_diagonal_low_kick : retail_air_kick);
-}
-
-static void press_air_followup_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_air_kick);
 }
 
 /* 0x46c3f0 permits close HP against a reacting, grounded victim after a
