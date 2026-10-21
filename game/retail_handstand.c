@@ -146,7 +146,8 @@ static void handstand_contact(Fighter *fighter) {
 void kai_script_contact_b10_continuation(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 0 && fighter_sample(fighter) == 9, "Handstand HK needs its selected startup");
   fighter->native_record = &front_record;
-  native_begin(fighter, 1, 3, kai_entry_retail_script_004e8390);
+  native_begin(fighter, 1, 3, NULL);
+  native_script_end(fighter, 0x4e8390, fighter_ready, 11);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, frame == 1 ? 10 : 11, handstand_contact);
   }
@@ -156,7 +157,8 @@ void kai_script_contact_b10_continuation(Fighter *fighter) {
 void kai_handstand_rear_contact(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 6 && fighter_sample(fighter) == 9, "Handstand LK needs its selected startup");
   fighter->native_record = &rear_record;
-  native_begin(fighter, 1, 3, kai_entry_retail_script_004e83d8);
+  native_begin(fighter, 1, 3, NULL);
+  native_script_end(fighter, 0x4e83d8, fighter_ready, 11);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, 9 + frame, handstand_contact);
   }

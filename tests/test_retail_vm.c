@@ -2,6 +2,7 @@
 #include "retail_vm.h"
 #include "retail_data.h"
 #include "retail_native.h"
+#include "native.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -542,6 +543,27 @@ static void native_button_table(void) {
   put_word(0x4e7008, original);
 }
 
+static void native_script_continuation(void) {
+  for (unsigned interrupted = 0; interrupted < 2; ++interrupted) {
+    Fighter *owner = setup(0, 2);
+    native_hold(owner, 2, NULL);
+    native_script_end(owner, 0x4e6d08, fighter_ready, 4);
+    if (interrupted) {
+      fighter_interrupt(owner, fighter_ready);
+    }
+    for (int visit = 0; visit < 5 && !owner->retail_vm.active; ++visit) {
+      tick();
+    }
+    check(owner->native.script_end.entry == 0, "native script completion data must be consumed or canceled with its phase");
+    if (interrupted) {
+      check(!owner->retail_vm.active && owner->current_mmove == NULL, "canceled native completion must not resume a retail script");
+    } else {
+      check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e6d08 && owner->retail_vm.native_owner == 4,
+          "native completion must enter its stored original script with the typed integration context");
+    }
+  }
+}
+
 static void native_close_lifetimes(void) {
   const FighterFn entries[] = {retail_close_high_punch, retail_combo_high_punch, retail_close_high_kick};
   for (unsigned index = 0; index < sizeof entries / sizeof *entries; ++index) {
@@ -656,6 +678,7 @@ int main(int argc, char **argv) {
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();
+  native_script_continuation();
   native_close_lifetimes();
   native_air_ownership();
   native_air_loaded_recovery();

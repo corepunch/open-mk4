@@ -49,7 +49,8 @@ void jax_fatality_2_approach(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xd999);
   }
-  native_hold(fighter, 15, jax_entry_retail_script_004e5a98);
+  native_hold(fighter, 15, NULL);
+  native_script_end(fighter, 0x4e5a98, fighter_ready, 13);
 }
 
 /* 466df0 finishes only the auxiliary victim task; the body keeps its pose

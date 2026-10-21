@@ -79,7 +79,8 @@ static void first_intro_complete(Fighter *fighter) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xf333);
   }
   native_hold(victim, 11, first_victim_blends);
-  native_hold(fighter, 16, cage_entry_retail_script_004e12a0);
+  native_hold(fighter, 16, NULL);
+  native_script_end(fighter, 0x4e12a0, fighter_ready, 14);
 }
 
 static void first_intro(Fighter *fighter) {
@@ -178,7 +179,8 @@ void cage_first_sever(Fighter *victim) {
 }
 
 void cage_first_torso_half(Fighter *torso) {
-  first_native_to(torso, 109, 2, cage_entry_retail_script_004e1360);
+  first_native_to(torso, 109, 2, NULL);
+  native_script_end(torso, 0x4e1360, fighter_ready, 14);
 }
 
 void cage_first_torso_123(Fighter *torso) {

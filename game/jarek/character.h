@@ -33,7 +33,6 @@ void jarek_first_victim_rip(Fighter *fighter);
 void jarek_first_victim_impact(Fighter *fighter);
 void jarek_first_victim_end(Fighter *fighter);
 void jarek_first_victim_done(Fighter *fighter);
-void jarek_entry_retail_script_004e1260(Fighter *fighter);
 void jarek_fatality_2(Fighter *fighter);
 void jarek_second_glow(Fighter *fighter);
 void jarek_second_handoff(Fighter *fighter);

@@ -46,26 +46,6 @@
 
 /* Native-only blends; no VM timing tables. */
 
-void scorpion_entry_retail_script_004e0278(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0278, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e02a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e02a8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e02b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e02b8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e02d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e02d0, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0338(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0338, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004e97f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e97f8, fighter_ready, 0);
 }

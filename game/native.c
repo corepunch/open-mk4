@@ -1,4 +1,5 @@
 #include "native.h"
+#include "retail_vm.h"
 #include "math_util.h"
 #include <string.h>
 
@@ -11,12 +12,29 @@ static void frame_pose(Fighter *fighter, float pose) {
 void native_begin(Fighter *fighter, int first, int last, FighterFn end) {
   require(first >= 0 && last >= first && last - first < NATIVE_FRAME_CAPACITY, "Native move exceeds frame capacity");
   NativeFrames *program = &fighter->native;
+  program->script_end = (RetailScriptContinuation){0};
   int pose = fighter_sample(fighter);
   program->move = (mmove_t){.firstframe = first, .lastframe = last, .frame = program->frames, .endfunc = end, .samples = program->poses};
   memset(program->frames, 0, (size_t)(last - first + 1) * sizeof program->frames[0]);
   for (int i = 0; i <= last - first; ++i) {
     program->poses[i] = pose;
   }
+}
+
+static void native_script_resume(Fighter *fighter) {
+  RetailScriptContinuation next = fighter->native.script_end;
+  fighter->native.script_end = (RetailScriptContinuation){0};
+  require(next.entry != 0, "Missing native script continuation");
+  retail_vm_enter_owned(fighter, next.entry, next.finish, next.native_owner);
+}
+
+/* Install after native_begin (or a non-immediate native helper). The phase
+ * owns the original address as data; no fighter-specific C thunk is needed. */
+void native_script_end(Fighter *fighter, uint32_t entry, FighterFn finish, unsigned native_owner) {
+  require(entry >= RETAIL_SCRIPT_BEGIN && entry < RETAIL_SCRIPT_END && entry % 4 == 0 && finish != NULL && native_owner < MK4_ROSTER_COUNT,
+      "Invalid native script continuation");
+  fighter->native.script_end = (RetailScriptContinuation){entry, finish, native_owner};
+  fighter->native.move.endfunc = native_script_resume;
 }
 
 void native_frame(Fighter *fighter, int frame, int pose, FighterFn action) {

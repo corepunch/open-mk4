@@ -76,7 +76,6 @@ void raiden_lightning(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
 void raiden_weapon(Fighter *fighter);
-void raiden_entry_retail_script_004e56d8(Fighter *fighter);
 void raiden_entry_retail_script_004e8440(Fighter *fighter);
 void raiden_entry_retail_script_004e8458(Fighter *fighter);
 void raiden_entry_retail_script_004e8e18(Fighter *fighter);

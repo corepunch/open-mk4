@@ -199,7 +199,8 @@ static void first_victim_blend(Fighter *victim) {
 
 static void first_owner_blend(Fighter *fighter) {
   /* 44adae after sixteen visits: 475250 blends into 440, then 4e1430. */
-  native_scene_blends(fighter, owner_blend, 1, kai_entry_retail_script_004e1430);
+  native_scene_blends(fighter, owner_blend, 1, NULL);
+  native_script_end(fighter, 0x4e1430, fighter_ready, 11);
 }
 
 void kai_fatality_1(Fighter *fighter) {

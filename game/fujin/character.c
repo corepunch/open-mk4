@@ -31,11 +31,3 @@ void fujin_entry_retail_script_004ea040(Fighter *fighter) {
 void fujin_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ea0b8, fighter_ready, 5);
 }
-
-void fujin_entry_retail_script_004e1f58(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1f58, fighter_ready, 5);
-}
-
-void fujin_entry_retail_script_004e1f80(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1f80, fighter_ready, 5);
-}

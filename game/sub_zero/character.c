@@ -72,15 +72,3 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
 
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
-
-void sub_zero_entry_retail_script_004e0378(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0378, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e03f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e03f0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e0420(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0420, fighter_ready, 4);
-}

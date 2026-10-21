@@ -2,7 +2,8 @@
 #include "../character.h"
 
 void raiden_script_second_blend(Fighter *fighter) {
-  mk4_mmove_blend_to(fighter, 123, 101, 100, 0xccc, 0x1999, raiden_entry_retail_script_004e56d8);
+  mk4_mmove_blend_to(fighter, 123, 101, 100, 0xccc, 0x1999, NULL);
+  native_script_end(fighter, 0x4e56d8, fighter_ready, 1);
 }
 
 void raiden_script_second_particles(Fighter *fighter) {

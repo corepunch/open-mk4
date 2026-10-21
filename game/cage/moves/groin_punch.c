@@ -74,7 +74,8 @@ static void groin_recover(Fighter *fighter) {
   int first_rewind = pose > 12 ? pose - 12 : 1;
   int first_low = pose - first_rewind;
   int frames = first_rewind + 14 - first_low + (repetitions - 1) * 4;
-  native_begin(fighter, 1, frames, cage_entry_retail_script_004e5ba8);
+  native_begin(fighter, 1, frames, NULL);
+  native_script_end(fighter, 0x4e5ba8, fighter_ready, 14);
   for (int repeat = 0; repeat < repetitions; ++repeat) {
     do {
       native_frame(fighter, ++frame, --pose, NULL);

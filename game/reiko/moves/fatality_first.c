@@ -92,7 +92,8 @@ void reiko_first_victory(Fighter *fighter) {
 
 static void owner_tear(Fighter *fighter) {
   /* 452730 state 3 enters 4e2cf0 after 43d7d0 and twenty visits. */
-  native_hold(fighter, 20, reiko_entry_retail_script_004e2cf0);
+  native_hold(fighter, 20, NULL);
+  native_script_end(fighter, 0x4e2cf0, fighter_ready, 7);
 }
 
 static void owner_blend(Fighter *fighter) {

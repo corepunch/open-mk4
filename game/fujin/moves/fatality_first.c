@@ -107,7 +107,8 @@ void fujin_first_cycle(Fighter *fighter) {
     return;
   }
   fujin_equip_crossbow(fighter);
-  native_scene_blends(fighter, first_bow, 1, fujin_entry_retail_script_004e1f80);
+  native_scene_blends(fighter, first_bow, 1, NULL);
+  native_script_end(fighter, 0x4e1f80, fighter_ready, 5);
 }
 
 static void first_explode(Fighter *victim, Fighter *owner) {
@@ -228,5 +229,6 @@ void fujin_first_fatality(Fighter *fighter) {
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter->native_signal = true;
   g_battle.camera.follow_height = true;
-  native_scene_blends(fighter, first_intro, 1, fujin_entry_retail_script_004e1f58);
+  native_scene_blends(fighter, first_intro, 1, NULL);
+  native_script_end(fighter, 0x4e1f58, fighter_ready, 5);
 }

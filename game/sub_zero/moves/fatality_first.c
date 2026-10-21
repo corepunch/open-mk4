@@ -108,12 +108,14 @@ void sub_zero_first_fatality_script(Fighter *fighter) {
 }
 
 static void first_victim_start(Fighter *victim) {
-  sub_zero_native_blends(victim, first_victim_setup, COUNT(first_victim_setup), sub_zero_entry_retail_script_004e03f0);
+  sub_zero_native_blends(victim, first_victim_setup, COUNT(first_victim_setup), NULL);
+  native_script_end(victim, 0x4e03f0, fighter_ready, 4);
 }
 
 void sub_zero_script_first_begin(Fighter *fighter) {
   fighter->script_phase = 1;
-  sub_zero_native_blends(fighter, first_actor_blend, COUNT(first_actor_blend), sub_zero_entry_retail_script_004e0378);
+  sub_zero_native_blends(fighter, first_actor_blend, COUNT(first_actor_blend), NULL);
+  native_script_end(fighter, 0x4e0378, fighter_ready, 4);
 }
 
 void sub_zero_script_first_pull(Fighter *fighter) {
@@ -153,7 +155,8 @@ void sub_zero_script_first_head(Fighter *fighter) {
 }
 
 void sub_zero_script_first_victim_blends(Fighter *victim) {
-  sub_zero_native_blends(victim, first_victim_blends, COUNT(first_victim_blends), sub_zero_entry_retail_script_004e0420);
+  sub_zero_native_blends(victim, first_victim_blends, COUNT(first_victim_blends), NULL);
+  native_script_end(victim, 0x4e0420, fighter_ready, 4);
 }
 
 void sub_zero_script_first_victim_collapse(Fighter *victim) {

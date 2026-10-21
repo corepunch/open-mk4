@@ -9,18 +9,6 @@ const MoveDef jax_s_thrown = {.clip = 145, .last = MOVE_END, .flags = SF_LOCK | 
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
 
-void jax_entry_retail_script_004e1390(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1390, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e13f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e13f0, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e5a98(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5a98, fighter_ready, 13);
-}
-
 void jax_entry_retail_script_004ea040(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ea040, mk4_script_thrown_ready, 13);
 }

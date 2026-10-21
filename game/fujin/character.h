@@ -59,6 +59,4 @@ void fujin_first_loop_start(Fighter *fighter);
 void fujin_first_cycle(Fighter *fighter);
 void fujin_first_shoot(Fighter *fighter);
 void fujin_first_fire_end(Fighter *fighter);
-void fujin_entry_retail_script_004e1f58(Fighter *fighter);
-void fujin_entry_retail_script_004e1f80(Fighter *fighter);
 #endif

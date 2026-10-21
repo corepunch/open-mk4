@@ -48,7 +48,8 @@ void cage_script_fatality_2_continue(Fighter *fighter) {
 void cage_second_repeated_uppercuts(Fighter *fighter) {
   int sample = fighter_sample(fighter), frame = 1;
   require(fighter_move(fighter)->clip == 293 && sample == 6, "Cage repeated uppercuts require their generated six-pose startup");
-  native_begin(fighter, 1, 45, cage_entry_retail_script_004e58d8);
+  native_begin(fighter, 1, 45, NULL);
+  native_script_end(fighter, 0x4e58d8, fighter_ready, 14);
   /* 4658f0 repeats rewind-to6/advance8 three times, then finishes293. */
   for (int repeat = 0; repeat < 3; ++repeat) {
     while (sample > 6) {

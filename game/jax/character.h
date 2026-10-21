@@ -31,7 +31,6 @@ void jax_fatality_2_sparks(Fighter *fighter, int task_type);
 void jax_fatality_2_victim_pause(Fighter *fighter);
 void jax_fatality_task_end(Fighter *fighter);
 void jax_script_peer_reaction(Fighter *fighter, int reaction);
-void jax_entry_retail_script_004e13f0(Fighter *fighter);
 void jax_ground_pound(Fighter *fighter);
 bool jax_can_dash_punch(const Fighter *fighter);
 void jax_dash_punch(Fighter *fighter);
@@ -43,8 +42,6 @@ void jax_missile_spawn(Fighter *fighter, int task_type);
 void jax_fan_tail(Fighter *fighter);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
 void jax_weapon_action(Fighter *fighter);
-void jax_entry_retail_script_004e1390(Fighter *fighter);
-void jax_entry_retail_script_004e5a98(Fighter *fighter);
 extern const MoveDef jax_s_thrown;
 
 extern const ButtonTable jax_diagonal_air;

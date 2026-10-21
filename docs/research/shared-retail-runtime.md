@@ -1042,3 +1042,17 @@ Verified make format/format-check, shared VM/rejection tests,18 strict script
 audits, native/source graph gates, six helper and seven navigation checks. No
 new fighter tests or broad timing-matrix runs were needed for this equivalent
 adapter removal. Deferred callback migration is the next native lifetime step.
+
+### Native completion owns a script address
+
+Added RetailScriptContinuation as actor-owned native phase data. A native phase
+can install its original script VA, completion callback and typed integration
+context with native_script_end. Completion consumes that record once and enters
+the shared VM; replacing/canceling the phase clears it. Moved23 deferred native
+completion callbacks onto this boundary and deleted their C root thunks.
+
+This retains the original native hold/blend/frame controllers and script words;
+no script behavior or callback sequence is translated. One focused shared
+runtime fixture covers completion context plus interruption without resume.
+Verified formatting, VM/rejection checks,18 strict audits, native/source gates
+and seven navigation checks. No per-fighter timing/damage coverage was added.

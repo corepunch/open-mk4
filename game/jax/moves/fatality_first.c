@@ -91,7 +91,8 @@ void jax_fatality_1_victory(Fighter *owner) {
 
 static void first_owner_start(Fighter *owner) {
   battle_sound(SOUND_B, 0x30);
-  native_scene_blends(owner, first_owner_blend, 1, jax_entry_retail_script_004e1390);
+  native_scene_blends(owner, first_owner_blend, 1, NULL);
+  native_script_end(owner, 0x4e1390, fighter_ready, 13);
 }
 
 static void first_victim_stream(Fighter *victim) {
@@ -158,7 +159,8 @@ static void first_drop(Fighter *victim) {
 /* 449940: cursor 129 and the second arm (44a080), 428d70 to 305; cursor
  * 306 with B[0x12] and shake 5, to 375; cursor 376, then 4e13f0. */
 void jax_fatality_1_second_arm(Fighter *victim) {
-  native_begin(victim, FIRST_SECOND_ARM, FIRST_DROP, jax_entry_retail_script_004e13f0);
+  native_begin(victim, FIRST_SECOND_ARM, FIRST_DROP, NULL);
+  native_script_end(victim, 0x4e13f0, fighter_ready, 13);
   for (int sample = FIRST_SECOND_ARM; sample <= FIRST_DROP; ++sample) {
     FighterFn action = NULL;
     int arm = sample - FIRST_SECOND_ARM + FIRST_ARM_OFFSET;

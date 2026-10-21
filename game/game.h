@@ -4,10 +4,9 @@
  * fighters, and the draw entry points. Asset and renderer headers stay in
  * common/ because the viewer uses them too.
  *
- * A character is a row in the roster, not a subclass. The row points at a
- * motion record, immutable moves, entry callbacks, and a command table.
- * Each character's C file owns its moves and any custom logic. The live
- * fighter keeps the current move; battle_step runs shared combat rules.
+ * Retail data supplies identity, commands and script programs. Shared C native
+ * services implement engine boundaries. Each live fighter owns its interpreter,
+ * native playback and continuation state; battle_step runs shared combat rules.
  *
  * MK4 fills the roster today. War Gods (Midway arcade, Eurocom PC port, its
  * own wgfsys archive) is another game id: append rows, point them at that
@@ -175,8 +174,15 @@ struct mmove_s {
  * that runs independently of clip/script playback. */
 #define NATIVE_FRAME_CAPACITY 1024
 
+typedef struct RetailScriptContinuation {
+  uint32_t entry;
+  FighterFn finish;
+  unsigned native_owner;
+} RetailScriptContinuation;
+
 typedef struct NativeFrames {
   mmove_t move;
+  RetailScriptContinuation script_end;
   mframe_t frames[NATIVE_FRAME_CAPACITY];
   int poses[NATIVE_FRAME_CAPACITY];
 } NativeFrames;

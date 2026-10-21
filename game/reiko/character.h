@@ -34,7 +34,6 @@ bool reiko_can_star(const Fighter *fighter);
 void reiko_script_star_victim_tail(Fighter *fighter);
 void reiko_orbit(Fighter *fighter);
 bool reiko_can_orbit(const Fighter *fighter);
-void reiko_entry_retail_script_004e2cf0(Fighter *fighter);
 void reiko_first_head_59(Fighter *fighter);
 void reiko_first_head_83(Fighter *fighter);
 void reiko_first_left_arm_56(Fighter *fighter);

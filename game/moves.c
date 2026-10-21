@@ -300,6 +300,7 @@ void fighter_step_sequence(Fighter *fighter) {
  * run it twice. A phase change deliberately retains the action's cleanup. */
 void fighter_cancel_mmove(Fighter *fighter) {
   retail_vm_cancel(fighter);
+  fighter->native.script_end = (RetailScriptContinuation){0};
   FighterFn cleanup = fighter->mmove_cleanup;
   if (fighter->current_mmove != NULL || cleanup != NULL) {
     fighter->continuation++;

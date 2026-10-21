@@ -37,10 +37,6 @@
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
 
-void raiden_entry_retail_script_004e56d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e56d8, fighter_ready, 1);
-}
-
 void raiden_entry_retail_script_004e8440(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8440, fighter_ready, 1);
 }

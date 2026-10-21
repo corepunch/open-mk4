@@ -14,7 +14,3 @@ void jarek_entry_retail_script_004de664(Fighter *fighter) {
    * Its native490350 toggles the captured peer facing. */
   fighter->facing = -fighter->facing;
 }
-
-void jarek_entry_retail_script_004e1260(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1260, fighter_ready, 12);
-}

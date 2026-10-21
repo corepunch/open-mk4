@@ -29,22 +29,10 @@ const uint32_t kai_weapon_descriptor[] = {
 };
 // clang-format on
 
-void kai_entry_retail_script_004e8390(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8390, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e83d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e83d8, fighter_ready, 11);
-}
-
 void kai_entry_retail_script_004ed330(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed330, fighter_ready, 11);
 }
 
 void kai_entry_retail_script_004ed2f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed2f8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e1430(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1430, fighter_ready, 11);
 }

@@ -75,7 +75,8 @@ static void owner_blend(Fighter *fighter) {
 }
 
 static void victim_reach(Fighter *victim) {
-  native_hold(victim, 15, jarek_entry_retail_script_004e1260);
+  native_hold(victim, 15, NULL);
+  native_script_end(victim, 0x4e1260, fighter_ready, 12);
 }
 
 static void victim_aligned(Fighter *victim) {

@@ -28,22 +28,6 @@ const uint32_t cage_weapon_descriptor[] = {
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
 
-void cage_entry_retail_script_004e12a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e12a0, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e5ba8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ba8, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e58d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e58d8, fighter_ready, 14);
-}
-
 void cage_entry_retail_script_004e1350(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e1350, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e1360(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1360, fighter_ready, 14);
 }
