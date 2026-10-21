@@ -22,11 +22,11 @@ static const AirAttack air_attacks[] = {
 /* 4e6ee0 permits LP and either kick after a high air punch. 4e70c0 is
  * the grounded follow-up table after a low air contact, not another air kick. */
 static const ButtonTable kai_air_punch_followup = {
-    {[BUTTON_LOW_PUNCH] = kai_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable kai_air_followup = {{[BUTTON_HIGH_PUNCH] = kai_press_air_ground_hp,
-    [BUTTON_LOW_PUNCH] = kai_press_low_punch,
-    [BUTTON_HIGH_KICK] = kai_press_high_kick,
-    [BUTTON_LOW_KICK] = kai_press_low_kick}};
+    .press = {[BUTTON_LOW_PUNCH] = kai_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
+static const ButtonTable kai_air_followup = {.press = {[BUTTON_HIGH_PUNCH] = kai_press_air_ground_hp,
+                                                 [BUTTON_LOW_PUNCH] = kai_press_low_punch,
+                                                 [BUTTON_HIGH_KICK] = kai_press_high_kick,
+                                                 [BUTTON_LOW_KICK] = kai_press_low_kick}};
 static const NativeAirProfile air_profile = {air_attacks, &kai_air_punch_followup, &kai_air_followup, mk4_land, NULL};
 
 static void start_air_attack(Fighter *fighter, int index) {
@@ -116,7 +116,7 @@ static void press_air_followup_kick(Fighter *fighter) {
   fighter_interrupt(fighter, kai_air_combo_kick);
 }
 
-const ButtonTable kai_diagonal_air = {{[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
-    [BUTTON_LOW_PUNCH] = kai_press_air_lp,
-    [BUTTON_HIGH_KICK] = kai_press_air_hk,
-    [BUTTON_LOW_KICK] = kai_press_air_lk}};
+const ButtonTable kai_diagonal_air = {.press = {[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
+                                          [BUTTON_LOW_PUNCH] = kai_press_air_lp,
+                                          [BUTTON_HIGH_KICK] = kai_press_air_hk,
+                                          [BUTTON_LOW_KICK] = kai_press_air_lk}};

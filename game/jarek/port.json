@@ -1,7 +1,7 @@
 {
   "character": "jarek",
   "integration_source": "game/jarek/character.c",
-  "inventory_sha256": "77737aa0eb84f185cd35e9bd10114f3263082352627785df118cd23788b8b624",
+  "inventory_sha256": "8aa21d3b4edc71a21a329ebcc35f68a6c64e44815d2be6b816468b2149be55d2",
   "entry_adapters": {
     "0x467cd0": {
       "source": "game/jarek/moves/fatality_second.c",
@@ -153,17 +153,17 @@
     "close_hp": {
       "source": "game/retail_combat.c",
       "symbol": "retail_close_high_punch",
-      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation."
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "combo_hp": {
-      "source": "game/jarek/moves/combos.c",
-      "symbol": "jarek_combo_hp",
-      "evidence": "Shared native close-attack entry and compiler-owned root 4e69b0; existing NativeGroundProfile contact/recovery contract."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_combo_high_punch",
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "close_hk": {
-      "source": "game/jarek/moves/combos.c",
-      "symbol": "jarek_close_hk",
-      "evidence": "Shared native close-attack entry and compiler-owned root 4e6190; existing NativeGroundProfile contact/recovery contract."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_high_kick",
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "weapon_hp": {
       "source": "game/jarek/moves/weapon.c",
@@ -253,19 +253,19 @@
       "evidence": "Jarek selected stance table air_followup; typed EXE entries in reviewed inventory"
     },
     "close_hp_followup": {
-      "source": "game/jarek/moves/combos.c",
-      "symbol": "jarek_close_hp_followup",
-      "evidence": "Retail close_hp_followup table installed by the shared native close-contact runner."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "combo_hp_followup": {
-      "source": "game/jarek/moves/combos.c",
-      "symbol": "jarek_combo_hp_followup",
-      "evidence": "Retail combo_hp_followup table installed by the shared native close-contact runner."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "close_hk_followup": {
-      "source": "game/jarek/moves/combos.c",
-      "symbol": "jarek_close_hk_followup",
-      "evidence": "Retail close_hk_followup table installed by the shared native close-contact runner."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     }
   },
   "weapon": {
@@ -475,6 +475,33 @@
       "symbol": "victim_4854e0",
       "evidence": "Local native0x4854e0 and matching mk4decomp pending_match_variants; original4ea4e8 dispatch",
       "adaptation": "Shared native selected from the loaded reaction table, independent of actor model"
+    },
+    "3": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
+    },
+    "7": {
+      "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "26": {
+      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "27": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+    },
+    "43": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
     }
   },
   "schema": 1,
@@ -682,10 +709,20 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
+    "0x4e5fd0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
+    },
     "0x4e6190": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61d0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
     },
     "0x4e61e0": {
       "source": "game/retail_vm.c",

@@ -27,18 +27,18 @@ const uint32_t reptile_weapon_descriptor[] = {
 };
 // clang-format on
 
-static const ButtonTable reptile_standing = {{[BUTTON_HIGH_PUNCH] = reptile_press_punch,
-    [BUTTON_LOW_PUNCH] = reptile_press_low_punch,
-    [BUTTON_HIGH_KICK] = reptile_press_kick,
-    [BUTTON_LOW_KICK] = reptile_press_low_kick}};
-static const ButtonTable reptile_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-    [BUTTON_HIGH_KICK] = retail_press_sweep,
-    [BUTTON_LOW_KICK] = retail_press_sweep}};
-static const ButtonTable reptile_jumping = {{[BUTTON_HIGH_PUNCH] = reptile_press_air_hp,
-    [BUTTON_LOW_PUNCH] = reptile_press_air_lp,
-    [BUTTON_HIGH_KICK] = reptile_press_air_hk,
-    [BUTTON_LOW_KICK] = reptile_press_air_lk}};
+static const ButtonTable reptile_standing = {.press = {[BUTTON_HIGH_PUNCH] = reptile_press_punch,
+                                                 [BUTTON_LOW_PUNCH] = reptile_press_low_punch,
+                                                 [BUTTON_HIGH_KICK] = reptile_press_kick,
+                                                 [BUTTON_LOW_KICK] = reptile_press_low_kick}};
+static const ButtonTable reptile_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                                  [BUTTON_LOW_PUNCH] = retail_press_uppercut,
+                                                  [BUTTON_HIGH_KICK] = retail_press_sweep,
+                                                  [BUTTON_LOW_KICK] = retail_press_sweep}};
+static const ButtonTable reptile_jumping = {.press = {[BUTTON_HIGH_PUNCH] = reptile_press_air_hp,
+                                                [BUTTON_LOW_PUNCH] = reptile_press_air_lp,
+                                                [BUTTON_HIGH_KICK] = reptile_press_air_hk,
+                                                [BUTTON_LOW_KICK] = reptile_press_air_lk}};
 
 static const Controls reptile_controls = {NULL, 0,
     {[STANCE_STANDING] = &reptile_standing,
@@ -119,14 +119,6 @@ void reptile_entry_retail_script_004e9bd0(Fighter *fighter) {
 
 void reptile_entry_retail_script_004ed1e8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed1e8, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 10);
 }
 
 void reptile_entry_retail_script_004e6270(Fighter *fighter) {

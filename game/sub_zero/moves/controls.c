@@ -10,10 +10,6 @@ void sub_zero_press_lk(Fighter *fighter) {
   fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep_state : mk4_can_ground_throw(fighter, true) ? retail_lk_throw : retail_low_kick);
 }
 
-void sub_zero_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick);
-}
-
 void sub_zero_cpu_close_hk(Fighter *fighter) {
-  sub_zero_ground_attack(fighter, G_CLOSE_HK);
+  retail_close_high_kick(fighter);
 }

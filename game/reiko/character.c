@@ -36,18 +36,18 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable reiko_standing = {{[BUTTON_HIGH_PUNCH] = reiko_press_high_punch,
-    [BUTTON_LOW_PUNCH] = reiko_press_low_punch,
-    [BUTTON_HIGH_KICK] = reiko_press_high_kick,
-    [BUTTON_LOW_KICK] = reiko_press_low_kick}};
-static const ButtonTable reiko_crouching = {{[BUTTON_HIGH_PUNCH] = reiko_press_crouching_hp,
-    [BUTTON_LOW_PUNCH] = reiko_press_crouching_hp,
-    [BUTTON_HIGH_KICK] = reiko_press_crouching_kick,
-    [BUTTON_LOW_KICK] = reiko_press_crouching_kick}};
-static const ButtonTable reiko_air = {{[BUTTON_HIGH_PUNCH] = reiko_press_air_hp,
-    [BUTTON_LOW_PUNCH] = reiko_press_air_lp,
-    [BUTTON_HIGH_KICK] = reiko_press_air_hk,
-    [BUTTON_LOW_KICK] = reiko_press_air_lk}};
+static const ButtonTable reiko_standing = {.press = {[BUTTON_HIGH_PUNCH] = reiko_press_high_punch,
+                                               [BUTTON_LOW_PUNCH] = reiko_press_low_punch,
+                                               [BUTTON_HIGH_KICK] = reiko_press_high_kick,
+                                               [BUTTON_LOW_KICK] = reiko_press_low_kick}};
+static const ButtonTable reiko_crouching = {.press = {[BUTTON_HIGH_PUNCH] = reiko_press_crouching_hp,
+                                                [BUTTON_LOW_PUNCH] = reiko_press_crouching_hp,
+                                                [BUTTON_HIGH_KICK] = reiko_press_crouching_kick,
+                                                [BUTTON_LOW_KICK] = reiko_press_crouching_kick}};
+static const ButtonTable reiko_air = {.press = {[BUTTON_HIGH_PUNCH] = reiko_press_air_hp,
+                                          [BUTTON_LOW_PUNCH] = reiko_press_air_lp,
+                                          [BUTTON_HIGH_KICK] = reiko_press_air_hk,
+                                          [BUTTON_LOW_KICK] = reiko_press_air_lk}};
 
 static const Controls reiko_controls = {NULL, 0,
     {[STANCE_STANDING] = &reiko_standing, [STANCE_CROUCHING] = &reiko_crouching, [STANCE_JUMP] = &reiko_air, [STANCE_DIAGONAL_AIR] = &reiko_diagonal_air}};
@@ -111,14 +111,6 @@ void reiko_entry_retail_script_004e9b40(Fighter *fighter) {
 
 void reiko_entry_retail_script_004e9bd0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e9bd0, fighter_ready, 7);
-}
-
-void reiko_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 7);
-}
-
-void reiko_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e62c0(Fighter *fighter) {

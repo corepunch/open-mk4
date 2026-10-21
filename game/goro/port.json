@@ -1,7 +1,7 @@
 {
   "character": "goro",
   "integration_source": "game/goro/character.c",
-  "inventory_sha256": "17ff288d5d2a03750e4a4d9a44b221765271617645c8be5654060f7804dbe549",
+  "inventory_sha256": "4b52f6ea6afb3c3345d516d6672d0a5d614bc33ebc7d191cdf513c5661ced654",
   "schema": 1,
   "moves": {
     "lk_throw": {
@@ -92,17 +92,17 @@
     "close_hp": {
       "source": "game/retail_combat.c",
       "symbol": "retail_close_high_punch",
-      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation."
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "combo_hp": {
-      "source": "game/goro/moves/combos.c",
-      "symbol": "goro_combo_hp",
-      "evidence": "Close-HP follow-up 4e7078 HP enters 46c290 -> 4e69b0 clip 261 and shared runner 46c2c0."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_combo_high_punch",
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "close_hk": {
-      "source": "game/goro/moves/combos.c",
-      "symbol": "goro_close_hk",
-      "evidence": "461030 within 0.8 against a grounded, non-4001/4005 victim enters 46ba60 -> 4e6190 clip 314 and runner 46bb60."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_high_kick",
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "special_punch": {
       "source": "game/goro/moves/specials.c",
@@ -313,6 +313,28 @@
       "symbol": "goro_uppercut_victim",
       "adaptation": "Registered directly in shared reactions[192]; the Goro-owned victim program runs on any non-Goro victim.",
       "evidence": "4ea4e8[192] -> 482480: shake 6, 40% scale, wall recoil, disarm, attacker run drain, generated 4e8e50/4e8e80 clip 181 and getup."
+    },
+    "3": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
+    },
+    "26": {
+      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "27": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+    },
+    "43": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
     }
   },
   "stances": {
@@ -342,19 +364,19 @@
       "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
     },
     "close_hp_followup": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_standing",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "combo_hp_followup": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_standing",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "close_hk_followup": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_standing",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "air_followup": {
       "source": "game/goro/character.c",
@@ -553,10 +575,20 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
+    "0x4e5fd0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
+    },
     "0x4e6190": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61d0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
     },
     "0x4e61e0": {
       "source": "game/retail_vm.c",
@@ -643,10 +675,10 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
-    "0x4e69b0": {
+    "0x4e69c8": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
     },
     "0x4e8dd0": {
       "source": "game/retail_vm.c",

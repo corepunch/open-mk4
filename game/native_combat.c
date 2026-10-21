@@ -5,107 +5,12 @@
 #include <string.h>
 
 enum {
-  G_CLOSE_HP = 4,
-  G_COMBO_HP,
-  G_CLOSE_HK
-};
-
-enum {
   AIR_FLIGHT,
   AIR_COMBO,
   AIR_FREEZE,
   AIR_COMBO_FREEZE,
   AIR_FALL
 };
-
-static void close_followup(Fighter *fighter) {
-  fighter->buttons = NULL;
-  fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
-}
-
-/* Only entry/branch construction evaluates frame numbers. Action callbacks
- * below query combat/input state; none advances a timer or tests a deadline. */
-static int ground_pose(const NativeGroundProfile *profile, int index, int frame, int active, bool hit, int initial) {
-  switch (index) {
-    case G_CLOSE_HP: {
-      int reverse = hit ? 18 : 12;
-      return frame < 10 ? frame : frame < reverse ? 9 : maxi(0, 8 - frame + reverse);
-    }
-    case G_COMBO_HP:
-      return mini(profile->combo_last, frame + profile->combo_offset - (hit && frame > active ? mini(3, frame - active) : 0));
-    case G_CLOSE_HK: {
-      int reverse = hit ? 10 : 12;
-      return frame < 8 ? frame + 5 : frame < reverse ? 12 : maxi(0, 12 - frame + reverse);
-    }
-    default:
-      return initial;
-  }
-}
-
-static void ground_build(Fighter *fighter, int first, bool immediate);
-
-static void ground_query(Fighter *fighter) {
-  const NativeGroundProfile *profile = fighter->native_context;
-  int index = fighter->script_phase;
-  const Fighter *victim = fighter_opponent(fighter);
-  bool gate = false;
-  if (index == G_CLOSE_HP) {
-    gate = victim->action == ACTION_RETAIL_2001 || victim->action == ACTION_RETAIL_0106 || victim->action == ACTION_RETAIL_0107;
-  }
-  fighter->action = ACTION_RETAIL_1006;
-  if (gate || fighter->connected || battle_contact(fighter, &profile->attacks[index].record) == CONTACT_MISS) {
-    return;
-  }
-  if (index >= G_CLOSE_HP && index <= G_CLOSE_HK) {
-    fighter->buttons = profile->followups[index - G_CLOSE_HP];
-    fighter->flags = (fighter->flags | FF_FOLLOW_UP) & ~(unsigned)FF_BUSY;
-  }
-  ground_build(fighter, fighter->mmove_frame, true);
-}
-
-static void ground_build(Fighter *fighter, int first, bool immediate) {
-  const NativeGroundProfile *profile = fighter->native_context;
-  int index = fighter->script_phase;
-  require(index >= G_CLOSE_HP && index <= G_CLOSE_HK, "Ground native profile only owns close attacks");
-  const GroundAttack *attack = &profile->attacks[index];
-  int active = attack->active;
-  bool hit = fighter->connected;
-  int end = hit ? attack->end_contact : attack->end_miss;
-  int reverse = index == G_CLOSE_HP ? (hit ? 18 : 12) : index == G_CLOSE_HK ? (hit ? 10 : 12) : -1;
-  int initial = fighter_sample(fighter);
-  /* The compiled startup may hand off after the nominal active frame (for
-   * example, combo HP includes an explicit boundary wait). The native runner
-   * owns the contact probe: execute it on its first owned row rather than
-   * dropping it because the actor clock already crossed that boundary. */
-  int query_first = maxi(active, fighter->native_elapsed);
-  native_begin(fighter, first, maxi(first, end), profile->ready);
-  for (int frame = first; frame <= maxi(first, end); ++frame) {
-    FighterFn action = frame == query_first ? ground_query : NULL;
-    if (frame == reverse) {
-      action = close_followup;
-    }
-    native_frame(fighter, frame, ground_pose(profile, index, frame, active, hit, initial), action);
-  }
-  if (first > active) {
-    fighter->action = ACTION_RETAIL_1006;
-  }
-  native_play(fighter, immediate);
-}
-
-static void ground_begin(Fighter *fighter) {
-  ground_build(fighter, fighter->native_elapsed, true);
-}
-
-void native_ground_tail(Fighter *fighter, const NativeGroundProfile *profile) {
-  fighter->native_context = profile;
-  fighter->native_elapsed = fighter->ticks;
-  ground_begin(fighter);
-}
-
-void native_ground_next(Fighter *fighter, const NativeGroundProfile *profile) {
-  fighter->native_context = profile;
-  ground_build(fighter, fighter->ticks + 1, false);
-}
 
 /* Native 46d290/46d9b3 binds these two descriptors directly; unlike the
  * authored move programs, its repeat/contact controller is native code. */

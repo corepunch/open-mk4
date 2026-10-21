@@ -2,6 +2,14 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+extern const ButtonTable retail_close_buttons[];
+uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button button);
+void retail_press_table(Fighter *fighter, Button button);
+void retail_combo_high_punch(Fighter *fighter);
+void retail_close_high_kick(Fighter *fighter);
+void retail_close_high_punch_tail(Fighter *fighter);
+void retail_combo_high_punch_tail(Fighter *fighter);
+void retail_close_high_kick_tail(Fighter *fighter);
 void retail_close_high_punch(Fighter *fighter);
 void retail_crouch_high_kick(Fighter *fighter);
 void retail_press_crouch_high_kick(Fighter *fighter);

@@ -514,6 +514,33 @@ static void native_inherited_descriptor(void) {
   put_word(0x4e6c10, original);
 }
 
+static void native_button_table(void) {
+  Fighter *owner = setup(0, 2);
+  uint32_t original = mk4_image_u32(&image, 0x4e7078);
+  put_word(0x4e7078, 0x46c740);
+  owner->buttons = &retail_close_buttons[0];
+  owner->flags = FF_FOLLOW_UP;
+  fighter_press(owner, BUTTON_HIGH_PUNCH);
+  check(owner->pending != NULL, "loaded button controller must schedule the native entry");
+  tick();
+  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e5d90, "button dispatch must read the changed native target rather than a C button row");
+  fighter_cancel_mmove(owner);
+  put_word(0x4e7078, original);
+}
+
+static void native_close_lifetimes(void) {
+  const FighterFn entries[] = {retail_close_high_punch, retail_combo_high_punch, retail_close_high_kick};
+  for (unsigned index = 0; index < sizeof entries / sizeof *entries; ++index) {
+    Fighter *owner = setup(0, 2);
+    entries[index](owner);
+    for (int visit = 0; visit < 128 && owner->state != S_IDLE; ++visit) {
+      tick();
+    }
+    check(owner->state == S_IDLE && !owner->retail_vm.active && owner->current_mmove == NULL,
+        "native clip completion and inherited/script recovery must retire their ownership");
+  }
+}
+
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
   if (argc == 2) {
@@ -552,6 +579,8 @@ int main(int argc, char **argv) {
   reaction_native_table();
   native_throw_selection();
   native_inherited_descriptor();
+  native_button_table();
+  native_close_lifetimes();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

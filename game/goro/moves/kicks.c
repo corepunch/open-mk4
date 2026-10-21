@@ -12,7 +12,7 @@ void goro_press_high_kick(Fighter *fighter) {
     return;
   }
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
-    fighter_interrupt(fighter, goro_close_hk);
+    fighter_interrupt(fighter, retail_close_high_kick);
     return;
   }
   fighter_interrupt(fighter, retail_high_kick);

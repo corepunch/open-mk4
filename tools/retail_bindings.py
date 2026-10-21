@@ -1443,6 +1443,10 @@ def bindings_for(character):
     for address, function in ((0x46efd0, 'retail_sweep_advancing_tail'), (0x46f080, 'retail_sweep_standard_tail')):
         result[address] = Binding(function, 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Shared native sweep cursor/contact/recovery; checked local 46efd0/46f080/46f130')
+    for address, function in ((0x46bf10, 'retail_close_high_punch_tail'), (0x46c2c0, 'retail_combo_high_punch_tail'),
+                              (0x46bb60, 'retail_close_high_kick_tail')):
+        result[address] = Binding(function, 'game/retail_controls.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='Shared original native contact/recovery and loaded follow-up button tables; checked local entries and matching mk4decomp phase controllers')
     # Legacy navigation aliases for unused standard-roundhouse entries shared
     # the old advancing-sweep adapter. Preserve that source mapping only.
     if result.get(0x46f270) and result[0x46f270].symbol in ('fujin_script_finish', 'reiko_script_finish', 'tanya_script_finish', 'kai_script_finish', 'noob_saibot_script_finish'):

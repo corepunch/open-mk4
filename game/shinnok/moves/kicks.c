@@ -12,7 +12,7 @@ void shinnok_press_kick(Fighter *fighter) {
   }
 
   if (!fighter_holds_back(fighter) && fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
-    fighter_interrupt(fighter, shinnok_close_hk);
+    fighter_interrupt(fighter, retail_close_high_kick);
     return;
   }
 

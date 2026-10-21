@@ -22,9 +22,6 @@
 #define enter_throw raiden_enter_throw
 #define enter_victory raiden_enter_victory
 #define first_fatality raiden_first_fatality
-#define ground_attack raiden_ground_attack
-#define ground_native_next raiden_ground_native_next
-#define ground_native_tail raiden_ground_native_tail
 #define lk_victim raiden_lk_victim
 #define press_air_hk raiden_press_air_hk
 #define press_air_hp raiden_press_air_hp
@@ -56,7 +53,6 @@
 #define script_draw_equip raiden_script_draw_equip
 #define script_first_end raiden_script_first_end
 #define script_first_release raiden_script_first_release
-#define script_knee_tail raiden_script_knee_tail
 #define script_lightning_spawn raiden_script_lightning_spawn
 #define script_lp_end raiden_script_lp_end
 #define script_lp_return raiden_script_lp_return
@@ -83,16 +79,6 @@
 #define special_cleanup raiden_special_cleanup
 
 enum {
-  G_LOW_KICK,
-  G_CROUCH_LP,
-  G_CROUCH_LK,
-  G_CROUCH_HK,
-  G_CLOSE_HP,
-  G_COMBO_HP,
-  G_CLOSE_HK
-};
-
-enum {
   AIR_FLIGHT,
   AIR_COMBO,
   AIR_FREEZE,
@@ -113,19 +99,13 @@ void raiden_cpu_close_hp(Fighter *fighter);
 void raiden_enter_throw(Fighter *fighter);
 void raiden_enter_victory(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
-void raiden_ground_attack(Fighter *fighter, int index);
-void raiden_ground_native_next(Fighter *fighter);
-void raiden_ground_native_tail(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
 void raiden_press_air_hk(Fighter *fighter);
 void raiden_press_air_hp(Fighter *fighter);
 void raiden_press_air_lk(Fighter *fighter);
 void raiden_press_air_lp(Fighter *fighter);
-void raiden_press_combo_hk(Fighter *fighter);
-void raiden_press_combo_hp(Fighter *fighter);
 void raiden_press_jab(Fighter *fighter);
 void raiden_press_kick(Fighter *fighter);
-void raiden_press_knee_hp(Fighter *fighter);
 void raiden_press_lk(Fighter *fighter);
 void raiden_press_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
@@ -146,7 +126,6 @@ void raiden_entry_retail_script_004e5770(Fighter *fighter);
 void raiden_entry_retail_script_004e5788(Fighter *fighter);
 void raiden_entry_retail_script_004e5e28(Fighter *fighter);
 void raiden_entry_retail_script_004e5e50(Fighter *fighter);
-void raiden_entry_retail_script_004e6190(Fighter *fighter);
 void raiden_entry_retail_script_004e61f8(Fighter *fighter);
 void raiden_entry_retail_script_004e62c0(Fighter *fighter);
 void raiden_entry_retail_script_004e62d8(Fighter *fighter);
@@ -156,7 +135,6 @@ void raiden_entry_retail_script_004e6658(Fighter *fighter);
 void raiden_entry_retail_script_004e66d0(Fighter *fighter);
 void raiden_entry_retail_script_004e66f0(Fighter *fighter);
 void raiden_entry_retail_script_004e6710(Fighter *fighter);
-void raiden_entry_retail_script_004e69b0(Fighter *fighter);
 void raiden_entry_retail_script_004e6a40(Fighter *fighter);
 void raiden_entry_retail_script_004e8440(Fighter *fighter);
 void raiden_entry_retail_script_004e8458(Fighter *fighter);
@@ -181,12 +159,9 @@ void raiden_script_air_land(Fighter *fighter);
 void raiden_script_air_lk_tail(Fighter *fighter);
 void raiden_script_air_lp_tail(Fighter *fighter);
 void raiden_script_air_release(Fighter *fighter);
-void raiden_script_close_hp_tail(Fighter *fighter);
-void raiden_script_combo_hp_tail(Fighter *fighter);
 void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
-void raiden_script_knee_tail(Fighter *fighter);
 void raiden_script_lightning_spawn(Fighter *fighter, int task_type);
 void raiden_script_lp_end(Fighter *fighter);
 void raiden_script_lp_return(Fighter *fighter);

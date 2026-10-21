@@ -5,7 +5,7 @@ void sonya_hk(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
     retail_roundhouse(fighter);
   } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
-    sonya_ground_attack(fighter, G_CLOSE_HK);
+    retail_close_high_kick(fighter);
   } else {
     retail_high_kick(fighter);
   }

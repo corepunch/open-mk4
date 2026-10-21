@@ -137,7 +137,7 @@ def unreachable_references(profile):
     graph = workspace_graph()
     # The roster lookup is an indirect runtime selection, not an edge from
     # every fighter to every other fighter's command tables.
-    reached = graph.reachable(['mk4_' + profile['character'], 'retail_native_entry', 'retail_native_predicate'], stop={'roster'})
+    reached = graph.reachable(['mk4_' + profile['character'], 'retail_native_entry', 'retail_native_predicate', 'fighter_press'], stop={'roster'})
     errors = []
     references = []
     for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings', 'runtime_scripts'):

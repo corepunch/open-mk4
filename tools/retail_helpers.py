@@ -197,8 +197,8 @@ for address, name, function, effects in (
     (0x46ccd0, 'uppercut_entry', 'enter_uppercut', 'Sub-Zero clip 293; A[2]/A[6] branch, repeated contact and distinct hit/miss endings.'),
     (0x46f1f0, 'roundhouse_entry', 'sub_zero_roundhouse', 'Character-selected roundhouse; keep its own command and record.'),
     (0x46be40, 'close_hp_entry', 'retail_close_high_punch', 'Shared native entry reads descriptor table4e6c10, native roster aliases and peer action before original4e61e0.'),
-    (0x46c2a0, 'combo_hp_entry', 'sub_zero_combo_hp', 'Sub-Zero clip 532 and its own follow-up contact.'),
-    (0x46ba60, 'close_hk_entry', 'sub_zero_hk', 'Sub-Zero close HK and contact-enabled follow-up buttons.'),
+    (0x46c2a0, 'combo_hp_entry', 'retail_combo_high_punch', 'Original native combo table4e6c50 selects one of three script-enter operands; shared A16 contact and recovery.'),
+    (0x46ba60, 'close_hk_entry', 'retail_close_high_kick', 'Shared original knee entry, B38 contact, loaded follow-up table4e70a8 and script miss recovery4e61d0.'),
     (0x46b7f0, 'crouch_lp_entry', 'sub_zero_crouch_lp', 'Character-owned crouching LP data; preserve contact-selected endings.'),
     (0x46b5a0, 'crouch_hk_entry', 'sub_zero_crouch_hk', 'Sub-Zero clip 52 launcher and its own victim reaction.'),
     (0x46b710, 'crouch_lk_entry', 'sub_zero_crouch_lk', 'Character-owned crouching LK and low-contact data.'),
@@ -278,3 +278,8 @@ HELPERS[0x42c560] = H('ground_lp_throw', 'grounded fighters after controller thr
 HELPERS[0x42b6b0] = H('ground_lk_throw', 'grounded fighters after controller throw gates', 'Read original4ddfb8 with native48e490 hidden aliases; shared capture and each native entry script operand.', 'Direct original script execution.', ('game/retail_throw.c', 'retail_lk_throw'), (0x42b6e0, 0x48e490))
 
 HELPERS[0x46b7f0] = H('crouch_lp_entry', 'active fighter and current weapon presence', 'Read53ce58 armed/unarmed descriptor, advance native opening, query live A3, wait on contact and rewind.', 'Shared native controller.', ('game/retail_combat.c', 'retail_crouch_low_punch'))
+
+for _address, _source, _symbol in ((0x46be40, 'game/retail_combat.c', 'retail_close_high_punch'),
+                                   (0x46c2a0, 'game/retail_controls.c', 'retail_combo_high_punch'),
+                                   (0x46ba60, 'game/retail_controls.c', 'retail_close_high_kick')):
+    HELPERS[_address] = replace(HELPERS[_address], port=(_source, _symbol), flow='Shared native controller and original retail scripts.')

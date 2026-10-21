@@ -14,11 +14,11 @@ static const AttackRecord slam_record = {0x11c28, -0xf581, 0xfa9f, 0x1cc8b, 88, 
 static void teleport_landing(Fighter *fighter);
 static void teleport_press_block(Fighter *fighter);
 
-static const ButtonTable teleport_air = {{[BUTTON_HIGH_PUNCH] = noob_saibot_press_air_hp,
-    [BUTTON_LOW_PUNCH] = noob_saibot_press_air_lp,
-    [BUTTON_BLOCK] = teleport_press_block,
-    [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
-    [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
+static const ButtonTable teleport_air = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_air_hp,
+                                             [BUTTON_LOW_PUNCH] = noob_saibot_press_air_lp,
+                                             [BUTTON_BLOCK] = teleport_press_block,
+                                             [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
+                                             [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
 
 static int64_t square_sum(q16 x, q16 z) {
   return (((int64_t)x * x) >> 16) + (((int64_t)z * z) >> 16);

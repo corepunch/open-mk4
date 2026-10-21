@@ -9,18 +9,18 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 120, .last = MOVE_END, .flags = SF_HOLD};
 
-static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_high_punch,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
-    [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
-    [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-    [BUTTON_HIGH_KICK] = retail_press_sweep,
-    [BUTTON_LOW_KICK] = retail_press_sweep}};
-static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_air_hp,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_air_lp,
-    [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
-    [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
+static const ButtonTable standing = {.press = {[BUTTON_HIGH_PUNCH] = quan_chi_press_high_punch,
+                                         [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
+                                         [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
+                                         [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
+static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                          [BUTTON_LOW_PUNCH] = retail_press_uppercut,
+                                          [BUTTON_HIGH_KICK] = retail_press_sweep,
+                                          [BUTTON_LOW_KICK] = retail_press_sweep}};
+static const ButtonTable straight_air = {.press = {[BUTTON_HIGH_PUNCH] = quan_chi_press_air_hp,
+                                             [BUTTON_LOW_PUNCH] = quan_chi_press_air_lp,
+                                             [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
+                                             [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
 
 static const Controls quan_chi_controls = {
     NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &straight_air, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
@@ -103,14 +103,6 @@ void quan_chi_entry_retail_script_004e6710(Fighter *fighter) {
 
 void quan_chi_entry_retail_script_004e9910(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e9910, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter) {

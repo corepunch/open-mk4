@@ -106,6 +106,8 @@ def instruction_c(row):
         return ['%s(%d);' % ('advance_twice_for_count' if op == 0x19 else 'advance_twice_to_sample', value)]
     if op in (0x20, 0x27, 0x2b):
         return ['sound_event_%s(%d);' % ({0x20: 'a', 0x27: 'c', 0x2b: 'b'}[op], arg)]
+    if op == 0x5f:
+        return ['set_horizontal_motion_operand(%s);' % hex(words[0])]
     if op == 0x1f:
         return ['set_attack_selector(%d);' % words[0]]
     if op in (0x51, 0x52, 0x53, 0x5e):

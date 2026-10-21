@@ -37,18 +37,18 @@ const MoveDef *const fujin_moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable fujin_standing = {{[BUTTON_HIGH_PUNCH] = fujin_press_punch,
-    [BUTTON_LOW_PUNCH] = fujin_press_low_punch,
-    [BUTTON_HIGH_KICK] = fujin_press_kick,
-    [BUTTON_LOW_KICK] = fujin_press_low_kick}};
-static const ButtonTable fujin_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-    [BUTTON_HIGH_KICK] = retail_press_sweep,
-    [BUTTON_LOW_KICK] = retail_press_sweep}};
-static const ButtonTable fujin_jumping = {{[BUTTON_HIGH_PUNCH] = fujin_press_air_punch,
-    [BUTTON_LOW_PUNCH] = fujin_press_air_lp,
-    [BUTTON_HIGH_KICK] = fujin_press_air_hk,
-    [BUTTON_LOW_KICK] = fujin_press_air_lk}};
+static const ButtonTable fujin_standing = {.press = {[BUTTON_HIGH_PUNCH] = fujin_press_punch,
+                                               [BUTTON_LOW_PUNCH] = fujin_press_low_punch,
+                                               [BUTTON_HIGH_KICK] = fujin_press_kick,
+                                               [BUTTON_LOW_KICK] = fujin_press_low_kick}};
+static const ButtonTable fujin_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                                [BUTTON_LOW_PUNCH] = retail_press_uppercut,
+                                                [BUTTON_HIGH_KICK] = retail_press_sweep,
+                                                [BUTTON_LOW_KICK] = retail_press_sweep}};
+static const ButtonTable fujin_jumping = {.press = {[BUTTON_HIGH_PUNCH] = fujin_press_air_punch,
+                                              [BUTTON_LOW_PUNCH] = fujin_press_air_lp,
+                                              [BUTTON_HIGH_KICK] = fujin_press_air_hk,
+                                              [BUTTON_LOW_KICK] = fujin_press_air_lk}};
 
 static const Controls fujin_controls = {NULL, 0,
     {[STANCE_STANDING] = &fujin_standing, [STANCE_CROUCHING] = &fujin_crouching, [STANCE_JUMP] = &fujin_jumping, [STANCE_DIAGONAL_AIR] = &fujin_diagonal_air}};
@@ -94,14 +94,6 @@ void fujin_entry_retail_script_004e6658(Fighter *fighter) {
 
 void fujin_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 5);
-}
-
-void fujin_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 5);
-}
-
-void fujin_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e8258(Fighter *fighter) {

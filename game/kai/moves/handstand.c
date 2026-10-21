@@ -21,7 +21,7 @@ static const AttackRecord spin_record = {0x111a9, -0x3ae1, 0x16b43, 0x51a9, 126,
 static const AttackRecord front_record = {0x1851e, -0xbd2f, 0x10000, 0x9958, 127, 127, 5, 0, 0x1c28};
 static const AttackRecord rear_record = {0x1e624, -0x2395, 0x10000, 0x9958, 167, 127, 5, 0, 0x170a};
 static const ButtonTable handstand_buttons = {
-    {[BUTTON_LOW_PUNCH] = handstand_spin, [BUTTON_BLOCK] = handstand_exit, [BUTTON_HIGH_KICK] = kai_input_47cc10, [BUTTON_LOW_KICK] = handstand_rear}};
+    .press = {[BUTTON_LOW_PUNCH] = handstand_spin, [BUTTON_BLOCK] = handstand_exit, [BUTTON_HIGH_KICK] = kai_input_47cc10, [BUTTON_LOW_KICK] = handstand_rear}};
 
 bool kai_can_handstand(const Fighter *fighter) {
   unsigned required = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK);

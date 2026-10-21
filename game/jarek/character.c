@@ -11,18 +11,18 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 111, .last = MOVE_END, .flags = SF_HOLD};
 
-static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch,
-    [BUTTON_LOW_PUNCH] = jarek_press_low_punch,
-    [BUTTON_HIGH_KICK] = jarek_press_kick,
-    [BUTTON_LOW_KICK] = jarek_press_low_kick}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-    [BUTTON_HIGH_KICK] = retail_press_sweep,
-    [BUTTON_LOW_KICK] = retail_press_sweep}};
-static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = jarek_press_air_hp,
-    [BUTTON_LOW_PUNCH] = jarek_press_air_lp,
-    [BUTTON_HIGH_KICK] = jarek_press_air_hk,
-    [BUTTON_LOW_KICK] = jarek_press_air_lk}};
+static const ButtonTable standing = {.press = {[BUTTON_HIGH_PUNCH] = jarek_press_punch,
+                                         [BUTTON_LOW_PUNCH] = jarek_press_low_punch,
+                                         [BUTTON_HIGH_KICK] = jarek_press_kick,
+                                         [BUTTON_LOW_KICK] = jarek_press_low_kick}};
+static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                          [BUTTON_LOW_PUNCH] = retail_press_uppercut,
+                                          [BUTTON_HIGH_KICK] = retail_press_sweep,
+                                          [BUTTON_LOW_KICK] = retail_press_sweep}};
+static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = jarek_press_air_hp,
+                                        [BUTTON_LOW_PUNCH] = jarek_press_air_lp,
+                                        [BUTTON_HIGH_KICK] = jarek_press_air_hk,
+                                        [BUTTON_LOW_KICK] = jarek_press_air_lk}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
@@ -109,14 +109,6 @@ void jarek_entry_retail_script_004e81a8(Fighter *fighter) {
 
 void jarek_entry_retail_script_004ed118(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed118, fighter_ready, 12);
-}
-
-void jarek_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 12);
-}
-
-void jarek_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6270(Fighter *fighter) {

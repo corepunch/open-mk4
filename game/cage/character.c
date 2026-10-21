@@ -28,18 +28,18 @@ const uint32_t cage_weapon_descriptor[] = {
 };
 // clang-format on
 
-static const ButtonTable cage_standing = {{[BUTTON_HIGH_PUNCH] = cage_press_high_punch,
-    [BUTTON_LOW_PUNCH] = cage_press_low_punch,
-    [BUTTON_HIGH_KICK] = cage_press_high_kick,
-    [BUTTON_LOW_KICK] = cage_press_low_kick}};
-static const ButtonTable cage_crouching = {{[BUTTON_HIGH_PUNCH] = cage_press_crouching_hp,
-    [BUTTON_LOW_PUNCH] = cage_press_crouching_hp,
-    [BUTTON_HIGH_KICK] = cage_press_crouching_kick,
-    [BUTTON_LOW_KICK] = cage_press_crouching_kick}};
-static const ButtonTable cage_straight_air = {{[BUTTON_HIGH_PUNCH] = cage_press_air_hp,
-    [BUTTON_LOW_PUNCH] = cage_press_air_lp,
-    [BUTTON_HIGH_KICK] = cage_press_air_hk,
-    [BUTTON_LOW_KICK] = cage_press_air_lk}};
+static const ButtonTable cage_standing = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_high_punch,
+                                              [BUTTON_LOW_PUNCH] = cage_press_low_punch,
+                                              [BUTTON_HIGH_KICK] = cage_press_high_kick,
+                                              [BUTTON_LOW_KICK] = cage_press_low_kick}};
+static const ButtonTable cage_crouching = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_crouching_hp,
+                                               [BUTTON_LOW_PUNCH] = cage_press_crouching_hp,
+                                               [BUTTON_HIGH_KICK] = cage_press_crouching_kick,
+                                               [BUTTON_LOW_KICK] = cage_press_crouching_kick}};
+static const ButtonTable cage_straight_air = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_air_hp,
+                                                  [BUTTON_LOW_PUNCH] = cage_press_air_lp,
+                                                  [BUTTON_HIGH_KICK] = cage_press_air_hk,
+                                                  [BUTTON_LOW_KICK] = cage_press_air_lk}};
 
 static const Controls cage_controls = {NULL, 0,
     {[STANCE_STANDING] = &cage_standing, [STANCE_CROUCHING] = &cage_crouching, [STANCE_JUMP] = &cage_straight_air, [STANCE_DIAGONAL_AIR] = &cage_diagonal_air}};
@@ -121,14 +121,6 @@ void cage_entry_retail_script_004e80a8(Fighter *fighter) {
 
 void cage_entry_retail_script_004e80d0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e80d0, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 14);
 }
 
 void cage_entry_retail_script_004e9f78(Fighter *fighter) {

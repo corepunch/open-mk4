@@ -384,7 +384,5 @@ void retail_close_high_punch(Fighter *fighter) {
   uint32_t packed = mk4_image_u32(image, 0x4e6c10 + slot * 4);
   bool reacting = (fighter_opponent(fighter)->action & 0xf000) == 0x4000;
   retail_vm_bind_animation(fighter, packed * 4, reacting ? 0 : 4);
-  /* Remaining native recovery profiles identify this entry until their tails migrate. */
-  fighter->script_phase = 4;
   retail_vm_enter(fighter, 0x4e61e0, fighter_ready);
 }

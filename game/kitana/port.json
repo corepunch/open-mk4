@@ -18,7 +18,7 @@
     }
   },
   "integration_source": "game/kitana/character.c",
-  "inventory_sha256": "8aaff962c68568884db5ebababc2194ca6a5fdbfaf1a550128b77a12af1ad193",
+  "inventory_sha256": "5550a878feb93289cd7790eb4795298e02f0b0d5809328e3c8d0e18613c9be08",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
@@ -61,19 +61,19 @@
       "symbol": "retail_vm_enter"
     },
     "close_hk": {
-      "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_high_kick"
     },
     "close_hp": {
-      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation.",
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",
       "source": "game/retail_combat.c",
       "symbol": "retail_close_high_punch"
     },
     "combo_hp": {
-      "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_combo_high_punch"
     },
     "crouch_hk": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
@@ -439,6 +439,33 @@
       "evidence": "486b30: two standing block cycles, speed 0x3333, crouch/armed choices through shared 486d30; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
       "symbol": "react_fireball_block"
+    },
+    "3": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
+    },
+    "7": {
+      "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block"
+    },
+    "26": {
+      "evidence": "4ea4e8[26] -> 0x4838e0; shared C reaction dispatch",
+      "source": "game/reactions.c",
+      "symbol": "react_extra"
+    },
+    "27": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+    },
+    "43": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
     }
   },
   "schema": 1,
@@ -454,19 +481,19 @@
       "symbol": "air_followup"
     },
     "close_hk_followup": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "close_hk_followup"
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "close_hp_followup": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "close_hp_followup"
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "combo_hp_followup": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "combo_hp_followup"
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "crouching": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -605,6 +632,11 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
+    "0x4e5fd0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
+    },
     "0x4e6020": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
@@ -619,6 +651,11 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61d0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
     },
     "0x4e61e0": {
       "source": "game/retail_vm.c",
@@ -720,10 +757,10 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
-    "0x4e69b0": {
+    "0x4e6a28": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
     },
     "0x4e6a40": {
       "source": "game/retail_vm.c",

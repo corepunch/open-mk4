@@ -796,6 +796,12 @@ LK_SCRIPT_ROOTS = {
 }
 
 
+# Original native46c210 selection, independently checked against4e6c50.
+COMBO_NATIVE_SELECTION = tuple((0x46c290, 0x46c2a0, 0x46c2b0)[slot % 3]
+                               for slot in (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 13, 2, 4))
+COMBO_SCRIPT_ROOTS = {0x46c290: 0x4e69b0, 0x46c2a0: 0x4e69c8, 0x46c2b0: 0x4e6a28}
+
+
 def moves_for(character):
     result = dict(_moves_for(character))
     if character in NO_AIR_THROW:
@@ -810,5 +816,12 @@ def moves_for(character):
                               tuple(('native-selected script' if index == 0 else 'native continuation', root)
                                     for index, root in enumerate(LK_SCRIPT_ROOTS[selected])),
                               native=(('selected native entry', selected),))
+    selected_combo = COMBO_NATIVE_SELECTION[character]
+    result['combo_hp'] = move(selected_combo, (('native-selected script', COMBO_SCRIPT_ROOTS[selected_combo]),),
+                              contacts=(('A', 16),), buttons=(('contact follow-up', 0x4e7090),))
+    result['close_hp'] = move(0x46be40, (('inherited animation', 0x4e61e0),),
+                              contacts=(('A', 16),), buttons=(('contact follow-up', 0x4e7078),))
+    result['close_hk'] = move(0x46ba60, (('attacker', 0x4e6190), ('miss recovery', 0x4e61d0), ('follow-up crouch entry', 0x4e5fd0)),
+                              contacts=(('B', 38),), buttons=(('contact follow-up', 0x4e70a8),))
     result['high_punch'] = dict(result['high_punch'], contacts=(('A', 0),))
     return result

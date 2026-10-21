@@ -112,6 +112,9 @@ for _character in SPECIFIC:
     SPECIFIC[_character]['crouch_lp'] = ('game/retail_combat.c', 'retail_crouch_low_punch')
     SPECIFIC[_character]['crouch_lk'] = ('game/retail_combat.c', 'retail_crouch_low_kick')
     SPECIFIC[_character]['low_kick'] = ('game/retail_combat.c', 'retail_low_kick')
+    SPECIFIC[_character]['close_hp'] = ('game/retail_combat.c', 'retail_close_high_punch')
+    SPECIFIC[_character]['combo_hp'] = ('game/retail_controls.c', 'retail_combo_high_punch')
+    SPECIFIC[_character]['close_hk'] = ('game/retail_controls.c', 'retail_close_high_kick')
 
 
 # All catalogued script roots now enter the shared interpreter. Keep extraction

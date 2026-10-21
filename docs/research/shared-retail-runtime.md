@@ -741,3 +741,40 @@ One small runtime contract mutates the loaded descriptor table and verifies that
 the shared entry inherits the replacement independently of the model profile.
 Shared VM checks, all eighteen strict script audits, native source gates and
 formatting pass. No fighter timing or damage tests were added.
+
+## Shared close-attack controllers and loaded follow-up buttons
+
+Native46bf10,46c2c0 and46bb60 now have one implementation each, using live
+A16/B38 records, native clip completion/waits/reversal and the original knee
+miss script4e61d0. The knee contact drains attacker run energy via48fae0's
+0x6666/40 contract; this is not extra victim damage. Native46ba60 also owns
+its peer-reaction opening once. Native46c210 reads4e6c50 with native aliases
+and selects original4e69b0,4e69c8 or4e6a28 (clips261,532 or533). The previous
+copied profiles incorrectly selected the first combo variant for most slots.
+
+The three follow-up ButtonTable views contain only retail addresses. Input
+reads the six original controller pointers on each press;46c210..46c740 are
+shared native controllers, including follow-up crouch/uppercut gates and the
+existing equipped-weapon native service boundary. The script words retain
+all authored startup and miss-recovery logic. Normal stance/air tables and
+weapon frontends remain later migration inputs. The existing native idle
+blend uses the shared armed stance convention until weapon data migration.
+
+All54 copied close-attack rows,18 NativeGroundProfiles, copied follow-up tables,
+private startup/tail adapters,18 unused follow-up press wrappers and36 uncalled
+script adapters are removed. GroundAttack,NativeGroundProfile and the obsolete
+native ground frame-profile runner are retired. Remaining air/native modules
+still exist; this is not completion of the full fighter architecture migration.
+
+Research roots now reflect the actual combo variants and two native-entered
+recovery/follow-up scripts;1,137 reviewed roots are interpreted across18 slots.
+The audit checks its combo index against loaded4e6c50. Newly exposed reaction
+27 retains the preexisting generic native integration, without a parity claim.
+The source graph includes the actual fighter_press entry for loaded controllers.
+
+Validation: shared VM/rejection checks, all18 strict audits, native source gates,
+format checks,6 helper-navigation checks and7 port-navigation checks pass. Two
+small runtime contracts verify loaded-button target mutation and native/script
+completion ownership; no character timing/damage matrices were added. The SDL
+self-test passes18 rigs/11 arenas. The broad battle suite still stops at the
+previously recorded exact-tick air-throw damage assertion.

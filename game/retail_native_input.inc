@@ -190,6 +190,7 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeAction entries[] = {
+  {0x46ba60, 0x3ffff, retail_close_high_kick},
   {0x46be40, 0x3ffff, retail_close_high_punch},
   {0x467e70, 0x3ffff, retail_spike_finish},
   {0x448160, 0x3ffff, cage_fatality_1},

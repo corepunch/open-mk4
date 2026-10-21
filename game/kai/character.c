@@ -13,18 +13,18 @@ static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOC
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
 static const MoveDef s_victory = {122, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
-static const ButtonTable kai_standing = {{[BUTTON_HIGH_PUNCH] = kai_press_high_punch,
-    [BUTTON_LOW_PUNCH] = kai_press_low_punch,
-    [BUTTON_HIGH_KICK] = kai_press_high_kick,
-    [BUTTON_LOW_KICK] = kai_press_low_kick}};
-static const ButtonTable kai_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-    [BUTTON_HIGH_KICK] = retail_press_sweep,
-    [BUTTON_LOW_KICK] = retail_press_sweep}};
-static const ButtonTable kai_jumping = {{[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
-    [BUTTON_LOW_PUNCH] = kai_press_air_lp,
-    [BUTTON_HIGH_KICK] = kai_press_air_hk,
-    [BUTTON_LOW_KICK] = kai_press_air_lk}};
+static const ButtonTable kai_standing = {.press = {[BUTTON_HIGH_PUNCH] = kai_press_high_punch,
+                                             [BUTTON_LOW_PUNCH] = kai_press_low_punch,
+                                             [BUTTON_HIGH_KICK] = kai_press_high_kick,
+                                             [BUTTON_LOW_KICK] = kai_press_low_kick}};
+static const ButtonTable kai_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                              [BUTTON_LOW_PUNCH] = retail_press_uppercut,
+                                              [BUTTON_HIGH_KICK] = retail_press_sweep,
+                                              [BUTTON_LOW_KICK] = retail_press_sweep}};
+static const ButtonTable kai_jumping = {.press = {[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
+                                            [BUTTON_LOW_PUNCH] = kai_press_air_lp,
+                                            [BUTTON_HIGH_KICK] = kai_press_air_hk,
+                                            [BUTTON_LOW_KICK] = kai_press_air_lk}};
 
 static const Controls kai_controls = {
     NULL, 0, {[STANCE_STANDING] = &kai_standing, [STANCE_CROUCHING] = &kai_crouching, [STANCE_JUMP] = &kai_jumping, [STANCE_DIAGONAL_AIR] = &kai_diagonal_air}};
@@ -134,14 +134,6 @@ void kai_entry_retail_script_004e8870(Fighter *fighter) {
 
 void kai_entry_retail_script_004e88c8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e88c8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 11);
 }
 
 void kai_entry_retail_script_004e8338(Fighter *fighter) {

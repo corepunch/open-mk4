@@ -8,7 +8,7 @@
     }
   },
   "integration_source": "game/sub_zero/character.c",
-  "inventory_sha256": "698c997ecfc3f7d7cedd7e8b47bd0ca8982392194ff2a57c029831d1035c4396",
+  "inventory_sha256": "5a7b298c3ef06fdec69fed9e373dcf2637de1231fcc9e5ebfed64486d888f71e",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -46,19 +46,19 @@
       "symbol": "sub_zero_clone"
     },
     "close_hk": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_hk"
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_high_kick"
     },
     "close_hp": {
-      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation.",
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",
       "source": "game/retail_combat.c",
       "symbol": "retail_close_high_punch"
     },
     "combo_hp": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_combo_hp"
+      "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_combo_high_punch"
     },
     "crouch_hk": {
       "evidence": "Shared native46b5a0 entry; original character selector4e6020 supplies launcher behavior",
@@ -353,6 +353,23 @@
       "evidence": "4ea4e8[8] -> 0x486c70; shared C reaction dispatch",
       "source": "game/reactions.c",
       "symbol": "react_extra_block"
+    },
+    "3": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra_block",
+      "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
+    },
+    "27": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register27 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
+    },
+    "43": {
+      "source": "game/reactions.c",
+      "symbol": "react_extra",
+      "evidence": "Loaded4ea4e8 entry and existing shared reaction dispatch register43 as react_extra",
+      "adaptation": "Existing generic reaction integration retained; this migration does not establish native reaction gameplay parity"
     }
   },
   "schema": 1,
@@ -368,19 +385,19 @@
       "symbol": "air_followup"
     },
     "close_hk_followup": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "close_hk_followup"
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "close_hp_followup": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "close_hp_followup"
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "combo_hp_followup": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "combo_hp_followup"
+      "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "crouching": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -554,6 +571,11 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
+    "0x4e5fd0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
+    },
     "0x4e5fd8": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
@@ -568,6 +590,11 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61d0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original combo selection from4e6c50 and native close/follow-up literal script operands; bounded native/script listings reviewed"
     },
     "0x4e61e0": {
       "source": "game/retail_vm.c",

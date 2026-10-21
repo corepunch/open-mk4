@@ -59,15 +59,16 @@ static const FighterFn enter[S_COUNT] = {
 /* Native 494a00 parameter blocks; byte fields are decoded at authoring. */
 
 static const ButtonTable standing = {
-    {[BUTTON_HIGH_PUNCH] = sonya_press_jab, [BUTTON_LOW_PUNCH] = sonya_press_lp, [BUTTON_HIGH_KICK] = sonya_press_kick, [BUTTON_LOW_KICK] = sonya_press_lk}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
-    [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
-    [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
-static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = sonya_press_air_hp,
-    [BUTTON_LOW_PUNCH] = sonya_press_air_lp,
-    [BUTTON_HIGH_KICK] = sonya_press_air_hk,
-    [BUTTON_LOW_KICK] = sonya_press_air_lk}};
+    .press = {
+        [BUTTON_HIGH_PUNCH] = sonya_press_jab, [BUTTON_LOW_PUNCH] = sonya_press_lp, [BUTTON_HIGH_KICK] = sonya_press_kick, [BUTTON_LOW_KICK] = sonya_press_lk}};
+static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                          [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
+                                          [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
+                                          [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
+static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = sonya_press_air_hp,
+                                        [BUTTON_LOW_PUNCH] = sonya_press_air_lp,
+                                        [BUTTON_HIGH_KICK] = sonya_press_air_hk,
+                                        [BUTTON_LOW_KICK] = sonya_press_air_lk}};
 static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {
@@ -161,10 +162,6 @@ void sonya_entry_retail_script_004e5ed0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5ed0, fighter_ready, 2);
 }
 
-void sonya_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 2);
-}
-
 void sonya_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 2);
 }
@@ -199,10 +196,6 @@ void sonya_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void sonya_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 2);
 }
 
 void sonya_entry_retail_script_004e6a40(Fighter *fighter) {

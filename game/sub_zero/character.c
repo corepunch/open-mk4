@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "character.h"
 
-static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
-
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 
 /* 0x4ebd50, A selector 2 */
@@ -41,37 +39,9 @@ static const FighterFn enter[S_COUNT] = {
 };
 // clang-format on
 
-/* Ground scripts and their native tails: 4e6da0, 4e5fd8,
- * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69c8/46c2c0,
- * 4e6190/46bb60 and 4e6844/46f220. Times are our script ticks. */
-
-// clang-format off: Keep table entries on one row, including long rows.
-const GroundAttack sub_zero_ground_attacks[] = {
-  [4] = {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
-  [5] = {{.clip = 532, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 11, 29, 32},
-  [6] = {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
-};
-// clang-format on
-
-const NativeGroundProfile sub_zero_ground_profile = {
-    sub_zero_ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 0, 28};
-
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
  * Each extends, queries while holding its strike pose, then retracts. The
  * native contact continuations freeze the body and optionally open a cancel. */
-
-static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_combo_hp,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-    [BUTTON_HIGH_KICK] = sub_zero_press_kick,
-    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
-static const ButtonTable combo_hp_followup = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-    [BUTTON_HIGH_KICK] = sub_zero_press_kick,
-    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
-static const ButtonTable close_hk_followup = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_knee_hp,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-    [BUTTON_HIGH_KICK] = sub_zero_press_combo_hk,
-    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
 
 /* LP: roster script 4de798[4] -> 4de6b8/4de898; reaction 102 is
  * 485b70 -> 4e9bd0, then reverse getup 488b80/4fbcdc.
@@ -122,18 +92,18 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
 /* 46f080/46f130: two native contact visits, then remaining clip playback.
  * Keep the established portable timing; source-script startup is generated. */
 
-static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-    [BUTTON_HIGH_KICK] = sub_zero_press_kick,
-    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
-    [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
-    [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
-static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_air_hp,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_air_lp,
-    [BUTTON_HIGH_KICK] = sub_zero_press_air_hk,
-    [BUTTON_LOW_KICK] = sub_zero_press_air_lk}};
+static const ButtonTable standing = {.press = {[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
+                                         [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
+                                         [BUTTON_HIGH_KICK] = sub_zero_press_kick,
+                                         [BUTTON_LOW_KICK] = sub_zero_press_lk}};
+static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                          [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
+                                          [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
+                                          [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
+static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = sub_zero_press_air_hp,
+                                        [BUTTON_LOW_PUNCH] = sub_zero_press_air_lp,
+                                        [BUTTON_HIGH_KICK] = sub_zero_press_air_hk,
+                                        [BUTTON_LOW_KICK] = sub_zero_press_air_lk}};
 static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {.enter = {
@@ -258,10 +228,6 @@ void sub_zero_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 4);
 }
 
-void sub_zero_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 4);
-}
-
 void sub_zero_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 4);
 }
@@ -296,10 +262,6 @@ void sub_zero_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e69c8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69c8, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter) {

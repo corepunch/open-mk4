@@ -146,8 +146,12 @@ void fighter_press(Fighter *fighter, Button button) {
   FighterFn command = match_command(fighter, button, false);
   if (command != NULL) {
     fighter_interrupt(fighter, command);
-  } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL && fighter->buttons->press[button] != NULL) {
-    fighter->buttons->press[button](fighter);
+  } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL) {
+    if (fighter->buttons->retail_address != 0) {
+      retail_press_table(fighter, button);
+    } else if (fighter->buttons->press[button] != NULL) {
+      fighter->buttons->press[button](fighter);
+    }
   }
   if (button == BUTTON_RUN) {
     fighter->latch[button] = g_battle.ticks;

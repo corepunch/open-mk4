@@ -23,11 +23,11 @@ static const AirAttack air_attacks[] = {
 // clang-format on
 static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, air_land, NULL};
 static const ButtonTable air_followup = {
-    {[BUTTON_LOW_PUNCH] = raiden_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable air_ground_followup = {{[BUTTON_HIGH_PUNCH] = press_air_ground_hp,
-    [BUTTON_LOW_PUNCH] = raiden_press_lp,
-    [BUTTON_HIGH_KICK] = raiden_press_kick,
-    [BUTTON_LOW_KICK] = raiden_press_lk}};
+    .press = {[BUTTON_LOW_PUNCH] = raiden_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
+static const ButtonTable air_ground_followup = {.press = {[BUTTON_HIGH_PUNCH] = press_air_ground_hp,
+                                                    [BUTTON_LOW_PUNCH] = raiden_press_lp,
+                                                    [BUTTON_HIGH_KICK] = raiden_press_kick,
+                                                    [BUTTON_LOW_KICK] = raiden_press_lk}};
 
 static void air_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;

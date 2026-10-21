@@ -22,11 +22,11 @@ static const AirAttack air_attacks[] = {
 // clang-format on
 static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, sub_zero_air_land, NULL};
 static const ButtonTable air_followup = {
-    {[BUTTON_LOW_PUNCH] = sub_zero_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable air_ground_followup = {{[BUTTON_HIGH_PUNCH] = press_air_ground_hp,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-    [BUTTON_HIGH_KICK] = sub_zero_press_kick,
-    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
+    .press = {[BUTTON_LOW_PUNCH] = sub_zero_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
+static const ButtonTable air_ground_followup = {.press = {[BUTTON_HIGH_PUNCH] = press_air_ground_hp,
+                                                    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
+                                                    [BUTTON_HIGH_KICK] = sub_zero_press_kick,
+                                                    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
 static const MoveDef s_air_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 static const mframe_t air_getup_frames[34] = {{0}};
 static const mmove_t air_getup = {.firstframe = 46, .lastframe = 79, .frame = air_getup_frames, .endfunc = fighter_ready};

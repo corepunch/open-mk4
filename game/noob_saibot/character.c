@@ -37,18 +37,18 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable noob_saibot_standing = {{[BUTTON_HIGH_PUNCH] = noob_saibot_press_high_punch,
-    [BUTTON_LOW_PUNCH] = noob_saibot_press_low_punch,
-    [BUTTON_HIGH_KICK] = noob_saibot_press_high_kick,
-    [BUTTON_LOW_KICK] = noob_saibot_press_low_kick}};
-static const ButtonTable noob_saibot_crouching = {{[BUTTON_HIGH_PUNCH] = noob_saibot_press_crouching_hp,
-    [BUTTON_LOW_PUNCH] = noob_saibot_press_crouching_hp,
-    [BUTTON_HIGH_KICK] = noob_saibot_press_crouching_kick,
-    [BUTTON_LOW_KICK] = noob_saibot_press_crouching_kick}};
-static const ButtonTable noob_saibot_air = {{[BUTTON_HIGH_PUNCH] = noob_saibot_press_air_hp,
-    [BUTTON_LOW_PUNCH] = noob_saibot_press_air_lp,
-    [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
-    [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
+static const ButtonTable noob_saibot_standing = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_high_punch,
+                                                     [BUTTON_LOW_PUNCH] = noob_saibot_press_low_punch,
+                                                     [BUTTON_HIGH_KICK] = noob_saibot_press_high_kick,
+                                                     [BUTTON_LOW_KICK] = noob_saibot_press_low_kick}};
+static const ButtonTable noob_saibot_crouching = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_crouching_hp,
+                                                      [BUTTON_LOW_PUNCH] = noob_saibot_press_crouching_hp,
+                                                      [BUTTON_HIGH_KICK] = noob_saibot_press_crouching_kick,
+                                                      [BUTTON_LOW_KICK] = noob_saibot_press_crouching_kick}};
+static const ButtonTable noob_saibot_air = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_air_hp,
+                                                [BUTTON_LOW_PUNCH] = noob_saibot_press_air_lp,
+                                                [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
+                                                [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
 
 static const Controls noob_saibot_controls = {NULL, 0,
     {[STANCE_STANDING] = &noob_saibot_standing,
@@ -142,14 +142,6 @@ void noob_saibot_entry_retail_script_004ed268(Fighter *fighter) {
 
 void noob_saibot_entry_retail_script_004ed2c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 17);
 }
 
 void noob_saibot_entry_retail_script_004e62c0(Fighter *fighter) {

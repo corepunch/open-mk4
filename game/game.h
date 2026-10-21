@@ -313,6 +313,7 @@ typedef struct CommandDef {
  * unused; NULL ignores the press. A move with SF_LOCK installs none. */
 typedef struct ButtonTable {
   FighterFn press[BUTTON_COUNT];
+  uint32_t retail_address;
 } ButtonTable;
 
 typedef enum Stance {

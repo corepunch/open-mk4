@@ -12,15 +12,15 @@ static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_L
 static const MoveDef s_victory = {.clip = 412, .last = MOVE_END, .flags = SF_HOLD};
 
 static const ButtonTable s_standing = {
-    {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
-static const ButtonTable s_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-    [BUTTON_HIGH_KICK] = retail_press_sweep,
-    [BUTTON_LOW_KICK] = retail_press_sweep}};
-static const ButtonTable s_jumping = {{[BUTTON_HIGH_PUNCH] = jax_press_air_hp,
-    [BUTTON_LOW_PUNCH] = jax_press_air_lp,
-    [BUTTON_HIGH_KICK] = jax_press_air_hk,
-    [BUTTON_LOW_KICK] = jax_press_air_lk}};
+    .press = {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
+static const ButtonTable s_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                            [BUTTON_LOW_PUNCH] = retail_press_uppercut,
+                                            [BUTTON_HIGH_KICK] = retail_press_sweep,
+                                            [BUTTON_LOW_KICK] = retail_press_sweep}};
+static const ButtonTable s_jumping = {.press = {[BUTTON_HIGH_PUNCH] = jax_press_air_hp,
+                                          [BUTTON_LOW_PUNCH] = jax_press_air_lp,
+                                          [BUTTON_HIGH_KICK] = jax_press_air_hk,
+                                          [BUTTON_LOW_KICK] = jax_press_air_lk}};
 
 static const Controls s_controls = {NULL, 0, {&s_standing, &s_crouching, &s_jumping, [STANCE_DIAGONAL_AIR] = &jax_diagonal_air}};
 
@@ -177,14 +177,6 @@ void jax_entry_retail_script_004e89d8(Fighter *fighter) {
 
 void jax_entry_retail_script_004ed090(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed090, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 13);
 }
 
 void jax_entry_retail_script_004e5e18(Fighter *fighter) {

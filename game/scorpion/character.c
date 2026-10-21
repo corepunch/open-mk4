@@ -64,18 +64,18 @@ const MoveDef scorpion_s_teleport_land = {.clip = 304, .first = 18, .last = 27, 
 
 /* Generated VM finishers use shared scene, blend and object helpers. */
 
-static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = scorpion_press_jab,
-    [BUTTON_LOW_PUNCH] = scorpion_press_lp,
-    [BUTTON_HIGH_KICK] = scorpion_press_kick,
-    [BUTTON_LOW_KICK] = scorpion_press_lk}};
-static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
-    [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
-    [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
-static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = scorpion_press_air_hp,
-    [BUTTON_LOW_PUNCH] = scorpion_press_air_lp,
-    [BUTTON_HIGH_KICK] = scorpion_press_air_hk,
-    [BUTTON_LOW_KICK] = scorpion_press_air_lk}};
+static const ButtonTable scorpion_standing = {.press = {[BUTTON_HIGH_PUNCH] = scorpion_press_jab,
+                                                  [BUTTON_LOW_PUNCH] = scorpion_press_lp,
+                                                  [BUTTON_HIGH_KICK] = scorpion_press_kick,
+                                                  [BUTTON_LOW_KICK] = scorpion_press_lk}};
+static const ButtonTable scorpion_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+                                                   [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
+                                                   [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
+                                                   [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
+static const ButtonTable scorpion_jumping = {.press = {[BUTTON_HIGH_PUNCH] = scorpion_press_air_hp,
+                                                 [BUTTON_LOW_PUNCH] = scorpion_press_air_lp,
+                                                 [BUTTON_HIGH_KICK] = scorpion_press_air_hk,
+                                                 [BUTTON_LOW_KICK] = scorpion_press_air_lk}};
 static const Controls scorpion_controls = {NULL, 0, {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
 
 /* Weapon scripts 0x4e62c0/0x4e62d8, 0x4ec8b0/0x4ec918 and 0x4e8850;
@@ -197,10 +197,6 @@ void scorpion_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 0);
 }
 
-void scorpion_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 0);
 }
@@ -235,10 +231,6 @@ void scorpion_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void scorpion_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e87b0(Fighter *fighter) {
