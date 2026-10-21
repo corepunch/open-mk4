@@ -181,6 +181,36 @@ static void control_flow(void) {
   check(control_finished == 1 && fighter_sample(owner) == 0, "runtime must jump over invalid data, select packed streams and finish reverse playback");
 }
 
+static void playback_modes(void) {
+  /* Shared cursor/clock contract, independent of any authored fighter move. */
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  const uint32_t base = 0x570000;
+  const uint32_t descriptor = (0x4fad7c + 54 * 12) / 4;
+  uint32_t words[] = {0x49000202, descriptor, 0x46000002, 0x0d000000, 0x4a000001, 0x71000000, descriptor, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  control_finished = 0;
+  retail_vm_start(owner, &image, base, base + sizeof words, control_end, reject_native);
+  check(fighter_sample(owner) == 2, "optional sample descriptor must consume its operand before half-speed playback");
+  tick();
+  check(fighter_sample(owner) == 2, "half-speed playback must hold the first visit");
+  for (int i = 0; i < 50 && owner->retail_vm.active; ++i) {
+    check(owner->current_mmove == NULL, "playback and blend must not create generated frame programs");
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 1 && owner->blend_duration == 0 && owner->blend_weight == -1,
+      "reverse-to and blend must resume the script at sample one and retire blending");
+  put_word(base, 0x71000000);
+  put_word(base + 4, descriptor);
+  put_word(base + 8, 0x30000000);
+  retail_vm_start(owner, &image, base, base + 12, control_end, reject_native);
+  fighter_interrupt(owner, fighter_ready);
+  check(!owner->retail_vm.active && owner->blend_duration == 0, "interruption must retire a VM-owned blend");
+}
+
 static void data_tables(void) {
   /* Mutate shared source records: no compiled command or roster definition
    * may shadow a retail table read, including the second player's list. */
@@ -314,6 +344,7 @@ int main(int argc, char **argv) {
   behavior();
   runtime_words();
   control_flow();
+  playback_modes();
   native_handoff();
   data_tables();
   lifetimes();

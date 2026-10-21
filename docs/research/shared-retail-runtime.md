@@ -119,3 +119,24 @@ matrices. Runtime checks, C11 game and existing battle-test builds, formatting,
 all 18 canonical script/source audits, and helper/source navigation checks pass.
 The source tools now link removed weapon, stage, sidestep and predicate wrappers
 to the actual shared native implementations.
+
+## Shared playback and control-flow completion
+
+The interpreter now covers the additional counted, paired, reverse-to and
+half-speed playback modes used outside Scorpion, optional descriptor prefixes
+for sample assignment, and blend-to-clip/resume-at-one. Blend state belongs to
+the VM and is retired on interruption. Playback uses the shared animation
+clock without generating frame programs. Added branch forms use the native
+result bit selected by the opcode, live down input, or airborne state.
+
+Evidence is mk4decomp's `PauseTestCmp2CallStore`, paired forward/reverse matching
+assembly in `pending_match_variants.c`, and the supplied EXE handler table at
+4e3988. Bounded local listings verify half-speed wrappers 45b800/45b6d0,
+which call 429040/428ea0, and blend handler 45bc70. Existing reviewed decoder
+and native contracts supply the shared motion, contact D, callback and sound
+boundaries. This expands runtime capability; other fighters still require
+native binding and entry migration before their generated outputs can retire.
+
+One synthetic runtime fixture covers optional operand consumption, half-speed
+holding, reverse playback, blend resumption and cancellation. No authored
+fighter timing or damage cases were added.

@@ -495,7 +495,7 @@ typedef struct RetailVm {
   uint32_t pc, begin, end, instruction, entry;
   uint64_t wake;
   unsigned result, selector, loop_count;
-  int play_ticks, target, direction, stride;
+  int play_ticks, target, direction, stride, period, blend_ticks;
   bool active, return_after_play, parked, paired, wait_ground;
   FighterFn finish, cleanup, native_resume;
   RetailNativeFn native;
