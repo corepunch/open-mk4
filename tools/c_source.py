@@ -1,4 +1,4 @@
-"""Read private C move modules and retain real file/line navigation."""
+"""Resolve native C definitions and retain real file/line navigation."""
 from pathlib import Path
 import re
 
@@ -20,7 +20,10 @@ def source_files(path):
             if 'generated' not in child.parts and child.is_file():
                 visit(child)
 
-    visit(path)
+    if path.is_file():
+        visit(path)
+    elif path.name != 'character.c':
+        raise FileNotFoundError(path)
     if path.name == 'character.c':
         for child in sorted((path.parent / 'moves').glob('*.c')):
             visit(child)

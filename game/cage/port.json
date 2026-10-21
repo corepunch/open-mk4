@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "character": "cage",
-  "integration_source": "game/cage/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "7ac53cb685a8e5e26d072516bf4d5c44045c24524f744ec2ab409515bf38e3af",
   "moves": {
     "high_punch": {
@@ -100,7 +100,7 @@
       "evidence": "479ec0 ->4e80d0/479f00; six D26 queries, paired163/94/95 hit, blocked47d940 and own clip85 miss recovery."
     },
     "cpu_kick": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/kicks.c",
       "symbol": "cage_cpu_kick",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
@@ -357,7 +357,7 @@
       "evidence": "Cage contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
-      "source": "game/cage/character.c",
+      "source": "game/cage/moves/common.c",
       "symbol": "cage_script_opponent_reaction",
       "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
       "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."

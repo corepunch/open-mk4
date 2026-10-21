@@ -1,6 +1,6 @@
 {
   "character": "jarek",
-  "integration_source": "game/jarek/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "8aa21d3b4edc71a21a329ebcc35f68a6c64e44815d2be6b816468b2149be55d2",
   "entry_adapters": {
     "0x467cd0": {
@@ -44,7 +44,7 @@
       "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
     "0x46d260": {
-      "source": "game/jarek/character.c",
+      "source": "game/jarek/moves/weapon.c",
       "symbol": "jarek_script_weapon_draw_finish",
       "evidence": "46d260 is the Jarek weapon draw script tail from 4e62c0; bounded native/script listing"
     },
@@ -146,7 +146,7 @@
       "evidence": "Jarek roster slot 12 native entry 0x0046ccd0 and selected EXE script roots"
     },
     "draw_weapon": {
-      "source": "game/jarek/character.c",
+      "source": "game/jarek/moves/weapon.c",
       "symbol": "jarek_weapon_action",
       "evidence": "Jarek target 46d1d0 selects throw, follow-up equip or generated draw script 4e62c0"
     },
@@ -386,19 +386,19 @@
       "evidence": "Pinned EXE Jarek contact record and reaction table"
     },
     "175": {
-      "source": "game/jarek/character.c",
+      "source": "game/jarek/moves/fatality.c",
       "symbol": "jarek_fatality_contact_hold",
       "evidence": "Jarek spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
     },
     "102": {
-      "source": "game/jarek/character.c",
+      "source": "game/jarek/moves/common.c",
       "symbol": "jarek_script_opponent_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 102 through native continuation 0x45b1f0; paired clips 76/153, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 102 on the victim actor"
     },
     "107": {
-      "source": "game/jarek/character.c",
+      "source": "game/jarek/moves/common.c",
       "symbol": "jarek_script_opponent_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 107 through native continuation 0x45b1f0; paired clips 80/154, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 107 on the victim actor"

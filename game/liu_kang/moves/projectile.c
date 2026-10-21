@@ -1,6 +1,8 @@
 #include "retail_vm.h"
 #include "../character.h"
 
+const MeshAnimation liu_kang_fireball_mesh = {.first = 50, .count = 1, .period = 1, .scale = Q16_ONE};
+
 static void fireball_projectile(Projectile *p);
 static void fireball(Fighter *fighter, bool low);
 static const MoveDef s_fireball_high = {.clip = 18, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_030C};

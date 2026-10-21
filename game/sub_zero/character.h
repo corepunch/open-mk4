@@ -106,7 +106,6 @@ void sub_zero_lk_thrown_script(Fighter *victim);
 void sub_zero_lp_thrown_cleanup(Fighter *victim);
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end);
 bool sub_zero_owned_object(const Fighter *fighter, int kind);
-extern const MoveDef sub_zero_s_lp_thrown;
 void sub_zero_scene_blend_cleanup(Fighter *fighter);
 void sub_zero_script_breath_approach(Fighter *fighter);
 void sub_zero_script_breath_freeze(Fighter *fighter, int type);

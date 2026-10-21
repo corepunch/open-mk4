@@ -7,7 +7,7 @@
       "symbol": "weapon_pickup"
     }
   },
-  "integration_source": "game/liu_kang/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "9c22d4cd9cb0b874820c189a8f8f6cee29210856b5626452c2ab53d4513fd945",
   "moves": {
     "air_diagonal_hk": {
@@ -42,7 +42,7 @@
     },
     "bicycle_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/bicycle.c",
       "symbol": "liu_kang_bicycle_kick"
     },
     "close_hk": {
@@ -77,7 +77,7 @@
     },
     "draw_weapon": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/weapon.c",
       "symbol": "liu_kang_weapon"
     },
     "fan_fatality": {
@@ -87,12 +87,12 @@
     },
     "fatality_1": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/fatality_first.c",
       "symbol": "liu_kang_first_fatality"
     },
     "fatality_2": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/fatality_second.c",
       "symbol": "liu_kang_second_fatality"
     },
     "fireball_reaction": {
@@ -102,7 +102,7 @@
     },
     "flying_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/flying_kick.c",
       "symbol": "liu_kang_flying_kick"
     },
     "high_fireball": {
@@ -167,22 +167,22 @@
     },
     "sword_back_hp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/weapon.c",
       "symbol": "sword_back_hp"
     },
     "sword_back_lp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/weapon.c",
       "symbol": "sword_back_lp"
     },
     "sword_hp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/weapon.c",
       "symbol": "sword_hp"
     },
     "sword_lp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/weapon.c",
       "symbol": "sword_lp"
     },
     "uppercut": {
@@ -215,8 +215,8 @@
     "104": {
       "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 104 -> 0x485af0; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_script_lp_getup"
+      "source": "game/liu_kang/moves/common.c",
+      "symbol": "liu_kang_liu_script_lp_getup"
     },
     "11": {
       "evidence": "4ea4e8[11] -> 0x482070; shared reaction adapter and behavioral regressions",
@@ -277,8 +277,8 @@
     "176": {
       "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 176 -> 0x481360; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_script_fatal_setup"
+      "source": "game/liu_kang/moves/fatality.c",
+      "symbol": "liu_kang_liu_script_fatal_setup"
     },
     "19": {
       "evidence": "4ea4e8[19] -> 0x4831e0; shared reaction adapter and behavioral regressions",
@@ -404,13 +404,13 @@
     "80": {
       "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 80 -> 0x485910; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "lk_thrown_script"
+      "source": "game/liu_kang/moves/throws.c",
+      "symbol": "liu_kang_lk_thrown_script"
     },
     "84": {
       "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
       "evidence": "4ea4e8[84] -> 0x488870; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
+      "source": "game/liu_kang/moves/bicycle.c",
       "symbol": "bicycle_victim_script"
     },
     "3": {

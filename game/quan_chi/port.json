@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "character": "quan_chi",
-  "integration_source": "game/quan_chi/character.c",
+  "integration_source": "game/retail_native.c",
   "entry_adapters": {
     "0x467cd0": {
       "source": "game/quan_chi/moves/fatality_second.c",
@@ -233,7 +233,7 @@
       "evidence": "Quan Chi slot 8 dispatches reaction 10 through the shared C reaction table (0x481320)"
     },
     "103": {
-      "source": "game/quan_chi/character.c",
+      "source": "game/quan_chi/moves/common.c",
       "symbol": "quan_chi_script_current_reaction",
       "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
       "evidence": "Quan Chi LP throw emits reaction 103 through VM handler 45b1f0 (0x485b30)"
@@ -269,7 +269,7 @@
       "evidence": "Quan Chi slot 8 dispatches reaction 17 through the shared C reaction table (0x482e00)"
     },
     "175": {
-      "source": "game/quan_chi/character.c",
+      "source": "game/quan_chi/moves/common.c",
       "symbol": "quan_chi_script_current_reaction",
       "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
       "evidence": "Quan Chi LP throw emits reaction 175 through VM handler 45b1f0 (0x4836e0)"
@@ -375,13 +375,13 @@
       "adaptation": "Registered directly in shared reactions[108]; the Quan Chi-owned generated victim roots run for either humanoid player slot and the homing weapon falls through the shared 494590 drop when the thief stops."
     },
     "47": {
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/common.c",
       "symbol": "raiden_generated_reaction",
       "evidence": "Weapon record W5 (4ec848) selects reaction47, the same staff LP victim root registered by Raiden.",
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
     },
     "53": {
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/common.c",
       "symbol": "raiden_generated_reaction",
       "evidence": "Weapon record W7 (4ec838) selects reaction53, the same staff travel-strike victim root registered by Raiden.",
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."

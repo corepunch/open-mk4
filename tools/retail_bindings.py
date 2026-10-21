@@ -1527,6 +1527,15 @@ def bindings_for(character):
                                evidence='Original4712e0 enters4e6a40; original selector supplies every roster victory')
     result[0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=tuple(range(256)),
                                  evidence='Original45abf0 masks the inline operand to one byte before431520; camera adaptation follows live actors for every context')
+    # Historical research aliases resolve to the current native definition.
+    from c_source import function_source, private_aliases
+    for address, binding in tuple(result.items()):
+        symbol = private_aliases(binding.source).get(binding.symbol, binding.symbol)
+        try:
+            source, _, _ = function_source(binding.source, symbol)
+        except (ValueError, OSError):
+            continue  # Unreached historical evidence is checked if queried.
+        result[address] = replace(binding, source=source, symbol=symbol)
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

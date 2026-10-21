@@ -1,6 +1,8 @@
 #include "retail_vm.h"
 #include "../character.h"
 
+static const MoveDef cage_s_cpu_kick_script = {.clip = 308, .last = 24, .flags = SF_LOCK | SF_RECORD};
+
 void cage_cpu_kick(Fighter *fighter);
 
 /* Native479b70 queries D[25] at poses22/23, then holds24 for twelve

@@ -68,7 +68,7 @@
     }
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
-  "integration_source": "game/fujin/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "b36d47006c95707edae368f122a8c39012ee460cd4262ea20340a35654064141",
   "moves": {
     "jab": {
@@ -274,7 +274,7 @@
       "evidence": "Fujin uses global reaction selector 17 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
     },
     "175": {
-      "source": "game/fujin/character.c",
+      "source": "game/fujin/moves/common.c",
       "symbol": "fujin_script_opponent_reaction",
       "adaptation": "Fujin paired victim and fatality continuations handle this selector outside the shared global contact table.",
       "evidence": "Fujin opponent reaction continuation 0x45b230 handles selector 175."
@@ -346,13 +346,13 @@
       "evidence": "Fujin uses global reaction selector 8 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
     },
     "102": {
-      "source": "game/fujin/character.c",
+      "source": "game/fujin/moves/common.c",
       "symbol": "fujin_script_current_reaction",
       "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
       "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 102 on task peer +38/+3c, not on the executing owner."
     },
     "109": {
-      "source": "game/fujin/character.c",
+      "source": "game/fujin/moves/common.c",
       "symbol": "fujin_script_current_reaction",
       "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
       "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 109 on task peer +38/+3c, not on the executing owner."

@@ -1,6 +1,8 @@
 #include "retail_vm.h"
 #include "../character.h"
 
+static const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+
 static void lp_getup_done(Fighter *victim);
 
 static const MoveDef s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};

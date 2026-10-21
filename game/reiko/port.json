@@ -57,7 +57,7 @@
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     }
   },
-  "integration_source": "game/reiko/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "f7c4ff9d0c63330aaa3e77d46446228d9a5e668fbf525fbe98cfb02d50954d12",
   "moves": {
     "air_diagonal_hk": {
@@ -267,7 +267,7 @@
     "175": {
       "adaptation": "Reiko selector 175 is handled by the character pair/cinematic continuation, outside the shared hit-reaction table.",
       "evidence": "Contact selector 175 at 0x4836e0; Reiko-native pair coordinator 0x45b230",
-      "source": "game/reiko/character.c",
+      "source": "game/reiko/moves/common.c",
       "symbol": "reiko_script_opponent_reaction"
     },
     "18": {

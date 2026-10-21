@@ -36,8 +36,6 @@ void kai_script_lp_extended_finish(Fighter *fighter);
 void kai_script_lp_short_finish(Fighter *fighter);
 void kai_script_opponent_reaction(Fighter *fighter, int reaction);
 void kai_script_stage_event(Fighter *fighter);
-extern const MoveDef kai_s_air_attack;
-extern const MoveDef kai_s_low_kick;
 
 extern const ButtonTable kai_diagonal_air;
 bool kai_can_handstand(const Fighter *fighter);

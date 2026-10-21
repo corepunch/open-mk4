@@ -1,6 +1,8 @@
 #include "retail_vm.h"
 #include "../character.h"
 
+static const MoveDef cage_s_powered_punch_script = {.clip = 85, .last = 54, .flags = SF_LOCK | SF_RECORD};
+
 /* Native479f00 D[26], followed by two native47a280 paired cycles.
  * 4e80f4 is a physics callback descriptor, not the adjacent105 kick. */
 static const AttackRecord power_record = {0xc7ae, -0x16624, 0xe872, 0x13020, 163, 163, 3, 0, 0x1eb8};

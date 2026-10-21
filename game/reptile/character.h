@@ -18,7 +18,6 @@ enum {
 
 void reptile_script_lp_return(Fighter *fighter);
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
-extern const MoveDef reptile_s_lp_thrown;
 
 extern const ButtonTable reptile_diagonal_air;
 void reptile_input_47a690(Fighter *fighter);

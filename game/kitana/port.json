@@ -8,16 +8,16 @@
     },
     "0x498b70": {
       "evidence": "Kitana low-punch command record 4e44b0 enters the clip-26 paired shadow action and VM root 4ed268.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/controls.c",
       "symbol": "kitana_command_shadow_low"
     },
     "0x498e70": {
       "evidence": "Kitana airborne low-punch command record 4e44bc enters the clip-24 paired shadow action and VM root 4ed2c0.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/controls.c",
       "symbol": "kitana_command_shadow_up"
     }
   },
-  "integration_source": "game/kitana/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "ade3d43800a8d6c7835f30794c2e804742419d5292312725163438f3806a37c8",
   "moves": {
     "air_diagonal_hk": {
@@ -52,7 +52,7 @@
     },
     "bicycle": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/bicycle.c",
       "symbol": "kitana_bicycle"
     },
     "cartwheel": {
@@ -157,12 +157,12 @@
     },
     "shadow_low": {
       "evidence": "Kitana low-punch command uses the shared 4ed268 actor and contact phases with its own controller entry.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/controls.c",
       "symbol": "kitana_command_shadow_low"
     },
     "shadow_up": {
       "evidence": "Kitana airborne low-punch command uses the shared 4ed2c0 actor, motion and recovery phases.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/controls.c",
       "symbol": "kitana_command_shadow_up"
     },
     "sidestep": {
@@ -207,12 +207,12 @@
     },
     "weapon_hp": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/weapon.c",
       "symbol": "weapon_hp"
     },
     "weapon_lp": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/weapon.c",
       "symbol": "weapon_lp"
     },
     "weapon_throw": {
@@ -240,8 +240,8 @@
     "103": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "script_reaction"
+      "source": "game/kitana/moves/common.c",
+      "symbol": "kitana_script_reaction"
     },
     "11": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -256,7 +256,7 @@
     "121": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "13": {
@@ -287,8 +287,8 @@
     "175": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "script_reaction"
+      "source": "game/kitana/moves/common.c",
+      "symbol": "kitana_script_reaction"
     },
     "18": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -298,8 +298,8 @@
     "184": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "script_reaction"
+      "source": "game/kitana/moves/common.c",
+      "symbol": "kitana_script_reaction"
     },
     "2": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -324,7 +324,7 @@
     "24": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "28": {
@@ -375,13 +375,13 @@
     "55": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "56": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "57": {
@@ -397,20 +397,20 @@
     "68": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "78": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "script_reaction"
+      "source": "game/kitana/moves/common.c",
+      "symbol": "kitana_script_reaction"
     },
     "79": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
-      "symbol": "script_reaction"
+      "source": "game/kitana/moves/common.c",
+      "symbol": "kitana_script_reaction"
     },
     "8": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -420,19 +420,19 @@
     "86": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "87": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/common.c",
       "symbol": "kitana_generated_reaction"
     },
     "88": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/kitana/character.c",
+      "source": "game/kitana/moves/leg_grab.c",
       "symbol": "leg_grab_script"
     },
     "9": {

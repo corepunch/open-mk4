@@ -7,7 +7,7 @@
       "symbol": "weapon_pickup"
     }
   },
-  "integration_source": "game/raiden/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "b51d4a28818508d248a99a02c0ea289548e28aea1de9fd46970f1f69871915d9",
   "moves": {
     "air_diagonal_hk": {
@@ -142,22 +142,22 @@
     },
     "staff_back_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/weapon.c",
       "symbol": "weapon_back_hp"
     },
     "staff_back_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/weapon.c",
       "symbol": "weapon_back_lp"
     },
     "staff_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/weapon.c",
       "symbol": "weapon_hp"
     },
     "staff_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/weapon.c",
       "symbol": "weapon_lp"
     },
     "sweep": {
@@ -167,7 +167,7 @@
     },
     "teleport": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/teleport.c",
       "symbol": "raiden_teleport"
     },
     "torpedo": {
@@ -210,14 +210,14 @@
     "102": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "script_reaction"
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_script_reaction"
     },
     "107": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "script_reaction"
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_script_reaction"
     },
     "11": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -227,8 +227,8 @@
     "111": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "script_reaction"
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_script_reaction"
     },
     "119": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -263,14 +263,14 @@
     "175": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "script_reaction"
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_script_reaction"
     },
     "187": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "script_reaction"
+      "source": "game/raiden/moves/common.c",
+      "symbol": "raiden_script_reaction"
     },
     "19": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -340,7 +340,7 @@
     "47": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/common.c",
       "symbol": "raiden_generated_reaction"
     },
     "51": {
@@ -356,7 +356,7 @@
     "53": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/common.c",
       "symbol": "raiden_generated_reaction"
     },
     "6": {
@@ -367,7 +367,7 @@
     "66": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/common.c",
       "symbol": "raiden_generated_reaction"
     },
     "7": {
@@ -383,7 +383,7 @@
     "82": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
+      "source": "game/raiden/moves/common.c",
       "symbol": "raiden_generated_reaction"
     },
     "3": {

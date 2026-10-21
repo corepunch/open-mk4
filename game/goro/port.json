@@ -1,6 +1,6 @@
 {
   "character": "goro",
-  "integration_source": "game/goro/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "4b52f6ea6afb3c3345d516d6672d0a5d614bc33ebc7d191cdf513c5661ced654",
   "schema": 1,
   "moves": {

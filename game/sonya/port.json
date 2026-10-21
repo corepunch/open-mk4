@@ -7,7 +7,7 @@
       "symbol": "weapon_pickup"
     }
   },
-  "integration_source": "game/sonya/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "0da08701f7d890ffa90527ec9b233b0ee9a25cbc9b7e5868494a3e96b5b766cc",
   "moves": {
     "air_diagonal_hk": {
@@ -42,7 +42,7 @@
     },
     "bicycle": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/bicycle.c",
       "symbol": "sonya_bicycle"
     },
     "cartwheel": {
@@ -187,12 +187,12 @@
     },
     "weapon_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/weapon.c",
       "symbol": "weapon_hp"
     },
     "weapon_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/weapon.c",
       "symbol": "weapon_lp"
     },
     "weapon_throw": {
@@ -220,8 +220,8 @@
     "103": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "script_reaction"
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_script_reaction"
     },
     "11": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -236,7 +236,7 @@
     "121": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "13": {
@@ -267,8 +267,8 @@
     "175": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "script_reaction"
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_script_reaction"
     },
     "18": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -278,8 +278,8 @@
     "184": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "script_reaction"
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_script_reaction"
     },
     "2": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -304,7 +304,7 @@
     "24": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "28": {
@@ -355,13 +355,13 @@
     "55": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "56": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "57": {
@@ -377,20 +377,20 @@
     "68": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "78": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "script_reaction"
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_script_reaction"
     },
     "79": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "script_reaction"
+      "source": "game/sonya/moves/common.c",
+      "symbol": "sonya_script_reaction"
     },
     "8": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -400,19 +400,19 @@
     "86": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "87": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/common.c",
       "symbol": "sonya_generated_reaction"
     },
     "88": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
+      "source": "game/sonya/moves/leg_grab.c",
       "symbol": "leg_grab_script"
     },
     "9": {

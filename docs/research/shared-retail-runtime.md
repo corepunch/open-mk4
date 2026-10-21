@@ -1105,3 +1105,16 @@ and seven navigation checks. Extended the existing data-loading fixture by
 changing a raw inventory slot independently of script/CPU aliases; no authored
 fighter behavior matrices were added. Alternative kombat-code inventory tables
 are not selected by the current engine settings.
+
+### Remove fighter definition translation units
+
+Removed all 18 `character.c` units after retail roster loading replaced their
+definitions. Surviving native descriptor data now lives with its native caller;
+unused descriptors and declarations were removed. Research navigation resolves
+legacy scopes to actual native source files, and reviewed profile references
+point at their current implementations. The native frame gate now includes shared retail
+native sources rather than requiring character translation units. Per-fighter native
+modules and headers remain migration work.
+
+Validated formatting, shared VM/rejection checks, all 18 strict script audits,
+native frame checks, and existing navigation and port audit tests.

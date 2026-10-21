@@ -38,11 +38,10 @@ def audit_text(path, text):
 
 
 def main():
-    characters = sorted((ROOT / 'game').glob('*/character.c'))
-    if not characters:
-        raise ValueError('Native character sources are missing')
-    paths = characters + sorted((ROOT / 'game').glob('*/moves/*.c'))
+    paths = sorted((ROOT / 'game').glob('*/moves/*.c'))
+    paths += sorted((ROOT / 'game').glob('retail_*.c'))
     paths += [ROOT / 'game' / name for name in NATIVE]
+    paths = sorted(set(paths))
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]
     errors += ['Generated fighter runtime output is forbidden: ' + str(path.relative_to(ROOT))
                for path in (ROOT / 'game').glob('*/generated/*.inc')]

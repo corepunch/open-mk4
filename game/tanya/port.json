@@ -57,7 +57,7 @@
       "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
   },
-  "integration_source": "game/tanya/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "9ea2e766237fd70cd3afad931c88192401ba8b29bc47ced598558d1bc943a922",
   "moves": {
     "high_punch": {
@@ -319,13 +319,13 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "104": {
-      "source": "game/tanya/character.c",
+      "source": "game/tanya/moves/common.c",
       "symbol": "tanya_script_current_reaction",
       "adaptation": "Current-context reaction uses battle_react and the engine approximate entry when no shared table row exists.",
       "evidence": "Tanya contact table reaction 104; current-context dispatch is 45b1f0."
     },
     "175": {
-      "source": "game/tanya/character.c",
+      "source": "game/tanya/moves/common.c",
       "symbol": "tanya_script_opponent_reaction",
       "adaptation": "Fatality arena continuation owns this terminal reaction and does not start ordinary victim recovery.",
       "evidence": "Tanya finisher reaction 175 is handled by the paired scene continuation."

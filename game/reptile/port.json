@@ -57,7 +57,7 @@
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
   },
-  "integration_source": "game/reptile/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "3155c0a13a9a352f554910a8ef9b5927866c7b74a5d4ae3f1cafdd46426e52e5",
   "moves": {
     "air_diagonal_hk": {
@@ -326,7 +326,7 @@
       "evidence": "Reptile contact record selects reaction 143; reviewed against the portable shared reaction table."
     },
     "175": {
-      "source": "game/reptile/character.c",
+      "source": "game/reptile/moves/common.c",
       "symbol": "reptile_script_opponent_reaction",
       "adaptation": "Reptile fatality pair selector 175 is handled by its opponent-context continuation outside the global contact table.",
       "evidence": "Reptile fatality contact selector 175 reaches native continuation 0x45b230."

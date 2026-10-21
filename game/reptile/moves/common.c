@@ -1,6 +1,8 @@
 #include "retail_vm.h"
 #include "../character.h"
 
+static const MoveDef reptile_s_lp_thrown = {.clip = 153, .last = 26, .flags = SF_LOCK | SF_REACTION};
+
 void reptile_script_lp_return(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;

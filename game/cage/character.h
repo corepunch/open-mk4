@@ -29,8 +29,6 @@ void cage_script_opponent_reaction(Fighter *fighter, int reaction);
 void cage_script_powered_punch_tail(Fighter *fighter);
 void cage_shadow_victim(Fighter *fighter);
 void cage_power_land(Fighter *fighter);
-extern const MoveDef cage_s_cpu_kick_script;
-extern const MoveDef cage_s_powered_punch_script;
 
 extern const ButtonTable cage_diagonal_air;
 void cage_powered_punch(Fighter *fighter);

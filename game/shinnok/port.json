@@ -1,6 +1,6 @@
 {
   "character": "shinnok",
-  "integration_source": "game/shinnok/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "ddff3bc93f9b51fb68088e3bdfb0171b8f680b3705ab718982fa56d6a733eb04",
   "entry_adapters": {
     "0x467cd0": {
@@ -400,7 +400,7 @@
       "evidence": "Pinned EXE Shinnok contact record and reaction table"
     },
     "175": {
-      "source": "game/shinnok/character.c",
+      "source": "game/shinnok/moves/fatality.c",
       "symbol": "shinnok_fatality_contact_hold",
       "evidence": "Shinnok spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"

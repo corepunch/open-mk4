@@ -37,7 +37,7 @@
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     }
   },
-  "integration_source": "game/jax/character.c",
+  "integration_source": "game/retail_native.c",
   "inventory_sha256": "8a4e369f7cd1557d0c10fb60d884da6c3b12e6f9b62bf0ee3a2740d38dfa6694",
   "moves": {
     "air_diagonal_hk": {
