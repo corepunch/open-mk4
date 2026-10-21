@@ -146,6 +146,3 @@ void reptile_dash_victim(Fighter *fighter) {
 
 /* 488b80: 490350 toggles the model mirror bit, which the pair-axis
  * heading supersedes here, then 4914c0 runs the 4ea210 getup pairs. */
-void reptile_dash_victim_getup(Fighter *fighter) {
-  mk4_mmove_getup(fighter, 0x4ea210);
-}

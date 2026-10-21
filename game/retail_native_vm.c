@@ -35,7 +35,6 @@ void cage_second_victim_finish(Fighter *fighter);
 void cage_second_victim_pause(Fighter *fighter);
 void cage_weapon_back_lp_contact(Fighter *fighter);
 void cage_weapon_getup_back(Fighter *fighter);
-void cage_weapon_getup_roll(Fighter *fighter);
 void cage_weapon_upper_contact(Fighter *fighter);
 void fighter_friction(Fighter *fighter);
 void fujin_bow_finish(Fighter *fighter);
@@ -58,7 +57,6 @@ void fujin_second_finish(Fighter *victim);
 void fujin_triple_contact(Fighter *fighter);
 void fujin_triple_fast(Fighter *fighter);
 void fujin_wind_crouch_return(Fighter *fighter);
-void fujin_wind_getup(Fighter *fighter);
 void fujin_wind_recovery(Fighter *fighter);
 void goro_fireball_spawn(Fighter *fighter, int task_type);
 void goro_quake_resting_weapons(void);
@@ -97,7 +95,6 @@ void jarek_second_head_fall(Fighter *fighter, int task_type);
 void jarek_second_victim_hold(Fighter *fighter);
 void jarek_weapon_upper_contact(Fighter *fighter);
 void jax_dash_punch_contact(Fighter *fighter);
-void jax_dash_victim_getup(Fighter *victim);
 void jax_fatality_1_first_arm(Fighter *victim);
 void jax_fatality_1_grab(Fighter *victim);
 void jax_fatality_1_second_arm(Fighter *victim);
@@ -224,7 +221,6 @@ void quan_chi_fatality_leg(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_draw_equip(Fighter *fighter);
 void quan_chi_script_flip_kick_tail(Fighter *fighter);
-void quan_chi_script_getup_roll(Fighter *fighter);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_skull_release(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *victim);
@@ -278,7 +274,6 @@ void reiko_second_victim_fall(Fighter *victim);
 void reiko_star_spawn(Fighter *fighter, int task_type);
 void reptile_acid_spawn(Fighter *fighter, int task_type);
 void reptile_acid_victim_tail(Fighter *victim);
-void reptile_dash_victim_getup(Fighter *fighter);
 void reptile_first_owner_bite(Fighter *fighter);
 void reptile_first_owner_cycle(Fighter *fighter);
 void reptile_first_owner_loop(Fighter *fighter);
@@ -365,7 +360,6 @@ void shinnok_second_gore(Fighter *hand);
 void shinnok_second_hands(Fighter *fighter);
 void shinnok_second_vanish(Fighter *fighter);
 void shinnok_second_vanished(Fighter *fighter);
-void shinnok_weapon_back_getup(Fighter *fighter);
 void shinnok_weapon_crouch_return(Fighter *fighter);
 void shinnok_weapon_sweep_finish(Fighter *fighter);
 void shinnok_weapon_sweep_getup(Fighter *fighter);
@@ -1818,32 +1812,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           mk4_mmove_side_getup(fighter);
           return true;
         case 0x488b80:
-          reptile_dash_victim_getup(fighter);
+          retail_getup_flip(fighter);
           return true;
         case 0x488ba0:
-          if (owner & 0x20u) {
-            fujin_wind_getup(fighter);
-            return true;
-          }
-          if (owner & 0x40u) {
-            shinnok_weapon_back_getup(fighter);
-            return true;
-          }
-          return false;
+          retail_getup_back(fighter);
+          return true;
         case 0x488c00:
-          if (owner & 0x4000u) {
-            cage_weapon_getup_roll(fighter);
-            return true;
-          }
-          if (owner & 0x2000u) {
-            jax_dash_victim_getup(fighter);
-            return true;
-          }
-          if (owner & 0x100u) {
-            quan_chi_script_getup_roll(fighter);
-            return true;
-          }
-          return false;
+          retail_getup_roll(fighter);
+          return true;
         case 0x488c10:
           if (owner & 0x10000u) {
             kitana_script_weapon_victim_getup(fighter);

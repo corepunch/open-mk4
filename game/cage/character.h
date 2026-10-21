@@ -43,7 +43,6 @@ void cage_weapon_upper_contact(Fighter *fighter);
 void cage_weapon_back_lp_contact(Fighter *fighter);
 void cage_script_draw_equip(Fighter *fighter);
 void cage_weapon_getup_back(Fighter *fighter);
-void cage_weapon_getup_roll(Fighter *fighter);
 void cage_weapon_reaction(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 void cage_second_charge(Fighter *fighter, int task_type);

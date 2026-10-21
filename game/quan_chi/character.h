@@ -18,7 +18,6 @@ void quan_chi_skull(Fighter *fighter);
 void quan_chi_script_skull_release(Fighter *fighter);
 void quan_chi_flip_kick(Fighter *fighter);
 void quan_chi_script_flip_kick_tail(Fighter *fighter);
-void quan_chi_script_getup_roll(Fighter *fighter);
 void quan_chi_teleport_stomp(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *fighter);
 void quan_chi_weapon_steal(Fighter *fighter);

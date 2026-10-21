@@ -71,10 +71,6 @@ void shinnok_weapon_action(Fighter *fighter) {
   }
 }
 
-void shinnok_weapon_back_getup(Fighter *fighter) {
-  mk4_mmove_getup(fighter, 0x4ea210);
-}
-
 void shinnok_weapon_crouch_return(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_finish_mmove(fighter, NULL);

@@ -1527,6 +1527,10 @@ def bindings_for(character):
                                evidence='Original4712e0 enters4e6a40; original selector supplies every roster victory')
     result[0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=tuple(range(256)),
                                  evidence='Original45abf0 masks the inline operand to one byte before431520; camera adaptation follows live actors for every context')
+    # Native getups have the same address and data for every caller.
+    result[0x488b80] = Binding('retail_getup_flip', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local488b80/488ba0/488c00 and4914c0 use original getup records; one shared native implementation')
+    result[0x488ba0] = Binding('retail_getup_back', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local488b80/488ba0/488c00 and4914c0 use original getup records; one shared native implementation')
+    result[0x488c00] = Binding('retail_getup_roll', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local488b80/488ba0/488c00 and4914c0 use original getup records; one shared native implementation')
     # Historical research aliases resolve to the current native definition.
     from c_source import function_source, private_aliases
     for address, binding in tuple(result.items()):

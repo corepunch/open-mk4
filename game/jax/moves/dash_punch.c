@@ -191,6 +191,3 @@ void jax_dash_victim_throw(Fighter *victim) {
 }
 
 /* 488c00 -> 4914c0(4ea220): roll getup 191/16 at -0x147a, crouch 190/16. */
-void jax_dash_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, 0x4ea220);
-}

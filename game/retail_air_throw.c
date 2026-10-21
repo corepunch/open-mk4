@@ -221,3 +221,19 @@ void retail_air_slam_end(Fighter *fighter) {
   battle_damage((Fighter *)fighter_opponent(fighter), 0x30a3);
   retail_slam_tail(fighter);
 }
+
+/* 488ba0 and 488c00 pass the original records to shared native 4914c0. */
+void retail_getup_back(Fighter *fighter) {
+  mk4_mmove_getup(fighter, 0x4ea210);
+}
+
+void retail_getup_roll(Fighter *fighter) {
+  mk4_mmove_getup(fighter, 0x4ea220);
+}
+
+/* 488b80 calls 490350 before the ordinary backward getup. Simulation
+ * advances outside the renderer's pause gate, so no global frame flag is used. */
+void retail_getup_flip(Fighter *fighter) {
+  retail_flip_facing(fighter);
+  retail_getup_back(fighter);
+}

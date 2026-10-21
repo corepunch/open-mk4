@@ -35,7 +35,6 @@ void jax_ground_pound(Fighter *fighter);
 bool jax_can_dash_punch(const Fighter *fighter);
 void jax_dash_punch(Fighter *fighter);
 void jax_dash_punch_contact(Fighter *fighter);
-void jax_dash_victim_getup(Fighter *fighter);
 bool jax_can_missile(const Fighter *fighter);
 void jax_missile(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);

@@ -1118,3 +1118,17 @@ modules and headers remain migration work.
 
 Validated formatting, shared VM/rejection checks, all 18 strict script audits,
 native frame checks, and existing navigation and port audit tests.
+
+### Shared getup native entries
+
+488ba0 and 488c00 now dispatch once for every caller, passing the original
+4ea210/4ea220 records to the existing 4914c0 adaptation. Removed six copied
+fighter wrappers and their private declarations. 488b80 also performs its
+490350 facing toggle before the shared recovery, as the local executable does;
+the previous Reptile wrapper omitted it. Compared the local bounded listings
+with mk4decomp's Cascade5StageInit (upstream491520, local4914c0); upstream
+addresses differ. Renderer pause gates stay outside combat simulation.
+
+Verified formatting, shared VM/rejections, all strict script audits and native
+frame gates. Reused existing runtime getup/lifetime checks without new authored
+fighter timing fixtures.

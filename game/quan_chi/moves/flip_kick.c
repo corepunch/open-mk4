@@ -74,9 +74,6 @@ void quan_chi_flip_kick(Fighter *fighter) {
 }
 
 /* 488c00: shared roll getup after the reaction-160 landing. */
-void quan_chi_script_getup_roll(Fighter *fighter) {
-  mk4_mmove_getup(fighter, 0x4ea220);
-}
 
 /* Reaction 160 (481d90): 488ea0 wall recoil, 494520 disarm, then VM 4e8a48
  * launches clip 189 and lands into 488c00. */

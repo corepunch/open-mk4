@@ -176,10 +176,6 @@ void fujin_wind_slam_victim(Fighter *fighter) {
   native_hold(fighter, 4, slam_drop);
 }
 
-void fujin_wind_getup(Fighter *fighter) {
-  mk4_mmove_getup(fighter, 0x4ea210);
-}
-
 void fujin_wind_crouch_return(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_finish_mmove(fighter, NULL);

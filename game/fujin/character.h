@@ -34,7 +34,6 @@ void fujin_wind_slam(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
 void fujin_wind_slam_victim(Fighter *fighter);
 void fujin_wind_recovery(Fighter *fighter);
-void fujin_wind_getup(Fighter *fighter);
 void fujin_wind_crouch_return(Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_triple_contact(Fighter *fighter);

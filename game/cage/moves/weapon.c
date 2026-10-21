@@ -98,10 +98,6 @@ void cage_weapon_getup_back(Fighter *fighter) {
   mk4_mmove_finish_getup(fighter, 0x4ea210);
 }
 
-void cage_weapon_getup_roll(Fighter *fighter) {
-  mk4_mmove_getup(fighter, 0x4ea220);
-}
-
 void cage_weapon_reaction(Fighter *fighter) {
   require(fighter->reaction == 63 || fighter->reaction == 139 || fighter->reaction == 149, "Invalid Cage weapon victim reaction");
   if (fighter->reaction == 149) {
