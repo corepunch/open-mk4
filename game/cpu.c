@@ -29,11 +29,11 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   }
   if (fighter->armed && fighter->weapon != NULL) {
     if (action == CPU_JAB || action == CPU_CLOSE_HP) {
-      entry = fighter->weapon->hp;
+      entry = retail_weapon_high_punch;
     } else if (action == CPU_HIGH_KICK || action == CPU_CLOSE_HK) {
-      entry = fighter->weapon->lp;
+      entry = retail_weapon_low_punch;
     } else if (action == CPU_WEAPON_THROW) {
-      entry = fighter->weapon->throw_move;
+      entry = weapon_throw;
     }
   }
   fighter->held = 0;

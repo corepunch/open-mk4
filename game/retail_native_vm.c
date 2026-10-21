@@ -22,7 +22,6 @@ void cage_orb_spawn(Fighter *fighter, int task_type);
 void cage_power_land(Fighter *fighter);
 void cage_script_cpu_kick_tail(Fighter *fighter);
 void cage_script_current_reaction(Fighter *fighter, int reaction);
-void cage_script_draw_equip(Fighter *fighter);
 void cage_script_fatality_1_signal(Fighter *fighter);
 void cage_script_fatality_2_continue(Fighter *fighter);
 void cage_script_lp_return(Fighter *fighter);
@@ -40,7 +39,6 @@ void fighter_friction(Fighter *fighter);
 void fujin_bow_finish(Fighter *fighter);
 void fujin_dive_contact(Fighter *fighter);
 void fujin_dive_land(Fighter *fighter);
-void fujin_draw_equip(Fighter *fighter);
 void fujin_first_cycle(Fighter *fighter);
 void fujin_first_fire_end(Fighter *fighter);
 void fujin_first_loop_start(Fighter *fighter);
@@ -88,7 +86,6 @@ void jarek_script_low_kick_clear(Fighter *fighter);
 void jarek_script_lp_end(Fighter *fighter);
 void jarek_script_lp_return(Fighter *fighter);
 void jarek_script_opponent_reaction(Fighter *fighter, int reaction);
-void jarek_script_weapon_draw_finish(Fighter *fighter);
 void jarek_second_glow(Fighter *fighter);
 void jarek_second_handoff(Fighter *fighter);
 void jarek_second_head_fall(Fighter *fighter, int task_type);
@@ -112,7 +109,6 @@ void jax_lp_throw_return(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
 void jax_script_peer_reaction(Fighter *fighter, int reaction);
-void jax_script_weapon_draw_finish(Fighter *fighter);
 void jax_throw_grunt(void);
 void kai_aerial_punch_contact(Fighter *fighter);
 void kai_first_owner_grab(Fighter *fighter);
@@ -134,7 +130,6 @@ void kai_rising_skull_finish(Fighter *fighter);
 void kai_rising_skull_spawn(Fighter *fighter);
 void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_script_current_reaction(Fighter *fighter, int reaction);
-void kai_script_draw_equip(Fighter *fighter);
 void kai_script_lp_extended_finish(Fighter *fighter);
 void kai_script_lp_short_finish(Fighter *fighter);
 void kai_script_opponent_reaction(Fighter *fighter, int reaction);
@@ -147,7 +142,6 @@ void kai_second_victim_fall(Fighter *victim);
 void kai_weapon_back_contact(Fighter *fighter);
 void kai_weapon_victim_getup(Fighter *fighter);
 void kitana_script_cartwheel_tail(Fighter *fighter);
-void kitana_script_draw_equip(Fighter *fighter);
 void kitana_script_first_release(Fighter *fighter);
 void kitana_script_leg_grab_tail(Fighter *fighter);
 void kitana_script_leg_victim_end(Fighter *victim);
@@ -172,7 +166,6 @@ void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
-void liu_kang_liu_script_draw_equip(Fighter *fighter);
 void liu_kang_liu_script_fatal_align(Fighter *fighter);
 void liu_kang_liu_script_fatal_setup(Fighter *fighter);
 void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type);
@@ -206,7 +199,6 @@ void noob_saibot_script_lp_end(Fighter *fighter);
 void noob_saibot_script_lp_reaction(Fighter *fighter, int reaction);
 void noob_saibot_script_lp_return(Fighter *fighter);
 void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction);
-void noob_saibot_script_weapon_draw_finish(Fighter *fighter);
 void noob_saibot_shadow_install_physics(Fighter *fighter);
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
 void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
@@ -217,12 +209,10 @@ void quan_chi_fatality_hit_179(Fighter *fighter);
 void quan_chi_fatality_hit_241(Fighter *fighter);
 void quan_chi_fatality_leg(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
-void quan_chi_script_draw_equip(Fighter *fighter);
 void quan_chi_script_flip_kick_tail(Fighter *fighter);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_skull_release(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *victim);
-void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
 void raiden_script_lightning_spawn(Fighter *fighter, int task_type);
@@ -263,7 +253,6 @@ void reiko_script_lp_reaction(Fighter *fighter, int reaction);
 void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void reiko_script_star_victim_tail(Fighter *fighter);
-void reiko_script_weapon_draw_finish(Fighter *fighter);
 void reiko_second_owner_park(Fighter *fighter);
 void reiko_second_stars(Fighter *fighter, int task_type);
 void reiko_second_victim_end(Fighter *victim);
@@ -279,7 +268,6 @@ void reptile_first_victim_collapse(Fighter *victim);
 void reptile_first_victim_shake(Fighter *victim);
 void reptile_script_acid_drool(Fighter *fighter);
 void reptile_script_dash_contact(Fighter *fighter);
-void reptile_script_draw_equip(Fighter *fighter);
 void reptile_script_head_close(Fighter *fighter);
 void reptile_script_head_open(Fighter *fighter);
 void reptile_script_head_wide(Fighter *fighter);
@@ -319,7 +307,6 @@ void scorpion_script_burn_victim_repeat(Fighter *victim);
 void scorpion_script_burn_victim_settle(Fighter *victim);
 void scorpion_script_burn_victim_start(Fighter *fighter);
 void scorpion_script_burn_victory(Fighter *fighter);
-void scorpion_script_draw_equip(Fighter *fighter);
 void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);
 void scorpion_script_lk_damage(Fighter *fighter);
@@ -348,7 +335,6 @@ void shinnok_first_victim_crush(Fighter *victim);
 void shinnok_first_victim_held(Fighter *victim);
 void shinnok_first_victim_squeeze(Fighter *victim);
 void shinnok_script_current_reaction(Fighter *fighter, int reaction);
-void shinnok_script_draw_equip(Fighter *fighter);
 void shinnok_script_lp_return(Fighter *fighter);
 void shinnok_script_opponent_reaction(Fighter *fighter, int reaction);
 void shinnok_second_clap(Fighter *hand);
@@ -361,7 +347,6 @@ void shinnok_weapon_crouch_return(Fighter *fighter);
 void shinnok_weapon_sweep_finish(Fighter *fighter);
 void shinnok_weapon_sweep_getup(Fighter *fighter);
 void sonya_script_cartwheel_tail(Fighter *fighter);
-void sonya_script_draw_equip(Fighter *fighter);
 void sonya_script_first_release(Fighter *fighter);
 void sonya_script_leg_grab_tail(Fighter *fighter);
 void sonya_script_leg_victim_end(Fighter *victim);
@@ -384,7 +369,6 @@ void sub_zero_script_breath_object(Fighter *fighter, int type);
 void sub_zero_script_breath_shatter(Fighter *fighter);
 void sub_zero_script_breath_slide(Fighter *fighter);
 void sub_zero_script_breath_victim_end(Fighter *victim);
-void sub_zero_script_draw_equip(Fighter *fighter);
 void sub_zero_script_first_begin(Fighter *fighter);
 void sub_zero_script_first_cues1(Fighter *fighter);
 void sub_zero_script_first_cues2(Fighter *fighter);
@@ -420,7 +404,6 @@ void tanya_first_victim_burst(Fighter *fighter);
 void tanya_first_victim_repeat(Fighter *fighter);
 void tanya_first_victim_swell(Fighter *fighter);
 void tanya_script_current_reaction(Fighter *fighter, int reaction);
-void tanya_script_draw_equip(Fighter *fighter);
 void tanya_script_lp_return(Fighter *fighter);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 void tanya_second_event(Fighter *fighter, int selector);
@@ -1350,75 +1333,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           native_uppercut_default(fighter);
           return true;
         case 0x46d260:
-          if (owner & 0x4000u) {
-            cage_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x20u) {
-            fujin_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x1000u) {
-            jarek_script_weapon_draw_finish(fighter);
-            return true;
-          }
-          if (owner & 0x2000u) {
-            jax_script_weapon_draw_finish(fighter);
-            return true;
-          }
-          if (owner & 0x800u) {
-            kai_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x10000u) {
-            kitana_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x8u) {
-            liu_kang_liu_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x20000u) {
-            noob_saibot_script_weapon_draw_finish(fighter);
-            return true;
-          }
-          if (owner & 0x100u) {
-            quan_chi_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x80u) {
-            reiko_script_weapon_draw_finish(fighter);
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x40u) {
-            shinnok_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x10u) {
-            sub_zero_script_draw_equip(fighter);
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_script_draw_equip(fighter);
-            return true;
-          }
-          return false;
+          retail_weapon_draw_equip(fighter);
+          return true;
         case 0x46dd00:
           retail_vm_enter(fighter, 0x4e6330, fighter->retail_vm.finish);
           return true;

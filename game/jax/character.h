@@ -40,9 +40,6 @@ void jax_missile(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);
 void jax_fan_tail(Fighter *fighter);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
-void jax_weapon_action(Fighter *fighter);
 
 extern const ButtonTable jax_diagonal_air;
-void jax_script_weapon_draw_finish(Fighter *fighter);
-void jax_command_weapon(Fighter *fighter);
 #endif

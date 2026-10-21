@@ -37,8 +37,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "reptile_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
     },
     "0x47a690": {
@@ -191,29 +191,33 @@
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     },
     "draw_weapon": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "reptile_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
     },
     "weapon_hp": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "weapon_hp",
-      "evidence": "495d40 action 111 and shared strike 4ec628 (clip 230, WEAPON[18]); back held selects 495d70."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "495d40 action 111 and shared strike 4ec628 (clip 230, WEAPON[18]); back held selects 495d70.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_lp": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "weapon_lp",
-      "evidence": "496100 close-throw gate 46dbb0, then strike 4ec658 (clip 240, WEAPON[21]); back held selects 496140."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "496100 close-throw gate 46dbb0, then strike 4ec658 (clip 240, WEAPON[21]); back held selects 496140.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_hp": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "weapon_back_hp",
-      "evidence": "495d70 action 404 and VM 4ec640 (248 to 8) into the 495db0 WEAPON[20] flurry."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "evidence": "495d70 action 404 and VM 4ec640 (248 to 8) into the 495db0 WEAPON[20] flurry.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_lp": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "weapon_back_lp",
-      "evidence": "496140 action 10e, travel record 4ec670, clip 233 and four WEAPON[19] queries before 496840."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "evidence": "496140 action 10e, travel record 4ec670, clip 233 and four WEAPON[19] queries before 496840.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
       "source": "game/reptile/moves/weapon.c",
@@ -538,8 +542,8 @@
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0.; runtime resolves the original scene table and shared native entry"
     },
     "0x46d1d0": {
-      "source": "game/reptile/moves/weapon.c",
-      "symbol": "reptile_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
     }
   },

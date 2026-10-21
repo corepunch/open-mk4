@@ -43,7 +43,7 @@
 #define script_close_hp_tail scorpion_script_close_hp_tail
 #define script_combo_hp_tail scorpion_script_combo_hp_tail
 #define script_crouch_lk_tail scorpion_script_crouch_lk_tail
-#define script_draw_equip scorpion_script_draw_equip
+#define script_draw_equip retail_weapon_draw_equip
 #define script_fire_decor scorpion_script_fire_decor
 #define script_fire_flame scorpion_script_fire_flame
 #define script_lk_damage scorpion_script_lk_damage
@@ -91,7 +91,6 @@ void scorpion_burn_fatality(Fighter *fighter);
 void scorpion_fire(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_teleport(Fighter *fighter);
-void scorpion_weapon(Fighter *fighter);
 void scorpion_script_beast_attack(Fighter *fighter);
 void scorpion_script_beast_begin(Fighter *fighter);
 void scorpion_script_beast_gore(Fighter *victim, int type);
@@ -110,7 +109,6 @@ void scorpion_script_burn_victim_repeat(Fighter *victim);
 void scorpion_script_burn_victim_settle(Fighter *victim);
 void scorpion_script_burn_victim_start(Fighter *fighter);
 void scorpion_script_burn_victory(Fighter *fighter);
-void scorpion_script_draw_equip(Fighter *fighter);
 void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);
 void scorpion_script_lk_damage(Fighter *fighter);

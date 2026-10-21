@@ -2,6 +2,31 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_weapon_equip(Fighter *fighter);
+void retail_weapon_draw(Fighter *fighter);
+void retail_weapon_draw_equip(Fighter *fighter);
+void retail_weapon_high_punch(Fighter *fighter);
+void retail_weapon_low_punch(Fighter *fighter);
+void retail_weapon_back_high_punch(Fighter *fighter);
+void retail_weapon_back_low_punch(Fighter *fighter);
+void retail_weapon_native_4963e0(Fighter *fighter);
+void retail_weapon_native_4964d0(Fighter *fighter);
+void retail_weapon_native_496670(Fighter *fighter);
+void retail_weapon_native_496920(Fighter *fighter);
+void retail_weapon_native_495c30(Fighter *fighter);
+void retail_weapon_native_495c60(Fighter *fighter);
+void retail_weapon_native_495cc0(Fighter *fighter);
+void retail_weapon_native_495cf0(Fighter *fighter);
+void retail_weapon_native_496c90(Fighter *fighter);
+void retail_weapon_native_496c50(Fighter *fighter);
+void retail_weapon_native_480770(Fighter *fighter);
+void retail_weapon_native_496720(Fighter *fighter);
+void retail_weapon_native_495a90(Fighter *fighter);
+void retail_weapon_native_495860(Fighter *fighter);
+void retail_weapon_native_495d70(Fighter *fighter);
+void retail_weapon_native_496140(Fighter *fighter);
+void retail_weapon_native_496d10(Fighter *fighter);
+void retail_weapon_native_495610(Fighter *fighter);
 void retail_getup_back(Fighter *fighter);
 void retail_getup_flip(Fighter *fighter);
 void retail_getup_roll(Fighter *fighter);

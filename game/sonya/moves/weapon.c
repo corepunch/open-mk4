@@ -1,37 +1,10 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const WeaponDef native_weapon;
-static void equip_weapon(Fighter *fighter);
-static void weapon_hp(Fighter *fighter);
-static void weapon_lp(Fighter *fighter);
-static void weapon_back_hp(Fighter *fighter);
-static void weapon_back_lp(Fighter *fighter);
+void retail_weapon_native_496720(Fighter *fighter);
 static const MoveDef s_weapon_back_hp = {.clip = 228, .last = 39, .flags = RETAIL, .action = 0x112};
-static const MoveDef s_weapon_back_lp = {.clip = 227, .last = 59, .flags = RETAIL, .action = 0x112};
 static const AttackRecord weapon_back_hp_record = {98959, -28835, 67502, 36700, 55, 55, 119, 0, 13107};
 static const AttackRecord weapon_back_lp_record = {98959, -28835, 67502, 36700, 57, 57, 119, 0, 9175};
-static const WeaponDef native_weapon = {0x62, weapon_hp, weapon_lp, weapon_back_hp, weapon_back_lp, NULL, weapon_throw, equip_weapon, SCENE_MODEL_SONYA_WEAPON};
-
-static void equip_weapon(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &native_weapon);
-}
-
-static void weapon_hp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_high_punch(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec760, 0x0, 0x111, true);
-  }
-}
-
-static void weapon_lp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_low_punch(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec778, 0x0, 0x111, true);
-  }
-}
 
 void sonya_script_weapon_hp_tail(Fighter *fighter) {
   mk4_mmove_weapon_tail(fighter, &weapon_back_hp_record, 7);
@@ -41,36 +14,11 @@ void sonya_script_weapon_lp_tail(Fighter *fighter) {
   mk4_mmove_weapon_tail(fighter, &weapon_back_lp_record, 2);
 }
 
-static void weapon_back_hp(Fighter *fighter) {
+void retail_weapon_native_496720(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
   fighter->mmove_cleanup = sonya_special_cleanup;
   retail_vm_enter_owned(fighter, 0x4ec7a0, fighter_ready, 2);
-}
-
-static void weapon_back_lp(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &s_weapon_back_lp);
-  mk4_script_schedule_motion(fighter, 0x1999, 8, 13);
-  fighter->mmove_cleanup = sonya_special_cleanup;
-  retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 2);
-}
-
-void sonya_script_draw_equip(Fighter *fighter) {
-  equip_weapon(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 2);
-}
-
-void sonya_weapon(Fighter *fighter) {
-  if (fighter->armed) {
-    weapon_throw(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    equip_weapon(fighter);
-    weapon_followup_victim(fighter);
-    weapon_back_hp(fighter);
-  } else {
-    weapon_draw(fighter, &native_weapon);
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 2);
-  }
 }
 
 void sonya_script_weapon_victim_getup(Fighter *victim) {

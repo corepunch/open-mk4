@@ -86,7 +86,7 @@ static void steal_poll(Fighter *fighter) {
   }
   const WeaponDef *def = weapon->weapon;
   weapon->kind = 0;
-  def->equip(fighter);
+  fighter_equip_weapon(fighter, def);
   battle_sound(SOUND_C, fighter == &g_battle.fighters[0] ? 0x26 : 0x27);
   steal_ready(fighter);
 }

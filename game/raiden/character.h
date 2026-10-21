@@ -29,7 +29,7 @@
 #define script_close_hp_tail raiden_script_close_hp_tail
 #define script_combo_hp_tail raiden_script_combo_hp_tail
 #define script_crouch_lk_tail raiden_script_crouch_lk_tail
-#define script_draw_equip raiden_script_draw_equip
+#define script_draw_equip retail_weapon_draw_equip
 #define script_first_end raiden_script_first_end
 #define script_first_release raiden_script_first_release
 #define script_lightning_spawn raiden_script_lightning_spawn
@@ -75,9 +75,7 @@ void raiden_lk_victim(Fighter *victim);
 void raiden_lightning(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
-void raiden_weapon(Fighter *fighter);
 void raiden_scene_end_watch(Fighter *fighter);
-void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
 void raiden_script_lightning_spawn(Fighter *fighter, int task_type);

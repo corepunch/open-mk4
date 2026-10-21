@@ -7,6 +7,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+static const uint32_t weapon_descriptors[] = {
+    0x4ecdf8, 0x4ecdb8, 0x4ece58, 0x4ece18, 0x4ece38, 0x4eced8, 0x4ecef8, 0x4ecf58, 0x4ecdd8, 0x4eceb8, 0x4ece98, 0x4ece78, 0x4ecd98, 0x4ecf38};
+
+int mk4_weapon_model_index(const Mk4Image *image, uint32_t inventory) {
+  uint32_t object = mk4_image_u32(image, inventory + 4);
+  for (size_t i = 0; i < sizeof weapon_descriptors / sizeof *weapon_descriptors; ++i) {
+    if (mk4_image_u32(image, weapon_descriptors[i] + 4) == object) {
+      return SCENE_MODEL_SWORD + (int)i;
+    }
+  }
+  uint32_t extra_inventory = mk4_image_u32(image, 0x53d5c0 + 17 * 4) * 4;
+  require(object == mk4_image_u32(image, extra_inventory + 4), "Unloaded native weapon object template");
+  return SCENE_MODEL_EXTRA_WEAPON;
+}
+
 static int32_t image_s32(const Mk4Image *exe, uint32_t va) {
   return (int32_t)mk4_image_u32(exe, va);
 }
@@ -482,8 +497,6 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   statue.material_pages = assets->hud.effects.textures;
   statue.bones = load_rig(&exe, 0x50686c, 0x50609c, statue.meshes.count);
   PUSH(assets->scene_models, statue);
-  const uint32_t weapon_descriptors[] = {
-      0x4ecdf8, 0x4ecdb8, 0x4ece58, 0x4ece18, 0x4ece38, 0x4eced8, 0x4ecef8, 0x4ecf58, 0x4ecdd8, 0x4eceb8, 0x4ece98, 0x4ece78, 0x4ecd98, 0x4ecf38};
   for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
     uint32_t descriptor = weapon_descriptors[i];
     uint32_t root = mk4_image_u32(&exe, descriptor + 4) * 4;
@@ -498,6 +511,12 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     weapon.bones.data[0].translation.y = image_s32(&exe, descriptor + 28) / 65536.f;
     PUSH(assets->scene_models, weapon);
   }
+  uint32_t extra_inventory = mk4_image_u32(&exe, 0x53d5c0 + 17 * 4) * 4;
+  uint32_t extra_root = mk4_image_u32(&exe, extra_inventory + 4) * 4;
+  Character extra_weapon = statue;
+  extra_weapon.bones = load_rig(&exe, extra_root, mk4_image_u32(&exe, extra_root + 4), extra_weapon.meshes.count);
+  extra_weapon.bones.data[0].translation.y = image_s32(&exe, extra_inventory + 28) / 65536.f;
+  PUSH(assets->scene_models, extra_weapon);
   /*41d560/41d770 replaces a wind-torn victim with the original
    *share2 flesh rig50c444 before4818f0 separates its limbs. */
   Character flesh = statue;

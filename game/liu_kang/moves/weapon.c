@@ -1,7 +1,6 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const WeaponDef dragon_sword;
 static void sword_travel(Fighter *fighter, int delay, int duration);
 static void sword_cleanup(Fighter *fighter);
 static bool sword_repeat(Fighter *fighter);
@@ -14,15 +13,12 @@ static void sword_recover(Fighter *fighter);
 static void sword_contact(Fighter *fighter);
 static void sword_swing(Fighter *fighter);
 static void sword_strike_script(Fighter *fighter);
-static void equip_dragon_sword(Fighter *fighter);
 static void sword_attack(Fighter *fighter, int index);
-static void sword_hp(Fighter *fighter);
-static void sword_lp(Fighter *fighter);
-static void sword_back_hp(Fighter *fighter);
-static void sword_back_lp(Fighter *fighter);
+void retail_weapon_native_4963e0(Fighter *fighter);
+void retail_weapon_native_4964d0(Fighter *fighter);
+void retail_weapon_native_496670(Fighter *fighter);
+void retail_weapon_native_496920(Fighter *fighter);
 static const MoveDef s_sword_hp = {.clip = 233, .last = 44, .flags = RETAIL, .action = ACTION_RETAIL_021C};
-static const WeaponDef dragon_sword = {
-    0x66, sword_hp, sword_lp, sword_back_hp, sword_back_lp, NULL, weapon_throw, equip_dragon_sword, SCENE_MODEL_DRAGON_SWORD};
 
 static void sword_travel(Fighter *fighter, int delay, int duration) {
   q16 speed = fighter->weapon_strike == NULL ? 0x11eb : fighter->weapon_strike->speed;
@@ -129,10 +125,6 @@ static void sword_strike_script(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-static void equip_dragon_sword(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &dragon_sword);
-}
-
 static void sword_attack(Fighter *fighter, int index) {
   if (fighter_airborne(fighter)) {
     retail_air_attack(fighter, index == 2 ? 0 : 1);
@@ -166,7 +158,7 @@ static void sword_attack(Fighter *fighter, int index) {
   sword_strike_script(fighter);
 }
 
-static void sword_hp(Fighter *fighter) {
+void retail_weapon_native_4963e0(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     retail_air_high_punch(fighter);
     return;
@@ -178,34 +170,16 @@ static void sword_hp(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ec680, fighter_ready, 3);
 }
 
-static void sword_lp(Fighter *fighter) {
+void retail_weapon_native_4964d0(Fighter *fighter) {
   sword_attack(fighter, 0);
 }
 
-static void sword_back_hp(Fighter *fighter) {
+void retail_weapon_native_496670(Fighter *fighter) {
   sword_attack(fighter, 2);
 }
 
-static void sword_back_lp(Fighter *fighter) {
+void retail_weapon_native_496920(Fighter *fighter) {
   sword_attack(fighter, 3);
-}
-
-void liu_kang_weapon(Fighter *fighter) {
-  if (fighter->armed) {
-    fighter->weapon->throw_move(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    equip_dragon_sword(fighter);
-    weapon_followup_victim(fighter);
-    sword_lp(fighter); /* 4ecb40[type 66 - 60] -> 4964d0. */
-  } else {
-    weapon_draw(fighter, &dragon_sword);
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 3);
-  }
-}
-
-void liu_kang_liu_script_draw_equip(Fighter *fighter) {
-  equip_dragon_sword(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 3);
 }
 
 unsigned liu_kang_liu_script_sword_gate(Fighter *fighter) {

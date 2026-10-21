@@ -5,12 +5,14 @@ function references are expanded. Native literals retain instruction provenance;
 no operand is called Q16, damage, action or a host pointer just from its number.
 """
 from collections import deque
+import json
 from c_source import read_source, source_files, function_source
 import re
 
-from character_catalog import moves_for, character_name
+from character_catalog import moves_for, character_name, CHARACTERS
 from retail_actions import catalog, native_evidence, NATIVE
 from retail_helper_view import ROOT, helper_rows, port_source
+from retail_helpers import HELPERS
 from retail_symbols import native_name, reference_rows
 from scorpion_moves import script_program
 
@@ -99,6 +101,17 @@ def masked_c(text):
 def port_entry(character, name):
     if character not in SPECIFIC:
         return None
+    if name == 'draw_weapon':
+        return ('game/retail_weapon.c', 'retail_weapon_draw')
+    if name.startswith(('weapon_', 'sword_', 'staff_', 'scepter_')):
+        helper = HELPERS.get(moves_for(character).get(name, {}).get('entry'))
+        if helper is not None and helper.port:
+            return helper.port
+    profile_path = ROOT / 'game' / CHARACTERS[character] / 'port.json'
+    profile = json.loads(profile_path.read_text())
+    reviewed = profile.get('moves', {}).get(name, {})
+    if reviewed.get('source', '').endswith('/moves/weapon.c') or reviewed.get('source') == 'game/retail_weapon.c':
+        return (reviewed['source'], reviewed['symbol'])
     if name in COMMON and character != 2:
         return COMMON[name]
     c = {0: 'scorpion', 1: 'raiden', 2: 'sonya', 3: 'liu_kang', 4: 'sub_zero'}[character]

@@ -135,29 +135,33 @@
       "evidence": "Native497070/80 ->4ed0d8; independent4970d0 orb uses C0/4ebed0 and ten share2 mesh frames."
     },
     "draw_weapon": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "cage_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     },
     "weapon_upper": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "weapon_upper",
-      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_lp": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "weapon_lp",
-      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_hp": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "weapon_back_hp",
-      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_lp": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "weapon_back_lp",
-      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
       "source": "game/cage/moves/weapon.c",
@@ -177,8 +181,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "cage_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     },
     "0x497070": {
@@ -525,8 +529,8 @@
       "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
     "0x46d1d0": {
-      "source": "game/cage/moves/weapon.c",
-      "symbol": "cage_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     },
     "0x467cd0": {

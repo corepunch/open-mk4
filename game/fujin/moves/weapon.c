@@ -1,22 +1,17 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static void weapon_hp(Fighter *fighter);
-static void weapon_lp(Fighter *fighter);
-static void weapon_low(Fighter *fighter);
-void fujin_equip_crossbow(Fighter *fighter);
+void retail_weapon_native_495c30(Fighter *fighter);
+void retail_weapon_native_495c60(Fighter *fighter);
+void retail_weapon_native_495cc0(Fighter *fighter);
 static void bow_fire(Fighter *fighter);
-static void bow_followup_begin(Fighter *fighter);
-static const WeaponDef crossbow = {0x68, weapon_hp, weapon_lp, weapon_hp, weapon_low, NULL, weapon_throw, fujin_equip_crossbow, SCENE_MODEL_FUJIN_WEAPON};
+void retail_weapon_native_495cf0(Fighter *fighter);
+
 static const MoveDef bow_move = {.clip = 211, .last = 28, .flags = SF_LOCK | SF_RECORD, .action = 0x303};
 static const MoveDef bolt_victim = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
 static const AttackRecord bolt_record = {0x3d70, -0x1eb8, 0x7d70, 0x3ae1, 101, 10, 2, ATTACK_MARK, 0xccc};
 /* Native4ed438 selects506dc8, whose sole mesh is shared106. */
 static const MeshAnimation bolt_mesh = {.first = 106, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED};
-
-void fujin_equip_crossbow(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &crossbow);
-}
 
 static void bow_cleanup(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -133,7 +128,7 @@ static void bow_start(Fighter *fighter, int variant) {
   }
 }
 
-static void weapon_hp(Fighter *fighter) {
+void retail_weapon_native_495c30(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     retail_air_high_punch(fighter);
   } else {
@@ -141,11 +136,11 @@ static void weapon_hp(Fighter *fighter) {
   }
 }
 
-static void weapon_low(Fighter *fighter) {
+void retail_weapon_native_495cc0(Fighter *fighter) {
   bow_start(fighter, 2);
 }
 
-static void weapon_lp(Fighter *fighter) {
+void retail_weapon_native_495c60(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     retail_air_low_punch(fighter);
   } else if (!(fighter->flags & FF_FOLLOW_UP) && mk4_can_ground_throw(fighter, false)) {
@@ -166,28 +161,10 @@ void fujin_bow_followup_next(Fighter *fighter) {
   }
 }
 
-static void bow_followup_begin(Fighter *fighter) {
+void retail_weapon_native_495cf0(Fighter *fighter) {
   fighter_upright(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   bow_start(fighter, 3);
-}
-
-void fujin_draw_equip(Fighter *fighter) {
-  fujin_equip_crossbow(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 5);
-}
-
-void fujin_weapon_action(Fighter *fighter) {
-  if (fighter->armed) {
-    fighter->weapon->throw_move(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    fujin_equip_crossbow(fighter);
-    weapon_followup_victim(fighter);
-    bow_followup_begin(fighter);
-  } else {
-    weapon_draw(fighter, &crossbow);
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 5);
-  }
 }
 
 void fujin_bolt_victim(Fighter *fighter) {

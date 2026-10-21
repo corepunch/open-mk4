@@ -11,12 +11,10 @@ extern void cage_groin_punch(Fighter *fighter);
 extern void cage_high_orb(Fighter *fighter);
 extern void cage_low_orb(Fighter *fighter);
 extern void cage_powered_punch(Fighter *fighter);
-extern void cage_weapon_action(Fighter *fighter);
 extern void fujin_dive(Fighter *fighter);
 extern void fujin_first_fatality(Fighter *fighter);
 extern void fujin_second_fatality(Fighter *fighter);
 extern void fujin_triple_kick(Fighter *fighter);
-extern void fujin_weapon_action(Fighter *fighter);
 extern void fujin_wind(Fighter *fighter);
 extern void fujin_wind_grab(Fighter *fighter);
 extern void fujin_wind_slam(Fighter *fighter);
@@ -32,15 +30,12 @@ extern void jarek_fatality_1(Fighter *fighter);
 extern void jarek_fatality_2(Fighter *fighter);
 extern void jarek_quake(Fighter *fighter);
 extern void jarek_upward_ball(Fighter *fighter);
-extern void jarek_weapon_action(Fighter *fighter);
 extern void jax_air_throw(Fighter *fighter);
-extern void jax_command_weapon(Fighter *fighter);
 extern void jax_dash_punch(Fighter *fighter);
 extern void jax_fatality_1(Fighter *fighter);
 extern void jax_fatality_2(Fighter *fighter);
 extern void jax_ground_pound(Fighter *fighter);
 extern void jax_missile(Fighter *fighter);
-extern void kai_draw_weapon(Fighter *fighter);
 extern void kai_fatality_1(Fighter *fighter);
 extern void kai_fatality_2(Fighter *fighter);
 extern void kai_ground_skull(Fighter *fighter);
@@ -59,55 +54,47 @@ extern void kitana_leg_grab(Fighter *fighter);
 extern void kitana_ring(Fighter *fighter);
 extern void noob_saibot_flip_kick(Fighter *fighter);
 extern void noob_saibot_star(Fighter *fighter);
-extern void kitana_weapon(Fighter *fighter);
 extern void liu_kang_bicycle_kick(Fighter *fighter);
 extern void liu_kang_first_fatality(Fighter *fighter);
 extern void liu_kang_flying_kick(Fighter *fighter);
 extern void liu_kang_high_fireball(Fighter *fighter);
 extern void liu_kang_low_fireball(Fighter *fighter);
 extern void liu_kang_second_fatality(Fighter *fighter);
-extern void liu_kang_weapon(Fighter *fighter);
 extern void mk4_sidestep(Fighter *fighter);
 extern void noob_saibot_air_throw(Fighter *fighter);
 extern void noob_saibot_command_498b70(Fighter *fighter);
 extern void noob_saibot_command_498e70(Fighter *fighter);
 extern void noob_saibot_teleport(Fighter *fighter);
-extern void noob_saibot_weapon_action(Fighter *fighter);
 extern void quan_chi_air_throw(Fighter *fighter);
 extern void quan_chi_first_fatality(Fighter *fighter);
 extern void quan_chi_flip_kick(Fighter *fighter);
 extern void quan_chi_second_fatality(Fighter *fighter);
 extern void quan_chi_skull(Fighter *fighter);
 extern void quan_chi_teleport_stomp(Fighter *fighter);
-extern void quan_chi_weapon_action(Fighter *fighter);
 extern void quan_chi_weapon_steal(Fighter *fighter);
 extern void raiden_first_fatality(Fighter *fighter);
 extern void raiden_lightning(Fighter *fighter);
 extern void raiden_second_fatality(Fighter *fighter);
 extern void raiden_teleport(Fighter *fighter);
 extern void raiden_torpedo(Fighter *fighter);
-extern void raiden_weapon(Fighter *fighter);
 extern void reiko_first_fatality(Fighter *fighter);
 extern void reiko_flip_kick(Fighter *fighter);
 extern void reiko_orbit(Fighter *fighter);
 extern void reiko_second_fatality(Fighter *fighter);
 extern void reiko_star(Fighter *fighter);
 extern void reiko_teleport(Fighter *fighter);
-extern void reiko_weapon_action(Fighter *fighter);
 extern void reptile_acid_spit(Fighter *fighter);
 extern void reptile_fatality_1(Fighter *fighter);
 extern void reptile_fatality_2(Fighter *fighter);
 extern void reptile_input_47a690(Fighter *fighter);
 extern void reptile_input_47afe0(Fighter *fighter);
 extern void reptile_invisibility(Fighter *fighter);
-extern void reptile_weapon_action(Fighter *fighter);
 extern void scorpion_air_throw(Fighter *fighter);
 extern void scorpion_beast_fatality(Fighter *fighter);
 extern void scorpion_burn_fatality(Fighter *fighter);
 extern void scorpion_fire(Fighter *fighter);
 extern void scorpion_spear(Fighter *fighter);
 extern void scorpion_teleport(Fighter *fighter);
-extern void scorpion_weapon(Fighter *fighter);
 extern void shinnok_fatality_1(Fighter *fighter);
 extern void shinnok_fatality_2(Fighter *fighter);
 extern void shinnok_morph_cage(Fighter *fighter);
@@ -124,7 +111,6 @@ extern void shinnok_morph_scorpion(Fighter *fighter);
 extern void shinnok_morph_sonya(Fighter *fighter);
 extern void shinnok_morph_sub_zero(Fighter *fighter);
 extern void shinnok_morph_tanya(Fighter *fighter);
-extern void shinnok_weapon_action(Fighter *fighter);
 extern void sonya_air_throw(Fighter *fighter);
 extern void sonya_bicycle(Fighter *fighter);
 extern void sonya_cartwheel(Fighter *fighter);
@@ -133,20 +119,17 @@ extern void sonya_leg_grab(Fighter *fighter);
 extern void sonya_ring(Fighter *fighter);
 extern void sonya_second_fatality(Fighter *fighter);
 extern void sonya_square_wave(Fighter *fighter);
-extern void sonya_weapon(Fighter *fighter);
 extern void sub_zero_clone(Fighter *fighter);
 extern void sub_zero_first_fatality(Fighter *fighter);
 extern void sub_zero_ice(Fighter *fighter);
 extern void sub_zero_second_fatality(Fighter *fighter);
 extern void sub_zero_slide(Fighter *fighter);
-extern void sub_zero_weapon(Fighter *fighter);
 extern void tanya_air_fireball(Fighter *fighter);
 extern void tanya_drill_kick(Fighter *fighter);
 extern void tanya_fatality_1(Fighter *fighter);
 extern void tanya_fatality_2(Fighter *fighter);
 extern void tanya_fireball(Fighter *fighter);
 extern void tanya_spin_kick(Fighter *fighter);
-extern void tanya_weapon_action(Fighter *fighter);
 extern void weapon_pickup(Fighter *fighter);
 extern bool cage_can_groin_punch(const Fighter *fighter);
 extern bool fujin_can_dive(const Fighter *fighter);
@@ -194,6 +177,7 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeAction entries[] = {
+  {0x46d1d0, 0x3ffff, retail_weapon_draw},
   {0x47c070, 0x3ffff, retail_teleport},
   {0x47c2a0, 0x3ffff, retail_teleport_slam},
   {0x47c850, 0x3ffff, retail_handstand_spin},
@@ -292,23 +276,6 @@ static const NativeAction entries[] = {
   {0x46a020, 0x3ffff, weapon_pickup},
   {0x46a5f0, 0x20, fujin_wind_slam},
   {0x46a620, 0x20, fujin_wind},
-  {0x46d1d0, 0x4000, cage_weapon_action},
-  {0x46d1d0, 0x20, fujin_weapon_action},
-  {0x46d1d0, 0x1000, jarek_weapon_action},
-  {0x46d1d0, 0x2000, jax_command_weapon},
-  {0x46d1d0, 0x800, kai_draw_weapon},
-  {0x46d1d0, 0x10000, kitana_weapon},
-  {0x46d1d0, 0x8, liu_kang_weapon},
-  {0x46d1d0, 0x20000, noob_saibot_weapon_action},
-  {0x46d1d0, 0x100, quan_chi_weapon_action},
-  {0x46d1d0, 0x2, raiden_weapon},
-  {0x46d1d0, 0x80, reiko_weapon_action},
-  {0x46d1d0, 0x400, reptile_weapon_action},
-  {0x46d1d0, 0x1, scorpion_weapon},
-  {0x46d1d0, 0x40, shinnok_weapon_action},
-  {0x46d1d0, 0x4, sonya_weapon},
-  {0x46d1d0, 0x10, sub_zero_weapon},
-  {0x46d1d0, 0x200, tanya_weapon_action},
   {0x478df0, 0x800, kai_input_478df0},
   {0x478ee0, 0x80, reiko_orbit},
   {0x4791a0, 0x80, reiko_flip_kick},

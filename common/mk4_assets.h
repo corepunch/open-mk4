@@ -133,6 +133,8 @@ typedef struct Assets {
   SoundBank audio;
 } Assets;
 
+int mk4_weapon_model_index(const Mk4Image *image, uint32_t inventory);
+
 enum {
   SCENE_MODEL_SPINE,
   SCENE_MODEL_ICE_CLONE,
@@ -150,6 +152,7 @@ enum {
   SCENE_MODEL_REPTILE_WEAPON,
   SCENE_MODEL_TANYA_WEAPON,
   SCENE_MODEL_QUAN_CHI_WEAPON,
+  SCENE_MODEL_EXTRA_WEAPON,
   SCENE_MODEL_FLAYED_BODY,
   SCENE_MODEL_WIND_PIECES,                                /* Fourteen closed part rigs in4ea420 order. */
   SCENE_MODEL_SEVERED_LEGS = SCENE_MODEL_WIND_PIECES + 14 /* One leg rig per roster asset. */

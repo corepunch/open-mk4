@@ -17,8 +17,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/tanya/moves/weapon.c",
-      "symbol": "tanya_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "HK F,F record 4e4530 (T1[0x29], gate 45ef50). 46d1d0: armed -> T2[0xd] 498270 throw; follow-up -> 494610 and 4ecb40[0xd] 4955b0; otherwise action 1004, 4e62c0 and 46d260 equip of type 6d."
     },
     "0x479520": {
@@ -176,24 +176,27 @@
       "evidence": "47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
     "draw_weapon": {
-      "source": "game/tanya/moves/weapon.c",
-      "symbol": "tanya_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0: armed -> T2[0xd] 498270 throw; follow-up -> 494610 and 4ecb40[0xd] 4955b0; otherwise action 1004, 4e62c0 and 46d260 equip of type 6d."
     },
     "weapon_hp": {
-      "source": "game/tanya/moves/weapon.c",
-      "symbol": "weapon_hp",
-      "evidence": "4955b0: action 111, 494990 strike 4ec420 (clip 229, 0/4/7/3/1, WEAPON 42, sound 0x20); held back takes 4955e0."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "4955b0: action 111, 494990 strike 4ec420 (clip 229, 0/4/7/3/1, WEAPON 42, sound 0x20); held back takes 4955e0.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_hp": {
-      "source": "game/tanya/moves/weapon.c",
-      "symbol": "weapon_back_hp",
-      "evidence": "4955e0: 4947d0 travel 4ec438 (delay 3, speed 0x147a, 8 visits), 494950 strike 4ec448 (clip 231, 6/10/16/4/1, WEAPON 43)."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "evidence": "4955e0: 4947d0 travel 4ec438 (delay 3, speed 0x147a, 8 visits), 494950 strike 4ec448 (clip 231, 6/10/16/4/1, WEAPON 43).",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_lp": {
-      "source": "game/tanya/moves/weapon.c",
-      "symbol": "weapon_lp",
-      "evidence": "495610: 46dbb0 LP throw gate, then 497ae0/497ad0 action 316 and VM 4ed190; 497b60 releases the boomerang task 497c50 (C20), 497e60 returns and catches."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "495610: 46dbb0 LP throw gate, then 497ae0/497ad0 action 316 and VM 4ed190; 497b60 releases the boomerang task 497c50 (C20), 497e60 returns and catches.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
       "source": "game/tanya/moves/weapon.c",
@@ -535,8 +538,8 @@
       "evidence": "LK F,D,B record 4e455c (T4[18]). 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
     "0x46d1d0": {
-      "source": "game/tanya/moves/weapon.c",
-      "symbol": "tanya_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "HK F,F record 4e4530 (T1[0x29], gate 45ef50). 46d1d0: armed -> T2[0xd] 498270 throw; follow-up -> 494610 and 4ecb40[0xd] 4955b0; otherwise action 1004, 4e62c0 and 46d260 equip of type 6d."
     },
     "0x467cd0": {

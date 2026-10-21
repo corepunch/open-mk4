@@ -77,8 +77,8 @@
     },
     "draw_weapon": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/weapon.c",
-      "symbol": "sub_zero_weapon"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw"
     },
     "fan_fatality": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -137,23 +137,27 @@
     },
     "scepter_back_hp": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/weapon.c",
-      "symbol": "scepter_back_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "scepter_back_lp": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/weapon.c",
-      "symbol": "scepter_back_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "scepter_hp": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/weapon.c",
-      "symbol": "scepter_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "scepter_lp": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/weapon.c",
-      "symbol": "scepter_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sidestep": {
       "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",

@@ -12,8 +12,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/fujin/moves/weapon.c",
-      "symbol": "fujin_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "0x467cd0": {
@@ -172,23 +172,25 @@
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     },
     "draw_weapon": {
-      "source": "game/fujin/moves/weapon.c",
-      "symbol": "fujin_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "crossbow_hp": {
-      "source": "game/fujin/moves/weapon.c",
-      "symbol": "weapon_hp",
-      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "crossbow_lp": {
-      "source": "game/fujin/moves/weapon.c",
-      "symbol": "weapon_lp",
-      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "crossbow_followup": {
       "source": "game/fujin/moves/weapon.c",
-      "symbol": "bow_followup_begin",
+      "symbol": "retail_weapon_native_495cf0",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "crossbow_reaction": {
@@ -564,8 +566,8 @@
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     },
     "0x46d1d0": {
-      "source": "game/fujin/moves/weapon.c",
-      "symbol": "fujin_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "0x46a620": {

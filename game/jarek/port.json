@@ -24,8 +24,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "jarek_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
     },
     "0x47b310": {
@@ -44,8 +44,8 @@
       "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
     "0x46d260": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "jarek_script_weapon_draw_finish",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw_equip",
       "evidence": "46d260 is the Jarek weapon draw script tail from 4e62c0; bounded native/script listing"
     },
     "0x467e00": {
@@ -146,8 +146,8 @@
       "evidence": "Jarek roster slot 12 native entry 0x0046ccd0 and selected EXE script roots"
     },
     "draw_weapon": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "jarek_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Jarek target 46d1d0 selects throw, follow-up equip or generated draw script 4e62c0"
     },
     "close_hp": {
@@ -166,24 +166,28 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "weapon_hp": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "hp",
-      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_lp": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "lp",
-      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_hp": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "back_hp",
-      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_back_lp": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "back_lp",
-      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
       "source": "game/jarek/moves/weapon.c",
@@ -527,8 +531,8 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46d1d0": {
-      "source": "game/jarek/moves/weapon.c",
-      "symbol": "jarek_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
     },
     "0x47b310": {

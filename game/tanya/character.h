@@ -28,8 +28,6 @@ void tanya_spin_kick(Fighter *fighter);
 void tanya_blocked_recoil_land(Fighter *fighter);
 void tanya_drill_kick(Fighter *fighter);
 void tanya_drill_kick_contact(Fighter *fighter);
-void tanya_script_draw_equip(Fighter *fighter);
-void tanya_weapon_action(Fighter *fighter);
 void tanya_boomerang_release(Fighter *fighter);
 void tanya_fatality_2(Fighter *fighter);
 void tanya_second_height(Fighter *fighter);

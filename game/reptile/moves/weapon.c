@@ -4,23 +4,14 @@
 
 /* Descriptor 4ece78: type 67, shared_g rig 506d90 and button table
  * 4ecd68 = HP 495d40, LP 496100 and the shared stance handlers. */
-static void weapon_hp(Fighter *fighter);
-static void weapon_lp(Fighter *fighter);
-static void weapon_back_hp(Fighter *fighter);
-static void weapon_back_lp(Fighter *fighter);
-static void equip_weapon(Fighter *fighter);
+void retail_weapon_native_495d70(Fighter *fighter);
+void retail_weapon_native_496140(Fighter *fighter);
 /* 495db0 queries WEAPON[20]; 496140 queries WEAPON[19]. */
 static const AttackRecord flurry_record = {0x16666, -0x12e14, 0x1147a, 0xe624, 137, 10, 112, 0, 0xccc};
 static const AttackRecord sweep_record = {0x1cccc, -0xe666, 0x1451e, 0xb0a3, 96, 10, 119, 0, 0x2147};
 static const MoveDef flurry_start = {.clip = 248, .last = 12, .flags = SF_LOCK | SF_RECORD, .action = 0x404};
 static const MoveDef flurry_cycle = {.clip = 249, .last = 11, .flags = SF_LOCK | SF_RECORD, .action = 0x404};
 static const MoveDef back_low = {.clip = 233, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
-static const WeaponDef native_weapon = {
-    0x67, weapon_hp, weapon_lp, weapon_back_hp, weapon_back_lp, NULL, weapon_throw, equip_weapon, SCENE_MODEL_REPTILE_WEAPON};
-
-static void equip_weapon(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &native_weapon);
-}
 
 static void weapon_cleanup(Fighter *fighter) {
   native_motion_stop(fighter);
@@ -124,7 +115,7 @@ void reptile_weapon_flurry(Fighter *fighter) {
   }
 }
 
-static void weapon_back_hp(Fighter *fighter) {
+void retail_weapon_native_495d70(Fighter *fighter) {
   /* 495d70: action 404, attack id 314 and VM 4ec640 (clip 248 to 8). */
   fighter_start_move(fighter, S_PUNCH, &flurry_start);
   fighter->mmove_cleanup = weapon_cleanup;
@@ -158,7 +149,7 @@ static void back_low_cue(Fighter *fighter) {
   battle_sound(SOUND_C, 0x1f);
 }
 
-static void weapon_back_lp(Fighter *fighter) {
+void retail_weapon_native_496140(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &back_low);
   fighter->mmove_cleanup = weapon_cleanup;
   fighter->sample_override = 0;
@@ -172,51 +163,9 @@ static void weapon_back_lp(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-static void weapon_hp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_high_punch(fighter);
-  } else if (fighter_holds_back(fighter)) {
-    weapon_back_hp(fighter);
-  } else {
-    /* 495d40: action 111 and shared strike 4ec628. */
-    weapon_start_retail_strike(fighter, 0x4ec628, 0, 0x111, false);
-  }
-}
-
-static void weapon_lp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_low_punch(fighter);
-  } else if (mk4_can_ground_throw(fighter, false)) {
-    /* 496100 -> 46dbb0: a close, unrestricted LP throws instead. */
-    retail_lp_throw(fighter);
-  } else if (fighter_holds_back(fighter)) {
-    weapon_back_lp(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec658, 0, 0x111, false);
-  }
-}
-
-void reptile_script_draw_equip(Fighter *fighter) {
-  equip_weapon(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 10);
-}
-
 /* 46d1d0: armed throws (2000d), a follow-up draw (494610) equips, reacts
  * the peer and runs 4ecb40[7] = 495d20, the 4eca28 HP strike; otherwise
  * action 1004 and VM 4e62c0. */
-void reptile_weapon_action(Fighter *fighter) {
-  if (fighter->armed) {
-    fighter->weapon->throw_move(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    equip_weapon(fighter);
-    weapon_followup_victim(fighter);
-    weapon_start_retail_strike(fighter, 0x4ec628, 0, 0x111, false);
-  } else {
-    weapon_draw(fighter, &native_weapon);
-    fighter->action = 0x1004;
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 10);
-  }
-}
 
 static const MoveDef weapon_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
 static const MoveDef weapon_stagger = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};

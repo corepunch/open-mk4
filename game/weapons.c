@@ -17,11 +17,11 @@ static const MoveDef pickup_move = WEAPON_MOVE(209, ACTION_RETAIL_2006, 14);
 static const MoveDef landing = WEAPON_MOVE(304, ACTION_RETAIL_2008, 27);
 static const MoveDef blend_stance = WEAPON_MOVE(286, ACTION_RETAIL_1006, 0);
 #undef WEAPON_MOVE
-static const MoveDef idle = {.clip = 286, .last = MOVE_END};
-static const MoveDef walk = {.clip = 277, .last = MOVE_END};
-static const MoveDef back_walk = {.clip = 278, .last = MOVE_END};
-static const MoveDef crouch = {.clip = 219, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef block = {.clip = 245, .last = MOVE_END, .flags = SF_HOLD};
+static const MoveDef idle = {.clip = -1, .last = MOVE_END};
+static const MoveDef walk = {.clip = -1, .last = MOVE_END};
+static const MoveDef back_walk = {.clip = -1, .last = MOVE_END};
+static const MoveDef crouch = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD};
+static const MoveDef block = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD};
 // clang-format off: Keep table entries on one row, including long rows.
 static const AttackRecord air_records[] = {
   {110690, -60882, 68157, 62914, 156, 156, 4, 0, 11796},
@@ -32,14 +32,23 @@ static const AttackRecord thrown_record = {57606, -37945, 73990, 35979, 154, 154
 
 void weapon_stance(Fighter *fighter, int state) {
   const MoveDef *move = roster_def(fighter->roster)->moves[state];
+  uint32_t descriptor = 0;
   if (fighter->armed) {
+    require(fighter->weapon != NULL, "Armed stance needs a loaded inventory");
     move = state == S_IDLE ? &idle : state == S_WALK ? (fighter_holds_back(fighter) ? &back_walk : &walk) : state == S_CROUCH ? &crouch : &block;
+    descriptor = state == S_IDLE   ? fighter->weapon->idle
+                 : state == S_WALK ? (fighter_holds_back(fighter) ? fighter->weapon->backward : fighter->weapon->forward)
+                                   : mk4_image_u32(retail_vm_image(), (state == S_CROUCH ? 0x53ce50 : 0x53ce30) + 4) * 4;
   }
-  if (state == S_WALK && fighter->state == S_WALK && fighter->current_move == move) {
+  if (state == S_WALK && fighter->state == S_WALK &&
+      (fighter->current_move == move || (descriptor != 0 && fighter_move(fighter)->clip == (int)((descriptor - 0x4fad7c) / 12)))) {
     return;
   }
   fighter_start_move(fighter, state, move);
-  if (!fighter->armed && state == S_CROUCH) {
+  if (descriptor != 0) {
+    retail_vm_bind_animation(fighter, descriptor, 0);
+    fighter->sample_override = -1;
+  } else if (state == S_CROUCH) {
     /* Original46b610/494120 binds the unarmed descriptor in53ce40. */
     retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53ce40) * 4, 0);
   }
@@ -375,7 +384,7 @@ void weapon_draw(Fighter *fighter, const WeaponDef *weapon) {
   fighter_start_move(fighter, S_PUNCH, &draw_move);
   fighter->weapon = weapon;
   fighter->sample_override = 0;
-  /* The character starts its generated 4e62c0/4e62d8 program. */
+  /* Shared draw entry starts the original4e62c0 words. */
 }
 
 /* 498480: detach the held weapon .75 along the heading at Y -1.2 as an
@@ -476,7 +485,7 @@ void weapon_pickup(Fighter *fighter) {
     fighter_ready(fighter);
     return;
   }
-  g_battle.projectiles[index].weapon->equip(fighter);
+  fighter_equip_weapon(fighter, g_battle.projectiles[index].weapon);
   battle_sound(SOUND_C, fighter == &g_battle.fighters[0] ? 0x26 : 0x27);
   g_battle.projectiles[index].kind = 0;
   fighter_start_mmove(fighter, S_PUNCH, &pickup_move, &pickup_phase);

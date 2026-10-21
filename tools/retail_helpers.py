@@ -301,3 +301,88 @@ for _address, _symbol in ((4631168, 'retail_air_throw'), (4630928, 'retail_air_t
     else:
         HELPERS[_address] = H(_symbol, 'active actor and original native/script data', 'Shared native air capture, continuation or reaction; local EXE listings and original script operands.', 'Native ownership with independent victim cleanup.', ('game/retail_air_throw.c', _symbol))
 HELPERS[0x484b60] = H('air_throw_victim_getup', 'released victim', 'Native descriptor4fb628, turn/disarm and loaded native side-getup record4ea200; KO uses original4ea1e8.', 'Shared KO-aware native recovery.', ('game/mk4_common.c', 'mk4_mmove_air_getup'))
+
+# Weapon frontends share original inventory and parameter dispatch.
+for _address in (0x496c20, 0x496c30, 0x496a40, 0x496ba0, 0x4966b0, 0x4966e0, 0x4956c0, 0x495720, 0x495bb0, 0x495be0, 0x496cd0, 0x496cf0, 0x4955b0, 0x495a20, 0x495a50, 0x495830, 0x495980, 0x495800, 0x496100, 0x495d40, 0x4956f0, 0x495740, 0x496a70, 0x496be0, 0x4955e0, 0x4959c0, 0x496ce0, 0x495c20, 0x495710, 0x4959f0, 0x495d20,):
+    if _address in HELPERS:
+        HELPERS[_address] = replace(HELPERS[_address], port=('game/retail_weapon.c', 'weapon_native'))
+if 0x496c90 in HELPERS:
+    HELPERS[0x496c90] = replace(HELPERS[0x496c90], port=('game/scorpion/moves/weapon.c', 'retail_weapon_native_496c90'))
+if 0x496c50 in HELPERS:
+    HELPERS[0x496c50] = replace(HELPERS[0x496c50], port=('game/scorpion/moves/weapon.c', 'retail_weapon_native_496c50'))
+if 0x480770 in HELPERS:
+    HELPERS[0x480770] = replace(HELPERS[0x480770], port=('game/scorpion/moves/weapon.c', 'retail_weapon_native_480770'))
+if 0x495860 in HELPERS:
+    HELPERS[0x495860] = replace(HELPERS[0x495860], port=('game/cage/moves/weapon.c', 'retail_weapon_native_495860'))
+if 0x496d10 in HELPERS:
+    HELPERS[0x496d10] = replace(HELPERS[0x496d10], port=('game/reiko/moves/weapon.c', 'retail_weapon_native_496d10'))
+if 0x4963e0 in HELPERS:
+    HELPERS[0x4963e0] = replace(HELPERS[0x4963e0], port=('game/liu_kang/moves/weapon.c', 'retail_weapon_native_4963e0'))
+if 0x4964d0 in HELPERS:
+    HELPERS[0x4964d0] = replace(HELPERS[0x4964d0], port=('game/liu_kang/moves/weapon.c', 'retail_weapon_native_4964d0'))
+if 0x496670 in HELPERS:
+    HELPERS[0x496670] = replace(HELPERS[0x496670], port=('game/liu_kang/moves/weapon.c', 'retail_weapon_native_496670'))
+if 0x496920 in HELPERS:
+    HELPERS[0x496920] = replace(HELPERS[0x496920], port=('game/liu_kang/moves/weapon.c', 'retail_weapon_native_496920'))
+if 0x495a90 in HELPERS:
+    HELPERS[0x495a90] = replace(HELPERS[0x495a90], port=('game/kai/moves/weapon.c', 'retail_weapon_native_495a90'))
+if 0x496720 in HELPERS:
+    HELPERS[0x496720] = replace(HELPERS[0x496720], port=('game/sonya/moves/weapon.c', 'retail_weapon_native_496720'))
+if 0x495c30 in HELPERS:
+    HELPERS[0x495c30] = replace(HELPERS[0x495c30], port=('game/fujin/moves/weapon.c', 'retail_weapon_native_495c30'))
+if 0x495cc0 in HELPERS:
+    HELPERS[0x495cc0] = replace(HELPERS[0x495cc0], port=('game/fujin/moves/weapon.c', 'retail_weapon_native_495cc0'))
+if 0x495c60 in HELPERS:
+    HELPERS[0x495c60] = replace(HELPERS[0x495c60], port=('game/fujin/moves/weapon.c', 'retail_weapon_native_495c60'))
+if 0x495cf0 in HELPERS:
+    HELPERS[0x495cf0] = replace(HELPERS[0x495cf0], port=('game/fujin/moves/weapon.c', 'retail_weapon_native_495cf0'))
+if 0x495d70 in HELPERS:
+    HELPERS[0x495d70] = replace(HELPERS[0x495d70], port=('game/reptile/moves/weapon.c', 'retail_weapon_native_495d70'))
+if 0x496140 in HELPERS:
+    HELPERS[0x496140] = replace(HELPERS[0x496140], port=('game/reptile/moves/weapon.c', 'retail_weapon_native_496140'))
+if 0x495610 in HELPERS:
+    HELPERS[0x495610] = replace(HELPERS[0x495610], port=('game/tanya/moves/weapon.c', 'retail_weapon_native_495610'))
+if 0x46d1d0 in HELPERS:
+    HELPERS[0x46d1d0] = replace(HELPERS[0x46d1d0], port=('game/retail_weapon.c', 'retail_weapon_draw'))
+if 0x46d260 in HELPERS:
+    HELPERS[0x46d260] = replace(HELPERS[0x46d260], port=('game/retail_weapon.c', 'retail_weapon_draw_equip'))
+if 0x493080 in HELPERS:
+    HELPERS[0x493080] = replace(HELPERS[0x493080], port=('game/retail_weapon.c', 'retail_weapon_equip'))
+
+# Newly consolidated native boundaries remain navigable by their original VA.
+if 0x496c90 not in HELPERS:
+    HELPERS[0x496c90] = H('weapon_native_496c90', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/scorpion/moves/weapon.c', 'retail_weapon_native_496c90'))
+if 0x496c50 not in HELPERS:
+    HELPERS[0x496c50] = H('weapon_native_496c50', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/scorpion/moves/weapon.c', 'retail_weapon_native_496c50'))
+if 0x480770 not in HELPERS:
+    HELPERS[0x480770] = H('weapon_native_480770', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/scorpion/moves/weapon.c', 'retail_weapon_native_480770'))
+if 0x495860 not in HELPERS:
+    HELPERS[0x495860] = H('weapon_native_495860', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/cage/moves/weapon.c', 'retail_weapon_native_495860'))
+if 0x496d10 not in HELPERS:
+    HELPERS[0x496d10] = H('weapon_native_496d10', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/reiko/moves/weapon.c', 'retail_weapon_native_496d10'))
+if 0x4963e0 not in HELPERS:
+    HELPERS[0x4963e0] = H('weapon_native_4963e0', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/liu_kang/moves/weapon.c', 'retail_weapon_native_4963e0'))
+if 0x4964d0 not in HELPERS:
+    HELPERS[0x4964d0] = H('weapon_native_4964d0', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/liu_kang/moves/weapon.c', 'retail_weapon_native_4964d0'))
+if 0x496670 not in HELPERS:
+    HELPERS[0x496670] = H('weapon_native_496670', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/liu_kang/moves/weapon.c', 'retail_weapon_native_496670'))
+if 0x496920 not in HELPERS:
+    HELPERS[0x496920] = H('weapon_native_496920', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/liu_kang/moves/weapon.c', 'retail_weapon_native_496920'))
+if 0x495a90 not in HELPERS:
+    HELPERS[0x495a90] = H('weapon_native_495a90', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/kai/moves/weapon.c', 'retail_weapon_native_495a90'))
+if 0x496720 not in HELPERS:
+    HELPERS[0x496720] = H('weapon_native_496720', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/sonya/moves/weapon.c', 'retail_weapon_native_496720'))
+if 0x495c30 not in HELPERS:
+    HELPERS[0x495c30] = H('weapon_native_495c30', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/fujin/moves/weapon.c', 'retail_weapon_native_495c30'))
+if 0x495cc0 not in HELPERS:
+    HELPERS[0x495cc0] = H('weapon_native_495cc0', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/fujin/moves/weapon.c', 'retail_weapon_native_495cc0'))
+if 0x495c60 not in HELPERS:
+    HELPERS[0x495c60] = H('weapon_native_495c60', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/fujin/moves/weapon.c', 'retail_weapon_native_495c60'))
+if 0x495cf0 not in HELPERS:
+    HELPERS[0x495cf0] = H('weapon_native_495cf0', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/fujin/moves/weapon.c', 'retail_weapon_native_495cf0'))
+if 0x495d70 not in HELPERS:
+    HELPERS[0x495d70] = H('weapon_native_495d70', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/reptile/moves/weapon.c', 'retail_weapon_native_495d70'))
+if 0x496140 not in HELPERS:
+    HELPERS[0x496140] = H('weapon_native_496140', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/reptile/moves/weapon.c', 'retail_weapon_native_496140'))
+if 0x495610 not in HELPERS:
+    HELPERS[0x495610] = H('weapon_native_495610', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/tanya/moves/weapon.c', 'retail_weapon_native_495610'))

@@ -3,10 +3,7 @@
 #include <math.h>
 #include <string.h>
 
-static void equip_weapon(Fighter *fighter);
-static void weapon_hp(Fighter *fighter);
-static void weapon_lp(Fighter *fighter);
-static void weapon_back_hp(Fighter *fighter);
+void retail_weapon_native_495610(Fighter *fighter);
 
 /* 4955b0 descriptor 4ec420 and its held-back alternate 4955e0 (travel
  * 4ec438, strike 4ec448): clip, first/windup/target/queries/recovery,
@@ -17,7 +14,6 @@ static const MoveDef boomerang_throw = {.clip = 229, .last = 44, .flags = SF_LOC
 static const AttackRecord boomerang_record = {0xc76c, -0x424d, 0x9be7, 0x8c8b, 169, 154, 0, ATTACK_MARK, 0x3333};
 static const MoveDef victim_hit = {.clip = 130, .last = 39, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
 static const MoveDef victim_fall = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
-static const WeaponDef boomerang = {0x6d, weapon_hp, weapon_lp, weapon_back_hp, NULL, NULL, weapon_throw, equip_weapon, SCENE_MODEL_TANYA_WEAPON};
 
 enum {
   BOOMERANG_OUT,
@@ -25,30 +21,7 @@ enum {
   BOOMERANG_HOME
 };
 
-static void equip_weapon(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &boomerang);
-}
-
-static void weapon_back_hp(Fighter *fighter) {
-  weapon_start_retail_strike(fighter, 0x4ec448, 0x4ec438, 0x111, true);
-}
-
 /* 494990 takes descriptor word 3 (4955e0) when back is held. */
-static void weapon_ground_hp(Fighter *fighter) {
-  if (fighter_holds_back(fighter)) {
-    weapon_back_hp(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec420, 0x0, 0x111, false);
-  }
-}
-
-static void weapon_hp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_high_punch(fighter);
-  } else {
-    weapon_ground_hp(fighter);
-  }
-}
 
 /* 497e20: one counter across all phases plays sound C 0x5a on the first
  * visit and every tenth visit after it. */
@@ -83,7 +56,7 @@ static void boomerang_arrive(Projectile *projectile) {
   Fighter *owner = &g_battle.fighters[projectile->owner];
   memset(projectile->vel, 0, sizeof projectile->vel);
   if (!owner->armed && !(owner->flags & (FF_BUSY | FF_REACTING)) && !fighter_airborne(owner) && owner->health > 0 && g_battle.phase == PHASE_FIGHT) {
-    projectile->weapon->equip(owner);
+    fighter_equip_weapon(owner, projectile->weapon);
     battle_sound(SOUND_C, projectile->owner == 0 ? 0x26 : 0x27);
     projectile->kind = 0;
     fighter_interrupt(owner, fighter_ready);
@@ -173,7 +146,7 @@ static void boomerang_start(Fighter *fighter) {
 }
 
 /* 495610: 46dbb0's LP throw gate first, then T2[0x16]/[0x17]. */
-static void weapon_lp(Fighter *fighter) {
+void retail_weapon_native_495610(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     retail_air_low_punch(fighter);
   } else if (mk4_can_ground_throw(fighter, false)) {
@@ -183,25 +156,8 @@ static void weapon_lp(Fighter *fighter) {
   }
 }
 
-void tanya_script_draw_equip(Fighter *fighter) {
-  equip_weapon(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 9);
-}
-
 /* 46d1d0: armed -> T2[0xd] throw; follow-up window -> 494610 equips, sets
  * up the victim and 4ecb40[0x6d-0x60] = 4955b0; otherwise draw 4e62c0. */
-void tanya_weapon_action(Fighter *fighter) {
-  if (fighter->armed) {
-    fighter->weapon->throw_move(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    equip_weapon(fighter);
-    weapon_followup_victim(fighter);
-    weapon_ground_hp(fighter);
-  } else {
-    weapon_draw(fighter, &boomerang);
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 9);
-  }
-}
 
 /* 490bd0 as a group callback keeps the falling victim facing its peer. */
 

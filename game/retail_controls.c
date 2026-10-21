@@ -190,11 +190,11 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
   FighterFn entry = NULL;
   switch (target) {
     case 0x460f40:
-      entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? fighter->weapon->back_hp : fighter->weapon->hp) : normal_hp;
+      entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_high_punch : retail_weapon_high_punch) : normal_hp;
       break;
     case 0x460fb0:
-      entry =
-          fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp) : action_entry(fighter, 8);
+      entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_low_punch : retail_weapon_low_punch)
+                                                        : action_entry(fighter, 8);
       break;
     case 0x460fc0:
       entry = action_entry(fighter, fighter_holds_back(fighter) ? 6 : 4);
@@ -210,8 +210,8 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
       }
       break;
     case 0x4610d0:
-      if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60 && fighter->weapon->crouch_lp != NULL) {
-        entry = fighter->weapon->crouch_lp;
+      if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60) {
+        entry = retail_weapon_native_480770;
       } else {
         entry = crouch_entry(fighter, 8);
       }
@@ -234,7 +234,7 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
         entry = retail_uppercut;
       } else if (fighter->armed && fighter->weapon != NULL) {
         weapon_followup_victim(fighter);
-        entry = fighter_holds_back(fighter) ? fighter->weapon->back_hp : fighter->weapon->hp;
+        entry = fighter_holds_back(fighter) ? retail_weapon_back_high_punch : retail_weapon_high_punch;
       } else {
         entry = target == 0x46c210 ? retail_combo_high_punch : target == 0x46c3f0 ? air_ground_hp : normal_hp;
       }
@@ -242,7 +242,7 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
     case 0x46c6f0:
       if (fighter->armed && fighter->weapon != NULL) {
         weapon_followup_victim(fighter);
-        entry = fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp;
+        entry = fighter_holds_back(fighter) ? retail_weapon_back_low_punch : retail_weapon_low_punch;
       } else {
         entry = retail_normal_low_punch;
       }

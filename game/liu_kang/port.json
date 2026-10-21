@@ -77,8 +77,8 @@
     },
     "draw_weapon": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/weapon.c",
-      "symbol": "liu_kang_weapon"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw"
     },
     "fan_fatality": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -167,23 +167,27 @@
     },
     "sword_back_hp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/weapon.c",
-      "symbol": "sword_back_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sword_back_lp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/weapon.c",
-      "symbol": "sword_back_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sword_hp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/weapon.c",
-      "symbol": "sword_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sword_lp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/weapon.c",
-      "symbol": "sword_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "uppercut": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",

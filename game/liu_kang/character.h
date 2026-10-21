@@ -32,7 +32,7 @@
 #define liu_script_close_hp_tail liu_kang_liu_script_close_hp_tail
 #define liu_script_combo_hp_tail liu_kang_liu_script_combo_hp_tail
 #define liu_script_crouch_lk_tail liu_kang_liu_script_crouch_lk_tail
-#define liu_script_draw_equip liu_kang_liu_script_draw_equip
+#define liu_script_draw_equip retail_weapon_draw_equip
 #define liu_script_fatal_align liu_kang_liu_script_fatal_align
 #define liu_script_fatal_setup liu_kang_liu_script_fatal_setup
 #define liu_script_fatal_spawn liu_kang_liu_script_fatal_spawn
@@ -83,11 +83,9 @@ void liu_kang_flying_kick(Fighter *fighter);
 void liu_kang_high_fireball(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
-void liu_kang_weapon(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
-void liu_kang_liu_script_draw_equip(Fighter *fighter);
 void liu_kang_liu_script_fatal_align(Fighter *fighter);
 void liu_kang_liu_script_fatal_setup(Fighter *fighter);
 void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type);

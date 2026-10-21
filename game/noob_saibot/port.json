@@ -12,8 +12,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "noob_saibot_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x4791a0": {
@@ -171,29 +171,33 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "draw_weapon": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "noob_saibot_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "axe_hp": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "weapon_hp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "axe_lp": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "weapon_lp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "axe_back_hp": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "weapon_back_hp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "axe_back_lp": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "weapon_back_lp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_throw": {
       "source": "game/weapons.c",
@@ -342,15 +346,15 @@
       "symbol": "react_extra_block"
     },
     "93": {
-      "source": "game/noob_saibot/moves/weapon.c",
+      "source": "game/reiko/moves/weapon.c",
       "symbol": "weapon_first_victim",
-      "adaptation": "Type69 native contact starts the selected independent generated victim stream, without an approximate fallback.",
+      "adaptation": "One native axe victim implementation, selected by the shared native weapon service for any caller.",
       "evidence": "Native488420/488440 ->4ea040 and488810/488850 ->4ea0b8; native recovery7 queries WEAPON27."
     },
     "138": {
-      "source": "game/noob_saibot/moves/weapon.c",
+      "source": "game/reiko/moves/weapon.c",
       "symbol": "weapon_second_victim",
-      "adaptation": "Type69 native contact starts the selected independent generated victim stream, without an approximate fallback.",
+      "adaptation": "One native axe victim implementation, selected by the shared native weapon service for any caller.",
       "evidence": "Native488420/488440 ->4ea040 and488810/488850 ->4ea0b8; native recovery7 queries WEAPON27."
     },
     "0": {
@@ -547,8 +551,8 @@
       "evidence": "Existing recovered shadow command, preserved in generated retail table with its original order and air gate."
     },
     "0x46d1d0": {
-      "source": "game/noob_saibot/moves/weapon.c",
-      "symbol": "noob_saibot_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x47c070": {

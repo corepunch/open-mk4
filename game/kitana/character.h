@@ -27,7 +27,7 @@
 #define script_close_hp_tail kitana_script_close_hp_tail
 #define script_combo_hp_tail kitana_script_combo_hp_tail
 #define script_crouch_lk_tail kitana_script_crouch_lk_tail
-#define script_draw_equip kitana_script_draw_equip
+#define script_draw_equip retail_weapon_draw_equip
 #define script_first_release kitana_script_first_release
 #define script_leg_grab_tail kitana_script_leg_grab_tail
 #define script_leg_victim_end kitana_script_leg_victim_end
@@ -72,11 +72,9 @@ void kitana_shadow_task_low(Fighter *fighter, int task_type);
 void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void kitana_shadow_up(Fighter *fighter);
 void kitana_square_wave(Fighter *fighter);
-void kitana_weapon(Fighter *fighter);
 void kitana_lk_victim(Fighter *victim);
 void kitana_scene_end_watch(Fighter *fighter);
 void kitana_script_cartwheel_tail(Fighter *fighter);
-void kitana_script_draw_equip(Fighter *fighter);
 void kitana_script_first_release(Fighter *fighter);
 void kitana_script_leg_grab_tail(Fighter *fighter);
 void kitana_script_leg_victim_end(Fighter *victim);

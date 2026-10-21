@@ -106,7 +106,7 @@ void fujin_first_cycle(Fighter *fighter) {
     retail_vm_enter_owned(fighter, 0x4e1f68, fighter_ready, 5);
     return;
   }
-  fujin_equip_crossbow(fighter);
+  retail_weapon_equip(fighter);
   native_scene_blends(fighter, first_bow, 1, NULL);
   native_script_end(fighter, 0x4e1f80, fighter_ready, 5);
 }

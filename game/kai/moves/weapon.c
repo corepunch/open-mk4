@@ -1,48 +1,18 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static void equip_weapon(Fighter *fighter);
-static void weapon_hp(Fighter *fighter);
-static void weapon_lp(Fighter *fighter);
-static void weapon_back(Fighter *fighter);
+void retail_weapon_native_495a90(Fighter *fighter);
 static void weapon_cleanup(Fighter *fighter);
 static const MoveDef back_move = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
 static const MoveDef victim_move = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
 static const AttackRecord back_record = {98959, -45809, 67502, 28835, 146, 10, 119, 0, 11796};
-static const WeaponDef native_weapon = {0x63, weapon_hp, weapon_lp, weapon_back, weapon_back, NULL, weapon_throw, equip_weapon, SCENE_MODEL_KAI_WEAPON};
-
-static void equip_weapon(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &native_weapon);
-}
-
-static void weapon_hp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_high_punch(fighter);
-  } else if (fighter_holds_back(fighter)) {
-    weapon_back(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec558, 0x4ec548, 0x10e, true);
-  }
-}
-
-static void weapon_lp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_low_punch(fighter);
-  } else if (mk4_can_ground_throw(fighter, false)) {
-    fighter_enter_state(fighter, S_THROW);
-  } else if (fighter_holds_back(fighter)) {
-    weapon_back(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec580, 0x4ec570, 0x10e, true);
-  }
-}
 
 static void weapon_cleanup(Fighter *fighter) {
   native_motion_stop(fighter);
   mk4_script_stop_body(fighter);
 }
 
-static void weapon_back(Fighter *fighter) {
+void retail_weapon_native_495a90(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &back_move);
   fighter->mmove_cleanup = weapon_cleanup;
   /* 495a90 /4ec598 installs delayed travel before the selected VM stream. */
@@ -55,29 +25,8 @@ void kai_weapon_back_contact(Fighter *fighter) {
   weapon_script_contact_tail(fighter, &back_record, 2);
 }
 
-void kai_script_draw_equip(Fighter *fighter) {
-  equip_weapon(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 11);
-}
-
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
  * the HP strike data directly, bypassing ordinary air/back input selection. */
-static void weapon_followup(Fighter *fighter) {
-  weapon_start_retail_strike(fighter, 0x4ec558, 0x4ec548, 0x10e, true);
-}
-
-void kai_draw_weapon(Fighter *fighter) {
-  if (fighter->armed) {
-    fighter->weapon->throw_move(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    equip_weapon(fighter);
-    weapon_followup_victim(fighter);
-    weapon_followup(fighter);
-  } else {
-    weapon_draw(fighter, &native_weapon);
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 11);
-  }
-}
 
 void kai_weapon_victim_getup(Fighter *fighter) {
   mk4_mmove_finish_getup(fighter, 0x4ea210);

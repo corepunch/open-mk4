@@ -61,7 +61,9 @@ class HelperTests(unittest.TestCase):
         self.assertIn('not automatically decompiled x86', clone)
         self.assertIn('game/sub_zero/moves/clone.c:', clone)
         scepter = move_c_text(self.image, 'scepter_back_lp', character=4)
-        self.assertIn('static void scepter_back_lp(', scepter)
+        self.assertIn('static void weapon_native(', scepter)
+        self.assertIn('weapon_start_retail_strike(', scepter)
+        self.assertIn('game/retail_weapon.c:', scepter)
         self.assertIn('reaction 151', scepter)
         self.assertIn('zero direct damage', scepter)
 

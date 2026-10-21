@@ -255,9 +255,8 @@ typedef struct CpuState {
 
 typedef struct WeaponDef {
   int type; /* retail descriptor type; travels with a dropped weapon */
-  FighterFn hp, lp, back_hp, back_lp, crouch_lp, throw_move;
-  void (*equip)(Fighter *fighter);
   int model;
+  uint32_t inventory, buttons, idle, forward, backward;
 } WeaponDef;
 
 /* 494a00's descriptor-driven attack phases, translated into game data. */

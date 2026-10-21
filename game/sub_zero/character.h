@@ -44,7 +44,7 @@
 #define script_close_hp_tail sub_zero_script_close_hp_tail
 #define script_combo_hp_tail sub_zero_script_combo_hp_tail
 #define script_crouch_lk_tail sub_zero_script_crouch_lk_tail
-#define script_draw_equip sub_zero_script_draw_equip
+#define script_draw_equip retail_weapon_draw_equip
 #define script_first_begin sub_zero_script_first_begin
 #define script_first_cues1 sub_zero_script_first_cues1
 #define script_first_cues2 sub_zero_script_first_cues2
@@ -113,7 +113,6 @@ void sub_zero_script_breath_object(Fighter *fighter, int type);
 void sub_zero_script_breath_shatter(Fighter *fighter);
 void sub_zero_script_breath_slide(Fighter *fighter);
 void sub_zero_script_breath_victim_end(Fighter *victim);
-void sub_zero_script_draw_equip(Fighter *fighter);
 void sub_zero_script_first_begin(Fighter *fighter);
 void sub_zero_script_first_cues1(Fighter *fighter);
 void sub_zero_script_first_cues2(Fighter *fighter);
@@ -144,7 +143,6 @@ void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_ice(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
-void sub_zero_weapon(Fighter *fighter);
 void sub_zero_throw_disarm(Fighter *victim);
 
 #endif

@@ -82,8 +82,8 @@
     },
     "draw_weapon": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/weapon.c",
-      "symbol": "scorpion_weapon"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw"
     },
     "fan_fatality": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -152,18 +152,21 @@
     },
     "sword_back_hp": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/weapon.c",
-      "symbol": "sword_back_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sword_back_lp": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/weapon.c",
-      "symbol": "sword_back_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sword_spin": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "source": "game/scorpion/moves/weapon.c",
-      "symbol": "sword_spin"
+      "symbol": "retail_weapon_native_480770",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sword_throw": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

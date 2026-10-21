@@ -30,8 +30,8 @@
       "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "draw_weapon": {
-      "source": "game/kai/moves/weapon.c",
-      "symbol": "kai_draw_weapon",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "fan_fatality": {
@@ -150,8 +150,8 @@
       "evidence": "Bounded native handstand listings preserve selected startup, contact and recovery streams."
     },
     "weapon_followup": {
-      "source": "game/kai/moves/weapon.c",
-      "symbol": "weapon_followup",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "4ecb40[type63-60] selects4959f0:4eca08 motion and4eca18 clip230/weapon31, bypassing air/back selectors."
     },
     "rising_skull": {
@@ -217,8 +217,8 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46d1d0": {
-      "source": "game/kai/moves/weapon.c",
-      "symbol": "kai_draw_weapon",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "0x47bd10": {
@@ -536,8 +536,8 @@
       "evidence": "Kai LK command4e4908 selects47c520 through held-switch predicate45eb80/45f2b0."
     },
     "0x46d1d0": {
-      "source": "game/kai/moves/weapon.c",
-      "symbol": "kai_draw_weapon",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "0x47bd10": {

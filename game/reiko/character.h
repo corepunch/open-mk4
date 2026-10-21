@@ -21,8 +21,6 @@ void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable reiko_diagonal_air;
-void reiko_weapon_action(Fighter *fighter);
-void reiko_script_weapon_draw_finish(Fighter *fighter);
 void reiko_flip_kick(Fighter *fighter);
 bool reiko_can_flip_kick(const Fighter *fighter);
 void reiko_star(Fighter *fighter);

@@ -207,13 +207,15 @@
     },
     "weapon_hp": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/kitana/moves/weapon.c",
-      "symbol": "weapon_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_lp": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/kitana/moves/weapon.c",
-      "symbol": "weapon_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_throw": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",

@@ -32,7 +32,7 @@
 #define script_close_hp_tail sonya_script_close_hp_tail
 #define script_combo_hp_tail sonya_script_combo_hp_tail
 #define script_crouch_lk_tail sonya_script_crouch_lk_tail
-#define script_draw_equip sonya_script_draw_equip
+#define script_draw_equip retail_weapon_draw_equip
 #define script_first_release sonya_script_first_release
 #define script_leg_grab_tail sonya_script_leg_grab_tail
 #define script_leg_victim_end sonya_script_leg_victim_end
@@ -73,7 +73,6 @@ void sonya_first_fatality(Fighter *fighter);
 void sonya_lk_victim(Fighter *victim);
 void sonya_scene_end_watch(Fighter *fighter);
 void sonya_script_cartwheel_tail(Fighter *fighter);
-void sonya_script_draw_equip(Fighter *fighter);
 void sonya_script_first_release(Fighter *fighter);
 void sonya_script_leg_grab_tail(Fighter *fighter);
 void sonya_script_leg_victim_end(Fighter *victim);
@@ -96,7 +95,6 @@ void sonya_cartwheel(Fighter *fighter);
 void sonya_leg_grab(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);
-void sonya_weapon(Fighter *fighter);
 void sonya_special_cleanup(Fighter *fighter);
 void sonya_square_victim(Fighter *victim);
 

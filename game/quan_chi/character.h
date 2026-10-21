@@ -21,8 +21,6 @@ void quan_chi_script_flip_kick_tail(Fighter *fighter);
 void quan_chi_teleport_stomp(Fighter *fighter);
 void quan_chi_script_stomp_victim(Fighter *fighter);
 void quan_chi_weapon_steal(Fighter *fighter);
-void quan_chi_weapon_action(Fighter *fighter);
-void quan_chi_script_draw_equip(Fighter *fighter);
 void quan_chi_first_fatality(Fighter *fighter);
 void quan_chi_second_fatality(Fighter *fighter);
 bool quan_chi_can_first_fatality(const Fighter *fighter);

@@ -25,7 +25,6 @@ void jarek_script_low_kick_clear(Fighter *fighter);
 void jarek_script_lp_end(Fighter *fighter);
 void jarek_script_lp_return(Fighter *fighter);
 void jarek_script_opponent_reaction(Fighter *fighter, int reaction);
-void jarek_script_weapon_draw_finish(Fighter *fighter);
 void jarek_cannonball(Fighter *fighter);
 void jarek_fatality_1(Fighter *fighter);
 void jarek_first_heart(Fighter *fighter);
@@ -44,7 +43,6 @@ void jarek_blade_spawn(Fighter *fighter, int task_type);
 void jarek_quake_tail(Fighter *fighter);
 void jarek_upward_ball(Fighter *fighter);
 void jarek_ball_land(Fighter *fighter);
-void jarek_weapon_action(Fighter *fighter);
 
 void jarek_weapon_upper_contact(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);

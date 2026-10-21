@@ -142,23 +142,27 @@
     },
     "staff_back_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/weapon.c",
-      "symbol": "weapon_back_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "staff_back_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/weapon.c",
-      "symbol": "weapon_back_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "staff_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/weapon.c",
-      "symbol": "weapon_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "staff_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/weapon.c",
-      "symbol": "weapon_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "sweep": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

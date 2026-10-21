@@ -187,13 +187,15 @@
     },
     "weapon_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/moves/weapon.c",
-      "symbol": "weapon_hp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/moves/weapon.c",
-      "symbol": "weapon_lp"
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_throw": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

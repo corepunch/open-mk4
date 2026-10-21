@@ -1177,3 +1177,30 @@ The existing Liu Kang suite builds but stops at its old current_mmove-only
 normal-playback assertion before weapons: direct VM ownership is not accepted by
 that legacy generated-program assertion. It is not reported as a passing weapon
 integration check. No new fighter matrices or execution harnesses were added.
+
+### Shared inventory-driven weapon lifecycle and input
+
+Removed all 17 authored WeaponDef configurations and fighter draw/equip
+adapters. WeaponDef is now an address/model view without C callbacks; one
+shared lifecycle reads the raw roster inventory, original button targets and
+4ecb40 followup table. Shared494990 dispatch follows the original parameter's
+back alternative. Native frontend operands are indexed by original VA, with
+action writes checked against bounded listings rather than inherited C tags.
+Complex native services remain single address exports. Three emptied weapon
+translation units were deleted; remaining weapon modules contain native
+services and are still pending relocation/consolidation.
+
+Pickup, catch and theft retain the actual world object's inventory instead of
+re-equipping the recipient's own weapon. Armed stance/walk descriptors load from
+that inventory. Kitana now uses raw type6d with its original object template;
+Noob uses raw type6a and its separately loaded original rig, rather than the
+old Sonya/axe aliases. Reference checks include mk4decomp StrikeAnim4Picker,
+MoveDispatch4StateFsm, Event112Cluster and local46d1d0/46d260/493080/494610
+listings. Default inventory settings remain the supported engine mode.
+
+Verified formatting, shared VM/rejections, all18 strict audits, native frame
+gates, six helper-navigation checks, seven port/source checks, and the SDL
+asset self-test (all18 combat rigs and11 arenas). Extended the existing shared
+loader fixture by mutating raw inventory, button target and back alternative;
+no fighter timing or damage matrix was added. Catalogued root coverage remains
+a research index, not a claim of exhaustive native gameplay parity.

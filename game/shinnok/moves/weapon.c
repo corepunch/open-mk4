@@ -1,67 +1,7 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const MoveDef followup = {.clip = 237, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x112};
 static const MoveDef victim = {.clip = 132, .last = 59, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4003};
-static const WeaponDef polearm = {0x64, shinnok_weapon_hp, shinnok_weapon_lp, shinnok_weapon_back_hp, shinnok_weapon_back_lp, NULL, weapon_throw,
-    shinnok_weapon_equip, SCENE_MODEL_SHINNOK_WEAPON};
-
-void shinnok_weapon_back_hp(Fighter *fighter) {
-  weapon_start_retail_strike(fighter, 0x4ec750, 0x4ec740, 0x212, true);
-}
-
-void shinnok_weapon_back_lp(Fighter *fighter) {
-  weapon_start_retail_strike(fighter, 0x4ec618, 0x0, 0x10e, false);
-}
-
-void shinnok_weapon_hp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_high_punch(fighter);
-  } else if (fighter_holds_back(fighter)) {
-    shinnok_weapon_back_hp(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec5d8, 0x4ec5c8, 0x10e, true);
-  }
-}
-
-void shinnok_weapon_lp(Fighter *fighter) {
-  if (fighter_airborne(fighter)) {
-    retail_air_low_punch(fighter);
-  } else if (fighter_distance(fighter) <= .7f && !fighter_airborne(fighter_opponent(fighter)) && !(fighter_opponent(fighter)->flags & FF_REACTING)) {
-    retail_lp_throw(fighter);
-  } else if (fighter_holds_back(fighter)) {
-    shinnok_weapon_back_lp(fighter);
-  } else {
-    weapon_start_retail_strike(fighter, 0x4ec600, 0x4ec5f0, 0x10e, true);
-  }
-}
-
-void shinnok_weapon_equip(Fighter *fighter) {
-  fighter_equip_weapon(fighter, &polearm);
-}
-
-void shinnok_script_draw_equip(Fighter *fighter) {
-  shinnok_weapon_equip(fighter);
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 6);
-}
-
-static void shinnok_weapon_followup(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &followup);
-  retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 6);
-}
-
-void shinnok_weapon_action(Fighter *fighter) {
-  if (fighter->armed) {
-    fighter->weapon->throw_move(fighter);
-  } else if (fighter->flags & FF_FOLLOW_UP) {
-    shinnok_weapon_equip(fighter);
-    weapon_followup_victim(fighter);
-    shinnok_weapon_followup(fighter);
-  } else {
-    weapon_draw(fighter, &polearm);
-    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 6);
-  }
-}
 
 void shinnok_weapon_crouch_return(Fighter *fighter) {
   mk4_script_stop_body(fighter);

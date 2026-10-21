@@ -532,6 +532,32 @@ static void native_weapon_parameters(void) {
   put_word(motion + 4, original_speed);
 }
 
+static void native_weapon_inventory(void) {
+  Fighter *actor = setup(0, 2);
+  uint32_t original = mk4_image_u32(&image, 0x53d5c0);
+  uint32_t selected = mk4_image_u32(&image, 0x53d5c0 + 17 * 4);
+  put_word(0x53d5c0, selected);
+  retail_weapon_equip(actor);
+  check(actor->armed && actor->weapon->inventory == selected * 4 && actor->weapon->type == (int)mk4_image_u32(&image, selected * 4),
+      "equipment must load the raw roster inventory independently of the actor model");
+  uint32_t table = actor->weapon->buttons;
+  uint32_t target = mk4_image_u32(&image, table);
+  put_word(table, 0x496c20);
+  retail_weapon_high_punch(actor);
+  check(actor->weapon_strike != NULL && actor->weapon_strike->parameters == 0x4ec880,
+      "armed input must resolve the loaded native button target rather than fighter callbacks");
+  fighter_cancel_mmove(actor);
+  uint32_t alternative = mk4_image_u32(&image, 0x4ec88c);
+  put_word(0x4ec88c, 0x495740);
+  retail_weapon_back_high_punch(actor);
+  check(actor->weapon_strike->parameters == 0x4ec4b8 && actor->action == ACTION_RETAIL_0113,
+      "back input must follow the original parameter alternative and native action class");
+  fighter_cancel_mmove(actor);
+  put_word(0x4ec88c, alternative);
+  put_word(table, target);
+  put_word(0x53d5c0, original);
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -750,6 +776,7 @@ int main(int argc, char **argv) {
   reaction_native_table();
   native_getup_entries();
   native_weapon_parameters();
+  native_weapon_inventory();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

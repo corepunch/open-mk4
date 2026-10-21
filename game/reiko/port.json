@@ -22,8 +22,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x46d1d0": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "reiko_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x478ee0": {
@@ -156,29 +156,33 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "draw_weapon": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "reiko_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "axe_hp": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "weapon_hp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_high_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "axe_lp": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "weapon_lp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_low_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "axe_back_hp": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "weapon_back_hp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_high_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "axe_back_lp": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "weapon_back_lp",
-      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner."
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_back_low_punch",
+      "evidence": "Type69 native496cd0/496ce0/496cf0/496d10 with descriptors4ec988/9a0/9b0/9c8; shared frame strike runner.",
+      "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_throw": {
       "source": "game/weapons.c",
@@ -538,8 +542,8 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46d1d0": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "reiko_weapon_action",
+      "source": "game/retail_weapon.c",
+      "symbol": "retail_weapon_draw",
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x47c070": {

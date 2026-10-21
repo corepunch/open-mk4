@@ -54,8 +54,6 @@ void reptile_first_owner_loop(Fighter *fighter);
 void reptile_first_victim_bite(Fighter *fighter);
 void reptile_first_victim_collapse(Fighter *fighter);
 void reptile_first_victim_shake(Fighter *fighter);
-void reptile_script_draw_equip(Fighter *fighter);
-void reptile_weapon_action(Fighter *fighter);
 void reptile_weapon_flurry(Fighter *fighter);
 void reptile_weapon_getup_back(Fighter *fighter);
 void reptile_weapon_reaction(Fighter *fighter);
