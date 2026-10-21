@@ -5,6 +5,7 @@
 void retail_getup_back(Fighter *fighter);
 void retail_getup_flip(Fighter *fighter);
 void retail_getup_roll(Fighter *fighter);
+void retail_getup_roll_flip(Fighter *fighter);
 void retail_flip_facing(Fighter *fighter);
 void retail_throw_turn(Fighter *fighter);
 void retail_victory(Fighter *fighter);

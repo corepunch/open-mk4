@@ -46,7 +46,7 @@
 #define script_second_repeat sonya_script_second_repeat
 #define script_second_victim_end sonya_script_second_victim_end
 #define script_square_wave_tail sonya_script_square_wave_tail
-#define script_throw_getup sonya_script_throw_getup
+#define script_throw_getup retail_getup_roll
 #define script_weapon_hp_tail sonya_script_weapon_hp_tail
 #define script_weapon_lp_tail sonya_script_weapon_lp_tail
 #define script_weapon_victim_getup sonya_script_weapon_victim_getup
@@ -87,7 +87,6 @@ void sonya_script_second_pause(Fighter *fighter);
 void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
 void sonya_script_square_wave_tail(Fighter *fighter);
-void sonya_script_throw_getup(Fighter *victim);
 void sonya_script_weapon_hp_tail(Fighter *fighter);
 void sonya_script_weapon_lp_tail(Fighter *fighter);
 void sonya_script_weapon_victim_getup(Fighter *victim);

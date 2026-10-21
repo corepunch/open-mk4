@@ -213,10 +213,10 @@
       "symbol": "react_extra"
     },
     "104": {
-      "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
+      "adaptation": "Current-reaction native integration installs the original reaction104 script; its485b10 tail uses the shared roll getup.",
       "evidence": "VM reaction dispatcher selects 104 -> 0x485af0; docs/liu-kang-scripts.md",
       "source": "game/liu_kang/moves/common.c",
-      "symbol": "liu_kang_liu_script_lp_getup"
+      "symbol": "liu_kang_liu_script_reaction"
     },
     "11": {
       "evidence": "4ea4e8[11] -> 0x482070; shared reaction adapter and behavioral regressions",

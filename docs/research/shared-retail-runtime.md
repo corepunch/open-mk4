@@ -1132,3 +1132,16 @@ addresses differ. Renderer pause gates stay outside combat simulation.
 Verified formatting, shared VM/rejections, all strict script audits and native
 frame gates. Reused existing runtime getup/lifetime checks without new authored
 fighter timing fixtures.
+
+### Shared throw recovery natives
+
+Removed four more copied getup bodies. Local485ad0 flips then enters488ba0;
+485b10 flips then enters488c00;485b50 flips twice through488bd0 and enters
+488c00. The old Sonya/Kitana body incorrectly used a backwards standing clip,
+and Reiko/Noob bypassed recovery entirely. These addresses now use the same
+shared data-driven recovery regardless of native-owner context. Evidence comes
+from bounded local listings and mk4decomp SfxBlockCluster's matching assembly.
+
+Verified formatting, shared VM/rejections, strict script audits and native frame
+gates. Added one shared native-boundary fixture for facing parity, crouch-row
+selection, owner independence and interruption; no character timing assertions.

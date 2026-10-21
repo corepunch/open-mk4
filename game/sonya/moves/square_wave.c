@@ -57,7 +57,7 @@ static void square_victim_drop(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->body.gravity = 0x28f;
   victim->body.vel[AXIS_Y] = 0x666;
-  sonya_script_throw_getup(victim);
+  retail_getup_roll(victim);
 }
 
 static void square_victim_guard(Fighter *victim) {

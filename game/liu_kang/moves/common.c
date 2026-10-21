@@ -2,22 +2,9 @@
 #include "../character.h"
 
 static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 
 /* VM control flow is generated; native adapters build frame rows. Playback need
  * not match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
-
-void liu_kang_liu_script_lp_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    liu_kang_thrown_finish(victim);
-    return;
-  }
-  victim->facing = -victim->facing;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_lp_getup);
-  victim->sample_override = 0;
-  fighter_set_speed(victim, -0x147a);
-  native_finish_clip(victim, liu_kang_thrown_finish);
-}
 
 void liu_kang_liu_script_lk_continue(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);

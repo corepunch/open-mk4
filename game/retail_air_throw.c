@@ -237,3 +237,9 @@ void retail_getup_flip(Fighter *fighter) {
   retail_flip_facing(fighter);
   retail_getup_back(fighter);
 }
+
+/* 485b10 flips once before488c00;485b50 flips twice via488bd0. */
+void retail_getup_roll_flip(Fighter *fighter) {
+  retail_flip_facing(fighter);
+  retail_getup_roll(fighter);
+}

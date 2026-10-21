@@ -41,7 +41,7 @@
 #define liu_script_lk_damage liu_kang_liu_script_lk_damage
 #define liu_script_lk_thrown_tail liu_kang_liu_script_lk_thrown_tail
 #define liu_script_land liu_kang_liu_script_land
-#define liu_script_lp_getup liu_kang_liu_script_lp_getup
+#define liu_script_lp_getup retail_getup_roll_flip
 #define liu_script_reaction liu_kang_liu_script_reaction
 #define liu_script_scene_event liu_kang_liu_script_scene_event
 #define liu_script_spawn_air liu_kang_liu_script_spawn_air
@@ -96,7 +96,6 @@ void liu_kang_liu_script_lk_continue(Fighter *fighter);
 void liu_kang_liu_script_lk_damage(Fighter *fighter);
 void liu_kang_liu_script_lk_thrown_tail(Fighter *victim);
 void liu_kang_liu_script_land(Fighter *fighter);
-void liu_kang_liu_script_lp_getup(Fighter *victim);
 void liu_kang_liu_script_reaction(Fighter *fighter, int reaction);
 void liu_kang_liu_script_scene_event(Fighter *fighter, int selector);
 void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type);

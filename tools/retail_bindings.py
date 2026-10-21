@@ -1531,6 +1531,9 @@ def bindings_for(character):
     result[0x488b80] = Binding('retail_getup_flip', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local488b80/488ba0/488c00 and4914c0 use original getup records; one shared native implementation')
     result[0x488ba0] = Binding('retail_getup_back', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local488b80/488ba0/488c00 and4914c0 use original getup records; one shared native implementation')
     result[0x488c00] = Binding('retail_getup_roll', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local488b80/488ba0/488c00 and4914c0 use original getup records; one shared native implementation')
+    result[0x485ad0] = Binding('retail_getup_flip', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local485ad0/485b10/485b50 match SfxBlockCluster; shared original getup rows and facing operations')
+    result[0x485b10] = Binding('retail_getup_roll_flip', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local485ad0/485b10/485b50 match SfxBlockCluster; shared original getup rows and facing operations')
+    result[0x485b50] = Binding('retail_getup_roll', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local485ad0/485b10/485b50 match SfxBlockCluster; shared original getup rows and facing operations')
     # Historical research aliases resolve to the current native definition.
     from c_source import function_source, private_aliases
     for address, binding in tuple(result.items()):

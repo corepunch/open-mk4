@@ -83,5 +83,5 @@ void kitana_weapon(Fighter *fighter) {
 }
 
 void kitana_script_weapon_victim_getup(Fighter *victim) {
-  native_finish_clip(victim, kitana_script_throw_getup);
+  native_finish_clip(victim, retail_getup_roll);
 }

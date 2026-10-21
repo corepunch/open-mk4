@@ -161,7 +161,6 @@ void kitana_script_second_pause(Fighter *fighter);
 void kitana_script_second_repeat(Fighter *fighter);
 void kitana_script_second_victim_end(Fighter *victim);
 void kitana_script_square_wave_tail(Fighter *fighter);
-void kitana_script_throw_getup(Fighter *victim);
 void kitana_script_weapon_hp_tail(Fighter *fighter);
 void kitana_script_weapon_lp_tail(Fighter *fighter);
 void kitana_script_weapon_victim_getup(Fighter *victim);
@@ -181,7 +180,6 @@ void liu_kang_liu_script_land(Fighter *fighter);
 void liu_kang_liu_script_lk_continue(Fighter *fighter);
 void liu_kang_liu_script_lk_damage(Fighter *fighter);
 void liu_kang_liu_script_lk_thrown_tail(Fighter *victim);
-void liu_kang_liu_script_lp_getup(Fighter *victim);
 void liu_kang_liu_script_reaction(Fighter *fighter, int reaction);
 void liu_kang_liu_script_scene_event(Fighter *fighter, int selector);
 void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type);
@@ -238,7 +236,6 @@ void raiden_script_second_particles(Fighter *fighter);
 void raiden_script_second_release(Fighter *fighter);
 void raiden_script_second_victim_end(Fighter *fighter);
 void raiden_script_staff_victim_tail(Fighter *victim);
-void raiden_script_throw_getup(Fighter *victim);
 void raiden_script_thrown_return(Fighter *fighter);
 void raiden_script_torpedo_contact(Fighter *fighter);
 void raiden_script_torpedo_miss(Fighter *fighter);
@@ -378,7 +375,6 @@ void sonya_script_second_pause(Fighter *fighter);
 void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
 void sonya_script_square_wave_tail(Fighter *fighter);
-void sonya_script_throw_getup(Fighter *victim);
 void sonya_script_weapon_hp_tail(Fighter *fighter);
 void sonya_script_weapon_lp_tail(Fighter *fighter);
 void sonya_script_weapon_victim_getup(Fighter *victim);
@@ -1771,28 +1767,15 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           liu_kang_liu_script_lk_thrown_tail(fighter);
           return true;
         case 0x485ad0:
-          if (owner & 0x20080u) {
-            mk4_mmove_thrown_finish(fighter);
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_script_throw_getup(fighter);
-            return true;
-          }
-          return false;
+          retail_getup_flip(fighter);
+          return true;
         case 0x485b10:
-          liu_kang_liu_script_lp_getup(fighter);
+          retail_getup_roll_flip(fighter);
           return true;
         case 0x485b50:
-          if (owner & 0x10000u) {
-            kitana_script_throw_getup(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_throw_getup(fighter);
-            return true;
-          }
-          return false;
+          /* 490350 twice, through488bd0, leaves the original facing. */
+          retail_getup_roll(fighter);
+          return true;
         case 0x486000:
           scorpion_script_spear_pull(fighter);
           return true;

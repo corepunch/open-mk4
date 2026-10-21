@@ -11,7 +11,7 @@ static const AttackRecord leg_record = {92405, -29491, 85852, 76677, 88, 88, 8, 
 
 void sonya_script_leg_victim_end(Fighter *victim) {
   mk4_mmove_bind(victim, 185, 16, 0);
-  sonya_script_throw_getup(victim);
+  retail_getup_roll(victim);
 }
 
 static void leg_grab_done(Fighter *fighter) {

@@ -41,7 +41,7 @@
 #define script_second_repeat kitana_script_second_repeat
 #define script_second_victim_end kitana_script_second_victim_end
 #define script_square_wave_tail kitana_script_square_wave_tail
-#define script_throw_getup kitana_script_throw_getup
+#define script_throw_getup retail_getup_roll
 #define script_weapon_hp_tail kitana_script_weapon_hp_tail
 #define script_weapon_lp_tail kitana_script_weapon_lp_tail
 #define script_weapon_victim_getup kitana_script_weapon_victim_getup
@@ -90,7 +90,6 @@ void kitana_script_second_pause(Fighter *fighter);
 void kitana_script_second_repeat(Fighter *fighter);
 void kitana_script_second_victim_end(Fighter *victim);
 void kitana_script_square_wave_tail(Fighter *fighter);
-void kitana_script_throw_getup(Fighter *victim);
 void kitana_script_weapon_hp_tail(Fighter *fighter);
 void kitana_script_weapon_lp_tail(Fighter *fighter);
 void kitana_script_weapon_victim_getup(Fighter *victim);

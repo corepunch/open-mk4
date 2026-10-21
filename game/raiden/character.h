@@ -43,7 +43,7 @@
 #define script_second_release raiden_script_second_release
 #define script_second_victim_end raiden_script_second_victim_end
 #define script_staff_victim_tail raiden_script_staff_victim_tail
-#define script_throw_getup raiden_script_throw_getup
+#define script_throw_getup retail_getup_flip
 #define script_thrown_return raiden_script_thrown_return
 #define script_torpedo_contact raiden_script_torpedo_contact
 #define script_torpedo_miss raiden_script_torpedo_miss
@@ -91,7 +91,6 @@ void raiden_script_second_particles(Fighter *fighter);
 void raiden_script_second_release(Fighter *fighter);
 void raiden_script_second_victim_end(Fighter *fighter);
 void raiden_script_staff_victim_tail(Fighter *victim);
-void raiden_script_throw_getup(Fighter *victim);
 void raiden_script_thrown_return(Fighter *fighter);
 void raiden_script_torpedo_contact(Fighter *fighter);
 void raiden_script_torpedo_miss(Fighter *fighter);

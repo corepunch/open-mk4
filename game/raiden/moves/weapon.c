@@ -64,7 +64,7 @@ void raiden_weapon(Fighter *fighter) {
 }
 
 void raiden_script_weapon_victim_getup(Fighter *victim) {
-  native_finish_clip(victim, raiden_script_throw_getup);
+  native_finish_clip(victim, retail_getup_flip);
 }
 
 void raiden_script_staff_victim_tail(Fighter *victim) {

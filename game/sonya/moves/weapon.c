@@ -80,5 +80,5 @@ void sonya_weapon(Fighter *fighter) {
 }
 
 void sonya_script_weapon_victim_getup(Fighter *victim) {
-  native_finish_clip(victim, sonya_script_throw_getup);
+  native_finish_clip(victim, retail_getup_roll);
 }
