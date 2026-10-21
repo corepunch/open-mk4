@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "character.h"
 
-#include "generated/scripts.inc"
-
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
@@ -92,201 +90,201 @@ const CharacterDef mk4_fujin = {
 };
 
 void fujin_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004de610(Fighter *fighter) {
-  retail_script_004de610(fighter);
+  retail_vm_enter_owned(fighter, 0x4de610, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_script_004de6b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e5d20(Fighter *fighter) {
-  retail_script_004e5d20(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d20, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_script_004e5d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_script_004e61f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_script_004e6800(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6890(Fighter *fighter) {
-  retail_script_004e6890(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6890, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e68a8(Fighter *fighter) {
-  retail_script_004e68a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e68a8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e8258(Fighter *fighter) {
-  retail_script_004e8258(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8258, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e8298(Fighter *fighter) {
-  retail_script_004e8298(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8298, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004ed408(Fighter *fighter) {
-  retail_script_004ed408(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed408, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004ed788(Fighter *fighter) {
-  retail_script_004ed788(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed788, fujin_bow_followup_next, 5);
 }
 
 void fujin_entry_retail_script_004e9e10(Fighter *fighter) {
-  retail_script_004e9e10(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9e10, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e5c00(Fighter *fighter) {
-  retail_script_004e5c00(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c00, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e5c20(Fighter *fighter) {
-  retail_script_004e5c20(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c20, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e5c50(Fighter *fighter) {
-  retail_script_004e5c50(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c50, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e9fe0(Fighter *fighter) {
-  retail_script_004e9fe0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9fe0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e9ff0(Fighter *fighter) {
-  retail_script_004e9ff0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9ff0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e8740(Fighter *fighter) {
-  retail_script_004e8740(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8740, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e8770(Fighter *fighter) {
-  retail_script_004e8770(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8770, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004ea040(Fighter *fighter) {
-  retail_script_004ea040(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea040, mk4_mmove_thrown_finish, 5);
 }
 
 void fujin_entry_retail_script_004ea050(Fighter *fighter) {
-  retail_script_004ea050(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea050, mk4_mmove_thrown_finish, 5);
 }
 
 void fujin_entry_retail_script_004ea0b8(Fighter *fighter) {
-  retail_script_004ea0b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea0b8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e8830(Fighter *fighter) {
-  retail_script_004e8830(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8830, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e9fb0(Fighter *fighter) {
-  retail_script_004e9fb0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9fb0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004dfed0(Fighter *fighter) {
-  retail_script_004dfed0(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfed0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004ea2d8(Fighter *fighter) {
-  retail_script_004ea2d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea2d8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004ea2a8(Fighter *fighter) {
-  retail_script_004ea2a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea2a8, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e1f58(Fighter *fighter) {
-  retail_script_004e1f58(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1f58, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e1f68(Fighter *fighter) {
-  retail_script_004e1f68(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1f68, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e1f80(Fighter *fighter) {
-  retail_script_004e1f80(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1f80, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e1f98(Fighter *fighter) {
-  retail_script_004e1f98(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1f98, fighter_ready, 5);
 }

@@ -7,250 +7,66 @@
       "symbol": "weapon_pickup"
     }
   },
-  "entry_contexts": {
-    "0x4de668": {
-      "clip": 80,
-      "count": 75,
-      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
-      "sample": 57
-    },
-    "0x4e0220": {
-      "clip": 392,
-      "count": 25,
-      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
-      "sample": 24
-    },
-    "0x4e56d8": {
-      "clip": 123,
-      "count": 101,
-      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
-      "sample": 100
-    },
-    "0x4e56f0": {
-      "clip": 123,
-      "count": 101,
-      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
-      "sample": 100
-    },
-    "0x4e5788": {
-      "clip": 575,
-      "count": 15,
-      "evidence": "4e5770 binds victim clip 575 at sample 0, then native 464ee0 enters 4e5788's 211-tick hold.",
-      "sample": 0
-    },
-    "0x4e5e50": {
-      "clip": 82,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
-    },
-    "0x4e61e0": {
-      "clip": 262,
-      "count": 10,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 0
-    },
-    "0x4e62d8": {
-      "clip": 244,
-      "count": 49,
-      "evidence": "Native46d260 equips then resumes draw clip244 at22; generated draw completes at48.",
-      "sample": 22
-    },
-    "0x4e6330": {
-      "clip": 295,
-      "count": 19,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 0
-    },
-    "0x4e6360": {
-      "clip": 295,
-      "count": 19,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 18
-    },
-    "0x4e6890": {
-      "clip": 64,
-      "count": 45,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 0
-    },
-    "0x4e68a8": {
-      "clip": 64,
-      "count": 45,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 0
-    },
-    "0x4e6950": {
-      "clip": 293,
-      "count": 20,
-      "evidence": "raiden_arena_fatality binds the scene-specific 293/20 owner pose before 4e6950's initial 28-tick hold.",
-      "sample": 0
-    },
-    "0x4e6998": {
-      "clip": 71,
-      "count": 28,
-      "evidence": "Exact native entry preserves clip/cursor; docs/raiden-sonya-scripts.md",
-      "sample": 13
-    },
-    "0x4e8e18": {
-      "evidence": "Independent victim owns KO-aware native recovery",
-      "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e9910": {
-      "clip": 202,
-      "count": 45,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 28
-    },
-    "0x4e99c0": {
-      "clip": 169,
-      "count": 43,
-      "evidence": "Native entry clip/sample checked against pinned EXE; docs/raiden-sonya-scripts.md",
-      "sample": 0
-    },
-    "0x4e9ad0": {
-      "evidence": "Independent victim owns KO-aware native recovery",
-      "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e9ae8": {
-      "evidence": "Independent victim owns KO-aware native recovery",
-      "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e9b40": {
-      "evidence": "Released victim owns recovery including KO",
-      "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e9bd0": {
-      "evidence": "Released victim owns recovery including KO",
-      "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4e9d50": {
-      "evidence": "Independent victim owns KO-aware native recovery",
-      "return_to": "mk4_script_thrown_ready"
-    },
-    "0x4ea068": {
-      "evidence": "Independent victim owns KO-aware native recovery",
-      "return_to": "mk4_script_thrown_ready"
-    }
-  },
-  "generated_scripts": [
-    "0x4de218",
-    "0x4de640",
-    "0x4de668",
-    "0x4de6b8",
-    "0x4de798",
-    "0x4e0210",
-    "0x4e0220",
-    "0x4e56c8",
-    "0x4e56d8",
-    "0x4e56f0",
-    "0x4e5728",
-    "0x4e5740",
-    "0x4e5760",
-    "0x4e5770",
-    "0x4e5788",
-    "0x4e5ca0",
-    "0x4e5d90",
-    "0x4e5e28",
-    "0x4e5e50",
-    "0x4e6020",
-    "0x4e6158",
-    "0x4e6190",
-    "0x4e61e0",
-    "0x4e61f8",
-    "0x4e62a0",
-    "0x4e62c0",
-    "0x4e62d8",
-    "0x4e62f0",
-    "0x4e6330",
-    "0x4e6360",
-    "0x4e63b0",
-    "0x4e63d8",
-    "0x4e6500",
-    "0x4e6658",
-    "0x4e66d0",
-    "0x4e66f0",
-    "0x4e6710",
-    "0x4e6798",
-    "0x4e6800",
-    "0x4e6890",
-    "0x4e68a8",
-    "0x4e6950",
-    "0x4e6998",
-    "0x4e69b0",
-    "0x4e6a40",
-    "0x4e8440",
-    "0x4e8458",
-    "0x4e8e18",
-    "0x4e9910",
-    "0x4e99c0",
-    "0x4e9ad0",
-    "0x4e9ae8",
-    "0x4e9b40",
-    "0x4e9bd0",
-    "0x4e9d50",
-    "0x4ea068",
-    "0x4ea108",
-    "0x4ed5f0"
-  ],
+  "entry_contexts": {},
+  "generated_scripts": [],
   "integration_source": "game/raiden/character.c",
   "inventory_sha256": "6f27204a3058ab08d09c03c76ad9f67f5e1d72406ca874eea0d62fc58af21e2a",
   "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6500"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "air_diagonal_lk": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e63d8"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "air_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6658"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "air_kick": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e61f8"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "air_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6710"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "air_throw": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e5e28"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "close_hk": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6190"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "close_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e61e0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "combo_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e69b0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "crouch_hk": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6020"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "crouch_lk": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6158"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "crouch_lp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -259,8 +75,8 @@
     },
     "draw_weapon": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e62c0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "fan_fatality": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -269,18 +85,18 @@
     },
     "fatality_1": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e0210"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "fatality_2": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e56c8"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "high_kick": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e5ca0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "high_punch": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -289,33 +105,33 @@
     },
     "jab": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e62f0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "lightning": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004ed5f0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "lk_throw": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004de218"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "low_kick": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e5d90"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "lp_throw": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004de798"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "roundhouse": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6800"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "sidestep": {
       "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",
@@ -324,8 +140,8 @@
     },
     "spike_fatality": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6950"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "staff_back_hp": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -349,8 +165,8 @@
     },
     "sweep": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6798"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "teleport": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -359,18 +175,18 @@
     },
     "torpedo": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e8440"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "uppercut": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e62a0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "victory": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/generated/scripts.inc",
-      "symbol": "retail_script_004e6a40"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "weapon_throw": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -659,6 +475,296 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de218": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de640": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de668": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de6b8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de798": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0210": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0220": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e56c8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e56d8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e56f0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5728": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5740": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5760": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5770": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5788": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5ca0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5d90": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5e28": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5e50": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6020": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6190": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61e0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61f8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62c0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62d8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62f0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6330": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6360": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e63b0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e63d8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6500": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6658": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e66d0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e66f0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6710": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6798": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6800": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6890": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e68a8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6950": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6998": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e69b0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6a40": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8440": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8458": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8e18": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9910": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e99c0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9ad0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9ae8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9b40": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9bd0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9d50": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea068": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea108": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ed5f0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     }
   }
 }

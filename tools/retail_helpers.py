@@ -5,7 +5,7 @@ signatures. `port` identifies the existing engine adaptation, never an original
 source recovery. Related addresses are explicit, bounded navigation, not a
 recursive native disassembly closure. Add new knowledge here once for all ports.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 @dataclass(frozen=True)
@@ -246,3 +246,7 @@ HELPERS[0x48b030] = H('camera_compact_spline', 'Q16 track parameter and four nei
     'Sample on the independent camera clock.', ('game/presentation.c', 'camera_sample'))
 
 HELPERS[0x467e00] = H('fan_fatality_dispatch', 'active fighter and stage finish gate', 'Shared fan scene native coordinator; retail actor scripts.', 'Resumable scene.', ('game/retail_scene.c', 'retail_fan_finish'))
+
+for _address, _helper in list(HELPERS.items()):
+    if _helper.port and _helper.port[0].endswith('/generated/scripts.inc'):
+        HELPERS[_address] = replace(_helper, port=('game/retail_vm.c', 'retail_vm_enter'))

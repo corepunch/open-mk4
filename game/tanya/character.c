@@ -14,8 +14,6 @@ static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOC
 static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
 static const MoveDef s_victory = {124, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
-#include "generated/scripts.inc"
-
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = tanya_press_high_punch,
     [BUTTON_LOW_PUNCH] = tanya_press_low_punch,
     [BUTTON_HIGH_KICK] = tanya_press_high_kick,
@@ -95,177 +93,177 @@ const CharacterDef mk4_tanya = {
 };
 
 void tanya_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_script_004e5d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_script_004e61f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_script_004e6800(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6890(Fighter *fighter) {
-  retail_script_004e6890(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6890, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e68a8(Fighter *fighter) {
-  retail_script_004e68a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e68a8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004ed268(Fighter *fighter) {
-  retail_script_004ed268(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004ed2c0(Fighter *fighter) {
-  retail_script_004ed2c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e81f0(Fighter *fighter) {
-  retail_script_004e81f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81f0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e84b8(Fighter *fighter) {
-  retail_script_004e84b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004ed190(Fighter *fighter) {
-  retail_script_004ed190(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed190, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e9db8(Fighter *fighter) {
-  retail_script_004e9db8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9db8, mk4_mmove_thrown_finish, 9);
 }
 
 void tanya_entry_retail_script_004e8bb0(Fighter *fighter) {
-  retail_script_004e8bb0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8bb0, mk4_mmove_thrown_finish, 9);
 }
 
 void tanya_entry_retail_script_004e5798(Fighter *fighter) {
-  retail_script_004e5798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5798, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e57c0(Fighter *fighter) {
-  retail_script_004e57c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e57c0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e5820(Fighter *fighter) {
-  retail_script_004e5820(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5820, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e5b38(Fighter *fighter) {
-  retail_script_004e5b38(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5b38, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6a40(Fighter *fighter) {
-  retail_script_004e6a40(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e1598(Fighter *fighter) {
-  retail_script_004e1598(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1598, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e15a8(Fighter *fighter) {
-  retail_script_004e15a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15a8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e15b8(Fighter *fighter) {
-  retail_script_004e15b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15b8, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e15d0(Fighter *fighter) {
-  retail_script_004e15d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15d0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e15e0(Fighter *fighter) {
-  retail_script_004e15e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15e0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e15f0(Fighter *fighter) {
-  retail_script_004e15f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15f0, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e1600(Fighter *fighter) {
-  retail_script_004e1600(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1600, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e16d0(Fighter *fighter) {
-  retail_script_004e16d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e16d0, fighter_ready, 9);
 }

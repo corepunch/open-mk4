@@ -61,7 +61,6 @@
 #define liu_script_lk_thrown_tail liu_kang_liu_script_lk_thrown_tail
 #define liu_script_land liu_kang_liu_script_land
 #define liu_script_lp_getup liu_kang_liu_script_lp_getup
-#define liu_script_motion liu_kang_liu_script_motion
 #define liu_script_reaction liu_kang_liu_script_reaction
 #define liu_script_roundhouse_start liu_kang_liu_script_roundhouse_start
 #define liu_script_roundhouse_tail liu_kang_liu_script_roundhouse_tail
@@ -195,7 +194,6 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter);
 void liu_kang_liu_script_lk_thrown_tail(Fighter *victim);
 void liu_kang_liu_script_land(Fighter *fighter);
 void liu_kang_liu_script_lp_getup(Fighter *victim);
-void liu_kang_liu_script_motion(Fighter *fighter, int speed, int delay, int duration);
 void liu_kang_liu_script_reaction(Fighter *fighter, int reaction);
 void liu_kang_liu_script_roundhouse_start(Fighter *fighter);
 void liu_kang_liu_script_roundhouse_tail(Fighter *fighter);

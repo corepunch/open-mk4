@@ -17,8 +17,6 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 111, .last = MOVE_END, .flags = SF_HOLD};
 
-#include "generated/scripts.inc"
-
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = jarek_press_punch,
     [BUTTON_LOW_PUNCH] = jarek_press_low_punch,
     [BUTTON_HIGH_KICK] = jarek_press_kick,
@@ -84,11 +82,11 @@ const CharacterDef mk4_jarek = {
 };
 
 void jarek_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004de640(Fighter *fighter) {
-  retail_script_004de640(fighter);
+  retail_vm_enter_owned(fighter, 0x4de640, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004de664(Fighter *fighter) {
@@ -98,173 +96,173 @@ void jarek_entry_retail_script_004de664(Fighter *fighter) {
 }
 
 void jarek_entry_retail_script_004de668(Fighter *fighter) {
-  retail_script_004de668(fighter);
+  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_script_004de6b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e5d20(Fighter *fighter) {
-  retail_script_004e5d20(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d20, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_script_004e5d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_script_004e61f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_script_004e6800(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_script_004e6860(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6860, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_script_004e6878(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6878, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e81a8(Fighter *fighter) {
-  retail_script_004e81a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81a8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004ed118(Fighter *fighter) {
-  retail_script_004ed118(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed118, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_script_004e6270(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004ec4f0(Fighter *fighter) {
-  retail_script_004ec4f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec4f0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e8c08(Fighter *fighter) {
-  retail_script_004e8c08(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8c08, mk4_mmove_thrown_finish, 12);
 }
 
 void jarek_entry_retail_script_004e84b8(Fighter *fighter) {
-  retail_script_004e84b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e9658(Fighter *fighter) {
-  retail_script_004e9658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9658, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e81c8(Fighter *fighter) {
-  retail_script_004e81c8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81c8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004d2db0(Fighter *fighter) {
-  retail_script_004d2db0(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2db0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004d2de0(Fighter *fighter) {
-  retail_script_004d2de0(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2de0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004d2e10(Fighter *fighter) {
-  retail_script_004d2e10(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2e10, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1220(Fighter *fighter) {
-  retail_script_004e1220(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1220, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1230(Fighter *fighter) {
-  retail_script_004e1230(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1230, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1248(Fighter *fighter) {
-  retail_script_004e1248(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1248, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1260(Fighter *fighter) {
-  retail_script_004e1260(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1260, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1270(Fighter *fighter) {
-  retail_script_004e1270(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1270, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1280(Fighter *fighter) {
-  retail_script_004e1280(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1280, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e1290(Fighter *fighter) {
-  retail_script_004e1290(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1290, fighter_ready, 12);
 }

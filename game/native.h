@@ -13,7 +13,6 @@ void native_play_rows(Fighter *fighter, int sample, int step, FighterFn end);
 void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames, int pose_step, FighterFn end);
 void native_await(Fighter *fighter, FighterTest condition, FighterFn end);
 void native_finish_clip(Fighter *fighter, FighterFn end);
-void native_repeat(Fighter *fighter, const mmove_t *move, int repetitions, FighterFn end);
 void native_scene_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end);
 void native_hold(Fighter *fighter, int frames, FighterFn end);
 void native_motion_begin(Fighter *fighter, int frames, FighterFn end);

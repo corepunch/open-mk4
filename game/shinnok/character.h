@@ -145,8 +145,6 @@ void shinnok_fatality_begin(Fighter *fighter, unsigned done);
 void shinnok_fatality_vanish_cue(Fighter *fighter);
 void shinnok_fatality_return(Fighter *fighter);
 void shinnok_fatality_maybe_complete(Fighter *owner);
-const mmove_t *shinnok_retail_script_004e2f58_repeat_phase(void);
-const mmove_t *shinnok_retail_script_004e2f98_repeat_phase(void);
 void shinnok_entry_retail_script_004e2ef0(Fighter *fighter);
 void shinnok_entry_retail_script_004e2f00(Fighter *fighter);
 void shinnok_entry_retail_script_004e2f10(Fighter *fighter);

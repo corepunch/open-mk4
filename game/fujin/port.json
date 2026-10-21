@@ -67,186 +67,22 @@
       "evidence": "The ordinary stance low kick is46a7b0 ->4e5d90, distinct from46a5f0 wind slam; its normal button route now reaches this existing adapter."
     }
   },
-  "entry_contexts": {
-    "0x4e6330": {
-      "clip": 295,
-      "count": 19,
-      "sample": 0,
-      "evidence": "Fujin jab root 4e62f0 opens clip 295 at sample 0 immediately before native tail 46dd00 enters this continuation; bounded Fujin jab query."
-    },
-    "0x4e61e0": {
-      "clip": 262,
-      "count": 10,
-      "sample": 0,
-      "evidence": "46be40 selects close HP clip 262 before 4e61e0 plays samples through 7 and enters shared native 46bf10."
-    },
-    "0x4e6890": {
-      "clip": 64,
-      "count": 45,
-      "sample": 0,
-      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
-    },
-    "0x4e68a8": {
-      "clip": 64,
-      "count": 45,
-      "sample": 0,
-      "evidence": "46f390 enters the 64/45-sample roundhouse fast/normal stream from sample zero."
-    },
-    "0x4e5d20": {
-      "clip": 65,
-      "count": 11,
-      "sample": 10,
-      "evidence": "46a6b0 ->470c60 block4e5d00 B[0]; 46a6c0 enters4e5d20, then46a6e0 reverses the remaining clip."
-    },
-    "0x4de318": {
-      "clip": 37,
-      "count": 66,
-      "sample": 18,
-      "evidence": "Shared paired LK owner continuation from4de2f8.",
-      "paired": true
-    },
-    "0x4de328": {
-      "clip": 37,
-      "count": 66,
-      "sample": 42,
-      "evidence": "Shared paired LK owner continuation from4de2f8.",
-      "paired": true
-    },
-    "0x4e6360": {
-      "clip": 295,
-      "count": 19,
-      "sample": 18,
-      "evidence": "46dd10 resumes the jab repeat after clip295 finishes at18; the native tail enters4e6360."
-    },
-    "0x4e8298": {
-      "clip": 58,
-      "count": 10,
-      "sample": 9,
-      "evidence": "4e8258 completes clip58 before47bf90 holds sample9 through its contact table."
-    },
-    "0x4e6950": {
-      "clip": 293,
-      "count": 20,
-      "sample": 0,
-      "evidence": "mk4_begin_stage_finish binds the scene-specific293/20 owner pose before4e6950 initial28-tick hold."
-    },
-    "0x4ed408": {
-      "clip": 211,
-      "count": 29,
-      "sample": 4,
-      "evidence": "49a3b0 advances clip211 to4 then spawns the straight bolt and enters4ed408."
-    },
-    "0x4ed788": {
-      "clip": 211,
-      "count": 29,
-      "sample": 4,
-      "return_to": "fujin_bow_followup_next",
-      "evidence": "49a290 advances clip211 to4 and spawns;4ed788 reaches8 then resumes49a190 for the next short or final shot."
-    },
-    "0x4e62d8": {
-      "clip": 244,
-      "count": 49,
-      "sample": 22,
-      "evidence": "46d260 equips after draw clip244 reaches22, then resumes its recovery."
-    },
-    "0x4e5c20": {
-      "clip": 98,
-      "count": 40,
-      "sample": 16,
-      "evidence": "Native46a650 keeps clip98 at16 after D8 contact, then enters4e5c20 recovery with valid end cursor40."
-    },
-    "0x4e9ff0": {
-      "clip": 195,
-      "count": 29,
-      "sample": 28,
-      "evidence": "Native4883b0 selects195 final pose with4298b0 before the impact and4-tick hold at4e9ff0."
-    },
-    "0x4ea040": {
-      "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Native46f650 controller return snaps the intermediate victim to its own floor if the paired owner was interrupted; do not retain the captured vertical offset."
-    },
-    "0x4ea050": {
-      "return_to": "mk4_mmove_thrown_finish",
-      "evidence": "Native46f650 controller return snaps the intermediate victim to its own floor if the paired owner was interrupted; do not retain the captured vertical offset."
-    },
-    "0x4dfed0": {
-      "clip": 291,
-      "count": 73,
-      "sample": 0,
-      "evidence": "43bea0 calls4611c0/490f60, selecting53d408[5]=Fujin standing descriptor291 before4dfed0 waits60 and binds547."
-    }
-  },
+  "entry_contexts": {},
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
-  "generated_scripts": [
-    "0x4de2f8",
-    "0x4de318",
-    "0x4de328",
-    "0x4de610",
-    "0x4de6b8",
-    "0x4de798",
-    "0x4e5d20",
-    "0x4e5ca0",
-    "0x4e5d90",
-    "0x4e6190",
-    "0x4e61e0",
-    "0x4e61f8",
-    "0x4e62a0",
-    "0x4e62f0",
-    "0x4e6330",
-    "0x4e6360",
-    "0x4e63b0",
-    "0x4e63d8",
-    "0x4e6500",
-    "0x4e6658",
-    "0x4e6710",
-    "0x4e6798",
-    "0x4e6800",
-    "0x4e6890",
-    "0x4e68a8",
-    "0x4e6950",
-    "0x4e69b0",
-    "0x4e8258",
-    "0x4e8298",
-    "0x4e62c0",
-    "0x4e62d8",
-    "0x4e66d0",
-    "0x4e66f0",
-    "0x4ed408",
-    "0x4ed788",
-    "0x4e9e10",
-    "0x4e5c00",
-    "0x4e5c20",
-    "0x4e5c50",
-    "0x4e9fe0",
-    "0x4e9ff0",
-    "0x4e8740",
-    "0x4e8770",
-    "0x4ea040",
-    "0x4ea050",
-    "0x4ea0b8",
-    "0x4e8830",
-    "0x4e9fb0",
-    "0x4dfed0",
-    "0x4ea2d8",
-    "0x4ea2a8",
-    "0x4e1f58",
-    "0x4e1f68",
-    "0x4e1f80",
-    "0x4e1f98"
-  ],
+  "generated_scripts": [],
   "integration_source": "game/fujin/character.c",
   "inventory_sha256": "7f1bd8dc883cb38692ebf440426136148bd2538ec09bae11ffbbe4c94003ab0c",
   "legacy_scripts": {},
   "moves": {
     "jab": {
       "evidence": "Fujin jab root 0x4e62f0 binds clips 294/295 and uses contact descriptor 0x4ebd38; bounded Fujin script query.",
-      "source": "game/fujin/generated/scripts.inc",
-      "symbol": "retail_script_004e62f0"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "low_kick": {
       "evidence": "Fujin low kick root 0x4e5d90 compiles to clip 308 and B[5]; Fujin move query and contact descriptor 0x4ebb10.",
-      "source": "game/fujin/generated/scripts.inc",
-      "symbol": "retail_script_004e5d90"
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter"
     },
     "air_diagonal_hk": {
       "source": "game/fujin/character.c",
@@ -801,6 +637,281 @@
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de2f8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de318": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de328": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de610": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de6b8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4de798": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5d20": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5ca0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5d90": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6190": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61e0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e61f8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62f0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6330": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6360": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e63b0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e63d8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6500": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6658": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6710": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6798": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6800": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6890": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e68a8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e6950": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e69b0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8258": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8298": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62c0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e62d8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e66d0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e66f0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ed408": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ed788": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9e10": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5c00": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5c20": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e5c50": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9fe0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9ff0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8740": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8770": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea040": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea050": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea0b8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e8830": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e9fb0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4dfed0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea2d8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4ea2a8": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e1f58": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e1f68": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e1f80": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e1f98": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     }
   }
 }

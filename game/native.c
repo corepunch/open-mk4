@@ -218,19 +218,6 @@ void native_finish_clip(Fighter *fighter, FighterFn end) {
   native_play(fighter, false);
 }
 
-void native_repeat(Fighter *fighter, const mmove_t *move, int repetitions, FighterFn end) {
-  int count = move->lastframe - move->firstframe + 1;
-  require(repetitions > 0, "Native frame repetition must be bounded");
-  native_begin(fighter, 0, repetitions * count - 1, end);
-  for (int repeat = 0; repeat < repetitions; ++repeat) {
-    for (int frame = 0; frame < count; ++frame) {
-      int row = repeat * count + frame;
-      fighter->native.frames[row] = move->frame[frame];
-      fighter->native.poses[row] = move->samples != NULL ? move->samples[frame] : move->firstframe + frame;
-    }
-  }
-}
-
 static void scene_weight_frame(Fighter *fighter, float weight) {
   fighter->blend_weight = (q16)weight;
 }

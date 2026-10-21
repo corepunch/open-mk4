@@ -105,15 +105,15 @@ static void sample(Fighter *fighter, int pose) {
 static void play(Fighter *fighter, int target, bool inclusive) {
   RetailVm *vm = &fighter->retail_vm;
   int current = fighter_sample(fighter);
-  if (target < 0 || target > fighter_move(fighter)->last) {
+  if (target < 0 || target > fighter_move(fighter)->last + 1) {
     vm_error(fighter, "playback target outside clip");
   }
   vm->stride = 1;
   vm->period = 1;
-  vm->target = target;
+  vm->target = target > fighter_move(fighter)->last ? fighter_move(fighter)->last : target;
   vm->direction = target >= current ? 1 : -1;
   vm->play_ticks = (target >= current ? target - current : current - target) + (inclusive ? 1 : 0);
-  vm->wake = g_battle.ticks + 1;
+  vm->wake = g_battle.ticks + (vm->play_ticks > 0 ? 1 : 0);
 }
 
 /* PauseTestCmp2CallStore consumes a descriptor only for prefix byte 2. */
@@ -139,7 +139,7 @@ void retail_vm_reverse_return(Fighter *fighter) {
 }
 
 AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
-  require(address >= 0x4eb000 && address <= 0x4ec000 - 24, "Attack record outside reviewed retail data");
+  require(address >= 0x4eb000 && address <= 0x4ec2a8 - 24, "Attack record outside reviewed retail data");
   uint32_t reactions = mk4_image_u32(image, address + 16);
   return (AttackRecord){(q16)mk4_image_u32(image, address), (q16)mk4_image_u32(image, address + 4), (q16)mk4_image_u32(image, address + 8),
       (q16)mk4_image_u32(image, address + 12), reactions & 255u, (reactions >> 8) & 255u, (reactions >> 16) & 255u, reactions >> 24,
@@ -149,7 +149,7 @@ AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
 static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
   RetailVm *vm = &fighter->retail_vm;
   uint32_t packed = mk4_image_u32(vm->image, table + selector * 4);
-  if (packed < 0x4eb000 / 4 || packed > (0x4ec000 - 24) / 4) {
+  if (packed < 0x4eb000 / 4 || packed > (0x4ec2a8 - 24) / 4) {
     vm_error(fighter, "contact record outside reviewed data");
   }
   AttackRecord record = retail_vm_attack_record(vm->image, packed * 4);
@@ -181,7 +181,12 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
       .native = native,
       .loop_count = previous.loop_count,
       .result = previous.result,
-      .selector = previous.selector};
+      .selector = previous.selector,
+      .repeat_count = previous.repeat_count,
+      .repeat_entry = previous.repeat_entry,
+      .repeat_after = previous.repeat_after,
+      .native_owner = previous.native_owner_set ? previous.native_owner : (unsigned)fighter->roster,
+      .native_owner_set = true};
   fighter->continuation++;
   const MoveDef *move = fighter_move(fighter);
   if (move->clip >= 0 && move->last == MOVE_END) {
@@ -192,6 +197,39 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
 
 void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
   retail_vm_start_at(fighter, retail_vm_image(), entry, RETAIL_SCRIPT_BEGIN, RETAIL_SCRIPT_END, next, retail_native_vm);
+}
+
+/* Legacy native services are still selected by the originating integration
+ * context. A victim/scene actor keeps its own model roster independently. */
+void retail_vm_enter_owned(Fighter *fighter, uint32_t entry, FighterFn next, unsigned native_owner) {
+  require(native_owner < MK4_ROSTER_COUNT, "Invalid native integration context");
+  fighter->retail_vm.native_owner = native_owner;
+  fighter->retail_vm.native_owner_set = true;
+  retail_vm_enter(fighter, entry, next);
+}
+
+static void repeat_enter(Fighter *fighter, uint32_t entry) {
+  RetailVm *vm = &fighter->retail_vm;
+  if (vm->active) {
+    retail_vm_start_at(fighter, vm->image, entry, vm->begin, vm->end, vm->finish, vm->native);
+  } else {
+    retail_vm_enter(fighter, entry, fighter_ready);
+  }
+}
+
+void retail_vm_repeat(Fighter *fighter, uint32_t entry, unsigned count, uint32_t after) {
+  require(count > 0, "Native script repetition must be bounded");
+  fighter->retail_vm.repeat_count = count;
+  fighter->retail_vm.repeat_entry = entry;
+  fighter->retail_vm.repeat_after = after;
+  repeat_enter(fighter, entry);
+}
+
+void retail_vm_repeat_next(Fighter *fighter) {
+  RetailVm *vm = &fighter->retail_vm;
+  require(vm->active && vm->repeat_count > 0, "Native script cycle without a live counter");
+  uint32_t next = --vm->repeat_count == 0 ? vm->repeat_after : vm->repeat_entry;
+  repeat_enter(fighter, next);
 }
 
 void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
@@ -356,11 +394,17 @@ void retail_vm_step(Fighter *fighter) {
       case 0x4d: {
         int current = fighter_sample(fighter);
         int target = opcode == 0x4d ? (int)arg : current + (int)arg;
+        int last = fighter_move(fighter)->last;
+        if (opcode != 0x4d && target > last) {
+          target = last;
+        }
         play(fighter, target, false);
         vm->paired = opcode == 0x10;
         if (opcode == 0x19 || opcode == 0x4d) {
           vm->stride = 2;
-          vm->play_ticks = (target - current + 1) / 2;
+          vm->play_ticks = opcode == 0x19 ? ((int)arg + 1) / 2 : (target - current + 1) / 2;
+        } else {
+          vm->play_ticks = (int)arg;
         }
         break;
       }

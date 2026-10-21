@@ -1,4 +1,5 @@
 #include "../character.h"
+#include "retail_vm.h"
 
 /* Fatality I: 467ce0 -> 43cbb0 -> 4e0498[6] = 455000. Shinnok vanishes
  * through clip 12 while a giant hand (rig 5083c4, nf_fat_g.geo) rises in
@@ -135,13 +136,12 @@ void shinnok_first_hidden(Fighter *fighter) {
 }
 
 void shinnok_first_hand_squeeze(Fighter *hand) {
-  native_repeat(hand, shinnok_retail_script_004e2f58_repeat_phase(), 23, shinnok_entry_retail_script_004e2f68);
-  native_play(hand, false);
+  retail_vm_repeat(hand, 0x4e2f58, 23, 0x4e2f68);
 }
 
 void shinnok_first_squeeze_cycle(Fighter *fighter) {
-  /* 4558d0/455b80 decrement the native counter; native_repeat owns it. */
-  mk4_script_fan_cycle(fighter);
+  /* 4558d0/455b80 decrement their native counter and re-enter retail. */
+  retail_vm_repeat_next(fighter);
 }
 
 void shinnok_first_task_end(Fighter *actor) {
@@ -161,8 +161,7 @@ void shinnok_first_victim_held(Fighter *victim) {
 }
 
 void shinnok_first_victim_squeeze(Fighter *victim) {
-  native_repeat(victim, shinnok_retail_script_004e2f98_repeat_phase(), 23, shinnok_entry_retail_script_004e2fa8);
-  native_play(victim, false);
+  retail_vm_repeat(victim, 0x4e2f98, 23, 0x4e2fa8);
 }
 
 void shinnok_first_victim_crush(Fighter *victim) {

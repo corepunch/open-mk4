@@ -191,3 +191,36 @@ claim of completed native gameplay parity or removal of per-character modules.
 The focused native ABI fixture checks callback installation, wrong-role and
 wrong-task rejection, unknown addresses and invalid owners. Existing runtime
 and malformed-stream checks continue to validate native handoff and cleanup.
+
+## All roster script roots execute directly
+
+All eighteen fighter integrations now enter original words through the shared
+VM. All remaining generated script C includes are deleted; no script/frame
+include remains in any fighter source. The last native frame-expansion helper,
+`native_repeat`, and its generated-phase accessors are removed. A bounded
+native counter re-enters a script with its original image, typed callback and
+successor; cancellation retires that counter. Caller-returning Liu throw
+playback retains its explicit native successor instead of falling through to a
+controller return.
+
+Native bridge selection temporarily preserves the originating integration
+context independently of a victim/scene actor's model roster. This corrects
+cross-actor native dispatch during migration; it does not make native masks or
+per-character entry adapters part of the target architecture. Existing native
+modules, C state definitions and configuration still need consolidation.
+
+The shared playback runtime now clamps counted/double-step rendering while
+retaining the requested count, following mk4decomp `anim_frame_advance.c` and
+the existing checked decoder contracts. A forward target may reach the
+one-past-end completion cursor without rendering an invalid pose. Contact
+record bounds include the retail D bank through 4ec290 (end 4ec2a8), rather
+than the earlier Scorpion-only extent.
+
+Validation: shared VM/native ABI/lifetime/repetition and malformed-stream
+checks; all eighteen strict require-implemented audits and canonical checks;
+source-navigation/helper checks (7/6); format and native-frame gates; game
+build and self-test (all eighteen rigs). The existing battle suite passes the
+migrated earlier integration scenarios and stops at the same pre-existing
+exact-tick Scorpion throw assertion reproduced on 4b234fe. The added fixtures
+exercise shared native repetition and native/model context separation, not
+authored fighter timing or balance.

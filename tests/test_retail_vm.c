@@ -211,6 +211,39 @@ static void playback_modes(void) {
   check(!owner->retail_vm.active && owner->blend_duration == 0, "interruption must retire a VM-owned blend");
 }
 
+static bool repeat_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
+  (void)argument;
+  if (kind != RETAIL_TAIL || (address != 1 && address != 2)) {
+    return false;
+  }
+  if (address == 1) {
+    retail_vm_repeat(fighter, 0x570008, 3, 0x570014);
+  } else {
+    retail_vm_repeat_next(fighter);
+  }
+  return true;
+}
+
+static void native_repetition(void) {
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_KICK, &locked);
+  const uint32_t words[] = {0x32000000, 1, 0x04000001, 0x32000000, 2, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(0x570000 + i * 4, words[i]);
+  }
+  control_finished = 0;
+  retail_vm_start(owner, &image, 0x570000, 0x570000 + sizeof words, control_end, repeat_native);
+  for (int i = 0; i < 10 && owner->retail_vm.active; ++i) {
+    check(owner->current_mmove == NULL, "native repetition must re-enter retail words without copying frame rows");
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 3, "native counter must repeat the source stream and resume its successor once");
+  retail_vm_start(owner, &image, 0x570000, 0x570000 + sizeof words, control_end, repeat_native);
+  fighter_interrupt(owner, fighter_ready);
+  check(owner->retail_vm.repeat_count == 0 && !owner->retail_vm.active, "interruption must retire the native repetition contract");
+}
+
 static void native_contracts(void) {
   Fighter *owner = setup(0, 2);
   check(retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0) && owner->body.physics == fighter_friction,
@@ -218,6 +251,11 @@ static void native_contracts(void) {
   check(!retail_native_vm(owner, 0x4913a0, RETAIL_CALL, 0), "physics callbacks must not be invoked through the call ABI");
   check(!retail_native_vm(owner, 0x49a6a0, RETAIL_SPAWN, 0), "spawn ABI must reject an unreviewed task type before calling native code");
   check(!retail_native_vm(owner, 0x12345678, RETAIL_TAIL, 0), "native lookup must reject unknown retail addresses");
+  owner->roster = 4;
+  owner->retail_vm.native_owner = 0;
+  owner->retail_vm.native_owner_set = true;
+  check(retail_native_vm(owner, 0x480040, RETAIL_PHYSICS, 0) && owner->body.physics != NULL,
+      "native binding context must remain independent of a victim or scene actor's model roster");
   owner->roster = MK4_ROSTER_COUNT;
   check(!retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0), "native lookup must reject an invalid owner before shifting its mask");
 }
@@ -358,6 +396,7 @@ int main(int argc, char **argv) {
   playback_modes();
   native_handoff();
   native_contracts();
+  native_repetition();
   data_tables();
   lifetimes();
   assets_bound();

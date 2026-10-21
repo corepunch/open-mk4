@@ -125,245 +125,245 @@ const CharacterDef mk4_scorpion = {
 /* Native-only blends; no VM timing tables. */
 
 void scorpion_entry_retail_script_004d2e58(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4d2e58, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4d2e58, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004d2e88(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4d2e88, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4d2e88, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004d2eb0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4d2eb0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4d2eb0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004d2ef8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4d2ef8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4d2ef8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004d2f10(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4d2f10, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4d2f10, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4de2f8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004de318(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4de318, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4de318, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004de328(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4de328, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4de328, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004de798(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4de798, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0278(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0278, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0278, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0288(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0288, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0288, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0298(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0298, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0298, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e02a8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e02a8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e02a8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e02b8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e02b8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e02b8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e02d0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e02d0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e02d0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0300(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0300, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0300, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0310(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0310, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0310, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0320(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0320, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0320, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0338(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0338, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0338, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0348(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0348, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0348, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e0358(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0358, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e0358, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e5b58(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5b58, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e5b58, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5c70, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5ca0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5e28, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e5e50, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e60b8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e60b8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e60b8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6158, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6190, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e61e0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e61f8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e62a0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e62c0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e62d8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e62f0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e63d8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6500, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6658, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e66d0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e66f0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6710, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6798, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6844(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6844, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6844, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6860, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6860, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6878, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6878, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6950, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e69b0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6d08(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6d08, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e6d08, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e87b0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e87b0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e87b0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e8818(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e8818, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e8850(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e8850, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e8850, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e97f8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e97f8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e97f8, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e9910, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e9910, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e9938(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e9938, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e9938, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e9970(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e9970, mk4_script_thrown_ready);
+  retail_vm_enter_owned(fighter, 0x4e9970, mk4_script_thrown_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e9d00(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e9d00, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e9d00, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e9f20(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e9f20, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4e9f20, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004ec8b0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4ec8b0, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004ec918(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4ec918, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4ec918, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004ed448(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4ed448, scorpion_script_spear_done);
+  retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0);
 }
 
 void scorpion_entry_retail_script_004ed4a8(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4ed4a8, fighter_ready);
+  retail_vm_enter_owned(fighter, 0x4ed4a8, fighter_ready, 0);
 }

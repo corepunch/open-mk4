@@ -101,6 +101,15 @@ for _character in SPECIFIC:
     SPECIFIC[_character]['fan_fatality'] = ('game/retail_scene.c', 'retail_fan_finish')
 
 
+# All catalogued script roots now enter the shared interpreter. Keep extraction
+# navigation on their native entry adapters while those adapters are retired.
+for _character, _entries in SPECIFIC.items():
+    _slug = {0: 'scorpion', 1: 'raiden', 2: 'sonya', 3: 'liu_kang', 4: 'sub_zero'}[_character]
+    for _name, _entry in list(_entries.items()):
+        if isinstance(_entry, tuple) and _entry[0].endswith('/generated/scripts.inc'):
+            _entries[_name] = ('game/%s/character.c' % _slug, '%s_entry_%s' % (_slug, _entry[1]))
+
+
 PORT_NOTES = {
     (4, 'lp_throw'): 'Retail selector 4de798[4] chooses 4de6b8: owner/victim 76/153, damage 0x2666 at sample 25, '
                     'owner return after sample 48. Reaction 102 plays 142/141/143, waits 20 and reverses into getup 328. '

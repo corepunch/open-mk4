@@ -38,7 +38,7 @@ class PortTests(unittest.TestCase):
                     self.assertTrue(code.endswith('}'))
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
-        self.assertIn('retail_script_004ed588', ice)
+        self.assertIn('sub_zero_entry_retail_script_004ed588', ice)
         self.assertIn('sub_zero_ice_projectile', source_closure(('game/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
             port_source(('game/sub_zero/character.c', 'if'))
@@ -47,15 +47,15 @@ class PortTests(unittest.TestCase):
 
     def test_ice_and_native_clone_have_reusable_phases_and_exact_values(self):
         ice = port_text(self.disassembly, 'ice', 4)
-        for value in ('static inline void retail_script_004ed588(', 'fighter_mmove_phase(', 'retail_script_004ed588_branch_',
-                      'script_spawn_ice', 'raw_fixed=', 'retail_contact_', '0x570a', '0049bc74', 'mk4decomp',
+        for value in ('retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4)',
+                      'script_spawn_ice', 'raw_fixed=', '0x570a', '0049bc74', 'mk4decomp',
                       'Existing engine C', 'not a standalone translation unit', 'literal', 'control target'):
             self.assertIn(value, ice)
         clone = port_text(self.disassembly, 'clone', 4)
         for value in ('clone_start', 'clone_object', '0x6147', 'ACTION_RETAIL_0406', 'Native move: no VM script root'):
             self.assertIn(value, clone)
         spear = port_text(self.disassembly, 'spear')
-        self.assertIn('retail_vm_enter(fighter, 0x4ed448, scorpion_script_spear_done)', spear)
+        self.assertIn('retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0)', spear)
         self.assertIn('scheduler wait; ticks=45', spear)
         self.assertIn('script_spear_return', spear)
         self.assertIn('Typed compiler boundaries', spear)

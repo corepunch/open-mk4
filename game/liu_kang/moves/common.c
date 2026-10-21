@@ -103,11 +103,6 @@ void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
   }
 }
 
-void liu_kang_liu_script_motion(Fighter *fighter, int speed, int delay, int duration) {
-  fighter->saved_motion[0] = speed;
-  native_schedule_speed(fighter, speed, delay, duration);
-}
-
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter) {
   const WeaponStrike *strike = &liu_kang_sword_attacks[3];
   weapon_script_contact_tail(fighter, &strike->record, strike->queries);

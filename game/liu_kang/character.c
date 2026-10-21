@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "character.h"
 
-#include "generated/scripts.inc"
-
 /* Retail attack records; source addresses identify the supplied EXE. */
 
 /* 0x4ebd50, A selector 2 */
@@ -164,193 +162,193 @@ const CharacterDef mk4_liu_kang = {
 };
 
 void liu_kang_entry_retail_script_004de3b0(Fighter *fighter) {
-  retail_script_004de3b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4de3b0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004de410(Fighter *fighter) {
-  retail_script_004de410(fighter);
+  retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004de428(Fighter *fighter) {
-  retail_script_004de428(fighter);
+  retail_vm_enter_owned(fighter, 0x4de428, liu_kang_entry_retail_script_004de468, 3);
 }
 
 void liu_kang_entry_retail_script_004de468(Fighter *fighter) {
-  retail_script_004de468(fighter);
+  retail_vm_enter_owned(fighter, 0x4de468, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004dfff8(Fighter *fighter) {
-  retail_script_004dfff8(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfff8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e0020(Fighter *fighter) {
-  retail_script_004e0020(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0020, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e60b8(Fighter *fighter) {
-  retail_script_004e60b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e60b8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_script_004e6158(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e67d8(Fighter *fighter) {
-  retail_script_004e67d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e67d8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6890(Fighter *fighter) {
-  retail_script_004e6890(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6890, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e68a8(Fighter *fighter) {
-  retail_script_004e68a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e68a8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6c90(Fighter *fighter) {
-  retail_script_004e6c90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6c90, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6d08(Fighter *fighter) {
-  retail_script_004e6d08(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6d08, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6df0(Fighter *fighter) {
-  retail_script_004e6df0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6df0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6e90(Fighter *fighter) {
-  retail_script_004e6e90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6e90, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e8610(Fighter *fighter) {
-  retail_script_004e8610(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8610, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e8678(Fighter *fighter) {
-  retail_script_004e8678(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8678, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e8688(Fighter *fighter) {
-  retail_script_004e8688(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8688, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e86a8(Fighter *fighter) {
-  retail_script_004e86a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e86a8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e86d0(Fighter *fighter) {
-  retail_script_004e86d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e86d0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e86e8(Fighter *fighter) {
-  retail_script_004e86e8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e86e8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e8718(Fighter *fighter) {
-  retail_script_004e8718(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8718, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e9a90(Fighter *fighter) {
-  retail_script_004e9a90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9a90, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e9ad0(Fighter *fighter) {
-  retail_script_004e9ad0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9ad0, mk4_script_thrown_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e9ae8(Fighter *fighter) {
-  retail_script_004e9ae8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9ae8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e9b68(Fighter *fighter) {
-  retail_script_004e9b68(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9b68, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004ec680(Fighter *fighter) {
-  retail_script_004ec680(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec680, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004ec7f0(Fighter *fighter) {
-  retail_script_004ec7f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004ed678(Fighter *fighter) {
-  retail_script_004ed678(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed678, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter) {
-  retail_script_004ed6c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed6c0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter) {
-  retail_script_004ed6f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed6f8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e9de8(Fighter *fighter) {
-  retail_script_004e9de8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9de8, mk4_mmove_thrown_finish, 3);
 }

@@ -17,8 +17,6 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 111, .last = MOVE_END, .flags = SF_HOLD};
 
-#include "generated/scripts.inc"
-
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = shinnok_press_punch,
     [BUTTON_LOW_PUNCH] = shinnok_press_low_punch,
     [BUTTON_HIGH_KICK] = shinnok_press_kick,
@@ -84,197 +82,189 @@ const CharacterDef mk4_shinnok = {
 };
 
 void shinnok_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_script_004e5d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_script_004e61f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_script_004e6800(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_script_004e6860(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6860, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_script_004e6878(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6878, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_script_004e6270(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e8d08(Fighter *fighter) {
-  retail_script_004e8d08(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8d08, mk4_mmove_thrown_finish, 6);
 }
 
 void shinnok_entry_retail_script_004e9460(Fighter *fighter) {
-  retail_script_004e9460(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9460, mk4_mmove_thrown_finish, 6);
 }
 
 void shinnok_entry_retail_script_004e9498(Fighter *fighter) {
-  retail_script_004e9498(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9498, mk4_mmove_thrown_finish, 6);
 }
 
 void shinnok_entry_retail_script_004ec8b0(Fighter *fighter) {
-  retail_script_004ec8b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2ef0(Fighter *fighter) {
-  retail_script_004e2ef0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2ef0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f00(Fighter *fighter) {
-  retail_script_004e2f00(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f00, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f10(Fighter *fighter) {
-  retail_script_004e2f10(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f10, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f20(Fighter *fighter) {
-  retail_script_004e2f20(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f20, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f30(Fighter *fighter) {
-  retail_script_004e2f30(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f30, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f40(Fighter *fighter) {
-  retail_script_004e2f40(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f40, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f68(Fighter *fighter) {
-  retail_script_004e2f68(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f68, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f78(Fighter *fighter) {
-  retail_script_004e2f78(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f78, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f88(Fighter *fighter) {
-  retail_script_004e2f88(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f88, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2fa8(Fighter *fighter) {
-  retail_script_004e2fa8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2fa8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2fb8(Fighter *fighter) {
-  retail_script_004e2fb8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2fb8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e0088(Fighter *fighter) {
-  retail_script_004e0088(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0088, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2fc8(Fighter *fighter) {
-  retail_script_004e2fc8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2fc8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2fd8(Fighter *fighter) {
-  retail_script_004e2fd8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2fd8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e00b8(Fighter *fighter) {
-  retail_script_004e00b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e00b8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e00e0(Fighter *fighter) {
-  retail_script_004e00e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e00e0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e00f8(Fighter *fighter) {
-  retail_script_004e00f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e00f8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004ea270(Fighter *fighter) {
-  retail_script_004ea270(fighter);
-}
-
-const mmove_t *shinnok_retail_script_004e2f58_repeat_phase(void) {
-  return &retail_script_004e2f58_phase;
-}
-
-const mmove_t *shinnok_retail_script_004e2f98_repeat_phase(void) {
-  return &retail_script_004e2f98_phase;
+  retail_vm_enter_owned(fighter, 0x4ea270, fighter_ready, 6);
 }

@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "character.h"
 
-#include "generated/scripts.inc"
-
 static const MoveDef s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
 const MoveDef quan_chi_s_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK};
@@ -91,181 +89,181 @@ const CharacterDef mk4_quan_chi = {
 };
 
 void quan_chi_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6998(Fighter *fighter) {
-  retail_script_004e6998(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6998, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_script_004e5d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_script_004e5e28(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_script_004e5e50(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_script_004e61f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_script_004e6800(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_script_004e6860(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6860, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_script_004e6878(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6878, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_script_004e9910(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9910, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_script_004e6270(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter) {
-  retail_script_004ed3a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed3a0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004ed3c0(Fighter *fighter) {
-  retail_script_004ed3c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed3c0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e9cd8(Fighter *fighter) {
-  retail_script_004e9cd8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9cd8, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e8100(Fighter *fighter) {
-  retail_script_004e8100(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8100, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e8a48(Fighter *fighter) {
-  retail_script_004e8a48(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8a48, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e9868(Fighter *fighter) {
-  retail_script_004e9868(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9868, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e8818(Fighter *fighter) {
-  retail_script_004e8818(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e9818(Fighter *fighter) {
-  retail_script_004e9818(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9818, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e9838(Fighter *fighter) {
-  retail_script_004e9838(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9838, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e14f8(Fighter *fighter) {
-  retail_script_004e14f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e14f8, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1508(Fighter *fighter) {
-  retail_script_004e1508(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1508, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1518(Fighter *fighter) {
-  retail_script_004e1518(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1518, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1528(Fighter *fighter) {
-  retail_script_004e1528(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1528, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1538(Fighter *fighter) {
-  retail_script_004e1538(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1538, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1558(Fighter *fighter) {
-  retail_script_004e1558(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1558, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1568(Fighter *fighter) {
-  retail_script_004e1568(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1568, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e1580(Fighter *fighter) {
-  retail_script_004e1580(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1580, fighter_ready, 8);
 }

@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "character.h"
 
-#include "generated/scripts.inc"
-
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
@@ -90,11 +88,11 @@ const CharacterDef mk4_reiko = {
 };
 
 void reiko_entry_retail_script_004de2f8(Fighter *fighter) {
-  retail_script_004de2f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004de640(Fighter *fighter) {
-  retail_script_004de640(fighter);
+  retail_vm_enter_owned(fighter, 0x4de640, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004de664(Fighter *fighter) {
@@ -103,225 +101,225 @@ void reiko_entry_retail_script_004de664(Fighter *fighter) {
 }
 
 void reiko_entry_retail_script_004de668(Fighter *fighter) {
-  retail_script_004de668(fighter);
+  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_script_004de6b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004de798(Fighter *fighter) {
-  retail_script_004de798(fighter);
+  retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_script_004e5c70(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_script_004e5ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_script_004e5d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e61f8(Fighter *fighter) {
-  retail_script_004e61f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_script_004e62a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_script_004e62f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e63d8(Fighter *fighter) {
-  retail_script_004e63d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6500(Fighter *fighter) {
-  retail_script_004e6500(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6500, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6658(Fighter *fighter) {
-  retail_script_004e6658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6658, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6710(Fighter *fighter) {
-  retail_script_004e6710(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_script_004e6798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_script_004e6800(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6890(Fighter *fighter) {
-  retail_script_004e6890(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6890, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e68a8(Fighter *fighter) {
-  retail_script_004e68a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e68a8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6950(Fighter *fighter) {
-  retail_script_004e6950(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e9b40(Fighter *fighter) {
-  retail_script_004e9b40(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9b40, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e9bd0(Fighter *fighter) {
-  retail_script_004e9bd0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9bd0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_script_004e61e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e69b0(Fighter *fighter) {
-  retail_script_004e69b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e6190(Fighter *fighter) {
-  retail_script_004e6190(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_script_004e62c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e66d0(Fighter *fighter) {
-  retail_script_004e66d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66d0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e66f0(Fighter *fighter) {
-  retail_script_004e66f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e66f0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004ea040(Fighter *fighter) {
-  retail_script_004ea040(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea040, mk4_script_thrown_ready, 7);
 }
 
 void reiko_entry_retail_script_004ea0b8(Fighter *fighter) {
-  retail_script_004ea0b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea0b8, mk4_script_thrown_ready, 7);
 }
 
 void reiko_entry_retail_script_004e82b8(Fighter *fighter) {
-  retail_script_004e82b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e82b8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e82e0(Fighter *fighter) {
-  retail_script_004e82e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e82e0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e8310(Fighter *fighter) {
-  retail_script_004e8310(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8310, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e8818(Fighter *fighter) {
-  retail_script_004e8818(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e9880(Fighter *fighter) {
-  retail_script_004e9880(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9880, mk4_script_thrown_ready, 7);
 }
 
 void reiko_entry_retail_script_004ed038(Fighter *fighter) {
-  retail_script_004ed038(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e97f8(Fighter *fighter) {
-  retail_script_004e97f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e97f8, fighter_stop_mmove, 7);
 }
 
 void reiko_entry_retail_script_004e2cf0(Fighter *fighter) {
-  retail_script_004e2cf0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2cf0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d18(Fighter *fighter) {
-  retail_script_004e2d18(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d18, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d28(Fighter *fighter) {
-  retail_script_004e2d28(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d28, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d38(Fighter *fighter) {
-  retail_script_004e2d38(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d38, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d48(Fighter *fighter) {
-  retail_script_004e2d48(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d48, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d58(Fighter *fighter) {
-  retail_script_004e2d58(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d58, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d68(Fighter *fighter) {
-  retail_script_004e2d68(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d68, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d78(Fighter *fighter) {
-  retail_script_004e2d78(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d78, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2d88(Fighter *fighter) {
-  retail_script_004e2d88(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d88, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2dc0(Fighter *fighter) {
-  retail_script_004e2dc0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2dc0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2dd0(Fighter *fighter) {
-  retail_script_004e2dd0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2dd0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2de0(Fighter *fighter) {
-  retail_script_004e2de0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2de0, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2df8(Fighter *fighter) {
-  retail_script_004e2df8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2df8, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2e08(Fighter *fighter) {
-  retail_script_004e2e08(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e08, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2e18(Fighter *fighter) {
-  retail_script_004e2e18(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e18, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2e40(Fighter *fighter) {
-  retail_script_004e2e40(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e40, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004e2e50(Fighter *fighter) {
-  retail_script_004e2e50(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e50, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004d2d10(Fighter *fighter) {
-  retail_script_004d2d10(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2d10, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004d2d60(Fighter *fighter) {
-  retail_script_004d2d60(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2d60, fighter_ready, 7);
 }
 
 void reiko_entry_retail_script_004d2d90(Fighter *fighter) {
-  retail_script_004d2d90(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2d90, fighter_ready, 7);
 }

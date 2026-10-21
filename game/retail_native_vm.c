@@ -702,7 +702,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
   if (fighter->roster < 0 || fighter->roster >= MK4_ROSTER_COUNT) {
     return false;
   }
-  uint32_t owner = 1u << fighter->roster;
+  unsigned context = fighter->retail_vm.native_owner_set ? fighter->retail_vm.native_owner : (unsigned)fighter->roster;
+  if (context >= MK4_ROSTER_COUNT) {
+    return false;
+  }
+  uint32_t owner = 1u << context;
   switch (kind) {
     case RETAIL_CALL:
       switch (address) {

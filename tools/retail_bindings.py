@@ -1423,6 +1423,11 @@ def bindings_for(character):
         links = {address: replace(binding, symbol="retail_vm_enter", source="game/retail_vm.c")
                  for address, binding in links.items()}
     result = {**BINDINGS, **links, **CHARACTER_BINDINGS.get(character, {})}
+    # Native script links always enter original words in the shared VM.
+    result = {address: replace(binding, symbol='retail_vm_enter', source='game/retail_vm.c')
+              if binding.script_target else binding for address, binding in result.items()}
+    if 0x45b050 in result:
+        result[0x45b050] = replace(result[0x45b050], symbol='mk4_script_schedule_motion', source='game/script.c')
     # 43d530 is a reviewed nonblocking cycle boundary. Native coordinators
     # expand its generated frame phase rather than decrementing a counter.
     if 0x43d530 in result:
