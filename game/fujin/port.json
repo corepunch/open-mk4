@@ -135,8 +135,8 @@
       "evidence": "Fujin close low-punch throw entry starts selector root 4de798, which selects generated extended or short root."
     },
     "roundhouse": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Fujin roundhouse command starts generated stream 4e6800 and its native startup selector."
     },
     "spike_fatality": {

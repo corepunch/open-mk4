@@ -1447,6 +1447,10 @@ def bindings_for(character):
     # the old advancing-sweep adapter. Preserve that source mapping only.
     if result.get(0x46f270) and result[0x46f270].symbol in ('fujin_script_finish', 'reiko_script_finish', 'tanya_script_finish', 'kai_script_finish', 'noob_saibot_script_finish'):
         result[0x46f270] = replace(result[0x46f270], symbol='retail_sweep_advancing_tail', source='game/retail_combat.c')
+    for address, function in ((0x46f220, 'retail_roundhouse_start'), (0x46f270, 'retail_roundhouse_tail'),
+                              (0x46f390, 'retail_roundhouse_wide_start'), (0x46f3e0, 'retail_roundhouse_wide_tail')):
+        result[address] = Binding(function, 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='Shared native roundhouse branches/cursor/contact/recovery; checked local 46f220..46f644 and matching mk4decomp handlers')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

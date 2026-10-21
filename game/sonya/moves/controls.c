@@ -11,7 +11,7 @@ void sonya_press_lk(Fighter *fighter) {
 }
 
 void sonya_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sonya_roundhouse : retail_high_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick);
 }
 
 void sonya_cpu_close_hk(Fighter *fighter) {

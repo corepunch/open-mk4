@@ -38,7 +38,6 @@ void goro_press_high_kick(Fighter *fighter);
 void goro_press_high_punch(Fighter *fighter);
 void goro_press_low_kick(Fighter *fighter);
 void goro_press_low_punch(Fighter *fighter);
-void goro_roundhouse(Fighter *fighter);
 void goro_spike_fatality(Fighter *fighter);
 void goro_uppercut(Fighter *fighter);
 
@@ -56,8 +55,6 @@ void goro_script_lp_finish(Fighter *fighter);
 void goro_script_lp_pair_start(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
 void goro_script_opponent_reaction(Fighter *fighter, int reaction);
-void goro_script_roundhouse_finish(Fighter *fighter);
-void goro_script_roundhouse_start(Fighter *fighter);
 void goro_script_spike_tail(Fighter *fighter);
 
 extern const uint32_t goro_retail_weapon_descriptor[];
@@ -105,9 +102,6 @@ void goro_entry_retail_script_004e63d8(Fighter *fighter);
 void goro_entry_retail_script_004e6500(Fighter *fighter);
 void goro_entry_retail_script_004e6658(Fighter *fighter);
 void goro_entry_retail_script_004e6710(Fighter *fighter);
-void goro_entry_retail_script_004e6800(Fighter *fighter);
-void goro_entry_retail_script_004e6860(Fighter *fighter);
-void goro_entry_retail_script_004e6878(Fighter *fighter);
 void goro_entry_retail_script_004e6950(Fighter *fighter);
 void goro_entry_retail_script_004e69b0(Fighter *fighter);
 void goro_entry_retail_script_004e9910(Fighter *fighter);

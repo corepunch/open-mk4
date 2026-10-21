@@ -74,8 +74,6 @@
 #define script_reaction sonya_script_reaction
 #define script_ring_flash sonya_script_ring_flash
 #define script_ring_spawn sonya_script_ring_spawn
-#define script_roundhouse_start sonya_script_roundhouse_start
-#define script_roundhouse_tail sonya_script_roundhouse_tail
 #define script_second_branch sonya_script_second_branch
 #define script_second_cycle_end sonya_script_second_cycle_end
 #define script_second_open sonya_script_second_open
@@ -101,8 +99,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -179,9 +176,6 @@ void sonya_entry_retail_script_004e6658(Fighter *fighter);
 void sonya_entry_retail_script_004e66d0(Fighter *fighter);
 void sonya_entry_retail_script_004e66f0(Fighter *fighter);
 void sonya_entry_retail_script_004e6710(Fighter *fighter);
-void sonya_entry_retail_script_004e6800(Fighter *fighter);
-void sonya_entry_retail_script_004e6860(Fighter *fighter);
-void sonya_entry_retail_script_004e6878(Fighter *fighter);
 void sonya_entry_retail_script_004e6950(Fighter *fighter);
 void sonya_entry_retail_script_004e69b0(Fighter *fighter);
 void sonya_entry_retail_script_004e6a40(Fighter *fighter);
@@ -229,8 +223,6 @@ void sonya_script_lk_return(Fighter *fighter);
 void sonya_script_reaction(Fighter *fighter, int reaction);
 void sonya_script_ring_flash(Fighter *fighter, int task_type);
 void sonya_script_ring_spawn(Fighter *fighter, int task_type);
-void sonya_script_roundhouse_start(Fighter *fighter);
-void sonya_script_roundhouse_tail(Fighter *fighter);
 void sonya_script_second_branch(Fighter *fighter);
 void sonya_script_second_cycle_end(Fighter *fighter);
 void sonya_script_second_open(Fighter *fighter);
@@ -252,7 +244,6 @@ void sonya_hk(Fighter *fighter);
 void sonya_hp(Fighter *fighter);
 void sonya_leg_grab(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
-void sonya_roundhouse(Fighter *fighter);
 void sonya_spike_fatality(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);
 void sonya_uppercut(Fighter *fighter);

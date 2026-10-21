@@ -138,8 +138,8 @@
       "evidence": "Native selector 0x483550 disarms and enters 0x4e9620: clip 183 launch, landing wait and 488b40 side getup."
     },
     "roundhouse": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Reptile roundhouse entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "spike_fatality": {

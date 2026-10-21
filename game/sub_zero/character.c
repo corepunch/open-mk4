@@ -67,12 +67,11 @@ const GroundAttack sub_zero_ground_attacks[] = {
   {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
   {{.clip = 532, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 11, 29, 32},
   {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
-  {{.clip = 313, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010D}, {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796}, 16, 33, 61},
 };
 // clang-format on
 
 const NativeGroundProfile sub_zero_ground_profile = {
-    sub_zero_ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 0, 28, 21, 22, 38, NULL};
+    sub_zero_ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 0, 28};
 
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
  * Each extends, queries while holding its strike pose, then retracts. The
@@ -342,18 +341,6 @@ void sub_zero_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6860(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6860, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6878(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6878, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e6950(Fighter *fighter) {

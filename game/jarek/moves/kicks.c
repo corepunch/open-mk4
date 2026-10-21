@@ -10,7 +10,7 @@ void jarek_script_low_kick_clear(Fighter *fighter) {
 
 void jarek_press_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, jarek_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

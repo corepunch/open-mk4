@@ -13,7 +13,7 @@ static void fujin_enter_kick(Fighter *fighter) {
 
 void fujin_press_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fujin_press_roundhouse(fighter);
+    retail_press_roundhouse(fighter);
     return;
   }
 

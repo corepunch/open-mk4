@@ -13,7 +13,7 @@ void kitana_press_lk(Fighter *fighter) {
 }
 
 void kitana_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? kitana_roundhouse : retail_high_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick);
 }
 
 void kitana_command_shadow_low(Fighter *fighter) {

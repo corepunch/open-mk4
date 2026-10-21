@@ -356,3 +356,27 @@ gates pass. Existing advancing-sweep integration passes; the battle suite
 then stops at the already established baseline ground-throw tick assertion.
 No per-fighter tests were added. Remaining native controllers and roster
 configuration still require consolidation.
+
+## Shared roundhouse native family
+
+All eighteen roundhouse modules and their fixed native profiles are removed.
+Native 46f1f0 stores010d and enters retail selector4e6800. Shared46f220/46f390
+select the original fast/normal streams from the saved follow-up flag.
+Shared46f270/46f3e0 advance/query at most three times with live B[33]/B[34].
+No C roster clip choice, copied contact record or absolute-tick frame rows
+remain for this family. Six unused roundhouse rows are removed from the
+remaining ground profiles, whose API no longer carries roundhouse fields.
+Fifty-four unused VM thunks are also retired.
+
+Evidence: local46f1f0..46f644 and contact48d3f0, matched to mk4decomp's
+`PrefixThunkInstallSelf3State` embedded bit-9/contact handlers and
+`Install3StateMStackPopDispatch`. The latter saves the contact result across
+playback: result above one (hit/air hit) installs its28-visit native recovery;
+miss/block return after the bound clip. This replaces the previous C profile's
+inverted hit/miss recovery approximation with the checked native branch.
+
+Shared VM/native checks, all eighteen strict audits, formatting and native
+source gates pass. Existing roundhouse hit/miss and Goro integrations pass;
+the battle suite subsequently reaches the documented baseline throw tick
+assertion. No new fighter tests or timing matrices were added. Other native
+families and roster/controller configuration remain transitional.

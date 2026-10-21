@@ -22,8 +22,7 @@ static const GroundAttack attacks[8] = {
   [6] = {{.clip = 314, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
 };
 // clang-format on
-static const NativeGroundProfile profile = {
-    attacks, {&jarek_close_hp_followup, &jarek_combo_hp_followup, &jarek_close_hk_followup}, fighter_ready, 5, 2, 27, 0, 0, 0, NULL};
+static const NativeGroundProfile profile = {attacks, {&jarek_close_hp_followup, &jarek_combo_hp_followup, &jarek_close_hk_followup}, fighter_ready, 2, 27};
 
 void jarek_close_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[4].move);

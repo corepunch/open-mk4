@@ -1,5 +1,6 @@
 #include "retail_native.h"
 #include "retail_vm.h"
+#include "script.h"
 
 /* 470c60/470cb0: native contact rows, followed by a negative terminator
  * and native continuation. Poses and selectors stay in the retail image. */
@@ -149,4 +150,84 @@ void retail_sweep_advancing_tail(Fighter *fighter) {
 
 void retail_press_sweep(Fighter *fighter) {
   fighter_interrupt(fighter, retail_sweep);
+}
+
+/* Native 46f1f0 only stores 010d and enters the retail roster selector. */
+void retail_roundhouse(Fighter *fighter) {
+  bool fast = (fighter->flags & FF_FOLLOW_UP) != 0;
+  mk4_script_stop_body(fighter);
+  retail_native_begin(fighter, S_KICK, ACTION_RETAIL_010D, false);
+  fighter->native_followup = fast;
+  retail_vm_enter(fighter, 0x4e6800, fighter_ready);
+}
+
+void retail_press_roundhouse(Fighter *fighter) {
+  fighter_interrupt(fighter, retail_roundhouse);
+}
+
+void retail_roundhouse_start(Fighter *fighter) {
+  retail_vm_enter(fighter, fighter->native_followup ? 0x4e6860 : 0x4e6878, fighter->retail_vm.finish);
+}
+
+void retail_roundhouse_wide_start(Fighter *fighter) {
+  retail_vm_enter(fighter, fighter->native_followup ? 0x4e6890 : 0x4e68a8, fighter->retail_vm.finish);
+}
+
+static void roundhouse_return(Fighter *fighter) {
+  FighterFn next = fighter->retail_vm.finish;
+  retail_vm_cancel(fighter);
+  if (next != NULL) {
+    next(fighter);
+  }
+}
+
+/* 46f500 saves the query result across forward playback. Results above one
+ * (ground/air hit) install the native 28-visit recovery; miss/block return. */
+static void roundhouse_recover(Fighter *fighter) {
+  RetailVm *vm = &fighter->retail_vm;
+  int pose = fighter_sample(fighter);
+  if (pose < fighter_move(fighter)->last) {
+    fighter->sample_override = pose + 1;
+    retail_vm_wait_native(fighter, 1, roundhouse_recover);
+  } else {
+    retail_vm_wait_native(fighter, vm->native_contact ? 28 : 0, roundhouse_return);
+  }
+}
+
+static void roundhouse_query(Fighter *fighter) {
+  RetailVm *vm = &fighter->retail_vm;
+  require(vm->active && vm->native_rows < 3, "Roundhouse query without a live native continuation");
+  int pose = fighter_sample(fighter);
+  if (pose < fighter_move(fighter)->last) {
+    fighter->sample_override = pose + 1;
+  }
+  uint32_t packed = mk4_image_u32(vm->image, 0x53d2b8 + vm->native_selector * 4);
+  AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
+  uint64_t continuation = fighter->continuation;
+  ContactResult result = battle_contact(fighter, &attack);
+  if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  if (result != CONTACT_MISS || ++vm->native_rows == 3) {
+    vm->native_contact = result == CONTACT_HIT || result == CONTACT_AIR_HIT;
+    fighter->action = ACTION_RETAIL_1006;
+    retail_vm_wait_native(fighter, 1, roundhouse_recover);
+  } else {
+    retail_vm_wait_native(fighter, 1, roundhouse_query);
+  }
+}
+
+static void roundhouse_contact_start(Fighter *fighter, unsigned selector) {
+  require(fighter->retail_vm.active, "Roundhouse native needs a live retail task");
+  fighter->retail_vm.native_rows = 0;
+  fighter->retail_vm.native_selector = selector;
+  roundhouse_query(fighter);
+}
+
+void retail_roundhouse_tail(Fighter *fighter) {
+  roundhouse_contact_start(fighter, 33);
+}
+
+void retail_roundhouse_wide_tail(Fighter *fighter) {
+  roundhouse_contact_start(fighter, 34);
 }

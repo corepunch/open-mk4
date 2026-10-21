@@ -13,7 +13,7 @@ void sub_zero_press_lk(Fighter *fighter) {
 }
 
 void sub_zero_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sub_zero_roundhouse : retail_high_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick);
 }
 
 void sub_zero_cpu_close_hk(Fighter *fighter) {

@@ -12,11 +12,9 @@ static const GroundAttack ground_attacks[] = {
   {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
   {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
   {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
-  {{.clip = 313, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010D}, {69468, -43909, 61603, 27525, 20, 20, 5, 0, 11796}, 16, 33, 61},
 };
 // clang-format on
-static const NativeGroundProfile ground_profile = {
-    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 2, 27, 19, 20, 44, NULL};
+static const NativeGroundProfile ground_profile = {ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 2, 27};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = sonya_press_combo_hp,
     [BUTTON_LOW_PUNCH] = sonya_press_lp,
     [BUTTON_HIGH_KICK] = sonya_press_kick,
@@ -45,8 +43,7 @@ void sonya_ground_attack(Fighter *fighter, int index) {
   fighter->native_followup = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
   static const FighterFn scripts[] = {sonya_entry_retail_script_004e5d90, sonya_ground_native_tail, sonya_entry_retail_script_004e6158,
-      sonya_entry_retail_script_004e6020, sonya_entry_retail_script_004e61e0, sonya_entry_retail_script_004e69b0, sonya_entry_retail_script_004e6190,
-      sonya_entry_retail_script_004e6800};
+      sonya_entry_retail_script_004e6020, sonya_entry_retail_script_004e61e0, sonya_entry_retail_script_004e69b0, sonya_entry_retail_script_004e6190};
   scripts[index](fighter);
 }
 

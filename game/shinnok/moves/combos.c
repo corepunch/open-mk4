@@ -23,7 +23,7 @@ static const GroundAttack attacks[8] = {
 };
 // clang-format on
 static const NativeGroundProfile profile = {
-    attacks, {&shinnok_close_hp_followup, &shinnok_combo_hp_followup, &shinnok_close_hk_followup}, fighter_ready, 5, 2, 27, 0, 0, 0, NULL};
+    attacks, {&shinnok_close_hp_followup, &shinnok_combo_hp_followup, &shinnok_close_hk_followup}, fighter_ready, 2, 27};
 
 void shinnok_close_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[4].move);

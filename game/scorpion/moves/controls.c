@@ -12,5 +12,5 @@ void scorpion_press_lk(Fighter *fighter) {
 }
 
 void scorpion_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? scorpion_roundhouse : retail_high_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick);
 }

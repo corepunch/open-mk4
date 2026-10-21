@@ -10,7 +10,7 @@
 
 void reptile_press_kick(Fighter *fighter) {
   if (!fighter->armed && fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, reptile_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

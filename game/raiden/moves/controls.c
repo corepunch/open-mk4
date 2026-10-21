@@ -13,7 +13,7 @@ void raiden_press_lk(Fighter *fighter) {
 }
 
 void raiden_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? raiden_roundhouse : retail_high_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick);
 }
 
 void raiden_cpu_close_hk(Fighter *fighter) {

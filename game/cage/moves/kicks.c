@@ -48,7 +48,7 @@ void cage_cpu_kick(Fighter *fighter) {
 
 void cage_press_high_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, cage_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

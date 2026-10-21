@@ -150,8 +150,8 @@
     },
     "roundhouse": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_roundhouse"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse"
     },
     "sidestep": {
       "evidence": "469250 is one shared retail sidestep native entry; runtime command dispatch and mk4decomp input handlers",

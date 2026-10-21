@@ -23,7 +23,7 @@ static const GroundAttack attacks[8] = {
 };
 // clang-format on
 static const NativeGroundProfile profile = {
-    attacks, {&reptile_close_hp_followup, &reptile_combo_hp_followup, &reptile_close_hk_followup}, fighter_ready, 5, 2, 27, 0, 0, 0, NULL};
+    attacks, {&reptile_close_hp_followup, &reptile_combo_hp_followup, &reptile_close_hk_followup}, fighter_ready, 2, 27};
 
 void reptile_close_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[4].move);

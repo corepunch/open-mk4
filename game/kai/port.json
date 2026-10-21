@@ -99,8 +99,8 @@
       "evidence": "Kai slot-11 LP throw enters generated 0x4de798; native 0x42cb80 selects generated 0x4de610 or 0x4de6b8 from the paired ordering/range result; typed inventory and exact-entry listings."
     },
     "roundhouse": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6800, 0x4e6860, 0x4e6878); verified by typed Kai inventory."
     },
     "spike_fatality": {

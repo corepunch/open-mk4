@@ -7,7 +7,7 @@
 
 void shinnok_press_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, shinnok_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

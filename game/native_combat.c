@@ -11,8 +11,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -30,7 +29,7 @@ static void close_followup(Fighter *fighter) {
 
 /* Only entry/branch construction evaluates frame numbers. Action callbacks
  * below query combat/input state; none advances a timer or tests a deadline. */
-static int ground_pose(const NativeGroundProfile *profile, int index, int frame, int active, int fast, bool hit, int initial) {
+static int ground_pose(const NativeGroundProfile *profile, int index, int frame, int active, bool hit, int initial) {
   switch (index) {
     case G_CROUCH_LP:
     case G_CROUCH_LK: {
@@ -47,10 +46,6 @@ static int ground_pose(const NativeGroundProfile *profile, int index, int frame,
       int reverse = hit ? 10 : 12;
       return frame < 8 ? frame + 5 : frame < reverse ? 12 : maxi(0, 12 - frame + reverse);
     }
-    case G_ROUNDHOUSE:
-      return frame <= 6       ? frame * 2
-             : frame < active ? mini(profile->round_pre, 12 + (frame - 6) * (fast ? 2 : 1))
-                              : mini(profile->round_last, profile->round_first + frame - active);
     default:
       return initial;
   }
@@ -67,9 +62,7 @@ static void ground_query(Fighter *fighter) {
     gate = victim->action == ACTION_RETAIL_2001 || victim->action == ACTION_RETAIL_0106 || victim->action == ACTION_RETAIL_0107;
   }
   fighter->action = ACTION_RETAIL_1006;
-  if (gate || fighter->connected ||
-      battle_contact(fighter, index == G_ROUNDHOUSE && profile->roundhouse_record != NULL ? profile->roundhouse_record : &profile->attacks[index].record) ==
-          CONTACT_MISS) {
+  if (gate || fighter->connected || battle_contact(fighter, &profile->attacks[index].record) == CONTACT_MISS) {
     return;
   }
   if (index >= G_CLOSE_HP && index <= G_CLOSE_HK) {
@@ -83,10 +76,9 @@ static void ground_build(Fighter *fighter, int first, bool immediate) {
   const NativeGroundProfile *profile = fighter->native_context;
   int index = fighter->script_phase;
   const GroundAttack *attack = &profile->attacks[index];
-  int fast = index == G_ROUNDHOUSE && fighter->native_followup ? profile->fast : 0;
-  int active = attack->active - fast;
+  int active = attack->active;
   bool hit = fighter->connected;
-  int end = (hit && !(index == G_ROUNDHOUSE && fighter->contact == CONTACT_BLOCK) ? attack->end_contact : attack->end_miss) - fast;
+  int end = hit ? attack->end_contact : attack->end_miss;
   int reverse = index == G_CLOSE_HP ? (hit ? 18 : 12) : index == G_CLOSE_HK ? (hit ? 10 : 12) : -1;
   int initial = fighter_sample(fighter);
   /* The compiled startup may hand off after the nominal active frame (for
@@ -96,11 +88,11 @@ static void ground_build(Fighter *fighter, int first, bool immediate) {
   int query_first = maxi(active, fighter->native_elapsed);
   native_begin(fighter, first, maxi(first, end), profile->ready);
   for (int frame = first; frame <= maxi(first, end); ++frame) {
-    FighterFn action = frame >= query_first && frame <= query_first + (index == G_ROUNDHOUSE ? 2 : 0) ? ground_query : NULL;
+    FighterFn action = frame == query_first ? ground_query : NULL;
     if (frame == reverse) {
       action = close_followup;
     }
-    native_frame(fighter, frame, ground_pose(profile, index, frame, active, fast, hit, initial), action);
+    native_frame(fighter, frame, ground_pose(profile, index, frame, active, hit, initial), action);
   }
   if (first > active) {
     fighter->action = ACTION_RETAIL_1006;

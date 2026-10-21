@@ -84,8 +84,8 @@
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "roundhouse": {
-      "source": "game/goro/moves/roundhouse.c",
-      "symbol": "goro_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "461030 with back held enters 46f1f0; Goro slot 4e6840 binds 313, 46f220 selects 4e6860/4e6878 and 46f270 queries B[33]."
     },
     "high_punch": {

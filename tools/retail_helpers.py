@@ -259,3 +259,5 @@ HELPERS[0x46d290] = H('standing_high_punch', 'active fighter and HP repeat input
 HELPERS[0x46dca0] = H('jab_entry', 'active fighter after controller LP throw gates', 'Shared post-gate 46dcbc action 010b and original script 4e62f0; controller throw gates remain separate.', 'Direct retail execution.', ('game/retail_combat.c', 'retail_jab'))
 
 HELPERS[0x46ef90] = H('sweep_entry', 'active fighter', 'Store010c, schedule the independent B28 cue and enter selector4e6798.', 'Shared retail execution.', ('game/retail_combat.c', 'retail_sweep'))
+
+HELPERS[0x46f1f0] = H('roundhouse_entry', 'active fighter', 'Store010d and enter the original character selector4e6800; shared native contacts and recovery.', 'Shared retail execution.', ('game/retail_combat.c', 'retail_roundhouse'))

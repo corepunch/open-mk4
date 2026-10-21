@@ -84,8 +84,8 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "roundhouse": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "fatality_1": {

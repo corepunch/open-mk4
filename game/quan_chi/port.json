@@ -135,8 +135,8 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "roundhouse": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "spike_fatality": {

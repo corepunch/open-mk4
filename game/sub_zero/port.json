@@ -135,8 +135,8 @@
     },
     "roundhouse": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_roundhouse"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse"
     },
     "scepter_back_hp": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

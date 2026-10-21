@@ -31,3 +31,9 @@ bool retail_native_gate(const Fighter *fighter, uint32_t address);
 #endif
 
 void retail_press_sweep(Fighter *fighter);
+void retail_roundhouse(Fighter *fighter);
+void retail_press_roundhouse(Fighter *fighter);
+void retail_roundhouse_start(Fighter *fighter);
+void retail_roundhouse_wide_start(Fighter *fighter);
+void retail_roundhouse_tail(Fighter *fighter);
+void retail_roundhouse_wide_tail(Fighter *fighter);

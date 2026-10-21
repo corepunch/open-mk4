@@ -72,8 +72,6 @@
 #define script_lp_return raiden_script_lp_return
 #define script_lp_select raiden_script_lp_select
 #define script_reaction raiden_script_reaction
-#define script_roundhouse_start raiden_script_roundhouse_start
-#define script_roundhouse_tail raiden_script_roundhouse_tail
 #define script_second_blend raiden_script_second_blend
 #define script_second_effect raiden_script_second_effect
 #define script_second_end raiden_script_second_end
@@ -105,8 +103,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -157,7 +154,6 @@ void raiden_crouch_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
 void raiden_hp(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
-void raiden_roundhouse(Fighter *fighter);
 void raiden_spike_fatality(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
@@ -194,9 +190,6 @@ void raiden_entry_retail_script_004e6658(Fighter *fighter);
 void raiden_entry_retail_script_004e66d0(Fighter *fighter);
 void raiden_entry_retail_script_004e66f0(Fighter *fighter);
 void raiden_entry_retail_script_004e6710(Fighter *fighter);
-void raiden_entry_retail_script_004e6800(Fighter *fighter);
-void raiden_entry_retail_script_004e6890(Fighter *fighter);
-void raiden_entry_retail_script_004e68a8(Fighter *fighter);
 void raiden_entry_retail_script_004e6950(Fighter *fighter);
 void raiden_entry_retail_script_004e69b0(Fighter *fighter);
 void raiden_entry_retail_script_004e6a40(Fighter *fighter);
@@ -241,8 +234,6 @@ void raiden_script_lp_end(Fighter *fighter);
 void raiden_script_lp_return(Fighter *fighter);
 void raiden_script_lp_select(Fighter *fighter);
 void raiden_script_reaction(Fighter *fighter, int reaction);
-void raiden_script_roundhouse_start(Fighter *fighter);
-void raiden_script_roundhouse_tail(Fighter *fighter);
 void raiden_script_second_blend(Fighter *fighter);
 void raiden_script_second_effect(Fighter *fighter);
 void raiden_script_second_end(Fighter *fighter);

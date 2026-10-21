@@ -23,7 +23,7 @@ static const GroundAttack attacks[8] = {
 };
 // clang-format on
 static const NativeGroundProfile profile = {
-    attacks, {&quan_chi_close_hp_followup, &quan_chi_combo_hp_followup, &quan_chi_close_hk_followup}, fighter_ready, 5, 2, 27, 0, 0, 0, NULL};
+    attacks, {&quan_chi_close_hp_followup, &quan_chi_combo_hp_followup, &quan_chi_close_hk_followup}, fighter_ready, 2, 27};
 
 void quan_chi_close_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[4].move);

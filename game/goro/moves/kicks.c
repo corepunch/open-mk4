@@ -8,7 +8,7 @@
 void goro_press_high_kick(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, goro_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {

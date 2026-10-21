@@ -189,8 +189,8 @@
       "evidence": "Shinnok roster slot 6 native entry 0x0042c560 and selected EXE script roots"
     },
     "roundhouse": {
-      "source": "game/shinnok/character.c",
-      "symbol": "shinnok_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Shinnok roster slot 6 native entry 0x0046f1f0 and selected EXE script roots"
     },
     "spike_fatality": {

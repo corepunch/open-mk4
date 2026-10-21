@@ -3,5 +3,5 @@
 /* Runner 0x470c60 with block 0x4e5d30: the first contact latches. */
 
 void liu_kang_press_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? liu_kang_roundhouse : liu_kang_hk);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_roundhouse : liu_kang_hk);
 }

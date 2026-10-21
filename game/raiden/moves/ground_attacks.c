@@ -12,11 +12,9 @@ static const GroundAttack ground_attacks[] = {
   {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
   {{.clip = 261, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 9, 26, 29},
   {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
-  {{.clip = 64, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010D}, {0x10f5c, -0xab85, 0xf0a3, 0x6b85, 15, 15, 5, 0, 0x2e14}, 14, 39, 67},
 };
 // clang-format on
-static const NativeGroundProfile ground_profile = {
-    ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 5, 2, 27, 19, 20, 44, NULL};
+static const NativeGroundProfile ground_profile = {ground_attacks, {&close_hp_followup, &combo_hp_followup, &close_hk_followup}, fighter_ready, 2, 27};
 static const ButtonTable close_hp_followup = {{[BUTTON_HIGH_PUNCH] = raiden_press_combo_hp,
     [BUTTON_LOW_PUNCH] = raiden_press_lp,
     [BUTTON_HIGH_KICK] = raiden_press_kick,
@@ -47,8 +45,7 @@ void raiden_ground_attack(Fighter *fighter, int index) {
   fighter->native_followup = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
   static const FighterFn scripts[] = {raiden_entry_retail_script_004e5d90, raiden_ground_native_tail, raiden_entry_retail_script_004e6158,
-      raiden_entry_retail_script_004e6020, raiden_entry_retail_script_004e61e0, raiden_entry_retail_script_004e69b0, raiden_entry_retail_script_004e6190,
-      raiden_entry_retail_script_004e6800};
+      raiden_entry_retail_script_004e6020, raiden_entry_retail_script_004e61e0, raiden_entry_retail_script_004e69b0, raiden_entry_retail_script_004e6190};
   scripts[index](fighter);
 }
 

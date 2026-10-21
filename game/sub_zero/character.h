@@ -102,8 +102,6 @@
 #define script_lp_owner_return sub_zero_script_lp_owner_return
 #define script_reaction sub_zero_script_reaction
 #define script_ready sub_zero_script_ready
-#define script_roundhouse_start sub_zero_script_roundhouse_start
-#define script_roundhouse_tail sub_zero_script_roundhouse_tail
 #define script_slide_return sub_zero_script_slide_return
 #define script_spawn_ice sub_zero_script_spawn_ice
 #define script_spike_tail sub_zero_script_spike_tail
@@ -123,8 +121,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -231,9 +228,6 @@ void sub_zero_entry_retail_script_004e6658(Fighter *fighter);
 void sub_zero_entry_retail_script_004e66d0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e66f0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6800(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6860(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6878(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6950(Fighter *fighter);
 void sub_zero_entry_retail_script_004e69c8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter);
@@ -289,8 +283,6 @@ void sub_zero_script_lp_getup(Fighter *victim);
 void sub_zero_script_lp_owner_return(Fighter *fighter);
 void sub_zero_script_reaction(Fighter *fighter, int reaction);
 void sub_zero_script_ready(Fighter *fighter);
-void sub_zero_script_roundhouse_start(Fighter *fighter);
-void sub_zero_script_roundhouse_tail(Fighter *fighter);
 void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
 void sub_zero_script_spike_tail(Fighter *fighter);
@@ -307,7 +299,6 @@ void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_hk(Fighter *fighter);
 void sub_zero_hp(Fighter *fighter);
 void sub_zero_ice(Fighter *fighter);
-void sub_zero_roundhouse(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
 void sub_zero_spike_fatality(Fighter *fighter);

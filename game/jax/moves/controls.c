@@ -7,7 +7,7 @@ void jax_press_lp(Fighter *fighter) {
 
 void jax_press_hk(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, jax_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

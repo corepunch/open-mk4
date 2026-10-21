@@ -52,8 +52,7 @@ typedef struct NativeGroundProfile {
   const GroundAttack *attacks;
   const ButtonTable *followups[3];
   FighterFn ready;
-  int fast, combo_offset, combo_last, round_pre, round_first, round_last;
-  const AttackRecord *roundhouse_record;
+  int combo_offset, combo_last;
 } NativeGroundProfile;
 
 typedef struct AirAttack {

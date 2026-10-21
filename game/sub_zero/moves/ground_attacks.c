@@ -17,7 +17,7 @@ void sub_zero_ground_attack(Fighter *fighter, int index) {
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
   static const FighterFn scripts[] = {sub_zero_entry_retail_script_004e6da0, sub_zero_ground_native_tail, sub_zero_entry_retail_script_004e6158,
       sub_zero_entry_retail_script_004e5fd8, sub_zero_entry_retail_script_004e61e0, sub_zero_entry_retail_script_004e69c8,
-      sub_zero_entry_retail_script_004e6190, sub_zero_entry_retail_script_004e6800};
+      sub_zero_entry_retail_script_004e6190};
   scripts[index](fighter);
 }
 

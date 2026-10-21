@@ -6,7 +6,7 @@ static void lk_return_hold(Fighter *fighter);
 void sonya_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
-    sonya_roundhouse(fighter);
+    retail_roundhouse(fighter);
   } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
     sonya_ground_attack(fighter, G_CLOSE_HK);
   } else {

@@ -13,13 +13,13 @@
     },
     "0x46f390": {
       "evidence": "Retail roundhouse selector reads actor flag 0x200 and enters 4e6890 when set or 4e68a8 otherwise; fighter_fast_start selects the corresponding generated Jax branch.",
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_roundhouse_start"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse_wide_start"
     },
     "0x46f3e0": {
       "evidence": "Retail callback advances Jax roundhouse clip and queries attack table B selector 34; port uses the established clip-64 phase with the exact Jax B[34] contact record.",
-      "source": "game/jax/character.c",
-      "symbol": "jax_script_roundhouse_tail"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse_wide_tail"
     },
     "0x467e00": {
       "source": "game/retail_scene.c",
@@ -124,8 +124,8 @@
     },
     "roundhouse": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for roundhouse",
-      "source": "game/jax/character.c",
-      "symbol": "jax_roundhouse"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse"
     },
     "spike_fatality": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for spike_fatality",

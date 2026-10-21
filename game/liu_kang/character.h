@@ -55,8 +55,6 @@
 #define liu_script_land liu_kang_liu_script_land
 #define liu_script_lp_getup liu_kang_liu_script_lp_getup
 #define liu_script_reaction liu_kang_liu_script_reaction
-#define liu_script_roundhouse_start liu_kang_liu_script_roundhouse_start
-#define liu_script_roundhouse_tail liu_kang_liu_script_roundhouse_tail
 #define liu_script_scene_event liu_kang_liu_script_scene_event
 #define liu_script_spawn_air liu_kang_liu_script_spawn_air
 #define liu_script_spawn_high liu_kang_liu_script_spawn_high
@@ -98,8 +96,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -144,7 +141,6 @@ void liu_kang_high_fireball(Fighter *fighter);
 void liu_kang_hk(Fighter *fighter);
 void liu_kang_hp(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
-void liu_kang_roundhouse(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
 void liu_kang_spike_fatality(Fighter *fighter);
 void liu_kang_uppercut(Fighter *fighter);
@@ -172,8 +168,6 @@ void liu_kang_liu_script_lk_thrown_tail(Fighter *victim);
 void liu_kang_liu_script_land(Fighter *fighter);
 void liu_kang_liu_script_lp_getup(Fighter *victim);
 void liu_kang_liu_script_reaction(Fighter *fighter, int reaction);
-void liu_kang_liu_script_roundhouse_start(Fighter *fighter);
-void liu_kang_liu_script_roundhouse_tail(Fighter *fighter);
 void liu_kang_liu_script_scene_event(Fighter *fighter, int selector);
 void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type);
 void liu_kang_liu_script_spawn_high(Fighter *fighter, int task_type);
@@ -217,13 +211,10 @@ void liu_kang_entry_retail_script_004e6658(Fighter *fighter);
 void liu_kang_entry_retail_script_004e66d0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e66f0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6710(Fighter *fighter);
-void liu_kang_entry_retail_script_004e6890(Fighter *fighter);
-void liu_kang_entry_retail_script_004e68a8(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6950(Fighter *fighter);
 void liu_kang_entry_retail_script_004e69b0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6d08(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6df0(Fighter *fighter);
-void liu_kang_entry_retail_script_004e6e90(Fighter *fighter);
 void liu_kang_entry_retail_script_004e8610(Fighter *fighter);
 void liu_kang_entry_retail_script_004e8678(Fighter *fighter);
 void liu_kang_entry_retail_script_004e8688(Fighter *fighter);

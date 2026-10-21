@@ -83,8 +83,6 @@
 #define script_lp_return scorpion_script_lp_return
 #define script_opponent_reaction scorpion_script_opponent_reaction
 #define script_reaction scorpion_script_reaction
-#define script_roundhouse_start scorpion_script_roundhouse_start
-#define script_roundhouse_tail scorpion_script_roundhouse_tail
 #define script_spawn_spear scorpion_script_spawn_spear
 #define script_spear_done scorpion_script_spear_done
 #define script_spear_pull scorpion_script_spear_pull
@@ -113,8 +111,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -197,9 +194,6 @@ void scorpion_entry_retail_script_004e6658(Fighter *fighter);
 void scorpion_entry_retail_script_004e66d0(Fighter *fighter);
 void scorpion_entry_retail_script_004e66f0(Fighter *fighter);
 void scorpion_entry_retail_script_004e6710(Fighter *fighter);
-void scorpion_entry_retail_script_004e6844(Fighter *fighter);
-void scorpion_entry_retail_script_004e6860(Fighter *fighter);
-void scorpion_entry_retail_script_004e6878(Fighter *fighter);
 void scorpion_entry_retail_script_004e6950(Fighter *fighter);
 void scorpion_entry_retail_script_004e69b0(Fighter *fighter);
 void scorpion_entry_retail_script_004e6d08(Fighter *fighter);
@@ -228,7 +222,6 @@ void scorpion_burn_fatality(Fighter *fighter);
 void scorpion_fire(Fighter *fighter);
 void scorpion_hk(Fighter *fighter);
 void scorpion_hp(Fighter *fighter);
-void scorpion_roundhouse(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_spike_fatality(Fighter *fighter);
 void scorpion_teleport(Fighter *fighter);
@@ -273,8 +266,6 @@ void scorpion_script_lp_return(Fighter *fighter);
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction);
 void scorpion_thrown_end_script(Fighter *victim);
 void scorpion_script_reaction(Fighter *fighter, int reaction);
-void scorpion_script_roundhouse_start(Fighter *fighter);
-void scorpion_script_roundhouse_tail(Fighter *fighter);
 void scorpion_script_spawn_spear(Fighter *fighter, int type);
 void scorpion_script_spear_done(Fighter *fighter);
 void scorpion_script_spear_pull(Fighter *fighter);

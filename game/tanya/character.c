@@ -124,18 +124,6 @@ void tanya_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 9);
 }
 
-void tanya_entry_retail_script_004e6800(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e6890(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6890, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e68a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e68a8, fighter_ready, 9);
-}
-
 void tanya_entry_retail_script_004e6950(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 9);
 }

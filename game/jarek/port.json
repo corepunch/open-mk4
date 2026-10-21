@@ -130,8 +130,8 @@
       "evidence": "Jarek roster slot 12 native entry 0x0042c560 and selected EXE script roots"
     },
     "roundhouse": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Jarek roster slot 12 native entry 0x0046f1f0 and selected EXE script roots"
     },
     "spike_fatality": {

@@ -70,8 +70,6 @@
 #define script_reaction kitana_script_reaction
 #define script_ring_flash kitana_script_ring_flash
 #define script_ring_spawn kitana_script_ring_spawn
-#define script_roundhouse_start kitana_script_roundhouse_start
-#define script_roundhouse_tail kitana_script_roundhouse_tail
 #define script_second_branch kitana_script_second_branch
 #define script_second_cycle_end kitana_script_second_cycle_end
 #define script_second_open kitana_script_second_open
@@ -97,8 +95,7 @@ enum {
   G_CROUCH_HK,
   G_CLOSE_HP,
   G_COMBO_HP,
-  G_CLOSE_HK,
-  G_ROUNDHOUSE
+  G_CLOSE_HK
 };
 
 enum {
@@ -138,7 +135,6 @@ void kitana_hk(Fighter *fighter);
 void kitana_hp(Fighter *fighter);
 void kitana_leg_grab(Fighter *fighter);
 void kitana_ring(Fighter *fighter);
-void kitana_roundhouse(Fighter *fighter);
 void kitana_shadow_install_physics(Fighter *fighter);
 void kitana_shadow_low(Fighter *fighter);
 void kitana_shadow_task_low(Fighter *fighter, int task_type);
@@ -192,9 +188,6 @@ void kitana_entry_retail_script_004e6658(Fighter *fighter);
 void kitana_entry_retail_script_004e66d0(Fighter *fighter);
 void kitana_entry_retail_script_004e66f0(Fighter *fighter);
 void kitana_entry_retail_script_004e6710(Fighter *fighter);
-void kitana_entry_retail_script_004e6800(Fighter *fighter);
-void kitana_entry_retail_script_004e6860(Fighter *fighter);
-void kitana_entry_retail_script_004e6878(Fighter *fighter);
 void kitana_entry_retail_script_004e6950(Fighter *fighter);
 void kitana_entry_retail_script_004e69b0(Fighter *fighter);
 void kitana_entry_retail_script_004e6a40(Fighter *fighter);
@@ -244,8 +237,6 @@ void kitana_script_lk_return(Fighter *fighter);
 void kitana_script_reaction(Fighter *fighter, int reaction);
 void kitana_script_ring_flash(Fighter *fighter, int task_type);
 void kitana_script_ring_spawn(Fighter *fighter, int task_type);
-void kitana_script_roundhouse_start(Fighter *fighter);
-void kitana_script_roundhouse_tail(Fighter *fighter);
 void kitana_script_second_branch(Fighter *fighter);
 void kitana_script_second_cycle_end(Fighter *fighter);
 void kitana_script_second_open(Fighter *fighter);

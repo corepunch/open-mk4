@@ -7,7 +7,7 @@
 
 void noob_saibot_press_high_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, noob_saibot_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

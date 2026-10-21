@@ -7,7 +7,7 @@
 
 void reiko_press_high_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, reiko_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

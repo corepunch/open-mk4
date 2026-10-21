@@ -2,7 +2,7 @@
 
 void kai_press_high_kick(Fighter *fighter) {
   if (!fighter->armed && fighter_holds_back(fighter)) {
-    fighter_interrupt(fighter, kai_roundhouse);
+    fighter_interrupt(fighter, retail_roundhouse);
     return;
   }
 

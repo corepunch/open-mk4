@@ -138,8 +138,8 @@
       "evidence": "Tanya low_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "roundhouse": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_roundhouse",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_roundhouse",
       "evidence": "Tanya roundhouse entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "close_hp": {
