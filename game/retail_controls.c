@@ -102,15 +102,15 @@ static void air_ground_hp(Fighter *fighter) {
   }
 }
 
-static void normal_hk(Fighter *fighter) {
+static FighterFn normal_hk_entry(Fighter *fighter) {
   const Fighter *peer = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
-    enter_action(fighter, 7);
+    return action_entry(fighter, 7);
   } else if (fighter_distance(fighter) <= q16_float(0xcccc) && !fighter_airborne(peer) && peer->action != ACTION_RETAIL_4005 &&
              peer->action != ACTION_RETAIL_4001) {
-    enter_action(fighter, 12);
+    return action_entry(fighter, 12);
   } else {
-    enter_action(fighter, 5);
+    return action_entry(fighter, 5);
   }
 }
 
@@ -120,10 +120,6 @@ void retail_normal_low_punch(Fighter *fighter) {
 
 void retail_normal_low_kick(Fighter *fighter) {
   (mk4_can_ground_throw(fighter, true) ? retail_lk_throw : retail_low_kick)(fighter);
-}
-
-static void normal_lk(Fighter *fighter) {
-  enter_action(fighter, fighter_holds_back(fighter) ? 6 : 4);
 }
 
 /* Native46b5d0 supplies only the literal script operand, not authored logic. */
@@ -151,10 +147,10 @@ void retail_press_table(Fighter *fighter, Button button) {
           fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp) : action_entry(fighter, 8);
       break;
     case 0x460fc0:
-      entry = normal_lk;
+      entry = action_entry(fighter, fighter_holds_back(fighter) ? 6 : 4);
       break;
     case 0x461030:
-      entry = normal_hk;
+      entry = normal_hk_entry(fighter);
       break;
     case 0x4610c0:
       /* The engine command matcher owns finish command gates before fallback. */
@@ -209,11 +205,11 @@ void retail_press_table(Fighter *fighter, Button button) {
       } else if (target == 0x46c6a0) {
         entry = fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick;
       } else {
-        entry = normal_hk;
+        entry = normal_hk_entry(fighter);
       }
       break;
     case 0x46c740:
-      entry = normal_lk;
+      entry = action_entry(fighter, fighter_holds_back(fighter) ? 6 : 4);
       break;
     default:
       fatal("Unimplemented retail button controller %08x", target);

@@ -810,3 +810,13 @@ checks, six helper-navigation checks and seven port-navigation checks pass. The
 existing runtime fixtures exercise the loaded input path; no tests were added.
 SDL self-test passes all18 rigs/11 arenas. The broad battle test's previously
 recorded air-throw assertion has not been reclassified as passing.
+
+## Preserve press-time direction modifiers
+
+The first broad integration run after loaded ground controls exposed a real
+bridge regression: Back+LK was selected inside the deferred native entry after
+the direction could be released. LK and HK controller selection now resolves
+the retail action target at the press boundary, then queues the selected native
+entry. The existing advancing-sweep integration check passes again and the
+battle suite proceeds to its previously recorded air-throw damage assertion.
+Compilation and formatting pass. No new fighter timing tests were added.
