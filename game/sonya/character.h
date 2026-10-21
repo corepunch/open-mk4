@@ -35,12 +35,10 @@
 #define s_victory sonya_s_victory
 #define scene_end_watch sonya_scene_end_watch
 #define script_air_diagonal_tail sonya_script_air_diagonal_tail
-#define script_air_getup sonya_script_air_getup
 #define script_air_hp_tail sonya_script_air_hp_tail
 #define script_air_kick_tail sonya_script_air_kick_tail
 #define script_air_lk_tail sonya_script_air_lk_tail
 #define script_air_lp_tail sonya_script_air_lp_tail
-#define script_air_release sonya_script_air_release
 #define script_cartwheel_tail sonya_script_cartwheel_tail
 #define script_close_hp_tail sonya_script_close_hp_tail
 #define script_combo_hp_tail sonya_script_combo_hp_tail
@@ -103,7 +101,6 @@ void sonya_entry_retail_script_004e5990(Fighter *fighter);
 void sonya_entry_retail_script_004e59a8(Fighter *fighter);
 void sonya_entry_retail_script_004e59c8(Fighter *fighter);
 void sonya_entry_retail_script_004e5a20(Fighter *fighter);
-void sonya_entry_retail_script_004e5ed0(Fighter *fighter);
 void sonya_entry_retail_script_004e62c0(Fighter *fighter);
 void sonya_entry_retail_script_004e62d8(Fighter *fighter);
 void sonya_entry_retail_script_004e6a40(Fighter *fighter);
@@ -114,7 +111,6 @@ void sonya_entry_retail_script_004e85c0(Fighter *fighter);
 void sonya_entry_retail_script_004e8b38(Fighter *fighter);
 void sonya_entry_retail_script_004e8f50(Fighter *fighter);
 void sonya_entry_retail_script_004e9110(Fighter *fighter);
-void sonya_entry_retail_script_004e98a0(Fighter *fighter);
 void sonya_entry_retail_script_004e9a68(Fighter *fighter);
 void sonya_entry_retail_script_004e9b88(Fighter *fighter);
 void sonya_entry_retail_script_004e9de8(Fighter *fighter);
@@ -127,12 +123,10 @@ extern const MoveDef sonya_s_knockdown;
 extern const MoveDef sonya_s_victory;
 void sonya_scene_end_watch(Fighter *fighter);
 void sonya_script_air_diagonal_tail(Fighter *fighter);
-void sonya_script_air_getup(Fighter *victim);
 void sonya_script_air_hp_tail(Fighter *fighter);
 void sonya_script_air_kick_tail(Fighter *fighter);
 void sonya_script_air_lk_tail(Fighter *fighter);
 void sonya_script_air_lp_tail(Fighter *fighter);
-void sonya_script_air_release(Fighter *fighter);
 void sonya_script_cartwheel_tail(Fighter *fighter);
 void sonya_script_draw_equip(Fighter *fighter);
 void sonya_script_first_release(Fighter *fighter);
@@ -153,7 +147,6 @@ void sonya_script_weapon_hp_tail(Fighter *fighter);
 void sonya_script_weapon_lp_tail(Fighter *fighter);
 void sonya_script_weapon_victim_getup(Fighter *victim);
 void sonya_second_fatality(Fighter *fighter);
-void sonya_air_throw(Fighter *fighter);
 void sonya_bicycle(Fighter *fighter);
 void sonya_cartwheel(Fighter *fighter);
 void sonya_hk(Fighter *fighter);

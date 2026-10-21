@@ -161,7 +161,7 @@ static void teleport_slam(Fighter *fighter) {
     teleport_blocked(fighter);
   } else {
     face_peer(fighter);
-    mk4_air_pair_frames(fighter, &s_slam, &s_slammed, noob_saibot_entry_retail_script_004e82e0, noob_saibot_slam_released_fall);
+    mk4_air_pair_frames(fighter, &s_slam, &s_slammed, noob_saibot_entry_retail_script_004e82e0, retail_slam_released_fall);
   }
 }
 
@@ -184,7 +184,7 @@ void noob_saibot_script_teleport_slam_fall(Fighter *fighter) {
 static void slam_land(Fighter *fighter) {
   /* 47c4b0: 48de80 subtracts 0x1c28 from the peer, then 46acc0. */
   battle_damage((Fighter *)fighter_opponent(fighter), 0x1c28);
-  noob_saibot_slam_tail(fighter);
+  retail_slam_tail(fighter);
 }
 
 static void gravity_gate(Fighter *fighter) {

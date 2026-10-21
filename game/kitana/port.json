@@ -46,9 +46,9 @@
       "symbol": "retail_air_low_punch"
     },
     "air_throw": {
-      "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw_flip"
     },
     "bicycle": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",

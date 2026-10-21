@@ -91,9 +91,9 @@
       "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_throw": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_air_throw",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw_slam",
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",
@@ -487,7 +487,7 @@
     "symbol": "quan_chi_weapon_descriptor",
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
-  "inventory_sha256": "c8316286f0b79b3bb2d65fcae95f8a8f51385a35c5e222167fdcfbc9e9a7681b",
+  "inventory_sha256": "770f5cf3f44ba59abdcc9792b693a617a268f2c9da9542b2abed4e1641efa1b7",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -510,9 +510,9 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46aba0": {
-      "source": "game/quan_chi/moves/throws.c",
-      "symbol": "quan_chi_air_throw",
-      "evidence": "Retail-listed air throw command and shared 45ed70/80 distance/height gate."
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw_slam",
+      "evidence": "Loaded command selects this original native address; shared capture and original scripts"
     },
     "0x499740": {
       "source": "game/quan_chi/moves/skull.c",
@@ -674,15 +674,20 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
-    "0x4e5e28": {
+    "0x4e5e78": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+      "evidence": "Quan Chi native46aba0 selects original4e5e78 and its fall/landing/reaction continuations, as checked in local EXE"
     },
-    "0x4e5e50": {
+    "0x4e5ea0": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+      "evidence": "Quan Chi native46aba0 selects original4e5e78 and its fall/landing/reaction continuations, as checked in local EXE"
+    },
+    "0x4e5eb0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Quan Chi native46aba0 selects original4e5e78 and its fall/landing/reaction continuations, as checked in local EXE"
     },
     "0x4e5fd0": {
       "source": "game/retail_vm.c",
@@ -844,10 +849,10 @@
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
-    "0x4e9910": {
+    "0x4e9880": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
+      "evidence": "Quan Chi native46aba0 selects original4e5e78 and its fall/landing/reaction continuations, as checked in local EXE"
     },
     "0x4e99e0": {
       "source": "game/retail_vm.c",

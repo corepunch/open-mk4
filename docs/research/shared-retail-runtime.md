@@ -861,3 +861,37 @@ are retained, as checked against the local native listing and shared selectors.
 Existing borrowed-fatality checks pass for both actor slots and both target
 classes. The bounded broad suite now advances to an obsolete cloned262/261
 close-combo matrix. Build/format checks pass; no tests were added for this fix.
+
+## Shared retail air throws and native reactions
+
+The four original air-throw entry addresses46aa80,46a990,46aba0 and46ae60 now
+select one shared capture implementation and their literal original script
+operands. Both captured views are unbound until the retail words bind them.
+Quan Chi's actual46aba0 input now runs4e5e78 and its slam continuations instead
+of the copied Scorpion throw. Research inventories reflect that selection,
+bringing the reviewed root count to1,138 across18 slots.
+
+Release/fall/get-up natives are actor-independent services. The duplicate
+Reiko/Noob slam and reaction implementations are shared once; the hop consumes
+original4e5ec0. Reaction85/89/105/166 native selection reads4ea4e8. Native484b60
+now follows its actual descriptor4fb628 and side-getup service4ea200; the old
+living-victim clip131 profile had copied the KO path. Flip get-up reads53cf70.
+Local listings were checked against mk4decomp's pending-match/native recovery
+structure, retaining our independent captured-victim interruption policy.
+
+Private capture/get-up animation seeds, duplicate release/slam helpers, five
+empty modules,27 unused VM adapters and the with-moves capture adapter are
+removed. Air button tables still include transitional C fallbacks; their
+retail-authoritative migration is the next step.
+
+Shared runtime tests cover the four native capture classes and KO ownership
+without authored timing/damage matrices. All strict audits, native source gates,
+formatting, six helper and seven port-navigation checks pass; SDL self-test
+passes18 rigs/11 arenas. The broad suite now passes air capture/interruption
+and the repaired borrowed-fatality dispatch. Obsolete Scorpion/Quan/Noob throw,
+cloned262/261 combo, C-roster-seed and per-tick kick/Scorpion frame assertions
+were retired or reduced to runtime ownership checks. The two unused C trace
+fixtures and their C-output paths were removed; JSON research evidence remains.
+The broad suite currently stops at a legacy direct-S_THROW balance assertion;
+unstarted throw states no longer contain character C behavior. It is not
+reported as passing.

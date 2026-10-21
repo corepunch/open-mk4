@@ -120,10 +120,6 @@ void reiko_entry_retail_script_004e8818(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 7);
 }
 
-void reiko_entry_retail_script_004e9880(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9880, mk4_script_thrown_ready, 7);
-}
-
 void reiko_entry_retail_script_004ed038(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 7);
 }

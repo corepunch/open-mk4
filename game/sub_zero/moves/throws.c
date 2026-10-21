@@ -61,7 +61,3 @@ void sub_zero_throw_disarm(Fighter *victim) {
 void sub_zero_script_lk_victim_rise(Fighter *victim) {
   fighter_start_mmove(victim, S_KNOCKDOWN, &s_lk_thrown_rise, &lk_rise);
 }
-
-void sub_zero_air_throw(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, sub_zero_entry_retail_script_004e5e28, sub_zero_entry_retail_script_004e9910);
-}

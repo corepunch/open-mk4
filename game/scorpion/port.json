@@ -41,9 +41,9 @@
       "symbol": "retail_air_low_punch"
     },
     "air_throw": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_air_throw"
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw"
     },
     "breathe_fire": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

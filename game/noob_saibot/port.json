@@ -86,9 +86,9 @@
       "symbol": "retail_air_low_punch"
     },
     "air_throw": {
-      "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail.",
-      "source": "game/noob_saibot/moves/throws.c",
-      "symbol": "noob_saibot_air_throw"
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw_slam"
     },
     "fan_fatality": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -391,8 +391,8 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "105": {
-      "source": "game/noob_saibot/moves/slam.c",
-      "symbol": "noob_saibot_slam_reaction",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_slam_reaction",
       "adaptation": "The landing owner applies the reaction directly and starts its own generated 4e9880.",
       "evidence": "46acc0 -> 480f50[105] -> 484760: disarm, floor snap, stop and generated 4e9880."
     },
@@ -532,9 +532,9 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x46aba0": {
-      "source": "game/noob_saibot/moves/throws.c",
-      "symbol": "noob_saibot_air_throw",
-      "evidence": "BLOCK record 4e4b08 (gate 45ed70) enters 46aba0: shared capture, 4e5e78/4e5ea0/4e5eb0 paired fall, 46aca0 landing damage and 46acc0 slam tail."
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw_slam",
+      "evidence": "Loaded command selects this original native address; shared capture and original scripts"
     },
     "0x498b70": {
       "source": "game/noob_saibot/moves/controls.c",

@@ -22,27 +22,6 @@ static const NativeAirProfile air_profile = {
 
 /* 484b60: the released victim turns for clip 131's reversed getup, samples
  * 46..79, unless the throw was lethal. */
-static const MoveDef s_air_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
-static const mframe_t air_getup_frames[34] = {{0}};
-static const mmove_t air_getup = {.firstframe = 46, .lastframe = 79, .frame = air_getup_frames, .endfunc = fighter_ready};
-
-void quan_chi_script_air_release(Fighter *fighter) {
-  mk4_mmove_air_throw_release(fighter);
-  quan_chi_entry_retail_script_004e5e50(fighter);
-}
-
-void quan_chi_script_air_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
-
-void quan_chi_script_air_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    fighter_finish_mmove(victim, NULL);
-    return;
-  }
-  victim->facing = -victim->facing;
-  fighter_start_mmove(victim, S_KNOCKDOWN, &s_air_getup, &air_getup);
-}
 
 void quan_chi_script_air_finish(Fighter *fighter) {
   int index = fighter->native_variant;

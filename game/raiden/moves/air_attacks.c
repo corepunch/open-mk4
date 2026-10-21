@@ -69,15 +69,6 @@ void raiden_script_air_diagonal_tail(Fighter *fighter) {
   air_native_tail(fighter, 3, 0);
 }
 
-void raiden_script_air_release(Fighter *fighter) {
-  mk4_mmove_air_throw_release(fighter);
-  raiden_entry_retail_script_004e5e50(fighter);
-}
-
-void raiden_script_air_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
-
 void raiden_cpu_air_hk(Fighter *fighter) {
   retail_air_attack(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? 3 : 2);
 }

@@ -36,9 +36,9 @@
       "symbol": "retail_air_low_punch"
     },
     "air_throw": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_air_throw"
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw"
     },
     "clone": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

@@ -131,6 +131,15 @@ static void victim_4852e0(Fighter *fighter) {
 
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x484760:
+      return retail_slam_reaction;
+    case 0x4847a0:
+      return retail_air_victim_flip;
+    case 0x484b40:
+      return retail_air_victim_default;
+    case 0x484a10:
+      return retail_air_victim_lift;
+
     case 0x4851d0:
       return victim_4851d0;
     case 0x485530:

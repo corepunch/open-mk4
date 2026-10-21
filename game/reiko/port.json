@@ -403,8 +403,8 @@
       "evidence": "47c2d5 D[14] hit/air reaction 24, superseded by 47c33e capture before the victim runs it."
     },
     "105": {
-      "source": "game/reiko/moves/slam.c",
-      "symbol": "reiko_slam_reaction",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_slam_reaction",
       "adaptation": "The landing owner applies the reaction directly and starts its own generated 4e9880.",
       "evidence": "46acc0 -> 480f50[105] -> 484760: disarm, floor snap, stop and generated 4e9880."
     },

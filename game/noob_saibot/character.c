@@ -88,18 +88,6 @@ void noob_saibot_entry_retail_script_004de668(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 17);
 }
 
-void noob_saibot_entry_retail_script_004e5e78(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5e78, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e5ea0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ea0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e9880(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9880, mk4_script_thrown_ready, 17);
-}
-
 void noob_saibot_entry_retail_script_004e9b40(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e9b40, fighter_ready, 17);
 }

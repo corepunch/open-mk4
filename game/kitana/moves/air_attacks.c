@@ -2,9 +2,6 @@
 
 static const ButtonTable air_followup;
 static void air_land(Fighter *fighter);
-static void air_release_land(Fighter *fighter);
-static void air_release_fall(Fighter *fighter);
-static void air_getup_rise(Fighter *victim);
 static void air_native_tail(Fighter *fighter, int index, int elapsed);
 static void press_air_followup_kick(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
@@ -72,40 +69,8 @@ void kitana_script_air_diagonal_tail(Fighter *fighter) {
   air_native_tail(fighter, 3, 0);
 }
 
-static void air_release_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
-
-static void air_release_fall(Fighter *fighter) {
-  fighter->body.gravity = 0x20c;
-  fighter->body.vel[AXIS_Y] = -0x51e;
-  native_await(fighter, native_grounded, air_release_land);
-}
-
 /* The released victim's stream starts after the owner's damage, so its
  * setup sees the damaged victim. */
-void kitana_script_air_release(Fighter *fighter) {
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = 85;
-  battle_damage(victim, 0x2666);
-  fighter_cancel_mmove(victim);
-  kitana_entry_retail_script_004e98a0(victim);
-  native_finish_clip(fighter, air_release_fall);
-}
-
-static void air_getup_rise(Fighter *victim) {
-  mk4_script_stop_body(victim);
-  if (victim->health <= 0) {
-    fighter_finish_mmove(victim, NULL);
-    return;
-  }
-  mk4_mmove_bind(victim, 197, 29, 0);
-  native_finish_clip(victim, mk4_mmove_thrown_finish);
-}
-
-void kitana_script_air_getup(Fighter *victim) {
-  native_finish_clip(victim, air_getup_rise);
-}
 
 void kitana_cpu_air_hk(Fighter *fighter) {
   retail_air_attack(fighter, fighter->body.vel[AXIS_X] || fighter->body.vel[AXIS_Z] ? 3 : 2);

@@ -1,6 +1,7 @@
 #include "game.h"
 #include "native.h"
 #include "script.h"
+#include "retail_vm.h"
 #include "mk4_characters.h"
 #include "math_util.h"
 #include <string.h>
@@ -319,9 +320,8 @@ void mk4_jump(Fighter *fighter) {
 /* Air throw: scripts 0x4e5e28/0x4e5e50, native 0x46aae0.
  * The owner releases the pair; the victim owns its fall/getup, so interrupting
  * either participant cannot suspend a body. Shared getup replaces task parking. */
-static const MoveDef s_air_throw = {.clip = 82, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
-static const MoveDef s_air_thrown = {.clip = 202, .last = 44, .flags = SF_LOCK, .action = 0x4003};
-static const MoveDef s_throw_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = 0x200e};
+static const MoveDef s_air_throw = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
+static const MoveDef s_air_thrown = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK, .action = 0x4003};
 
 static int air_throw_release_sample(const Fighter *victim) {
   int last = fighter_move(victim)->last;
@@ -428,16 +428,12 @@ static void air_pair_capture(Fighter *fighter, const MoveDef *owner_move, const 
   victim->capture_action = fighter->action;
 }
 
-/* 484b60: KO stays down; otherwise turn and finish clip 131 from pose 46. */
+/* Native484b60: bind185, turn/disarm, then native488b40's loaded side-getup. */
 void mk4_mmove_air_getup(Fighter *victim) {
-  if (victim->health <= 0) {
-    fighter_finish_mmove(victim, NULL);
-    return;
-  }
+  retail_vm_bind_animation(victim, 0x4fb628, 0);
   victim->facing = -victim->facing;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_throw_getup);
-  victim->sample_override = 46;
-  native_finish_clip(victim, fighter_ready);
+  mk4_script_disarm_self(victim);
+  mk4_mmove_side_getup(victim);
 }
 
 void mk4_script_air_throw_release(Fighter *fighter) {
@@ -512,7 +508,11 @@ void mk4_mmove_air_throw_release(Fighter *fighter) {
 }
 
 void mk4_air_throw_frames(Fighter *fighter, FighterFn owner_script, FighterFn victim_script) {
-  mk4_air_throw_frames_with_moves(fighter, &s_air_throw, &s_air_thrown, owner_script, victim_script);
+  if (!mk4_can_air_throw(fighter)) {
+    fighter_ready(fighter);
+    return;
+  }
+  mk4_air_pair_frames(fighter, &s_air_throw, &s_air_thrown, owner_script, victim_script);
 }
 
 /* An interrupted captured victim must not stay suspended without gravity. */
@@ -520,16 +520,6 @@ static void air_frame_victim_cleanup(Fighter *victim) {
   if (fighter_airborne(victim) && victim->body.gravity == 0) {
     victim->body.gravity = 0x28f;
   }
-}
-
-/* Roster-specific air throws keep the shared 48f9f0 pair acquisition and
- * captured-victim hold while selecting their own owner and victim clips. */
-void mk4_air_throw_frames_with_moves(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn owner_script, FighterFn victim_script) {
-  if (!mk4_can_air_throw(fighter)) {
-    fighter_ready(fighter);
-    return;
-  }
-  mk4_air_pair_frames(fighter, owner_move, victim_move, owner_script, victim_script);
 }
 
 /* The same capture and held victim after a caller-owned contact decision,

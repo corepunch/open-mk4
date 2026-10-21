@@ -14,10 +14,6 @@
 #define s_crouch jax_s_crouch
 #define s_thrown jax_s_thrown
 
-void jax_air_throw(Fighter *fighter);
-void jax_air_throw_fall(Fighter *fighter);
-void jax_air_throw_getup(Fighter *fighter);
-void jax_air_throw_release(Fighter *fighter);
 void jax_lp_slam_first(Fighter *fighter);
 void jax_lp_slam_second(Fighter *fighter);
 void jax_lp_slam_third(Fighter *fighter);
@@ -70,8 +66,6 @@ void jax_entry_retail_script_004e5a80(Fighter *fighter);
 void jax_entry_retail_script_004e5a98(Fighter *fighter);
 void jax_entry_retail_script_004e5b10(Fighter *fighter);
 void jax_entry_retail_script_004e5b38(Fighter *fighter);
-void jax_entry_retail_script_004e5dd8(Fighter *fighter);
-void jax_entry_retail_script_004e5df8(Fighter *fighter);
 void jax_entry_retail_script_004e62c0(Fighter *fighter);
 void jax_entry_retail_script_004e62d8(Fighter *fighter);
 void jax_entry_retail_script_004e8150(Fighter *fighter);
@@ -83,8 +77,6 @@ extern const MoveDef jax_s_thrown;
 extern const ButtonTable jax_diagonal_air;
 void jax_press_air_hk(Fighter *fighter);
 void jax_press_air_lk(Fighter *fighter);
-void jax_entry_retail_script_004e5e18(Fighter *fighter);
-void jax_entry_retail_script_004e98e8(Fighter *fighter);
 void jax_script_weapon_draw_finish(Fighter *fighter);
 void jax_command_weapon(Fighter *fighter);
 void jax_entry_retail_script_004ea040(Fighter *fighter);

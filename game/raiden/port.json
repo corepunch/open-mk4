@@ -36,9 +36,9 @@
       "symbol": "retail_air_low_punch"
     },
     "air_throw": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds",
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw"
     },
     "close_hk": {
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md",

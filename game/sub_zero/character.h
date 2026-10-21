@@ -40,13 +40,10 @@
 #define s_lp_thrown sub_zero_s_lp_thrown
 #define scene_blend_cleanup sub_zero_scene_blend_cleanup
 #define script_air_diagonal_tail sub_zero_script_air_diagonal_tail
-#define script_air_getup sub_zero_script_air_getup
 #define script_air_hp_tail sub_zero_script_air_hp_tail
 #define script_air_kick_tail sub_zero_script_air_kick_tail
-#define script_air_land sub_zero_script_air_land
 #define script_air_lk_tail sub_zero_script_air_lk_tail
 #define script_air_lp_tail sub_zero_script_air_lp_tail
-#define script_air_release sub_zero_script_air_release
 #define script_breath_approach sub_zero_script_breath_approach
 #define script_breath_freeze sub_zero_script_breath_freeze
 #define script_breath_object sub_zero_script_breath_object
@@ -143,28 +140,22 @@ void sub_zero_entry_retail_script_004e03d8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e03f0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0420(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0430(Fighter *fighter);
-void sub_zero_entry_retail_script_004e5e28(Fighter *fighter);
-void sub_zero_entry_retail_script_004e5e50(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62c0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter);
 void sub_zero_entry_retail_script_004e84d8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e84f8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e8530(Fighter *fighter);
-void sub_zero_entry_retail_script_004e9910(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9bd0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter);
 void sub_zero_entry_retail_script_004ed588(Fighter *fighter);
 extern const MoveDef sub_zero_s_lp_thrown;
 void sub_zero_scene_blend_cleanup(Fighter *fighter);
 void sub_zero_script_air_diagonal_tail(Fighter *fighter);
-void sub_zero_script_air_getup(Fighter *victim);
 void sub_zero_script_air_hp_tail(Fighter *fighter);
 void sub_zero_script_air_kick_tail(Fighter *fighter);
-void sub_zero_script_air_land(Fighter *fighter);
 void sub_zero_script_air_lk_tail(Fighter *fighter);
 void sub_zero_script_air_lp_tail(Fighter *fighter);
-void sub_zero_script_air_release(Fighter *fighter);
 void sub_zero_script_breath_approach(Fighter *fighter);
 void sub_zero_script_breath_freeze(Fighter *fighter, int type);
 void sub_zero_script_breath_object(Fighter *fighter, int type);
@@ -197,7 +188,6 @@ void sub_zero_script_victory(Fighter *fighter);
 void sub_zero_second_fatality_script(Fighter *fighter);
 void sub_zero_slide_script(Fighter *fighter);
 void sub_zero_start_fatality(Fighter *fighter, int id);
-void sub_zero_air_throw(Fighter *fighter);
 void sub_zero_clone(Fighter *fighter);
 void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_hk(Fighter *fighter);

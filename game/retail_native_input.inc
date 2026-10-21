@@ -190,6 +190,11 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeAction entries[] = {
+  {0x46aa80, 0x3ffff, retail_air_throw},
+  {0x46a990, 0x3ffff, retail_air_throw_lift},
+  {0x46aba0, 0x3ffff, retail_air_throw_slam},
+  {0x46ae60, 0x3ffff, retail_air_throw_flip},
+
   {0x46e6c0, 0x3ffff, retail_air_high_punch},
   {0x46ee30, 0x3ffff, retail_air_low_punch},
   {0x46c7a0, 0x3ffff, retail_air_kick},
@@ -276,13 +281,6 @@ static const NativeAction entries[] = {
   {0x46a020, 0x3ffff, weapon_pickup},
   {0x46a5f0, 0x20, fujin_wind_slam},
   {0x46a620, 0x20, fujin_wind},
-  {0x46a990, 0x2000, jax_air_throw},
-  {0x46aa80, 0x10, sub_zero_air_throw},
-  {0x46aa80, 0x1, scorpion_air_throw},
-  {0x46aba0, 0x20000, noob_saibot_air_throw},
-  {0x46aba0, 0x100, quan_chi_air_throw},
-  {0x46ae60, 0x10000, kitana_air_throw},
-  {0x46ae60, 0x4, sonya_air_throw},
   {0x46d1d0, 0x4000, cage_weapon_action},
   {0x46d1d0, 0x20, fujin_weapon_action},
   {0x46d1d0, 0x1000, jarek_weapon_action},

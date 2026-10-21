@@ -1495,6 +1495,13 @@ def bindings_for(character):
                                evidence='42c7d0 calls shared48f9f0 then enters original4de840')
     result[0x488b40] = Binding('mk4_mmove_side_getup', 'game/script.c', ('tail',), flow='terminal', mmove=True,
                                evidence='Native488b40/488b70 chooses original4ea200 getup record or4ea1e8 KO script; shared engine phase gate')
+    # Original air-throw native addresses are actor-independent services.
+    for address, function in ((4631024, 'retail_air_lift_fall'), (4631104, 'retail_air_lift_release'), (4631264, 'retail_air_throw_release'), (4631328, 'retail_air_throw_land'), (4631568, 'retail_air_slam_fall'), (4631712, 'retail_air_slam_end'), (4632272, 'retail_air_flip_release'), (4736992, 'retail_air_flip_getup'), (4737584, 'retail_air_lift_getup'), (4737888, 'mk4_mmove_air_getup')):
+        result[address] = Binding(function, 'game/mk4_common.c' if address == 0x484b60 else 'game/retail_air_throw.c',
+                                  ('tail',), flow='terminal', mmove=True,
+                                  evidence='Shared checked native air-throw/reaction continuation; local listings and matching mk4decomp pending_match_variants')
+    result[0x46ac90] = Binding('retail_vm_enter', 'game/retail_vm.c', ('tail',), script_target=0x4e5eb0,
+                               flow='immediate', mmove=True, evidence='Original46ac90 enters4e5eb0')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

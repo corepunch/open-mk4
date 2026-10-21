@@ -24,7 +24,7 @@ void raiden_script_throw_getup(Fighter *victim) {
 
 void raiden_enter_throw(Fighter *fighter) {
   if (mk4_can_air_throw(fighter)) {
-    mk4_air_throw_frames(fighter, raiden_entry_retail_script_004e5e28, raiden_entry_retail_script_004e9910);
+    retail_air_throw(fighter);
     return;
   }
   retail_lp_throw(fighter);

@@ -291,3 +291,13 @@ HELPERS[0x46a7b0] = H('low_kick_entry', 'active fighter and peer state', 'Origin
 # Native air entries are shared; animation comes from original selectors.
 for _address, _symbol in ((4646592, 'retail_air_high_punch'), (4648496, 'retail_air_low_punch'), (4638624, 'retail_air_kick'), (4645760, 'retail_air_diagonal_high_kick'), (4644688, 'retail_air_diagonal_low_kick')):
     HELPERS[_address] = replace(HELPERS[_address], port=('game/retail_air.c', _symbol), inputs='active fighter and retail selector', flow='Shared native entry and original script words.')
+
+HELPERS[0x46aa80] = replace(HELPERS[0x46aa80], port=('game/retail_air_throw.c', 'retail_air_throw'), effects='Shared native capture and original4e5e28/4e9910; native484b60 uses loaded side-getup record4ea200.')
+
+# Shared native air-throw services, selected by address rather than model.
+for _address, _symbol in ((4631168, 'retail_air_throw'), (4630928, 'retail_air_throw_lift'), (4631456, 'retail_air_throw_slam'), (4632160, 'retail_air_throw_flip'), (4631024, 'retail_air_lift_fall'), (4631104, 'retail_air_lift_release'), (4631264, 'retail_air_throw_release'), (4631328, 'retail_air_throw_land'), (4631568, 'retail_air_slam_fall'), (4631712, 'retail_air_slam_end'), (4632272, 'retail_air_flip_release'), (4736992, 'retail_air_flip_getup'), (4737584, 'retail_air_lift_getup'), (4736864, 'retail_slam_reaction'), (4736928, 'retail_air_victim_flip'), (4737856, 'retail_air_victim_default'), (4737552, 'retail_air_victim_lift'), (4631744, 'retail_slam_tail')):
+    if _address in HELPERS:
+        HELPERS[_address] = replace(HELPERS[_address], port=('game/retail_air_throw.c', _symbol))
+    else:
+        HELPERS[_address] = H(_symbol, 'active actor and original native/script data', 'Shared native air capture, continuation or reaction; local EXE listings and original script operands.', 'Native ownership with independent victim cleanup.', ('game/retail_air_throw.c', _symbol))
+HELPERS[0x484b60] = H('air_throw_victim_getup', 'released victim', 'Native descriptor4fb628, turn/disarm and loaded native side-getup record4ea200; KO uses original4ea1e8.', 'Shared KO-aware native recovery.', ('game/mk4_common.c', 'mk4_mmove_air_getup'))

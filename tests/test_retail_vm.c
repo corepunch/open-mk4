@@ -557,6 +557,31 @@ static void native_air_ownership(void) {
   }
 }
 
+static void native_air_capture_lifetimes(void) {
+  const FighterFn entries[] = {retail_air_throw, retail_air_throw_lift, retail_air_throw_slam, retail_air_throw_flip, retail_air_throw_slam};
+  for (unsigned index = 0; index < sizeof entries / sizeof *entries; ++index) {
+    Fighter *owner = setup(0, 0);
+    Fighter *peer = fighter_peer(owner);
+    bool ko = index == 4;
+    peer->health = ko ? 1 : Q16_ONE;
+    owner->body.pos[AXIS_Y] = owner->body.ground - 3 * Q16_ONE;
+    peer->body.pos[AXIS_Y] = peer->body.ground - 3 * Q16_ONE;
+    entries[index](owner);
+    check((owner->flags & FF_PAIRED) && (peer->flags & FF_PAIRED), "native air capture must acquire both contexts");
+    for (int visit = 0; visit < 512; ++visit) {
+      tick();
+      if (ko ? peer->health == 0 && peer->current_mmove == NULL && !peer->retail_vm.active && !(owner->flags & FF_PAIRED)
+             : owner->state == S_IDLE && peer->state == S_IDLE) {
+        break;
+      }
+    }
+    check((ko ? peer->health == 0 && peer->state != S_IDLE && !peer->retail_vm.active && peer->current_mmove == NULL
+              : owner->state == S_IDLE && peer->state == S_IDLE) &&
+              !(owner->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED),
+        "native air capture/release must retire independent contexts and preserve KO ownership");
+  }
+}
+
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
   if (argc == 2) {
@@ -598,6 +623,7 @@ int main(int argc, char **argv) {
   native_button_table();
   native_close_lifetimes();
   native_air_ownership();
+  native_air_capture_lifetimes();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

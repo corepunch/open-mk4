@@ -55,9 +55,9 @@
       "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds"
     },
     "air_throw": {
-      "source": "game/goro/moves/throws.c",
-      "symbol": "goro_air_throw",
-      "evidence": "Requested portable extension: Goro BLOCK list 53c99c is empty; shared 46aa80 pair with generated owner 4e5e28/4e5e50 and victim 4e9910 frame streams."
+      "source": "game/retail_air_throw.c",
+      "symbol": "retail_air_throw",
+      "evidence": "Original native entry and script operands implemented once, with shared captured-victim lifetime; no fighter animation seeds"
     },
     "fan_fatality": {
       "source": "game/retail_scene.c",

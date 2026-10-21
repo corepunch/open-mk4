@@ -2,8 +2,6 @@
 
 static void throw_getup_land(Fighter *victim);
 static void lk_victim_land(Fighter *victim);
-static const MoveDef s_air_owner = {.clip = 77, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x502};
-static const MoveDef s_air_victim = {.clip = 161, .last = 39, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 /* 485b50: after landing, a living victim turns and plays getup 328 through
  * its last pose, holding that pose for one more visit before the controller. */
@@ -33,13 +31,4 @@ static void lk_victim_land(Fighter *victim) {
 void sonya_lk_victim(Fighter *victim) {
   mk4_mmove_bind(victim, 203, 112, 75);
   native_finish_clip(victim, lk_victim_land);
-}
-
-void sonya_air_throw(Fighter *fighter) {
-  if (!mk4_can_air_throw(fighter)) {
-    return;
-  }
-  fighter_upright(fighter);
-  fighter_upright(fighter_peer(fighter));
-  mk4_mmove_throw_start(fighter, &s_air_owner, &s_air_victim, sonya_entry_retail_script_004e5ed0);
 }

@@ -89,20 +89,8 @@ void goro_entry_retail_script_004dfbb8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4dfbb8, fighter_ready, 15);
 }
 
-void goro_entry_retail_script_004e5e28(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 15);
-}
-
-void goro_entry_retail_script_004e5e50(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 15);
-}
-
 void goro_entry_retail_script_004e6270(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 15);
-}
-
-void goro_entry_retail_script_004e9910(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9910, fighter_ready, 15);
 }
 
 void goro_entry_retail_script_004ed790(Fighter *fighter) {

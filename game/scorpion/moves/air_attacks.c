@@ -70,12 +70,3 @@ void scorpion_script_air_lk_tail(Fighter *fighter) {
 void scorpion_script_air_diagonal_tail(Fighter *fighter) {
   air_native_tail(fighter, 3, 0);
 }
-
-void scorpion_script_air_release(Fighter *fighter) {
-  mk4_mmove_air_throw_release(fighter);
-  scorpion_entry_retail_script_004e5e50(fighter);
-}
-
-void scorpion_script_air_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}

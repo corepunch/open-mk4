@@ -117,6 +117,7 @@ for _character in SPECIFIC:
     SPECIFIC[_character]['air_kick'] = ('game/retail_air.c', 'retail_air_kick')
     SPECIFIC[_character]['air_diagonal_hk'] = ('game/retail_air.c', 'retail_air_diagonal_high_kick')
     SPECIFIC[_character]['air_diagonal_lk'] = ('game/retail_air.c', 'retail_air_diagonal_low_kick')
+    SPECIFIC[_character]['air_throw'] = ('game/retail_air_throw.c', 'retail_air_throw_flip' if _character == 2 else 'retail_air_throw')
     SPECIFIC[_character]['close_hp'] = ('game/retail_combat.c', 'retail_close_high_punch')
     SPECIFIC[_character]['combo_hp'] = ('game/retail_controls.c', 'retail_combo_high_punch')
     SPECIFIC[_character]['close_hk'] = ('game/retail_controls.c', 'retail_close_high_kick')

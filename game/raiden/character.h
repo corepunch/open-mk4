@@ -35,10 +35,8 @@
 #define script_air_diagonal_tail raiden_script_air_diagonal_tail
 #define script_air_hp_tail raiden_script_air_hp_tail
 #define script_air_kick_tail raiden_script_air_kick_tail
-#define script_air_land raiden_script_air_land
 #define script_air_lk_tail raiden_script_air_lk_tail
 #define script_air_lp_tail raiden_script_air_lp_tail
-#define script_air_release raiden_script_air_release
 #define script_close_hp_tail raiden_script_close_hp_tail
 #define script_combo_hp_tail raiden_script_combo_hp_tail
 #define script_crouch_lk_tail raiden_script_crouch_lk_tail
@@ -110,15 +108,12 @@ void raiden_entry_retail_script_004e5740(Fighter *fighter);
 void raiden_entry_retail_script_004e5760(Fighter *fighter);
 void raiden_entry_retail_script_004e5770(Fighter *fighter);
 void raiden_entry_retail_script_004e5788(Fighter *fighter);
-void raiden_entry_retail_script_004e5e28(Fighter *fighter);
-void raiden_entry_retail_script_004e5e50(Fighter *fighter);
 void raiden_entry_retail_script_004e62c0(Fighter *fighter);
 void raiden_entry_retail_script_004e62d8(Fighter *fighter);
 void raiden_entry_retail_script_004e6a40(Fighter *fighter);
 void raiden_entry_retail_script_004e8440(Fighter *fighter);
 void raiden_entry_retail_script_004e8458(Fighter *fighter);
 void raiden_entry_retail_script_004e8e18(Fighter *fighter);
-void raiden_entry_retail_script_004e9910(Fighter *fighter);
 void raiden_entry_retail_script_004e99c0(Fighter *fighter);
 void raiden_entry_retail_script_004e9ad0(Fighter *fighter);
 void raiden_entry_retail_script_004e9ae8(Fighter *fighter);
@@ -134,10 +129,8 @@ void raiden_scene_end_watch(Fighter *fighter);
 void raiden_script_air_diagonal_tail(Fighter *fighter);
 void raiden_script_air_hp_tail(Fighter *fighter);
 void raiden_script_air_kick_tail(Fighter *fighter);
-void raiden_script_air_land(Fighter *fighter);
 void raiden_script_air_lk_tail(Fighter *fighter);
 void raiden_script_air_lp_tail(Fighter *fighter);
-void raiden_script_air_release(Fighter *fighter);
 void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);

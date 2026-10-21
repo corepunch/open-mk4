@@ -2,6 +2,25 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_air_throw(Fighter *fighter);
+void retail_air_throw_lift(Fighter *fighter);
+void retail_air_throw_slam(Fighter *fighter);
+void retail_air_throw_flip(Fighter *fighter);
+void retail_air_throw_release(Fighter *fighter);
+void retail_air_throw_land(Fighter *fighter);
+void retail_air_lift_fall(Fighter *fighter);
+void retail_air_lift_release(Fighter *fighter);
+void retail_air_lift_getup(Fighter *fighter);
+void retail_air_flip_release(Fighter *fighter);
+void retail_air_flip_getup(Fighter *fighter);
+void retail_air_slam_fall(Fighter *fighter);
+void retail_air_slam_end(Fighter *fighter);
+void retail_air_victim_default(Fighter *fighter);
+void retail_air_victim_flip(Fighter *fighter);
+void retail_air_victim_lift(Fighter *fighter);
+void retail_slam_tail(Fighter *fighter);
+void retail_slam_reaction(Fighter *fighter);
+void retail_slam_released_fall(Fighter *fighter);
 void retail_air_bind_row(Fighter *fighter, uint32_t row);
 void retail_air_attack(Fighter *fighter, unsigned kind);
 void retail_air_high_punch(Fighter *fighter);

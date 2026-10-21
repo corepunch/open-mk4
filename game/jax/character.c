@@ -117,14 +117,6 @@ void jax_entry_retail_script_004e5b38(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5b38, fighter_ready, 13);
 }
 
-void jax_entry_retail_script_004e5dd8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5dd8, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e5df8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5df8, fighter_ready, 13);
-}
-
 void jax_entry_retail_script_004e62c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 13);
 }
@@ -151,14 +143,6 @@ void jax_entry_retail_script_004e89d8(Fighter *fighter) {
 
 void jax_entry_retail_script_004ed090(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed090, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e5e18(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5e18, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e98e8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e98e8, fighter_ready, 13);
 }
 
 void jax_entry_retail_script_004ea040(Fighter *fighter) {

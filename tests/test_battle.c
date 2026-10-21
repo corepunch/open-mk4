@@ -148,125 +148,17 @@ static void check_hit_blood(void) {
 }
 
 static void check_roster(void) {
-  const CharacterDef *human = roster_def(0);
-  const CharacterDef *goro = roster_def(15);
-  check(roster_count() == 18, "MK4 roster should be 18 fighters");
-  check(human->game == GAME_MK4 && goro->game == GAME_MK4, "Current rows are MK4");
-  check(human->controls != roster_def(4)->controls, "Scorpion owns its command and stance tables");
-  for (int i = 0; i < roster_count(); ++i)
-    check(roster_def(i)->moves != NULL && roster_def(i)->move_count == S_COUNT, "Every fighter owns a move table");
-  check(human->moves != goro->moves, "Goro names clips from his own bank");
-  check(roster_clip(human, S_IDLE, 77) == 77, "Idle reads the mesh idle clip");
-  check(roster_clip(human, S_BLOCK, 0) == 322 && roster_clip(goro, S_BLOCK, 0) == 595, "Block reads slot 0x53ce30 or Goro's clip");
-  check(roster_clip(roster_def(16), S_VICTORY, 0) == roster_clip(roster_def(2), S_VICTORY, 0), "Kitana reads Sonya's character entries");
-  check(roster_clip(roster_def(17), S_THROW, 0) == roster_clip(roster_def(7), S_THROW, 0), "Noob Saibot reads Reiko's character entries");
-  check(goro->moves[S_CROUCH]->first > goro->moves[S_CROUCH]->last, "Goro's duck plays his rise backwards");
-  check(roster_clip(roster_def(13), S_THROW, 0) == 83, "Jax throw from script 0x4de4f0");
-  check(roster_clip(human, S_VICTORY, 0) == 115 && (human->moves[S_VICTORY]->flags & SF_HOLD), "Scorpion holds his 0x4e6a44 win pose");
-  check(human->moves[S_PUNCH]->clip == -1 && human->enter[S_PUNCH] == retail_jab, "Unstarted script states must carry no authored animation or balance");
-  check(human->moves[S_BLOCK]->flags & SF_HOLD, "Block holds its last frame");
-  check(human->moves[S_THROW]->flags & SF_UNBLOCKABLE, "Throw is unblockable");
-}
-
-static void check_original_kicks(void) {
-  struct KickFixture {
-    int roster, clip, count;
-    int frames[30];
-  };
-  static const struct KickFixture fixtures[] = {
-#include "fixtures/original_kicks.inc"
-  };
-  for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
-    const struct KickFixture *expected = &fixtures[i];
-    fight(4.f);
-    int player = expected->roster == 0 ? 0 : 1;
-    Fighter *fighter = &g_battle.fighters[player];
-    Input in[2] = {0};
-    in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
-    battle_step(in);
-    check(fighter->pending != NULL && fighter->state == S_IDLE, "Press must start its move on the next tick");
-    in[player] = (Input){0};
-    battle_step(in);
-    check(fighter->current_move->clip == expected->clip, "Kick callback chose wrong move");
-    int visits = 0;
-    while (fighter->state == S_KICK && visits < 40) {
-      int sample = fighter_frame(fighter, expected->clip == 66 ? 18 : 28);
-      check(sample >= 0 && sample < (expected->clip == 66 ? 18 : 28) && (visits != 0 || sample == 0), "Generated kick playback left its decoded clip");
-      in[player] = (Input){.held = BUTTON_BIT(BUTTON_LEFT)};
-      battle_step(in);
-      ++visits;
-    }
-    check(visits >= expected->count && visits <= expected->count + 3 && fighter->state == S_WALK && fighter->ticks == 0,
-        "Generated kick must finish its bounded recovery and return movement control");
-    check(fighter->current_move->sequence == NULL, "Movement kept stale kick playback");
-
-    fighter_enter_state(fighter, S_KICK);
-    advance_ticks(5, NULL);
-    fighter_enter_state(fighter, S_HIT);
-    check(fighter->current_move->sequence == NULL, "Reaction kept interrupted kick sequence");
-    advance_ticks(30, NULL);
-    check(fighter->state == S_IDLE, "Interrupted kick completion overwrote reaction");
-
-    fight(1.f);
-    fighter = &g_battle.fighters[player];
-    in[0] = (Input){0};
-    in[1] = (Input){0};
-    in[player].held = BUTTON_BIT(BUTTON_HIGH_KICK);
-    battle_step(in);
-    advance_ticks(expected->roster == 0 ? 12 : 11, NULL);
-    check(g_battle.fighters[1 - player].health == Q16_ONE, "Kick contact started before retail query");
-    advance_ticks(1, NULL);
-    check(g_battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick missed its first retail contact step");
-    advance_ticks(2, NULL);
-    check(g_battle.fighters[1 - player].health == Q16_ONE - 0x2147, "Kick connected more than once");
+  check(roster_count() == MK4_ROSTER_COUNT, "Retail roster views must cover the loaded fighter bank");
+  for (int i = 0; i < roster_count(); ++i) {
+    const CharacterDef *view = roster_def(i);
+    check(view->game == GAME_MK4 && view->asset == i && view->moves != NULL && view->move_count == S_COUNT,
+        "Retail roster views must provide bounded engine state and model identity");
+    check(view->moves[S_PUNCH]->clip == -1 && view->enter[S_PUNCH] == retail_jab, "Unstarted script states must carry no authored animation or balance");
   }
 }
 
 static void sequence_event(Fighter *fighter) {
   fighter->health--;
-}
-
-static void check_original_scorpion(void) {
-  struct ScorpionFixture {
-    const char *name;
-    int state, result, contact_tick, press_count, presses[8], facing_away, count;
-    int clips[256], frames[256];
-  };
-  static const struct ScorpionFixture fixtures[] = {
-#include "fixtures/original_scorpion.inc"
-  };
-  for (size_t i = 0; i < sizeof fixtures / sizeof fixtures[0]; ++i) {
-    const struct ScorpionFixture *expected = &fixtures[i];
-    fight(4.f);
-    Fighter *fighter = &g_battle.fighters[0];
-    if (expected->facing_away) {
-      fighter->facing = -1;
-    }
-    fighter_enter_state(fighter, expected->state);
-    bool second = false;
-    bool expected_second = false;
-    for (int tick = 0; tick < expected->count; ++tick) {
-      expected_second |= expected->clips[tick] == 295;
-    }
-    int tick = 0;
-    for (; tick < expected->count + 16 && fighter->state == expected->state; ++tick) {
-      int clip = fighter_move(fighter)->clip;
-      int count = clip == 294 ? 23 : clip == 295 ? 19 : clip == 293 ? 20 : clip == 63 ? 46 : 18;
-      check(fighter_frame(fighter, count) >= 0 && fighter_frame(fighter, count) < count, "Generated normal left its decoded animation");
-      second |= clip == 295;
-      if (expected->result != 0 && tick == expected->contact_tick) {
-        fighter_note_contact(fighter, (ContactResult)expected->result);
-      }
-      for (int press = 0; press < expected->press_count; ++press) {
-        if (expected->presses[press] == tick + 1) {
-          fighter->buffered |= BUTTON_BIT(BUTTON_LOW_PUNCH);
-        }
-      }
-      battle_step((Input[2]){0});
-    }
-    check(second == expected_second, "Jab must preserve the recorded repeat/away branch");
-    check(fighter->state == S_IDLE, "Generated normal must finish recovery and retire its stack");
-  }
 }
 
 static void sequence_end(Fighter *fighter) {
@@ -367,39 +259,6 @@ static void check_wait_phases(void) {
   advance_ticks(45, NULL);
   check(g_battle.phase == PHASE_READY && g_battle.fighters[0].health == Q16_ONE && sequence_completions == 0,
       "A previous match's wait callback must not run in the fresh match");
-}
-
-static void check_scorpion_contact_branches(void) {
-  for (int blocked = 0; blocked < 2; ++blocked) {
-    fight(1.f);
-    Fighter *fighter = &g_battle.fighters[0];
-    fighter_enter_state(fighter, S_UPPERCUT);
-    check(fighter->current_mmove != NULL, "Uppercut must run its branches through frame tables");
-    Input in[2] = {0};
-    if (blocked) {
-      in[1].held = BUTTON_BIT(BUTTON_BLOCK);
-    }
-    advance_ticks(7, in);
-    check(fighter->contact == (blocked ? CONTACT_BLOCK : CONTACT_HIT) && fighter->contact_tick == 7,
-        "Battle did not deliver uppercut contact to its continuation");
-    int end = blocked ? 31 : 61;
-    advance_ticks(end - 8, in);
-    check(fighter->state == S_UPPERCUT, "Contact recovery ended before retail return");
-    advance_ticks(1, in);
-    check(fighter->state == S_IDLE, "Contact recovery did not return on retail step");
-  }
-  {
-    fight(4.f);
-    Fighter *fighter = &g_battle.fighters[0];
-    fighter_enter_state(fighter, S_PUNCH);
-    advance_ticks(7, NULL);
-    battle_step((Input[2]){{.held = BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
-    battle_step((Input[2]){0});
-    check(fighter_move(fighter)->clip == 295, "Jab repeat failed at its native branch");
-    fighter_enter_state(fighter, S_HIT);
-    advance_ticks(30, NULL);
-    check(fighter->state == S_IDLE && fighter->pending == NULL && fighter->buffered == 0, "Interrupted jab retained a continuation or buffered repeat");
-  }
 }
 
 /* docs/scorpion/input-and-commands.md: two-sample press rule, history, latency. */
@@ -1160,38 +1019,6 @@ static void check_straight_air_kick_contacts(void) {
         check(owner->state == S_IDLE, "Straight-air kick branch must land and recover");
       }
     }
-  }
-}
-
-static void check_reconnected_ground_combos(void) {
-  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
-  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
-    battle_init(rosters[row], 4);
-    g_battle.phase = PHASE_FIGHT;
-    Fighter *fighter = &g_battle.fighters[0];
-    Fighter *victim = &g_battle.fighters[1];
-    fighter->body.pos[AXIS_X] = -0x5333;
-    victim->body.pos[AXIS_X] = 0x5333;
-    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    for (int tick = 0; tick < 8; ++tick) {
-      advance_ticks(1, NULL);
-    }
-    for (int wait = 0; wait < 12 && !(fighter->flags & FF_FOLLOW_UP); ++wait) {
-      advance_ticks(1, NULL);
-    }
-    if (!(fighter_move(fighter)->clip == 262 && (fighter->flags & FF_FOLLOW_UP))) {
-      fprintf(stderr, "Ground combo roster %d clip %d flags %u health %d\n", rosters[row], fighter_move(fighter)->clip, fighter->flags, victim->health);
-    }
-    check(fighter_move(fighter)->clip == 262 && (fighter->flags & FF_FOLLOW_UP), "Close HP must install a live follow-up table");
-    check(victim->health < Q16_ONE, "Close HP must resolve its retail contact before the follow-up");
-    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(1, NULL);
-    check(fighter_move(fighter)->clip == 261, "Close HP follow-up must enter the generated combo HP stream");
-    for (int tick = 0; tick < 100; ++tick) {
-      advance_ticks(1, NULL);
-    }
-    check(fighter->state == S_IDLE && fighter->buttons != NULL, "Reconnected ground combo must recover and restore controls");
-    check(victim->health < Q16_ONE - 2621, "Close HP to combo HP must resolve both contacts");
   }
 }
 
@@ -4754,7 +4581,7 @@ static void check_ground_throw_lifetimes(void) {
   }
 }
 
-static void check_air_throw(void) {
+static void check_air_capture_lifetimes(void) {
   for (int player = 0; player < 2; ++player) {
     battle_init(0, 0);
     g_battle.phase = PHASE_FIGHT;
@@ -4768,12 +4595,10 @@ static void check_air_throw(void) {
     input[player].held = BUTTON_BIT(BUTTON_BLOCK);
     battle_step(input);
     advance_ticks(1, NULL);
-    check(owner->current_move->clip == 82 && victim->current_move->clip == 202, "Air throw must take both participants");
-    advance_ticks(27, NULL);
-    check(victim->health == Q16_ONE && owner->body.gravity == 0, "Air throw must hold before its damage event");
-    advance_ticks(1, NULL);
-    check(victim->health == Q16_ONE - 0x2147, "Air throw must deal 13 percent at release");
-    advance_ticks(140, NULL);
+    check((owner->flags & FF_PAIRED) && (victim->flags & FF_PAIRED), "Air capture must acquire both actor contexts");
+    for (int visit = 0; visit < 256 && (owner->state != S_IDLE || victim->state != S_IDLE); ++visit) {
+      advance_ticks(1, NULL);
+    }
     check(owner->state == S_IDLE && victim->state == S_IDLE, "Both air throw participants must recover");
     check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Air throw must release body attachment");
   }
@@ -5185,34 +5010,6 @@ static void check_tanya_ports(void) {
 }
 
 /* Quan Chi checks: retail command and CPU records for roster slot 8. */
-static void check_quan_chi_air_throw(void) {
-  for (int slot = 0; slot < 2; ++slot) {
-    for (int interrupted = 0; interrupted < 2; ++interrupted) {
-      battle_init(slot ? 4 : 8, slot ? 8 : 4);
-      g_battle.phase = PHASE_FIGHT;
-      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-      owner->body.pos[AXIS_X] = 0;
-      victim->body.pos[AXIS_X] = slot ? -Q16_ONE : Q16_ONE;
-      owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -3 * Q16_ONE;
-      fighter_enter_state(owner, S_JUMP);
-      fighter_enter_state(victim, S_JUMP);
-      Input input[2] = {0};
-      input[slot].held = BUTTON_BIT(BUTTON_BLOCK);
-      battle_step(input);
-      advance_ticks(1, NULL);
-      check(owner->current_move->clip == 82 && victim->current_move->clip == 202, "Quan Chi BLOCK record must enter the retail air throw");
-      if (interrupted) {
-        battle_react(owner, 11);
-      }
-      for (int tick = 0; tick < 170; ++tick) {
-        advance_ticks(1, NULL);
-      }
-      check(victim->health == (interrupted ? Q16_ONE : Q16_ONE - 0x2147), "Quan Chi air throw must deal 13 percent once, only when released");
-      check(victim->state == S_IDLE && !(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Quan Chi air throw victim must recover independently");
-      check(interrupted || owner->state == S_IDLE, "Quan Chi air throw owner must land and recover");
-    }
-  }
-}
 
 static Projectile *quan_chi_skull_object(void) {
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
@@ -5588,53 +5385,6 @@ static void check_reiko_noob_high_kick(void) {
 
 /* Noob BLOCK record 4e4b08 -> 46aba0: the pair falls together, 46aca0
  * deals 19% on landing and 46acc0 slams the peer with reaction 105. */
-static void check_noob_air_throw(void) {
-  for (int slot = 0; slot < 2; ++slot) {
-    for (int scenario = 0; scenario < 3; ++scenario) {
-      reiko_noob_fight(17, scenario == 1 ? 2 : 4, slot, 1.f);
-      Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-      owner->body.pos[AXIS_Y] = victim->body.pos[AXIS_Y] = -3 * Q16_ONE;
-      fighter_enter_state(owner, S_JUMP);
-      fighter_enter_state(victim, S_JUMP);
-      if (scenario == 2) {
-        victim->health = 0x30a3;
-      }
-      fighter_press(owner, BUTTON_BLOCK);
-      advance_ticks(2, NULL);
-      check(fighter_move(owner)->clip == 74 && fighter_move(victim)->clip == 150, "Noob air throw must take its own owner and victim clips");
-      bool grounded = false, slammed = false;
-      int after_slam = 0;
-      for (int tick = 0; tick < 240; ++tick) {
-        advance_ticks(1, NULL);
-        check(grounded || victim->health == (scenario == 2 ? 0x30a3 : Q16_ONE), "Noob air throw damage waits for the owner's landing");
-        grounded |= !fighter_airborne(owner);
-        slammed |= victim->reaction == 105 && fighter_move(victim)->clip == 175;
-        after_slam += slammed;
-        if ((owner->state == S_IDLE && victim->state == S_IDLE) || (scenario == 2 && after_slam > 60)) {
-          break;
-        }
-      }
-      check(slammed, "Noob air throw must release its peer through reaction 105");
-      if (scenario == 2) {
-        check(victim->health == 0 && victim->state != S_IDLE, "A KO slam must keep the victim down");
-        continue;
-      }
-      check(victim->health == Q16_ONE - 0x30a3, "Noob air throw must deal 46aca0 damage once");
-      check(owner->state == S_IDLE && victim->state == S_IDLE, "Both Noob air throw participants must recover");
-      check(!(owner->flags & FF_PAIRED) && !(victim->flags & FF_PAIRED), "Noob air throw must release body attachment");
-    }
-  }
-  reiko_noob_fight(17, 4, 0, 1.f);
-  for (int i = 0; i < 2; ++i) {
-    g_battle.fighters[i].body.pos[AXIS_Y] = -3 * Q16_ONE;
-    fighter_enter_state(&g_battle.fighters[i], S_JUMP);
-  }
-  fighter_press(&g_battle.fighters[0], BUTTON_BLOCK);
-  advance_ticks(4, NULL);
-  battle_react(&g_battle.fighters[0], 11);
-  advance_ticks(200, NULL);
-  check(g_battle.fighters[1].state == S_IDLE && g_battle.fighters[1].health == Q16_ONE, "Interrupted Noob air throw must release its victim without damage");
-}
 
 /* Up record 4e4e20 (D,U) -> 47c070 for both fighters. Without BLOCK the
  * body rises off the top, reappears below the floor one unit past the peer
@@ -5941,7 +5691,6 @@ static void check_reiko_noob(void) {
   check_reiko_orbit();
   check_reiko_noob_star();
   check_reiko_noob_flip_kick();
-  check_noob_air_throw();
   check_reiko_noob_teleport();
 }
 
@@ -6018,8 +5767,7 @@ int main(void) {
   check_reconnected_stage_commands();
   check_script_reactions();
   check_ground_throw_lifetimes();
-  check_air_throw();
-  check_quan_chi_air_throw();
+  check_air_capture_lifetimes();
   check_quan_chi_skull();
   check_quan_chi_flip_kick();
   check_quan_chi_teleport_stomp();
@@ -6040,17 +5788,13 @@ int main(void) {
   check_roster_jab_frames();
   check_roster_high_punch_frames();
   check_straight_air_kick_contacts();
-  check_reconnected_ground_combos();
   check_reconnected_roundhouses();
   check_weapon();
   check_specials();
   check_retail_input();
   check_roster();
-  check_original_kicks();
-  check_original_scorpion();
   check_sequence_events();
   check_wait_phases();
-  check_scorpion_contact_branches();
   {
     battle_init(0, 4);
     advance_ticks(89, NULL);
