@@ -45,19 +45,3 @@
 // clang-format on
 
 /* Native-only blends; no VM timing tables. */
-
-void scorpion_entry_retail_script_004e97f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e97f8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e9938(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9938, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004ec8b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004ec918(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ec918, fighter_ready, 0);
-}

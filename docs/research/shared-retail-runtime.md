@@ -1056,3 +1056,29 @@ no script behavior or callback sequence is translated. One focused shared
 runtime fixture covers completion context plus interruption without resume.
 Verified formatting, VM/rejection checks,18 strict audits, native/source gates
 and seven navigation checks. No per-fighter timing/damage coverage was added.
+
+### No C script-root adapters remain
+
+Removed the remaining46 selected/immediate script thunks. Native selectors
+carry RetailScriptContinuation values or raw original VAs instead of C function
+pointers. The shared axe victim service consumes that data directly. Scene
+actor allocation now has a shared raw-script entry path; the actor keeps the
+source model while entering its own native integration context.
+
+The original4de428 return followed by4de468 is represented as VM-owned return
+data, separate from native frame completion. That data follows compatible VM
+handoffs and is consumed once or canceled. Existing native return semantics
+are preserved; no authored branch/wait/animation is translated.
+
+Three remaining names falsely labeled4de664 a script. It is a native490350
+callback word; all callers now load that word and use one facing-flip service.
+Verified local490350 against mk4decomp scaled_xor_store.c (upstream4903b0),
+which toggles the group state-mask facing bit. No script entry adapters or
+associated declarations/macros remain anywhere in game C/headers.
+
+Verified formatting, shared VM/rejection checks,18 strict audits, native/source
+gates and seven navigation checks. Extended the existing continuation fixture
+for VM/native ownership separation, raw scene-actor context and reset cleanup;
+no fighter timing/damage matrices were added. Character.c files now contain
+only residual native data or are empty; their source-index/data migration and
+removal are next, along with consolidation of the remaining native services.

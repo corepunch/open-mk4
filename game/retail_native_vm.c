@@ -453,6 +453,9 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
   switch (kind) {
     case RETAIL_CALL:
       switch (address) {
+        case 0x490350:
+          retail_flip_facing(fighter);
+          return true;
         case 0x48a350:
           retail_impact_voice(fighter);
           return true;

@@ -84,3 +84,13 @@ void retail_finish_first(Fighter *fighter) {
 void retail_finish_second(Fighter *fighter) {
   finish_enter(fighter, true);
 }
+
+/* Native490350 is shared by the callback word at4de664. */
+void retail_flip_facing(Fighter *fighter) {
+  fighter->facing = -fighter->facing;
+}
+
+void retail_throw_turn(Fighter *fighter) {
+  uint32_t callback = mk4_image_u32(retail_vm_image(), 0x4de664);
+  require(retail_native_vm(fighter, callback, RETAIL_CALL, 0), "Unsupported throw callback table entry");
+}

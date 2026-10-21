@@ -36,35 +36,3 @@
 
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
-
-void sonya_entry_retail_script_004e8b38(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8b38, mk4_script_thrown_ready, 2);
-}
-
-void sonya_entry_retail_script_004e8f50(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8f50, mk4_script_thrown_ready, 2);
-}
-
-void sonya_entry_retail_script_004e9110(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9110, mk4_script_thrown_ready, 2);
-}
-
-void sonya_entry_retail_script_004e9a68(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9a68, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e9b88(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9b88, mk4_script_thrown_ready, 2);
-}
-
-void sonya_entry_retail_script_004e9de8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9de8, mk4_script_thrown_ready, 2);
-}
-
-void sonya_entry_retail_script_004ea0b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ea0b8, mk4_script_thrown_ready, 2);
-}
-
-void sonya_entry_retail_script_004ea130(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ea130, mk4_script_thrown_ready, 2);
-}

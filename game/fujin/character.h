@@ -41,8 +41,6 @@ void fujin_triple_kick(Fighter *fighter);
 void fujin_triple_contact(Fighter *fighter);
 void fujin_triple_fast(Fighter *fighter);
 void fujin_triple_victim(Fighter *fighter);
-void fujin_entry_retail_script_004ea040(Fighter *fighter);
-void fujin_entry_retail_script_004ea0b8(Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
 void fujin_grab_control_start(Fighter *fighter);

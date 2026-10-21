@@ -30,8 +30,13 @@ void kitana_script_reaction(Fighter *fighter, int reaction) {
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
   fighter_cancel_mmove(victim);
-  FighterFn script = reaction == 78 ? kitana_lk_victim : reaction == 79 ? kitana_entry_retail_script_004e9a68 : kitana_entry_retail_script_004e9b88;
-  script(victim);
+  if (reaction == 78) {
+    kitana_lk_victim(victim);
+  } else {
+    RetailScriptContinuation script =
+        reaction == 79 ? (RetailScriptContinuation){0x4e9a68, fighter_ready, 16} : (RetailScriptContinuation){0x4e9b88, mk4_script_thrown_ready, 16};
+    retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
+  }
 }
 
 void kitana_shadow_task_low(Fighter *fighter, int task_type) {
@@ -59,28 +64,29 @@ void kitana_special_cleanup(Fighter *fighter) {
 }
 
 void kitana_generated_reaction(Fighter *victim) {
-  FighterFn script;
+  RetailScriptContinuation script = {0};
+  FighterFn native = NULL;
   switch (victim->reaction) {
     case 24:
-      script = kitana_entry_retail_script_004e9110;
+      script = (RetailScriptContinuation){0x4e9110, mk4_script_thrown_ready, 16};
       break;
     case 55:
-      script = kitana_entry_retail_script_004e8b38;
+      script = (RetailScriptContinuation){0x4e8b38, mk4_script_thrown_ready, 16};
       break;
     case 56:
-      script = kitana_entry_retail_script_004e8f50;
+      script = (RetailScriptContinuation){0x4e8f50, mk4_script_thrown_ready, 16};
       break;
     case 68:
-      script = kitana_entry_retail_script_004e9de8;
+      script = (RetailScriptContinuation){0x4e9de8, mk4_script_thrown_ready, 16};
       break;
     case 86:
-      script = kitana_entry_retail_script_004ea130;
+      script = (RetailScriptContinuation){0x4ea130, mk4_script_thrown_ready, 16};
       break;
     case 87:
-      script = kitana_square_victim;
+      native = kitana_square_victim;
       break;
     case 121:
-      script = kitana_entry_retail_script_004ea0b8;
+      script = (RetailScriptContinuation){0x4ea0b8, mk4_script_thrown_ready, 16};
       battle_wall_recoil(victim);
       break;
     default:
@@ -94,5 +100,9 @@ void kitana_generated_reaction(Fighter *victim) {
   if (fighter_airborne(victim) && victim->body.gravity == 0) {
     victim->body.gravity = 0x28f;
   }
-  script(victim);
+  if (native != NULL) {
+    native(victim);
+  } else {
+    retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
+  }
 }

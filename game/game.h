@@ -507,6 +507,7 @@ typedef struct RetailVm {
   int play_ticks, target, direction, stride, period, blend_ticks;
   bool active, return_after_play, parked, paired, wait_ground, native_owner_set, native_contact;
   FighterFn finish, cleanup, native_resume;
+  RetailScriptContinuation then;
   RetailNativeFn native;
 } RetailVm;
 
@@ -951,6 +952,7 @@ void battle_event_program(BattleEvent *event, int frames);
 void battle_event_frame(BattleEvent *event, int frame, int value, BattleEventFn action);
 bool battle_is_scene_actor(const Fighter *actor);
 Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const MoveDef *move, FighterFn entry);
+Fighter *battle_scene_actor_start_script(Fighter *owner, const Fighter *source, const MoveDef *move, uint32_t entry, FighterFn finish, unsigned native_owner);
 void battle_scene_actor_stop(Fighter *actor);
 void battle_step_scene_actors(void);
 void battle_shadow_actor_start(Fighter *owner, int variant);

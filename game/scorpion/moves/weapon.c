@@ -70,7 +70,8 @@ static void sword_attack(Fighter *fighter, bool hp, bool back) {
   fighter_start_move(fighter, S_PUNCH, move);
   fighter->sample_override = 0;
   if (back) {
-    (hp ? scorpion_entry_retail_script_004ec918 : scorpion_entry_retail_script_004ec8b0)(fighter);
+    RetailScriptContinuation script = hp ? (RetailScriptContinuation){0x4ec918, fighter_ready, 0} : (RetailScriptContinuation){0x4ec8b0, fighter_ready, 0};
+    retail_vm_enter_owned(fighter, script.entry, script.finish, script.native_owner);
   } else {
     sword_slash_build(fighter, 1, false);
   }

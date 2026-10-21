@@ -20,13 +20,10 @@ void noob_saibot_shadow_low(Fighter *fighter);
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
 void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
 void noob_saibot_shadow_up(Fighter *fighter);
-void noob_saibot_entry_retail_script_004de664(Fighter *fighter);
 
 extern const ButtonTable noob_saibot_diagonal_air;
 void noob_saibot_weapon_action(Fighter *fighter);
 void noob_saibot_script_weapon_draw_finish(Fighter *fighter);
-void noob_saibot_entry_retail_script_004ea040(Fighter *fighter);
-void noob_saibot_entry_retail_script_004ea0b8(Fighter *fighter);
 void noob_saibot_flip_kick(Fighter *fighter);
 void noob_saibot_star(Fighter *fighter);
 void noob_saibot_star_spawn(Fighter *fighter, int task_type);

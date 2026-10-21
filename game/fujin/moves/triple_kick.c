@@ -137,7 +137,8 @@ void fujin_triple_victim(Fighter *fighter) {
     require(fighter->reaction == 93 || fighter->reaction == 95, "Invalid Fujin triple-kick victim stage");
     /* Native488420/488440 and488830/488850 are also the exact
      * first/second axe victim entries; reuse their shared adaptations. */
-    weapon_axe_reaction(fighter, fighter->reaction == 95, fighter->reaction == 95 ? fujin_entry_retail_script_004ea0b8 : fujin_entry_retail_script_004ea040);
+    weapon_axe_reaction(fighter, fighter->reaction == 95,
+        fighter->reaction == 95 ? (RetailScriptContinuation){0x4ea0b8, fighter_ready, 5} : (RetailScriptContinuation){0x4ea040, mk4_mmove_thrown_finish, 5});
   }
 }
 

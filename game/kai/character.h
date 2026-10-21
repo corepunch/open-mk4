@@ -58,8 +58,6 @@ void kai_rising_skull_spawn(Fighter *fighter);
 void kai_rising_skull_finish(Fighter *fighter);
 void kai_ground_skull(Fighter *fighter);
 void kai_ground_skull_spawn(Fighter *fighter);
-void kai_entry_retail_script_004ed330(Fighter *fighter);
-void kai_entry_retail_script_004ed2f8(Fighter *fighter);
 bool kai_can_first_fatality(const Fighter *fighter);
 void kai_fatality_1(Fighter *fighter);
 void kai_first_owner_grab(Fighter *fighter);

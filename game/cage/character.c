@@ -27,7 +27,3 @@ const uint32_t cage_weapon_descriptor[] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
-
-void cage_entry_retail_script_004e1350(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1350, fighter_ready, 14);
-}

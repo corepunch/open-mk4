@@ -67,5 +67,4 @@ void cage_first_torso_half(Fighter *fighter);
 void cage_first_torso_123(Fighter *fighter);
 void cage_first_torso_finish(Fighter *fighter);
 void cage_first_task_end(Fighter *fighter);
-void cage_entry_retail_script_004e1350(Fighter *fighter);
 #endif

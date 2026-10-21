@@ -8,7 +8,7 @@ static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, S
 
 void noob_saibot_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  noob_saibot_entry_retail_script_004de664(victim);
+  retail_throw_turn(victim);
   retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 17);
 }
 

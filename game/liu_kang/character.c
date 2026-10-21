@@ -60,23 +60,3 @@ const WeaponStrike liu_kang_sword_attacks[] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
-
-void liu_kang_entry_retail_script_004de468(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de468, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004dfff8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4dfff8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004ed678(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed678, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed6c0, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed6f8, fighter_ready, 3);
-}

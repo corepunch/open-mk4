@@ -45,7 +45,6 @@ void jarek_quake_tail(Fighter *fighter);
 void jarek_upward_ball(Fighter *fighter);
 void jarek_ball_land(Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
-void jarek_entry_retail_script_004de664(Fighter *fighter);
 extern const MoveDef jarek_s_low_kick;
 
 void jarek_weapon_upper_contact(Fighter *fighter);

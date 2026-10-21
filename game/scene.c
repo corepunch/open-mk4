@@ -106,10 +106,10 @@ static SceneActor *scene_slot(Fighter *actor) {
   return NULL;
 }
 
-Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const MoveDef *move, FighterFn entry) {
+static Fighter *scene_actor_allocate(Fighter *owner, const Fighter *source, const MoveDef *move) {
   require((owner == &g_battle.fighters[0] || owner == &g_battle.fighters[1]) && (source == &g_battle.fighters[0] || source == &g_battle.fighters[1]),
       "Scene actor needs live owner and source fighters");
-  require(move != NULL && entry != NULL, "Scene actor needs a pose and frame entry");
+  require(move != NULL, "Scene actor needs a pose");
   for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
     SceneActor *slot = &g_battle.scene_actors[i];
     if (slot->active) {
@@ -139,10 +139,26 @@ Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const M
     actor->state = S_KNOCKDOWN;
     actor->action = move->action;
     actor->flags = FF_BUSY | FF_UNTOUCHABLE;
-    entry(actor);
     return actor;
   }
   return NULL;
+}
+
+Fighter *battle_scene_actor_start(Fighter *owner, const Fighter *source, const MoveDef *move, FighterFn entry) {
+  require(entry != NULL, "Scene actor needs a frame entry");
+  Fighter *actor = scene_actor_allocate(owner, source, move);
+  if (actor != NULL) {
+    entry(actor);
+  }
+  return actor;
+}
+
+Fighter *battle_scene_actor_start_script(Fighter *owner, const Fighter *source, const MoveDef *move, uint32_t entry, FighterFn finish, unsigned native_owner) {
+  Fighter *actor = scene_actor_allocate(owner, source, move);
+  if (actor != NULL) {
+    retail_vm_enter_owned(actor, entry, finish, native_owner);
+  }
+  return actor;
 }
 
 void battle_scene_actor_stop(Fighter *actor) {

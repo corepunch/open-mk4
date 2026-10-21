@@ -138,15 +138,15 @@ static void ground_step(Projectile *object) {
   }
 }
 
-static void skull_cast(Fighter *fighter, const MoveDef *move, FighterFn script) {
+static void skull_cast(Fighter *fighter, const MoveDef *move, uint32_t script) {
   fighter_start_move(fighter, S_PUNCH, move);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  script(fighter);
+  retail_vm_enter_owned(fighter, script, fighter_ready, 11);
 }
 
 void kai_rising_skull(Fighter *fighter) {
-  skull_cast(fighter, &rising_cast, kai_entry_retail_script_004ed330);
+  skull_cast(fighter, &rising_cast, 0x4ed330);
 }
 
 void kai_rising_skull_spawn(Fighter *fighter) {
@@ -162,7 +162,7 @@ void kai_rising_skull_finish(Fighter *fighter) {
 }
 
 void kai_ground_skull(Fighter *fighter) {
-  skull_cast(fighter, &ground_cast, kai_entry_retail_script_004ed2f8);
+  skull_cast(fighter, &ground_cast, 0x4ed2f8);
 }
 
 static void ground_fall_landed(Fighter *fighter) {

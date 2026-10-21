@@ -505,7 +505,7 @@ static void axe_followup(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script) {
+void weapon_axe_reaction(Fighter *victim, bool followup, RetailScriptContinuation script) {
   static const MoveDef first = {.clip = 127, .last = 39, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
   static const MoveDef second = {.clip = 131, .last = 79, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
   mk4_script_stop_body(victim);
@@ -516,7 +516,7 @@ void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script) {
   fighter_start_move(victim, followup ? S_KNOCKDOWN : S_HIT, followup ? &second : &first);
   victim->flags |= FF_REACTING;
   mk4_script_effect(victim, followup ? 0 : 9);
-  script(victim);
+  retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
 }
 
 static void script_strike_recover(Fighter *fighter) {

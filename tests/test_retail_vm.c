@@ -562,6 +562,30 @@ static void native_script_continuation(void) {
           "native completion must enter its stored original script with the typed integration context");
     }
   }
+
+  Fighter *owner = setup(0, 2);
+  uint32_t saved[2] = {mk4_image_u32(&image, 0x4e6d08), mk4_image_u32(&image, 0x4e6d0c)};
+  put_word(0x4e6d08, 0x34000002);
+  put_word(0x4e6d0c, 0x30000000);
+  retail_native_begin(owner, S_KICK, 0x101, false);
+  retail_vm_enter_then_owned(owner, 0x4e6d08, 0x4e5d90, fighter_ready, 4);
+  native_begin(owner, 0, 0, NULL);
+  native_script_end(owner, 0x4e62f0, fighter_ready, 1);
+  for (int visit = 0; visit < 5 && owner->retail_vm.entry != 0x4e5d90; ++visit) {
+    tick();
+  }
+  check(owner->retail_vm.entry == 0x4e5d90 && owner->retail_vm.native_owner == 4 && owner->retail_vm.then.entry == 0 && owner->native.script_end.entry == 0,
+      "VM return continuation must stay independent of native completion data and consume once");
+
+  static const MoveDef actor_view = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK};
+  Fighter *actor = battle_scene_actor_start_script(owner, fighter_peer(owner), &actor_view, 0x4e6d08, fighter_ready, 1);
+  check(actor != NULL && actor->roster == fighter_peer(owner)->roster && actor->retail_vm.active && actor->retail_vm.native_owner == 1,
+      "raw scene script entry must preserve model identity independently of native integration context");
+  battle_reset_match();
+  check(!owner->retail_vm.active && owner->retail_vm.then.entry == 0 && !actor->retail_vm.active,
+      "reset must cancel both raw scene script and VM return continuations");
+  put_word(0x4e6d08, saved[0]);
+  put_word(0x4e6d0c, saved[1]);
 }
 
 static void native_close_lifetimes(void) {

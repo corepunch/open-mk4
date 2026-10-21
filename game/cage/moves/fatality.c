@@ -165,7 +165,7 @@ void cage_first_sever(Fighter *victim) {
   Fighter *owner = (Fighter *)fighter_opponent(victim);
   victim->sample_override = 225;
   victim->hidden_joints[0] |= UINT64_C(1) << 3;
-  Fighter *torso = battle_scene_actor_start(owner, victim, &first_body, cage_entry_retail_script_004e1350);
+  Fighter *torso = battle_scene_actor_start_script(owner, victim, &first_body, 0x4e1350, fighter_ready, 14);
   require(torso != NULL, "Cage torso needs its bounded independent scene slot");
   /* 448af0's copied body hides the two leg subtrees11/12. The original
    * body keeps those legs and continues410/411 independently. */

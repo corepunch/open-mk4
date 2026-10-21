@@ -29,8 +29,13 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
   fighter_cancel_mmove(victim);
-  FighterFn script = reaction == 111 ? raiden_lk_victim : reaction == 107 ? raiden_entry_retail_script_004e9b40 : raiden_entry_retail_script_004e9bd0;
-  script(victim);
+  if (reaction == 111) {
+    raiden_lk_victim(victim);
+  } else {
+    RetailScriptContinuation script =
+        reaction == 107 ? (RetailScriptContinuation){0x4e9b40, mk4_script_thrown_ready, 1} : (RetailScriptContinuation){0x4e9bd0, mk4_script_thrown_ready, 1};
+    retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
+  }
 }
 
 void raiden_script_lp_end(Fighter *fighter) {
@@ -178,7 +183,8 @@ void raiden_torpedo(Fighter *fighter) {
   fighter_set_speed(fighter, 0x2666);
   mk4_script_save_motion(fighter);
   fighter->mmove_cleanup = raiden_special_cleanup;
-  (fast ? raiden_entry_retail_script_004e8440 : raiden_entry_retail_script_004e8458)(fighter);
+  RetailScriptContinuation script = fast ? (RetailScriptContinuation){0x4e8440, fighter_ready, 1} : (RetailScriptContinuation){0x4e8458, fighter_ready, 1};
+  retail_vm_enter_owned(fighter, script.entry, script.finish, script.native_owner);
 }
 
 void raiden_script_torpedo_victim_motion(Fighter *victim) {
@@ -194,23 +200,24 @@ void raiden_script_torpedo_victim_motion(Fighter *victim) {
 }
 
 void raiden_generated_reaction(Fighter *victim) {
-  FighterFn script;
+  RetailScriptContinuation script = {0};
   switch (victim->reaction) {
     case 47:
-      script = raiden_entry_retail_script_004ea068;
+      script = (RetailScriptContinuation){0x4ea068, mk4_script_thrown_ready, 1};
       battle_wall_recoil(victim);
       break;
     case 53:
-      script = raiden_entry_retail_script_004e8e18;
+      script = (RetailScriptContinuation){0x4e8e18, mk4_script_thrown_ready, 1};
       break;
     case 66:
-      script = raiden_entry_retail_script_004e9d50;
+      script = (RetailScriptContinuation){0x4e9d50, mk4_script_thrown_ready, 1};
       break;
     case 82:
-      script = raiden_entry_retail_script_004ea108;
+      script = (RetailScriptContinuation){0x4ea108, fighter_ready, 1};
       break;
     case 83:
-      script = fighter_airborne(victim) ? raiden_entry_retail_script_004e9ae8 : raiden_entry_retail_script_004e9ad0;
+      script = fighter_airborne(victim) ? (RetailScriptContinuation){0x4e9ae8, mk4_script_thrown_ready, 1}
+                                        : (RetailScriptContinuation){0x4e9ad0, mk4_script_thrown_ready, 1};
       break;
     default:
       require(false, "Unexpected Raiden record reaction");
@@ -223,5 +230,5 @@ void raiden_generated_reaction(Fighter *victim) {
   if (fighter_airborne(victim) && victim->body.gravity == 0) {
     victim->body.gravity = 0x28f;
   }
-  script(victim);
+  retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
 }

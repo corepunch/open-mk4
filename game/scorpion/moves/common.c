@@ -64,7 +64,9 @@ void scorpion_script_reaction(Fighter *fighter, int reaction) {
 }
 
 void scorpion_generated_reaction(Fighter *victim) {
-  (victim->reaction == 173 ? scorpion_entry_retail_script_004e97f8 : scorpion_entry_retail_script_004e9938)(victim);
+  RetailScriptContinuation script =
+      victim->reaction == 173 ? (RetailScriptContinuation){0x4e97f8, fighter_ready, 0} : (RetailScriptContinuation){0x4e9938, fighter_ready, 0};
+  retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
 }
 
 void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end) {

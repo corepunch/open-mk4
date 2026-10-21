@@ -36,7 +36,7 @@ void weapon_block(Fighter *fighter);
 void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, int queries);
 bool weapon_can_draw(const Fighter *fighter);
 void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *profile);
-void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script);
+void weapon_axe_reaction(Fighter *victim, bool followup, RetailScriptContinuation script);
 
 bool native_grounded(const Fighter *fighter);
 void native_uppercut_default(Fighter *fighter);

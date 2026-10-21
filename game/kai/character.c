@@ -28,11 +28,3 @@ const uint32_t kai_weapon_descriptor[] = {
   0xffffc000,
 };
 // clang-format on
-
-void kai_entry_retail_script_004ed330(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed330, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004ed2f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed2f8, fighter_ready, 11);
-}

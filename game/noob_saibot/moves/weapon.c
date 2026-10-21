@@ -45,11 +45,11 @@ static void weapon_back_lp(Fighter *fighter) {
 }
 
 static void weapon_first_victim(Fighter *fighter) {
-  weapon_axe_reaction(fighter, false, noob_saibot_entry_retail_script_004ea040);
+  weapon_axe_reaction(fighter, false, (RetailScriptContinuation){0x4ea040, mk4_script_thrown_ready, 17});
 }
 
 static void weapon_second_victim(Fighter *fighter) {
-  weapon_axe_reaction(fighter, true, noob_saibot_entry_retail_script_004ea0b8);
+  weapon_axe_reaction(fighter, true, (RetailScriptContinuation){0x4ea0b8, mk4_script_thrown_ready, 17});
 }
 
 void noob_saibot_script_weapon_draw_finish(Fighter *fighter) {

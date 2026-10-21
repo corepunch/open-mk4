@@ -2,6 +2,8 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_flip_facing(Fighter *fighter);
+void retail_throw_turn(Fighter *fighter);
 void retail_victory(Fighter *fighter);
 void retail_victory_continue(Fighter *fighter);
 void retail_teleport(Fighter *fighter);

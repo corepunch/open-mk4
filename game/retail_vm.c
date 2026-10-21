@@ -2,6 +2,8 @@
 #include "script.h"
 #include "retail_native.h"
 
+static void resume_script_return(Fighter *fighter);
+
 /* Rule-only clients still execute retail words. The game supplies its selected
  * image through assets; this immutable cache owns the default test image. */
 const Mk4Image *retail_vm_image(void) {
@@ -182,6 +184,7 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
       .end = end,
       .active = true,
       .finish = next,
+      .then = next == resume_script_return ? previous.then : (RetailScriptContinuation){0},
       .cleanup = cleanup,
       .native = native,
       .loop_count = previous.loop_count,
@@ -206,6 +209,22 @@ void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
 
 /* Legacy native services are still selected by the originating integration
  * context. A victim/scene actor keeps its own model roster independently. */
+static void resume_script_return(Fighter *fighter) {
+  RetailScriptContinuation next = fighter->retail_vm.then;
+  require(next.entry != 0, "Missing retail script return continuation");
+  fighter->retail_vm.then = (RetailScriptContinuation){0};
+  retail_vm_enter_owned(fighter, next.entry, next.finish, next.native_owner);
+}
+
+/* Native callers that enter a second script after an original return keep
+ * that continuation in VM ownership, independent of native frame completion. */
+void retail_vm_enter_then_owned(Fighter *fighter, uint32_t entry, uint32_t after, FighterFn finish, unsigned native_owner) {
+  require(after >= RETAIL_SCRIPT_BEGIN && after < RETAIL_SCRIPT_END && after % 4 == 0 && finish != NULL && native_owner < MK4_ROSTER_COUNT,
+      "Invalid retail script return continuation");
+  fighter->retail_vm.then = (RetailScriptContinuation){after, finish, native_owner};
+  retail_vm_enter_owned(fighter, entry, resume_script_return, native_owner);
+}
+
 void retail_vm_enter_owned(Fighter *fighter, uint32_t entry, FighterFn next, unsigned native_owner) {
   require(native_owner < MK4_ROSTER_COUNT, "Invalid native integration context");
   fighter->retail_vm.native_owner = native_owner;

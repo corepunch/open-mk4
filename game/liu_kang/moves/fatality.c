@@ -193,8 +193,11 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
       victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x20ccc);
     }
   }
-  FighterFn start = id == FINISH_LIU_KANG_1 ? dragon_fatality_script : liu_kang_entry_retail_script_004dfff8;
-  start(fighter);
+  if (id == FINISH_LIU_KANG_1) {
+    dragon_fatality_script(fighter);
+  } else {
+    retail_vm_enter_owned(fighter, 0x4dfff8, fighter_ready, 3);
+  }
 }
 
 /* Typed native boundaries used by generated VM code. These contain native

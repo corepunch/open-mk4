@@ -34,7 +34,7 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   liu_kang_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
   /* 4de428 returns to this native caller, which then enters 4de468. */
-  retail_vm_enter_owned(fighter, 0x4de428, liu_kang_entry_retail_script_004de468, 3);
+  retail_vm_enter_then_owned(fighter, 0x4de428, 0x4de468, fighter_ready, 3);
 }
 
 void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type) {

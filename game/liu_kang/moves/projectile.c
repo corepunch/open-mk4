@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void fireball_projectile(Projectile *p);
@@ -54,8 +55,10 @@ static void fireball(Fighter *fighter, bool low) {
   fighter_upright(fighter);
   fighter->script_phase = air ? 2 : low ? 1 : 0;
   fighter->sample_override = 0;
-  FighterFn script = air ? liu_kang_entry_retail_script_004ed6f8 : low ? liu_kang_entry_retail_script_004ed678 : liu_kang_entry_retail_script_004ed6c0;
-  script(fighter);
+  RetailScriptContinuation script = air   ? (RetailScriptContinuation){0x4ed6f8, fighter_ready, 3}
+                                    : low ? (RetailScriptContinuation){0x4ed678, fighter_ready, 3}
+                                          : (RetailScriptContinuation){0x4ed6c0, fighter_ready, 3};
+  retail_vm_enter_owned(fighter, script.entry, script.finish, script.native_owner);
 }
 
 void liu_kang_high_fireball(Fighter *fighter) {
