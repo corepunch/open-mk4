@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static void throw_getup_land(Fighter *victim);
-static void lk_victim_land(Fighter *victim);
 static void ground_throw(Fighter *fighter);
 static const MoveDef s_lk_throw = {.clip = 33, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0501};
 static const MoveDef s_lk_thrown = {.clip = 149, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
@@ -52,15 +51,6 @@ void raiden_script_thrown_return(Fighter *fighter) {
     return;
   }
   fighter_finish_mmove(fighter, fighter_ready);
-}
-
-static void lk_victim_land(Fighter *victim) {
-  battle_scene_impact(victim);
-  native_finish_clip(victim, mk4_mmove_thrown_finish);
-}
-
-void raiden_script_lk_victim_end(Fighter *victim) {
-  native_await(victim, native_grounded, lk_victim_land);
 }
 
 void raiden_lk_victim(Fighter *victim) {

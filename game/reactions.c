@@ -1,5 +1,7 @@
 #include "game.h"
 #include "native.h"
+#include "retail_native.h"
+#include "retail_vm.h"
 #include "mk4_characters.h"
 
 void reptile_reaction_40(Fighter *fighter);
@@ -1018,8 +1020,9 @@ void battle_react(Fighter *victim, int reaction) {
     victim->body.pos[AXIS_Y] += victim->body.root_y;
     victim->body.root_y = 0;
   }
-  FighterFn entry = reactions[reaction] != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? reactions[reaction]
-                                                                                                                                      : react_approximate;
+  FighterFn native = retail_throw_reaction(retail_vm_image(), (unsigned)reaction);
+  FighterFn selected = native != NULL ? native : reactions[reaction];
+  FighterFn entry = selected != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
   if (victim->roster == 16 && (reaction == 24 || reaction == 55 || reaction == 56 || reaction == 68 || reaction == 86 || reaction == 87 || reaction == 121)) {
     entry = kitana_generated_reaction;
   }

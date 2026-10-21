@@ -454,6 +454,24 @@ static void assets_bound(void) {
   assets_free(&assets);
 }
 
+/* A table edit must select a native service independently of model identity. */
+static void reaction_native_table(void) {
+  Fighter *actor = setup(0, 2);
+  uint32_t original = mk4_image_u32(&image, 0x4ea4e8);
+  put_word(0x4ea4e8, 0x4854e0);
+  FighterFn entry = retail_throw_reaction(&image, 0);
+  check(entry != NULL, "loaded reaction target must resolve its shared native entry");
+  /* Native4854e0 inherits the descriptor installed by the paired script. */
+  retail_vm_bind_animation(actor, 0x4fad7c + 149 * 12, 0);
+  entry(actor);
+  check(actor->retail_vm.active && actor->retail_vm.entry == 0x4e99c0, "native reaction must execute its original script");
+  for (int visit = 0; visit < 128 && actor->retail_vm.active; ++visit) {
+    tick();
+  }
+  check(!actor->retail_vm.active, "shared native reaction must retire its continuation");
+  put_word(0x4ea4e8, original);
+}
+
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
   if (argc == 2) {
@@ -489,6 +507,7 @@ int main(int argc, char **argv) {
   native_cursor_return();
   native_shared_record();
   data_tables();
+  reaction_native_table();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

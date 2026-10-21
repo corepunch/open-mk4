@@ -180,3 +180,10 @@ q16 retail_cpu_finish_distance(const Mk4Image *image, unsigned character, bool s
   require(distance >= 0 && distance <= 16 * Q16_ONE, "Invalid retail CPU finish distance");
   return distance;
 }
+
+uint32_t retail_reaction_target(const Mk4Image *image, unsigned reaction) {
+  require(reaction < (0x4ea7f0 - 0x4ea4e8) / 4, "Invalid retail reaction selector");
+  uint32_t target = mk4_image_u32(image, 0x4ea4e8 + reaction * 4);
+  require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail reaction native");
+  return target;
+}

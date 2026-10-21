@@ -59,7 +59,6 @@
 #define script_first_release raiden_script_first_release
 #define script_knee_tail raiden_script_knee_tail
 #define script_lightning_spawn raiden_script_lightning_spawn
-#define script_lk_victim_end raiden_script_lk_victim_end
 #define script_lp_end raiden_script_lp_end
 #define script_lp_return raiden_script_lp_return
 #define script_reaction raiden_script_reaction
@@ -200,7 +199,6 @@ void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
 void raiden_script_knee_tail(Fighter *fighter);
 void raiden_script_lightning_spawn(Fighter *fighter, int task_type);
-void raiden_script_lk_victim_end(Fighter *victim);
 void raiden_script_lp_end(Fighter *fighter);
 void raiden_script_lp_return(Fighter *fighter);
 void raiden_script_reaction(Fighter *fighter, int reaction);

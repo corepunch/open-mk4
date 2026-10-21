@@ -1467,6 +1467,11 @@ def bindings_for(character):
                                   evidence='45b380 calls490bd0; shared facing adaptation with world-pump pair heading')
     result[0x46b740] = Binding('retail_crouch_low_kick_tail', 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
                                evidence='46b740 shared B23 probe, action1006 and1/4-visit recovery; original4e6180 rewind')
+    for address, function, source in ((0x4854c0, 'retail_throw_victim_continue', 'game/retail_throw.c'),
+                                      (0x4854d0, 'retail_throw_victim_impact', 'game/retail_throw.c'),
+                                      (0x485510, 'mk4_mmove_thrown_finish', 'game/script.c')):
+        result[address] = Binding(function, source, ('tail',), flow='terminal', mmove=True,
+                                  evidence='Shared native throw-victim continuation; matching local4854c0/4854d0/485510 and mk4decomp pending_match_variants')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

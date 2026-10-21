@@ -633,3 +633,20 @@ Formatting, runtime checks, all strict roster audits, native source gates and
 six existing helper-navigation checks pass. Existing battle integration builds
 and reaches the independently reproduced ground-throw assertion, after its
 native scene and branch/interrupt coverage. No tests were added.
+
+## Retail-selected native throw-victim entries
+
+A checked4ea4e8 reaction-table reader now selects five missing native victim
+entries by original address:485860,4857b0,485810,4854e0 and485480. Their shared
+implementation retains inherited animation state, applies native descriptor /
+physics setup and executes original victim words. Native4854c0/4854d0 continue
+through original4ea3c0/4ea3d0. Native485510 now uses the checked floor/controller
+return rather than Raiden's extra approximate landing/finish phase.
+
+The entries match local listings and mk4decomp pending_match_variants.c. One
+small runtime fixture edits a loaded reaction target, checks native selection
+independently of the actor model, supplies its required inherited descriptor,
+and checks continuation retirement. Runtime checks, all strict roster audits,
+native source gates and formatting pass. Battle integration reaches the known
+ground-throw assertion. This is preparation for replacing the copied LK starts;
+the catalogue's existing1,109 roots still omit those correct LK selections.

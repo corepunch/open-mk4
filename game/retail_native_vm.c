@@ -309,7 +309,6 @@ void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
 void raiden_script_knee_tail(Fighter *fighter);
 void raiden_script_lightning_spawn(Fighter *fighter, int task_type);
-void raiden_script_lk_victim_end(Fighter *victim);
 void raiden_script_lp_end(Fighter *fighter);
 void raiden_script_lp_return(Fighter *fighter);
 void raiden_script_reaction(Fighter *fighter, int reaction);
@@ -2501,8 +2500,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x484c00:
           scorpion_script_teleport_victim_tail(fighter);
           return true;
+        case 0x4854c0:
+          retail_throw_victim_continue(fighter);
+          return true;
+        case 0x4854d0:
+          retail_throw_victim_impact(fighter);
+          return true;
         case 0x485510:
-          raiden_script_lk_victim_end(fighter);
+          mk4_mmove_thrown_finish(fighter);
           return true;
         case 0x4858d0:
           if (owner & 0x10000u) {
