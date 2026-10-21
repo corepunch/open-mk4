@@ -34,7 +34,6 @@ void kai_input_47bd10(Fighter *fighter);
 void kai_input_47c520(Fighter *fighter);
 void kai_aerial_punch_contact(Fighter *fighter);
 void kai_lunge_kick_contact(Fighter *fighter);
-void kai_lp_throw(Fighter *fighter);
 void kai_press_air_hk(Fighter *fighter);
 void kai_press_air_hp(Fighter *fighter);
 void kai_press_air_lk(Fighter *fighter);

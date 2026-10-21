@@ -22,7 +22,7 @@ void goro_press_high_punch(Fighter *fighter) {
 
 /* 460fb0 selects LP throw 42c560 within 0.7, otherwise jab 46dca0. */
 void goro_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? goro_lp_throw : retail_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? retail_lp_throw : retail_jab);
 }
 
 void goro_press_crouching_punch(Fighter *fighter) {

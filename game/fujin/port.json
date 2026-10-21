@@ -127,9 +127,9 @@
       "evidence": "Fujin low-kick throw entry starts generated paired stream 4de2f8."
     },
     "lp_throw": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_lp_throw",
-      "evidence": "Fujin close low-punch throw entry starts selector root 4de798, which selects generated extended or short root."
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "roundhouse": {
       "source": "game/retail_combat.c",

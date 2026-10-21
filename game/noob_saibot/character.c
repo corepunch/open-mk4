@@ -71,7 +71,7 @@ static const FighterFn state_entries[S_COUNT] = {
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
 
-  [S_THROW] = noob_saibot_lp_throw,
+  [S_THROW] = retail_lp_throw,
 };
 // clang-format on
 

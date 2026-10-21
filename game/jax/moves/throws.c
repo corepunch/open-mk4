@@ -16,10 +16,6 @@ enum {
  * is held (4de588/5a8/5c8/5e8). Each extra slam (4de518 to 82, 4de538 to
  * 116, then 55..116 again) subtracts 5%; 4de568/4de558 release the victim
  * with reaction 100/125 and a last 5%. */
-void jax_lp_throw(Fighter *fighter) {
-  fighter->native_variant = 0;
-  mk4_mmove_throw_start(fighter, &jax_s_throw, &jax_s_thrown, jax_entry_retail_script_004de798);
-}
 
 void jax_lk_throw(Fighter *fighter) {
   mk4_mmove_throw_start(fighter, &s_lk_throw, &s_lk_thrown, jax_entry_retail_script_004de2f8);

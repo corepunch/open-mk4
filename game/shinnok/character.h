@@ -27,7 +27,6 @@ extern const MoveDef shinnok_s_throw;
 void shinnok_fan_tail(Fighter *fighter);
 void shinnok_fan_victory(Fighter *fighter);
 void shinnok_fatality_contact_hold(Fighter *fighter);
-void shinnok_lp_throw(Fighter *fighter);
 void shinnok_press_air_hp(Fighter *fighter);
 void shinnok_press_air_kick(Fighter *fighter);
 void shinnok_press_air_lp(Fighter *fighter);

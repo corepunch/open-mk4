@@ -147,7 +147,7 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_HIGH_KICK] = sub_zero_hk,
                                        [CPU_SWEEP] = retail_sweep_state,
                                        [CPU_UPPERCUT] = retail_uppercut_state,
-                                       [CPU_THROW] = sub_zero_enter_throw,
+                                       [CPU_THROW] = retail_lp_throw,
                                        [CPU_CLOSE_HP] = sub_zero_cpu_close_hp,
                                        [CPU_CLOSE_HK] = sub_zero_cpu_close_hk,
                                        [CPU_CROUCH_LP] = sub_zero_crouch_lp,

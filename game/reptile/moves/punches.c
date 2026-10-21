@@ -14,7 +14,7 @@ static void reptile_entry_high_punch(Fighter *fighter) {
 
 static void reptile_entry_low_punch(Fighter *fighter) {
   if (fighter_distance(fighter) <= 0.7f) {
-    reptile_lp_throw(fighter);
+    retail_lp_throw(fighter);
   } else {
     retail_jab(fighter);
   }

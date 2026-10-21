@@ -10,9 +10,9 @@
       "evidence": "Selected4de2f8/318/328 paired streams, native42be10 retreats through clip282;4de358 is Q16 motion data, not a script."
     },
     "lp_throw": {
-      "source": "game/goro/moves/throws.c",
-      "symbol": "goro_lp_throw",
-      "evidence": "Goro close low punch selects paired throw root 0x4de798; its owner/victim clips and five damage follow-up phases are retained in generated roots."
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "jab": {
       "source": "game/retail_combat.c",

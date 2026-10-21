@@ -24,7 +24,6 @@ void tanya_entry_retail_script_004e6500(Fighter *fighter);
 void tanya_entry_retail_script_004e6658(Fighter *fighter);
 void tanya_entry_retail_script_004e6710(Fighter *fighter);
 extern const MoveDef tanya_s_throw;
-void tanya_lp_throw(Fighter *fighter);
 void tanya_press_air_hk(Fighter *fighter);
 void tanya_press_air_hp(Fighter *fighter);
 void tanya_press_air_lk(Fighter *fighter);

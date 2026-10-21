@@ -35,7 +35,7 @@ static const MoveDef *const moves[S_COUNT] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
-  [S_THROW] = sonya_enter_throw,
+  [S_THROW] = retail_lp_throw,
   [S_VICTORY] = sonya_enter_victory,
   [S_IDLE] = weapon_idle,
   [S_WALK] = weapon_walk,
@@ -79,7 +79,7 @@ static const CpuMoves cpu_moves = {
             [CPU_HIGH_KICK] = sonya_hk,
             [CPU_SWEEP] = retail_sweep_state,
             [CPU_UPPERCUT] = retail_uppercut_state,
-            [CPU_THROW] = sonya_enter_throw,
+            [CPU_THROW] = retail_lp_throw,
             [CPU_CLOSE_HP] = sonya_cpu_close_hp,
             [CPU_CLOSE_HK] = sonya_cpu_close_hk,
             [CPU_CROUCH_LP] = sonya_crouch_lp,

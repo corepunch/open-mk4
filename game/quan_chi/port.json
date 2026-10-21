@@ -126,9 +126,9 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "lp_throw": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_lp_throw",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "roundhouse": {
       "source": "game/retail_combat.c",

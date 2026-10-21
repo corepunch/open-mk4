@@ -13,7 +13,6 @@
 
 void noob_saibot_command_498b70(Fighter *fighter);
 void noob_saibot_command_498e70(Fighter *fighter);
-void noob_saibot_lp_throw(Fighter *fighter);
 void noob_saibot_press_air_hk(Fighter *fighter);
 void noob_saibot_press_air_hp(Fighter *fighter);
 void noob_saibot_press_air_lk(Fighter *fighter);

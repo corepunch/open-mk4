@@ -10,9 +10,9 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "lp_throw": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_lp_throw",
-      "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "lk_throw": {
       "source": "game/cage/character.c",

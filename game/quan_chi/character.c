@@ -32,7 +32,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
-  [S_THROW] = quan_chi_lp_throw,
+  [S_THROW] = retail_lp_throw,
 };
 // clang-format on
 

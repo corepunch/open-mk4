@@ -17,7 +17,6 @@ enum {
 #define s_lp_thrown reptile_s_lp_thrown
 #define s_throw reptile_s_throw
 
-void reptile_lp_throw(Fighter *fighter);
 void reptile_press_air_hk(Fighter *fighter);
 void reptile_press_air_hp(Fighter *fighter);
 void reptile_press_air_lk(Fighter *fighter);

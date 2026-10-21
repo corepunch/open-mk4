@@ -116,9 +116,9 @@
       "symbol": "retail_low_kick"
     },
     "lp_throw": {
-      "evidence": "Jax roster slot 13 native selection and generated retail script roots for lp_throw",
-      "source": "game/jax/character.c",
-      "symbol": "jax_lp_throw"
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw"
     },
     "roundhouse": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for roundhouse",

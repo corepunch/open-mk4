@@ -5,9 +5,8 @@ static void lk_thrown_turn(Fighter *victim);
 static void ground_thrown_frame(Fighter *victim);
 static void ground_thrown_script(Fighter *victim);
 static void throw_cleanup(Fighter *owner);
-static void ground_throw(Fighter *fighter, bool lk);
+static void ground_throw(Fighter *fighter);
 static const MoveDef s_lk_throw = {.clip = 35, .last = 43, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0501};
-static const MoveDef s_lp_thrown = {.clip = 151, .last = 45, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lk_thrown = {.clip = 133, .last = 35, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 void liu_kang_thrown_finish(Fighter *victim) {
@@ -64,16 +63,16 @@ static void throw_cleanup(Fighter *owner) {
   }
 }
 
-static void ground_throw(Fighter *fighter, bool lk) {
-  if (!mk4_can_ground_throw(fighter, lk)) {
+static void ground_throw(Fighter *fighter) {
+  if (!mk4_can_ground_throw(fighter, true)) {
     fighter_ready(fighter);
     return;
   }
   Fighter *victim = fighter_peer(fighter);
   mk4_script_stop_body(fighter);
   mk4_script_stop_body(victim);
-  fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &liu_kang_s_throw);
-  fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &s_lp_thrown);
+  fighter_start_move(fighter, S_THROW, &s_lk_throw);
+  fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown);
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   fighter->sample_override = victim->sample_override = 0;
@@ -84,16 +83,12 @@ static void ground_throw(Fighter *fighter, bool lk) {
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
   fighter->mmove_cleanup = throw_cleanup;
-  (lk ? liu_kang_entry_retail_script_004de3b0 : liu_kang_entry_retail_script_004de798)(fighter);
+  (liu_kang_entry_retail_script_004de3b0)(fighter);
   ground_thrown_script(victim);
 }
 
-void liu_kang_enter_throw(Fighter *fighter) {
-  ground_throw(fighter, false);
-}
-
 void liu_kang_enter_lk_throw(Fighter *fighter) {
-  ground_throw(fighter, true);
+  ground_throw(fighter);
 }
 
 static void lk_thrown_turn(Fighter *victim) {

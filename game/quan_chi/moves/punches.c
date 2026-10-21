@@ -16,7 +16,7 @@ void quan_chi_press_high_punch(Fighter *fighter) {
 }
 
 void quan_chi_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? quan_chi_lp_throw : retail_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? retail_lp_throw : retail_jab);
 }
 
 /* 46d290/46d9b3: select the native HP record and 296/297 repeat phases. */

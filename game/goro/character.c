@@ -59,7 +59,7 @@ static const Controls goro_controls = {NULL, 0, {[STANCE_STANDING] = &goro_stand
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
-  [S_THROW] = goro_lp_throw,
+  [S_THROW] = retail_lp_throw,
 };
 // clang-format on
 

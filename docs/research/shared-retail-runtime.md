@@ -617,3 +617,19 @@ existing VM button-entry regression now expects the selector root rather than
 its Scorpion-only destination. Matching local listing and mk4decomp's action104
 router establish the entry; no authored timing or contact logic was added to C.
 Runtime checks, all strict roster audits, source gates and formatting pass.
+
+## Shared LP capture and original selector
+
+The ground LP entry now uses a single native42c590 capture boundary and enters
+original4de798, with unbound shared owner/victim state views. Retail scripts
+bind their own animations; seventeen fighter setup functions and their dead
+LP branches are removed. Jax's slam counter and generic native phase initialize
+at this boundary. Raiden's existing combined air/ground adapter retains its air
+branch and calls the common ground path. Existing controller throw gates and
+engine pair geometry remain their separate boundaries; this does not implement
+original camera-side pair swapping or claim full42c560 parity.
+
+Formatting, runtime checks, all strict roster audits, native source gates and
+six existing helper-navigation checks pass. Existing battle integration builds
+and reaches the independently reproduced ground-throw assertion, after its
+native scene and branch/interrupt coverage. No tests were added.

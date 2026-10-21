@@ -17,7 +17,7 @@
 #define cpu_close_hk kitana_cpu_close_hk
 #define cpu_close_hp kitana_cpu_close_hp
 #define enter_lk_throw kitana_enter_lk_throw
-#define enter_throw kitana_enter_throw
+#define enter_throw retail_lp_throw
 #define enter_victory kitana_enter_victory
 #define ground_attack kitana_ground_attack
 #define ground_native_next kitana_ground_native_next
@@ -102,7 +102,6 @@ void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
 void kitana_cpu_close_hp(Fighter *fighter);
 void kitana_enter_lk_throw(Fighter *fighter);
-void kitana_enter_throw(Fighter *fighter);
 void kitana_enter_victory(Fighter *fighter);
 void kitana_ground_attack(Fighter *fighter, int index);
 void kitana_ground_native_next(Fighter *fighter);

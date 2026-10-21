@@ -25,7 +25,7 @@
 #define cpu_close_hk sub_zero_cpu_close_hk
 #define cpu_close_hp sub_zero_cpu_close_hp
 #define enter_lk_throw sub_zero_enter_lk_throw
-#define enter_throw sub_zero_enter_throw
+#define enter_throw retail_lp_throw
 #define finish_scene sub_zero_finish_scene
 #define first_fatality_script sub_zero_first_fatality_script
 #define ground_attack sub_zero_ground_attack
@@ -147,7 +147,6 @@ bool sub_zero_can_slide(const Fighter *fighter);
 void sub_zero_cpu_close_hk(Fighter *fighter);
 void sub_zero_cpu_close_hp(Fighter *fighter);
 void sub_zero_enter_lk_throw(Fighter *fighter);
-void sub_zero_enter_throw(Fighter *fighter);
 void sub_zero_finish_scene(Fighter *fighter);
 void sub_zero_first_fatality_script(Fighter *fighter);
 void sub_zero_ground_attack(Fighter *fighter, int index);

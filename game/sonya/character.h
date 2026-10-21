@@ -21,7 +21,7 @@
 #define cpu_close_hk sonya_cpu_close_hk
 #define cpu_close_hp sonya_cpu_close_hp
 #define enter_lk_throw sonya_enter_lk_throw
-#define enter_throw sonya_enter_throw
+#define enter_throw retail_lp_throw
 #define enter_victory sonya_enter_victory
 #define first_fatality sonya_first_fatality
 #define ground_attack sonya_ground_attack
@@ -111,7 +111,6 @@ void sonya_cpu_air_lk(Fighter *fighter);
 void sonya_cpu_close_hk(Fighter *fighter);
 void sonya_cpu_close_hp(Fighter *fighter);
 void sonya_enter_lk_throw(Fighter *fighter);
-void sonya_enter_throw(Fighter *fighter);
 void sonya_enter_victory(Fighter *fighter);
 void sonya_first_fatality(Fighter *fighter);
 void sonya_ground_attack(Fighter *fighter, int index);

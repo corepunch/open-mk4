@@ -16,7 +16,7 @@
 #define can_spear scorpion_can_spear
 #define can_teleport scorpion_can_teleport
 #define enter_lk_throw scorpion_enter_lk_throw
-#define enter_throw scorpion_enter_throw
+#define enter_throw retail_lp_throw
 #define fire_script scorpion_fire_script
 #define ground_attack scorpion_ground_attack
 #define ground_native_next scorpion_ground_native_next
@@ -121,7 +121,6 @@ enum {
 bool scorpion_can_spear(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);
 void scorpion_enter_lk_throw(Fighter *fighter);
-void scorpion_enter_throw(Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
 void scorpion_ground_attack(Fighter *fighter, int index);
 void scorpion_ground_native_next(Fighter *fighter);

@@ -22,7 +22,6 @@ enum {
   CAGE_EVENT_FATALITY_2
 };
 
-void cage_lp_throw(Fighter *fighter);
 void cage_press_air_hk(Fighter *fighter);
 void cage_press_air_hp(Fighter *fighter);
 void cage_press_air_lk(Fighter *fighter);

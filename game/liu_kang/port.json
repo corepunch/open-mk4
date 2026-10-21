@@ -141,9 +141,9 @@
       "symbol": "retail_vm_enter"
     },
     "lp_throw": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "enter_throw"
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw"
     },
     "roundhouse": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",

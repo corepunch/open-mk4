@@ -51,7 +51,7 @@ static void hp(Fighter *fighter) {
  * callback handles air first; follow-up table4ecb40 enters this ground body. */
 static void ground_lp(Fighter *fighter) {
   if (fighter_distance(fighter) <= .7f && !fighter_airborne(fighter_opponent(fighter)) && !(fighter_opponent(fighter)->flags & FF_REACTING)) {
-    jarek_lp_throw(fighter);
+    retail_lp_throw(fighter);
   } else if (fighter_holds_back(fighter)) {
     back_lp(fighter);
   } else {

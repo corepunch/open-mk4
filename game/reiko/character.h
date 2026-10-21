@@ -17,7 +17,6 @@ enum {
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_throw reiko_s_throw
 
-void reiko_lp_throw(Fighter *fighter);
 void reiko_press_air_hk(Fighter *fighter);
 void reiko_press_air_hp(Fighter *fighter);
 void reiko_press_air_lk(Fighter *fighter);

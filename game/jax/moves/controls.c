@@ -1,7 +1,7 @@
 #include "../character.h"
 
 void jax_press_lp(Fighter *fighter) {
-  FighterFn entry = fighter->armed ? fighter->weapon->lp : (fighter_distance(fighter) <= 0.7f ? jax_lp_throw : retail_jab);
+  FighterFn entry = fighter->armed ? fighter->weapon->lp : (fighter_distance(fighter) <= 0.7f ? retail_lp_throw : retail_jab);
   fighter_interrupt(fighter, entry);
 }
 

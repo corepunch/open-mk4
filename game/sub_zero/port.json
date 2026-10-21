@@ -126,9 +126,9 @@
       "symbol": "retail_low_kick"
     },
     "lp_throw": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "enter_throw"
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw"
     },
     "roundhouse": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

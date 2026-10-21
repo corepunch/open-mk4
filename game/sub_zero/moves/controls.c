@@ -1,7 +1,7 @@
 #include "../character.h"
 
 void sub_zero_press_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, mk4_can_ground_throw(fighter, false) ? sub_zero_enter_throw
+  fighter_interrupt(fighter, mk4_can_ground_throw(fighter, false) ? retail_lp_throw
                              : fighter->armed                     ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
                                                                   : retail_jab);
 }

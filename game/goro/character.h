@@ -18,7 +18,6 @@ void goro_air_throw(Fighter *fighter);
 void goro_close_hk(Fighter *fighter);
 void goro_close_hp(Fighter *fighter);
 void goro_lk_throw(Fighter *fighter);
-void goro_lp_throw(Fighter *fighter);
 void goro_press_air_ground_hp(Fighter *fighter);
 void goro_press_air_hk(Fighter *fighter);
 void goro_press_air_hp(Fighter *fighter);

@@ -51,7 +51,7 @@ static void weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     weapon_air_frames(fighter, false, quan_chi_entry_retail_script_004e66f0);
   } else if (mk4_can_ground_throw(fighter, false)) {
-    quan_chi_lp_throw(fighter);
+    retail_lp_throw(fighter);
   } else if (fighter_holds_back(fighter)) {
     weapon_back_lp(fighter);
   } else {

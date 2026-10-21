@@ -66,9 +66,9 @@
       "evidence": "Tanya high_punch entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "lp_throw": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_lp_throw",
-      "evidence": "Tanya lp_throw entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "lk_throw": {
       "source": "game/tanya/character.c",

@@ -121,9 +121,9 @@
       "evidence": "Jarek roster slot 12 native entry 0x0046a7b0 and selected EXE script roots"
     },
     "lp_throw": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_lp_throw",
-      "evidence": "Jarek roster slot 12 native entry 0x0042c560 and selected EXE script roots"
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "roundhouse": {
       "source": "game/retail_combat.c",

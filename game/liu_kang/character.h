@@ -21,7 +21,7 @@
 #define cpu_close_hk liu_kang_cpu_close_hk
 #define cpu_close_hp liu_kang_cpu_close_hp
 #define enter_lk_throw liu_kang_enter_lk_throw
-#define enter_throw liu_kang_enter_throw
+#define enter_throw retail_lp_throw
 #define finish_scene liu_kang_finish_scene
 #define fireball_mesh liu_kang_fireball_mesh
 #define fireball_spawn liu_kang_fireball_spawn
@@ -110,7 +110,6 @@ void liu_kang_cpu_air_lk(Fighter *fighter);
 void liu_kang_cpu_close_hk(Fighter *fighter);
 void liu_kang_cpu_close_hp(Fighter *fighter);
 void liu_kang_enter_lk_throw(Fighter *fighter);
-void liu_kang_enter_throw(Fighter *fighter);
 void liu_kang_finish_scene(Fighter *fighter);
 extern const MeshAnimation liu_kang_fireball_mesh;
 void liu_kang_fireball_spawn(Fighter *fighter, int type);

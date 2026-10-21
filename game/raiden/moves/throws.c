@@ -2,10 +2,9 @@
 
 static void throw_getup_land(Fighter *victim);
 static void lk_victim_land(Fighter *victim);
-static void ground_throw(Fighter *fighter, bool lk);
+static void ground_throw(Fighter *fighter);
 static const MoveDef s_lk_throw = {.clip = 33, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0501};
 static const MoveDef s_lk_thrown = {.clip = 149, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const MoveDef s_lp_thrown = {.clip = 154, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 /* 485ad0: after landing, a living victim turns and plays getup 328 through
  * its last pose, holding that pose for one more visit before the controller. */
@@ -27,13 +26,12 @@ void raiden_script_throw_getup(Fighter *victim) {
   native_await(victim, native_grounded, throw_getup_land);
 }
 
-static void ground_throw(Fighter *fighter, bool lk) {
-  if (!mk4_can_ground_throw(fighter, lk)) {
+static void ground_throw(Fighter *fighter) {
+  if (!mk4_can_ground_throw(fighter, true)) {
     fighter_ready(fighter);
     return;
   }
-  mk4_mmove_throw_start(fighter, lk ? &s_lk_throw : &raiden_s_throw, lk ? &s_lk_thrown : &s_lp_thrown,
-      lk ? raiden_entry_retail_script_004de218 : raiden_entry_retail_script_004de798);
+  mk4_mmove_throw_start(fighter, &s_lk_throw, &s_lk_thrown, raiden_entry_retail_script_004de218);
 }
 
 void raiden_enter_throw(Fighter *fighter) {
@@ -41,11 +39,11 @@ void raiden_enter_throw(Fighter *fighter) {
     mk4_air_throw_frames(fighter, raiden_entry_retail_script_004e5e28, raiden_entry_retail_script_004e9910);
     return;
   }
-  ground_throw(fighter, false);
+  retail_lp_throw(fighter);
 }
 
 void raiden_enter_lk_throw(Fighter *fighter) {
-  ground_throw(fighter, true);
+  ground_throw(fighter);
 }
 
 void raiden_script_thrown_return(Fighter *fighter) {

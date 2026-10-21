@@ -35,7 +35,7 @@ void shinnok_weapon_lp(Fighter *fighter) {
   if (fighter_airborne(fighter)) {
     weapon_air_frames(fighter, false, shinnok_entry_retail_script_004e66f0);
   } else if (fighter_distance(fighter) <= .7f && !fighter_airborne(fighter_opponent(fighter)) && !(fighter_opponent(fighter)->flags & FF_REACTING)) {
-    shinnok_lp_throw(fighter);
+    retail_lp_throw(fighter);
   } else if (fighter_holds_back(fighter)) {
     shinnok_weapon_back_lp(fighter);
   } else {

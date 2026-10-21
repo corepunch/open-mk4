@@ -3,7 +3,7 @@
 static void thrown_finish(Fighter *victim);
 static void lk_thrown_release(Fighter *victim);
 static void throw_cleanup(Fighter *owner);
-static void ground_throw(Fighter *fighter, bool lk);
+static void ground_throw(Fighter *fighter);
 static const MoveDef s_lk_throw = {.clip = 41, .last = 74, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0501};
 static const MoveDef s_lk_thrown = {.clip = 165, .last = 46, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lk_thrown_rise = {.clip = 200, .last = 40, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
@@ -85,40 +85,28 @@ void sub_zero_script_lk_victim_rise(Fighter *victim) {
   fighter_start_mmove(victim, S_KNOCKDOWN, &s_lk_thrown_rise, &lk_rise);
 }
 
-static void ground_throw(Fighter *fighter, bool lk) {
-  if (!mk4_can_ground_throw(fighter, lk)) {
+static void ground_throw(Fighter *fighter) {
+  if (!mk4_can_ground_throw(fighter, true)) {
     fighter_ready(fighter);
     return;
   }
   Fighter *victim = fighter_peer(fighter);
   mk4_script_stop_body(fighter);
   mk4_script_stop_body(victim);
-  fighter_start_move(fighter, S_THROW, lk ? &s_lk_throw : &sub_zero_s_throw);
-  fighter_start_move(victim, S_KNOCKDOWN, lk ? &s_lk_thrown : &sub_zero_s_lp_thrown);
+  fighter_start_move(fighter, S_THROW, &s_lk_throw);
+  fighter_start_move(victim, S_KNOCKDOWN, &s_lk_thrown);
   fighter->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED | FF_REACTING;
   fighter->sample_override = victim->sample_override = 0;
-  if (!lk) {
-    memcpy(victim->body.pos, fighter->body.pos, sizeof victim->body.pos);
-    victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
-    victim->facing = fighter->facing;
-    memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  }
-  if (lk) {
-    fighter_set_speed(fighter, -0x1999);
-    mk4_script_save_motion(fighter);
-  }
+  fighter_set_speed(fighter, -0x1999);
+  mk4_script_save_motion(fighter);
   fighter_mmove_phase(victim, &lp_capture_phase);
   fighter->mmove_cleanup = throw_cleanup;
-  (lk ? sub_zero_entry_retail_script_004de490 : sub_zero_entry_retail_script_004de798)(fighter);
-}
-
-void sub_zero_enter_throw(Fighter *fighter) {
-  ground_throw(fighter, false);
+  (sub_zero_entry_retail_script_004de490)(fighter);
 }
 
 void sub_zero_enter_lk_throw(Fighter *fighter) {
-  ground_throw(fighter, true);
+  ground_throw(fighter);
 }
 
 void sub_zero_air_throw(Fighter *fighter) {

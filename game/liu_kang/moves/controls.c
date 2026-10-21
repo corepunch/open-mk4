@@ -1,7 +1,7 @@
 #include "../character.h"
 
 void liu_kang_press_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, mk4_can_ground_throw(fighter, false) ? liu_kang_enter_throw
+  fighter_interrupt(fighter, mk4_can_ground_throw(fighter, false) ? retail_lp_throw
                              : fighter->armed                     ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
                                                                   : retail_jab);
 }

@@ -19,7 +19,7 @@ void kai_press_low_punch(Fighter *fighter) {
     return;
   }
   if (!fighter->armed && !fighter_holds_back(fighter) && mk4_can_ground_throw(fighter, false)) {
-    fighter_interrupt(fighter, kai_lp_throw);
+    fighter_interrupt(fighter, retail_lp_throw);
     return;
   }
   fighter_interrupt(fighter, retail_jab);

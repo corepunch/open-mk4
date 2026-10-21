@@ -131,9 +131,9 @@
       "symbol": "retail_vm_enter"
     },
     "lp_throw": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw"
     },
     "ring": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

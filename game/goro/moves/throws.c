@@ -14,15 +14,6 @@ void goro_lk_throw(Fighter *fighter) {
   mk4_mmove_throw_start(fighter, &goro_s_throw, &goro_s_knockdown, goro_entry_retail_script_004de2f8);
 }
 
-void goro_lp_throw(Fighter *fighter) {
-  if (!mk4_can_ground_throw(fighter, false)) {
-    fighter_ready(fighter);
-    return;
-  }
-  fighter->script_phase = 0;
-  mk4_mmove_throw_start(fighter, &goro_s_throw, &goro_s_knockdown, goro_entry_retail_script_004de798);
-}
-
 /* Requested portable extension: Goro's retail BLOCK list (53c99c) is empty.
  * The shared 46aa80 pair, generated 4e5e28/4e5e50 owner and 4e9910 victim
  * streams run on frame tables. */

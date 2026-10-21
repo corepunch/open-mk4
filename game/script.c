@@ -237,6 +237,23 @@ void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const Mo
   script(fighter);
 }
 
+/* Native42c590's capture and original4de798 selector. No fighter clip seed. */
+static void lp_throw_script(Fighter *fighter) {
+  retail_vm_enter(fighter, 0x4de798, fighter_ready);
+}
+
+void retail_lp_throw(Fighter *fighter) {
+  if (!mk4_can_ground_throw(fighter, false)) {
+    fighter_ready(fighter);
+    return;
+  }
+  static const MoveDef owner = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
+  static const MoveDef victim = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter->native_variant = 0;
+  fighter->script_phase = 0;
+  mk4_mmove_throw_start(fighter, &owner, &victim, lp_throw_script);
+}
+
 /* Captures the victim in place, keeping its own facing (e.g. Raiden's torpedo 47d7f0). */
 void mk4_mmove_carry_victim(Fighter *fighter, const MoveDef *move) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

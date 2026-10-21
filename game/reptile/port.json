@@ -126,9 +126,9 @@
       "evidence": "Reptile low kick entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "lp_throw": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_lp_throw",
-      "evidence": "Reptile lp throw entry starts its reviewed generated VM stream through the portable fighter adapter."
+      "source": "game/script.c",
+      "symbol": "retail_lp_throw",
+      "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "reaction_40": {
       "source": "game/reptile/moves/dash.c",

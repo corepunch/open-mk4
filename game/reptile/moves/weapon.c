@@ -196,7 +196,7 @@ static void weapon_lp(Fighter *fighter) {
     weapon_air_frames(fighter, false, reptile_entry_retail_script_004e66f0);
   } else if (mk4_can_ground_throw(fighter, false)) {
     /* 496100 -> 46dbb0: a close, unrestricted LP throws instead. */
-    reptile_lp_throw(fighter);
+    retail_lp_throw(fighter);
   } else if (fighter_holds_back(fighter)) {
     weapon_back_lp(fighter);
   } else {
