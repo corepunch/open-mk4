@@ -137,14 +137,16 @@ or system font. Goro uses his
 own 21-channel animation bank. Other characters use compatible original action
 clips. All resources load directly from the read-only archive and executable.
 
-Sub-Zero now has character-owned normals/combos and throws, ice blast and
-freeze/backfire, clone, slide, scepter draw/combat/throw/pickup, RUN double-tap
-sidestep, both character fatalities and both stage fatalities. Commands, source
-addresses, verification and presentation limits are recorded in
-[the character port guide](docs/character-script-port.md).
-For another fighter, follow its [research-to-commit workflow](docs/character-script-port.md#workflow):
-bounded script/native queries, evidence for constants, generated frame programs,
-paired recovery, command wiring and focused regression tests.
+All 1,109 catalogued fighter script roots across 18 roster slots execute original
+retail words through one shared C11 interpreter. Roster, command/action, CPU
+special and scene-selection tables load from retail data. Generated fighter
+C/frame output and its emitter are removed. Remaining native controllers and
+state adapters are being consolidated; see the
+[migration ledger](docs/research/shared-retail-runtime.md).
+Follow the [shared runtime workflow](docs/character-script-port.md#workflow):
+check mk4decomp and matching local native listings, implement a missing runtime
+or native boundary once, and keep validation focused on our data/lifetime
+contracts. Authored script behavior stays in the original words.
 
 Combat runs at a fixed 60 ticks per second. It implements walking/running,
 jumping, crouching, punches, kicks, sweeps (crouch + kick), uppercuts (crouch +

@@ -7,11 +7,8 @@
       "symbol": "weapon_pickup"
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/sonya/character.c",
   "inventory_sha256": "884490de1145269b0971bc31d7c15cc818469a73a2f450ef238621cd311cef4f",
-  "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -204,7 +201,6 @@
       "symbol": "weapon_throw"
     }
   },
-  "output": "game/sonya/generated/scripts.inc",
   "reactions": {
     "0": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -425,7 +421,6 @@
       "symbol": "react_fireball_block"
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

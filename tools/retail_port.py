@@ -199,7 +199,7 @@ def source_rows(port, limit):
 
 def compiler_binding_rows(image, move, character):
     from retail_bindings import bindings_for
-    from retail_codegen import instruction_binding
+    from retail_contracts import instruction_binding
     bindings = bindings_for(character)
     used = {}
     for _, root in move['scripts']:

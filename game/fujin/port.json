@@ -67,12 +67,9 @@
       "evidence": "The ordinary stance low kick is46a7b0 ->4e5d90, distinct from46a5f0 wind slam; its normal button route now reaches this existing adapter."
     }
   },
-  "entry_contexts": {},
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
-  "generated_scripts": [],
   "integration_source": "game/fujin/character.c",
   "inventory_sha256": "7f1bd8dc883cb38692ebf440426136148bd2538ec09bae11ffbbe4c94003ab0c",
-  "legacy_scripts": {},
   "moves": {
     "jab": {
       "evidence": "Fujin jab root 0x4e62f0 binds clips 294/295 and uses contact descriptor 0x4ebd38; bounded Fujin script query.",
@@ -235,7 +232,6 @@
       "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
     }
   },
-  "output": "game/fujin/generated/scripts.inc",
   "reactions": {
     "1": {
       "source": "game/reactions.c",
@@ -460,7 +456,6 @@
       "adaptation": "Reaction181 is installed by the generated fatality peer dispatcher; its portable global reaction entry starts independent wind hold, skin separation and flesh replacement phases."
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

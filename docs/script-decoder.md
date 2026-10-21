@@ -4,13 +4,13 @@ The decoder reads the supplied EXE; it does not execute retail code. Decoded
 operand layouts and native dependencies are evidence for a C port, not proof
 that a move's semantics or implementation are complete.
 
-For new ports, start with the deterministic compiler and coverage audit in
+Start with the shared-runtime inventory and coverage audit described in
 [script-compiler.md](script-compiler.md). `tools/compile_retail.py --inventory`
-reads typed character roots; `--audit` exposes unsupported operations/native
-bindings and reviewed legacy boundaries; `--generate` emits compilable C11
-frame programs. The decoder's `--c` and `--port` views below remain research/navigation
-reports, not the code-generation workflow. Research only unresolved boundaries,
-add a typed compiler binding or lowering once, then regenerate.
+reads typed retail roots; `--audit` checks interpreter opcodes, typed native
+roles and reviewed integration boundaries. The former script-to-C/frame
+emitter is removed. The decoder's `--c` and `--port` views are read-only
+research/navigation reports. Extend the shared interpreter or one native
+service for an unresolved boundary; execute the original words directly.
 
 ## Targeted queries
 

@@ -1,11 +1,7 @@
 {
   "character": "shinnok",
-  "return_to": "fighter_ready",
-  "output": "game/shinnok/generated/scripts.inc",
   "integration_source": "game/shinnok/character.c",
   "inventory_sha256": "99cbb52aa0aec52f0b33509f8ad390d7fb3ef4d7e5076a070419e8c985b43258",
-  "generated_scripts": [],
-  "entry_contexts": {},
   "entry_adapters": {
     "0x467cd0": {
       "source": "game/shinnok/moves/fatality_second.c",

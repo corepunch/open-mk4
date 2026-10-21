@@ -17,11 +17,8 @@
       "symbol": "kitana_command_shadow_up"
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/kitana/character.c",
   "inventory_sha256": "f488c4e2303de415b643e6af5cbf63a300aab4fbc9d656d1661ad2ecde7e687f",
-  "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
@@ -224,7 +221,6 @@
       "symbol": "weapon_throw"
     }
   },
-  "output": "game/kitana/generated/scripts.inc",
   "reactions": {
     "0": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -445,7 +441,6 @@
       "symbol": "react_fireball_block"
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

@@ -60,50 +60,9 @@ const CharacterDef mk4_example = {controls};
         self.assertTrue(any('combos.c:followups' in error for error in errors))
         self.assertFalse(any(':live ' in error for error in errors))
 
-    def test_generated_body_must_be_connected_not_merely_compiled(self):
-        graph = DefinitionGraph({'game/example/character.c': """
-static void retail_script_004e0000(Fighter *fighter) { /* EXE 004e0000: 0x3f000000 */ }
-void example_entry_retail_script_004e0000(Fighter *fighter) { retail_script_004e0000(fighter); }
-static void unrelated(Fighter *fighter) {}
-const CharacterDef mk4_example = {unrelated};
-"""})
-        with patch('c_reachability.workspace_graph', return_value=graph):
-            errors = unreachable_references({'character': 'example', 'generated_scripts': ['0x4e0000']})
-        self.assertEqual(errors, ['generated script 0x4e0000: compiled implementation is unreachable from gameplay'])
 
-    def test_reachable_cfg_can_embed_a_catalogued_continuation(self):
-        graph = DefinitionGraph({'game/example/character.c': """
-static void retail_script_004e0004(Fighter *fighter) { /* EXE 004e0004: 0x3f000000 */ }
-static void retail_script_004e0000(Fighter *fighter) {
-  /* EXE 004e0000: 0x33000000 */
-  /* EXE 004e0004: 0x3f000000 */
-}
-const CharacterDef mk4_example = {retail_script_004e0000};
-"""})
-        with patch('c_reachability.workspace_graph', return_value=graph):
-            errors = unreachable_references({'character': 'example', 'generated_scripts': ['0x4e0000', '0x4e0004']},
-                                            {0x4e0000: {0x4e0000, 0x4e0004}})
-        self.assertEqual(errors, [])
 
-    def test_generated_phase_can_be_expanded_by_a_native_coordinator(self):
-        graph = DefinitionGraph({'game/example/character.c': """
-static const mmove_t retail_script_004e0000_phase = {0};
-static void retail_script_004e0000(Fighter *fighter) {}
-static void native_loop(Fighter *fighter) { repeat(fighter, &retail_script_004e0000_phase); }
-const CharacterDef mk4_example = {native_loop};
-"""})
-        with patch('c_reachability.workspace_graph', return_value=graph):
-            self.assertEqual(unreachable_references({'character': 'example', 'generated_scripts': ['0x4e0000']}), [])
 
-    def test_generated_provenance_does_not_make_a_reference_edge(self):
-        graph = DefinitionGraph({'game/example/character.c': """
-static void retail_script_004e0000(Fighter *fighter) { /* EXE 004e0000: 0x3f000000 */ }
-const CharacterDef mk4_example = {0}; /* retail_script_004e0000 */
-"""})
-        with patch('c_reachability.workspace_graph', return_value=graph):
-            errors = unreachable_references({'character': 'example', 'generated_scripts': ['0x4e0000']})
-        self.assertEqual(len(errors), 1)
-        self.assertIn('compiled implementation is unreachable', errors[0])
 
     def test_registered_weapon_cannot_redispatch_its_own_armed_button(self):
         for initializer in ('{0x69, hp, lp}', '{.type = 0x69, .hp = hp, .lp = lp}'):
@@ -131,17 +90,6 @@ const WeaponDef weapon = {0x69, hp};
         with patch('c_reachability.workspace_graph', return_value=graph):
             self.assertEqual(unreachable_references({'character': 'example'}), [])
 
-    def test_generated_unused_continuations_do_not_become_independent_moves(self):
-        graph = DefinitionGraph({'game/example/character.c': '''
-static void retail_script_12345678(void) {}
-void example_entry_retail_script_12345678(void) { retail_script_12345678(); }
-static void authored_special(void) {}
-const CharacterDef mk4_example = {0};
-'''})
-        with patch('c_reachability.workspace_graph', return_value=graph):
-            errors = unreachable_references({'character': 'example'})
-        self.assertEqual(len(errors), 1)
-        self.assertIn(':authored_special', errors[0])
 
 
 

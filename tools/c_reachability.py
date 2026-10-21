@@ -133,7 +133,7 @@ def weapon_dispatch_cycles(graph, reached, directory):
     return errors
 
 
-def unreachable_references(profile, compiled_graphs=None):
+def unreachable_references(profile):
     graph = workspace_graph()
     # The roster lookup is an indirect runtime selection, not an edge from
     # every fighter to every other fighter's command tables.
@@ -158,24 +158,10 @@ def unreachable_references(profile, compiled_graphs=None):
             reported.update(candidates)
     # A manifest is a review index, not the universe of possible omissions.
     # Inspect authored callbacks and control tables even if nobody listed them
-    # in port.json. Generated VM bodies and their mechanical integration thunks
+    # in port.json. Mechanical interpreter integration thunks
     # are checked through the catalog roots above, not as independent moves.
     directory = 'game/' + profile['character'] + '/'
     errors.extend(weapon_dispatch_cycles(graph, reached, directory))
-    # A generated phase may be entered through its native loop coordinator.
-    # Linked continuations can be folded into another generated C function;
-    # use the compiler's decoded CFG, not a requirement to call every wrapper.
-    live_programs = set()
-    for path, name in reached:
-        match = re.match(r'retail_script_([0-9a-fA-F]{8})(?:_|$)', name)
-        if path.startswith(directory) and match:
-            live_programs.add(int(match[1], 16))
-    implemented = set(live_programs)
-    for entry in live_programs:
-        implemented.update((compiled_graphs or {}).get(entry, ()))
-    for entry in profile.get('generated_scripts', ()):
-        if int(entry, 16) not in implemented:
-            errors.append('generated script %s: compiled implementation is unreachable from gameplay' % entry)
     for key, body in graph.nodes.items():
         path, name = key
         if not path.startswith(directory) or key in reached or key in reported:
@@ -183,7 +169,7 @@ def unreachable_references(profile, compiled_graphs=None):
         head = body.split('{', 1)[0]
         function = '=' not in head and re.search(r'\b' + re.escape(name) + r'\s*\(', head)
         table = re.search(r'\b(?:ButtonTable|CommandDef|Controls|CpuMoves)\b', head)
-        generated_thunk = path == directory + 'character.c' and (name.startswith('retail_script_') or name.startswith(profile['character'] + '_entry_retail_script_'))
+        generated_thunk = path == directory + 'character.c' and name.startswith(profile['character'] + '_entry_retail_script_')
         if (function or table) and not generated_thunk:
             errors.append('unreachable move definition %s:%s (not connected to gameplay)' % key)
     return errors

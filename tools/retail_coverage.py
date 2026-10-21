@@ -2,7 +2,7 @@
 
 Inventory reads typed EXE tables and selected decoded VM graphs, without native
 execution or bulk discovery. A reviewed manifest names existing C boundaries;
-legacy VM bodies remain visible and never count as generated coverage.
+translated or legacy VM bodies are rejected; original words run in the shared runtime.
 """
 import hashlib
 import json
@@ -11,7 +11,7 @@ import re
 
 from character_catalog import CHARACTERS, moves_for
 from retail_bindings import bindings_for
-from retail_codegen import CompileError, compile_program, instruction_binding, symbol, generate, format_c
+from retail_contracts import instruction_binding
 from retail_helper_view import port_source
 from retail_moves import EXE_SHA256
 from retail_port import masked_c
@@ -37,7 +37,7 @@ def profile_for(character):
         return None
     profile = json.loads(path.read_text())
     if profile.get('schema') != 1 or profile.get('character') != CHARACTERS[character]:
-        raise ValueError('Invalid character generation profile')
+        raise ValueError('Invalid runtime coverage profile')
     return profile
 
 
@@ -125,30 +125,25 @@ def check_reference(reference, errors, label, table=False):
             errors.append('%s: %s' % (label, exc))
 
 
-def audit(image, character, return_to=None, profile=None):
+def audit(image, character, profile=None):
     observed = inventory(image, character)
     profile = profile_for(character) if profile is None else profile
     errors = []
     bindings = bindings_for(character)
-    continuation = return_to or (profile or {}).get('return_to')
     root_names = {}
     for name, move in moves_for(character).items():
         for role, entry in move['scripts']:
             root_names.setdefault(entry, []).append('%s: %s' % (name, role))
-    generated = {int(entry, 16) for entry in (profile or {}).get('generated_scripts', [])}
-    legacy = (profile or {}).get('legacy_scripts', {})
     runtime = (profile or {}).get('runtime_scripts', {})
-    contexts = (profile or {}).get('entry_contexts', {})
-    for entry in contexts.keys() - {hex(root) for root in generated}:
-        errors.append('%s: stale generated entry context' % entry)
+    for key in ('generated_scripts', 'legacy_scripts', 'entry_contexts'):
+        if (profile or {}).get(key):
+            errors.append('%s: translated/legacy script configuration is forbidden; use the shared interpreter' % key)
     scripts = []
-    compiled_graphs = {}
     for entry, names in sorted(root_names.items()):
         if hex(entry) in runtime:
             reference = runtime[hex(entry)]
             check_reference(reference, errors, 'runtime script ' + hex(entry))
             program = script_program(image, entry, character)
-            compiled_graphs[entry] = {int(row['va'], 16) for row in program['instructions']}
             limits = (ROOT / 'game/retail_vm.h').read_text()
             begin = int(re.search(r'#define RETAIL_SCRIPT_BEGIN (0x[0-9a-f]+)', limits)[1], 16)
             end = int(re.search(r'#define RETAIL_SCRIPT_END (0x[0-9a-f]+)', limits)[1], 16)
@@ -158,33 +153,20 @@ def audit(image, character, return_to=None, profile=None):
             supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/retail_vm.c').read_text())}
             if any(int(row['opcode'], 16) not in supported for row in program['instructions']):
                 errors.append('%s: runtime opcode is unsupported' % hex(entry))
+            for row in program['instructions']:
+                boundary = instruction_binding(row)
+                if boundary and boundary[0]:
+                    binding = bindings.get(boundary[0])
+                    if binding is None:
+                        errors.append('%s: runtime native %08x has no registration' % (row['va'], boundary[0]))
+                    elif boundary[1] not in binding.roles:
+                        errors.append('%s: runtime native %08x does not implement role %s' % (row['va'], boundary[0], boundary[1]))
             scripts.append(dict(entry=hex(entry), moves=names, status='interpreted', implementation='runtime', diagnostics=[]))
             continue
-        try:
-            program, _ = compile_program(image, entry, character, bindings, contexts.get(hex(entry), {}).get('return_to', continuation), contexts.get(hex(entry)))
-            status, diagnostics = 'compilable', []
-            compiled_graphs[entry] = {int(row['va'], 16) for row in program['instructions']}
-        except (CompileError, ValueError) as exc:
-            status = 'unsupported'
-            diagnostics = exc.diagnostics if isinstance(exc, CompileError) else [dict(pc=hex(entry), reason=str(exc))]
-        implementation = 'generated' if entry in generated else 'legacy' if hex(entry) in legacy else 'unreviewed'
-        scripts.append(dict(entry=hex(entry), moves=names, status=status, implementation=implementation, diagnostics=diagnostics))
-        if implementation == 'generated' and status != 'compilable':
-            errors.append('%s: generated script no longer compiles' % hex(entry))
-        if implementation == 'legacy':
-            check_reference(legacy[hex(entry)], errors, 'legacy script ' + hex(entry))
-        if implementation == 'unreviewed':
-            errors.append('%s: script has no generation entry or reviewed legacy boundary' % hex(entry))
-    for entry in generated - root_names.keys():
-        errors.append('%s: generation entry is outside the selected catalog' % hex(entry))
-    for entry in set(legacy) - {hex(root) for root in root_names}:
-        errors.append('%s: stale legacy script boundary' % entry)
+        scripts.append(dict(entry=hex(entry), moves=names, status='unreviewed', implementation='missing', diagnostics=[]))
+        errors.append('%s: script has no reviewed interpreter boundary' % hex(entry))
     for entry in set(runtime) - {hex(root) for root in root_names}:
         errors.append('%s: stale runtime script boundary' % entry)
-    for entry in set(runtime) & ({hex(root) for root in generated} | set(legacy)):
-        errors.append('%s: runtime script retains a generated or legacy body' % entry)
-    for entry in {hex(root) for root in generated} & set(legacy):
-        errors.append('%s: script cannot be both generated and legacy' % entry)
     event_names = {table['button'] for table in observed['inputs']}
     for event in sorted(INPUT_EVENTS - event_names):
         errors.append('missing input event ' + event)
@@ -193,7 +175,7 @@ def audit(image, character, return_to=None, profile=None):
     else:
         if profile.get('inventory_sha256') != fingerprint(observed):
             errors.append('EXE/root inventory changed: review --inventory and update its reviewed fingerprint')
-        errors.extend(unreachable_references(profile, compiled_graphs))
+        errors.extend(unreachable_references(profile))
         references = profile.get('moves', {})
         for name in observed['moves']:
             check_reference(references.get(name), errors, 'move ' + name)
@@ -241,34 +223,6 @@ def audit(image, character, return_to=None, profile=None):
                 errors.append('reaction %s: C dispatch %s differs from reviewed %s' % (value, actual.get(value), reference.get('symbol')))
             elif reference and reference.get('source') != 'game/reactions.c' and not reference.get('adaptation'):
                 errors.append('reaction %s: non-table dispatch needs an explicit adaptation' % value)
-        integration = profile.get('integration_source')
-        if generated:
-            if not integration or not (ROOT / integration).is_file():
-                errors.append('generated scripts need an integration source')
-            else:
-                source = read_source(ROOT / integration)
-                referenced = {entry for entry in generated if re.search(r'\b' + symbol(entry) + r'\b|&' + symbol(entry) + r'_(?:repeat_)?phase\b', masked_c(source))}
-                reachable = set(referenced)
-                for entry in referenced:
-                    try:
-                        program, _ = compile_program(image, entry, character, bindings,
-                                                     contexts.get(hex(entry), {}).get('return_to', continuation), contexts.get(hex(entry)))
-                        reachable.update(int(row['va'], 16) for row in program['instructions'])
-                    except (CompileError, ValueError):
-                        pass # Per-root compilation errors were reported above.
-                for entry in sorted(generated - reachable):
-                    errors.append('%s: generated function is not referenced by integration source or a linked generated CFG' % hex(entry))
-                include = (ROOT / profile['output']).relative_to((ROOT / integration).parent).as_posix()
-                if '#include "%s"' % include not in source:
-                    errors.append('integration source does not include ' + include)
-    if generated and all(row['status'] == 'compilable' for row in scripts if row['implementation'] == 'generated'):
-        output = ROOT / profile['output']
-        try:
-            expected = format_c(generate(image, generated, character, continuation, contexts=contexts))
-            if not output.is_file() or output.read_text() != expected:
-                errors.append('generated output is missing, stale or manually edited: ' + str(profile['output']))
-        except ValueError as exc:
-            errors.append('generation failed: ' + str(exc))
     # Every typed boundary is navigable to a real definition. Prose helper
     # names alone never satisfy this check.
     for address, binding in sorted(bindings.items()):
@@ -278,26 +232,14 @@ def audit(image, character, return_to=None, profile=None):
                 inventory_sha256=fingerprint(observed), scripts=scripts,
                 native_frontier=observed['native_frontier'], inputs=observed['inputs'], cpu=observed['cpu'],
                 stances=observed['stances'], weapon=observed['weapon'], reactions=observed['reactions'],
-                compilable=sum(row['status'] == 'compilable' for row in scripts), total=len(scripts),
-                generated=sum(row['implementation'] == 'generated' for row in scripts),
+                total=len(scripts), generated=0,
                 runtime=sum(row['implementation'] == 'runtime' for row in scripts),
-                legacy=sum(row['implementation'] == 'legacy' for row in scripts), coverage_errors=sorted(set(errors)))
+                legacy=0, coverage_errors=sorted(set(errors)))
 
 
 def summary(report):
-    lines = ['%s: %d generated, %d interpreted, %d legacy VM roots; %d/%d graphs compilable.' %
-             (report['character'], report['generated'], report.get('runtime', 0), report['legacy'], report['compilable'], report['total']),
-             '%d input event tables, %d CPU rows, %d stance tables, %d reactions (contacts and VM dispatch).' %
-             (len(report['inputs']), len(report['cpu']), len(report['stances']), len(report['reactions'])),
-             '%d coverage errors. Legacy bodies do not count as generated.' % len(report['coverage_errors'])]
+    lines = ['%s: %d/%d catalogued roots interpreted.' % (report['character'], report['runtime'], report['total']),
+             '%d input event tables, %d CPU rows, %d stance tables, %d reactions; %d coverage errors.' %
+             (len(report['inputs']), len(report['cpu']), len(report['stances']), len(report['reactions']), len(report['coverage_errors']))]
     lines.extend('- ' + error for error in report['coverage_errors'])
-    blockers = {}
-    for script in report['scripts']:
-        for row in script['diagnostics']:
-            blockers.setdefault(row['reason'], []).append(row['pc'])
-    if blockers:
-        lines.append('Compiler blockers (all call sites are available in JSON audit):')
-        lines.extend('- %s (%d sites)' % (reason, len(set(sites))) for reason, sites in sorted(blockers.items())[:8])
-        if len(blockers) > 8:
-            lines.append('- %d more blocker groups; use the JSON audit for the full list.' % (len(blockers) - 8))
     return '\n'.join(lines) + '\n'

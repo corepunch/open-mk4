@@ -37,8 +37,6 @@
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/jax/character.c",
   "inventory_sha256": "82619a4adc344f621810d1c3870444cd199dfc441503035f1fe23cc58c27141e",
   "moves": {
@@ -198,7 +196,6 @@
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }
   },
-  "output": "game/jax/generated/scripts.inc",
   "reactions": {
     "1": {
       "source": "game/reactions.c",
@@ -404,7 +401,6 @@
       "evidence": "4de568 45b1f0[0x64]; 4ea4e8[100] -> 485bf0 shared LP-throw release, as for Cage."
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

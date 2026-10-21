@@ -57,8 +57,6 @@
       "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/tanya/character.c",
   "inventory_sha256": "12669c85e57afbe3212efd3f59be3bc12da5d354915e7ee2227a21fa10ccc38f",
   "moves": {
@@ -213,7 +211,6 @@
       "evidence": "467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
   },
-  "output": "game/tanya/generated/scripts.inc",
   "reactions": {
     "1": {
       "source": "game/reactions.c",
@@ -415,7 +412,6 @@
       "adaptation": "The second-fatality scene owns this victim continuation through the current-reaction handler, not the shared table."
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

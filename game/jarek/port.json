@@ -1,11 +1,7 @@
 {
   "character": "jarek",
-  "return_to": "fighter_ready",
-  "output": "game/jarek/generated/scripts.inc",
   "integration_source": "game/jarek/character.c",
   "inventory_sha256": "02c1744360f975e739fb22dddb15ef370de22cf2896c2a04abd13b9017b98867",
-  "generated_scripts": [],
-  "entry_contexts": {},
   "entry_adapters": {
     "0x467cd0": {
       "source": "game/jarek/moves/fatality_second.c",

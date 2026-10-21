@@ -7,7 +7,7 @@ LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
 export CLANG_FORMAT
-FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.[ch] game/*/generated/*.inc viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
+FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.inc game/*/*.[ch] game/*/moves/*.[ch] viewer/*.[ch] tests/*.[ch] tests/fixtures/*.inc)
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
@@ -15,16 +15,16 @@ HEADERS = $(wildcard common/*.h)
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
 SCRIPT_CHARACTERS = $(patsubst game/%/port.json,%,$(wildcard game/*/port.json))
-SCRIPT_GENERATE_TARGETS = $(addprefix scripts-generate-,$(SCRIPT_CHARACTERS))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: retail-vm-test native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_GENERATE_TARGETS) $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: retail-vm-test native-frames-check scripts scripts-check scripts-audit mmove-frames mmove-frames-check $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
-scripts: $(SCRIPT_GENERATE_TARGETS)
-scripts-check: scripts-audit $(SCRIPT_CHECK_TARGETS)
-scripts-audit: $(SCRIPT_AUDIT_TARGETS)
+scripts: scripts-audit
+scripts-check: scripts-audit
+scripts-audit:
+	python3 tools/compile_retail.py --all --audit --strict --summary --require-implemented
 mmove-frames:
 	python3 tools/generate_mmove_frames.py
 native-frames-check:
@@ -33,10 +33,8 @@ native-frames-check:
 	python3 tests/test_native_frames.py
 mmove-frames-check:
 	python3 tools/generate_mmove_frames.py --check
-$(SCRIPT_GENERATE_TARGETS): scripts-generate-%:
-	python3 tools/compile_retail.py --character $* --generate
 $(SCRIPT_CHECK_TARGETS): scripts-check-%:
-	python3 tools/compile_retail.py --character $* --generate --check
+	python3 tools/compile_retail.py --character $* --audit --strict --summary --require-implemented
 $(SCRIPT_AUDIT_TARGETS): scripts-audit-%:
 	python3 tools/compile_retail.py --character $* --audit --strict --summary --require-implemented
 
@@ -74,7 +72,7 @@ run: mk4-viewer
 	./mk4-viewer
 CHARACTER_SOURCES = $(wildcard game/*/character.c game/*/moves/*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/retail_data.c game/retail_native.c game/retail_native_vm.c game/retail_scene.c game/retail_combat.c game/retail_vm.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c game/shadow_actor.c $(CHARACTER_SOURCES)
-GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch] game/*/generated/*.inc) game/native.h game/script.h game/retail_vm.h game/retail_data.h game/retail_native.h game/retail_native_input.inc game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc
+GAME_HEADERS = $(wildcard game/*/*.h game/*/moves/*.[ch]) game/native.h game/script.h game/retail_vm.h game/retail_data.h game/retail_native.h game/retail_native_input.inc game/game.h game/menu.h game/mk4_characters.h game/audio.h game/retail_actions.inc
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -128,5 +126,5 @@ check: retail-vm-test format-check scripts-check mmove-frames-check native-frame
 	python3 tests/test_retail_helpers.py
 	python3 tests/test_retail_actions.py
 	python3 tests/test_retail_port.py
-	python3 tests/test_script_codegen.py
+	python3 tests/test_retail_audit.py
 	python3 tests/test_retail_controls.py

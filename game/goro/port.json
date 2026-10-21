@@ -1,11 +1,7 @@
 {
   "character": "goro",
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/goro/character.c",
   "inventory_sha256": "63454822bc9afb04cab589a527085be56dd6ec9b27ccd413cdf5145b8585dc66",
-  "output": "game/goro/generated/scripts.inc",
-  "return_to": "fighter_ready",
   "schema": 1,
   "moves": {
     "lk_throw": {

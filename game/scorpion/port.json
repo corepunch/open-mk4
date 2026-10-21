@@ -12,11 +12,8 @@
       "symbol": "weapon_pickup"
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/scorpion/character.c",
   "inventory_sha256": "b515bb4b7f8a397f24a1ca654d281474963279863da9190d8e59c47eeb49d787",
-  "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -184,7 +181,6 @@
       "symbol": "retail_uppercut"
     }
   },
-  "output": "game/scorpion/generated/scripts.inc",
   "reactions": {
     "0": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -386,7 +382,6 @@
       "symbol": "react_extra"
     }
   },
-  "return_to": "fighter_ready",
   "runtime_scripts": {
     "0x4d2e58": {
       "evidence": "Direct retail words; docs/research/retail-vm.md; command and lifetime regressions in tests/test_retail_vm.c",

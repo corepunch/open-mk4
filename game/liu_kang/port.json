@@ -7,11 +7,8 @@
       "symbol": "weapon_pickup"
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/liu_kang/character.c",
   "inventory_sha256": "053a2cc67cf25fae7314534f66ec89a746ad76f3f4b09374bddc0e4eedb4c935",
-  "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -199,7 +196,6 @@
       "symbol": "weapon_throw"
     }
   },
-  "output": "game/liu_kang/generated/scripts.inc",
   "reactions": {
     "0": {
       "evidence": "4ea4e8[0] -> 0x486cd0; shared reaction adapter and behavioral regressions",
@@ -418,7 +414,6 @@
       "symbol": "bicycle_victim_script"
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

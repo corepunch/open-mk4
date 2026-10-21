@@ -417,7 +417,7 @@ view and preserve the actual displayed idle clip across freeze, replacing
 assumptions about the old private command table and idle sentinel.
 
 Validation: shared VM checks, all strict roster audits, native source gates,
-formatting, game build and game self-test (all18 rigs and11 arenas) pass.
+formatting, game build and game self-test (all 18 rigs and11 arenas) pass.
 Battle integration stops at the established ground-throw assertion. The broader
 asset suite passes the snapshot/rig binding checks but later stops at its
 existing air-throw attacker/victim clip expectation; that native throw family
@@ -513,3 +513,27 @@ Existing CPU near/far and stage/scene integrations pass before the known throw
 assertion. No fighter timing/balance tests were added. Remaining per-fighter
 normal-controller aliases, states and native implementations still require
 consolidation; this is not yet removal of the entire per-fighter architecture.
+
+## Script-to-C/frame translation retired
+
+The offline C emitter, frame-program lowering backend and translation test
+suite are deleted. Only read-only inventory and runtime audits remain behind
+the historical `compile_retail.py` command. `make scripts` and
+`make scripts-check` audit all 18 slots in one process, sharing the source
+reachability index. No generated files are written or compared.
+
+Coverage profiles no longer contain compiler outputs, generated roots, entry
+contexts or compiler return targets. Audits require interpreted roots and
+check native presence/role in each decoded program; translated/legacy
+configuration is rejected. Tiny decoder-boundary classification and native
+fixture formatting utilities remain separate from code emission. Native-frame
+fixture generation is retained for the engine scheduler we implement.
+
+Obsolete generated-C/CFG reachability tests are retired. Two small audit
+fixtures check forbidden translation configuration and missing/wrong native
+roles. Shared-runtime coverage, native source/reachability checks, native-frame
+fixture canonical checks, helper/navigation checks (6/7) and existing decoder
+query tests (33) pass. Inventory fingerprints and 1,109 interpreted roots remain
+unchanged. The workflow and compiler-era documentation now describe direct
+retail execution. This tooling cleanup does not claim remaining per-fighter
+native/controller architecture is finished.

@@ -6,16 +6,18 @@ The reference checkout is useful disassembly/reconstructed C, not recovered
 original source. Its addresses, scratch globals and some native-port comments
 differ from this executable. In particular its VM dispatch table is elsewhere.
 
-## Current generated implementation
+## Current interpreter implementation
 
-Scorpion now generates all 70 reviewed VM roots; Sub-Zero generates 63 and
-Liu Kang 57. Use `make scripts` and `make scripts-check`, following
-[the compiler workflow](character-script-port.md#workflow). The historical
-measurements below describe retail dispatch visits and the earlier sparse
-playback implementation. Current native regressions retain their branch
-scenarios and verify gameplay/recovery without requiring retail task scheduling
-or last-submitted-pose identity. Native entry, scene and object adaptations are
-recorded in the porting guide; no VM bodies remain in character timing tables.
+Scorpion executes all 70 reviewed roots directly, and every other catalogued
+fighter root also uses the shared interpreter. There is no script-to-C/frame
+emitter or generated fighter output. `make scripts` and `make scripts-check`
+now run read-only runtime audits; follow the
+[shared runtime workflow](character-script-port.md#workflow).
+
+The historical measurements below describe retail dispatch visits and earlier
+playback adaptations. They are research evidence, not timing requirements for
+new fighter-specific tests. Current native migration and remaining limitations
+are recorded in [the shared runtime ledger](research/shared-retail-runtime.md).
 
 ## Where lengths and starts live
 

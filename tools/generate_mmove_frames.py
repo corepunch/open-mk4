@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 from retail_moves import RetailImage, clip_inventory
-from retail_codegen import format_c
+from c_format import format_c
 from c_source import read_source, private_aliases
 
 

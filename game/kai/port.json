@@ -1,10 +1,6 @@
 {
   "schema": 1,
-  "return_to": "fighter_ready",
-  "generated_scripts": [],
-  "entry_contexts": {},
   "character": "kai",
-  "output": "game/kai/generated/scripts.inc",
   "integration_source": "game/kai/character.c",
   "inventory_sha256": "e0e19c3f62ee129bfb5cfeea513ad30520060dc97b63a6002ce5ab4e48ae39ce",
   "moves": {

@@ -1,12 +1,8 @@
 {
   "schema": 1,
   "character": "cage",
-  "return_to": "fighter_ready",
-  "output": "game/cage/generated/scripts.inc",
   "integration_source": "game/cage/character.c",
   "inventory_sha256": "0468f4710ab69c2e43bc14610162a88b2a6ea176c832a9bfec4d28fc92aa5e75",
-  "generated_scripts": [],
-  "entry_contexts": {},
   "moves": {
     "high_punch": {
       "source": "game/cage/character.c",

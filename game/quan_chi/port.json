@@ -1,11 +1,7 @@
 {
   "schema": 1,
   "character": "quan_chi",
-  "return_to": "fighter_ready",
-  "output": "game/quan_chi/generated/scripts.inc",
   "integration_source": "game/quan_chi/character.c",
-  "generated_scripts": [],
-  "entry_contexts": {},
   "entry_adapters": {
     "0x467cd0": {
       "source": "game/quan_chi/moves/fatality_second.c",

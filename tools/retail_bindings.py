@@ -1,4 +1,4 @@
-"""Typed, reviewed native boundaries for the script compiler (not x86 decompilation).
+"""Typed, reviewed native boundaries for runtime audits and source navigation.
 
 Keys are local EXE addresses. Roles prevent invoking a physics callback as a
 predicate or a spawn as a synchronous native call. Arguments describe the
@@ -23,8 +23,8 @@ class Binding:
     script_target: int = 0
     inline_values: tuple = ()
     cursor_effect: str = 'preserve'
-    mmove_lowering: str = ''  # explicit offline lowering for a yielding native primitive
-    mmove: bool = False  # reviewed nonblocking native callback for frame-table lowering
+    mmove_lowering: str = ''  # historical annotation; no C/frame emitter remains
+    mmove: bool = False  # reviewed nonblocking native/lifetime contract
 
     def __post_init__(self):
         if self.mmove_lowering not in ('', 'pair_to', 'pair_back_to', 'reverse_return', 'controller_return', 'current'):

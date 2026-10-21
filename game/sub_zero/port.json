@@ -7,11 +7,8 @@
       "symbol": "weapon_pickup"
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/sub_zero/character.c",
   "inventory_sha256": "cd1e0f4b368cfb12940c2eed4efcbce66b44589b4a94cff80b9fd95e61f7669c",
-  "legacy_scripts": {},
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -189,7 +186,6 @@
       "symbol": "weapon_throw"
     }
   },
-  "output": "game/sub_zero/generated/scripts.inc",
   "reactions": {
     "0": {
       "evidence": "4ea4e8[0] -> 0x486cd0; shared C reaction dispatch",
@@ -359,7 +355,6 @@
       "symbol": "react_extra_block"
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {

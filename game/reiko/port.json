@@ -57,8 +57,6 @@
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     }
   },
-  "entry_contexts": {},
-  "generated_scripts": [],
   "integration_source": "game/reiko/character.c",
   "inventory_sha256": "346495e28f8f65daf4c90f67cd03b33b30f8b476d584e06cef5ef99f902c0460",
   "moves": {
@@ -218,7 +216,6 @@
       "evidence": "467cd0 -> 4dfe90[7] = 41c360: owner 4d2d10 on clip 553 throws the 61-star 41d260 barrage; first arrival starts the victim 4d2d60 stagger with 41c510 push-back and 41c690 jolt, the head star ends them and 4d2d90 falls; gate 45e530 = 0x1cccc..0x30000."
     }
   },
-  "output": "game/reiko/generated/scripts.inc",
   "reactions": {
     "1": {
       "evidence": "Retail reaction selector 1 (0x486c40) routes to the shared MK4 reaction table.",
@@ -433,7 +430,6 @@
       "evidence": "C[21] blocked reaction 2: 4ea4e8[2] = 0x486ca0, shared C reaction dispatch."
     }
   },
-  "return_to": "fighter_ready",
   "schema": 1,
   "stances": {
     "air_followup": {
