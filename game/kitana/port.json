@@ -86,9 +86,9 @@
       "symbol": "retail_vm_enter"
     },
     "crouch_lp": {
-      "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",
-      "source": "game/kitana/character.c",
-      "symbol": "kitana_crouch_lp"
+      "evidence": "Shared native46b7f0, live53ce58 descriptors and A3 contact; matching local/mk4decomp phase controller",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_low_punch"
     },
     "draw_weapon": {
       "evidence": "Kitana roster ID 16 selects Sonya retail script slot 2; same EXE roots and bounded metadata.",

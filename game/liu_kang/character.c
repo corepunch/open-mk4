@@ -85,7 +85,7 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = liu_kang_press_jab,
     [BUTTON_HIGH_KICK] = liu_kang_press_kick,
     [BUTTON_LOW_KICK] = liu_kang_press_lk}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = liu_kang_press_crouch_lp,
+    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
     [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
     [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = liu_kang_press_air_hp,
@@ -105,7 +105,7 @@ static const CpuMoves cpu_moves = {
             [CPU_THROW] = retail_lp_throw,
             [CPU_CLOSE_HP] = liu_kang_cpu_close_hp,
             [CPU_CLOSE_HK] = liu_kang_cpu_close_hk,
-            [CPU_CROUCH_LP] = liu_kang_crouch_lp,
+            [CPU_CROUCH_LP] = retail_crouch_low_punch,
             [CPU_AIR_HP] = liu_kang_cpu_air_hp,
             [CPU_AIR_HK] = liu_kang_cpu_air_hk,
             [CPU_AIR_LK] = liu_kang_cpu_air_lk,
@@ -160,14 +160,6 @@ void liu_kang_entry_retail_script_004e0020(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0020, fighter_ready, 3);
 }
 
-void liu_kang_entry_retail_script_004e60b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e60b8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 3);
-}
-
 void liu_kang_entry_retail_script_004e6190(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 3);
 }
@@ -210,10 +202,6 @@ void liu_kang_entry_retail_script_004e6710(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004e69b0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e6d08(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6d08, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6df0(Fighter *fighter) {

@@ -63,7 +63,7 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = kitana_press_jab,
     [BUTTON_HIGH_KICK] = kitana_press_kick,
     [BUTTON_LOW_KICK] = kitana_press_lk}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = kitana_press_crouch_lp,
+    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
     [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
     [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = kitana_press_air_hp,
@@ -83,7 +83,7 @@ static const CpuMoves cpu_moves = {
             [CPU_THROW] = retail_lp_throw,
             [CPU_CLOSE_HP] = kitana_cpu_close_hp,
             [CPU_CLOSE_HK] = kitana_cpu_close_hk,
-            [CPU_CROUCH_LP] = kitana_crouch_lp,
+            [CPU_CROUCH_LP] = retail_crouch_low_punch,
             [CPU_AIR_HP] = kitana_air_hp,
             [CPU_AIR_HK] = kitana_cpu_air_hk,
             [CPU_AIR_LK] = kitana_cpu_air_lk,
@@ -152,20 +152,8 @@ void kitana_entry_retail_script_004e5a20(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5a20, fighter_ready, 16);
 }
 
-void kitana_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 16);
-}
-
 void kitana_entry_retail_script_004e5ed0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5ed0, fighter_ready, 16);
-}
-
-void kitana_entry_retail_script_004e6020(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6020, fighter_ready, 16);
-}
-
-void kitana_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 16);
 }
 
 void kitana_entry_retail_script_004e6190(Fighter *fighter) {

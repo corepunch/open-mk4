@@ -76,9 +76,9 @@
       "symbol": "retail_crouch_low_kick"
     },
     "crouch_lp": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_crouch_lp"
+      "evidence": "Shared native46b7f0, live53ce58 descriptors and A3 contact; matching local/mk4decomp phase controller",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_low_punch"
     },
     "draw_weapon": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

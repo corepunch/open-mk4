@@ -66,9 +66,9 @@
       "symbol": "retail_vm_enter"
     },
     "crouch_lp": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/character.c",
-      "symbol": "raiden_crouch_lp"
+      "evidence": "Shared native46b7f0, live53ce58 descriptors and A3 contact; matching local/mk4decomp phase controller",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_low_punch"
     },
     "draw_weapon": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

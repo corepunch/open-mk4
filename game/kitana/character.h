@@ -31,7 +31,7 @@
 #define press_combo_hp kitana_press_combo_hp
 #define press_crouch_hk retail_press_crouch_high_kick
 #define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp kitana_press_crouch_lp
+#define press_crouch_lp retail_press_crouch_low_punch
 #define press_jab kitana_press_jab
 #define press_kick kitana_press_kick
 #define press_knee_hp kitana_press_knee_hp
@@ -109,7 +109,6 @@ void kitana_bicycle(Fighter *fighter);
 void kitana_cartwheel(Fighter *fighter);
 void kitana_command_shadow_low(Fighter *fighter);
 void kitana_command_shadow_up(Fighter *fighter);
-void kitana_crouch_lp(Fighter *fighter);
 void kitana_hk(Fighter *fighter);
 void kitana_hp(Fighter *fighter);
 void kitana_leg_grab(Fighter *fighter);
@@ -128,7 +127,6 @@ void kitana_press_air_lk(Fighter *fighter);
 void kitana_press_air_lp(Fighter *fighter);
 void kitana_press_combo_hk(Fighter *fighter);
 void kitana_press_combo_hp(Fighter *fighter);
-void kitana_press_crouch_lp(Fighter *fighter);
 void kitana_press_jab(Fighter *fighter);
 void kitana_press_kick(Fighter *fighter);
 void kitana_press_knee_hp(Fighter *fighter);
@@ -142,10 +140,7 @@ void kitana_entry_retail_script_004e5990(Fighter *fighter);
 void kitana_entry_retail_script_004e59a8(Fighter *fighter);
 void kitana_entry_retail_script_004e59c8(Fighter *fighter);
 void kitana_entry_retail_script_004e5a20(Fighter *fighter);
-void kitana_entry_retail_script_004e5d90(Fighter *fighter);
 void kitana_entry_retail_script_004e5ed0(Fighter *fighter);
-void kitana_entry_retail_script_004e6020(Fighter *fighter);
-void kitana_entry_retail_script_004e6158(Fighter *fighter);
 void kitana_entry_retail_script_004e6190(Fighter *fighter);
 void kitana_entry_retail_script_004e61e0(Fighter *fighter);
 void kitana_entry_retail_script_004e61f8(Fighter *fighter);

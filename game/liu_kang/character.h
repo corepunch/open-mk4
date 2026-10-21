@@ -65,7 +65,7 @@
 #define press_combo_hp liu_kang_press_combo_hp
 #define press_crouch_hk retail_press_crouch_high_kick
 #define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp liu_kang_press_crouch_lp
+#define press_crouch_lp retail_press_crouch_low_punch
 #define press_jab liu_kang_press_jab
 #define press_kick liu_kang_press_kick
 #define press_knee_hp liu_kang_press_knee_hp
@@ -114,7 +114,6 @@ void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_ground_attack(Fighter *fighter, int index);
 void liu_kang_ground_native_tail(Fighter *fighter);
 void liu_kang_bicycle_kick(Fighter *fighter);
-void liu_kang_crouch_lp(Fighter *fighter);
 void liu_kang_first_fatality(Fighter *fighter);
 void liu_kang_flying_kick(Fighter *fighter);
 void liu_kang_high_fireball(Fighter *fighter);
@@ -157,7 +156,6 @@ void liu_kang_press_air_lk(Fighter *fighter);
 void liu_kang_press_air_lp(Fighter *fighter);
 void liu_kang_press_combo_hk(Fighter *fighter);
 void liu_kang_press_combo_hp(Fighter *fighter);
-void liu_kang_press_crouch_lp(Fighter *fighter);
 void liu_kang_press_jab(Fighter *fighter);
 void liu_kang_press_kick(Fighter *fighter);
 void liu_kang_press_knee_hp(Fighter *fighter);
@@ -168,8 +166,6 @@ void liu_kang_entry_retail_script_004de428(Fighter *fighter);
 void liu_kang_entry_retail_script_004de468(Fighter *fighter);
 void liu_kang_entry_retail_script_004dfff8(Fighter *fighter);
 void liu_kang_entry_retail_script_004e0020(Fighter *fighter);
-void liu_kang_entry_retail_script_004e60b8(Fighter *fighter);
-void liu_kang_entry_retail_script_004e6158(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6190(Fighter *fighter);
 void liu_kang_entry_retail_script_004e61e0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e62c0(Fighter *fighter);
@@ -181,7 +177,6 @@ void liu_kang_entry_retail_script_004e66d0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e66f0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6710(Fighter *fighter);
 void liu_kang_entry_retail_script_004e69b0(Fighter *fighter);
-void liu_kang_entry_retail_script_004e6d08(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6df0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e8610(Fighter *fighter);
 void liu_kang_entry_retail_script_004e8678(Fighter *fighter);

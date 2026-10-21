@@ -45,7 +45,7 @@
 #define press_combo_hp sub_zero_press_combo_hp
 #define press_crouch_hk retail_press_crouch_high_kick
 #define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp sub_zero_press_crouch_lp
+#define press_crouch_lp retail_press_crouch_low_punch
 #define press_jab sub_zero_press_jab
 #define press_kick sub_zero_press_kick
 #define press_knee_hp sub_zero_press_knee_hp
@@ -159,7 +159,6 @@ void sub_zero_press_air_lk(Fighter *fighter);
 void sub_zero_press_air_lp(Fighter *fighter);
 void sub_zero_press_combo_hk(Fighter *fighter);
 void sub_zero_press_combo_hp(Fighter *fighter);
-void sub_zero_press_crouch_lp(Fighter *fighter);
 void sub_zero_press_jab(Fighter *fighter);
 void sub_zero_press_kick(Fighter *fighter);
 void sub_zero_press_knee_hp(Fighter *fighter);
@@ -185,8 +184,6 @@ void sub_zero_entry_retail_script_004e0420(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0430(Fighter *fighter);
 void sub_zero_entry_retail_script_004e5e28(Fighter *fighter);
 void sub_zero_entry_retail_script_004e5e50(Fighter *fighter);
-void sub_zero_entry_retail_script_004e5fd8(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6158(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6190(Fighter *fighter);
 void sub_zero_entry_retail_script_004e61e0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e61f8(Fighter *fighter);
@@ -200,7 +197,6 @@ void sub_zero_entry_retail_script_004e66f0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter);
 void sub_zero_entry_retail_script_004e69c8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6da0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e84d8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e84f8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e8530(Fighter *fighter);
@@ -255,7 +251,6 @@ void sub_zero_slide_script(Fighter *fighter);
 void sub_zero_start_fatality(Fighter *fighter, int id);
 void sub_zero_air_throw(Fighter *fighter);
 void sub_zero_clone(Fighter *fighter);
-void sub_zero_crouch_lp(Fighter *fighter);
 void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_hk(Fighter *fighter);
 void sub_zero_hp(Fighter *fighter);

@@ -69,7 +69,7 @@ static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = scorpion_pr
     [BUTTON_HIGH_KICK] = scorpion_press_kick,
     [BUTTON_LOW_KICK] = scorpion_press_lk}};
 static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = scorpion_press_crouch_lp,
+    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
     [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
     [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable scorpion_jumping = {{[BUTTON_HIGH_PUNCH] = scorpion_press_air_hp,
@@ -197,14 +197,6 @@ void scorpion_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 0);
 }
 
-void scorpion_entry_retail_script_004e60b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e60b8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004e6190(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 0);
 }
@@ -251,10 +243,6 @@ void scorpion_entry_retail_script_004e6710(Fighter *fighter) {
 
 void scorpion_entry_retail_script_004e69b0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e6d08(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6d08, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e87b0(Fighter *fighter) {

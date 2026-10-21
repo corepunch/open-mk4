@@ -5,6 +5,8 @@
 void retail_crouch_high_kick(Fighter *fighter);
 void retail_press_crouch_high_kick(Fighter *fighter);
 void retail_press_crouch_low_kick(Fighter *fighter);
+void retail_crouch_low_punch(Fighter *fighter);
+void retail_press_crouch_low_punch(Fighter *fighter);
 void retail_crouch_low_kick(Fighter *fighter);
 void retail_crouch_low_kick_tail(Fighter *fighter);
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction);

@@ -47,13 +47,9 @@ static const FighterFn enter[S_COUNT] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 const GroundAttack sub_zero_ground_attacks[] = {
-  {{.clip = 70, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0102}, {0x15c28, -0x35c2, 0x104df, 0x5c28, 17, 10, 6, 0, 0x1c28}, 11, 30, 32},
-  {{.clip = 260, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0107}, {65536, -3932, 42532, 20971, 29, 10, 4, 0, 2621}, 8, 19, 22},
-  {{.clip = 315, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0106}, {81264, 34734, 67502, 32768, 28, 10, 4, 0, 3932}, 9, 19, 22},
-  {{.clip = 52, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0104}, {0xa8f5, -0xd70a, 0xa3d7, 0xb851, 26, 26, 7, 0, 0x1999}, 7, 31, 31},
-  {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
-  {{.clip = 532, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 11, 29, 32},
-  {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
+  [4] = {{.clip = 262, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 7, 21, 27},
+  [5] = {{.clip = 532, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0108}, {65536, -37945, 57016, 51707, 43, 10, 3, 0, 2621}, 11, 29, 32},
+  [6] = {{.clip = 314, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0103}, {60293, -11796, 43909, 72024, 27, 10, 3, 0, 6553}, 4, 25, 28},
 };
 // clang-format on
 
@@ -131,7 +127,7 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
     [BUTTON_HIGH_KICK] = sub_zero_press_kick,
     [BUTTON_LOW_KICK] = sub_zero_press_lk}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = sub_zero_press_crouch_lp,
+    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
     [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
     [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_air_hp,
@@ -149,7 +145,7 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_THROW] = retail_lp_throw,
                                        [CPU_CLOSE_HP] = sub_zero_cpu_close_hp,
                                        [CPU_CLOSE_HK] = sub_zero_cpu_close_hk,
-                                       [CPU_CROUCH_LP] = sub_zero_crouch_lp,
+                                       [CPU_CROUCH_LP] = retail_crouch_low_punch,
                                        [CPU_AIR_HP] = sub_zero_air_hp,
                                        [CPU_AIR_HK] = sub_zero_air_hk_diagonal,
                                        [CPU_AIR_LK] = sub_zero_air_lk_diagonal,
@@ -262,14 +258,6 @@ void sub_zero_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 4);
 }
 
-void sub_zero_entry_retail_script_004e5fd8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5fd8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 4);
-}
-
 void sub_zero_entry_retail_script_004e6190(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 4);
 }
@@ -320,10 +308,6 @@ void sub_zero_entry_retail_script_004e69c8(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e6a40(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6da0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6da0, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e84d8(Fighter *fighter) {

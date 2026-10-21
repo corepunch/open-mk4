@@ -5,11 +5,7 @@
 #include <string.h>
 
 enum {
-  G_LOW_KICK,
-  G_CROUCH_LP,
-  G_CROUCH_LK,
-  G_CROUCH_HK,
-  G_CLOSE_HP,
+  G_CLOSE_HP = 4,
   G_COMBO_HP,
   G_CLOSE_HK
 };
@@ -31,11 +27,6 @@ static void close_followup(Fighter *fighter) {
  * below query combat/input state; none advances a timer or tests a deadline. */
 static int ground_pose(const NativeGroundProfile *profile, int index, int frame, int active, bool hit, int initial) {
   switch (index) {
-    case G_CROUCH_LP:
-    case G_CROUCH_LK: {
-      int reverse = active + (hit ? 4 : 1);
-      return frame < active ? mini(9, frame + (index == G_CROUCH_LP ? 2 : 1)) : maxi(0, 9 - maxi(0, frame - reverse));
-    }
     case G_CLOSE_HP: {
       int reverse = hit ? 18 : 12;
       return frame < 10 ? frame : frame < reverse ? 9 : maxi(0, 8 - frame + reverse);
@@ -57,7 +48,7 @@ static void ground_query(Fighter *fighter) {
   const NativeGroundProfile *profile = fighter->native_context;
   int index = fighter->script_phase;
   const Fighter *victim = fighter_opponent(fighter);
-  bool gate = (index == G_CROUCH_LP || index == G_CROUCH_LK) && victim->action == ACTION_RETAIL_2011;
+  bool gate = false;
   if (index == G_CLOSE_HP) {
     gate = victim->action == ACTION_RETAIL_2001 || victim->action == ACTION_RETAIL_0106 || victim->action == ACTION_RETAIL_0107;
   }
@@ -75,6 +66,7 @@ static void ground_query(Fighter *fighter) {
 static void ground_build(Fighter *fighter, int first, bool immediate) {
   const NativeGroundProfile *profile = fighter->native_context;
   int index = fighter->script_phase;
+  require(index >= G_CLOSE_HP && index <= G_CLOSE_HK, "Ground native profile only owns close attacks");
   const GroundAttack *attack = &profile->attacks[index];
   int active = attack->active;
   bool hit = fighter->connected;

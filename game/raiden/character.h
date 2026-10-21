@@ -34,7 +34,7 @@
 #define press_combo_hp raiden_press_combo_hp
 #define press_crouch_hk retail_press_crouch_high_kick
 #define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp raiden_press_crouch_lp
+#define press_crouch_lp retail_press_crouch_low_punch
 #define press_jab raiden_press_jab
 #define press_kick raiden_press_kick
 #define press_knee_hp raiden_press_knee_hp
@@ -123,13 +123,11 @@ void raiden_press_air_lk(Fighter *fighter);
 void raiden_press_air_lp(Fighter *fighter);
 void raiden_press_combo_hk(Fighter *fighter);
 void raiden_press_combo_hp(Fighter *fighter);
-void raiden_press_crouch_lp(Fighter *fighter);
 void raiden_press_jab(Fighter *fighter);
 void raiden_press_kick(Fighter *fighter);
 void raiden_press_knee_hp(Fighter *fighter);
 void raiden_press_lk(Fighter *fighter);
 void raiden_press_lp(Fighter *fighter);
-void raiden_crouch_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
 void raiden_hp(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
@@ -146,11 +144,8 @@ void raiden_entry_retail_script_004e5740(Fighter *fighter);
 void raiden_entry_retail_script_004e5760(Fighter *fighter);
 void raiden_entry_retail_script_004e5770(Fighter *fighter);
 void raiden_entry_retail_script_004e5788(Fighter *fighter);
-void raiden_entry_retail_script_004e5d90(Fighter *fighter);
 void raiden_entry_retail_script_004e5e28(Fighter *fighter);
 void raiden_entry_retail_script_004e5e50(Fighter *fighter);
-void raiden_entry_retail_script_004e6020(Fighter *fighter);
-void raiden_entry_retail_script_004e6158(Fighter *fighter);
 void raiden_entry_retail_script_004e6190(Fighter *fighter);
 void raiden_entry_retail_script_004e61e0(Fighter *fighter);
 void raiden_entry_retail_script_004e61f8(Fighter *fighter);

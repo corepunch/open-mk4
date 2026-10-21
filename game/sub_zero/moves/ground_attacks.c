@@ -5,25 +5,20 @@ void sub_zero_ground_native_tail(Fighter *fighter) {
 }
 
 void sub_zero_ground_attack(Fighter *fighter, int index) {
+  require(index >= G_CLOSE_HP && index <= G_CLOSE_HK, "Ground profile only owns remaining close-native attacks");
   bool followup = fighter_fast_start(fighter);
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP || index == G_CROUCH_LP ? S_PUNCH : S_KICK, &sub_zero_ground_attacks[index].move);
+  fighter_start_move(fighter, index == G_CLOSE_HP || index == G_COMBO_HP ? S_PUNCH : S_KICK, &sub_zero_ground_attacks[index].move);
   fighter->script_phase = index;
   fighter->native_followup = followup;
-  fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_CROUCH_LP ? 2 : index == G_CROUCH_LK ? 1 : 0;
-  static const FighterFn scripts[] = {sub_zero_entry_retail_script_004e6da0, sub_zero_ground_native_tail, sub_zero_entry_retail_script_004e6158,
-      sub_zero_entry_retail_script_004e5fd8, sub_zero_entry_retail_script_004e61e0, sub_zero_entry_retail_script_004e69c8,
-      sub_zero_entry_retail_script_004e6190};
+  fighter->sample_override = index == G_CLOSE_HK ? 5 : 0;
+  static const FighterFn scripts[] = {
+      [G_CLOSE_HP] = sub_zero_entry_retail_script_004e61e0,
+      [G_COMBO_HP] = sub_zero_entry_retail_script_004e69c8,
+      [G_CLOSE_HK] = sub_zero_entry_retail_script_004e6190,
+  };
   scripts[index](fighter);
-}
-
-void sub_zero_crouch_lp(Fighter *fighter) {
-  sub_zero_ground_attack(fighter, G_CROUCH_LP);
-}
-
-void sub_zero_press_crouch_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed && fighter->weapon->crouch_lp != NULL ? fighter->weapon->crouch_lp : sub_zero_crouch_lp);
 }
 
 void sub_zero_script_knee_tail(Fighter *fighter) {

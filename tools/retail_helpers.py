@@ -276,3 +276,5 @@ HELPERS[0x46b5a0] = H('crouch_hk_entry', 'active fighter', 'Action0104 and origi
 HELPERS[0x42c560] = H('ground_lp_throw', 'grounded fighters after controller throw gates', 'Shared native42c590 capture; original4de798 selects owner/victim scripts and release behavior.', 'Native capture and independent victim lifetime.', ('game/script.c', 'retail_lp_throw'), (0x42c3d0, 0x42c590))
 
 HELPERS[0x42b6b0] = H('ground_lk_throw', 'grounded fighters after controller throw gates', 'Read original4ddfb8 with native48e490 hidden aliases; shared capture and each native entry script operand.', 'Direct original script execution.', ('game/retail_throw.c', 'retail_lk_throw'), (0x42b6e0, 0x48e490))
+
+HELPERS[0x46b7f0] = H('crouch_lp_entry', 'active fighter and current weapon presence', 'Read53ce58 armed/unarmed descriptor, advance native opening, query live A3, wait on contact and rewind.', 'Shared native controller.', ('game/retail_combat.c', 'retail_crouch_low_punch'))

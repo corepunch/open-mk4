@@ -71,9 +71,9 @@
       "symbol": "retail_crouch_low_kick"
     },
     "crouch_lp": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_crouch_lp"
+      "evidence": "Shared native46b7f0, live53ce58 descriptors and A3 contact; matching local/mk4decomp phase controller",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_low_punch"
     },
     "draw_weapon": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

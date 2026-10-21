@@ -709,3 +709,19 @@ retired; existing capture, interruption and KO lifetime checks remain and pass.
 Battle integration proceeds to its next exact-tick air-throw damage assertion,
 so the broad battle suite is not reported as passing. The SDL self-test passes
 all18 rigs and11 arenas. No new fighter timing/damage matrices were added.
+
+## Shared native crouching low punch
+
+Native46b7f0 now runs once, reading the armed/unarmed descriptor pair53ce58 and
+A3 contact record from the retail image. Its native opening, sound, forward
+completion, contact-dependent wait and reverse completion use the shared native
+runner. Native4610d0's sword-type exception stays at the shared press boundary.
+Twelve private entry/button wrappers and eighteen uncalled VM adapters are
+removed. All24 copied rows for the four already migrated low/crouch families
+are retired; native ground profiles now own only the remaining close attacks.
+The old native ground runner's unreachable crouch branches are removed too.
+
+The local46b7f0/4940e0/428ce0 sequence matches mk4decomp's phase controller in
+five_block_dispatch_variants.c. Runtime checks, all strict roster audits,
+native source gates and formatting pass. No tests were added. Close-attack
+profiles and their follow-up tables remain the next native migration inputs.

@@ -1,6 +1,7 @@
 #include "retail_native.h"
 #include "retail_vm.h"
 #include "script.h"
+#include "native.h"
 
 /* 470c60/470cb0: native contact rows, followed by a negative terminator
  * and native continuation. Poses and selectors stay in the retail image. */
@@ -317,4 +318,56 @@ void retail_press_crouch_high_kick(Fighter *fighter) {
 
 void retail_press_crouch_low_kick(Fighter *fighter) {
   fighter_interrupt(fighter, retail_crouch_low_kick);
+}
+
+static void crouch_punch_reverse(Fighter *fighter) {
+  int last = fighter_move(fighter)->last;
+  native_begin(fighter, 0, last, fighter_ready);
+  for (int row = 0; row <= last; ++row) {
+    native_frame(fighter, row, last - row, NULL);
+  }
+  native_play(fighter, false);
+}
+
+static void crouch_punch_contact(Fighter *fighter) {
+  ContactResult result = CONTACT_MISS;
+  if (fighter_opponent(fighter)->action != ACTION_RETAIL_2011) {
+    const Mk4Image *image = retail_vm_image();
+    uint32_t packed = mk4_image_u32(image, 0x53d268 + 3 * 4);
+    AttackRecord attack = retail_vm_attack_record(image, packed * 4);
+    uint64_t continuation = fighter->continuation;
+    result = battle_contact(fighter, &attack);
+    if (fighter->continuation != continuation || fighter->pending != NULL) {
+      return;
+    }
+  }
+  fighter->action = ACTION_RETAIL_1006;
+  native_hold(fighter, result == CONTACT_MISS ? 1 : 4, crouch_punch_reverse);
+}
+
+static void crouch_punch_extend(Fighter *fighter) {
+  battle_sound(SOUND_B, 27);
+  native_finish_clip(fighter, crouch_punch_contact);
+}
+
+/* Native46b7f0:4940e0 selects the armed/unarmed descriptor from53ce58.
+ * This routine is native; no script control flow or fighter frame table is copied. */
+void retail_crouch_low_punch(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_0107, false);
+  const Mk4Image *image = retail_vm_image();
+  uint32_t packed = mk4_image_u32(image, 0x53ce58 + (fighter->armed ? 4 : 0));
+  retail_vm_bind_animation(fighter, packed * 4, 2);
+  require(fighter_move(fighter)->last >= 5, "Native crouch punch needs three opening samples");
+  native_play_rows(fighter, 5, 1, crouch_punch_extend);
+}
+
+/* Native4610d0 has one weapon-type exception before the shared crouch entry. */
+void retail_press_crouch_low_punch(Fighter *fighter) {
+  FighterFn entry = retail_crouch_low_punch;
+  if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60 && fighter->weapon->crouch_lp != NULL) {
+    entry = fighter->weapon->crouch_lp;
+  }
+  fighter_interrupt(fighter, entry);
 }

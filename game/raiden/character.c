@@ -63,7 +63,7 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = raiden_press_jab,
     [BUTTON_HIGH_KICK] = raiden_press_kick,
     [BUTTON_LOW_KICK] = raiden_press_lk}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-    [BUTTON_LOW_PUNCH] = raiden_press_crouch_lp,
+    [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
     [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
     [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = raiden_press_air_hp,
@@ -83,7 +83,7 @@ static const CpuMoves cpu_moves = {
             [CPU_THROW] = raiden_enter_throw,
             [CPU_CLOSE_HP] = raiden_cpu_close_hp,
             [CPU_CLOSE_HK] = raiden_cpu_close_hk,
-            [CPU_CROUCH_LP] = raiden_crouch_lp,
+            [CPU_CROUCH_LP] = retail_crouch_low_punch,
             [CPU_AIR_HP] = raiden_air_hp,
             [CPU_AIR_HK] = raiden_cpu_air_hk,
             [CPU_AIR_LK] = raiden_cpu_air_lk,
@@ -157,24 +157,12 @@ void raiden_entry_retail_script_004e5788(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5788, fighter_ready, 1);
 }
 
-void raiden_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 1);
-}
-
 void raiden_entry_retail_script_004e5e28(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004e5e50(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e50, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e6020(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6020, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e6158(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6158, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004e6190(Fighter *fighter) {

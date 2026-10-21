@@ -30,7 +30,7 @@
 #define press_combo_hp scorpion_press_combo_hp
 #define press_crouch_hk retail_press_crouch_high_kick
 #define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp scorpion_press_crouch_lp
+#define press_crouch_lp retail_press_crouch_low_punch
 #define press_jab scorpion_press_jab
 #define press_kick scorpion_press_kick
 #define press_knee_hp scorpion_press_knee_hp
@@ -130,7 +130,6 @@ void scorpion_press_air_lk(Fighter *fighter);
 void scorpion_press_air_lp(Fighter *fighter);
 void scorpion_press_combo_hk(Fighter *fighter);
 void scorpion_press_combo_hp(Fighter *fighter);
-void scorpion_press_crouch_lp(Fighter *fighter);
 void scorpion_press_jab(Fighter *fighter);
 void scorpion_press_kick(Fighter *fighter);
 void scorpion_press_knee_hp(Fighter *fighter);
@@ -158,8 +157,6 @@ void scorpion_entry_retail_script_004e0358(Fighter *fighter);
 void scorpion_entry_retail_script_004e5b58(Fighter *fighter);
 void scorpion_entry_retail_script_004e5e28(Fighter *fighter);
 void scorpion_entry_retail_script_004e5e50(Fighter *fighter);
-void scorpion_entry_retail_script_004e60b8(Fighter *fighter);
-void scorpion_entry_retail_script_004e6158(Fighter *fighter);
 void scorpion_entry_retail_script_004e6190(Fighter *fighter);
 void scorpion_entry_retail_script_004e61e0(Fighter *fighter);
 void scorpion_entry_retail_script_004e61f8(Fighter *fighter);
@@ -172,7 +169,6 @@ void scorpion_entry_retail_script_004e66d0(Fighter *fighter);
 void scorpion_entry_retail_script_004e66f0(Fighter *fighter);
 void scorpion_entry_retail_script_004e6710(Fighter *fighter);
 void scorpion_entry_retail_script_004e69b0(Fighter *fighter);
-void scorpion_entry_retail_script_004e6d08(Fighter *fighter);
 void scorpion_entry_retail_script_004e87b0(Fighter *fighter);
 void scorpion_entry_retail_script_004e8818(Fighter *fighter);
 void scorpion_entry_retail_script_004e8850(Fighter *fighter);
