@@ -164,7 +164,7 @@ def unreachable_references(profile):
     errors.extend(weapon_dispatch_cycles(graph, reached, directory))
     for key, body in graph.nodes.items():
         path, name = key
-        if not path.startswith(directory) or key in reached or key in reported:
+        if not (path.startswith(directory) or path.startswith('game/native/')) or key in reached or key in reported:
             continue
         head = body.split('{', 1)[0]
         function = '=' not in head and re.search(r'\b' + re.escape(name) + r'\s*\(', head)

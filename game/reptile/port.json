@@ -2,12 +2,12 @@
   "character": "reptile",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/reptile/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "reptile_fatality_2",
       "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
     },
     "0x467ce0": {
-      "source": "game/reptile/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "reptile_fatality_1",
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     },
@@ -27,7 +27,7 @@
       "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x4698a0": {
-      "source": "game/reptile/moves/invisibility.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_invisibility",
       "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     },
@@ -42,17 +42,17 @@
       "evidence": "LK B,B record 4e45d0 (45ef50) -> 46d1d0: armed throw, follow-up 494610 -> 4ecb40[7] = 495d20 HP strike, otherwise action 1004 and VM 4e62c0/46d260/4e62d8."
     },
     "0x47a690": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47a690",
       "evidence": "Exact Reptile input target sets action 0x216 and enters generated script 0x4e8128."
     },
     "0x47afe0": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Exact Reptile input target sets action 0x20d and enters generated script 0x4e8178."
     },
     "0x4988d0": {
-      "source": "game/reptile/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
@@ -101,12 +101,12 @@
       "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40"
     },
     "input_47a690": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47a690",
       "evidence": "47a690 action 216 enters 4e8128 (302, then 303 at 0x2e14) and 47a6d0: sixteen D[23] queries with hit, block-recoil and reverse-302 recoveries."
     },
     "input_47afe0": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "47afe0 action 20d enters 4e8178 (clip 106, D[21] at 13) and 47b010 probe cycles."
     },
@@ -131,7 +131,7 @@
       "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "reaction_40": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_reaction_40",
       "evidence": "Native selector 0x483550 disarms and enters 0x4e9620: clip 183 launch, landing wait and 488b40 side getup."
     },
@@ -171,22 +171,22 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "acid_spit": {
-      "source": "game/reptile/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     },
     "invisibility": {
-      "source": "game/reptile/moves/invisibility.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_invisibility",
       "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     },
     "fatality_2": {
-      "source": "game/reptile/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "reptile_fatality_2",
       "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
     },
     "fatality_1": {
-      "source": "game/reptile/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "reptile_fatality_1",
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     },
@@ -220,7 +220,7 @@
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
-      "source": "game/reptile/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "reptile_weapon_reaction",
       "evidence": "4821c0/482270/482300 select 4e8bc0, 4e8c98 and 4e8cc0 for reactions 96, 137 and 144."
     }
@@ -307,7 +307,7 @@
       "evidence": "Reptile contact record selects reaction 39; reviewed against the portable shared reaction table."
     },
     "40": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_reaction_40",
       "adaptation": "Shared reactions.c entry 40 dispatches any struck victim to the move-owned generated 4e9620 program.",
       "evidence": "Roll D[21] selects reaction 40 (483550): disarm and VM 4e9620 with tail 488b40."
@@ -319,7 +319,7 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "102": {
-      "source": "game/reptile/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "reptile_script_lp_reaction",
       "adaptation": "Loaded reaction native shared across rosters; captured peer is released independently of owner recovery.",
       "evidence": "4ea4e8[102] ->485b70 ->485c60 and4287a0(4e9bb8): packed descriptor4fb598 and native callback485c40. The old4e9bd0 script-root hypothesis was incorrect."
@@ -330,7 +330,7 @@
       "evidence": "Reptile contact record selects reaction 143; reviewed against the portable shared reaction table."
     },
     "175": {
-      "source": "game/reptile/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "reptile_script_opponent_reaction",
       "adaptation": "Reptile fatality pair selector 175 is handled by its opponent-context continuation outside the global contact table.",
       "evidence": "Reptile fatality contact selector 175 reaches native continuation 0x45b230."
@@ -341,7 +341,7 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "41": {
-      "source": "game/reptile/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "reptile_acid_victim",
       "adaptation": "Shared reactions.c entry 41 dispatches grounded victims to the move-owned acid reaction; battle_react redirects airborne victims to reaction 10.",
       "evidence": "C[17] selects 41 (483d60): action 1013, 494520 disarm, 48ef30 airborne -> 481320 (reaction 10), else friction 4e97f0 and VM 4e97f8 with tail 483df0."
@@ -352,7 +352,7 @@
       "evidence": "Acid C[17] blocked reaction 2 uses the shared projectile block handler 486ca0."
     },
     "158": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_dash_victim",
       "adaptation": "Shared reactions.c entry 158 dispatches any struck victim to the move-owned generated 4e95f0 program.",
       "evidence": "Dash D[23] selects reaction 158 (483500): damage scale 0x9999, disarm, VM 4e95f0 clip 179 launch and 488b80 getup."
@@ -363,25 +363,25 @@
       "evidence": "Dash D[23] blocked reaction 165 (486d00) uses the shared slide-block handler."
     },
     "180": {
-      "source": "game/reptile/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "reptile_second_victim",
       "adaptation": "Shared reactions.c entry 180 dispatches the struck victim to the move-owned melt phases; 45b1f0 installs it on the captured peer.",
       "evidence": "4dff08 dispatches 180 through 45b1f0 (480f80/48f880, peer task): 481530 holds 28, 481670 turns, VM 4ea290 and native 481590 tear/flesh/4ea2a8 fall."
     },
     "96": {
-      "source": "game/reptile/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "reptile_weapon_reaction",
       "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
       "evidence": "4821c0 disarms and enters 4e8bc0 (clip 182 knockback, 490bd0 facing callback)."
     },
     "137": {
-      "source": "game/reptile/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "reptile_weapon_reaction",
       "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
       "evidence": "482270 enters 4e8c98 (clip 311 stagger) and 482280 replays it before the controller return."
     },
     "144": {
-      "source": "game/reptile/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "reptile_weapon_reaction",
       "adaptation": "Shared reactions.c entry dispatches any struck victim to the move-owned generated weapon victim program.",
       "evidence": "482300: damage scale 0x8000, wall recoil, disarm, 4e8cc0 clip 189 launch and 482790 getup."
@@ -397,7 +397,7 @@
       "evidence": "Reptile weapon records WEAPON[18/19/21] block with shared reaction 119 (486a70)."
     },
     "63": {
-      "source": "game/cage/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "cage_weapon_reaction",
       "adaptation": "The shared reactions.c entry 63 already dispatches native 482380 (4e8d38 flight and 488c00 getup) for any struck victim; Reptile HP WEAPON[18] reuses it.",
       "evidence": "WEAPON[18] selects reaction 63 (482380), the same native shared with Cage mace LP."
@@ -512,22 +512,22 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x47a690": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47a690",
       "evidence": "Typed Reptile native command 0x47a690 and generated owned script/contact continuation."
     },
     "0x47afe0": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
     },
     "0x4988d0": {
-      "source": "game/reptile/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     },
     "0x4698a0": {
-      "source": "game/reptile/moves/invisibility.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_invisibility",
       "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     },
@@ -561,17 +561,17 @@
   },
   "cpu_bindings": {
     "0x47a690": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47a690",
       "evidence": "Typed Reptile native command 0x47a690 and generated owned script/contact continuation."
     },
     "0x47afe0": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_input_47afe0",
       "evidence": "Typed Reptile native command 0x47afe0 and generated owned script/contact continuation."
     },
     "0x4988d0": {
-      "source": "game/reptile/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }

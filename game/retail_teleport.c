@@ -2,7 +2,7 @@
 #include "retail_vm.h"
 #include "native.h"
 #include "script.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 #include "math_util.h"
 
 /* D,U special 47c070 (also the near/medium CPU row): action 0x20e and script

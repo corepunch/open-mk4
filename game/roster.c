@@ -1,6 +1,6 @@
 #include "game.h"
 #include "native.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 #include "retail_data.h"
 #include "retail_vm.h"
 #include "retail_native.h"

@@ -81,12 +81,12 @@
       "symbol": "retail_fan_finish"
     },
     "fatality_1": {
-      "source": "game/jax/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "jax_fatality_1",
       "evidence": "LK-release record 4e43e8 (F,F,D,F, gate 45e1b0) -> 467ce0/43cbb0/4e0498[13] = 4494c0 arm-rip scene: owner 384/443, victim 389/204 or 400 to 386, arms 446/447 on limb objects."
     },
     "fatality_2": {
-      "source": "game/jax/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "jax_fatality_2",
       "evidence": "BLOCK record 4e43c8 (B,F,F,D, gate 45e570) -> 467cd0/43bd70/4dfe90[13] = 4669c0 head clap: owner 284/555/556/114 loop, victim reaction 183 557/206."
     },
@@ -185,17 +185,17 @@
       "evidence": "Shared498270 weapon throw, retained type/model and independent pickup/drop lifecycle."
     },
     "missile": {
-      "source": "game/jax/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jax_missile",
       "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
     },
     "dash_punch": {
-      "source": "game/jax/moves/dash_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "jax_dash_punch",
       "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
     },
     "ground_pound": {
-      "source": "game/jax/moves/ground_pound.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jax_ground_pound",
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }
@@ -299,7 +299,7 @@
       "adaptation": "Explicit stage-scene continuation 467fc0 owns the impaled victim outside the ordinary hit table, as for Sub-Zero."
     },
     "183": {
-      "source": "game/jax/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "jax_fatality_2_head",
       "evidence": "4e5a98 45b1f0[0xb7]; 4ea4e8[183] -> 466b40: hide head node 2, effect 4, neck blood 455ea0, 4e5b10.",
       "adaptation": "Registered directly in shared reactions[183]; the Jax-owned generated victim program runs on either player slot."
@@ -311,14 +311,14 @@
       "evidence": "4ea4e8[166] -> 484a10 clears the paired bit and enters 4e98e8: clip 140 motion, landing wait and 484a30."
     },
     "93": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "weapon_first_victim",
+      "source": "game/native/weapon_attacks.c",
+      "symbol": "native_weapon_3_weapon_first_victim",
       "adaptation": "One native axe victim implementation, selected by the shared native weapon service for any caller.",
       "evidence": "Native488420/488440 ->4ea040 and488810/488850 ->4ea0b8; native recovery7 queries WEAPON27."
     },
     "138": {
-      "source": "game/reiko/moves/weapon.c",
-      "symbol": "weapon_second_victim",
+      "source": "game/native/weapon_attacks.c",
+      "symbol": "native_weapon_3_weapon_second_victim",
       "adaptation": "One native axe victim implementation, selected by the shared native weapon service for any caller.",
       "evidence": "Native488420/488440 ->4ea040 and488810/488850 ->4ea0b8; native recovery7 queries WEAPON27."
     },
@@ -343,13 +343,13 @@
       "symbol": "react_extra"
     },
     "47": {
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction",
       "evidence": "4ea4e8[47] ->488530; shared dispatch selects the existing generated victim stream.",
       "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
     },
     "53": {
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction",
       "evidence": "4ea4e8[53] ->482450; shared dispatch selects the existing generated victim stream.",
       "adaptation": "Shared generated reaction retains its existing coroutine controller; axe owner and dedicated93/138 victims use frame tables."
@@ -360,7 +360,7 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "68": {
-      "source": "game/sonya/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "sonya_generated_reaction",
       "evidence": "Missile C[4] hit reaction 68; 4ea4e8[68] -> 486750 runs the shared generated 4e9de8 victim body.",
       "adaptation": "Shared reactions[68] dispatches the existing generated 4e9de8 victim program for any attacker roster."
@@ -371,13 +371,13 @@
       "evidence": "Missile C[4] blocked reaction 2; 4ea4e8[2] -> 486ca0 shared block recovery."
     },
     "157": {
-      "source": "game/jax/moves/dash_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "jax_dash_victim_hit",
       "evidence": "D[22] hit and 47acc0 480f80[0x9d]; 4ea4e8[157] -> 4883f0 -> 4ea028 clip 311 stagger.",
       "adaptation": "Registered directly in shared reactions[157]; the Jax-owned generated victim program is valid for either humanoid player slot."
     },
     "168": {
-      "source": "game/jax/moves/dash_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "jax_dash_victim_throw",
       "evidence": "47ae90 480f80[0xa8]; 4ea4e8[168] -> 4867b0: grounded 4e9e38 clip 130, airborne 481ce0 -> 4e89d8 and 488c00.",
       "adaptation": "Registered directly in shared reactions[168]; the Jax-owned generated victim program is valid for either humanoid player slot."
@@ -388,7 +388,7 @@
       "evidence": "D[22] blocked reaction 165; 4ea4e8[165] -> 486d00 shared block recovery."
     },
     "136": {
-      "source": "game/goro/moves/victims.c",
+      "source": "game/native/contexts.c",
       "symbol": "goro_quake_victim",
       "evidence": "468f00 480f80[0x88]; 4ea4e8[136] -> 4834d0: disarm, 48a320 voice list 4ea8f8, script 4e95c8 clip 182.",
       "adaptation": "Roster-generic victim handler; the shared reactions[136] entry runs the Goro-owned port, which Goro's quake stomp also dispatches."
@@ -523,17 +523,17 @@
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x496f80": {
-      "source": "game/jax/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jax_missile",
       "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
     },
     "0x47ab10": {
-      "source": "game/jax/moves/dash_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "jax_dash_punch",
       "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
     },
     "0x468f00": {
-      "source": "game/jax/moves/ground_pound.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jax_ground_pound",
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     },
@@ -563,17 +563,17 @@
   },
   "cpu_bindings": {
     "0x496f80": {
-      "source": "game/jax/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jax_missile",
       "evidence": "LP D,F record 4e4388 (gate 45e7e0) and CPU projectile row 4df9dc -> 496f80: heading snapshot 49c610, action 0x314, 4ed090 clip 29, C[93], task 80 (496fc0) C[4] missile with 49bb00 contact and 49bbd0 arena bounds."
     },
     "0x47ab10": {
-      "source": "game/jax/moves/dash_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "jax_dash_punch",
       "evidence": "LP D,B record 4e4394 (gate 45e910) and near/far CPU rows -> 47ab10: stamp 0xc, action 0x215, 4e8150 dash, 47ab50 15 D[22] queries, 47acc0 hit/block/air branches with reactions 157/168, miss rewind."
     },
     "0x468f00": {
-      "source": "game/jax/moves/ground_pound.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jax_ground_pound",
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     }

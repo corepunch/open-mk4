@@ -42,7 +42,7 @@
     },
     "bicycle_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/bicycle.c",
+      "source": "game/native/attacks.c",
       "symbol": "liu_kang_bicycle_kick"
     },
     "close_hk": {
@@ -87,12 +87,12 @@
     },
     "fatality_1": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "liu_kang_first_fatality"
     },
     "fatality_2": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "liu_kang_second_fatality"
     },
     "fireball_reaction": {
@@ -102,7 +102,7 @@
     },
     "flying_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/moves/flying_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "liu_kang_flying_kick"
     },
     "high_fireball": {
@@ -219,7 +219,7 @@
     "104": {
       "adaptation": "Current-reaction native integration installs the original reaction104 script; its485b10 tail uses the shared roll getup.",
       "evidence": "VM reaction dispatcher selects 104 -> 0x485af0; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "liu_kang_liu_script_reaction"
     },
     "11": {
@@ -281,7 +281,7 @@
     "176": {
       "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 176 -> 0x481360; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "liu_kang_liu_script_fatal_setup"
     },
     "19": {
@@ -387,7 +387,7 @@
     "62": {
       "adaptation": "Use the existing generated native victim stream in the shared dispatcher.",
       "evidence": "Reaction62 and148 share native4821e0 and generated4e8c08.",
-      "source": "game/jarek/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "jarek_weapon_reaction"
     },
     "64": {
@@ -408,14 +408,14 @@
     "80": {
       "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
       "evidence": "VM reaction dispatcher selects 80 -> 0x485910; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/moves/throws.c",
+      "source": "game/native/throws.c",
       "symbol": "liu_kang_lk_thrown_script"
     },
     "84": {
       "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
       "evidence": "4ea4e8[84] -> 0x488870; docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/moves/bicycle.c",
-      "symbol": "bicycle_victim_script"
+      "source": "game/native/attacks.c",
+      "symbol": "n47eb30_bicycle_victim_script"
     },
     "3": {
       "source": "game/reactions.c",

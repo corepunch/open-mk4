@@ -3,7 +3,7 @@
 #include "retail_vm.h"
 #include "native.h"
 #include "script.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 
 /* Views contain addresses only; button targets remain in the loaded image. */
 const ButtonTable retail_close_buttons[] = {

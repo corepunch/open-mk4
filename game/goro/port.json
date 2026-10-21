@@ -105,32 +105,32 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "special_punch": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_punch",
       "evidence": "HP F,F (4e4bf4, action 49) -> 43af90: voice 0x5fa, 45f870, 4dfb60 clip 599 to 14, 43afc0 three D[32] rows, finish and return."
     },
     "special_kick": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_kick",
       "evidence": "HK B,B (4e4c1c, action 50) -> 43b170: voice 0x5fa, 45f870, 4dfb70 clip 598 to 8, 43b1a0 eight D[33] rows, finish and return."
     },
     "special_uppercut": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_uppercut",
       "evidence": "HP D,D (4e4c00, action 51) -> 43b640: voice 0x5fa, 45f870, slot 53c6bc clip 600 at 0, nine poses, five D[35] rows, finish and return."
     },
     "leap_stomp": {
-      "source": "game/goro/moves/stomp.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_leap_stomp",
       "evidence": "HK F,F,B (4e4c10, action 48) and the far CPU row -> 43b320: voice 0x64f, action 0409, 4dfbb8 clip 601, 43b370 rise/relocate/drop with D[34] and 30% damage."
     },
     "quake_stomp": {
-      "source": "game/goro/moves/quake.c",
+      "source": "game/native/projectiles.c",
       "symbol": "goro_quake_stomp",
       "evidence": "HK B,F,D,D (4e4c28, action 52) -> 43b7e0: voice 0x604, 48fde0 blend to clip 602, 4dfc50 jump, 43b8c0 24% and reaction 136 to a grounded victim."
     },
     "fireball": {
-      "source": "game/goro/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "goro_fireball",
       "evidence": "HP F,B (4e4be8, 4ed828[0]) and the CPU projectile row -> 49ca70: heading snapshot, clip-592 script 4ed790, task 83 C[22] object."
     }
@@ -147,12 +147,12 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x43b640": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_uppercut",
       "evidence": "Typed HP D,D target 43b640; native clip-600 rows and D[35] queries."
     },
     "0x43b7e0": {
-      "source": "game/goro/moves/quake.c",
+      "source": "game/native/projectiles.c",
       "symbol": "goro_quake_stomp",
       "evidence": "Typed HK B,F,D,D target 43b7e0; native blend, generated 4dfc50 jump and 43b8c0 landing."
     }
@@ -291,25 +291,25 @@
       "evidence": "4ea4e8[175] -> 0x4836e0; spike stage root 4e6950 queries A[18] before native 467fc0."
     },
     "189": {
-      "source": "game/goro/moves/victims.c",
+      "source": "game/native/contexts.c",
       "symbol": "goro_punch_victim",
       "adaptation": "Registered directly in shared reactions[189]; the Goro-owned victim program runs on any non-Goro victim.",
       "evidence": "4ea4e8[189] -> 482420: wall recoil 488ea0, disarm 494520, generated 4e8dd0 clip 319 flight and 482790 getup."
     },
     "190": {
-      "source": "game/goro/moves/victims.c",
+      "source": "game/native/contexts.c",
       "symbol": "goro_kick_victim",
       "adaptation": "Registered directly in shared reactions[190]; the Goro-owned victim program runs on any non-Goro victim.",
       "evidence": "4ea4e8[190] -> 483570: disarm 494520, generated 4ea3e0 -> 4e9670 clip 183 flight and 488b40 side getup."
     },
     "191": {
-      "source": "game/goro/moves/victims.c",
+      "source": "game/native/contexts.c",
       "symbol": "goro_stomp_victim",
       "adaptation": "Registered directly in shared reactions[191]; the Goro-owned victim program runs on any non-Goro victim.",
       "evidence": "4ea4e8[191] -> 4842d0: disarm, airborne fall 0x1999, generated 4ea400 clip 178 and native 484330 stomp cycles."
     },
     "192": {
-      "source": "game/goro/moves/victims.c",
+      "source": "game/native/contexts.c",
       "symbol": "goro_uppercut_victim",
       "adaptation": "Registered directly in shared reactions[192]; the Goro-owned victim program runs on any non-Goro victim.",
       "evidence": "4ea4e8[192] -> 482480: shake 6, 40% scale, wall recoil, disarm, attacker run drain, generated 4e8e50/4e8e80 clip 181 and getup."
@@ -391,32 +391,32 @@
   },
   "command_bindings": {
     "0x49ca70": {
-      "source": "game/goro/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "goro_fireball",
       "evidence": "Typed HP F,B target 49ca70 (dispatch 4ed828[0]); heading snapshot and script 4ed790."
     },
     "0x43af90": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_punch",
       "evidence": "Typed HP F,F target 43af90 (4e6ef8[49]); clip 599 and D[32] rows."
     },
     "0x43b640": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_uppercut",
       "evidence": "Typed HP D,D target 43b640 (4e6ef8[51]); clip 600 and D[35] rows."
     },
     "0x43b320": {
-      "source": "game/goro/moves/stomp.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_leap_stomp",
       "evidence": "Typed HK F,F,B target 43b320 (4e6ef8[48]); leap, drop and D[34] stomp."
     },
     "0x43b170": {
-      "source": "game/goro/moves/specials.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_special_kick",
       "evidence": "Typed HK B,B target 43b170 (4e6ef8[50]); clip 598 and D[33] rows."
     },
     "0x43b7e0": {
-      "source": "game/goro/moves/quake.c",
+      "source": "game/native/projectiles.c",
       "symbol": "goro_quake_stomp",
       "evidence": "Typed HK B,F,D,D target 43b7e0 (4e6ef8[52]); clip 602 jump and landing quake."
     },
@@ -437,12 +437,12 @@
   },
   "cpu_bindings": {
     "0x43b320": {
-      "source": "game/goro/moves/stomp.c",
+      "source": "game/native/attacks.c",
       "symbol": "goro_leap_stomp",
       "evidence": "Typed far CPU row 4df9a4[15] word 200005 selects 43b320; near/medium rows are zero."
     },
     "0x49ca70": {
-      "source": "game/goro/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "goro_fireball",
       "evidence": "Typed projectile CPU row 4df9e4[15] word 2001a selects 49ca70."
     }

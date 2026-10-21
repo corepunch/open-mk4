@@ -2,7 +2,7 @@
   "character": "tanya",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/tanya/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "tanya_fatality_2",
       "evidence": "HK D,F,D,F record 4e453c (T1[0x43], gate 45e570). 467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
     },
@@ -22,12 +22,12 @@
       "evidence": "HK F,F record 4e4530 (T1[0x29], gate 45ef50). 46d1d0: armed -> T2[0xd] 498270 throw; follow-up -> 494610 and 4ecb40[0xd] 4955b0; otherwise action 1004, 4e62c0 and 46d260 equip of type 6d."
     },
     "0x479520": {
-      "source": "game/tanya/moves/spin_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "tanya_spin_kick",
       "evidence": "LK F,F record 4e4550 (T4[30], gate 45e8d0). 479520 stamps 0xd, sets 21b, binds clip 109 with the 4797c0 14..28 loop at speed .15, sounds indexed 35/C57 after eight visits, fifteen D28 queries; hit waits twelve, block enters 47d940 (generated 4e84b8, 47dae0 landing), recovery 479705 rewinds 10..0."
     },
     "0x47b9f0": {
-      "source": "game/tanya/moves/drill_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "tanya_drill_kick",
       "evidence": "LK F,D,B record 4e455c (T4[18]). 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
@@ -54,7 +54,7 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x467ce0": {
-      "source": "game/tanya/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "tanya_fatality_1",
       "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
@@ -170,12 +170,12 @@
       "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "spin_kick": {
-      "source": "game/tanya/moves/spin_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "tanya_spin_kick",
       "evidence": "479520 stamps 0xd, sets 21b, binds clip 109 with the 4797c0 14..28 loop at speed .15, sounds indexed 35/C57 after eight visits, fifteen D28 queries; hit waits twelve, block enters 47d940 (generated 4e84b8, 47dae0 landing), recovery 479705 rewinds 10..0."
     },
     "drill_kick": {
-      "source": "game/tanya/moves/drill_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "tanya_drill_kick",
       "evidence": "47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
@@ -203,17 +203,17 @@
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
-      "source": "game/tanya/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "tanya_weapon_reaction",
       "evidence": "Reactions 169 (486710 -> 4e9db8) and 170 (4821a0 -> 4e8bb0) disarm through 494520 before their generated victim streams."
     },
     "fatality_2": {
-      "source": "game/tanya/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "tanya_fatality_2",
       "evidence": "467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
     },
     "fatality_1": {
-      "source": "game/tanya/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "tanya_fatality_1",
       "evidence": "467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
     }
@@ -326,13 +326,13 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "104": {
-      "source": "game/tanya/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "tanya_script_current_reaction",
       "adaptation": "Current-context reaction uses battle_react and the engine approximate entry when no shared table row exists.",
       "evidence": "Tanya contact table reaction 104; current-context dispatch is 45b1f0."
     },
     "175": {
-      "source": "game/tanya/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "tanya_script_opponent_reaction",
       "adaptation": "Fatality arena continuation owns this terminal reaction and does not start ordinary victim recovery.",
       "evidence": "Tanya finisher reaction 175 is handled by the paired scene continuation."
@@ -363,13 +363,13 @@
       "evidence": "Drill kick D17 block reaction 9 (486b30) uses the shared fireball block retreat .2."
     },
     "94": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_victim",
       "evidence": "Drill kick D17 hit reaction 94 (488450) is the shared middle-kick victim 4ea050.",
       "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
     },
     "95": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_victim",
       "evidence": "Drill kick 47ba90 installs shared reaction 95 through 480f80 on a grounded victim.",
       "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
@@ -380,7 +380,7 @@
       "evidence": "Drill kick D17 air reaction 122 dispatches native 483500 -> 4e95f0."
     },
     "158": {
-      "source": "game/reptile/moves/dash.c",
+      "source": "game/native/motion.c",
       "symbol": "reptile_dash_victim",
       "evidence": "Spin kick D28 reaction 158: 4ea4e8[158] -> 483500 (the same native as 122): damage scale 0x9999, disarm, VM 4e95f0.",
       "adaptation": "Roster-generic victim handler; the shared reactions[158] entry runs the Reptile-owned generated 4e95f0 program for any victim."
@@ -401,19 +401,19 @@
       "evidence": "Boomerang C20 air reaction 154 (4835e0) uses the shared extra reaction row."
     },
     "169": {
-      "source": "game/tanya/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "tanya_weapon_reaction",
       "evidence": "Weapon 42 and boomerang C20 select 169: 486710 disarms (494520) and enters 4e9db8 (clip 130, shake 0, effect 4, speed -.25).",
       "adaptation": "The shared reaction dispatcher runs this character-owned generated victim frame stream for every humanoid roster."
     },
     "170": {
-      "source": "game/tanya/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "tanya_weapon_reaction",
       "evidence": "Weapon 43 selects 170: 4821a0 disarms (494520) and enters 4e8bb0 (effect 16, then the shared 4e8bc8 clip 182 fall).",
       "adaptation": "The shared reaction dispatcher runs this character-owned generated victim frame stream for every humanoid roster."
     },
     "186": {
-      "source": "game/tanya/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "tanya_second_reaction",
       "evidence": "4e5798 opcode 41 installs reaction 186 (465200): copy facing/angles/X-Z from the owner and enter 4e5820.",
       "adaptation": "The second-fatality scene owns this victim continuation through the current-reaction handler, not the shared table."
@@ -534,12 +534,12 @@
       "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x479520": {
-      "source": "game/tanya/moves/spin_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "tanya_spin_kick",
       "evidence": "LK F,F record 4e4550 (T4[30], gate 45e8d0). 479520 stamps 0xd, sets 21b, binds clip 109 with the 4797c0 14..28 loop at speed .15, sounds indexed 35/C57 after eight visits, fifteen D28 queries; hit waits twelve, block enters 47d940 (generated 4e84b8, 47dae0 landing), recovery 479705 rewinds 10..0."
     },
     "0x47b9f0": {
-      "source": "game/tanya/moves/drill_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "tanya_drill_kick",
       "evidence": "LK F,D,B record 4e455c (T4[18]). 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     },
@@ -578,7 +578,7 @@
       "adaptation": "One shared native projectile service; original script words own cast timing and the raw actor keeps its model identity."
     },
     "0x47b9f0": {
-      "source": "game/tanya/moves/drill_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "tanya_drill_kick",
       "evidence": "Near/medium/far CPU rows 4df90c/94c/98c[9] word 0x40012 select T4[18]. 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     }

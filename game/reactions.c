@@ -2,7 +2,7 @@
 #include "native.h"
 #include "retail_native.h"
 #include "retail_vm.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 
 void reptile_reaction_40(Fighter *fighter);
 void reptile_acid_victim(Fighter *fighter);

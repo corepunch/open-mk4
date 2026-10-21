@@ -1379,3 +1379,27 @@ step; this interface change preserves existing native behavior and its recorded
 limitations. Verified make format, shared VM/rejections, strict audits, native
 frame gates and helper/port navigation (6/7 tests). All native units compile
 through the shared C11 interface. No tests added for this interface cleanup.
+
+### Consolidate native C into shared capability modules
+
+Removed every fighter C source path:125 native units now compile as eight
+shared modules undergame/native/ (attacks, motion, projectiles, throws, weapon
+attacks, contexts, severing and cinematics). Their local symbols remain static
+and have distinct native-cluster namespaces. This is native C consolidation,
+not script translation. Removed mk4_characters.h and the VM bridge's duplicate
+native declarations in favor of the single native_services.h interface.
+
+The build no longer enumerates fighter C folders. The architecture gate rejects
+character C/header/moves paths and checks all shared native modules. Reachability
+now covers those modules globally rather than silently skipping relocated
+implementations. Normalized reviewed source links; historical path/local-name
+relocations live only in Python navigation. Cached source text/masks by file
+modification time to avoid repeatedly parsing consolidated units during audits.
+
+Verified make format, shared VM/rejections, strict all18 inventories, native
+frame gates, helper/port navigation (6/7 tests), and the SDL game build. The
+linker reports the existing SDL library/newer macOS deployment-version warning.
+No new gameplay tests. Old actor-based native bridge specializations and copied
+reaction data still need consolidation against actual native semantics; moving
+native files does not establish their parity. Recorded broad timing-suite
+limitations remain and were not rerun for this layout/interface change.

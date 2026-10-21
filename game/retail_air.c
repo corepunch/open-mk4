@@ -2,7 +2,7 @@
 #include "retail_vm.h"
 #include "native.h"
 #include "script.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 #include "math_util.h"
 
 /* Original native entries supply literal script operands. Selectors and authored

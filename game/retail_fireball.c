@@ -2,7 +2,7 @@
 #include "retail_native.h"
 #include "native.h"
 #include "script.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 #include "math_util.h"
 
 /* T2 actions 10/11 (498b70/498e70) set 309/30a and enter 4ed268/4ed2c0. */

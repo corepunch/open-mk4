@@ -4,12 +4,12 @@
   "inventory_sha256": "8aa21d3b4edc71a21a329ebcc35f68a6c64e44815d2be6b816468b2149be55d2",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/jarek/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "jarek_fatality_2",
       "evidence": "467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
     },
     "0x467ce0": {
-      "source": "game/jarek/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "jarek_fatality_1",
       "evidence": "467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410."
     },
@@ -29,17 +29,17 @@
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
     },
     "0x47b310": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_cannonball",
       "evidence": "47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
     },
     "0x47b5d0": {
-      "source": "game/jarek/moves/quake.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_quake",
       "evidence": "47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     },
     "0x497540": {
-      "source": "game/jarek/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_blade",
       "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
@@ -59,7 +59,7 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x4797f0": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_upward_ball",
       "evidence": "4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
     }
@@ -190,37 +190,37 @@
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
-      "source": "game/jarek/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "jarek_weapon_reaction",
       "evidence": "Native495830/495980/495860/4959c0 select reviewed knife records and VM/native strike phases."
     },
     "cannonball": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_cannonball",
       "evidence": "47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
     },
     "upward_ball": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_upward_ball",
       "evidence": "4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
     },
     "quake": {
-      "source": "game/jarek/moves/quake.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_quake",
       "evidence": "47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     },
     "blade": {
-      "source": "game/jarek/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_blade",
       "evidence": "497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
     "fatality_2": {
-      "source": "game/jarek/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "jarek_fatality_2",
       "evidence": "467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
     },
     "fatality_1": {
-      "source": "game/jarek/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "jarek_fatality_1",
       "evidence": "467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410."
     }
@@ -390,19 +390,19 @@
       "evidence": "Pinned EXE Jarek contact record and reaction table"
     },
     "175": {
-      "source": "game/jarek/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "jarek_fatality_contact_hold",
       "evidence": "Jarek spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
     },
     "102": {
-      "source": "game/jarek/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "jarek_script_opponent_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 102 through native continuation 0x45b1f0; paired clips 76/153, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 102 on the victim actor"
     },
     "107": {
-      "source": "game/jarek/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "jarek_script_opponent_reaction",
       "evidence": "Jarek LP-throw victim path dispatches selector 107 through native continuation 0x45b1f0; paired clips 80/154, bounded EXE/script listing",
       "adaptation": "Release the paired throw victim and retain selector 107 on the victim actor"
@@ -413,25 +413,25 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "149": {
-      "source": "game/cage/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "cage_weapon_reaction",
       "evidence": "Native knife weapon records select reaction149; use its actual shared generated victim path.",
       "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
     },
     "146": {
-      "source": "game/kai/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "kai_weapon_reaction",
       "evidence": "Native knife weapon records select reaction146; use its actual shared generated victim path.",
       "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
     },
     "44": {
-      "source": "game/kai/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "kai_weapon_reaction",
       "evidence": "Native knife weapon records select reaction44; use its actual shared generated victim path.",
       "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
     },
     "148": {
-      "source": "game/jarek/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "jarek_weapon_reaction",
       "evidence": "Native knife weapon records select reaction148; use its actual shared generated victim path.",
       "adaptation": "The shared reaction dispatcher enters the selected generated victim stream with independent frame recovery and KO handling."
@@ -447,7 +447,7 @@
       "evidence": "Native knife weapon records select reaction119; use its actual shared generated victim path."
     },
     "42": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_ball_victim",
       "evidence": "D19 hit/air reaction42: 4ea4e8[42] ->4835a0 disarms, then generated4e9658 clip183 knockdown and488b40 side getup.",
       "adaptation": "The shared reaction table enters this exported victim entry for any roster."
@@ -458,7 +458,7 @@
       "evidence": "Ball D[19] blocked reaction0 selects 4ea4e8[0] ->486cd0 shared block recovery."
     },
     "136": {
-      "source": "game/goro/moves/victims.c",
+      "source": "game/native/contexts.c",
       "symbol": "goro_quake_victim",
       "evidence": "47b600 reaction136: 4ea4e8[136] ->4834d0 disarms, picks a4ea8f8 voice and enters generated4e95c8 clip182 stumble.",
       "adaptation": "Roster-generic victim handler; the shared reactions[136] entry runs the Goro-owned port, which Goro's quake stomp and Jax's ground pound also dispatch."
@@ -469,7 +469,7 @@
       "evidence": "Blade C[4] blocked reaction2: 4ea4e8[2] ->486ca0 shared projectile block."
     },
     "68": {
-      "source": "game/sonya/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "sonya_generated_reaction",
       "evidence": "Blade C[4] hit reaction68: 4ea4e8[68] ->486750, the shared generated victim stream registered by Sonya.",
       "adaptation": "The shared reaction table enters the existing generated reaction-68 victim program for any roster."
@@ -536,22 +536,22 @@
       "evidence": "46d1d0 type6a draw/throw/follow-up table selects495980, not back HP."
     },
     "0x47b310": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_cannonball",
       "evidence": "Typed LK record 0x4e4468 B,F selects native 47b310. 47b310 binds clip301 via53cf4c, plays it two poses per visit, tucks with spin.3 and speed.2, queries D19 nineteen visits, then reverses301; contact enters47d940 recoil and generated4e84b8."
     },
     "0x4797f0": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_upward_ball",
       "evidence": "Typed HP record 0x4e43f8 F,D,F selects native 4797f0. 4797f0 sets speed.16, binds301 via53cf44, then tucks with spin.4, Y-.2, gravity24d and47bf50 decay; 479960 queries D19 until the rise slows, then479a10 lands through46fd90."
     },
     "0x47b5d0": {
-      "source": "game/jarek/moves/quake.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_quake",
       "evidence": "Typed HK record 0x4e4448 B,D,B selects native 47b5d0. 47b5d0 sets action105 and enters4e81a8 (indexed33, clip107 to20, C68, shake3); 47b600 damages a grounded peer 0x23d7 with reaction136, then4e81c8 finishes107."
     },
     "0x497540": {
-      "source": "game/jarek/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_blade",
       "evidence": "Typed LP record 0x4e4418 D,B selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
@@ -577,12 +577,12 @@
   },
   "cpu_bindings": {
     "0x47b310": {
-      "source": "game/jarek/moves/ball.c",
+      "source": "game/native/motion.c",
       "symbol": "jarek_cannonball",
       "evidence": "Typed near/medium/far Jarek CPU rows 4df918/958/998 all select native 47b310 cannonball."
     },
     "0x497540": {
-      "source": "game/jarek/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "jarek_blade",
       "evidence": "Typed Jarek CPU projectile row 4df9d8 selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     }

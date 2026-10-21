@@ -11,10 +11,12 @@ service receives explicit Fighter/body/scene state and reuses the engine's
 combat, physics and lifetime boundaries. A routine shared by several roster
 slots has one implementation.
 
-Remaining `*/moves/*.c` paths are transitional native implementations awaiting
-consolidation into shared services. They do not define fighter registration or
-script programs. Keep local callbacks and records static. Do not add fighter
-configuration, generated frame paths or copied native variants there.
+`native/*.c` groups native implementations by capability: attacks, motion,
+projectiles, throws, weapon attacks, contexts and cinematic bodies. Local
+callbacks and records stay static. No C source or header lives in fighter
+folders. Some native services retain historical names and engine adaptations;
+source registration alone does not establish their native parity. Do not add
+fighter configuration, generated frame paths or copied native variants.
 
 Per-fighter `port.json` files are research inventories and source navigation,
 not runtime configuration or evidence of complete native parity. Historical

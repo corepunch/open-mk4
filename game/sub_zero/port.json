@@ -42,7 +42,7 @@
     },
     "clone": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/clone.c",
+      "source": "game/native/motion.c",
       "symbol": "sub_zero_clone"
     },
     "close_hk": {
@@ -87,12 +87,12 @@
     },
     "fatality_1": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "sub_zero_first_fatality"
     },
     "fatality_2": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "sub_zero_second_fatality"
     },
     "high_kick": {
@@ -107,7 +107,7 @@
     },
     "ice": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "sub_zero_ice"
     },
     "jab": {
@@ -166,7 +166,7 @@
     },
     "slide": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/moves/slide.c",
+      "source": "game/native/motion.c",
       "symbol": "sub_zero_slide"
     },
     "spike_fatality": {
@@ -209,7 +209,7 @@
     "102": {
       "adaptation": "Explicit actor/independent victim native continuation, outside the ordinary hit table",
       "evidence": "4ea4e8[102] -> 0x485b70; paired/cinematic dispatch",
-      "source": "game/sub_zero/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "sub_zero_script_reaction"
     },
     "11": {

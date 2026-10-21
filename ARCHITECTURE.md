@@ -329,9 +329,9 @@ engine implementations; local callbacks and records stay static. Native services
 operate on explicit Fighter/body/scene contexts and are implemented once per
 retail routine rather than copied by roster.
 
-The remaining fighter-named native source paths are migration inputs awaiting
-service consolidation. Per-fighter `port.json` files and historical source aliases
-are research/navigation data only. Strict audits check the reviewed inventory,
+Native implementations live in `game/native/` capability modules; no C source
+or header belongs in fighter directories. Per-fighter `port.json` files and
+historical source aliases are research/navigation data only. Strict audits check the reviewed inventory,
 source reachability and runtime/native boundaries; registration does not prove
 native gameplay parity.
 

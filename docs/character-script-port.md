@@ -2,8 +2,8 @@
 
 All catalogued fighter programs execute original retail words through one
 C11 interpreter. Script-to-C/frame translation is retired. The remaining
-fighter C modules are migration inputs for native services and controllers;
-they are not the architecture to extend.
+native services and controllers live in shared capability modules under
+`game/native/`; fighter folders contain research profiles only.
 
 ## Workflow
 

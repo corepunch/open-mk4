@@ -1,7 +1,7 @@
 #include "script.h"
 #include "retail_vm.h"
 #include "native.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 #include "math_util.h"
 #include <string.h>
 

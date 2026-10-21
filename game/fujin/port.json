@@ -17,37 +17,37 @@
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "0x467cd0": {
-      "source": "game/fujin/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "fujin_second_fatality",
       "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
     },
     "0x467ce0": {
-      "source": "game/fujin/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "fujin_first_fatality",
       "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
     },
     "0x46a5f0": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind_slam",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x46a620": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x47bf60": {
-      "source": "game/fujin/moves/dive.c",
+      "source": "game/native/motion.c",
       "symbol": "fujin_dive",
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     },
     "0x47f010": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_kick",
       "evidence": "47f010 enters4e8740 clip100;47f070 queries D9 at14..17,47f140/47f390 runs three paired stages with93/94/95 victims, and47f480 selects4e8790 blocked recoil. This is not the normal roundhouse."
     },
     "0x480360": {
-      "source": "game/fujin/moves/wind_grab.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_wind_grab",
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks."
     },
@@ -167,7 +167,7 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "aerial_dive": {
-      "source": "game/fujin/moves/dive.c",
+      "source": "game/native/motion.c",
       "symbol": "fujin_dive",
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     },
@@ -189,47 +189,47 @@
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "crossbow_followup": {
-      "source": "game/fujin/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "retail_weapon_native_495cf0",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "crossbow_reaction": {
-      "source": "game/fujin/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "fujin_bolt_victim",
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "wind": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "wind_slam": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind_slam",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "wind_victim": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind_victim",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "triple_kick": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_kick",
       "evidence": "47f010 enters4e8740 clip100;47f070 queries D9 at14..17,47f140/47f390 runs three paired stages with93/94/95 victims, and47f480 selects4e8790 blocked recoil. This is not the normal roundhouse."
     },
     "wind_grab": {
-      "source": "game/fujin/moves/wind_grab.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_wind_grab",
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks."
     },
     "fatality_2": {
-      "source": "game/fujin/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "fujin_second_fatality",
       "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
     },
     "fatality_1": {
-      "source": "game/fujin/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "fujin_first_fatality",
       "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
     }
@@ -276,7 +276,7 @@
       "evidence": "Fujin uses global reaction selector 17 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
     },
     "175": {
-      "source": "game/fujin/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "fujin_script_opponent_reaction",
       "adaptation": "Fujin paired victim and fatality continuations handle this selector outside the shared global contact table.",
       "evidence": "Fujin opponent reaction continuation 0x45b230 handles selector 175."
@@ -348,13 +348,13 @@
       "evidence": "Fujin uses global reaction selector 8 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
     },
     "102": {
-      "source": "game/fujin/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "fujin_script_current_reaction",
       "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
       "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 102 on task peer +38/+3c, not on the executing owner."
     },
     "109": {
-      "source": "game/fujin/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "fujin_script_current_reaction",
       "adaptation": "The executing owner releases its captured peer into battle_react; compiled owner recovery continues independently on frame tables.",
       "evidence": "45b1f0 -> 480f80 -> 48f880/48fd00 installs reaction 109 on task peer +38/+3c, not on the executing owner."
@@ -370,7 +370,7 @@
       "evidence": "Dive D[15] blocked reaction0 selects486cd0 shared block recovery."
     },
     "101": {
-      "source": "game/fujin/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "fujin_bolt_victim",
       "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction.",
       "adaptation": "Shared reaction table entry101 dispatches to the generated crossbow victim in its owning move module; reactions.c registers this same function globally for any struck humanoid."
@@ -401,13 +401,13 @@
       "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
     },
     "92": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind_victim",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts.",
       "adaptation": "Shared reactions.c table registers the move-owned wind victim functions for either player; reaction97 explicitly retains vortex velocity across action cleanup."
     },
     "97": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind_slam_victim",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts.",
       "adaptation": "Shared reactions.c table registers the move-owned wind victim functions for either player; reaction97 explicitly retains vortex velocity across action cleanup."
@@ -419,25 +419,25 @@
       "adaptation": "Shared reactions.c table registers the move-owned wind victim functions for either player; reaction97 explicitly retains vortex velocity across action cleanup."
     },
     "93": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_victim",
       "evidence": "D9 and47f140 select native488420,488450 and488830:127,311 and131 independent victim phases.",
       "adaptation": "Global reactions.c registers the same move-owned dispatcher; shared first/final axe victim adapters use these exact native entries, not different weapon attacks."
     },
     "94": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_victim",
       "evidence": "D9 and47f140 select native488420,488450 and488830:127,311 and131 independent victim phases.",
       "adaptation": "Global reactions.c registers the same move-owned dispatcher; shared first/final axe victim adapters use these exact native entries, not different weapon attacks."
     },
     "95": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_victim",
       "evidence": "D9 and47f140 select native488420,488450 and488830:127,311 and131 independent victim phases.",
       "adaptation": "Global reactions.c registers the same move-owned dispatcher; shared first/final axe victim adapters use these exact native entries, not different weapon attacks."
     },
     "98": {
-      "source": "game/fujin/moves/wind_grab.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_grab_victim",
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks.",
       "adaptation": "The shared reaction table registers the move-owned native98 orbit and generated183 release; no unrelated hit/throw fallback is used."
@@ -448,7 +448,7 @@
       "evidence": "480660 directly selects global blocked reaction7 without applying damage."
     },
     "181": {
-      "source": "game/fujin/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "fujin_second_victim",
       "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550.",
       "scripts": [
@@ -561,7 +561,7 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x47bf60": {
-      "source": "game/fujin/moves/dive.c",
+      "source": "game/native/motion.c",
       "symbol": "fujin_dive",
       "evidence": "Native47bf60 enters4e8258 action20f, clip58 motion. 47bf90 selects4e8280 D[15] contact and4e8298 recoil; this is an aerial dive, not sweep."
     },
@@ -571,22 +571,22 @@
       "evidence": "46d1d0 draws descriptor4ece98 type68; native495c30/495c60 dispatch upward, straight or downward crossbow shots, while4ecb40[8] selects495cf0 four-shot follow-up."
     },
     "0x46a620": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x46a5f0": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind_slam",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x47f010": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_kick",
       "evidence": "47f010 enters4e8740 clip100;47f070 queries D9 at14..17,47f140/47f390 runs three paired stages with93/94/95 victims, and47f480 selects4e8790 blocked recoil. This is not the normal roundhouse."
     },
     "0x480360": {
-      "source": "game/fujin/moves/wind_grab.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_wind_grab",
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks."
     },
@@ -616,12 +616,12 @@
   },
   "cpu_bindings": {
     "0x46a620": {
-      "source": "game/fujin/moves/wind.c",
+      "source": "game/native/projectiles.c",
       "symbol": "fujin_wind",
       "evidence": "46a620 enters4e5c50/D8 ->487ed0 vortex92;46a5f0 enters4e5c00 only while the captured peer has action1001 and invokes488310 slam97. Four acceleration cycles and8-percent slam use actual generated recovery/landing scripts."
     },
     "0x47f010": {
-      "source": "game/fujin/moves/triple_kick.c",
+      "source": "game/native/attacks.c",
       "symbol": "fujin_triple_kick",
       "evidence": "47f010 enters4e8740 clip100;47f070 queries D9 at14..17,47f140/47f390 runs three paired stages with93/94/95 victims, and47f480 selects4e8790 blocked recoil. This is not the normal roundhouse."
     }

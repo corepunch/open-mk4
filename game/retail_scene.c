@@ -1,6 +1,6 @@
 #include "retail_native.h"
 #include "retail_vm.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 #include "script.h"
 #include "native.h"
 

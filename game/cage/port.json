@@ -85,22 +85,22 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "fatality_1": {
-      "source": "game/cage/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "cage_fatality_1",
       "evidence": "First-fatality roster table4e0498[14] selects448160;406/407 owner,410/411 victim,408 detached torso and443 victory are separate native continuations."
     },
     "fatality_2": {
-      "source": "game/cage/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "cage_fatality_2",
       "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory."
     },
     "powered_punch": {
-      "source": "game/cage/moves/powered_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_powered_punch",
       "evidence": "479ec0 ->4e80d0/479f00; six D26 queries, paired163/94/95 hit, blocked47d940 and own clip85 miss recovery."
     },
     "cpu_kick": {
-      "source": "game/cage/moves/kicks.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_cpu_kick",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
@@ -120,17 +120,17 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "groin_punch": {
-      "source": "game/cage/moves/groin_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_groin_punch",
       "evidence": "468aa0 binds clip438 via53ce10, extends5/11, queries D[27], rewinds/extensions5 times or12 on block, then4e5ba8. Female and1014 victims bypass contacts."
     },
     "high_orb": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_high_orb",
       "evidence": "Native497070/80 ->4ed0d8; independent4970d0 orb uses C0/4ebed0 and ten share2 mesh frames."
     },
     "low_orb": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_low_orb",
       "evidence": "Native497070/80 ->4ed0d8; independent4970d0 orb uses C0/4ebed0 and ten share2 mesh frames."
     },
@@ -164,7 +164,7 @@
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "weapon_reaction": {
-      "source": "game/cage/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "cage_weapon_reaction",
       "evidence": "Native4957b0/495800 and496920 use their selected records, clip and motion data."
     }
@@ -186,12 +186,12 @@
       "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     },
     "0x497070": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_high_orb",
       "evidence": "Native497070 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
     "0x497080": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_low_orb",
       "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
@@ -206,12 +206,12 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x467cd0": {
-      "source": "game/cage/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "cage_fatality_2",
       "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory."
     },
     "0x467ce0": {
-      "source": "game/cage/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "cage_fatality_1",
       "evidence": "First-fatality roster table4e0498[14] selects448160;406/407 owner,410/411 victim,408 detached torso and443 victory are separate native continuations."
     }
@@ -361,7 +361,7 @@
       "evidence": "Cage contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
-      "source": "game/cage/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "cage_script_opponent_reaction",
       "adaptation": "Cage throw/fatality sequence owns this paired reaction through handler 0x45b230; the adapter releases the pair and routes owner recovery.",
       "evidence": "Cage generated throw/fatality streams dispatch reaction 175 through native handler 0x45b230."
@@ -377,8 +377,8 @@
       "evidence": "Native high-kick B[0]/B[2] contact selects shared reaction16; 4ea4e8[16] ->0x482a10."
     },
     "164": {
-      "source": "game/cage/moves/groin_punch.c",
-      "symbol": "groin_victim",
+      "source": "game/native/attacks.c",
+      "symbol": "native_groin_punch_groin_victim",
       "adaptation": "After contact selects164, replace its pending approximation with the native4879c0 setup and generated4e9f78 stun.",
       "evidence": "4ea4e8[164] ->4879c0 ->4e9f78; action1014, disarm, stop, clip126 stun."
     },
@@ -403,19 +403,19 @@
       "evidence": "Cage orb C0 selects shared reaction2; generated64 body4e9de8 and existing block frame recovery."
     },
     "63": {
-      "source": "game/cage/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "cage_weapon_reaction",
       "evidence": "Native482380/482300 select4e8d38/4e8cc0;149 applies half damage scaling before flight.",
       "adaptation": "The shared reaction dispatcher runs generated victim streams with native standing/crouching getup profiles."
     },
     "149": {
-      "source": "game/cage/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "cage_weapon_reaction",
       "evidence": "Native482380/482300 select4e8d38/4e8cc0;149 applies half damage scaling before flight.",
       "adaptation": "The shared reaction dispatcher runs generated victim streams with native standing/crouching getup profiles."
     },
     "146": {
-      "source": "game/kai/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "kai_weapon_reaction",
       "evidence": "Native4821c0 shared weapon33 victim stream4e8bc0 is already generated and frame-driven.",
       "adaptation": "Reuse the shared native146 dispatcher across weapon owners."
@@ -431,19 +431,19 @@
       "evidence": "Native weapon contact record selects shared frame reaction119."
     },
     "185": {
-      "source": "game/cage/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "cage_second_victim_hit",
       "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory.",
       "adaptation": "Shared reaction dispatcher starts the independent generated130/206 victim and detached head; native80-visit completion ends the scene."
     },
     "162": {
-      "source": "game/cage/moves/kicks.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_shadow_victim",
       "evidence": "D25 hit/air162 ->4836b0 disarm494520 then generated4e9718 ballistic183, ground/getup488b40.",
       "adaptation": "Registered directly in shared reactions[162]; generated Cage-owned victim root is valid for either humanoid player slot. battle_react performs native494520 disarm before entry."
     },
     "163": {
-      "source": "game/cage/moves/powered_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_power_victim",
       "adaptation": "Direct shared reactions[163] entry; two subsequent owner-driven94/95 stages use the existing exact shared Fujin victim adapters.",
       "evidence": "D26 ->163 ->488400 blood15 then488440/4ea040;47a030 dispatches94/95 once each."
@@ -504,27 +504,27 @@
       "evidence": "Typed stage-fatality target 0x467e70; generated owner/victim streams remain character-owned."
     },
     "0x479ec0": {
-      "source": "game/cage/moves/powered_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_powered_punch",
       "evidence": "479ec0 ->4e80d0/479f00; six D26 queries, paired163/94/95 hit, blocked47d940 and own clip85 miss recovery."
     },
     "0x479b20": {
-      "source": "game/cage/moves/kicks.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_cpu_kick",
       "evidence": "Typed Cage command target 0x479b20; generated startup and native 479f00/479b70 contact branches."
     },
     "0x468aa0": {
-      "source": "game/cage/moves/groin_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_groin_punch",
       "evidence": "468aa0 binds clip438 via53ce10, extends5/11, queries D[27], rewinds/extensions5 times or12 on block, then4e5ba8. Female and1014 victims bypass contacts."
     },
     "0x497070": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_high_orb",
       "evidence": "Native497070 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
     "0x497080": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_low_orb",
       "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     },
@@ -555,12 +555,12 @@
   },
   "cpu_bindings": {
     "0x479b20": {
-      "source": "game/cage/moves/kicks.c",
+      "source": "game/native/attacks.c",
       "symbol": "cage_cpu_kick",
       "evidence": "Typed near/medium/far Cage CPU rows all select native479b20 shadow kick."
     },
     "0x497080": {
-      "source": "game/cage/moves/projectile.c",
+      "source": "game/native/projectiles.c",
       "symbol": "cage_low_orb",
       "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     }

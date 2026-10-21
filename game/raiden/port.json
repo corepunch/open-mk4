@@ -171,7 +171,7 @@
     },
     "teleport": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "raiden_teleport"
     },
     "torpedo": {
@@ -214,13 +214,13 @@
     "102": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_script_reaction"
     },
     "107": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_script_reaction"
     },
     "11": {
@@ -231,7 +231,7 @@
     "111": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_script_reaction"
     },
     "119": {
@@ -267,13 +267,13 @@
     "175": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_script_reaction"
     },
     "187": {
       "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_script_reaction"
     },
     "19": {
@@ -344,7 +344,7 @@
     "47": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction"
     },
     "51": {
@@ -360,7 +360,7 @@
     "53": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction"
     },
     "6": {
@@ -371,7 +371,7 @@
     "66": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction"
     },
     "7": {
@@ -387,7 +387,7 @@
     "82": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction"
     },
     "3": {

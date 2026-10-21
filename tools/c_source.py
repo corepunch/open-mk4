@@ -1,21 +1,32 @@
 """Resolve native C definitions and retain real file/line navigation."""
 from pathlib import Path
 from functools import lru_cache
-from native_source_aliases import LEGACY_NATIVE_NAMES
+from native_source_aliases import LEGACY_NATIVE_NAMES, LEGACY_NATIVE_FILES, LEGACY_LOCAL_NAMES
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+@lru_cache(maxsize=256)
+def _source_text(path, modified):
+    text = path.read_text()
+    return text, mask_c(text)
+
+
+def source_text(path):
+    return _source_text(path, path.stat().st_mtime_ns)
+
+
 def source_files(path):
     path = (ROOT / path).resolve()
+    historical = path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else ''
     result, seen = [], set()
 
     def visit(current):
         if current in seen:
             return
         seen.add(current)
-        text = current.read_text()
+        text = source_text(current)[0]
         result.append(current)
         for include in re.findall(r'^\s*#include\s+"([^"\n]+\.inc)"', text, re.M):
             child = (current.parent / include).resolve()
@@ -24,18 +35,21 @@ def source_files(path):
 
     if path.is_file():
         visit(path)
+    elif historical in LEGACY_NATIVE_FILES:
+        visit(ROOT / LEGACY_NATIVE_FILES[historical])
     elif path.name != 'character.c':
         raise FileNotFoundError(path)
     if path.name == 'character.c':
-        for child in sorted((path.parent / 'moves').glob('*.c')):
-            visit(child)
+        prefix = path.parent.relative_to(ROOT).as_posix() + '/moves/'
+        for child in sorted({target for old, target in LEGACY_NATIVE_FILES.items() if old.startswith(prefix)}):
+            visit(ROOT / child)
     return result
 
 
 def read_source(path):
     # Generated includes stay explicit boundaries rather than making every
     # generated root appear referenced by its own integration source.
-    return '\n'.join(path.read_text() for path in source_files(path))
+    return '\n'.join(source_text(path)[0] for path in source_files(path))
 
 
 def mask_c(text):
@@ -63,6 +77,17 @@ def native_alias(name):
 
 
 def canonical_name(path, name):
+    actual = (ROOT / path).resolve()
+    if actual.is_relative_to(ROOT):
+        historical = actual.relative_to(ROOT).as_posix()
+        renamed = LEGACY_LOCAL_NAMES.get(historical + '::' + name)
+        if renamed is None and actual.name == 'character.c':
+            prefix = actual.parent.relative_to(ROOT).as_posix() + '/moves/'
+            matches = {value for key, value in LEGACY_LOCAL_NAMES.items()
+                       if key.startswith(prefix) and key.endswith('::' + name)}
+            if len(matches) == 1:
+                renamed = next(iter(matches))
+        name = renamed or name
     name = private_aliases(path).get(name, name)
     name = native_alias(name)
     try:
@@ -82,7 +107,7 @@ def public_definitions():
     result = {}
     pattern = r'^[A-Za-z_][\w* \t]*\b(\w+)\s*\([^;{}]*\)\s*\{'
     for path in sorted((ROOT / 'game').rglob('*.c')):
-        source = mask_c(path.read_text())
+        source = source_text(path)[1]
         for match in re.finditer(pattern, source, re.M):
             if source[match.start():match.end()].startswith('static '):
                 continue
@@ -97,8 +122,7 @@ def function_source(path, name):
     except FileNotFoundError:
         candidates = []
     for candidate in candidates:
-        text = candidate.read_text()
-        masked = mask_c(text)
+        text, masked = source_text(candidate)
         match = re.search(r'^[A-Za-z_][\w* \t]*\b' + re.escape(name) + r'\s*\([^;{}]*\)\s*\{', masked, re.M)
         if match is None:
             continue

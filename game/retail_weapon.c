@@ -2,7 +2,7 @@
 #include "retail_data.h"
 #include "retail_vm.h"
 #include "native.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 
 /* These are native call operands, not fighter configuration. Each original
  * frontend supplies one parameter row to494990 (or494950 without back testing). */

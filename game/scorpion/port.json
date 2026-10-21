@@ -47,7 +47,7 @@
     },
     "breathe_fire": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/fire.c",
+      "source": "game/native/projectiles.c",
       "symbol": "scorpion_fire"
     },
     "close_hk": {
@@ -92,12 +92,12 @@
     },
     "fatality_1": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "scorpion_burn_fatality"
     },
     "fatality_2": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "scorpion_beast_fatality"
     },
     "high_kick": {
@@ -137,7 +137,7 @@
     },
     "spear": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/spear.c",
+      "source": "game/native/attacks.c",
       "symbol": "scorpion_spear"
     },
     "spike_fatality": {
@@ -164,7 +164,7 @@
     },
     "sword_spin": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "retail_weapon_native_480770",
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
@@ -175,7 +175,7 @@
     },
     "teleport_punch": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "scorpion_teleport"
     },
     "uppercut": {
@@ -354,19 +354,19 @@
     "70": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/spear.c",
-      "symbol": "spear_projectile"
+      "source": "game/native/attacks.c",
+      "symbol": "n486000_spear_projectile"
     },
     "71": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/spear.c",
+      "source": "game/native/attacks.c",
       "symbol": "scorpion_spear_stun_script"
     },
     "77": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "scorpion_script_opponent_reaction"
     },
     "8": {

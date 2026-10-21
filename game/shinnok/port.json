@@ -4,12 +4,12 @@
   "inventory_sha256": "ddff3bc93f9b51fb68088e3bdfb0171b8f680b3705ab718982fa56d6a733eb04",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/shinnok/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "shinnok_fatality_2",
       "evidence": "BLOCK record 4e4694 (D,U,U,D, gate 45e570) -> 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0: camera intro 4e0088, victim reaction 179, hands 43c9d0/43ca00, return 455190."
     },
     "0x467ce0": {
-      "source": "game/shinnok/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "shinnok_fatality_1",
       "evidence": "RUN record 4e4708 (D,B,F,D, gate 45e570) -> 467ce0 -> 43cbb0 -> 4e0498[6] = 455000: owner vanish 4e2ef0, hand 4556d0/4e2f40, victim 4558f0/4e2f78, return 455190."
     },
@@ -19,85 +19,85 @@
       "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x469a00": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_scorpion",
       "evidence": "469a00 stores roster 0 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a10": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_raiden",
       "evidence": "469a10 stores roster 1 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a20": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_sonya",
       "evidence": "469a20 stores roster 2 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a30": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_liu_kang",
       "evidence": "469a30 stores roster 3 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a40": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_sub_zero",
       "evidence": "469a40 stores roster 4 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a50": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_fujin",
       "evidence": "469a50 stores roster 5 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a60": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_reiko",
       "evidence": "469a60 stores roster 7 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a70": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_jarek",
       "evidence": "469a70 stores roster 12 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a80": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_quan_chi",
       "evidence": "469a80 stores roster 8 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a90": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_tanya",
       "evidence": "469a90 stores roster 9 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469aa0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_reptile",
       "evidence": "469aa0 stores roster 10 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469ab0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_jax",
       "evidence": "469ab0 stores roster 13 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469ac0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_cage",
       "evidence": "469ac0 stores roster 14 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469ad0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_kai",
       "evidence": "469ad0 stores roster 11 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
@@ -245,7 +245,7 @@
       "evidence": "Native495bb0/495be0,496670/495c20 select the reviewed type64 strike, motion and victim data."
     },
     "weapon_reaction": {
-      "source": "game/shinnok/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "shinnok_weapon_reaction",
       "evidence": "Native495bb0/495be0,496670/495c20 select the reviewed type64 strike, motion and victim data."
     },
@@ -255,12 +255,12 @@
       "evidence": "Type64 table4ecb40[4] selects496c50 ->4ec8b0 with weapon2, distinct from ordinary HP weapon28."
     },
     "fatality_1": {
-      "source": "game/shinnok/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "shinnok_fatality_1",
       "evidence": "RUN record 4e4708 (D,B,F,D, gate 45e570) -> 467ce0 -> 43cbb0 -> 4e0498[6] = 455000: owner vanish 4e2ef0, hand 4556d0/4e2f40, victim 4558f0/4e2f78, return 455190."
     },
     "fatality_2": {
-      "source": "game/shinnok/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "shinnok_fatality_2",
       "evidence": "BLOCK record 4e4694 (D,U,U,D, gate 45e570) -> 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0: camera intro 4e0088, victim reaction 179, hands 43c9d0/43ca00, return 455190."
     }
@@ -400,7 +400,7 @@
       "evidence": "Pinned EXE Shinnok contact record and reaction table"
     },
     "175": {
-      "source": "game/shinnok/moves/fatality.c",
+      "source": "game/native/cinematics.c",
       "symbol": "shinnok_fatality_contact_hold",
       "evidence": "Shinnok spike contact 0x4ebd80 deals zero damage and uses reaction 175 before native scene coordinator 0x467fc0",
       "adaptation": "Keep the victim in the fatality-owned scene pose until the spike scene coordinator finishes"
@@ -411,25 +411,25 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "139": {
-      "source": "game/cage/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "cage_weapon_reaction",
       "evidence": "Native weapon table selects reaction139 and its actual generated victim stream.",
       "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
     },
     "140": {
-      "source": "game/shinnok/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "shinnok_weapon_reaction",
       "evidence": "Native weapon table selects reaction140 and its actual generated victim stream.",
       "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
     },
     "141": {
-      "source": "game/shinnok/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "shinnok_weapon_reaction",
       "evidence": "Native weapon table selects reaction141 and its actual generated victim stream.",
       "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
     },
     "62": {
-      "source": "game/jarek/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "jarek_weapon_reaction",
       "evidence": "Native weapon table selects reaction62 and its actual generated victim stream.",
       "adaptation": "The common dispatcher installs independent frame phases, preserving KO and held-DOWN recovery."
@@ -465,7 +465,7 @@
       "evidence": "Shinnok straight air kick contact (air_attacks[2], clip 327) selects blocked reaction 8; 4ea4e8[8] enters 0x486c70, dispatched by the shared portable reaction table."
     },
     "179": {
-      "source": "game/shinnok/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "shinnok_second_victim",
       "evidence": "4e0088 dispatches 179 on the peer; 4ea4e8[179] = 481510 starts lift task 46a280 and stream 4ea270 (clip 542, then 543).",
       "adaptation": "The shared reaction table starts the floating victim; its 46a280/46a380 lift becomes precomputed motion rows."
@@ -532,85 +532,85 @@
       "evidence": "46d1d0 type64 selects draw/throw or table4ecb40[4] native496c50 follow-up script4ec8b0."
     },
     "0x469a00": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_scorpion",
       "evidence": "469a00 stores roster 0 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a10": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_raiden",
       "evidence": "469a10 stores roster 1 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a20": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_sonya",
       "evidence": "469a20 stores roster 2 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a30": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_liu_kang",
       "evidence": "469a30 stores roster 3 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a40": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_sub_zero",
       "evidence": "469a40 stores roster 4 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a50": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_fujin",
       "evidence": "469a50 stores roster 5 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a60": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_reiko",
       "evidence": "469a60 stores roster 7 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a70": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_jarek",
       "evidence": "469a70 stores roster 12 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a80": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_quan_chi",
       "evidence": "469a80 stores roster 8 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469a90": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_tanya",
       "evidence": "469a90 stores roster 9 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469aa0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_reptile",
       "evidence": "469aa0 stores roster 10 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469ab0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_jax",
       "evidence": "469ab0 stores roster 13 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469ac0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_cage",
       "evidence": "469ac0 stores roster 14 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x469ad0": {
-      "source": "game/shinnok/moves/morph.c",
+      "source": "game/native/motion.c",
       "symbol": "shinnok_morph_kai",
       "evidence": "469ad0 stores roster 11 in 53c42c and enters 469ae0: task +0x34 morph, 4aa7e0 four-tick hold, name token, stamp slot 5 and 470420 return; 48e1e0 restores Shinnok.",
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."

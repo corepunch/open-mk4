@@ -81,7 +81,7 @@ class PortTests(unittest.TestCase):
         source = '\n'.join(source_rows(port_entry(4, 'clone'), 1))
         self.assertNotIn('```c', source)
         self.assertIn('No partial function', source)
-        self.assertIn('sub_zero/moves/clone.c:', source)
+        self.assertIn('native/motion.c:', source)
         with self.assertRaisesRegex(ValueError, 'Unknown'):
             port_text(disassembly, 'not_a_move', 4)
 
@@ -161,7 +161,7 @@ class PortTests(unittest.TestCase):
     def test_private_move_navigation_keeps_generated_code_separate(self):
         integration = 'game/scorpion/character.c'
         actual, line, code = function_source(integration, 'scorpion_teleport')
-        self.assertEqual(actual, 'game/scorpion/moves/teleport.c')
+        self.assertEqual(actual, 'game/native/motion.c')
         self.assertTrue((ROOT / actual).read_text().splitlines()[line - 1].startswith('void scorpion_teleport('))
         native = read_source(integration)
         self.assertIn(code, native)

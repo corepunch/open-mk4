@@ -38,13 +38,15 @@ def audit_text(path, text):
 
 
 def main():
-    paths = sorted((ROOT / 'game').glob('*/moves/*.c'))
+    paths = sorted((ROOT / 'game').glob('native/*.c'))
     paths += sorted((ROOT / 'game').glob('retail_*.c'))
     paths += [ROOT / 'game' / name for name in NATIVE]
     paths = sorted(set(paths))
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]
     errors += ['Generated fighter runtime output is forbidden: ' + str(path.relative_to(ROOT))
                for path in (ROOT / 'game').glob('*/generated/*.inc')]
+    errors += ['Per-character C architecture is forbidden: ' + str(path.relative_to(ROOT))
+               for pattern in ('*/character.[ch]', '*/moves/*.[ch]') for path in (ROOT / 'game').glob(pattern)]
     if errors:
         print('\n'.join(errors))
         return 1

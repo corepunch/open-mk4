@@ -4,12 +4,12 @@
   "integration_source": "game/retail_native.c",
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/quan_chi/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "quan_chi_second_fatality",
       "evidence": "Second-fatality roster table4dfe90[8] selects43be30, which dispatches the victim roster's own second fatality."
     },
     "0x467ce0": {
-      "source": "game/quan_chi/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "quan_chi_first_fatality",
       "evidence": "First-fatality roster table4e0498[8] selects44bcd0; owner, victim, torn leg and camera are separate native continuations."
     },
@@ -19,7 +19,7 @@
       "evidence": "Typed RUN command target 469250 and shared sidestep gate 45e820."
     },
     "0x469c80": {
-      "source": "game/quan_chi/moves/steal.c",
+      "source": "game/native/attacks.c",
       "symbol": "quan_chi_weapon_steal",
       "evidence": "Native469c80 weapon steal: clip7, D11 against an armed victim, homing task70 weapon 484100 and 46a180 equip; otherwise 469d7a recovery."
     },
@@ -39,17 +39,17 @@
       "evidence": "46d1d0 selects draw/throw/follow-up for type6f; follow-up table4ecb40 selects496be0, not another normal."
     },
     "0x47a370": {
-      "source": "game/quan_chi/moves/flip_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_flip_kick",
       "evidence": "Native47a370: action217, decay47bf50, VM4e8100 clip105 and 47a3b0 D24 contact/recovery."
     },
     "0x47cf30": {
-      "source": "game/quan_chi/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Native47cf30 teleport stomp: clip87 sink, relocation by47d550, D10 query while falling, hit47cfbd/47d1a0/47d320, block47fe60, miss47d500."
     },
     "0x499740": {
-      "source": "game/quan_chi/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "quan_chi_skull",
       "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
     },
@@ -166,22 +166,22 @@
       "evidence": "Shared checked original close-entry native, loaded descriptor/combo/button tables and original scripts; docs/research/shared-retail-runtime.md"
     },
     "skull": {
-      "source": "game/quan_chi/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "quan_chi_skull",
       "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
     },
     "flip_kick": {
-      "source": "game/quan_chi/moves/flip_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_flip_kick",
       "evidence": "Native47a370: action217, 490ae0(4e80f8) installs decay47bf50, VM4e8100 clip105 to15 with speed0x547a; 47a3b0 four D24 visits, 47a500 hit/block holds and 47a610 finish."
     },
     "teleport_stomp": {
-      "source": "game/quan_chi/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Native47cf30: action400, sink callback47d550 relocates to the saved opponent X/Z at Y-4 with gravity0xa3d; D10 stomp, 47d1a0 three clip89 stomps, 47d320 flip exit; block47fe60, miss47d500."
     },
     "weapon_steal": {
-      "source": "game/quan_chi/moves/steal.c",
+      "source": "game/native/attacks.c",
       "symbol": "quan_chi_weapon_steal",
       "evidence": "Native469c80: action401, C37, clip7 to10; armed victim/unarmed thief D11 query; hit waits up to30 ticks for task70 484100 to home within0x8000 and 46a180 equips it; miss/block 469d7a."
     },
@@ -215,12 +215,12 @@
       "adaptation": "Original inventory button target and native alternative select the shared weapon service; no fighter C configuration."
     },
     "fatality_1": {
-      "source": "game/quan_chi/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "quan_chi_first_fatality",
       "evidence": "467ce0 table4e0498[8] selects44bcd0: align1.1, owner420 then421 beating loop, victim389/424/417, leg task44c0f0 copies joints12/14/16 for422/423, camera44c700."
     },
     "fatality_2": {
-      "source": "game/quan_chi/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "quan_chi_second_fatality",
       "evidence": "467cd0 table4dfe90[8] selects43be30: performs4dfe90[victim roster] (Kitana as Sonya, Noob as Reiko), or43cbb0's first fatality against Quan Chi."
     }
@@ -237,7 +237,7 @@
       "evidence": "Quan Chi slot 8 dispatches reaction 10 through the shared C reaction table (0x481320)"
     },
     "103": {
-      "source": "game/quan_chi/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "quan_chi_script_current_reaction",
       "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
       "evidence": "Quan Chi LP throw emits reaction 103 through VM handler 45b1f0 (0x485b30)"
@@ -273,7 +273,7 @@
       "evidence": "Quan Chi slot 8 dispatches reaction 17 through the shared C reaction table (0x482e00)"
     },
     "175": {
-      "source": "game/quan_chi/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "quan_chi_script_current_reaction",
       "adaptation": "The selected native current-context reaction remains an explicit battle_react dispatch.",
       "evidence": "Quan Chi LP throw emits reaction 175 through VM handler 45b1f0 (0x4836e0)"
@@ -350,19 +350,19 @@
       "evidence": "Native46dd30 high-punch contact A0/4ebd20 selects32/485e30; shared native frame recovery."
     },
     "128": {
-      "source": "game/quan_chi/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "quan_chi_skull_reaction",
       "evidence": "Skull C7/4ebe88 selects reaction128; 4ea4e8[128] ->485f90: 494520 disarm then generated4e9cd8 clip182 knockback.",
       "adaptation": "Registered directly in shared reactions[128]; the Quan Chi-owned generated victim root runs for either humanoid player slot and performs the 494520 disarm itself."
     },
     "160": {
-      "source": "game/quan_chi/moves/flip_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_flip_reaction",
       "evidence": "D24/4ec020 hit and air select reaction160; 4ea4e8[160] ->481d90: 488ea0 wall recoil, 494520 disarm, VM4e8a48 clip189 launch and 488c00 roll getup.",
       "adaptation": "Registered directly in shared reactions[160]; the Quan Chi-owned generated victim root runs for either humanoid player slot."
     },
     "106": {
-      "source": "game/quan_chi/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_stomp_reaction",
       "evidence": "D10/4ec158 hit and air select reaction106; 4ea4e8[106] ->4843b0: 494520 disarm, 48ef30 airborne drop, VM4e9868 clip178 and 484420 stomp cycles/488ba0 getup.",
       "adaptation": "Registered directly in shared reactions[106]; the Quan Chi-owned generated victim root and its 484420 native cycles run for either humanoid player slot."
@@ -373,19 +373,19 @@
       "evidence": "Teleport stomp D10/4ec158 selects block reaction0; 4ea4e8[0] ->486cd0 shared block recovery, after 47fe60's 48fed0 separation."
     },
     "108": {
-      "source": "game/quan_chi/moves/steal.c",
+      "source": "game/native/attacks.c",
       "symbol": "quan_chi_steal_reaction",
       "evidence": "D11/4ec140 hit and air select reaction108; 4ea4e8[108] ->484060: 493370 detaches the weapon into task70 484100, 48ef30 selects VM4e9838 air or4e9818 ground.",
       "adaptation": "Registered directly in shared reactions[108]; the Quan Chi-owned generated victim roots run for either humanoid player slot and the homing weapon falls through the shared 494590 drop when the thief stops."
     },
     "47": {
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction",
       "evidence": "Weapon record W5 (4ec848) selects reaction47, the same staff LP victim root registered by Raiden.",
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
     },
     "53": {
-      "source": "game/raiden/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "raiden_generated_reaction",
       "evidence": "Weapon record W7 (4ec838) selects reaction53, the same staff travel-strike victim root registered by Raiden.",
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated program owns recovery."
@@ -519,22 +519,22 @@
       "evidence": "Loaded command selects this original native address; shared capture and original scripts"
     },
     "0x499740": {
-      "source": "game/quan_chi/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "quan_chi_skull",
       "evidence": "Native499740: 49c610 heading snapshot, action306 and4ed3a0 clip23 startup; 499780 spawns task73 skull4998d0 (C7, bite499b40, expiry499c00) and enters4ed3c0."
     },
     "0x47a370": {
-      "source": "game/quan_chi/moves/flip_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_flip_kick",
       "evidence": "Native47a370: action217, decay47bf50, VM4e8100 clip105 and 47a3b0 D24 contact/recovery."
     },
     "0x47cf30": {
-      "source": "game/quan_chi/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Native47cf30 teleport stomp: clip87 sink, relocation by47d550, D10 query while falling, hit47cfbd/47d1a0/47d320, block47fe60, miss47d500."
     },
     "0x469c80": {
-      "source": "game/quan_chi/moves/steal.c",
+      "source": "game/native/attacks.c",
       "symbol": "quan_chi_weapon_steal",
       "evidence": "Native469c80 weapon steal: clip7, D11 against an armed victim, homing task70 weapon 484100 and 46a180 equip; otherwise 469d7a recovery."
     },
@@ -567,17 +567,17 @@
   },
   "cpu_bindings": {
     "0x499740": {
-      "source": "game/quan_chi/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "quan_chi_skull",
       "evidence": "Typed projectile CPU row 4df9c8 word0x20007 selects native499740, the same skull as LP [F,F]."
     },
     "0x47a370": {
-      "source": "game/quan_chi/moves/flip_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_flip_kick",
       "evidence": "Typed near CPU row 4df908 word0x4001a selects native47a370, the HK [F,F] flip kick."
     },
     "0x47cf30": {
-      "source": "game/quan_chi/moves/teleport.c",
+      "source": "game/native/motion.c",
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Typed medium 4df948 and far 4df988 CPU rows (word0x4000b) select native47cf30, the LK [F,D] teleport stomp."
     }

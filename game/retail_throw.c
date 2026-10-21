@@ -3,7 +3,7 @@
 #include "retail_vm.h"
 #include "script.h"
 #include "native.h"
-#include "mk4_characters.h"
+#include "native_services.h"
 
 /* Native throw-victim entries are selected by the original reaction table,
  * independently of either fighter's model or the originating script. */

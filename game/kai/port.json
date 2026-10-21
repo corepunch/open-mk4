@@ -50,12 +50,12 @@
       "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40"
     },
     "input_478df0": {
-      "source": "game/kai/moves/lunge_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "kai_input_478df0",
       "evidence": "478df0 action20b enters4e8870 clip551; 478e20 queries B[9] at samples30..34, then478e40 finishes551 and returns."
     },
     "input_47bd10": {
-      "source": "game/kai/moves/aerial_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "kai_input_47bd10",
       "evidence": "47bd10 action210 enters4e8210 clip298 hop; 47bd40 runs record4e8238 with D[16] contact, floor and timeout fall continuations."
     },
@@ -155,34 +155,34 @@
       "evidence": "4ecb40[type63-60] selects4959f0:4eca08 motion and4eca18 clip230/weapon31, bypassing air/back selectors."
     },
     "rising_skull": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_rising_skull",
       "evidence": "499410 action307 ->4ed330 clip21; 499450 task499490 rises to Y-4 and drops over the peer with C[8]; 4ed348 loop and499470 cooldown return."
     },
     "ground_skull": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_ground_skull",
       "evidence": "498fc0 action308 ->4ed2f8 clip22 hop; 499000 task4990f0 sinks and rises under the peer with C[9]; owner rewinds22 then47e990 or46f650."
     },
     "fatality_1": {
-      "source": "game/kai/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "kai_fatality_1",
       "evidence": "First-fatality roster table4e0498[11] selects44ad70: owner440/445/443, victim task44b0e0 441/444, torso task44b4a0 442 after the44b2c0 waist sever."
     },
     "fatality_2": {
-      "source": "game/kai/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "kai_fatality_2",
       "evidence": "Second-fatality table4dfe90[11] selects43bfe0: owner4dff88 493/486/487 with hover task46a280, skull task43c140 and reaction178 (4814c0/455bf0) victim4ea240 ->46a500 ->4e5be0."
     }
   },
   "entry_adapters": {
     "0x467cd0": {
-      "source": "game/kai/moves/fatality_second.c",
+      "source": "game/native/cinematics.c",
       "symbol": "kai_fatality_2",
       "evidence": "Second-fatality dispatcher467cd0 ->43bd70 ->4dfe90[11]=43bfe0."
     },
     "0x467ce0": {
-      "source": "game/kai/moves/fatality_first.c",
+      "source": "game/native/severing.c",
       "symbol": "kai_fatality_1",
       "evidence": "First-fatality dispatcher467ce0 ->43cbb0 ->4e0498[11]=44ad70."
     },
@@ -197,12 +197,12 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x498fc0": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_ground_skull",
       "evidence": "Kai LP F,F record4e48a8 and CPU medium row select native498fc0 ground skull."
     },
     "0x499410": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_rising_skull",
       "evidence": "Kai HP B,B record4e4888 and CPU near/projectile rows select native499410 rising skull."
     },
@@ -222,12 +222,12 @@
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "0x47bd10": {
-      "source": "game/kai/moves/aerial_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "kai_input_47bd10",
       "evidence": "Typed Kai HP D,F record4e4894 selects47bd10; 4e8210 hop and native4e8238 contact record."
     },
     "0x478df0": {
-      "source": "game/kai/moves/lunge_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "kai_input_478df0",
       "evidence": "Typed Kai LK D,F record4e4914 selects478df0; 4e8870 clip551 with478e20 B[9] contacts."
     }
@@ -274,7 +274,7 @@
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 17 at 0x482e00."
     },
     "175": {
-      "source": "game/kai/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "kai_script_opponent_reaction",
       "adaptation": "The typed native reaction handler preserves paired owner/victim ownership and hands reaction 77 to the victim after release.",
       "evidence": "Kai script handler 0x45b230 dispatches selected reaction 175 at address 0x4836e0."
@@ -346,13 +346,13 @@
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 8 at 0x486c70."
     },
     "102": {
-      "source": "game/kai/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "kai_script_current_reaction",
       "adaptation": "Release the captured peer and install reaction102 through battle_react; generated owner recovery continues independently on frame tables.",
       "evidence": "Kai root 0x4de6b8 calls current reaction 0x45b1f0 with selector 0x66, then reaches tail 0x42ce80."
     },
     "109": {
-      "source": "game/kai/moves/common.c",
+      "source": "game/native/contexts.c",
       "symbol": "kai_script_current_reaction",
       "adaptation": "Release the captured peer and install reaction109 through battle_react; generated owner recovery continues independently on frame tables.",
       "evidence": "Kai root 0x4de610 calls current reaction 0x45b1f0 with selector 0x6d, then reaches tail 0x42cbc0."
@@ -381,19 +381,19 @@
       "evidence": "Handstand D13 blocked reaction0 dispatches486cd0; existing shared block frame recovery."
     },
     "142": {
-      "source": "game/kai/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "kai_weapon_reaction",
       "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
       "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
     },
     "145": {
-      "source": "game/kai/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "kai_weapon_reaction",
       "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
       "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
     },
     "146": {
-      "source": "game/kai/moves/weapon.c",
+      "source": "game/native/weapon_attacks.c",
       "symbol": "kai_weapon_reaction",
       "evidence": "Native482110/4825e0/4821c0 select4e8b78/4e8f50/4e8bc0 with disarm, recoil and motion.",
       "adaptation": "The shared reaction dispatcher runs these character-owned generated victim frame streams for every humanoid roster."
@@ -541,22 +541,22 @@
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "0x47bd10": {
-      "source": "game/kai/moves/aerial_punch.c",
+      "source": "game/native/attacks.c",
       "symbol": "kai_input_47bd10",
       "evidence": "Typed Kai HP D,F record4e4894 selects47bd10; 4e8210 hop and native4e8238 contact record."
     },
     "0x478df0": {
-      "source": "game/kai/moves/lunge_kick.c",
+      "source": "game/native/motion.c",
       "symbol": "kai_input_478df0",
       "evidence": "Typed Kai LK D,F record4e4914 selects478df0; 4e8870 clip551 with478e20 B[9] contacts."
     },
     "0x499410": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_rising_skull",
       "evidence": "Typed Kai HP B,B record4e4888 selects499410 through cooldown gate45eb40."
     },
     "0x498fc0": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_ground_skull",
       "evidence": "Typed Kai LP F,F record4e48a8 (flags 12, airborne allowed) selects498fc0 through gate45eb10."
     },
@@ -585,12 +585,12 @@
   },
   "cpu_bindings": {
     "0x499410": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_rising_skull",
       "evidence": "Typed Kai CPU near and projectile rows4df914/4df9d4 word20008 select499410."
     },
     "0x498fc0": {
-      "source": "game/kai/moves/skull.c",
+      "source": "game/native/projectiles.c",
       "symbol": "kai_ground_skull",
       "evidence": "Typed Kai CPU medium row4df954 word20009 selects498fc0."
     }
