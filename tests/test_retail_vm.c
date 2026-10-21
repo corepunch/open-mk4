@@ -84,7 +84,7 @@ static void behavior(void) {
         Fighter *owner = setup(slot, scenario);
         press(slot, crouch != 0, scenario);
         check(owner->retail_vm.active, "real button entry must select the runtime interpreter");
-        check(owner->retail_vm.begin == (crouch ? 0x4e60b8u : 0x4e6d08u), "button entry selected the wrong retail root");
+        check(owner->retail_vm.entry == (crouch ? 0x4e60b8u : 0x4e6d08u), "button entry selected the wrong retail root");
         recovery[scenario] = recover(owner, slot, crouch != 0, scenario);
       }
       if (!crouch) {
@@ -301,9 +301,9 @@ int main(int argc, char **argv) {
       put_word(0x4e6d08, 0x3a0000ff);
       put_word(0x4e6d0c, 0x3b000000);
     } else if (strcmp(argv[1], "range") == 0) {
-      for (uint32_t at = 0x4e6d08; at < 0x4e6d9c; at += 4) {
-        put_word(at, 0x1f000000);
-      }
+      Fighter *owner = setup(0, 2);
+      put_word(0x570000, 0x1f000000);
+      retail_vm_start(owner, &image, 0x570000, 0x570004, control_end, reject_native);
     } else {
       check(false, "unknown rejection test");
     }

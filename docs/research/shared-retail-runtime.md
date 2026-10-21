@@ -83,3 +83,19 @@ use the runtime roster API rather than reading a C definition's ground field.
 
 Verification: shared runtime suite, C11 game build, format-check, all 18
 canonical script/source checks and the existing game asset self-test pass.
+
+## Shared script entry
+
+`retail_vm_enter` now starts an original address inside the checked retail data
+window, with an explicit native return continuation. The per-fighter 70-root
+switch and its graph-bound constants are removed. Offline inventory checks
+still verify that decoded roots lie inside the shared window and use supported
+operations. Individual entries do not need runtime C enrollment. VM state keeps
+the source entry separately from the checked data bounds for diagnostics.
+
+The native ABI glue is now a runtime module, `retail_native_vm.c`. It remains a
+transitional adapter to legacy native routines, not a completed native port.
+This change does not enable all other fighters' generated roots automatically:
+their remaining opcode/native semantics must still be migrated and verified.
+Existing shared-runtime and rejection checks pass with the generic entry path;
+the small explicit-window fixture retains cursor-boundary rejection coverage.

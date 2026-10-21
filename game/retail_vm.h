@@ -2,6 +2,11 @@
 #define MK4_RETAIL_VM_H
 #include "game.h"
 
+#define RETAIL_SCRIPT_BEGIN 0x4d0000u
+#define RETAIL_SCRIPT_END 0x4ef000u
+
+void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn finish);
+
 /* Caller supplies a reviewed contiguous script range and
  * typed native adapter. Nothing in the image is executed as host code. */
 void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn finish, RetailNativeFn native);

@@ -492,7 +492,7 @@ typedef bool (*RetailNativeFn)(Fighter *fighter, uint32_t address, RetailNativeK
 
 typedef struct RetailVm {
   const Mk4Image *image; /* borrowed immutable data, owned by assets or the caller */
-  uint32_t pc, begin, end, instruction;
+  uint32_t pc, begin, end, instruction, entry;
   uint64_t wake;
   unsigned result, selector, loop_count;
   int play_ticks, target, direction, stride;

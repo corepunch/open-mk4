@@ -149,14 +149,12 @@ def audit(image, character, return_to=None, profile=None):
             check_reference(reference, errors, 'runtime script ' + hex(entry))
             program = script_program(image, entry, character)
             compiled_graphs[entry] = {int(row['va'], 16) for row in program['instructions']}
-            source = read_source(ROOT / reference['source'])
-            match = re.search(r'case\s+0x0*' + format(entry, 'x') + r':\s*end\s*=\s*(0x[0-9a-f]+)', source)
-            end = int(match[1], 16) if match else entry
-            lower = re.search(r'case\s+0x0*' + format(entry, 'x') + r':(?:(?!break;).)*?begin\s*=\s*(0x[0-9a-f]+)', source, re.S)
-            begin = int(lower[1], 16) if lower else entry
+            limits = (ROOT / 'game/retail_vm.h').read_text()
+            begin = int(re.search(r'#define RETAIL_SCRIPT_BEGIN (0x[0-9a-f]+)', limits)[1], 16)
+            end = int(re.search(r'#define RETAIL_SCRIPT_END (0x[0-9a-f]+)', limits)[1], 16)
             if any(int(row['va'], 16) < begin or int(row['va'], 16) + 4 * (1 + len(row.get('operands', []))) > end
                    for row in program['instructions']):
-                errors.append('%s: runtime registration does not contain the decoded graph' % hex(entry))
+                errors.append('%s: runtime data range does not contain the decoded graph' % hex(entry))
             supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/retail_vm.c').read_text())}
             if any(int(row['opcode'], 16) not in supported for row in program['instructions']):
                 errors.append('%s: runtime opcode is unsupported' % hex(entry))

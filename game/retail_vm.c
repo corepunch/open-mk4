@@ -1,5 +1,6 @@
 #include "retail_vm.h"
 #include "script.h"
+#include "retail_native.h"
 
 /* Rule-only clients still execute retail words. The game supplies its selected
  * image through assets; this immutable cache owns the default test image. */
@@ -134,7 +135,8 @@ static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
 
 void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
   require(image != NULL && image->bytes.count != 0 && next != NULL && native != NULL, "Retail VM needs owned image and typed continuations");
-  require(begin <= entry && entry < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= 65536, "Invalid reviewed retail script range");
+  require(begin <= entry && entry < end && begin % 4 == 0 && end % 4 == 0 && end - begin <= RETAIL_SCRIPT_END - RETAIL_SCRIPT_BEGIN,
+      "Invalid reviewed retail script range");
   RetailVm previous = fighter->retail_vm;
   FighterFn cleanup = previous.cleanup != NULL ? previous.cleanup : fighter->mmove_cleanup;
   fighter->retail_vm.cleanup = NULL;
@@ -142,6 +144,7 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
   fighter_cancel_mmove(fighter);
   fighter->sequence = NULL;
   fighter->retail_vm = (RetailVm){.image = image,
+      .entry = entry,
       .pc = entry,
       .begin = begin,
       .end = end,
@@ -158,6 +161,10 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
     bind(fighter, (0x4fad7c + (uint32_t)move->clip * 12) / 4, fighter_sample(fighter));
   }
   retail_vm_step(fighter);
+}
+
+void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
+  retail_vm_start_at(fighter, retail_vm_image(), entry, RETAIL_SCRIPT_BEGIN, RETAIL_SCRIPT_END, next, retail_native_vm);
 }
 
 void retail_vm_start(Fighter *fighter, const Mk4Image *image, uint32_t begin, uint32_t end, FighterFn next, RetailNativeFn native) {
