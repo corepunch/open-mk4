@@ -139,8 +139,8 @@
     },
     "sweep": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_sweep"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep"
     },
     "uppercut": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",

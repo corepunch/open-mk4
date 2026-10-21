@@ -148,8 +148,8 @@
       "evidence": "Reptile spike fatality entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "sweep": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_sweep",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep",
       "evidence": "Reptile sweep entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "uppercut": {

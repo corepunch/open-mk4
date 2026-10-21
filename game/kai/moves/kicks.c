@@ -20,5 +20,5 @@ void kai_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? kai_sweep : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep : retail_low_kick);
 }

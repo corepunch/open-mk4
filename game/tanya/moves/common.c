@@ -15,10 +15,6 @@ void tanya_script_opponent_reaction(Fighter *fighter, int reaction) {
   require(false, "Unexpected Tanya opponent reaction");
 }
 
-void tanya_script_finish(Fighter *fighter) {
-  native_advancing_sweep(fighter);
-}
-
 void tanya_script_current_reaction(Fighter *fighter, int reaction) {
   if (reaction == 186) {
     /* 4e5798's opcode 41 installs reaction 186 (465200) on the victim. */

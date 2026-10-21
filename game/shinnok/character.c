@@ -23,8 +23,8 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = shinnok_press_punch,
     [BUTTON_LOW_KICK] = shinnok_press_low_kick}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = shinnok_press_uppercut,
     [BUTTON_LOW_PUNCH] = shinnok_press_uppercut,
-    [BUTTON_HIGH_KICK] = shinnok_press_sweep,
-    [BUTTON_LOW_KICK] = shinnok_press_sweep}};
+    [BUTTON_HIGH_KICK] = retail_press_sweep,
+    [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = shinnok_press_air_hp,
     [BUTTON_LOW_PUNCH] = shinnok_press_air_lp,
     [BUTTON_HIGH_KICK] = shinnok_press_air_hk,
@@ -38,7 +38,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_JUMP] = NULL,
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
-  [S_SWEEP] = shinnok_sweep,
+  [S_SWEEP] = retail_sweep,
   [S_UPPERCUT] = shinnok_uppercut,
   [S_THROW] = shinnok_lp_throw,
   [S_BLOCK] = weapon_block,
@@ -111,10 +111,6 @@ void shinnok_entry_retail_script_004e6658(Fighter *fighter) {
 
 void shinnok_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 6);
-}
-
-void shinnok_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e6800(Fighter *fighter) {

@@ -34,8 +34,8 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "sweep": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_sweep",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "air_hp": {

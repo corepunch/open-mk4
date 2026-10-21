@@ -31,5 +31,5 @@ void fujin_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? fujin_enter_sweep : fujin_entry_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep : fujin_entry_low_kick);
 }

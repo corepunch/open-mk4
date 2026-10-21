@@ -145,8 +145,8 @@
       "evidence": "Fujin spike fatality starts generated stream 4e6950 and shared scene continuation."
     },
     "sweep": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_sweep",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep",
       "evidence": "Fujin sweep command starts generated stream 4e6798."
     },
     "uppercut": {

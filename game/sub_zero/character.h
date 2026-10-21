@@ -26,7 +26,6 @@
 #define cpu_close_hk sub_zero_cpu_close_hk
 #define cpu_close_hp sub_zero_cpu_close_hp
 #define enter_lk_throw sub_zero_enter_lk_throw
-#define enter_sweep sub_zero_enter_sweep
 #define enter_throw sub_zero_enter_throw
 #define enter_uppercut sub_zero_enter_uppercut
 #define finish_scene sub_zero_finish_scene
@@ -108,7 +107,6 @@
 #define script_slide_return sub_zero_script_slide_return
 #define script_spawn_ice sub_zero_script_spawn_ice
 #define script_spike_tail sub_zero_script_spike_tail
-#define script_sweep_tail sub_zero_script_sweep_tail
 #define script_thrown_return sub_zero_script_thrown_return
 #define script_victory sub_zero_script_victory
 #define second_fatality_script sub_zero_second_fatality_script
@@ -165,7 +163,6 @@ bool sub_zero_can_slide(const Fighter *fighter);
 void sub_zero_cpu_close_hk(Fighter *fighter);
 void sub_zero_cpu_close_hp(Fighter *fighter);
 void sub_zero_enter_lk_throw(Fighter *fighter);
-void sub_zero_enter_sweep(Fighter *fighter);
 void sub_zero_enter_throw(Fighter *fighter);
 void sub_zero_enter_uppercut(Fighter *fighter);
 void sub_zero_finish_scene(Fighter *fighter);
@@ -234,7 +231,6 @@ void sub_zero_entry_retail_script_004e6658(Fighter *fighter);
 void sub_zero_entry_retail_script_004e66d0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e66f0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6710(Fighter *fighter);
-void sub_zero_entry_retail_script_004e6798(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6800(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6860(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6878(Fighter *fighter);
@@ -298,7 +294,6 @@ void sub_zero_script_roundhouse_tail(Fighter *fighter);
 void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
 void sub_zero_script_spike_tail(Fighter *fighter);
-void sub_zero_script_sweep_tail(Fighter *fighter);
 void sub_zero_script_thrown_return(Fighter *victim);
 void sub_zero_script_victory(Fighter *fighter);
 void sub_zero_second_fatality_script(Fighter *fighter);
@@ -316,7 +311,6 @@ void sub_zero_roundhouse(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
 void sub_zero_spike_fatality(Fighter *fighter);
-void sub_zero_sweep(Fighter *fighter);
 void sub_zero_uppercut(Fighter *fighter);
 void sub_zero_weapon(Fighter *fighter);
 void sub_zero_throw_disarm(Fighter *victim);

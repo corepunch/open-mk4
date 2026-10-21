@@ -16,7 +16,7 @@
 #define press_high_punch quan_chi_press_high_punch
 #define press_low_kick quan_chi_press_low_kick
 #define press_low_punch quan_chi_press_low_punch
-#define press_sweep quan_chi_press_sweep
+#define press_sweep retail_press_sweep
 #define press_uppercut quan_chi_press_uppercut
 #define s_high_kick quan_chi_s_high_kick
 #define s_jab quan_chi_s_jab
@@ -32,7 +32,6 @@ void quan_chi_press_high_kick(Fighter *fighter);
 void quan_chi_press_high_punch(Fighter *fighter);
 void quan_chi_press_low_kick(Fighter *fighter);
 void quan_chi_press_low_punch(Fighter *fighter);
-void quan_chi_press_sweep(Fighter *fighter);
 void quan_chi_press_uppercut(Fighter *fighter);
 void quan_chi_lp_throw(Fighter *fighter);
 void quan_chi_script_air_finish(Fighter *fighter);
@@ -45,8 +44,6 @@ void quan_chi_script_lk_return(Fighter *fighter);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_roundhouse_start(Fighter *fighter);
 void quan_chi_script_spike_tail(Fighter *fighter);
-void quan_chi_script_sweep_finish(Fighter *fighter);
-void quan_chi_sweep(Fighter *fighter);
 void quan_chi_uppercut(Fighter *fighter);
 void quan_chi_entry_retail_script_004de2f8(Fighter *fighter);
 void quan_chi_entry_retail_script_004de798(Fighter *fighter);
@@ -58,7 +55,6 @@ void quan_chi_entry_retail_script_004e63d8(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6500(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6658(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6710(Fighter *fighter);
-void quan_chi_entry_retail_script_004e6798(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6800(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6860(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6878(Fighter *fighter);

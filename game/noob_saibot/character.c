@@ -155,10 +155,6 @@ void noob_saibot_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 17);
 }
 
-void noob_saibot_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 17);
-}
-
 void noob_saibot_entry_retail_script_004e6800(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6800, fighter_ready, 17);
 }

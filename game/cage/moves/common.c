@@ -1,20 +1,11 @@
 #include "../character.h"
 
-void cage_start_script(Fighter *fighter, StateId state, const MoveDef *move, FighterFn script) {
-  fighter_start_move(fighter, state, move);
-  script(fighter);
-}
-
 void cage_script_lp_return(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
   fighter_finish_mmove(fighter, fighter_ready);
-}
-
-void cage_script_finish(Fighter *fighter) {
-  native_standard_sweep(fighter);
 }
 
 void cage_script_opponent_reaction(Fighter *fighter, int reaction) {

@@ -40,7 +40,6 @@ void goro_press_low_kick(Fighter *fighter);
 void goro_press_low_punch(Fighter *fighter);
 void goro_roundhouse(Fighter *fighter);
 void goro_spike_fatality(Fighter *fighter);
-void goro_sweep(Fighter *fighter);
 void goro_uppercut(Fighter *fighter);
 
 void goro_script_air_finish(Fighter *fighter);
@@ -106,7 +105,6 @@ void goro_entry_retail_script_004e63d8(Fighter *fighter);
 void goro_entry_retail_script_004e6500(Fighter *fighter);
 void goro_entry_retail_script_004e6658(Fighter *fighter);
 void goro_entry_retail_script_004e6710(Fighter *fighter);
-void goro_entry_retail_script_004e6798(Fighter *fighter);
 void goro_entry_retail_script_004e6800(Fighter *fighter);
 void goro_entry_retail_script_004e6860(Fighter *fighter);
 void goro_entry_retail_script_004e6878(Fighter *fighter);

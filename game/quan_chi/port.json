@@ -145,8 +145,8 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "sweep": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_sweep",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep",
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "uppercut": {

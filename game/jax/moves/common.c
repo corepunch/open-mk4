@@ -12,10 +12,6 @@ void jax_script_peer_reaction(Fighter *fighter, int reaction) {
   battle_react(victim, reaction);
 }
 
-void jax_script_finish(Fighter *fighter) {
-  native_advancing_sweep(fighter);
-}
-
 void jax_script_lk_return(Fighter *fighter) {
   jax_entry_retail_script_004de358(fighter);
 }

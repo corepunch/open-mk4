@@ -7,7 +7,7 @@ void sub_zero_press_lp(Fighter *fighter) {
 }
 
 void sub_zero_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)                ? sub_zero_enter_sweep
+  fighter_interrupt(fighter, fighter_holds_back(fighter)                ? retail_sweep_state
                              : sub_zero_can_ground_throw(fighter, true) ? sub_zero_enter_lk_throw
                                                                         : retail_low_kick);
 }

@@ -52,7 +52,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_BLOCK] = weapon_block,
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
-  [S_SWEEP] = liu_kang_sweep,
+  [S_SWEEP] = retail_sweep,
   [S_UPPERCUT] = liu_kang_uppercut,
 };
 // clang-format on
@@ -114,7 +114,7 @@ static const CpuMoves cpu_moves = {
             [CPU_JAB] = retail_jab,
             [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = liu_kang_hk,
-            [CPU_SWEEP] = liu_kang_enter_sweep,
+            [CPU_SWEEP] = retail_sweep_state,
             [CPU_UPPERCUT] = liu_kang_enter_uppercut,
             [CPU_THROW] = liu_kang_enter_throw,
             [CPU_CLOSE_HP] = liu_kang_cpu_close_hp,
@@ -237,10 +237,6 @@ void liu_kang_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e67d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e67d8, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6890(Fighter *fighter) {

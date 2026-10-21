@@ -270,6 +270,25 @@ static void native_row_data(void) {
   }
 }
 
+/* The native query advances the bound cursor; it does not own fighter poses. */
+static void native_cursor_return(void) {
+  Fighter *owner = setup(0, 2);
+  static const MoveDef locked = {.clip = 54, .last = 12, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(owner, S_SWEEP, &locked);
+  owner->sample_override = 4;
+  put_word(0x570000, 0x3e000000);
+  control_finished = 0;
+  retail_vm_start(owner, &image, 0x570000, 0x570004, control_end, reject_native);
+  check(retail_native_vm(owner, 0x46f080, RETAIL_TAIL, 0), "native cursor query must use the shared binding");
+  check(fighter_sample(owner) == 5 && owner->current_mmove == NULL, "native query must advance the bound cursor");
+  tick();
+  check(fighter_sample(owner) == 6 && owner->action == ACTION_RETAIL_1006, "second miss must advance once and start recovery");
+  for (unsigned i = 0; i < 20 && !control_finished; ++i) {
+    tick();
+  }
+  check(control_finished == 1 && fighter_sample(owner) == 12, "native recovery must finish the loaded clip and return once");
+}
+
 static void native_shared_record(void) {
   Fighter *owner = setup(0, 0);
   Fighter *victim = fighter_peer(owner);
@@ -444,6 +463,7 @@ int main(int argc, char **argv) {
   native_contracts();
   native_repetition();
   native_row_data();
+  native_cursor_return();
   native_shared_record();
   data_tables();
   lifetimes();

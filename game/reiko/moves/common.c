@@ -35,10 +35,6 @@ void reiko_script_lp_return(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
-void reiko_script_finish(Fighter *fighter) {
-  native_advancing_sweep(fighter);
-}
-
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
     return;

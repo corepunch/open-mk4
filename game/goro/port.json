@@ -29,8 +29,8 @@
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "sweep": {
-      "source": "game/goro/moves/sweep.c",
-      "symbol": "goro_sweep",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "air_hp": {

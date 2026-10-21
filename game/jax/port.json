@@ -134,8 +134,8 @@
     },
     "sweep": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for sweep",
-      "source": "game/jax/character.c",
-      "symbol": "jax_sweep"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep"
     },
     "uppercut": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for uppercut",

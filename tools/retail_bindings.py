@@ -1440,6 +1440,13 @@ def bindings_for(character):
     for address, function in ((0x46a6b0, 'retail_kick_contact_default'), (0x46a760, 'retail_kick_contact_wide'), (0x46a790, 'retail_kick_contact_narrow')):
         result[address] = Binding(function, 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='470c60 native parameter rows and checked local entry tables; docs/research/shared-retail-runtime.md')
+    for address, function in ((0x46efd0, 'retail_sweep_advancing_tail'), (0x46f080, 'retail_sweep_standard_tail')):
+        result[address] = Binding(function, 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='Shared native sweep cursor/contact/recovery; checked local 46efd0/46f080/46f130')
+    # Legacy navigation aliases for unused standard-roundhouse entries shared
+    # the old advancing-sweep adapter. Preserve that source mapping only.
+    if result.get(0x46f270) and result[0x46f270].symbol in ('fujin_script_finish', 'reiko_script_finish', 'tanya_script_finish', 'kai_script_finish', 'noob_saibot_script_finish'):
+        result[0x46f270] = replace(result[0x46f270], symbol='retail_sweep_advancing_tail', source='game/retail_combat.c')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

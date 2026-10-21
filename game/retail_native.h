@@ -3,6 +3,10 @@
 #include "game.h"
 
 void retail_native_begin(Fighter *fighter, StateId state, int action, bool commands);
+void retail_sweep(Fighter *fighter);
+void retail_sweep_state(Fighter *fighter);
+void retail_sweep_standard_tail(Fighter *fighter);
+void retail_sweep_advancing_tail(Fighter *fighter);
 void retail_jab(Fighter *fighter);
 void retail_high_punch(Fighter *fighter);
 void retail_high_kick(Fighter *fighter);
@@ -25,3 +29,5 @@ bool retail_has_gravity(const Fighter *fighter);
 CommandPredicate retail_native_predicate(uint32_t address);
 bool retail_native_gate(const Fighter *fighter, uint32_t address);
 #endif
+
+void retail_press_sweep(Fighter *fighter);

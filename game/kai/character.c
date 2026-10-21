@@ -24,8 +24,8 @@ static const ButtonTable kai_standing = {{[BUTTON_HIGH_PUNCH] = kai_press_high_p
     [BUTTON_LOW_KICK] = kai_press_low_kick}};
 static const ButtonTable kai_crouching = {{[BUTTON_HIGH_PUNCH] = kai_press_uppercut,
     [BUTTON_LOW_PUNCH] = kai_press_uppercut,
-    [BUTTON_HIGH_KICK] = kai_press_sweep,
-    [BUTTON_LOW_KICK] = kai_press_sweep}};
+    [BUTTON_HIGH_KICK] = retail_press_sweep,
+    [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable kai_jumping = {{[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
     [BUTTON_LOW_PUNCH] = kai_press_air_lp,
     [BUTTON_HIGH_KICK] = kai_press_air_hk,
@@ -44,7 +44,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_JUMP] = NULL,
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
-  [S_SWEEP] = kai_sweep,
+  [S_SWEEP] = retail_sweep,
   [S_UPPERCUT] = kai_uppercut,
   [S_THROW] = kai_lp_throw,
   [S_BLOCK] = weapon_block,
@@ -150,10 +150,6 @@ void kai_entry_retail_script_004e6658(Fighter *fighter) {
 
 void kai_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 11);
 }
 
 void kai_entry_retail_script_004e6800(Fighter *fighter) {

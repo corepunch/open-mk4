@@ -1,7 +1,5 @@
 #include "../character.h"
 
-static void fujin_state_move(Fighter *fighter, int state);
-
 void fujin_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }
@@ -50,17 +48,4 @@ void fujin_script_lp_extended_finish(Fighter *fighter) {
 
 void fujin_script_lp_short_finish(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
-}
-
-void fujin_script_finish(Fighter *fighter) {
-  fujin_sweep_tail(fighter);
-}
-
-void fujin_start(Fighter *fighter, StateId state, FighterFn script) {
-  fujin_state_move(fighter, state);
-  script(fighter);
-}
-
-static void fujin_state_move(Fighter *fighter, int state) {
-  fighter_start_move(fighter, state, fujin_moves[state]);
 }

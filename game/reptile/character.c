@@ -38,8 +38,8 @@ static const ButtonTable reptile_standing = {{[BUTTON_HIGH_PUNCH] = reptile_pres
     [BUTTON_LOW_KICK] = reptile_press_low_kick}};
 static const ButtonTable reptile_crouching = {{[BUTTON_HIGH_PUNCH] = reptile_press_uppercut,
     [BUTTON_LOW_PUNCH] = reptile_press_uppercut,
-    [BUTTON_HIGH_KICK] = reptile_press_sweep,
-    [BUTTON_LOW_KICK] = reptile_press_sweep}};
+    [BUTTON_HIGH_KICK] = retail_press_sweep,
+    [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable reptile_jumping = {{[BUTTON_HIGH_PUNCH] = reptile_press_air_hp,
     [BUTTON_LOW_PUNCH] = reptile_press_air_lp,
     [BUTTON_HIGH_KICK] = reptile_press_air_hk,
@@ -122,10 +122,6 @@ void reptile_entry_retail_script_004e6658(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 10);
-}
-
-void reptile_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 10);
 }
 
 void reptile_entry_retail_script_004e6800(Fighter *fighter) {

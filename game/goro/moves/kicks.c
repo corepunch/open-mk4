@@ -24,9 +24,9 @@ void goro_press_low_kick(Fighter *fighter) {
     fighter_interrupt(fighter, goro_lk_throw);
     return;
   }
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? goro_sweep : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep : retail_low_kick);
 }
 
 void goro_press_crouching_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, goro_sweep);
+  fighter_interrupt(fighter, retail_sweep);
 }

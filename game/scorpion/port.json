@@ -150,8 +150,8 @@
     },
     "sweep": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_sweep"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep"
     },
     "sword_back_hp": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

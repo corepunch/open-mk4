@@ -66,9 +66,9 @@ void cage_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? cage_sweep : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep : retail_low_kick);
 }
 
 void cage_press_crouching_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, cage_sweep);
+  fighter_interrupt(fighter, retail_sweep);
 }

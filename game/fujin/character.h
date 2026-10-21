@@ -16,7 +16,6 @@
 #define s_throw fujin_s_throw
 #define s_uppercut fujin_s_uppercut
 
-void fujin_enter_sweep(Fighter *fighter);
 void fujin_enter_throw(Fighter *fighter);
 void fujin_press_air_hk(Fighter *fighter);
 void fujin_press_air_lk(Fighter *fighter);
@@ -26,18 +25,15 @@ void fujin_press_kick(Fighter *fighter);
 void fujin_press_low_kick(Fighter *fighter);
 void fujin_press_low_punch(Fighter *fighter);
 void fujin_press_punch(Fighter *fighter);
-void fujin_press_sweep(Fighter *fighter);
 void fujin_press_uppercut(Fighter *fighter);
 void fujin_script_air_finish(Fighter *fighter);
 void fujin_script_current_reaction(Fighter *fighter, int reaction);
-void fujin_script_finish(Fighter *fighter);
 void fujin_script_lk_return(Fighter *fighter);
 void fujin_script_lp_extended_finish(Fighter *fighter);
 void fujin_script_lp_select(Fighter *fighter);
 void fujin_script_lp_short_finish(Fighter *fighter);
 void fujin_script_opponent_reaction(Fighter *fighter, int reaction);
 void fujin_script_roundhouse_start(Fighter *fighter);
-void fujin_start(Fighter *fighter, StateId state, FighterFn script);
 extern const MoveDef *const fujin_moves[13];
 void fujin_entry_retail_script_004de2f8(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
@@ -49,7 +45,6 @@ void fujin_entry_retail_script_004e63d8(Fighter *fighter);
 void fujin_entry_retail_script_004e6500(Fighter *fighter);
 void fujin_entry_retail_script_004e6658(Fighter *fighter);
 void fujin_entry_retail_script_004e6710(Fighter *fighter);
-void fujin_entry_retail_script_004e6798(Fighter *fighter);
 void fujin_entry_retail_script_004e6800(Fighter *fighter);
 void fujin_entry_retail_script_004e6890(Fighter *fighter);
 void fujin_entry_retail_script_004e68a8(Fighter *fighter);
@@ -130,7 +125,6 @@ void fujin_grab_control_start(Fighter *fighter);
 void fujin_grab_victim(Fighter *fighter);
 void fujin_entry_retail_script_004e8830(Fighter *fighter);
 void fujin_entry_retail_script_004e9fb0(Fighter *fighter);
-void fujin_sweep_tail(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
 void fujin_second_victim(Fighter *fighter);
 void fujin_second_burst(Fighter *fighter);

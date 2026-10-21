@@ -175,8 +175,8 @@
     },
     "sweep": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_sweep"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep"
     },
     "uppercut": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

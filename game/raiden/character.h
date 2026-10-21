@@ -21,7 +21,6 @@
 #define cpu_close_hk raiden_cpu_close_hk
 #define cpu_close_hp raiden_cpu_close_hp
 #define enter_lk_throw raiden_enter_lk_throw
-#define enter_sweep raiden_enter_sweep
 #define enter_throw raiden_enter_throw
 #define enter_uppercut raiden_enter_uppercut
 #define enter_victory raiden_enter_victory
@@ -83,7 +82,6 @@
 #define script_second_victim_end raiden_script_second_victim_end
 #define script_spike_tail raiden_script_spike_tail
 #define script_staff_victim_tail raiden_script_staff_victim_tail
-#define script_sweep_tail raiden_script_sweep_tail
 #define script_throw_getup raiden_script_throw_getup
 #define script_thrown_return raiden_script_thrown_return
 #define script_torpedo_contact raiden_script_torpedo_contact
@@ -132,7 +130,6 @@ void raiden_cpu_air_lk(Fighter *fighter);
 void raiden_cpu_close_hk(Fighter *fighter);
 void raiden_cpu_close_hp(Fighter *fighter);
 void raiden_enter_lk_throw(Fighter *fighter);
-void raiden_enter_sweep(Fighter *fighter);
 void raiden_enter_throw(Fighter *fighter);
 void raiden_enter_uppercut(Fighter *fighter);
 void raiden_enter_victory(Fighter *fighter);
@@ -162,7 +159,6 @@ void raiden_hp(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
 void raiden_roundhouse(Fighter *fighter);
 void raiden_spike_fatality(Fighter *fighter);
-void raiden_sweep(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
 void raiden_uppercut(Fighter *fighter);
@@ -198,7 +194,6 @@ void raiden_entry_retail_script_004e6658(Fighter *fighter);
 void raiden_entry_retail_script_004e66d0(Fighter *fighter);
 void raiden_entry_retail_script_004e66f0(Fighter *fighter);
 void raiden_entry_retail_script_004e6710(Fighter *fighter);
-void raiden_entry_retail_script_004e6798(Fighter *fighter);
 void raiden_entry_retail_script_004e6800(Fighter *fighter);
 void raiden_entry_retail_script_004e6890(Fighter *fighter);
 void raiden_entry_retail_script_004e68a8(Fighter *fighter);
@@ -256,7 +251,6 @@ void raiden_script_second_release(Fighter *fighter);
 void raiden_script_second_victim_end(Fighter *fighter);
 void raiden_script_spike_tail(Fighter *fighter);
 void raiden_script_staff_victim_tail(Fighter *victim);
-void raiden_script_sweep_tail(Fighter *fighter);
 void raiden_script_throw_getup(Fighter *victim);
 void raiden_script_thrown_return(Fighter *fighter);
 void raiden_script_torpedo_contact(Fighter *fighter);

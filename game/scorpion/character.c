@@ -52,7 +52,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_BLOCK] = weapon_block,
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
-  [S_SWEEP] = scorpion_sweep,
+  [S_SWEEP] = retail_sweep,
   [S_UPPERCUT] = scorpion_uppercut,
 };
 // clang-format on
@@ -272,10 +272,6 @@ void scorpion_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void scorpion_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e6844(Fighter *fighter) {

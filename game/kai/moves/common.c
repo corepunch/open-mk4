@@ -48,7 +48,3 @@ void kai_script_opponent_reaction(Fighter *fighter, int reaction) {
   }
   require(false, "Unexpected Kai paired reaction");
 }
-
-void kai_script_finish(Fighter *fighter) {
-  native_advancing_sweep(fighter);
-}

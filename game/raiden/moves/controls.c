@@ -7,7 +7,7 @@ void raiden_press_lp(Fighter *fighter) {
 }
 
 void raiden_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? raiden_enter_sweep
+  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? retail_sweep_state
                              : raiden_can_ground_throw(fighter, true) ? raiden_enter_lk_throw
                                                                       : retail_low_kick);
 }

@@ -138,6 +138,11 @@ void retail_vm_reverse_return(Fighter *fighter) {
   fighter->retail_vm.return_after_play = true;
 }
 
+void retail_vm_forward_return(Fighter *fighter) {
+  play(fighter, fighter_move(fighter)->last, true);
+  fighter->retail_vm.return_after_play = true;
+}
+
 AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
   require(address >= 0x4eb000 && address <= 0x4ec2a8 - 24, "Attack record outside reviewed retail data");
   uint32_t reactions = mk4_image_u32(image, address + 16);

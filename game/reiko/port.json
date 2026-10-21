@@ -134,8 +134,8 @@
     },
     "sweep": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_sweep"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep"
     },
     "uppercut": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",

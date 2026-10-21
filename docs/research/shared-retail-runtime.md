@@ -333,3 +333,26 @@ Validation reuses shared VM/native/lifetime checks, all strict roster audits,
 formatting, helper/navigation checks (6/7) and native source gates. No new tests
 added. The battle integration run stops at the established baseline throw
 assertion.
+
+## Shared sweep native cursor and recovery
+
+All eighteen sweep entries use native 46ef90 once: action 010c, independent
+B[28] cue after fourteen visits and direct selector 4e6798. Both contact tails
+46efd0/46f080 advance the currently bound cursor and read live B[36]/B[35].
+The native recovery marks 1006, waits one visit and plays the loaded clip to
+its end. Copied records, fixed 23/24 frame rows and fighter-local sweep
+modules/adapters are removed. The original script still chooses descriptors
+and authored control flow.
+
+Evidence is the checked local native entry/contact/recovery listings and
+mk4decomp's matching cursor-submit/native-state handlers. Unused legacy
+navigation aliases that previously shared a sweep adapter retain their
+mapping; this does not register additional native ABI addresses.
+
+One small runtime fixture uses an arbitrary bound clip/cursor to verify
+relative advancement, loaded end bounds and exactly one native return.
+Shared VM checks, strict audits for all eighteen slots and native source
+gates pass. Existing advancing-sweep integration passes; the battle suite
+then stops at the already established baseline ground-throw tick assertion.
+No per-fighter tests were added. Remaining native controllers and roster
+configuration still require consolidation.

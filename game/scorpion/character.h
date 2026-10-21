@@ -17,7 +17,6 @@
 #define can_spear scorpion_can_spear
 #define can_teleport scorpion_can_teleport
 #define enter_lk_throw scorpion_enter_lk_throw
-#define enter_sweep scorpion_enter_sweep
 #define enter_throw scorpion_enter_throw
 #define enter_uppercut scorpion_enter_uppercut
 #define fire_script scorpion_fire_script
@@ -91,7 +90,6 @@
 #define script_spear_pull scorpion_script_spear_pull
 #define script_spear_return scorpion_script_spear_return
 #define script_spike_tail scorpion_script_spike_tail
-#define script_sweep_tail scorpion_script_sweep_tail
 #define script_teleport_land scorpion_script_teleport_land
 #define script_teleport_motion scorpion_script_teleport_motion
 #define script_teleport_victim_tail scorpion_script_teleport_victim_tail
@@ -139,7 +137,6 @@ bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool scorpion_can_spear(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);
 void scorpion_enter_lk_throw(Fighter *fighter);
-void scorpion_enter_sweep(Fighter *fighter);
 void scorpion_enter_throw(Fighter *fighter);
 void scorpion_enter_uppercut(Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
@@ -200,7 +197,6 @@ void scorpion_entry_retail_script_004e6658(Fighter *fighter);
 void scorpion_entry_retail_script_004e66d0(Fighter *fighter);
 void scorpion_entry_retail_script_004e66f0(Fighter *fighter);
 void scorpion_entry_retail_script_004e6710(Fighter *fighter);
-void scorpion_entry_retail_script_004e6798(Fighter *fighter);
 void scorpion_entry_retail_script_004e6844(Fighter *fighter);
 void scorpion_entry_retail_script_004e6860(Fighter *fighter);
 void scorpion_entry_retail_script_004e6878(Fighter *fighter);
@@ -235,7 +231,6 @@ void scorpion_hp(Fighter *fighter);
 void scorpion_roundhouse(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_spike_fatality(Fighter *fighter);
-void scorpion_sweep(Fighter *fighter);
 void scorpion_teleport(Fighter *fighter);
 void scorpion_uppercut(Fighter *fighter);
 void scorpion_weapon(Fighter *fighter);
@@ -285,7 +280,6 @@ void scorpion_script_spear_done(Fighter *fighter);
 void scorpion_script_spear_pull(Fighter *fighter);
 void scorpion_script_spear_return(Fighter *fighter);
 void scorpion_script_spike_tail(Fighter *fighter);
-void scorpion_script_sweep_tail(Fighter *fighter);
 void scorpion_script_teleport_land(Fighter *fighter);
 void scorpion_script_teleport_motion(Fighter *fighter);
 void scorpion_script_teleport_victim_tail(Fighter *victim);

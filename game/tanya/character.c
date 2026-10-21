@@ -20,8 +20,8 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = tanya_press_high_pun
     [BUTTON_LOW_KICK] = tanya_press_low_kick}};
 static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = tanya_press_uppercut,
     [BUTTON_LOW_PUNCH] = tanya_press_uppercut,
-    [BUTTON_HIGH_KICK] = tanya_press_sweep,
-    [BUTTON_LOW_KICK] = tanya_press_sweep}};
+    [BUTTON_HIGH_KICK] = retail_press_sweep,
+    [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = tanya_press_air_hp,
     [BUTTON_LOW_PUNCH] = tanya_press_air_lp,
     [BUTTON_HIGH_KICK] = tanya_press_air_hk,
@@ -40,7 +40,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_BLOCK] = weapon_block,
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
-  [S_SWEEP] = tanya_sweep,
+  [S_SWEEP] = retail_sweep,
   [S_UPPERCUT] = tanya_uppercut,
   [S_THROW] = tanya_lp_throw,
 };
@@ -122,10 +122,6 @@ void tanya_entry_retail_script_004e6658(Fighter *fighter) {
 
 void tanya_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 9);
-}
-
-void tanya_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 9);
 }
 
 void tanya_entry_retail_script_004e6800(Fighter *fighter) {

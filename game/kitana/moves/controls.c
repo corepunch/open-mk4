@@ -7,7 +7,7 @@ void kitana_press_lp(Fighter *fighter) {
 }
 
 void kitana_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? kitana_enter_sweep
+  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? retail_sweep_state
                              : kitana_can_ground_throw(fighter, true) ? kitana_enter_lk_throw
                                                                       : retail_low_kick);
 }

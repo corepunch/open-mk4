@@ -19,7 +19,6 @@
 #define cpu_close_hk kitana_cpu_close_hk
 #define cpu_close_hp kitana_cpu_close_hp
 #define enter_lk_throw kitana_enter_lk_throw
-#define enter_sweep kitana_enter_sweep
 #define enter_throw kitana_enter_throw
 #define enter_uppercut kitana_enter_uppercut
 #define enter_victory kitana_enter_victory
@@ -81,7 +80,6 @@
 #define script_second_victim_end kitana_script_second_victim_end
 #define script_spike_tail kitana_script_spike_tail
 #define script_square_wave_tail kitana_script_square_wave_tail
-#define script_sweep_tail kitana_script_sweep_tail
 #define script_throw_getup kitana_script_throw_getup
 #define script_weapon_hp_tail kitana_script_weapon_hp_tail
 #define script_weapon_lp_tail kitana_script_weapon_lp_tail
@@ -123,7 +121,6 @@ void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
 void kitana_cpu_close_hp(Fighter *fighter);
 void kitana_enter_lk_throw(Fighter *fighter);
-void kitana_enter_sweep(Fighter *fighter);
 void kitana_enter_throw(Fighter *fighter);
 void kitana_enter_uppercut(Fighter *fighter);
 void kitana_enter_victory(Fighter *fighter);
@@ -149,7 +146,6 @@ void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void kitana_shadow_up(Fighter *fighter);
 void kitana_spike_fatality(Fighter *fighter);
 void kitana_square_wave(Fighter *fighter);
-void kitana_sweep(Fighter *fighter);
 void kitana_uppercut(Fighter *fighter);
 void kitana_weapon(Fighter *fighter);
 void kitana_lk_victim(Fighter *victim);
@@ -196,7 +192,6 @@ void kitana_entry_retail_script_004e6658(Fighter *fighter);
 void kitana_entry_retail_script_004e66d0(Fighter *fighter);
 void kitana_entry_retail_script_004e66f0(Fighter *fighter);
 void kitana_entry_retail_script_004e6710(Fighter *fighter);
-void kitana_entry_retail_script_004e6798(Fighter *fighter);
 void kitana_entry_retail_script_004e6800(Fighter *fighter);
 void kitana_entry_retail_script_004e6860(Fighter *fighter);
 void kitana_entry_retail_script_004e6878(Fighter *fighter);
@@ -259,7 +254,6 @@ void kitana_script_second_repeat(Fighter *fighter);
 void kitana_script_second_victim_end(Fighter *victim);
 void kitana_script_spike_tail(Fighter *fighter);
 void kitana_script_square_wave_tail(Fighter *fighter);
-void kitana_script_sweep_tail(Fighter *fighter);
 void kitana_script_throw_getup(Fighter *victim);
 void kitana_script_weapon_hp_tail(Fighter *fighter);
 void kitana_script_weapon_lp_tail(Fighter *fighter);

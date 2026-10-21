@@ -23,7 +23,6 @@
 #define cpu_close_hk sonya_cpu_close_hk
 #define cpu_close_hp sonya_cpu_close_hp
 #define enter_lk_throw sonya_enter_lk_throw
-#define enter_sweep sonya_enter_sweep
 #define enter_throw sonya_enter_throw
 #define enter_uppercut sonya_enter_uppercut
 #define enter_victory sonya_enter_victory
@@ -85,7 +84,6 @@
 #define script_second_victim_end sonya_script_second_victim_end
 #define script_spike_tail sonya_script_spike_tail
 #define script_square_wave_tail sonya_script_square_wave_tail
-#define script_sweep_tail sonya_script_sweep_tail
 #define script_throw_getup sonya_script_throw_getup
 #define script_weapon_hp_tail sonya_script_weapon_hp_tail
 #define script_weapon_lp_tail sonya_script_weapon_lp_tail
@@ -130,7 +128,6 @@ void sonya_cpu_air_lk(Fighter *fighter);
 void sonya_cpu_close_hk(Fighter *fighter);
 void sonya_cpu_close_hp(Fighter *fighter);
 void sonya_enter_lk_throw(Fighter *fighter);
-void sonya_enter_sweep(Fighter *fighter);
 void sonya_enter_throw(Fighter *fighter);
 void sonya_enter_uppercut(Fighter *fighter);
 void sonya_enter_victory(Fighter *fighter);
@@ -182,7 +179,6 @@ void sonya_entry_retail_script_004e6658(Fighter *fighter);
 void sonya_entry_retail_script_004e66d0(Fighter *fighter);
 void sonya_entry_retail_script_004e66f0(Fighter *fighter);
 void sonya_entry_retail_script_004e6710(Fighter *fighter);
-void sonya_entry_retail_script_004e6798(Fighter *fighter);
 void sonya_entry_retail_script_004e6800(Fighter *fighter);
 void sonya_entry_retail_script_004e6860(Fighter *fighter);
 void sonya_entry_retail_script_004e6878(Fighter *fighter);
@@ -243,7 +239,6 @@ void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
 void sonya_script_spike_tail(Fighter *fighter);
 void sonya_script_square_wave_tail(Fighter *fighter);
-void sonya_script_sweep_tail(Fighter *fighter);
 void sonya_script_throw_getup(Fighter *victim);
 void sonya_script_weapon_hp_tail(Fighter *fighter);
 void sonya_script_weapon_lp_tail(Fighter *fighter);
@@ -260,7 +255,6 @@ void sonya_ring(Fighter *fighter);
 void sonya_roundhouse(Fighter *fighter);
 void sonya_spike_fatality(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);
-void sonya_sweep(Fighter *fighter);
 void sonya_uppercut(Fighter *fighter);
 void sonya_weapon(Fighter *fighter);
 void sonya_special_cleanup(Fighter *fighter);

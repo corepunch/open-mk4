@@ -23,10 +23,6 @@ void reptile_script_opponent_reaction(Fighter *fighter, int reaction) {
   require(false, "Unexpected Reptile opponent reaction");
 }
 
-void reptile_script_finish(Fighter *fighter) {
-  native_standard_sweep(fighter);
-}
-
 /* 45b1f0 installs a reaction on the current task's captured peer: 102
  * releases the short LP throw victim; 4dff08 dispatches 180 to the
  * second-fatality victim. */

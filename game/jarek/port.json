@@ -140,8 +140,8 @@
       "evidence": "Jarek roster slot 12 native entry 0x00467e70 and selected EXE script roots"
     },
     "sweep": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_sweep",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_sweep",
       "evidence": "Jarek roster slot 12 native entry 0x0046ef90 and selected EXE script roots"
     },
     "uppercut": {

@@ -51,7 +51,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_BLOCK] = weapon_block,
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
-  [S_SWEEP] = raiden_sweep,
+  [S_SWEEP] = retail_sweep,
   [S_UPPERCUT] = raiden_uppercut,
 };
 // clang-format on
@@ -91,7 +91,7 @@ static const CpuMoves cpu_moves = {
             [CPU_JAB] = retail_jab,
             [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = raiden_hk,
-            [CPU_SWEEP] = raiden_enter_sweep,
+            [CPU_SWEEP] = retail_sweep_state,
             [CPU_UPPERCUT] = raiden_enter_uppercut,
             [CPU_THROW] = raiden_enter_throw,
             [CPU_CLOSE_HP] = raiden_cpu_close_hp,
@@ -257,10 +257,6 @@ void raiden_entry_retail_script_004e66f0(Fighter *fighter) {
 
 void raiden_entry_retail_script_004e6710(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6710, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e6798(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6798, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004e6800(Fighter *fighter) {
