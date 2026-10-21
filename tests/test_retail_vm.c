@@ -1,5 +1,6 @@
 #include "game.h"
 #include "retail_vm.h"
+#include "retail_data.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -179,6 +180,39 @@ static void control_flow(void) {
   check(control_finished == 1 && fighter_sample(owner) == 0, "runtime must jump over invalid data, select packed streams and finish reverse playback");
 }
 
+static void data_tables(void) {
+  /* Mutate shared source records: no compiled command or roster definition
+   * may shadow a retail table read, including the second player's list. */
+  uint32_t slot = 0x53cb58 + 4 * 17;
+  uint32_t saved = mk4_image_u32(&image, slot);
+  uint32_t base = 0x4ee000;
+  uint32_t words[4];
+  for (unsigned i = 0; i < 4; ++i) {
+    words[i] = mk4_image_u32(&image, base + i * 4);
+  }
+  put_word(slot, base / 4);
+  put_word(base, 0xddaa);
+  put_word(base + 4, 0x1234);
+  put_word(base + 8, 0x01010b01);
+  put_word(base + 12, 0);
+  uint32_t action_slot = 0x4e6ef8 + 4;
+  uint32_t action_saved = mk4_image_u32(&image, action_slot);
+  put_word(action_slot, 0x456780);
+  RetailCommandCursor cursor = retail_command_cursor(&image, 17, 1, BUTTON_HIGH_PUNCH, false);
+  RetailCommand command;
+  check(retail_command_next(&image, &cursor, &command), "runtime must read the selected player/character list");
+  check(command.pattern == 0xddaa && command.extra == 0x1234 && command.window == 11 && command.target == 0x456780 &&
+            command.predicate == mk4_image_u32(&image, 0x4e4ec4),
+      "runtime must decode the record and resolve live predicate/action tables");
+  check(!retail_command_next(&image, &cursor, &command), "retail terminator must close the list");
+  for (unsigned i = 0; i < 4; ++i) {
+    put_word(base + i * 4, words[i]);
+  }
+  put_word(slot, saved);
+  put_word(action_slot, action_saved);
+  check(retail_character_slot(16) == 2 && retail_character_slot(17) == 7, "shared stance selection must apply retail hidden-roster remaps");
+}
+
 static int cleanup_calls;
 
 static void cleanup_once(Fighter *fighter) {
@@ -258,6 +292,7 @@ int main(int argc, char **argv) {
   runtime_words();
   control_flow();
   native_handoff();
+  data_tables();
   lifetimes();
   assets_bound();
   battle_init(0, 4);
