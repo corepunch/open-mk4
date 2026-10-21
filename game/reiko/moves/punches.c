@@ -5,7 +5,7 @@ static void reiko_high_punch(Fighter *fighter);
 static void reiko_high_punch(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
-    reiko_close_hp(fighter);
+    retail_close_high_punch(fighter);
   } else {
     retail_high_punch(fighter);
   }

@@ -6,6 +6,12 @@ unsigned retail_character_slot(unsigned character) {
   return character == 16 ? 2 : character == 17 ? 7 : character;
 }
 
+/* Native48e490 and close-entry46be40 use a different Noob alias from scripts. */
+unsigned retail_native_character_slot(unsigned character) {
+  require(character < MK4_ROSTER_COUNT, "Invalid retail native character");
+  return character == 16 ? 2 : character == 17 ? 4 : character;
+}
+
 uint32_t retail_action_target(const Mk4Image *image, unsigned flags, unsigned action) {
   // clang-format off: Keep table entries on one row, including long rows.
   static const uint32_t dispatch[][2] = {
@@ -189,9 +195,7 @@ uint32_t retail_reaction_target(const Mk4Image *image, unsigned reaction) {
 }
 
 uint32_t retail_lk_target(const Mk4Image *image, unsigned character) {
-  require(character < MK4_ROSTER_COUNT, "Invalid native LK roster slot");
-  /* Native48e490 remaps17 to4, unlike the script selector's17 to7. */
-  unsigned slot = character == 16 ? 2 : character == 17 ? 4 : character;
+  unsigned slot = retail_native_character_slot(character);
   uint32_t target = mk4_image_u32(image, 0x4ddfb8 + slot * 4);
   require(target >= 0x400000 && target < 0x4d0000, "Invalid native LK entry");
   return target;

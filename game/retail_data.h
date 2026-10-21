@@ -21,6 +21,7 @@ typedef struct RetailCommand {
 /* Addresses refer to the checked local image, never host function pointers. */
 void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster *roster);
 unsigned retail_character_slot(unsigned character);
+unsigned retail_native_character_slot(unsigned character);
 uint32_t retail_action_target(const Mk4Image *image, unsigned flags, unsigned action);
 RetailCommandCursor retail_command_cursor(const Mk4Image *image, unsigned character, unsigned player, Button button, bool released);
 bool retail_command_next(const Mk4Image *image, RetailCommandCursor *cursor, RetailCommand *command);

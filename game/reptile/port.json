@@ -156,9 +156,9 @@
       "evidence": "Reptile uppercut entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "close_hp": {
-      "source": "game/reptile/moves/combos.c",
-      "symbol": "reptile_close_hp",
-      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+      "source": "game/retail_combat.c",
+      "symbol": "retail_close_high_punch",
+      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation."
     },
     "combo_hp": {
       "source": "game/reptile/moves/combos.c",

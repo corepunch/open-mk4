@@ -18,12 +18,6 @@ static const GroundAttack attacks[8] = {
 // clang-format on
 static const NativeGroundProfile profile = {attacks, {&jax_close_hp_followup, &jax_combo_hp_followup, &jax_close_hk_followup}, fighter_ready, 2, 27};
 
-void jax_close_hp(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &attacks[4].move);
-  fighter->script_phase = 4;
-  jax_entry_retail_script_004e61e0(fighter);
-}
-
 void jax_combo_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[5].move);
   fighter->script_phase = 5;

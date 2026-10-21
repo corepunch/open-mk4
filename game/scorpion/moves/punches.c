@@ -5,7 +5,7 @@ static void scorpion_combo_hp(Fighter *fighter);
 void scorpion_hp(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
-    scorpion_ground_attack(fighter, G_CLOSE_HP);
+    retail_close_high_punch(fighter);
     return;
   }
   retail_high_punch(fighter);

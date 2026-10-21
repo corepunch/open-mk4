@@ -165,10 +165,6 @@ void sonya_entry_retail_script_004e6190(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 2);
 }
 
-void sonya_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 2);
-}
-
 void sonya_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 2);
 }

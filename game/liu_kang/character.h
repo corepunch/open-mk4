@@ -167,7 +167,6 @@ void liu_kang_entry_retail_script_004de468(Fighter *fighter);
 void liu_kang_entry_retail_script_004dfff8(Fighter *fighter);
 void liu_kang_entry_retail_script_004e0020(Fighter *fighter);
 void liu_kang_entry_retail_script_004e6190(Fighter *fighter);
-void liu_kang_entry_retail_script_004e61e0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e62c0(Fighter *fighter);
 void liu_kang_entry_retail_script_004e62d8(Fighter *fighter);
 void liu_kang_entry_retail_script_004e63d8(Fighter *fighter);

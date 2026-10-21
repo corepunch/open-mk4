@@ -5,7 +5,7 @@ static void liu_kang_combo_hp(Fighter *fighter);
 void liu_kang_hp(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
-    liu_kang_ground_attack(fighter, G_CLOSE_HP);
+    retail_close_high_punch(fighter);
     return;
   }
   retail_high_punch(fighter);
@@ -47,5 +47,5 @@ void liu_kang_liu_script_combo_hp_tail(Fighter *fighter) {
 /* 438e50/60/70/80 select 4df8e8/928/968/9a8[3]:
  * bicycle, low fireball, flying kick, low fireball. */
 void liu_kang_cpu_close_hp(Fighter *fighter) {
-  liu_kang_ground_attack(fighter, G_CLOSE_HP);
+  retail_close_high_punch(fighter);
 }

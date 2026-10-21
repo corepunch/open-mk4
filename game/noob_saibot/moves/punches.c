@@ -5,7 +5,7 @@ static void noob_saibot_high_punch(Fighter *fighter);
 static void noob_saibot_high_punch(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
-    noob_saibot_close_hp(fighter);
+    retail_close_high_punch(fighter);
   } else {
     retail_high_punch(fighter);
   }

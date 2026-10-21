@@ -27,7 +27,7 @@ void liu_kang_ground_native_tail(Fighter *fighter) {
 }
 
 void liu_kang_ground_attack(Fighter *fighter, int index) {
-  require(index >= G_CLOSE_HP && index <= G_CLOSE_HK, "Ground profile only owns remaining close-native attacks");
+  require(index >= G_COMBO_HP && index <= G_CLOSE_HK, "Ground profile only owns remaining close-native attacks");
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
@@ -36,7 +36,7 @@ void liu_kang_ground_attack(Fighter *fighter, int index) {
   fighter->native_followup = followup;
   fighter->sample_override = index == G_CLOSE_HK ? 5 : index == G_COMBO_HP ? 2 : 0;
   static const FighterFn scripts[] = {
-      [G_CLOSE_HP] = liu_kang_entry_retail_script_004e61e0,
+
       [G_COMBO_HP] = liu_kang_entry_retail_script_004e69b0,
       [G_CLOSE_HK] = liu_kang_entry_retail_script_004e6190,
   };

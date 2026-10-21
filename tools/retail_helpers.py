@@ -196,7 +196,7 @@ for address, name, function, effects in (
     (0x46ef90, 'sweep_entry', 'enter_sweep', 'Sub-Zero clip 63 and B[35]; keep low-contact and recovery branches.'),
     (0x46ccd0, 'uppercut_entry', 'enter_uppercut', 'Sub-Zero clip 293; A[2]/A[6] branch, repeated contact and distinct hit/miss endings.'),
     (0x46f1f0, 'roundhouse_entry', 'sub_zero_roundhouse', 'Character-selected roundhouse; keep its own command and record.'),
-    (0x46be40, 'close_hp_entry', 'sub_zero_hp', 'Sub-Zero close HP and follow-up tables; do not substitute ordinary jab.'),
+    (0x46be40, 'close_hp_entry', 'retail_close_high_punch', 'Shared native entry reads descriptor table4e6c10, native roster aliases and peer action before original4e61e0.'),
     (0x46c2a0, 'combo_hp_entry', 'sub_zero_combo_hp', 'Sub-Zero clip 532 and its own follow-up contact.'),
     (0x46ba60, 'close_hk_entry', 'sub_zero_hk', 'Sub-Zero close HK and contact-enabled follow-up buttons.'),
     (0x46b7f0, 'crouch_lp_entry', 'sub_zero_crouch_lp', 'Character-owned crouching LP data; preserve contact-selected endings.'),

@@ -25,12 +25,6 @@ static const GroundAttack attacks[8] = {
 static const NativeGroundProfile profile = {
     attacks, {&shinnok_close_hp_followup, &shinnok_combo_hp_followup, &shinnok_close_hk_followup}, fighter_ready, 2, 27};
 
-void shinnok_close_hp(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &attacks[4].move);
-  fighter->script_phase = 4;
-  shinnok_entry_retail_script_004e61e0(fighter);
-}
-
 void shinnok_combo_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[5].move);
   fighter->script_phase = 5;
@@ -65,7 +59,7 @@ static void press_combo_hp(Fighter *fighter) {
 
 void shinnok_press_air_ground_hp(Fighter *fighter) {
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
-    fighter_interrupt(fighter, shinnok_close_hp);
+    fighter_interrupt(fighter, retail_close_high_punch);
   } else {
     shinnok_press_punch(fighter);
   }

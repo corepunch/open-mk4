@@ -725,3 +725,19 @@ The local46b7f0/4940e0/428ce0 sequence matches mk4decomp's phase controller in
 five_block_dispatch_variants.c. Runtime checks, all strict roster audits,
 native source gates and formatting pass. No tests were added. Close-attack
 profiles and their follow-up tables remain the next native migration inputs.
+
+## Retail-loaded inherited close-punch animation
+
+Native46be40 now has one shared entry for every roster slot. It binds the
+packed descriptor from4e6c10, applies the native16->2/17->4 aliases and checks
+peer action class4000 before entering original inherited-animation script4e61e0.
+This matches mk4decomp's close-entry sequence and scaled_chain_and_f000_dirty_toggle.c
+(upstream48e740, local48e6e0), verified against the local entry listing.
+Twelve private native startups, six ground-profile startup branches and eighteen
+uncalled script adapters are removed. Existing close-contact recovery profiles
+remain migration inputs; this step does not claim their copied tails are gone.
+
+One small runtime contract mutates the loaded descriptor table and verifies that
+the shared entry inherits the replacement independently of the model profile.
+Shared VM checks, all eighteen strict script audits, native source gates and
+formatting pass. No fighter timing or damage tests were added.

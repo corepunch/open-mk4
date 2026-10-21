@@ -5,7 +5,7 @@ static void sonya_combo_hp(Fighter *fighter);
 void sonya_hp(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {
-    sonya_ground_attack(fighter, G_CLOSE_HP);
+    retail_close_high_punch(fighter);
     return;
   }
   retail_high_punch(fighter);
@@ -45,5 +45,5 @@ void sonya_script_combo_hp_tail(Fighter *fighter) {
 }
 
 void sonya_cpu_close_hp(Fighter *fighter) {
-  sonya_ground_attack(fighter, G_CLOSE_HP);
+  retail_close_high_punch(fighter);
 }

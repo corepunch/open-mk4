@@ -156,9 +156,9 @@
       "source": "game/noob_saibot/character.c"
     },
     "close_hp": {
-      "source": "game/noob_saibot/moves/combos.c",
-      "symbol": "noob_saibot_close_hp",
-      "evidence": "Shared native close-attack entry and compiler-owned root 4e61e0; existing NativeGroundProfile contact/recovery contract."
+      "source": "game/retail_combat.c",
+      "symbol": "retail_close_high_punch",
+      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation."
     },
     "combo_hp": {
       "source": "game/noob_saibot/moves/combos.c",

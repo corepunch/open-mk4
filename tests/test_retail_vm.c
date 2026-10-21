@@ -498,6 +498,22 @@ static void native_throw_selection(void) {
   put_word(0x4ddfb8, original);
 }
 
+/* Change the image, not a fighter profile: native startup must bind loaded data. */
+static void native_inherited_descriptor(void) {
+  Fighter *owner = setup(0, 2);
+  uint32_t original = mk4_image_u32(&image, 0x4e6c10);
+  uint32_t replacement = mk4_image_u32(&image, 0x4e6c14);
+  put_word(0x4e6c10, replacement);
+  retail_native_entry(0, 0x46be40)(owner);
+  int clip = (int)((replacement * 4 - 0x4fad7c) / 12);
+  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e61e0 && fighter_move(owner)->clip == clip,
+      "native inherited animation must come from the loaded descriptor table");
+  check(
+      retail_native_character_slot(16) == 2 && retail_native_character_slot(17) == 4, "native hidden-roster aliases must remain distinct from script aliases");
+  fighter_cancel_mmove(owner);
+  put_word(0x4e6c10, original);
+}
+
 int main(int argc, char **argv) {
   image = mk4_image_load("MK4/MK-4.EXE");
   if (argc == 2) {
@@ -535,6 +551,7 @@ int main(int argc, char **argv) {
   data_tables();
   reaction_native_table();
   native_throw_selection();
+  native_inherited_descriptor();
   lifetimes();
   assets_bound();
   battle_init(0, 4);

@@ -164,10 +164,6 @@ void liu_kang_entry_retail_script_004e6190(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6190, fighter_ready, 3);
 }
 
-void liu_kang_entry_retail_script_004e61e0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e61e0, fighter_ready, 3);
-}
-
 void liu_kang_entry_retail_script_004e62c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 3);
 }

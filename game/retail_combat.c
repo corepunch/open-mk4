@@ -1,5 +1,6 @@
 #include "retail_native.h"
 #include "retail_vm.h"
+#include "retail_data.h"
 #include "script.h"
 #include "native.h"
 
@@ -370,4 +371,20 @@ void retail_press_crouch_low_punch(Fighter *fighter) {
     entry = fighter->weapon->crouch_lp;
   }
   fighter_interrupt(fighter, entry);
+}
+
+/* Native46be40 binds its descriptor before entering inherited-animation script4e61e0.
+ * 48e6e0 tests the peer's action class, independently of the actor's weapon. */
+void retail_close_high_punch(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_0108, false);
+  const Mk4Image *image = retail_vm_image();
+  unsigned slot = retail_native_character_slot((unsigned)fighter->roster);
+  uint32_t packed = mk4_image_u32(image, 0x4e6c10 + slot * 4);
+  bool reacting = (fighter_opponent(fighter)->action & 0xf000) == 0x4000;
+  retail_vm_bind_animation(fighter, packed * 4, reacting ? 0 : 4);
+  /* Remaining native recovery profiles identify this entry until their tails migrate. */
+  fighter->script_phase = 4;
+  retail_vm_enter(fighter, 0x4e61e0, fighter_ready);
 }

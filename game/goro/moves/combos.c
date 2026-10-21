@@ -27,12 +27,6 @@ static const GroundAttack attacks[8] = {
 // clang-format on
 static const NativeGroundProfile profile = {attacks, {&goro_close_hp_followup, &goro_combo_hp_followup, &goro_close_hk_followup}, fighter_ready, 2, 27};
 
-void goro_close_hp(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &attacks[4].move);
-  fighter->script_phase = 4;
-  goro_entry_retail_script_004e61e0(fighter);
-}
-
 static void goro_combo_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[5].move);
   fighter->script_phase = 5;
@@ -68,7 +62,7 @@ static void press_combo_hp(Fighter *fighter) {
 /* 4e70c0 HP after a low air contact repeats 460f40's close selection. */
 void goro_press_air_ground_hp(Fighter *fighter) {
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
-    fighter_interrupt(fighter, goro_close_hp);
+    fighter_interrupt(fighter, retail_close_high_punch);
   } else {
     goro_press_high_punch(fighter);
   }

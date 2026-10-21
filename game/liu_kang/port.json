@@ -51,9 +51,9 @@
       "symbol": "liu_kang_hk"
     },
     "close_hp": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_hp"
+      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation.",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_close_high_punch"
     },
     "combo_hp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",

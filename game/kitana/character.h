@@ -142,7 +142,6 @@ void kitana_entry_retail_script_004e59c8(Fighter *fighter);
 void kitana_entry_retail_script_004e5a20(Fighter *fighter);
 void kitana_entry_retail_script_004e5ed0(Fighter *fighter);
 void kitana_entry_retail_script_004e6190(Fighter *fighter);
-void kitana_entry_retail_script_004e61e0(Fighter *fighter);
 void kitana_entry_retail_script_004e61f8(Fighter *fighter);
 void kitana_entry_retail_script_004e62c0(Fighter *fighter);
 void kitana_entry_retail_script_004e62d8(Fighter *fighter);

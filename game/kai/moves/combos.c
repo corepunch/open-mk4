@@ -24,12 +24,6 @@ static const GroundAttack attacks[8] = {
 // clang-format on
 static const NativeGroundProfile profile = {attacks, {&kai_close_hp_followup, &kai_combo_hp_followup, &kai_close_hk_followup}, fighter_ready, 2, 27};
 
-void kai_close_hp(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &attacks[4].move);
-  fighter->script_phase = 4;
-  kai_entry_retail_script_004e61e0(fighter);
-}
-
 void kai_combo_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &attacks[5].move);
   fighter->script_phase = 5;
@@ -64,7 +58,7 @@ static void press_combo_hp(Fighter *fighter) {
 
 void kai_press_air_ground_hp(Fighter *fighter) {
   if (fighter_distance(fighter) <= .8f && !fighter_airborne(fighter_opponent(fighter))) {
-    fighter_interrupt(fighter, kai_close_hp);
+    fighter_interrupt(fighter, retail_close_high_punch);
   } else {
     kai_press_high_punch(fighter);
   }

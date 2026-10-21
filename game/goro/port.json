@@ -90,9 +90,9 @@
       "evidence": "Shared stance 4e5058 HP 460f40 selects 46d290/46d9b3 (clip 296/297, action 010a, A[0]) or close HP 46be40 within 0.8."
     },
     "close_hp": {
-      "source": "game/goro/moves/combos.c",
-      "symbol": "goro_close_hp",
-      "evidence": "46be40 selects 4e6c10[15] clip 263, then 4e61e0 and shared runner 46bf10 with follow-up table 4e7078."
+      "source": "game/retail_combat.c",
+      "symbol": "retail_close_high_punch",
+      "evidence": "Native46be40 reads descriptor table4e6c10 and native hidden-roster aliases; peer reaction class selects the inherited cursor before original4e61e0. Recovery remains the existing native tail pending consolidation."
     },
     "combo_hp": {
       "source": "game/goro/moves/combos.c",

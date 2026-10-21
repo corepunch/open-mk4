@@ -14,7 +14,6 @@ extern const MoveDef goro_s_knockdown;
 
 void goro_air_throw(Fighter *fighter);
 void goro_close_hk(Fighter *fighter);
-void goro_close_hp(Fighter *fighter);
 void goro_press_air_ground_hp(Fighter *fighter);
 void goro_press_air_hk(Fighter *fighter);
 void goro_press_air_hp(Fighter *fighter);
@@ -74,7 +73,6 @@ void goro_entry_retail_script_004dfbb8(Fighter *fighter);
 void goro_entry_retail_script_004e5e28(Fighter *fighter);
 void goro_entry_retail_script_004e5e50(Fighter *fighter);
 void goro_entry_retail_script_004e6190(Fighter *fighter);
-void goro_entry_retail_script_004e61e0(Fighter *fighter);
 void goro_entry_retail_script_004e61f8(Fighter *fighter);
 void goro_entry_retail_script_004e6270(Fighter *fighter);
 void goro_entry_retail_script_004e63d8(Fighter *fighter);

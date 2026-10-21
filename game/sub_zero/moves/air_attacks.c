@@ -116,7 +116,7 @@ static void press_air_followup_kick(Fighter *fighter) {
  * low air contact. Ordinary standing HP uses a stricter entry predicate. */
 static void air_ground_hp(Fighter *fighter) {
   if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(fighter_opponent(fighter))) {
-    sub_zero_ground_attack(fighter, G_CLOSE_HP);
+    retail_close_high_punch(fighter);
   } else {
     sub_zero_hp(fighter);
   }

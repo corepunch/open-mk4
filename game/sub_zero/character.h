@@ -185,7 +185,6 @@ void sub_zero_entry_retail_script_004e0430(Fighter *fighter);
 void sub_zero_entry_retail_script_004e5e28(Fighter *fighter);
 void sub_zero_entry_retail_script_004e5e50(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6190(Fighter *fighter);
-void sub_zero_entry_retail_script_004e61e0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e61f8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62c0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter);
