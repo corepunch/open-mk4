@@ -1,12 +1,6 @@
 #include "../character.h"
 
-static void goro_jab(Fighter *fighter);
 static void goro_high_punch(Fighter *fighter);
-
-static void goro_jab(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &goro_s_jab);
-  goro_entry_retail_script_004e62f0(fighter);
-}
 
 /* Goro shares stance table 4e5058: 460f40 selects close HP 46be40 within
  * 0.8 unless 48e6e0 sees a reacting victim or 48ee60 an airborne one. */
@@ -28,7 +22,7 @@ void goro_press_high_punch(Fighter *fighter) {
 
 /* 460fb0 selects LP throw 42c560 within 0.7, otherwise jab 46dca0. */
 void goro_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? goro_lp_throw : goro_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? goro_lp_throw : retail_jab);
 }
 
 void goro_press_crouching_punch(Fighter *fighter) {

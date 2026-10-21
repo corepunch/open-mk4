@@ -1,8 +1,8 @@
 #include "../character.h"
 
 void scorpion_press_lp(Fighter *fighter) {
-  FighterFn entry = fighter->armed ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp) : scorpion_jab;
-  fighter_interrupt(fighter, scorpion_can_ground_throw(fighter, false) ? scorpion_enter_throw : fighter->armed ? entry : scorpion_jab);
+  FighterFn entry = fighter->armed ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp) : retail_jab;
+  fighter_interrupt(fighter, scorpion_can_ground_throw(fighter, false) ? scorpion_enter_throw : fighter->armed ? entry : retail_jab);
 }
 
 void scorpion_press_lk(Fighter *fighter) {

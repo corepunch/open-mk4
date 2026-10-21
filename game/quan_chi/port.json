@@ -115,8 +115,8 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "jab": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "lk_throw": {

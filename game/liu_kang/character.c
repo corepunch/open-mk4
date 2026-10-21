@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
-  [S_PUNCH] = liu_kang_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = liu_kang_sweep,
   [S_UPPERCUT] = liu_kang_uppercut,
@@ -111,7 +111,7 @@ static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 static const CpuMoves cpu_moves = {
     .enter =
         {
-            [CPU_JAB] = liu_kang_jab,
+            [CPU_JAB] = retail_jab,
             [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = liu_kang_hk,
             [CPU_SWEEP] = liu_kang_enter_sweep,
@@ -187,10 +187,6 @@ void liu_kang_entry_retail_script_004e0020(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0020, fighter_ready, 3);
 }
 
-void liu_kang_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 3);
-}
-
 void liu_kang_entry_retail_script_004e60b8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e60b8, fighter_ready, 3);
 }
@@ -217,10 +213,6 @@ void liu_kang_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e63d8(Fighter *fighter) {
@@ -265,10 +257,6 @@ void liu_kang_entry_retail_script_004e6950(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004e69b0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e69b0, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e6c90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6c90, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004e6d08(Fighter *fighter) {

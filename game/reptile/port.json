@@ -98,8 +98,8 @@
       "evidence": "Reptile high kick entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "high_punch": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Reptile high punch entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "input_47a690": {
@@ -113,8 +113,8 @@
       "evidence": "47afe0 action 20d enters 4e8178 (clip 106, D[21] at 13) and 47b010 probe cycles."
     },
     "jab": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Reptile jab entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "lk_throw": {

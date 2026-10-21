@@ -19,8 +19,8 @@
       "evidence": "Goro close low punch selects paired throw root 0x4de798; its owner/victim clips and five damage follow-up phases are retained in generated roots."
     },
     "jab": {
-      "source": "game/goro/moves/punches.c",
-      "symbol": "goro_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "uppercut": {

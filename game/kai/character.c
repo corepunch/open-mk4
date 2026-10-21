@@ -42,7 +42,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = kai_crouch,
   [S_JUMP] = NULL,
-  [S_PUNCH] = kai_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = kai_sweep,
   [S_UPPERCUT] = kai_uppercut,
@@ -120,18 +120,6 @@ void kai_entry_retail_script_004de798(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 11);
 }
 
-void kai_entry_retail_script_004e6998(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6998, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 11);
-}
-
 void kai_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 11);
 }
@@ -146,10 +134,6 @@ void kai_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void kai_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 11);
 }
 
 void kai_entry_retail_script_004e63d8(Fighter *fighter) {

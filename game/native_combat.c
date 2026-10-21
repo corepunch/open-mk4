@@ -126,8 +126,7 @@ void native_ground_next(Fighter *fighter, const NativeGroundProfile *profile) {
 /* Native 46d290/46d9b3 binds these two descriptors directly; unlike the
  * authored move programs, its repeat/contact controller is native code. */
 static void hp_bind(Fighter *fighter, bool second, int first) {
-  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_010A};
-  fighter_start_move(fighter, S_PUNCH, &move);
+  retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_010A, true);
   retail_vm_bind_animation(fighter, second ? 0x4fbb68 : 0x4fbb5c, first);
 }
 

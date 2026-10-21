@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static void noob_saibot_high_punch(Fighter *fighter);
-static void noob_saibot_jab(Fighter *fighter);
 
 static void noob_saibot_high_punch(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
@@ -12,17 +11,12 @@ static void noob_saibot_high_punch(Fighter *fighter) {
   }
 }
 
-static void noob_saibot_jab(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &noob_saibot_s_jab);
-  noob_saibot_entry_retail_script_004e62f0(fighter);
-}
-
 void noob_saibot_press_high_punch(Fighter *fighter) {
   fighter_interrupt(fighter, fighter->armed ? fighter->weapon->hp : noob_saibot_high_punch);
 }
 
 void noob_saibot_press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? noob_saibot_lp_throw : noob_saibot_jab);
+  fighter_interrupt(fighter, fighter->armed ? fighter->weapon->lp : fighter_distance(fighter) <= 0.7f ? noob_saibot_lp_throw : retail_jab);
 }
 
 void noob_saibot_press_crouching_hp(Fighter *fighter) {

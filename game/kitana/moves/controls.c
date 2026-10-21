@@ -3,7 +3,7 @@
 void kitana_press_lp(Fighter *fighter) {
   fighter_interrupt(fighter, kitana_can_ground_throw(fighter, false) ? kitana_enter_throw
                              : fighter->armed                        ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                     : kitana_jab);
+                                                                     : retail_jab);
 }
 
 void kitana_press_lk(Fighter *fighter) {

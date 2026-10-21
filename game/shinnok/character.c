@@ -36,7 +36,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_JUMP] = NULL,
-  [S_PUNCH] = shinnok_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = shinnok_sweep,
   [S_UPPERCUT] = shinnok_uppercut,
@@ -89,28 +89,12 @@ void shinnok_entry_retail_script_004de798(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 6);
 }
 
-void shinnok_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 6);
-}
-
-void shinnok_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 6);
-}
-
-void shinnok_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 6);
-}
-
 void shinnok_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e62a0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 6);
-}
-
-void shinnok_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e63d8(Fighter *fighter) {
@@ -221,20 +205,12 @@ void shinnok_entry_retail_script_004e2f40(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e2f40, fighter_ready, 6);
 }
 
-void shinnok_entry_retail_script_004e2f68(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e2f68, fighter_ready, 6);
-}
-
 void shinnok_entry_retail_script_004e2f78(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e2f78, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2f88(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e2f88, fighter_ready, 6);
-}
-
-void shinnok_entry_retail_script_004e2fa8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e2fa8, fighter_ready, 6);
 }
 
 void shinnok_entry_retail_script_004e2fb8(Fighter *fighter) {

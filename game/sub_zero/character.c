@@ -47,7 +47,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
-  [S_PUNCH] = sub_zero_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = sub_zero_sweep,
   [S_UPPERCUT] = sub_zero_uppercut,
@@ -155,7 +155,7 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_air_hp
 static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {.enter = {
-                                       [CPU_JAB] = sub_zero_jab,
+                                       [CPU_JAB] = retail_jab,
                                        [CPU_LOW_KICK] = retail_low_kick,
                                        [CPU_HIGH_KICK] = sub_zero_hk,
                                        [CPU_SWEEP] = sub_zero_enter_sweep,
@@ -280,10 +280,6 @@ void sub_zero_entry_retail_script_004e0430(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0430, fighter_ready, 4);
 }
 
-void sub_zero_entry_retail_script_004e5c80(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5c80, fighter_ready, 4);
-}
-
 void sub_zero_entry_retail_script_004e5e28(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 4);
 }
@@ -322,10 +318,6 @@ void sub_zero_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e63d8(Fighter *fighter) {
@@ -370,10 +362,6 @@ void sub_zero_entry_retail_script_004e6878(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e6950(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6998(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6998, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e69c8(Fighter *fighter) {

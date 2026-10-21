@@ -37,7 +37,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_JUMP] = mk4_jump,
-  [S_PUNCH] = jax_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = jax_sweep,
   [S_UPPERCUT] = jax_uppercut,
@@ -151,14 +151,6 @@ void jax_entry_retail_script_004e5b38(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5b38, fighter_ready, 13);
 }
 
-void jax_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 13);
-}
-
 void jax_entry_retail_script_004e5dd8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5dd8, fighter_ready, 13);
 }
@@ -181,10 +173,6 @@ void jax_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void jax_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 13);
 }
 
 void jax_entry_retail_script_004e63d8(Fighter *fighter) {

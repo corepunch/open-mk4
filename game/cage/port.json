@@ -24,8 +24,8 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "jab": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "uppercut": {

@@ -104,8 +104,8 @@
     },
     "jab": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for jab",
-      "source": "game/jax/character.c",
-      "symbol": "jax_jab"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab"
     },
     "lk_throw": {
       "evidence": "Selected4de2f8/318/328 paired streams, native42be10 retreats through clip282;4de358 is Q16 motion data, not a script.",

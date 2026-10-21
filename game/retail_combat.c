@@ -64,9 +64,7 @@ void retail_kick_contact_narrow(Fighter *fighter) {
 /* Native 46a680 and the post-gate block 46a81a set the action and enter the retail selector.
  * The script binds the clip before yielding; no fighter C clip seed is used. */
 static void kick_enter(Fighter *fighter, int action, uint32_t script) {
-  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
-  fighter_start_move(fighter, S_KICK, &move);
-  fighter->action = action;
+  retail_native_begin(fighter, S_KICK, action, false);
   retail_vm_enter(fighter, script, fighter_ready);
 }
 
@@ -76,4 +74,10 @@ void retail_high_kick(Fighter *fighter) {
 
 void retail_low_kick(Fighter *fighter) {
   kick_enter(fighter, ACTION_RETAIL_0102, 0x4e5d90);
+}
+
+/* Playback after the original controller's LP throw gates (46dcbc). */
+void retail_jab(Fighter *fighter) {
+  retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_010B, true);
+  retail_vm_enter(fighter, 0x4e62f0, fighter_ready);
 }

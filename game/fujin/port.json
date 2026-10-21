@@ -120,8 +120,8 @@
       "evidence": "Fujin standing high kick starts generated stream 4e5ca0."
     },
     "high_punch": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Fujin high-punch command starts its generated jab chain 4e62f0."
     },
     "lk_throw": {

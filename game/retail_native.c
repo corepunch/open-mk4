@@ -13,6 +13,17 @@ typedef struct NativeGate {
 
 #include "retail_native_input.inc"
 
+/* Shared engine action ownership for native/script attacks. The native
+ * caller supplies its original action and whether commands remain live. */
+void retail_native_begin(Fighter *fighter, StateId state, int action, bool commands) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+  fighter_start_move(fighter, state, &move);
+  fighter->action = action;
+  if (commands) {
+    fighter->flags &= ~(unsigned)FF_BUSY;
+  }
+}
+
 FighterFn retail_native_entry(unsigned character, uint32_t address) {
   require(character < MK4_ROSTER_COUNT, "Invalid retail native owner");
   for (size_t i = 0; i < sizeof entries / sizeof *entries; ++i) {

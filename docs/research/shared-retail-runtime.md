@@ -309,3 +309,27 @@ reimplemented by this consolidation, and no tests were added.
 
 Validation reuses the shared VM/native/lifetime checks, formatting and strict
 roster/source audits.
+
+## Shared jab playback and unused adapter removal
+
+Nineteen jab playback copies now use `retail_jab`, which establishes the shared
+native action context and enters 4e62f0 with action 010b and live commands.
+The original LP throw gates remain in the controllers; this is the post-gate
+46dcbc playback block, not a claim that the entire 46dca0 native entry is
+finished. No bypassing full-entry registration was added.
+
+Native 46ddd0 now reads contact A[1] live rather than a C attack record. The
+local entry/gate/contact listings and checked mk4decomp
+`TriCounterReinitChain` correspondence establish these boundaries. Kick, jab
+and native HP setup share one engine action-context primitive.
+
+Sixty-eight mechanical VM wrappers with zero incoming C/table references are
+removed, including their declarations. Retail jumps and native row
+continuations enter original addresses directly and do not need C thunks.
+Research navigation points at the shared native entries. Coverage remains
+1,109 interpreted catalog roots across eighteen slots.
+
+Validation reuses shared VM/native/lifetime checks, all strict roster audits,
+formatting, helper/navigation checks (6/7) and native source gates. No new tests
+added. The battle integration run stops at the established baseline throw
+assertion.

@@ -49,7 +49,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
-  [S_PUNCH] = raiden_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = raiden_sweep,
   [S_UPPERCUT] = raiden_uppercut,
@@ -88,7 +88,7 @@ static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 static const CpuMoves cpu_moves = {
     .enter =
         {
-            [CPU_JAB] = raiden_jab,
+            [CPU_JAB] = retail_jab,
             [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = raiden_hk,
             [CPU_SWEEP] = raiden_enter_sweep,
@@ -191,10 +191,6 @@ void raiden_entry_retail_script_004e5788(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5788, fighter_ready, 1);
 }
 
-void raiden_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 1);
-}
-
 void raiden_entry_retail_script_004e5d90(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 1);
 }
@@ -239,10 +235,6 @@ void raiden_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 1);
 }
 
-void raiden_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 1);
-}
-
 void raiden_entry_retail_script_004e63d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e63d8, fighter_ready, 1);
 }
@@ -285,10 +277,6 @@ void raiden_entry_retail_script_004e68a8(Fighter *fighter) {
 
 void raiden_entry_retail_script_004e6950(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e6950, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e6998(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6998, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004e69b0(Fighter *fighter) {

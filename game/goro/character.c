@@ -114,18 +114,6 @@ void goro_entry_retail_script_004dfbb8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4dfbb8, fighter_ready, 15);
 }
 
-void goro_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 15);
-}
-
-void goro_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 15);
-}
-
-void goro_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 15);
-}
-
 void goro_entry_retail_script_004e5e28(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 15);
 }
@@ -152,10 +140,6 @@ void goro_entry_retail_script_004e6270(Fighter *fighter) {
 
 void goro_entry_retail_script_004e62a0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 15);
-}
-
-void goro_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 15);
 }
 
 void goro_entry_retail_script_004e63d8(Fighter *fighter) {

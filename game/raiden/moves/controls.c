@@ -3,7 +3,7 @@
 void raiden_press_lp(Fighter *fighter) {
   fighter_interrupt(fighter, raiden_can_ground_throw(fighter, false) ? raiden_enter_throw
                              : fighter->armed                        ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                     : raiden_jab);
+                                                                     : retail_jab);
 }
 
 void raiden_press_lk(Fighter *fighter) {

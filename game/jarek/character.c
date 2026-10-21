@@ -36,7 +36,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_JUMP] = NULL,
-  [S_PUNCH] = jarek_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = jarek_sweep,
   [S_UPPERCUT] = jarek_uppercut,
@@ -107,18 +107,6 @@ void jarek_entry_retail_script_004de798(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 12);
 }
 
-void jarek_entry_retail_script_004e5d20(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d20, fighter_ready, 12);
-}
-
-void jarek_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 12);
-}
-
-void jarek_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 12);
-}
-
 void jarek_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 12);
 }
@@ -133,10 +121,6 @@ void jarek_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void jarek_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 12);
-}
-
-void jarek_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004e63d8(Fighter *fighter) {

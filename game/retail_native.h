@@ -2,6 +2,8 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_native_begin(Fighter *fighter, StateId state, int action, bool commands);
+void retail_jab(Fighter *fighter);
 void retail_high_punch(Fighter *fighter);
 void retail_high_kick(Fighter *fighter);
 void retail_low_kick(Fighter *fighter);

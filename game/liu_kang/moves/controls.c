@@ -3,7 +3,7 @@
 void liu_kang_press_lp(Fighter *fighter) {
   fighter_interrupt(fighter, liu_kang_can_ground_throw(fighter, false) ? liu_kang_enter_throw
                              : fighter->armed                          ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                       : liu_kang_jab);
+                                                                       : retail_jab);
 }
 
 void liu_kang_press_lk(Fighter *fighter) {

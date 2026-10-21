@@ -78,8 +78,8 @@
       "evidence": "Tanya lk_throw entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "jab": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_jab",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_jab",
       "evidence": "Tanya jab entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "uppercut": {

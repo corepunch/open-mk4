@@ -114,28 +114,12 @@ void cage_entry_retail_script_004e5ba8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5ba8, fighter_ready, 14);
 }
 
-void cage_entry_retail_script_004e6998(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6998, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e5d90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5d90, fighter_ready, 14);
-}
-
 void cage_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 14);
 }
 
 void cage_entry_retail_script_004e62a0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 14);
-}
-
-void cage_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 14);
 }
 
 void cage_entry_retail_script_004e63d8(Fighter *fighter) {

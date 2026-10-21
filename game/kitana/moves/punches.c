@@ -2,13 +2,6 @@
 
 static void kitana_combo_hp(Fighter *fighter);
 
-void kitana_jab(Fighter *fighter) {
-  fighter_start_move(fighter, S_PUNCH, &kitana_s_jab);
-  /* The jab entry clears the busy bit (0x490330): commands stay live. */
-  fighter->flags &= ~(unsigned)FF_BUSY;
-  kitana_entry_retail_script_004e62f0(fighter);
-}
-
 void kitana_hp(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && !(victim->flags & FF_REACTING)) {

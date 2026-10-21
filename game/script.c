@@ -1,4 +1,5 @@
 #include "script.h"
+#include "retail_vm.h"
 #include "native.h"
 #include "mk4_characters.h"
 #include "math_util.h"
@@ -145,8 +146,7 @@ void mk4_script_guard_block_sound_28(Fighter *fighter) {
   script_guard_block_sound(fighter, 28);
 }
 
-/* Native contracts shared by generated fighter scripts. */
-static const AttackRecord jab_record = {0xf333, -0x47ae, 0xcccc, 0x7333, 37, 11, 1, 0, 0xa3d}; /* 4ebd38 */
+/* Shared retail native contracts. */
 
 static bool script_repeat_jab(const Fighter *fighter);
 
@@ -354,7 +354,10 @@ void mk4_script_jab_contact(Fighter *fighter) {
   if ((action == ACTION_RETAIL_010C && fighter_sample(victim) < 5) || (action == ACTION_RETAIL_0102 && victim->avoids_high)) {
     return;
   }
-  battle_contact(fighter, &jab_record);
+  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
+  uint32_t record = mk4_image_u32(image, 0x53d26c);
+  AttackRecord attack = retail_vm_attack_record(image, record * 4);
+  battle_contact(fighter, &attack);
 }
 
 void mk4_script_stop_body(Fighter *fighter) {

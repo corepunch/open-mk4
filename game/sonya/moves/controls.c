@@ -3,7 +3,7 @@
 void sonya_press_lp(Fighter *fighter) {
   fighter_interrupt(fighter, sonya_can_ground_throw(fighter, false) ? sonya_enter_throw
                              : fighter->armed                       ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                    : sonya_jab);
+                                                                    : retail_jab);
 }
 
 void sonya_press_lk(Fighter *fighter) {

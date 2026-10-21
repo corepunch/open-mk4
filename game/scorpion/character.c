@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
-  [S_PUNCH] = scorpion_jab,
+  [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = scorpion_sweep,
   [S_UPPERCUT] = scorpion_uppercut,
@@ -210,14 +210,6 @@ void scorpion_entry_retail_script_004e5b58(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5b58, fighter_ready, 0);
 }
 
-void scorpion_entry_retail_script_004e5c70(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5c70, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e5ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5ca0, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004e5e28(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e5e28, fighter_ready, 0);
 }
@@ -256,10 +248,6 @@ void scorpion_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void scorpion_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e62f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62f0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e63d8(Fighter *fighter) {

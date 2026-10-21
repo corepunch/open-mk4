@@ -26,7 +26,6 @@ enum {
 };
 
 void jarek_fatality_contact_hold(Fighter *fighter);
-void jarek_jab(Fighter *fighter);
 void jarek_lp_throw(Fighter *fighter);
 void jarek_press_air_hp(Fighter *fighter);
 void jarek_press_air_kick(Fighter *fighter);
@@ -93,14 +92,10 @@ void jarek_entry_retail_script_004de668(Fighter *fighter);
 void jarek_entry_retail_script_004de6b8(Fighter *fighter);
 void jarek_entry_retail_script_004de798(Fighter *fighter);
 void jarek_entry_retail_script_004e6950(Fighter *fighter);
-void jarek_entry_retail_script_004e5d20(Fighter *fighter);
-void jarek_entry_retail_script_004e5ca0(Fighter *fighter);
-void jarek_entry_retail_script_004e5d90(Fighter *fighter);
 void jarek_entry_retail_script_004e61f8(Fighter *fighter);
 void jarek_entry_retail_script_004e62a0(Fighter *fighter);
 void jarek_entry_retail_script_004e62c0(Fighter *fighter);
 void jarek_entry_retail_script_004e62d8(Fighter *fighter);
-void jarek_entry_retail_script_004e62f0(Fighter *fighter);
 void jarek_entry_retail_script_004e63d8(Fighter *fighter);
 void jarek_entry_retail_script_004e6500(Fighter *fighter);
 void jarek_entry_retail_script_004e6658(Fighter *fighter);

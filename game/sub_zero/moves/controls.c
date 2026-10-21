@@ -3,7 +3,7 @@
 void sub_zero_press_lp(Fighter *fighter) {
   fighter_interrupt(fighter, sub_zero_can_ground_throw(fighter, false) ? sub_zero_enter_throw
                              : fighter->armed                          ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                       : sub_zero_jab);
+                                                                       : retail_jab);
 }
 
 void sub_zero_press_lk(Fighter *fighter) {
