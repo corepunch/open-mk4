@@ -3,7 +3,6 @@
 #include "game.h"
 
 extern const Motion mk4_motion;
-extern const Controls mk4_controls;
 
 extern const CharacterDef mk4_scorpion;
 extern const CharacterDef mk4_raiden;

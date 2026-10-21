@@ -13,17 +13,10 @@
 extern const MoveDef goro_s_knockdown;
 
 void goro_air_throw(Fighter *fighter);
-void goro_press_air_ground_hp(Fighter *fighter);
 void goro_press_air_hk(Fighter *fighter);
 void goro_press_air_hp(Fighter *fighter);
 void goro_press_air_lk(Fighter *fighter);
 void goro_press_air_lp(Fighter *fighter);
-void goro_press_crouching_kick(Fighter *fighter);
-void goro_press_crouching_punch(Fighter *fighter);
-void goro_press_high_kick(Fighter *fighter);
-void goro_press_high_punch(Fighter *fighter);
-void goro_press_low_kick(Fighter *fighter);
-void goro_press_low_punch(Fighter *fighter);
 
 void goro_script_air_finish(Fighter *fighter);
 void goro_script_air_getup(Fighter *fighter);

@@ -11,18 +11,12 @@ static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | 
 static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 static const MoveDef s_victory = {.clip = 412, .last = MOVE_END, .flags = SF_HOLD};
 
-static const ButtonTable s_standing = {
-    .press = {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
-static const ButtonTable s_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-                                            [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-                                            [BUTTON_HIGH_KICK] = retail_press_sweep,
-                                            [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable s_jumping = {.press = {[BUTTON_HIGH_PUNCH] = jax_press_air_hp,
                                           [BUTTON_LOW_PUNCH] = jax_press_air_lp,
                                           [BUTTON_HIGH_KICK] = jax_press_air_hk,
                                           [BUTTON_LOW_KICK] = jax_press_air_lk}};
 
-static const Controls s_controls = {NULL, 0, {&s_standing, &s_crouching, &s_jumping, [STANCE_DIAGONAL_AIR] = &jax_diagonal_air}};
+static const Controls s_controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &s_jumping, [STANCE_DIAGONAL_AIR] = &jax_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {

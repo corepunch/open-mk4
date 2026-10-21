@@ -29,14 +29,7 @@
 #define press_air_lp raiden_press_air_lp
 #define press_combo_hk raiden_press_combo_hk
 #define press_combo_hp raiden_press_combo_hp
-#define press_crouch_hk retail_press_crouch_high_kick
-#define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp retail_press_crouch_low_punch
-#define press_jab raiden_press_jab
-#define press_kick raiden_press_kick
 #define press_knee_hp raiden_press_knee_hp
-#define press_lk raiden_press_lk
-#define press_lp raiden_press_lp
 #define s_knockdown raiden_s_knockdown
 #define s_victory raiden_s_victory
 #define scene_end_watch raiden_scene_end_watch
@@ -104,12 +97,7 @@ void raiden_press_air_hk(Fighter *fighter);
 void raiden_press_air_hp(Fighter *fighter);
 void raiden_press_air_lk(Fighter *fighter);
 void raiden_press_air_lp(Fighter *fighter);
-void raiden_press_jab(Fighter *fighter);
-void raiden_press_kick(Fighter *fighter);
-void raiden_press_lk(Fighter *fighter);
-void raiden_press_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
-void raiden_hp(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);

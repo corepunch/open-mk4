@@ -1,8 +1,6 @@
 #include "character.h"
 #include "retail_vm.h"
 
-static const ButtonTable scorpion_standing;
-
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 
 /* 0x4ebd50, A selector 2 */
@@ -64,19 +62,11 @@ const MoveDef scorpion_s_teleport_land = {.clip = 304, .first = 18, .last = 27, 
 
 /* Generated VM finishers use shared scene, blend and object helpers. */
 
-static const ButtonTable scorpion_standing = {.press = {[BUTTON_HIGH_PUNCH] = scorpion_press_jab,
-                                                  [BUTTON_LOW_PUNCH] = scorpion_press_lp,
-                                                  [BUTTON_HIGH_KICK] = scorpion_press_kick,
-                                                  [BUTTON_LOW_KICK] = scorpion_press_lk}};
-static const ButtonTable scorpion_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-                                                   [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
-                                                   [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
-                                                   [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable scorpion_jumping = {.press = {[BUTTON_HIGH_PUNCH] = scorpion_press_air_hp,
                                                  [BUTTON_LOW_PUNCH] = scorpion_press_air_lp,
                                                  [BUTTON_HIGH_KICK] = scorpion_press_air_hk,
                                                  [BUTTON_LOW_KICK] = scorpion_press_air_lk}};
-static const Controls scorpion_controls = {NULL, 0, {&scorpion_standing, &scorpion_crouching, &scorpion_jumping}};
+static const Controls scorpion_controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &scorpion_jumping}};
 
 /* Weapon scripts 0x4e62c0/0x4e62d8, 0x4ec8b0/0x4ec918 and 0x4e8850;
  * slash parameter blocks 0x4ec880/0x4ec898; native throw 0x498290. */

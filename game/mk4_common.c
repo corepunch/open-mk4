@@ -5,56 +5,6 @@
 #include "math_util.h"
 #include <string.h>
 
-/* Approximate stance tables for fighters whose retail moves are not yet
- * ported. They follow the retail buttons from the shared tables in
- * docs/scorpion/input-and-commands.md section 6: back+LK sweeps, crouching
- * HP uppercuts and a close LP throws. Other selections use the generic move
- * for the button. A character with recovered moves owns its tables. */
-#define ENTER_STATE(name, state)                                                                                                                               \
-  static void enter_##name(Fighter *fighter) {                                                                                                                 \
-    fighter_enter_state(fighter, state);                                                                                                                       \
-  }
-ENTER_STATE(punch, S_PUNCH)
-ENTER_STATE(kick, S_KICK)
-ENTER_STATE(sweep, S_SWEEP)
-ENTER_STATE(uppercut, S_UPPERCUT)
-ENTER_STATE(throw, S_THROW)
-
-/* 0xb333 Q16: retail close-LP throw distance. */
-#define MK4_THROW_RANGE 0.7f
-
-static void press_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, enter_punch);
-}
-
-static void press_low_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_distance(fighter) <= MK4_THROW_RANGE ? enter_throw : enter_punch);
-}
-
-static void press_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, enter_kick);
-}
-
-static void press_low_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? enter_sweep : enter_kick);
-}
-
-static void press_uppercut(Fighter *fighter) {
-  fighter_interrupt(fighter, enter_uppercut);
-}
-
-static void press_sweep(Fighter *fighter) {
-  fighter_interrupt(fighter, enter_sweep);
-}
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const ButtonTable standing = {.press = {[BUTTON_HIGH_PUNCH] = press_punch, [BUTTON_LOW_PUNCH] = press_low_punch, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_low_kick}};
-static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = press_uppercut, [BUTTON_LOW_PUNCH] = press_uppercut, [BUTTON_HIGH_KICK] = press_sweep, [BUTTON_LOW_KICK] = press_sweep}};
-static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = press_punch, [BUTTON_LOW_PUNCH] = press_punch, [BUTTON_HIGH_KICK] = press_kick, [BUTTON_LOW_KICK] = press_kick}};
-// clang-format on
-
-const Controls mk4_controls = {NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping}};
-
 /* 460570/460710, 491780: forward walking .06, backward .7 scale.
  * 460980/4609f0: .13 running, 2% energy per tick, 40-tick recovery delay.
  * 422800 restores 5% after that delay. Straight jump: 46f7e0. */
@@ -429,15 +379,18 @@ bool mk4_begin_stage_finish(Fighter *fighter, int id) {
   return true;
 }
 
-/* Shared 46c6f0/46c740 ground throw gates, also used by the fully ported
- * normal entries: LK's close comparison is strict, LP's is inclusive. */
+/* Native46dbb0 and46a7b0: LP and LK have distinct throw exclusions. */
 bool mk4_can_ground_throw(const Fighter *fighter, bool low_kick) {
   const Fighter *victim = fighter_opponent(fighter);
   int action = victim->action;
   float distance = fighter_distance(fighter);
-  return (low_kick ? distance < .7f : distance <= .7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
-         action != ACTION_RETAIL_010A && action != ACTION_RETAIL_010B && action != ACTION_RETAIL_0100 && action != ACTION_RETAIL_0102 &&
-         action != ACTION_RETAIL_010E && !(action >= ACTION_RETAIL_0111 && action <= ACTION_RETAIL_0113);
+  float range = q16_float(0xb333);
+  if (!(low_kick ? distance < range : distance <= range) || (fighter->flags & FF_FOLLOW_UP) || fighter_airborne(victim) || fighter_holds_back(victim) ||
+      (action & 0xf000) == 0x4000) {
+    return false;
+  }
+  return low_kick || (!fighter->armed && action != ACTION_RETAIL_010A && action != ACTION_RETAIL_010B && action != ACTION_RETAIL_0100 &&
+                         action != ACTION_RETAIL_0102 && action != ACTION_RETAIL_010E && !(action >= ACTION_RETAIL_0111 && action <= ACTION_RETAIL_0113));
 }
 
 bool mk4_can_air_throw(const Fighter *fighter) {

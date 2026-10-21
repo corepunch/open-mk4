@@ -27,22 +27,14 @@ const uint32_t reptile_weapon_descriptor[] = {
 };
 // clang-format on
 
-static const ButtonTable reptile_standing = {.press = {[BUTTON_HIGH_PUNCH] = reptile_press_punch,
-                                                 [BUTTON_LOW_PUNCH] = reptile_press_low_punch,
-                                                 [BUTTON_HIGH_KICK] = reptile_press_kick,
-                                                 [BUTTON_LOW_KICK] = reptile_press_low_kick}};
-static const ButtonTable reptile_crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-                                                  [BUTTON_LOW_PUNCH] = retail_press_uppercut,
-                                                  [BUTTON_HIGH_KICK] = retail_press_sweep,
-                                                  [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable reptile_jumping = {.press = {[BUTTON_HIGH_PUNCH] = reptile_press_air_hp,
                                                 [BUTTON_LOW_PUNCH] = reptile_press_air_lp,
                                                 [BUTTON_HIGH_KICK] = reptile_press_air_hk,
                                                 [BUTTON_LOW_KICK] = reptile_press_air_lk}};
 
 static const Controls reptile_controls = {NULL, 0,
-    {[STANCE_STANDING] = &reptile_standing,
-        [STANCE_CROUCHING] = &reptile_crouching,
+    {[STANCE_STANDING] = &retail_ground_buttons[0],
+        [STANCE_CROUCHING] = &retail_ground_buttons[1],
         [STANCE_JUMP] = &reptile_jumping,
         [STANCE_DIAGONAL_AIR] = &reptile_diagonal_air}};
 

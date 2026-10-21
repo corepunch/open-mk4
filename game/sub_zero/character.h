@@ -39,14 +39,7 @@
 #define press_air_lp sub_zero_press_air_lp
 #define press_combo_hk sub_zero_press_combo_hk
 #define press_combo_hp sub_zero_press_combo_hp
-#define press_crouch_hk retail_press_crouch_high_kick
-#define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp retail_press_crouch_low_punch
-#define press_jab sub_zero_press_jab
-#define press_kick sub_zero_press_kick
 #define press_knee_hp sub_zero_press_knee_hp
-#define press_lk sub_zero_press_lk
-#define press_lp sub_zero_press_lp
 #define s_lp_thrown sub_zero_s_lp_thrown
 #define scene_blend_cleanup sub_zero_scene_blend_cleanup
 #define script_air_diagonal_tail sub_zero_script_air_diagonal_tail
@@ -138,10 +131,6 @@ void sub_zero_press_air_hk(Fighter *fighter);
 void sub_zero_press_air_hp(Fighter *fighter);
 void sub_zero_press_air_lk(Fighter *fighter);
 void sub_zero_press_air_lp(Fighter *fighter);
-void sub_zero_press_jab(Fighter *fighter);
-void sub_zero_press_kick(Fighter *fighter);
-void sub_zero_press_lk(Fighter *fighter);
-void sub_zero_press_lp(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2bf0(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c10(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c78(Fighter *fighter);
@@ -225,7 +214,6 @@ void sub_zero_air_throw(Fighter *fighter);
 void sub_zero_clone(Fighter *fighter);
 void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_hk(Fighter *fighter);
-void sub_zero_hp(Fighter *fighter);
 void sub_zero_ice(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);

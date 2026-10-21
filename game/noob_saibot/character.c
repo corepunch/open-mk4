@@ -37,22 +37,14 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-static const ButtonTable noob_saibot_standing = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_high_punch,
-                                                     [BUTTON_LOW_PUNCH] = noob_saibot_press_low_punch,
-                                                     [BUTTON_HIGH_KICK] = noob_saibot_press_high_kick,
-                                                     [BUTTON_LOW_KICK] = noob_saibot_press_low_kick}};
-static const ButtonTable noob_saibot_crouching = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_crouching_hp,
-                                                      [BUTTON_LOW_PUNCH] = noob_saibot_press_crouching_hp,
-                                                      [BUTTON_HIGH_KICK] = noob_saibot_press_crouching_kick,
-                                                      [BUTTON_LOW_KICK] = noob_saibot_press_crouching_kick}};
 static const ButtonTable noob_saibot_air = {.press = {[BUTTON_HIGH_PUNCH] = noob_saibot_press_air_hp,
                                                 [BUTTON_LOW_PUNCH] = noob_saibot_press_air_lp,
                                                 [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
                                                 [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
 
 static const Controls noob_saibot_controls = {NULL, 0,
-    {[STANCE_STANDING] = &noob_saibot_standing,
-        [STANCE_CROUCHING] = &noob_saibot_crouching,
+    {[STANCE_STANDING] = &retail_ground_buttons[0],
+        [STANCE_CROUCHING] = &retail_ground_buttons[1],
         [STANCE_JUMP] = &noob_saibot_air,
         [STANCE_DIAGONAL_AIR] = &noob_saibot_diagonal_air}};
 

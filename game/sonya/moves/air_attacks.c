@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static const ButtonTable air_followup;
-static const ButtonTable air_ground_followup;
 static void air_land(Fighter *fighter);
 static void air_release_land(Fighter *fighter);
 static void air_release_fall(Fighter *fighter);
@@ -13,8 +12,6 @@ static void air_kick(Fighter *fighter);
 static void air_hk_diagonal(Fighter *fighter);
 static void air_lk_diagonal(Fighter *fighter);
 static void press_air_followup_kick(Fighter *fighter);
-static void air_ground_hp(Fighter *fighter);
-static void press_air_ground_hp(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const AirAttack air_attacks[] = {
   {{.clip = 97, .last = MOVE_END, .flags = RETAIL, .action = 0x603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
@@ -24,13 +21,9 @@ static const AirAttack air_attacks[] = {
   {{.clip = 60, .last = MOVE_END, .flags = RETAIL, .action = 0x601}, {55705, 1966, 56950, 30146, 22, 22, 4, 2, 9830}, 6, 10, 10},
 };
 // clang-format on
-static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, air_land, NULL};
+static const NativeAirProfile air_profile = {air_attacks, &air_followup, &retail_close_buttons[3], air_land, NULL};
 static const ButtonTable air_followup = {
     .press = {[BUTTON_LOW_PUNCH] = sonya_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable air_ground_followup = {.press = {[BUTTON_HIGH_PUNCH] = press_air_ground_hp,
-                                                    [BUTTON_LOW_PUNCH] = sonya_press_lp,
-                                                    [BUTTON_HIGH_KICK] = sonya_press_kick,
-                                                    [BUTTON_LOW_KICK] = sonya_press_lk}};
 
 static void air_land(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_FOLLOW_UP;
@@ -101,21 +94,6 @@ static void press_air_followup_kick(Fighter *fighter) {
 
 /* 0x46c3f0 permits close HP against a reacting, grounded victim after a
  * low air contact. Ordinary standing HP uses a stricter entry predicate. */
-static void air_ground_hp(Fighter *fighter) {
-  if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(fighter_opponent(fighter))) {
-    retail_close_high_punch(fighter);
-  } else {
-    sonya_hp(fighter);
-  }
-}
-
-static void press_air_ground_hp(Fighter *fighter) {
-  if (fighter->armed) {
-    sonya_press_jab(fighter);
-  } else {
-    fighter_interrupt(fighter, air_ground_hp);
-  }
-}
 
 void sonya_script_air_hp_tail(Fighter *fighter) {
   air_native_tail(fighter, 0, 0);

@@ -244,10 +244,6 @@ void retail_uppercut_state(Fighter *fighter) {
   fighter_enter_state(fighter, S_UPPERCUT);
 }
 
-void retail_press_uppercut(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_uppercut);
-}
-
 /* Native42d1b0's pair-range/camera-side branch uses the engine fighter axis
  * for camera-side ordering. Both original native selectors share this test. */
 static void lp_select(Fighter *fighter, uint32_t alternate) {
@@ -313,14 +309,6 @@ void retail_crouch_high_kick(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e6020, fighter_ready);
 }
 
-void retail_press_crouch_high_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_crouch_high_kick);
-}
-
-void retail_press_crouch_low_kick(Fighter *fighter) {
-  fighter_interrupt(fighter, retail_crouch_low_kick);
-}
-
 static void crouch_punch_reverse(Fighter *fighter) {
   int last = fighter_move(fighter)->last;
   native_begin(fighter, 0, last, fighter_ready);
@@ -362,15 +350,6 @@ void retail_crouch_low_punch(Fighter *fighter) {
   retail_vm_bind_animation(fighter, packed * 4, 2);
   require(fighter_move(fighter)->last >= 5, "Native crouch punch needs three opening samples");
   native_play_rows(fighter, 5, 1, crouch_punch_extend);
-}
-
-/* Native4610d0 has one weapon-type exception before the shared crouch entry. */
-void retail_press_crouch_low_punch(Fighter *fighter) {
-  FighterFn entry = retail_crouch_low_punch;
-  if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60 && fighter->weapon->crouch_lp != NULL) {
-    entry = fighter->weapon->crouch_lp;
-  }
-  fighter_interrupt(fighter, entry);
 }
 
 /* Native46be40 binds its descriptor before entering inherited-animation script4e61e0.

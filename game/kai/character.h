@@ -27,7 +27,6 @@ enum {
 };
 
 void kai_crouch(Fighter *fighter);
-void kai_high_punch(Fighter *fighter);
 void kai_input_478df0(Fighter *fighter);
 void kai_input_47bd10(Fighter *fighter);
 void kai_input_47c520(Fighter *fighter);
@@ -37,10 +36,6 @@ void kai_press_air_hk(Fighter *fighter);
 void kai_press_air_hp(Fighter *fighter);
 void kai_press_air_lk(Fighter *fighter);
 void kai_press_air_lp(Fighter *fighter);
-void kai_press_high_kick(Fighter *fighter);
-void kai_press_high_punch(Fighter *fighter);
-void kai_press_low_kick(Fighter *fighter);
-void kai_press_low_punch(Fighter *fighter);
 void kai_script_air_finish(Fighter *fighter);
 void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_script_current_reaction(Fighter *fighter, int reaction);
@@ -70,7 +65,6 @@ extern const MoveDef kai_s_low_kick;
 extern const ButtonTable kai_diagonal_air;
 void kai_press_air_hk(Fighter *fighter);
 void kai_press_air_lk(Fighter *fighter);
-void kai_press_air_ground_hp(Fighter *fighter);
 bool kai_can_handstand(const Fighter *fighter);
 void kai_handstand_spin_begin(Fighter *fighter);
 void kai_handstand_rear_contact(Fighter *fighter);

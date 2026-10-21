@@ -10,7 +10,27 @@ const ButtonTable retail_close_buttons[] = {
     {.retail_address = 0x4e7078},
     {.retail_address = 0x4e7090},
     {.retail_address = 0x4e70a8},
+    {.retail_address = 0x4e70c0},
 };
+
+const ButtonTable retail_ground_buttons[] = {
+    {.retail_address = 0x4e5058},
+    {.retail_address = 0x4e5070},
+};
+
+static FighterFn action_entry(Fighter *fighter, unsigned index) {
+  uint32_t target = retail_action_target(retail_vm_image(), 1, index);
+  return retail_native_entry((unsigned)fighter->roster, target);
+}
+
+static void enter_action(Fighter *fighter, unsigned index) {
+  action_entry(fighter, index)(fighter);
+}
+
+static FighterFn crouch_entry(Fighter *fighter, unsigned index) {
+  uint32_t target = mk4_image_u32(retail_vm_image(), 0x4e7020 + index * 4);
+  return retail_native_entry((unsigned)fighter->roster, target);
+}
 
 uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button button) {
   require(button >= BUTTON_HIGH_PUNCH && button < BUTTON_COUNT, "Invalid retail button slot");
@@ -67,34 +87,43 @@ void retail_combo_high_punch(Fighter *fighter) {
 static void normal_hp(Fighter *fighter) {
   const Fighter *peer = fighter_opponent(fighter);
   if (fighter_distance(fighter) <= q16_float(0xcccc) && !fighter_airborne(peer) && (peer->action & 0xf000) != 0x4000) {
-    retail_close_high_punch(fighter);
+    enter_action(fighter, 9);
   } else {
-    retail_high_punch(fighter);
+    enter_action(fighter, 11);
+  }
+}
+
+/* Native46c3f0 can force a close punch even when the grounded peer is reacting. */
+static void air_ground_hp(Fighter *fighter) {
+  if (fighter_distance(fighter) <= q16_float(0xcccc) && !fighter_airborne(fighter_opponent(fighter))) {
+    enter_action(fighter, 9);
+  } else {
+    normal_hp(fighter);
   }
 }
 
 static void normal_hk(Fighter *fighter) {
   const Fighter *peer = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
-    retail_roundhouse(fighter);
+    enter_action(fighter, 7);
   } else if (fighter_distance(fighter) <= q16_float(0xcccc) && !fighter_airborne(peer) && peer->action != ACTION_RETAIL_4005 &&
              peer->action != ACTION_RETAIL_4001) {
-    retail_close_high_kick(fighter);
+    enter_action(fighter, 12);
   } else {
-    retail_high_kick(fighter);
+    enter_action(fighter, 5);
   }
 }
 
-static void normal_lp(Fighter *fighter) {
+void retail_normal_low_punch(Fighter *fighter) {
   (mk4_can_ground_throw(fighter, false) ? retail_lp_throw : retail_jab)(fighter);
 }
 
+void retail_normal_low_kick(Fighter *fighter) {
+  (mk4_can_ground_throw(fighter, true) ? retail_lk_throw : retail_low_kick)(fighter);
+}
+
 static void normal_lk(Fighter *fighter) {
-  if (fighter_holds_back(fighter)) {
-    retail_sweep(fighter);
-  } else {
-    (mk4_can_ground_throw(fighter, true) ? retail_lk_throw : retail_low_kick)(fighter);
-  }
+  enter_action(fighter, fighter_holds_back(fighter) ? 6 : 4);
 }
 
 /* Native46b5d0 supplies only the literal script operand, not authored logic. */
@@ -114,7 +143,45 @@ void retail_press_table(Fighter *fighter, Button button) {
   bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
   FighterFn entry = NULL;
   switch (target) {
+    case 0x460f40:
+      entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? fighter->weapon->back_hp : fighter->weapon->hp) : normal_hp;
+      break;
+    case 0x460fb0:
+      entry =
+          fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp) : action_entry(fighter, 8);
+      break;
+    case 0x460fc0:
+      entry = normal_lk;
+      break;
+    case 0x461030:
+      entry = normal_hk;
+      break;
+    case 0x4610c0:
+      /* The engine command matcher owns finish command gates before fallback. */
+      {
+        uint32_t target = retail_action_target(retail_vm_image(), 1, 1);
+        entry = target == 0x46ccd0 ? retail_uppercut : retail_native_entry((unsigned)fighter->roster, target);
+      }
+      break;
+    case 0x4610d0:
+      if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60 && fighter->weapon->crouch_lp != NULL) {
+        entry = fighter->weapon->crouch_lp;
+      } else {
+        entry = crouch_entry(fighter, 8);
+      }
+      break;
+    case 0x461190:
+      entry = crouch_entry(fighter, 7);
+      break;
+    case 0x461160:
+      entry = crouch_entry(fighter, 6);
+      break;
+    case 0x460200:
+    case 0x461130:
+      /* Held-block movement/state ownership is handled by the simulation pump. */
+      return;
     case 0x46c210:
+    case 0x46c3f0:
     case 0x46c450:
     case 0x46c480:
       if (target == 0x46c480 && down && (peer->action == ACTION_RETAIL_4004 || peer->hits > 1)) {
@@ -123,7 +190,7 @@ void retail_press_table(Fighter *fighter, Button button) {
         weapon_followup_victim(fighter);
         entry = fighter_holds_back(fighter) ? fighter->weapon->back_hp : fighter->weapon->hp;
       } else {
-        entry = target == 0x46c210 ? retail_combo_high_punch : normal_hp;
+        entry = target == 0x46c210 ? retail_combo_high_punch : target == 0x46c3f0 ? air_ground_hp : normal_hp;
       }
       break;
     case 0x46c6f0:
@@ -131,7 +198,7 @@ void retail_press_table(Fighter *fighter, Button button) {
         weapon_followup_victim(fighter);
         entry = fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp;
       } else {
-        entry = normal_lp;
+        entry = retail_normal_low_punch;
       }
       break;
     case 0x46c650:

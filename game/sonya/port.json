@@ -106,14 +106,14 @@
       "symbol": "retail_vm_enter"
     },
     "high_punch": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "sonya_hp"
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40",
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch"
     },
     "jab": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch"
     },
     "leg_grab": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -126,9 +126,9 @@
       "symbol": "retail_lk_throw"
     },
     "low_kick": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick"
     },
     "lp_throw": {
       "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
@@ -451,9 +451,9 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "air_ground_followup"
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "air_punch_followup": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -476,9 +476,9 @@
       "symbol": "retail_close_buttons"
     },
     "crouching": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "crouching"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -486,9 +486,9 @@
       "symbol": "jumping"
     },
     "standing": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/sonya/character.c",
-      "symbol": "standing"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "straight_air": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

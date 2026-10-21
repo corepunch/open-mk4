@@ -92,19 +92,11 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
 /* 46f080/46f130: two native contact visits, then remaining clip playback.
  * Keep the established portable timing; source-script startup is generated. */
 
-static const ButtonTable standing = {.press = {[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
-                                         [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-                                         [BUTTON_HIGH_KICK] = sub_zero_press_kick,
-                                         [BUTTON_LOW_KICK] = sub_zero_press_lk}};
-static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-                                          [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
-                                          [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
-                                          [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = sub_zero_press_air_hp,
                                         [BUTTON_LOW_PUNCH] = sub_zero_press_air_lp,
                                         [BUTTON_HIGH_KICK] = sub_zero_press_air_hk,
                                         [BUTTON_LOW_KICK] = sub_zero_press_air_lk}};
-static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
+static const Controls controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &jumping}};
 
 static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_JAB] = retail_jab,

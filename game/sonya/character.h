@@ -31,14 +31,7 @@
 #define press_air_lp sonya_press_air_lp
 #define press_combo_hk sonya_press_combo_hk
 #define press_combo_hp sonya_press_combo_hp
-#define press_crouch_hk retail_press_crouch_high_kick
-#define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp retail_press_crouch_low_punch
-#define press_jab sonya_press_jab
-#define press_kick sonya_press_kick
 #define press_knee_hp sonya_press_knee_hp
-#define press_lk sonya_press_lk
-#define press_lp sonya_press_lp
 #define s_knockdown sonya_s_knockdown
 #define s_victory sonya_s_victory
 #define scene_end_watch sonya_scene_end_watch
@@ -102,10 +95,6 @@ void sonya_press_air_hk(Fighter *fighter);
 void sonya_press_air_hp(Fighter *fighter);
 void sonya_press_air_lk(Fighter *fighter);
 void sonya_press_air_lp(Fighter *fighter);
-void sonya_press_jab(Fighter *fighter);
-void sonya_press_kick(Fighter *fighter);
-void sonya_press_lk(Fighter *fighter);
-void sonya_press_lp(Fighter *fighter);
 void sonya_entry_retail_script_004e01c0(Fighter *fighter);
 void sonya_entry_retail_script_004e01d0(Fighter *fighter);
 void sonya_entry_retail_script_004e5930(Fighter *fighter);
@@ -177,7 +166,6 @@ void sonya_air_throw(Fighter *fighter);
 void sonya_bicycle(Fighter *fighter);
 void sonya_cartwheel(Fighter *fighter);
 void sonya_hk(Fighter *fighter);
-void sonya_hp(Fighter *fighter);
 void sonya_leg_grab(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);

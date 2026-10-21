@@ -96,14 +96,14 @@
       "symbol": "retail_high_kick"
     },
     "high_punch": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_high_punch"
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40",
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch"
     },
     "jab": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch"
     },
     "lk_throw": {
       "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture",
@@ -111,9 +111,9 @@
       "symbol": "retail_lk_throw"
     },
     "low_kick": {
-      "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/retail_combat.c",
-      "symbol": "retail_low_kick"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick"
     },
     "lp_throw": {
       "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
@@ -466,9 +466,9 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "source": "game/reiko/moves/air_attacks.c",
-      "symbol": "reiko_air_followup",
-      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "air_punch_followup": {
       "source": "game/reiko/moves/air_attacks.c",
@@ -491,9 +491,9 @@
       "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "crouching": {
-      "evidence": "Retail Reiko stance table 0x4e5070; shared base button map with Reiko generated move entries in game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_crouching"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
       "source": "game/reiko/moves/air_attacks.c",
@@ -501,9 +501,9 @@
       "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
-      "evidence": "Retail Reiko stance table 0x4e5058; shared base button map with Reiko generated move entries in game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_standing"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "straight_air": {
       "evidence": "Retail Reiko stance table 0x4e6ec8; shared base button map with Reiko generated move entries in game/reiko/character.c",

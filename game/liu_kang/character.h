@@ -61,14 +61,7 @@
 #define press_air_lp liu_kang_press_air_lp
 #define press_combo_hk liu_kang_press_combo_hk
 #define press_combo_hp liu_kang_press_combo_hp
-#define press_crouch_hk retail_press_crouch_high_kick
-#define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp retail_press_crouch_low_punch
-#define press_jab liu_kang_press_jab
-#define press_kick liu_kang_press_kick
 #define press_knee_hp liu_kang_press_knee_hp
-#define press_lk liu_kang_press_lk
-#define press_lp liu_kang_press_lp
 #define start_fatality liu_kang_start_fatality
 #define sword_attacks liu_kang_sword_attacks
 #define throw_disarm liu_kang_throw_disarm
@@ -104,7 +97,6 @@ void liu_kang_first_fatality(Fighter *fighter);
 void liu_kang_flying_kick(Fighter *fighter);
 void liu_kang_high_fireball(Fighter *fighter);
 void liu_kang_hk(Fighter *fighter);
-void liu_kang_hp(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
 void liu_kang_weapon(Fighter *fighter);
@@ -137,10 +129,6 @@ void liu_kang_press_air_hk(Fighter *fighter);
 void liu_kang_press_air_hp(Fighter *fighter);
 void liu_kang_press_air_lk(Fighter *fighter);
 void liu_kang_press_air_lp(Fighter *fighter);
-void liu_kang_press_jab(Fighter *fighter);
-void liu_kang_press_kick(Fighter *fighter);
-void liu_kang_press_lk(Fighter *fighter);
-void liu_kang_press_lp(Fighter *fighter);
 void liu_kang_entry_retail_script_004de410(Fighter *fighter);
 void liu_kang_entry_retail_script_004de428(Fighter *fighter);
 void liu_kang_entry_retail_script_004de468(Fighter *fighter);

@@ -12,20 +12,12 @@
 #define press_air_hp quan_chi_press_air_hp
 #define press_air_lk quan_chi_press_air_lk
 #define press_air_lp quan_chi_press_air_lp
-#define press_high_kick quan_chi_press_high_kick
-#define press_high_punch quan_chi_press_high_punch
-#define press_low_kick quan_chi_press_low_kick
-#define press_low_punch quan_chi_press_low_punch
 #define press_sweep retail_press_sweep
 
 void quan_chi_press_air_hk(Fighter *fighter);
 void quan_chi_press_air_hp(Fighter *fighter);
 void quan_chi_press_air_lk(Fighter *fighter);
 void quan_chi_press_air_lp(Fighter *fighter);
-void quan_chi_press_high_kick(Fighter *fighter);
-void quan_chi_press_high_punch(Fighter *fighter);
-void quan_chi_press_low_kick(Fighter *fighter);
-void quan_chi_press_low_punch(Fighter *fighter);
 void quan_chi_script_air_finish(Fighter *fighter);
 void quan_chi_script_air_release(Fighter *fighter);
 void quan_chi_script_air_land(Fighter *fighter);
@@ -44,7 +36,6 @@ void quan_chi_entry_retail_script_004e9910(Fighter *fighter);
 extern const ButtonTable quan_chi_diagonal_air;
 void quan_chi_press_air_hk(Fighter *fighter);
 void quan_chi_press_air_lk(Fighter *fighter);
-void quan_chi_press_air_ground_hp(Fighter *fighter);
 void quan_chi_air_throw(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter);
 void quan_chi_skull(Fighter *fighter);

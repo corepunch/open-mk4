@@ -283,3 +283,7 @@ for _address, _source, _symbol in ((0x46be40, 'game/retail_combat.c', 'retail_cl
                                    (0x46c2a0, 'game/retail_controls.c', 'retail_combo_high_punch'),
                                    (0x46ba60, 'game/retail_controls.c', 'retail_close_high_kick')):
     HELPERS[_address] = replace(HELPERS[_address], port=(_source, _symbol), flow='Shared native controller and original retail scripts.')
+
+HELPERS[0x46d290] = replace(HELPERS[0x46d290], port=('game/native_combat.c', 'retail_high_punch'))
+HELPERS[0x46dca0] = H('jab_entry', 'active fighter and peer state', 'Original46dbb0 LP throw gate, then shared capture or original4e62f0 playback.', 'Shared native gate and retail execution.', ('game/retail_controls.c', 'retail_normal_low_punch'))
+HELPERS[0x46a7b0] = H('low_kick_entry', 'active fighter and peer state', 'Original LK throw gate and strict range, then shared capture or original4e5d90 playback.', 'Shared native gate and retail execution.', ('game/retail_controls.c', 'retail_normal_low_kick'))

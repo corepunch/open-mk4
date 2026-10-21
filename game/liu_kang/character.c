@@ -80,19 +80,11 @@ const WeaponStrike liu_kang_sword_attacks[] = {
 /* First scene: 4e0498[3] -> 450930. Second: 4dfe90[3] ->
  * 43c3d0/4dfff8/4e0020, victim reactions 176/177. */
 
-static const ButtonTable standing = {.press = {[BUTTON_HIGH_PUNCH] = liu_kang_press_jab,
-                                         [BUTTON_LOW_PUNCH] = liu_kang_press_lp,
-                                         [BUTTON_HIGH_KICK] = liu_kang_press_kick,
-                                         [BUTTON_LOW_KICK] = liu_kang_press_lk}};
-static const ButtonTable crouching = {.press = {[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
-                                          [BUTTON_LOW_PUNCH] = retail_press_crouch_low_punch,
-                                          [BUTTON_HIGH_KICK] = retail_press_crouch_high_kick,
-                                          [BUTTON_LOW_KICK] = retail_press_crouch_low_kick}};
 static const ButtonTable jumping = {.press = {[BUTTON_HIGH_PUNCH] = liu_kang_press_air_hp,
                                         [BUTTON_LOW_PUNCH] = liu_kang_press_air_lp,
                                         [BUTTON_HIGH_KICK] = liu_kang_press_air_hk,
                                         [BUTTON_LOW_KICK] = liu_kang_press_air_lk}};
-static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
+static const Controls controls = {NULL, 0, {&retail_ground_buttons[0], &retail_ground_buttons[1], &jumping}};
 
 static const CpuMoves cpu_moves = {
     .enter =

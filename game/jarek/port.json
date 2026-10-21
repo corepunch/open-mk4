@@ -101,14 +101,14 @@
       "evidence": "Jarek roster slot 12 native entry 0x0046a680 and selected EXE script roots"
     },
     "high_punch": {
-      "source": "game/jarek/character.c",
-      "symbol": "jarek_high_punch",
-      "evidence": "Jarek roster slot 12 native entry 0x0046d290 and selected EXE script roots"
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch",
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40"
     },
     "jab": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab",
-      "evidence": "Jarek roster slot 12 native entry 0x0046dca0 and selected EXE script roots"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "lk_throw": {
       "source": "game/retail_throw.c",
@@ -116,9 +116,9 @@
       "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture"
     },
     "low_kick": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_low_kick",
-      "evidence": "Jarek roster slot 12 native entry 0x0046a7b0 and selected EXE script roots"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "lp_throw": {
       "source": "game/script.c",
@@ -223,14 +223,14 @@
   },
   "stances": {
     "standing": {
-      "source": "game/jarek/character.c",
-      "symbol": "standing",
-      "evidence": "Jarek selected stance table standing; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "crouching": {
-      "source": "game/jarek/character.c",
-      "symbol": "crouching",
-      "evidence": "Jarek selected stance table crouching; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
       "source": "game/jarek/character.c",
@@ -248,9 +248,9 @@
       "evidence": "Jarek selected stance table air_punch_followup; typed EXE entries in reviewed inventory"
     },
     "air_followup": {
-      "source": "game/jarek/character.c",
-      "symbol": "air_followup",
-      "evidence": "Jarek selected stance table air_followup; typed EXE entries in reviewed inventory"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "close_hp_followup": {
       "source": "game/retail_controls.c",

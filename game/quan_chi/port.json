@@ -106,14 +106,14 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "high_punch": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_high_punch",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch",
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40"
     },
     "jab": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "lk_throw": {
       "source": "game/retail_throw.c",
@@ -121,9 +121,9 @@
       "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture"
     },
     "low_kick": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_low_kick",
-      "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "lp_throw": {
       "source": "game/script.c",
@@ -437,9 +437,9 @@
   },
   "stances": {
     "air_followup": {
-      "source": "game/quan_chi/moves/air_attacks.c",
-      "symbol": "quan_chi_air_followup",
-      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "air_punch_followup": {
       "source": "game/quan_chi/moves/air_attacks.c",
@@ -462,9 +462,9 @@
       "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "crouching": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "crouching",
-      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "diagonal_air": {
       "source": "game/quan_chi/moves/air_attacks.c",
@@ -472,9 +472,9 @@
       "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "standing",
-      "evidence": "Quan Chi roster controls map this VM stance table through the authored portable button table"
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
       "source": "game/quan_chi/character.c",

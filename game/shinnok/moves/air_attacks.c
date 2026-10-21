@@ -23,11 +23,8 @@ static const AirAttack air_attacks[] = {
  * the grounded follow-up table after a low air contact, not another air kick. */
 static const ButtonTable shinnok_air_punch_followup = {
     .press = {[BUTTON_LOW_PUNCH] = shinnok_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable shinnok_air_followup = {.press = {[BUTTON_HIGH_PUNCH] = shinnok_press_air_ground_hp,
-                                                     [BUTTON_LOW_PUNCH] = shinnok_press_low_punch,
-                                                     [BUTTON_HIGH_KICK] = shinnok_press_kick,
-                                                     [BUTTON_LOW_KICK] = shinnok_press_low_kick}};
-static const NativeAirProfile air_profile = {air_attacks, &shinnok_air_punch_followup, &shinnok_air_followup, mk4_land, shinnok_entry_retail_script_004e6270};
+static const NativeAirProfile air_profile = {
+    air_attacks, &shinnok_air_punch_followup, &retail_close_buttons[3], mk4_land, shinnok_entry_retail_script_004e6270};
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;

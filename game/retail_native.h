@@ -3,6 +3,9 @@
 #include "game.h"
 
 extern const ButtonTable retail_close_buttons[];
+extern const ButtonTable retail_ground_buttons[];
+void retail_normal_low_punch(Fighter *fighter);
+void retail_normal_low_kick(Fighter *fighter);
 uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button button);
 void retail_press_table(Fighter *fighter, Button button);
 void retail_combo_high_punch(Fighter *fighter);
@@ -12,10 +15,7 @@ void retail_combo_high_punch_tail(Fighter *fighter);
 void retail_close_high_kick_tail(Fighter *fighter);
 void retail_close_high_punch(Fighter *fighter);
 void retail_crouch_high_kick(Fighter *fighter);
-void retail_press_crouch_high_kick(Fighter *fighter);
-void retail_press_crouch_low_kick(Fighter *fighter);
 void retail_crouch_low_punch(Fighter *fighter);
-void retail_press_crouch_low_punch(Fighter *fighter);
 void retail_crouch_low_kick(Fighter *fighter);
 void retail_crouch_low_kick_tail(Fighter *fighter);
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction);
@@ -73,7 +73,6 @@ void retail_roundhouse_tail(Fighter *fighter);
 void retail_roundhouse_wide_tail(Fighter *fighter);
 void retail_uppercut(Fighter *fighter);
 void retail_uppercut_state(Fighter *fighter);
-void retail_press_uppercut(Fighter *fighter);
 
 void retail_finish_first(Fighter *fighter);
 void retail_finish_second(Fighter *fighter);

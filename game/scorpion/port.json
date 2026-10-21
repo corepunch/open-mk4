@@ -106,14 +106,14 @@
       "symbol": "retail_high_kick"
     },
     "high_punch": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_hp"
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40",
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch"
     },
     "jab": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch"
     },
     "lk_throw": {
       "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture",
@@ -121,9 +121,9 @@
       "symbol": "retail_lk_throw"
     },
     "low_kick": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/retail_combat.c",
-      "symbol": "retail_low_kick"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick"
     },
     "lp_throw": {
       "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
@@ -774,9 +774,9 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "air_ground_followup"
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "air_punch_followup": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -799,9 +799,9 @@
       "symbol": "retail_close_buttons"
     },
     "crouching": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_crouching"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -809,9 +809,9 @@
       "symbol": "scorpion_jumping"
     },
     "standing": {
-      "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_standing"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "straight_air": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

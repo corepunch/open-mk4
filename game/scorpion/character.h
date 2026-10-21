@@ -25,14 +25,7 @@
 #define press_air_lp scorpion_press_air_lp
 #define press_combo_hk scorpion_press_combo_hk
 #define press_combo_hp scorpion_press_combo_hp
-#define press_crouch_hk retail_press_crouch_high_kick
-#define press_crouch_lk retail_press_crouch_low_kick
-#define press_crouch_lp retail_press_crouch_low_punch
-#define press_jab scorpion_press_jab
-#define press_kick scorpion_press_kick
 #define press_knee_hp scorpion_press_knee_hp
-#define press_lk scorpion_press_lk
-#define press_lp scorpion_press_lp
 #define s_teleport_land scorpion_s_teleport_land
 #define script_air_diagonal_tail scorpion_script_air_diagonal_tail
 #define script_air_hp_tail scorpion_script_air_hp_tail
@@ -111,10 +104,6 @@ void scorpion_press_air_hk(Fighter *fighter);
 void scorpion_press_air_hp(Fighter *fighter);
 void scorpion_press_air_lk(Fighter *fighter);
 void scorpion_press_air_lp(Fighter *fighter);
-void scorpion_press_jab(Fighter *fighter);
-void scorpion_press_kick(Fighter *fighter);
-void scorpion_press_lk(Fighter *fighter);
-void scorpion_press_lp(Fighter *fighter);
 void scorpion_entry_retail_script_004d2e58(Fighter *fighter);
 void scorpion_entry_retail_script_004d2e88(Fighter *fighter);
 void scorpion_entry_retail_script_004d2eb0(Fighter *fighter);
@@ -164,8 +153,6 @@ void scorpion_air_throw(Fighter *fighter);
 void scorpion_beast_fatality(Fighter *fighter);
 void scorpion_burn_fatality(Fighter *fighter);
 void scorpion_fire(Fighter *fighter);
-void scorpion_hk(Fighter *fighter);
-void scorpion_hp(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_teleport(Fighter *fighter);
 void scorpion_weapon(Fighter *fighter);

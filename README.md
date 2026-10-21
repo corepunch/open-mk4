@@ -139,7 +139,7 @@ clips. All resources load directly from the read-only archive and executable.
 
 All 1,137 catalogued fighter script roots across 18 roster slots execute original
 retail words through one shared C11 interpreter. Roster, command/action, CPU
-special, native throw/combo selection, close-attack button, reaction and scene-selection tables load from retail data. Generated fighter
+special, native throw/combo selection, ground/follow-up button, reaction and scene-selection tables load from retail data. Generated fighter
 C/frame output and its emitter are removed. Remaining native controllers and
 state adapters are being consolidated; see the
 [migration ledger](docs/research/shared-retail-runtime.md).

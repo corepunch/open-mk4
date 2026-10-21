@@ -28,21 +28,16 @@ const uint32_t cage_weapon_descriptor[] = {
 };
 // clang-format on
 
-static const ButtonTable cage_standing = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_high_punch,
-                                              [BUTTON_LOW_PUNCH] = cage_press_low_punch,
-                                              [BUTTON_HIGH_KICK] = cage_press_high_kick,
-                                              [BUTTON_LOW_KICK] = cage_press_low_kick}};
-static const ButtonTable cage_crouching = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_crouching_hp,
-                                               [BUTTON_LOW_PUNCH] = cage_press_crouching_hp,
-                                               [BUTTON_HIGH_KICK] = cage_press_crouching_kick,
-                                               [BUTTON_LOW_KICK] = cage_press_crouching_kick}};
 static const ButtonTable cage_straight_air = {.press = {[BUTTON_HIGH_PUNCH] = cage_press_air_hp,
                                                   [BUTTON_LOW_PUNCH] = cage_press_air_lp,
                                                   [BUTTON_HIGH_KICK] = cage_press_air_hk,
                                                   [BUTTON_LOW_KICK] = cage_press_air_lk}};
 
 static const Controls cage_controls = {NULL, 0,
-    {[STANCE_STANDING] = &cage_standing, [STANCE_CROUCHING] = &cage_crouching, [STANCE_JUMP] = &cage_straight_air, [STANCE_DIAGONAL_AIR] = &cage_diagonal_air}};
+    {[STANCE_STANDING] = &retail_ground_buttons[0],
+        [STANCE_CROUCHING] = &retail_ground_buttons[1],
+        [STANCE_JUMP] = &cage_straight_air,
+        [STANCE_DIAGONAL_AIR] = &cage_diagonal_air}};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {

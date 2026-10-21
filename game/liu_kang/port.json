@@ -116,14 +116,14 @@
       "symbol": "retail_high_kick"
     },
     "high_punch": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_hp"
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40",
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch"
     },
     "jab": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch"
     },
     "lk_throw": {
       "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture",
@@ -136,9 +136,9 @@
       "symbol": "retail_vm_enter"
     },
     "low_kick": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter"
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick"
     },
     "lp_throw": {
       "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed",
@@ -444,9 +444,9 @@
   "schema": 1,
   "stances": {
     "air_followup": {
-      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "air_ground_followup"
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons"
     },
     "air_punch_followup": {
       "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
@@ -469,9 +469,9 @@
       "symbol": "retail_close_buttons"
     },
     "crouching": {
-      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "crouching"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "diagonal_air": {
       "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
@@ -479,9 +479,9 @@
       "symbol": "jumping"
     },
     "standing": {
-      "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",
-      "source": "game/liu_kang/character.c",
-      "symbol": "standing"
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries",
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons"
     },
     "straight_air": {
       "evidence": "Shared retail button-table selection; docs/scorpion/input-and-commands.md section 6, docs/liu-kang-scripts.md",

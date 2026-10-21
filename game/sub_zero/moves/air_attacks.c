@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static const ButtonTable air_followup;
-static const ButtonTable air_ground_followup;
 static void air_native_tail(Fighter *fighter, int index, int elapsed);
 static void start_air_attack(Fighter *fighter, int index);
 static void air_lp(Fighter *fighter);
@@ -9,8 +8,6 @@ static void air_kick(Fighter *fighter);
 static void air_combo_lp(Fighter *fighter);
 static void air_combo_kick(Fighter *fighter);
 static void press_air_followup_kick(Fighter *fighter);
-static void air_ground_hp(Fighter *fighter);
-static void press_air_ground_hp(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const AirAttack air_attacks[] = {
   {{.clip = 97, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0603}, {67502, -39976, 56360, 43253, 38, 10, 143, 0, 5898}, 6, 10, 9},
@@ -20,13 +17,9 @@ static const AirAttack air_attacks[] = {
   {{.clip = 59, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0601}, {55705, -2621, 51773, 38010, 22, 22, 4, ATTACK_MARK, 9830}, 6, 10, 10},
 };
 // clang-format on
-static const NativeAirProfile air_profile = {air_attacks, &air_followup, &air_ground_followup, sub_zero_air_land, NULL};
+static const NativeAirProfile air_profile = {air_attacks, &air_followup, &retail_close_buttons[3], sub_zero_air_land, NULL};
 static const ButtonTable air_followup = {
     .press = {[BUTTON_LOW_PUNCH] = sub_zero_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable air_ground_followup = {.press = {[BUTTON_HIGH_PUNCH] = press_air_ground_hp,
-                                                    [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
-                                                    [BUTTON_HIGH_KICK] = sub_zero_press_kick,
-                                                    [BUTTON_LOW_KICK] = sub_zero_press_lk}};
 static const MoveDef s_air_getup = {.clip = 131, .first = 46, .last = 79, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 static const mframe_t air_getup_frames[34] = {{0}};
 static const mmove_t air_getup = {.firstframe = 46, .lastframe = 79, .frame = air_getup_frames, .endfunc = fighter_ready};
@@ -114,21 +107,6 @@ static void press_air_followup_kick(Fighter *fighter) {
 
 /* 0x46c3f0 permits close HP against a reacting, grounded victim after a
  * low air contact. Ordinary standing HP uses a stricter entry predicate. */
-static void air_ground_hp(Fighter *fighter) {
-  if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(fighter_opponent(fighter))) {
-    retail_close_high_punch(fighter);
-  } else {
-    sub_zero_hp(fighter);
-  }
-}
-
-static void press_air_ground_hp(Fighter *fighter) {
-  if (fighter->armed) {
-    sub_zero_press_jab(fighter);
-  } else {
-    fighter_interrupt(fighter, air_ground_hp);
-  }
-}
 
 void sub_zero_script_air_hp_tail(Fighter *fighter) {
   air_native_tail(fighter, 0, 0);

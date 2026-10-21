@@ -23,12 +23,8 @@ static const AirAttack air_attacks[] = {
  * the grounded follow-up table after a low air contact, not another air kick. */
 static const ButtonTable quan_chi_air_punch_followup = {
     .press = {[BUTTON_LOW_PUNCH] = quan_chi_press_air_lp, [BUTTON_HIGH_KICK] = press_air_followup_kick, [BUTTON_LOW_KICK] = press_air_followup_kick}};
-static const ButtonTable quan_chi_air_followup = {.press = {[BUTTON_HIGH_PUNCH] = quan_chi_press_air_ground_hp,
-                                                      [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
-                                                      [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
-                                                      [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
 static const NativeAirProfile air_profile = {
-    air_attacks, &quan_chi_air_punch_followup, &quan_chi_air_followup, mk4_land, quan_chi_entry_retail_script_004e6270};
+    air_attacks, &quan_chi_air_punch_followup, &retail_close_buttons[3], mk4_land, quan_chi_entry_retail_script_004e6270};
 
 static void start_air_attack(Fighter *fighter, int index) {
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;

@@ -26,10 +26,6 @@ void jarek_press_air_kick(Fighter *fighter);
 void jarek_press_air_hk(Fighter *fighter);
 void jarek_press_air_lk(Fighter *fighter);
 void jarek_press_air_lp(Fighter *fighter);
-void jarek_press_kick(Fighter *fighter);
-void jarek_press_low_kick(Fighter *fighter);
-void jarek_press_low_punch(Fighter *fighter);
-void jarek_press_punch(Fighter *fighter);
 void jarek_script_air_finish(Fighter *fighter);
 void jarek_script_current_reaction(Fighter *fighter, int reaction);
 void jarek_script_low_kick_avoid(Fighter *fighter);
@@ -85,7 +81,6 @@ extern const MoveDef jarek_s_block;
 extern const MoveDef jarek_s_crouch;
 extern const MoveDef jarek_s_low_kick;
 
-void jarek_press_air_ground_hp(Fighter *fighter);
 void jarek_entry_retail_script_004e6270(Fighter *fighter);
 void jarek_weapon_upper_contact(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);

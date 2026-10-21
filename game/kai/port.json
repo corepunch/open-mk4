@@ -45,9 +45,9 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5ca0, 0x4e6998); verified by typed Kai inventory."
     },
     "high_punch": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_high_punch",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (); verified by typed Kai inventory."
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch",
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40"
     },
     "input_478df0": {
       "source": "game/kai/moves/lunge_kick.c",
@@ -75,9 +75,9 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e8358); verified by typed Kai inventory."
     },
     "jab": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62f0, 0x4e6330, 0x4e6360, 0x4e63b0); verified by typed Kai inventory."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "lk_throw": {
       "source": "game/retail_throw.c",
@@ -85,9 +85,9 @@
       "evidence": "Loaded4ddfb8 native selection including16->2/17->4; original selected scripts and shared capture"
     },
     "low_kick": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_low_kick",
-      "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5d90); verified by typed Kai inventory."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "lp_throw": {
       "source": "game/script.c",
@@ -459,9 +459,9 @@
   },
   "stances": {
     "air_followup": {
-      "source": "game/kai/moves/air_attacks.c",
-      "symbol": "kai_air_followup",
-      "evidence": "Retail air_followup table; installed by native air contact or diagonal jump entry."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     },
     "air_punch_followup": {
       "source": "game/kai/moves/air_attacks.c",
@@ -484,9 +484,9 @@
       "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "crouching": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_crouching",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e5070 recorded for this stance."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "diagonal_air": {
       "source": "game/kai/moves/air_attacks.c",
@@ -494,9 +494,9 @@
       "evidence": "Retail diagonal_air table; installed by native air contact or diagonal jump entry."
     },
     "standing": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_standing",
-      "evidence": "Kai CharacterDef currently selects shared portable controls; typed roster table 0x4e5058 recorded for this stance."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
       "source": "game/kai/character.c",

@@ -778,3 +778,35 @@ small runtime contracts verify loaded-button target mutation and native/script
 completion ownership; no character timing/damage matrices were added. The SDL
 self-test passes18 rigs/11 arenas. The broad battle suite still stops at the
 previously recorded exact-tick air-throw damage assertion.
+
+## Loaded ground controls for every fighter
+
+All eighteen standing/crouching controls now use shared address-only views of
+4e5058/4e5070. Grounded air-contact follow-ups use original4e70c0 and native46c3f0,
+which can force a close punch against a reacting grounded peer. Normal native
+selectors read action table4e6ef8 and crouch table4e7020; targets are resolved
+through the shared typed registry. Equipped weapon native frontends remain the
+existing service boundary until their descriptor/button migration.
+
+Native46dbb0 and46a7b0 now share their actual common exclusions while retaining
+their differences: LP has attack-action exclusions and an unarmed condition;
+LK uses strict distance and allows the armed path. Native48ebc0's swapped
+context checks whether the victim holds back. Both use exact retail0xb333 range.
+Native input controllers are implemented once rather than copied per fighter.
+Held block remains owned by the simulation state pump, and engine command
+matching handles finish requests before crouching-HP fallback; this step does
+not add retail optional automatic-finish/cheat flags.
+
+The54 copied ground/follow-up button tables,126 unused private normal-input
+functions,40 empty native input modules, four now-unused shared press wrappers
+and the unused approximate mk4_controls fallback are removed. Legacy CPU callers
+still retain some native selector wrappers; air input/profiles remain the next
+migration family. The audit exposed an old Goro manifest entry pointing at his
+jumping table instead of the actual grounded follow-up table; the jumping table
+is preserved and the correct native follow-up is now indexed.
+
+Shared VM/rejection checks, eighteen strict audits, native source gates, format
+checks, six helper-navigation checks and seven port-navigation checks pass. The
+existing runtime fixtures exercise the loaded input path; no tests were added.
+SDL self-test passes all18 rigs/11 arenas. The broad battle test's previously
+recorded air-throw assertion has not been reclassified as passing.

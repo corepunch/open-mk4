@@ -15,9 +15,9 @@
       "evidence": "Shared native42c590 capture and original4de798 selector; no fighter animation seed"
     },
     "jab": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_jab",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_punch",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "uppercut": {
       "source": "game/retail_combat.c",
@@ -75,9 +75,9 @@
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "low_kick": {
-      "source": "game/retail_combat.c",
-      "symbol": "retail_low_kick",
-      "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_normal_low_kick",
+      "evidence": "Original46dca0/46a7b0 native throw gate followed by original retail selector; implemented once"
     },
     "roundhouse": {
       "source": "game/retail_combat.c",
@@ -85,9 +85,9 @@
       "evidence": "461030 with back held enters 46f1f0; Goro slot 4e6840 binds 313, 46f220 selects 4e6860/4e6878 and 46f270 queries B[33]."
     },
     "high_punch": {
-      "source": "game/goro/moves/punches.c",
-      "symbol": "goro_high_punch",
-      "evidence": "Shared stance 4e5058 HP 460f40 selects 46d290/46d9b3 (clip 296/297, action 010a, A[0]) or close HP 46be40 within 0.8."
+      "source": "game/native_combat.c",
+      "symbol": "retail_high_punch",
+      "evidence": "Shared original native46d290/46d9b3 playback, reached through loaded standing controller460f40"
     },
     "close_hp": {
       "source": "game/retail_combat.c",
@@ -339,14 +339,14 @@
   },
   "stances": {
     "standing": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_standing",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "crouching": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_crouching",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_ground_buttons",
+      "evidence": "Original4e5058/4e5070 button pointers read live; shared native selectors and typed engine interrupt/held-block boundaries"
     },
     "straight_air": {
       "source": "game/goro/character.c",
@@ -379,9 +379,9 @@
       "evidence": "Original6slot button table read from the retail image on every press; native controller implemented once"
     },
     "air_followup": {
-      "source": "game/goro/character.c",
-      "symbol": "goro_jumping",
-      "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Goro controls select these portable stance tables."
+      "source": "game/retail_controls.c",
+      "symbol": "retail_close_buttons",
+      "evidence": "Original grounded air-contact follow-up table4e70c0 read live, with shared native46c3f0 controller"
     }
   },
   "weapon": {
