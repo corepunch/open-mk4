@@ -3,12 +3,8 @@
 
 #include "game.h"
 
-/* Primitives for generated frame programs. No bytecode or address dispatch. */
-bool mk4_mmove_pair_step(Fighter *fighter);
+/* Shared native services used by the retail interpreter and engine. */
 void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first);
-void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample);
-void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample);
-void mk4_mmove_blend_bind(Fighter *fighter, int clip, int count);
 void mk4_mmove_blend_to(Fighter *fighter, int clip, int count, int target, q16 step, q16 first, FighterFn end);
 void mk4_script_stop(Fighter *fighter);
 void mk4_script_avoid_clear(Fighter *fighter);
@@ -18,7 +14,6 @@ void mk4_script_indexed_sound(Fighter *fighter, int selector);
 void mk4_script_guard_block_sound_26(Fighter *fighter);
 void mk4_script_guard_block_sound_28(Fighter *fighter);
 
-void mk4_mmove_land(Fighter *fighter);
 void mk4_script_thrown_ready(Fighter *fighter);
 void mk4_script_impact(Fighter *fighter);
 void mk4_script_impact_callback(Fighter *fighter);
@@ -31,7 +26,6 @@ void mk4_script_context(Fighter *fighter, int selector);
 void mk4_script_roster_sound(Fighter *fighter, int selector);
 void mk4_script_draw_voice(Fighter *fighter);
 void mk4_script_scene_active(Fighter *fighter);
-void mk4_mmove_pair_back_step(Fighter *owner);
 void mk4_mmove_throw_start(Fighter *fighter, const MoveDef *owner_move, const MoveDef *victim_move, FighterFn script);
 Fighter *mk4_script_release_pair(Fighter *fighter);
 void mk4_mmove_pair_victim(Fighter *fighter, const MoveDef *move);
@@ -52,8 +46,6 @@ void mk4_script_context_sound(Fighter *fighter, int selector);
 void mk4_script_reaction_motion(Fighter *fighter, int left, int right, int up, int gravity);
 void mk4_script_landing_motion(Fighter *fighter);
 void mk4_script_scene_pose(Fighter *fighter, int clip, int sample);
-void mk4_script_fan_cycle(Fighter *fighter);
-void mk4_mmove_fan_victim_end(Fighter *fighter);
 void mk4_native_fan_rise(Fighter *fighter);
 void mk4_native_spike_tail(Fighter *fighter, FighterFn end);
 void mk4_script_spike_tail(Fighter *fighter);
@@ -67,7 +59,6 @@ void mk4_script_scene_task(Fighter *fighter, int task_type);
 
 void mk4_mmove_hold(Fighter *fighter);
 void mk4_mmove_wait_grounded(Fighter *fighter);
-void mk4_mmove_wait_land(Fighter *fighter, FighterFn next);
 
 void mk4_mmove_lk_blend_return(Fighter *fighter);
 #endif

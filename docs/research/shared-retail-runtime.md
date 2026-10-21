@@ -596,3 +596,14 @@ Runtime checks, all strict roster audits, source gates and formatting pass.
 The existing battle integration builds and reaches the known ground-throw
 assertion. No tests were added. Other ground-attack profile rows and controller
 tables remain transitional and are not evidence of completed consolidation.
+
+## Retired compiler-only C support
+
+Nine uncalled generated-program APIs are removed: inherited clip checks,
+paired cursor stepping, generated blend setup, generated landing/wait wrappers,
+and obsolete fan callbacks. Live interpreter opcodes already own these control
+flows; native engine blending and other called services remain. Research aliases
+now point to the actual VM, common landing or shared native scene implementation.
+The header describes native services rather than generated script primitives.
+Runtime checks, all strict roster audits, source gates and formatting pass.
+No new tests or behavior paths were introduced.

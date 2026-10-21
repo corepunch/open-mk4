@@ -4,7 +4,6 @@
 #include "mk4_characters.h"
 #include "math_util.h"
 #include <string.h>
-#include <stdio.h>
 
 static void bind_clip(Fighter *fighter, int clip, int count, int first) {
   require(count > 0 && first >= 0 && first < count, "Invalid native clip binding");
@@ -26,56 +25,6 @@ void mk4_mmove_bind(Fighter *fighter, int clip, int count, int first) {
   /* Native frame continuations own contact queries. Do not also resolve the
    * approximate startup/active/damage window from an old move header. */
   fighter->playback_move.flags |= SF_RECORD;
-}
-
-void mk4_script_inherit(Fighter *fighter, int clip, int count, int sample) {
-  if (fighter_move(fighter)->clip != clip || fighter_sample(fighter) != sample) {
-    char message[160];
-    snprintf(message, sizeof message, "Generated entry needs clip %d sample %d; native continuation has clip %d sample %d", clip, sample,
-        fighter_move(fighter)->clip, fighter_sample(fighter));
-    require(false, message);
-  }
-  bind_clip(fighter, clip, count, sample);
-}
-
-void mk4_mmove_inherit_current(Fighter *fighter, int count, int sample) {
-  const MoveDef *current = fighter_move(fighter);
-  require(current->clip >= 0 && current->last == count - 1 && fighter_sample(fighter) == sample,
-      "Generated frame entry needs the inherited clip length and sample");
-  mk4_mmove_bind(fighter, current->clip, count, sample);
-}
-
-/* A paired frame boundary advances the captured victim only. The generated
- * owner row supplies its own pose. Release gives the victim an independent
- * phase whose first duration starts on the following simulation tick. */
-bool mk4_mmove_pair_step(Fighter *owner) {
-  /* As in pair_advance_frame, a released owner keeps its compiled recovery
-   * after the victim entered an independent reaction. */
-  if (owner->flags & FF_PAIR_RELEASE) {
-    return true;
-  }
-  Fighter *victim = (Fighter *)fighter_opponent(owner);
-  if (victim->pending != NULL || !(owner->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
-    fighter_finish_mmove(owner, fighter_ready);
-    return false;
-  }
-  if (!(victim->flags & FF_PAIR_RELEASE)) {
-    victim->sample_override = mini(fighter_move(victim)->last, fighter_sample(victim) + 1);
-  }
-  return true;
-}
-
-/* 45bc70/45bd20 -> 428b10: blend from the live pose into sample zero,
- * with step 0xa3d and first weight 0x4000, then resume at sample one. */
-void mk4_mmove_blend_bind(Fighter *fighter, int clip, int count) {
-  require(count > 1, "Blend continuation needs sample one");
-  int source = fighter_move(fighter)->clip;
-  int sample = fighter_sample(fighter);
-  mk4_mmove_bind(fighter, clip, count, 0);
-  fighter->blend_clip = source;
-  fighter->blend_sample = sample;
-  fighter->blend_duration = 1;
-  fighter->blend_weight = 0x4000;
 }
 
 static void blend_weight_frame(Fighter *fighter, float weight) {
@@ -150,11 +99,6 @@ void mk4_script_guard_block_sound_28(Fighter *fighter) {
 
 static bool script_repeat_jab(const Fighter *fighter);
 
-/* 46ab20/47ed40/47ef10 finish the generated stream before the shared landing controller. */
-void mk4_mmove_land(Fighter *fighter) {
-  fighter_finish_mmove(fighter, mk4_land);
-}
-
 void mk4_script_thrown_ready(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   if (fighter->health > 0) {
@@ -217,13 +161,6 @@ void mk4_script_draw_voice(Fighter *fighter) {
 
 void mk4_script_scene_active(Fighter *fighter) {
   fighter->flags |= FF_UNTOUCHABLE;
-}
-
-/* 45bbc0/45beb0: reverse both live cursors, then hand off for one actor tick.
- * Each owner visit steps the victim back one pose. */
-void mk4_mmove_pair_back_step(Fighter *owner) {
-  Fighter *victim = (Fighter *)fighter_opponent(owner);
-  victim->sample_override = maxi(0, fighter_sample(victim) - 1);
 }
 
 /* 46f650 first calls4906c0: controller return snaps to the actor floor. */
@@ -415,16 +352,6 @@ void mk4_script_scene_pose(Fighter *fighter, int clip, int sample) {
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
 
-void mk4_script_fan_cycle(Fighter *fighter) {
-  (void)fighter; /* Native 43d530 returns to its scene coordinator. */
-}
-
-/* 43db50 hides the released fan victim and retires its frame program. */
-void mk4_mmove_fan_victim_end(Fighter *victim) {
-  victim->appearance = APPEARANCE_HIDDEN;
-  fighter_finish_mmove(victim, NULL);
-}
-
 static void scene_finish_all(Fighter *fighter) {
   (void)fighter;
   fighter_cancel_all_mmoves();
@@ -570,12 +497,6 @@ void mk4_script_scene_task(Fighter *fighter, int task_type) {
   /* 464bd0 has no presentation or combat writes: it retains its task slot
    * through one-tick reschedules. The bounded object pool owns that lifetime. */
   battle_spawn_projectile(fighter, PROJECTILE_EFFECT, 2, scene_task_step);
-}
-
-/* 48f390 landing continuation from a runtime-selected pose: hold the live
- * pose until the body lands, then enter the generated successor. */
-void mk4_mmove_wait_land(Fighter *fighter, FighterFn next) {
-  native_await(fighter, native_grounded, next);
 }
 
 void mk4_mmove_wait_grounded(Fighter *fighter) {

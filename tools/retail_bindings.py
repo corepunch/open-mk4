@@ -145,12 +145,12 @@ BINDINGS[0x45b1b0] = Binding('mk4_script_impact', 'game/script.c', ('handler',),
 BINDINGS[0x45b1d0] = Binding('mk4_script_impact_callback', 'game/script.c', ('handler',), ('fighter',), result='void', mmove=True, evidence='45b1d0; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45b350] = Binding('mk4_script_damage', 'game/script.c', ('handler',), ('fighter', 'word0_i32'), result='void', mmove=True, evidence='45b350; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x45baf0] = Binding('mk4_script_scene_active', 'game/script.c', ('handler',), ('fighter',), result='void', mmove=True, evidence='45baf0; bounded native listing and docs/liu-kang-scripts.md')
-BINDINGS[0x45bb10] = Binding('mk4_mmove_pair_step', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), result='void', flow='suspend', mmove_lowering='pair_to', cursor_effect='unknown', evidence='45bb10; bounded native listing and docs/liu-kang-scripts.md')
+BINDINGS[0x45bb10] = Binding('retail_vm_step', 'game/retail_vm.c', ('handler',), ('fighter', 'arg_u8'), result='void', flow='suspend', mmove_lowering='pair_to', cursor_effect='unknown', evidence='45bb10; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x46ddd0] = Binding('mk4_script_jab_contact', 'game/script.c', ('call',), ('fighter',), result='void', mmove=True, evidence='46ddd0; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x46de60] = Binding('mk4_script_jab_gate', 'game/script.c', ('call', 'predicate'), ('fighter',), result='flags', mmove=True, evidence='46de60; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x470420] = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',), ('fighter',), result='void', flow='terminal', evidence='470420; bounded native listing and docs/liu-kang-scripts.md')
-BINDINGS[0x47ed40] = Binding('mk4_mmove_land', 'game/script.c', ('tail',), ('fighter',), result='void', flow='terminal', evidence='47ed40; bounded native listing and docs/liu-kang-scripts.md')
-BINDINGS[0x47ef10] = Binding('mk4_mmove_land', 'game/script.c', ('tail',), ('fighter',), result='void', flow='terminal', evidence='47ef10; bounded native listing and docs/liu-kang-scripts.md')
+BINDINGS[0x47ed40] = Binding('mk4_land', 'game/mk4_common.c', ('tail',), ('fighter',), result='void', flow='terminal', evidence='47ed40; bounded native listing and docs/liu-kang-scripts.md')
+BINDINGS[0x47ef10] = Binding('mk4_land', 'game/mk4_common.c', ('tail',), ('fighter',), result='void', flow='terminal', evidence='47ef10; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x48f6e0] = Binding('mk4_script_save_motion', 'game/script.c', ('call',), ('fighter',), result='void', evidence='48f6e0; bounded native listing and docs/liu-kang-scripts.md')
 BINDINGS[0x48f750] = Binding('mk4_script_restore_motion', 'game/script.c', ('call',), ('fighter',), result='void', evidence='48f750; bounded native listing and docs/liu-kang-scripts.md')
 CHARACTER_BINDINGS[4] = {
@@ -208,7 +208,7 @@ CHARACTER_BINDINGS[4][0x41bbb0] = Binding('script_breath_object', 'game/sub_zero
 CHARACTER_BINDINGS[4][0x41b860] = Binding('script_breath_freeze', 'game/sub_zero/character.c', ('spawn',), ('fighter', 'task_type'), mmove=True, evidence='41b860 native contract; explicit engine body/scene context', flow='independent', task_types=(0,))
 
 CHARACTER_BINDINGS[4][0x46aae0] = Binding('script_air_release', 'game/sub_zero/character.c', ('tail',), mmove=True, evidence='46aae0 releases pair and applies D-record damage before 4e5e50')
-BINDINGS[0x46ab20] = Binding('mk4_mmove_land', 'game/script.c', ('tail',), flow='terminal', evidence='46ab20 shared landing return')
+BINDINGS[0x46ab20] = Binding('mk4_land', 'game/mk4_common.c', ('tail',), flow='terminal', evidence='46ab20 shared landing return')
 BINDINGS[0x484b60] = Binding('mk4_mmove_air_getup', 'game/mk4_common.c', ('tail',), flow='terminal', evidence='484b60 released air victim native getup')
 
 
@@ -310,8 +310,8 @@ for _character, _slug in ((1, 'raiden'), (2, 'sonya')):
     for _address in (0x45b1f0, 0x45b230):
         CHARACTER_BINDINGS[_character][_address] = Binding('script_reaction', _source, ('handler',), ('fighter', 'arg_u8'),
             evidence='%x reaction dispatch; native pair adapter owns independent victim recovery' % _address)
-    CHARACTER_BINDINGS[_character][0x43d530] = Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',), evidence='43d530 returns to the C scene coordinator')
-    CHARACTER_BINDINGS[_character][0x43db50] = Binding('mk4_mmove_fan_victim_end', 'game/script.c', ('tail',), evidence='43db50 arena release/hide; existing shared scene helper')
+    CHARACTER_BINDINGS[_character][0x43d530] = Binding('retail_fan_cycle', 'game/retail_scene.c', ('tail',), evidence='43d530 returns to the C scene coordinator')
+    CHARACTER_BINDINGS[_character][0x43db50] = Binding('retail_fan_victim_end', 'game/retail_scene.c', ('tail',), evidence='43db50 arena release/hide; existing shared scene helper')
     CHARACTER_BINDINGS[_character][0x484b60] = Binding('mk4_mmove_air_getup', 'game/mk4_common.c', ('tail',), evidence='484b60 airborne throw victim getup; shared native continuation')
     if _character == 1:
         CHARACTER_BINDINGS[_character][0x47d6e0] = Binding('script_torpedo_motion', _source, ('physics',), evidence='47d6e0 installed torpedo horizontal motion callback')
@@ -363,7 +363,7 @@ CHARACTER_BINDINGS[1][0x4889b0] = Binding('script_torpedo_victim_motion', 'game/
 CHARACTER_BINDINGS[2][0x488c10] = Binding('script_weapon_victim_getup', 'game/sonya/character.c', ('tail',), evidence='488c10 KO-aware front/back getup; uses shared native getup')
 BINDINGS[0x46a850] = Binding('fighter_finish_mmove', 'game/moves.c', ('tail',), flow='terminal', evidence='46a850 -> 429380 reverses the current clip then 46f650 controller return', mmove_lowering='reverse_return')
 BINDINGS[0x46a6e0] = Binding('fighter_finish_mmove', 'game/moves.c', ('tail',), flow='terminal', evidence='46a6e0 kick reversal -> 429380 then 46f650 controller return', mmove_lowering='reverse_return')
-BINDINGS[0x45bbc0] = Binding('mk4_mmove_pair_back_step', 'game/script.c', ('handler',), ('fighter', 'arg_u8'), flow='suspend', cursor_effect='unknown', mmove_lowering='pair_back_to', evidence='45bbc0 -> 45beb0 decrements owner and victim cursors to the inline target')
+BINDINGS[0x45bbc0] = Binding('retail_vm_step', 'game/retail_vm.c', ('handler',), ('fighter', 'arg_u8'), flow='suspend', cursor_effect='unknown', mmove_lowering='pair_back_to', evidence='45bbc0 -> 45beb0 decrements owner and victim cursors to the inline target')
 
 # Reiko's selected roots share native continuations with the established
 # roster ports. Keep the fighter-specific behavior in c_reiko.c and reuse
@@ -537,13 +537,13 @@ CHARACTER_BINDINGS[6] = {
                       evidence='42be10 returns the held Shinnok throw actor through the common controller-ready boundary'),
     0x42ce60: Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',),
                       evidence='42ce60 performs its final phase reset then returns through the shared ready boundary'),
-    0x43d530: Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',),
+    0x43d530: Binding('retail_fan_cycle', 'game/retail_scene.c', ('tail',),
                       evidence='43d530 returns to the Shinnok fan scene coordinator without actor-local work'),
-    0x43db50: Binding('mk4_mmove_fan_victim_end', 'game/script.c', ('tail',),
+    0x43db50: Binding('retail_fan_victim_end', 'game/retail_scene.c', ('tail',),
                       evidence='43db50 hides the fan victim and retires its scene frame program'),
     0x467fc0: Binding('mk4_script_spike_tail', 'game/script.c', ('tail',), flow='terminal',
                       evidence='467fc0 completes Shinnok stage-fatality victim rise and owner recovery'),
-    0x46ab20: Binding('mk4_mmove_land', 'game/script.c', ('tail',),
+    0x46ab20: Binding('mk4_land', 'game/mk4_common.c', ('tail',),
                       evidence='46ab20 hands the air-throw continuation to the common landing controller'),
     0x46a760: Binding('shinnok_script_kick_finish', 'game/shinnok/moves/kicks.c', ('tail',), flow='terminal', mmove=True,
                       evidence='46a760 -> 470c60 block 4e5d30: B[1] at poses 17/17/16, then 46a770 sets 1006 and enters 4e5c70'),
@@ -634,11 +634,11 @@ CHARACTER_BINDINGS[5] = {
                       evidence='42ce80 returns the short Fujin LP owner; reaction 102 was already installed on its peer at cursor25'),
     0x43d460: Binding('fujin_script_fan_tail', 'game/fujin/character.c', ('tail',), flow='terminal',
                       evidence='43d460 coordinates Fujin fan owner/victim continuations through shared scene helper'),
-    0x43d530: Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',),
+    0x43d530: Binding('retail_fan_cycle', 'game/retail_scene.c', ('tail',),
                       evidence='43d530 returns to the Fujin fan scene coordinator'),
     0x43d6f0: Binding('retail_script_004e0158', 'game/fujin/generated/scripts.inc', ('tail',),
                       script_target=0x4e0158, evidence='43d6f0 enters Fujin fan victory stream 4e0158'),
-    0x43db50: Binding('mk4_mmove_fan_victim_end', 'game/script.c', ('tail',), flow='terminal',
+    0x43db50: Binding('retail_fan_victim_end', 'game/retail_scene.c', ('tail',), flow='terminal',
                       evidence='43db50 hides the fan victim and retires its scene frame program'),
     0x45b1f0: Binding('fujin_script_current_reaction', 'game/fujin/character.c', ('handler',), ('fighter', 'arg_u8'),
                       evidence='45b1f0 -> 480f80/48f880/48fd00 installs Fujin LP reactions 102/109 on the captured peer'),
@@ -1047,9 +1047,9 @@ CHARACTER_BINDINGS[13] = {
                       script_target=0x4e0158, evidence='43d6f0 clears scene motion and enters the Jax fan victory stream 4e0158'),
     0x43d460: Binding('jax_fan_tail', 'game/jax/character.c', ('tail',), flow='terminal',
                       evidence='43d460 coordinates Jax fan performer, cycle, release and victim scene streams'),
-    0x43d530: Binding('mk4_script_fan_cycle', 'game/script.c', ('tail',),
+    0x43d530: Binding('retail_fan_cycle', 'game/retail_scene.c', ('tail',),
                       evidence='43d530 fan owner cycle returns to the Jax scene coordinator'),
-    0x43db50: Binding('mk4_mmove_fan_victim_end', 'game/script.c', ('tail',), flow='terminal',
+    0x43db50: Binding('retail_fan_victim_end', 'game/retail_scene.c', ('tail',), flow='terminal',
                       evidence='43db50 retires the Jax fan victim scene stream'),
     0x45b230: Binding('jax_script_opponent_reaction', 'game/jax/character.c', ('handler',), ('fighter', 'arg_u8'),
                       evidence='45b230 dispatches the low-byte reaction in the opponent context through reaction table 4ea4e8'),
@@ -1173,7 +1173,7 @@ CHARACTER_BINDINGS[14] = {
                       evidence='467fc0 completes the shared stage-spike scene and Cage finisher recovery'),
     0x46a790: Binding('cage_script_kick_finish', 'game/cage/character.c', ('tail',), flow='terminal',
                       evidence='46a790 enters Cage high-kick recovery stream 4e5c70'),
-    0x46ab20: Binding('mk4_mmove_land', 'game/script.c', ('tail',),
+    0x46ab20: Binding('mk4_land', 'game/mk4_common.c', ('tail',),
                       evidence='46ab20 hands air-throw owner recovery to the common landing controller'),
     0x46c7f0: Binding('cage_script_air_finish', 'game/cage/character.c', ('tail',), flow='terminal',
                       evidence='46c7f0 completes straight Cage air-kick continuation through landing'),
