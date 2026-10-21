@@ -567,14 +567,14 @@
       "evidence": "480360 ->4e8830 opens10 then holds11;4803a0 steers while LP is held,480510 captures within1 unit through reaction98/487a10 orbit and twelve-percent release, or480660 handles grounded block. Native slot8 reuse delay is90 ticks."
     },
     "0x467cd0": {
-      "source": "game/fujin/moves/fatality_second.c",
-      "symbol": "fujin_second_fatality",
-      "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "Second-fatality table4dfe90[5]=43bea0 selects4dfed0 owner547/548; reaction181=4816b0 selects549 hold,4818f0 tears flesh rig50c444 and4ea2a8 lands550.; runtime resolves the original scene table and shared native entry"
     },
     "0x467ce0": {
-      "source": "game/fujin/moves/fatality_first.c",
-      "symbol": "fujin_first_fatality",
-      "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "First-fatality table4e0498[5]=44f4f0 selects398 half-speed, fourteen399 cycles,210/212 draw and three independent213 shots0/40/85;450090 lifts the spinning peer and44fa10 supplies original bolt106 and explosive arrival.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

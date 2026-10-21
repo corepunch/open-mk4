@@ -10,24 +10,13 @@ void goro_fireball(Fighter *fighter);
 void goro_stomp_hold_separation(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
 void quan_chi_weapon_action(Fighter *fighter);
-void quan_chi_second_fatality(Fighter *fighter);
 bool fujin_can_dive(const Fighter *fighter);
 void fujin_dive(Fighter *fighter);
-void cage_fatality_1(Fighter *fighter);
-void cage_fatality_2(Fighter *fighter);
-void tanya_fatality_1(Fighter *fighter);
 bool tanya_can_first_fatality(const Fighter *fighter);
-void tanya_fatality_2(Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
-void jarek_fatality_2(Fighter *fighter);
-void jarek_fatality_1(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
-void shinnok_fatality_1(Fighter *fighter);
-void shinnok_fatality_2(Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
-void fujin_second_fatality(Fighter *fighter);
-void fujin_first_fatality(Fighter *fighter);
 bool reptile_can_first_fatality(const Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
@@ -43,16 +32,12 @@ void kai_rising_skull(Fighter *fighter);
 void kai_ground_skull(Fighter *fighter);
 bool kai_can_rising_skull(const Fighter *fighter);
 bool kai_can_ground_skull(const Fighter *fighter);
-void kai_fatality_1(Fighter *fighter);
 bool kai_can_first_fatality(const Fighter *fighter);
-void kai_fatality_2(Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
 void reiko_entry_retail_script_004de640(Fighter *fighter);
 void noob_saibot_entry_retail_script_004de640(Fighter *fighter);
-void reiko_first_fatality(Fighter *fighter);
-void reiko_second_fatality(Fighter *fighter);
 
 static void check(bool yes, const char *message) {
   if (!yes) {
@@ -1805,7 +1790,7 @@ static void check_jarek_second_fatality(void) {
       owner->body.pos[AXIS_X] = slot ? 0x11999 : -0x11999;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       check(retail_can_finish_range(owner) && !retail_can_finish_range(victim), "Jarek's second gate must accept 1.8..3 for the winner only");
-      jarek_finish_command(owner, jarek_fatality_2, slot);
+      jarek_finish_command(owner, retail_finish_second, slot);
       check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 577, "Jarek's U,U,F,F+BLK must start his own clip-577 scene");
       bool cut = false, fall = false, victory = false;
       int limit = reset_at ? 70 : 600;
@@ -1855,7 +1840,7 @@ static void check_jarek_first_fatality(void) {
     owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
     victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
     check(retail_can_finish_close(owner) && !retail_can_finish_close(victim), "Jarek's first gate must accept the close winner only");
-    jarek_finish_command(owner, jarek_fatality_1, slot);
+    jarek_finish_command(owner, retail_finish_first, slot);
     check(g_battle.phase == PHASE_FATALITY, "Jarek's F,B,F,F+LK must start his own scene");
     bool owner_clip = false, ripped = false, heart = false;
     for (int tick = 0; tick < 700 && g_battle.phase == PHASE_FATALITY; ++tick) {
@@ -3648,7 +3633,7 @@ static void check_kai_first_fatality(void) {
       owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       owner->held = 0;
-      kai_enter_command(slot, kai_fatality_1, BUTTON_BIT(BUTTON_BLOCK));
+      kai_enter_command(slot, retail_finish_first, BUTTON_BIT(BUTTON_BLOCK));
       check(g_battle.phase == PHASE_FATALITY, "Kai first command must start its own frame-only scene");
       int timer = g_battle.time_ticks;
       bool torso = false, paired = false;
@@ -3694,7 +3679,7 @@ static void check_kai_second_fatality(void) {
       owner->body.pos[AXIS_X] = slot ? 0x10000 : -0x10000;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       check(retail_can_finish_range(owner) && !retail_can_finish_range(victim), "Kai second gate must accept 1.8..3 units for the winner");
-      kai_enter_command(slot, kai_fatality_2, BUTTON_BIT(BUTTON_BLOCK));
+      kai_enter_command(slot, retail_finish_second, BUTTON_BIT(BUTTON_BLOCK));
       check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 493, "Kai second command must start the levitation scene");
       check(owner->body.pos[AXIS_X] == 0 && victim->body.pos[AXIS_X] == (slot ? -5 : 5) * Q16_ONE, "Kai second scene must use its fixed origin layout");
       int timer = g_battle.time_ticks;
@@ -3742,8 +3727,6 @@ static void check_partial_cpu_stage_dispatch(void) {
         const CpuMoves *cpu = roster_def(selected)->cpu;
         check(cpu != NULL && cpu->enter[CPU_FINISH_FAN] != NULL && cpu->enter[CPU_FINISH_SPIKE] != NULL,
             "Partial fighter must attach its generated CPU stage table to the roster");
-        check(cpu->enter[CPU_FINISH_1] == NULL && cpu->enter[CPU_FINISH_2] == NULL,
-            "Stage registration must not substitute fan or spike for an unported character fatality");
         check(battle_cpu_action(owner, fan ? CPU_FINISH_FAN : CPU_FINISH_SPIKE), "CPU must reach the reviewed stage entry");
         advance_ticks(1, NULL);
         check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (fan ? FINISH_FAN : FINISH_SPIKE),
@@ -3906,7 +3889,7 @@ static void check_fujin_second_fatality(void) {
         const Controls *controls = roster_def(5)->controls;
         const CommandDef *command = NULL;
         for (int i = 0; i < controls->command_count; ++i) {
-          if (controls->commands[i].enter == fujin_second_fatality) {
+          if (controls->commands[i].enter == retail_finish_second) {
             command = &controls->commands[i];
           }
         }
@@ -4322,7 +4305,7 @@ static void check_cage_first_fatality(void) {
         const Controls *controls = roster_def(14)->controls;
         const CommandDef *selected = NULL;
         for (int i = 0; i < controls->command_count; ++i) {
-          if (controls->commands[i].enter == cage_fatality_1) {
+          if (controls->commands[i].enter == retail_finish_first) {
             selected = &controls->commands[i];
           }
         }
@@ -4531,7 +4514,7 @@ static void check_cage_second_fatality(void) {
       const Controls *controls = roster_def(14)->controls;
       const CommandDef *selected = NULL;
       for (int i = 0; i < controls->command_count; ++i) {
-        if (controls->commands[i].enter == cage_fatality_2) {
+        if (controls->commands[i].enter == retail_finish_second) {
           selected = &controls->commands[i];
         }
       }
@@ -4625,7 +4608,7 @@ static void check_shinnok_fatalities(void) {
         check(battle_can_finish(owner) && !retail_can_finish_close(owner), "Shinnok's 45e570 gate must reject distance above one unit");
         owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        shinnok_fatality_command(slot, second ? shinnok_fatality_2 : shinnok_fatality_1);
+        shinnok_fatality_command(slot, second ? retail_finish_second : retail_finish_first);
         check(g_battle.phase == PHASE_FATALITY, "Shinnok fatality command must start its own scene");
         if (second) {
           check(owner->body.pos[AXIS_X] == 0 && owner->body.pos[AXIS_Z] == 0 && victim->body.pos[AXIS_X] == (slot ? -Q16_ONE : Q16_ONE),
@@ -5178,7 +5161,7 @@ static void check_tanya_second_fatality(void) {
       battle_init(slot ? 2 : 9, slot ? 9 : 2);
       g_battle.phase = PHASE_FIGHT;
       Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-      tanya_finisher_command(slot, tanya_fatality_2, 0);
+      tanya_finisher_command(slot, retail_finish_second, 0);
       check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 439, "Tanya HK D,F,D,F must start her second fatality from the roster stance");
       bool owner_scene = false, victim_scene = false, collapse = false, victory = false;
       int limit = reset_at ? 100 : 800;
@@ -5205,11 +5188,11 @@ static void check_tanya_first_fatality(void) {
     battle_init(slot ? 0 : 9, slot ? 9 : 0);
     g_battle.phase = PHASE_FIGHT;
     Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-    tanya_finisher_command(slot, tanya_fatality_1, 0);
+    tanya_finisher_command(slot, retail_finish_first, 0);
     check(g_battle.phase != PHASE_FATALITY, "Tanya's first fatality must require HP held with BLOCK");
     battle_init(slot ? 0 : 9, slot ? 9 : 0);
     g_battle.phase = PHASE_FIGHT;
-    tanya_finisher_command(slot, tanya_fatality_1, BUTTON_BIT(BUTTON_HIGH_PUNCH));
+    tanya_finisher_command(slot, retail_finish_first, BUTTON_BIT(BUTTON_HIGH_PUNCH));
     check(g_battle.phase == PHASE_FATALITY, "Tanya HP+BLK D,D,U,D must start her first fatality");
     bool kiss = false, swell = false, shake = false, burst = false;
     for (int tick = 0; tick < 900 && g_battle.phase == PHASE_FATALITY; ++tick) {
@@ -5612,7 +5595,7 @@ static void check_quan_chi_second_fatality(void) {
       owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
       g_battle.fighters[1 - slot].body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       check(!retail_can_finish_range(owner), "Quan Chi second fatality must reject close range");
-      fighter_interrupt(owner, quan_chi_second_fatality);
+      fighter_interrupt(owner, retail_finish_second);
       advance_ticks(2, NULL);
       check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (against ? 31 : 18),
           "43be30 must perform the victim roster's own second fatality, or the leg fatality against Quan Chi");
@@ -5966,7 +5949,7 @@ static bool reiko_finish_command(int slot, FighterFn entry, unsigned held, q16 d
 static void check_reiko_first_fatality(void) {
   unsigned chord = BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK);
   for (int slot = 0; slot < 2; ++slot) {
-    check(reiko_finish_command(slot, reiko_first_fatality, chord, 0xcccc), "Reiko first fatality must start from its held-switch command");
+    check(reiko_finish_command(slot, retail_finish_first, chord, 0xcccc), "Reiko first fatality must start from its held-switch command");
     Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
     int pieces = 0;
     for (int tick = 0; tick < 800 && g_battle.phase == PHASE_FATALITY; ++tick) {
@@ -5980,14 +5963,14 @@ static void check_reiko_first_fatality(void) {
     check(pieces == 4 && (victim->hidden_joints[0] & (UINT64_C(1) << 3)), "Reiko's tear must detach torso, head and both arms");
     check(g_battle.phase == PHASE_MATCH_OVER && fighter_move(owner)->clip == 443, "Reiko first fatality must end in its victory loop");
   }
-  check(!reiko_finish_command(0, reiko_first_fatality, 0, 0xcccc), "45e360 must require its held switches");
+  check(!reiko_finish_command(0, retail_finish_first, 0, 0xcccc), "45e360 must require its held switches");
 }
 
 /* 467cd0: B,B,D,D+HK at 1.8..3 units; the star barrage's first arrival
  * starts the clip-554 stagger and push-back, and the victim falls. */
 static void check_reiko_second_fatality(void) {
   for (int slot = 0; slot < 2; ++slot) {
-    check(reiko_finish_command(slot, reiko_second_fatality, 0, 0x26666), "Reiko second fatality must start from its command");
+    check(reiko_finish_command(slot, retail_finish_second, 0, 0x26666), "Reiko second fatality must start from its command");
     Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
     float start = fighter_distance(owner);
     bool staggered = false;
@@ -5998,7 +5981,7 @@ static void check_reiko_second_fatality(void) {
     check(staggered && fighter_distance(owner) > start + 2.5f, "Star arrivals must stagger and push the victim back");
     check(g_battle.phase == PHASE_MATCH_OVER && fighter_sample(victim) == 159, "Reiko second fatality must finish the fall before the result");
   }
-  check(!reiko_finish_command(0, reiko_second_fatality, 0, 0x10000), "45e530 must reject a close victim");
+  check(!reiko_finish_command(0, retail_finish_second, 0, 0x10000), "45e530 must reject a close victim");
 }
 
 static void check_reiko_noob(void) {

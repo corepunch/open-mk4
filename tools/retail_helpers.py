@@ -263,3 +263,6 @@ HELPERS[0x46ef90] = H('sweep_entry', 'active fighter', 'Store010c, schedule the 
 HELPERS[0x46f1f0] = H('roundhouse_entry', 'active fighter', 'Store010d and enter the original character selector4e6800; shared native contacts and recovery.', 'Shared retail execution.', ('game/retail_combat.c', 'retail_roundhouse'))
 
 HELPERS[0x46ccd0] = H('uppercut_entry', 'active fighter after finish-window gates', 'Post-gate46cdb4 stores0109 and enters original4e62a0; shared46cde0 contact/recovery.', 'Shared retail execution.', ('game/retail_combat.c', 'retail_uppercut'))
+
+HELPERS[0x467ce0] = H('first_fatality_dispatch', 'active fighter and retail scene table', 'Read4e0498 with the original hidden-roster remaps and invoke its native scene entry.', 'Shared native dispatch.', ('game/retail_native.c', 'retail_finish_first'))
+HELPERS[0x467cd0] = H('second_fatality_dispatch', 'active fighter and retail scene table', 'Read4dfe90 with the original hidden-roster remaps and invoke its native scene entry.', 'Shared native dispatch.', ('game/retail_native.c', 'retail_finish_second'))

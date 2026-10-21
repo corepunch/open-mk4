@@ -9,19 +9,11 @@
 
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
-void fujin_second_fatality(Fighter *fighter);
-void fujin_first_fatality(Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_wind(Fighter *fighter);
 void fujin_wind_slam(Fighter *fighter);
-void cage_fatality_1(Fighter *fighter);
-void cage_fatality_2(Fighter *fighter);
 void quan_chi_weapon_action(Fighter *fighter);
 bool shinnok_can_morph(const Fighter *fighter);
-void shinnok_fatality_1(Fighter *fighter);
-void shinnok_fatality_2(Fighter *fighter);
-void tanya_fatality_1(Fighter *fighter);
-void tanya_fatality_2(Fighter *fighter);
 
 static void check(bool ok, const char *message) {
   require(ok, message);
@@ -416,7 +408,7 @@ static void tanya_fatality_assets(const Assets *assets) {
       check(battle_can_finish(owner), "Asset-backed Tanya fatality needs its actual KO window");
       owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      fighter_interrupt(owner, which ? tanya_fatality_2 : tanya_fatality_1);
+      fighter_interrupt(owner, which ? retail_finish_second : retail_finish_first);
       bool pieces = false;
       for (int tick = 0; tick < 900 && g_battle.phase != PHASE_MATCH_OVER; ++tick) {
         battle_step((Input[2]){0});
@@ -735,9 +727,9 @@ static void shinnok_fatality_assets(const Assets *assets) {
     victim->body.pos[AXIS_X] = 0x6666;
     check(battle_can_finish(owner), "Shinnok asset fatality needs the finish window");
     if (second) {
-      shinnok_fatality_2(owner);
+      retail_finish_second(owner);
     } else {
-      shinnok_fatality_1(owner);
+      retail_finish_first(owner);
     }
     int hands = 0;
     for (int tick = 0; tick < 1000 && g_battle.phase == PHASE_FATALITY; ++tick) {
@@ -923,7 +915,7 @@ static void fujin_first_fatality_assets(const Assets *assets) {
     victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
     victim->health = 0;
     victim->action = 0x1009;
-    fujin_first_fatality(owner);
+    retail_finish_first(owner);
     bool wind = false, bolt = false, debris = false;
     int bolts = 0;
     for (int tick = 0; tick < 700; ++tick) {
@@ -980,7 +972,7 @@ static void fujin_second_fatality_assets(const Assets *assets) {
     victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
     victim->health = 0;
     victim->action = 0x1009;
-    fujin_second_fatality(owner);
+    retail_finish_second(owner);
     bool skin = false, flayed = false, landing = false;
     for (int tick = 0; tick < 650; ++tick) {
       battle_step((Input[2]){0});
@@ -1206,7 +1198,7 @@ static void cage_first_fatality_assets(const Assets *assets) {
       check(battle_can_finish(owner), "Asset-backed torso rip needs the deciding-KO window");
       owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      fighter_interrupt(owner, cage_fatality_1);
+      fighter_interrupt(owner, retail_finish_first);
       bool detached = false;
       for (int tick = 0; tick < 1100 && g_battle.phase != PHASE_MATCH_OVER; ++tick) {
         battle_step((Input[2]){0});
@@ -1247,7 +1239,7 @@ static void cage_second_fatality_assets(const Assets *assets) {
     check(battle_can_finish(owner), "Asset-backed Cage fatality needs its actual KO window");
     owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
     victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-    fighter_interrupt(owner, cage_fatality_2);
+    fighter_interrupt(owner, retail_finish_second);
     bool charge = false, head = false, fall = false;
     for (int tick = 0; tick < 450 && g_battle.phase != PHASE_MATCH_OVER; ++tick) {
       battle_step((Input[2]){0});

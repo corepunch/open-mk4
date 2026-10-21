@@ -326,6 +326,14 @@ static void native_contracts(void) {
 }
 
 static void data_tables(void) {
+  uint32_t scene_slot = 0x4e0498;
+  uint32_t scene_saved = mk4_image_u32(&image, scene_slot);
+  uint32_t alternate = mk4_image_u32(&image, scene_slot + 4);
+  FighterFn original_scene = retail_native_entry(0, scene_saved);
+  put_word(scene_slot, alternate);
+  check(retail_finish_target(&image, 0, false) == alternate && retail_native_entry(0, alternate) != original_scene,
+      "scene dispatch must resolve the live retail target rather than a fighter callback table");
+  put_word(scene_slot, scene_saved);
   /* Mutate shared source records: no compiled command or roster definition
    * may shadow a retail table read, including the second player's list. */
   uint32_t slot = 0x53cb58 + 4 * 17;

@@ -1,5 +1,7 @@
 #include "retail_native.h"
 #include "math_util.h"
+#include "retail_data.h"
+#include "retail_vm.h"
 
 typedef struct NativeAction {
   uint32_t address, characters;
@@ -64,4 +66,21 @@ bool retail_can_finish_range(const Fighter *fighter) {
 
 bool retail_has_gravity(const Fighter *fighter) {
   return fighter->body.gravity != 0;
+}
+
+/* 467ce0/43cbb0 and467cd0/43bd70 select the actual native scene entry
+ * through retail tables. Hidden fighters share the scene-selection remaps. */
+static void finish_enter(Fighter *fighter, bool second) {
+  uint32_t target = retail_finish_target(retail_vm_image(), (unsigned)fighter->roster, second);
+  if (target != 0) {
+    retail_native_entry((unsigned)fighter->roster, target)(fighter);
+  }
+}
+
+void retail_finish_first(Fighter *fighter) {
+  finish_enter(fighter, false);
+}
+
+void retail_finish_second(Fighter *fighter) {
+  finish_enter(fighter, true);
 }

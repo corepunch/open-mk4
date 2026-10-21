@@ -535,14 +535,14 @@
       "evidence": "478ee0 stamps slot 17, action 0x2014, C[0x63], clip 306; twenty 487e20 placements around the live peer from pi past the approach angle, -0x283a per visit with the radius shrinking to 1.2; then face, stance clip 284, 20 visits and 470420."
     },
     "0x467ce0": {
-      "source": "game/reiko/moves/fatality_first.c",
-      "symbol": "reiko_first_fatality",
-      "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "467ce0 -> 4e0498[7] = 452730: 425/428 shared-origin tear (452950), 452ac0 detaches subtrees 3/2/5/6 on clips 429/430/427/426, owner victory 443 (4528a0); gate 45e360 = close finish plus held BLK+HK+LP+LK.; runtime resolves the original scene table and shared native entry"
     },
     "0x467cd0": {
-      "source": "game/reiko/moves/fatality_second.c",
-      "symbol": "reiko_second_fatality",
-      "evidence": "467cd0 -> 4dfe90[7] = 41c360: owner 4d2d10 on clip 553 throws the 61-star 41d260 barrage; first arrival starts the victim 4d2d60 stagger with 41c510 push-back and 41c690 jolt, the head star ends them and 4d2d90 falls; gate 45e530 = 0x1cccc..0x30000."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "467cd0 -> 4dfe90[7] = 41c360: owner 4d2d10 on clip 553 throws the 61-star 41d260 barrage; first arrival starts the victim 4d2d60 stagger with 41c510 push-back and 41c690 jolt, the head star ends them and 4d2d90 falls; gate 45e530 = 0x1cccc..0x30000.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

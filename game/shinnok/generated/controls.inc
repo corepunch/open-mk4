@@ -2,8 +2,8 @@
 
 static const CpuMoves retail_cpu_moves = {.enter =
                                               {
-                                                  [CPU_FINISH_1] = shinnok_fatality_1,
-                                                  [CPU_FINISH_2] = shinnok_fatality_2,
+                                                  [CPU_FINISH_1] = retail_finish_first,
+                                                  [CPU_FINISH_2] = retail_finish_second,
                                                   [CPU_FINISH_FAN] = retail_fan_finish,
                                                   [CPU_FINISH_SPIKE] = shinnok_spike_fatality,
                                               },

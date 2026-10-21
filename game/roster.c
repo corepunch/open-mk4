@@ -80,6 +80,8 @@ const CharacterDef *roster_def(int index) {
       uint32_t target = retail_cpu_target(image, (unsigned)index, table);
       cpu[index].enter[slots[table]] = target ? retail_native_entry((unsigned)index, target) : NULL;
     }
+    cpu[index].enter[CPU_FINISH_1] = retail_finish_target(image, (unsigned)index, false) ? retail_finish_first : NULL;
+    cpu[index].enter[CPU_FINISH_2] = retail_finish_target(image, (unsigned)index, true) ? retail_finish_second : NULL;
     unsigned slot = retail_character_slot((unsigned)index);
     for (unsigned finish = 0; finish < 2; ++finish) {
       cpu[index].finish_distance[finish] = (q16)mk4_image_u32(image, 0x4dfe10 + finish * 0x40 + slot * 4);

@@ -517,14 +517,14 @@
       "evidence": "HK F,F record 4e4530 (T1[0x29], gate 45ef50). 46d1d0: armed -> T2[0xd] 498270 throw; follow-up -> 494610 and 4ecb40[0xd] 4955b0; otherwise action 1004, 4e62c0 and 46d260 equip of type 6d."
     },
     "0x467cd0": {
-      "source": "game/tanya/moves/fatality_second.c",
-      "symbol": "tanya_fatality_2",
-      "evidence": "HK D,F,D,F record 4e453c (T1[0x43], gate 45e570). 467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569)."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "HK D,F,D,F record 4e453c (T1[0x43], gate 45e570). 467cd0 -> 43bd70 -> 4dfe90[9] 464f30: victim task 466dd0/4e5b38, 475530 at 1.0, owner 4e5798 (context 78, 60 visits, reaction 186, clip 564), 4650b0 height, 4e57c0 three 565 cycles with task 619 cues and cameras 69/70, 566, 465130 wait 120 and victory; victim 465200 -> 4e5820 (567, 568x3) and 4e5860 (569).; runtime resolves the original scene table and shared native entry"
     },
     "0x467ce0": {
-      "source": "game/tanya/moves/fatality_first.c",
-      "symbol": "tanya_fatality_1",
-      "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "BLK D,D,U,D record 4e4520 (T1[0x40], flags 0x41, gate 45e2a0). 467ce0 -> 43cbb0 -> 4e0498[9] 44d340: victim task 44d560 and camera 44f180, 475530 at 1.15, owner B 0x30 and 475250 blend to 395 (4e1598/44d4a0/4e15a8/44d4e0/4e15b8 396, ten 4e15d0 replays); victim 389/397 blends, 4756f0 shared origin, 4e15e0 swell, 44d7c0 bob, two 4e15f0 pulses, 44d8d0 voice/shake cues, 4e1600 shake and 44dd90 burst.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

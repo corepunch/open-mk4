@@ -442,3 +442,26 @@ mask. Typed roles and argument guards remain enforced.
 Validation reuses shared runtime/native lifetime and rejection checks, strict
 audits for all slots, formatting and native source gates. No fighter timing
 or balance coverage was added.
+
+## Retail-loaded fatality native dispatch
+
+First/second fatality dispatch now reads4e0498/4dfe90 at execution and resolves
+the actual native scene address. Thirty fighter-specific dispatcher rows are
+replaced by the two shared dispatchers and a native-address registry: the
+existing native scene implementations remain registered once at their real
+entry addresses. CPU finish entries are populated from the same live tables,
+including supported hidden-roster selections; zero native targets stay absent.
+
+Evidence is local467ce0/43cbb0 and467cd0/43bd70, including the scene-specific
+hidden remaps16->2 and17->7, matched to mk4decomp's
+`PendingMatch_CallPauseScaledStoreCopyJmp`. These remaps are intentionally
+distinct from48e490's native action-table remap. Scene bodies and their
+existing lifetime contracts are reused.
+
+Existing command/scene regressions now request shared dispatch rather than
+private C function pointers. One source-data fixture swaps a scene-table word
+and checks native resolution. Shared VM checks, eighteen strict audits,
+formatting and native source gates pass. Existing battle finishers/CPU scenes
+pass and the run reaches the known ground-throw assertion. No fighter timing
+or balance tests were added. Private CPU minimum-range configuration and
+other native/controller families remain transitional.

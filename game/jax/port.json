@@ -506,14 +506,14 @@
       "evidence": "LK F,F,D record 4e43a8 and medium CPU row 4df95c -> 468f00: action 0x101, clip 108 to 15/35/38, impact C[0x50], shake 3, grounded opponent 0x23d7 and reaction 136, ten 37/38 cycles, finish and return."
     },
     "0x467ce0": {
-      "source": "game/jax/moves/fatality_first.c",
-      "symbol": "jax_fatality_1",
-      "evidence": "LK-release record 4e43e8 (F,F,D,F, gate 45e1b0) -> 467ce0/43cbb0/4e0498[13] = 4494c0 arm-rip scene: owner 384/443, victim 389/204 or 400 to 386, arms 446/447 on limb objects."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "LK-release record 4e43e8 (F,F,D,F, gate 45e1b0) -> 467ce0/43cbb0/4e0498[13] = 4494c0 arm-rip scene: owner 384/443, victim 389/204 or 400 to 386, arms 446/447 on limb objects.; runtime resolves the original scene table and shared native entry"
     },
     "0x467cd0": {
-      "source": "game/jax/moves/fatality_second.c",
-      "symbol": "jax_fatality_2",
-      "evidence": "BLOCK record 4e43c8 (B,F,F,D, gate 45e570) -> 467cd0/43bd70/4dfe90[13] = 4669c0 head clap: owner 284/555/556/114 loop, victim reaction 183 557/206."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "BLOCK record 4e43c8 (B,F,F,D, gate 45e570) -> 467cd0/43bd70/4dfe90[13] = 4669c0 head clap: owner 284/555/556/114 loop, victim reaction 183 557/206.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

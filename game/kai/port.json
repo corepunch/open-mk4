@@ -533,14 +533,14 @@
       "evidence": "Typed Kai LP F,F record4e48a8 (flags 12, airborne allowed) selects498fc0 through gate45eb10."
     },
     "0x467ce0": {
-      "source": "game/kai/moves/fatality_first.c",
-      "symbol": "kai_fatality_1",
-      "evidence": "Typed Kai HK U,F,U,B record4e48e8 (gate45e220) selects first-fatality dispatcher467ce0 ->4e0498[11]=44ad70."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "Typed Kai HK U,F,U,B record4e48e8 (gate45e220) selects first-fatality dispatcher467ce0 ->4e0498[11]=44ad70.; runtime resolves the original scene table and shared native entry"
     },
     "0x467cd0": {
-      "source": "game/kai/moves/fatality_second.c",
-      "symbol": "kai_fatality_2",
-      "evidence": "Typed Kai BLOCK U,U,U,D record4e48d4 (gate45e530) selects second-fatality dispatcher467cd0 ->4dfe90[11]=43bfe0."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "Typed Kai BLOCK U,U,U,D record4e48d4 (gate45e530) selects second-fatality dispatcher467cd0 ->4dfe90[11]=43bfe0.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

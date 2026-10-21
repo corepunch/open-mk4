@@ -507,14 +507,14 @@
       "evidence": "46d1d0 selects draw/throw/follow-up for type6e; follow-up table4ecb40 selects496920, not another normal."
     },
     "0x467cd0": {
-      "source": "game/cage/moves/fatality_second.c",
-      "symbol": "cage_fatality_2",
-      "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "Native467cd0 roster slot14 selects465790 ->4e5870/4e5880, independent185 victim and111 victory.; runtime resolves the original scene table and shared native entry"
     },
     "0x467ce0": {
-      "source": "game/cage/moves/fatality.c",
-      "symbol": "cage_fatality_1",
-      "evidence": "First-fatality roster table4e0498[14] selects448160;406/407 owner,410/411 victim,408 detached torso and443 victory are separate native continuations."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "First-fatality roster table4e0498[14] selects448160;406/407 owner,410/411 victim,408 detached torso and443 victory are separate native continuations.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

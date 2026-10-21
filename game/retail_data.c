@@ -165,3 +165,9 @@ void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster 
   roster->idle = retail_stance_clip(image, character, false);
   roster->walk = retail_stance_clip(image, character, true);
 }
+
+uint32_t retail_finish_target(const Mk4Image *image, unsigned character, bool second) {
+  uint32_t target = mk4_image_u32(image, (second ? 0x4dfe90 : 0x4e0498) + retail_character_slot(character) * 4);
+  require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail scene native target");
+  return target;
+}

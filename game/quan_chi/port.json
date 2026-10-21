@@ -512,14 +512,14 @@
       "evidence": "46d1d0 selects draw/throw/follow-up for type6f; follow-up table4ecb40 selects496be0, not another normal."
     },
     "0x467ce0": {
-      "source": "game/quan_chi/moves/fatality_first.c",
-      "symbol": "quan_chi_first_fatality",
-      "evidence": "First-fatality roster table4e0498[8] selects44bcd0; owner, victim, torn leg and camera are separate native continuations."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "First-fatality roster table4e0498[8] selects44bcd0; owner, victim, torn leg and camera are separate native continuations.; runtime resolves the original scene table and shared native entry"
     },
     "0x467cd0": {
-      "source": "game/quan_chi/moves/fatality_second.c",
-      "symbol": "quan_chi_second_fatality",
-      "evidence": "Second-fatality roster table4dfe90[8] selects43be30, which dispatches the victim roster's own second fatality."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "Second-fatality roster table4dfe90[8] selects43be30, which dispatches the victim roster's own second fatality.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

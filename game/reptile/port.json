@@ -501,14 +501,14 @@
       "evidence": "BLOCK record 4e45f0 and HK record 4e45b0 (chord gate 45f260) enter 4698a0 -> VM 4e5bb0 (clip 12, C[75]/C[74]) and native 4698b0, which toggles the culled render bit at sample 40."
     },
     "0x467cd0": {
-      "source": "game/reptile/moves/fatality_second.c",
-      "symbol": "reptile_fatality_2",
-      "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "HP U,D,D,D record 4e457c (45e530, 1.8..3 units) -> 467cd0 -> 4dfe90[10] = 43bf40 -> VM 4dff08: 493 hold, hover task 38, reaction 180, acid task 0, 544/545x6 vomit and 493 loop.; runtime resolves the original scene table and shared native entry"
     },
     "0x467ce0": {
-      "source": "game/reptile/moves/fatality.c",
-      "symbol": "reptile_fatality_1",
-      "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0.; runtime resolves the original scene table and shared native entry"
     },
     "0x46d1d0": {
       "source": "game/reptile/moves/weapon.c",

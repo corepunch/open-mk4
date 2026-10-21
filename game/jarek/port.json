@@ -524,14 +524,14 @@
       "evidence": "Typed LP record 0x4e4418 D,B selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     },
     "0x467cd0": {
-      "source": "game/jarek/moves/fatality_second.c",
-      "symbol": "jarek_fatality_2",
-      "evidence": "Typed BLOCK record 0x4e4438 U,U,F,F (flags 0x41, gate 45e530). 467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "Typed BLOCK record 0x4e4438 U,U,F,F (flags 0x41, gate 45e530). 467cd0 ->43bd70 ->4dfe90[12] =41df20: shared41aaf0 preamble, owner4d2db0 (context59, clip577, scene active, 41de30 glow) and 41dfc0 handing the victim to41dff0/41ad60 head separation and4d2e10, owner4d2de0 laser cues and4712e0 victory4e6a40.; runtime resolves the original scene table and shared native entry"
     },
     "0x467ce0": {
-      "source": "game/jarek/moves/fatality_first.c",
-      "symbol": "jarek_fatality_1",
-      "evidence": "Typed LK record 0x4e4474 F,B,F,F (gate 45e570). 467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "Typed LK record 0x4e4474 F,B,F,F (gate 45e570). 467ce0 ->43cbb0 ->4e0498[12] =446d00: pair aligned one unit, owner blends into403 (female peer, list4e7b28) or402 and enters4e1220/4e1230, 446f80 attaches the ja_fat_g heart to joint10 before4e1248; victim task447150 blends389/404 into4e1260..4e1290 with447310/4473b0/447410.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {

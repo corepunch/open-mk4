@@ -28,7 +28,6 @@ bool retail_can_finish_range(const Fighter *fighter);
 bool retail_has_gravity(const Fighter *fighter);
 CommandPredicate retail_native_predicate(uint32_t address);
 bool retail_native_gate(const Fighter *fighter, uint32_t address);
-#endif
 
 void retail_press_sweep(Fighter *fighter);
 void retail_roundhouse(Fighter *fighter);
@@ -40,3 +39,7 @@ void retail_roundhouse_wide_tail(Fighter *fighter);
 void retail_uppercut(Fighter *fighter);
 void retail_uppercut_state(Fighter *fighter);
 void retail_press_uppercut(Fighter *fighter);
+
+void retail_finish_first(Fighter *fighter);
+void retail_finish_second(Fighter *fighter);
+#endif

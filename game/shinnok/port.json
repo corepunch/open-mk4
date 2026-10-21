@@ -588,14 +588,14 @@
       "adaptation": "Shared fighter_change_character keeps the selection for round setup; resident assets replace the retail LOADING reload pause."
     },
     "0x467ce0": {
-      "source": "game/shinnok/moves/fatality_first.c",
-      "symbol": "shinnok_fatality_1",
-      "evidence": "RUN record 4e4708 (D,B,F,D, gate 45e570) -> 467ce0 -> 43cbb0 -> 4e0498[6] = 455000: owner vanish 4e2ef0, hand 4556d0/4e2f40, victim 4558f0/4e2f78, return 455190."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_first",
+      "evidence": "RUN record 4e4708 (D,B,F,D, gate 45e570) -> 467ce0 -> 43cbb0 -> 4e0498[6] = 455000: owner vanish 4e2ef0, hand 4556d0/4e2f40, victim 4558f0/4e2f78, return 455190.; runtime resolves the original scene table and shared native entry"
     },
     "0x467cd0": {
-      "source": "game/shinnok/moves/fatality_second.c",
-      "symbol": "shinnok_fatality_2",
-      "evidence": "BLOCK record 4e4694 (D,U,U,D, gate 45e570) -> 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0: camera intro 4e0088, victim reaction 179, hands 43c9d0/43ca00, return 455190."
+      "source": "game/retail_native.c",
+      "symbol": "retail_finish_second",
+      "evidence": "BLOCK record 4e4694 (D,U,U,D, gate 45e570) -> 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0: camera intro 4e0088, victim reaction 179, hands 43c9d0/43ca00, return 455190.; runtime resolves the original scene table and shared native entry"
     }
   },
   "command_predicates": {
