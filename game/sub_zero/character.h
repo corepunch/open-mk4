@@ -60,7 +60,7 @@
 #define script_lk_rebase sub_zero_script_lk_rebase
 #define script_lk_victim_rise sub_zero_script_lk_victim_rise
 #define script_lp_getup sub_zero_script_lp_getup
-#define script_lp_owner_return sub_zero_script_lp_owner_return
+#define script_lp_owner_return retail_throw_ready
 #define script_reaction sub_zero_script_reaction
 #define script_ready sub_zero_script_ready
 #define script_slide_return sub_zero_script_slide_return
@@ -128,7 +128,6 @@ void sub_zero_script_lk_owner_return(Fighter *fighter);
 void sub_zero_script_lk_rebase(Fighter *fighter);
 void sub_zero_script_lk_victim_rise(Fighter *victim);
 void sub_zero_script_lp_getup(Fighter *victim);
-void sub_zero_script_lp_owner_return(Fighter *fighter);
 void sub_zero_script_reaction(Fighter *fighter, int reaction);
 void sub_zero_script_ready(Fighter *fighter);
 void sub_zero_script_slide_return(Fighter *fighter);

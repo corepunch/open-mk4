@@ -18,7 +18,3 @@ void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
 void shinnok_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);
 }
-
-void shinnok_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}

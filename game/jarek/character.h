@@ -22,8 +22,6 @@ void jarek_fatality_contact_hold(Fighter *fighter);
 void jarek_script_current_reaction(Fighter *fighter, int reaction);
 void jarek_script_low_kick_avoid(Fighter *fighter);
 void jarek_script_low_kick_clear(Fighter *fighter);
-void jarek_script_lp_end(Fighter *fighter);
-void jarek_script_lp_return(Fighter *fighter);
 void jarek_script_opponent_reaction(Fighter *fighter, int reaction);
 void jarek_cannonball(Fighter *fighter);
 void jarek_fatality_1(Fighter *fighter);

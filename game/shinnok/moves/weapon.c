@@ -3,14 +3,6 @@
 
 static const MoveDef victim = {.clip = 132, .last = 59, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4003};
 
-void shinnok_weapon_crouch_return(Fighter *fighter) {
-  mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, NULL);
-  if (fighter->health > 0) {
-    fighter_enter_state(fighter, S_CROUCH);
-  }
-}
-
 void shinnok_weapon_sweep_getup(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   if (fighter->health <= 0) {

@@ -10,7 +10,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 
 void goro_script_current_reaction(Fighter *fighter, int reaction);
-void goro_script_lp_finish(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
 void goro_script_opponent_reaction(Fighter *fighter, int reaction);
 

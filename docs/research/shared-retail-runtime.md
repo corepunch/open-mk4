@@ -1275,3 +1275,19 @@ gates, helper/port/reachability checks and SDL self-test for18 rigs/11 arenas.
 One shared ABI fixture checks typed task rejection, owner-independent spawning
 and reset cleanup; no fighter timing/damage matrices were added. The existing
 projectile burst/trail presentation omissions remain native integration work.
+
+### Shared throw and crouch controller returns
+
+Removed19 copied endpoint bodies. Native42cbc0/42ce60/42ce80 now use one
+KO-aware engine controller boundary that releases owned pair/motion state;
+45fc40 reuses the existing shared crouch-return service. Native42cc40 runs the
+peer callback cell4de664 before entering original4de668, including the facing
+callback omitted by the old Raiden variant. Actor-based return dispatch is
+removed at these addresses. Engine pair-space coordinates remain the simulation
+boundary rather than emulating retail render-coordinate rebasing.
+
+Checked local return listings,48fe80 and42d070 against mk4decomp
+GameSectionSwitcher/controller references. Verified formatting, shared
+VM/rejections, strict audits, native frame gates and helper/port navigation.
+One shared fixture checks context-independent pair/motion cleanup and prevents
+KO revival; no authored throw timing/damage matrices were added.

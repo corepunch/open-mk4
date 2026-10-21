@@ -22,7 +22,6 @@ void shinnok_weapon_hp(Fighter *fighter);
 void shinnok_weapon_lp(Fighter *fighter);
 
 extern const ButtonTable shinnok_diagonal_air;
-void shinnok_weapon_crouch_return(Fighter *fighter);
 void shinnok_weapon_sweep_getup(Fighter *fighter);
 void shinnok_weapon_sweep_finish(Fighter *fighter);
 void shinnok_weapon_reaction(Fighter *fighter);

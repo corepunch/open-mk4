@@ -24,10 +24,6 @@ void goro_script_lp_phase_repeat(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de6e4, fighter_ready, 15);
 }
 
-void goro_script_lp_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 /* 43a5c0 -> 43a610 disturbs resting world objects of Goro's own descriptor
  * type (4ecf18 word 0 = 0x6c) after his stomp landings. */
 void goro_quake_resting_weapons(void) {

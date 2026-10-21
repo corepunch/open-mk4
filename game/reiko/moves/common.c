@@ -3,20 +3,6 @@
 
 static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION, NULL, 0};
 
-void reiko_script_lp_end(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  retail_throw_turn(victim);
-  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 7);
-}
-
-void reiko_script_lp_return(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
     return;

@@ -24,7 +24,6 @@ enum {
 void cage_script_cpu_kick_tail(Fighter *fighter);
 void cage_script_fatality_1_signal(Fighter *fighter);
 void cage_script_fatality_2_continue(Fighter *fighter);
-void cage_script_lp_return(Fighter *fighter);
 void cage_script_opponent_reaction(Fighter *fighter, int reaction);
 void cage_script_powered_punch_tail(Fighter *fighter);
 void cage_shadow_victim(Fighter *fighter);

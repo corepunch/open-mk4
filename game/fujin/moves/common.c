@@ -22,11 +22,3 @@ void fujin_script_opponent_reaction(Fighter *fighter, int reaction) {
   }
   require(false, "Unexpected Fujin opponent reaction");
 }
-
-void fujin_script_lp_extended_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
-void fujin_script_lp_short_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}

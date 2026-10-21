@@ -333,3 +333,20 @@ void retail_lk_continue_840(Fighter *fighter) {
   require(retail_native_vm(fighter, 0x48f9f0, RETAIL_CALL, 0), "Missing shared pair alignment native");
   retail_vm_enter(fighter, 0x4de840, fighter_ready);
 }
+
+/* Native42cbc0/42ce60/42ce80 return through the engine controller boundary.
+ * Pair-space coordinates belong to simulation rather than retail render state. */
+void retail_throw_ready(Fighter *fighter) {
+  if (fighter->flags & FF_PAIRED) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    fighter_peer(fighter)->flags &= ~(unsigned)FF_PAIRED;
+  }
+  mk4_script_stop_body(fighter);
+  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
+}
+
+/* 42cc40 runs the peer callback cell4de664, then the original owner words. */
+void retail_lp_end(Fighter *fighter) {
+  retail_throw_turn(fighter_peer(fighter));
+  retail_vm_enter(fighter, 0x4de668, fighter_ready);
+}

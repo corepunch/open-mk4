@@ -229,14 +229,6 @@ void retail_handstand_spin(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8338, fighter_ready, 11);
 }
 
-void kai_handstand_crouch_return(Fighter *fighter) {
-  mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, NULL);
-  if (fighter->health > 0) {
-    fighter_enter_state(fighter, S_CROUCH);
-  }
-}
-
 void kai_handstand_victim_tail(Fighter *fighter) {
   int first = fighter_sample(fighter);
   native_begin(fighter, first, 39, mk4_mmove_thrown_finish);

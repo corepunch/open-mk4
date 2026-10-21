@@ -176,14 +176,6 @@ void fujin_wind_slam_victim(Fighter *fighter) {
   native_hold(fighter, 4, slam_drop);
 }
 
-void fujin_wind_crouch_return(Fighter *fighter) {
-  mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, NULL);
-  if (fighter->health > 0) {
-    fighter_enter_state(fighter, S_CROUCH);
-  }
-}
-
 void fujin_wind_recovery(Fighter *fighter) {
   fighter->action = 0x1015;
   retail_vm_enter_owned(fighter, 0x4e5c20, fighter_ready, 5);

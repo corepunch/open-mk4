@@ -33,8 +33,8 @@
 #define script_first_end raiden_script_first_end
 #define script_first_release raiden_script_first_release
 #define script_lightning_spawn raiden_script_lightning_spawn
-#define script_lp_end raiden_script_lp_end
-#define script_lp_return raiden_script_lp_return
+#define script_lp_end retail_lp_end
+#define script_lp_return retail_throw_ready
 #define script_reaction raiden_script_reaction
 #define script_second_blend raiden_script_second_blend
 #define script_second_effect raiden_script_second_effect
@@ -79,8 +79,6 @@ void raiden_scene_end_watch(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);
 void raiden_script_lightning_spawn(Fighter *fighter, int task_type);
-void raiden_script_lp_end(Fighter *fighter);
-void raiden_script_lp_return(Fighter *fighter);
 void raiden_script_reaction(Fighter *fighter, int reaction);
 void raiden_script_second_blend(Fighter *fighter);
 void raiden_script_second_effect(Fighter *fighter);

@@ -573,7 +573,7 @@ void mk4_mmove_side_getup(Fighter *fighter) {
 
 static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
 
-static void getup_crouch_finish(Fighter *fighter) {
+void retail_crouch_return(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_finish_mmove(fighter, NULL);
   if (fighter->health > 0) {
@@ -600,7 +600,7 @@ void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
   retail_vm_bind_animation(fighter, descriptor, 0);
   fighter_set_speed(fighter, speed);
   int last = fighter_move(fighter)->last;
-  native_begin(fighter, 0, last, crouch ? getup_crouch_finish : mk4_mmove_thrown_finish);
+  native_begin(fighter, 0, last, crouch ? retail_crouch_return : mk4_mmove_thrown_finish);
   for (int frame = 0; frame <= last; ++frame) {
     native_frame(fighter, frame, frame, NULL);
   }

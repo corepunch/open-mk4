@@ -124,10 +124,6 @@ void sub_zero_script_lk_owner_return(Fighter *fighter) {
   fighter_start_mmove(fighter, S_THROW, &s_lk_throw_idle, &lk_owner_idle_phase);
 }
 
-void sub_zero_script_lp_owner_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 /* Owner submits paired samples; the victim only watches capture lifetime. */
 
 bool sub_zero_owned_object(const Fighter *fighter, int kind) {

@@ -56,3 +56,25 @@ LEGACY_NATIVE_NAMES.update({
     'tanya_fireball': 'retail_fireball',
     'tanya_fireball_spawn': 'retail_fireball_spawn',
 })
+
+LEGACY_NATIVE_NAMES.update({
+    'cage_script_lp_return': 'retail_throw_ready',
+    'fujin_script_lp_extended_finish': 'retail_throw_ready',
+    'fujin_script_lp_short_finish': 'retail_throw_ready',
+    'fujin_wind_crouch_return': 'retail_crouch_return',
+    'goro_script_lp_finish': 'retail_throw_ready',
+    'jarek_script_lp_end': 'retail_lp_end',
+    'jarek_script_lp_return': 'retail_throw_ready',
+    'kai_handstand_crouch_return': 'retail_crouch_return',
+    'kai_script_lp_extended_finish': 'retail_throw_ready',
+    'kai_script_lp_short_finish': 'retail_throw_ready',
+    'raiden_script_lp_end': 'retail_lp_end',
+    'raiden_script_lp_return': 'retail_throw_ready',
+    'reiko_script_lp_end': 'retail_lp_end',
+    'reiko_script_lp_return': 'retail_throw_ready',
+    'reptile_script_lp_return': 'retail_throw_ready',
+    'scorpion_script_lp_return': 'retail_throw_ready',
+    'shinnok_script_lp_return': 'retail_throw_ready',
+    'shinnok_weapon_crouch_return': 'retail_crouch_return',
+    'sub_zero_script_lp_owner_return': 'retail_throw_ready',
+})

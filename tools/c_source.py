@@ -53,15 +53,24 @@ def private_aliases(path):
     return dict(re.findall(r'^#define (\w+) (\w+)$', header.read_text(), re.M))
 
 
+def native_alias(name):
+    for _ in range(len(LEGACY_NATIVE_NAMES) + 1):
+        target = LEGACY_NATIVE_NAMES.get(name, name)
+        if target == name:
+            return name
+        name = target
+    raise ValueError('Cyclic native research alias')
+
+
 def canonical_name(path, name):
     name = private_aliases(path).get(name, name)
-    name = LEGACY_NATIVE_NAMES.get(name, name)
+    name = native_alias(name)
     try:
         scope = (ROOT / path).resolve().relative_to(ROOT / 'game').parts[0]
     except (ValueError, IndexError):
         return name
     if '.' not in scope:
-        qualified = LEGACY_NATIVE_NAMES.get(scope + '_' + name, scope + '_' + name)
+        qualified = native_alias(scope + '_' + name)
         if qualified in public_definitions():
             return qualified
     return name

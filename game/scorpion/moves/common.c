@@ -21,10 +21,6 @@ void scorpion_script_lk_damage(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de328, fighter_ready, 0);
 }
 
-void scorpion_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction) {
   require(reaction == 77, "Unexpected Scorpion pair release");
   Fighter *victim = fighter_peer(fighter);

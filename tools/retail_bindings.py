@@ -1543,6 +1543,11 @@ def bindings_for(character):
     result[0x498eb0] = Binding('retail_fireball_fall', 'game/retail_fireball.c', ('tail',), flow='terminal', mmove=True, evidence='Same original498be0 template4d1718 and waiter data for every actor; no roster branch in local49c540/498be0')
     result[0x498bb0] = Binding('retail_fireball_spawn', 'game/retail_fireball.c', ('spawn',), ('fighter', 'task_type'), task_types=(75,), flow='independent', mmove=True, evidence='Same original498be0 template4d1718 and waiter data for every actor; no roster branch in local49c540/498be0')
     result[0x498ed0] = Binding('retail_air_fireball_spawn', 'game/retail_fireball.c', ('spawn',), ('fighter', 'task_type'), task_types=(75,), flow='independent', mmove=True, evidence='Same original498be0 template4d1718 and waiter data for every actor; no roster branch in local49c540/498be0')
+    result[0x42cbc0] = Binding('retail_throw_ready', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
+    result[0x42cc40] = Binding('retail_lp_end', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
+    result[0x42ce60] = Binding('retail_throw_ready', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
+    result[0x42ce80] = Binding('retail_throw_ready', 'game/retail_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
+    result[0x45fc40] = Binding('retail_crouch_return', 'game/script.c', ('tail',), flow='terminal', mmove=True, evidence='Bounded local native return and GameSectionSwitcher; shared controller/pair ownership with original4de668 words')
     # Historical research aliases resolve to the current native definition.
     from c_source import function_source, canonical_name
     for address, binding in tuple(result.items()):

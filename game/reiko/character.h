@@ -16,8 +16,6 @@ enum {
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 
-void reiko_script_lp_end(Fighter *fighter);
-void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable reiko_diagonal_air;

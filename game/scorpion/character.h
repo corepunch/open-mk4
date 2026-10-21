@@ -48,7 +48,7 @@
 #define script_fire_flame scorpion_script_fire_flame
 #define script_lk_damage scorpion_script_lk_damage
 #define script_lk_rebase scorpion_script_lk_rebase
-#define script_lp_return scorpion_script_lp_return
+#define script_lp_return retail_throw_ready
 #define script_opponent_reaction scorpion_script_opponent_reaction
 #define script_reaction scorpion_script_reaction
 #define script_spawn_spear scorpion_script_spawn_spear
@@ -113,7 +113,6 @@ void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);
 void scorpion_script_lk_damage(Fighter *fighter);
 void scorpion_script_lk_rebase(Fighter *fighter);
-void scorpion_script_lp_return(Fighter *fighter);
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction);
 void scorpion_thrown_end_script(Fighter *victim);
 void scorpion_script_reaction(Fighter *fighter, int reaction);

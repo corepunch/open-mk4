@@ -3,14 +3,6 @@
 
 static const MoveDef reptile_s_lp_thrown = {.clip = 153, .last = 26, .flags = SF_LOCK | SF_REACTION};
 
-void reptile_script_lp_return(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
     return;

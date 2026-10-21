@@ -38,14 +38,6 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   }
 }
 
-void raiden_script_lp_end(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 1);
-}
-
-void raiden_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void raiden_special_cleanup(Fighter *fighter) {
   mk4_script_pair_cleanup(fighter);
   fighter->body.physics = NULL;

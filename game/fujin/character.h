@@ -12,8 +12,6 @@
 
 void fujin_enter_throw(Fighter *fighter);
 void fujin_script_current_reaction(Fighter *fighter, int reaction);
-void fujin_script_lp_extended_finish(Fighter *fighter);
-void fujin_script_lp_short_finish(Fighter *fighter);
 void fujin_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable fujin_diagonal_air;
@@ -31,7 +29,6 @@ void fujin_wind_slam(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
 void fujin_wind_slam_victim(Fighter *fighter);
 void fujin_wind_recovery(Fighter *fighter);
-void fujin_wind_crouch_return(Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
 void fujin_triple_contact(Fighter *fighter);
 void fujin_triple_fast(Fighter *fighter);

@@ -16,7 +16,6 @@ enum {
 
 #define s_lp_thrown reptile_s_lp_thrown
 
-void reptile_script_lp_return(Fighter *fighter);
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable reptile_diagonal_air;

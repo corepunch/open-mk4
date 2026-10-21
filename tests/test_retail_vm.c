@@ -609,6 +609,25 @@ static void native_projectile_context(void) {
   }
 }
 
+static void native_return_ownership(void) {
+  Fighter *actor = setup(0, 2);
+  Fighter *peer = fighter_peer(actor);
+  actor->flags |= FF_PAIRED;
+  peer->flags |= FF_PAIRED;
+  actor->body.vel[AXIS_X] = 0x1234;
+  actor->retail_vm.native_owner_set = true;
+  actor->retail_vm.native_owner = 15;
+  check(retail_native_vm(actor, 0x42ce80, RETAIL_TAIL, 0), "native throw return must not depend on a fighter context mask");
+  check(!(actor->flags & FF_PAIRED) && !(peer->flags & FF_PAIRED) && actor->body.vel[AXIS_X] == 0 && actor->state == S_IDLE,
+      "controller return must retire pair and motion ownership together");
+  actor = setup(0, 2);
+  actor->health = 0;
+  fighter_start_move(actor, S_HIT, roster_def(actor->roster)->moves[S_HIT]);
+  check(retail_native_vm(actor, 0x42ce60, RETAIL_TAIL, 0), "native KO return must resolve the shared controller boundary");
+  check(actor->health == 0 && actor->state == S_HIT && actor->current_mmove == NULL && !actor->retail_vm.active,
+      "native controller return must not revive a defeated actor");
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -830,6 +849,7 @@ int main(int argc, char **argv) {
   native_weapon_inventory();
   native_contact_record_lifetime();
   native_projectile_context();
+  native_return_ownership();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

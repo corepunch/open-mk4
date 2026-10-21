@@ -31,8 +31,6 @@ void kai_aerial_punch_contact(Fighter *fighter);
 void kai_lunge_kick_contact(Fighter *fighter);
 void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_script_current_reaction(Fighter *fighter, int reaction);
-void kai_script_lp_extended_finish(Fighter *fighter);
-void kai_script_lp_short_finish(Fighter *fighter);
 void kai_script_opponent_reaction(Fighter *fighter, int reaction);
 void kai_script_stage_event(Fighter *fighter);
 
@@ -41,7 +39,6 @@ bool kai_can_handstand(const Fighter *fighter);
 void kai_handstand_spin_begin(Fighter *fighter);
 void kai_handstand_rear_contact(Fighter *fighter);
 void kai_handstand_victim_tail(Fighter *fighter);
-void kai_handstand_crouch_return(Fighter *fighter);
 void kai_handstand_reaction(Fighter *fighter);
 void kai_weapon_victim_getup(Fighter *fighter);
 void kai_weapon_reaction(Fighter *fighter);
