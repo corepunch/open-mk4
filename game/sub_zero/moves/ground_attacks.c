@@ -1,6 +1,5 @@
 #include "../character.h"
 
-static void sub_zero_crouch_lk(Fighter *fighter);
 static void sub_zero_crouch_hk(Fighter *fighter);
 
 void sub_zero_ground_native_tail(Fighter *fighter) {
@@ -25,10 +24,6 @@ void sub_zero_crouch_lp(Fighter *fighter) {
   sub_zero_ground_attack(fighter, G_CROUCH_LP);
 }
 
-static void sub_zero_crouch_lk(Fighter *fighter) {
-  sub_zero_ground_attack(fighter, G_CROUCH_LK);
-}
-
 static void sub_zero_crouch_hk(Fighter *fighter) {
   sub_zero_ground_attack(fighter, G_CROUCH_HK);
 }
@@ -42,11 +37,7 @@ void sub_zero_press_crouch_hk(Fighter *fighter) {
 }
 
 void sub_zero_press_crouch_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, sub_zero_crouch_lk);
-}
-
-void sub_zero_script_crouch_lk_tail(Fighter *fighter) {
-  native_ground_next(fighter, &sub_zero_ground_profile);
+  fighter_interrupt(fighter, retail_crouch_low_kick);
 }
 
 void sub_zero_script_knee_tail(Fighter *fighter) {

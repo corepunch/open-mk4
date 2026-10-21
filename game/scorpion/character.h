@@ -231,7 +231,6 @@ void scorpion_script_burn_victim_start(Fighter *fighter);
 void scorpion_script_burn_victory(Fighter *fighter);
 void scorpion_script_close_hp_tail(Fighter *fighter);
 void scorpion_script_combo_hp_tail(Fighter *fighter);
-void scorpion_script_crouch_lk_tail(Fighter *fighter);
 void scorpion_script_draw_equip(Fighter *fighter);
 void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);

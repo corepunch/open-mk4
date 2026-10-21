@@ -1,7 +1,6 @@
 #include "../character.h"
 
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
-static void liu_kang_crouch_lk(Fighter *fighter);
 static void liu_kang_crouch_hk(Fighter *fighter);
 // clang-format off: Keep table entries on one row, including long rows.
 static const GroundAttack ground_attacks[] = {
@@ -32,10 +31,6 @@ void liu_kang_ground_native_tail(Fighter *fighter) {
   native_ground_tail(fighter, &ground_profile);
 }
 
-void liu_kang_ground_native_next(Fighter *fighter) {
-  native_ground_next(fighter, &ground_profile);
-}
-
 void liu_kang_ground_attack(Fighter *fighter, int index) {
   bool followup = (fighter->flags & FF_FOLLOW_UP) != 0;
   mk4_script_stop_body(fighter);
@@ -54,10 +49,6 @@ void liu_kang_crouch_lp(Fighter *fighter) {
   liu_kang_ground_attack(fighter, G_CROUCH_LP);
 }
 
-static void liu_kang_crouch_lk(Fighter *fighter) {
-  liu_kang_ground_attack(fighter, G_CROUCH_LK);
-}
-
 static void liu_kang_crouch_hk(Fighter *fighter) {
   liu_kang_ground_attack(fighter, G_CROUCH_HK);
 }
@@ -71,11 +62,7 @@ void liu_kang_press_crouch_hk(Fighter *fighter) {
 }
 
 void liu_kang_press_crouch_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, liu_kang_crouch_lk);
-}
-
-void liu_kang_liu_script_crouch_lk_tail(Fighter *fighter) {
-  liu_kang_ground_native_next(fighter);
+  fighter_interrupt(fighter, retail_crouch_low_kick);
 }
 
 void liu_kang_liu_script_knee_tail(Fighter *fighter) {

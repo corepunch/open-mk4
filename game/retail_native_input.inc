@@ -226,6 +226,7 @@ static const NativeAction entries[] = {
   {0x46f1f0, 0x3ffffu, retail_roundhouse},
   {0x46ef90, 0x3ffff, retail_sweep},
   {0x46d290, 0x3ffff, retail_high_punch},
+  {0x46b710, 0x3ffff, retail_crouch_low_kick},
   {0x46a680, 0x3ffff, retail_high_kick},
   {0x467e00, 0x3ffff, retail_fan_finish},
   {0x47b690, 0x10000, kitana_cartwheel},

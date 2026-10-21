@@ -582,3 +582,17 @@ Kai's native callers share the same service. The local listing confirms
 continues to own the simulation heading, preserving the existing axis-facing
 adaptation. Shared runtime, all-roster strict audits, native source gates and
 formatting pass; no tests were added.
+
+## Shared crouching low-kick native boundary
+
+Native entry46b710 sets0106 and enters original4e6158. Native46b740 now queries
+live B23 once unless the peer is2011, marks1006, waits1/4 visits for miss/contact,
+and enters original4e6180 for its authored rewind. Six private startup and tail
+callbacks are removed. The entry is available to every retail context; existing
+crouch controls use it. Original local listings match the action106 block and
+recovery in mk4decomp's five_block_dispatch_variants.c (upstream46b7a0 tail).
+
+Runtime checks, all strict roster audits, source gates and formatting pass.
+The existing battle integration builds and reaches the known ground-throw
+assertion. No tests were added. Other ground-attack profile rows and controller
+tables remain transitional and are not evidence of completed consolidation.

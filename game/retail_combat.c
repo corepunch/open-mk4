@@ -273,3 +273,32 @@ void retail_lp_select_long(Fighter *fighter) {
 void retail_face_peer(Fighter *fighter) {
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
 }
+
+/* 46b710/46b740: script startup, one B[23] probe, then native recovery wait. */
+void retail_crouch_low_kick(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  retail_native_begin(fighter, S_KICK, ACTION_RETAIL_0106, false);
+  retail_vm_enter(fighter, 0x4e6158, fighter_ready);
+}
+
+static void crouch_low_kick_recover(Fighter *fighter) {
+  retail_vm_enter(fighter, 0x4e6180, fighter->retail_vm.finish);
+}
+
+void retail_crouch_low_kick_tail(Fighter *fighter) {
+  RetailVm *vm = &fighter->retail_vm;
+  require(vm->active, "Crouch LK native needs a live retail task");
+  ContactResult result = CONTACT_MISS;
+  if (fighter_opponent(fighter)->action != ACTION_RETAIL_2011) {
+    uint32_t packed = mk4_image_u32(vm->image, 0x53d2b8 + 23 * 4);
+    AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
+    uint64_t continuation = fighter->continuation;
+    result = battle_contact(fighter, &attack);
+    if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+      return;
+    }
+  }
+  fighter->action = ACTION_RETAIL_1006;
+  retail_vm_wait_native(fighter, result == CONTACT_MISS ? 1 : 4, crouch_low_kick_recover);
+}

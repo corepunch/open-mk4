@@ -71,9 +71,9 @@
       "symbol": "scorpion_crouch_hk"
     },
     "crouch_lk": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_crouch_lk"
+      "evidence": "Shared native46b710 entry and46b740 B23/recovery; original4e6158 and4e6180",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_low_kick"
     },
     "crouch_lp": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

@@ -1465,6 +1465,8 @@ def bindings_for(character):
     for address, role in ((0x45b380, 'handler'), (0x490bd0, 'physics')):
         result[address] = Binding('retail_face_peer', 'game/retail_combat.c', (role,), mmove=True,
                                   evidence='45b380 calls490bd0; shared facing adaptation with world-pump pair heading')
+    result[0x46b740] = Binding('retail_crouch_low_kick_tail', 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='46b740 shared B23 probe, action1006 and1/4-visit recovery; original4e6180 rewind')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

@@ -191,7 +191,6 @@ void sonya_script_air_release(Fighter *fighter);
 void sonya_script_cartwheel_tail(Fighter *fighter);
 void sonya_script_close_hp_tail(Fighter *fighter);
 void sonya_script_combo_hp_tail(Fighter *fighter);
-void sonya_script_crouch_lk_tail(Fighter *fighter);
 void sonya_script_draw_equip(Fighter *fighter);
 void sonya_script_first_release(Fighter *fighter);
 void sonya_script_knee_tail(Fighter *fighter);

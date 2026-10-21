@@ -27,7 +27,6 @@
 #define fireball_spawn liu_kang_fireball_spawn
 #define flying_kick_script liu_kang_flying_kick_script
 #define ground_attack liu_kang_ground_attack
-#define ground_native_next liu_kang_ground_native_next
 #define ground_native_tail liu_kang_ground_native_tail
 #define liu_script_air_diagonal_tail liu_kang_liu_script_air_diagonal_tail
 #define liu_script_air_hp_tail liu_kang_liu_script_air_hp_tail
@@ -117,7 +116,6 @@ extern const MeshAnimation liu_kang_fireball_mesh;
 void liu_kang_fireball_spawn(Fighter *fighter, int type);
 void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_ground_attack(Fighter *fighter, int index);
-void liu_kang_ground_native_next(Fighter *fighter);
 void liu_kang_ground_native_tail(Fighter *fighter);
 void liu_kang_bicycle_kick(Fighter *fighter);
 void liu_kang_crouch_lp(Fighter *fighter);
@@ -140,7 +138,6 @@ void liu_kang_liu_script_bicycle_getup(Fighter *victim);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
 void liu_kang_liu_script_close_hp_tail(Fighter *fighter);
 void liu_kang_liu_script_combo_hp_tail(Fighter *fighter);
-void liu_kang_liu_script_crouch_lk_tail(Fighter *fighter);
 void liu_kang_liu_script_draw_equip(Fighter *fighter);
 void liu_kang_liu_script_fatal_align(Fighter *fighter);
 void liu_kang_liu_script_fatal_setup(Fighter *fighter);

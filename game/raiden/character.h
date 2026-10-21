@@ -197,7 +197,6 @@ void raiden_script_air_lp_tail(Fighter *fighter);
 void raiden_script_air_release(Fighter *fighter);
 void raiden_script_close_hp_tail(Fighter *fighter);
 void raiden_script_combo_hp_tail(Fighter *fighter);
-void raiden_script_crouch_lk_tail(Fighter *fighter);
 void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter);

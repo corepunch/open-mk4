@@ -66,9 +66,9 @@
       "symbol": "retail_vm_enter"
     },
     "crouch_lk": {
-      "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_crouch_lk"
+      "evidence": "Shared native46b710 entry and46b740 B23/recovery; original4e6158 and4e6180",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_crouch_low_kick"
     },
     "crouch_lp": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",

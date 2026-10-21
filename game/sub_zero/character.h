@@ -240,7 +240,6 @@ void sub_zero_script_breath_slide(Fighter *fighter);
 void sub_zero_script_breath_victim_end(Fighter *victim);
 void sub_zero_script_close_hp_tail(Fighter *fighter);
 void sub_zero_script_combo_hp_tail(Fighter *fighter);
-void sub_zero_script_crouch_lk_tail(Fighter *fighter);
 void sub_zero_script_draw_equip(Fighter *fighter);
 void sub_zero_script_first_begin(Fighter *fighter);
 void sub_zero_script_first_cues1(Fighter *fighter);
