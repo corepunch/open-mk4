@@ -69,10 +69,26 @@ const CharacterDef *roster_def(int index) {
   static CharacterDef definitions[MK4_ROSTER_COUNT];
   static Controls controls[MK4_ROSTER_COUNT];
   static CpuMoves cpu[MK4_ROSTER_COUNT];
+  static RetailRoster identities[MK4_ROSTER_COUNT];
+  static MoveDef states[MK4_ROSTER_COUNT][S_COUNT];
+  static const MoveDef *state_views[MK4_ROSTER_COUNT][S_COUNT];
   static const Mk4Image *images[MK4_ROSTER_COUNT];
   const Mk4Image *image = retail_vm_image();
   if (images[index] != image) {
     definitions[index] = *roster[index];
+    retail_roster_read(image, (unsigned)index, &identities[index]);
+    definitions[index].game = GAME_MK4;
+    definitions[index].asset = index;
+    definitions[index].name = identities[index].name;
+    definitions[index].ground = identities[index].ground;
+    require(definitions[index].move_count == S_COUNT, "Native state view has an invalid shape");
+    for (int state = 0; state < S_COUNT; ++state) {
+      states[index][state] = state == S_IDLE || state == S_WALK ? (MoveDef){.last = MOVE_END} : *roster[index]->moves[state];
+      state_views[index][state] = &states[index][state];
+    }
+    states[index][S_IDLE].clip = identities[index].idle;
+    states[index][S_WALK].clip = identities[index].walk;
+    definitions[index].moves = state_views[index];
     controls[index] = *roster[index]->controls;
     retail_bind_commands(&controls[index], image, (unsigned)index);
     definitions[index].controls = &controls[index];

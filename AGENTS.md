@@ -47,13 +47,11 @@ tables and small helpers do not automatically need dedicated tests. Avoid tests
 that only repeat implementation constants or assert every intermediate tick.
 Derive expected behavior from retail evidence rather than copying the code.
 
-For fighter ports, prefer a small set of behavioral regressions for damage and
-recovery, important branches, interruption, and both player slots for paired
-moves. Include KO/reset when actor or object lifetimes make it relevant. Exercise
-real command or move entries. Test shared scheduling and engine behavior once,
-then reuse that coverage across fighters instead of duplicating exhaustive
-matrices. Run relevant existing checks; add tests only where they catch a
-meaningful bug cheaply.
+Test the shared runtime and native integration we implement. Keep fixtures
+small and focused on opcode/control flow, typed native boundaries, data loading,
+interruption and cleanup. Trust the retail scripts for authored character logic;
+do not add per-fighter timing, damage or balance matrices. Existing regressions
+may be adapted to the runtime API without adding character-specific coverage.
 
 ## References
 
@@ -104,6 +102,13 @@ post-processing.
 
 See [the fighter port workflow](docs/character-script-port.md#workflow) for the
 end-to-end research, frame-program implementation, validation and commit procedure.
+
+The target is one shared retail runtime for every fighter, with retail-loaded
+roster, input, action, stance and CPU tables. Do not add per-character C
+architecture or hand-authored fighter configuration. Retail native routines
+must have one shared implementation rather than copied fighter variants.
+The remaining character modules and compiler outputs are migration inputs,
+not the target design. See `docs/research/shared-retail-runtime.md`.
 
 Scorpion runs all 70 reviewed roots through direct retail script execution. Run original words
 through the shared C11 interpreter; do not translate branches, waits, loops or

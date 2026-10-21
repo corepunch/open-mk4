@@ -1,7 +1,5 @@
 #include "character.h"
 
-const MoveDef jax_s_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END};
-const MoveDef jax_s_walk = {.clip = 265, .last = MOVE_END};
 const MoveDef jax_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
 const MoveDef jax_s_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_010B};
@@ -55,8 +53,6 @@ static const FighterFn enter[S_COUNT] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
-  [S_IDLE] = &jax_s_idle,
-  [S_WALK] = &jax_s_walk,
   [S_CROUCH] = &jax_s_crouch,
   [S_JUMP] = &s_jump,
   [S_PUNCH] = &jax_s_jab,
@@ -71,7 +67,18 @@ static const MoveDef *const moves[S_COUNT] = {
 };
 // clang-format on
 
-const CharacterDef mk4_jax = {GAME_MK4, 13, "JAX", &mk4_motion, moves, S_COUNT, &s_controls, enter, -75169, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
+const CharacterDef mk4_jax = {
+    .motion = &mk4_motion,
+    .moves = moves,
+    .move_count = S_COUNT,
+    .controls = &s_controls,
+    .enter = enter,
+    .walk = mk4_walk,
+    .jump = mk4_jump,
+    .cpu = &retail_cpu_moves,
+    .move_list = NULL,
+    .move_list_count = 0,
+};
 
 void jax_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

@@ -2,8 +2,6 @@
 
 /* Kai's move clips and contact timing come from the slot-11 retail tables.
  * Script bodies are emitted from game/kai/port.json. */
-const MoveDef kai_s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-const MoveDef kai_s_walk = {265, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 const MoveDef kai_s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 const MoveDef kai_s_jab = {294, 0, MOVE_END, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK, NULL, 0};
@@ -60,8 +58,6 @@ static const FighterFn enter[S_COUNT] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
-  [S_IDLE] = &kai_s_idle,
-  [S_WALK] = &kai_s_walk,
   [S_CROUCH] = &kai_s_crouch,
   [S_JUMP] = &s_jump,
   [S_PUNCH] = &kai_s_jab,
@@ -92,7 +88,18 @@ const uint32_t kai_weapon_descriptor[] = {
 };
 // clang-format on
 
-const CharacterDef mk4_kai = {GAME_MK4, 11, "KAI", &mk4_motion, moves, S_COUNT, &kai_controls, enter, -74829, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
+const CharacterDef mk4_kai = {
+    .motion = &mk4_motion,
+    .moves = moves,
+    .move_count = S_COUNT,
+    .controls = &kai_controls,
+    .enter = enter,
+    .walk = mk4_walk,
+    .jump = mk4_jump,
+    .cpu = &retail_cpu_moves,
+    .move_list = NULL,
+    .move_list_count = 0,
+};
 
 void kai_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

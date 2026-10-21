@@ -12,8 +12,6 @@
 
 /* Attack entries query source contact records through SF_RECORD. Locomotion
  * and generic reaction states retain the shared portable controllers. */
-static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-static const MoveDef s_walk = {267, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
@@ -31,8 +29,6 @@ const MoveDef sonya_s_victory = {114, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_H
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
-  [S_IDLE] = &s_idle,
-  [S_WALK] = &s_walk,
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
   [S_PUNCH] = &sonya_s_jab,
@@ -131,7 +127,17 @@ static const MoveListEntry move_list[] = {
 // clang-format on
 
 const CharacterDef mk4_sonya = {
-    GAME_MK4, 2, "SONYA", &mk4_motion, moves, S_COUNT, &controls, enter, -73629, mk4_walk, mk4_jump, &cpu_moves, move_list, COUNT(move_list)};
+    .motion = &mk4_motion,
+    .moves = moves,
+    .move_count = S_COUNT,
+    .controls = &controls,
+    .enter = enter,
+    .walk = mk4_walk,
+    .jump = mk4_jump,
+    .cpu = &cpu_moves,
+    .move_list = move_list,
+    .move_list_count = COUNT(move_list),
+};
 
 void sonya_entry_retail_script_004de360(Fighter *fighter) {
   retail_script_004de360(fighter);

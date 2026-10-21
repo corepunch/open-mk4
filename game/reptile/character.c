@@ -4,8 +4,6 @@
 #include "generated/frames.inc"
 
 /* Combat values remain the native approximation until measured against retail. */
-static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-static const MoveDef s_walk = {268, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 const MoveDef reptile_s_jab = {294, 0, MOVE_END, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK, NULL, 0};
@@ -59,8 +57,6 @@ static const Controls reptile_controls = {NULL, 0,
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
-  [S_IDLE] = &s_idle,
-  [S_WALK] = &s_walk,
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
   [S_PUNCH] = &reptile_s_jab,
@@ -86,7 +82,17 @@ static const FighterFn state_entries[S_COUNT] = {
 // clang-format on
 
 const CharacterDef mk4_reptile = {
-    GAME_MK4, 10, "REPTILE", &mk4_motion, moves, S_COUNT, &reptile_controls, state_entries, -73531, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
+    .motion = &mk4_motion,
+    .moves = moves,
+    .move_count = S_COUNT,
+    .controls = &reptile_controls,
+    .enter = state_entries,
+    .walk = mk4_walk,
+    .jump = mk4_jump,
+    .cpu = &retail_cpu_moves,
+    .move_list = NULL,
+    .move_list_count = 0,
+};
 
 void reptile_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

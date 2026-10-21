@@ -2,6 +2,12 @@
 #define MK4_RETAIL_DATA_H
 #include "game.h"
 
+typedef struct RetailRoster {
+  char name[1024];
+  q16 ground;
+  int idle, walk;
+} RetailRoster;
+
 typedef struct RetailCommandCursor {
   uint32_t address;
   unsigned remaining;
@@ -13,6 +19,7 @@ typedef struct RetailCommand {
 } RetailCommand;
 
 /* Addresses refer to the checked local image, never host function pointers. */
+void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster *roster);
 unsigned retail_character_slot(unsigned character);
 uint32_t retail_action_target(const Mk4Image *image, unsigned flags, unsigned action);
 RetailCommandCursor retail_command_cursor(const Mk4Image *image, unsigned character, unsigned player, Button button, bool released);

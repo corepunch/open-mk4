@@ -12,13 +12,11 @@
 #define s_block jarek_s_block
 #define s_crouch jarek_s_crouch
 #define s_high_kick jarek_s_high_kick
-#define s_idle jarek_s_idle
 #define s_jab jarek_s_jab
 #define s_low_kick jarek_s_low_kick
 #define s_sweep jarek_s_sweep
 #define s_throw jarek_s_throw
 #define s_uppercut jarek_s_uppercut
-#define s_walk jarek_s_walk
 
 /* Character-owned finisher ids, outside the shared FINISH_* range. */
 enum {
@@ -136,13 +134,11 @@ void jarek_entry_retail_script_004ed118(Fighter *fighter);
 extern const MoveDef jarek_s_block;
 extern const MoveDef jarek_s_crouch;
 extern const MoveDef jarek_s_high_kick;
-extern const MoveDef jarek_s_idle;
 extern const MoveDef jarek_s_jab;
 extern const MoveDef jarek_s_low_kick;
 extern const MoveDef jarek_s_sweep;
 extern const MoveDef jarek_s_throw;
 extern const MoveDef jarek_s_uppercut;
-extern const MoveDef jarek_s_walk;
 
 void jarek_close_hp(Fighter *fighter);
 void jarek_combo_hp(Fighter *fighter);

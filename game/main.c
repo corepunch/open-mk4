@@ -66,6 +66,7 @@ static void validate(const Assets *assets) {
     int channels = 0;
     int state;
     require(strcmp(def->name, ch->name) == 0, "Roster name does not match the loaded mesh");
+    require(def->ground == (q16)(ch->bones.data[0].translation.y * Q16_ONE), "Roster ground does not match the retail rig root");
     require(assets->hud.names[def->asset] >= 0, "Missing fighter name");
     for (size_t j = 0; j < ch->bones.count; ++j)
       channels = maxi(channels, ch->bones.data[j].channel + 1);

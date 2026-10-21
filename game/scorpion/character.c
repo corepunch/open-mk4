@@ -11,8 +11,6 @@ static const ButtonTable scorpion_standing;
 
 /* Recovered moves query retail records from their events (SF_RECORD). The
  * remaining moves keep the approximate damage, reach and push columns. */
-static const MoveDef s_idle = {CLIP_ASSET_IDLE, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-static const MoveDef s_walk = {269, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
@@ -31,8 +29,6 @@ static const MoveDef s_victory = {115, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
-  [S_IDLE] = &s_idle,
-  [S_WALK] = &s_walk,
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
   [S_PUNCH] = &scorpion_s_jab,
@@ -113,7 +109,17 @@ static const MoveListEntry move_list[] = {
 // clang-format on
 
 const CharacterDef mk4_scorpion = {
-    GAME_MK4, 0, "SCORPION", &mk4_motion, moves, S_COUNT, &scorpion_controls, enter, -76873, mk4_walk, mk4_jump, NULL, move_list, COUNT(move_list)};
+    .motion = &mk4_motion,
+    .moves = moves,
+    .move_count = S_COUNT,
+    .controls = &scorpion_controls,
+    .enter = enter,
+    .walk = mk4_walk,
+    .jump = mk4_jump,
+    .cpu = NULL,
+    .move_list = move_list,
+    .move_list_count = COUNT(move_list),
+};
 
 /* Native-only blends; no VM timing tables. */
 

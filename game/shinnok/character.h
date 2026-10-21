@@ -12,12 +12,10 @@
 #define s_block shinnok_s_block
 #define s_crouch shinnok_s_crouch
 #define s_high_kick shinnok_s_high_kick
-#define s_idle shinnok_s_idle
 #define s_jab shinnok_s_jab
 #define s_sweep shinnok_s_sweep
 #define s_throw shinnok_s_throw
 #define s_uppercut shinnok_s_uppercut
-#define s_walk shinnok_s_walk
 
 void shinnok_entry_retail_script_004de2f8(Fighter *fighter);
 void shinnok_entry_retail_script_004de798(Fighter *fighter);
@@ -45,12 +43,10 @@ void shinnok_entry_retail_script_004e6950(Fighter *fighter);
 extern const MoveDef shinnok_s_block;
 extern const MoveDef shinnok_s_crouch;
 extern const MoveDef shinnok_s_high_kick;
-extern const MoveDef shinnok_s_idle;
 extern const MoveDef shinnok_s_jab;
 extern const MoveDef shinnok_s_sweep;
 extern const MoveDef shinnok_s_throw;
 extern const MoveDef shinnok_s_uppercut;
-extern const MoveDef shinnok_s_walk;
 void shinnok_block(Fighter *fighter);
 void shinnok_crouch(Fighter *fighter);
 void shinnok_fan_fatality(Fighter *fighter);

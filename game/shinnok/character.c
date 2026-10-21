@@ -1,7 +1,5 @@
 #include "character.h"
 
-const MoveDef shinnok_s_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END};
-const MoveDef shinnok_s_walk = {.clip = 267, .last = MOVE_END};
 const MoveDef shinnok_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
 const MoveDef shinnok_s_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_010B};
@@ -58,8 +56,6 @@ static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping, [ST
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveDef *const moves[S_COUNT] = {
-  [S_IDLE] = &shinnok_s_idle,
-  [S_WALK] = &shinnok_s_walk,
   [S_CROUCH] = &shinnok_s_crouch,
   [S_JUMP] = &s_jump,
   [S_PUNCH] = &shinnok_s_jab,
@@ -75,7 +71,17 @@ static const MoveDef *const moves[S_COUNT] = {
 // clang-format on
 
 const CharacterDef mk4_shinnok = {
-    GAME_MK4, 6, "SHINNOK", &mk4_motion, moves, S_COUNT, &controls, enter, -73531, mk4_walk, mk4_jump, &retail_cpu_moves, NULL, 0};
+    .motion = &mk4_motion,
+    .moves = moves,
+    .move_count = S_COUNT,
+    .controls = &controls,
+    .enter = enter,
+    .walk = mk4_walk,
+    .jump = mk4_jump,
+    .cpu = &retail_cpu_moves,
+    .move_list = NULL,
+    .move_list_count = 0,
+};
 
 void shinnok_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_script_004de2f8(fighter);

@@ -64,3 +64,22 @@ portable CPU planner remains engine code; this step replaces its fighter rows.
 The shared mutation fixture verifies live CPU dispatch and zero-row behavior,
 and resolves the runtime command/CPU ABI for every roster slot. Runtime suite,
 C11 game build, formatting and all 18 canonical script/source checks pass.
+
+## Roster identity and base stances
+
+The shared reader now loads roster names from 4ee1f0 and ground offsets from
+the referenced rig root in each 32-byte row at 4eb2e8. Idle/walk descriptors
+come from the original 53d408/53d388 tables. Name, asset identity and ground
+constants are removed from all 18 native integration records, along with their
+idle/walk MoveDef copies. Generic runtime state views supply these two stances.
+Other state entries and native parameter blocks are still legacy integration.
+
+The layout is the same independently decoded by `common/mk4_assets.c` and the
+mk4decomp rig/state routines cited in AGENTS.md. The asset self-test verifies
+all 18 runtime names and ground offsets against the loaded meshes/rig roots,
+and validates all state clips. This corrects Kitana's old copied Sonya ground
+offset by loading Kitana's actual rig value. The two old morph assertions now
+use the runtime roster API rather than reading a C definition's ground field.
+
+Verification: shared runtime suite, C11 game build, format-check, all 18
+canonical script/source checks and the existing game asset self-test pass.

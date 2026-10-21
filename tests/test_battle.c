@@ -1999,7 +1999,8 @@ static void check_shinnok_morph(void) {
     check(shinnok_morph_into_sub_zero(slot), "Shinnok's morph must queue the target's name cue once the four-tick hold ends");
     check(owner->roster == 4 && owner->morphed && fighter_selected_roster(owner) == 6 && owner->state == S_IDLE && owner->buttons != NULL,
         "Shinnok's morph must install the target character and return to its standing controls");
-    check(owner->body.ground == mk4_sub_zero.ground && owner->body.pos[AXIS_Y] == mk4_sub_zero.ground, "A morph must adopt the target rig's standing ground");
+    check(
+        owner->body.ground == roster_def(4)->ground && owner->body.pos[AXIS_Y] == roster_def(4)->ground, "A morph must adopt the target rig's standing ground");
     /* The target's own command table now drives the actor: Down, Forward + LP is Sub-Zero's ice. */
     Button forward = slot ? BUTTON_LEFT : BUTTON_RIGHT;
     command(slot, BUTTON_DOWN, forward, BUTTON_LOW_PUNCH);
@@ -2010,7 +2011,7 @@ static void check_shinnok_morph(void) {
     advance_ticks(600, NULL);
     check(owner->roster == 4, "The morph expires only at a neutral reset, not while standing");
     check(shinnok_jab_recovers(slot, 60), "The expiry reset must queue Shinnok's indexed name cue 0x2c");
-    check(owner->roster == 6 && !owner->morphed && owner->state == S_IDLE && owner->body.ground == mk4_shinnok.ground,
+    check(owner->roster == 6 && !owner->morphed && owner->state == S_IDLE && owner->body.ground == roster_def(6)->ground,
         "The first neutral reset 600 ticks after the morph must restore Shinnok");
 
     check(shinnok_morph_into_sub_zero(slot) && owner->roster == 4, "Shinnok must be able to morph again after reverting");

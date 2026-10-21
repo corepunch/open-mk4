@@ -142,3 +142,26 @@ void retail_bind_commands(Controls *controls, const Mk4Image *image, unsigned ch
   controls->commands = records[character];
   controls->command_count = (int)count;
 }
+
+void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster *roster) {
+  require(character < MK4_ROSTER_COUNT && roster != NULL, "Invalid retail roster destination");
+  uint32_t name = mk4_image_u32(image, 0x4ee1f0 + character * 4);
+  View memory = view(image->bytes);
+  require(name >= 0x400000, "Invalid retail character name");
+  size_t i = 0;
+  for (; i + 1 < sizeof roster->name; ++i) {
+    unsigned char ch = view_u8(memory, name - 0x400000 + i);
+    roster->name[i] = (char)(ch >= 'a' && ch <= 'z' ? ch - ('a' - 'A') : ch);
+    if (ch == 0) {
+      break;
+    }
+  }
+  require(i + 1 < sizeof roster->name, "Unterminated retail character name");
+  uint32_t record = 0x4eb2e8 + character * 32;
+  uint32_t slot = mk4_image_u32(image, record) * 4;
+  uint32_t root = mk4_image_u32(image, record + 12) * 4;
+  require(mk4_image_u32(image, root + 4) == slot, "Retail roster rig slot mismatch");
+  roster->ground = (q16)mk4_image_u32(image, root + 16);
+  roster->idle = retail_stance_clip(image, character, false);
+  roster->walk = retail_stance_clip(image, character, true);
+}
