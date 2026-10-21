@@ -55,7 +55,6 @@ void mk4_script_effect(Fighter *fighter, int selector);
 void mk4_script_projectile_step(Projectile *object, const AttackRecord *record, bool hits_crouching);
 Projectile *mk4_script_projectile_spawn(Fighter *fighter, ProjectileFn step, const MeshAnimation *mesh, q16 forward, q16 y, int lifetime);
 void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int duration);
-void mk4_mmove_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries);
 void mk4_script_scene_task(Fighter *fighter, int task_type);
 
 void mk4_mmove_hold(Fighter *fighter);

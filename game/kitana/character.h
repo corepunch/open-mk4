@@ -88,8 +88,6 @@ void kitana_script_second_pause(Fighter *fighter);
 void kitana_script_second_repeat(Fighter *fighter);
 void kitana_script_second_victim_end(Fighter *victim);
 void kitana_script_square_wave_tail(Fighter *fighter);
-void kitana_script_weapon_hp_tail(Fighter *fighter);
-void kitana_script_weapon_lp_tail(Fighter *fighter);
 void kitana_script_weapon_victim_getup(Fighter *victim);
 void kitana_special_cleanup(Fighter *fighter);
 void kitana_square_victim(Fighter *victim);

@@ -44,6 +44,5 @@ void jarek_quake_tail(Fighter *fighter);
 void jarek_upward_ball(Fighter *fighter);
 void jarek_ball_land(Fighter *fighter);
 
-void jarek_weapon_upper_contact(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);
 #endif

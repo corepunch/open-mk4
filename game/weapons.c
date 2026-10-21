@@ -581,8 +581,23 @@ static void script_strike_recover(Fighter *fighter) {
 }
 
 static void script_strike_query(Fighter *fighter) {
-  if (battle_contact(fighter, fighter->native_record) != CONTACT_MISS) {
-    script_strike_recover(fighter);
+  uint64_t continuation = fighter->continuation;
+  ContactResult result = battle_contact(fighter, fighter->native_record);
+  if (fighter->continuation != continuation || fighter->pending != NULL) {
+    return;
+  }
+  if (result != CONTACT_MISS) {
+    if (fighter->native_variant == 0x496770) {
+      /* Native4968e0 selects the authored contact branch; it is not a C
+       * approximation of that branch's waits or reverse playback. */
+      weapon_cleanup(fighter);
+      if (result == CONTACT_BLOCK) {
+        fighter->action = ACTION_RETAIL_1006;
+      }
+      retail_vm_enter(fighter, result == CONTACT_BLOCK ? 0x4ec7d8 : 0x4ec7c0, mk4_mmove_thrown_finish);
+    } else {
+      script_strike_recover(fighter);
+    }
   }
 }
 
@@ -593,9 +608,36 @@ void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, in
   require(record != NULL && queries > 0 && last != MOVE_END && first + queries - 1 <= last, "Invalid scripted weapon contact boundary");
   fighter->native_record_value = *record;
   fighter->native_record = &fighter->native_record_value;
+  fighter->native_variant = 0;
   native_begin(fighter, 1, queries, script_strike_recover);
   for (int frame = 1; frame <= queries; ++frame) {
     native_frame(fighter, frame, first + frame - 1, script_strike_query);
   }
   native_play(fighter, false);
+}
+
+/* Local4958b0/495ae0/496770/496970 all query the loaded weapon bank.
+ * The source pose is inherited from the script that tail-called this native. */
+void retail_weapon_contact(Fighter *fighter, uint32_t address) {
+  unsigned selector, queries;
+  switch (address) {
+    case 0x4958b0:
+    case 0x495ae0:
+      selector = 33;
+      queries = 2;
+      break;
+    case 0x496770:
+      selector = 10;
+      queries = 7;
+      break;
+    default:
+      require(address == 0x496970, "Invalid native weapon contact entry");
+      selector = 11;
+      queries = 2;
+      break;
+  }
+  const Mk4Image *image = retail_vm_image();
+  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d0c0 + selector * 4) * 4);
+  weapon_script_contact_tail(fighter, &record, (int)queries);
+  fighter->native_variant = (int)address;
 }

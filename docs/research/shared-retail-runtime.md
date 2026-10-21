@@ -1216,3 +1216,19 @@ in individual native services.
 Verified formatting, shared VM/rejection checks and native frame gates. One
 shared ABI fixture changes caller-local data after handoff and checks that both
 yielding entry points retain their own copy, then interrupts playback.
+
+### Shared weapon contact tails
+
+4958b0/495ae0/496770/496970 now dispatch once with loaded weapon contact
+records, independent of the actor's native-owner mask. Removed nine fighter
+wrappers, their copied contact records and the unused alternate query runner.
+Local4968e0 now enters the original4ec7c0 or4ec7d8 contact branch instead of
+finishing through the old handwritten approximation. Query callbacks also stop
+when contact interrupts or replaces the current action.
+
+Checked bounded local native listings (selectors33/10/11 and query counts)
+and the original contact scripts; mk4decomp Event112Cluster/source references
+remain the native research base. Verified formatting, shared VM/rejections,
+all strict audits, native frame gates and existing helper/port navigation.
+Extended the shared lifetime fixture to mutate the loaded contact bank and
+invoke the same native under a different owner context, then cancel playback.

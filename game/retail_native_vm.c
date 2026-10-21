@@ -32,9 +32,7 @@ void cage_second_flash(Fighter *fighter, int task_type);
 void cage_second_repeated_uppercuts(Fighter *fighter);
 void cage_second_victim_finish(Fighter *fighter);
 void cage_second_victim_pause(Fighter *fighter);
-void cage_weapon_back_lp_contact(Fighter *fighter);
 void cage_weapon_getup_back(Fighter *fighter);
-void cage_weapon_upper_contact(Fighter *fighter);
 void fighter_friction(Fighter *fighter);
 void fujin_bow_finish(Fighter *fighter);
 void fujin_dive_contact(Fighter *fighter);
@@ -90,7 +88,6 @@ void jarek_second_glow(Fighter *fighter);
 void jarek_second_handoff(Fighter *fighter);
 void jarek_second_head_fall(Fighter *fighter, int task_type);
 void jarek_second_victim_hold(Fighter *fighter);
-void jarek_weapon_upper_contact(Fighter *fighter);
 void jax_dash_punch_contact(Fighter *fighter);
 void jax_fatality_1_first_arm(Fighter *victim);
 void jax_fatality_1_grab(Fighter *victim);
@@ -139,7 +136,6 @@ void kai_second_event(Fighter *fighter, int selector);
 void kai_second_hover(Fighter *fighter, int task_type);
 void kai_second_skull(Fighter *fighter, int task_type);
 void kai_second_victim_fall(Fighter *victim);
-void kai_weapon_back_contact(Fighter *fighter);
 void kai_weapon_victim_getup(Fighter *fighter);
 void kitana_script_cartwheel_tail(Fighter *fighter);
 void kitana_script_first_release(Fighter *fighter);
@@ -155,8 +151,6 @@ void kitana_script_second_pause(Fighter *fighter);
 void kitana_script_second_repeat(Fighter *fighter);
 void kitana_script_second_victim_end(Fighter *victim);
 void kitana_script_square_wave_tail(Fighter *fighter);
-void kitana_script_weapon_hp_tail(Fighter *fighter);
-void kitana_script_weapon_lp_tail(Fighter *fighter);
 void kitana_script_weapon_victim_getup(Fighter *victim);
 void kitana_shadow_install_physics(Fighter *fighter);
 void kitana_shadow_task_low(Fighter *fighter, int task_type);
@@ -164,7 +158,6 @@ void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void liu_kang_bicycle_script(Fighter *fighter);
 void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
-void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);
 void liu_kang_liu_script_fatal_align(Fighter *fighter);
 void liu_kang_liu_script_fatal_setup(Fighter *fighter);
@@ -360,8 +353,6 @@ void sonya_script_second_pause(Fighter *fighter);
 void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
 void sonya_script_square_wave_tail(Fighter *fighter);
-void sonya_script_weapon_hp_tail(Fighter *fighter);
-void sonya_script_weapon_lp_tail(Fighter *fighter);
 void sonya_script_weapon_victim_getup(Fighter *victim);
 void sub_zero_script_breath_approach(Fighter *fighter);
 void sub_zero_script_breath_freeze(Fighter *fighter, int type);
@@ -1730,17 +1721,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x4958b0:
-          if (owner & 0x4000u) {
-            cage_weapon_upper_contact(fighter);
-            return true;
-          }
-          if (owner & 0x1000u) {
-            jarek_weapon_upper_contact(fighter);
-            return true;
-          }
-          return false;
+          retail_weapon_contact(fighter, address);
+          return true;
         case 0x495ae0:
-          kai_weapon_back_contact(fighter);
+          retail_weapon_contact(fighter, address);
           return true;
         case 0x495db0:
           reptile_weapon_flurry(fighter);
@@ -1749,33 +1733,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           liu_kang_liu_script_sword_blend(fighter);
           return true;
         case 0x496770:
-          if (owner & 0x10000u) {
-            kitana_script_weapon_hp_tail(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_weapon_hp_tail(fighter);
-            return true;
-          }
-          return false;
+          retail_weapon_contact(fighter, address);
+          return true;
         case 0x496970:
-          if (owner & 0x4000u) {
-            cage_weapon_back_lp_contact(fighter);
-            return true;
-          }
-          if (owner & 0x10000u) {
-            kitana_script_weapon_lp_tail(fighter);
-            return true;
-          }
-          if (owner & 0x8u) {
-            liu_kang_liu_script_back_lp_tail(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_weapon_lp_tail(fighter);
-            return true;
-          }
-          return false;
+          retail_weapon_contact(fighter, address);
+          return true;
         case 0x497b60:
           tanya_boomerang_release(fighter);
           return true;

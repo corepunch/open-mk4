@@ -503,17 +503,6 @@ static void native_ready_done(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
-static void weapon_tail_recover(Fighter *fighter) {
-  fighter->action = ACTION_RETAIL_1006;
-  fighter->body.physics = NULL;
-  fighter_set_speed(fighter, 0);
-  native_finish_clip(fighter, native_ready_done);
-}
-
-void mk4_mmove_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {
-  native_query_rows(fighter, record, queries, 1, weapon_tail_recover);
-}
-
 static void scene_task_step(Projectile *object) {
   if (g_battle.phase == PHASE_FATALITY) {
     object->lifetime = 2;

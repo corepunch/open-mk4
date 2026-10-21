@@ -2,15 +2,9 @@
 #include "../character.h"
 
 static const MoveDef victim = {.clip = 130, .last = 39, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x4001};
-static const AttackRecord upper_record = {98959, -45809, 67502, 28835, 146, 10, 119, 0, 11796};
 
 /* 495980 has the throw/back gates but no air selector. The ordinary LP
  * callback handles air first; follow-up table4ecb40 enters this ground body. */
-
-void jarek_weapon_upper_contact(Fighter *fighter) {
-  require(fighter_move(fighter)->clip == 226 && fighter_sample(fighter) == 29, "Knife upper contact needs the selected VM startup");
-  weapon_script_contact_tail(fighter, &upper_record, 2);
-}
 
 void jarek_weapon_reaction(Fighter *fighter) {
   require(fighter->reaction == 148 || fighter->reaction == 62, "Invalid knife victim entry");

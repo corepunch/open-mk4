@@ -2,6 +2,7 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_weapon_contact(Fighter *fighter, uint32_t address);
 void retail_weapon_equip(Fighter *fighter);
 void retail_weapon_draw(Fighter *fighter);
 void retail_weapon_draw_equip(Fighter *fighter);

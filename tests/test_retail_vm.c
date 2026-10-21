@@ -574,6 +574,18 @@ static void native_contact_record_lifetime(void) {
   check(actor->native_record == &actor->native_record_value && actor->native_record->damage == damage,
       "shared native contact rows must retain caller data across the yielding boundary");
   fighter_cancel_mmove(actor);
+  retail_vm_bind_animation(actor, 0x4fad7c + 227 * 12, 29);
+  uint32_t original = mk4_image_u32(&image, 0x53d0c0 + 11 * 4);
+  uint32_t selected = mk4_image_u32(&image, 0x53d0c0);
+  put_word(0x53d0c0 + 11 * 4, selected);
+  actor->retail_vm.native_owner_set = true;
+  actor->retail_vm.native_owner = 15;
+  check(retail_native_vm(actor, 0x496970, RETAIL_TAIL, 0), "weapon contact native must not depend on fighter registration masks");
+  AttackRecord expected = retail_vm_attack_record(&image, selected * 4);
+  check(actor->native_record == &actor->native_record_value && actor->native_record->damage == expected.damage,
+      "weapon native must read its contact selector from the loaded bank and own the decoded record");
+  put_word(0x53d0c0 + 11 * 4, original);
+  fighter_cancel_mmove(actor);
 }
 
 static void native_throw_selection(void) {

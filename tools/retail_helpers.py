@@ -386,3 +386,7 @@ if 0x496140 not in HELPERS:
     HELPERS[0x496140] = H('weapon_native_496140', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/reptile/moves/weapon.c', 'retail_weapon_native_496140'))
 if 0x495610 not in HELPERS:
     HELPERS[0x495610] = H('weapon_native_495610', 'active actor and original native operands', 'Engine adaptation of this original native entry; consult its bounded listing for native effects.', 'Native service with original script execution.', ('game/tanya/moves/weapon.c', 'retail_weapon_native_495610'))
+
+for _address in (0x4958b0, 0x495ae0, 0x496770, 0x496970):
+    if _address in HELPERS:
+        HELPERS[_address] = replace(HELPERS[_address], port=('game/weapons.c', 'retail_weapon_contact'))

@@ -43,7 +43,6 @@ void kai_handstand_rear_contact(Fighter *fighter);
 void kai_handstand_victim_tail(Fighter *fighter);
 void kai_handstand_crouch_return(Fighter *fighter);
 void kai_handstand_reaction(Fighter *fighter);
-void kai_weapon_back_contact(Fighter *fighter);
 void kai_weapon_victim_getup(Fighter *fighter);
 void kai_weapon_reaction(Fighter *fighter);
 bool kai_can_rising_skull(const Fighter *fighter);

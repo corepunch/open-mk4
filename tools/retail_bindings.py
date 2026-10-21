@@ -1535,6 +1535,10 @@ def bindings_for(character):
     result[0x485b10] = Binding('retail_getup_roll_flip', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local485ad0/485b10/485b50 match SfxBlockCluster; shared original getup rows and facing operations')
     result[0x485b50] = Binding('retail_getup_roll', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True, evidence='Local485ad0/485b10/485b50 match SfxBlockCluster; shared original getup rows and facing operations')
     result[0x46d260] = Binding('retail_weapon_draw_equip', 'game/retail_weapon.c', ('tail',), flow='terminal', mmove=True, evidence='Original46d260 equips493080 from raw inventory and enters4e62d8 once for every caller')
+    result[0x4958b0] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
+    result[0x496770] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
+    result[0x496970] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
+    result[0x495ae0] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
     # Historical research aliases resolve to the current native definition.
     from c_source import function_source, private_aliases
     for address, binding in tuple(result.items()):

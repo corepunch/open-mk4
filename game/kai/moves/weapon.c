@@ -5,7 +5,6 @@ void retail_weapon_native_495a90(Fighter *fighter);
 static void weapon_cleanup(Fighter *fighter);
 static const MoveDef back_move = {.clip = 226, .last = 59, .flags = SF_LOCK | SF_RECORD, .action = 0x10e};
 static const MoveDef victim_move = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
-static const AttackRecord back_record = {98959, -45809, 67502, 28835, 146, 10, 119, 0, 11796};
 
 static void weapon_cleanup(Fighter *fighter) {
   native_motion_stop(fighter);
@@ -18,11 +17,6 @@ void retail_weapon_native_495a90(Fighter *fighter) {
   /* 495a90 /4ec598 installs delayed travel before the selected VM stream. */
   native_schedule_speed(fighter, 0x1999, 7, 13);
   retail_vm_enter_owned(fighter, 0x4ec5a8, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_weapon_back_contact(Fighter *fighter) {
-  require(fighter_move(fighter)->clip == 226 && fighter_sample(fighter) == 29, "Kai back weapon contact needs its selected VM startup");
-  weapon_script_contact_tail(fighter, &back_record, 2);
 }
 
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use

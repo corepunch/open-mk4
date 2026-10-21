@@ -53,9 +53,3 @@ void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
     victim->facing = -victim->facing;
   }
 }
-
-void liu_kang_liu_script_back_lp_tail(Fighter *fighter) {
-  const Mk4Image *image = retail_vm_image();
-  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d0c0 + 11 * 4) * 4);
-  weapon_script_contact_tail(fighter, &record, 2);
-}
