@@ -572,14 +572,35 @@ void retail_vm_step(Fighter *fighter) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
+      case 0x43:
       case 0x55:
       case 0x36: {
         uint32_t address = fetch(fighter);
         uint32_t target = fetch(fighter);
-        if (!vm->native(fighter, address, RETAIL_PREDICATE, 0)) {
+        uint64_t continuation = fighter->continuation;
+        if (!vm->native(fighter, address, RETAIL_PREDICATE, opcode == 0x55 ? arg : 0)) {
           vm_error(fighter, "unreviewed predicate binding");
         }
+        if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+          return;
+        }
         if (vm->result & (opcode == 0x36 ? 4u : 1u)) {
+          jump(fighter, target);
+        }
+        break;
+      }
+      case 0x3d: {
+        uint32_t target = fetch(fighter);
+        if (fighter->contact == CONTACT_BLOCK) {
+          jump(fighter, target);
+        }
+        break;
+      }
+      case 0x50: {
+        uint32_t target = fetch(fighter);
+        uint64_t continuation = fighter->continuation;
+        contact(fighter, 0x53d2b8, arg);
+        if (vm->active && fighter->continuation == continuation && (vm->result & 1u)) {
           jump(fighter, target);
         }
         break;
@@ -600,6 +621,17 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x39:
         fighter->body.physics = NULL;
+        break;
+      case 0x5d: {
+        q16 horizontal = (q16)fetch(fighter);
+        q16 vertical = (q16)fetch(fighter);
+        fighter->body.pos[AXIS_X] += q16_mul(fighter_axis(fighter, AXIS_X), horizontal);
+        fighter->body.pos[AXIS_Z] += q16_mul(fighter_axis(fighter, AXIS_Z), horizontal);
+        fighter->body.pos[AXIS_Y] += vertical;
+        break;
+      }
+      case 0x74:
+        battle_sound(SOUND_TOKEN, 0x627);
         break;
       case 0x58:
         fighter_set_speed(fighter, (q16)fetch(fighter));
@@ -672,6 +704,7 @@ void retail_vm_step(Fighter *fighter) {
       case 0x34:
         vm->wake = g_battle.ticks + (word & 0xffffffu);
         break;
+      case 0x54:
       case 0x37:
         vm->wake = g_battle.ticks + ((vm->result & 1u) ? (word >> 12) & 0xfffu : word & 0xfffu);
         break;

@@ -83,6 +83,12 @@ SCRIPT_OPS = {
     0x3a: ('set loop counter', 0),
     0x3b: ('decrement counter and loop to preceding 0x3a', 0),
     0x3c: ('select character script', 16),
+    0x3d: ('branch if contact result is blocked', 1),
+    0x43: ('native predicate and conditional script branch', 2),
+    0x50: ('contact query B and branch on contact', 1),
+    0x54: ('wait selected by native result bit 0', 0),
+    0x5d: ('adjust position along heading and vertically', 2),
+    0x74: ('play native sound token 0x627', 0),
     0x3e: ('park task with repeated 60-tick reschedule', 0),
     0x3f: ('return to fighter controller', 0),
     0x40: ('spawn cooperative task', 2),
@@ -193,7 +199,7 @@ def script_program(image, entry, character=0):
                 row['clip_owner'] = 'victim' if op == 0x0e else 'self'
                 if op == 0x71:
                     row['start_sample'] = 1
-            if op in (0x32, 0x35, 0x36, 0x38, 0x55):
+            if op in (0x32, 0x35, 0x36, 0x38, 0x43, 0x55):
                 row['native_target'] = hex(operands[0])
                 open_edges.append(dict(source=hex(pc), kind=operation, target=hex(operands[0])))
             if op in INLINE_NATIVE_OPS:
@@ -201,8 +207,8 @@ def script_program(image, entry, character=0):
                 row['argument'] = word & 255 if op != 0x61 else None
                 open_edges.append(dict(source=hex(pc), kind='native helper dependency',
                                        target=row['native_target']))
-            if op in (0x51, 0x52, 0x53, 0x5e):
-                table, label = {0x51: (0x53d2b8, 'B'), 0x52: (0x53d268, 'A'),
+            if op in (0x50, 0x51, 0x52, 0x53, 0x5e):
+                table, label = {0x50: (0x53d2b8, 'B'), 0x51: (0x53d2b8, 'B'), 0x52: (0x53d268, 'A'),
                                 0x53: (0x53d178, 'D'), 0x5e: (0x53d0c0, 'weapon')}[op]
                 row['contact_table'] = label
                 row['contact'] = attack_record(image, table, word & 255)
@@ -218,13 +224,13 @@ def script_program(image, entry, character=0):
                                        target=row['handler']))
             if op == 0x30:
                 open_edges.append(dict(source=hex(pc), kind='dynamic continuation return', target='0x41f780'))
-            if op == 0x37:
+            if op in (0x37, 0x54):
                 row['wait_if_clear'] = word & 0xfff
                 row['wait_if_set'] = (word >> 12) & 0xfff
-            if op in (0x2f, 0x42, 0x44, 0x45):
+            if op in (0x2f, 0x3d, 0x42, 0x44, 0x45, 0x50):
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
-            if op in (0x36, 0x55):
+            if op in (0x36, 0x43, 0x55):
                 pending.append(operands[1] * 4)
                 row['branch'] = hex(operands[1] * 4)
             if op == 0x3b:

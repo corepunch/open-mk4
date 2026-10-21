@@ -411,8 +411,10 @@ static void cleanup_once(Fighter *fighter) {
   cleanup_calls++;
 }
 
+static unsigned predicate_argument;
+
 static bool predicate_native(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
-  (void)argument;
+  predicate_argument = argument;
   check(address == 0x12345678 && kind == RETAIL_PREDICATE, "predicate must use its typed native boundary");
   fighter->retail_vm.result = 4;
   return true;
@@ -758,6 +760,36 @@ static void native_stagger_boundary(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
 }
 
+static void conditional_primitive_opcodes(void) {
+  const uint32_t base = 0x570180;
+  const uint32_t words[] = {0x43000000, 0x12345678, (base + 68) / 4, 0x55ffff07, 0x12345678, (base + 68) / 4, 0x3d000000, (base + 40) / 4, 0x12000002,
+      0x30000000, 0x5d000000, 0x1000, 0xffffe000, 0x74000000, 0x54003002, 0x12000003, 0x30000000, 0xff000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + 4 * i, words[i]);
+  }
+  for (int blocked = 0; blocked < 2; ++blocked) {
+    Fighter *actor = setup(0, 2);
+    static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+    fighter_start_move(actor, S_PUNCH, &locked);
+    q16 x = actor->body.pos[AXIS_X], y = actor->body.pos[AXIS_Y];
+    actor->contact = blocked ? CONTACT_BLOCK : CONTACT_HIT;
+    control_finished = 0;
+    g_battle.sound_count = 0;
+    retail_vm_start(actor, &image, base, base + sizeof words, control_end, predicate_native);
+    check(predicate_argument == 7, "inline native predicate arguments must be masked and forwarded through the typed boundary");
+    if (blocked) {
+      check(actor->retail_vm.active && actor->retail_vm.wake == g_battle.ticks + 2 && actor->body.pos[AXIS_X] == x + 0x1000 &&
+                actor->body.pos[AXIS_Y] == y - 0x2000 && g_battle.sound_count == 1 && g_battle.sounds[0].selector == 0x627,
+          "block-value branch must consume signed position operands, native token and flag-selected packed wait");
+      for (int visit = 0; visit < 4 && actor->retail_vm.active; ++visit) {
+        tick();
+      }
+    }
+    check(control_finished == 1 && fighter_sample(actor) == (blocked ? 3 : 2),
+        "predicate bit-zero branch and numeric block-result branch must remain distinct and continue at their selected targets");
+  }
+}
+
 static void cursor_alias_opcodes(void) {
   Fighter *actor = setup(0, 2);
   const uint32_t base = 0x570180, descriptor = 0x4fad7c;
@@ -1031,6 +1063,7 @@ int main(int argc, char **argv) {
   native_stagger_boundary();
   native_task_completion();
   cursor_alias_opcodes();
+  conditional_primitive_opcodes();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

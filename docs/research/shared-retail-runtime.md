@@ -1525,3 +1525,25 @@ descriptor length. Verified formatting, shared VM/rejections, strict audits,
 native frame gates, existing decoder checks and helper/port navigation (6/7
 tests). Fourteen non-null opcode handlers still require completion; this is
 not a claim of full interpreter/native parity. No character tests added.
+
+### Complete conditional and small engine opcode boundaries
+
+Implemented3d's numeric block-result branch,43's predicate bit-zero branch,
+50's loaded B-contact/conditional script jump,54's packed conditional wait,
+5d's signed heading/Y position adjustment and74's native token627. Reused the
+shared contact, pose, heading and sound boundaries. ContactResult values1/2/3
+match the original native48d4a0 output, independently of predicate flag bits.
+Native predicates now preserve opcode55's masked inline argument and stop the
+old stream after an ownership transfer; the previous bridge discarded it.
+
+Checked bounded45b500/45b5f0/45ac80/45acf0/45b0d0/45c100/45ad90 and their
+helpers, including490b10 and48d4a0, against the supplied EXE and mk4decomp
+MoveListCursorCluster/VM matching structure. The decoder follows both new
+branch edges and exposes exact operand counts; C-style views remain read-only.
+
+Verified formatting, shared VM/rejections, strict audits, native frame gates,
+existing decoder checks and helper/port navigation (6/7 tests). One combined
+runtime fixture checks numeric contact versus flag branches, inline native
+arguments, signed operands, token dispatch and packed wait selection. It uses
+a locked synthetic runtime action so the controller cannot interrupt the wait.
+No authored character tests. Eight non-null opcode handlers remain to complete.
