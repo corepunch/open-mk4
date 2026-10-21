@@ -633,95 +633,50 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
     case RETAIL_CALL:
       switch (address) {
         case 0x406ba0:
-          if (owner & 0x800u) {
-            kai_second_child_walk(fighter);
-            return true;
-          }
-          return false;
+          kai_second_child_walk(fighter);
+          return true;
         case 0x40eb80:
-          if (owner & 0x400u) {
-            reptile_script_head_close(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_head_close(fighter);
+          return true;
         case 0x40ec40:
-          if (owner & 0x400u) {
-            reptile_script_head_open(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_head_open(fighter);
+          return true;
         case 0x40ed20:
-          if (owner & 0x400u) {
-            reptile_script_head_wide(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_head_wide(fighter);
+          return true;
         case 0x40ee00:
-          if (owner & 0x400u) {
-            reptile_script_acid_drool(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_acid_drool(fighter);
+          return true;
         case 0x410380:
-          if (owner & 0x2u) {
-            raiden_script_victory_effect(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_victory_effect(fighter);
+          return true;
         case 0x416ae0:
-          if (owner & 0x1u) {
-            scorpion_script_fire_decor(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_fire_decor(fighter);
+          return true;
         case 0x416d40:
-          if (owner & 0x1u) {
-            scorpion_script_fire_flame(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_fire_flame(fighter);
+          return true;
         case 0x41db70:
-          if (owner & 0x40u) {
-            shinnok_second_gore(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_gore(fighter);
+          return true;
         case 0x41dba0:
-          if (owner & 0x40u) {
-            shinnok_second_gore(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_gore(fighter);
+          return true;
         case 0x41dbd0:
-          if (owner & 0x40u) {
-            shinnok_second_gore(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_gore(fighter);
+          return true;
         case 0x41de30:
-          if (owner & 0x1000u) {
-            jarek_second_glow(fighter);
-            return true;
-          }
-          return false;
+          jarek_second_glow(fighter);
+          return true;
         case 0x427b70:
-          if (owner & 0x2u) {
-            raiden_script_second_particles(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_second_particles(fighter);
+          return true;
         case 0x42b680:
-          if (owner & 0x8000u) {
-            goro_script_lp_pair_start(fighter);
-            return true;
-          }
-          return false;
+          goro_script_lp_pair_start(fighter);
+          return true;
         case 0x43a5c0:
-          if (owner & 0x8000u) {
-            goro_quake_resting_weapons();
-            return true;
-          }
-          return false;
+          goro_quake_resting_weapons();
+          return true;
         case 0x46a950:
           if (owner & 0x1000u) {
             jarek_script_low_kick_clear(fighter);
@@ -743,136 +698,73 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46ddd0:
-          if (owner & 0x3ffffu) {
-            mk4_script_jab_contact(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_jab_contact(fighter);
+          return true;
         case 0x46de60:
-          if (owner & 0x3ffffu) {
-            fighter->retail_vm.result = mk4_script_jab_gate(fighter);
-            return true;
-          }
-          return false;
+          fighter->retail_vm.result = mk4_script_jab_gate(fighter);
+          return true;
         case 0x47d720:
-          if (owner & 0x2u) {
-            raiden_script_torpedo_step(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_torpedo_step(fighter);
+          return true;
         case 0x48a1f0:
-          if (owner & 0x1u) {
-            scorpion_script_beast_voice(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_beast_voice(fighter);
+          return true;
         case 0x48a220:
-          if (owner & 0x2000u) {
-            jax_throw_grunt();
-            return true;
-          }
-          return false;
+          jax_throw_grunt();
+          return true;
         case 0x48f6e0:
-          if (owner & 0x8u) {
-            mk4_script_save_motion(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_save_motion(fighter);
+          return true;
         case 0x48f750:
-          if (owner & 0xau) {
-            mk4_script_restore_motion(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_restore_motion(fighter);
+          return true;
         case 0x48f9f0:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_fatal_align(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_fatal_align(fighter);
+          return true;
         case 0x490290:
-          if (owner & 0x10004u) {
-            mk4_script_touchable(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_touchable(fighter);
+          return true;
         case 0x494520:
-          if (owner & 0x10004u) {
-            mk4_script_disarm_self(fighter);
-            return true;
-          }
-          return false;
+          mk4_script_disarm_self(fighter);
+          return true;
         default:
           return false;
       }
     case RETAIL_TAIL:
       switch (address) {
         case 0x41b080:
-          if (owner & 0x10u) {
-            sub_zero_script_breath_victim_end(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_breath_victim_end(fighter);
+          return true;
         case 0x41b440:
-          if (owner & 0x10u) {
-            sub_zero_script_breath_approach(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_breath_approach(fighter);
+          return true;
         case 0x41b450:
-          if (owner & 0x10u) {
-            sub_zero_script_breath_slide(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_breath_slide(fighter);
+          return true;
         case 0x41b570:
-          if (owner & 0x10u) {
-            sub_zero_script_breath_shatter(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_breath_shatter(fighter);
+          return true;
         case 0x41c4b0:
-          if (owner & 0x80u) {
-            reiko_second_victim_fall(fighter);
-            return true;
-          }
-          return false;
+          reiko_second_victim_fall(fighter);
+          return true;
         case 0x41c4e0:
-          if (owner & 0x80u) {
-            reiko_second_victim_end(fighter);
-            return true;
-          }
-          return false;
+          reiko_second_victim_end(fighter);
+          return true;
         case 0x41dfc0:
-          if (owner & 0x1000u) {
-            jarek_second_handoff(fighter);
-            return true;
-          }
-          return false;
+          jarek_second_handoff(fighter);
+          return true;
         case 0x41e0a0:
-          if (owner & 0x1000u) {
-            jarek_second_victim_hold(fighter);
-            return true;
-          }
-          return false;
+          jarek_second_victim_hold(fighter);
+          return true;
         case 0x41ea50:
-          if (owner & 0x1u) {
-            scorpion_script_beast_begin(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_beast_begin(fighter);
+          return true;
         case 0x41ebd0:
-          if (owner & 0x1u) {
-            scorpion_script_beast_attack(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_beast_attack(fighter);
+          return true;
         case 0x41ec70:
-          if (owner & 0x1u) {
-            scorpion_script_beast_victim_pieces(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_beast_victim_pieces(fighter);
+          return true;
         case 0x41f1b0:
           if (owner & 0x80u) {
             reiko_second_owner_park(fighter);
@@ -968,83 +860,44 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x42c0b0:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_lk_continue(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_lk_continue(fighter);
+          return true;
         case 0x42c0d0:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_lk_damage(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_lk_damage(fighter);
+          return true;
         case 0x42c170:
-          if (owner & 0x8u) {
-            retail_vm_enter(fighter, 0x4de478, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4de478, fighter->retail_vm.finish);
+          return true;
         case 0x42c200:
-          if (owner & 0x10u) {
-            sub_zero_script_lk_rebase(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_lk_rebase(fighter);
+          return true;
         case 0x42c220:
-          if (owner & 0x10u) {
-            sub_zero_script_lk_damage(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_lk_damage(fighter);
+          return true;
         case 0x42c300:
-          if (owner & 0x10u) {
-            sub_zero_script_lk_owner_return(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_lk_owner_return(fighter);
+          return true;
         case 0x42c770:
-          if (owner & 0x8000u) {
-            retail_vm_enter(fighter, 0x4de7e8, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4de7e8, fighter->retail_vm.finish);
+          return true;
         case 0x42c7b0:
-          if (owner & 0x8000u) {
-            goro_script_lp_phase_repeat(fighter);
-            return true;
-          }
-          return false;
+          goro_script_lp_phase_repeat(fighter);
+          return true;
         case 0x42c7f0:
-          if (owner & 0x2000u) {
-            retail_vm_enter(fighter, 0x4de4f0, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4de4f0, fighter->retail_vm.finish);
+          return true;
         case 0x42c820:
-          if (owner & 0x2000u) {
-            jax_lp_slam_first(fighter);
-            return true;
-          }
-          return false;
+          jax_lp_slam_first(fighter);
+          return true;
         case 0x42c8c0:
-          if (owner & 0x2000u) {
-            jax_lp_slam_second(fighter);
-            return true;
-          }
-          return false;
+          jax_lp_slam_second(fighter);
+          return true;
         case 0x42c8f0:
-          if (owner & 0x2000u) {
-            jax_lp_slam_third(fighter);
-            return true;
-          }
-          return false;
+          jax_lp_slam_third(fighter);
+          return true;
         case 0x42c9f0:
-          if (owner & 0x2000u) {
-            jax_lp_throw_return(fighter);
-            return true;
-          }
-          return false;
+          jax_lp_throw_return(fighter);
+          return true;
         case 0x42cb80:
           if (owner & 0x20u) {
             fujin_script_lp_select(fighter);
@@ -1154,83 +1007,44 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x43afc0:
-          if (owner & 0x8000u) {
-            goro_script_punch_tail(fighter);
-            return true;
-          }
-          return false;
+          goro_script_punch_tail(fighter);
+          return true;
         case 0x43b1a0:
-          if (owner & 0x8000u) {
-            goro_script_kick_tail(fighter);
-            return true;
-          }
-          return false;
+          goro_script_kick_tail(fighter);
+          return true;
         case 0x43b370:
-          if (owner & 0x8000u) {
-            goro_script_leap_continue(fighter);
-            return true;
-          }
-          return false;
+          goro_script_leap_continue(fighter);
+          return true;
         case 0x43b590:
-          if (owner & 0x8000u) {
-            goro_script_stomp_return(fighter);
-            return true;
-          }
-          return false;
+          goro_script_stomp_return(fighter);
+          return true;
         case 0x43b8c0:
-          if (owner & 0x8000u) {
-            goro_script_quake_land(fighter);
-            return true;
-          }
-          return false;
+          goro_script_quake_land(fighter);
+          return true;
         case 0x43c500:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_fatal_setup(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_fatal_setup(fighter);
+          return true;
         case 0x43c820:
-          if (owner & 0x40u) {
-            shinnok_second_vanish(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_vanish(fighter);
+          return true;
         case 0x43ca30:
-          if (owner & 0x40u) {
-            shinnok_second_clap(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_clap(fighter);
+          return true;
         case 0x43d460:
-          if (owner & 0x3ffffu) {
-            retail_fan_tail(fighter);
-            return true;
-          }
-          return false;
+          retail_fan_tail(fighter);
+          return true;
         case 0x43d510:
-          if (owner & 0x3ffffu) {
-            retail_fan_cycle(fighter);
-            return true;
-          }
-          return false;
+          retail_fan_cycle(fighter);
+          return true;
         case 0x43d530:
-          if (owner & 0x3ffffu) {
-            retail_fan_cycle(fighter);
-            return true;
-          }
-          return false;
+          retail_fan_cycle(fighter);
+          return true;
         case 0x43d6f0:
-          if (owner & 0x3ffffu) {
-            retail_fan_victory(fighter);
-            return true;
-          }
-          return false;
+          retail_fan_victory(fighter);
+          return true;
         case 0x43db50:
-          if (owner & 0x3ffffu) {
-            retail_fan_victim_end(fighter);
-            return true;
-          }
-          return false;
+          retail_fan_victim_end(fighter);
+          return true;
         case 0x43f510:
           if (owner & 0x10000u) {
             kitana_script_first_release(fighter);
@@ -1242,605 +1056,305 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x441140:
-          if (owner & 0x2u) {
-            raiden_script_first_release(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_first_release(fighter);
+          return true;
         case 0x441180:
-          if (owner & 0x2u) {
-            raiden_script_first_end(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_first_end(fighter);
+          return true;
         case 0x443930:
-          if (owner & 0x1u) {
-            scorpion_script_burn_begin(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_begin(fighter);
+          return true;
         case 0x443a30:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_start(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_start(fighter);
+          return true;
         case 0x443a70:
-          if (owner & 0x1u) {
-            scorpion_script_burn_repeat1(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_repeat1(fighter);
+          return true;
         case 0x443b40:
-          if (owner & 0x1u) {
-            scorpion_script_burn_repeat2(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_repeat2(fighter);
+          return true;
         case 0x443c10:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victory(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victory(fighter);
+          return true;
         case 0x444000:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_cue(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_cue(fighter);
+          return true;
         case 0x444030:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_repeat(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_repeat(fighter);
+          return true;
         case 0x444060:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_blend(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_blend(fighter);
+          return true;
         case 0x444100:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_impact(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_impact(fighter);
+          return true;
         case 0x444150:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_settle(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_settle(fighter);
+          return true;
         case 0x444190:
-          if (owner & 0x1u) {
-            scorpion_script_burn_victim_end(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_burn_victim_end(fighter);
+          return true;
         case 0x445150:
-          if (owner & 0x10u) {
-            sub_zero_script_first_begin(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_begin(fighter);
+          return true;
         case 0x445220:
-          if (owner & 0x10u) {
-            sub_zero_script_first_pull(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_pull(fighter);
+          return true;
         case 0x445240:
-          if (owner & 0x10u) {
-            sub_zero_script_first_cues1(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_cues1(fighter);
+          return true;
         case 0x445280:
-          if (owner & 0x10u) {
-            sub_zero_script_first_cues2(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_cues2(fighter);
+          return true;
         case 0x4452b0:
-          if (owner & 0x10u) {
-            sub_zero_script_first_cues3(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_cues3(fighter);
+          return true;
         case 0x4452e0:
-          if (owner & 0x10u) {
-            sub_zero_script_first_cues4(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_cues4(fighter);
+          return true;
         case 0x445310:
-          if (owner & 0x10u) {
-            sub_zero_script_first_head(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_head(fighter);
+          return true;
         case 0x445510:
-          if (owner & 0x10u) {
-            sub_zero_script_first_victim_blends(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_victim_blends(fighter);
+          return true;
         case 0x4456c0:
-          if (owner & 0x10u) {
-            sub_zero_script_first_victim_collapse(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_victim_collapse(fighter);
+          return true;
         case 0x445700:
-          if (owner & 0x10u) {
-            sub_zero_script_first_victim_end(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_first_victim_end(fighter);
+          return true;
         case 0x446f80:
-          if (owner & 0x1000u) {
-            jarek_first_heart(fighter);
-            return true;
-          }
-          return false;
+          jarek_first_heart(fighter);
+          return true;
         case 0x447310:
-          if (owner & 0x1000u) {
-            jarek_first_victim_rip(fighter);
-            return true;
-          }
-          return false;
+          jarek_first_victim_rip(fighter);
+          return true;
         case 0x4473b0:
-          if (owner & 0x1000u) {
-            jarek_first_victim_impact(fighter);
-            return true;
-          }
-          return false;
+          jarek_first_victim_impact(fighter);
+          return true;
         case 0x447410:
-          if (owner & 0x1000u) {
-            jarek_first_victim_end(fighter);
-            return true;
-          }
-          return false;
+          jarek_first_victim_end(fighter);
+          return true;
         case 0x448480:
-          if (owner & 0x4000u) {
-            cage_script_fatality_1_signal(fighter);
-            return true;
-          }
-          return false;
+          cage_script_fatality_1_signal(fighter);
+          return true;
         case 0x4487b0:
-          if (owner & 0x4000u) {
-            cage_first_victim_59(fighter);
-            return true;
-          }
-          return false;
+          cage_first_victim_59(fighter);
+          return true;
         case 0x4487f0:
-          if (owner & 0x4000u) {
-            cage_first_victim_131(fighter);
-            return true;
-          }
-          return false;
+          cage_first_victim_131(fighter);
+          return true;
         case 0x448830:
-          if (owner & 0x4000u) {
-            cage_first_victim_148(fighter);
-            return true;
-          }
-          return false;
+          cage_first_victim_148(fighter);
+          return true;
         case 0x448870:
-          if (owner & 0x4000u) {
-            cage_first_victim_166(fighter);
-            return true;
-          }
-          return false;
+          cage_first_victim_166(fighter);
+          return true;
         case 0x4488b0:
-          if (owner & 0x4000u) {
-            cage_first_victim_185(fighter);
-            return true;
-          }
-          return false;
+          cage_first_victim_185(fighter);
+          return true;
         case 0x4488f0:
-          if (owner & 0x4000u) {
-            cage_first_victim_206(fighter);
-            return true;
-          }
-          return false;
+          cage_first_victim_206(fighter);
+          return true;
         case 0x448930:
-          if (owner & 0x4000u) {
-            cage_first_sever(fighter);
-            return true;
-          }
-          return false;
+          cage_first_sever(fighter);
+          return true;
         case 0x448c80:
-          if (owner & 0x4000u) {
-            cage_first_torso_half(fighter);
-            return true;
-          }
-          return false;
+          cage_first_torso_half(fighter);
+          return true;
         case 0x448d20:
-          if (owner & 0x4000u) {
-            cage_first_torso_123(fighter);
-            return true;
-          }
-          return false;
+          cage_first_torso_123(fighter);
+          return true;
         case 0x448d70:
-          if (owner & 0x4000u) {
-            cage_first_torso_finish(fighter);
-            return true;
-          }
-          return false;
+          cage_first_torso_finish(fighter);
+          return true;
         case 0x449620:
-          if (owner & 0x2000u) {
-            jax_fatality_1_victory(fighter);
-            return true;
-          }
-          return false;
+          jax_fatality_1_victory(fighter);
+          return true;
         case 0x449890:
-          if (owner & 0x2000u) {
-            jax_fatality_1_grab(fighter);
-            return true;
-          }
-          return false;
+          jax_fatality_1_grab(fighter);
+          return true;
         case 0x4498d0:
-          if (owner & 0x2000u) {
-            jax_fatality_1_first_arm(fighter);
-            return true;
-          }
-          return false;
+          jax_fatality_1_first_arm(fighter);
+          return true;
         case 0x449940:
-          if (owner & 0x2000u) {
-            jax_fatality_1_second_arm(fighter);
-            return true;
-          }
-          return false;
+          jax_fatality_1_second_arm(fighter);
+          return true;
         case 0x44aeb0:
-          if (owner & 0x800u) {
-            kai_first_owner_grab(fighter);
-            return true;
-          }
-          return false;
+          kai_first_owner_grab(fighter);
+          return true;
         case 0x44af20:
-          if (owner & 0x800u) {
-            kai_first_owner_spin(fighter);
-            return true;
-          }
-          return false;
+          kai_first_owner_spin(fighter);
+          return true;
         case 0x44af30:
-          if (owner & 0x800u) {
-            kai_first_owner_tear(fighter);
-            return true;
-          }
-          return false;
+          kai_first_owner_tear(fighter);
+          return true;
         case 0x44b260:
-          if (owner & 0x800u) {
-            kai_first_victim_71(fighter);
-            return true;
-          }
-          return false;
+          kai_first_victim_71(fighter);
+          return true;
         case 0x44b290:
-          if (owner & 0x800u) {
-            kai_first_victim_turn(fighter);
-            return true;
-          }
-          return false;
+          kai_first_victim_turn(fighter);
+          return true;
         case 0x44b2c0:
-          if (owner & 0x800u) {
-            kai_first_victim_sever(fighter);
-            return true;
-          }
-          return false;
+          kai_first_victim_sever(fighter);
+          return true;
         case 0x44b600:
-          if (owner & 0x800u) {
-            kai_first_torso_203(fighter);
-            return true;
-          }
-          return false;
+          kai_first_torso_203(fighter);
+          return true;
         case 0x44b650:
-          if (owner & 0x800u) {
-            kai_first_torso_impact(fighter);
-            return true;
-          }
-          return false;
+          kai_first_torso_impact(fighter);
+          return true;
         case 0x44be10:
-          if (owner & 0x100u) {
-            quan_chi_fatality_cue_40(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_fatality_cue_40(fighter);
+          return true;
         case 0x44be40:
-          if (owner & 0x100u) {
-            quan_chi_fatality_leg(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_fatality_leg(fighter);
+          return true;
         case 0x44be60:
-          if (owner & 0x100u) {
-            quan_chi_fatality_hit_179(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_fatality_hit_179(fighter);
+          return true;
         case 0x44beb0:
-          if (owner & 0x100u) {
-            quan_chi_fatality_hit_241(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_fatality_hit_241(fighter);
+          return true;
         case 0x44bf00:
-          if (owner & 0x100u) {
-            retail_vm_enter(fighter, 0x4e1548, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e1548, fighter->retail_vm.finish);
+          return true;
         case 0x44bf10:
-          if (owner & 0x100u) {
-            quan_chi_fatality_beat(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_fatality_beat(fighter);
+          return true;
         case 0x44d4a0:
-          if (owner & 0x200u) {
-            tanya_first_owner_53(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_owner_53(fighter);
+          return true;
         case 0x44d4e0:
-          if (owner & 0x200u) {
-            tanya_first_owner_drift(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_owner_drift(fighter);
+          return true;
         case 0x44d510:
-          if (owner & 0x200u) {
-            tanya_first_owner_replays(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_owner_replays(fighter);
+          return true;
         case 0x44d530:
-          if (owner & 0x200u) {
-            tanya_first_owner_loop(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_owner_loop(fighter);
+          return true;
         case 0x44d6e0:
-          if (owner & 0x200u) {
-            tanya_first_victim_swell(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_victim_swell(fighter);
+          return true;
         case 0x44d750:
-          if (owner & 0x200u) {
-            tanya_first_victim_repeat(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_victim_repeat(fighter);
+          return true;
         case 0x44d7a0:
-          if (owner & 0x200u) {
-            tanya_first_victim_burst(fighter);
-            return true;
-          }
-          return false;
+          tanya_first_victim_burst(fighter);
+          return true;
         case 0x44f5e0:
-          if (owner & 0x20u) {
-            fujin_first_loop_start(fighter);
-            return true;
-          }
-          return false;
+          fujin_first_loop_start(fighter);
+          return true;
         case 0x44f620:
-          if (owner & 0x20u) {
-            fujin_first_cycle(fighter);
-            return true;
-          }
-          return false;
+          fujin_first_cycle(fighter);
+          return true;
         case 0x44f6f0:
-          if (owner & 0x20u) {
-            fujin_first_shoot(fighter);
-            return true;
-          }
-          return false;
+          fujin_first_shoot(fighter);
+          return true;
         case 0x4528a0:
-          if (owner & 0x80u) {
-            reiko_first_victory(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_victory(fighter);
+          return true;
         case 0x452ac0:
-          if (owner & 0x80u) {
-            reiko_first_tear(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_tear(fighter);
+          return true;
         case 0x452bb0:
-          if (owner & 0x80u) {
-            reiko_first_victim_118(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_victim_118(fighter);
+          return true;
         case 0x452c10:
-          if (owner & 0x80u) {
-            reiko_first_victim_165(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_victim_165(fighter);
+          return true;
         case 0x452c50:
-          if (owner & 0x80u) {
-            reiko_first_piece_end(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_piece_end(fighter);
+          return true;
         case 0x452e50:
-          if (owner & 0x80u) {
-            reiko_first_torso_29(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_torso_29(fighter);
+          return true;
         case 0x452e90:
-          if (owner & 0x80u) {
-            reiko_first_torso_end(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_torso_end(fighter);
+          return true;
         case 0x452f00:
-          if (owner & 0x80u) {
-            reiko_first_head_59(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_head_59(fighter);
+          return true;
         case 0x452f40:
-          if (owner & 0x80u) {
-            reiko_first_head_83(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_head_83(fighter);
+          return true;
         case 0x452f90:
-          if (owner & 0x80u) {
-            reiko_first_piece_end(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_piece_end(fighter);
+          return true;
         case 0x452fe0:
-          if (owner & 0x80u) {
-            reiko_first_left_arm_56(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_left_arm_56(fighter);
+          return true;
         case 0x453020:
-          if (owner & 0x80u) {
-            reiko_first_left_arm_land(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_left_arm_land(fighter);
+          return true;
         case 0x453040:
-          if (owner & 0x80u) {
-            reiko_first_piece_end(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_piece_end(fighter);
+          return true;
         case 0x453090:
-          if (owner & 0x80u) {
-            reiko_first_right_arm_44(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_right_arm_44(fighter);
+          return true;
         case 0x4530d0:
-          if (owner & 0x80u) {
-            reiko_first_right_arm_land(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_right_arm_land(fighter);
+          return true;
         case 0x4530f0:
-          if (owner & 0x80u) {
-            reiko_first_piece_end(fighter);
-            return true;
-          }
-          return false;
+          reiko_first_piece_end(fighter);
+          return true;
         case 0x453ae0:
-          if (owner & 0x400u) {
-            reptile_first_owner_cycle(fighter);
-            return true;
-          }
-          return false;
+          reptile_first_owner_cycle(fighter);
+          return true;
         case 0x453b20:
-          if (owner & 0x400u) {
-            reptile_first_owner_bite(fighter);
-            return true;
-          }
-          return false;
+          reptile_first_owner_bite(fighter);
+          return true;
         case 0x453ba0:
-          if (owner & 0x400u) {
-            reptile_first_owner_loop(fighter);
-            return true;
-          }
-          return false;
+          reptile_first_owner_loop(fighter);
+          return true;
         case 0x454130:
-          if (owner & 0x400u) {
-            reptile_first_victim_bite(fighter);
-            return true;
-          }
-          return false;
+          reptile_first_victim_bite(fighter);
+          return true;
         case 0x4541b0:
-          if (owner & 0x400u) {
-            reptile_first_victim_shake(fighter);
-            return true;
-          }
-          return false;
+          reptile_first_victim_shake(fighter);
+          return true;
         case 0x4541e0:
-          if (owner & 0x400u) {
-            reptile_first_victim_collapse(fighter);
-            return true;
-          }
-          return false;
+          reptile_first_victim_collapse(fighter);
+          return true;
         case 0x455110:
-          if (owner & 0x40u) {
-            shinnok_first_vanished(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_vanished(fighter);
+          return true;
         case 0x455140:
-          if (owner & 0x40u) {
-            shinnok_first_hidden(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_hidden(fighter);
+          return true;
         case 0x4551b0:
-          if (owner & 0x40u) {
-            shinnok_fatality_reappear(fighter);
-            return true;
-          }
-          return false;
+          shinnok_fatality_reappear(fighter);
+          return true;
         case 0x455230:
-          if (owner & 0x40u) {
-            shinnok_fatality_victory(fighter);
-            return true;
-          }
-          return false;
+          shinnok_fatality_victory(fighter);
+          return true;
         case 0x455330:
-          if (owner & 0x40u) {
-            shinnok_second_vanished(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_vanished(fighter);
+          return true;
         case 0x455360:
-          if (owner & 0x40u) {
-            shinnok_second_hands(fighter);
-            return true;
-          }
-          return false;
+          shinnok_second_hands(fighter);
+          return true;
         case 0x4558b0:
-          if (owner & 0x40u) {
-            shinnok_first_hand_squeeze(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_hand_squeeze(fighter);
+          return true;
         case 0x4558d0:
-          if (owner & 0x40u) {
-            shinnok_first_squeeze_cycle(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_squeeze_cycle(fighter);
+          return true;
         case 0x455ae0:
-          if (owner & 0x40u) {
-            shinnok_first_victim_held(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_victim_held(fighter);
+          return true;
         case 0x455b60:
-          if (owner & 0x40u) {
-            shinnok_first_victim_squeeze(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_victim_squeeze(fighter);
+          return true;
         case 0x455b80:
-          if (owner & 0x40u) {
-            shinnok_first_squeeze_cycle(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_squeeze_cycle(fighter);
+          return true;
         case 0x455ba0:
-          if (owner & 0x40u) {
-            shinnok_first_victim_crush(fighter);
-            return true;
-          }
-          return false;
+          shinnok_first_victim_crush(fighter);
+          return true;
         case 0x45fc40:
           if (owner & 0x20u) {
             fujin_wind_crouch_return(fighter);
@@ -1856,77 +1370,41 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x464960:
-          if (owner & 0x2u) {
-            raiden_script_second_blend(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_second_blend(fighter);
+          return true;
         case 0x464a60:
-          if (owner & 0x2u) {
-            raiden_script_second_effect(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_second_effect(fighter);
+          return true;
         case 0x464a90:
-          if (owner & 0x2u) {
-            retail_vm_enter(fighter, 0x4e5728, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e5728, fighter->retail_vm.finish);
+          return true;
         case 0x464aa0:
-          if (owner & 0x2u) {
-            raiden_script_second_release(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_second_release(fighter);
+          return true;
         case 0x464bb0:
-          if (owner & 0x2u) {
-            raiden_script_second_end(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_second_end(fighter);
+          return true;
         case 0x464ee0:
-          if (owner & 0x2u) {
-            raiden_script_second_victim_end(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_second_victim_end(fighter);
+          return true;
         case 0x4650b0:
-          if (owner & 0x200u) {
-            tanya_second_height(fighter);
-            return true;
-          }
-          return false;
+          tanya_second_height(fighter);
+          return true;
         case 0x465130:
-          if (owner & 0x200u) {
-            tanya_second_finish(fighter);
-            return true;
-          }
-          return false;
+          tanya_second_finish(fighter);
+          return true;
         case 0x465250:
-          if (owner & 0x200u) {
-            retail_vm_enter(fighter, 0x4e5860, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e5860, fighter->retail_vm.finish);
+          return true;
         case 0x4658a0:
-          if (owner & 0x4000u) {
-            cage_script_fatality_2_continue(fighter);
-            return true;
-          }
-          return false;
+          cage_script_fatality_2_continue(fighter);
+          return true;
         case 0x4658f0:
-          if (owner & 0x4000u) {
-            cage_second_repeated_uppercuts(fighter);
-            return true;
-          }
-          return false;
+          cage_second_repeated_uppercuts(fighter);
+          return true;
         case 0x465b10:
-          if (owner & 0x4000u) {
-            cage_second_victim_finish(fighter);
-            return true;
-          }
-          return false;
+          cage_second_victim_finish(fighter);
+          return true;
         case 0x465e10:
           if (owner & 0x10000u) {
             kitana_script_second_open(fighter);
@@ -1988,17 +1466,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x466a90:
-          if (owner & 0x2000u) {
-            jax_fatality_2_approach(fighter);
-            return true;
-          }
-          return false;
+          jax_fatality_2_approach(fighter);
+          return true;
         case 0x466bb0:
-          if (owner & 0x2000u) {
-            jax_fatality_2_finish(fighter);
-            return true;
-          }
-          return false;
+          jax_fatality_2_finish(fighter);
+          return true;
         case 0x466df0:
           if (owner & 0x4000u) {
             cage_second_victim_pause(fighter);
@@ -2088,38 +1560,23 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x468640:
-          if (owner & 0x1u) {
-            scorpion_fire_script(fighter);
-            return true;
-          }
-          return false;
+          scorpion_fire_script(fighter);
+          return true;
         case 0x4698b0:
-          if (owner & 0x400u) {
-            reptile_script_invisibility(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_invisibility(fighter);
+          return true;
         case 0x46a500:
-          if (owner & 0x800u) {
-            kai_second_victim_fall(fighter);
-            return true;
-          }
-          return false;
+          kai_second_victim_fall(fighter);
+          return true;
         case 0x46a650:
-          if (owner & 0x20u) {
-            fujin_wind_recovery(fighter);
-            return true;
-          }
-          return false;
+          fujin_wind_recovery(fighter);
+          return true;
         case 0x46a6b0:
           retail_kick_contact_default(fighter);
           return true;
         case 0x46a6e0:
-          if (owner & 0x11024u) {
-            retail_vm_reverse_return(fighter);
-            return true;
-          }
-          return false;
+          retail_vm_reverse_return(fighter);
+          return true;
         case 0x46a760:
           retail_kick_contact_wide(fighter);
           return true;
@@ -2127,29 +1584,17 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_kick_contact_narrow(fighter);
           return true;
         case 0x46a850:
-          if (owner & 0x11224u) {
-            retail_vm_reverse_return(fighter);
-            return true;
-          }
-          return false;
+          retail_vm_reverse_return(fighter);
+          return true;
         case 0x46a8d0:
-          if (owner & 0x2a4c9u) {
-            retail_vm_reverse_return(fighter);
-            return true;
-          }
-          return false;
+          retail_vm_reverse_return(fighter);
+          return true;
         case 0x46a9f0:
-          if (owner & 0x2000u) {
-            jax_air_throw_fall(fighter);
-            return true;
-          }
-          return false;
+          jax_air_throw_fall(fighter);
+          return true;
         case 0x46aa40:
-          if (owner & 0x2000u) {
-            jax_air_throw_release(fighter);
-            return true;
-          }
-          return false;
+          jax_air_throw_release(fighter);
+          return true;
         case 0x46aae0:
           if (owner & 0x8000u) {
             goro_script_air_release(fighter);
@@ -2195,23 +1640,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46ac10:
-          if (owner & 0x20000u) {
-            noob_saibot_script_air_throw_continue(fighter);
-            return true;
-          }
-          return false;
+          noob_saibot_script_air_throw_continue(fighter);
+          return true;
         case 0x46ac90:
-          if (owner & 0x20000u) {
-            retail_vm_enter(fighter, 0x4e5eb0, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e5eb0, fighter->retail_vm.finish);
+          return true;
         case 0x46aca0:
-          if (owner & 0x20000u) {
-            noob_saibot_script_air_throw_end(fighter);
-            return true;
-          }
-          return false;
+          noob_saibot_script_air_throw_end(fighter);
+          return true;
         case 0x46aed0:
           if (owner & 0x10000u) {
             kitana_script_air_release(fighter);
@@ -2513,11 +1949,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46c820:
-          if (owner & 0xd540u) {
-            native_air_straight_land(fighter);
-            return true;
-          }
-          return false;
+          native_air_straight_land(fighter);
+          return true;
         case 0x46c970:
           if (owner & 0x20u) {
             fujin_script_air_finish(fighter);
@@ -2626,23 +2059,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46dd00:
-          if (owner & 0x3ffffu) {
-            retail_vm_enter(fighter, 0x4e6330, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e6330, fighter->retail_vm.finish);
+          return true;
         case 0x46dd10:
-          if (owner & 0x3ffffu) {
-            retail_vm_enter(fighter, 0x4e6360, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e6360, fighter->retail_vm.finish);
+          return true;
         case 0x46dd20:
-          if (owner & 0x3ffffu) {
-            retail_vm_enter(fighter, 0x4e63b0, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e63b0, fighter->retail_vm.finish);
+          return true;
         case 0x46df90:
           if (owner & 0x1000u) {
             jarek_script_air_finish(fighter);
@@ -2874,17 +2298,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46eab0:
-          if (owner & 0x37fffu) {
-            weapon_air_frames_native(fighter, fighter->retail_vm.selector);
-            return true;
-          }
-          return false;
+          weapon_air_frames_native(fighter, fighter->retail_vm.selector);
+          return true;
         case 0x46ec10:
-          if (owner & 0x37fffu) {
-            weapon_air_frames_native(fighter, fighter->retail_vm.selector);
-            return true;
-          }
-          return false;
+          weapon_air_frames_native(fighter, fighter->retail_vm.selector);
+          return true;
         case 0x46eea0:
           if (owner & 0x4000u) {
             cage_script_air_finish(fighter);
@@ -3010,53 +2428,29 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x478e20:
-          if (owner & 0x800u) {
-            kai_lunge_kick_contact(fighter);
-            return true;
-          }
-          return false;
+          kai_lunge_kick_contact(fighter);
+          return true;
         case 0x479b70:
-          if (owner & 0x4000u) {
-            cage_script_cpu_kick_tail(fighter);
-            return true;
-          }
-          return false;
+          cage_script_cpu_kick_tail(fighter);
+          return true;
         case 0x479f00:
-          if (owner & 0x4000u) {
-            cage_script_powered_punch_tail(fighter);
-            return true;
-          }
-          return false;
+          cage_script_powered_punch_tail(fighter);
+          return true;
         case 0x47a3b0:
-          if (owner & 0x100u) {
-            quan_chi_script_flip_kick_tail(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_script_flip_kick_tail(fighter);
+          return true;
         case 0x47a6d0:
-          if (owner & 0x400u) {
-            reptile_script_dash_contact(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_dash_contact(fighter);
+          return true;
         case 0x47ab50:
-          if (owner & 0x2000u) {
-            jax_dash_punch_contact(fighter);
-            return true;
-          }
-          return false;
+          jax_dash_punch_contact(fighter);
+          return true;
         case 0x47b010:
-          if (owner & 0x400u) {
-            reptile_script_roll_tail(fighter);
-            return true;
-          }
-          return false;
+          reptile_script_roll_tail(fighter);
+          return true;
         case 0x47b600:
-          if (owner & 0x1000u) {
-            jarek_quake_tail(fighter);
-            return true;
-          }
-          return false;
+          jarek_quake_tail(fighter);
+          return true;
         case 0x47b6c0:
           if (owner & 0x10000u) {
             kitana_script_cartwheel_tail(fighter);
@@ -3068,29 +2462,17 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x47ba20:
-          if (owner & 0x200u) {
-            tanya_drill_kick_contact(fighter);
-            return true;
-          }
-          return false;
+          tanya_drill_kick_contact(fighter);
+          return true;
         case 0x47bd40:
-          if (owner & 0x800u) {
-            kai_aerial_punch_contact(fighter);
-            return true;
-          }
-          return false;
+          kai_aerial_punch_contact(fighter);
+          return true;
         case 0x47bf90:
-          if (owner & 0x20u) {
-            fujin_dive_contact(fighter);
-            return true;
-          }
-          return false;
+          fujin_dive_contact(fighter);
+          return true;
         case 0x47bfd0:
-          if (owner & 0x20u) {
-            fujin_dive_land(fighter);
-            return true;
-          }
-          return false;
+          fujin_dive_land(fighter);
+          return true;
         case 0x47c0a0:
           if (owner & 0x20000u) {
             noob_saibot_script_teleport_vanish(fighter);
@@ -3122,47 +2504,26 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x47c580:
-          if (owner & 0x800u) {
-            kai_script_stage_event(fighter);
-            return true;
-          }
-          return false;
+          kai_script_stage_event(fighter);
+          return true;
         case 0x47c880:
-          if (owner & 0x800u) {
-            kai_handstand_spin_begin(fighter);
-            return true;
-          }
-          return false;
+          kai_handstand_spin_begin(fighter);
+          return true;
         case 0x47cc10:
-          if (owner & 0x800u) {
-            retail_vm_enter(fighter, 0x4e8358, fighter->retail_vm.finish);
-            return true;
-          }
-          return false;
+          retail_vm_enter(fighter, 0x4e8358, fighter->retail_vm.finish);
+          return true;
         case 0x47cc50:
-          if (owner & 0x800u) {
-            kai_script_contact_b10_continuation(fighter);
-            return true;
-          }
-          return false;
+          kai_script_contact_b10_continuation(fighter);
+          return true;
         case 0x47ccc0:
-          if (owner & 0x800u) {
-            kai_handstand_rear_contact(fighter);
-            return true;
-          }
-          return false;
+          kai_handstand_rear_contact(fighter);
+          return true;
         case 0x47d680:
-          if (owner & 0x2u) {
-            raiden_script_torpedo_miss(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_torpedo_miss(fighter);
+          return true;
         case 0x47d7f0:
-          if (owner & 0x2u) {
-            raiden_script_torpedo_contact(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_torpedo_contact(fighter);
+          return true;
         case 0x47dae0:
           if (owner & 0x4000u) {
             cage_power_land(fighter);
@@ -3178,17 +2539,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x47dc40:
-          if (owner & 0x10u) {
-            sub_zero_slide_script(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_slide_script(fighter);
+          return true;
         case 0x47de00:
-          if (owner & 0x10u) {
-            sub_zero_script_slide_return(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_slide_return(fighter);
+          return true;
         case 0x47e0a0:
           if (owner & 0x10000u) {
             kitana_script_leg_grab_tail(fighter);
@@ -3210,47 +2565,26 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x47eb30:
-          if (owner & 0x8u) {
-            liu_kang_bicycle_script(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_bicycle_script(fighter);
+          return true;
         case 0x47ed40:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_land(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_land(fighter);
+          return true;
         case 0x47ee00:
-          if (owner & 0x8u) {
-            liu_kang_flying_kick_script(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_flying_kick_script(fighter);
+          return true;
         case 0x47ef10:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_land(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_land(fighter);
+          return true;
         case 0x47f060:
-          if (owner & 0x20u) {
-            fujin_triple_fast(fighter);
-            return true;
-          }
-          return false;
+          fujin_triple_fast(fighter);
+          return true;
         case 0x47f070:
-          if (owner & 0x20u) {
-            fujin_triple_contact(fighter);
-            return true;
-          }
-          return false;
+          fujin_triple_contact(fighter);
+          return true;
         case 0x47fcf0:
-          if (owner & 0x1u) {
-            scorpion_teleport_script(fighter);
-            return true;
-          }
-          return false;
+          scorpion_teleport_script(fighter);
+          return true;
         case 0x47ffc0:
           if (owner & 0x20000u) {
             noob_saibot_script_teleport_land(fighter);
@@ -3270,29 +2604,17 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x4803a0:
-          if (owner & 0x20u) {
-            fujin_grab_control_start(fighter);
-            return true;
-          }
-          return false;
+          fujin_grab_control_start(fighter);
+          return true;
         case 0x4807b0:
-          if (owner & 0x1u) {
-            scorpion_spin_script(fighter);
-            return true;
-          }
-          return false;
+          scorpion_spin_script(fighter);
+          return true;
         case 0x481590:
-          if (owner & 0x400u) {
-            reptile_second_melt(fighter);
-            return true;
-          }
-          return false;
+          reptile_second_melt(fighter);
+          return true;
         case 0x4816f0:
-          if (owner & 0x20u) {
-            fujin_second_burst(fighter);
-            return true;
-          }
-          return false;
+          fujin_second_burst(fighter);
+          return true;
         case 0x4817c0:
           if (owner & 0x20u) {
             fujin_second_finish(fighter);
@@ -3304,23 +2626,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x482280:
-          if (owner & 0x400u) {
-            reptile_weapon_stagger_tail(fighter);
-            return true;
-          }
-          return false;
+          reptile_weapon_stagger_tail(fighter);
+          return true;
         case 0x4824f0:
-          if (owner & 0x8000u) {
-            goro_script_uppercut_victim_slide(fighter);
-            return true;
-          }
-          return false;
+          goro_script_uppercut_victim_slide(fighter);
+          return true;
         case 0x482540:
-          if (owner & 0x8000u) {
-            goro_victim_getup(fighter);
-            return true;
-          }
-          return false;
+          goro_victim_getup(fighter);
+          return true;
         case 0x482790:
           if (owner & 0x4000u) {
             cage_weapon_getup_back(fighter);
@@ -3352,17 +2665,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x483090:
-          if (owner & 0x40u) {
-            shinnok_weapon_sweep_getup(fighter);
-            return true;
-          }
-          return false;
+          shinnok_weapon_sweep_getup(fighter);
+          return true;
         case 0x4830a0:
-          if (owner & 0x40u) {
-            shinnok_weapon_sweep_finish(fighter);
-            return true;
-          }
-          return false;
+          shinnok_weapon_sweep_finish(fighter);
+          return true;
         case 0x483df0:
           if (owner & 0x80u) {
             reiko_script_star_victim_tail(fighter);
@@ -3378,17 +2685,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x484330:
-          if (owner & 0x8000u) {
-            goro_script_stomp_victim_hold(fighter);
-            return true;
-          }
-          return false;
+          goro_script_stomp_victim_hold(fighter);
+          return true;
         case 0x484420:
-          if (owner & 0x100u) {
-            quan_chi_script_stomp_victim(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_script_stomp_victim(fighter);
+          return true;
         case 0x4847e0:
           if (owner & 0x10000u) {
             kitana_script_air_getup(fighter);
@@ -3400,11 +2701,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x484a30:
-          if (owner & 0x2000u) {
-            jax_air_throw_getup(fighter);
-            return true;
-          }
-          return false;
+          jax_air_throw_getup(fighter);
+          return true;
         case 0x484b60:
           if (owner & 0x8000u) {
             goro_script_air_getup(fighter);
@@ -3424,17 +2722,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x484c00:
-          if (owner & 0x1u) {
-            scorpion_script_teleport_victim_tail(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_teleport_victim_tail(fighter);
+          return true;
         case 0x485510:
-          if (owner & 0x2u) {
-            raiden_script_lk_victim_end(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_lk_victim_end(fighter);
+          return true;
         case 0x4858d0:
           if (owner & 0x10000u) {
             kitana_script_leg_victim_end(fighter);
@@ -3446,11 +2738,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x485930:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_lk_thrown_tail(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_lk_thrown_tail(fighter);
+          return true;
         case 0x485ad0:
           if (owner & 0x20080u) {
             mk4_mmove_thrown_finish(fighter);
@@ -3462,11 +2751,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x485b10:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_lp_getup(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_lp_getup(fighter);
+          return true;
         case 0x485b50:
           if (owner & 0x10000u) {
             kitana_script_throw_getup(fighter);
@@ -3478,35 +2764,20 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x486000:
-          if (owner & 0x1u) {
-            scorpion_script_spear_pull(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_spear_pull(fighter);
+          return true;
         case 0x487220:
-          if (owner & 0x10u) {
-            sub_zero_script_lk_victim_rise(fighter);
-            return true;
-          }
-          return false;
+          sub_zero_script_lk_victim_rise(fighter);
+          return true;
         case 0x487420:
-          if (owner & 0x1u) {
-            scorpion_spear_stun_script(fighter);
-            return true;
-          }
-          return false;
+          scorpion_spear_stun_script(fighter);
+          return true;
         case 0x488590:
-          if (owner & 0x2u) {
-            raiden_script_staff_victim_tail(fighter);
-            return true;
-          }
-          return false;
+          raiden_script_staff_victim_tail(fighter);
+          return true;
         case 0x488ac0:
-          if (owner & 0x800u) {
-            kai_handstand_victim_tail(fighter);
-            return true;
-          }
-          return false;
+          kai_handstand_victim_tail(fighter);
+          return true;
         case 0x488b40:
           if (owner & 0x8u) {
             liu_kang_liu_script_bicycle_getup(fighter);
@@ -3518,11 +2789,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x488b80:
-          if (owner & 0x400u) {
-            reptile_dash_victim_getup(fighter);
-            return true;
-          }
-          return false;
+          reptile_dash_victim_getup(fighter);
+          return true;
         case 0x488ba0:
           if (owner & 0x20u) {
             fujin_wind_getup(fighter);
@@ -3568,23 +2836,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x495ae0:
-          if (owner & 0x800u) {
-            kai_weapon_back_contact(fighter);
-            return true;
-          }
-          return false;
+          kai_weapon_back_contact(fighter);
+          return true;
         case 0x495db0:
-          if (owner & 0x400u) {
-            reptile_weapon_flurry(fighter);
-            return true;
-          }
-          return false;
+          reptile_weapon_flurry(fighter);
+          return true;
         case 0x496430:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_sword_blend(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_sword_blend(fighter);
+          return true;
         case 0x496770:
           if (owner & 0x10000u) {
             kitana_script_weapon_hp_tail(fighter);
@@ -3614,11 +2873,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x497b60:
-          if (owner & 0x200u) {
-            tanya_boomerang_release(fighter);
-            return true;
-          }
-          return false;
+          tanya_boomerang_release(fighter);
+          return true;
         case 0x498eb0:
           if (owner & 0x10000u) {
             kitana_shadow_install_physics(fighter);
@@ -3634,47 +2890,26 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x499000:
-          if (owner & 0x800u) {
-            kai_ground_skull_spawn(fighter);
-            return true;
-          }
-          return false;
+          kai_ground_skull_spawn(fighter);
+          return true;
         case 0x499450:
-          if (owner & 0x800u) {
-            kai_rising_skull_spawn(fighter);
-            return true;
-          }
-          return false;
+          kai_rising_skull_spawn(fighter);
+          return true;
         case 0x499470:
-          if (owner & 0x800u) {
-            kai_rising_skull_finish(fighter);
-            return true;
-          }
-          return false;
+          kai_rising_skull_finish(fighter);
+          return true;
         case 0x499780:
-          if (owner & 0x100u) {
-            quan_chi_script_skull_release(fighter);
-            return true;
-          }
-          return false;
+          quan_chi_script_skull_release(fighter);
+          return true;
         case 0x49a480:
-          if (owner & 0x20u) {
-            fujin_bow_finish(fighter);
-            return true;
-          }
-          return false;
+          fujin_bow_finish(fighter);
+          return true;
         case 0x49a680:
-          if (owner & 0x1u) {
-            scorpion_script_spear_return(fighter);
-            return true;
-          }
-          return false;
+          scorpion_script_spear_return(fighter);
+          return true;
         case 0x49c010:
-          if (owner & 0x8u) {
-            liu_kang_liu_script_air_return(fighter);
-            return true;
-          }
-          return false;
+          liu_kang_liu_script_air_return(fighter);
+          return true;
         case 0x49cb60:
           if (owner & 0x4000u) {
             cage_first_task_end(fighter);
@@ -3707,158 +2942,107 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
     case RETAIL_SPAWN:
       switch (address) {
         case 0x412d80:
-          if (owner & 0x2000u) {
-            if (argument != 619u) {
-              return false;
-            }
-            jax_fatality_2_sparks(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          jax_fatality_2_sparks(fighter, (int)argument);
+          return true;
         case 0x412ec0:
-          if (owner & 0x2000u) {
-            if (argument != 619u) {
-              return false;
-            }
-            jax_fatality_2_flash(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          jax_fatality_2_flash(fighter, (int)argument);
+          return true;
         case 0x413970:
-          if (owner & 0x4000u) {
-            if (argument != 619u) {
-              return false;
-            }
-            cage_second_charge(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          cage_second_charge(fighter, (int)argument);
+          return true;
         case 0x413a10:
-          if (owner & 0x4000u) {
-            if (argument != 619u) {
-              return false;
-            }
-            cage_second_flash(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          cage_second_flash(fighter, (int)argument);
+          return true;
         case 0x41b860:
-          if (owner & 0x10u) {
-            if (argument != 0u) {
-              return false;
-            }
-            sub_zero_script_breath_freeze(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          sub_zero_script_breath_freeze(fighter, (int)argument);
+          return true;
         case 0x41bbb0:
-          if (owner & 0x10u) {
-            if (argument != 0u) {
-              return false;
-            }
-            sub_zero_script_breath_object(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          sub_zero_script_breath_object(fighter, (int)argument);
+          return true;
         case 0x41d260:
-          if (owner & 0x80u) {
-            if (argument != 0u) {
-              return false;
-            }
-            reiko_second_stars(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          reiko_second_stars(fighter, (int)argument);
+          return true;
         case 0x41e0e0:
-          if (owner & 0x1000u) {
-            if (argument != 0u) {
-              return false;
-            }
-            jarek_second_head_fall(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          jarek_second_head_fall(fighter, (int)argument);
+          return true;
         case 0x41e490:
-          if (owner & 0x400u) {
-            if (argument != 0u) {
-              return false;
-            }
-            reptile_second_acid(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          reptile_second_acid(fighter, (int)argument);
+          return true;
         case 0x41ed80:
-          if (owner & 0x1u) {
-            if (argument != 0u) {
-              return false;
-            }
-            scorpion_script_beast_gore(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          scorpion_script_beast_gore(fighter, (int)argument);
+          return true;
         case 0x41ef20:
-          if (owner & 0x20u) {
-            if (argument != 38u) {
-              return false;
-            }
-            fujin_second_blood(fighter, (int)argument);
-            return true;
+          if (argument != 38u) {
+            return false;
           }
-          return false;
+          fujin_second_blood(fighter, (int)argument);
+          return true;
         case 0x43c140:
-          if (owner & 0x800u) {
-            if (argument != 38u) {
-              return false;
-            }
-            kai_second_skull(fighter, (int)argument);
-            return true;
+          if (argument != 38u) {
+            return false;
           }
-          return false;
+          kai_second_skull(fighter, (int)argument);
+          return true;
         case 0x43c540:
-          if (owner & 0x8u) {
-            if (argument != 38u) {
-              return false;
-            }
-            liu_kang_liu_script_fatal_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 38u) {
+            return false;
           }
-          return false;
+          liu_kang_liu_script_fatal_spawn(fighter, (int)argument);
+          return true;
         case 0x450d40:
-          if (owner & 0x1u) {
-            if (argument != 0u) {
-              return false;
-            }
-            scorpion_script_transform_effect(fighter, (int)argument);
-            return true;
+          if (argument != 0u) {
+            return false;
           }
-          return false;
+          scorpion_script_transform_effect(fighter, (int)argument);
+          return true;
         case 0x464bd0:
-          if (owner & 0x12006u) {
-            if (argument != 619u) {
-              return false;
-            }
-            mk4_script_scene_task(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          mk4_script_scene_task(fighter, (int)argument);
+          return true;
         case 0x465270:
-          if (owner & 0x200u) {
-            if (argument != 619u) {
-              return false;
-            }
-            tanya_second_owner_cue(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          tanya_second_owner_cue(fighter, (int)argument);
+          return true;
         case 0x465390:
-          if (owner & 0x200u) {
-            if (argument != 619u) {
-              return false;
-            }
-            tanya_second_victim_cue(fighter, (int)argument);
-            return true;
+          if (argument != 619u) {
+            return false;
           }
-          return false;
+          tanya_second_victim_cue(fighter, (int)argument);
+          return true;
         case 0x46a280:
           if (owner & 0x800u) {
             if (argument != 38u) {
@@ -3892,41 +3076,29 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x496fc0:
-          if (owner & 0x2000u) {
-            if (argument != 80u) {
-              return false;
-            }
-            jax_missile_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 80u) {
+            return false;
           }
-          return false;
+          jax_missile_spawn(fighter, (int)argument);
+          return true;
         case 0x4970d0:
-          if (owner & 0x4000u) {
-            if (argument != 79u) {
-              return false;
-            }
-            cage_orb_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 79u) {
+            return false;
           }
-          return false;
+          cage_orb_spawn(fighter, (int)argument);
+          return true;
         case 0x497580:
-          if (owner & 0x1000u) {
-            if (argument != 78u) {
-              return false;
-            }
-            jarek_blade_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 78u) {
+            return false;
           }
-          return false;
+          jarek_blade_spawn(fighter, (int)argument);
+          return true;
         case 0x498920:
-          if (owner & 0x400u) {
-            if (argument != 76u) {
-              return false;
-            }
-            reptile_acid_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 76u) {
+            return false;
           }
-          return false;
+          reptile_acid_spawn(fighter, (int)argument);
+          return true;
         case 0x498bb0:
           if (owner & 0x10000u) {
             if (argument != 75u) {
@@ -3974,14 +3146,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x49a6a0:
-          if (owner & 0x1u) {
-            if (argument != 67u) {
-              return false;
-            }
-            scorpion_script_spawn_spear(fighter, (int)argument);
-            return true;
+          if (argument != 67u) {
+            return false;
           }
-          return false;
+          scorpion_script_spawn_spear(fighter, (int)argument);
+          return true;
         case 0x49b9e0:
           if (owner & 0x10000u) {
             if (argument != 38u) {
@@ -4015,59 +3184,41 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x49bcb0:
-          if (owner & 0x10u) {
-            if (argument != 66u) {
-              return false;
-            }
-            sub_zero_script_spawn_ice(fighter, (int)argument);
-            return true;
+          if (argument != 66u) {
+            return false;
           }
-          return false;
+          sub_zero_script_spawn_ice(fighter, (int)argument);
+          return true;
         case 0x49be10:
-          if (owner & 0x2u) {
-            if (argument != 65u) {
-              return false;
-            }
-            raiden_script_lightning_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 65u) {
+            return false;
           }
-          return false;
+          raiden_script_lightning_spawn(fighter, (int)argument);
+          return true;
         case 0x49c0d0:
-          if (owner & 0x8u) {
-            if (argument != 64u) {
-              return false;
-            }
-            liu_kang_liu_script_spawn_air(fighter, (int)argument);
-            return true;
+          if (argument != 64u) {
+            return false;
           }
-          return false;
+          liu_kang_liu_script_spawn_air(fighter, (int)argument);
+          return true;
         case 0x49c110:
-          if (owner & 0x8u) {
-            if (argument != 64u) {
-              return false;
-            }
-            liu_kang_liu_script_spawn_low(fighter, (int)argument);
-            return true;
+          if (argument != 64u) {
+            return false;
           }
-          return false;
+          liu_kang_liu_script_spawn_low(fighter, (int)argument);
+          return true;
         case 0x49c160:
-          if (owner & 0x8u) {
-            if (argument != 64u) {
-              return false;
-            }
-            liu_kang_liu_script_spawn_high(fighter, (int)argument);
-            return true;
+          if (argument != 64u) {
+            return false;
           }
-          return false;
+          liu_kang_liu_script_spawn_high(fighter, (int)argument);
+          return true;
         case 0x49ca90:
-          if (owner & 0x8000u) {
-            if (argument != 83u) {
-              return false;
-            }
-            goro_fireball_spawn(fighter, (int)argument);
-            return true;
+          if (argument != 83u) {
+            return false;
           }
-          return false;
+          goro_fireball_spawn(fighter, (int)argument);
+          return true;
         default:
           return false;
       }
@@ -4255,64 +3406,37 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
     case RETAIL_PREDICATE:
       switch (address) {
         case 0x46db00:
-          if (owner & 0x8u) {
-            fighter->retail_vm.result = liu_kang_liu_script_sword_gate(fighter);
-            return true;
-          }
-          return false;
+          fighter->retail_vm.result = liu_kang_liu_script_sword_gate(fighter);
+          return true;
         case 0x46de60:
-          if (owner & 0x3ffffu) {
-            fighter->retail_vm.result = mk4_script_jab_gate(fighter);
-            return true;
-          }
-          return false;
+          fighter->retail_vm.result = mk4_script_jab_gate(fighter);
+          return true;
         case 0x48d450:
-          if (owner & 0x2u) {
-            fighter->retail_vm.result = raiden_script_torpedo_query(fighter);
-            return true;
-          }
-          return false;
+          fighter->retail_vm.result = raiden_script_torpedo_query(fighter);
+          return true;
         default:
           return false;
       }
     case RETAIL_PHYSICS:
       switch (address) {
         case 0x4707e0:
-          if (owner & 0x20492u) {
-            fighter->body.physics = mk4_script_landing_motion;
-            return true;
-          }
-          return false;
+          fighter->body.physics = mk4_script_landing_motion;
+          return true;
         case 0x47d6e0:
-          if (owner & 0x2u) {
-            fighter->body.physics = raiden_script_torpedo_motion;
-            return true;
-          }
-          return false;
+          fighter->body.physics = raiden_script_torpedo_motion;
+          return true;
         case 0x480040:
-          if (owner & 0x1u) {
-            fighter->body.physics = scorpion_script_teleport_motion;
-            return true;
-          }
-          return false;
+          fighter->body.physics = scorpion_script_teleport_motion;
+          return true;
         case 0x480e90:
-          if (owner & 0x8u) {
-            fighter->body.physics = liu_kang_liu_script_bicycle_motion;
-            return true;
-          }
-          return false;
+          fighter->body.physics = liu_kang_liu_script_bicycle_motion;
+          return true;
         case 0x480f40:
-          if (owner & 0x8000u) {
-            fighter->body.physics = goro_stomp_hold_separation;
-            return true;
-          }
-          return false;
+          fighter->body.physics = goro_stomp_hold_separation;
+          return true;
         case 0x4889b0:
-          if (owner & 0x2u) {
-            fighter->body.physics = raiden_script_torpedo_victim_motion;
-            return true;
-          }
-          return false;
+          fighter->body.physics = raiden_script_torpedo_victim_motion;
+          return true;
         case 0x490bd0:
           if (owner & 0x800u) {
             fighter->body.physics = kai_weapon_face_peer;
@@ -4328,11 +3452,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x4913a0:
-          if (owner & 0x3fffdu) {
-            fighter->body.physics = fighter_friction;
-            return true;
-          }
-          return false;
+          fighter->body.physics = fighter_friction;
+          return true;
         default:
           return false;
       }

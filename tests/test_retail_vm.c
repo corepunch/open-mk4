@@ -394,6 +394,16 @@ static bool predicate_native(Fighter *fighter, uint32_t address, RetailNativeKin
   return true;
 }
 
+static void native_address_identity(void) {
+  Fighter *owner = setup(0, 2);
+  owner->body.vel[AXIS_X] = 0x1234;
+  owner->body.vel[AXIS_Z] = -0x2345;
+  check(retail_native_vm(owner, 0x48f6e0, RETAIL_CALL, 0), "shared native address must not depend on a fighter registration mask");
+  check(owner->saved_motion[AXIS_X] == 0x1234 && owner->body.vel[AXIS_X] == 0, "native momentum save must use the calling actor");
+  check(retail_native_vm(owner, 0x48f750, RETAIL_CALL, 0), "shared native restore must use the same typed address boundary");
+  check(owner->body.vel[AXIS_X] == 0x1234 && owner->body.vel[AXIS_Z] == -0x2345, "native restore must preserve both horizontal components");
+}
+
 static void native_handoff(void) {
   /* Shared contracts: predicate flags select a packed branch, and cleanup
    * survives VM/native playback transitions until the action is cancelled. */
@@ -460,6 +470,7 @@ int main(int argc, char **argv) {
   control_flow();
   playback_modes();
   native_handoff();
+  native_address_identity();
   native_contracts();
   native_repetition();
   native_row_data();
