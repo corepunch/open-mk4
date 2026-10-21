@@ -143,32 +143,7 @@ const CharacterDef mk4_example = {0};
         self.assertEqual(len(errors), 1)
         self.assertIn(':authored_special', errors[0])
 
-    def test_human_reachability_does_not_hide_missing_or_wrong_cpu_finish_slots(self):
-        for cpu in ('{0}', '{.enter = {[CPU_FINISH_1] = other}}',
-                    '{.enter = {0}} /* [CPU_FINISH_1] = finish */'):
-            source = 'static void finish(void) {} static void other(void) {} ' + \
-                     'static const Commands retail_commands = {finish}; ' + \
-                     'static const CpuMoves retail_cpu_moves = ' + cpu + '; ' + \
-                     'const CharacterDef mk4_example = {&retail_commands, &retail_cpu_moves};'
-            graph = DefinitionGraph({'game/example/character.c': source})
-            profile = {'character': 'example', 'integration_source': 'game/example/character.c', 'controls_output': 'ignored.inc',
-                       'command_bindings': {'0x467ce0': {'source': 'game/example/character.c', 'symbol': 'finish'}}}
-            with patch('c_reachability.workspace_graph', return_value=graph):
-                errors = unreachable_references(profile)
-            self.assertTrue(any('runtime CPU finish CPU_FINISH_1' in error for error in errors), errors)
-            self.assertIn(('game/example/character.c', 'finish'), graph.reachable(['mk4_example']))
 
-    def test_correct_cpu_finish_slot_remains_connected_to_its_own_roster(self):
-        graph = DefinitionGraph({'game/example/character.c': '''
-static void finish(void) {}
-static const Commands retail_commands = {finish};
-static const CpuMoves retail_cpu_moves = {.enter = {[CPU_FINISH_1] = finish}};
-const CharacterDef mk4_example = {&retail_commands, &retail_cpu_moves};
-'''})
-        profile = {'character': 'example', 'integration_source': 'game/example/character.c', 'controls_output': 'ignored.inc',
-                   'command_bindings': {'0x467ce0': {'source': 'game/example/character.c', 'symbol': 'finish'}}}
-        with patch('c_reachability.workspace_graph', return_value=graph):
-            self.assertFalse(unreachable_references(profile))
 
 
 if __name__ == '__main__':

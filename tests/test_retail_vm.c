@@ -326,6 +326,10 @@ static void native_contracts(void) {
 }
 
 static void data_tables(void) {
+  uint32_t distance_saved = mk4_image_u32(&image, 0x4dfe10);
+  put_word(0x4dfe10, 0x12345);
+  check(retail_cpu_finish_distance(&image, 0, false) == 0x12345, "CPU approach must read the live retail distance row");
+  put_word(0x4dfe10, distance_saved);
   uint32_t scene_slot = 0x4e0498;
   uint32_t scene_saved = mk4_image_u32(&image, scene_slot);
   uint32_t alternate = mk4_image_u32(&image, scene_slot + 4);

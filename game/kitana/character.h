@@ -20,7 +20,6 @@
 #define enter_lk_throw kitana_enter_lk_throw
 #define enter_throw kitana_enter_throw
 #define enter_victory kitana_enter_victory
-#define first_fatality kitana_first_fatality
 #define ground_attack kitana_ground_attack
 #define ground_native_next kitana_ground_native_next
 #define ground_native_tail kitana_ground_native_tail
@@ -74,7 +73,6 @@
 #define script_weapon_hp_tail kitana_script_weapon_hp_tail
 #define script_weapon_lp_tail kitana_script_weapon_lp_tail
 #define script_weapon_victim_getup kitana_script_weapon_victim_getup
-#define second_fatality kitana_second_fatality
 #define special_cleanup kitana_special_cleanup
 #define square_victim kitana_square_victim
 
@@ -109,7 +107,6 @@ void kitana_cpu_close_hp(Fighter *fighter);
 void kitana_enter_lk_throw(Fighter *fighter);
 void kitana_enter_throw(Fighter *fighter);
 void kitana_enter_victory(Fighter *fighter);
-void kitana_first_fatality(Fighter *fighter);
 void kitana_ground_attack(Fighter *fighter, int index);
 void kitana_ground_native_next(Fighter *fighter);
 void kitana_ground_native_tail(Fighter *fighter);
@@ -227,7 +224,6 @@ void kitana_script_throw_getup(Fighter *victim);
 void kitana_script_weapon_hp_tail(Fighter *fighter);
 void kitana_script_weapon_lp_tail(Fighter *fighter);
 void kitana_script_weapon_victim_getup(Fighter *victim);
-void kitana_second_fatality(Fighter *fighter);
 void kitana_special_cleanup(Fighter *fighter);
 void kitana_square_victim(Fighter *victim);
 

@@ -237,7 +237,7 @@ typedef enum CpuAction {
 
 typedef struct CpuMoves {
   FighterFn enter[CPU_ACTION_COUNT];
-  q16 finish_min[2], finish_distance[2]; /* zero distance retains the shared default */
+  q16 finish_distance[2]; /* UI view of the live retail target-distance rows */
 } CpuMoves;
 
 typedef struct CpuState {

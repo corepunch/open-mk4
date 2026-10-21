@@ -155,10 +155,6 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_AIR_HK] = sub_zero_air_hk_diagonal,
                                        [CPU_AIR_LK] = sub_zero_air_lk_diagonal,
                                        [CPU_DRAW] = sub_zero_weapon,
-                                       [CPU_FINISH_1] = sub_zero_first_fatality,
-                                       [CPU_FINISH_2] = sub_zero_second_fatality,
-                                       [CPU_FINISH_FAN] = retail_fan_finish,
-                                       [CPU_FINISH_SPIKE] = retail_spike_finish,
                                    }};
 
 // clang-format off: Keep table entries on one row, including long rows.

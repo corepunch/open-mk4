@@ -50,8 +50,6 @@ static const ButtonTable reiko_air = {{[BUTTON_HIGH_PUNCH] = reiko_press_air_hp,
     [BUTTON_HIGH_KICK] = reiko_press_air_hk,
     [BUTTON_LOW_KICK] = reiko_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls reiko_controls = {NULL, 0,
     {[STANCE_STANDING] = &reiko_standing, [STANCE_CROUCHING] = &reiko_crouching, [STANCE_JUMP] = &reiko_air, [STANCE_DIAGONAL_AIR] = &reiko_diagonal_air}};
 
@@ -74,7 +72,7 @@ const CharacterDef mk4_reiko = {
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

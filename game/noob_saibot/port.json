@@ -487,7 +487,6 @@
     "symbol": "native_weapon",
     "evidence": "Descriptor4eced8 type69 and extracted rig; owned callbacks use shared native strike descriptors."
   },
-  "controls_output": "game/noob_saibot/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",

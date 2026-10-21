@@ -458,7 +458,6 @@
   },
   "exe_sha256": "4bb7112eb54093dde5ec3ddcef12166c6cf95d08cd282a70d4da405132730b1d",
   "legacy_scripts": {},
-  "controls_output": "game/reptile/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -544,11 +543,6 @@
       "symbol": "reptile_acid_spit",
       "evidence": "D,F+HP record 4e4570 and CPU projectile row enter 4988d0: family-7 stamp 48e3a0, 49c610 heading snapshot, action 30b and generated 4ed1e8 with head descriptors 517c24/517c40, task76 acid carrier and 40ee30 droplets."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 0,
-    "CPU_FINISH_2": 117964,
-    "evidence": "45e570 (first) has no lower bound and accepts up to one unit; 45e530 (second) rejects distances below 0x1cccc. CPU distances 4dfe10/4dfe50[10] are 0xcccc and 0x23333."
   },
   "runtime_scripts": {
     "0x4e01a0": {

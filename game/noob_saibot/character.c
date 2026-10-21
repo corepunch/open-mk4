@@ -51,8 +51,6 @@ static const ButtonTable noob_saibot_air = {{[BUTTON_HIGH_PUNCH] = noob_saibot_p
     [BUTTON_HIGH_KICK] = noob_saibot_press_air_hk,
     [BUTTON_LOW_KICK] = noob_saibot_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls noob_saibot_controls = {NULL, 0,
     {[STANCE_STANDING] = &noob_saibot_standing,
         [STANCE_CROUCHING] = &noob_saibot_crouching,
@@ -85,7 +83,7 @@ const CharacterDef mk4_noob_saibot = {
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = move_list,
     .move_list_count = (int)(sizeof move_list / sizeof move_list[0]),
 };

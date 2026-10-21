@@ -484,3 +484,32 @@ Validation reuses shared VM/lifetime checks, all eighteen strict audits,
 formatting, native source gates and existing CPU/stage integration. The battle
 run passes the stage scenes and reaches the known ground-throw assertion.
 No new fighter or timing tests were added.
+
+## No generated fighter runtime includes
+
+The final twelve generated CPU includes and their generator are removed.
+There are no generated fighter C/include outputs or generated fighter folders
+left. Runtime source checks reject their reintroduction. The shared roster
+binds all four finisher slots itself; first/second support and target distances
+come from retail tables, and fan/spike use their shared native implementations.
+Two unused Kitana fatality entry copies lose their final private CPU callers
+and are removed. Other native callbacks remain migration work.
+
+Hand-authored CPU finish minima and their manifest fields are retired.
+Local4345d1..43464b reads a single target distance;43460d maps boss15 to14
+for approach data. CPU code reads that live row and approaches when outside
+it. There is no authored minimum/retreat gate. The native scene body is called
+directly after CPU selection, as in retail. Three duplicate human range checks
+in native scene entries (Fujin, Reiko, Reptile second scenes) are removed;
+original command predicates remain in human input matching. Checked local
+43bea0,41c360,43bf40 and mk4decomp's matching scene handlers establish that
+boundary.
+
+Obsolete C-table generation tests and static CPU table reachability assertions
+are removed. Two small source-registration audit checks remain; the shared data
+fixture verifies a mutated distance word. Shared VM checks, eighteen strict
+audits, native source gates, formatting and helper/navigation checks pass.
+Existing CPU near/far and stage/scene integrations pass before the known throw
+assertion. No fighter timing/balance tests were added. Remaining per-fighter
+normal-controller aliases, states and native implementations still require
+consolidation; this is not yet removal of the entire per-fighter architecture.

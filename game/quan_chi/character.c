@@ -23,8 +23,6 @@ static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_a
     [BUTTON_HIGH_KICK] = quan_chi_press_air_hk,
     [BUTTON_LOW_KICK] = quan_chi_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls quan_chi_controls = {
     NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &straight_air, [STANCE_DIAGONAL_AIR] = &quan_chi_diagonal_air}};
 
@@ -71,7 +69,7 @@ const CharacterDef mk4_quan_chi = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

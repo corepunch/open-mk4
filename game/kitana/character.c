@@ -89,12 +89,7 @@ static const CpuMoves cpu_moves = {
             [CPU_AIR_HK] = kitana_cpu_air_hk,
             [CPU_AIR_LK] = kitana_cpu_air_lk,
             [CPU_DRAW] = kitana_weapon,
-            [CPU_FINISH_1] = kitana_first_fatality,
-            [CPU_FINISH_2] = kitana_second_fatality,
-            [CPU_FINISH_FAN] = retail_fan_finish,
-            [CPU_FINISH_SPIKE] = retail_spike_finish,
         },
-    .finish_min = {0x10000, 0x1cccc},
 };
 
 // clang-format off: Keep table entries on one row, including long rows.

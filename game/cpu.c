@@ -257,17 +257,13 @@ static bool opponent_object(const Fighter *fighter, bool clone) {
   return false;
 }
 
-typedef struct CpuFinishRange {
-  q16 minimum, target;
-} CpuFinishRange;
-
-static CpuFinishRange finish_range(const Fighter *fighter, int action) {
-  int index = action == CPU_FINISH_1 ? 0 : action == CPU_FINISH_2 ? 1 : -1;
-  const CpuMoves *moves = roster_def(fighter->roster)->cpu;
-  if (index >= 0 && moves != NULL && moves->finish_distance[index] > 0) {
-    return (CpuFinishRange){moves->finish_min[index], moves->finish_distance[index]};
+/* 4345d1..43464b reads one target distance. It does not apply a
+ * fighter-authored minimum or retreat gate before entering the native scene. */
+static q16 finish_distance(const Fighter *fighter, int action) {
+  if (action == CPU_FINISH_1 || action == CPU_FINISH_2) {
+    return retail_cpu_finish_distance(retail_vm_image(), (unsigned)fighter->roster, action == CPU_FINISH_2);
   }
-  return action == CPU_FINISH_2 ? (CpuFinishRange){0x1cccc, 0x26666} : (CpuFinishRange){0, 0xb333};
+  return 0xb333;
 }
 
 static void finish(Fighter *fighter) {
@@ -284,7 +280,7 @@ static void finish(Fighter *fighter) {
       action = g_battle.arena == 0 ? CPU_FINISH_SPIKE : g_battle.arena == 8 ? CPU_FINISH_FAN : battle_chance(600) ? CPU_FINISH_2 : CPU_FINISH_1;
     }
     cpu->plan = action + 1;
-    cpu->target = finish_range(fighter, action).target;
+    cpu->target = finish_distance(fighter, action);
     cpu->timer = 240;
   }
 }
@@ -407,13 +403,9 @@ void battle_cpu_step(Fighter *fighter) {
     cpu->target = 0;
     action = PLAN_FORWARD_FLIP;
   }
-  bool retreat = distance < finish_range(fighter, action).minimum;
-  if ((distance >= cpu->target && cpu->target > 0) || retreat) {
+  if (distance > cpu->target && cpu->target > 0) {
     if (cpu->timer-- > 0) {
-      fighter->held = BUTTON_BIT((fighter->facing > 0) != retreat ? BUTTON_RIGHT : BUTTON_LEFT);
-      if (!retreat) {
-        fighter->held |= BUTTON_BIT(BUTTON_RUN);
-      }
+      fighter->held = BUTTON_BIT(fighter->facing > 0 ? BUTTON_RIGHT : BUTTON_LEFT) | BUTTON_BIT(BUTTON_RUN);
       return;
     }
     cpu->plan = 0;

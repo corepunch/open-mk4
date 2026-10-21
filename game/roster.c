@@ -82,9 +82,10 @@ const CharacterDef *roster_def(int index) {
     }
     cpu[index].enter[CPU_FINISH_1] = retail_finish_target(image, (unsigned)index, false) ? retail_finish_first : NULL;
     cpu[index].enter[CPU_FINISH_2] = retail_finish_target(image, (unsigned)index, true) ? retail_finish_second : NULL;
-    unsigned slot = retail_character_slot((unsigned)index);
+    cpu[index].enter[CPU_FINISH_FAN] = retail_fan_finish;
+    cpu[index].enter[CPU_FINISH_SPIKE] = retail_spike_finish;
     for (unsigned finish = 0; finish < 2; ++finish) {
-      cpu[index].finish_distance[finish] = (q16)mk4_image_u32(image, 0x4dfe10 + finish * 0x40 + slot * 4);
+      cpu[index].finish_distance[finish] = retail_cpu_finish_distance(image, (unsigned)index, finish != 0);
     }
     definitions[index].cpu = &cpu[index];
     images[index] = image;

@@ -35,10 +35,8 @@ mmove-frames-check:
 	python3 tools/generate_mmove_frames.py --check
 $(SCRIPT_GENERATE_TARGETS): scripts-generate-%:
 	python3 tools/compile_retail.py --character $* --generate
-	python3 tools/retail_controls.py --character $*
 $(SCRIPT_CHECK_TARGETS): scripts-check-%:
 	python3 tools/compile_retail.py --character $* --generate --check
-	python3 tools/retail_controls.py --character $* --check
 $(SCRIPT_AUDIT_TARGETS): scripts-audit-%:
 	python3 tools/compile_retail.py --character $* --audit --strict --summary --require-implemented
 

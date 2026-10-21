@@ -176,7 +176,7 @@ void reptile_second_finish(Fighter *victim) {
 }
 
 void reptile_fatality_2(Fighter *fighter) {
-  if (!retail_can_finish_range(fighter) || !battle_begin_finisher(fighter, REPTILE_EVENT_FATALITY_2)) {
+  if (!battle_begin_finisher(fighter, REPTILE_EVENT_FATALITY_2)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

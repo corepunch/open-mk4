@@ -41,8 +41,6 @@ static const ButtonTable reptile_jumping = {{[BUTTON_HIGH_PUNCH] = reptile_press
     [BUTTON_HIGH_KICK] = reptile_press_air_hk,
     [BUTTON_LOW_KICK] = reptile_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls reptile_controls = {NULL, 0,
     {[STANCE_STANDING] = &reptile_standing,
         [STANCE_CROUCHING] = &reptile_crouching,
@@ -79,7 +77,7 @@ const CharacterDef mk4_reptile = {
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

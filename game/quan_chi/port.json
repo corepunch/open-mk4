@@ -459,7 +459,6 @@
     "evidence": "Quan Chi weapon descriptor 0x4ecf38, retained as the exact eight-word portable data view"
   },
   "inventory_sha256": "5a22f3b3ded96ff1b5354119fd07cfa19eed52c3ef9503a012ef9924d4b8d335",
-  "controls_output": "game/quan_chi/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -549,11 +548,6 @@
       "symbol": "quan_chi_teleport_stomp",
       "evidence": "Typed medium 4df948 and far 4df988 CPU rows (word0x4000b) select native47cf30, the LK [F,D] teleport stomp."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 0,
-    "CPU_FINISH_2": 0,
-    "evidence": "Quan Chi CPU first/second targets 4dfe10/4dfe50[8] are 0.8 and 1.5 units; 467ce0/467cd0 scene entries have no lower range once selected."
   },
   "runtime_scripts": {
     "0x4e01a0": {

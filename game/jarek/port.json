@@ -476,7 +476,6 @@
     }
   },
   "schema": 1,
-  "controls_output": "game/jarek/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -554,11 +553,6 @@
       "symbol": "jarek_blade",
       "evidence": "Typed Jarek CPU projectile row 4df9d8 selects native 497540. 497540 snapshots the heading (49c610), sets action310 and enters4ed118: clip27 to17, task78 at17, six15/17 cycles, finish; 497580 spawns the4ed170 blade with C4 contacts."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_2": 117964,
-    "evidence": "Jarek first gate45e570 accepts up to1 unit and CPU target4dfe10[12] is0xcccc; second gate45e530 accepts 1.8..3 units and4dfe50[12] is0x2cccc.",
-    "CPU_FINISH_1": 0
   },
   "runtime_scripts": {
     "0x4e01a0": {

@@ -171,3 +171,12 @@ uint32_t retail_finish_target(const Mk4Image *image, unsigned character, bool se
   require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail scene native target");
   return target;
 }
+
+q16 retail_cpu_finish_distance(const Mk4Image *image, unsigned character, bool second) {
+  /* 43460d maps the boss to14 for CPU approach distance, independently of
+   * its scene support. Hidden scene aliases retain their shared data slot. */
+  unsigned slot = character == 15 ? 14 : retail_character_slot(character);
+  q16 distance = (q16)mk4_image_u32(image, (second ? 0x4dfe50 : 0x4dfe10) + slot * 4);
+  require(distance >= 0 && distance <= 16 * Q16_ONE, "Invalid retail CPU finish distance");
+  return distance;
+}

@@ -27,8 +27,6 @@ static const ButtonTable kai_jumping = {{[BUTTON_HIGH_PUNCH] = kai_press_air_hp,
     [BUTTON_HIGH_KICK] = kai_press_air_hk,
     [BUTTON_LOW_KICK] = kai_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls kai_controls = {
     NULL, 0, {[STANCE_STANDING] = &kai_standing, [STANCE_CROUCHING] = &kai_crouching, [STANCE_JUMP] = &kai_jumping, [STANCE_DIAGONAL_AIR] = &kai_diagonal_air}};
 
@@ -82,7 +80,7 @@ const CharacterDef mk4_kai = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

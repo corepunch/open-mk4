@@ -199,8 +199,7 @@ def audit(image, character, return_to=None, profile=None):
             check_reference(references.get(name), errors, 'move ' + name)
         for name in references.keys() - observed['moves'].keys():
             errors.append('stale move boundary ' + name)
-        if profile.get('controls_output'):
-            from retail_controls import generate_controls
+        if profile.get('command_bindings'):
             bound = profile.get('command_bindings', {})
             required = {row['target'] for table in observed['inputs'] for row in table['records']}
             for target in sorted(required - bound.keys()):
@@ -219,16 +218,6 @@ def audit(image, character, return_to=None, profile=None):
                 check_reference(reference, errors, 'runtime CPU ' + target)
             for target, reference in profile.get('cpu_finish_bindings', {}).items():
                 check_reference(reference, errors, 'runtime CPU finish ' + target)
-            try:
-                expected = generate_controls(image, character, profile)
-                output = ROOT / profile['controls_output']
-                if not output.is_file() or output.read_text() != expected:
-                    errors.append('runtime command table differs from typed retail records: ' + str(output))
-                include = output.relative_to((ROOT / profile['integration_source']).parent).as_posix()
-                if '#include "' + include + '"' not in read_source(ROOT / profile['integration_source']):
-                    errors.append('runtime command table is not included by integration source')
-            except ValueError as exc:
-                errors.append('runtime command generation: ' + str(exc))
         entry_targets = {move['entry'] for move in observed['moves'].values()}
         extras = profile.get('entry_adapters', {})
         targets = {row['target'] for table in observed['inputs'] for row in table['records']} | {row['target'] for row in observed['cpu'].values()}

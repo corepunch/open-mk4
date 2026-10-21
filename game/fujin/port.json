@@ -514,7 +514,6 @@
     "symbol": "fujin_weapon_descriptor",
     "evidence": "Retail Fujin inventory descriptor 0x4ece98; eight encoded descriptor words copied from the pinned EXE inventory query."
   },
-  "controls_output": "game/fujin/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -601,11 +600,6 @@
       "symbol": "fujin_triple_kick",
       "evidence": "47f010 enters4e8740 clip100;47f070 queries D9 at14..17,47f140/47f390 runs three paired stages with93/94/95 victims, and47f480 selects4e8790 blocked recoil. This is not the normal roundhouse."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 117964,
-    "CPU_FINISH_2": 117964,
-    "evidence": "Fujin first45e3b0 calls45e530, the second range gate1.8..3; both CPU targets4dfe10/4dfe50[5] are2 units. CPU scene entry bypasses counted human input."
   },
   "runtime_scripts": {
     "0x4e01a0": {

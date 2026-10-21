@@ -480,7 +480,6 @@
     "symbol": "native_weapon",
     "evidence": "4ecef8 type63, rig506ccc, button table4eccc0 targets495a20/495a50 and back495a90."
   },
-  "controls_output": "game/kai/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -566,11 +565,6 @@
       "symbol": "kai_ground_skull",
       "evidence": "Typed Kai CPU medium row4df954 word20009 selects498fc0."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 0,
-    "evidence": "Kai first45e220 uses the45e570 close gate up to1 unit and second45e530 accepts1.8..3; CPU targets4dfe10/4dfe50[11] are.8 and1.8 units, and the CPU scene entry bypasses both human gates.",
-    "CPU_FINISH_2": 0
   },
   "runtime_scripts": {
     "0x4e01a0": {

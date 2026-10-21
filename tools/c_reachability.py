@@ -22,32 +22,6 @@ CPU_FINISH_TARGETS = {
 }
 
 
-def cpu_finish_dispatch_errors(graph, profile):
-    if not profile.get('controls_output'):
-        return []
-    expected = {slot: profile.get('command_bindings', {}).get(target) or profile.get('cpu_finish_bindings', {}).get(target)
-                for slot, target in CPU_FINISH_TARGETS.items()}
-    expected = {slot: ref for slot, ref in expected.items() if ref}
-    if not expected:
-        return []
-    path = profile['integration_source']
-    table = graph.find(path, 'retail_cpu_moves')
-    body = graph.nodes.get(table, '')
-    errors = []
-    aliases = private_aliases(ROOT / path)
-    for slot, reference in expected.items():
-        name = reference.get('symbol')
-        if not isinstance(name, str) or not re.fullmatch(r'\w+', name):
-            errors.append('runtime CPU finish %s: missing reviewed symbol' % slot)
-            continue
-        symbol = aliases.get(name, name)
-        match = re.search(r'\[\s*' + slot + r'\s*\]\s*=\s*&?\s*(\w+)', body)
-        actual = match[1] if match else 'missing'
-        if actual != symbol:
-            errors.append('runtime CPU finish %s: expected %s, found %s (human reachability does not connect the CPU slot)' % (slot, symbol, actual))
-    return errors
-
-
 def definitions(source):
     source = mask_c(source)
     source = re.sub(r'^\s*#.*(?:\\\n.*)*', '', source, flags=re.M)
@@ -168,9 +142,6 @@ def unreachable_references(profile, compiled_graphs=None):
     references = []
     for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings', 'runtime_scripts'):
         references.extend((section + ' ' + label, ref) for label, ref in profile.get(section, {}).items())
-    if profile.get('cpu_bindings') or profile.get('cpu_finish_bindings') or (
-            profile.get('controls_output') and any(target in profile.get('command_bindings', {}) for target in CPU_FINISH_TARGETS.values())):
-        references.append(('runtime CPU table', {'source': profile['integration_source'], 'symbol': 'retail_cpu_moves'}))
     reported = set()
     for label, ref in references:
         path, name = ref.get('source'), ref.get('symbol')
@@ -191,7 +162,6 @@ def unreachable_references(profile, compiled_graphs=None):
     # are checked through the catalog roots above, not as independent moves.
     directory = 'game/' + profile['character'] + '/'
     errors.extend(weapon_dispatch_cycles(graph, reached, directory))
-    errors.extend(cpu_finish_dispatch_errors(graph, profile))
     # A generated phase may be entered through its native loop coordinator.
     # Linked continuations can be folded into another generated C function;
     # use the compiler's decoded CFG, not a requirement to call every wrapper.

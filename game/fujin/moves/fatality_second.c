@@ -105,7 +105,7 @@ void fujin_second_victim(Fighter *victim) {
 }
 
 void fujin_second_fatality(Fighter *fighter) {
-  if (!retail_can_finish_range(fighter) || !battle_begin_finisher(fighter, FINISH_FUJIN_2)) {
+  if (!battle_begin_finisher(fighter, FINISH_FUJIN_2)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

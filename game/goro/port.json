@@ -371,7 +371,6 @@
     "symbol": "goro_retail_weapon_descriptor",
     "evidence": "Pinned MK-4 EXE inventory for Goro roster 15; docs/character-script-port.md. Preserves the encoded retail descriptor words at 0x4ecf18."
   },
-  "controls_output": "game/goro/generated/controls.inc",
   "command_bindings": {
     "0x49ca70": {
       "source": "game/goro/moves/projectile.c",

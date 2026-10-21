@@ -40,8 +40,6 @@ static const FighterFn enter[S_COUNT] = {
 };
 // clang-format on
 
-#include "generated/controls.inc"
-
 static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -64,7 +62,7 @@ const CharacterDef mk4_jarek = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

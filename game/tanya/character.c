@@ -23,8 +23,6 @@ static const ButtonTable jumping = {{[BUTTON_HIGH_PUNCH] = tanya_press_air_hp,
     [BUTTON_HIGH_KICK] = tanya_press_air_hk,
     [BUTTON_LOW_KICK] = tanya_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls tanya_controls = {
     NULL, 0, {[STANCE_STANDING] = &standing, [STANCE_CROUCHING] = &crouching, [STANCE_JUMP] = &jumping, [STANCE_DIAGONAL_AIR] = &tanya_diagonal_air}};
 
@@ -75,7 +73,7 @@ const CharacterDef mk4_tanya = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

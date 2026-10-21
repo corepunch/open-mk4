@@ -52,8 +52,6 @@ static const ButtonTable fujin_jumping = {{[BUTTON_HIGH_PUNCH] = fujin_press_air
     [BUTTON_HIGH_KICK] = fujin_press_air_hk,
     [BUTTON_LOW_KICK] = fujin_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls fujin_controls = {NULL, 0,
     {[STANCE_STANDING] = &fujin_standing, [STANCE_CROUCHING] = &fujin_crouching, [STANCE_JUMP] = &fujin_jumping, [STANCE_DIAGONAL_AIR] = &fujin_diagonal_air}};
 
@@ -75,7 +73,7 @@ const CharacterDef mk4_fujin = {
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

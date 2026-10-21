@@ -55,8 +55,6 @@ static const ButtonTable goro_jumping = {{[BUTTON_HIGH_PUNCH] = goro_press_air_h
     [BUTTON_HIGH_KICK] = goro_press_air_hk,
     [BUTTON_LOW_KICK] = goro_press_air_lk}};
 
-#include "generated/controls.inc"
-
 static const Controls goro_controls = {NULL, 0, {[STANCE_STANDING] = &goro_standing, [STANCE_CROUCHING] = &goro_crouching, [STANCE_JUMP] = &goro_jumping}};
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -73,7 +71,7 @@ const CharacterDef mk4_goro = {
     .enter = state_entries,
     .walk = mk4_walk,
     .jump = NULL,
-    .cpu = &retail_cpu_moves,
+    .cpu = NULL,
     .move_list = NULL,
     .move_list_count = 0,
 };

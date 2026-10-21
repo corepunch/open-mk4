@@ -469,7 +469,6 @@
     "symbol": "boomerang",
     "evidence": "4ecd98 type 6d: rig template 506ff8 (shared_g mesh 0x7e), button table 4ecc78 (4955b0/495610/460200/461030/460fc0), stances 13eeb6/13ee98/13ee9b."
   },
-  "controls_output": "game/tanya/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -549,11 +548,6 @@
       "symbol": "tanya_drill_kick",
       "evidence": "Near/medium/far CPU rows 4df90c/94c/98c[9] word 0x40012 select T4[18]. 47b9f0 sets 211 and enters 4e81f0 (clip 103 to 12, speed 0x23d7); 47ba20 queries D17 at 13/14, 47ba90 adds reaction 95 to a grounded victim after six samples, 47bbd0 recovers to 20, shakes and finishes clip 103."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 0,
-    "CPU_FINISH_2": 0,
-    "evidence": "Tanya 45e570/45e2a0 close gates accept up to 1 unit; CPU targets 4dfe10[9] and 4dfe50[9] are both 0xe666."
   },
   "runtime_scripts": {
     "0x4e01a0": {

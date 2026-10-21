@@ -44,6 +44,8 @@ def main():
     paths = characters + sorted((ROOT / 'game').glob('*/moves/*.c'))
     paths += [ROOT / 'game' / name for name in NATIVE]
     errors = [error for path in paths for error in audit_text(path.relative_to(ROOT), path.read_text())]
+    errors += ['Generated fighter runtime output is forbidden: ' + str(path.relative_to(ROOT))
+               for path in (ROOT / 'game').glob('*/generated/*.inc')]
     if errors:
         print('\n'.join(errors))
         return 1

@@ -476,7 +476,6 @@
     }
   },
   "schema": 1,
-  "controls_output": "game/shinnok/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -606,11 +605,6 @@
     "0x45ef50": "weapon_can_draw",
     "0x45e6a0": "shinnok_can_morph",
     "0x45e570": "retail_can_finish_close"
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 0,
-    "CPU_FINISH_2": 0,
-    "evidence": "Shinnok 45e570 accepts up to 1 unit for both records; CPU targets 4dfe10/4dfe50[6] are 1 and 1.8 units, and 43c6d0 repositions the pair itself."
   },
   "runtime_scripts": {
     "0x4e01a0": {

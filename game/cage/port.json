@@ -454,7 +454,6 @@
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     }
   },
-  "controls_output": "game/cage/generated/controls.inc",
   "command_bindings": {
     "0x469250": {
       "source": "game/mk4_common.c",
@@ -537,11 +536,6 @@
       "symbol": "cage_low_orb",
       "evidence": "Native497080 sets312/311, snapshots the heading and enters4ed0d8; task79 selects its own parabolic orb."
     }
-  },
-  "cpu_finish_min": {
-    "CPU_FINISH_1": 0,
-    "CPU_FINISH_2": 0,
-    "evidence": "Cage45e570 close gate accepts up to1 unit; CPU first/second targets are4dfe10/4dfe50[14]=1 unit."
   },
   "runtime_scripts": {
     "0x4e01a0": {

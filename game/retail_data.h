@@ -28,4 +28,5 @@ uint32_t retail_cpu_target(const Mk4Image *image, unsigned character, unsigned d
 void retail_bind_commands(Controls *controls, const Mk4Image *image, unsigned character);
 int retail_stance_clip(const Mk4Image *image, unsigned character, bool walking);
 uint32_t retail_finish_target(const Mk4Image *image, unsigned character, bool second);
+q16 retail_cpu_finish_distance(const Mk4Image *image, unsigned character, bool second);
 #endif
