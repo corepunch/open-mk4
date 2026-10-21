@@ -42,6 +42,9 @@ SCRIPT_OPS = {
     0x07: ('finish backwards', 0),
     0x08: ('clip descriptor playback', 1),
     0x09: ('clip descriptor operation', 1),
+    0x0a: ('advance animation cursor by low byte', 0),
+    0x13: ('set cursor to final sample', 0),
+    0x14: ('submit final animation sample', 0),
     0x0c: ('bind clip, submit inline sample and advance cursor', 1),
     0x0d: ('native playback helper', 0),
     0x0e: ('open victim clip at sample 0', 1),
@@ -128,6 +131,11 @@ SCRIPT_OPS = {
     0x75: ('play indexed block sound when selected player is blocking', 0),
     0x76: ('play alternate indexed block sound when selected player is blocking', 0),
 }
+
+
+# These slots are direct aliases of the original dispatcher, with no operands.
+for _op in (0x0b, 0x15, 0x18, 0x21, 0x23, 0x57, 0x66, 0x67):
+    SCRIPT_OPS[_op] = ('VM no-op / continue', 0)
 
 
 # Verified from exact-entry handlers in the supplied EXE, not execution traces.

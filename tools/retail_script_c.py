@@ -99,6 +99,12 @@ def instruction_c(row):
         return ['advance_to_sample(%d);' % inline]
     if op == 0x10:
         return ['advance_self_and_victim(%d);' % inline]
+    if op in (0x0b, 0x15, 0x18, 0x21, 0x23, 0x57, 0x66, 0x67):
+        return ['vm_continue();']
+    if op == 0x0a:
+        return ['advance_animation_cursor(%d);' % arg]
+    if op in (0x13, 0x14):
+        return ['%s(animation_last_sample());' % ('set_animation_cursor' if op == 0x13 else 'submit_animation_sample')]
     if op == 0x12:
         return ['set_animation_cursor(%d);' % inline]
     if op in (0x19, 0x4d):

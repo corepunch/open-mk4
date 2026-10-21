@@ -758,6 +758,26 @@ static void native_stagger_boundary(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
 }
 
+static void cursor_alias_opcodes(void) {
+  Fighter *actor = setup(0, 2);
+  const uint32_t base = 0x570180, descriptor = 0x4fad7c;
+  const uint32_t words[] = {0x0f000000, descriptor / 4, 0x0bffffff, 0x15000000, 0x18000000, 0x21000000, 0x23000000, 0x57000000, 0x66000000, 0x67000000,
+      0x0affff02, 0x34000001, 0x13000000, 0x34000001, 0x14000000, 0x30000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + 4 * i, words[i]);
+  }
+  uint32_t count = mk4_image_u32(&image, descriptor + 4);
+  put_word(descriptor + 4, 9);
+  control_finished = 0;
+  retail_vm_start(actor, &image, base, base + sizeof words, control_end, reject_native);
+  put_word(descriptor + 4, count);
+  check(fighter_sample(actor) == 2, "cursor-add must mask to its low byte and dispatcher aliases must consume no operands");
+  tick();
+  check(fighter_sample(actor) == 8, "final-cursor opcode must use the bound descriptor length");
+  tick();
+  check(control_finished == 1 && fighter_sample(actor) == 8, "final-pose submission must preserve the descriptor sample and continue dispatch");
+}
+
 static void native_task_completion(void) {
   const uint32_t base = 0x570180;
   put_word(base, 0x34000001);
@@ -1010,6 +1030,7 @@ int main(int argc, char **argv) {
   native_reaction_table();
   native_stagger_boundary();
   native_task_completion();
+  cursor_alias_opcodes();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

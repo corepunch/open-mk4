@@ -1507,3 +1507,21 @@ Verified formatting, shared VM/rejections, strict audits, native frame gates
 and helper/port navigation (6/7 tests). One runtime fixture checks native task
 retirement consumes completion/cleanup once and interruption suppresses the
 completion, in an unrelated script context. No scene timing/damage matrices.
+
+### Cover cursor operations and dispatcher-alias opcode slots
+
+Added opcode0a's low-byte cursor increment and13/14's final-sample cursor/
+submission operations using the loaded descriptor. The engine owns sampled
+poses directly rather than emitting a separate retail render submission.
+Slots0b/15/18/21/23/57/66/67 are genuine no-ops: their loaded handler pointers
+return directly to dispatcher4594b0. Decoder operand counts, native-boundary
+classification and read-only C-style views now recognize these operations.
+Slot31 is null in the original table and remains invalid, not a no-op.
+
+Checked local45a490/45aa80/45aab0/429970 and the dispatch table against
+mk4decomp ComboMoveSelectFsmCluster/matching animation assembly. One runtime
+fixture checks no operand consumption, low-byte masking and a mutated loaded
+descriptor length. Verified formatting, shared VM/rejections, strict audits,
+native frame gates, existing decoder checks and helper/port navigation (6/7
+tests). Fourteen non-null opcode handlers still require completion; this is
+not a claim of full interpreter/native parity. No character tests added.

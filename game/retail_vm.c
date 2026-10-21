@@ -326,6 +326,15 @@ void retail_vm_step(Fighter *fighter) {
     unsigned opcode = word >> 24, arg = word & 255u;
     switch (opcode) {
       case 0x00:
+      case 0x0b:
+      case 0x15:
+      case 0x18:
+      case 0x21:
+      case 0x23:
+      case 0x57:
+      case 0x66:
+      case 0x67:
+        /* These loaded dispatch slots point directly back to4594b0. */
         break;
       case 0x0e:
         bind_image((Fighter *)fighter_opponent(fighter), vm->image, fetch(fighter), 0);
@@ -350,6 +359,15 @@ void retail_vm_step(Fighter *fighter) {
         }
         break;
       }
+      case 0x0a:
+        sample(fighter, fighter_sample(fighter) + (int)arg);
+        break;
+      case 0x13:
+      case 0x14:
+        /* The engine owns the sampled pose directly; native429970's pose
+         * submission does not require a separate retail render command. */
+        sample(fighter, fighter_move(fighter)->last);
+        break;
       case 0x0d:
         sample(fighter, fighter_sample(fighter) + 1);
         break;
