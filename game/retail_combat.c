@@ -231,3 +231,17 @@ void retail_roundhouse_tail(Fighter *fighter) {
 void retail_roundhouse_wide_tail(Fighter *fighter) {
   roundhouse_contact_start(fighter, 34);
 }
+
+/* 46cdb4 playback after the finish-window controller gates. */
+void retail_uppercut(Fighter *fighter) {
+  retail_native_begin(fighter, S_UPPERCUT, ACTION_RETAIL_0109, false);
+  retail_vm_enter(fighter, 0x4e62a0, fighter_ready);
+}
+
+void retail_uppercut_state(Fighter *fighter) {
+  fighter_enter_state(fighter, S_UPPERCUT);
+}
+
+void retail_press_uppercut(Fighter *fighter) {
+  fighter_interrupt(fighter, retail_uppercut);
+}

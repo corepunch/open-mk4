@@ -144,8 +144,8 @@
     },
     "uppercut": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_uppercut"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut"
     },
     "shadow_low": {
       "evidence": "Noob Saibot command target has its own generated shadow playback and callback route.",

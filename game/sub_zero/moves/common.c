@@ -75,12 +75,6 @@ static const mmove_t lk_owner_idle_phase = {
 static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0304};
 static const MeshAnimation ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
 
-void sub_zero_hold_phase(Fighter *fighter, const mmove_t *phase) {
-  int sample = fighter_sample(fighter);
-  fighter_mmove_phase(fighter, phase);
-  fighter->sample_override = sample;
-}
-
 void sub_zero_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {

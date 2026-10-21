@@ -52,7 +52,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = sonya_uppercut,
+  [S_UPPERCUT] = retail_uppercut,
 };
 // clang-format on
 
@@ -73,7 +73,7 @@ static const FighterFn enter[S_COUNT] = {
 
 static const ButtonTable standing = {
     {[BUTTON_HIGH_PUNCH] = sonya_press_jab, [BUTTON_LOW_PUNCH] = sonya_press_lp, [BUTTON_HIGH_KICK] = sonya_press_kick, [BUTTON_LOW_KICK] = sonya_press_lk}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = sonya_press_uppercut,
+static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
     [BUTTON_LOW_PUNCH] = sonya_press_crouch_lp,
     [BUTTON_HIGH_KICK] = sonya_press_crouch_hk,
     [BUTTON_LOW_KICK] = sonya_press_crouch_lk}};
@@ -90,7 +90,7 @@ static const CpuMoves cpu_moves = {
             [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = sonya_hk,
             [CPU_SWEEP] = retail_sweep_state,
-            [CPU_UPPERCUT] = sonya_enter_uppercut,
+            [CPU_UPPERCUT] = retail_uppercut_state,
             [CPU_THROW] = sonya_enter_throw,
             [CPU_CLOSE_HP] = sonya_cpu_close_hp,
             [CPU_CLOSE_HK] = sonya_cpu_close_hk,
@@ -209,10 +209,6 @@ void sonya_entry_retail_script_004e61e0(Fighter *fighter) {
 
 void sonya_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 2);
-}
-
-void sonya_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 2);
 }
 
 void sonya_entry_retail_script_004e62c0(Fighter *fighter) {

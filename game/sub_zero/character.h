@@ -27,14 +27,12 @@
 #define cpu_close_hp sub_zero_cpu_close_hp
 #define enter_lk_throw sub_zero_enter_lk_throw
 #define enter_throw sub_zero_enter_throw
-#define enter_uppercut sub_zero_enter_uppercut
 #define finish_scene sub_zero_finish_scene
 #define first_fatality_script sub_zero_first_fatality_script
 #define ground_attack sub_zero_ground_attack
 #define ground_attacks sub_zero_ground_attacks
 #define ground_native_tail sub_zero_ground_native_tail
 #define ground_profile sub_zero_ground_profile
-#define hold_phase sub_zero_hold_phase
 #define ice_projectile sub_zero_ice_projectile
 #define lk_thrown_script sub_zero_lk_thrown_script
 #define lp_capture_done sub_zero_lp_capture_done
@@ -57,7 +55,6 @@
 #define press_knee_hp sub_zero_press_knee_hp
 #define press_lk sub_zero_press_lk
 #define press_lp sub_zero_press_lp
-#define press_uppercut sub_zero_press_uppercut
 #define s_jab sub_zero_s_jab
 #define s_kick sub_zero_s_kick
 #define s_lp_thrown sub_zero_s_lp_thrown
@@ -112,7 +109,6 @@
 #define spike_start sub_zero_spike_start
 #define start_fatality sub_zero_start_fatality
 #define throw_disarm sub_zero_throw_disarm
-#define uppercut_script sub_zero_uppercut_script
 
 enum {
   G_LOW_KICK,
@@ -161,14 +157,12 @@ void sub_zero_cpu_close_hk(Fighter *fighter);
 void sub_zero_cpu_close_hp(Fighter *fighter);
 void sub_zero_enter_lk_throw(Fighter *fighter);
 void sub_zero_enter_throw(Fighter *fighter);
-void sub_zero_enter_uppercut(Fighter *fighter);
 void sub_zero_finish_scene(Fighter *fighter);
 void sub_zero_first_fatality_script(Fighter *fighter);
 void sub_zero_ground_attack(Fighter *fighter, int index);
 extern const GroundAttack sub_zero_ground_attacks[8];
 void sub_zero_ground_native_tail(Fighter *fighter);
 extern const NativeGroundProfile sub_zero_ground_profile;
-void sub_zero_hold_phase(Fighter *fighter, const mmove_t *phase);
 void sub_zero_ice_projectile(Projectile *p);
 void sub_zero_lk_thrown_script(Fighter *victim);
 void sub_zero_lp_capture_done(Fighter *victim);
@@ -191,7 +185,6 @@ void sub_zero_press_kick(Fighter *fighter);
 void sub_zero_press_knee_hp(Fighter *fighter);
 void sub_zero_press_lk(Fighter *fighter);
 void sub_zero_press_lp(Fighter *fighter);
-void sub_zero_press_uppercut(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2bf0(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c10(Fighter *fighter);
 void sub_zero_entry_retail_script_004d2c78(Fighter *fighter);
@@ -219,7 +212,6 @@ void sub_zero_entry_retail_script_004e6158(Fighter *fighter);
 void sub_zero_entry_retail_script_004e6190(Fighter *fighter);
 void sub_zero_entry_retail_script_004e61e0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e61f8(Fighter *fighter);
-void sub_zero_entry_retail_script_004e62a0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62c0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter);
 void sub_zero_entry_retail_script_004e63d8(Fighter *fighter);
@@ -302,9 +294,7 @@ void sub_zero_ice(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
 void sub_zero_spike_fatality(Fighter *fighter);
-void sub_zero_uppercut(Fighter *fighter);
 void sub_zero_weapon(Fighter *fighter);
 void sub_zero_throw_disarm(Fighter *victim);
-void sub_zero_uppercut_script(Fighter *fighter);
 
 #endif

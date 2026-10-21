@@ -18,8 +18,8 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_high_
     [BUTTON_LOW_PUNCH] = quan_chi_press_low_punch,
     [BUTTON_HIGH_KICK] = quan_chi_press_high_kick,
     [BUTTON_LOW_KICK] = quan_chi_press_low_kick}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_uppercut,
-    [BUTTON_LOW_PUNCH] = quan_chi_press_uppercut,
+static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
     [BUTTON_HIGH_KICK] = retail_press_sweep,
     [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable straight_air = {{[BUTTON_HIGH_PUNCH] = quan_chi_press_air_hp,
@@ -41,7 +41,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = quan_chi_uppercut,
+  [S_UPPERCUT] = retail_uppercut,
   [S_THROW] = quan_chi_lp_throw,
 };
 // clang-format on
@@ -106,10 +106,6 @@ void quan_chi_entry_retail_script_004e5e50(Fighter *fighter) {
 
 void quan_chi_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 8);
-}
-
-void quan_chi_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 8);
 }
 
 void quan_chi_entry_retail_script_004e63d8(Fighter *fighter) {

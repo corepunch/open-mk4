@@ -24,7 +24,6 @@
 #define cpu_close_hp sonya_cpu_close_hp
 #define enter_lk_throw sonya_enter_lk_throw
 #define enter_throw sonya_enter_throw
-#define enter_uppercut sonya_enter_uppercut
 #define enter_victory sonya_enter_victory
 #define first_fatality sonya_first_fatality
 #define ground_attack sonya_ground_attack
@@ -45,7 +44,6 @@
 #define press_knee_hp sonya_press_knee_hp
 #define press_lk sonya_press_lk
 #define press_lp sonya_press_lp
-#define press_uppercut sonya_press_uppercut
 #define s_jab sonya_s_jab
 #define s_kick sonya_s_kick
 #define s_knockdown sonya_s_knockdown
@@ -90,7 +88,6 @@
 #define special_cleanup sonya_special_cleanup
 #define spike_start sonya_spike_start
 #define square_victim sonya_square_victim
-#define uppercut_script sonya_uppercut_script
 
 enum {
   G_LOW_KICK,
@@ -126,7 +123,6 @@ void sonya_cpu_close_hk(Fighter *fighter);
 void sonya_cpu_close_hp(Fighter *fighter);
 void sonya_enter_lk_throw(Fighter *fighter);
 void sonya_enter_throw(Fighter *fighter);
-void sonya_enter_uppercut(Fighter *fighter);
 void sonya_enter_victory(Fighter *fighter);
 void sonya_first_fatality(Fighter *fighter);
 void sonya_ground_attack(Fighter *fighter, int index);
@@ -147,7 +143,6 @@ void sonya_press_kick(Fighter *fighter);
 void sonya_press_knee_hp(Fighter *fighter);
 void sonya_press_lk(Fighter *fighter);
 void sonya_press_lp(Fighter *fighter);
-void sonya_press_uppercut(Fighter *fighter);
 void sonya_entry_retail_script_004de360(Fighter *fighter);
 void sonya_entry_retail_script_004de798(Fighter *fighter);
 void sonya_entry_retail_script_004e01c0(Fighter *fighter);
@@ -167,7 +162,6 @@ void sonya_entry_retail_script_004e6158(Fighter *fighter);
 void sonya_entry_retail_script_004e6190(Fighter *fighter);
 void sonya_entry_retail_script_004e61e0(Fighter *fighter);
 void sonya_entry_retail_script_004e61f8(Fighter *fighter);
-void sonya_entry_retail_script_004e62a0(Fighter *fighter);
 void sonya_entry_retail_script_004e62c0(Fighter *fighter);
 void sonya_entry_retail_script_004e62d8(Fighter *fighter);
 void sonya_entry_retail_script_004e63d8(Fighter *fighter);
@@ -246,11 +240,9 @@ void sonya_leg_grab(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
 void sonya_spike_fatality(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);
-void sonya_uppercut(Fighter *fighter);
 void sonya_weapon(Fighter *fighter);
 void sonya_special_cleanup(Fighter *fighter);
 void sonya_spike_start(Fighter *fighter);
 void sonya_square_victim(Fighter *victim);
-void sonya_uppercut_script(Fighter *fighter);
 
 #endif

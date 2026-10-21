@@ -20,7 +20,7 @@ void noob_saibot_press_low_punch(Fighter *fighter) {
 }
 
 void noob_saibot_press_crouching_hp(Fighter *fighter) {
-  fighter_interrupt(fighter, noob_saibot_uppercut);
+  fighter_interrupt(fighter, retail_uppercut);
 }
 
 /* 46d290/46d9b3: select the native HP record and 296/297 repeat phases. */

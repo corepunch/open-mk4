@@ -150,8 +150,8 @@
       "evidence": "Fujin sweep command starts generated stream 4e6798."
     },
     "uppercut": {
-      "source": "game/fujin/character.c",
-      "symbol": "fujin_uppercut",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut",
       "evidence": "Fujin uppercut command starts generated stream 4e62a0."
     },
     "close_hp": {

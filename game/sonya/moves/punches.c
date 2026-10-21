@@ -30,7 +30,7 @@ void sonya_press_combo_hp(Fighter *fighter) {
 void sonya_press_knee_hp(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if ((victim->action == ACTION_RETAIL_4004 || victim->hits > 1) && fighter_height(fighter) <= 0.5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN))) {
-    fighter_interrupt(fighter, sonya_enter_uppercut);
+    fighter_interrupt(fighter, retail_uppercut_state);
   } else {
     sonya_press_jab(fighter);
   }

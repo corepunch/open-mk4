@@ -153,8 +153,8 @@
       "evidence": "Reptile sweep entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "uppercut": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_uppercut",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut",
       "evidence": "Reptile uppercut entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "close_hp": {

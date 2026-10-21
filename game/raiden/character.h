@@ -22,7 +22,6 @@
 #define cpu_close_hp raiden_cpu_close_hp
 #define enter_lk_throw raiden_enter_lk_throw
 #define enter_throw raiden_enter_throw
-#define enter_uppercut raiden_enter_uppercut
 #define enter_victory raiden_enter_victory
 #define first_fatality raiden_first_fatality
 #define ground_attack raiden_ground_attack
@@ -43,7 +42,6 @@
 #define press_knee_hp raiden_press_knee_hp
 #define press_lk raiden_press_lk
 #define press_lp raiden_press_lp
-#define press_uppercut raiden_press_uppercut
 #define s_jab raiden_s_jab
 #define s_kick raiden_s_kick
 #define s_knockdown raiden_s_knockdown
@@ -94,7 +92,6 @@
 #define second_fatality raiden_second_fatality
 #define special_cleanup raiden_special_cleanup
 #define spike_start raiden_spike_start
-#define uppercut_script raiden_uppercut_script
 
 enum {
   G_LOW_KICK,
@@ -128,7 +125,6 @@ void raiden_cpu_close_hk(Fighter *fighter);
 void raiden_cpu_close_hp(Fighter *fighter);
 void raiden_enter_lk_throw(Fighter *fighter);
 void raiden_enter_throw(Fighter *fighter);
-void raiden_enter_uppercut(Fighter *fighter);
 void raiden_enter_victory(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
 void raiden_ground_attack(Fighter *fighter, int index);
@@ -149,7 +145,6 @@ void raiden_press_kick(Fighter *fighter);
 void raiden_press_knee_hp(Fighter *fighter);
 void raiden_press_lk(Fighter *fighter);
 void raiden_press_lp(Fighter *fighter);
-void raiden_press_uppercut(Fighter *fighter);
 void raiden_crouch_lp(Fighter *fighter);
 void raiden_hk(Fighter *fighter);
 void raiden_hp(Fighter *fighter);
@@ -157,7 +152,6 @@ void raiden_lightning(Fighter *fighter);
 void raiden_spike_fatality(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
-void raiden_uppercut(Fighter *fighter);
 void raiden_weapon(Fighter *fighter);
 void raiden_entry_retail_script_004de218(Fighter *fighter);
 void raiden_entry_retail_script_004de640(Fighter *fighter);
@@ -181,7 +175,6 @@ void raiden_entry_retail_script_004e6158(Fighter *fighter);
 void raiden_entry_retail_script_004e6190(Fighter *fighter);
 void raiden_entry_retail_script_004e61e0(Fighter *fighter);
 void raiden_entry_retail_script_004e61f8(Fighter *fighter);
-void raiden_entry_retail_script_004e62a0(Fighter *fighter);
 void raiden_entry_retail_script_004e62c0(Fighter *fighter);
 void raiden_entry_retail_script_004e62d8(Fighter *fighter);
 void raiden_entry_retail_script_004e63d8(Fighter *fighter);
@@ -256,6 +249,5 @@ void raiden_script_weapon_victim_getup(Fighter *victim);
 void raiden_second_fatality(Fighter *fighter);
 void raiden_special_cleanup(Fighter *fighter);
 void raiden_spike_start(Fighter *fighter);
-void raiden_uppercut_script(Fighter *fighter);
 
 #endif

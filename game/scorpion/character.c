@@ -53,7 +53,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = scorpion_uppercut,
+  [S_UPPERCUT] = retail_uppercut,
 };
 // clang-format on
 
@@ -81,7 +81,7 @@ static const ButtonTable scorpion_standing = {{[BUTTON_HIGH_PUNCH] = scorpion_pr
     [BUTTON_LOW_PUNCH] = scorpion_press_lp,
     [BUTTON_HIGH_KICK] = scorpion_press_kick,
     [BUTTON_LOW_KICK] = scorpion_press_lk}};
-static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = scorpion_press_uppercut,
+static const ButtonTable scorpion_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
     [BUTTON_LOW_PUNCH] = scorpion_press_crouch_lp,
     [BUTTON_HIGH_KICK] = scorpion_press_crouch_hk,
     [BUTTON_LOW_KICK] = scorpion_press_crouch_lk}};
@@ -236,10 +236,6 @@ void scorpion_entry_retail_script_004e61e0(Fighter *fighter) {
 
 void scorpion_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e62c0(Fighter *fighter) {

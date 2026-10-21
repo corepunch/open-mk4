@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = sub_zero_uppercut,
+  [S_UPPERCUT] = retail_uppercut,
 };
 // clang-format on
 
@@ -143,7 +143,7 @@ static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_jab,
     [BUTTON_LOW_PUNCH] = sub_zero_press_lp,
     [BUTTON_HIGH_KICK] = sub_zero_press_kick,
     [BUTTON_LOW_KICK] = sub_zero_press_lk}};
-static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = sub_zero_press_uppercut,
+static const ButtonTable crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
     [BUTTON_LOW_PUNCH] = sub_zero_press_crouch_lp,
     [BUTTON_HIGH_KICK] = sub_zero_press_crouch_hk,
     [BUTTON_LOW_KICK] = sub_zero_press_crouch_lk}};
@@ -158,7 +158,7 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_LOW_KICK] = retail_low_kick,
                                        [CPU_HIGH_KICK] = sub_zero_hk,
                                        [CPU_SWEEP] = retail_sweep_state,
-                                       [CPU_UPPERCUT] = sub_zero_enter_uppercut,
+                                       [CPU_UPPERCUT] = retail_uppercut_state,
                                        [CPU_THROW] = sub_zero_enter_throw,
                                        [CPU_CLOSE_HP] = sub_zero_cpu_close_hp,
                                        [CPU_CLOSE_HK] = sub_zero_cpu_close_hk,
@@ -305,10 +305,6 @@ void sub_zero_entry_retail_script_004e61e0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e62c0(Fighter *fighter) {

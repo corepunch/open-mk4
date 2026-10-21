@@ -23,7 +23,6 @@ enum {
 void tanya_entry_retail_script_004de2f8(Fighter *fighter);
 void tanya_entry_retail_script_004de798(Fighter *fighter);
 void tanya_entry_retail_script_004e61f8(Fighter *fighter);
-void tanya_entry_retail_script_004e62a0(Fighter *fighter);
 void tanya_entry_retail_script_004e63d8(Fighter *fighter);
 void tanya_entry_retail_script_004e6500(Fighter *fighter);
 void tanya_entry_retail_script_004e6658(Fighter *fighter);
@@ -43,13 +42,11 @@ void tanya_press_high_kick(Fighter *fighter);
 void tanya_press_high_punch(Fighter *fighter);
 void tanya_press_low_kick(Fighter *fighter);
 void tanya_press_low_punch(Fighter *fighter);
-void tanya_press_uppercut(Fighter *fighter);
 void tanya_script_air_finish(Fighter *fighter);
 void tanya_script_current_reaction(Fighter *fighter, int reaction);
 void tanya_script_lk_return(Fighter *fighter);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 void tanya_script_spike_tail(Fighter *fighter);
-void tanya_uppercut(Fighter *fighter);
 
 extern const ButtonTable tanya_diagonal_air;
 void tanya_press_air_hk(Fighter *fighter);

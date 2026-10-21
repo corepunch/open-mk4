@@ -68,7 +68,6 @@ typedef struct NativeAirProfile {
 } NativeAirProfile;
 
 bool native_grounded(const Fighter *fighter);
-void native_uppercut_tail(Fighter *fighter, FighterFn contact);
 void native_uppercut_default(Fighter *fighter);
 void native_ground_tail(Fighter *fighter, const NativeGroundProfile *profile);
 void native_ground_next(Fighter *fighter, const NativeGroundProfile *profile);

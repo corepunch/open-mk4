@@ -24,8 +24,8 @@
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "uppercut": {
-      "source": "game/goro/moves/uppercut.c",
-      "symbol": "goro_uppercut",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "sweep": {

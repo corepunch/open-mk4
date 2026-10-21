@@ -230,7 +230,6 @@ void kitana_script_weapon_victim_getup(Fighter *victim);
 void kitana_shadow_install_physics(Fighter *fighter);
 void kitana_shadow_task_low(Fighter *fighter, int task_type);
 void kitana_shadow_task_up(Fighter *fighter, int task_type);
-void kitana_uppercut_script(Fighter *fighter);
 void liu_kang_bicycle_script(Fighter *fighter);
 void liu_kang_flying_kick_script(Fighter *fighter);
 void liu_kang_liu_script_air_diagonal_tail(Fighter *fighter);
@@ -263,7 +262,6 @@ void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type);
 void liu_kang_liu_script_spike_tail(Fighter *fighter);
 void liu_kang_liu_script_sword_blend(Fighter *fighter);
 unsigned liu_kang_liu_script_sword_gate(Fighter *fighter);
-void liu_kang_uppercut_script(Fighter *fighter);
 void mk4_mmove_air_getup(Fighter *victim);
 void mk4_mmove_lk_owner_ready(Fighter *fighter);
 void mk4_mmove_side_getup(Fighter *fighter);
@@ -316,7 +314,6 @@ void quan_chi_script_close_hp_tail(Fighter *fighter);
 void quan_chi_script_combo_hp_tail(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_draw_equip(Fighter *fighter);
-void quan_chi_script_finish(Fighter *fighter);
 void quan_chi_script_flip_kick_tail(Fighter *fighter);
 void quan_chi_script_getup_roll(Fighter *fighter);
 void quan_chi_script_lk_return(Fighter *fighter);
@@ -363,7 +360,6 @@ void raiden_script_torpedo_step(Fighter *fighter);
 void raiden_script_torpedo_victim_motion(Fighter *victim);
 void raiden_script_victory_effect(Fighter *fighter);
 void raiden_script_weapon_victim_getup(Fighter *victim);
-void raiden_uppercut_script(Fighter *fighter);
 void reiko_first_head_59(Fighter *piece);
 void reiko_first_head_83(Fighter *piece);
 void reiko_first_left_arm_56(Fighter *piece);
@@ -490,7 +486,6 @@ void scorpion_script_weapon_ready(Fighter *fighter);
 void scorpion_spear_stun_script(Fighter *fighter);
 void scorpion_spin_script(Fighter *fighter);
 void scorpion_teleport_script(Fighter *fighter);
-void scorpion_uppercut_script(Fighter *fighter);
 void shinnok_fatality_reappear(Fighter *fighter);
 void shinnok_fatality_victory(Fighter *fighter);
 void shinnok_first_hand_squeeze(Fighter *hand);
@@ -552,7 +547,6 @@ void sonya_script_throw_getup(Fighter *victim);
 void sonya_script_weapon_hp_tail(Fighter *fighter);
 void sonya_script_weapon_lp_tail(Fighter *fighter);
 void sonya_script_weapon_victim_getup(Fighter *victim);
-void sonya_uppercut_script(Fighter *fighter);
 void sub_zero_script_air_diagonal_tail(Fighter *fighter);
 void sub_zero_script_air_getup(Fighter *victim);
 void sub_zero_script_air_hp_tail(Fighter *fighter);
@@ -594,7 +588,6 @@ void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
 void sub_zero_script_spike_tail(Fighter *fighter);
 void sub_zero_script_victory(Fighter *fighter);
 void sub_zero_slide_script(Fighter *fighter);
-void sub_zero_uppercut_script(Fighter *fighter);
 void tanya_air_fireball_fall(Fighter *fighter);
 void tanya_air_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_blocked_recoil_land(Fighter *fighter);
@@ -2560,39 +2553,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x46cde0:
-          if (owner & 0x10000u) {
-            kitana_uppercut_script(fighter);
-            return true;
-          }
-          if (owner & 0x8u) {
-            liu_kang_uppercut_script(fighter);
-            return true;
-          }
-          if (owner & 0x2fee0u) {
-            native_uppercut_default(fighter);
-            return true;
-          }
-          if (owner & 0x100u) {
-            quan_chi_script_finish(fighter);
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_uppercut_script(fighter);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_uppercut_script(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_uppercut_script(fighter);
-            return true;
-          }
-          if (owner & 0x10u) {
-            sub_zero_uppercut_script(fighter);
-            return true;
-          }
-          return false;
+          native_uppercut_default(fighter);
+          return true;
         case 0x46d260:
           if (owner & 0x4000u) {
             cage_script_draw_equip(fighter);

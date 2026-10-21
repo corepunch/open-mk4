@@ -307,7 +307,8 @@ static void uppercut_recovery(Fighter *fighter) {
   int repeats = fighter->contact == CONTACT_MISS ? 3 : fighter->contact == CONTACT_BLOCK ? 2 : 8;
   int recovery = fighter->contact == CONTACT_MISS ? 8 : 9;
   bool delayed = fighter->contact_tick == 9;
-  int count = repeats * 5 + (delayed ? 2 : 0) + 20 - recovery;
+  int last = fighter_move(fighter)->last;
+  int count = repeats * 5 + (delayed ? 2 : 0) + last + 1 - recovery;
   native_begin(fighter, 0, count - 1, fighter_ready);
   int row = 0;
   for (int repeat = 0; repeat < repeats; ++repeat) {
@@ -317,14 +318,14 @@ static void uppercut_recovery(Fighter *fighter) {
       fighter->native.poses[row++] = poses[frame];
     }
   }
-  for (int sample = recovery; sample < 20; ++sample) {
+  for (int sample = recovery; sample <= last; ++sample) {
     fighter->native.poses[row++] = sample;
   }
   native_play(fighter, false);
 }
 
-void native_uppercut_tail(Fighter *fighter, FighterFn contact) {
-  require(fighter_move(fighter)->clip == 293 && fighter_sample(fighter) == 5, "Uppercut needs its generated startup");
+static void native_uppercut_tail(Fighter *fighter, FighterFn contact) {
+  require(fighter_move(fighter)->clip == 293 && fighter_sample(fighter) == 5, "Uppercut needs its retail startup");
   int pose = fighter_sample(fighter);
   native_begin(fighter, 1, 5, uppercut_recovery);
   for (int frame = 1; frame <= 5; ++frame) {
@@ -335,12 +336,14 @@ void native_uppercut_tail(Fighter *fighter, FighterFn contact) {
 
 /* 46cde0 queries A[2], or A[6] in a follow-up window, and skips crouch2001. */
 static void uppercut_default_contact(Fighter *fighter) {
-  static const AttackRecord normal = {0xe3d7, -0xfd70, 0x947a, 0x10518, 34, 34, 6, 0, 0x28f5};
-  static const AttackRecord followup = {0x12106, -0x111a9, 0xfa9f, 0x17a9f, 34, 34, 6, 0, 0xa3d};
   if (fighter->connected || fighter_opponent(fighter)->action == ACTION_RETAIL_2001) {
     return;
   }
-  if (battle_contact(fighter, fighter->flags & FF_FOLLOW_UP ? &followup : &normal) != CONTACT_MISS) {
+  const Mk4Image *image = retail_vm_image();
+  unsigned selector = fighter->flags & FF_FOLLOW_UP ? 6 : 2;
+  uint32_t packed = mk4_image_u32(image, 0x53d268 + selector * 4);
+  AttackRecord record = retail_vm_attack_record(image, packed * 4);
+  if (battle_contact(fighter, &record) != CONTACT_MISS) {
     fighter->action = ACTION_RETAIL_1006;
   }
 }

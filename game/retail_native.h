@@ -37,3 +37,6 @@ void retail_roundhouse_start(Fighter *fighter);
 void retail_roundhouse_wide_start(Fighter *fighter);
 void retail_roundhouse_tail(Fighter *fighter);
 void retail_roundhouse_wide_tail(Fighter *fighter);
+void retail_uppercut(Fighter *fighter);
+void retail_uppercut_state(Fighter *fighter);
+void retail_press_uppercut(Fighter *fighter);

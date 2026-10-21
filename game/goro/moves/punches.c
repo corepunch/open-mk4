@@ -26,5 +26,5 @@ void goro_press_low_punch(Fighter *fighter) {
 }
 
 void goro_press_crouching_punch(Fighter *fighter) {
-  fighter_interrupt(fighter, goro_uppercut);
+  fighter_interrupt(fighter, retail_uppercut);
 }

@@ -380,3 +380,24 @@ source gates pass. Existing roundhouse hit/miss and Goro integrations pass;
 the battle suite subsequently reaches the documented baseline throw tick
 assertion. No new fighter tests or timing matrices were added. Other native
 families and roster/controller configuration remain transitional.
+
+## Shared uppercut playback and contact service
+
+All eighteen uppercut modules are removed. Shared playback46cdb4 establishes
+0109 and enters original4e62a0. The pre-existing finish-window branches in
+46ccd0 are a separate controller boundary; this step does not register that
+full native entry. Native46cde0 uses the existing shared recovery state
+machine once, queries live A[2]/A[6] instead of copied fighter records and
+finishes through the loaded clip bound. The six private contact variants and
+Sub-Zero's duplicate native phase are retired, together with eighteen unused
+startup thunks and the now-unused hold-phase adapter.
+
+The entry/VM boundary follows checked local code and mk4decomp ArgSarStoreJmp;
+the local46cde0 listing confirms selector2/6, crouch2001 exclusion, contact
+cycles and distinct result recovery. Existing native phase implementation is
+reused rather than re-authoring retail script control flow.
+
+Shared runtime checks, eighteen strict audits and native source gates pass.
+The existing battle run reaches the established baseline throw assertion.
+No new fighter tests were added. Native families and roster/controller
+configuration outside these consolidated attacks remain transitional.

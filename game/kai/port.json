@@ -114,8 +114,8 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e6798); verified by typed Kai inventory."
     },
     "uppercut": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_uppercut",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e62a0); verified by typed Kai inventory."
     },
     "close_hp": {

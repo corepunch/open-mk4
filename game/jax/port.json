@@ -139,8 +139,8 @@
     },
     "uppercut": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for uppercut",
-      "source": "game/jax/character.c",
-      "symbol": "jax_uppercut"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut"
     },
     "close_hp": {
       "source": "game/jax/moves/combos.c",

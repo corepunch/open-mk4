@@ -83,8 +83,8 @@
       "evidence": "Tanya jab entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "uppercut": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_uppercut",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_uppercut",
       "evidence": "Tanya uppercut entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "sweep": {

@@ -1451,6 +1451,8 @@ def bindings_for(character):
                               (0x46f390, 'retail_roundhouse_wide_start'), (0x46f3e0, 'retail_roundhouse_wide_tail')):
         result[address] = Binding(function, 'game/retail_combat.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Shared native roundhouse branches/cursor/contact/recovery; checked local 46f220..46f644 and matching mk4decomp handlers')
+    result[0x46cde0] = Binding('native_uppercut_default', 'game/native_combat.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Shared native 46cde0 contact/recovery; A2/A6 are read live from the retail image')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

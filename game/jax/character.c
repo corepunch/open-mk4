@@ -19,8 +19,8 @@ static const MoveDef s_victory = {.clip = 412, .last = MOVE_END, .flags = SF_HOL
 
 static const ButtonTable s_standing = {
     {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
-static const ButtonTable s_crouching = {{[BUTTON_HIGH_PUNCH] = jax_press_uppercut,
-    [BUTTON_LOW_PUNCH] = jax_press_uppercut,
+static const ButtonTable s_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
     [BUTTON_HIGH_KICK] = retail_press_sweep,
     [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable s_jumping = {{[BUTTON_HIGH_PUNCH] = jax_press_air_hp,
@@ -40,7 +40,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_PUNCH] = retail_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = jax_uppercut,
+  [S_UPPERCUT] = retail_uppercut,
   [S_THROW] = jax_lp_throw,
   [S_BLOCK] = weapon_block,
   [S_HIT] = NULL,
@@ -161,10 +161,6 @@ void jax_entry_retail_script_004e5df8(Fighter *fighter) {
 
 void jax_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 13);
-}
-
-void jax_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 13);
 }
 
 void jax_entry_retail_script_004e62c0(Fighter *fighter) {

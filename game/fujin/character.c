@@ -52,8 +52,8 @@ static const ButtonTable fujin_standing = {{[BUTTON_HIGH_PUNCH] = fujin_press_pu
     [BUTTON_LOW_PUNCH] = fujin_press_low_punch,
     [BUTTON_HIGH_KICK] = fujin_press_kick,
     [BUTTON_LOW_KICK] = fujin_press_low_kick}};
-static const ButtonTable fujin_crouching = {{[BUTTON_HIGH_PUNCH] = fujin_press_uppercut,
-    [BUTTON_LOW_PUNCH] = fujin_press_uppercut,
+static const ButtonTable fujin_crouching = {{[BUTTON_HIGH_PUNCH] = retail_press_uppercut,
+    [BUTTON_LOW_PUNCH] = retail_press_uppercut,
     [BUTTON_HIGH_KICK] = retail_press_sweep,
     [BUTTON_LOW_KICK] = retail_press_sweep}};
 static const ButtonTable fujin_jumping = {{[BUTTON_HIGH_PUNCH] = fujin_press_air_punch,
@@ -107,10 +107,6 @@ void fujin_entry_retail_script_004de798(Fighter *fighter) {
 
 void fujin_entry_retail_script_004e61f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e61f8, fighter_ready, 5);
-}
-
-void fujin_entry_retail_script_004e62a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62a0, fighter_ready, 5);
 }
 
 void fujin_entry_retail_script_004e63d8(Fighter *fighter) {
