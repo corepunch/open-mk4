@@ -309,10 +309,8 @@ typedef struct CommandDef {
   FighterFn enter;
 } CommandDef;
 
-/* Press handlers for one stance, indexed by Button. Direction entries are
- * unused; NULL ignores the press. A move with SF_LOCK installs none. */
+/* Original six-slot native button table. A locked move installs none. */
 typedef struct ButtonTable {
-  FighterFn press[BUTTON_COUNT];
   uint32_t retail_address;
 } ButtonTable;
 

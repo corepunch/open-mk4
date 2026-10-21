@@ -919,3 +919,18 @@ frame checks, formatting. Extended the existing loaded-button fixture to
 change an air action target and check dispatch plus airborne ownership; no
 fighter timing/damage matrices were added. The broad legacy battle-suite
 limitation recorded above remains.
+
+### All button tables come from retail
+
+The handstand controller47c580 installs4e83f8, confirmed against the local EXE
+and mk4decomp StageEventComplexFsm/StageEventExitCluster. Its four nonzero
+entries resolve once through the typed native bridge. The native handstand
+service now lives in shared retail_handstand.c. Removed ButtonTable.press and
+the last human/CPU C callback fallback: every installed button view names an
+original table. Existing authored scripts remain unchanged.
+
+Verified make format, retail-vm-test including rejection checks,18 strict
+script audits, native source/frame checks and format-check. No new tests were
+needed for this use of the already-tested loaded-table boundary. The remaining
+native handstand implementation still owns its native animation controller;
+this change does not claim all native profiles have been migrated.

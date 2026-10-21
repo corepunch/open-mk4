@@ -147,11 +147,7 @@ void fighter_press(Fighter *fighter, Button button) {
   if (command != NULL) {
     fighter_interrupt(fighter, command);
   } else if ((g_battle.phase == PHASE_FIGHT || battle_can_finish(fighter)) && fighter->buttons != NULL) {
-    if (fighter->buttons->retail_address != 0) {
-      retail_press_table(fighter, button);
-    } else if (fighter->buttons->press[button] != NULL) {
-      fighter->buttons->press[button](fighter);
-    }
+    retail_press_table(fighter, button);
   }
   if (button == BUTTON_RUN) {
     fighter->latch[button] = g_battle.ticks;

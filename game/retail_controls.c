@@ -181,6 +181,10 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
     fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, target));
     return;
   }
+  if (target == 0x47c850 || target == 0x47ccf0 || target == 0x47cc10 || target == 0x47cc80) {
+    fighter_interrupt(fighter, retail_native_entry((unsigned)fighter->roster, target));
+    return;
+  }
   const Fighter *peer = fighter_opponent(fighter);
   bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
   FighterFn entry = NULL;

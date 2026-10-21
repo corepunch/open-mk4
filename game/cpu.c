@@ -71,10 +71,6 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
       return true;
     }
   }
-  if (table != NULL && table->press[button] != NULL) {
-    table->press[button](fighter);
-    return true;
-  }
   return false;
 }
 

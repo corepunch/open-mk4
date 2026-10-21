@@ -1,11 +1,11 @@
-#include "../character.h"
+#include "kai/character.h"
 
 static void kai_stage_event_step(Fighter *fighter);
 static void kai_input_47cbf0(Fighter *fighter);
-static void kai_input_47cc10(Fighter *fighter);
-static void handstand_rear(Fighter *fighter);
-static void handstand_spin(Fighter *fighter);
-static void handstand_exit(Fighter *fighter);
+void retail_handstand_front(Fighter *fighter);
+void retail_handstand_rear(Fighter *fighter);
+void retail_handstand_spin(Fighter *fighter);
+void retail_handstand_exit(Fighter *fighter);
 static void handstand_stance(Fighter *fighter, bool walking);
 static void spin_release(Fighter *fighter);
 static void spin_wait(Fighter *fighter);
@@ -20,8 +20,7 @@ static const MoveDef rear = {.clip = 6, .last = 12, .flags = SF_LOCK | SF_RECORD
 static const AttackRecord spin_record = {0x111a9, -0x3ae1, 0x16b43, 0x51a9, 126, 10, 0, 0, 0x170a};
 static const AttackRecord front_record = {0x1851e, -0xbd2f, 0x10000, 0x9958, 127, 127, 5, 0, 0x1c28};
 static const AttackRecord rear_record = {0x1e624, -0x2395, 0x10000, 0x9958, 167, 127, 5, 0, 0x170a};
-static const ButtonTable handstand_buttons = {
-    .press = {[BUTTON_LOW_PUNCH] = handstand_spin, [BUTTON_BLOCK] = handstand_exit, [BUTTON_HIGH_KICK] = kai_input_47cc10, [BUTTON_LOW_KICK] = handstand_rear}};
+static const ButtonTable handstand_buttons = {.retail_address = 0x4e83f8};
 
 bool kai_can_handstand(const Fighter *fighter) {
   unsigned required = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK);
@@ -52,7 +51,7 @@ static bool handstand_live(Fighter *fighter) {
     return false;
   }
   if (g_battle.phase != PHASE_FIGHT) {
-    handstand_exit(fighter);
+    retail_handstand_exit(fighter);
     return false;
   }
   return true;
@@ -119,19 +118,19 @@ void kai_input_47c520(Fighter *fighter) {
   }
 }
 
-static void handstand_exit(Fighter *fighter) {
+void retail_handstand_exit(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->mmove_cleanup = handstand_cleanup;
   kai_entry_retail_script_004e83e8(fighter);
 }
 
-static void kai_input_47cc10(Fighter *fighter) {
+void retail_handstand_front(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &front);
   fighter->mmove_cleanup = handstand_cleanup;
   kai_entry_retail_script_004e8358(fighter);
 }
 
-static void handstand_rear(Fighter *fighter) {
+void retail_handstand_rear(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &rear);
   fighter->mmove_cleanup = handstand_cleanup;
   kai_entry_retail_script_004e83a0(fighter);
@@ -221,7 +220,7 @@ void kai_handstand_spin_begin(Fighter *fighter) {
   spin_wait(fighter);
 }
 
-static void handstand_spin(Fighter *fighter) {
+void retail_handstand_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &spin);
   fighter->mmove_cleanup = handstand_cleanup;
   kai_entry_retail_script_004e8338(fighter);

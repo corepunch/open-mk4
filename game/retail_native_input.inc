@@ -1,3 +1,7 @@
+extern void retail_handstand_front(Fighter *fighter);
+extern void retail_handstand_rear(Fighter *fighter);
+extern void retail_handstand_spin(Fighter *fighter);
+extern void retail_handstand_exit(Fighter *fighter);
 /* Temporary native ABI bridge while the implementations are consolidated.
  * Command patterns, priorities, flags and dispatch targets are read from retail. */
 extern void cage_cpu_kick(Fighter *fighter);
@@ -192,6 +196,11 @@ extern bool weapon_can_pickup(const Fighter *fighter);
 static const NativeAction entries[] = {
   {0x47c070, 0x3ffff, retail_teleport},
   {0x47c2a0, 0x3ffff, retail_teleport_slam},
+  {0x47c850, 0x3ffff, retail_handstand_spin},
+  {0x47ccf0, 0x3ffff, retail_handstand_exit},
+  {0x47cc10, 0x3ffff, retail_handstand_front},
+  {0x47cc80, 0x3ffff, retail_handstand_rear},
+
   {0x46aa80, 0x3ffff, retail_air_throw},
   {0x46a990, 0x3ffff, retail_air_throw_lift},
   {0x46aba0, 0x3ffff, retail_air_throw_slam},
