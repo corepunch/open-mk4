@@ -12,17 +12,6 @@ static const MoveDef s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK
 static const MoveDef s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const AttackRecord torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
 
-void raiden_hk(Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(fighter);
-  if (fighter_holds_back(fighter)) {
-    retail_roundhouse(fighter);
-  } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
-    retail_close_high_kick(fighter);
-  } else {
-    retail_high_kick(fighter);
-  }
-}
-
 void raiden_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 187) {
     Fighter *victim = fighter_peer(fighter);

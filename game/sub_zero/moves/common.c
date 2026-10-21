@@ -75,17 +75,6 @@ static const mmove_t lk_owner_idle_phase = {
 static const MoveDef s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0304};
 static const MeshAnimation ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
 
-void sub_zero_hk(Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(fighter);
-  if (fighter_holds_back(fighter)) {
-    retail_roundhouse(fighter);
-  } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
-    retail_close_high_kick(fighter);
-  } else {
-    retail_high_kick(fighter);
-  }
-}
-
 void sub_zero_script_ready(Fighter *fighter) {
   FighterFn next = fighter->reaction == 102 && fighter_move(fighter)->clip == 143 ? sub_zero_script_thrown_return : fighter_ready;
   fighter_finish_mmove(fighter, next);

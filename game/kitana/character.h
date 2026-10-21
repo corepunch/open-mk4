@@ -62,14 +62,11 @@ enum {
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
-void kitana_cpu_close_hk(Fighter *fighter);
-void kitana_cpu_close_hp(Fighter *fighter);
 void kitana_enter_victory(Fighter *fighter);
 void kitana_bicycle(Fighter *fighter);
 void kitana_cartwheel(Fighter *fighter);
 void kitana_command_shadow_low(Fighter *fighter);
 void kitana_command_shadow_up(Fighter *fighter);
-void kitana_hk(Fighter *fighter);
 void kitana_leg_grab(Fighter *fighter);
 void kitana_ring(Fighter *fighter);
 void kitana_shadow_install_physics(Fighter *fighter);

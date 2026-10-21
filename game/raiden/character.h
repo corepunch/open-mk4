@@ -72,13 +72,10 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 bool raiden_can_teleport(const Fighter *fighter);
-void raiden_cpu_close_hk(Fighter *fighter);
-void raiden_cpu_close_hp(Fighter *fighter);
 void raiden_enter_throw(Fighter *fighter);
 void raiden_enter_victory(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
-void raiden_hk(Fighter *fighter);
 void raiden_lightning(Fighter *fighter);
 void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);

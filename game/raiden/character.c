@@ -58,23 +58,6 @@ static const FighterFn enter[S_COUNT] = {
 
 /* Native 494a00 parameter blocks; byte fields are decoded at authoring. */
 
-static const CpuMoves cpu_moves = {
-    .enter =
-        {
-            [CPU_JAB] = retail_jab,
-            [CPU_LOW_KICK] = retail_low_kick,
-            [CPU_HIGH_KICK] = raiden_hk,
-            [CPU_SWEEP] = retail_sweep_state,
-            [CPU_UPPERCUT] = retail_uppercut_state,
-            [CPU_THROW] = raiden_enter_throw,
-            [CPU_CLOSE_HP] = raiden_cpu_close_hp,
-            [CPU_CLOSE_HK] = raiden_cpu_close_hk,
-            [CPU_CROUCH_LP] = retail_crouch_low_punch,
-
-            [CPU_DRAW] = raiden_weapon,
-        },
-};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveListEntry move_list[] = {
   {MOVE_LIST_SPECIAL, "LIGHTNING", "D,B+LP"},
@@ -96,7 +79,7 @@ const CharacterDef mk4_raiden = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &cpu_moves,
+    .cpu = NULL,
     .move_list = move_list,
     .move_list_count = COUNT(move_list),
 };

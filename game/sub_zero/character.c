@@ -92,20 +92,6 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
 /* 46f080/46f130: two native contact visits, then remaining clip playback.
  * Keep the established portable timing; source-script startup is generated. */
 
-static const CpuMoves cpu_moves = {.enter = {
-                                       [CPU_JAB] = retail_jab,
-                                       [CPU_LOW_KICK] = retail_low_kick,
-                                       [CPU_HIGH_KICK] = sub_zero_hk,
-                                       [CPU_SWEEP] = retail_sweep_state,
-                                       [CPU_UPPERCUT] = retail_uppercut_state,
-                                       [CPU_THROW] = retail_lp_throw,
-                                       [CPU_CLOSE_HP] = sub_zero_cpu_close_hp,
-                                       [CPU_CLOSE_HK] = sub_zero_cpu_close_hk,
-                                       [CPU_CROUCH_LP] = retail_crouch_low_punch,
-
-                                       [CPU_DRAW] = sub_zero_weapon,
-                                   }};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveListEntry move_list[] = {
   {MOVE_LIST_SPECIAL, "ICE BLAST", "D,F+LP"},
@@ -127,7 +113,7 @@ const CharacterDef mk4_sub_zero = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &cpu_moves,
+    .cpu = NULL,
     .move_list = move_list,
     .move_list_count = COUNT(move_list),
 };

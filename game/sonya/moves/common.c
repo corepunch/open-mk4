@@ -1,16 +1,5 @@
 #include "../character.h"
 
-void sonya_hk(Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(fighter);
-  if (fighter_holds_back(fighter)) {
-    retail_roundhouse(fighter);
-  } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
-    retail_close_high_kick(fighter);
-  } else {
-    retail_high_kick(fighter);
-  }
-}
-
 void sonya_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 184) {
     Fighter *victim = fighter_peer(fighter);

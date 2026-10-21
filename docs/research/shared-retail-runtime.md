@@ -966,3 +966,19 @@ The short-descriptor fixture now installs the actual air stance rather than
 using standing controls on a manually positioned actor. SDL self-test passes
 all18 rigs and11 arenas. Weapon native recovery remains separate migration
 work, as do the remaining roster definitions and special native modules.
+
+### Shared CPU action integration
+
+Removed the five remaining per-fighter CpuMoves configurations, ten trivial
+close-attack adapters, five duplicate HK selectors and seven empty modules.
+CPU close HP/HK resolve original action slots9/12. Normal fallback uses loaded
+stance controls; jab/low kick/forced LP throw remain shared engine action
+entries. Weapon draw uses original slot41 only when its target appears in the
+loaded input lists, including slots formerly missing C CPU tables and respecting
+boss slots without that command. Specials/finishers and finish distances retain
+their original loaded tables. No character CPU configuration supplies behavior.
+
+Verified formatting, shared VM/rejection tests,18 strict audits and native
+source/frame gates. Existing broad integration exercises CPU and weapon dispatch
+before reaching the unchanged direct-S_THROW balance assertion. No new tests
+or per-fighter CPU matrices were added.

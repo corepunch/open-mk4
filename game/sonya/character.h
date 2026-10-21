@@ -71,8 +71,6 @@ enum {
 bool sonya_can_cartwheel(const Fighter *fighter);
 bool sonya_can_first_fatality(const Fighter *fighter);
 bool sonya_can_leg_grab(const Fighter *fighter);
-void sonya_cpu_close_hk(Fighter *fighter);
-void sonya_cpu_close_hp(Fighter *fighter);
 void sonya_enter_victory(Fighter *fighter);
 void sonya_first_fatality(Fighter *fighter);
 void sonya_lk_victim(Fighter *victim);
@@ -129,7 +127,6 @@ void sonya_script_weapon_victim_getup(Fighter *victim);
 void sonya_second_fatality(Fighter *fighter);
 void sonya_bicycle(Fighter *fighter);
 void sonya_cartwheel(Fighter *fighter);
-void sonya_hk(Fighter *fighter);
 void sonya_leg_grab(Fighter *fighter);
 void sonya_ring(Fighter *fighter);
 void sonya_square_wave(Fighter *fighter);

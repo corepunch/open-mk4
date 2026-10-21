@@ -74,8 +74,6 @@ enum {
 void liu_kang_bicycle_script(Fighter *fighter);
 bool liu_kang_can_bicycle(const Fighter *fighter);
 bool liu_kang_can_first_fatality(const Fighter *fighter);
-void liu_kang_cpu_close_hk(Fighter *fighter);
-void liu_kang_cpu_close_hp(Fighter *fighter);
 void liu_kang_finish_scene(Fighter *fighter);
 extern const MeshAnimation liu_kang_fireball_mesh;
 void liu_kang_fireball_spawn(Fighter *fighter, int type);
@@ -84,7 +82,6 @@ void liu_kang_bicycle_kick(Fighter *fighter);
 void liu_kang_first_fatality(Fighter *fighter);
 void liu_kang_flying_kick(Fighter *fighter);
 void liu_kang_high_fireball(Fighter *fighter);
-void liu_kang_hk(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
 void liu_kang_weapon(Fighter *fighter);

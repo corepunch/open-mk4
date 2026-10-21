@@ -6,17 +6,6 @@ static const MoveDef s_lp_getup = {.clip = 191, .last = 15, .flags = SF_LOCK, .a
 /* VM control flow is generated; native adapters build frame rows. Playback need
  * not match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
 
-void liu_kang_hk(Fighter *fighter) {
-  const Fighter *victim = fighter_opponent(fighter);
-  if (fighter_holds_back(fighter)) {
-    retail_roundhouse(fighter);
-  } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
-    retail_close_high_kick(fighter);
-  } else {
-    retail_high_kick(fighter);
-  }
-}
-
 void liu_kang_liu_script_lp_getup(Fighter *victim) {
   if (victim->health <= 0) {
     liu_kang_thrown_finish(victim);

@@ -80,23 +80,6 @@ const WeaponStrike liu_kang_sword_attacks[] = {
 /* First scene: 4e0498[3] -> 450930. Second: 4dfe90[3] ->
  * 43c3d0/4dfff8/4e0020, victim reactions 176/177. */
 
-static const CpuMoves cpu_moves = {
-    .enter =
-        {
-            [CPU_JAB] = retail_jab,
-            [CPU_LOW_KICK] = retail_low_kick,
-            [CPU_HIGH_KICK] = liu_kang_hk,
-            [CPU_SWEEP] = retail_sweep_state,
-            [CPU_UPPERCUT] = retail_uppercut_state,
-            [CPU_THROW] = retail_lp_throw,
-            [CPU_CLOSE_HP] = liu_kang_cpu_close_hp,
-            [CPU_CLOSE_HK] = liu_kang_cpu_close_hk,
-            [CPU_CROUCH_LP] = retail_crouch_low_punch,
-
-            [CPU_DRAW] = liu_kang_weapon,
-        }, /* 4dfe10/4dfe50[3]. */
-};
-
 // clang-format off: Keep table entries on one row, including long rows.
 static const MoveListEntry move_list[] = {
   {MOVE_LIST_SPECIAL, "HIGH FIREBALL", "F,F+HP (AIR OK)"},
@@ -119,7 +102,7 @@ const CharacterDef mk4_liu_kang = {
     .enter = enter,
     .walk = mk4_walk,
     .jump = mk4_jump,
-    .cpu = &cpu_moves,
+    .cpu = NULL,
     .move_list = move_list,
     .move_list_count = COUNT(move_list),
 };
