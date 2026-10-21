@@ -252,9 +252,10 @@
       "evidence": "Reptile contact record selects reaction 9; this selector uses the shared fireball-block handler."
     },
     "10": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Reptile contact record selects reaction 10; reviewed against the portable shared reaction table."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "11": {
       "source": "game/reactions.c",

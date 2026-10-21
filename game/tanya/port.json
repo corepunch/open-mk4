@@ -245,9 +245,10 @@
       "evidence": "Tanya contact record selects reaction 8; reviewed against the portable shared reaction table."
     },
     "10": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Tanya contact record selects reaction 10; reviewed against the portable shared reaction table."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "11": {
       "source": "game/reactions.c",
@@ -399,9 +400,10 @@
       "evidence": "Weapon 42/43 block reaction 119 (486a70) uses the shared armed block."
     },
     "154": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Boomerang C20 air reaction 154 (4835e0) uses the shared extra reaction row."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "169": {
       "source": "game/native/weapon_attacks.c",

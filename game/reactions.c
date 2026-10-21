@@ -343,15 +343,15 @@ typedef struct ReactionSpec {
 #define R(c, n, a) {.clip = c, .last = n, .flags = SF_LOCK, .action = a}
 // clang-format off: Keep table entries on one row, including long rows.
 static const ReactionSpec extra_reactions[256] = {
+  /* Legacy airborne90/173 adapters still borrow this row; native481320 itself
+   * now enters original4e89a0 and does not use it. */
   [10] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
-  [12] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xccc, -0x23d7, 0x20c, 0, false, false},
   [22] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
   [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
   [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
   [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
   [39] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
   [48] = {R(180, 19, 0x4001), 0, 6, -1, 0, 0x3333, 0, 0, 0, true, false},
-  [49] = {R(131, 79, 0x4003), 0, 0, 40, 328, 0xa3d, -0x23d7, 0x24d, 0, false, false},
   [50] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0x11eb, 0, 0, 0, false, false},
   [51] = {R(319, 82, 0x4003), 0, 0, 34, 328, -0x1999, -0x2147, 0x20c, 0, false, false},
   [52] = {R(181, 82, 0x4003), 0, 0, 51, 328, 0x7ae, -0x3851, 0x20c, 0x6666, false, false},
@@ -364,7 +364,6 @@ static const ReactionSpec extra_reactions[256] = {
   [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
   [129] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0xa3d, 0, 0, 0, false, false},
   [130] = {R(179, 53, 0x100a), 0, 0, 39, 328, -0x51e, -0x4ccc, 0x353, 0, false, false},
-  [154] = {R(131, 79, 0x4003), 0, 0, 40, 0, 0x1999, -0x23d7, 0x24d, 0, false, false},
   [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
@@ -867,8 +866,6 @@ static const FighterFn reactions[256] = {
   [7] = react_extra_block,
   [8] = react_extra_block,
   [143] = react_extra_block,
-  [10] = react_extra,
-  [12] = react_extra,
   [20] = react_extra,
   [22] = react_extra,
   [23] = react_extra,
@@ -876,7 +873,6 @@ static const FighterFn reactions[256] = {
   [32] = react_extra,
   [39] = react_extra,
   [48] = react_extra,
-  [49] = react_extra,
   [50] = react_extra,
   [51] = react_extra,
   [52] = react_extra,
@@ -897,7 +893,6 @@ static const FighterFn reactions[256] = {
   [100] = react_extra,
   [101] = fujin_bolt_victim,
   [122] = react_extra,
-  [154] = react_extra,
   [155] = react_extra,
   [156] = react_extra,
   [173] = react_extra,

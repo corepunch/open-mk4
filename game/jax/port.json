@@ -207,9 +207,10 @@
       "evidence": "Jax script reaction selector 1 follows the shared reaction table entry."
     },
     "10": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Jax script reaction selector 10 follows the shared reaction table entry."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "11": {
       "source": "game/reactions.c",
@@ -336,9 +337,10 @@
       "symbol": "react_block"
     },
     "154": {
-      "evidence": "4ea4e8[154] -> 0x4835e0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "51": {
       "evidence": "4ea4e8[51] -> 0x482420; shared C reaction dispatch",

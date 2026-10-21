@@ -1441,3 +1441,24 @@ Verified make format, shared VM/rejections, strict audits, native frame gates
 and helper/port navigation (6/7 tests). One small native-boundary fixture swaps
 loaded reaction selection, checks the incoming-action branch, completion and
 interruption. No authored frame timing, damage or per-fighter matrices added.
+
+### Load launch streams and share their native completions
+
+Native481320/482560/4825c0/4835e0 now enter original4e89a0/4e8ea8/4e8f10/
+4e96c8, with only checked native disarm/recoil preludes. Removed their legacy
+reaction-table playback entries and three copied spec rows. The old row10
+remains solely because unmigrated airborne90/173 adapters still borrow it;
+its native entry no longer uses that copy.
+
+Native482790 is one shared inherited-descriptor completion into loaded back
+getup4ea210. Removed four duplicate wrappers and all seven owner branches.
+This corrects the old Raiden/Sonya-specific flip/roll variants at that address;
+their distinct staff/488c10 services remain. Native4835f0 enters original
+4e96e0 and483610 finishes the inherited descriptor before controller return.
+Checked bounded entries,428810 and streams against mk4decomp
+StageGameProgressCluster/BattleEndCluster matching assembly. Engine frame
+continuations replace internal task84 resume bookkeeping.
+
+Verified formatting, shared VM/rejections, strict audits, native frame gates
+and helper/port navigation (6/7 tests). Existing runtime/native/lifetime
+fixtures cover the integration; no new timing or per-fighter tests added.

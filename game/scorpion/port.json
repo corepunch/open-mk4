@@ -196,9 +196,10 @@
       "symbol": "react_jab_block"
     },
     "10": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "100": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -226,9 +227,10 @@
       "symbol": "react_block"
     },
     "12": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "13": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -241,9 +243,10 @@
       "symbol": "react_extra_block"
     },
     "154": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "16": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -337,9 +340,10 @@
       "symbol": "react_low_block"
     },
     "49": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "5": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

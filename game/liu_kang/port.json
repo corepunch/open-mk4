@@ -212,9 +212,10 @@
       "symbol": "react_jab_block"
     },
     "10": {
-      "evidence": "4ea4e8[10] -> 0x481320; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "104": {
       "adaptation": "Current-reaction native integration installs the original reaction104 script; its485b10 tail uses the shared roll getup.",
@@ -258,9 +259,10 @@
       "symbol": "react_extra"
     },
     "154": {
-      "evidence": "4ea4e8[154] -> 0x4835e0; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "16": {
       "evidence": "4ea4e8[16] -> 0x482a10; shared reaction adapter and behavioral regressions",

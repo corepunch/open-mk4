@@ -239,9 +239,10 @@
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 1 at 0x486c40."
     },
     "10": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 10 at 0x481320."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_launch_reaction",
+      "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
+      "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "11": {
       "source": "game/reactions.c",

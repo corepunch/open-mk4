@@ -1026,35 +1026,14 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           goro_victim_getup(fighter);
           return true;
         case 0x482790:
-          if (owner & 0x4000u) {
-            cage_weapon_getup_back(fighter);
-            return true;
-          }
-          if (owner & 0x8000u) {
-            goro_victim_finish_getup(fighter);
-            return true;
-          }
-          if (owner & 0x800u) {
-            kai_weapon_victim_getup(fighter);
-            return true;
-          }
-          if (owner & 0x10000u) {
-            sonya_script_weapon_victim_getup(fighter);
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_script_weapon_victim_getup(fighter);
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_weapon_getup_back(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_weapon_victim_getup(fighter);
-            return true;
-          }
-          return false;
+          retail_reaction_getup_back(fighter);
+          return true;
+        case 0x4835f0:
+          retail_reaction_fall(fighter);
+          return true;
+        case 0x483610:
+          retail_reaction_finish(fighter);
+          return true;
         case 0x483090:
           shinnok_weapon_sweep_getup(fighter);
           return true;

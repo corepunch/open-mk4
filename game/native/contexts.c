@@ -157,10 +157,6 @@ void goro_script_stomp_victim_hold(Fighter *victim) {
 }
 
 /* 482790 finishes the bound clip before 488ba0's getup. */
-void goro_victim_finish_getup(Fighter *victim) {
-  mk4_mmove_finish_getup(victim, 0x4ea210);
-}
-
 /* 482540: 433c00 clears the CPU reaction latch, then 488ba0. */
 void goro_victim_getup(Fighter *victim) {
   mk4_mmove_getup(victim, 0x4ea210);

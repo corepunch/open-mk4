@@ -179,3 +179,8 @@ void retail_disturb_resting_weapons(void);
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction);
 void retail_stagger_reaction(Fighter *fighter);
 void retail_native_sound_list(uint32_t address);
+
+void retail_launch_reaction(Fighter *fighter);
+void retail_reaction_getup_back(Fighter *fighter);
+void retail_reaction_finish(Fighter *fighter);
+void retail_reaction_fall(Fighter *fighter);

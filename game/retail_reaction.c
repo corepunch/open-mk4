@@ -68,8 +68,59 @@ void retail_stagger_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, mk4_script_thrown_ready);
 }
 
+void retail_launch_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  if (entry != 0x4835e0) {
+    mk4_script_disarm_self(fighter);
+  }
+  if (entry == 0x481320) {
+    battle_wall_recoil(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  switch (entry) {
+    case 0x481320:
+      script = 0x4e89a0;
+      break;
+    case 0x482560:
+      script = 0x4e8ea8;
+      break;
+    case 0x4825c0:
+      script = 0x4e8f10;
+      break;
+    case 0x4835e0:
+      script = 0x4e96c8;
+      break;
+    default:
+      require(false, "Unexpected shared launch native");
+      return;
+  }
+  retail_vm_enter(fighter, script, mk4_script_thrown_ready);
+}
+
+/* 482790 and483610 both finish the inherited descriptor; their native
+ * completion differs. Engine continuations replace the task84 resume flag. */
+void retail_reaction_getup_back(Fighter *fighter) {
+  mk4_mmove_finish_getup(fighter, 0x4ea210);
+}
+
+void retail_reaction_finish(Fighter *fighter) {
+  native_finish_clip(fighter, mk4_mmove_thrown_finish);
+}
+
+void retail_reaction_fall(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
+  retail_vm_enter(fighter, 0x4e96e0, mk4_script_thrown_ready);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x481320:
+    case 0x482560:
+    case 0x4825c0:
+    case 0x4835e0:
+      return retail_launch_reaction;
     case 0x482e00:
     case 0x482830:
     case 0x482870:

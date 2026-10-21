@@ -18,10 +18,6 @@ void retail_weapon_native_495860(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ec4f0, fighter_ready, 14);
 }
 
-void cage_weapon_getup_back(Fighter *fighter) {
-  mk4_mmove_finish_getup(fighter, 0x4ea210);
-}
-
 void cage_weapon_reaction(Fighter *fighter) {
   require(fighter->reaction == 63 || fighter->reaction == 139 || fighter->reaction == 149, "Invalid Cage weapon victim reaction");
   if (fighter->reaction == 149) {
@@ -253,10 +249,6 @@ void retail_weapon_native_495a90(Fighter *fighter) {
 
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
  * the HP strike data directly, bypassing ordinary air/back input selection. */
-
-void kai_weapon_victim_getup(Fighter *fighter) {
-  mk4_mmove_finish_getup(fighter, 0x4ea210);
-}
 
 void kai_weapon_reaction(Fighter *fighter) {
   int reaction = fighter->reaction;
@@ -728,10 +720,6 @@ void reptile_weapon_stagger_tail(Fighter *fighter) {
   }
   native_frame(fighter, 19, 18, NULL);
   native_play(fighter, false);
-}
-
-void reptile_weapon_getup_back(Fighter *fighter) {
-  mk4_mmove_finish_getup(fighter, 0x4ea210);
 }
 
 /* Native service cluster: 470420. */

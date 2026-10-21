@@ -1,6 +1,11 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'cage_weapon_getup_back': 'retail_reaction_getup_back',
+    'kai_weapon_victim_getup': 'retail_reaction_getup_back',
+    'goro_victim_finish_getup': 'retail_reaction_getup_back',
+    'reptile_weapon_getup_back': 'retail_reaction_getup_back',
+
     'scorpion_script_lk_rebase': 'retail_vm_enter',
     'scorpion_script_lk_damage': 'retail_vm_enter',
     'cage_script_opponent_reaction': 'retail_script_release_reaction',
