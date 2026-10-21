@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #include "game.h"
 #include "mk4_characters.h"
 #include "script.h"
@@ -10,32 +11,24 @@ void goro_stomp_hold_separation(Fighter *fighter);
 void cage_weapon_action(Fighter *fighter);
 void quan_chi_weapon_action(Fighter *fighter);
 void quan_chi_second_fatality(Fighter *fighter);
-bool quan_chi_can_second_fatality(const Fighter *fighter);
 bool fujin_can_dive(const Fighter *fighter);
 void fujin_dive(Fighter *fighter);
 void cage_fatality_1(Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
-bool cage_can_close_fatality(const Fighter *fighter);
 void tanya_fatality_1(Fighter *fighter);
 bool tanya_can_first_fatality(const Fighter *fighter);
 void tanya_fatality_2(Fighter *fighter);
-bool tanya_can_close_fatality(const Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void jarek_fan_fatality(Fighter *fighter);
 void jarek_fatality_2(Fighter *fighter);
 void jarek_fatality_1(Fighter *fighter);
-bool jarek_can_close_fatality(const Fighter *fighter);
-bool jarek_can_second_fatality(const Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
 void shinnok_fatality_2(Fighter *fighter);
-bool shinnok_can_close_fatality(const Fighter *fighter);
 void fujin_weapon_action(Fighter *fighter);
 void fujin_wind_grab(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
 void fujin_first_fatality(Fighter *fighter);
-bool fujin_can_second_fatality(const Fighter *fighter);
-bool reptile_can_second_fatality(const Fighter *fighter);
 bool reptile_can_first_fatality(const Fighter *fighter);
 bool fujin_can_wind_grab(const Fighter *fighter);
 void fujin_triple_kick(Fighter *fighter);
@@ -54,7 +47,6 @@ bool kai_can_ground_skull(const Fighter *fighter);
 void kai_fatality_1(Fighter *fighter);
 bool kai_can_first_fatality(const Fighter *fighter);
 void kai_fatality_2(Fighter *fighter);
-bool kai_can_second_fatality(const Fighter *fighter);
 void fujin_entry_retail_script_004de610(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);
@@ -1815,10 +1807,10 @@ static void check_jarek_second_fatality(void) {
       Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
       owner->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      check(!jarek_can_second_fatality(owner), "Jarek's second fatality must reject distances below 1.8");
+      check(!retail_can_finish_range(owner), "Jarek's second fatality must reject distances below 1.8");
       owner->body.pos[AXIS_X] = slot ? 0x11999 : -0x11999;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      check(jarek_can_second_fatality(owner) && !jarek_can_second_fatality(victim), "Jarek's second gate must accept 1.8..3 for the winner only");
+      check(retail_can_finish_range(owner) && !retail_can_finish_range(victim), "Jarek's second gate must accept 1.8..3 for the winner only");
       jarek_finish_command(owner, jarek_fatality_2, slot);
       check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 577, "Jarek's U,U,F,F+BLK must start his own clip-577 scene");
       bool cut = false, fall = false, victory = false;
@@ -1865,10 +1857,10 @@ static void check_jarek_first_fatality(void) {
     }
     owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
     victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-    check(!jarek_can_close_fatality(owner), "Jarek's first fatality must reject distances above one unit");
+    check(!retail_can_finish_close(owner), "Jarek's first fatality must reject distances above one unit");
     owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
     victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-    check(jarek_can_close_fatality(owner) && !jarek_can_close_fatality(victim), "Jarek's first gate must accept the close winner only");
+    check(retail_can_finish_close(owner) && !retail_can_finish_close(victim), "Jarek's first gate must accept the close winner only");
     jarek_finish_command(owner, jarek_fatality_1, slot);
     check(g_battle.phase == PHASE_FATALITY, "Jarek's F,B,F,F+LK must start his own scene");
     bool owner_clip = false, ripped = false, heart = false;
@@ -2726,10 +2718,10 @@ static void check_reptile_second_fatality(void) {
         check(battle_can_finish(owner), "Reptile acid fatality needs the deciding-KO command window");
         owner->body.pos[AXIS_X] = slot ? 0x18200 : -0x18200;
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        check(!reptile_can_second_fatality(owner), "45e530 rejects 3.0+ unit separations");
+        check(!retail_can_finish_range(owner), "45e530 rejects 3.0+ unit separations");
         owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        check(reptile_can_second_fatality(owner), "45e530 accepts a two-unit separation");
+        check(retail_can_finish_range(owner), "45e530 accepts a two-unit separation");
         static const Button sequence[] = {BUTTON_UP, BUTTON_DOWN, BUTTON_DOWN, BUTTON_DOWN};
         for (int i = 0; i < 4; ++i) {
           Input input[2] = {0};
@@ -3701,13 +3693,13 @@ static void check_kai_second_fatality(void) {
     for (int reset = 0; reset < 2; ++reset) {
       kai_finish_window(slot, 4, 0xc000);
       Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-      check(!kai_can_second_fatality(owner), "Kai second gate must reject a pair closer than 1.8 units");
+      check(!retail_can_finish_range(owner), "Kai second gate must reject a pair closer than 1.8 units");
       owner->body.pos[AXIS_X] = slot ? 0x1a000 : -0x1a000;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      check(!kai_can_second_fatality(owner), "Kai second gate must reject a pair beyond three units");
+      check(!retail_can_finish_range(owner), "Kai second gate must reject a pair beyond three units");
       owner->body.pos[AXIS_X] = slot ? 0x10000 : -0x10000;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      check(kai_can_second_fatality(owner) && !kai_can_second_fatality(victim), "Kai second gate must accept 1.8..3 units for the winner");
+      check(retail_can_finish_range(owner) && !retail_can_finish_range(victim), "Kai second gate must accept 1.8..3 units for the winner");
       kai_enter_command(slot, kai_fatality_2, BUTTON_BIT(BUTTON_BLOCK));
       check(g_battle.phase == PHASE_FATALITY && fighter_move(owner)->clip == 493, "Kai second command must start the levitation scene");
       check(owner->body.pos[AXIS_X] == 0 && victim->body.pos[AXIS_X] == (slot ? -5 : 5) * Q16_ONE, "Kai second scene must use its fixed origin layout");
@@ -3916,7 +3908,7 @@ static void check_fujin_second_fatality(void) {
         check(battle_can_finish(owner), "Fujin wind fatality needs the deciding-KO command window");
         owner->body.pos[AXIS_X] = slot ? Q16_ONE : -Q16_ONE;
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        check(fujin_can_second_fatality(owner), "Fujin second fatality must accept its two-unit range");
+        check(retail_can_finish_range(owner), "Fujin second fatality must accept its two-unit range");
         const Controls *controls = roster_def(5)->controls;
         const CommandDef *command = NULL;
         for (int i = 0; i < controls->command_count; ++i) {
@@ -4539,7 +4531,7 @@ static void check_cage_second_fatality(void) {
       check(battle_can_finish(owner), "Cage fatality must enter through the real deciding-KO window");
       owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      check(!cage_can_close_fatality(owner) && !cage_can_close_fatality(victim), "Cage close fatality must reject distance above one and the defeated player");
+      check(!retail_can_finish_close(owner) && !retail_can_finish_close(victim), "Cage close fatality must reject distance above one and the defeated player");
       owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
       victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
       const Controls *controls = roster_def(14)->controls;
@@ -4636,7 +4628,7 @@ static void check_shinnok_fatalities(void) {
         }
         owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        check(battle_can_finish(owner) && !shinnok_can_close_fatality(owner), "Shinnok's 45e570 gate must reject distance above one unit");
+        check(battle_can_finish(owner) && !retail_can_finish_close(owner), "Shinnok's 45e570 gate must reject distance above one unit");
         owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
         victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
         shinnok_fatality_command(slot, second ? shinnok_fatality_2 : shinnok_fatality_1);
@@ -5141,7 +5133,7 @@ static void tanya_finisher_command(int slot, FighterFn entry, unsigned chord) {
   check(battle_can_finish(owner), "Tanya fatality must enter through the real deciding-KO window");
   owner->body.pos[AXIS_X] = slot ? 0x8ccc : -0x8ccc;
   victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-  check(!tanya_can_close_fatality(owner) && !tanya_can_close_fatality(victim), "Tanya close fatality must reject distance above one and the defeated player");
+  check(!retail_can_finish_close(owner) && !retail_can_finish_close(victim), "Tanya close fatality must reject distance above one and the defeated player");
   owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
   victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
   if (chord != 0) {
@@ -5622,10 +5614,10 @@ static void check_quan_chi_second_fatality(void) {
       int roster = against ? 8 : 14;
       quan_chi_finish_window(slot, roster, 0x10000);
       Fighter *owner = &g_battle.fighters[slot];
-      check(quan_chi_can_second_fatality(owner), "Quan Chi second fatality must accept its 1.8..3 range");
+      check(retail_can_finish_range(owner), "Quan Chi second fatality must accept its 1.8..3 range");
       owner->body.pos[AXIS_X] = slot ? 0x6666 : -0x6666;
       g_battle.fighters[1 - slot].body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-      check(!quan_chi_can_second_fatality(owner), "Quan Chi second fatality must reject close range");
+      check(!retail_can_finish_range(owner), "Quan Chi second fatality must reject close range");
       fighter_interrupt(owner, quan_chi_second_fatality);
       advance_ticks(2, NULL);
       check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == (against ? 31 : 18),

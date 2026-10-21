@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_SHINNOK_PRIVATE_H
 #define MK4_SHINNOK_PRIVATE_H
 
@@ -147,7 +148,6 @@ enum {
   SHINNOK_FATALITY_DONE = 7
 };
 
-bool shinnok_can_close_fatality(const Fighter *fighter);
 void shinnok_fatality_1(Fighter *fighter);
 void shinnok_fatality_2(Fighter *fighter);
 void shinnok_fatality_begin(Fighter *fighter, unsigned done);

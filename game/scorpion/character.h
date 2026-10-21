@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_SCORPION_PRIVATE_H
 #define MK4_SCORPION_PRIVATE_H
 
@@ -10,8 +11,8 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define can_beast_fatality scorpion_can_beast_fatality
-#define can_burn_fatality scorpion_can_burn_fatality
+#define can_beast_fatality retail_can_finish_close
+#define can_burn_fatality retail_can_finish_range
 #define can_ground_throw scorpion_can_ground_throw
 #define can_spear scorpion_can_spear
 #define can_teleport scorpion_can_teleport
@@ -145,8 +146,6 @@ enum {
 #define BLEND(clip_id, cursor)                                                                                                                                 \
   {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, cursor, cursor, 1, 0x3333, 0x3333}
 
-bool scorpion_can_beast_fatality(const Fighter *fighter);
-bool scorpion_can_burn_fatality(const Fighter *fighter);
 bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool scorpion_can_spear(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);

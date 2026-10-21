@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_LIU_KANG_PRIVATE_H
 #define MK4_LIU_KANG_PRIVATE_H
 
@@ -16,7 +17,7 @@
 #define armed_walk liu_kang_armed_walk
 #define bicycle_script liu_kang_bicycle_script
 #define can_bicycle liu_kang_can_bicycle
-#define can_close_fatality liu_kang_can_close_fatality
+#define can_close_fatality retail_can_finish_close
 #define can_first_fatality liu_kang_can_first_fatality
 #define can_ground_throw liu_kang_can_ground_throw
 #define cpu_air_hk liu_kang_cpu_air_hk
@@ -137,7 +138,6 @@ void liu_kang_armed_idle(Fighter *fighter);
 void liu_kang_armed_walk(Fighter *fighter);
 void liu_kang_bicycle_script(Fighter *fighter);
 bool liu_kang_can_bicycle(const Fighter *fighter);
-bool liu_kang_can_close_fatality(const Fighter *fighter);
 bool liu_kang_can_first_fatality(const Fighter *fighter);
 bool liu_kang_can_ground_throw(const Fighter *fighter, bool low_kick);
 void liu_kang_cpu_air_hk(Fighter *fighter);

@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_REPTILE_PRIVATE_H
 #define MK4_REPTILE_PRIVATE_H
 
@@ -125,7 +126,6 @@ void reptile_entry_retail_script_004e95f0(Fighter *fighter);
 void reptile_entry_retail_script_004dff08(Fighter *fighter);
 void reptile_entry_retail_script_004ea290(Fighter *fighter);
 void reptile_entry_retail_script_004ea2a8(Fighter *fighter);
-bool reptile_can_second_fatality(const Fighter *fighter);
 void reptile_fatality_2(Fighter *fighter);
 void reptile_second_acid(Fighter *fighter, int task_type);
 void reptile_second_event(Fighter *fighter, int selector);

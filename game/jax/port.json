@@ -777,7 +777,7 @@
     "0x45e7e0": "jax_can_missile",
     "0x45e910": "jax_can_dash_punch",
     "0x45e1b0": "jax_can_fatality_1",
-    "0x45e570": "jax_can_fatality_2"
+    "0x45e570": "retail_can_finish_close"
   },
   "cpu_bindings": {
     "0x496f80": {

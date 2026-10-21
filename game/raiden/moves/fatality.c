@@ -38,7 +38,3 @@ void raiden_enter_victory(Fighter *fighter) {
   fighter_start_move(fighter, S_VICTORY, &raiden_s_victory);
   raiden_script_victory(fighter);
 }
-
-bool raiden_can_close_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}

@@ -832,7 +832,7 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ef50": "weapon_can_draw",
     "0x45e6a0": "shinnok_can_morph",
-    "0x45e570": "shinnok_can_close_fatality"
+    "0x45e570": "retail_can_finish_close"
   },
   "cpu_finish_min": {
     "CPU_FINISH_1": 0,

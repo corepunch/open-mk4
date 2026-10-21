@@ -73,11 +73,6 @@ void noob_saibot_shadow_up(Fighter *fighter) {
   noob_saibot_entry_retail_script_004ed2c0(fighter);
 }
 
-bool noob_saibot_shadow_up_enabled(const Fighter *fighter) {
-  /* 45ef20 returns true exactly when current-group +0x4c (gravity) is nonzero. */
-  return fighter->body.gravity != 0;
-}
-
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type) {
   require(task_type == 75, "Unexpected Noob Saibot shadow task type");
   battle_shadow_actor_start(fighter, SHADOW_ACTOR_LOW);

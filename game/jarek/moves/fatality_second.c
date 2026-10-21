@@ -8,12 +8,6 @@ static const MoveDef victim_scene = {.clip = 182, .last = 64, .flags = SF_LOCK |
 /* 41de30 -> 406dd0(50c604): share2 mesh 0, .113 forward of the node. */
 static const MeshAnimation glow_mesh = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2, .offset = {0, 0, 0x1ced}};
 
-bool jarek_can_second_fatality(const Fighter *fighter) {
-  /* 45e530: the finish gate between 1.8 and 3 units. */
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
-}
-
 static void glow_step(Projectile *object) {
   if (g_battle.phase != PHASE_FATALITY) {
     object->kind = 0;

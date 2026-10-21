@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #include "../character.h"
 
 /* HP record 4e457c (U,D,D,D, window 50, gate 45e530) targets 467cd0, which
@@ -19,12 +20,6 @@ enum {
   HOVER_FALLING,
   HOVER_RISING
 };
-
-bool reptile_can_second_fatality(const Fighter *fighter) {
-  /* 45e530: pair distance 1.8..3 units, then the shared 45e5e0 window. */
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
-}
 
 /* Task 38 (46a280) writes the owner's gravity: -0x28f, ten +0x41 steps,
  * then +0x83 until vertical speed is not upward (48f490), ten visits,
@@ -181,7 +176,7 @@ void reptile_second_finish(Fighter *victim) {
 }
 
 void reptile_fatality_2(Fighter *fighter) {
-  if (!reptile_can_second_fatality(fighter) || !battle_begin_finisher(fighter, REPTILE_EVENT_FATALITY_2)) {
+  if (!retail_can_finish_range(fighter) || !battle_begin_finisher(fighter, REPTILE_EVENT_FATALITY_2)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

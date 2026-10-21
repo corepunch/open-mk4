@@ -99,3 +99,23 @@ This change does not enable all other fighters' generated roots automatically:
 their remaining opcode/native semantics must still be migrated and verified.
 Existing shared-runtime and rejection checks pass with the generic entry path;
 the small explicit-window fixture retains cursor-boundary rejection coverage.
+
+## Native predicate consolidation
+
+Local native addresses 45e530, 45e570 and 45ef20 now each have one shared
+implementation. Remove their 20 fighter variants and redirect existing native
+callers to the shared routines. The predicate ABI is keyed only by native
+address; it no longer selects an implementation through a character mask.
+The input adapter still has legacy action implementations to consolidate.
+
+Bounded local listings establish the ranged finish limit, close finish gate,
+and group +4c gravity test. The finish paths join 45e5e0, whose checked
+mk4decomp correspondence is `PendingMatch_SwapOrPassSet` in
+`pending_match_variants.c` / matching assembly. These bodies preserve the
+existing engine finish-window abstraction while removing duplicated C logic.
+
+Existing predicate assertions now refer to shared APIs, with no new character
+matrices. Runtime checks, C11 game and existing battle-test builds, formatting,
+all 18 canonical script/source audits, and helper/source navigation checks pass.
+The source tools now link removed weapon, stage, sidestep and predicate wrappers
+to the actual shared native implementations.

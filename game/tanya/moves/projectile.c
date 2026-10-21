@@ -156,7 +156,3 @@ void tanya_air_fireball(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &air_cast);
   tanya_entry_retail_script_004ed2c0(fighter);
 }
-
-bool tanya_can_air_fireball(const Fighter *fighter) {
-  return fighter->body.gravity != 0;
-}

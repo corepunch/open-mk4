@@ -31,10 +31,6 @@ void kitana_shadow_up(Fighter *fighter) {
   kitana_entry_retail_script_004ed2c0(fighter);
 }
 
-bool kitana_shadow_up_enabled(const Fighter *fighter) {
-  return fighter->body.gravity != 0;
-}
-
 Fighter *kitana_opponent(Fighter *fighter) {
   return &g_battle.fighters[fighter == &g_battle.fighters[0] ? 1 : 0];
 }

@@ -1,14 +1,10 @@
+#include "retail_native.h"
 #include "../character.h"
 
 static const MoveDef owner_pose = {.clip = 291, .last = 72, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
 static const MoveDef victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
 /*4818f0 reads4ea420 in this order, separating one joint every five visits. */
 static const int torn_joints[] = {2, 10, 9, 8, 7, 6, 5, 3, 12, 11, 14, 13, 16, 15};
-
-bool fujin_can_second_fatality(const Fighter *fighter) {
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
-}
 
 static void second_complete(Fighter *fighter) {
   mk4_script_stop_body(fighter);
@@ -109,7 +105,7 @@ void fujin_second_victim(Fighter *victim) {
 }
 
 void fujin_second_fatality(Fighter *fighter) {
-  if (!fujin_can_second_fatality(fighter) || !battle_begin_finisher(fighter, FINISH_FUJIN_2)) {
+  if (!retail_can_finish_range(fighter) || !battle_begin_finisher(fighter, FINISH_FUJIN_2)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

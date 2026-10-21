@@ -714,7 +714,7 @@
     "0x45e950": "reptile_can_dash",
     "0x45e9d0": "reptile_can_spit",
     "0x45f260": "reptile_can_invisibility",
-    "0x45e530": "reptile_can_second_fatality",
+    "0x45e530": "retail_can_finish_range",
     "0x45e250": "reptile_can_first_fatality",
     "0x45ef50": "weapon_can_draw"
   },

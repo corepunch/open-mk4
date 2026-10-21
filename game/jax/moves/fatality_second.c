@@ -12,10 +12,6 @@ static const MoveDef second_victim_pose = {.clip = 13, .last = 55, .flags = SF_L
 static const MeshAnimation second_flash_mesh = {
     .first = 281, .count = 1, .period = 1, .scale = 0x4ccc, .source = MESH_SHARED2, .offset = {7040, 6272, 0}, .additive = true};
 
-bool jax_can_fatality_2(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 static void second_flash_step(Projectile *object) {
   if (g_battle.phase != PHASE_FATALITY) {
     object->kind = 0;

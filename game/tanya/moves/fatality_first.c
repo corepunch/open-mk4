@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #include "../character.h"
 #include <math.h>
 #include <string.h>
@@ -23,7 +24,7 @@ bool tanya_can_first_fatality(const Fighter *fighter) {
   unsigned chord = BUTTON_BIT(BUTTON_HIGH_PUNCH) | BUTTON_BIT(BUTTON_BLOCK);
   unsigned mask =
       chord | BUTTON_BIT(BUTTON_UP) | BUTTON_BIT(BUTTON_HIGH_KICK) | BUTTON_BIT(BUTTON_LOW_PUNCH) | BUTTON_BIT(BUTTON_LOW_KICK) | BUTTON_BIT(BUTTON_RUN);
-  return tanya_can_close_fatality(fighter) && (fighter->held & mask) == chord;
+  return retail_can_finish_close(fighter) && (fighter->held & mask) == chord;
 }
 
 /* 44d8d0 jump table 44dc80: per state its B sounds, 489ff0 roster voice,

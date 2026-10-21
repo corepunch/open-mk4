@@ -826,7 +826,7 @@
     "0x45e6d0": "reiko_can_star",
     "0x45e710": "reiko_can_orbit",
     "0x45e360": "reiko_can_first_fatality",
-    "0x45e530": "reiko_can_second_fatality"
+    "0x45e530": "retail_can_finish_range"
   },
   "cpu_bindings": {
     "0x47c070": {

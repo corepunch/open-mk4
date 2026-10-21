@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_QUAN_CHI_PRIVATE_H
 #define MK4_QUAN_CHI_PRIVATE_H
 
@@ -139,7 +140,6 @@ void quan_chi_entry_retail_script_004e66f0(Fighter *fighter);
 void quan_chi_first_fatality(Fighter *fighter);
 void quan_chi_second_fatality(Fighter *fighter);
 bool quan_chi_can_first_fatality(const Fighter *fighter);
-bool quan_chi_can_second_fatality(const Fighter *fighter);
 void quan_chi_fatality_cue_40(Fighter *fighter);
 void quan_chi_fatality_leg(Fighter *fighter);
 void quan_chi_fatality_hit_179(Fighter *fighter);

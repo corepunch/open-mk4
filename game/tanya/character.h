@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_TANYA_PRIVATE_H
 #define MK4_TANYA_PRIVATE_H
 
@@ -98,7 +99,6 @@ void tanya_entry_retail_script_004ed268(Fighter *fighter);
 void tanya_entry_retail_script_004ed2c0(Fighter *fighter);
 void tanya_fireball(Fighter *fighter);
 void tanya_air_fireball(Fighter *fighter);
-bool tanya_can_air_fireball(const Fighter *fighter);
 void tanya_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_air_fireball_spawn(Fighter *fighter, int task_type);
 void tanya_air_fireball_fall(Fighter *fighter);
@@ -130,7 +130,6 @@ void tanya_entry_retail_script_004e57c0(Fighter *fighter);
 void tanya_entry_retail_script_004e5820(Fighter *fighter);
 void tanya_entry_retail_script_004e5b38(Fighter *fighter);
 void tanya_entry_retail_script_004e6a40(Fighter *fighter);
-bool tanya_can_close_fatality(const Fighter *fighter);
 void tanya_fatality_2(Fighter *fighter);
 void tanya_second_height(Fighter *fighter);
 void tanya_second_owner_cue(Fighter *fighter, int task_type);

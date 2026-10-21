@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #include "../character.h"
 #include "math_util.h"
 #include <math.h>
@@ -13,11 +14,6 @@
 static const MoveDef second_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
 
 /* 45e530: 0x1cccc <= distance <= 0x30000, then the 45e5e0 finish window. */
-bool reiko_can_second_fatality(const Fighter *fighter) {
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= q16_float(0x30000);
-}
-
 /* A star leaves the owner's hand joint (9 or 10) and homes on its target
  * joint at 0.15 per visit until every component is within 0.2 (41cd60).
  * Portable adaptation: the flight is scheduled from the launch distance and
@@ -165,7 +161,7 @@ void reiko_second_victim_end(Fighter *victim) {
 }
 
 void reiko_second_fatality(Fighter *fighter) {
-  if (!reiko_can_second_fatality(fighter) || !battle_begin_finisher(fighter, REIKO_FINISH_2)) {
+  if (!retail_can_finish_range(fighter) || !battle_begin_finisher(fighter, REIKO_FINISH_2)) {
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);

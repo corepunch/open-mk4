@@ -19,11 +19,6 @@ static const SceneClip victim_blends[] = {
 static const MeshAnimation heart_mesh = {
     .first = 0, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_JAREK_FATALITY, .offset = {-0xf5c, -0xf5c, 0x7ae}};
 
-bool jarek_can_close_fatality(const Fighter *fighter) {
-  /* 45e570: the finish gate up to one unit. */
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 static bool female_victim(const Fighter *victim) {
   /* 474fa0 -> 475160 reads the peer roster; list 4e7b28 begins 9, 2. */
   int roster = victim->roster == 16 ? 2 : victim->roster == 17 ? 7 : victim->roster;

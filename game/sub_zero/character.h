@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_SUB_ZERO_PRIVATE_H
 #define MK4_SUB_ZERO_PRIVATE_H
 
@@ -24,7 +25,7 @@
 #define can_first_fatality sub_zero_can_first_fatality
 #define can_ground_throw sub_zero_can_ground_throw
 #define can_ice sub_zero_can_ice
-#define can_second_fatality sub_zero_can_second_fatality
+#define can_second_fatality retail_can_finish_range
 #define can_slide sub_zero_can_slide
 #define cpu_close_hk sub_zero_cpu_close_hk
 #define cpu_close_hp sub_zero_cpu_close_hp
@@ -179,7 +180,6 @@ bool sub_zero_can_close_fatality(const Fighter *fighter);
 bool sub_zero_can_first_fatality(const Fighter *fighter);
 bool sub_zero_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool sub_zero_can_ice(const Fighter *fighter);
-bool sub_zero_can_second_fatality(const Fighter *fighter);
 bool sub_zero_can_slide(const Fighter *fighter);
 void sub_zero_cpu_close_hk(Fighter *fighter);
 void sub_zero_cpu_close_hp(Fighter *fighter);

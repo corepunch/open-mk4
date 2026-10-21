@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #include "../character.h"
 
 static const MoveDef first_owner = {.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
@@ -21,7 +22,7 @@ static const ParticleVisual tornado[] = {
 static const MeshAnimation first_bolt = {.first = 106, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED};
 
 bool fujin_can_first_fatality(const Fighter *fighter) {
-  if (!fujin_can_second_fatality(fighter)) {
+  if (!retail_can_finish_range(fighter)) {
     return false;
   }
   unsigned pair = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_RUN);

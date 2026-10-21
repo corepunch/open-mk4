@@ -48,15 +48,6 @@ static void fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
 }
 
-bool scorpion_can_burn_fatality(const Fighter *fighter) {
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
-}
-
-bool scorpion_can_beast_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 static void finish_scene(Fighter *fighter) {
   (void)fighter;
   battle_end_finisher();

@@ -7,10 +7,6 @@ static const MoveDef victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | S
 static const MeshAnimation charge_mesh = {
     .first = 271, .count = 10, .period = 1, .scale = 0xb333, .source = MESH_SHARED2, .offset = {7040, 6272, 0}, .additive = true};
 
-bool cage_can_close_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 static void charge_step(Projectile *object) {
   if (g_battle.phase != PHASE_FATALITY) {
     object->kind = 0;

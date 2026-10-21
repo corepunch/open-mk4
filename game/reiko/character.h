@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_REIKO_PRIVATE_H
 #define MK4_REIKO_PRIVATE_H
 
@@ -173,7 +174,6 @@ void reiko_entry_retail_script_004d2d10(Fighter *fighter);
 void reiko_entry_retail_script_004d2d60(Fighter *fighter);
 void reiko_entry_retail_script_004d2d90(Fighter *fighter);
 void reiko_second_fatality(Fighter *fighter);
-bool reiko_can_second_fatality(const Fighter *fighter);
 void reiko_second_stars(Fighter *fighter, int task_type);
 void reiko_second_owner_park(Fighter *fighter);
 void reiko_second_victim_fall(Fighter *fighter);

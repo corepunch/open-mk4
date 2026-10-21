@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_JAREK_PRIVATE_H
 #define MK4_JAREK_PRIVATE_H
 
@@ -61,7 +62,6 @@ void jarek_script_weapon_draw_finish(Fighter *fighter);
 void jarek_spike_fatality(Fighter *fighter);
 void jarek_sweep(Fighter *fighter);
 void jarek_cannonball(Fighter *fighter);
-bool jarek_can_close_fatality(const Fighter *fighter);
 void jarek_fatality_1(Fighter *fighter);
 void jarek_first_heart(Fighter *fighter);
 void jarek_first_victim_rip(Fighter *fighter);
@@ -75,7 +75,6 @@ void jarek_entry_retail_script_004e1260(Fighter *fighter);
 void jarek_entry_retail_script_004e1270(Fighter *fighter);
 void jarek_entry_retail_script_004e1280(Fighter *fighter);
 void jarek_entry_retail_script_004e1290(Fighter *fighter);
-bool jarek_can_second_fatality(const Fighter *fighter);
 void jarek_fatality_2(Fighter *fighter);
 void jarek_second_glow(Fighter *fighter);
 void jarek_second_handoff(Fighter *fighter);

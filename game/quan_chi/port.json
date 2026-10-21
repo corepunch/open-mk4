@@ -731,7 +731,7 @@
     "0x45ed80": "mk4_can_air_throw",
     "0x45ef50": "weapon_can_draw",
     "0x45e2f0": "quan_chi_can_first_fatality",
-    "0x45e530": "quan_chi_can_second_fatality"
+    "0x45e530": "retail_can_finish_range"
   },
   "cpu_bindings": {
     "0x499740": {

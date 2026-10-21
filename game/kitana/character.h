@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_KITANA_PRIVATE_H
 #define MK4_KITANA_PRIVATE_H
 
@@ -171,7 +172,6 @@ void kitana_shadow_low(Fighter *fighter);
 void kitana_shadow_task_low(Fighter *fighter, int task_type);
 void kitana_shadow_task_up(Fighter *fighter, int task_type);
 void kitana_shadow_up(Fighter *fighter);
-bool kitana_shadow_up_enabled(const Fighter *fighter);
 void kitana_spike_fatality(Fighter *fighter);
 void kitana_square_wave(Fighter *fighter);
 void kitana_sweep(Fighter *fighter);

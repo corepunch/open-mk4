@@ -727,10 +727,10 @@
     "0x45efc0": "weapon_can_pickup",
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
-    "0x45ef20": "tanya_can_air_fireball",
+    "0x45ef20": "retail_has_gravity",
     "0x45e8d0": "tanya_can_spin_kick",
     "0x45ef50": "weapon_can_draw",
-    "0x45e570": "tanya_can_close_fatality",
+    "0x45e570": "retail_can_finish_close",
     "0x45e2a0": "tanya_can_first_fatality"
   },
   "cpu_bindings": {

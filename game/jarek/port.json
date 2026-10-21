@@ -756,8 +756,8 @@
     "0x45e5a0": "mk4_can_fan_finish",
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ef50": "weapon_can_draw",
-    "0x45e530": "jarek_can_second_fatality",
-    "0x45e570": "jarek_can_close_fatality"
+    "0x45e530": "retail_can_finish_range",
+    "0x45e570": "retail_can_finish_close"
   },
   "cpu_bindings": {
     "0x47b310": {

@@ -787,7 +787,7 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45f120": "cage_can_groin_punch",
     "0x45ef50": "weapon_can_draw",
-    "0x45e570": "cage_can_close_fatality"
+    "0x45e570": "retail_can_finish_close"
   },
   "cpu_bindings": {
     "0x479b20": {

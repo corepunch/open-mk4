@@ -10,10 +10,6 @@ void shinnok_fatality_contact_hold(Fighter *fighter) {
 
 /* 45e570: both fatality records accept distance <= 1 and 45e5e0's
  * finisher window. */
-bool shinnok_can_close_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 // clang-format off: Keep table entries on one row, including long rows.
 /* 475430 with descriptor 4fc240 (clip 443) and step 0xccc. */
 static const SceneClip victory_blend[] = {

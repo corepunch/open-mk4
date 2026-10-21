@@ -113,7 +113,7 @@ void retail_bind_commands(Controls *controls, const Mk4Image *image, unsigned ch
         *record = (CommandDef){.button = button,
             .window = (int)source.window,
             .flags = (source.flags & (CMD_AIR | CMD_BLOCK_OK)) | (released ? CMD_RELEASE : 0),
-            .predicate = retail_native_predicate(character, source.predicate),
+            .predicate = retail_native_predicate(source.predicate),
             .enter = retail_native_entry(character, source.target)};
         for (uint32_t pattern = source.pattern == 0xffffffffu ? 0 : source.pattern; pattern; pattern >>= 8) {
           require(record->count < COMMAND_TOKENS, "Retail pattern exceeds controls view capacity");

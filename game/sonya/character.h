@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_SONYA_PRIVATE_H
 #define MK4_SONYA_PRIVATE_H
 
@@ -20,7 +21,7 @@
 #define can_first_fatality sonya_can_first_fatality
 #define can_ground_throw sonya_can_ground_throw
 #define can_leg_grab sonya_can_leg_grab
-#define can_second_fatality sonya_can_second_fatality
+#define can_second_fatality retail_can_finish_range
 #define cpu_air_hk sonya_cpu_air_hk
 #define cpu_air_lk sonya_cpu_air_lk
 #define cpu_close_hk sonya_cpu_close_hk
@@ -142,7 +143,6 @@ bool sonya_can_cartwheel(const Fighter *fighter);
 bool sonya_can_first_fatality(const Fighter *fighter);
 bool sonya_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool sonya_can_leg_grab(const Fighter *fighter);
-bool sonya_can_second_fatality(const Fighter *fighter);
 void sonya_cpu_air_hk(Fighter *fighter);
 void sonya_cpu_air_lk(Fighter *fighter);
 void sonya_cpu_close_hk(Fighter *fighter);

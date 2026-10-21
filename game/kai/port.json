@@ -3465,7 +3465,7 @@
     "0x45eb40": "kai_can_rising_skull",
     "0x45eb10": "kai_can_ground_skull",
     "0x45e220": "kai_can_first_fatality",
-    "0x45e530": "kai_can_second_fatality"
+    "0x45e530": "retail_can_finish_range"
   },
   "cpu_bindings": {
     "0x499410": {

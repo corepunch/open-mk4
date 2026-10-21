@@ -56,10 +56,6 @@ void liu_kang_fatal_pose(Fighter *fighter, int clip, int sample, bool owner) {
   fighter->flags |= FF_UNTOUCHABLE | FF_BUSY;
 }
 
-bool liu_kang_can_close_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 void liu_kang_finish_scene(Fighter *fighter) {
   (void)fighter;
   battle_end_finisher();

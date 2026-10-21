@@ -6,10 +6,6 @@ static const MoveDef victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | S
 static const MoveDef owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
 
 /* 45e570: close fatality range (<= 1 unit) and the shared finish window. */
-bool tanya_can_close_fatality(const Fighter *fighter) {
-  return battle_can_finish(fighter) && fighter_distance(fighter) <= 1.f;
-}
-
 /* Retail 489fc0 plays a raw sample token. These tokens are the same words
  * as these B-bank entries; 0x281 (owner cue) and 0x1bd (one random entry)
  * have no bank selector and stay silent. */

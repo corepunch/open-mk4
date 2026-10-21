@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_FUJIN_PRIVATE_H
 #define MK4_FUJIN_PRIVATE_H
 
@@ -151,7 +152,6 @@ void fujin_entry_retail_script_004e8830(Fighter *fighter);
 void fujin_entry_retail_script_004e9fb0(Fighter *fighter);
 void fujin_sweep_tail(Fighter *fighter);
 void fujin_second_fatality(Fighter *fighter);
-bool fujin_can_second_fatality(const Fighter *fighter);
 void fujin_second_victim(Fighter *fighter);
 void fujin_second_burst(Fighter *fighter);
 void fujin_second_finish(Fighter *fighter);

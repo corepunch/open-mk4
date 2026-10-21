@@ -178,65 +178,45 @@ extern void tanya_spike_fatality(Fighter *fighter);
 extern void tanya_spin_kick(Fighter *fighter);
 extern void tanya_weapon_action(Fighter *fighter);
 extern void weapon_pickup(Fighter *fighter);
-extern bool cage_can_close_fatality(const Fighter *fighter);
 extern bool cage_can_groin_punch(const Fighter *fighter);
 extern bool fujin_can_dive(const Fighter *fighter);
 extern bool fujin_can_first_fatality(const Fighter *fighter);
-extern bool fujin_can_second_fatality(const Fighter *fighter);
 extern bool fujin_can_wind(const Fighter *fighter);
 extern bool fujin_can_wind_grab(const Fighter *fighter);
 extern bool fujin_can_wind_slam(const Fighter *fighter);
-extern bool jarek_can_close_fatality(const Fighter *fighter);
-extern bool jarek_can_second_fatality(const Fighter *fighter);
 extern bool jax_can_dash_punch(const Fighter *fighter);
 extern bool jax_can_fatality_1(const Fighter *fighter);
-extern bool jax_can_fatality_2(const Fighter *fighter);
 extern bool jax_can_missile(const Fighter *fighter);
 extern bool kai_can_first_fatality(const Fighter *fighter);
 extern bool kai_can_ground_skull(const Fighter *fighter);
 extern bool kai_can_handstand(const Fighter *fighter);
 extern bool kai_can_rising_skull(const Fighter *fighter);
-extern bool kai_can_second_fatality(const Fighter *fighter);
-extern bool kitana_shadow_up_enabled(const Fighter *fighter);
 extern bool liu_kang_can_bicycle(const Fighter *fighter);
-extern bool liu_kang_can_close_fatality(const Fighter *fighter);
 extern bool liu_kang_can_first_fatality(const Fighter *fighter);
 extern bool mk4_can_air_throw(const Fighter *fighter);
 extern bool mk4_can_fan_finish(const Fighter *fighter);
 extern bool mk4_can_sidestep(const Fighter *fighter);
 extern bool mk4_can_spike_finish(const Fighter *fighter);
-extern bool noob_saibot_shadow_up_enabled(const Fighter *fighter);
 extern bool quan_chi_can_first_fatality(const Fighter *fighter);
-extern bool quan_chi_can_second_fatality(const Fighter *fighter);
-extern bool raiden_can_close_fatality(const Fighter *fighter);
 extern bool raiden_can_teleport(const Fighter *fighter);
 extern bool reiko_can_first_fatality(const Fighter *fighter);
 extern bool reiko_can_flip_kick(const Fighter *fighter);
 extern bool reiko_can_orbit(const Fighter *fighter);
-extern bool reiko_can_second_fatality(const Fighter *fighter);
 extern bool reiko_can_star(const Fighter *fighter);
 extern bool reptile_can_dash(const Fighter *fighter);
 extern bool reptile_can_first_fatality(const Fighter *fighter);
 extern bool reptile_can_invisibility(const Fighter *fighter);
-extern bool reptile_can_second_fatality(const Fighter *fighter);
 extern bool reptile_can_spit(const Fighter *fighter);
-extern bool scorpion_can_beast_fatality(const Fighter *fighter);
-extern bool scorpion_can_burn_fatality(const Fighter *fighter);
 extern bool scorpion_can_spear(const Fighter *fighter);
 extern bool scorpion_can_teleport(const Fighter *fighter);
-extern bool shinnok_can_close_fatality(const Fighter *fighter);
 extern bool shinnok_can_morph(const Fighter *fighter);
 extern bool sonya_can_cartwheel(const Fighter *fighter);
 extern bool sonya_can_first_fatality(const Fighter *fighter);
 extern bool sonya_can_leg_grab(const Fighter *fighter);
-extern bool sonya_can_second_fatality(const Fighter *fighter);
 extern bool sub_zero_can_clone(const Fighter *fighter);
 extern bool sub_zero_can_first_fatality(const Fighter *fighter);
 extern bool sub_zero_can_ice(const Fighter *fighter);
-extern bool sub_zero_can_second_fatality(const Fighter *fighter);
 extern bool sub_zero_can_slide(const Fighter *fighter);
-extern bool tanya_can_air_fireball(const Fighter *fighter);
-extern bool tanya_can_close_fatality(const Fighter *fighter);
 extern bool tanya_can_first_fatality(const Fighter *fighter);
 extern bool tanya_can_spin_kick(const Fighter *fighter);
 extern bool weapon_can_draw(const Fighter *fighter);
@@ -427,69 +407,52 @@ static const NativeAction entries[] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const NativeGate gates[] = {
-  {0x45e1b0, 0x2000, jax_can_fatality_1},
-  {0x45e220, 0x800, kai_can_first_fatality},
-  {0x45e250, 0x400, reptile_can_first_fatality},
-  {0x45e2a0, 0x200, tanya_can_first_fatality},
-  {0x45e2f0, 0x100, quan_chi_can_first_fatality},
-  {0x45e360, 0x80, reiko_can_first_fatality},
-  {0x45e3b0, 0x20, fujin_can_first_fatality},
-  {0x45e410, 0x8, liu_kang_can_first_fatality},
-  {0x45e460, 0x10, sub_zero_can_first_fatality},
-  {0x45e4b0, 0x4, sonya_can_first_fatality},
-  {0x45e4f0, 0x37fff, mk4_can_spike_finish},
-  {0x45e530, 0x20, fujin_can_second_fatality},
-  {0x45e530, 0x1000, jarek_can_second_fatality},
-  {0x45e530, 0x800, kai_can_second_fatality},
-  {0x45e530, 0x100, quan_chi_can_second_fatality},
-  {0x45e530, 0x80, reiko_can_second_fatality},
-  {0x45e530, 0x400, reptile_can_second_fatality},
-  {0x45e530, 0x1, scorpion_can_burn_fatality},
-  {0x45e530, 0x4, sonya_can_second_fatality},
-  {0x45e530, 0x10, sub_zero_can_second_fatality},
-  {0x45e570, 0x4000, cage_can_close_fatality},
-  {0x45e570, 0x1000, jarek_can_close_fatality},
-  {0x45e570, 0x2000, jax_can_fatality_2},
-  {0x45e570, 0x8, liu_kang_can_close_fatality},
-  {0x45e570, 0x2, raiden_can_close_fatality},
-  {0x45e570, 0x1, scorpion_can_beast_fatality},
-  {0x45e570, 0x40, shinnok_can_close_fatality},
-  {0x45e570, 0x200, tanya_can_close_fatality},
-  {0x45e5a0, 0x37fff, mk4_can_fan_finish},
-  {0x45e6a0, 0x40, shinnok_can_morph},
-  {0x45e6d0, 0x80, reiko_can_star},
-  {0x45e710, 0x80, reiko_can_orbit},
-  {0x45e7a0, 0x80, reiko_can_flip_kick},
-  {0x45e7e0, 0x2000, jax_can_missile},
-  {0x45e820, 0x3ffff, mk4_can_sidestep},
-  {0x45e8d0, 0x200, tanya_can_spin_kick},
-  {0x45e910, 0x2000, jax_can_dash_punch},
-  {0x45e950, 0x400, reptile_can_dash},
-  {0x45e990, 0x4, sonya_can_cartwheel},
-  {0x45e9d0, 0x400, reptile_can_spit},
-  {0x45ea10, 0x2, raiden_can_teleport},
-  {0x45ea60, 0x1, scorpion_can_spear},
-  {0x45eab0, 0x8, liu_kang_can_bicycle},
-  {0x45eb10, 0x800, kai_can_ground_skull},
-  {0x45eb40, 0x800, kai_can_rising_skull},
-  {0x45eb80, 0x800, kai_can_handstand},
-  {0x45ebf0, 0x20, fujin_can_wind_slam},
-  {0x45ec10, 0x20, fujin_can_wind},
-  {0x45ec60, 0x20, fujin_can_wind_grab},
-  {0x45ece0, 0x10, sub_zero_can_clone},
-  {0x45ed70, 0x22101, mk4_can_air_throw},
-  {0x45ed80, 0x4, mk4_can_air_throw},
-  {0x45eeb0, 0x20, fujin_can_dive},
-  {0x45ef20, 0x10000, kitana_shadow_up_enabled},
-  {0x45ef20, 0x20000, noob_saibot_shadow_up_enabled},
-  {0x45ef20, 0x200, tanya_can_air_fireball},
-  {0x45ef50, 0x37fff, weapon_can_draw},
-  {0x45efc0, 0x3ffff, weapon_can_pickup},
-  {0x45f0c0, 0x1, scorpion_can_teleport},
-  {0x45f120, 0x4000, cage_can_groin_punch},
-  {0x45f1b0, 0x4, sonya_can_leg_grab},
-  {0x45f1f0, 0x10, sub_zero_can_ice},
-  {0x45f260, 0x400, reptile_can_invisibility},
-  {0x45f270, 0x10, sub_zero_can_slide},
+  {0x45e1b0, jax_can_fatality_1},
+  {0x45e220, kai_can_first_fatality},
+  {0x45e250, reptile_can_first_fatality},
+  {0x45e2a0, tanya_can_first_fatality},
+  {0x45e2f0, quan_chi_can_first_fatality},
+  {0x45e360, reiko_can_first_fatality},
+  {0x45e3b0, fujin_can_first_fatality},
+  {0x45e410, liu_kang_can_first_fatality},
+  {0x45e460, sub_zero_can_first_fatality},
+  {0x45e4b0, sonya_can_first_fatality},
+  {0x45e4f0, mk4_can_spike_finish},
+  {0x45e530, retail_can_finish_range},
+  {0x45e570, retail_can_finish_close},
+  {0x45e5a0, mk4_can_fan_finish},
+  {0x45e6a0, shinnok_can_morph},
+  {0x45e6d0, reiko_can_star},
+  {0x45e710, reiko_can_orbit},
+  {0x45e7a0, reiko_can_flip_kick},
+  {0x45e7e0, jax_can_missile},
+  {0x45e820, mk4_can_sidestep},
+  {0x45e8d0, tanya_can_spin_kick},
+  {0x45e910, jax_can_dash_punch},
+  {0x45e950, reptile_can_dash},
+  {0x45e990, sonya_can_cartwheel},
+  {0x45e9d0, reptile_can_spit},
+  {0x45ea10, raiden_can_teleport},
+  {0x45ea60, scorpion_can_spear},
+  {0x45eab0, liu_kang_can_bicycle},
+  {0x45eb10, kai_can_ground_skull},
+  {0x45eb40, kai_can_rising_skull},
+  {0x45eb80, kai_can_handstand},
+  {0x45ebf0, fujin_can_wind_slam},
+  {0x45ec10, fujin_can_wind},
+  {0x45ec60, fujin_can_wind_grab},
+  {0x45ece0, sub_zero_can_clone},
+  {0x45ed70, mk4_can_air_throw},
+  {0x45ed80, mk4_can_air_throw},
+  {0x45eeb0, fujin_can_dive},
+  {0x45ef20, retail_has_gravity},
+  {0x45ef50, weapon_can_draw},
+  {0x45efc0, weapon_can_pickup},
+  {0x45f0c0, scorpion_can_teleport},
+  {0x45f120, cage_can_groin_punch},
+  {0x45f1b0, sonya_can_leg_grab},
+  {0x45f1f0, sub_zero_can_ice},
+  {0x45f260, reptile_can_invisibility},
+  {0x45f270, sub_zero_can_slide},
 };
 // clang-format on

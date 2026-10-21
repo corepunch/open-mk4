@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_JAX_PRIVATE_H
 #define MK4_JAX_PRIVATE_H
 
@@ -33,7 +34,6 @@ void jax_entry_retail_script_004de538(Fighter *fighter);
 void jax_entry_retail_script_004de558(Fighter *fighter);
 void jax_entry_retail_script_004de568(Fighter *fighter);
 bool jax_can_fatality_1(const Fighter *fighter);
-bool jax_can_fatality_2(const Fighter *fighter);
 void jax_fatality_1(Fighter *fighter);
 void jax_fatality_1_first_arm(Fighter *fighter);
 void jax_fatality_1_grab(Fighter *fighter);

@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_RAIDEN_PRIVATE_H
 #define MK4_RAIDEN_PRIVATE_H
 
@@ -16,7 +17,7 @@
 #define armed_crouch raiden_armed_crouch
 #define armed_idle raiden_armed_idle
 #define armed_walk raiden_armed_walk
-#define can_close_fatality raiden_can_close_fatality
+#define can_close_fatality retail_can_finish_close
 #define can_ground_throw raiden_can_ground_throw
 #define can_teleport raiden_can_teleport
 #define cpu_air_hk raiden_cpu_air_hk
@@ -142,7 +143,6 @@ void raiden_armed_block(Fighter *fighter);
 void raiden_armed_crouch(Fighter *fighter);
 void raiden_armed_idle(Fighter *fighter);
 void raiden_armed_walk(Fighter *fighter);
-bool raiden_can_close_fatality(const Fighter *fighter);
 bool raiden_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool raiden_can_teleport(const Fighter *fighter);
 void raiden_cpu_air_hk(Fighter *fighter);

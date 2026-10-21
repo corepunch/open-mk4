@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_CAGE_PRIVATE_H
 #define MK4_CAGE_PRIVATE_H
 
@@ -146,7 +147,6 @@ void cage_entry_retail_script_004ec4f0(Fighter *fighter);
 void cage_entry_retail_script_004ec7f0(Fighter *fighter);
 void cage_entry_retail_script_004e8cc0(Fighter *fighter);
 void cage_entry_retail_script_004e8d38(Fighter *fighter);
-bool cage_can_close_fatality(const Fighter *fighter);
 void cage_fatality_2(Fighter *fighter);
 void cage_second_charge(Fighter *fighter, int task_type);
 void cage_second_flash(Fighter *fighter, int task_type);

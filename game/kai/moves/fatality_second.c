@@ -25,12 +25,6 @@ enum {
   SECOND_SETTLE = 160
 };
 
-bool kai_can_second_fatality(const Fighter *fighter) {
-  /* 45e530: range 1.8..3, then the 45e5e0 finish window. */
-  float distance = fighter_distance(fighter);
-  return battle_can_finish(fighter) && distance >= q16_float(0x1cccc) && distance <= 3.f;
-}
-
 void kai_second_event(Fighter *fighter, int selector) {
   require(g_battle.phase == PHASE_FATALITY && selector == 45, "Unexpected Kai second scene event");
   /* 4315b0 queues the scene camera event; the finisher owns its input lock. */

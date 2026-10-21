@@ -734,7 +734,7 @@
     "0x45e4f0": "mk4_can_spike_finish",
     "0x45ed70": "mk4_can_air_throw",
     "0x45ed80": "mk4_can_air_throw",
-    "0x45ef20": "noob_saibot_shadow_up_enabled",
+    "0x45ef20": "retail_has_gravity",
     "0x45ef50": "weapon_can_draw"
   },
   "cpu_bindings": {
