@@ -1204,3 +1204,15 @@ asset self-test (all18 combat rigs and11 arenas). Extended the existing shared
 loader fixture by mutating raw inventory, button target and back alternative;
 no fighter timing or damage matrix was added. Catalogued root coverage remains
 a research index, not a claim of exhaustive native gameplay parity.
+
+### Own delayed native contact records
+
+Fixed a lifetime error in the migrated back-LP tail: a local decoded contact
+record was retained by delayed native playback. Both native_query_rows and the
+weapon contact runner now copy their input into actor-owned storage before
+yielding. This applies to every caller rather than extending record lifetimes
+in individual native services.
+
+Verified formatting, shared VM/rejection checks and native frame gates. One
+shared ABI fixture changes caller-local data after handoff and checks that both
+yielding entry points retain their own copy, then interrupts playback.

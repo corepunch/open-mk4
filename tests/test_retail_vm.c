@@ -558,6 +558,24 @@ static void native_weapon_inventory(void) {
   put_word(0x53d5c0, original);
 }
 
+static void native_contact_record_lifetime(void) {
+  Fighter *actor = setup(0, 2);
+  retail_vm_bind_animation(actor, 0x4fad7c + 227 * 12, 29);
+  AttackRecord record = retail_vm_attack_record(&image, mk4_image_u32(&image, 0x53d0c0 + 11 * 4) * 4);
+  q16 damage = record.damage;
+  weapon_script_contact_tail(actor, &record, 2);
+  record.damage = 0;
+  check(actor->native_record == &actor->native_record_value && actor->native_record->damage == damage,
+      "delayed weapon contact playback must own a copy of caller-local record data");
+  fighter_cancel_mmove(actor);
+  record.damage = damage;
+  native_query_rows(actor, &record, 2, 1, control_end);
+  record.damage = 0;
+  check(actor->native_record == &actor->native_record_value && actor->native_record->damage == damage,
+      "shared native contact rows must retain caller data across the yielding boundary");
+  fighter_cancel_mmove(actor);
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -777,6 +795,7 @@ int main(int argc, char **argv) {
   native_getup_entries();
   native_weapon_parameters();
   native_weapon_inventory();
+  native_contact_record_lifetime();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

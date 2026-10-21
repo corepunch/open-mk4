@@ -200,7 +200,9 @@ void native_query_rows(Fighter *fighter, const AttackRecord *record, int frames,
     return;
   }
   int pose = fighter_sample(fighter);
-  fighter->native_record = record;
+  require(record != NULL, "Native contact playback needs a record");
+  fighter->native_record_value = *record;
+  fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, frames, end);
   for (int frame = 1; frame <= frames; ++frame) {
     native_frame(fighter, frame, maxi(0, pose + frame * pose_step), query_continue);

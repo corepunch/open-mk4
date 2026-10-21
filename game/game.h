@@ -542,6 +542,7 @@ struct Fighter {
   const void *native_context;
   uint32_t native_getup; /* borrowed retail native recovery record */
   const AttackRecord *native_record;
+  AttackRecord native_record_value;
   FighterTest native_condition;
   bool native_followup, native_signal;
   int native_variant, native_elapsed;

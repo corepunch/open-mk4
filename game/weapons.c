@@ -591,7 +591,8 @@ static void script_strike_query(Fighter *fighter) {
 void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, int queries) {
   int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
   require(record != NULL && queries > 0 && last != MOVE_END && first + queries - 1 <= last, "Invalid scripted weapon contact boundary");
-  fighter->native_record = record;
+  fighter->native_record_value = *record;
+  fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, queries, script_strike_recover);
   for (int frame = 1; frame <= queries; ++frame) {
     native_frame(fighter, frame, first + frame - 1, script_strike_query);
