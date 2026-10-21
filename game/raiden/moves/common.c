@@ -32,9 +32,7 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 111) {
     raiden_lk_victim(victim);
   } else {
-    RetailScriptContinuation script =
-        reaction == 107 ? (RetailScriptContinuation){0x4e9b40, mk4_script_thrown_ready, 1} : (RetailScriptContinuation){0x4e9bd0, mk4_script_thrown_ready, 1};
-    retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
+    battle_react(victim, reaction);
   }
 }
 

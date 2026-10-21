@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-
 static void lp_getup_done(Fighter *victim);
 
 static const MoveDef s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
@@ -171,18 +169,8 @@ void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count,
 
 void sub_zero_script_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
-    return; /* Spike's native arena continuation owns the victim. */
+    return; /* The arena continuation owns the victim. */
   }
-  require(reaction == 102, "Unexpected Sub-Zero generated reaction");
-  Fighter *victim = fighter_peer(fighter);
-  sub_zero_throw_disarm(victim);
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  mk4_script_stop_body(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, &sub_zero_s_lp_thrown);
-  victim->reaction = reaction;
-  victim->sample_override = 25;
-  victim->flags |= FF_REACTING;
-  victim->mmove_cleanup = sub_zero_lp_thrown_cleanup;
-  retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 4);
+  require(reaction == 102, "Unexpected LP victim reaction");
+  battle_react(mk4_script_release_pair(fighter), reaction);
 }

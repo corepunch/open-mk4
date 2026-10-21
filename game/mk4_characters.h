@@ -40,7 +40,6 @@ void cage_power_victim(Fighter *fighter);
 void jax_dash_victim_hit(Fighter *fighter);
 void jax_dash_victim_throw(Fighter *fighter);
 void jax_fatality_2_head(Fighter *fighter);
-void jax_slam_victim(Fighter *fighter);
 void cage_second_victim_hit(Fighter *fighter);
 void shinnok_second_victim(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);

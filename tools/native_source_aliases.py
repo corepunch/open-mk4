@@ -1,6 +1,7 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'jax_slam_victim': 'retail_lp_victim',
     'kitana_bicycle': 'sonya_bicycle',
     'kitana_cartwheel': 'sonya_cartwheel',
     'kitana_generated_reaction': 'sonya_generated_reaction',

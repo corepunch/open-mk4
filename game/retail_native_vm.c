@@ -1496,6 +1496,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x488b40:
           mk4_mmove_side_getup(fighter);
           return true;
+        case 0x485c40:
         case 0x488b80:
           retail_getup_flip(fighter);
           return true;

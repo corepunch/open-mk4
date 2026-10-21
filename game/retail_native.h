@@ -170,3 +170,5 @@ void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner);
 void retail_lp_select_short(Fighter *fighter);
 void retail_lp_select_long(Fighter *fighter);
 #endif
+
+void retail_lp_victim(Fighter *fighter);

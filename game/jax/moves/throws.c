@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const MoveDef s_slam_fall = {.clip = 173, .last = 22, .flags = SF_LOCK | SF_REACTION};
-
 enum {
   SLAM_LIMIT = 4,
   SLAM_START = 55
@@ -77,28 +75,4 @@ void jax_lp_throw_return(Fighter *fighter) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   mk4_script_stop_body(fighter);
   fighter_finish_mmove(fighter, fighter_ready);
-}
-
-static void slam_victim_getup(Fighter *victim) {
-  /* 485c40: stop motion, 490350 flips the facing bit, 488ba0 -> 4914c0(4ea210). */
-  mk4_script_stop_body(victim);
-  victim->facing = -victim->facing;
-  mk4_mmove_getup(victim, 0x4ea210);
-}
-
-/* 4ea4e8[125] -> 485ba0: 485c60 (disarm, 48a220 grunt, shake 0, 489ff0
- * list 6, floor snap), 485d00 repositions the body from the pair
- * geometry, then 4287a0(4e9bc0) plays clip 173 before 485c40. */
-void jax_slam_victim(Fighter *victim) {
-  mk4_script_disarm_self(victim);
-  retail_throw_grunt();
-  mk4_script_shake(victim, 0);
-  victim->body.pos[AXIS_Y] = victim->body.ground;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_slam_fall);
-  victim->sample_override = 0;
-  native_begin(victim, 0, s_slam_fall.last, slam_victim_getup);
-  for (int frame = 0; frame <= s_slam_fall.last; ++frame) {
-    native_frame(victim, frame, frame, NULL);
-  }
-  native_play(victim, false);
 }

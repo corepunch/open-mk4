@@ -18,15 +18,6 @@ static void thrown_finish(Fighter *victim) {
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
 
-void sub_zero_lp_thrown_cleanup(Fighter *victim) {
-  if (victim->body.physics == mk4_script_landing_motion) {
-    victim->body.physics = NULL;
-  }
-  if (victim->body.on_land == mk4_script_impact) {
-    victim->body.on_land = NULL;
-  }
-}
-
 void sub_zero_script_thrown_return(Fighter *victim) {
   if (fighter_move(victim)->clip != 143) {
     mk4_script_thrown_ready(victim);
@@ -51,12 +42,6 @@ static void lk_thrown_release(Fighter *victim) {
 void sub_zero_lk_thrown_script(Fighter *victim) {
   victim->script_phase = 1;
   fighter_mmove_phase(victim, &lk_thrown_release_phase);
-}
-
-void sub_zero_throw_disarm(Fighter *victim) {
-  if (victim->armed && victim->disarm != NULL) {
-    victim->disarm(victim);
-  }
 }
 
 void sub_zero_script_lk_victim_rise(Fighter *victim) {

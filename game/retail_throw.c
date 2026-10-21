@@ -137,8 +137,54 @@ static void victim_4852e0(Fighter *fighter) {
   native_hold(fighter, 1, victim_slide_blend);
 }
 
+/* 485c60 is shared by the LP victim entries. Pair/world coordinates are
+ * owned by the engine; 485d00's render-coordinate rebasing is unnecessary. */
+void retail_lp_victim(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  mk4_script_disarm_self(fighter);
+  victim_begin(fighter);
+  retail_throw_grunt();
+  mk4_script_shake(fighter, 0);
+  mk4_script_roster_sound(fighter, 6);
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  switch (entry) {
+    case 0x485b70:
+      native_animation_table(fighter, 0x4e9bb8, fighter->retail_vm.native_owner);
+      break;
+    case 0x485ba0:
+      native_animation_table(fighter, 0x4e9bc0, fighter->retail_vm.native_owner);
+      break;
+    case 0x485bf0:
+      native_animation_table(fighter, 0x4e9bc8, fighter->retail_vm.native_owner);
+      break;
+    case 0x485b30:
+      retail_vm_enter(fighter, 0x4e9b88, mk4_mmove_thrown_finish);
+      break;
+    case 0x485af0:
+      retail_vm_enter(fighter, 0x4e9b68, mk4_mmove_thrown_finish);
+      break;
+    case 0x485a90:
+      retail_vm_enter(fighter, 0x4e9b40, mk4_mmove_thrown_finish);
+      break;
+    case 0x485a30:
+      retail_vm_enter(fighter, 0x4e9b18, mk4_mmove_thrown_finish);
+      break;
+    default:
+      require(false, "Unexpected native LP victim entry");
+  }
+}
+
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x485b70:
+    case 0x485ba0:
+    case 0x485bf0:
+    case 0x485b30:
+    case 0x485af0:
+    case 0x485a90:
+    case 0x485a30:
+      return retail_lp_victim;
     case 0x484760:
       return retail_slam_reaction;
     case 0x4847a0:

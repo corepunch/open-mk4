@@ -146,7 +146,6 @@ def _moves_for(character):
                     ('short throw', 0x4de6b8),
                     ('throw owner continuation', 0x4de668),
                     ('throw victim recovery', 0x4e9b40),
-                    ('throw victim recovery', 0x4e9bd0),
                 ),
             ),
             lk_throw=move(0x42b6b0, (('paired opening', 0x4de2f8), ('damage', 0x4de318), ('release', 0x4de328))),
@@ -242,8 +241,7 @@ def _moves_for(character):
         shared.update(
             # 4de79c's roster table sends slot 10 straight to the short
             # 4de6b8 throw; only the 4de858 slots (1, 7, 12) reach 42cc00/4de640.
-            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('short throw', 0x4de6b8),
-                                     ('victim reaction 102', 0x4e9bd0)),
+            lp_throw=move(0x42c560, (('selected attacker/victim', 0x4de798), ('short throw', 0x4de6b8)),
                           native=(('short continuation', 0x42ce80),)),
             # 4e8148/4e8174 are 490ae0 physics descriptors (47aab0, 47af90),
             # not VM roots; 4e8150 belongs to 47ab10, which no record targets.
@@ -546,7 +544,7 @@ def _moves_for(character):
         )
         if character == 1:
             shared.update(
-                lp_throw=move(0x42c560, (("roster selector", 0x4de798), ("extended throw", 0x4de640), ("short throw", 0x4de6b8), ("extended owner recovery", 0x4de668), ("extended victim", 0x4e9b40), ("short victim", 0x4e9bd0))),
+                lp_throw=move(0x42c560, (("roster selector", 0x4de798), ("extended throw", 0x4de640), ("short throw", 0x4de6b8), ("extended owner recovery", 0x4de668), ("extended victim", 0x4e9b40))),
                 fatality_1=move(0x467ce0, (("performer", 0x4e0210), ("owner release", 0x4e0220)), native=(("scene", 0x440fc0),)),
                 fatality_2=move(0x467cd0, (("scene entry", 0x4e56c8), ("first playback", 0x4e56d8), ("repeated playback", 0x4e56f0), ("held pose", 0x4e5728), ("ending", 0x4e5740), ("owner hold", 0x4e5760), ("victim", 0x4e5770), ("victim hold", 0x4e5788)), native=(("scene", 0x4647f0),)),
                 staff_hp=move(0x496a40, contacts=(("weapon", 4),)), staff_lp=move(0x496ba0, contacts=(("weapon", 5),)), staff_back_hp=move(0x496a70, contacts=(("weapon", 7),)), staff_back_lp=move(0x496be0, contacts=(("weapon", 6),)),
@@ -734,7 +732,7 @@ def _moves_for(character):
     if character != 4:
         return shared
     shared.update(
-        lp_throw=move(0x42c560, (('roster-selected attacker/victim', 0x4de798), ('reaction 102 tumble body', 0x4e9bd0)),
+        lp_throw=move(0x42c560, (('roster-selected attacker/victim', 0x4de798),),
                       native=(('precondition', 0x42c3d0), ('entry/roster selection', 0x42c590), ('owner return', 0x42ce80),
                               ('reaction 102', 0x485b70), ('victim getup', 0x488b80))),
         lk_throw=move(0x42b6b0, (('Sub-Zero paired opening', 0x4de490), ('paired counts', 0x4de4b8),

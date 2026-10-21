@@ -1,10 +1,8 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-
-/* VM control flow is generated; native adapters build frame rows. Playback need
- * not match stored clip length. See docs/liu-kang-scripts.md for the evidence. */
+/* Original script words own VM control flow; the remaining native adapters
+ * implement engine boundaries. See docs/liu-kang-scripts.md for evidence. */
 
 void liu_kang_liu_script_lk_continue(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);
@@ -38,14 +36,7 @@ void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
   Fighter *victim = fighter_peer(fighter);
   victim->reaction = reaction;
   if (reaction == 104) {
-    liu_kang_throw_disarm(victim);
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    victim->flags &= ~(unsigned)FF_PAIRED;
-    mk4_script_stop_body(victim);
-    fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
-    victim->sample_override = 0;
-    victim->flags |= FF_REACTING;
-    retail_vm_enter_owned(victim, 0x4e9b68, fighter_ready, 3);
+    battle_react(mk4_script_release_pair(fighter), reaction);
   } else if (reaction == 80) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
     victim->flags &= ~(unsigned)FF_PAIRED;

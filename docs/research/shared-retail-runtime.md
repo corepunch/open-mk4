@@ -1324,3 +1324,25 @@ Compared the bounded local4287a0 listing with the mk4decomp animation runner.
 Verified formatting, shared VM/rejection checks and native frame gates. A small
 runtime fixture checks table mutation after capture, completion, cancellation
 and script/native type rejection. Production LP callers migrate next.
+
+### Load the shared LP victim entries
+
+Reaction-table targets485b70/485ba0/485bf0 now use one485c60 prelude and
+original4287a0 tables4e9bb8/4e9bc0/4e9bc8. Their packed descriptors and native
+callback485c40 come from retail data. Direct-entry variants485b30/485af0/
+485a90/485a30 enter original4e9b88/4e9b68/4e9b40/4e9b18 respectively.
+Removed copied LP victim frame programs and the redundant Jax slam victim.
+Known loaded native reactions take precedence over the old Goro approximation.
+
+The old reaction102 root4e9bd0 was a false hypothesis: native485b70 calls an
+animation/native-callback table, not that script. Removed it from the five
+inherited research inventories and reviewed their fingerprints. Compared
+bounded local entries and4287a0 against mk4decomp SfxBlockCluster matching
+assembly. Engine pair/world coordinates replace485d00 render rebasing;
+485bf0's Goro-specific43a5c0 object-task presentation remains unimplemented.
+
+Verified make format, shared VM/rejections, strict audits and native frame
+gates. One integration fixture mutates the reaction target and animation-table
+words to verify loaded dispatch independently of roster/selector. No authored
+LP timing or damage matrices were added. Existing broad battle/timing-suite
+limitations recorded above remain; these checks do not establish native parity.

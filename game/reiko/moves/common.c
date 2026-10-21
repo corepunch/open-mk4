@@ -1,8 +1,6 @@
 #include "retail_vm.h"
 #include "../character.h"
 
-static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION, NULL, 0};
-
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
     return;
@@ -16,14 +14,6 @@ void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
 }
 
 void reiko_script_lp_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 102 || reaction == 107, "Unexpected reiko LP victim reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = reaction;
-  victim->flags |= FF_REACTING;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_lp_thrown);
-  if (reaction == 102) {
-    retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 7);
-  } else {
-    retail_vm_enter_owned(victim, 0x4e9b40, fighter_ready, 7);
-  }
+  require(reaction == 102 || reaction == 107, "Unexpected LP victim reaction");
+  battle_react(mk4_script_release_pair(fighter), reaction);
 }

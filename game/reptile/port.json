@@ -58,7 +58,7 @@
     }
   },
   "integration_source": "game/retail_native.c",
-  "inventory_sha256": "3155c0a13a9a352f554910a8ef9b5927866c7b74a5d4ae3f1cafdd46426e52e5",
+  "inventory_sha256": "2677aa1a17b3c50be3ac83a3e1f46674f72db23648fe4fc34a2eb7e3f18fa53d",
   "moves": {
     "air_diagonal_hk": {
       "source": "game/retail_air.c",
@@ -321,8 +321,8 @@
     "102": {
       "source": "game/reptile/moves/common.c",
       "symbol": "reptile_script_lp_reaction",
-      "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
-      "evidence": "Contact selector 102 at 0x485b70 dispatches through current-context handler 0x45b1f0; the short 4de6b8 throw's victim stream is 0x4e9bd0."
+      "adaptation": "Loaded reaction native shared across rosters; captured peer is released independently of owner recovery.",
+      "evidence": "4ea4e8[102] ->485b70 ->485c60 and4287a0(4e9bb8): packed descriptor4fb598 and native callback485c40. The old4e9bd0 script-root hypothesis was incorrect."
     },
     "143": {
       "source": "game/reactions.c",
@@ -843,11 +843,6 @@
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
     "0x4e97f8": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e9bd0": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"

@@ -27,7 +27,6 @@
 #define first_fatality_script sub_zero_first_fatality_script
 #define ice_projectile sub_zero_ice_projectile
 #define lk_thrown_script sub_zero_lk_thrown_script
-#define lp_thrown_cleanup sub_zero_lp_thrown_cleanup
 #define native_blends sub_zero_native_blends
 #define owned_object sub_zero_owned_object
 #define press_combo_hk sub_zero_press_combo_hk
@@ -70,7 +69,6 @@
 #define second_fatality_script sub_zero_second_fatality_script
 #define slide_script sub_zero_slide_script
 #define start_fatality sub_zero_start_fatality
-#define throw_disarm sub_zero_throw_disarm
 
 enum {
   AIR_FLIGHT,
@@ -103,7 +101,6 @@ void sub_zero_finish_scene(Fighter *fighter);
 void sub_zero_first_fatality_script(Fighter *fighter);
 void sub_zero_ice_projectile(Projectile *p);
 void sub_zero_lk_thrown_script(Fighter *victim);
-void sub_zero_lp_thrown_cleanup(Fighter *victim);
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end);
 bool sub_zero_owned_object(const Fighter *fighter, int kind);
 void sub_zero_scene_blend_cleanup(Fighter *fighter);
@@ -142,6 +139,5 @@ void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_ice(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);
-void sub_zero_throw_disarm(Fighter *victim);
 
 #endif

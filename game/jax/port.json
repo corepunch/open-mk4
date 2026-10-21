@@ -394,10 +394,10 @@
       "adaptation": "Roster-generic victim handler; the shared reactions[136] entry runs the Goro-owned port, which Goro's quake stomp also dispatches."
     },
     "125": {
-      "source": "game/jax/moves/throws.c",
-      "symbol": "jax_slam_victim",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lp_victim",
       "evidence": "4de558 45b1f0[0x7d]; 4ea4e8[125] -> 485ba0: 485c60 disarm/grunt/shake/floor, clip 173 (4e9bc0), 485c40 facing flip and 488ba0 back getup 328/184.",
-      "adaptation": "Registered directly in shared reactions[125]; the native victim phase runs for any humanoid victim roster."
+      "adaptation": "Loaded reaction native shared across rosters; original descriptor/native callback table supplies playback and completion."
     },
     "100": {
       "source": "game/reactions.c",

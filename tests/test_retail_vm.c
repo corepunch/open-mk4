@@ -692,6 +692,25 @@ static void native_callback_table(void) {
   check(actor->native.script_end.entry == 0 && actor->native.native_end.address == 0, "cancellation must clear both typed completion records");
 }
 
+static void native_reaction_table(void) {
+  Fighter *actor = setup(0, 0);
+  actor->roster = 15;
+  uint32_t target = mk4_image_u32(&image, 0x4ea4e8 + 100 * 4);
+  uint32_t packed = mk4_image_u32(&image, 0x4e9bb8);
+  uint32_t callback = mk4_image_u32(&image, 0x4e9bbc);
+  put_word(0x4ea4e8 + 100 * 4, 0x485b70);
+  put_word(0x4e9bb8, 0x4fad7c / 4);
+  put_word(0x4e9bbc, 0x42ce80);
+  battle_react(actor, 100);
+  tick();
+  check(actor->native.native_end.address == 0x42ce80 && fighter_move(actor)->clip == 0 && !actor->retail_vm.active,
+      "reaction dispatch must use loaded native and animation/callback tables independently of roster or selector");
+  fighter_interrupt(actor, fighter_ready);
+  put_word(0x4ea4e8 + 100 * 4, target);
+  put_word(0x4e9bb8, packed);
+  put_word(0x4e9bbc, callback);
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -920,6 +939,7 @@ int main(int argc, char **argv) {
   native_return_ownership();
   native_sound_data();
   native_callback_table();
+  native_reaction_table();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

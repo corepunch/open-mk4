@@ -948,7 +948,7 @@ static const FighterFn reactions[256] = {
   [157] = jax_dash_victim_hit,
   [168] = jax_dash_victim_throw,
   [183] = jax_fatality_2_head,
-  [125] = jax_slam_victim,
+  [125] = react_approximate,
   [162] = cage_shadow_victim,
   [163] = cage_power_victim,
   [126] = kai_handstand_reaction,
@@ -1022,7 +1022,8 @@ void battle_react(Fighter *victim, int reaction) {
   }
   FighterFn native = retail_throw_reaction(retail_vm_image(), (unsigned)reaction);
   FighterFn selected = native != NULL ? native : reactions[reaction];
-  FighterFn entry = selected != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
+  FighterFn entry =
+      selected != NULL && (native != NULL || victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
   if (victim->roster == 16 && (reaction == 24 || reaction == 55 || reaction == 56 || reaction == 68 || reaction == 86 || reaction == 87 || reaction == 121)) {
     entry = sonya_generated_reaction;
   }

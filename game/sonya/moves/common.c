@@ -19,10 +19,10 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
   fighter_cancel_mmove(victim);
   if (reaction == 78) {
     sonya_lk_victim(victim);
+  } else if (reaction == 79) {
+    retail_vm_enter_owned(victim, 0x4e9a68, fighter_ready, 2);
   } else {
-    RetailScriptContinuation script =
-        reaction == 79 ? (RetailScriptContinuation){0x4e9a68, fighter_ready, 2} : (RetailScriptContinuation){0x4e9b88, mk4_script_thrown_ready, 2};
-    retail_vm_enter_owned(victim, script.entry, script.finish, script.native_owner);
+    battle_react(victim, reaction);
   }
 }
 

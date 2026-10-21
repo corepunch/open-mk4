@@ -60,7 +60,7 @@
     }
   },
   "integration_source": "game/retail_native.c",
-  "inventory_sha256": "c48f7c9e419a7cee9a11f7a547d8875ccdf0ef13182480e752c12278c5b8fb96",
+  "inventory_sha256": "60b696490ce4244919ebd9ac193a6f0dc2ebe3896817f48a940fe288a65f9eaf",
   "moves": {
     "air_diagonal_hk": {
       "evidence": "Shared original native entry supplies canonical selector; retail script binds animation and authored control flow, without fighter C seeds",
@@ -836,11 +836,6 @@
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
     },
     "0x4e9b40": {
-      "source": "game/retail_vm.c",
-      "symbol": "retail_vm_enter",
-      "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
-    },
-    "0x4e9bd0": {
       "source": "game/retail_vm.c",
       "symbol": "retail_vm_enter",
       "evidence": "Original retail words through the shared interpreter and typed native boundary; docs/research/shared-retail-runtime.md"
