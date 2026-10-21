@@ -254,9 +254,10 @@
       "symbol": "react_extra_block"
     },
     "15": {
-      "evidence": "4ea4e8[15] -> 0x483450; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "154": {
       "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
@@ -367,9 +368,10 @@
       "symbol": "react_extra_block"
     },
     "57": {
-      "evidence": "4ea4e8[57] -> 0x482750; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "59": {
       "evidence": "4ea4e8[59] -> 0x4823c0; shared reaction adapter and behavioral regressions",
@@ -387,9 +389,10 @@
       "symbol": "react_extra"
     },
     "61": {
-      "evidence": "4ea4e8[61] -> 0x482730; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "62": {
       "adaptation": "Use the existing generated native victim stream in the shared dispatcher.",

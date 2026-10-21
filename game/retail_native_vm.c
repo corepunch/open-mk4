@@ -847,27 +847,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_roundhouse_wide_tail(fighter);
           return true;
         case 0x470420:
-          if (owner & 0x37decu) {
-            mk4_mmove_thrown_finish(fighter);
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_script_thrown_return(fighter);
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_weapon_ready(fighter);
-            return true;
-          }
-          if (owner & 0x10u) {
-            sub_zero_script_ready(fighter);
-            return true;
-          }
-          if (owner & 0x200u) {
-            tanya_script_lp_return(fighter);
-            return true;
-          }
-          return false;
+          retail_controller_return(fighter);
+          return true;
         case 0x4712e0:
           if (g_battle.phase == PHASE_FATALITY && (owner & 0x10u)) {
             sub_zero_script_victory(fighter);

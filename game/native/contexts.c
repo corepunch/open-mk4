@@ -612,11 +612,8 @@ void sonya_generated_reaction(Fighter *victim) {
 }
 
 /* Native service cluster: 42c200, 42c220, 42c300, 470420, 49bcb0. */
-static void n42c200_lp_getup_done(Fighter *victim);
 
 static const MoveDef n42c200_s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
-static const mframe_t n42c200_lp_getup_frames[15] = {{0}};
-static const mmove_t n42c200_lp_getup_phase = {.firstframe = 0, .lastframe = 14, .frame = n42c200_lp_getup_frames, .endfunc = n42c200_lp_getup_done};
 // clang-format off: Keep table entries on one row, including long rows.
 static const int n42c200_lk_owner_idle_frames_samples[] = {
   0,
@@ -686,20 +683,6 @@ static const mmove_t n42c200_lk_owner_idle_phase = {
     .firstframe = 0, .lastframe = 59, .frame = n42c200_lk_owner_idle_frames, .endfunc = fighter_ready, .samples = n42c200_lk_owner_idle_frames_samples};
 static const MoveDef n42c200_s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0304};
 static const MeshAnimation n42c200_ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
-
-void sub_zero_script_ready(Fighter *fighter) {
-  FighterFn next = fighter->reaction == 102 && fighter_move(fighter)->clip == 143 ? sub_zero_script_thrown_return : fighter_ready;
-  fighter_finish_mmove(fighter, next);
-}
-
-static void n42c200_lp_getup_done(Fighter *victim) {
-  mk4_script_stop_body(victim);
-  fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
-}
-
-void sub_zero_script_lp_getup(Fighter *victim) {
-  fighter_mmove_phase(victim, &n42c200_lp_getup_phase);
-}
 
 void sub_zero_script_lk_rebase(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
@@ -788,8 +771,4 @@ void tanya_script_current_reaction(Fighter *fighter, int reaction) {
   require(reaction == 104, "Unexpected tanya LP release reaction");
   Fighter *victim = mk4_script_release_pair(fighter);
   battle_react(victim, reaction);
-}
-
-void tanya_script_lp_return(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
 }

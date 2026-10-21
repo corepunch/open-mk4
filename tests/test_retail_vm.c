@@ -627,6 +627,14 @@ static void native_return_ownership(void) {
   check(retail_native_vm(actor, 0x42ce60, RETAIL_TAIL, 0), "native KO return must resolve the shared controller boundary");
   check(actor->health == 0 && actor->state == S_HIT && actor->current_mmove == NULL && !actor->retail_vm.active,
       "native controller return must not revive a defeated actor");
+  check(retail_native_vm(actor, 0x470420, RETAIL_TAIL, 0) && actor->state != S_IDLE, "ordinary native controller return must also preserve KO ownership");
+  actor = setup(0, 2);
+  actor->body.pos[AXIS_Y] = actor->body.ground - Q16_ONE;
+  actor->body.vel[AXIS_Y] = -0x123;
+  actor->body.gravity = 0x147;
+  check(retail_native_vm(actor, 0x470420, RETAIL_TAIL, 0), "ordinary native controller return must resolve independently of script context");
+  check(actor->state == S_JUMP && actor->body.pos[AXIS_Y] == actor->body.ground - Q16_ONE && actor->body.vel[AXIS_Y] == -0x123 && actor->body.gravity == 0x147,
+      "native controller return must preserve airborne physics rather than snap or freeze the actor");
 }
 
 static void native_sound_data(void) {

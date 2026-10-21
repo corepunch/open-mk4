@@ -261,9 +261,10 @@
       "evidence": "Tanya contact record selects reaction 13; reviewed against the portable shared reaction table."
     },
     "15": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Tanya contact record selects reaction 15; reviewed against the portable shared reaction table."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "16": {
       "source": "game/reactions.c",

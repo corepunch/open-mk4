@@ -420,3 +420,17 @@ void retail_lp_end(Fighter *fighter) {
   retail_throw_turn(fighter_peer(fighter));
   retail_vm_enter(fighter, 0x4de668, fighter_ready);
 }
+
+/* 470420/48e080 releases native callbacks and restores ordinary control.
+ * Airborne motion belongs to physics; controller return must preserve it. */
+void retail_controller_return(Fighter *fighter) {
+  if (fighter->flags & FF_PAIRED) {
+    fighter->flags &= ~(unsigned)FF_PAIRED;
+    fighter_peer(fighter)->flags &= ~(unsigned)FF_PAIRED;
+  }
+  native_motion_stop(fighter);
+  fighter->body.physics = NULL;
+  fighter->body.on_land = NULL;
+  retail_face_peer(fighter);
+  fighter_finish_mmove(fighter, fighter->health > 0 ? fighter_ready : NULL);
+}

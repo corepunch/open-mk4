@@ -221,9 +221,10 @@
       "evidence": "Goro contact reaches shared reaction 18 through retail dispatcher 0x483050."
     },
     "20": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Goro contact reaches shared reaction 20 through retail dispatcher 0x483490."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "21": {
       "source": "game/retail_reaction.c",
@@ -279,9 +280,10 @@
       "evidence": "4ea4e8[77] ->484f10 binds descriptor4fc8f4/clip586 at65, advances to130, then resets and returns."
     },
     "100": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Goro contact reaches shared reaction 100 through retail dispatcher 0x485bf0."
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lp_victim",
+      "evidence": "Loaded4ea4e8[100] ->485bf0, shared485c60 prelude and original4287a0 table4e9bc8.",
+      "adaptation": "Shared loaded native reaction entry, independent of roster and generated playback."
     },
     "143": {
       "source": "game/reactions.c",

@@ -1,6 +1,13 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'raiden_script_thrown_return': 'retail_controller_return',
+    'scorpion_script_weapon_ready': 'retail_controller_return',
+    'sub_zero_script_ready': 'retail_controller_return',
+    'tanya_script_lp_return': 'retail_controller_return',
+    'sub_zero_script_thrown_return': 'retail_controller_return',
+    'sub_zero_script_lp_getup': 'retail_controller_return',
+
     'cage_weapon_getup_back': 'retail_reaction_getup_back',
     'kai_weapon_victim_getup': 'retail_reaction_getup_back',
     'goro_victim_finish_getup': 'retail_reaction_getup_back',

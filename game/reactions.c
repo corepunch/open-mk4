@@ -367,9 +367,6 @@ static const ReactionSpec extra_reactions[256] = {
   [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
-static const MoveDef tumble_start = R(142, 16, 0x4003);
-static const MoveDef tumble_loop = R(141, 16, 0x4003);
-static const MoveDef tumble_land_move = R(143, 28, 0x4003);
 static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
 static const MoveDef getup_front = R(188, 15, ACTION_GETUP);
 static const MoveDef getup_kick = R(191, 15, ACTION_GETUP);
@@ -444,23 +441,6 @@ static void extra_reaction_play(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-static void tumble_play(Fighter *fighter);
-
-static void tumble_next(Fighter *fighter) {
-  if (fighter->current_move == &tumble_land_move) {
-    begin_getup(fighter, (fighter->reaction == 100 || fighter->reaction == 61) ? 0 : 328);
-    return;
-  }
-  fighter_start_move(fighter, S_KNOCKDOWN, fighter_airborne(fighter) ? &tumble_loop : &tumble_land_move);
-  fighter->sample_override = 0;
-  tumble_play(fighter);
-}
-
-static void tumble_play(Fighter *fighter) {
-  int final = fighter->current_move == &tumble_land_move ? ((fighter->reaction == 100 || fighter->reaction == 61) ? 49 : 37) : 17;
-  reaction_play(fighter, 1, fighter->current_move == &tumble_land_move ? 28 : 16, final, tumble_next);
-}
-
 static void react_extra(Fighter *fighter) {
   switch (fighter->reaction) {
     case 10:
@@ -479,13 +459,6 @@ static void react_extra(Fighter *fighter) {
   }
   int id = fighter->reaction;
   bool teleport_air = id == 90 && fighter_airborne(fighter);
-  if (id == 15 || id == 20 || id == 57 || id == 61 || id == 100 || id == 156) {
-    fighter_start_move(fighter, S_KNOCKDOWN, &tumble_start);
-    fighter->sample_override = 0;
-    tumble_play(fighter);
-    launch(fighter, id == 57 || id == 61 ? 0xa3d : id == 15 || id == 20 ? 0xccc : 0xa3d, -0x147a, id == 156 ? 0x1ca : 0xde);
-    return;
-  }
   if ((id == 90 || id == 173) && fighter_airborne(fighter)) {
     fighter->reaction = id = 10;
   }
@@ -847,13 +820,10 @@ static const FighterFn reactions[256] = {
   [87] = sonya_generated_reaction,
   [121] = sonya_generated_reaction,
   [54] = react_extra,
-  [57] = react_extra,
   [59] = react_extra,
   [60] = react_extra,
-  [61] = react_extra,
   [62] = jarek_weapon_reaction,
   [117] = react_block,
-  [15] = react_extra,
   [19] = react_liu_record,
   [31] = react_liu_record,
   [64] = react_liu_record,
@@ -866,7 +836,6 @@ static const FighterFn reactions[256] = {
   [7] = react_extra_block,
   [8] = react_extra_block,
   [143] = react_extra_block,
-  [20] = react_extra,
   [22] = react_extra,
   [23] = react_extra,
   [26] = react_extra,
@@ -890,11 +859,9 @@ static const FighterFn reactions[256] = {
   [181] = fujin_second_victim,
   [179] = shinnok_second_victim,
   [99] = react_extra,
-  [100] = react_extra,
   [101] = fujin_bolt_victim,
   [122] = react_extra,
   [155] = react_extra,
-  [156] = react_extra,
   [173] = react_extra,
 
   [112] = react_block,

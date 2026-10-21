@@ -184,3 +184,7 @@ void retail_launch_reaction(Fighter *fighter);
 void retail_reaction_getup_back(Fighter *fighter);
 void retail_reaction_finish(Fighter *fighter);
 void retail_reaction_fall(Fighter *fighter);
+
+void retail_tumble_reaction(Fighter *fighter);
+
+void retail_controller_return(Fighter *fighter);

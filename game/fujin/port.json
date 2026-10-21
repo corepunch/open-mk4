@@ -262,9 +262,10 @@
       "evidence": "Fujin uses global reaction selector 143 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
     },
     "15": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Fujin uses global reaction selector 15 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "16": {
       "source": "game/reactions.c",
@@ -401,9 +402,10 @@
       "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
     },
     "156": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "92": {
       "source": "game/native/projectiles.c",

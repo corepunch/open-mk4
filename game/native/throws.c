@@ -129,14 +129,6 @@ void liu_kang_liu_script_lk_thrown_tail(Fighter *victim) {
 }
 
 /* Native service cluster: 470420. */
-void raiden_script_thrown_return(Fighter *fighter) {
-  if (fighter->reaction == 102 && fighter_move(fighter)->clip == 143) {
-    retail_getup_flip(fighter);
-    return;
-  }
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void raiden_lk_victim(Fighter *victim) {
   mk4_mmove_bind(victim, 169, 43, 0);
   fighter_set_speed(victim, 0xf5c); /* 490ab0 consumes 4e99bc's speed. */
@@ -162,7 +154,6 @@ void sonya_lk_victim(Fighter *victim) {
 static void n487220_thrown_finish(Fighter *victim);
 static void n487220_lk_thrown_release(Fighter *victim);
 static const MoveDef n487220_s_lk_thrown_rise = {.clip = 200, .last = 40, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
-static const MoveDef n487220_s_lp_thrown_getup = {.clip = 328, .last = 14, .flags = SF_LOCK, .action = ACTION_RETAIL_200E};
 static const mframe_t n487220_lk_thrown_release_phase_frames[5] = {{0}};
 static const mmove_t n487220_lk_thrown_release_phase = {
     .firstframe = 42, .lastframe = 46, .frame = n487220_lk_thrown_release_phase_frames, .endfunc = n487220_lk_thrown_release};
@@ -175,21 +166,6 @@ static const mmove_t n487220_lk_rise = {.firstframe = 0, .lastframe = 40, .frame
 static void n487220_thrown_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
-}
-
-void sub_zero_script_thrown_return(Fighter *victim) {
-  if (fighter_move(victim)->clip != 143) {
-    mk4_script_thrown_ready(victim);
-    return;
-  }
-  mk4_script_stop_body(victim);
-  if (victim->health <= 0) {
-    return;
-  }
-  victim->facing = -victim->facing;
-  fighter_start_move(victim, S_KNOCKDOWN, &n487220_s_lp_thrown_getup);
-  victim->sample_override = 0;
-  sub_zero_script_lp_getup(victim);
 }
 
 static void n487220_lk_thrown_release(Fighter *victim) {

@@ -749,10 +749,6 @@ SWORD_MOVE(s_sword_back_lp, 237, ACTION_RETAIL_0112);
 SWORD_MOVE(s_sword_back_hp, 238, ACTION_RETAIL_0112);
 SWORD_MOVE(s_spin_start, 223, ACTION_RETAIL_0407);
 
-void scorpion_script_weapon_ready(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 static void n470420_2_sword_slash_recover(Fighter *fighter) {
   fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
   fighter->action = ACTION_RETAIL_1006;

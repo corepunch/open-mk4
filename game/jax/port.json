@@ -405,9 +405,10 @@
       "adaptation": "Loaded reaction native shared across rosters; original descriptor/native callback table supplies playback and completion."
     },
     "100": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "4de568 45b1f0[0x64]; 4ea4e8[100] -> 485bf0 shared LP-throw release, as for Cage."
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lp_victim",
+      "evidence": "Loaded4ea4e8[100] ->485bf0, shared485c60 prelude and original4287a0 table4e9bc8.",
+      "adaptation": "Shared loaded native reaction entry, independent of roster and generated playback."
     },
     "153": {
       "source": "game/retail_throw.c",

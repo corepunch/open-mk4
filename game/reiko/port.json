@@ -282,9 +282,10 @@
       "symbol": "react_sweep"
     },
     "20": {
-      "evidence": "Retail reaction selector 20 (0x483490) routes to the shared MK4 reaction table.",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_tumble_reaction",
+      "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "21": {
       "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",

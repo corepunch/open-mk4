@@ -1462,3 +1462,27 @@ continuations replace internal task84 resume bookkeeping.
 Verified formatting, shared VM/rejections, strict audits, native frame gates
 and helper/port navigation (6/7 tests). Existing runtime/native/lifetime
 fixtures cover the integration; no new timing or per-fighter tests added.
+
+### Replace the copied tumble loop and ordinary controller variants
+
+Native483450/483490/482750/482730/4826a0 now perform their checked native
+prelude and execute original4e9508/4e9568/4e9048/4e8fe8/4e8f80. Removed the
+hand-authored tumble phase loop, its MoveDefs and legacy dispatch entries.
+Native4826e0's sound selection follows the peer's weapon descriptor/type,
+with the loaded inventory as the unequipped fallback. Original words own
+motion, landing boundaries and waits. Corrected reaction100's stale review
+reference to the already-shared loaded LP native.
+
+Native470420 uses one controller boundary instead of five owner branches.
+Removed six obsolete return/getup wrappers and the now-unused Sub-Zero LP
+frame program. Checked470420/48e080 with mk4decomp SlotPhaseResetInstallChain:
+callback release must preserve airborne velocity/gravity. The shared return
+releases pair/native callbacks, faces the peer and preserves KO ownership;
+ordinary engine neutral control handles grounded reset. This differs from
+native throw helpers that explicitly stop and floor the body.
+
+Verified formatting, shared VM/rejections, strict audits, native frame gates
+and helper/port navigation (6/7 tests). Extended the existing controller
+contract fixture for airborne preservation and KO; no authored timing matrix.
+Checked bounded tumble/helpers/streams against StageGameProgressCluster,
+matching assembly and the supplied EXE. Other legacy reaction copies remain.

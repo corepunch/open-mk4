@@ -114,8 +114,66 @@ void retail_reaction_fall(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e96e0, mk4_script_thrown_ready);
 }
 
+void retail_tumble_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  if (entry == 0x482730) {
+    mk4_script_stop_body(fighter);
+    fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  } else {
+    mk4_script_disarm_self(fighter);
+  }
+  if (entry == 0x483450 || entry == 0x483490) {
+    battle_wall_recoil(fighter);
+  }
+  if (entry == 0x4826a0) {
+    const Fighter *peer = fighter_peer(fighter);
+    RetailWeaponInventory inventory;
+    retail_weapon_read(retail_vm_image(), (unsigned)peer->roster, &inventory);
+    int type = peer->weapon != NULL ? peer->weapon->type : (int)inventory.type;
+    if (type == 0x61) {
+      mk4_script_indexed_sound(fighter, 2);
+    } else if (type != 0x69) {
+      retail_native_sound_list(0x4ea880);
+    }
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  FighterFn finish = mk4_script_thrown_ready;
+  switch (entry) {
+    case 0x483450:
+      script = 0x4e9508;
+      finish = retail_getup_back;
+      break;
+    case 0x483490:
+      script = 0x4e9568;
+      finish = retail_getup_back;
+      break;
+    case 0x482750:
+      script = 0x4e9048;
+      break;
+    case 0x482730:
+      script = 0x4e8fe8;
+      break;
+    case 0x4826a0:
+      script = 0x4e8f80;
+      finish = retail_getup_back;
+      break;
+    default:
+      require(false, "Unexpected shared tumble native");
+      return;
+  }
+  retail_vm_enter(fighter, script, finish);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x483450:
+    case 0x483490:
+    case 0x482750:
+    case 0x482730:
+    case 0x4826a0:
+      return retail_tumble_reaction;
     case 0x481320:
     case 0x482560:
     case 0x4825c0:
