@@ -5,11 +5,7 @@
  * Script bodies are emitted from game/kai/port.json. */
 const MoveDef kai_s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-const MoveDef kai_s_jab = {294, 0, MOVE_END, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK, NULL, 0};
-const MoveDef kai_s_high_kick = {71, 0, MOVE_END, 10, 5, 18, 12, 28, 1.85f, 0.32f, SF_ATTACK | SF_LOCK, NULL, 0};
 const MoveDef kai_s_low_kick = {70, 0, MOVE_END, 9, 5, 18, 12, 28, 1.55f, 0.27f, SF_ATTACK | SF_LOCK | SF_LOW, NULL, 0};
-const MoveDef kai_s_sweep = {62, 0, MOVE_END, 11, 5, 23, 10, 44, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, NULL, 0};
-const MoveDef kai_s_uppercut = {293, 0, MOVE_END, 9, 5, 30, 18, 20, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH, NULL, 0};
 const MoveDef kai_s_throw = {37, 0, MOVE_END, 6, 2, 25, 14, 66, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 
 const MoveDef kai_s_air_attack = {61, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_ATTACK | SF_LOCK, NULL, 0};
@@ -42,10 +38,6 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = kai_crouch,
   [S_JUMP] = NULL,
-  [S_PUNCH] = retail_jab,
-  [S_KICK] = retail_high_kick,
-  [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = retail_uppercut,
   [S_THROW] = kai_lp_throw,
   [S_BLOCK] = weapon_block,
   [S_HIT] = NULL,
@@ -58,10 +50,6 @@ static const FighterFn enter[S_COUNT] = {
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &kai_s_crouch,
   [S_JUMP] = &s_jump,
-  [S_PUNCH] = &kai_s_jab,
-  [S_KICK] = &kai_s_high_kick,
-  [S_SWEEP] = &kai_s_sweep,
-  [S_UPPERCUT] = &kai_s_uppercut,
   [S_THROW] = &kai_s_throw,
   [S_BLOCK] = &kai_s_block,
   [S_HIT] = &s_hit,

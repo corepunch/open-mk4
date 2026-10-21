@@ -9,12 +9,8 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_jab fujin_s_jab
-#define s_kick fujin_s_kick
 #define s_knockdown fujin_s_knockdown
-#define s_sweep fujin_s_sweep
 #define s_throw fujin_s_throw
-#define s_uppercut fujin_s_uppercut
 
 void fujin_enter_throw(Fighter *fighter);
 void fujin_press_air_hk(Fighter *fighter);
@@ -43,12 +39,8 @@ void fujin_entry_retail_script_004e6500(Fighter *fighter);
 void fujin_entry_retail_script_004e6658(Fighter *fighter);
 void fujin_entry_retail_script_004e6710(Fighter *fighter);
 void fujin_entry_retail_script_004e6950(Fighter *fighter);
-extern const MoveDef fujin_s_jab;
-extern const MoveDef fujin_s_kick;
 extern const MoveDef fujin_s_knockdown;
-extern const MoveDef fujin_s_sweep;
 extern const MoveDef fujin_s_throw;
-extern const MoveDef fujin_s_uppercut;
 
 extern const ButtonTable fujin_diagonal_air;
 void fujin_press_air_hk(Fighter *fighter);

@@ -37,12 +37,8 @@
 #define press_knee_hp scorpion_press_knee_hp
 #define press_lk scorpion_press_lk
 #define press_lp scorpion_press_lp
-#define s_jab scorpion_s_jab
-#define s_kick scorpion_s_kick
-#define s_sweep scorpion_s_sweep
 #define s_teleport_land scorpion_s_teleport_land
 #define s_throw scorpion_s_throw
-#define s_uppercut scorpion_s_uppercut
 #define script_air_diagonal_tail scorpion_script_air_diagonal_tail
 #define script_air_hp_tail scorpion_script_air_hp_tail
 #define script_air_kick_tail scorpion_script_air_kick_tail
@@ -204,12 +200,8 @@ void scorpion_entry_retail_script_004ec8b0(Fighter *fighter);
 void scorpion_entry_retail_script_004ec918(Fighter *fighter);
 void scorpion_entry_retail_script_004ed448(Fighter *fighter);
 void scorpion_entry_retail_script_004ed4a8(Fighter *fighter);
-extern const MoveDef scorpion_s_jab;
-extern const MoveDef scorpion_s_kick;
-extern const MoveDef scorpion_s_sweep;
 extern const MoveDef scorpion_s_teleport_land;
 extern const MoveDef scorpion_s_throw;
-extern const MoveDef scorpion_s_uppercut;
 void scorpion_air_throw(Fighter *fighter);
 void scorpion_beast_fatality(Fighter *fighter);
 void scorpion_burn_fatality(Fighter *fighter);

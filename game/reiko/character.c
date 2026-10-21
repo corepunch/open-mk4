@@ -4,10 +4,6 @@
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-const MoveDef reiko_s_jab = {294, 0, MOVE_END, 5, 4, 12, 7, 19, 1.25f, 0.13f, SF_ATTACK | SF_LOCK, NULL, 0};
-const MoveDef reiko_s_kick = {66, 0, MOVE_END, 10, 5, 18, 12, 25, 1.85f, 0.32f, SF_ATTACK | SF_LOCK, NULL, 0};
-const MoveDef reiko_s_sweep = {62, 0, MOVE_END, 11, 5, 23, 10, 45, 1.65f, 0.25f, SF_ATTACK | SF_LOCK | SF_LOW | SF_LAUNCH, NULL, 0};
-const MoveDef reiko_s_uppercut = {293, 0, MOVE_END, 9, 5, 30, 18, 60, 1.35f, 0.5f, SF_ATTACK | SF_LOCK | SF_LAUNCH, NULL, 0};
 const MoveDef reiko_s_throw = {78, 0, MOVE_END, 6, 2, 25, 14, 42, 0.95f, 0.45f, SF_ATTACK | SF_LOCK | SF_RECORD | SF_LAUNCH | SF_UNBLOCKABLE, NULL, 0};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
@@ -33,10 +29,6 @@ const uint32_t reiko_weapon_descriptor[] = {
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_PUNCH] = &reiko_s_jab,
-  [S_KICK] = &reiko_s_kick,
-  [S_SWEEP] = &reiko_s_sweep,
-  [S_UPPERCUT] = &reiko_s_uppercut,
   [S_THROW] = &reiko_s_throw,
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,

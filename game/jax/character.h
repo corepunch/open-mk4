@@ -12,12 +12,8 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_block jax_s_block
 #define s_crouch jax_s_crouch
-#define s_high_kick jax_s_high_kick
-#define s_jab jax_s_jab
-#define s_sweep jax_s_sweep
 #define s_throw jax_s_throw
 #define s_thrown jax_s_thrown
-#define s_uppercut jax_s_uppercut
 
 void jax_air_throw(Fighter *fighter);
 void jax_air_throw_fall(Fighter *fighter);
@@ -99,12 +95,8 @@ void jax_entry_retail_script_004e8150(Fighter *fighter);
 void jax_entry_retail_script_004ed090(Fighter *fighter);
 extern const MoveDef jax_s_block;
 extern const MoveDef jax_s_crouch;
-extern const MoveDef jax_s_high_kick;
-extern const MoveDef jax_s_jab;
-extern const MoveDef jax_s_sweep;
 extern const MoveDef jax_s_throw;
 extern const MoveDef jax_s_thrown;
-extern const MoveDef jax_s_uppercut;
 
 extern const ButtonTable jax_diagonal_air;
 void jax_press_air_hk(Fighter *fighter);

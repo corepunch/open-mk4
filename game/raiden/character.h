@@ -42,12 +42,8 @@
 #define press_knee_hp raiden_press_knee_hp
 #define press_lk raiden_press_lk
 #define press_lp raiden_press_lp
-#define s_jab raiden_s_jab
-#define s_kick raiden_s_kick
 #define s_knockdown raiden_s_knockdown
-#define s_sweep raiden_s_sweep
 #define s_throw raiden_s_throw
-#define s_uppercut raiden_s_uppercut
 #define s_victory raiden_s_victory
 #define scene_end_watch raiden_scene_end_watch
 #define script_air_diagonal_tail raiden_script_air_diagonal_tail
@@ -199,12 +195,8 @@ void raiden_entry_retail_script_004e9d50(Fighter *fighter);
 void raiden_entry_retail_script_004ea068(Fighter *fighter);
 void raiden_entry_retail_script_004ea108(Fighter *fighter);
 void raiden_entry_retail_script_004ed5f0(Fighter *fighter);
-extern const MoveDef raiden_s_jab;
-extern const MoveDef raiden_s_kick;
 extern const MoveDef raiden_s_knockdown;
-extern const MoveDef raiden_s_sweep;
 extern const MoveDef raiden_s_throw;
-extern const MoveDef raiden_s_uppercut;
 extern const MoveDef raiden_s_victory;
 void raiden_scene_end_watch(Fighter *fighter);
 void raiden_script_air_diagonal_tail(Fighter *fighter);

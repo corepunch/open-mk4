@@ -40,12 +40,8 @@
 #define press_knee_hp kitana_press_knee_hp
 #define press_lk kitana_press_lk
 #define press_lp kitana_press_lp
-#define s_jab kitana_s_jab
-#define s_kick kitana_s_kick
 #define s_knockdown kitana_s_knockdown
-#define s_sweep kitana_s_sweep
 #define s_throw kitana_s_throw
-#define s_uppercut kitana_s_uppercut
 #define s_victory kitana_s_victory
 #define scene_end_watch kitana_scene_end_watch
 #define script_air_diagonal_tail kitana_script_air_diagonal_tail
@@ -202,12 +198,8 @@ void kitana_entry_retail_script_004ec7f0(Fighter *fighter);
 void kitana_entry_retail_script_004ed268(Fighter *fighter);
 void kitana_entry_retail_script_004ed2c0(Fighter *fighter);
 void kitana_entry_retail_script_004ed4c0(Fighter *fighter);
-extern const MoveDef kitana_s_jab;
-extern const MoveDef kitana_s_kick;
 extern const MoveDef kitana_s_knockdown;
-extern const MoveDef kitana_s_sweep;
 extern const MoveDef kitana_s_throw;
-extern const MoveDef kitana_s_uppercut;
 extern const MoveDef kitana_s_victory;
 void kitana_scene_end_watch(Fighter *fighter);
 void kitana_script_air_diagonal_tail(Fighter *fighter);

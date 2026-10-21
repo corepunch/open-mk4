@@ -14,12 +14,8 @@ enum {
   REPTILE_EVENT_FATALITY_2
 };
 
-#define s_jab reptile_s_jab
-#define s_kick reptile_s_kick
 #define s_lp_thrown reptile_s_lp_thrown
-#define s_sweep reptile_s_sweep
 #define s_throw reptile_s_throw
-#define s_uppercut reptile_s_uppercut
 
 void reptile_lp_throw(Fighter *fighter);
 void reptile_press_air_hk(Fighter *fighter);
@@ -48,12 +44,8 @@ void reptile_entry_retail_script_004e8178(Fighter *fighter);
 void reptile_entry_retail_script_004e9620(Fighter *fighter);
 void reptile_entry_retail_script_004e9bd0(Fighter *fighter);
 void reptile_entry_retail_script_004ed1e8(Fighter *fighter);
-extern const MoveDef reptile_s_jab;
-extern const MoveDef reptile_s_kick;
 extern const MoveDef reptile_s_lp_thrown;
-extern const MoveDef reptile_s_sweep;
 extern const MoveDef reptile_s_throw;
-extern const MoveDef reptile_s_uppercut;
 
 extern const ButtonTable reptile_diagonal_air;
 void reptile_press_air_hk(Fighter *fighter);

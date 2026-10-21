@@ -1,4 +1,5 @@
 #include "game.h"
+#include "retail_native.h"
 #include "mk4_assets.h"
 #include "mk4_characters.h"
 #include <math.h>
@@ -79,9 +80,10 @@ static void combat_poses(const Assets *assets) {
   Fighter *sub_zero = &g_battle.fighters[0];
   sub_zero->ticks = 70;
   check(fighter_pose_sample(sub_zero) == 0, "Pose snapshot must wrap the real 35-sample idle");
+  int idle_clip = fighter_move(sub_zero)->clip;
   battle_react(sub_zero, 67);
   battle_step((Input[2]){0});
-  check(sub_zero->sample_override == 0 && sub_zero->frozen_clip == CLIP_ASSET_IDLE, "Freeze must preserve the displayed looping pose");
+  check(sub_zero->sample_override == 0 && sub_zero->frozen_clip == idle_clip, "Freeze must preserve the displayed looping pose");
   const Character *closed = fighter_model(assets, sub_zero);
   const Character *intact = roster_character(assets, 4);
   check(closed->meshes.data == intact->meshes.data && closed->texture.pixels.data == intact->texture.pixels.data,
@@ -214,9 +216,9 @@ static void cross_clip_pose_interpolation(const Assets *assets) {
 static void fighter_render_snapshots(const Assets *assets) {
   battle_init(0, 0);
   Fighter *fighter = &g_battle.fighters[0];
-  fighter_start_move(fighter, S_UPPERCUT, roster_def(0)->moves[S_UPPERCUT]);
+  retail_uppercut(fighter);
   battle_bind_assets(assets);
-  fighter_start_move(fighter, S_KICK, roster_def(0)->moves[S_KICK]);
+  retail_high_kick(fighter);
   fighter->sample_override = 12;
   g_battle.ticks = 2;
   battle_capture_render_snapshot();
@@ -679,7 +681,7 @@ static void shinnok_weapon_contacts(const Assets *assets) {
 /* Shinnok: every 469a00..469ad0 morph poses its target rig, then the KO
  * neutral reset (48e1e0) restores and poses Shinnok again. */
 static void shinnok_morph_rigs(const Assets *assets) {
-  const Controls *controls = mk4_shinnok.controls;
+  const Controls *controls = roster_def(6)->controls;
   int morphs = 0;
   for (int i = 0; i < controls->command_count; ++i) {
     if (controls->commands[i].predicate != shinnok_can_morph) {

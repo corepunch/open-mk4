@@ -15,10 +15,6 @@ static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
-const MoveDef sub_zero_s_jab = {.clip = 294, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_010B};
-const MoveDef sub_zero_s_kick = {.clip = 71, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0100};
-const MoveDef sub_zero_s_sweep = {.clip = 63, .last = MOVE_END, .flags = RETAIL | SF_LOW, .action = ACTION_RETAIL_010C};
-const MoveDef sub_zero_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0109};
 const MoveDef sub_zero_s_throw = {.clip = 76, .last = 48, .flags = SF_LOCK | SF_RECORD | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
@@ -29,10 +25,6 @@ static const MoveDef s_victory = {115, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &s_crouch,
   [S_JUMP] = &s_jump,
-  [S_PUNCH] = &sub_zero_s_jab,
-  [S_KICK] = &sub_zero_s_kick,
-  [S_SWEEP] = &sub_zero_s_sweep,
-  [S_UPPERCUT] = &sub_zero_s_uppercut,
   [S_THROW] = &sub_zero_s_throw,
   [S_BLOCK] = &s_block,
   [S_HIT] = &s_hit,
@@ -47,10 +39,6 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_BLOCK] = weapon_block,
-  [S_PUNCH] = retail_jab,
-  [S_KICK] = retail_high_kick,
-  [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = retail_uppercut,
 };
 // clang-format on
 

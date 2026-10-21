@@ -3,11 +3,6 @@
 
 const MoveDef jax_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
-const MoveDef jax_s_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_010B};
-const MoveDef jax_s_high_kick = {.clip = 66, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_0100};
-
-const MoveDef jax_s_sweep = {.clip = 62, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW, .action = ACTION_RETAIL_010C};
-const MoveDef jax_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LAUNCH, .action = ACTION_RETAIL_0109};
 
 const MoveDef jax_s_throw = {.clip = 83, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE, .action = ACTION_RETAIL_0500};
 const MoveDef jax_s_thrown = {.clip = 145, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
@@ -37,10 +32,6 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_JUMP] = mk4_jump,
-  [S_PUNCH] = retail_jab,
-  [S_KICK] = retail_high_kick,
-  [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = retail_uppercut,
   [S_THROW] = jax_lp_throw,
   [S_BLOCK] = weapon_block,
   [S_HIT] = NULL,
@@ -53,10 +44,6 @@ static const FighterFn enter[S_COUNT] = {
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &jax_s_crouch,
   [S_JUMP] = &s_jump,
-  [S_PUNCH] = &jax_s_jab,
-  [S_KICK] = &jax_s_high_kick,
-  [S_SWEEP] = &jax_s_sweep,
-  [S_UPPERCUT] = &jax_s_uppercut,
   [S_THROW] = &jax_s_throw,
   [S_BLOCK] = &jax_s_block,
   [S_HIT] = &s_hit,

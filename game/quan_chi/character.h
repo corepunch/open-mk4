@@ -17,11 +17,7 @@
 #define press_low_kick quan_chi_press_low_kick
 #define press_low_punch quan_chi_press_low_punch
 #define press_sweep retail_press_sweep
-#define s_high_kick quan_chi_s_high_kick
-#define s_jab quan_chi_s_jab
-#define s_sweep quan_chi_s_sweep
 #define s_throw quan_chi_s_throw
-#define s_uppercut quan_chi_s_uppercut
 
 void quan_chi_press_air_hk(Fighter *fighter);
 void quan_chi_press_air_hp(Fighter *fighter);
@@ -51,11 +47,7 @@ void quan_chi_entry_retail_script_004e6658(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6710(Fighter *fighter);
 void quan_chi_entry_retail_script_004e6950(Fighter *fighter);
 void quan_chi_entry_retail_script_004e9910(Fighter *fighter);
-extern const MoveDef quan_chi_s_high_kick;
-extern const MoveDef quan_chi_s_jab;
-extern const MoveDef quan_chi_s_sweep;
 extern const MoveDef quan_chi_s_throw;
-extern const MoveDef quan_chi_s_uppercut;
 
 extern const ButtonTable quan_chi_diagonal_air;
 void quan_chi_press_air_hk(Fighter *fighter);

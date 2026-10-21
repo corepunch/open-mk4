@@ -5,40 +5,9 @@
 #include "retail_native.h"
 #include <stddef.h>
 
-/* Each fighter owns a move table indexed by StateId. Columns: clip, first
- * and last frame, startup, active, recovery, damage, stun, reach, push,
- * flags. Idle is CLIP_ASSET_IDLE because each mesh
- * already carries its own idle clip. Goro's mesh uses a separate 21-channel
- * bank, so his table names clips from that bank.
- *
- * Clips come from the original move routines, which store an action code
- * at player +0x74 and run a move script; op 0x3c in a script branches on a
- * 16-entry character table (Kitana reads Sonya's entry, Noob Reiko's).
- *   walk    forward-walk table 0x53d388 (0x53d3c8 holds the slower walk back)
- *   crouch  0x2001 plays 259 into the crouch, then loops 258
- *   jump    0x2007 plays 304: takeoff, air, landing
- *   punch   0x10b plays the jab 294 (295 follows a repeated press)
- *   kick    0x100 high kick, character table at 0x4e5ca4
- *   sweep   0x10c, character table at 0x4e679c
- *   upper   0x109 starts with 293
- *   throw   the character table at 0x4de7a0 sets the victim's clip (op
- *           0x0e) and the thrower's (op 0x0f); Jax's entry calls 0x42c7f0,
- *           which switches to script 0x4de4f0 (83, victim 145)
- *   block   0x2005 sets slot 0x53ce30 (322), or 595 for Goro
- *   hit     0x2005 reaction script starts with 247
- *   knock   0x4003 staggers with 311, then falls with 186
- *   victory the round-end scripts call 0x4712e0, whose character table at
- *           0x4e6a44 opens each win pose and then waits on its last frame
- * Clips 210..250 belong to the weapon routines and hold a weapon grip;
- * the 0x4e5efc table (44..51) holds AI katas, not win poses.
- * Goro's moves come from his AI handlers: 597 punch (0x43ae70), 598 kick
- * (0x43b170), 600 uppercut (slot 0x53c6bc at 0x43b75f), 601 leap and
- * stomp (action 0x409), 602 jump (0x43b7e0), and 603, a rise from the
- * crouch, played backwards as his duck. He has no sweep; the stomp is his
- * low knockdown. His hit (593) and knockdown (581) are visual choices.
- * Clip 581 keeps a root Y near +0.87, which plants its last frame; the
- * first frame is still about 0.49 below the floor. His bank has no flatter
- * grounded fall, so that opening stays. */
+/* Retail data supplies roster identity and script animation. The remaining
+ * legacy rows provide native services while their families are consolidated;
+ * shared script states never copy their authored attack seeds. */
 static const CharacterDef *const roster[] = {
     &mk4_scorpion,
     &mk4_raiden,
@@ -71,6 +40,7 @@ const CharacterDef *roster_def(int index) {
   static CpuMoves cpu[MK4_ROSTER_COUNT];
   static RetailRoster identities[MK4_ROSTER_COUNT];
   static MoveDef states[MK4_ROSTER_COUNT][S_COUNT];
+  static FighterFn entries[MK4_ROSTER_COUNT][S_COUNT];
   static const MoveDef *state_views[MK4_ROSTER_COUNT][S_COUNT];
   static const Mk4Image *images[MK4_ROSTER_COUNT];
   const Mk4Image *image = retail_vm_image();
@@ -83,12 +53,24 @@ const CharacterDef *roster_def(int index) {
     definitions[index].ground = identities[index].ground;
     require(definitions[index].move_count == S_COUNT, "Native state view has an invalid shape");
     for (int state = 0; state < S_COUNT; ++state) {
-      states[index][state] = state == S_IDLE || state == S_WALK ? (MoveDef){.last = MOVE_END} : *roster[index]->moves[state];
+      bool retail_attack = state >= S_PUNCH && state <= S_UPPERCUT;
+      states[index][state] = state == S_IDLE || state == S_WALK || retail_attack ? (MoveDef){.clip = -1, .last = MOVE_END} : *roster[index]->moves[state];
+      entries[index][state] = roster[index]->enter != NULL ? roster[index]->enter[state] : NULL;
+      if (retail_attack) {
+        /* Unstarted engine views have no authored clip or balance. Playback
+         * binds the original descriptor before its first rendered sample. */
+        states[index][state].flags = SF_ATTACK | SF_LOCK | SF_RECORD;
+      }
       state_views[index][state] = &states[index][state];
     }
     states[index][S_IDLE].clip = identities[index].idle;
     states[index][S_WALK].clip = identities[index].walk;
     definitions[index].moves = state_views[index];
+    entries[index][S_PUNCH] = retail_jab;
+    entries[index][S_KICK] = retail_high_kick;
+    entries[index][S_SWEEP] = retail_sweep;
+    entries[index][S_UPPERCUT] = retail_uppercut;
+    definitions[index].enter = entries[index];
     controls[index] = *roster[index]->controls;
     retail_bind_commands(&controls[index], image, (unsigned)index);
     definitions[index].controls = &controls[index];

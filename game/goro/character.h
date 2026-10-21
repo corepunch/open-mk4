@@ -8,19 +8,11 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_jab goro_s_jab
-#define s_kick goro_s_kick
 #define s_knockdown goro_s_knockdown
-#define s_sweep goro_s_sweep
 #define s_throw goro_s_throw
-#define s_uppercut goro_s_uppercut
 
-extern const MoveDef goro_s_jab;
-extern const MoveDef goro_s_kick;
 extern const MoveDef goro_s_knockdown;
-extern const MoveDef goro_s_sweep;
 extern const MoveDef goro_s_throw;
-extern const MoveDef goro_s_uppercut;
 
 void goro_air_throw(Fighter *fighter);
 void goro_close_hk(Fighter *fighter);

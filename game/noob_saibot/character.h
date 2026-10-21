@@ -9,11 +9,7 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_jab noob_saibot_s_jab
-#define s_kick noob_saibot_s_kick
-#define s_sweep noob_saibot_s_sweep
 #define s_throw noob_saibot_s_throw
-#define s_uppercut noob_saibot_s_uppercut
 
 void noob_saibot_command_498b70(Fighter *fighter);
 void noob_saibot_command_498e70(Fighter *fighter);
@@ -63,11 +59,7 @@ void noob_saibot_entry_retail_script_004e9b40(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e9bd0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ed268(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ed2c0(Fighter *fighter);
-extern const MoveDef noob_saibot_s_jab;
-extern const MoveDef noob_saibot_s_kick;
-extern const MoveDef noob_saibot_s_sweep;
 extern const MoveDef noob_saibot_s_throw;
-extern const MoveDef noob_saibot_s_uppercut;
 
 extern const ButtonTable noob_saibot_diagonal_air;
 void noob_saibot_press_air_hk(Fighter *fighter);

@@ -14,12 +14,8 @@
 #define s_air_attack kai_s_air_attack
 #define s_block kai_s_block
 #define s_crouch kai_s_crouch
-#define s_high_kick kai_s_high_kick
-#define s_jab kai_s_jab
 #define s_low_kick kai_s_low_kick
-#define s_sweep kai_s_sweep
 #define s_throw kai_s_throw
-#define s_uppercut kai_s_uppercut
 
 enum {
   KAI_STAGE_EVENT_PLAY_CLIP = 1,
@@ -81,12 +77,8 @@ void kai_entry_retail_script_004e88c8(Fighter *fighter);
 extern const MoveDef kai_s_air_attack;
 extern const MoveDef kai_s_block;
 extern const MoveDef kai_s_crouch;
-extern const MoveDef kai_s_high_kick;
-extern const MoveDef kai_s_jab;
 extern const MoveDef kai_s_low_kick;
-extern const MoveDef kai_s_sweep;
 extern const MoveDef kai_s_throw;
-extern const MoveDef kai_s_uppercut;
 
 extern const ButtonTable kai_diagonal_air;
 void kai_press_air_hk(Fighter *fighter);

@@ -55,12 +55,8 @@
 #define press_knee_hp sub_zero_press_knee_hp
 #define press_lk sub_zero_press_lk
 #define press_lp sub_zero_press_lp
-#define s_jab sub_zero_s_jab
-#define s_kick sub_zero_s_kick
 #define s_lp_thrown sub_zero_s_lp_thrown
-#define s_sweep sub_zero_s_sweep
 #define s_throw sub_zero_s_throw
-#define s_uppercut sub_zero_s_uppercut
 #define scene_blend_cleanup sub_zero_scene_blend_cleanup
 #define script_air_diagonal_tail sub_zero_script_air_diagonal_tail
 #define script_air_getup sub_zero_script_air_getup
@@ -231,12 +227,8 @@ void sub_zero_entry_retail_script_004e9910(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9bd0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter);
 void sub_zero_entry_retail_script_004ed588(Fighter *fighter);
-extern const MoveDef sub_zero_s_jab;
-extern const MoveDef sub_zero_s_kick;
 extern const MoveDef sub_zero_s_lp_thrown;
-extern const MoveDef sub_zero_s_sweep;
 extern const MoveDef sub_zero_s_throw;
-extern const MoveDef sub_zero_s_uppercut;
 void sub_zero_scene_blend_cleanup(Fighter *fighter);
 void sub_zero_script_air_diagonal_tail(Fighter *fighter);
 void sub_zero_script_air_getup(Fighter *victim);

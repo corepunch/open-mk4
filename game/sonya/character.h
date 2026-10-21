@@ -44,12 +44,8 @@
 #define press_knee_hp sonya_press_knee_hp
 #define press_lk sonya_press_lk
 #define press_lp sonya_press_lp
-#define s_jab sonya_s_jab
-#define s_kick sonya_s_kick
 #define s_knockdown sonya_s_knockdown
-#define s_sweep sonya_s_sweep
 #define s_throw sonya_s_throw
-#define s_uppercut sonya_s_uppercut
 #define s_victory sonya_s_victory
 #define scene_end_watch sonya_scene_end_watch
 #define script_air_diagonal_tail sonya_script_air_diagonal_tail
@@ -189,12 +185,8 @@ void sonya_entry_retail_script_004ea130(Fighter *fighter);
 void sonya_entry_retail_script_004ec7a0(Fighter *fighter);
 void sonya_entry_retail_script_004ec7f0(Fighter *fighter);
 void sonya_entry_retail_script_004ed4c0(Fighter *fighter);
-extern const MoveDef sonya_s_jab;
-extern const MoveDef sonya_s_kick;
 extern const MoveDef sonya_s_knockdown;
-extern const MoveDef sonya_s_sweep;
 extern const MoveDef sonya_s_throw;
-extern const MoveDef sonya_s_uppercut;
 extern const MoveDef sonya_s_victory;
 void sonya_scene_end_watch(Fighter *fighter);
 void sonya_script_air_diagonal_tail(Fighter *fighter);

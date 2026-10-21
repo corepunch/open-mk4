@@ -14,11 +14,7 @@ enum {
   TANYA_EVENT_FATALITY_2
 };
 
-#define s_jab tanya_s_jab
-#define s_kick tanya_s_kick
-#define s_sweep tanya_s_sweep
 #define s_throw tanya_s_throw
-#define s_uppercut tanya_s_uppercut
 
 void tanya_entry_retail_script_004de2f8(Fighter *fighter);
 void tanya_entry_retail_script_004de798(Fighter *fighter);
@@ -28,11 +24,7 @@ void tanya_entry_retail_script_004e6500(Fighter *fighter);
 void tanya_entry_retail_script_004e6658(Fighter *fighter);
 void tanya_entry_retail_script_004e6710(Fighter *fighter);
 void tanya_entry_retail_script_004e6950(Fighter *fighter);
-extern const MoveDef tanya_s_jab;
-extern const MoveDef tanya_s_kick;
-extern const MoveDef tanya_s_sweep;
 extern const MoveDef tanya_s_throw;
-extern const MoveDef tanya_s_uppercut;
 void tanya_lp_throw(Fighter *fighter);
 void tanya_press_air_hk(Fighter *fighter);
 void tanya_press_air_hp(Fighter *fighter);

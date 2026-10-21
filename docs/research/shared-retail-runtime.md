@@ -401,3 +401,24 @@ Shared runtime checks, eighteen strict audits and native source gates pass.
 The existing battle run reaches the established baseline throw assertion.
 No new fighter tests were added. Native families and roster/controller
 configuration outside these consolidated attacks remain transitional.
+
+## Shared engine attack-state entries
+
+The four generic attack states (punch, kick, sweep and uppercut) now bind their
+shared native/script entries in the roster runtime. Seventy-two fighter-local
+MoveDef seeds and duplicate entry assignments are removed. An unstarted state
+has no authored clip, timing or balance; original playback binds its descriptor
+before rendering. Other legacy state rows remain migration inputs.
+
+Existing render-snapshot coverage now enters attacks through their runtime
+API. Static attack-clip assertions are retired rather than preserving obsolete
+C defaults. Existing asset checks read Shinnok commands through the live roster
+view and preserve the actual displayed idle clip across freeze, replacing
+assumptions about the old private command table and idle sentinel.
+
+Validation: shared VM checks, all strict roster audits, native source gates,
+formatting, game build and game self-test (all18 rigs and11 arenas) pass.
+Battle integration stops at the established ground-throw assertion. The broader
+asset suite passes the snapshot/rig binding checks but later stops at its
+existing air-throw attacker/victim clip expectation; that native throw family
+has not yet been consolidated. No new fighter tests were added.

@@ -76,11 +76,7 @@
 #define press_knee_hp liu_kang_press_knee_hp
 #define press_lk liu_kang_press_lk
 #define press_lp liu_kang_press_lp
-#define s_jab liu_kang_s_jab
-#define s_kick liu_kang_s_kick
-#define s_sweep liu_kang_s_sweep
 #define s_throw liu_kang_s_throw
-#define s_uppercut liu_kang_s_uppercut
 #define start_fatality liu_kang_start_fatality
 #define sword_attacks liu_kang_sword_attacks
 #define throw_disarm liu_kang_throw_disarm
@@ -224,11 +220,7 @@ void liu_kang_entry_retail_script_004ec7f0(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed678(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter);
 void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter);
-extern const MoveDef liu_kang_s_jab;
-extern const MoveDef liu_kang_s_kick;
-extern const MoveDef liu_kang_s_sweep;
 extern const MoveDef liu_kang_s_throw;
-extern const MoveDef liu_kang_s_uppercut;
 void liu_kang_start_fatality(Fighter *fighter, int id);
 extern const WeaponStrike liu_kang_sword_attacks[4];
 void liu_kang_throw_disarm(Fighter *victim);

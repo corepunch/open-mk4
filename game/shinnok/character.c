@@ -3,12 +3,6 @@
 
 const MoveDef shinnok_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
-const MoveDef shinnok_s_jab = {.clip = 294, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_010B};
-
-const MoveDef shinnok_s_high_kick = {.clip = 66, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK, .action = ACTION_RETAIL_0100};
-
-const MoveDef shinnok_s_sweep = {.clip = 63, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW, .action = ACTION_RETAIL_010C};
-const MoveDef shinnok_s_uppercut = {.clip = 293, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LAUNCH, .action = ACTION_RETAIL_0109};
 
 const MoveDef shinnok_s_throw = {.clip = 37, .last = MOVE_END, .flags = SF_LOCK | SF_UNBLOCKABLE | SF_RECORD, .action = ACTION_RETAIL_0500};
 
@@ -36,10 +30,6 @@ static const FighterFn enter[S_COUNT] = {
   [S_WALK] = weapon_walk,
   [S_CROUCH] = weapon_crouch,
   [S_JUMP] = NULL,
-  [S_PUNCH] = retail_jab,
-  [S_KICK] = retail_high_kick,
-  [S_SWEEP] = retail_sweep,
-  [S_UPPERCUT] = retail_uppercut,
   [S_THROW] = shinnok_lp_throw,
   [S_BLOCK] = weapon_block,
   [S_HIT] = NULL,
@@ -56,10 +46,6 @@ static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping, [ST
 static const MoveDef *const moves[S_COUNT] = {
   [S_CROUCH] = &shinnok_s_crouch,
   [S_JUMP] = &s_jump,
-  [S_PUNCH] = &shinnok_s_jab,
-  [S_KICK] = &shinnok_s_high_kick,
-  [S_SWEEP] = &shinnok_s_sweep,
-  [S_UPPERCUT] = &shinnok_s_uppercut,
   [S_THROW] = &shinnok_s_throw,
   [S_BLOCK] = &shinnok_s_block,
   [S_HIT] = &s_hit,

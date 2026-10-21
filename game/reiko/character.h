@@ -15,11 +15,7 @@ enum {
 };
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_jab reiko_s_jab
-#define s_kick reiko_s_kick
-#define s_sweep reiko_s_sweep
 #define s_throw reiko_s_throw
-#define s_uppercut reiko_s_uppercut
 
 void reiko_lp_throw(Fighter *fighter);
 void reiko_press_air_hk(Fighter *fighter);
@@ -53,11 +49,7 @@ void reiko_entry_retail_script_004e6710(Fighter *fighter);
 void reiko_entry_retail_script_004e6950(Fighter *fighter);
 void reiko_entry_retail_script_004e9b40(Fighter *fighter);
 void reiko_entry_retail_script_004e9bd0(Fighter *fighter);
-extern const MoveDef reiko_s_jab;
-extern const MoveDef reiko_s_kick;
-extern const MoveDef reiko_s_sweep;
 extern const MoveDef reiko_s_throw;
-extern const MoveDef reiko_s_uppercut;
 
 extern const ButtonTable reiko_diagonal_air;
 void reiko_press_air_hk(Fighter *fighter);

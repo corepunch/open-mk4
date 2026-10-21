@@ -10,12 +10,8 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_cpu_kick_script cage_s_cpu_kick_script
-#define s_jab cage_s_jab
-#define s_kick cage_s_kick
 #define s_powered_punch_script cage_s_powered_punch_script
-#define s_sweep cage_s_sweep
 #define s_throw cage_s_throw
-#define s_uppercut cage_s_uppercut
 
 enum {
   CAGE_EVENT_CPU_KICK_RECOVERY = 1,
@@ -66,12 +62,8 @@ void cage_entry_retail_script_004ea040(Fighter *fighter);
 void cage_entry_retail_script_004e84b8(Fighter *fighter);
 void cage_power_land(Fighter *fighter);
 extern const MoveDef cage_s_cpu_kick_script;
-extern const MoveDef cage_s_jab;
-extern const MoveDef cage_s_kick;
 extern const MoveDef cage_s_powered_punch_script;
-extern const MoveDef cage_s_sweep;
 extern const MoveDef cage_s_throw;
-extern const MoveDef cage_s_uppercut;
 
 extern const ButtonTable cage_diagonal_air;
 void cage_press_air_hk(Fighter *fighter);
