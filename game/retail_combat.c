@@ -365,3 +365,76 @@ void retail_close_high_punch(Fighter *fighter) {
   retail_vm_bind_animation(fighter, packed * 4, reacting ? 0 : 4);
   retail_vm_enter(fighter, 0x4e61e0, fighter_ready);
 }
+
+/* Native490460 uses the captured peer's facing and relative order before
+ * assigning motion. The engine's pair/world coordinates own that ordering. */
+void retail_directional_motion(Fighter *fighter, q16 speed, q16 up, q16 gravity) {
+  const Fighter *peer = fighter_opponent(fighter);
+  bool peer_right = peer->body.pos[AXIS_X] >= fighter->body.pos[AXIS_X];
+  bool reverse = peer->facing < 0 ? !peer_right : peer_right;
+  if (reverse) {
+    speed = (q16)(-(int64_t)speed);
+    retail_face_peer(fighter);
+    retail_flip_facing(fighter);
+  }
+  fighter_set_speed(fighter, speed);
+  fighter->body.vel[AXIS_Y] = up;
+  fighter->body.gravity = gravity;
+}
+
+static int64_t native_radius_squared(const Fighter *fighter) {
+  int64_t x = fighter->body.pos[AXIS_X], z = fighter->body.pos[AXIS_Z];
+  return x * x + z * z;
+}
+
+/* Native48f100: current body is farther out and within the outer ten square
+ * world units. These are arena geometry values, not fighter configuration. */
+bool retail_outer_edge(const Fighter *fighter) {
+  int64_t radius = g_battle.arena_radius;
+  int64_t own = native_radius_squared(fighter);
+  return own >= native_radius_squared(fighter_opponent(fighter)) && own > radius * radius - 10LL * Q16_ONE * Q16_ONE;
+}
+
+static bool native_pair_recoil_frame(BattleEvent *event, Fighter *owner, Fighter *other) {
+  (void)event;
+  Fighter *actors[] = {owner, other};
+  for (unsigned i = 0; i < 2; ++i) {
+    actors[i]->body.vel[AXIS_X] = q16_mul(actors[i]->body.vel[AXIS_X], 0xe666);
+    actors[i]->body.vel[AXIS_Z] = q16_mul(actors[i]->body.vel[AXIS_Z], 0xe666);
+  }
+  return true;
+}
+
+static bool native_pair_recoil_done(BattleEvent *event, Fighter *owner, Fighter *other) {
+  (void)event;
+  mk4_script_stop_body(owner);
+  mk4_script_stop_body(other);
+  return false;
+}
+
+/* Native45c050 ->42b8c0/42b930: geometric edge push, independently owned
+ * by the world event pool. The original native task has ten decay visits. */
+void retail_edge_push(Fighter *fighter) {
+  const Fighter *peer = fighter_opponent(fighter);
+  int64_t outer = native_radius_squared(peer);
+  if (outer < native_radius_squared(fighter)) {
+    return;
+  }
+  int64_t radius = g_battle.arena_radius;
+  int64_t threshold = radius - 2LL * Q16_ONE;
+  /* 4ab290 takes the Q16 square root. Compare squared values in the
+   * engine's world coordinates. */
+  if (threshold >= 0 && outer <= threshold * threshold) {
+    return;
+  }
+  Fighter *first = &g_battle.fighters[0], *second = &g_battle.fighters[1];
+  q16 x = -q16_mul(first->body.pos[AXIS_X], 0x7ae);
+  q16 z = -q16_mul(first->body.pos[AXIS_Z], 0x7ae);
+  first->body.vel[AXIS_X] = second->body.vel[AXIS_X] = x;
+  first->body.vel[AXIS_Z] = second->body.vel[AXIS_Z] = z;
+  BattleEvent *event = battle_event_start(fighter, native_pair_recoil_done, false, false);
+  battle_event_program(event, 10);
+  for (int visit = 0; visit < 10; ++visit) {
+    battle_event_frame(event, visit, 0, native_pair_recoil_frame);
+  }
+}

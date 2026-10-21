@@ -1547,3 +1547,26 @@ runtime fixture checks numeric contact versus flag branches, inline native
 arguments, signed operands, token dispatch and packed wait selection. It uses
 a locked synthetic runtime action so the controller cannot interrupt the wait.
 No authored character tests. Eight non-null opcode handlers remain to complete.
+
+### Add directional motion and arena opcode services
+
+Implemented65's three-word directional motion,6f's outer-edge branch,70's
+world-distance-gated peer reaction and72's independent edge-push task.
+Directional490460/490580/490c00 behavior uses the captured peer's facing and
+relative order, adapted to the engine's pair/world coordinates. Distance70
+reads the existing world distance field and preserves unrelated result bits.
+
+Checked local handlers and native48f100/48f240/42b8c0/42b930/4ab290. The latter
+is a Q16 square root, not a random helper: edge push is deterministic when the
+farther body's radius exceeds arena radius minus two. The shared native task
+applies the original radial push and ten decay visits through the existing
+world-event frame player, then stops both motion contexts. No fighter script
+or per-roster callback owns that event. mk4decomp's
+bit_dispatch_dual_call_m_stack_push.c matches490460's bit-driven cascade;
+local addresses establish the VM wrapper and geometry operands.
+
+Verified formatting, shared VM/rejections, strict audits, native frame gates,
+existing decoder checks and helper/port navigation (6/7 tests). Small runtime
+fixtures check signed operands/directional branches, typed distance dispatch,
+result-bit preservation and independent event cleanup/reset. No authored move
+or balance matrices. Four non-null animation-controller slots remain.

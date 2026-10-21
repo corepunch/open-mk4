@@ -127,6 +127,9 @@ SCRIPT_OPS = {
     0x65: ('motion via native 0x490460, vertical velocity and gravity', 3),
     0x6c: ('schedule horizontal motion with packed delay/duration', 1),
     0x6a: ('native helper', 0),
+    0x6f: ('branch when current fighter occupies outer arena edge', 1),
+    0x70: ('dispatch peer reaction within Q16 distance operand', 1),
+    0x72: ('start shared native edge-push task', 0),
     0x6b: ('sound helper', 0),
     0x6e: ('disarm opponent through native helper', 0),
     0x6d: ('native helper with word operand', 1),
@@ -227,7 +230,7 @@ def script_program(image, entry, character=0):
             if op in (0x37, 0x54):
                 row['wait_if_clear'] = word & 0xfff
                 row['wait_if_set'] = (word >> 12) & 0xfff
-            if op in (0x2f, 0x3d, 0x42, 0x44, 0x45, 0x50):
+            if op in (0x2f, 0x3d, 0x42, 0x44, 0x45, 0x50, 0x6f):
                 pending.append(operands[0] * 4)
                 row['branch'] = hex(operands[0] * 4)
             if op in (0x36, 0x43, 0x55):

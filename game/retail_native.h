@@ -191,3 +191,7 @@ void retail_controller_return(Fighter *fighter);
 
 void retail_task_pause(Fighter *fighter);
 void retail_task_retire(Fighter *fighter);
+
+void retail_directional_motion(Fighter *fighter, q16 speed, q16 up, q16 gravity);
+bool retail_outer_edge(const Fighter *fighter);
+void retail_edge_push(Fighter *fighter);

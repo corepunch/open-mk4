@@ -760,6 +760,68 @@ static void native_stagger_boundary(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
 }
 
+static bool distance_reaction_probe(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
+  check(address == 0x45b1f0 && kind == RETAIL_HANDLER && argument == 25, "distance reaction opcode must use its typed low-byte handler argument");
+  fighter->native_variant++;
+  return true;
+}
+
+static void motion_distance_opcodes(void) {
+  const uint32_t base = 0x570180;
+  const uint32_t words[] = {0x65000000, 0x1000, 0xffffe000, 0x100, 0x7000ff19, Q16_ONE, 0x3e000000};
+  for (unsigned i = 0; i < sizeof words / sizeof *words; ++i) {
+    put_word(base + 4 * i, words[i]);
+  }
+  for (int reverse = 0; reverse < 2; ++reverse) {
+    Fighter *actor = setup(0, 2);
+    static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+    fighter_start_move(actor, S_PUNCH, &locked);
+    fighter_peer(actor)->facing = reverse ? 1 : -1;
+    g_battle.distance = reverse ? 2 * Q16_ONE : Q16_ONE;
+    actor->retail_vm.result = 4;
+    actor->native_variant = 0;
+    retail_vm_start(actor, &image, base, base + sizeof words, control_end, distance_reaction_probe);
+    check(actor->body.vel[AXIS_X] == (reverse ? -0x1000 : 0x1000) && actor->body.vel[AXIS_Y] == -0x2000 && actor->body.gravity == 0x100,
+        "directional motion must follow peer-facing order and consume all three signed motion words");
+    check(actor->native_variant == (reverse ? 0 : 1) && actor->retail_vm.result == (reverse ? 4u : 5u),
+        "distance reaction must use the world distance, preserve other flags and update bit zero");
+    fighter_interrupt(actor, fighter_ready);
+  }
+}
+
+static void edge_task_lifetime(void) {
+  const uint32_t base = 0x570180;
+  put_word(base, 0x6f000000);
+  put_word(base + 4, (base + 16) / 4);
+  put_word(base + 8, 0x72000000);
+  put_word(base + 12, 0x3e000000);
+  put_word(base + 16, 0xff000000);
+  Fighter *actor = setup(0, 2), *peer = fighter_peer(actor);
+  static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+  fighter_start_move(actor, S_PUNCH, &locked);
+  fighter_start_move(peer, S_PUNCH, &locked);
+  g_battle.arena_radius = Q16_ONE;
+  actor->body.pos[AXIS_X] = 2 * Q16_ONE;
+  peer->body.pos[AXIS_X] = 3 * Q16_ONE;
+  retail_vm_start(actor, &image, base, base + 20, control_end, reject_native);
+  BattleEvent *event = NULL;
+  for (int i = 0; i < MAX_BATTLE_EVENTS; ++i) {
+    if (g_battle.events[i].active) {
+      event = &g_battle.events[i];
+      break;
+    }
+  }
+  check(event != NULL && actor->body.vel[AXIS_X] < 0 && actor->body.vel[AXIS_X] == peer->body.vel[AXIS_X],
+      "outer-peer edge task must apply one shared world recoil without taking fighter script ownership");
+  for (int visit = 0; visit < 32 && event->active; ++visit) {
+    tick();
+  }
+  check(
+      !event->active && actor->body.vel[AXIS_X] == 0 && peer->body.vel[AXIS_X] == 0, "independent native edge task must retire and clean both motion contexts");
+  battle_init(0, 4);
+  check(!event->active, "round reset must leave the native event resource retired");
+}
+
 static void conditional_primitive_opcodes(void) {
   const uint32_t base = 0x570180;
   const uint32_t words[] = {0x43000000, 0x12345678, (base + 68) / 4, 0x55ffff07, 0x12345678, (base + 68) / 4, 0x3d000000, (base + 40) / 4, 0x12000002,
@@ -1064,6 +1126,8 @@ int main(int argc, char **argv) {
   native_task_completion();
   cursor_alias_opcodes();
   conditional_primitive_opcodes();
+  motion_distance_opcodes();
+  edge_task_lifetime();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();

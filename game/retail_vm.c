@@ -589,6 +589,31 @@ void retail_vm_step(Fighter *fighter) {
         }
         break;
       }
+      case 0x6f: {
+        uint32_t target = fetch(fighter);
+        bool outer = retail_outer_edge(fighter);
+        vm->result = (vm->result & ~1u) | (outer ? 1u : 0u);
+        if (outer) {
+          jump(fighter, target);
+        }
+        break;
+      }
+      case 0x70: {
+        q16 limit = (q16)fetch(fighter);
+        if (g_battle.distance <= limit) {
+          uint64_t continuation = fighter->continuation;
+          if (!vm->native(fighter, 0x45b1f0, RETAIL_HANDLER, arg)) {
+            vm_error(fighter, "unreviewed distance reaction binding");
+          }
+          if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
+            return;
+          }
+          vm->result |= 1u;
+        } else {
+          vm->result &= ~1u;
+        }
+        break;
+      }
       case 0x3d: {
         uint32_t target = fetch(fighter);
         if (fighter->contact == CONTACT_BLOCK) {
@@ -621,6 +646,16 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x39:
         fighter->body.physics = NULL;
+        break;
+      case 0x65: {
+        q16 speed = (q16)fetch(fighter);
+        q16 up = (q16)fetch(fighter);
+        q16 gravity = (q16)fetch(fighter);
+        retail_directional_motion(fighter, speed, up, gravity);
+        break;
+      }
+      case 0x72:
+        retail_edge_push(fighter);
         break;
       case 0x5d: {
         q16 horizontal = (q16)fetch(fighter);

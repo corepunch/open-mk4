@@ -12,7 +12,7 @@ from character_catalog import moves_for, character_name, CHARACTERS
 
 ANIMATION_NAMES = {67: 'ANIM_SCORPION_LOW_KICK'}
 TERMINALS = {0x30, 0x32, 0x3e, 0x3f}
-CONDITIONALS = {0x3d, 0x43, 0x50, 0x42, 0x2f, 0x36, 0x44, 0x45, 0x55, 0x3b}
+CONDITIONALS = {0x6f, 0x3d, 0x43, 0x50, 0x42, 0x2f, 0x36, 0x44, 0x45, 0x55, 0x3b}
 
 
 def animation_name(clip):
@@ -112,6 +112,12 @@ def instruction_c(row):
         return ['%s(%d);' % ('advance_twice_for_count' if op == 0x19 else 'advance_twice_to_sample', value)]
     if op in (0x20, 0x27, 0x2b):
         return ['sound_event_%s(%d);' % ({0x20: 'a', 0x27: 'c', 0x2b: 'b'}[op], arg)]
+    if op == 0x65:
+        return ['set_peer_oriented_motion(%d, %d, %d);' % tuple(signed_word(value) for value in words)]
+    if op == 0x70:
+        return ['dispatch_peer_reaction_within(%d, %d);' % (arg, signed_word(words[0]))]
+    if op == 0x72:
+        return ['start_native_edge_push();']
     if op == 0x5d:
         return ['adjust_heading_position(%s, %s);' % (signed_word(words[0]), signed_word(words[1]))]
     if op == 0x74:
@@ -141,7 +147,7 @@ def instruction_c(row):
             prefix = ['contact_query_b(%d);' % arg]
         if op in (0x36, 0x43, 0x55):
             prefix = (['native_argument(%d);' % arg] if op == 0x55 else []) + [target + '();']
-        condition = {0x3d: 'contact_result() == CONTACT_BLOCK', 0x43: '(native_result_flags() & 1) != 0', 0x50: '(native_result_flags() & 1) != 0', 0x42: '(native_result_flags() & 1) != 0', 0x2f: 'fighter_is_airborne()', 0x44: 'down_is_held()', 0x45: 'fast_startup_allowed()',
+        condition = {0x6f: 'fighter_at_outer_edge()', 0x3d: 'contact_result() == CONTACT_BLOCK', 0x43: '(native_result_flags() & 1) != 0', 0x50: '(native_result_flags() & 1) != 0', 0x42: '(native_result_flags() & 1) != 0', 0x2f: 'fighter_is_airborne()', 0x44: 'down_is_held()', 0x45: 'fast_startup_allowed()',
                      0x36: '(native_result_flags() & 4) != 0', 0x55: '(native_result_flags() & 1) != 0',
                      0x3b: '--loop_counter != 0'}[op]
         branch = ['goto L_%08x;' % int(row['branch'], 16)] if 'branch' in row else ['unresolved_loop_target();', 'return;']
