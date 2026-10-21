@@ -19,7 +19,6 @@ void scorpion_generated_reaction(Fighter *fighter);
 void raiden_generated_reaction(Fighter *fighter);
 void reiko_star_reaction(Fighter *fighter);
 void sonya_generated_reaction(Fighter *fighter);
-void kitana_generated_reaction(Fighter *fighter);
 void mk4_walk(Fighter *fighter);
 void mk4_jump(Fighter *fighter);
 void mk4_jump_backward(Fighter *fighter);

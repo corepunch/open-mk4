@@ -137,21 +137,21 @@ void kai_second_hover(Fighter *fighter, int task_type);
 void kai_second_skull(Fighter *fighter, int task_type);
 void kai_second_victim_fall(Fighter *victim);
 void kai_weapon_victim_getup(Fighter *fighter);
-void kitana_script_cartwheel_tail(Fighter *fighter);
-void kitana_script_first_release(Fighter *fighter);
-void kitana_script_leg_grab_tail(Fighter *fighter);
-void kitana_script_leg_victim_end(Fighter *victim);
-void kitana_script_reaction(Fighter *fighter, int reaction);
-void kitana_script_ring_flash(Fighter *fighter, int task_type);
-void kitana_script_ring_spawn(Fighter *fighter, int task_type);
-void kitana_script_second_branch(Fighter *fighter);
-void kitana_script_second_cycle_end(Fighter *fighter);
-void kitana_script_second_open(Fighter *fighter);
-void kitana_script_second_pause(Fighter *fighter);
-void kitana_script_second_repeat(Fighter *fighter);
-void kitana_script_second_victim_end(Fighter *victim);
-void kitana_script_square_wave_tail(Fighter *fighter);
-void kitana_script_weapon_victim_getup(Fighter *victim);
+void sonya_script_cartwheel_tail(Fighter *fighter);
+void sonya_script_first_release(Fighter *fighter);
+void sonya_script_leg_grab_tail(Fighter *fighter);
+void sonya_script_leg_victim_end(Fighter *victim);
+void sonya_script_reaction(Fighter *fighter, int reaction);
+void sonya_script_ring_flash(Fighter *fighter, int task_type);
+void sonya_script_ring_spawn(Fighter *fighter, int task_type);
+void sonya_script_second_branch(Fighter *fighter);
+void sonya_script_second_cycle_end(Fighter *fighter);
+void sonya_script_second_open(Fighter *fighter);
+void sonya_script_second_pause(Fighter *fighter);
+void sonya_script_second_repeat(Fighter *fighter);
+void sonya_script_second_victim_end(Fighter *victim);
+void sonya_script_square_wave_tail(Fighter *fighter);
+void sonya_script_weapon_victim_getup(Fighter *victim);
 void kitana_shadow_install_physics(Fighter *fighter);
 void kitana_shadow_task_low(Fighter *fighter, int task_type);
 void kitana_shadow_task_up(Fighter *fighter, int task_type);
@@ -188,14 +188,14 @@ void mk4_script_save_motion(Fighter *fighter);
 void mk4_script_scene_task(Fighter *fighter, int task_type);
 void mk4_script_touchable(Fighter *fighter);
 void native_uppercut_default(Fighter *fighter);
-void noob_saibot_script_lp_end(Fighter *fighter);
-void noob_saibot_script_lp_reaction(Fighter *fighter, int reaction);
-void noob_saibot_script_lp_return(Fighter *fighter);
-void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction);
+void reiko_script_lp_end(Fighter *fighter);
+void reiko_script_lp_reaction(Fighter *fighter, int reaction);
+void reiko_script_lp_return(Fighter *fighter);
+void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void noob_saibot_shadow_install_physics(Fighter *fighter);
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
 void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
-void noob_saibot_star_spawn(Fighter *fighter, int task_type);
+void reiko_star_spawn(Fighter *fighter, int task_type);
 void quan_chi_fatality_beat(Fighter *fighter);
 void quan_chi_fatality_cue_40(Fighter *fighter);
 void quan_chi_fatality_hit_179(Fighter *fighter);
@@ -241,16 +241,11 @@ void reiko_first_torso_end(Fighter *piece);
 void reiko_first_victim_118(Fighter *victim);
 void reiko_first_victim_165(Fighter *victim);
 void reiko_first_victory(Fighter *fighter);
-void reiko_script_lp_end(Fighter *fighter);
-void reiko_script_lp_reaction(Fighter *fighter, int reaction);
-void reiko_script_lp_return(Fighter *fighter);
-void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void reiko_script_star_victim_tail(Fighter *fighter);
 void reiko_second_owner_park(Fighter *fighter);
 void reiko_second_stars(Fighter *fighter, int task_type);
 void reiko_second_victim_end(Fighter *victim);
 void reiko_second_victim_fall(Fighter *victim);
-void reiko_star_spawn(Fighter *fighter, int task_type);
 void reptile_acid_spawn(Fighter *fighter, int task_type);
 void reptile_acid_victim_tail(Fighter *victim);
 void reptile_first_owner_bite(Fighter *fighter);
@@ -339,21 +334,6 @@ void shinnok_second_vanished(Fighter *fighter);
 void shinnok_weapon_crouch_return(Fighter *fighter);
 void shinnok_weapon_sweep_finish(Fighter *fighter);
 void shinnok_weapon_sweep_getup(Fighter *fighter);
-void sonya_script_cartwheel_tail(Fighter *fighter);
-void sonya_script_first_release(Fighter *fighter);
-void sonya_script_leg_grab_tail(Fighter *fighter);
-void sonya_script_leg_victim_end(Fighter *victim);
-void sonya_script_reaction(Fighter *fighter, int reaction);
-void sonya_script_ring_flash(Fighter *fighter, int task_type);
-void sonya_script_ring_spawn(Fighter *fighter, int task_type);
-void sonya_script_second_branch(Fighter *fighter);
-void sonya_script_second_cycle_end(Fighter *fighter);
-void sonya_script_second_open(Fighter *fighter);
-void sonya_script_second_pause(Fighter *fighter);
-void sonya_script_second_repeat(Fighter *fighter);
-void sonya_script_second_victim_end(Fighter *victim);
-void sonya_script_square_wave_tail(Fighter *fighter);
-void sonya_script_weapon_victim_getup(Fighter *victim);
 void sub_zero_script_breath_approach(Fighter *fighter);
 void sub_zero_script_breath_freeze(Fighter *fighter, int type);
 void sub_zero_script_breath_object(Fighter *fighter, int type);
@@ -690,7 +670,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           if (owner & 0x20000u) {
-            noob_saibot_script_lp_end(fighter);
+            reiko_script_lp_end(fighter);
             return true;
           }
           if (owner & 0x2u) {
@@ -734,7 +714,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           if (owner & 0x20000u) {
-            noob_saibot_script_lp_return(fighter);
+            reiko_script_lp_return(fighter);
             return true;
           }
           if (owner & 0x2u) {
@@ -794,15 +774,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_fan_victim_end(fighter);
           return true;
         case 0x43f510:
-          if (owner & 0x10000u) {
-            kitana_script_first_release(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_first_release(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_first_release(fighter);
+          return true;
         case 0x441140:
           raiden_script_first_release(fighter);
           return true;
@@ -1154,65 +1127,23 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           cage_second_victim_finish(fighter);
           return true;
         case 0x465e10:
-          if (owner & 0x10000u) {
-            kitana_script_second_open(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_second_open(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_second_open(fighter);
+          return true;
         case 0x465e70:
-          if (owner & 0x10000u) {
-            kitana_script_second_repeat(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_second_repeat(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_second_repeat(fighter);
+          return true;
         case 0x465ea0:
-          if (owner & 0x10000u) {
-            kitana_script_second_branch(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_second_branch(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_second_branch(fighter);
+          return true;
         case 0x465ed0:
-          if (owner & 0x10000u) {
-            kitana_script_second_pause(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_second_pause(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_second_pause(fighter);
+          return true;
         case 0x466000:
-          if (owner & 0x10000u) {
-            kitana_script_second_cycle_end(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_second_cycle_end(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_second_cycle_end(fighter);
+          return true;
         case 0x466190:
-          if (owner & 0x10000u) {
-            kitana_script_second_victim_end(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_second_victim_end(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_second_victim_end(fighter);
+          return true;
         case 0x466a90:
           jax_fatality_2_approach(fighter);
           return true;
@@ -1437,15 +1368,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           jarek_quake_tail(fighter);
           return true;
         case 0x47b6c0:
-          if (owner & 0x10000u) {
-            kitana_script_cartwheel_tail(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_cartwheel_tail(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_cartwheel_tail(fighter);
+          return true;
         case 0x47ba20:
           tanya_drill_kick_contact(fighter);
           return true;
@@ -1509,25 +1433,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           sub_zero_script_slide_return(fighter);
           return true;
         case 0x47e0a0:
-          if (owner & 0x10000u) {
-            kitana_script_leg_grab_tail(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_leg_grab_tail(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_leg_grab_tail(fighter);
+          return true;
         case 0x47e1d0:
-          if (owner & 0x10000u) {
-            kitana_script_square_wave_tail(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_square_wave_tail(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_square_wave_tail(fighter);
+          return true;
         case 0x47eb30:
           liu_kang_bicycle_script(fighter);
           return true;
@@ -1597,7 +1507,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           if (owner & 0x10000u) {
-            kitana_script_weapon_victim_getup(fighter);
+            sonya_script_weapon_victim_getup(fighter);
             return true;
           }
           if (owner & 0x2u) {
@@ -1661,15 +1571,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           mk4_mmove_thrown_finish(fighter);
           return true;
         case 0x4858d0:
-          if (owner & 0x10000u) {
-            kitana_script_leg_victim_end(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_leg_victim_end(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_leg_victim_end(fighter);
+          return true;
         case 0x485930:
           liu_kang_liu_script_lk_thrown_tail(fighter);
           return true;
@@ -1711,15 +1614,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_getup_roll(fighter);
           return true;
         case 0x488c10:
-          if (owner & 0x10000u) {
-            kitana_script_weapon_victim_getup(fighter);
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_weapon_victim_getup(fighter);
-            return true;
-          }
-          return false;
+          sonya_script_weapon_victim_getup(fighter);
+          return true;
         case 0x4958b0:
           retail_weapon_contact(fighter, address);
           return true;
@@ -1930,7 +1826,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             if (argument != 82u) {
               return false;
             }
-            noob_saibot_star_spawn(fighter, (int)argument);
+            reiko_star_spawn(fighter, (int)argument);
             return true;
           }
           if (owner & 0x80u) {
@@ -2022,7 +1918,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             if (argument != 38u) {
               return false;
             }
-            kitana_script_ring_flash(fighter, (int)argument);
+            sonya_script_ring_flash(fighter, (int)argument);
             return true;
           }
           if (owner & 0x4u) {
@@ -2038,7 +1934,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             if (argument != 68u) {
               return false;
             }
-            kitana_script_ring_spawn(fighter, (int)argument);
+            sonya_script_ring_spawn(fighter, (int)argument);
             return true;
           }
           if (owner & 0x4u) {
@@ -2142,7 +2038,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           if (owner & 0x10000u) {
-            kitana_script_reaction(fighter, (int)(argument & 255u));
+            sonya_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x8u) {
@@ -2150,7 +2046,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           if (owner & 0x20000u) {
-            noob_saibot_script_lp_reaction(fighter, (int)(argument & 255u));
+            reiko_script_lp_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x100u) {
@@ -2221,11 +2117,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             return true;
           }
           if (owner & 0x10000u) {
-            kitana_script_reaction(fighter, (int)(argument & 255u));
+            sonya_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x20000u) {
-            noob_saibot_script_opponent_reaction(fighter, (int)(argument & 255u));
+            reiko_script_opponent_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x100u) {

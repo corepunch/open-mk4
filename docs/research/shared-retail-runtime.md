@@ -1232,3 +1232,23 @@ remain the native research base. Verified formatting, shared VM/rejections,
 all strict audits, native frame gates and existing helper/port navigation.
 Extended the shared lifetime fixture to mutate the loaded contact bank and
 invoke the same native under a different owner context, then cancel playback.
+
+### Remove duplicate hidden-fighter native implementations
+
+Removed59 duplicate native bodies and12 emptied C units from the hidden-fighter
+folders. Complete function comparisons found identical native operations after
+removing diagnostic text and the old explicit script/native context aliases
+(16->2,17->7); raw roster/model/inventory selection remains independent.
+Consumers now call the existing native implementation. Twelve duplicated owner
+dispatch cases collapsed to direct calls, and repeated input registrations
+merged. The remaining shadow-task adaptations are separate research work.
+
+Historical names survive only in a Python research navigation alias index;
+unique native definitions resolve to their actual source file. This is not game
+configuration or a character callback layer. Arbitrary engine helpers remain
+outside character source-excerpt expansion. Reviewed source references point to
+canonical native definitions.
+
+Verified formatting, shared VM/rejection checks, all strict audits, native frame
+gates, six helper checks, seven port/source checks and six reachability checks.
+No new character behavior tests were added.

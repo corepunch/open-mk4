@@ -12,9 +12,9 @@
 
 void noob_saibot_command_498b70(Fighter *fighter);
 void noob_saibot_command_498e70(Fighter *fighter);
-void noob_saibot_script_lp_end(Fighter *fighter);
-void noob_saibot_script_lp_return(Fighter *fighter);
-void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction);
+void reiko_script_lp_end(Fighter *fighter);
+void reiko_script_lp_return(Fighter *fighter);
+void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void noob_saibot_shadow_install_physics(Fighter *fighter);
 void noob_saibot_shadow_low(Fighter *fighter);
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type);
@@ -22,7 +22,7 @@ void noob_saibot_shadow_task_up(Fighter *fighter, int task_type);
 void noob_saibot_shadow_up(Fighter *fighter);
 
 extern const ButtonTable noob_saibot_diagonal_air;
-void noob_saibot_flip_kick(Fighter *fighter);
-void noob_saibot_star(Fighter *fighter);
-void noob_saibot_star_spawn(Fighter *fighter, int task_type);
+void reiko_flip_kick(Fighter *fighter);
+void reiko_star(Fighter *fighter);
+void reiko_star_spawn(Fighter *fighter, int task_type);
 #endif

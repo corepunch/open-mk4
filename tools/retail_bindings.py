@@ -1358,7 +1358,8 @@ for _cid, _name in ((7, 'reiko'), (10, 'reptile'), (17, 'noob_saibot')):
             CHARACTER_BINDINGS[_cid][_address] = replace(CHARACTER_BINDINGS[_cid][_address], mmove=True)
     if 0x45abf0 in CHARACTER_BINDINGS[_cid]:
         CHARACTER_BINDINGS[_cid][0x45abf0] = replace(CHARACTER_BINDINGS[_cid][0x45abf0], mmove=True)
-    CHARACTER_BINDINGS[_cid][0x45b1f0] = Binding(_name + '_script_lp_reaction', 'game/' + _name + '/moves/common.c',
+    _implementation = 'reiko' if _cid == 17 else _name
+    CHARACTER_BINDINGS[_cid][0x45b1f0] = Binding(_implementation + '_script_lp_reaction', 'game/' + _implementation + '/moves/common.c',
         ('handler',), ('fighter', 'arg_u8'), mmove=True, evidence='45b1f0 releases peer with102/107; owner continues generated damage/recovery')
     for _address in (0x485ad0, 0x470420):
         CHARACTER_BINDINGS[_cid][_address] = Binding('mk4_mmove_thrown_finish', 'game/script.c', ('tail',),
@@ -1540,9 +1541,9 @@ def bindings_for(character):
     result[0x496970] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
     result[0x495ae0] = Binding('retail_weapon_contact', 'game/weapons.c', ('tail',), flow='terminal', mmove=True, evidence='Original weapon native reads selector33/10/11;4968e0 contact enters original4ec7c0 or4ec7d8 words')
     # Historical research aliases resolve to the current native definition.
-    from c_source import function_source, private_aliases
+    from c_source import function_source, canonical_name
     for address, binding in tuple(result.items()):
-        symbol = private_aliases(binding.source).get(binding.symbol, binding.symbol)
+        symbol = canonical_name(binding.source, binding.symbol)
         try:
             source, _, _ = function_source(binding.source, symbol)
         except (ValueError, OSError):

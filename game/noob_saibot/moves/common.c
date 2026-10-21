@@ -4,33 +4,6 @@
 
 static const MoveDef s_noob_shadow_low = {.clip = 26, .last = 13, .flags = SF_LOCK, .action = 0x309};
 static const MoveDef s_noob_shadow_up = {.clip = 24, .last = 9, .flags = SF_LOCK, .action = 0x30a};
-static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION, NULL, 0};
-
-void noob_saibot_script_lp_end(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  retail_throw_turn(victim);
-  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 17);
-}
-
-void noob_saibot_script_lp_return(Fighter *fighter) {
-  Fighter *victim = (Fighter *)fighter_opponent(fighter);
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  mk4_script_stop_body(fighter);
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
-void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return;
-  }
-
-  if (reaction == 77) {
-    mk4_mmove_lk_release(fighter, reaction);
-    return;
-  }
-  require(false, "Unexpected Noob Saibot opponent reaction");
-}
 
 void noob_saibot_shadow_low(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_noob_shadow_low);
@@ -100,17 +73,4 @@ void noob_saibot_shadow_install_physics(Fighter *fighter) {
   native_begin(fighter, 0, 0, shadow_land);
   native_frame(fighter, 0, 7, shadow_fall_frame);
   native_play(fighter, false);
-}
-
-void noob_saibot_script_lp_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 102 || reaction == 107, "Unexpected noob_saibot LP victim reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = reaction;
-  victim->flags |= FF_REACTING;
-  fighter_start_move(victim, S_KNOCKDOWN, &s_lp_thrown);
-  if (reaction == 102) {
-    retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 17);
-  } else {
-    retail_vm_enter_owned(victim, 0x4e9b40, fighter_ready, 17);
-  }
 }

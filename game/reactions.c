@@ -1024,7 +1024,7 @@ void battle_react(Fighter *victim, int reaction) {
   FighterFn selected = native != NULL ? native : reactions[reaction];
   FighterFn entry = selected != NULL && (victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;
   if (victim->roster == 16 && (reaction == 24 || reaction == 55 || reaction == 56 || reaction == 68 || reaction == 86 || reaction == 87 || reaction == 121)) {
-    entry = kitana_generated_reaction;
+    entry = sonya_generated_reaction;
   }
 
   for (int i = 0; i < 3; ++i) {

@@ -17,8 +17,8 @@
       "evidence": "Typed type69 weapon draw/throw entry46d1d0; real496cd0/496cf0 strikes and native secondary reaction path."
     },
     "0x4791a0": {
-      "source": "game/noob_saibot/moves/flip_kick.c",
-      "symbol": "noob_saibot_flip_kick",
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "0x47c070": {
@@ -27,8 +27,8 @@
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "0x496db0": {
-      "source": "game/noob_saibot/moves/star.c",
-      "symbol": "noob_saibot_star",
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     },
     "0x46aba0": {
@@ -210,13 +210,13 @@
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "flip_kick": {
-      "source": "game/noob_saibot/moves/flip_kick.c",
-      "symbol": "noob_saibot_flip_kick",
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "star": {
-      "source": "game/noob_saibot/moves/star.c",
-      "symbol": "noob_saibot_star",
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   },
@@ -234,14 +234,14 @@
     "102": {
       "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
       "evidence": "Contact selector 102 at 0x485b70 dispatches through Noob Saibot LP-throw reaction continuation 0x45b1f0.",
-      "source": "game/noob_saibot/moves/common.c",
-      "symbol": "noob_saibot_script_lp_reaction"
+      "source": "game/reiko/moves/common.c",
+      "symbol": "reiko_script_lp_reaction"
     },
     "107": {
       "adaptation": "Release the captured peer and enter its selected generated frame reaction; owner recovery continues independently.",
       "evidence": "Contact selector 107 at 0x485a90 dispatches through Noob Saibot LP-throw reaction continuation 0x45b1f0.",
-      "source": "game/noob_saibot/moves/common.c",
-      "symbol": "noob_saibot_script_lp_reaction"
+      "source": "game/reiko/moves/common.c",
+      "symbol": "reiko_script_lp_reaction"
     },
     "11": {
       "evidence": "Retail reaction selector 11 (0x482070) routes to the shared MK4 reaction table.",
@@ -271,8 +271,8 @@
     "175": {
       "adaptation": "Noob Saibot selector 175 is handled by the character pair/cinematic continuation, outside the shared hit-reaction table.",
       "evidence": "Contact selector 175 at 0x4836e0; Noob Saibot-native pair coordinator 0x45b230",
-      "source": "game/noob_saibot/moves/common.c",
-      "symbol": "noob_saibot_script_opponent_reaction"
+      "source": "game/reiko/moves/common.c",
+      "symbol": "reiko_script_opponent_reaction"
     },
     "18": {
       "evidence": "Retail reaction selector 18 (0x483050) routes to the shared MK4 reaction table.",
@@ -578,13 +578,13 @@
       "evidence": "Up record 4e4e20 (D,U, flags 0x14) and the near/medium CPU rows enter 47c070: action 0x20e, rise 4e82b8, 47c0a0 vanish, relocation past the peer and emergence; 4e88f0 BLOCK 47c2a0 queries D14 for the 4e82e0/4e8310 slam or the 47fec0 recoil."
     },
     "0x4791a0": {
-      "source": "game/noob_saibot/moves/flip_kick.c",
-      "symbol": "noob_saibot_flip_kick",
+      "source": "game/reiko/moves/flip_kick.c",
+      "symbol": "reiko_flip_kick",
       "evidence": "4791a0 stamps slot 16, C[0x62], action 0x21e, 0.2 speed with 47bf50 decay; clip 110 to 7, then D[29] at 8/9/10; hit or miss finishes the clip, a block sets no-guard and waits 16 visits."
     },
     "0x496db0": {
-      "source": "game/noob_saibot/moves/star.c",
-      "symbol": "noob_saibot_star",
+      "source": "game/reiko/moves/star.c",
+      "symbol": "reiko_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
     }
   },

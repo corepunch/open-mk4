@@ -43,17 +43,17 @@ extern void kai_input_478df0(Fighter *fighter);
 extern void kai_input_47bd10(Fighter *fighter);
 extern void kai_input_47c520(Fighter *fighter);
 extern void kai_rising_skull(Fighter *fighter);
-extern void kitana_bicycle(Fighter *fighter);
+extern void sonya_bicycle(Fighter *fighter);
 extern void kitana_command_shadow_low(Fighter *fighter);
 extern void kitana_command_shadow_up(Fighter *fighter);
 extern void kitana_air_throw(Fighter *fighter);
-extern void kitana_square_wave(Fighter *fighter);
+extern void sonya_square_wave(Fighter *fighter);
 extern void sub_zero_air_throw(Fighter *fighter);
-extern void kitana_cartwheel(Fighter *fighter);
-extern void kitana_leg_grab(Fighter *fighter);
-extern void kitana_ring(Fighter *fighter);
-extern void noob_saibot_flip_kick(Fighter *fighter);
-extern void noob_saibot_star(Fighter *fighter);
+extern void sonya_cartwheel(Fighter *fighter);
+extern void sonya_leg_grab(Fighter *fighter);
+extern void sonya_ring(Fighter *fighter);
+extern void reiko_flip_kick(Fighter *fighter);
+extern void reiko_star(Fighter *fighter);
 extern void liu_kang_bicycle_kick(Fighter *fighter);
 extern void liu_kang_first_fatality(Fighter *fighter);
 extern void liu_kang_flying_kick(Fighter *fighter);
@@ -78,10 +78,8 @@ extern void raiden_second_fatality(Fighter *fighter);
 extern void raiden_teleport(Fighter *fighter);
 extern void raiden_torpedo(Fighter *fighter);
 extern void reiko_first_fatality(Fighter *fighter);
-extern void reiko_flip_kick(Fighter *fighter);
 extern void reiko_orbit(Fighter *fighter);
 extern void reiko_second_fatality(Fighter *fighter);
-extern void reiko_star(Fighter *fighter);
 extern void reiko_teleport(Fighter *fighter);
 extern void reptile_acid_spit(Fighter *fighter);
 extern void reptile_fatality_1(Fighter *fighter);
@@ -112,13 +110,8 @@ extern void shinnok_morph_sonya(Fighter *fighter);
 extern void shinnok_morph_sub_zero(Fighter *fighter);
 extern void shinnok_morph_tanya(Fighter *fighter);
 extern void sonya_air_throw(Fighter *fighter);
-extern void sonya_bicycle(Fighter *fighter);
-extern void sonya_cartwheel(Fighter *fighter);
 extern void sonya_first_fatality(Fighter *fighter);
-extern void sonya_leg_grab(Fighter *fighter);
-extern void sonya_ring(Fighter *fighter);
 extern void sonya_second_fatality(Fighter *fighter);
-extern void sonya_square_wave(Fighter *fighter);
 extern void sub_zero_clone(Fighter *fighter);
 extern void sub_zero_first_fatality(Fighter *fighter);
 extern void sub_zero_ice(Fighter *fighter);
@@ -243,11 +236,11 @@ static const NativeAction entries[] = {
   {0x42c590, 0x3ffff, retail_lp_throw},
   {0x46a680, 0x3ffff, retail_high_kick},
   {0x467e00, 0x3ffff, retail_fan_finish},
-  {0x47b690, 0x10000, kitana_cartwheel},
-  {0x47dee0, 0x10000, kitana_leg_grab},
-  {0x49b9a0, 0x10000, kitana_ring},
-  {0x4791a0, 0x20000, noob_saibot_flip_kick},
-  {0x496db0, 0x20000, noob_saibot_star},
+  {0x47b690, 0x10004, sonya_cartwheel},
+  {0x47dee0, 0x10004, sonya_leg_grab},
+  {0x49b9a0, 0x10004, sonya_ring},
+  {0x4791a0, 0x20080, reiko_flip_kick},
+  {0x496db0, 0x20080, reiko_star},
   {0x43af90, 0x8000, goro_special_punch},
   {0x43b170, 0x8000, goro_special_kick},
   {0x43b320, 0x8000, goro_leap_stomp},
@@ -278,7 +271,6 @@ static const NativeAction entries[] = {
   {0x46a620, 0x20, fujin_wind},
   {0x478df0, 0x800, kai_input_478df0},
   {0x478ee0, 0x80, reiko_orbit},
-  {0x4791a0, 0x80, reiko_flip_kick},
   {0x479520, 0x200, tanya_spin_kick},
   {0x4797f0, 0x1000, jarek_upward_ball},
   {0x479b20, 0x4000, cage_cpu_kick},
@@ -289,7 +281,6 @@ static const NativeAction entries[] = {
   {0x47afe0, 0x400, reptile_input_47afe0},
   {0x47b310, 0x1000, jarek_cannonball},
   {0x47b5d0, 0x1000, jarek_quake},
-  {0x47b690, 0x4, sonya_cartwheel},
   {0x47b9f0, 0x200, tanya_drill_kick},
   {0x47bd10, 0x800, kai_input_47bd10},
   {0x47bf60, 0x20, fujin_dive},
@@ -298,18 +289,14 @@ static const NativeAction entries[] = {
   {0x47cf30, 0x100, quan_chi_teleport_stomp},
   {0x47d5f0, 0x2, raiden_torpedo},
   {0x47dc00, 0x10, sub_zero_slide},
-  {0x47dee0, 0x4, sonya_leg_grab},
-  {0x47e180, 0x10000, kitana_square_wave},
-  {0x47e180, 0x4, sonya_square_wave},
-  {0x47e650, 0x10000, kitana_bicycle},
-  {0x47e650, 0x4, sonya_bicycle},
+  {0x47e180, 0x10004, sonya_square_wave},
+  {0x47e650, 0x10004, sonya_bicycle},
   {0x47eaf0, 0x8, liu_kang_bicycle_kick},
   {0x47edc0, 0x8, liu_kang_flying_kick},
   {0x47f010, 0x20, fujin_triple_kick},
   {0x47f4d0, 0x10, sub_zero_clone},
   {0x47fc90, 0x1, scorpion_teleport},
   {0x480360, 0x20, fujin_wind_grab},
-  {0x496db0, 0x80, reiko_star},
   {0x496f80, 0x2000, jax_missile},
   {0x497070, 0x4000, cage_high_orb},
   {0x497080, 0x4000, cage_low_orb},
@@ -325,7 +312,6 @@ static const NativeAction entries[] = {
   {0x499410, 0x800, kai_rising_skull},
   {0x499740, 0x100, quan_chi_skull},
   {0x49a630, 0x1, scorpion_spear},
-  {0x49b9a0, 0x4, sonya_ring},
   {0x49bc60, 0x10, sub_zero_ice},
   {0x49bdd0, 0x2, raiden_lightning},
   {0x49bf50, 0x8, liu_kang_low_fireball},
