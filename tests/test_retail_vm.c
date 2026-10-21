@@ -469,6 +469,15 @@ static void reaction_native_table(void) {
     tick();
   }
   check(!actor->retail_vm.active, "shared native reaction must retire its continuation");
+  actor = setup(0, 2);
+  put_word(0x4ea4e8, 0x4851d0);
+  entry = retail_throw_reaction(&image, 0);
+  check(entry != NULL, "native recovery must resolve from the loaded table");
+  entry(actor);
+  for (int visit = 0; visit < 128 && actor->state != S_IDLE; ++visit) {
+    tick();
+  }
+  check(actor->state == S_IDLE && actor->current_mmove == NULL, "native clip/hold/getup chain must release its playback ownership");
   put_word(0x4ea4e8, original);
 }
 

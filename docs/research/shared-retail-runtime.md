@@ -663,3 +663,16 @@ The local488ba0/488c00 callers and4914c0 listing establish the records. Reading
 the checked EXE confirms both records exactly match the retired profile values,
 including descriptor-derived lengths. Runtime checks, all strict roster audits,
 native source gates and formatting pass. No new tests were added.
+
+## Shared native LK victim recovery phases
+
+The same retail reaction resolver now implements4851d0,485530,4856a0 and
+4852e0 once. Native descriptors53cf7c/53cf80 supply clip lengths; native waits,
+impact, retained-cursor completion, friction and stance blending remain native
+work. Recovery uses the original get-up records rather than fighter profiles.
+The phases follow the local listings and matching pending_match_variants.c
+entries. One extension to the existing native-table fixture checks that a
+clip/hold/get-up chain retires playback ownership; it adds no fighter timing or
+balance expectations. Runtime checks, strict roster audits, source gates and
+formatting pass. These complete the missing nine LK victim entries needed
+before selecting the correct LK scripts.

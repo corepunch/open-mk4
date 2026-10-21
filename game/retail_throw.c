@@ -2,6 +2,7 @@
 #include "retail_data.h"
 #include "retail_vm.h"
 #include "script.h"
+#include "native.h"
 
 /* Native throw-victim entries are selected by the original reaction table,
  * independently of either fighter's model or the originating script. */
@@ -54,8 +55,84 @@ static void victim_485480(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4ea398, mk4_mmove_thrown_finish);
 }
 
+static void flip_getup(Fighter *fighter) {
+  fighter->facing = -fighter->facing;
+  mk4_mmove_getup(fighter, 0x4ea210);
+}
+
+static void victim_pause_getup(Fighter *fighter) {
+  native_hold(fighter, 10, flip_getup);
+}
+
+static void victim_4851d0(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
+  victim_begin(fighter);
+  const Mk4Image *image = retail_vm_image();
+  retail_vm_bind_animation(fighter, mk4_image_u32(image, 0x53cf7c) * 4, 0);
+  native_finish_clip(fighter, victim_pause_getup);
+}
+
+static void roll_getup(Fighter *fighter) {
+  mk4_mmove_getup(fighter, 0x4ea220);
+}
+
+static void victim_pause_roll(Fighter *fighter) {
+  native_hold(fighter, 8, roll_getup);
+}
+
+static void victim_impact_finish(Fighter *fighter) {
+  battle_scene_impact(fighter);
+  native_finish_clip(fighter, victim_pause_roll);
+}
+
+static void victim_485530(Fighter *fighter) {
+  victim_begin(fighter);
+  const Mk4Image *image = retail_vm_image();
+  retail_vm_bind_animation(fighter, mk4_image_u32(image, 0x53cf80) * 4, 0);
+  native_play_rows(fighter, 45, 1, victim_impact_finish);
+}
+
+static void victim_slide(Fighter *fighter) {
+  fighter_set_speed(fighter, -0x3333);
+  fighter->body.physics = fighter_friction;
+  native_finish_clip(fighter, mk4_mmove_thrown_finish);
+}
+
+static void victim_4856a0(Fighter *fighter) {
+  victim_begin(fighter);
+  native_hold(fighter, 2, victim_slide);
+}
+
+static void victim_stance_blend(Fighter *fighter) {
+  const Mk4Image *image = retail_vm_image();
+  int clip = retail_stance_clip(image, (unsigned)fighter->roster, false);
+  unsigned count = mk4_image_u32(image, 0x4fad7c + (uint32_t)clip * 12 + 4);
+  require(count > 0 && count <= 65535, "Invalid native stance animation length");
+  mk4_mmove_blend_to(fighter, clip, (int)count, 0, 0x3333, 0, mk4_mmove_thrown_finish);
+}
+
+static void victim_slide_blend(Fighter *fighter) {
+  fighter_set_speed(fighter, -0x3333);
+  fighter->body.physics = fighter_friction;
+  native_finish_clip(fighter, victim_stance_blend);
+}
+
+static void victim_4852e0(Fighter *fighter) {
+  mk4_script_disarm_self(fighter);
+  victim_begin(fighter);
+  native_hold(fighter, 1, victim_slide_blend);
+}
+
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x4851d0:
+      return victim_4851d0;
+    case 0x485530:
+      return victim_485530;
+    case 0x4856a0:
+      return victim_4856a0;
+    case 0x4852e0:
+      return victim_4852e0;
     case 0x485860:
       return victim_485860;
     case 0x4857b0:
