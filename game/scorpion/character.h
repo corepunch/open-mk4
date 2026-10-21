@@ -20,7 +20,6 @@
 #define enter_sweep scorpion_enter_sweep
 #define enter_throw scorpion_enter_throw
 #define enter_uppercut scorpion_enter_uppercut
-#define fan_start scorpion_fan_start
 #define fire_script scorpion_fire_script
 #define ground_attack scorpion_ground_attack
 #define ground_native_next scorpion_ground_native_next
@@ -79,10 +78,6 @@
 #define script_combo_hp_tail scorpion_script_combo_hp_tail
 #define script_crouch_lk_tail scorpion_script_crouch_lk_tail
 #define script_draw_equip scorpion_script_draw_equip
-#define script_fan_cycle scorpion_script_fan_cycle
-#define script_fan_tail scorpion_script_fan_tail
-#define script_fan_victim_end scorpion_script_fan_victim_end
-#define script_fan_victory scorpion_script_fan_victory
 #define script_fire_decor scorpion_script_fire_decor
 #define script_fire_flame scorpion_script_fire_flame
 #define script_kick_tail scorpion_script_kick_tail
@@ -153,7 +148,6 @@ void scorpion_enter_lk_throw(Fighter *fighter);
 void scorpion_enter_sweep(Fighter *fighter);
 void scorpion_enter_throw(Fighter *fighter);
 void scorpion_enter_uppercut(Fighter *fighter);
-void scorpion_fan_start(Fighter *fighter);
 void scorpion_fire_script(Fighter *fighter);
 void scorpion_ground_attack(Fighter *fighter, int index);
 void scorpion_ground_native_next(Fighter *fighter);
@@ -185,12 +179,6 @@ void scorpion_entry_retail_script_004de2f8(Fighter *fighter);
 void scorpion_entry_retail_script_004de318(Fighter *fighter);
 void scorpion_entry_retail_script_004de328(Fighter *fighter);
 void scorpion_entry_retail_script_004de798(Fighter *fighter);
-void scorpion_entry_retail_script_004e0118(Fighter *fighter);
-void scorpion_entry_retail_script_004e0138(Fighter *fighter);
-void scorpion_entry_retail_script_004e0148(Fighter *fighter);
-void scorpion_entry_retail_script_004e0158(Fighter *fighter);
-void scorpion_entry_retail_script_004e0188(Fighter *fighter);
-void scorpion_entry_retail_script_004e01a0(Fighter *fighter);
 void scorpion_entry_retail_script_004e0278(Fighter *fighter);
 void scorpion_entry_retail_script_004e0288(Fighter *fighter);
 void scorpion_entry_retail_script_004e0298(Fighter *fighter);
@@ -255,7 +243,6 @@ void scorpion_beast_fatality(Fighter *fighter);
 void scorpion_block(Fighter *fighter);
 void scorpion_burn_fatality(Fighter *fighter);
 void scorpion_crouch(Fighter *fighter);
-void scorpion_fan_fatality(Fighter *fighter);
 void scorpion_fire(Fighter *fighter);
 void scorpion_hk(Fighter *fighter);
 void scorpion_hp(Fighter *fighter);
@@ -301,10 +288,6 @@ void scorpion_script_close_hp_tail(Fighter *fighter);
 void scorpion_script_combo_hp_tail(Fighter *fighter);
 void scorpion_script_crouch_lk_tail(Fighter *fighter);
 void scorpion_script_draw_equip(Fighter *fighter);
-void scorpion_script_fan_cycle(Fighter *fighter);
-void scorpion_script_fan_tail(Fighter *fighter);
-void scorpion_script_fan_victim_end(Fighter *fighter);
-void scorpion_script_fan_victory(Fighter *fighter);
 void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);
 void scorpion_script_kick_tail(Fighter *fighter);

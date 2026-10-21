@@ -47,8 +47,8 @@
       "symbol": "noob_saibot_command_498e70"
     },
     "0x467e00": {
-      "source": "game/noob_saibot/moves/fan.c",
-      "symbol": "noob_saibot_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -77,31 +77,6 @@
       "count": 75,
       "evidence": "42cc40 enters this Noob Saibot owner continuation after the 4de640/4de6b8 selector; exact inherited clip/sample from native script words.",
       "sample": 57
-    },
-    "0x4e0138": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "return_to": "caller",
-      "sample": 69
-    },
-    "0x4e0148": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
-    },
-    "0x4e0158": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 107
-    },
-    "0x4e01a0": {
-      "clip": 416,
-      "count": 108,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
     },
     "0x4e5c70": {
       "clip": 66,
@@ -204,12 +179,6 @@
     "0x4de668",
     "0x4de6b8",
     "0x4de798",
-    "0x4e0118",
-    "0x4e0138",
-    "0x4e0148",
-    "0x4e0158",
-    "0x4e0188",
-    "0x4e01a0",
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
@@ -286,8 +255,8 @@
     },
     "fan_fatality": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_fan_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish"
     },
     "high_kick": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -692,8 +661,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x467e00": {
-      "source": "game/noob_saibot/moves/fan.c",
-      "symbol": "noob_saibot_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -752,6 +721,38 @@
       "source": "game/noob_saibot/moves/star.c",
       "symbol": "noob_saibot_star",
       "evidence": "496db0 stamps slot 18, snapshots the pair axis, stores action 0x315 and enters 4ed038; task 82 (496e00) travels 0x30a3 per visit and queries C[21] through 4ed080."
+    }
+  },
+  "runtime_scripts": {
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
     }
   }
 }

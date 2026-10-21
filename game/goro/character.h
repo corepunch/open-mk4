@@ -1,3 +1,4 @@
+#include "retail_native.h"
 #ifndef MK4_GORO_PRIVATE_H
 #define MK4_GORO_PRIVATE_H
 
@@ -24,7 +25,6 @@ extern const MoveDef goro_s_uppercut;
 void goro_air_throw(Fighter *fighter);
 void goro_close_hk(Fighter *fighter);
 void goro_close_hp(Fighter *fighter);
-void goro_fan_fatality(Fighter *fighter);
 void goro_lk_throw(Fighter *fighter);
 void goro_lp_throw(Fighter *fighter);
 void goro_press_air_ground_hp(Fighter *fighter);
@@ -51,10 +51,6 @@ void goro_script_close_hk_tail(Fighter *fighter);
 void goro_script_close_hp_tail(Fighter *fighter);
 void goro_script_combo_hp_tail(Fighter *fighter);
 void goro_script_current_reaction(Fighter *fighter, int reaction);
-void goro_script_fan_cycle(Fighter *fighter);
-void goro_script_fan_tail(Fighter *fighter);
-void goro_script_fan_victim_end(Fighter *fighter);
-void goro_script_fan_victory(Fighter *fighter);
 void goro_script_kick_finish(Fighter *fighter);
 void goro_script_lk_finish(Fighter *fighter);
 void goro_script_lk_return(Fighter *fighter);
@@ -93,7 +89,6 @@ void goro_uppercut_victim(Fighter *victim);
 void goro_victim_finish_getup(Fighter *victim);
 void goro_victim_getup(Fighter *victim);
 
-const mmove_t *goro_retail_script_004e0138_repeat_phase(void);
 void goro_entry_retail_script_004de2f8(Fighter *fighter);
 void goro_entry_retail_script_004de6e4(Fighter *fighter);
 void goro_entry_retail_script_004de798(Fighter *fighter);
@@ -101,12 +96,6 @@ void goro_entry_retail_script_004de7e8(Fighter *fighter);
 void goro_entry_retail_script_004dfb60(Fighter *fighter);
 void goro_entry_retail_script_004dfb70(Fighter *fighter);
 void goro_entry_retail_script_004dfbb8(Fighter *fighter);
-void goro_entry_retail_script_004e0118(Fighter *fighter);
-void goro_entry_retail_script_004e0138(Fighter *fighter);
-void goro_entry_retail_script_004e0148(Fighter *fighter);
-void goro_entry_retail_script_004e0158(Fighter *fighter);
-void goro_entry_retail_script_004e0188(Fighter *fighter);
-void goro_entry_retail_script_004e01a0(Fighter *fighter);
 void goro_entry_retail_script_004e5c70(Fighter *fighter);
 void goro_entry_retail_script_004e5ca0(Fighter *fighter);
 void goro_entry_retail_script_004e5d90(Fighter *fighter);

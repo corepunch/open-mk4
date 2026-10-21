@@ -244,3 +244,5 @@ HELPERS[0x48ce00] = H('select_frozen_cut_rig', 'roster asset slot and current po
 HELPERS[0x48b030] = H('camera_compact_spline', 'Q16 track parameter and four neighboring control points',
     'Kernel .5*(1-.75*d*d+.25*abs(d*d*d)); repeat initial camera for control indices <=2; retail track coordinates are X,Z,Y.',
     'Sample on the independent camera clock.', ('game/presentation.c', 'camera_sample'))
+
+HELPERS[0x467e00] = H('fan_fatality_dispatch', 'active fighter and stage finish gate', 'Shared fan scene native coordinator; retail actor scripts.', 'Resumable scene.', ('game/retail_scene.c', 'retail_fan_finish'))

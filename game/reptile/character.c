@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -106,22 +106,6 @@ void reptile_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void reptile_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void reptile_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void reptile_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void reptile_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void reptile_entry_retail_script_004e5ca0(Fighter *fighter) {
   retail_script_004e5ca0(fighter);
 }
@@ -198,10 +182,6 @@ void reptile_entry_retail_script_004ed1e8(Fighter *fighter) {
   retail_script_004ed1e8(fighter);
 }
 
-const mmove_t *reptile_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void reptile_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -216,14 +196,6 @@ void reptile_entry_retail_script_004e6190(Fighter *fighter) {
 
 void reptile_entry_retail_script_004e6270(Fighter *fighter) {
   retail_script_004e6270(fighter);
-}
-
-void reptile_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
-}
-
-void reptile_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
 }
 
 void reptile_entry_retail_script_004e97f8(Fighter *fighter) {

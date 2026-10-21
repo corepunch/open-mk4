@@ -77,7 +77,7 @@ void scorpion_start_fatality(Fighter *fighter, int id) {
   if (id == FINISH_FAN) {
     fatal_pose(victim, 416, 0, false);
   }
-  FighterFn start = id == FINISH_BURN ? burn_start : id == FINISH_BEAST ? beast_start : id == FINISH_FAN ? scorpion_fan_start : scorpion_spike_start;
+  FighterFn start = id == FINISH_BURN ? burn_start : id == FINISH_BEAST ? beast_start : id == FINISH_FAN ? retail_fan_start : scorpion_spike_start;
   start(fighter);
 }
 

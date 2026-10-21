@@ -19,7 +19,6 @@ void tanya_fatality_1(Fighter *fighter);
 bool tanya_can_first_fatality(const Fighter *fighter);
 void tanya_fatality_2(Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
-void jarek_fan_fatality(Fighter *fighter);
 void jarek_fatality_2(Fighter *fighter);
 void jarek_fatality_1(Fighter *fighter);
 void shinnok_weapon_action(Fighter *fighter);
@@ -1753,7 +1752,7 @@ static void check_jarek_fan_victims(void) {
     }
     g_battle.fighters[0].body.pos[AXIS_X] = -0x6666;
     g_battle.fighters[1].body.pos[AXIS_X] = 0x6666;
-    jarek_fan_fatality(&g_battle.fighters[0]);
+    retail_fan_finish(&g_battle.fighters[0]);
     check(g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_FAN, "Jarek's fan entry must start the fan scene");
     bool cycled = false;
     for (int tick = 0; tick < 650; ++tick) {

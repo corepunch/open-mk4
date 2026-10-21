@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "character.h"
 
 const MoveDef shinnok_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
@@ -17,7 +18,6 @@ static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_L
 static const MoveDef s_victory = {.clip = 111, .last = MOVE_END, .flags = SF_HOLD};
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = shinnok_press_punch,
     [BUTTON_LOW_PUNCH] = shinnok_press_low_punch,
@@ -91,26 +91,6 @@ void shinnok_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void shinnok_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void shinnok_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void shinnok_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void shinnok_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void shinnok_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void shinnok_entry_retail_script_004e5c70(Fighter *fighter) {
   retail_script_004e5c70(fighter);
 }
@@ -171,10 +151,6 @@ void shinnok_entry_retail_script_004e6950(Fighter *fighter) {
   retail_script_004e6950(fighter);
 }
 
-const mmove_t *shinnok_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void shinnok_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -221,10 +197,6 @@ void shinnok_entry_retail_script_004e9498(Fighter *fighter) {
 
 void shinnok_entry_retail_script_004ec8b0(Fighter *fighter) {
   retail_script_004ec8b0(fighter);
-}
-
-void shinnok_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void shinnok_entry_retail_script_004e2ef0(Fighter *fighter) {

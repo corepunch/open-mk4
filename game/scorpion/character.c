@@ -160,30 +160,6 @@ void scorpion_entry_retail_script_004de798(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4de798, fighter_ready);
 }
 
-void scorpion_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0118, fighter_ready);
-}
-
-void scorpion_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0138, fighter_ready);
-}
-
-void scorpion_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0148, fighter_ready);
-}
-
-void scorpion_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0158, fighter_ready);
-}
-
-void scorpion_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0188, fighter_ready);
-}
-
-void scorpion_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e01a0, fighter_ready);
-}
-
 void scorpion_entry_retail_script_004e0278(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e0278, fighter_ready);
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "character.h"
 
 /* Kai's move clips and contact timing come from the slot-11 retail tables.
@@ -18,7 +19,6 @@ static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, 
 static const MoveDef s_victory = {122, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 static const ButtonTable kai_standing = {{[BUTTON_HIGH_PUNCH] = kai_press_high_punch,
     [BUTTON_LOW_PUNCH] = kai_press_low_punch,
@@ -122,26 +122,6 @@ void kai_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void kai_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void kai_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void kai_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void kai_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void kai_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void kai_entry_retail_script_004e6998(Fighter *fighter) {
   retail_script_004e6998(fighter);
 }
@@ -234,10 +214,6 @@ void kai_entry_retail_script_004e88c8(Fighter *fighter) {
   retail_script_004e88c8(fighter);
 }
 
-const mmove_t *kai_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void kai_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -304,10 +280,6 @@ void kai_entry_retail_script_004e8bc0(Fighter *fighter) {
 
 void kai_entry_retail_script_004e8f50(Fighter *fighter) {
   retail_script_004e8f50(fighter);
-}
-
-void kai_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void kai_entry_retail_script_004ed330(Fighter *fighter) {

@@ -30,31 +30,6 @@
       "evidence": "liu_kang_start_fatality poses the second-fatality owner on clip 119 at sample 0 before 4dfff8's scene-event holds.",
       "sample": 0
     },
-    "0x4e0138": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "43d460/43d530 native loop, 31 calls from C owner",
-      "return_to": "caller",
-      "sample": 69
-    },
-    "0x4e0148": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "43d640 owner release",
-      "sample": 69
-    },
-    "0x4e0158": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "43d6f0 owner victory",
-      "sample": 107
-    },
-    "0x4e01a0": {
-      "clip": 416,
-      "count": 108,
-      "evidence": "43db10 victim release replaces repeat task",
-      "sample": 69
-    },
     "0x4e5c70": {
       "clip": 66,
       "count": 18,
@@ -133,12 +108,6 @@
     "0x4de798",
     "0x4dfff8",
     "0x4e0020",
-    "0x4e0118",
-    "0x4e0138",
-    "0x4e0148",
-    "0x4e0158",
-    "0x4e0188",
-    "0x4e01a0",
     "0x4e5c70",
     "0x4e60b8",
     "0x4e6158",
@@ -260,8 +229,8 @@
     },
     "fan_fatality": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_fan_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish"
     },
     "fatality_1": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
@@ -646,5 +615,37 @@
     "evidence": "53d5c0[3] -> 4ece58/type 66 and armed table 4ecd50; docs/liu-kang-scripts.md",
     "source": "game/liu_kang/character.c",
     "symbol": "dragon_sword"
+  },
+  "runtime_scripts": {
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    }
   }
 }

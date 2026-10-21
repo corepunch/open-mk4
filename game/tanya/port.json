@@ -42,8 +42,8 @@
       "evidence": "Native 498e70 (flag 0x10, gate 45ef20 gravity) sets 30a and enters 4ed2c0: clip 24, task 75 498ed0 descending fireball, then 498eb0 fall."
     },
     "0x467e00": {
-      "source": "game/tanya/moves/fan.c",
-      "symbol": "tanya_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -71,31 +71,6 @@
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "sample": 42,
       "paired": true
-    },
-    "0x4e0138": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "return_to": "caller",
-      "sample": 69
-    },
-    "0x4e0148": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
-    },
-    "0x4e0158": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 107
-    },
-    "0x4e01a0": {
-      "clip": 416,
-      "count": 108,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
     },
     "0x4e5c70": {
       "clip": 66,
@@ -201,12 +176,6 @@
     "0x4de318",
     "0x4de328",
     "0x4de798",
-    "0x4e0118",
-    "0x4e0138",
-    "0x4e0148",
-    "0x4e0158",
-    "0x4e0188",
-    "0x4e01a0",
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
@@ -313,8 +282,8 @@
       "evidence": "Tanya air_diagonal_lk entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "fan_fatality": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Tanya fan_fatality entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "spike_fatality": {
@@ -677,8 +646,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x467e00": {
-      "source": "game/tanya/moves/fan.c",
-      "symbol": "tanya_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -749,5 +718,37 @@
     "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 0,
     "evidence": "Tanya 45e570/45e2a0 close gates accept up to 1 unit; CPU targets 4dfe10[9] and 4dfe50[9] are both 0xe666."
+  },
+  "runtime_scripts": {
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    }
   }
 }

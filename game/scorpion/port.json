@@ -90,8 +90,8 @@
     },
     "fan_fatality": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_fan_fatality"
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish"
     },
     "fatality_1": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

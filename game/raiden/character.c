@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 
@@ -107,7 +107,7 @@ static const CpuMoves cpu_moves = {
             [CPU_DRAW] = raiden_weapon,
             [CPU_FINISH_1] = raiden_first_fatality,
             [CPU_FINISH_2] = raiden_second_fatality,
-            [CPU_FINISH_FAN] = raiden_fan_fatality,
+            [CPU_FINISH_FAN] = retail_fan_finish,
             [CPU_FINISH_SPIKE] = raiden_spike_fatality,
         },
     .finish_min = {0, 0},
@@ -157,30 +157,6 @@ void raiden_entry_retail_script_004de6b8(Fighter *fighter) {
 
 void raiden_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
-}
-
-void raiden_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void raiden_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
-}
-
-void raiden_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void raiden_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void raiden_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void raiden_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
 }
 
 void raiden_entry_retail_script_004e0210(Fighter *fighter) {
@@ -377,8 +353,4 @@ void raiden_entry_retail_script_004ea108(Fighter *fighter) {
 
 void raiden_entry_retail_script_004ed5f0(Fighter *fighter) {
   retail_script_004ed5f0(fighter);
-}
-
-const mmove_t *raiden_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
 }

@@ -33,31 +33,6 @@
       "sample": 21,
       "evidence": "4dfc50 binds 602 and advances to 21 before 43b8c0 enters 4dfc60."
     },
-    "0x4e0138": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "return_to": "caller",
-      "sample": 69
-    },
-    "0x4e0148": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 69
-    },
-    "0x4e0158": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 107
-    },
-    "0x4e01a0": {
-      "clip": 416,
-      "count": 108,
-      "evidence": "Native continuation preserves this clip/sample; bounded source listings and character port guide",
-      "sample": 69
-    },
     "0x4e5c70": {
       "clip": 66,
       "count": 18,
@@ -127,12 +102,6 @@
     "0x4dfc38",
     "0x4dfc50",
     "0x4dfc60",
-    "0x4e0118",
-    "0x4e0138",
-    "0x4e0148",
-    "0x4e0158",
-    "0x4e0188",
-    "0x4e01a0",
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
@@ -228,8 +197,8 @@
       "evidence": "Requested portable extension: Goro BLOCK list 53c99c is empty; shared 46aa80 pair with generated owner 4e5e28/4e5e50 and victim 4e9910 frame streams."
     },
     "fan_fatality": {
-      "source": "game/goro/moves/fan.c",
-      "symbol": "goro_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "CPU stage-8 finish 434520 -> 434940 dispatches action 10041 -> 4e6ef8[65] = 467e00 for every roster; generated owner/victim roots 4e0118/4e0188."
     },
     "spike_fatality": {
@@ -596,14 +565,46 @@
   },
   "cpu_finish_bindings": {
     "0x467e00": {
-      "source": "game/goro/moves/fan.c",
-      "symbol": "goro_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "CPU stage-8 finish 434940 dispatches 10041 -> 467e00; Goro has no fan command record."
     },
     "0x467e70": {
       "source": "game/goro/moves/spike.c",
       "symbol": "goro_spike_fatality",
       "evidence": "CPU stage-0 finish 4348b0 dispatches 10042 -> 467e70; Goro has no spike command record."
+    }
+  },
+  "runtime_scripts": {
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
     }
   }
 }

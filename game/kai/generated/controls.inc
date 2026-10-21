@@ -4,7 +4,7 @@ static const CpuMoves retail_cpu_moves = {.enter =
                                               {
                                                   [CPU_FINISH_1] = kai_fatality_1,
                                                   [CPU_FINISH_2] = kai_fatality_2,
-                                                  [CPU_FINISH_FAN] = kai_fan_fatality,
+                                                  [CPU_FINISH_FAN] = retail_fan_finish,
                                                   [CPU_FINISH_SPIKE] = kai_spike_fatality,
                                               },
     .finish_min = {0x0, 0x0}};

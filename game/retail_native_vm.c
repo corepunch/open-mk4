@@ -5,7 +5,9 @@
 #include "retail_native.h"
 
 bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
-  if (kind == RETAIL_CALL && address == 0x46a950) {
+  if (kind == RETAIL_TAIL && address == 0x43d510) {
+    retail_fan_cycle(fighter);
+  } else if (kind == RETAIL_CALL && address == 0x46a950) {
     mk4_script_avoid_clear(fighter);
   } else if (kind == RETAIL_CALL && address == 0x46a970) {
     mk4_script_avoid_set(fighter);
@@ -66,13 +68,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
   } else if (address == 0x42ce60 && (kind == RETAIL_TAIL)) {
     scorpion_script_lp_return(fighter);
   } else if (address == 0x43d460 && (kind == RETAIL_TAIL)) {
-    scorpion_script_fan_tail(fighter);
+    retail_fan_tail(fighter);
   } else if (address == 0x43d530 && (kind == RETAIL_TAIL)) {
-    scorpion_script_fan_cycle(fighter);
+    retail_fan_cycle(fighter);
   } else if (address == 0x43d6f0 && (kind == RETAIL_TAIL)) {
-    scorpion_script_fan_victory(fighter);
+    retail_fan_victory(fighter);
   } else if (address == 0x43db50 && (kind == RETAIL_TAIL)) {
-    scorpion_script_fan_victim_end(fighter);
+    retail_fan_victim_end(fighter);
   } else if (address == 0x443930 && (kind == RETAIL_TAIL)) {
     scorpion_script_burn_begin(fighter);
   } else if (address == 0x443a30 && (kind == RETAIL_TAIL)) {

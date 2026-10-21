@@ -222,11 +222,10 @@ void liu_kang_start_fatality(Fighter *fighter, int id) {
   }
   if (id == FINISH_FAN) {
     liu_kang_fatal_pose(victim, 416, 0, false);
-    liu_kang_entry_retail_script_004e0188(victim);
   }
   FighterFn start = id == FINISH_LIU_KANG_1   ? dragon_fatality_script
                     : id == FINISH_LIU_KANG_2 ? liu_kang_entry_retail_script_004dfff8
-                    : id == FINISH_FAN        ? liu_kang_entry_retail_script_004e0118
+                    : id == FINISH_FAN        ? retail_fan_start
                                               : liu_kang_entry_retail_script_004e6950;
   start(fighter);
 }

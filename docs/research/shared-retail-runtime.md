@@ -140,3 +140,34 @@ native binding and entry migration before their generated outputs can retire.
 One synthetic runtime fixture covers optional operand consumption, half-speed
 holding, reverse playback, blend resumption and cancellation. No authored
 fighter timing or damage cases were added.
+
+## One native fan scene
+
+All roster slots now use `retail_scene.c` for native entries 467e00, 43d460,
+43d510/43d530, 43d6f0 and 43db50. The eighteen per-fighter fan modules, generated
+fan bodies and generated-phase accessors are removed. Native entry masks for
+467e00 collapse to a single roster-wide implementation. The remaining script
+entry wrappers for this scene are removed as well; the native coordinator
+enters original addresses directly.
+
+The native countdown remains native code, while retail 4e0118/0128/0138/0148,
+0158/0188/01a0 supply playback and their branches. The native peer test selects
+414 for non-female victims and the 415 continuation for female slots 2/9
+(including hidden-roster remapping). Earlier copies generally omitted this
+native branch. The shared implementation follows the local 43d4b0 and
+43d540/43d559 listings, with mk4decomp's `CountdownStoreCallChain` and the
+matching dual-entry source as reference. Descriptor lengths come from the
+loaded retail image, including native rebinds, rather than copied C counts.
+
+Validation reuses shared VM checks, strict coverage/canonical audits and the
+existing battle regressions for native scenes. No scene-specific tests added.
+Other native subsystems and generated script roots remain migration work.
+
+The standalone generated clip-frame files also had zero remaining symbol
+references across game sources and tests. All seventeen remaining files and
+their includes are removed rather than regenerating unused arrays after fan
+migration. Shared VM checks, all strict script audits and source-navigation
+checks pass. Existing battle regressions pass the fan/stage scenes, then fail
+at the old exact-tick Scorpion throw assertion. An isolated build of pre-change
+4b234fe fails at the identical assertion; it is a pre-existing test limitation,
+not evidence of a new fan regression.

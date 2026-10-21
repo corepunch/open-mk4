@@ -1,9 +1,9 @@
+#include "retail_vm.h"
 #include "character.h"
 
 static const ButtonTable close_hp_followup, combo_hp_followup, close_hk_followup;
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 
@@ -174,7 +174,7 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_DRAW] = sub_zero_weapon,
                                        [CPU_FINISH_1] = sub_zero_first_fatality,
                                        [CPU_FINISH_2] = sub_zero_second_fatality,
-                                       [CPU_FINISH_FAN] = sub_zero_fan_fatality,
+                                       [CPU_FINISH_FAN] = retail_fan_finish,
                                        [CPU_FINISH_SPIKE] = sub_zero_spike_fatality,
                                    }};
 
@@ -238,26 +238,6 @@ void sub_zero_entry_retail_script_004de4e0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
-}
-
-void sub_zero_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void sub_zero_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void sub_zero_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void sub_zero_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void sub_zero_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
 }
 
 void sub_zero_entry_retail_script_004e0368(Fighter *fighter) {
@@ -438,8 +418,4 @@ void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004ed588(Fighter *fighter) {
   retail_script_004ed588(fighter);
-}
-
-const mmove_t *sub_zero_retail_script_004e0138_phase(void) {
-  return &retail_script_004e0138_phase;
 }

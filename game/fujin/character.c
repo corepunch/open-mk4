@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -107,26 +107,6 @@ void fujin_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void fujin_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void fujin_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void fujin_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void fujin_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void fujin_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void fujin_entry_retail_script_004e5d20(Fighter *fighter) {
   retail_script_004e5d20(fighter);
 }
@@ -187,10 +167,6 @@ void fujin_entry_retail_script_004e6950(Fighter *fighter) {
   retail_script_004e6950(fighter);
 }
 
-const mmove_t *fujin_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void fujin_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -209,10 +185,6 @@ void fujin_entry_retail_script_004e8258(Fighter *fighter) {
 
 void fujin_entry_retail_script_004e8298(Fighter *fighter) {
   retail_script_004e8298(fighter);
-}
-
-void fujin_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void fujin_entry_retail_script_004e62c0(Fighter *fighter) {

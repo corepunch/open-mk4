@@ -5,6 +5,7 @@
 #define RETAIL_SCRIPT_BEGIN 0x4d0000u
 #define RETAIL_SCRIPT_END 0x4ef000u
 
+void retail_vm_bind_animation(Fighter *fighter, uint32_t descriptor, int first);
 void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn finish);
 
 /* Caller supplies a reviewed contiguous script range and

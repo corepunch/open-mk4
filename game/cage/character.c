@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "character.h"
 
 /* Combat values remain the native approximation until measured against retail. */
@@ -17,7 +18,6 @@ const MoveDef cage_s_cpu_kick_script = {.clip = 308, .last = 24, .flags = SF_LOC
 const MoveDef cage_s_powered_punch_script = {.clip = 85, .last = 54, .flags = SF_LOCK | SF_RECORD};
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Contact records from Cage's 53d2b8/53d268 tables, selected by the
  * generated controller callbacks479b70/479f00. */
@@ -98,26 +98,6 @@ void cage_entry_retail_script_004de2f8(Fighter *fighter) {
 
 void cage_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
-}
-
-void cage_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void cage_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void cage_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void cage_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void cage_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
 }
 
 void cage_entry_retail_script_004e12a0(Fighter *fighter) {
@@ -202,10 +182,6 @@ void cage_entry_retail_script_004e80a8(Fighter *fighter) {
 
 void cage_entry_retail_script_004e80d0(Fighter *fighter) {
   retail_script_004e80d0(fighter);
-}
-
-const mmove_t *cage_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
 }
 
 void cage_entry_retail_script_004e61e0(Fighter *fighter) {
@@ -330,10 +306,6 @@ void cage_entry_retail_script_004e1370(Fighter *fighter) {
 
 void cage_entry_retail_script_004e1380(Fighter *fighter) {
   retail_script_004e1380(fighter);
-}
-
-void cage_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void cage_entry_retail_script_004e9718(Fighter *fighter) {

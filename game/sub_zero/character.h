@@ -33,7 +33,6 @@
 #define enter_sweep sub_zero_enter_sweep
 #define enter_throw sub_zero_enter_throw
 #define enter_uppercut sub_zero_enter_uppercut
-#define fan_start sub_zero_fan_start
 #define finish_scene sub_zero_finish_scene
 #define first_fatality_script sub_zero_first_fatality_script
 #define ground_attack sub_zero_ground_attack
@@ -92,10 +91,6 @@
 #define script_combo_hp_tail sub_zero_script_combo_hp_tail
 #define script_crouch_lk_tail sub_zero_script_crouch_lk_tail
 #define script_draw_equip sub_zero_script_draw_equip
-#define script_fan_cycle sub_zero_script_fan_cycle
-#define script_fan_tail sub_zero_script_fan_tail
-#define script_fan_victim_end sub_zero_script_fan_victim_end
-#define script_fan_victory sub_zero_script_fan_victory
 #define script_first_begin sub_zero_script_first_begin
 #define script_first_cues1 sub_zero_script_first_cues1
 #define script_first_cues2 sub_zero_script_first_cues2
@@ -187,7 +182,6 @@ void sub_zero_enter_lk_throw(Fighter *fighter);
 void sub_zero_enter_sweep(Fighter *fighter);
 void sub_zero_enter_throw(Fighter *fighter);
 void sub_zero_enter_uppercut(Fighter *fighter);
-void sub_zero_fan_start(Fighter *fighter);
 void sub_zero_finish_scene(Fighter *fighter);
 void sub_zero_first_fatality_script(Fighter *fighter);
 void sub_zero_ground_attack(Fighter *fighter, int index);
@@ -229,12 +223,6 @@ void sub_zero_entry_retail_script_004de490(Fighter *fighter);
 void sub_zero_entry_retail_script_004de4b8(Fighter *fighter);
 void sub_zero_entry_retail_script_004de4e0(Fighter *fighter);
 void sub_zero_entry_retail_script_004de798(Fighter *fighter);
-void sub_zero_entry_retail_script_004e0118(Fighter *fighter);
-const mmove_t *sub_zero_retail_script_004e0138_phase(void);
-void sub_zero_entry_retail_script_004e0148(Fighter *fighter);
-void sub_zero_entry_retail_script_004e0158(Fighter *fighter);
-void sub_zero_entry_retail_script_004e0188(Fighter *fighter);
-void sub_zero_entry_retail_script_004e01a0(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0368(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0378(Fighter *fighter);
 void sub_zero_entry_retail_script_004e0388(Fighter *fighter);
@@ -306,10 +294,6 @@ void sub_zero_script_close_hp_tail(Fighter *fighter);
 void sub_zero_script_combo_hp_tail(Fighter *fighter);
 void sub_zero_script_crouch_lk_tail(Fighter *fighter);
 void sub_zero_script_draw_equip(Fighter *fighter);
-void sub_zero_script_fan_cycle(Fighter *fighter);
-void sub_zero_script_fan_tail(Fighter *fighter);
-void sub_zero_script_fan_victim_end(Fighter *fighter);
-void sub_zero_script_fan_victory(Fighter *fighter);
 void sub_zero_script_first_begin(Fighter *fighter);
 void sub_zero_script_first_cues1(Fighter *fighter);
 void sub_zero_script_first_cues2(Fighter *fighter);
@@ -346,7 +330,6 @@ void sub_zero_stop_body(Fighter *fighter);
 void sub_zero_air_throw(Fighter *fighter);
 void sub_zero_clone(Fighter *fighter);
 void sub_zero_crouch_lp(Fighter *fighter);
-void sub_zero_fan_fatality(Fighter *fighter);
 void sub_zero_first_fatality(Fighter *fighter);
 void sub_zero_hk(Fighter *fighter);
 void sub_zero_hp(Fighter *fighter);

@@ -12,8 +12,8 @@
       "evidence": "UP record 4e4600 (45e250: close gate and HP+HK+LP+LK chord 4e40d8) -> 467ce0 -> 4e0498[10] = 4539b0: 1.5-unit alignment, owner 432 cycles and play-out loop, victim 389/431 bite controller 453fa0."
     },
     "0x467e00": {
-      "source": "game/reptile/moves/fan.c",
-      "symbol": "reptile_entry_fan",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -71,31 +71,6 @@
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
       "sample": 42,
       "paired": true
-    },
-    "0x4e0138": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "return_to": "caller",
-      "sample": 69
-    },
-    "0x4e0148": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
-    },
-    "0x4e0158": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 107
-    },
-    "0x4e01a0": {
-      "clip": 416,
-      "count": 108,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
     },
     "0x4e5c70": {
       "clip": 66,
@@ -194,12 +169,6 @@
     "0x4de328",
     "0x4de6b8",
     "0x4de798",
-    "0x4e0118",
-    "0x4e0138",
-    "0x4e0148",
-    "0x4e0158",
-    "0x4e0188",
-    "0x4e01a0",
     "0x4e5c70",
     "0x4e5ca0",
     "0x4e5d90",
@@ -278,8 +247,8 @@
       "evidence": "Reptile air lp entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "fan_fatality": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Reptile fan fatality entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "high_kick": {
@@ -661,8 +630,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x467e00": {
-      "source": "game/reptile/moves/fan.c",
-      "symbol": "reptile_entry_fan",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -739,5 +708,37 @@
     "CPU_FINISH_1": 0,
     "CPU_FINISH_2": 117964,
     "evidence": "45e570 (first) has no lower bound and accepts up to one unit; 45e530 (second) rejects distances below 0x1cccc. CPU distances 4dfe10/4dfe50[10] are 0xcccc and 0x23333."
+  },
+  "runtime_scripts": {
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    }
   }
 }

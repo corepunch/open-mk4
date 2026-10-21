@@ -89,7 +89,7 @@ void sub_zero_start_fatality(Fighter *fighter, int id) {
   }
   FighterFn start = id == FINISH_SUB_ZERO_1   ? sub_zero_first_fatality_script
                     : id == FINISH_SUB_ZERO_2 ? sub_zero_second_fatality_script
-                    : id == FINISH_FAN        ? sub_zero_fan_start
+                    : id == FINISH_FAN        ? retail_fan_start
                                               : sub_zero_spike_start;
   start(fighter);
 }

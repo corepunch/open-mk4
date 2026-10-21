@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Retail attack records; source addresses identify the supplied EXE. */
 
@@ -130,7 +130,7 @@ static const CpuMoves cpu_moves = {
             [CPU_DRAW] = liu_kang_weapon,
             [CPU_FINISH_1] = liu_kang_first_fatality,
             [CPU_FINISH_2] = liu_kang_second_fatality,
-            [CPU_FINISH_FAN] = liu_kang_fan_fatality,
+            [CPU_FINISH_FAN] = retail_fan_finish,
             [CPU_FINISH_SPIKE] = liu_kang_spike_fatality,
         },
     .finish_min = {0x1cccc, 0}, /* 4dfe10/4dfe50[3]. */
@@ -189,30 +189,6 @@ void liu_kang_entry_retail_script_004dfff8(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004e0020(Fighter *fighter) {
   retail_script_004e0020(fighter);
-}
-
-void liu_kang_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void liu_kang_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
-}
-
-void liu_kang_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void liu_kang_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void liu_kang_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void liu_kang_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
 }
 
 void liu_kang_entry_retail_script_004e5c70(Fighter *fighter) {
@@ -373,10 +349,6 @@ void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter) {
   retail_script_004ed6f8(fighter);
-}
-
-const mmove_t *liu_kang_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
 }
 
 void liu_kang_entry_retail_script_004e9de8(Fighter *fighter) {

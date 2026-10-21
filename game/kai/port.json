@@ -148,147 +148,6 @@
         ]
       }
     ],
-    "0x4e0118": [
-      {
-        "pc": "0x4e0118",
-        "words": [
-          "0x47000245",
-          "0x13f03c"
-        ]
-      },
-      {
-        "pc": "0x4e0120",
-        "words": [
-          "0x32000000",
-          "0x43d460"
-        ]
-      }
-    ],
-    "0x4e0138": [
-      {
-        "pc": "0x4e0138",
-        "words": [
-          "0x500004d"
-        ]
-      },
-      {
-        "pc": "0x4e013c",
-        "words": [
-          "0x12000045"
-        ]
-      },
-      {
-        "pc": "0x4e0140",
-        "words": [
-          "0x32000000",
-          "0x43d530"
-        ]
-      }
-    ],
-    "0x4e0148": [
-      {
-        "pc": "0x4e0148",
-        "words": [
-          "0x1200004e"
-        ]
-      },
-      {
-        "pc": "0x4e014c",
-        "words": [
-          "0x500006b"
-        ]
-      },
-      {
-        "pc": "0x4e0150",
-        "words": [
-          "0x32000000",
-          "0x43d6f0"
-        ]
-      }
-    ],
-    "0x4e0158": [
-      {
-        "pc": "0x4e0158",
-        "words": [
-          "0x3000000"
-        ]
-      },
-      {
-        "pc": "0x4e015c",
-        "words": [
-          "0x48000200",
-          "0x13f033"
-        ]
-      },
-      {
-        "pc": "0x4e0164",
-        "words": [
-          "0x12000012"
-        ]
-      },
-      {
-        "pc": "0x4e0168",
-        "words": [
-          "0x3000000"
-        ]
-      },
-      {
-        "pc": "0x4e016c",
-        "words": [
-          "0x33000000",
-          "0x138059"
-        ]
-      }
-    ],
-    "0x4e0188": [
-      {
-        "pc": "0x4e0188",
-        "words": [
-          "0x47000245",
-          "0x13f03f"
-        ]
-      },
-      {
-        "pc": "0x4e0190",
-        "words": [
-          "0x500004d"
-        ]
-      },
-      {
-        "pc": "0x4e0194",
-        "words": [
-          "0x12000045"
-        ]
-      },
-      {
-        "pc": "0x4e0198",
-        "words": [
-          "0x33000000",
-          "0x138064"
-        ]
-      }
-    ],
-    "0x4e01a0": [
-      {
-        "pc": "0x4e01a0",
-        "words": [
-          "0x1200004e"
-        ]
-      },
-      {
-        "pc": "0x4e01a4",
-        "words": [
-          "0x500006b"
-        ]
-      },
-      {
-        "pc": "0x4e01a8",
-        "words": [
-          "0x32000000",
-          "0x43db50"
-        ]
-      }
-    ],
     "0x4e5ca0": [
       {
         "pc": "0x4e5c80",
@@ -2755,31 +2614,6 @@
       "sample": 42,
       "paired": true
     },
-    "0x4e0138": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "return_to": "caller",
-      "sample": 69
-    },
-    "0x4e0148": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
-    },
-    "0x4e0158": {
-      "clip": 415,
-      "count": 130,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 107
-    },
-    "0x4e01a0": {
-      "clip": 416,
-      "count": 108,
-      "evidence": "Shared native fan sequence 43d460/43d6f0 preserves clip415 sample69 (owner cycle/release), sample107 (victory), and clip416 sample69 (victim release); Cage uses the same retail roots as the verified Fujin stage scene.",
-      "sample": 69
-    },
     "0x4e6330": {
       "clip": 295,
       "count": 19,
@@ -2951,8 +2785,8 @@
       "evidence": "46d1d0 draw/throw/follow-up dispatch equips retail type63 and its own HP/LP/back controls."
     },
     "fan_fatality": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e0118, 0x4e0188, 0x4e0138, 0x4e0148, 0x4e0158, 0x4e01a0); verified by typed Kai inventory."
     },
     "high_kick": {
@@ -3123,8 +2957,8 @@
       "evidence": "Kai HP B,B record4e4888 and CPU near/projectile rows select native499410 rising skull."
     },
     "0x467e00": {
-      "source": "game/kai/moves/fan.c",
-      "symbol": "kai_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -3405,8 +3239,8 @@
       "evidence": "Typed RUN pickup target 46a020 and pickup gate 45efc0."
     },
     "0x467e00": {
-      "source": "game/kai/moves/fan.c",
-      "symbol": "kai_fan_fatality",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_fan_finish",
       "evidence": "Typed stage-fatality target 0x467e00; generated owner/victim streams remain character-owned."
     },
     "0x467e70": {
@@ -3483,5 +3317,37 @@
     "CPU_FINISH_1": 0,
     "evidence": "Kai first45e220 uses the45e570 close gate up to1 unit and second45e530 accepts1.8..3; CPU targets4dfe10/4dfe50[11] are.8 and1.8 units, and the CPU scene entry bypasses both human gates.",
     "CPU_FINISH_2": 0
+  },
+  "runtime_scripts": {
+    "0x4e01a0": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0158": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0148": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0188": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0138": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    },
+    "0x4e0118": {
+      "source": "game/retail_vm.c",
+      "symbol": "retail_vm_enter",
+      "evidence": "Shared native scene coordinator and retail script words; docs/research/shared-retail-runtime.md"
+    }
   }
 }

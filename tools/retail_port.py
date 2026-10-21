@@ -96,6 +96,11 @@ for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub
                 SPECIFIC[_character][_name] = ('game/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _root)
 
 
+# This scene has one native coordinator for all fighters, with direct retail words.
+for _character in SPECIFIC:
+    SPECIFIC[_character]['fan_fatality'] = ('game/retail_scene.c', 'retail_fan_finish')
+
+
 PORT_NOTES = {
     (4, 'lp_throw'): 'Retail selector 4de798[4] chooses 4de6b8: owner/victim 76/153, damage 0x2666 at sample 25, '
                     'owner return after sample 48. Reaction 102 plays 142/141/143, waits 20 and reverses into getup 328. '

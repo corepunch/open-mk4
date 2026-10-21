@@ -86,6 +86,11 @@ static void bind_image(Fighter *fighter, const Mk4Image *image, uint32_t packed,
   fighter->sample_override = first < 0 ? (int)count - 1 : first;
 }
 
+void retail_vm_bind_animation(Fighter *fighter, uint32_t descriptor, int first) {
+  require(descriptor % 4 == 0, "Unaligned animation descriptor");
+  bind_image(fighter, fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image(), descriptor / 4, first);
+}
+
 static void bind(Fighter *fighter, uint32_t packed, int first) {
   bind_image(fighter, fighter->retail_vm.image, packed, first);
 }

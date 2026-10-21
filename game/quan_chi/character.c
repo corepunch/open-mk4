@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 static const MoveDef s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
@@ -98,26 +98,6 @@ void quan_chi_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void quan_chi_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void quan_chi_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void quan_chi_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void quan_chi_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void quan_chi_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void quan_chi_entry_retail_script_004e6998(Fighter *fighter) {
   retail_script_004e6998(fighter);
 }
@@ -190,10 +170,6 @@ void quan_chi_entry_retail_script_004e9910(Fighter *fighter) {
   retail_script_004e9910(fighter);
 }
 
-const mmove_t *quan_chi_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void quan_chi_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -208,10 +184,6 @@ void quan_chi_entry_retail_script_004e6190(Fighter *fighter) {
 
 void quan_chi_entry_retail_script_004e6270(Fighter *fighter) {
   retail_script_004e6270(fighter);
-}
-
-void quan_chi_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter) {

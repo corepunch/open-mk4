@@ -1427,6 +1427,11 @@ def bindings_for(character):
     # expand its generated frame phase rather than decrementing a counter.
     if 0x43d530 in result:
         result[0x43d530] = replace(result[0x43d530], mmove=True)
+    for address, function in ((0x43d460, 'retail_fan_tail'), (0x43d510, 'retail_fan_cycle'),
+                              (0x43d530, 'retail_fan_cycle'), (0x43d6f0, 'retail_fan_victory'),
+                              (0x43db50, 'retail_fan_victim_end')):
+        result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
+                                  evidence='Shared original native scene counter/peer selection and retail playback; docs/research/shared-retail-runtime.md')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

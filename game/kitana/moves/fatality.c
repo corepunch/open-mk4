@@ -9,7 +9,7 @@ void kitana_arena_fatality(Fighter *fighter, int id) {
   }
   mk4_script_scene_pose(fighter, id == FINISH_FAN ? 415 : 293, id == FINISH_FAN ? 130 : 20, 0);
   mk4_script_scene_pose(kitana_opponent(fighter), id == FINISH_FAN ? 416 : 13, id == FINISH_FAN ? 108 : 56, 0);
-  (id == FINISH_FAN ? kitana_fan_start : kitana_spike_start)(fighter);
+  (id == FINISH_FAN ? retail_fan_start : kitana_spike_start)(fighter);
 }
 
 /* Native scenes retain independent victims, blends, particles and teardown.

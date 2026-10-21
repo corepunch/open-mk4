@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Combat values remain the native approximation until measured against retail. */
 static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
@@ -114,26 +114,6 @@ void reiko_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void reiko_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void reiko_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void reiko_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void reiko_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void reiko_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void reiko_entry_retail_script_004e5c70(Fighter *fighter) {
   retail_script_004e5c70(fighter);
 }
@@ -202,10 +182,6 @@ void reiko_entry_retail_script_004e9bd0(Fighter *fighter) {
   retail_script_004e9bd0(fighter);
 }
 
-const mmove_t *reiko_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void reiko_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -240,10 +216,6 @@ void reiko_entry_retail_script_004ea040(Fighter *fighter) {
 
 void reiko_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_script_004ea0b8(fighter);
-}
-
-void reiko_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void reiko_entry_retail_script_004e82b8(Fighter *fighter) {

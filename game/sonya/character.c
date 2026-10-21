@@ -1,7 +1,7 @@
+#include "retail_vm.h"
 #include "character.h"
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 /* Retail attack records (docs/scorpion/combat-core.md section 2). */
 
@@ -105,7 +105,7 @@ static const CpuMoves cpu_moves = {
             [CPU_DRAW] = sonya_weapon,
             [CPU_FINISH_1] = sonya_first_fatality,
             [CPU_FINISH_2] = sonya_second_fatality,
-            [CPU_FINISH_FAN] = sonya_fan_fatality,
+            [CPU_FINISH_FAN] = retail_fan_finish,
             [CPU_FINISH_SPIKE] = sonya_spike_fatality,
         },
     .finish_min = {0x10000, 0x1cccc},
@@ -145,30 +145,6 @@ void sonya_entry_retail_script_004de360(Fighter *fighter) {
 
 void sonya_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
-}
-
-void sonya_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void sonya_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
-}
-
-void sonya_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void sonya_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void sonya_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void sonya_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
 }
 
 void sonya_entry_retail_script_004e01c0(Fighter *fighter) {
@@ -377,8 +353,4 @@ void sonya_entry_retail_script_004ec7f0(Fighter *fighter) {
 
 void sonya_entry_retail_script_004ed4c0(Fighter *fighter) {
   retail_script_004ed4c0(fighter);
-}
-
-const mmove_t *sonya_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
 }

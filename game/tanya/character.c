@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "character.h"
 
 /* Combat values remain the native approximation until measured against retail. */
@@ -14,7 +15,6 @@ static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, 
 static const MoveDef s_victory = {124, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 static const ButtonTable standing = {{[BUTTON_HIGH_PUNCH] = tanya_press_high_punch,
     [BUTTON_LOW_PUNCH] = tanya_press_low_punch,
@@ -102,26 +102,6 @@ void tanya_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
 }
 
-void tanya_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void tanya_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void tanya_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
-}
-
-void tanya_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void tanya_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
-}
-
 void tanya_entry_retail_script_004e5c70(Fighter *fighter) {
   retail_script_004e5c70(fighter);
 }
@@ -182,10 +162,6 @@ void tanya_entry_retail_script_004e6950(Fighter *fighter) {
   retail_script_004e6950(fighter);
 }
 
-const mmove_t *tanya_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void tanya_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -196,10 +172,6 @@ void tanya_entry_retail_script_004e69b0(Fighter *fighter) {
 
 void tanya_entry_retail_script_004e6190(Fighter *fighter) {
   retail_script_004e6190(fighter);
-}
-
-void tanya_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
 }
 
 void tanya_entry_retail_script_004ed268(Fighter *fighter) {

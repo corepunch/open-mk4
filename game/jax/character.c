@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "character.h"
 
 const MoveDef jax_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
@@ -17,7 +18,6 @@ static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_L
 static const MoveDef s_victory = {.clip = 412, .last = MOVE_END, .flags = SF_HOLD};
 
 #include "generated/scripts.inc"
-#include "generated/frames.inc"
 
 static const ButtonTable s_standing = {
     {[BUTTON_HIGH_PUNCH] = jax_press_hp, [BUTTON_LOW_PUNCH] = jax_press_lp, [BUTTON_HIGH_KICK] = jax_press_hk, [BUTTON_LOW_KICK] = jax_press_lk}};
@@ -107,22 +107,6 @@ void jax_entry_retail_script_004de568(Fighter *fighter) {
 
 void jax_entry_retail_script_004de798(Fighter *fighter) {
   retail_script_004de798(fighter);
-}
-
-void jax_entry_retail_script_004e0118(Fighter *fighter) {
-  retail_script_004e0118(fighter);
-}
-
-void jax_entry_retail_script_004e0148(Fighter *fighter) {
-  retail_script_004e0148(fighter);
-}
-
-void jax_entry_retail_script_004e0188(Fighter *fighter) {
-  retail_script_004e0188(fighter);
-}
-
-void jax_entry_retail_script_004e01a0(Fighter *fighter) {
-  retail_script_004e01a0(fighter);
 }
 
 void jax_entry_retail_script_004e1390(Fighter *fighter) {
@@ -261,10 +245,6 @@ void jax_entry_retail_script_004ed090(Fighter *fighter) {
   retail_script_004ed090(fighter);
 }
 
-const mmove_t *jax_retail_script_004e0138_repeat_phase(void) {
-  return &retail_script_004e0138_phase;
-}
-
 void jax_entry_retail_script_004e61e0(Fighter *fighter) {
   retail_script_004e61e0(fighter);
 }
@@ -299,12 +279,4 @@ void jax_entry_retail_script_004ea040(Fighter *fighter) {
 
 void jax_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_script_004ea0b8(fighter);
-}
-
-void jax_entry_retail_script_004e0138(Fighter *fighter) {
-  retail_script_004e0138(fighter);
-}
-
-void jax_entry_retail_script_004e0158(Fighter *fighter) {
-  retail_script_004e0158(fighter);
 }
