@@ -21,7 +21,6 @@ enum {
 };
 
 void jarek_fatality_contact_hold(Fighter *fighter);
-void jarek_script_air_finish(Fighter *fighter);
 void jarek_script_current_reaction(Fighter *fighter, int reaction);
 void jarek_script_low_kick_avoid(Fighter *fighter);
 void jarek_script_low_kick_clear(Fighter *fighter);
@@ -71,7 +70,6 @@ extern const MoveDef jarek_s_block;
 extern const MoveDef jarek_s_crouch;
 extern const MoveDef jarek_s_low_kick;
 
-void jarek_entry_retail_script_004e6270(Fighter *fighter);
 void jarek_weapon_upper_contact(Fighter *fighter);
 void jarek_weapon_reaction(Fighter *fighter);
 void jarek_entry_retail_script_004ec4f0(Fighter *fighter);

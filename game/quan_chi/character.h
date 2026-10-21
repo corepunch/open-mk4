@@ -10,12 +10,10 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define press_sweep retail_press_sweep
 
-void quan_chi_script_air_finish(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable quan_chi_diagonal_air;
-void quan_chi_entry_retail_script_004e6270(Fighter *fighter);
 void quan_chi_skull(Fighter *fighter);
 void quan_chi_script_skull_release(Fighter *fighter);
 void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter);

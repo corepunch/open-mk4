@@ -12,7 +12,6 @@
 
 void noob_saibot_command_498b70(Fighter *fighter);
 void noob_saibot_command_498e70(Fighter *fighter);
-void noob_saibot_script_air_finish(Fighter *fighter);
 void noob_saibot_script_lp_end(Fighter *fighter);
 void noob_saibot_script_lp_return(Fighter *fighter);
 void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction);
@@ -35,10 +34,6 @@ void noob_saibot_entry_retail_script_004e62c0(Fighter *fighter);
 void noob_saibot_entry_retail_script_004e62d8(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ea040(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ea0b8(Fighter *fighter);
-void noob_saibot_entry_retail_script_004e82b8(Fighter *fighter);
-void noob_saibot_entry_retail_script_004e82e0(Fighter *fighter);
-void noob_saibot_entry_retail_script_004e8310(Fighter *fighter);
-void noob_saibot_entry_retail_script_004e8818(Fighter *fighter);
 void noob_saibot_flip_kick(Fighter *fighter);
 void noob_saibot_entry_retail_script_004ed038(Fighter *fighter);
 void noob_saibot_star(Fighter *fighter);

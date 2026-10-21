@@ -102,9 +102,7 @@ static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_CLOSE_HP] = sub_zero_cpu_close_hp,
                                        [CPU_CLOSE_HK] = sub_zero_cpu_close_hk,
                                        [CPU_CROUCH_LP] = retail_crouch_low_punch,
-                                       [CPU_AIR_HP] = retail_air_high_punch,
-                                       [CPU_AIR_HK] = retail_air_diagonal_high_kick,
-                                       [CPU_AIR_LK] = retail_air_diagonal_low_kick,
+
                                        [CPU_DRAW] = sub_zero_weapon,
                                    }};
 

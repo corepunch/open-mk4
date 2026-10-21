@@ -1508,6 +1508,21 @@ def bindings_for(character):
                                   evidence='One shared47c070 native teleport and original scripts; checked4e88f0 input and matching native phase addresses')
     result[0x47ffc0] = Binding('mk4_land', 'game/mk4_common.c', ('tail',), flow='terminal', mmove=True,
                                evidence='Original47ffc0 calls shared native46fd90 landing before controller return')
+    # Native air controllers consume original descriptor/contact rows once.
+    result[0x46c7f0] = Binding('retail_air_straight_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46c820] = Binding('retail_air_straight_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46c970] = Binding('retail_air_straight_wide_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46df90] = Binding('retail_air_lk_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e070] = Binding('retail_air_lk_alt_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e150] = Binding('retail_air_lk_wide_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e3d0] = Binding('retail_air_diagonal_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e4d0] = Binding('retail_air_diagonal_alt_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e5c0] = Binding('retail_air_diagonal_wide_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e730] = Binding('retail_air_hp_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46eea0] = Binding('retail_air_lp_tail', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46e240] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46dff0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x46c8f0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')
@@ -1919,7 +1934,7 @@ CHARACTER_BINDINGS[0][0x48f750] = replace(BINDINGS[0x48f750], mmove=True)
 for _address, _binding in list(CHARACTER_BINDINGS[3].items()):
     CHARACTER_BINDINGS[3][_address] = replace(_binding, mmove=True)
 for _address in (0x47ed40, 0x47ef10):
-    CHARACTER_BINDINGS[3][_address] = Binding('liu_script_land', 'game/liu_kang/moves/air_attacks.c', ('tail',), flow='terminal', mmove=True,
+    CHARACTER_BINDINGS[3][_address] = Binding('liu_script_land', 'game/liu_kang/moves/projectile.c', ('tail',), flow='terminal', mmove=True,
         evidence='%x finishes the generated stream and enters the common landing controller' % _address)
 for _address in (0x48f6e0, 0x48f750):
     CHARACTER_BINDINGS[3][_address] = replace(BINDINGS[_address], mmove=True)

@@ -54,7 +54,7 @@ static void clone_cleanup(Fighter *fighter) {
 }
 
 static void clone_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, sub_zero_air_land);
+  fighter_finish_mmove(fighter, retail_air_land);
 }
 
 static void clone_land_frames_frame_0(Fighter *fighter) {

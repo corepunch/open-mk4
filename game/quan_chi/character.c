@@ -57,10 +57,6 @@ const CharacterDef mk4_quan_chi = {
     .move_list_count = 0,
 };
 
-void quan_chi_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 8);
-}
-
 void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed3a0, fighter_ready, 8);
 }

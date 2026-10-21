@@ -22,12 +22,6 @@
 #define press_combo_hk scorpion_press_combo_hk
 #define press_combo_hp scorpion_press_combo_hp
 #define press_knee_hp scorpion_press_knee_hp
-#define s_teleport_land scorpion_s_teleport_land
-#define script_air_diagonal_tail scorpion_script_air_diagonal_tail
-#define script_air_hp_tail scorpion_script_air_hp_tail
-#define script_air_kick_tail scorpion_script_air_kick_tail
-#define script_air_lk_tail scorpion_script_air_lk_tail
-#define script_air_lp_tail scorpion_script_air_lp_tail
 #define script_beast_attack scorpion_script_beast_attack
 #define script_beast_begin scorpion_script_beast_begin
 #define script_beast_gore scorpion_script_beast_gore
@@ -71,7 +65,6 @@
 #define start_fatality scorpion_start_fatality
 #define sword_spin_control scorpion_sword_spin_control
 #define sword_spin_query scorpion_sword_spin_query
-#define teleport_land_script scorpion_teleport_land_script
 #define teleport_script scorpion_teleport_script
 
 enum {
@@ -127,18 +120,12 @@ void scorpion_entry_retail_script_004ec8b0(Fighter *fighter);
 void scorpion_entry_retail_script_004ec918(Fighter *fighter);
 void scorpion_entry_retail_script_004ed448(Fighter *fighter);
 void scorpion_entry_retail_script_004ed4a8(Fighter *fighter);
-extern const MoveDef scorpion_s_teleport_land;
 void scorpion_beast_fatality(Fighter *fighter);
 void scorpion_burn_fatality(Fighter *fighter);
 void scorpion_fire(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_teleport(Fighter *fighter);
 void scorpion_weapon(Fighter *fighter);
-void scorpion_script_air_diagonal_tail(Fighter *fighter);
-void scorpion_script_air_hp_tail(Fighter *fighter);
-void scorpion_script_air_kick_tail(Fighter *fighter);
-void scorpion_script_air_lk_tail(Fighter *fighter);
-void scorpion_script_air_lp_tail(Fighter *fighter);
 void scorpion_script_beast_attack(Fighter *fighter);
 void scorpion_script_beast_begin(Fighter *fighter);
 void scorpion_script_beast_gore(Fighter *victim, int type);
@@ -180,7 +167,6 @@ void scorpion_spin_script(Fighter *fighter);
 void scorpion_start_fatality(Fighter *fighter, int id);
 void scorpion_sword_spin_control(Fighter *fighter);
 void scorpion_sword_spin_query(Fighter *fighter);
-void scorpion_teleport_land_script(Fighter *fighter);
 void scorpion_teleport_script(Fighter *fighter);
 
 #endif

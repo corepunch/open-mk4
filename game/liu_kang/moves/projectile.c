@@ -65,3 +65,21 @@ void liu_kang_high_fireball(Fighter *fighter) {
 void liu_kang_low_fireball(Fighter *fighter) {
   fireball(fighter, true);
 }
+
+void liu_kang_liu_script_spawn_air(Fighter *fighter, int task_type) {
+  require(task_type == 64, "Wrong Liu Kang air-fireball task type");
+  liu_kang_fireball_spawn(fighter, 2);
+}
+
+static void air_return_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
+void liu_kang_liu_script_land(Fighter *fighter) {
+  fighter_finish_mmove(fighter, mk4_land);
+}
+
+void liu_kang_liu_script_air_return(Fighter *fighter) {
+  fighter->body.gravity = 0x20c;
+  native_await(fighter, native_grounded, air_return_land);
+}

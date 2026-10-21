@@ -50,7 +50,6 @@ bool jax_can_missile(const Fighter *fighter);
 void jax_missile(Fighter *fighter);
 void jax_missile_spawn(Fighter *fighter, int task_type);
 void jax_fan_tail(Fighter *fighter);
-void jax_script_air_finish(Fighter *fighter);
 void jax_script_opponent_reaction(Fighter *fighter, int reaction);
 void jax_weapon_action(Fighter *fighter);
 void jax_entry_retail_script_004e1390(Fighter *fighter);

@@ -25,11 +25,6 @@
 #define s_knockdown kitana_s_knockdown
 #define s_victory kitana_s_victory
 #define scene_end_watch kitana_scene_end_watch
-#define script_air_diagonal_tail kitana_script_air_diagonal_tail
-#define script_air_hp_tail kitana_script_air_hp_tail
-#define script_air_kick_tail kitana_script_air_kick_tail
-#define script_air_lk_tail kitana_script_air_lk_tail
-#define script_air_lp_tail kitana_script_air_lp_tail
 #define script_cartwheel_tail kitana_script_cartwheel_tail
 #define script_close_hp_tail kitana_script_close_hp_tail
 #define script_combo_hp_tail kitana_script_combo_hp_tail
@@ -67,8 +62,6 @@ enum {
 #define SEQUENCE(segments, count, end) {segments, COUNT(segments), NULL, 0, count, end, NULL}
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
-void kitana_cpu_air_hk(Fighter *fighter);
-void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
 void kitana_cpu_close_hp(Fighter *fighter);
 void kitana_enter_victory(Fighter *fighter);
@@ -118,11 +111,6 @@ void kitana_entry_retail_script_004ed4c0(Fighter *fighter);
 extern const MoveDef kitana_s_knockdown;
 extern const MoveDef kitana_s_victory;
 void kitana_scene_end_watch(Fighter *fighter);
-void kitana_script_air_diagonal_tail(Fighter *fighter);
-void kitana_script_air_hp_tail(Fighter *fighter);
-void kitana_script_air_kick_tail(Fighter *fighter);
-void kitana_script_air_lk_tail(Fighter *fighter);
-void kitana_script_air_lp_tail(Fighter *fighter);
 void kitana_script_cartwheel_tail(Fighter *fighter);
 void kitana_script_draw_equip(Fighter *fighter);
 void kitana_script_first_release(Fighter *fighter);

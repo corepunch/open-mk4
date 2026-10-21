@@ -109,22 +109,6 @@ void noob_saibot_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ea0b8, mk4_script_thrown_ready, 17);
 }
 
-void noob_saibot_entry_retail_script_004e82b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e82b8, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e82e0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e82e0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e8310(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8310, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e8818(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 17);
-}
-
 void noob_saibot_entry_retail_script_004ed038(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 17);
 }

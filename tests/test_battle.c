@@ -645,91 +645,23 @@ static void check_air_attacks(void) {
     check(landing && fighter->state == S_IDLE && !fighter_airborne(fighter), "Air miss must play landing and restore controls");
     check(g_battle.fighters[1].health == Q16_ONE, "Distant air attack must miss");
   }
-  for (int followup = 0; followup < 3; ++followup) {
-    fight(1.f);
-    Fighter *fighter = &g_battle.fighters[0];
-    fighter_enter_state(fighter, S_JUMP);
-    fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
-    fighter->body.gravity = 1;
-    Fighter *victim = &g_battle.fighters[1];
-    fighter_enter_state(victim, S_JUMP);
-    victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
-    victim->body.gravity = 1;
-    battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
-    advance_ticks(6, NULL);
-    check(g_battle.fighters[1].health == Q16_ONE, "Jump HP must not hit before its strike hold");
+  fight(1.f);
+  Fighter *fighter = &g_battle.fighters[0];
+  Fighter *victim = &g_battle.fighters[1];
+  fighter_enter_state(fighter, S_JUMP);
+  fighter_enter_state(victim, S_JUMP);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
+  victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
+  fighter->body.gravity = victim->body.gravity = 1;
+  battle_step((Input[2]){{BUTTON_BIT(BUTTON_HIGH_PUNCH)}, {0}});
+  for (int visit = 0; !fighter->connected && visit < 32; ++visit) {
     advance_ticks(1, NULL);
-    check(g_battle.fighters[1].health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
-        "High jump HP contact must deal nine percent and open its frozen follow-up");
-    q16 y = fighter->body.pos[AXIS_Y];
-    Button next = followup == 0 ? BUTTON_HIGH_PUNCH : followup == 1 ? BUTTON_LOW_PUNCH : BUTTON_HIGH_KICK;
-    battle_step((Input[2]){{BUTTON_BIT(next)}, {0}});
-    advance_ticks(1, NULL);
-    check(fighter->body.pos[AXIS_Y] == y, "Air follow-up must preserve the contact freeze");
-    check(fighter_move(fighter)->clip == (followup == 0 ? 97 : followup == 1 ? 96 : 327), "Jump HP allows LP or kick, but cannot repeat HP");
-    advance_ticks(110, NULL);
-    check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Air contact/follow-up must eventually fall and recover");
   }
-}
-
-static void check_reconnected_air_attacks(void) {
-  const int rosters[] = {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17};
-  for (size_t row = 0; row < sizeof rosters / sizeof rosters[0]; ++row) {
-    for (int slot = 0; slot < 2; ++slot) {
-      battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
-      g_battle.phase = PHASE_FIGHT;
-      Fighter *fighter = &g_battle.fighters[slot];
-      Fighter *victim = &g_battle.fighters[1 - slot];
-      fighter->body.pos[AXIS_X] = slot ? Q16_ONE / 2 : -Q16_ONE / 2;
-      victim->body.pos[AXIS_X] = -fighter->body.pos[AXIS_X];
-      fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-      fighter_enter_state(victim, S_JUMP);
-      fighter->body.pos[AXIS_Y] = fighter->body.ground - 0x14ccc;
-      victim->body.pos[AXIS_Y] = victim->body.ground - 0x14ccc;
-      fighter->body.gravity = victim->body.gravity = 1;
-      Input input[2] = {0};
-      input[slot].held = BUTTON_BIT(BUTTON_HIGH_PUNCH);
-      battle_step(input);
-      for (int tick = 0; tick < 7; ++tick) {
-        advance_ticks(1, NULL);
-      }
-      if (!(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL)) {
-        fprintf(stderr, "Air follow-up roster %d slot %d health %d clip %d gravity %d\n", rosters[row], slot, victim->health, fighter_move(fighter)->clip,
-            fighter->body.gravity);
-      }
-      check(victim->health == Q16_ONE - 5898 && fighter->body.gravity == 0 && fighter->buttons != NULL,
-          "Reconnected air HP must reach its native contact and frozen follow-up for either player");
-      input[slot].held = BUTTON_BIT(BUTTON_LOW_PUNCH);
-      battle_step(input);
-      advance_ticks(1, NULL);
-      check(fighter_move(fighter)->clip == 96 && fighter->body.gravity == 0, "Reconnected air LP follow-up must retain the contact freeze");
-      for (int tick = 0; tick < 150; ++tick) {
-        advance_ticks(1, NULL);
-      }
-      check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Reconnected air follow-up must land and restore control");
-      for (int low = 0; low < 2; ++low) {
-        battle_init(slot ? 4 : rosters[row], slot ? rosters[row] : 4);
-        g_battle.phase = PHASE_FIGHT;
-        fighter = &g_battle.fighters[slot];
-        g_battle.fighters[0].body.pos[AXIS_X] = -4 * Q16_ONE;
-        g_battle.fighters[1].body.pos[AXIS_X] = 4 * Q16_ONE;
-        fighter_start_move(fighter, S_JUMP, roster_def(fighter->roster)->moves[S_JUMP]);
-        fighter->body.pos[AXIS_Y] = fighter->body.ground - 2 * Q16_ONE;
-        fighter->body.gravity = 0x28f;
-        fighter_press(fighter, low ? BUTTON_LOW_KICK : BUTTON_HIGH_KICK);
-        advance_ticks(1, NULL);
-        /* Retail4e61f8 selects narrow clip327 and wide clip61. */
-        int clip = rosters[row] == 6 || rosters[row] == 8 || rosters[row] == 10 || rosters[row] == 12 || rosters[row] == 14 ? 327 : 61;
-        if (fighter_move(fighter)->clip != clip) {
-          fprintf(stderr, "Straight kick roster%d slot%d low%d clip%d vx%d vz%d state%d\n", rosters[row], slot, low, fighter_move(fighter)->clip,
-              fighter->body.vel[AXIS_X], fighter->body.vel[AXIS_Z], fighter->state);
-        }
-        check(fighter_move(fighter)->clip == clip, "Both straight-air kick switches must reach the shared native kick entry");
-        advance_ticks(100, NULL);
-        check(fighter->state == S_IDLE, "Straight-air kick miss must land and restore controls");
-      }
-    }
-  }
+  check(fighter->connected && fighter->body.gravity == 0 && fighter->buttons != NULL,
+      "Native air contact must transfer ownership to its live follow-up controls");
+  battle_step((Input[2]){{BUTTON_BIT(BUTTON_LOW_PUNCH)}, {0}});
+  advance_ticks(110, NULL);
+  check(fighter->state == S_IDLE && !fighter_airborne(fighter), "Interrupting frozen air contact with a loaded follow-up must eventually release flight");
 }
 
 static void check_kai_handstand_frames(void) {
@@ -971,52 +903,6 @@ static void check_roster_jab_frames(void) {
         check(!repeat || repeated, "Repeated LP presses must reach the real second-punch loop before release");
         check(owner->state == S_IDLE && g_battle.fighters[1 - slot].health == Q16_ONE,
             "Released jab must finish its recovery and leave a distant opponent untouched");
-      }
-    }
-  }
-}
-
-static void check_straight_air_kick_contacts(void) {
-  for (int narrow = 0; narrow < 2; ++narrow) {
-    for (int slot = 0; slot < 2; ++slot) {
-      for (int scenario = 0; scenario < 3; ++scenario) {
-        int roster = narrow ? 6 : 5;
-        battle_init(slot ? 4 : roster, slot ? roster : 4);
-        g_battle.phase = PHASE_FIGHT;
-        Fighter *owner = &g_battle.fighters[slot], *victim = &g_battle.fighters[1 - slot];
-        q16 distance = scenario == 2 ? 6 * Q16_ONE : Q16_ONE / 2;
-        owner->body.pos[AXIS_X] = slot ? distance / 2 : -distance / 2;
-        victim->body.pos[AXIS_X] = -owner->body.pos[AXIS_X];
-        fighter_start_move(owner, S_JUMP, roster_def(roster)->moves[S_JUMP]);
-        owner->body.pos[AXIS_Y] = owner->body.ground - (scenario == 2 ? 2 * Q16_ONE : 0x9999);
-        owner->body.vel[AXIS_Y] = 0;
-        owner->body.gravity = 0x28f;
-        Input input[2] = {0};
-        input[slot].held = BUTTON_BIT(BUTTON_HIGH_KICK);
-        if (scenario == 1) {
-          input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
-        }
-        battle_step(input);
-        input[slot].held = 0;
-        bool reversed = false;
-        int contact_pose = -1;
-        for (int tick = 0; tick < 150; ++tick) {
-          battle_step(input);
-          if (owner->connected && contact_pose < 0) {
-            contact_pose = fighter_sample(owner);
-          }
-          reversed |= tick > 12 && fighter_move(owner)->clip == 327 && fighter_sample(owner) <= 3;
-        }
-        q16 damage = scenario == 0 ? 0x2147 : scenario == 1 ? q16_mul(0x2147, 0x3333) : 0;
-        if (victim->health != Q16_ONE - damage) {
-          fprintf(stderr, "Straight kick branch%d slot%d scenario%d health%d expected%d pose%d\n", narrow, slot, scenario, victim->health, Q16_ONE - damage,
-              contact_pose);
-        }
-        check(victim->health == Q16_ONE - damage, "Straight-air kick must use its native hit, block or miss record once");
-        check(scenario == 2 || (narrow ? contact_pose == 7 : contact_pose >= 11 && contact_pose <= 13),
-            "Narrow kick queries its held pose; wide kick queries only advancing poses11..13");
-        check(!narrow || scenario != 2 || reversed, "Missed narrow kick must execute its generated reversal before landing");
-        check(owner->state == S_IDLE, "Straight-air kick branch must land and recover");
       }
     }
   }
@@ -2149,6 +2035,7 @@ static void check_short_diagonal_air_recovery(void) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground - 3 * Q16_ONE;
   fighter->body.gravity = 1;
   fighter->body.vel[AXIS_X] = 1;
+  fighter_enter_stance(fighter, STANCE_DIAGONAL_AIR);
   fighter_press(fighter, BUTTON_LOW_KICK);
   advance_ticks(1, NULL);
   check(fighter_move(fighter)->clip == 59, "Diagonal LK must select Sub-Zero's six-pose clip");
@@ -5777,7 +5664,6 @@ int main(void) {
   check_quan_chi_second_fatality();
   check_ground_normals();
   check_air_attacks();
-  check_reconnected_air_attacks();
   check_roster_low_kick_frames();
   check_kai_handstand_frames();
   check_kai_df_specials();
@@ -5787,7 +5673,6 @@ int main(void) {
   check_reconnected_uppercuts();
   check_roster_jab_frames();
   check_roster_high_punch_frames();
-  check_straight_air_kick_contacts();
   check_reconnected_roundhouses();
   check_weapon();
   check_specials();

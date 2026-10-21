@@ -70,9 +70,7 @@ static const CpuMoves cpu_moves = {
             [CPU_CLOSE_HP] = kitana_cpu_close_hp,
             [CPU_CLOSE_HK] = kitana_cpu_close_hk,
             [CPU_CROUCH_LP] = retail_crouch_low_punch,
-            [CPU_AIR_HP] = retail_air_high_punch,
-            [CPU_AIR_HK] = kitana_cpu_air_hk,
-            [CPU_AIR_LK] = kitana_cpu_air_lk,
+
             [CPU_DRAW] = kitana_weapon,
         },
 };

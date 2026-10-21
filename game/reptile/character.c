@@ -82,10 +82,6 @@ void reptile_entry_retail_script_004ed1e8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed1e8, fighter_ready, 10);
 }
 
-void reptile_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 10);
-}
-
 void reptile_entry_retail_script_004e97f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e97f8, fighter_ready, 10);
 }

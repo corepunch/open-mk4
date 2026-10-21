@@ -26,11 +26,6 @@
 #define fireball_mesh liu_kang_fireball_mesh
 #define fireball_spawn liu_kang_fireball_spawn
 #define flying_kick_script liu_kang_flying_kick_script
-#define liu_script_air_diagonal_tail liu_kang_liu_script_air_diagonal_tail
-#define liu_script_air_hp_tail liu_kang_liu_script_air_hp_tail
-#define liu_script_air_kick_tail liu_kang_liu_script_air_kick_tail
-#define liu_script_air_lk_tail liu_kang_liu_script_air_lk_tail
-#define liu_script_air_lp_tail liu_kang_liu_script_air_lp_tail
 #define liu_script_air_return liu_kang_liu_script_air_return
 #define liu_script_back_lp_tail liu_kang_liu_script_back_lp_tail
 #define liu_script_bicycle_motion liu_kang_liu_script_bicycle_motion
@@ -79,9 +74,6 @@ enum {
 void liu_kang_bicycle_script(Fighter *fighter);
 bool liu_kang_can_bicycle(const Fighter *fighter);
 bool liu_kang_can_first_fatality(const Fighter *fighter);
-void liu_kang_cpu_air_hk(Fighter *fighter);
-void liu_kang_cpu_air_hp(Fighter *fighter);
-void liu_kang_cpu_air_lk(Fighter *fighter);
 void liu_kang_cpu_close_hk(Fighter *fighter);
 void liu_kang_cpu_close_hp(Fighter *fighter);
 void liu_kang_finish_scene(Fighter *fighter);
@@ -96,11 +88,6 @@ void liu_kang_hk(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);
 void liu_kang_weapon(Fighter *fighter);
-void liu_kang_liu_script_air_diagonal_tail(Fighter *fighter);
-void liu_kang_liu_script_air_hp_tail(Fighter *fighter);
-void liu_kang_liu_script_air_kick_tail(Fighter *fighter);
-void liu_kang_liu_script_air_lk_tail(Fighter *fighter);
-void liu_kang_liu_script_air_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_air_return(Fighter *fighter);
 void liu_kang_liu_script_back_lp_tail(Fighter *fighter);
 void liu_kang_liu_script_bicycle_motion(Fighter *fighter);

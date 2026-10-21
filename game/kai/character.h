@@ -32,7 +32,6 @@ void kai_input_47bd10(Fighter *fighter);
 void kai_input_47c520(Fighter *fighter);
 void kai_aerial_punch_contact(Fighter *fighter);
 void kai_lunge_kick_contact(Fighter *fighter);
-void kai_script_air_finish(Fighter *fighter);
 void kai_script_contact_b10_continuation(Fighter *fighter);
 void kai_script_current_reaction(Fighter *fighter, int reaction);
 void kai_script_draw_equip(Fighter *fighter);

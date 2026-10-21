@@ -12,7 +12,6 @@
 #define s_knockdown fujin_s_knockdown
 
 void fujin_enter_throw(Fighter *fighter);
-void fujin_script_air_finish(Fighter *fighter);
 void fujin_script_current_reaction(Fighter *fighter, int reaction);
 void fujin_script_lp_extended_finish(Fighter *fighter);
 void fujin_script_lp_short_finish(Fighter *fighter);

@@ -35,11 +35,6 @@
 #define press_knee_hp sub_zero_press_knee_hp
 #define s_lp_thrown sub_zero_s_lp_thrown
 #define scene_blend_cleanup sub_zero_scene_blend_cleanup
-#define script_air_diagonal_tail sub_zero_script_air_diagonal_tail
-#define script_air_hp_tail sub_zero_script_air_hp_tail
-#define script_air_kick_tail sub_zero_script_air_kick_tail
-#define script_air_lk_tail sub_zero_script_air_lk_tail
-#define script_air_lp_tail sub_zero_script_air_lp_tail
 #define script_breath_approach sub_zero_script_breath_approach
 #define script_breath_freeze sub_zero_script_breath_freeze
 #define script_breath_object sub_zero_script_breath_object
@@ -98,7 +93,6 @@ enum {
 #define BLEND(c, sample, step, first)                                                                                                                          \
   {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, sample, sample, 1, step, first}
 
-void sub_zero_air_land(Fighter *fighter);
 void sub_zero_breath_travel(Fighter *fighter);
 bool sub_zero_can_clone(const Fighter *fighter);
 bool sub_zero_can_close_fatality(const Fighter *fighter);
@@ -143,11 +137,6 @@ void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter);
 void sub_zero_entry_retail_script_004ed588(Fighter *fighter);
 extern const MoveDef sub_zero_s_lp_thrown;
 void sub_zero_scene_blend_cleanup(Fighter *fighter);
-void sub_zero_script_air_diagonal_tail(Fighter *fighter);
-void sub_zero_script_air_hp_tail(Fighter *fighter);
-void sub_zero_script_air_kick_tail(Fighter *fighter);
-void sub_zero_script_air_lk_tail(Fighter *fighter);
-void sub_zero_script_air_lp_tail(Fighter *fighter);
 void sub_zero_script_breath_approach(Fighter *fighter);
 void sub_zero_script_breath_freeze(Fighter *fighter, int type);
 void sub_zero_script_breath_object(Fighter *fighter, int type);

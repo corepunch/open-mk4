@@ -570,6 +570,27 @@ static void native_air_ownership(void) {
   }
 }
 
+/* Original native contact rows select their recovery continuation at runtime. */
+static void native_air_loaded_recovery(void) {
+  Fighter *owner = setup(0, 2);
+  uint32_t original = mk4_image_u32(&image, 0x4e6694);
+  put_word(0x4e6694, 0x46e230);
+  owner->body.pos[AXIS_Y] = owner->body.ground - 3 * Q16_ONE;
+  owner->body.gravity = 0x28f;
+  retail_air_high_punch(owner);
+  unsigned visits = 0;
+  while (owner->retail_vm.entry != 0x4e64e0 && visits++ < 32) {
+    tick();
+  }
+  check(owner->retail_vm.active && owner->retail_vm.entry == 0x4e64e0,
+      "native contact miss must consume its loaded callback and enter the original recovery script");
+  fighter_interrupt(owner, fighter_ready);
+  tick();
+  check(!owner->retail_vm.active && owner->current_mmove == NULL && owner->body.gravity != 0,
+      "interrupting scripted air recovery must retire playback and restore flight");
+  put_word(0x4e6694, original);
+}
+
 static void native_air_capture_lifetimes(void) {
   const FighterFn entries[] = {retail_air_throw, retail_air_throw_lift, retail_air_throw_slam, retail_air_throw_flip, retail_air_throw_slam};
   for (unsigned index = 0; index < sizeof entries / sizeof *entries; ++index) {
@@ -636,6 +657,7 @@ int main(int argc, char **argv) {
   native_button_table();
   native_close_lifetimes();
   native_air_ownership();
+  native_air_loaded_recovery();
   native_air_capture_lifetimes();
   lifetimes();
   assets_bound();

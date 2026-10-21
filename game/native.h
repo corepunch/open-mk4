@@ -37,21 +37,6 @@ bool weapon_can_draw(const Fighter *fighter);
 void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *profile);
 void weapon_axe_reaction(Fighter *victim, bool followup, FighterFn script);
 
-typedef struct AirAttack {
-  AttackRecord record;
-  int extend, hold, retract;
-} AirAttack;
-
-typedef struct NativeAirProfile {
-  const AirAttack *attacks;
-  const ButtonTable *followup, *ground_followup;
-  FighterFn land, straight_miss;
-} NativeAirProfile;
-
 bool native_grounded(const Fighter *fighter);
 void native_uppercut_default(Fighter *fighter);
-void native_air_tail(Fighter *fighter, const NativeAirProfile *profile, int index, int elapsed);
-void native_air_cleanup(Fighter *fighter);
-void native_air_straight_land(Fighter *fighter);
-void native_air_straight_tail(Fighter *fighter, const NativeAirProfile *profile);
 #endif

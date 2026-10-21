@@ -934,3 +934,35 @@ script audits, native source/frame checks and format-check. No new tests were
 needed for this use of the already-tested loaded-table boundary. The remaining
 native handstand implementation still owns its native animation controller;
 this change does not claim all native profiles have been migrated.
+
+### Shared air native parameter controllers
+
+Removed all18 air-attack modules,90 copied attack records and their recovery
+budgets, NativeAirProfile/AirAttack and54 private callbacks. Native470980 now
+reads the original opening descriptor, budget and callback;4704d0 reads its
+original query budget, attack-bank selector and hit/ground/miss callbacks.
+The remaining straight-wide controller is implemented once. The typed VM
+bridge resolves these services independently of native_owner.
+
+Miss/contact recovery enters original4e6270/6280,4e6458/6490/64c8/64e0,
+4e6588/65d0/6618/6630,4e66a0/66b8 and4e6758/6770. Their waits, gravity,
+reverse clips and return branches execute as words in the shared interpreter.
+Landing46e240/46dff0/46c8f0/46c820 uses the common native controller. Original
+HP contact permits an air follow-up when the peer is airborne even if the
+attacker is low. Evidence: bounded native listings, original rows and pinned
+mk4decomp FiveThunkMStackDispatcher/FiveEntryAlarmInstallChain in
+five_block_dispatch_variants.c, plus matching ComboSpecialEventCluster.
+Fourteen uncalled VM root adapters and the unused Scorpion landing seed were
+removed. Liu projectile-only helpers moved beside the projectile service.
+
+Verified shared VM/rejection checks,18 strict script audits, native source/frame
+gates and formatting. The existing loaded-row fixture changes a miss callback,
+checks entry into the original recovery script, then interrupts the frozen
+owner and checks playback cleanup. Broad battle integration passes the shared
+air paths and still stops at the previously recorded direct-S_THROW balance
+assertion. Removed the retired per-fighter air timing/damage matrices; retained
+short-descriptor rendering, real input, landing and follow-up ownership checks.
+The short-descriptor fixture now installs the actual air stance rather than
+using standing controls on a manually positioned actor. SDL self-test passes
+all18 rigs and11 arenas. Weapon native recovery remains separate migration
+work, as do the remaining roster definitions and special native modules.

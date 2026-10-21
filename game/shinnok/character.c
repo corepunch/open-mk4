@@ -48,10 +48,6 @@ const CharacterDef mk4_shinnok = {
     .move_list_count = 0,
 };
 
-void shinnok_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 6);
-}
-
 void shinnok_entry_retail_script_004e62c0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 6);
 }

@@ -536,6 +536,7 @@ struct Fighter {
   FighterTest native_condition;
   bool native_followup, native_signal;
   int native_variant, native_elapsed;
+  uint32_t retail_air_row;
   int mmove_frame, mmove_nextframe; /* -1 means no pending frame jump */
   bool mmove_hold;
   FighterFn mmove_cleanup;

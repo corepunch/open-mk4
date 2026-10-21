@@ -12,7 +12,6 @@
 
 extern const MoveDef goro_s_knockdown;
 
-void goro_script_air_finish(Fighter *fighter);
 void goro_script_current_reaction(Fighter *fighter, int reaction);
 void goro_script_lp_finish(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
@@ -49,7 +48,6 @@ void goro_entry_retail_script_004de7e8(Fighter *fighter);
 void goro_entry_retail_script_004dfb60(Fighter *fighter);
 void goro_entry_retail_script_004dfb70(Fighter *fighter);
 void goro_entry_retail_script_004dfbb8(Fighter *fighter);
-void goro_entry_retail_script_004e6270(Fighter *fighter);
 void goro_entry_retail_script_004ed790(Fighter *fighter);
 void goro_entry_retail_script_004dfbd0(Fighter *fighter);
 void goro_entry_retail_script_004dfc38(Fighter *fighter);

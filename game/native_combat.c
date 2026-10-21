@@ -4,14 +4,6 @@
 #include "math_util.h"
 #include <string.h>
 
-enum {
-  AIR_FLIGHT,
-  AIR_COMBO,
-  AIR_FREEZE,
-  AIR_COMBO_FREEZE,
-  AIR_FALL
-};
-
 /* Native 46d290/46d9b3 binds these two descriptors directly; unlike the
  * authored move programs, its repeat/contact controller is native code. */
 static void hp_bind(Fighter *fighter, bool second, int first) {
@@ -64,134 +56,6 @@ void retail_high_punch(Fighter *fighter) {
   fighter->flags &= ~(unsigned)FF_BUSY;
   battle_sound(SOUND_A, 10);
   hp_build(fighter);
-}
-
-void native_air_cleanup(Fighter *fighter) {
-  if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
-    fighter->body.gravity = 0x51e;
-  }
-  fighter->buttons = NULL;
-}
-
-static void air_guard(Fighter *fighter) {
-  if (!fighter_airborne(fighter)) {
-    const NativeAirProfile *profile = fighter->native_context;
-    fighter_finish_mmove(fighter, profile->land);
-  }
-}
-
-static void air_hold_ground(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
-}
-
-static void air_fall(Fighter *fighter) {
-  const NativeAirProfile *profile = fighter->native_context;
-  if (fighter->script_phase == AIR_COMBO) {
-    fighter->body.gravity = 0x51e;
-  }
-  fighter->script_phase = AIR_FALL;
-  if (!fighter_airborne(fighter)) {
-    fighter_finish_mmove(fighter, profile->land);
-    return;
-  }
-  native_begin(fighter, 0, 0, profile->land);
-  native_frame(fighter, 0, fighter_sample(fighter), air_hold_ground);
-  native_play(fighter, false);
-}
-
-static void air_unfreeze(Fighter *fighter) {
-  fighter->buttons = NULL;
-  fighter->body.gravity = fighter->native_variant >= 3 || fighter->script_phase == AIR_COMBO_FREEZE ? 0x51e : 0x28f;
-  air_fall(fighter);
-}
-
-static void air_query(Fighter *fighter) {
-  const NativeAirProfile *profile = fighter->native_context;
-  int index = fighter->native_variant;
-  if (!fighter_airborne(fighter)) {
-    fighter_finish_mmove(fighter, profile->land);
-    return;
-  }
-  if (fighter->connected || battle_contact(fighter, &profile->attacks[index].record) == CONTACT_MISS) {
-    return;
-  }
-  bool combo = fighter->script_phase == AIR_COMBO;
-  bool low = fighter->body.ground - fighter->body.pos[AXIS_Y] <= 0xcccc;
-  memset(fighter->body.vel, 0, sizeof fighter->body.vel);
-  fighter->body.gravity = 0;
-  fighter->body.physics = NULL;
-  fighter->body.on_land = NULL;
-  fighter->action = ACTION_RETAIL_1006;
-  fighter->script_phase = combo ? AIR_COMBO_FREEZE : AIR_FREEZE;
-  if (index == 0 || index == 2) {
-    if (low) {
-      fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      if (!combo) {
-        fighter->buttons = profile->ground_followup;
-        fighter->flags |= FF_FOLLOW_UP;
-      }
-    } else if (index == 0 && !combo) {
-      fighter->buttons = profile->followup;
-    }
-  }
-  native_hold(fighter, index >= 3 ? 8 : 12, air_unfreeze);
-}
-
-/* 46c820 keeps existing gravity, restores51e if frozen and waits for landing. */
-void native_air_straight_land(Fighter *fighter) {
-  if (fighter->body.gravity == 0) {
-    fighter->body.gravity = 0x51e;
-  }
-  air_fall(fighter);
-}
-
-static void air_straight_miss(Fighter *fighter) {
-  const NativeAirProfile *profile = fighter->native_context;
-  if (profile->straight_miss != NULL) {
-    profile->straight_miss(fighter);
-  } else {
-    air_fall(fighter);
-  }
-}
-
-/* 46c7f0/4e6258 holds narrow pose7 for four B[40] queries. The wide
- * 46c970 branch advances poses11..13 and queries B[39] three times. */
-static void air_straight_build(Fighter *fighter) {
-  bool narrow = fighter_move(fighter)->clip == 327;
-  int count = narrow ? 4 : 3;
-  native_begin(fighter, 1, count, air_straight_miss);
-  for (int frame = 1; frame <= count; ++frame) {
-    native_frame(fighter, frame, narrow ? 7 : 10 + frame, air_query);
-  }
-  native_play(fighter, true);
-}
-
-static void air_build(Fighter *fighter) {
-  const NativeAirProfile *profile = fighter->native_context;
-  const AirAttack *attack = &profile->attacks[fighter->native_variant];
-  int retract = attack->extend + attack->hold;
-  int first = fighter->native_elapsed ? fighter->native_elapsed : 1;
-  /* Native reverse-clip playback starts at the bound descriptor's last
-   * stored pose. A profile's recovery budget can exceed a selected short
-   * diagonal clip; those extra rows are not additional animation poses. */
-  int reverse = attack->retract;
-  if (fighter_move(fighter)->last != MOVE_END) {
-    reverse = mini(reverse, fighter_move(fighter)->last + 1);
-  }
-  int last = retract + reverse;
-  native_begin(fighter, first, last, air_fall);
-  for (int frame = first; frame <= last; ++frame) {
-    int sample = frame < attack->extend ? frame : frame < retract ? attack->extend - 1 : maxi(0, reverse - 1 - frame + retract);
-    native_frame(fighter, frame, sample, frame >= attack->extend && frame < retract ? air_query : air_guard);
-  }
-  native_play(fighter, fighter->native_elapsed != 0);
-}
-
-void native_air_tail(Fighter *fighter, const NativeAirProfile *profile, int index, int elapsed) {
-  fighter->native_context = profile;
-  fighter->native_variant = index;
-  fighter->native_elapsed = elapsed;
-  air_build(fighter);
 }
 
 bool native_grounded(const Fighter *fighter) {
@@ -247,12 +111,4 @@ static void uppercut_default_contact(Fighter *fighter) {
 
 void native_uppercut_default(Fighter *fighter) {
   native_uppercut_tail(fighter, uppercut_default_contact);
-}
-
-void native_air_straight_tail(Fighter *fighter, const NativeAirProfile *profile) {
-  int clip = fighter_move(fighter)->clip;
-  require(clip == 61 || (clip == 327 && profile->straight_miss != NULL), "Straight-air kick needs its selected clip and recovery");
-  fighter->native_context = profile;
-  fighter->native_variant = 2;
-  air_straight_build(fighter);
 }

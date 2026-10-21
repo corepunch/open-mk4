@@ -91,10 +91,6 @@ void cage_entry_retail_script_004e9f78(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e9f78, mk4_script_thrown_ready, 14);
 }
 
-void cage_entry_retail_script_004e6270(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6270, fighter_ready, 14);
-}
-
 void cage_entry_retail_script_004ed0d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed0d8, fighter_ready, 14);
 }

@@ -16,7 +16,6 @@ enum {
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 
-void reiko_script_air_finish(Fighter *fighter);
 void reiko_script_lp_end(Fighter *fighter);
 void reiko_script_lp_return(Fighter *fighter);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
@@ -32,10 +31,6 @@ void reiko_entry_retail_script_004e62c0(Fighter *fighter);
 void reiko_entry_retail_script_004e62d8(Fighter *fighter);
 void reiko_entry_retail_script_004ea040(Fighter *fighter);
 void reiko_entry_retail_script_004ea0b8(Fighter *fighter);
-void reiko_entry_retail_script_004e82b8(Fighter *fighter);
-void reiko_entry_retail_script_004e82e0(Fighter *fighter);
-void reiko_entry_retail_script_004e8310(Fighter *fighter);
-void reiko_entry_retail_script_004e8818(Fighter *fighter);
 void reiko_flip_kick(Fighter *fighter);
 bool reiko_can_flip_kick(const Fighter *fighter);
 void reiko_entry_retail_script_004ed038(Fighter *fighter);

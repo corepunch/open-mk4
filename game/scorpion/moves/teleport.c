@@ -11,14 +11,6 @@ static const AttackRecord teleport_record = {0x128f5, -0x3ae1, 0xab85, 0x91eb, 9
 static const MoveDef s_teleport = {.clip = 312, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0209};
 static const MoveDef s_teleport_block = {.clip = 301, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_1011};
 
-void scorpion_teleport_land_script(Fighter *fighter) {
-  native_begin(fighter, 1, 10, scorpion_special_ready);
-  for (int frame = 1; frame <= 10; ++frame) {
-    native_frame(fighter, frame, mini(27, 18 + frame), NULL);
-  }
-  native_play(fighter, false);
-}
-
 static void teleport_land_gate(Fighter *fighter) {
   fighter->mmove_hold = fighter_airborne(fighter);
 }

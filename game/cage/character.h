@@ -21,7 +21,6 @@ enum {
   CAGE_EVENT_FATALITY_2
 };
 
-void cage_script_air_finish(Fighter *fighter);
 void cage_script_cpu_kick_tail(Fighter *fighter);
 void cage_script_fatality_1_signal(Fighter *fighter);
 void cage_script_fatality_2_continue(Fighter *fighter);
@@ -48,7 +47,6 @@ void cage_cpu_kick(Fighter *fighter);
 void cage_groin_punch(Fighter *fighter);
 bool cage_can_groin_punch(const Fighter *fighter);
 void cage_entry_retail_script_004e9f78(Fighter *fighter);
-void cage_entry_retail_script_004e6270(Fighter *fighter);
 void cage_high_orb(Fighter *fighter);
 void cage_low_orb(Fighter *fighter);
 void cage_orb_spawn(Fighter *fighter, int task_type);

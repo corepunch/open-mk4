@@ -47,8 +47,6 @@ static const FighterFn enter[S_COUNT] = {
  * C continuations. The camera-dependent teleport exit uses a fixed ten-tick
  * vanish in our engine; it retains the distance/wall exits and contact branches. */
 
-const MoveDef scorpion_s_teleport_land = {.clip = 304, .first = 18, .last = 27, .flags = SF_LOCK, .action = ACTION_RETAIL_2008};
-
 /* Ground scripts and their native tails: 4e6d08/46a8d0, 4e60b8,
  * 4e6158/46b740, 46b7f0, 4e61e0/46bf10, 4e69b0/46c2c0,
  * 4e6190/46bb60 and 4e6844/46f220. Times are our script ticks. */

@@ -92,9 +92,7 @@ static const CpuMoves cpu_moves = {
             [CPU_CLOSE_HP] = liu_kang_cpu_close_hp,
             [CPU_CLOSE_HK] = liu_kang_cpu_close_hk,
             [CPU_CROUCH_LP] = retail_crouch_low_punch,
-            [CPU_AIR_HP] = liu_kang_cpu_air_hp,
-            [CPU_AIR_HK] = liu_kang_cpu_air_hk,
-            [CPU_AIR_LK] = liu_kang_cpu_air_lk,
+
             [CPU_DRAW] = liu_kang_weapon,
         }, /* 4dfe10/4dfe50[3]. */
 };

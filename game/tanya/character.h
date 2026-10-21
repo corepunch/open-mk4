@@ -14,7 +14,6 @@ enum {
   TANYA_EVENT_FATALITY_2
 };
 
-void tanya_script_air_finish(Fighter *fighter);
 void tanya_script_current_reaction(Fighter *fighter, int reaction);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 
