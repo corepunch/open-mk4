@@ -76,7 +76,6 @@ extern const uint32_t tanya_weapon_descriptor[];
 void tanya_script_draw_equip(Fighter *fighter);
 void tanya_weapon_action(Fighter *fighter);
 void tanya_boomerang_release(Fighter *fighter);
-void tanya_weapon_face_peer(Fighter *fighter);
 void tanya_entry_retail_script_004e5798(Fighter *fighter);
 void tanya_entry_retail_script_004e57c0(Fighter *fighter);
 void tanya_entry_retail_script_004e5820(Fighter *fighter);

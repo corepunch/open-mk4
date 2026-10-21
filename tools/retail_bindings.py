@@ -1462,6 +1462,9 @@ def bindings_for(character):
                                   evidence='One checked native throw utility; source42be10/42cb80/42cc00 and matching mk4decomp contracts')
     result[0x42bf00] = Binding('mk4_mmove_lk_blend_return', 'game/script.c', ('tail',), flow='terminal', mmove=True,
                                evidence='42bf00 completes the bound clip and native stance blend; one shared engine recovery adaptation')
+    for address, role in ((0x45b380, 'handler'), (0x490bd0, 'physics')):
+        result[address] = Binding('retail_face_peer', 'game/retail_combat.c', (role,), mmove=True,
+                                  evidence='45b380 calls490bd0; shared facing adaptation with world-pump pair heading')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

@@ -2,6 +2,7 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_face_peer(Fighter *fighter);
 void retail_native_begin(Fighter *fighter, StateId state, int action, bool commands);
 void retail_sweep(Fighter *fighter);
 void retail_sweep_state(Fighter *fighter);

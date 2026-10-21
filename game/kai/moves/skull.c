@@ -184,7 +184,7 @@ static void ground_air_fall(Fighter *fighter) {
   };
 
   fighter->body.gravity = 0x147;
-  kai_weapon_face_peer(fighter);
+  retail_face_peer(fighter);
   mk4_mmove_bind(fighter, 310, FALL_LAST + 1, FALL_FIRST);
   int frames = FALL_HOLD + FALL_LAST - FALL_FIRST;
   native_begin(fighter, 1, frames, ground_fall_landed);

@@ -572,3 +572,13 @@ limitation. Shared VM checks, strict audits for all 1,109 roots, native source
 gates and formatting pass. The battle integration builds and reaches its
 previously reproduced ground-throw damage assertion. No new character tests
 were added. Remaining throw starts and native families still require migration.
+
+## Shared native facing callback
+
+45b380 and physics callback 490bd0 now use one native-facing adaptation.
+Five identical private callbacks and their owner-mask branches are removed;
+Kai's native callers share the same service. The local listing confirms
+45b380's facing service and 490bd0's pair-heading refresh. Our world pump
+continues to own the simulation heading, preserving the existing axis-facing
+adaptation. Shared runtime, all-roster strict audits, native source gates and
+formatting pass; no tests were added.

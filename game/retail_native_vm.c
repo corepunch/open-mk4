@@ -60,7 +60,6 @@ void fujin_script_opponent_reaction(Fighter *fighter, int reaction);
 void fujin_second_blood(Fighter *fighter, int task_type);
 void fujin_second_burst(Fighter *victim);
 void fujin_second_event(Fighter *fighter, int selector);
-void fujin_second_face(Fighter *fighter);
 void fujin_second_finish(Fighter *victim);
 void fujin_triple_contact(Fighter *fighter);
 void fujin_triple_fast(Fighter *fighter);
@@ -178,7 +177,6 @@ void kai_second_hover(Fighter *fighter, int task_type);
 void kai_second_skull(Fighter *fighter, int task_type);
 void kai_second_victim_fall(Fighter *victim);
 void kai_weapon_back_contact(Fighter *fighter);
-void kai_weapon_face_peer(Fighter *fighter);
 void kai_weapon_victim_getup(Fighter *fighter);
 void kitana_script_air_diagonal_tail(Fighter *fighter);
 void kitana_script_air_getup(Fighter *victim);
@@ -393,11 +391,9 @@ void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
 void reptile_script_roll_tail(Fighter *fighter);
 void reptile_second_acid(Fighter *fighter, int task_type);
 void reptile_second_event(Fighter *fighter, int selector);
-void reptile_second_face(Fighter *fighter);
 void reptile_second_finish(Fighter *victim);
 void reptile_second_hover(Fighter *fighter, int task_type);
 void reptile_second_melt(Fighter *victim);
-void reptile_weapon_face_peer(Fighter *fighter);
 void reptile_weapon_flurry(Fighter *fighter);
 void reptile_weapon_getup_back(Fighter *fighter);
 void reptile_weapon_stagger_tail(Fighter *fighter);
@@ -579,7 +575,6 @@ void tanya_second_height(Fighter *fighter);
 void tanya_second_owner_cue(Fighter *fighter, int task_type);
 void tanya_second_victim_cue(Fighter *fighter, int task_type);
 void tanya_second_victim_pause(Fighter *fighter);
-void tanya_weapon_face_peer(Fighter *fighter);
 void weapon_air_frames_native(Fighter *fighter, unsigned selector);
 
 bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
@@ -3202,15 +3197,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x45b380:
-          if (owner & 0x20u) {
-            fujin_second_face(fighter);
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_second_face(fighter);
-            return true;
-          }
-          return false;
+          retail_face_peer(fighter);
+          return true;
         default:
           return false;
       }
@@ -3249,19 +3237,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           fighter->body.physics = raiden_script_torpedo_victim_motion;
           return true;
         case 0x490bd0:
-          if (owner & 0x800u) {
-            fighter->body.physics = kai_weapon_face_peer;
-            return true;
-          }
-          if (owner & 0x400u) {
-            fighter->body.physics = reptile_weapon_face_peer;
-            return true;
-          }
-          if (owner & 0x200u) {
-            fighter->body.physics = tanya_weapon_face_peer;
-            return true;
-          }
-          return false;
+          fighter->body.physics = retail_face_peer;
+          return true;
         case 0x4913a0:
           fighter->body.physics = fighter_friction;
           return true;

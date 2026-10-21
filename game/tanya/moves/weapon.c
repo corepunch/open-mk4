@@ -210,9 +210,6 @@ void tanya_weapon_action(Fighter *fighter) {
 }
 
 /* 490bd0 as a group callback keeps the falling victim facing its peer. */
-void tanya_weapon_face_peer(Fighter *fighter) {
-  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-}
 
 /* Reactions 169 (486710 -> 4e9db8) and 170 (4821a0 -> 4e8bb0) both disarm
  * through 494520 before their generated victim streams. */

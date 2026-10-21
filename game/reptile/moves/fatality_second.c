@@ -151,11 +151,6 @@ void reptile_second_melt(Fighter *victim) {
   native_play(victim, false);
 }
 
-void reptile_second_face(Fighter *fighter) {
-  /* Opcode 64 -> 490bd0: face the peer again. */
-  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-}
-
 void reptile_second_event(Fighter *fighter, int selector) {
   require(g_battle.phase == PHASE_FATALITY && selector == 63, "Unexpected Reptile second scene event");
   /* 4315b0 queues scene orchestration; the finisher owns its input lock. */

@@ -49,7 +49,7 @@ static void aerial_fall(Fighter *fighter, q16 gravity) {
   fighter->body.physics = NULL;
   fighter->body.gravity = gravity;
   fighter->action = 0x1005;
-  kai_weapon_face_peer(fighter);
+  retail_face_peer(fighter);
   mk4_mmove_bind(fighter, FALL_CLIP, FALL_COUNT, FALL_FIRST);
   native_begin(fighter, 1, FALL_HOLD - FALL_FIRST, fall_landed);
   for (int frame = 1; frame <= FALL_HOLD - FALL_FIRST; ++frame) {

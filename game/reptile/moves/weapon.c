@@ -256,11 +256,6 @@ void reptile_weapon_reaction(Fighter *fighter) {
   }
 }
 
-void reptile_weapon_face_peer(Fighter *fighter) {
-  /* 490bd0 as a group callback keeps the victim facing its peer. */
-  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-}
-
 /* 482280 -> 489020: replay 311 from 0 to its end, then 46f650. */
 void reptile_weapon_stagger_tail(Fighter *fighter) {
   fighter->sample_override = 0;

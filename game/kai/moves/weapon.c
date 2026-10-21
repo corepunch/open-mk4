@@ -85,10 +85,6 @@ void kai_draw_weapon(Fighter *fighter) {
   }
 }
 
-void kai_weapon_face_peer(Fighter *fighter) {
-  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-}
-
 void kai_weapon_victim_getup(Fighter *fighter) {
   static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
   mk4_mmove_finish_getup(fighter, &profile);

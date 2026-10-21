@@ -268,3 +268,8 @@ void retail_lp_select_short(Fighter *fighter) {
 void retail_lp_select_long(Fighter *fighter) {
   lp_select(fighter, 0x4de640);
 }
+
+/* 45b380 invokes 490bd0; pair heading is maintained by the world pump. */
+void retail_face_peer(Fighter *fighter) {
+  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
+}

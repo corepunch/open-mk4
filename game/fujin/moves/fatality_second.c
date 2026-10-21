@@ -19,11 +19,6 @@ void fujin_second_finish(Fighter *victim) {
   native_hold(victim, 60, second_complete);
 }
 
-void fujin_second_face(Fighter *fighter) {
-  /*64 ->490bd0: correct the actor's facing relative to its peer. */
-  fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-}
-
 void fujin_second_event(Fighter *fighter, int selector) {
   require(g_battle.phase == PHASE_FATALITY && selector == 63, "Unexpected Fujin second scene event");
   /*4315b0 queues scene orchestration; our finisher owns its input lock. */
