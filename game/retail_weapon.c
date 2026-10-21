@@ -235,3 +235,8 @@ void retail_weapon_draw(Fighter *fighter) {
     retail_vm_enter(fighter, 0x4e62c0, fighter_ready);
   }
 }
+
+/* 43a5c0/43a610 visits resting object descriptors of retail type6c. */
+void retail_disturb_resting_weapons(void) {
+  weapon_hop_resting(0x6c);
+}

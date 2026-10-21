@@ -65,7 +65,7 @@ static void leap_fall(Fighter *fighter) {
   if (!fighter_airborne(fighter)) {
     fighter->mmove_hold = false;
     fighter->sample_override = LEAP_APEX_SAMPLE;
-    goro_quake_resting_weapons();
+    retail_disturb_resting_weapons();
     retail_vm_enter_owned(fighter, 0x4dfc38, fighter_ready, 15);
     return;
   }
@@ -73,7 +73,7 @@ static void leap_fall(Fighter *fighter) {
     return;
   }
   fighter->mmove_hold = false;
-  goro_quake_resting_weapons();
+  retail_disturb_resting_weapons();
   battle_damage((Fighter *)fighter_opponent(fighter), LEAP_DAMAGE);
   fighter->sample_override = LEAP_APEX_SAMPLE;
   retail_vm_enter_owned(fighter, 0x4dfbd0, fighter_ready, 15);

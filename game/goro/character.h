@@ -9,7 +9,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 
-void goro_script_current_reaction(Fighter *fighter, int reaction);
 void goro_script_lp_phase_repeat(Fighter *fighter);
 void goro_script_opponent_reaction(Fighter *fighter, int reaction);
 
@@ -19,7 +18,7 @@ void goro_fireball_spawn(Fighter *fighter, int task_type);
 void goro_kick_victim(Fighter *victim);
 void goro_leap_stomp(Fighter *fighter);
 void goro_punch_victim(Fighter *victim);
-void goro_quake_resting_weapons(void);
+void retail_disturb_resting_weapons(void);
 void goro_quake_stomp(Fighter *fighter);
 void goro_quake_victim(Fighter *victim);
 void goro_script_kick_tail(Fighter *fighter);

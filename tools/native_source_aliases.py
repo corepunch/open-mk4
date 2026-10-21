@@ -1,6 +1,12 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'goro_script_current_reaction': 'retail_script_release_reaction',
+    'kai_script_current_reaction': 'retail_script_release_reaction',
+    'quan_chi_script_current_reaction': 'retail_script_release_reaction',
+    'reiko_script_lp_reaction': 'retail_script_release_reaction',
+    'sub_zero_script_reaction': 'retail_script_release_reaction',
+    'goro_quake_resting_weapons': 'retail_disturb_resting_weapons',
     'jax_slam_victim': 'retail_lp_victim',
     'kitana_bicycle': 'sonya_bicycle',
     'kitana_cartwheel': 'sonya_cartwheel',

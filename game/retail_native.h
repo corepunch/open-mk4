@@ -172,3 +172,6 @@ void retail_lp_select_long(Fighter *fighter);
 #endif
 
 void retail_lp_victim(Fighter *fighter);
+
+void retail_script_release_reaction(Fighter *fighter, int reaction);
+void retail_disturb_resting_weapons(void);

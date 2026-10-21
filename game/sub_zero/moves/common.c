@@ -166,11 +166,3 @@ void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count,
   fighter->mmove_cleanup = sub_zero_scene_blend_cleanup;
   native_scene_blends(fighter, clips, count, end);
 }
-
-void sub_zero_script_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    return; /* The arena continuation owns the victim. */
-  }
-  require(reaction == 102, "Unexpected LP victim reaction");
-  battle_react(mk4_script_release_pair(fighter), reaction);
-}

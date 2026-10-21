@@ -51,8 +51,7 @@ void fujin_triple_contact(Fighter *fighter);
 void fujin_triple_fast(Fighter *fighter);
 void fujin_wind_recovery(Fighter *fighter);
 void goro_fireball_spawn(Fighter *fighter, int task_type);
-void goro_quake_resting_weapons(void);
-void goro_script_current_reaction(Fighter *fighter, int reaction);
+void retail_disturb_resting_weapons(void);
 void goro_script_kick_tail(Fighter *fighter);
 void goro_script_leap_continue(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);
@@ -117,7 +116,6 @@ void kai_lunge_kick_contact(Fighter *fighter);
 void kai_rising_skull_finish(Fighter *fighter);
 void kai_rising_skull_spawn(Fighter *fighter);
 void kai_script_contact_b10_continuation(Fighter *fighter);
-void kai_script_current_reaction(Fighter *fighter, int reaction);
 void kai_script_opponent_reaction(Fighter *fighter, int reaction);
 void kai_script_stage_event(Fighter *fighter);
 void kai_second_child_walk(Fighter *fighter);
@@ -174,7 +172,6 @@ void mk4_script_save_motion(Fighter *fighter);
 void mk4_script_scene_task(Fighter *fighter, int task_type);
 void mk4_script_touchable(Fighter *fighter);
 void native_uppercut_default(Fighter *fighter);
-void reiko_script_lp_reaction(Fighter *fighter, int reaction);
 void reiko_script_opponent_reaction(Fighter *fighter, int reaction);
 void reiko_star_spawn(Fighter *fighter, int task_type);
 void quan_chi_fatality_beat(Fighter *fighter);
@@ -182,7 +179,6 @@ void quan_chi_fatality_cue_40(Fighter *fighter);
 void quan_chi_fatality_hit_179(Fighter *fighter);
 void quan_chi_fatality_hit_241(Fighter *fighter);
 void quan_chi_fatality_leg(Fighter *fighter);
-void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_flip_kick_tail(Fighter *fighter);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_script_skull_release(Fighter *fighter);
@@ -329,7 +325,6 @@ void sub_zero_script_lk_damage(Fighter *fighter);
 void sub_zero_script_lk_owner_return(Fighter *fighter);
 void sub_zero_script_lk_rebase(Fighter *fighter);
 void sub_zero_script_lk_victim_rise(Fighter *victim);
-void sub_zero_script_reaction(Fighter *fighter, int reaction);
 void sub_zero_script_ready(Fighter *fighter);
 void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);
@@ -417,7 +412,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_throw_pair_start(fighter);
           return true;
         case 0x43a5c0:
-          goro_quake_resting_weapons();
+          retail_disturb_resting_weapons();
           return true;
         case 0x46a950:
           if (owner & 0x1000u) {
@@ -1861,16 +1856,16 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           return false;
         case 0x45b1f0:
+          if (retail_throw_reaction(fighter->retail_vm.image, argument & 255u) != NULL) {
+            retail_script_release_reaction(fighter, (int)(argument & 255u));
+            return true;
+          }
           if (owner & 0x4000u) {
             cage_script_current_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x20u) {
             fujin_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x8000u) {
-            goro_script_current_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x1000u) {
@@ -1881,10 +1876,6 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             jax_script_peer_reaction(fighter, (int)(argument & 255u));
             return true;
           }
-          if (owner & 0x800u) {
-            kai_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
           if (owner & 0x10000u) {
             sonya_script_reaction(fighter, (int)(argument & 255u));
             return true;
@@ -1893,20 +1884,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
             liu_kang_liu_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
-          if (owner & 0x20000u) {
-            reiko_script_lp_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x100u) {
-            quan_chi_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
           if (owner & 0x2u) {
             raiden_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x80u) {
-            reiko_script_lp_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x400u) {
@@ -1923,10 +1902,6 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           if (owner & 0x4u) {
             sonya_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x10u) {
-            sub_zero_script_reaction(fighter, (int)(argument & 255u));
             return true;
           }
           if (owner & 0x200u) {

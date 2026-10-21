@@ -125,7 +125,6 @@ void sub_zero_script_lk_owner_return(Fighter *fighter);
 void sub_zero_script_lk_rebase(Fighter *fighter);
 void sub_zero_script_lk_victim_rise(Fighter *victim);
 void sub_zero_script_lp_getup(Fighter *victim);
-void sub_zero_script_reaction(Fighter *fighter, int reaction);
 void sub_zero_script_ready(Fighter *fighter);
 void sub_zero_script_slide_return(Fighter *fighter);
 void sub_zero_script_spawn_ice(Fighter *fighter, int task_type);

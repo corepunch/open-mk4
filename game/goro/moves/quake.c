@@ -56,6 +56,6 @@ void goro_script_quake_land(Fighter *fighter) {
     battle_damage(victim, QUAKE_DAMAGE);
     battle_react(victim, QUAKE_REACTION);
   }
-  goro_quake_resting_weapons();
+  retail_disturb_resting_weapons();
   retail_vm_enter_owned(fighter, 0x4dfc60, fighter_ready, 15);
 }

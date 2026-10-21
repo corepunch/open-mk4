@@ -141,6 +141,9 @@ static void victim_4852e0(Fighter *fighter) {
  * owned by the engine; 485d00's render-coordinate rebasing is unnecessary. */
 void retail_lp_victim(Fighter *fighter) {
   uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  if (entry == 0x485bf0 && fighter_peer(fighter)->roster == 15) {
+    retail_disturb_resting_weapons();
+  }
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   retail_throw_grunt();
@@ -173,6 +176,10 @@ void retail_lp_victim(Fighter *fighter) {
     default:
       require(false, "Unexpected native LP victim entry");
   }
+}
+
+void retail_script_release_reaction(Fighter *fighter, int reaction) {
+  battle_react(mk4_script_release_pair(fighter), reaction);
 }
 
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {

@@ -1346,3 +1346,20 @@ gates. One integration fixture mutates the reaction target and animation-table
 words to verify loaded dispatch independently of roster/selector. No authored
 LP timing or damage matrices were added. Existing broad battle/timing-suite
 limitations recorded above remain; these checks do not establish native parity.
+
+### Route known reaction natives independently of script owner
+
+The45b1f0 bridge now checks the loaded shared throw-native registry before
+legacy owner dispatch, matching480f80's reaction-table selection and48f880/
+48fd00 peer switch. Removed five forwarding wrappers and their owner branches.
+The existing mutated-table fixture now exercises this handler from an unrelated
+script context and verifies pair release, rather than calling battle_react
+alone. Both native reaction handlers were checked against bounded local
+listings; their context labels do not make the executing Fighter the victim.
+
+Resolved the previous485bf0 Goro presentation limitation:43a5c0/43a610 visits
+resting object descriptors of type6c. Its existing weapon-hop adaptation is
+now one shared service used by LP, stomp and quake callers, without a roster
+inventory wrapper. Verified formatting, shared VM/rejections, strict audits,
+native frame gates and helper/port navigation (6/7 tests). Other native scene
+and reaction services remain migration work; no authored matrices added.

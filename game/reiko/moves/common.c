@@ -12,8 +12,3 @@ void reiko_script_opponent_reaction(Fighter *fighter, int reaction) {
   }
   require(false, "Unexpected Reiko opponent reaction");
 }
-
-void reiko_script_lp_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 102 || reaction == 107, "Unexpected LP victim reaction");
-  battle_react(mk4_script_release_pair(fighter), reaction);
-}

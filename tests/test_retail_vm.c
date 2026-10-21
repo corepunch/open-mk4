@@ -701,8 +701,14 @@ static void native_reaction_table(void) {
   put_word(0x4ea4e8 + 100 * 4, 0x485b70);
   put_word(0x4e9bb8, 0x4fad7c / 4);
   put_word(0x4e9bbc, 0x42ce80);
-  battle_react(actor, 100);
+  Fighter *owner = fighter_peer(actor);
+  owner->retail_vm.image = &image;
+  owner->retail_vm.native_owner = 9;
+  owner->flags |= FF_PAIRED;
+  actor->flags |= FF_PAIRED;
+  check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100), "shared reaction handler must accept loaded native targets in any script context");
   tick();
+  check(!(actor->flags & FF_PAIRED) && !(owner->flags & FF_PAIRED), "shared reaction dispatch must release captured pair ownership");
   check(actor->native.native_end.address == 0x42ce80 && fighter_move(actor)->clip == 0 && !actor->retail_vm.active,
       "reaction dispatch must use loaded native and animation/callback tables independently of roster or selector");
   fighter_interrupt(actor, fighter_ready);
