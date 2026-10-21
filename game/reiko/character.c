@@ -65,10 +65,10 @@ static const Controls reiko_controls = {NULL, 0,
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
-  [S_IDLE] = reiko_armed_idle,
-  [S_WALK] = reiko_armed_walk,
-  [S_CROUCH] = reiko_armed_crouch,
-  [S_BLOCK] = reiko_armed_block,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
+  [S_BLOCK] = weapon_block,
 
   [S_THROW] = reiko_lp_throw,
 };

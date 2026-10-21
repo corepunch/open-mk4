@@ -12,18 +12,6 @@ void jax_script_peer_reaction(Fighter *fighter, int reaction) {
   battle_react(victim, reaction);
 }
 
-void jax_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void jax_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void jax_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void jax_script_finish(Fighter *fighter) {
   native_advancing_sweep(fighter);
 }

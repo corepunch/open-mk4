@@ -1,17 +1,5 @@
 #include "../character.h"
 
-void shinnok_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void shinnok_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void shinnok_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
     shinnok_fatality_contact_hold(fighter);

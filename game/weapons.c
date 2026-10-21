@@ -42,6 +42,22 @@ void weapon_stance(Fighter *fighter, int state) {
   fighter_start_move(fighter, state, move);
 }
 
+void weapon_idle(Fighter *fighter) {
+  weapon_stance(fighter, S_IDLE);
+}
+
+void weapon_walk(Fighter *fighter) {
+  weapon_stance(fighter, S_WALK);
+}
+
+void weapon_crouch(Fighter *fighter) {
+  weapon_stance(fighter, S_CROUCH);
+}
+
+void weapon_block(Fighter *fighter) {
+  weapon_stance(fighter, S_BLOCK);
+}
+
 static void weapon_cleanup(Fighter *fighter) {
   if (fighter->body.physics == axe_strafe) {
     fighter->body.physics = NULL;

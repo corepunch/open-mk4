@@ -38,8 +38,8 @@ static const Controls kai_controls = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = kai_idle,
-  [S_WALK] = kai_walk,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
   [S_CROUCH] = kai_crouch,
   [S_JUMP] = NULL,
   [S_PUNCH] = kai_jab,
@@ -47,7 +47,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_SWEEP] = kai_sweep,
   [S_UPPERCUT] = kai_uppercut,
   [S_THROW] = kai_lp_throw,
-  [S_BLOCK] = kai_block,
+  [S_BLOCK] = weapon_block,
   [S_HIT] = NULL,
   [S_KNOCKDOWN] = NULL,
   [S_VICTORY] = fighter_ready,

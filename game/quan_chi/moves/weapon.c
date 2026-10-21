@@ -79,19 +79,3 @@ void quan_chi_weapon_action(Fighter *fighter) {
     quan_chi_entry_retail_script_004e62c0(fighter);
   }
 }
-
-void quan_chi_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void quan_chi_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void quan_chi_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void quan_chi_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}

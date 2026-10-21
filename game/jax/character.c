@@ -33,16 +33,16 @@ static const Controls s_controls = {NULL, 0, {&s_standing, &s_crouching, &s_jump
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = jax_idle,
-  [S_WALK] = jax_walk,
-  [S_CROUCH] = jax_crouch,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
   [S_JUMP] = mk4_jump,
   [S_PUNCH] = jax_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = jax_sweep,
   [S_UPPERCUT] = jax_uppercut,
   [S_THROW] = jax_lp_throw,
-  [S_BLOCK] = jax_block,
+  [S_BLOCK] = weapon_block,
   [S_HIT] = NULL,
   [S_KNOCKDOWN] = NULL,
   [S_VICTORY] = NULL,

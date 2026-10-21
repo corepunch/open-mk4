@@ -209,22 +209,6 @@ void tanya_weapon_action(Fighter *fighter) {
   }
 }
 
-void tanya_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void tanya_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void tanya_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void tanya_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 /* 490bd0 as a group callback keeps the falling victim facing its peer. */
 void tanya_weapon_face_peer(Fighter *fighter) {
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;

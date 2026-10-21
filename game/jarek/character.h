@@ -25,10 +25,7 @@ enum {
   JAREK_EVENT_FATALITY_2
 };
 
-void jarek_block(Fighter *fighter);
-void jarek_crouch(Fighter *fighter);
 void jarek_fatality_contact_hold(Fighter *fighter);
-void jarek_idle(Fighter *fighter);
 void jarek_jab(Fighter *fighter);
 void jarek_lp_throw(Fighter *fighter);
 void jarek_press_air_hp(Fighter *fighter);
@@ -88,7 +85,6 @@ void jarek_ball_land(Fighter *fighter);
 void jarek_entry_retail_script_004e84b8(Fighter *fighter);
 void jarek_entry_retail_script_004e9658(Fighter *fighter);
 void jarek_uppercut(Fighter *fighter);
-void jarek_walk(Fighter *fighter);
 void jarek_weapon_action(Fighter *fighter);
 void jarek_entry_retail_script_004de2f8(Fighter *fighter);
 void jarek_entry_retail_script_004de640(Fighter *fighter);

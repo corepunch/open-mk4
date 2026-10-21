@@ -31,10 +31,8 @@ enum {
   KAI_EVENT_FATALITY_2
 };
 
-void kai_block(Fighter *fighter);
 void kai_crouch(Fighter *fighter);
 void kai_high_punch(Fighter *fighter);
-void kai_idle(Fighter *fighter);
 void kai_input_478df0(Fighter *fighter);
 void kai_input_47bd10(Fighter *fighter);
 void kai_input_47c520(Fighter *fighter);
@@ -68,7 +66,6 @@ void kai_script_spike_tail(Fighter *fighter);
 void kai_script_stage_event(Fighter *fighter);
 void kai_sweep(Fighter *fighter);
 void kai_uppercut(Fighter *fighter);
-void kai_walk(Fighter *fighter);
 void kai_entry_retail_script_004de2f8(Fighter *fighter);
 void kai_entry_retail_script_004de358(Fighter *fighter);
 void kai_entry_retail_script_004de610(Fighter *fighter);

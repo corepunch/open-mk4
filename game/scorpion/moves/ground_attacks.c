@@ -77,10 +77,6 @@ void scorpion_press_crouch_lk(Fighter *fighter) {
   fighter_interrupt(fighter, scorpion_crouch_lk);
 }
 
-void scorpion_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
 void scorpion_script_crouch_lk_tail(Fighter *fighter) {
   scorpion_ground_native_next(fighter);
 }

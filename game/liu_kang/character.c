@@ -46,10 +46,10 @@ static const MoveDef *const moves[S_COUNT] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = liu_kang_armed_idle,
-  [S_WALK] = liu_kang_armed_walk,
-  [S_CROUCH] = liu_kang_armed_crouch,
-  [S_BLOCK] = liu_kang_armed_block,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
+  [S_BLOCK] = weapon_block,
   [S_PUNCH] = liu_kang_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = liu_kang_sweep,

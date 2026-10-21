@@ -34,10 +34,10 @@ static const Controls quan_chi_controls = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = quan_chi_armed_idle,
-  [S_WALK] = quan_chi_armed_walk,
-  [S_CROUCH] = quan_chi_armed_crouch,
-  [S_BLOCK] = quan_chi_armed_block,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
+  [S_BLOCK] = weapon_block,
   [S_PUNCH] = quan_chi_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = quan_chi_sweep,

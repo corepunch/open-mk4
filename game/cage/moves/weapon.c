@@ -94,22 +94,6 @@ void cage_weapon_action(Fighter *fighter) {
   }
 }
 
-void cage_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void cage_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void cage_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void cage_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void cage_weapon_getup_back(Fighter *fighter) {
   static const NativeGetupDef profile = {.clip = 328, .count = 15, .crouch_clip = 184, .crouch_count = 16, .speed = 0, .crouch_speed = -0xa3d};
   mk4_mmove_finish_getup(fighter, &profile);

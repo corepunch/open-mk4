@@ -1,17 +1,5 @@
 #include "../character.h"
 
-void jarek_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void jarek_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void jarek_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void jarek_script_lk_return(Fighter *fighter) {
   mk4_mmove_lk_owner_return(fighter, fighter_ready);
 }

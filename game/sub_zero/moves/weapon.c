@@ -17,22 +17,6 @@ static const WeaponStrike scepter_attacks[] = {
 // clang-format on
 static const WeaponDef scepter = {0x6b, scepter_hp, scepter_lp, scepter_back_hp, scepter_back_lp, NULL, weapon_throw, equip_scepter, SCENE_MODEL_SCEPTER};
 
-void sub_zero_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void sub_zero_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void sub_zero_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void sub_zero_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 static void equip_scepter(Fighter *fighter) {
   fighter_equip_weapon(fighter, &scepter);
 }

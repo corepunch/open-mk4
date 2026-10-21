@@ -297,3 +297,15 @@ return. It tests our native data boundary rather than copied fighter balance.
 Shared VM checks, strict roster audits and helper/navigation checks (6/7)
 pass. The existing battle run again stops at the documented baseline throw
 tick assertion.
+
+## Shared stance callbacks
+
+Sixty-seven fighter-local wrappers that only called `weapon_stance` are
+removed. Four shared callbacks now select idle, walking, crouching and block
+states through the same weapon/state service. Runtime-loaded idle/walk data
+and actor weapon selection retain their ownership. Four private C modules
+that became include-only are also deleted. No stance or timing behavior is
+reimplemented by this consolidation, and no tests were added.
+
+Validation reuses the shared VM/native/lifetime checks, formatting and strict
+roster/source audits.

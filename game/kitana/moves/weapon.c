@@ -81,22 +81,6 @@ void kitana_weapon(Fighter *fighter) {
   }
 }
 
-void kitana_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void kitana_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void kitana_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void kitana_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void kitana_script_weapon_victim_getup(Fighter *victim) {
   native_finish_clip(victim, kitana_script_throw_getup);
 }

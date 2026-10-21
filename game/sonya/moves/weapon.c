@@ -78,22 +78,6 @@ void sonya_weapon(Fighter *fighter) {
   }
 }
 
-void sonya_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void sonya_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void sonya_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void sonya_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void sonya_script_weapon_victim_getup(Fighter *victim) {
   native_finish_clip(victim, sonya_script_throw_getup);
 }

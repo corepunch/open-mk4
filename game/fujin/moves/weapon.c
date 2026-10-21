@@ -197,19 +197,3 @@ void fujin_bolt_victim(Fighter *fighter) {
   fighter->mmove_cleanup = bow_cleanup;
   fujin_entry_retail_script_004e9e10(fighter);
 }
-
-void fujin_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void fujin_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void fujin_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void fujin_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}

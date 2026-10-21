@@ -13,10 +13,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp sonya_air_hp
 #define arena_fatality sonya_arena_fatality
-#define armed_block sonya_armed_block
-#define armed_crouch sonya_armed_crouch
-#define armed_idle sonya_armed_idle
-#define armed_walk sonya_armed_walk
 #define can_cartwheel sonya_can_cartwheel
 #define can_first_fatality sonya_can_first_fatality
 #define can_ground_throw sonya_can_ground_throw
@@ -125,10 +121,6 @@ enum {
 
 void sonya_air_hp(Fighter *fighter);
 void sonya_arena_fatality(Fighter *fighter, int id);
-void sonya_armed_block(Fighter *fighter);
-void sonya_armed_crouch(Fighter *fighter);
-void sonya_armed_idle(Fighter *fighter);
-void sonya_armed_walk(Fighter *fighter);
 bool sonya_can_cartwheel(const Fighter *fighter);
 bool sonya_can_first_fatality(const Fighter *fighter);
 bool sonya_can_ground_throw(const Fighter *fighter, bool low_kick);

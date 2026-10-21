@@ -1,17 +1,5 @@
 #include "../character.h"
 
-void kai_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void kai_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void kai_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void kai_script_lk_return(Fighter *fighter) {
   /* Retail 42be10 enters the follow-up VM root after its global task checks. */
   kai_entry_retail_script_004de358(fighter);

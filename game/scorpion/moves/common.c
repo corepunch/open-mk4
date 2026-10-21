@@ -50,18 +50,6 @@ void scorpion_script_opponent_reaction(Fighter *fighter, int reaction) {
   scorpion_thrown_end_script(victim);
 }
 
-void scorpion_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void scorpion_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void scorpion_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void scorpion_spin_script(Fighter *fighter) {
   int pose = fighter_sample(fighter);
   native_begin(fighter, 1, 12, NULL);

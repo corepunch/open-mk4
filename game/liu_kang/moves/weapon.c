@@ -203,19 +203,3 @@ unsigned liu_kang_liu_script_sword_gate(Fighter *fighter) {
 void liu_kang_liu_script_sword_blend(Fighter *fighter) {
   sword_blend(fighter, 5, sword_finish);
 }
-
-void liu_kang_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void liu_kang_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void liu_kang_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void liu_kang_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}

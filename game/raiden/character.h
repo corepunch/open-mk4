@@ -13,10 +13,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp raiden_air_hp
 #define arena_fatality raiden_arena_fatality
-#define armed_block raiden_armed_block
-#define armed_crouch raiden_armed_crouch
-#define armed_idle raiden_armed_idle
-#define armed_walk raiden_armed_walk
 #define can_close_fatality retail_can_finish_close
 #define can_ground_throw raiden_can_ground_throw
 #define can_teleport raiden_can_teleport
@@ -129,10 +125,6 @@ enum {
 
 void raiden_air_hp(Fighter *fighter);
 void raiden_arena_fatality(Fighter *fighter, int id);
-void raiden_armed_block(Fighter *fighter);
-void raiden_armed_crouch(Fighter *fighter);
-void raiden_armed_idle(Fighter *fighter);
-void raiden_armed_walk(Fighter *fighter);
 bool raiden_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool raiden_can_teleport(const Fighter *fighter);
 void raiden_cpu_air_hk(Fighter *fighter);

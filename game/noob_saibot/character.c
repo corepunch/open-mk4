@@ -76,10 +76,10 @@ static const MoveListEntry move_list[] = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
-  [S_IDLE] = noob_saibot_armed_idle,
-  [S_WALK] = noob_saibot_armed_walk,
-  [S_CROUCH] = noob_saibot_armed_crouch,
-  [S_BLOCK] = noob_saibot_armed_block,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
+  [S_BLOCK] = weapon_block,
 
   [S_THROW] = noob_saibot_lp_throw,
 };

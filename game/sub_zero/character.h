@@ -15,10 +15,6 @@
 #define air_hp sub_zero_air_hp
 #define air_land sub_zero_air_land
 #define air_lk_diagonal sub_zero_air_lk_diagonal
-#define armed_block sub_zero_armed_block
-#define armed_crouch sub_zero_armed_crouch
-#define armed_idle sub_zero_armed_idle
-#define armed_walk sub_zero_armed_walk
 #define breath_travel sub_zero_breath_travel
 #define can_clone sub_zero_can_clone
 #define can_close_fatality sub_zero_can_close_fatality
@@ -159,10 +155,6 @@ void sub_zero_air_hk_diagonal(Fighter *fighter);
 void sub_zero_air_hp(Fighter *fighter);
 void sub_zero_air_land(Fighter *fighter);
 void sub_zero_air_lk_diagonal(Fighter *fighter);
-void sub_zero_armed_block(Fighter *fighter);
-void sub_zero_armed_crouch(Fighter *fighter);
-void sub_zero_armed_idle(Fighter *fighter);
-void sub_zero_armed_walk(Fighter *fighter);
 void sub_zero_breath_travel(Fighter *fighter);
 bool sub_zero_can_clone(const Fighter *fighter);
 bool sub_zero_can_close_fatality(const Fighter *fighter);

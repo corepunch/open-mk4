@@ -11,10 +11,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define armed_block liu_kang_armed_block
-#define armed_crouch liu_kang_armed_crouch
-#define armed_idle liu_kang_armed_idle
-#define armed_walk liu_kang_armed_walk
 #define bicycle_script liu_kang_bicycle_script
 #define can_bicycle liu_kang_can_bicycle
 #define can_close_fatality retail_can_finish_close
@@ -122,10 +118,6 @@ enum {
 #define FATAL_MOVE(c, last_sample) {.clip = c, .last = last_sample, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}
 #define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
 
-void liu_kang_armed_block(Fighter *fighter);
-void liu_kang_armed_crouch(Fighter *fighter);
-void liu_kang_armed_idle(Fighter *fighter);
-void liu_kang_armed_walk(Fighter *fighter);
 void liu_kang_bicycle_script(Fighter *fighter);
 bool liu_kang_can_bicycle(const Fighter *fighter);
 bool liu_kang_can_first_fatality(const Fighter *fighter);

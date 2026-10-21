@@ -62,22 +62,6 @@ void raiden_weapon(Fighter *fighter) {
   }
 }
 
-void raiden_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void raiden_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void raiden_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void raiden_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 void raiden_script_weapon_victim_getup(Fighter *victim) {
   native_finish_clip(victim, raiden_script_throw_getup);
 }

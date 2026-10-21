@@ -13,10 +13,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp kitana_air_hp
 #define arena_fatality kitana_arena_fatality
-#define armed_block kitana_armed_block
-#define armed_crouch kitana_armed_crouch
-#define armed_idle kitana_armed_idle
-#define armed_walk kitana_armed_walk
 #define can_ground_throw kitana_can_ground_throw
 #define cpu_air_hk kitana_cpu_air_hk
 #define cpu_air_lk kitana_cpu_air_lk
@@ -121,10 +117,6 @@ enum {
 
 void kitana_air_hp(Fighter *fighter);
 void kitana_arena_fatality(Fighter *fighter, int id);
-void kitana_armed_block(Fighter *fighter);
-void kitana_armed_crouch(Fighter *fighter);
-void kitana_armed_idle(Fighter *fighter);
-void kitana_armed_walk(Fighter *fighter);
 bool kitana_can_ground_throw(const Fighter *fighter, bool low_kick);
 void kitana_cpu_air_hk(Fighter *fighter);
 void kitana_cpu_air_lk(Fighter *fighter);

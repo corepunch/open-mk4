@@ -34,10 +34,10 @@ static const Controls tanya_controls = {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = tanya_armed_idle,
-  [S_WALK] = tanya_armed_walk,
-  [S_CROUCH] = tanya_armed_crouch,
-  [S_BLOCK] = tanya_armed_block,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
+  [S_BLOCK] = weapon_block,
   [S_PUNCH] = tanya_jab,
   [S_KICK] = retail_high_kick,
   [S_SWEEP] = tanya_sweep,

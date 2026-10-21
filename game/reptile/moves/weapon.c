@@ -226,22 +226,6 @@ void reptile_weapon_action(Fighter *fighter) {
   }
 }
 
-void reptile_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void reptile_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void reptile_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void reptile_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
-
 static const MoveDef weapon_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
 static const MoveDef weapon_stagger = {.clip = 311, .last = 18, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
 static const MoveDef weapon_launch = {.clip = 189, .last = 29, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};

@@ -68,10 +68,10 @@ static const Controls fujin_controls = {NULL, 0,
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const FighterFn state_entries[S_COUNT] = {
-  [S_IDLE] = fujin_armed_idle,
-  [S_WALK] = fujin_armed_walk,
-  [S_CROUCH] = fujin_armed_crouch,
-  [S_BLOCK] = fujin_armed_block,
+  [S_IDLE] = weapon_idle,
+  [S_WALK] = weapon_walk,
+  [S_CROUCH] = weapon_crouch,
+  [S_BLOCK] = weapon_block,
   [S_THROW] = fujin_enter_throw,
 };
 // clang-format on

@@ -69,19 +69,3 @@ void noob_saibot_weapon_action(Fighter *fighter) {
     noob_saibot_entry_retail_script_004e62c0(fighter);
   }
 }
-
-void noob_saibot_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void noob_saibot_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void noob_saibot_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void noob_saibot_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}

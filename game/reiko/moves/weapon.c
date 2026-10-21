@@ -69,19 +69,3 @@ void reiko_weapon_action(Fighter *fighter) {
     reiko_entry_retail_script_004e62c0(fighter);
   }
 }
-
-void reiko_armed_idle(Fighter *fighter) {
-  weapon_stance(fighter, S_IDLE);
-}
-
-void reiko_armed_walk(Fighter *fighter) {
-  weapon_stance(fighter, S_WALK);
-}
-
-void reiko_armed_crouch(Fighter *fighter) {
-  weapon_stance(fighter, S_CROUCH);
-}
-
-void reiko_armed_block(Fighter *fighter) {
-  weapon_stance(fighter, S_BLOCK);
-}
