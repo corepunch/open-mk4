@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* First fatality: 467ce0 -> 43cbb0 -> roster table 4e0498[11] = 44ad70.
@@ -76,12 +77,12 @@ void kai_first_owner_grab(Fighter *fighter) {
   battle_sound(SOUND_B, 0x31);
   battle_sound(SOUND_B, 0x2f);
   fighter->sample_override = fighter_sample(fighter) + 1;
-  kai_entry_retail_script_004e1440(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1440, fighter_ready, 11);
 }
 
 void kai_first_owner_spin(Fighter *fighter) {
   /* 44af20 enters 4e1450, two passes of clip 445. */
-  kai_entry_retail_script_004e1450(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1450, fighter_ready, 11);
 }
 
 static void first_owner_victory(Fighter *fighter) {
@@ -89,7 +90,7 @@ static void first_owner_victory(Fighter *fighter) {
   first_impact(7);
   fighter->state = S_VICTORY;
   fighter->native_variant |= FIRST_OWNER_READY;
-  kai_entry_retail_script_004e1468(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1468, fighter_ready, 11);
   first_maybe_complete(fighter);
 }
 
@@ -113,19 +114,19 @@ void kai_first_owner_tear(Fighter *fighter) {
 void kai_first_victim_71(Fighter *victim) {
   /* 44b260 sets cursor 71, then 4e1490. */
   victim->sample_override = 71;
-  kai_entry_retail_script_004e1490(victim);
+  retail_vm_enter_owned(victim, 0x4e1490, fighter_ready, 11);
 }
 
 void kai_first_victim_turn(Fighter *victim) {
   /* 44b290: B[29], then the second clip-444 pass 4e14a8. */
   battle_sound(SOUND_B, 0x29);
-  kai_entry_retail_script_004e14a8(victim);
+  retail_vm_enter_owned(victim, 0x4e14a8, fighter_ready, 11);
 }
 
 static void first_torso_start(Fighter *torso) {
   /* 44b4a0: torso B[0] (its voice list 12 has no portable bank), then 4e14c8. */
   battle_sound(SOUND_B, 0);
-  kai_entry_retail_script_004e14c8(torso);
+  retail_vm_enter_owned(torso, 0x4e14c8, fighter_ready, 11);
 }
 
 static void first_sever(Fighter *victim) {
@@ -141,7 +142,7 @@ static void first_sever(Fighter *victim) {
   Mat3 unused;
   fighter_joint_position(victim, 3, &waist, &unused);
   battle_blood_hit(owner, victim, waist, 0x3333);
-  kai_entry_retail_script_004e14b8(victim);
+  retail_vm_enter_owned(victim, 0x4e14b8, fighter_ready, 11);
 }
 
 static void first_victim_rip(Fighter *victim) {
@@ -163,13 +164,13 @@ void kai_first_torso_203(Fighter *torso) {
     torso->body.pos[AXIS_Y] -= 0x1999;
   }
   torso->sample_override = 203;
-  kai_entry_retail_script_004e14d8(torso);
+  retail_vm_enter_owned(torso, 0x4e14d8, fighter_ready, 11);
 }
 
 void kai_first_torso_impact(Fighter *torso) {
   /* 44b650: B[12], then 4e14e8 finishes clip 442. */
   battle_sound(SOUND_B, 0x12);
-  kai_entry_retail_script_004e14e8(torso);
+  retail_vm_enter_owned(torso, 0x4e14e8, fighter_ready, 11);
 }
 
 void kai_first_task_end(Fighter *actor) {
@@ -188,7 +189,7 @@ static void first_victim_start(Fighter *victim) {
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   victim->flags |= FF_PAIRED;
-  kai_entry_retail_script_004e1480(victim);
+  retail_vm_enter_owned(victim, 0x4e1480, fighter_ready, 11);
 }
 
 static void first_victim_blend(Fighter *victim) {

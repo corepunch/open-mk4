@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* 4de6e4 passes reaction 100 to current-context dispatcher 45b1f0 while the
@@ -16,10 +17,10 @@ void goro_script_opponent_reaction(Fighter *fighter, int reaction) {
 void goro_script_lp_phase_repeat(Fighter *fighter) {
   fighter->script_phase++;
   if (fighter->script_phase < 5) {
-    goro_entry_retail_script_004de7e8(fighter);
+    retail_vm_enter_owned(fighter, 0x4de7e8, fighter_ready, 15);
     return;
   }
-  goro_entry_retail_script_004de6e4(fighter);
+  retail_vm_enter_owned(fighter, 0x4de6e4, fighter_ready, 15);
 }
 
 void goro_script_lp_finish(Fighter *fighter) {

@@ -1,9 +1,10 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 void jarek_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   jarek_entry_retail_script_004de664(victim);
-  jarek_entry_retail_script_004de668(fighter);
+  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 12);
 }
 
 void jarek_script_lp_return(Fighter *fighter) {

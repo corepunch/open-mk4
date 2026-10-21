@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "retail_native.h"
 #include "../character.h"
 #include "math_util.h"
@@ -139,12 +140,12 @@ static void arrival_gate(Fighter *victim) {
 }
 
 static void victim_stagger(Fighter *victim) {
-  reiko_entry_retail_script_004d2d60(victim);
+  retail_vm_enter_owned(victim, 0x4d2d60, fighter_ready, 7);
 }
 
 /* 41c4b0: a floor pool at joint 4, then 4d2d90. */
 void reiko_second_victim_fall(Fighter *victim) {
-  reiko_entry_retail_script_004d2d90(victim);
+  retail_vm_enter_owned(victim, 0x4d2d90, fighter_ready, 7);
 }
 
 static void second_end(Fighter *victim) {
@@ -178,5 +179,5 @@ void reiko_second_fatality(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &second_owner);
   fighter->sample_override = 0;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  reiko_entry_retail_script_004d2d10(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2d10, fighter_ready, 7);
 }

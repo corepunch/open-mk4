@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void projectile_step(Projectile *object);
@@ -19,7 +20,7 @@ void sonya_ring(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_projectile);
-  sonya_entry_retail_script_004ed4c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed4c0, fighter_ready, 2);
 }
 
 void sonya_script_ring_flash(Fighter *fighter, int task_type) {

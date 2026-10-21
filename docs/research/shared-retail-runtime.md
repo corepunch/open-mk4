@@ -1023,3 +1023,22 @@ entry was wrong: do_attack(S_THROW) drives LP input; its remaining failure is
 an authored timing/damage assertion, not proof about an unstarted state view.
 Weapon tables/profiles,446 remaining script-root adapters and unique/duplicate
 native modules are still migration inputs; this is not native gameplay parity.
+
+### Retire direct script-root thunks
+
+Replaced387 direct calls with their exact retail_vm_enter_owned address,
+completion callback and integration context. Removed377 uncalled root thunks
+and dead aliases. Authored script behavior is unchanged; native literal script
+operands now reach the interpreter directly. The remaining72 names include
+69 true deferred/selected script callbacks and three mislabeled native callback
+tables, not generated script bodies.
+
+Source navigation now follows native frontends or the shared interpreter for
+script-only boundaries. Removed the dead generated-path index and the rule
+that invented a C root thunk for every runtime script. Updated existing
+navigation assertions to require the actual VM call rather than a wrapper.
+
+Verified make format/format-check, shared VM/rejection tests,18 strict script
+audits, native/source graph gates, six helper and seven navigation checks. No
+new fighter tests or broad timing-matrix runs were needed for this equivalent
+adapter removal. Deferred callback migration is the next native lifetime step.

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 void cage_cpu_kick(Fighter *fighter);
@@ -38,10 +39,10 @@ void cage_script_cpu_kick_tail(Fighter *fighter) {
 }
 
 void cage_shadow_victim(Fighter *fighter) {
-  cage_entry_retail_script_004e9718(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9718, fighter_ready, 14);
 }
 
 void cage_cpu_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &cage_s_cpu_kick_script);
-  cage_entry_retail_script_004e80a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e80a8, fighter_ready, 14);
 }

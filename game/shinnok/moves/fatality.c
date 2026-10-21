@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Spike-fatality contact 0x4ebd80 uses reaction 175 with zero damage. The
@@ -40,7 +41,7 @@ void shinnok_fatality_vanish_cue(Fighter *fighter) {
 /* 455190: the child cue again, then clip 436 to sample 18 (4e2f10). */
 void shinnok_fatality_return(Fighter *fighter) {
   vanish_cue(fighter);
-  shinnok_entry_retail_script_004e2f10(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f10, fighter_ready, 6);
 }
 
 static void reappear_land(Fighter *fighter) {
@@ -57,13 +58,13 @@ void shinnok_fatality_reappear(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x2666;
   fighter->body.gravity = 0x28f;
   fighter->body.on_land = reappear_land;
-  shinnok_entry_retail_script_004e2f20(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f20, fighter_ready, 6);
 }
 
 static void victory_loop(Fighter *fighter) {
   fighter->state = S_VICTORY;
   fighter->native_variant |= SHINNOK_FATALITY_OWNER_READY;
-  shinnok_entry_retail_script_004e2f30(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f30, fighter_ready, 6);
   shinnok_fatality_maybe_complete(fighter);
 }
 

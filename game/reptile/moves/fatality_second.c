@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "retail_native.h"
 #include "../character.h"
 
@@ -100,7 +101,7 @@ void reptile_second_acid(Fighter *fighter, int task_type) {
  * and turns the body perpendicular to the pair, then VM 4ea290. */
 static void second_turn(Fighter *victim) {
   victim->body.angle[AXIS_Y] = -0x191eb;
-  reptile_entry_retail_script_004ea290(victim);
+  retail_vm_enter_owned(victim, 0x4ea290, fighter_ready, 10);
 }
 
 void reptile_second_victim(Fighter *victim) {
@@ -132,7 +133,7 @@ static void second_flayed(Fighter *victim) {
   if (victim->assets != NULL) {
     victim->scene_model = &victim->assets->scene_models.data[SCENE_MODEL_FLAYED_BODY];
   }
-  reptile_entry_retail_script_004ea2a8(victim);
+  retail_vm_enter_owned(victim, 0x4ea2a8, fighter_ready, 10);
 }
 
 /* 481590: save the -0x28f drift, stop motion and run 4818f0, one joint
@@ -180,5 +181,5 @@ void reptile_fatality_2(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter->sample_override = 0;
-  reptile_entry_retail_script_004dff08(fighter);
+  retail_vm_enter_owned(fighter, 0x4dff08, fighter_ready, 10);
 }

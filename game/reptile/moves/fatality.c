@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* UP record 4e4600 (gate 45e250) targets 467ce0, which selects
@@ -29,7 +30,7 @@ bool reptile_can_first_fatality(const Fighter *fighter) {
 }
 
 static void owner_entry(Fighter *fighter) {
-  reptile_entry_retail_script_004e2e60(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e60, fighter_ready, 10);
 }
 
 static void owner_blend_start(Fighter *fighter) {
@@ -41,7 +42,7 @@ static void owner_blend_start(Fighter *fighter) {
 /* 453ae0: roster voice list 4 (no portable bank), cursor 11, VM 4e2e70. */
 void reptile_first_owner_cycle(Fighter *fighter) {
   fighter->sample_override = 11;
-  reptile_entry_retail_script_004e2e70(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e70, fighter_ready, 10);
 }
 
 /* 453b20: cursor 169, voice lists 4/12 and the 453bf0 hand-blood task,
@@ -49,17 +50,17 @@ void reptile_first_owner_cycle(Fighter *fighter) {
  * slot; the finisher already owns both actors' controls. */
 void reptile_first_owner_bite(Fighter *fighter) {
   fighter->sample_override = 169;
-  reptile_entry_retail_script_004e2e98(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2e98, fighter_ready, 10);
 }
 
 /* 453ba0: cursor 294 and VM 4e2ea8, which jumps back to 4e2e98. */
 void reptile_first_owner_loop(Fighter *fighter) {
   fighter->sample_override = 294;
-  reptile_entry_retail_script_004e2ea8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2ea8, fighter_ready, 10);
 }
 
 static void victim_entry(Fighter *victim) {
-  reptile_entry_retail_script_004e2eb0(victim);
+  retail_vm_enter_owned(victim, 0x4e2eb0, fighter_ready, 10);
 }
 
 static void victim_join(Fighter *victim) {
@@ -102,13 +103,13 @@ void reptile_first_victim_bite(Fighter *victim) {
   battle_blood_hit(owner, victim, neck(victim), 0x3333);
   victim->hidden_joints[0] |= UINT64_C(1) << 2;
   battle_sound(SOUND_IMPACT_VOICE, roster_def(victim->roster)->asset);
-  reptile_entry_retail_script_004e2ec0(victim);
+  retail_vm_enter_owned(victim, 0x4e2ec0, fighter_ready, 10);
 }
 
 /* 4541b0: B[0x30], then VM 4e2ed0 repeats 85..124. */
 void reptile_first_victim_shake(Fighter *victim) {
   battle_sound(SOUND_B, 0x30);
-  reptile_entry_retail_script_004e2ed0(victim);
+  retail_vm_enter_owned(victim, 0x4e2ed0, fighter_ready, 10);
 }
 
 static void victim_spray(Fighter *victim) {

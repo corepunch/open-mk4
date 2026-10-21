@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void cartwheel_done(Fighter *fighter);
@@ -35,7 +36,7 @@ void sonya_cartwheel(Fighter *fighter) {
   }
   fighter_start_move(fighter, S_KICK, &s_cartwheel);
   fighter->mmove_cleanup = sonya_special_cleanup;
-  sonya_entry_retail_script_004e81d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81d0, fighter_ready, 2);
 }
 
 bool sonya_can_cartwheel(const Fighter *fighter) {

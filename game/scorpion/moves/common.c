@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef s_lk_thrown_end = {.clip = 586, .first = 65, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
@@ -13,11 +14,11 @@ void scorpion_script_lk_rebase(Fighter *fighter) {
   victim->body.pos[AXIS_Y] = victim->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  scorpion_entry_retail_script_004de318(fighter);
+  retail_vm_enter_owned(fighter, 0x4de318, fighter_ready, 0);
 }
 
 void scorpion_script_lk_damage(Fighter *fighter) {
-  scorpion_entry_retail_script_004de328(fighter);
+  retail_vm_enter_owned(fighter, 0x4de328, fighter_ready, 0);
 }
 
 void scorpion_script_lp_return(Fighter *fighter) {

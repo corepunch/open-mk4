@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void equip(Fighter *fighter);
@@ -30,7 +31,7 @@ static void back_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &upper);
   fighter->mmove_cleanup = cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  jarek_entry_retail_script_004ec4f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec4f0, fighter_ready, 12);
 }
 
 static void back_lp(Fighter *fighter) {
@@ -74,7 +75,7 @@ void jarek_weapon_upper_contact(Fighter *fighter) {
 
 void jarek_script_weapon_draw_finish(Fighter *fighter) {
   equip(fighter);
-  jarek_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 12);
 }
 
 void jarek_weapon_action(Fighter *fighter) {
@@ -86,7 +87,7 @@ void jarek_weapon_action(Fighter *fighter) {
     ground_lp(fighter);
   } else {
     weapon_draw(fighter, &knife);
-    jarek_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 12);
   }
 }
 
@@ -100,5 +101,5 @@ void jarek_weapon_reaction(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter_start_move(fighter, S_HIT, &victim);
   fighter->flags |= FF_REACTING;
-  jarek_entry_retail_script_004e8c08(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8c08, mk4_mmove_thrown_finish, 12);
 }

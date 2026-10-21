@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void first_end_shake(Fighter *fighter);
@@ -7,7 +8,7 @@ static void first_end_finish(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter) {
   mk4_script_scene_pose(fighter_peer(fighter), 393, 0);
   battle_particles(fighter_peer(fighter), 2, 12, true);
-  raiden_entry_retail_script_004e0220(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0220, fighter_ready, 1);
 }
 
 static void first_end_shake(Fighter *fighter) {
@@ -39,5 +40,5 @@ void raiden_first_fatality(Fighter *fighter) {
   }
   mk4_script_scene_pose(fighter, 392, 0);
   mk4_script_scene_pose(fighter_peer(fighter), 393, 0);
-  raiden_entry_retail_script_004e0210(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0210, fighter_ready, 1);
 }

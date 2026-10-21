@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Kai's two skull specials share task code at 498e50..499734.
@@ -151,7 +152,7 @@ void kai_rising_skull(Fighter *fighter) {
 void kai_rising_skull_spawn(Fighter *fighter) {
   /* 499450: task 499490 type 48 from 4ed390 (back .4, Y -.01), rising .2. */
   skull_spawn_from(fighter, rising_step, -0x6666, -0x28f, -SKULL_SPEED, SKULL_UP);
-  kai_entry_retail_script_004ed348(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed348, fighter_ready, 11);
 }
 
 void kai_rising_skull_finish(Fighter *fighter) {

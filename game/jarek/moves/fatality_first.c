@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* F,B,F,F+LK -> 467ce0 -> 43cbb0 -> 4e0498[12] = 446d00 (heart rip). */
@@ -51,14 +52,14 @@ void jarek_first_heart(Fighter *fighter) {
     heart->initial_mesh = heart_mesh.first;
     heart_step(heart);
   }
-  jarek_entry_retail_script_004e1248(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1248, fighter_ready, 12);
 }
 
 static void owner_stream(Fighter *fighter) {
   if (female_victim(fighter_opponent(fighter))) {
-    jarek_entry_retail_script_004e1220(fighter);
+    retail_vm_enter_owned(fighter, 0x4e1220, fighter_ready, 12);
   } else {
-    jarek_entry_retail_script_004e1230(fighter);
+    retail_vm_enter_owned(fighter, 0x4e1230, fighter_ready, 12);
   }
 }
 
@@ -102,7 +103,7 @@ void jarek_first_victim_rip(Fighter *victim) {
   chest_blood(victim);
   battle_sound(SOUND_B, 0x23);
   battle_sound(SOUND_B, 0x16);
-  jarek_entry_retail_script_004e1270(victim);
+  retail_vm_enter_owned(victim, 0x4e1270, fighter_ready, 12);
 }
 
 /* 4473b0: bank B 0x12 and shake 5, cursor 148, then 4e1280. */
@@ -110,13 +111,13 @@ void jarek_first_victim_impact(Fighter *victim) {
   battle_sound(SOUND_B, 0x12);
   mk4_script_shake(victim, 5);
   victim->sample_override = 148;
-  jarek_entry_retail_script_004e1280(victim);
+  retail_vm_enter_owned(victim, 0x4e1280, fighter_ready, 12);
 }
 
 /* 447410: shake 5 before the final 4e1290 playback. */
 void jarek_first_victim_end(Fighter *victim) {
   mk4_script_shake(victim, 5);
-  jarek_entry_retail_script_004e1290(victim);
+  retail_vm_enter_owned(victim, 0x4e1290, fighter_ready, 12);
 }
 
 static void scene_wait(Fighter *victim) {

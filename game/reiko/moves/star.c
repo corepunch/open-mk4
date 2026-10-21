@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* D,F+LP 496db0 (also the projectile CPU row): stamp slot 18, snapshot the
@@ -63,7 +64,7 @@ void reiko_star(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_star_throw);
   fighter->saved_motion[AXIS_X] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[AXIS_Z] = fighter_axis(fighter, AXIS_Z);
-  reiko_entry_retail_script_004ed038(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 7);
 }
 
 static const MoveDef s_star_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x2013};
@@ -110,5 +111,5 @@ void reiko_star_reaction(Fighter *victim) {
   victim->body.pos[AXIS_Y] = victim->body.ground;
   mk4_script_stop_body(victim);
   victim->body.physics = fighter_friction;
-  reiko_entry_retail_script_004e97f8(victim);
+  retail_vm_enter_owned(victim, 0x4e97f8, fighter_stop_mmove, 7);
 }

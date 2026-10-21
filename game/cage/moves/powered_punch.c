@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Native479f00 D[26], followed by two native47a280 paired cycles.
@@ -136,7 +137,7 @@ static void power_rewind(Fighter *fighter) {
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-  cage_entry_retail_script_004e84b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 14);
 }
 
 static void power_blocked(Fighter *fighter) {
@@ -194,12 +195,12 @@ void cage_power_victim(Fighter *fighter) {
   fighter_start_move(fighter, S_HIT, &victim);
   fighter->flags |= FF_REACTING;
   mk4_script_effect(fighter, 15);
-  cage_entry_retail_script_004ea040(fighter);
+  retail_vm_enter_owned(fighter, 0x4ea040, fighter_ready, 14);
 }
 
 void cage_powered_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &cage_s_powered_punch_script);
   fighter->native_followup = false;
   fighter->mmove_cleanup = power_cleanup;
-  cage_entry_retail_script_004e80d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e80d0, fighter_ready, 14);
 }

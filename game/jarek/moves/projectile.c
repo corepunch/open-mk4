@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* D,B+LP and the CPU projectile row -> 497540: 49c610 snapshots the pair
@@ -106,5 +107,5 @@ void jarek_blade(Fighter *fighter) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->action = 0x310;
-  jarek_entry_retail_script_004ed118(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed118, fighter_ready, 12);
 }

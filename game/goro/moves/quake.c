@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include "math_util.h"
 
@@ -23,7 +24,7 @@ static void quake_cleanup(Fighter *fighter) {
 
 static void quake_jump(Fighter *fighter) {
   quake_cleanup(fighter);
-  goro_entry_retail_script_004dfc50(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfc50, fighter_ready, 15);
 }
 
 /* 43b7e0 (HK B,F,D,D): voice 0x604, then 48fde0 blends from the current
@@ -56,5 +57,5 @@ void goro_script_quake_land(Fighter *fighter) {
     battle_react(victim, QUAKE_REACTION);
   }
   goro_quake_resting_weapons();
-  goro_entry_retail_script_004dfc60(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfc60, fighter_ready, 15);
 }

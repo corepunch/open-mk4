@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 void raiden_script_second_blend(Fighter *fighter) {
@@ -10,22 +11,22 @@ void raiden_script_second_particles(Fighter *fighter) {
 
 void raiden_script_second_effect(Fighter *fighter) {
   battle_particles(fighter_peer(fighter), 18, 12, true);
-  raiden_entry_retail_script_004e56f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e56f0, fighter_ready, 1);
 }
 
 void raiden_script_second_release(Fighter *fighter) {
   battle_particles(fighter_peer(fighter), 2, 24, true);
-  raiden_entry_retail_script_004e5740(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5740, fighter_ready, 1);
 }
 
 void raiden_script_second_end(Fighter *fighter) {
   fighter->body.physics = raiden_scene_end_watch;
-  raiden_entry_retail_script_004e5760(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5760, fighter_ready, 1);
 }
 
 void raiden_script_second_victim_end(Fighter *fighter) {
   battle_particles(fighter, 2, 24, true);
-  raiden_entry_retail_script_004e5788(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5788, fighter_ready, 1);
 }
 
 void raiden_second_fatality(Fighter *fighter) {
@@ -38,5 +39,5 @@ void raiden_second_fatality(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0x14000);
   }
-  raiden_entry_retail_script_004e56c8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e56c8, fighter_ready, 1);
 }

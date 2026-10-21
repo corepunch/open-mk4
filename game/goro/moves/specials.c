@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include "math_util.h"
 
@@ -44,7 +45,7 @@ static void special_tail(Fighter *fighter, const AttackRecord *record, int first
 /* 43af90 -> 4dfb60 clip 599 to 14, then 43afc0: three D[32] rows. */
 void goro_special_punch(Fighter *fighter) {
   goro_begin_special(fighter, S_PUNCH, &s_special_punch, 0x5fa);
-  goro_entry_retail_script_004dfb60(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfb60, fighter_ready, 15);
 }
 
 void goro_script_punch_tail(Fighter *fighter) {
@@ -54,7 +55,7 @@ void goro_script_punch_tail(Fighter *fighter) {
 /* 43b170 -> 4dfb70 clip 598 to 8, then 43b1a0: eight D[33] rows. */
 void goro_special_kick(Fighter *fighter) {
   goro_begin_special(fighter, S_KICK, &s_special_kick, 0x5fa);
-  goro_entry_retail_script_004dfb70(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfb70, fighter_ready, 15);
 }
 
 void goro_script_kick_tail(Fighter *fighter) {

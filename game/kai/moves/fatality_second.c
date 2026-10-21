@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include <math.h>
 
@@ -166,7 +167,7 @@ void kai_second_victim_fall(Fighter *victim) {
   kai_second_child_walk(victim);
   native_motion_begin(victim, SECOND_SETTLE, second_complete);
   native_motion_play(victim);
-  kai_entry_retail_script_004e5be0(victim);
+  retail_vm_enter_owned(victim, 0x4e5be0, fighter_ready, 11);
 }
 
 void kai_second_victim(Fighter *victim) {
@@ -183,7 +184,7 @@ void kai_second_victim(Fighter *victim) {
     head->gravity = 0x20c;
   }
   battle_blood_hit(owner, victim, neck, 0x3333);
-  kai_entry_retail_script_004ea240(victim);
+  retail_vm_enter_owned(victim, 0x4ea240, fighter_ready, 11);
 }
 
 void kai_fatality_2(Fighter *fighter) {
@@ -203,5 +204,5 @@ void kai_fatality_2(Fighter *fighter) {
   native_hold(victim, 1, NULL);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  kai_entry_retail_script_004dff88(fighter);
+  retail_vm_enter_owned(fighter, 0x4dff88, fighter_ready, 11);
 }

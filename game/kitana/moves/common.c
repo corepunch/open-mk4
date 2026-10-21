@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef s_shadow_low = {.clip = 26, .last = 13, .flags = SF_LOCK, .action = 0x309};
@@ -5,12 +6,12 @@ static const MoveDef s_shadow_up = {.clip = 24, .last = 9, .flags = SF_LOCK, .ac
 
 void kitana_shadow_low(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_shadow_low);
-  kitana_entry_retail_script_004ed268(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 16);
 }
 
 void kitana_shadow_up(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_shadow_up);
-  kitana_entry_retail_script_004ed2c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 16);
 }
 
 void kitana_script_reaction(Fighter *fighter, int reaction) {
@@ -18,7 +19,7 @@ void kitana_script_reaction(Fighter *fighter, int reaction) {
     Fighter *victim = fighter_peer(fighter);
     mk4_script_scene_pose(victim, 561, 0);
     fighter_cancel_mmove(victim);
-    kitana_entry_retail_script_004e59c8(victim);
+    retail_vm_enter_owned(victim, 0x4e59c8, fighter_ready, 16);
     return;
   }
   if (reaction == 175) {

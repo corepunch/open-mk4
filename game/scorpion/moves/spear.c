@@ -64,10 +64,10 @@ static void spear_projectile(Projectile *p) {
       fighter_start_move(victim, S_HIT, &s_spear_stun);
       victim->sample_override = 0;
       victim->flags |= FF_REACTING;
-      scorpion_entry_retail_script_004e9f20(victim);
+      retail_vm_enter_owned(victim, 0x4e9f20, fighter_ready, 0);
       fighter_start_move(owner, S_PUNCH, &s_spear);
       owner->sample_override = 31;
-      scorpion_entry_retail_script_004ed4a8(owner);
+      retail_vm_enter_owned(owner, 0x4ed4a8, fighter_ready, 0);
       owner->retail_vm.cleanup = spear_cleanup;
       p->kind = 0;
     } else {
@@ -103,7 +103,7 @@ static void spear_projectile(Projectile *p) {
     fighter_start_move(victim, S_HIT, &s_snared);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
-    scorpion_entry_retail_script_004e9d00(victim);
+    retail_vm_enter_owned(victim, 0x4e9d00, fighter_ready, 0);
     victim->damage_scale = 0x9999; /* 0x485fb0: subsequent combo damage scales to 60%. */
     p->phase = 1;
     p->lifetime = 100;
@@ -141,7 +141,7 @@ void scorpion_spear(Fighter *fighter) {
   fighter->script_phase = followup;
   fighter->sample_override = followup ? 9 : 0;
   fighter->spear_ready = g_battle.ticks + 90;
-  scorpion_entry_retail_script_004ed448(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0);
   fighter->retail_vm.cleanup = spear_cleanup;
 }
 

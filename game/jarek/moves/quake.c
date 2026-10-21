@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* B,D,B+HK -> 47b5d0: action 0x105, then generated 4e81a8 stamps clip 107
@@ -7,7 +8,7 @@ static const MoveDef quake_move = {.clip = 107, .last = MOVE_END, .flags = SF_LO
 void jarek_quake(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &quake_move);
   fighter->sample_override = 0;
-  jarek_entry_retail_script_004e81a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81a8, fighter_ready, 12);
 }
 
 /* 47b600: action 0x200f, 415180 ground-shock decoration, then 48ee60/48ef40
@@ -22,5 +23,5 @@ void jarek_quake_tail(Fighter *fighter) {
      * runs Goro's port of it (disarm, 4ea8f8 voice, victim script 4e95c8). */
     battle_react(victim, 136);
   }
-  jarek_entry_retail_script_004e81c8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81c8, fighter_ready, 12);
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const WeaponDef dragon_sword;
@@ -144,7 +145,7 @@ static void sword_attack(Fighter *fighter, int index) {
     const WeaponStrike *strike = &liu_kang_sword_attacks[index];
     native_schedule_speed(fighter, strike->speed, maxi(0, strike->delay - 1), strike->travel);
     fighter->mmove_cleanup = sword_cleanup;
-    liu_kang_entry_retail_script_004ec7f0(fighter);
+    retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 3);
     return;
   }
   if (liu_kang_sword_attacks[index].travel != 0) {
@@ -163,7 +164,7 @@ static void sword_hp(Fighter *fighter) {
   fighter->weapon_strike = NULL;
   fighter->sample_override = 0;
   fighter->mmove_cleanup = sword_cleanup;
-  liu_kang_entry_retail_script_004ec680(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec680, fighter_ready, 3);
 }
 
 static void sword_lp(Fighter *fighter) {
@@ -187,13 +188,13 @@ void liu_kang_weapon(Fighter *fighter) {
     sword_lp(fighter); /* 4ecb40[type 66 - 60] -> 4964d0. */
   } else {
     weapon_draw(fighter, &dragon_sword);
-    liu_kang_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 3);
   }
 }
 
 void liu_kang_liu_script_draw_equip(Fighter *fighter) {
   equip_dragon_sword(fighter);
-  liu_kang_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 3);
 }
 
 unsigned liu_kang_liu_script_sword_gate(Fighter *fighter) {

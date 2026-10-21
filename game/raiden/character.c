@@ -37,56 +37,8 @@
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
 
-void raiden_entry_retail_script_004de668(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e0210(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0210, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e0220(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0220, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e56c8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e56c8, fighter_ready, 1);
-}
-
 void raiden_entry_retail_script_004e56d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e56d8, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e56f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e56f0, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e5740(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5740, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e5760(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5760, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e5770(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5770, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e5788(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5788, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004e6a40(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004e8440(Fighter *fighter) {
@@ -99,10 +51,6 @@ void raiden_entry_retail_script_004e8458(Fighter *fighter) {
 
 void raiden_entry_retail_script_004e8e18(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8e18, mk4_script_thrown_ready, 1);
-}
-
-void raiden_entry_retail_script_004e99c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e99c0, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004e9ad0(Fighter *fighter) {
@@ -131,8 +79,4 @@ void raiden_entry_retail_script_004ea068(Fighter *fighter) {
 
 void raiden_entry_retail_script_004ea108(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ea108, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004ed5f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed5f0, fighter_ready, 1);
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* 478df0 sets action 20b and enters 4e8870: indexed cue 59, clip 551 with
@@ -38,5 +39,5 @@ void kai_lunge_kick_contact(Fighter *fighter) {
 
 void kai_input_478df0(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &lunge_kick);
-  kai_entry_retail_script_004e8870(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8870, fighter_ready, 11);
 }

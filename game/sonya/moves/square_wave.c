@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void square_query(Fighter *fighter);
@@ -49,7 +50,7 @@ void sonya_square_wave(Fighter *fighter) {
   }
   fighter_start_move(fighter, S_JUMP, &s_square_wave);
   fighter->mmove_cleanup = sonya_special_cleanup;
-  sonya_entry_retail_script_004e85c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e85c0, fighter_ready, 2);
 }
 
 static void square_victim_drop(Fighter *victim) {

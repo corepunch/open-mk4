@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const WeaponDef native_weapon;
@@ -53,7 +54,7 @@ static void weapon_second_victim(Fighter *fighter) {
 
 void reiko_script_weapon_draw_finish(Fighter *fighter) {
   weapon_equip(fighter);
-  reiko_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 7);
 }
 
 void reiko_weapon_action(Fighter *fighter) {
@@ -66,6 +67,6 @@ void reiko_weapon_action(Fighter *fighter) {
     fighter->action = ACTION_RETAIL_010E;
   } else {
     weapon_draw(fighter, &native_weapon);
-    reiko_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 7);
   }
 }

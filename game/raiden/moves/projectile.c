@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void projectile_step(Projectile *object);
@@ -19,5 +20,5 @@ void raiden_lightning(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &s_projectile);
-  raiden_entry_retail_script_004ed5f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed5f0, fighter_ready, 1);
 }

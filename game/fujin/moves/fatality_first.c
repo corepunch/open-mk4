@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "retail_native.h"
 #include "../character.h"
 
@@ -97,12 +98,12 @@ void fujin_first_loop_start(Fighter *fighter) {
   if (sound != NULL) {
     battle_event_delay(sound, 25);
   }
-  fujin_entry_retail_script_004e1f68(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1f68, fighter_ready, 5);
 }
 
 void fujin_first_cycle(Fighter *fighter) {
   if (fighter->native_variant-- > 0) {
-    fujin_entry_retail_script_004e1f68(fighter);
+    retail_vm_enter_owned(fighter, 0x4e1f68, fighter_ready, 5);
     return;
   }
   fujin_equip_crossbow(fighter);
@@ -176,7 +177,7 @@ static bool first_shot(BattleEvent *event, Fighter *owner, Fighter *victim) {
     bolt->vel[AXIS_Y] = -0x2e14;
   }
   battle_sound(SOUND_C, 0x29);
-  fujin_entry_retail_script_004e1f98(owner);
+  retail_vm_enter_owned(owner, 0x4e1f98, fighter_ready, 5);
   return true;
 }
 

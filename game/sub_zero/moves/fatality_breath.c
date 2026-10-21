@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void breath_object(Projectile *p);
@@ -38,13 +39,13 @@ void sub_zero_script_breath_freeze(Fighter *fighter, int type) {
 }
 
 void sub_zero_script_breath_approach(Fighter *fighter) {
-  sub_zero_entry_retail_script_004d2c78(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2c78, fighter_ready, 4);
 }
 
 static void breath_resume(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
   fighter->script_phase = 3;
-  sub_zero_entry_retail_script_004d2ca0(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2ca0, fighter_ready, 4);
 }
 
 void sub_zero_breath_travel(Fighter *fighter) {
@@ -59,5 +60,5 @@ void sub_zero_script_breath_shatter(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   battle_particles(victim, 3, 32, true);
   battle_shatter(victim);
-  sub_zero_entry_retail_script_004d2cc8(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2cc8, fighter_ready, 4);
 }

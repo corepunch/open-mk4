@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* LK-release record 4e43e8 (F,F,D,F, window 70, gate 45e1b0) -> 467ce0 ->
@@ -79,7 +80,7 @@ static void first_tear(Fighter *victim, int joint, const AttachmentDef *def) {
 static void first_owner_loop(Fighter *owner) {
   owner->state = S_VICTORY;
   owner->native_variant |= FIRST_OWNER_READY;
-  jax_entry_retail_script_004e13a0(owner);
+  retail_vm_enter_owned(owner, 0x4e13a0, fighter_ready, 13);
   first_maybe_complete(owner);
 }
 
@@ -98,9 +99,9 @@ static void first_victim_stream(Fighter *victim) {
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   if (first_listed_victim(victim)) {
-    jax_entry_retail_script_004e13b0(victim);
+    retail_vm_enter_owned(victim, 0x4e13b0, fighter_ready, 13);
   } else {
-    jax_entry_retail_script_004e13c0(victim);
+    retail_vm_enter_owned(victim, 0x4e13c0, fighter_ready, 13);
   }
 }
 
@@ -119,7 +120,7 @@ static void first_victim_start(Fighter *victim) {
 void jax_fatality_1_grab(Fighter *victim) {
   victim->sample_override = 50;
   battle_sound(SOUND_B, 0x29);
-  jax_entry_retail_script_004e13d0(victim);
+  retail_vm_enter_owned(victim, 0x4e13d0, fighter_ready, 13);
 }
 
 /* 4498d0: first arm (449b00) and blood fall (474580), B[0], the 489ff0
@@ -129,7 +130,7 @@ void jax_fatality_1_first_arm(Fighter *victim) {
   battle_sound(SOUND_B, 0);
   mk4_script_roster_sound(victim, 8);
   victim->sample_override = 79;
-  jax_entry_retail_script_004e13e0(victim);
+  retail_vm_enter_owned(victim, 0x4e13e0, fighter_ready, 13);
 }
 
 static void first_second_arm(Fighter *victim) {

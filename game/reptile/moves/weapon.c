@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include "math_util.h"
 
@@ -137,7 +138,7 @@ static void weapon_back_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &flurry_start);
   fighter->mmove_cleanup = weapon_cleanup;
   fighter->sample_override = 0;
-  reptile_entry_retail_script_004ec640(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec640, fighter_ready, 10);
 }
 
 static void back_low_recover(Fighter *fighter) {
@@ -206,7 +207,7 @@ static void weapon_lp(Fighter *fighter) {
 
 void reptile_script_draw_equip(Fighter *fighter) {
   equip_weapon(fighter);
-  reptile_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 10);
 }
 
 /* 46d1d0: armed throws (2000d), a follow-up draw (494610) equips, reacts
@@ -222,7 +223,7 @@ void reptile_weapon_action(Fighter *fighter) {
   } else {
     weapon_draw(fighter, &native_weapon);
     fighter->action = 0x1004;
-    reptile_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 10);
   }
 }
 
@@ -246,13 +247,13 @@ void reptile_weapon_reaction(Fighter *fighter) {
   fighter->flags |= FF_REACTING;
   if (reaction == 96) {
     fighter_start_move(fighter, S_HIT, &weapon_victim);
-    reptile_entry_retail_script_004e8bc0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8bc0, mk4_mmove_thrown_finish, 10);
   } else if (reaction == 137) {
     fighter_start_move(fighter, S_HIT, &weapon_stagger);
-    reptile_entry_retail_script_004e8c98(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8c98, mk4_mmove_thrown_finish, 10);
   } else {
     fighter_start_move(fighter, S_KNOCKDOWN, &weapon_launch);
-    reptile_entry_retail_script_004e8cc0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8cc0, mk4_mmove_thrown_finish, 10);
   }
 }
 

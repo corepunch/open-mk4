@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* LP [F,F] record 4e4818 and the CPU projectile row select native 499740:
@@ -85,14 +86,14 @@ void quan_chi_script_skull_release(Fighter *fighter) {
       skull->vel[axis] = q16_mul(fighter->saved_motion[axis == AXIS_X ? 0 : 1], 0x3333);
     }
   }
-  quan_chi_entry_retail_script_004ed3c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed3c0, fighter_ready, 8);
 }
 
 void quan_chi_skull(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_skull);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  quan_chi_entry_retail_script_004ed3a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed3a0, fighter_ready, 8);
 }
 
 /* Reaction 128 (485f90): 494520 drops a weapon, then 4e9cd8 knocks the
@@ -102,5 +103,5 @@ void quan_chi_skull_reaction(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &s_bitten);
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
-  quan_chi_entry_retail_script_004e9cd8(victim);
+  retail_vm_enter_owned(victim, 0x4e9cd8, fighter_ready, 8);
 }

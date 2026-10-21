@@ -844,7 +844,7 @@ static void react_liu_record(Fighter *fighter) {
   fighter_start_move(fighter, index < 2 ? S_HIT : S_KNOCKDOWN, &liu_reaction_moves[index]);
   fighter->sample_override = 0;
   if (fighter->reaction == 64) {
-    liu_kang_entry_retail_script_004e9de8(fighter);
+    retail_vm_enter_owned(fighter, 0x4e9de8, mk4_mmove_thrown_finish, 3);
   } else {
     liu_record_script(fighter);
   }

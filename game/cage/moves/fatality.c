@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 #define FIRST_OWNER_READY 1
@@ -61,9 +62,9 @@ static void first_native_to(Fighter *fighter, int target, int period, FighterFn 
 
 static void first_victim_stream(Fighter *victim) {
   if (female_victim(victim)) {
-    cage_entry_retail_script_004e12d0(victim);
+    retail_vm_enter_owned(victim, 0x4e12d0, fighter_ready, 14);
   } else {
-    cage_entry_retail_script_004e12c0(victim);
+    retail_vm_enter_owned(victim, 0x4e12c0, fighter_ready, 14);
   }
 }
 
@@ -101,7 +102,7 @@ static void first_intro(Fighter *fighter) {
 static void first_owner_victory(Fighter *fighter) {
   fighter->state = S_VICTORY;
   fighter->native_variant |= FIRST_OWNER_READY;
-  cage_entry_retail_script_004e12b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e12b0, fighter_ready, 14);
   first_maybe_complete(fighter);
 }
 
@@ -113,43 +114,43 @@ void cage_script_fatality_1_signal(Fighter *fighter) {
 void cage_first_victim_59(Fighter *victim) {
   victim->sample_override = 59;
   battle_sound(SOUND_B, 0x1c);
-  cage_entry_retail_script_004e12e0(victim);
+  retail_vm_enter_owned(victim, 0x4e12e0, fighter_ready, 14);
 }
 
 void cage_first_victim_131(Fighter *victim) {
   victim->sample_override = 131;
   battle_sound(SOUND_B, 0x29);
-  cage_entry_retail_script_004e12f0(victim);
+  retail_vm_enter_owned(victim, 0x4e12f0, fighter_ready, 14);
 }
 
 void cage_first_victim_148(Fighter *victim) {
   victim->sample_override = 148;
   battle_sound(SOUND_B, 0x1b);
-  cage_entry_retail_script_004e1300(victim);
+  retail_vm_enter_owned(victim, 0x4e1300, fighter_ready, 14);
 }
 
 void cage_first_victim_166(Fighter *victim) {
   victim->sample_override = 166;
   battle_sound(SOUND_B, 0x2a);
-  cage_entry_retail_script_004e1310(victim);
+  retail_vm_enter_owned(victim, 0x4e1310, fighter_ready, 14);
 }
 
 void cage_first_victim_185(Fighter *victim) {
   victim->sample_override = 185;
   battle_sound(SOUND_B, 0x1b);
-  cage_entry_retail_script_004e1320(victim);
+  retail_vm_enter_owned(victim, 0x4e1320, fighter_ready, 14);
 }
 
 void cage_first_victim_206(Fighter *victim) {
   victim->sample_override = 206;
   battle_sound(SOUND_B, 0x2b);
-  cage_entry_retail_script_004e1330(victim);
+  retail_vm_enter_owned(victim, 0x4e1330, fighter_ready, 14);
 }
 
 static void first_lower_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   battle_camera_shake(5, 3, 0x2e14);
-  cage_entry_retail_script_004e1340(victim);
+  retail_vm_enter_owned(victim, 0x4e1340, fighter_ready, 14);
 }
 
 static void first_lower_impact(Fighter *victim) {
@@ -184,13 +185,13 @@ void cage_first_torso_123(Fighter *torso) {
   torso->sample_override = 123;
   battle_sound(SOUND_B, 0x17);
   battle_camera_shake(9, 3, 0x2e14);
-  cage_entry_retail_script_004e1370(torso);
+  retail_vm_enter_owned(torso, 0x4e1370, fighter_ready, 14);
 }
 
 void cage_first_torso_finish(Fighter *torso) {
   battle_sound(SOUND_B, 0x17);
   battle_camera_shake(9, 3, 0x2e14);
-  cage_entry_retail_script_004e1380(torso);
+  retail_vm_enter_owned(torso, 0x4e1380, fighter_ready, 14);
 }
 
 void cage_first_task_end(Fighter *actor) {

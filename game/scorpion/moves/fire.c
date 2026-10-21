@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void fire_contact(Fighter *fighter);
@@ -24,7 +25,7 @@ void scorpion_fire(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_fire);
   fighter->sample_override = 1;
   fighter->script_phase = (fighter_opponent(fighter)->flags & FF_REACTING) != 0;
-  scorpion_entry_retail_script_004e5b58(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5b58, fighter_ready, 0);
 }
 
 void scorpion_script_fire_decor(Fighter *fighter) {

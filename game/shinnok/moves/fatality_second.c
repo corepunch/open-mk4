@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Fatality II: 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0. The victim floats
@@ -58,18 +59,18 @@ void shinnok_second_victim(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_REACTING;
   lift_victim(victim);
-  shinnok_entry_retail_script_004ea270(victim);
+  retail_vm_enter_owned(victim, 0x4ea270, fighter_ready, 6);
 }
 
 void shinnok_second_vanish(Fighter *fighter) {
   /* 43c820 state 0 -> 4552e0. */
   shinnok_fatality_vanish_cue(fighter);
-  shinnok_entry_retail_script_004e2fc8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2fc8, fighter_ready, 6);
 }
 
 void shinnok_second_vanished(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
-  shinnok_entry_retail_script_004e2fd8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2fd8, fighter_ready, 6);
 }
 
 static void hand_model(Fighter *hand) {
@@ -80,7 +81,7 @@ static void hand_model(Fighter *hand) {
 
 static void first_hand_entry(Fighter *hand) {
   hand_model(hand);
-  shinnok_entry_retail_script_004e00b8(hand);
+  retail_vm_enter_owned(hand, 0x4e00b8, fighter_ready, 6);
 }
 
 static void second_hand_entry(Fighter *hand) {
@@ -89,7 +90,7 @@ static void second_hand_entry(Fighter *hand) {
   hand->facing = -hand->facing;
   hand->heading[0] = -hand->heading[0];
   hand->heading[1] = -hand->heading[1];
-  shinnok_entry_retail_script_004e00e0(hand);
+  retail_vm_enter_owned(hand, 0x4e00e0, fighter_ready, 6);
 }
 
 /* 43caa0: rig 5083c4 at the victim's X, Z zero, with the owner's yaw and
@@ -127,7 +128,7 @@ void shinnok_second_clap(Fighter *hand) {
   native_motion_stop(victim);
   mk4_script_stop_body(victim);
   victim->appearance = APPEARANCE_HIDDEN;
-  shinnok_entry_retail_script_004e00f8(hand);
+  retail_vm_enter_owned(hand, 0x4e00f8, fighter_ready, 6);
 }
 
 /* 41db70/41dba0/41dbd0 -> 41dc00 allocate generic flesh pieces from
@@ -148,5 +149,5 @@ void shinnok_fatality_2(Fighter *fighter) {
   fighter->body.pos[AXIS_X] = fighter->body.pos[AXIS_Z] = 0;
   victim->body.pos[AXIS_X] = side;
   victim->body.pos[AXIS_Z] = 0;
-  shinnok_entry_retail_script_004e0088(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0088, fighter_ready, 6);
 }

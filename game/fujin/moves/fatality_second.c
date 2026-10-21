@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "retail_native.h"
 #include "../character.h"
 
@@ -61,7 +62,7 @@ static void second_flayed(Fighter *victim) {
   if (victim->assets != NULL) {
     victim->scene_model = &victim->assets->scene_models.data[SCENE_MODEL_FLAYED_BODY];
   }
-  fujin_entry_retail_script_004ea2a8(victim);
+  retail_vm_enter_owned(victim, 0x4ea2a8, fighter_ready, 5);
 }
 
 void fujin_second_burst(Fighter *victim) {
@@ -96,7 +97,7 @@ void fujin_second_victim(Fighter *victim) {
     native_motion_frame(victim, visit, NULL, 0, action);
   }
   native_motion_play(victim);
-  fujin_entry_retail_script_004ea2d8(victim);
+  retail_vm_enter_owned(victim, 0x4ea2d8, fighter_ready, 5);
 }
 
 void fujin_second_fatality(Fighter *fighter) {
@@ -108,5 +109,5 @@ void fujin_second_fatality(Fighter *fighter) {
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  fujin_entry_retail_script_004dfed0(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfed0, fighter_ready, 5);
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include <math.h>
 #include <string.h>
@@ -175,7 +176,7 @@ void tanya_boomerang_release(Fighter *fighter) {
 static void boomerang_start(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &boomerang_throw);
   fighter->native_variant = fighter_holds_back(fighter);
-  tanya_entry_retail_script_004ed190(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed190, fighter_ready, 9);
 }
 
 /* 495610: 46dbb0's LP throw gate first, then T2[0x16]/[0x17]. */
@@ -191,7 +192,7 @@ static void weapon_lp(Fighter *fighter) {
 
 void tanya_script_draw_equip(Fighter *fighter) {
   equip_weapon(fighter);
-  tanya_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 9);
 }
 
 /* 46d1d0: armed -> T2[0xd] throw; follow-up window -> 494610 equips, sets
@@ -205,7 +206,7 @@ void tanya_weapon_action(Fighter *fighter) {
     weapon_ground_hp(fighter);
   } else {
     weapon_draw(fighter, &boomerang);
-    tanya_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 9);
   }
 }
 
@@ -219,10 +220,10 @@ void tanya_weapon_reaction(Fighter *fighter) {
   if (fighter->reaction == 169) {
     fighter_start_move(fighter, S_HIT, &victim_hit);
     fighter->flags |= FF_REACTING;
-    tanya_entry_retail_script_004e9db8(fighter);
+    retail_vm_enter_owned(fighter, 0x4e9db8, mk4_mmove_thrown_finish, 9);
   } else {
     fighter_start_move(fighter, S_KNOCKDOWN, &victim_fall);
     fighter->flags |= FF_REACTING;
-    tanya_entry_retail_script_004e8bb0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8bb0, mk4_mmove_thrown_finish, 9);
   }
 }

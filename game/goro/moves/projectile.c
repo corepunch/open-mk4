@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void fireball_step(Projectile *projectile);
@@ -45,5 +46,5 @@ void goro_fireball(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_fireball);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  goro_entry_retail_script_004ed790(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed790, fighter_ready, 15);
 }

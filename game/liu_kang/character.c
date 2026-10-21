@@ -61,84 +61,12 @@ const WeaponStrike liu_kang_sword_attacks[] = {
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
 
-void liu_kang_entry_retail_script_004de410(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004de428(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de428, liu_kang_entry_retail_script_004de468, 3);
-}
-
 void liu_kang_entry_retail_script_004de468(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de468, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004dfff8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4dfff8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e0020(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0020, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e8610(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8610, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e8678(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8678, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e8688(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8688, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e86a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e86a8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e86d0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e86d0, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e86e8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e86e8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e8718(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8718, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e9a90(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9a90, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e9ad0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9ad0, mk4_script_thrown_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e9ae8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9ae8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e9b68(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9b68, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004ec680(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ec680, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004ec7f0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 3);
 }
 
 void liu_kang_entry_retail_script_004ed678(Fighter *fighter) {
@@ -151,8 +79,4 @@ void liu_kang_entry_retail_script_004ed6c0(Fighter *fighter) {
 
 void liu_kang_entry_retail_script_004ed6f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed6f8, fighter_ready, 3);
-}
-
-void liu_kang_entry_retail_script_004e9de8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9de8, mk4_mmove_thrown_finish, 3);
 }

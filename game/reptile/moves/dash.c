@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* B,F+LK record 4e45dc (gate 45e950) and the near/medium CPU rows enter
@@ -85,7 +86,7 @@ void reptile_input_47a690(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &dash);
   fighter->sample_override = 0;
-  reptile_entry_retail_script_004e8128(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8128, fighter_ready, 10);
 }
 
 static void roll_probe(Fighter *fighter) {
@@ -122,7 +123,7 @@ void reptile_input_47afe0(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &roll);
   fighter->sample_override = 0;
-  reptile_entry_retail_script_004e8178(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8178, fighter_ready, 10);
 }
 
 /* Reaction 40 (483550): disarm and VM 4e9620, clip 183 launch, landing
@@ -130,7 +131,7 @@ void reptile_input_47afe0(Fighter *fighter) {
 void reptile_reaction_40(Fighter *fighter) {
   fighter_start_move(fighter, S_KNOCKDOWN, &roll_victim);
   fighter->sample_override = 0;
-  reptile_entry_retail_script_004e9620(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9620, fighter_ready, 10);
 }
 
 /* Reaction 158 (483500): damage scale 0x9999 (482a50), disarm and VM
@@ -140,7 +141,7 @@ void reptile_dash_victim(Fighter *fighter) {
   fighter->damage_scale = 0x9999;
   fighter_start_move(fighter, S_KNOCKDOWN, &dash_victim);
   fighter->sample_override = 0;
-  reptile_entry_retail_script_004e95f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e95f0, fighter_ready, 10);
 }
 
 /* 488b80: 490350 toggles the model mirror bit, which the pair-axis

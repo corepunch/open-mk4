@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* U,U,F,F+BLK -> 467cd0 -> 43bd70 -> 4dfe90[12] = 41df20. After the shared
@@ -63,7 +64,7 @@ static void victim_start(Fighter *victim) {
   battle_attach_head(victim, victim, 2);
   fighter_start_move(victim, S_KNOCKDOWN, &victim_scene);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_REACTING;
-  jarek_entry_retail_script_004d2e10(victim);
+  retail_vm_enter_owned(victim, 0x4d2e10, fighter_ready, 12);
 }
 
 /* 41dfc0: 48f880 replaces the victim task with 41dff0; the owner enters
@@ -72,7 +73,7 @@ void jarek_second_handoff(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_cancel_mmove(victim);
   victim_start(victim);
-  jarek_entry_retail_script_004d2de0(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2de0, fighter_ready, 12);
 }
 
 /* 41e0e0: the separated head falls under gravity 0x20c, spinning about Z
@@ -118,5 +119,5 @@ void jarek_fatality_2(Fighter *fighter) {
   native_play(victim, false);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  jarek_entry_retail_script_004d2db0(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2db0, fighter_ready, 12);
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef dive = {.clip = 58, .last = 9, .flags = SF_LOCK | SF_RECORD, .action = 0x20f};
@@ -20,7 +21,7 @@ void fujin_dive_land(Fighter *fighter) {
 
 static void dive_recoil(Fighter *fighter) {
   fighter->action = ACTION_RETAIL_1006;
-  fujin_entry_retail_script_004e8298(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8298, fighter_ready, 5);
 }
 
 static void dive_query(Fighter *fighter) {
@@ -48,5 +49,5 @@ void fujin_dive(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &dive);
   fighter->body.physics = fighter->body.on_land = NULL;
   fighter->mmove_cleanup = dive_cleanup;
-  fujin_entry_retail_script_004e8258(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8258, fighter_ready, 5);
 }

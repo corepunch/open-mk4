@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef triple = {.clip = 100, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x208};
@@ -124,14 +125,14 @@ void fujin_triple_contact(Fighter *fighter) {
 }
 
 void fujin_triple_fast(Fighter *fighter) {
-  fujin_entry_retail_script_004e8770(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8770, fighter_ready, 5);
 }
 
 void fujin_triple_victim(Fighter *fighter) {
   if (fighter->reaction == 94) {
     fighter_start_move(fighter, S_HIT, &middle_victim);
     fighter->flags |= FF_REACTING;
-    fujin_entry_retail_script_004ea050(fighter);
+    retail_vm_enter_owned(fighter, 0x4ea050, mk4_mmove_thrown_finish, 5);
   } else {
     require(fighter->reaction == 93 || fighter->reaction == 95, "Invalid Fujin triple-kick victim stage");
     /* Native488420/488440 and488830/488850 are also the exact
@@ -146,5 +147,5 @@ void fujin_triple_kick(Fighter *fighter) {
   fighter->native_followup = false;
   fighter->mmove_cleanup = triple_cleanup;
   battle_sound(SOUND_C, 0x42);
-  fujin_entry_retail_script_004e8740(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8740, fighter_ready, 5);
 }

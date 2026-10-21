@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* 47bd10 sets action 210 and enters 4e8210: sound C60, forward .18, Y -.1,
@@ -135,5 +136,5 @@ void kai_aerial_punch_contact(Fighter *fighter) {
 void kai_input_47bd10(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &aerial_punch);
   fighter->mmove_cleanup = aerial_cleanup;
-  kai_entry_retail_script_004e8210(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8210, fighter_ready, 11);
 }

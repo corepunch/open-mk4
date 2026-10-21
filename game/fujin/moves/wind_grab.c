@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include <math.h>
 
@@ -151,7 +152,7 @@ static void orbit_release(Fighter *victim, const Fighter *owner, q16 angle) {
     victim->heading[0] = (q16)llround(x * Q16_ONE / length);
     victim->heading[1] = (q16)llround(z * Q16_ONE / length);
   }
-  fujin_entry_retail_script_004e9fb0(victim);
+  retail_vm_enter_owned(victim, 0x4e9fb0, fighter_ready, 5);
 }
 
 static void orbit_step(Fighter *victim) {
@@ -202,5 +203,5 @@ void fujin_wind_grab(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &wind_grab);
   fighter->mmove_cleanup = grab_cleanup;
   grab_effect_start(fighter);
-  fujin_entry_retail_script_004e8830(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8830, fighter_ready, 5);
 }

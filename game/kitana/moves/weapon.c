@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const WeaponDef native_weapon;
@@ -53,19 +54,19 @@ static void weapon_back_hp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
   fighter->mmove_cleanup = kitana_special_cleanup;
-  kitana_entry_retail_script_004ec7a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec7a0, fighter_ready, 16);
 }
 
 static void weapon_back_lp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_weapon_back_lp);
   mk4_script_schedule_motion(fighter, 0x1999, 8, 13);
   fighter->mmove_cleanup = kitana_special_cleanup;
-  kitana_entry_retail_script_004ec7f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 16);
 }
 
 void kitana_script_draw_equip(Fighter *fighter) {
   equip_weapon(fighter);
-  kitana_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 16);
 }
 
 void kitana_weapon(Fighter *fighter) {
@@ -77,7 +78,7 @@ void kitana_weapon(Fighter *fighter) {
     weapon_back_hp(fighter);
   } else {
     weapon_draw(fighter, &native_weapon);
-    kitana_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 16);
   }
 }
 

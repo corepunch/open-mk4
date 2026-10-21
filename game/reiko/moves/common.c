@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION, NULL, 0};
@@ -5,7 +6,7 @@ static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, S
 void reiko_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   reiko_entry_retail_script_004de664(victim);
-  reiko_entry_retail_script_004de668(fighter);
+  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 7);
 }
 
 void reiko_script_lp_return(Fighter *fighter) {
@@ -35,8 +36,8 @@ void reiko_script_lp_reaction(Fighter *fighter, int reaction) {
   victim->flags |= FF_REACTING;
   fighter_start_move(victim, S_KNOCKDOWN, &s_lp_thrown);
   if (reaction == 102) {
-    reiko_entry_retail_script_004e9bd0(victim);
+    retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 7);
   } else {
-    reiko_entry_retail_script_004e9b40(victim);
+    retail_vm_enter_owned(victim, 0x4e9b40, fighter_ready, 7);
   }
 }

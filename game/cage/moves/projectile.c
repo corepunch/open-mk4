@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef cast = {.clip = 28, .last = 29, .flags = SF_LOCK | SF_RECORD, .action = 0x311};
@@ -62,7 +63,7 @@ static void cast_orb(Fighter *fighter, int action) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->action = action;
-  cage_entry_retail_script_004ed0d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed0d8, fighter_ready, 14);
 }
 
 void cage_high_orb(Fighter *fighter) {

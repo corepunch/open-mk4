@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef s_lp_release = {.clip = 174, .last = 26, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
@@ -19,7 +20,7 @@ void liu_kang_liu_script_lp_getup(Fighter *victim) {
 }
 
 void liu_kang_liu_script_lk_continue(Fighter *fighter) {
-  liu_kang_entry_retail_script_004de410(fighter);
+  retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);
 }
 
 void liu_kang_liu_script_lk_damage(Fighter *fighter) {
@@ -33,7 +34,7 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   liu_kang_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
   /* 4de428 returns to this native caller, which then enters 4de468. */
-  liu_kang_entry_retail_script_004de428(fighter);
+  retail_vm_enter_owned(fighter, 0x4de428, liu_kang_entry_retail_script_004de468, 3);
 }
 
 void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type) {
@@ -57,7 +58,7 @@ void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
     fighter_start_move(victim, S_KNOCKDOWN, &s_lp_release);
     victim->sample_override = 0;
     victim->flags |= FF_REACTING;
-    liu_kang_entry_retail_script_004e9b68(victim);
+    retail_vm_enter_owned(victim, 0x4e9b68, fighter_ready, 3);
   } else if (reaction == 80) {
     fighter->flags &= ~(unsigned)FF_PAIRED;
     victim->flags &= ~(unsigned)FF_PAIRED;

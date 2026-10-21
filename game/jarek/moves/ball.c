@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Jarek's cannonball 47b310 (B,F+LK and every CPU range row) and upward
@@ -65,7 +66,7 @@ static void recoil_wait(Fighter *fighter) {
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   ball_face(fighter);
-  jarek_entry_retail_script_004e84b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 12);
 }
 
 /* 47d940: contact recoil shared by both balls. */
@@ -203,5 +204,5 @@ void jarek_ball_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &victim_move);
   fighter->flags |= FF_REACTING;
-  jarek_entry_retail_script_004e9658(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9658, fighter_ready, 12);
 }

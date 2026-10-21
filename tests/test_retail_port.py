@@ -38,7 +38,8 @@ class PortTests(unittest.TestCase):
                     self.assertTrue(code.endswith('}'))
                     self.assertIn(function + '(', code)
         ice = source_closure(port_entry(4, 'ice'))
-        self.assertIn('sub_zero_entry_retail_script_004ed588', ice)
+        self.assertIn('sub_zero_ice', ice)
+        self.assertIn('retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4)', ice['sub_zero_ice'][1])
         self.assertIn('sub_zero_ice_projectile', source_closure(('game/sub_zero/character.c', 'script_spawn_ice')))  # A callback argument, not an inline call.
         with self.assertRaisesRegex(ValueError, 'Missing portable C definition'):
             port_source(('game/sub_zero/character.c', 'if'))
@@ -58,7 +59,7 @@ class PortTests(unittest.TestCase):
         self.assertIn('retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0)', spear)
         self.assertIn('scheduler wait; ticks=45', spear)
         self.assertIn('script_spear_return', spear)
-        self.assertIn('Typed compiler boundaries', spear)
+        self.assertIn('Typed runtime boundaries', spear)
         other = port_text(self.disassembly, 'jab', 5, 12)
         self.assertIn('No portable C entry is indexed', other)
         self.assertNotIn('static void scorpion_jab(', other)
@@ -150,7 +151,7 @@ class PortTests(unittest.TestCase):
         base = [sys.executable, tool, '--exe', str(ROOT / 'MK4/MK-4.EXE'), '--archive', 'missing']
         with tempfile.TemporaryDirectory() as directory:
             result = subprocess.run([*base, '--character', 'sub_zero', '--move', 'ice', '--port'], cwd=directory, text=True, capture_output=True, check=True)
-            self.assertIn('retail_script_004ed588', result.stdout)
+            self.assertIn('retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4)', result.stdout)
             self.assertEqual(list(Path(directory).iterdir()), [])
             for args in (['--port'], ['--port', '--script', '4ed588'], ['--port', '--move', 'ice', '--c'],
                          ['--port', '--move', 'ice', '--raw'], ['--move', 'ice', '--port', '--limit', '0']):

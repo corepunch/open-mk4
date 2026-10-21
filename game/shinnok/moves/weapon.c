@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -49,12 +50,12 @@ void shinnok_weapon_equip(Fighter *fighter) {
 
 void shinnok_script_draw_equip(Fighter *fighter) {
   shinnok_weapon_equip(fighter);
-  shinnok_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 6);
 }
 
 static void shinnok_weapon_followup(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &followup);
-  shinnok_entry_retail_script_004ec8b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 6);
 }
 
 void shinnok_weapon_action(Fighter *fighter) {
@@ -66,7 +67,7 @@ void shinnok_weapon_action(Fighter *fighter) {
     shinnok_weapon_followup(fighter);
   } else {
     weapon_draw(fighter, &polearm);
-    shinnok_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 6);
   }
 }
 
@@ -88,7 +89,7 @@ void shinnok_weapon_sweep_getup(Fighter *fighter) {
     fighter_finish_mmove(fighter, NULL);
     return;
   }
-  shinnok_entry_retail_script_004e9498(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9498, mk4_mmove_thrown_finish, 6);
 }
 
 /* 4830a0/483160 resumes clip197 at zero and finishes before controller
@@ -115,8 +116,8 @@ void shinnok_weapon_reaction(Fighter *fighter) {
   fighter_start_move(fighter, S_KNOCKDOWN, &victim);
   fighter->flags |= FF_REACTING;
   if (fighter->reaction == 140) {
-    shinnok_entry_retail_script_004e8d08(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8d08, mk4_mmove_thrown_finish, 6);
   } else {
-    shinnok_entry_retail_script_004e9460(fighter);
+    retail_vm_enter_owned(fighter, 0x4e9460, mk4_mmove_thrown_finish, 6);
   }
 }

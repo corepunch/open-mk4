@@ -73,64 +73,8 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
 // clang-format off: Keep table entries on one row, including long rows.
 // clang-format on
 
-void sub_zero_entry_retail_script_004d2bf0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2bf0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004d2c10(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2c10, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004d2c78(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2c78, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004d2ca0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2ca0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004d2cc8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2cc8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004de4b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de4b8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004de4e0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de4e0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e0368(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0368, fighter_ready, 4);
-}
-
 void sub_zero_entry_retail_script_004e0378(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0378, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e0388(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0388, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e0398(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0398, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e03a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e03a8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e03b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e03b8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e03c8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e03c8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e03d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e03d8, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e03f0(Fighter *fighter) {
@@ -139,40 +83,4 @@ void sub_zero_entry_retail_script_004e03f0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e0420(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0420, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e0430(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0430, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e84d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e84d8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e84f8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e84f8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e8530(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8530, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e9bd0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9bd0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e9ee0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9ee0, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004ed588(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4);
 }

@@ -40,20 +40,4 @@ void goro_uppercut_victim(Fighter *victim);
 void goro_victim_finish_getup(Fighter *victim);
 void goro_victim_getup(Fighter *victim);
 
-void goro_entry_retail_script_004de6e4(Fighter *fighter);
-void goro_entry_retail_script_004de7e8(Fighter *fighter);
-void goro_entry_retail_script_004dfb60(Fighter *fighter);
-void goro_entry_retail_script_004dfb70(Fighter *fighter);
-void goro_entry_retail_script_004dfbb8(Fighter *fighter);
-void goro_entry_retail_script_004ed790(Fighter *fighter);
-void goro_entry_retail_script_004dfbd0(Fighter *fighter);
-void goro_entry_retail_script_004dfc38(Fighter *fighter);
-void goro_entry_retail_script_004dfc50(Fighter *fighter);
-void goro_entry_retail_script_004dfc60(Fighter *fighter);
-void goro_entry_retail_script_004e8dd0(Fighter *fighter);
-void goro_entry_retail_script_004e8e50(Fighter *fighter);
-void goro_entry_retail_script_004e8e80(Fighter *fighter);
-void goro_entry_retail_script_004e95c8(Fighter *fighter);
-void goro_entry_retail_script_004ea3e0(Fighter *fighter);
-void goro_entry_retail_script_004ea400(Fighter *fighter);
 #endif

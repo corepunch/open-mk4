@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Native scenes retain independent victims, blends, particles and teardown.
@@ -16,7 +17,7 @@ void raiden_scene_end_watch(Fighter *fighter) {
 }
 
 void raiden_script_victory(Fighter *fighter) {
-  raiden_entry_retail_script_004e6a40(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 1);
 }
 
 void raiden_script_victory_effect(Fighter *fighter) {

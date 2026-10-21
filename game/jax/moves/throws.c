@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef s_slam_fall = {.clip = 173, .last = 22, .flags = SF_LOCK | SF_REACTION};
@@ -44,32 +45,32 @@ static bool slam_continue(Fighter *fighter) {
 
 void jax_lp_slam_first(Fighter *fighter) {
   if (!slam_continue(fighter)) {
-    jax_entry_retail_script_004de568(fighter);
+    retail_vm_enter_owned(fighter, 0x4de568, fighter_ready, 13);
     return;
   }
   /* 42c83f saves the victim group position in task +5c..+64. */
   memcpy(fighter->saved_motion, fighter_opponent(fighter)->body.pos, sizeof fighter->saved_motion);
-  jax_entry_retail_script_004de518(fighter);
+  retail_vm_enter_owned(fighter, 0x4de518, fighter_ready, 13);
 }
 
 void jax_lp_slam_second(Fighter *fighter) {
   if (slam_continue(fighter)) {
-    jax_entry_retail_script_004de538(fighter);
+    retail_vm_enter_owned(fighter, 0x4de538, fighter_ready, 13);
   } else {
-    jax_entry_retail_script_004de558(fighter);
+    retail_vm_enter_owned(fighter, 0x4de558, fighter_ready, 13);
   }
 }
 
 void jax_lp_slam_third(Fighter *fighter) {
   if (!slam_continue(fighter)) {
-    jax_entry_retail_script_004de568(fighter);
+    retail_vm_enter_owned(fighter, 0x4de568, fighter_ready, 13);
     return;
   }
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   memcpy(victim->body.pos, fighter->saved_motion, sizeof victim->body.pos);
   fighter->sample_override = SLAM_START;
   victim->sample_override = SLAM_START;
-  jax_entry_retail_script_004de518(fighter);
+  retail_vm_enter_owned(fighter, 0x4de518, fighter_ready, 13);
 }
 
 /* 42c9f0 blends into the stance (48fde0, 0xccc) and returns via 470420. */

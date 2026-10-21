@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const WeaponDef scepter;
@@ -55,11 +56,11 @@ void sub_zero_weapon(Fighter *fighter) {
     fighter->action = ACTION_RETAIL_010E;
   } else {
     weapon_draw(fighter, &scepter);
-    sub_zero_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 4);
   }
 }
 
 void sub_zero_script_draw_equip(Fighter *fighter) {
   equip_scepter(fighter);
-  sub_zero_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 4);
 }

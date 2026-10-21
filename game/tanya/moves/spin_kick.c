@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* LK F,F record 4e4550 -> T4[30] 479520: action 21b, clip 109 through
@@ -55,7 +56,7 @@ static void recoil_wait(Fighter *fighter) {
   memset(fighter->body.spin, 0, sizeof fighter->body.spin);
   memset(fighter->body.angle, 0, sizeof fighter->body.angle);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
-  tanya_entry_retail_script_004e84b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e84b8, fighter_ready, 9);
 }
 
 /* Shared blocked recoil 47d940: action 1010, 4e84a8 speed -.05, Y -0x23d7

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void throw_getup_land(Fighter *victim);
@@ -33,5 +34,5 @@ void raiden_script_thrown_return(Fighter *fighter) {
 void raiden_lk_victim(Fighter *victim) {
   mk4_mmove_bind(victim, 169, 43, 0);
   fighter_set_speed(victim, 0xf5c); /* 490ab0 consumes 4e99bc's speed. */
-  raiden_entry_retail_script_004e99c0(victim);
+  retail_vm_enter_owned(victim, 0x4e99c0, fighter_ready, 1);
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void flying_query(Fighter *fighter);
@@ -12,11 +13,11 @@ static void flying_query(Fighter *fighter) {
 
 static void flying_branch(Fighter *fighter) {
   if (!fighter_airborne(fighter)) {
-    liu_kang_entry_retail_script_004e86d0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e86d0, fighter_ready, 3);
   } else if (fighter->contact == CONTACT_BLOCK) {
-    liu_kang_entry_retail_script_004e8718(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8718, fighter_ready, 3);
   } else {
-    liu_kang_entry_retail_script_004e86e8(fighter);
+    retail_vm_enter_owned(fighter, 0x4e86e8, fighter_ready, 3);
   }
 }
 
@@ -45,5 +46,5 @@ void liu_kang_flying_kick(Fighter *fighter) {
   fighter->body.vel[AXIS_Y] = -0x170a;
   fighter->body.gravity = 0x106;
   battle_sound(SOUND_INDEXED, 0);
-  liu_kang_entry_retail_script_004e86a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e86a8, fighter_ready, 3);
 }

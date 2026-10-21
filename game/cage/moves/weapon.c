@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void equip_weapon(Fighter *fighter);
@@ -32,7 +33,7 @@ static void weapon_upper(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &upper);
   fighter->mmove_cleanup = weapon_cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  cage_entry_retail_script_004ec4f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec4f0, fighter_ready, 14);
 }
 
 static void weapon_back_hp(Fighter *fighter) {
@@ -43,7 +44,7 @@ static void weapon_back_lp(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &back_lp);
   fighter->mmove_cleanup = weapon_cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  cage_entry_retail_script_004ec7f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec7f0, fighter_ready, 14);
 }
 
 static void weapon_hp(Fighter *fighter) {
@@ -78,7 +79,7 @@ void cage_weapon_back_lp_contact(Fighter *fighter) {
 
 void cage_script_draw_equip(Fighter *fighter) {
   equip_weapon(fighter);
-  cage_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 14);
 }
 
 void cage_weapon_action(Fighter *fighter) {
@@ -90,7 +91,7 @@ void cage_weapon_action(Fighter *fighter) {
     weapon_back_lp(fighter);
   } else {
     weapon_draw(fighter, &mace);
-    cage_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 14);
   }
 }
 
@@ -112,8 +113,8 @@ void cage_weapon_reaction(Fighter *fighter) {
   fighter_start_move(fighter, S_KNOCKDOWN, &victim);
   fighter->flags |= FF_REACTING;
   if (fighter->reaction == 149) {
-    cage_entry_retail_script_004e8cc0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8cc0, mk4_mmove_thrown_finish, 14);
   } else {
-    cage_entry_retail_script_004e8d38(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8d38, mk4_mmove_thrown_finish, 14);
   }
 }

@@ -46,44 +46,8 @@
 
 /* Native-only blends; no VM timing tables. */
 
-void scorpion_entry_retail_script_004d2e58(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2e58, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004d2e88(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2e88, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004d2eb0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2eb0, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004d2ef8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2ef8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004d2f10(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4d2f10, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004de318(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de318, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004de328(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de328, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004e0278(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0278, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0288(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0288, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0298(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0298, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e02a8(Fighter *fighter) {
@@ -98,52 +62,8 @@ void scorpion_entry_retail_script_004e02d0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e02d0, fighter_ready, 0);
 }
 
-void scorpion_entry_retail_script_004e0300(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0300, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0310(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0310, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0320(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0320, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004e0338(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e0338, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0348(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0348, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e0358(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e0358, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e5b58(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5b58, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e87b0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e87b0, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e8818(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e8850(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8850, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004e97f8(Fighter *fighter) {
@@ -154,30 +74,10 @@ void scorpion_entry_retail_script_004e9938(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e9938, fighter_ready, 0);
 }
 
-void scorpion_entry_retail_script_004e9970(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9970, mk4_script_thrown_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e9d00(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9d00, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004e9f20(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9f20, fighter_ready, 0);
-}
-
 void scorpion_entry_retail_script_004ec8b0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 0);
 }
 
 void scorpion_entry_retail_script_004ec918(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ec918, fighter_ready, 0);
-}
-
-void scorpion_entry_retail_script_004ed448(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed448, scorpion_script_spear_done, 0);
-}
-
-void scorpion_entry_retail_script_004ed4a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed4a8, fighter_ready, 0);
 }

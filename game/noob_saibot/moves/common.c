@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include "math_util.h"
 
@@ -8,7 +9,7 @@ static const MoveDef s_lp_thrown = {153, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, S
 void noob_saibot_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   noob_saibot_entry_retail_script_004de664(victim);
-  noob_saibot_entry_retail_script_004de668(fighter);
+  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 17);
 }
 
 void noob_saibot_script_lp_return(Fighter *fighter) {
@@ -33,12 +34,12 @@ void noob_saibot_script_opponent_reaction(Fighter *fighter, int reaction) {
 
 void noob_saibot_shadow_low(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_noob_shadow_low);
-  noob_saibot_entry_retail_script_004ed268(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 17);
 }
 
 void noob_saibot_shadow_up(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_noob_shadow_up);
-  noob_saibot_entry_retail_script_004ed2c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 17);
 }
 
 void noob_saibot_shadow_task_low(Fighter *fighter, int task_type) {
@@ -108,8 +109,8 @@ void noob_saibot_script_lp_reaction(Fighter *fighter, int reaction) {
   victim->flags |= FF_REACTING;
   fighter_start_move(victim, S_KNOCKDOWN, &s_lp_thrown);
   if (reaction == 102) {
-    noob_saibot_entry_retail_script_004e9bd0(victim);
+    retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 17);
   } else {
-    noob_saibot_entry_retail_script_004e9b40(victim);
+    retail_vm_enter_owned(victim, 0x4e9b40, fighter_ready, 17);
   }
 }

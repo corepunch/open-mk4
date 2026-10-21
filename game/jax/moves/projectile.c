@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* LP D,F record 4e4388 (flags 0x2, gate 45e7e0) and the projectile CPU row
@@ -62,5 +63,5 @@ void jax_missile(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_missile);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  jax_entry_retail_script_004ed090(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed090, fighter_ready, 13);
 }

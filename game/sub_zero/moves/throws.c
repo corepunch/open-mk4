@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void thrown_finish(Fighter *victim);
@@ -44,7 +45,7 @@ void sub_zero_script_thrown_return(Fighter *victim) {
 static void lk_thrown_release(Fighter *victim) {
   victim->sample_override = 46;
   victim->body.physics = fighter_friction;
-  sub_zero_entry_retail_script_004e9ee0(victim);
+  retail_vm_enter_owned(victim, 0x4e9ee0, fighter_ready, 4);
 }
 
 void sub_zero_lk_thrown_script(Fighter *victim) {

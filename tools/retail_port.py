@@ -1,4 +1,4 @@
-"""Bounded source extraction and operand ledger for translating a move to C.
+"""Bounded native source navigation and retail operand provenance.
 
 Existing ports are source excerpts, never automatic decompilation. Only character-module
 function references are expanded. Native literals retain instruction provenance;
@@ -7,7 +7,6 @@ no operand is called Q16, damage, action or a host pointer just from its number.
 from collections import deque
 from c_source import read_source, source_files, function_source
 import re
-import json
 
 from character_catalog import moves_for, character_name
 from retail_actions import catalog, native_evidence, NATIVE
@@ -41,35 +40,6 @@ SPECIFIC = {
         'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
         'air_throw': 'sonya_air_throw', 'victory': ('game/roster.c', 'retail_victory'), 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
     3: {
-        'jab': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62f0'),
-        'high_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6c90'),
-        'low_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6d08'),
-        'uppercut': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62a0'),
-        'sweep': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e67d8'),
-        'roundhouse': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6e90'),
-        'close_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e61e0'),
-        'combo_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e69b0'),
-        'close_hk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6190'),
-        'crouch_lk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6158'),
-        'crouch_hk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e60b8'),
-        'air_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6658'),
-        'air_lp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6710'),
-        'air_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6df0'),
-        'air_diagonal_hk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6500'),
-        'air_diagonal_lk': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e63d8'),
-        'lp_throw': ('game/liu_kang/generated/scripts.inc', 'retail_script_004de798'),
-        'lk_throw': ('game/liu_kang/generated/scripts.inc', 'retail_script_004de3b0'),
-        'bicycle_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e8610'),
-        'flying_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e86a8'),
-        'high_fireball': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ed6c0'),
-        'low_fireball': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ed678'),
-        'air_fireball': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ed6f8'),
-        'sword_hp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ec680'),
-        'sword_back_lp': ('game/liu_kang/generated/scripts.inc', 'retail_script_004ec7f0'),
-        'draw_weapon': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62c0'),
-        'fatality_2': ('game/liu_kang/generated/scripts.inc', 'retail_script_004dfff8'),
-        'fan_fatality': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e0118'),
-        'spike_fatality': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6950'),
         'fatality_1': 'liu_kang_first_fatality',
         'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
         'sword_lp': 'sword_lp',
@@ -82,19 +52,6 @@ SPECIFIC = {
         'fatality_1': 'sub_zero_first_fatality', 'fatality_2': 'sub_zero_second_fatality',
         'weapon_throw': ('game/weapons.c', 'weapon_throw')},
 }
-
-# Generated VM entries are first-class extraction sources. Native-only entries
-# still point at their engine integration above.
-for _character, _slug in ((0, 'scorpion'), (1, 'raiden'), (2, 'sonya'), (4, 'sub_zero')):
-    for _name, _move in moves_for(_character).items():
-        if _move['scripts'] and (_character not in (1, 2) or _name not in SPECIFIC[_character]):
-            _root = _move['scripts'][0][1]
-            _profile = json.loads((ROOT / 'game' / _slug / 'port.json').read_text())
-            if hex(_root) in _profile.get('runtime_scripts', {}):
-                SPECIFIC[_character][_name] = ('game/%s/character.c' % _slug, '%s_entry_retail_script_%08x' % (_slug, _root))
-            else:
-                SPECIFIC[_character][_name] = ('game/%s/generated/scripts.inc' % _slug, 'retail_script_%08x' % _root)
-
 
 # This scene has one native coordinator for all fighters, with direct retail words.
 for _character in SPECIFIC:
@@ -123,15 +80,6 @@ for _character in SPECIFIC:
     SPECIFIC[_character]['close_hk'] = ('game/retail_controls.c', 'retail_close_high_kick')
 
 
-# All catalogued script roots now enter the shared interpreter. Keep extraction
-# navigation on their native entry adapters while those adapters are retired.
-for _character, _entries in SPECIFIC.items():
-    _slug = {0: 'scorpion', 1: 'raiden', 2: 'sonya', 3: 'liu_kang', 4: 'sub_zero'}[_character]
-    for _name, _entry in list(_entries.items()):
-        if isinstance(_entry, tuple) and _entry[0].endswith('/generated/scripts.inc'):
-            _entries[_name] = ('game/%s/character.c' % _slug, '%s_entry_%s' % (_slug, _entry[1]))
-
-
 PORT_NOTES = {
     (4, 'lp_throw'): 'Retail selector 4de798[4] chooses 4de6b8: owner/victim 76/153, damage 0x2666 at sample 25, '
                     'owner return after sample 48. Reaction 102 plays 142/141/143, waits 20 and reverses into getup 328. '
@@ -155,6 +103,8 @@ def port_entry(character, name):
         return COMMON[name]
     c = {0: 'scorpion', 1: 'raiden', 2: 'sonya', 3: 'liu_kang', 4: 'sub_zero'}[character]
     entry = SPECIFIC[character].get(name, ENTRIES.get(name))
+    if entry is None and moves_for(character).get(name, {}).get('scripts'):
+        return ('game/retail_vm.c', 'retail_vm_enter')
     if isinstance(entry, tuple):
         return entry
     return ('game/%s/character.c' % c, entry.format(c=c)) if entry else None
@@ -223,7 +173,7 @@ def compiler_binding_rows(image, move, character):
                 used[key[0]] = bindings[key[0]]
     if not used:
         return []
-    rows = ['', '## Typed compiler boundaries', '',
+    rows = ['', '## Typed runtime boundaries', '',
             'Direct decoded edges only. These links identify engine ownership and lifetime; native semantics remain separate evidence.', '']
     for address, binding in sorted(used.items()):
         if not (ROOT / binding.source).is_file():
@@ -305,7 +255,7 @@ def port_text(disassembly, name, character=0, limit=512):
         raise ValueError('Unknown %s move %r; use --list-moves' % (character_name(character), name))
     move = moves[name]
     image = disassembly.image
-    rows = ['# %s: %s — C port worksheet' % (character_name(character), name), '',
+    rows = ['# %s: %s — native integration worksheet' % (character_name(character), name), '',
             'Retail entry `--native %08x`; EXE bytes are authoritative. mk4decomp links use checked assembly correspondence, '
             'not equal numeric addresses or assumed original symbols.' % move['entry']]
     port = port_entry(character, name)

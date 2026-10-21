@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void finish_scene(Fighter *fighter);
@@ -20,12 +21,12 @@ static void burn_start(Fighter *fighter) {
   if (frames > 0) {
     native_hold(fighter, frames, scorpion_entry_retail_script_004e0278);
   } else {
-    scorpion_entry_retail_script_004e0278(fighter);
+    retail_vm_enter_owned(fighter, 0x4e0278, fighter_ready, 0);
   }
 }
 
 static void beast_start(Fighter *fighter) {
-  scorpion_entry_retail_script_004d2e58(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2e58, fighter_ready, 0);
 }
 
 void scorpion_start_fatality(Fighter *fighter, int id) {
@@ -61,16 +62,16 @@ void scorpion_script_burn_tail(Fighter *victim) {
 void scorpion_script_burn_begin(Fighter *fighter) {
   battle_sound(SOUND_B, 14);
   battle_sound(SOUND_B, 46);
-  scorpion_entry_retail_script_004e0288(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0288, fighter_ready, 0);
 }
 
 void scorpion_script_burn_victim_start(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   victim->appearance = APPEARANCE_BURNED;
   fighter_cancel_mmove(victim);
-  scorpion_entry_retail_script_004e0300(victim);
+  retail_vm_enter_owned(victim, 0x4e0300, fighter_ready, 0);
   battle_sound(SOUND_B, 15);
-  scorpion_entry_retail_script_004e0298(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0298, fighter_ready, 0);
 }
 
 void scorpion_script_burn_repeat1(Fighter *fighter) {
@@ -87,11 +88,11 @@ void scorpion_script_burn_victory(Fighter *fighter) {
 
 void scorpion_script_burn_victim_cue(Fighter *victim) {
   battle_sound(SOUND_B, 16);
-  scorpion_entry_retail_script_004e0310(victim);
+  retail_vm_enter_owned(victim, 0x4e0310, fighter_ready, 0);
 }
 
 void scorpion_script_burn_victim_repeat(Fighter *victim) {
-  scorpion_entry_retail_script_004e0320(victim);
+  retail_vm_enter_owned(victim, 0x4e0320, fighter_ready, 0);
 }
 
 void scorpion_script_burn_victim_blend(Fighter *victim) {
@@ -101,12 +102,12 @@ void scorpion_script_burn_victim_blend(Fighter *victim) {
 void scorpion_script_burn_victim_impact(Fighter *victim) {
   mk4_script_shake(victim, 0);
   battle_particles(victim, 0, 4, true);
-  scorpion_entry_retail_script_004e0348(victim);
+  retail_vm_enter_owned(victim, 0x4e0348, fighter_ready, 0);
 }
 
 void scorpion_script_burn_victim_settle(Fighter *victim) {
   mk4_script_shake(victim, 0);
-  scorpion_entry_retail_script_004e0358(victim);
+  retail_vm_enter_owned(victim, 0x4e0358, fighter_ready, 0);
 }
 
 void scorpion_script_burn_victim_end(Fighter *victim) {
@@ -124,19 +125,19 @@ static void beast_watch(Fighter *fighter) {
 void scorpion_script_beast_begin(Fighter *fighter) {
   fighter->appearance = APPEARANCE_BEAST;
   fighter->body.physics = beast_watch;
-  scorpion_entry_retail_script_004d2e88(fighter);
+  retail_vm_enter_owned(fighter, 0x4d2e88, fighter_ready, 0);
 }
 
 void scorpion_script_beast_attack(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   fighter_cancel_mmove(victim);
-  scorpion_entry_retail_script_004d2ef8(victim);
-  scorpion_entry_retail_script_004d2eb0(fighter);
+  retail_vm_enter_owned(victim, 0x4d2ef8, fighter_ready, 0);
+  retail_vm_enter_owned(fighter, 0x4d2eb0, fighter_ready, 0);
 }
 
 void scorpion_script_beast_victim_pieces(Fighter *victim) {
   battle_particles(victim, 0, 12, true);
-  scorpion_entry_retail_script_004d2f10(victim);
+  retail_vm_enter_owned(victim, 0x4d2f10, fighter_ready, 0);
 }
 
 void scorpion_script_beast_voice(Fighter *fighter) {

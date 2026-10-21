@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void bicycle_release(Fighter *victim);
@@ -26,10 +27,10 @@ static void bicycle_release(Fighter *victim) {
   victim->reaction = 81;
   victim->sample_override = 0;
   if (air) {
-    liu_kang_entry_retail_script_004e9ae8(victim);
+    retail_vm_enter_owned(victim, 0x4e9ae8, fighter_ready, 3);
   } else {
     victim->body.physics = fighter_friction;
-    liu_kang_entry_retail_script_004e9ad0(victim);
+    retail_vm_enter_owned(victim, 0x4e9ad0, mk4_script_thrown_ready, 3);
   }
 }
 
@@ -87,7 +88,7 @@ static bool bicycle_grounded(const Fighter *fighter) {
 }
 
 static void bicycle_land(Fighter *fighter) {
-  liu_kang_entry_retail_script_004e8678(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8678, fighter_ready, 3);
 }
 
 static void bicycle_descend(Fighter *fighter) {
@@ -114,7 +115,7 @@ static void bicycle_carry_end(Fighter *fighter) {
 /* The query rows end on landing, contact or their last visit. */
 static void bicycle_contact_end(Fighter *fighter) {
   if (fighter->contact == CONTACT_BLOCK) {
-    liu_kang_entry_retail_script_004e8688(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8688, fighter_ready, 3);
     return;
   }
   if (fighter->contact != CONTACT_HIT) {
@@ -160,7 +161,7 @@ void liu_kang_bicycle_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_bicycle);
   fighter->sample_override = 0;
   fighter->mmove_cleanup = bicycle_cleanup;
-  liu_kang_entry_retail_script_004e8610(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8610, fighter_ready, 3);
 }
 
 static void bicycle_motion_pose(Fighter *fighter, float pose) {

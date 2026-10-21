@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 void sonya_script_reaction(Fighter *fighter, int reaction) {
@@ -5,7 +6,7 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
     Fighter *victim = fighter_peer(fighter);
     mk4_script_scene_pose(victim, 561, 0);
     fighter_cancel_mmove(victim);
-    sonya_entry_retail_script_004e59c8(victim);
+    retail_vm_enter_owned(victim, 0x4e59c8, fighter_ready, 2);
     return;
   }
   if (reaction == 175) {

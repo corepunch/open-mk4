@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* T2 actions 10/11 (498b70/498e70) set 309/30a and enter 4ed268/4ed2c0. */
@@ -147,12 +148,12 @@ void tanya_air_fireball_fall(Fighter *fighter) {
 void tanya_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &cast);
-  tanya_entry_retail_script_004ed268(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 9);
 }
 
 /* Command flag 0x10 and 45ef20 require an airborne fighter with gravity. */
 void tanya_air_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &air_cast);
-  tanya_entry_retail_script_004ed2c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 9);
 }

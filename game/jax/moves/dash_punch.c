@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* LP D,B record 4e4394 (flags 0x4, gate 45e910) and the near/far CPU rows
@@ -28,7 +29,7 @@ bool jax_can_dash_punch(const Fighter *fighter) {
 void jax_dash_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_dash);
   fighter->dash_punch_ready = g_battle.ticks + 60;
-  jax_entry_retail_script_004e8150(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8150, fighter_ready, 13);
 }
 
 /* 47af90, installed through descriptor 4e8174 as the group +44 callback:
@@ -170,7 +171,7 @@ void jax_dash_punch_contact(Fighter *fighter) {
 void jax_dash_victim_hit(Fighter *victim) {
   mk4_script_stop_body(victim);
   fighter_start_move(victim, S_HIT, &s_dash_stagger);
-  jax_entry_retail_script_004ea028(victim);
+  retail_vm_enter_owned(victim, 0x4ea028, fighter_ready, 13);
 }
 
 /* 4ea4e8[168] -> 4867b0: disarm; an airborne victim takes 481ce0 (shake 0,
@@ -181,12 +182,12 @@ void jax_dash_victim_throw(Fighter *victim) {
   if (fighter_airborne(victim)) {
     mk4_script_shake(victim, 0);
     fighter_start_move(victim, S_KNOCKDOWN, &s_dash_air_fall);
-    jax_entry_retail_script_004e89d8(victim);
+    retail_vm_enter_owned(victim, 0x4e89d8, fighter_ready, 13);
     return;
   }
   fighter_start_move(victim, S_KNOCKDOWN, &s_dash_fall);
   victim->body.physics = fighter_friction;
-  jax_entry_retail_script_004e9e38(victim);
+  retail_vm_enter_owned(victim, 0x4e9e38, fighter_ready, 13);
 }
 
 /* 488c00 -> 4914c0(4ea220): roll getup 191/16 at -0x147a, crouch 190/16. */

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include "math_util.h"
 
@@ -87,5 +88,5 @@ void tanya_drill_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &drill);
   fighter->mmove_cleanup = drill_cleanup;
-  tanya_entry_retail_script_004e81f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e81f0, fighter_ready, 9);
 }

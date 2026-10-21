@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 #include <math.h>
 
@@ -143,8 +144,8 @@ void quan_chi_steal_reaction(Fighter *victim) {
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
   if (airborne) {
-    quan_chi_entry_retail_script_004e9838(victim);
+    retail_vm_enter_owned(victim, 0x4e9838, fighter_ready, 8);
   } else {
-    quan_chi_entry_retail_script_004e9818(victim);
+    retail_vm_enter_owned(victim, 0x4e9818, fighter_ready, 8);
   }
 }

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void begin_victim(Fighter *victim);
@@ -28,14 +29,14 @@ void goro_punch_victim(Fighter *victim) {
   begin_victim(victim);
   battle_wall_recoil(victim);
   mk4_script_disarm_self(victim);
-  goro_entry_retail_script_004e8dd0(victim);
+  retail_vm_enter_owned(victim, 0x4e8dd0, fighter_ready, 15);
 }
 
 /* 190 (483570): disarm 494520, then 4ea3e0 -> shared 4e9670 flight. */
 void goro_kick_victim(Fighter *victim) {
   begin_victim(victim);
   mk4_script_disarm_self(victim);
-  goro_entry_retail_script_004ea3e0(victim);
+  retail_vm_enter_owned(victim, 0x4ea3e0, fighter_ready, 15);
 }
 
 /* 192 (482480 -> 4824a0): shake 6; 482a50 sets later damage to 40%;
@@ -50,13 +51,13 @@ void goro_uppercut_victim(Fighter *victim) {
   mk4_script_disarm_self(victim);
   attacker->run_energy = 0;
   attacker->run_delay = 60;
-  goro_entry_retail_script_004e8e50(victim);
+  retail_vm_enter_owned(victim, 0x4e8e50, fighter_ready, 15);
 }
 
 /* 4824f0: back speed 0x7ae, or 0xf5c after more than one hit, then 4e8e80. */
 void goro_script_uppercut_victim_slide(Fighter *victim) {
   fighter_set_speed(victim, victim->hits > 1 ? -0xf5c : -0x7ae);
-  goro_entry_retail_script_004e8e80(victim);
+  retail_vm_enter_owned(victim, 0x4e8e80, fighter_ready, 15);
 }
 
 /* 136 (4834d0): disarm, 48a320 -> 489e80 picks one of list 4ea8f8's three
@@ -66,7 +67,7 @@ void goro_quake_victim(Fighter *victim) {
   begin_victim(victim);
   mk4_script_disarm_self(victim);
   battle_sound(SOUND_TOKEN, voices[battle_random(3)]);
-  goro_entry_retail_script_004e95c8(victim);
+  retail_vm_enter_owned(victim, 0x4e95c8, fighter_ready, 15);
 }
 
 /* 191 (4842d0): disarm; an airborne victim falls with 0x1999 velocity and
@@ -78,7 +79,7 @@ void goro_stomp_victim(Fighter *victim) {
     victim->body.vel[AXIS_Y] = 0x1999;
     victim->body.gravity = 0x1999;
   }
-  goro_entry_retail_script_004ea400(victim);
+  retail_vm_enter_owned(victim, 0x4ea400, fighter_ready, 15);
 }
 
 /* 484650: each cycle shakes the camera, cues effect 13 and replays clip

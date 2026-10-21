@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* HK [F,F] record 4e4858 and the near CPU row select native 47a370: action
@@ -69,7 +70,7 @@ void quan_chi_flip_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_flip_kick);
   fighter->mmove_cleanup = flip_cleanup;
   fighter->body.physics = flip_decay;
-  quan_chi_entry_retail_script_004e8100(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8100, fighter_ready, 8);
 }
 
 /* 488c00: shared roll getup after the reaction-160 landing. */
@@ -85,5 +86,5 @@ void quan_chi_flip_reaction(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &s_flip_victim);
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
-  quan_chi_entry_retail_script_004e8a48(victim);
+  retail_vm_enter_owned(victim, 0x4e8a48, fighter_ready, 8);
 }

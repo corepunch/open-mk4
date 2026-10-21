@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void dragon_stream(Fighter *fighter);
@@ -153,7 +154,7 @@ void liu_kang_liu_script_fatal_setup(Fighter *fighter) {
   retail_scene_pose(fighter_peer(fighter), 539, 0, false);
   fighter->flags |= FF_PAIRED;
   fighter_peer(fighter)->flags |= FF_PAIRED;
-  liu_kang_entry_retail_script_004e0020(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0020, fighter_ready, 3);
 }
 
 void liu_kang_liu_script_fatal_spawn(Fighter *fighter, int task_type) {

@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 void reptile_script_lp_return(Fighter *fighter) {
@@ -32,5 +33,5 @@ void reptile_script_lp_reaction(Fighter *fighter, int reaction) {
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
   fighter_start_move(victim, S_KNOCKDOWN, &reptile_s_lp_thrown);
-  reptile_entry_retail_script_004e9bd0(victim);
+  retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 10);
 }

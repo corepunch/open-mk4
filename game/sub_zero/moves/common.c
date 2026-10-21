@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void lp_getup_done(Fighter *victim);
@@ -97,7 +98,7 @@ void sub_zero_script_lk_rebase(Fighter *fighter) {
   victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  sub_zero_entry_retail_script_004de4b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4de4b8, fighter_ready, 4);
 }
 
 void sub_zero_script_lk_damage(Fighter *fighter) {
@@ -111,7 +112,7 @@ void sub_zero_script_lk_damage(Fighter *fighter) {
   victim->flags |= FF_PAIR_RELEASE;
   sub_zero_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
-  sub_zero_entry_retail_script_004de4e0(fighter);
+  retail_vm_enter_owned(fighter, 0x4de4e0, fighter_ready, 4);
 }
 
 void sub_zero_script_lk_owner_return(Fighter *fighter) {
@@ -162,7 +163,7 @@ void sub_zero_ice(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_ice);
   fighter->script_phase = followup;
   fighter->sample_override = 0;
-  sub_zero_entry_retail_script_004ed588(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed588, fighter_ready, 4);
 }
 
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end) {
@@ -185,5 +186,5 @@ void sub_zero_script_reaction(Fighter *fighter, int reaction) {
   victim->sample_override = 25;
   victim->flags |= FF_REACTING;
   victim->mmove_cleanup = sub_zero_lp_thrown_cleanup;
-  sub_zero_entry_retail_script_004e9bd0(victim);
+  retail_vm_enter_owned(victim, 0x4e9bd0, fighter_ready, 4);
 }

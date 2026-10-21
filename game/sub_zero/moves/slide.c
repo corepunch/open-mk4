@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void slide_cleanup(Fighter *fighter);
@@ -90,10 +91,10 @@ static void slide_contact(Fighter *fighter) {
   }
   fighter->script_phase = 1;
   if (contact == CONTACT_BLOCK) {
-    sub_zero_entry_retail_script_004e8530(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8530, fighter_ready, 4);
   } else {
     fighter->slide_ready = g_battle.ticks + 64;
-    sub_zero_entry_retail_script_004e84f8(fighter);
+    retail_vm_enter_owned(fighter, 0x4e84f8, fighter_ready, 4);
   }
 }
 
@@ -112,7 +113,7 @@ void sub_zero_slide(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &s_slide);
   fighter->sample_override = 0;
   fighter->mmove_cleanup = slide_cleanup;
-  sub_zero_entry_retail_script_004e84d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e84d8, fighter_ready, 4);
 }
 
 void sub_zero_script_breath_slide(Fighter *fighter) {

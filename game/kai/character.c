@@ -29,92 +29,16 @@ const uint32_t kai_weapon_descriptor[] = {
 };
 // clang-format on
 
-void kai_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e8210(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8210, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e8320(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8320, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e8358(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8358, fighter_ready, 11);
-}
-
 void kai_entry_retail_script_004e8390(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8390, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e8870(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8870, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e88c8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e88c8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e8338(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8338, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e83a0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e83a0, fighter_ready, 11);
 }
 
 void kai_entry_retail_script_004e83d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e83d8, fighter_ready, 11);
 }
 
-void kai_entry_retail_script_004e83e8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e83e8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e9308(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9308, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004e9360(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9360, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004ea170(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ea170, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004ea1c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ea1c0, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004ec5a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ec5a8, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004e8b78(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8b78, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004e8bc0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8bc0, mk4_mmove_thrown_finish, 11);
-}
-
-void kai_entry_retail_script_004e8f50(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e8f50, mk4_mmove_thrown_finish, 11);
-}
-
 void kai_entry_retail_script_004ed330(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed330, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004ed348(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed348, fighter_ready, 11);
 }
 
 void kai_entry_retail_script_004ed2f8(Fighter *fighter) {
@@ -123,56 +47,4 @@ void kai_entry_retail_script_004ed2f8(Fighter *fighter) {
 
 void kai_entry_retail_script_004e1430(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e1430, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e1440(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1440, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e1450(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1450, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e1468(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1468, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e1480(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1480, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e1490(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e1490, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e14a8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e14a8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e14b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e14b8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e14c8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e14c8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e14d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e14d8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e14e8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e14e8, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004dff88(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4dff88, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004ea240(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ea240, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004e5be0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5be0, fighter_ready, 11);
 }

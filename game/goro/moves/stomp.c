@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void leap_rise(Fighter *fighter);
@@ -35,7 +36,7 @@ static void leap_cleanup(Fighter *fighter) {
 void goro_leap_stomp(Fighter *fighter) {
   goro_begin_special(fighter, S_KICK, &s_leap, 0x64f);
   fighter->mmove_cleanup = leap_cleanup;
-  goro_entry_retail_script_004dfbb8(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfbb8, fighter_ready, 15);
 }
 
 static void leap_descend(Fighter *fighter) {
@@ -65,7 +66,7 @@ static void leap_fall(Fighter *fighter) {
     fighter->mmove_hold = false;
     fighter->sample_override = LEAP_APEX_SAMPLE;
     goro_quake_resting_weapons();
-    goro_entry_retail_script_004dfc38(fighter);
+    retail_vm_enter_owned(fighter, 0x4dfc38, fighter_ready, 15);
     return;
   }
   if (battle_contact(fighter, &stomp_record) == CONTACT_MISS) {
@@ -75,7 +76,7 @@ static void leap_fall(Fighter *fighter) {
   goro_quake_resting_weapons();
   battle_damage((Fighter *)fighter_opponent(fighter), LEAP_DAMAGE);
   fighter->sample_override = LEAP_APEX_SAMPLE;
-  goro_entry_retail_script_004dfbd0(fighter);
+  retail_vm_enter_owned(fighter, 0x4dfbd0, fighter_ready, 15);
 }
 
 /* 43b505 records the victim X/Z and rises at -0x3851 per visit; 43b42d

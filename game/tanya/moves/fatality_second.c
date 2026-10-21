@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* HK D,F,D,F record 4e453c -> 467cd0 -> 43bd70 -> 4dfe90[9] = 464f30. */
@@ -93,7 +94,7 @@ void tanya_second_height(Fighter *fighter) {
   if (roster == 2 || roster == 9 || roster == 16) {
     fighter->body.pos[AXIS_Y] += 0x147a;
   }
-  tanya_entry_retail_script_004e57c0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e57c0, fighter_ready, 9);
 }
 
 /* 465200 (reaction 186): 475690/4756f0 copy the owner's facing, angles
@@ -108,7 +109,7 @@ static void second_victim_scene(Fighter *owner) {
   /* The shared origin must not be separated by ordinary body collision. */
   owner->flags |= FF_PAIRED;
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
-  tanya_entry_retail_script_004e5820(victim);
+  retail_vm_enter_owned(victim, 0x4e5820, fighter_ready, 9);
 }
 
 void tanya_second_reaction(Fighter *fighter) {
@@ -138,7 +139,7 @@ static void victory_watch(Fighter *fighter) {
  * ends 50 visits into that loop, as in Sub-Zero's port. */
 void tanya_script_victory(Fighter *fighter) {
   fighter->body.physics = victory_watch;
-  tanya_entry_retail_script_004e6a40(fighter);
+  retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 9);
 }
 
 static void second_victory(Fighter *fighter) {
@@ -161,7 +162,7 @@ void tanya_fatality_2(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  tanya_entry_retail_script_004e5b38(victim);
+  retail_vm_enter_owned(victim, 0x4e5b38, fighter_ready, 9);
   /* 475530 places the victim 1.0 ahead; 4906c0 grounds the owner. */
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), Q16_ONE);
@@ -169,5 +170,5 @@ void tanya_fatality_2(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  tanya_entry_retail_script_004e5798(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5798, fighter_ready, 9);
 }

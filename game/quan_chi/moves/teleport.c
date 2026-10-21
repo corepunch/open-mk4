@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* LK [F,D] record 4e4838 and the medium/far CPU rows select native 47cf30.
@@ -142,7 +143,7 @@ static void blocked_low(Fighter *fighter) {
 
 static void blocked_retract(Fighter *fighter) {
   fighter_upright(fighter);
-  quan_chi_entry_retail_script_004e8818(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 8);
 }
 
 static void blocked_fall(Fighter *fighter) {
@@ -285,5 +286,5 @@ void quan_chi_stomp_reaction(Fighter *victim) {
     victim->body.vel[AXIS_Y] = 0x1999;
     victim->body.gravity = 0x1999;
   }
-  quan_chi_entry_retail_script_004e9868(victim);
+  retail_vm_enter_owned(victim, 0x4e9868, fighter_ready, 8);
 }

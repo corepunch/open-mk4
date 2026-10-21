@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void equip_weapon(Fighter *fighter);
@@ -53,7 +54,7 @@ static void weapon_back(Fighter *fighter) {
   fighter->mmove_cleanup = weapon_cleanup;
   /* 495a90 /4ec598 installs delayed travel before the selected VM stream. */
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  kai_entry_retail_script_004ec5a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ec5a8, mk4_mmove_thrown_finish, 11);
 }
 
 void kai_weapon_back_contact(Fighter *fighter) {
@@ -63,7 +64,7 @@ void kai_weapon_back_contact(Fighter *fighter) {
 
 void kai_script_draw_equip(Fighter *fighter) {
   equip_weapon(fighter);
-  kai_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 11);
 }
 
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
@@ -81,7 +82,7 @@ void kai_draw_weapon(Fighter *fighter) {
     weapon_followup(fighter);
   } else {
     weapon_draw(fighter, &native_weapon);
-    kai_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 11);
   }
 }
 
@@ -107,14 +108,14 @@ void kai_weapon_reaction(Fighter *fighter) {
     fighter->body.pos[AXIS_X] = peer->body.pos[AXIS_X] + q16_mul(fighter_axis(peer, AXIS_X), 0x1cccc);
     fighter->body.pos[AXIS_Z] = peer->body.pos[AXIS_Z] + q16_mul(fighter_axis(peer, AXIS_Z), 0x1cccc);
     fighter->body.pos[AXIS_Y] = peer->body.pos[AXIS_Y] - 0x8000;
-    kai_entry_retail_script_004e8b78(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8b78, mk4_mmove_thrown_finish, 11);
   } else if (reaction == 145 || reaction == 44) {
     if (airborne) {
       fighter->body.gravity = 0x28f;
       fighter->body.vel[AXIS_Y] = 0x1999;
     }
-    kai_entry_retail_script_004e8f50(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8f50, mk4_mmove_thrown_finish, 11);
   } else {
-    kai_entry_retail_script_004e8bc0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8bc0, mk4_mmove_thrown_finish, 11);
   }
 }

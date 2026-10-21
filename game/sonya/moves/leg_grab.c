@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void leg_stop(Fighter *fighter);
@@ -29,10 +30,10 @@ static void leg_stop(Fighter *fighter) {
 static void leg_grab_contact(Fighter *fighter) {
   if (battle_contact(fighter, &leg_record) == CONTACT_MISS || fighter->contact == CONTACT_BLOCK) {
     fighter->action = 0x1012;
-    sonya_entry_retail_script_004e85a8(fighter);
+    retail_vm_enter_owned(fighter, 0x4e85a8, fighter_ready, 2);
   } else {
     mk4_mmove_pair_victim(fighter, &s_leg_victim);
-    sonya_entry_retail_script_004e8578(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8578, fighter_ready, 2);
   }
 }
 

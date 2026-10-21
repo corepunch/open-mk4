@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 #define QC_COUNT(array) ((int)(sizeof(array) / sizeof((array)[0])))
@@ -71,29 +72,29 @@ static void beat_cue(Fighter *fighter, int shake) {
 }
 
 void quan_chi_fatality_cue_40(Fighter *fighter) {
-  quan_chi_entry_retail_script_004e1508(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1508, fighter_ready, 8);
 }
 
 void quan_chi_fatality_hit_179(Fighter *fighter) {
   beat_cue(fighter, 5);
-  quan_chi_entry_retail_script_004e1528(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1528, fighter_ready, 8);
 }
 
 void quan_chi_fatality_hit_241(Fighter *fighter) {
   beat_cue(fighter, 7);
-  quan_chi_entry_retail_script_004e1538(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1538, fighter_ready, 8);
 }
 
 void quan_chi_fatality_beat(Fighter *fighter) {
   beat_cue(fighter, 7);
-  quan_chi_entry_retail_script_004e1558(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1558, fighter_ready, 8);
 }
 
 static void leg_entry(Fighter *leg) {
   if (leg->assets != NULL) {
     leg->scene_model = &leg->assets->scene_models.data[SCENE_MODEL_SEVERED_LEGS + roster_def(leg->roster)->asset];
   }
-  quan_chi_entry_retail_script_004e1580(leg);
+  retail_vm_enter_owned(leg, 0x4e1580, fighter_ready, 8);
 }
 
 /* 44be40 -> task 44c0f0: sound B[0], victim voice list 8, 476d80 detaches
@@ -111,11 +112,11 @@ void quan_chi_fatality_leg(Fighter *fighter) {
   fighter_joint_position(victim, 12, &hip, &unused);
   battle_blood_hit(fighter, victim, hip, 0x3333);
   battle_joint_spray(victim, &stump_spray);
-  quan_chi_entry_retail_script_004e1518(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1518, fighter_ready, 8);
 }
 
 static void victim_stream(Fighter *victim) {
-  quan_chi_entry_retail_script_004e1568(victim);
+  retail_vm_enter_owned(victim, 0x4e1568, fighter_ready, 8);
 }
 
 static void victim_blend(Fighter *victim) {
@@ -123,7 +124,7 @@ static void victim_blend(Fighter *victim) {
 }
 
 static void owner_stream(Fighter *fighter) {
-  quan_chi_entry_retail_script_004e14f8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e14f8, fighter_ready, 8);
 }
 
 static void owner_blend(Fighter *fighter) {

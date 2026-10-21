@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Acid spit: D,F+HP record 4e4570 and the CPU projectile row both enter
@@ -144,7 +145,7 @@ void reptile_acid_spit(Fighter *fighter) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->mmove_cleanup = spit_cleanup;
-  reptile_entry_retail_script_004ed1e8(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed1e8, fighter_ready, 10);
 }
 
 /* 483df0/483ed0/483fa0: twenty samples, ten four-sample chunks, 48e080
@@ -166,5 +167,5 @@ void reptile_acid_victim(Fighter *victim) {
   fighter_start_move(victim, S_HIT, &acid_victim);
   victim->sample_override = 0;
   victim->body.physics = fighter_friction;
-  reptile_entry_retail_script_004e97f8(victim);
+  retail_vm_enter_owned(victim, 0x4e97f8, fighter_ready, 10);
 }

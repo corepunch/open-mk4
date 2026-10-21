@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const WeaponDef sword;
@@ -124,7 +125,7 @@ static void sword_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_spin_start);
   fighter->sample_override = 0;
   fighter->mmove_cleanup = mk4_script_stop_body;
-  scorpion_entry_retail_script_004e8850(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8850, fighter_ready, 0);
 }
 
 void scorpion_weapon(Fighter *fighter) {
@@ -135,15 +136,15 @@ void scorpion_weapon(Fighter *fighter) {
     weapon_followup_victim(fighter);
     fighter_start_move(fighter, S_PUNCH, &s_sword_back_lp);
     fighter->sample_override = 0;
-    scorpion_entry_retail_script_004ec8b0(fighter);
+    retail_vm_enter_owned(fighter, 0x4ec8b0, fighter_ready, 0);
   } else {
     weapon_draw(fighter, &sword);
-    scorpion_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 0);
   }
   fighter->sample_override = 0;
 }
 
 void scorpion_script_draw_equip(Fighter *fighter) {
   equip_sword(fighter);
-  scorpion_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 0);
 }

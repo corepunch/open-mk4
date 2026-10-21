@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* BLOCK record 4e43c8 (B,F,F,D, window 50, flags 0x41, gate 45e570) ->
@@ -69,7 +70,7 @@ void jax_fatality_2_head(Fighter *victim) {
   victim->hidden_joints[0] |= UINT64_C(1) << 2;
   mk4_script_effect(victim, 4);
   battle_blood_hit(fighter_opponent(victim), victim, neck, 0x3333);
-  jax_entry_retail_script_004e5b10(victim);
+  retail_vm_enter_owned(victim, 0x4e5b10, fighter_ready, 13);
 }
 
 static void second_scene_end(Fighter *victim) {
@@ -90,8 +91,8 @@ void jax_fatality_2(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &second_victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  jax_entry_retail_script_004e5b38(victim);
+  retail_vm_enter_owned(victim, 0x4e5b38, fighter_ready, 13);
   fighter_start_move(fighter, S_PUNCH, &second_owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  jax_entry_retail_script_004e5a80(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5a80, fighter_ready, 13);
 }

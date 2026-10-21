@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void first_camera_start(Fighter *fighter);
@@ -99,7 +100,7 @@ bool sub_zero_can_first_fatality(const Fighter *fighter) {
 
 static void first_camera_start(Fighter *fighter) {
   battle_camera_sequence(fighter, fighter_peer(fighter), first_camera_shots, COUNT(first_camera_shots));
-  sub_zero_entry_retail_script_004e0368(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0368, fighter_ready, 4);
 }
 
 void sub_zero_first_fatality_script(Fighter *fighter) {
@@ -117,28 +118,28 @@ void sub_zero_script_first_begin(Fighter *fighter) {
 
 void sub_zero_script_first_pull(Fighter *fighter) {
   first_victim_start(fighter_peer(fighter));
-  sub_zero_entry_retail_script_004e0388(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0388, fighter_ready, 4);
 }
 
 void sub_zero_script_first_cues1(Fighter *fighter) {
   battle_sound(SOUND_B, 0x1b);
   battle_sound(SOUND_B, 0x29);
-  sub_zero_entry_retail_script_004e0398(fighter);
+  retail_vm_enter_owned(fighter, 0x4e0398, fighter_ready, 4);
 }
 
 void sub_zero_script_first_cues2(Fighter *fighter) {
   battle_sound(SOUND_B, 0x2b);
-  sub_zero_entry_retail_script_004e03a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e03a8, fighter_ready, 4);
 }
 
 void sub_zero_script_first_cues3(Fighter *fighter) {
   battle_sound(SOUND_B, 0x2a);
-  sub_zero_entry_retail_script_004e03b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e03b8, fighter_ready, 4);
 }
 
 void sub_zero_script_first_cues4(Fighter *fighter) {
   battle_sound(SOUND_B, 0x1b);
-  sub_zero_entry_retail_script_004e03c8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e03c8, fighter_ready, 4);
 }
 
 void sub_zero_script_first_head(Fighter *fighter) {
@@ -148,7 +149,7 @@ void sub_zero_script_first_head(Fighter *fighter) {
   ScenePiece *head = battle_attach_head(victim, fighter, 10);
   battle_attach_piece_model(head, &first_spine, fighter);
   battle_joint_spray(victim, &first_blood);
-  sub_zero_entry_retail_script_004e03d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e03d8, fighter_ready, 4);
 }
 
 void sub_zero_script_first_victim_blends(Fighter *victim) {
@@ -158,7 +159,7 @@ void sub_zero_script_first_victim_blends(Fighter *victim) {
 void sub_zero_script_first_victim_collapse(Fighter *victim) {
   battle_sound(SOUND_B, 0x18);
   battle_camera_shake(2, 3, 0x2e14);
-  sub_zero_entry_retail_script_004e0430(victim);
+  retail_vm_enter_owned(victim, 0x4e0430, fighter_ready, 4);
 }
 
 void sub_zero_script_first_victim_end(Fighter *victim) {

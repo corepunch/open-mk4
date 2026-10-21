@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef caster = {.clip = 98, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x403};
@@ -105,7 +106,7 @@ static void vortex_lift(Fighter *fighter) {
 static void vortex_landed(Fighter *fighter) {
   mk4_mmove_bind(fighter, 195, 29, 28);
   if (fighter->health > 0) {
-    fujin_entry_retail_script_004e9fe0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e9fe0, fighter_ready, 5);
   } else {
     fighter_finish_mmove(fighter, NULL);
   }
@@ -155,7 +156,7 @@ void fujin_wind_victim(Fighter *fighter) {
 static void slam_landed(Fighter *fighter) {
   mk4_mmove_bind(fighter, 195, 29, 28);
   fighter->hits++;
-  fujin_entry_retail_script_004e9ff0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9ff0, fighter_ready, 5);
 }
 
 static void slam_drop(Fighter *fighter) {
@@ -189,13 +190,13 @@ void fujin_wind_crouch_return(Fighter *fighter) {
 
 void fujin_wind_recovery(Fighter *fighter) {
   fighter->action = 0x1015;
-  fujin_entry_retail_script_004e5c20(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c20, fighter_ready, 5);
 }
 
 void fujin_wind(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &caster);
-  fujin_entry_retail_script_004e5c50(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c50, fighter_ready, 5);
 }
 
 void fujin_wind_slam(Fighter *fighter) {
@@ -205,5 +206,5 @@ void fujin_wind_slam(Fighter *fighter) {
   }
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &slam);
-  fujin_entry_retail_script_004e5c00(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5c00, fighter_ready, 5);
 }

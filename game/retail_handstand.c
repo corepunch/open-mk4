@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "kai/character.h"
 
 static void kai_stage_event_step(Fighter *fighter);
@@ -103,7 +104,7 @@ void kai_script_stage_event(Fighter *fighter) {
 
 static void kai_input_47cbf0(Fighter *fighter) {
   weapon_followup_victim(fighter);
-  kai_entry_retail_script_004e88c8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e88c8, fighter_ready, 11);
 }
 
 void kai_input_47c520(Fighter *fighter) {
@@ -114,26 +115,26 @@ void kai_input_47c520(Fighter *fighter) {
   if (fighter->armed) {
     kai_input_47cbf0(fighter);
   } else {
-    kai_entry_retail_script_004e8320(fighter);
+    retail_vm_enter_owned(fighter, 0x4e8320, fighter_ready, 11);
   }
 }
 
 void retail_handstand_exit(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->mmove_cleanup = handstand_cleanup;
-  kai_entry_retail_script_004e83e8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e83e8, fighter_ready, 11);
 }
 
 void retail_handstand_front(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &front);
   fighter->mmove_cleanup = handstand_cleanup;
-  kai_entry_retail_script_004e8358(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8358, fighter_ready, 11);
 }
 
 void retail_handstand_rear(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &rear);
   fighter->mmove_cleanup = handstand_cleanup;
-  kai_entry_retail_script_004e83a0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e83a0, fighter_ready, 11);
 }
 
 static void handstand_contact(Fighter *fighter) {
@@ -223,7 +224,7 @@ void kai_handstand_spin_begin(Fighter *fighter) {
 void retail_handstand_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &spin);
   fighter->mmove_cleanup = handstand_cleanup;
-  kai_entry_retail_script_004e8338(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8338, fighter_ready, 11);
 }
 
 void kai_handstand_crouch_return(Fighter *fighter) {
@@ -256,17 +257,17 @@ void kai_handstand_reaction(Fighter *fighter) {
   fighter_start_move(fighter, fighter->reaction == 127 ? S_KNOCKDOWN : S_HIT, fighter->reaction == 127 ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
   if (fighter->reaction == 127) {
-    kai_entry_retail_script_004ea170(fighter);
+    retail_vm_enter_owned(fighter, 0x4ea170, mk4_mmove_thrown_finish, 11);
   } else if (fighter->reaction == 167) {
     fighter->body.physics = fighter_friction;
-    kai_entry_retail_script_004ea1c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4ea1c0, mk4_mmove_thrown_finish, 11);
   } else {
     mk4_script_shake(fighter, 0);
     if (crouch) {
       fighter->body.physics = fighter_friction;
-      kai_entry_retail_script_004e9360(fighter);
+      retail_vm_enter_owned(fighter, 0x4e9360, mk4_mmove_thrown_finish, 11);
     } else {
-      kai_entry_retail_script_004e9308(fighter);
+      retail_vm_enter_owned(fighter, 0x4e9308, mk4_mmove_thrown_finish, 11);
     }
   }
 }

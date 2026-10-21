@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void equip_weapon(Fighter *fighter);
@@ -62,7 +63,7 @@ static void weapon_lp(Fighter *fighter) {
 /* 46d260: equip after the draw clip reaches its grip sample, then 4e62d8. */
 void quan_chi_script_draw_equip(Fighter *fighter) {
   equip_weapon(fighter);
-  quan_chi_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 8);
 }
 
 /* 46d1d0: an armed fighter throws (45f5f0); a follow-up equips through
@@ -76,6 +77,6 @@ void quan_chi_weapon_action(Fighter *fighter) {
     weapon_back_lp(fighter);
   } else {
     weapon_draw(fighter, &native_weapon);
-    quan_chi_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 8);
   }
 }

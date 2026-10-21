@@ -86,7 +86,7 @@ static void hand_entry(Fighter *hand) {
   if (hand->assets != NULL) {
     hand->scene_model = &hand->assets->shinnok_hand;
   }
-  shinnok_entry_retail_script_004e2f40(hand);
+  retail_vm_enter_owned(hand, 0x4e2f40, fighter_ready, 6);
 }
 
 /* 4556d0 state 1: rig 5083c4 is placed 1.4 along the owner's heading at
@@ -110,7 +110,7 @@ static void first_vanish(Fighter *fighter) {
   require(event != NULL, "Shinnok hand needs its delayed spawner");
   battle_event_delay(event, 65);
   shinnok_fatality_vanish_cue(fighter);
-  shinnok_entry_retail_script_004e2ef0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2ef0, fighter_ready, 6);
 }
 
 static void victim_lift(Fighter *victim) {
@@ -119,7 +119,7 @@ static void victim_lift(Fighter *victim) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = owner->body.pos[axis] + q16_mul(fighter_axis(owner, axis), 0x16666);
   }
-  shinnok_entry_retail_script_004e2f78(victim);
+  retail_vm_enter_owned(victim, 0x4e2f78, fighter_ready, 6);
 }
 
 static void victim_blend(Fighter *victim) {
@@ -128,7 +128,7 @@ static void victim_blend(Fighter *victim) {
 
 void shinnok_first_vanished(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
-  shinnok_entry_retail_script_004e2f00(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2f00, fighter_ready, 6);
 }
 
 void shinnok_first_hidden(Fighter *fighter) {
@@ -157,7 +157,7 @@ void shinnok_first_victim_held(Fighter *victim) {
   /* 455ae0 marks the group 0x1000 and 4773a0 detaches it from its player
    * slot; the portable victim simply remains scene-owned. */
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  shinnok_entry_retail_script_004e2f88(victim);
+  retail_vm_enter_owned(victim, 0x4e2f88, fighter_ready, 6);
 }
 
 void shinnok_first_victim_squeeze(Fighter *victim) {
@@ -173,7 +173,7 @@ void shinnok_first_victim_crush(Fighter *victim) {
   Mat3 unused;
   fighter_joint_position(victim, 1, &chest, &unused);
   battle_blood_hit(fighter_opponent(victim), victim, chest, 0x8000);
-  shinnok_entry_retail_script_004e2fb8(victim);
+  retail_vm_enter_owned(victim, 0x4e2fb8, fighter_ready, 6);
 }
 
 void shinnok_fatality_1(Fighter *fighter) {

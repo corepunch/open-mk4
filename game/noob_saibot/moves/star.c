@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* Reiko's D,F+LP target 496db0: stamp slot 18, snapshot the
@@ -61,5 +62,5 @@ void noob_saibot_star(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_star_throw);
   fighter->saved_motion[AXIS_X] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[AXIS_Z] = fighter_axis(fighter, AXIS_Z);
-  noob_saibot_entry_retail_script_004ed038(fighter);
+  retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 17);
 }

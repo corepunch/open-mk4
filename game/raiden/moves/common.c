@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void torpedo_pose(Fighter *fighter, float pose);
@@ -17,7 +18,7 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
     Fighter *victim = fighter_peer(fighter);
     mk4_script_scene_pose(victim, 574, 0);
     fighter_cancel_mmove(victim);
-    raiden_entry_retail_script_004e5770(victim);
+    retail_vm_enter_owned(victim, 0x4e5770, fighter_ready, 1);
     return;
   }
   if (reaction == 175) {
@@ -33,7 +34,7 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
 }
 
 void raiden_script_lp_end(Fighter *fighter) {
-  raiden_entry_retail_script_004de668(fighter);
+  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 1);
 }
 
 void raiden_script_lp_return(Fighter *fighter) {
@@ -159,7 +160,7 @@ void raiden_script_torpedo_contact(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   mk4_mmove_carry_victim(fighter, &s_torpedo_victim);
   fighter_cancel_mmove(victim);
-  raiden_entry_retail_script_004ea108(victim);
+  retail_vm_enter_owned(victim, 0x4ea108, fighter_ready, 1);
   int pose = fighter_sample(fighter);
   native_begin(fighter, 1, 50, torpedo_release);
   for (int frame = 1; frame <= 50; ++frame) {

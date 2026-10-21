@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void teleport_land_gate(Fighter *fighter);
@@ -34,7 +35,7 @@ static void teleport_pause(Fighter *fighter) {
 }
 
 static void teleport_block_return(Fighter *fighter) {
-  scorpion_entry_retail_script_004e8818(fighter);
+  retail_vm_enter_owned(fighter, 0x4e8818, fighter_ready, 0);
 }
 
 static void teleport_query(Fighter *fighter) {
@@ -111,7 +112,7 @@ void scorpion_teleport(Fighter *fighter) {
   fighter->native_signal = false;
   fighter->flags |= FF_TELEPORTING;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? -1 : 1;
-  scorpion_entry_retail_script_004e87b0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e87b0, fighter_ready, 0);
 }
 
 void scorpion_script_teleport_motion(Fighter *fighter) {
@@ -125,5 +126,5 @@ void scorpion_script_teleport_motion(Fighter *fighter) {
 }
 
 void scorpion_script_teleport_victim_tail(Fighter *victim) {
-  scorpion_entry_retail_script_004e9970(victim);
+  retail_vm_enter_owned(victim, 0x4e9970, mk4_script_thrown_ready, 0);
 }

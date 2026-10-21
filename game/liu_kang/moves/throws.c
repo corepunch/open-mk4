@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void lk_thrown_release(Fighter *victim);
@@ -11,7 +12,7 @@ void liu_kang_thrown_finish(Fighter *victim) {
 static void lk_thrown_release(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->reaction = 80;
-  liu_kang_entry_retail_script_004e9a90(victim);
+  retail_vm_enter_owned(victim, 0x4e9a90, fighter_ready, 3);
 }
 
 void liu_kang_lk_thrown_script(Fighter *victim) {

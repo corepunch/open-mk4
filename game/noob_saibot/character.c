@@ -32,42 +32,10 @@ void noob_saibot_entry_retail_script_004de664(Fighter *fighter) {
   fighter->facing = -fighter->facing;
 }
 
-void noob_saibot_entry_retail_script_004de668(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e9b40(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9b40, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e9bd0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e9bd0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004ed268(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed268, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004ed2c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed2c0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e62c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004e62d8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 17);
-}
-
 void noob_saibot_entry_retail_script_004ea040(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ea040, mk4_script_thrown_ready, 17);
 }
 
 void noob_saibot_entry_retail_script_004ea0b8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ea0b8, mk4_script_thrown_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004ed038(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 17);
 }

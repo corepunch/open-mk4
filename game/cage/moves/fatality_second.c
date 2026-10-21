@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static const MoveDef owner_pose = {.clip = 293, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
@@ -41,7 +42,7 @@ void cage_second_flash(Fighter *fighter, int task_type) {
 void cage_script_fatality_2_continue(Fighter *fighter) {
   /* 4658a0 -> standing dispatch ->4658d0 ->4e5880. Both actors
    * already have locked scene poses; retain this actor's frame ownership. */
-  cage_entry_retail_script_004e5880(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5880, fighter_ready, 14);
 }
 
 void cage_second_repeated_uppercuts(Fighter *fighter) {
@@ -99,7 +100,7 @@ void cage_second_victim_hit(Fighter *fighter) {
   Mat3 unused;
   fighter_joint_position(fighter, 2, &neck, &unused);
   battle_blood_hit(fighter_opponent(fighter), fighter, neck, 0x3333);
-  cage_entry_retail_script_004e5900(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5900, fighter_stop_mmove, 14);
 }
 
 void cage_fatality_2(Fighter *fighter) {
@@ -109,8 +110,8 @@ void cage_fatality_2(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(victim, S_KNOCKDOWN, &victim_pose);
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  cage_entry_retail_script_004e5b38(victim);
+  retail_vm_enter_owned(victim, 0x4e5b38, fighter_ready, 14);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  cage_entry_retail_script_004e5870(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5870, fighter_ready, 14);
 }

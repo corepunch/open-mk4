@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void groin_choose(Fighter *fighter);
@@ -39,7 +40,7 @@ static void groin_victim(Fighter *victim) {
   fighter_start_move(victim, S_HIT, &groin_stun);
   victim->flags |= FF_REACTING;
   victim->body.physics = fighter_friction;
-  cage_entry_retail_script_004e9f78(victim);
+  retail_vm_enter_owned(victim, 0x4e9f78, mk4_script_thrown_ready, 14);
 }
 
 static void groin_contact(Fighter *fighter) {

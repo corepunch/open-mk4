@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "retail_native.h"
 #include "../character.h"
 #include <math.h>
@@ -140,19 +141,19 @@ static bool burst_step(BattleEvent *event, Fighter *owner, Fighter *opponent) {
 void tanya_first_victim_burst(Fighter *fighter) {
   BattleEvent *event = battle_event_start(fighter, burst_step, false, false);
   battle_event_program(event, 88);
-  tanya_entry_retail_script_004e16d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e16d0, fighter_ready, 9);
 }
 
 /* 44d750: one more 4e15f0 pass, then cue task 44d8d0 and clip 409. */
 void tanya_first_victim_repeat(Fighter *fighter) {
   if (fighter->native_variant-- > 0) {
-    tanya_entry_retail_script_004e15f0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e15f0, fighter_ready, 9);
     return;
   }
   BattleEvent *event = battle_event_start(fighter, cue_next, false, false);
   event->data[1] = 0;
   cue_next(event, fighter, (Fighter *)fighter_opponent(fighter));
-  tanya_entry_retail_script_004e1600(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1600, fighter_ready, 9);
 }
 
 /* 44d6e0: the 44d7c0 bob task, sound B 0x2b and a two-pass counter. */
@@ -161,7 +162,7 @@ void tanya_first_victim_swell(Fighter *fighter) {
   battle_event_program(event, 25);
   battle_sound(SOUND_B, 0x2b);
   fighter->native_variant = 1;
-  tanya_entry_retail_script_004e15f0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15f0, fighter_ready, 9);
 }
 
 /* 44d560 state 3: 4756f0 places the victim on the owner's X/Z. */
@@ -171,7 +172,7 @@ static void victim_scene(Fighter *victim) {
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   owner->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED;
-  tanya_entry_retail_script_004e15e0(victim);
+  retail_vm_enter_owned(victim, 0x4e15e0, fighter_ready, 9);
 }
 
 /* 475190 state 1: 475690 copies the owner's facing and angles. */
@@ -189,25 +190,25 @@ static void victim_start(Fighter *victim) {
 void tanya_first_owner_53(Fighter *fighter) {
   fighter->sample_override = 53;
   battle_sound(SOUND_B, 0x27);
-  tanya_entry_retail_script_004e15a8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15a8, fighter_ready, 9);
 }
 
 /* 44d4e0 -> 44dd20 scales the 44dca0 scene vector by -0x439. That vector
  * comes from an unresolved camera object; the owner keeps its place. */
 void tanya_first_owner_drift(Fighter *fighter) {
-  tanya_entry_retail_script_004e15b8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15b8, fighter_ready, 9);
 }
 
 /* 44d510 arms nine more 4e15d0 replays of clip 396. */
 void tanya_first_owner_replays(Fighter *fighter) {
   fighter->native_variant = 9;
-  tanya_entry_retail_script_004e15d0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e15d0, fighter_ready, 9);
 }
 
 /* 44d530 counts the replays, then stops motion and parks the owner. */
 void tanya_first_owner_loop(Fighter *fighter) {
   if (--fighter->native_variant >= 0) {
-    tanya_entry_retail_script_004e15d0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e15d0, fighter_ready, 9);
     return;
   }
   mk4_script_stop_body(fighter);
@@ -215,7 +216,7 @@ void tanya_first_owner_loop(Fighter *fighter) {
 }
 
 static void owner_kiss_start(Fighter *fighter) {
-  tanya_entry_retail_script_004e1598(fighter);
+  retail_vm_enter_owned(fighter, 0x4e1598, fighter_ready, 9);
 }
 
 /* 44d340 state 1 after sixteen visits: sound B 0x30, then 475250 blends

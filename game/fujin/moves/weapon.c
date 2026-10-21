@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 static void weapon_hp(Fighter *fighter);
@@ -99,10 +100,10 @@ void fujin_bow_finish(Fighter *fighter) {
 static void bow_fire(Fighter *fighter) {
   bow_spawn(fighter);
   if (fighter->native_variant >= 3) {
-    fujin_entry_retail_script_004ed788(fighter);
+    retail_vm_enter_owned(fighter, 0x4ed788, fujin_bow_followup_next, 5);
   } else if (fighter->native_variant == 0) {
     fighter->action = 0x1016;
-    fujin_entry_retail_script_004ed408(fighter);
+    retail_vm_enter_owned(fighter, 0x4ed408, fighter_ready, 5);
   } else {
     fujin_bow_finish(fighter);
   }
@@ -174,7 +175,7 @@ static void bow_followup_begin(Fighter *fighter) {
 
 void fujin_draw_equip(Fighter *fighter) {
   fujin_equip_crossbow(fighter);
-  fujin_entry_retail_script_004e62d8(fighter);
+  retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 5);
 }
 
 void fujin_weapon_action(Fighter *fighter) {
@@ -186,7 +187,7 @@ void fujin_weapon_action(Fighter *fighter) {
     bow_followup_begin(fighter);
   } else {
     weapon_draw(fighter, &crossbow);
-    fujin_entry_retail_script_004e62c0(fighter);
+    retail_vm_enter_owned(fighter, 0x4e62c0, fighter_ready, 5);
   }
 }
 
@@ -195,5 +196,5 @@ void fujin_bolt_victim(Fighter *fighter) {
   fighter_start_move(fighter, S_HIT, &bolt_victim);
   fighter->flags |= FF_REACTING;
   fighter->mmove_cleanup = bow_cleanup;
-  fujin_entry_retail_script_004e9e10(fighter);
+  retail_vm_enter_owned(fighter, 0x4e9e10, fighter_ready, 5);
 }

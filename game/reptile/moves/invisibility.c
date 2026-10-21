@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* BLOCK record 4e45f0 and HK record 4e45b0 both enter 4698a0 -> VM 4e5bb0:
@@ -42,5 +43,5 @@ void reptile_script_invisibility(Fighter *fighter) {
 
 void reptile_invisibility(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &invisibility);
-  reptile_entry_retail_script_004e5bb0(fighter);
+  retail_vm_enter_owned(fighter, 0x4e5bb0, fighter_ready, 10);
 }

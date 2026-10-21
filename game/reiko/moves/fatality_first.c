@@ -1,3 +1,4 @@
+#include "retail_vm.h"
 #include "../character.h"
 
 /* F,D,F+BLK 467ce0 -> first-fatality table 4e0498[7] = 452730: Reiko and
@@ -80,7 +81,7 @@ static void random_piece_sound(void) {
 
 static void owner_victory_loop(Fighter *fighter) {
   fighter->state = S_VICTORY;
-  reiko_entry_retail_script_004e2d18(fighter);
+  retail_vm_enter_owned(fighter, 0x4e2d18, fighter_ready, 7);
   first_done(fighter, FIRST_OWNER_DONE);
 }
 
@@ -105,7 +106,7 @@ static void victim_place(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
-  reiko_entry_retail_script_004e2d28(victim);
+  retail_vm_enter_owned(victim, 0x4e2d28, fighter_ready, 7);
 }
 
 static void victim_body_blend(Fighter *victim) {
@@ -133,22 +134,22 @@ static void torso_start(Fighter *piece) {
   /* 4534e0: joint 3 without the separately detached head and arms. */
   piece_place(piece, 3);
   piece->hidden_joints[0] |= (UINT64_C(1) << 2) | (UINT64_C(1) << 5) | (UINT64_C(1) << 6);
-  reiko_entry_retail_script_004e2d68(piece);
+  retail_vm_enter_owned(piece, 0x4e2d68, fighter_ready, 7);
 }
 
 static void head_start(Fighter *piece) {
   piece_place(piece, 2);
-  reiko_entry_retail_script_004e2d88(piece);
+  retail_vm_enter_owned(piece, 0x4e2d88, fighter_ready, 7);
 }
 
 static void left_arm_start(Fighter *piece) {
   piece_place(piece, 5);
-  reiko_entry_retail_script_004e2de0(piece);
+  retail_vm_enter_owned(piece, 0x4e2de0, fighter_ready, 7);
 }
 
 static void right_arm_start(Fighter *piece) {
   piece_place(piece, 6);
-  reiko_entry_retail_script_004e2e18(piece);
+  retail_vm_enter_owned(piece, 0x4e2e18, fighter_ready, 7);
 }
 
 /* The independent 452c90 sound task plays only while this scene runs. */
@@ -190,7 +191,7 @@ void reiko_first_tear(Fighter *victim) {
   fighter_joint_position(victim, 3, &waist, &unused);
   battle_blood_hit(owner, victim, waist, 0x3333);
   victim->hidden_joints[0] |= UINT64_C(1) << 3;
-  reiko_entry_retail_script_004e2d38(victim);
+  retail_vm_enter_owned(victim, 0x4e2d38, fighter_ready, 7);
 }
 
 void reiko_first_victim_118(Fighter *victim) {
@@ -198,14 +199,14 @@ void reiko_first_victim_118(Fighter *victim) {
   battle_sound(SOUND_B, 0x40);
   shake(6);
   victim->sample_override = 118;
-  reiko_entry_retail_script_004e2d48(victim);
+  retail_vm_enter_owned(victim, 0x4e2d48, fighter_ready, 7);
 }
 
 void reiko_first_victim_165(Fighter *victim) {
   /* 452c10: random hit sound, shake row 2, then 4e2d58 finishes 428. */
   random_hit_sound();
   shake(2);
-  reiko_entry_retail_script_004e2d58(victim);
+  retail_vm_enter_owned(victim, 0x4e2d58, fighter_ready, 7);
 }
 
 /* 452c50 / 452e90 / 452f90 / 453040 / 4530f0: a floor pool (475730 /
@@ -225,7 +226,7 @@ void reiko_first_torso_29(Fighter *piece) {
   /* 452e50: random hit sound, shake row 7, then 4e2d78 finishes 429. */
   random_hit_sound();
   shake(7);
-  reiko_entry_retail_script_004e2d78(piece);
+  retail_vm_enter_owned(piece, 0x4e2d78, fighter_ready, 7);
 }
 
 void reiko_first_torso_end(Fighter *piece) {
@@ -239,7 +240,7 @@ void reiko_first_head_59(Fighter *piece) {
   /* 452f00: B[0x3f], pose 59, then 4e2dc0 to 82. */
   battle_sound(SOUND_B, 0x3f);
   piece->sample_override = 59;
-  reiko_entry_retail_script_004e2dc0(piece);
+  retail_vm_enter_owned(piece, 0x4e2dc0, fighter_ready, 7);
 }
 
 void reiko_first_head_83(Fighter *piece) {
@@ -247,33 +248,33 @@ void reiko_first_head_83(Fighter *piece) {
   random_piece_sound();
   piece->sample_override = 83;
   random_piece_sound();
-  reiko_entry_retail_script_004e2dd0(piece);
+  retail_vm_enter_owned(piece, 0x4e2dd0, fighter_ready, 7);
 }
 
 void reiko_first_left_arm_56(Fighter *piece) {
   /* 452fe0: random piece sound, pose 56, then 4e2df8 to 66. */
   random_piece_sound();
   piece->sample_override = 56;
-  reiko_entry_retail_script_004e2df8(piece);
+  retail_vm_enter_owned(piece, 0x4e2df8, fighter_ready, 7);
 }
 
 void reiko_first_left_arm_land(Fighter *piece) {
   /* 453020: random piece sound, then 4e2e08 finishes 427. */
   random_piece_sound();
-  reiko_entry_retail_script_004e2e08(piece);
+  retail_vm_enter_owned(piece, 0x4e2e08, fighter_ready, 7);
 }
 
 void reiko_first_right_arm_44(Fighter *piece) {
   /* 453090: random piece sound, pose 44, then 4e2e40 to 68. */
   random_piece_sound();
   piece->sample_override = 44;
-  reiko_entry_retail_script_004e2e40(piece);
+  retail_vm_enter_owned(piece, 0x4e2e40, fighter_ready, 7);
 }
 
 void reiko_first_right_arm_land(Fighter *piece) {
   /* 4530d0: random piece sound, then 4e2e50 finishes 426. */
   random_piece_sound();
-  reiko_entry_retail_script_004e2e50(piece);
+  retail_vm_enter_owned(piece, 0x4e2e50, fighter_ready, 7);
 }
 
 void reiko_first_fatality(Fighter *fighter) {
