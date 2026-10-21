@@ -301,6 +301,7 @@ void fighter_step_sequence(Fighter *fighter) {
 void fighter_cancel_mmove(Fighter *fighter) {
   retail_vm_cancel(fighter);
   fighter->native.script_end = (RetailScriptContinuation){0};
+  fighter->native.native_end = (RetailNativeContinuation){0};
   FighterFn cleanup = fighter->mmove_cleanup;
   if (fighter->current_mmove != NULL || cleanup != NULL) {
     fighter->continuation++;

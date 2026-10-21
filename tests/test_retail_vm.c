@@ -659,6 +659,39 @@ static void native_sound_data(void) {
   put_word(0x4ea82c, token);
 }
 
+static void native_callback_table(void) {
+  const uint32_t table = 0x570180, descriptor = 0x4fad7c;
+  for (unsigned interrupted = 0; interrupted < 2; ++interrupted) {
+    Fighter *actor = setup(0, 2);
+    uint32_t count = mk4_image_u32(&image, descriptor + 4);
+    put_word(descriptor + 4, 2);
+    put_word(table, descriptor / 4);
+    put_word(table + 4, 0x42ce80);
+    native_animation_table(actor, table, 4);
+    put_word(descriptor + 4, count);
+    check(actor->native.native_end.address == 0x42ce80 && actor->native.native_end.native_owner == 4 && actor->native.script_end.entry == 0,
+        "native animation table must own its callback and context separately from VM script completion");
+    put_word(table + 4, 0x4e6d08);
+    if (interrupted) {
+      fighter_interrupt(actor, fighter_ready);
+    }
+    for (int visit = 0; visit < 5 && actor->current_mmove != NULL; ++visit) {
+      tick();
+    }
+    check(actor->current_mmove == NULL && !actor->retail_vm.active && actor->native.native_end.address == 0,
+        "native table completion or interruption must consume its captured callback without entering callback data as script words");
+  }
+  Fighter *actor = setup(0, 2);
+  native_hold(actor, 2, NULL);
+  native_address_end(actor, 0x42ce80, 4);
+  native_script_end(actor, 0x4e6d08, fighter_ready, 1);
+  check(actor->native.native_end.address == 0, "script completion must replace an earlier native callback");
+  native_address_end(actor, 0x42ce80, 4);
+  check(actor->native.script_end.entry == 0, "native callback must replace an earlier script completion");
+  fighter_cancel_mmove(actor);
+  check(actor->native.script_end.entry == 0 && actor->native.native_end.address == 0, "cancellation must clear both typed completion records");
+}
+
 static void native_throw_selection(void) {
   Fighter *owner = setup(0, 0);
   Fighter *peer = &g_battle.fighters[1];
@@ -851,6 +884,10 @@ int main(int argc, char **argv) {
     } else if (strcmp(argv[1], "budget") == 0) {
       put_word(0x4e6d08, 0x3a0000ff);
       put_word(0x4e6d0c, 0x3b000000);
+    } else if (strcmp(argv[1], "callback") == 0) {
+      Fighter *actor = setup(0, 2);
+      native_hold(actor, 1, NULL);
+      native_address_end(actor, 0x4e6d08, 0);
     } else if (strcmp(argv[1], "range") == 0) {
       Fighter *owner = setup(0, 2);
       put_word(0x570000, 0x1f000000);
@@ -882,6 +919,7 @@ int main(int argc, char **argv) {
   native_projectile_context();
   native_return_ownership();
   native_sound_data();
+  native_callback_table();
   native_throw_selection();
   native_inherited_descriptor();
   native_button_table();
@@ -894,6 +932,6 @@ int main(int argc, char **argv) {
   assets_bound();
   battle_init(0, 4);
   mk4_image_free(&image);
-  puts("PASS: direct Scorpion scripts, hit/block/miss, both slots, runtime loop words, interruption, KO and reset");
+  puts("PASS: shared retail VM, native boundaries, loaded data, interruption, KO and reset");
   return 0;
 }

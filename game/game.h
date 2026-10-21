@@ -180,9 +180,15 @@ typedef struct RetailScriptContinuation {
   unsigned native_owner;
 } RetailScriptContinuation;
 
+typedef struct RetailNativeContinuation {
+  uint32_t address;
+  unsigned native_owner;
+} RetailNativeContinuation;
+
 typedef struct NativeFrames {
   mmove_t move;
   RetailScriptContinuation script_end;
+  RetailNativeContinuation native_end;
   mframe_t frames[NATIVE_FRAME_CAPACITY];
   int poses[NATIVE_FRAME_CAPACITY];
 } NativeFrames;

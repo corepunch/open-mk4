@@ -12,4 +12,8 @@ for mode, message in {
                             text=True, timeout=10)
     assert result.returncode != 0, mode
     assert 'Retail VM at ' in result.stderr and message in result.stderr, (mode, result.stderr)
-print('PASS: unsupported opcode/native, invalid pose/cursor and non-yielding stream rejected')
+
+result = subprocess.run(['build/test-retail-vm', 'callback'], capture_output=True, text=True, timeout=10)
+assert result.returncode != 0 and 'Invalid native address continuation' in result.stderr, result.stderr
+
+print('PASS: malformed VM streams and script/native completion type errors rejected')

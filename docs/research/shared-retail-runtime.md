@@ -1311,3 +1311,16 @@ Verified formatting, shared VM/rejections, strict audits and native frame gates.
 One shared data-format fixture mutates the remap and checks direct tokens,
 per-roster half-word lists and word-sized native lists. No character audio or
 move matrices were added.
+
+### Typed native animation-table completions
+
+Implemented the shared4287a0 boundary: load the packed animation descriptor and
+unpacked native completion address from the original table, then retain the
+completion in actor-owned state. Native and script completion addresses have
+separate types and replace/cancel each other. This is required by the LP victim
+tables; treating their second word as a script root was incorrect.
+
+Compared the bounded local4287a0 listing with the mk4decomp animation runner.
+Verified formatting, shared VM/rejection checks and native frame gates. A small
+runtime fixture checks table mutation after capture, completion, cancellation
+and script/native type rejection. Production LP callers migrate next.
