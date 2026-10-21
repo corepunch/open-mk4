@@ -94,8 +94,8 @@
     },
     "high_kick": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for high_kick",
-      "source": "game/jax/character.c",
-      "symbol": "jax_high_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick"
     },
     "high_punch": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for high_punch",
@@ -114,8 +114,8 @@
     },
     "low_kick": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for low_kick",
-      "source": "game/jax/character.c",
-      "symbol": "jax_low_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick"
     },
     "lp_throw": {
       "evidence": "Jax roster slot 13 native selection and generated retail script roots for lp_throw",

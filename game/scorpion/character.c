@@ -51,7 +51,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_CROUCH] = scorpion_crouch,
   [S_BLOCK] = scorpion_block,
   [S_PUNCH] = scorpion_jab,
-  [S_KICK] = scorpion_kick,
+  [S_KICK] = retail_high_kick,
   [S_SWEEP] = scorpion_sweep,
   [S_UPPERCUT] = scorpion_uppercut,
 };

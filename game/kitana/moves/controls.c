@@ -7,11 +7,13 @@ void kitana_press_lp(Fighter *fighter) {
 }
 
 void kitana_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? kitana_enter_sweep : kitana_can_ground_throw(fighter, true) ? kitana_enter_lk_throw : kitana_lk);
+  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? kitana_enter_sweep
+                             : kitana_can_ground_throw(fighter, true) ? kitana_enter_lk_throw
+                                                                      : retail_low_kick);
 }
 
 void kitana_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? kitana_roundhouse : kitana_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? kitana_roundhouse : retail_high_kick);
 }
 
 void kitana_command_shadow_low(Fighter *fighter) {

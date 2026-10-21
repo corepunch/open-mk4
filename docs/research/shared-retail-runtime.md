@@ -259,3 +259,20 @@ live pose/continuation reads and interruption without generated frame arrays.
 Existing shared runtime/native tests and strict roster audits pass. The battle
 integration run again reaches its pre-existing exact-tick Scorpion throw
 assertion; no new character damage or timing cases were introduced.
+
+## Shared native high/low kick entries
+
+Native 46a680 and the post-gate low-kick block 46a81a now have one
+implementation each. They establish the engine action context, store
+0100/0102 and enter the original retail selector
+4e5ca0/4e5d90. Thirty-six duplicate entry adapters and unused private clip
+seeds are removed. Descriptor selection and playback come from retail words;
+the engine supplies only a shared locked/record-driven action context.
+
+The high-kick entry is verified against mk4decomp's matching
+`PendingMatch_ArgSarStoreJmp` container and local 46a680. Existing controller
+branches still decide close/roundhouse/weapon/throw choices until their own
+native consolidation. The full 46a7b0 includes throw gates before 46a81a;
+it is not registered as a completed shared native entry by this step. Existing low-kick/runtime integration coverage is reused; its
+entry assertion now names the original selector rather than a former direct
+selected-root adapter. No new tests were added.

@@ -84,7 +84,7 @@ static void behavior(void) {
         Fighter *owner = setup(slot, scenario);
         press(slot, crouch != 0, scenario);
         check(owner->retail_vm.active, "real button entry must select the runtime interpreter");
-        check(owner->retail_vm.entry == (crouch ? 0x4e60b8u : 0x4e6d08u), "button entry selected the wrong retail root");
+        check(owner->retail_vm.entry == (crouch ? 0x4e60b8u : 0x4e5d90u), "button entry selected the wrong retail root");
         recovery[scenario] = recover(owner, slot, crouch != 0, scenario);
       }
       if (!crouch) {

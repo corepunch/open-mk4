@@ -9,11 +9,11 @@ void sub_zero_press_lp(Fighter *fighter) {
 void sub_zero_press_lk(Fighter *fighter) {
   fighter_interrupt(fighter, fighter_holds_back(fighter)                ? sub_zero_enter_sweep
                              : sub_zero_can_ground_throw(fighter, true) ? sub_zero_enter_lk_throw
-                                                                        : sub_zero_lk);
+                                                                        : retail_low_kick);
 }
 
 void sub_zero_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sub_zero_roundhouse : sub_zero_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sub_zero_roundhouse : retail_high_kick);
 }
 
 void sub_zero_cpu_close_hk(Fighter *fighter) {

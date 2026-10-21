@@ -48,7 +48,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_CROUCH] = sub_zero_armed_crouch,
   [S_BLOCK] = sub_zero_armed_block,
   [S_PUNCH] = sub_zero_jab,
-  [S_KICK] = sub_zero_kick,
+  [S_KICK] = retail_high_kick,
   [S_SWEEP] = sub_zero_sweep,
   [S_UPPERCUT] = sub_zero_uppercut,
 };
@@ -158,7 +158,7 @@ static const Controls controls = {NULL, 0, {&standing, &crouching, &jumping}};
 
 static const CpuMoves cpu_moves = {.enter = {
                                        [CPU_JAB] = sub_zero_jab,
-                                       [CPU_LOW_KICK] = sub_zero_lk,
+                                       [CPU_LOW_KICK] = retail_low_kick,
                                        [CPU_HIGH_KICK] = sub_zero_hk,
                                        [CPU_SWEEP] = sub_zero_enter_sweep,
                                        [CPU_UPPERCUT] = sub_zero_enter_uppercut,

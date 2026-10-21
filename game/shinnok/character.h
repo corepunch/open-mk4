@@ -47,7 +47,6 @@ void shinnok_crouch(Fighter *fighter);
 void shinnok_fan_tail(Fighter *fighter);
 void shinnok_fan_victory(Fighter *fighter);
 void shinnok_fatality_contact_hold(Fighter *fighter);
-void shinnok_high_kick(Fighter *fighter);
 void shinnok_idle(Fighter *fighter);
 void shinnok_jab(Fighter *fighter);
 void shinnok_lp_throw(Fighter *fighter);

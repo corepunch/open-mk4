@@ -1,28 +1,12 @@
 #include "../character.h"
 
-static void reptile_high_kick(Fighter *fighter);
-static void reptile_low_kick(Fighter *fighter);
-
 /* 4e5ca0 selects 4e6c90: clip 66 opens at 3 and advances twice per visit
  * to 17, then 46a760 runs 470c60 with block 4e5d30. */
-static const MoveDef s_high_kick = {.clip = 66, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
 
 /* 4e5d30 selector 1: B[1], 13%, reactions 16/13/6. */
 
 /* 4e5d30 lists poses 17, 17 and 16 with one B[1] query per visit; the
  * terminator calls 46a770 on the following visit. */
-
-static void reptile_high_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &s_high_kick);
-  fighter->sample_override = 0;
-  reptile_entry_retail_script_004e5ca0(fighter);
-}
-
-static void reptile_low_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &reptile_s_kick);
-  fighter->action = ACTION_RETAIL_0102;
-  reptile_entry_retail_script_004e5d90(fighter);
-}
 
 void reptile_press_kick(Fighter *fighter) {
   if (!fighter->armed && fighter_holds_back(fighter)) {
@@ -35,7 +19,7 @@ void reptile_press_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, reptile_high_kick);
+  fighter_interrupt(fighter, retail_high_kick);
 }
 
 void reptile_press_low_kick(Fighter *fighter) {
@@ -44,5 +28,5 @@ void reptile_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? reptile_sweep : reptile_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? reptile_sweep : retail_low_kick);
 }

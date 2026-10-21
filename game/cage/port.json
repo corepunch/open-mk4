@@ -74,13 +74,13 @@
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "high_kick": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "low_kick": {
-      "source": "game/cage/character.c",
-      "symbol": "cage_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Cage roster slot 14 retail entry and generated script roots verified in the compiler inventory."
     },
     "roundhouse": {

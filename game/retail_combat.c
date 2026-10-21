@@ -60,3 +60,20 @@ void retail_kick_contact_wide(Fighter *fighter) {
 void retail_kick_contact_narrow(Fighter *fighter) {
   retail_kick_contact_rows(fighter, 0x4e6978);
 }
+
+/* Native 46a680 and the post-gate block 46a81a set the action and enter the retail selector.
+ * The script binds the clip before yielding; no fighter C clip seed is used. */
+static void kick_enter(Fighter *fighter, int action, uint32_t script) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
+  fighter_start_move(fighter, S_KICK, &move);
+  fighter->action = action;
+  retail_vm_enter(fighter, script, fighter_ready);
+}
+
+void retail_high_kick(Fighter *fighter) {
+  kick_enter(fighter, ACTION_RETAIL_0100, 0x4e5ca0);
+}
+
+void retail_low_kick(Fighter *fighter) {
+  kick_enter(fighter, ACTION_RETAIL_0102, 0x4e5d90);
+}

@@ -94,8 +94,8 @@
     },
     "high_kick": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_high_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick"
     },
     "high_punch": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
@@ -114,8 +114,8 @@
     },
     "low_kick": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",
-      "source": "game/reiko/character.c",
-      "symbol": "reiko_low_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick"
     },
     "lp_throw": {
       "evidence": "Reiko roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/reiko/character.c",

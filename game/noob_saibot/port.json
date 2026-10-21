@@ -99,8 +99,8 @@
     },
     "high_kick": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_high_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick"
     },
     "high_punch": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
@@ -119,8 +119,8 @@
     },
     "low_kick": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",
-      "source": "game/noob_saibot/character.c",
-      "symbol": "noob_saibot_low_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick"
     },
     "lp_throw": {
       "evidence": "Noob Saibot roster-selected entry starts the catalogued generated VM root; tools/character_catalog.py and game/noob_saibot/character.c",

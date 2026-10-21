@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_CROUCH] = sonya_armed_crouch,
   [S_BLOCK] = sonya_armed_block,
   [S_PUNCH] = sonya_jab,
-  [S_KICK] = sonya_kick,
+  [S_KICK] = retail_high_kick,
   [S_SWEEP] = sonya_sweep,
   [S_UPPERCUT] = sonya_uppercut,
 };
@@ -89,7 +89,7 @@ static const CpuMoves cpu_moves = {
     .enter =
         {
             [CPU_JAB] = sonya_jab,
-            [CPU_LOW_KICK] = sonya_lk,
+            [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = sonya_hk,
             [CPU_SWEEP] = sonya_enter_sweep,
             [CPU_UPPERCUT] = sonya_enter_uppercut,

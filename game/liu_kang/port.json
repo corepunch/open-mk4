@@ -115,8 +115,8 @@
     },
     "high_kick": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",
-      "source": "game/liu_kang/character.c",
-      "symbol": "liu_kang_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick"
     },
     "high_punch": {
       "evidence": "docs/liu-kang-scripts.md: verified pre-compiler port; reviewed legacy boundary, not generated VM coverage",

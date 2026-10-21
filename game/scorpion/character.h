@@ -243,8 +243,6 @@ void scorpion_hk(Fighter *fighter);
 void scorpion_hp(Fighter *fighter);
 void scorpion_idle(Fighter *fighter);
 void scorpion_jab(Fighter *fighter);
-void scorpion_kick(Fighter *fighter);
-void scorpion_lk(Fighter *fighter);
 void scorpion_roundhouse(Fighter *fighter);
 void scorpion_spear(Fighter *fighter);
 void scorpion_spike_fatality(Fighter *fighter);

@@ -105,8 +105,8 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "high_kick": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "high_punch": {
@@ -125,8 +125,8 @@
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "low_kick": {
-      "source": "game/quan_chi/character.c",
-      "symbol": "quan_chi_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Quan Chi slot 8 move entry and generated VM roots in the reviewed profile"
     },
     "lp_throw": {

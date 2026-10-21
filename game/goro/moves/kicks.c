@@ -1,21 +1,7 @@
 #include "../character.h"
 
-static void goro_high_kick(Fighter *fighter);
-static void goro_low_kick(Fighter *fighter);
-
 /* 46a760 -> 470c60 block 4e5d30: B[1] at poses 17, 17 and 16, skipping
  * a crouching (2001) victim or a consumed contact, then 46a770 -> 4e5c70. */
-
-static void goro_high_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &goro_s_kick);
-  goro_entry_retail_script_004e5ca0(fighter);
-}
-
-static void goro_low_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &goro_s_kick);
-  fighter->action = ACTION_RETAIL_0102;
-  goro_entry_retail_script_004e5d90(fighter);
-}
 
 /* 461030: back selects roundhouse 46f1f0; within 0.8 a grounded victim
  * outside reactions 4001/4005 selects close HK 46ba60; else 46a680. */
@@ -29,7 +15,7 @@ void goro_press_high_kick(Fighter *fighter) {
     fighter_interrupt(fighter, goro_close_hk);
     return;
   }
-  fighter_interrupt(fighter, goro_high_kick);
+  fighter_interrupt(fighter, retail_high_kick);
 }
 
 /* 460fc0: back selects sweep 46ef90; LK throw 42b6b0 precedes low kick. */
@@ -38,7 +24,7 @@ void goro_press_low_kick(Fighter *fighter) {
     fighter_interrupt(fighter, goro_lk_throw);
     return;
   }
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? goro_sweep : goro_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? goro_sweep : retail_low_kick);
 }
 
 void goro_press_crouching_kick(Fighter *fighter) {

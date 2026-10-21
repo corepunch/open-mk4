@@ -2,6 +2,8 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
+void retail_high_kick(Fighter *fighter);
+void retail_low_kick(Fighter *fighter);
 void retail_kick_contact_rows(Fighter *fighter, uint32_t table);
 void retail_kick_contact_default(Fighter *fighter);
 void retail_kick_contact_wide(Fighter *fighter);

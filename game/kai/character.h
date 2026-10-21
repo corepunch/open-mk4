@@ -33,7 +33,6 @@ enum {
 
 void kai_block(Fighter *fighter);
 void kai_crouch(Fighter *fighter);
-void kai_high_kick(Fighter *fighter);
 void kai_high_punch(Fighter *fighter);
 void kai_idle(Fighter *fighter);
 void kai_input_478df0(Fighter *fighter);

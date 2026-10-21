@@ -159,8 +159,8 @@
       "evidence": "Shinnok roster slot 6 native entry 0x00467e00 and selected EXE script roots"
     },
     "high_kick": {
-      "source": "game/shinnok/character.c",
-      "symbol": "shinnok_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Shinnok roster slot 6 native entry 0x0046a680 and selected EXE script roots"
     },
     "high_punch": {
@@ -179,8 +179,8 @@
       "evidence": "Shinnok roster slot 6 native entry 0x0042b6b0 and selected EXE script roots"
     },
     "low_kick": {
-      "source": "game/shinnok/character.c",
-      "symbol": "shinnok_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Shinnok roster slot 6 native entry 0x0046a7b0 and selected EXE script roots"
     },
     "lp_throw": {

@@ -1,23 +1,9 @@
 #include "../character.h"
 
-static void noob_saibot_high_kick(Fighter *fighter);
-static void noob_saibot_low_kick(Fighter *fighter);
-
 /* 46a760 -> 470c60 with block 4e5d30: B[1] is queried while poses 17, 17
  * and 16 are submitted. A contact latches and the victim's crouch action
  * 2001 skips the query. 46a770 then stores action 1006 (470e80) and enters
  * recovery 4e5c70 from pose 16. */
-
-static void noob_saibot_high_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &noob_saibot_s_kick);
-  noob_saibot_entry_retail_script_004e5ca0(fighter);
-}
-
-static void noob_saibot_low_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &noob_saibot_s_kick);
-  fighter->action = ACTION_RETAIL_0102;
-  noob_saibot_entry_retail_script_004e5d90(fighter);
-}
 
 void noob_saibot_press_high_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
@@ -30,7 +16,7 @@ void noob_saibot_press_high_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, noob_saibot_high_kick);
+  fighter_interrupt(fighter, retail_high_kick);
 }
 
 void noob_saibot_press_low_kick(Fighter *fighter) {
@@ -39,7 +25,7 @@ void noob_saibot_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? noob_saibot_sweep : noob_saibot_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? noob_saibot_sweep : retail_low_kick);
 }
 
 void noob_saibot_press_crouching_kick(Fighter *fighter) {

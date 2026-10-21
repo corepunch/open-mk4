@@ -105,8 +105,8 @@
     },
     "high_kick": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick"
     },
     "high_punch": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
@@ -125,8 +125,8 @@
     },
     "low_kick": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/scorpion/character.c",
-      "symbol": "scorpion_lk"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick"
     },
     "lp_throw": {
       "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",

@@ -8,9 +8,9 @@ void scorpion_press_lp(Fighter *fighter) {
 void scorpion_press_lk(Fighter *fighter) {
   fighter_interrupt(fighter, fighter_holds_back(fighter)                ? scorpion_enter_sweep
                              : scorpion_can_ground_throw(fighter, true) ? scorpion_enter_lk_throw
-                                                                        : scorpion_lk);
+                                                                        : retail_low_kick);
 }
 
 void scorpion_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? scorpion_roundhouse : scorpion_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? scorpion_roundhouse : retail_high_kick);
 }

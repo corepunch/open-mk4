@@ -1,30 +1,14 @@
 #include "../character.h"
 
-static const MoveDef s_short_kick = {.clip = 65, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
-
-static void fujin_low_kick(Fighter *fighter);
-static void fujin_high_kick(Fighter *fighter);
 static void fujin_entry_low_kick(Fighter *fighter);
 static void fujin_enter_kick(Fighter *fighter);
-static const MoveDef s_low_kick = {.clip = 308, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD | SF_LOW};
-
-static void fujin_low_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &s_low_kick);
-  fighter->action = ACTION_RETAIL_0102;
-  fujin_entry_retail_script_004e5d90(fighter);
-}
-
-static void fujin_high_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &s_short_kick);
-  fujin_entry_retail_script_004e5ca0(fighter);
-}
 
 static void fujin_entry_low_kick(Fighter *fighter) {
-  fujin_low_kick(fighter);
+  retail_low_kick(fighter);
 }
 
 static void fujin_enter_kick(Fighter *fighter) {
-  fujin_high_kick(fighter);
+  retail_high_kick(fighter);
 }
 
 void fujin_press_kick(Fighter *fighter) {

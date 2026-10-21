@@ -93,8 +93,8 @@
       "evidence": "Reptile fan fatality entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "high_kick": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Reptile high kick entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "high_punch": {
@@ -123,8 +123,8 @@
       "evidence": "Reptile lk throw entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "low_kick": {
-      "source": "game/reptile/character.c",
-      "symbol": "reptile_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Reptile low kick entry starts its reviewed generated VM stream through the portable fighter adapter."
     },
     "lp_throw": {

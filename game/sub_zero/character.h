@@ -328,8 +328,6 @@ void sub_zero_hk(Fighter *fighter);
 void sub_zero_hp(Fighter *fighter);
 void sub_zero_ice(Fighter *fighter);
 void sub_zero_jab(Fighter *fighter);
-void sub_zero_kick(Fighter *fighter);
-void sub_zero_lk(Fighter *fighter);
 void sub_zero_roundhouse(Fighter *fighter);
 void sub_zero_second_fatality(Fighter *fighter);
 void sub_zero_slide(Fighter *fighter);

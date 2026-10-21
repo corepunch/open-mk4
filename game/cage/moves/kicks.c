@@ -1,10 +1,6 @@
 #include "../character.h"
 
-static const MoveDef s_narrow_kick = {.clip = 71, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD};
-
 void cage_cpu_kick(Fighter *fighter);
-static void cage_high_kick(Fighter *fighter);
-static void cage_low_kick(Fighter *fighter);
 
 /* Native479b70 queries D[25] at poses22/23, then holds24 for twelve
  * contact visits while descriptor4e80c8 installs47bf50 velocity decay.
@@ -50,17 +46,6 @@ void cage_cpu_kick(Fighter *fighter) {
   cage_entry_retail_script_004e80a8(fighter);
 }
 
-static void cage_high_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &s_narrow_kick);
-  cage_entry_retail_script_004e5ca0(fighter);
-}
-
-static void cage_low_kick(Fighter *fighter) {
-  fighter_start_move(fighter, S_KICK, &cage_s_kick);
-  fighter->action = ACTION_RETAIL_0102;
-  cage_entry_retail_script_004e5d90(fighter);
-}
-
 void cage_press_high_kick(Fighter *fighter) {
   if (fighter_holds_back(fighter)) {
     fighter_interrupt(fighter, cage_roundhouse);
@@ -72,7 +57,7 @@ void cage_press_high_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, cage_high_kick);
+  fighter_interrupt(fighter, retail_high_kick);
 }
 
 void cage_press_low_kick(Fighter *fighter) {
@@ -81,7 +66,7 @@ void cage_press_low_kick(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? cage_sweep : cage_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? cage_sweep : retail_low_kick);
 }
 
 void cage_press_crouching_kick(Fighter *fighter) {

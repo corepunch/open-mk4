@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_CROUCH] = raiden_armed_crouch,
   [S_BLOCK] = raiden_armed_block,
   [S_PUNCH] = raiden_jab,
-  [S_KICK] = raiden_kick,
+  [S_KICK] = retail_high_kick,
   [S_SWEEP] = raiden_sweep,
   [S_UPPERCUT] = raiden_uppercut,
 };
@@ -91,7 +91,7 @@ static const CpuMoves cpu_moves = {
     .enter =
         {
             [CPU_JAB] = raiden_jab,
-            [CPU_LOW_KICK] = raiden_lk,
+            [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = raiden_hk,
             [CPU_SWEEP] = raiden_enter_sweep,
             [CPU_UPPERCUT] = raiden_enter_uppercut,

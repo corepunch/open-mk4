@@ -14,10 +14,6 @@ void scorpion_hp_script(Fighter *fighter) {
   native_hp_start(fighter, &hp_profile);
 }
 
-void scorpion_lk(Fighter *fighter) {
-  scorpion_ground_attack(fighter, G_LOW_KICK);
-}
-
 void scorpion_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
@@ -25,7 +21,7 @@ void scorpion_hk(Fighter *fighter) {
   } else if (fighter_distance(fighter) <= 0.8f && !fighter_airborne(victim) && victim->action != ACTION_RETAIL_4001 && victim->action != ACTION_RETAIL_4005) {
     scorpion_ground_attack(fighter, G_CLOSE_HK);
   } else {
-    scorpion_kick(fighter);
+    retail_high_kick(fighter);
   }
 }
 

@@ -42,7 +42,6 @@ extern const MoveDef tanya_s_kick;
 extern const MoveDef tanya_s_sweep;
 extern const MoveDef tanya_s_throw;
 extern const MoveDef tanya_s_uppercut;
-void tanya_high_kick(Fighter *fighter);
 void tanya_jab(Fighter *fighter);
 void tanya_lp_throw(Fighter *fighter);
 void tanya_press_air_hk(Fighter *fighter);

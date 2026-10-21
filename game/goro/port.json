@@ -74,13 +74,13 @@
       "evidence": "CPU stage-0 finish 434520 -> 4348b0 dispatches action 10042 -> 4e6ef8[66] = 467e70; generated stage root 4e6950."
     },
     "high_kick": {
-      "source": "game/goro/moves/kicks.c",
-      "symbol": "goro_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "low_kick": {
-      "source": "game/goro/moves/kicks.c",
-      "symbol": "goro_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Pinned MK-4 EXE inventory for roster 15 and bounded Goro script queries; docs/character-script-port.md. Move roots are catalogued for Goro roster selection."
     },
     "roundhouse": {

@@ -158,8 +158,6 @@ void liu_kang_high_fireball(Fighter *fighter);
 void liu_kang_hk(Fighter *fighter);
 void liu_kang_hp(Fighter *fighter);
 void liu_kang_jab(Fighter *fighter);
-void liu_kang_kick(Fighter *fighter);
-void liu_kang_lk(Fighter *fighter);
 void liu_kang_low_fireball(Fighter *fighter);
 void liu_kang_roundhouse(Fighter *fighter);
 void liu_kang_second_fatality(Fighter *fighter);

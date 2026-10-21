@@ -7,11 +7,11 @@ void sonya_press_lp(Fighter *fighter) {
 }
 
 void sonya_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sonya_enter_sweep : sonya_can_ground_throw(fighter, true) ? sonya_enter_lk_throw : sonya_lk);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sonya_enter_sweep : sonya_can_ground_throw(fighter, true) ? sonya_enter_lk_throw : retail_low_kick);
 }
 
 void sonya_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sonya_roundhouse : sonya_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? sonya_roundhouse : retail_high_kick);
 }
 
 void sonya_cpu_close_hk(Fighter *fighter) {

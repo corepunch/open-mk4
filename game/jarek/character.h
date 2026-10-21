@@ -28,10 +28,8 @@ enum {
 void jarek_block(Fighter *fighter);
 void jarek_crouch(Fighter *fighter);
 void jarek_fatality_contact_hold(Fighter *fighter);
-void jarek_high_kick(Fighter *fighter);
 void jarek_idle(Fighter *fighter);
 void jarek_jab(Fighter *fighter);
-void jarek_low_kick(Fighter *fighter);
 void jarek_lp_throw(Fighter *fighter);
 void jarek_press_air_hp(Fighter *fighter);
 void jarek_press_air_kick(Fighter *fighter);

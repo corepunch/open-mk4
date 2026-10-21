@@ -44,8 +44,8 @@
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e0118, 0x4e0188, 0x4e0138, 0x4e0148, 0x4e0158, 0x4e01a0); verified by typed Kai inventory."
     },
     "high_kick": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5ca0, 0x4e6998); verified by typed Kai inventory."
     },
     "high_punch": {
@@ -89,8 +89,8 @@
       "evidence": "Selected4de2f8/318/328 paired streams, native42be10 retreats through clip282;4de358 is Q16 motion data, not a script."
     },
     "low_kick": {
-      "source": "game/kai/character.c",
-      "symbol": "kai_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Kai slot-11 move route starts its selected generated graph or native path (0x4e5d90); verified by typed Kai inventory."
     },
     "lp_throw": {

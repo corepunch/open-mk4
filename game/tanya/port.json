@@ -128,13 +128,13 @@
       "evidence": "Tanya spike_fatality entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "high_kick": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_high_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick",
       "evidence": "Tanya high_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "low_kick": {
-      "source": "game/tanya/character.c",
-      "symbol": "tanya_low_kick",
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick",
       "evidence": "Tanya low_kick entry and selected root verified in the character-9 worksheet; portable callback is in c_tanya.c."
     },
     "roundhouse": {

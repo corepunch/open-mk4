@@ -51,7 +51,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_CROUCH] = liu_kang_armed_crouch,
   [S_BLOCK] = liu_kang_armed_block,
   [S_PUNCH] = liu_kang_jab,
-  [S_KICK] = liu_kang_kick,
+  [S_KICK] = retail_high_kick,
   [S_SWEEP] = liu_kang_sweep,
   [S_UPPERCUT] = liu_kang_uppercut,
 };
@@ -114,7 +114,7 @@ static const CpuMoves cpu_moves = {
     .enter =
         {
             [CPU_JAB] = liu_kang_jab,
-            [CPU_LOW_KICK] = liu_kang_lk,
+            [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = liu_kang_hk,
             [CPU_SWEEP] = liu_kang_enter_sweep,
             [CPU_UPPERCUT] = liu_kang_enter_uppercut,

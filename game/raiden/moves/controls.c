@@ -7,11 +7,13 @@ void raiden_press_lp(Fighter *fighter) {
 }
 
 void raiden_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? raiden_enter_sweep : raiden_can_ground_throw(fighter, true) ? raiden_enter_lk_throw : raiden_lk);
+  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? raiden_enter_sweep
+                             : raiden_can_ground_throw(fighter, true) ? raiden_enter_lk_throw
+                                                                      : retail_low_kick);
 }
 
 void raiden_press_combo_hk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter) ? raiden_roundhouse : raiden_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? raiden_roundhouse : retail_high_kick);
 }
 
 void raiden_cpu_close_hk(Fighter *fighter) {

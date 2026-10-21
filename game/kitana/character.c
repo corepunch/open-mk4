@@ -50,7 +50,7 @@ static const FighterFn enter[S_COUNT] = {
   [S_CROUCH] = kitana_armed_crouch,
   [S_BLOCK] = kitana_armed_block,
   [S_PUNCH] = kitana_jab,
-  [S_KICK] = kitana_kick,
+  [S_KICK] = retail_high_kick,
   [S_SWEEP] = kitana_sweep,
   [S_UPPERCUT] = kitana_uppercut,
 };
@@ -91,7 +91,7 @@ static const CpuMoves cpu_moves = {
     .enter =
         {
             [CPU_JAB] = kitana_jab,
-            [CPU_LOW_KICK] = kitana_lk,
+            [CPU_LOW_KICK] = retail_low_kick,
             [CPU_HIGH_KICK] = kitana_hk,
             [CPU_SWEEP] = kitana_enter_sweep,
             [CPU_UPPERCUT] = kitana_enter_uppercut,

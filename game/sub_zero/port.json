@@ -100,8 +100,8 @@
     },
     "high_kick": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_kick"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_high_kick"
     },
     "high_punch": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
@@ -125,8 +125,8 @@
     },
     "low_kick": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",
-      "source": "game/sub_zero/character.c",
-      "symbol": "sub_zero_lk"
+      "source": "game/retail_combat.c",
+      "symbol": "retail_low_kick"
     },
     "lp_throw": {
       "evidence": "Pinned EXE entry and native adapters; docs/character-script-port.md",

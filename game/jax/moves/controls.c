@@ -16,7 +16,7 @@ void jax_press_hk(Fighter *fighter) {
     return;
   }
 
-  fighter_interrupt(fighter, jax_high_kick);
+  fighter_interrupt(fighter, retail_high_kick);
 }
 
 void jax_press_lk(Fighter *fighter) {
@@ -25,6 +25,6 @@ void jax_press_lk(Fighter *fighter) {
     return;
   }
 
-  FighterFn entry = fighter_holds_back(fighter) ? jax_sweep : jax_low_kick;
+  FighterFn entry = fighter_holds_back(fighter) ? jax_sweep : retail_low_kick;
   fighter_interrupt(fighter, entry);
 }

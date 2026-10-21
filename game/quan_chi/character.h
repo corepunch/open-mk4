@@ -34,7 +34,6 @@ void quan_chi_press_low_kick(Fighter *fighter);
 void quan_chi_press_low_punch(Fighter *fighter);
 void quan_chi_press_sweep(Fighter *fighter);
 void quan_chi_press_uppercut(Fighter *fighter);
-void quan_chi_high_kick(Fighter *fighter);
 void quan_chi_jab(Fighter *fighter);
 void quan_chi_lp_throw(Fighter *fighter);
 void quan_chi_script_air_finish(Fighter *fighter);
