@@ -892,9 +892,9 @@ and the repaired borrowed-fatality dispatch. Obsolete Scorpion/Quan/Noob throw,
 cloned262/261 combo, C-roster-seed and per-tick kick/Scorpion frame assertions
 were retired or reduced to runtime ownership checks. The two unused C trace
 fixtures and their C-output paths were removed; JSON research evidence remains.
-The broad suite currently stops at a legacy direct-S_THROW balance assertion;
-unstarted throw states no longer contain character C behavior. It is not
-reported as passing.
+The broad suite currently stops at a legacy fixed-visit LP throw balance assertion. It is not reported as
+passing. The fixture drives LP input; its S_THROW argument is a test-helper
+label, not direct state entry.
 
 ### Loaded air controls and shared teleport native
 
@@ -959,7 +959,7 @@ Verified shared VM/rejection checks,18 strict script audits, native source/frame
 gates and formatting. The existing loaded-row fixture changes a miss callback,
 checks entry into the original recovery script, then interrupts the frozen
 owner and checks playback cleanup. Broad battle integration passes the shared
-air paths and still stops at the previously recorded direct-S_THROW balance
+air paths and still stops at the previously recorded fixed-visit LP throw balance
 assertion. Removed the retired per-fighter air timing/damage matrices; retained
 short-descriptor rendering, real input, landing and follow-up ownership checks.
 The short-descriptor fixture now installs the actual air stance rather than
@@ -980,5 +980,46 @@ their original loaded tables. No character CPU configuration supplies behavior.
 
 Verified formatting, shared VM/rejection tests,18 strict audits and native
 source/frame gates. Existing broad integration exercises CPU and weapon dispatch
-before reaching the unchanged direct-S_THROW balance assertion. No new tests
+before reaching the unchanged fixed-visit LP throw balance assertion. No new tests
 or per-fighter CPU matrices were added.
+
+### Loaded roster views; no C fighter definitions
+
+Removed all18 CharacterDef templates, their copied state/entry arrays and
+handwritten move lists. roster_def now builds compatibility views from loaded
+identity, rig ground, idle/walk, commands and CPU data plus shared engine state
+interfaces. Original46b300 selects the loaded53ce30 guard descriptor or its
+literal boss descriptor4fc960. The common crouch native binds53ce40 on entry.
+Unstarted jump, attack, reaction and victory views are unbound; they do not
+invent fighter-specific animation seeds. Native/script takeover owns binding.
+Approximate reaction fallback remains an engine integration limitation, rather
+than a per-fighter C pose table. Private default throw/crouch/victory adapters
+and three unused script-root wrappers were removed.
+
+Victory enters original4e6a40 for every slot. Its selector supplies authored
+clips and loops, including the actual boss victory instead of a C pose. The
+existing native finisher-completion monitor is retained where needed; raw4712e0
+entry itself is shared. The move-list UI formats original direction/button
+records and uses shared labels (SPECIAL/WEAPON/finishers), since these command
+lists contain no display names. C no longer maintains a second command list.
+
+Goro's victory exposed missing opcode73 (native45c070): choose sampled token64a
+or66d using bit0 of the original random word, preserving script execution.
+Implemented once using SOUND_TOKEN. Evidence matches mk4decomp
+HitReactionCluster's matching assembly in five_block_dispatch_variants.c.
+Original45abf0 masks its context operand to one byte; replaced the arbitrary
+previous81 limit with that actual boundary. The portable camera still follows
+live scene actors. Source-navigation mappings and graph fixtures now root at
+the shared roster/native registry, not removed CharacterDef registrations.
+
+Verified make format/format-check, shared VM and rejection checks,18 strict
+script audits, native/source graph gates, six helper and seven port checks.
+SDL self-test passes18 rigs/11 arenas. Existing broad integration passes the
+loaded boss victory/context/sound path, CPU stage/finish dispatch and all air
+checks, then reaches the unchanged fixed-visit LP throw balance assertion.
+KO lifecycle checks now allow the original victory program after attack cleanup.
+An earlier ledger diagnosis calling that last throw assertion a direct state
+entry was wrong: do_attack(S_THROW) drives LP input; its remaining failure is
+an authored timing/damage assertion, not proof about an unstarted state view.
+Weapon tables/profiles,446 remaining script-root adapters and unique/duplicate
+native modules are still migration inputs; this is not native gameplay parity.

@@ -1523,6 +1523,10 @@ def bindings_for(character):
     result[0x46e240] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     result[0x46dff0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     result[0x46c8f0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
+    result[0x4712e0] = Binding('retail_victory_continue', 'game/roster.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Original4712e0 enters4e6a40; original selector supplies every roster victory')
+    result[0x45abf0] = replace(BINDINGS[0x45abf0], inline_values=tuple(range(256)),
+                                 evidence='Original45abf0 masks the inline operand to one byte before431520; camera adaptation follows live actors for every context')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

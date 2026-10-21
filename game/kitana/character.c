@@ -10,37 +10,13 @@
 
 /* Attack entries query source contact records through SF_RECORD. Locomotion
  * and generic reaction states retain the shared portable controllers. */
-static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
 /* Native uppercut recovery uses contact-selected pose sequences. */
 
-static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
-const MoveDef kitana_s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
-const MoveDef kitana_s_victory = {114, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &kitana_s_knockdown,
-  [S_VICTORY] = &kitana_s_victory,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_THROW] = retail_lp_throw,
-  [S_VICTORY] = kitana_enter_victory,
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-};
 // clang-format on
 
 /* Ground scripts and their native tails: 4e6da0, 4e5fd8,
@@ -59,33 +35,7 @@ static const FighterFn enter[S_COUNT] = {
 /* Native 494a00 parameter blocks; byte fields are decoded at authoring. */
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveListEntry move_list[] = {
-  {MOVE_LIST_SPECIAL, "RING TOSS", "D,F+LP"},
-  {MOVE_LIST_SPECIAL, "AIR SHADOW", "D,F+LP (AIR)"},
-  {MOVE_LIST_SPECIAL, "BICYCLE KICK", "F,B+HP"},
-  {MOVE_LIST_SPECIAL, "SQUARE WAVE", "B,B,D+HK"},
-  {MOVE_LIST_SPECIAL, "CARTWHEEL", "B,D,F+LK"},
-  {MOVE_LIST_SPECIAL, "LEG GRAB", "D+LP+BL"},
-  {MOVE_LIST_SPECIAL, "WEAPON", "F,F+LK"},
-  {MOVE_LIST_FINISHER, "FATALITY 1", "D,D,D,U+RUN"},
-  {MOVE_LIST_FINISHER, "FATALITY 2", "U,D,D,U+HK"},
-  {MOVE_LIST_FINISHER, "FAN STAGE", "D,B,B+HK"},
-  {MOVE_LIST_FINISHER, "SPIKE STAGE", "F,D,F+HP"},
-};
 // clang-format on
-
-const CharacterDef mk4_kitana = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = move_list,
-    .move_list_count = COUNT(move_list),
-};
 
 void kitana_entry_retail_script_004e01d0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e01d0, fighter_ready, 16);
@@ -125,10 +75,6 @@ void kitana_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void kitana_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 16);
-}
-
-void kitana_entry_retail_script_004e6a40(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 16);
 }
 
 void kitana_entry_retail_script_004e81d0(Fighter *fighter) {

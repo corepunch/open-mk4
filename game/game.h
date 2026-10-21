@@ -370,6 +370,8 @@ typedef struct MoveListEntry {
   const char *input;
 } MoveListEntry;
 
+/* Compatibility cache of loaded retail identity/data and shared engine services.
+ * No character-owned C definition supplies these records. */
 typedef struct CharacterDef {
   GameId game;
   int asset;
@@ -382,7 +384,7 @@ typedef struct CharacterDef {
   q16 ground;                     /* retail standing group Y: the rig root's Y translation (soles at 0) */
   FighterFn walk;                 /* game-owned ground locomotion; reads held direction/run */
   FighterFn jump;                 /* grounded jump entry; owns takeoff, flight and landing */
-  const CpuMoves *cpu;            /* translated action entries, selected by the shared CPU controller */
+  const CpuMoves *cpu;            /* loaded/shared action view for the CPU controller */
   const MoveListEntry *move_list; /* optional player-reachable commands shown at selection */
   int move_list_count;
 } CharacterDef;

@@ -10,36 +10,14 @@
 
 /* Recovered moves query retail records from their events (SF_RECORD). The
  * remaining moves keep the approximate damage, reach and push columns. */
-static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
 /* The jab graph alternates an opening/recovery with a second clip. Contact
  * requests at phase boundaries execute before the next branch is committed. */
 
-static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
-static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
-static const MoveDef s_victory = {115, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &s_knockdown,
-  [S_VICTORY] = &s_victory,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-};
 // clang-format on
 
 /* Specials translated from spear_entry/return, teleport_entry/landing and
@@ -64,30 +42,7 @@ static const FighterFn enter[S_COUNT] = {
  * slash parameter blocks 0x4ec880/0x4ec898; native throw 0x498290. */
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveListEntry move_list[] = {
-  {MOVE_LIST_SPECIAL, "SPEAR", "B,B+LP"},
-  {MOVE_LIST_SPECIAL, "HELLFIRE", "D,F+LP"},
-  {MOVE_LIST_SPECIAL, "TELEPORT", "D,B+HP (AIR OK)"},
-  {MOVE_LIST_SPECIAL, "WEAPON", "F,F+HK"},
-  {MOVE_LIST_FINISHER, "FATALITY 1", "B,F,F,B+BL"},
-  {MOVE_LIST_FINISHER, "FATALITY 2", "B,F,D,U+HP"},
-  {MOVE_LIST_FINISHER, "FAN STAGE", "F,D,D+LK"},
-  {MOVE_LIST_FINISHER, "SPIKE STAGE", "B,F,F+LK"},
-};
 // clang-format on
-
-const CharacterDef mk4_scorpion = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = move_list,
-    .move_list_count = COUNT(move_list),
-};
 
 /* Native-only blends; no VM timing tables. */
 

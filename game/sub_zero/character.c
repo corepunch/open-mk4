@@ -10,33 +10,11 @@
 
 /* Recovered moves query retail records from their events (SF_RECORD). The
  * remaining moves keep the approximate damage, reach and push columns. */
-static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-
-static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
-static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
-static const MoveDef s_victory = {115, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &s_knockdown,
-  [S_VICTORY] = &s_victory,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-};
 // clang-format on
 
 /* Air scripts 0x4e6658, 0x4e6710, 0x4e61f8, 0x4e6500 and 0x4e63d8.
@@ -93,30 +71,7 @@ const MoveDef sub_zero_s_lp_thrown = {.clip = 153, .last = 25, .flags = SF_LOCK,
  * Keep the established portable timing; source-script startup is generated. */
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveListEntry move_list[] = {
-  {MOVE_LIST_SPECIAL, "ICE BLAST", "D,F+LP"},
-  {MOVE_LIST_SPECIAL, "ICE CLONE", "D,B+LP (AIR OK)"},
-  {MOVE_LIST_SPECIAL, "SLIDE", "LP+BL+LK"},
-  {MOVE_LIST_SPECIAL, "WEAPON", "D,F+HK"},
-  {MOVE_LIST_FINISHER, "FATALITY 1", "F,B,F,D+HP"},
-  {MOVE_LIST_FINISHER, "FATALITY 2", "B,B,D,B+HP"},
-  {MOVE_LIST_FINISHER, "FAN STAGE", "D,U,U,U+HK"},
-  {MOVE_LIST_FINISHER, "SPIKE STAGE", "D,D,D+LK"},
-};
 // clang-format on
-
-const CharacterDef mk4_sub_zero = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = move_list,
-    .move_list_count = COUNT(move_list),
-};
 
 void sub_zero_entry_retail_script_004d2bf0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4d2bf0, fighter_ready, 4);
@@ -196,10 +151,6 @@ void sub_zero_entry_retail_script_004e62c0(Fighter *fighter) {
 
 void sub_zero_entry_retail_script_004e62d8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e62d8, fighter_ready, 4);
-}
-
-void sub_zero_entry_retail_script_004e6a40(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e6a40, fighter_ready, 4);
 }
 
 void sub_zero_entry_retail_script_004e84d8(Fighter *fighter) {

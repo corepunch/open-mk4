@@ -40,6 +40,10 @@ void weapon_stance(Fighter *fighter, int state) {
     return;
   }
   fighter_start_move(fighter, state, move);
+  if (!fighter->armed && state == S_CROUCH) {
+    /* Original46b610/494120 binds the unarmed descriptor in53ce40. */
+    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53ce40) * 4, 0);
+  }
 }
 
 void weapon_idle(Fighter *fighter) {

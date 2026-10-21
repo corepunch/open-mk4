@@ -1,5 +1,6 @@
 #include "retail_data.h"
 #include "retail_native.h"
+#include <stdio.h>
 
 unsigned retail_character_slot(unsigned character) {
   require(character < MK4_ROSTER_COUNT, "Invalid retail character");
@@ -199,4 +200,58 @@ uint32_t retail_lk_target(const Mk4Image *image, unsigned character) {
   uint32_t target = mk4_image_u32(image, 0x4ddfb8 + slot * 4);
   require(target >= 0x400000 && target < 0x4d0000, "Invalid native LK entry");
   return target;
+}
+
+/* UI text is a view of the loaded command lists, not another fighter ruleset.
+ * Retail has no command display names here, so use shared action labels. */
+void retail_bind_move_list(CharacterDef *definition, const Mk4Image *image, unsigned character) {
+  enum {
+    CAPACITY = 64,
+    INPUT_SIZE = 64
+  };
+
+  static MoveListEntry entries[MK4_ROSTER_COUNT][CAPACITY];
+  static char inputs[MK4_ROSTER_COUNT][CAPACITY][INPUT_SIZE];
+  static const char *buttons[BUTTON_COUNT] = {"U", "D", "L", "R", "HP", "LP", "BL", "HK", "LK", "RUN"};
+  require(character < MK4_ROSTER_COUNT, "Invalid command display owner");
+  unsigned count = 0;
+  for (unsigned finish = 0; finish < 2; ++finish) {
+    for (Button button = BUTTON_UP; button < BUTTON_COUNT; ++button) {
+      for (unsigned released = 0; released < 2; ++released) {
+        RetailCommandCursor cursor = retail_command_cursor(image, character, 0, button, released != 0);
+        RetailCommand command;
+        while (retail_command_next(image, &cursor, &command)) {
+          unsigned action = command.word & 255;
+          bool finisher = (command.flags & 1) && action >= 64 && action <= 67;
+          if (finisher != (finish != 0) || (command.pattern == 0xffffffffu && !released)) {
+            continue;
+          }
+          require(count < CAPACITY, "Retail command display capacity exceeded");
+          char *input = inputs[character][count];
+          size_t used = 0;
+          if (released) {
+            used = (size_t)snprintf(input, INPUT_SIZE, "RELEASE ");
+          }
+          uint32_t pattern = command.pattern == 0xffffffffu ? 0 : command.pattern;
+          for (; pattern; pattern >>= 8) {
+            const char *direction = (pattern & 255) == 1 ? "U" : (pattern & 255) == 2 ? "D" : (pattern & 255) == 0xaa ? "B" : "F";
+            int written = snprintf(input + used, INPUT_SIZE - used, "%s%s", direction, pattern >> 8 ? "," : "+");
+            require(written >= 0 && (size_t)written < INPUT_SIZE - used, "Retail command display input too long");
+            used += (size_t)written;
+          }
+          int written = snprintf(input + used, INPUT_SIZE - used, "%s", buttons[button]);
+          require(written >= 0 && (size_t)written < INPUT_SIZE - used, "Retail command display button too long");
+          const char *name = finisher                              ? (action == 64      ? "FATALITY 1"
+                                                                         : action == 67 ? "FATALITY 2"
+                                                                                        : "STAGE FINISH")
+                             : (command.flags & 1) && action == 41 ? "WEAPON"
+                                                                   : "SPECIAL";
+          entries[character][count] = (MoveListEntry){finisher ? MOVE_LIST_FINISHER : MOVE_LIST_SPECIAL, name, input};
+          count++;
+        }
+      }
+    }
+  }
+  definition->move_list = entries[character];
+  definition->move_list_count = (int)count;
 }

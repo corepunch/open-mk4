@@ -216,7 +216,7 @@ void raiden_generated_reaction(Fighter *victim) {
       return;
   }
   mk4_script_disarm_self(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, &raiden_s_knockdown);
+  fighter_start_move(victim, S_KNOCKDOWN, roster_def(victim->roster)->moves[S_KNOCKDOWN]);
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
   if (fighter_airborne(victim) && victim->body.gravity == 0) {

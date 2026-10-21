@@ -135,9 +135,9 @@ def weapon_dispatch_cycles(graph, reached, directory):
 
 def unreachable_references(profile):
     graph = workspace_graph()
-    # The roster lookup is an indirect runtime selection, not an edge from
-    # every fighter to every other fighter's command tables.
-    reached = graph.reachable(['mk4_' + profile['character'], 'retail_native_entry', 'retail_native_predicate', 'fighter_press'], stop={'roster'})
+    # Loaded roster views and the typed native registry are shared runtime
+    # roots. Per-fighter CharacterDef templates no longer register gameplay.
+    reached = graph.reachable(['roster_def', 'retail_native_entry', 'retail_native_predicate', 'fighter_press'], stop={'roster'})
     errors = []
     references = []
     for section in ('moves', 'entry_adapters', 'stances', 'command_bindings', 'cpu_bindings', 'cpu_finish_bindings', 'runtime_scripts'):

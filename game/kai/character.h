@@ -12,8 +12,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define s_air_attack kai_s_air_attack
-#define s_block kai_s_block
-#define s_crouch kai_s_crouch
 #define s_low_kick kai_s_low_kick
 
 enum {
@@ -26,7 +24,6 @@ enum {
   KAI_EVENT_FATALITY_2
 };
 
-void kai_crouch(Fighter *fighter);
 void kai_input_478df0(Fighter *fighter);
 void kai_input_47bd10(Fighter *fighter);
 void kai_input_47c520(Fighter *fighter);
@@ -48,8 +45,6 @@ void kai_entry_retail_script_004e8390(Fighter *fighter);
 void kai_entry_retail_script_004e8870(Fighter *fighter);
 void kai_entry_retail_script_004e88c8(Fighter *fighter);
 extern const MoveDef kai_s_air_attack;
-extern const MoveDef kai_s_block;
-extern const MoveDef kai_s_crouch;
 extern const MoveDef kai_s_low_kick;
 
 extern const ButtonTable kai_diagonal_air;

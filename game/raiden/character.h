@@ -25,8 +25,6 @@
 #define press_combo_hk raiden_press_combo_hk
 #define press_combo_hp raiden_press_combo_hp
 #define press_knee_hp raiden_press_knee_hp
-#define s_knockdown raiden_s_knockdown
-#define s_victory raiden_s_victory
 #define scene_end_watch raiden_scene_end_watch
 #define script_close_hp_tail raiden_script_close_hp_tail
 #define script_combo_hp_tail raiden_script_combo_hp_tail
@@ -72,8 +70,6 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 bool raiden_can_teleport(const Fighter *fighter);
-void raiden_enter_throw(Fighter *fighter);
-void raiden_enter_victory(Fighter *fighter);
 void raiden_first_fatality(Fighter *fighter);
 void raiden_lk_victim(Fighter *victim);
 void raiden_lightning(Fighter *fighter);
@@ -105,8 +101,6 @@ void raiden_entry_retail_script_004e9d50(Fighter *fighter);
 void raiden_entry_retail_script_004ea068(Fighter *fighter);
 void raiden_entry_retail_script_004ea108(Fighter *fighter);
 void raiden_entry_retail_script_004ed5f0(Fighter *fighter);
-extern const MoveDef raiden_s_knockdown;
-extern const MoveDef raiden_s_victory;
 void raiden_scene_end_watch(Fighter *fighter);
 void raiden_script_draw_equip(Fighter *fighter);
 void raiden_script_first_end(Fighter *fighter);

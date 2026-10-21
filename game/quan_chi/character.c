@@ -1,22 +1,7 @@
 #include "retail_vm.h"
 #include "character.h"
 
-static const MoveDef s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
-
-static const MoveDef s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
-static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
-static const MoveDef s_victory = {.clip = 120, .last = MOVE_END, .flags = SF_HOLD};
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-  [S_THROW] = retail_lp_throw,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
@@ -33,29 +18,7 @@ const uint32_t quan_chi_weapon_descriptor[] = {
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &s_knockdown,
-  [S_VICTORY] = &s_victory,
-};
 // clang-format on
-
-const CharacterDef mk4_quan_chi = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = NULL,
-    .move_list_count = 0,
-};
 
 void quan_chi_entry_retail_script_004ed3a0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed3a0, fighter_ready, 8);

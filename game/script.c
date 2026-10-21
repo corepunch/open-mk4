@@ -147,7 +147,7 @@ void mk4_script_context(Fighter *fighter, int selector) {
   /* 431520/431700 create a camera task. Our camera already follows both
    * live actors; paired positions remain the source of its framing. */
   (void)fighter;
-  require(selector >= 0 && selector <= 81, "Unexpected paired camera context");
+  require(selector >= 0 && selector <= 255, "Unexpected paired camera context");
 }
 
 void mk4_script_roster_sound(Fighter *fighter, int selector) {

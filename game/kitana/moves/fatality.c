@@ -1,7 +1,5 @@
 #include "../character.h"
 
-static void script_victory(Fighter *fighter);
-
 /* Native scenes retain independent victims, blends, particles and teardown.
  * Every VM playback/repeat below is a generated function, including result
  * poses that continue until the ordinary round/reset lifetime ends. */
@@ -15,13 +13,4 @@ void kitana_scene_end_watch(Fighter *fighter) {
     fighter->body.physics = NULL;
     battle_end_finisher();
   }
-}
-
-static void script_victory(Fighter *fighter) {
-  kitana_entry_retail_script_004e6a40(fighter);
-}
-
-void kitana_enter_victory(Fighter *fighter) {
-  fighter_start_move(fighter, S_VICTORY, &kitana_s_victory);
-  script_victory(fighter);
 }

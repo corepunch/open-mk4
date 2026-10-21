@@ -1,54 +1,13 @@
 #include "retail_vm.h"
 #include "character.h"
 
-const MoveDef jarek_s_crouch = {.clip = 259, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef s_jump = {.clip = 304, .last = MOVE_END};
-
 const MoveDef jarek_s_low_kick = {.clip = 308, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_LOW, .action = ACTION_RETAIL_0106};
 
-const MoveDef jarek_s_block = {.clip = 322, .last = MOVE_END, .flags = SF_HOLD};
-static const MoveDef s_hit = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_HOLD};
-static const MoveDef s_knockdown = {.clip = 186, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
-static const MoveDef s_victory = {.clip = 111, .last = MOVE_END, .flags = SF_HOLD};
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_JUMP] = NULL,
-  [S_THROW] = retail_lp_throw,
-  [S_BLOCK] = weapon_block,
-  [S_HIT] = NULL,
-  [S_KNOCKDOWN] = NULL,
-  [S_VICTORY] = NULL,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &jarek_s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &jarek_s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &s_knockdown,
-  [S_VICTORY] = &s_victory,
-};
 // clang-format on
-
-const CharacterDef mk4_jarek = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = NULL,
-    .move_list_count = 0,
-};
 
 void jarek_entry_retail_script_004de664(Fighter *fighter) {
   /* 4de664 is callback data consumed by48fcd0, not a VM stream.

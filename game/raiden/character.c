@@ -10,37 +10,13 @@
 
 /* Attack entries query source contact records through SF_RECORD. Locomotion
  * and generic reaction states retain the shared portable controllers. */
-static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
 
 /* Native uppercut recovery uses contact-selected pose sequences. */
 
-static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
-const MoveDef raiden_s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
-const MoveDef raiden_s_victory = {123, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &raiden_s_knockdown,
-  [S_VICTORY] = &raiden_s_victory,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_THROW] = raiden_enter_throw,
-  [S_VICTORY] = raiden_enter_victory,
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-};
 // clang-format on
 
 /* Ground scripts and their native tails: 4e6da0, 4e5fd8,
@@ -59,30 +35,7 @@ static const FighterFn enter[S_COUNT] = {
 /* Native 494a00 parameter blocks; byte fields are decoded at authoring. */
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveListEntry move_list[] = {
-  {MOVE_LIST_SPECIAL, "LIGHTNING", "D,B+LP"},
-  {MOVE_LIST_SPECIAL, "TORPEDO", "F,F+LK (AIR OK)"},
-  {MOVE_LIST_SPECIAL, "TELEPORT", "D,U"},
-  {MOVE_LIST_SPECIAL, "WEAPON", "F,B+HP"},
-  {MOVE_LIST_FINISHER, "FATALITY 1", "F,B,U,U+HK"},
-  {MOVE_LIST_FINISHER, "FATALITY 2", "D,U,U,U+HP"},
-  {MOVE_LIST_FINISHER, "FAN STAGE", "D,F,B+BL"},
-  {MOVE_LIST_FINISHER, "SPIKE STAGE", "F,F,D+LP"},
-};
 // clang-format on
-
-const CharacterDef mk4_raiden = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = move_list,
-    .move_list_count = COUNT(move_list),
-};
 
 void raiden_entry_retail_script_004de668(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 1);

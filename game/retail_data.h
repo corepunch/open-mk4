@@ -26,6 +26,7 @@ uint32_t retail_action_target(const Mk4Image *image, unsigned flags, unsigned ac
 RetailCommandCursor retail_command_cursor(const Mk4Image *image, unsigned character, unsigned player, Button button, bool released);
 bool retail_command_next(const Mk4Image *image, RetailCommandCursor *cursor, RetailCommand *command);
 uint32_t retail_cpu_target(const Mk4Image *image, unsigned character, unsigned distance);
+void retail_bind_move_list(CharacterDef *definition, const Mk4Image *image, unsigned character);
 void retail_bind_commands(Controls *controls, const Mk4Image *image, unsigned character);
 int retail_stance_clip(const Mk4Image *image, unsigned character, bool walking);
 uint32_t retail_finish_target(const Mk4Image *image, unsigned character, bool second);

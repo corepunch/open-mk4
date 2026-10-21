@@ -22,14 +22,6 @@ void raiden_script_throw_getup(Fighter *victim) {
   native_await(victim, native_grounded, throw_getup_land);
 }
 
-void raiden_enter_throw(Fighter *fighter) {
-  if (mk4_can_air_throw(fighter)) {
-    retail_air_throw(fighter);
-    return;
-  }
-  retail_lp_throw(fighter);
-}
-
 void raiden_script_thrown_return(Fighter *fighter) {
   if (fighter->reaction == 102 && fighter_move(fighter)->clip == 143) {
     raiden_script_throw_getup(fighter);

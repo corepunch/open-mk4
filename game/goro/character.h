@@ -8,9 +8,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_knockdown goro_s_knockdown
-
-extern const MoveDef goro_s_knockdown;
 
 void goro_script_current_reaction(Fighter *fighter, int reaction);
 void goro_script_lp_finish(Fighter *fighter);

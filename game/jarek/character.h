@@ -10,8 +10,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_block jarek_s_block
-#define s_crouch jarek_s_crouch
 #define s_low_kick jarek_s_low_kick
 
 /* Character-owned finisher ids, outside the shared FINISH_* range. */
@@ -66,8 +64,6 @@ void jarek_entry_retail_script_004e62c0(Fighter *fighter);
 void jarek_entry_retail_script_004e62d8(Fighter *fighter);
 void jarek_entry_retail_script_004e81a8(Fighter *fighter);
 void jarek_entry_retail_script_004ed118(Fighter *fighter);
-extern const MoveDef jarek_s_block;
-extern const MoveDef jarek_s_crouch;
 extern const MoveDef jarek_s_low_kick;
 
 void jarek_weapon_upper_contact(Fighter *fighter);

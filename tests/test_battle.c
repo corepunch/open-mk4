@@ -1216,7 +1216,7 @@ static void check_kai_weapon_commands(void) {
           fprintf(stderr, "Kai weapon slot%d strike%d scenario%d health%d expected%d\n", slot, strike, scenario, victim->health, expected);
         }
         check(victim->health == expected, "Kai weapon records must preserve native damage, chip and miss behavior");
-        check(owner->state == S_IDLE && owner->armed && owner->body.physics == NULL && owner->body.vel[AXIS_X] == 0,
+        check((owner->state == S_IDLE || owner->state == S_VICTORY) && owner->armed && owner->body.physics == NULL && owner->body.vel[AXIS_X] == 0,
             "Kai weapon recovery must clear travel and restore armed controls");
         check(victim->body.ground == roster_def(victim->roster)->ground, "Weapon victim positioning must preserve the arena floor baseline");
         if (scenario == 3) {
@@ -2493,7 +2493,8 @@ static void check_reptile_weapon_commands(void) {
         }
         check(damaged, "Reptile weapon records must keep their native damage, chip and miss");
         check(scenario != 0 || reacted, "Unblocked Reptile weapon hits must enter their own victim programs");
-        check(owner->state == S_IDLE && owner->armed && owner->body.physics == NULL, "Reptile weapon recovery must restore armed controls");
+        check((owner->state == S_IDLE || owner->state == S_VICTORY) && owner->armed && owner->body.physics == NULL,
+            "Reptile weapon recovery must restore armed controls");
         check(victim->health > 0 && (victim->state == S_IDLE || victim->state == S_BLOCK || victim->state == S_CROUCH), "Weapon victims must recover");
       }
     }

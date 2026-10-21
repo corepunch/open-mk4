@@ -4,24 +4,6 @@
 
 extern const Motion mk4_motion;
 
-extern const CharacterDef mk4_scorpion;
-extern const CharacterDef mk4_raiden;
-extern const CharacterDef mk4_sonya;
-extern const CharacterDef mk4_liu_kang;
-extern const CharacterDef mk4_sub_zero;
-extern const CharacterDef mk4_fujin;
-extern const CharacterDef mk4_shinnok;
-extern const CharacterDef mk4_reiko;
-extern const CharacterDef mk4_quan_chi;
-extern const CharacterDef mk4_tanya;
-extern const CharacterDef mk4_reptile;
-extern const CharacterDef mk4_kai;
-extern const CharacterDef mk4_jarek;
-extern const CharacterDef mk4_jax;
-extern const CharacterDef mk4_cage;
-extern const CharacterDef mk4_goro;
-extern const CharacterDef mk4_kitana;
-extern const CharacterDef mk4_noob_saibot;
 bool mk4_can_fan_finish(const Fighter *fighter);
 void mk4_special_stamp(Fighter *fighter, int slot);
 bool mk4_special_elapsed(const Fighter *fighter, int slot, uint64_t ticks);

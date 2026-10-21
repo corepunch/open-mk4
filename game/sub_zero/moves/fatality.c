@@ -34,7 +34,7 @@ static void victory_watch(Fighter *fighter) {
 
 void sub_zero_script_victory(Fighter *fighter) {
   fighter->body.physics = victory_watch;
-  sub_zero_entry_retail_script_004e6a40(fighter);
+  retail_victory_continue(fighter);
 }
 
 void sub_zero_start_fatality(Fighter *fighter, int id) {

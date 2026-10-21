@@ -597,6 +597,11 @@ void retail_vm_step(Fighter *fighter) {
           return;
         }
         break;
+      case 0x73:
+        /* Native45c070 preserves VM scratch and selects a sampled token
+         * from the low bit of the shared retail random word. */
+        battle_sound(SOUND_TOKEN, battle_random(0x10000) & 1 ? 0x66d : 0x64a);
+        break;
       case 0x3e:
         retail_vm_wait_native(fighter, 0, NULL);
         return;

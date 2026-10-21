@@ -2,13 +2,6 @@
 #include "character.h"
 
 /* Combat values remain the native approximation until measured against retail. */
-static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-
-static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
-const MoveDef fujin_s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
-static const MoveDef s_victory = {120, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
 /* Retail inventory descriptor 0x4ece98, preserved as encoded EXE words. */
 
@@ -26,39 +19,10 @@ const uint32_t fujin_weapon_descriptor[] = {
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-const MoveDef *const fujin_moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &fujin_s_knockdown,
-  [S_VICTORY] = &s_victory,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn state_entries[S_COUNT] = {
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-  [S_THROW] = fujin_enter_throw,
-};
 // clang-format on
-
-const CharacterDef mk4_fujin = {
-    .motion = &mk4_motion,
-    .moves = fujin_moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = state_entries,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = NULL,
-    .move_list_count = 0,
-};
 
 void fujin_entry_retail_script_004e8258(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e8258, fighter_ready, 5);

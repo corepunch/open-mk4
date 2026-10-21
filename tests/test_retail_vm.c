@@ -128,7 +128,8 @@ static void lifetimes(void) {
     for (int n = 0; n < 60; ++n) {
       tick();
     }
-    check(g_battle.fighters[1 - slot].health == 0 && !owner->retail_vm.active, "KO must allow bounded owner recovery");
+    check(g_battle.fighters[1 - slot].health == 0 && (!owner->retail_vm.active || (owner->state == S_VICTORY && owner->retail_vm.entry == 0x4e6a40)),
+        "KO must retire attack ownership before entering the original victory program");
     owner = setup(slot, 2);
     press(slot, true, 2);
     battle_reset_match();

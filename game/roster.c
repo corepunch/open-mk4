@@ -1,36 +1,62 @@
 #include "game.h"
+#include "native.h"
 #include "mk4_characters.h"
 #include "retail_data.h"
 #include "retail_vm.h"
 #include "retail_native.h"
 #include <stddef.h>
 
-/* Retail data supplies roster identity and script animation. The remaining
- * legacy rows provide native services while their families are consolidated;
- * shared script states never copy their authored attack seeds. */
-static const CharacterDef *const roster[] = {
-    &mk4_scorpion,
-    &mk4_raiden,
-    &mk4_sonya,
-    &mk4_liu_kang,
-    &mk4_sub_zero,
-    &mk4_fujin,
-    &mk4_shinnok,
-    &mk4_reiko,
-    &mk4_quan_chi,
-    &mk4_tanya,
-    &mk4_reptile,
-    &mk4_kai,
-    &mk4_jarek,
-    &mk4_jax,
-    &mk4_cage,
-    &mk4_goro,
-    &mk4_kitana,
-    &mk4_noob_saibot,
+/* Engine state views are shared native boundaries. Original programs bind
+ * attack/victory animation; these views contain no authored fighter attacks. */
+static const MoveDef engine_states[S_COUNT] = {
+    [S_IDLE] = {.clip = -1, .last = MOVE_END},
+    [S_WALK] = {.clip = -1, .last = MOVE_END},
+    [S_CROUCH] = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD},
+    [S_JUMP] = {.clip = -1, .last = MOVE_END},
+    [S_PUNCH] = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD},
+    [S_KICK] = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD},
+    [S_SWEEP] = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD},
+    [S_UPPERCUT] = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD},
+    [S_THROW] = {.clip = -1, .last = MOVE_END, .flags = SF_ATTACK | SF_LOCK | SF_RECORD},
+    [S_BLOCK] = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD},
+    [S_HIT] = {.clip = -1, .last = MOVE_END, .recovery = 24, .flags = SF_LOCK | SF_REACTION | SF_HOLD},
+    [S_KNOCKDOWN] = {.clip = -1, .last = MOVE_END, .recovery = 54, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND},
+    [S_VICTORY] = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD},
 };
 
+static void victory_finished(Fighter *fighter) {
+  fighter_cancel_mmove(fighter);
+}
+
+void retail_victory_continue(Fighter *fighter) {
+  retail_vm_enter(fighter, 0x4e6a40, fighter->retail_vm.active ? fighter->retail_vm.finish : victory_finished);
+}
+
+void retail_victory(Fighter *fighter) {
+  fighter_start_move(fighter, S_VICTORY, &engine_states[S_VICTORY]);
+  retail_victory_continue(fighter);
+}
+
+static const FighterFn state_entries[S_COUNT] = {
+    [S_IDLE] = weapon_idle,
+    [S_WALK] = weapon_walk,
+    [S_CROUCH] = weapon_crouch,
+    [S_PUNCH] = retail_jab,
+    [S_KICK] = retail_high_kick,
+    [S_SWEEP] = retail_sweep,
+    [S_UPPERCUT] = retail_uppercut,
+    [S_THROW] = retail_lp_throw,
+    [S_BLOCK] = weapon_block,
+    [S_VICTORY] = retail_victory,
+};
+
+static int descriptor_clip(uint32_t packed) {
+  require(packed >= 0x4fad7c / 4 && packed < (0x4fad7c + MK4_CLIP_COUNT * 12) / 4 && (packed * 4 - 0x4fad7c) % 12 == 0, "Invalid native state descriptor");
+  return (int)((packed * 4 - 0x4fad7c) / 12);
+}
+
 int roster_count(void) {
-  return (int)(sizeof roster / sizeof roster[0]);
+  return MK4_ROSTER_COUNT;
 }
 
 const CharacterDef *roster_def(int index) {
@@ -40,40 +66,31 @@ const CharacterDef *roster_def(int index) {
   static CpuMoves cpu[MK4_ROSTER_COUNT];
   static RetailRoster identities[MK4_ROSTER_COUNT];
   static MoveDef states[MK4_ROSTER_COUNT][S_COUNT];
-  static FighterFn entries[MK4_ROSTER_COUNT][S_COUNT];
   static const MoveDef *state_views[MK4_ROSTER_COUNT][S_COUNT];
   static const Mk4Image *images[MK4_ROSTER_COUNT];
   const Mk4Image *image = retail_vm_image();
   if (images[index] != image) {
-    definitions[index] = *roster[index];
+    definitions[index] = (CharacterDef){.motion = &mk4_motion, .move_count = S_COUNT, .enter = state_entries, .walk = mk4_walk, .jump = mk4_jump};
     retail_roster_read(image, (unsigned)index, &identities[index]);
     definitions[index].game = GAME_MK4;
     definitions[index].asset = index;
     definitions[index].name = identities[index].name;
     definitions[index].ground = identities[index].ground;
-    require(definitions[index].move_count == S_COUNT, "Native state view has an invalid shape");
     for (int state = 0; state < S_COUNT; ++state) {
-      bool retail_attack = state >= S_PUNCH && state <= S_THROW;
-      states[index][state] = state == S_IDLE || state == S_WALK || retail_attack ? (MoveDef){.clip = -1, .last = MOVE_END} : *roster[index]->moves[state];
-      entries[index][state] = roster[index]->enter != NULL ? roster[index]->enter[state] : NULL;
-      if (retail_attack) {
-        /* Unstarted engine views have no authored clip or balance. Playback
-         * binds the original descriptor before its first rendered sample. */
-        states[index][state].flags = SF_ATTACK | SF_LOCK | SF_RECORD;
-      }
+      states[index][state] = engine_states[state];
       state_views[index][state] = &states[index][state];
     }
+    /* Native46b300 guard: the boss descriptor is a native literal and the
+     * ordinary descriptor is loaded. Other native entries bind on takeover;
+     * unstarted views do not invent fighter-compatible animation seeds. */
+    states[index][S_BLOCK].clip = descriptor_clip(index == 15 ? 0x4fc960 / 4 : mk4_image_u32(image, 0x53ce30));
     states[index][S_IDLE].clip = identities[index].idle;
     states[index][S_WALK].clip = identities[index].walk;
     definitions[index].moves = state_views[index];
-    entries[index][S_PUNCH] = retail_jab;
-    entries[index][S_KICK] = retail_high_kick;
-    entries[index][S_SWEEP] = retail_sweep;
-    entries[index][S_UPPERCUT] = retail_uppercut;
-    definitions[index].enter = entries[index];
     controls[index] = retail_stances;
     retail_bind_commands(&controls[index], image, (unsigned)index);
     definitions[index].controls = &controls[index];
+    retail_bind_move_list(&definitions[index], image, (unsigned)index);
     cpu[index] = (CpuMoves){0};
     cpu[index].enter[CPU_JAB] = retail_jab;
     cpu[index].enter[CPU_LOW_KICK] = retail_low_kick;

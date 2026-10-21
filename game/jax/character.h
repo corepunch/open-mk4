@@ -10,8 +10,6 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_block jax_s_block
-#define s_crouch jax_s_crouch
 #define s_thrown jax_s_thrown
 
 void jax_lp_slam_first(Fighter *fighter);
@@ -66,8 +64,6 @@ void jax_entry_retail_script_004e62c0(Fighter *fighter);
 void jax_entry_retail_script_004e62d8(Fighter *fighter);
 void jax_entry_retail_script_004e8150(Fighter *fighter);
 void jax_entry_retail_script_004ed090(Fighter *fighter);
-extern const MoveDef jax_s_block;
-extern const MoveDef jax_s_crouch;
 extern const MoveDef jax_s_thrown;
 
 extern const ButtonTable jax_diagonal_air;

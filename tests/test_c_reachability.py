@@ -31,28 +31,25 @@ int main(void) { use(controls); }
         self.assertIn(('a.c', 'move'), reached)
         self.assertNotIn(('b.c', 'move'), reached)
 
-    def test_another_fighter_cannot_supply_the_missing_registration(self):
+    def test_unregistered_table_cannot_supply_the_missing_callback(self):
         graph = DefinitionGraph({'game.c': """
 static void special(void) {}
 static const Commands registered = {special};
-const CharacterDef mk4_first = {0};
-const CharacterDef mk4_second = {registered};
-static const CharacterDef *roster[] = {&mk4_first, &mk4_second};
-const CharacterDef *lookup(void) { return roster[0]; }
-int main(void) { lookup(); }
+const Controls first = {0};
+const Controls second = {registered};
+int main(void) { use(first); }
 """})
-        self.assertIn(('game.c', 'special'), graph.reachable(['main']))
-        self.assertNotIn(('game.c', 'special'), graph.reachable(['mk4_first'], stop={'roster'}))
-        self.assertIn(('game.c', 'special'), graph.reachable(['mk4_second'], stop={'roster'}))
+        self.assertNotIn(('game.c', 'special'), graph.reachable(['main']))
+        self.assertIn(('game.c', 'special'), graph.reachable(['second']))
 
     def test_unlisted_move_and_followup_cycle_are_still_audit_failures(self):
         graph = DefinitionGraph({'game/example/moves/combos.c': '''
 static void second(void) { use(followups); }
 static const ButtonTable followups = {second};
 void live(void) {}
-''', 'game/example/character.c': '''
+''', 'game/roster.c': '''
 const Controls controls = {live};
-const CharacterDef mk4_example = {controls};
+const CharacterDef *roster_def(int index) { use(controls); }
 '''})
         with patch('c_reachability.workspace_graph', return_value=graph):
             errors = unreachable_references({'character': 'example'})
@@ -72,7 +69,7 @@ static void hp(Fighter *fighter) { fighter_press(fighter, BUTTON_HIGH_PUNCH); }
 static void lp(Fighter *fighter) { start_real_strike(fighter); }
 static const WeaponDef weapon = """ + initializer + """;
 void equip(Fighter *fighter) { fighter_equip_weapon(fighter, &weapon); }
-""", 'game/example/character.c': 'const CharacterDef mk4_example = {equip};'})
+""", 'game/retail_native.c': 'void retail_native_entry(void) { equip(); }'})
                 with patch('c_reachability.workspace_graph', return_value=graph):
                     errors = unreachable_references({'character': 'example'})
                 self.assertEqual(len(errors), 1)
@@ -82,7 +79,7 @@ void equip(Fighter *fighter) { fighter_equip_weapon(fighter, &weapon); }
         graph = DefinitionGraph({'game/example/weapon.c': """
 static void hp(Fighter *fighter) { start_real_strike(fighter); }
 static const WeaponDef weapon = {0x69, hp};
-const CharacterDef mk4_example = {weapon};
+void retail_native_entry(void) { use(weapon); }
 """, 'game/other/weapon.c': """
 static void hp(Fighter *fighter) { fighter_press(fighter, BUTTON_HIGH_PUNCH); }
 const WeaponDef weapon = {0x69, hp};

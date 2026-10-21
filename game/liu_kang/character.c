@@ -14,33 +14,11 @@
 
 /* Attacks query retail records from their events (SF_RECORD). Generic
  * S_HIT/S_KNOCKDOWN entries remain shared recovery fallbacks. */
-static const MoveDef s_crouch = {259, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_jump = {304, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, 0, NULL, 0};
-
-static const MoveDef s_block = {322, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
-static const MoveDef s_hit = {247, 0, MOVE_END, 0, 0, 24, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_HOLD, NULL, 0};
-static const MoveDef s_knockdown = {186, 0, MOVE_END, 0, 0, 54, 0, 0, 0.f, 0.f, SF_LOCK | SF_REACTION | SF_WAIT_LAND, NULL, 0};
-static const MoveDef s_victory = {119, 0, MOVE_END, 0, 0, 0, 0, 0, 0.f, 0.f, SF_HOLD, NULL, 0};
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveDef *const moves[S_COUNT] = {
-  [S_CROUCH] = &s_crouch,
-  [S_JUMP] = &s_jump,
-
-  [S_BLOCK] = &s_block,
-  [S_HIT] = &s_hit,
-  [S_KNOCKDOWN] = &s_knockdown,
-  [S_VICTORY] = &s_victory,
-};
 // clang-format on
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const FighterFn enter[S_COUNT] = {
-  [S_IDLE] = weapon_idle,
-  [S_WALK] = weapon_walk,
-  [S_CROUCH] = weapon_crouch,
-  [S_BLOCK] = weapon_block,
-};
 // clang-format on
 
 /* Selected Liu Kang ground scripts and native tails: 4e6d08, 4e60b8,
@@ -81,31 +59,7 @@ const WeaponStrike liu_kang_sword_attacks[] = {
  * 43c3d0/4dfff8/4e0020, victim reactions 176/177. */
 
 // clang-format off: Keep table entries on one row, including long rows.
-static const MoveListEntry move_list[] = {
-  {MOVE_LIST_SPECIAL, "HIGH FIREBALL", "F,F+HP (AIR OK)"},
-  {MOVE_LIST_SPECIAL, "LOW FIREBALL", "F,F+LP"},
-  {MOVE_LIST_SPECIAL, "FLYING KICK", "F,F+HK"},
-  {MOVE_LIST_SPECIAL, "BICYCLE KICK", "HOLD LK 2S, RELEASE"},
-  {MOVE_LIST_SPECIAL, "WEAPON", "B,F+LK"},
-  {MOVE_LIST_FINISHER, "FATALITY 1", "F,F,F,D+BL"},
-  {MOVE_LIST_FINISHER, "FATALITY 2", "F,D,D,U+HP"},
-  {MOVE_LIST_FINISHER, "FAN STAGE", "F,F,B+LP"},
-  {MOVE_LIST_FINISHER, "SPIKE STAGE", "F,F,B+HK"},
-};
 // clang-format on
-
-const CharacterDef mk4_liu_kang = {
-    .motion = &mk4_motion,
-    .moves = moves,
-    .move_count = S_COUNT,
-    .controls = &retail_stances,
-    .enter = enter,
-    .walk = mk4_walk,
-    .jump = mk4_jump,
-    .cpu = NULL,
-    .move_list = move_list,
-    .move_list_count = COUNT(move_list),
-};
 
 void liu_kang_entry_retail_script_004de410(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de410, fighter_ready, 3);

@@ -35,11 +35,11 @@ SPECIFIC = {
     1: {'lightning': 'raiden_lightning', 'torpedo': 'raiden_torpedo', 'teleport': 'raiden_teleport',
         'staff_hp': 'weapon_hp', 'staff_lp': 'weapon_lp', 'staff_back_hp': 'weapon_back_hp', 'staff_back_lp': 'weapon_back_lp',
         'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
-        'victory': 'enter_victory', 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
+        'victory': ('game/roster.c', 'retail_victory'), 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
     2: {'ring': 'sonya_ring', 'leg_grab': 'sonya_leg_grab', 'bicycle': 'sonya_bicycle', 'square_wave': 'sonya_square_wave', 'cartwheel': 'sonya_cartwheel',
         'weapon_hp': 'weapon_hp', 'weapon_lp': 'weapon_lp', 'weapon_back_hp': 'weapon_back_hp', 'weapon_back_lp': 'weapon_back_lp',
         'fatality_1': 'first_fatality', 'fatality_2': 'second_fatality', 'sidestep': ('game/mk4_common.c', 'mk4_sidestep'),
-        'air_throw': 'sonya_air_throw', 'victory': 'enter_victory', 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
+        'air_throw': 'sonya_air_throw', 'victory': ('game/roster.c', 'retail_victory'), 'weapon_throw': ('game/weapons.c', 'weapon_throw')},
     3: {
         'jab': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e62f0'),
         'high_kick': ('game/liu_kang/generated/scripts.inc', 'retail_script_004e6c90'),

@@ -10,11 +10,7 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_block shinnok_s_block
-#define s_crouch shinnok_s_crouch
 
-extern const MoveDef shinnok_s_block;
-extern const MoveDef shinnok_s_crouch;
 void shinnok_fan_tail(Fighter *fighter);
 void shinnok_fan_victory(Fighter *fighter);
 void shinnok_fatality_contact_hold(Fighter *fighter);

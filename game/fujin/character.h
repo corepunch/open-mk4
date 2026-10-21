@@ -9,15 +9,12 @@
 #include "script.h"
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
-#define s_knockdown fujin_s_knockdown
 
 void fujin_enter_throw(Fighter *fighter);
 void fujin_script_current_reaction(Fighter *fighter, int reaction);
 void fujin_script_lp_extended_finish(Fighter *fighter);
 void fujin_script_lp_short_finish(Fighter *fighter);
 void fujin_script_opponent_reaction(Fighter *fighter, int reaction);
-extern const MoveDef *const fujin_moves[13];
-extern const MoveDef fujin_s_knockdown;
 
 extern const ButtonTable fujin_diagonal_air;
 bool fujin_can_dive(const Fighter *fighter);

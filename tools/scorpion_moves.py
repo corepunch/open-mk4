@@ -124,6 +124,7 @@ SCRIPT_OPS = {
     0x68: ('restart animation at half speed with optional clip prefix', -1),
     0x69: ('play remaining animation at half speed', 0),
     0x71: ('blend into clip and resume at sample one', 1),
+    0x73: ('play one of two sampled sound tokens from random bit zero', 0),
     0x75: ('play indexed block sound when selected player is blocking', 0),
     0x76: ('play alternate indexed block sound when selected player is blocking', 0),
 }
