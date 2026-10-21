@@ -89,19 +89,6 @@ void kai_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 11);
 }
 
-void kai_entry_retail_script_004de358(Fighter *fighter) {
-  /* 4de358 is speed data consumed by490ab0, not a VM program. */
-  mk4_mmove_lk_owner_return(fighter, kai_script_lk_finish);
-}
-
-void kai_entry_retail_script_004de610(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de610, fighter_ready, 11);
-}
-
-void kai_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 11);
-}
-
 void kai_entry_retail_script_004de798(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 11);
 }

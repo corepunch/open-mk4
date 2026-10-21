@@ -33,7 +33,6 @@ void quan_chi_script_air_release(Fighter *fighter);
 void quan_chi_script_air_land(Fighter *fighter);
 void quan_chi_script_air_getup(Fighter *fighter);
 void quan_chi_script_current_reaction(Fighter *fighter, int reaction);
-void quan_chi_script_lk_return(Fighter *fighter);
 void quan_chi_script_opponent_reaction(Fighter *fighter, int reaction);
 void quan_chi_entry_retail_script_004de2f8(Fighter *fighter);
 void quan_chi_entry_retail_script_004de798(Fighter *fighter);

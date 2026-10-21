@@ -129,16 +129,8 @@ void kitana_entry_retail_script_004de798(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de798, fighter_ready, 16);
 }
 
-void kitana_entry_retail_script_004e01c0(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e01c0, fighter_ready, 16);
-}
-
 void kitana_entry_retail_script_004e01d0(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4e01d0, fighter_ready, 16);
-}
-
-void kitana_entry_retail_script_004e5930(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4e5930, fighter_ready, 16);
 }
 
 void kitana_entry_retail_script_004e5940(Fighter *fighter) {

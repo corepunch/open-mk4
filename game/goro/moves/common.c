@@ -13,15 +13,6 @@ void goro_script_opponent_reaction(Fighter *fighter, int reaction) {
   mk4_mmove_lk_release(fighter, reaction);
 }
 
-void goro_script_lk_return(Fighter *fighter) {
-  /* Retail 42be10 retreats with the 4de358 speed data, not a VM program. */
-  mk4_mmove_lk_owner_return(fighter, goro_script_lk_finish);
-}
-
-void goro_script_lk_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void goro_script_lp_phase_repeat(Fighter *fighter) {
   fighter->script_phase++;
   if (fighter->script_phase < 5) {

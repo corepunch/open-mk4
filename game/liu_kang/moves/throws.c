@@ -10,15 +10,6 @@ static const MoveDef s_lk_throw = {.clip = 35, .last = 43, .flags = SF_LOCK | SF
 static const MoveDef s_lp_thrown = {.clip = 151, .last = 45, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lk_thrown = {.clip = 133, .last = 35, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
-bool liu_kang_can_ground_throw(const Fighter *fighter, bool low_kick) {
-  const Fighter *victim = fighter_opponent(fighter);
-  int a = victim->action;
-  float distance = fighter_distance(fighter);
-  return (low_kick ? distance < 0.7f : distance <= 0.7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
-         a != ACTION_RETAIL_010A && a != ACTION_RETAIL_010B && a != ACTION_RETAIL_0100 && a != ACTION_RETAIL_0102 && a != ACTION_RETAIL_010E &&
-         !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
-}
-
 void liu_kang_thrown_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
@@ -74,7 +65,7 @@ static void throw_cleanup(Fighter *owner) {
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
-  if (!liu_kang_can_ground_throw(fighter, lk)) {
+  if (!mk4_can_ground_throw(fighter, lk)) {
     fighter_ready(fighter);
     return;
   }

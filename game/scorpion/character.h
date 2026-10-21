@@ -13,7 +13,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define can_beast_fatality retail_can_finish_close
 #define can_burn_fatality retail_can_finish_range
-#define can_ground_throw scorpion_can_ground_throw
 #define can_spear scorpion_can_spear
 #define can_teleport scorpion_can_teleport
 #define enter_lk_throw scorpion_enter_lk_throw
@@ -73,7 +72,6 @@
 #define script_knee_tail scorpion_script_knee_tail
 #define script_lk_damage scorpion_script_lk_damage
 #define script_lk_rebase scorpion_script_lk_rebase
-#define script_lk_return scorpion_script_lk_return
 #define script_lp_return scorpion_script_lp_return
 #define script_opponent_reaction scorpion_script_opponent_reaction
 #define script_reaction scorpion_script_reaction
@@ -120,7 +118,6 @@ enum {
 #define BLEND(clip_id, cursor)                                                                                                                                 \
   {{.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, cursor, cursor, 1, 0x3333, 0x3333}
 
-bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool scorpion_can_spear(const Fighter *fighter);
 bool scorpion_can_teleport(const Fighter *fighter);
 void scorpion_enter_lk_throw(Fighter *fighter);
@@ -241,7 +238,6 @@ void scorpion_script_fire_flame(Fighter *fighter);
 void scorpion_script_knee_tail(Fighter *fighter);
 void scorpion_script_lk_damage(Fighter *fighter);
 void scorpion_script_lk_rebase(Fighter *fighter);
-void scorpion_script_lk_return(Fighter *fighter);
 void scorpion_script_lp_return(Fighter *fighter);
 void scorpion_script_opponent_reaction(Fighter *fighter, int reaction);
 void scorpion_thrown_end_script(Fighter *victim);

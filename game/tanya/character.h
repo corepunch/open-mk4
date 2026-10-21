@@ -35,7 +35,6 @@ void tanya_press_low_kick(Fighter *fighter);
 void tanya_press_low_punch(Fighter *fighter);
 void tanya_script_air_finish(Fighter *fighter);
 void tanya_script_current_reaction(Fighter *fighter, int reaction);
-void tanya_script_lk_return(Fighter *fighter);
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction);
 
 extern const ButtonTable tanya_diagonal_air;

@@ -11,11 +11,3 @@ void jax_script_peer_reaction(Fighter *fighter, int reaction) {
   Fighter *victim = reaction == 183 ? (Fighter *)fighter_opponent(fighter) : mk4_script_release_pair(fighter);
   battle_react(victim, reaction);
 }
-
-void jax_script_lk_return(Fighter *fighter) {
-  jax_entry_retail_script_004de358(fighter);
-}
-
-void jax_script_lk_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}

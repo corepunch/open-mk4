@@ -43,23 +43,6 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   script(victim);
 }
 
-void raiden_script_lp_select(Fighter *fighter) {
-  /* 42d1b0 compares camera-side ordering and squared pair range (40).
-   * Resolve camera-side ordering along our fighter axis. */
-  q16 along = 0;
-  int64_t distance2 = 0;
-  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-    q16 delta = fighter->saved_motion[axis];
-    along += q16_mul(delta, fighter_axis(fighter, axis));
-    distance2 += ((int64_t)delta * delta) >> 16;
-  }
-  if (along >= 0 && distance2 < 0x280000) {
-    raiden_entry_retail_script_004de6b8(fighter);
-  } else {
-    raiden_entry_retail_script_004de640(fighter);
-  }
-}
-
 void raiden_script_lp_end(Fighter *fighter) {
   raiden_entry_retail_script_004de668(fighter);
 }

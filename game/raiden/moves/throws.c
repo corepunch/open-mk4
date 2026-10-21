@@ -7,15 +7,6 @@ static const MoveDef s_lk_throw = {.clip = 33, .last = MOVE_END, .flags = SF_LOC
 static const MoveDef s_lk_thrown = {.clip = 149, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lp_thrown = {.clip = 154, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
-bool raiden_can_ground_throw(const Fighter *fighter, bool low_kick) {
-  const Fighter *victim = fighter_opponent(fighter);
-  int a = victim->action;
-  float distance = fighter_distance(fighter);
-  return (low_kick ? distance < 0.7f : distance <= 0.7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
-         a != ACTION_RETAIL_010A && a != ACTION_RETAIL_010B && a != ACTION_RETAIL_0100 && a != ACTION_RETAIL_0102 && a != ACTION_RETAIL_010E &&
-         !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
-}
-
 /* 485ad0: after landing, a living victim turns and plays getup 328 through
  * its last pose, holding that pose for one more visit before the controller. */
 static void throw_getup_land(Fighter *victim) {
@@ -37,7 +28,7 @@ void raiden_script_throw_getup(Fighter *victim) {
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
-  if (!raiden_can_ground_throw(fighter, lk)) {
+  if (!mk4_can_ground_throw(fighter, lk)) {
     fighter_ready(fighter);
     return;
   }

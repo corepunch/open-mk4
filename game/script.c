@@ -542,7 +542,7 @@ void mk4_script_schedule_motion(Fighter *fighter, int speed, int delay, int dura
   native_schedule_speed(fighter, speed, delay, duration);
 }
 
-static void weapon_tail_done(Fighter *fighter) {
+static void native_ready_done(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
@@ -550,7 +550,7 @@ static void weapon_tail_recover(Fighter *fighter) {
   fighter->action = ACTION_RETAIL_1006;
   fighter->body.physics = NULL;
   fighter_set_speed(fighter, 0);
-  native_finish_clip(fighter, weapon_tail_done);
+  native_finish_clip(fighter, native_ready_done);
 }
 
 void mk4_mmove_weapon_tail(Fighter *fighter, const AttackRecord *record, int queries) {
@@ -607,10 +607,12 @@ void mk4_mmove_lk_release(Fighter *fighter, int reaction) {
 /* 42be10 ->490ab0 reads speed -0x3333 from4de358, opens descriptor53c540
  * (clip282), and advances to its end before controller return. */
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
-  fighter_set_speed(fighter, -0x3333);
-  mk4_mmove_bind(fighter, 282, 30, 0);
-  native_begin(fighter, 0, 29, end);
-  for (int sample = 0; sample < 30; ++sample) {
+  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
+  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, 0x4de358));
+  retail_vm_bind_animation(fighter, mk4_image_u32(image, 0x53c540) * 4, 0);
+  int last = fighter_move(fighter)->last;
+  native_begin(fighter, 0, last, end);
+  for (int sample = 0; sample <= last; ++sample) {
     native_frame(fighter, sample, sample, NULL);
   }
   native_play(fighter, false);
@@ -681,4 +683,14 @@ void mk4_mmove_finish_getup(Fighter *fighter, const NativeGetupDef *profile) {
     native_frame(fighter, frame, frame, NULL);
   }
   native_play(fighter, false);
+}
+
+/*42bf00 completes the clip, then uses the existing engine stance-recovery
+ * adaptation for the original0xccc blend before controller return. */
+static void lk_blend_hold(Fighter *fighter) {
+  native_hold(fighter, 20, native_ready_done);
+}
+
+void mk4_mmove_lk_blend_return(Fighter *fighter) {
+  native_finish_clip(fighter, lk_blend_hold);
 }

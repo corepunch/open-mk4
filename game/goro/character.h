@@ -39,8 +39,6 @@ void goro_script_close_hk_tail(Fighter *fighter);
 void goro_script_close_hp_tail(Fighter *fighter);
 void goro_script_combo_hp_tail(Fighter *fighter);
 void goro_script_current_reaction(Fighter *fighter, int reaction);
-void goro_script_lk_finish(Fighter *fighter);
-void goro_script_lk_return(Fighter *fighter);
 void goro_script_lp_finish(Fighter *fighter);
 void goro_script_lp_pair_start(Fighter *fighter);
 void goro_script_lp_phase_repeat(Fighter *fighter);

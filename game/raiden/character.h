@@ -13,7 +13,6 @@
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp raiden_air_hp
 #define can_close_fatality retail_can_finish_close
-#define can_ground_throw raiden_can_ground_throw
 #define can_teleport raiden_can_teleport
 #define cpu_air_hk raiden_cpu_air_hk
 #define cpu_air_lk raiden_cpu_air_lk
@@ -63,7 +62,6 @@
 #define script_lk_victim_end raiden_script_lk_victim_end
 #define script_lp_end raiden_script_lp_end
 #define script_lp_return raiden_script_lp_return
-#define script_lp_select raiden_script_lp_select
 #define script_reaction raiden_script_reaction
 #define script_second_blend raiden_script_second_blend
 #define script_second_effect raiden_script_second_effect
@@ -109,7 +107,6 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 void raiden_air_hp(Fighter *fighter);
-bool raiden_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool raiden_can_teleport(const Fighter *fighter);
 void raiden_cpu_air_hk(Fighter *fighter);
 void raiden_cpu_air_lk(Fighter *fighter);
@@ -145,9 +142,7 @@ void raiden_teleport(Fighter *fighter);
 void raiden_torpedo(Fighter *fighter);
 void raiden_weapon(Fighter *fighter);
 void raiden_entry_retail_script_004de218(Fighter *fighter);
-void raiden_entry_retail_script_004de640(Fighter *fighter);
 void raiden_entry_retail_script_004de668(Fighter *fighter);
-void raiden_entry_retail_script_004de6b8(Fighter *fighter);
 void raiden_entry_retail_script_004de798(Fighter *fighter);
 void raiden_entry_retail_script_004e0210(Fighter *fighter);
 void raiden_entry_retail_script_004e0220(Fighter *fighter);
@@ -211,7 +206,6 @@ void raiden_script_lightning_spawn(Fighter *fighter, int task_type);
 void raiden_script_lk_victim_end(Fighter *victim);
 void raiden_script_lp_end(Fighter *fighter);
 void raiden_script_lp_return(Fighter *fighter);
-void raiden_script_lp_select(Fighter *fighter);
 void raiden_script_reaction(Fighter *fighter, int reaction);
 void raiden_script_second_blend(Fighter *fighter);
 void raiden_script_second_effect(Fighter *fighter);

@@ -245,3 +245,26 @@ void retail_uppercut_state(Fighter *fighter) {
 void retail_press_uppercut(Fighter *fighter) {
   fighter_interrupt(fighter, retail_uppercut);
 }
+
+/* Native42d1b0's pair-range/camera-side branch uses the engine fighter axis
+ * for camera-side ordering. Both original native selectors share this test. */
+static void lp_select(Fighter *fighter, uint32_t alternate) {
+  q16 along = 0;
+  int64_t distance2 = 0;
+  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
+    q16 delta = fighter->saved_motion[axis];
+    along += q16_mul(delta, fighter_axis(fighter, axis));
+    distance2 += ((int64_t)delta * delta) >> 16;
+  }
+  uint32_t target = along >= 0 && distance2 < 0x280000 ? 0x4de6b8 : alternate;
+  FighterFn finish = fighter->retail_vm.active ? fighter->retail_vm.finish : fighter_ready;
+  retail_vm_enter(fighter, target, finish);
+}
+
+void retail_lp_select_short(Fighter *fighter) {
+  lp_select(fighter, 0x4de610);
+}
+
+void retail_lp_select_long(Fighter *fighter) {
+  lp_select(fighter, 0x4de640);
+}

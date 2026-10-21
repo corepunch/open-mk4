@@ -555,3 +555,20 @@ existing engine boundaries.
 Shared VM checks, all strict roster audits, native source gates and formatting
 pass. Existing native scene/CPU/stage integrations pass before the known throw
 assertion. No additional tests or fighter timing expectations were added.
+
+## Shared native throw utilities
+
+The native addresses 42be10, 42bf00, 42cb80 and 42cc00 now resolve once,
+without fighter masks. Six duplicate ground-throw predicates and the copied
+LP branch selectors are removed. LK return reads its speed from 4de358 and
+animation descriptor from 53c540, matching the local executable and mk4decomp
+native paths. 4de358 is speed data; two obsolete adapters that treated it as a
+script are removed. Sixteen unused VM entry adapters are retired; the existing
+branch regression enters original addresses through the shared interpreter.
+
+The 42bf00 return preserves the engine's existing 20-visit stance recovery
+approximation; visual parity with the original 0xccc stance blend remains a
+limitation. Shared VM checks, strict audits for all 1,109 roots, native source
+gates and formatting pass. The battle integration builds and reaches its
+previously reproduced ground-throw damage assertion. No new character tests
+were added. Remaining throw starts and native families still require migration.

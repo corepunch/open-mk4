@@ -15,7 +15,6 @@
 #define can_bicycle liu_kang_can_bicycle
 #define can_close_fatality retail_can_finish_close
 #define can_first_fatality liu_kang_can_first_fatality
-#define can_ground_throw liu_kang_can_ground_throw
 #define cpu_air_hk liu_kang_cpu_air_hk
 #define cpu_air_hp liu_kang_cpu_air_hp
 #define cpu_air_lk liu_kang_cpu_air_lk
@@ -106,7 +105,6 @@ enum {
 void liu_kang_bicycle_script(Fighter *fighter);
 bool liu_kang_can_bicycle(const Fighter *fighter);
 bool liu_kang_can_first_fatality(const Fighter *fighter);
-bool liu_kang_can_ground_throw(const Fighter *fighter, bool low_kick);
 void liu_kang_cpu_air_hk(Fighter *fighter);
 void liu_kang_cpu_air_hp(Fighter *fighter);
 void liu_kang_cpu_air_lk(Fighter *fighter);

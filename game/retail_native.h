@@ -44,4 +44,6 @@ void retail_finish_first(Fighter *fighter);
 void retail_finish_second(Fighter *fighter);
 void retail_spike_finish(Fighter *fighter);
 void retail_scene_pose(Fighter *fighter, int clip, int sample, bool owner);
+void retail_lp_select_short(Fighter *fighter);
+void retail_lp_select_long(Fighter *fighter);
 #endif

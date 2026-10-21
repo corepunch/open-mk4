@@ -19,7 +19,6 @@
 #define can_clone sub_zero_can_clone
 #define can_close_fatality sub_zero_can_close_fatality
 #define can_first_fatality sub_zero_can_first_fatality
-#define can_ground_throw sub_zero_can_ground_throw
 #define can_ice sub_zero_can_ice
 #define can_second_fatality retail_can_finish_range
 #define can_slide sub_zero_can_slide
@@ -143,7 +142,6 @@ void sub_zero_breath_travel(Fighter *fighter);
 bool sub_zero_can_clone(const Fighter *fighter);
 bool sub_zero_can_close_fatality(const Fighter *fighter);
 bool sub_zero_can_first_fatality(const Fighter *fighter);
-bool sub_zero_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool sub_zero_can_ice(const Fighter *fighter);
 bool sub_zero_can_slide(const Fighter *fighter);
 void sub_zero_cpu_close_hk(Fighter *fighter);

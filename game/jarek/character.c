@@ -71,10 +71,6 @@ void jarek_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 12);
 }
 
-void jarek_entry_retail_script_004de640(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de640, fighter_ready, 12);
-}
-
 void jarek_entry_retail_script_004de664(Fighter *fighter) {
   /* 4de664 is callback data consumed by48fcd0, not a VM stream.
    * Its native490350 toggles the captured peer facing. */
@@ -83,10 +79,6 @@ void jarek_entry_retail_script_004de664(Fighter *fighter) {
 
 void jarek_entry_retail_script_004de668(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 12);
-}
-
-void jarek_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 12);
 }
 
 void jarek_entry_retail_script_004de798(Fighter *fighter) {

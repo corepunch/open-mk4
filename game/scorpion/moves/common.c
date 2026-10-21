@@ -31,11 +31,6 @@ void scorpion_script_lk_damage(Fighter *fighter) {
   scorpion_entry_retail_script_004de328(fighter);
 }
 
-void scorpion_script_lk_return(Fighter *fighter) {
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
 void scorpion_script_lp_return(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }

@@ -1,24 +1,5 @@
 #include "../character.h"
 
-void jarek_script_lk_return(Fighter *fighter) {
-  mk4_mmove_lk_owner_return(fighter, fighter_ready);
-}
-
-void jarek_script_lp_select(Fighter *fighter) {
-  q16 along = 0;
-  int64_t distance2 = 0;
-  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-    q16 delta = fighter->saved_motion[axis];
-    along += q16_mul(delta, fighter_axis(fighter, axis));
-    distance2 += ((int64_t)delta * delta) >> 16;
-  }
-  if (along >= 0 && distance2 < 0x280000) {
-    jarek_entry_retail_script_004de6b8(fighter);
-  } else {
-    jarek_entry_retail_script_004de640(fighter);
-  }
-}
-
 void jarek_script_lp_end(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   jarek_entry_retail_script_004de664(victim);

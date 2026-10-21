@@ -8,15 +8,6 @@ static const MoveDef s_lk_throw = {.clip = 37, .last = 65, .flags = SF_LOCK | SF
 static const MoveDef s_lp_thrown = {.clip = 152, .last = 41, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const MoveDef s_lk_thrown = {.clip = 157, .last = 130, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
-bool scorpion_can_ground_throw(const Fighter *fighter, bool low_kick) {
-  const Fighter *victim = fighter_opponent(fighter);
-  int a = victim->action;
-  float distance = fighter_distance(fighter);
-  return (low_kick ? distance < 0.7f : distance <= 0.7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
-         a != ACTION_RETAIL_010A && a != ACTION_RETAIL_010B && a != ACTION_RETAIL_0100 && a != ACTION_RETAIL_0102 && a != ACTION_RETAIL_010E &&
-         !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
-}
-
 static void thrown_end_done(Fighter *victim) {
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
 }
@@ -44,7 +35,7 @@ static void ground_thrown_script(Fighter *victim) {
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
-  if (!scorpion_can_ground_throw(fighter, lk)) {
+  if (!mk4_can_ground_throw(fighter, lk)) {
     fighter_ready(fighter);
     return;
   }

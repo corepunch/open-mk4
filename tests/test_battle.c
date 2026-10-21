@@ -1,4 +1,5 @@
 #include "retail_native.h"
+#include "retail_vm.h"
 #include "game.h"
 #include "mk4_characters.h"
 #include "script.h"
@@ -33,11 +34,6 @@ void kai_ground_skull(Fighter *fighter);
 bool kai_can_rising_skull(const Fighter *fighter);
 bool kai_can_ground_skull(const Fighter *fighter);
 bool kai_can_first_fatality(const Fighter *fighter);
-void fujin_entry_retail_script_004de610(Fighter *fighter);
-void jarek_entry_retail_script_004de640(Fighter *fighter);
-void kai_entry_retail_script_004de610(Fighter *fighter);
-void reiko_entry_retail_script_004de640(Fighter *fighter);
-void noob_saibot_entry_retail_script_004de640(Fighter *fighter);
 
 static void check(bool yes, const char *message) {
   if (!yes) {
@@ -1330,10 +1326,10 @@ static void finish_window(int winner, float distance, int arena) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * .5f * Q16_ONE);
 }
 
-static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn alternate) {
+static void check_branch_frame_lp_throw(int roster, int extended_clip, uint32_t alternate) {
   for (int slot = 0; slot < 2; ++slot) {
-    /* A NULL alternate marks a roster whose 4de79c slot reaches only the short throw. */
-    for (int extended = 0; extended < (alternate != NULL ? 2 : 1); ++extended) {
+    /* A zero alternate marks a roster whose 4de79c slot reaches only the short throw. */
+    for (int extended = 0; extended < (alternate != 0 ? 2 : 1); ++extended) {
       for (int interrupted = 0; interrupted < 2; ++interrupted) {
         battle_init(slot ? 4 : roster, slot ? roster : 4);
         g_battle.phase = PHASE_FIGHT;
@@ -1347,7 +1343,7 @@ static void check_branch_frame_lp_throw(int roster, int extended_clip, FighterFn
         if (extended) {
           /* Exercise the real alternate VM entry with its acquired pair;
            * arena-dependent native branch selection is a separate boundary. */
-          alternate(owner);
+          retail_vm_enter_owned(owner, alternate, fighter_ready, (unsigned)roster);
         }
         check(fighter_move(owner)->clip == (extended ? extended_clip : 76), "Branch LP LP entries must retain both reviewed owner/victim branches");
         advance_ticks(8, NULL);
@@ -6015,12 +6011,12 @@ int main(void) {
   check_cage_second_fatality();
   check_shinnok_fatalities();
   check_independent_scene_actor_lifetime();
-  check_branch_frame_lp_throw(5, 81, fujin_entry_retail_script_004de610);
-  check_branch_frame_lp_throw(11, 81, kai_entry_retail_script_004de610);
-  check_branch_frame_lp_throw(12, 80, jarek_entry_retail_script_004de640);
-  check_branch_frame_lp_throw(7, 80, reiko_entry_retail_script_004de640);
-  check_branch_frame_lp_throw(10, 80, NULL);
-  check_branch_frame_lp_throw(17, 80, noob_saibot_entry_retail_script_004de640);
+  check_branch_frame_lp_throw(5, 81, 0x4de610);
+  check_branch_frame_lp_throw(11, 81, 0x4de610);
+  check_branch_frame_lp_throw(12, 80, 0x4de640);
+  check_branch_frame_lp_throw(7, 80, 0x4de640);
+  check_branch_frame_lp_throw(10, 80, 0);
+  check_branch_frame_lp_throw(17, 80, 0x4de640);
   check_peer_release_lp_throw(6, 75);
   check_peer_release_lp_throw(8, 78);
   check_peer_release_lp_throw(9, 79);

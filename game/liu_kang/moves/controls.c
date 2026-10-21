@@ -1,15 +1,15 @@
 #include "../character.h"
 
 void liu_kang_press_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, liu_kang_can_ground_throw(fighter, false) ? liu_kang_enter_throw
-                             : fighter->armed                          ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                       : retail_jab);
+  fighter_interrupt(fighter, mk4_can_ground_throw(fighter, false) ? liu_kang_enter_throw
+                             : fighter->armed                     ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
+                                                                  : retail_jab);
 }
 
 void liu_kang_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)                ? retail_sweep_state
-                             : liu_kang_can_ground_throw(fighter, true) ? liu_kang_enter_lk_throw
-                                                                        : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter)           ? retail_sweep_state
+                             : mk4_can_ground_throw(fighter, true) ? liu_kang_enter_lk_throw
+                                                                   : retail_low_kick);
 }
 
 void liu_kang_press_combo_hk(Fighter *fighter) {

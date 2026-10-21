@@ -1,29 +1,5 @@
 #include "../character.h"
 
-void kai_script_lk_return(Fighter *fighter) {
-  /* Retail 42be10 enters the follow-up VM root after its global task checks. */
-  kai_entry_retail_script_004de358(fighter);
-}
-
-void kai_script_lk_finish(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
-void kai_script_lp_select(Fighter *fighter) {
-  q16 along = 0;
-  int64_t distance2 = 0;
-  for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
-    q16 delta = fighter->saved_motion[axis];
-    along += q16_mul(delta, fighter_axis(fighter, axis));
-    distance2 += ((int64_t)delta * delta) >> 16;
-  }
-  if (along >= 0 && distance2 < 0x280000) {
-    kai_entry_retail_script_004de6b8(fighter);
-  } else {
-    kai_entry_retail_script_004de610(fighter);
-  }
-}
-
 void kai_script_current_reaction(Fighter *fighter, int reaction) {
   require(reaction == 102 || reaction == 109, "Unexpected Kai LP victim reaction");
   Fighter *victim = mk4_script_release_pair(fighter);

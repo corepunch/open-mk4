@@ -14,7 +14,6 @@
 #define air_hp sonya_air_hp
 #define can_cartwheel sonya_can_cartwheel
 #define can_first_fatality sonya_can_first_fatality
-#define can_ground_throw sonya_can_ground_throw
 #define can_leg_grab sonya_can_leg_grab
 #define can_second_fatality retail_can_finish_range
 #define cpu_air_hk sonya_cpu_air_hk
@@ -63,7 +62,6 @@
 #define script_knee_tail sonya_script_knee_tail
 #define script_leg_grab_tail sonya_script_leg_grab_tail
 #define script_leg_victim_end sonya_script_leg_victim_end
-#define script_lk_return sonya_script_lk_return
 #define script_reaction sonya_script_reaction
 #define script_ring_flash sonya_script_ring_flash
 #define script_ring_spawn sonya_script_ring_spawn
@@ -107,7 +105,6 @@ enum {
 void sonya_air_hp(Fighter *fighter);
 bool sonya_can_cartwheel(const Fighter *fighter);
 bool sonya_can_first_fatality(const Fighter *fighter);
-bool sonya_can_ground_throw(const Fighter *fighter, bool low_kick);
 bool sonya_can_leg_grab(const Fighter *fighter);
 void sonya_cpu_air_hk(Fighter *fighter);
 void sonya_cpu_air_lk(Fighter *fighter);
@@ -200,7 +197,6 @@ void sonya_script_first_release(Fighter *fighter);
 void sonya_script_knee_tail(Fighter *fighter);
 void sonya_script_leg_grab_tail(Fighter *fighter);
 void sonya_script_leg_victim_end(Fighter *victim);
-void sonya_script_lk_return(Fighter *fighter);
 void sonya_script_reaction(Fighter *fighter, int reaction);
 void sonya_script_ring_flash(Fighter *fighter, int task_type);
 void sonya_script_ring_spawn(Fighter *fighter, int task_type);

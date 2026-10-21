@@ -68,11 +68,6 @@ void jax_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 13);
 }
 
-void jax_entry_retail_script_004de358(Fighter *fighter) {
-  /* 4de358 is speed data consumed by490ab0, not a VM program. */
-  mk4_mmove_lk_owner_return(fighter, jax_script_lk_finish);
-}
-
 void jax_entry_retail_script_004de518(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de518, fighter_ready, 13);
 }

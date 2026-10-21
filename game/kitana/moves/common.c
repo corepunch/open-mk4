@@ -2,8 +2,6 @@
 
 static const MoveDef s_shadow_low = {.clip = 26, .last = 13, .flags = SF_LOCK, .action = 0x309};
 static const MoveDef s_shadow_up = {.clip = 24, .last = 9, .flags = SF_LOCK, .action = 0x30a};
-static void lk_return_done(Fighter *fighter);
-static void lk_return_hold(Fighter *fighter);
 
 void kitana_shadow_low(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_shadow_low);
@@ -44,18 +42,6 @@ void kitana_script_reaction(Fighter *fighter, int reaction) {
   fighter_cancel_mmove(victim);
   FighterFn script = reaction == 78 ? kitana_lk_victim : reaction == 79 ? kitana_entry_retail_script_004e9a68 : kitana_entry_retail_script_004e9b88;
   script(victim);
-}
-
-static void lk_return_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
-static void lk_return_hold(Fighter *fighter) {
-  native_hold(fighter, 20, lk_return_done); /* Native stance blend, step 0xccc. */
-}
-
-void kitana_script_lk_return(Fighter *fighter) {
-  native_finish_clip(fighter, lk_return_hold);
 }
 
 void kitana_shadow_task_low(Fighter *fighter, int task_type) {

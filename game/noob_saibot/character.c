@@ -92,10 +92,6 @@ void noob_saibot_entry_retail_script_004de2f8(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de2f8, fighter_ready, 17);
 }
 
-void noob_saibot_entry_retail_script_004de640(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de640, fighter_ready, 17);
-}
-
 void noob_saibot_entry_retail_script_004de664(Fighter *fighter) {
   /* 4de664 is a490350 callback table, not a VM body. */
   fighter->facing = -fighter->facing;
@@ -103,10 +99,6 @@ void noob_saibot_entry_retail_script_004de664(Fighter *fighter) {
 
 void noob_saibot_entry_retail_script_004de668(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 17);
-}
-
-void noob_saibot_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 17);
 }
 
 void noob_saibot_entry_retail_script_004de798(Fighter *fighter) {

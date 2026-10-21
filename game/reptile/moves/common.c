@@ -1,9 +1,5 @@
 #include "../character.h"
 
-void reptile_script_lk_return(Fighter *fighter) {
-  mk4_mmove_lk_owner_return(fighter, fighter_ready);
-}
-
 void reptile_script_lp_return(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;

@@ -1455,6 +1455,13 @@ def bindings_for(character):
                                evidence='Shared native 46cde0 contact/recovery; A2/A6 are read live from the retail image')
     result[0x467fc0] = Binding('mk4_script_spike_tail', 'game/script.c', ('tail',), flow='terminal', mmove=True,
                                evidence='One shared native spike recovery; checked467e70/467fc0 and original4e6950 playback')
+    for address, function, source in ((0x42be10, 'mk4_mmove_lk_owner_ready', 'game/script.c'),
+                                      (0x42cb80, 'retail_lp_select_short', 'game/retail_combat.c'),
+                                      (0x42cc00, 'retail_lp_select_long', 'game/retail_combat.c')):
+        result[address] = Binding(function, source, ('tail',), flow='terminal', mmove=True,
+                                  evidence='One checked native throw utility; source42be10/42cb80/42cc00 and matching mk4decomp contracts')
+    result[0x42bf00] = Binding('mk4_mmove_lk_blend_return', 'game/script.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='42bf00 completes the bound clip and native stance blend; one shared engine recovery adaptation')
     return result
 
 CHARACTER_BINDINGS[4][0x46ab20] = Binding('script_air_land', 'game/sub_zero/character.c', ('tail',), flow='terminal', mmove=True, evidence='46ab20 shared nonblocking landing continuation')

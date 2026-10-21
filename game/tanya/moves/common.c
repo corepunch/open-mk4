@@ -1,9 +1,5 @@
 #include "../character.h"
 
-void tanya_script_lk_return(Fighter *fighter) {
-  mk4_mmove_lk_owner_return(fighter, fighter_ready);
-}
-
 void tanya_script_opponent_reaction(Fighter *fighter, int reaction) {
   if (reaction == 175) {
     return;

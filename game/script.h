@@ -69,4 +69,5 @@ void mk4_mmove_hold(Fighter *fighter);
 void mk4_mmove_wait_grounded(Fighter *fighter);
 void mk4_mmove_wait_land(Fighter *fighter, FighterFn next);
 
+void mk4_mmove_lk_blend_return(Fighter *fighter);
 #endif

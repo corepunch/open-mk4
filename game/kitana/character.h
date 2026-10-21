@@ -12,7 +12,6 @@
 
 /* Internal interfaces; helpers and tables stay local to their owning move. */
 #define air_hp kitana_air_hp
-#define can_ground_throw kitana_can_ground_throw
 #define cpu_air_hk kitana_cpu_air_hk
 #define cpu_air_lk kitana_cpu_air_lk
 #define cpu_close_hk kitana_cpu_close_hk
@@ -58,7 +57,6 @@
 #define script_knee_tail kitana_script_knee_tail
 #define script_leg_grab_tail kitana_script_leg_grab_tail
 #define script_leg_victim_end kitana_script_leg_victim_end
-#define script_lk_return kitana_script_lk_return
 #define script_reaction kitana_script_reaction
 #define script_ring_flash kitana_script_ring_flash
 #define script_ring_spawn kitana_script_ring_spawn
@@ -99,7 +97,6 @@ enum {
 #define RETAIL SF_ATTACK | SF_LOCK | SF_RECORD
 
 void kitana_air_hp(Fighter *fighter);
-bool kitana_can_ground_throw(const Fighter *fighter, bool low_kick);
 void kitana_cpu_air_hk(Fighter *fighter);
 void kitana_cpu_air_lk(Fighter *fighter);
 void kitana_cpu_close_hk(Fighter *fighter);
@@ -144,9 +141,7 @@ void kitana_press_lk(Fighter *fighter);
 void kitana_press_lp(Fighter *fighter);
 void kitana_entry_retail_script_004de360(Fighter *fighter);
 void kitana_entry_retail_script_004de798(Fighter *fighter);
-void kitana_entry_retail_script_004e01c0(Fighter *fighter);
 void kitana_entry_retail_script_004e01d0(Fighter *fighter);
-void kitana_entry_retail_script_004e5930(Fighter *fighter);
 void kitana_entry_retail_script_004e5940(Fighter *fighter);
 void kitana_entry_retail_script_004e5960(Fighter *fighter);
 void kitana_entry_retail_script_004e5980(Fighter *fighter);
@@ -209,7 +204,6 @@ void kitana_script_first_release(Fighter *fighter);
 void kitana_script_knee_tail(Fighter *fighter);
 void kitana_script_leg_grab_tail(Fighter *fighter);
 void kitana_script_leg_victim_end(Fighter *victim);
-void kitana_script_lk_return(Fighter *fighter);
 void kitana_script_reaction(Fighter *fighter, int reaction);
 void kitana_script_ring_flash(Fighter *fighter, int task_type);
 void kitana_script_ring_spawn(Fighter *fighter, int task_type);

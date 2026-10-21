@@ -122,16 +122,8 @@ void raiden_entry_retail_script_004de218(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de218, fighter_ready, 1);
 }
 
-void raiden_entry_retail_script_004de640(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de640, fighter_ready, 1);
-}
-
 void raiden_entry_retail_script_004de668(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4de668, fighter_ready, 1);
-}
-
-void raiden_entry_retail_script_004de6b8(Fighter *fighter) {
-  retail_vm_enter_owned(fighter, 0x4de6b8, fighter_ready, 1);
 }
 
 void raiden_entry_retail_script_004de798(Fighter *fighter) {

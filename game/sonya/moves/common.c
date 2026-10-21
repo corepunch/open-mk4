@@ -1,8 +1,5 @@
 #include "../character.h"
 
-static void lk_return_done(Fighter *fighter);
-static void lk_return_hold(Fighter *fighter);
-
 void sonya_hk(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   if (fighter_holds_back(fighter)) {
@@ -32,18 +29,6 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
   fighter_cancel_mmove(victim);
   FighterFn script = reaction == 78 ? sonya_lk_victim : reaction == 79 ? sonya_entry_retail_script_004e9a68 : sonya_entry_retail_script_004e9b88;
   script(victim);
-}
-
-static void lk_return_done(Fighter *fighter) {
-  fighter_finish_mmove(fighter, fighter_ready);
-}
-
-static void lk_return_hold(Fighter *fighter) {
-  native_hold(fighter, 20, lk_return_done); /* Native stance blend, step 0xccc. */
-}
-
-void sonya_script_lk_return(Fighter *fighter) {
-  native_finish_clip(fighter, lk_return_hold);
 }
 
 void sonya_special_cleanup(Fighter *fighter) {

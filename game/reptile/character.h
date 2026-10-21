@@ -27,7 +27,6 @@ void reptile_press_low_kick(Fighter *fighter);
 void reptile_press_low_punch(Fighter *fighter);
 void reptile_press_punch(Fighter *fighter);
 void reptile_script_air_finish(Fighter *fighter);
-void reptile_script_lk_return(Fighter *fighter);
 void reptile_script_lp_return(Fighter *fighter);
 void reptile_script_opponent_reaction(Fighter *fighter, int reaction);
 void reptile_entry_retail_script_004de2f8(Fighter *fighter);

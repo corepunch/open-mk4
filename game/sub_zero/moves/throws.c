@@ -17,15 +17,6 @@ static const mframe_t lp_capture_frames[1] = {
 };
 static const mmove_t lp_capture_phase = {.firstframe = 0, .lastframe = 0, .frame = lp_capture_frames, .endfunc = sub_zero_lp_capture_done};
 
-bool sub_zero_can_ground_throw(const Fighter *fighter, bool low_kick) {
-  const Fighter *victim = fighter_opponent(fighter);
-  int a = victim->action;
-  float distance = fighter_distance(fighter);
-  return (low_kick ? distance < 0.7f : distance <= 0.7f) && !(fighter->flags & FF_FOLLOW_UP) && !fighter_airborne(victim) && !(victim->flags & FF_REACTING) &&
-         a != ACTION_RETAIL_010A && a != ACTION_RETAIL_010B && a != ACTION_RETAIL_0100 && a != ACTION_RETAIL_0102 && a != ACTION_RETAIL_010E &&
-         !(a >= ACTION_RETAIL_0111 && a <= ACTION_RETAIL_0113);
-}
-
 /* A newly installed peer can take its P1/P2 turn in the installation tick.
  * A displayed victim sample must still last one simulation tick. Keep the
  * first wait on that sample as well; subsequent waits follow the same rule. */
@@ -95,7 +86,7 @@ void sub_zero_script_lk_victim_rise(Fighter *victim) {
 }
 
 static void ground_throw(Fighter *fighter, bool lk) {
-  if (!sub_zero_can_ground_throw(fighter, lk)) {
+  if (!mk4_can_ground_throw(fighter, lk)) {
     fighter_ready(fighter);
     return;
   }

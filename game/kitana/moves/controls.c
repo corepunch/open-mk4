@@ -1,15 +1,13 @@
 #include "../character.h"
 
 void kitana_press_lp(Fighter *fighter) {
-  fighter_interrupt(fighter, kitana_can_ground_throw(fighter, false) ? kitana_enter_throw
-                             : fighter->armed                        ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
-                                                                     : retail_jab);
+  fighter_interrupt(fighter, mk4_can_ground_throw(fighter, false) ? kitana_enter_throw
+                             : fighter->armed                     ? (fighter_holds_back(fighter) ? fighter->weapon->back_lp : fighter->weapon->lp)
+                                                                  : retail_jab);
 }
 
 void kitana_press_lk(Fighter *fighter) {
-  fighter_interrupt(fighter, fighter_holds_back(fighter)              ? retail_sweep_state
-                             : kitana_can_ground_throw(fighter, true) ? kitana_enter_lk_throw
-                                                                      : retail_low_kick);
+  fighter_interrupt(fighter, fighter_holds_back(fighter) ? retail_sweep_state : mk4_can_ground_throw(fighter, true) ? kitana_enter_lk_throw : retail_low_kick);
 }
 
 void kitana_press_combo_hk(Fighter *fighter) {
