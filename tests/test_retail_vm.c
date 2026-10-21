@@ -211,6 +211,17 @@ static void playback_modes(void) {
   check(!owner->retail_vm.active && owner->blend_duration == 0, "interruption must retire a VM-owned blend");
 }
 
+static void native_contracts(void) {
+  Fighter *owner = setup(0, 2);
+  check(retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0) && owner->body.physics == fighter_friction,
+      "native physics binding must install its typed callback without running it");
+  check(!retail_native_vm(owner, 0x4913a0, RETAIL_CALL, 0), "physics callbacks must not be invoked through the call ABI");
+  check(!retail_native_vm(owner, 0x49a6a0, RETAIL_SPAWN, 0), "spawn ABI must reject an unreviewed task type before calling native code");
+  check(!retail_native_vm(owner, 0x12345678, RETAIL_TAIL, 0), "native lookup must reject unknown retail addresses");
+  owner->roster = MK4_ROSTER_COUNT;
+  check(!retail_native_vm(owner, 0x4913a0, RETAIL_PHYSICS, 0), "native lookup must reject an invalid owner before shifting its mask");
+}
+
 static void data_tables(void) {
   /* Mutate shared source records: no compiled command or roster definition
    * may shadow a retail table read, including the second player's list. */
@@ -346,6 +357,7 @@ int main(int argc, char **argv) {
   control_flow();
   playback_modes();
   native_handoff();
+  native_contracts();
   data_tables();
   lifetimes();
   assets_bound();

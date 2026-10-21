@@ -474,6 +474,12 @@ void retail_vm_step(Fighter *fighter) {
         }
         break;
       }
+      case 0x56:
+      case 0x64:
+        if (!vm->native(fighter, opcode == 0x56 ? 0x45ac30 : 0x45b380, RETAIL_HANDLER, arg)) {
+          vm_error(fighter, "unreviewed scene/facing binding");
+        }
+        break;
       case 0x41:
       case 0x1e:
         if (!vm->native(fighter, opcode == 0x41 ? 0x45b1f0 : 0x45b230, RETAIL_HANDLER, arg)) {

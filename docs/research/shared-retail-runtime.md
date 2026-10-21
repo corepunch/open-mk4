@@ -171,3 +171,23 @@ checks pass. Existing battle regressions pass the fan/stage scenes, then fail
 at the old exact-tick Scorpion throw assertion. An isolated build of pre-change
 4b234fe fails at the identical assertion; it is a pre-existing test limitation,
 not evidence of a new fan regression.
+
+## Roster-wide typed native boundary
+
+The shared VM native boundary now covers the reviewed native contracts required
+by every catalogued retail script graph. The bridge uses real C signatures and
+keeps call/tail, predicate, spawn, physics and handler roles separate. Physics
+entries install callbacks rather than executing them; spawn task types are
+checked before the call. Script-only native links re-enter the VM with its
+continuation. Scene-event and facing opcodes now use the same handler boundary.
+
+This bridge is explicitly transitional: roster masks select existing native
+services until their duplicate implementations and configuration are replaced.
+It does not translate or embed script words, timing, branches or frame rows.
+The original typed contracts and C signatures supply registrations; native
+implementations remain the existing reviewed engine adaptations. It is not a
+claim of completed native gameplay parity or removal of per-character modules.
+
+The focused native ABI fixture checks callback installation, wrong-role and
+wrong-task rejection, unknown addresses and invalid owners. Existing runtime
+and malformed-stream checks continue to validate native handoff and cleanup.
