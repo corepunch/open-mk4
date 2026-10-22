@@ -23,13 +23,13 @@ static const MoveDef walk = {.clip = -1, .last = MOVE_END};
 static const MoveDef back_walk = {.clip = -1, .last = MOVE_END};
 static const MoveDef crouch = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD};
 static const MoveDef block = {.clip = -1, .last = MOVE_END, .flags = SF_HOLD};
-// clang-format off: Keep table entries on one row, including long rows.
-static const AttackRecord air_records[] = {
-  {110690, -60882, 68157, 62914, 156, 156, 4, 0, 11796},
-  {101580, -4587, 64225, 53739, 155, 155, 4, 0, 11796},
+
+enum {
+  WEAPON_AIR_HP_ATTACK_RECORD = 0x4ebd08,
+  WEAPON_AIR_LP_ATTACK_RECORD = 0x4ebcf0,
+  WEAPON_THROW_ATTACK_RECORD = 0x4ebe10,
+  AXE_FOLLOWUP_ATTACK_RECORD = 0x4eb798
 };
-static const AttackRecord thrown_record = {57606, -37945, 73990, 35979, 154, 154, 0, ATTACK_MARK, 16384};
-// clang-format on
 
 void weapon_stance(Fighter *fighter, int state) {
   const MoveDef *move = roster_def(fighter->roster)->moves[state];
@@ -285,7 +285,8 @@ static void object_tick(Projectile *p) {
     p->angle[k] = (p->angle[k] + p->spin[k]) % 0x6487e;
   }
   if (p->phase == 0) {
-    ContactResult result = battle_contact_from(&g_battle.fighters[p->owner], &thrown_record, p->pos, p->facing);
+    AttackRecord record = retail_vm_attack_record(retail_vm_image(), WEAPON_THROW_ATTACK_RECORD);
+    ContactResult result = battle_contact_from(&g_battle.fighters[p->owner], &record, p->pos, p->facing);
     if (result != CONTACT_MISS) {
       begin_bounce(p);
     } else if (p->ticks >= 30 ||
@@ -352,7 +353,8 @@ static void weapon_air_landing(Fighter *fighter) {
 static void weapon_air_query(Fighter *fighter) {
   bool high = fighter_move(fighter)->clip == 252;
   if (!fighter->connected) {
-    battle_contact(fighter, &air_records[high ? 0 : 1]);
+    AttackRecord record = retail_vm_attack_record(retail_vm_image(), high ? WEAPON_AIR_HP_ATTACK_RECORD : WEAPON_AIR_LP_ATTACK_RECORD);
+    battle_contact(fighter, &record);
   }
   weapon_air_landing(fighter);
 }
@@ -499,7 +501,6 @@ void weapon_pickup(Fighter *fighter) {
 }
 
 /* Type69: native496cd0/496cf0, descriptors4ec988/4ec9a0/4ec9b0/4ec9c8. */
-static const AttackRecord axe_second_record = {119209, -46530, 71434, 73990, 138, 138, 119, 0, 8519};
 
 bool weapon_can_draw(const Fighter *fighter) {
   return g_battle.phase == PHASE_FIGHT && (fighter->armed || (!fighter->weapon_used && !(fighter->flags & FF_WEAPON_LOST)));
@@ -536,7 +537,8 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
 }
 
 static void axe_second_contact(Fighter *fighter) {
-  ContactResult result = battle_contact(fighter, &axe_second_record);
+  AttackRecord record = retail_vm_attack_record(retail_vm_image(), AXE_FOLLOWUP_ATTACK_RECORD);
+  ContactResult result = battle_contact(fighter, &record);
   if (result != CONTACT_MISS && result != CONTACT_BLOCK) {
     const NativeAxeProfile *profile = fighter->native_context;
     fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->followup_hit);

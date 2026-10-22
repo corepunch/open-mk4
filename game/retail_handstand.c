@@ -18,9 +18,13 @@ static const MoveDef walk = {.clip = 5, .last = 24, .flags = SF_LOCK | SF_RECORD
 static const MoveDef spin = {.clip = 2, .last = 8, .flags = SF_LOCK | SF_RECORD, .action = 0x408};
 static const MoveDef front = {.clip = 0, .last = 12, .flags = SF_LOCK | SF_RECORD, .action = 0x200d};
 static const MoveDef rear = {.clip = 6, .last = 12, .flags = SF_LOCK | SF_RECORD, .action = 0x114};
-static const AttackRecord spin_record = {0x111a9, -0x3ae1, 0x16b43, 0x51a9, 126, 10, 0, 0, 0x170a};
-static const AttackRecord front_record = {0x1851e, -0xbd2f, 0x10000, 0x9958, 127, 127, 5, 0, 0x1c28};
-static const AttackRecord rear_record = {0x1e624, -0x2395, 0x10000, 0x9958, 167, 127, 5, 0, 0x170a};
+
+enum {
+  HANDSTAND_SPIN_ATTACK_RECORD = 0x4ec128,
+  HANDSTAND_FRONT_ATTACK_RECORD = 0x4eba08,
+  HANDSTAND_REAR_ATTACK_RECORD = 0x4eb9f0
+};
+
 static const ButtonTable handstand_buttons = {.retail_address = 0x4e83f8};
 
 bool kai_can_handstand(const Fighter *fighter) {
@@ -145,7 +149,8 @@ static void handstand_contact(Fighter *fighter) {
 
 void kai_script_contact_b10_continuation(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 0 && fighter_sample(fighter) == 9, "Handstand HK needs its selected startup");
-  fighter->native_record = &front_record;
+  fighter->native_record_value = retail_vm_attack_record(retail_vm_image(), HANDSTAND_FRONT_ATTACK_RECORD);
+  fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, 3, NULL);
   native_script_end(fighter, 0x4e8390, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
@@ -156,7 +161,8 @@ void kai_script_contact_b10_continuation(Fighter *fighter) {
 
 void kai_handstand_rear_contact(Fighter *fighter) {
   require(fighter_move(fighter)->clip == 6 && fighter_sample(fighter) == 9, "Handstand LK needs its selected startup");
-  fighter->native_record = &rear_record;
+  fighter->native_record_value = retail_vm_attack_record(retail_vm_image(), HANDSTAND_REAR_ATTACK_RECORD);
+  fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, 3, NULL);
   native_script_end(fighter, 0x4e83d8, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
@@ -203,7 +209,8 @@ static void spin_query(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   ContactResult result = CONTACT_MISS;
   if ((victim->action & 0xf00) != 0x200) {
-    result = battle_contact(fighter, &spin_record);
+    AttackRecord record = retail_vm_attack_record(retail_vm_image(), HANDSTAND_SPIN_ATTACK_RECORD);
+    result = battle_contact(fighter, &record);
   }
   battle_sound(SOUND_C, 53);
   if (result == CONTACT_BLOCK || (result != CONTACT_MISS && victim->hits >= 3)) {

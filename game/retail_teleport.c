@@ -13,8 +13,11 @@ static const MoveDef s_teleport = {.clip = -1, .last = MOVE_END, .flags = SF_LOC
 static const MoveDef s_slam = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x20e};
 static const MoveDef s_slammed = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK, .action = 0x4003};
 static const MoveDef s_recoil = {.clip = 301, .last = 8, .flags = SF_LOCK, .action = ACTION_RETAIL_1011};
+
 /* 47c2d5 queries D[14]: no damage; 480fc0(8) replaces the hit reaction. */
-static const AttackRecord slam_record = {0x11c28, -0xf581, 0xfa9f, 0x1cc8b, 88, 24, 0, 0, 0};
+enum {
+  TELEPORT_SLAM_ATTACK_RECORD = 0x4ec110
+};
 
 static void teleport_landing(Fighter *fighter);
 
@@ -147,7 +150,8 @@ void retail_teleport_slam(Fighter *fighter) {
     teleport_landing(fighter);
     return;
   }
-  ContactResult result = battle_contact(fighter, &slam_record);
+  AttackRecord record = retail_vm_attack_record(retail_vm_image(), TELEPORT_SLAM_ATTACK_RECORD);
+  ContactResult result = battle_contact(fighter, &record);
   if (result == CONTACT_MISS) {
     teleport_landing(fighter);
   } else if (result == CONTACT_BLOCK) {
