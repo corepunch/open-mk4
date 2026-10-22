@@ -101,7 +101,11 @@ build/test-retail-vm: tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(G
 retail-vm-test: build/test-retail-vm
 	./build/test-retail-vm
 	python3 tests/test_retail_vm.py
-game-test: input-test mk4-game build/test-battle build/test-shadows build/test-frames
+build/test-menu: tests/test_menu.c game/menu.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_menu.c game/menu.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
+game-test: input-test mk4-game build/test-battle build/test-shadows build/test-frames build/test-menu
+	./build/test-menu
 	./build/test-battle
 	./build/test-shadows
 	./build/test-frames

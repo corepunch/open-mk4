@@ -173,6 +173,21 @@ static void apply_shell(ShellCommand command, bool *running, bool *paused, bool 
   }
 }
 
+static void start_menu_match(const FrontendMenu *menu, const Assets *assets, int difficulty, bool *cpu, bool *demo, int *arena) {
+  *arena = menu->arena;
+  *cpu = menu->mode != MENU_TEAM;
+  *demo = false;
+  battle_init(menu->p1, menu->p2);
+  g_battle.cpu_level = difficulty;
+  if (menu->climbing) {
+    g_battle.cpu_rank = menu->tower;
+    g_battle.cpu_progress = menu->floor;
+    g_battle.cpu_adaptive = true;
+  }
+  battle_bind_assets(assets);
+  battle_set_arena(*arena);
+}
+
 int main(int argc, char **argv) {
   const char *archive = "MK4/FILESYS.DAT";
   const char *exe = "MK4/MK-4.EXE";
@@ -190,6 +205,7 @@ int main(int argc, char **argv) {
   FrontendMenu menu;
   int rendered = 0;
   double accumulator = 0;
+  double tower_wait = 0;
   uint64_t last;
 
   for (int i = 1; i < argc; ++i) {
@@ -263,7 +279,7 @@ int main(int argc, char **argv) {
   game_audio_init(&audio, headless);
   host_input_init(&input);
   srand(headless ? 0 : SDL_GetTicks());
-  menu_init(&menu);
+  menu_init(&menu, &assets.retail_image);
   if (select_requested) {
     menu.p1 = p1;
     menu.p2 = p2;
@@ -291,21 +307,22 @@ int main(int argc, char **argv) {
       }
       if (!match_started) {
         if (menu_command(&menu, commands.menu, &running)) {
-          p1 = menu.p1;
-          p2 = menu.p2;
-          arena = menu.arena;
-          cpu = menu.mode != MENU_TEAM;
-          demo = false;
-          battle_init(p1, p2);
-          g_battle.cpu_level = difficulty;
-          battle_bind_assets(&assets);
-          battle_set_arena(arena);
+          start_menu_match(&menu, &assets, difficulty, &cpu, &demo, &arena);
+          tower_wait = 0;
           host_input_suppress(&input);
           paused = false;
           match_started = true;
         }
       } else {
-        apply_shell(commands.shell, &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, &input);
+        if (menu.climbing && commands.shell == SHELL_QUIT) {
+          menu.screen = MENU_MODE;
+          menu.cursor = MENU_ARCADE;
+          menu.climbing = false;
+          match_started = false;
+          host_input_suppress(&input);
+        } else if (!menu.climbing || commands.shell == SHELL_PAUSE || commands.shell == SHELL_RESET) {
+          apply_shell(commands.shell, &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, &input);
+        }
       }
     }
 
@@ -313,6 +330,17 @@ int main(int argc, char **argv) {
       uint64_t now = SDL_GetPerformanceCounter();
       double dt = headless ? 1.0 / 60.0 : fmin(0.1, (double)(now - last) / (double)SDL_GetPerformanceFrequency());
       last = now;
+      if (!match_started && menu.climbing && menu.screen == MENU_TOWER) {
+        tower_wait += dt;
+        if (tower_wait >= 2.0) {
+          menu_command(&menu, MENU_CONFIRM, &running);
+          start_menu_match(&menu, &assets, difficulty, &cpu, &demo, &arena);
+          host_input_suppress(&input);
+          match_started = true;
+          paused = false;
+          tower_wait = 0;
+        }
+      }
       if (match_started && !paused)
         accumulator += dt;
       else
@@ -333,6 +361,13 @@ int main(int argc, char **argv) {
       battle_step(in);
       game_audio_step(&audio, &assets);
       accumulator -= 1.0 / 60.0;
+      if (menu.climbing && g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks > 360) {
+        menu_match_finished(&menu, g_battle.winner == 0);
+        tower_wait = 0;
+        match_started = false;
+        accumulator = 0;
+        host_input_suppress(&input);
+      }
       if (demo && g_battle.phase == PHASE_MATCH_OVER && g_battle.phase_ticks > 240)
         battle_reset_match();
     }

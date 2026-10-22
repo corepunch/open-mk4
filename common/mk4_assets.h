@@ -114,7 +114,7 @@ typedef struct Arena {
 ARRAY_TYPE(Arenas, Arena);
 
 typedef struct Hud {
-  Geometry font, effects, effects2, fujin_wind, title_scene, select_scene;
+  Geometry font, effects, effects2, fujin_wind, title_scene, select_scene, ladder_scene;
   Geometry jarek_fatality; /* ja_fat_g.geo: Jarek fatality props, e.g. 446fa0 rig 50831c */
   int names[MK4_ROSTER_COUNT];
 } Hud;

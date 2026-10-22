@@ -8,7 +8,10 @@
 typedef enum MenuScreen {
   MENU_MODE,
   MENU_SELECT,
-  MENU_ARENA
+  MENU_ARENA,
+  MENU_TOWER,
+  MENU_CONTINUE,
+  MENU_COMPLETE
 } MenuScreen;
 
 typedef enum MenuMode {
@@ -20,6 +23,17 @@ typedef enum MenuMode {
   MENU_EXIT
 } MenuMode;
 
+enum {
+  MENU_TOWERS = 5,
+  MENU_TOWER_FLOORS = 16
+};
+
+typedef struct MenuTower {
+  char name[32];
+  int count;
+  uint32_t opponents[MENU_TOWER_FLOORS];
+} MenuTower;
+
 typedef struct FrontendMenu {
   MenuScreen screen;
   MenuMode mode;
@@ -28,9 +42,15 @@ typedef struct FrontendMenu {
   int arena;
   int selecting_player;
   int cursor;
+  MenuTower towers[MENU_TOWERS];
+  int tower, floor, face;
+  bool climbing;
 } FrontendMenu;
 
-void menu_init(FrontendMenu *menu);
+void menu_init(FrontendMenu *menu, const Mk4Image *image);
+int menu_tower_opponent(const FrontendMenu *menu, int tower, int floor);
+/* Called once after the match presentation completes. Defeat retains the floor. */
+void menu_match_finished(FrontendMenu *menu, bool won);
 /* Returns true when a command starts a match. */
 bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit);
 /* Animation time is supplied by the host, in seconds. */

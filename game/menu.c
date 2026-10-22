@@ -64,13 +64,47 @@ static int roster_for_retail_cursor(int cursor, int current) {
   return current;
 }
 
-void menu_init(FrontendMenu *menu) {
+void menu_init(FrontendMenu *menu, const Mk4Image *image) {
   memset(menu, 0, sizeof *menu);
   menu->screen = MENU_MODE;
   menu->p1 = 0;
   menu->p2 = 4;
   menu->arena = 8;
   menu->cursor = 0;
+  /* Local EXE: five 16-byte column records, terminated packed opponent
+   * lists, and five 12-byte label records. Pointers are word indices. */
+  for (int i = 0; i < MENU_TOWERS; ++i) {
+    MenuTower *tower = &menu->towers[i];
+    uint32_t list = mk4_image_u32(image, 0x4e557c + i * 16) * 4;
+    uint32_t name = mk4_image_u32(image, 0x4e5688 + i * 12) * 4;
+    require(name >= 0x400000, "Invalid retail tower label");
+    view_string(view(image->bytes), name - 0x400000, tower->name, sizeof tower->name);
+    while (tower->count < MENU_TOWER_FLOORS) {
+      uint32_t packed = mk4_image_u32(image, list + tower->count * 4);
+      if (!packed) {
+        break;
+      }
+      for (int face = 0; face < 4; ++face) {
+        require(((packed >> (face * 8)) & 255) < MK4_ROSTER_COUNT, "Invalid retail tower opponent");
+      }
+      tower->opponents[tower->count++] = packed;
+    }
+    require(tower->count > 0 && tower->count < MENU_TOWER_FLOORS, "Invalid retail tower length");
+  }
+}
+
+int menu_tower_opponent(const FrontendMenu *menu, int tower, int floor) {
+  require(tower >= 0 && tower < MENU_TOWERS && floor >= 0 && floor < menu->towers[tower].count, "Invalid tower position");
+  return (int)((menu->towers[tower].opponents[floor] >> (menu->face * 8)) & 255);
+}
+
+void menu_match_finished(FrontendMenu *menu, bool won) {
+  if (!won) {
+    menu->screen = MENU_CONTINUE;
+    return;
+  }
+  ++menu->floor;
+  menu->screen = menu->floor == menu->towers[menu->tower].count ? MENU_COMPLETE : MENU_TOWER;
 }
 
 static void move_character(FrontendMenu *menu, int dx, int dy) {
@@ -111,6 +145,13 @@ bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
       } else {
         menu->screen = MENU_MODE;
       }
+    } else if (menu->screen == MENU_TOWER && !menu->climbing) {
+      menu->screen = MENU_SELECT;
+      menu->cursor = retail_cursor_for_roster(menu->p1);
+    } else if (menu->screen == MENU_TOWER || menu->screen == MENU_CONTINUE || menu->screen == MENU_COMPLETE) {
+      menu->climbing = false;
+      menu->screen = MENU_MODE;
+      menu->cursor = MENU_ARCADE;
     } else if (menu->screen == MENU_ARENA) {
       menu->screen = MENU_SELECT;
       menu->selecting_player = menu->mode == MENU_TEAM ? 1 : 0;
@@ -152,12 +193,40 @@ bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
           menu->cursor = retail_cursor_for_roster(menu->p2);
         } else {
           menu->p2 = (menu->p1 + 1) % roster_count();
-          menu->screen = MENU_ARENA;
+          menu->screen = menu->mode == MENU_ARCADE ? MENU_TOWER : MENU_ARENA;
+          menu->tower = 0;
+          menu->floor = 0;
+          menu->face = rand() % 4;
+          menu->climbing = false;
         }
       } else {
         menu->p2 = roster_for_retail_cursor(menu->cursor, menu->p2);
         menu->screen = MENU_ARENA;
       }
+    }
+    return false;
+  }
+  if (menu->screen == MENU_COMPLETE) {
+    if (confirm) {
+      menu->climbing = false;
+      menu->screen = MENU_MODE;
+      menu->cursor = MENU_ARCADE;
+    }
+    return false;
+  }
+  if (menu->screen == MENU_TOWER || menu->screen == MENU_CONTINUE) {
+    if (!menu->climbing) {
+      if (command == MENU_LEFT) {
+        menu->tower = (menu->tower + MENU_TOWERS - 1) % MENU_TOWERS;
+      } else if (command == MENU_RIGHT) {
+        menu->tower = (menu->tower + 1) % MENU_TOWERS;
+      }
+    }
+    if (confirm) {
+      menu->climbing = true;
+      menu->p2 = menu_tower_opponent(menu, menu->tower, menu->floor);
+      menu->arena = menu->p2 == 15 ? 0 : (8 + menu->floor) % MK4_ARENA_COUNT;
+      return true;
     }
     return false;
   }
@@ -514,6 +583,85 @@ static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu 
   draw_preview(canvas, assets, menu->p2, (Rect){1030, 273, 172, 238}, .18f, seconds);
 }
 
+/* Use the retail portrait meshes' UV rectangles so atlas packing remains
+ * asset-owned. The mesh identities follow the retail ladder face table. */
+static void tower_portrait(Canvas *canvas, const Geometry *scene, int roster, Rect dest) {
+  static const int meshes[MK4_ROSTER_COUNT] = {13, 15, 17, 16, 20, 19, 21, 23, 29, 24, 22, 28, 25, 26, 27, 18, 17, 14};
+  const Mesh *mesh = &scene->meshes.data[meshes[roster]];
+  int u0 = 256, v0 = 256, u1 = 0, v1 = 0;
+  for (size_t i = 0; i < mesh->triangles.count; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      const Vertex *v = &mesh->triangles.data[i].v[j];
+      u0 = mini(u0, (int)v->u);
+      v0 = mini(v0, (int)v->v);
+      u1 = maxi(u1, (int)v->u);
+      v1 = maxi(v1, (int)v->v);
+    }
+  }
+  blit_page(canvas, scene, mesh->triangles.data[0].texture, (Rect){u0, v0, u1 - u0 + 1, v1 - v0 + 1}, dest);
+}
+
+static void draw_tower(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, double seconds) {
+  const Geometry *scene = &assets->hud.ladder_scene;
+  const Geometry *font = &assets->hud.font;
+  int w = canvas->w, h = canvas->h;
+  canvas_rect(canvas, (Rect){0, 0, w, h}, 0xff080b14);
+  blit_page(canvas, scene, 0, (Rect){0, 0, 256, 256}, (Rect){0, 0, w, h});
+  centered(font, canvas, h * 3 / 100, menu->screen == MENU_COMPLETE ? "THE TOWER IS CONQUERED" : "CHOOSE YOUR DESTINY", 1.5f);
+  int base = h * 83 / 100;
+  int pitch = h * 7 / 100;
+  int size = pitch - 4;
+  int column_width = w * 16 / 100;
+  for (int col = 0; col < MENU_TOWERS; ++col) {
+    const MenuTower *tower = &menu->towers[col];
+    int cx = w * (10 + col * 20) / 100;
+    bool selected = col == menu->tower;
+    for (int floor = 0; floor < tower->count; ++floor) {
+      int y = base - (floor + 1) * pitch;
+      int side = pitch / 2;
+      int front = pitch + 4;
+      Rect block = {cx - front / 2, y, front, pitch - 2};
+      float right = (float)(block.x + block.w);
+      float top = (float)y;
+      float bottom = (float)(y + block.h);
+      float depth = (float)side;
+      float corners[4][2] = {{right, top}, {right + depth, top - depth / 3}, {right + depth, bottom - depth / 3}, {right, bottom}};
+      canvas_quad(canvas, &scene->textures.data[1], (Rect){1, 1, 126, 78}, corners, selected ? 0xffa0a0a0 : 0xff686878);
+      blit_page(canvas, scene, 1, (Rect){1, 1, 126, 78}, block);
+      tower_portrait(canvas, scene, menu_tower_opponent(menu, col, floor), (Rect){cx - size / 2, y + 1, size, size});
+      if (selected && menu->climbing && floor < menu->floor) {
+        select_shade(canvas, block, 0xb0000000);
+        font_draw(font, canvas, cx - font_width(font, "WIN", .65f) / 2, y + size / 3, "WIN", .65f);
+      }
+      if (selected && floor == menu->floor) {
+        unsigned red = (unsigned)(200 + 55 * (.5 + .5 * sin(seconds * 6)));
+        for (int ring = 0; ring < 3; ++ring) {
+          canvas_outline(canvas, (Rect){block.x - ring, block.y - ring, block.w + ring * 2, block.h + ring * 2}, 0xff000000 | (red << 16) | 0x3020);
+        }
+      }
+    }
+    uint32_t color = selected ? 0xffb02010 : 0xff303038;
+    canvas_rect(canvas, (Rect){cx - column_width / 2, base, column_width, h / 25}, color);
+    font_draw(font, canvas, cx - font_width(font, tower->name, .75f) / 2, base + 6, tower->name, .75f);
+  }
+  char status[128];
+  const MenuTower *tower = &menu->towers[menu->tower];
+  if (menu->screen == MENU_COMPLETE) {
+    snprintf(status, sizeof status, "%s WINS - %s", roster_def(menu->p1)->name, tower->name);
+  } else if (menu->screen == MENU_CONTINUE) {
+    snprintf(status, sizeof status, "CONTINUE?  ENTER TO RETRY   ESC TO END RUN");
+  } else if (menu->climbing) {
+    snprintf(status, sizeof status, "FIGHT %d / %d - %s   GET READY", menu->floor + 1, tower->count,
+        roster_def(menu_tower_opponent(menu, menu->tower, menu->floor))->name);
+  } else {
+    snprintf(status, sizeof status, "LEFT / RIGHT TO CHOOSE   ENTER TO FIGHT   ESC TO GO BACK");
+  }
+  centered(font, canvas, h * 92 / 100, status, .8f);
+  if (menu->screen == MENU_COMPLETE) {
+    centered(font, canvas, h * 97 / 100, "ENTER TO RETURN TO MENU", .65f);
+  }
+}
+
 void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, double seconds) {
   // Resets depth for the fighter previews; each screen repaints every pixel.
   canvas_clear(canvas);
@@ -521,7 +669,9 @@ void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, d
     draw_mode(canvas, assets, menu);
   } else if (menu->screen == MENU_SELECT) {
     draw_select(canvas, assets, menu, seconds);
-  } else {
+  } else if (menu->screen == MENU_ARENA) {
     draw_arena(canvas, assets, menu, seconds);
+  } else {
+    draw_tower(canvas, assets, menu, seconds);
   }
 }

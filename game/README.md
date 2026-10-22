@@ -22,3 +22,15 @@ Per-fighter `port.json` files are research inventories and source navigation,
 not runtime configuration or evidence of complete native parity. Historical
 source names are resolved by Python research tools only. Use bounded queries
 and the [runtime migration workflow](../docs/character-script-port.md).
+
+Arcade goes from fighter selection to the five retail destiny towers. The
+frontend loads column names and packed opponent lists from the selected EXE
+and draws the original `ladder_g.geo` artwork. Left/right chooses a column;
+Enter begins. A match win returns to the tower at the next floor; a loss offers
+a retry of the same opponent. The next fight starts after a short tower
+preview (Enter skips the wait). The final win completes the run. Escape leaves
+the run. Progress lives in the frontend session, outside the resettable battle.
+Column rank and completed floors feed the existing CPU difficulty context.
+The portable screen adapts retail presentation; camera choreography and fighter
+ending movies are not implemented. Arena rotation uses the host's existing arena
+list, with Goro in his lair, rather than a recovered retail arena progression.
