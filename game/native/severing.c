@@ -462,16 +462,6 @@ bool jax_can_fatality_1(const Fighter *fighter) {
          g_battle.ticks - fighter->latch[BUTTON_LOW_KICK] >= 240;
 }
 
-static bool n449620_first_listed_victim(const Fighter *victim) {
-  static const int rosters[] = {4, 0, 12, 8, 7, 13, 14};
-  for (size_t i = 0; i < sizeof rosters / sizeof rosters[0]; ++i) {
-    if (victim->roster == rosters[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
 static void n449620_first_maybe_complete(Fighter *owner) {
   if (owner->native_variant == (FIRST_OWNER_READY | FIRST_VICTIM_DONE) && g_battle.phase == PHASE_FATALITY) {
     battle_end_finisher();
@@ -509,10 +499,10 @@ static void n449620_first_victim_stream(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
-  if (n449620_first_listed_victim(victim)) {
-    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FIRST_VICTIM_STREAM_4E13B0, fighter_ready);
+  if (retail_index_list_contains(retail_vm_image(), MK4_RETAIL_DATA_ARM_TEAR_CLIP_204_ROSTERS, (unsigned)victim->roster, MK4_ROSTER_COUNT)) {
+    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_ARM_TEAR_VICTIM_CLIP_204, fighter_ready);
   } else {
-    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FIRST_VICTIM_STREAM_4E13C0, fighter_ready);
+    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_ARM_TEAR_VICTIM_CLIP_400, fighter_ready);
   }
 }
 

@@ -294,3 +294,18 @@ unsigned retail_terminated_rows(const Mk4Image *image, uint32_t table, unsigned 
   require(false, "Retail table exceeds its engine capacity or lacks a terminator");
   return 0;
 }
+
+/* Native475090 scans signed indices; any negative entry terminates the list. */
+bool retail_index_list_contains(const Mk4Image *image, uint32_t table, unsigned value, unsigned limit) {
+  for (unsigned index = 0; index <= limit; ++index) {
+    int32_t candidate = (int32_t)mk4_image_u32(image, table + index * 4);
+    if (candidate < 0) {
+      return false;
+    }
+    if ((unsigned)candidate == value) {
+      return true;
+    }
+  }
+  require(false, "Retail index list exceeds its engine capacity or lacks a terminator");
+  return false;
+}
