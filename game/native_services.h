@@ -494,7 +494,6 @@ void sonya_script_second_pause(Fighter *fighter);
 void sonya_script_second_repeat(Fighter *fighter);
 void sonya_script_second_victim_end(Fighter *victim);
 void sonya_script_square_wave_tail(Fighter *fighter);
-void sonya_script_weapon_victim_getup(Fighter *victim);
 void sonya_second_fatality(Fighter *fighter);
 void sonya_special_cleanup(Fighter *fighter);
 void sonya_square_victim(Fighter *victim);

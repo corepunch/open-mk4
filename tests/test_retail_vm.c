@@ -498,16 +498,16 @@ static void reaction_native_table(void) {
 /* These original addresses differ by facing operations and recovery row,
  * independently of the actor model or the caller's script context. */
 static void native_getup_entries(void) {
-  const uint32_t entries[] = {0x485ad0, 0x485b10, 0x485b50};
+  const uint32_t entries[] = {0x485ad0, 0x485b10, 0x485b50, 0x488c10};
   for (unsigned i = 0; i < sizeof entries / sizeof *entries; ++i) {
     Fighter *actor = setup(0, 2);
     actor->retail_vm.native_owner_set = true;
     actor->retail_vm.native_owner = 15;
     actor->held = BUTTON_BIT(BUTTON_DOWN);
     int facing = actor->facing;
-    uint32_t row = i == 0 ? 0x4ea210 : 0x4ea220;
+    uint32_t row = i == 0 ? 0x4ea210 : i == 3 ? 0x4ea230 : 0x4ea220;
     check(retail_native_vm(actor, entries[i], RETAIL_TAIL, 0), "getup address must work independently of native owner");
-    check(actor->facing == (i == 2 ? facing : -facing), "getup native must preserve its original facing operations");
+    check(actor->facing == (i >= 2 ? facing : -facing), "getup native must preserve its original facing operations");
     uint32_t descriptor = mk4_image_u32(&image, row + 12) * 4;
     check(fighter_move(actor)->clip == (int)((descriptor - 0x4fad7c) / 12), "getup must select the held-down descriptor from retail data");
     fighter_cancel_mmove(actor);

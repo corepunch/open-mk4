@@ -275,22 +275,6 @@ static void react_kick_air_impact(Fighter *fighter) {
   launch(fighter, 0x11eb, -0x23d7, 0x28f);
 }
 
-/* Kai skull reactions. 129 (485f10) disarms, then airborne victims take
- * reaction 22's 483030/4e9430 path; grounded ones run 4e9c80: sound B[1],
- * clip 132 two samples per visit to 14, stop, then 488ba0 getup 328.
- * 130 (485f50) disarms, sets action 100a and runs 4e9ca8: sound B[3],
- * clip 179 launch, landing at 39 and 488b80's getup 328. */
-static void react_extra(Fighter *fighter);
-
-static void react_kai_skull(Fighter *fighter) {
-  if (fighter->reaction == 129 && fighter_airborne(fighter)) {
-    fighter->reaction = 22;
-  } else {
-    battle_sound(SOUND_B, fighter->reaction == 129 ? 1 : 3);
-  }
-  react_extra(fighter);
-}
-
 /* 16 (0x482a10): kick hit, including the wall recoil check. */
 static void react_kick_hit(Fighter *fighter) {
   battle_wall_recoil(fighter);
@@ -343,16 +327,11 @@ static const ReactionSpec extra_reactions[256] = {
   /* Legacy airborne90/173 adapters still borrow this row; native481320 itself
    * now enters original4e89a0 and does not use it. */
   [10] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
-  [22] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
   [23] = {R(131, 44, 0x4003), 0, 0, 41, 185, 0xf5c, -0x2b85, 0x28f, 0x9999, false, false},
   [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
   [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
-  [39] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
   [54] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
   [62] = {R(130, 39, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
-  [90] = {.move = R(311, 18, 0x4001), .land_at = -1},
-  [129] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0xa3d, 0, 0, 0, false, false},
-  [130] = {R(179, 53, 0x100a), 0, 0, 39, 328, -0x51e, -0x4ccc, 0x353, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
 static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
@@ -390,19 +369,13 @@ static void reaction_land_gate(Fighter *fighter) {
   fighter->mmove_hold = fighter_airborne(fighter);
 }
 
-/* 4e9c98 opcode 5b (45b010) stops reaction 129 at its sample-14 boundary. */
-static void reaction_stop_gate(Fighter *fighter) {
-  mk4_script_stop(fighter);
-  fighter->mmove_hold = fighter_airborne(fighter);
-}
-
 static void extra_reaction_end(Fighter *fighter) {
   begin_getup(fighter, extra_reactions[fighter->reaction].getup);
 }
 
 static int reaction_pose(const Fighter *fighter, const ReactionSpec *spec, int elapsed) {
   int sample = elapsed;
-  if (fighter->reaction == 23 || fighter->reaction == 129) {
+  if (fighter->reaction == 23) {
     sample = elapsed < 7 ? elapsed * 2 : elapsed + 7;
   }
   if (spec->hold_ticks) {
@@ -423,7 +396,7 @@ static void extra_reaction_play(Fighter *fighter) {
   for (int frame = first; frame <= last; ++frame) {
     int pose = reaction_pose(fighter, spec, frame);
     bool gate = !landing && spec->land_at >= 0 && pose >= spec->land_at;
-    native_frame(fighter, frame, mini(spec->move.last, pose), gate ? (fighter->reaction == 129 ? reaction_stop_gate : reaction_land_gate) : NULL);
+    native_frame(fighter, frame, mini(spec->move.last, pose), gate ? reaction_land_gate : NULL);
     landing |= gate;
   }
   native_play(fighter, false);
@@ -443,8 +416,7 @@ static void react_extra(Fighter *fighter) {
       break;
   }
   int id = fighter->reaction;
-  bool teleport_air = id == 90 && fighter_airborne(fighter);
-  if ((id == 90 || id == 173) && fighter_airborne(fighter)) {
+  if (id == 173 && fighter_airborne(fighter)) {
     fighter->reaction = id = 10;
   }
   if (id == 32 && (fighter->damage_total >= 0x3333 || (!fighter->human && fighter->damage_total >= 0x2666))) {
@@ -453,7 +425,7 @@ static void react_extra(Fighter *fighter) {
   }
   const ReactionSpec *spec = &extra_reactions[id];
   fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, &spec->move);
-  if (id == 90 || id == 173) {
+  if (id == 173) {
     mk4_script_stop_body(fighter);
     scorpion_generated_reaction(fighter);
     return;
@@ -469,8 +441,7 @@ static void react_extra(Fighter *fighter) {
   if (spec->friction) {
     slide(fighter, spec->speed);
   } else {
-    /* 0x4e9980 shares clip 183 with jab air, but retreats at 0.03. */
-    launch(fighter, teleport_air ? 0x7ae : spec->speed, spec->vy, spec->gravity);
+    launch(fighter, spec->speed, spec->vy, spec->gravity);
   }
   if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
     fighter->body.gravity = 0x28f;
@@ -819,16 +790,13 @@ static const FighterFn reactions[256] = {
   [7] = react_extra_block,
   [8] = react_extra_block,
   [143] = react_extra_block,
-  [22] = react_extra,
   [23] = react_extra,
   [26] = react_extra,
   [32] = react_extra,
-  [39] = react_extra,
   [150] = react_scepter_low,
   [151] = react_scepter_freeze,
   [120] = react_weapon_followup,
   [67] = react_freeze,
-  [90] = react_extra,
   [92] = fujin_wind_victim,
   [93] = fujin_triple_victim,
   [94] = fujin_triple_victim,
@@ -849,8 +817,6 @@ static const FighterFn reactions[256] = {
   [11] = react_jab_air,
   [13] = react_kick_air,
   [123] = react_kick_air_impact,
-  [129] = react_kai_skull,
-  [130] = react_kai_skull,
   [16] = react_kick_hit,
   [18] = react_sweep,
   [34] = react_uppercut,

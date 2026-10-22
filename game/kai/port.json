@@ -294,9 +294,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 22 at 0x482f00."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "evidence": "Loaded4ea4e8[22] -> 482f00; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
       "source": "game/reactions.c",
@@ -320,9 +321,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 39 at 0x482ef0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "evidence": "Loaded4ea4e8[39] -> 482ef0; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "4": {
       "source": "game/reactions.c",
@@ -419,14 +421,16 @@
       "evidence": "Kai aerial punch D[16] contact selects shared reaction123; 4ea4e8[123] ->0x481ce0 ->4e89d8 clip189 launch and488c00 getup."
     },
     "129": {
-      "source": "game/reactions.c",
-      "symbol": "react_kai_skull",
-      "evidence": "Kai rising skull C[8] selects shared reaction129; 4ea4e8[129] ->0x485f10: airborne 483030/4e9430, grounded4e9c80 and488ba0 getup."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "evidence": "Loaded4ea4e8[129] -> 485f10; bounded native branches into original4e9c80/4e9430; checked mk4decomp script/getup contracts.",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "130": {
-      "source": "game/reactions.c",
-      "symbol": "react_kai_skull",
-      "evidence": "Kai ground skull C[9] selects shared reaction130; 4ea4e8[130] ->0x485f50 action100a,4e9ca8 clip179 and488b80 getup."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "evidence": "Loaded4ea4e8[130] -> 485f50; bounded native branches into original4e9ca8; checked mk4decomp script/getup contracts.",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "110": {
       "source": "game/retail_throw.c",

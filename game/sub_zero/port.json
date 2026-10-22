@@ -283,9 +283,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
-      "evidence": "4ea4e8[22] -> 0x482f00; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[22] -> 482f00; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
       "evidence": "4ea4e8[23] -> 0x481fc0; shared C reaction dispatch",
@@ -325,9 +326,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
-      "evidence": "4ea4e8[39] -> 0x482ef0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[39] -> 482ef0; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "4": {
       "evidence": "4ea4e8[4] -> 0x486bb0; shared C reaction dispatch",

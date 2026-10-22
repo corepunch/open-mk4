@@ -599,7 +599,7 @@ void retail_crouch_return(Fighter *fighter) {
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
 void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
-  require(record == 0x4ea200 || record == 0x4ea210 || record == 0x4ea220, "Unreviewed native getup record");
+  require(record == 0x4ea200 || record == 0x4ea210 || record == 0x4ea220 || record == 0x4ea230, "Unreviewed native getup record");
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   if (fighter->health <= 0) {

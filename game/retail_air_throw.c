@@ -243,3 +243,8 @@ void retail_getup_roll_flip(Fighter *fighter) {
   retail_flip_facing(fighter);
   retail_getup_roll(fighter);
 }
+
+/*488c10 selects4ea230; round/KO result orchestration belongs to battle. */
+void retail_getup_front(Fighter *fighter) {
+  mk4_mmove_getup(fighter, 0x4ea230);
+}

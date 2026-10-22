@@ -270,8 +270,51 @@ void retail_scaled_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, finish);
 }
 
+void retail_branch_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  bool airborne = fighter_airborne(fighter);
+  if (entry == 0x482ef0 || entry == 0x482f00) {
+    mk4_script_context_sound(fighter, 16);
+  }
+  mk4_script_disarm_self(fighter);
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  FighterFn finish = mk4_script_thrown_ready;
+  switch (entry) {
+    case 0x482ef0:
+    case 0x482f00:
+      script = airborne ? 0x4e9430 : 0x4e93a8;
+      finish = retail_getup_front;
+      break;
+    case 0x485f10:
+      script = airborne ? 0x4e9430 : 0x4e9c80;
+      if (airborne) {
+        finish = retail_getup_front;
+      }
+      break;
+    case 0x485f50:
+      fighter->action = 0x100a;
+      script = 0x4e9ca8;
+      break;
+    case 0x484bc0:
+      script = airborne ? 0x4e9980 : 0x4e9938;
+      break;
+    default:
+      require(false, "Unexpected branching reaction native");
+      return;
+  }
+  retail_vm_enter(fighter, script, finish);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x482ef0:
+    case 0x482f00:
+    case 0x485f10:
+    case 0x485f50:
+    case 0x484bc0:
+      return retail_branch_reaction;
     case 0x482480:
     case 0x4824a0:
     case 0x4823c0:

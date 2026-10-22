@@ -1,6 +1,7 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'sonya_script_weapon_victim_getup': 'retail_getup_front',
     'reptile_dash_victim': 'retail_scaled_reaction',
     'goro_uppercut_victim': 'retail_scaled_reaction',
 

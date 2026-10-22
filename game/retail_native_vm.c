@@ -1042,7 +1042,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_getup_roll(fighter);
           return true;
         case 0x488c10:
-          sonya_script_weapon_victim_getup(fighter);
+          retail_getup_front(fighter);
           return true;
         case 0x4958b0:
           retail_weapon_contact(fighter, address);

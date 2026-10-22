@@ -206,3 +206,6 @@ void retail_scene_join_victory(Fighter *fighter);
 void retail_script_reaction(Fighter *fighter);
 
 void retail_scaled_reaction(Fighter *fighter);
+
+void retail_branch_reaction(Fighter *fighter);
+void retail_getup_front(Fighter *fighter);

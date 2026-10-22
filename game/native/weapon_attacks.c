@@ -887,10 +887,6 @@ void retail_weapon_native_496720(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ec7a0, fighter_ready, 2);
 }
 
-void sonya_script_weapon_victim_getup(Fighter *victim) {
-  native_finish_clip(victim, retail_getup_roll);
-}
-
 #undef RETAIL
 
 /* Native service cluster: 497b60. */

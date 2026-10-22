@@ -1716,3 +1716,22 @@ Checked bounded local entries and482a50/48a320 dependencies, mk4decomp
 EightEntryAlarmDispatch matching assembly and shared controller contracts.
 Verified formatting, shared runtime/rejections, all strict fighter audits,
 native gates and helper/port navigation. No new fighter-specific tests.
+
+### Original ground/air reaction branches and front getup data
+
+Replaced ReactionSpec22/39/90/129/130 with shared native branch entries.
+482ef0/482f00 selects4e93a8 or4e9430,485f10 selects4e9c80 or4e9430,
+485f50 sets native action100a and enters4e9ca8, and484bc0 selects4e9938 or
+4e9980. Removed the Kai-named C branch and its copied sound/playback handling.
+The old airborne90 approximation incorrectly borrowed reaction10 motion.
+
+Native488c10 now selects original getup record4ea230 through the same shared
+loaded-record controller as other getups. Removed the Sonya wrapper's extra
+inherited-clip finish. Battle owns KO/round result orchestration rather than
+reproducing488c40's result director inside this gameplay native.
+
+Checked bounded local branches, mk4decomp OutroEventForwarderCluster,
+PendingMatch_ArgSarStoreJmp and existing script/getup contracts. Verified
+formatting, shared runtime/rejections, all strict audits, native gates and
+helper/port navigation. Extended the existing loaded-getup fixture with the
+new record/address, preserving context, crouch and interruption checks.

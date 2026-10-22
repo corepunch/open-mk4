@@ -296,9 +296,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Fujin uses global reaction selector 22 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "evidence": "Loaded4ea4e8[22] -> 482f00; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
       "source": "game/reactions.c",
@@ -322,9 +323,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Fujin uses global reaction selector 39 from 0x4ea4e8; the shared portable reaction table dispatches it to this handler."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "evidence": "Loaded4ea4e8[39] -> 482ef0; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "4": {
       "source": "game/reactions.c",

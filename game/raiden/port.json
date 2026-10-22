@@ -296,9 +296,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "22": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[22] -> 482f00; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "23": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
@@ -338,9 +339,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "39": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[39] -> 482ef0; bounded native branches into original4e93a8/4e9430; checked mk4decomp script/getup contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_branch_reaction",
+      "adaptation": "Loaded native entry chooses the original ground/air script and typed getup completion once for every actor."
     },
     "4": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
