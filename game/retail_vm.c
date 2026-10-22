@@ -833,7 +833,7 @@ void retail_vm_step(Fighter *fighter) {
       case 0x52:
       case 0x53:
       case 0x5e:
-        contact(fighter, opcode == 0x51 ? 0x53d2b8 : opcode == 0x52 ? 0x53d268 : opcode == 0x53 ? 0x53d178 : 0x53d0c0, arg);
+        contact(fighter, opcode == 0x51 ? 0x53d2b8 : opcode == 0x52 ? 0x53d268 : opcode == 0x53 ? 0x53d178 : RETAIL_WEAPON_ATTACK_TABLE, arg);
         break;
       default:
         vm_error(fighter, "unsupported opcode");

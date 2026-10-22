@@ -1,4 +1,5 @@
 #include "native_services.h"
+#include "retail_layout.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -636,75 +637,37 @@ void reptile_weapon_stagger_tail(Fighter *fighter) {
 
 /* Native service cluster: 470420. */
 #define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
-static void n470420_2_sword_slash_recover(Fighter *fighter);
-static void n470420_2_sword_slash_query(Fighter *fighter);
-static void n470420_2_sword_slash_build(Fighter *fighter, int first, bool hit);
-static void n470420_2_sword_attack(Fighter *fighter, bool hp, bool back);
-void retail_weapon_native_496c90(Fighter *fighter);
-void retail_weapon_native_496c50(Fighter *fighter);
-static void n470420_2_sword_spin_recover(Fighter *fighter);
-void retail_weapon_native_480770(Fighter *fighter);
-// clang-format off: Keep table entries on one row, including long rows.
-static const AttackRecord n470420_2_sword_records[] = {
-  {98304, -35389, 57016, 39321, 48, 12, 119, 0, 13107}, /* HP / LP */
-  {124518, -34078, 83230, 51118, 49, 12, 119, 0, 13107}, /* back LP */
-  {111411, -34078, 83230, 51118, 50, 12, 119, 0, 13107}, /* back HP */
-  {78643, 1900, 193331, 24903, 99, 10, 118, 0, 3276}, /* spin */
-  {110690, -60882, 68157, 62914, 156, 156, 4, 0, 11796}, /* air HP */
-  {101580, -4587, 64225, 53739, 155, 155, 4, 0, 11796}, /* air LP */
-  {57606, -37945, 73990, 35979, 154, 154, 0, ATTACK_MARK, 16384}, /* throw */
+
+enum {
+  SWORD_BACK_LP_SCRIPT = 0x4ec8b0,
+  SWORD_BACK_HP_SCRIPT = 0x4ec918,
+  SWORD_SPIN_SCRIPT = 0x4e8850,
+  SWORD_SPIN_ATTACK_SELECTOR = 22,
+  SWORD_SPIN_STEERING_SPEED = 0xf5c /* Retail Q16 0.1 * 0.6. */
 };
-// clang-format on
-SWORD_MOVE(s_sword_hp, 235, ACTION_RETAIL_010E);
-SWORD_MOVE(s_sword_lp, 236, ACTION_RETAIL_010E);
+
 SWORD_MOVE(s_sword_back_lp, 237, ACTION_RETAIL_0112);
 SWORD_MOVE(s_sword_back_hp, 238, ACTION_RETAIL_0112);
 SWORD_MOVE(s_spin_start, 223, ACTION_RETAIL_0407);
 
-static void n470420_2_sword_slash_recover(Fighter *fighter) {
-  fighter->body.vel[AXIS_X] = fighter->body.vel[AXIS_Z] = 0;
-  fighter->action = ACTION_RETAIL_1006;
-}
-
-static void n470420_2_sword_slash_query(Fighter *fighter) {
-  if (!fighter->connected && battle_contact(fighter, &n470420_2_sword_records[0]) != CONTACT_MISS) {
-    n470420_2_sword_slash_recover(fighter);
-    n470420_2_sword_slash_build(fighter, fighter->mmove_frame, true);
-  }
-}
-
-static void n470420_2_sword_slash_build(Fighter *fighter, int first, bool hit) {
-  int last = hit ? 42 : 43;
-  native_begin(fighter, first, last, scorpion_special_ready);
-  for (int frame = first; frame <= last; ++frame) {
-    FighterFn action = !hit && frame >= 17 && frame < 21 ? n470420_2_sword_slash_query : !hit && frame == 21 ? n470420_2_sword_slash_recover : NULL;
-    native_frame(fighter, frame, frame + hit, action);
-  }
-  native_play(fighter, hit);
-}
-
-static void n470420_2_sword_attack(Fighter *fighter, bool hp, bool back) {
+/* Standing slashes use the shared retail parameter runner. These back
+ * alternatives enter the original scripts directly (496c50/496c90). */
+static void sword_back_attack(Fighter *fighter, bool hp) {
   if (fighter_airborne(fighter)) {
     retail_air_attack(fighter, hp ? 0 : 1);
     return;
   }
-  const MoveDef *move = back ? (hp ? &s_sword_back_hp : &s_sword_back_lp) : (hp ? &s_sword_hp : &s_sword_lp);
-  fighter_start_move(fighter, S_PUNCH, move);
+  fighter_start_move(fighter, S_PUNCH, hp ? &s_sword_back_hp : &s_sword_back_lp);
   fighter->sample_override = 0;
-  if (back) {
-    RetailScriptContinuation script = hp ? (RetailScriptContinuation){0x4ec918, fighter_ready} : (RetailScriptContinuation){0x4ec8b0, fighter_ready};
-    retail_vm_enter(fighter, script.entry, script.finish);
-  } else {
-    n470420_2_sword_slash_build(fighter, 1, false);
-  }
+  retail_vm_enter(fighter, hp ? SWORD_BACK_HP_SCRIPT : SWORD_BACK_LP_SCRIPT, fighter_ready);
 }
 
 void retail_weapon_native_496c90(Fighter *fighter) {
-  n470420_2_sword_attack(fighter, true, true);
+  sword_back_attack(fighter, true);
 }
 
 void retail_weapon_native_496c50(Fighter *fighter) {
-  n470420_2_sword_attack(fighter, false, true);
+  sword_back_attack(fighter, false);
 }
 
 static void n470420_2_sword_spin_recover(Fighter *fighter) {
@@ -725,11 +688,14 @@ void scorpion_sword_spin_control(Fighter *fighter) {
   /* 496d20: raw Left, then Right (which wins), steer at 0.1 * 0.6 along the
    * screen-side axis. */
   int direction = (fighter->held & BUTTON_BIT(BUTTON_RIGHT)) ? 1 : (fighter->held & BUTTON_BIT(BUTTON_LEFT)) ? -1 : 0;
-  fighter_set_screen_speed(fighter, direction * 0xf5c);
+  fighter_set_screen_speed(fighter, direction * SWORD_SPIN_STEERING_SPEED);
 }
 
 void scorpion_sword_spin_query(Fighter *fighter) {
-  if (battle_contact(fighter, &n470420_2_sword_records[3]) == CONTACT_BLOCK) {
+  const Mk4Image *image = retail_vm_image();
+  uint32_t packed = mk4_image_u32(image, RETAIL_WEAPON_ATTACK_TABLE + SWORD_SPIN_ATTACK_SELECTOR * 4);
+  AttackRecord record = retail_vm_attack_record(image, packed * 4);
+  if (battle_contact(fighter, &record) == CONTACT_BLOCK) {
     n470420_2_sword_spin_recover(fighter);
   } else {
     scorpion_sword_spin_control(fighter);
@@ -740,7 +706,7 @@ void retail_weapon_native_480770(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &s_spin_start);
   fighter->sample_override = 0;
   fighter->mmove_cleanup = mk4_script_stop_body;
-  retail_vm_enter(fighter, 0x4e8850, fighter_ready);
+  retail_vm_enter(fighter, SWORD_SPIN_SCRIPT, fighter_ready);
 }
 
 #undef SWORD_MOVE

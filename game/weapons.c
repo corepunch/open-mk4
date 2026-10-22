@@ -202,7 +202,7 @@ WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int acti
                              .last = (int)count - 1,
                              .flags = SF_LOCK | SF_RECORD,
                              .action = action},
-      .record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d0c0 + (query & 255) * 4) * 4),
+      .record = retail_vm_attack_record(image, mk4_image_u32(image, RETAIL_WEAPON_ATTACK_TABLE + (query & 255) * 4) * 4),
       .first = (int)((query >> 8) & 255),
       .windup = (int)(phases >> 24),
       .target = (int)((phases >> 16) & 255),
@@ -643,7 +643,7 @@ void retail_weapon_contact(Fighter *fighter, uint32_t address) {
       break;
   }
   const Mk4Image *image = retail_vm_image();
-  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d0c0 + selector * 4) * 4);
+  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, RETAIL_WEAPON_ATTACK_TABLE + selector * 4) * 4);
   weapon_script_contact_tail(fighter, &record, (int)queries);
   fighter->native_variant = (int)address;
 }
