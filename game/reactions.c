@@ -150,7 +150,7 @@ static void react_jab_hit(Fighter *fighter) {
   retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
   bool crouch = fighter->action == ACTION_RETAIL_2001 || fighter->action == ACTION_RETAIL_2002;
   if (crouch) {
-    uint32_t physics = mk4_image_u32(retail_vm_image(), RETAIL_CROUCH_REACTION_PHYSICS_WORD);
+    uint32_t physics = mk4_image_u32(battle_data(), RETAIL_CROUCH_REACTION_PHYSICS_WORD);
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown crouch reaction callback");
     hit_script(fighter, RETAIL_CROUCH_REACTION_SCRIPT, retail_controller_return);
     return;
@@ -298,7 +298,7 @@ static void react_block(Fighter *fighter) {
   }
   if (entry != RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS) {
     fighter_set_speed(fighter, -speed);
-    uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_BLOCK_REACTION_FRICTION_ROW);
+    uint32_t physics = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_BLOCK_REACTION_FRICTION_ROW);
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native block callback");
   }
   if (variant >= 16 && fighter->armed) {
@@ -311,7 +311,7 @@ static void react_block(Fighter *fighter) {
   }
   fighter->native_variant = repeat;
   if (crouch) {
-    uint32_t descriptor = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS + (fighter->armed ? 4 : 0)) * 4;
+    uint32_t descriptor = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS + (fighter->armed ? 4 : 0)) * 4;
     retail_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {
@@ -569,8 +569,8 @@ FighterFn retail_engine_reaction(uint32_t entry) {
  * reaction starts on the victim's next update. */
 void battle_react(Fighter *victim, int reaction) {
   require(reaction >= 0, "Invalid reaction id");
-  uint32_t target = retail_reaction_target(retail_vm_image(), (unsigned)reaction);
-  FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
+  uint32_t target = retail_reaction_target(battle_data(), (unsigned)reaction);
+  FighterFn native = retail_reaction_entry(battle_data(), (unsigned)reaction);
   q16 retained_velocity[3];
   if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == RETAIL_NATIVE_SPEAR_WAIT) {
     memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);

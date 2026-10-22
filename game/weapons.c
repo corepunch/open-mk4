@@ -40,7 +40,7 @@ void weapon_stance(Fighter *fighter, int state) {
     descriptor = state == S_IDLE ? fighter->weapon->idle
                  : state == S_WALK
                      ? (fighter_holds_back(fighter) ? fighter->weapon->backward : fighter->weapon->forward)
-                     : mk4_image_u32(retail_vm_image(), (state == S_CROUCH ? MK4_RETAIL_DATA_CROUCH_HOLD_DESCRIPTORS : MK4_RETAIL_DATA_ROSTER_DEF) + 4) * 4;
+                     : mk4_image_u32(battle_data(), (state == S_CROUCH ? MK4_RETAIL_DATA_CROUCH_HOLD_DESCRIPTORS : MK4_RETAIL_DATA_ROSTER_DEF) + 4) * 4;
   }
   if (state == S_WALK && fighter->state == S_WALK &&
       (fighter->current_move == move ||
@@ -53,7 +53,7 @@ void weapon_stance(Fighter *fighter, int state) {
     fighter->sample_override = -1;
   } else if (state == S_CROUCH) {
     /* Original46b610/494120 binds the unarmed descriptor in53ce40. */
-    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_WEAPON_STANCE) * 4, 0);
+    retail_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_WEAPON_STANCE) * 4, 0);
   }
 }
 
@@ -189,7 +189,7 @@ void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool trav
 /* Native494990/494a00 read these original packed parameters. Motion
  * is the optional4947d0 row supplied by the native frontend, not script data. */
 WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int action) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   require(parameters >= MK4_RETAIL_DATA_WEAPON_PARAMETERS_BEGIN && parameters <= MK4_RETAIL_DATA_WEAPON_PARAMETERS_END && parameters % 4 == 0,
       "Invalid native weapon parameter row");
   uint32_t descriptor = mk4_image_u32(image, parameters) * 4;
@@ -288,7 +288,7 @@ static void object_tick(Projectile *p) {
     p->angle[k] = (p->angle[k] + p->spin[k]) % 0x6487e;
   }
   if (p->phase == 0) {
-    AttackRecord record = retail_vm_attack_record(retail_vm_image(), WEAPON_THROW_ATTACK_RECORD);
+    AttackRecord record = retail_vm_attack_record(battle_data(), WEAPON_THROW_ATTACK_RECORD);
     ContactResult result = battle_contact_from(&g_battle.fighters[p->owner], &record, p->pos, p->facing);
     if (result != CONTACT_MISS) {
       begin_bounce(p);
@@ -356,7 +356,7 @@ static void weapon_air_landing(Fighter *fighter) {
 static void weapon_air_query(Fighter *fighter) {
   bool high = fighter_move(fighter)->clip == 252;
   if (!fighter->connected) {
-    AttackRecord record = retail_vm_attack_record(retail_vm_image(), high ? WEAPON_AIR_HP_ATTACK_RECORD : WEAPON_AIR_LP_ATTACK_RECORD);
+    AttackRecord record = retail_vm_attack_record(battle_data(), high ? WEAPON_AIR_HP_ATTACK_RECORD : WEAPON_AIR_LP_ATTACK_RECORD);
     battle_contact(fighter, &record);
   }
   weapon_air_landing(fighter);
@@ -540,7 +540,7 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
 }
 
 static void axe_second_contact(Fighter *fighter) {
-  AttackRecord record = retail_vm_attack_record(retail_vm_image(), AXE_FOLLOWUP_ATTACK_RECORD);
+  AttackRecord record = retail_vm_attack_record(battle_data(), AXE_FOLLOWUP_ATTACK_RECORD);
   ContactResult result = battle_contact(fighter, &record);
   if (result != CONTACT_MISS && result != CONTACT_BLOCK) {
     const NativeAxeProfile *profile = fighter->native_context;
@@ -649,7 +649,7 @@ void retail_weapon_contact(Fighter *fighter, uint32_t address) {
       queries = 2;
       break;
   }
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, RETAIL_WEAPON_ATTACK_TABLE + selector * 4) * 4);
   weapon_script_contact_tail(fighter, &record, (int)queries);
   fighter->native_variant = (int)address;

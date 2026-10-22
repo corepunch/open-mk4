@@ -1,4 +1,7 @@
 #include "game.h"
+#include "mk4_program.h"
+
+static Mk4Image image;
 #include "native.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +56,7 @@ static void mmove_end(Fighter *fighter) {
 }
 
 static void setup(void) {
-  battle_init(0, 4);
+  battle_init(&image, 0, 4);
   g_battle.phase = PHASE_FIGHT;
   g_battle.fighters[0].body.pos[AXIS_X] = -5 * Q16_ONE;
   g_battle.fighters[1].body.pos[AXIS_X] = 5 * Q16_ONE;
@@ -139,7 +142,7 @@ static void mmove_phases_and_cleanup(void) {
     } else if (kind == 2) {
       battle_next_round();
     } else if (kind == 3) {
-      battle_init(4, 0);
+      battle_init(&image, 4, 0);
     } else {
       battle_reset_match();
     }
@@ -299,6 +302,8 @@ static void advance(int ticks) {
 }
 
 int main(void) {
+  image = mk4_image_load("MK4/MK-4.EXE");
+  mk4_program_load(&image, "build/mk4.scripts");
   mmove_frames_and_callbacks();
   mmove_phases_and_cleanup();
   mmove_hold_jump_and_loop();

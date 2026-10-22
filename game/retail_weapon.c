@@ -62,7 +62,7 @@ static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
       fighter->action = native->action;
     }
     if (native->back_test && back) {
-      uint32_t alternative = mk4_image_u32(retail_vm_image(), native->parameters + 12);
+      uint32_t alternative = mk4_image_u32(battle_data(), native->parameters + 12);
       if (alternative != 0) {
         require(alternative != address, "Recursive native weapon alternative");
         weapon_native(fighter, alternative, false);
@@ -167,7 +167,7 @@ static void weapon_input(Fighter *fighter, unsigned button, bool back) {
     retail_air_attack(fighter, button);
     return;
   }
-  uint32_t address = mk4_image_u32(retail_vm_image(), fighter->weapon->buttons + button * 4);
+  uint32_t address = mk4_image_u32(battle_data(), fighter->weapon->buttons + button * 4);
   weapon_native(fighter, address, back || fighter_holds_back(fighter));
 }
 
@@ -191,9 +191,9 @@ static const WeaponDef *weapon_definition(unsigned roster) {
   static WeaponDef definitions[MK4_ROSTER_COUNT];
   require(roster < MK4_ROSTER_COUNT, "Invalid native inventory slot");
   RetailWeaponInventory inventory;
-  retail_weapon_read(retail_vm_image(), roster, &inventory);
+  retail_weapon_read(battle_data(), roster, &inventory);
   definitions[roster] = (WeaponDef){.type = (int)inventory.type,
-      .model = mk4_weapon_model_index(retail_vm_image(), inventory.address),
+      .model = mk4_weapon_model_index(battle_data(), inventory.address),
       .inventory = inventory.address,
       .buttons = inventory.buttons,
       .idle = inventory.idle,
@@ -228,7 +228,7 @@ void retail_weapon_draw(Fighter *fighter) {
     retail_weapon_equip(fighter);
     weapon_followup_victim(fighter);
     require(fighter->weapon->type >= 0x60 && fighter->weapon->type <= 0x6f, "Invalid weapon followup type");
-    uint32_t target = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_WEAPON_DRAW_FOLLOWUP_ENTRIES + (unsigned)(fighter->weapon->type - 0x60) * 4);
+    uint32_t target = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_WEAPON_DRAW_FOLLOWUP_ENTRIES + (unsigned)(fighter->weapon->type - 0x60) * 4);
     weapon_native(fighter, target, false);
   } else {
     weapon_draw(fighter, weapon_definition((unsigned)fighter->roster));

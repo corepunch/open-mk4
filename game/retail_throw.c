@@ -27,7 +27,7 @@ static void victim_ground_turn(Fighter *fighter) {
 }
 
 void retail_native_sound_list(uint32_t address) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   unsigned count = mk4_image_u32(image, address);
   require(count > 0 && count <= 32, "Invalid native sound token list");
   battle_sound(SOUND_TOKEN, (int)mk4_image_u32(image, address + 4 + 4 * battle_random(count)));
@@ -82,7 +82,7 @@ static void victim_pause_getup(Fighter *fighter) {
 static void victim_finish_flip_getup(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_VICTIM_FINISH_FLIP_GETUP) * 4, 0);
   native_finish_clip(fighter, victim_pause_getup);
 }
@@ -102,7 +102,7 @@ static void victim_impact_finish(Fighter *fighter) {
 
 static void victim_impact_roll_getup(Fighter *fighter) {
   victim_begin(fighter);
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_VICTIM_IMPACT_ROLL_GETUP) * 4, 0);
   native_play_rows(fighter, 45, 1, victim_impact_finish);
 }
@@ -119,7 +119,7 @@ static void victim_pause_slide(Fighter *fighter) {
 }
 
 static void victim_stance_blend(Fighter *fighter) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   int clip = retail_stance_clip(image, (unsigned)fighter->roster, false);
   unsigned count = mk4_image_u32(image, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   require(count > 0 && count <= 65535, "Invalid native stance animation length");
@@ -146,7 +146,7 @@ static void victim_slide_to_stance(Fighter *fighter) {
  * already supply the rebased position. The other four releases are scripts
  * with distinct slide/impact paths; none of that playback is authored here. */
 void retail_lp_victim(Fighter *fighter) {
-  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  uint32_t entry = retail_reaction_target(battle_data(), (unsigned)fighter->reaction);
   if (entry == RETAIL_NATIVE_LP_VICTIM_WEAPON_SCATTER_RELEASE && fighter_peer(fighter)->roster == 15) {
     retail_disturb_resting_weapons();
   }
@@ -206,7 +206,7 @@ static void lk_inherited_finish(Fighter *fighter) {
 }
 
 void retail_lk_victim(Fighter *fighter) {
-  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  uint32_t entry = retail_reaction_target(battle_data(), (unsigned)fighter->reaction);
   int sample = fighter_sample(fighter);
   victim_begin(fighter);
   switch (entry) {
@@ -223,8 +223,8 @@ void retail_lk_victim(Fighter *fighter) {
     case RETAIL_NATIVE_LK_VICTIM_EFFECT_SLIDE:
       mk4_script_effect(fighter, 0);
       retail_vm_bind_animation(fighter, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_169, 0);
-      retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_LK_VICTIM_SLIDE) * 4, 0);
-      fighter_set_speed(fighter, (q16)mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_LK_VICTIM_SLIDE_SPEED));
+      retail_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_LK_VICTIM_SLIDE) * 4, 0);
+      fighter_set_speed(fighter, (q16)mk4_image_u32(battle_data(), MK4_RETAIL_DATA_LK_VICTIM_SLIDE_SPEED));
       native_play_rows(fighter, mini(fighter_move(fighter)->last, 26), 1, lk_impact_finish);
       break;
     default:
@@ -368,7 +368,7 @@ void retail_lk_throw(Fighter *fighter) {
     fighter_ready(fighter);
     return;
   }
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t native = retail_lk_target(image, (unsigned)fighter->roster);
   uint32_t script = lk_script(native);
   retail_throw_capture(fighter, ACTION_RETAIL_0501, native != RETAIL_NATIVE_SUB_ZERO_LK_THROW_ENTRY);
@@ -393,7 +393,7 @@ void retail_throw_pair_start(Fighter *fighter) {
 }
 
 static void idle_pose(Fighter *fighter) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   int clip = retail_stance_clip(image, (unsigned)fighter->roster, false);
   retail_vm_bind_animation(fighter, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE, 0);
 }

@@ -3,6 +3,8 @@
 `mk4/program.asm` is editable, checked-in MK4 wordcode disassembly. `make scripts`
 assembles it into `build/mk4.scripts`; ordinary builds depend on that package.
 Assembly uses no EXE, disassembler, generated C, or per-fighter implementation.
+The host explicitly loads the package before initializing a match;
+`mk4-game --scripts PATH` selects a different assembled package.
 The shared C interpreter executes these assembled words. Original EXE data is
 still needed for animation descriptors, roster/command tables, assets and other
 native parameters. Script fetches outside the assembled word set fail instead

@@ -1,7 +1,6 @@
 #include "mk4_assets.h"
 #include "mk4_package.h"
 #include "mk4_image.h"
-#include "mk4_program.h"
 #include "math_util.h"
 #include <math.h>
 #include <stdio.h>
@@ -653,8 +652,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       (int)assets->clips.data[434].frames.data[0].angles.count == hand_channels && (int)assets->clips.data[541].frames.data[0].angles.count == hand_channels,
       "Shinnok hand animation/rig mismatch");
   package_free(&archive);
-  mk4_program_load(&exe, "build/mk4.scripts");
-  assets->retail_image = exe;
+  assets->image = exe;
 }
 
 void assets_load_battle(Assets *assets, const char *archive_path, const char *executable) {
@@ -873,7 +871,7 @@ static void geometry_free(Geometry *g) {
 }
 
 void assets_free(Assets *a) {
-  mk4_image_free(&a->retail_image);
+  mk4_image_free(&a->image);
   sound_bank_free(&a->audio);
   for (size_t i = 0; i < a->scene_models.count; ++i) {
     FREE_ARRAY(a->scene_models.data[i].bones);

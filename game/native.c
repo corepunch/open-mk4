@@ -60,7 +60,7 @@ void native_address_end(Fighter *fighter, uint32_t address) {
 /* Native4287a0 reads a packed descriptor and a byte-address callback cell,
  * then starts ordinary forward native playback at pose zero. */
 void native_animation_table(Fighter *fighter, uint32_t table) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t descriptor = mk4_image_u32(image, table) * 4;
   uint32_t callback = mk4_image_u32(image, table + 4);
   retail_vm_bind_animation(fighter, descriptor, 0);

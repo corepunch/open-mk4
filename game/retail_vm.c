@@ -6,20 +6,6 @@
 
 static void resume_script_return(Fighter *fighter);
 
-/* Rule-only clients still execute retail words. The game supplies its selected
- * image through assets; this immutable cache owns the default test image. */
-const Mk4Image *retail_vm_image(void) {
-  static Mk4Image image;
-  if (g_battle.retail_scripts != NULL) {
-    return g_battle.retail_scripts;
-  }
-  if (image.bytes.data == NULL) {
-    image = mk4_image_load("MK4/MK-4.EXE");
-    mk4_program_load(&image, "build/mk4.scripts");
-  }
-  return &image;
-}
-
 void retail_vm_wait_native(Fighter *fighter, unsigned ticks, FighterFn next) {
   require(fighter->retail_vm.active, "Native wait without a retail task");
   fighter->retail_vm.parked = true;
@@ -99,7 +85,7 @@ static void bind_image(Fighter *fighter, const Mk4Image *image, uint32_t packed,
 
 void retail_vm_bind_animation(Fighter *fighter, uint32_t descriptor, int first) {
   require(descriptor % 4 == 0, "Unaligned animation descriptor");
-  bind_image(fighter, fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image(), descriptor / 4, first);
+  bind_image(fighter, fighter->retail_vm.active ? fighter->retail_vm.image : battle_data(), descriptor / 4, first);
 }
 
 static void bind(Fighter *fighter, uint32_t packed, int first) {
@@ -230,7 +216,7 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
 }
 
 void retail_vm_enter(Fighter *fighter, uint32_t entry, FighterFn next) {
-  retail_vm_start_at(fighter, retail_vm_image(), entry, RETAIL_SCRIPT_BEGIN, RETAIL_SCRIPT_END, next, retail_native_vm);
+  retail_vm_start_at(fighter, battle_data(), entry, RETAIL_SCRIPT_BEGIN, RETAIL_SCRIPT_END, next, retail_native_vm);
 }
 
 /* Script returns keep their own typed continuation; native addresses select

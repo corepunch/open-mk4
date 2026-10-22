@@ -161,7 +161,7 @@ static uint16_t sound_half(const Mk4Image *image, uint32_t address) {
  * This remap is independent of script and native-action roster aliases. */
 void mk4_script_roster_sound(Fighter *fighter, int selector) {
   require(selector >= 0 && selector < 22 && fighter->roster >= 0 && fighter->roster < MK4_ROSTER_COUNT, "Invalid roster sound selector");
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   unsigned roster = fighter->roster == 16 ? 10u : (unsigned)fighter->roster;
   uint32_t remap_address = MK4_RETAIL_DATA_SOUND_ROSTER_REMAP + roster;
   int remap = (int8_t)(mk4_image_u32(image, remap_address & ~3u) >> ((remap_address & 3u) * 8));
@@ -353,7 +353,7 @@ void mk4_script_jab_contact(Fighter *fighter) {
   if ((action == ACTION_RETAIL_010C && fighter_sample(victim) < 5) || (action == ACTION_RETAIL_0102 && victim->avoids_high)) {
     return;
   }
-  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
+  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : battle_data();
   uint32_t record = mk4_image_u32(image, MK4_RETAIL_DATA_JAB_CONTACT);
   AttackRecord attack = retail_vm_attack_record(image, record * 4);
   battle_contact(fighter, &attack);
@@ -442,7 +442,7 @@ void mk4_script_shake(Fighter *fighter, int selector) {
   };
 
   require(selector >= 0 && selector < CAMERA_SHAKE_ROW_COUNT, "Unexpected camera pulse selector");
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t row = MK4_RETAIL_DATA_CAMERA_SHAKE_ROWS + (unsigned)selector * CAMERA_SHAKE_ROW_BYTES;
   battle_camera_shake((int)mk4_image_u32(image, row), (int)mk4_image_u32(image, row + 4), (q16)mk4_image_u32(image, row + 8));
 }
@@ -519,7 +519,7 @@ void mk4_mmove_hold(Fighter *fighter) {
 /* 42be10 ->490ab0 reads speed -0x3333 from4de358, opens descriptor53c540
  * (clip282), and advances to its end before controller return. */
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
-  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
+  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : battle_data();
   fighter_set_speed(fighter, -(q16)mk4_image_u32(image, MK4_RETAIL_DATA_MMOVE_LK_OWNER_RETURN));
   retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN) * 4, 0);
   int last = fighter_move(fighter)->last;
@@ -566,7 +566,7 @@ void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
     return;
   }
   bool crouch = (fighter->held & BUTTON_BIT(BUTTON_DOWN)) != 0;
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t pair = record + (crouch ? 8 : 0);
   q16 speed = (q16)mk4_image_u32(image, pair);
   uint32_t descriptor = mk4_image_u32(image, pair + 4) * 4;

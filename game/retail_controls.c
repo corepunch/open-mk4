@@ -57,13 +57,13 @@ static bool press_air_controller(Fighter *fighter, uint32_t target) {
     default:
       return false;
   }
-  uint32_t entry = retail_action_target(retail_vm_image(), 8, action);
+  uint32_t entry = retail_action_target(battle_data(), 8, action);
   fighter_interrupt(fighter, retail_native_entry(entry));
   return true;
 }
 
 static FighterFn action_entry(unsigned index) {
-  uint32_t target = retail_action_target(retail_vm_image(), 1, index);
+  uint32_t target = retail_action_target(battle_data(), 1, index);
   return retail_native_entry(target);
 }
 
@@ -72,7 +72,7 @@ static void enter_action(Fighter *fighter, unsigned index) {
 }
 
 static FighterFn crouch_entry(unsigned index) {
-  uint32_t target = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CROUCH_ENTRY + index * 4);
+  uint32_t target = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_CROUCH_ENTRY + index * 4);
   return retail_native_entry(target);
 }
 
@@ -109,7 +109,7 @@ uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button butt
 
 void retail_combo_high_punch(Fighter *fighter) {
   unsigned slot = retail_native_character_slot((unsigned)fighter->roster);
-  uint32_t entry = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_COMBO_HIGH_PUNCH + slot * 4);
+  uint32_t entry = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_COMBO_HIGH_PUNCH + slot * 4);
   uint32_t script;
   switch (entry) {
     case RETAIL_NATIVE_JAX_COMBO_HP_ENTRY:
@@ -207,7 +207,7 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
     case RETAIL_NATIVE_PRESS_CROUCHING_HIGH_PUNCH:
       /* The engine command matcher owns finish command gates before fallback. */
       {
-        uint32_t target = retail_action_target(retail_vm_image(), 1, 1);
+        uint32_t target = retail_action_target(battle_data(), 1, 1);
         entry = target == RETAIL_NATIVE_UPPERCUT_ENTRY ? retail_uppercut : retail_native_entry(target);
       }
       break;
@@ -283,8 +283,8 @@ static void close_followup(Fighter *fighter) {
 }
 
 static bool contact(Fighter *fighter, uint32_t table, unsigned selector, ContactResult *result) {
-  uint32_t packed = mk4_image_u32(retail_vm_image(), table + selector * 4);
-  AttackRecord attack = retail_vm_attack_record(retail_vm_image(), packed * 4);
+  uint32_t packed = mk4_image_u32(battle_data(), table + selector * 4);
+  AttackRecord attack = retail_vm_attack_record(battle_data(), packed * 4);
   uint64_t continuation = fighter->continuation;
   *result = battle_contact(fighter, &attack);
   return fighter->continuation == continuation && fighter->pending == NULL;
@@ -348,7 +348,7 @@ void retail_combo_high_punch_tail(Fighter *fighter) {
 
 static void knee_blend(Fighter *fighter) {
   close_followup(fighter);
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   int clip = fighter->armed ? 286 : retail_stance_clip(image, (unsigned)fighter->roster, false);
   int count = (int)mk4_image_u32(image, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   mk4_mmove_blend_to(fighter, clip, count, 0, 0x1999, 0, fighter_ready);
@@ -396,7 +396,7 @@ void retail_close_high_kick(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_KICK, ACTION_RETAIL_0103, false);
   if ((fighter_opponent(fighter)->action & 0xf000) == 0x4000) {
-    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK) * 4, 0);
+    retail_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK) * 4, 0);
     native_play_rows(fighter, 4, 1, knee_script);
   } else {
     knee_script(fighter);
@@ -404,7 +404,7 @@ void retail_close_high_kick(Fighter *fighter) {
 }
 
 void retail_press_table(Fighter *fighter, Button button) {
-  uint32_t target = retail_button_target(retail_vm_image(), fighter->buttons->retail_address, button);
+  uint32_t target = retail_button_target(battle_data(), fighter->buttons->retail_address, button);
   retail_press_native_button(fighter, target);
 }
 
@@ -428,7 +428,7 @@ bool retail_native_button_chord(const Fighter *fighter, uint32_t address) {
     primary <<= P2_PRIMARY_SHIFT;
     secondary <<= P2_SECONDARY_SHIFT;
   }
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   return (primary & mk4_image_u32(image, row + 8)) == mk4_image_u32(image, row) &&
          (secondary & mk4_image_u32(image, row + 12)) == mk4_image_u32(image, row + 4);
 }

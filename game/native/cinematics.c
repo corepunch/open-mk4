@@ -370,12 +370,12 @@ enum {
 };
 
 static unsigned skin_part_count(void) {
-  return retail_terminated_rows(retail_vm_image(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
+  return retail_terminated_rows(battle_data(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS, SKIN_PART_ROW_BYTES, SKIN_PART_CAPACITY);
 }
 
 static int skin_part_joint(int index) {
   require(index >= 0 && (unsigned)index < skin_part_count(), "Invalid native skin tear phase");
-  return (int)mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS + (unsigned)index * SKIN_PART_ROW_BYTES);
+  return (int)mk4_image_u32(battle_data(), MK4_RETAIL_DATA_SKIN_SEVER_ROWS + (unsigned)index * SKIN_PART_ROW_BYTES);
 }
 
 void fujin_second_blood(Fighter *fighter, int task_type) {
@@ -916,7 +916,7 @@ static void liu_kang_fatality_dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
   int actor_end = DRAGON_ACTOR_START_DELAY + scene_frame_count(liu_kang_fatality_dragon_actor, 2);
   int victim_end = DRAGON_VICTIM_START_DELAY + scene_frame_count(liu_kang_fatality_dragon_target, NATIVE_COUNT(liu_kang_fatality_dragon_target)) +
-                   (int)mk4_image_u32(retail_vm_image(), DRAGON_VICTIM_ANIMATION_DESCRIPTOR + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
+                   (int)mk4_image_u32(battle_data(), DRAGON_VICTIM_ANIMATION_DESCRIPTOR + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   int last = maxi(actor_end, victim_end);
   native_motion_begin(fighter, last - first + 1, liu_kang_finish_scene);
   for (int frame = first; frame <= last; ++frame) {
@@ -1036,7 +1036,7 @@ void quan_chi_second_fatality(Fighter *fighter) {
     retail_finish_first(fighter);
     return;
   }
-  uint32_t target = retail_finish_target(retail_vm_image(), roster, true);
+  uint32_t target = retail_finish_target(battle_data(), roster, true);
   if (target == 0) {
     fighter_ready(fighter);
     return;

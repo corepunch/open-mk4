@@ -1,4 +1,5 @@
 #include "game.h"
+#include "mk4_program.h"
 #include "retail_native.h"
 #include "mk4_assets.h"
 #include <math.h>
@@ -60,7 +61,7 @@ static void cross_clip_pose_interpolation(const Assets *assets) {
 }
 
 static void fighter_render_snapshots(const Assets *assets) {
-  battle_init(0, 0);
+  battle_init(&assets->image, 0, 0);
   battle_bind_assets(assets);
   const InputFrame idle[2] = {0};
   battle_step(idle);
@@ -70,7 +71,7 @@ static void fighter_render_snapshots(const Assets *assets) {
   battle_reset_match();
   check(g_battle.current_animation.valid && g_battle.current_animation.tick == 0 && g_battle.previous_animation.tick == 0,
       "Reset must replace both animation snapshots");
-  battle_init(0, 0);
+  battle_init(&assets->image, 0, 0);
   Fighter *fighter = &g_battle.fighters[0];
   retail_uppercut(fighter);
   battle_bind_assets(assets);
@@ -124,7 +125,7 @@ static void scene_pose_entry(Fighter *actor) {
 static void independent_scene_poses(const Assets *assets) {
   const int sources[] = {4, 2};
   for (int variant = 0; variant < 2; ++variant) {
-    battle_init(14, sources[variant]);
+    battle_init(&assets->image, 14, sources[variant]);
     battle_bind_assets(assets);
     g_battle.phase = PHASE_FIGHT;
     static const MoveDef pose = {.clip = 408, .last = 142};
@@ -166,6 +167,8 @@ int main(void) {
   }
   Assets assets = {0};
   assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
+  mk4_program_load(&assets.image, "build/mk4.scripts");
+  battle_init(&assets.image, 0, 4);
   check(assets.characters.count == 18 && assets.clips.count == 612, "Incomplete roster/pack");
   size_t frames = 0, poses = 0;
   for (size_t i = 0; i < assets.clips.count; ++i)

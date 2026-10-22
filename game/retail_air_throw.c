@@ -83,7 +83,7 @@ void retail_slam_tail(Fighter *fighter) {
   Fighter *victim = mk4_script_release_pair(fighter);
   retail_slam_reaction(victim);
   fighter->action = 0;
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   fighter_set_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_SPEED));
   fighter->body.vel[AXIS_Y] = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_Y_VELOCITY);
   fighter->body.gravity = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY);
@@ -200,7 +200,7 @@ static void air_getup_rise(Fighter *victim) {
     fighter_finish_mmove(victim, NULL);
     return;
   }
-  retail_vm_bind_animation(victim, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE) * 4, 0);
+  retail_vm_bind_animation(victim, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE) * 4, 0);
   native_finish_clip(victim, mk4_mmove_thrown_finish);
 }
 

@@ -45,7 +45,7 @@ static void fujin_dive_dive_recoil(Fighter *fighter) {
 }
 
 static void fujin_dive_dive_query(Fighter *fighter) {
-  AttackRecord fujin_dive_dive_contact = retail_vm_attack_record(retail_vm_image(), DIVE_ATTACK_RECORD);
+  AttackRecord fujin_dive_dive_contact = retail_vm_attack_record(battle_data(), DIVE_ATTACK_RECORD);
 
   /* 4704d0 checks the floor before each subsequent D[15] query. */
   if (!fighter_airborne(fighter)) {
@@ -167,7 +167,7 @@ static void jarek_ball_ball_recoil(Fighter *fighter) {
 }
 
 static bool jarek_ball_ball_contact(Fighter *fighter) {
-  AttackRecord jarek_ball_ball_record = retail_vm_attack_record(retail_vm_image(), BALL_ATTACK_RECORD);
+  AttackRecord jarek_ball_ball_record = retail_vm_attack_record(battle_data(), BALL_ATTACK_RECORD);
 
   if (battle_contact(fighter, &jarek_ball_ball_record) == CONTACT_MISS) {
     return false;
@@ -287,7 +287,7 @@ static const MoveDef kai_lunge_kick_lunge_kick = {.clip = 551, .last = 59, .flag
 /* B[9] 0x4eba20: 14% damage, reactions 127 hit/air and 5 block. */
 
 static void kai_lunge_kick_lunge_query(Fighter *fighter) {
-  AttackRecord kai_lunge_kick_lunge_contact = retail_vm_attack_record(retail_vm_image(), LUNGE_ATTACK_RECORD);
+  AttackRecord kai_lunge_kick_lunge_contact = retail_vm_attack_record(battle_data(), LUNGE_ATTACK_RECORD);
 
   /* 470b30 skips 470dc0 after the first contact in this list. */
   if (!fighter->connected) {
@@ -331,7 +331,7 @@ static void liu_kang_flying_kick_flying_hold(Fighter *fighter);
 static const MoveDef liu_kang_flying_kick_s_flying_kick = {.clip = 92, .last = 5, .flags = RETAIL, .action = ACTION_RETAIL_0207};
 
 static void liu_kang_flying_kick_flying_query(Fighter *fighter) {
-  AttackRecord liu_kang_flying_kick_flying_record = retail_vm_attack_record(retail_vm_image(), FLYING_ATTACK_RECORD);
+  AttackRecord liu_kang_flying_kick_flying_record = retail_vm_attack_record(battle_data(), FLYING_ATTACK_RECORD);
 
   fighter->mmove_hold = fighter_airborne(fighter) && battle_contact(fighter, &liu_kang_flying_kick_flying_record) == CONTACT_MISS;
 }
@@ -347,7 +347,7 @@ static void liu_kang_flying_kick_flying_branch(Fighter *fighter) {
 }
 
 static void liu_kang_flying_kick_flying_hold(Fighter *fighter) {
-  AttackRecord liu_kang_flying_kick_flying_record = retail_vm_attack_record(retail_vm_image(), FLYING_ATTACK_RECORD);
+  AttackRecord liu_kang_flying_kick_flying_record = retail_vm_attack_record(battle_data(), FLYING_ATTACK_RECORD);
 
   if (fighter_airborne(fighter) && battle_contact(fighter, &liu_kang_flying_kick_flying_record) == CONTACT_MISS) {
     native_begin(fighter, 0, 0, liu_kang_flying_kick_flying_branch);
@@ -423,7 +423,7 @@ static void quan_chi_flip_kick_flip_finish(Fighter *fighter) {
 /* 47a500: contact submits pose 19 (429970), stops motion (4906e0) and sets
  * no-guard (490140). A block waits five extra ticks before 47a5c0's ten. */
 static void quan_chi_flip_kick_flip_contact(Fighter *fighter) {
-  AttackRecord quan_chi_flip_kick_flip_record = retail_vm_attack_record(retail_vm_image(), FLIP_ATTACK_RECORD);
+  AttackRecord quan_chi_flip_kick_flip_record = retail_vm_attack_record(battle_data(), FLIP_ATTACK_RECORD);
 
   ContactResult result = battle_contact(fighter, &quan_chi_flip_kick_flip_record);
   if (result == CONTACT_MISS) {
@@ -650,7 +650,7 @@ static void quan_chi_teleport_teleport_blocked(Fighter *fighter) {
 
 /* 47cf6b: gravity zero means the owner landed without contact (47d500). */
 static void quan_chi_teleport_teleport_query(Fighter *fighter) {
-  AttackRecord quan_chi_teleport_stomp_record = retail_vm_attack_record(retail_vm_image(), STOMP_ATTACK_RECORD);
+  AttackRecord quan_chi_teleport_stomp_record = retail_vm_attack_record(battle_data(), STOMP_ATTACK_RECORD);
 
   if (fighter->body.gravity == 0) {
     quan_chi_teleport_teleport_missed(fighter);
@@ -851,7 +851,7 @@ static void flip_kick_finish(Fighter *fighter, bool blocked) {
 }
 
 static void flip_kick_query(Fighter *fighter) {
-  AttackRecord flip_kick_record = retail_vm_attack_record(retail_vm_image(), FLIP_KICK_ATTACK_RECORD);
+  AttackRecord flip_kick_record = retail_vm_attack_record(battle_data(), FLIP_KICK_ATTACK_RECORD);
 
   ContactResult result = battle_contact(fighter, &flip_kick_record);
   if (result != CONTACT_MISS) {
@@ -986,7 +986,7 @@ static void reptile_dash_dash_shake_back(Fighter *fighter) {
 }
 
 static void reptile_dash_dash_contact(Fighter *fighter) {
-  AttackRecord reptile_dash_dash_record = retail_vm_attack_record(retail_vm_image(), DASH_ATTACK_RECORD);
+  AttackRecord reptile_dash_dash_record = retail_vm_attack_record(battle_data(), DASH_ATTACK_RECORD);
 
   if (fighter->connected) {
     return;
@@ -1035,7 +1035,7 @@ void reptile_dash(Fighter *fighter) {
 }
 
 static void reptile_dash_roll_probe(Fighter *fighter) {
-  AttackRecord reptile_dash_roll_record = retail_vm_attack_record(retail_vm_image(), ROLL_ATTACK_RECORD);
+  AttackRecord reptile_dash_roll_record = retail_vm_attack_record(battle_data(), ROLL_ATTACK_RECORD);
 
   /* 47b260 queries D[21] until its local latch is set. */
   if (!fighter->connected) {
@@ -1170,7 +1170,7 @@ static void scorpion_teleport_teleport_block_return(Fighter *fighter) {
 }
 
 static void scorpion_teleport_teleport_query(Fighter *fighter) {
-  AttackRecord scorpion_teleport_teleport_record = retail_vm_attack_record(retail_vm_image(), TELEPORT_ATTACK_RECORD);
+  AttackRecord scorpion_teleport_teleport_record = retail_vm_attack_record(battle_data(), TELEPORT_ATTACK_RECORD);
 
   if (!fighter_airborne(fighter)) {
     fighter_finish_mmove(fighter, scorpion_special_ready);
@@ -1359,7 +1359,7 @@ static void sonya_square_wave_square_victim_guard(Fighter *victim);
 static const MoveDef sonya_square_wave_s_square_wave = {.clip = 72, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x201};
 
 static void sonya_square_wave_square_query(Fighter *fighter) {
-  AttackRecord sonya_square_wave_square_record = retail_vm_attack_record(retail_vm_image(), SQUARE_ATTACK_RECORD);
+  AttackRecord sonya_square_wave_square_record = retail_vm_attack_record(battle_data(), SQUARE_ATTACK_RECORD);
 
   battle_contact(fighter, &sonya_square_wave_square_record);
   fighter->mmove_hold = fighter_height(fighter) < 2.4f && !fighter->connected;
@@ -1419,7 +1419,7 @@ static void sonya_square_wave_square_victim_guard(Fighter *victim) {
 
 /* The carried pose cycle repeats until the owner leaves the square wave. */
 void retail_square_victim(Fighter *victim) {
-  retail_vm_bind_animation(victim, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_SQUARE_VICTIM) * 4, 0);
+  retail_vm_bind_animation(victim, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_SQUARE_VICTIM) * 4, 0);
   victim->flags |= FF_PAIRED;
   const Fighter *owner = fighter_opponent(victim);
   if (owner->action != 0x201 || owner->pending != NULL) {
@@ -1477,7 +1477,7 @@ static const mframe_t ice_clone_start_frames[3] = {{0}};
 static const mmove_t ice_clone_start = {.firstframe = 0, .lastframe = 2, .frame = ice_clone_start_frames, .endfunc = ice_clone_spin};
 
 static void ice_clone_object(Projectile *p) {
-  AttackRecord ice_clone_record = retail_vm_attack_record(retail_vm_image(), ICE_CLONE_ATTACK_RECORD);
+  AttackRecord ice_clone_record = retail_vm_attack_record(battle_data(), ICE_CLONE_ATTACK_RECORD);
 
   Fighter *owner = &g_battle.fighters[p->owner];
   if (g_battle.contacts_off || battle_contact_from(owner, &ice_clone_record, p->pos, p->facing) != CONTACT_MISS) {
@@ -1650,7 +1650,7 @@ static void sub_zero_slide_slide_cleanup(Fighter *fighter) {
 }
 
 static void sub_zero_slide_slide_contact(Fighter *fighter) {
-  AttackRecord sub_zero_slide_slide_record = retail_vm_attack_record(retail_vm_image(), SLIDE_ATTACK_RECORD);
+  AttackRecord sub_zero_slide_slide_record = retail_vm_attack_record(battle_data(), SLIDE_ATTACK_RECORD);
 
   fighter->sample_override = 9;
   ContactResult contact = battle_contact(fighter, &sub_zero_slide_slide_record);
@@ -1766,7 +1766,7 @@ static void tanya_drill_kick_drill_contact(Fighter *fighter, ContactResult resul
 
 /* 47ba20 submits samples 13 and 14 with a D[17] query after each. */
 void tanya_drill_kick_contact(Fighter *fighter) {
-  AttackRecord tanya_drill_kick_drill_record = retail_vm_attack_record(retail_vm_image(), DRILL_ATTACK_RECORD);
+  AttackRecord tanya_drill_kick_drill_record = retail_vm_attack_record(battle_data(), DRILL_ATTACK_RECORD);
 
   require(fighter_move(fighter)->clip == 103 && fighter_sample(fighter) == 12, "Tanya drill kick contact needs its retail startup");
   for (int pose = 13; pose <= 14; ++pose) {

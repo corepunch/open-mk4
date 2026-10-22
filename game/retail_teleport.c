@@ -150,7 +150,7 @@ void retail_teleport_slam(Fighter *fighter) {
     teleport_landing(fighter);
     return;
   }
-  AttackRecord record = retail_vm_attack_record(retail_vm_image(), TELEPORT_SLAM_ATTACK_RECORD);
+  AttackRecord record = retail_vm_attack_record(battle_data(), TELEPORT_SLAM_ATTACK_RECORD);
   ContactResult result = battle_contact(fighter, &record);
   if (result == CONTACT_MISS) {
     teleport_landing(fighter);

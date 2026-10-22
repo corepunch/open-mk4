@@ -71,11 +71,10 @@ const CharacterDef *roster_def(int index) {
   static MoveDef states[MK4_ROSTER_COUNT][S_COUNT];
   static const MoveDef *state_views[MK4_ROSTER_COUNT][S_COUNT];
   static const Mk4Image *images[MK4_ROSTER_COUNT];
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   if (images[index] != image) {
     definitions[index] = (CharacterDef){.motion = &mk4_motion, .move_count = S_COUNT, .enter = state_entries, .walk = mk4_walk, .jump = mk4_jump};
     retail_roster_read(image, (unsigned)index, &identities[index]);
-    definitions[index].game = GAME_MK4;
     definitions[index].asset = index;
     definitions[index].name = identities[index].name;
     definitions[index].ground = identities[index].ground;
@@ -146,7 +145,6 @@ int roster_clip(const CharacterDef *def, int state, int asset_idle) {
 
 const Character *roster_character(const Assets *assets, int roster_index) {
   const CharacterDef *def = roster_def(roster_index);
-  require(def->game == GAME_MK4, "Only the MK4 mesh bank is loaded");
   require(def->asset >= 0 && (size_t)def->asset < assets->characters.count, "Roster asset out of range");
   return &assets->characters.data[def->asset];
 }

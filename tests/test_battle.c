@@ -1,4 +1,7 @@
 #include "game.h"
+#include "mk4_program.h"
+
+static Mk4Image image;
 #include "retail_native.h"
 #include "script.h"
 #include <math.h>
@@ -13,7 +16,7 @@ static void check(bool yes, const char *message) {
 }
 
 static void fight(float distance) {
-  battle_init(0, 4);
+  battle_init(&image, 0, 4);
   g_battle.phase = PHASE_FIGHT;
   g_battle.fighters[0].body.pos[AXIS_X] = (q16)(-distance * 0.5f * Q16_ONE);
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * 0.5f * Q16_ONE);
@@ -30,8 +33,7 @@ static void check_roster(void) {
   check(roster_count() == MK4_ROSTER_COUNT, "Retail roster views must cover the loaded fighter bank");
   for (int i = 0; i < roster_count(); ++i) {
     const CharacterDef *view = roster_def(i);
-    check(view->game == GAME_MK4 && view->asset == i && view->moves != NULL && view->move_count == S_COUNT,
-        "Retail roster views must provide bounded engine state and model identity");
+    check(view->asset == i && view->moves != NULL && view->move_count == S_COUNT, "Retail roster views must provide bounded engine state and model identity");
     check(view->moves[S_PUNCH]->clip == -1 && view->enter[S_PUNCH] == retail_jab, "Unstarted script states must carry no authored animation or balance");
   }
 }
@@ -129,7 +131,7 @@ static void check_wait_phases(void) {
   g_battle.camera.active = true;
   g_battle.projectiles[0].kind = PROJECTILE_SPEAR;
   sequence_completions = 0;
-  battle_init(4, 0);
+  battle_init(&image, 4, 0);
   check(g_battle.fighters[0].roster == 4 && g_battle.fighters[1].roster == 0 && g_battle.phase == PHASE_READY && g_battle.ticks == 0,
       "Singleton initialization must start the requested fresh match");
   check(g_battle.fighters[0].sequence == NULL && g_battle.fighters[0].current_mmove == NULL && g_battle.fighters[0].pending == NULL &&
@@ -157,7 +159,7 @@ static void scene_actor_entry(Fighter *actor) {
 
 static void check_independent_scene_actor_lifetime(void) {
   for (int slot = 0; slot < 2; ++slot) {
-    battle_init(14, 4);
+    battle_init(&image, 14, 4);
     g_battle.phase = PHASE_FIGHT;
     Fighter *owner = &g_battle.fighters[slot], *source = &g_battle.fighters[1 - slot];
     const MoveDef *source_move = fighter_move(source);
@@ -187,11 +189,14 @@ static void check_independent_scene_actor_lifetime(void) {
 /* Match lifecycle, movement and body constraints belong to our engine. Retail
  * authored move timing/damage is covered by the source scripts, not matrices. */
 int main(void) {
+  image = mk4_image_load("MK4/MK-4.EXE");
+  mk4_program_load(&image, "build/mk4.scripts");
+  battle_init(&image, 0, 4);
   check_roster();
   check_sequence_events();
   check_wait_phases();
   check_independent_scene_actor_lifetime();
-  battle_init(0, 4);
+  battle_init(&image, 0, 4);
   advance_ticks(89, NULL);
   check(g_battle.phase == PHASE_READY, "Countdown ends too soon");
   advance_ticks(1, NULL);

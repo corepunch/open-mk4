@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "game.h"
+#include "mk4_program.h"
 #include "draw.h"
 #include <math.h>
 #include <string.h>
@@ -8,10 +9,12 @@
 int main(void) {
   Assets assets = {0};
   assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
+  mk4_program_load(&assets.image, "build/mk4.scripts");
+  battle_init(&assets.image, 0, 4);
   assets_load_battle(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
   FrontendMenu menu;
   bool quit = false;
-  menu_init(&menu, &assets.retail_image);
+  menu_init(&menu, &assets.image);
   require(!menu_command(&menu, MENU_CONFIRM, &quit) && menu.screen == MENU_SELECT, "Arcade must select a fighter first");
   require(!menu_command(&menu, MENU_CONFIRM, &quit) && menu.screen == MENU_TOWER, "Arcade must choose a tower instead of an arena");
   Canvas canvas;
@@ -34,8 +37,8 @@ int main(void) {
       menu_draw(&canvas, &assets, &menu, 0);
       require(menu_command(&menu, MENU_CONFIRM, &quit) && menu.p2 == opponent, "Continue must retry the same opponent");
       for (int floor = 0; floor < menu.towers[col].count; ++floor) {
-        uint32_t list = mk4_image_u32(&assets.retail_image, 0x4e557c + col * 16) * 4;
-        int expected = (int)((mk4_image_u32(&assets.retail_image, list + floor * 4) >> (face * 8)) & 255);
+        uint32_t list = mk4_image_u32(&assets.image, 0x4e557c + col * 16) * 4;
+        int expected = (int)((mk4_image_u32(&assets.image, list + floor * 4) >> (face * 8)) & 255);
         require(menu.p2 == expected, "Opponent must come from the selected byte of the retail list");
         menu_match_finished(&menu, true);
         require(menu.floor == floor + 1, "A match win advances exactly one floor");
@@ -52,9 +55,9 @@ int main(void) {
     }
   }
   /* Loading a changed list proves that the frontend has no copied ladder. */
-  uint32_t list = mk4_image_u32(&assets.retail_image, 0x4e557c) * 4;
-  assets.retail_image.bytes.data[list - 0x400000] = 12;
-  menu_init(&menu, &assets.retail_image);
+  uint32_t list = mk4_image_u32(&assets.image, 0x4e557c) * 4;
+  assets.image.bytes.data[list - 0x400000] = 12;
+  menu_init(&menu, &assets.image);
   require(menu_tower_opponent(&menu, 0, 0) == 12, "Frontend must consume the loaded retail list");
   menu.cursor = MENU_TEAM;
   menu_command(&menu, MENU_CONFIRM, &quit);
@@ -62,7 +65,7 @@ int main(void) {
   require(menu.screen == MENU_SELECT && menu.selecting_player == 1, "Local play must select both fighters");
   menu_command(&menu, MENU_CONFIRM, &quit);
   require(menu.screen == MENU_ARENA && menu_command(&menu, MENU_CONFIRM, &quit), "Local play must retain arena selection");
-  battle_init(0, 4);
+  battle_init(&assets.image, 0, 4);
   static Battle before;
   memcpy(&before, &g_battle, sizeof before);
   Canvas preview;

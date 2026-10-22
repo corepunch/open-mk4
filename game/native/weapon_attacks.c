@@ -46,7 +46,7 @@ static void fujin_weapon_bow_cleanup(Fighter *fighter) {
 }
 
 static void fujin_weapon_bolt_step(Projectile *bolt) {
-  AttackRecord fujin_weapon_bolt_record = retail_vm_attack_record(retail_vm_image(), BOLT_ATTACK_RECORD);
+  AttackRecord fujin_weapon_bolt_record = retail_vm_attack_record(battle_data(), BOLT_ATTACK_RECORD);
 
   if (g_battle.contacts_off) {
     bolt->kind = 0;
@@ -365,7 +365,7 @@ static void liu_kang_weapon_sword_attack(Fighter *fighter, int index) {
   if (index == 3) {
     static const MoveDef back_lp = {.clip = -1, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0112};
     fighter_start_move(fighter, S_PUNCH, &back_lp);
-    const Mk4Image *image = retail_vm_image();
+    const Mk4Image *image = battle_data();
     native_schedule_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED),
         maxi(0, (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY) - 1),
         (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION));
@@ -547,7 +547,7 @@ static void reptile_weapon_flurry_continue(Fighter *fighter) {
 }
 
 static void reptile_weapon_flurry_query(Fighter *fighter) {
-  AttackRecord reptile_weapon_flurry_record = retail_vm_attack_record(retail_vm_image(), FLURRY_ATTACK_RECORD);
+  AttackRecord reptile_weapon_flurry_record = retail_vm_attack_record(battle_data(), FLURRY_ATTACK_RECORD);
 
   /* Every 495de8 query is a fresh WEAPON[20] contact for its cycle. */
   ContactResult result = battle_contact(fighter, &reptile_weapon_flurry_record);
@@ -576,7 +576,7 @@ static void reptile_weapon_flurry_cycle_start(Fighter *fighter) {
 /* 495db0 state 0 at 248/8: a blocked query recoils; anything else plays
  * out 248 into the first 249 cycle. */
 void reptile_weapon_flurry(Fighter *fighter) {
-  AttackRecord reptile_weapon_flurry_record = retail_vm_attack_record(retail_vm_image(), FLURRY_ATTACK_RECORD);
+  AttackRecord reptile_weapon_flurry_record = retail_vm_attack_record(battle_data(), FLURRY_ATTACK_RECORD);
 
   require(fighter_move(fighter)->clip == 248 && fighter_sample(fighter) == 8, "Reptile weapon flurry needs its retail 248 startup");
   ContactResult result = battle_contact(fighter, &reptile_weapon_flurry_record);
@@ -608,7 +608,7 @@ static void reptile_weapon_back_low_recover(Fighter *fighter) {
 }
 
 static void reptile_weapon_back_low_query(Fighter *fighter) {
-  AttackRecord reptile_weapon_sweep_record = retail_vm_attack_record(retail_vm_image(), SWEEP_ATTACK_RECORD);
+  AttackRecord reptile_weapon_sweep_record = retail_vm_attack_record(battle_data(), SWEEP_ATTACK_RECORD);
 
   if (!fighter->connected && battle_contact(fighter, &reptile_weapon_sweep_record) != CONTACT_MISS) {
     reptile_weapon_back_low_recover(fighter);
@@ -714,7 +714,7 @@ void scorpion_sword_spin_control(Fighter *fighter) {
 }
 
 void scorpion_sword_spin_query(Fighter *fighter) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t packed = mk4_image_u32(image, RETAIL_WEAPON_ATTACK_TABLE + SWORD_SPIN_ATTACK_SELECTOR * 4);
   AttackRecord record = retail_vm_attack_record(image, packed * 4);
   if (battle_contact(fighter, &record) == CONTACT_BLOCK) {
@@ -856,7 +856,7 @@ static void tanya_weapon_boomerang_home(Projectile *projectile) {
  * skips a victim in action 2001, and turns back on contact or outside
  * the arena radius squared plus twelve. */
 static void tanya_weapon_boomerang_step(Projectile *projectile) {
-  AttackRecord tanya_weapon_boomerang_record = retail_vm_attack_record(retail_vm_image(), BOOMERANG_ATTACK_RECORD);
+  AttackRecord tanya_weapon_boomerang_record = retail_vm_attack_record(battle_data(), BOOMERANG_ATTACK_RECORD);
 
   if (projectile->phase == TANYA_WEAPON_BOOMERANG_HOME) {
     tanya_weapon_boomerang_home(projectile);

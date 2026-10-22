@@ -90,7 +90,10 @@ Source paths for retail flow:
 
 Game, engine, viewer and native tests use C11. Use procedural functions, plain
 structs and explicit state/context ownership. `Battle g_battle` is the single
-active simulation; `battle_init(p1,p2)` fully resets it. Simulation functions
+active MK4 simulation; `battle_init(data,p1,p2)` fully resets it with an
+explicit borrowed data image and assembled program. The host owns and loads
+those resources; neither simulation nor VM opens a default EXE. Visual asset
+binding cannot replace the match program. Simulation functions
 operate on Fighter, body, object and scene contexts. They never read SDL.
 Assets, pose buffers, archive storage, audio and host resources retain explicit
 owners. The standalone `fsys.cpp` development tool remains C++17 and uses the

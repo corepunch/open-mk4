@@ -17,7 +17,7 @@ static void hp_query(Fighter *fighter) {
   const Fighter *victim = fighter_opponent(fighter);
   bool ducking_kick = victim->action == ACTION_RETAIL_0102 && victim->avoids_high;
   if (!fighter->connected && !ducking_kick) {
-    const Mk4Image *image = retail_vm_image();
+    const Mk4Image *image = battle_data();
     uint32_t record = mk4_image_u32(image, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE);
     AttackRecord attack = retail_vm_attack_record(image, record * 4);
     battle_contact(fighter, &attack);
@@ -100,7 +100,7 @@ static void uppercut_default_contact(Fighter *fighter) {
   if (fighter->connected || fighter_opponent(fighter)->action == ACTION_RETAIL_2001) {
     return;
   }
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   unsigned selector = fighter->flags & FF_FOLLOW_UP ? 6 : 2;
   uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE + selector * 4);
   AttackRecord record = retail_vm_attack_record(image, packed * 4);

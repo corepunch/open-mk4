@@ -323,7 +323,7 @@ static void crouch_punch_reverse(Fighter *fighter) {
 static void crouch_punch_contact(Fighter *fighter) {
   ContactResult result = CONTACT_MISS;
   if (fighter_opponent(fighter)->action != ACTION_RETAIL_2011) {
-    const Mk4Image *image = retail_vm_image();
+    const Mk4Image *image = battle_data();
     uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE + 3 * 4);
     AttackRecord attack = retail_vm_attack_record(image, packed * 4);
     uint64_t continuation = fighter->continuation;
@@ -347,7 +347,7 @@ void retail_crouch_low_punch(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_0107, false);
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CROUCH_LOW_PUNCH + (fighter->armed ? 4 : 0));
   retail_vm_bind_animation(fighter, packed * 4, 2);
   require(fighter_move(fighter)->last >= 5, "Native crouch punch needs three opening samples");
@@ -360,7 +360,7 @@ void retail_close_high_punch(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_0108, false);
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   unsigned slot = retail_native_character_slot((unsigned)fighter->roster);
   uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CLOSE_HIGH_PUNCH + slot * 4);
   bool reacting = (fighter_opponent(fighter)->action & 0xf000) == 0x4000;

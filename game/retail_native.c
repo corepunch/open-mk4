@@ -70,7 +70,7 @@ bool retail_has_gravity(const Fighter *fighter) {
 /* 467ce0/43cbb0 and467cd0/43bd70 select the actual native scene entry
  * through retail tables. Hidden fighters share the scene-selection remaps. */
 static void finish_enter(Fighter *fighter, bool second) {
-  uint32_t target = retail_finish_target(retail_vm_image(), (unsigned)fighter->roster, second);
+  uint32_t target = retail_finish_target(battle_data(), (unsigned)fighter->roster, second);
   if (target != 0) {
     retail_native_entry(target)(fighter);
   }
@@ -90,6 +90,6 @@ void retail_flip_facing(Fighter *fighter) {
 }
 
 void retail_throw_turn(Fighter *fighter) {
-  uint32_t callback = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_THROW_TURN);
+  uint32_t callback = mk4_image_u32(battle_data(), MK4_RETAIL_DATA_THROW_TURN);
   require(retail_native_vm(fighter, callback, RETAIL_CALL, 0), "Unsupported throw callback table entry");
 }

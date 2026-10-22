@@ -208,7 +208,7 @@ void retail_scene_join_victory(Fighter *fighter) {
  * captured peer. Retail words bind the scene's victim animations. */
 void retail_scene_reaction(Fighter *fighter) {
   Fighter *owner = fighter_peer(fighter);
-  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  uint32_t entry = retail_reaction_target(battle_data(), (unsigned)fighter->reaction);
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   fighter->facing = owner->facing;
@@ -303,7 +303,7 @@ void retail_scene_victim_hold(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   fighter->facing = -fighter->facing;
-  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD) * 4, 0);
+  retail_vm_bind_animation(fighter, mk4_image_u32(battle_data(), MK4_RETAIL_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD) * 4, 0);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
 

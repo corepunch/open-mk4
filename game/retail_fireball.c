@@ -31,7 +31,7 @@ static bool fireball_contact(Projectile *projectile, bool air) {
   if (!air && victim->action == ACTION_RETAIL_2001) {
     return false;
   }
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   uint32_t waiter = air ? MK4_RETAIL_DATA_FIREBALL_AIR_CONTACT_ROW : MK4_RETAIL_DATA_FIREBALL_STANDING_CONTACT_ROW;
   unsigned selector = mk4_image_u32(image, waiter);
   require(selector < 256, "Invalid native projectile contact selector");
@@ -89,7 +89,7 @@ static Projectile *spawn(Fighter *fighter, ProjectileFn step) {
   projectile->initial_mesh = fireball_mesh.first;
   projectile->heading[0] = fighter_axis(fighter, AXIS_X);
   projectile->heading[1] = fighter_axis(fighter, AXIS_Z);
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   q16 offset = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_FIREBALL_SPAWN_FORWARD_OFFSET);
   projectile->pos[AXIS_Y] += (q16)mk4_image_u32(image, MK4_RETAIL_DATA_FIREBALL_SPAWN_Y_OFFSET);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {

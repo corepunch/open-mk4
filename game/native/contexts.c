@@ -214,7 +214,7 @@ void raiden_script_torpedo_motion(Fighter *fighter) {
 }
 
 unsigned raiden_script_torpedo_query(Fighter *fighter) {
-  AttackRecord raiden_common_torpedo_record = retail_vm_attack_record(retail_vm_image(), TORPEDO_ATTACK_RECORD);
+  AttackRecord raiden_common_torpedo_record = retail_vm_attack_record(battle_data(), TORPEDO_ATTACK_RECORD);
 
   return battle_contact(fighter, &raiden_common_torpedo_record) == CONTACT_MISS ? 0u : 1u;
 }

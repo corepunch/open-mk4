@@ -9,7 +9,7 @@ enum {
 };
 
 static unsigned head_hand_part_count(void) {
-  return retail_terminated_rows(retail_vm_image(), MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS, HEAD_HAND_PART_ROW_BYTES, HEAD_HAND_PART_CAPACITY);
+  return retail_terminated_rows(battle_data(), MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS, HEAD_HAND_PART_ROW_BYTES, HEAD_HAND_PART_CAPACITY);
 }
 
 /* Native service cluster: 44f5e0, 44f620, 44f6f0, 49cb60. */
@@ -138,10 +138,10 @@ static void fujin_fatality_first_explode(Fighter *victim, Fighter *owner) {
   }
   for (unsigned part = 0; part < head_hand_part_count(); ++part) {
     uint32_t row = MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS + part * HEAD_HAND_PART_ROW_BYTES;
-    int joint = (int)mk4_image_u32(retail_vm_image(), row);
+    int joint = (int)mk4_image_u32(battle_data(), row);
     ScenePiece *piece = battle_detach_piece(&source, joint, (q16[3]){part == 1 ? -0x2147 : 0x2147, -0x2147, 0}, (q16[3]){0, 0x2147, 0});
     if (piece != NULL) {
-      piece->scale = (q16)mk4_image_u32(retail_vm_image(), row + 4);
+      piece->scale = (q16)mk4_image_u32(battle_data(), row + 4);
       piece->gravity = 0x189;
     }
   }
@@ -501,7 +501,7 @@ static void jax_fatality_first_victim_stream(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
-  if (retail_index_list_contains(retail_vm_image(), MK4_RETAIL_DATA_ARM_TEAR_CLIP_204_ROSTERS, (unsigned)victim->roster, MK4_ROSTER_COUNT)) {
+  if (retail_index_list_contains(battle_data(), MK4_RETAIL_DATA_ARM_TEAR_CLIP_204_ROSTERS, (unsigned)victim->roster, MK4_ROSTER_COUNT)) {
     retail_vm_enter(victim, MK4_RETAIL_SCRIPT_ARM_TEAR_VICTIM_CLIP_204, fighter_ready);
   } else {
     retail_vm_enter(victim, MK4_RETAIL_SCRIPT_ARM_TEAR_VICTIM_CLIP_400, fighter_ready);
@@ -1857,8 +1857,8 @@ static bool tanya_fatality_first_burst_step(BattleEvent *event, Fighter *owner, 
     fighter_joint_position(owner, 2, &neck, &unused);
     for (unsigned i = 0; i < head_hand_part_count(); ++i) {
       uint32_t row = MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS + i * HEAD_HAND_PART_ROW_BYTES;
-      int joint = (int)mk4_image_u32(retail_vm_image(), row);
-      q16 speed = (q16)mk4_image_u32(retail_vm_image(), row + 4);
+      int joint = (int)mk4_image_u32(battle_data(), row);
+      q16 speed = (q16)mk4_image_u32(battle_data(), row + 4);
       q16 velocity[3] = {q16_mul(fighter_axis(peer, AXIS_X), speed), -speed, q16_mul(fighter_axis(peer, AXIS_Z), speed)};
       ScenePiece *piece = battle_detach_piece(owner, joint, velocity, (q16[3]){0});
       if (piece != NULL) {

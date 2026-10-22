@@ -120,7 +120,7 @@ typedef struct Hud {
 } Hud;
 
 typedef struct Assets {
-  Mk4Image retail_image; /* immutable script/descriptor data, retained from the selected EXE */
+  Mk4Image image; /* owned MK4 data; the game loads compiled scripts before match initialization */
   Characters characters;
   Characters cut_characters; /* closed-surface rigs; share normal meshes/textures when the file matches */
   Characters scene_models;   /* shared immutable geometry; independently owned accessory rigs */

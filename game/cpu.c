@@ -24,7 +24,7 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
   FighterFn entry = def->cpu != NULL ? def->cpu->enter[action] : NULL;
   unsigned selection = action == CPU_SPECIAL_NEAR ? 0u : action == CPU_SPECIAL_1 ? 1u : action == CPU_SPECIAL_2 ? 2u : 3u;
   if (action == CPU_SPECIAL_NEAR || action == CPU_SPECIAL_1 || action == CPU_SPECIAL_2 || action == CPU_PROJECTILE) {
-    uint32_t target = retail_cpu_target(retail_vm_image(), (unsigned)fighter->roster, selection);
+    uint32_t target = retail_cpu_target(battle_data(), (unsigned)fighter->roster, selection);
     entry = target ? retail_native_entry(target) : NULL;
   }
   if (fighter->armed && fighter->weapon != NULL) {
@@ -65,7 +65,7 @@ bool battle_cpu_action(Fighter *fighter, CpuAction action) {
                              : action == CPU_UPPERCUT || action == CPU_CROUCH_LP ? STANCE_CROUCHING
                                                                                  : STANCE_STANDING];
   if (table != NULL && table->retail_address != 0) {
-    uint32_t target = retail_button_target(retail_vm_image(), table->retail_address, button);
+    uint32_t target = retail_button_target(battle_data(), table->retail_address, button);
     if (target != 0) {
       retail_press_native_button(fighter, target);
       return true;
@@ -265,7 +265,7 @@ static bool opponent_object(const Fighter *fighter, bool clone) {
  * fighter-authored minimum or retreat gate before entering the native scene. */
 static q16 finish_distance(const Fighter *fighter, int action) {
   if (action == CPU_FINISH_1 || action == CPU_FINISH_2) {
-    return retail_cpu_finish_distance(retail_vm_image(), (unsigned)fighter->roster, action == CPU_FINISH_2);
+    return retail_cpu_finish_distance(battle_data(), (unsigned)fighter->roster, action == CPU_FINISH_2);
   }
   return 0xb333;
 }

@@ -24,9 +24,9 @@ static void tick(void) {
 }
 
 static Fighter *setup(int slot, int scenario) {
-  battle_init(slot ? 4 : 0, slot ? 0 : 4);
+  battle_init(&image, slot ? 4 : 0, slot ? 0 : 4);
   g_battle.phase = PHASE_FIGHT;
-  g_battle.retail_scripts = &image;
+  g_battle.data = &image;
   Fighter *owner = &g_battle.fighters[slot];
   Fighter *victim = &g_battle.fighters[1 - slot];
   q16 distance = scenario == 2 ? 6 * Q16_ONE : 0xc000;
@@ -510,10 +510,13 @@ static void assets_bound(void) {
     Fighter *owner = setup(0, 2);
     battle_bind_assets(&assets);
     press(0, crouch != 0, 2);
-    check(owner->retail_vm.active && owner->retail_vm.image == &assets.retail_image, "asset binding must select the host-owned executable image");
+    check(owner->retail_vm.active && owner->retail_vm.image == &image, "presentation binding must retain the explicitly selected match program");
     recover(owner, 0, crouch != 0, 2);
   }
-  battle_init(0, 4);
+  mk4_program_load(&assets.image, "build/mk4.scripts");
+  battle_init(&assets.image, 0, 4);
+  check(battle_data() == &assets.image, "match initialization must select its explicit data image");
+  battle_init(&image, 0, 4);
   assets_free(&assets);
 }
 
@@ -678,7 +681,7 @@ static void native_projectile_context(void) {
   }
   check(projectile != NULL && projectile->kind == PROJECTILE_FIREBALL && projectile->owner == 0 && projectile->mesh_animation != NULL,
       "original native task must allocate the common projectile resource with its caller identity");
-  battle_init(0, 2);
+  battle_init(&image, 0, 2);
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
     check(g_battle.projectiles[i].kind == 0, "reset must retire the independent native projectile");
   }
@@ -976,7 +979,7 @@ static void edge_task_lifetime(void) {
   }
   check(
       !event->active && actor->body.vel[AXIS_X] == 0 && peer->body.vel[AXIS_X] == 0, "independent native edge task must retire and clean both motion contexts");
-  battle_init(0, 4);
+  battle_init(&image, 0, 4);
   check(!event->active, "round reset must leave the native event resource retired");
 }
 
@@ -997,7 +1000,7 @@ static void scene_task_lifetime(void) {
   check(event->active, "actor script interruption must preserve the independent scene task");
   g_battle.phase = PHASE_MATCH_OVER;
   check(!event->step(event, actor, fighter_peer(actor)), "scene completion must retire independent hover motion");
-  battle_init(0, 4);
+  battle_init(&image, 0, 4);
   check(!event->active, "round reset must release the scene task resource");
 }
 
@@ -1430,7 +1433,7 @@ int main(int argc, char **argv) {
   native_air_capture_lifetimes();
   lifetimes();
   assets_bound();
-  battle_init(0, 4);
+  battle_init(&image, 0, 4);
   mk4_image_free(&image);
   puts("PASS: shared retail VM, native boundaries, loaded data, interruption, KO and reset");
   return 0;

@@ -10,7 +10,7 @@
 /* Native470980's initial phase binds the descriptor in its original row. */
 void retail_air_bind_row(Fighter *fighter, uint32_t row) {
   require(row >= RETAIL_SCRIPT_BEGIN && row <= RETAIL_SCRIPT_END - 12 && row % 4 == 0, "Invalid native air parameter row");
-  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
+  const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : battle_data();
   retail_vm_bind_animation(fighter, mk4_image_u32(image, row) * 4, 0);
 }
 
@@ -127,12 +127,12 @@ static void air_punch_contact(Fighter *fighter, bool high) {
 
 static void air_contact_miss(Fighter *fighter) {
   uint32_t row = fighter->retail_air_row;
-  air_continue(fighter, mk4_image_u32(retail_vm_image(), row + 20));
+  air_continue(fighter, mk4_image_u32(battle_data(), row + 20));
 }
 
 static void air_contact_query(Fighter *fighter) {
   uint32_t row = fighter->retail_air_row;
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   if (!fighter_airborne(fighter)) {
     fighter->action = ACTION_RETAIL_1006;
     air_continue(fighter, mk4_image_u32(image, row + 16));
@@ -151,7 +151,7 @@ static void air_contact_query(Fighter *fighter) {
 }
 
 static void air_contact_begin(Fighter *fighter, uint32_t row) {
-  unsigned count = mk4_image_u32(retail_vm_image(), row);
+  unsigned count = mk4_image_u32(battle_data(), row);
   require(count > 0 && count <= NATIVE_FRAME_CAPACITY, "Invalid native air contact budget");
   fighter->retail_air_row = row;
   fighter->mmove_cleanup = air_cleanup;
@@ -163,7 +163,7 @@ static void air_contact_begin(Fighter *fighter, uint32_t row) {
 }
 
 static void air_opened(Fighter *fighter) {
-  air_continue(fighter, mk4_image_u32(retail_vm_image(), fighter->retail_air_row + 8));
+  air_continue(fighter, mk4_image_u32(battle_data(), fighter->retail_air_row + 8));
 }
 
 static void air_open_guard(Fighter *fighter) {
@@ -174,7 +174,7 @@ static void air_open_guard(Fighter *fighter) {
 
 static void air_open(Fighter *fighter, uint32_t row) {
   retail_air_bind_row(fighter, row);
-  unsigned budget = mk4_image_u32(retail_vm_image(), row + 4);
+  unsigned budget = mk4_image_u32(battle_data(), row + 4);
   int count = fighter_move(fighter)->last;
   if (budget != 0 && budget < (unsigned)count) {
     count = (int)budget;
@@ -318,7 +318,7 @@ static void air_wide_query(Fighter *fighter) {
     air_wide_landed(fighter);
     return;
   }
-  AttackRecord record = retail_vm_attack_record(retail_vm_image(), mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + 39 * 4) * 4);
+  AttackRecord record = retail_vm_attack_record(battle_data(), mk4_image_u32(battle_data(), MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + 39 * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     air_punch_contact(fighter, false);
   }

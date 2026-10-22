@@ -19,7 +19,7 @@ static bool locked(const Fighter *fighter) {
 void battle_set_arena(int arena) {
   /* 423690 / 4dad60, in the archive stage order. */
   require(arena >= 0 && arena < MK4_ARENA_COUNT, "Invalid battle arena");
-  q16 radius = (q16)mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_ARENA_RADII + (unsigned)arena * 4);
+  q16 radius = (q16)mk4_image_u32(battle_data(), MK4_RETAIL_DATA_ARENA_RADII + (unsigned)arena * 4);
   require(radius > 0, "Invalid retail arena radius");
   g_battle.arena = arena;
   g_battle.arena_radius = radius;
@@ -46,9 +46,11 @@ static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facin
   fighter_enter_state(fighter, S_IDLE);
 }
 
-void battle_init(int p1, int p2) {
+void battle_init(const Mk4Image *data, int p1, int p2) {
+  require(data != NULL && data->bytes.count != 0 && data->program_words.count != 0, "Match needs MK4 data and an assembled script program");
   fighter_cancel_all_mmoves();
   memset(&g_battle, 0, sizeof g_battle);
+  g_battle.data = data;
   battle_set_arena(0);
   g_battle.cpu_level = 3;
   g_battle.fighters[0].roster = p1;

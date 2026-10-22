@@ -1,4 +1,5 @@
 #include "game.h"
+#include "mk4_program.h"
 #include "draw.h"
 #include "audio.h"
 #include "sdl_app.h"
@@ -23,6 +24,7 @@ static void usage(void) {
        "  --menu             show the front-end menu (also available in headless mode)\n"
        "  --select           open character selection (team mode with --two-player)\n"
        "  --frames N         stop after N frames (headless advances exactly 1/60s)\n"
+       "  --scripts PATH     load assembled MK4 wordcode (default build/mk4.scripts)\n"
        "  --screenshot PATH  save final frame as BMP\n"
        "  --list             show original roster and arenas\n"
        "  --self-test        validate battle resources and animation compatibility\n"
@@ -34,6 +36,7 @@ static void usage(void) {
 }
 
 static void validate(const Assets *assets) {
+  battle_init(&assets->image, 0, 4);
   int roster;
   require(assets->arenas.count == 11, "Incomplete arena list");
   require(assets->audio.sounds.count == 674, "Incomplete sound archive");
@@ -95,7 +98,7 @@ static void validate(const Assets *assets) {
   }
   /* Retired projectiles keep their immutable mesh reference until reuse.
    *Rendering must honor lifetime rather than drawing that stale reference. */
-  battle_init(0, 4);
+  battle_init(&assets->image, 0, 4);
   battle_bind_assets(assets);
   battle_set_arena(8);
   g_battle.phase = PHASE_FIGHT;
@@ -177,7 +180,7 @@ static void start_menu_match(const FrontendMenu *menu, const Assets *assets, int
   *arena = menu->arena;
   *cpu = menu->mode != MENU_TEAM;
   *demo = false;
-  battle_init(menu->p1, menu->p2);
+  battle_init(&assets->image, menu->p1, menu->p2);
   g_battle.cpu_level = difficulty;
   if (menu->climbing) {
     g_battle.cpu_rank = menu->tower;
@@ -208,12 +211,15 @@ int main(int argc, char **argv) {
   double tower_wait = 0;
   uint64_t last;
 
+  const char *program = "build/mk4.scripts";
   for (int i = 1; i < argc; ++i) {
     const char *arg = argv[i];
     if (!strcmp(arg, "--archive"))
       archive = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--exe"))
       exe = cli_value(argc, argv, &i);
+    else if (!strcmp(arg, "--scripts"))
+      program = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--screenshot"))
       shot = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--p1")) {
@@ -256,6 +262,7 @@ int main(int argc, char **argv) {
   require(arena >= 0 && arena < 11 && limit >= 0, "Invalid arena or frame limit");
 
   assets_load(&assets, archive, exe);
+  mk4_program_load(&assets.image, program);
   assets_load_battle(&assets, archive, exe);
   if (list) {
     for (size_t i = 0; i < assets.characters.count; ++i)
@@ -273,13 +280,13 @@ int main(int argc, char **argv) {
 
   sdl_app_init(&app, "Mortal Kombat 4", 1280, 800, headless);
   canvas_init(&cv, 1280, 800);
-  battle_init(p1, p2);
+  battle_init(&assets.image, p1, p2);
   require(difficulty >= 1 && difficulty <= 9, "CPU difficulty must be between 1 and 9");
   g_battle.cpu_level = difficulty;
   game_audio_init(&audio, headless);
   host_input_init(&input);
   srand(headless ? 0 : SDL_GetTicks());
-  menu_init(&menu, &assets.retail_image);
+  menu_init(&menu, &assets.image);
   if (select_requested) {
     menu.p1 = p1;
     menu.p2 = p2;

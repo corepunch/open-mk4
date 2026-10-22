@@ -8,10 +8,7 @@
  * services implement engine boundaries. Each live fighter owns its interpreter,
  * native playback and continuation state; battle_step runs shared combat rules.
  *
- * MK4 fills the roster today. War Gods (Midway arcade, Eurocom PC port, its
- * own wgfsys archive) is another game id: append rows, point them at that
- * game's state and clip tables, and load a second asset bank. The step
- * function does not branch on the game id. */
+ */
 #include "retail_native_addresses.h"
 #include "mk4_assets.h"
 #include "input.h"
@@ -35,11 +32,6 @@ static inline q16 q16_mul(q16 a, q16 b) {
 static inline float q16_float(q16 value) {
   return (float)value / (float)Q16_ONE;
 }
-
-typedef enum GameId {
-  GAME_MK4 = 0,
-  GAME_WARGODS = 1
-} GameId;
 
 typedef enum StateId {
   S_IDLE,
@@ -335,7 +327,6 @@ typedef struct MoveListEntry {
 /* Compatibility cache of loaded retail identity/data and shared engine services.
  * No character-owned C definition supplies these records. */
 typedef struct CharacterDef {
-  GameId game;
   int asset;
   const char *name;
   const Motion *motion;
@@ -797,7 +788,7 @@ typedef struct SceneActor {
 #define MAX_SOUND_EVENTS 16
 
 struct Battle {
-  const Mk4Image *retail_scripts; /* borrowed script data; NULL uses the shared retail image */
+  const Mk4Image *data; /* borrowed MK4 data and compiled program, required before initialization */
   const Assets *assets;
   Fighter fighters[2];
   SceneActor scene_actors[MAX_SCENE_ACTORS];
@@ -961,7 +952,8 @@ void battle_step_presentation(void);
 void battle_sound(int bank, int selector);
 void battle_scene_impact(const Fighter *fighter);
 
-void battle_init(int p1, int p2);
+const Mk4Image *battle_data(void);
+void battle_init(const Mk4Image *data, int p1, int p2);
 void battle_reset_match(void);
 void battle_next_round(void);
 void battle_step(const InputFrame input[2]);

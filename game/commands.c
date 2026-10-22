@@ -64,7 +64,7 @@ static Button resolve_token(const Fighter *fighter, CommandToken token) {
 }
 
 static FighterFn match_command(const Fighter *fighter, Button button, bool released) {
-  const Mk4Image *image = retail_vm_image();
+  const Mk4Image *image = battle_data();
   unsigned player = fighter == &g_battle.fighters[1] ? 1u : 0u;
   RetailCommandCursor cursor = retail_command_cursor(image, (unsigned)fighter->roster, player, button, released);
   RetailCommand command;
