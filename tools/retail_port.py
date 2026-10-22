@@ -5,7 +5,7 @@ function references are expanded. Native literals retain instruction provenance;
 no operand is called Q16, damage, action or a host pointer just from its number.
 """
 from collections import deque
-from c_source import read_source, source_files, function_source
+from c_source import read_source, source_files, function_source, canonical_name
 import re
 
 from character_catalog import moves_for, character_name, CHARACTERS
@@ -51,7 +51,8 @@ def port_entry(character, name):
             return (next(iter(paths)), symbol)
     helper = HELPERS.get(move.get('entry'))
     if helper and helper.port:
-        return helper.port
+        path, symbol = helper.port
+        return path, canonical_name(path, symbol)
     if move.get('scripts'):
         return ('game/retail_vm.c', 'retail_vm_enter')
     return None
@@ -60,6 +61,7 @@ def port_entry(character, name):
 def source_closure(port):
     """Lexical character-module references, including callback arguments; no C call-graph claim."""
     path, root = port
+    root = canonical_name(path, root)
     source = read_source(ROOT / path)
     masked = masked_c(source)
     definitions = {m[1] for m in re.finditer(r'^[A-Za-z_][\w* \t]*\b(\w+)\s*\([^;{}]*\)\s*\{', masked, re.M)}

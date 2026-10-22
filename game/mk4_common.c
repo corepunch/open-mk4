@@ -367,7 +367,7 @@ bool mk4_can_spike_finish(const Fighter *fighter) {
 }
 
 /* 467e00/467e70 enter the stage coordinator after the winner/range gate.
- * Native scene ownership must be established before either generated actor
+ * Native scene ownership must be established before either retail actor
  * starts, since the child may immediately bind or release its peer. */
 bool mk4_begin_stage_finish(Fighter *fighter, int id) {
   if (!battle_begin_finisher(fighter, id)) {
@@ -436,7 +436,7 @@ static void air_pair_capture(Fighter *fighter, const MoveDef *owner_move, const 
 
 /* Native484b60: bind185, turn/disarm, then native488b40's loaded side-getup. */
 void mk4_mmove_air_getup(Fighter *victim) {
-  retail_vm_bind_animation(victim, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_185_4FB628, 0);
+  retail_vm_bind_animation(victim, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_185, 0);
   victim->facing = -victim->facing;
   mk4_script_disarm_self(victim);
   mk4_mmove_side_getup(victim);
@@ -454,7 +454,7 @@ void mk4_script_air_throw_release(Fighter *fighter) {
   }
 }
 
-static void air_generated_cleanup(Fighter *fighter) {
+static void air_playback_cleanup(Fighter *fighter) {
   if ((fighter->flags & FF_PAIRED) && fighter_airborne(fighter)) {
     fighter->body.gravity = 0x28f;
   }
@@ -501,7 +501,7 @@ static const mmove_t air_frame_victim_phase = {.firstframe = 0, .lastframe = 0, 
 static void air_frame_cleanup(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   bool captured = (victim->flags & FF_PAIRED) != 0;
-  air_generated_cleanup(fighter);
+  air_playback_cleanup(fighter);
   if (captured && victim->pending == NULL) {
     victim->paired_release(victim);
   }

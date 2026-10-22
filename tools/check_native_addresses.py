@@ -31,12 +31,18 @@ def category(address):
 def main():
     named = {'Native': set(), 'Script/data': set()}
     literals = []
+    vague = []
     paths = list((ROOT / 'game').rglob('*')) + [ROOT / 'common' / name for name in
             ('mk4_image.c', 'mk4_image.h', 'mk4_retail_data_addresses.h')]
     for path in sorted(paths):
         if path.suffix not in ('.c', '.h', '.inc'):
             continue
         source = mask_c(path.read_text())
+        for match in re.finditer(
+                r'\bn[0-9a-f]{6}_\w+|\bRETAIL_NATIVE_(?:NATIVE_VM|VM_ENTER)_\w+|'
+                r'\bMK4_RETAIL_SCRIPT_(?:NATIVE_VM|LK_SCRIPT)_\w+|'
+                r'\bretail_(?:weapon_native|scene)_[0-9a-f]{6}\w*', source):
+            vague.append((path.relative_to(ROOT), source.count('\n', 0, match.start()) + 1, match[0]))
         allowed = set()
         for address, offset in address_definitions(source):
             group = category(address)
@@ -62,7 +68,10 @@ def main():
     print(f'Overall: {completed_total}/{total_total} ({percent:.1f}%).')
     for _, address, path, line in literals:
         print(f'{path}:{line}: unnamed retail address {address:#x}')
-    return bool(literals)
+    print(f'Address-based/dispatcher placeholder labels: {len(vague)}.')
+    for path, line, symbol in vague:
+        print(f'{path}:{line}: replace placeholder {symbol} with a verified role name')
+    return bool(literals or vague)
 
 
 if __name__ == '__main__':

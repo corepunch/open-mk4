@@ -66,8 +66,7 @@ RetailCommandCursor retail_command_cursor(const Mk4Image *image, unsigned charac
     return (RetailCommandCursor){0};
   }
   uint32_t packed = mk4_image_u32(image, table + character * 4);
-  require(
-      !packed || (packed >= MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000 / 4 && packed < MK4_RETAIL_DATA_IMAGE_END_580000 / 4), "Invalid retail command list");
+  require(!packed || (packed >= MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN / 4 && packed < MK4_RETAIL_DATA_IMAGE_END / 4), "Invalid retail command list");
   return (RetailCommandCursor){.address = packed * 4, .remaining = 256};
 }
 
@@ -75,7 +74,7 @@ bool retail_command_next(const Mk4Image *image, RetailCommandCursor *cursor, Ret
   if (cursor->address == 0) {
     return false;
   }
-  require(cursor->remaining > 0 && cursor->address >= MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000 && cursor->address + 12 <= MK4_RETAIL_DATA_IMAGE_END_580000,
+  require(cursor->remaining > 0 && cursor->address >= MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN && cursor->address + 12 <= MK4_RETAIL_DATA_IMAGE_END,
       "Unterminated retail command list");
   uint32_t pattern = mk4_image_u32(image, cursor->address);
   if (pattern == 0) {
@@ -90,7 +89,7 @@ bool retail_command_next(const Mk4Image *image, RetailCommandCursor *cursor, Ret
       .flags = flags,
       .window = (word >> 8) & 255u,
       .target = retail_action_target(image, flags, word & 255u),
-      .predicate = predicate ? mk4_image_u32(image, MK4_RETAIL_DATA_COMMAND_NEXT_4E4EC0 + predicate * 4) : 0};
+      .predicate = predicate ? mk4_image_u32(image, MK4_RETAIL_DATA_COMMAND_NEXT + predicate * 4) : 0};
   cursor->address += 12;
   cursor->remaining--;
   return true;
@@ -160,10 +159,10 @@ void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster 
   require(character < MK4_ROSTER_COUNT && roster != NULL, "Invalid retail roster destination");
   uint32_t name = mk4_image_u32(image, RETAIL_ROSTER_NAME_TABLE + character * 4);
   View memory = view(image->bytes);
-  require(name >= MK4_RETAIL_DATA_IMAGE_BASE_400000, "Invalid retail character name");
+  require(name >= MK4_RETAIL_DATA_IMAGE_BASE, "Invalid retail character name");
   size_t i = 0;
   for (; i + 1 < sizeof roster->name; ++i) {
-    unsigned char ch = view_u8(memory, name - MK4_RETAIL_DATA_IMAGE_BASE_400000 + i);
+    unsigned char ch = view_u8(memory, name - MK4_RETAIL_DATA_IMAGE_BASE + i);
     roster->name[i] = (char)(ch >= 'a' && ch <= 'z' ? ch - ('a' - 'A') : ch);
     if (ch == 0) {
       break;
@@ -181,8 +180,7 @@ void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster 
 
 uint32_t retail_finish_target(const Mk4Image *image, unsigned character, bool second) {
   uint32_t target = mk4_image_u32(image, (second ? RETAIL_SECOND_FINISH_TABLE : RETAIL_FIRST_FINISH_TABLE) + retail_character_slot(character) * 4);
-  require(target == 0 || (target >= MK4_RETAIL_DATA_IMAGE_BASE_400000 && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000),
-      "Invalid retail scene native target");
+  require(target == 0 || (target >= MK4_RETAIL_DATA_IMAGE_BASE && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN), "Invalid retail scene native target");
   return target;
 }
 
@@ -198,15 +196,14 @@ q16 retail_cpu_finish_distance(const Mk4Image *image, unsigned character, bool s
 uint32_t retail_reaction_target(const Mk4Image *image, unsigned reaction) {
   require(reaction < RETAIL_REACTION_COUNT, "Invalid retail reaction selector");
   uint32_t target = mk4_image_u32(image, RETAIL_REACTION_TABLE + reaction * 4);
-  require(
-      target == 0 || (target >= MK4_RETAIL_DATA_IMAGE_BASE_400000 && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000), "Invalid retail reaction native");
+  require(target == 0 || (target >= MK4_RETAIL_DATA_IMAGE_BASE && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN), "Invalid retail reaction native");
   return target;
 }
 
 uint32_t retail_lk_target(const Mk4Image *image, unsigned character) {
   unsigned slot = retail_native_character_slot(character);
   uint32_t target = mk4_image_u32(image, RETAIL_LK_THROW_TABLE + slot * 4);
-  require(target >= MK4_RETAIL_DATA_IMAGE_BASE_400000 && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000, "Invalid native LK entry");
+  require(target >= MK4_RETAIL_DATA_IMAGE_BASE && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN, "Invalid native LK entry");
   return target;
 }
 
@@ -269,7 +266,7 @@ void retail_bind_move_list(CharacterDef *definition, const Mk4Image *image, unsi
 void retail_weapon_read(const Mk4Image *image, unsigned character, RetailWeaponInventory *inventory) {
   require(character < MK4_ROSTER_COUNT && inventory != NULL, "Invalid retail inventory owner");
   uint32_t address = mk4_image_u32(image, RETAIL_WEAPON_INVENTORY_TABLE + character * 4) * 4;
-  require(address >= MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000 && address <= MK4_RETAIL_SCRIPT_SCRIPT_END_4EF000 - 32 && address % 4 == 0,
+  require(address >= MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN && address <= MK4_RETAIL_SCRIPT_SCRIPT_END - 32 && address % 4 == 0,
       "Invalid retail inventory descriptor");
   *inventory = (RetailWeaponInventory){.address = address,
       .type = mk4_image_u32(image, address),

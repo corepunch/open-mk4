@@ -723,7 +723,7 @@ static void battle_tick(const InputFrame input[2]) {
         entry(fighter);
       } else {
         fighter->ticks++;
-        /* Finisher presentation may keep a generated pose loop after the
+        /* Finisher presentation may keep a retail pose loop after the
          * result; the next round or reset cancels its frame program. */
         if (fighter->retail_vm.active) {
           retail_vm_step(fighter);

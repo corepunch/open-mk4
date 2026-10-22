@@ -488,7 +488,7 @@ struct Fighter {
   bool avoids_high;             /* low-kick script's temporary high-punch avoidance gate */
   const Character *scene_model; /* Optional actor-owned presentation replacement; assets retain ownership. */
   const MoveDef *current_move;
-  MoveDef playback_move;        /* actor-owned clip binding for generated frame programs */
+  MoveDef playback_move;        /* actor-owned clip binding for shared playback */
   const MoveSequence *sequence; /* active phase; may replace the move's initial sequence */
   const mmove_t *current_mmove;
   RetailVm retail_vm;
@@ -526,7 +526,7 @@ struct Fighter {
   int script_phase;
   FighterFn paired_release; /* native peer continuation selected by a paired move */
   int capture_action;       /* owner action that keeps a shared air capture held */
-  q16 saved_motion[3];      /* native save/restore around blocking generated playback */
+  q16 saved_motion[3];      /* native save/restore around blocking retail playback */
   const WeaponStrike *weapon_strike;
   WeaponStrike loaded_weapon_strike;
   int blend_clip, blend_sample, blend_ticks, blend_duration;

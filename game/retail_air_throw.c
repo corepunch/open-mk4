@@ -6,36 +6,36 @@
 #include "math_util.h"
 
 void retail_air_victim_default(Fighter *victim) {
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_AIR_VICTIM_DEFAULT_4E9910, mk4_mmove_thrown_finish);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_AIR_VICTIM_DEFAULT, mk4_mmove_thrown_finish);
 }
 
 void retail_air_victim_flip(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_AIR_VICTIM_FLIP_4E98A0, mk4_mmove_thrown_finish);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_AIR_VICTIM_FLIP, mk4_mmove_thrown_finish);
 }
 
 /* Original native entry operands; the scripts bind both participants. */
 void retail_air_throw(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_4E5E28, retail_air_victim_default);
+  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW, retail_air_victim_default);
 }
 
 void retail_air_throw_lift(Fighter *fighter) {
-  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_LIFT_4E5DD8, retail_air_victim_lift);
+  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_LIFT, retail_air_victim_lift);
 }
 
 void retail_air_throw_slam(Fighter *fighter) {
   retail_face_peer(fighter);
-  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_SLAM_4E5E78, retail_slam_released_fall);
+  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_SLAM, retail_slam_released_fall);
 }
 
 void retail_air_throw_flip(Fighter *fighter) {
   retail_face_peer(fighter);
-  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_FLIP_4E5ED0, retail_air_victim_flip);
+  mk4_air_throw_frames(fighter, MK4_RETAIL_DATA_AIR_THROW_FLIP, retail_air_victim_flip);
 }
 
 void retail_air_throw_release(Fighter *fighter) {
   mk4_mmove_air_throw_release(fighter);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_THROW_RELEASE_4E5E50, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_THROW_RELEASE, fighter_ready);
 }
 
 void retail_air_throw_land(Fighter *fighter) {
@@ -49,7 +49,7 @@ static const MoveDef s_slam_victim = {.clip = -1, .last = MOVE_END, .flags = SF_
 static void slam_victim(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &s_slam_victim);
   victim->flags |= FF_REACTING;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SLAM_VICTIM_4E9880, mk4_mmove_thrown_finish);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SLAM_VICTIM, mk4_mmove_thrown_finish);
 }
 
 /* 480f50[105] -> 484760: disarm (494520), snap to the floor and stop
@@ -126,7 +126,7 @@ void retail_air_victim_lift(Fighter *victim) {
   victim->flags &= ~(unsigned)FF_PAIRED;
   victim->flags |= FF_REACTING;
   victim->reaction = 166;
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_AIR_VICTIM_LIFT_4E98E8, mk4_mmove_thrown_finish);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_AIR_VICTIM_LIFT, mk4_mmove_thrown_finish);
 }
 
 /* 46a9f0 stores gravity 0x3d7 on both paired actors and enters 4e5df8. */
@@ -134,7 +134,7 @@ void retail_air_lift_fall(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter->body.gravity = 0x3d7;
   victim->body.gravity = 0x3d7;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_LIFT_FALL_4E5DF8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_LIFT_FALL, fighter_ready);
 }
 
 /* 46aa40 dispatches reaction 166 to the victim, subtracts 0x2147 and enters
@@ -145,7 +145,7 @@ void retail_air_lift_release(Fighter *fighter) {
   fighter->flags |= FF_PAIR_RELEASE;
   retail_air_victim_lift(victim);
   battle_damage(victim, 0x2147);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_LIFT_RELEASE_4E5E18, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_LIFT_RELEASE, fighter_ready);
 }
 
 /* 484a30 first reschedules once. Each later visit lets a living victim's
@@ -200,7 +200,7 @@ static void air_getup_rise(Fighter *victim) {
     fighter_finish_mmove(victim, NULL);
     return;
   }
-  retail_vm_bind_animation(victim, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE_53CF70) * 4, 0);
+  retail_vm_bind_animation(victim, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_AIR_GETUP_RISE) * 4, 0);
   native_finish_clip(victim, mk4_mmove_thrown_finish);
 }
 
@@ -214,7 +214,7 @@ void retail_air_slam_fall(Fighter *fighter) {
   victim->body.gravity = 0x147a;
   fighter->body.vel[AXIS_Y] = -0x1999;
   victim->body.vel[AXIS_Y] = -0x1999;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_SLAM_FALL_4E5EA0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_SLAM_FALL, fighter_ready);
 }
 
 void retail_air_slam_end(Fighter *fighter) {
@@ -224,7 +224,7 @@ void retail_air_slam_end(Fighter *fighter) {
 
 /* 488ba0 and 488c00 pass the original records to shared native 4914c0. */
 void retail_getup_back(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210);
+  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP);
 }
 
 void retail_getup_roll(Fighter *fighter) {

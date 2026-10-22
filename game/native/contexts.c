@@ -19,99 +19,99 @@ enum {
 void goro_script_lp_phase_repeat(Fighter *fighter) {
   fighter->script_phase++;
   if (fighter->script_phase < 5) {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_SCRIPT_LP_PHASE_REPEAT_4DE7E8, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_LP_THROW_REPEATED_DAMAGE, fighter_ready);
     return;
   }
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_SCRIPT_LP_PHASE_REPEAT_4DE6E4, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_LP_THROW_FINAL_DAMAGE, fighter_ready);
 }
 
 /* Native service cluster: 4824f0, 482540, 482790, 484330. */
-static void n4824f0_begin_victim(Fighter *victim);
-static void n4824f0_stomp_victim_next(Fighter *victim);
-static void n4824f0_stomp_victim_rest(Fighter *victim);
-static const MoveDef n4824f0_s_victim = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
+static void goro_victims_begin_victim(Fighter *victim);
+static void goro_victims_stomp_victim_next(Fighter *victim);
+static void goro_victims_stomp_victim_rest(Fighter *victim);
+static const MoveDef goro_victims_s_victim = {.clip = 247, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION, .action = ACTION_RETAIL_4001};
 
 /* 488ba0 and 482790 select 4ea210: standing 328 or held-DOWN crouching 184. */
 
 enum {
-  n4824f0_STOMP_VICTIM_CLIP = 178,
-  n4824f0_STOMP_VICTIM_COUNT = 28,
-  n4824f0_STOMP_VICTIM_LOOP = 15,
-  n4824f0_STOMP_VICTIM_CYCLES = 5, /* 484330 plus 484420 states 0..3 */
-  n4824f0_STOMP_VICTIM_REST = 20   /* 4845f0 parks the task for 0x14 visits */
+  GORO_VICTIMS_STOMP_VICTIM_CLIP = 178,
+  GORO_VICTIMS_STOMP_VICTIM_COUNT = 28,
+  GORO_VICTIMS_STOMP_VICTIM_LOOP = 15,
+  GORO_VICTIMS_STOMP_VICTIM_CYCLES = 5, /* 484330 plus 484420 states 0..3 */
+  GORO_VICTIMS_STOMP_VICTIM_REST = 20   /* 4845f0 parks the task for 0x14 visits */
 };
 
-/* Shared reaction table entries own a non-Goro victim; the generated
+/* Shared reaction table entries own a non-Goro victim; the retail
  * victim streams bind their own clips from a locked reaction move. */
-static void n4824f0_begin_victim(Fighter *victim) {
+static void goro_victims_begin_victim(Fighter *victim) {
   mk4_script_stop_body(victim);
-  fighter_start_move(victim, S_KNOCKDOWN, &n4824f0_s_victim);
+  fighter_start_move(victim, S_KNOCKDOWN, &goro_victims_s_victim);
   victim->flags |= FF_REACTING;
 }
 
 /* 190 (483570): disarm 494520, then 4ea3e0 -> shared 4e9670 flight. */
 void goro_kick_victim(Fighter *victim) {
-  n4824f0_begin_victim(victim);
+  goro_victims_begin_victim(victim);
   mk4_script_disarm_self(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_KICK_VICTIM_4EA3E0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_KICK_VICTIM, fighter_ready);
 }
 
 /* 4824f0: back speed 0x7ae, or 0xf5c after more than one hit, then 4e8e80. */
 void goro_script_uppercut_victim_slide(Fighter *victim) {
   fighter_set_speed(victim, victim->hits > 1 ? -0xf5c : -0x7ae);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_SCRIPT_UPPERCUT_VICTIM_SLIDE_4E8E80, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_UPPERCUT_VICTIM_SLIDE, fighter_ready);
 }
 
 /* 136 (4834d0): disarm, 48a320 -> 489e80 picks one of list 4ea8f8's three
  * sampled tokens at random, then 4e95c8. */
 void goro_quake_victim(Fighter *victim) {
-  n4824f0_begin_victim(victim);
+  goro_victims_begin_victim(victim);
   mk4_script_disarm_self(victim);
   retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_QUAKE_VICTIM_4E95C8, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_QUAKE_VICTIM, fighter_ready);
 }
 
 /* 191 (4842d0): disarm; an airborne victim falls with 0x1999 velocity and
  * gravity before 4ea400 plays clip 178. */
 void goro_stomp_victim(Fighter *victim) {
-  n4824f0_begin_victim(victim);
+  goro_victims_begin_victim(victim);
   mk4_script_disarm_self(victim);
   if (fighter_airborne(victim)) {
     victim->body.vel[AXIS_Y] = 0x1999;
     victim->body.gravity = 0x1999;
   }
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_STOMP_VICTIM_4EA400, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_STOMP_VICTIM, fighter_ready);
 }
 
 /* 484650: each cycle shakes the camera, cues effect 13 and replays clip
  * 178 from pose 15. After a cycle it continues only while the stomper still
  * has action 0409 or 0400, at most five cycles, then parks and gets up. */
-static void n4824f0_stomp_victim_next(Fighter *victim) {
+static void goro_victims_stomp_victim_next(Fighter *victim) {
   int action = fighter_opponent(victim)->action;
   if (action != 0x409 && action != 0x400) {
-    n4824f0_stomp_victim_rest(victim);
+    goro_victims_stomp_victim_rest(victim);
     return;
   }
   mk4_script_shake(victim, 0);
   mk4_script_effect(victim, 13);
 }
 
-static void n4824f0_stomp_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210);
+static void goro_victims_stomp_victim_getup(Fighter *victim) {
+  mk4_mmove_getup(victim, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP);
 }
 
-static void n4824f0_stomp_victim_rest(Fighter *victim) {
-  native_hold(victim, n4824f0_STOMP_VICTIM_REST, n4824f0_stomp_victim_getup);
+static void goro_victims_stomp_victim_rest(Fighter *victim) {
+  native_hold(victim, GORO_VICTIMS_STOMP_VICTIM_REST, goro_victims_stomp_victim_getup);
 }
 
 void goro_script_stomp_victim_hold(Fighter *victim) {
-  int span = n4824f0_STOMP_VICTIM_COUNT - n4824f0_STOMP_VICTIM_LOOP;
-  mk4_mmove_bind(victim, n4824f0_STOMP_VICTIM_CLIP, n4824f0_STOMP_VICTIM_COUNT, n4824f0_STOMP_VICTIM_LOOP);
-  native_begin(victim, 0, span * n4824f0_STOMP_VICTIM_CYCLES - 1, n4824f0_stomp_victim_rest);
-  for (int cycle = 0; cycle < n4824f0_STOMP_VICTIM_CYCLES; ++cycle) {
+  int span = GORO_VICTIMS_STOMP_VICTIM_COUNT - GORO_VICTIMS_STOMP_VICTIM_LOOP;
+  mk4_mmove_bind(victim, GORO_VICTIMS_STOMP_VICTIM_CLIP, GORO_VICTIMS_STOMP_VICTIM_COUNT, GORO_VICTIMS_STOMP_VICTIM_LOOP);
+  native_begin(victim, 0, span * GORO_VICTIMS_STOMP_VICTIM_CYCLES - 1, goro_victims_stomp_victim_rest);
+  for (int cycle = 0; cycle < GORO_VICTIMS_STOMP_VICTIM_CYCLES; ++cycle) {
     for (int pose = 0; pose < span; ++pose) {
-      FighterFn action = pose == 0 && cycle > 0 ? n4824f0_stomp_victim_next : NULL;
-      native_frame(victim, cycle * span + pose, n4824f0_STOMP_VICTIM_LOOP + pose, action);
+      FighterFn action = pose == 0 && cycle > 0 ? goro_victims_stomp_victim_next : NULL;
+      native_frame(victim, cycle * span + pose, GORO_VICTIMS_STOMP_VICTIM_LOOP + pose, action);
     }
   }
   mk4_script_shake(victim, 0);
@@ -122,7 +122,7 @@ void goro_script_stomp_victim_hold(Fighter *victim) {
 /* 482790 finishes the bound clip before 488ba0's getup. */
 /* 482540: 433c00 clears the CPU reaction latch, then 488ba0. */
 void goro_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210);
+  mk4_mmove_getup(victim, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP);
 }
 
 /* Native service cluster: 45b1f0, 45b230. */
@@ -137,7 +137,7 @@ void goro_victim_getup(Fighter *victim) {
  * implement engine boundaries. See docs/liu-kang-scripts.md for evidence. */
 
 void liu_kang_liu_script_lk_continue(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LIU_SCRIPT_LK_CONTINUE_4DE410, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LK_CONTINUE, fighter_ready);
 }
 
 void liu_kang_liu_script_lk_damage(Fighter *fighter) {
@@ -148,7 +148,7 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   fighter_cancel_mmove(victim);
   battle_damage(victim, 0x2e14);
   /* 4de428 returns to this native caller, which then enters 4de468. */
-  retail_vm_enter_then(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LIU_SCRIPT_LK_DAMAGE_4DE428, MK4_RETAIL_SCRIPT_LIU_KANG_LIU_SCRIPT_LK_DAMAGE_4DE468, fighter_ready);
+  retail_vm_enter_then(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LK_THROW_DAMAGE_RELEASE, MK4_RETAIL_SCRIPT_LIU_KANG_LK_THROW_RETREAT_ENTRY, fighter_ready);
 }
 
 void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type) {
@@ -163,16 +163,16 @@ void liu_kang_liu_script_spawn_high(Fighter *fighter, int task_type) {
 
 /* Native service cluster: 45b230. */
 /* Native service cluster: 45b1f0, 45b230, 47d680, 47d6e0, 47d720, 47d7f0, 4889b0, 48d450. */
-static void n45b1f0_5_torpedo_pose(Fighter *fighter, float pose);
-static void n45b1f0_5_torpedo_cycle(Fighter *fighter);
-static void n45b1f0_5_torpedo_land(Fighter *fighter);
-static void n45b1f0_5_torpedo_miss_motion(Fighter *fighter);
-static void n45b1f0_5_torpedo_recoil(Fighter *fighter);
-static void n45b1f0_5_torpedo_release(Fighter *fighter);
-static void n45b1f0_5_torpedo_pair(Fighter *fighter);
+static void raiden_common_torpedo_pose(Fighter *fighter, float pose);
+static void raiden_common_torpedo_cycle(Fighter *fighter);
+static void raiden_common_torpedo_land(Fighter *fighter);
+static void raiden_common_torpedo_miss_motion(Fighter *fighter);
+static void raiden_common_torpedo_recoil(Fighter *fighter);
+static void raiden_common_torpedo_release(Fighter *fighter);
+static void raiden_common_torpedo_pair(Fighter *fighter);
 
-static const MoveDef n45b1f0_5_s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x202};
-static const MoveDef n45b1f0_5_s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
+static const MoveDef raiden_common_s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x202};
+static const MoveDef raiden_common_s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 
 void raiden_special_cleanup(Fighter *fighter) {
   mk4_script_pair_cleanup(fighter);
@@ -183,14 +183,14 @@ void raiden_special_cleanup(Fighter *fighter) {
   }
 }
 
-static void n45b1f0_5_torpedo_pose(Fighter *fighter, float pose) {
+static void raiden_common_torpedo_pose(Fighter *fighter, float pose) {
   fighter->sample_override = (int)pose;
 }
 
-static void n45b1f0_5_torpedo_cycle(Fighter *fighter) {
+static void raiden_common_torpedo_cycle(Fighter *fighter) {
   native_motion_begin(fighter, 22, NULL);
   for (int frame = 0; frame < 22; ++frame) {
-    native_motion_frame(fighter, frame, n45b1f0_5_torpedo_pose, (float)(20 + frame / 2), NULL);
+    native_motion_frame(fighter, frame, raiden_common_torpedo_pose, (float)(20 + frame / 2), NULL);
   }
   fighter->native_motion.loop = true;
   native_motion_play(fighter);
@@ -201,12 +201,12 @@ void raiden_script_torpedo_motion(Fighter *fighter) {
   int delay = fighter->ticks & 1;
   int count = delay + (30 - pose) * 2;
   if (count <= 0) {
-    n45b1f0_5_torpedo_cycle(fighter);
+    raiden_common_torpedo_cycle(fighter);
   } else {
-    native_motion_begin(fighter, count, n45b1f0_5_torpedo_cycle);
+    native_motion_begin(fighter, count, raiden_common_torpedo_cycle);
     for (int frame = 0; frame < count; ++frame) {
       int sample = pose + (frame >= delay ? 1 + (frame - delay) / 2 : 0);
-      native_motion_frame(fighter, frame, n45b1f0_5_torpedo_pose, (float)sample, NULL);
+      native_motion_frame(fighter, frame, raiden_common_torpedo_pose, (float)sample, NULL);
     }
     native_motion_play(fighter);
   }
@@ -214,12 +214,12 @@ void raiden_script_torpedo_motion(Fighter *fighter) {
 }
 
 unsigned raiden_script_torpedo_query(Fighter *fighter) {
-  AttackRecord n45b1f0_5_torpedo_record = retail_vm_attack_record(retail_vm_image(), TORPEDO_ATTACK_RECORD);
+  AttackRecord raiden_common_torpedo_record = retail_vm_attack_record(retail_vm_image(), TORPEDO_ATTACK_RECORD);
 
-  return battle_contact(fighter, &n45b1f0_5_torpedo_record) == CONTACT_MISS ? 0u : 1u;
+  return battle_contact(fighter, &raiden_common_torpedo_record) == CONTACT_MISS ? 0u : 1u;
 }
 
-static void n45b1f0_5_torpedo_land(Fighter *fighter) {
+static void raiden_common_torpedo_land(Fighter *fighter) {
   fighter_finish_mmove(fighter, fighter_ready);
 }
 
@@ -229,13 +229,13 @@ void raiden_script_torpedo_miss(Fighter *fighter) {
     fighter->body.vel[axis] = q16_mul(fighter->body.vel[axis], 0x4000);
   }
   fighter->body.gravity = 0x28f;
-  native_await(fighter, native_grounded, n45b1f0_5_torpedo_land);
+  native_await(fighter, native_grounded, raiden_common_torpedo_land);
 }
 
-/* The step runs inside a generated frame row that installs its successor
+/* The step runs inside a native frame row that installs its successor
  * afterwards. The world pump runs this physics later in the same tick,
  * before gravity and integration, so the miss keeps the 47d720 timing. */
-static void n45b1f0_5_torpedo_miss_motion(Fighter *fighter) {
+static void raiden_common_torpedo_miss_motion(Fighter *fighter) {
   raiden_script_torpedo_miss(fighter);
 }
 
@@ -248,19 +248,19 @@ void raiden_script_torpedo_step(Fighter *fighter) {
     next2 += next * next;
   }
   if (radius2 >= (int64_t)10 * Q16_ONE * 10 * Q16_ONE && next2 >= radius2) {
-    fighter->body.physics = n45b1f0_5_torpedo_miss_motion;
+    fighter->body.physics = raiden_common_torpedo_miss_motion;
   }
 }
 
-static void n45b1f0_5_torpedo_recoil(Fighter *fighter) {
+static void raiden_common_torpedo_recoil(Fighter *fighter) {
   fighter->action = 0x1010;
   fighter_set_speed(fighter, -0xccc);
   fighter->body.vel[AXIS_Y] = -0x23d7;
   fighter->body.gravity = 0x168;
-  native_await(fighter, native_grounded, n45b1f0_5_torpedo_land);
+  native_await(fighter, native_grounded, raiden_common_torpedo_land);
 }
 
-static void n45b1f0_5_torpedo_release(Fighter *fighter) {
+static void raiden_common_torpedo_release(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   if (victim->pending == NULL && (fighter->flags & FF_PAIRED) && (victim->flags & FF_PAIRED)) {
     mk4_script_release_pair(fighter);
@@ -268,13 +268,13 @@ static void n45b1f0_5_torpedo_release(Fighter *fighter) {
   } else {
     fighter->flags &= ~(unsigned)FF_PAIRED;
   }
-  n45b1f0_5_torpedo_recoil(fighter);
+  raiden_common_torpedo_recoil(fighter);
 }
 
-static void n45b1f0_5_torpedo_pair(Fighter *fighter) {
+static void raiden_common_torpedo_pair(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   if (victim->pending != NULL || !(fighter->flags & FF_PAIRED) || !(victim->flags & FF_PAIRED)) {
-    n45b1f0_5_torpedo_release(fighter);
+    raiden_common_torpedo_release(fighter);
     return;
   }
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
@@ -282,24 +282,24 @@ static void n45b1f0_5_torpedo_pair(Fighter *fighter) {
   }
   victim->body.pos[AXIS_Y] = fighter->body.pos[AXIS_Y];
   if (fighter_distance(fighter) > 10.f) {
-    n45b1f0_5_torpedo_release(fighter);
+    raiden_common_torpedo_release(fighter);
   }
 }
 
 void raiden_script_torpedo_contact(Fighter *fighter) {
   fighter->body.physics = NULL;
   if (fighter->contact == CONTACT_BLOCK) {
-    n45b1f0_5_torpedo_recoil(fighter);
+    raiden_common_torpedo_recoil(fighter);
     return;
   }
   Fighter *victim = fighter_peer(fighter);
-  mk4_mmove_carry_victim(fighter, &n45b1f0_5_s_torpedo_victim);
+  mk4_mmove_carry_victim(fighter, &raiden_common_s_torpedo_victim);
   fighter_cancel_mmove(victim);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_RAIDEN_SCRIPT_TORPEDO_CONTACT_4EA108, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_CONTACT, fighter_ready);
   int pose = fighter_sample(fighter);
-  native_begin(fighter, 1, 50, n45b1f0_5_torpedo_release);
+  native_begin(fighter, 1, 50, raiden_common_torpedo_release);
   for (int frame = 1; frame <= 50; ++frame) {
-    native_frame(fighter, frame, pose, n45b1f0_5_torpedo_pair);
+    native_frame(fighter, frame, pose, raiden_common_torpedo_pair);
   }
   native_play(fighter, false);
 }
@@ -309,12 +309,12 @@ void raiden_torpedo(Fighter *fighter) {
     return;
   }
   bool fast = fighter_fast_start(fighter);
-  fighter_start_move(fighter, S_KICK, &n45b1f0_5_s_torpedo);
+  fighter_start_move(fighter, S_KICK, &raiden_common_s_torpedo);
   fighter_set_speed(fighter, 0x2666);
   mk4_script_save_motion(fighter);
   fighter->mmove_cleanup = raiden_special_cleanup;
-  RetailScriptContinuation script = fast ? (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_4E8440, fighter_ready}
-                                         : (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_4E8458, fighter_ready};
+  RetailScriptContinuation script = fast ? (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_FAST_STARTUP, fighter_ready}
+                                         : (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_ORDINARY_STARTUP, fighter_ready};
   retail_vm_enter(fighter, script.entry, script.finish);
 }
 
@@ -378,9 +378,9 @@ void sonya_special_cleanup(Fighter *fighter) {
 
 /* Native service cluster: 42c200, 42c220, 42c300, 470420, 49bcb0. */
 
-static const MoveDef n42c200_s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
+static const MoveDef sub_zero_common_s_lk_throw_idle = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_0501};
 // clang-format off: Keep table entries on one row, including long rows.
-static const int n42c200_lk_owner_idle_frames_samples[] = {
+static const int sub_zero_common_lk_owner_idle_frames_samples[] = {
   0,
   0,
   0,
@@ -443,11 +443,14 @@ static const int n42c200_lk_owner_idle_frames_samples[] = {
   0,
 };
 // clang-format on
-static const mframe_t n42c200_lk_owner_idle_frames[60] = {{0}};
-static const mmove_t n42c200_lk_owner_idle_phase = {
-    .firstframe = 0, .lastframe = 59, .frame = n42c200_lk_owner_idle_frames, .endfunc = fighter_ready, .samples = n42c200_lk_owner_idle_frames_samples};
-static const MoveDef n42c200_s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0304};
-static const MeshAnimation n42c200_ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
+static const mframe_t sub_zero_common_lk_owner_idle_frames[60] = {{0}};
+static const mmove_t sub_zero_common_lk_owner_idle_phase = {.firstframe = 0,
+    .lastframe = 59,
+    .frame = sub_zero_common_lk_owner_idle_frames,
+    .endfunc = fighter_ready,
+    .samples = sub_zero_common_lk_owner_idle_frames_samples};
+static const MoveDef sub_zero_common_s_ice = {.clip = 16, .last = 35, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0304};
+static const MeshAnimation sub_zero_common_ice_meshes = {.first = 75, .count = 8, .period = 1, .scale = Q16_ONE};
 
 void sub_zero_script_lk_rebase(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
@@ -457,7 +460,7 @@ void sub_zero_script_lk_rebase(Fighter *fighter) {
   victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_LK_REBASE_4DE4B8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_LK_REBASE, fighter_ready);
 }
 
 void sub_zero_script_lk_damage(Fighter *fighter) {
@@ -471,14 +474,14 @@ void sub_zero_script_lk_damage(Fighter *fighter) {
   victim->flags |= FF_PAIR_RELEASE;
   sub_zero_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_LK_DAMAGE_4DE4E0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_LK_DAMAGE, fighter_ready);
 }
 
 void sub_zero_script_lk_owner_return(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   fighter->flags &= ~(unsigned)FF_PAIRED;
   victim->flags &= ~(unsigned)FF_PAIRED;
-  fighter_start_mmove(fighter, S_THROW, &n42c200_s_lk_throw_idle, &n42c200_lk_owner_idle_phase);
+  fighter_start_mmove(fighter, S_THROW, &sub_zero_common_s_lk_throw_idle, &sub_zero_common_lk_owner_idle_phase);
 }
 
 /* Owner submits paired samples; the victim only watches capture lifetime. */
@@ -497,7 +500,7 @@ void sub_zero_script_spawn_ice(Fighter *fighter, int task_type) {
   require(task_type == 66, "Invalid ice projectile task type");
   Projectile *p = battle_spawn_projectile(fighter, PROJECTILE_ICE, 180, sub_zero_ice_projectile);
   if (p != NULL) {
-    p->mesh_animation = &n42c200_ice_meshes;
+    p->mesh_animation = &sub_zero_common_ice_meshes;
     p->initial_mesh = 74;
     for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
       q16 heading = fighter_axis(fighter, axis);
@@ -515,10 +518,10 @@ bool sub_zero_can_ice(const Fighter *fighter) {
 void sub_zero_ice(Fighter *fighter) {
   bool followup = fighter_fast_start(fighter);
   mk4_script_stop_body(fighter);
-  fighter_start_move(fighter, S_PUNCH, &n42c200_s_ice);
+  fighter_start_move(fighter, S_PUNCH, &sub_zero_common_s_ice);
   fighter->script_phase = followup;
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_ICE_4ED588, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_ICE, fighter_ready);
 }
 
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end) {

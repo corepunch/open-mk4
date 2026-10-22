@@ -51,7 +51,7 @@ static void native_address_resume(Fighter *fighter) {
 /* Install after native_begin or a non-immediate native helper. Native callback
  * addresses remain distinct from script entries and are never host pointers. */
 void native_address_end(Fighter *fighter, uint32_t address) {
-  require(address >= MK4_RETAIL_DATA_IMAGE_BASE_400000 && address < RETAIL_SCRIPT_BEGIN, "Invalid native address continuation");
+  require(address >= MK4_RETAIL_DATA_IMAGE_BASE && address < RETAIL_SCRIPT_BEGIN, "Invalid native address continuation");
   fighter->native.script_end = (RetailScriptContinuation){0};
   fighter->native.native_end = (RetailNativeContinuation){address};
   fighter->native.move.endfunc = native_address_resume;

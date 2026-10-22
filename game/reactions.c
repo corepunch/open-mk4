@@ -116,7 +116,7 @@ static void react_jab_air(Fighter *fighter) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_JAB_AIR_4E8B00, retail_controller_return);
+  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_JAB_AIR, retail_controller_return);
 }
 
 static void react_kick_air(Fighter *fighter) {
@@ -124,13 +124,13 @@ static void react_kick_air(Fighter *fighter) {
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
   retail_native_sound_list(RETAIL_SOUND_KNOCKDOWN_VOICE_LIST);
-  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_AIR_4E8A18, retail_getup_roll);
+  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_AIR, retail_getup_roll);
 }
 
 static void react_kick_air_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 0);
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, MK4_RETAIL_SCRIPT_JAX_DASH_VICTIM_THROW_4E89D8, retail_getup_roll);
+  hit_script(fighter, MK4_RETAIL_SCRIPT_JAX_DASH_PUNCH_AIRBORNE_VICTIM_168, retail_getup_roll);
 }
 
 static void react_kick_hit(Fighter *fighter) {
@@ -451,63 +451,63 @@ static void react_weapon_followup(Fighter *fighter) {
 /* Native entry registry. Reaction IDs and roster dispatch stay in retail data. */
 FighterFn retail_engine_reaction(uint32_t entry) {
   switch (entry) {
-    case RETAIL_NATIVE_CAGE_SECOND_VICTIM_HIT_465A80:
+    case RETAIL_NATIVE_CAGE_SECOND_VICTIM_HIT:
       return cage_second_victim_hit;
-    case RETAIL_NATIVE_JAX_FATALITY_2_HEAD_466B40:
+    case RETAIL_NATIVE_JAX_FATALITY_2_HEAD:
       return jax_fatality_2_head;
-    case RETAIL_NATIVE_KAI_SECOND_VICTIM_4814C0:
+    case RETAIL_NATIVE_KAI_SECOND_VICTIM:
       return kai_second_victim;
-    case RETAIL_NATIVE_SHINNOK_SECOND_VICTIM_481510:
+    case RETAIL_NATIVE_SHINNOK_SECOND_VICTIM:
       return shinnok_second_victim;
-    case RETAIL_NATIVE_REPTILE_SECOND_VICTIM_481530:
+    case RETAIL_NATIVE_REPTILE_SECOND_VICTIM:
       return reptile_second_victim;
-    case RETAIL_NATIVE_FUJIN_SECOND_VICTIM_4816B0:
+    case RETAIL_NATIVE_FUJIN_SECOND_VICTIM:
       return fujin_second_victim;
-    case RETAIL_NATIVE_REACT_KICK_AIR_IMPACT_481CE0:
+    case RETAIL_NATIVE_REACT_KICK_AIR_IMPACT:
       return react_kick_air_impact;
-    case RETAIL_NATIVE_REACT_KICK_AIR_481D30:
+    case RETAIL_NATIVE_REACT_KICK_AIR:
       return react_kick_air;
-    case RETAIL_NATIVE_QUAN_CHI_FLIP_REACTION_481D90:
+    case RETAIL_NATIVE_QUAN_CHI_FLIP_REACTION:
       return quan_chi_flip_reaction;
-    case RETAIL_NATIVE_REACT_JAB_AIR_482070:
+    case RETAIL_NATIVE_REACT_JAB_AIR:
       return react_jab_air;
-    case RETAIL_NATIVE_TANYA_WEAPON_REACTION_4821A0:
+    case RETAIL_NATIVE_TANYA_WEAPON_REACTION_REACTION_170_ENTRY:
       return tanya_weapon_reaction;
-    case RETAIL_NATIVE_REACT_KICK_HIT_482A10:
+    case RETAIL_NATIVE_REACT_KICK_HIT:
       return react_kick_hit;
-    case RETAIL_NATIVE_REACT_WEAPON_FOLLOWUP_482C20:
+    case RETAIL_NATIVE_REACT_WEAPON_FOLLOWUP:
       return react_weapon_followup;
-    case RETAIL_NATIVE_KAI_HANDSTAND_REACTION_482DE0:
+    case RETAIL_NATIVE_KAI_HANDSTAND_REACTION_ENTRY:
       return kai_handstand_reaction;
-    case RETAIL_NATIVE_GORO_QUAKE_VICTIM_4834D0:
+    case RETAIL_NATIVE_GORO_QUAKE_VICTIM:
       return goro_quake_victim;
-    case RETAIL_NATIVE_REPTILE_REACTION_40_483550:
+    case RETAIL_NATIVE_REPTILE_REACTION_40:
       return reptile_reaction_40;
-    case RETAIL_NATIVE_GORO_KICK_VICTIM_483570:
+    case RETAIL_NATIVE_GORO_KICK_VICTIM:
       return goro_kick_victim;
-    case RETAIL_NATIVE_JAREK_BALL_VICTIM_4835A0:
+    case RETAIL_NATIVE_JAREK_BALL_VICTIM:
       return jarek_ball_victim;
-    case RETAIL_NATIVE_CAGE_SHADOW_VICTIM_4836B0:
+    case RETAIL_NATIVE_CAGE_SHADOW_VICTIM:
       return cage_shadow_victim;
-    case RETAIL_NATIVE_REACT_JAB_HIT_483B40:
+    case RETAIL_NATIVE_REACT_JAB_HIT:
       return react_jab_hit;
-    case RETAIL_NATIVE_QUAN_CHI_STEAL_REACTION_484060:
+    case RETAIL_NATIVE_QUAN_CHI_STEAL_REACTION:
       return quan_chi_steal_reaction;
-    case RETAIL_NATIVE_GORO_STOMP_VICTIM_4842D0:
+    case RETAIL_NATIVE_GORO_STOMP_VICTIM:
       return goro_stomp_victim;
-    case RETAIL_NATIVE_QUAN_CHI_STOMP_REACTION_4843B0:
+    case RETAIL_NATIVE_QUAN_CHI_STOMP_REACTION:
       return quan_chi_stomp_reaction;
-    case RETAIL_NATIVE_QUAN_CHI_SKULL_REACTION_485F90:
+    case RETAIL_NATIVE_QUAN_CHI_SKULL_REACTION:
       return quan_chi_skull_reaction;
-    case RETAIL_NATIVE_REACT_SCEPTER_FREEZE_486210:
+    case RETAIL_NATIVE_REACT_SCEPTER_FREEZE:
       return react_scepter_freeze;
-    case RETAIL_NATIVE_REACT_FREEZE_486230:
+    case RETAIL_NATIVE_REACT_FREEZE:
       return react_freeze;
-    case RETAIL_NATIVE_TANYA_WEAPON_REACTION_486710:
+    case RETAIL_NATIVE_TANYA_WEAPON_REACTION_ENTRY:
       return tanya_weapon_reaction;
-    case RETAIL_NATIVE_FUJIN_BOLT_VICTIM_486770:
+    case RETAIL_NATIVE_FUJIN_BOLT_VICTIM:
       return fujin_bolt_victim;
-    case RETAIL_NATIVE_JAX_DASH_VICTIM_THROW_4867B0:
+    case RETAIL_NATIVE_JAX_DASH_VICTIM_THROW:
       return jax_dash_victim_throw;
     case RETAIL_NATIVE_REACT_BLOCK_486970:
       return react_block;
@@ -541,15 +541,15 @@ FighterFn retail_engine_reaction(uint32_t entry) {
       return react_block;
     case RETAIL_NATIVE_REACT_BLOCK_486D00:
       return react_block;
-    case RETAIL_NATIVE_FUJIN_GRAB_VICTIM_487A10:
+    case RETAIL_NATIVE_FUJIN_GRAB_VICTIM:
       return fujin_grab_victim;
-    case RETAIL_NATIVE_FUJIN_WIND_VICTIM_487ED0:
+    case RETAIL_NATIVE_FUJIN_WIND_VICTIM:
       return fujin_wind_victim;
-    case RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM_488310:
+    case RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM:
       return fujin_wind_slam_victim;
-    case RETAIL_NATIVE_JAX_DASH_VICTIM_HIT_4883F0:
+    case RETAIL_NATIVE_JAX_DASH_VICTIM_HIT:
       return jax_dash_victim_hit;
-    case RETAIL_NATIVE_CAGE_POWER_VICTIM_488400:
+    case RETAIL_NATIVE_CAGE_POWER_VICTIM:
       return cage_power_victim;
     case RETAIL_NATIVE_FUJIN_TRIPLE_VICTIM_488420:
       return fujin_triple_victim;
@@ -572,12 +572,12 @@ void battle_react(Fighter *victim, int reaction) {
   uint32_t target = retail_reaction_target(retail_vm_image(), (unsigned)reaction);
   FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
   q16 retained_velocity[3];
-  if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM_488310 || target == RETAIL_NATIVE_SPEAR_WAIT_487350) {
+  if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == RETAIL_NATIVE_SPEAR_WAIT) {
     memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);
   }
   victim->body_contact = false;
   victim->reaction = reaction;
-  if (target != RETAIL_NATIVE_REACT_FREEZE_486230 && target != RETAIL_NATIVE_REACT_SCEPTER_FREEZE_486210) {
+  if (target != RETAIL_NATIVE_REACT_FREEZE && target != RETAIL_NATIVE_REACT_SCEPTER_FREEZE) {
     for (int i = 0; i < 3; ++i) {
       victim->body.angle[i] = 0;
     }
@@ -596,7 +596,7 @@ void battle_react(Fighter *victim, int reaction) {
   fighter_interrupt(victim, native);
   /* Native488310 changes gravity on the existing vortex motion. Preserve
    * that motion across cancellation of the previous portable frame action. */
-  if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM_488310 || target == RETAIL_NATIVE_SPEAR_WAIT_487350) {
+  if (target == RETAIL_NATIVE_FUJIN_WIND_SLAM_VICTIM || target == RETAIL_NATIVE_SPEAR_WAIT) {
     memcpy(victim->body.vel, retained_velocity, sizeof retained_velocity);
   }
   victim->flags |= FF_REACTING;

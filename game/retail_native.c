@@ -90,6 +90,6 @@ void retail_flip_facing(Fighter *fighter) {
 }
 
 void retail_throw_turn(Fighter *fighter) {
-  uint32_t callback = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_THROW_TURN_4DE664);
+  uint32_t callback = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_THROW_TURN);
   require(retail_native_vm(fighter, callback, RETAIL_CALL, 0), "Unsupported throw callback table entry");
 }

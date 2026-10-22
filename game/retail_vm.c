@@ -626,14 +626,13 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x56:
       case 0x64:
-        if (!vm->native(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT_45AC30 : RETAIL_NATIVE_FACE_PEER_45B380, RETAIL_HANDLER, arg)) {
+        if (!vm->native(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT : RETAIL_NATIVE_FACE_PEER_45B380, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed scene/facing binding");
         }
         break;
       case 0x41:
       case 0x1e:
-        if (!vm->native(fighter, opcode == 0x41 ? RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH_45B1F0 : RETAIL_NATIVE_DISPATCH_OPPONENT_REACTION_45B230,
-                RETAIL_HANDLER, arg)) {
+        if (!vm->native(fighter, opcode == 0x41 ? RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH : RETAIL_NATIVE_DISPATCH_OPPONENT_REACTION, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
@@ -667,7 +666,7 @@ void retail_vm_step(Fighter *fighter) {
         q16 limit = (q16)fetch(fighter);
         if (g_battle.distance <= limit) {
           uint64_t continuation = fighter->continuation;
-          if (!vm->native(fighter, RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH_45B1F0, RETAIL_HANDLER, arg)) {
+          if (!vm->native(fighter, RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH, RETAIL_HANDLER, arg)) {
             vm_error(fighter, "unreviewed distance reaction binding");
           }
           if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
@@ -689,7 +688,7 @@ void retail_vm_step(Fighter *fighter) {
       case 0x50: {
         uint32_t target = fetch(fighter);
         uint64_t continuation = fighter->continuation;
-        contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8, arg);
+        contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE, arg);
         if (vm->active && fighter->continuation == continuation && (vm->result & 1u)) {
           jump(fighter, target);
         }
@@ -835,9 +834,9 @@ void retail_vm_step(Fighter *fighter) {
       case 0x53:
       case 0x5e:
         contact(fighter,
-            opcode == 0x51   ? MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8
-            : opcode == 0x52 ? MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE_53D268
-            : opcode == 0x53 ? MK4_RETAIL_DATA_CONTACT_QUERY_D_TABLE_53D178
+            opcode == 0x51   ? MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE
+            : opcode == 0x52 ? MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE
+            : opcode == 0x53 ? MK4_RETAIL_DATA_CONTACT_QUERY_D_TABLE
                              : RETAIL_WEAPON_ATTACK_TABLE,
             arg);
         break;

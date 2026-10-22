@@ -285,7 +285,7 @@ void retail_throw_capture(Fighter *fighter, int action, bool align) {
 
 /* Native42c590's capture and original4de798 selector. No fighter clip seed. */
 static void lp_throw_script(Fighter *fighter) {
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_THROW_SCRIPT_4DE798, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_THROW_SCRIPT, fighter_ready);
 }
 
 void retail_lp_throw(Fighter *fighter) {
@@ -354,7 +354,7 @@ void mk4_script_jab_contact(Fighter *fighter) {
     return;
   }
   const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
-  uint32_t record = mk4_image_u32(image, MK4_RETAIL_DATA_JAB_CONTACT_53D26C);
+  uint32_t record = mk4_image_u32(image, MK4_RETAIL_DATA_JAB_CONTACT);
   AttackRecord attack = retail_vm_attack_record(image, record * 4);
   battle_contact(fighter, &attack);
 }
@@ -520,8 +520,8 @@ void mk4_mmove_hold(Fighter *fighter) {
  * (clip282), and advances to its end before controller return. */
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
   const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
-  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, MK4_RETAIL_DATA_MMOVE_LK_OWNER_RETURN_4DE358));
-  retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN_53C540) * 4, 0);
+  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, MK4_RETAIL_DATA_MMOVE_LK_OWNER_RETURN));
+  retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN) * 4, 0);
   int last = fighter_move(fighter)->last;
   native_begin(fighter, 0, last, end);
   for (int sample = 0; sample <= last; ++sample) {
@@ -537,7 +537,7 @@ void mk4_mmove_lk_owner_ready(Fighter *fighter) {
 /* Native488b40/488b70 selects the original side-getup record. */
 void mk4_mmove_side_getup(Fighter *fighter) {
   if (fighter->health <= 0) {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_MMOVE_SIDE_GETUP_4EA1E8, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_MMOVE_SIDE_GETUP, mk4_mmove_thrown_finish);
     return;
   }
   mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200);
@@ -556,7 +556,7 @@ void retail_crouch_return(Fighter *fighter) {
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
 void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
-  require(record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200 || record == MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210 ||
+  require(record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200 || record == MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP ||
               record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA220 || record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA230,
       "Unreviewed native getup record");
   mk4_script_stop_body(fighter);

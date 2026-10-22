@@ -16,9 +16,8 @@ void retail_air_bind_row(Fighter *fighter, uint32_t row) {
 
 void retail_air_attack(Fighter *fighter, unsigned kind) {
   static const int actions[] = {0x603, 0x604, 0x600, 0x602, 0x601};
-  static const uint32_t scripts[] = {MK4_RETAIL_SCRIPT_AIR_HIGH_PUNCH_STARTUP_4E6658, MK4_RETAIL_SCRIPT_AIR_LOW_PUNCH_STARTUP_4E6710,
-      MK4_RETAIL_SCRIPT_AIR_STRAIGHT_KICK_STARTUP_4E61F8, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_HIGH_KICK_STARTUP_4E6500,
-      MK4_RETAIL_SCRIPT_AIR_DIAGONAL_LOW_KICK_STARTUP_4E63D8};
+  static const uint32_t scripts[] = {MK4_RETAIL_SCRIPT_AIR_HIGH_PUNCH_STARTUP, MK4_RETAIL_SCRIPT_AIR_LOW_PUNCH_STARTUP,
+      MK4_RETAIL_SCRIPT_AIR_STRAIGHT_KICK_STARTUP, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_HIGH_KICK_STARTUP, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_LOW_KICK_STARTUP};
   require(kind < sizeof scripts / sizeof *scripts, "Invalid native air attack");
   bool combo = fighter_airborne(fighter) && fighter->body.gravity == 0;
   retail_native_begin(fighter, S_JUMP, actions[kind], true);
@@ -30,7 +29,7 @@ void retail_air_attack(Fighter *fighter, unsigned kind) {
   retail_face_peer(fighter);
   uint32_t script = scripts[kind];
   if (fighter->armed && kind < 2) {
-    script = kind == 0 ? MK4_RETAIL_SCRIPT_AIR_ATTACK_4E66D0 : MK4_RETAIL_SCRIPT_AIR_ATTACK_4E66F0;
+    script = kind == 0 ? MK4_RETAIL_SCRIPT_JAX_DRAW_WEAPON_AIR_HP : MK4_RETAIL_SCRIPT_JAX_DRAW_WEAPON_AIR_LP;
   }
   retail_vm_enter(fighter, script, fighter_ready);
 }
@@ -102,7 +101,7 @@ static void air_low_contact_end(Fighter *fighter) {
 
 static void air_high_contact_end(Fighter *fighter) {
   fighter->buttons = NULL;
-  air_script(fighter, MK4_RETAIL_SCRIPT_AIR_HIGH_CONTACT_END_4E66B8, false);
+  air_script(fighter, MK4_RETAIL_SCRIPT_AIR_HIGH_CONTACT_END, false);
 }
 
 static void air_punch_contact(Fighter *fighter, bool high) {
@@ -111,7 +110,7 @@ static void air_punch_contact(Fighter *fighter, bool high) {
   fighter->action = ACTION_RETAIL_1006;
   if (air_followup) {
     if (!high) {
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_PUNCH_CONTACT_4E6280, false);
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_PUNCH_CONTACT, false);
       return;
     }
     fighter->buttons = &retail_air_buttons[2];
@@ -140,10 +139,10 @@ static void air_contact_query(Fighter *fighter) {
     return;
   }
   uint32_t query = mk4_image_u32(image, row + 8);
-  require(query == RETAIL_NATIVE_CONTACT_QUERY_A_48D3D0 || query == RETAIL_NATIVE_CONTACT_QUERY_B_48D3F0, "Unsupported native air contact query");
+  require(query == RETAIL_NATIVE_CONTACT_QUERY_A || query == RETAIL_NATIVE_CONTACT_QUERY_B, "Unsupported native air contact query");
   unsigned selector = mk4_image_u32(image, row + 4);
   require(selector < 256, "Invalid native air contact selector");
-  uint32_t bank = query == RETAIL_NATIVE_CONTACT_QUERY_A_48D3D0 ? MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE_53D268 : MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8;
+  uint32_t bank = query == RETAIL_NATIVE_CONTACT_QUERY_A ? MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE : MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE;
   AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, bank + selector * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     fighter->action = ACTION_RETAIL_1006;
@@ -196,7 +195,7 @@ static void air_continue(Fighter *fighter, uint32_t target) {
       fighter->sample_override = mini(9, fighter_move(fighter)->last);
       air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E6680);
       return;
-    case RETAIL_NATIVE_AIR_CONTACT_BEGIN_46EEC0:
+    case RETAIL_NATIVE_AIR_CONTACT_BEGIN:
       air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E6738);
       return;
     case RETAIL_NATIVE_AIR_CONTINUE_46E3F0:
@@ -211,13 +210,13 @@ static void air_continue(Fighter *fighter, uint32_t target) {
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E65F8);
       return;
-    case RETAIL_NATIVE_AIR_PUNCH_CONTACT_46E7C0:
+    case RETAIL_NATIVE_GORO_AIR_HP_RECOVERY_CALLBACK:
       air_punch_contact(fighter, true);
       return;
-    case RETAIL_NATIVE_AIR_PUNCH_CONTACT_46CB10:
+    case RETAIL_NATIVE_GORO_AIR_KICK_RECOVERY_CALLBACK:
       air_punch_contact(fighter, false);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46EF10:
+    case RETAIL_NATIVE_GORO_AIR_LP_RECOVERY_CALLBACK:
       air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6770, false);
       return;
     case RETAIL_NATIVE_AIR_SCRIPT_46E230:
@@ -254,7 +253,7 @@ static void air_continue(Fighter *fighter, uint32_t target) {
       air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6618, true);
       return;
     case RETAIL_NATIVE_AIR_SCRIPT_46C810:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6270, false);
+      air_script(fighter, MK4_RETAIL_SCRIPT_CAGE_AIR_KICK_NARROW_MISS_REVERSAL, false);
       return;
     case RETAIL_NATIVE_AIR_LAND_46E240:
     case RETAIL_NATIVE_AIR_LAND_46C8F0:
@@ -266,39 +265,39 @@ static void air_continue(Fighter *fighter, uint32_t target) {
 }
 
 void retail_air_hp_tail(Fighter *fighter) {
-  air_open(fighter, MK4_RETAIL_DATA_AIR_HP_TAIL_4E6670);
+  air_open(fighter, MK4_RETAIL_DATA_AIR_HP_TAIL);
 }
 
 void retail_air_lp_tail(Fighter *fighter) {
-  air_open(fighter, MK4_RETAIL_DATA_AIR_LP_TAIL_4E6728);
+  air_open(fighter, MK4_RETAIL_DATA_AIR_LP_TAIL);
 }
 
 void retail_air_diagonal_tail(Fighter *fighter) {
-  air_open(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_TAIL_4E6558);
+  air_open(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_TAIL);
 }
 
 void retail_air_diagonal_alt_tail(Fighter *fighter) {
-  air_open(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_ALT_TAIL_4E65A0);
+  air_open(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_ALT_TAIL);
 }
 
 void retail_air_diagonal_wide_tail(Fighter *fighter) {
-  air_open(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_WIDE_TAIL_4E65E8);
+  air_open(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_WIDE_TAIL);
 }
 
 void retail_air_lk_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LK_TAIL_4E6438);
+  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LK_TAIL);
 }
 
 void retail_air_lk_alt_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LK_ALT_TAIL_4E6470);
+  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LK_ALT_TAIL);
 }
 
 void retail_air_lk_wide_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LK_WIDE_TAIL_4E64A8);
+  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LK_WIDE_TAIL);
 }
 
 void retail_air_straight_tail(Fighter *fighter) {
-  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_STRAIGHT_TAIL_4E6258);
+  air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_STRAIGHT_TAIL);
 }
 
 static void air_wide_landed(Fighter *fighter) {
@@ -319,7 +318,7 @@ static void air_wide_query(Fighter *fighter) {
     air_wide_landed(fighter);
     return;
   }
-  AttackRecord record = retail_vm_attack_record(retail_vm_image(), mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8 + 39 * 4) * 4);
+  AttackRecord record = retail_vm_attack_record(retail_vm_image(), mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE + 39 * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     air_punch_contact(fighter, false);
   }

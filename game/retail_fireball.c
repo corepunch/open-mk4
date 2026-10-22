@@ -35,7 +35,7 @@ static bool fireball_contact(Projectile *projectile, bool air) {
   uint32_t waiter = air ? MK4_RETAIL_DATA_FIREBALL_CONTACT_4ED2E8 : MK4_RETAIL_DATA_FIREBALL_CONTACT_4ED2B0;
   unsigned selector = mk4_image_u32(image, waiter);
   require(selector < 256, "Invalid native projectile contact selector");
-  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, MK4_RETAIL_DATA_PROJECTILE_CONTACT_TABLE_53D208 + selector * 4) * 4);
+  AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, MK4_RETAIL_DATA_PROJECTILE_CONTACT_TABLE + selector * 4) * 4);
   if (battle_projectile_contact(projectile, &record) == CONTACT_MISS) {
     return false;
   }
@@ -144,7 +144,7 @@ static void fall_hold(Fighter *fighter) {
  * and the peer-facing update 490bd0; one fall sample per visit until 18. */
 void retail_fireball_fall(Fighter *fighter) {
   fighter_start_move(fighter, S_JUMP, &fall);
-  retail_vm_bind_animation(fighter, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_310_4FBC04, 7);
+  retail_vm_bind_animation(fighter, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_310, 7);
   fighter->body.vel[AXIS_Y] = 0;
   fighter->body.gravity = 0x20c;
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
@@ -159,12 +159,12 @@ void retail_fireball_fall(Fighter *fighter) {
 void retail_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &cast);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FIREBALL_4ED268, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIREBALL_CASTER, fighter_ready);
 }
 
 /* Command flag 0x10 and 45ef20 require an airborne fighter with gravity. */
 void retail_air_fireball(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &air_cast);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_FIREBALL_4ED2C0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_AIR_FIREBALL, fighter_ready);
 }
