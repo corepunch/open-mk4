@@ -435,21 +435,16 @@ void mk4_native_fan_rise(Fighter *fighter) {
 
 void mk4_script_shake(Fighter *fighter, int selector) {
   (void)fighter;
-  // clang-format off: Keep table entries on one row, including long rows.
-  static const int pulses[][3] = {
-    {3, 4, 0x2666},
-    {2, 2, 0x1999},
-    {2, 2, 0x1999},
-    {4, 3, 0x2666},
-    {10, 3, 0x2e14},
-    {2, 3, 0x2e14},
-    {3, 3, 0x3333},
-    {2, 3, 0xf5c},
-    {6, 3, 0x2e14},
+
+  enum {
+    CAMERA_SHAKE_ROW_COUNT = 9,
+    CAMERA_SHAKE_ROW_BYTES = 12
   };
-  // clang-format on
-  require(selector >= 0 && selector < 9, "Unexpected camera pulse selector");
-  battle_camera_shake(pulses[selector][0], pulses[selector][1], pulses[selector][2]);
+
+  require(selector >= 0 && selector < CAMERA_SHAKE_ROW_COUNT, "Unexpected camera pulse selector");
+  const Mk4Image *image = retail_vm_image();
+  uint32_t row = MK4_RETAIL_DATA_CAMERA_SHAKE_ROWS + (unsigned)selector * CAMERA_SHAKE_ROW_BYTES;
+  battle_camera_shake((int)mk4_image_u32(image, row), (int)mk4_image_u32(image, row + 4), (q16)mk4_image_u32(image, row + 8));
 }
 
 void mk4_script_effect(Fighter *fighter, int selector) {
