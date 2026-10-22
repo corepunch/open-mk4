@@ -8,22 +8,22 @@
 
 /* Views contain addresses only; button targets remain in the loaded image. */
 const ButtonTable retail_close_buttons[] = {
-    {.retail_address = 0x4e7078},
-    {.retail_address = 0x4e7090},
-    {.retail_address = 0x4e70a8},
-    {.retail_address = 0x4e70c0},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_CLOSE_PRIMARY_4E7078},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_CLOSE_SECONDARY_4E7090},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_CLOSE_TERTIARY_4E70A8},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_CLOSE_FOLLOWUP_4E70C0},
 };
 
 const ButtonTable retail_ground_buttons[] = {
-    {.retail_address = 0x4e5058},
-    {.retail_address = 0x4e5070},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_STANDING_4E5058},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_CROUCHING_4E5070},
 };
 
 const ButtonTable retail_air_buttons[] = {
-    {.retail_address = 0x4e6ec8},
-    {.retail_address = 0x4e70d8},
-    {.retail_address = 0x4e6ee0},
-    {.retail_address = 0x4e88f0},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_STRAIGHT_AIR_4E6EC8},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_DIAGONAL_AIR_4E70D8},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_AIR_COMBO_4E6EE0},
+    {.retail_address = MK4_RETAIL_INPUT_TABLE_TELEPORT_AIR_4E88F0},
 };
 
 const Controls retail_stances = {.stances = {
@@ -72,7 +72,7 @@ static void enter_action(Fighter *fighter, unsigned index) {
 }
 
 static FighterFn crouch_entry(unsigned index) {
-  uint32_t target = mk4_image_u32(retail_vm_image(), 0x4e7020 + index * 4);
+  uint32_t target = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CROUCH_ENTRY_4E7020 + index * 4);
   return retail_native_entry(target);
 }
 
@@ -103,23 +103,24 @@ uint32_t retail_button_target(const Mk4Image *image, uint32_t table, Button butt
       fatal("Invalid retail button");
   }
   uint32_t target = mk4_image_u32(image, table + slot * 4);
-  require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail button target");
+  require(
+      target == 0 || (target >= MK4_RETAIL_DATA_IMAGE_BASE_400000 && target < MK4_RETAIL_DATA_PACKED_POINTERS_BEGIN_4D0000), "Invalid retail button target");
   return target;
 }
 
 void retail_combo_high_punch(Fighter *fighter) {
   unsigned slot = retail_native_character_slot((unsigned)fighter->roster);
-  uint32_t entry = mk4_image_u32(retail_vm_image(), 0x4e6c50 + slot * 4);
+  uint32_t entry = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_COMBO_HIGH_PUNCH_4E6C50 + slot * 4);
   uint32_t script;
   switch (entry) {
     case RETAIL_NATIVE_COMBO_HIGH_PUNCH_46C290:
-      script = 0x4e69b0;
+      script = MK4_RETAIL_SCRIPT_COMBO_HIGH_PUNCH_4E69B0;
       break;
     case RETAIL_NATIVE_COMBO_HP_ENTRY_46C2A0:
-      script = 0x4e69c8;
+      script = MK4_RETAIL_SCRIPT_COMBO_HIGH_PUNCH_4E69C8;
       break;
     case RETAIL_NATIVE_COMBO_HIGH_PUNCH_46C2B0:
-      script = 0x4e6a28;
+      script = MK4_RETAIL_SCRIPT_COMBO_HIGH_PUNCH_4E6A28;
       break;
     default:
       fatal("Unimplemented native combo entry %08x", entry);
@@ -170,7 +171,7 @@ void retail_normal_low_kick(Fighter *fighter) {
 static void follow_crouch_hk(Fighter *fighter) {
   int action = fighter->action;
   retail_native_begin(fighter, S_KICK, action, false);
-  retail_vm_enter(fighter, 0x4e5fd0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FOLLOW_CROUCH_HK_4E5FD0, fighter_ready);
 }
 
 /* Controllers46c210..46c740. Native weapon frontends remain transitional services. */
@@ -317,7 +318,7 @@ void retail_close_high_punch_tail(Fighter *fighter) {
   const Fighter *peer = fighter_opponent(fighter);
   ContactResult result = CONTACT_MISS;
   if (peer->action != ACTION_RETAIL_2001 && peer->action != ACTION_RETAIL_0106 && peer->action != ACTION_RETAIL_0107 &&
-      !contact(fighter, 0x53d268, 16, &result)) {
+      !contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE_53D268, 16, &result)) {
     return;
   }
   if (result == CONTACT_MISS) {
@@ -335,7 +336,7 @@ static void combo_finish(Fighter *fighter) {
 
 void retail_combo_high_punch_tail(Fighter *fighter) {
   ContactResult result;
-  if (!contact(fighter, 0x53d268, 16, &result)) {
+  if (!contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE_53D268, 16, &result)) {
     return;
   }
   if (result == CONTACT_MISS) {
@@ -369,12 +370,12 @@ static void knee_contact_finished(Fighter *fighter) {
 }
 
 static void knee_miss_finished(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e61d0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KNEE_MISS_FINISHED_4E61D0, fighter_ready);
 }
 
 void retail_close_high_kick_tail(Fighter *fighter) {
   ContactResult result;
-  if (!contact(fighter, 0x53d2b8, 38, &result)) {
+  if (!contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8, 38, &result)) {
     return;
   }
   if (result == CONTACT_MISS) {
@@ -388,7 +389,7 @@ void retail_close_high_kick_tail(Fighter *fighter) {
 }
 
 static void knee_script(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6190, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KNEE_SCRIPT_4E6190, fighter_ready);
 }
 
 void retail_close_high_kick(Fighter *fighter) {
@@ -396,7 +397,7 @@ void retail_close_high_kick(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_KICK, ACTION_RETAIL_0103, false);
   if ((fighter_opponent(fighter)->action & 0xf000) == 0x4000) {
-    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53ce60) * 4, 0);
+    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_CLOSE_HIGH_KICK_53CE60) * 4, 0);
     native_play_rows(fighter, 4, 1, knee_script);
   } else {
     knee_script(fighter);

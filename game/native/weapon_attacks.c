@@ -24,7 +24,7 @@ void retail_weapon_native_495860(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n482790_upper);
   fighter->mmove_cleanup = n482790_weapon_cleanup;
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  retail_vm_enter(fighter, 0x4ec4f0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_WEAPON_NATIVE_495860_4EC4F0, fighter_ready);
 }
 
 /* Native service cluster: 49a480. */
@@ -123,10 +123,10 @@ void fujin_bow_finish(Fighter *fighter) {
 static void n49a480_bow_fire(Fighter *fighter) {
   n49a480_bow_spawn(fighter);
   if (fighter->native_variant >= 3) {
-    retail_vm_enter(fighter, 0x4ed788, fujin_bow_followup_next);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BOW_FIRE_4ED788, fujin_bow_followup_next);
   } else if (fighter->native_variant == 0) {
     fighter->action = 0x1016;
-    retail_vm_enter(fighter, 0x4ed408, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BOW_FIRE_4ED408, fighter_ready);
   } else {
     fujin_bow_finish(fighter);
   }
@@ -201,7 +201,7 @@ void fujin_bolt_victim(Fighter *fighter) {
   fighter_start_move(fighter, S_HIT, &n49a480_bolt_victim);
   fighter->flags |= FF_REACTING;
   fighter->mmove_cleanup = n49a480_bow_cleanup;
-  retail_vm_enter(fighter, 0x4e9e10, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_BOLT_VICTIM_4E9E10, fighter_ready);
 }
 
 /* Native service cluster: native_weapon. */
@@ -224,7 +224,7 @@ void retail_weapon_native_495a90(Fighter *fighter) {
   fighter->mmove_cleanup = n482790_2_weapon_cleanup;
   /* 495a90 /4ec598 installs delayed travel before the selected VM stream. */
   native_schedule_speed(fighter, 0x1999, 7, 13);
-  retail_vm_enter(fighter, 0x4ec5a8, mk4_mmove_thrown_finish);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_WEAPON_NATIVE_495A90_4EC5A8, mk4_mmove_thrown_finish);
 }
 
 /* 4ecb40[type63-60] selects4959f0 ->4eca08/4eca18. These use
@@ -311,7 +311,7 @@ static void n46db00_sword_recover(Fighter *fighter) {
     /* 496500 -> 4ec720/730, delayed travel then second strike. The move
      * rebind keeps the action's cleanup for the second strike. */
     fighter->mmove_cleanup = NULL;
-    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec730, 0x4ec720, ACTION_RETAIL_010E);
+    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC730, MK4_RETAIL_DATA_SWORD_ATTACK_4EC720, ACTION_RETAIL_010E);
     fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
     fighter->mmove_cleanup = n46db00_sword_cleanup;
     fighter->script_phase = 1;
@@ -365,18 +365,19 @@ static void n46db00_sword_attack(Fighter *fighter, int index) {
     static const MoveDef back_lp = {.clip = -1, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0112};
     fighter_start_move(fighter, S_PUNCH, &back_lp);
     const Mk4Image *image = retail_vm_image();
-    native_schedule_speed(fighter, (q16)mk4_image_u32(image, 0x4ec7e4), maxi(0, (int)mk4_image_u32(image, 0x4ec7e0) - 1), (int)mk4_image_u32(image, 0x4ec7e8));
+    native_schedule_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_ATTACK_4EC7E4),
+        maxi(0, (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_ATTACK_4EC7E0) - 1), (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_ATTACK_4EC7E8));
     fighter->mmove_cleanup = n46db00_sword_cleanup;
-    retail_vm_enter(fighter, 0x4ec7f0, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SWORD_ATTACK_4EC7F0, fighter_ready);
     return;
   }
   require(index >= 0 && index <= 2, "Invalid native weapon strike selection");
   if (index == 0) {
-    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec708, 0, ACTION_RETAIL_010E);
+    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC708, 0, ACTION_RETAIL_010E);
   } else if (index == 1) {
-    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec730, 0x4ec720, ACTION_RETAIL_010E);
+    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC730, MK4_RETAIL_DATA_SWORD_ATTACK_4EC720, ACTION_RETAIL_010E);
   } else {
-    fighter->loaded_weapon_strike = weapon_retail_strike(0x4ec750, 0x4ec740, ACTION_RETAIL_0212);
+    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC750, MK4_RETAIL_DATA_SWORD_ATTACK_4EC740, ACTION_RETAIL_0212);
   }
   fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
   fighter->script_phase = index;
@@ -398,7 +399,7 @@ void retail_weapon_native_4963e0(Fighter *fighter) {
   fighter->weapon_strike = NULL;
   fighter->sample_override = 0;
   fighter->mmove_cleanup = n46db00_sword_cleanup;
-  retail_vm_enter(fighter, 0x4ec680, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_WEAPON_NATIVE_4963E0_4EC680, fighter_ready);
 }
 
 void retail_weapon_native_4964d0(Fighter *fighter) {
@@ -458,11 +459,11 @@ void retail_weapon_native_496d10(Fighter *fighter) {
 }
 
 static void native_weapon_3_weapon_first_victim(Fighter *fighter) {
-  weapon_axe_reaction(fighter, false, (RetailScriptContinuation){0x4ea040, mk4_script_thrown_ready});
+  weapon_axe_reaction(fighter, false, (RetailScriptContinuation){MK4_RETAIL_SCRIPT_CAGE_POWER_VICTIM_4EA040, mk4_script_thrown_ready});
 }
 
 static void native_weapon_3_weapon_second_victim(Fighter *fighter) {
-  weapon_axe_reaction(fighter, true, (RetailScriptContinuation){0x4ea0b8, mk4_script_thrown_ready});
+  weapon_axe_reaction(fighter, true, (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RECORD_REACTION_4EA0B8, mk4_script_thrown_ready});
 }
 
 /* Native service cluster: 482280, 482790, 495db0. */
@@ -588,7 +589,7 @@ void retail_weapon_native_495d70(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n482280_flurry_start);
   fighter->mmove_cleanup = n482280_weapon_cleanup;
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, 0x4ec640, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_WEAPON_NATIVE_495D70_4EC640, fighter_ready);
 }
 
 static void n482280_back_low_recover(Fighter *fighter) {
@@ -736,7 +737,7 @@ void shinnok_weapon_sweep_getup(Fighter *fighter) {
     fighter_finish_mmove(fighter, NULL);
     return;
   }
-  retail_vm_enter(fighter, 0x4e9498, mk4_mmove_thrown_finish);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_WEAPON_SWEEP_GETUP_4E9498, mk4_mmove_thrown_finish);
 }
 
 /* 4830a0/483160 resumes clip197 at zero and finishes before controller
@@ -759,7 +760,7 @@ void retail_weapon_native_496720(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n482790_4_s_weapon_back_hp);
   mk4_script_schedule_motion(fighter, 0x1999, 3, 12);
   fighter->mmove_cleanup = sonya_special_cleanup;
-  retail_vm_enter(fighter, 0x4ec7a0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_WEAPON_NATIVE_496720_4EC7A0, fighter_ready);
 }
 
 #undef RETAIL
@@ -907,7 +908,7 @@ void tanya_boomerang_release(Fighter *fighter) {
 static void n497b60_boomerang_start(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n497b60_boomerang_throw);
   fighter->native_variant = fighter_holds_back(fighter);
-  retail_vm_enter(fighter, 0x4ed190, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BOOMERANG_START_4ED190, fighter_ready);
 }
 
 /* 495610: 46dbb0's LP throw gate first, then T2[0x16]/[0x17]. */
@@ -936,10 +937,10 @@ void tanya_weapon_reaction(Fighter *fighter) {
   if (retail_reaction_native(fighter) == RETAIL_NATIVE_TANYA_WEAPON_REACTION_486710) {
     fighter_start_move(fighter, S_HIT, &n497b60_victim_hit);
     fighter->flags |= FF_REACTING;
-    retail_vm_enter(fighter, 0x4e9db8, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_WEAPON_REACTION_4E9DB8, mk4_mmove_thrown_finish);
   } else {
     fighter_start_move(fighter, S_KNOCKDOWN, &n497b60_victim_fall);
     fighter->flags |= FF_REACTING;
-    retail_vm_enter(fighter, 0x4e8bb0, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_WEAPON_REACTION_4E8BB0, mk4_mmove_thrown_finish);
   }
 }

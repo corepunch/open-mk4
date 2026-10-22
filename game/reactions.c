@@ -116,7 +116,7 @@ static void react_jab_air(Fighter *fighter) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, 0x4e8b00, retail_controller_return);
+  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_JAB_AIR_4E8B00, retail_controller_return);
 }
 
 static void react_kick_air(Fighter *fighter) {
@@ -124,13 +124,13 @@ static void react_kick_air(Fighter *fighter) {
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
   retail_native_sound_list(RETAIL_SOUND_KNOCKDOWN_VOICE_LIST);
-  hit_script(fighter, 0x4e8a18, retail_getup_roll);
+  hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_AIR_4E8A18, retail_getup_roll);
 }
 
 static void react_kick_air_impact(Fighter *fighter) {
   mk4_script_shake(fighter, 0);
   mk4_script_disarm_self(fighter);
-  hit_script(fighter, 0x4e89d8, retail_getup_roll);
+  hit_script(fighter, MK4_RETAIL_SCRIPT_JAX_DASH_VICTIM_THROW_4E89D8, retail_getup_roll);
 }
 
 static void react_kick_hit(Fighter *fighter) {
@@ -139,10 +139,10 @@ static void react_kick_hit(Fighter *fighter) {
   if (fighter->crouching) {
     mk4_script_indexed_sound(fighter, 1);
     fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
-    hit_script(fighter, 0x4e9238, retail_controller_return);
+    hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_HIT_4E9238, retail_controller_return);
     fighter->action = ACTION_RETAIL_4005;
   } else {
-    hit_script(fighter, 0x4e9208, retail_controller_return);
+    hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_HIT_4E9208, retail_controller_return);
   }
 }
 
@@ -161,7 +161,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (staggers) {
     battle_wall_recoil(fighter);
   }
-  hit_script(fighter, staggers ? 0x4e97d0 : 0x4e9798, retail_controller_return);
+  hit_script(fighter, staggers ? MK4_RETAIL_SCRIPT_REACT_JAB_HIT_4E97D0 : MK4_RETAIL_SCRIPT_REACT_JAB_HIT_4E9798, retail_controller_return);
 }
 
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {
@@ -193,7 +193,7 @@ void retail_block_cycle(Fighter *fighter) {
     fighter->native_variant--;
   }
   if (fighter->native_variant > 0) {
-    retail_vm_enter(fighter, 0x4e9e68, retail_controller_return);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REACT_BLOCK_4E9E68, retail_controller_return);
   } else {
     mk4_script_stop_body(fighter);
     retail_controller_return(fighter);
@@ -298,7 +298,7 @@ static void react_block(Fighter *fighter) {
   }
   if (entry != RETAIL_NATIVE_REACT_BLOCK_486D00) {
     fighter_set_speed(fighter, -speed);
-    uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9e60);
+    uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_REACT_BLOCK_4E9E60);
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native block callback");
   }
   if (variant >= 16 && fighter->armed) {
@@ -307,15 +307,15 @@ static void react_block(Fighter *fighter) {
     if (fighter->armed || variant >= 16) {
       retail_native_sound_list(RETAIL_SOUND_UNARMED_IMPACT_LIST);
     }
-    retail_native_sound_list(variant % 16 < 5 ? 0x4ea918 : 0x4ea928);
+    retail_native_sound_list(variant % 16 < 5 ? MK4_RETAIL_SOUND_LIST_REACT_BLOCK_4EA918 : MK4_RETAIL_SOUND_LIST_REACT_BLOCK_4EA928);
   }
   fighter->native_variant = repeat;
   if (crouch) {
-    uint32_t descriptor = mk4_image_u32(retail_vm_image(), 0x53cf88 + (fighter->armed ? 4 : 0)) * 4;
+    uint32_t descriptor = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_REACT_BLOCK_53CF88 + (fighter->armed ? 4 : 0)) * 4;
     retail_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {
-    retail_vm_enter(fighter, fighter->armed ? 0x4e9ec8 : 0x4e9e68, retail_controller_return);
+    retail_vm_enter(fighter, fighter->armed ? MK4_RETAIL_SCRIPT_REACT_BLOCK_4E9EC8 : MK4_RETAIL_SCRIPT_REACT_BLOCK_4E9E68, retail_controller_return);
   }
 }
 

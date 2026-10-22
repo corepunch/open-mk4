@@ -163,10 +163,10 @@ void mk4_script_roster_sound(Fighter *fighter, int selector) {
   require(selector >= 0 && selector < 22 && fighter->roster >= 0 && fighter->roster < MK4_ROSTER_COUNT, "Invalid roster sound selector");
   const Mk4Image *image = retail_vm_image();
   unsigned roster = fighter->roster == 16 ? 10u : (unsigned)fighter->roster;
-  uint32_t remap_address = 0x4ead18 + roster;
+  uint32_t remap_address = MK4_RETAIL_DATA_ROSTER_SOUND_4EAD18 + roster;
   int remap = (int8_t)(mk4_image_u32(image, remap_address & ~3u) >> ((remap_address & 3u) * 8));
   require(remap >= 0 && remap < MK4_ROSTER_COUNT, "Invalid roster sound remap");
-  uint32_t table = mk4_image_u32(image, 0x53d000 + (unsigned)selector * 4) * 4;
+  uint32_t table = mk4_image_u32(image, MK4_RETAIL_DATA_ROSTER_SOUND_53D000 + (unsigned)selector * 4) * 4;
   if (table == 0) {
     return;
   }
@@ -285,7 +285,7 @@ void retail_throw_capture(Fighter *fighter, int action, bool align) {
 
 /* Native42c590's capture and original4de798 selector. No fighter clip seed. */
 static void lp_throw_script(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4de798, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LP_THROW_SCRIPT_4DE798, fighter_ready);
 }
 
 void retail_lp_throw(Fighter *fighter) {
@@ -354,7 +354,7 @@ void mk4_script_jab_contact(Fighter *fighter) {
     return;
   }
   const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
-  uint32_t record = mk4_image_u32(image, 0x53d26c);
+  uint32_t record = mk4_image_u32(image, MK4_RETAIL_DATA_JAB_CONTACT_53D26C);
   AttackRecord attack = retail_vm_attack_record(image, record * 4);
   battle_contact(fighter, &attack);
 }
@@ -525,8 +525,8 @@ void mk4_mmove_hold(Fighter *fighter) {
  * (clip282), and advances to its end before controller return. */
 void mk4_mmove_lk_owner_return(Fighter *fighter, FighterFn end) {
   const Mk4Image *image = fighter->retail_vm.active ? fighter->retail_vm.image : retail_vm_image();
-  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, 0x4de358));
-  retail_vm_bind_animation(fighter, mk4_image_u32(image, 0x53c540) * 4, 0);
+  fighter_set_speed(fighter, -(q16)mk4_image_u32(image, MK4_RETAIL_DATA_MMOVE_LK_OWNER_RETURN_4DE358));
+  retail_vm_bind_animation(fighter, mk4_image_u32(image, MK4_RETAIL_ANIMATION_DESCRIPTOR_MMOVE_LK_OWNER_RETURN_53C540) * 4, 0);
   int last = fighter_move(fighter)->last;
   native_begin(fighter, 0, last, end);
   for (int sample = 0; sample <= last; ++sample) {
@@ -542,10 +542,10 @@ void mk4_mmove_lk_owner_ready(Fighter *fighter) {
 /* Native488b40/488b70 selects the original side-getup record. */
 void mk4_mmove_side_getup(Fighter *fighter) {
   if (fighter->health <= 0) {
-    retail_vm_enter(fighter, 0x4ea1e8, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_MMOVE_SIDE_GETUP_4EA1E8, mk4_mmove_thrown_finish);
     return;
   }
-  mk4_mmove_getup(fighter, 0x4ea200);
+  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200);
 }
 
 static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
@@ -561,7 +561,9 @@ void retail_crouch_return(Fighter *fighter) {
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
 void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
-  require(record == 0x4ea200 || record == 0x4ea210 || record == 0x4ea220 || record == 0x4ea230, "Unreviewed native getup record");
+  require(record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200 || record == MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210 ||
+              record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA220 || record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA230,
+      "Unreviewed native getup record");
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   if (fighter->health <= 0) {

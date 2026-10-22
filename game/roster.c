@@ -30,7 +30,7 @@ static void victory_finished(Fighter *fighter) {
 }
 
 void retail_victory_continue(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6a40, fighter->retail_vm.active ? fighter->retail_vm.finish : victory_finished);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_SCRIPT_VICTORY_4E6A40, fighter->retail_vm.active ? fighter->retail_vm.finish : victory_finished);
 }
 
 void retail_victory(Fighter *fighter) {
@@ -86,7 +86,8 @@ const CharacterDef *roster_def(int index) {
     /* Native46b300 guard: the boss descriptor is a native literal and the
      * ordinary descriptor is loaded. Other native entries bind on takeover;
      * unstarted views do not invent fighter-compatible animation seeds. */
-    states[index][S_BLOCK].clip = descriptor_clip(index == 15 ? 0x4fc960 / 4 : mk4_image_u32(image, 0x53ce30));
+    states[index][S_BLOCK].clip =
+        descriptor_clip(index == 15 ? MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_595_4FC960 / 4 : mk4_image_u32(image, MK4_RETAIL_DATA_ROSTER_DEF_53CE30));
     states[index][S_IDLE].clip = identities[index].idle;
     states[index][S_WALK].clip = identities[index].walk;
     definitions[index].moves = state_views[index];

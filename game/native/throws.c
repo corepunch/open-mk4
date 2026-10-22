@@ -134,7 +134,7 @@ static void n487220_thrown_finish(Fighter *victim) {
 static void n487220_lk_thrown_release(Fighter *victim) {
   victim->sample_override = 46;
   victim->body.physics = fighter_friction;
-  retail_vm_enter(victim, 0x4e9ee0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_LK_THROWN_RELEASE_4E9EE0, fighter_ready);
 }
 
 void sub_zero_lk_thrown_script(Fighter *victim) {

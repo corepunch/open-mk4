@@ -184,7 +184,7 @@ static bool n44f5e0_first_shot(BattleEvent *event, Fighter *owner, Fighter *vict
     bolt->vel[AXIS_Y] = -0x2e14;
   }
   battle_sound(SOUND_C, 0x29);
-  retail_vm_enter(owner, 0x4e1f98, retail_scene_44f5e0_complete);
+  retail_vm_enter(owner, MK4_RETAIL_SCRIPT_FIRST_SHOT_4E1F98, retail_scene_44f5e0_complete);
   return true;
 }
 
@@ -235,7 +235,7 @@ void fujin_first_fatality(Fighter *fighter) {
   fighter->native_signal = true;
   g_battle.camera.follow_height = true;
   native_scene_blends(fighter, n44f5e0_first_intro, 1, NULL);
-  native_script_end(fighter, 0x4e1f58, fighter_ready);
+  native_script_end(fighter, MK4_RETAIL_SCRIPT_FUJIN_FIRST_FATALITY_4E1F58, fighter_ready);
 }
 
 /* Native service cluster: 446f80, 447310, 4473b0, 447410, 49cb60. */
@@ -295,14 +295,14 @@ void jarek_first_heart(Fighter *fighter) {
     heart->initial_mesh = n446f80_heart_mesh.first;
     n446f80_heart_step(heart);
   }
-  retail_vm_enter(fighter, 0x4e1248, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_FIRST_HEART_4E1248, fighter_ready);
 }
 
 static void n446f80_owner_stream(Fighter *fighter) {
   if (n446f80_female_victim(fighter_opponent(fighter))) {
-    retail_vm_enter(fighter, 0x4e1220, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_OWNER_STREAM_4E1220, fighter_ready);
   } else {
-    retail_vm_enter(fighter, 0x4e1230, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_OWNER_STREAM_4E1230, fighter_ready);
   }
 }
 
@@ -319,7 +319,7 @@ static void n446f80_owner_blend(Fighter *fighter) {
 
 static void n446f80_victim_reach(Fighter *victim) {
   native_hold(victim, 15, NULL);
-  native_script_end(victim, 0x4e1260, fighter_ready);
+  native_script_end(victim, MK4_RETAIL_SCRIPT_VICTIM_REACH_4E1260, fighter_ready);
 }
 
 static void n446f80_victim_aligned(Fighter *victim) {
@@ -347,7 +347,7 @@ void jarek_first_victim_rip(Fighter *victim) {
   n446f80_chest_blood(victim);
   battle_sound(SOUND_B, 0x23);
   battle_sound(SOUND_B, 0x16);
-  retail_vm_enter(victim, 0x4e1270, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAREK_FIRST_VICTIM_RIP_4E1270, fighter_ready);
 }
 
 /* 4473b0: bank B 0x12 and shake 5, cursor 148, then 4e1280. */
@@ -355,13 +355,13 @@ void jarek_first_victim_impact(Fighter *victim) {
   battle_sound(SOUND_B, 0x12);
   mk4_script_shake(victim, 5);
   victim->sample_override = 148;
-  retail_vm_enter(victim, 0x4e1280, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAREK_FIRST_VICTIM_IMPACT_4E1280, fighter_ready);
 }
 
 /* 447410: shake 5 before the final 4e1290 playback. */
 void jarek_first_victim_end(Fighter *victim) {
   mk4_script_shake(victim, 5);
-  retail_vm_enter(victim, 0x4e1290, retail_scene_446f80_complete);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAREK_FIRST_VICTIM_END_4E1290, retail_scene_446f80_complete);
 }
 
 static void n446f80_scene_wait(Fighter *victim) {
@@ -480,7 +480,7 @@ static void n449620_first_tear(Fighter *victim, int joint, const AttachmentDef *
 static void n449620_first_owner_loop(Fighter *owner) {
   owner->state = S_VICTORY;
   owner->native_variant |= FIRST_OWNER_READY;
-  retail_vm_enter(owner, 0x4e13a0, fighter_ready);
+  retail_vm_enter(owner, MK4_RETAIL_SCRIPT_FIRST_OWNER_LOOP_4E13A0, fighter_ready);
   n449620_first_maybe_complete(owner);
 }
 
@@ -492,7 +492,7 @@ void jax_fatality_1_victory(Fighter *owner) {
 static void n449620_first_owner_start(Fighter *owner) {
   battle_sound(SOUND_B, 0x30);
   native_scene_blends(owner, n449620_first_owner_blend, 1, NULL);
-  native_script_end(owner, 0x4e1390, fighter_ready);
+  native_script_end(owner, MK4_RETAIL_SCRIPT_FIRST_OWNER_START_4E1390, fighter_ready);
 }
 
 static void n449620_first_victim_stream(Fighter *victim) {
@@ -500,9 +500,9 @@ static void n449620_first_victim_stream(Fighter *victim) {
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   if (n449620_first_listed_victim(victim)) {
-    retail_vm_enter(victim, 0x4e13b0, fighter_ready);
+    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FIRST_VICTIM_STREAM_4E13B0, fighter_ready);
   } else {
-    retail_vm_enter(victim, 0x4e13c0, fighter_ready);
+    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FIRST_VICTIM_STREAM_4E13C0, fighter_ready);
   }
 }
 
@@ -521,7 +521,7 @@ static void n449620_first_victim_start(Fighter *victim) {
 void jax_fatality_1_grab(Fighter *victim) {
   victim->sample_override = 50;
   battle_sound(SOUND_B, 0x29);
-  retail_vm_enter(victim, 0x4e13d0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAX_FATALITY_1_GRAB_4E13D0, fighter_ready);
 }
 
 /* 4498d0: first arm (449b00) and blood fall (474580), B[0], the 489ff0
@@ -531,7 +531,7 @@ void jax_fatality_1_first_arm(Fighter *victim) {
   battle_sound(SOUND_B, 0);
   mk4_script_roster_sound(victim, 8);
   victim->sample_override = 79;
-  retail_vm_enter(victim, 0x4e13e0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_JAX_FATALITY_1_FIRST_ARM_4E13E0, fighter_ready);
 }
 
 static void n449620_first_second_arm(Fighter *victim) {
@@ -560,7 +560,7 @@ static void n449620_first_drop(Fighter *victim) {
  * 306 with B[0x12] and shake 5, to 375; cursor 376, then 4e13f0. */
 void jax_fatality_1_second_arm(Fighter *victim) {
   native_begin(victim, n449620_FIRST_SECOND_ARM, n449620_FIRST_DROP, NULL);
-  native_script_end(victim, 0x4e13f0, retail_scene_449620_complete);
+  native_script_end(victim, MK4_RETAIL_SCRIPT_JAX_FATALITY_1_SECOND_ARM_4E13F0, retail_scene_449620_complete);
   for (int sample = n449620_FIRST_SECOND_ARM; sample <= n449620_FIRST_DROP; ++sample) {
     FighterFn action = NULL;
     int arm = sample - n449620_FIRST_SECOND_ARM + n449620_FIRST_ARM_OFFSET;
@@ -689,12 +689,12 @@ void kai_first_owner_grab(Fighter *fighter) {
   battle_sound(SOUND_B, 0x31);
   battle_sound(SOUND_B, 0x2f);
   fighter->sample_override = fighter_sample(fighter) + 1;
-  retail_vm_enter(fighter, 0x4e1440, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_FIRST_OWNER_GRAB_4E1440, fighter_ready);
 }
 
 void kai_first_owner_spin(Fighter *fighter) {
   /* 44af20 enters 4e1450, two passes of clip 445. */
-  retail_vm_enter(fighter, 0x4e1450, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_FIRST_OWNER_SPIN_4E1450, fighter_ready);
 }
 
 static void n44aeb0_first_owner_victory(Fighter *fighter) {
@@ -702,7 +702,7 @@ static void n44aeb0_first_owner_victory(Fighter *fighter) {
   n44aeb0_first_impact(7);
   fighter->state = S_VICTORY;
   fighter->native_variant |= FIRST_OWNER_READY;
-  retail_vm_enter(fighter, 0x4e1468, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FIRST_OWNER_VICTORY_4E1468, fighter_ready);
   n44aeb0_first_maybe_complete(fighter);
 }
 
@@ -726,19 +726,19 @@ void kai_first_owner_tear(Fighter *fighter) {
 void kai_first_victim_71(Fighter *victim) {
   /* 44b260 sets cursor 71, then 4e1490. */
   victim->sample_override = 71;
-  retail_vm_enter(victim, 0x4e1490, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_KAI_FIRST_VICTIM_71_4E1490, fighter_ready);
 }
 
 void kai_first_victim_turn(Fighter *victim) {
   /* 44b290: B[29], then the second clip-444 pass 4e14a8. */
   battle_sound(SOUND_B, 0x29);
-  retail_vm_enter(victim, 0x4e14a8, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_KAI_FIRST_VICTIM_TURN_4E14A8, fighter_ready);
 }
 
 static void n44aeb0_first_torso_start(Fighter *torso) {
   /* 44b4a0: torso B[0] (its voice list 12 has no portable bank), then 4e14c8. */
   battle_sound(SOUND_B, 0);
-  retail_vm_enter(torso, 0x4e14c8, fighter_ready);
+  retail_vm_enter(torso, MK4_RETAIL_SCRIPT_FIRST_TORSO_START_4E14C8, fighter_ready);
 }
 
 static void n44aeb0_first_sever(Fighter *victim) {
@@ -754,7 +754,7 @@ static void n44aeb0_first_sever(Fighter *victim) {
   Mat3 unused;
   fighter_joint_position(victim, 3, &waist, &unused);
   battle_blood_hit(owner, victim, waist, 0x3333);
-  retail_vm_enter(victim, 0x4e14b8, retail_scene_44aeb0_complete);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FIRST_SEVER_4E14B8, retail_scene_44aeb0_complete);
 }
 
 static void n44aeb0_first_victim_rip(Fighter *victim) {
@@ -776,13 +776,13 @@ void kai_first_torso_203(Fighter *torso) {
     torso->body.pos[AXIS_Y] -= 0x1999;
   }
   torso->sample_override = 203;
-  retail_vm_enter(torso, 0x4e14d8, fighter_ready);
+  retail_vm_enter(torso, MK4_RETAIL_SCRIPT_KAI_FIRST_TORSO_203_4E14D8, fighter_ready);
 }
 
 void kai_first_torso_impact(Fighter *torso) {
   /* 44b650: B[12], then 4e14e8 finishes clip 442. */
   battle_sound(SOUND_B, 0x12);
-  retail_vm_enter(torso, 0x4e14e8, retail_scene_44aeb0_complete);
+  retail_vm_enter(torso, MK4_RETAIL_SCRIPT_KAI_FIRST_TORSO_IMPACT_4E14E8, retail_scene_44aeb0_complete);
 }
 
 void retail_scene_44aeb0_complete(Fighter *actor) {
@@ -800,7 +800,7 @@ static void n44aeb0_first_victim_start(Fighter *victim) {
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   victim->flags |= FF_PAIRED;
-  retail_vm_enter(victim, 0x4e1480, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FIRST_VICTIM_START_4E1480, fighter_ready);
 }
 
 static void n44aeb0_first_victim_blend(Fighter *victim) {
@@ -811,7 +811,7 @@ static void n44aeb0_first_victim_blend(Fighter *victim) {
 static void n44aeb0_first_owner_blend(Fighter *fighter) {
   /* 44adae after sixteen visits: 475250 blends into 440, then 4e1430. */
   native_scene_blends(fighter, n44aeb0_owner_blend, 1, NULL);
-  native_script_end(fighter, 0x4e1430, fighter_ready);
+  native_script_end(fighter, MK4_RETAIL_SCRIPT_FIRST_OWNER_BLEND_4E1430, fighter_ready);
 }
 
 void kai_fatality_1(Fighter *fighter) {
@@ -933,29 +933,29 @@ static void n44be10_beat_cue(Fighter *fighter, int shake) {
 }
 
 void quan_chi_fatality_cue_40(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e1508, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_CUE_40_4E1508, fighter_ready);
 }
 
 void quan_chi_fatality_hit_179(Fighter *fighter) {
   n44be10_beat_cue(fighter, 5);
-  retail_vm_enter(fighter, 0x4e1528, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_HIT_179_4E1528, fighter_ready);
 }
 
 void quan_chi_fatality_hit_241(Fighter *fighter) {
   n44be10_beat_cue(fighter, 7);
-  retail_vm_enter(fighter, 0x4e1538, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_HIT_241_4E1538, fighter_ready);
 }
 
 void quan_chi_fatality_beat(Fighter *fighter) {
   n44be10_beat_cue(fighter, 7);
-  retail_vm_enter(fighter, 0x4e1558, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_BEAT_4E1558, fighter_ready);
 }
 
 static void n44be10_leg_entry(Fighter *leg) {
   if (leg->assets != NULL) {
     leg->scene_model = &leg->assets->scene_models.data[SCENE_MODEL_SEVERED_LEGS + roster_def(leg->roster)->asset];
   }
-  retail_vm_enter(leg, 0x4e1580, fighter_ready);
+  retail_vm_enter(leg, MK4_RETAIL_SCRIPT_LEG_ENTRY_4E1580, fighter_ready);
 }
 
 /* 44be40 -> task 44c0f0: sound B[0], victim voice list 8, 476d80 detaches
@@ -973,11 +973,11 @@ void quan_chi_fatality_leg(Fighter *fighter) {
   fighter_joint_position(victim, 12, &hip, &unused);
   battle_blood_hit(fighter, victim, hip, 0x3333);
   battle_joint_spray(victim, &n44be10_stump_spray);
-  retail_vm_enter(fighter, 0x4e1518, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_FATALITY_LEG_4E1518, fighter_ready);
 }
 
 static void n44be10_victim_stream(Fighter *victim) {
-  retail_vm_enter(victim, 0x4e1568, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_STREAM_4E1568, fighter_ready);
 }
 
 static void n44be10_victim_blend(Fighter *victim) {
@@ -985,7 +985,7 @@ static void n44be10_victim_blend(Fighter *victim) {
 }
 
 static void n44be10_owner_stream(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e14f8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_OWNER_STREAM_4E14F8, fighter_ready);
 }
 
 static void n44be10_owner_blend(Fighter *fighter) {
@@ -1041,7 +1041,7 @@ static void n441140_first_end_finish(Fighter *fighter);
 void raiden_script_first_release(Fighter *fighter) {
   mk4_script_scene_pose(fighter_peer(fighter), 393, 0);
   battle_particles(fighter_peer(fighter), 2, 12, true);
-  retail_vm_enter(fighter, 0x4e0220, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_SCRIPT_FIRST_RELEASE_4E0220, fighter_ready);
 }
 
 static void n441140_first_end_shake(Fighter *fighter) {
@@ -1076,7 +1076,7 @@ void raiden_first_fatality(Fighter *fighter) {
   }
   mk4_script_scene_pose(fighter, 392, 0);
   mk4_script_scene_pose(fighter_peer(fighter), 393, 0);
-  retail_vm_enter(fighter, 0x4e0210, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_FIRST_FATALITY_4E0210, fighter_ready);
 }
 
 /* Native service cluster: 4528a0, 452ac0, 452bb0, 452c10, 452c50, 452e50, 452e90, 452f00, 452f40, 452f90, 452fe0, 453020, 453040, 453090, 4530d0, 4530f0. */
@@ -1165,7 +1165,7 @@ static void n4528a0_random_piece_sound(void) {
 
 static void n4528a0_owner_victory_loop(Fighter *fighter) {
   fighter->state = S_VICTORY;
-  retail_vm_enter(fighter, 0x4e2d18, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_OWNER_VICTORY_LOOP_4E2D18, fighter_ready);
   n4528a0_first_done(fighter, FIRST_OWNER_DONE);
 }
 
@@ -1177,7 +1177,7 @@ void reiko_first_victory(Fighter *fighter) {
 static void n4528a0_owner_tear(Fighter *fighter) {
   /* 452730 state 3 enters 4e2cf0 after 43d7d0 and twenty visits. */
   native_hold(fighter, 20, NULL);
-  native_script_end(fighter, 0x4e2cf0, fighter_ready);
+  native_script_end(fighter, MK4_RETAIL_SCRIPT_OWNER_TEAR_4E2CF0, fighter_ready);
 }
 
 static void n4528a0_owner_blend(Fighter *fighter) {
@@ -1191,7 +1191,7 @@ static void n4528a0_victim_place(Fighter *victim) {
   const Fighter *owner = fighter_opponent(victim);
   victim->body.pos[AXIS_X] = owner->body.pos[AXIS_X];
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
-  retail_vm_enter(victim, 0x4e2d28, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_PLACE_4E2D28, fighter_ready);
 }
 
 static void n4528a0_victim_body_blend(Fighter *victim) {
@@ -1219,22 +1219,22 @@ static void n4528a0_torso_start(Fighter *piece) {
   /* 4534e0: joint 3 without the separately detached head and arms. */
   n4528a0_piece_place(piece, 3);
   piece->hidden_joints[0] |= (UINT64_C(1) << 2) | (UINT64_C(1) << 5) | (UINT64_C(1) << 6);
-  retail_vm_enter(piece, 0x4e2d68, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_TORSO_START_4E2D68, fighter_ready);
 }
 
 static void n4528a0_head_start(Fighter *piece) {
   n4528a0_piece_place(piece, 2);
-  retail_vm_enter(piece, 0x4e2d88, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_HEAD_START_4E2D88, fighter_ready);
 }
 
 static void n4528a0_left_arm_start(Fighter *piece) {
   n4528a0_piece_place(piece, 5);
-  retail_vm_enter(piece, 0x4e2de0, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_LEFT_ARM_START_4E2DE0, fighter_ready);
 }
 
 static void n4528a0_right_arm_start(Fighter *piece) {
   n4528a0_piece_place(piece, 6);
-  retail_vm_enter(piece, 0x4e2e18, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_RIGHT_ARM_START_4E2E18, fighter_ready);
 }
 
 /* The independent 452c90 sound task plays only while this scene runs. */
@@ -1276,7 +1276,7 @@ void reiko_first_tear(Fighter *victim) {
   fighter_joint_position(victim, 3, &waist, &unused);
   battle_blood_hit(owner, victim, waist, 0x3333);
   victim->hidden_joints[0] |= UINT64_C(1) << 3;
-  retail_vm_enter(victim, 0x4e2d38, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REIKO_FIRST_TEAR_4E2D38, fighter_ready);
 }
 
 void reiko_first_victim_118(Fighter *victim) {
@@ -1284,14 +1284,14 @@ void reiko_first_victim_118(Fighter *victim) {
   battle_sound(SOUND_B, 0x40);
   n4528a0_shake(6);
   victim->sample_override = 118;
-  retail_vm_enter(victim, 0x4e2d48, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REIKO_FIRST_VICTIM_118_4E2D48, fighter_ready);
 }
 
 void reiko_first_victim_165(Fighter *victim) {
   /* 452c10: random hit sound, shake row 2, then 4e2d58 finishes 428. */
   n4528a0_random_hit_sound();
   n4528a0_shake(2);
-  retail_vm_enter(victim, 0x4e2d58, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_REIKO_FIRST_VICTIM_165_4E2D58, fighter_ready);
 }
 
 /* 452c50 / 452e90 / 452f90 / 453040 / 4530f0: a floor pool (475730 /
@@ -1311,7 +1311,7 @@ void reiko_first_torso_29(Fighter *piece) {
   /* 452e50: random hit sound, shake row 7, then 4e2d78 finishes 429. */
   n4528a0_random_hit_sound();
   n4528a0_shake(7);
-  retail_vm_enter(piece, 0x4e2d78, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_TORSO_29_4E2D78, fighter_ready);
 }
 
 void reiko_first_torso_end(Fighter *piece) {
@@ -1325,7 +1325,7 @@ void reiko_first_head_59(Fighter *piece) {
   /* 452f00: B[0x3f], pose 59, then 4e2dc0 to 82. */
   battle_sound(SOUND_B, 0x3f);
   piece->sample_override = 59;
-  retail_vm_enter(piece, 0x4e2dc0, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_HEAD_59_4E2DC0, fighter_ready);
 }
 
 void reiko_first_head_83(Fighter *piece) {
@@ -1333,33 +1333,33 @@ void reiko_first_head_83(Fighter *piece) {
   n4528a0_random_piece_sound();
   piece->sample_override = 83;
   n4528a0_random_piece_sound();
-  retail_vm_enter(piece, 0x4e2dd0, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_HEAD_83_4E2DD0, fighter_ready);
 }
 
 void reiko_first_left_arm_56(Fighter *piece) {
   /* 452fe0: random piece sound, pose 56, then 4e2df8 to 66. */
   n4528a0_random_piece_sound();
   piece->sample_override = 56;
-  retail_vm_enter(piece, 0x4e2df8, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_LEFT_ARM_56_4E2DF8, fighter_ready);
 }
 
 void reiko_first_left_arm_land(Fighter *piece) {
   /* 453020: random piece sound, then 4e2e08 finishes 427. */
   n4528a0_random_piece_sound();
-  retail_vm_enter(piece, 0x4e2e08, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_LEFT_ARM_LAND_4E2E08, fighter_ready);
 }
 
 void reiko_first_right_arm_44(Fighter *piece) {
   /* 453090: random piece sound, pose 44, then 4e2e40 to 68. */
   n4528a0_random_piece_sound();
   piece->sample_override = 44;
-  retail_vm_enter(piece, 0x4e2e40, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_RIGHT_ARM_44_4E2E40, fighter_ready);
 }
 
 void reiko_first_right_arm_land(Fighter *piece) {
   /* 4530d0: random piece sound, then 4e2e50 finishes 426. */
   n4528a0_random_piece_sound();
-  retail_vm_enter(piece, 0x4e2e50, fighter_ready);
+  retail_vm_enter(piece, MK4_RETAIL_SCRIPT_REIKO_FIRST_RIGHT_ARM_LAND_4E2E50, fighter_ready);
 }
 
 void reiko_first_fatality(Fighter *fighter) {
@@ -1485,7 +1485,7 @@ static void n455110_hand_entry(Fighter *hand) {
   if (hand->assets != NULL) {
     hand->scene_model = &hand->assets->shinnok_hand;
   }
-  retail_vm_enter(hand, 0x4e2f40, retail_scene_455110_complete);
+  retail_vm_enter(hand, MK4_RETAIL_SCRIPT_HAND_ENTRY_4E2F40, retail_scene_455110_complete);
 }
 
 /* 4556d0 state 1: rig 5083c4 is placed 1.4 along the owner's heading at
@@ -1509,7 +1509,7 @@ static void n455110_first_vanish(Fighter *fighter) {
   require(event != NULL, "Shinnok hand needs its delayed spawner");
   battle_event_delay(event, 65);
   shinnok_fatality_vanish_cue(fighter);
-  retail_vm_enter(fighter, 0x4e2ef0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FIRST_VANISH_4E2EF0, fighter_ready);
 }
 
 static void n455110_victim_lift(Fighter *victim) {
@@ -1518,7 +1518,7 @@ static void n455110_victim_lift(Fighter *victim) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = owner->body.pos[axis] + q16_mul(fighter_axis(owner, axis), 0x16666);
   }
-  retail_vm_enter(victim, 0x4e2f78, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_LIFT_4E2F78, fighter_ready);
 }
 
 static void n455110_victim_blend(Fighter *victim) {
@@ -1527,7 +1527,7 @@ static void n455110_victim_blend(Fighter *victim) {
 
 void shinnok_first_vanished(Fighter *fighter) {
   fighter->appearance = APPEARANCE_HIDDEN;
-  retail_vm_enter(fighter, 0x4e2f00, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_VANISHED_4E2F00, fighter_ready);
 }
 
 void shinnok_first_hidden(Fighter *fighter) {
@@ -1535,7 +1535,7 @@ void shinnok_first_hidden(Fighter *fighter) {
 }
 
 void shinnok_first_hand_squeeze(Fighter *hand) {
-  retail_vm_repeat(hand, 0x4e2f58, 23, 0x4e2f68);
+  retail_vm_repeat(hand, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_HAND_SQUEEZE_4E2F58, 23, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_HAND_SQUEEZE_4E2F68);
 }
 
 void shinnok_first_squeeze_cycle(Fighter *fighter) {
@@ -1555,11 +1555,11 @@ void shinnok_first_victim_held(Fighter *victim) {
   /* 455ae0 marks the group 0x1000 and 4773a0 detaches it from its player
    * slot; the portable victim simply remains scene-owned. */
   victim->flags |= FF_BUSY | FF_UNTOUCHABLE;
-  retail_vm_enter(victim, 0x4e2f88, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_VICTIM_HELD_4E2F88, fighter_ready);
 }
 
 void shinnok_first_victim_squeeze(Fighter *victim) {
-  retail_vm_repeat(victim, 0x4e2f98, 23, 0x4e2fa8);
+  retail_vm_repeat(victim, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_VICTIM_SQUEEZE_4E2F98, 23, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_VICTIM_SQUEEZE_4E2FA8);
 }
 
 void shinnok_first_victim_crush(Fighter *victim) {
@@ -1571,7 +1571,7 @@ void shinnok_first_victim_crush(Fighter *victim) {
   Mat3 unused;
   fighter_joint_position(victim, 1, &chest, &unused);
   battle_blood_hit(fighter_opponent(victim), victim, chest, 0x8000);
-  retail_vm_enter(victim, 0x4e2fb8, retail_scene_455110_complete);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SHINNOK_FIRST_VICTIM_CRUSH_4E2FB8, retail_scene_455110_complete);
 }
 
 void shinnok_fatality_1(Fighter *fighter) {
@@ -1597,7 +1597,7 @@ void shinnok_fatality_1(Fighter *fighter) {
 void sonya_script_first_release(Fighter *fighter) {
   battle_shatter(fighter_peer(fighter));
   fighter->body.physics = sonya_scene_end_watch;
-  retail_vm_enter(fighter, 0x4e01d0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_SCRIPT_FIRST_RELEASE_4E01D0, fighter_ready);
 }
 
 void sonya_first_fatality(Fighter *fighter) {
@@ -1606,7 +1606,7 @@ void sonya_first_fatality(Fighter *fighter) {
   }
   mk4_script_scene_pose(fighter, 388, 0);
   mk4_script_scene_pose(fighter_peer(fighter), 389, 0);
-  retail_vm_enter(fighter, 0x4e01c0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_FIRST_FATALITY_4E01C0, fighter_ready);
 }
 
 bool sonya_can_first_fatality(const Fighter *fighter) {
@@ -1716,7 +1716,7 @@ bool sub_zero_can_first_fatality(const Fighter *fighter) {
 
 static void n445150_first_camera_start(Fighter *fighter) {
   battle_camera_sequence(fighter, fighter_peer(fighter), n445150_first_camera_shots, NATIVE_COUNT(n445150_first_camera_shots));
-  retail_vm_enter(fighter, 0x4e0368, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FIRST_CAMERA_START_4E0368, fighter_ready);
 }
 
 void sub_zero_first_fatality_script(Fighter *fighter) {
@@ -1725,39 +1725,39 @@ void sub_zero_first_fatality_script(Fighter *fighter) {
 
 static void n445150_first_victim_start(Fighter *victim) {
   sub_zero_native_blends(victim, n445150_first_victim_setup, NATIVE_COUNT(n445150_first_victim_setup), NULL);
-  native_script_end(victim, 0x4e03f0, fighter_ready);
+  native_script_end(victim, MK4_RETAIL_SCRIPT_FIRST_VICTIM_START_4E03F0, fighter_ready);
 }
 
 void sub_zero_script_first_begin(Fighter *fighter) {
   fighter->script_phase = 1;
   sub_zero_native_blends(fighter, n445150_first_actor_blend, NATIVE_COUNT(n445150_first_actor_blend), NULL);
-  native_script_end(fighter, 0x4e0378, fighter_ready);
+  native_script_end(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_BEGIN_4E0378, fighter_ready);
 }
 
 void sub_zero_script_first_pull(Fighter *fighter) {
   n445150_first_victim_start(fighter_peer(fighter));
-  retail_vm_enter(fighter, 0x4e0388, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_PULL_4E0388, fighter_ready);
 }
 
 void sub_zero_script_first_cues1(Fighter *fighter) {
   battle_sound(SOUND_B, 0x1b);
   battle_sound(SOUND_B, 0x29);
-  retail_vm_enter(fighter, 0x4e0398, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_CUES1_4E0398, fighter_ready);
 }
 
 void sub_zero_script_first_cues2(Fighter *fighter) {
   battle_sound(SOUND_B, 0x2b);
-  retail_vm_enter(fighter, 0x4e03a8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_CUES2_4E03A8, fighter_ready);
 }
 
 void sub_zero_script_first_cues3(Fighter *fighter) {
   battle_sound(SOUND_B, 0x2a);
-  retail_vm_enter(fighter, 0x4e03b8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_CUES3_4E03B8, fighter_ready);
 }
 
 void sub_zero_script_first_cues4(Fighter *fighter) {
   battle_sound(SOUND_B, 0x1b);
-  retail_vm_enter(fighter, 0x4e03c8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_CUES4_4E03C8, fighter_ready);
 }
 
 void sub_zero_script_first_head(Fighter *fighter) {
@@ -1767,18 +1767,18 @@ void sub_zero_script_first_head(Fighter *fighter) {
   ScenePiece *head = battle_attach_head(victim, fighter, 10);
   battle_attach_piece_model(head, &n445150_first_spine, fighter);
   battle_joint_spray(victim, &n445150_first_blood);
-  retail_vm_enter(fighter, 0x4e03d8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_HEAD_4E03D8, fighter_ready);
 }
 
 void sub_zero_script_first_victim_blends(Fighter *victim) {
   sub_zero_native_blends(victim, n445150_first_victim_blends, NATIVE_COUNT(n445150_first_victim_blends), NULL);
-  native_script_end(victim, 0x4e0420, fighter_ready);
+  native_script_end(victim, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_VICTIM_BLENDS_4E0420, fighter_ready);
 }
 
 void sub_zero_script_first_victim_collapse(Fighter *victim) {
   battle_sound(SOUND_B, 0x18);
   battle_camera_shake(2, 3, 0x2e14);
-  retail_vm_enter(victim, 0x4e0430, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_FIRST_VICTIM_COLLAPSE_4E0430, fighter_ready);
 }
 
 void sub_zero_script_first_victim_end(Fighter *victim) {
@@ -1934,19 +1934,19 @@ static bool n44d4a0_burst_step(BattleEvent *event, Fighter *owner, Fighter *oppo
 void tanya_first_victim_burst(Fighter *fighter) {
   BattleEvent *event = battle_event_start(fighter, n44d4a0_burst_step, false, false);
   battle_event_program(event, 88);
-  retail_vm_enter(fighter, 0x4e16d0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_VICTIM_BURST_4E16D0, fighter_ready);
 }
 
 /* 44d750: one more 4e15f0 pass, then cue task 44d8d0 and clip 409. */
 void tanya_first_victim_repeat(Fighter *fighter) {
   if (fighter->native_variant-- > 0) {
-    retail_vm_enter(fighter, 0x4e15f0, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_VICTIM_REPEAT_4E15F0, fighter_ready);
     return;
   }
   BattleEvent *event = battle_event_start(fighter, n44d4a0_cue_next, false, false);
   event->data[1] = 0;
   n44d4a0_cue_next(event, fighter, (Fighter *)fighter_opponent(fighter));
-  retail_vm_enter(fighter, 0x4e1600, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_VICTIM_REPEAT_4E1600, fighter_ready);
 }
 
 /* 44d6e0: the 44d7c0 bob task, sound B 0x2b and a two-pass counter. */
@@ -1955,7 +1955,7 @@ void tanya_first_victim_swell(Fighter *fighter) {
   battle_event_program(event, 25);
   battle_sound(SOUND_B, 0x2b);
   fighter->native_variant = 1;
-  retail_vm_enter(fighter, 0x4e15f0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_VICTIM_REPEAT_4E15F0, fighter_ready);
 }
 
 /* 44d560 state 3: 4756f0 places the victim on the owner's X/Z. */
@@ -1965,7 +1965,7 @@ static void n44d4a0_victim_scene(Fighter *victim) {
   victim->body.pos[AXIS_Z] = owner->body.pos[AXIS_Z];
   owner->flags |= FF_PAIRED;
   victim->flags |= FF_PAIRED;
-  retail_vm_enter(victim, 0x4e15e0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_VICTIM_SCENE_4E15E0, fighter_ready);
 }
 
 /* 475190 state 1: 475690 copies the owner's facing and angles. */
@@ -1983,25 +1983,25 @@ static void n44d4a0_victim_start(Fighter *victim) {
 void tanya_first_owner_53(Fighter *fighter) {
   fighter->sample_override = 53;
   battle_sound(SOUND_B, 0x27);
-  retail_vm_enter(fighter, 0x4e15a8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_OWNER_53_4E15A8, fighter_ready);
 }
 
 /* 44d4e0 -> 44dd20 scales the 44dca0 scene vector by -0x439. That vector
  * comes from an unresolved camera object; the owner keeps its place. */
 void tanya_first_owner_drift(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e15b8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_OWNER_DRIFT_4E15B8, fighter_ready);
 }
 
 /* 44d510 arms nine more 4e15d0 replays of clip 396. */
 void tanya_first_owner_replays(Fighter *fighter) {
   fighter->native_variant = 9;
-  retail_vm_enter(fighter, 0x4e15d0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_OWNER_LOOP_4E15D0, fighter_ready);
 }
 
 /* 44d530 counts the replays, then stops motion and parks the owner. */
 void tanya_first_owner_loop(Fighter *fighter) {
   if (--fighter->native_variant >= 0) {
-    retail_vm_enter(fighter, 0x4e15d0, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_TANYA_FIRST_OWNER_LOOP_4E15D0, fighter_ready);
     return;
   }
   mk4_script_stop_body(fighter);
@@ -2009,7 +2009,7 @@ void tanya_first_owner_loop(Fighter *fighter) {
 }
 
 static void n44d4a0_owner_kiss_start(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e1598, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_OWNER_KISS_START_4E1598, fighter_ready);
 }
 
 /* 44d340 state 1 after sixteen visits: sound B 0x30, then 475250 blends

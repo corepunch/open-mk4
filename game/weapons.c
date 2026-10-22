@@ -37,9 +37,10 @@ void weapon_stance(Fighter *fighter, int state) {
   if (fighter->armed) {
     require(fighter->weapon != NULL, "Armed stance needs a loaded inventory");
     move = state == S_IDLE ? &idle : state == S_WALK ? (fighter_holds_back(fighter) ? &back_walk : &walk) : state == S_CROUCH ? &crouch : &block;
-    descriptor = state == S_IDLE   ? fighter->weapon->idle
-                 : state == S_WALK ? (fighter_holds_back(fighter) ? fighter->weapon->backward : fighter->weapon->forward)
-                                   : mk4_image_u32(retail_vm_image(), (state == S_CROUCH ? 0x53ce50 : 0x53ce30) + 4) * 4;
+    descriptor = state == S_IDLE ? fighter->weapon->idle
+                 : state == S_WALK
+                     ? (fighter_holds_back(fighter) ? fighter->weapon->backward : fighter->weapon->forward)
+                     : mk4_image_u32(retail_vm_image(), (state == S_CROUCH ? MK4_RETAIL_DATA_WEAPON_STANCE_53CE50 : MK4_RETAIL_DATA_ROSTER_DEF_53CE30) + 4) * 4;
   }
   if (state == S_WALK && fighter->state == S_WALK &&
       (fighter->current_move == move ||
@@ -52,7 +53,7 @@ void weapon_stance(Fighter *fighter, int state) {
     fighter->sample_override = -1;
   } else if (state == S_CROUCH) {
     /* Original46b610/494120 binds the unarmed descriptor in53ce40. */
-    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53ce40) * 4, 0);
+    retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_WEAPON_STANCE_53CE40) * 4, 0);
   }
 }
 
@@ -138,7 +139,7 @@ static void strike_recovery(Fighter *fighter) {
   fighter_set_speed(fighter, 0);
   fighter->script_phase = 1;
   fighter->action = ACTION_RETAIL_1006;
-  if (fighter->connected && fighter->weapon_strike->parameters == 0x4ec9c8) {
+  if (fighter->connected && fighter->weapon_strike->parameters == MK4_RETAIL_DATA_STRIKE_QUERY_4EC9C8) {
     axe_followup(fighter);
     return;
   }
@@ -152,7 +153,7 @@ static void strike_recovery(Fighter *fighter) {
 static void strike_query(Fighter *fighter) {
   ContactResult result = battle_contact(fighter, &fighter->weapon_strike->record);
   if (result != CONTACT_MISS) {
-    if (fighter->weapon_strike->parameters == 0x4ec9c8 && result != CONTACT_BLOCK) {
+    if (fighter->weapon_strike->parameters == MK4_RETAIL_DATA_STRIKE_QUERY_4EC9C8 && result != CONTACT_BLOCK) {
       const NativeAxeProfile *profile = fighter->native_context;
       fighter_interrupt((Fighter *)fighter_opponent(fighter), profile->first_hit);
     }
@@ -189,7 +190,8 @@ void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool trav
  * is the optional4947d0 row supplied by the native frontend, not script data. */
 WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int action) {
   const Mk4Image *image = retail_vm_image();
-  require(parameters >= 0x4ec400 && parameters <= 0x4ecb00 && parameters % 4 == 0, "Invalid native weapon parameter row");
+  require(parameters >= MK4_RETAIL_DATA_WEAPON_RETAIL_STRIKE_4EC400 && parameters <= MK4_RETAIL_DATA_WEAPON_RETAIL_STRIKE_4ECB00 && parameters % 4 == 0,
+      "Invalid native weapon parameter row");
   uint32_t descriptor = mk4_image_u32(image, parameters) * 4;
   require(descriptor >= RETAIL_ANIMATION_TABLE && descriptor < RETAIL_ANIMATION_TABLE + MK4_CLIP_COUNT * RETAIL_ANIMATION_DESCRIPTOR_SIZE &&
               (descriptor - RETAIL_ANIMATION_TABLE) % RETAIL_ANIMATION_DESCRIPTOR_SIZE == 0,
@@ -211,7 +213,8 @@ WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int acti
       .sound = (int)(query >> 16),
       .parameters = parameters};
   if (motion != 0) {
-    require(motion >= 0x4ec400 && motion <= 0x4ecb00 && motion % 4 == 0, "Invalid native weapon motion row");
+    require(motion >= MK4_RETAIL_DATA_WEAPON_RETAIL_STRIKE_4EC400 && motion <= MK4_RETAIL_DATA_WEAPON_RETAIL_STRIKE_4ECB00 && motion % 4 == 0,
+        "Invalid native weapon motion row");
     strike.delay = (int)mk4_image_u32(image, motion);
     strike.speed = (q16)mk4_image_u32(image, motion + 4);
     strike.travel = (int)mk4_image_u32(image, motion + 8);
@@ -383,7 +386,7 @@ static void weapon_air_begin(Fighter *fighter) {
 void weapon_air_frames_native(Fighter *fighter, unsigned selector) {
   require(selector == 0x104 || selector == 0x108, "Invalid native weapon-air selector");
   /* Native470980 binds the descriptor in its parameter row before playback. */
-  uint32_t row = selector == 0x104 ? 0x4e66e0 : 0x4e6700;
+  uint32_t row = selector == 0x104 ? MK4_RETAIL_DATA_WEAPON_AIR_FRAMES_NATIVE_4E66E0 : MK4_RETAIL_DATA_WEAPON_AIR_FRAMES_NATIVE_4E6700;
   retail_air_bind_row(fighter, row);
   weapon_air_begin(fighter);
 }
@@ -517,16 +520,16 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
   uint32_t parameters;
   switch (index) {
     case 0:
-      parameters = 0x4ec988;
+      parameters = MK4_RETAIL_DATA_WEAPON_HP_STRIKE_PARAMETERS_4EC988;
       break;
     case 1:
-      parameters = 0x4ec9b0;
+      parameters = MK4_RETAIL_DATA_WEAPON_LP_THROW_OR_STRIKE_PARAMETERS_4EC9B0;
       break;
     case 2:
-      parameters = 0x4ec9a0;
+      parameters = MK4_RETAIL_DATA_WEAPON_ALTERNATE_STRIKE_PARAMETERS_4EC9A0;
       break;
     default:
-      parameters = 0x4ec9c8;
+      parameters = MK4_RETAIL_DATA_STRIKE_QUERY_4EC9C8;
       break;
   }
   weapon_start_retail_strike(fighter, parameters, 0, ACTION_RETAIL_0111, index < 2);
@@ -602,7 +605,8 @@ static void script_strike_query(Fighter *fighter) {
       if (result == CONTACT_BLOCK) {
         fighter->action = ACTION_RETAIL_1006;
       }
-      retail_vm_enter(fighter, result == CONTACT_BLOCK ? 0x4ec7d8 : 0x4ec7c0, mk4_mmove_thrown_finish);
+      retail_vm_enter(fighter, result == CONTACT_BLOCK ? MK4_RETAIL_SCRIPT_SCRIPT_STRIKE_QUERY_4EC7D8 : MK4_RETAIL_SCRIPT_SCRIPT_STRIKE_QUERY_4EC7C0,
+          mk4_mmove_thrown_finish);
     } else {
       script_strike_recover(fighter);
     }

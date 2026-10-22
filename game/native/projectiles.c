@@ -87,7 +87,7 @@ static void n4970d0_cast_orb(Fighter *fighter, int action) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->action = action;
-  retail_vm_enter(fighter, 0x4ed0d8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAST_ORB_4ED0D8, fighter_ready);
 }
 
 void cage_high_orb(Fighter *fighter) {
@@ -204,7 +204,7 @@ static void n46a650_vortex_lift(Fighter *fighter) {
 static void n46a650_vortex_landed(Fighter *fighter) {
   mk4_mmove_bind(fighter, 195, 29, 28);
   if (fighter->health > 0) {
-    retail_vm_enter(fighter, 0x4e9fe0, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_VORTEX_LANDED_4E9FE0, fighter_ready);
   } else {
     fighter_finish_mmove(fighter, NULL);
   }
@@ -254,7 +254,7 @@ void fujin_wind_victim(Fighter *fighter) {
 static void n46a650_slam_landed(Fighter *fighter) {
   mk4_mmove_bind(fighter, 195, 29, 28);
   fighter->hits++;
-  retail_vm_enter(fighter, 0x4e9ff0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SLAM_LANDED_4E9FF0, fighter_ready);
 }
 
 static void n46a650_slam_drop(Fighter *fighter) {
@@ -276,13 +276,13 @@ void fujin_wind_slam_victim(Fighter *fighter) {
 
 void fujin_wind_recovery(Fighter *fighter) {
   fighter->action = 0x1015;
-  retail_vm_enter(fighter, 0x4e5c20, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_WIND_RECOVERY_4E5C20, fighter_ready);
 }
 
 void fujin_wind(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_PUNCH, &n46a650_caster);
-  retail_vm_enter(fighter, 0x4e5c50, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_WIND_4E5C50, fighter_ready);
 }
 
 void fujin_wind_slam(Fighter *fighter) {
@@ -292,7 +292,7 @@ void fujin_wind_slam(Fighter *fighter) {
   }
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &n46a650_slam);
-  retail_vm_enter(fighter, 0x4e5c00, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FUJIN_WIND_SLAM_4E5C00, fighter_ready);
 }
 
 /* Native service cluster: 49ca90. */
@@ -344,7 +344,7 @@ void goro_fireball(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n49ca90_s_fireball);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  retail_vm_enter(fighter, 0x4ed790, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_FIREBALL_4ED790, fighter_ready);
 }
 
 /* Native service cluster: 43b8c0. */
@@ -370,7 +370,7 @@ static void n43b8c0_quake_cleanup(Fighter *fighter) {
 
 static void n43b8c0_quake_jump(Fighter *fighter) {
   n43b8c0_quake_cleanup(fighter);
-  retail_vm_enter(fighter, 0x4dfc50, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAKE_JUMP_4DFC50, fighter_ready);
 }
 
 /* 43b7e0 (HK B,F,D,D): voice 0x604, then 48fde0 blends from the current
@@ -403,7 +403,7 @@ void goro_script_quake_land(Fighter *fighter) {
     battle_react(victim, n43b8c0_QUAKE_REACTION);
   }
   retail_disturb_resting_weapons();
-  retail_vm_enter(fighter, 0x4dfc60, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_SCRIPT_QUAKE_LAND_4DFC60, fighter_ready);
 }
 
 /* Native service cluster: 497580. */
@@ -516,7 +516,7 @@ void jarek_blade(Fighter *fighter) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->action = 0x310;
-  retail_vm_enter(fighter, 0x4ed118, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_BLADE_4ED118, fighter_ready);
 }
 
 /* Native service cluster: 47b600. */
@@ -527,7 +527,7 @@ static const MoveDef n47b600_quake_move = {.clip = 107, .last = MOVE_END, .flags
 void jarek_quake(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &n47b600_quake_move);
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, 0x4e81a8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_QUAKE_4E81A8, fighter_ready);
 }
 
 /* 47b600: action 0x200f, 415180 ground-shock decoration, then 48ee60/48ef40
@@ -542,7 +542,7 @@ void jarek_quake_tail(Fighter *fighter) {
      * runs Goro's port of it (disarm, 4ea8f8 voice, victim script 4e95c8). */
     battle_react(victim, 136);
   }
-  retail_vm_enter(fighter, 0x4e81c8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAREK_QUAKE_TAIL_4E81C8, fighter_ready);
 }
 
 /* Native service cluster: native_ground_pound. */
@@ -664,7 +664,7 @@ void jax_missile(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n496fc0_s_missile);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  retail_vm_enter(fighter, 0x4ed090, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAX_MISSILE_4ED090, fighter_ready);
 }
 
 /* Native service cluster: 499000, 499450, 499470. */
@@ -817,13 +817,13 @@ static void n499000_skull_cast(Fighter *fighter, const MoveDef *move, uint32_t s
 }
 
 void kai_rising_skull(Fighter *fighter) {
-  n499000_skull_cast(fighter, &n499000_rising_cast, 0x4ed330);
+  n499000_skull_cast(fighter, &n499000_rising_cast, MK4_RETAIL_DATA_KAI_RISING_SKULL_4ED330);
 }
 
 void kai_rising_skull_spawn(Fighter *fighter) {
   /* 499450: task 499490 type 48 from 4ed390 (back .4, Y -.01), rising .2. */
   n499000_skull_spawn_from(fighter, n499000_rising_step, -0x6666, -0x28f, -n499000_SKULL_SPEED, n499000_SKULL_UP);
-  retail_vm_enter(fighter, 0x4ed348, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_RISING_SKULL_SPAWN_4ED348, fighter_ready);
 }
 
 void kai_rising_skull_finish(Fighter *fighter) {
@@ -833,7 +833,7 @@ void kai_rising_skull_finish(Fighter *fighter) {
 }
 
 void kai_ground_skull(Fighter *fighter) {
-  n499000_skull_cast(fighter, &n499000_ground_cast, 0x4ed2f8);
+  n499000_skull_cast(fighter, &n499000_ground_cast, MK4_RETAIL_DATA_KAI_GROUND_SKULL_4ED2F8);
 }
 
 static void n499000_ground_fall_landed(Fighter *fighter) {
@@ -950,9 +950,9 @@ static void n47ed40_fireball(Fighter *fighter, bool low) {
   fighter_upright(fighter);
   fighter->script_phase = air ? 2 : low ? 1 : 0;
   fighter->sample_override = 0;
-  RetailScriptContinuation script = air   ? (RetailScriptContinuation){0x4ed6f8, fighter_ready}
-                                    : low ? (RetailScriptContinuation){0x4ed678, fighter_ready}
-                                          : (RetailScriptContinuation){0x4ed6c0, fighter_ready};
+  RetailScriptContinuation script = air   ? (RetailScriptContinuation){MK4_RETAIL_SCRIPT_FIREBALL_4ED6F8, fighter_ready}
+                                    : low ? (RetailScriptContinuation){MK4_RETAIL_DATA_FIREBALL_4ED678, fighter_ready}
+                                          : (RetailScriptContinuation){MK4_RETAIL_DATA_FIREBALL_4ED6C0, fighter_ready};
   retail_vm_enter(fighter, script.entry, script.finish);
 }
 
@@ -1072,14 +1072,14 @@ void quan_chi_script_skull_release(Fighter *fighter) {
       skull->vel[axis] = q16_mul(fighter->saved_motion[axis == AXIS_X ? 0 : 1], 0x3333);
     }
   }
-  retail_vm_enter(fighter, 0x4ed3c0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_SCRIPT_SKULL_RELEASE_4ED3C0, fighter_ready);
 }
 
 void quan_chi_skull(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n499780_s_skull);
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
-  retail_vm_enter(fighter, 0x4ed3a0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_QUAN_CHI_SKULL_4ED3A0, fighter_ready);
 }
 
 /* Reaction 128 (485f90): 494520 drops a weapon, then 4e9cd8 knocks the
@@ -1089,7 +1089,7 @@ void quan_chi_skull_reaction(Fighter *victim) {
   fighter_start_move(victim, S_KNOCKDOWN, &n499780_s_bitten);
   victim->flags |= FF_REACTING;
   victim->sample_override = 0;
-  retail_vm_enter(victim, 0x4e9cd8, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_QUAN_CHI_SKULL_REACTION_4E9CD8, fighter_ready);
 }
 
 /* Native service cluster: 49be10. */
@@ -1114,7 +1114,7 @@ void raiden_lightning(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &n49be10_s_projectile);
-  retail_vm_enter(fighter, 0x4ed5f0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_RAIDEN_LIGHTNING_4ED5F0, fighter_ready);
 }
 
 /* Native service cluster: 483df0, 496e00. */
@@ -1184,7 +1184,7 @@ void reiko_star(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n483df0_s_star_throw);
   fighter->saved_motion[AXIS_X] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[AXIS_Z] = fighter_axis(fighter, AXIS_Z);
-  retail_vm_enter(fighter, 0x4ed038, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REIKO_STAR_4ED038, fighter_ready);
 }
 
 /* Native service cluster: 40eb80, 40ec40, 40ed20, 40ee00, 483df0, 498920. */
@@ -1335,7 +1335,7 @@ void reptile_acid_spit(Fighter *fighter) {
   fighter->saved_motion[0] = fighter_axis(fighter, AXIS_X);
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->mmove_cleanup = n40eb80_spit_cleanup;
-  retail_vm_enter(fighter, 0x4ed1e8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_ACID_SPIT_4ED1E8, fighter_ready);
 }
 
 /* Native service cluster: 416ae0, 416d40, 468640. */
@@ -1418,7 +1418,7 @@ void sonya_ring(Fighter *fighter) {
     return;
   }
   fighter_start_move(fighter, S_PUNCH, &n49b9e0_s_projectile);
-  retail_vm_enter(fighter, 0x4ed4c0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SONYA_RING_4ED4C0, fighter_ready);
 }
 
 void sonya_script_ring_flash(Fighter *fighter, int task_type) {

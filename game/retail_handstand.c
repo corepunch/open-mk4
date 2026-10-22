@@ -25,7 +25,7 @@ enum {
   HANDSTAND_REAR_ATTACK_RECORD = 0x4eb9f0
 };
 
-static const ButtonTable handstand_buttons = {.retail_address = 0x4e83f8};
+static const ButtonTable handstand_buttons = {.retail_address = MK4_RETAIL_INPUT_TABLE_HANDSTAND_4E83F8};
 
 bool kai_can_handstand(const Fighter *fighter) {
   unsigned required = BUTTON_BIT(BUTTON_BLOCK) | BUTTON_BIT(BUTTON_LOW_KICK);
@@ -108,7 +108,7 @@ void kai_script_stage_event(Fighter *fighter) {
 
 static void kai_input_47cbf0(Fighter *fighter) {
   weapon_followup_victim(fighter);
-  retail_vm_enter(fighter, 0x4e88c8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_INPUT_47CBF0_4E88C8, fighter_ready);
 }
 
 void kai_input_47c520(Fighter *fighter) {
@@ -119,26 +119,26 @@ void kai_input_47c520(Fighter *fighter) {
   if (fighter->armed) {
     kai_input_47cbf0(fighter);
   } else {
-    retail_vm_enter(fighter, 0x4e8320, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_INPUT_47C520_4E8320, fighter_ready);
   }
 }
 
 void retail_handstand_exit(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter(fighter, 0x4e83e8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_EXIT_4E83E8, fighter_ready);
 }
 
 void retail_handstand_front(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &front);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter(fighter, 0x4e8358, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_FRONT_4E8358, fighter_ready);
 }
 
 void retail_handstand_rear(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &rear);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter(fighter, 0x4e83a0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_REAR_4E83A0, fighter_ready);
 }
 
 static void handstand_contact(Fighter *fighter) {
@@ -152,7 +152,7 @@ void kai_script_contact_b10_continuation(Fighter *fighter) {
   fighter->native_record_value = retail_vm_attack_record(retail_vm_image(), HANDSTAND_FRONT_ATTACK_RECORD);
   fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, 3, NULL);
-  native_script_end(fighter, 0x4e8390, fighter_ready);
+  native_script_end(fighter, MK4_RETAIL_SCRIPT_KAI_SCRIPT_CONTACT_B10_CONTINUATION_4E8390, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, frame == 1 ? 10 : 11, handstand_contact);
   }
@@ -164,7 +164,7 @@ void kai_handstand_rear_contact(Fighter *fighter) {
   fighter->native_record_value = retail_vm_attack_record(retail_vm_image(), HANDSTAND_REAR_ATTACK_RECORD);
   fighter->native_record = &fighter->native_record_value;
   native_begin(fighter, 1, 3, NULL);
-  native_script_end(fighter, 0x4e83d8, fighter_ready);
+  native_script_end(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REAR_CONTACT_4E83D8, fighter_ready);
   for (int frame = 1; frame <= 3; ++frame) {
     native_frame(fighter, frame, 9 + frame, handstand_contact);
   }
@@ -233,7 +233,7 @@ void kai_handstand_spin_begin(Fighter *fighter) {
 void retail_handstand_spin(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &spin);
   fighter->mmove_cleanup = handstand_cleanup;
-  retail_vm_enter(fighter, 0x4e8338, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_SPIN_4E8338, fighter_ready);
 }
 
 void kai_handstand_victim_tail(Fighter *fighter) {
@@ -262,17 +262,17 @@ void kai_handstand_reaction(Fighter *fighter) {
       retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
   if (retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50) {
-    retail_vm_enter(fighter, 0x4ea170, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REACTION_4EA170, mk4_mmove_thrown_finish);
   } else if (retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80) {
     fighter->body.physics = fighter_friction;
-    retail_vm_enter(fighter, 0x4ea1c0, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REACTION_4EA1C0, mk4_mmove_thrown_finish);
   } else {
     mk4_script_shake(fighter, 0);
     if (crouch) {
       fighter->body.physics = fighter_friction;
-      retail_vm_enter(fighter, 0x4e9360, mk4_mmove_thrown_finish);
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CROUCH_REACTION_SCRIPT_4E9360, mk4_mmove_thrown_finish);
     } else {
-      retail_vm_enter(fighter, 0x4e9308, mk4_mmove_thrown_finish);
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REACTION_4E9308, mk4_mmove_thrown_finish);
     }
   }
 }

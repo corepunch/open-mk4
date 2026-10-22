@@ -12,16 +12,16 @@ static void fan_cycle_enter(Fighter *fighter) {
   int roster = fighter_opponent(fighter)->roster;
   roster = roster == 16 ? 2 : roster == 17 ? 7 : roster;
   if (roster == 2 || roster == 9) {
-    retail_vm_enter(fighter, 0x4e0138, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FAN_CYCLE_ENTER_4E0138, fighter_ready);
   } else {
-    retail_vm_bind_animation(fighter, 0x4fc0e4, 0);
-    retail_vm_enter(fighter, 0x4e0128, fighter_ready);
+    retail_vm_bind_animation(fighter, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_414_4FC0E4, 0);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FAN_CYCLE_ENTER_4E0128, fighter_ready);
   }
 }
 
 void retail_fan_start(Fighter *fighter) {
-  retail_vm_enter((Fighter *)fighter_opponent(fighter), 0x4e0188, fighter_ready);
-  retail_vm_enter(fighter, 0x4e0118, fighter_ready);
+  retail_vm_enter((Fighter *)fighter_opponent(fighter), MK4_RETAIL_SCRIPT_FAN_START_4E0188, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FAN_START_4E0118, fighter_ready);
 }
 
 void retail_fan_finish(Fighter *fighter) {
@@ -44,15 +44,15 @@ void retail_fan_cycle(Fighter *fighter) {
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_cancel_mmove(victim);
   victim->sample_override = 69;
-  retail_vm_enter(victim, 0x4e01a0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_FAN_CYCLE_4E01A0, fighter_ready);
   mk4_native_fan_rise(fighter);
   /* CountdownStoreCallChain rebinds the release descriptor at sample 69. */
-  retail_vm_bind_animation(fighter, 0x4fc0f0, 69);
-  retail_vm_enter(fighter, 0x4e0148, fighter_ready);
+  retail_vm_bind_animation(fighter, MK4_RETAIL_ANIMATION_DESCRIPTOR_CLIP_415_4FC0F0, 69);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FAN_CYCLE_4E0148, fighter_ready);
 }
 
 void retail_fan_victory(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e0158, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_FAN_VICTORY_4E0158, fighter_ready);
 }
 
 void retail_fan_victim_end(Fighter *fighter) {
@@ -61,7 +61,7 @@ void retail_fan_victim_end(Fighter *fighter) {
 }
 
 static void spike_script_enter(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6950, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SPIKE_SCRIPT_ENTER_4E6950, fighter_ready);
 }
 
 static void retail_spike_delay(Fighter *fighter) {
@@ -189,7 +189,7 @@ static bool scene_victory_join(BattleEvent *event, Fighter *owner, Fighter *peer
     return false;
   }
   if (event->phase == 0) {
-    if (owner->retail_vm.active && owner->retail_vm.entry == 0x4e6a40) {
+    if (owner->retail_vm.active && owner->retail_vm.entry == MK4_RETAIL_SCRIPT_RAIDEN_SCRIPT_VICTORY_4E6A40) {
       event->phase = 1;
       battle_event_delay(event, 50);
     }
@@ -220,13 +220,13 @@ void retail_scene_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case RETAIL_NATIVE_SCENE_REACTION_464E30:
-      script = 0x4e5770;
+      script = MK4_RETAIL_SCRIPT_SCENE_REACTION_4E5770;
       break;
     case RETAIL_NATIVE_SCENE_REACTION_465200:
-      script = 0x4e5820;
+      script = MK4_RETAIL_SCRIPT_SCENE_REACTION_4E5820;
       break;
     case RETAIL_NATIVE_SCENE_REACTION_466110:
-      script = 0x4e59c8;
+      script = MK4_RETAIL_SCRIPT_SCENE_REACTION_4E59C8;
       break;
     default:
       require(false, "Unexpected native scene reaction");
@@ -270,7 +270,7 @@ void retail_stage_victim(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  retail_vm_enter(fighter, 0x4ea300, retail_task_pause);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_STAGE_VICTIM_4EA300, retail_task_pause);
 }
 
 static bool stage_ceiling_reached(const Fighter *fighter) {
@@ -278,7 +278,7 @@ static bool stage_ceiling_reached(const Fighter *fighter) {
 }
 
 static void stage_impaled(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4ea330, retail_task_pause);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_STAGE_IMPALED_4EA330, retail_task_pause);
 }
 
 /*483720/48f5f0 waits for the original absolute ceiling height. */
@@ -303,7 +303,7 @@ void retail_scene_victim_hold(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   fighter->facing = -fighter->facing;
-  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cfa8) * 4, 0);
+  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_SCENE_VICTIM_HOLD_53CFA8) * 4, 0);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }
 

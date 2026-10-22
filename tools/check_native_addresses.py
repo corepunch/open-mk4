@@ -1,42 +1,67 @@
 #!/usr/bin/env python3
-"""Report native-address naming coverage in the shared C runtime."""
+"""Report native, script and data address naming in the shared C runtime."""
 from pathlib import Path
 import re
 import sys
 from c_source import mask_c
 
 ROOT = Path(__file__).resolve().parents[1]
-CATALOGS = {'retail_native_addresses.h', 'retail_native.h'}
+
+
+def address_definitions(source):
+    """Locate literal constant definitions, never ordinary assignments."""
+    result = []
+    for enum in re.finditer(r'\benum(?:\s+\w+)?\s*\{[^}]*\}', source, re.S):
+        for match in re.finditer(r'\b(\w+)\s*=\s*(0x[0-9a-fA-F]+)', enum[0]):
+            result.append((int(match[2], 16), enum.start() + match.start(2)))
+    for match in re.finditer(
+            r'#define\s+\w+\s+(0x[0-9a-fA-F]+)|\b(?:static\s+)?const\s+uint32_t\s+\w+\s*=\s*(0x[0-9a-fA-F]+)', source):
+        result.append((int(match[1] or match[2], 16), match.start(1) if match[1] else match.start(2)))
+    return result
+
+
+def category(address):
+    if 0x401000 <= address < 0x4d0000:
+        return 'Native'
+    if address == 0x400000 or 0x4d0000 <= address <= 0x580000:
+        return 'Script/data'
+    return None
 
 
 def main():
-    names = {}
+    named = {'Native': set(), 'Script/data': set()}
     literals = []
-    for path in sorted((ROOT / 'game').rglob('*')):
+    paths = list((ROOT / 'game').rglob('*')) + [ROOT / 'common' / name for name in
+            ('mk4_image.c', 'mk4_image.h', 'mk4_retail_data_addresses.h')]
+    for path in sorted(paths):
         if path.suffix not in ('.c', '.h', '.inc'):
             continue
         source = mask_c(path.read_text())
-        definitions = list(re.finditer(r'\b(RETAIL_NATIVE_\w+)\s*=\s*(0x[0-9a-fA-F]+)', source))
         allowed = set()
-        if path.name in CATALOGS:
-            for match in definitions:
-                address = int(match[2], 16)
-                if 0x401000 <= address < 0x4d0000:
-                    if address in names:
-                        raise ValueError('Duplicate native address definition: ' + match[2])
-                    names[address] = match[1]
-                    allowed.add(match.start(2))
+        for address, offset in address_definitions(source):
+            group = category(address)
+            if group:
+                named[group].add(address)
+                allowed.add(offset)
         for match in re.finditer(r'\b0x[0-9a-fA-F]+\b', source):
             address = int(match[0], 16)
-            if 0x401000 <= address < 0x4d0000 and match.start() not in allowed:
-                literals.append((address, path.relative_to(ROOT), source.count('\n', 0, match.start()) + 1))
-    unnamed = {address for address, _, _ in literals}
-    total = len(set(names) | unnamed)
-    completed = len(set(names) - unnamed)
-    percent = 100 * completed / total if total else 100
-    print(f'Native address naming: {completed}/{total} unique addresses ({percent:.1f}%); {len(literals)} raw use sites remain.')
-    for address, path, line in literals:
-        print(f'{path}:{line}: unnamed native address {address:#x}')
+            group = category(address)
+            if group and match.start() not in allowed:
+                literals.append((group, address, path.relative_to(ROOT), source.count('\n', 0, match.start()) + 1))
+    completed_total = total_total = 0
+    for group, definitions in named.items():
+        remaining = [row for row in literals if row[0] == group]
+        unnamed = {row[1] for row in remaining}
+        total = len(definitions | unnamed)
+        completed = len(definitions - unnamed)
+        percent = 100 * completed / total if total else 100
+        print(f'{group} address naming: {completed}/{total} unique addresses ({percent:.1f}%); {len(remaining)} raw use sites remain.')
+        completed_total += completed
+        total_total += total
+    percent = 100 * completed_total / total_total if total_total else 100
+    print(f'Overall: {completed_total}/{total_total} ({percent:.1f}%).')
+    for _, address, path, line in literals:
+        print(f'{path}:{line}: unnamed retail address {address:#x}')
     return bool(literals)
 
 

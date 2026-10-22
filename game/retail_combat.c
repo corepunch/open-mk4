@@ -17,10 +17,10 @@ static void kick_row(Fighter *fighter) {
     if (next == RETAIL_NATIVE_KICK_ROW_46A770 || next == RETAIL_NATIVE_KICK_ROW_46A6C0) {
       /* 470e80 marks the recovery action before these two continuations. */
       fighter->action = ACTION_RETAIL_1006;
-      script = next == RETAIL_NATIVE_KICK_ROW_46A770 ? 0x4e5c70 : 0x4e5d20;
+      script = next == RETAIL_NATIVE_KICK_ROW_46A770 ? MK4_RETAIL_SCRIPT_KICK_ROW_4E5C70 : MK4_RETAIL_SCRIPT_KICK_ROW_4E5D20;
     } else {
       require(next == RETAIL_NATIVE_KICK_ROW_46A7A0, "Unimplemented native contact-row continuation");
-      script = 0x4e6998;
+      script = MK4_RETAIL_SCRIPT_KICK_ROW_4E6998;
     }
     retail_vm_enter(fighter, script, vm->finish);
     return;
@@ -30,7 +30,7 @@ static void kick_row(Fighter *fighter) {
   uint64_t continuation = fighter->continuation;
   if (!vm->native_contact && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
     require(vm->native_query == RETAIL_NATIVE_CONTACT_QUERY_B_48D3F0, "Unimplemented native contact-row query");
-    uint32_t record = mk4_image_u32(vm->image, 0x53d2b8 + vm->native_selector * 4);
+    uint32_t record = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8 + vm->native_selector * 4);
     AttackRecord attack = retail_vm_attack_record(vm->image, record * 4);
     ContactResult result = battle_contact(fighter, &attack);
     if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {
@@ -53,15 +53,15 @@ void retail_kick_contact_rows(Fighter *fighter, uint32_t table) {
 }
 
 void retail_kick_contact_default(Fighter *fighter) {
-  retail_kick_contact_rows(fighter, 0x4e5d00);
+  retail_kick_contact_rows(fighter, MK4_RETAIL_DATA_KICK_CONTACT_DEFAULT_4E5D00);
 }
 
 void retail_kick_contact_wide(Fighter *fighter) {
-  retail_kick_contact_rows(fighter, 0x4e5d30);
+  retail_kick_contact_rows(fighter, MK4_RETAIL_DATA_KICK_CONTACT_WIDE_4E5D30);
 }
 
 void retail_kick_contact_narrow(Fighter *fighter) {
-  retail_kick_contact_rows(fighter, 0x4e6978);
+  retail_kick_contact_rows(fighter, MK4_RETAIL_DATA_KICK_CONTACT_NARROW_4E6978);
 }
 
 /* Native 46a680 and the post-gate block 46a81a set the action and enter the retail selector.
@@ -72,17 +72,17 @@ static void kick_enter(Fighter *fighter, int action, uint32_t script) {
 }
 
 void retail_high_kick(Fighter *fighter) {
-  kick_enter(fighter, ACTION_RETAIL_0100, 0x4e5ca0);
+  kick_enter(fighter, ACTION_RETAIL_0100, MK4_RETAIL_DATA_HIGH_KICK_4E5CA0);
 }
 
 void retail_low_kick(Fighter *fighter) {
-  kick_enter(fighter, ACTION_RETAIL_0102, 0x4e5d90);
+  kick_enter(fighter, ACTION_RETAIL_0102, MK4_RETAIL_DATA_LOW_KICK_4E5D90);
 }
 
 /* Playback after the original controller's LP throw gates (46dcbc). */
 void retail_jab(Fighter *fighter) {
   retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_010B, true);
-  retail_vm_enter(fighter, 0x4e62f0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_JAB_4E62F0, fighter_ready);
 }
 
 static bool sweep_sound(BattleEvent *event, Fighter *owner, Fighter *victim) {
@@ -100,7 +100,7 @@ void retail_sweep(Fighter *fighter) {
   if (event != NULL) {
     battle_event_delay(event, 14);
   }
-  retail_vm_enter(fighter, 0x4e6798, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SWEEP_4E6798, fighter_ready);
 }
 
 void retail_sweep_state(Fighter *fighter) {
@@ -120,7 +120,7 @@ static void sweep_query(Fighter *fighter) {
   if (pose < fighter_move(fighter)->last) {
     fighter->sample_override = pose + 1;
   }
-  uint32_t packed = mk4_image_u32(vm->image, 0x53d2b8 + vm->native_selector * 4);
+  uint32_t packed = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8 + vm->native_selector * 4);
   AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
   uint64_t continuation = fighter->continuation;
   ContactResult result = battle_contact(fighter, &attack);
@@ -160,7 +160,7 @@ void retail_roundhouse(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   retail_native_begin(fighter, S_KICK, ACTION_RETAIL_010D, false);
   fighter->native_followup = fast;
-  retail_vm_enter(fighter, 0x4e6800, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_ROUNDHOUSE_4E6800, fighter_ready);
 }
 
 void retail_press_roundhouse(Fighter *fighter) {
@@ -168,11 +168,13 @@ void retail_press_roundhouse(Fighter *fighter) {
 }
 
 void retail_roundhouse_start(Fighter *fighter) {
-  retail_vm_enter(fighter, fighter->native_followup ? 0x4e6860 : 0x4e6878, fighter->retail_vm.finish);
+  retail_vm_enter(
+      fighter, fighter->native_followup ? MK4_RETAIL_SCRIPT_ROUNDHOUSE_START_4E6860 : MK4_RETAIL_SCRIPT_ROUNDHOUSE_START_4E6878, fighter->retail_vm.finish);
 }
 
 void retail_roundhouse_wide_start(Fighter *fighter) {
-  retail_vm_enter(fighter, fighter->native_followup ? 0x4e6890 : 0x4e68a8, fighter->retail_vm.finish);
+  retail_vm_enter(fighter, fighter->native_followup ? MK4_RETAIL_SCRIPT_ROUNDHOUSE_WIDE_START_4E6890 : MK4_RETAIL_SCRIPT_ROUNDHOUSE_WIDE_START_4E68A8,
+      fighter->retail_vm.finish);
 }
 
 static void roundhouse_return(Fighter *fighter) {
@@ -203,7 +205,7 @@ static void roundhouse_query(Fighter *fighter) {
   if (pose < fighter_move(fighter)->last) {
     fighter->sample_override = pose + 1;
   }
-  uint32_t packed = mk4_image_u32(vm->image, 0x53d2b8 + vm->native_selector * 4);
+  uint32_t packed = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8 + vm->native_selector * 4);
   AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
   uint64_t continuation = fighter->continuation;
   ContactResult result = battle_contact(fighter, &attack);
@@ -237,7 +239,7 @@ void retail_roundhouse_wide_tail(Fighter *fighter) {
 /* 46cdb4 playback after the finish-window controller gates. */
 void retail_uppercut(Fighter *fighter) {
   retail_native_begin(fighter, S_UPPERCUT, ACTION_RETAIL_0109, false);
-  retail_vm_enter(fighter, 0x4e62a0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_UPPERCUT_4E62A0, fighter_ready);
 }
 
 void retail_uppercut_state(Fighter *fighter) {
@@ -254,17 +256,17 @@ static void lp_select(Fighter *fighter, uint32_t alternate) {
     along += q16_mul(delta, fighter_axis(fighter, axis));
     distance2 += ((int64_t)delta * delta) >> 16;
   }
-  uint32_t target = along >= 0 && distance2 < 0x280000 ? 0x4de6b8 : alternate;
+  uint32_t target = along >= 0 && distance2 < 0x280000 ? MK4_RETAIL_DATA_LP_SELECT_4DE6B8 : alternate;
   FighterFn finish = fighter->retail_vm.active ? fighter->retail_vm.finish : fighter_ready;
   retail_vm_enter(fighter, target, finish);
 }
 
 void retail_lp_select_short(Fighter *fighter) {
-  lp_select(fighter, 0x4de610);
+  lp_select(fighter, MK4_RETAIL_DATA_LP_SELECT_SHORT_4DE610);
 }
 
 void retail_lp_select_long(Fighter *fighter) {
-  lp_select(fighter, 0x4de640);
+  lp_select(fighter, MK4_RETAIL_DATA_LP_SELECT_LONG_4DE640);
 }
 
 /* 45b380 invokes 490bd0; pair heading is maintained by the world pump. */
@@ -277,11 +279,11 @@ void retail_crouch_low_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_KICK, ACTION_RETAIL_0106, false);
-  retail_vm_enter(fighter, 0x4e6158, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CROUCH_LOW_KICK_4E6158, fighter_ready);
 }
 
 static void crouch_low_kick_recover(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4e6180, fighter->retail_vm.finish);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CROUCH_LOW_KICK_RECOVER_4E6180, fighter->retail_vm.finish);
 }
 
 void retail_crouch_low_kick_tail(Fighter *fighter) {
@@ -289,7 +291,7 @@ void retail_crouch_low_kick_tail(Fighter *fighter) {
   require(vm->active, "Crouch LK native needs a live retail task");
   ContactResult result = CONTACT_MISS;
   if (fighter_opponent(fighter)->action != ACTION_RETAIL_2011) {
-    uint32_t packed = mk4_image_u32(vm->image, 0x53d2b8 + 23 * 4);
+    uint32_t packed = mk4_image_u32(vm->image, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8 + 23 * 4);
     AttackRecord attack = retail_vm_attack_record(vm->image, packed * 4);
     uint64_t continuation = fighter->continuation;
     result = battle_contact(fighter, &attack);
@@ -306,7 +308,7 @@ void retail_crouch_high_kick(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_KICK, ACTION_RETAIL_0104, false);
-  retail_vm_enter(fighter, 0x4e6020, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CROUCH_HIGH_KICK_4E6020, fighter_ready);
 }
 
 static void crouch_punch_reverse(Fighter *fighter) {
@@ -322,7 +324,7 @@ static void crouch_punch_contact(Fighter *fighter) {
   ContactResult result = CONTACT_MISS;
   if (fighter_opponent(fighter)->action != ACTION_RETAIL_2011) {
     const Mk4Image *image = retail_vm_image();
-    uint32_t packed = mk4_image_u32(image, 0x53d268 + 3 * 4);
+    uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE_53D268 + 3 * 4);
     AttackRecord attack = retail_vm_attack_record(image, packed * 4);
     uint64_t continuation = fighter->continuation;
     result = battle_contact(fighter, &attack);
@@ -346,7 +348,7 @@ void retail_crouch_low_punch(Fighter *fighter) {
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_0107, false);
   const Mk4Image *image = retail_vm_image();
-  uint32_t packed = mk4_image_u32(image, 0x53ce58 + (fighter->armed ? 4 : 0));
+  uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CROUCH_LOW_PUNCH_53CE58 + (fighter->armed ? 4 : 0));
   retail_vm_bind_animation(fighter, packed * 4, 2);
   require(fighter_move(fighter)->last >= 5, "Native crouch punch needs three opening samples");
   native_play_rows(fighter, 5, 1, crouch_punch_extend);
@@ -360,10 +362,10 @@ void retail_close_high_punch(Fighter *fighter) {
   retail_native_begin(fighter, S_PUNCH, ACTION_RETAIL_0108, false);
   const Mk4Image *image = retail_vm_image();
   unsigned slot = retail_native_character_slot((unsigned)fighter->roster);
-  uint32_t packed = mk4_image_u32(image, 0x4e6c10 + slot * 4);
+  uint32_t packed = mk4_image_u32(image, MK4_RETAIL_DATA_CLOSE_HIGH_PUNCH_4E6C10 + slot * 4);
   bool reacting = (fighter_opponent(fighter)->action & 0xf000) == 0x4000;
   retail_vm_bind_animation(fighter, packed * 4, reacting ? 0 : 4);
-  retail_vm_enter(fighter, 0x4e61e0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CLOSE_HIGH_PUNCH_4E61E0, fighter_ready);
 }
 
 /* Native490460 uses the captured peer's facing and relative order before

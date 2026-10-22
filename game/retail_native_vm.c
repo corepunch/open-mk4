@@ -152,10 +152,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_task_pause(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_42BDF0:
-          retail_vm_enter(fighter, 0x4de318, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4DE318, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_42BE00:
-          retail_vm_enter(fighter, 0x4de328, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4DE328, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_LK_RETURN_42B730:
         case RETAIL_NATIVE_LK_RETURN_42B7A0:
@@ -201,7 +201,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           liu_kang_liu_script_lk_damage(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_42C170:
-          retail_vm_enter(fighter, 0x4de478, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4DE478, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_SUB_ZERO_SCRIPT_LK_REBASE_42C200:
           sub_zero_script_lk_rebase(fighter);
@@ -213,13 +213,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           sub_zero_script_lk_owner_return(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_42C770:
-          retail_vm_enter(fighter, 0x4de7e8, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_SCRIPT_LP_PHASE_REPEAT_4DE7E8, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_GORO_SCRIPT_LP_PHASE_REPEAT_42C7B0:
           goro_script_lp_phase_repeat(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_42C7F0:
-          retail_vm_enter(fighter, 0x4de4f0, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4DE4F0, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_JAX_LP_SLAM_FIRST_42C820:
           jax_lp_slam_first(fighter);
@@ -456,7 +456,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           quan_chi_fatality_hit_241(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_44BF00:
-          retail_vm_enter(fighter, 0x4e1548, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E1548, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_QUAN_CHI_FATALITY_BEAT_44BF10:
           quan_chi_fatality_beat(fighter);
@@ -603,7 +603,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           raiden_script_second_effect(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_464A90:
-          retail_vm_enter(fighter, 0x4e5728, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E5728, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_RAIDEN_SCRIPT_SECOND_RELEASE_464AA0:
           raiden_script_second_release(fighter);
@@ -621,7 +621,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           tanya_second_finish(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_465250:
-          retail_vm_enter(fighter, 0x4e5860, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E5860, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_CAGE_SCRIPT_FATALITY_2_CONTINUE_4658A0:
           cage_script_fatality_2_continue(fighter);
@@ -711,7 +711,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_air_slam_fall(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_46AC90:
-          retail_vm_enter(fighter, 0x4e5eb0, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E5EB0, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_AIR_SLAM_END_46ACA0:
           retail_air_slam_end(fighter);
@@ -756,13 +756,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_weapon_draw_equip(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_46DD00:
-          retail_vm_enter(fighter, 0x4e6330, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E6330, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_46DD10:
-          retail_vm_enter(fighter, 0x4e6360, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E6360, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_46DD20:
-          retail_vm_enter(fighter, 0x4e63b0, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E63B0, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_AIR_LK_TAIL_46DF90:
           retail_air_lk_tail(fighter);
@@ -873,7 +873,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           kai_handstand_spin_begin(fighter);
           return true;
         case RETAIL_NATIVE_HANDSTAND_FRONT_47CC10:
-          retail_vm_enter(fighter, 0x4e8358, fighter->retail_vm.finish);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_HANDSTAND_FRONT_4E8358, fighter->retail_vm.finish);
           return true;
         case RETAIL_NATIVE_KAI_SCRIPT_CONTACT_B10_CONTINUATION_47CC50:
           kai_script_contact_b10_continuation(fighter);
@@ -951,13 +951,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           goro_victim_getup(fighter);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_4829E0:
-          retail_vm_enter(fighter, 0x4e91c0, mk4_script_thrown_ready);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E91C0, mk4_script_thrown_ready);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_4829F0:
-          retail_vm_enter(fighter, 0x4e91d0, mk4_script_thrown_ready);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E91D0, mk4_script_thrown_ready);
           return true;
         case RETAIL_NATIVE_NATIVE_VM_482A00:
-          retail_vm_enter(fighter, 0x4e91e0, mk4_script_thrown_ready);
+          retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_NATIVE_VM_4E91E0, mk4_script_thrown_ready);
           return true;
         case RETAIL_NATIVE_REACTION_GETUP_BACK_482790:
           retail_reaction_getup_back(fighter);

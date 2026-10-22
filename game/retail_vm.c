@@ -689,7 +689,7 @@ void retail_vm_step(Fighter *fighter) {
       case 0x50: {
         uint32_t target = fetch(fighter);
         uint64_t continuation = fighter->continuation;
-        contact(fighter, 0x53d2b8, arg);
+        contact(fighter, MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8, arg);
         if (vm->active && fighter->continuation == continuation && (vm->result & 1u)) {
           jump(fighter, target);
         }
@@ -834,7 +834,12 @@ void retail_vm_step(Fighter *fighter) {
       case 0x52:
       case 0x53:
       case 0x5e:
-        contact(fighter, opcode == 0x51 ? 0x53d2b8 : opcode == 0x52 ? 0x53d268 : opcode == 0x53 ? 0x53d178 : RETAIL_WEAPON_ATTACK_TABLE, arg);
+        contact(fighter,
+            opcode == 0x51   ? MK4_RETAIL_DATA_CONTACT_QUERY_B_TABLE_53D2B8
+            : opcode == 0x52 ? MK4_RETAIL_DATA_CONTACT_QUERY_A_TABLE_53D268
+            : opcode == 0x53 ? MK4_RETAIL_DATA_CONTACT_QUERY_D_TABLE_53D178
+                             : RETAIL_WEAPON_ATTACK_TABLE,
+            arg);
         break;
       default:
         vm_error(fighter, "unsupported opcode");

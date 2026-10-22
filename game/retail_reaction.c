@@ -38,20 +38,22 @@ void retail_stagger_reaction(Fighter *fighter) {
         uint32_t physics = mk4_image_u32(retail_vm_image(), RETAIL_CROUCH_REACTION_PHYSICS_WORD);
         require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown crouch reaction motion callback");
       }
-      script = crouch ? RETAIL_CROUCH_REACTION_SCRIPT : 0x4e9308;
+      script = crouch ? RETAIL_CROUCH_REACTION_SCRIPT : MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REACTION_4E9308;
       break;
     case RETAIL_NATIVE_STAGGER_REACTION_482830:
-      script = 0x4e90e0;
+      script = MK4_RETAIL_SCRIPT_STAGGER_REACTION_4E90E0;
       break;
     case RETAIL_NATIVE_STAGGER_REACTION_482870:
     case RETAIL_NATIVE_STAGGER_REACTION_4828D0:
       mk4_script_disarm_self(fighter);
-      retail_native_sound_list(0x4ea938);
-      script = crouch ? 0x4e9170 : entry == RETAIL_NATIVE_STAGGER_REACTION_482870 ? 0x4e9130 : 0x4e9150;
+      retail_native_sound_list(MK4_RETAIL_SOUND_LIST_STAGGER_REACTION_4EA938);
+      script = crouch                                           ? MK4_RETAIL_SCRIPT_STAGGER_REACTION_4E9170
+               : entry == RETAIL_NATIVE_STAGGER_REACTION_482870 ? MK4_RETAIL_SCRIPT_STAGGER_REACTION_4E9130
+                                                                : MK4_RETAIL_SCRIPT_STAGGER_REACTION_4E9150;
       break;
     case RETAIL_NATIVE_STAGGER_REACTION_482BE0:
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
-      script = 0x4e9260;
+      script = MK4_RETAIL_SCRIPT_STAGGER_REACTION_4E9260;
       break;
     case RETAIL_NATIVE_STAGGER_REACTION_482E80:
     case RETAIL_NATIVE_STAGGER_REACTION_482E90:
@@ -59,13 +61,13 @@ void retail_stagger_reaction(Fighter *fighter) {
       mk4_script_disarm_self(fighter);
       stagger_voice(fighter);
       fighter->action = ACTION_RETAIL_4003;
-      script = 0x4e9388;
+      script = MK4_RETAIL_SCRIPT_STAGGER_REACTION_4E9388;
       break;
     case RETAIL_NATIVE_STAGGER_REACTION_482B10:
       fighter->action = 0x4002;
       stagger_voice(fighter);
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
-      script = 0x4e9238;
+      script = MK4_RETAIL_SCRIPT_REACT_KICK_HIT_4E9238;
       break;
     default:
       require(false, "Unexpected shared stagger native");
@@ -88,16 +90,16 @@ void retail_launch_reaction(Fighter *fighter) {
   switch (entry) {
     case RETAIL_NATIVE_LAUNCH_REACTION_481320:
     case RETAIL_NATIVE_LAUNCH_REACTION_481350:
-      script = 0x4e89a0;
+      script = MK4_RETAIL_SCRIPT_GUARD_FALL_4E89A0;
       break;
     case RETAIL_NATIVE_LAUNCH_REACTION_482560:
-      script = 0x4e8ea8;
+      script = MK4_RETAIL_SCRIPT_LAUNCH_REACTION_4E8EA8;
       break;
     case RETAIL_NATIVE_LAUNCH_REACTION_4825C0:
-      script = 0x4e8f10;
+      script = MK4_RETAIL_SCRIPT_LAUNCH_REACTION_4E8F10;
       break;
     case RETAIL_NATIVE_LAUNCH_REACTION_4835E0:
-      script = 0x4e96c8;
+      script = MK4_RETAIL_SCRIPT_LAUNCH_REACTION_4E96C8;
       break;
     default:
       require(false, "Unexpected shared launch native");
@@ -109,7 +111,7 @@ void retail_launch_reaction(Fighter *fighter) {
 /* 482790 and483610 both finish the inherited descriptor; their native
  * completion differs. Engine continuations replace the task84 resume flag. */
 void retail_reaction_getup_back(Fighter *fighter) {
-  mk4_mmove_finish_getup(fighter, 0x4ea210);
+  mk4_mmove_finish_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210);
 }
 
 void retail_reaction_finish(Fighter *fighter) {
@@ -118,7 +120,7 @@ void retail_reaction_finish(Fighter *fighter) {
 
 void retail_reaction_fall(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
-  retail_vm_enter(fighter, 0x4e96e0, mk4_script_thrown_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REACTION_FALL_4E96E0, mk4_script_thrown_ready);
 }
 
 /* Native4826e0 selects impact audio from the captured attacker weapon. */
@@ -130,7 +132,7 @@ static void weapon_impact_voice(Fighter *fighter) {
   if (type == 0x61) {
     mk4_script_indexed_sound(fighter, 2);
   } else if (type != 0x69) {
-    retail_native_sound_list(0x4ea880);
+    retail_native_sound_list(MK4_RETAIL_SOUND_LIST_WEAPON_IMPACT_VOICE_4EA880);
   }
 }
 
@@ -154,21 +156,21 @@ void retail_tumble_reaction(Fighter *fighter) {
   FighterFn finish = mk4_script_thrown_ready;
   switch (entry) {
     case RETAIL_NATIVE_TUMBLE_REACTION_483450:
-      script = 0x4e9508;
+      script = MK4_RETAIL_SCRIPT_TUMBLE_REACTION_4E9508;
       finish = retail_getup_back;
       break;
     case RETAIL_NATIVE_TUMBLE_REACTION_483490:
-      script = 0x4e9568;
+      script = MK4_RETAIL_SCRIPT_TUMBLE_REACTION_4E9568;
       finish = retail_getup_back;
       break;
     case RETAIL_NATIVE_TUMBLE_REACTION_482750:
-      script = 0x4e9048;
+      script = MK4_RETAIL_SCRIPT_TUMBLE_REACTION_4E9048;
       break;
     case RETAIL_NATIVE_TUMBLE_REACTION_482730:
-      script = 0x4e8fe8;
+      script = MK4_RETAIL_SCRIPT_TUMBLE_REACTION_4E8FE8;
       break;
     case RETAIL_NATIVE_TUMBLE_REACTION_4826A0:
-      script = 0x4e8f80;
+      script = MK4_RETAIL_SCRIPT_TUMBLE_REACTION_4E8F80;
       finish = retail_getup_back;
       break;
     default:
@@ -217,34 +219,34 @@ void retail_script_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case RETAIL_NATIVE_SCRIPT_REACTION_482260:
-      script = 0x4e8c78;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E8C78;
       break;
     case RETAIL_NATIVE_SCRIPT_REACTION_482410:
-      script = 0x4e8da8;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E8DA8;
       break;
     case RETAIL_NATIVE_SCRIPT_REACTION_482420:
-      script = 0x4e8dd0;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E8DD0;
       break;
     case RETAIL_NATIVE_SCRIPT_REACTION_482580: {
-      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e8edc);
+      uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_SCRIPT_REACTION_4E8EDC);
       require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native reaction motion callback");
-      script = 0x4e8ee0;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E8EE0;
       break;
     }
     case RETAIL_NATIVE_SCRIPT_REACTION_482770:
-      script = 0x4e90b0;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E90B0;
       break;
     case RETAIL_NATIVE_SCRIPT_REACTION_4831E0:
-      script = 0x4e94b0;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E94B0;
       break;
     case RETAIL_NATIVE_SCRIPT_REACTION_4866D0: {
-      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9d80);
+      uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_SCRIPT_REACTION_4E9D80);
       require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native recoil motion callback");
-      script = 0x4e9d88;
+      script = MK4_RETAIL_SCRIPT_SCRIPT_REACTION_4E9D88;
       break;
     }
     case RETAIL_NATIVE_SCRIPT_REACTION_486730:
-      script = 0x4e9de8;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E9DE8;
       break;
     default:
       require(false, "Unexpected script reaction native");
@@ -273,22 +275,22 @@ void retail_scaled_reaction(Fighter *fighter) {
       Fighter *attacker = fighter_peer(fighter);
       attacker->run_energy = 0;
       attacker->run_delay = 60;
-      script = 0x4e8e50;
+      script = MK4_RETAIL_SCRIPT_SCALED_REACTION_4E8E50;
       break;
     }
     case RETAIL_NATIVE_SCALED_REACTION_4823C0:
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_50_PERCENT;
-      script = 0x4e8d70;
+      script = MK4_RETAIL_SCRIPT_SCALED_REACTION_4E8D70;
       finish = retail_getup_roll;
       break;
     case RETAIL_NATIVE_SCALED_REACTION_483500:
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
-      script = 0x4e95f0;
+      script = MK4_RETAIL_SCRIPT_SCALED_REACTION_4E95F0;
       break;
     case RETAIL_NATIVE_SCALED_REACTION_482F60:
       weapon_impact_voice(fighter);
-      script = 0x4e93d8;
+      script = MK4_RETAIL_SCRIPT_SCALED_REACTION_4E93D8;
       break;
     default:
       require(false, "Unexpected scaled reaction native");
@@ -311,21 +313,21 @@ void retail_branch_reaction(Fighter *fighter) {
   switch (entry) {
     case RETAIL_NATIVE_BRANCH_REACTION_482EF0:
     case RETAIL_NATIVE_BRANCH_REACTION_482F00:
-      script = airborne ? 0x4e9430 : 0x4e93a8;
+      script = airborne ? MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E9430 : MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E93A8;
       finish = retail_getup_front;
       break;
     case RETAIL_NATIVE_BRANCH_REACTION_485F10:
-      script = airborne ? 0x4e9430 : 0x4e9c80;
+      script = airborne ? MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E9430 : MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E9C80;
       if (airborne) {
         finish = retail_getup_front;
       }
       break;
     case RETAIL_NATIVE_BRANCH_REACTION_485F50:
       fighter->action = 0x100a;
-      script = 0x4e9ca8;
+      script = MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E9CA8;
       break;
     case RETAIL_NATIVE_BRANCH_REACTION_484BC0:
-      script = airborne ? 0x4e9980 : 0x4e9938;
+      script = airborne ? MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E9980 : MK4_RETAIL_SCRIPT_BRANCH_REACTION_4E9938;
       break;
     default:
       require(false, "Unexpected branching reaction native");
@@ -366,29 +368,29 @@ void retail_weapon_reaction(Fighter *fighter) {
     case RETAIL_NATIVE_REACTION_POSITION_482110:
     case RETAIL_NATIVE_REACTION_POSITION_482130:
       reaction_position(fighter, 0x1cccc, -0x8000);
-      script = 0x4e8b78;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8B78;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_4821C0:
-      script = 0x4e8bc0;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8BC0;
       break;
     case RETAIL_NATIVE_REACTION_POSITION_4821E0:
       reaction_position(fighter, 0x1b333, 0);
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      script = 0x4e8c08;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8C08;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_482270:
-      script = 0x4e8c98;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8C98;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_482300:
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_50_PERCENT;
-      script = 0x4e8cc0;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8CC0;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_482350:
-      script = 0x4e8d08;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8D08;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_482380:
-      script = 0x4e8d38;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E8D38;
       finish = retail_getup_roll;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_4825E0:
@@ -396,13 +398,13 @@ void retail_weapon_reaction(Fighter *fighter) {
         fighter->body.gravity = 0x28f;
         fighter->body.vel[AXIS_Y] = 0x1999;
       }
-      script = 0x4e8f50;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E8F50;
       break;
     case RETAIL_NATIVE_WEAPON_REACTION_483050:
       retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      script = 0x4e9460;
+      script = MK4_RETAIL_SCRIPT_WEAPON_REACTION_4E9460;
       break;
     default:
       require(false, "Unexpected weapon reaction native");
@@ -447,11 +449,11 @@ void retail_impact_reaction(Fighter *fighter) {
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  uint32_t script = entry == RETAIL_NATIVE_IMPACT_REACTION_481FC0   ? 0x4e8ab8
-                    : entry == RETAIL_NATIVE_IMPACT_REACTION_4838E0 ? 0x4e9758
-                    : stagger                                       ? 0x4e97d0
-                    : entry == RETAIL_NATIVE_IMPACT_REACTION_485EA0 ? 0x4e9c40
-                                                                    : 0x4e9c28;
+  uint32_t script = entry == RETAIL_NATIVE_IMPACT_REACTION_481FC0   ? MK4_RETAIL_SCRIPT_IMPACT_REACTION_4E8AB8
+                    : entry == RETAIL_NATIVE_IMPACT_REACTION_4838E0 ? MK4_RETAIL_DATA_IMPACT_REACTION_4E9758
+                    : stagger                                       ? MK4_RETAIL_SCRIPT_REACT_JAB_HIT_4E97D0
+                    : entry == RETAIL_NATIVE_IMPACT_REACTION_485EA0 ? MK4_RETAIL_DATA_IMPACT_REACTION_4E9C40
+                                                                    : MK4_RETAIL_DATA_IMPACT_REACTION_4E9C28;
   retail_vm_enter(fighter, script, mk4_script_thrown_ready);
 }
 
@@ -503,24 +505,24 @@ void retail_stagger_entry(Fighter *fighter) {
   if (airborne) {
     if (entry == RETAIL_NATIVE_STAGGER_ENTRY_483C50) {
       mk4_script_indexed_sound(fighter, 1);
-      retail_vm_enter(fighter, 0x4e8a78, retail_controller_return);
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REACTION_FALL_RETURN_4E8A78, retail_controller_return);
     } else {
-      retail_vm_enter(fighter, 0x4e89a0, mk4_script_thrown_ready);
+      retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GUARD_FALL_4E89A0, mk4_script_thrown_ready);
     }
     return;
   }
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e97f0);
+  uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_STAGGER_ENTRY_4E97F0);
   require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native stagger callback");
-  retail_vm_enter(fighter, 0x4e97f8, mk4_script_thrown_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_STAGGER_ENTRY_4E97F8, mk4_script_thrown_ready);
 }
 
 void retail_snare_reaction(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4000};
   fighter_start_move(fighter, S_HIT, &move);
   fighter->flags |= FF_NO_GUARD;
-  retail_vm_enter(fighter, 0x4e9f08, mk4_script_thrown_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SNARE_REACTION_4E9F08, mk4_script_thrown_ready);
 }
 
 /*45b1f0/480f80 installs the loaded reaction on the captured peer.
@@ -544,13 +546,13 @@ void retail_bicycle_release(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_100B};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   if (air) {
-    retail_vm_enter(fighter, 0x4e9ae8, mk4_script_thrown_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BICYCLE_RELEASE_4E9AE8, mk4_script_thrown_ready);
   } else {
     mk4_script_stop_body(fighter);
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
-    uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9acc);
+    uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_BICYCLE_RELEASE_4E9ACC);
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native release callback");
-    retail_vm_enter(fighter, 0x4e9ad0, mk4_script_thrown_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BICYCLE_RELEASE_4E9AD0, mk4_script_thrown_ready);
   }
 }
 
@@ -558,7 +560,7 @@ void retail_bicycle_release(Fighter *fighter) {
 static void reaction_fall_return(Fighter *fighter) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  retail_vm_enter(fighter, 0x4e8a78, mk4_mmove_thrown_finish);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REACTION_FALL_RETURN_4E8A78, mk4_mmove_thrown_finish);
 }
 
 void retail_spear_arrival(Fighter *fighter) {
@@ -567,7 +569,7 @@ void retail_spear_arrival(Fighter *fighter) {
   fighter->flags |= FF_NO_GUARD | FF_REACTING;
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
-  retail_vm_enter(fighter, 0x4e9f20, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SPEAR_ARRIVAL_4E9F20, fighter_ready);
 }
 
 static bool spear_arrived(const Fighter *fighter) {
@@ -585,7 +587,7 @@ void retail_pair_release(Fighter *fighter) {
   fighter->paired_release = NULL;
   fighter->capture_action = 0;
   if (fighter_airborne(fighter)) {
-    retail_vm_enter(fighter, 0x4e9f48, mk4_mmove_thrown_finish);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_PAIR_RELEASE_4E9F48, mk4_mmove_thrown_finish);
   } else {
     retail_controller_return(fighter);
   }
@@ -610,7 +612,7 @@ void retail_bicycle_cycle(Fighter *fighter) {
     return;
   }
   mk4_script_effect(fighter, 14);
-  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cfa0) * 4, 4);
+  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), MK4_RETAIL_ANIMATION_DESCRIPTOR_BICYCLE_CYCLE_53CFA0) * 4, 4);
   native_finish_clip(fighter, retail_bicycle_cycle);
 }
 
@@ -622,7 +624,7 @@ void retail_bicycle_capture(Fighter *fighter) {
   fighter->paired_release = retail_pair_release;
   fighter->script_phase = 0;
   fighter->flags |= FF_PAIRED | FF_REACTING;
-  retail_vm_enter(fighter, 0x4ea0f8, retail_pair_release);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BICYCLE_CAPTURE_4EA0F8, retail_pair_release);
 }
 
 static void torpedo_return_hold(Fighter *fighter) {
@@ -651,20 +653,20 @@ void retail_record_reaction(Fighter *fighter) {
   switch (entry) {
     case RETAIL_NATIVE_BATTLE_REACT_488530:
       battle_react(fighter_peer(fighter), 161);
-      script = 0x4ea068;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4EA068;
       break;
     case RETAIL_NATIVE_RECORD_REACTION_482450:
-      script = 0x4e8e18;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E8E18;
       break;
     case RETAIL_NATIVE_RECORD_REACTION_486690: {
-      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9d4c);
+      uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_RECORD_REACTION_4E9D4C);
       require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native record callback");
-      script = 0x4e9d50;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E9D50;
       break;
     }
     case RETAIL_NATIVE_FACE_PEER_488990:
       retail_face_peer(fighter);
-      script = 0x4ea108;
+      script = MK4_RETAIL_SCRIPT_RAIDEN_SCRIPT_TORPEDO_CONTACT_4EA108;
       break;
     case RETAIL_NATIVE_BATTLE_SOUND_485960:
       battle_sound(SOUND_A, 0x2a);
@@ -672,11 +674,11 @@ void retail_record_reaction(Fighter *fighter) {
       retail_bicycle_release(fighter);
       return;
     case RETAIL_NATIVE_RECORD_REACTION_482850:
-      script = 0x4e9110;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E9110;
       break;
     case RETAIL_NATIVE_REACTION_POSITION_4820D0:
       reaction_position(fighter, 0x1b333, -0x1999);
-      script = 0x4e8b38;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E8B38;
       break;
     case RETAIL_NATIVE_BATTLE_SOUND_482600:
       battle_sound(SOUND_C, 8);
@@ -684,13 +686,13 @@ void retail_record_reaction(Fighter *fighter) {
         fighter->body.gravity = 0x28f;
         fighter->body.vel[AXIS_Y] = 0x1999;
       }
-      script = 0x4e8f50;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E8F50;
       break;
     case RETAIL_NATIVE_RECORD_REACTION_486750:
-      script = 0x4e9de8;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4E9DE8;
       break;
     case RETAIL_NATIVE_RECORD_REACTION_488A20:
-      script = 0x4ea130;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4EA130;
       finish = retail_getup_front;
       break;
     case RETAIL_NATIVE_FACE_PEER_487750:
@@ -700,14 +702,14 @@ void retail_record_reaction(Fighter *fighter) {
     case RETAIL_NATIVE_EFFECT_4887C0:
       mk4_script_effect(fighter, 9);
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_40_PERCENT;
-      script = 0x4ea0b8;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4EA0B8;
       break;
     case RETAIL_NATIVE_EFFECT_488810:
       mk4_script_effect(fighter, 0);
-      script = 0x4ea0b8;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4EA0B8;
       break;
     case RETAIL_NATIVE_RECORD_REACTION_488830:
-      script = 0x4ea0b8;
+      script = MK4_RETAIL_SCRIPT_RECORD_REACTION_4EA0B8;
       break;
     default:
       require(false, "Unexpected record reaction native");
@@ -732,38 +734,38 @@ void retail_aux_reaction(Fighter *fighter) {
   uint32_t script;
   switch (entry) {
     case RETAIL_NATIVE_AUX_REACTION_482230:
-      script = 0x4e8c30;
+      script = MK4_RETAIL_SCRIPT_AUX_REACTION_4E8C30;
       break;
     case RETAIL_NATIVE_AUX_REACTION_4829A0:
       retail_face_peer(fighter);
       fighter->body.angle[AXIS_Y] += 0x32492;
-      script = 0x4e91a0;
+      script = MK4_RETAIL_SCRIPT_AUX_REACTION_4E91A0;
       break;
     case RETAIL_NATIVE_AUX_REACTION_483580:
-      script = 0x4ea3e0;
+      script = MK4_RETAIL_SCRIPT_GORO_KICK_VICTIM_4EA3E0;
       break;
     case RETAIL_NATIVE_AUX_REACTION_4835C0:
-      script = 0x4e9690;
+      script = MK4_RETAIL_SCRIPT_AUX_REACTION_4E9690;
       break;
     case RETAIL_NATIVE_AUX_REACTION_4836D0:
-      script = 0x4ea2f8;
+      script = MK4_RETAIL_SCRIPT_AUX_REACTION_4EA2F8;
       break;
     case RETAIL_NATIVE_AUX_REACTION_485F00:
-      script = 0x4e9c58;
+      script = MK4_RETAIL_SCRIPT_AUX_REACTION_4E9C58;
       break;
     case RETAIL_NATIVE_AUX_REACTION_485FB0:
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      script = 0x4e9d00;
+      script = MK4_RETAIL_SCRIPT_SPEAR_PROJECTILE_4E9D00;
       break;
     case RETAIL_NATIVE_AUX_REACTION_4879C0: {
       fighter->action = 0x1014;
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
-      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4ec2c8);
+      uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_AUX_REACTION_4EC2C8);
       require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native impact friction callback");
-      script = 0x4e9f78;
+      script = MK4_RETAIL_SCRIPT_GROIN_PUNCH_GROIN_VICTIM_4E9F78;
       break;
     }
     default:
@@ -803,7 +805,7 @@ void retail_guard_fall(Fighter *fighter) {
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
-  retail_vm_enter(fighter, airborne ? 0x4e89a0 : 0x4e9d20, mk4_script_thrown_ready);
+  retail_vm_enter(fighter, airborne ? MK4_RETAIL_SCRIPT_GUARD_FALL_4E89A0 : MK4_RETAIL_SCRIPT_GUARD_FALL_4E9D20, mk4_script_thrown_ready);
 }
 
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {

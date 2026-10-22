@@ -19,10 +19,10 @@ enum {
 void goro_script_lp_phase_repeat(Fighter *fighter) {
   fighter->script_phase++;
   if (fighter->script_phase < 5) {
-    retail_vm_enter(fighter, 0x4de7e8, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_SCRIPT_LP_PHASE_REPEAT_4DE7E8, fighter_ready);
     return;
   }
-  retail_vm_enter(fighter, 0x4de6e4, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_GORO_SCRIPT_LP_PHASE_REPEAT_4DE6E4, fighter_ready);
 }
 
 /* Native service cluster: 4824f0, 482540, 482790, 484330. */
@@ -53,13 +53,13 @@ static void n4824f0_begin_victim(Fighter *victim) {
 void goro_kick_victim(Fighter *victim) {
   n4824f0_begin_victim(victim);
   mk4_script_disarm_self(victim);
-  retail_vm_enter(victim, 0x4ea3e0, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_KICK_VICTIM_4EA3E0, fighter_ready);
 }
 
 /* 4824f0: back speed 0x7ae, or 0xf5c after more than one hit, then 4e8e80. */
 void goro_script_uppercut_victim_slide(Fighter *victim) {
   fighter_set_speed(victim, victim->hits > 1 ? -0xf5c : -0x7ae);
-  retail_vm_enter(victim, 0x4e8e80, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_SCRIPT_UPPERCUT_VICTIM_SLIDE_4E8E80, fighter_ready);
 }
 
 /* 136 (4834d0): disarm, 48a320 -> 489e80 picks one of list 4ea8f8's three
@@ -68,7 +68,7 @@ void goro_quake_victim(Fighter *victim) {
   n4824f0_begin_victim(victim);
   mk4_script_disarm_self(victim);
   retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
-  retail_vm_enter(victim, 0x4e95c8, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_QUAKE_VICTIM_4E95C8, fighter_ready);
 }
 
 /* 191 (4842d0): disarm; an airborne victim falls with 0x1999 velocity and
@@ -80,7 +80,7 @@ void goro_stomp_victim(Fighter *victim) {
     victim->body.vel[AXIS_Y] = 0x1999;
     victim->body.gravity = 0x1999;
   }
-  retail_vm_enter(victim, 0x4ea400, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_GORO_STOMP_VICTIM_4EA400, fighter_ready);
 }
 
 /* 484650: each cycle shakes the camera, cues effect 13 and replays clip
@@ -97,7 +97,7 @@ static void n4824f0_stomp_victim_next(Fighter *victim) {
 }
 
 static void n4824f0_stomp_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, 0x4ea210);
+  mk4_mmove_getup(victim, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210);
 }
 
 static void n4824f0_stomp_victim_rest(Fighter *victim) {
@@ -122,7 +122,7 @@ void goro_script_stomp_victim_hold(Fighter *victim) {
 /* 482790 finishes the bound clip before 488ba0's getup. */
 /* 482540: 433c00 clears the CPU reaction latch, then 488ba0. */
 void goro_victim_getup(Fighter *victim) {
-  mk4_mmove_getup(victim, 0x4ea210);
+  mk4_mmove_getup(victim, MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP_4EA210);
 }
 
 /* Native service cluster: 45b1f0, 45b230. */
@@ -137,7 +137,7 @@ void goro_victim_getup(Fighter *victim) {
  * implement engine boundaries. See docs/liu-kang-scripts.md for evidence. */
 
 void liu_kang_liu_script_lk_continue(Fighter *fighter) {
-  retail_vm_enter(fighter, 0x4de410, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LIU_SCRIPT_LK_CONTINUE_4DE410, fighter_ready);
 }
 
 void liu_kang_liu_script_lk_damage(Fighter *fighter) {
@@ -148,7 +148,7 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   fighter_cancel_mmove(victim);
   battle_damage(victim, 0x2e14);
   /* 4de428 returns to this native caller, which then enters 4de468. */
-  retail_vm_enter_then(fighter, 0x4de428, 0x4de468, fighter_ready);
+  retail_vm_enter_then(fighter, MK4_RETAIL_SCRIPT_LIU_KANG_LIU_SCRIPT_LK_DAMAGE_4DE428, MK4_RETAIL_SCRIPT_LIU_KANG_LIU_SCRIPT_LK_DAMAGE_4DE468, fighter_ready);
 }
 
 void liu_kang_liu_script_spawn_low(Fighter *fighter, int task_type) {
@@ -295,7 +295,7 @@ void raiden_script_torpedo_contact(Fighter *fighter) {
   Fighter *victim = fighter_peer(fighter);
   mk4_mmove_carry_victim(fighter, &n45b1f0_5_s_torpedo_victim);
   fighter_cancel_mmove(victim);
-  retail_vm_enter(victim, 0x4ea108, fighter_ready);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_RAIDEN_SCRIPT_TORPEDO_CONTACT_4EA108, fighter_ready);
   int pose = fighter_sample(fighter);
   native_begin(fighter, 1, 50, n45b1f0_5_torpedo_release);
   for (int frame = 1; frame <= 50; ++frame) {
@@ -313,7 +313,8 @@ void raiden_torpedo(Fighter *fighter) {
   fighter_set_speed(fighter, 0x2666);
   mk4_script_save_motion(fighter);
   fighter->mmove_cleanup = raiden_special_cleanup;
-  RetailScriptContinuation script = fast ? (RetailScriptContinuation){0x4e8440, fighter_ready} : (RetailScriptContinuation){0x4e8458, fighter_ready};
+  RetailScriptContinuation script = fast ? (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_4E8440, fighter_ready}
+                                         : (RetailScriptContinuation){MK4_RETAIL_SCRIPT_RAIDEN_TORPEDO_4E8458, fighter_ready};
   retail_vm_enter(fighter, script.entry, script.finish);
 }
 
@@ -456,7 +457,7 @@ void sub_zero_script_lk_rebase(Fighter *fighter) {
   victim->body.pos[AXIS_Y] = victim->body.ground + fighter->body.pos[AXIS_Y] - fighter->body.ground;
   victim->facing = fighter->facing;
   memcpy(victim->heading, fighter->heading, sizeof victim->heading);
-  retail_vm_enter(fighter, 0x4de4b8, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_LK_REBASE_4DE4B8, fighter_ready);
 }
 
 void sub_zero_script_lk_damage(Fighter *fighter) {
@@ -470,7 +471,7 @@ void sub_zero_script_lk_damage(Fighter *fighter) {
   victim->flags |= FF_PAIR_RELEASE;
   sub_zero_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
-  retail_vm_enter(fighter, 0x4de4e0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_SCRIPT_LK_DAMAGE_4DE4E0, fighter_ready);
 }
 
 void sub_zero_script_lk_owner_return(Fighter *fighter) {
@@ -517,7 +518,7 @@ void sub_zero_ice(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &n42c200_s_ice);
   fighter->script_phase = followup;
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, 0x4ed588, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SUB_ZERO_ICE_4ED588, fighter_ready);
 }
 
 void sub_zero_native_blends(Fighter *fighter, const SceneClip *clips, int count, FighterFn end) {

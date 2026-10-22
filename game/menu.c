@@ -74,10 +74,10 @@ void menu_init(FrontendMenu *menu, const Mk4Image *image) {
    * lists, and five 12-byte label records. Pointers are word indices. */
   for (int i = 0; i < MENU_TOWERS; ++i) {
     MenuTower *tower = &menu->towers[i];
-    uint32_t list = mk4_image_u32(image, 0x4e557c + i * 16) * 4;
-    uint32_t name = mk4_image_u32(image, 0x4e5688 + i * 12) * 4;
-    require(name >= 0x400000, "Invalid retail tower label");
-    view_string(view(image->bytes), name - 0x400000, tower->name, sizeof tower->name);
+    uint32_t list = mk4_image_u32(image, MK4_RETAIL_DATA_TOWER_COLUMNS_4E557C + i * 16) * 4;
+    uint32_t name = mk4_image_u32(image, MK4_RETAIL_DATA_TOWER_LABELS_4E5688 + i * 12) * 4;
+    require(name >= MK4_RETAIL_DATA_IMAGE_BASE_400000, "Invalid retail tower label");
+    view_string(view(image->bytes), name - MK4_RETAIL_DATA_IMAGE_BASE_400000, tower->name, sizeof tower->name);
     while (tower->count < MENU_TOWER_FLOORS) {
       uint32_t packed = mk4_image_u32(image, list + tower->count * 4);
       if (!packed) {
