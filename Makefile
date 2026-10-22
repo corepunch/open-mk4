@@ -64,7 +64,7 @@ test: fsys build/test-package
 	./build/test-package
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-frames build/test-retail-vm
+	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-retail-vm
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
@@ -91,29 +91,17 @@ build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/inpu
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
-build/test-sub-zero: tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
-	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_sub_zero.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
-build/test-liu-kang: tests/test_liu_kang.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
-	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_liu_kang.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 build/test-frames: tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_frames.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
-build/test-raiden-sonya: tests/test_raiden_sonya.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
-	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_raiden_sonya.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 build/test-retail-vm: tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
 retail-vm-test: build/test-retail-vm
 	./build/test-retail-vm
 	python3 tests/test_retail_vm.py
-game-test: mk4-game build/test-battle build/test-sub-zero build/test-liu-kang build/test-raiden-sonya build/test-shadows build/test-frames
+game-test: mk4-game build/test-battle build/test-shadows build/test-frames
 	./build/test-battle
-	./build/test-sub-zero
-	./build/test-liu-kang
-	./build/test-raiden-sonya
 	./build/test-shadows
 	./build/test-frames
 	./mk4-game --self-test

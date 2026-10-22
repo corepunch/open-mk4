@@ -1982,3 +1982,16 @@ The existing runtime fixture covers script/native completion for standing,
 armed and crouch branches without authored timing or balance assertions.
 Formatting, runtime/rejection checks, strict all-roster audits and native source
 gates pass.
+
+## Runtime-focused validation
+
+Retire the obsolete Sub-Zero, Liu Kang, Raiden/Sonya and large battle/asset
+move timing and damage matrices. They encoded the removed generated/C fighter
+implementation and ownership assumptions. Keep the shared VM/native lifetime
+and malformed-stream fixtures, engine sequence/frame/event cleanup, match and
+body constraints, FSYS rejection, asset decoding, original matrix/pose checks,
+audio decoding, rendering/shadows, all-roster source audits and headless demo.
+The asset and engine fixtures now depend on shared runtime interfaces rather
+than the removed mk4_characters.h. Retail authored character behavior is not
+retested as thousands of copied C expectations. This narrows the contract suite;
+it does not substitute registration coverage for native gameplay parity.
