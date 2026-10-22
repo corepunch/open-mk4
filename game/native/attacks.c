@@ -1274,10 +1274,10 @@ void kai_aerial_punch_contact(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-void kai_input_47bd10(Fighter *fighter) {
+void kai_aerial_punch(Fighter *fighter) {
   fighter_start_move(fighter, S_PUNCH, &kai_aerial_punch_aerial_punch);
   fighter->mmove_cleanup = kai_aerial_punch_aerial_cleanup;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_INPUT_47BD10, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_AERIAL_PUNCH, fighter_ready);
 }
 
 /* Native service cluster: 47eb30, 480e90. */

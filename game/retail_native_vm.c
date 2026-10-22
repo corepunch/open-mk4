@@ -680,7 +680,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_KICK_CONTACT_DEFAULT:
           retail_kick_contact_default(fighter);
           return true;
-        case RETAIL_NATIVE_VM_REVERSE_RETURN_46A6E0:
+        case RETAIL_NATIVE_HIGH_KICK_REVERSE_RETURN:
           retail_vm_reverse_return(fighter);
           return true;
         case RETAIL_NATIVE_KICK_CONTACT_WIDE:
@@ -689,10 +689,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_KICK_CONTACT_NARROW:
           retail_kick_contact_narrow(fighter);
           return true;
-        case RETAIL_NATIVE_VM_REVERSE_RETURN_46A850:
+        case RETAIL_NATIVE_LOW_KICK_REVERSE_RETURN:
           retail_vm_reverse_return(fighter);
           return true;
-        case RETAIL_NATIVE_VM_REVERSE_RETURN_46A8D0:
+        case RETAIL_NATIVE_LOW_KICK_NARROW_REVERSE_RETURN:
           retail_vm_reverse_return(fighter);
           return true;
         case RETAIL_NATIVE_AIR_LIFT_FALL:
@@ -734,13 +734,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_AIR_STRAIGHT_TAIL:
           retail_air_straight_tail(fighter);
           return true;
-        case RETAIL_NATIVE_AIR_LAND_46E240:
+        case RETAIL_NATIVE_AIR_ATTACK_LAND_OR_FINISH:
           retail_air_land(fighter);
           return true;
-        case RETAIL_NATIVE_AIR_LAND_46DFF0:
+        case RETAIL_NATIVE_AIR_LOW_KICK_LAND:
           retail_air_land(fighter);
           return true;
-        case RETAIL_NATIVE_AIR_LAND_46C8F0:
+        case RETAIL_NATIVE_AIR_STRAIGHT_KICK_LAND:
           retail_air_land(fighter);
           return true;
         case RETAIL_NATIVE_AIR_STRAIGHT_LAND:
@@ -785,10 +785,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_AIR_HP_TAIL:
           retail_air_hp_tail(fighter);
           return true;
-        case RETAIL_NATIVE_WEAPON_AIR_FRAMES_NATIVE_46EAB0:
+        case RETAIL_NATIVE_WEAPON_AIR_HIGH_PUNCH_OPEN:
           weapon_air_frames_native(fighter, fighter->retail_vm.selector);
           return true;
-        case RETAIL_NATIVE_WEAPON_AIR_FRAMES_NATIVE_46EC10:
+        case RETAIL_NATIVE_WEAPON_AIR_LOW_PUNCH_OPEN:
           weapon_air_frames_native(fighter, fighter->retail_vm.selector);
           return true;
         case RETAIL_NATIVE_AIR_LP_TAIL:
@@ -812,7 +812,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_ROUNDHOUSE_WIDE_TAIL:
           retail_roundhouse_wide_tail(fighter);
           return true;
-        case RETAIL_NATIVE_CONTROLLER_RETURN_470420:
+        case RETAIL_NATIVE_RETURN_TO_PLAYER_OR_CPU_CONTROL:
           retail_controller_return(fighter);
           return true;
         case RETAIL_NATIVE_VICTORY_CONTINUE:
@@ -905,13 +905,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_LIU_KANG_BICYCLE_SCRIPT:
           liu_kang_bicycle_script(fighter);
           return true;
-        case RETAIL_NATIVE_LIU_KANG_LIU_SCRIPT_LAND_47ED40:
+        case RETAIL_NATIVE_LIU_KANG_BICYCLE_LAND:
           liu_kang_liu_script_land(fighter);
           return true;
         case RETAIL_NATIVE_LIU_KANG_FLYING_KICK_SCRIPT:
           liu_kang_flying_kick_script(fighter);
           return true;
-        case RETAIL_NATIVE_LIU_KANG_LIU_SCRIPT_LAND_47EF10:
+        case RETAIL_NATIVE_LIU_KANG_FLYING_KICK_LAND:
           liu_kang_liu_script_land(fighter);
           return true;
         case RETAIL_NATIVE_FUJIN_TRIPLE_FAST:
@@ -1050,7 +1050,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_BLOCK_CYCLE:
           retail_block_cycle(fighter);
           return true;
-        case RETAIL_NATIVE_CONTROLLER_RETURN_460250:
+        case RETAIL_NATIVE_STANDING_BLOCK_HOLD:
           retail_controller_return(fighter);
           return true;
         case RETAIL_NATIVE_SCORPION_SPEAR_STUN_SCRIPT:
@@ -1081,7 +1081,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_CAGE_WEAPON_UPPER_CONTACT:
           retail_weapon_contact(fighter, address);
           return true;
-        case RETAIL_NATIVE_WEAPON_CONTACT_495AE0:
+        case RETAIL_NATIVE_KAI_WEAPON_BACK_STRIKE_CONTACT:
           retail_weapon_contact(fighter, address);
           return true;
         case RETAIL_NATIVE_REPTILE_WEAPON_FLURRY:
@@ -1090,7 +1090,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_LIU_KANG_LIU_SCRIPT_SWORD_BLEND:
           liu_kang_liu_script_sword_blend(fighter);
           return true;
-        case RETAIL_NATIVE_WEAPON_CONTACT_496770:
+        case RETAIL_NATIVE_LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT:
           retail_weapon_contact(fighter, address);
           return true;
         case RETAIL_NATIVE_CAGE_WEAPON_BACK_LP_CONTACT:

@@ -2,7 +2,7 @@
 #include "native_services.h"
 
 static void kai_stage_event_step(Fighter *fighter);
-static void kai_input_47cbf0(Fighter *fighter);
+static void kai_armed_handstand_enter(Fighter *fighter);
 void retail_handstand_front(Fighter *fighter);
 void retail_handstand_rear(Fighter *fighter);
 void retail_handstand_spin(Fighter *fighter);
@@ -106,20 +106,20 @@ void kai_script_stage_event(Fighter *fighter) {
   handstand_stance(fighter, false);
 }
 
-static void kai_input_47cbf0(Fighter *fighter) {
+static void kai_armed_handstand_enter(Fighter *fighter) {
   weapon_followup_victim(fighter);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_INPUT_47CBF0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_ARMED_HANDSTAND_ENTER, fighter_ready);
 }
 
-void kai_input_47c520(Fighter *fighter) {
+void kai_handstand_enter(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &intro);
   fighter->facing = fighter->body.pos[AXIS_X] <= fighter_opponent(fighter)->body.pos[AXIS_X] ? 1 : -1;
   fighter->mmove_cleanup = handstand_cleanup;
   if (fighter->armed) {
-    kai_input_47cbf0(fighter);
+    kai_armed_handstand_enter(fighter);
   } else {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_INPUT_47C520, fighter_ready);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_ENTER, fighter_ready);
   }
 }
 

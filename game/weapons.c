@@ -520,7 +520,7 @@ void weapon_axe_strike(Fighter *fighter, int index, const NativeAxeProfile *prof
   uint32_t parameters;
   switch (index) {
     case 0:
-      parameters = MK4_RETAIL_DATA_WEAPON_CLIP_231_QUERY_26_PARAMETERS_4EC988;
+      parameters = MK4_RETAIL_DATA_AXE_HIGH_PUNCH_PARAMETERS;
       break;
     case 1:
       parameters = MK4_RETAIL_DATA_WEAPON_CLIP_232_QUERY_24_PARAMETERS;
@@ -598,14 +598,15 @@ static void script_strike_query(Fighter *fighter) {
     return;
   }
   if (result != CONTACT_MISS) {
-    if (fighter->native_variant == RETAIL_NATIVE_WEAPON_CONTACT_496770) {
+    if (fighter->native_variant == RETAIL_NATIVE_LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT) {
       /* Native4968e0 selects the authored contact branch; it is not a C
        * approximation of that branch's waits or reverse playback. */
       weapon_cleanup(fighter);
       if (result == CONTACT_BLOCK) {
         fighter->action = ACTION_RETAIL_1006;
       }
-      retail_vm_enter(fighter, result == CONTACT_BLOCK ? MK4_RETAIL_SCRIPT_SCRIPT_STRIKE_QUERY_4EC7D8 : MK4_RETAIL_SCRIPT_SCRIPT_STRIKE_QUERY_4EC7C0,
+      retail_vm_enter(fighter,
+          result == CONTACT_BLOCK ? MK4_RETAIL_SCRIPT_SWORD_BACK_HIGH_PUNCH_BLOCK_RECOVERY : MK4_RETAIL_SCRIPT_SWORD_BACK_HIGH_PUNCH_HIT_RECOVERY,
           mk4_mmove_thrown_finish);
     } else {
       script_strike_recover(fighter);
@@ -634,11 +635,11 @@ void retail_weapon_contact(Fighter *fighter, uint32_t address) {
   unsigned selector, queries;
   switch (address) {
     case RETAIL_NATIVE_CAGE_WEAPON_UPPER_CONTACT:
-    case RETAIL_NATIVE_WEAPON_CONTACT_495AE0:
+    case RETAIL_NATIVE_KAI_WEAPON_BACK_STRIKE_CONTACT:
       selector = 33;
       queries = 2;
       break;
-    case RETAIL_NATIVE_WEAPON_CONTACT_496770:
+    case RETAIL_NATIVE_LIU_KANG_SWORD_BACK_HIGH_PUNCH_CONTACT:
       selector = 10;
       queries = 7;
       break;

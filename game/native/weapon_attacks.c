@@ -311,7 +311,8 @@ static void liu_kang_weapon_sword_recover(Fighter *fighter) {
     /* 496500 -> 4ec720/730, delayed travel then second strike. The move
      * rebind keeps the action's cleanup for the second strike. */
     fighter->mmove_cleanup = NULL;
-    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC730, MK4_RETAIL_DATA_SWORD_ATTACK_4EC720, ACTION_RETAIL_010E);
+    fighter->loaded_weapon_strike =
+        weapon_retail_strike(MK4_RETAIL_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS, MK4_RETAIL_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION, ACTION_RETAIL_010E);
     fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
     fighter->mmove_cleanup = liu_kang_weapon_sword_cleanup;
     fighter->script_phase = 1;
@@ -365,19 +366,22 @@ static void liu_kang_weapon_sword_attack(Fighter *fighter, int index) {
     static const MoveDef back_lp = {.clip = -1, .last = MOVE_END, .flags = RETAIL, .action = ACTION_RETAIL_0112};
     fighter_start_move(fighter, S_PUNCH, &back_lp);
     const Mk4Image *image = retail_vm_image();
-    native_schedule_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_ATTACK_4EC7E4),
-        maxi(0, (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_ATTACK_4EC7E0) - 1), (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_ATTACK_4EC7E8));
+    native_schedule_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED),
+        maxi(0, (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DELAY) - 1),
+        (int)mk4_image_u32(image, MK4_RETAIL_DATA_SWORD_BACK_LOW_PUNCH_SPEED_DURATION));
     fighter->mmove_cleanup = liu_kang_weapon_sword_cleanup;
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_SWORD_ATTACK, fighter_ready);
     return;
   }
   require(index >= 0 && index <= 2, "Invalid native weapon strike selection");
   if (index == 0) {
-    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC708, 0, ACTION_RETAIL_010E);
+    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_LOW_PUNCH_OPEN_PARAMETERS, 0, ACTION_RETAIL_010E);
   } else if (index == 1) {
-    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC730, MK4_RETAIL_DATA_SWORD_ATTACK_4EC720, ACTION_RETAIL_010E);
+    fighter->loaded_weapon_strike =
+        weapon_retail_strike(MK4_RETAIL_DATA_SWORD_LOW_PUNCH_REPEAT_PARAMETERS, MK4_RETAIL_DATA_SWORD_LOW_PUNCH_REPEAT_MOTION, ACTION_RETAIL_010E);
   } else {
-    fighter->loaded_weapon_strike = weapon_retail_strike(MK4_RETAIL_DATA_SWORD_ATTACK_4EC750, MK4_RETAIL_DATA_SWORD_ATTACK_4EC740, ACTION_RETAIL_0212);
+    fighter->loaded_weapon_strike =
+        weapon_retail_strike(MK4_RETAIL_DATA_SWORD_BACK_HIGH_PUNCH_PARAMETERS, MK4_RETAIL_DATA_SWORD_BACK_HIGH_PUNCH_MOTION, ACTION_RETAIL_0212);
   }
   fighter_start_move(fighter, S_PUNCH, &fighter->loaded_weapon_strike.move);
   fighter->script_phase = index;

@@ -76,9 +76,9 @@ static void cage_fatality_first_native_to(Fighter *fighter, int target, int peri
 
 static void cage_fatality_first_victim_stream(Fighter *victim) {
   if (cage_fatality_female_victim(victim)) {
-    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FATALITY_1_CONTINUATION_4E12D0, fighter_ready);
+    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_TORSO_RIP_FEMALE_VICTIM, fighter_ready);
   } else {
-    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FATALITY_1_CONTINUATION_4E12C0, fighter_ready);
+    retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_TORSO_RIP_MALE_VICTIM, fighter_ready);
   }
 }
 
@@ -166,7 +166,7 @@ void cage_first_victim_206(Fighter *victim) {
 static void cage_fatality_first_lower_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   battle_camera_shake(5, 3, 0x2e14);
-  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_FATALITY_1_CONTINUATION_4E1340, retail_cage_torso_scene_complete);
+  retail_vm_enter(victim, MK4_RETAIL_SCRIPT_CAGE_TORSO_RIP_LOWER_FINISH, retail_cage_torso_scene_complete);
 }
 
 static void cage_fatality_first_lower_impact(Fighter *victim) {

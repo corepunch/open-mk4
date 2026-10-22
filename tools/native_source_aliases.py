@@ -1400,3 +1400,10 @@ LEGACY_NATIVE_NAMES.update({'retail_lk_script_170': 'retail_lk_rock_repeat_one',
  'retail_weapon_native_480770': 'retail_sword_spin',
  'retail_weapon_native_496720': 'retail_sonya_weapon_back_high_punch',
  'retail_weapon_native_495610': 'retail_boomerang_low_punch'})
+
+# Historical entry names resolve to the researched move roles.
+LEGACY_NATIVE_NAMES.update({'kai_input_478df0': 'kai_lunge_kick',
+ 'kai_input_47bd10': 'kai_aerial_punch',
+ 'kai_input_47c520': 'kai_handstand_enter',
+ 'reptile_input_47a690': 'reptile_dash',
+ 'reptile_input_47afe0': 'reptile_roll'})

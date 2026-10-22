@@ -37,21 +37,21 @@ const Controls retail_stances = {.stances = {
 static bool press_air_controller(Fighter *fighter, uint32_t target) {
   unsigned action;
   switch (target) {
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_4712C0:
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_46C1F0:
+    case RETAIL_NATIVE_PRESS_STRAIGHT_AIR_HIGH_PUNCH:
+    case RETAIL_NATIVE_PRESS_DIAGONAL_AIR_HIGH_PUNCH:
       action = 0;
       break;
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_4712D0:
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_46C200:
+    case RETAIL_NATIVE_PRESS_STRAIGHT_AIR_LOW_PUNCH:
+    case RETAIL_NATIVE_PRESS_DIAGONAL_AIR_LOW_PUNCH:
       action = 1;
       break;
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_46C1D0:
+    case RETAIL_NATIVE_PRESS_DIAGONAL_AIR_HIGH_KICK:
       action = 2;
       break;
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_46C1E0:
+    case RETAIL_NATIVE_PRESS_DIAGONAL_AIR_LOW_KICK:
       action = 3;
       break;
-    case RETAIL_NATIVE_PRESS_AIR_CONTROLLER_4712B0:
+    case RETAIL_NATIVE_PRESS_STRAIGHT_AIR_KICK:
       action = 4;
       break;
     default:
@@ -119,7 +119,7 @@ void retail_combo_high_punch(Fighter *fighter) {
       script = MK4_RETAIL_SCRIPT_SUB_ZERO_COMBO_HP_ATTACKER;
       break;
     case RETAIL_NATIVE_KITANA_COMBO_HP_ENTRY:
-      script = MK4_RETAIL_SCRIPT_COMBO_HIGH_PUNCH_4E6A28;
+      script = MK4_RETAIL_SCRIPT_KITANA_COMBO_HIGH_PUNCH_ATTACKER;
       break;
     default:
       fatal("Unimplemented native combo entry %08x", entry);
@@ -191,59 +191,59 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
   bool down = fighter_height(fighter) <= .5f && (fighter->held & BUTTON_BIT(BUTTON_DOWN));
   FighterFn entry = NULL;
   switch (target) {
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_460F40:
+    case RETAIL_NATIVE_PRESS_STANDING_HIGH_PUNCH:
       entry = fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_high_punch : retail_weapon_high_punch) : normal_hp;
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_460FB0:
+    case RETAIL_NATIVE_PRESS_STANDING_LOW_PUNCH:
       entry =
           fighter->armed && fighter->weapon != NULL ? (fighter_holds_back(fighter) ? retail_weapon_back_low_punch : retail_weapon_low_punch) : action_entry(8);
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_460FC0:
+    case RETAIL_NATIVE_PRESS_STANDING_LOW_KICK:
       entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_461030:
+    case RETAIL_NATIVE_PRESS_STANDING_HIGH_KICK:
       entry = normal_hk_entry(fighter);
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_4610C0:
+    case RETAIL_NATIVE_PRESS_CROUCHING_HIGH_PUNCH:
       /* The engine command matcher owns finish command gates before fallback. */
       {
         uint32_t target = retail_action_target(retail_vm_image(), 1, 1);
         entry = target == RETAIL_NATIVE_UPPERCUT_ENTRY ? retail_uppercut : retail_native_entry(target);
       }
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_4610D0:
+    case RETAIL_NATIVE_PRESS_CROUCHING_LOW_PUNCH:
       if (fighter->armed && fighter->weapon != NULL && fighter->weapon->type == 0x60) {
         entry = retail_sword_spin;
       } else {
         entry = crouch_entry(8);
       }
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_461190:
+    case RETAIL_NATIVE_PRESS_CROUCHING_HIGH_KICK:
       entry = crouch_entry(7);
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_461160:
+    case RETAIL_NATIVE_PRESS_CROUCHING_LOW_KICK:
       entry = crouch_entry(6);
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_460200:
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_461130:
+    case RETAIL_NATIVE_PRESS_STANDING_BLOCK:
+    case RETAIL_NATIVE_PRESS_CROUCHING_BLOCK:
       /* Held-block movement/state ownership is handled by the simulation pump. */
       return;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C210:
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C3F0:
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C450:
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C480:
-      if (target == RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C480 && down && (peer->action == ACTION_RETAIL_4004 || peer->hits > 1)) {
+    case RETAIL_NATIVE_PRESS_CLOSE_PUNCH_COMBO_HIGH_PUNCH:
+    case RETAIL_NATIVE_PRESS_AIR_CONTACT_HIGH_PUNCH:
+    case RETAIL_NATIVE_PRESS_COMBO_PUNCH_HIGH_PUNCH:
+    case RETAIL_NATIVE_PRESS_CLOSE_KICK_HIGH_PUNCH:
+      if (target == RETAIL_NATIVE_PRESS_CLOSE_KICK_HIGH_PUNCH && down && (peer->action == ACTION_RETAIL_4004 || peer->hits > 1)) {
         entry = retail_uppercut;
       } else if (fighter->armed && fighter->weapon != NULL) {
         weapon_followup_victim(fighter);
         entry = fighter_holds_back(fighter) ? retail_weapon_back_high_punch : retail_weapon_high_punch;
       } else {
-        entry = target == RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C210   ? retail_combo_high_punch
-                : target == RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C3F0 ? air_ground_hp
-                                                                     : normal_hp;
+        entry = target == RETAIL_NATIVE_PRESS_CLOSE_PUNCH_COMBO_HIGH_PUNCH ? retail_combo_high_punch
+                : target == RETAIL_NATIVE_PRESS_AIR_CONTACT_HIGH_PUNCH     ? air_ground_hp
+                                                                           : normal_hp;
       }
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C6F0:
+    case RETAIL_NATIVE_PRESS_FOLLOWUP_LOW_PUNCH:
       if (fighter->armed && fighter->weapon != NULL) {
         weapon_followup_victim(fighter);
         entry = fighter_holds_back(fighter) ? retail_weapon_back_low_punch : retail_weapon_low_punch;
@@ -251,18 +251,18 @@ void retail_press_native_button(Fighter *fighter, uint32_t target) {
         entry = retail_normal_low_punch;
       }
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C650:
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C680:
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C6A0:
-      if (target != RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C680 && down && peer->hits > 1) {
+    case RETAIL_NATIVE_PRESS_COMBO_PUNCH_HIGH_KICK:
+    case RETAIL_NATIVE_PRESS_FOLLOWUP_HIGH_KICK:
+    case RETAIL_NATIVE_PRESS_CLOSE_KICK_HIGH_KICK:
+      if (target != RETAIL_NATIVE_PRESS_FOLLOWUP_HIGH_KICK && down && peer->hits > 1) {
         entry = follow_crouch_hk;
-      } else if (target == RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C6A0) {
+      } else if (target == RETAIL_NATIVE_PRESS_CLOSE_KICK_HIGH_KICK) {
         entry = fighter_holds_back(fighter) ? retail_roundhouse : retail_high_kick;
       } else {
         entry = normal_hk_entry(fighter);
       }
       break;
-    case RETAIL_NATIVE_PRESS_NATIVE_BUTTON_46C740:
+    case RETAIL_NATIVE_PRESS_FOLLOWUP_LOW_KICK:
       entry = action_entry(fighter_holds_back(fighter) ? 6 : 4);
       break;
     default:

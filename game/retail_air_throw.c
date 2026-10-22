@@ -84,9 +84,9 @@ void retail_slam_tail(Fighter *fighter) {
   retail_slam_reaction(victim);
   fighter->action = 0;
   const Mk4Image *image = retail_vm_image();
-  fighter_set_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SLAM_TAIL_4E5EC0));
-  fighter->body.vel[AXIS_Y] = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SLAM_TAIL_4E5EC4);
-  fighter->body.gravity = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SLAM_TAIL_4E5EC8);
+  fighter_set_speed(fighter, (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_SPEED));
+  fighter->body.vel[AXIS_Y] = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_Y_VELOCITY);
+  fighter->body.gravity = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_AIR_THROW_SLAM_RELEASE_GRAVITY);
   int sample = fighter_sample(fighter), last = fighter_move(fighter)->last;
   if (sample >= last) {
     fighter_finish_mmove(fighter, slam_flip);

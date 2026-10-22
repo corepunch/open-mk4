@@ -32,7 +32,7 @@ static bool fireball_contact(Projectile *projectile, bool air) {
     return false;
   }
   const Mk4Image *image = retail_vm_image();
-  uint32_t waiter = air ? MK4_RETAIL_DATA_FIREBALL_CONTACT_4ED2E8 : MK4_RETAIL_DATA_FIREBALL_CONTACT_4ED2B0;
+  uint32_t waiter = air ? MK4_RETAIL_DATA_FIREBALL_AIR_CONTACT_ROW : MK4_RETAIL_DATA_FIREBALL_STANDING_CONTACT_ROW;
   unsigned selector = mk4_image_u32(image, waiter);
   require(selector < 256, "Invalid native projectile contact selector");
   AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, MK4_RETAIL_DATA_PROJECTILE_CONTACT_TABLE + selector * 4) * 4);
@@ -90,8 +90,8 @@ static Projectile *spawn(Fighter *fighter, ProjectileFn step) {
   projectile->heading[0] = fighter_axis(fighter, AXIS_X);
   projectile->heading[1] = fighter_axis(fighter, AXIS_Z);
   const Mk4Image *image = retail_vm_image();
-  q16 offset = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SPAWN_4ED808);
-  projectile->pos[AXIS_Y] += (q16)mk4_image_u32(image, MK4_RETAIL_DATA_SPAWN_4ED80C);
+  q16 offset = (q16)mk4_image_u32(image, MK4_RETAIL_DATA_FIREBALL_SPAWN_FORWARD_OFFSET);
+  projectile->pos[AXIS_Y] += (q16)mk4_image_u32(image, MK4_RETAIL_DATA_FIREBALL_SPAWN_Y_OFFSET);
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     projectile->pos[axis] += q16_mul(fighter_axis(fighter, axis), offset);
     projectile->vel[axis] = q16_mul(fighter_axis(fighter, axis), 0x3333);

@@ -288,7 +288,7 @@ void retail_scaled_reaction(Fighter *fighter) {
     case RETAIL_NATIVE_SCALED_REACTION_483500:
       fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
       retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
-      script = MK4_RETAIL_SCRIPT_REPTILE_INPUT_47A690_VICTIM_REACTION_158;
+      script = MK4_RETAIL_SCRIPT_REPTILE_DASH_VICTIM;
       break;
     case RETAIL_NATIVE_SCALED_REACTION_482F60:
       weapon_impact_voice(fighter);

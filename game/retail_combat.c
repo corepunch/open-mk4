@@ -14,12 +14,12 @@ static void kick_row(Fighter *fighter) {
   if (pose < 0) {
     uint32_t next = mk4_image_u32(vm->image, vm->native_cursor);
     uint32_t script;
-    if (next == RETAIL_NATIVE_KICK_ROW_46A770 || next == RETAIL_NATIVE_KICK_ROW_46A6C0) {
+    if (next == RETAIL_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY || next == RETAIL_NATIVE_FUJIN_HIGH_KICK_CONTACT_RECOVERY) {
       /* 470e80 marks the recovery action before these two continuations. */
       fighter->action = ACTION_RETAIL_1006;
-      script = next == RETAIL_NATIVE_KICK_ROW_46A770 ? MK4_RETAIL_SCRIPT_JAX_HIGH_KICK_RECOVERY : MK4_RETAIL_SCRIPT_FUJIN_HIGH_KICK_RECOVERY;
+      script = next == RETAIL_NATIVE_JAX_HIGH_KICK_CONTACT_RECOVERY ? MK4_RETAIL_SCRIPT_JAX_HIGH_KICK_RECOVERY : MK4_RETAIL_SCRIPT_FUJIN_HIGH_KICK_RECOVERY;
     } else {
-      require(next == RETAIL_NATIVE_KICK_ROW_46A7A0, "Unimplemented native contact-row continuation");
+      require(next == RETAIL_NATIVE_HIGH_KICK_NARROW_CONTACT_RECOVERY, "Unimplemented native contact-row continuation");
       script = MK4_RETAIL_SCRIPT_KAI_HIGH_KICK_RECOVERY;
     }
     retail_vm_enter(fighter, script, vm->finish);

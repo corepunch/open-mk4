@@ -318,9 +318,9 @@ void kai_lunge_kick_contact(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-void kai_input_478df0(Fighter *fighter) {
+void kai_lunge_kick(Fighter *fighter) {
   fighter_start_move(fighter, S_KICK, &kai_lunge_kick_lunge_kick);
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_INPUT_478DF0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_LUNGE_KICK, fighter_ready);
 }
 
 /* Native service cluster: 47ee00. */
@@ -1026,12 +1026,12 @@ void reptile_script_dash_contact(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-void reptile_input_47a690(Fighter *fighter) {
+void reptile_dash(Fighter *fighter) {
   fighter->slide_ready = g_battle.ticks + 70;
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &reptile_dash_dash);
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_INPUT_47A690, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_DASH, fighter_ready);
 }
 
 static void reptile_dash_roll_probe(Fighter *fighter) {
@@ -1066,11 +1066,11 @@ void reptile_script_roll_tail(Fighter *fighter) {
   native_play(fighter, false);
 }
 
-void reptile_input_47afe0(Fighter *fighter) {
+void reptile_roll(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter_start_move(fighter, S_KICK, &reptile_dash_roll);
   fighter->sample_override = 0;
-  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_INPUT_47AFE0, fighter_ready);
+  retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REPTILE_ROLL, fighter_ready);
 }
 
 /* Reaction 40 (483550): disarm and VM 4e9620, clip 183 launch, landing

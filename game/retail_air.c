@@ -191,24 +191,24 @@ static void air_open(Fighter *fighter, uint32_t row) {
 
 static void air_continue(Fighter *fighter, uint32_t target) {
   switch (target) {
-    case RETAIL_NATIVE_AIR_CONTINUE_46E750:
+    case RETAIL_NATIVE_AIR_HIGH_PUNCH_CONTACT_WINDOW:
       fighter->sample_override = mini(9, fighter_move(fighter)->last);
-      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E6680);
+      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_HIGH_PUNCH_CONTACT_ROW);
       return;
     case RETAIL_NATIVE_AIR_CONTACT_BEGIN:
-      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E6738);
+      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_LOW_PUNCH_CONTACT_ROW);
       return;
-    case RETAIL_NATIVE_AIR_CONTINUE_46E3F0:
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_QUERY_30:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E6568);
+      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_KICK_QUERY_30_ROW);
       return;
-    case RETAIL_NATIVE_AIR_CONTINUE_46E4F0:
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_QUERY_31:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E65B0);
+      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_KICK_QUERY_31_ROW);
       return;
-    case RETAIL_NATIVE_AIR_CONTINUE_46E5E0:
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_QUERY_32:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_CONTINUE_4E65F8);
+      air_contact_begin(fighter, MK4_RETAIL_DATA_AIR_DIAGONAL_KICK_QUERY_32_ROW);
       return;
     case RETAIL_NATIVE_GORO_AIR_HP_RECOVERY_CALLBACK:
       air_punch_contact(fighter, true);
@@ -217,46 +217,46 @@ static void air_continue(Fighter *fighter, uint32_t target) {
       air_punch_contact(fighter, false);
       return;
     case RETAIL_NATIVE_GORO_AIR_LP_RECOVERY_CALLBACK:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6770, false);
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_LOW_PUNCH_CONTACT_HOLD, false);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46E230:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E64E0, false);
+    case RETAIL_NATIVE_AIR_LOW_KICK_CONTACT_HOLD:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_LOW_KICK_CONTACT_HOLD, false);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46E6B0:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6630, false);
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_CONTACT_HOLD:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_KICK_CONTACT_HOLD, false);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46E790:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E66A0, true);
+    case RETAIL_NATIVE_AIR_HIGH_PUNCH_MISS_REVERSE:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_HIGH_PUNCH_MISS_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46EEE0:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6758, true);
+    case RETAIL_NATIVE_AIR_LOW_PUNCH_MISS_REVERSE:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_LOW_PUNCH_MISS_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_CONTINUE_46DFB0:
+    case RETAIL_NATIVE_AIR_LOW_KICK_CLIP_58_REVERSE:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6458, true);
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_LOW_KICK_CLIP_58_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_CONTINUE_46E090:
+    case RETAIL_NATIVE_AIR_LOW_KICK_CLIP_59_REVERSE:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6490, true);
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_LOW_KICK_CLIP_59_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_CONTINUE_46E170:
+    case RETAIL_NATIVE_AIR_LOW_KICK_CLIP_60_REVERSE:
       fighter->flags &= ~(unsigned)FF_BUSY;
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E64C8, true);
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_LOW_KICK_CLIP_60_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46E420:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6588, true);
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_CLIP_55_REVERSE:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_KICK_CLIP_55_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46E510:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E65D0, true);
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_CLIP_56_REVERSE:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_KICK_CLIP_56_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46E600:
-      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_CONTINUE_4E6618, true);
+    case RETAIL_NATIVE_AIR_DIAGONAL_KICK_CLIP_57_REVERSE:
+      air_script(fighter, MK4_RETAIL_SCRIPT_AIR_DIAGONAL_KICK_CLIP_57_REVERSE, true);
       return;
-    case RETAIL_NATIVE_AIR_SCRIPT_46C810:
+    case RETAIL_NATIVE_AIR_STRAIGHT_KICK_MISS_REVERSE:
       air_script(fighter, MK4_RETAIL_SCRIPT_CAGE_AIR_KICK_NARROW_MISS_REVERSAL, false);
       return;
-    case RETAIL_NATIVE_AIR_LAND_46E240:
-    case RETAIL_NATIVE_AIR_LAND_46C8F0:
+    case RETAIL_NATIVE_AIR_ATTACK_LAND_OR_FINISH:
+    case RETAIL_NATIVE_AIR_STRAIGHT_KICK_LAND:
       retail_air_land(fighter);
       return;
     default:

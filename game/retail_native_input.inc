@@ -39,9 +39,9 @@ extern void jax_missile(Fighter *fighter);
 extern void kai_fatality_1(Fighter *fighter);
 extern void kai_fatality_2(Fighter *fighter);
 extern void kai_ground_skull(Fighter *fighter);
-extern void kai_input_478df0(Fighter *fighter);
-extern void kai_input_47bd10(Fighter *fighter);
-extern void kai_input_47c520(Fighter *fighter);
+extern void kai_lunge_kick(Fighter *fighter);
+extern void kai_aerial_punch(Fighter *fighter);
+extern void kai_handstand_enter(Fighter *fighter);
 extern void kai_rising_skull(Fighter *fighter);
 extern void sonya_bicycle(Fighter *fighter);
 extern void kitana_air_throw(Fighter *fighter);
@@ -80,8 +80,8 @@ extern void reiko_teleport(Fighter *fighter);
 extern void reptile_acid_spit(Fighter *fighter);
 extern void reptile_fatality_1(Fighter *fighter);
 extern void reptile_fatality_2(Fighter *fighter);
-extern void reptile_input_47a690(Fighter *fighter);
-extern void reptile_input_47afe0(Fighter *fighter);
+extern void reptile_dash(Fighter *fighter);
+extern void reptile_roll(Fighter *fighter);
 extern void reptile_invisibility(Fighter *fighter);
 extern void scorpion_air_throw(Fighter *fighter);
 extern void scorpion_beast_fatality(Fighter *fighter);
@@ -265,22 +265,22 @@ static const NativeAction entries[] = {
   {RETAIL_NATIVE_WEAPON_PICKUP, weapon_pickup},
   {RETAIL_NATIVE_FUJIN_WIND_SLAM, fujin_wind_slam},
   {RETAIL_NATIVE_FUJIN_WIND, fujin_wind},
-  {RETAIL_NATIVE_KAI_INPUT_478DF0_ENTRY, kai_input_478df0},
+  {RETAIL_NATIVE_KAI_LUNGE_KICK_ENTRY, kai_lunge_kick},
   {RETAIL_NATIVE_REIKO_ORBIT, reiko_orbit},
   {RETAIL_NATIVE_TANYA_SPIN_KICK, tanya_spin_kick},
   {RETAIL_NATIVE_JAREK_UPWARD_BALL, jarek_upward_ball},
   {RETAIL_NATIVE_CAGE_CPU_KICK, cage_cpu_kick},
   {RETAIL_NATIVE_CAGE_POWERED_PUNCH, cage_powered_punch},
   {RETAIL_NATIVE_QUAN_CHI_FLIP_KICK, quan_chi_flip_kick},
-  {RETAIL_NATIVE_REPTILE_INPUT_47A690_ENTRY, reptile_input_47a690},
+  {RETAIL_NATIVE_REPTILE_DASH_ENTRY, reptile_dash},
   {RETAIL_NATIVE_JAX_DASH_PUNCH, jax_dash_punch},
-  {RETAIL_NATIVE_REPTILE_INPUT_47AFE0_ENTRY, reptile_input_47afe0},
+  {RETAIL_NATIVE_REPTILE_ROLL_ENTRY, reptile_roll},
   {RETAIL_NATIVE_JAREK_CANNONBALL, jarek_cannonball},
   {RETAIL_NATIVE_JAREK_QUAKE, jarek_quake},
   {RETAIL_NATIVE_TANYA_DRILL_KICK, tanya_drill_kick},
-  {RETAIL_NATIVE_KAI_INPUT_47BD10_ENTRY, kai_input_47bd10},
+  {RETAIL_NATIVE_KAI_AERIAL_PUNCH_ENTRY, kai_aerial_punch},
   {RETAIL_NATIVE_FUJIN_DIVE, fujin_dive},
-  {RETAIL_NATIVE_KAI_INPUT_47C520_ENTRY, kai_input_47c520},
+  {RETAIL_NATIVE_KAI_HANDSTAND_ENTRY, kai_handstand_enter},
   {RETAIL_NATIVE_RAIDEN_TELEPORT, raiden_teleport},
   {RETAIL_NATIVE_QUAN_CHI_TELEPORT_STOMP, quan_chi_teleport_stomp},
   {RETAIL_NATIVE_RAIDEN_TORPEDO, raiden_torpedo},
