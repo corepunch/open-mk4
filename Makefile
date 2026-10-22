@@ -18,7 +18,7 @@ SCRIPT_CHARACTERS = $(patsubst game/%/port.json,%,$(wildcard game/*/port.json))
 SCRIPT_CHECK_TARGETS = $(addprefix scripts-check-,$(SCRIPT_CHARACTERS))
 SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 
-.PHONY: retail-vm-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
+.PHONY: input-test retail-vm-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
 scripts: scripts-audit
@@ -68,7 +68,7 @@ run: mk4-viewer
 	./mk4-viewer
 NATIVE_SERVICE_SOURCES = $(wildcard game/native/*.c) game/mk4_common.c
 ROSTER_SOURCES = game/roster.c game/moves.c game/native.c game/native_combat.c game/script.c game/retail_data.c game/retail_native.c game/retail_native_vm.c game/retail_scene.c game/retail_combat.c game/retail_air.c game/retail_air_throw.c game/retail_teleport.c game/retail_handstand.c game/retail_fireball.c game/retail_weapon.c game/retail_controls.c game/retail_throw.c game/retail_reaction.c game/retail_vm.c game/pose.c game/weapons.c game/scene.c game/presentation.c game/cpu.c game/commands.c game/combat.c game/reactions.c $(NATIVE_SERVICE_SOURCES)
-GAME_HEADERS = $(wildcard game/native/*.[ch]) game/native_services.h game/native.h game/script.h game/retail_vm.h game/retail_data.h game/retail_native.h game/retail_native_input.inc game/game.h game/menu.h game/native_services.h game/audio.h game/retail_actions.inc
+GAME_HEADERS = game/input.h game/sdl_input.h game/host_commands.h $(wildcard game/native/*.[ch]) game/native_services.h game/native.h game/script.h game/retail_vm.h game/retail_data.h game/retail_native.h game/retail_native_input.inc game/game.h game/menu.h game/native_services.h game/audio.h game/retail_actions.inc
 build/test-mk4-assets: tests/test_mk4_assets.c tests/fixtures/original_matrices.inc game/battle.c $(ROSTER_SOURCES) $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame tests/test_mk4_assets.c game/battle.c $(ROSTER_SOURCES) $(ASSETS) -o $@ $(LDLIBS)
@@ -76,7 +76,7 @@ viewer-test: mk4-viewer build/test-mk4-assets
 	./mk4-viewer --self-test
 	./build/test-mk4-assets
 game: mk4-game
-GAME_SOURCES = game/main.c game/menu.c game/input.c game/audio.c $(ROSTER_SOURCES) game/battle.c game/draw.c
+GAME_SOURCES = game/main.c game/menu.c game/input.c game/sdl_input.c game/audio.c $(ROSTER_SOURCES) game/battle.c game/draw.c
 mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
@@ -84,6 +84,11 @@ play: mk4-game
 build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) $(ASSETS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(ASSETS) -o $@ $(LDLIBS)
+build/test-input: tests/test_input.c game/input.c game/sdl_input.c game/input.h game/sdl_input.h game/host_commands.h
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_input.c game/input.c game/sdl_input.c -o $@ $$($(SDL2_CONFIG) --libs)
+input-test: build/test-input
+	./build/test-input
 build/test-shadows: tests/test_shadows.c $(ASSETS) $(RENDER) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) tests/test_shadows.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
@@ -96,7 +101,7 @@ build/test-retail-vm: tests/test_retail_vm.c game/battle.c $(ROSTER_SOURCES) $(G
 retail-vm-test: build/test-retail-vm
 	./build/test-retail-vm
 	python3 tests/test_retail_vm.py
-game-test: mk4-game build/test-battle build/test-shadows build/test-frames
+game-test: input-test mk4-game build/test-battle build/test-shadows build/test-frames
 	./build/test-battle
 	./build/test-shadows
 	./build/test-frames

@@ -19,8 +19,8 @@ static void fight(float distance) {
   g_battle.fighters[1].body.pos[AXIS_X] = (q16)(distance * 0.5f * Q16_ONE);
 }
 
-static void advance_ticks(int n, const Input *in) {
-  const Input zero[2] = {0};
+static void advance_ticks(int n, const InputFrame *in) {
+  const InputFrame zero[2] = {0};
   int i;
   for (i = 0; i < n; ++i)
     battle_step(in ? in : zero);
@@ -208,14 +208,14 @@ int main(void) {
   g_battle.time_ticks = 1;
   g_battle.fighters[0].health = 75;
   g_battle.fighters[1].health = 50;
-  battle_step((Input[2]){0});
+  battle_step((InputFrame[2]){0});
   check(g_battle.winner == 0 && g_battle.phase == PHASE_ROUND_OVER, "Timeout winner incorrect");
   fight(4.f);
   g_battle.time_ticks = 1;
-  battle_step((Input[2]){0});
+  battle_step((InputFrame[2]){0});
   check(g_battle.winner == -1 && g_battle.fighters[0].wins == 0 && g_battle.fighters[1].wins == 0, "Draw should not award wins");
   fight(4.f);
-  Input input[2] = {0};
+  InputFrame input[2] = {0};
   input[0].held = BUTTON_BIT(BUTTON_UP);
   battle_step(input);
   advance_ticks(90, NULL);

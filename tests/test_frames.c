@@ -294,7 +294,7 @@ static void event_frame_schedules(void) {
 
 static void advance(int ticks) {
   for (int i = 0; i < ticks; ++i) {
-    battle_step((Input[2]){0});
+    battle_step((InputFrame[2]){0});
   }
 }
 

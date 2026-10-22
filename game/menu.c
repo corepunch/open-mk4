@@ -100,9 +100,9 @@ static void move_character(FrontendMenu *menu, int dx, int dy) {
   menu->cursor = row * SELECT_COLUMNS + column;
 }
 
-bool menu_key(FrontendMenu *menu, int keycode, bool *quit) {
-  bool confirm = keycode == SDLK_RETURN || keycode == SDLK_KP_ENTER || keycode == SDLK_SPACE;
-  bool back = keycode == SDLK_ESCAPE || keycode == SDLK_BACKSPACE;
+bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit) {
+  bool confirm = command == MENU_CONFIRM;
+  bool back = command == MENU_BACK;
   if (back) {
     if (menu->screen == MENU_MODE) {
       *quit = true;
@@ -121,9 +121,9 @@ bool menu_key(FrontendMenu *menu, int keycode, bool *quit) {
     return false;
   }
   if (menu->screen == MENU_MODE) {
-    if (keycode == SDLK_UP || keycode == SDLK_w) {
+    if (command == MENU_UP) {
       menu->cursor = (menu->cursor + 5) % 6;
-    } else if (keycode == SDLK_DOWN || keycode == SDLK_s) {
+    } else if (command == MENU_DOWN) {
       menu->cursor = (menu->cursor + 1) % 6;
     } else if (confirm) {
       if (menu->cursor == MENU_EXIT) {
@@ -138,13 +138,13 @@ bool menu_key(FrontendMenu *menu, int keycode, bool *quit) {
     return false;
   }
   if (menu->screen == MENU_SELECT) {
-    if (keycode == SDLK_LEFT || keycode == SDLK_a) {
+    if (command == MENU_LEFT) {
       move_character(menu, -1, 0);
-    } else if (keycode == SDLK_RIGHT || keycode == SDLK_d) {
+    } else if (command == MENU_RIGHT) {
       move_character(menu, 1, 0);
-    } else if (keycode == SDLK_UP || keycode == SDLK_w) {
+    } else if (command == MENU_UP) {
       move_character(menu, 0, -1);
-    } else if (keycode == SDLK_DOWN || keycode == SDLK_s) {
+    } else if (command == MENU_DOWN) {
       move_character(menu, 0, 1);
     } else if (confirm) {
       if (menu->selecting_player == 0) {
@@ -164,9 +164,9 @@ bool menu_key(FrontendMenu *menu, int keycode, bool *quit) {
     return false;
   }
   if (menu->screen == MENU_ARENA) {
-    if (keycode == SDLK_LEFT || keycode == SDLK_a) {
+    if (command == MENU_LEFT) {
       menu->arena = (menu->arena + MK4_ARENA_COUNT - 1) % MK4_ARENA_COUNT;
-    } else if (keycode == SDLK_RIGHT || keycode == SDLK_d) {
+    } else if (command == MENU_RIGHT) {
       menu->arena = (menu->arena + 1) % MK4_ARENA_COUNT;
     } else if (confirm) {
       return true;
@@ -379,7 +379,7 @@ static void draw_select_side(Canvas *canvas, const Assets *assets, const Fronten
   } else if (player == 0) {
     roster = menu->p1;
   } else if (cpu) {
-    // Single-player modes face the next roster slot; see menu_key.
+    // Single-player modes face the next roster slot; see menu_command.
     int hovered = select_hovered(menu, 0);
     roster = hovered < 0 ? -1 : (hovered + 1) % roster_count();
   } else {

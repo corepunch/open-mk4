@@ -18,7 +18,7 @@ static void check(bool condition, const char *message) {
 }
 
 static void tick(void) {
-  Input input[2] = {0};
+  InputFrame input[2] = {0};
   battle_step(input);
 }
 
@@ -35,7 +35,7 @@ static Fighter *setup(int slot, int scenario) {
 }
 
 static void press(int slot, bool crouch, int scenario) {
-  Input input[2] = {0};
+  InputFrame input[2] = {0};
   input[slot].held = BUTTON_BIT(crouch ? BUTTON_HIGH_KICK : BUTTON_LOW_KICK);
   if (crouch) {
     input[slot].held |= BUTTON_BIT(BUTTON_DOWN);
@@ -53,7 +53,7 @@ static int recover(Fighter *owner, int slot, bool crouch, int scenario) {
   while (owner->retail_vm.active && ticks < 100) {
     check(owner->current_mmove == NULL && owner->sequence == NULL, "VM must run without a generated frame/sequence program");
     check(fighter_sample(owner) >= 0 && fighter_sample(owner) <= fighter_move(owner)->last, "VM pose outside decoded clip");
-    Input input[2] = {0};
+    InputFrame input[2] = {0};
     if (scenario == 1) {
       input[1 - slot].held = BUTTON_BIT(BUTTON_BLOCK);
     }

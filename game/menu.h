@@ -2,6 +2,7 @@
 #define MK4_MENU_H
 
 #include "renderer.h"
+#include "host_commands.h"
 #include <stdbool.h>
 
 typedef enum MenuScreen {
@@ -30,8 +31,8 @@ typedef struct FrontendMenu {
 } FrontendMenu;
 
 void menu_init(FrontendMenu *menu);
-/* Returns true when a key starts a match. */
-bool menu_key(FrontendMenu *menu, int keycode, bool *quit);
+/* Returns true when a command starts a match. */
+bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit);
 void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu);
 
 #endif

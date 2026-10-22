@@ -13,6 +13,7 @@
  * game's state and clip tables, and load a second asset bank. The step
  * function does not branch on the game id. */
 #include "renderer.h"
+#include "input.h"
 #include "mk4_image.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -38,56 +39,6 @@ typedef enum GameId {
   GAME_MK4 = 0,
   GAME_WARGODS = 1
 } GameId;
-
-/* Retail switches in the order the switch scan queues their press events:
- * word 0x4d00a4 holds directions, HP, BLK and HK; word 0x4d00a8 holds LP,
- * LK and RUN. Directions are absolute, not facing relative. See
- * docs/scorpion/input-and-commands.md. */
-typedef enum Button {
-  BUTTON_UP,
-  BUTTON_DOWN,
-  BUTTON_LEFT,
-  BUTTON_RIGHT,
-  BUTTON_HIGH_PUNCH,
-  BUTTON_BLOCK,
-  BUTTON_HIGH_KICK,
-  BUTTON_LOW_PUNCH,
-  BUTTON_LOW_KICK,
-  BUTTON_RUN,
-  BUTTON_COUNT
-} Button;
-
-#define BUTTON_BIT(button) (1u << (button))
-
-/* held is the switches down during this tick. The simulation derives presses
- * with the retail two-sample rule: a switch must be up in both previous
- * samples, so a one-tick release between taps does not repeat a press. */
-typedef struct Input {
-  unsigned held;
-} Input;
-
-static inline bool input_held(Input in, Button button) {
-  return (in.held & BUTTON_BIT(button)) != 0;
-}
-
-/* code[] holds keyboard scancodes. The numbers come from SDL; this header
- * does not include SDL. */
-typedef struct InputDevice {
-  int code[BUTTON_COUNT];
-  unsigned suppressed; /* keys held across a shell action, ignored until released */
-} InputDevice;
-
-typedef enum ShellCommand {
-  SHELL_NONE = 0,
-  SHELL_QUIT,
-  SHELL_PAUSE,
-  SHELL_RESET,
-  SHELL_REMATCH,
-  SHELL_NEXT_P1,
-  SHELL_NEXT_P2,
-  SHELL_TOGGLE_CPU,
-  SHELL_NEXT_ARENA
-} ShellCommand;
 
 typedef enum StateId {
   S_IDLE,
@@ -885,15 +836,10 @@ struct Battle {
  * Assets remain borrowed from the host; rendering only reads this state. */
 extern Battle g_battle;
 
-void input_bind_player(InputDevice *device, int player);
-void input_sample(InputDevice *device, const unsigned char *keys, Input *out);
-void input_sync(InputDevice *device, const unsigned char *keys);
-void input_cpu(int player, Input *out);
 uint32_t battle_random(uint32_t range);
 bool battle_chance(int per_thousand);
 void battle_cpu_step(Fighter *fighter);
 bool battle_cpu_action(Fighter *fighter, CpuAction action);
-ShellCommand input_shell_command(int keycode);
 
 int roster_count(void);
 const CharacterDef *roster_def(int index);
@@ -1017,7 +963,7 @@ void battle_scene_impact(const Fighter *fighter);
 void battle_init(int p1, int p2);
 void battle_reset_match(void);
 void battle_next_round(void);
-void battle_step(const Input input[2]);
+void battle_step(const InputFrame input[2]);
 void battle_capture_render_snapshot(void);
 const char *state_name(int state);
 

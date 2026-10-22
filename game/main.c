@@ -4,6 +4,7 @@
 #include "math_util.h"
 #include "cli.h"
 #include "menu.h"
+#include "sdl_input.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -25,7 +26,8 @@ static void usage(void) {
        "  --self-test        validate battle resources and animation compatibility\n"
        "P1: A/D W/S move, U HP, J LP, I HK, K LK, L block, H run.\n"
        "P2: arrows, keypad 4 HP, 1 LP, 5 HK, 2 LK, 3 block, right Shift run.\n"
-       "Menu: Enter starts, arrows/WASD choose, Escape goes back.\n"
+       "Gamepad: D-pad/left stick move, Y/X punch, B/A kick, RB block, LB run; Start pauses, Back rematches.\n"
+       "Menu: A/Start confirms, B goes back. Enter starts, arrows/WASD choose, Escape goes back.\n"
        "In a match: F1/F2 change fighters, F3 CPU/local, F4 arena, R reset, Enter rematch, Space pause.\n");
 }
 
@@ -112,8 +114,7 @@ static void validate(const Assets *assets) {
   puts("PASS: 11 textured arena hierarchies; original HUD/name sprites; all 18 combat rigs compatible");
 }
 
-static void apply_shell(
-    ShellCommand command, bool *running, bool *paused, bool *cpu, bool *demo, int *arena, int arena_count, InputDevice pads[2], const unsigned char *keys) {
+static void apply_shell(ShellCommand command, bool *running, bool *paused, bool *cpu, bool *demo, int *arena, int arena_count, HostInput *input) {
   int player;
   switch (command) {
     case SHELL_QUIT:
@@ -121,19 +122,16 @@ static void apply_shell(
       break;
     case SHELL_PAUSE:
       *paused = !*paused;
-      input_sync(&pads[0], keys);
-      input_sync(&pads[1], keys);
+      host_input_suppress(input);
       break;
     case SHELL_RESET:
       battle_reset_match();
-      input_sync(&pads[0], keys);
-      input_sync(&pads[1], keys);
+      host_input_suppress(input);
       break;
     case SHELL_REMATCH:
       if (g_battle.phase == PHASE_MATCH_OVER) {
         battle_reset_match();
-        input_sync(&pads[0], keys);
-        input_sync(&pads[1], keys);
+        host_input_suppress(input);
       }
       break;
     case SHELL_NEXT_P1:
@@ -142,21 +140,18 @@ static void apply_shell(
       g_battle.fighters[player].roster = (fighter_selected_roster(&g_battle.fighters[player]) + 1) % roster_count();
       g_battle.fighters[player].morphed = false;
       battle_reset_match();
-      input_sync(&pads[0], keys);
-      input_sync(&pads[1], keys);
+      host_input_suppress(input);
       break;
     case SHELL_TOGGLE_CPU:
       *cpu = !*cpu;
       *demo = false;
-      input_sync(&pads[0], keys);
-      input_sync(&pads[1], keys);
+      host_input_suppress(input);
       break;
     case SHELL_NEXT_ARENA:
       *arena = (*arena + 1) % arena_count;
       battle_set_arena(*arena);
       battle_reset_match();
-      input_sync(&pads[0], keys);
-      input_sync(&pads[1], keys);
+      host_input_suppress(input);
       break;
     case SHELL_NONE:
       break;
@@ -174,7 +169,7 @@ int main(int argc, char **argv) {
   SdlApp app;
   Canvas cv;
   GameAudio audio;
-  InputDevice pads[2];
+  HostInput input;
   bool running = true, paused = false;
   bool match_started;
   FrontendMenu menu;
@@ -251,14 +246,13 @@ int main(int argc, char **argv) {
   require(difficulty >= 1 && difficulty <= 9, "CPU difficulty must be between 1 and 9");
   g_battle.cpu_level = difficulty;
   game_audio_init(&audio, headless);
-  input_bind_player(&pads[0], 0);
-  input_bind_player(&pads[1], 1);
+  host_input_init(&input);
   menu_init(&menu);
   if (select_requested) {
     menu.p1 = p1;
     menu.p2 = p2;
     menu.cursor = cpu ? MENU_ARCADE : MENU_TEAM;
-    menu_key(&menu, SDLK_RETURN, &running);
+    menu_command(&menu, MENU_CONFIRM, &running);
   }
   match_started = !menu_requested && (headless || explicit_match);
   if (match_started) {
@@ -271,21 +265,16 @@ int main(int argc, char **argv) {
 
   while (running) {
     SDL_Event ev;
-    const unsigned char *keys;
     while (SDL_PollEvent(&ev)) {
+      InputCommands commands = host_input_event(&input, &ev);
       if (ev.type == SDL_QUIT)
         running = false;
       if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
         paused = true;
-        keys = SDL_GetKeyboardState(NULL);
-        input_sync(&pads[0], keys);
-        input_sync(&pads[1], keys);
+        host_input_suppress(&input);
       }
-      if (ev.type != SDL_KEYDOWN || ev.key.repeat)
-        continue;
-      keys = SDL_GetKeyboardState(NULL);
       if (!match_started) {
-        if (menu_key(&menu, (int)ev.key.keysym.sym, &running)) {
+        if (menu_command(&menu, commands.menu, &running)) {
           p1 = menu.p1;
           p2 = menu.p2;
           arena = menu.arena;
@@ -295,12 +284,12 @@ int main(int argc, char **argv) {
           g_battle.cpu_level = difficulty;
           battle_bind_assets(&assets);
           battle_set_arena(arena);
-          input_sync(&pads[0], keys);
-          input_sync(&pads[1], keys);
+          host_input_suppress(&input);
+          paused = false;
           match_started = true;
         }
       } else {
-        apply_shell(input_shell_command((int)ev.key.keysym.sym), &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, pads, keys);
+        apply_shell(commands.shell, &running, &paused, &cpu, &demo, &arena, (int)assets.arenas.count, &input);
       }
     }
 
@@ -313,17 +302,18 @@ int main(int argc, char **argv) {
       else
         accumulator = 0;
     }
-    keys = SDL_GetKeyboardState(NULL);
+    if (paused || !match_started) {
+      host_input_suppress(&input);
+    }
     while (match_started && accumulator >= 1.0 / 60.0) {
-      Input in[2];
-      input_sample(&pads[0], keys, &in[0]);
-      input_sample(&pads[1], keys, &in[1]);
+      InputFrame in[2];
+      host_input_consume(&input, in);
       g_battle.fighters[0].human = !demo;
       g_battle.fighters[1].human = !(cpu || demo);
       if (demo)
-        input_cpu(0, &in[0]);
+        in[0] = (InputFrame){0};
       if (cpu || demo)
-        input_cpu(1, &in[1]);
+        in[1] = (InputFrame){0};
       battle_step(in);
       game_audio_step(&audio, &assets);
       accumulator -= 1.0 / 60.0;
@@ -346,6 +336,7 @@ int main(int argc, char **argv) {
     save_bmp(&cv, shot);
   printf("Rendered %d frames; simulated %llu ticks; health %.4f / %.4f; round %d\n", rendered, (unsigned long long)g_battle.ticks,
       q16_float(g_battle.fighters[0].health), q16_float(g_battle.fighters[1].health), g_battle.round);
+  host_input_free(&input);
   game_audio_free(&audio);
   sdl_app_free(&app);
   canvas_free(&cv);

@@ -121,7 +121,7 @@ static void independent_scene_poses(const Assets *assets) {
     Fighter *actor = battle_scene_actor_start(&g_battle.fighters[0], &g_battle.fighters[1], &pose, scene_pose_entry);
     check(actor != NULL && actor->assets == assets, "Independent scene actor must borrow its source's decoded assets");
     for (int tick = 0; tick < 2; ++tick) {
-      battle_step((Input[2]){0});
+      battle_step((InputFrame[2]){0});
       Pose bones[MK4_MAX_BONES];
       fighter_pose(assets, actor, bones);
       const Character *model = fighter_model(assets, actor);

@@ -353,7 +353,7 @@ static void advance_fighter(Fighter *fighter, const Fighter *other) {
 }
 
 /* Switch scan 0x45c560: a press needs the switch up in both previous samples. */
-static void sample_switches(Fighter *fighter, Input in) {
+static void sample_switches(Fighter *fighter, InputFrame in) {
   fighter->held = in.held;
   fighter->pressed = in.held & ~fighter->prev[0] & ~fighter->prev[1];
   fighter->released = fighter->prev[0] & ~in.held;
@@ -646,7 +646,7 @@ void battle_event_pump(void) {
   }
 }
 
-void battle_step(const Input input[2]) {
+void battle_step(const InputFrame input[2]) {
   int i;
   battle_capture_render_snapshot();
   g_battle.ticks++;

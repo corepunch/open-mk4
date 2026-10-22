@@ -96,6 +96,28 @@ Assets, pose buffers, archive storage, audio and host resources retain explicit
 owners. The standalone `fsys.cpp` development tool remains C++17 and uses the
 same C archive validator and filename hash.
 
+## Input boundary
+
+`game/input.h` defines `InputFrame`: a fixed-width mask of absolute game
+buttons for one simulation tick. It contains no device identifiers, SDL types
+or derived press/release events. The simulation retains the retail two-sample
+press rule. CPU decisions remain simulation-owned rather than emulated devices.
+
+`game/input.c` accumulates host samples until a tick consumes them. Short taps
+survive between rendered frames; later catch-up ticks receive current held
+state. Multiple transitions before a tick collapse to one sample. Opposing
+directions cancel. Shell transitions discard pending taps and suppress held
+buttons until release. This is an in-process contract, not a serialized network
+or replay format.
+
+`game/sdl_input.c` owns keyboard bindings and SDL gamepad lifetime, mapping
+D-pad/left-stick directions and buttons into that same contract. Keyboard and
+pad holds combine per player. Gamepads take the first free player slot and
+support hotplug; stick axes use a quarter-range dead zone. Menu and shell
+commands are separate device-independent enums in `game/host_commands.h`.
+The menu accepts semantic actions rather than SDL keycodes. Mapping is fixed
+for now; configuration and timestamped event replay are separate features.
+
 ## Shared retail runtime
 
 All 18 fighters run original retail scripts through `game/retail_vm.c`.
