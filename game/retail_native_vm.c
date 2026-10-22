@@ -951,6 +951,15 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x482540:
           goro_victim_getup(fighter);
           return true;
+        case 0x4829e0:
+          retail_vm_enter(fighter, 0x4e91c0, mk4_script_thrown_ready);
+          return true;
+        case 0x4829f0:
+          retail_vm_enter(fighter, 0x4e91d0, mk4_script_thrown_ready);
+          return true;
+        case 0x482a00:
+          retail_vm_enter(fighter, 0x4e91e0, mk4_script_thrown_ready);
+          return true;
         case 0x482790:
           retail_reaction_getup_back(fighter);
           return true;
@@ -1019,7 +1028,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           retail_getup_roll(fighter);
           return true;
         case 0x486000:
-          scorpion_script_spear_pull(fighter);
+          retail_shake_stun(fighter);
           return true;
         case 0x487220:
           sub_zero_script_lk_victim_rise(fighter);

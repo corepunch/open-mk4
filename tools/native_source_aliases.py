@@ -1,6 +1,7 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'scorpion_script_spear_pull': 'retail_shake_stun',
     'raiden_generated_reaction': 'retail_record_reaction',
     'sonya_generated_reaction': 'retail_record_reaction',
     'sonya_square_victim': 'retail_square_victim',

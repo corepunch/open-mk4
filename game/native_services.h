@@ -386,7 +386,6 @@ void scorpion_script_fire_decor(Fighter *fighter);
 void scorpion_script_fire_flame(Fighter *fighter);
 void scorpion_script_spawn_spear(Fighter *fighter, int type);
 void scorpion_script_spear_done(Fighter *fighter);
-void scorpion_script_spear_pull(Fighter *fighter);
 void scorpion_script_spear_return(Fighter *fighter);
 void scorpion_script_teleport_motion(Fighter *fighter);
 void scorpion_script_teleport_victim_tail(Fighter *victim);

@@ -995,6 +995,13 @@ static void native_task_completion(void) {
   }
   check(g_battle.phase == PHASE_MATCH_OVER && !actor->retail_vm.active && actor->current_mmove == NULL,
       "stage native continuations must join the battle result and retire all actor playback ownership");
+  actor = setup(0, 2);
+  retail_vm_bind_animation(actor, 0x4fad7c, 0);
+  check(retail_native_vm(actor, 0x486000, RETAIL_TAIL, 0), "bounded shake native must use the shared typed boundary");
+  tick();
+  fighter_interrupt(actor, fighter_ready);
+  check(
+      actor->visual_offset[AXIS_Y] == 0 && actor->current_mmove == NULL, "interrupting a native presentation phase must remove its owned offset and playback");
 }
 
 static void native_throw_selection(void) {

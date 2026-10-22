@@ -1903,3 +1903,18 @@ port navigation. Extended the existing table-mutation fixture to cover an
 engine-native selection, catching fallback to a copied ID table. Full retail
 table inspection exposes18 additional native addresses outside prior reviewed
 move coverage; implementing those remains required, not inferred complete.
+
+### Additional full-table script entries and corrected stun native
+
+Added shared preludes for previously unregistered482230/4829a0/483580/4835c0/
+4836d0/485f00/485fb0/4879c0 and the4314e0 park boundary. Original words own
+all playback. Added the three original script-only4829e0/4829f0/482a00 links.
+The full-table review exposed486000's mislabeled Scorpion adapter: it parked
+indefinitely, but local486000/4860d0 performs ten3+3 shake cycles then15 settle
+visits before controller return. Replaced it once with a bounded native phase
+and owned visual-offset cleanup; jitter uses the engine's presentation offset.
+
+Checked local entries/dependencies, original script graphs and mk4decomp native
+clusters. Verified formatting, runtime/rejections, strict audits, native gates
+and helper/port navigation. Extended the existing native cleanup fixture with
+interrupted shake-offset retirement. No authored reaction matrices.

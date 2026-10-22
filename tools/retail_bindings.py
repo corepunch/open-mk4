@@ -1543,6 +1543,11 @@ def bindings_for(character):
     for address, function in ((0x467fc0, 'retail_stage_owner'), (0x483720, 'retail_stage_impale'), (0x4837c0, 'retail_stage_complete')):
         result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Bounded local stage native and mk4decomp BattleEndCluster; original4ea300/4ea330 own victim playback and waits')
+    result[0x486000] = Binding('retail_shake_stun', 'game/retail_reaction.c', ('tail',), flow='terminal', mmove=True,
+                               evidence='Local486000/4860d0 bounded shake and settle; one native implementation replaces an indefinite fighter-specific waiter')
+    for address, target in ((0x4829e0, 0x4e91c0), (0x4829f0, 0x4e91d0), (0x482a00, 0x4e91e0)):
+        result[address] = Binding('retail_vm_enter', 'game/retail_vm.c', ('tail',), script_target=target,
+                                  evidence='Exact native only enters this original script; shared VM continuation')
     result[0x45b1f0] = Binding('retail_script_reaction_dispatch', 'game/retail_reaction.c', ('handler',), ('fighter', 'arg_u8'),
                                evidence='Local45b1f0/480f80 loads4ea4e8 and installs the captured peer; no roster-specific handler variants')
     result[0x45b230] = Binding('retail_script_release_reaction', 'game/retail_throw.c', ('handler',), ('fighter', 'arg_u8'),

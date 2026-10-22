@@ -236,4 +236,7 @@ void retail_square_victim(Fighter *fighter);
 uint32_t retail_reaction_native(const Fighter *fighter);
 FighterFn retail_engine_reaction(uint32_t entry);
 
+void retail_aux_reaction(Fighter *fighter);
+void retail_shake_stun(Fighter *fighter);
+
 #endif

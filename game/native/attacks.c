@@ -1717,11 +1717,6 @@ void scorpion_script_spawn_spear(Fighter *fighter, int type) {
   n486000_spear_spawn(fighter);
 }
 
-void scorpion_script_spear_pull(Fighter *fighter) {
-  fighter->damage_scale = 0x9999;
-  retail_vm_wait_native(fighter, 0, NULL);
-}
-
 /* Native service cluster: native_bicycle. */
 static bool native_bicycle_bicycle_height(const Fighter *fighter);
 static void native_bicycle_bicycle_contact(Fighter *fighter);

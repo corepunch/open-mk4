@@ -608,8 +608,96 @@ void retail_record_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, finish);
 }
 
+/* Additional original reaction-table entries use the same typed native
+ * prelude/script boundary; none selects by fighter or copied reaction ID. */
+void retail_aux_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_native(fighter);
+  if (entry == 0x482230) {
+    battle_wall_recoil(fighter);
+  }
+  if (entry == 0x482230 || entry == 0x483580 || entry == 0x4835c0 || entry == 0x485fb0 || entry == 0x4879c0) {
+    mk4_script_disarm_self(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  switch (entry) {
+    case 0x482230:
+      script = 0x4e8c30;
+      break;
+    case 0x4829a0:
+      retail_face_peer(fighter);
+      fighter->body.angle[AXIS_Y] += 0x32492;
+      script = 0x4e91a0;
+      break;
+    case 0x483580:
+      script = 0x4ea3e0;
+      break;
+    case 0x4835c0:
+      script = 0x4e9690;
+      break;
+    case 0x4836d0:
+      script = 0x4ea2f8;
+      break;
+    case 0x485f00:
+      script = 0x4e9c58;
+      break;
+    case 0x485fb0:
+      fighter->damage_scale = 0x9999;
+      mk4_script_stop_body(fighter);
+      fighter->body.pos[AXIS_Y] = fighter->body.ground;
+      script = 0x4e9d00;
+      break;
+    case 0x4879c0: {
+      fighter->action = 0x1014;
+      mk4_script_stop_body(fighter);
+      fighter->body.pos[AXIS_Y] = fighter->body.ground;
+      uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4ec2c8);
+      require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native impact friction callback");
+      script = 0x4e9f78;
+      break;
+    }
+    default:
+      require(false, "Unexpected auxiliary reaction native");
+      return;
+  }
+  retail_vm_enter(fighter, script, mk4_script_thrown_ready);
+}
+
+static void stun_shift(Fighter *fighter) {
+  fighter->visual_offset[AXIS_Y] = -0x147a;
+}
+
+static void stun_reset(Fighter *fighter) {
+  fighter->visual_offset[AXIS_Y] = 0;
+}
+
+/*486000/4860d0: ten native3+3 shake cycles and15-visit settle.
+ * Use presentation offset so render jitter does not alter combat geometry. */
+void retail_shake_stun(Fighter *fighter) {
+  int sample = fighter_sample(fighter);
+  native_begin(fighter, 0, 74, retail_controller_return);
+  fighter->mmove_cleanup = stun_reset;
+  for (int frame = 0; frame < 75; ++frame) {
+    FighterFn action = frame < 60 && frame % 6 == 0 ? stun_shift : frame < 60 && frame % 6 == 3 ? stun_reset : NULL;
+    native_frame(fighter, frame, sample, action);
+  }
+  native_play(fighter, false);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x482230:
+    case 0x4829a0:
+    case 0x483580:
+    case 0x4835c0:
+    case 0x4836d0:
+    case 0x485f00:
+    case 0x485fb0:
+    case 0x4879c0:
+      return retail_aux_reaction;
+    case 0x4314e0:
+      return retail_task_pause;
     case 0x488530:
     case 0x482450:
     case 0x486690:
