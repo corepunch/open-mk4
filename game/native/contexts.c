@@ -3,28 +3,8 @@
 #include <stdlib.h>
 
 /* Native service cluster: 45b1f0, 45b230. */
-void cage_script_current_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 185) {
-    battle_react((Fighter *)fighter_opponent(fighter), reaction);
-    return;
-  }
-  require(reaction == 100, "Unexpected Cage LP victim reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  battle_react(victim, reaction);
-}
 
 /* Native service cluster: 45b1f0, 45b230. */
-void fujin_script_current_reaction(Fighter *fighter, int reaction) {
-  /* 480f80 -> 48f880/48fd00 installs this on the task's captured peer.
-   * Replacing the owner here cancels the very stream issuing the reaction. */
-  if (reaction == 97 || reaction == 181) {
-    battle_react((Fighter *)fighter_opponent(fighter), reaction);
-    return;
-  }
-  require(reaction == 102 || reaction == 109, "Unexpected Fujin LP victim release");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  battle_react(victim, reaction);
-}
 
 /* Native service cluster: 42c7b0, 45b230. */
 /* 4de6e4 passes reaction 100 to current-context dispatcher 45b1f0 while the
@@ -140,24 +120,10 @@ void goro_victim_getup(Fighter *victim) {
 }
 
 /* Native service cluster: 45b1f0, 45b230. */
-void jarek_script_current_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    jarek_fatality_contact_hold(fighter);
-    return;
-  }
-  require(reaction == 102 || reaction == 107, "Unexpected Jarek LP victim reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  battle_react(victim, reaction);
-}
 
 /* Native service cluster: 45b1f0, 45b230. */
 /* 45b1f0 installs the reaction on the task peer: 183 from the head clap;
  * 100/125 end the LP slam, releasing the pair first. */
-void jax_script_peer_reaction(Fighter *fighter, int reaction) {
-  require(reaction == 100 || reaction == 125 || reaction == 183, "Unexpected Jax peer reaction");
-  Fighter *victim = reaction == 183 ? (Fighter *)fighter_opponent(fighter) : mk4_script_release_pair(fighter);
-  battle_react(victim, reaction);
-}
 
 /* Native service cluster: 45b230. */
 /* Native service cluster: 42c0b0, 42c0d0, 45b1f0, 49c110, 49c160. */
@@ -173,10 +139,7 @@ void liu_kang_liu_script_lk_damage(Fighter *fighter) {
   for (int axis = AXIS_X; axis <= AXIS_Z; axis += 2) {
     victim->body.pos[axis] = fighter->body.pos[axis] + q16_mul(fighter_axis(fighter, axis), 0xb333);
   }
-  victim->script_phase = 1;
-  victim->flags |= FF_PAIR_RELEASE;
   fighter_cancel_mmove(victim);
-  liu_kang_lk_thrown_script(victim);
   battle_damage(victim, 0x2e14);
   /* 4de428 returns to this native caller, which then enters 4de468. */
   retail_vm_enter_then_owned(fighter, 0x4de428, 0x4de468, fighter_ready, 3);
@@ -192,19 +155,6 @@ void liu_kang_liu_script_spawn_high(Fighter *fighter, int task_type) {
   liu_kang_fireball_spawn(fighter, 0);
 }
 
-void liu_kang_liu_script_reaction(Fighter *fighter, int reaction) {
-  Fighter *victim = fighter_peer(fighter);
-  victim->reaction = reaction;
-  if (reaction == 104) {
-    battle_react(mk4_script_release_pair(fighter), reaction);
-  } else if (reaction == 80) {
-    fighter->flags &= ~(unsigned)FF_PAIRED;
-    victim->flags &= ~(unsigned)FF_PAIRED;
-  } else if (reaction == 176) {
-    victim->facing = -victim->facing;
-  }
-}
-
 /* Native service cluster: 45b230. */
 /* Native service cluster: 45b1f0, 45b230, 47d680, 47d6e0, 47d720, 47d7f0, 4889b0, 48d450. */
 static void n45b1f0_5_torpedo_pose(Fighter *fighter, float pose);
@@ -218,19 +168,6 @@ static void n45b1f0_5_torpedo_pair(Fighter *fighter);
 static const MoveDef n45b1f0_5_s_torpedo = {.clip = 94, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x202};
 static const MoveDef n45b1f0_5_s_torpedo_victim = {.clip = 135, .last = MOVE_END, .flags = SF_LOCK, .action = ACTION_RETAIL_4003};
 static const AttackRecord n45b1f0_5_torpedo_record = {85852, -3932, 62914, 20971, 82, 82, 0, 0, 9830};
-
-void raiden_script_reaction(Fighter *fighter, int reaction) {
-
-  if (reaction == 175) {
-    return; /* Arena spike coordinator owns the victim. */
-  }
-  require(reaction == 102 || reaction == 107 || reaction == 111, "Unexpected Raiden paired reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = reaction;
-  victim->flags |= FF_REACTING;
-  fighter_cancel_mmove(victim);
-  battle_react(victim, reaction);
-}
 
 void raiden_special_cleanup(Fighter *fighter) {
   mk4_script_pair_cleanup(fighter);
@@ -424,14 +361,6 @@ void raiden_generated_reaction(Fighter *victim) {
 /* 45b1f0 installs a reaction on the current task's captured peer: 102
  * releases the short LP throw victim; 4dff08 dispatches 180 to the
  * second-fatality victim. */
-void reptile_script_lp_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 180) {
-    battle_react(fighter_peer(fighter), reaction);
-    return;
-  }
-  require(reaction == 102, "Unexpected LP victim reaction");
-  battle_react(mk4_script_release_pair(fighter), reaction);
-}
 
 /* Native service cluster: 42bdf0, 42be00, 450d40, 45b1f0, 45b230, 4807b0. */
 
@@ -451,23 +380,6 @@ void scorpion_spin_script(Fighter *fighter) {
   fighter->sample_override = pose;
 }
 
-void scorpion_script_reaction(Fighter *fighter, int reaction) {
-  Fighter *victim = fighter_peer(fighter);
-  if (reaction == 175) {
-    return; /* Native arena continuation owns the impalement and completion. */
-  }
-  if (reaction == 71) {
-    if (victim->action == ACTION_RETAIL_1008) {
-      victim->reaction = 71;
-    }
-    return; /* Pull arrival already started the independently interruptible stun. */
-  }
-  require(reaction == 100, "Unexpected generated Scorpion reaction");
-  fighter->flags &= ~(unsigned)FF_PAIRED;
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  battle_react(victim, reaction);
-}
-
 void scorpion_native_blend(Fighter *fighter, const SceneClip *blend, FighterFn end) {
   native_scene_blends(fighter, blend, 1, end);
 }
@@ -478,34 +390,8 @@ void scorpion_script_transform_effect(Fighter *fighter, int type) {
 }
 
 /* Native service cluster: 45b1f0, 45b230. */
-void shinnok_script_current_reaction(Fighter *fighter, int reaction) {
-  if (reaction == 175) {
-    shinnok_fatality_contact_hold(fighter);
-    return;
-  }
-  if (reaction == 179) {
-    /* 4e0088 installs the clap victim's lift and float on the task peer. */
-    battle_react((Fighter *)fighter_opponent(fighter), reaction);
-    return;
-  }
-  require(reaction == 100, "Unexpected Shinnok LP release reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  battle_react(victim, reaction);
-}
 
 /* Native service cluster: 45b1f0, 45b230. */
-void sonya_script_reaction(Fighter *fighter, int reaction) {
-
-  if (reaction == 175) {
-    return;
-  }
-  require(reaction == 78 || reaction == 79 || reaction == 103, "Unexpected Sonya paired reaction");
-  Fighter *victim = mk4_script_release_pair(fighter);
-  victim->reaction = reaction;
-  victim->flags |= FF_REACTING;
-  fighter_cancel_mmove(victim);
-  battle_react(victim, reaction);
-}
 
 void sonya_special_cleanup(Fighter *fighter) {
   mk4_script_pair_cleanup(fighter);

@@ -208,6 +208,9 @@ void retail_lk_victim(Fighter *fighter) {
       retail_vm_bind_animation(fighter, 0x4fb700, sample);
       native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
       break;
+    case 0x485910:
+      retail_vm_enter(fighter, 0x4e9a90, mk4_mmove_thrown_finish);
+      break;
     case 0x4858a0:
       retail_vm_enter(fighter, 0x4e9a68, mk4_mmove_thrown_finish);
       break;
@@ -225,6 +228,7 @@ void retail_lk_victim(Fighter *fighter) {
 
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x485910:
     case 0x484d50:
     case 0x4858a0:
     case 0x485040:

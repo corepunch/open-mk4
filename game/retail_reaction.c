@@ -484,8 +484,35 @@ void retail_stagger_entry(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e97f8, mk4_script_thrown_ready);
 }
 
+void retail_snare_reaction(Fighter *fighter) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4000};
+  fighter_start_move(fighter, S_HIT, &move);
+  fighter->flags |= FF_NO_GUARD;
+  retail_vm_enter(fighter, 0x4e9f08, mk4_script_thrown_ready);
+}
+
+/*45b1f0/480f80 installs the loaded reaction on the captured peer.
+ * Already-released spear arrival owns its independent stun continuation. */
+void retail_script_reaction_dispatch(Fighter *fighter, int reaction) {
+  require(reaction >= 0 && reaction < 256, "Invalid script reaction selector");
+  Fighter *victim = fighter_peer(fighter);
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)reaction);
+  if (entry == 0x487330 && victim->action == ACTION_RETAIL_1008) {
+    victim->reaction = reaction;
+    return;
+  }
+  if (retail_throw_reaction(retail_vm_image(), (unsigned)reaction) != NULL) {
+    victim = mk4_script_release_pair(fighter);
+  }
+  battle_react(victim, reaction);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x487330:
+      return retail_snare_reaction;
+    case 0x481360:
+      return retail_scene_victim_hold;
     case 0x4836e0:
       return retail_stage_victim;
     case 0x464e30:

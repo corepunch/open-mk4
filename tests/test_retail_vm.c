@@ -743,7 +743,12 @@ static void native_stagger_boundary(void) {
   for (int crouch = 0; crouch < 2; ++crouch) {
     Fighter *actor = setup(0, 0);
     actor->action = crouch ? 0x2001 : 0x2000;
-    battle_react(actor, 100);
+    Fighter *owner = fighter_peer(actor);
+    owner->retail_vm.native_owner_set = true;
+    owner->retail_vm.native_owner = 15;
+    uint64_t generation = owner->continuation;
+    check(retail_native_vm(owner, 0x45b1f0, RETAIL_HANDLER, 100) && owner->continuation == generation && actor->pending != NULL,
+        "script reaction dispatch must use the loaded peer native independently of owner context without interrupting the caller");
     tick();
     check(actor->retail_vm.active && actor->retail_vm.entry == (crouch ? 0x4e9360u : 0x4e9308u) && actor->current_mmove == NULL,
         "loaded stagger native must preserve the incoming action branch and transfer playback to original script words");

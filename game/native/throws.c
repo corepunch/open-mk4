@@ -85,24 +85,11 @@ void jax_lp_throw_return(Fighter *fighter) {
 }
 
 /* Native service cluster: 485930. */
-static void n485930_lk_thrown_release(Fighter *victim);
 static void n485930_lk_thrown_turn(Fighter *victim);
 
 void liu_kang_thrown_finish(Fighter *victim) {
   mk4_script_stop_body(victim);
   fighter_finish_mmove(victim, victim->health > 0 ? fighter_ready : NULL);
-}
-
-static void n485930_lk_thrown_release(Fighter *victim) {
-  victim->flags &= ~(unsigned)FF_PAIRED;
-  victim->reaction = 80;
-  retail_vm_enter_owned(victim, 0x4e9a90, fighter_ready, 3);
-}
-
-void liu_kang_lk_thrown_script(Fighter *victim) {
-  victim->script_phase = 1;
-  victim->sample_override = 30;
-  native_hold(victim, 2, n485930_lk_thrown_release);
 }
 
 void liu_kang_throw_disarm(Fighter *victim) {

@@ -224,3 +224,7 @@ void retail_stage_owner(Fighter *fighter);
 void retail_stage_victim(Fighter *fighter);
 void retail_stage_impale(Fighter *fighter);
 void retail_stage_complete(Fighter *fighter);
+
+void retail_snare_reaction(Fighter *fighter);
+void retail_script_reaction_dispatch(Fighter *fighter, int reaction);
+void retail_scene_victim_hold(Fighter *fighter);

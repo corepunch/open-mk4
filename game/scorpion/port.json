@@ -377,10 +377,10 @@
       "symbol": "n486000_spear_projectile"
     },
     "71": {
-      "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/native/attacks.c",
-      "symbol": "scorpion_spear_stun_script"
+      "adaptation": "Loaded native entry owns the peer reaction or existing native handoff; script dispatch does not depend on a fighter owner mask.",
+      "evidence": "Local487330/485910/481360 and45b1f0/480f80 captured-peer dispatch; original4e9f08/4e9a90 and loaded53cfa8 descriptor.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_snare_reaction"
     },
     "77": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",

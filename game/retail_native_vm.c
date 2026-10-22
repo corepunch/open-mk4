@@ -18,7 +18,6 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
   if (context >= MK4_ROSTER_COUNT) {
     return false;
   }
-  uint32_t owner = 1u << context;
   switch (kind) {
     case RETAIL_CALL:
       switch (address) {
@@ -1316,55 +1315,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           mk4_script_context(fighter, (int)(argument & 255u));
           return true;
         case 0x45b1f0:
-          if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) != NULL) {
-            retail_script_release_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x4000u) {
-            cage_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x20u) {
-            fujin_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x1000u) {
-            jarek_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x2000u) {
-            jax_script_peer_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x10000u) {
-            sonya_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x8u) {
-            liu_kang_liu_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_script_lp_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x1u) {
-            scorpion_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x40u) {
-            shinnok_script_current_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          return false;
+          retail_script_reaction_dispatch(fighter, (int)(argument & 255u));
+          return true;
         case 0x45b230:
           if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) == NULL) {
             return false;

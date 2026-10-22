@@ -296,3 +296,13 @@ static void stage_complete(Fighter *fighter) {
 void retail_stage_complete(Fighter *fighter) {
   native_hold(fighter, 60, stage_complete);
 }
+
+/*481360: flip and bind the loaded held-victim descriptor. The portable
+ * scene director already owns camera tracking and the later impact task. */
+void retail_scene_victim_hold(Fighter *fighter) {
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  fighter->facing = -fighter->facing;
+  retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cfa8) * 4, 0);
+  fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
+}

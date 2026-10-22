@@ -1851,3 +1851,21 @@ shared scene/native completion contract to the existing runtime fixture:
 original script handoff, bounded completion and retirement of actor playback.
 No character timing/damage assertions. Result/input direction and scene rendering
 remain engine coordinator/presentation adaptations.
+
+### Remove the last native owner-mask dispatcher
+
+45b1f0 now resolves the captured peer and loaded native target once; all ten
+remaining fighter-specific wrappers and both duplicate stage-contact holds are
+gone. Throw natives release the pair through the shared boundary.487330 enters
+original4e9f08 unless pull arrival already owns its independent1008 stun, in
+which case the existing handoff is preserved. Native485910 enters4e9a90 after
+the owner's original paired two-pose advance; removed Liu's premature native
+two-visit victim player.481360 flips and binds loaded53cfa8 for the scene-held
+victim, with camera/result orchestration in the existing scene director.
+
+No owner bitmask or roster-dependent native handler remains in retail_native_vm.
+Checked local45b1f0/480f80,487330,485910,481360,42c0d0 and original paired/victim
+words. Verified formatting, runtime/rejections, all strict audits, native gates
+and helper/port navigation. Reused the loaded-stagger fixture through45b1f0
+with a different native context to check peer selection and caller ownership;
+no authored move timing assertions.

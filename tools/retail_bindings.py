@@ -1540,12 +1540,11 @@ def bindings_for(character):
     result[0x46e240] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     result[0x46dff0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
     result[0x46c8f0] = Binding('retail_air_land', 'game/retail_air.c', ('tail',), flow='terminal', mmove=True, evidence='Original470980/4704d0 rows and native recovery; checked mk4decomp five_block_dispatch_variants and bounded local listings')
-    if character == 9:
-        result[0x45b1f0] = Binding('retail_script_release_reaction', 'game/retail_throw.c', ('handler',), ('fighter', 'arg_u8'),
-                                 evidence='Loaded reaction table selects shared LP or scene native; no Tanya handler variant')
     for address, function in ((0x467fc0, 'retail_stage_owner'), (0x483720, 'retail_stage_impale'), (0x4837c0, 'retail_stage_complete')):
         result[address] = Binding(function, 'game/retail_scene.c', ('tail',), flow='terminal', mmove=True,
                                   evidence='Bounded local stage native and mk4decomp BattleEndCluster; original4ea300/4ea330 own victim playback and waits')
+    result[0x45b1f0] = Binding('retail_script_reaction_dispatch', 'game/retail_reaction.c', ('handler',), ('fighter', 'arg_u8'),
+                               evidence='Local45b1f0/480f80 loads4ea4e8 and installs the captured peer; no roster-specific handler variants')
     result[0x45b230] = Binding('retail_script_release_reaction', 'game/retail_throw.c', ('handler',), ('fighter', 'arg_u8'),
                                evidence='Local45b230/480f50 loads4ea4e8 and installs the captured peer; one typed shared release boundary')
     result[0x488c10] = Binding('retail_getup_front', 'game/retail_air_throw.c', ('tail',), flow='terminal', mmove=True,

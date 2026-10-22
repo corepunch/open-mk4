@@ -1,6 +1,20 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'cage_script_current_reaction': 'retail_script_reaction_dispatch',
+    'fujin_script_current_reaction': 'retail_script_reaction_dispatch',
+    'jarek_script_current_reaction': 'retail_script_reaction_dispatch',
+    'jax_script_peer_reaction': 'retail_script_reaction_dispatch',
+    'liu_kang_liu_script_reaction': 'retail_script_reaction_dispatch',
+    'raiden_script_reaction': 'retail_script_reaction_dispatch',
+    'reptile_script_lp_reaction': 'retail_script_reaction_dispatch',
+    'scorpion_script_reaction': 'retail_script_reaction_dispatch',
+    'shinnok_script_current_reaction': 'retail_script_reaction_dispatch',
+    'sonya_script_reaction': 'retail_script_reaction_dispatch',
+    'liu_kang_lk_thrown_script': 'retail_lk_victim',
+    'jarek_fatality_contact_hold': 'retail_stage_victim',
+    'shinnok_fatality_contact_hold': 'retail_stage_victim',
+
     'mk4_script_spike_tail': 'retail_stage_owner',
     'mk4_native_spike_tail': 'retail_stage_owner',
     'tanya_second_reaction': 'retail_scene_reaction',

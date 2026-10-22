@@ -449,11 +449,6 @@ void fujin_second_fatality(Fighter *fighter) {
 /* Native service cluster: native_fatality. */
 /* The Jarek fatality contact uses reaction 175 with zero damage. The stage
  * coordinator owns the victim pose and recovery for that scene. */
-void jarek_fatality_contact_hold(Fighter *fighter) {
-  require(g_battle.phase == PHASE_FATALITY, "Jarek reaction 175 outside fatality");
-  fighter->pending = NULL;
-  fighter->flags |= FF_REACTING | FF_BUSY;
-}
 
 /* Native service cluster: 41de30, 41dfc0, 41e0a0, 41e0e0. */
 enum {
@@ -1756,11 +1751,6 @@ enum {
 
 /* Spike-fatality contact 0x4ebd80 uses reaction 175 with zero damage. The
  * stage coordinator owns the victim pose and recovery for that scene. */
-void shinnok_fatality_contact_hold(Fighter *fighter) {
-  require(g_battle.phase == PHASE_FATALITY, "Shinnok reaction 175 outside fatality");
-  fighter->pending = NULL;
-  fighter->flags |= FF_REACTING | FF_BUSY;
-}
 
 /* 45e570: both fatality records accept distance <= 1 and 45e5e0's
  * finisher window. */

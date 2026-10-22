@@ -283,10 +283,10 @@
       "symbol": "retail_stage_victim"
     },
     "176": {
-      "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
-      "evidence": "VM reaction dispatcher selects 176 -> 0x481360; docs/liu-kang-scripts.md",
-      "source": "game/native/cinematics.c",
-      "symbol": "liu_kang_liu_script_fatal_setup"
+      "adaptation": "Loaded native entry owns the peer reaction or existing native handoff; script dispatch does not depend on a fighter owner mask.",
+      "evidence": "Local487330/485910/481360 and45b1f0/480f80 captured-peer dispatch; original4e9f08/4e9a90 and loaded53cfa8 descriptor.",
+      "source": "game/retail_scene.c",
+      "symbol": "retail_scene_victim_hold"
     },
     "19": {
       "evidence": "Loaded4ea4e8[19] -> 4831e0; bounded native listing, mk4decomp shared native/script contracts and original4e94b0/4e96e0/4e9d88/4e9de8 words.",
@@ -427,10 +427,10 @@
       "symbol": "react_extra_block"
     },
     "80": {
-      "adaptation": "Existing independent victim/scene frame program implements this dispatch outside the shared reaction table",
-      "evidence": "VM reaction dispatcher selects 80 -> 0x485910; docs/liu-kang-scripts.md",
-      "source": "game/native/throws.c",
-      "symbol": "liu_kang_lk_thrown_script"
+      "adaptation": "Loaded native entry owns the peer reaction or existing native handoff; script dispatch does not depend on a fighter owner mask.",
+      "evidence": "Local487330/485910/481360 and45b1f0/480f80 captured-peer dispatch; original4e9f08/4e9a90 and loaded53cfa8 descriptor.",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_victim"
     },
     "84": {
       "adaptation": "Owner coordinates the independent paired/cinematic victim; shared battle_react table is bypassed",
