@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "game.h"
 #include "native.h"
 #include "native_services.h"
@@ -51,8 +52,10 @@ static const FighterFn state_entries[S_COUNT] = {
 };
 
 static int descriptor_clip(uint32_t packed) {
-  require(packed >= 0x4fad7c / 4 && packed < (0x4fad7c + MK4_CLIP_COUNT * 12) / 4 && (packed * 4 - 0x4fad7c) % 12 == 0, "Invalid native state descriptor");
-  return (int)((packed * 4 - 0x4fad7c) / 12);
+  require(packed >= RETAIL_ANIMATION_TABLE / 4 && packed < (RETAIL_ANIMATION_TABLE + MK4_CLIP_COUNT * RETAIL_ANIMATION_DESCRIPTOR_SIZE) / 4 &&
+              (packed * 4 - RETAIL_ANIMATION_TABLE) % RETAIL_ANIMATION_DESCRIPTOR_SIZE == 0,
+      "Invalid native state descriptor");
+  return (int)((packed * 4 - RETAIL_ANIMATION_TABLE) / RETAIL_ANIMATION_DESCRIPTOR_SIZE);
 }
 
 int roster_count(void) {

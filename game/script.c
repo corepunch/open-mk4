@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "script.h"
 #include "retail_vm.h"
 #include "native.h"
@@ -408,7 +409,7 @@ void mk4_script_landing_motion(Fighter *fighter) {
 
 void mk4_script_scene_pose(Fighter *fighter, int clip, int sample) {
   require(clip >= 0 && clip < MK4_CLIP_COUNT, "Invalid native scene animation");
-  retail_vm_bind_animation(fighter, 0x4fad7c + (uint32_t)clip * 12, sample);
+  retail_vm_bind_animation(fighter, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE, sample);
   fighter->action = ACTION_RETAIL_0700;
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
 }

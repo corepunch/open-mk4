@@ -1,9 +1,10 @@
 #ifndef MK4_RETAIL_DATA_H
 #define MK4_RETAIL_DATA_H
+#include "retail_layout.h"
 #include "game.h"
 
 enum {
-  RETAIL_REACTION_COUNT = (0x4ea7f0 - 0x4ea4e8) / 4
+  RETAIL_REACTION_COUNT = (RETAIL_REACTION_TABLE_END - RETAIL_REACTION_TABLE) / 4
 };
 
 typedef struct RetailRoster {

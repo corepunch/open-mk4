@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "game.h"
 #include "native.h"
 #include "retail_vm.h"
@@ -41,7 +42,8 @@ void weapon_stance(Fighter *fighter, int state) {
                                    : mk4_image_u32(retail_vm_image(), (state == S_CROUCH ? 0x53ce50 : 0x53ce30) + 4) * 4;
   }
   if (state == S_WALK && fighter->state == S_WALK &&
-      (fighter->current_move == move || (descriptor != 0 && fighter_move(fighter)->clip == (int)((descriptor - 0x4fad7c) / 12)))) {
+      (fighter->current_move == move ||
+          (descriptor != 0 && fighter_move(fighter)->clip == (int)((descriptor - RETAIL_ANIMATION_TABLE) / RETAIL_ANIMATION_DESCRIPTOR_SIZE)))) {
     return;
   }
   fighter_start_move(fighter, state, move);
@@ -189,13 +191,17 @@ WeaponStrike weapon_retail_strike(uint32_t parameters, uint32_t motion, int acti
   const Mk4Image *image = retail_vm_image();
   require(parameters >= 0x4ec400 && parameters <= 0x4ecb00 && parameters % 4 == 0, "Invalid native weapon parameter row");
   uint32_t descriptor = mk4_image_u32(image, parameters) * 4;
-  require(
-      descriptor >= 0x4fad7c && descriptor < 0x4fad7c + MK4_CLIP_COUNT * 12 && (descriptor - 0x4fad7c) % 12 == 0, "Invalid native weapon animation descriptor");
-  uint32_t count = mk4_image_u32(image, descriptor + 4);
+  require(descriptor >= RETAIL_ANIMATION_TABLE && descriptor < RETAIL_ANIMATION_TABLE + MK4_CLIP_COUNT * RETAIL_ANIMATION_DESCRIPTOR_SIZE &&
+              (descriptor - RETAIL_ANIMATION_TABLE) % RETAIL_ANIMATION_DESCRIPTOR_SIZE == 0,
+      "Invalid native weapon animation descriptor");
+  uint32_t count = mk4_image_u32(image, descriptor + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   require(count > 0 && count <= 65535, "Invalid native weapon animation length");
   uint32_t phases = mk4_image_u32(image, parameters + 4);
   uint32_t query = mk4_image_u32(image, parameters + 8);
-  WeaponStrike strike = {.move = {.clip = (int)((descriptor - 0x4fad7c) / 12), .last = (int)count - 1, .flags = SF_LOCK | SF_RECORD, .action = action},
+  WeaponStrike strike = {.move = {.clip = (int)((descriptor - RETAIL_ANIMATION_TABLE) / RETAIL_ANIMATION_DESCRIPTOR_SIZE),
+                             .last = (int)count - 1,
+                             .flags = SF_LOCK | SF_RECORD,
+                             .action = action},
       .record = retail_vm_attack_record(image, mk4_image_u32(image, 0x53d0c0 + (query & 255) * 4) * 4),
       .first = (int)((query >> 8) & 255),
       .windup = (int)(phases >> 24),

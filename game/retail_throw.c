@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "retail_native.h"
 #include "retail_data.h"
 #include "retail_vm.h"
@@ -13,7 +14,7 @@ static void victim_begin(Fighter *fighter) {
   int sample = fighter_sample(fighter);
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
   if (clip >= 0) {
-    retail_vm_bind_animation(fighter, 0x4fad7c + (uint32_t)clip * 12, sample);
+    retail_vm_bind_animation(fighter, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE, sample);
   }
   mk4_script_touchable(fighter);
 }
@@ -120,7 +121,7 @@ static void victim_4856a0(Fighter *fighter) {
 static void victim_stance_blend(Fighter *fighter) {
   const Mk4Image *image = retail_vm_image();
   int clip = retail_stance_clip(image, (unsigned)fighter->roster, false);
-  unsigned count = mk4_image_u32(image, 0x4fad7c + (uint32_t)clip * 12 + 4);
+  unsigned count = mk4_image_u32(image, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   require(count > 0 && count <= 65535, "Invalid native stance animation length");
   mk4_mmove_blend_to(fighter, clip, (int)count, 0, 0x3333, 0, mk4_mmove_thrown_finish);
 }
@@ -389,7 +390,7 @@ void retail_throw_pair_start(Fighter *fighter) {
 static void idle_pose(Fighter *fighter) {
   const Mk4Image *image = retail_vm_image();
   int clip = retail_stance_clip(image, (unsigned)fighter->roster, false);
-  retail_vm_bind_animation(fighter, 0x4fad7c + (uint32_t)clip * 12, 0);
+  retail_vm_bind_animation(fighter, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE, 0);
 }
 
 void retail_lk_return(Fighter *fighter) {

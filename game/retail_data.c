@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "retail_data.h"
 #include "retail_native.h"
 #include <stdio.h>
@@ -16,11 +17,11 @@ unsigned retail_native_character_slot(unsigned character) {
 uint32_t retail_action_target(const Mk4Image *image, unsigned flags, unsigned action) {
   // clang-format off: Keep table entries on one row, including long rows.
   static const uint32_t dispatch[][2] = {
-    {1, 0x4e6ef8},
-    {2, 0x4ed828},
-    {4, 0x4e8910},
-    {8, 0x4e7008},
-    {0x20, 0x4dfc90}
+    {1, RETAIL_ACTION_TABLE_1},
+    {2, RETAIL_ACTION_TABLE_2},
+    {4, RETAIL_ACTION_TABLE_4},
+    {8, RETAIL_ACTION_TABLE_8},
+    {0x20, RETAIL_ACTION_TABLE_32}
   };
   // clang-format on
   require(action < 256, "Invalid retail action index");
@@ -37,25 +38,26 @@ RetailCommandCursor retail_command_cursor(const Mk4Image *image, unsigned charac
   uint32_t table = 0;
   switch (button) {
     case BUTTON_UP:
-      table = player ? 0x53cb10 : 0x53c888;
+      table = player ? RETAIL_P2_UP_COMMAND_TABLE : RETAIL_P1_UP_COMMAND_TABLE;
       break;
     case BUTTON_HIGH_PUNCH:
-      table = player ? 0x53cb58 : 0x53c8d0;
+      table = player ? RETAIL_P2_HP_COMMAND_TABLE : RETAIL_P1_HP_COMMAND_TABLE;
       break;
     case BUTTON_LOW_PUNCH:
-      table = player ? 0x53cba0 : 0x53c918;
+      table = player ? RETAIL_P2_LP_COMMAND_TABLE : RETAIL_P1_LP_COMMAND_TABLE;
       break;
     case BUTTON_BLOCK:
-      table = player ? 0x53cbe8 : 0x53c960;
+      table = player ? RETAIL_P2_BLOCK_COMMAND_TABLE : RETAIL_P1_BLOCK_COMMAND_TABLE;
       break;
     case BUTTON_HIGH_KICK:
-      table = player ? 0x53cc30 : 0x53c9a8;
+      table = player ? RETAIL_P2_HK_COMMAND_TABLE : RETAIL_P1_HK_COMMAND_TABLE;
       break;
     case BUTTON_LOW_KICK:
-      table = released ? (player ? 0x53ca80 : 0x53ca38) : (player ? 0x53cc78 : 0x53c9f0);
+      table = released ? (player ? RETAIL_P2_LK_RELEASE_COMMAND_TABLE : RETAIL_P1_LK_RELEASE_COMMAND_TABLE)
+                       : (player ? RETAIL_P2_LK_COMMAND_TABLE : RETAIL_P1_LK_COMMAND_TABLE);
       break;
     case BUTTON_RUN:
-      table = player ? 0x53ccc0 : 0x53cac8;
+      table = player ? RETAIL_P2_RUN_COMMAND_TABLE : RETAIL_P1_RUN_COMMAND_TABLE;
       break;
     default:
       return (RetailCommandCursor){0};
@@ -94,14 +96,16 @@ bool retail_command_next(const Mk4Image *image, RetailCommandCursor *cursor, Ret
 
 uint32_t retail_cpu_target(const Mk4Image *image, unsigned character, unsigned distance) {
   require(distance < 4, "Invalid retail CPU table");
-  uint32_t word = mk4_image_u32(image, 0x4df8e8 + distance * 0x40 + retail_character_slot(character) * 4);
+  uint32_t word = mk4_image_u32(image, RETAIL_CPU_ACTION_TABLES + distance * RETAIL_CPU_ACTION_TABLE_STRIDE + retail_character_slot(character) * 4);
   return retail_action_target(image, (word >> 16) & 255u, word & 255u);
 }
 
 int retail_stance_clip(const Mk4Image *image, unsigned character, bool walking) {
-  uint32_t packed = mk4_image_u32(image, (walking ? 0x53d388 : 0x53d408) + retail_character_slot(character) * 4);
-  require(packed >= 0x4fad7c / 4 && packed < (0x4fad7c + MK4_CLIP_COUNT * 12) / 4 && (packed * 4 - 0x4fad7c) % 12 == 0, "Invalid retail stance descriptor");
-  return (int)((packed * 4 - 0x4fad7c) / 12);
+  uint32_t packed = mk4_image_u32(image, (walking ? RETAIL_WALK_ANIMATION_TABLE : RETAIL_IDLE_ANIMATION_TABLE) + retail_character_slot(character) * 4);
+  require(packed >= RETAIL_ANIMATION_TABLE / 4 && packed < (RETAIL_ANIMATION_TABLE + MK4_CLIP_COUNT * RETAIL_ANIMATION_DESCRIPTOR_SIZE) / 4 &&
+              (packed * 4 - RETAIL_ANIMATION_TABLE) % RETAIL_ANIMATION_DESCRIPTOR_SIZE == 0,
+      "Invalid retail stance descriptor");
+  return (int)((packed * 4 - RETAIL_ANIMATION_TABLE) / RETAIL_ANIMATION_DESCRIPTOR_SIZE);
 }
 
 /* Compatibility view for UI and existing callers that inspect controls. The
@@ -152,7 +156,7 @@ void retail_bind_commands(Controls *controls, const Mk4Image *image, unsigned ch
 
 void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster *roster) {
   require(character < MK4_ROSTER_COUNT && roster != NULL, "Invalid retail roster destination");
-  uint32_t name = mk4_image_u32(image, 0x4ee1f0 + character * 4);
+  uint32_t name = mk4_image_u32(image, RETAIL_ROSTER_NAME_TABLE + character * 4);
   View memory = view(image->bytes);
   require(name >= 0x400000, "Invalid retail character name");
   size_t i = 0;
@@ -164,7 +168,7 @@ void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster 
     }
   }
   require(i + 1 < sizeof roster->name, "Unterminated retail character name");
-  uint32_t record = 0x4eb2e8 + character * 32;
+  uint32_t record = RETAIL_ROSTER_RECORD_TABLE + character * RETAIL_ROSTER_RECORD_SIZE;
   uint32_t slot = mk4_image_u32(image, record) * 4;
   uint32_t root = mk4_image_u32(image, record + 12) * 4;
   require(mk4_image_u32(image, root + 4) == slot, "Retail roster rig slot mismatch");
@@ -174,7 +178,7 @@ void retail_roster_read(const Mk4Image *image, unsigned character, RetailRoster 
 }
 
 uint32_t retail_finish_target(const Mk4Image *image, unsigned character, bool second) {
-  uint32_t target = mk4_image_u32(image, (second ? 0x4dfe90 : 0x4e0498) + retail_character_slot(character) * 4);
+  uint32_t target = mk4_image_u32(image, (second ? RETAIL_SECOND_FINISH_TABLE : RETAIL_FIRST_FINISH_TABLE) + retail_character_slot(character) * 4);
   require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail scene native target");
   return target;
 }
@@ -183,21 +187,21 @@ q16 retail_cpu_finish_distance(const Mk4Image *image, unsigned character, bool s
   /* 43460d maps the boss to14 for CPU approach distance, independently of
    * its scene support. Hidden scene aliases retain their shared data slot. */
   unsigned slot = character == 15 ? 14 : retail_character_slot(character);
-  q16 distance = (q16)mk4_image_u32(image, (second ? 0x4dfe50 : 0x4dfe10) + slot * 4);
+  q16 distance = (q16)mk4_image_u32(image, (second ? RETAIL_SECOND_FINISH_DISTANCE_TABLE : RETAIL_FIRST_FINISH_DISTANCE_TABLE) + slot * 4);
   require(distance >= 0 && distance <= 16 * Q16_ONE, "Invalid retail CPU finish distance");
   return distance;
 }
 
 uint32_t retail_reaction_target(const Mk4Image *image, unsigned reaction) {
   require(reaction < RETAIL_REACTION_COUNT, "Invalid retail reaction selector");
-  uint32_t target = mk4_image_u32(image, 0x4ea4e8 + reaction * 4);
+  uint32_t target = mk4_image_u32(image, RETAIL_REACTION_TABLE + reaction * 4);
   require(target == 0 || (target >= 0x400000 && target < 0x4d0000), "Invalid retail reaction native");
   return target;
 }
 
 uint32_t retail_lk_target(const Mk4Image *image, unsigned character) {
   unsigned slot = retail_native_character_slot(character);
-  uint32_t target = mk4_image_u32(image, 0x4ddfb8 + slot * 4);
+  uint32_t target = mk4_image_u32(image, RETAIL_LK_THROW_TABLE + slot * 4);
   require(target >= 0x400000 && target < 0x4d0000, "Invalid native LK entry");
   return target;
 }
@@ -260,7 +264,7 @@ void retail_bind_move_list(CharacterDef *definition, const Mk4Image *image, unsi
  * roster slot. Script, stance and native action aliases do not apply here. */
 void retail_weapon_read(const Mk4Image *image, unsigned character, RetailWeaponInventory *inventory) {
   require(character < MK4_ROSTER_COUNT && inventory != NULL, "Invalid retail inventory owner");
-  uint32_t address = mk4_image_u32(image, 0x53d5c0 + character * 4) * 4;
+  uint32_t address = mk4_image_u32(image, RETAIL_WEAPON_INVENTORY_TABLE + character * 4) * 4;
   require(address >= 0x4d0000 && address <= 0x4ef000 - 32 && address % 4 == 0, "Invalid retail inventory descriptor");
   *inventory = (RetailWeaponInventory){.address = address,
       .type = mk4_image_u32(image, address),

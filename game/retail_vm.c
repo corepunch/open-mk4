@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "retail_vm.h"
 #include "script.h"
 #include "retail_native.h"
@@ -74,11 +75,12 @@ void retail_vm_cancel(Fighter *fighter) {
 
 static void bind_image(Fighter *fighter, const Mk4Image *image, uint32_t packed, int first) {
   /* Descriptors are packed word addresses after the retail data fixups. */
-  if (packed < 0x4fad7c / 4 || packed >= (0x4fad7c + MK4_CLIP_COUNT * 12) / 4 || (packed * 4 - 0x4fad7c) % 12 != 0) {
+  if (packed < RETAIL_ANIMATION_TABLE / 4 || packed >= (RETAIL_ANIMATION_TABLE + MK4_CLIP_COUNT * RETAIL_ANIMATION_DESCRIPTOR_SIZE) / 4 ||
+      (packed * 4 - RETAIL_ANIMATION_TABLE) % RETAIL_ANIMATION_DESCRIPTOR_SIZE != 0) {
     vm_error(fighter, "invalid animation descriptor");
   }
-  int clip = (int)((packed * 4 - 0x4fad7c) / 12);
-  uint32_t count = mk4_image_u32(image, packed * 4 + 4);
+  int clip = (int)((packed * 4 - RETAIL_ANIMATION_TABLE) / RETAIL_ANIMATION_DESCRIPTOR_SIZE);
+  uint32_t count = mk4_image_u32(image, packed * 4 + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   if (count == 0 || count > 65535 || first >= (int)count) {
     vm_error(fighter, "invalid animation length or initial cursor");
   }
@@ -169,7 +171,8 @@ void retail_vm_forward_return(Fighter *fighter) {
 }
 
 AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
-  require(address >= 0x4eb000 && address <= 0x4ec2a8 - 24, "Attack record outside reviewed retail data");
+  require(
+      address >= RETAIL_ATTACK_RECORDS_BEGIN && address <= RETAIL_ATTACK_RECORDS_END - RETAIL_ATTACK_RECORD_SIZE, "Attack record outside reviewed retail data");
   uint32_t reactions = mk4_image_u32(image, address + 16);
   return (AttackRecord){(q16)mk4_image_u32(image, address), (q16)mk4_image_u32(image, address + 4), (q16)mk4_image_u32(image, address + 8),
       (q16)mk4_image_u32(image, address + 12), reactions & 255u, (reactions >> 8) & 255u, (reactions >> 16) & 255u, reactions >> 24,
@@ -179,7 +182,7 @@ AttackRecord retail_vm_attack_record(const Mk4Image *image, uint32_t address) {
 static void contact(Fighter *fighter, uint32_t table, unsigned selector) {
   RetailVm *vm = &fighter->retail_vm;
   uint32_t packed = mk4_image_u32(vm->image, table + selector * 4);
-  if (packed < 0x4eb000 / 4 || packed > (0x4ec2a8 - 24) / 4) {
+  if (packed < RETAIL_ATTACK_RECORDS_BEGIN / 4 || packed > (RETAIL_ATTACK_RECORDS_END - RETAIL_ATTACK_RECORD_SIZE) / 4) {
     vm_error(fighter, "contact record outside reviewed data");
   }
   AttackRecord record = retail_vm_attack_record(vm->image, packed * 4);
@@ -219,7 +222,7 @@ void retail_vm_start_at(Fighter *fighter, const Mk4Image *image, uint32_t entry,
   fighter->continuation++;
   const MoveDef *move = fighter_move(fighter);
   if (move->clip >= 0 && move->last == MOVE_END) {
-    bind(fighter, (0x4fad7c + (uint32_t)move->clip * 12) / 4, fighter_sample(fighter));
+    bind(fighter, (RETAIL_ANIMATION_TABLE + (uint32_t)move->clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE) / 4, fighter_sample(fighter));
   }
   retail_vm_step(fighter);
 }

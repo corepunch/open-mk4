@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "retail_native.h"
 #include "retail_data.h"
 #include "retail_vm.h"
@@ -346,7 +347,7 @@ static void knee_blend(Fighter *fighter) {
   close_followup(fighter);
   const Mk4Image *image = retail_vm_image();
   int clip = fighter->armed ? 286 : retail_stance_clip(image, (unsigned)fighter->roster, false);
-  int count = (int)mk4_image_u32(image, 0x4fad7c + (uint32_t)clip * 12 + 4);
+  int count = (int)mk4_image_u32(image, RETAIL_ANIMATION_TABLE + (uint32_t)clip * RETAIL_ANIMATION_DESCRIPTOR_SIZE + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   mk4_mmove_blend_to(fighter, clip, count, 0, 0x1999, 0, fighter_ready);
 }
 
