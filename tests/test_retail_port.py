@@ -61,7 +61,7 @@ class PortTests(unittest.TestCase):
         self.assertIn('script_spear_return', spear)
         self.assertIn('Typed runtime boundaries', spear)
         other = port_text(self.disassembly, 'jab', 5, 12)
-        self.assertIn('No portable C entry is indexed', other)
+        self.assertIn('retail_normal_low_punch', other)
         self.assertNotIn('static void scorpion_jab(', other)
 
     def test_shared_instruction_budget_and_atomic_c_bodies(self):

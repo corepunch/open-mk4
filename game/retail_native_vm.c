@@ -1026,7 +1026,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           /* 490350 twice, through488bd0, leaves the original facing. */
           retail_getup_roll(fighter);
           return true;
-        case 0x486530:
+        case RETAIL_NATIVE_THAW_LANDING:
           retail_thaw_land(fighter);
           return true;
         case 0x486000:

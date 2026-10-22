@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 /* Native service cluster: 44f5e0, 44f620, 44f6f0, 49cb60. */
-static const MoveDef n44f5e0_first_owner = {.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n44f5e0_first_victim = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
+static const MoveDef n44f5e0_first_owner = {.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n44f5e0_first_victim = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n44f5e0_first_intro[] = {
   {{.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD}, 0, 0, 1, 0x32f1, 0x3333},
@@ -240,17 +240,17 @@ enum {
 };
 
 /* F,B,F,F+LK -> 467ce0 -> 43cbb0 -> 4e0498[12] = 446d00 (heart rip). */
-static const MoveDef n446f80_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n446f80_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n446f80_owner_female[] = {
-  {{.clip = 403, .last = 237, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 403, .last = 237, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
 };
 static const SceneClip n446f80_owner_male[] = {
-  {{.clip = 402, .last = 237, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 402, .last = 237, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
 };
 static const SceneClip n446f80_victim_blends[] = {
-  {{.clip = 389, .last = 0, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
-  {{.clip = 404, .last = 204, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 389, .last = 0, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 404, .last = 204, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
 };
 // clang-format on
 /* 446fa0 -> 406dd0(50831c): ja_fat_g.geo mesh 0 on the owner's joint 10,
@@ -407,7 +407,7 @@ void jarek_fatality_1(Fighter *fighter) {
 #define FIRST_OWNER_READY 1
 #define FIRST_VICTIM_DONE 2
 
-static const MoveDef n449620_first_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n449620_first_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n449620_first_owner_blend[] = {
@@ -615,9 +615,9 @@ enum {
 #define FIRST_OWNER_READY 1
 #define FIRST_VICTIM_DONE 2
 #define FIRST_TORSO_DONE 4
-static const MoveDef n44aeb0_first_torso = {.clip = 442, .last = 335, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n44aeb0_first_torso = {.clip = 442, .last = 335, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 /* 44ad70 holds the owner's current standing pose for sixteen visits. */
-static const MoveDef n44aeb0_first_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n44aeb0_first_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n44aeb0_owner_blend[] = {
   {{.clip = 440, .last = 439, .flags = SF_LOCK | SF_RECORD}, 0, 0, 1, 0x32f1, 0x3333},
@@ -860,11 +860,11 @@ enum {
  * blends 389 -> 424 then loops 417; the leg runs 422 then loops 423. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n44be10_owner_blends[] = {
-  {{.clip = 420, .last = 251, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 420, .last = 251, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
 };
 static const SceneClip n44be10_victim_blends[] = {
-  {{.clip = 389, .last = 0, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
-  {{.clip = 424, .last = 251, .flags = SF_LOCK | SF_RECORD, .action = 0x700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 389, .last = 0, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
+  {{.clip = 424, .last = 251, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, 0, 0, 1, 0x32f1, 0x3333},
 };
 /* 48a910 camera tracks 4e1a80 (3 + 4 controls) and 4e1ad8 (4 + 4 controls),
  * both stepped at 0xccc; 44c7dc holds 45 ticks between them. Retail X,Z,Y
@@ -894,8 +894,8 @@ static const CameraShot n44be10_camera_shots[] = {
 };
 // clang-format on
 /* The owner keeps his stance pose through 44bd9b's sixteen-tick setup. */
-static const MoveDef n44be10_owner_hold = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n44be10_leg_move = {.clip = 422, .last = 134, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n44be10_owner_hold = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n44be10_leg_move = {.clip = 422, .last = 134, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 /* 44c550 -> 473ed0: stump blood from joint 12 for 0x8a ticks after ten. */
 static const ParticleVisual n44be10_stump_blood_visual = {.animation = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE}};
 static const ParticleSpray n44be10_stump_blood = {
@@ -1090,7 +1090,7 @@ enum {
 #define FIRST_VICTIM_DONE 2
 #define FIRST_PIECES_DONE (4 | 8 | 16 | 32)
 
-static const MoveDef n4528a0_first_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n4528a0_first_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n4528a0_owner_intro[] = {
   {{.clip = 425, .last = 93, .flags = SF_LOCK | SF_RECORD}, 0, 0, 1, 0x32f1, 0x3333},
@@ -1111,10 +1111,10 @@ static const int n4528a0_shake_rows[][3] = {
   [7] = {2, 3, 0x0f5c},
 };
 // clang-format on
-static const MoveDef n4528a0_torso_piece = {.clip = 429, .last = 50, .action = 0x700};
-static const MoveDef n4528a0_head_piece = {.clip = 430, .last = 124, .action = 0x700};
-static const MoveDef n4528a0_left_arm_piece = {.clip = 427, .last = 69, .action = 0x700};
-static const MoveDef n4528a0_right_arm_piece = {.clip = 426, .last = 88, .action = 0x700};
+static const MoveDef n4528a0_torso_piece = {.clip = 429, .last = 50, .action = ACTION_RETAIL_0700};
+static const MoveDef n4528a0_head_piece = {.clip = 430, .last = 124, .action = ACTION_RETAIL_0700};
+static const MoveDef n4528a0_left_arm_piece = {.clip = 427, .last = 69, .action = ACTION_RETAIL_0700};
+static const MoveDef n4528a0_right_arm_piece = {.clip = 426, .last = 88, .action = ACTION_RETAIL_0700};
 
 static void n4528a0_shake(int row) {
   battle_camera_shake(n4528a0_shake_rows[row][0], n4528a0_shake_rows[row][1], n4528a0_shake_rows[row][2]);
@@ -1398,7 +1398,7 @@ enum {
 /* Fatality I: 467ce0 -> 43cbb0 -> 4e0498[6] = 455000. Shinnok vanishes
  * through clip 12 while a giant hand (rig 5083c4, nf_fat_g.geo) rises in
  * front of him, squeezes the victim and drops it; he then leaps back in. */
-static const MoveDef n455110_grab_hand_pose = {.clip = 434, .last = 379, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n455110_grab_hand_pose = {.clip = 434, .last = 379, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 /* 4558f0 states 2/3: 475190 blends descriptor 4fbfb8 (clip 389), then
  * 475340 blends 4fc1e0 (clip 435), both with 475250's .2 start and step. */
@@ -1793,7 +1793,7 @@ enum {
 };
 
 /* BLK D,D,U,D record 4e4520 -> 467ce0 -> 43cbb0 -> 4e0498[9] = 44d340. */
-static const MoveDef n44d4a0_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n44d4a0_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 /* 475250/475190/475340 blend at step 0x32f1 from weight 0x3333. */
 static const SceneClip n44d4a0_owner_kiss[] = {

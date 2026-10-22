@@ -2,10 +2,11 @@
 #define MK4_RETAIL_NATIVE_H
 #include "game.h"
 
-/* Verified local EXE entry points for the shared fire phase boundary. */
+/* Verified local EXE entry points for shared script/native phase boundaries. */
 enum {
   RETAIL_NATIVE_FIRE_CONTACT = 0x468640,
-  RETAIL_NATIVE_FIRE_RECOVERY = 0x4688e0
+  RETAIL_NATIVE_FIRE_RECOVERY = 0x4688e0,
+  RETAIL_NATIVE_THAW_LANDING = 0x486530
 };
 
 void retail_fireball(Fighter *fighter);

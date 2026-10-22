@@ -17,7 +17,7 @@ enum {
 #define FIRST_OWNER_READY 1
 #define FIRST_VICTIM_DONE 2
 #define FIRST_TORSO_DONE 4
-static const MoveDef n448480_first_body = {.clip = 408, .last = 142, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n448480_first_body = {.clip = 408, .last = 142, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 static const SceneClip n448480_owner_male[] = {
   {{.clip = 406, .last = 376, .flags = SF_LOCK | SF_RECORD}, 0, 0, 1, 0x32f1, 0x3333},
@@ -245,8 +245,8 @@ enum {
   n413970_CAGE_EVENT_FATALITY_2
 };
 
-static const MoveDef n413970_owner_pose = {.clip = 293, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n413970_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n413970_owner_pose = {.clip = 293, .last = 19, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n413970_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 /* 413ce0 uses4d17b8: the additive variants of the same ten share2
  * roots as Cage's orb, attached to joint10 at.7 scale. */
 static const MeshAnimation n413970_charge_mesh = {
@@ -356,8 +356,8 @@ void cage_fatality_2(Fighter *fighter) {
 }
 
 /* Native service cluster: 41ef20, 45ac30, 4816f0, 4817c0. */
-static const MoveDef n41ef20_owner_pose = {.clip = 291, .last = 72, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n41ef20_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
+static const MoveDef n41ef20_owner_pose = {.clip = 291, .last = 72, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n41ef20_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 /*4818f0 reads4ea420 in this order, separating one joint every five visits. */
 static const int n41ef20_torn_joints[] = {2, 10, 9, 8, 7, 6, 5, 3, 12, 11, 14, 13, 16, 15};
 
@@ -459,9 +459,9 @@ enum {
 
 /* U,U,F,F+BLK -> 467cd0 -> 43bd70 -> 4dfe90[12] = 41df20. After the shared
  * 41aaf0 preamble the owner runs generated 4d2db0 on clip 577. */
-static const MoveDef n41de30_owner_pose = {.clip = 577, .last = 114, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n41de30_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n41de30_victim_scene = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n41de30_owner_pose = {.clip = 577, .last = 114, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n41de30_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n41de30_victim_scene = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 /* 41de30 -> 406dd0(50c604): share2 mesh 0, .113 forward of the node. */
 static const MeshAnimation n41de30_glow_mesh = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2, .offset = {0, 0, 0x1ced}};
 
@@ -585,8 +585,8 @@ void jarek_fatality_2(Fighter *fighter) {
  * current clip (4e5b38) and parks it (466df0), while 4e5a80 binds clip 284
  * on Jax, waits 20 ticks and enters 466a90: 475530 places the victim 0.85
  * units ahead, 15 ticks later 4e5a98 runs the clap. */
-static const MoveDef n412d80_second_owner_pose = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n412d80_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n412d80_second_owner_pose = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n412d80_second_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 /* 412ec0 -> 4d1748: share2 mesh 281 for 30 ticks at joint 10, scale 0x4ccc. */
 static const MeshAnimation n412d80_second_flash_mesh = {
     .first = 281, .count = 1, .period = 1, .scale = 0x4ccc, .source = MESH_SHARED2, .offset = {7040, 6272, 0}, .additive = true};
@@ -682,8 +682,8 @@ enum {
  * The owner levitates on clips 493/486/487 (4dff88) and throws the skull
  * object 43c140; within 1.3 units it installs reaction 178 (4814c0), whose
  * head task 455bf0 and script 4ea240 -> 46a500 -> 4e5be0 fell the victim. */
-static const MoveDef n406ba0_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n406ba0_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
+static const MoveDef n406ba0_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n406ba0_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 /* 4dffe8 selects the skull rig 50c8f8 (share2 mesh 48): forward .2, Y -.2. */
 static const MeshAnimation n406ba0_skull_mesh = {.first = 48, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_SHARED2};
 
@@ -805,6 +805,13 @@ void kai_fatality_2(Fighter *fighter) {
 }
 
 /* Native service cluster: 43c500, 43c540, 45ac30, 48f9f0. */
+enum {
+  DRAGON_VICTIM_SCRIPT = 0x4e1fa8,
+  DRAGON_VICTIM_ANIMATION_DESCRIPTOR = 0x4fc120,
+  DRAGON_ACTOR_START_DELAY = 121,
+  DRAGON_VICTIM_START_DELAY = 269
+};
+
 #define SCENE(c, a, b) {{.clip = c, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700}, a, b, 1, 0, 0}
 static void n43c500_dragon_stream(Fighter *fighter);
 static void n43c500_dragon_spawn(Fighter *fighter);
@@ -859,7 +866,7 @@ static void n43c500_dragon_actor_start(Fighter *fighter) {
 
 /*451190: native389/419 blends precede original4e1fa8 playback/retirement. */
 static void n43c500_dragon_victim_script(Fighter *victim) {
-  retail_vm_enter(victim, 0x4e1fa8, fighter_stop_mmove);
+  retail_vm_enter(victim, DRAGON_VICTIM_SCRIPT, fighter_stop_mmove);
 }
 
 static void n43c500_dragon_victim_start(Fighter *fighter) {
@@ -890,17 +897,18 @@ static void n43c500_dragon_detach(Fighter *fighter) {
 
 static void n43c500_dragon_fatality_script(Fighter *fighter) {
   int first = g_battle.phase_ticks + 1;
-  int actor_end = 121 + scene_frame_count(n43c500_dragon_actor, 2);
-  int victim_end = 269 + scene_frame_count(n43c500_dragon_target, NATIVE_COUNT(n43c500_dragon_target)) + (int)mk4_image_u32(retail_vm_image(), 0x4fc120 + 4);
+  int actor_end = DRAGON_ACTOR_START_DELAY + scene_frame_count(n43c500_dragon_actor, 2);
+  int victim_end = DRAGON_VICTIM_START_DELAY + scene_frame_count(n43c500_dragon_target, NATIVE_COUNT(n43c500_dragon_target)) +
+                   (int)mk4_image_u32(retail_vm_image(), DRAGON_VICTIM_ANIMATION_DESCRIPTOR + RETAIL_ANIMATION_FRAME_COUNT_OFFSET);
   int last = maxi(actor_end, victim_end);
   native_motion_begin(fighter, last - first + 1, liu_kang_finish_scene);
   for (int frame = first; frame <= last; ++frame) {
     FighterFn action = n43c500_dragon_stream;
     if (frame == 101) {
       action = n43c500_dragon_spawn;
-    } else if (frame == 121) {
+    } else if (frame == DRAGON_ACTOR_START_DELAY) {
       action = n43c500_dragon_actor_start;
-    } else if (frame == 269) {
+    } else if (frame == DRAGON_VICTIM_START_DELAY) {
       action = n43c500_dragon_victim_start;
     } else if (frame == 281) {
       action = n43c500_dragon_bite_sound;
@@ -1101,7 +1109,7 @@ enum {
 #define SECOND_ARRIVED 1
 #define SECOND_HEADSHOT 2
 
-static const MoveDef n41c4b0_second_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n41c4b0_second_owner = {.clip = 284, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 
 /* 45e530: 0x1cccc <= distance <= 0x30000, then the 45e5e0 finish window. */
 /* A star leaves the owner's hand joint (9 or 10) and homes on its target
@@ -1278,9 +1286,9 @@ enum {
 
 /* UP record 4e4600 (gate 45e250) targets 467ce0, which selects
  * 4e0498[10] = 4539b0: Reptile's head-bite scene. */
-static const MoveDef n453ae0_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
+static const MoveDef n453ae0_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 /* 4539b0 waits 31 visits before 475250; the stance pose is not advanced. */
-static const MoveDef n453ae0_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n453ae0_owner_wait = {.clip = CLIP_ASSET_IDLE, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 // clang-format off: Keep table entries on one row, including long rows.
 /* 475250 blends 4fc1bc (clip 432) at step 0x32f1 from 0x3333. */
 static const SceneClip n453ae0_owner_blend[] = {
@@ -1461,8 +1469,8 @@ enum {
 
 /* HP record 4e457c (U,D,D,D, window 50, gate 45e530) targets 467cd0, which
  * selects 4dfe90[10] = 43bf40: shared setup 41aaf0, then VM 4dff08. */
-static const MoveDef n41e490_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n41e490_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
+static const MoveDef n41e490_owner_pose = {.clip = 493, .last = 39, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n41e490_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 /* 4818f0 reads 4ea420 in this order, separating one joint every five visits. */
 static const int n41e490_torn_joints[] = {2, 10, 9, 8, 7, 6, 5, 3, 12, 11, 14, 13, 16, 15};
 /* 41e490 droplets reuse the 4d16d0 shared meshes 340..344; 40f380 adds
@@ -1809,7 +1817,7 @@ void shinnok_fatality_maybe_complete(Fighter *owner) {
 /* Both fatalities start from a locked standing owner (stance clip 283,
  * 53d408[6]) and the dizzy victim. */
 void shinnok_fatality_begin(Fighter *fighter, unsigned done) {
-  static const MoveDef owner_pose = {.clip = 283, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+  static const MoveDef owner_pose = {.clip = 283, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
   Fighter *victim = (Fighter *)fighter_opponent(fighter);
   fighter_start_move(fighter, S_PUNCH, &owner_pose);
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE;
@@ -1833,8 +1841,8 @@ enum {
 /* Fatality II: 467cd0 -> 43bd70 -> 4dfe90[6] = 43c6d0. The victim floats
  * up while Shinnok vanishes; two mirrored giant hands (rig 5083c4) clap
  * and burst it, then he leaps back in. */
-static const MoveDef n41db70_clap_hand_pose = {.clip = 541, .last = 199, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
-static const MoveDef n41db70_victim_pose = {.clip = 542, .last = 11, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = 0x700};
+static const MoveDef n41db70_clap_hand_pose = {.clip = 541, .last = 199, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
+static const MoveDef n41db70_victim_pose = {.clip = 542, .last = 11, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_0700};
 
 /* Rows of the independent 46a280/46a380 lift task. */
 #define LIFT_ROWS 400
@@ -2162,9 +2170,9 @@ enum {
 };
 
 /* HK D,F,D,F record 4e453c -> 467cd0 -> 43bd70 -> 4dfe90[9] = 464f30. */
-static const MoveDef n45ac30_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n45ac30_victim_pose = {.clip = 13, .last = 55, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 /* 4611c0 selects the roster stance 53d408[9] = clip 439. */
-static const MoveDef n45ac30_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
+static const MoveDef n45ac30_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = ACTION_RETAIL_0700};
 
 /* 45e570: close fatality range (<= 1 unit) and the shared finish window. */
 /* Task-619 cue lists: {visits before the action, token or random list}. */

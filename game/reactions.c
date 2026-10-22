@@ -323,6 +323,10 @@ static void react_block(Fighter *fighter) {
 /* 486230/486310/486340/4863b0: six 6-tick shakes, 88-tick hold,
  * three 6-tick shakes. Pose and body stay fixed; cosmetic shake is omitted.
  * Air thaw: 4e9d38 sets gravity 0x147 and waits for landing, then 486530. */
+enum {
+  AIRBORNE_THAW_SCRIPT = 0x4e9d38
+};
+
 static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = 0x1003};
 static const MoveDef thaw_hop = {.clip = 310, .first = 7, .last = 18, .flags = SF_LOCK, .action = 0x1005};
 
@@ -335,7 +339,7 @@ void retail_thaw_land(Fighter *fighter) {
 static void frozen_thaw(Fighter *fighter) {
   fighter->appearance = APPEARANCE_NORMAL;
   if (fighter_airborne(fighter)) {
-    retail_vm_enter(fighter, 0x4e9d38, retail_controller_return);
+    retail_vm_enter(fighter, AIRBORNE_THAW_SCRIPT, retail_controller_return);
   } else {
     fighter->flags &= ~(unsigned)FF_NO_GUARD;
     neutral(fighter);
