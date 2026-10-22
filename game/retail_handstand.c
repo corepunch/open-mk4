@@ -249,19 +249,21 @@ void kai_handstand_reaction(Fighter *fighter) {
   static const MoveDef stagger = {.clip = 134, .last = 17, .flags = SF_LOCK | SF_REACTION, .action = 0x4001};
   static const MoveDef knockdown = {.clip = 131, .last = 79, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
   bool crouch = fighter->action == 0x2001 || fighter->action == 0x2010 || fighter->action == 0x2002 || fighter->action == 0x106 || fighter->action == 0x107;
-  require(retail_reaction_native(fighter) == 0x482de0 || retail_reaction_native(fighter) == 0x488a50 || retail_reaction_native(fighter) == 0x488a80,
+  require(retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_482DE0 ||
+              retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ||
+              retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80,
       "Unexpected handstand victim reaction");
   mk4_script_stop_body(fighter);
-  if (retail_reaction_native(fighter) != 0x488a80) {
+  if (retail_reaction_native(fighter) != RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  fighter_start_move(
-      fighter, retail_reaction_native(fighter) == 0x488a50 ? S_KNOCKDOWN : S_HIT, retail_reaction_native(fighter) == 0x488a50 ? &knockdown : &stagger);
+  fighter_start_move(fighter, retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ? S_KNOCKDOWN : S_HIT,
+      retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
-  if (retail_reaction_native(fighter) == 0x488a50) {
+  if (retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50) {
     retail_vm_enter(fighter, 0x4ea170, mk4_mmove_thrown_finish);
-  } else if (retail_reaction_native(fighter) == 0x488a80) {
+  } else if (retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80) {
     fighter->body.physics = fighter_friction;
     retail_vm_enter(fighter, 0x4ea1c0, mk4_mmove_thrown_finish);
   } else {

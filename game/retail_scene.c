@@ -219,13 +219,13 @@ void retail_scene_reaction(Fighter *fighter) {
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
   uint32_t script;
   switch (entry) {
-    case 0x464e30:
+    case RETAIL_NATIVE_SCENE_REACTION_464E30:
       script = 0x4e5770;
       break;
-    case 0x465200:
+    case RETAIL_NATIVE_SCENE_REACTION_465200:
       script = 0x4e5820;
       break;
-    case 0x466110:
+    case RETAIL_NATIVE_SCENE_REACTION_466110:
       script = 0x4e59c8;
       break;
     default:

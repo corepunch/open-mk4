@@ -117,7 +117,15 @@ def check_reference(reference, errors, label):
 def native_entries():
     source = masked_c((ROOT / 'game/retail_native_input.inc').read_text())
     table = source.split('static const NativeAction entries[] = {', 1)[1].split('};', 1)[0]
-    return {int(address, 16): symbol for address, symbol in re.findall(r'\{(0x[0-9a-f]+),\s*(\w+)\}', table)}
+    constants = {}
+    for name in ('retail_native_addresses.h', 'retail_native.h'):
+        constants.update({symbol: int(value, 16) for symbol, value in re.findall(
+            r'(RETAIL_NATIVE_\w+) = (0x[0-9a-f]+)', (ROOT / 'game' / name).read_text())})
+    result = {}
+    for address, symbol in re.findall(r'\{(0x[0-9a-f]+|RETAIL_NATIVE_\w+),\s*(\w+)\}', table):
+        value = int(address, 16) if address.startswith('0x') else constants[address]
+        result[value] = symbol
+    return result
 
 
 def audit(image, character):

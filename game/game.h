@@ -12,6 +12,7 @@
  * own wgfsys archive) is another game id: append rows, point them at that
  * game's state and clip tables, and load a second asset bank. The step
  * function does not branch on the game id. */
+#include "retail_native_addresses.h"
 #include "mk4_assets.h"
 #include "input.h"
 #include "mk4_image.h"

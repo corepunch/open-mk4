@@ -19,7 +19,7 @@ static void victim_begin(Fighter *fighter) {
   mk4_script_touchable(fighter);
 }
 
-static void victim_485860(Fighter *fighter) {
+static void victim_ground_turn(Fighter *fighter) {
   victim_begin(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   fighter->facing = -fighter->facing;
@@ -42,7 +42,7 @@ void retail_throw_grunt(void) {
   retail_native_sound_list(RETAIL_SOUND_THROW_GRUNT_LIST);
 }
 
-static void victim_4857b0(Fighter *fighter) {
+static void victim_friction_impact(Fighter *fighter) {
   victim_begin(fighter);
   retail_vm_bind_animation(fighter, 0x4fb55c, 0);
   fighter->body.physics = fighter_friction;
@@ -50,20 +50,20 @@ static void victim_4857b0(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e99e0, mk4_mmove_thrown_finish);
 }
 
-static void victim_485810(Fighter *fighter) {
+static void victim_saved_motion(Fighter *fighter) {
   victim_begin(fighter);
   retail_vm_bind_animation(fighter, 0x4fb5c8, 0);
   mk4_script_save_motion(fighter);
   retail_vm_enter(fighter, 0x4e99f0, mk4_mmove_thrown_finish);
 }
 
-static void victim_4854e0(Fighter *fighter) {
+static void victim_disarm_fall(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   retail_vm_enter(fighter, 0x4e99c0, mk4_mmove_thrown_finish);
 }
 
-static void victim_485480(Fighter *fighter) {
+static void victim_disarm_raise(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   fighter->body.pos[AXIS_Y] -= 0x4ccc;
@@ -79,7 +79,7 @@ static void victim_pause_getup(Fighter *fighter) {
   native_hold(fighter, 10, flip_getup);
 }
 
-static void victim_4851d0(Fighter *fighter) {
+static void victim_finish_flip_getup(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   const Mk4Image *image = retail_vm_image();
@@ -100,7 +100,7 @@ static void victim_impact_finish(Fighter *fighter) {
   native_finish_clip(fighter, victim_pause_roll);
 }
 
-static void victim_485530(Fighter *fighter) {
+static void victim_impact_roll_getup(Fighter *fighter) {
   victim_begin(fighter);
   const Mk4Image *image = retail_vm_image();
   retail_vm_bind_animation(fighter, mk4_image_u32(image, 0x53cf80) * 4, 0);
@@ -113,7 +113,7 @@ static void victim_slide(Fighter *fighter) {
   native_finish_clip(fighter, mk4_mmove_thrown_finish);
 }
 
-static void victim_4856a0(Fighter *fighter) {
+static void victim_pause_slide(Fighter *fighter) {
   victim_begin(fighter);
   native_hold(fighter, 2, victim_slide);
 }
@@ -132,7 +132,7 @@ static void victim_slide_blend(Fighter *fighter) {
   native_finish_clip(fighter, victim_stance_blend);
 }
 
-static void victim_4852e0(Fighter *fighter) {
+static void victim_slide_to_stance(Fighter *fighter) {
   mk4_script_disarm_self(fighter);
   victim_begin(fighter);
   native_hold(fighter, 1, victim_slide_blend);
@@ -142,7 +142,7 @@ static void victim_4852e0(Fighter *fighter) {
  * owned by the engine; 485d00's render-coordinate rebasing is unnecessary. */
 void retail_lp_victim(Fighter *fighter) {
   uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
-  if (entry == 0x485bf0 && fighter_peer(fighter)->roster == 15) {
+  if (entry == RETAIL_NATIVE_LP_VICTIM_485BF0 && fighter_peer(fighter)->roster == 15) {
     retail_disturb_resting_weapons();
   }
   mk4_script_disarm_self(fighter);
@@ -153,25 +153,25 @@ void retail_lp_victim(Fighter *fighter) {
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;
   switch (entry) {
-    case 0x485b70:
+    case RETAIL_NATIVE_LP_VICTIM_485B70:
       native_animation_table(fighter, 0x4e9bb8);
       break;
-    case 0x485ba0:
+    case RETAIL_NATIVE_LP_VICTIM_485BA0:
       native_animation_table(fighter, 0x4e9bc0);
       break;
-    case 0x485bf0:
+    case RETAIL_NATIVE_LP_VICTIM_485BF0:
       native_animation_table(fighter, 0x4e9bc8);
       break;
-    case 0x485b30:
+    case RETAIL_NATIVE_LP_VICTIM_485B30:
       retail_vm_enter(fighter, 0x4e9b88, mk4_mmove_thrown_finish);
       break;
-    case 0x485af0:
+    case RETAIL_NATIVE_LP_VICTIM_485AF0:
       retail_vm_enter(fighter, 0x4e9b68, mk4_mmove_thrown_finish);
       break;
-    case 0x485a90:
+    case RETAIL_NATIVE_LP_VICTIM_485A90:
       retail_vm_enter(fighter, 0x4e9b40, mk4_mmove_thrown_finish);
       break;
-    case 0x485a30:
+    case RETAIL_NATIVE_LP_VICTIM_485A30:
       retail_vm_enter(fighter, 0x4e9b18, mk4_mmove_thrown_finish);
       break;
     default:
@@ -183,7 +183,7 @@ void retail_script_release_reaction(Fighter *fighter, int reaction) {
   battle_react(mk4_script_release_pair(fighter), reaction);
 }
 
-static void victim_484f10(Fighter *fighter) {
+static void victim_finish_captured_clip(Fighter *fighter) {
   victim_begin(fighter);
   mk4_script_stop_body(fighter);
   retail_vm_bind_animation(fighter, 0x4fc8f4, 65);
@@ -205,17 +205,17 @@ void retail_lk_victim(Fighter *fighter) {
   int sample = fighter_sample(fighter);
   victim_begin(fighter);
   switch (entry) {
-    case 0x484d50:
+    case RETAIL_NATIVE_LK_VICTIM_484D50:
       retail_vm_bind_animation(fighter, 0x4fb700, sample);
       native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
       break;
-    case 0x485910:
+    case RETAIL_NATIVE_LK_VICTIM_485910:
       retail_vm_enter(fighter, 0x4e9a90, mk4_mmove_thrown_finish);
       break;
-    case 0x4858a0:
+    case RETAIL_NATIVE_LK_VICTIM_4858A0:
       retail_vm_enter(fighter, 0x4e9a68, mk4_mmove_thrown_finish);
       break;
-    case 0x485040:
+    case RETAIL_NATIVE_LK_VICTIM_485040:
       mk4_script_effect(fighter, 0);
       retail_vm_bind_animation(fighter, 0x4fb568, 0);
       retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cf78) * 4, 0);
@@ -229,48 +229,48 @@ void retail_lk_victim(Fighter *fighter) {
 
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
-    case 0x485910:
-    case 0x484d50:
-    case 0x4858a0:
-    case 0x485040:
+    case RETAIL_NATIVE_LK_VICTIM_485910:
+    case RETAIL_NATIVE_LK_VICTIM_484D50:
+    case RETAIL_NATIVE_LK_VICTIM_4858A0:
+    case RETAIL_NATIVE_LK_VICTIM_485040:
       return retail_lk_victim;
-    case 0x485b70:
-    case 0x485ba0:
-    case 0x485bf0:
-    case 0x485b30:
-    case 0x485af0:
-    case 0x485a90:
-    case 0x485a30:
+    case RETAIL_NATIVE_LP_VICTIM_485B70:
+    case RETAIL_NATIVE_LP_VICTIM_485BA0:
+    case RETAIL_NATIVE_LP_VICTIM_485BF0:
+    case RETAIL_NATIVE_LP_VICTIM_485B30:
+    case RETAIL_NATIVE_LP_VICTIM_485AF0:
+    case RETAIL_NATIVE_LP_VICTIM_485A90:
+    case RETAIL_NATIVE_LP_VICTIM_485A30:
       return retail_lp_victim;
-    case 0x484f10:
-      return victim_484f10;
-    case 0x484760:
+    case RETAIL_NATIVE_VICTIM_FINISH_CAPTURED_CLIP_484F10:
+      return victim_finish_captured_clip;
+    case RETAIL_NATIVE_SLAM_REACTION_484760:
       return retail_slam_reaction;
-    case 0x4847a0:
+    case RETAIL_NATIVE_AIR_VICTIM_FLIP_4847A0:
       return retail_air_victim_flip;
-    case 0x484b40:
+    case RETAIL_NATIVE_AIR_VICTIM_DEFAULT_484B40:
       return retail_air_victim_default;
-    case 0x484a10:
+    case RETAIL_NATIVE_AIR_VICTIM_LIFT_484A10:
       return retail_air_victim_lift;
 
-    case 0x4851d0:
-      return victim_4851d0;
-    case 0x485530:
-      return victim_485530;
-    case 0x4856a0:
-      return victim_4856a0;
-    case 0x4852e0:
-      return victim_4852e0;
-    case 0x485860:
-      return victim_485860;
-    case 0x4857b0:
-      return victim_4857b0;
-    case 0x485810:
-      return victim_485810;
-    case 0x4854e0:
-      return victim_4854e0;
-    case 0x485480:
-      return victim_485480;
+    case RETAIL_NATIVE_VICTIM_FINISH_FLIP_GETUP_4851D0:
+      return victim_finish_flip_getup;
+    case RETAIL_NATIVE_VICTIM_IMPACT_ROLL_GETUP_485530:
+      return victim_impact_roll_getup;
+    case RETAIL_NATIVE_VICTIM_PAUSE_SLIDE_4856A0:
+      return victim_pause_slide;
+    case RETAIL_NATIVE_VICTIM_SLIDE_TO_STANCE_4852E0:
+      return victim_slide_to_stance;
+    case RETAIL_NATIVE_VICTIM_GROUND_TURN_485860:
+      return victim_ground_turn;
+    case RETAIL_NATIVE_VICTIM_FRICTION_IMPACT_4857B0:
+      return victim_friction_impact;
+    case RETAIL_NATIVE_VICTIM_SAVED_MOTION_485810:
+      return victim_saved_motion;
+    case RETAIL_NATIVE_VICTIM_DISARM_FALL_4854E0:
+      return victim_disarm_fall;
+    case RETAIL_NATIVE_VICTIM_DISARM_RAISE_485480:
+      return victim_disarm_raise;
     default:
       return NULL;
   }
@@ -322,35 +322,35 @@ static void pair_edge_task(Fighter *fighter) {
  * selection itself comes exclusively from the loaded4ddfb8 table. */
 static uint32_t lk_script(uint32_t native) {
   switch (native) {
-    case 0x42b700:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42B700:
       return 0x4de3d0;
-    case 0x42b770:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42B770:
       return 0x4ddff8;
-    case 0x42b7e0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42B7E0:
       return 0x4de038;
-    case 0x42bad0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BAD0:
       return 0x4de088;
-    case 0x42bb50:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BB50:
       return 0x4de0e8;
-    case 0x42bbe0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BBE0:
       return 0x4de138;
-    case 0x42bc40:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BC40:
       return 0x4de1b0;
-    case 0x42bce0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BCE0:
       return 0x4de218;
-    case 0x42bd10:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BD10:
       return 0x4de258;
-    case 0x42bda0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BDA0:
       return 0x4de2a0;
-    case 0x42bdd0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BDD0:
       return 0x4de2f8;
-    case 0x42bed0:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42BED0:
       return 0x4de360;
-    case 0x42c040:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42C040:
       return 0x4de3b0;
-    case 0x42c180:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42C180:
       return 0x4de490;
-    case 0x42c750:
+    case RETAIL_NATIVE_LK_THROW_ENTRY_42C750:
       return 0x4de720;
     default:
       require(false, "Unimplemented native LK entry");
@@ -366,17 +366,17 @@ void retail_lk_throw(Fighter *fighter) {
   const Mk4Image *image = retail_vm_image();
   uint32_t native = retail_lk_target(image, (unsigned)fighter->roster);
   uint32_t script = lk_script(native);
-  retail_throw_capture(fighter, ACTION_RETAIL_0501, native != 0x42c180);
-  if (native == 0x42c180) {
+  retail_throw_capture(fighter, ACTION_RETAIL_0501, native != RETAIL_NATIVE_LK_THROW_ENTRY_42C180);
+  if (native == RETAIL_NATIVE_LK_THROW_ENTRY_42C180) {
     fighter_set_speed(fighter, -0x1999);
     mk4_script_save_motion(fighter);
-  } else if (native == 0x42c040) {
+  } else if (native == RETAIL_NATIVE_LK_THROW_ENTRY_42C040) {
     Fighter *peer = (Fighter *)fighter_opponent(fighter);
     peer->body.pos[AXIS_X] += q16_mul(fighter_axis(fighter, AXIS_X), 0xcccc);
     peer->body.pos[AXIS_Z] += q16_mul(fighter_axis(fighter, AXIS_Z), 0xcccc);
-  } else if (native == 0x42bc40) {
+  } else if (native == RETAIL_NATIVE_LK_THROW_ENTRY_42BC40) {
     pair_edge_task(fighter);
-  } else if (native == 0x42c750) {
+  } else if (native == RETAIL_NATIVE_LK_THROW_ENTRY_42C750) {
     battle_sound(SOUND_TOKEN, 0x654);
   }
   retail_vm_enter(fighter, script, fighter_ready);
@@ -443,7 +443,7 @@ void retail_lk_script_190(Fighter *fighter) {
 }
 
 void retail_lk_continue_840(Fighter *fighter) {
-  require(retail_native_vm(fighter, 0x48f9f0, RETAIL_CALL, 0), "Missing shared pair alignment native");
+  require(retail_native_vm(fighter, RETAIL_NATIVE_LIU_KANG_LIU_SCRIPT_FATAL_ALIGN_48F9F0, RETAIL_CALL, 0), "Missing shared pair alignment native");
   retail_vm_enter(fighter, 0x4de840, fighter_ready);
 }
 

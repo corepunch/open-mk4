@@ -14,37 +14,37 @@ typedef struct WeaponNative {
 
 // clang-format off: Keep table entries on one row, including long rows.
 static const WeaponNative weapon_natives[] = {
-  {0x496c20, 0x4ec880, 0, 0x0, false, true},
-  {0x496c30, 0x4ec898, 0, 0x0, true, true},
-  {0x496a40, 0x4ec810, 0, 0x112, false, true},
-  {0x496ba0, 0x4ec848, 0, 0x112, true, true},
-  {0x4966b0, 0x4ec760, 0, 0x111, false, true},
-  {0x4966e0, 0x4ec778, 0, 0x111, true, true},
-  {0x4956c0, 0x4ec458, 0, 0x111, false, true},
-  {0x495720, 0x4ec490, 0, 0x0, true, true},
-  {0x495bb0, 0x4ec5d8, 0x4ec5c8, 0x0, false, true},
-  {0x495be0, 0x4ec600, 0x4ec5f0, 0x0, true, true},
-  {0x496cd0, 0x4ec988, 0, 0x0, false, true},
-  {0x496cf0, 0x4ec9b0, 0, 0x0, true, true},
-  {0x4955b0, 0x4ec420, 0, 0x111, false, true},
-  {0x495a20, 0x4ec558, 0x4ec548, 0x0, false, true},
-  {0x495a50, 0x4ec580, 0x4ec570, 0x0, true, true},
-  {0x495830, 0x4ec4c8, 0, 0x111, false, true},
-  {0x495980, 0x4ec510, 0, 0x111, true, true},
-  {0x495800, 0x4ec9f8, 0, 0x111, false, true},
-  {0x496100, 0x4ec658, 0, 0x111, true, true},
-  {0x495d40, 0x4ec628, 0, 0x111, false, true},
-  {0x4956f0, 0x4ec480, 0x4ec470, 0x0, false, false},
-  {0x495740, 0x4ec4b8, 0x4ec4a8, 0x113, false, false},
-  {0x496a70, 0x4ec838, 0x4ec828, 0x112, false, false},
-  {0x496be0, 0x4ec870, 0x4ec860, 0x112, false, false},
-  {0x4955e0, 0x4ec448, 0x4ec438, 0x0, false, false},
-  {0x4959c0, 0x4ec538, 0x4ec528, 0x0, false, false},
-  {0x496ce0, 0x4ec9a0, 0, 0x0, false, false},
-  {0x495c20, 0x4ec618, 0, 0x0, false, false},
-  {0x495710, 0x4ec480, 0, 0x0, false, false},
-  {0x4959f0, 0x4eca18, 0x4eca08, 0x0, false, false},
-  {0x495d20, 0x4eca28, 0, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_496C20, 0x4ec880, 0, 0x0, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_496C30, 0x4ec898, 0, 0x0, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_496A40, 0x4ec810, 0, 0x112, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_496BA0, 0x4ec848, 0, 0x112, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_4966B0, 0x4ec760, 0, 0x111, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_4966E0, 0x4ec778, 0, 0x111, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_4956C0, 0x4ec458, 0, 0x111, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_495720, 0x4ec490, 0, 0x0, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_495BB0, 0x4ec5d8, 0x4ec5c8, 0x0, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_495BE0, 0x4ec600, 0x4ec5f0, 0x0, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_496CD0, 0x4ec988, 0, 0x0, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_496CF0, 0x4ec9b0, 0, 0x0, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_4955B0, 0x4ec420, 0, 0x111, false, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_495A20, 0x4ec558, 0x4ec548, 0x0, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_495A50, 0x4ec580, 0x4ec570, 0x0, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_495830, 0x4ec4c8, 0, 0x111, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_495980, 0x4ec510, 0, 0x111, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_495800, 0x4ec9f8, 0, 0x111, false, true},
+  {RETAIL_NATIVE_WEAPON_LP_THROW_OR_STRIKE_496100, 0x4ec658, 0, 0x111, true, true},
+  {RETAIL_NATIVE_WEAPON_HP_STRIKE_495D40, 0x4ec628, 0, 0x111, false, true},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_4956F0, 0x4ec480, 0x4ec470, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_495740, 0x4ec4b8, 0x4ec4a8, 0x113, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_496A70, 0x4ec838, 0x4ec828, 0x112, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_496BE0, 0x4ec870, 0x4ec860, 0x112, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_4955E0, 0x4ec448, 0x4ec438, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_4959C0, 0x4ec538, 0x4ec528, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_496CE0, 0x4ec9a0, 0, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_495C20, 0x4ec618, 0, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_495710, 0x4ec480, 0, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_4959F0, 0x4eca18, 0x4eca08, 0x0, false, false},
+  {RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_495D20, 0x4eca28, 0, 0x0, false, false},
 };
 // clang-format on
 
@@ -77,40 +77,40 @@ static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
     return;
   }
   switch (address) {
-    case 0x4963e0:
+    case RETAIL_NATIVE_LIU_WEAPON_HIGH_PUNCH_4963E0:
       if (back) {
         retail_weapon_native_496670(fighter);
       } else {
         retail_weapon_native_4963e0(fighter);
       }
       break;
-    case 0x4964d0:
+    case RETAIL_NATIVE_LIU_WEAPON_LOW_PUNCH_4964D0:
       if (mk4_can_ground_throw(fighter, false)) {
         retail_lp_throw(fighter);
       } else if (back) {
-        weapon_native(fighter, 0x496920, false);
+        weapon_native(fighter, RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_496920, false);
       } else {
         retail_weapon_native_4964d0(fighter);
       }
       break;
-    case 0x495780:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495780:
       if (back) {
-        weapon_native(fighter, 0x496a70, false);
+        weapon_native(fighter, RETAIL_NATIVE_WEAPON_ALTERNATE_STRIKE_496A70, false);
       } else {
         weapon_start_retail_strike(fighter, 0x4ec9d8, 0, 0x112, false);
       }
       break;
-    case 0x4957b0:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_4957B0:
       if (back) {
         retail_weapon_native_495860(fighter);
       } else {
         weapon_start_retail_strike(fighter, 0x4ec9e8, 0, 0x111, false);
       }
       break;
-    case 0x495c30:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495C30:
       retail_weapon_native_495c30(fighter);
       break;
-    case 0x495c60:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495C60:
       if (!(fighter->flags & FF_FOLLOW_UP) && mk4_can_ground_throw(fighter, false)) {
         retail_lp_throw(fighter);
       } else if (back) {
@@ -119,40 +119,40 @@ static void weapon_native(Fighter *fighter, uint32_t address, bool back) {
         retail_weapon_native_495c60(fighter);
       }
       break;
-    case 0x495cf0:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495CF0:
       retail_weapon_native_495cf0(fighter);
       break;
-    case 0x495610:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495610:
       retail_weapon_native_495610(fighter);
       break;
-    case 0x496c50:
+    case RETAIL_NATIVE_SWORD_BACK_LP_496C50:
       retail_weapon_native_496c50(fighter);
       break;
-    case 0x496c90:
+    case RETAIL_NATIVE_SWORD_BACK_HP_496C90:
       retail_weapon_native_496c90(fighter);
       break;
-    case 0x496670:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_496670:
       retail_weapon_native_496670(fighter);
       break;
-    case 0x496920:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_496920:
       retail_weapon_native_496920(fighter);
       break;
-    case 0x496720:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_496720:
       retail_weapon_native_496720(fighter);
       break;
-    case 0x495a90:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495A90:
       retail_weapon_native_495a90(fighter);
       break;
-    case 0x495860:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495860:
       retail_weapon_native_495860(fighter);
       break;
-    case 0x495d70:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_495D70:
       retail_weapon_native_495d70(fighter);
       break;
-    case 0x496140:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_496140:
       retail_weapon_native_496140(fighter);
       break;
-    case 0x496d10:
+    case RETAIL_NATIVE_WEAPON_PARAMETER_ENTRY_496D10:
       retail_weapon_native_496d10(fighter);
       break;
     default:

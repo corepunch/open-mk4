@@ -626,13 +626,14 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x56:
       case 0x64:
-        if (!vm->native(fighter, opcode == 0x56 ? 0x45ac30 : 0x45b380, RETAIL_HANDLER, arg)) {
+        if (!vm->native(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT_45AC30 : RETAIL_NATIVE_FACE_PEER_45B380, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed scene/facing binding");
         }
         break;
       case 0x41:
       case 0x1e:
-        if (!vm->native(fighter, opcode == 0x41 ? 0x45b1f0 : 0x45b230, RETAIL_HANDLER, arg)) {
+        if (!vm->native(fighter, opcode == 0x41 ? RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH_45B1F0 : RETAIL_NATIVE_DISPATCH_OPPONENT_REACTION_45B230,
+                RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed reaction binding");
         }
         break;
@@ -666,7 +667,7 @@ void retail_vm_step(Fighter *fighter) {
         q16 limit = (q16)fetch(fighter);
         if (g_battle.distance <= limit) {
           uint64_t continuation = fighter->continuation;
-          if (!vm->native(fighter, 0x45b1f0, RETAIL_HANDLER, arg)) {
+          if (!vm->native(fighter, RETAIL_NATIVE_SCRIPT_REACTION_DISPATCH_45B1F0, RETAIL_HANDLER, arg)) {
             vm_error(fighter, "unreviewed distance reaction binding");
           }
           if (!vm->active || fighter->continuation != continuation || fighter->pending != NULL) {

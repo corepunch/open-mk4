@@ -14,12 +14,12 @@ static void kick_row(Fighter *fighter) {
   if (pose < 0) {
     uint32_t next = mk4_image_u32(vm->image, vm->native_cursor);
     uint32_t script;
-    if (next == 0x46a770 || next == 0x46a6c0) {
+    if (next == RETAIL_NATIVE_KICK_ROW_46A770 || next == RETAIL_NATIVE_KICK_ROW_46A6C0) {
       /* 470e80 marks the recovery action before these two continuations. */
       fighter->action = ACTION_RETAIL_1006;
-      script = next == 0x46a770 ? 0x4e5c70 : 0x4e5d20;
+      script = next == RETAIL_NATIVE_KICK_ROW_46A770 ? 0x4e5c70 : 0x4e5d20;
     } else {
-      require(next == 0x46a7a0, "Unimplemented native contact-row continuation");
+      require(next == RETAIL_NATIVE_KICK_ROW_46A7A0, "Unimplemented native contact-row continuation");
       script = 0x4e6998;
     }
     retail_vm_enter(fighter, script, vm->finish);
@@ -29,7 +29,7 @@ static void kick_row(Fighter *fighter) {
   fighter->sample_override = pose;
   uint64_t continuation = fighter->continuation;
   if (!vm->native_contact && fighter_opponent(fighter)->action != ACTION_RETAIL_2001) {
-    require(vm->native_query == 0x48d3f0, "Unimplemented native contact-row query");
+    require(vm->native_query == RETAIL_NATIVE_CONTACT_QUERY_B_48D3F0, "Unimplemented native contact-row query");
     uint32_t record = mk4_image_u32(vm->image, 0x53d2b8 + vm->native_selector * 4);
     AttackRecord attack = retail_vm_attack_record(vm->image, record * 4);
     ContactResult result = battle_contact(fighter, &attack);

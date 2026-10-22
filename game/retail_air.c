@@ -138,10 +138,10 @@ static void air_contact_query(Fighter *fighter) {
     return;
   }
   uint32_t query = mk4_image_u32(image, row + 8);
-  require(query == 0x48d3d0 || query == 0x48d3f0, "Unsupported native air contact query");
+  require(query == RETAIL_NATIVE_CONTACT_QUERY_A_48D3D0 || query == RETAIL_NATIVE_CONTACT_QUERY_B_48D3F0, "Unsupported native air contact query");
   unsigned selector = mk4_image_u32(image, row + 4);
   require(selector < 256, "Invalid native air contact selector");
-  uint32_t bank = query == 0x48d3d0 ? 0x53d268 : 0x53d2b8;
+  uint32_t bank = query == RETAIL_NATIVE_CONTACT_QUERY_A_48D3D0 ? 0x53d268 : 0x53d2b8;
   AttackRecord record = retail_vm_attack_record(image, mk4_image_u32(image, bank + selector * 4) * 4);
   if (!fighter->connected && battle_contact(fighter, &record) != CONTACT_MISS) {
     fighter->action = ACTION_RETAIL_1006;
@@ -190,72 +190,72 @@ static void air_open(Fighter *fighter, uint32_t row) {
 
 static void air_continue(Fighter *fighter, uint32_t target) {
   switch (target) {
-    case 0x46e750:
+    case RETAIL_NATIVE_AIR_CONTINUE_46E750:
       fighter->sample_override = mini(9, fighter_move(fighter)->last);
       air_contact_begin(fighter, 0x4e6680);
       return;
-    case 0x46eec0:
+    case RETAIL_NATIVE_AIR_CONTACT_BEGIN_46EEC0:
       air_contact_begin(fighter, 0x4e6738);
       return;
-    case 0x46e3f0:
+    case RETAIL_NATIVE_AIR_CONTINUE_46E3F0:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, 0x4e6568);
       return;
-    case 0x46e4f0:
+    case RETAIL_NATIVE_AIR_CONTINUE_46E4F0:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, 0x4e65b0);
       return;
-    case 0x46e5e0:
+    case RETAIL_NATIVE_AIR_CONTINUE_46E5E0:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_contact_begin(fighter, 0x4e65f8);
       return;
-    case 0x46e7c0:
+    case RETAIL_NATIVE_AIR_PUNCH_CONTACT_46E7C0:
       air_punch_contact(fighter, true);
       return;
-    case 0x46cb10:
+    case RETAIL_NATIVE_AIR_PUNCH_CONTACT_46CB10:
       air_punch_contact(fighter, false);
       return;
-    case 0x46ef10:
+    case RETAIL_NATIVE_AIR_SCRIPT_46EF10:
       air_script(fighter, 0x4e6770, false);
       return;
-    case 0x46e230:
+    case RETAIL_NATIVE_AIR_SCRIPT_46E230:
       air_script(fighter, 0x4e64e0, false);
       return;
-    case 0x46e6b0:
+    case RETAIL_NATIVE_AIR_SCRIPT_46E6B0:
       air_script(fighter, 0x4e6630, false);
       return;
-    case 0x46e790:
+    case RETAIL_NATIVE_AIR_SCRIPT_46E790:
       air_script(fighter, 0x4e66a0, true);
       return;
-    case 0x46eee0:
+    case RETAIL_NATIVE_AIR_SCRIPT_46EEE0:
       air_script(fighter, 0x4e6758, true);
       return;
-    case 0x46dfb0:
+    case RETAIL_NATIVE_AIR_CONTINUE_46DFB0:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_script(fighter, 0x4e6458, true);
       return;
-    case 0x46e090:
+    case RETAIL_NATIVE_AIR_CONTINUE_46E090:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_script(fighter, 0x4e6490, true);
       return;
-    case 0x46e170:
+    case RETAIL_NATIVE_AIR_CONTINUE_46E170:
       fighter->flags &= ~(unsigned)FF_BUSY;
       air_script(fighter, 0x4e64c8, true);
       return;
-    case 0x46e420:
+    case RETAIL_NATIVE_AIR_SCRIPT_46E420:
       air_script(fighter, 0x4e6588, true);
       return;
-    case 0x46e510:
+    case RETAIL_NATIVE_AIR_SCRIPT_46E510:
       air_script(fighter, 0x4e65d0, true);
       return;
-    case 0x46e600:
+    case RETAIL_NATIVE_AIR_SCRIPT_46E600:
       air_script(fighter, 0x4e6618, true);
       return;
-    case 0x46c810:
+    case RETAIL_NATIVE_AIR_SCRIPT_46C810:
       air_script(fighter, 0x4e6270, false);
       return;
-    case 0x46e240:
-    case 0x46c8f0:
+    case RETAIL_NATIVE_AIR_LAND_46E240:
+    case RETAIL_NATIVE_AIR_LAND_46C8F0:
       retail_air_land(fighter);
       return;
     default:

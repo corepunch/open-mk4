@@ -595,7 +595,7 @@ static void script_strike_query(Fighter *fighter) {
     return;
   }
   if (result != CONTACT_MISS) {
-    if (fighter->native_variant == 0x496770) {
+    if (fighter->native_variant == RETAIL_NATIVE_WEAPON_CONTACT_496770) {
       /* Native4968e0 selects the authored contact branch; it is not a C
        * approximation of that branch's waits or reverse playback. */
       weapon_cleanup(fighter);
@@ -629,17 +629,17 @@ void weapon_script_contact_tail(Fighter *fighter, const AttackRecord *record, in
 void retail_weapon_contact(Fighter *fighter, uint32_t address) {
   unsigned selector, queries;
   switch (address) {
-    case 0x4958b0:
-    case 0x495ae0:
+    case RETAIL_NATIVE_WEAPON_CONTACT_4958B0:
+    case RETAIL_NATIVE_WEAPON_CONTACT_495AE0:
       selector = 33;
       queries = 2;
       break;
-    case 0x496770:
+    case RETAIL_NATIVE_WEAPON_CONTACT_496770:
       selector = 10;
       queries = 7;
       break;
     default:
-      require(address == 0x496970, "Invalid native weapon contact entry");
+      require(address == RETAIL_NATIVE_WEAPON_CONTACT_496970, "Invalid native weapon contact entry");
       selector = 11;
       queries = 2;
       break;
