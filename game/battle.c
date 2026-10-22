@@ -18,10 +18,11 @@ static bool locked(const Fighter *fighter) {
 
 void battle_set_arena(int arena) {
   /* 423690 / 4dad60, in the archive stage order. */
-  static const q16 radii[] = {0x98000, 0x98000, 0x98000, 0x98000, 0x98000, 0x98000, 0x88000, 0x98000, 0x98000, 0xa0000, 0x70000};
-  require(arena >= 0 && arena < (int)(sizeof radii / sizeof *radii), "Invalid battle arena");
+  require(arena >= 0 && arena < MK4_ARENA_COUNT, "Invalid battle arena");
+  q16 radius = (q16)mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_ARENA_RADII + (unsigned)arena * 4);
+  require(radius > 0, "Invalid retail arena radius");
   g_battle.arena = arena;
-  g_battle.arena_radius = radii[arena];
+  g_battle.arena_radius = radius;
 }
 
 static void place(Fighter *fighter, int roster_index, int wins, q16 x, int facing) {
