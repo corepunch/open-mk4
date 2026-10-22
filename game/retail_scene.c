@@ -102,3 +102,17 @@ void retail_task_retire(Fighter *fighter) {
     completed(fighter);
   }
 }
+
+static void scene_body_complete(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  battle_end_finisher();
+}
+
+/* Native4817c0: the scene task lowers the remaining body once, then
+ * yields60 before4314e0 completes orchestration. Raw audio controls remain
+ * part of the engine scene boundary rather than indexed fighter samples. */
+void retail_scene_body_finish(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] -= 0x147a;
+  native_hold(fighter, 60, scene_body_complete);
+}

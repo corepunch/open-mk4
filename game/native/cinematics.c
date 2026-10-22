@@ -360,19 +360,6 @@ static const MoveDef n41ef20_victim_pose = {.clip = 13, .last = 55, .flags = SF_
 /*4818f0 reads4ea420 in this order, separating one joint every five visits. */
 static const int n41ef20_torn_joints[] = {2, 10, 9, 8, 7, 6, 5, 3, 12, 11, 14, 13, 16, 15};
 
-static void n41ef20_second_complete(Fighter *fighter) {
-  mk4_script_stop_body(fighter);
-  battle_end_finisher();
-}
-
-void fujin_second_finish(Fighter *victim) {
-  /*4817c0 lowers the body by.08 and waits60. Its raw audio control61
-   *is orchestration rather than an indexed sample selector. */
-  mk4_script_stop_body(victim);
-  victim->body.pos[AXIS_Y] -= 0x147a;
-  native_hold(victim, 60, n41ef20_second_complete);
-}
-
 void fujin_second_blood(Fighter *fighter, int task_type) {
   require(task_type == 38, "Unexpected wind fatality decoration task");
   const Fighter *victim = fighter_opponent(fighter);
@@ -1714,19 +1701,6 @@ void reptile_second_melt(Fighter *victim) {
     native_frame(victim, visit, pose, (visit - 1) % 5 == 0 ? n41e490_second_tear : NULL);
   }
   native_play(victim, false);
-}
-
-static void n41e490_second_complete(Fighter *victim) {
-  mk4_script_stop_body(victim);
-  battle_end_finisher();
-}
-
-/* 4817c0 lowers the body by .08 and waits 60 visits before 4314e0 ends
- * the scene; its raw audio controls are orchestration, not samples. */
-void reptile_second_finish(Fighter *victim) {
-  mk4_script_stop_body(victim);
-  victim->body.pos[AXIS_Y] -= 0x147a;
-  native_hold(victim, 60, n41e490_second_complete);
 }
 
 void reptile_fatality_2(Fighter *fighter) {

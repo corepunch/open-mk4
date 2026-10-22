@@ -1617,3 +1617,16 @@ Verified formatting, shared VM/rejections, strict audits, native frame gates
 and helper/port navigation (6/7 tests). Updated the existing navigation check
 to assert canonical alias names instead of requiring removed legacy spellings
 inside current C bodies. No new tests for identical helper bodies.
+
+### Share body scene completion
+
+Removed duplicate Fujin/Reptile4817c0 native bodies and their context-owner
+switch. The shared scene boundary lowers the body by0x147a once and uses the
+existing60-visit continuation before completing the finisher. Checked the
+bounded local native phases; retained the engine's existing audio/orchestration
+adaptation rather than inventing fighter-specific audio selectors.
+
+Verified formatting, shared runtime, all strict fighter audits, native gates
+and existing helper/port navigation. No new tests for identical native bodies.
+This removes another owner specialization; remaining copied reaction playback
+and other owner branches still require migration.

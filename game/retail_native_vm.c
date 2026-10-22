@@ -956,15 +956,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           fujin_second_burst(fighter);
           return true;
         case 0x4817c0:
-          if (owner & 0x20u) {
-            fujin_second_finish(fighter);
-            return true;
-          }
-          if (owner & 0x400u) {
-            reptile_second_finish(fighter);
-            return true;
-          }
-          return false;
+          retail_scene_body_finish(fighter);
+          return true;
         case 0x482280:
           reptile_weapon_stagger_tail(fighter);
           return true;

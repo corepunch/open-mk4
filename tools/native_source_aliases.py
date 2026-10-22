@@ -1,6 +1,8 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'fujin_second_finish': 'retail_scene_body_finish',
+    'reptile_second_finish': 'retail_scene_body_finish',
     'fujin_second_event': 'mk4_script_context',
     'kai_second_event': 'mk4_script_context',
     'liu_kang_liu_script_scene_event': 'mk4_script_context',
