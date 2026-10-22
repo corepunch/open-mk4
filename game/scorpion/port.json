@@ -261,9 +261,10 @@
       "adaptation": "Shared loaded native registry selects the original prelude; the interpreter owns script playback and waits."
     },
     "173": {
-      "evidence": "Exact-entry native continuation and selected script words; docs/scorpion-retail-moves.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[173] -> 483c50; bounded483c50/483d40/483d60/483d80 and original4e97f8/4e8a78/4e89a0; mk4decomp native task/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_entry",
+      "adaptation": "Shared native action/ground/air prelude; original words own playback and loaded callback physics. Hit particles use engine presentation."
     },
     "175": {
       "adaptation": "Explicit paired or cinematic native continuation outside the ordinary reaction table",

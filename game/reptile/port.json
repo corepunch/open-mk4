@@ -351,10 +351,10 @@
       "adaptation": "Shared loaded native prelude and original script; native wall and stagger branches remain shared across actor contexts."
     },
     "41": {
-      "source": "game/native/projectiles.c",
-      "symbol": "reptile_acid_victim",
-      "adaptation": "Shared reactions.c entry 41 dispatches grounded victims to the move-owned acid reaction; battle_react redirects airborne victims to reaction 10.",
-      "evidence": "C[17] selects 41 (483d60): action 1013, 494520 disarm, 48ef30 airborne -> 481320 (reaction 10), else friction 4e97f0 and VM 4e97f8 with tail 483df0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_entry",
+      "adaptation": "Shared native action/ground/air prelude; original words own playback and loaded callback physics. Hit particles use engine presentation.",
+      "evidence": "Loaded4ea4e8[41] -> 483d60; bounded483c50/483d40/483d60/483d80 and original4e97f8/4e8a78/4e89a0; mk4decomp native task/controller contracts."
     },
     "2": {
       "source": "game/reactions.c",

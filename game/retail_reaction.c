@@ -424,8 +424,53 @@ void retail_impact_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, mk4_script_thrown_ready);
 }
 
+/*416e20/416e50 spawns an independent bounded hit-particle task. The
+ * engine presentation service supplies its portable particle artwork. */
+static bool hit_particles(BattleEvent *event, Fighter *owner, Fighter *peer) {
+  (void)peer;
+  battle_particles(owner, 2, 1, true);
+  return --event->data[0] > 0;
+}
+
+void retail_stagger_entry(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  bool airborne = fighter_airborne(fighter);
+  if (entry == 0x483c50) {
+    BattleEvent *particles = battle_event_start(fighter, hit_particles, false, false);
+    require(particles != NULL, "Hit reaction needs its native particle task");
+    particles->data[0] = 16;
+  }
+  if (!airborne || entry != 0x483c50) {
+    mk4_script_disarm_self(fighter);
+  }
+  if (airborne && entry != 0x483c50) {
+    battle_wall_recoil(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
+  fighter_start_move(fighter, airborne ? S_KNOCKDOWN : S_HIT, &move);
+  fighter->action = entry == 0x483d40 ? 0x2013 : entry == 0x483d60 ? 0x1013 : 0;
+  if (airborne) {
+    if (entry == 0x483c50) {
+      mk4_script_indexed_sound(fighter, 1);
+      retail_vm_enter(fighter, 0x4e8a78, retail_controller_return);
+    } else {
+      retail_vm_enter(fighter, 0x4e89a0, mk4_script_thrown_ready);
+    }
+    return;
+  }
+  mk4_script_stop_body(fighter);
+  fighter->body.pos[AXIS_Y] = fighter->body.ground;
+  uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e97f0);
+  require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native stagger callback");
+  retail_vm_enter(fighter, 0x4e97f8, mk4_script_thrown_ready);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x483c50:
+    case 0x483d40:
+    case 0x483d60:
+      return retail_stagger_entry;
     case 0x481fc0:
     case 0x4838e0:
     case 0x485e30:

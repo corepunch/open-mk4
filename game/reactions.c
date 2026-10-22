@@ -5,7 +5,6 @@
 #include "native_services.h"
 
 void reptile_reaction_40(Fighter *fighter);
-void reptile_acid_victim(Fighter *fighter);
 void reptile_second_victim(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
 void fujin_wind_victim(Fighter *fighter);
@@ -270,129 +269,12 @@ static void react_jab_hit(Fighter *fighter) {
   }
 }
 
-/* Remaining legacy reaction specs are migration inputs. New native entries
- * hand playback to original words through retail_reaction.c; remove each
- * copied row and its unused playback paths when that native migrates. */
-typedef struct ReactionSpec {
-  MoveDef move;
-  int hold_at, hold_ticks, land_at, getup;
-  q16 speed, vy, gravity, scale;
-  bool friction, no_guard;
-} ReactionSpec;
-
-#define R(c, n, a) {.clip = c, .last = n, .flags = SF_LOCK, .action = a}
-// clang-format off: Keep table entries on one row, including long rows.
-static const ReactionSpec extra_reactions[256] = {
-  /* Legacy airborne173 adapter still borrows this row; native481320 itself
-   * now enters original4e89a0 and does not use it. */
-  [10] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
-  [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
-};
-static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
-static const MoveDef getup_front = R(188, 15, ACTION_GETUP);
-static const MoveDef getup_kick = R(191, 15, ACTION_GETUP);
-static const MoveDef getup_side = R(185, 15, ACTION_GETUP);
-// clang-format on
-#undef R
-
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {
   native_begin(fighter, first, final, end);
   for (int frame = first; frame <= final; ++frame) {
     native_frame(fighter, frame, mini(last, frame), NULL);
   }
   native_play(fighter, false);
-}
-
-static void begin_getup(Fighter *fighter, int clip) {
-  stop_sliding(fighter);
-  if (fighter->health <= 0) {
-    fighter_stop_mmove(fighter);
-    return;
-  }
-  if (!clip) {
-    neutral(fighter);
-    return;
-  }
-  fighter_start_move(fighter, S_KNOCKDOWN, clip == 188 ? &getup_front : clip == 185 ? &getup_side : clip == 191 ? &getup_kick : &getup_back);
-  fighter->sample_override = 0;
-  int last = fighter_move(fighter)->last;
-  reaction_play(fighter, 1, last, last + 1, neutral);
-}
-
-static void reaction_land_gate(Fighter *fighter) {
-  fighter->mmove_hold = fighter_airborne(fighter);
-}
-
-static void extra_reaction_end(Fighter *fighter) {
-  begin_getup(fighter, extra_reactions[fighter->reaction].getup);
-}
-
-static int reaction_pose(const ReactionSpec *spec, int elapsed) {
-  int sample = elapsed;
-  if (spec->hold_ticks) {
-    sample = elapsed < spec->hold_at ? elapsed : elapsed < spec->hold_at + spec->hold_ticks ? spec->hold_at : elapsed - spec->hold_ticks;
-  }
-  return sample;
-}
-
-static void extra_reaction_play(Fighter *fighter) {
-  const ReactionSpec *spec = &extra_reactions[fighter->reaction];
-  int first = spec->hold_at == 4 ? 4 : 0;
-  int last = first;
-  while (reaction_pose(spec, last) <= spec->move.last) {
-    ++last;
-  }
-  native_begin(fighter, first, last, extra_reaction_end);
-  bool landing = false;
-  for (int frame = first; frame <= last; ++frame) {
-    int pose = reaction_pose(spec, frame);
-    bool gate = !landing && spec->land_at >= 0 && pose >= spec->land_at;
-    native_frame(fighter, frame, mini(spec->move.last, pose), gate ? reaction_land_gate : NULL);
-    landing |= gate;
-  }
-  native_play(fighter, false);
-}
-
-static void react_extra(Fighter *fighter) {
-  switch (fighter->reaction) {
-    case 10:
-    case 17:
-    case 25:
-    case 26:
-    case 28:
-    case 29:
-      battle_wall_recoil(fighter);
-      break;
-    default:
-      break;
-  }
-  int id = fighter->reaction;
-  if (id == 173 && fighter_airborne(fighter)) {
-    fighter->reaction = id = 10;
-  }
-  const ReactionSpec *spec = &extra_reactions[id];
-  fighter_start_move(fighter, spec->land_at < 0 ? S_HIT : S_KNOCKDOWN, &spec->move);
-  if (id == 173) {
-    mk4_script_stop_body(fighter);
-    scorpion_generated_reaction(fighter);
-    return;
-  }
-  fighter->sample_override = spec->hold_at == 4 ? 4 : 0;
-  extra_reaction_play(fighter);
-  if (spec->scale) {
-    fighter->damage_scale = spec->scale;
-  }
-  if (spec->no_guard) {
-    fighter->flags |= FF_NO_GUARD;
-  }
-  if (spec->friction) {
-    slide(fighter, spec->speed);
-  } else {
-    launch(fighter, spec->speed, spec->vy, spec->gravity);
-  }
-  if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
-    fighter->body.gravity = 0x28f;
-  }
 }
 
 static void react_extra_block(Fighter *fighter) {
@@ -747,7 +629,6 @@ static const FighterFn reactions[256] = {
   [181] = fujin_second_victim,
   [179] = shinnok_second_victim,
   [101] = fujin_bolt_victim,
-  [173] = react_extra,
 
   [112] = react_block,
   [118] = react_block,
@@ -759,7 +640,6 @@ static const FighterFn reactions[256] = {
   [13] = react_kick_air,
   [123] = react_kick_air_impact,
   [16] = react_kick_hit,
-  [45] = reiko_star_reaction,
   [37] = react_jab_hit,
   [165] = react_slide_block,
   [157] = jax_dash_victim_hit,
@@ -779,7 +659,6 @@ static const FighterFn reactions[256] = {
   [190] = goro_kick_victim,
   [191] = goro_stomp_victim,
   [178] = kai_second_victim,
-  [41] = reptile_acid_victim,
   [40] = reptile_reaction_40,
   [180] = reptile_second_victim,
   [128] = quan_chi_skull_reaction,
@@ -794,6 +673,7 @@ static const FighterFn reactions[256] = {
  * reaction starts on the victim's next update. */
 void battle_react(Fighter *victim, int reaction) {
   require(reaction >= 0 && reaction < COUNT(reactions), "Invalid reaction id");
+  FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
   q16 retained_velocity[3];
   if (reaction == 97) {
     memcpy(retained_velocity, victim->body.vel, sizeof retained_velocity);
@@ -801,17 +681,13 @@ void battle_react(Fighter *victim, int reaction) {
   victim->body_contact = false;
   /* Drop rules for the reaction ids currently used by our script records.
    * Native 0x494520 is called by these reaction paths, not by ordinary block. */
-  if (victim->armed && victim->disarm != NULL &&
+  if (native == NULL && victim->armed && victim->disarm != NULL &&
       ((reaction >= 10 && reaction <= 13) || (reaction >= 15 && reaction <= 23) || reaction == 31 || reaction == 64 || reaction == 65 || reaction == 34 ||
           (reaction >= 48 && reaction <= 62) || reaction == 70 || reaction == 150 || (reaction == 151 && victim->hits > 3) || reaction == 122 ||
           reaction == 26 || reaction == 28 || reaction == 29 || reaction == 38 || reaction == 39 || reaction == 90 || reaction == 154 || reaction == 155 ||
           reaction == 156 || reaction == 162 || reaction == 173 || reaction == 123 || reaction == 129 || reaction == 130 || reaction == 41 || reaction == 40 ||
           reaction == 158)) {
     victim->disarm(victim);
-  }
-  /* 483d60 hands an airborne acid victim (48ef30) to reaction 10's 481320. */
-  if (reaction == 41 && fighter_airborne(victim)) {
-    reaction = 10;
   }
   victim->reaction = reaction;
   if (reaction != 67 && reaction != 151) {
@@ -821,7 +697,6 @@ void battle_react(Fighter *victim, int reaction) {
     victim->body.pos[AXIS_Y] += victim->body.root_y;
     victim->body.root_y = 0;
   }
-  FighterFn native = retail_reaction_entry(retail_vm_image(), (unsigned)reaction);
   FighterFn selected = native != NULL ? native : reactions[reaction];
   FighterFn entry =
       selected != NULL && (native != NULL || victim->roster != 15 || reaction == 67 || (reaction == 151 && victim->hits <= 3)) ? selected : react_approximate;

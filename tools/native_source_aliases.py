@@ -1,6 +1,10 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'reiko_star_reaction': 'retail_stagger_entry',
+    'reptile_acid_victim': 'retail_stagger_entry',
+    'scorpion_generated_reaction': 'retail_stagger_entry',
+
     'cage_weapon_reaction': 'retail_weapon_reaction',
     'jarek_weapon_reaction': 'retail_weapon_reaction',
     'kai_weapon_reaction': 'retail_weapon_reaction',

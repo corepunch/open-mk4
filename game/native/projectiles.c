@@ -1143,28 +1143,6 @@ void reiko_star(Fighter *fighter) {
   retail_vm_enter_owned(fighter, 0x4ed038, fighter_ready, 7);
 }
 
-static const MoveDef n483df0_s_star_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x2013};
-
-/* Reaction 45 (483d40): 481010 resets the peer and stores action 0x2013.
- * Airborne victims continue as reaction 10 (481320 -> 4e89a0). Otherwise
- * 494520 disarms, 4906c0 snaps to the floor and stops, 4e97f0 installs
- * friction and 4e97f8 pushes back on clip 182. */
-void reiko_star_reaction(Fighter *victim) {
-  if (fighter_airborne(victim)) {
-    battle_react(victim, 10);
-    return;
-  }
-  if (victim->armed && victim->disarm != NULL) {
-    victim->disarm(victim);
-  }
-  fighter_start_move(victim, S_HIT, &n483df0_s_star_victim);
-  victim->flags |= FF_REACTING;
-  victim->body.pos[AXIS_Y] = victim->body.ground;
-  mk4_script_stop_body(victim);
-  victim->body.physics = fighter_friction;
-  retail_vm_enter_owned(victim, 0x4e97f8, fighter_stop_mmove, 7);
-}
-
 /* Native service cluster: 40eb80, 40ec40, 40ed20, 40ee00, 483df0, 498920. */
 /* Acid spit: D,F+HP record 4e4570 and the CPU projectile row both enter
  * 4988d0. It stamps action family 7 (48e3a0), snapshots the pair heading
@@ -1178,8 +1156,8 @@ static const ParticleVisual n40eb80_drool_visual = {
     .animation = {.first = 340, .count = 5, .period = 2, .scale = 0x51eb, .source = MESH_SHARED, .offset = {0x1100, 0xd80, 0}}};
 static const ParticleSpray n40eb80_drool_spray = {
     .visual = &n40eb80_drool_visual, .count = 1, .lifetime = 40, .gravity = 0x2e1, .velocity = {0, -0xe14, 0}, .spread = {0x51e, 0x666, 0x51e}};
+
 /* 483d60 grounded victim: action 1013, clip 182 (65 samples). */
-static const MoveDef n40eb80_acid_victim = {.clip = 182, .last = 64, .flags = SF_LOCK | SF_REACTION, .action = 0x1013};
 
 enum {
   n40eb80_REPTILE_HEAD_JOINT = 2,
@@ -1311,16 +1289,6 @@ void reptile_acid_spit(Fighter *fighter) {
   fighter->saved_motion[1] = fighter_axis(fighter, AXIS_Z);
   fighter->mmove_cleanup = n40eb80_spit_cleanup;
   retail_vm_enter_owned(fighter, 0x4ed1e8, fighter_ready, 10);
-}
-
-/* Reaction 41. battle_react sends airborne victims to reaction 10, as
- * 483d60 does through 48ef30 and 481320. Grounded victims install the
- * 4e97f0 friction callback and enter 4e97f8. */
-void reptile_acid_victim(Fighter *victim) {
-  fighter_start_move(victim, S_HIT, &n40eb80_acid_victim);
-  victim->sample_override = 0;
-  victim->body.physics = fighter_friction;
-  retail_vm_enter_owned(victim, 0x4e97f8, fighter_ready, 10);
 }
 
 /* Native service cluster: 416ae0, 416d40, 468640. */

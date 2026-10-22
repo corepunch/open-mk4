@@ -441,10 +441,10 @@
       "evidence": "D[29] blocked reaction 9: 4ea4e8[9] = 0x486b30, shared C reaction dispatch."
     },
     "45": {
-      "source": "game/native/projectiles.c",
-      "symbol": "reiko_star_reaction",
-      "adaptation": "Shared reaction table entry: airborne victims continue as reaction 10; grounded ones run generated 4e97f8 and the native 483df0 stagger.",
-      "evidence": "C[21] hit/air reaction 45: 4ea4e8[45] = 0x483d40."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_stagger_entry",
+      "adaptation": "Shared native action/ground/air prelude; original words own playback and loaded callback physics. Hit particles use engine presentation.",
+      "evidence": "Loaded4ea4e8[45] -> 483d40; bounded483c50/483d40/483d60/483d80 and original4e97f8/4e8a78/4e89a0; mk4decomp native task/controller contracts."
     },
     "2": {
       "source": "game/reactions.c",

@@ -1775,3 +1775,22 @@ the shared launch registry so native peer reaction14 enters4e89a0 directly.
 Checked local native/dependency listings and mk4decomp OutroEventForwarderCluster
 matching assembly. Verified formatting, runtime/rejections, all strict audits,
 native gates and helper/port navigation. No authored reaction timing tests.
+
+### Retire ReactionSpec playback entirely
+
+Removed the last ReactionSpec rows, its animation/motion compiler helpers and
+Scorpion-named generated-reaction adapter. Loaded483c50/483d40/483d60 share
+native483d80 ground handling (loaded4e97f0 callback and original4e97f8).
+Airborne483c50 runs its actual4e8a78 continuation; star/acid enter original
+4e89a0. Native action distinctions remain2013/1013/0. Removed redundant
+star/acid victim MoveDefs and handlers. Shared entries now own their disarm
+preludes; the old reaction-ID disarm list applies only to legacy fallback
+entries, preventing it from overriding native branch decisions.
+
+Checked bounded local branches and mk4decomp MainTickChain/native task source.
+416e20's bounded independent hit task uses the existing engine particle service
+(16 emissions); its raw palette/mesh object system remains represented by the
+portable generic particle artwork, consistent with existing effect boundaries.
+Verified formatting, runtime/rejections, all strict audits, native gates and
+helper/port navigation. No new authored reaction tests. Other legacy reaction
+phase programs still remain; removing ReactionSpec alone is not completion.
