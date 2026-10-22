@@ -315,10 +315,10 @@
       "evidence": "4ea4e8[191] -> 4842d0: disarm, airborne fall 0x1999, generated 4ea400 clip 178 and native 484330 stomp cycles."
     },
     "192": {
-      "source": "game/native/contexts.c",
-      "symbol": "goro_uppercut_victim",
-      "adaptation": "Registered directly in shared reactions[192]; the Goro-owned victim program runs on any non-Goro victim.",
-      "evidence": "4ea4e8[192] -> 482480: shake 6, 40% scale, wall recoil, disarm, attacker run drain, generated 4e8e50/4e8e80 clip 181 and getup."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery.",
+      "evidence": "Loaded4ea4e8[192] -> 482480; bounded local native preludes and original4e8e50; mk4decomp shared script/controller contracts."
     },
     "3": {
       "source": "game/reactions.c",

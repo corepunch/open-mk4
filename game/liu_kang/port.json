@@ -374,9 +374,10 @@
       "adaptation": "Shared loaded native prelude; scripts own the complete tumble, motion, waits and landing phases."
     },
     "59": {
-      "evidence": "4ea4e8[59] -> 0x4823c0; shared reaction adapter and behavioral regressions",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[59] -> 4823c0; bounded local native preludes and original4e8d70; mk4decomp shared script/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "6": {
       "evidence": "4ea4e8[6] -> 0x486af0; shared reaction adapter and behavioral regressions",

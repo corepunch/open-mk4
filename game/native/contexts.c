@@ -69,21 +69,6 @@ void goro_kick_victim(Fighter *victim) {
   retail_vm_enter_owned(victim, 0x4ea3e0, fighter_ready, 15);
 }
 
-/* 192 (482480 -> 4824a0): shake 6; 482a50 sets later damage to 40%;
- * 488ea0 wall recoil; disarm; 488fd0 drains the attacker's run meter
- * (48fae0: -1.0, 60-visit delay); then 4e8e50. */
-void goro_uppercut_victim(Fighter *victim) {
-  Fighter *attacker = (Fighter *)fighter_opponent(victim);
-  n4824f0_begin_victim(victim);
-  mk4_script_shake(victim, 6);
-  victim->damage_scale = 0x6666;
-  battle_wall_recoil(victim);
-  mk4_script_disarm_self(victim);
-  attacker->run_energy = 0;
-  attacker->run_delay = 60;
-  retail_vm_enter_owned(victim, 0x4e8e50, fighter_ready, 15);
-}
-
 /* 4824f0: back speed 0x7ae, or 0xf5c after more than one hit, then 4e8e80. */
 void goro_script_uppercut_victim_slide(Fighter *victim) {
   fighter_set_speed(victim, victim->hits > 1 ? -0xf5c : -0x7ae);

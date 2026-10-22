@@ -402,9 +402,10 @@
       "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "52": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Weapon record W6 (4ec870 back LP) selects shared reaction52 through retail dispatcher 0x4824a0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "evidence": "Loaded4ea4e8[52] -> 4824a0; bounded local native preludes and original4e8e50; mk4decomp shared script/controller contracts.",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "119": {
       "source": "game/reactions.c",

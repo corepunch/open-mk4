@@ -380,15 +380,16 @@
       "adaptation": "Global reactions.c registers this move-owned dispatcher for native 488450/488830; the victim phases are the shared 4ea050/4ea0b8 programs, independent of the attacker roster."
     },
     "122": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Drill kick D17 air reaction 122 dispatches native 483500 -> 4e95f0."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "evidence": "Loaded4ea4e8[122] -> 483500; bounded local native preludes and original4e95f0; mk4decomp shared script/controller contracts.",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "158": {
-      "source": "game/native/motion.c",
-      "symbol": "reptile_dash_victim",
-      "evidence": "Spin kick D28 reaction 158: 4ea4e8[158] -> 483500 (the same native as 122): damage scale 0x9999, disarm, VM 4e95f0.",
-      "adaptation": "Roster-generic victim handler; the shared reactions[158] entry runs the Reptile-owned generated 4e95f0 program for any victim."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "evidence": "Loaded4ea4e8[158] -> 483500; bounded local native preludes and original4e95f0; mk4decomp shared script/controller contracts.",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "0": {
       "source": "game/reactions.c",

@@ -204,3 +204,5 @@ void retail_stagger_tail(Fighter *fighter);
 void retail_scene_join_victory(Fighter *fighter);
 
 void retail_script_reaction(Fighter *fighter);
+
+void retail_scaled_reaction(Fighter *fighter);

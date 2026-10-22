@@ -1699,3 +1699,20 @@ Updated reviewed research metadata to the actual shared native source.
 Verified formatting, shared runtime/rejections, all18 strict fighter audits,
 native gates and existing helper/port navigation. Reused existing runtime
 and callback fixtures; no new per-reaction tests.
+
+### Share scaled native reaction handoffs
+
+Removed copied ReactionSpec52/59/122/155 and the separate Reptile158 and
+Goro192 adapters. Loaded482480/4824a0/4823c0/483500/482f60 now execute
+original4e8e50/4e8d70/4e95f0/4e93d8 after their native preludes. Both122
+and158 use the same483500 implementation. Native482480 adds shake6 before
+the shared4824a0 path; native run drain and damage scaling remain native
+engine effects. Native48a320 now reads original sound list4ea8f8 rather
+than omitting it. Shared4826e0 weapon-dependent audio serves both native
+callers once. Native4823c0 retains its typed roll-getup completion after VM
+return.
+
+Checked bounded local entries and482a50/48a320 dependencies, mk4decomp
+EightEntryAlarmDispatch matching assembly and shared controller contracts.
+Verified formatting, shared runtime/rejections, all strict fighter audits,
+native gates and helper/port navigation. No new fighter-specific tests.

@@ -921,7 +921,6 @@ static const AttackRecord n47a6d0_dash_record = {0xd1eb, 0x570a, 0x16872, 0xbfbe
 static const MoveDef n47a6d0_roll = {.clip = 106, .last = 21, .flags = SF_LOCK | SF_RECORD, .action = 0x20d};
 static const AttackRecord n47a6d0_roll_record = {0xe872, -0x3f7c, 0xb84b, 0x56c8, 40, 10, 9, 0, 0x170a};
 static const MoveDef n47a6d0_roll_victim = {.clip = 183, .last = 33, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
-static const MoveDef n47a6d0_dash_victim = {.clip = 179, .last = MOVE_END, .flags = SF_LOCK | SF_REACTION | SF_WAIT_LAND};
 
 bool reptile_can_dash(const Fighter *fighter) {
   /* 45e950: action family 11 must be at least 70 ticks old and the peer
@@ -1041,16 +1040,6 @@ void reptile_reaction_40(Fighter *fighter) {
   fighter_start_move(fighter, S_KNOCKDOWN, &n47a6d0_roll_victim);
   fighter->sample_override = 0;
   retail_vm_enter_owned(fighter, 0x4e9620, fighter_ready, 10);
-}
-
-/* Reaction 158 (483500): damage scale 0x9999 (482a50), disarm and VM
- * 4e95f0, clip 179 launch and landing. The 48a320 random grunt list
- * 4ea8f8 uses raw tokens and is omitted with the dash footsteps. */
-void reptile_dash_victim(Fighter *fighter) {
-  fighter->damage_scale = 0x9999;
-  fighter_start_move(fighter, S_KNOCKDOWN, &n47a6d0_dash_victim);
-  fighter->sample_override = 0;
-  retail_vm_enter_owned(fighter, 0x4e95f0, fighter_ready, 10);
 }
 
 /* 488b80: 490350 toggles the model mirror bit, which the pair-axis

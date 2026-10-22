@@ -397,9 +397,10 @@
       "adaptation": "Shared loaded native prelude; original words own launch, landing, playback and getup selection."
     },
     "155": {
-      "source": "game/reactions.c",
-      "symbol": "react_extra",
-      "evidence": "Crossbow C[16], shared armed air, thrown weapon and follow-up victim select this native reaction;101 uses486770 ->4e9e10 with native friction."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "evidence": "Loaded4ea4e8[155] -> 482f60; bounded local native preludes and original4e93d8; mk4decomp shared script/controller contracts.",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "156": {
       "source": "game/retail_reaction.c",

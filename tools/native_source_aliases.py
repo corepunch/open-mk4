@@ -1,6 +1,9 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'reptile_dash_victim': 'retail_scaled_reaction',
+    'goro_uppercut_victim': 'retail_scaled_reaction',
+
     'goro_punch_victim': 'retail_script_reaction',
     'sub_zero_script_victory': 'retail_victory_continue',
     'reiko_script_star_victim_tail': 'retail_stagger_tail',

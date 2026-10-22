@@ -356,10 +356,10 @@
       "evidence": "Acid C[17] blocked reaction 2 uses the shared projectile block handler 486ca0."
     },
     "158": {
-      "source": "game/native/motion.c",
-      "symbol": "reptile_dash_victim",
-      "adaptation": "Shared reactions.c entry 158 dispatches any struck victim to the move-owned generated 4e95f0 program.",
-      "evidence": "Dash D[23] selects reaction 158 (483500): damage scale 0x9999, disarm, VM 4e95f0 clip 179 launch and 488b80 getup."
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery.",
+      "evidence": "Loaded4ea4e8[158] -> 483500; bounded local native preludes and original4e95f0; mk4decomp shared script/controller contracts."
     },
     "165": {
       "source": "game/reactions.c",

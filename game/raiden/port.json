@@ -360,9 +360,10 @@
       "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "52": {
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[52] -> 4824a0; bounded local native preludes and original4e8e50; mk4decomp shared script/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "53": {
       "adaptation": "Shared reactions table calls this exported entry on the explicit victim; its generated frame program owns recovery.",

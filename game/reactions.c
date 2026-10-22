@@ -6,7 +6,6 @@
 
 void reptile_reaction_40(Fighter *fighter);
 void reptile_acid_victim(Fighter *fighter);
-void reptile_dash_victim(Fighter *fighter);
 void reptile_second_victim(Fighter *fighter);
 void reptile_weapon_reaction(Fighter *fighter);
 void fujin_bolt_victim(Fighter *fighter);
@@ -18,7 +17,6 @@ void fujin_second_victim(Fighter *fighter);
 void goro_quake_victim(Fighter *fighter);
 void goro_kick_victim(Fighter *fighter);
 void goro_stomp_victim(Fighter *fighter);
-void goro_uppercut_victim(Fighter *fighter);
 void kai_second_victim(Fighter *fighter);
 #include "script.h"
 #include "math_util.h"
@@ -350,15 +348,11 @@ static const ReactionSpec extra_reactions[256] = {
   [26] = {R(128, 109, 0x4003), 0, 0, 53, 0, 0x7ae, -0x3333, 0x20c, 0x6666, false, false},
   [32] = {R(324, 13, 0x4001), 0, 0, -1, 0, 0, 0, 0, 0, false, false},
   [39] = {R(186, 19, 0x4003), 0, 0, 14, 188, 0x1999, 0, 0, 0, false, false},
-  [52] = {R(181, 82, 0x4003), 0, 0, 51, 328, 0x7ae, -0x3851, 0x20c, 0x6666, false, false},
   [54] = {R(183, 33, 0x4003), 0, 0, 30, 185, 0x11eb, -0x23d7, 0x28f, 0, false, false},
-  [59] = {R(189, 30, 0x4003), 0, 0, 30, 191, 0x3d7, -0x3851, 0x28f, 0x8000, false, false},
   [62] = {R(130, 39, 0x4001), 0, 0, -1, 0, 0xccc, 0, 0, 0, false, false},
   [90] = {.move = R(311, 18, 0x4001), .land_at = -1},
-  [122] = {R(179, 53, 0x4003), 0, 0, 39, 328, -0xa3d, -0x30a3, 0x28f, 0x9999, false, false},
   [129] = {R(132, 59, 0x4003), 0, 0, 14, 328, 0xa3d, 0, 0, 0, false, false},
   [130] = {R(179, 53, 0x100a), 0, 0, 39, 328, -0x51e, -0x4ccc, 0x353, 0, false, false},
-  [155] = {R(132, 59, 0x4003), 0, 0, 13, 328, 0x1999, 0x666, 0x147, 0, false, false},
   [173] = {.move = R(182, 64, 0x4001), .land_at = -1},
 };
 static const MoveDef getup_back = R(328, 14, ACTION_GETUP);
@@ -443,7 +437,6 @@ static void react_extra(Fighter *fighter) {
     case 26:
     case 28:
     case 29:
-    case 52:
       battle_wall_recoil(fighter);
       break;
     default:
@@ -477,7 +470,7 @@ static void react_extra(Fighter *fighter) {
     slide(fighter, spec->speed);
   } else {
     /* 0x4e9980 shares clip 183 with jab air, but retreats at 0.03. */
-    launch(fighter, teleport_air ? 0x7ae : id == 52 && fighter->hits > 1 ? 0xf5c : spec->speed, spec->vy, spec->gravity);
+    launch(fighter, teleport_air ? 0x7ae : spec->speed, spec->vy, spec->gravity);
   }
   if (fighter_airborne(fighter) && fighter->body.gravity == 0) {
     fighter->body.gravity = 0x28f;
@@ -812,7 +805,6 @@ static const FighterFn reactions[256] = {
   [87] = sonya_generated_reaction,
   [121] = sonya_generated_reaction,
   [54] = react_extra,
-  [59] = react_extra,
   [62] = jarek_weapon_reaction,
   [117] = react_block,
   [19] = react_liu_record,
@@ -832,7 +824,6 @@ static const FighterFn reactions[256] = {
   [26] = react_extra,
   [32] = react_extra,
   [39] = react_extra,
-  [52] = react_extra,
   [150] = react_scepter_low,
   [151] = react_scepter_freeze,
   [120] = react_weapon_followup,
@@ -847,8 +838,6 @@ static const FighterFn reactions[256] = {
   [181] = fujin_second_victim,
   [179] = shinnok_second_victim,
   [101] = fujin_bolt_victim,
-  [122] = react_extra,
-  [155] = react_extra,
   [173] = react_extra,
 
   [112] = react_block,
@@ -895,11 +884,9 @@ static const FighterFn reactions[256] = {
   [136] = goro_quake_victim,
   [190] = goro_kick_victim,
   [191] = goro_stomp_victim,
-  [192] = goro_uppercut_victim,
   [178] = kai_second_victim,
   [41] = reptile_acid_victim,
   [40] = reptile_reaction_40,
-  [158] = reptile_dash_victim,
   [180] = reptile_second_victim,
   [96] = reptile_weapon_reaction,
   [137] = reptile_weapon_reaction,

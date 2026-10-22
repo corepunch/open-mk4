@@ -114,6 +114,19 @@ void retail_reaction_fall(Fighter *fighter) {
   retail_vm_enter(fighter, 0x4e96e0, mk4_script_thrown_ready);
 }
 
+/* Native4826e0 selects impact audio from the captured attacker weapon. */
+static void weapon_impact_voice(Fighter *fighter) {
+  const Fighter *peer = fighter_peer(fighter);
+  RetailWeaponInventory inventory;
+  retail_weapon_read(retail_vm_image(), (unsigned)peer->roster, &inventory);
+  int type = peer->weapon != NULL ? peer->weapon->type : (int)inventory.type;
+  if (type == 0x61) {
+    mk4_script_indexed_sound(fighter, 2);
+  } else if (type != 0x69) {
+    retail_native_sound_list(0x4ea880);
+  }
+}
+
 void retail_tumble_reaction(Fighter *fighter) {
   uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
   if (entry == 0x482730) {
@@ -126,15 +139,7 @@ void retail_tumble_reaction(Fighter *fighter) {
     battle_wall_recoil(fighter);
   }
   if (entry == 0x4826a0) {
-    const Fighter *peer = fighter_peer(fighter);
-    RetailWeaponInventory inventory;
-    retail_weapon_read(retail_vm_image(), (unsigned)peer->roster, &inventory);
-    int type = peer->weapon != NULL ? peer->weapon->type : (int)inventory.type;
-    if (type == 0x61) {
-      mk4_script_indexed_sound(fighter, 2);
-    } else if (type != 0x69) {
-      retail_native_sound_list(0x4ea880);
-    }
+    weapon_impact_voice(fighter);
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
   fighter_start_move(fighter, S_KNOCKDOWN, &move);
@@ -221,8 +226,58 @@ void retail_script_reaction(Fighter *fighter) {
   retail_vm_enter(fighter, script, mk4_script_thrown_ready);
 }
 
+void retail_scaled_reaction(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  if (entry == 0x482480) {
+    mk4_script_shake(fighter, 6);
+  }
+  if (entry == 0x482480 || entry == 0x4824a0 || entry == 0x4823c0) {
+    battle_wall_recoil(fighter);
+  }
+  mk4_script_disarm_self(fighter);
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_4003};
+  fighter_start_move(fighter, S_KNOCKDOWN, &move);
+  uint32_t script;
+  FighterFn finish = mk4_script_thrown_ready;
+  switch (entry) {
+    case 0x482480:
+    case 0x4824a0: {
+      fighter->damage_scale = 0x6666;
+      Fighter *attacker = fighter_peer(fighter);
+      attacker->run_energy = 0;
+      attacker->run_delay = 60;
+      script = 0x4e8e50;
+      break;
+    }
+    case 0x4823c0:
+      fighter->damage_scale = 0x8000;
+      script = 0x4e8d70;
+      finish = retail_getup_roll;
+      break;
+    case 0x483500:
+      fighter->damage_scale = 0x9999;
+      retail_native_sound_list(0x4ea8f8);
+      script = 0x4e95f0;
+      break;
+    case 0x482f60:
+      weapon_impact_voice(fighter);
+      script = 0x4e93d8;
+      break;
+    default:
+      require(false, "Unexpected scaled reaction native");
+      return;
+  }
+  retail_vm_enter(fighter, script, finish);
+}
+
 FighterFn retail_reaction_entry(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x482480:
+    case 0x4824a0:
+    case 0x4823c0:
+    case 0x483500:
+    case 0x482f60:
+      return retail_scaled_reaction;
     case 0x482260:
     case 0x482410:
     case 0x482420:

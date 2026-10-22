@@ -341,9 +341,10 @@
       "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "52": {
-      "evidence": "4ea4e8[52] -> 0x4824a0; shared C reaction dispatch",
-      "source": "game/reactions.c",
-      "symbol": "react_extra"
+      "evidence": "Loaded4ea4e8[52] -> 4824a0; bounded local native preludes and original4e8e50; mk4decomp shared script/controller contracts.",
+      "source": "game/retail_reaction.c",
+      "symbol": "retail_scaled_reaction",
+      "adaptation": "Loaded native target selects one shared prelude; original words own playback, motion and recovery."
     },
     "6": {
       "evidence": "4ea4e8[6] -> 0x486af0; shared C reaction dispatch",
