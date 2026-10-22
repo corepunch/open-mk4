@@ -32,8 +32,7 @@ def main():
     named = {'Native': set(), 'Script/data': set()}
     literals = []
     vague = []
-    paths = list((ROOT / 'game').rglob('*')) + [ROOT / 'common' / name for name in
-            ('mk4_image.c', 'mk4_image.h', 'mk4_retail_data_addresses.h')]
+    paths = [path for directory in ('game', 'common') for path in (ROOT / directory).rglob('*')]
     for path in sorted(paths):
         if path.suffix not in ('.c', '.h', '.inc'):
             continue
