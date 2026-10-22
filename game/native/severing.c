@@ -883,29 +883,10 @@ static const SceneClip n44be10_victim_blends[] = {
 };
 /* 48a910 camera tracks 4e1a80 (3 + 4 controls) and 4e1ad8 (4 + 4 controls),
  * both stepped at 0xccc; 44c7dc holds 45 ticks between them. Retail X,Z,Y
- * records are stored here as X,Y,Z. */
-static const q16 n44be10_camera_side[][3] = {
-  {0, -0x20000, -0x60000},
-  {0, -0x20000, -0x60000},
-  {0, -0x20000, -0x60000},
-  {0, -0x20000, -0x60000},
-  {0, -0x20000, -0x60000},
-  {0, -0x20000, -0x60000},
-  {0, -0x20000, -0x60000},
-};
-static const q16 n44be10_camera_orbit[][3] = {
-  {0x88000, -0x1b333, -0x80000},
-  {0x60000, -0x18000, 0x60000},
-  {0x48000, -0x14ccc, 0x40000},
-  {-0x80000, -0x14ccc, 0x80000},
-  {-0x80000, -0x14ccc, -0x80000},
-  {0x80000, -0x14ccc, -0x80000},
-  {0x80000, -0x14ccc, 0x80000},
-  {-0x80000, -0x14ccc, 0x80000},
-};
+ * records remain in the loaded image in their original X,Z,Y order. */
 static const CameraShot n44be10_camera_shots[] = {
-  {n44be10_camera_side, QC_NATIVE_COUNT(n44be10_camera_side), 45, 0xccc, 0, 0, 0},
-  {n44be10_camera_orbit, QC_NATIVE_COUNT(n44be10_camera_orbit), 0, 0xccc, 0, 0, 0},
+  {MK4_RETAIL_DATA_LEG_TEAR_CAMERA_SIDE, 45, 0xccc, 0, 0, 0},
+  {MK4_RETAIL_DATA_LEG_TEAR_CAMERA_ORBIT, 0, 0xccc, 0, 0, 0},
 };
 // clang-format on
 /* The owner keeps his stance pose through 44bd9b's sixteen-tick setup. */
@@ -1644,49 +1625,9 @@ static const SceneClip n445150_first_victim_blends[] = {
 };
 // clang-format on
 // clang-format off: Keep table entries on one row, including long rows.
-static const q16 n445150_first_camera[][3] = {
-  {131072, -131072, -196608},
-  {131072, -131072, -196608},
-  {131072, -131072, -196608},
-  {131072, -131072, -196608},
-  {131072, -131072, -196608},
-  {131072, -131072, -196608},
-  {131072, -131072, -196608},
-};
-// clang-format on
-// clang-format off: Keep table entries on one row, including long rows.
-static const q16 n445150_orbit_camera[][3] = {
-  {-327680, -163840, -458752},
-  {-393216, -183500, -393216},
-  {-393216, -255590, 393216},
-  {393216, -216268, 393216},
-  {393216, -190054, -393216},
-  {-458752, -170393, -458752},
-  {-524288, -157286, 524288},
-  {589824, -144179, 589824},
-  {655360, -117964, -655360},
-  {-655360, -104857, -655360},
-  {-655360, -104857, 655360},
-  {655360, -104857, 655360},
-  {655360, -117964, -655360},
-  {-655360, -131072, -655360},
-  {-655360, -144179, 655360},
-  {655360, -150732, 655360},
-  {655360, -157286, -655360},
-  {-655360, -157286, -655360},
-  {-655360, -157286, 655360},
-  {655360, -157286, 655360},
-  {655360, -157286, -655360},
-  {-655360, -157286, -655360},
-  {-655360, -157286, 655360},
-  {655360, -157286, 655360},
-  {655360, -157286, -655360},
-};
-// clang-format on
-// clang-format off: Keep table entries on one row, including long rows.
 static const CameraShot n445150_first_camera_shots[] = {
-  {n445150_first_camera, NATIVE_COUNT(n445150_first_camera), 50, 0xccc, 0, 0, 0},
-  {n445150_orbit_camera, NATIVE_COUNT(n445150_orbit_camera), 0, 0x45a, 3, 80, -0x4000},
+  {MK4_RETAIL_DATA_SPINE_PULL_CAMERA_INTRO, 50, 0xccc, 0, 0, 0},
+  {MK4_RETAIL_DATA_SPINE_PULL_CAMERA_ORBIT, 0, 0x45a, 3, 80, -0x4000},
 };
 // clang-format on
 static const AttachmentDef n445150_first_spine = {.model = SCENE_MODEL_SPINE,

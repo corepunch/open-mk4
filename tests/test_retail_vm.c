@@ -103,6 +103,29 @@ static void native_chord_rows(void) {
   }
 }
 
+static void native_camera_rows(void) {
+  Fighter *owner = setup(0, 0);
+  Fighter *peer = fighter_peer(owner);
+  uint32_t path = MK4_RETAIL_DATA_LEG_TEAR_CAMERA_SIDE;
+  uint32_t extent = mk4_image_u32(&image, path);
+  uint32_t x = mk4_image_u32(&image, path + 4);
+  CameraShot shot = {.retail_path = path, .step = Q16_ONE};
+  put_word(path, Q16_ONE);
+  battle_camera_sequence(owner, peer, &shot, 1);
+  check(g_battle.camera.path_count == 5, "native camera must derive control count from its loaded path header");
+  g_battle.camera.parameter = 3 * Q16_ONE;
+  battle_step_presentation();
+  float before = g_battle.camera.eye.x;
+  put_word(path + 4, x + Q16_ONE);
+  battle_camera_sequence(owner, peer, &shot, 1);
+  g_battle.camera.parameter = 3 * Q16_ONE;
+  battle_step_presentation();
+  check(g_battle.camera.eye.x != before, "native camera must sample changed retail control points");
+  put_word(path, extent);
+  put_word(path + 4, x);
+  g_battle.camera = (SceneCamera){0};
+}
+
 static void behavior(void) {
   for (int slot = 0; slot < 2; ++slot) {
     for (int crouch = 0; crouch < 2; ++crouch) {
@@ -1362,6 +1385,7 @@ int main(int argc, char **argv) {
   native_weapon_inventory();
   native_contact_record_lifetime();
   native_chord_rows();
+  native_camera_rows();
   native_projectile_context();
   native_return_ownership();
   native_sound_data();

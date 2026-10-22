@@ -7,6 +7,10 @@
  * Values are image indices, never host pointers or executable function pointers.
  * Established local constant definitions remain valid aliases of these values. */
 enum {
+  MK4_RETAIL_DATA_LEG_TEAR_CAMERA_SIDE = 0x4e1a80,
+  MK4_RETAIL_DATA_LEG_TEAR_CAMERA_ORBIT = 0x4e1ad8,
+  MK4_RETAIL_DATA_SPINE_PULL_CAMERA_INTRO = 0x4e0f00,
+  MK4_RETAIL_DATA_SPINE_PULL_CAMERA_ORBIT = 0x4e0f58,
   MK4_RETAIL_DATA_ARENA_RADII = 0x4dad60,
   MK4_RETAIL_DATA_SKIN_SEVER_ROWS = 0x4ea420,
   MK4_RETAIL_DATA_HEAD_HAND_PART_PARAMETERS = 0x4e1cd0,

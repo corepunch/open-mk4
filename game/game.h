@@ -751,8 +751,8 @@ typedef struct BloodSplat {
 } BloodSplat;
 
 typedef struct CameraShot {
-  const q16 (*points)[3];
-  int count, hold;
+  uint32_t retail_path;
+  int hold;
   q16 step;
   int aim_joint, aim_ticks;
   q16 aim_y;
@@ -764,7 +764,7 @@ typedef struct SceneCamera {
   Vec3 eye, target, from_target, to_target;
   int ticks, duration;
   const CameraShot *shots;
-  int shot_count, shot, hold, target_player;
+  int shot_count, shot, hold, target_player, path_count;
   q16 parameter;
   Vec3 origin, axis, path_start;
   q16 shake_y, shake_amount;

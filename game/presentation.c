@@ -1,4 +1,5 @@
 #include "game.h"
+#include "retail_vm.h"
 #include "math_util.h"
 #include <math.h>
 #include <string.h>
@@ -86,10 +87,20 @@ bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, M
   return false;
 }
 
+enum {
+  CAMERA_PATH_EXTRA_CONTROLS = 4,
+  CAMERA_PATH_CONTROL_CAPACITY = 256,
+  CAMERA_PATH_HEADER_BYTES = 4,
+  CAMERA_PATH_ROW_BYTES = 12
+};
+
 static void camera_shot(void) {
   SceneCamera *camera = &g_battle.camera;
   const CameraShot *shot = &camera->shots[camera->shot];
-  require(shot->count >= 4 && shot->step > 0, "Invalid camera shot");
+  uint32_t extent = mk4_image_u32(retail_vm_image(), shot->retail_path);
+  require(extent > 0 && extent % Q16_ONE == 0 && extent / Q16_ONE <= CAMERA_PATH_CONTROL_CAPACITY - CAMERA_PATH_EXTRA_CONTROLS && shot->step > 0,
+      "Invalid retail camera path");
+  camera->path_count = (int)(extent / Q16_ONE) + CAMERA_PATH_EXTRA_CONTROLS;
   camera->parameter = Q16_ONE;
   camera->hold = 0;
   camera->path_start = camera->eye;
@@ -119,7 +130,7 @@ void battle_camera_sequence(const Fighter *owner, const Fighter *target, const C
 /* 48b030/4a0: four control points, with the retail compact-support
  * cubic kernel .5*(1 - .75*d*d + .25*abs(d*d*d)). Indices <= 2
  * repeat the camera's starting position; later controls are local to
- * the scene reference. Retail records store X,Z,Y; CameraShot uses X,Y,Z. */
+ * the scene reference. Control points remain in the retail image in their original X,Z,Y order. */
 static Vec3 camera_sample(const SceneCamera *camera) {
   const CameraShot *shot = &camera->shots[camera->shot];
   float parameter = q16_float(camera->parameter);
@@ -130,10 +141,13 @@ static Vec3 camera_sample(const SceneCamera *camera) {
     float weight = .5f * (1.f - .75f * d * d + .25f * d * d * d);
     Vec3 point = camera->path_start;
     if (i > 2) {
-      int n = mini(shot->count - 1, i - 3);
-      float x = q16_float(shot->points[n][0]), z = q16_float(shot->points[n][2]);
-      point = (Vec3){camera->origin.x + camera->axis.x * x - camera->axis.z * z, q16_float(shot->points[n][1]),
-          camera->origin.z + camera->axis.z * x + camera->axis.x * z};
+      int n = mini(camera->path_count - 1, i - 3);
+      uint32_t row = shot->retail_path + CAMERA_PATH_HEADER_BYTES + (unsigned)n * CAMERA_PATH_ROW_BYTES;
+      const Mk4Image *image = retail_vm_image();
+      float x = q16_float((q16)mk4_image_u32(image, row));
+      float z = q16_float((q16)mk4_image_u32(image, row + 4));
+      float y = q16_float((q16)mk4_image_u32(image, row + 8));
+      point = (Vec3){camera->origin.x + camera->axis.x * x - camera->axis.z * z, y, camera->origin.z + camera->axis.z * x + camera->axis.x * z};
     }
     result = vec_add(result, vec_scale(point, weight));
   }
@@ -554,7 +568,7 @@ void battle_step_presentation(void) {
   }
   if (camera->active && camera->shots != NULL) {
     const CameraShot *shot = &camera->shots[camera->shot];
-    q16 end = (shot->count - 1) * Q16_ONE;
+    q16 end = (camera->path_count - 1) * Q16_ONE;
     if (camera->parameter < end) {
       camera->parameter = mini(end, camera->parameter + shot->step);
       camera->eye = camera_sample(camera);
