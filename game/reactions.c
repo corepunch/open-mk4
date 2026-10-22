@@ -24,8 +24,6 @@ void kai_second_victim(Fighter *fighter);
  * are in docs/scorpion/combat-core.md. These are our C continuations, not
  * an emulation of the retail task scheduler. Native entry selection is loaded. */
 
-#define COUNT(array) ((int)(sizeof array / sizeof array[0]))
-
 enum {
   FRICTION = 0xe666,    /* 0x4913a0: velocity *= 0.9 per world pump */
   FRICTION_STOP = 0x41, /* stop once vx*vx + vz*vz <= this */
@@ -105,75 +103,6 @@ void battle_wall_recoil(Fighter *victim) {
   }
 }
 
-/* These maps include the entry pose. Later poses and actions are installed
- * once in a fixed-frame program; callbacks never read an age clock. */
-typedef struct ReactionPhase {
-  MoveDef move;
-  const int *samples;
-  int count;
-  FighterFn end;
-  FighterTest until;
-} ReactionPhase;
-
-// clang-format off: Keep table entries on one row, including long rows.
-static const int block_samples[] = {3, 5, 7, 9, 7, 5, 3, 3, 5, 7, 9, 7, 5, 3};
-static const int crouch_block_samples[] = {0, 1, 2, 3, 4, 4, 3, 2, 1, 0};
-// clang-format on
-
-#define REACTION(name, clip_id, move_flags, poses, frames, finish, gate, action_id)                                                                            \
-  static const ReactionPhase name = {                                                                                                                          \
-      .move = {.clip = clip_id, .last = MOVE_END, .flags = move_flags, .action = action_id}, .samples = poses, .count = frames, .end = finish, .until = gate}
-
-REACTION(block_short, 321, SF_LOCK, block_samples, 7, neutral, NULL, ACTION_BLOCK);
-REACTION(block_long, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(slide_block, 321, SF_LOCK, block_samples, COUNT(block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(slide_crouch_block, 255, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(fireball_armed_block, 247, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
-REACTION(fireball_armed_crouch_block, 222, SF_LOCK, crouch_block_samples, COUNT(crouch_block_samples), neutral, NULL, ACTION_BLOCK);
-#undef REACTION
-
-static void shared_reaction_finish(Fighter *fighter) {
-  const ReactionPhase *phase = fighter->native_context;
-  fighter_finish_mmove(fighter, phase->end);
-}
-
-static void shared_reaction_gate(Fighter *fighter) {
-  const ReactionPhase *phase = fighter->native_context;
-  fighter->mmove_hold = !phase->until(fighter);
-}
-
-static void start_reaction(Fighter *fighter, int state, const ReactionPhase *phase) {
-  fighter_start_move(fighter, state, &phase->move);
-  fighter->native_context = phase;
-  fighter->sample_override = phase->samples[0];
-  native_begin(fighter, 1, phase->count, shared_reaction_finish);
-  for (int frame = 1; frame <= phase->count; ++frame) {
-    native_frame(fighter, frame, phase->samples[mini(frame, phase->count - 1)], NULL);
-  }
-  if (phase->until != NULL) {
-    fighter->native.frames[phase->count - 1].thinkfunc = shared_reaction_gate;
-  }
-  native_play(fighter, false);
-}
-
-/* 1: jab blocked. */
-static void react_jab_block(Fighter *fighter) {
-  start_reaction(fighter, S_BLOCK, &block_short);
-  slide(fighter, 0x3d70); /* 0.24 */
-}
-
-/* 4: sweep blocked. */
-static void react_low_block(Fighter *fighter) {
-  start_reaction(fighter, S_BLOCK, &block_long);
-  slide(fighter, 0x2666); /* 0.15 */
-}
-
-/* 6: kick or uppercut blocked. */
-static void react_block(Fighter *fighter) {
-  start_reaction(fighter, S_BLOCK, &block_long);
-  slide(fighter, 0x3333); /* 0.20 */
-}
-
 /* Native preludes select original streams; script words own all playback. */
 static void hit_script(Fighter *fighter, uint32_t script, FighterFn finish) {
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION};
@@ -243,31 +172,151 @@ static void reaction_play(Fighter *fighter, int first, int last, int final, Figh
   native_play(fighter, false);
 }
 
-static void react_extra_block(Fighter *fighter) {
-  uint32_t id = retail_reaction_native(fighter);
-  start_reaction(fighter, S_BLOCK, id == 0x486c70 ? &block_short : &block_long);
-  if (id == 0x486bf0 || id == 0x486970) {
+/*486f90 uses native descriptor playback, rather than a script stream. */
+static void block_crouch_finish(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  retail_controller_return(fighter);
+}
+
+static void block_crouch_reverse(Fighter *fighter) {
+  int first = fighter_sample(fighter);
+  native_begin(fighter, 0, first, block_crouch_finish);
+  for (int frame = 0; frame <= first; ++frame) {
+    native_frame(fighter, frame, first - frame, NULL);
+  }
+  native_play(fighter, false);
+}
+
+/*486f30: repeat the original seven-pose stream, then return to input. */
+void retail_block_cycle(Fighter *fighter) {
+  if (fighter->native_variant > 0) {
+    fighter->native_variant--;
+  }
+  if (fighter->native_variant > 0) {
+    retail_vm_enter(fighter, 0x4e9e68, retail_controller_return);
+  } else {
+    mk4_script_stop_body(fighter);
+    retail_controller_return(fighter);
+  }
+}
+
+static void react_block(Fighter *fighter) {
+  uint32_t entry = retail_reaction_native(fighter);
+  q16 speed = 0;
+  unsigned repeat = 2, variant = 0;
+  bool recoil = true, stance = false;
+  switch (entry) {
+    case 0x486970:
+      speed = 0xf5c;
+      variant = 3;
+      stance = true;
+      recoil = false;
+      break;
+    case 0x4869c0:
+      repeat = 1;
+      variant = 0x10;
+      break;
+    case 0x4869f0:
+      speed = 0x2e14;
+      variant = 0x15;
+      break;
+    case 0x486a30:
+      speed = 0x3333;
+      variant = 0x16;
+      stance = true;
+      break;
+    case 0x486a70:
+      speed = 0x4000;
+      repeat = 3;
+      variant = 0x17;
+      stance = true;
+      break;
+    case 0x486ab0:
+      speed = 0x4000;
+      repeat = 3;
+      variant = 7;
+      stance = true;
+      break;
+    case 0x486af0:
+      speed = 0x3333;
+      variant = 6;
+      stance = true;
+      break;
+    case 0x486b30:
+      speed = 0x3333;
+      variant = 6;
+      stance = true;
+      recoil = false;
+      break;
+    case 0x486b70:
+      speed = 0x2e14;
+      variant = 5;
+      break;
+    case 0x486bb0:
+      speed = 0x2666;
+      variant = 4;
+      break;
+    case 0x486bf0:
+      speed = 0xf5c;
+      variant = 3;
+      stance = true;
+      break;
+    case 0x486c40:
+      speed = 0x3d70;
+      repeat = 1;
+      variant = 1;
+      break;
+    case 0x486c70:
+      repeat = 1;
+      recoil = false;
+      break;
+    case 0x486ca0:
+      speed = 0x2147;
+      variant = 5;
+      recoil = false;
+      break;
+    case 0x486cd0:
+      repeat = 1;
+      break;
+    case 0x486d00:
+      recoil = false;
+      break;
+    default:
+      fatal("Unknown block native %08x", entry);
+  }
+  bool crouch = fighter->crouching;
+  if (stance) {
+    fighter_enter_stance(fighter, STANCE_STANDING);
+  }
+  if (recoil) {
+    battle_wall_recoil(fighter);
+  }
+  static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_BLOCK};
+  fighter_start_move(fighter, S_BLOCK, &move);
+  if (entry == 0x486970 || entry == 0x486bf0) {
     fighter->action = 0x4004;
   }
-  slide(fighter, id == 0x486c70 ? 0 : id == 0x486ab0 ? 0x4000 : id == 0x486b70 ? 0x2e14 : 0xf5c);
-}
-
-/* 486d00 -> 4e9e68: two repetitions of seven standing poses, no push.
- * 486f90 instead binds crouching clip 255 and plays it out and back. */
-static void react_slide_block(Fighter *fighter) {
-  start_reaction(fighter, S_BLOCK, fighter->crouching ? &slide_crouch_block : &slide_block);
-}
-
-/* 2: 486ca0 -> 486d30/486e20. Two standing cycles, or the crouching
- * out-and-back path; armed standing uses 4e9ec8's five-sample clip 247.
- * Unlike the jab block, all paths retreat at .13 with friction. */
-static void react_fireball_block(Fighter *fighter) {
-  const ReactionPhase *phase = fighter->crouching ? &slide_crouch_block : &block_long;
-  if (fighter->armed) {
-    phase = fighter->crouching ? &fireball_armed_crouch_block : &fireball_armed_block;
+  if (entry != 0x486d00) {
+    fighter_set_speed(fighter, -speed);
+    uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9e60);
+    require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native block callback");
   }
-  start_reaction(fighter, S_BLOCK, phase);
-  slide(fighter, retail_reaction_native(fighter) == 0x486b30 ? 0x3333 : 0x2147);
+  if (variant >= 16 && fighter->armed) {
+    retail_native_sound_list(0x4ea8e0);
+  } else {
+    if (fighter->armed || variant >= 16) {
+      retail_native_sound_list(0x4ea8c8);
+    }
+    retail_native_sound_list(variant % 16 < 5 ? 0x4ea918 : 0x4ea928);
+  }
+  fighter->native_variant = repeat;
+  if (crouch) {
+    uint32_t descriptor = mk4_image_u32(retail_vm_image(), 0x53cf88 + (fighter->armed ? 4 : 0)) * 4;
+    retail_vm_bind_animation(fighter, descriptor, 0);
+    native_finish_clip(fighter, block_crouch_reverse);
+  } else {
+    retail_vm_enter(fighter, fighter->armed ? 0x4e9ec8 : 0x4e9e68, retail_controller_return);
+  }
 }
 
 /* 486230/486310/486340/4863b0: six 6-tick shakes, 88-tick hold,
@@ -475,7 +524,7 @@ FighterFn retail_engine_reaction(uint32_t entry) {
     case 0x4867b0:
       return jax_dash_victim_throw;
     case 0x486970:
-      return react_extra_block;
+      return react_block;
     case 0x4869c0:
       return react_block;
     case 0x4869f0:
@@ -485,27 +534,27 @@ FighterFn retail_engine_reaction(uint32_t entry) {
     case 0x486a70:
       return react_block;
     case 0x486ab0:
-      return react_extra_block;
+      return react_block;
     case 0x486af0:
       return react_block;
     case 0x486b30:
-      return react_fireball_block;
+      return react_block;
     case 0x486b70:
-      return react_extra_block;
+      return react_block;
     case 0x486bb0:
-      return react_low_block;
+      return react_block;
     case 0x486bf0:
-      return react_extra_block;
+      return react_block;
     case 0x486c40:
-      return react_jab_block;
+      return react_block;
     case 0x486c70:
-      return react_extra_block;
+      return react_block;
     case 0x486ca0:
-      return react_fireball_block;
+      return react_block;
     case 0x486cd0:
       return react_block;
     case 0x486d00:
-      return react_slide_block;
+      return react_block;
     case 0x487a10:
       return fujin_grab_victim;
     case 0x487ed0:

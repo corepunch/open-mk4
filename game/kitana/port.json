@@ -236,7 +236,7 @@
     "1": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_jab_block"
+      "symbol": "react_block"
     },
     "10": {
       "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
@@ -274,7 +274,7 @@
     "143": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "154": {
       "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
@@ -314,7 +314,7 @@
     "2": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block"
+      "symbol": "react_block"
     },
     "21": {
       "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
@@ -378,12 +378,12 @@
     "4": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_low_block"
+      "symbol": "react_block"
     },
     "5": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "54": {
       "evidence": "Loaded4ea4e8[54] -> 482130; bounded local native prelude and original4e8b78; mk4decomp GameModeAdvanceCluster/EightEntryAlarmDispatch and shared controller contracts.",
@@ -435,7 +435,7 @@
     "8": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "86": {
       "adaptation": "Loaded native target selects the shared prelude; original words control playback and native helpers share descriptor data.",
@@ -458,17 +458,17 @@
     "9": {
       "evidence": "486b30: two standing block cycles, speed 0x3333, crouch/armed choices through shared 486d30; docs/raiden-sonya-scripts.md",
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block"
+      "symbol": "react_block"
     },
     "3": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "7": {
       "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "26": {
       "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",

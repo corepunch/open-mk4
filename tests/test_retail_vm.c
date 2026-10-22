@@ -504,6 +504,23 @@ static void reaction_native_table(void) {
   check(actor->appearance == APPEARANCE_FROZEN && actor->action == 0x1003,
       "engine-native reactions must also follow the loaded address rather than a copied reaction-ID table");
   fighter_interrupt(actor, fighter_ready);
+  for (int branch = 0; branch < 3; ++branch) {
+    actor = setup(0, 2);
+    actor->crouching = branch == 2;
+    if (branch != 0) {
+      retail_weapon_equip(actor);
+    }
+    put_word(0x4ea4e8, 0x486c40);
+    battle_react(actor, 0);
+    for (int visit = 0; visit < 128; ++visit) {
+      tick();
+      if (actor->state == S_IDLE && actor->pending == NULL) {
+        break;
+      }
+    }
+    check(actor->state == S_IDLE && !actor->retail_vm.active && actor->current_mmove == NULL,
+        "shared block script/native branches must release playback ownership");
+  }
   put_word(0x4ea4e8, original);
 }
 

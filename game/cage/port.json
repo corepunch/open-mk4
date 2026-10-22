@@ -271,12 +271,12 @@
   "reactions": {
     "1": {
       "source": "game/reactions.c",
-      "symbol": "react_jab_block",
+      "symbol": "react_block",
       "evidence": "Cage contact reaches shared reaction 1 through retail dispatcher 0x486c40."
     },
     "4": {
       "source": "game/reactions.c",
-      "symbol": "react_low_block",
+      "symbol": "react_block",
       "evidence": "Cage contact reaches shared reaction 4 through retail dispatcher 0x486bb0."
     },
     "6": {
@@ -286,7 +286,7 @@
     },
     "8": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Cage contact reaches shared reaction 8 through retail dispatcher 0x486c70."
     },
     "10": {
@@ -367,7 +367,7 @@
     },
     "143": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Cage contact reaches shared reaction 143 through retail dispatcher 0x486970."
     },
     "175": {
@@ -394,7 +394,7 @@
     },
     "165": {
       "source": "game/reactions.c",
-      "symbol": "react_slide_block",
+      "symbol": "react_block",
       "evidence": "4ea4e8[165] ->486d00; native D[27] blocked reaction."
     },
     "32": {
@@ -411,7 +411,7 @@
     },
     "2": {
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block",
+      "symbol": "react_block",
       "evidence": "Cage orb C0 selects shared reaction2; generated64 body4e9de8 and existing block frame recovery."
     },
     "63": {
@@ -463,7 +463,7 @@
     },
     "3": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "174": {
@@ -475,7 +475,7 @@
     "7": {
       "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "26": {
       "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",

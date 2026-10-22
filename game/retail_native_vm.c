@@ -1042,6 +1042,12 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case 0x488890:
           retail_bicycle_cycle(fighter);
           return true;
+        case 0x486f30:
+          retail_block_cycle(fighter);
+          return true;
+        case 0x460250:
+          retail_controller_return(fighter);
+          return true;
         case 0x487420:
           scorpion_spear_stun_script(fighter);
           return true;

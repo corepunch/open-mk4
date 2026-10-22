@@ -235,7 +235,7 @@
   "reactions": {
     "1": {
       "source": "game/reactions.c",
-      "symbol": "react_jab_block",
+      "symbol": "react_block",
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 1 at 0x486c40."
     },
     "10": {
@@ -256,7 +256,7 @@
     },
     "143": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 143 at 0x486970."
     },
     "15": {
@@ -331,12 +331,12 @@
     },
     "4": {
       "source": "game/reactions.c",
-      "symbol": "react_low_block",
+      "symbol": "react_block",
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 4 at 0x486bb0."
     },
     "5": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 5 at 0x486b70."
     },
     "6": {
@@ -352,7 +352,7 @@
     },
     "8": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Kai slot 11 reaction table uses shared portable reaction dispatch for retail reaction 8 at 0x486c70."
     },
     "102": {
@@ -444,13 +444,13 @@
     },
     "3": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "7": {
       "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "26": {
       "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",

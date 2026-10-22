@@ -209,7 +209,7 @@
     "1": {
       "evidence": "4ea4e8[1] -> 0x486c40; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
-      "symbol": "react_jab_block"
+      "symbol": "react_block"
     },
     "10": {
       "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
@@ -251,7 +251,7 @@
     "143": {
       "evidence": "4ea4e8[143] -> 0x486970; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "15": {
       "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
@@ -297,7 +297,7 @@
     "2": {
       "evidence": "4ea4e8[2] -> 0x486ca0; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block"
+      "symbol": "react_block"
     },
     "21": {
       "evidence": "Loaded4ea4e8 native selection; checked bounded native stagger prelude and original4e90e0/4e9130/4e9150/4e9170/4e9238/4e9260/4e9308/4e9360/4e9388 script words. Script data owns all playback and waits.",
@@ -367,12 +367,12 @@
     "4": {
       "evidence": "4ea4e8[4] -> 0x486bb0; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
-      "symbol": "react_low_block"
+      "symbol": "react_block"
     },
     "5": {
       "evidence": "4ea4e8[5] -> 0x486b70; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "57": {
       "evidence": "Checked483450/483490/482750/482730/4826a0 and original4e9508/4e9568/4e9048/4e8fe8/4e8f80 words.",
@@ -424,7 +424,7 @@
     "8": {
       "evidence": "4ea4e8[8] -> 0x486c70; shared reaction adapter and behavioral regressions",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "80": {
       "adaptation": "Loaded native entry owns the peer reaction or existing native handoff; script dispatch does not depend on a fighter owner mask.",
@@ -440,13 +440,13 @@
     },
     "3": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "7": {
       "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "26": {
       "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",

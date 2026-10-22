@@ -1967,3 +1967,18 @@ Evidence: bounded local native and script listings, mk4decomp
 GameModeAdvanceCluster, Alarm4EntryInstallChain and CrouchFsmCluster matching
 assembly. Existing shared runtime, strict scripts and source gates pass; no
 per-fighter tests were added.
+
+## Shared block native and script boundary
+
+Remove the final ReactionPhase type and copied standing/crouching block sample
+arrays. All block entries share one native prelude, with constants recovered
+from the original native entry instructions rather than fighter definitions.
+Standing recovery runs 4e9e68 and its native486f30 repeat join; armed recovery
+runs 4e9ec8. Crouch recovery is originally native486f90: load the selected
+53cf88 descriptor, play forward and backward, stop, then return to input.
+The portable controller owns subsequent held-input processing. Local listings
+and mk4decomp StanceFsmCluster/matching block assembly establish these boundaries.
+The existing runtime fixture covers script/native completion for standing,
+armed and crouch branches without authored timing or balance assertions.
+Formatting, runtime/rejection checks, strict all-roster audits and native source
+gates pass.

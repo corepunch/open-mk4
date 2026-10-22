@@ -203,7 +203,7 @@
   "reactions": {
     "1": {
       "source": "game/reactions.c",
-      "symbol": "react_jab_block",
+      "symbol": "react_block",
       "evidence": "Jax script reaction selector 1 follows the shared reaction table entry."
     },
     "10": {
@@ -219,7 +219,7 @@
     },
     "143": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Jax script reaction selector 143 follows the shared reaction table entry."
     },
     "17": {
@@ -277,7 +277,7 @@
     },
     "4": {
       "source": "game/reactions.c",
-      "symbol": "react_low_block",
+      "symbol": "react_block",
       "evidence": "Jax script reaction selector 4 follows the shared reaction table entry."
     },
     "6": {
@@ -287,12 +287,12 @@
     },
     "8": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "Jax script reaction selector 8 follows the shared reaction table entry."
     },
     "9": {
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block",
+      "symbol": "react_block",
       "evidence": "Jax script reaction selector 9 follows the shared reaction table entry."
     },
     "77": {
@@ -379,7 +379,7 @@
     },
     "2": {
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block",
+      "symbol": "react_block",
       "evidence": "Missile C[4] blocked reaction 2; 4ea4e8[2] -> 486ca0 shared block recovery."
     },
     "157": {
@@ -396,7 +396,7 @@
     },
     "165": {
       "source": "game/reactions.c",
-      "symbol": "react_slide_block",
+      "symbol": "react_block",
       "evidence": "D[22] blocked reaction 165; 4ea4e8[165] -> 486d00 shared block recovery."
     },
     "136": {
@@ -425,13 +425,13 @@
     },
     "3": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "7": {
       "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "26": {
       "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",

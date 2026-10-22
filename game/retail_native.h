@@ -232,6 +232,7 @@ void retail_spear_arrival(Fighter *fighter);
 void retail_pair_release(Fighter *fighter);
 void retail_bicycle_capture(Fighter *fighter);
 void retail_bicycle_cycle(Fighter *fighter);
+void retail_block_cycle(Fighter *fighter);
 void retail_bicycle_release(Fighter *fighter);
 void retail_torpedo_return(Fighter *fighter);
 void retail_record_reaction(Fighter *fighter);

@@ -224,7 +224,7 @@
     "1": {
       "evidence": "Retail reaction selector 1 (0x486c40) routes to the shared MK4 reaction table.",
       "source": "game/reactions.c",
-      "symbol": "react_jab_block"
+      "symbol": "react_block"
     },
     "10": {
       "evidence": "Loaded4ea4e8 native entry; checked481320/482560/4825c0/4835e0 and original4e89a0/4e8ea8/4e8f10/4e96c8 scripts.",
@@ -257,7 +257,7 @@
     "143": {
       "evidence": "Retail reaction selector 143 (0x486970) routes to the shared MK4 reaction table.",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "16": {
       "evidence": "Retail reaction selector 16 (0x482a10) routes to the shared MK4 reaction table.",
@@ -332,12 +332,12 @@
     "4": {
       "evidence": "Retail reaction selector 4 (0x486bb0) routes to the shared MK4 reaction table.",
       "source": "game/reactions.c",
-      "symbol": "react_low_block"
+      "symbol": "react_block"
     },
     "5": {
       "evidence": "Retail reaction selector 5 (0x486b70) routes to the shared MK4 reaction table.",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "6": {
       "evidence": "Retail reaction selector 6 (0x486af0) routes to the shared MK4 reaction table.",
@@ -353,7 +353,7 @@
     "8": {
       "evidence": "Retail reaction selector 8 (0x486c70) routes to the shared MK4 reaction table.",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "93": {
       "source": "game/native/weapon_attacks.c",
@@ -433,7 +433,7 @@
     },
     "9": {
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block",
+      "symbol": "react_block",
       "evidence": "D[29] blocked reaction 9: 4ea4e8[9] = 0x486b30, shared C reaction dispatch."
     },
     "45": {
@@ -444,7 +444,7 @@
     },
     "2": {
       "source": "game/reactions.c",
-      "symbol": "react_fireball_block",
+      "symbol": "react_block",
       "evidence": "C[21] blocked reaction 2: 4ea4e8[2] = 0x486ca0, shared C reaction dispatch."
     },
     "132": {
@@ -455,13 +455,13 @@
     },
     "3": {
       "source": "game/reactions.c",
-      "symbol": "react_extra_block",
+      "symbol": "react_block",
       "evidence": "D26 block3 ->486bf0; shared native grounded block recovery."
     },
     "7": {
       "evidence": "4ea4e8[7] -> 0x486ab0; shared C reaction dispatch",
       "source": "game/reactions.c",
-      "symbol": "react_extra_block"
+      "symbol": "react_block"
     },
     "26": {
       "evidence": "Loaded4ea4e8[26] -> 4838e0; bounded native/dependency listings and original4e9758; checked mk4decomp matching native/controller sources.",
