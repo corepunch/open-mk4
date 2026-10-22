@@ -33,6 +33,7 @@ typedef struct FrontendMenu {
 void menu_init(FrontendMenu *menu);
 /* Returns true when a command starts a match. */
 bool menu_command(FrontendMenu *menu, MenuCommand command, bool *quit);
-void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu);
+/* Animation time is supplied by the host, in seconds. */
+void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, double seconds);
 
 #endif

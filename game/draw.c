@@ -1,4 +1,4 @@
-#include "game.h"
+#include "draw.h"
 #include "sprite_font.h"
 #include "shadow.h"
 #include "lighting.h"
@@ -137,7 +137,7 @@ static void subtree_pose(const Character *ch, const Clip *clip, double frame, in
   }
 }
 
-static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, const Character *model, double interpolation) {
+static Triangles fighter_geometry(const Battle *battle, const Assets *assets, const Fighter *fighter, const Character *model, double interpolation) {
   Triangles triangles = {0};
   const Character *ch = model != NULL ? model : fighter_model(assets, fighter);
   if (fighter->appearance == APPEARANCE_HIDDEN || (model == NULL && fighter->invisible)) {
@@ -156,7 +156,7 @@ static Triangles fighter_geometry(const Assets *assets, const Fighter *fighter, 
   } else if (model != NULL) {
     pose(ch, fighter_clip(assets, fighter), fighter_pose_frame(fighter), bones);
   } else {
-    fighter_render_pose(assets, fighter, interpolation, bones);
+    fighter_render_pose(battle, assets, fighter, interpolation, bones);
   }
   Mat3 turn = fighter_turn(assets, fighter);
   /* The pose keeps every root-motion channel, as 0x4b8140 does for joints.
@@ -330,10 +330,10 @@ static void draw_blend_billboard(Canvas *cv, Camera camera, const Geometry *geom
  * stretch their depth back out before laying them flat. The sprite's top
  * edge stays farthest from the camera, and stains fade over their last
  * second. */
-static void draw_blood_splats(Canvas *cv, Camera camera, const Assets *assets, float floor_y) {
+static void draw_blood_splats(Canvas *cv, Camera camera, const Battle *battle, const Assets *assets, float floor_y) {
   const Geometry *effects = &assets->hud.effects;
   for (int i = 0; i < MAX_BLOOD_SPLATS; ++i) {
-    const BloodSplat *splat = &g_battle.splats[i];
+    const BloodSplat *splat = &battle->splats[i];
     if (splat->ticks <= 0) {
       continue;
     }
@@ -366,10 +366,10 @@ static void draw_blood_splats(Canvas *cv, Camera camera, const Assets *assets, f
 
 /* Hit blood from battle_blood_hit: retail drop mesh 0 in flight, crown
  * meshes 4-12 on landing and spatter sprite 153 at the impact. */
-static void draw_blood(Canvas *cv, Camera camera, const Assets *assets, const SceneLight *light) {
+static void draw_blood(Canvas *cv, Camera camera, const Battle *battle, const Assets *assets, const SceneLight *light) {
   const Geometry *effects = &assets->hud.effects;
   for (int i = 0; i < MAX_BLOOD_DROPS; ++i) {
-    const BloodDrop *drop = &g_battle.blood[i];
+    const BloodDrop *drop = &battle->blood[i];
     Vec3 origin = {q16_float(drop->pos[0]), q16_float(drop->pos[1]), q16_float(drop->pos[2])};
     float scale = q16_float(drop->scale);
     if (drop->kind == BLOOD_DROP) {
@@ -406,9 +406,8 @@ static void draw_weapon(Canvas *cv, Camera camera, const Assets *assets, Vec3 or
 
 /* Animated accessories reserve their first channel for the detached
  * parent piece; the model's remaining channels pose its own hierarchy. */
-static Mat3 piece_basis(const Assets *assets, int index) {
-  (void)assets;
-  const ScenePiece *piece = &g_battle.pieces[index];
+static Mat3 piece_basis(const Battle *battle, int index) {
+  const ScenePiece *piece = &battle->pieces[index];
   float factor = 4096.f / (6.283185307179586f * Q16_ONE);
   Mat3 spin = rotation(0, (Vec3){piece->angle[0] * factor, piece->angle[1] * factor, piece->angle[2] * factor});
   return mat3_mul(spin, piece->orientation);
@@ -451,14 +450,14 @@ static void draw_limb(Canvas *cv, Camera camera, const SceneAttachment *attachme
   }
 }
 
-static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, const SceneLight *light) {
+static void draw_attachments(Canvas *cv, Camera camera, const Battle *battle, const Assets *assets, const SceneLight *light) {
   for (int i = 0; i < MAX_SCENE_ATTACHMENTS; ++i) {
-    const SceneAttachment *attachment = &g_battle.attachments[i];
+    const SceneAttachment *attachment = &battle->attachments[i];
     if (attachment->def == NULL) {
       continue;
     }
     const AttachmentDef *def = attachment->def;
-    const ScenePiece *piece = &g_battle.pieces[attachment->piece];
+    const ScenePiece *piece = &battle->pieces[attachment->piece];
     if (def->limb) {
       draw_limb(cv, camera, attachment, piece, &assets->clips.data[def->clip], light);
       continue;
@@ -470,7 +469,7 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
     /* 446730 installs the inverse-parent transform on the accessory
      * root. Its authored motion stays in the scene frame while the
      * detached head follows the first channel's own rotation. */
-    Mat3 basis = def->scene_space ? attachment->orientation : piece_basis(assets, attachment->piece);
+    Mat3 basis = def->scene_space ? attachment->orientation : piece_basis(battle, attachment->piece);
     Vec3 origin = {q16_float(piece->pos[0]), q16_float(piece->pos[1]), q16_float(piece->pos[2])};
     Vec3 root = clip->frames.data[attachment->sample].translation;
     for (size_t n = 0; n < model->bones.count; ++n) {
@@ -489,25 +488,24 @@ static void draw_attachments(Canvas *cv, Camera camera, const Assets *assets, co
   }
 }
 
-void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool paused, double interpolation) {
-  battle_capture_render_snapshot();
+void draw_battle(Canvas *cv, const Battle *battle, const Assets *assets, bool cpu, bool paused, double interpolation) {
   double animation_fraction = 1.0;
-  if (g_battle.current_animation.valid) {
-    double ticks_since_snapshot = (double)(g_battle.ticks - g_battle.current_animation.tick);
+  if (battle->current_animation.valid) {
+    double ticks_since_snapshot = (double)(battle->ticks - battle->current_animation.tick);
     animation_fraction = fmax(0., fmin(1., (ticks_since_snapshot + fmax(0., fmin(1., interpolation))) / 2.0));
   }
   canvas_clear(cv);
-  const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
+  const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
   Camera camera = {.focal = (float)cv->w * .95f, .w = cv->w, .h = cv->h};
-  camera.eye = battle_follow_eye(&camera.heading);
+  camera.eye = battle_follow_eye(battle, &camera.heading);
   camera.right = (Vec3){-camera.heading.z, 0, camera.heading.x};
-  if (g_battle.camera.active) {
+  if (battle->camera.active) {
     camera.scene = true;
-    if (g_battle.camera.focal_scale > 0) {
-      camera.focal *= q16_float(g_battle.camera.focal_scale);
+    if (battle->camera.focal_scale > 0) {
+      camera.focal *= q16_float(battle->camera.focal_scale);
     }
-    camera.eye = g_battle.camera.eye;
-    Vec3 direction = vec_sub(g_battle.camera.target, camera.eye);
+    camera.eye = battle->camera.eye;
+    Vec3 direction = vec_sub(battle->camera.target, camera.eye);
     float length = sqrtf(dot(direction, direction));
     camera.forward = vec_scale(direction, 1.f / fmaxf(.001f, length));
     float horizontal = hypotf(direction.x, direction.z);
@@ -515,15 +513,15 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     camera.up =
         (Vec3){-camera.forward.y * camera.right.z, camera.forward.x * camera.right.z - camera.forward.z * camera.right.x, camera.forward.y * camera.right.x};
   }
-  camera.shake_y = q16_float(g_battle.camera.shake_y);
+  camera.shake_y = q16_float(battle->camera.shake_y);
   camera.eye.y += camera.shake_y;
   SceneLight light = above_camera_light(camera.eye);
-  float floor_y = draw_arena(cv, camera, &assets->arenas.data[arena], light);
-  Triangles fighters[] = {fighter_geometry(assets, a, NULL, animation_fraction), fighter_geometry(assets, b, NULL, animation_fraction)};
+  float floor_y = draw_arena(cv, camera, &assets->arenas.data[battle->arena], light);
+  Triangles fighters[] = {fighter_geometry(battle, assets, a, NULL, animation_fraction), fighter_geometry(battle, assets, b, NULL, animation_fraction)};
   Mat4 shadow;
   require(planar_shadow_matrix((Vec4){0, 1, 0, -floor_y}, light_homogeneous(light), &shadow), "Shadow light must intersect the receiver plane");
   for (size_t i = 0; i < 2; ++i) {
-    const Texture *texture = &fighter_model(assets, &g_battle.fighters[i])->texture;
+    const Texture *texture = &fighter_model(assets, &battle->fighters[i])->texture;
     for (size_t j = 0; j < fighters[i].count; ++j) {
       Triangle triangle = fighters[i].data[j];
       bool valid = true;
@@ -534,11 +532,11 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     }
   }
   canvas_resolve_shadows(cv, 104);
-  draw_blood_splats(cv, camera, assets, floor_y);
+  draw_blood_splats(cv, camera, battle, assets, floor_y);
   uint32_t ice_pixel = 0xff89dfff;
   const Texture ice_texture = {1, 1, {&ice_pixel, 1, 1}};
   for (int i = 0; i < MAX_SCENE_PIECES; ++i) {
-    const ScenePiece *piece = &g_battle.pieces[i];
+    const ScenePiece *piece = &battle->pieces[i];
     if (!piece->active) {
       continue;
     }
@@ -546,7 +544,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
                           : piece->frozen      ? &assets->cut_characters.data[roster_def(piece->roster)->asset]
                                                : roster_character(assets, piece->roster);
     const Bone *bone = &ch->bones.data[piece->bone];
-    Mat3 transform = piece_basis(assets, i);
+    Mat3 transform = piece_basis(battle, i);
     const Triangles *mesh = &ch->meshes.data[bone->mesh].triangles;
     for (size_t n = 0; n < mesh->count; ++n) {
       Triangle triangle = mesh->data[n];
@@ -558,9 +556,9 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       render_triangle(cv, camera, triangle, piece->frozen ? &ice_texture : &ch->texture, 1, PASS_COLOR, &light);
     }
   }
-  draw_attachments(cv, camera, assets, &light);
+  draw_attachments(cv, camera, battle, assets, &light);
   for (size_t i = 0; i < 2; ++i) {
-    const Fighter *fighter = &g_battle.fighters[i];
+    const Fighter *fighter = &battle->fighters[i];
     const Texture *texture = fighter->appearance == APPEARANCE_FROZEN ? &ice_texture : &fighter_model(assets, fighter)->texture;
     for (size_t j = 0; j < fighters[i].count; ++j)
       render_triangle(cv, camera, fighters[i].data[j], texture,
@@ -571,13 +569,13 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     FREE_ARRAY(fighters[i]);
   }
   for (int i = 0; i < MAX_SCENE_ACTORS; ++i) {
-    const SceneActor *slot = &g_battle.scene_actors[i];
+    const SceneActor *slot = &battle->scene_actors[i];
     if (!slot->active) {
       continue;
     }
     const Fighter *actor = &slot->actor;
     const Character *model = fighter_model(assets, actor);
-    Triangles geometry = fighter_geometry(assets, actor, model, animation_fraction);
+    Triangles geometry = fighter_geometry(battle, assets, actor, model, animation_fraction);
     for (size_t j = 0; j < geometry.count; ++j) {
       render_triangle(cv, camera, geometry.data[j], &model->texture, 1.f, PASS_COLOR, &light);
     }
@@ -585,12 +583,12 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   }
   /* Script objects are rendered from simulation state; rendering never advances them. */
   for (int i = 0; i < MAX_PROJECTILES; ++i) {
-    const Projectile *p = &g_battle.projectiles[i];
+    const Projectile *p = &battle->projectiles[i];
     if (p->kind == 0) {
       continue;
     }
     if (p->kind == PROJECTILE_CLONE) {
-      Fighter clone = g_battle.fighters[p->owner];
+      Fighter clone = battle->fighters[p->owner];
       MoveDef captured = {.clip = p->clip, .last = MOVE_END};
       clone.current_move = &captured;
       clone.appearance = APPEARANCE_NORMAL;
@@ -603,7 +601,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       clone.body.root_y = p->root_y;
       memcpy(clone.body.pos, p->pos, sizeof clone.body.pos);
       const Character *model = &assets->scene_models.data[SCENE_MODEL_ICE_CLONE];
-      Triangles geometry = fighter_geometry(assets, &clone, model, animation_fraction);
+      Triangles geometry = fighter_geometry(battle, assets, &clone, model, animation_fraction);
       SceneLight clone_light = light;
       if (p->light.def != NULL) {
         clone_light.position = (Vec3){q16_float(p->light.pos[0]), q16_float(p->light.pos[1]), q16_float(p->light.pos[2])};
@@ -648,7 +646,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     if (p->kind != PROJECTILE_SPEAR) {
       continue;
     }
-    const Fighter *owner = &g_battle.fighters[p->owner];
+    const Fighter *owner = &battle->fighters[p->owner];
     Vec3 hand = {fighter_x(owner), -1.4f - fighter_height(owner), fighter_z(owner)};
     Vec3 tip = {q16_float(p->pos[AXIS_X]), q16_float(p->pos[AXIS_Y]), q16_float(p->pos[AXIS_Z])};
     ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, hand)}, 1);
@@ -657,7 +655,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     canvas_rect(cv, (Rect){(int)to.x - 3, (int)to.y - 2, 7, 4}, 0xffdedede);
   }
   for (int i = 0; i < 2; ++i) {
-    const Fighter *f = &g_battle.fighters[i];
+    const Fighter *f = &battle->fighters[i];
     if (f->armed && !f->invisible) {
       Vec3 hand;
       Mat3 grip;
@@ -665,8 +663,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       draw_weapon(cv, camera, assets, hand, grip, f->weapon, &light);
     }
     if ((fighter_move(f)->clip == 448 && f->current_mmove != NULL && f->ticks >= 13 && f->ticks < (f->script_phase ? 32 : 48)) ||
-        (g_battle.phase == PHASE_FATALITY && g_battle.finisher == FINISH_BURN && i == g_battle.winner && g_battle.phase_ticks >= 51 &&
-            g_battle.phase_ticks < 191)) {
+        (battle->phase == PHASE_FATALITY && battle->finisher == FINISH_BURN && i == battle->winner && battle->phase_ticks >= 51 && battle->phase_ticks < 191)) {
       Vec3 mouth = {fighter_x(f), -1.65f - fighter_height(f), fighter_z(f)};
       Vec3 end = {mouth.x + f->facing * 2.3f, mouth.y + .25f, mouth.z};
       ScreenVertex from = camera_project(camera, (Vertex){.p = camera_point(camera, mouth)}, 1);
@@ -677,7 +674,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     }
   }
   for (int i = 0; i < MAX_PARTICLES; ++i) {
-    const Particle *p = &g_battle.particles[i];
+    const Particle *p = &battle->particles[i];
     if (p->ticks <= 0) {
       continue;
     }
@@ -694,9 +691,9 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
       continue;
     }
   }
-  draw_blood(cv, camera, assets, &light);
+  draw_blood(cv, camera, battle, assets, &light);
   for (size_t i = 0; i < 2; ++i) {
-    const HitEffect *e = &g_battle.effects[i];
+    const HitEffect *e = &battle->effects[i];
     if (e->ticks <= 0)
       continue;
     /* Lift the flash slightly toward the camera, ahead of both bodies. */
@@ -714,7 +711,7 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
   bar(cv, font, a->health, left, false);
   bar(cv, font, b->health, right, true);
   for (int i = 0; i < 2; ++i) {
-    const Fighter *f = &g_battle.fighters[i];
+    const Fighter *f = &battle->fighters[i];
     int idx = assets->hud.names[roster_def(f->roster)->asset];
     Sprite s = font->sprites.data[idx];
     int x = i ? cv->w - 38 - s.w * 2 : 38;
@@ -727,34 +724,34 @@ void draw_battle(Canvas *cv, const Assets *assets, int arena, bool cpu, bool pau
     canvas_rect(cv, (Rect){i ? meter_x + 180 - energy : meter_x, 83, energy, 4}, gold);
   }
   char timer[32], round[32];
-  snprintf(timer, sizeof timer, "%02d", maxi(0, (g_battle.time_ticks + 59) / 60));
-  snprintf(round, sizeof round, "ROUND %d", g_battle.round);
+  snprintf(timer, sizeof timer, "%02d", maxi(0, (battle->time_ticks + 59) / 60));
+  snprintf(round, sizeof round, "ROUND %d", battle->round);
   font_centered(font, cv, 43, timer, 2);
   font_centered(font, cv, 96, round, .65f);
   canvas_rect(cv, (Rect){0, cv->h - 96, cv->w, 96}, 0xff141517);
-  font_draw(font, cv, 28, cv->h - 79, assets->arenas.data[arena].name, 1);
+  font_draw(font, cv, 28, cv->h - 79, assets->arenas.data[battle->arena].name, 1);
   const char *mode = cpu ? "P1 VS CPU / F3 TWO PLAYERS" : "LOCAL TWO PLAYERS / F3 CPU";
   font_draw(font, cv, cv->w - 28 - font_width(font, mode, .6f), cv->h - 78, mode, .6f);
   font_draw(font, cv, 28, cv->h - 49, "P1  A/D MOVE  W JUMP  S DUCK  U HP  J LP  I HK  K LK  L BLOCK  H RUN", .6f);
   font_draw(font, cv, 28, cv->h - 29, "P2  ARROWS  NUM 1/2/3/4/5  RSHIFT RUN    F1/F2 FIGHTERS  F4 ARENA  R RESET  SPACE PAUSE", .6f);
-  if (g_battle.phase == PHASE_READY) {
-    round_intro(cv, &assets->hud, g_battle.round);
-    if (g_battle.phase_ticks > 40)
+  if (battle->phase == PHASE_READY) {
+    round_intro(cv, &assets->hud, battle->round);
+    if (battle->phase_ticks > 40)
       draw_sprite(cv, &assets->hud.effects, 137, (Rect){cv->w / 2 - 181, 285, 362, 126}, false);
   }
-  if (g_battle.phase == PHASE_FINISH || g_battle.phase == PHASE_FATALITY) {
-    font_centered(font, cv, 165, g_battle.phase == PHASE_FINISH ? "FINISH HIM" : "FATALITY", 1.5f);
+  if (battle->phase == PHASE_FINISH || battle->phase == PHASE_FATALITY) {
+    font_centered(font, cv, 165, battle->phase == PHASE_FINISH ? "FINISH HIM" : "FATALITY", 1.5f);
   }
-  if (g_battle.phase == PHASE_ROUND_OVER || g_battle.phase == PHASE_MATCH_OVER) {
+  if (battle->phase == PHASE_ROUND_OVER || battle->phase == PHASE_MATCH_OVER) {
     char message[1100];
-    if (g_battle.winner < 0)
+    if (battle->winner < 0)
       snprintf(message, sizeof message, "DRAW");
     else
-      snprintf(message, sizeof message, g_battle.finisher ? "%s WINS / FATALITY" : "%s WINS",
-          roster_character(assets, g_battle.fighters[g_battle.winner].roster)->name);
+      snprintf(message, sizeof message, battle->finisher ? "%s WINS / FATALITY" : "%s WINS",
+          roster_character(assets, battle->fighters[battle->winner].roster)->name);
     canvas_rect(cv, (Rect){cv->w / 2 - 350, 205, 700, 100}, 0xff141517);
     font_centered(font, cv, 224, message, 1.5f);
-    font_centered(font, cv, 267, g_battle.phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND", .75f);
+    font_centered(font, cv, 267, battle->phase == PHASE_MATCH_OVER ? "MATCH COMPLETE / ENTER TO REMATCH" : "NEXT ROUND", .75f);
   }
   if (paused) {
     canvas_rect(cv, (Rect){cv->w / 2 - 130, cv->h / 2 - 35, 260, 66}, 0xff141517);

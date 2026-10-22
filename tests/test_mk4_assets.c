@@ -61,6 +61,16 @@ static void cross_clip_pose_interpolation(const Assets *assets) {
 
 static void fighter_render_snapshots(const Assets *assets) {
   battle_init(0, 0);
+  battle_bind_assets(assets);
+  const InputFrame idle[2] = {0};
+  battle_step(idle);
+  battle_step(idle);
+  check(g_battle.current_animation.valid && g_battle.current_animation.tick == g_battle.ticks && g_battle.previous_animation.tick == 0,
+      "Simulation ticks must publish animation history without drawing");
+  battle_reset_match();
+  check(g_battle.current_animation.valid && g_battle.current_animation.tick == 0 && g_battle.previous_animation.tick == 0,
+      "Reset must replace both animation snapshots");
+  battle_init(0, 0);
   Fighter *fighter = &g_battle.fighters[0];
   retail_uppercut(fighter);
   battle_bind_assets(assets);
@@ -75,15 +85,15 @@ static void fighter_render_snapshots(const Assets *assets) {
   Pose source[MK4_MAX_BONES], target[MK4_MAX_BONES], rendered[MK4_MAX_BONES];
   pose(model, &assets->clips.data[from->clip], from->sample, source);
   pose(model, &assets->clips.data[to->clip], to->sample, target);
-  fighter_render_pose(assets, fighter, 0.0, rendered);
+  fighter_render_pose(&g_battle, assets, fighter, 0.0, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(fabsf(rendered[i].position.x - source[i].position.x) < .0001f, "Render snapshot starts from the previous clip pose");
   }
-  fighter_render_pose(assets, fighter, 1.0, rendered);
+  fighter_render_pose(&g_battle, assets, fighter, 1.0, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(fabsf(rendered[i].position.x - target[i].position.x) < .0001f, "Render snapshot reaches the new clip pose");
   }
-  fighter_render_pose(assets, fighter, 0.5, rendered);
+  fighter_render_pose(&g_battle, assets, fighter, 0.5, rendered);
   for (size_t i = 0; i < model->bones.count; ++i) {
     check(isfinite(rendered[i].position.x) && isfinite(rendered[i].rotation.m[0]), "Cross-animation render snapshot must remain finite");
   }

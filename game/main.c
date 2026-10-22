@@ -1,4 +1,5 @@
 #include "game.h"
+#include "draw.h"
 #include "audio.h"
 #include "sdl_app.h"
 #include "math_util.h"
@@ -6,6 +7,7 @@
 #include "menu.h"
 #include "sdl_input.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static void usage(void) {
@@ -95,19 +97,32 @@ static void validate(const Assets *assets) {
    *Rendering must honor lifetime rather than drawing that stale reference. */
   battle_init(0, 4);
   battle_bind_assets(assets);
+  battle_set_arena(8);
   g_battle.phase = PHASE_FIGHT;
   Canvas baseline, effect;
   canvas_init(&baseline, 640, 480);
   canvas_init(&effect, 640, 480);
-  draw_battle(&baseline, assets, 8, false, false, 1);
+  /* Invalid history used to be repaired by drawing. Only update owns it now. */
+  g_battle.previous_animation.valid = false;
+  g_battle.current_animation.valid = false;
+  static Battle before;
+  memcpy(&before, &g_battle, sizeof before);
+  draw_battle(&baseline, &g_battle, assets, false, false, 1);
+  draw_battle(&effect, &g_battle, assets, false, false, 0.5);
+  require(memcmp(&before, &g_battle, sizeof before) == 0, "Repeated drawing must not change battle or animation history");
+  g_battle.fighters[0].health = 0;
+  draw_battle(&effect, &before, assets, false, false, 1);
+  g_battle.fighters[0].health = before.fighters[0].health;
+  require(memcmp(baseline.pixels, effect.pixels, (size_t)baseline.w * baseline.h * sizeof *baseline.pixels) == 0,
+      "Drawing an explicit battle view must not read the global match");
   static const MeshAnimation marker = {.first = 0, .count = 1, .period = 1, .scale = Q16_ONE, .source = MESH_FUJIN_WIND};
   Projectile *object = &g_battle.projectiles[0];
   *object = (Projectile){.kind = PROJECTILE_EFFECT, .mesh_animation = &marker, .initial_mesh = 0, .heading = {Q16_ONE, 0}, .pos = {0, -Q16_ONE, 0}};
-  draw_battle(&effect, assets, 8, false, false, 1);
+  draw_battle(&effect, &g_battle, assets, false, false, 1);
   size_t bytes = (size_t)baseline.w * baseline.h * sizeof *baseline.pixels;
   require(memcmp(baseline.pixels, effect.pixels, bytes) != 0, "Effect lifecycle fixture must be visible while active");
   object->kind = 0;
-  draw_battle(&effect, assets, 8, false, false, 1);
+  draw_battle(&effect, &g_battle, assets, false, false, 1);
   require(memcmp(baseline.pixels, effect.pixels, bytes) == 0, "Retired effect mesh must disappear without clearing its immutable reference");
   canvas_free(&effect);
   canvas_free(&baseline);
@@ -247,6 +262,7 @@ int main(int argc, char **argv) {
   g_battle.cpu_level = difficulty;
   game_audio_init(&audio, headless);
   host_input_init(&input);
+  srand(headless ? 0 : SDL_GetTicks());
   menu_init(&menu);
   if (select_requested) {
     menu.p1 = p1;
@@ -321,9 +337,9 @@ int main(int argc, char **argv) {
         battle_reset_match();
     }
     if (match_started)
-      draw_battle(&cv, &assets, arena, cpu, paused, accumulator * 60.0);
+      draw_battle(&cv, &g_battle, &assets, cpu, paused, accumulator * 60.0);
     else
-      menu_draw(&cv, &assets, &menu);
+      menu_draw(&cv, &assets, &menu, headless ? rendered / 60.0 : SDL_GetTicks() / 1000.0);
     sdl_app_present(&app, &cv);
     ++rendered;
     if (limit && rendered >= limit)

@@ -93,7 +93,7 @@ void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_
   }
 }
 
-void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
+void fighter_render_pose(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]) {
   const Character *ch = fighter_model(assets, fighter);
   const Clip *clip = fighter_clip(assets, fighter);
   if (fighter->blend_duration > 0) {
@@ -103,9 +103,9 @@ void fighter_render_pose(const Assets *assets, const Fighter *fighter, double in
     pose_blend(ch, &assets->clips.data[id], fighter->blend_sample, clip, sample, fraction, output);
     return;
   }
-  int fighter_index = fighter == &g_battle.fighters[0] ? 0 : fighter == &g_battle.fighters[1] ? 1 : -1;
-  const AnimationSnapshot *previous = &g_battle.previous_animation;
-  const AnimationSnapshot *current = &g_battle.current_animation;
+  int fighter_index = fighter == &battle->fighters[0] ? 0 : fighter == &battle->fighters[1] ? 1 : -1;
+  const AnimationSnapshot *previous = &battle->previous_animation;
+  const AnimationSnapshot *current = &battle->current_animation;
   if (fighter_index < 0 || !previous->valid || !current->valid || !previous->fighters[fighter_index].valid || !current->fighters[fighter_index].valid ||
       previous->fighters[fighter_index].model != ch || current->fighters[fighter_index].model != ch) {
     double sample = fighter_pose_sample(fighter);

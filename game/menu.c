@@ -2,7 +2,6 @@
 #include "game.h"
 #include "sprite_font.h"
 #include "math_util.h"
-#include <SDL.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,7 +66,6 @@ static int roster_for_retail_cursor(int cursor, int current) {
 
 void menu_init(FrontendMenu *menu) {
   memset(menu, 0, sizeof *menu);
-  srand(SDL_GetTicks());
   menu->screen = MENU_MODE;
   menu->p1 = 0;
   menu->p2 = 4;
@@ -223,7 +221,7 @@ static void draw_mode(Canvas *canvas, const Assets *assets, const FrontendMenu *
   }
 }
 
-static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, float yaw) {
+static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect bounds, float yaw, double seconds) {
   static Bounds bounds_cache[MK4_ROSTER_COUNT];
   static bool cached[MK4_ROSTER_COUNT];
   const Character *character = &assets->characters.data[roster];
@@ -232,7 +230,7 @@ static void draw_preview(Canvas *canvas, const Assets *assets, int roster, Rect 
     bounds_cache[roster] = character_bounds(character, clip);
     cached[roster] = true;
   }
-  double frame = fmod((double)SDL_GetTicks() * 0.024, (double)clip->frames.count);
+  double frame = fmod(seconds * 24.0, (double)clip->frames.count);
   draw_character(canvas, character, clip, frame, bounds, bounds_cache[roster], yaw, false, false);
   blit_name(canvas, &assets->hud.font, assets->hud.names[roster], bounds.x + bounds.w / 2, bounds.y + bounds.h - 46, 1.5f);
 }
@@ -427,10 +425,9 @@ static void draw_select_side(Canvas *canvas, const Assets *assets, const Fronten
   }
 }
 
-static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu *menu) {
+static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, double seconds) {
   int width = canvas->w;
   int height = canvas->h;
-  float seconds = (float)SDL_GetTicks() / 1000.f;
   // Use the clean marble regions, excluding the player-number/color swatches.
   for (int row = 0; row < 2; ++row) {
     int y = row * height / 2;
@@ -495,7 +492,7 @@ static void draw_select(Canvas *canvas, const Assets *assets, const FrontendMenu
   }
 }
 
-static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu *menu) {
+static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, double seconds) {
   canvas_rect(canvas, (Rect){0, 0, canvas->w, canvas->h}, 0xff10151d);
   centered(&assets->hud.font, canvas, 90, "CHOOSE THE ARENA", 1.4f);
   Rect stage = {272, 220, 736, 316};
@@ -513,18 +510,18 @@ static void draw_arena(Canvas *canvas, const Assets *assets, const FrontendMenu 
   snprintf(choice, sizeof choice, "ARENA %02d / %02d", menu->arena + 1, MK4_ARENA_COUNT);
   centered(&assets->hud.font, canvas, 603, choice, .7f);
   centered(&assets->hud.font, canvas, 646, "LEFT / RIGHT TO CHOOSE   ENTER TO FIGHT   ESC TO GO BACK", .58f);
-  draw_preview(canvas, assets, menu->p1, (Rect){78, 273, 172, 238}, -.18f);
-  draw_preview(canvas, assets, menu->p2, (Rect){1030, 273, 172, 238}, .18f);
+  draw_preview(canvas, assets, menu->p1, (Rect){78, 273, 172, 238}, -.18f, seconds);
+  draw_preview(canvas, assets, menu->p2, (Rect){1030, 273, 172, 238}, .18f, seconds);
 }
 
-void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu) {
+void menu_draw(Canvas *canvas, const Assets *assets, const FrontendMenu *menu, double seconds) {
   // Resets depth for the fighter previews; each screen repaints every pixel.
   canvas_clear(canvas);
   if (menu->screen == MENU_MODE) {
     draw_mode(canvas, assets, menu);
   } else if (menu->screen == MENU_SELECT) {
-    draw_select(canvas, assets, menu);
+    draw_select(canvas, assets, menu, seconds);
   } else {
-    draw_arena(canvas, assets, menu);
+    draw_arena(canvas, assets, menu, seconds);
   }
 }

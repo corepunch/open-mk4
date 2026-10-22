@@ -646,9 +646,8 @@ void battle_event_pump(void) {
   }
 }
 
-void battle_step(const InputFrame input[2]) {
+static void battle_tick(const InputFrame input[2]) {
   int i;
-  battle_capture_render_snapshot();
   g_battle.ticks++;
   g_battle.sound_count = 0;
   battle_step_presentation();
@@ -763,4 +762,11 @@ void battle_step(const InputFrame input[2]) {
   if (g_battle.fighters[0].health <= 0 || g_battle.fighters[1].health <= 0 || g_battle.time_ticks <= 0) {
     finish_round();
   }
+}
+
+void battle_step(const InputFrame input[2]) {
+  battle_tick(input);
+  /* The tick owns history capture, including early phase exits. Drawing may
+   * happen zero, one or many times between simulation steps. */
+  battle_capture_render_snapshot();
 }

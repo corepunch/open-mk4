@@ -115,8 +115,10 @@ D-pad/left-stick directions and buttons into that same contract. Keyboard and
 pad holds combine per player. Gamepads take the first free player slot and
 support hotplug; stick axes use a quarter-range dead zone. Menu and shell
 commands are separate device-independent enums in `game/host_commands.h`.
-The menu accepts semantic actions rather than SDL keycodes. Mapping is fixed
-for now; configuration and timestamped event replay are separate features.
+The menu accepts semantic actions rather than SDL keycodes. The host supplies
+menu animation time and seeds menu selection randomness; menu code does not
+call SDL. Mapping is fixed for now; configuration and timestamped event replay
+are separate features.
 
 ## Shared retail runtime
 
@@ -141,7 +143,14 @@ The shared 60 Hz actor pump advances that state on one thread. There are no
 coroutine stacks, worker threads or raw retail task-stack emulation. Typed
 script returns remain distinct from typed native completions. Starting a new
 phase or interrupting one transfers ownership and prevents stale callbacks.
-A renderer reads snapshots and never advances combat or script state.
+The simulation captures animation history after each tick (at the existing
+30 Hz animation sampling cadence), including early phase exits and resets.
+`game/draw.h` takes an explicit `const Battle *` and borrowed assets. Drawing
+never captures history or advances combat, scripts or presentation effects.
+The renderer reads the supplied match on the same host thread; animation
+snapshots are interpolation history, not a detached full-scene snapshot for
+concurrent rendering. `game/game.h` depends on shared asset/pose types, not
+rasterizer or SDL interfaces.
 
 `game/retail_native.c` resolves input/native entry addresses and predicates;
 `game/retail_native_vm.c` resolves typed script-native calls, tails, handlers,

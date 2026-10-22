@@ -1,8 +1,8 @@
 #ifndef MK4_GAME_H
 #define MK4_GAME_H
-/* One header for the match: input frames, the character roster, the two live
- * fighters, and the draw entry points. Asset and renderer headers stay in
- * common/ because the viewer uses them too.
+/* Simulation state and services for the match. Device-independent tick input
+ * lives in input.h; raster drawing and SDL adapters have separate interfaces.
+ * Shared asset and pose types stay in common/ for the viewer.
  *
  * Retail data supplies identity, commands and script programs. Shared C native
  * services implement engine boundaries. Each live fighter owns its interpreter,
@@ -12,7 +12,7 @@
  * own wgfsys archive) is another game id: append rows, point them at that
  * game's state and clip tables, and load a second asset bank. The step
  * function does not branch on the game id. */
-#include "renderer.h"
+#include "mk4_assets.h"
 #include "input.h"
 #include "mk4_image.h"
 #include <stdbool.h>
@@ -917,7 +917,7 @@ bool fighter_joint_bounds(const Fighter *fighter, const q16 origin[3], const q16
 double fighter_pose_frame(const Fighter *fighter);
 int fighter_pose_sample(const Fighter *fighter);
 void fighter_pose(const Assets *assets, const Fighter *fighter, Pose output[MK4_MAX_BONES]);
-void fighter_render_pose(const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]);
+void fighter_render_pose(const Battle *battle, const Assets *assets, const Fighter *fighter, double interpolation, Pose output[MK4_MAX_BONES]);
 void fighter_ready(Fighter *fighter);
 void fighter_equip_weapon(Fighter *fighter, const WeaponDef *weapon);
 void weapon_start_strike(Fighter *fighter, const WeaponStrike *strike, bool travel);
@@ -941,7 +941,7 @@ bool fighter_joint_position(const Fighter *fighter, int joint, Vec3 *position, M
 void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count);
 void battle_camera_shake(int pulses, int interval, q16 amount);
 /* The normal fight camera's eye and horizontal heading toward the pair. */
-Vec3 battle_follow_eye(Vec3 *heading);
+Vec3 battle_follow_eye(const Battle *battle, Vec3 *heading);
 void fighter_visual_offset(Fighter *fighter, q16 along, q16 y);
 void battle_object_light(Projectile *object, const OrbitLightDef *def);
 int projectile_mesh_frame(const Projectile *object);
@@ -967,6 +967,4 @@ void battle_step(const InputFrame input[2]);
 void battle_capture_render_snapshot(void);
 const char *state_name(int state);
 
-void draw_battle(Canvas *canvas, const Assets *assets, int arena, bool cpu, bool paused, double interpolation);
-void draw_sprite(Canvas *canvas, const Geometry *geometry, int sprite, Rect dest, bool flip);
 #endif

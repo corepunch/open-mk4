@@ -108,7 +108,7 @@ static void camera_shot(void) {
 void battle_camera_sequence(const Fighter *owner, const Fighter *target, const CameraShot *shots, int count) {
   require(shots != NULL && count > 0, "Invalid camera sequence");
   SceneCamera *camera = &g_battle.camera;
-  Vec3 initial = camera->active ? camera->eye : battle_follow_eye(NULL);
+  Vec3 initial = camera->active ? camera->eye : battle_follow_eye(&g_battle, NULL);
   *camera = (SceneCamera){.active = true, .eye = initial, .shots = shots, .shot_count = count, .target_player = target == &g_battle.fighters[0] ? 0 : 1};
   camera->axis = (Vec3){q16_float(owner->heading[0]), 0, q16_float(owner->heading[1])};
   camera->origin = (Vec3){fighter_x(target) - camera->axis.x * q16_float(0xe666), -1.25f, fighter_z(target) - camera->axis.z * q16_float(0xe666)};
@@ -210,14 +210,14 @@ void battle_joint_spray(const Fighter *fighter, const JointSprayDef *def) {
 
 /* Our fight framing, not the retail camera director: look across the pair
  * axis at the fighters' midpoint and pull back with their separation. */
-Vec3 battle_follow_eye(Vec3 *heading) {
-  const Fighter *a = &g_battle.fighters[0], *b = &g_battle.fighters[1];
-  Vec3 view = g_battle.view;
+Vec3 battle_follow_eye(const Battle *battle, Vec3 *heading) {
+  const Fighter *a = &battle->fighters[0], *b = &battle->fighters[1];
+  Vec3 view = battle->view;
   float length = hypotf(view.x, view.z);
   view = length > .001f ? (Vec3){view.x / length, 0, view.z / length} : (Vec3){0, 0, -1};
   float distance = hypotf(fighter_x(b) - fighter_x(a), fighter_z(b) - fighter_z(a));
   float lift = 0;
-  if (g_battle.camera.follow_height) {
+  if (battle->camera.follow_height) {
     lift = fmaxf(a->appearance == APPEARANCE_HIDDEN ? 0 : fighter_height(a), b->appearance == APPEARANCE_HIDDEN ? 0 : fighter_height(b));
     lift = fmaxf(0, lift);
   }
@@ -236,7 +236,7 @@ static void step_follow_view(void) {
   float dx = fighter_x(b) - fighter_x(a), dz = fighter_z(b) - fighter_z(a);
   float distance = hypotf(dx, dz);
   Vec3 view;
-  battle_follow_eye(&view);
+  battle_follow_eye(&g_battle, &view);
   if (distance > .05f) {
     Vec3 goal = {dz / distance, 0, -dx / distance};
     if (goal.x * view.x + goal.z * view.z < 0) {
