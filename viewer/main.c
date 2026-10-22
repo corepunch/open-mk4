@@ -52,7 +52,7 @@ static void draw(Canvas *cv, const Assets *assets, const Bounds boxes[MK4_ROSTER
 static void usage(void) {
   puts("MK4 SDL2 character gallery\n"
        "  --archive PATH     default MK4/FILESYS.DAT\n"
-       "  --exe PATH         default MK4/MK-4.EXE\n"
+       "  --data PATH        default build/mk4.data\n"
        "  --headless         load/render without a desktop window\n"
        "  --screenshot PATH  save BMP image\n"
        "  --time SECONDS     start at this animation time\n"
@@ -64,7 +64,7 @@ static void usage(void) {
 }
 
 int main(int argc, char **argv) {
-  const char *archive = "MK4/FILESYS.DAT", *exe = "MK4/MK-4.EXE", *shot = NULL, *dump = NULL;
+  const char *archive = "MK4/FILESYS.DAT", *data = "build/mk4.data", *shot = NULL, *dump = NULL;
   bool headless = false, selftest = false;
   int limit = 0, override_clip = -1;
   double start_time = 0;
@@ -73,8 +73,8 @@ int main(int argc, char **argv) {
     const char *arg = argv[i];
     if (!strcmp(arg, "--archive"))
       archive = cli_value(argc, argv, &i);
-    else if (!strcmp(arg, "--exe"))
-      exe = cli_value(argc, argv, &i);
+    else if (!strcmp(arg, "--data"))
+      data = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--headless"))
       headless = true;
     else if (!strcmp(arg, "--self-test"))
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
   require(limit >= 0 && isfinite(start_time) && start_time >= 0 && isfinite(yaw) && override_clip >= -1 && override_clip < MK4_CLIP_COUNT,
       "Invalid command-line value");
   Assets assets = {0};
-  assets_load(&assets, archive, exe);
+  assets_load(&assets, archive, data);
   size_t triangles = 0, frames = 0;
   Bounds boxes[MK4_ROSTER_COUNT];
   for (size_t i = 0; i < assets.clips.count; ++i)

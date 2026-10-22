@@ -139,12 +139,8 @@ def audit(image, character):
     scripts = []
     for entry, names in sorted(root_names.items()):
         program = script_program(image, entry, character)
-        limits = (ROOT / 'game/script/vm.h').read_text()
-        begin = int(re.search(r'#define SCRIPT_ADDRESS_BEGIN (0x[0-9a-f]+)', limits)[1], 16)
-        end = int(re.search(r'#define SCRIPT_ADDRESS_END (0x[0-9a-f]+)', limits)[1], 16)
-        if any(int(row['va'], 16) < begin or int(row['va'], 16) + 4 * (1 + len(row.get('operands', []))) > end
-               for row in program['instructions']):
-            errors.append('%s: runtime data range does not contain the decoded graph' % hex(entry))
+        # This audit checks the original catalog/evidence and native registration.
+        # Linked source layout is independently validated by mk4_link and its tests.
         supported = {int(value, 16) for value in re.findall(r'case (0x[0-9a-f]+):', (ROOT / 'game/script/vm.c').read_text())}
         if any(int(row['opcode'], 16) not in supported for row in program['instructions']):
             errors.append('%s: runtime opcode is unsupported' % hex(entry))

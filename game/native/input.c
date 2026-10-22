@@ -79,7 +79,7 @@ static FighterFn crouch_entry(unsigned index) {
 
 uint32_t action_button_target(const Mk4Image *image, uint32_t table, Button button) {
   require(button >= BUTTON_HIGH_PUNCH && button < BUTTON_COUNT, "Invalid retail button slot");
-  require(table >= SCRIPT_ADDRESS_BEGIN && table <= SCRIPT_ADDRESS_END - 24 && table % 4 == 0, "Invalid retail button table");
+  require(table >= MK4_DATA_IMAGE_BASE && table <= MK4_DATA_IMAGE_END - 24 && table % 4 == 0, "Invalid retail button table");
   unsigned slot;
   switch (button) {
     case BUTTON_HIGH_PUNCH:
@@ -104,7 +104,7 @@ uint32_t action_button_target(const Mk4Image *image, uint32_t table, Button butt
       fatal("Invalid retail button");
   }
   uint32_t target = mk4_image_u32(image, table + slot * 4);
-  require(target == 0 || (target >= MK4_DATA_IMAGE_BASE && target < MK4_DATA_PACKED_POINTERS_BEGIN), "Invalid retail button target");
+  require(target == 0 || (target >= MK4_NATIVE_ID_BEGIN && target < MK4_NATIVE_ID_END), "Invalid retail button target");
   return target;
 }
 
@@ -420,7 +420,7 @@ bool action_native_button_chord(const Fighter *fighter, uint32_t address) {
     P2_SECONDARY_SHIFT = 4
   };
 
-  require(address >= SCRIPT_ADDRESS_BEGIN && address <= SCRIPT_ADDRESS_END - ROW_BYTES && address % 4 == 0, "Invalid native button-chord row");
+  require(address >= MK4_DATA_IMAGE_BASE && address <= MK4_DATA_IMAGE_END - ROW_BYTES && address % 4 == 0, "Invalid native button-chord row");
   bool second_player = fighter == &g_battle.fighters[1];
   uint32_t row = address + (second_player ? PLAYER_RECORD_BYTES : 0);
   uint32_t primary = fighter->held & (BUTTON_BIT(BUTTON_LOW_PUNCH) - 1);

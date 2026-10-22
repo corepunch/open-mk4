@@ -2,7 +2,7 @@ CC = cc
 CFLAGS = -O2 -std=c11 -Wall -Wextra -Wpedantic
 CXX = c++
 CXXFLAGS = -O2 -std=c++17 -Wall -Wextra -Wpedantic
-CPPFLAGS = -Icommon
+CPPFLAGS = -Icommon -Ibuild
 LDLIBS = -lm
 SDL2_CONFIG ?= sdl2-config
 CLANG_FORMAT ?= $(shell command -v clang-format 2>/dev/null || xcrun --find clang-format 2>/dev/null || echo clang-format)
@@ -11,7 +11,7 @@ FORMAT_FILES = $(wildcard *.[ch] *.cpp *.hpp common/*.[ch] game/*.[ch] game/*.in
 PACKAGE = common/mk4_package.c common/binary.c
 ASSETS = common/mk4_program.c common/mk4_image.c common/mk4_assets.c common/mk4_audio.c $(PACKAGE)
 RENDER = common/renderer.c common/sdl_app.c common/sprite_font.c common/shadow.c common/lighting.c
-HEADERS = $(wildcard common/*.h)
+HEADERS = $(wildcard common/*.h) build/mk4_linked.h
 PACKAGE_OBJECTS = build/mk4_package.o build/binary.o
 
 SCRIPT_CHARACTERS := $(shell python3 -c 'import sys; sys.path.insert(0, "tools"); from character_catalog import CHARACTERS; print(" ".join(CHARACTERS))')
@@ -21,18 +21,18 @@ SCRIPT_AUDIT_TARGETS = $(addprefix scripts-audit-,$(SCRIPT_CHARACTERS))
 .PHONY: input-test retail-vm-test native-frames-check scripts scripts-check scripts-audit $(SCRIPT_CHECK_TARGETS) $(SCRIPT_AUDIT_TARGETS) all wargods-test extract extract-wargods test clean viewer run viewer-test game play game-test format format-check check
 all: fsys mk4-viewer mk4-game
 
-scripts: build/mk4.scripts
+scripts: build/mk4.data build/mk4_linked.h
 
-build/mk4.scripts: tools/mk4_asm.py $(wildcard scripts/mk4/*)
-	python3 tools/mk4_asm.py scripts/mk4/program.asm $@
+build/mk4.data: tools/mk4_link.py tools/mk4_asm.py $(wildcard scripts/mk4/*)
+	python3 tools/mk4_link.py scripts/mk4/project.asm $@ build/mk4_linked.h
+build/mk4_linked.h: build/mk4.data
+	@test -f $@ || python3 tools/mk4_link.py scripts/mk4/project.asm build/mk4.data $@
 
-mk4-game build/test-retail-vm build/test-mk4-assets build/test-battle build/test-frames build/test-menu: | build/mk4.scripts
-
-scripts-check: scripts-audit build/mk4.scripts
-	python3 tests/test_mk4_asm.py
+scripts-check: scripts-audit scripts
+	python3 tests/test_mk4_link.py
 	python3 tools/check_native_addresses.py
-scripts-audit: build/mk4.scripts
-	python3 tools/compile_retail.py --all --audit --strict --summary --require-implemented --program build/mk4.scripts
+scripts-audit:
+	python3 tools/compile_retail.py --all --audit --strict --summary --require-implemented
 native-frames-check:
 	python3 tests/test_c_reachability.py
 	python3 tools/check_native_frames.py
@@ -68,7 +68,7 @@ test: fsys build/test-package
 	./build/test-package
 	python3 tests/test_fsys.py ./fsys
 clean:
-	rm -f fsys mk4-viewer mk4-game $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-retail-vm
+	rm -f fsys mk4-viewer mk4-game build/mk4.data build/mk4_linked.h build/mk4.scripts $(PACKAGE_OBJECTS) build/battle.o build/test-package build/test-mk4-assets build/test-battle build/test-shadows build/test-frames build/test-retail-vm
 viewer: mk4-viewer
 mk4-viewer: viewer/main.c $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $$($(SDL2_CONFIG) --cflags) viewer/main.c $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
@@ -89,7 +89,7 @@ mk4-game: $(GAME_SOURCES) $(GAME_HEADERS) $(ASSETS) $(RENDER) $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) $(GAME_SOURCES) $(ASSETS) $(RENDER) -o $@ $$($(SDL2_CONFIG) --libs) $(LDLIBS)
 play: mk4-game
 	./mk4-game
-build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) $(ASSETS)
+build/test-battle: tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(GAME_HEADERS) $(ASSETS) $(HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Igame $$($(SDL2_CONFIG) --cflags) tests/test_battle.c game/battle.c $(ROSTER_SOURCES) game/input.c $(ASSETS) -o $@ $(LDLIBS)
 build/test-input: tests/test_input.c game/input.c game/sdl_input.c game/input.h game/sdl_input.h game/host_commands.h

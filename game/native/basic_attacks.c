@@ -44,7 +44,7 @@ static void kick_row(Fighter *fighter) {
 
 void action_kick_contact_rows(Fighter *fighter, uint32_t table) {
   ScriptVm *vm = &fighter->execution.script;
-  require(vm->active && table >= SCRIPT_ADDRESS_BEGIN && table <= SCRIPT_ADDRESS_END - 12, "Native contact rows need a live retail task and data");
+  require(vm->active && table >= MK4_DATA_IMAGE_BASE && table <= MK4_DATA_IMAGE_END - 12, "Native contact rows need a live retail task and data");
   vm->native_selector = mk4_image_u32(vm->image, table);
   vm->native_query = mk4_image_u32(vm->image, table + 4);
   vm->native_cursor = table + 8;

@@ -85,8 +85,7 @@ static void check_independent_scene_actor_lifetime(void) {
 /* Match lifecycle, movement and body constraints belong to our engine. Retail
  * authored move timing/damage is covered by the source scripts, not matrices. */
 int main(void) {
-  image = mk4_image_load("MK4/MK-4.EXE");
-  mk4_program_load(&image, "build/mk4.scripts");
+  image = mk4_image_load("build/mk4.data");
   battle_init(&image, 0, 4);
   check_roster();
   check_independent_scene_actor_lifetime();

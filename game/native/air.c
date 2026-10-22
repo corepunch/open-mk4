@@ -10,7 +10,7 @@
  * animation/control flow and native descriptor rows come from the image. */
 /* Native470980's initial phase binds the descriptor in its original row. */
 void action_air_bind_row(Fighter *fighter, uint32_t row) {
-  require(row >= SCRIPT_ADDRESS_BEGIN && row <= SCRIPT_ADDRESS_END - 12 && row % 4 == 0, "Invalid native air parameter row");
+  require(row >= MK4_DATA_IMAGE_BASE && row <= MK4_DATA_IMAGE_END - 12 && row % 4 == 0, "Invalid native air parameter row");
   const Mk4Image *image = fighter->execution.script.active ? fighter->execution.script.image : battle_data();
   script_vm_bind_animation(fighter, mk4_image_u32(image, row) * 4, 0);
 }

@@ -6,7 +6,7 @@
 /* Named byte addresses of native attack records, checked against the local EXE.
  * Decode the original data through the VM; do not keep copied balance tables. */
 enum {
-  TORPEDO_ATTACK_RECORD = 0x4ec1a0
+  TORPEDO_ATTACK_RECORD = MK4_LINK_CONTEXTS_TORPEDO_ATTACK_RECORD
 };
 
 /* Native service cluster: 45b1f0, 45b230. */

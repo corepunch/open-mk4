@@ -14,7 +14,7 @@
 static void usage(void) {
   puts("MK4 native battle game\n"
        "  --archive PATH     default MK4/FILESYS.DAT\n"
-       "  --exe PATH         default MK4/MK-4.EXE\n"
+       "  --data PATH        default build/mk4.data\n"
        "  --p1 N --p2 N      roster slots 0..17 (default Scorpion / Sub Zero)\n"
        "  --arena N          arena 0..10 (default 8, The Prison)\n"
        "  --two-player       local controls for player two\n"
@@ -24,7 +24,6 @@ static void usage(void) {
        "  --menu             show the front-end menu (also available in headless mode)\n"
        "  --select           open character selection (team mode with --two-player)\n"
        "  --frames N         stop after N frames (headless advances exactly 1/60s)\n"
-       "  --scripts PATH     load assembled MK4 wordcode (default build/mk4.scripts)\n"
        "  --screenshot PATH  save final frame as BMP\n"
        "  --list             show original roster and arenas\n"
        "  --self-test        validate battle resources and animation compatibility\n"
@@ -193,7 +192,7 @@ static void start_menu_match(const FrontendMenu *menu, const Assets *assets, int
 
 int main(int argc, char **argv) {
   const char *archive = "MK4/FILESYS.DAT";
-  const char *exe = "MK4/MK-4.EXE";
+  const char *data = "build/mk4.data";
   const char *shot = NULL;
   bool headless = false, demo = false, cpu = true, selftest = false, list = false;
   bool menu_requested = false, select_requested = false, explicit_match = false;
@@ -211,15 +210,12 @@ int main(int argc, char **argv) {
   double tower_wait = 0;
   uint64_t last;
 
-  const char *program = "build/mk4.scripts";
   for (int i = 1; i < argc; ++i) {
     const char *arg = argv[i];
     if (!strcmp(arg, "--archive"))
       archive = cli_value(argc, argv, &i);
-    else if (!strcmp(arg, "--exe"))
-      exe = cli_value(argc, argv, &i);
-    else if (!strcmp(arg, "--scripts"))
-      program = cli_value(argc, argv, &i);
+    else if (!strcmp(arg, "--data"))
+      data = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--screenshot"))
       shot = cli_value(argc, argv, &i);
     else if (!strcmp(arg, "--p1")) {
@@ -261,9 +257,8 @@ int main(int argc, char **argv) {
   require(p1 >= 0 && p1 < roster_count() && p2 >= 0 && p2 < roster_count(), "Invalid roster slot");
   require(arena >= 0 && arena < 11 && limit >= 0, "Invalid arena or frame limit");
 
-  assets_load(&assets, archive, exe);
-  mk4_program_load(&assets.image, program);
-  assets_load_battle(&assets, archive, exe);
+  assets_load(&assets, archive, data);
+  assets_load_battle(&assets, archive);
   if (list) {
     for (size_t i = 0; i < assets.characters.count; ++i)
       printf("Fighter %2zu: %s\n", i, assets.characters.data[i].name);

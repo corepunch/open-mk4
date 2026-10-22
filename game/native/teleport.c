@@ -16,7 +16,7 @@ static const MoveDef s_recoil = {.clip = 301, .last = 8, .flags = SF_LOCK, .acti
 
 /* 47c2d5 queries D[14]: no damage; 480fc0(8) replaces the hit reaction. */
 enum {
-  TELEPORT_SLAM_ATTACK_RECORD = 0x4ec110
+  TELEPORT_SLAM_ATTACK_RECORD = MK4_LINK_TELEPORT_TELEPORT_SLAM_ATTACK_RECORD
 };
 
 static void teleport_landing(Fighter *fighter);

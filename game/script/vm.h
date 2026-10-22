@@ -2,9 +2,6 @@
 #define MK4_SCRIPT_VM_H
 #include "game.h"
 
-#define SCRIPT_ADDRESS_BEGIN 0x4d0000u
-#define SCRIPT_ADDRESS_END 0x4ef000u
-
 void script_vm_bind_animation(Fighter *fighter, uint32_t descriptor, int first);
 void script_vm_repeat(Fighter *fighter, uint32_t entry, unsigned count, uint32_t after);
 void script_vm_repeat_next(Fighter *fighter);

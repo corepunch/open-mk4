@@ -7,6 +7,10 @@ native services and controllers live in shared capability modules under
 `game/native/`. Evidence belongs beside shared implementations or in typed
 research bindings; there are no per-fighter coverage manifests.
 
+Project edits use `scripts/mk4/project.asm`: data and code references resolve
+symbolically, and `make game` rebuilds both package and native label consumers.
+The EXE is needed for research/import evidence only. See [source format](../scripts/README.md).
+
 ## Workflow
 
 1. Build edited script sources with `make scripts`; normal builds do this

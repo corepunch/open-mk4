@@ -166,8 +166,7 @@ int main(void) {
       check(fabsf(m.m[i] - (float)fixtures[f].q12.values[i] / 4096) < .002f, "Rotation differs from original x86 builder");
   }
   Assets assets = {0};
-  assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
-  mk4_program_load(&assets.image, "build/mk4.scripts");
+  assets_load(&assets, "MK4/FILESYS.DAT", "build/mk4.data");
   battle_init(&assets.image, 0, 4);
   check(assets.characters.count == 18 && assets.clips.count == 612, "Incomplete roster/pack");
   size_t frames = 0, poses = 0;
@@ -234,7 +233,7 @@ int main(void) {
   }
   /* 489ff0 selector8: Liu remap1 reads token1275 -> pcmk0255.esf.
    * This catches accidental routing through indexed sounds (opcode25). */
-  assets_load_battle(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
+  assets_load_battle(&assets, "MK4/FILESYS.DAT");
   cross_clip_pose_interpolation(&assets);
   fighter_render_snapshots(&assets);
   independent_scene_poses(&assets);

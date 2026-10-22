@@ -1,3 +1,4 @@
+#include "script/native_ids.h"
 #include "runtime/playback.h"
 #include "script/vm.h"
 #include "native/actions.h"
@@ -52,7 +53,7 @@ static void native_address_resume(Fighter *fighter) {
 /* Install after native_begin or a non-immediate native helper. Native callback
  * addresses remain distinct from script entries and are never host pointers. */
 void native_address_end(Fighter *fighter, uint32_t address) {
-  require(address >= MK4_DATA_IMAGE_BASE && address < SCRIPT_ADDRESS_BEGIN, "Invalid native address continuation");
+  require(address >= MK4_NATIVE_ID_BEGIN && address < MK4_NATIVE_ID_END, "Invalid native address continuation");
   fighter->execution.native_frames.script_end = (ScriptContinuation){0};
   fighter->execution.native_frames.native_end = (NativeContinuation){address};
   fighter->execution.native_frames.move.endfunc = native_address_resume;

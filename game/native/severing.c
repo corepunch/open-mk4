@@ -14,8 +14,8 @@ static unsigned head_hand_part_count(void) {
 
 /* Native service cluster: 44f5e0, 44f620, 44f6f0, 49cb60. */
 enum {
-  WIND_FINISH_CYCLE_SCRIPT = 0x4e1f68,
-  WIND_FINISH_EXIT_SCRIPT = 0x4e1f80
+  WIND_FINISH_CYCLE_SCRIPT = MK4_LINK_SEVERING_WIND_FINISH_CYCLE_SCRIPT,
+  WIND_FINISH_EXIT_SCRIPT = MK4_LINK_SEVERING_WIND_FINISH_EXIT_SCRIPT
 };
 
 static const MoveDef fujin_fatality_first_owner = {.clip = 398, .last = 26, .flags = SF_LOCK | SF_RECORD, .action = ACTION_CODE_0700};

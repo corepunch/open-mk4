@@ -19,7 +19,6 @@ ROOT = Path(__file__).resolve().parents[1]
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exe', type=Path, default=ROOT / 'MK4/MK-4.EXE')
-    parser.add_argument('--program', type=Path, help='audit assembled project scripts over the original data image')
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument('--character', type=character_id, default=0)
     selection.add_argument('--all', action='store_true', help='audit all roster slots in one process')
@@ -35,9 +34,6 @@ def main(argv=None):
         parser.error('--summary/--strict/--require-implemented require --audit')
     try:
         image = RetailImage(args.exe)
-        if args.program:
-            from mk4_asm import apply_package
-            apply_package(image, args.program)
         selected = range(len(CHARACTERS)) if args.all else [args.character]
         reports, status = [], 0
         for character in selected:

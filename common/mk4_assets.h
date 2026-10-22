@@ -161,8 +161,8 @@ enum {
 const Texture *character_texture(const Character *character, int page);
 
 /* Initialize Assets to zero before loading. The owner frees all decoded data. */
-void assets_load(Assets *assets, const char *archive, const char *executable);
-void assets_load_battle(Assets *assets, const char *archive, const char *executable);
+void assets_load(Assets *assets, const char *archive, const char *data_path);
+void assets_load_battle(Assets *assets, const char *archive);
 void assets_free(Assets *assets);
 /* Output is caller-owned and holds at least ch->bones.count entries. */
 void pose(const Character *ch, const Clip *clip, double frame, Pose output[MK4_MAX_BONES]);

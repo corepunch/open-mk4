@@ -8,10 +8,9 @@
 
 int main(void) {
   Assets assets = {0};
-  assets_load(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
-  mk4_program_load(&assets.image, "build/mk4.scripts");
+  assets_load(&assets, "MK4/FILESYS.DAT", "build/mk4.data");
   battle_init(&assets.image, 0, 4);
-  assets_load_battle(&assets, "MK4/FILESYS.DAT", "MK4/MK-4.EXE");
+  assets_load_battle(&assets, "MK4/FILESYS.DAT");
   FrontendMenu menu;
   bool quit = false;
   menu_init(&menu, &assets.image);
@@ -37,7 +36,7 @@ int main(void) {
       menu_draw(&canvas, &assets, &menu, 0);
       require(menu_command(&menu, MENU_CONFIRM, &quit) && menu.p2 == opponent, "Continue must retry the same opponent");
       for (int floor = 0; floor < menu.towers[col].count; ++floor) {
-        uint32_t list = mk4_image_u32(&assets.image, 0x4e557c + col * 16) * 4;
+        uint32_t list = mk4_image_u32(&assets.image, MK4_FIXTURE_REF_95612 + col * 16) * 4;
         int expected = (int)((mk4_image_u32(&assets.image, list + floor * 4) >> (face * 8)) & 255);
         require(menu.p2 == expected, "Opponent must come from the selected byte of the retail list");
         menu_match_finished(&menu, true);
@@ -55,8 +54,8 @@ int main(void) {
     }
   }
   /* Loading a changed list proves that the frontend has no copied ladder. */
-  uint32_t list = mk4_image_u32(&assets.image, 0x4e557c) * 4;
-  assets.image.bytes.data[list - 0x400000] = 12;
+  uint32_t list = mk4_image_u32(&assets.image, MK4_FIXTURE_REF_95612) * 4;
+  assets.image.bytes.data[list - MK4_DATA_IMAGE_BASE] = 12;
   menu_init(&menu, &assets.image);
   require(menu_tower_opponent(&menu, 0, 0) == 12, "Frontend must consume the loaded retail list");
   menu.cursor = MENU_TEAM;

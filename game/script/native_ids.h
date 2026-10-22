@@ -1,6 +1,11 @@
 #ifndef MK4_NATIVE_ADDRESSES_H
 #define MK4_NATIVE_ADDRESSES_H
 
+enum {
+  MK4_NATIVE_ID_BEGIN = 0x401000,
+  MK4_NATIVE_ID_END = 0x4ce000
+};
+
 /* Native ABI byte addresses in the verified local MK4/MK-4.EXE revision.
  * Names describe registered engine services, native frontend roles or the
  * implemented handler family; they are not claims of recovered source names.

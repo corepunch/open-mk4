@@ -89,7 +89,7 @@ The package tool keeps its stable-snapshot watcher and extraction code separate.
 | Code | Used by |
 | --- | --- |
 | `common/mk4_package.*`, `common/binary.*` | Package tool, viewer, game |
-| `common/mk4_assets.*` | Viewer and game: GEO, RGB555 textures, rigs, AP0/AP1, poses, executable data |
+| `common/mk4_assets.*` | Viewer and game: GEO, RGB555 textures, rigs, AP0/AP1, poses, linked source data |
 | `common/renderer.*` | Viewer and game: canvas, depth buffer, textured triangles, text, sprite blits, screenshots |
 | `common/lighting.*` | Shared point light for model/arena shading and matching shadow projection |
 | `common/shadow.*` | Homogeneous planar shadow matrices for directional and point lights |
@@ -126,23 +126,24 @@ make check
 ```
 
 The separate `mk4-game` target starts Scorpion versus a CPU Sub Zero in The
-Prison. It loads all 18 fighters, 11 arena GEOs and their executable scene
+Prison. It loads all 18 fighters, 11 arena GEOs and their source scene
 hierarchies, three texture pages per arena, `mk4font_.geo` for original name and
 health-bar artwork and all other game text, and `shared_g.geo` for original
 ROUND/round-number sprites and fight/impact graphics. The game uses no built-in
 or system font. Goro uses his
 own 21-channel animation bank. Other characters use compatible original action
-clips. All resources load directly from the read-only archive and executable.
+clips. Resources load from the read-only archive and the linked project data package.
 
 All 1,133 catalogued fighter script roots across 18 roster slots execute MK4
 wordcode assembled from checked-in [script sources](scripts/README.md).
 Edit `scripts/mk4/program.asm`, run `make scripts` (or `make game`), then launch
-`./mk4-game`. Assembly does not read the EXE. Use `--scripts PATH` to select a
-different assembled package. Original EXE tables and archive assets are still
-required; instruction fetches use only words supplied by the assembled package.
+`./mk4-game`. Tables live in `scripts/mk4/tables.asm`; the linker resolves
+labels after edits and rebuilds C callers when offsets change. Neither build nor
+game/viewer startup needs the EXE. Use `--data PATH` to select a compatible
+linked package. The original archive still supplies binary asset payloads.
 
 Roster, command/action, CPU, native throw/combo, stance, reaction and scene
-selection tables load from MK4 data. Shared C capabilities implement native
+selection tables load from the linked source package. Shared C capabilities implement native
 calls; there are no generated fighter C programs or per-fighter C modules.
 Follow the [shared runtime workflow](docs/character-script-port.md#workflow):
 check mk4decomp and matching local native listings, implement a missing runtime
@@ -202,8 +203,8 @@ a specific installation with `make format CLANG_FORMAT=/path/to/clang-format`.
 
 ## SDL2 character gallery
 
-The C11 viewer reads the archive and executable directly; extraction is optional.
-It loads all 18 roster slots, their textured GEO meshes and executable skeletons,
+The C11 viewer reads the archive and linked project data; extraction is optional.
+It loads all 18 roster slots, their textured GEO meshes and source skeletons,
 and loops the game's per-character idle animations in a 6-by-3 grid. Each view
 faces the character's head toward the camera. Kitana and Noob use the game's
 special-ID stance remapping; Goro retains all four arms and 21 animation channels.
@@ -224,14 +225,14 @@ external runtime dependency.
 
 ```sh
 ./mk4-viewer --headless --time 0.2 --screenshot build/gallery.bmp
-./mk4-viewer --archive MK4/FILESYS.DAT --exe MK4/MK-4.EXE
+./mk4-viewer --archive MK4/FILESYS.DAT --data build/mk4.data
 ./mk4-viewer --help
 ```
 
-The executable supplies the skeletons, roster, pointer fixups, animation frame
-counts and idle selection. The current profile supports the supplied June 1998
-`MK-4.EXE`; another revision is rejected if its animation-table signature differs.
-The archive stays read-only. No game executable code runs inside the viewer.
+The linked project package supplies skeletons, roster, animation descriptors and
+other tables. Build it with `make scripts`; `make viewer` does this automatically.
+The original archive stays read-only. The EXE is only needed for explicit
+research/import operations.
 
 `make viewer-test` checks original x86 rotation fixtures, complete bone-channel
 mapping, upright poses throughout all 865 roster idle frames, loop wrapping and

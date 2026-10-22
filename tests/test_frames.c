@@ -302,8 +302,7 @@ static void advance(int ticks) {
 }
 
 int main(void) {
-  image = mk4_image_load("MK4/MK-4.EXE");
-  mk4_program_load(&image, "build/mk4.scripts");
+  image = mk4_image_load("build/mk4.data");
   mmove_frames_and_callbacks();
   mmove_phases_and_cleanup();
   mmove_hold_jump_and_loop();

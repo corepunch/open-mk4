@@ -138,13 +138,20 @@ The runtime has four concrete boundaries:
 resolve host callbacks. Native IDs are included only by modules that use them,
 rather than exposed through every simulation structure.
 
-All 18 fighters run MK4 wordcode assembled from `scripts/mk4/program.asm`
-through `game/script/vm.c`. `make scripts` builds the package without reading
-the EXE. Original data tables still come from the image; script fetches require
-a word supplied by the assembled package. See [script sources](scripts/README.md).
-Roster identity, input records, action dispatch, stances, CPU choices, weapon
-inventories, animation descriptors and reaction targets are loaded from the
-retail image. Selection remaps follow each original table's own native path;
+All 18 fighters run MK4 wordcode linked from `scripts/mk4/program.asm`
+through `game/script/vm.c`. `scripts/mk4/tables.asm` supplies the other image
+records, including roster/input/action/CPU/weapon/reaction tables, animation
+metadata, rigs, sound selectors and scene data. `make scripts` links them into
+one `mk4.data` package without reading the EXE. The generated C header resolves
+native callers to the same labels; a layout fingerprint rejects stale packages.
+No script address is pinned to its original location. Stable native IDs select
+C services and remain distinct from linked data offsets.
+
+Original fixup records identify packed references at import; decoded asset
+structures identify raw pointers. Ordinary numeric fields remain unchanged.
+Instruction membership is explicit and accidental fallthrough between separate
+blocks encounters a non-executable guard. See [source workflow](scripts/README.md).
+Selection remaps follow each original table's own native path;
 model identity is not a substitute for script or table selection.
 `game/roster.c` exposes runtime-derived compatibility views for engine/UI
 callers, not handwritten fighter definitions. Unstarted attack states have

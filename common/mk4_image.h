@@ -3,7 +3,7 @@
 #include "binary.h"
 #include "mk4_addresses.h"
 
-/* Relocated, non-executable retail data. VAs are checked indices, never pointers. */
+/* Linked project data and wordcode. Offsets are checked indices, never pointers. */
 typedef struct Mk4Image {
   Bytes bytes;
   Bytes program_words; /* bitset of words supplied by the assembled script package */

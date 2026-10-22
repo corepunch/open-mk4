@@ -7,10 +7,10 @@
 /* Named byte addresses of native attack records, checked against the local EXE.
  * Decode the original data through the VM; do not keep copied balance tables. */
 enum {
-  BOLT_ATTACK_RECORD = 0x4ebea0,
-  FLURRY_ATTACK_RECORD = 0x4eb7e0,
-  SWEEP_ATTACK_RECORD = 0x4eb7f8,
-  BOOMERANG_ATTACK_RECORD = 0x4ebde0
+  BOLT_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_BOLT_ATTACK_RECORD,
+  FLURRY_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_FLURRY_ATTACK_RECORD,
+  SWEEP_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_SWEEP_ATTACK_RECORD,
+  BOOMERANG_ATTACK_RECORD = MK4_LINK_WEAPON_ATTACKS_BOOMERANG_ATTACK_RECORD
 };
 
 /* Native service cluster: 482790. */
@@ -659,9 +659,9 @@ void reptile_weapon_stagger_tail(Fighter *fighter) {
 #define SWORD_MOVE(name, clip_id, action_id) static const MoveDef name = {.clip = clip_id, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD, .action = action_id}
 
 enum {
-  SWORD_BACK_LP_SCRIPT = 0x4ec8b0,
-  SWORD_BACK_HP_SCRIPT = 0x4ec918,
-  SWORD_SPIN_SCRIPT = 0x4e8850,
+  SWORD_BACK_LP_SCRIPT = MK4_LINK_WEAPON_ATTACKS_SWORD_BACK_LP_SCRIPT,
+  SWORD_BACK_HP_SCRIPT = MK4_LINK_WEAPON_ATTACKS_SWORD_BACK_HP_SCRIPT,
+  SWORD_SPIN_SCRIPT = MK4_LINK_WEAPON_ATTACKS_SWORD_SPIN_SCRIPT,
   SWORD_SPIN_ATTACK_SELECTOR = 22,
   SWORD_SPIN_STEERING_SPEED = 0xf5c /* Retail Q16 0.1 * 0.6. */
 };

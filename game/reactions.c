@@ -324,7 +324,7 @@ static void react_block(Fighter *fighter) {
  * three 6-tick shakes. Pose and body stay fixed; cosmetic shake is omitted.
  * Air thaw: 4e9d38 sets gravity 0x147 and waits for landing, then 486530. */
 enum {
-  AIRBORNE_THAW_SCRIPT = 0x4e9d38
+  AIRBORNE_THAW_SCRIPT = MK4_LINK_REACTIONS_AIRBORNE_THAW_SCRIPT
 };
 
 static const MoveDef frozen = {.clip = 13, .last = MOVE_END, .flags = SF_LOCK | SF_HOLD, .action = ACTION_CODE_1003};

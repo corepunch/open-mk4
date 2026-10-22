@@ -18,22 +18,20 @@ assert result.returncode != 0 and 'Invalid native address continuation' in resul
 
 print('PASS: malformed VM streams and script/native completion type errors rejected')
 
-# Build a changed source without reading the EXE; the C VM must execute it.
+# The shared loader validates package length, layout identity and script membership.
 from pathlib import Path
-import struct
-import sys
 from tempfile import TemporaryDirectory
-sys.path.insert(0, 'tools')
-from mk4_asm import assemble, encode
+import struct
 with TemporaryDirectory() as directory:
-    source = Path(directory) / 'fixture.asm'
-    package = Path(directory) / 'fixture.scripts'
-    source.write_text('.org 0x4d0000\nwait 3\nreturn 0\n')
-    data = encode(assemble(source))
-    package.write_bytes(data)
-    subprocess.run(['build/test-retail-vm', 'program', str(package)], check=True, timeout=10)
-    for broken in (data[:-1], b'BAD!' + data[4:], data[:12] + data[12:20] * 2):
+    package = Path(directory) / 'fixture.data'
+    data = Path('build/mk4.data').read_bytes()
+    bad_layout = bytearray(data)
+    bad_layout[20] ^= 1
+    bad_mask = bytearray(data)
+    size = struct.unpack_from('<I', data, 8)[0]
+    bad_mask[52 + size] |= 1
+    for broken in (data[:-1], b'BAD!' + data[4:], data + b'x', bad_layout, bad_mask):
         package.write_bytes(broken)
-        result = subprocess.run(['build/test-retail-vm', 'program', str(package)], capture_output=True, timeout=10)
-        assert result.returncode != 0, 'malformed assembled package was accepted'
-print('PASS: project script assembly reaches the C VM; malformed packages are rejected')
+        result = subprocess.run(['build/test-retail-vm', 'load', str(package)], capture_output=True, timeout=10)
+        assert result.returncode != 0, 'malformed linked package was accepted'
+print('PASS: malformed packages, layout mismatch and invalid script membership rejected')

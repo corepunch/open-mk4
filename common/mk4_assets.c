@@ -38,13 +38,13 @@ int mk4_weapon_model_index(const Mk4Image *image, uint32_t inventory) {
   return SCENE_MODEL_EXTRA_WEAPON;
 }
 
-static int32_t image_s32(const Mk4Image *exe, uint32_t va) {
-  return (int32_t)mk4_image_u32(exe, va);
+static int32_t image_s32(const Mk4Image *image, uint32_t va) {
+  return (int32_t)mk4_image_u32(image, va);
 }
 
-static void image_string(const Mk4Image *exe, uint32_t va, char out[1024]) {
+static void image_string(const Mk4Image *image, uint32_t va, char out[1024]) {
   require(va >= MK4_DATA_IMAGE_BASE, "Invalid string VA");
-  view_string(view(exe->bytes), va - MK4_DATA_IMAGE_BASE, out, 1024);
+  view_string(view(image->bytes), va - MK4_DATA_IMAGE_BASE, out, 1024);
 }
 
 ARRAY_TYPE(Vertices, Vertex);
@@ -294,7 +294,7 @@ static Geometry load_geometry(View v) {
   return g;
 }
 
-static Clips load_clips(const Package *archive, const Mk4Image *exe) {
+static Clips load_clips(const Package *archive, const Mk4Image *image) {
   View ap0 = package_get(archive, 0x2da2df95), ap1 = package_get(archive, 0x2da3df95);
   Clips clips = {0};
   RESIZE(clips, MK4_CLIP_COUNT);
@@ -309,7 +309,7 @@ static Clips load_clips(const Package *archive, const Mk4Image *exe) {
     require(id < (int)clips.count && !seen[id], "Invalid animation index");
     seen[id] = true;
     uint32_t desc = MK4_DATA_ANIMATION_TABLE + (uint32_t)id * 12;
-    int frames = (int)mk4_image_u32(exe, desc + 4), words = (int)(mk4_image_u32(exe, desc + 8) >> 16);
+    int frames = (int)mk4_image_u32(image, desc + 4), words = (int)(mk4_image_u32(image, desc + 8) >> 16);
     require(frames > 0 && frames <= 600 && words >= 3 && words <= 24, "Invalid animation descriptor");
     View stream = view_sub(ap1, offset, size);
     offset += size;
@@ -341,7 +341,7 @@ static Clips load_clips(const Package *archive, const Mk4Image *exe) {
 }
 
 typedef struct RigReader {
-  const Mk4Image *exe;
+  const Mk4Image *image;
   uint32_t cursor, slot;
   size_t meshes;
   Bones bones;
@@ -349,34 +349,35 @@ typedef struct RigReader {
 
 static void rig_walk(RigReader *r, int parent, int depth) {
   require(depth < 32 && r->bones.count < MK4_MAX_BONES, "Invalid skeleton hierarchy");
-  uint32_t flags = mk4_image_u32(r->exe, r->cursor);
-  require(mk4_image_u32(r->exe, r->cursor + 4) == r->slot, "Skeleton asset slot mismatch");
+  uint32_t flags = mk4_image_u32(r->image, r->cursor);
+  require(mk4_image_u32(r->image, r->cursor + 4) == r->slot, "Skeleton asset slot mismatch");
   Bone b = {0};
   b.parent = parent;
   b.flags = (flags & 0xfffff) | (parent < 0 ? 0x09000000u : 0x0a000000u);
   /* Required post-build setup: root kind 9 (C), descendants kind 10 (B).
      * MStackPushTwoEntryChainCall / ScaledMaskOrStore preserve other flags. */
   b.kind = (int)((b.flags >> 24) & 7);
-  int id = image_s32(r->exe, r->cursor) >> 20;
+  int id = image_s32(r->image, r->cursor) >> 20;
   b.id = id;
   b.channel = (b.flags & 0x100) ? id - 2 : -1;
-  b.mesh = (int)mk4_image_u32(r->exe, r->cursor + 24);
+  b.mesh = (int)mk4_image_u32(r->image, r->cursor + 24);
   require(b.mesh >= 0 && (size_t)b.mesh < r->meshes, "Skeleton mesh index out of range");
-  b.translation = (Vec3){image_s32(r->exe, r->cursor + 12) / 65536.f, image_s32(r->exe, r->cursor + 16) / 65536.f, image_s32(r->exe, r->cursor + 20) / 65536.f};
+  b.translation =
+      (Vec3){image_s32(r->image, r->cursor + 12) / 65536.f, image_s32(r->image, r->cursor + 16) / 65536.f, image_s32(r->image, r->cursor + 20) / 65536.f};
   int index = (int)r->bones.count;
   PUSH(r->bones, b);
   r->cursor += 28;
   if (!(flags & 8))
     for (;;) {
-      uint32_t f = mk4_image_u32(r->exe, r->cursor);
+      uint32_t f = mk4_image_u32(r->image, r->cursor);
       rig_walk(r, index, depth + 1);
       if (f & 16)
         break;
     }
 }
 
-static Bones load_rig(const Mk4Image *exe, uint32_t start, uint32_t slot, size_t meshes) {
-  RigReader r = {.exe = exe, .cursor = start, .slot = slot, .meshes = meshes};
+static Bones load_rig(const Mk4Image *image, uint32_t start, uint32_t slot, size_t meshes) {
+  RigReader r = {.image = image, .cursor = start, .slot = slot, .meshes = meshes};
   rig_walk(&r, -1, 0);
   return r.bones;
 }
@@ -430,18 +431,18 @@ Mat3 rotation(int kind, Vec3 bam) {
   return (Mat3){{zr * t + z * y, z * t - zr * y, yr * x, zr * x, z * x, -xr, zr * u - yr * z, z * u + zr * yr, y * x}};
 }
 
-void assets_load(Assets *assets, const char *archive_path, const char *executable) {
+void assets_load(Assets *assets, const char *archive_path, const char *data_path) {
   require(!assets->characters.count && !assets->clips.count, "Assets already loaded");
   Package archive;
   package_load(&archive, archive_path);
-  Mk4Image exe = mk4_image_load(executable);
-  assets->clips = load_clips(&archive, &exe);
+  Mk4Image image = mk4_image_load(data_path);
+  assets->clips = load_clips(&archive, &image);
   for (int i = 0; i < MK4_ROSTER_COUNT; ++i) {
-    uint32_t rec = MK4_DATA_ROSTER_RECORD_TABLE + (uint32_t)i * 32, slot = mk4_image_u32(&exe, rec) * 4;
-    uint32_t asset = mk4_image_u32(&exe, slot), name = mk4_image_u32(&exe, asset);
+    uint32_t rec = MK4_DATA_ROSTER_RECORD_TABLE + (uint32_t)i * 32, slot = mk4_image_u32(&image, rec) * 4;
+    uint32_t asset = mk4_image_u32(&image, slot), name = mk4_image_u32(&image, asset);
     Character ch = {0};
-    image_string(&exe, mk4_image_u32(&exe, MK4_DATA_ROSTER_NAME_TABLE + (uint32_t)i * 4), ch.name);
-    image_string(&exe, name, ch.file);
+    image_string(&image, mk4_image_u32(&image, MK4_DATA_ROSTER_NAME_TABLE + (uint32_t)i * 4), ch.name);
+    image_string(&image, name, ch.file);
     for (size_t k = 0; ch.name[k]; ++k)
       if (ch.name[k] >= 'a' && ch.name[k] <= 'z')
         ch.name[k] -= 32;
@@ -452,11 +453,11 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     for (size_t j = 1; j < pages.count; ++j)
       FREE_ARRAY(pages.data[j].pixels);
     FREE_ARRAY(pages);
-    ch.bones = load_rig(&exe, mk4_image_u32(&exe, rec + 12) * 4, slot, ch.meshes.count);
-    ch.scale = (float)mk4_image_u32(&exe, rec + 28) / 65536.f;
+    ch.bones = load_rig(&image, mk4_image_u32(&image, rec + 12) * 4, slot, ch.meshes.count);
+    ch.scale = (float)mk4_image_u32(&image, rec + 28) / 65536.f;
     /* StateDispatchTable special roster-ID stance remapping. */
     int stance_index = i == 16 ? 2 : i == 17 ? 7 : i;
-    uint32_t stance = mk4_image_u32(&exe, MK4_DATA_IDLE_ANIMATION_TABLE + (uint32_t)stance_index * 4) * 4;
+    uint32_t stance = mk4_image_u32(&image, MK4_DATA_IDLE_ANIMATION_TABLE + (uint32_t)stance_index * 4) * 4;
     require(stance >= MK4_DATA_ANIMATION_TABLE && (stance - MK4_DATA_ANIMATION_TABLE) % 12 == 0 && stance < MK4_DATA_ANIMATION_TABLE + 612 * 12,
         "Invalid default stance descriptor");
     ch.idle = (int)((stance - MK4_DATA_ANIMATION_TABLE) / 12);
@@ -472,9 +473,9 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     /* 48ce00 selects roster +0x14 when freezing; these alternate
      * meshes close the exposed cuts used by detached body parts. */
     Character cut = ch;
-    uint32_t cut_root = mk4_image_u32(&exe, rec + 20) * 4;
-    uint32_t cut_slot = mk4_image_u32(&exe, cut_root + 4);
-    image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, cut_slot)), cut.file);
+    uint32_t cut_root = mk4_image_u32(&image, rec + 20) * 4;
+    uint32_t cut_slot = mk4_image_u32(&image, cut_root + 4);
+    image_string(&image, mk4_image_u32(&image, mk4_image_u32(&image, cut_slot)), cut.file);
     if (strcmp(cut.file, ch.file) != 0) {
       /* Kitana's recovered freeze row selects Tanya's cut geometry. */
       View cut_data = package_geo(&archive, cut.file);
@@ -486,13 +487,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       }
       FREE_ARRAY(cut_pages);
     }
-    cut.bones = load_rig(&exe, cut_root, cut_slot, cut.meshes.count);
+    cut.bones = load_rig(&image, cut_root, cut_slot, cut.meshes.count);
     PUSH(assets->cut_characters, cut);
   }
   /* 446620 adds rig 5145bc below the detached head. Its mesh data
    * is in sz_geo.geo; clip 386 also animates the original head first. */
   Character spine = assets->characters.data[4];
-  spine.bones = load_rig(&exe, MK4_DATA_SPINE_RIG, MK4_DATA_SPINE_ASSET_SLOT, spine.meshes.count);
+  spine.bones = load_rig(&image, MK4_DATA_SPINE_RIG, MK4_DATA_SPINE_ASSET_SLOT, spine.meshes.count);
   spine.idle = 386;
   for (size_t i = 0; i < spine.bones.count; ++i) {
     spine.bones.data[i].channel++;
@@ -512,11 +513,11 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   statue.meshes = assets->hud.effects.meshes;
   statue.texture = assets->hud.effects.textures.data[0];
   statue.material_pages = assets->hud.effects.textures;
-  statue.bones = load_rig(&exe, MK4_DATA_ICE_CLONE_RIG, MK4_DATA_ICE_CLONE_ASSET_SLOT, statue.meshes.count);
+  statue.bones = load_rig(&image, MK4_DATA_ICE_CLONE_RIG, MK4_DATA_ICE_CLONE_ASSET_SLOT, statue.meshes.count);
   PUSH(assets->scene_models, statue);
   for (size_t i = 0; i < sizeof weapon_descriptors / sizeof weapon_descriptors[0]; ++i) {
     uint32_t descriptor = weapon_descriptors[i];
-    uint32_t root = mk4_image_u32(&exe, descriptor + 4) * 4;
+    uint32_t root = mk4_image_u32(&image, descriptor + 4) * 4;
     Character weapon = statue;
     if (descriptor == MK4_WEAPON_DESCRIPTOR_CAGE || descriptor == MK4_WEAPON_DESCRIPTOR_QUAN_CHI) { /* Cage and Quan Chi rigs are in share2_g.geo. */
       snprintf(weapon.file, sizeof weapon.file, "share2_g.geo");
@@ -524,15 +525,15 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       weapon.material_pages = assets->hud.effects2.textures;
       weapon.texture = assets->hud.effects2.textures.data[0];
     }
-    weapon.bones = load_rig(&exe, root, mk4_image_u32(&exe, root + 4), weapon.meshes.count);
-    weapon.bones.data[0].translation.y = image_s32(&exe, descriptor + 28) / 65536.f;
+    weapon.bones = load_rig(&image, root, mk4_image_u32(&image, root + 4), weapon.meshes.count);
+    weapon.bones.data[0].translation.y = image_s32(&image, descriptor + 28) / 65536.f;
     PUSH(assets->scene_models, weapon);
   }
-  uint32_t extra_inventory = mk4_image_u32(&exe, MK4_DATA_WEAPON_INVENTORY_TABLE + 17 * 4) * 4;
-  uint32_t extra_root = mk4_image_u32(&exe, extra_inventory + 4) * 4;
+  uint32_t extra_inventory = mk4_image_u32(&image, MK4_DATA_WEAPON_INVENTORY_TABLE + 17 * 4) * 4;
+  uint32_t extra_root = mk4_image_u32(&image, extra_inventory + 4) * 4;
   Character extra_weapon = statue;
-  extra_weapon.bones = load_rig(&exe, extra_root, mk4_image_u32(&exe, extra_root + 4), extra_weapon.meshes.count);
-  extra_weapon.bones.data[0].translation.y = image_s32(&exe, extra_inventory + 28) / 65536.f;
+  extra_weapon.bones = load_rig(&image, extra_root, mk4_image_u32(&image, extra_root + 4), extra_weapon.meshes.count);
+  extra_weapon.bones.data[0].translation.y = image_s32(&image, extra_inventory + 28) / 65536.f;
   PUSH(assets->scene_models, extra_weapon);
   /*41d560/41d770 replaces a wind-torn victim with the original
    *share2 flesh rig50c444 before4818f0 separates its limbs. */
@@ -541,12 +542,12 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   flesh.meshes = assets->hud.effects2.meshes;
   flesh.texture = assets->hud.effects2.textures.data[0];
   flesh.material_pages = assets->hud.effects2.textures;
-  flesh.bones = load_rig(&exe, MK4_DATA_FLAYED_BODY_RIG, MK4_DATA_FLAYED_BODY_ASSET_SLOT, flesh.meshes.count);
+  flesh.bones = load_rig(&image, MK4_DATA_FLAYED_BODY_RIG, MK4_DATA_FLAYED_BODY_ASSET_SLOT, flesh.meshes.count);
   PUSH(assets->scene_models, flesh);
   for (uint32_t part = 0; part < 14; ++part) {
-    uint32_t root = mk4_image_u32(&exe, MK4_DATA_SKIN_SEVER_FIRST_RIG_WORD + part * 12) * 4;
+    uint32_t root = mk4_image_u32(&image, MK4_DATA_SKIN_SEVER_FIRST_RIG_WORD + part * 12) * 4;
     Character skin = flesh;
-    skin.bones = load_rig(&exe, root, mk4_image_u32(&exe, root + 4), skin.meshes.count);
+    skin.bones = load_rig(&image, root, mk4_image_u32(&image, root + 4), skin.meshes.count);
     PUSH(assets->scene_models, skin);
   }
   /* Quan Chi fatality I: 44ccf0 copies the victim's own leg joints
@@ -582,7 +583,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* Scorpion fatality II: 0x41ea50 selects rig 0x50cb28, whose asset
    * slot 0x50c2e8 resolves to sc_fat2_.geo. Reuse the normal rig decoder. */
   Character *beast = &assets->scorpion_beast;
-  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_DATA_SCORPION_BEAST_ASSET_SLOT)), beast->file);
+  image_string(&image, mk4_image_u32(&image, mk4_image_u32(&image, MK4_DATA_SCORPION_BEAST_ASSET_SLOT)), beast->file);
   snprintf(beast->name, sizeof beast->name, "SCORPION CREATURE");
   View beast_data = package_geo(&archive, beast->file);
   beast->meshes = load_meshes(beast_data);
@@ -592,7 +593,7 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
     FREE_ARRAY(beast_pages.data[i].pixels);
   }
   FREE_ARRAY(beast_pages);
-  beast->bones = load_rig(&exe, MK4_DATA_SCORPION_BEAST_RIG, MK4_DATA_SCORPION_BEAST_ASSET_SLOT, beast->meshes.count);
+  beast->bones = load_rig(&image, MK4_DATA_SCORPION_BEAST_RIG, MK4_DATA_SCORPION_BEAST_ASSET_SLOT, beast->meshes.count);
   beast->idle = 578;
   beast->scale = 1.f;
   int beast_channels = 0;
@@ -608,13 +609,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 450930 creates the original Liu Kang dragon rig 508204. Its
    * asset slot 5061b0 resolves to lk_fat_g.geo; IDs start at one. */
   Character *dragon = &assets->liu_dragon;
-  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT)), dragon->file);
+  image_string(&image, mk4_image_u32(&image, mk4_image_u32(&image, MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT)), dragon->file);
   snprintf(dragon->name, sizeof dragon->name, "LIU KANG DRAGON");
   View dragon_data = package_geo(&archive, dragon->file);
   dragon->meshes = load_meshes(dragon_data);
   dragon->material_pages = load_textures(dragon_data);
   dragon->texture = dragon->material_pages.data[0];
-  dragon->bones = load_rig(&exe, MK4_DATA_LIU_KANG_DRAGON_RIG, MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT, dragon->meshes.count);
+  dragon->bones = load_rig(&image, MK4_DATA_LIU_KANG_DRAGON_RIG, MK4_DATA_LIU_KANG_DRAGON_ASSET_SLOT, dragon->meshes.count);
   dragon->idle = 418;
   dragon->scale = 1.f;
   int dragon_channels = 0;
@@ -628,13 +629,13 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
   /* 4556d0 and 43caa0 create rig 5083c4. Its asset slot 5061e0 resolves
    * to nf_fat_g.geo; fatality I plays clip 434 and II plays clip 541. */
   Character *hand = &assets->shinnok_hand;
-  image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, MK4_DATA_SHINNOK_HAND_ASSET_SLOT)), hand->file);
+  image_string(&image, mk4_image_u32(&image, mk4_image_u32(&image, MK4_DATA_SHINNOK_HAND_ASSET_SLOT)), hand->file);
   snprintf(hand->name, sizeof hand->name, "SHINNOK HAND");
   View hand_data = package_geo(&archive, hand->file);
   hand->meshes = load_meshes(hand_data);
   hand->material_pages = load_textures(hand_data);
   hand->texture = hand->material_pages.data[0];
-  hand->bones = load_rig(&exe, MK4_DATA_SHINNOK_HAND_RIG, MK4_DATA_SHINNOK_HAND_ASSET_SLOT, hand->meshes.count);
+  hand->bones = load_rig(&image, MK4_DATA_SHINNOK_HAND_RIG, MK4_DATA_SHINNOK_HAND_ASSET_SLOT, hand->meshes.count);
   hand->idle = 541;
   hand->scale = 1.f;
   int hand_channels = 0;
@@ -650,14 +651,14 @@ void assets_load(Assets *assets, const char *archive_path, const char *executabl
       (int)assets->clips.data[434].frames.data[0].angles.count == hand_channels && (int)assets->clips.data[541].frames.data[0].angles.count == hand_channels,
       "Shinnok hand animation/rig mismatch");
   package_free(&archive);
-  assets->image = exe;
+  assets->image = image;
 }
 
-void assets_load_battle(Assets *assets, const char *archive_path, const char *executable) {
+void assets_load_battle(Assets *assets, const char *archive_path) {
   require(assets->characters.count == MK4_ROSTER_COUNT && !assets->arenas.count, "Load fighters before battle assets");
   Package archive;
   package_load(&archive, archive_path);
-  Mk4Image exe = mk4_image_load(executable);
+  const Mk4Image *image = &assets->image;
   // clang-format off: Keep table entries on one row, including long rows.
   const char *names[] = {
     "GORO'S LAIR",
@@ -675,12 +676,12 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
   // clang-format on
   /* June 1998 stage table, verified against the supplied executable. */
   for (size_t i = 0; i < MK4_ARENA_COUNT; ++i) {
-    uint32_t rec = MK4_DATA_ARENA_RECORD_TABLE + (uint32_t)i * 64, slot = mk4_image_u32(&exe, rec) * 4;
+    uint32_t rec = MK4_DATA_ARENA_RECORD_TABLE + (uint32_t)i * 64, slot = mk4_image_u32(image, rec) * 4;
     Arena a = {0};
     snprintf(a.name, sizeof a.name, "%s", names[i]);
-    image_string(&exe, mk4_image_u32(&exe, mk4_image_u32(&exe, slot)), a.file);
+    image_string(image, mk4_image_u32(image, mk4_image_u32(image, slot)), a.file);
     a.geometry = load_geometry(package_geo(&archive, a.file));
-    a.nodes = load_rig(&exe, mk4_image_u32(&exe, rec + 12) * 4, slot, a.geometry.meshes.count);
+    a.nodes = load_rig(image, mk4_image_u32(image, rec + 12) * 4, slot, a.geometry.meshes.count);
     for (size_t j = 0; j < a.nodes.count; ++j)
       a.nodes.data[j].channel = -1;
     PUSH(assets->arenas, a);
@@ -697,9 +698,9 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
     MK4_DATA_SOUND_B_TABLE,
     MK4_DATA_SOUND_C_TABLE,
     MK4_DATA_SOUND_INDEXED_TABLE,
-    mk4_image_u32(&exe, MK4_DATA_SOUND_IMPACT_VOICE_POINTER) * 4,
-    mk4_image_u32(&exe, MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE + 8 * 4) * 4,
-    mk4_image_u32(&exe, MK4_DATA_SOUND_DRAW_VOICE_POINTER) * 4,
+    mk4_image_u32(image, MK4_DATA_SOUND_IMPACT_VOICE_POINTER) * 4,
+    mk4_image_u32(image, MK4_DATA_ROSTER_SOUND_SELECTOR_TABLE + 8 * 4) * 4,
+    mk4_image_u32(image, MK4_DATA_SOUND_DRAW_VOICE_POINTER) * 4,
     MK4_DATA_SOUND_CONTEXT_TABLE,
     0
   };
@@ -714,9 +715,9 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
         /* 489ff0: flat nonzero selector-8 list, indexed through the signed
          * roster remap (Kitana uses roster 10 for this voice family). */
         int roster = i == 16 ? 10 : i;
-        selector = view_u8(view(exe.bytes), MK4_DATA_SOUND_ROSTER_REMAP - MK4_DATA_IMAGE_BASE + (uint32_t)roster);
+        selector = view_u8(view(image->bytes), MK4_DATA_SOUND_ROSTER_REMAP - MK4_DATA_IMAGE_BASE + (uint32_t)roster);
       }
-      assets->audio.events[bank][i] = view_u16(view(exe.bytes), sound_tables[bank] - MK4_DATA_IMAGE_BASE + (uint32_t)selector * 2);
+      assets->audio.events[bank][i] = view_u16(view(image->bytes), sound_tables[bank] - MK4_DATA_IMAGE_BASE + (uint32_t)selector * 2);
     }
   }
   // clang-format off: Keep table entries on one row, including long rows.
@@ -750,7 +751,6 @@ void assets_load_battle(Assets *assets, const char *archive_path, const char *ex
     require(assets->hud.names[i] >= 0, "Missing HUD name");
   }
   package_free(&archive);
-  mk4_image_free(&exe);
 }
 
 const Texture *character_texture(const Character *character, int page) {
