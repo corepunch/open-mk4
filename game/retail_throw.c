@@ -189,8 +189,46 @@ static void victim_484f10(Fighter *fighter) {
   native_finish_clip(fighter, mk4_mmove_thrown_finish);
 }
 
+static void lk_impact_finish(Fighter *fighter) {
+  mk4_script_stop_body(fighter);
+  battle_scene_impact(fighter);
+  native_finish_clip(fighter, mk4_mmove_thrown_finish);
+}
+
+static void lk_inherited_finish(Fighter *fighter) {
+  native_finish_clip(fighter, mk4_mmove_thrown_finish);
+}
+
+void retail_lk_victim(Fighter *fighter) {
+  uint32_t entry = retail_reaction_target(retail_vm_image(), (unsigned)fighter->reaction);
+  int sample = fighter_sample(fighter);
+  victim_begin(fighter);
+  switch (entry) {
+    case 0x484d50:
+      retail_vm_bind_animation(fighter, 0x4fb700, sample);
+      native_play_rows(fighter, mini(fighter_move(fighter)->last, sample + 7), 1, lk_inherited_finish);
+      break;
+    case 0x4858a0:
+      retail_vm_enter(fighter, 0x4e9a68, mk4_mmove_thrown_finish);
+      break;
+    case 0x485040:
+      mk4_script_effect(fighter, 0);
+      retail_vm_bind_animation(fighter, 0x4fb568, 0);
+      retail_vm_bind_animation(fighter, mk4_image_u32(retail_vm_image(), 0x53cf78) * 4, 0);
+      fighter_set_speed(fighter, (q16)mk4_image_u32(retail_vm_image(), 0x4e99bc));
+      native_play_rows(fighter, mini(fighter_move(fighter)->last, 26), 1, lk_impact_finish);
+      break;
+    default:
+      require(false, "Unexpected native LK victim entry");
+  }
+}
+
 FighterFn retail_throw_reaction(const Mk4Image *image, unsigned reaction) {
   switch (retail_reaction_target(image, reaction)) {
+    case 0x484d50:
+    case 0x4858a0:
+    case 0x485040:
+      return retail_lk_victim;
     case 0x485b70:
     case 0x485ba0:
     case 0x485bf0:

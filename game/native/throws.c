@@ -128,28 +128,6 @@ void liu_kang_liu_script_lk_thrown_tail(Fighter *victim) {
   native_play(victim, false);
 }
 
-/* Native service cluster: 470420. */
-void raiden_lk_victim(Fighter *victim) {
-  mk4_mmove_bind(victim, 169, 43, 0);
-  fighter_set_speed(victim, 0xf5c); /* 490ab0 consumes 4e99bc's speed. */
-  retail_vm_enter_owned(victim, 0x4e99c0, fighter_ready, 1);
-}
-
-/* Native service cluster: native_throws_2. */
-
-/* Native service cluster: native_throws_3. */
-static void native_throws_3_lk_victim_land(Fighter *victim);
-
-static void native_throws_3_lk_victim_land(Fighter *victim) {
-  native_await(victim, native_grounded, mk4_mmove_thrown_finish);
-}
-
-/* The victim advances seven poses and then completes clip 203 in one run. */
-void sonya_lk_victim(Fighter *victim) {
-  mk4_mmove_bind(victim, 203, 112, 75);
-  native_finish_clip(victim, native_throws_3_lk_victim_land);
-}
-
 /* Native service cluster: 487220. */
 static void n487220_thrown_finish(Fighter *victim);
 static void n487220_lk_thrown_release(Fighter *victim);

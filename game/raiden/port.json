@@ -230,10 +230,10 @@
       "symbol": "react_jab_air"
     },
     "111": {
-      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/native/contexts.c",
-      "symbol": "raiden_script_reaction"
+      "adaptation": "Loaded native target selects the shared inherited-descriptor/script victim entry for every actor.",
+      "evidence": "Loaded4ea4e8[111] -> 485040; bounded native and animation helper listings, mk4decomp shared native/script contracts.",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_victim"
     },
     "119": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

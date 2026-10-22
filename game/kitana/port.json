@@ -421,16 +421,16 @@
       "symbol": "sonya_generated_reaction"
     },
     "78": {
-      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/native/contexts.c",
-      "symbol": "sonya_script_reaction"
+      "adaptation": "Loaded native target selects the shared inherited-descriptor/script victim entry for every actor.",
+      "evidence": "Loaded4ea4e8[78] -> 484d50; bounded native and animation helper listings, mk4decomp shared native/script contracts.",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_victim"
     },
     "79": {
-      "adaptation": "Character native pair/scene coordinator starts victim recovery independently; shared reaction dispatch is bypassed explicitly",
-      "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",
-      "source": "game/native/contexts.c",
-      "symbol": "sonya_script_reaction"
+      "adaptation": "Loaded native target selects the shared inherited-descriptor/script victim entry for every actor.",
+      "evidence": "Loaded4ea4e8[79] -> 4858a0; bounded native and animation helper listings, mk4decomp shared native/script contracts.",
+      "source": "game/retail_throw.c",
+      "symbol": "retail_lk_victim"
     },
     "8": {
       "evidence": "Pinned EXE roster selection and bounded native queries; docs/raiden-sonya-scripts.md",

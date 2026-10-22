@@ -1017,6 +1017,14 @@ static void native_inherited_descriptor(void) {
   }
   check(owner->current_mmove == NULL && owner->state == S_IDLE, "short inherited descriptor must complete without hard-coded clip bounds");
   put_word(descriptor + 4, count);
+
+  owner = setup(0, 2);
+  retail_vm_bind_animation(owner, descriptor, 2);
+  owner->reaction = 78;
+  retail_reaction_entry(&image, 78)(owner);
+  check(fighter_move(owner)->clip == (int)((0x4fb700 - 0x4fad7c) / 12) && fighter_sample(owner) == 2,
+      "LK victim native must bind the loaded descriptor at its inherited cursor rather than a fighter-specific starting pose");
+  fighter_interrupt(owner, fighter_ready);
 }
 
 static void native_button_table(void) {

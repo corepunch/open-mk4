@@ -235,11 +235,7 @@ void raiden_script_reaction(Fighter *fighter, int reaction) {
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
   fighter_cancel_mmove(victim);
-  if (reaction == 111) {
-    raiden_lk_victim(victim);
-  } else {
-    battle_react(victim, reaction);
-  }
+  battle_react(victim, reaction);
 }
 
 void raiden_special_cleanup(Fighter *fighter) {
@@ -520,13 +516,7 @@ void sonya_script_reaction(Fighter *fighter, int reaction) {
   victim->reaction = reaction;
   victim->flags |= FF_REACTING;
   fighter_cancel_mmove(victim);
-  if (reaction == 78) {
-    sonya_lk_victim(victim);
-  } else if (reaction == 79) {
-    retail_vm_enter_owned(victim, 0x4e9a68, fighter_ready, 2);
-  } else {
-    battle_react(victim, reaction);
-  }
+  battle_react(victim, reaction);
 }
 
 void sonya_special_cleanup(Fighter *fighter) {

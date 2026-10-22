@@ -1807,3 +1807,19 @@ Verified bounded local native/script entries and mk4decomp shared contracts,
 formatting, runtime/rejections, strict audits, native gates and existing helper/
 port navigation. Updated bounded source navigation after retiring the old
 record player; no new authored reaction tests.
+
+### Shared remaining LK victim boundaries
+
+Removed all roster branches from45b230. Its captured-peer dispatcher now uses
+loaded native reaction entries78/79/111, alongside the already shared victims.
+484d50 binds4fb700 at the inherited cursor rather than forcing sample75;
+4858a0 runs original4e9a68;485040 loads53cf78 and4e99bc, advances through its
+native impact phase and completes the descriptor. Removed Sonya/Raiden LK
+wrappers and redundant mixed-handler branches. Stage175 remains an explicit
+coordinator-owned boundary.
+
+Checked bounded local entries and428d10/428d30/429040, plus mk4decomp
+PendingMatch native/script contracts. Verified formatting, runtime/rejections,
+strict audits, native gates and helper/port navigation. Extended the existing
+inherited-descriptor fixture to catch fixed fighter starting poses. Camera/
+render-space cleanup remains the engine's shared controller adaptation.

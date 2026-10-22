@@ -1,6 +1,9 @@
 """Historical source names for bounded research navigation; never game configuration."""
 
 LEGACY_NATIVE_NAMES = {
+    'raiden_lk_victim': 'retail_lk_victim',
+    'sonya_lk_victim': 'retail_lk_victim',
+
     'react_liu_record': 'retail_script_reaction',
     'react_scepter_low': 'retail_script_reaction',
     'reiko_star_reaction': 'retail_stagger_entry',

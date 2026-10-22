@@ -215,3 +215,5 @@ void retail_weapon_reaction(Fighter *fighter);
 void retail_impact_reaction(Fighter *fighter);
 
 void retail_stagger_entry(Fighter *fighter);
+
+void retail_lk_victim(Fighter *fighter);

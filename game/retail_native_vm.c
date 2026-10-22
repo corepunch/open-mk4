@@ -1367,24 +1367,11 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           if ((argument & 255u) == 175) {
             return true; /* The stage coordinator owns its victim continuation. */
           }
-          if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) != NULL) {
-            Fighter *victim = mk4_script_release_pair(fighter);
-            battle_react(victim, (int)(argument & 255u));
-            return true;
+          if (retail_reaction_entry(fighter->retail_vm.image, argument & 255u) == NULL) {
+            return false;
           }
-          if (owner & 0x10000u) {
-            sonya_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x2u) {
-            raiden_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          if (owner & 0x4u) {
-            sonya_script_reaction(fighter, (int)(argument & 255u));
-            return true;
-          }
-          return false;
+          retail_script_release_reaction(fighter, (int)(argument & 255u));
+          return true;
         case 0x45b380:
           retail_face_peer(fighter);
           return true;
