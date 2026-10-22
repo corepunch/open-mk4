@@ -139,10 +139,10 @@ static void react_kick_hit(Fighter *fighter) {
   if (fighter->crouching) {
     mk4_script_indexed_sound(fighter, 1);
     fighter->damage_scale = RETAIL_DAMAGE_SCALE_60_PERCENT;
-    hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_HIT_4E9238, retail_controller_return);
+    hit_script(fighter, MK4_RETAIL_SCRIPT_KICK_HIT_CROUCHING_STAGGER, retail_controller_return);
     fighter->action = ACTION_RETAIL_4005;
   } else {
-    hit_script(fighter, MK4_RETAIL_SCRIPT_REACT_KICK_HIT_4E9208, retail_controller_return);
+    hit_script(fighter, MK4_RETAIL_SCRIPT_KICK_HIT_STANDING_STAGGER, retail_controller_return);
   }
 }
 
@@ -161,7 +161,7 @@ static void react_jab_hit(Fighter *fighter) {
   if (staggers) {
     battle_wall_recoil(fighter);
   }
-  hit_script(fighter, staggers ? MK4_RETAIL_SCRIPT_REACT_JAB_HIT_4E97D0 : MK4_RETAIL_SCRIPT_REACT_JAB_HIT_4E9798, retail_controller_return);
+  hit_script(fighter, staggers ? MK4_RETAIL_SCRIPT_JAB_HIT_DAMAGE_STAGGER : MK4_RETAIL_SCRIPT_JAB_HIT_SHORT_RECOVERY, retail_controller_return);
 }
 
 static void reaction_play(Fighter *fighter, int first, int last, int final, FighterFn end) {
@@ -193,7 +193,7 @@ void retail_block_cycle(Fighter *fighter) {
     fighter->native_variant--;
   }
   if (fighter->native_variant > 0) {
-    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_REACT_BLOCK_4E9E68, retail_controller_return);
+    retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, retail_controller_return);
   } else {
     mk4_script_stop_body(fighter);
     retail_controller_return(fighter);
@@ -206,79 +206,79 @@ static void react_block(Fighter *fighter) {
   unsigned repeat = 2, variant = 0;
   bool recoil = true, stance = false;
   switch (entry) {
-    case RETAIL_NATIVE_REACT_BLOCK_486970:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL:
       speed = 0xf5c;
       variant = 3;
       stance = true;
       recoil = false;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_4869C0:
+    case RETAIL_NATIVE_BLOCK_WEAPON_SINGLE_NO_PUSH:
       repeat = 1;
       variant = 0x10;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_4869F0:
+    case RETAIL_NATIVE_BLOCK_WEAPON_PUSH_0_18:
       speed = 0x2e14;
       variant = 0x15;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486A30:
+    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_20:
       speed = 0x3333;
       variant = 0x16;
       stance = true;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486A70:
+    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_25_TRIPLE:
       speed = 0x4000;
       repeat = 3;
       variant = 0x17;
       stance = true;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486AB0:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_25_TRIPLE:
       speed = 0x4000;
       repeat = 3;
       variant = 7;
       stance = true;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486AF0:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20:
       speed = 0x3333;
       variant = 6;
       stance = true;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486B30:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20_NO_WALL_RECOIL:
       speed = 0x3333;
       variant = 6;
       stance = true;
       recoil = false;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486B70:
+    case RETAIL_NATIVE_BLOCK_PUSH_0_18:
       speed = 0x2e14;
       variant = 5;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486BB0:
+    case RETAIL_NATIVE_BLOCK_PUSH_0_15:
       speed = 0x2666;
       variant = 4;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486BF0:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06:
       speed = 0xf5c;
       variant = 3;
       stance = true;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486C40:
+    case RETAIL_NATIVE_BLOCK_SINGLE_PUSH_0_24:
       speed = 0x3d70;
       repeat = 1;
       variant = 1;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486C70:
+    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH_NO_WALL_RECOIL:
       repeat = 1;
       recoil = false;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486CA0:
+    case RETAIL_NATIVE_BLOCK_PUSH_0_13_NO_WALL_RECOIL:
       speed = 0x2147;
       variant = 5;
       recoil = false;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486CD0:
+    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH:
       repeat = 1;
       break;
-    case RETAIL_NATIVE_REACT_BLOCK_486D00:
+    case RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS:
       recoil = false;
       break;
     default:
@@ -293,12 +293,12 @@ static void react_block(Fighter *fighter) {
   }
   static const MoveDef move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_2005};
   fighter_start_move(fighter, S_BLOCK, &move);
-  if (entry == RETAIL_NATIVE_REACT_BLOCK_486970 || entry == RETAIL_NATIVE_REACT_BLOCK_486BF0) {
+  if (entry == RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL || entry == RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06) {
     fighter->action = ACTION_RETAIL_4004;
   }
-  if (entry != RETAIL_NATIVE_REACT_BLOCK_486D00) {
+  if (entry != RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS) {
     fighter_set_speed(fighter, -speed);
-    uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_REACT_BLOCK_4E9E60);
+    uint32_t physics = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_BLOCK_REACTION_FRICTION_ROW);
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native block callback");
   }
   if (variant >= 16 && fighter->armed) {
@@ -307,15 +307,15 @@ static void react_block(Fighter *fighter) {
     if (fighter->armed || variant >= 16) {
       retail_native_sound_list(RETAIL_SOUND_UNARMED_IMPACT_LIST);
     }
-    retail_native_sound_list(variant % 16 < 5 ? MK4_RETAIL_SOUND_LIST_REACT_BLOCK_4EA918 : MK4_RETAIL_SOUND_LIST_REACT_BLOCK_4EA928);
+    retail_native_sound_list(variant % 16 < 5 ? MK4_RETAIL_SOUND_LIST_BLOCK_LOW_VARIANT_IMPACTS : MK4_RETAIL_SOUND_LIST_BLOCK_HIGH_VARIANT_IMPACTS);
   }
   fighter->native_variant = repeat;
   if (crouch) {
-    uint32_t descriptor = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_REACT_BLOCK_53CF88 + (fighter->armed ? 4 : 0)) * 4;
+    uint32_t descriptor = mk4_image_u32(retail_vm_image(), MK4_RETAIL_DATA_CROUCH_BLOCK_ANIMATION_DESCRIPTORS + (fighter->armed ? 4 : 0)) * 4;
     retail_vm_bind_animation(fighter, descriptor, 0);
     native_finish_clip(fighter, block_crouch_reverse);
   } else {
-    retail_vm_enter(fighter, fighter->armed ? MK4_RETAIL_SCRIPT_REACT_BLOCK_4E9EC8 : MK4_RETAIL_SCRIPT_REACT_BLOCK_4E9E68, retail_controller_return);
+    retail_vm_enter(fighter, fighter->armed ? MK4_RETAIL_SCRIPT_BLOCK_ARMED_RECOVERY : MK4_RETAIL_SCRIPT_BLOCK_UNARMED_POSE_CYCLE, retail_controller_return);
   }
 }
 
@@ -509,37 +509,37 @@ FighterFn retail_engine_reaction(uint32_t entry) {
       return fujin_bolt_victim;
     case RETAIL_NATIVE_JAX_DASH_VICTIM_THROW:
       return jax_dash_victim_throw;
-    case RETAIL_NATIVE_REACT_BLOCK_486970:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_4869C0:
+    case RETAIL_NATIVE_BLOCK_WEAPON_SINGLE_NO_PUSH:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_4869F0:
+    case RETAIL_NATIVE_BLOCK_WEAPON_PUSH_0_18:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486A30:
+    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_20:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486A70:
+    case RETAIL_NATIVE_BLOCK_WEAPON_STANDING_PUSH_0_25_TRIPLE:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486AB0:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_25_TRIPLE:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486AF0:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486B30:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_20_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486B70:
+    case RETAIL_NATIVE_BLOCK_PUSH_0_18:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486BB0:
+    case RETAIL_NATIVE_BLOCK_PUSH_0_15:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486BF0:
+    case RETAIL_NATIVE_BLOCK_STANDING_PUSH_0_06:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486C40:
+    case RETAIL_NATIVE_BLOCK_SINGLE_PUSH_0_24:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486C70:
+    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486CA0:
+    case RETAIL_NATIVE_BLOCK_PUSH_0_13_NO_WALL_RECOIL:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486CD0:
+    case RETAIL_NATIVE_BLOCK_SINGLE_NO_PUSH:
       return react_block;
-    case RETAIL_NATIVE_REACT_BLOCK_486D00:
+    case RETAIL_NATIVE_BLOCK_STANDING_NO_PHYSICS:
       return react_block;
     case RETAIL_NATIVE_FUJIN_GRAB_VICTIM:
       return fujin_grab_victim;
@@ -551,13 +551,13 @@ FighterFn retail_engine_reaction(uint32_t entry) {
       return jax_dash_victim_hit;
     case RETAIL_NATIVE_CAGE_POWER_VICTIM:
       return cage_power_victim;
-    case RETAIL_NATIVE_FUJIN_TRIPLE_VICTIM_488420:
+    case RETAIL_NATIVE_FUJIN_TRIPLE_FIRST_VICTIM:
       return fujin_triple_victim;
-    case RETAIL_NATIVE_FUJIN_TRIPLE_VICTIM_488450:
+    case RETAIL_NATIVE_FUJIN_TRIPLE_MIDDLE_VICTIM:
       return fujin_triple_victim;
-    case RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50:
+    case RETAIL_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN:
       return kai_handstand_reaction;
-    case RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80:
+    case RETAIL_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER:
       return kai_handstand_reaction;
     default:
       return NULL;

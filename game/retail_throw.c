@@ -88,7 +88,7 @@ static void victim_finish_flip_getup(Fighter *fighter) {
 }
 
 static void roll_getup(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA220);
+  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_ROLL_GETUP);
 }
 
 static void victim_pause_roll(Fighter *fighter) {

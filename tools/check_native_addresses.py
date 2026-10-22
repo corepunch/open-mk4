@@ -41,7 +41,8 @@ def main():
         for match in re.finditer(
                 r'\bn[0-9a-f]{6}_\w+|\bRETAIL_NATIVE_(?:NATIVE_VM|VM_ENTER)_\w+|'
                 r'\bMK4_RETAIL_SCRIPT_(?:NATIVE_VM|LK_SCRIPT)_\w+|'
-                r'\bretail_(?:weapon_native|scene)_[0-9a-f]{6}\w*', source):
+                r'\bretail_(?:weapon_native|scene)_[0-9a-f]{6}\w*|'
+                r'\b[A-Za-z_]\w*_[45][0-9a-fA-F]{5}(?:_\w+)?\b', source):
             vague.append((path.relative_to(ROOT), source.count('\n', 0, match.start()) + 1, match[0]))
         allowed = set()
         for address, offset in address_definitions(source):

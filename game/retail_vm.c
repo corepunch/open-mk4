@@ -626,7 +626,7 @@ void retail_vm_step(Fighter *fighter) {
       }
       case 0x56:
       case 0x64:
-        if (!vm->native(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT : RETAIL_NATIVE_FACE_PEER_45B380, RETAIL_HANDLER, arg)) {
+        if (!vm->native(fighter, opcode == 0x56 ? RETAIL_NATIVE_CONTEXT : RETAIL_NATIVE_FACE_PEER_AND_RESUME_SCRIPT, RETAIL_HANDLER, arg)) {
           vm_error(fighter, "unreviewed scene/facing binding");
         }
         break;

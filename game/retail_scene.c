@@ -219,13 +219,13 @@ void retail_scene_reaction(Fighter *fighter) {
   fighter->flags |= FF_BUSY | FF_UNTOUCHABLE | FF_PAIRED;
   uint32_t script;
   switch (entry) {
-    case RETAIL_NATIVE_SCENE_REACTION_464E30:
+    case RETAIL_NATIVE_RAIDEN_FATALITY_2_SCENE_VICTIM:
       script = MK4_RETAIL_SCRIPT_RAIDEN_FATALITY_2_VICTIM;
       break;
     case RETAIL_NATIVE_TANYA_FATALITY_2_VICTIM_REACTION_186:
       script = MK4_RETAIL_SCRIPT_TANYA_FATALITY_2_VICTIM_SCENE;
       break;
-    case RETAIL_NATIVE_SCENE_REACTION_466110:
+    case RETAIL_NATIVE_SONYA_FATALITY_2_SCENE_VICTIM:
       script = MK4_RETAIL_SCRIPT_SONYA_FATALITY_2_VICTIM;
       break;
     default:

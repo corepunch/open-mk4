@@ -163,10 +163,10 @@ void mk4_script_roster_sound(Fighter *fighter, int selector) {
   require(selector >= 0 && selector < 22 && fighter->roster >= 0 && fighter->roster < MK4_ROSTER_COUNT, "Invalid roster sound selector");
   const Mk4Image *image = retail_vm_image();
   unsigned roster = fighter->roster == 16 ? 10u : (unsigned)fighter->roster;
-  uint32_t remap_address = MK4_RETAIL_DATA_ROSTER_SOUND_4EAD18 + roster;
+  uint32_t remap_address = MK4_RETAIL_DATA_SOUND_ROSTER_REMAP + roster;
   int remap = (int8_t)(mk4_image_u32(image, remap_address & ~3u) >> ((remap_address & 3u) * 8));
   require(remap >= 0 && remap < MK4_ROSTER_COUNT, "Invalid roster sound remap");
-  uint32_t table = mk4_image_u32(image, MK4_RETAIL_DATA_ROSTER_SOUND_53D000 + (unsigned)selector * 4) * 4;
+  uint32_t table = mk4_image_u32(image, MK4_RETAIL_DATA_ROSTER_SOUND_SELECTOR_TABLE + (unsigned)selector * 4) * 4;
   if (table == 0) {
     return;
   }
@@ -540,7 +540,7 @@ void mk4_mmove_side_getup(Fighter *fighter) {
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_MMOVE_SIDE_GETUP, mk4_mmove_thrown_finish);
     return;
   }
-  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200);
+  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_SIDE_GETUP);
 }
 
 static const MoveDef getup_move = {.clip = -1, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD | SF_REACTION, .action = ACTION_RETAIL_200E};
@@ -556,8 +556,8 @@ void retail_crouch_return(Fighter *fighter) {
 /* 4914c0 consumes speed/clip and crouching speed/clip pairs. The caller
  * owns the selected data; the shared phase owns KO and controller return. */
 void mk4_mmove_getup(Fighter *fighter, uint32_t record) {
-  require(record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA200 || record == MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP ||
-              record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA220 || record == MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA230,
+  require(record == MK4_RETAIL_GETUP_DESCRIPTOR_SIDE_GETUP || record == MK4_RETAIL_GETUP_DESCRIPTOR_FLIP_GETUP ||
+              record == MK4_RETAIL_GETUP_DESCRIPTOR_ROLL_GETUP || record == MK4_RETAIL_GETUP_DESCRIPTOR_FRONT_GETUP,
       "Unreviewed native getup record");
   mk4_script_stop_body(fighter);
   fighter->body.pos[AXIS_Y] = fighter->body.ground;

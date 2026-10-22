@@ -47,13 +47,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_SCORPION_SCRIPT_FIRE_FLAME:
           scorpion_script_fire_flame(fighter);
           return true;
-        case RETAIL_NATIVE_SHINNOK_SECOND_GORE_41DB70:
+        case RETAIL_NATIVE_SHINNOK_SECOND_GORE_19_PIECES:
           shinnok_second_gore(fighter);
           return true;
-        case RETAIL_NATIVE_SHINNOK_SECOND_GORE_41DBA0:
+        case RETAIL_NATIVE_SHINNOK_SECOND_GORE_8_PIECES:
           shinnok_second_gore(fighter);
           return true;
-        case RETAIL_NATIVE_SHINNOK_SECOND_GORE_41DBD0:
+        case RETAIL_NATIVE_SHINNOK_SECOND_GORE_7_PIECES:
           shinnok_second_gore(fighter);
           return true;
         case RETAIL_NATIVE_JAREK_SECOND_GLOW:
@@ -148,7 +148,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_SCORPION_SCRIPT_BEAST_VICTIM_PIECES:
           scorpion_script_beast_victim_pieces(fighter);
           return true;
-        case RETAIL_NATIVE_TASK_PAUSE_41F1B0:
+        case RETAIL_NATIVE_TASK_PARK_60_TICK_LOOP:
           retail_task_pause(fighter);
           return true;
         case RETAIL_NATIVE_CAGE_LK_THROW_PAIRED_CONTINUATION:
@@ -157,8 +157,8 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_CAGE_LK_THROW_RELEASE:
           retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_CAGE_LK_THROW_RELEASE, fighter->retail_vm.finish);
           return true;
-        case RETAIL_NATIVE_LK_RETURN_42B730:
-        case RETAIL_NATIVE_LK_RETURN_42B7A0:
+        case RETAIL_NATIVE_CAGE_LK_THROW_OWNER_RETURN:
+        case RETAIL_NATIVE_JAREK_LK_THROW_OWNER_RETURN:
           retail_lk_return(fighter);
           return true;
         case RETAIL_NATIVE_LK_PAUSE_LONG:
@@ -236,7 +236,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_LP_SELECT_SHORT:
           retail_lp_select_short(fighter);
           return true;
-        case RETAIL_NATIVE_THROW_READY_42CBC0:
+        case RETAIL_NATIVE_LP_THROW_OWNER_READY:
           retail_throw_ready(fighter);
           return true;
         case RETAIL_NATIVE_LP_SELECT_LONG:
@@ -245,7 +245,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_LP_END:
           retail_lp_end(fighter);
           return true;
-        case RETAIL_NATIVE_THROW_READY_42CE60:
+        case RETAIL_NATIVE_LP_THROW_VICTIM_ADJUST_RETURN:
           retail_throw_ready(fighter);
           return true;
         case RETAIL_NATIVE_SUB_ZERO_LP_THROW_OWNER_RETURN:
@@ -278,10 +278,10 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_FAN_TAIL:
           retail_fan_tail(fighter);
           return true;
-        case RETAIL_NATIVE_FAN_CYCLE_43D510:
+        case RETAIL_NATIVE_FAN_MALE_VICTIM_OWNER_CYCLE:
           retail_fan_cycle(fighter);
           return true;
-        case RETAIL_NATIVE_FAN_CYCLE_43D530:
+        case RETAIL_NATIVE_FAN_FEMALE_VICTIM_OWNER_CYCLE:
           retail_fan_cycle(fighter);
           return true;
         case RETAIL_NATIVE_FAN_VICTORY:
@@ -503,7 +503,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_REIKO_FIRST_VICTIM_165:
           reiko_first_victim_165(fighter);
           return true;
-        case RETAIL_NATIVE_REIKO_FIRST_PIECE_END_452C50:
+        case RETAIL_NATIVE_REIKO_LEG_TEAR_VICTIM_FINISH:
           reiko_first_piece_end(fighter);
           return true;
         case RETAIL_NATIVE_REIKO_FIRST_TORSO_29:
@@ -518,7 +518,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_REIKO_FIRST_HEAD_83:
           reiko_first_head_83(fighter);
           return true;
-        case RETAIL_NATIVE_REIKO_FIRST_PIECE_END_452F90:
+        case RETAIL_NATIVE_REIKO_LEG_TEAR_HEAD_FINISH:
           reiko_first_piece_end(fighter);
           return true;
         case RETAIL_NATIVE_REIKO_FIRST_LEFT_ARM_56:
@@ -527,7 +527,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_REIKO_FIRST_LEFT_ARM_LAND:
           reiko_first_left_arm_land(fighter);
           return true;
-        case RETAIL_NATIVE_REIKO_FIRST_PIECE_END_453040:
+        case RETAIL_NATIVE_REIKO_LEG_TEAR_LEFT_ARM_FINISH:
           reiko_first_piece_end(fighter);
           return true;
         case RETAIL_NATIVE_REIKO_FIRST_RIGHT_ARM_44:
@@ -536,7 +536,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_REIKO_FIRST_RIGHT_ARM_LAND:
           reiko_first_right_arm_land(fighter);
           return true;
-        case RETAIL_NATIVE_REIKO_FIRST_PIECE_END_4530F0:
+        case RETAIL_NATIVE_REIKO_LEG_TEAR_RIGHT_ARM_FINISH:
           reiko_first_piece_end(fighter);
           return true;
         case RETAIL_NATIVE_REPTILE_FIRST_OWNER_CYCLE:
@@ -578,7 +578,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_SHINNOK_FIRST_HAND_SQUEEZE:
           shinnok_first_hand_squeeze(fighter);
           return true;
-        case RETAIL_NATIVE_SHINNOK_FIRST_SQUEEZE_CYCLE_4558D0:
+        case RETAIL_NATIVE_SHINNOK_HAND_SQUEEZE_CYCLE:
           shinnok_first_squeeze_cycle(fighter);
           return true;
         case RETAIL_NATIVE_SHINNOK_FIRST_VICTIM_HELD:
@@ -587,7 +587,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_SHINNOK_FIRST_VICTIM_SQUEEZE:
           shinnok_first_victim_squeeze(fighter);
           return true;
-        case RETAIL_NATIVE_SHINNOK_FIRST_SQUEEZE_CYCLE_455B80:
+        case RETAIL_NATIVE_SHINNOK_VICTIM_SQUEEZE_CYCLE:
           shinnok_first_squeeze_cycle(fighter);
           return true;
         case RETAIL_NATIVE_SHINNOK_FIRST_VICTIM_CRUSH:
@@ -1007,7 +1007,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_THROW_VICTIM_IMPACT:
           retail_throw_victim_impact(fighter);
           return true;
-        case RETAIL_NATIVE_MMOVE_THROWN_FINISH_485510:
+        case RETAIL_NATIVE_THROW_VICTIM_STOP_AND_RETURN:
           mk4_mmove_thrown_finish(fighter);
           return true;
         case RETAIL_NATIVE_SONYA_SCRIPT_LEG_VICTIM_END:
@@ -1016,13 +1016,13 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_LIU_KANG_LIU_SCRIPT_LK_THROWN_TAIL:
           liu_kang_liu_script_lk_thrown_tail(fighter);
           return true;
-        case RETAIL_NATIVE_GETUP_FLIP_485AD0:
+        case RETAIL_NATIVE_LP_SLIDING_IMPACT_FLIP_GETUP:
           retail_getup_flip(fighter);
           return true;
         case RETAIL_NATIVE_GETUP_ROLL_FLIP:
           retail_getup_roll_flip(fighter);
           return true;
-        case RETAIL_NATIVE_GETUP_ROLL_485B50:
+        case RETAIL_NATIVE_LP_TWO_SPEED_SLIDE_DOUBLE_FLIP_ROLL_GETUP:
           /* 490350 twice, through488bd0, leaves the original facing. */
           retail_getup_roll(fighter);
           return true;
@@ -1065,7 +1065,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_MMOVE_SIDE_GETUP:
           mk4_mmove_side_getup(fighter);
           return true;
-        case RETAIL_NATIVE_GETUP_FLIP_485C40:
+        case RETAIL_NATIVE_LP_TABLE_VICTIM_STOP_AND_FLIP_GETUP:
         case RETAIL_NATIVE_SUB_ZERO_LP_THROW_VICTIM_GETUP:
           retail_getup_flip(fighter);
           return true;
@@ -1352,7 +1352,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
           }
           retail_script_release_reaction(fighter, (int)(argument & 255u));
           return true;
-        case RETAIL_NATIVE_FACE_PEER_45B380:
+        case RETAIL_NATIVE_FACE_PEER_AND_RESUME_SCRIPT:
           retail_face_peer(fighter);
           return true;
         default:
@@ -1392,7 +1392,7 @@ bool retail_native_vm(Fighter *fighter, uint32_t address, RetailNativeKind kind,
         case RETAIL_NATIVE_RAIDEN_SCRIPT_TORPEDO_VICTIM_MOTION:
           fighter->body.physics = raiden_script_torpedo_victim_motion;
           return true;
-        case RETAIL_NATIVE_FACE_PEER_490BD0:
+        case RETAIL_NATIVE_FACE_PEER_ORIENT_GROUP:
           fighter->body.physics = retail_face_peer;
           return true;
         case RETAIL_NATIVE_VELOCITY_FRICTION:

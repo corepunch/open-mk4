@@ -250,20 +250,20 @@ void kai_handstand_reaction(Fighter *fighter) {
   static const MoveDef knockdown = {.clip = 131, .last = 79, .flags = SF_LOCK | SF_REACTION, .action = 0x4003};
   bool crouch = fighter->action == 0x2001 || fighter->action == 0x2010 || fighter->action == 0x2002 || fighter->action == 0x106 || fighter->action == 0x107;
   require(retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_ENTRY ||
-              retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ||
-              retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80,
+              retail_reaction_native(fighter) == RETAIL_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ||
+              retail_reaction_native(fighter) == RETAIL_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER,
       "Unexpected handstand victim reaction");
   mk4_script_stop_body(fighter);
-  if (retail_reaction_native(fighter) != RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80) {
+  if (retail_reaction_native(fighter) != RETAIL_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER) {
     battle_wall_recoil(fighter);
   }
   mk4_script_disarm_self(fighter);
-  fighter_start_move(fighter, retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ? S_KNOCKDOWN : S_HIT,
-      retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50 ? &knockdown : &stagger);
+  fighter_start_move(fighter, retail_reaction_native(fighter) == RETAIL_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ? S_KNOCKDOWN : S_HIT,
+      retail_reaction_native(fighter) == RETAIL_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN ? &knockdown : &stagger);
   fighter->flags |= FF_REACTING;
-  if (retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A50) {
+  if (retail_reaction_native(fighter) == RETAIL_NATIVE_HANDSTAND_VICTIM_KNOCKDOWN) {
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REACTION_KNOCKDOWN, mk4_mmove_thrown_finish);
-  } else if (retail_reaction_native(fighter) == RETAIL_NATIVE_KAI_HANDSTAND_REACTION_488A80) {
+  } else if (retail_reaction_native(fighter) == RETAIL_NATIVE_HANDSTAND_VICTIM_REAR_STAGGER) {
     fighter->body.physics = fighter_friction;
     retail_vm_enter(fighter, MK4_RETAIL_SCRIPT_KAI_HANDSTAND_REACTION_REAR_STAGGER, mk4_mmove_thrown_finish);
   } else {

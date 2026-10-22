@@ -348,7 +348,7 @@ static const NativeGate gates[] = {
   {RETAIL_NATIVE_FUJIN_CAN_WIND_GRAB, fujin_can_wind_grab},
   {RETAIL_NATIVE_SUB_ZERO_CAN_CLONE, sub_zero_can_clone},
   {RETAIL_NATIVE_JAX_AIR_THROW_COMMAND_GATE, mk4_can_air_throw},
-  {RETAIL_NATIVE_CAN_AIR_THROW_45ED80, mk4_can_air_throw},
+  {RETAIL_NATIVE_CAN_PLAYER_PAIR_AIR_THROW, mk4_can_air_throw},
   {RETAIL_NATIVE_FUJIN_CAN_DIVE, fujin_can_dive},
   {RETAIL_NATIVE_HAS_GRAVITY, retail_has_gravity},
   {RETAIL_NATIVE_WEAPON_CAN_DRAW, weapon_can_draw},

@@ -228,7 +228,7 @@ void retail_getup_back(Fighter *fighter) {
 }
 
 void retail_getup_roll(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA220);
+  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_ROLL_GETUP);
 }
 
 /* 488b80 calls 490350 before the ordinary backward getup. Simulation
@@ -246,5 +246,5 @@ void retail_getup_roll_flip(Fighter *fighter) {
 
 /*488c10 selects4ea230; round/KO result orchestration belongs to battle. */
 void retail_getup_front(Fighter *fighter) {
-  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_MMOVE_GETUP_4EA230);
+  mk4_mmove_getup(fighter, MK4_RETAIL_GETUP_DESCRIPTOR_FRONT_GETUP);
 }
