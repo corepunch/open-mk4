@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "native_services.h"
 #include "retail_data.h"
 #include <math.h>
@@ -2166,41 +2167,20 @@ static const MoveDef n45ac30_victim_pose = {.clip = 13, .last = 55, .flags = SF_
 static const MoveDef n45ac30_owner_pose = {.clip = 439, .last = 44, .flags = SF_LOCK | SF_RECORD, .action = 0x700};
 
 /* 45e570: close fatality range (<= 1 unit) and the shared finish window. */
-/* Retail 489fc0 plays a raw sample token. These tokens are the same words
- * as these B-bank entries; 0x281 (owner cue) and 0x1bd (one random entry)
- * have no bank selector and stay silent. */
-static void n45ac30_token_sound(int token) {
-  // clang-format off: Keep table entries on one row, including long rows.
-  static const int tokens[][2] = {
-    {0xd2, 0x1c}, {0x27b, 0x20}, {0xbe, 0x3e}, {0x14d7, 0x29}, {0x14dc, 0x2a}, {0x14e1, 0x2b}, {0x2f8, 0x18}, {0x1b8, 0x19}, {0xcd, 0x47},
-  };
-  // clang-format on
-  for (size_t i = 0; i < sizeof tokens / sizeof tokens[0]; ++i) {
-    if (tokens[i][0] == token) {
-      battle_sound(SOUND_B, tokens[i][1]);
-      return;
-    }
-  }
-  if (token == 0x1c2) {
-    battle_sound(SOUND_C, 0x37);
-  }
-}
-
 /* Task-619 cue lists: {visits before the action, token or random list}. */
 // clang-format off: Keep table entries on one row, including long rows.
 static const int n45ac30_owner_cue[][2] = {{33, 0xd2}, {20, 0x281}};
-static const int n45ac30_victim_cue[][2] = {{45, 0x4ea8b0}, {12, 0x4ea8b0}, {8, 0x14dc}, {20, 0x14e1}, {23, 0x14d7}, {13, 0xbe}, {15, 0x14dc}, {20, 0x14dc}, {33, 0x2f8}};
+static const int n45ac30_victim_cue[][2] = {{45, RETAIL_SOUND_FOOTSTEP_LIST}, {12, RETAIL_SOUND_FOOTSTEP_LIST}, {8, 0x14dc}, {20, 0x14e1}, {23, 0x14d7}, {13, 0xbe}, {15, 0x14dc}, {20, 0x14dc}, {33, 0x2f8}};
 // clang-format on
 
 static bool n45ac30_cue_frame(BattleEvent *event, Fighter *owner, Fighter *opponent) {
   (void)owner;
   (void)opponent;
-  if (event->frame_value == 0x4ea8b0) {
+  if (event->frame_value == RETAIL_SOUND_FOOTSTEP_LIST) {
     /* 48a2a0 -> 489e80: one of four list 4ea8b0 tokens. */
-    static const int list[] = {0x1b8, 0x1bd, 0x1c2, 0xcd};
-    n45ac30_token_sound(list[battle_random(4)]);
+    retail_native_sound_list(RETAIL_SOUND_FOOTSTEP_LIST);
   } else {
-    n45ac30_token_sound(event->frame_value);
+    battle_sound(SOUND_TOKEN, event->frame_value);
   }
   return true;
 }

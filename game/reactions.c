@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "game.h"
 #include "native.h"
 #include "retail_native.h"
@@ -123,7 +124,7 @@ static void react_kick_air(Fighter *fighter) {
   fighter->damage_scale = 0x9999;
   battle_wall_recoil(fighter);
   mk4_script_disarm_self(fighter);
-  retail_native_sound_list(0x4ea870);
+  retail_native_sound_list(RETAIL_SOUND_KNOCKDOWN_VOICE_LIST);
   hit_script(fighter, 0x4e8a18, retail_getup_roll);
 }
 
@@ -147,7 +148,7 @@ static void react_kick_hit(Fighter *fighter) {
 }
 
 static void react_jab_hit(Fighter *fighter) {
-  retail_native_sound_list(0x4ea8f8);
+  retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
   bool crouch = fighter->action == 0x2001 || fighter->action == 0x2002;
   if (crouch) {
     uint32_t physics = mk4_image_u32(retail_vm_image(), 0x4e9358);
@@ -302,10 +303,10 @@ static void react_block(Fighter *fighter) {
     require(retail_native_vm(fighter, physics, RETAIL_PHYSICS, 0), "Unknown native block callback");
   }
   if (variant >= 16 && fighter->armed) {
-    retail_native_sound_list(0x4ea8e0);
+    retail_native_sound_list(RETAIL_SOUND_ARMED_IMPACT_LIST);
   } else {
     if (fighter->armed || variant >= 16) {
-      retail_native_sound_list(0x4ea8c8);
+      retail_native_sound_list(RETAIL_SOUND_UNARMED_IMPACT_LIST);
     }
     retail_native_sound_list(variant % 16 < 5 ? 0x4ea918 : 0x4ea928);
   }

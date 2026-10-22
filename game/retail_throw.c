@@ -35,11 +35,11 @@ void retail_native_sound_list(uint32_t address) {
 
 void retail_impact_voice(Fighter *fighter) {
   (void)fighter;
-  retail_native_sound_list(0x4ea8a0);
+  retail_native_sound_list(RETAIL_SOUND_IMPACT_VOICE_LIST);
 }
 
 void retail_throw_grunt(void) {
-  retail_native_sound_list(0x4ea828);
+  retail_native_sound_list(RETAIL_SOUND_THROW_GRUNT_LIST);
 }
 
 static void victim_4857b0(Fighter *fighter) {

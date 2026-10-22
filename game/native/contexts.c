@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "native_services.h"
 #include <math.h>
 #include <stdlib.h>
@@ -58,10 +59,9 @@ void goro_script_uppercut_victim_slide(Fighter *victim) {
 /* 136 (4834d0): disarm, 48a320 -> 489e80 picks one of list 4ea8f8's three
  * sampled tokens at random, then 4e95c8. */
 void goro_quake_victim(Fighter *victim) {
-  static const int voices[] = {0x78, 0x7d, 0x82};
   n4824f0_begin_victim(victim);
   mk4_script_disarm_self(victim);
-  battle_sound(SOUND_TOKEN, voices[battle_random(3)]);
+  retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
   retail_vm_enter(victim, 0x4e95c8, fighter_ready);
 }
 

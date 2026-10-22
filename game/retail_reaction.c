@@ -1,3 +1,4 @@
+#include "retail_layout.h"
 #include "native_services.h"
 #include "retail_data.h"
 
@@ -9,8 +10,8 @@ uint32_t retail_reaction_native(const Fighter *fighter) {
  * of the selected script/model aliases. Script words supply subsequent sound. */
 static void stagger_voice(Fighter *fighter) {
   if (fighter_peer(fighter)->roster == 13) {
-    retail_native_sound_list(0x4ea8c8);
-    retail_native_sound_list(0x4ea870);
+    retail_native_sound_list(RETAIL_SOUND_UNARMED_IMPACT_LIST);
+    retail_native_sound_list(RETAIL_SOUND_KNOCKDOWN_VOICE_LIST);
   } else {
     mk4_script_indexed_sound(fighter, 1);
   }
@@ -203,7 +204,7 @@ void retail_script_reaction(Fighter *fighter) {
     mk4_script_disarm_self(fighter);
   }
   if (entry == 0x4831e0) {
-    retail_native_sound_list(0x4ea8f8);
+    retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
     mk4_script_stop_body(fighter);
     fighter->body.pos[AXIS_Y] = fighter->body.ground;
   } else if (entry == 0x486730) {
@@ -280,7 +281,7 @@ void retail_scaled_reaction(Fighter *fighter) {
       break;
     case 0x483500:
       fighter->damage_scale = 0x9999;
-      retail_native_sound_list(0x4ea8f8);
+      retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
       script = 0x4e95f0;
       break;
     case 0x482f60:
@@ -395,7 +396,7 @@ void retail_weapon_reaction(Fighter *fighter) {
       script = 0x4e8f50;
       break;
     case 0x483050:
-      retail_native_sound_list(0x4ea8f8);
+      retail_native_sound_list(RETAIL_SOUND_RANDOM_GRUNT_LIST);
       mk4_script_stop_body(fighter);
       fighter->body.pos[AXIS_Y] = fighter->body.ground;
       script = 0x4e9460;
@@ -411,7 +412,7 @@ static bool uppercut_voice(BattleEvent *event, Fighter *owner, Fighter *peer) {
   (void)event;
   (void)owner;
   (void)peer;
-  retail_native_sound_list(0x4ea960);
+  retail_native_sound_list(RETAIL_SOUND_UPPERCUT_VOICE_LIST);
   return false;
 }
 
@@ -785,7 +786,7 @@ void retail_shake_stun(Fighter *fighter) {
 
 void retail_guard_fall(Fighter *fighter) {
   bool airborne = fighter_airborne(fighter);
-  retail_native_sound_list(fighter->armed ? 0x4ea8e0 : 0x4ea8c8);
+  retail_native_sound_list(fighter->armed ? RETAIL_SOUND_ARMED_IMPACT_LIST : RETAIL_SOUND_UNARMED_IMPACT_LIST);
   if (airborne) {
     mk4_script_disarm_self(fighter);
     battle_wall_recoil(fighter);
