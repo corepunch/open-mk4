@@ -11,7 +11,7 @@ from retail_helpers import HELPERS
 from character_catalog import moves_for, character_name, CHARACTERS
 
 ANIMATION_NAMES = {67: 'ANIM_SCORPION_LOW_KICK'}
-TERMINALS = {0x30, 0x32, 0x3e, 0x3f}
+TERMINALS = {0x1b, 0x30, 0x32, 0x3e, 0x3f}
 CONDITIONALS = {0x6f, 0x3d, 0x43, 0x50, 0x42, 0x2f, 0x36, 0x44, 0x45, 0x55, 0x3b}
 
 
@@ -101,6 +101,12 @@ def instruction_c(row):
         return ['advance_self_and_victim(%d);' % inline]
     if op in (0x0b, 0x15, 0x18, 0x21, 0x23, 0x57, 0x66, 0x67):
         return ['vm_continue();']
+    if op in (0x17, 0x1a):
+        return ['%s(%s);' % ('play_clip_double' if op == 0x17 else 'play_clip_interleaved', animation_name(row['clip']))]
+    if op == 0x1b:
+        return ['return_counted_operand(%#x, %d);' % (words[0], arg)]
+    if op == 0x1c:
+        return ['play_inherited_clip_interleaved(%d);' % arg]
     if op == 0x0a:
         return ['advance_animation_cursor(%d);' % arg]
     if op in (0x13, 0x14):

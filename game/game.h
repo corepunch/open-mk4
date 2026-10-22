@@ -507,11 +507,11 @@ typedef struct RetailVm {
   const Mk4Image *image; /* borrowed immutable data, owned by assets or the caller */
   uint32_t pc, begin, end, instruction, entry;
   uint64_t wake;
-  unsigned result, selector, loop_count, repeat_count, native_owner;
-  uint32_t repeat_entry, repeat_after, native_cursor, native_query;
+  unsigned result, selector, loop_count, repeat_count, native_owner, playback_limit;
+  uint32_t repeat_entry, repeat_after, native_cursor, native_query, returned_word;
   unsigned native_selector, native_rows;
   int play_ticks, target, direction, stride, period, blend_ticks;
-  bool active, return_after_play, parked, paired, wait_ground, native_owner_set, native_contact;
+  bool active, return_after_play, parked, paired, wait_ground, native_owner_set, native_contact, interpolated_play, interpolated_pair;
   FighterFn finish, cleanup, native_resume;
   RetailScriptContinuation then;
   RetailNativeFn native;

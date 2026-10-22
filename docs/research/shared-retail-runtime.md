@@ -1570,3 +1570,30 @@ existing decoder checks and helper/port navigation (6/7 tests). Small runtime
 fixtures check signed operands/directional branches, typed distance dispatch,
 result-bit preservation and independent event cleanup/reset. No authored move
 or balance matrices. Four non-null animation-controller slots remain.
+
+### Cover the remaining animation-controller dispatch slots
+
+Added17's double-source-pose playback and1a/1c's actor-owned interleaved
+full/half-weight playback with the original200/inline source budget. The
+shared VM owns the cursor, target, blend and cancellation; no frame rows are
+generated. Slot1b returns its fetched word and masked count to the typed native
+caller as data. It does not bind or execute that word. Decoder control flow
+recognizes the counted return as terminal.
+
+Checked45a3e0/4283a0/4285b0,45a070/45a0c0/45a0f0/45a140/45a260,
+428550/4285d0 and407d00/407d50 against mk4decomp
+ComboMoveSelectFsmCluster's dual-entry machine, matching assembly and the
+separate animation cursor/completion model. The engine represents sampled
+poses and blends directly; exact retail tagged-scheduler trace identity is
+not the integration contract.
+
+Verified make format, shared VM/rejections, strict audits, native frame gates,
+existing decoder checks, helper/port navigation (6/7 tests), SDL game build
+and resource self-test (all18 rigs and11 arenas). Existing SDL deployment-
+version linker warning remains. A compact runtime fixture checks loaded clip
+bounds, inline budgets, counted data return and blend cleanup on interruption.
+
+A direct comparison with the supplied dispatch table now finds runtime and
+decoder cases for all118 non-null slots; null31 remains invalid. Slot coverage
+does not establish native gameplay parity. Legacy reaction copies and native
+owner specializations remain the next migration work, not completed parity.

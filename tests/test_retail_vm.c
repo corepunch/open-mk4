@@ -760,6 +760,58 @@ static void native_stagger_boundary(void) {
   put_word(0x4ea4e8 + 100 * 4, target);
 }
 
+static uint32_t returned_word;
+static unsigned returned_limit;
+
+static void counted_operand_end(Fighter *fighter) {
+  returned_word = fighter->retail_vm.returned_word;
+  returned_limit = fighter->retail_vm.playback_limit;
+  control_end(fighter);
+}
+
+static void animation_controller_opcodes(void) {
+  const uint32_t base = 0x570180, descriptor = 0x4fad7c;
+  uint32_t count = mk4_image_u32(&image, descriptor + 4);
+  put_word(descriptor + 4, 9);
+  static const MoveDef locked = {.clip = 0, .last = MOVE_END, .flags = SF_LOCK | SF_RECORD};
+  Fighter *actor = setup(0, 2);
+  fighter_start_move(actor, S_PUNCH, &locked);
+  put_word(base, 0x1a000000);
+  put_word(base + 4, descriptor / 4);
+  put_word(base + 8, 0x30000000);
+  retail_vm_start(actor, &image, base, base + 12, control_end, reject_native);
+  tick();
+  check(actor->retail_vm.interpolated_play && actor->blend_duration == 1 && actor->blend_sample == 1 && actor->blend_weight == 0x8000,
+      "interleaved playback must submit adjacent source poses at the original half weight");
+  fighter_interrupt(actor, fighter_ready);
+  check(
+      !actor->retail_vm.active && actor->blend_duration == 0 && actor->blend_weight == -1, "interruption must release interpolated pose ownership with the VM");
+  for (int limited = 0; limited < 2; ++limited) {
+    actor = setup(0, 2);
+    fighter_start_move(actor, S_PUNCH, &locked);
+    retail_vm_bind_animation(actor, descriptor, 0);
+    put_word(base, limited ? 0x1cffff03 : 0x17000000);
+    put_word(base + 4, limited ? 0x30000000 : descriptor / 4);
+    put_word(base + 8, 0x30000000);
+    control_finished = 0;
+    retail_vm_start(actor, &image, base, base + 12, control_end, reject_native);
+    for (int visit = 0; visit < 32 && actor->retail_vm.active; ++visit) {
+      tick();
+    }
+    check(control_finished == 1 && fighter_sample(actor) == (limited ? 2 : 8) && actor->current_mmove == NULL,
+        "native animation controllers must honor the inline source budget and loaded clip length without generated frame programs");
+  }
+  actor = setup(0, 2);
+  put_word(base, 0x1bffff03);
+  put_word(base + 4, 0xdeadbeef);
+  returned_word = returned_limit = 0;
+  control_finished = 0;
+  retail_vm_start(actor, &image, base, base + 8, counted_operand_end, reject_native);
+  check(control_finished == 1 && returned_word == 0xdeadbeef && returned_limit == 3 && !actor->retail_vm.active,
+      "counted operand return must deliver data to its typed caller rather than execute the operand");
+  put_word(descriptor + 4, count);
+}
+
 static bool distance_reaction_probe(Fighter *fighter, uint32_t address, RetailNativeKind kind, unsigned argument) {
   check(address == 0x45b1f0 && kind == RETAIL_HANDLER && argument == 25, "distance reaction opcode must use its typed low-byte handler argument");
   fighter->native_variant++;
@@ -1127,6 +1179,7 @@ int main(int argc, char **argv) {
   cursor_alias_opcodes();
   conditional_primitive_opcodes();
   motion_distance_opcodes();
+  animation_controller_opcodes();
   edge_task_lifetime();
   native_throw_selection();
   native_inherited_descriptor();

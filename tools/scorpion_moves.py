@@ -52,6 +52,10 @@ SCRIPT_OPS = {
     0x10: ('advance self and victim poses for count', 0),
     0x11: ('bind clip and set animation cursor', 1),
     0x12: ('set animation cursor', 0),
+    0x17: ('bind clip and play two source poses per visit', 1),
+    0x1a: ('bind clip and play interleaved poses with native limit 200', 1),
+    0x1b: ('return operand and low-byte count to native caller', 1),
+    0x1c: ('play inherited clip with interleaved poses and inline count', 0),
     0x16: ('mark fatality scene active', 0),
     0x19: ('advance twice per visit for count', 0),
     0x1d: ('native playback helper', 0),
@@ -194,7 +198,7 @@ def script_program(image, entry, character=0):
             operands = [image.word(pc + (i + 1) * 4) for i in range(count)]
             row.update(operation=operation, inline=word & 0xffffff,
                        operands=[hex(value) for value in operands])
-            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x46, 0x47, 0x48, 0x49, 0x4e, 0x68, 0x71) and operands:
+            if op in (0x01, 0x02, 0x08, 0x09, 0x0c, 0x0e, 0x0f, 0x11, 0x17, 0x1a, 0x46, 0x47, 0x48, 0x49, 0x4e, 0x68, 0x71) and operands:
                 clip = image.clip(operands[0])
                 row.update(clip=clip, stored_count=image.word(operands[0] * 4 + 4))
                 if op in (0x01, 0x0c, 0x0f, 0x11):
@@ -253,7 +257,7 @@ def script_program(image, entry, character=0):
             elif op == 0x33:
                 row['branch'] = hex(operands[0] * 4)
                 pc = operands[0] * 4
-            elif op in (0x30, 0x32, 0x3e, 0x3f):
+            elif op in (0x1b, 0x30, 0x32, 0x3e, 0x3f):
                 break
             else:
                 pc += (count + 1) * 4

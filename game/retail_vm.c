@@ -54,7 +54,7 @@ static void finish(Fighter *fighter) {
 void retail_vm_cancel(Fighter *fighter) {
   if (fighter->retail_vm.active) {
     FighterFn cleanup = fighter->retail_vm.cleanup;
-    if (fighter->retail_vm.blend_ticks > 0) {
+    if (fighter->retail_vm.blend_ticks > 0 || fighter->retail_vm.interpolated_play) {
       fighter->blend_duration = 0;
       fighter->blend_weight = -1;
     }
@@ -133,6 +133,24 @@ static void slow_play(Fighter *fighter, int target, bool inclusive) {
   RetailVm *vm = &fighter->retail_vm;
   vm->period = 2;
   vm->wake = g_battle.ticks + (target == fighter_sample(fighter) ? 1 : 2);
+}
+
+/* 45a070/45a0f0 ->45a260/45a140: full poses alternate with half-weight
+ * adjacent-pose submissions, using one actor-owned source-frame budget. */
+static void interpolated_play(Fighter *fighter, unsigned limit) {
+  RetailVm *vm = &fighter->retail_vm;
+  int first = fighter_sample(fighter), last = fighter_move(fighter)->last;
+  if (first < 0 || last == MOVE_END || first > last) {
+    vm_error(fighter, "interpolated playback needs a bounded cursor");
+  }
+  unsigned remaining = (unsigned)(last - first + 1);
+  unsigned count = limit == 0 || limit > remaining ? remaining : limit;
+  vm->playback_limit = limit;
+  vm->target = first + (int)count - 1;
+  vm->play_ticks = 0;
+  vm->interpolated_play = true;
+  vm->interpolated_pair = false;
+  vm->wake = g_battle.ticks + 1;
 }
 
 void retail_vm_reverse_return(Fighter *fighter) {
@@ -290,6 +308,33 @@ void retail_vm_step(Fighter *fighter) {
     fighter->blend_weight = -1;
     sample(fighter, 1);
   }
+  if (vm->interpolated_play) {
+    int current = fighter_sample(fighter);
+    fighter->blend_duration = 0;
+    fighter->blend_weight = -1;
+    if (current >= vm->target) {
+      vm->interpolated_play = false;
+      vm->interpolated_pair = false;
+    } else {
+      if (vm->interpolated_pair) {
+        sample(fighter, current + 1);
+        vm->interpolated_pair = false;
+      } else {
+        int first = current + 1;
+        int second = first < vm->target ? first + 1 : first;
+        sample(fighter, second);
+        vm->interpolated_pair = first != second;
+        if (vm->interpolated_pair) {
+          fighter->blend_clip = fighter_move(fighter)->clip;
+          fighter->blend_sample = first;
+          fighter->blend_duration = 1;
+          fighter->blend_weight = 0x8000;
+        }
+      }
+      vm->wake = g_battle.ticks + 1;
+      return;
+    }
+  }
   if (vm->play_ticks > 0) {
     int pose = fighter_sample(fighter);
     if (pose != vm->target) {
@@ -359,6 +404,27 @@ void retail_vm_step(Fighter *fighter) {
         }
         break;
       }
+      case 0x17: {
+        bind(fighter, fetch(fighter), 0);
+        int last = fighter_move(fighter)->last;
+        sample(fighter, last > 0 ? 1 : 0);
+        play(fighter, last, true);
+        vm->stride = 2;
+        vm->play_ticks = (last - fighter_sample(fighter) + 1) / 2 + 1;
+        break;
+      }
+      case 0x1a:
+        bind(fighter, fetch(fighter), 0);
+        interpolated_play(fighter, 200);
+        break;
+      case 0x1b:
+        vm->playback_limit = arg;
+        vm->returned_word = fetch(fighter);
+        finish(fighter);
+        return;
+      case 0x1c:
+        interpolated_play(fighter, arg);
+        break;
       case 0x0a:
         sample(fighter, fighter_sample(fighter) + (int)arg);
         break;
@@ -777,7 +843,7 @@ void retail_vm_step(Fighter *fighter) {
     if (!vm->active || vm->parked || fighter->pending != NULL) {
       return;
     }
-    if (vm->play_ticks > 0 || vm->blend_ticks > 0 || g_battle.ticks < vm->wake) {
+    if (vm->play_ticks > 0 || vm->blend_ticks > 0 || vm->interpolated_play || g_battle.ticks < vm->wake) {
       return;
     }
   }
